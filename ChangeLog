@@ -1,5 +1,12 @@
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
+	* operations/color/value-invert.c: Renamed vinvert operation
+	to value-invert.
+
+	* operations/color/vinvert.c: Moved and removed.
+
+2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+
 	* operations/color/brightness-contrast.c
 	* operations/color/whitebalance.c
 	* operations/color/invert.c
