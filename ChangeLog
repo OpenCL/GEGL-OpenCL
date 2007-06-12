@@ -1,5 +1,12 @@
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
+	* operations/svg/svg_huerotate.c
+	* operations/svg/svg_luminancetoalpha.c
+	* operations/svg/svg_matrix.c
+	* operations/svg/svg_saturate.c: Use glong instead of gint.
+
+2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+
 	* operations/color/value-invert.c: Added missing divide by value.
 
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>

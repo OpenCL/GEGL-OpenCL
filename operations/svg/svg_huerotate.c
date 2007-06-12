@@ -49,7 +49,7 @@ process (GeglOperation *op,
   const gchar  delimiter=',';
   const gchar *delimiters=" ";
   gchar      **values;
-  gint         i;
+  glong        i;
 
   m = ma;
 

@@ -45,7 +45,8 @@ process (GeglOperation *op,
                     0.0,      0.0,      0.0,     0.0, 0.0,
                     0.2125,   0.7154,   0.0721,  0.0, 0.0,
                     0.0,      0.0,      0.0,     0.0, 1.0};
-  gint i;
+  glong        i;
+
   m = ma;
   for (i=0; i<n_pixels; i++)
     {
