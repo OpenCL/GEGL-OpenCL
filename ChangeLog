@@ -1,5 +1,13 @@
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
+	* operations/color/brightness-contrast.c
+	* operations/color/whitebalance.c
+	* operations/color/invert.c
+	* operations/color/levels.c
+	* operations/color/threshold.c: Use glong instead of gint.
+
+2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+
 	* operations/color/vinvert.c: added the value invert operation.
 
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>

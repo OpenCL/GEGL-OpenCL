@@ -61,7 +61,7 @@ process (GeglOperation *op,
   gfloat              a_scale;
   gfloat              b_base;
   gfloat              b_scale;
-  gint                i;
+  glong               i;
 
   self = GEGL_CHANT_OPERATION (op);
   pixel = in_buf;

@@ -92,7 +92,7 @@ process (GeglOperation *op,
 {
   GeglChantOperation *self;
   gfloat             *pixel; 
-  gint                i;
+  glong               i;
 
   self = GEGL_CHANT_OPERATION (op);
   pixel = in_buf;  

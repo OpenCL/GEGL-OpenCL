@@ -47,7 +47,7 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          n_pixels)
 {
-  gint i;
+  glong   i;
 
   gfloat *in = in_buf;
   gfloat *out = out_buf;
