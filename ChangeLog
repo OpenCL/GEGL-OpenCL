@@ -1,9 +1,10 @@
-2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+2007-06-12  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/svg/svg_huerotate.c
-	* operations/svg/svg_luminancetoalpha.c
-	* operations/svg/svg_matrix.c
-	* operations/svg/svg_saturate.c: Use glong instead of gint.
+	New operations should be added to the workshop before being considered
+	added permanently.
+
+	* operations/color/value-invert.c: moved ...
+	* operations/workshop/value-invert.c: ... here
 
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
