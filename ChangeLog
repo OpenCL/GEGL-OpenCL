@@ -1,5 +1,9 @@
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
+	* operations/color/vinvert.c: added the value invert operation.
+
+2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+
 	* operations/io/ff-load.c: added <errno.h> include without which
 	build breaks on Fedora 7.
 
