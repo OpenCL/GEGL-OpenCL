@@ -1,3 +1,15 @@
+2007-06-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/envelopes.h: added boolean toggle for whether
+	the same random spray is applied to every pixel and a parameter
+	specifying a radial distribution modifier, with a new default value
+	of 1.8.
+
+	* operations/workshop/c2g.c: Extend the envelope using operations ..
+	* operations/workshop/max-envelope.c: .. to use both same_spray and
+	* operations/workshop/min-envelope.c: .. radial gamma.
+	* operations/workshop/stress.c:
+
 2007-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	New operations should be added to the workshop before being considered

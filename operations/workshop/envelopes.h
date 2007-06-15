@@ -23,16 +23,16 @@
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
 static gfloat   radiuses[RADIUS_PRIME];
-static gboolean luts_computed = FALSE; 
+static gdouble  luts_computed = 0.0; 
 static gint     angle_no=0;
 static gint     radius_no=0;
 
-static void compute_luts(void)
+static void compute_luts(gdouble rgamma)
 {
   gint i;
-  if (luts_computed)
+  if (luts_computed==rgamma)
     return;
-  luts_computed = TRUE;
+  luts_computed = rgamma;
 
   for (i=0;i<ANGLE_PRIME;i++)
     {
@@ -42,7 +42,7 @@ static void compute_luts(void)
     }
   for (i=0;i<RADIUS_PRIME;i++)
     {
-      radiuses[i] = (random() / (RAND_MAX*1.0));
+      radiuses[i] = pow(random() / (RAND_MAX*1.0), rgamma);
     }
 }
 
@@ -142,16 +142,18 @@ retry:                      /* if we've sampled outside the valid image
     }
 }
 
-static void compute_envelopes (gfloat *buf,
-                               gint    width,
-                               gint    height,
-                               gint    x,
-                               gint    y,
-                               gint    radius,
-                               gint    samples,
-                               gint    iterations,
-                               gfloat *min_envelope,
-                               gfloat *max_envelope)
+static void compute_envelopes (gfloat  *buf,
+                               gint     width,
+                               gint     height,
+                               gint     x,
+                               gint     y,
+                               gint     radius,
+                               gint     samples,
+                               gint     iterations,
+                               gboolean same_spray,
+                               gdouble  rgamma,
+                               gfloat  *min_envelope,
+                               gfloat  *max_envelope)
 {
   gint    i;
   gint    c;
@@ -160,7 +162,13 @@ static void compute_envelopes (gfloat *buf,
   gfloat  bright_avg[4] = {0,0,0,0};
   gfloat *pixel = buf + (width*y+x)*4;
 
-  compute_luts();
+  compute_luts(rgamma);
+
+  if (same_spray)
+    {
+      angle_no = 0;
+      radius_no = 0;
+    }
 
   for (i=0;i<iterations;i++)
     {

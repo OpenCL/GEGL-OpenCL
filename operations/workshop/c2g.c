@@ -24,6 +24,8 @@
 gegl_chant_int (radius,     2, 5000.0, 384, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,    3,  "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 23, "number of iterations (length of exposure)")
+gegl_chant_boolean (same_spray, FALSE, "")
+gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
 gegl_chant_double (strength,  -8, 8,  0.5, "how much the local optimum separation should be taken into account.")
 gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
@@ -44,10 +46,11 @@ static void c2g (GeglBuffer *src,
                  gint        radius,
                  gint        samples,
                  gint        iterations,
+                 gboolean    same_spray,
+                 gdouble     rgamma,
                  gfloat      strength,
                  gfloat      gamma);
 
-static void compute_luts(void);
 #include <stdlib.h>
 
 static gboolean
@@ -86,7 +89,7 @@ process (GeglOperation *operation,
                            "height", compute.height,
                            NULL);
 
-    c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
+    c2g (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma, self->strength, self->gamma);
     g_object_unref (temp_in);
     
 
@@ -112,6 +115,8 @@ static void c2g (GeglBuffer *src,
                  gint        radius,
                  gint        samples,
                  gint        iterations,
+                 gboolean    same_spray,
+                 gdouble     rgamma,
                  gfloat      strength,
                  gfloat      gamma)
 {
@@ -119,7 +124,6 @@ static void c2g (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  compute_luts ();
 
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
@@ -140,6 +144,8 @@ static void c2g (GeglBuffer *src,
                              x, y,
                              radius, samples,
                              iterations,
+                             same_spray,
+                             rgamma,
                              min_envelope, max_envelope);
 
           { /* now having a local blackpoint and a local white point

@@ -23,6 +23,8 @@
 gegl_chant_int (radius,     2, 5000.0, 50, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,  "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 20, "number of iterations (length of exposure)")
+gegl_chant_boolean (same_spray, FALSE, "")
+gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
 #else
 
 #define GEGL_CHANT_NAME         min_envelope
@@ -39,7 +41,9 @@ static void min_envelope (GeglBuffer *src,
                           GeglBuffer *dst,
                           gint        radius,
                           gint        samples,
-                          gint        iterations);
+                          gint        iterations,
+                          gboolean    same_spray,
+                          gdouble     rgamma);
 
 
 #include <stdlib.h>
@@ -86,7 +90,7 @@ process (GeglOperation *operation,
                                "height", compute.height,
                                NULL);
 
-        min_envelope (temp_in, output, self->radius, self->samples, self->iterations);
+        min_envelope (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma);
         g_object_unref (temp_in);
       }
 
@@ -111,7 +115,9 @@ static void min_envelope (GeglBuffer *src,
                           GeglBuffer *dst,
                           gint        radius,
                           gint        samples,
-                          gint        iterations)
+                          gint        iterations,
+                          gboolean    same_spray,
+                          gdouble     rgamma)
 {
   gint x,y;
   gfloat *src_buf;
@@ -136,6 +142,8 @@ static void min_envelope (GeglBuffer *src,
                              x, y,
                              radius, samples,
                              iterations,
+                             same_spray,
+                             rgamma,
                              min_envelope, NULL);
 
          {
