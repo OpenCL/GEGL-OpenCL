@@ -29,6 +29,7 @@
 #include "module/geglmoduledb.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <glib/gstdio.h>
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
@@ -144,11 +145,34 @@ gegl_exit (void)
 
   if (g_getenv ("GEGL_SWAP"))
     {
-      const gchar *swapdir = g_getenv ("GEGL_SWAP");
-      guint        pid     = getpid ();
-      gchar        buf[4096];
-      g_snprintf (buf, 4096, "rm %s/GEGL-%i-*.swap", swapdir, pid);
-      system (buf);
+      /* remove all files matching <$GEGL_SWAP>/GEGL-<pid>-*.swap */
+
+      const gchar  *swapdir = g_getenv ("GEGL_SWAP");
+      guint         pid     = getpid ();
+      GDir         *dir     = g_dir_open (swapdir, 0, NULL);
+
+      gchar        *glob    = g_strdup_printf ("GEGL-%i-*.swap", pid);
+      GPatternSpec *pattern = g_pattern_spec_new (glob);
+      g_free (glob);
+
+      if (dir != NULL)
+        {
+          const gchar *name;
+
+          while ((name = g_dir_read_name (dir)) != NULL)
+            {
+              if (g_pattern_match_string (pattern, name))
+                {
+                  gchar *fname = g_strdup_printf ("%s/%s", swapdir, name);
+                  g_unlink (fname);
+                  g_free (fname);
+                }
+            }
+
+          g_dir_close (dir);
+        }
+
+      g_pattern_spec_free (pattern);
     }
 
   g_print ("\n");

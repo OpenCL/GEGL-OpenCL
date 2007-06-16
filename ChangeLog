@@ -1,3 +1,7 @@
+2007-06-15  Mukund Sivaraman  <muks@mukund.org>
+
+	* gegl/gegl-init.c: don't use system() passing user-supplied data.
+
 2007-06-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/envelopes.h: added boolean toggle for whether
