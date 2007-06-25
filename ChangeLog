@@ -1,3 +1,16 @@
+2007-06-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Moved affine ops to newer APIs, speed and quality regression since
+	only nearest neighbour works, and that at a slower speed than bilinear
+	used to.
+
+	* operations/affine/affine.c: (affine_generic): added a new generic
+	affine core that uses the sampling API of GeglBuffer (which only
+	supports nearest neighbour for now).
+	(process): use gegl_operation_get_source and gegl_operation_get_target
+	for all communication with the core about buffers, and use
+	affine_generic for actual computation.
+
 2007-06-15  Mukund Sivaraman  <muks@mukund.org>
 
 	* gegl/gegl-init.c: don't use system() passing user-supplied data.

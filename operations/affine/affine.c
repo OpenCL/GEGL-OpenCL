@@ -18,10 +18,12 @@
  * Copyright 2006 Philip Lafleur
  */
 
+/* TODO: reenable different interpolators (through the sampling mechanism
+ *       of GeglBuffer intitially) */
 /* TODO: only calculate pixels inside transformed polygon */
 /* TODO: should hard edges always be used when only scaling? */
-/* TODO: solve rounding problems in rect calculation if possible
-         (see scale_*) */
+/* TODO: make rect calculations depend on the sampling kernel of the
+ *       interpolation filter used */
 
 #include <string.h>
 #include <math.h>
@@ -580,40 +582,104 @@ compute_affected_region (GeglOperation *op,
 
 }
 
+void
+affine_generic (GeglBuffer        *dest,
+                GeglBuffer        *src,
+                Matrix3            matrix,
+                GeglInterpolation  interpolation)
+{
+  gint     x, y;
+  gfloat  *dest_buf,
+          *dest_ptr;
+  Matrix3  inverse;
+  gdouble  u_start,
+           v_start,
+           u_float,
+           v_float;
+  Babl*   format = babl_format ("RaGaBaA float");
+
+  gint dest_pixels;
+
+  /* XXX: fast paths as existing in files in the same dir as affine.c
+   *      should probably be hooked in here, and bailing out before using
+   *      the generic code.
+   */
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+
+  dest_buf = g_new (gfloat, dest_pixels * 4);
+
+  matrix3_copy (inverse, matrix);
+  matrix3_invert (inverse);
+
+  u_start = inverse[0][0] * dest->x + inverse[0][1] * dest->y
+            + inverse[0][2] - src->x;
+  v_start = inverse[1][0] * dest->x + inverse[1][1] * dest->y
+            + inverse[1][2] - src->y;
+
+  /* correct rounding on e.g. negative scaling (is this sound?) */
+  if (inverse [0][0] < 0.)
+    u_start -= .001;
+  if (inverse [1][1] < 0.)
+    v_start -= .001;
+
+  for (dest_ptr = dest_buf, y = dest->height; y--;)
+    {
+      u_float = u_start;
+      v_float = v_start;
+
+      for (x = dest->width; x--;)
+        {
+          gfloat  pix[4];
+          gegl_buffer_sample (src, u_float, v_float, 1.0, pix, format, interpolation);
+
+          *dest_ptr++ = pix[0];
+          *dest_ptr++ = pix[1];
+          *dest_ptr++ = pix[2];
+          *dest_ptr++ = pix[3];
+
+          u_float += inverse [0][0];
+          v_float += inverse [1][0];
+        }
+      u_start += inverse [0][1];
+      v_start += inverse [1][1];
+    }
+  gegl_buffer_set (dest, NULL, format, dest_buf);
+  g_free (dest_buf);
+}
+
 
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
   OpAffine      *affine = (OpAffine *) operation;
-  GeglBuffer    *filter_input;
+  GeglBuffer    *input;
   GeglBuffer    *output;
   GeglRectangle *result;
  
   result = gegl_operation_result_rect (operation, context_id);
-  filter_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+
+  input = gegl_operation_get_source (operation, context_id, "input");
+  output = gegl_operation_get_target (operation, context_id, "output");
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
     {
-      output = g_object_new (GEGL_TYPE_BUFFER,
-          "source", filter_input,
-          "x",      result->x,
-          "y",      result->y,
-          "width",  result->width ,
-          "height", result->height,
-          NULL);
-      /* XXX: use get_target for this as well */
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-      return TRUE;
+      /* XXX: make the copying smarter, by perhaps even COW sharing
+       * of tiles (in the gegl_buffer_copy code)
+       */
+      gegl_buffer_copy (input, NULL, output, NULL);
     }
+#if 0  /* XXX: port to use newer APIs, perhaps not possible to achieve COW,
+                but should still be faster than a full resampling when it
+                is not needed */
   else if (matrix3_is_translate (affine->matrix) &&
            (! strcasecmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
       output = g_object_new (GEGL_TYPE_BUFFER,
-                             "source",      filter_input,
+                             "source",      input,
                              "x",           result->x,
                              "y",           result->y,
                              "width",       result->width ,
@@ -626,53 +692,12 @@ process (GeglOperation *operation,
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       return TRUE;
     }
+#endif
   else
     {
-      output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
-
-      if (! strcasecmp (affine->filter, "linear"))
-        {
-          GeglBuffer *input;
-
-          if (affine->hard_edges)
-            input = g_object_new (GEGL_TYPE_BUFFER,
-              "source", filter_input,
-              "x",      filter_input->x,
-              "y",      filter_input->y,
-              "width",  filter_input->width + 1,
-              "height", filter_input->height + 1,
-              NULL);
-          else
-            input = g_object_new (GEGL_TYPE_BUFFER,
-                "source", filter_input,
-                "x",      filter_input->x - 1,
-                "y",      filter_input->y - 1,
-                "width",  filter_input->width + 2,
-                "height", filter_input->height + 2,
-                NULL);
-
-          if (matrix3_is_scale (affine->matrix))
-            scale_linear (output, input, affine->matrix, affine->hard_edges);
-          else
-            affine_linear (output, input, affine->matrix, affine->hard_edges);
-
-          g_object_unref (input);
-        }
-      else if (!strcasecmp (affine->filter, "lanczos"))
-        if (matrix3_is_scale (affine->matrix))
-          scale_lanczos (output, filter_input, affine->matrix, affine->lanczos_width);
-        else
-          affine_lanczos (output, filter_input, affine->matrix, affine->lanczos_width);
-      else if (!strcasecmp (affine->filter, "cubic"))
-        if (matrix3_is_scale (affine->matrix))
-          scale_cubic (output, filter_input, affine->matrix);
-        else
-          affine_cubic (output, filter_input, affine->matrix);
-      else
-          if (matrix3_is_scale (affine->matrix))
-            scale_nearest (output, filter_input, affine->matrix);
-          else
-            affine_nearest (output, filter_input, affine->matrix);
+      /* XXX: add back more interpolators */
+      affine_generic (output, input, affine->matrix, GEGL_INTERPOLATION_NEAREST);
     }
+  g_object_unref (input);
   return TRUE;
 }
