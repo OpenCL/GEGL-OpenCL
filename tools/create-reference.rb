@@ -154,7 +154,6 @@ class Function
                    <div class='return_type'>#{self.return_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
                    <div class='function_name'>#{@name}</div>
                    </div>"
-
         ret += "<div class='function_args'>"
 
         first=true
@@ -303,8 +302,11 @@ elements = []
 function = nil
 state = :none
 arg_no=0
+
+(ARGV.length-1).times {
+    |file_no|
 line_no=0
-IO.foreach(ARGV[0]) {
+IO.foreach(ARGV[file_no]) {
     |line|
     line_no = line_no+1
 
@@ -439,9 +441,10 @@ IO.foreach(ARGV[0]) {
         state=:none
     end
 }
+}
 
-if ARGV.length!=2
-    puts "usage: #{$0} <gegl.h> <output.html>"
+if ARGV.length<2
+    puts "usage: #{$0} <header1 [header2 ..]> <output.html>"
     exit
 end
 
@@ -455,7 +458,7 @@ File.open(ARGV[1], "w") {|file|
 =end
 
 
-File.open(ARGV[1], "w") {|file|
+File.open(ARGV[ARGV.length-1], "w") {|file|
 
 file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/tr/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html>          

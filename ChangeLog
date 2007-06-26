@@ -1,3 +1,8 @@
+2007-06-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: added support for multiple input header
+	files.
+
 2007-06-25  Øyvind Kolås  <pippin@gimp.org>
 
 	Moved affine ops to newer APIs, speed and quality regression since
