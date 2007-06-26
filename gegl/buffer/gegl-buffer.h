@@ -31,8 +31,18 @@
 typedef struct _GeglBuffer     GeglBuffer;
 #endif
 
-
-GType           gegl_buffer_get_type     (void) G_GNUC_CONST;
+/***
+ * GeglBuffer:
+ *
+ * GeglBuffer is the API used by GEGL for storing and retrieving raster data.
+ * GeglBuffer heavily relies on babl for translation and description of
+ * different pixel formats.
+ *
+ * Internally GeglBuffer currently uses a tiled mipmap pyramid structure that
+ * can be swapped to disk. In the future GeglBuffer might also support a linear
+ * backend, a GPU memory backend and a network backend for buffers.
+ */
+GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 
 /** 
  * gegl_buffer_new:
@@ -99,23 +109,27 @@ void            gegl_buffer_get               (GeglBuffer       *buffer,
 /**
  * gegl_buffer_set:
  * @buffer: the buffer to modify.
- * @rect: the coordinates we want to change the data of and the width/height extent, if NULL equal to
- * the extent of the buffer.
+ * @rect: the coordinates we want to change the data of and the width/height extent, if NULL equal to the extent of the buffer.
  * @format: the babl_format the linear buffer @src.
  * @src: linear buffer of image data to be stored in @buffer.
  *
- * Modify a rectangle of the buffer, 
- * 
- * 
- * 
+ * Store a linear raster buffer into the GeglBuffer.
  */
 void            gegl_buffer_set               (GeglBuffer       *buffer,
                                                GeglRectangle    *rect,
                                                Babl             *format,
                                                void             *src);
 
-/* copies a region from source buffer to destination buffer, for now the
- * width and height of dst_rect is ignored, keep it 0 for future compatibility.
+
+/**
+ * gegl_buffer_copy:
+ * @src: source buffer.
+ * @src_rect: source rectangle (or NULL to copy entire source buffer)
+ * @dst: destination buffer.
+ * @dst_rect: position of upper left destination pixel, or NULL for top
+ * left coordinates of the buffer extents.
+ *
+ * copies a region from source buffer to destination buffer.
  *
  * If the babl_formats of the buffers are the same, and the tile boundaries
  * align, this should optimally lead to shared tiles that are copy on write,
@@ -127,7 +141,11 @@ void            gegl_buffer_copy              (GeglBuffer       *src,
                                                GeglRectangle    *dst_rect);
 
 
-/* duplicate a buffer (internally uses gegl_buffer_copy), this should ideally
+/** 
+ * gegl_buffer_dup:
+ * @buffer: the GeglBuffer to duplicate.
+ *
+ * duplicate a buffer (internally uses gegl_buffer_copy), this should ideally
  * lead to a buffer that shares the raster data with the original on a tile
  * by tile COW basis. This is not yet implemented
  */
@@ -137,7 +155,6 @@ typedef enum {
   GEGL_INTERPOLATION_NEAREST
 } GeglInterpolation;
 
-
 /**
  * gegl_buffer_sample:
  * @buffer: the GeglBuffer to sample from
@@ -145,13 +162,15 @@ typedef enum {
  * @y: y coordinate to sample in buffer coordinates
  * @scale: the scale we're fetching at (<1.0 can leads to decimation)
  * @dest: buffer capable of storing one pixel in @format.
+ * @format: the format to store the sampled color in.
  * @interpolation: the interpolation behavior to use, currently only nearest
  * neighbour is implemented for this API, bilinear, bicubic and lanczos needs
  * to be ported from working code.
  *
- * Resample the buffer at some given coordinates using a specified format. For some
- * operations this might be sufficient, but it might be considered prototyping convenience
- * that needs to be optimized away from algorithms using it later.
+ * Resample the buffer at some given coordinates using a specified format. For
+ * some operations this might be sufficient, but it might be considered
+ * prototyping convenience that needs to be optimized away from algorithms
+ * using it later.
  */
 void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                gdouble           x,

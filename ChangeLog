@@ -1,5 +1,9 @@
 2007-06-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.h: filled holes in API documentation.
+
+2007-06-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: added support for multiple input header
 	files.
 
