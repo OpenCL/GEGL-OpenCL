@@ -7,10 +7,12 @@ EXTRA_DIST      += $(wildcard *.cpp)
 
 
 
-ff-load.so: ff-load.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+ff-load$(SHREXT): ff-load.c $(GEGLHEADERS)
+	@if [ ! -z "$(AVCODEC_LIBS)" ]; then \
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
 		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS) \
-		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS) 
+		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS);\
+	fi
 
 jpg-load$(SHREXT): jpg-load.c $(GEGLHEADERS)
 	@if [ ! -z "$(LIBJPEG)" ]; then \

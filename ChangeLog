@@ -1,3 +1,8 @@
+2007-06-27  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* operations/io/Makefile.am (ff-load$(SHREXT)): build
+	conditionally if AVCODEC_LIBS is present.
+
 2007-06-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h: filled holes in API documentation.
