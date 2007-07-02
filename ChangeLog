@@ -1,3 +1,10 @@
+2007-07-01  Mark Probst  <mark.probst@gmail.com>
+
+	* property-types/gegl-curve.c
+	* property-types/gegl-curve.h
+	* gegl/gegl.h:
+	Added a function for removing a point from a curve.
+
 2007-06-27  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* operations/io/Makefile.am (ff-load$(SHREXT)): build

@@ -776,6 +776,9 @@ guint	     gegl_curve_add_point	       (GeglCurve    *self,
 						gfloat       x,
 						gfloat       y);
 
+void         gegl_curve_remove_point_index     (GeglCurve   *self,
+						guint        index);
+
 void	     gegl_curve_get_point	       (GeglCurve    *self,
 						guint	     index,
 						gfloat	     *x,
