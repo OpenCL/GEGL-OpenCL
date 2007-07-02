@@ -1,5 +1,10 @@
 2007-07-01  Mark Probst  <mark.probst@gmail.com>
 
+	* gegl/gegl-xml.c: Fixed a curve saving bug and a relative
+	filename bug.
+
+2007-07-01  Mark Probst  <mark.probst@gmail.com>
+
 	* property-types/gegl-curve.c
 	* property-types/gegl-curve.h
 	* gegl/gegl.h:

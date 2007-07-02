@@ -566,7 +566,7 @@ static void encode_node_attributes_old (SerializeState *ss,
                   if (ss->path_root &&
                       !strncmp (ss->path_root, value, strlen (ss->path_root)))
                     {
-                      tuple_old (ss->buf, properties[i]->name, &value[strlen (ss->path_root) + 1]);
+                      tuple_old (ss->buf, properties[i]->name, &value[strlen (ss->path_root)]);
                     }
                   else
                     {
@@ -907,8 +907,10 @@ static void xml_curve (SerializeState *ss,
 
   ind; g_string_append (ss->buf, "<curve ymin='");
   g_ascii_dtostr (str, sizeof(str), min_y);
+  g_string_append (ss->buf, str);
   g_string_append (ss->buf, "' ymax='");
   g_ascii_dtostr (str, sizeof(str), max_y);
+  g_string_append (ss->buf, str);
   g_string_append (ss->buf, "'>\n");
   for (i = 0; i < num_points; ++i)
     {
@@ -954,7 +956,7 @@ static void serialize_properties (SerializeState *ss,
                   if (ss->path_root &&
                       !strncmp (ss->path_root, value, strlen (ss->path_root)))
                     {
-                      xml_param (ss, indent + 2, properties[i]->name, &value[strlen (ss->path_root) + 1]);
+                      xml_param (ss, indent + 2, properties[i]->name, &value[strlen (ss->path_root)]);
                     }
                   else
                     {
@@ -1089,7 +1091,7 @@ static void serialize_layer (SerializeState *ss,
       if (ss->path_root &&
           !strncmp (ss->path_root, src, strlen (ss->path_root)))
         {
-          g_string_append_printf (ss->buf, " src='%s'", &src[strlen (ss->path_root) + 1]);
+          g_string_append_printf (ss->buf, " src='%s'", &src[strlen (ss->path_root)]);
         }
       else
         {
