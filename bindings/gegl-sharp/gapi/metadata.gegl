@@ -26,4 +26,8 @@
     <attr path="/api/namespace/object[@name='Color']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Curve']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Processor']" name="parent">GObject</attr>
+
+    <remove-node path="/api/namespace/object[@name='Curve']/method[@name='CalcValues']" />
+    <remove-node path="/api/namespace/object[@name='Node']/method[@name='GetProperty']" />
+    <remove-node path="/api/namespace/object[@name='Node']/method[@name='GetBoundingBox']" />
 </metadata>

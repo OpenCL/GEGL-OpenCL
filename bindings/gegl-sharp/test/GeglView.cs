@@ -11,6 +11,7 @@ namespace Gegl
         private int x, y;
         private double scale;
         private Processor processor;
+	private Gegl.Rectangle processor_rect;
         private Node node;
         private uint timeout_id = 0;
 
@@ -57,7 +58,7 @@ namespace Gegl
                 }*/
 
                 //processor = node.Processor;
-                Repaint();
+                Repaint(Allocation.Width, Allocation.Height);
             }
         }
       
@@ -68,22 +69,27 @@ namespace Gegl
             Scale = 1.0;
 
             ExposeEvent += HandleViewExposed;
+	    ConfigureEvent += HandleResize;
         }
 
-        public void Repaint()
+        public void Repaint(int width, int height)
         {
             //Gegl.Rectangle roi = new Gegl.Rectangle(x, y, Allocation.Width / scale, Allocation.Height/scale);
-            Gegl.Rectangle roi = new Gegl.Rectangle();
-            roi.Set(x, y, (uint) (Allocation.Width / scale), (uint) (Allocation.Height/scale));
-            Processor.Rectangle = roi;
+            processor_rect = new Gegl.Rectangle();
+            processor_rect.Set(x, y, (uint) (width / scale), (uint) (height/scale));
+            Processor.Rectangle = processor_rect;
 
             // refresh view twice a second
             if (timeout_id == 0) {
                 timeout_id = GLib.Timeout.Add(200, delegate {
                     double progress;
+		    Console.WriteLine("working: " + Allocation.Width + " " + Allocation.Height + " " + processor_rect.Width + " " + processor_rect.Height);
                     bool more = Processor.Work(out progress);
                     if (!more)
+		    {
+			HandleNodeComputed(null, processor_rect);
                         timeout_id = 0;
+		    }
 
                     return more;
                 });
@@ -103,8 +109,16 @@ namespace Gegl
 
         //format = babl_format (RVAL2CSTR (r_format));
 
+	public void HandleResize (object sender, ConfigureEventArgs args)
+	{
+	    Gdk.EventConfigure ev = args.Event;
+	    Console.WriteLine("resized: " + ev.X + " " + ev.Y + " " + ev.Width + " " + ev.Height);
+	    Repaint(ev.Width, ev.Height);
+	}
+
         private void HandleViewExposed(object sender, ExposeEventArgs args)
         {
+	    Console.WriteLine("exposed");
             if (Node != null) {
                 foreach (Gdk.Rectangle rect in args.Event.Region.GetRectangles()) {
                     Gegl.Rectangle roi = new Gegl.Rectangle();
@@ -121,7 +135,6 @@ namespace Gegl
                 }
             }
 
-            Repaint();
             args.RetVal = false;  // returning false here, allows cairo to hook in and draw more
         }
 

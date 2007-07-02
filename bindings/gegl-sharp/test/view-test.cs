@@ -7,6 +7,7 @@ public class ViewTest {
     {
         Gegl.Global.Init();
 
+	/*
         Node gegl = Gegl.Global.ParseXml(
             @"<gegl>
                <over>
@@ -18,18 +19,48 @@ public class ViewTest {
                                 width='400' height='400'/>
             </gegl>", ""
         );
+	*/
+
+	Node gegl = new Gegl.Node();
+	Node load = gegl.CreateChild("load");
+	Node mixer = gegl.CreateChild("mono-mixer");
+	Node contrast = gegl.CreateChild("contrast-curve");
+	Node save = gegl.CreateChild("png-save");
+	Gegl.Curve curve = new Gegl.Curve(0, 1);
+
+	load.SetProperty("path", "/home/schani/Desktop/princessa514b.jpg");
+
+	mixer.SetProperty("red", 0.4);
+	mixer.SetProperty("green", 0.3);
+	mixer.SetProperty("blue", 0.3);
+
+	curve.AddPoint(0.0f, 0.0f);
+	curve.AddPoint(0.25f, 0.2f);
+	curve.AddPoint(0.75f, 0.8f);
+	curve.AddPoint(1.0f, 1.0f);
+
+	contrast.SetProperty("curve", curve);
+
+	save.SetProperty("path", "out.png");
+
+	load.Link(mixer);
+	mixer.Link(contrast);
+	contrast.Link(save);
+
+	contrast.Process();
 
         Gtk.Application.Init ();
         Gtk.Window window = new Gtk.Window("Gegl# View Test");
         window.DeleteEvent += OnDelete;
 
         Gegl.View view = new Gegl.View();
-        view.Node = gegl;
+        view.Node = contrast;
         window.SetDefaultSize(400, 400);
 
         window.Add(view);
         window.ShowAll();
 
+/*
         GLib.Timeout.Add(100, delegate {
             view.Scale *= 1.01;
             view.X += 2;
@@ -37,6 +68,7 @@ public class ViewTest {
 
             return true;
         });
+*/
 
         Gtk.Application.Run();
 

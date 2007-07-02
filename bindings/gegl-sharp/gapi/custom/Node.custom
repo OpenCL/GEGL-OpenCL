@@ -1,19 +1,27 @@
-
 		[DllImport("libgegl-1.0.dll")]
 		static extern IntPtr gegl_node_new_processor(IntPtr node, ref Gegl.Rectangle rectangle);
 
 		public Gegl.Processor Processor(Gegl.Rectangle rectangle)
 		{
-            return new Gegl.Processor(gegl_node_new_processor(Handle, ref rectangle));
+			return new Gegl.Processor(gegl_node_new_processor(Handle, ref rectangle));
 		}
 
 		public void SetProperty(string property_name, object value)
-        {
+	        {
 			IntPtr property_name_as_native = GLib.Marshaller.StringToPtrGStrdup (property_name);
 			GLib.Value value_as_native = new GLib.Value(value);
 			gegl_node_set_property(Handle, property_name_as_native, ref value_as_native);
-			value_as_native.Dispose();
 			GLib.Marshaller.Free (property_name_as_native);
+		}
+
+		[DllImport("libgegl-1.0.dll")]
+		static extern void gegl_node_get_property(IntPtr raw, IntPtr property_name, ref GLib.Value value);
+
+		public GLib.Value GetProperty (string property_name, ref GLib.Value value) {
+			IntPtr property_name_as_native = GLib.Marshaller.StringToPtrGStrdup (property_name);
+			gegl_node_get_property(Handle, property_name_as_native, ref value);
+			GLib.Marshaller.Free (property_name_as_native);
+			return value;
 		}
 
 		[DllImport("libbabl-0.0.dll")]
@@ -23,13 +31,22 @@
 		static extern void gegl_node_blit(IntPtr raw, ref Gegl.Rectangle roi, double scale, IntPtr format, int rowstride, byte[] destination_buf, int flags);
 
 		public byte[] Render(Gegl.Rectangle roi, double scale, string format, Gegl.BlitFlags flags) {
-            byte [] buf = new byte[roi.Width * roi.Height * 3];
+        		byte [] buf = new byte[roi.Width * roi.Height * 3];
 
 			IntPtr format_as_native = GLib.Marshaller.StringToPtrGStrdup (format);
-            IntPtr bformat = babl_format(format_as_native);
+		        IntPtr bformat = babl_format(format_as_native);
 			gegl_node_blit(Handle, ref roi, scale, bformat, 0, buf, (int) flags);
 			GLib.Marshaller.Free (format_as_native);
 
-            return buf;
+			return buf;
 		}
         
+		[DllImport("libgegl-1.0.dll")]
+		static extern Gegl.Rectangle gegl_node_get_bounding_box(IntPtr raw);
+
+		public Gegl.Rectangle BoundingBox { 
+			get {
+				Gegl.Rectangle ret = gegl_node_get_bounding_box(Handle);
+				return ret;
+			}
+		}
