@@ -71,7 +71,7 @@ GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer       *buffer,
  *
  * Destroys a buffer and frees up the resources used by a buffer, internally
  * this is done with reference counting and gobject, and gegl_buffer_destroy
- * is a thing wrapper around g_object_unref.
+ * is a thin wrapper around g_object_unref.
  **/
 void            gegl_buffer_destroy           (GeglBuffer       *buffer);
 
