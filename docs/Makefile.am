@@ -41,9 +41,9 @@ if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
 
-api.html: ../gegl/gegl.h ../tools/create-reference.rb
+api.html: ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../tools/create-reference.rb
 if HAVE_RUBY
-	../tools/create-reference.rb ../gegl/gegl.h api.html
+	../tools/create-reference.rb ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h api.html
 endif
 
 runinfo: Makefile.am
