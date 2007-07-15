@@ -452,6 +452,10 @@ void
 gegl_node_invalidated (GeglNode      *node,
                        GeglRectangle *rect)
 {
+  if (node->cache)
+    {
+      gegl_cache_invalidate (node->cache, rect);
+    }
   g_signal_emit (node, gegl_node_signals[GEGL_NODE_INVALIDATED],
                  0, rect, NULL);
 }

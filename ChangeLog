@@ -1,5 +1,10 @@
 2007-07-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (gegl_node_invalidated): invalidate
+	associated cache on invalidation.
+
+2007-07-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node-dynamic.[ch]: added gboolean cached field and
 	improved indentation and documentation in header file.
 
