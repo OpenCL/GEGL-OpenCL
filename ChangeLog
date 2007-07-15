@@ -1,5 +1,10 @@
 2007-07-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node-dynamic.[ch]: added gboolean cached field and
+	improved indentation and documentation in header file.
+
+2007-07-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.h: spell fix, improved documentation.
 
 2007-07-01  Mark Probst  <mark.probst@gmail.com>

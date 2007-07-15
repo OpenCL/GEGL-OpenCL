@@ -52,6 +52,7 @@ static void
 gegl_node_dynamic_init (GeglNodeDynamic *self)
 {
   self->refs = 0;
+  self->cached = FALSE;
 }
 
 void

@@ -41,22 +41,29 @@ struct _GeglNodeDynamic
   GeglNode      *node;
   gpointer       context_id;
 
-  GeglRectangle  need_rect;
-  GeglRectangle  result_rect;
+  GeglRectangle  need_rect;   /* the rectangle needed from this node */
+  GeglRectangle  result_rect; /* the result computation rectangle for this node,
+                                 (will differ if the needed rect extends beyond
+                                 the defined rectangle, some operations might
+                                 event force/suggest expansion of the result
+                                 rect.. (contrast stretch?))
+                               */
+  gboolean       cached;       /* true if the cache can be used directly, and
+                                  recomputation of inputs is unneccesary) */
 
-  gint      refs; /*< set to number of nodes that depends on it before evaluation begins,
-                      each time data is fetched from the op the reference count is dropped,
-                      when it drops to zero, the op is asked to clean it's pads
-                   */
-  GSList  *property; /* used for the dynamic storage of pad data, being
-                        exchanged */
+  gint           refs;         /* set to number of nodes that depends on it
+                                  before evaluation begins, each time data is
+                                  fetched from the op the reference count is
+                                  dropped, when it drops to zero, the op is
+                                  asked to clean it's pads
+                                */
+  GSList        *property;      /* used internally for data being exchanged */
 };
 
 struct _GeglNodeDynamicClass
 {
-  GObjectClass    parent_class;
+  GObjectClass   parent_class;
 };
-
 
 GType           gegl_node_dynamic_get_type         (void) G_GNUC_CONST;
 GeglRectangle * gegl_node_dynamic_get_need_rect    (GeglNodeDynamic *node);
