@@ -32,6 +32,7 @@
 #include "graph/gegl-visitable.h"
 #include "gegl-instrument.h"
 #include "operation/gegl-operation.h"
+#include "buffer/gegl-region.h"
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
@@ -70,14 +71,26 @@ visit_pad (GeglVisitor *self,
 
   if (gegl_pad_is_output (pad))
     {
-      glong time      = gegl_ticks ();
-      glong babl_time = babl_total_usecs;
-      gegl_operation_process (operation, context_id, gegl_pad_get_name (pad));
-      babl_time = babl_total_usecs - babl_time;
-      time      = gegl_ticks () - time;
+      if (dynamic->cached)
+        {
+          gegl_operation_get_target (operation, context_id, pad->name);
+        }
+      else
+        {
+          glong time      = gegl_ticks ();
+          glong babl_time = babl_total_usecs;
+          gegl_operation_process (operation, context_id, gegl_pad_get_name (pad));
+          babl_time = babl_total_usecs - babl_time;
+          time      = gegl_ticks () - time;
 
-      gegl_instrument ("process", gegl_node_get_operation (node), time);
-      gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
+          gegl_instrument ("process", gegl_node_get_operation (node), time);
+          gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
+          if (node->cache)
+            {
+              gegl_region_union_with_rect (node->cache->valid_region,
+                                           gegl_operation_result_rect (operation, context_id));
+            }
+        }
     }
   else if (gegl_pad_is_input (pad))
     {

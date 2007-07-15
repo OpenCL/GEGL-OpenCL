@@ -1,5 +1,10 @@
 2007-07-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-eval-visitor.c: (visit_pad): pass valid caches
+	on output pads and update the cahe's valid region if it exists.
+
+2007-07-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.c: (gegl_node_invalidated): invalidate
 	associated cache on invalidation.
 
