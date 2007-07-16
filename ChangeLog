@@ -1,5 +1,13 @@
 2007-07-16  Øyvind Kolås  <pippin@gimp.org>
 
+	Make use of gegl_operation_get_target to make the results of file
+	loaders cacheable.
+
+	* operations/io/jpg-load.c:
+	* operations/io/png-load.c: 
+
+2007-07-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/checkerboard.c: (process): removed superfluous
 	leaking buffer creation call.
 

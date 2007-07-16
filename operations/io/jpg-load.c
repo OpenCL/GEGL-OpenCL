@@ -51,27 +51,23 @@ process (GeglOperation *operation,
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output;
   GeglRectangle        rect={0,0};
-  gint           result;
-
-
+  gint                 problem;
   
-  result = query_jpg (self->path, &rect.width, &rect.height);
+  problem = query_jpg (self->path, &rect.width, &rect.height);
 
-  if (result)
+  if (problem)
     {
-      GeglRectangle foo={0,0,10,10};
-      output = gegl_buffer_new (&foo, babl_format ("R'G'B' u8"));
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       g_warning ("%s failed to open file %s for reading.",
         G_OBJECT_TYPE_NAME (operation), self->path);
-      return TRUE;
+      return FALSE;
     }
 
-  output = gegl_buffer_new (&rect, babl_format ("R'G'B' u8"));
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-  result = gegl_buffer_import_jpg (output, self->path, 0, 0);
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
+  output = gegl_operation_get_target (operation, context_id, "output");
 
-  if (result)
+  problem = gegl_buffer_import_jpg (output, self->path, 0, 0);
+
+  if (problem)
     {
       g_warning ("%s failed to open file %s for reading.",
         G_OBJECT_TYPE_NAME (operation), self->path);

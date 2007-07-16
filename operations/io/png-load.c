@@ -55,64 +55,31 @@ process (GeglOperation *operation,
 {
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer   *output = NULL;
-  gint          result;
+  gint          problem;
   gpointer      format;
+  gint width, height;
 
+
+  problem = query_png (self->path, &width, &height, &format);
+  if (problem)
     {
-    gint width, height;
-
-    if (strcmp(self->path, "-"))
-      {
-        result = query_png (self->path, &width, &height, &format);
-        if (result)
-          {
-            g_warning ("%s is %s really a PNG file?",
-              G_OBJECT_TYPE_NAME (operation), self->path);
-            output = g_object_new (GEGL_TYPE_BUFFER,
-                                   "format", babl_format ("R'G'B'A u8"),
-                                   "x",      0,
-                                   "y",      0,
-                                   "width",  10,
-                                   "height", 10,
-                                   NULL);
-            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-            return TRUE;
-          }
-      }
-
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format", format,
-                           "x",      0,
-                           "y",      0,
-                           "width",  width,
-                           "height", height,
-                           NULL);
-
-    result = gegl_buffer_import_png (output, self->path, 0, 0,
-                                     &width, &height, format);
-
-    if (result)
-      {
-        g_warning ("%s failed to open file %s for reading.",
-          G_OBJECT_TYPE_NAME (operation), self->path);
-        if (output)
-          {
-            g_object_unref (output);
-
-          }
-        output = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", format,
-                               "x",      0,
-                               "y",      0,
-                               "width",  10,
-                               "height", 10,
-                               NULL);
-
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-        return TRUE;
-      }
+      g_warning ("%s is %s really a PNG file?",
+      G_OBJECT_TYPE_NAME (operation), self->path);
+      return FALSE;
     }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+
+  gegl_operation_set_format (operation, "output", format);
+  output = gegl_operation_get_target (operation, context_id, "output");
+
+  problem = gegl_buffer_import_png (output, self->path, 0, 0,
+                                    &width, &height, format);
+
+  if (problem)
+    {
+      g_warning ("%s failed to open file %s for reading.",
+                 G_OBJECT_TYPE_NAME (operation), self->path);
+      return FALSE;
+    }
   return  TRUE;
 }
 
@@ -127,19 +94,11 @@ get_defined_region (GeglOperation *operation)
   gint status;
   gpointer format;
 
-  /*if (!strcmp (self->path, "-"))
-    {
-      process (operation, context_id);
-      width = source->output->width;
-      height = source->output->height;
-    }
-  else*/
     {
       status = query_png (self->path, &width, &height, &format);
 
       if (status)
         {
-          /* g_warning ("calc have rect of %s failed", self->path); */
           width=10;
           height=10;
         }
