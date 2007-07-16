@@ -76,14 +76,6 @@ process (GeglOperation *operation,
                          &color2[2],
                          &color2[3]);
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format",
-                           babl_format ("RGBA float"),
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->width ,
-                           "height", result->height,
-                           NULL);
     output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
     g_object_get (output, "px-size", &pxsize,

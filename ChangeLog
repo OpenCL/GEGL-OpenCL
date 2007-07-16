@@ -1,3 +1,8 @@
+2007-07-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/render/checkerboard.c: (process): removed superfluous
+	leaking buffer creation call.
+
 2007-07-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-eval-visitor.c: (visit_pad): pass valid caches
