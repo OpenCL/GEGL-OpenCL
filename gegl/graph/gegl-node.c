@@ -1657,10 +1657,20 @@ gegl_node_get_cache (GeglNode *node)
 {
   if (!node->cache)
     {
+      GeglPad *pad;
+      Babl *format;
+
+      pad = gegl_node_get_pad (node, "output");
+      g_assert (pad);
+      format = pad->format;
+      if (!format)
+        {
+          format = babl_format ("RGBA float");
+        }
+
       node->cache = g_object_new (GEGL_TYPE_CACHE,
                                   "node", node,
-                                  /*                          "format", babl_format ("R'G'B' u8"), performance/mem usage tweak used for FOSDEM*/
-                                  "format", babl_format ("RGBA float"),
+                                  "format", format,
                                   NULL);
       g_signal_connect (G_OBJECT (node->cache), "computed",
                         (GCallback) computed_event,

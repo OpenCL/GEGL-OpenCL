@@ -1,5 +1,10 @@
 2007-07-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (gegl_node_get_cache): create the cache
+	based on the pixel format requested on the pad of the node.
+
+2007-07-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/ff-load.c: Make use of gegl_operation_get_target to
 	make the results of the ffmpeg frame importer cacheable.
 
