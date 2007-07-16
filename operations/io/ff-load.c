@@ -161,6 +161,8 @@ prepare (GeglOperation *operation,
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *p= (Priv*)self->priv;
 
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
+
   if (!p->loadedfilename ||
       strcmp (p->loadedfilename, self->path))
     {
@@ -347,23 +349,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle      *need;
+  GeglRectangle      *result_rect;
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer         *output = NULL;
   Priv               *p = (Priv*)self->priv;
 
-  need = gegl_operation_get_requested_region (operation, context_id);
+  result_rect = gegl_operation_result_rect (operation, context_id);
   {
-    /*GeglRectangle *result = gegl_operation_result_rect (operation, context_id);*/
+    output = gegl_operation_get_target (operation, context_id, "output");
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format",
-                           babl_format ("R'G'B'A u8"),
-                           "x",      0,
-                           "y",      0,
-                           "width",  p->width ,
-                           "height", p->height,
-                           NULL);
     if (p->ic && !decode_frame (self, self->frame))
       {
         gint pxsize;
@@ -405,11 +399,10 @@ process (GeglOperation *operation,
                 }
               }
           }
-        gegl_buffer_set (output, NULL, NULL, buf);
+        gegl_buffer_set (output, result_rect, babl_format ("R'G'B'A u8"), buf);
         g_free (buf);
       }
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 
