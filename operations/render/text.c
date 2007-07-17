@@ -160,7 +160,7 @@ process (GeglOperation *operation,
 
   result = gegl_operation_result_rect (operation, context_id);
 
-   output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+   output = gegl_operation_get_target (operation, context_id, "output");
   {
     guchar *data = g_malloc0 (result->width * result->height * 4);
     cairo_t *cr;

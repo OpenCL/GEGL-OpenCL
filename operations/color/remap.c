@@ -160,7 +160,7 @@ process (GeglOperation *operation,
       gegl_buffer_get (low,   result, 1.0, babl_format ("RGB float"), min);
       gegl_buffer_get (high,  result, 1.0, babl_format ("RGB float"), max);
 
-      output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+      output = gegl_operation_get_target (operation, context_id, "output");
 
       for (i=0;i<pixels;i++)
         {

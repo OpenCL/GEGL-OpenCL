@@ -54,7 +54,7 @@ process (GeglOperation *operation,
     GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
 
-    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+    output = gegl_operation_get_target (operation, context_id, "output");
     buf = g_malloc (result->width * result->height * 4);
       {
         gfloat *dst=buf;

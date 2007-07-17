@@ -402,7 +402,7 @@ process (GeglOperation *operation,
 
     make_color_map (self, colormap);
 
-    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+    output = gegl_operation_get_target (operation, context_id, "output");
 
     buf  = g_new (guchar, result->width * result->height * 4);
       {

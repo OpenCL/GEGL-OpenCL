@@ -96,7 +96,7 @@ process (GeglOperation *operation,
   
   buffer_get_min_max (input, &min, &max);
 
-  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+  output = gegl_operation_get_target (operation, context_id, "output");
   {
     gint row;
     guchar *buf;

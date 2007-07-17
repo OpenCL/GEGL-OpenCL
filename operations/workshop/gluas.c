@@ -99,7 +99,7 @@ process (GeglOperation *operation,
   self   = GEGL_CHANT_OPERATION (operation);
   input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
-  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+  output = gegl_operation_get_target (operation, context_id, "output");
 
   if (self->file && g_file_test (self->file, G_FILE_TEST_IS_REGULAR))
     {

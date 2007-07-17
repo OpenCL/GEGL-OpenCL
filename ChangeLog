@@ -1,5 +1,19 @@
 2007-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed unneeded GEGL_BUFFER cast of returned values from 
+	gegl_operation_get_target.
+
+	* operations/color/remap.c: (process):
+	* operations/color/stretch-contrast.c: (process):
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process), (class_init):
+	* operations/render/color.c: (process), (class_init):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process):
+	* operations/workshop/gluas.c: (process):
+
+2007-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/exr-load.cpp: Make use of gegl_operation_get_target to
 	make the results of the exr importer cacheable.
 

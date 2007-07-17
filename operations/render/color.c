@@ -61,7 +61,7 @@ process (GeglOperation *operation,
                          &color[2],
                          &color[3]);
 
-    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+    output = gegl_operation_get_target (operation, context_id, "output");
     buf = g_malloc (result->width * result->height * 4 * sizeof (gfloat));
       {
         gfloat *dst=buf;
@@ -97,6 +97,8 @@ detect (GeglOperation *operation,
 static void class_init (GeglOperationClass *klass)
 {
   klass->detect = detect;
+  klass->adjust_result_region = NULL;
+  klass->no_cache = TRUE;
 }
 
 #endif
