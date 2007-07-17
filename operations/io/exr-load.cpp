@@ -614,30 +614,17 @@ process (GeglOperation *operation,
     gboolean ok;
 
     ok = query_exr (self->path, &w, &h, &ff, &format);
-    if (!ok)
+    output = gegl_operation_get_target (operation, context_id, "output");
+
+    if (ok)
       {
-        output = GEGL_BUFFER (g_object_new (GEGL_TYPE_BUFFER,
-                                           "format", babl_format ("R'G'B'A u8"),
-                                           "x",      0,
-                                           "y",      0,
-                                           "width",  10,
-                                           "height", 10,
-                                           NULL));
+        import_exr (output, self->path, ff);
       }
     else
       {
-        output = GEGL_BUFFER (g_object_new (GEGL_TYPE_BUFFER,
-                                            "format", format,
-                                            "x",      0,
-                                            "y",      0,
-                                            "width",  w,
-                                            "height", h,
-                                            NULL));
-        import_exr (output, self->path, ff);
+        return FALSE;
       }
-
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return TRUE;
 }
 
@@ -653,6 +640,7 @@ get_defined_region (GeglOperation *operation)
     {
       result.width = w;
       result.height = h;
+      gegl_operation_set_format (operation, "output", (Babl*)format);
     }
 
   return result;

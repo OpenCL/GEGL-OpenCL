@@ -1,6 +1,6 @@
 2007-07-17  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/io/ff-load.c: Make use of gegl_operation_get_target to
+	* operations/io/exr-load.cpp: Make use of gegl_operation_get_target to
 	make the results of the exr importer cacheable.
 
 2007-07-16  Øyvind Kolås  <pippin@gimp.org>
