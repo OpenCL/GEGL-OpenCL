@@ -119,7 +119,6 @@ get_defined_region (GeglOperation *operation)
 
 static void class_init (GeglOperationClass *klass)
 {
-  klass->adjust_result_region = NULL;
   klass->no_cache = TRUE;
 }
 

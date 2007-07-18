@@ -1,3 +1,9 @@
+2007-07-18  Manish Singh  <yosh@gimp.org>
+
+	* operations/render/checkerboard.c
+	* operations/render/color.c: remove references to adjust_result_region
+	in GeglOperationClass, since it doesn't exist yet.
+
 2007-07-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed unneeded GEGL_BUFFER cast of returned values from 
