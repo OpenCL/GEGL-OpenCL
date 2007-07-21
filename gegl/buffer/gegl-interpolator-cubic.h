@@ -46,11 +46,6 @@ typedef struct _GeglInterpolatorCubicClass GeglInterpolatorCubicClass;
 struct _GeglInterpolatorCubicClass
 {
    GeglInterpolatorClass interpolator_class;
-   void (*prepare) (GeglInterpolator *self);
-   void (*get)     (GeglInterpolator *self,
-                    gdouble           x,
-                    gdouble           y,
-                    void             *output);
 };
 
 GType                   gegl_interpolator_cubic_get_type  (void) G_GNUC_CONST;

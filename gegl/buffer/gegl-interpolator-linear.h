@@ -44,11 +44,6 @@ typedef struct _GeglInterpolatorLinearClass GeglInterpolatorLinearClass;
 struct _GeglInterpolatorLinearClass
 {
    GeglInterpolatorClass interpolator_class;
-   void (*prepare) (GeglInterpolator *self);
-   void (*get)     (GeglInterpolator *self,
-                    gdouble           x,
-                    gdouble           y,
-                    void             *output);
 };
 
 GType                   gegl_interpolator_linear_get_type  (void) G_GNUC_CONST;

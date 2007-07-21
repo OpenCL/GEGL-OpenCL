@@ -1,3 +1,12 @@
+2007-07-21  Øyvind Kolås  <pippin@gimp.org>
+
+	The virtual function definitions do not belong in the sub-classes.
+
+	* gegl/buffer/gegl-interpolator-cubic.h:
+	* gegl/buffer/gegl-interpolator-lanczos.h:
+	* gegl/buffer/gegl-interpolator-linear.h:
+	* gegl/buffer/gegl-interpolator-nearest.h:
+
 2007-07-18  Manish Singh  <yosh@gimp.org>
 
 	* operations/render/checkerboard.c
