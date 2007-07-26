@@ -180,5 +180,17 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                Babl             *format,
                                                GeglInterpolation interpolation);
 
+/**
+ * gegl_buffer_sample_cleanup:
+ * @buffer: the GeglBuffer to sample from
+ *
+ * Clean up resources used by sampling framework of buffer (will be freed
+ * automatically later when the buffer is destroyed, for long lived buffers
+ * cleaning up the sampling infrastructure when it has been used for it's
+ * purpose will sometimes be more efficient).
+ */ 
+void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
+/**
+ */
 #endif

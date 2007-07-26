@@ -1,3 +1,9 @@
+2007-07-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h: Increased documentation coverage.
+	* tools/create-reference.rb: special case CSS style of a couple of
+	section headings for better visual grouping in menu.
+
 2007-07-21  Øyvind Kolås  <pippin@gimp.org>
 
 	The virtual function definitions do not belong in the sub-classes.

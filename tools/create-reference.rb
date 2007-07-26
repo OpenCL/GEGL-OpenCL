@@ -60,7 +60,12 @@ class Section
         @name=""
     end
     def menu_entry
-        "#{@name}"
+        if @name == "GeglBuffer" or
+           @name == "The GEGL API" then
+          return "<div style='padding-top:0.5em'>#{@name}</div>"
+        else
+          return "#{@name}"
+        end
     end
     def to_s
         ret = "#{@name}\n"
@@ -495,12 +500,10 @@ file.puts "<div class='toc'>
          <h3>Contents</h3>
       </div>
       <ul>
-        <li><a href='index.html'>GEGL</a></li>
-        <li>&nbsp;</li>
-        <li><a href='index.html#Documentation'>Documentation</a></li>
+        <li><a href='index.html' style='padding-top: 0.5em;'>GEGL</a></li>
+        <li><a href='index.html#Documentation' style='padding-top: 0.5em;'>Documentation</a></li>
         <li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>
         <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
-        <li>&nbsp;</li>
 
 "
     elements.each { |element|
