@@ -61,6 +61,11 @@ class Section
     end
     def menu_entry
         if @name == "GeglBuffer" or
+           @name == "GeglNode" or
+           @name == "GeglColor" or
+           @name == "GeglRectangle" or
+           @name == "GeglProcessor" or
+           @name == "XML" or
            @name == "The GEGL API" then
           return "<div style='padding-top:0.5em'>#{@name}</div>"
         else

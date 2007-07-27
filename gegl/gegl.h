@@ -108,6 +108,46 @@ void           gegl_exit                 (void);
 
 
 /***
+ * Available operations:
+ * Gegl provides means to check for available processing operations that
+ * can be used with nodes using #gegl_list_operations and for a specified
+ * op give a list of properties with #gegl_list_properties.
+ */
+
+/**
+ * gegl_list_operations:
+ * @n_operations_p: return location for number of operations.
+ *
+ * Returns an alphabetically sorted array of available operation names. The
+ * list should be freed with g_free after use.
+ * --
+ * gchar **operations;
+ * guint   n_operations;
+ * gint i;
+ *
+ * operations = gegl_list_operations (&n_operations);
+ * g_print ("Available operations:\n");
+ * for (i=0; i < n_operations; i++)
+ *   {
+ *     g_print ("\t%s\n", operations[i]);
+ *   }
+ * g_free (operations);
+ */
+gchar        **gegl_list_operations         (guint *n_operations_p);
+
+
+/**
+ * gegl_list_properties:
+ * @operation_type: the name of the operation type we want to query to properties of.
+ * @n_properties_p: return location for number of properties.
+ *
+ * Returns an allocated array of #GParamSpecs describing the properties
+ * of the operation available when a node has operation_type set.
+ */
+GParamSpec** gegl_list_properties           (const gchar   *operation_type,
+                                             guint         *n_properties_p);
+
+/***
  * GeglNode:
  *
  * The Node is the image processing primitive connected to create compositions
@@ -266,7 +306,7 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
                                           const gchar   *input_pad);
 
 /***
- * Setting properties:
+ * Properties:
  *
  * Properties can be set either when creating the node with
  * #gegl_node_new_child as well as later when changing the initial
@@ -295,6 +335,25 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
  *                      NULL);
  */
 void          gegl_node_set              (GeglNode      *node,
+                                          const gchar   *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
+
+/**
+ * gegl_node_get:
+ * @node: a #GeglNode
+ * @first_property_name: name of the first property to get.
+ * @...: return location for the first property, followed optionally by more
+ * name/value pairs, followed by NULL.
+ *
+ * Gets properties of a #GeglNode.
+ * ---
+ * double level;
+ * char  *path;
+ *
+ * gegl_node_get (png_save, "path", &path, NULL);
+ * gegl_node_get (threshold, "level", &level, NULL);
+ */
+void          gegl_node_get              (GeglNode      *node,
                                           const gchar   *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
 
@@ -382,74 +441,6 @@ void          gegl_node_blit             (GeglNode      *node,
 void          gegl_node_process          (GeglNode      *sink_node);
 
 
-/**
- * GeglProcessor:
- *
- * A #GeglProcessor, is a worker that can be used for background rendering
- * of regions in a node's cache. Or for processing a sink node. For most
- * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
- * should be sufficient. See #gegl_processor_work for a code sample.
- *
- */
-#ifndef GEGL_INTERNAL
-GType gegl_processor_get_type  (void) G_GNUC_CONST;
-typedef struct _GeglProcessor      GeglProcessor;
-#define GEGL_TYPE_PROCESSOR  (gegl_processor_get_type())
-#define GEGL_PROCESSOR(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
-#endif
-
-/**
- * gegl_node_new_processor:
- * @node: a #GeglNode
- * @rectangle: the #GeglRectangle to work on or NULL to work on all available
- * data.
- *
- * Returns a new #GeglProcessor.
- */
-GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
-                                             GeglRectangle *rectangle);
-
-/**
- * gegl_processor_set_rectangle:
- * @processor: a #GeglProcessor
- * @rectangle: the new #GeglRectangle the processor shold work on or NULL
- * to make it work on all data in the buffer.
- *
- * Change the rectangle a #GeglProcessor is working on.
- */
-void           gegl_processor_set_rectangle (GeglProcessor *processor,
-                                             GeglRectangle *rectangle);
-
-
-/**
- * gegl_processor_work:
- * @processor: a #GeglProcessor
- * @progress: a location to store the (estimated) percentage complete.
- *
- * Do an iteration of work for the processor.
- *
- * Returns TRUE if there is more work to be done.
- *
- * ---
- * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
- * double         progress;
- *
- * while (gegl_processor_work (processor, &progress))
- *   g_warning ("%f%% complete", progress);
- * gegl_processor_destroy (processor);
- */
-gboolean       gegl_processor_work          (GeglProcessor *processor,
-                                             gdouble       *progress);
-
-
-/**
- * gegl_processor_destroy:
- * @processor: a #GeglProcessor
- *
- * Frees up resources used by a processing handle.
- */
-void           gegl_processor_destroy       (GeglProcessor *processor);
-
 
 /***
  * State queries:
@@ -461,39 +452,6 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  * retrieve the values of named properties using #gegl_node_get.
  */
 
-/**
- * gegl_list_operations:
- * @n_operations_p: return location for number of operations.
- *
- * Returns an alphabetically sorted array of available operation names. The
- * list should be freed with g_free after use.
- * --
- * gchar **operations;
- * guint   n_operations;
- * gint i;
- *
- * operations = gegl_list_operations (&n_operations);
- * g_print ("Available operations:\n");
- * for (i=0; i < n_operations; i++)
- *   {
- *     g_print ("\t%s\n", operations[i]);
- *   }
- * g_free (operations);
- */
-gchar        **gegl_list_operations         (guint *n_operations_p);
-
-
-/**
- * gegl_list_properties:
- * @operation_type: the name of the operation type we want to query to properties of.
- * @n_properties_p: return location for number of properties.
- *
- * Returns an allocated array of #GParamSpecs describing the properties
- * of the operation currently set for a node. The returned array should
- * be freed with g_free.
- */
-GParamSpec** gegl_list_properties           (const gchar   *operation_type,
-                                             guint         *n_properties_p);
 
 
 /**
@@ -525,24 +483,6 @@ GParamSpec  * gegl_node_find_property    (GeglNode      *node,
                                           const gchar   *property_name);
 
 
-/**
- * gegl_node_get:
- * @node: a #GeglNode
- * @first_property_name: name of the first property to get.
- * @...: return location for the first property, followed optionally by more
- * name/value pairs, followed by NULL.
- *
- * Gets properties of a #GeglNode.
- * ---
- * double level;
- * char  *path;
- *
- * gegl_node_get (png_save, "path", &path, NULL);
- * gegl_node_get (threshold, "level", &level, NULL);
- */
-void          gegl_node_get              (GeglNode      *node,
-                                          const gchar   *first_property_name,
-                                          ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * gegl_node_get_bounding_box:
@@ -635,6 +575,63 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
 
 
 /***
+ * Binding conveniences:
+ *
+ * The following functions are mostly included to make it easier to create
+ * language bindings for the nodes. The varargs versions will in most cases
+ * lead to both more efficient and readable code from C.
+ */
+
+/**
+ * gegl_node_create_child:
+ * @parent: a #GeglNode
+ * @operation: the type of node to create.
+ *
+ * Creates a new processing node that performs the specified operation.
+ * All properties of the operation will have their default values. This
+ * is included as an addiiton to #gegl_node_new_child in the public API to have
+ * a non varargs entry point for bindings as well as sometimes simpler more
+ * readable code.
+ *
+ * Returns a newly created node. The node will be destroyed by the parent.
+ * Calling g_object_unref on a node will cause the node to be dropped by the
+ * parent. (You may also add additional references using
+ * g_object_ref/g_object_unref, but in general relying on the parents reference
+ * counting is easiest.)
+ */
+
+GeglNode     * gegl_node_create_child    (GeglNode      *parent,
+                                          const gchar   *operation);
+
+
+/**
+ * gegl_node_get_property:
+ * @node: the node to get a property from
+ * @property_name: the name of the property to get
+ * @value: pointer to a GValue where the value of the property should be stored
+ *
+ * This is mainly included for language bindings. Using #gegl_node_get is
+ * more convenient when programming in C.
+ *
+ */
+void          gegl_node_get_property     (GeglNode      *node,
+                                          const gchar   *property_name,
+                                          GValue        *value);
+
+/**
+ * gegl_node_set_property:
+ * @node: a #GeglNode
+ * @property_name: the name of the property to set
+ * @value: a GValue containing the value to be set in the property.
+ *
+ * This is mainly included for language bindings. Using #gegl_node_set is
+ * more convenient when programming in C.
+ */
+void          gegl_node_set_property     (GeglNode      *node,
+                                          const gchar   *property_name,
+                                          const GValue  *value);
+
+/***
  * XML:
  * The XML format used by GEGL is not stable and should not be relied on
  * for anything but testing purposes yet.
@@ -668,31 +665,78 @@ GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
  */
 gchar       * gegl_to_xml                (GeglNode      *node,
                                           const gchar   *path_root);
+/***
+ * GeglProcessor:
+ *
+ * A #GeglProcessor, is a worker that can be used for background rendering
+ * of regions in a node's cache. Or for processing a sink node. For most
+ * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
+ * should be sufficient. See #gegl_processor_work for a code sample.
+ *
+ */
+#ifndef GEGL_INTERNAL
+GType gegl_processor_get_type  (void) G_GNUC_CONST;
+typedef struct _GeglProcessor      GeglProcessor;
+#define GEGL_TYPE_PROCESSOR  (gegl_processor_get_type())
+#define GEGL_PROCESSOR(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
+#endif
+
+/**
+ * gegl_node_new_processor:
+ * @node: a #GeglNode
+ * @rectangle: the #GeglRectangle to work on or NULL to work on all available
+ * data.
+ *
+ * Returns a new #GeglProcessor.
+ */
+GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
+                                             GeglRectangle *rectangle);
+
+/**
+ * gegl_processor_set_rectangle:
+ * @processor: a #GeglProcessor
+ * @rectangle: the new #GeglRectangle the processor shold work on or NULL
+ * to make it work on all data in the buffer.
+ *
+ * Change the rectangle a #GeglProcessor is working on.
+ */
+void           gegl_processor_set_rectangle (GeglProcessor *processor,
+                                             GeglRectangle *rectangle);
+
+
+/**
+ * gegl_processor_work:
+ * @processor: a #GeglProcessor
+ * @progress: a location to store the (estimated) percentage complete.
+ *
+ * Do an iteration of work for the processor.
+ *
+ * Returns TRUE if there is more work to be done.
+ *
+ * ---
+ * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
+ * double         progress;
+ *
+ * while (gegl_processor_work (processor, &progress))
+ *   g_warning ("%f%% complete", progress);
+ * gegl_processor_destroy (processor);
+ */
+gboolean       gegl_processor_work          (GeglProcessor *processor,
+                                             gdouble       *progress);
+
+
+/**
+ * gegl_processor_destroy:
+ * @processor: a #GeglProcessor
+ *
+ * Frees up resources used by a processing handle.
+ */
+void           gegl_processor_destroy       (GeglProcessor *processor);
+
+
 
 #ifndef GEGL_INTERNAL
 
-/***
- * GeglRectangle:
- *
- * GeglRectangles are used in #gegl_node_get_bounding_box and #gegl_node_blit
- * for specifying rectangles.
- *
- * </p><pre>struct GeglRectangle
- * {
- *   gint x;
- *   gint y;
- *   gint width;
- *   gint height;
- * };</pre><p>
- *
- */
-struct _GeglRectangle
-{
-  gint x;
-  gint y;
-  gint width;
-  gint height;
-};
 
 /***
  * GeglColor:
@@ -752,10 +796,36 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         b,
                                           gfloat         a);
 
+#ifndef GEGL_INTERNAL
+/***
+ * GeglRectangle:
+ *
+ * GeglRectangles are used in #gegl_node_get_bounding_box and #gegl_node_blit
+ * for specifying rectangles.
+ *
+ * </p><pre>struct GeglRectangle
+ * {
+ *   gint x;
+ *   gint y;
+ *   gint width;
+ *   gint height;
+ * };</pre><p>
+ *
+ */
+struct _GeglRectangle
+{
+  gint x;
+  gint y;
+  gint width;
+  gint height;
+};
+
 /***
  * GeglCurve:
+ *
+ * Documentation and function signatures left out of documentation until
+ * API is frozen.
  */
-#ifndef GEGL_INTERNAL
 typedef struct _GeglCurve       GeglCurve;
 GType	     gegl_curve_get_type	       (void) G_GNUC_CONST;
 #define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
@@ -800,59 +870,6 @@ void	     gegl_curve_calc_values	       (GeglCurve   *self,
 						guint       num_samples,
 						gfloat      *xs,
 						gfloat      *ys);
-
-/***
- * Bindings conveniences:
- *
- * The following functions are mostly included to make it easier
- * to create language bindings. The varargs versions most often
- * lead to more readable C code.
- */
-
-/**
- * gegl_node_create_child:
- * @parent: a #GeglNode
- * @operation: the type of node to create.
- *
- * Creates a new processing node that performs the specified operation.
- *
- * Returns a newly created node. The node will be destroyed by the parent.
- * Calling g_object_unref on a node will cause the node to be dropped by the
- * parent. (You may also add additional references using
- * g_object_ref/g_objecr_unref, but in general relying on the parents reference
- * counting is easiest.)
- */
-
-GeglNode     * gegl_node_create_child    (GeglNode      *parent,
-                                          const gchar   *operation);
-
-
-/**
- * gegl_node_get_property:
- * @node: the node to get a property from
- * @property_name: the name of the property to get
- * @value: pointer to a GValue where the value of the property should be stored
- *
- * This is mainly included for language bindings. Using #gegl_node_get is
- * more convenient when programming in C.
- *
- */
-void          gegl_node_get_property     (GeglNode      *node,
-                                          const gchar   *property_name,
-                                          GValue        *value);
-
-/**
- * gegl_node_set_property:
- * @node: a #GeglNode
- * @property_name: the name of the property to set
- * @value: a GValue containing the value to be set in the property.
- *
- * This is mainly included for language bindings. Using #gegl_node_set is
- * more convenient when programming in C.
- */
-void          gegl_node_set_property     (GeglNode      *node,
-                                          const gchar   *property_name,
-                                          const GValue  *value);
 
 /*** this is just here to trick the parser.
  */

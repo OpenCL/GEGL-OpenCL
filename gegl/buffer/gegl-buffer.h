@@ -165,7 +165,7 @@ typedef enum {
  * @format: the format to store the sampled color in.
  * @interpolation: the interpolation behavior to use, currently only nearest
  * neighbour is implemented for this API, bilinear, bicubic and lanczos needs
- * to be ported from working code.
+ * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST
  *
  * Resample the buffer at some given coordinates using a specified format. For
  * some operations this might be sufficient, but it might be considered

@@ -1,3 +1,10 @@
+2007-07-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h: improved API documentation.
+	* gegl/gegl.h: reordered sections of API documentation.
+	* tools/create-reference.rb: made more headings special cased for
+	the sake of improved visual grouping in the menu/toc.
+
 2007-07-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h: Increased documentation coverage.
