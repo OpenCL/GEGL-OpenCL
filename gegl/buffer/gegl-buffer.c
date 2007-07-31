@@ -1651,6 +1651,7 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
 }
 
 #include "gegl-interpolator-linear.h"
+#include "gegl-interpolator-cubic.h"
 
 void
 gegl_buffer_sample (GeglBuffer       *buffer,
@@ -1664,7 +1665,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   /* look up appropriate interpolator,. */
   if (buffer->interpolator == NULL)
     {
-      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_LINEAR,
+      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_CUBIC,
                                            "input", buffer,
                                            "format", format,
                                            NULL);
@@ -1678,7 +1679,6 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
   /* if (scale < 1.0) do decimation, possibly using pyramid instead */
 
-  /*pget (buffer, x, y, format, dest);*/
 }
 
 void

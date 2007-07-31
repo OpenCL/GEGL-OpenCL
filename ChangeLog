@@ -1,3 +1,9 @@
+2007-08-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_sample): used cubic
+	interpolation by default in the scaffolding code since it seems to be
+	a less buggy implementation than the linear one.
+
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
 	Modified caching hints for some of the renderer operations.	
