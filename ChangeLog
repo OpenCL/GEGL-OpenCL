@@ -1,5 +1,10 @@
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-cr-visitor.c: (visit_node): only extand the result
+	rect if the result for this node is not cached.
+
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Started migration towards the partially functional caching framework
 	rewrite, the GEGL codebase is losing stability, not everything is
 	functional yet and portions of the tests in the gallery are processed

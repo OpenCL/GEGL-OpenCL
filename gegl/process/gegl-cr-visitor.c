@@ -63,8 +63,12 @@ visit_node (GeglVisitor *self,
 
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
-  gegl_rectangle_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
+  if (!dynamic->cached)
+    {
+      gegl_rectangle_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
+      dynamic->result_rect = gegl_operation_adjust_result_region (node->operation, &dynamic->result_rect);
 
+    }
   dynamic->refs = gegl_node_get_num_sinks (node);
 
   if (!strcmp (gegl_node_get_name (node), "proxynop-output"))
