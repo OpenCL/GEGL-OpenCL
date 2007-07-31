@@ -37,6 +37,7 @@
 #include "linear.h"
 #include "interpolate-lanczos.h"
 #include "interpolate-cubic.h"
+#include "buffer/gegl-interpolator.h"
 
 enum
 {
@@ -622,6 +623,11 @@ affine_generic (GeglBuffer        *dest,
   if (inverse [1][1] < 0.)
     v_start -= .001;
 
+  if (src->interpolator)
+    {
+      gegl_interpolator_prepare (src->interpolator);
+    }
+
   for (dest_ptr = dest_buf, y = dest->height; y--;)
     {
       u_float = u_start;
@@ -643,6 +649,7 @@ affine_generic (GeglBuffer        *dest,
       u_start += inverse [0][1];
       v_start += inverse [1][1];
     }
+  gegl_buffer_sample_cleanup (src);
   gegl_buffer_set (dest, NULL, format, dest_buf);
   g_free (dest_buf);
 }
@@ -661,6 +668,11 @@ process (GeglOperation *operation,
 
   input = gegl_operation_get_source (operation, context_id, "input");
   output = gegl_operation_get_target (operation, context_id, "output");
+
+  /*g_warning ("%i,%i %ix%i | %i,%i %ix%i | %i,%i  %ix%i",
+     input->x, input->y, input->width, input->height,
+     output->x, output->y, output->width, output->height,
+     result->x, result->y, result->width, result->height);*/
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))

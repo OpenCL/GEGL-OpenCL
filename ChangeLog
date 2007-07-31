@@ -1,5 +1,12 @@
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/affine.c: (affine_generic), (process): force a
+	reinitialization of the interpolator associated with a buffer before
+	sampling, as well as invoke gegl_buffer_sample_cleanup after we're
+	done.
+
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Start of cleaning up of interpolated getter functions, also sprinkled
 	with some FIXME's that needs to be addressed later.
 
