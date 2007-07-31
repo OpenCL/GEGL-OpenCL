@@ -42,14 +42,9 @@ struct _Priv
 {
   GeglNode   *self;
   GeglNode   *output;
-
   GeglNode   *load;
-
   gchar      *cached_path;
-  GeglBuffer *cached_buffer;
 };
-
-static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
 dispose (GObject *object)
@@ -57,11 +52,6 @@ dispose (GObject *object)
   GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
   Priv *priv = (Priv*)self->priv;
 
-  if (priv->cached_buffer)
-    {
-      g_object_unref (priv->cached_buffer);
-      priv->cached_buffer = NULL;
-    }
   if (priv->cached_path)
     {
       g_free (priv->cached_path);
@@ -94,19 +84,18 @@ prepare (GeglOperation *operation,
    *          requests to be made into members of the graph
    */
 
-  if (self->cache)
-    {
-      if (refresh_cache (self))
-        {
+    if (self->path[0]==0 && priv->cached_path == NULL)
+      {
           gegl_node_set (priv->load,
-                         "operation", "load-buffer",
-                         "buffer", priv->cached_buffer,
+                         "operation", "text",
+                         "size", 20.0,
+                         "string", "Eeeeek!",
                          NULL);
-        }
-    }
-  else
+      }
+    else
     {
-      if (self->path[0])
+      if (self->path[0] &&
+          (priv->cached_path == NULL || strcmp (self->path, priv->cached_path)))
         {
           const gchar *extension = strrchr (self->path, '.');
           const gchar *handler = NULL;
@@ -134,14 +123,12 @@ prepare (GeglOperation *operation,
                              "path",  self->path,
                              NULL);
             }
+          if (priv->cached_path)
+            g_free (priv->cached_path);
+          priv->cached_path = g_strdup (self->path);
         }
       else
         {
-          gegl_node_set (priv->load,
-                         "operation", "text",
-                         "size", 20.0,
-                         "string", "Eeeeek!",
-                         NULL);
         }
     }
 }
@@ -160,11 +147,11 @@ static void attach (GeglOperation *operation)
   priv->output = gegl_node_get_output_proxy (priv->self, "output");
 
   priv->load = gegl_node_new_child (priv->self,
-                                       "operation", "text",
-                                       "string", "foo",
-                                       NULL);
+                                    "operation", "text",
+                                    "string", "foo",
+                                     NULL);
 
-  gegl_node_connect_from (priv->output, "input", priv->load, "output");
+  gegl_node_link (priv->load, priv->output);
 }
 
 static GeglNode *
@@ -192,39 +179,6 @@ static void class_init (GeglOperationClass *klass)
   
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
-}
-
-
-static gboolean
-refresh_cache (GeglChantOperation *self)
-{
-  Priv *priv = (Priv*)self->priv;
-
-  if (!priv->cached_buffer ||
-      ((priv->cached_path && self->path) &&
-        strcmp (self->path, priv->cached_path)))
-    {
-        GeglNode  *gegl;
-        GeglNode  *load;
-
-        if (priv->cached_buffer)
-          {
-            g_object_unref (priv->cached_buffer);
-            priv->cached_buffer = NULL;
-            g_free (priv->cached_path);
-          }
-
-        gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-        load = gegl_node_new_child (gegl, "operation", "load",
-                                          "cache", FALSE,
-                                          "path", self->path,
-                                          NULL);
-        priv->cached_buffer = gegl_node_apply (load, "output");
-        g_object_unref (gegl);
-        priv->cached_path = g_strdup (self->path);
-        return TRUE;
-  }
-  return FALSE;
 }
 
 

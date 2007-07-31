@@ -1,5 +1,11 @@
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/io/load.c: (dispose), (prepare), (attach): rewritten to
+	use the core provided caching framework instead of it's own ad-hoc
+	cache.
+
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-cr-visitor.c: (visit_node): only extand the result
 	rect if the result for this node is not cached.
 
