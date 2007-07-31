@@ -1,5 +1,25 @@
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Started migration towards the partially functional caching framework
+	rewrite, the GEGL codebase is losing stability, not everything is
+	functional yet and portions of the tests in the gallery are processed
+	slower than they used to be.
+
+	* gegl/process/gegl-eval-visitor.c: (visit_pad): fill cache if it is
+	set up, avoid processing at all if the data in the cache is
+	sufficient.
+	* gegl/graph/gegl-node.h:
+	* gegl/operation/gegl-operation-source.c:
+	  (adjust_result_region): expand to full bounding box by default
+	  (override in subclasses by setting the virtual function to NULL)
+	* gegl/operation/gegl-operation.[ch]:
+	(gegl_operation_adjust_result_region): new method backed by virtual
+	function.
+	(gegl_operation_get_target): added caching behavior (disabled by
+	#ifdef for now.)
+
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/affine/affine.c: (affine_generic), (process): force a
 	reinitialization of the interpolator associated with a buffer before
 	sampling, as well as invoke gegl_buffer_sample_cleanup after we're

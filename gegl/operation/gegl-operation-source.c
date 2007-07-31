@@ -49,6 +49,9 @@ static GeglRectangle get_defined_region (GeglOperation *self);
 static GeglRectangle compute_input_request (GeglOperation *operation,
                                             const gchar   *input_pad,
                                             GeglRectangle *roi);
+static GeglRectangle  adjust_result_region (GeglOperation *operation,
+                                            GeglRectangle *roi);
+
 
 
 static void
@@ -62,6 +65,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 
   operation_class->process = process;
   operation_class->attach  = attach;
+  operation_class->adjust_result_region = adjust_result_region;
 
   operation_class->get_defined_region  = get_defined_region;
   operation_class->compute_input_request = compute_input_request;
@@ -142,4 +146,13 @@ static GeglRectangle compute_input_request (GeglOperation *operation,
                                             GeglRectangle *roi)
 {
   return *roi;
+}
+
+static GeglRectangle
+adjust_result_region (GeglOperation *operation,
+                       GeglRectangle *roi)
+{
+  GeglRectangle result = *roi;
+  result = operation->node->have_rect;
+  return result;
 }

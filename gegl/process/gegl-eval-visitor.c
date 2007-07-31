@@ -72,7 +72,7 @@ visit_pad (GeglVisitor *self,
   if (gegl_pad_is_output (pad))
     {
       if (dynamic->cached)
-        {
+        {   
           gegl_operation_get_target (operation, context_id, pad->name);
         }
       else
@@ -85,8 +85,10 @@ visit_pad (GeglVisitor *self,
 
           gegl_instrument ("process", gegl_node_get_operation (node), time);
           gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
-          if (node->cache)
-            {
+
+          if (node->cache) 
+            { 
+              /* update the valid region of the cache */
               gegl_region_union_with_rect (node->cache->valid_region,
                                            gegl_operation_result_rect (operation, context_id));
             }

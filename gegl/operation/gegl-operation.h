@@ -99,12 +99,18 @@ struct _GeglOperationClass
                                             const gchar   *input_pad,
                                             GeglRectangle *roi);
 
+  /* Adjust result rect, adapts the rectangle used for computing results.
+   * (useful for global operations like contrast stretching, as well as
+   * file loaders to force caching of the full raster).
+   */
+  GeglRectangle   (*adjust_result_region)  (GeglOperation *operation,
+                                            GeglRectangle *roi);
+
   /* Returns the node providing data for a specific location
    */
   GeglNode*       (*detect)               (GeglOperation *operation,
                                            gint           x,
                                            gint           y);
-
 
   /* do the actual processing needed to put GeglBuffers on the output pad */
   gboolean        (*process)              (GeglOperation *operation,
@@ -114,7 +120,7 @@ struct _GeglOperationClass
 };
 
 /* returns|registers the gtype for GeglOperation */
-GType      gegl_operation_get_type                  (void) G_GNUC_CONST;
+GType           gegl_operation_get_type             (void) G_GNUC_CONST;
 
 /* returns the ROI passed to _this_ operation */
 GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
@@ -149,6 +155,8 @@ GeglRectangle   gegl_operation_compute_affected_region  (GeglOperation *operatio
                                                      const gchar   *input_pad,
                                                      GeglRectangle  region);
 GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *operation);
+GeglRectangle   gegl_operation_adjust_result_region (GeglOperation *operation,
+                                                     GeglRectangle *roi);
 
 GeglRectangle   gegl_operation_compute_input_request(GeglOperation *operation,
                                                      const gchar   *input_pad,

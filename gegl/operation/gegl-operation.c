@@ -31,6 +31,7 @@
 #include "graph/gegl-connection.h"
 #include "graph/gegl-graph.h"
 #include "graph/gegl-pad.h"
+#include "buffer/gegl-region.h"
 
 static void          gegl_operation_class_init (GeglOperationClass    *klass);
 static void          gegl_operation_init       (GeglOperation         *self);
@@ -190,6 +191,7 @@ gegl_operation_compute_input_request (GeglOperation *operation,
   return klass->compute_input_request (operation, input_pad, roi);
 }
 
+
 gboolean
 gegl_operation_calc_source_regions (GeglOperation *operation,
                                     gpointer       context_id)
@@ -213,6 +215,22 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
       gegl_operation_set_source_region (operation, context_id, pad_name, &rect);
     }
   return TRUE;
+}
+
+GeglRectangle
+gegl_operation_adjust_result_region (GeglOperation *operation,
+                                     GeglRectangle *roi)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (operation);
+
+  if (!klass->adjust_result_region)
+    {
+      return *roi;
+    }
+  
+  return klass->adjust_result_region (operation, roi);
 }
 
 static void
@@ -317,8 +335,24 @@ gegl_operation_set_source_region (GeglOperation *operation,
     GeglNodeDynamic *child_dynamic = gegl_node_get_dynamic (child, context_id);
     gegl_rectangle_bounding_box (&child_need, &child_dynamic->need_rect, region);
 
+      /* If we're cached */
+      if (child->cache)
+        {
+          GeglCache *cache = child->cache;
+          GeglRectangle valid_box;
+          gegl_region_get_clipbox (cache->valid_region, &valid_box);
+
+          if (gegl_region_rect_in (cache->valid_region, &child_need) == GEGL_OVERLAP_RECTANGLE_IN)
+            {
+              child_dynamic->result_rect = child_need;
+              child_dynamic->cached = TRUE;
+              child_need.width = 0;
+              child_need.height = 0;
+            }
+        }
+
     gegl_node_set_need_rect (child, context_id,
-                             child_need.x, child_need.y,
+                             child_need.x,     child_need.y,
                              child_need.width, child_need.height);
   }
 }
@@ -613,18 +647,25 @@ gegl_operation_get_target (GeglOperation *operation,
   format = pad->format;
   g_assert (format != NULL);
 
-  /* XXX: make the GeglOperation base class keep track of the desired bablformat? (it will probably be the format of the cache as well,.)
-   */
   g_assert (!strcmp (property_name, "output")); 
 
   result = gegl_operation_result_rect (operation, context_id);
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", format,
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width,
-                         "height", result->height,
-                         NULL);
+/*#define ENABLE_CACHE*/
+#ifdef ENABLE_CACHE
+  /* FIXME: make the cache be of the format indicated by the format,.. */
+  if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
+    {
+      output = gegl_buffer_new (result, format);
+    }
+  else
+    {
+      GeglBuffer    *cache;
+      cache = GEGL_BUFFER (gegl_node_get_cache (operation->node));
+      output = gegl_buffer_create_sub_buffer (cache, result);
+    }
+#else
+  output = gegl_buffer_new (result, format);
+#endif
   gegl_operation_set_data (operation, context_id, property_name, G_OBJECT (output));
   return output;
 }
@@ -662,4 +703,3 @@ gegl_operation_get_source (GeglOperation *operation,
    */
   return input;
 }
-
