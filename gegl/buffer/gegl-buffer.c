@@ -225,6 +225,8 @@ gegl_buffer_dispose (GObject *object)
   buffer = (GeglBuffer *) object;
   trait  = GEGL_TILE_TRAIT (object);
 
+  gegl_buffer_sample_cleanup (buffer);
+
   if (trait->source &&
       GEGL_IS_BUFFER_ALLOCATOR (trait->source))
     {
@@ -1648,6 +1650,8 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
   return ret;
 }
 
+#include "gegl-interpolator-linear.h"
+
 void
 gegl_buffer_sample (GeglBuffer       *buffer,
                     gdouble           x,
@@ -1658,6 +1662,15 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     GeglInterpolation interpolation)
 {
   /* look up appropriate interpolator,. */
+  if (buffer->interpolator == NULL)
+    {
+      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_LINEAR,
+                                           "input", buffer,
+                                           "format", format,
+                                           NULL);
+      gegl_interpolator_prepare (buffer->interpolator);
+    }
+  gegl_interpolator_get (buffer->interpolator, x, y, dest);
 
   /* if none found, create a singleton interpolator for this buffer,
    * a function to clean up the interpolators set for a buffer should
@@ -1665,7 +1678,17 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
   /* if (scale < 1.0) do decimation, possibly using pyramid instead */
 
-  pget (buffer, x, y, format, dest);
+  /*pget (buffer, x, y, format, dest);*/
+}
+
+void
+gegl_buffer_sample_cleanup (GeglBuffer *buffer)
+{
+  if (buffer->interpolator)
+    {
+      g_object_unref (buffer->interpolator);
+      buffer->interpolator = NULL;
+    }
 }
 
 GeglRectangle *

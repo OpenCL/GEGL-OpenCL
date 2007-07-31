@@ -38,8 +38,6 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 
-static void    finalize (GObject *gobject);
-
 static void    gegl_interpolator_linear_get (GeglInterpolator *self,
                                              gdouble           x,
                                              gdouble           y,
@@ -56,7 +54,6 @@ gegl_interpolator_linear_class_init (GeglInterpolatorLinearClass *klass)
   GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
   GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
 
-  object_class->finalize     = finalize;
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
@@ -85,35 +82,23 @@ gegl_interpolator_linear_init (GeglInterpolatorLinear *self)
 void
 gegl_interpolator_linear_prepare (GeglInterpolator *interpolator)
 {
-  GeglBuffer *input = GEGL_BUFFER (interpolator->input);
-
-  /* fill the internal bufer */
-  interpolator->buffer             = g_malloc0 (input->width * input->height * 4 * 4);
-  interpolator->interpolate_format = babl_format ("RaGaBaA float");
-  gegl_buffer_get (interpolator->input, NULL, 1.0,
-                   interpolator->interpolate_format,
-                   interpolator->buffer);
-}
-
-static void
-finalize (GObject *gobject)
-{
-  GeglInterpolator *self = GEGL_INTERPOLATOR (gobject);
-
-  g_free (self->buffer);
-  G_OBJECT_CLASS (gegl_interpolator_linear_parent_class)->finalize (gobject);
 }
 
 void
-gegl_interpolator_linear_get (GeglInterpolator *self,
+gegl_interpolator_linear_get (GeglInterpolator *interpolator,
                               gdouble           x,
                               gdouble           y,
                               void             *output)
 {
-  GeglBuffer *input  = self->input;
-  gfloat     *buffer = self->buffer;
+  GeglBuffer *input  = interpolator->input;
+  gfloat     *buffer;
   gfloat      dst[4];
   gfloat      abyss = 0.;
+
+  gegl_interpolator_fill_buffer (interpolator, x, y);
+  buffer = interpolator->cache_buffer;
+  if (!buffer)
+    return;
 
   if (x >= 0 &&
       y >= 0 &&
@@ -158,7 +143,7 @@ gegl_interpolator_linear_get (GeglInterpolator *self,
       dst[2] = abyss;
       dst[3] = abyss;
     }
-  babl_process (babl_fish (self->interpolate_format, self->format),
+  babl_process (babl_fish (interpolator->interpolate_format, interpolator->format),
                 dst, output, 1);
 }
 

@@ -101,7 +101,6 @@ gegl_interpolator_cubic_init (GeglInterpolatorCubic *self)
 void
 gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
 {
-  GeglBuffer            *input = GEGL_BUFFER (interpolator->input);
   GeglInterpolatorCubic *self  = GEGL_INTERPOLATOR_CUBIC (interpolator);
 
   /* fill the internal bufer */
@@ -131,23 +130,15 @@ gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
       self->b    = 0.0;
       self->c    = 0.5;
     }
-
-  interpolator->buffer             = g_malloc0 (input->width * input->height * 4 * 4);
-  interpolator->interpolate_format = babl_format ("RaGaBaA float");
-  gegl_buffer_get (interpolator->input, NULL, 1.0,
-                   interpolator->interpolate_format,
-                   interpolator->buffer);
 }
 
 static void
 finalize (GObject *object)
 {
   GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
-  GeglInterpolator      *interpolator = GEGL_INTERPOLATOR (object);
 
   if (self->type)
     g_free (self->type);
-  g_free (interpolator->buffer);
   G_OBJECT_CLASS (gegl_interpolator_cubic_parent_class)->finalize (object);
 }
 
@@ -158,8 +149,8 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
                              void             *output)
 {
   GeglInterpolatorCubic *self   = GEGL_INTERPOLATOR_CUBIC (interpolator);
+  gfloat                *buffer = interpolator->cache_buffer;
   GeglBuffer            *input  = interpolator->input;
-  gfloat                *buffer = interpolator->buffer;
   gfloat                *buf_ptr;
   gfloat                 factor;
 
@@ -169,6 +160,11 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
   gfloat                 dst[4];
   gfloat                 abyss = 0.;
   gint                   i, j, pu, pv;
+
+  gegl_interpolator_fill_buffer (interpolator, x, y);
+  buffer = interpolator->cache_buffer;
+  if (!buffer)
+    return;
 
   if (x >= 0 &&
       y >= 0 &&

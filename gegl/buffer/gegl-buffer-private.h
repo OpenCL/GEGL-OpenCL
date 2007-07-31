@@ -36,27 +36,27 @@
 
 struct _GeglBuffer
 {
-  GeglTileTraits parent_object;
+  GeglTileTraits    parent_object;
 
+  gint              x;      /* exported through gegl_buffer_extents()    */
+  gint              y;      /*  -"-  */
+  gint              width;  /*  -"-  */
+  gint              height; /*  -"-  */
 
-  gint           x;      /* exported through gegl_buffer_extents()    */
-  gint           y;      /*  -"-  */
-  gint           width;  /*  -"-  */
-  gint           height; /*  -"-  */
+  Babl             *format;
 
-  Babl          *format;
+  gint              shift_x;
+  gint              shift_y;
+  gint              total_shift_x;
+  gint              total_shift_y;
 
-  gint           shift_x;
-  gint           shift_y;
-  gint           total_shift_x;
-  gint           total_shift_y;
+  gint              abyss_x;
+  gint              abyss_y;
+  gint              abyss_width;
+  gint              abyss_height;
 
-  gint           abyss_x;
-  gint           abyss_y;
-  gint           abyss_width;
-  gint           abyss_height;
-
-  GeglTile      *hot_tile;
+  GeglTile         *hot_tile;
+  GeglInterpolator *interpolator;
 };
 
 struct _GeglBufferClass

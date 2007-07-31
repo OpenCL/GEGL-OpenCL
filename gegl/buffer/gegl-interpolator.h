@@ -41,8 +41,10 @@ struct _GeglInterpolator
   /*< private >*/
   GeglBuffer *input;
   Babl       *format;
-  void       *buffer;
-  Babl       *interpolate_format;
+
+  GeglRectangle  cache_rectangle;
+  void          *cache_buffer;
+  Babl          *interpolate_format;
 };
 
 struct _GeglInterpolatorClass
@@ -62,6 +64,10 @@ void  gegl_interpolator_get                   (GeglInterpolator *self,
                                                gdouble           y,
                                                void             *output);
 GType gegl_interpolator_get_type              (void) G_GNUC_CONST;
+
+void  gegl_interpolator_fill_buffer           (GeglInterpolator *interpolator,
+                                               gdouble           x,
+                                               gdouble           y);
 
 G_END_DECLS
 

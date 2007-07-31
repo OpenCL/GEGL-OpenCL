@@ -25,6 +25,7 @@
 #include "gegl-types.h"
 #include "gegl-interpolator.h"
 #include "gegl-utils.h"
+#include "gegl-buffer-private.h"
 
 static void      gegl_interpolator_class_init (GeglInterpolatorClass *klass);
 static void      gegl_interpolator_init (GeglInterpolator *self);
@@ -46,6 +47,7 @@ gegl_interpolator_class_init (GeglInterpolatorClass *klass)
 static void
 gegl_interpolator_init (GeglInterpolator *self)
 {
+  self->cache_buffer = NULL;
 }
 
 void
@@ -74,10 +76,70 @@ gegl_interpolator_prepare (GeglInterpolator *self)
 
   if (klass->prepare)
     klass->prepare (self);
+
+  if (self->cache_buffer) /* to force a regetting of the region, even
+                             if the cached getter might be valid
+                           */
+    {
+      g_free (self->cache_buffer);
+      self->cache_buffer = NULL;
+    }
 }
 
 static void
 finalize (GObject *gobject)
 {
+  GeglInterpolator *interpolator = GEGL_INTERPOLATOR (gobject);
+  if (interpolator->cache_buffer)
+    {
+      g_free (interpolator->cache_buffer);
+    }
   G_OBJECT_CLASS (gegl_interpolator_parent_class)->finalize (gobject);
+}
+
+void
+gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
+                               gdouble           x,
+                               gdouble           y)
+{
+  GeglBuffer *input;
+ 
+  input = interpolator->input;
+  g_assert (input);
+
+  if (interpolator->cache_buffer) /* FIXME: check that the geometry of the
+                                            existing cache is good for the
+                                            provided coordinates as well
+                                   */
+    {
+      GeglRectangle r = interpolator->cache_rectangle;
+      /* FIXME: take sampling radius into account */
+
+      if (x>=r.x && x<r.x+r.width &&
+          y>=r.y && y<r.y+r.height)
+          /* we're already prefetched for the correct data */
+          return;
+
+      /* requested sample outside defined region, bailing early */
+      if (x < input->x ||
+          x > input->x+input->width ||
+          y < input->height ||
+          y > input->y+input->height)
+        return;
+      /*return;*/
+
+      g_free (interpolator->cache_buffer);
+    }
+
+  /* by default we just grab everything for the interpolator 
+   *
+   * FIXME: do not grab the whole GeglBuffer but only a fixed amount of
+   * pixels to allow this infrastructure to scale.
+   * */
+  interpolator->cache_buffer = g_malloc0 (input->width * input->height * 4 * 4);
+  interpolator->cache_rectangle = * gegl_buffer_extent (input);
+  interpolator->interpolate_format = babl_format ("RaGaBaA float");
+  gegl_buffer_get (interpolator->input, NULL, 1.0,
+                   interpolator->interpolate_format,
+                   interpolator->cache_buffer);
 }

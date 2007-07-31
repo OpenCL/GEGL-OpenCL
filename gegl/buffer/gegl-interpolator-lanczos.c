@@ -114,7 +114,7 @@ finalize (GObject *object)
   GeglInterpolator        *interpolator = GEGL_INTERPOLATOR (object);
 
   g_free (self->lanczos_lookup);
-  g_free (interpolator->buffer);
+  g_free (interpolator->cache_buffer);
   G_OBJECT_CLASS (gegl_interpolator_lanczos_parent_class)->finalize (object);
 }
 
@@ -171,16 +171,10 @@ gegl_interpolator_lanczos_init (GeglInterpolatorLanczos *self)
 void
 gegl_interpolator_lanczos_prepare (GeglInterpolator *interpolator)
 {
-  GeglBuffer *input = GEGL_BUFFER (interpolator->input);
+  /*GeglBuffer *input = GEGL_BUFFER (interpolator->input);*/
 
   /* calculate lookup */
   lanczos_lookup (interpolator);
-  /* fill the internal bufer */
-  interpolator->buffer             = g_malloc0 (input->width * input->height * 4 * 4);
-  interpolator->interpolate_format = babl_format ("RaGaBaA float");
-  gegl_buffer_get (interpolator->input, NULL, 1.0,
-                   interpolator->interpolate_format,
-                   interpolator->buffer);
 }
 
 void
@@ -191,7 +185,7 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
 {
   GeglInterpolatorLanczos *self   = GEGL_INTERPOLATOR_LANCZOS (interpolator);
   GeglBuffer              *input  = interpolator->input;
-  gfloat                  *buffer = interpolator->buffer;
+  gfloat                  *buffer;
   gfloat                  *buf_ptr;
 
   gdouble                  x_sum, y_sum, arecip;
@@ -206,6 +200,11 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
 
   gdouble                  x_kernel[lanczos_width2], /* 1-D kernels of Lanczos window coeffs */
                            y_kernel[lanczos_width2];
+  
+  gegl_interpolator_fill_buffer (interpolator, x, y);
+  buffer = interpolator->cache_buffer;
+  if (!buffer)
+    return;
 
   if (x >= 0 &&
       y >= 0 &&

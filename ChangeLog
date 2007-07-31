@@ -1,3 +1,21 @@
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
+	Start of cleaning up of interpolated getter functions, also sprinkled
+	with some FIXME's that needs to be addressed later.
+
+	* gegl/buffer/gegl-buffer-private.h: Added a persistent interpolator
+	field for the buffer.
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dispose),
+	(gegl_buffer_sample), (gegl_buffer_sample_cleanup): use a
+	GeglInterpolator as the backend for gegl_buffer_sample.
+	* gegl/buffer/gegl-interpolator-cubic.c:
+	* gegl/buffer/gegl-interpolator-lanczos.c:
+	* gegl/buffer/gegl-interpolator-linear.c:
+	* gegl/buffer/gegl-interpolator-nearest.c:
+	* gegl/buffer/gegl-interpolator.c: 
+	* gegl/buffer/gegl-interpolator.h: refactored and cleaned up
+	interpolators.
+
 2007-07-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h: improved API documentation.
