@@ -62,6 +62,7 @@ gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
 #define GEGL_CHANT_SOURCE
 
 #define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_CLASS_INIT
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -442,6 +443,12 @@ get_defined_region (GeglOperation *operation)
   result.height  = self->height;
 
   return result;
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  klass->adjust_result_region = NULL;
+  klass->no_cache = FALSE;
 }
 
 #endif

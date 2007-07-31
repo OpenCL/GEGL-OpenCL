@@ -1,5 +1,16 @@
 2007-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Modified caching hints for some of the renderer operations.	
+
+	* operations/render/FractalExplorer.c: do not expand result rect (but
+	do cache).
+	* operations/render/checkerboard.c: do not expand result rect (and do
+	not cache).
+	* operations/render/color.c: do not expand result rect (and do not
+	cache).
+
+2007-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/load.c: (dispose), (prepare), (attach): rewritten to
 	use the core provided caching framework instead of it's own ad-hoc
 	cache.

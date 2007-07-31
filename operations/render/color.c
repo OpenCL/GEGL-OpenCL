@@ -98,6 +98,7 @@ static void class_init (GeglOperationClass *klass)
 {
   klass->detect = detect;
   klass->no_cache = TRUE;
+  klass->adjust_result_region = NULL;
 }
 
 #endif
