@@ -35,6 +35,8 @@
  * well as the clarity of this documentation is most welcome.
  */
 
+G_BEGIN_DECLS
+
 /***
  * Introduction:
  *
@@ -870,6 +872,8 @@ void	     gegl_curve_calc_values	       (GeglCurve   *self,
 						guint       num_samples,
 						gfloat      *xs,
 						gfloat      *ys);
+
+G_END_DECLS
 
 /*** this is just here to trick the parser.
  */
