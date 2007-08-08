@@ -1,3 +1,7 @@
+2007-08-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/Makefile.am: make the gallery support parallel make.
+
 2007-07-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: include gegl-buffer.h in the generated documentation.
