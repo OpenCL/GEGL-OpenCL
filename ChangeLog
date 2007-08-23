@@ -1,3 +1,12 @@
+2007-08-23  Øyvind Kolås  <pippin@gimp.org>
+	
+	Applied patch from John Marshall <jay_marshall@ntlworld.com>, adding
+	INSTALLED_ITEMS to makefiles to make plug-ins be removed upon make
+	uninstall.
+
+	* operations/Makefile-operations.am:
+	* operations/affine/Makefile.am:
+
 2007-08-06  Étienne Bersac  <bersace03@laposte.net>
 
 	* gegl/gegl.h: Added G_*_DECLS stanza in order to allow using gegl
