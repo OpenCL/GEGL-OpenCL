@@ -22,9 +22,9 @@
 #include <string.h>
 
 #include "gegl-handler.h"
-#include "gegl-tile-log.h"
+#include "gegl-handler-log.h"
 
-G_DEFINE_TYPE (GeglTileLog, gegl_tile_log, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_TILE_TRAIT)
 static GObjectClass * parent_class = NULL;
 
 static GeglTile *
@@ -67,7 +67,7 @@ message (GeglTileStore  *gegl_tile_store,
 }
 
 static void
-gegl_tile_log_class_init (GeglTileLogClass *klass)
+gegl_handler_log_class_init (GeglHandlerLogClass *klass)
 {
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
 
@@ -78,6 +78,6 @@ gegl_tile_log_class_init (GeglTileLogClass *klass)
 }
 
 static void
-gegl_tile_log_init (GeglTileLog *self)
+gegl_handler_log_init (GeglHandlerLog *self)
 {
 }

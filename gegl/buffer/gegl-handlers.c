@@ -21,7 +21,7 @@
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
 #include "gegl-handlers.h"
-#include "gegl-tile-cache.h"
+#include "gegl-handler-cache.h"
 
 G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_TILE_TRAIT)
 static GObjectClass * parent_class = NULL;
@@ -34,12 +34,12 @@ gegl_handlers_nuke_cache (GeglHandlers *handlers)
 {
   GSList *iter;
 
-  while (gegl_handlers_get_first (handlers, GEGL_TYPE_TILE_CACHE))
+  while (gegl_handlers_get_first (handlers, GEGL_TYPE_HANDLER_CACHE))
     {
       iter = handlers->chain;
       while (iter)
         {
-          if (GEGL_IS_TILE_CACHE (iter->data))
+          if (GEGL_IS_HANDLER_CACHE (iter->data))
             {
               g_object_unref (iter->data);
               handlers->chain = g_slist_remove (handlers->chain, iter->data);

@@ -22,9 +22,9 @@
 #include <string.h>
 
 #include "gegl-handler.h"
-#include "gegl-tile-empty.h"
+#include "gegl-handler-empty.h"
 
-G_DEFINE_TYPE (GeglTileEmpty, gegl_tile_empty, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglHandlerEmpty, gegl_handler_empty, GEGL_TYPE_TILE_TRAIT)
 static GObjectClass * parent_class = NULL;
 enum
 {
@@ -35,7 +35,7 @@ enum
 static void
 finalize (GObject *object)
 {
-  GeglTileEmpty *empty = GEGL_TILE_EMPTY (object);
+  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (object);
 
   if (empty->tile)
     g_object_unref (empty->tile);
@@ -49,7 +49,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           z)
 {
   GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
-  GeglTileEmpty *empty  = GEGL_TILE_EMPTY (gegl_tile_store);
+  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_tile_store);
   GeglTile      *tile   = NULL;
 
   if (source)
@@ -69,7 +69,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTileEmpty *empty = GEGL_TILE_EMPTY (gobject);
+  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (gobject);
 
   switch (property_id)
     {
@@ -89,7 +89,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTileEmpty *empty = GEGL_TILE_EMPTY (gobject);
+  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (gobject);
 
   switch (property_id)
     {
@@ -109,13 +109,13 @@ constructor (GType                  type,
              GObjectConstructParam *params)
 {
   GObject       *object;
-  GeglTileEmpty *empty;
+  GeglHandlerEmpty *empty;
   gint           tile_width;
   gint           tile_height;
   gint           tile_size;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  empty  = GEGL_TILE_EMPTY (object);
+  empty  = GEGL_HANDLER_EMPTY (object);
 
   g_assert (empty->backend);
   g_object_get (empty->backend, "tile-width", &tile_width,
@@ -131,7 +131,7 @@ constructor (GType                  type,
 
 
 static void
-gegl_tile_empty_class_init (GeglTileEmptyClass *klass)
+gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
@@ -153,6 +153,6 @@ gegl_tile_empty_class_init (GeglTileEmptyClass *klass)
 }
 
 static void
-gegl_tile_empty_init (GeglTileEmpty *self)
+gegl_handler_empty_init (GeglHandlerEmpty *self)
 {
 }

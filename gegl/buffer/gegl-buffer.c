@@ -28,9 +28,9 @@
 #include "gegl-tile-backend.h"
 #include "gegl-handler.h"
 #include "gegl-tile.h"
-#include "gegl-tile-cache.h"
-#include "gegl-tile-log.h"
-#include "gegl-tile-empty.h"
+#include "gegl-handler-cache.h"
+#include "gegl-handler-log.h"
+#include "gegl-handler-empty.h"
 #include "gegl-buffer-allocator.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
@@ -432,7 +432,7 @@ gegl_buffer_constructor (GType                  type,
   buffer->total_shift_x += buffer->shift_x;
   buffer->total_shift_y += buffer->shift_y;
 
-  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_EMPTY,
+  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
                                                      "backend", backend,
                                                      NULL));
 
@@ -443,7 +443,7 @@ gegl_buffer_constructor (GType                  type,
    */
 
   if (0 && buffer->width < 1 << 14)
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_CACHE,
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
                                                 "size",
                                                 needed_tiles (buffer->width, tile_width) + 1,
                                                 NULL));

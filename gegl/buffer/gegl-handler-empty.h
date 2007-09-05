@@ -17,41 +17,40 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_TILE_ZOOM_H
-#define _GEGL_TILE_ZOOM_H
+#ifndef _GEGL_HANDLER_EMPTY_H
+#define _GEGL_HANDLER_EMPTY_H
 
 #include <glib.h>
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
 #include "gegl-handler.h"
-#include "gegl-storage.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_ZOOM            (gegl_tile_zoom_get_type ())
-#define GEGL_TILE_ZOOM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_ZOOM, GeglTileZoom))
-#define GEGL_TILE_ZOOM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_ZOOM, GeglTileZoomClass))
-#define GEGL_IS_TILE_ZOOM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_ZOOM))
-#define GEGL_IS_TILE_ZOOM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_ZOOM))
-#define GEGL_TILE_ZOOM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_ZOOM, GeglTileZoomClass))
+#define GEGL_TYPE_HANDLER_EMPTY            (gegl_handler_empty_get_type ())
+#define GEGL_HANDLER_EMPTY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HANDLER_EMPTY, GeglHandlerEmpty))
+#define GEGL_HANDLER_EMPTY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HANDLER_EMPTY, GeglHandlerEmptyClass))
+#define GEGL_IS_HANDLER_EMPTY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HANDLER_EMPTY))
+#define GEGL_IS_HANDLER_EMPTY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HANDLER_EMPTY))
+#define GEGL_HANDLER_EMPTY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLER_EMPTY, GeglHandlerEmptyClass))
 
 
-typedef struct _GeglTileZoom      GeglTileZoom;
-typedef struct _GeglTileZoomClass GeglTileZoomClass;
+typedef struct _GeglHandlerEmpty      GeglHandlerEmpty;
+typedef struct _GeglHandlerEmptyClass GeglHandlerEmptyClass;
 
-struct _GeglTileZoom
+struct _GeglHandlerEmpty
 {
   GeglHandler      parent_instance;
+  GeglTile        *tile;
   GeglTileBackend *backend;
-  GeglStorage     *storage;
 };
 
-struct _GeglTileZoomClass
+struct _GeglHandlerEmptyClass
 {
   GeglHandlerClass parent_class;
 };
 
-GType gegl_tile_zoom_get_type (void) G_GNUC_CONST;
+GType gegl_handler_empty_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
 

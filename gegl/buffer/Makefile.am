@@ -15,15 +15,15 @@ BUFFER_sources = \
     gegl-storage.c		\
     gegl-tile.c			\
     gegl-tile-backend.c		\
-    gegl-tile-cache.c		\
     gegl-tile-disk.c		\
-    gegl-tile-empty.c		\
-    gegl-tile-log.c		\
     gegl-tile-mem.c		\
     gegl-tile-store.c		\
     gegl-handler.c		\
     gegl-handlers.c		\
-    gegl-tile-zoom.c
+    gegl-handler-cache.c	\
+    gegl-handler-empty.c	\
+    gegl-handler-log.c		\
+    gegl-handler-zoom.c
 
 BUFFER_headers = \
     gegl-buffer-allocator.h	\
@@ -42,15 +42,15 @@ BUFFER_headers = \
     gegl-storage.h		\
     gegl-tile.h			\
     gegl-tile-backend.h		\
-    gegl-tile-cache.h		\
     gegl-tile-disk.h		\
-    gegl-tile-empty.h		\
-    gegl-tile-log.h		\
     gegl-tile-mem.h		\
     gegl-tile-store.h		\
     gegl-handler.h		\
     gegl-handlers.h		\
-    gegl-tile-zoom.h
+    gegl-handler-cache.h	\
+    gegl-handler-empty.h	\
+    gegl-handler-log.h		\
+    gegl-handler-zoom.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 libbufferinclude_HEADERS = gegl-buffer.h

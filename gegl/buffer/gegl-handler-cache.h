@@ -17,24 +17,24 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _TILE_CACHE_H
-#define _TILE_CACHE_H
+#ifndef _HANDLER_CACHE_H
+#define _HANDLER_CACHE_H
 
 #include "gegl-buffer-types.h"
 #include "gegl-handler.h"
 
-#define GEGL_TYPE_TILE_CACHE            (gegl_tile_cache_get_type ())
-#define GEGL_TILE_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_CACHE, GeglTileCache))
-#define GEGL_TILE_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_CACHE, GeglTileCacheClass))
-#define GEGL_IS_TILE_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_CACHE))
-#define GEGL_IS_TILE_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_CACHE))
-#define GEGL_TILE_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_CACHE, GeglTileCacheClass))
+#define GEGL_TYPE_HANDLER_CACHE            (gegl_handler_cache_get_type ())
+#define GEGL_HANDLER_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HANDLER_CACHE, GeglHandlerCache))
+#define GEGL_HANDLER_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HANDLER_CACHE, GeglHandlerCacheClass))
+#define GEGL_IS_HANDLER_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HANDLER_CACHE))
+#define GEGL_IS_HANDLER_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HANDLER_CACHE))
+#define GEGL_HANDLER_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLER_CACHE, GeglHandlerCacheClass))
 
 
-typedef struct _GeglTileCache        GeglTileCache;
-typedef struct _GeglTileCacheClass   GeglTileCacheClass;
+typedef struct _GeglHandlerCache        GeglHandlerCache;
+typedef struct _GeglHandlerCacheClass   GeglHandlerCacheClass;
 
-struct _GeglTileCache
+struct _GeglHandlerCache
 {
   GeglHandler parent_instance;
   GSList     *list;
@@ -45,12 +45,12 @@ struct _GeglTileCache
   gint     wash_percentage;
 };
 
-struct _GeglTileCacheClass
+struct _GeglHandlerCacheClass
 {
   GeglHandlerClass parent_class;
 };
 
-GType       gegl_tile_cache_get_type            (void) G_GNUC_CONST;
+GType       gegl_handler_cache_get_type            (void) G_GNUC_CONST;
 
 
 #endif

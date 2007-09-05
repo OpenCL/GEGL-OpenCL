@@ -26,11 +26,11 @@
 #include "gegl-storage.h"
 #include "gegl-tile.h"
 #include "gegl-tile-disk.h"
-#include "gegl-tile-empty.h"
-#include "gegl-tile-zoom.h"
+#include "gegl-handler-empty.h"
+#include "gegl-handler-zoom.h"
 #include "gegl-tile-mem.h"
-#include "gegl-tile-cache.h"
-#include "gegl-tile-log.h"
+#include "gegl-handler-cache.h"
+#include "gegl-handler-log.h"
 
 G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
 #define TILE_SIZE    128
@@ -229,14 +229,14 @@ gegl_storage_constructor (GType                  type,
                   NULL);
   }
 
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_CACHE,
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
                                                   "size", 256,
                                                    NULL));
 
-  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_LOG,
+  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG,
                                                   NULL));
 
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_ZOOM,
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
                                                   "backend", handler->source,
                                                   "storage", storage,
                                                   NULL));
@@ -244,7 +244,7 @@ gegl_storage_constructor (GType                  type,
   /* moved here to allow sharing between buffers (speeds up, but only
    * allows nulled (transparent) blank tiles,..
    */
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_EMPTY,
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
                                                   "backend", handler->source,
                                                    NULL));
 

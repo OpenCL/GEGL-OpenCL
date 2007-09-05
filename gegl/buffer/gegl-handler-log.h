@@ -17,8 +17,8 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_TILE_LOG_H
-#define _GEGL_TILE_LOG_H
+#ifndef _GEGL_HANDLER_LOG_H
+#define _GEGL_HANDLER_LOG_H
 
 #include <glib.h>
 #include "gegl-tile.h"
@@ -26,28 +26,28 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_LOG            (gegl_tile_log_get_type ())
-#define GEGL_TILE_LOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_LOG, GeglTileLog))
-#define GEGL_TILE_LOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_LOG, GeglTileLogClass))
-#define GEGL_IS_TILE_LOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_LOG))
-#define GEGL_IS_TILE_LOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_LOG))
-#define GEGL_TILE_LOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_LOG, GeglTileLogClass))
+#define GEGL_TYPE_HANDLER_LOG            (gegl_handler_log_get_type ())
+#define GEGL_HANDLER_LOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HANDLER_LOG, GeglHandlerLog))
+#define GEGL_HANDLER_LOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HANDLER_LOG, GeglHandlerLogClass))
+#define GEGL_IS_HANDLER_LOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HANDLER_LOG))
+#define GEGL_IS_HANDLER_LOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HANDLER_LOG))
+#define GEGL_HANDLER_LOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLER_LOG, GeglHandlerLogClass))
 
 
-typedef struct _GeglTileLog      GeglTileLog;
-typedef struct _GeglTileLogClass GeglTileLogClass;
+typedef struct _GeglHandlerLog      GeglHandlerLog;
+typedef struct _GeglHandlerLogClass GeglHandlerLogClass;
 
-struct _GeglTileLog
+struct _GeglHandlerLog
 {
   GeglHandler  parent_instance;
 };
 
-struct _GeglTileLogClass
+struct _GeglHandlerLogClass
 {
   GeglHandlerClass parent_class;
 };
 
-GType gegl_tile_log_get_type (void) G_GNUC_CONST;
+GType gegl_handler_log_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
 

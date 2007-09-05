@@ -22,9 +22,9 @@
 #include <string.h>
 
 #include "gegl-handler.h"
-#include "gegl-tile-zoom.h"
+#include "gegl-handler-zoom.h"
 
-G_DEFINE_TYPE (GeglTileZoom, gegl_tile_zoom, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglHandlerZoom, gegl_handler_zoom, GEGL_TYPE_TILE_TRAIT)
 static GObjectClass * parent_class = NULL;
 enum
 {
@@ -198,7 +198,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           z)
 {
   GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
-  GeglTileZoom  *zoom   = GEGL_TILE_ZOOM (gegl_tile_store);
+  GeglHandlerZoom  *zoom   = GEGL_HANDLER_ZOOM (gegl_tile_store);
   GeglTile      *tile   = NULL;
   Babl          *format = (Babl *) (zoom->backend->format);
   gint           tile_width;
@@ -280,7 +280,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           {
             g_object_unref (tile);
           }
-        return NULL;   /* no data from level below, return NULL and let GeglTileEmpty
+        return NULL;   /* no data from level below, return NULL and let GeglHandlerEmpty
                           fill in the shared empty tile */
       }
 
@@ -386,7 +386,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTileZoom *zoom = GEGL_TILE_ZOOM (gobject);
+  GeglHandlerZoom *zoom = GEGL_HANDLER_ZOOM (gobject);
 
   switch (property_id)
     {
@@ -410,7 +410,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTileZoom *zoom = GEGL_TILE_ZOOM (gobject);
+  GeglHandlerZoom *zoom = GEGL_HANDLER_ZOOM (gobject);
 
   switch (property_id)
     {
@@ -434,17 +434,17 @@ constructor (GType                  type,
              GObjectConstructParam *params)
 {
   GObject      *object;
-  GeglTileZoom *zoom;
+  GeglHandlerZoom *zoom;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  zoom   = GEGL_TILE_ZOOM (object);
+  zoom   = GEGL_HANDLER_ZOOM (object);
 
   return object;
 }
 
 
 static void
-gegl_tile_zoom_class_init (GeglTileZoomClass *klass)
+gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
@@ -474,7 +474,7 @@ gegl_tile_zoom_class_init (GeglTileZoomClass *klass)
 }
 
 static void
-gegl_tile_zoom_init (GeglTileZoom *self)
+gegl_handler_zoom_init (GeglHandlerZoom *self)
 {
   self->backend = NULL;
   self->storage = NULL;
