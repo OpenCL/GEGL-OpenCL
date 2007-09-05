@@ -36,7 +36,7 @@
 
 struct _GeglBuffer
 {
-  GeglTileTraits    parent_object;
+  GeglHandlers    parent_object;
 
   gint              x;      /* exported through gegl_buffer_extents()    */
   gint              y;      /*  -"-  */
@@ -61,7 +61,7 @@ struct _GeglBuffer
 
 struct _GeglBufferClass
 {
-  GeglTileTraitsClass parent_class;
+  GeglHandlersClass parent_class;
 };
 
 GeglStorage  * gegl_buffer_storage    (GeglBuffer    *buffer);

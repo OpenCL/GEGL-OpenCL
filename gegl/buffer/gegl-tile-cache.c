@@ -105,7 +105,7 @@ get_tile (GeglTileStore *tile_store,
           gint           z)
 {
   GeglTileCache *cache  = GEGL_TILE_CACHE (tile_store);
-  GeglTileStore *source = GEGL_TILE_TRAIT (tile_store)->source;
+  GeglTileStore *source = GEGL_HANDLER (tile_store)->source;
   GeglTile      *tile   = NULL;
 
   tile = gegl_tile_cache_get_tile (cache, x, y, z);
@@ -139,8 +139,8 @@ message (GeglTileStore  *tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglTileTrait *trait = GEGL_TILE_TRAIT (tile_store);
-  GeglTileCache *cache = GEGL_TILE_CACHE (trait);
+  GeglHandler   *handler = GEGL_HANDLER (tile_store);
+  GeglTileCache *cache = GEGL_TILE_CACHE (handler);
 
   if (message == GEGL_TILE_IS_CACHED)
     {
@@ -164,8 +164,8 @@ message (GeglTileStore  *tile_store,
     {
       gegl_tile_cache_void (cache, x, y, z);
     }
-  if (trait->source)
-    return gegl_tile_store_message (trait->source, message, x, y, z, data);
+  if (handler->source)
+    return gegl_tile_store_message (handler->source, message, x, y, z, data);
   return FALSE;
 }
 

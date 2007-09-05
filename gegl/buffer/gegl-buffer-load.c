@@ -9,7 +9,7 @@
 #include "gegl-buffer.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-tile.h"
 #include "gegl-tile-cache.h"
 #include "gegl-tile-log.h"

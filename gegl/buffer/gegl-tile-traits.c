@@ -23,27 +23,27 @@
 #include "gegl-tile-traits.h"
 #include "gegl-tile-cache.h"
 
-G_DEFINE_TYPE (GeglTileTraits, gegl_tile_traits, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_TILE_TRAIT)
 static GObjectClass * parent_class = NULL;
 
 static void
-gegl_tile_traits_rebind (GeglTileTraits *traits);
+gegl_handlers_rebind (GeglHandlers *handlers);
 
 static void
-gegl_tile_traits_nuke_cache (GeglTileTraits *traits)
+gegl_handlers_nuke_cache (GeglHandlers *handlers)
 {
   GSList *iter;
 
-  while (gegl_tile_traits_get_first (traits, GEGL_TYPE_TILE_CACHE))
+  while (gegl_handlers_get_first (handlers, GEGL_TYPE_TILE_CACHE))
     {
-      iter = traits->chain;
+      iter = handlers->chain;
       while (iter)
         {
           if (GEGL_IS_TILE_CACHE (iter->data))
             {
               g_object_unref (iter->data);
-              traits->chain = g_slist_remove (traits->chain, iter->data);
-              gegl_tile_traits_rebind (traits);
+              handlers->chain = g_slist_remove (handlers->chain, iter->data);
+              gegl_handlers_rebind (handlers);
               break;
             }
           iter = iter->next;
@@ -54,16 +54,16 @@ gegl_tile_traits_nuke_cache (GeglTileTraits *traits)
 static void
 dispose (GObject *object)
 {
-  GeglTileTraits *traits = GEGL_TILE_TRAITS (object);
-  GSList         *iter;
+  GeglHandlers *handlers = GEGL_HANDLERS (object);
+  GSList       *iter;
 
   /* Get rid of the cache before any further parts of the deconstruction of the
    * TileStore chain, unwritten tiles need a living TileStore for their
    * deconstruction.
    */
-  gegl_tile_traits_nuke_cache (traits);
+  gegl_handlers_nuke_cache (handlers);
 
-  iter = traits->chain;
+  iter = handlers->chain;
   while (iter)
     {
       if (iter->data)
@@ -71,9 +71,9 @@ dispose (GObject *object)
       iter = iter->next;
     }
 
-  if (traits->chain)
-    g_slist_free (traits->chain);
-  traits->chain = NULL;
+  if (handlers->chain)
+    g_slist_free (handlers->chain);
+  handlers->chain = NULL;
 
   (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
@@ -91,12 +91,12 @@ get_tile (GeglTileStore *tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileTraits *traits = GEGL_TILE_TRAITS (tile_store);
-  GeglTileStore  *source = GEGL_TILE_TRAIT (tile_store)->source;
+  GeglHandlers   *handlers = GEGL_HANDLERS (tile_store);
+  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
   GeglTile       *tile   = NULL;
 
-  if (traits->chain != NULL)
-    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (traits->chain->data),
+  if (handlers->chain != NULL)
+    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (handlers->chain->data),
                                      x, y, z);
   else if (source)
     tile = gegl_tile_store_get_tile (source, x, y, z);
@@ -113,11 +113,11 @@ message (GeglTileStore  *tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglTileTraits *traits = GEGL_TILE_TRAITS (tile_store);
-  GeglTileStore  *source = GEGL_TILE_TRAIT (tile_store)->source;
+  GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
+  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
 
-  if (traits->chain != NULL)
-    return gegl_tile_store_message (GEGL_TILE_STORE (traits->chain->data), message, x, y, z, data);
+  if (handlers->chain != NULL)
+    return gegl_tile_store_message (GEGL_TILE_STORE (handlers->chain->data), message, x, y, z, data);
   else if (source)
     return gegl_tile_store_message (source, message, x, y, z, data);
   else
@@ -127,7 +127,7 @@ message (GeglTileStore  *tile_store,
 }
 
 static void
-gegl_tile_traits_class_init (GeglTileTraitsClass *class)
+gegl_handlers_class_init (GeglHandlersClass *class)
 {
   GObjectClass       *gobject_class;
   GeglTileStoreClass *tile_store_class;
@@ -144,7 +144,7 @@ gegl_tile_traits_class_init (GeglTileTraitsClass *class)
 }
 
 static void
-gegl_tile_traits_init (GeglTileTraits *self)
+gegl_handlers_init (GeglHandlers *self)
 {
   self->chain = NULL;
 }
@@ -152,53 +152,53 @@ gegl_tile_traits_init (GeglTileTraits *self)
 GeglTileStore *tsource = NULL;
 
 static void
-gegl_tile_traits_rebind (GeglTileTraits *traits)
+gegl_handlers_rebind (GeglHandlers *handlers)
 {
   GSList *iter;
 
 
-  iter = traits->chain;
+  iter = handlers->chain;
   while (iter)
     {
-      GeglTileTrait *trait;
+      GeglHandler   *handler;
       GeglTileStore *source = NULL;
 
-      trait = iter->data;
+      handler = iter->data;
       if (iter->next)
         {
           source = g_object_ref (iter->next->data);
         }
       else
         {
-          g_object_get (traits, "source", &source, NULL);
+          g_object_get (handlers, "source", &source, NULL);
         }
-      g_object_set (G_OBJECT (trait), "source", source, NULL);
+      g_object_set (G_OBJECT (handler), "source", source, NULL);
       g_object_unref (source);
       iter = iter->next;
     }
 }
 
-GeglTileTrait *
-gegl_tile_traits_add (GeglTileTraits *traits,
-                      GeglTileTrait  *trait)
+GeglHandler *
+gegl_handlers_add (GeglHandlers *handlers,
+                   GeglHandler  *handler)
 {
-  tsource       = GEGL_TILE_STORE (GEGL_TILE_TRAIT (traits)->source);
-  traits->chain = g_slist_prepend (traits->chain, trait);
-  gegl_tile_traits_rebind (traits);
+  tsource       = GEGL_TILE_STORE (GEGL_HANDLER (handlers)->source);
+  handlers->chain = g_slist_prepend (handlers->chain, handler);
+  gegl_handlers_rebind (handlers);
   tsource = NULL;
-  return trait;
+  return handler;
 }
 
 /*
- * return the first trait of a given type
+ * return the first handler of a given type
  */
-GeglTileTrait *
-gegl_tile_traits_get_first (GeglTileTraits *traits,
-                            GType           type)
+GeglHandler *
+gegl_handlers_get_first (GeglHandlers *handlers,
+                         GType         type)
 {
   GSList *iter;
 
-  iter = traits->chain;
+  iter = handlers->chain;
   while (iter)
     {
       if ((G_TYPE_CHECK_INSTANCE_TYPE ((iter->data), type)))
@@ -209,4 +209,3 @@ gegl_tile_traits_get_first (GeglTileTraits *traits,
     }
   return NULL;
 }
-

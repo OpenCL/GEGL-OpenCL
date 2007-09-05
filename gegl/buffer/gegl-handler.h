@@ -23,33 +23,33 @@
 #include <glib.h>
 #include "gegl-tile.h"
 #include "gegl-tile-store.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_TRAIT            (gegl_tile_trait_get_type ())
-#define GEGL_TILE_TRAIT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAIT, GeglTileTrait))
-#define GEGL_TILE_TRAIT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAIT, GeglTileTraitClass))
+#define GEGL_TYPE_TILE_TRAIT            (gegl_handler_get_type ())
+#define GEGL_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAIT, GeglHandler))
+#define GEGL_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAIT, GeglHandlerClass))
 #define GEGL_IS_TILE_TRAIT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_TRAIT))
 #define GEGL_IS_TILE_TRAIT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_TRAIT))
-#define GEGL_TILE_TRAIT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAIT, GeglTileTraitClass))
+#define GEGL_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAIT, GeglHandlerClass))
 
 
 
-struct _GeglTileTrait
+struct _GeglHandler
 {
   GeglTileStore  parent_instance;
   GeglTileStore *source;
 };
 
-struct _GeglTileTraitClass
+struct _GeglHandlerClass
 {
   GeglTileStoreClass parent_class;
 };
 
-GType gegl_tile_trait_get_type (void) G_GNUC_CONST;
+GType gegl_handler_get_type (void) G_GNUC_CONST;
 
-#define gegl_tile_trait_get_source(trait)  ((trait)->source)
+#define gegl_handler_get_source(handler)  ((handler)->source)
 
 G_END_DECLS
 

@@ -21,7 +21,7 @@
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-tile-log.h"
 
 G_DEFINE_TYPE (GeglTileLog, gegl_tile_log, GEGL_TYPE_TILE_TRAIT)
@@ -33,7 +33,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileStore *source = GEGL_TILE_TRAIT (gegl_tile_store)->source;
+  GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
   GeglTile      *tile   = NULL;
 
   g_warning ("%p get_tile (%i,%i,%i)", (void *) gegl_tile_store, x, y, z);
@@ -58,11 +58,11 @@ message (GeglTileStore  *gegl_tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglTileTrait *trait = GEGL_TILE_TRAIT (gegl_tile_store);
+  GeglHandler *handler = GEGL_HANDLER (gegl_tile_store);
 
   g_warning ("%p message(%s, x=%i, y=%i, z=%i, data=%p)", (void *) gegl_tile_store, messages[message], x, y, z, data);
-  if (trait->source)
-    return gegl_tile_store_message (trait->source, message, x, y, z, data);
+  if (handler->source)
+    return gegl_tile_store_message (handler->source, message, x, y, z, data);
   return FALSE;
 }
 

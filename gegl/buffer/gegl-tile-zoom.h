@@ -23,7 +23,7 @@
 #include <glib.h>
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-storage.h"
 
 G_BEGIN_DECLS
@@ -41,14 +41,14 @@ typedef struct _GeglTileZoomClass GeglTileZoomClass;
 
 struct _GeglTileZoom
 {
-  GeglTileTrait  parent_instance;
+  GeglHandler      parent_instance;
   GeglTileBackend *backend;
   GeglStorage     *storage;
 };
 
 struct _GeglTileZoomClass
 {
-  GeglTileTraitClass parent_class;
+  GeglHandlerClass parent_class;
 };
 
 GType gegl_tile_zoom_get_type (void) G_GNUC_CONST;

@@ -21,7 +21,7 @@
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-tile-empty.h"
 
 G_DEFINE_TYPE (GeglTileEmpty, gegl_tile_empty, GEGL_TYPE_TILE_TRAIT)
@@ -48,7 +48,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileStore *source = GEGL_TILE_TRAIT (gegl_tile_store)->source;
+  GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
   GeglTileEmpty *empty  = GEGL_TILE_EMPTY (gegl_tile_store);
   GeglTile      *tile   = NULL;
 

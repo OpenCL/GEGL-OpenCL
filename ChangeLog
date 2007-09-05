@@ -1,3 +1,8 @@
+2007-09-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/*.[ch]: %s/GeglTileTrait/GeglHandler/ %s/trait/handler.
+
 2007-09-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* MAINTAINERS: added.

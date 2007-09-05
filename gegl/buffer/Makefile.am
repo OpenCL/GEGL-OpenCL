@@ -21,7 +21,7 @@ BUFFER_sources = \
     gegl-tile-log.c		\
     gegl-tile-mem.c		\
     gegl-tile-store.c		\
-    gegl-tile-trait.c		\
+    gegl-handler.c		\
     gegl-tile-traits.c		\
     gegl-tile-zoom.c
 
@@ -48,7 +48,7 @@ BUFFER_headers = \
     gegl-tile-log.h		\
     gegl-tile-mem.h		\
     gegl-tile-store.h		\
-    gegl-tile-trait.h		\
+    gegl-handler.h		\
     gegl-tile-traits.h		\
     gegl-tile-zoom.h
 

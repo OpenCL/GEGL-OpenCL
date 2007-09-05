@@ -26,7 +26,7 @@
 #include "gegl-buffer.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-tile.h"
 #include "gegl-tile-cache.h"
 #include "gegl-tile-log.h"
@@ -220,19 +220,19 @@ static void
 gegl_buffer_dispose (GObject *object)
 {
   GeglBuffer    *buffer;
-  GeglTileTrait *trait;
+  GeglHandler *handler;
 
   buffer = (GeglBuffer *) object;
-  trait  = GEGL_TILE_TRAIT (object);
+  handler  = GEGL_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
 
-  if (trait->source &&
-      GEGL_IS_BUFFER_ALLOCATOR (trait->source))
+  if (handler->source &&
+      GEGL_IS_BUFFER_ALLOCATOR (handler->source))
     {
       gegl_buffer_void (buffer);
 #if 0
-      trait->source = NULL; /* this might be a dangerous way of marking that we have already voided */
+      handler->source = NULL; /* this might be a dangerous way of marking that we have already voided */
 #endif
     }
 
@@ -257,7 +257,7 @@ gegl_buffer_backend (GeglBuffer *buffer)
 
   do
     {
-      tmp = GEGL_TILE_TRAIT (tmp)->source;
+      tmp = GEGL_HANDLER (tmp)->source;
     } while (tmp &&
              /*GEGL_IS_TILE_TRAIT (tmp) &&*/
              !GEGL_IS_TILE_BACKEND (tmp));
@@ -275,7 +275,7 @@ gegl_buffer_storage (GeglBuffer *buffer)
 
   do
     {
-      tmp = ((GeglTileTrait *) (tmp))->source;
+      tmp = ((GeglHandler *) (tmp))->source;
     } while (!GEGL_IS_STORAGE (tmp));
 
   return (GeglStorage *) tmp;
@@ -290,9 +290,9 @@ gegl_buffer_constructor (GType                  type,
 {
   GObject         *object;
   GeglBuffer      *buffer;
-  GeglTileTraits  *traits;
+  GeglHandlers  *handlers;
   GeglTileBackend *backend;
-  GeglTileTrait   *trait;
+  GeglHandler   *handler;
   GeglTileStore   *source;
   gint             tile_width;
   gint             tile_height;
@@ -300,9 +300,9 @@ gegl_buffer_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
   buffer  = GEGL_BUFFER (object);
-  traits  = GEGL_TILE_TRAITS (object);
-  trait   = GEGL_TILE_TRAIT (object);
-  source  = trait->source;
+  handlers  = GEGL_HANDLERS (object);
+  handler   = GEGL_HANDLER (object);
+  source  = handler->source;
   backend = gegl_buffer_backend (buffer);
 
   if (source)
@@ -432,7 +432,7 @@ gegl_buffer_constructor (GType                  type,
   buffer->total_shift_x += buffer->shift_x;
   buffer->total_shift_y += buffer->shift_y;
 
-  if (0) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_EMPTY,
+  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_EMPTY,
                                                      "backend", backend,
                                                      NULL));
 
@@ -443,7 +443,7 @@ gegl_buffer_constructor (GType                  type,
    */
 
   if (0 && buffer->width < 1 << 14)
-    gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_CACHE,
                                                 "size",
                                                 needed_tiles (buffer->width, tile_width) + 1,
                                                 NULL));
@@ -457,12 +457,12 @@ get_tile (GeglTileStore *tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileTraits *traits = GEGL_TILE_TRAITS (tile_store);
-  GeglTileStore  *source = GEGL_TILE_TRAIT (tile_store)->source;
+  GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
+  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
   GeglTile       *tile   = NULL;
 
-  if (traits->chain != NULL)
-    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (traits->chain->data),
+  if (handlers->chain != NULL)
+    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (handlers->chain->data),
                                      x, y, z);
   else if (source)
     tile = gegl_tile_store_get_tile (source, x, y, z);

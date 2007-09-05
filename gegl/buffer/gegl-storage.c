@@ -153,10 +153,10 @@ static void
 gegl_storage_dispose (GObject *object)
 {
   GeglStorage   *storage;
-  GeglTileTrait *trait;
+  GeglHandler *handler;
 
   storage = (GeglStorage *) object;
-  trait   = GEGL_TILE_TRAIT (object);
+  handler   = GEGL_HANDLER (object);
 
   (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
@@ -186,13 +186,13 @@ gegl_storage_constructor (GType                  type,
 {
   GObject        *object;
   GeglStorage    *storage;
-  GeglTileTraits *traits;
-  GeglTileTrait  *trait;
+  GeglHandlers   *handlers;
+  GeglHandler    *handler;
 
   object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   storage = GEGL_STORAGE (object);
-  traits  = GEGL_TILE_TRAITS (storage);
-  trait   = GEGL_TILE_TRAIT (storage);
+  handlers  = GEGL_HANDLERS (storage);
+  handler   = GEGL_HANDLER (storage);
 
   if (storage->path != NULL)
     {
@@ -219,7 +219,7 @@ gegl_storage_constructor (GType                  type,
     gint tile_size;
     gint px_size;
 
-    g_object_get (trait->source,
+    g_object_get (handler->source,
                   "tile-size", &tile_size,
                   "px-size", &px_size,
                   NULL);
@@ -229,24 +229,24 @@ gegl_storage_constructor (GType                  type,
                   NULL);
   }
 
-  if (1) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
-                                                     "size", 256,
-                                                     NULL));
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_CACHE,
+                                                  "size", 256,
+                                                   NULL));
 
-  if (0) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_LOG,
-                                                     NULL));
+  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_LOG,
+                                                  NULL));
 
-  if (1) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_ZOOM,
-                                                     "backend", trait->source,
-                                                     "storage", storage,
-                                                     NULL));
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_ZOOM,
+                                                  "backend", handler->source,
+                                                  "storage", storage,
+                                                  NULL));
 
   /* moved here to allow sharing between buffers (speeds up, but only
    * allows nulled (transparent) blank tiles,..
    */
-  if (1) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_EMPTY,
-                                                     "backend", trait->source,
-                                                     NULL));
+  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_TILE_EMPTY,
+                                                  "backend", handler->source,
+                                                   NULL));
 
   /* it doesn't really matter that empty tiles are not cached, since they
    * are Copy on Write.

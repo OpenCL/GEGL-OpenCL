@@ -21,7 +21,7 @@
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 #include "gegl-tile-zoom.h"
 
 G_DEFINE_TYPE (GeglTileZoom, gegl_tile_zoom, GEGL_TYPE_TILE_TRAIT)
@@ -197,7 +197,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileStore *source = GEGL_TILE_TRAIT (gegl_tile_store)->source;
+  GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
   GeglTileZoom  *zoom   = GEGL_TILE_ZOOM (gegl_tile_store);
   GeglTile      *tile   = NULL;
   Babl          *format = (Babl *) (zoom->backend->format);
@@ -337,8 +337,8 @@ message (GeglTileStore  *tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglTileTrait *trait  = GEGL_TILE_TRAIT (tile_store);
-  GeglTileStore *source = trait->source;
+  GeglHandler *handler  = GEGL_HANDLER (tile_store);
+  GeglTileStore *source = handler->source;
 
   if (message == GEGL_TILE_VOID_TL ||
       message == GEGL_TILE_VOID_TR ||
@@ -374,8 +374,8 @@ message (GeglTileStore  *tile_store,
       return FALSE;
     }
   /* pass the message on */
-  if (trait->source)
-    return gegl_tile_store_message (trait->source, message, x, y, z, data);
+  if (handler->source)
+    return gegl_tile_store_message (handler->source, message, x, y, z, data);
   return FALSE; /* pass it on */
 }
 

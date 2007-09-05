@@ -31,11 +31,11 @@ typedef struct _GeglTileStoreClass       GeglTileStoreClass;
 typedef struct _GeglTileBackend          GeglTileBackend;
 typedef struct _GeglTileBackendClass     GeglTileBackendClass;
 
-typedef struct _GeglTileTrait            GeglTileTrait;
-typedef struct _GeglTileTraitClass       GeglTileTraitClass;
+typedef struct _GeglHandler            GeglHandler;
+typedef struct _GeglHandlerClass       GeglHandlerClass;
 
-typedef struct _GeglTileTraits           GeglTileTraits;
-typedef struct _GeglTileTraitsClass      GeglTileTraitsClass;
+typedef struct _GeglHandlers           GeglHandlers;
+typedef struct _GeglHandlersClass      GeglHandlersClass;
 
 typedef struct _GeglStorage              GeglStorage;
 typedef struct _GeglStorageClass         GeglStorageClass;

@@ -23,7 +23,7 @@
 #include <glib.h>
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 
 G_BEGIN_DECLS
 
@@ -40,14 +40,14 @@ typedef struct _GeglTileEmptyClass GeglTileEmptyClass;
 
 struct _GeglTileEmpty
 {
-  GeglTileTrait    parent_instance;
+  GeglHandler      parent_instance;
   GeglTile        *tile;
   GeglTileBackend *backend;
 };
 
 struct _GeglTileEmptyClass
 {
-  GeglTileTraitClass parent_class;
+  GeglHandlerClass parent_class;
 };
 
 GType gegl_tile_empty_get_type (void) G_GNUC_CONST;

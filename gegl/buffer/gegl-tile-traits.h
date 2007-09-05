@@ -23,37 +23,37 @@
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
 
-#ifndef _GEGL_TILE_TRAITS_H
-#define _GEGL_TILE_TRAITS_H
+#ifndef _GEGL_HANDLERS_H
+#define _GEGL_HANDLERS_H
 
-#define GEGL_TYPE_TILE_TRAITS           (gegl_tile_traits_get_type ())
-#define GEGL_TILE_TRAITS(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAITS, GeglTileTraits))
-#define GEGL_TILE_TRAITS_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAITS, GeglTileTraitsClass))
+#define GEGL_TYPE_TILE_TRAITS           (gegl_handlers_get_type ())
+#define GEGL_HANDLERS(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAITS, GeglHandlers))
+#define GEGL_HANDLERS_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAITS, GeglHandlersClass))
 #define GEGL_IS_TILE_TRAITS(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_TRAITS))
 #define GEGL_IS_TILE_TRAITS_CLASS(klass)(G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_TRAITS))
-#define GEGL_TILE_TRAITS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAITS, GeglTileTraitsClass))
+#define GEGL_HANDLERS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAITS, GeglHandlersClass))
 
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 
-struct _GeglTileTraits
+struct _GeglHandlers
 {
-  GeglTileTrait  parent_object;
-  GSList        *chain;
+  GeglHandler  parent_object;
+  GSList      *chain;
 };
 
-struct _GeglTileTraitsClass
+struct _GeglHandlersClass
 {
-  GeglTileTraitClass parent_class;
+  GeglHandlerClass parent_class;
 };
 
-GType   gegl_tile_traits_get_type           (void) G_GNUC_CONST;
+GType   gegl_handlers_get_type           (void) G_GNUC_CONST;
 
-/* NOTE: gegl_tile_traits_add steals the initial assumed reference */
-GeglTileTrait * gegl_tile_traits_add        (GeglTileTraits *traits,
-                                             GeglTileTrait  *trait);
+/* NOTE: gegl_handlers_add steals the initial assumed reference */
+GeglHandler * gegl_handlers_add        (GeglHandlers *handlers,
+                                        GeglHandler  *handler);
 
-/* returns the first matching trait of a specified type (or NULL) */
-GeglTileTrait * gegl_tile_traits_get_first  (GeglTileTraits *traits,
-                                             GType           type);
+/* returns the first matching handler of a specified type (or NULL) */
+GeglHandler * gegl_handlers_get_first  (GeglHandlers *handlers,
+                                        GType           type);
 
 #endif

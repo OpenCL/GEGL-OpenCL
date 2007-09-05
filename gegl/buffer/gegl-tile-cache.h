@@ -21,7 +21,7 @@
 #define _TILE_CACHE_H
 
 #include "gegl-buffer-types.h"
-#include "gegl-tile-trait.h"
+#include "gegl-handler.h"
 
 #define GEGL_TYPE_TILE_CACHE            (gegl_tile_cache_get_type ())
 #define GEGL_TILE_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_CACHE, GeglTileCache))
@@ -36,18 +36,18 @@ typedef struct _GeglTileCacheClass   GeglTileCacheClass;
 
 struct _GeglTileCache
 {
-  GeglTileTrait parent_instance;
-  GSList  *list;
-  gint     size;
-  gint     hits;
-  gint     misses;
+  GeglHandler parent_instance;
+  GSList     *list;
+  gint        size;
+  gint        hits;
+  gint        misses;
 
   gint     wash_percentage;
 };
 
 struct _GeglTileCacheClass
 {
-  GeglTileTraitClass parent_class;
+  GeglHandlerClass parent_class;
 };
 
 GType       gegl_tile_cache_get_type            (void) G_GNUC_CONST;

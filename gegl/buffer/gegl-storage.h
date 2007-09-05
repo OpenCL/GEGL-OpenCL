@@ -37,22 +37,22 @@
 
 struct _GeglStorage
 {
-  GeglTileTraits parent_object;
-  Babl          *format;
-  gint           tile_width;
-  gint           tile_height;
-  gint           tile_size;
-  gint           px_size;
-  gint           width;
-  gint           height;
-  gchar         *path;
+  GeglHandlers parent_object;
+  Babl        *format;
+  gint         tile_width;
+  gint         tile_height;
+  gint         tile_size;
+  gint         px_size;
+  gint         width;
+  gint         height;
+  gchar       *path;
 
   guint          idle_swapper;
 };
 
 struct _GeglStorageClass
 {
-  GeglTileTraitsClass parent_class;
+  GeglHandlersClass parent_class;
 };
 
 GType        gegl_storage_get_type           (void) G_GNUC_CONST;
