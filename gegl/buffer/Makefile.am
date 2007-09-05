@@ -22,7 +22,7 @@ BUFFER_sources = \
     gegl-tile-mem.c		\
     gegl-tile-store.c		\
     gegl-handler.c		\
-    gegl-tile-traits.c		\
+    gegl-handlers.c		\
     gegl-tile-zoom.c
 
 BUFFER_headers = \
@@ -49,7 +49,7 @@ BUFFER_headers = \
     gegl-tile-mem.h		\
     gegl-tile-store.h		\
     gegl-handler.h		\
-    gegl-tile-traits.h		\
+    gegl-handlers.h		\
     gegl-tile-zoom.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)

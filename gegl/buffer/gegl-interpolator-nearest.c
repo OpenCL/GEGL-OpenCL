@@ -41,9 +41,6 @@ static void    gegl_interpolator_nearest_get (GeglInterpolator *self,
                                               gdouble           y,
                                               void             *output);
 
-static void    gegl_interpolator_nearest_prepare (GeglInterpolator *self);
-
-
 G_DEFINE_TYPE (GeglInterpolatorNearest, gegl_interpolator_nearest, GEGL_TYPE_INTERPOLATOR)
 
 static void

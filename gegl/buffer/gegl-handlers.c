@@ -20,7 +20,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
-#include "gegl-tile-traits.h"
+#include "gegl-handlers.h"
 #include "gegl-tile-cache.h"
 
 G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_TILE_TRAIT)

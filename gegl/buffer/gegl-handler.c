@@ -23,7 +23,7 @@
 
 #include "gegl-tile-store.h"
 #include "gegl-handler.h"
-#include "gegl-tile-traits.h"
+#include "gegl-handlers.h"
 
 G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_TILE_STORE)
 static GObjectClass * parent_class = NULL;

@@ -33,7 +33,7 @@
 #define GEGL_IS_STORAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_STORAGE))
 #define GEGL_STORAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_STORAGE, GeglStorageClass))
 
-#include "gegl-tile-traits.h"
+#include "gegl-handlers.h"
 
 struct _GeglStorage
 {

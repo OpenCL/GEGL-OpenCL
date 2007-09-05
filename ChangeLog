@@ -1,5 +1,9 @@
 2007-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/*: renamed files to get rid of "trait" term.
+
+2007-09-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/Makefile.am:
 	* gegl/buffer/*.[ch]: %s/GeglTileTrait/GeglHandler/ %s/trait/handler.
 
