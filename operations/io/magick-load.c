@@ -60,13 +60,7 @@ load_cache (GeglChantOperation *op_magick_load)
 
     {
       GeglBuffer *cache = GEGL_BUFFER(gegl_node_get_cache (temp_gegl));
-      GeglBuffer *newbuf = g_object_new (GEGL_TYPE_BUFFER,
-                                         "source", cache,
-                                         "x", rect.x,
-                                         "y", rect.y,
-                                         "width", rect.width,
-                                         "height", rect.height,
-                                         NULL);
+      GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
       op_magick_load->priv = (gpointer)newbuf;
       g_object_unref (cache);
     }

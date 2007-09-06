@@ -124,13 +124,7 @@ process (GeglOperation *operation,
       priv->buf = g_malloc (priv->width * priv->height * 4);
     }
 
-  source = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", input,
-                         "x",      requested->x,
-                         "y",      requested->y,
-                         "width",  requested->width ,
-                         "height", requested->height,
-                         NULL);
+  source = gegl_buffer_create_sub_buffer (input, requested);
 
   gegl_buffer_get (source, NULL, 1.0, babl_format ("R'G'B'A u8"), priv->buf);
   gtk_widget_queue_draw (priv->drawing_area);

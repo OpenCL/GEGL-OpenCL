@@ -139,7 +139,7 @@ process (GeglOperation *operation,
    *
    */
   source = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", input,
+                         "provider", input,
                          "x",      result->x,
                          "y",      result->y,
                          "width",  result->width ,

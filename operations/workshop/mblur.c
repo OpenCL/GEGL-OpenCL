@@ -78,23 +78,9 @@ process (GeglOperation *operation,
       GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
       GeglBuffer      *temp_in;
 
-      
-      temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                             "source", input,
-                             "x",      result->x,
-                             "y",      result->y,
-                             "width",  result->width ,
-                             "height", result->height ,
-                             NULL);
+        temp_in = gegl_buffer_create_sub_buffer (input, result);
+        output = gegl_buffer_new (result, babl_format ("RGBA float"));
 
-
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                             "format", babl_format ("RGBA float"),
-                             "x",      result->x,
-                             "y",      result->y,
-                             "width",  result->width ,
-                             "height", result->height ,
-                             NULL);
       {
         gint pixels  = result->width*result->height;
         gint bufsize = pixels*4*sizeof(gfloat);

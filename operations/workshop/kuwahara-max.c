@@ -59,34 +59,15 @@ process (GeglOperation *operation,
       GeglBuffer      *temp_in;
       GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
 
-      temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                             "source", input,
-                             "x",      compute.x,
-                             "y",      compute.y,
-                             "width",  compute.width ,
-                             "height", compute.height ,
-                             NULL);
-
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                             "format", babl_format ("RGBA float"),
-                             "x",      compute.x,
-                             "y",      compute.y,
-                             "width",  compute.width ,
-                             "height", compute.height ,
-                             NULL);
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+      output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
       kuwahara (temp_in, output, self->radius);
       g_object_unref (temp_in);
       
 
       {
-        GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
-                                              "source", output,
-                                              "x",      result->x,
-                                              "y",      result->y,
-                                              "width",  result->width ,
-                                              "height", result->height,
-                                              NULL);
+        GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
       }

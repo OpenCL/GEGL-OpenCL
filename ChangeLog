@@ -1,5 +1,11 @@
 2007-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operations/*/*.c: modified to use "provider" instead of
+	"source" property when doing low-level GeglBuffer actions, also
+	replaced some sub-buffer creations with gegl_buffer_create_sub_buffer.
+
+2007-09-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Made GeglTileStore become GeglTileProvider.
 	
 	* gegl/buffer/Makefile.am:

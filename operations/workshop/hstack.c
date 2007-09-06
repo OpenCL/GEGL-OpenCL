@@ -55,29 +55,10 @@ process (GeglOperation *operation,
    * include both input buffers
    */
 
-  temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", input,
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width,
-                         "height", result->height,
-                         NULL);
-  temp_aux = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", aux,
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width,
-                         "height", result->height,
-                         "shift-x", -(input->width + input->x),
-                         "shift-y", -(input->y),
-                         NULL);
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("RGBA float"),
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width,
-                         "height", result->height,
-                         NULL);
+          temp_in = gegl_buffer_create_sub_buffer (input, result);
+          temp_aux = gegl_buffer_create_sub_buffer (aux, result);
+          output = gegl_buffer_new (result, babl_format ("RGBA float"));
+
     {
       gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
       gfloat *bufB = g_malloc0 (result->width * result->height * 4 * 4);

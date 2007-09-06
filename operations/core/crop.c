@@ -60,7 +60,7 @@ process (GeglOperation *operation,
   g_assert (input);
 
   output = g_object_new (GEGL_TYPE_BUFFER,
-                         "source",       input,
+                         "provider", input,
                          "x",      (int)crop->x,
                          "y",      (int)crop->y,
                          "width",  (int)crop->width,

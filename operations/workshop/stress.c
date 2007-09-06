@@ -22,13 +22,13 @@
 
 #if GEGL_CHANT_PROPERTIES 
 
-gegl_chant_int (radius,     2, 5000.0, 40, "neighbourhood taken into account")
-gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
-gegl_chant_int (iterations, 0, 1000.0, 34,   "number of iterations (length of exposure)")
-gegl_chant_boolean (same_spray, FALSE, "use the same spray for all pixels")
-gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
+gegl_chant_int (radius,     2, 5000.0, 300, "neighbourhood taken into account")
+gegl_chant_int (samples,    0, 1000,   10,    "number of samples to do")
+gegl_chant_int (iterations, 0, 1000.0, 10,   "number of iterations (length of exposure)")
+gegl_chant_boolean (same_spray, TRUE, "use the same spray for all pixels")
+gegl_chant_double (rgamma, 0.0, 8.0, 2.0, "gamma applied to radial distribution")
 gegl_chant_double (strength, -10.0, 10.0, 1.0, "amoung of correction 0=none 1.0=full")
-gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
+gegl_chant_double (gamma, 0.0, 10.0, 1.0, "post correction gamma.")
 #else
 
 #define GEGL_CHANT_NAME         stress

@@ -58,7 +58,7 @@ process (GeglOperation *operation,
   g_assert (input);
 
   output = g_object_new (GEGL_TYPE_BUFFER,
-                         "source",       input,
+                         "provider",    input,
                          "shift-x",     (int)-translate->x,
                          "shift-y",     (int)-translate->y,
                          "abyss-width", -1,  /* turn of abyss (relying
