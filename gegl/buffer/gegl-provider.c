@@ -15,16 +15,16 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <glib.h>
 #include <glib-object.h>
-#include "gegl-tile-store.h"
+#include "gegl-provider.h"
 
-G_DEFINE_TYPE (GeglTileStore, gegl_tile_store, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglProvider, gegl_provider, G_TYPE_OBJECT)
 
 static GeglTile *
-get_tile (GeglTileStore *gegl_tile_store,
+get_tile (GeglProvider *gegl_provider,
           gint           x,
           gint           y,
           gint           z)
@@ -34,7 +34,7 @@ get_tile (GeglTileStore *gegl_tile_store,
 }
 
 static gboolean
-message (GeglTileStore  *gegl_tile_store,
+message (GeglProvider  *gegl_provider,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -46,7 +46,7 @@ message (GeglTileStore  *gegl_tile_store,
 }
 
 static void
-gegl_tile_store_class_init (GeglTileStoreClass *klass)
+gegl_provider_class_init (GeglProviderClass *klass)
 {
   /*GObjectClass *gobject_class = G_OBJECT_CLASS (klass);*/
   klass->get_tile = get_tile;
@@ -54,47 +54,47 @@ gegl_tile_store_class_init (GeglTileStoreClass *klass)
 }
 
 static void
-gegl_tile_store_init (GeglTileStore *self)
+gegl_provider_init (GeglProvider *self)
 {
 }
 
 /**
  *  GeglTile
- *  @gegl_tile_store: a GeglTileStore
+ *  @gegl_provider: a GeglProvider
  *  @x: horizontal index of requested tile
  *  @y: vertical index of requested tile
  *
  *  Return value: the tile requested (or NULL for sparse backends)
  */
 GeglTile *
-gegl_tile_store_get_tile (GeglTileStore *gegl_tile_store,
+gegl_provider_get_tile (GeglProvider *gegl_provider,
                           gint           x,
                           gint           y,
                           gint           z)
 {
-  GeglTileStoreClass *klass;
+  GeglProviderClass *klass;
 
-  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_tile_store), NULL);
+  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), NULL);
 
-  klass = GEGL_TILE_STORE_GET_CLASS (gegl_tile_store);
+  klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
 
-  return klass->get_tile (gegl_tile_store, x, y, z);
+  return klass->get_tile (gegl_provider, x, y, z);
 }
 
 gboolean
-gegl_tile_store_message (GeglTileStore  *gegl_tile_store,
+gegl_provider_message (GeglProvider  *gegl_provider,
                          GeglTileMessage message,
                          gint            x,
                          gint            y,
                          gint            z,
                          gpointer        data)
 {
-  GeglTileStoreClass *klass;
+  GeglProviderClass *klass;
 
-  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_tile_store), -1);
+  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), -1);
 
-  klass = GEGL_TILE_STORE_GET_CLASS (gegl_tile_store);
+  klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
 
-  return klass->message (gegl_tile_store, message, x, y, z, data);
+  return klass->message (gegl_provider, message, x, y, z, data);
 }
 

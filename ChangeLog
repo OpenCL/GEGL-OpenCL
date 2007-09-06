@@ -1,5 +1,13 @@
 2007-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Made GeglTileStore become GeglTileProvider.
+	
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/*.[ch]: 
+	* gegl/graph/gegl-node.c:
+
+2007-09-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/Makefile.am:
 	* gegl/buffer/*.[ch]: renamed files and substituted strings like
 	s/GeglTileZoom/GeglHandlerZoom/

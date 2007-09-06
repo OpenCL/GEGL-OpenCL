@@ -15,14 +15,14 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <glib.h>
 #include <glib-object.h>
 #include <string.h>
 
 #include <babl/babl.h>
-#include "gegl-tile-store.h"
+#include "gegl-provider.h"
 #include "gegl-tile-backend.h"
 
 G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_TILE_STORE)

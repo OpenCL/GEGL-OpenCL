@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include <stdlib.h>
@@ -172,7 +172,7 @@ storage_idle (gpointer data)
       return FALSE;
     }
 
-  gegl_tile_store_message (GEGL_TILE_STORE (storage),
+  gegl_provider_message (GEGL_PROVIDER (storage),
                            GEGL_TILE_IDLE, 0, 0, 0, NULL);
 
   return TRUE;
@@ -197,7 +197,7 @@ gegl_storage_constructor (GType                  type,
   if (storage->path != NULL)
     {
       g_object_set (storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_DISK_STORE,
+                    "provider", g_object_new (GEGL_TYPE_TILE_DISK_STORE,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -208,7 +208,7 @@ gegl_storage_constructor (GType                  type,
   else
     {
       g_object_set (storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_MEM_STORE,
+                    "provider", g_object_new (GEGL_TYPE_TILE_MEM_STORE,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -219,7 +219,7 @@ gegl_storage_constructor (GType                  type,
     gint tile_size;
     gint px_size;
 
-    g_object_get (handler->source,
+    g_object_get (handler->provider,
                   "tile-size", &tile_size,
                   "px-size", &px_size,
                   NULL);
@@ -237,7 +237,7 @@ gegl_storage_constructor (GType                  type,
                                                   NULL));
 
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
-                                                  "backend", handler->source,
+                                                  "backend", handler->provider,
                                                   "storage", storage,
                                                   NULL));
 
@@ -245,7 +245,7 @@ gegl_storage_constructor (GType                  type,
    * allows nulled (transparent) blank tiles,..
    */
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
-                                                  "backend", handler->source,
+                                                  "backend", handler->provider,
                                                    NULL));
 
   /* it doesn't really matter that empty tiles are not cached, since they
@@ -266,10 +266,10 @@ static void
 gegl_storage_class_init (GeglStorageClass *class)
 {
   GObjectClass       *gobject_class;
-  GeglTileStoreClass *tile_store_class;
+  GeglProviderClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglTileStoreClass *) class;
+  tile_store_class = (GeglProviderClass *) class;
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_storage_dispose;

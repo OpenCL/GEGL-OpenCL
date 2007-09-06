@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #ifndef GEGL_TILE_H
 #define GEGL_TILE_H
@@ -82,7 +82,7 @@ void       * gegl_tile_get_format      (GeglTile    *tile);
 void         gegl_tile_lock            (GeglTile    *tile);
 void         gegl_tile_unlock          (GeglTile    *tile);
 gboolean     gegl_tile_is_stored       (GeglTile    *tile);
-gboolean     gegl_tile_store           (GeglTile    *tile);
+gboolean     gegl_provider           (GeglTile    *tile);
 void         gegl_tile_void            (GeglTile    *tile);
 GeglTile    *gegl_tile_dup             (GeglTile    *tile);
 /* utility low-level functions used by undo system */

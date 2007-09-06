@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 #ifndef _TILE_BACKEND_H
 #define _TILE_BACKEND_H
@@ -23,7 +23,7 @@
 #include <glib.h>
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
-#include "gegl-tile-store.h"
+#include "gegl-provider.h"
 
 G_BEGIN_DECLS
 
@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 
 struct _GeglTileBackend
 {
-  GeglTileStore  parent_instance;
+  GeglProvider  parent_instance;
   gint           tile_width;
   gint           tile_height;
   void          *format;        /* defaults to the babl format "R'G'B'A u8" */
@@ -46,7 +46,7 @@ struct _GeglTileBackend
 
 struct _GeglTileBackendClass
 {
-  GeglTileStoreClass parent_class;
+  GeglProviderClass parent_class;
 };
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;

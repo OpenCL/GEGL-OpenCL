@@ -17,8 +17,8 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_TILE_STORE_H
-#define _GEGL_TILE_STORE_H
+#ifndef _GEGL_PROVIDER_H
+#define _GEGL_PROVIDER_H
 
 #include <glib.h>
 #include "gegl-buffer-types.h"
@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_STORE            (gegl_tile_store_get_type ())
-#define GEGL_TILE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORE, GeglTileStore))
-#define GEGL_TILE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_STORE, GeglTileStoreClass))
+#define GEGL_TYPE_TILE_STORE            (gegl_provider_get_type ())
+#define GEGL_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORE, GeglProvider))
+#define GEGL_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_STORE, GeglProviderClass))
 #define GEGL_IS_TILE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_STORE))
 #define GEGL_IS_TILE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_STORE))
-#define GEGL_TILE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_STORE, GeglTileStoreClass))
+#define GEGL_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_STORE, GeglProviderClass))
 
 typedef gint GeglTileMessage;
 
@@ -50,21 +50,21 @@ enum _GeglTileMessage
   GEGL_TILE_LAST_MESSAGE
 };
 
-struct _GeglTileStore
+struct _GeglProvider
 {
   GObject       parent_instance;
 };
 
-struct _GeglTileStoreClass
+struct _GeglProviderClass
 {
   GObjectClass    parent_class;
 
-  GeglTile     *(*get_tile) (GeglTileStore  *gegl_tile_store,
+  GeglTile     *(*get_tile) (GeglProvider  *gegl_provider,
                              gint            x,
                              gint            y,
                              gint            z);
 
-  gboolean      (*message)  (GeglTileStore  *gegl_tile_store,
+  gboolean      (*message)  (GeglProvider  *gegl_provider,
                              GeglTileMessage message,
                              gint            x,
                              gint            y,
@@ -72,14 +72,14 @@ struct _GeglTileStoreClass
                              gpointer        data);
 };
 
-GType      gegl_tile_store_get_type (void) G_GNUC_CONST;
+GType      gegl_provider_get_type (void) G_GNUC_CONST;
 
-GeglTile * gegl_tile_store_get_tile (GeglTileStore *gegl_tile_store,
+GeglTile * gegl_provider_get_tile (GeglProvider *gegl_provider,
                                      gint           x,
                                      gint           y,
                                      gint           z);
 
-gboolean   gegl_tile_store_message   (GeglTileStore   *gegl_tile_store,
+gboolean   gegl_provider_message   (GeglProvider   *gegl_provider,
                                       GeglTileMessage  message,
                                       gint             x,
                                       gint             y,

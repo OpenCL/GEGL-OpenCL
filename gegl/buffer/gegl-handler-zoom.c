@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <glib.h>
 #include <glib-object.h>
@@ -192,22 +192,22 @@ static void inline set_half (GeglTile * dst_tile,
 }
 
 static GeglTile *
-get_tile (GeglTileStore *gegl_tile_store,
+get_tile (GeglProvider *gegl_provider,
           gint           x,
           gint           y,
           gint           z)
 {
-  GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
-  GeglHandlerZoom  *zoom   = GEGL_HANDLER_ZOOM (gegl_tile_store);
-  GeglTile      *tile   = NULL;
-  Babl          *format = (Babl *) (zoom->backend->format);
-  gint           tile_width;
-  gint           tile_height;
-  gint           tile_size;
+  GeglProvider    *provider = GEGL_HANDLER (gegl_provider)->provider;
+  GeglHandlerZoom *zoom   = GEGL_HANDLER_ZOOM (gegl_provider);
+  GeglTile        *tile   = NULL;
+  Babl            *format = (Babl *) (zoom->backend->format);
+  gint             tile_width;
+  gint             tile_height;
+  gint             tile_size;
 
-  if (source)
+  if (provider)
     {
-      tile = gegl_tile_store_get_tile (source, x, y, z);
+      tile = gegl_provider_get_tile (provider, x, y, z);
     }
 
   if (tile != NULL)
@@ -267,7 +267,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           /* we get the tile from ourselves, to make successive rescales work
            * correctly */
           if (fetch[i][j])
-            source_tile[i][j] = gegl_tile_store_get_tile (gegl_tile_store,
+            source_tile[i][j] = gegl_provider_get_tile (gegl_provider,
                                                           x * 2 + i, y * 2 + j, z - 1);
         }
 
@@ -330,7 +330,7 @@ get_tile (GeglTileStore *gegl_tile_store,
 }
 
 static gboolean
-message (GeglTileStore  *tile_store,
+message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -338,14 +338,14 @@ message (GeglTileStore  *tile_store,
          gpointer        data)
 {
   GeglHandler *handler  = GEGL_HANDLER (tile_store);
-  GeglTileStore *source = handler->source;
+  GeglProvider *provider = handler->provider;
 
   if (message == GEGL_TILE_VOID_TL ||
       message == GEGL_TILE_VOID_TR ||
       message == GEGL_TILE_VOID_BL ||
       message == GEGL_TILE_VOID_BR)
     {
-      GeglTile *tile = gegl_tile_store_get_tile (source, x, y, z);
+      GeglTile *tile = gegl_provider_get_tile (provider, x, y, z);
 
       if (!tile)
         return FALSE;
@@ -374,8 +374,8 @@ message (GeglTileStore  *tile_store,
       return FALSE;
     }
   /* pass the message on */
-  if (handler->source)
-    return gegl_tile_store_message (handler->source, message, x, y, z, data);
+  if (handler->provider)
+    return gegl_provider_message (handler->provider, message, x, y, z, data);
   return FALSE; /* pass it on */
 }
 
@@ -447,10 +447,10 @@ static void
 gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  gegl_tile_store_class->get_tile = get_tile;
-  gegl_tile_store_class->message  = message;
+  gegl_provider_class->get_tile = get_tile;
+  gegl_provider_class->message  = message;
   gobject_class->set_property     = set_property;
   gobject_class->get_property     = get_property;
   gobject_class->constructor      = constructor;

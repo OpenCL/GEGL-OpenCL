@@ -17,13 +17,13 @@ BUFFER_sources = \
     gegl-tile-backend.c		\
     gegl-tile-disk.c		\
     gegl-tile-mem.c		\
-    gegl-tile-store.c		\
     gegl-handler.c		\
     gegl-handlers.c		\
     gegl-handler-cache.c	\
     gegl-handler-empty.c	\
     gegl-handler-log.c		\
-    gegl-handler-zoom.c
+    gegl-handler-zoom.c		\
+    gegl-provider.c
 
 BUFFER_headers = \
     gegl-buffer-allocator.h	\
@@ -44,13 +44,13 @@ BUFFER_headers = \
     gegl-tile-backend.h		\
     gegl-tile-disk.h		\
     gegl-tile-mem.h		\
-    gegl-tile-store.h		\
     gegl-handler.h		\
     gegl-handlers.h		\
     gegl-handler-cache.h	\
     gegl-handler-empty.h	\
     gegl-handler-log.h		\
-    gegl-handler-zoom.h
+    gegl-handler-zoom.h		\
+    gegl-provider.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 libbufferinclude_HEADERS = gegl-buffer.h

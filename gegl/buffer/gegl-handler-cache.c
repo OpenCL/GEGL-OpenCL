@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <stdio.h>
 
@@ -99,13 +99,13 @@ dispose (GObject *object)
 }
 
 static GeglTile *
-get_tile (GeglTileStore *tile_store,
+get_tile (GeglProvider *tile_store,
           gint           x,
           gint           y,
           gint           z)
 {
   GeglHandlerCache *cache  = GEGL_HANDLER_CACHE (tile_store);
-  GeglTileStore *source = GEGL_HANDLER (tile_store)->source;
+  GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
   GeglTile      *tile   = NULL;
 
   tile = gegl_handler_cache_get_tile (cache, x, y, z);
@@ -117,8 +117,8 @@ get_tile (GeglTileStore *tile_store,
     }
   cache->misses++;
 
-  if (source)
-    tile = gegl_tile_store_get_tile (source, x, y, z);
+  if (provider)
+    tile = gegl_provider_get_tile (provider, x, y, z);
 
   if (tile)
     {
@@ -132,7 +132,7 @@ static gboolean
 gegl_handler_cache_void (GeglHandlerCache *cache, gint x, gint y, gint z);
 
 static gboolean
-message (GeglTileStore  *tile_store,
+message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -164,8 +164,8 @@ message (GeglTileStore  *tile_store,
     {
       gegl_handler_cache_void (cache, x, y, z);
     }
-  if (handler->source)
-    return gegl_tile_store_message (handler->source, message, x, y, z, data);
+  if (handler->provider)
+    return gegl_provider_message (handler->provider, message, x, y, z, data);
   return FALSE;
 }
 
@@ -221,7 +221,7 @@ static void
 gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
 {
   GObjectClass       *gobject_class    = G_OBJECT_CLASS (class);
-  GeglTileStoreClass *tile_store_class = GEGL_TILE_STORE_CLASS (class);
+  GeglProviderClass *tile_store_class = GEGL_PROVIDER_CLASS (class);
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->set_property = set_property;
@@ -292,7 +292,7 @@ gegl_handler_cache_wash (GeglHandlerCache *cache)
     }
   if (last_dirty != NULL)
     {
-      gegl_tile_store (last_dirty);
+      gegl_provider (last_dirty);
       return TRUE;
     }
   return FALSE;

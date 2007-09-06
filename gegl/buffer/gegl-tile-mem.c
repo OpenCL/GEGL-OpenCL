@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <fcntl.h>
 #include <unistd.h>
@@ -138,7 +138,7 @@ lookup_entry (GeglTileMem *self,
  * too often.
  */
 static GeglTile *
-get_tile (GeglTileStore *tile_store,
+get_tile (GeglProvider *tile_store,
           gint           x,
           gint           y,
           gint           z)
@@ -163,7 +163,7 @@ get_tile (GeglTileStore *tile_store,
 }
 
 static
-gboolean set_tile (GeglTileStore *store,
+gboolean set_tile (GeglProvider *store,
                    GeglTile      *tile,
                    gint           x,
                    gint           y,
@@ -191,7 +191,7 @@ gboolean set_tile (GeglTileStore *store,
 }
 
 static
-gboolean void_tile (GeglTileStore *store,
+gboolean void_tile (GeglProvider *store,
                     GeglTile      *tile,
                     gint           x,
                     gint           y,
@@ -210,7 +210,7 @@ gboolean void_tile (GeglTileStore *store,
 }
 
 static
-gboolean exist_tile (GeglTileStore *store,
+gboolean exist_tile (GeglProvider *store,
                      GeglTile      *tile,
                      gint           x,
                      gint           y,
@@ -230,7 +230,7 @@ enum
 };
 
 static gboolean
-message (GeglTileStore  *tile_store,
+message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -354,7 +354,7 @@ static void
 gegl_tile_mem_class_init (GeglTileMemClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -363,8 +363,8 @@ gegl_tile_mem_class_init (GeglTileMemClass *klass)
   gobject_class->constructor  = gegl_tile_mem_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_tile_store_class->get_tile = get_tile;
-  gegl_tile_store_class->message  = message;
+  gegl_provider_class->get_tile = get_tile;
+  gegl_provider_class->message  = message;
 }
 
 static void

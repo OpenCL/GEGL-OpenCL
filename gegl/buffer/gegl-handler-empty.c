@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <glib.h>
 #include <glib-object.h>
@@ -43,17 +43,17 @@ finalize (GObject *object)
 }
 
 static GeglTile *
-get_tile (GeglTileStore *gegl_tile_store,
+get_tile (GeglProvider *gegl_provider,
           gint           x,
           gint           y,
           gint           z)
 {
-  GeglTileStore *source = GEGL_HANDLER (gegl_tile_store)->source;
-  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_tile_store);
+  GeglProvider *provider = GEGL_HANDLER (gegl_provider)->provider;
+  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_provider);
   GeglTile      *tile   = NULL;
 
-  if (source)
-    tile = gegl_tile_store_get_tile (source, x, y, z);
+  if (provider)
+    tile = gegl_provider_get_tile (provider, x, y, z);
   if (tile != NULL)
     return tile;
 
@@ -134,9 +134,9 @@ static void
 gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  gegl_tile_store_class->get_tile = get_tile;
+  gegl_provider_class->get_tile = get_tile;
   gobject_class->set_property     = set_property;
   gobject_class->get_property     = get_property;
   gobject_class->constructor      = constructor;

@@ -723,13 +723,8 @@ void          gegl_node_blit (GeglNode      *node,
       GeglBuffer *buffer;
       buffer = gegl_node_apply_roi (node, "output", roi);
       {
-        GeglBuffer *roi_buf = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", buffer,
-                                            "x", roi->x,
-                                            "y", roi->y,
-                                            "width", roi->width,
-                                            "height", roi->height,
-                                            NULL);
+        GeglBuffer *roi_buf = gegl_buffer_create_sub_buffer (buffer, roi);
+
         if (destination_buf)
           {
             gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);

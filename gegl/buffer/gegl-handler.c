@@ -15,13 +15,14 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include <glib.h>
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-tile-store.h"
+#include "gegl-provider.h"
 #include "gegl-handler.h"
 #include "gegl-handlers.h"
 
@@ -39,43 +40,43 @@ dispose (GObject *object)
 {
   GeglHandler *handler = GEGL_HANDLER (object);
 
-  if (handler->source != NULL)
+  if (handler->provider != NULL)
     {
-      g_object_unref (handler->source);
-      handler->source = NULL;
+      g_object_unref (handler->provider);
+      handler->provider = NULL;
     }
 
   (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
 static GeglTile *
-get_tile (GeglTileStore *gegl_tile_store,
+get_tile (GeglProvider *gegl_provider,
           gint           x,
           gint           y,
           gint           z)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_tile_store);
+  GeglHandler *handler = GEGL_HANDLER (gegl_provider);
   GeglTile      *tile  = NULL;
 
-  if (handler->source)
-    tile = gegl_tile_store_get_tile (handler->source, x, y, z);
+  if (handler->provider)
+    tile = gegl_provider_get_tile (handler->provider, x, y, z);
   if (tile != NULL)
     return tile;
   return tile;
 }
 
 static gboolean
-message (GeglTileStore  *gegl_tile_store,
+message (GeglProvider  *gegl_provider,
          GeglTileMessage message,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_tile_store);
+  GeglHandler *handler = GEGL_HANDLER (gegl_provider);
 
-  if (handler->source)
-    return gegl_tile_store_message (handler->source, message, x, y, z, data);
+  if (handler->provider)
+    return gegl_provider_message (handler->provider, message, x, y, z, data);
   return FALSE;
 }
 
@@ -90,7 +91,7 @@ get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_SOURCE:
-        g_value_set_object (value, handler->source);
+        g_value_set_object (value, handler->provider);
         break;
 
       default:
@@ -110,9 +111,9 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_SOURCE:
-        if (handler->source != NULL)
-          g_object_unref (handler->source);
-        handler->source = GEGL_TILE_STORE (g_value_dup_object (value));
+        if (handler->provider != NULL)
+          g_object_unref (handler->provider);
+        handler->provider = GEGL_PROVIDER (g_value_dup_object (value));
 
         /* special case if we are the Traits subclass of Trait
          * also set the source at the end of the chain.
@@ -125,7 +126,7 @@ set_property (GObject      *gobject,
               iter = iter->next;
             if (iter)
               {
-                g_object_set (GEGL_HANDLER (iter->data), "source", handler->source, NULL);
+                g_object_set (GEGL_HANDLER (iter->data), "provider", handler->provider, NULL);
               }
           }
         return;
@@ -140,7 +141,7 @@ static void
 gegl_handler_class_init (GeglHandlerClass *klass)
 {
   GObjectClass       *gobject_class    = G_OBJECT_CLASS (klass);
-  GeglTileStoreClass *tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+  GeglProviderClass *tile_store_class = GEGL_PROVIDER_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -148,7 +149,7 @@ gegl_handler_class_init (GeglHandlerClass *klass)
   gobject_class->dispose      = dispose;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
-                                   g_param_spec_object ("source",
+                                   g_param_spec_object ("provider",
                                                         "GeglBuffer",
                                                         "The tilestore to be a facade for",
                                                         G_TYPE_OBJECT,
@@ -161,5 +162,5 @@ gegl_handler_class_init (GeglHandlerClass *klass)
 static void
 gegl_handler_init (GeglHandler *self)
 {
-  self->source = NULL;
+  self->provider = NULL;
 }

@@ -15,14 +15,14 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #ifndef _TILE_TRAIT_H
 #define _TILE_TRAIT_H
 
 #include <glib.h>
 #include "gegl-tile.h"
-#include "gegl-tile-store.h"
+#include "gegl-provider.h"
 #include "gegl-handler.h"
 
 G_BEGIN_DECLS
@@ -38,18 +38,18 @@ G_BEGIN_DECLS
 
 struct _GeglHandler
 {
-  GeglTileStore  parent_instance;
-  GeglTileStore *source;
+  GeglProvider  parent_instance;
+  GeglProvider *provider;
 };
 
 struct _GeglHandlerClass
 {
-  GeglTileStoreClass parent_class;
+  GeglProviderClass parent_class;
 };
 
 GType gegl_handler_get_type (void) G_GNUC_CONST;
 
-#define gegl_handler_get_source(handler)  ((handler)->source)
+#define gegl_handler_get_provider(handler)  ((handler)->provider)
 
 G_END_DECLS
 

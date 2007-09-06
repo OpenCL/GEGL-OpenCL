@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 #include <glib.h>
 #include <glib/gprintf.h>
@@ -86,27 +86,27 @@ finalize (GObject *object)
 }
 
 static GeglTile *
-get_tile (GeglTileStore *tile_store,
-          gint           x,
-          gint           y,
-          gint           z)
+get_tile (GeglProvider *tile_store,
+          gint          x,
+          gint          y,
+          gint          z)
 {
-  GeglHandlers   *handlers = GEGL_HANDLERS (tile_store);
-  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
+  GeglHandlers  *handlers = GEGL_HANDLERS (tile_store);
+  GeglProvider  *provider = GEGL_HANDLER (tile_store)->provider;
   GeglTile       *tile   = NULL;
 
   if (handlers->chain != NULL)
-    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (handlers->chain->data),
+    tile = gegl_provider_get_tile (GEGL_PROVIDER (handlers->chain->data),
                                      x, y, z);
-  else if (source)
-    tile = gegl_tile_store_get_tile (source, x, y, z);
+  else if (provider)
+    tile = gegl_provider_get_tile (provider, x, y, z);
   else
     g_assert (0);
   return tile;
 }
 
 static gboolean
-message (GeglTileStore  *tile_store,
+message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -114,12 +114,12 @@ message (GeglTileStore  *tile_store,
          gpointer        data)
 {
   GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
-  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
+  GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
 
   if (handlers->chain != NULL)
-    return gegl_tile_store_message (GEGL_TILE_STORE (handlers->chain->data), message, x, y, z, data);
-  else if (source)
-    return gegl_tile_store_message (source, message, x, y, z, data);
+    return gegl_provider_message (GEGL_PROVIDER (handlers->chain->data), message, x, y, z, data);
+  else if (provider)
+    return gegl_provider_message (provider, message, x, y, z, data);
   else
     g_assert (0);
 
@@ -130,10 +130,10 @@ static void
 gegl_handlers_class_init (GeglHandlersClass *class)
 {
   GObjectClass       *gobject_class;
-  GeglTileStoreClass *tile_store_class;
+  GeglProviderClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglTileStoreClass *) class;
+  tile_store_class = (GeglProviderClass *) class;
 
   tile_store_class->get_tile = get_tile;
   tile_store_class->message  = message;
@@ -149,7 +149,7 @@ gegl_handlers_init (GeglHandlers *self)
   self->chain = NULL;
 }
 
-GeglTileStore *tsource = NULL;
+GeglProvider *tprovider = NULL;
 
 static void
 gegl_handlers_rebind (GeglHandlers *handlers)
@@ -161,19 +161,19 @@ gegl_handlers_rebind (GeglHandlers *handlers)
   while (iter)
     {
       GeglHandler   *handler;
-      GeglTileStore *source = NULL;
+      GeglProvider *provider = NULL;
 
       handler = iter->data;
       if (iter->next)
         {
-          source = g_object_ref (iter->next->data);
+          provider = g_object_ref (iter->next->data);
         }
       else
         {
-          g_object_get (handlers, "source", &source, NULL);
+          g_object_get (handlers, "provider", &provider, NULL);
         }
-      g_object_set (G_OBJECT (handler), "source", source, NULL);
-      g_object_unref (source);
+      g_object_set (G_OBJECT (handler), "provider", provider, NULL);
+      g_object_unref (provider);
       iter = iter->next;
     }
 }
@@ -182,10 +182,10 @@ GeglHandler *
 gegl_handlers_add (GeglHandlers *handlers,
                    GeglHandler  *handler)
 {
-  tsource       = GEGL_TILE_STORE (GEGL_HANDLER (handlers)->source);
+  tprovider       = GEGL_PROVIDER (GEGL_HANDLER (handlers)->provider);
   handlers->chain = g_slist_prepend (handlers->chain, handler);
   gegl_handlers_rebind (handlers);
-  tsource = NULL;
+  tprovider = NULL;
   return handler;
 }
 

@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include <glib.h>
@@ -227,12 +227,12 @@ gegl_buffer_dispose (GObject *object)
 
   gegl_buffer_sample_cleanup (buffer);
 
-  if (handler->source &&
-      GEGL_IS_BUFFER_ALLOCATOR (handler->source))
+  if (handler->provider &&
+      GEGL_IS_BUFFER_ALLOCATOR (handler->provider))
     {
       gegl_buffer_void (buffer);
 #if 0
-      handler->source = NULL; /* this might be a dangerous way of marking that we have already voided */
+      handler->provider = NULL; /* this might be a dangerous way of marking that we have already voided */
 #endif
     }
 
@@ -250,14 +250,14 @@ gegl_buffer_dispose (GObject *object)
 static GeglTileBackend *
 gegl_buffer_backend (GeglBuffer *buffer)
 {
-  GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
+  GeglProvider *tmp = GEGL_PROVIDER (buffer);
 
   if (!tmp)
     return NULL;
 
   do
     {
-      tmp = GEGL_HANDLER (tmp)->source;
+      tmp = GEGL_HANDLER (tmp)->provider;
     } while (tmp &&
              /*GEGL_IS_TILE_TRAIT (tmp) &&*/
              !GEGL_IS_TILE_BACKEND (tmp));
@@ -271,11 +271,11 @@ gegl_buffer_backend (GeglBuffer *buffer)
 GeglStorage *
 gegl_buffer_storage (GeglBuffer *buffer)
 {
-  GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
+  GeglProvider *tmp = GEGL_PROVIDER (buffer);
 
   do
     {
-      tmp = ((GeglHandler *) (tmp))->source;
+      tmp = ((GeglHandler *) (tmp))->provider;
     } while (!GEGL_IS_STORAGE (tmp));
 
   return (GeglStorage *) tmp;
@@ -290,39 +290,39 @@ gegl_buffer_constructor (GType                  type,
 {
   GObject         *object;
   GeglBuffer      *buffer;
-  GeglHandlers  *handlers;
+  GeglHandlers    *handlers;
   GeglTileBackend *backend;
-  GeglHandler   *handler;
-  GeglTileStore   *source;
+  GeglHandler     *handler;
+  GeglProvider    *provider;
   gint             tile_width;
   gint             tile_height;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
-  buffer  = GEGL_BUFFER (object);
+  buffer    = GEGL_BUFFER (object);
   handlers  = GEGL_HANDLERS (object);
   handler   = GEGL_HANDLER (object);
-  source  = handler->source;
-  backend = gegl_buffer_backend (buffer);
+  provider  = handler->provider;
+  backend   = gegl_buffer_backend (buffer);
 
-  if (source)
+  if (provider)
     {
-      if (GEGL_IS_STORAGE (source))
-        buffer->format = GEGL_STORAGE (source)->format;
-      else if (GEGL_IS_BUFFER (source))
-        buffer->format = GEGL_BUFFER (source)->format;
+      if (GEGL_IS_STORAGE (provider))
+        buffer->format = GEGL_STORAGE (provider)->format;
+      else if (GEGL_IS_BUFFER (provider))
+        buffer->format = GEGL_BUFFER (provider)->format;
     }
 
-  if (!source)
+  if (!provider)
     {
-      /* if no source is specified if a format is specified, we
+      /* if no provider is specified if a format is specified, we
        * we need to create our own
-       * source (this adds a redirectin buffer in between for
+       * provider (this adds a redirectin buffer in between for
        * all "allocated from format", type buffers.
        */
       g_assert (buffer->format);
 
-      source = GEGL_TILE_STORE (gegl_buffer_new_from_format (buffer->format,
+      provider = GEGL_PROVIDER (gegl_buffer_new_from_format (buffer->format,
                                                              buffer->x,
                                                              buffer->y,
                                                              buffer->width,
@@ -331,12 +331,12 @@ gegl_buffer_constructor (GType                  type,
        * the top level behavior exhibited by this buffer object.
        */
       g_object_set (buffer,
-                    "source", source,
+                    "provider", provider,
                     NULL);
-      g_object_unref (source);
+      g_object_unref (provider);
 
-      g_assert (source);
-      backend = gegl_buffer_backend (GEGL_BUFFER (source));
+      g_assert (provider);
+      backend = gegl_buffer_backend (GEGL_BUFFER (provider));
       g_assert (backend);
     }
 
@@ -346,17 +346,17 @@ gegl_buffer_constructor (GType                  type,
   tile_height = backend->tile_height;
 
   if (buffer->width == -1 &&
-      buffer->height == -1) /* no specified extents, inheriting from source */
+      buffer->height == -1) /* no specified extents, inheriting from provider */
     {
-      if (GEGL_IS_BUFFER (source))
+      if (GEGL_IS_BUFFER (provider))
         {
-          buffer->width  = GEGL_BUFFER (source)->width;
-          buffer->height = GEGL_BUFFER (source)->height;
+          buffer->width  = GEGL_BUFFER (provider)->width;
+          buffer->height = GEGL_BUFFER (provider)->height;
         }
-      else if (GEGL_IS_STORAGE (source))
+      else if (GEGL_IS_STORAGE (provider))
         {
-          buffer->width  = GEGL_STORAGE (source)->width;
-          buffer->height = GEGL_STORAGE (source)->height;
+          buffer->width  = GEGL_STORAGE (provider)->width;
+          buffer->height = GEGL_STORAGE (provider)->height;
         }
     }
 
@@ -383,21 +383,21 @@ gegl_buffer_constructor (GType                  type,
   else if (buffer->abyss_width == -1 ||
            buffer->abyss_height == -1)
     {
-      buffer->abyss_x      = GEGL_BUFFER (source)->abyss_x - buffer->shift_x;
-      buffer->abyss_y      = GEGL_BUFFER (source)->abyss_y - buffer->shift_y;
-      buffer->abyss_width  = GEGL_BUFFER (source)->abyss_width;
-      buffer->abyss_height = GEGL_BUFFER (source)->abyss_height;
+      buffer->abyss_x      = GEGL_BUFFER (provider)->abyss_x - buffer->shift_x;
+      buffer->abyss_y      = GEGL_BUFFER (provider)->abyss_y - buffer->shift_y;
+      buffer->abyss_width  = GEGL_BUFFER (provider)->abyss_width;
+      buffer->abyss_height = GEGL_BUFFER (provider)->abyss_height;
     }
 
   /* intersect our own abyss with parent's abyss if it exists
    */
-  if (GEGL_IS_BUFFER (source))
+  if (GEGL_IS_BUFFER (provider))
     {
       GeglRectangle parent = {
-        GEGL_BUFFER (source)->abyss_x - buffer->shift_x,
-        GEGL_BUFFER (source)->abyss_y - buffer->shift_y,
-        GEGL_BUFFER (source)->abyss_width,
-        GEGL_BUFFER (source)->abyss_height
+        GEGL_BUFFER (provider)->abyss_x - buffer->shift_x,
+        GEGL_BUFFER (provider)->abyss_y - buffer->shift_y,
+        GEGL_BUFFER (provider)->abyss_width,
+        GEGL_BUFFER (provider)->abyss_height
       };
       GeglRectangle request = {
         buffer->abyss_x,
@@ -415,14 +415,14 @@ gegl_buffer_constructor (GType                  type,
     }
 
   /* compute our own total shift */
-  if (GEGL_IS_BUFFER (source))
+  if (GEGL_IS_BUFFER (provider))
     {
-      GeglBuffer *source_buf;
+      GeglBuffer *provider_buf;
 
-      source_buf = GEGL_BUFFER (source);
+      provider_buf = GEGL_BUFFER (provider);
 
-      buffer->total_shift_x = source_buf->total_shift_x;
-      buffer->total_shift_y = source_buf->total_shift_y;
+      buffer->total_shift_x = provider_buf->total_shift_x;
+      buffer->total_shift_y = provider_buf->total_shift_y;
     }
   else
     {
@@ -452,20 +452,20 @@ gegl_buffer_constructor (GType                  type,
 }
 
 static GeglTile *
-get_tile (GeglTileStore *tile_store,
+get_tile (GeglProvider *tile_store,
           gint           x,
           gint           y,
           gint           z)
 {
   GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
-  GeglTileStore  *source = GEGL_HANDLER (tile_store)->source;
-  GeglTile       *tile   = NULL;
+  GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
+  GeglTile     *tile   = NULL;
 
   if (handlers->chain != NULL)
-    tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (handlers->chain->data),
+    tile = gegl_provider_get_tile (GEGL_PROVIDER (handlers->chain->data),
                                      x, y, z);
-  else if (source)
-    tile = gegl_tile_store_get_tile (source, x, y, z);
+  else if (provider)
+    tile = gegl_provider_get_tile (provider, x, y, z);
   else
     g_assert (0);
 
@@ -499,10 +499,10 @@ static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
   GObjectClass       *gobject_class;
-  GeglTileStoreClass *tile_store_class;
+  GeglProviderClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglTileStoreClass *) class;
+  tile_store_class = (GeglProviderClass *) class;
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
@@ -530,12 +530,12 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_X,
-                                   g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
+                                   g_param_spec_int ("x", "x", "local origin's offset relative to provider origin",
                                                      G_MININT, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_Y,
-                                   g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
+                                   g_param_spec_int ("y", "y", "local origin's offset relative to provider origin",
                                                      G_MININT, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
@@ -603,7 +603,7 @@ gegl_buffer_void_tile (GeglBuffer *buffer,
 {
   gint z = 0;
 
-  return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+  return gegl_provider_message (GEGL_PROVIDER (buffer),
                                   GEGL_TILE_VOID, x, y, z, NULL);
 }
 
@@ -611,7 +611,7 @@ gegl_buffer_void_tile (GeglBuffer *buffer,
 gboolean
 gegl_buffer_idle (GeglBuffer *buffer)
 {
-  return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+  return gegl_provider_message (GEGL_PROVIDER (buffer),
                                   GEGL_TILE_IDLE, 0, 0, 0, NULL);
 }
 #endif
@@ -655,7 +655,7 @@ gegl_buffer_void (GeglBuffer *buffer)
                 gint tx = gegl_tile_indice (tiledx / factor, tile_width);
                 gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-                gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+                gegl_provider_message (GEGL_PROVIDER (buffer),
                                          GEGL_TILE_VOID, tx, ty, z, NULL);
 
                 bufx += (tile_width - offsetx) * factor;
@@ -725,7 +725,7 @@ pset (GeglBuffer *buffer,
         gint      tiledy = buffer_y + buffer->total_shift_y + y;
         gint      tiledx = buffer_x + buffer->total_shift_x + x;
 
-        GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+        GeglTile *tile = gegl_provider_get_tile ((GeglProvider *) (buffer),
                                                    gegl_tile_indice (tiledx, tile_width),
                                                    gegl_tile_indice (tiledy, tile_height),
                                                    0);
@@ -809,7 +809,7 @@ pset (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+            tile = gegl_provider_get_tile ((GeglProvider *) (buffer),
                                              indice_x, indice_y,
                                              0);
           }
@@ -892,9 +892,9 @@ pget (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
-                                             indice_x, indice_y,
-                                             0);
+            tile = gegl_provider_get_tile ((GeglProvider *) (buffer),
+                                           indice_x, indice_y,
+                                           0);
           }
 
         if (tile)
@@ -1051,7 +1051,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
             else
               {
                 guchar   *tile_base, *tp;
-                GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+                GeglTile *tile = gegl_provider_get_tile ((GeglProvider *) (buffer),
                                                            gegl_tile_indice (tiledx, tile_width),
                                                            gegl_tile_indice (tiledy, tile_height),
                                                            level);
@@ -1183,7 +1183,7 @@ gegl_buffer_set (GeglBuffer    *buffer,
       return;
     }
   sub_buf = g_object_new (GEGL_TYPE_BUFFER,
-                          "source", buffer,
+                          "provider", buffer,
                           "x", rect->x,
                           "y", rect->y,
                           "width", rect->width,
@@ -1208,7 +1208,7 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                     gint           level)
 {
   GeglBuffer *sub_buf = g_object_new (GEGL_TYPE_BUFFER,
-                                      "source", buffer,
+                                      "provider", buffer,
                                       "x", rect->x,
                                       "y", rect->y,
                                       "width", rect->width,
@@ -1715,7 +1715,7 @@ gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
                           GeglRectangle *extent)
 {
   return g_object_new (GEGL_TYPE_BUFFER,
-                       "source", buffer,
+                       "provider", buffer,
                        "x", extent->x,
                        "y", extent->y,
                        "width", extent->width,

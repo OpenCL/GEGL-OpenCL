@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #ifndef _GEGL_BUFFER_TYPES_H
 #define _GEGL_BUFFER_TYPES_H
@@ -25,8 +25,8 @@ typedef struct _GeglInterpolator         GeglInterpolator;
 typedef struct _GeglTile                 GeglTile;
 typedef struct _GeglTileClass            GeglTileClass;
 
-typedef struct _GeglTileStore            GeglTileStore;
-typedef struct _GeglTileStoreClass       GeglTileStoreClass;
+typedef struct _GeglProvider            GeglProvider;
+typedef struct _GeglProviderClass       GeglProviderClass;
 
 typedef struct _GeglTileBackend          GeglTileBackend;
 typedef struct _GeglTileBackendClass     GeglTileBackendClass;
