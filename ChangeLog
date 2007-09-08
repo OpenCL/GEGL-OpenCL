@@ -1,5 +1,13 @@
 2007-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: removed total_shift fields.
+	* gegl/buffer/gegl-buffer.c: use shift_x and shift_y for the purposes
+	total_shift_x and total_shift_y used to be used for.
+	* gegl/buffer/gegl-buffer-save.c: %s/total_//g
+	* gegl/buffer/gegl-buffer-load.c: %s/total_//g
+
+2007-09-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_copy): use the height
 	of the source rect not the source buffer for iterating through
 	rows when copying.

@@ -107,8 +107,8 @@ gegl_buffer_load (GeglBuffer  *buffer,
 
   info->tile_size    = info->header.tile_width * info->header.tile_height * info->header.bpp;
   info->format       = babl_format (info->header.format);
-  info->x_tile_shift = buffer->total_shift_x / info->header.tile_width;
-  info->y_tile_shift = buffer->total_shift_y / info->header.tile_height;
+  info->x_tile_shift = buffer->shift_x / info->header.tile_width;
+  info->y_tile_shift = buffer->shift_y / info->header.tile_height;
 
   /* load the index */
   {

@@ -38,18 +38,16 @@ struct _GeglBuffer
 {
   GeglHandlers    parent_object;
 
-  gint              x;      /* exported through gegl_buffer_extents()    */
-  gint              y;      /*  -"-  */
+  gint              x;      /* exported through gegl_buffer_extents() */
+  gint              y;      /*  -"-     as a GeglRectangle            */
   gint              width;  /*  -"-  */
   gint              height; /*  -"-  */
 
   Babl             *format;
-
-  gint              shift_x;
-  gint              shift_y;
-  gint              total_shift_x;
-  gint              total_shift_y;
-
+ 
+  gint              shift_x;  /* during construction the relative */
+  gint              shift_y;  /* relative shift in relation to provider*/
+                              /* is stored here. */
   gint              abyss_x;
   gint              abyss_y;
   gint              abyss_width;

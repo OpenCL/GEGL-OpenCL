@@ -188,8 +188,8 @@ gegl_buffer_save (GeglBuffer    *buffer,
         height = roi->height;
       }
 
-    info->x_tile_shift = -buffer->total_shift_x / tile_width;
-    info->y_tile_shift = -buffer->total_shift_y / tile_height;
+    info->x_tile_shift = -buffer->shift_x / tile_width;
+    info->y_tile_shift = -buffer->shift_y / tile_height;
 
 
     {
@@ -200,13 +200,13 @@ gegl_buffer_save (GeglBuffer    *buffer,
           bufy = y;
           while (bufy < buffer->y + height)
             {
-              gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
+              gint tiledy  = buffer->y + buffer->shift_y + bufy;
               gint offsety = gegl_tile_offset (tiledy, tile_height);
               gint bufx    = x;
 
               while (bufx < buffer->x + width)
                 {
-                  gint tiledx  = buffer->x + bufx + buffer->total_shift_x;
+                  gint tiledx  = buffer->x + bufx + buffer->shift_x;
                   gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
