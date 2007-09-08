@@ -1,3 +1,9 @@
+2007-09-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_copy): use the height
+	of the source rect not the source buffer for iterating through
+	rows when copying.
+
 2007-09-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operations/*/*.c: modified to use "provider" instead of

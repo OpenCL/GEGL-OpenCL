@@ -928,6 +928,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
     }
 }
 
+
 static void inline
 gegl_buffer_iterate (GeglBuffer *buffer,
                      guchar     *buf,
@@ -1762,7 +1763,7 @@ gegl_buffer_copy (GeglBuffer    *src,
 
   temp = g_malloc (src_line.width * pxsize);
 
-  for (i=0;i<src->height;i++)
+  for (i=0; i<src_rect->height; i++)
     {
       gegl_buffer_get (src, &src_line, 1.0, format, temp);
       gegl_buffer_set (dst, &dst_line, format, temp);
