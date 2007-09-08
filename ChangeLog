@@ -1,5 +1,10 @@
 2007-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: documented every field of
+	the private GeglBuffer struct.
+
+2007-09-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: removed total_shift fields.
 	* gegl/buffer/gegl-buffer.c: use shift_x and shift_y for the purposes
 	total_shift_x and total_shift_y used to be used for.

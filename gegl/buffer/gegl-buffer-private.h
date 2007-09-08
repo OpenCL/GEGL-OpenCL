@@ -36,25 +36,33 @@
 
 struct _GeglBuffer
 {
-  GeglHandlers    parent_object;
+  GeglHandlers      parent_object; /* which is a GeglHandler which has a
+                                      provider field which is used for chaining
+                                      sub buffers with their anchestors */
 
-  gint              x;      /* exported through gegl_buffer_extents() */
-  gint              y;      /*  -"-     as a GeglRectangle            */
-  gint              width;  /*  -"-  */
-  gint              height; /*  -"-  */
+  gint              x;       /* exported through gegl_buffer_extents()       */
+  gint              y;       /*  -"-     as a GeglRectangle                  */
+  gint              width;   /*  -"-  XXX: should perhaps actually be        */
+  gint              height;  /*  -"-       a GeglRectangle?                  */
 
-  Babl             *format;
+  Babl             *format;  /* the pixel format used for pixels in this
+                                buffer */
  
-  gint              shift_x;  /* during construction the relative */
-  gint              shift_y;  /* relative shift in relation to provider*/
-                              /* is stored here. */
-  gint              abyss_x;
-  gint              abyss_y;
-  gint              abyss_width;
+  gint              shift_x; /* The relative offset of origins compared with */
+  gint              shift_y; /* anchestral storage buffer, during            */
+                             /* construction relative to immediate provider  */
+
+  gint              abyss_x; /* The abyss (bounding rectangle) in the buffers */
+  gint              abyss_y; /* local coordinates XXX: should perhaps be an */
+  gint              abyss_width; /* inlined GeglRectangle? */
   gint              abyss_height;
 
-  GeglTile         *hot_tile;
-  GeglInterpolator *interpolator;
+  GeglTile         *hot_tile; /* cached tile for speeding up pget/pset (1x1
+                                 sized gets/sets)*/
+
+  GeglInterpolator *interpolator; /* cached interpolator for speeding up random
+                                     access interpolated fetches from the
+                                     buffer */
 };
 
 struct _GeglBufferClass
