@@ -57,12 +57,15 @@ process (GeglOperation *operation,
 
   g_assert (input);
 
+  /* XXX: this shifted buffer is a behavior not readily available in the
+   *      pure C (non-gobject) part of the GeglBuffer API.
+   */
   output = g_object_new (GEGL_TYPE_BUFFER,
                          "provider",    input,
                          "shift-x",     (int)-translate->x,
                          "shift-y",     (int)-translate->y,
-                         "abyss-width", -1,  /* turn of abyss (relying
-                         on abyss of source) */
+                         "abyss-width", -1,  /* turn of abyss (relying on abyss
+                                                of source) */
                          NULL);
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;

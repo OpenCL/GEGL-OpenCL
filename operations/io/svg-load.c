@@ -82,23 +82,14 @@ process (GeglOperation *operation,
         {
           g_warning ("%s failed to open file %s for reading.",
             G_OBJECT_TYPE_NAME (operation), self->path);
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                            "format", babl_format ("R'G'B'A u8"),
-                                            "x",      0,
-                                            "y",      0,
-                                            "width",  10,
-                                            "height", 10,
-                                            NULL);
+            output = gegl_buffer_new (NULL, NULL);
               return TRUE;
         }
 
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                                        "format", babl_format ("R'G'B'A u8"),
-                                        "x",      0,
-                                        "y",      0,
-                                        "width",  width,
-                                        "height", height,
-                                        NULL);
+        {
+          GeglRectangle extent={0,0,width,height};
+          output = gegl_buffer_new (&extent, babl_format ("R'G'B'A u8"));
+        }
 
     result = gegl_buffer_import_svg (output, self->path,
                                      width, height, 0, 0, &width, &height);

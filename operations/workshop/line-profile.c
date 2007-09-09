@@ -68,14 +68,11 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   result = gegl_operation_get_requested_region (operation, context_id);
-  
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("B'aG'aR'aA u8"),
-                         "x",      0,
-                         "y",      0,
-                         "width",  width,
-                         "height", height,
-                         NULL);
+ 
+  { 
+    GeglRectangle extent = {0,0,width,height};
+    output = gegl_buffer_new (&extent, babl_format ("B'aG'aR'aA u8"));
+  }
 
   {
     guchar  *buf = g_malloc0 (width * height * 4);

@@ -77,14 +77,7 @@ process (GeglOperation *operation,
     gfloat *buf;
     gint pxsize;
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                        "format",
-                        babl_format ("Y float"),
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->width ,
-                        "height", result->height,
-                        NULL);
+    output = gegl_buffer_new (result, babl_format ("Y float"));
     g_object_get (output, "px-size", &pxsize, NULL);
 
     buf = g_malloc (result->width * result->height * pxsize);

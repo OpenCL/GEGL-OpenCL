@@ -40,13 +40,11 @@ process (GeglOperation *operation,
 
   if (self->pixbuf)
     {
-      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                                        "format", babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"),
-                                        "x", 0,
-                                        "y", 0,
-                                        "width", gdk_pixbuf_get_width (self->pixbuf),
-                                        "height", gdk_pixbuf_get_height (self->pixbuf),
-                                        NULL);
+      GeglRectangle extent = {0,0,
+                              gdk_pixbuf_get_width (self->pixbuf),
+                              gdk_pixbuf_get_height (self->pixbuf)};
+      GeglBuffer *output = gegl_buffer_new (&extent, 
+  babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
       gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (self->pixbuf));
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
     }

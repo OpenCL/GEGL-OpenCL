@@ -1,5 +1,25 @@
 2007-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Migrated to using gegl_buffer_new gegl_buffer_create_sub_buffer
+	instead of g_object_new (GEGL_TYPE_BUFFER, ..., NULL); where possible.
+
+	* gegl/operation/gegl-operation-point-composer.c: (fast_paths):
+	* gegl/operation/gegl-operation.c: (gegl_operation_process):
+	* operations/core/crop.c: (process):
+	* operations/core/shift.c: (process):
+	* operations/io/display.c: (process):
+	* operations/io/pixbuf.c: (process):
+	* operations/io/raw-load.c: (load_buffer):
+	* operations/io/svg-load.c: (process):
+	* operations/render/introspect.c: (process):
+	* operations/workshop/line-profile.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/mblur.c: (init):
+	* operations/workshop/mono-mixer.c: (process):
+	* operations/workshop/rawbayer-load.c: (load_buffer):
+
+2007-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Made gegl_buffer_new accept NULL parameters (constructing a "NULL
 	buffer" when passed a zero extent).
 

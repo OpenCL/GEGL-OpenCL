@@ -113,13 +113,7 @@ gegl_operation_process (GeglOperation *operation,
   if (!strcmp (output_pad, "output") &&
       (result->width == 0 || result->height == 0))
     {
-      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                                         "format", babl_format ("Y u8"),
-                                         "x", 0,
-                                         "y", 0,
-                                         "width", 0,
-                                         "height", 0,
-                                         NULL);
+      GeglBuffer *output = gegl_buffer_new (NULL, NULL);
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       return TRUE;
     }

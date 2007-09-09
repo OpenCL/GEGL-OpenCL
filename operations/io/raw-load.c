@@ -105,19 +105,17 @@ load_buffer (GeglChantOperation *op_raw_load)
           return;
         }
 
-       op_raw_load->priv = g_object_new (GEGL_TYPE_BUFFER,
-                                      "format", babl_format_new (
-                                        babl_model ("RGB"),
-                                        babl_type ("u16"),
-                                        babl_component ("G"),
-                                        babl_component ("B"),
-                                        babl_component ("R"),
-                                        NULL),
-                                      "x",      0,
-                                      "y",      0,
-                                      "width",  width,
-                                      "height", height,
-                                      NULL);
+        {
+          GeglRectangle extent = {0,0,width, height};
+          op_raw_load->priv = (gpointer)gegl_buffer_new (&extent,
+                                               babl_format_new (
+                                                 babl_model ("RGB"),
+                                                 babl_type ("u16"),
+                                                 babl_component ("G"),
+                                                 babl_component ("B"),
+                                                 babl_component ("R"),
+                                                 NULL));
+        }
          {
            
            guchar *buf=g_malloc (width * height * 3 * 2);

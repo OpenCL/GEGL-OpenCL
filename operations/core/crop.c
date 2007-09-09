@@ -52,20 +52,14 @@ process (GeglOperation *operation,
   GeglBuffer          *input;
   GeglBuffer          *output;
   GeglChantOperation  *crop;
+  GeglRectangle        extent = {crop->x, crop->y, crop->width, crop->height};
   
   crop   = GEGL_CHANT_OPERATION (operation);
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
-
   g_assert (input);
 
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "provider", input,
-                         "x",      (int)crop->x,
-                         "y",      (int)crop->y,
-                         "width",  (int)crop->width,
-                         "height", (int)crop->height,
-                         NULL);
+  output = gegl_buffer_create_sub_buffer (input, &extent);
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }

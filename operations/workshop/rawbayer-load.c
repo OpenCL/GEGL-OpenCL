@@ -101,13 +101,10 @@ load_buffer (GeglChantOperation *op_raw_load)
           return;
         }
 
-       op_raw_load->priv = g_object_new (GEGL_TYPE_BUFFER,
-                                        "format", babl_format ("Y u16"),
-                                        "x",      0,
-                                        "y",      0,
-                                        "width",  width,
-                                        "height", height,
-                                        NULL);
+      { 
+        GeglRectangle extent = {0,0,width,height};
+        output = gegl_buffer_new (&extent, babl_format ("Y u16"));
+      }
          {
            guchar *buf=g_malloc (width * height * 3 * 2);
            fread (buf, 1, width * height * 3 * 2, pfp);

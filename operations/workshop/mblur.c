@@ -49,13 +49,10 @@ init (GeglChantOperation *operation)
   self->priv = (void*) priv;
 
   /* XXX: this is not freed when the op is destroyed */
-  priv->acc = g_object_new (GEGL_TYPE_BUFFER,
-                            "format", babl_format ("RGBA float"),
-                            "x",      0,
-                            "y",      0,
-                            "width",  1024,
-                            "height", 1024,
-                            NULL);
+  { 
+    GeglRectangle extent = {0,0,1024,1024};
+    output = gegl_buffer_new (&extent, babl_format ("RGBA float"));
+  }
 }
 
 static gboolean

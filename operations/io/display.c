@@ -138,13 +138,7 @@ process (GeglOperation *operation,
    * in B'G'R'A, perhaps babl should have been able to figure this out itself?
    *
    */
-  source = g_object_new (GEGL_TYPE_BUFFER,
-                         "provider", input,
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width ,
-                         "height", result->height,
-                         NULL);
+  source = gegl_buffer_create_sub_buffer (input, result);
   gegl_buffer_get (source,
        NULL,
        1.0,

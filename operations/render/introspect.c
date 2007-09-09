@@ -78,13 +78,9 @@ process (GeglOperation *operation,
       GeglRectangle defined;
 
       defined = gegl_node_get_bounding_box (png_load);
-      self->buf = g_object_new (GEGL_TYPE_BUFFER,
-                          "format", babl_format ("R'G'B' u8"),
-                          "x",      defined.x,
-                          "y",      defined.y,
-                          "width",  defined.width ,
-                          "height", defined.height ,
-                          NULL);
+
+      self->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
+
       buffer_save = gegl_node_new_child (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 

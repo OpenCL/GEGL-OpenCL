@@ -198,13 +198,7 @@ fast_paths (GeglOperation *operation,
 
                   if (!gegl_rectangle_intersect (NULL, &aux_abyss, result))
                     {
-                      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                                                         "format", out_format,
-                                                         "x", 0,
-                                                         "y", 0,
-                                                         "width", 0,
-                                                         "height", 0,
-                                                         NULL);
+                      GeglBuffer *output = gegl_buffer_new (NULL, NULL);
                       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
                       return TRUE;
                     }
@@ -232,13 +226,7 @@ fast_paths (GeglOperation *operation,
       }
     else
       {
-        GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                                           "format", out_format,
-                                           "x", 0,
-                                           "y", 0,
-                                           "width", 0,
-                                           "height", 0,
-                                           NULL);
+        GeglBuffer *output = g_object_new (NULL, out_format);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
         return TRUE;
       }
