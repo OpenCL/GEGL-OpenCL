@@ -1,3 +1,14 @@
+2007-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Made gegl_buffer_new accept NULL parameters (constructing a "NULL
+	buffer" when passed a zero extent).
+
+	* gegl/buffer/gegl-buffer.h: updated documentation.
+	* gegl/buffer/gegl-buffer.c: 
+	(gegl_buffer_class_init): accept -1 for abyss extent.
+	(pset, pget): eliminated duplicated subexpressions.
+	(gegl_buffer_new): accept NULL parameters.
+
 2007-09-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-private.h: documented every field of

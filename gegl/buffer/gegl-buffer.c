@@ -383,7 +383,7 @@ gegl_buffer_constructor (GType                  type,
   else if (buffer->abyss_width == -1 ||
            buffer->abyss_height == -1)
     {
-      buffer->abyss_x      = GEGL_BUFFER (provider)->abyss_x - buffer->shift_x; /* XXX: is this correct? */
+      buffer->abyss_x      = GEGL_BUFFER (provider)->abyss_x - buffer->shift_x; 
       buffer->abyss_y      = GEGL_BUFFER (provider)->abyss_y - buffer->shift_y;
       buffer->abyss_width  = GEGL_BUFFER (provider)->abyss_width;
       buffer->abyss_height = GEGL_BUFFER (provider)->abyss_height;
@@ -537,12 +537,12 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_WIDTH,
                                    g_param_spec_int ("abyss-width", "abyss-width", "pixel width of abyss",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     -1, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_HEIGHT,
                                    g_param_spec_int ("abyss-height", "abyss-height", "pixel height of abyss",
-                                                     0, G_MAXINT, 0,
+                                                     -1, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_X,
@@ -775,17 +775,18 @@ pset (GeglBuffer *buffer,
     }
 
   {
-    if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y < abyss_y_total &&
-          buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x < abyss_x_total))
+    gint tiledy   = buffer_y + y;
+    gint tiledx   = buffer_x + x;
+
+    if (!(tiledy >= buffer_abyss_y &&
+          tiledy  < abyss_y_total &&
+          tiledx >= buffer_abyss_x &&
+          tiledx  < abyss_x_total))
       { /* in abyss */
         return;
       }
     else
       {
-        gint      tiledy   = buffer_y + buffer->shift_y + y;
-        gint      tiledx   = buffer_x + buffer->shift_x + x;
         gint      indice_x = gegl_tile_indice (tiledx, tile_width);
         gint      indice_y = gegl_tile_indice (tiledy, tile_height);
         GeglTile *tile     = NULL;
@@ -857,18 +858,19 @@ pget (GeglBuffer *buffer,
     }
 
   {
-    if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y < abyss_y_total &&
-          buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x < abyss_x_total))
+    gint      tiledy   = buffer_y + y;
+    gint      tiledx   = buffer_x + x;
+
+    if (!(tiledy >= buffer_abyss_y &&
+          tiledy <  abyss_y_total  &&
+          tiledx >= buffer_abyss_x &&
+          tiledx <  abyss_x_total))
       { /* in abyss */
         memset (buf, 0x00, bpx_size);
         return;
       }
     else
       {
-        gint      tiledy   = buffer_y + buffer->shift_y + y;
-        gint      tiledx   = buffer_x + buffer->shift_x + x;
         gint      indice_x = gegl_tile_indice (tiledx, tile_width);
         gint      indice_y = gegl_tile_indice (tiledy, tile_height);
         GeglTile *tile     = NULL;
@@ -1202,13 +1204,7 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                     void          *format,
                                     gint           level)
 {
-  GeglBuffer *sub_buf = g_object_new (GEGL_TYPE_BUFFER,
-                                      "provider", buffer,
-                                      "x", rect->x,
-                                      "y", rect->y,
-                                      "width", rect->width,
-                                      "height", rect->height,
-                                      NULL);
+  GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
 
   gegl_buffer_iterate (sub_buf, dst, FALSE, format, level);
   g_object_unref (sub_buf);
@@ -1645,6 +1641,7 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
   return ret;
 }
 
+#include "gegl-interpolator-nearest.h"
 #include "gegl-interpolator-linear.h"
 #include "gegl-interpolator-cubic.h"
 
@@ -1657,10 +1654,16 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     Babl             *format,
                     GeglInterpolation interpolation)
 {
+/*#define USE_WORKING_SHORTCUT*/
+#ifdef USE_WORKING_SHORTCUT
+  pget (buffer, x, y, format, dest);
+  return;
+#endif
+
   /* look up appropriate interpolator,. */
   if (buffer->interpolator == NULL)
     {
-      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_CUBIC,
+      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_NEAREST,
                                            "input", buffer,
                                            "format", format,
                                            NULL);
@@ -1696,6 +1699,14 @@ GeglBuffer *
 gegl_buffer_new (GeglRectangle *extent,
                  Babl          *format)
 {
+  GeglRectangle empty={0,0,0,0};
+
+  if (extent==NULL)
+    extent = &empty;
+
+  if (format==NULL)
+    format = babl_format ("RGBA float");
+
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
                        "y", extent->y,
@@ -1707,7 +1718,7 @@ gegl_buffer_new (GeglRectangle *extent,
 
 GeglBuffer* 
 gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
-                          GeglRectangle *extent)
+                               GeglRectangle *extent)
 {
   return g_object_new (GEGL_TYPE_BUFFER,
                        "provider", buffer,
@@ -1715,6 +1726,8 @@ gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
                        "y", extent->y,
                        "width", extent->width,
                        "height", extent->height,
+       /*              "abyss-width", 0,
+                       "abyss-height", 0,  */
                        NULL);
 }
 
@@ -1772,8 +1785,7 @@ gegl_buffer_dup (GeglBuffer *buffer)
 {
   GeglBuffer *new;
 
-  g_assert (buffer);
-
+  g_assert (buffer
   new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
   gegl_buffer_copy (buffer, gegl_buffer_extent (buffer),
                     new, gegl_buffer_extent (buffer));

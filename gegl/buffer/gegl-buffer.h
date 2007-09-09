@@ -50,7 +50,9 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
  * @format: the Babl pixel format to be used, create one with babl_format("RGBA
  * u8") and similar.
  *
- * Create a new GeglBuffer of a given format with a given extent.
+ * Create a new GeglBuffer of a given format with a given extent. It is possible
+ * to pass in NULL for both extent and format, a NULL extent creates an exmpty
+ * buffer and a NULL format makes the buffer default to "RGBA float".
  */
 GeglBuffer*     gegl_buffer_new               (GeglRectangle    *extent,
                                                Babl             *format);
