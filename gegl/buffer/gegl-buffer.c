@@ -760,14 +760,15 @@ pset (GeglBuffer *buffer,
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
-  gint    abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
-  gint    abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
-  gint    buffer_x       = buffer->x;
-  gint    buffer_y       = buffer->y;
-  gint    buffer_abyss_x = buffer->abyss_x;
-  gint    buffer_abyss_y = buffer->abyss_y;
-  gint    px_size        = FMTPXS (buffer->format);
-  
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
+  gint  buffer_x       = buffer->x + buffer_shift_x;
+  gint  buffer_y       = buffer->y + buffer_shift_y;
+  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
+  gint  px_size        = FMTPXS (buffer->format);
 
   if (format != buffer->format)
     {
@@ -844,13 +845,15 @@ pget (GeglBuffer *buffer,
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
-  gint    abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
-  gint    abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
-  gint    buffer_x       = buffer->x;
-  gint    buffer_y       = buffer->y;
-  gint    buffer_abyss_x = buffer->abyss_x;
-  gint    buffer_abyss_y = buffer->abyss_y;
-  gint    px_size        = FMTPXS (buffer->format);
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
+  gint  buffer_x       = buffer->x + buffer_shift_x;
+  gint  buffer_y       = buffer->y + buffer_shift_y;
+  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
+  gint  px_size        = FMTPXS (buffer->format);
 
   if (format != buffer->format)
     {
@@ -943,14 +946,14 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   gint  bufy = 0;
   Babl *fish;
 
-  gint  abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
-  gint  abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->x;
-  gint  buffer_y       = buffer->y;
-  gint  buffer_abyss_x = buffer->abyss_x;
-  gint  buffer_abyss_y = buffer->abyss_y;
+  gint  buffer_x       = buffer->x + buffer_shift_x;
+  gint  buffer_y       = buffer->y + buffer_shift_y;
+  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
   gint  i;
   gint  factor = 1;
 
@@ -963,8 +966,6 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   buffer_abyss_y /= factor;
   abyss_x_total  /= factor;
   abyss_y_total  /= factor;
-  buffer_shift_x /= factor;
-  buffer_shift_y /= factor;
   buffer_x       /= factor;
   buffer_y       /= factor;
   width          /= factor;
@@ -990,8 +991,11 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
   while (bufy < height)
     {
-      gint tiledy  = buffer_y + buffer_shift_y + bufy;
+      gint tiledy  = buffer_y + bufy;
       gint offsety = gegl_tile_offset (tiledy, tile_height);
+
+      
+
       gint bufx    = 0;
 
       if (!(buffer_y + bufy + (tile_height) >= buffer_abyss_y &&
@@ -1016,7 +1020,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
         while (bufx < width)
           {
-            gint    tiledx  = buffer_x + bufx + buffer_shift_x;
+            gint    tiledx  = buffer_x + bufx;
             gint    offsetx = gegl_tile_offset (tiledx, tile_width);
             gint    pixels;
             guchar *bp;
@@ -1072,7 +1076,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
                     if (fish)
                       {
-                        for (row = offsety;
+                     for (row = offsety;
                              row < tile_height &&
                              y < height &&
                              buffer_y + y < abyss_y_total
@@ -1179,13 +1183,7 @@ gegl_buffer_set (GeglBuffer    *buffer,
       gegl_buffer_iterate (buffer, src, TRUE, format, 0);
       return;
     }
-  sub_buf = g_object_new (GEGL_TYPE_BUFFER,
-                          "provider", buffer,
-                          "x", rect->x,
-                          "y", rect->y,
-                          "width", rect->width,
-                          "height", rect->height,
-                          NULL);
+  sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
   gegl_buffer_iterate (sub_buf, src, TRUE, format, 0);
   g_object_unref (sub_buf);
 }
@@ -1783,7 +1781,7 @@ gegl_buffer_copy (GeglBuffer    *src,
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  GeglBuffer *new;
+  GeglBuffer *new;vim C
 
   g_assert (buffer);
   new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
