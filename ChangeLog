@@ -1,5 +1,10 @@
 2007-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dup): mended destroyed
+	g_assert statement.
+
+2007-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Migrated to using gegl_buffer_new gegl_buffer_create_sub_buffer
 	instead of g_object_new (GEGL_TYPE_BUFFER, ..., NULL); where possible.
 

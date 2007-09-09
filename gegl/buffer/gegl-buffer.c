@@ -1785,7 +1785,7 @@ gegl_buffer_dup (GeglBuffer *buffer)
 {
   GeglBuffer *new;
 
-  g_assert (buffer
+  g_assert (buffer);
   new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
   gegl_buffer_copy (buffer, gegl_buffer_extent (buffer),
                     new, gegl_buffer_extent (buffer));
