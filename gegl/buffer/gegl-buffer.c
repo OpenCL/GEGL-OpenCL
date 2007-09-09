@@ -1781,7 +1781,7 @@ gegl_buffer_copy (GeglBuffer    *src,
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  GeglBuffer *new;vim C
+  GeglBuffer *new;
 
   g_assert (buffer);
   new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
