@@ -1096,12 +1096,10 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
                     if (fish)
                       {
-                     for (row = offsety;
+                        for (row = offsety;
                              row < tile_height &&
                              y < height &&
-                             buffer_y + y < abyss_y_total
-
-                             ;
+                             buffer_y + y < abyss_y_total;
                              row++, y++)
                           {
 
