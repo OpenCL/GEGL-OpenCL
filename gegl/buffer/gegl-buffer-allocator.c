@@ -62,13 +62,8 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
   gint         tile_width  = storage->tile_width;
   gint         tile_height = storage->tile_height;
 
-  /*gint needed_width = ((width-1)/tile_width+1)*tile_width;
-   * FIXME: the sizes needed for allocations are set to be larger than strictly
-   * needed to compensate for erronious interaction between adjecant
-   * buffers.
-   */
-  gint needed_width  = ((width - 1) / tile_width + 10) * tile_width;
-  gint needed_height = ((height - 1) / tile_height + 10) * tile_height;
+  gint needed_width  = ((width - 1) / tile_width +1) * tile_width;
+  gint needed_height = ((height - 1) / tile_height +1) * tile_height;
 
   gint shift_x;
   gint shift_y;

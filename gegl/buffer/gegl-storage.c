@@ -33,7 +33,9 @@
 #include "gegl-handler-log.h"
 
 G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
-#define TILE_SIZE    128
+
+#define TILE_WIDTH  128
+#define TILE_HEIGHT 64
 
 static GObjectClass * parent_class = NULL;
 
@@ -279,12 +281,12 @@ gegl_storage_class_init (GeglStorageClass *class)
 
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
                                    g_param_spec_int ("tile-width", "tile-width", "width of a tile in pixels",
-                                                     0, G_MAXINT, TILE_SIZE,
+                                                     0, G_MAXINT, TILE_WIDTH,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
                                    g_param_spec_int ("tile-height", "tile-height", "height of a tile in pixels",
-                                                     0, G_MAXINT, TILE_SIZE,
+                                                     0, G_MAXINT, TILE_HEIGHT,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_SIZE,

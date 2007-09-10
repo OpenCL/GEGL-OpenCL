@@ -1,5 +1,13 @@
 2007-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): remove
+	extra space used between allocated buffers now that abyss behavior is
+	more consistent.
+	* gegl/buffer/gegl-storage.c: Changed the (default) tile size for
+	GeglBuffers to be 128x64 based on profiling.
+
+2007-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-handler.h: cast parameter of
 	gegl_handler_get_provider macro to a (GeglHandler*).
 
