@@ -1,5 +1,10 @@
 2007-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/crop.c: (process): reordered lines to avoid
+	accessing unintiazlied variable.
+
+2007-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c:
 	   (gegl_buffer_constructor): when inheriting parent abyss, also
 	   inherit origin.

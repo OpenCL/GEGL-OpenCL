@@ -51,10 +51,9 @@ process (GeglOperation *operation,
 {
   GeglBuffer          *input;
   GeglBuffer          *output;
-  GeglChantOperation  *crop;
+  GeglChantOperation  *crop = GEGL_CHANT_OPERATION (operation);
   GeglRectangle        extent = {crop->x, crop->y, crop->width, crop->height};
   
-  crop   = GEGL_CHANT_OPERATION (operation);
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   g_assert (input);
