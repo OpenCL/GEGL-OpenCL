@@ -1,5 +1,10 @@
 2007-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-handler.h: cast parameter of
+	gegl_handler_get_provider macro to a (GeglHandler*).
+
+2007-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/crop.c: (process): reordered lines to avoid
 	accessing unintiazlied variable.
 

@@ -49,7 +49,7 @@ struct _GeglHandlerClass
 
 GType gegl_handler_get_type (void) G_GNUC_CONST;
 
-#define gegl_handler_get_provider(handler)  ((handler)->provider)
+#define gegl_handler_get_provider(handler)  (((GeglHandler*)handler)->provider)
 
 G_END_DECLS
 
