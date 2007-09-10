@@ -350,11 +350,15 @@ gegl_buffer_constructor (GType                  type,
     {
       if (GEGL_IS_BUFFER (provider))
         {
+          buffer->x = GEGL_BUFFER (provider)->x;
+          buffer->y = GEGL_BUFFER (provider)->y;
           buffer->width  = GEGL_BUFFER (provider)->width;
           buffer->height = GEGL_BUFFER (provider)->height;
         }
       else if (GEGL_IS_STORAGE (provider))
         {
+          buffer->x = 0;
+          buffer->y = 0;
           buffer->width  = GEGL_STORAGE (provider)->width;
           buffer->height = GEGL_STORAGE (provider)->height;
         }
@@ -1056,6 +1060,21 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                                                            gegl_tile_indice (tiledx, tile_width),
                                                            gegl_tile_indice (tiledy, tile_height),
                                                            level);
+
+                gint lskip = (buffer_abyss_x) - (buffer_x + bufx);
+                /* gap between left side of tile, and abyss */
+                gint rskip = (buffer_x + bufx + pixels) - abyss_x_total;
+                /* gap between right side of tile, and abyss */
+
+                if (lskip < 0)
+                  lskip = 0;
+                if (lskip > pixels)
+                  lskip = pixels;
+                if (rskip < 0)
+                  rskip = 0;
+                if (rskip > pixels)
+                  rskip = pixels;
+
                 if (!tile)
                   {
                     g_warning ("didn't get tile, trying to continue");
@@ -1074,6 +1093,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                     gint row;
                     gint y = bufy;
 
+
                     if (fish)
                       {
                      for (row = offsety;
@@ -1084,9 +1104,13 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                              ;
                              row++, y++)
                           {
+
                             if (buffer_y + y >= buffer_abyss_y &&
                                 buffer_y + y < abyss_y_total)
-                              babl_process (fish, bp, tp, pixels);
+                              {
+                                babl_process (fish, bp + lskip * bpx_size, tp + lskip * px_size, 
+                                 pixels - lskip - rskip);
+                              }
 
                             tp += tile_stride;
                             bp += buf_stride;
@@ -1098,14 +1122,20 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                              row < tile_height && y < height;
                              row++, y++)
                           {
+
                             if (buffer_y + y >= buffer_abyss_y &&
                                 buffer_y + y < abyss_y_total)
-                              memcpy (tp, bp, pixels * px_size);
+                              {
+
+                                memcpy (tp + lskip * px_size, bp + lskip * px_size,
+                                      (pixels - lskip - rskip) * px_size);
+                              }
 
                             tp += tile_stride;
                             bp += buf_stride;
                           }
                       }
+
                     gegl_tile_unlock (tile);
                   }
                 else /* read */
@@ -1131,25 +1161,17 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                             memset (bp, 0x00, pixels * bpx_size);
                           }
 
-                        {
-                          gint zeros = (buffer_abyss_x) - (buffer_x + bufx);
                           /* left hand zeroing of abyss in tile */
-                          if (zeros > 0)
-                            {
-                              if (zeros > pixels)
-                                zeros = pixels;
-                              if (zeros > tile_width)
-                                zeros = tile_width;
-                              memset (bp, 0x00, bpx_size * zeros);
-                            }
+                        if (lskip)
+                          {
+                            memset (bp, 0x00, bpx_size * lskip);
+                          }
 
-                          /* right side zeroing of abyss in tile */
-                          zeros = (buffer_x + bufx + pixels) - abyss_x_total;
-                          if (zeros > 0 && zeros < pixels)
-                            {
-                              memset (bp + (pixels - zeros) * bpx_size, 0x00, bpx_size * zeros);
-                            }
-                        }
+                        /* right side zeroing of abyss in tile */
+                        if (rskip)
+                          {
+                            memset (bp + (pixels - rskip) * bpx_size, 0x00, bpx_size * rskip);
+                          }
                         tp += tile_stride;
                         bp += buf_stride;
                       }
