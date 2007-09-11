@@ -1189,6 +1189,9 @@ gegl_buffer_set (GeglBuffer    *buffer,
   if (format == NULL)
     format = buffer->format;
 
+  /* FIXME: go through chain of providers up to but not including
+   * storage and disassociated Interpolator */
+
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
       pset (buffer, rect->x, rect->y, format, src);

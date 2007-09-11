@@ -1,5 +1,10 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set): added FIXME about
+	nuking cached interpolators on buffer change.
+
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Commited broken, but compiling incarnations of the cubic and lanczos
 	interpolators.
 
