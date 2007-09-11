@@ -154,7 +154,8 @@ void            gegl_buffer_copy              (GeglBuffer       *src,
 GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
 
 typedef enum {
-  GEGL_INTERPOLATION_NEAREST
+  GEGL_INTERPOLATION_NEAREST = 0,
+  GEGL_INTERPOLATION_LINEAR,
 } GeglInterpolation;
 
 /**

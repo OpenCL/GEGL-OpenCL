@@ -1,5 +1,13 @@
 2007-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.h: added GEGL_INTERPOLATION_LINEAR to
+	GeglInterpolation enum.
+	* gegl/buffer/gegl-buffer.c:
+	(pset,pget): fixed offset issue,
+	(gegl_buffer_sample): construct the specified interpolator.
+	
+2007-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	Reworked GeglInterpolator framework to use a small context cache
 	buffer. Only properly implemented for nearest neighbour and bi-linear
 	for now.

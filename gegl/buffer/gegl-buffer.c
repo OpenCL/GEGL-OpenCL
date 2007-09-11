@@ -766,8 +766,6 @@ pset (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->x + buffer_shift_x;
-  gint  buffer_y       = buffer->y + buffer_shift_y;
   gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
   gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
@@ -780,8 +778,8 @@ pset (GeglBuffer *buffer,
     }
 
   {
-    gint tiledy   = buffer_y + y;
-    gint tiledx   = buffer_x + x;
+    gint tiledy   = y + buffer_shift_y;
+    gint tiledx   = x + buffer_shift_x;
 
     if (!(tiledy >= buffer_abyss_y &&
           tiledy  < abyss_y_total &&
@@ -851,8 +849,6 @@ pget (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->x + buffer_shift_x;
-  gint  buffer_y       = buffer->y + buffer_shift_y;
   gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
   gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
@@ -865,8 +861,8 @@ pget (GeglBuffer *buffer,
     }
 
   {
-    gint      tiledy   = buffer_y + y;
-    gint      tiledx   = buffer_x + x;
+    gint tiledy = y + buffer_shift_y;
+    gint tiledx = x + buffer_shift_x;
 
     if (!(tiledy >= buffer_abyss_y &&
           tiledy <  abyss_y_total  &&
@@ -1223,7 +1219,6 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                     gint           level)
 {
   GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-
   gegl_buffer_iterate (sub_buf, dst, FALSE, format, level);
   g_object_unref (sub_buf);
 }
@@ -1681,8 +1676,24 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   /* look up appropriate interpolator,. */
   if (buffer->interpolator == NULL)
     {
-      buffer->interpolator = g_object_new (GEGL_TYPE_INTERPOLATOR_NEAREST,
-                                           "input", buffer,
+      /* FIXME: should probably check if the desired form of interpolation
+       * changes from the currently cached interpolator.
+       */
+      GType interpolation_type = 0;
+
+      switch (interpolation)
+        {
+          case GEGL_INTERPOLATION_NEAREST:
+            interpolation_type=GEGL_TYPE_INTERPOLATOR_NEAREST;
+            break;
+          case GEGL_INTERPOLATION_LINEAR:
+            interpolation_type=GEGL_TYPE_INTERPOLATOR_LINEAR;
+            break;
+          default:
+            g_warning ("unimplemented interpolation type %i", interpolation);
+        }
+      buffer->interpolator = g_object_new (interpolation_type,
+                                           "buffer", buffer,
                                            "format", format,
                                            NULL);
       gegl_interpolator_prepare (buffer->interpolator);
