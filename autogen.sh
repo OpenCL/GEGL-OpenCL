@@ -240,9 +240,10 @@ test $TEST_TYPE $FILE || {
     exit 1
 }
 
-(cd operations/generated;./porter-duff.rb)
+(cd operations/generated;./svg-12-blend.rb)
+(cd operations/generated;./svg-12-porter-duff.rb)
+(cd operations/generated;./other-blend.rb)
 (cd operations/generated;./math.rb)
-(cd operations/generated;./svg-blend.rb)
 (cd operations/workshop/generated;./blend.rb)
 (cd docs/;../tools/create-reference.rb ../gegl/gegl.h api.html)
 

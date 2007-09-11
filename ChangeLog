@@ -1,5 +1,17 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Added new composer ops based on the SVG-1.2 draft specification from
+	patch by John Marshall. (bug #47249)
+
+	* autogen.sh:
+	* operations/generated/other-blend.rb: added
+	* operations/generated/svg-12-blend.rb: added
+	* operations/generated/svg-12-porter-duff.rb: added
+	* operations/generated/svg-blend.rb: deleted
+	* operations/generated/porter-duff.rb: deleted
+
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set): added FIXME about
 	nuking cached interpolators on buffer change.
 
