@@ -62,8 +62,8 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
   gint         tile_width  = storage->tile_width;
   gint         tile_height = storage->tile_height;
 
-  gint needed_width  = ((width - 1) / tile_width +1) * tile_width;
-  gint needed_height = ((height - 1) / tile_height +1) * tile_height;
+  gint needed_width  = ((width - 1) / tile_width +2) * tile_width;
+  gint needed_height = ((height - 1) / tile_height +2) * tile_height;
 
   gint shift_x;
   gint shift_y;

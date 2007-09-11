@@ -1,3 +1,8 @@
+2007-09-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): use a
+	boundary of one unused tile between allocated buffers.
+
 2007-09-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): remove
