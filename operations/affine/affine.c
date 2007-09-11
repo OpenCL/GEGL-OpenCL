@@ -655,6 +655,7 @@ affine_generic (GeglBuffer        *dest,
 }
 
 
+
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
@@ -708,7 +709,8 @@ process (GeglOperation *operation,
   else
     {
       /* XXX: add back more interpolators */
-      affine_generic (output, input, affine->matrix, GEGL_INTERPOLATION_NEAREST);
+      affine_generic (output, input, affine->matrix, gegl_buffer_interpolation_from_string (
+         affine->filter));
     }
   g_object_unref (input);
   return TRUE;

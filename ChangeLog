@@ -1,5 +1,12 @@
 2007-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]:
+	(gegl_buffer_interpolation_from_string): added a convenience function
+	to lookup interpolation type enum from string.
+	* operations/affine/affine.c: (process): use the convenience function.
+
+2007-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.h: added GEGL_INTERPOLATION_LINEAR to
 	GeglInterpolation enum.
 	* gegl/buffer/gegl-buffer.c:

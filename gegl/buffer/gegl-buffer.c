@@ -1828,4 +1828,16 @@ gegl_buffer_destroy (GeglBuffer *buffer)
   g_object_unref (buffer);
 }
 
-
+GeglInterpolation
+gegl_buffer_interpolation_from_string (const gchar *string)
+{
+  if (g_str_equal (string, "nearest") ||
+      g_str_equal (string, "none")
+   )
+    return GEGL_INTERPOLATION_NEAREST;
+  if (g_str_equal (string, "linear") ||
+      g_str_equal (string, "bilinear")
+   )
+    return GEGL_INTERPOLATION_LINEAR;
+ return GEGL_INTERPOLATION_NEAREST;
+}

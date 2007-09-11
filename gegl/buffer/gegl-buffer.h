@@ -195,5 +195,14 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
 void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
 /**
+ * gegl_buffer_interpolation_from_string:
+ * @string: the string to look up
+ *
+ * Looks up the GeglInterpolation corresponding to a string, if no matching
+ * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
+ */
+GeglInterpolation gegl_buffer_interpolation_from_string (const gchar *string);
+
+/**
  */
 #endif
