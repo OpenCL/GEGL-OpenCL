@@ -1,3 +1,7 @@
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/clones.xml: s/under/dst-over/
+
 2007-08-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gallery/Makefile.am: make the gallery support parallel make.

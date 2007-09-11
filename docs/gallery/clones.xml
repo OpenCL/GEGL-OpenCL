@@ -121,7 +121,7 @@
                 <param name='value'>0.600000</param>
               </params>
           </node>
-          <node operation='under'>
+          <node operation='dst-over'>
               <node operation='opacity'>
                   <params>
                     <param name='value'>2.000000</param>
@@ -170,7 +170,7 @@
             <param name='y'>0.500000</param>
           </params>
       </node>
-      <node operation='under' id='clone2'>
+      <node operation='dst-over' id='clone2'>
           <node operation='opacity'>
               <params>
                 <param name='value'>0.800000</param>
