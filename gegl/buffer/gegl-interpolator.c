@@ -201,10 +201,6 @@ gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
   interpolator->cache_rectangle = surround;
   interpolator->interpolate_format = babl_format ("RaGaBaA float");
 
-  /* XXX: why is this needed? it doesn't really make sense */
-  surround.x += buffer->x;
-  surround.y += buffer->y;
-
   gegl_buffer_get (buffer, &surround, 1.0,
                    interpolator->interpolate_format,
                    interpolator->cache_buffer);

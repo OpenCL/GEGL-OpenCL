@@ -613,9 +613,9 @@ affine_generic (GeglBuffer        *dest,
   matrix3_invert (inverse);
 
   u_start = inverse[0][0] * dest->x + inverse[0][1] * dest->y
-            + inverse[0][2] - src->x;
+            + inverse[0][2];
   v_start = inverse[1][0] * dest->x + inverse[1][1] * dest->y
-            + inverse[1][2] - src->y;
+            + inverse[1][2];
 
   /* correct rounding on e.g. negative scaling (is this sound?) */
   if (inverse [0][0] < 0.)

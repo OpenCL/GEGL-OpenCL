@@ -1,3 +1,9 @@
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/affine/affine.c: Removed offset remaining from
+	when the affine code kept it's own linear buffer.
+	* gegl/buffer/gegl-interpolator.c: Removed counter offset.
+
 2007-09-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-interpolator.c: (dispose): unreference the buffer
