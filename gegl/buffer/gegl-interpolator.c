@@ -39,17 +39,18 @@ enum
   PROP_LAST
 };
 
-static void     gegl_interpolator_class_init (GeglInterpolatorClass *klass);
-static void     gegl_interpolator_init (GeglInterpolator *self);
-static void     finalize (GObject *gobject);
-static void     get_property (GObject    *gobject,
-                              guint       prop_id,
-                              GValue     *value,
-                              GParamSpec *pspec);
-static void     set_property (GObject      *gobject,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec);
+static void gegl_interpolator_class_init (GeglInterpolatorClass *klass);
+static void gegl_interpolator_init       (GeglInterpolator *self);
+static void finalize                     (GObject *gobject);
+static void dispose                      (GObject *gobject);
+static void get_property                 (GObject    *gobject,
+                                          guint       prop_id,
+                                          GValue     *value,
+                                          GParamSpec *pspec);
+static void set_property                 (GObject      *gobject,
+                                          guint         prop_id,
+                                          const GValue *value,
+                                          GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GeglInterpolator, gegl_interpolator, G_TYPE_OBJECT)
 
@@ -59,6 +60,7 @@ gegl_interpolator_class_init (GeglInterpolatorClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = finalize;
+  object_class->dispose = dispose;
 
   klass->prepare = NULL;
   klass->get     = NULL;
@@ -125,7 +127,8 @@ gegl_interpolator_prepare (GeglInterpolator *self)
 
 #if 0
   if (self->cache_buffer) /* to force a regetting of the region, even
-                             if the cached getter might be valid */
+                             if the cached getter might be valid
+                           */
     {
       g_free (self->cache_buffer);
       self->cache_buffer = NULL;
@@ -143,6 +146,18 @@ finalize (GObject *gobject)
       interpolator->cache_buffer = NULL;
     }
   G_OBJECT_CLASS (gegl_interpolator_parent_class)->finalize (gobject);
+}
+
+static void
+dispose (GObject *gobject)
+{
+  GeglInterpolator *interpolator = GEGL_INTERPOLATOR (gobject);
+  if (interpolator->buffer)
+    {
+      g_object_unref (interpolator->buffer);
+      interpolator->buffer = NULL;
+    }
+  G_OBJECT_CLASS (gegl_interpolator_parent_class)->dispose (gobject);
 }
 
 void

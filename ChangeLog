@@ -1,5 +1,10 @@
 2007-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-interpolator.c: (dispose): unreference the buffer
+	used as source upon destroying of the interpolator.
+
+2007-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]:
 	(gegl_buffer_interpolation_from_string): added a convenience function
 	to lookup interpolation type enum from string.
