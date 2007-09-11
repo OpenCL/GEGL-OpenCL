@@ -1,7 +1,7 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Added new composer ops based on the SVG-1.2 draft specification from
-	patch by John Marshall. (bug #47249)
+	patch by John Marshall. (bug #474249)
 
 	* autogen.sh:
 	* operations/generated/other-blend.rb: added
