@@ -16,6 +16,10 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
+/* XXX WARNING: This code compiles, but is functionally broken, and
+ * currently not used by the rest of GeglBuffer */
+
 #include "gegl-interpolator-lanczos.h"
 #include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
@@ -24,10 +28,8 @@
 enum
 {
   PROP_0,
-  PROP_INPUT,
   PROP_LANCZOS_WIDTH,
   PROP_LANCZOS_SAMPLES,
-  PROP_FORMAT,
   PROP_LAST
 };
 
@@ -38,24 +40,15 @@ get_property (GObject    *object,
               GParamSpec *pspec)
 {
   GeglInterpolatorLanczos *self         = GEGL_INTERPOLATOR_LANCZOS (object);
-  GeglInterpolator        *interpolator = GEGL_INTERPOLATOR (object);
 
   switch (prop_id)
     {
-      case PROP_INPUT:
-        g_value_set_object (value, interpolator->input);
-        break;
-
       case PROP_LANCZOS_WIDTH:
         g_value_set_int (value, self->lanczos_width);
         break;
 
       case PROP_LANCZOS_SAMPLES:
         g_value_set_int (value, self->lanczos_spp);
-        break;
-
-      case PROP_FORMAT:
-        g_value_set_pointer (value, interpolator->format);
         break;
 
       default:
@@ -70,24 +63,15 @@ set_property (GObject      *object,
               GParamSpec   *pspec)
 {
   GeglInterpolatorLanczos *self         = GEGL_INTERPOLATOR_LANCZOS (object);
-  GeglInterpolator        *interpolator = GEGL_INTERPOLATOR (object);
 
   switch (prop_id)
     {
-      case PROP_INPUT:
-        interpolator->input = GEGL_BUFFER (g_value_dup_object (value));
-        break;
-
       case PROP_LANCZOS_WIDTH:
         self->lanczos_width = g_value_get_int (value);
         break;
 
       case PROP_LANCZOS_SAMPLES:
         self->lanczos_spp = g_value_get_int (value);
-        break;
-
-      case PROP_FORMAT:
-        interpolator->format = g_value_get_pointer (value);
         break;
 
       default:
@@ -131,13 +115,6 @@ gegl_interpolator_lanczos_class_init (GeglInterpolatorLanczosClass *klass)
   interpolator_class->prepare = gegl_interpolator_lanczos_prepare;
   interpolator_class->get     = gegl_interpolator_lanczos_get;
 
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
-
   g_object_class_install_property (object_class, PROP_LANCZOS_WIDTH,
                                    g_param_spec_int ("lanczos_width",
                                                      "lanczos_width",
@@ -156,11 +133,6 @@ gegl_interpolator_lanczos_class_init (GeglInterpolatorLanczosClass *klass)
                                                      4000,
                                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 
-  g_object_class_install_property (object_class, PROP_FORMAT,
-                                   g_param_spec_pointer ("format",
-                                                         "format",
-                                                         "babl format",
-                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -184,8 +156,8 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
                                void             *output)
 {
   GeglInterpolatorLanczos *self   = GEGL_INTERPOLATOR_LANCZOS (interpolator);
-  GeglBuffer              *input  = interpolator->input;
-  gfloat                  *buffer;
+  GeglBuffer              *buffer  = interpolator->buffer;
+  gfloat                  *cache_buffer;
   gfloat                  *buf_ptr;
 
   gdouble                  x_sum, y_sum, arecip;
@@ -202,14 +174,14 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
                            y_kernel[lanczos_width2];
   
   gegl_interpolator_fill_buffer (interpolator, x, y);
-  buffer = interpolator->cache_buffer;
-  if (!buffer)
+  cache_buffer = interpolator->cache_buffer;
+  if (!cache_buffer)
     return;
 
   if (x >= 0 &&
       y >= 0 &&
-      x < input->width &&
-      y < input->height)
+      x < buffer->width &&
+      y < buffer->height)
     {
       gint u = (gint) x;
       gint v = (gint) y;
@@ -235,9 +207,9 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
       for (j = 0; j < lanczos_width2; j++)
         for (i = 0; i < lanczos_width2; i++)
           {
-            pu         = CLAMP (u + i - lanczos_width, 0, input->width - 1);
-            pv         = CLAMP (v + j - lanczos_width, 0, input->height - 1);
-            buf_ptr    = buffer + ((pv * input->width + pu) * 4);
+            pu         = CLAMP (u + i - lanczos_width, 0, buffer->width - 1);
+            pv         = CLAMP (v + j - lanczos_width, 0, buffer->height - 1);
+            buf_ptr    = cache_buffer + ((pv * buffer->width + pu) * 4);
             newval[0] += y_kernel[j] * x_kernel[i] * buf_ptr[0] * buf_ptr[3];
             newval[1] += y_kernel[j] * x_kernel[i] * buf_ptr[1] * buf_ptr[3];
             newval[2] += y_kernel[j] * x_kernel[i] * buf_ptr[2] * buf_ptr[3];

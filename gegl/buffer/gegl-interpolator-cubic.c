@@ -21,11 +21,12 @@
 #include <string.h>
 #include <math.h>
 
+/* XXX WARNING: This code compiles, but is functionally broken, and
+ * currently not used by the rest of GeglBuffer */
+
 enum
 {
   PROP_0,
-  PROP_INPUT,
-  PROP_FORMAT,
   PROP_B,
   PROP_TYPE,
   PROP_LAST
@@ -65,17 +66,6 @@ gegl_interpolator_cubic_class_init (GeglInterpolatorCubicClass *klass)
   interpolator_class->prepare = gegl_interpolator_cubic_prepare;
   interpolator_class->get     = gegl_interpolator_cubic_get;
 
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
-  g_object_class_install_property (object_class, PROP_FORMAT,
-                                   g_param_spec_pointer ("format",
-                                                         "format",
-                                                         "babl format",
-                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
   g_object_class_install_property (object_class, PROP_B,
                                    g_param_spec_double ("b",
                                                         "B",
@@ -148,9 +138,10 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
                              gdouble           y,
                              void             *output)
 {
-  GeglInterpolatorCubic *self   = GEGL_INTERPOLATOR_CUBIC (interpolator);
-  gfloat                *buffer = interpolator->cache_buffer;
-  GeglBuffer            *input  = interpolator->input;
+  GeglInterpolatorCubic *self      = GEGL_INTERPOLATOR_CUBIC (interpolator);
+  gfloat                *cache_buffer = interpolator->cache_buffer;
+  GeglRectangle         *rectangle = &interpolator->cache_rectangle;
+  GeglBuffer            *buffer    = interpolator->buffer;
   gfloat                *buf_ptr;
   gfloat                 factor;
 
@@ -162,25 +153,26 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
   gint                   i, j, pu, pv;
 
   gegl_interpolator_fill_buffer (interpolator, x, y);
-  buffer = interpolator->cache_buffer;
+  cache_buffer = interpolator->cache_buffer;
   if (!buffer)
     return;
 
   if (x >= 0 &&
       y >= 0 &&
-      x < input->width &&
-      y < input->height)
+      x < buffer->width &&
+      y < buffer->height)
     {
-      gint u = (gint) x;
-      gint v = (gint) y;
+      gint u = (gint) (x - rectangle->x);
+      gint v = (gint) (y - rectangle->y);
       newval[0] = newval[1] = newval[2] = newval[3] = 0.0;
       for (j = -1; j <= 2; j++)
         for (i = -1; i <= 2; i++)
           {
-            pu         = CLAMP (u + i, 0, input->width - 1);
-            pv         = CLAMP (v + j, 0, input->height - 1);
-            factor     = cubicKernel (y - pv, self->b, self->c) *cubicKernel (x - pu, self->b, self->c);
-            buf_ptr    = buffer + ((pv * input->width + pu) * 4);
+            pu         = CLAMP (u + i, 0, rectangle->width - 1);
+            pv         = CLAMP (v + j, 0, rectangle->height - 1);
+            factor     = cubicKernel ((y - rectangle->y) - pv, self->b, self->c) *
+                         cubicKernel ((x - rectangle->x) - pu, self->b, self->c);
+            buf_ptr    = cache_buffer + ((pv * rectangle->width + pu) * 4);
             newval[0] += factor * buf_ptr[0] * buf_ptr[3];
             newval[1] += factor * buf_ptr[1] * buf_ptr[3];
             newval[2] += factor * buf_ptr[2] * buf_ptr[3];
@@ -224,20 +216,11 @@ get_property (GObject    *object,
               GParamSpec *pspec)
 {
   GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
-  GeglInterpolator      *interpolator = GEGL_INTERPOLATOR (object);
 
   switch (prop_id)
     {
-      case PROP_INPUT:
-        g_value_set_object (value, interpolator->input);
-        break;
-
       case PROP_B:
         g_value_set_double (value, self->b);
-        break;
-
-      case PROP_FORMAT:
-        g_value_set_pointer (value, interpolator->format);
         break;
 
       case PROP_TYPE:
@@ -256,18 +239,9 @@ set_property (GObject      *object,
               GParamSpec   *pspec)
 {
   GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
-  GeglInterpolator      *interpolator = GEGL_INTERPOLATOR (object);
 
   switch (prop_id)
     {
-      case PROP_INPUT:
-        interpolator->input = GEGL_BUFFER (g_value_dup_object (value));
-        break;
-
-      case PROP_FORMAT:
-        interpolator->format = g_value_get_pointer (value);
-        break;
-
       case PROP_B:
         self->b = g_value_get_double (value);
         break;

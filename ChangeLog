@@ -1,5 +1,13 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Commited broken, but compiling incarnations of the cubic and lanczos
+	interpolators.
+
+	* gegl/buffer/gegl-interpolator-cubic.c:
+	* gegl/buffer/gegl-interpolator-lanczos.c:
+
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/affine/affine.c: Removed offset remaining from
 	when the affine code kept it's own linear buffer.
 	* gegl/buffer/gegl-interpolator.c: Removed counter offset.
