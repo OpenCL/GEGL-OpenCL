@@ -22,28 +22,22 @@
 enum
 {
   PROP_0,
-  PROP_INPUT,
-  PROP_FORMAT,
+  PROP_CONTEXT_PIXELS,
   PROP_LAST
 };
-
-
-
-static void     get_property (GObject    *gobject,
-                              guint       prop_id,
-                              GValue     *value,
-                              GParamSpec *pspec);
-static void     set_property (GObject      *gobject,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec);
 
 static void    gegl_interpolator_linear_get (GeglInterpolator *self,
                                              gdouble           x,
                                              gdouble           y,
                                              void             *output);
-
-static void    gegl_interpolator_linear_prepare (GeglInterpolator *self);
+static void            set_property (GObject      *gobject,
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec);
+static void            get_property (GObject    *gobject,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec);
 
 
 G_DEFINE_TYPE (GeglInterpolatorLinear, gegl_interpolator_linear, GEGL_TYPE_INTERPOLATOR)
@@ -51,37 +45,28 @@ G_DEFINE_TYPE (GeglInterpolatorLinear, gegl_interpolator_linear, GEGL_TYPE_INTER
 static void
 gegl_interpolator_linear_class_init (GeglInterpolatorLinearClass *klass)
 {
-  GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
   GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  interpolator_class->prepare = gegl_interpolator_linear_prepare;
   interpolator_class->get     = gegl_interpolator_linear_get;
 
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
+  g_object_class_install_property (object_class, PROP_CONTEXT_PIXELS,
+                                   g_param_spec_int ("context-pixels",
+                                                     "ContextPixels",
+                                                     "number of neighbourhood pixels needed in each direction",
+                                                     0, 16, 1,
+                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_FORMAT,
-                                   g_param_spec_pointer ("format",
-                                                         "format",
-                                                         "babl format",
-                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 }
 
 static void
 gegl_interpolator_linear_init (GeglInterpolatorLinear *self)
 {
-}
-
-void
-gegl_interpolator_linear_prepare (GeglInterpolator *interpolator)
-{
+  GEGL_INTERPOLATOR (self)->context_pixels=1;
 }
 
 void
@@ -90,50 +75,55 @@ gegl_interpolator_linear_get (GeglInterpolator *interpolator,
                               gdouble           y,
                               void             *output)
 {
-  GeglBuffer *input  = interpolator->input;
-  gfloat     *buffer;
-  gfloat      dst[4];
-  gfloat      abyss = 0.;
+  GeglRectangle *rect;
+  gfloat        *cache_buffer;
+  gfloat         dst[4];
+  gfloat         abyss = 0.;
 
   gegl_interpolator_fill_buffer (interpolator, x, y);
-  buffer = interpolator->cache_buffer;
-  if (!buffer)
+  rect = &interpolator->cache_rectangle;
+  cache_buffer = interpolator->cache_buffer;
+  if (!cache_buffer)
     return;
 
-  if (x >= 0 &&
-      y >= 0 &&
-      x < input->width &&
-      y < input->height)
+  if (x >= rect->x &&
+      y >= rect->y &&
+      x < rect->x+rect->width &&
+      y < rect->y+rect->height)
     {
+      x -= rect->x;
+      y -= rect->y;
+
       gint    i;
-      gint    x0 = input->x;
-      gint    y0 = input->y;
-      gint    x1 = input->x + input->width - 1;
-      gint    y1 = input->y + input->height - 1;
+      gint    x0 = 0;
+      gint    y0 = 0;
+      gint    x1 = rect->width - 1;
+      gint    y1 = rect->height - 1;
 
       gint    u  = (gint) x;
       gint    v  = (gint) y;
       gdouble uf = x - u;
       gdouble vf = y - v;
-      gdouble q1 = vf * uf;
-      gdouble q2 = (1 - uf) * vf;
-      gdouble q3 = (1 - uf) * (1 - vf);
-      gdouble q4 = uf * (1 - vf);
 
-      gfloat *p00 = buffer + (v * input->width + u) * 4;
+      gdouble q1 = (1 - uf) * (1 - vf);
+      gdouble q2 = uf * (1 - vf);
+      gdouble q3 = (1 - uf) * vf;
+      gdouble q4 = uf * vf;
+
+      gfloat *p00 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 0, x0, x1);
       v = CLAMP ((gint) y + 1, y0, y1);
-      gfloat *p01 = buffer + (v * input->width + u) * 4;
+      gfloat *p01 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 1, x0, x1);
       v = CLAMP ((gint) y + 0, y0, y1);
-      gfloat *p10 = buffer + (v * input->width + u) * 4;
+      gfloat *p10 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 1, x0, x1);
       v = CLAMP ((gint) y + 1, y0, y1);
-      gfloat *p11 = buffer + (v * input->width + u) * 4;
+      gfloat *p11 = cache_buffer + (v * rect->width + u) * 4;
 
       for (i = 0; i < 4; i++)
         {
-          dst[i] = q1 * p00[i] + q2 * p01[i] + q3 * p10[i] + q4 * p11[i];
+          dst[i] = q1 * p00[i] + q2 * p10[i] + q3 * p01[i] + q4 * p11[i];
         }
     }
   else
@@ -147,48 +137,41 @@ gegl_interpolator_linear_get (GeglInterpolator *interpolator,
                 dst, output, 1);
 }
 
-static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
 
-  switch (prop_id)
-    {
-      case PROP_INPUT:
-        g_value_set_object (value, self->input);
-        break;
-
-      case PROP_FORMAT:
-        g_value_set_pointer (value, self->format);
-        break;
-
-      default:
-        break;
-    }
-}
 
 static void
-set_property (GObject      *object,
-              guint         prop_id,
+set_property (GObject      *gobject,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
-
-  switch (prop_id)
+  switch (property_id)
     {
-      case PROP_INPUT:
-        self->input = GEGL_BUFFER (g_value_dup_object (value));
-        break;
-
-      case PROP_FORMAT:
-        self->format = g_value_get_pointer (value);
+      case PROP_CONTEXT_PIXELS:
+        g_object_set_property (gobject, "GeglInterpolator::context-pixels", value);
         break;
 
       default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
     }
 }
+
+static void
+get_property (GObject    *gobject,
+              guint       property_id,
+              GValue     *value,
+              GParamSpec *pspec)
+{
+  switch (property_id)
+    {
+      case PROP_CONTEXT_PIXELS:
+        g_object_get_property (gobject, "GeglInterpolator::context-pixels", value);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
+    }
+}
+

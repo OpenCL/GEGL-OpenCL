@@ -39,12 +39,13 @@ struct _GeglInterpolator
 {
   GObject parent_instance;
   /*< private >*/
-  GeglBuffer *input;
-  Babl       *format;
+  GeglBuffer    *buffer;
+  Babl          *format;
 
   GeglRectangle  cache_rectangle;
   void          *cache_buffer;
   Babl          *interpolate_format;
+  gint           context_pixels;
 };
 
 struct _GeglInterpolatorClass

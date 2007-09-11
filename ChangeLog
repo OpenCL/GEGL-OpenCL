@@ -1,5 +1,23 @@
 2007-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	Reworked GeglInterpolator framework to use a small context cache
+	buffer. Only properly implemented for nearest neighbour and bi-linear
+	for now.
+
+	* gegl/buffer/gegl-interpolator.c: use a cache-buffer of 16x16 pixels
+	as the source buffer for doing interpolations.
+	* gegl/buffer/gegl-interpolator.h: s/->input/->buffer/, added
+	context_pixels which indicates the neighbourhood needed by an
+	interpolator.
+	* gegl/buffer/gegl-interpolator-linear.c: changed the factors used
+	around to achieve correct interpolation. Modified to work with the new
+	smaller linear cache-buffer. Override the default from
+	GeglInterpolator of 0 context to be 1px radius of context.
+	* gegl/buffer/gegl-interpolator-nearest.c: modified to work with
+	the new smaller linear cache-buffer.
+
+2007-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): use a
 	boundary of one unused tile between allocated buffers.
 

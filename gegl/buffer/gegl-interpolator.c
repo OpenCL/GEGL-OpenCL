@@ -17,6 +17,9 @@
  *
  */
 
+#define SIZE 16  /* the cached region around a fetched pixel value is
+                    SIZE×SIZE pixels. */
+
 #include "config.h"
 
 #include <glib-object.h>
@@ -27,9 +30,26 @@
 #include "gegl-utils.h"
 #include "gegl-buffer-private.h"
 
-static void      gegl_interpolator_class_init (GeglInterpolatorClass *klass);
-static void      gegl_interpolator_init (GeglInterpolator *self);
-static void      finalize (GObject *gobject);
+enum
+{
+  PROP_0,
+  PROP_BUFFER,
+  PROP_FORMAT,
+  PROP_CONTEXT_PIXELS,
+  PROP_LAST
+};
+
+static void     gegl_interpolator_class_init (GeglInterpolatorClass *klass);
+static void     gegl_interpolator_init (GeglInterpolator *self);
+static void     finalize (GObject *gobject);
+static void     get_property (GObject    *gobject,
+                              guint       prop_id,
+                              GValue     *value,
+                              GParamSpec *pspec);
+static void     set_property (GObject      *gobject,
+                              guint         prop_id,
+                              const GValue *value,
+                              GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GeglInterpolator, gegl_interpolator, G_TYPE_OBJECT)
 
@@ -42,12 +62,38 @@ gegl_interpolator_class_init (GeglInterpolatorClass *klass)
 
   klass->prepare = NULL;
   klass->get     = NULL;
+
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
+
+  g_object_class_install_property (object_class, PROP_BUFFER,
+                                   g_param_spec_object ("buffer",
+                                                        "Buffer",
+                                                        "Input pad, for image buffer input.",
+                                                        GEGL_TYPE_BUFFER,
+                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (object_class, PROP_FORMAT,
+                                   g_param_spec_pointer ("format",
+                                                         "format",
+                                                         "babl format",
+                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (object_class, PROP_CONTEXT_PIXELS,
+                                   g_param_spec_int ("context-pixels",
+                                                     "ContextPixels",
+                                                     "number of neighbourhood pixels needed in each direction",
+                                                     0, 16, 0,
+                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 }
 
 static void
 gegl_interpolator_init (GeglInterpolator *self)
 {
   self->cache_buffer = NULL;
+  self->buffer = NULL;
+  self->context_pixels = 0;
 }
 
 void
@@ -77,13 +123,14 @@ gegl_interpolator_prepare (GeglInterpolator *self)
   if (klass->prepare)
     klass->prepare (self);
 
+#if 0
   if (self->cache_buffer) /* to force a regetting of the region, even
-                             if the cached getter might be valid
-                           */
+                             if the cached getter might be valid */
     {
       g_free (self->cache_buffer);
       self->cache_buffer = NULL;
     }
+#endif
 }
 
 static void
@@ -93,6 +140,7 @@ finalize (GObject *gobject)
   if (interpolator->cache_buffer)
     {
       g_free (interpolator->cache_buffer);
+      interpolator->cache_buffer = NULL;
     }
   G_OBJECT_CLASS (gegl_interpolator_parent_class)->finalize (gobject);
 }
@@ -102,44 +150,101 @@ gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
                                gdouble           x,
                                gdouble           y)
 {
-  GeglBuffer *input;
+  GeglBuffer    *buffer;
+  GeglRectangle  surround;
  
-  input = interpolator->input;
-  g_assert (input);
+  buffer = interpolator->buffer;
+  g_assert (buffer);
 
-  if (interpolator->cache_buffer) /* FIXME: check that the geometry of the
-                                            existing cache is good for the
-                                            provided coordinates as well
-                                   */
+  if (interpolator->cache_buffer) 
     {
       GeglRectangle r = interpolator->cache_rectangle;
-      /* FIXME: take sampling radius into account */
 
-      if (x>=r.x && x<r.x+r.width &&
-          y>=r.y && y<r.y+r.height)
-          /* we're already prefetched for the correct data */
-          return;
-
-      /* requested sample outside defined region, bailing early */
-      if (x < input->x ||
-          x > input->x+input->width ||
-          y < input->height ||
-          y > input->y+input->height)
-        return;
-      /*return;*/
+      /* check if the cache-buffer includes both the desired coordinates and
+       * a sufficient surrounding context 
+       */
+      if (x - r.x >= interpolator->context_pixels &&
+          x - r.x < r.width - interpolator->context_pixels &&
+          y - r.y >= interpolator->context_pixels &&
+          y - r.y < r.height - interpolator->context_pixels)
+        {
+          return;  /* we can reuse our cached interpolation source buffer */
+        }
 
       g_free (interpolator->cache_buffer);
+      interpolator->cache_buffer = NULL;
     }
 
-  /* by default we just grab everything for the interpolator 
-   *
-   * FIXME: do not grab the whole GeglBuffer but only a fixed amount of
-   * pixels to allow this infrastructure to scale.
-   * */
-  interpolator->cache_buffer = g_malloc0 (input->width * input->height * 4 * 4);
-  interpolator->cache_rectangle = * gegl_buffer_extent (input);
+  surround.x = x - SIZE/2;
+  surround.y = y - SIZE/2;
+  surround.width  = SIZE;
+  surround.height = SIZE;
+
+  interpolator->cache_buffer = g_malloc0 (surround.width *
+                                          surround.height *
+                                          4 * sizeof (gfloat));
+  interpolator->cache_rectangle = surround;
   interpolator->interpolate_format = babl_format ("RaGaBaA float");
-  gegl_buffer_get (interpolator->input, NULL, 1.0,
+
+  /* XXX: why is this needed? it doesn't really make sense */
+  surround.x += buffer->x;
+  surround.y += buffer->y;
+
+  gegl_buffer_get (buffer, &surround, 1.0,
                    interpolator->interpolate_format,
                    interpolator->cache_buffer);
+}
+
+static void
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
+{
+  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
+
+  switch (prop_id)
+    {
+      case PROP_BUFFER:
+        g_value_set_object (value, self->buffer);
+        break;
+
+      case PROP_FORMAT:
+        g_value_set_pointer (value, self->format);
+        break;
+
+      case PROP_CONTEXT_PIXELS:
+        g_value_set_int (value, self->context_pixels);
+        break;
+
+      default:
+        break;
+    }
+}
+
+static void
+set_property (GObject      *object,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
+
+  switch (prop_id)
+    {
+      case PROP_BUFFER:
+        self->buffer = GEGL_BUFFER (g_value_dup_object (value));
+        break;
+
+      case PROP_FORMAT:
+        self->format = g_value_get_pointer (value);
+        break;
+
+      case PROP_CONTEXT_PIXELS:
+        self->context_pixels = g_value_get_int (value);
+        break;
+
+      default:
+        break;
+    }
 }
