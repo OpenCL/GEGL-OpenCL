@@ -1,6 +1,7 @@
 2007-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* autogen.sh: Added check for existence of automake-1.10.
+	Fixes bug #474507.
 
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
