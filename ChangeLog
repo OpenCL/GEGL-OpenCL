@@ -1,5 +1,10 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/generated/blend.rb: disabled compositing ops
+	that are also implemented according to the SVG 1.2 draft spec.
+
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/dropshadow.c: (attach): s/"in"/"src-in"/ due to new
 	name according to SVG 1.2 draft spec.
 
