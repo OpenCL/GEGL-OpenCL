@@ -1,3 +1,7 @@
+2007-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* autogen.sh: Added check for existence of automake-1.10.
+
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Fixed some of the GeglBuffer modernization fixes that apparently
