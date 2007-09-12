@@ -73,7 +73,7 @@ static void attach (GeglOperation *operation)
       priv->translate = gegl_node_new_child (gegl, "operation", "translate", NULL);
       priv->opacity   = gegl_node_new_child (gegl, "operation", "opacity", NULL);
       priv->blur      = gegl_node_new_child (gegl, "operation", "gaussian-blur", NULL);
-      priv->darken    = gegl_node_new_child (gegl, "operation", "in", NULL);
+      priv->darken    = gegl_node_new_child (gegl, "operation", "src-in", NULL);
       priv->black     = gegl_node_new_child (gegl, "operation", "color",
                                          "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
                                          NULL);

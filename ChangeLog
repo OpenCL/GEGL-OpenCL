@@ -1,3 +1,8 @@
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/meta/dropshadow.c: (attach): s/"in"/"src-in"/ due to new
+	name according to SVG 1.2 draft spec.
+
 2007-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* autogen.sh: Added check for existence of automake-1.10.
