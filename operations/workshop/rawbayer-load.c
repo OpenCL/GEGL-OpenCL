@@ -103,7 +103,7 @@ load_buffer (GeglChantOperation *op_raw_load)
 
       { 
         GeglRectangle extent = {0,0,width,height};
-        output = gegl_buffer_new (&extent, babl_format ("Y u16"));
+        op_raw_load->priv = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
       }
          {
            guchar *buf=g_malloc (width * height * 3 * 2);

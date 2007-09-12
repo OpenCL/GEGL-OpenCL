@@ -57,7 +57,7 @@ process (GeglOperation *operation,
  green = self->green;
  blue = self->blue;
 
- output = gegl_buffer_new (result_rext, babl_format ("YA float"));
+ output = gegl_buffer_new (result_rect, babl_format ("YA float"));
 
  if ((result_rect->width > 0) && (result_rect->height > 0))
  {

@@ -51,7 +51,7 @@ init (GeglChantOperation *operation)
   /* XXX: this is not freed when the op is destroyed */
   { 
     GeglRectangle extent = {0,0,1024,1024};
-    output = gegl_buffer_new (&extent, babl_format ("RGBA float"));
+    priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
   }
 }
 

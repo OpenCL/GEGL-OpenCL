@@ -1,5 +1,14 @@
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixed some of the GeglBuffer modernization fixes that apparently
+	were rushed into fashion a bit quickly.
+
+	* operations/workshop/mblur.c: (init):
+	* operations/workshop/mono-mixer.c: (process):
+	* operations/workshop/rawbayer-load.c: (load_buffer):
+
+2007-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Added new composer ops based on the SVG-1.2 draft specification from
 	patch by John Marshall. (bug #474249)
 
