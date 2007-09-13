@@ -1,5 +1,13 @@
 2007-09-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-utils.[ch]: (gegl_rectangle_bounding_box),
+	(gegl_rectangle_intersect), (gegl_rectangle_copy),
+	(gegl_rectangle_contains), (gegl_rectangle_equal),
+	(gegl_rectangle_equal_coords): sprinkled const on GeglRectangle *
+	parameters in function prototype/defintion.
+
+2007-09-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/generated/blend.rb: disabled some more of ops
 	duplicated by recent SVG 1.2 draft conformant operations.
 

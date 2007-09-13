@@ -76,9 +76,9 @@ gegl_rectangle_set (GeglRectangle *r,
 }
 
 void
-gegl_rectangle_bounding_box (GeglRectangle *dest,
-                             GeglRectangle *src1,
-                             GeglRectangle *src2)
+gegl_rectangle_bounding_box (GeglRectangle       *dest,
+                             const GeglRectangle *src1,
+                             const GeglRectangle *src2)
 {
   gboolean s1_has_area = src1->width && src1->height;
   gboolean s2_has_area = src2->width && src2->height;
@@ -104,9 +104,9 @@ gegl_rectangle_bounding_box (GeglRectangle *dest,
 }
 
 gboolean
-gegl_rectangle_intersect (GeglRectangle *dest,
-                          GeglRectangle *src1,
-                          GeglRectangle *src2)
+gegl_rectangle_intersect (GeglRectangle       *dest,
+                          const GeglRectangle *src1,
+                          const GeglRectangle *src2)
 {
   gint x1, x2, y1, y2;
 
@@ -136,8 +136,8 @@ gegl_rectangle_intersect (GeglRectangle *dest,
 }
 
 void
-gegl_rectangle_copy (GeglRectangle *to,
-                     GeglRectangle *from)
+gegl_rectangle_copy (GeglRectangle       *to,
+                     const GeglRectangle *from)
 {
   to->x      = from->x;
   to->y      = from->y;
@@ -146,8 +146,8 @@ gegl_rectangle_copy (GeglRectangle *to,
 }
 
 gboolean
-gegl_rectangle_contains (GeglRectangle *r,
-                         GeglRectangle *s)
+gegl_rectangle_contains (const GeglRectangle *r,
+                         const GeglRectangle *s)
 {
   if (s->x >= r->x &&
       s->y >= r->y &&
@@ -159,8 +159,8 @@ gegl_rectangle_contains (GeglRectangle *r,
 }
 
 gboolean
-gegl_rectangle_equal (GeglRectangle *r,
-                      GeglRectangle *s)
+gegl_rectangle_equal (const GeglRectangle *r,
+                      const GeglRectangle *s)
 {
   if (r->x == s->x &&
       r->y == s->y &&
@@ -172,11 +172,11 @@ gegl_rectangle_equal (GeglRectangle *r,
 }
 
 gboolean
-gegl_rectangle_equal_coords (GeglRectangle *r,
-                             gint           x,
-                             gint           y,
-                             gint           w,
-                             gint           h)
+gegl_rectangle_equal_coords (const GeglRectangle *r,
+                             gint                 x,
+                             gint                 y,
+                             gint                 w,
+                             gint                 h)
 {
   if (r->x == x &&
       r->y == y &&

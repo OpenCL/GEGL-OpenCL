@@ -23,28 +23,28 @@
 
 G_BEGIN_DECLS
 
-void        gegl_rectangle_set          (GeglRectangle *r,
-                                         gint           x,
-                                         gint           y,
-                                         guint          width,
-                                         guint          height);
-gboolean    gegl_rectangle_equal        (GeglRectangle *r,
-                                         GeglRectangle *s);
-gboolean    gegl_rectangle_equal_coords (GeglRectangle *r,
-                                         gint           x,
-                                         gint           y,
-                                         gint           width,
-                                         gint           height);
-void        gegl_rectangle_copy         (GeglRectangle *to,
-                                         GeglRectangle *from);
-void        gegl_rectangle_bounding_box (GeglRectangle *dest,
-                                         GeglRectangle *src1,
-                                         GeglRectangle *src2);
-gboolean    gegl_rectangle_intersect    (GeglRectangle *dest,
-                                         GeglRectangle *src1,
-                                         GeglRectangle *src2);
-gboolean    gegl_rectangle_contains     (GeglRectangle *r,
-                                         GeglRectangle *s);
+void        gegl_rectangle_set          (GeglRectangle       *r,
+                                         gint                 x,
+                                         gint                 y,
+                                         guint                width,
+                                         guint                height);
+gboolean    gegl_rectangle_equal        (const GeglRectangle *r,
+                                         const GeglRectangle *s);
+gboolean    gegl_rectangle_equal_coords (const GeglRectangle *r,
+                                         gint                 x,
+                                         gint                 y,
+                                         gint                 width,
+                                         gint                 height);
+void        gegl_rectangle_copy         (GeglRectangle       *to,
+                                         const GeglRectangle *from);
+void        gegl_rectangle_bounding_box (GeglRectangle       *dest,
+                                         const GeglRectangle *src1,
+                                         const GeglRectangle *src2);
+gboolean    gegl_rectangle_intersect    (GeglRectangle       *dest,
+                                         const GeglRectangle *src1,
+                                         const GeglRectangle *src2);
+gboolean    gegl_rectangle_contains     (const GeglRectangle *r,
+                                         const GeglRectangle *s);
 
 void        gegl_log_debug              (gchar    *file,
                                          gint      line,
