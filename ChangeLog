@@ -1,5 +1,10 @@
 2007-09-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/generated/blend.rb: disabled some more of ops
+	duplicated by recent SVG 1.2 draft conformant operations.
+
+2007-09-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation.c:
 	(gegl_operation_set_source_region): intersect the requested region
 	with the available region, making the rectangle needed from the
