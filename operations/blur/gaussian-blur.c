@@ -226,18 +226,18 @@ iir_young_hor_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (src->width * src->height * 4 * 4);
-  w   = g_malloc0 (src->width * 4);
+  buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
+  w   = g_malloc0 (gegl_buffer_width (src) * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), buf);
 
-  w_len = src->width;
-  for (v=0; v<src->height; v++)
+  w_len = gegl_buffer_width (src);
+  for (v=0; v<gegl_buffer_height (src); v++)
     {
       for (c = 0; c < 4; c++)
         {
           iir_young_blur_1D (buf,
-                             v*src->width*4+c,
+                             v*gegl_buffer_width (src)*4+c,
                              4,
                              B,
                              b,
@@ -264,20 +264,20 @@ iir_young_ver_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (src->width * src->height * 4 * 4);
-  w   = g_malloc0 (src->height * 4);
+  buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
+  w   = g_malloc0 (gegl_buffer_height (src) * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), buf);
 
-  w_len = src->height;
+  w_len = gegl_buffer_height (src);
 
-  for (v=0; v<dst->width; v++)
+  for (v=0; v<gegl_buffer_width (dst); v++)
     {
       for (c = 0; c < 4; c++)
         {
           iir_young_blur_1D (buf,
                              (v+offset)*4 + c,
-                             src->width*4,
+                             gegl_buffer_width (src)*4,
                              B,
                              b,
                              w,
@@ -380,21 +380,21 @@ fir_hor_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset = 0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
+  for (v=0; v<gegl_buffer_height (dst); v++)
+    for (u=0; u<gegl_buffer_width (dst); u++)
       {
         gint i;
 
         for (i=0; i<4; i++)
           dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       src->width,
-                                                       src->height,
+                                                       gegl_buffer_width (src),
+                                                       gegl_buffer_height (src),
                                                        u - (matrix_length/2),
                                                        v,
                                                        matrix_length,
@@ -421,21 +421,21 @@ fir_ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset=0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
+  for (v=0; v<gegl_buffer_height (dst); v++)
+    for (u=0; u<gegl_buffer_width (dst); u++)
       {
         gint c;
 
         for (c=0; c<4; c++)
           dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       src->width,
-                                                       src->height,
+                                                       gegl_buffer_width (src),
+                                                       gegl_buffer_height (src),
                                                        u + skipoffsetX,
                                                        v - (matrix_length/2) + skipoffsetY,
                                                        1,

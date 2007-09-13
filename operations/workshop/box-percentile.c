@@ -175,14 +175,14 @@ median (GeglBuffer *src,
   gfloat *dst_buf;
 
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
 
   offset = 0;
-  for (y=0; y<dst->height; y++)
-    for (x=0; x<dst->width; x++)
+  for (y=0; y<gegl_buffer_height (dst); y++)
+    for (x=0; x<gegl_buffer_width (dst); x++)
       {
         gint u,v;
         gfloat *median_pix;
@@ -192,10 +192,10 @@ median (GeglBuffer *src,
         for (v=y-radius;v<=y+radius;v++)
           for (u=x-radius;u<=x+radius;u++)
             {
-              if (u >= 0 && u < dst->width &&
-                  v >= 0 && v < dst->height)
+              if (u >= 0 && u < gegl_buffer_width (dst) &&
+                  v >= 0 && v < gegl_buffer_height (dst))
                 {
-                  gfloat *src_pix = src_buf + (u+(v * src->width)) * 4;
+                  gfloat *src_pix = src_buf + (u+(v * gegl_buffer_width (src))) * 4;
                   gfloat luma = (src_pix[0] * 0.212671 +
                                  src_pix[1] * 0.715160 +
                                  src_pix[2] * 0.072169);

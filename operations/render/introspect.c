@@ -108,8 +108,7 @@ get_defined_region (GeglOperation *operation)
   if (self->buf)
     {
       GeglBuffer *buffer = GEGL_BUFFER (self->buf);
-      gegl_rectangle_set (&result, buffer->x, buffer->y,
-                              buffer->width, buffer->height);
+      result = *gegl_buffer_extent (buffer);
     }
   return result;
 }

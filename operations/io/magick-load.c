@@ -99,8 +99,8 @@ get_defined_region (GeglOperation *operation)
 
   load_cache (self);
 
-  width  = GEGL_BUFFER (self->priv)->width;
-  height = GEGL_BUFFER (self->priv)->height;
+  g_object_get (self->priv, "width", &width,
+                            "height", &height, NULL);
 
   result.width  = width;
   result.height  = height;

@@ -235,25 +235,25 @@ fix_saturation (GeglBuffer       *buf,
   g_object_get (buf, "px-size", &pxsize, NULL);
 
   for (y=0; y<3; y++)
-    row[y] = (gfloat*) g_malloc0 (pxsize * buf->width);
+    row[y] = (gfloat*) g_malloc0 (pxsize * gegl_buffer_width (buf));
 
   for (y=0; y<2; y++)
     {
-      gegl_rectangle_set (&rect, 0,y, buf->width, 1);
+      gegl_rectangle_set (&rect, 0,y, gegl_buffer_width (buf), 1);
       gegl_buffer_get (buf, &rect, 1.0, buf->format, row[y+1]);
     }
 
-  fix_saturation_row (row[1], row[1], row[2], yw, buf->width, nc);
+  fix_saturation_row (row[1], row[1], row[2], yw, gegl_buffer_width (buf), nc);
   
-  for (y=1; y<buf->height-1; y++)
+  for (y=1; y<gegl_buffer_height (buf)-1; y++)
     {
       if (y>1)
         {
-          gegl_rectangle_set (&rect, 0, y-2, buf->width, 1);
+          gegl_rectangle_set (&rect, 0, y-2, gegl_buffer_width (buf), 1);
           gegl_buffer_set (buf, &rect, buf->format, row[0]);
         }
       
-      gegl_rectangle_set (&rect, 0,y+1, buf->width, 1);
+      gegl_rectangle_set (&rect, 0,y+1, gegl_buffer_width (buf), 1);
       gegl_buffer_get (buf, &rect, 1.0, buf->format, row[0]);
 
       tmp = row[0];
@@ -261,15 +261,15 @@ fix_saturation (GeglBuffer       *buf,
       row[1] = row[2];
       row[2] = tmp;
 
-      fix_saturation_row (row[0], row[1], row[2], yw, buf->width, nc);
+      fix_saturation_row (row[0], row[1], row[2], yw, gegl_buffer_width (buf), nc);
     }
 
-  fix_saturation_row (row[1], row[2], row[2], yw, buf->width, nc);
+  fix_saturation_row (row[1], row[2], row[2], yw, gegl_buffer_width (buf), nc);
 
-  for (y=buf->height-2; y<buf->height; y++)
+  for (y=gegl_buffer_height (buf)-2; y<gegl_buffer_height (buf); y++)
     {
-      gegl_rectangle_set (&rect, 0, y, buf->width, 1);
-      gegl_buffer_set (buf, &rect, buf->format, row[y-buf->height+2]);
+      gegl_rectangle_set (&rect, 0, y, gegl_buffer_width (buf), 1);
+      gegl_buffer_set (buf, &rect, buf->format, row[y-gegl_buffer_height (buf)+2]);
     }
 
   for (y=0; y<3; y++)
@@ -329,24 +329,24 @@ reconstruct_chroma (GeglBuffer *buf,
   gint pxsize;
   g_object_get (buf, "px-size", &pxsize, NULL);
 
-  pixels = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*pxsize);
-  tmp = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*2*sizeof(gfloat));
+  pixels = (gfloat*) g_malloc0 (MAX(gegl_buffer_width (buf), gegl_buffer_height (buf))*pxsize);
+  tmp = (gfloat*) g_malloc0 (MAX(gegl_buffer_width (buf), gegl_buffer_height (buf))*2*sizeof(gfloat));
 
-  for (i=0; i<buf->height; i+=2)
+  for (i=0; i<gegl_buffer_height (buf); i+=2)
     {
-      gegl_rectangle_set (&rect, 0, i,  buf->width, 1);
+      gegl_rectangle_set (&rect, 0, i,  gegl_buffer_width (buf), 1);
       gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
 
-      reconstruct_chroma_row (pixels, buf->width, has_alpha, tmp);
+      reconstruct_chroma_row (pixels, gegl_buffer_width (buf), has_alpha, tmp);
       gegl_buffer_set (buf, &rect, buf->format, pixels);
     }
 
-  for (i=0; i<buf->width; i++)
+  for (i=0; i<gegl_buffer_width (buf); i++)
     {
-      gegl_rectangle_set (&rect, i, 0, 1, buf->height);
+      gegl_rectangle_set (&rect, i, 0, 1, gegl_buffer_height (buf));
       gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
 
-      reconstruct_chroma_row (pixels, buf->height, has_alpha, tmp);
+      reconstruct_chroma_row (pixels, gegl_buffer_height (buf), has_alpha, tmp);
       gegl_buffer_set (buf, &rect, buf->format, pixels);
     }
 
@@ -367,15 +367,15 @@ convert_yca_to_rgba (GeglBuffer *buf,
   gint pxsize;
   g_object_get (buf, "px-size", &pxsize, NULL);
 
-  pixels = (gchar*) g_malloc0 (buf->width * pxsize);
+  pixels = (gchar*) g_malloc0 (gegl_buffer_width (buf) * pxsize);
 
-  for (row=0; row<buf->height; row++)
+  for (row=0; row<gegl_buffer_height (buf); row++)
     {
-      gegl_rectangle_set (&rect, 0, row, buf->width, 1);
+      gegl_rectangle_set (&rect, 0, row, gegl_buffer_width (buf), 1);
       gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
       pxl = (gfloat*) pixels;
 
-      for (i=0; i<buf->width; i++)
+      for (i=0; i<gegl_buffer_width (buf); i++)
         {
           y  = pxl[0];
           ry = pxl[1];
@@ -453,7 +453,7 @@ import_exr (GeglBuffer  *gegl_buffer,
       g_object_get (gegl_buffer, "px-size", &pxsize, NULL);
       
 
-      char *pixels = (char*) g_malloc0 (gegl_buffer->width * pxsize);
+      char *pixels = (char*) g_malloc0 (gegl_buffer_width (gegl_buffer) * pxsize);
 
       char *base = pixels;
 
@@ -470,7 +470,7 @@ import_exr (GeglBuffer  *gegl_buffer,
       insert_channels (frameBuffer, 
                        file.header(), 
                        base, 
-                       gegl_buffer->width,
+                       gegl_buffer_width (gegl_buffer),
                        format_flags,
                        pxsize);
 
@@ -482,7 +482,7 @@ import_exr (GeglBuffer  *gegl_buffer,
         
         for (i=dw.min.y; i<=dw.max.y; i++)
           {
-            gegl_rectangle_set (&rect, 0, i-dw.min.y,gegl_buffer->width, 1);
+            gegl_rectangle_set (&rect, 0, i-dw.min.y,gegl_buffer_width (gegl_buffer), 1);
             file.readPixels (i);
             gegl_buffer_set (gegl_buffer, &rect, gegl_buffer->format, pixels);
           }

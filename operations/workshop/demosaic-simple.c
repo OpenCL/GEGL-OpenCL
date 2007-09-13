@@ -80,26 +80,28 @@ demosaic (GeglChantOperation *op,
           GeglBuffer *src,
           GeglBuffer *dst)
 {
+  GeglRectangle *src_extent = gegl_buffer_extent (src);
+  GeglRectangle *dst_extent = gegl_buffer_extent (dst);
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (src->width * src->height * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 3);
+  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4);
+  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 3);
   
   gegl_buffer_get (src, NULL, 1.0, babl_format ("Y float"), src_buf);
 
   offset=0;
-  for (y=src->y; y<dst->height + src->y; y++)
-    for (x=src->x; x<dst->width + src->x; x++)
+  for (y=src_extent->y; y<dst_extent->height + src_extent->y; y++)
+    for (x=src_extent->x; x<dst_extent->width + src_extent->x; x++)
       {
         gfloat red=0.0;
         gfloat green=0.0;
         gfloat blue=0.0;
 
-        if (y<dst->height+src->y-1 &&
-            x<dst->width+src->x-1)
+        if (y<dst_extent->height+src_extent->y-1 &&
+            x<dst_extent->width+src_extent->x-1)
           {
         if ((y + op->pattern%2)%2==0)
           {
@@ -107,26 +109,26 @@ demosaic (GeglChantOperation *op,
               {
                 blue=src_buf[offset+1];
                 green=src_buf[offset];
-                red=src_buf[offset + src->width];
+                red=src_buf[offset + src_extent->width];
               }
             else
               {
                 blue=src_buf[offset];
                 green=src_buf[offset+1];
-                red=src_buf[offset+1+src->width];
+                red=src_buf[offset+1+src_extent->width];
               }
           }
         else
           {
             if ((x+op->pattern/2)%2==1)
               {
-                blue=src_buf[offset + src->width + 1];
+                blue=src_buf[offset + src_extent->width + 1];
                 green=src_buf[offset + 1];
                 red=src_buf[offset];
               }
             else
               {
-                blue=src_buf[offset + src->width];
+                blue=src_buf[offset + src_extent->width];
                 green=src_buf[offset];
                 red=src_buf[offset + 1];
               }

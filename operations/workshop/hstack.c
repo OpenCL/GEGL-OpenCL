@@ -68,10 +68,10 @@ process (GeglOperation *operation,
         {
           gint offset=0;
           gint x,y;
-          for (y=0;y<output->height;y++)
-            for (x=0;x<output->width;x++)
+          for (y=0;y<gegl_buffer_height (output);y++)
+            for (x=0;x<gegl_buffer_width (output);x++)
               {
-                if (x + result->x >= input->width)
+                if (x + result->x >= gegl_buffer_width (input))
                   {
                     buf[offset+0]=bufB[offset+0];
                     buf[offset+1]=bufB[offset+1];

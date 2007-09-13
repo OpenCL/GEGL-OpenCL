@@ -164,21 +164,21 @@ hor_blur (GeglBuffer *src,
   gfloat *dst_buf;
 
   /* src == dst for hor blur */
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset = 0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
+  for (v=0; v<gegl_buffer_height (dst); v++)
+    for (u=0; u<gegl_buffer_width (dst); u++)
       {
         gint i;
         gfloat components[4];
 
         get_mean_components (src_buf,
-                             src->width,
-                             src->height,
+                             gegl_buffer_width (src),
+                             gegl_buffer_height (src),
                              u - radius,
                              v,
                              1 + radius*2,
@@ -206,21 +206,21 @@ ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
   
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset=0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
+  for (v=0; v<gegl_buffer_height (dst); v++)
+    for (u=0; u<gegl_buffer_width (dst); u++)
       {
         gfloat components[4];
         gint c;
 
         get_mean_components (src_buf,
-                             src->width,
-                             src->height,
+                             gegl_buffer_width (src),
+                             gegl_buffer_height (src),
                              u + radius,  /* 1x radius is the offset between the bufs */
                              v - radius + radius, /* 1x radius is the offset between the bufs */
                              1,

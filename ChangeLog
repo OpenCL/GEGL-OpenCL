@@ -1,4 +1,10 @@
 2007-09-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/**/*.c: modified not to use extent accessors instead of
+	poking directly into GeglBuffer's deprecated ->width, ->height, ->x
+	and ->y members.
+
+2007-09-13  Øyvind Kolås  <pippin@gimp.org>
 	
 	* gegl/buffer/gegl-buffer-private.[ch]: made the abyss and extent in
 	GeglBuffer be GeglRectangles.

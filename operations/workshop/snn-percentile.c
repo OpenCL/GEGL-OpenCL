@@ -199,16 +199,16 @@ snn_percentile (GeglBuffer *src,
   gfloat *dst_buf;
   RankList list = {0};
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
 
   offset = 0;
   percentile/= 100.0;
 
-  for (y=0; y<dst->height; y++)
-    for (x=0; x<dst->width; x++)
+  for (y=0; y<gegl_buffer_height (dst); y++)
+    for (x=0; x<gegl_buffer_width (dst); x++)
       {
         gint u,v;
         gfloat *center_pix = src_buf + offset * 4;
@@ -236,10 +236,10 @@ snn_percentile (GeglBuffer *src,
                   /* check which member of the symmetric quadruple to use */
                   for (i=0;i<pairs*2;i++)
                     {
-                      if (xs[i] >= 0 && xs[i] < src->width &&
-                          ys[i] >= 0 && ys[i] < src->height)
+                      if (xs[i] >= 0 && xs[i] < gegl_buffer_width (src) &&
+                          ys[i] >= 0 && ys[i] < gegl_buffer_height (src))
                         {
-                          gfloat *tpix = src_buf + (xs[i]+ys[i]*src->width)*4;
+                          gfloat *tpix = src_buf + (xs[i]+ys[i]*gegl_buffer_width (src))*4;
                           gfloat diff = colordiff (tpix, center_pix);
                           if (diff < best_diff)
                             {

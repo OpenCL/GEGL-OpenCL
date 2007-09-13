@@ -135,14 +135,14 @@ kuwahara (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
 
   offset = 0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
+  for (v=0; v<gegl_buffer_height (dst); v++)
+    for (u=0; u<gegl_buffer_width (dst); u++)
       {
         gint component;
 
@@ -155,8 +155,8 @@ kuwahara (GeglBuffer *src,
             gfloat variance = 0.0;
 
             compute_rectangle (src_buf,
-                               src->width,
-                               src->height,
+                               gegl_buffer_width (src),
+                               gegl_buffer_height (src),
                                u - radius -1,
                                v - radius -1,
                                1 + radius,
@@ -173,8 +173,8 @@ kuwahara (GeglBuffer *src,
               }
 
             compute_rectangle (src_buf,
-                               src->width,
-                               src->height,
+                               gegl_buffer_width (src),
+                               gegl_buffer_height (src),
                                u,
                                v - radius - 1,
                                1 + radius,
@@ -191,8 +191,8 @@ kuwahara (GeglBuffer *src,
               }
 
             compute_rectangle (src_buf,
-                               src->width,
-                               src->height,
+                               gegl_buffer_width (src),
+                               gegl_buffer_height (src),
                                u - radius - 1,
                                v,
                                1 + radius,
@@ -209,8 +209,8 @@ kuwahara (GeglBuffer *src,
               }
 
             compute_rectangle (src_buf,
-                               src->width,
-                               src->height,
+                               gegl_buffer_width (src),
+                               gegl_buffer_height (src),
                                u,
                                v,
                                1 + radius,

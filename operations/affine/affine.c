@@ -33,10 +33,6 @@
 #include "affine.h"
 #include "module.h"
 #include "matrix.h"
-#include "nearest.h"
-#include "linear.h"
-#include "interpolate-lanczos.h"
-#include "interpolate-cubic.h"
 #include "buffer/gegl-interpolator.h"
 
 enum
@@ -589,32 +585,37 @@ affine_generic (GeglBuffer        *dest,
                 Matrix3            matrix,
                 GeglInterpolation  interpolation)
 {
-  gint     x, y;
-  gfloat  *dest_buf,
-          *dest_ptr;
-  Matrix3  inverse;
-  gdouble  u_start,
-           v_start,
-           u_float,
-           v_float;
-  Babl*   format = babl_format ("RaGaBaA float");
+  GeglRectangle *dest_extent;
+  gint           x, y;
+  gfloat        *dest_buf,
+                *dest_ptr;
+  Matrix3        inverse;
+  gdouble        u_start,
+                 v_start,
+                 u_float,
+                 v_float;
 
-  gint dest_pixels;
+  Babl          *format; 
+  
+  gint           dest_pixels;
+
+  format = babl_format ("RaGaBaA float");
 
   /* XXX: fast paths as existing in files in the same dir as affine.c
    *      should probably be hooked in here, and bailing out before using
    *      the generic code.
    */
   g_object_get (dest, "pixels", &dest_pixels, NULL);
+  dest_extent = gegl_buffer_extent (dest);
 
   dest_buf = g_new (gfloat, dest_pixels * 4);
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
 
-  u_start = inverse[0][0] * dest->x + inverse[0][1] * dest->y
+  u_start = inverse[0][0] * dest_extent->x + inverse[0][1] * dest_extent->y
             + inverse[0][2];
-  v_start = inverse[1][0] * dest->x + inverse[1][1] * dest->y
+  v_start = inverse[1][0] * dest_extent->x + inverse[1][1] * dest_extent->y
             + inverse[1][2];
 
   /* correct rounding on e.g. negative scaling (is this sound?) */
@@ -628,12 +629,12 @@ affine_generic (GeglBuffer        *dest,
       gegl_interpolator_prepare (src->interpolator);
     }
 
-  for (dest_ptr = dest_buf, y = dest->height; y--;)
+  for (dest_ptr = dest_buf, y = dest_extent->height; y--;)
     {
       u_float = u_start;
       v_float = v_start;
 
-      for (x = dest->width; x--;)
+      for (x = dest_extent->width; x--;)
         {
           gfloat  pix[4];
           gegl_buffer_sample (src, u_float, v_float, 1.0, pix, format, interpolation);
