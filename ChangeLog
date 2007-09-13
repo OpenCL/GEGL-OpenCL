@@ -1,3 +1,10 @@
+2007-09-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.c:
+	(gegl_operation_set_source_region): intersect the requested region
+	with the available region, making the rectangle needed from the
+	child smaller.
+
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/generated/blend.rb: disabled compositing ops

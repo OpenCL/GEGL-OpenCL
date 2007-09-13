@@ -328,6 +328,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
   {
     GeglNodeDynamic *child_dynamic = gegl_node_get_dynamic (child, context_id);
     gegl_rectangle_bounding_box (&child_need, &child_dynamic->need_rect, region);
+    gegl_rectangle_intersect (&child_need, &child->have_rect, &child_need);
 
       /* If we're cached */
       if (child->cache)
@@ -336,7 +337,9 @@ gegl_operation_set_source_region (GeglOperation *operation,
           GeglRectangle valid_box;
           gegl_region_get_clipbox (cache->valid_region, &valid_box);
 
-          if (gegl_region_rect_in (cache->valid_region, &child_need) == GEGL_OVERLAP_RECTANGLE_IN)
+          if (child_need.width == 0  ||
+              child_need.height == 0 ||
+              gegl_region_rect_in (cache->valid_region, &child_need) == GEGL_OVERLAP_RECTANGLE_IN)
             {
               child_dynamic->result_rect = child_need;
               child_dynamic->cached = TRUE;
@@ -644,7 +647,11 @@ gegl_operation_get_target (GeglOperation *operation,
   g_assert (!strcmp (property_name, "output")); 
 
   result = gegl_operation_result_rect (operation, context_id);
-/*#define ENABLE_CACHE*/
+
+/* uncomment the following to enable the experimental per node
+   caching
+*/
+/* #define ENABLE_CACHE */
 #ifdef ENABLE_CACHE
   /* FIXME: make the cache be of the format indicated by the format,.. */
   if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
