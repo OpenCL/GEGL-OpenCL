@@ -117,7 +117,7 @@ process_inner (GeglOperation *operation,
       gfloat *in_buf = NULL, *out_buf = NULL, *aux_buf = NULL;
 
       in_buf = g_malloc (in_format->format.bytes_per_pixel *
-                         output->width * output->height);
+                         output->extent.width * output->extent.height);
       if (in_format == out_format)
         {
           out_buf = in_buf;
@@ -125,7 +125,7 @@ process_inner (GeglOperation *operation,
       else
         {
           out_buf = g_malloc (out_format->format.bytes_per_pixel *
-                              output->width * output->height);
+                              output->extent.width * output->extent.height);
         }
 
       gegl_buffer_get (input, result, 1.0, in_format, in_buf);
@@ -133,7 +133,7 @@ process_inner (GeglOperation *operation,
       if (aux)
         {
           aux_buf = g_malloc (aux_format->format.bytes_per_pixel *
-                             output->width * output->height);
+                             output->extent.width * output->extent.height);
           gegl_buffer_get (aux, result, 1.0, aux_format, aux_buf);
         }
       {
@@ -142,7 +142,7 @@ process_inner (GeglOperation *operation,
           in_buf,
           aux_buf,
           out_buf,
-          output->width * output->height);
+          output->extent.width * output->extent.height);
       }
 
       gegl_buffer_set (output, NULL, out_format, out_buf);
@@ -185,18 +185,18 @@ fast_paths (GeglOperation *operation,
           {
 /* SKIP_EMPTY_IN */
             {
-              GeglRectangle in_abyss;
+              const GeglRectangle *in_abyss;
 
               in_abyss = gegl_buffer_get_abyss (input);
 
               if ((!input ||
-                   !gegl_rectangle_intersect (NULL, &in_abyss, result)) &&
+                   !gegl_rectangle_intersect (NULL, in_abyss, result)) &&
                   aux)
                 {
-                  GeglRectangle aux_abyss;
+                  const GeglRectangle *aux_abyss;
                   aux_abyss = gegl_buffer_get_abyss (aux);
 
-                  if (!gegl_rectangle_intersect (NULL, &aux_abyss, result))
+                  if (!gegl_rectangle_intersect (NULL, aux_abyss, result))
                     {
                       GeglBuffer *output = gegl_buffer_new (NULL, NULL);
                       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
@@ -209,13 +209,13 @@ fast_paths (GeglOperation *operation,
             }
 /* SKIP_EMPTY_AUX */
             {
-              GeglRectangle aux_abyss;
+              const GeglRectangle *aux_abyss;
 
               if (aux)
                 aux_abyss = gegl_buffer_get_abyss (aux);
 
               if (!aux ||
-                  !gegl_rectangle_intersect (NULL, &aux_abyss, result))
+                  !gegl_rectangle_intersect (NULL, aux_abyss, result))
                 {
                   g_object_ref (input);
                   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
@@ -226,7 +226,7 @@ fast_paths (GeglOperation *operation,
       }
     else
       {
-        GeglBuffer *output = g_object_new (NULL, out_format);
+        GeglBuffer *output = gegl_buffer_new (NULL, out_format);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
         return TRUE;
       }

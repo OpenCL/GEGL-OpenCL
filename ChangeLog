@@ -1,4 +1,23 @@
 2007-09-13  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/buffer/gegl-buffer-private.[ch]: made the abyss and extent in
+	GeglBuffer be GeglRectangles.
+	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_x() gegl_buffer_y()
+	gegl_buffer_width(), gegl_buffer_height() and
+	gegl_buffer_pixel_count() macros, and modified gegl_buffer_extent() and
+	gegl_buffer_abyss() return const GeglRectangles.
+
+	Modified the following accordingly:
+	
+	* gegl/buffer/gegl-buffer-allocator.c:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-cache.c:
+	* gegl/buffer/gegl-interpolator-cubic.c:
+	* gegl/buffer/gegl-interpolator-lanczos.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+
+2007-09-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-utils.[ch]: (gegl_rectangle_bounding_box),
 	(gegl_rectangle_intersect), (gegl_rectangle_copy),

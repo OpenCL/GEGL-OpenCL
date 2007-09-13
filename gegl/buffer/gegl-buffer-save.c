@@ -156,10 +156,10 @@ gegl_buffer_save (GeglBuffer    *buffer,
       return;
     }
 
-  info->header.width       = buffer->width;
-  info->header.height      = buffer->height;
-  info->header.x           = buffer->x;
-  info->header.y           = buffer->y;
+  info->header.width       = buffer->extent.width;
+  info->header.height      = buffer->extent.height;
+  info->header.x           = buffer->extent.x;
+  info->header.y           = buffer->extent.y;
   info->header.tile_width  = gegl_buffer_storage (buffer)->tile_width;
   info->header.tile_height = gegl_buffer_storage (buffer)->tile_height;
 
@@ -171,8 +171,8 @@ gegl_buffer_save (GeglBuffer    *buffer,
 
   /* collect list of tiles to be written */
   {
-    gint width       = buffer->width;
-    gint height      = buffer->height;
+    gint width       = buffer->extent.width;
+    gint height      = buffer->extent.height;
     gint tile_width  = info->header.tile_width;
     gint tile_height = info->header.tile_height;
     gint x           = 0;
@@ -198,15 +198,15 @@ gegl_buffer_save (GeglBuffer    *buffer,
       for (z = 0; z < 10; z++)
         {
           bufy = y;
-          while (bufy < buffer->y + height)
+          while (bufy < buffer->extent.y + height)
             {
-              gint tiledy  = buffer->y + buffer->shift_y + bufy;
+              gint tiledy  = buffer->extent.y + buffer->shift_y + bufy;
               gint offsety = gegl_tile_offset (tiledy, tile_height);
               gint bufx    = x;
 
-              while (bufx < buffer->x + width)
+              while (bufx < buffer->extent.x + width)
                 {
-                  gint tiledx  = buffer->x + bufx + buffer->shift_x;
+                  gint tiledx  = buffer->extent.x + bufx + buffer->shift_x;
                   gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);

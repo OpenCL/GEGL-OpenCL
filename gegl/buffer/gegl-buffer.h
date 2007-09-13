@@ -54,8 +54,8 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
  * to pass in NULL for both extent and format, a NULL extent creates an exmpty
  * buffer and a NULL format makes the buffer default to "RGBA float".
  */
-GeglBuffer*     gegl_buffer_new               (GeglRectangle    *extent,
-                                               Babl             *format);
+GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
+                                               Babl                *format);
 
 /** 
  * gegl_buffer_create_sub_buffer:
@@ -64,8 +64,8 @@ GeglBuffer*     gegl_buffer_new               (GeglRectangle    *extent,
  *
  * Create a new sub GeglBuffer, that is a view on a larger buffer.
  */
-GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer       *buffer,
-                                               GeglRectangle    *extent);
+GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
+                                               GeglRectangle       *extent);
 
 /**
  * gegl_buffer_destroy:
@@ -75,7 +75,7 @@ GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer       *buffer,
  * this is done with reference counting and gobject, and gegl_buffer_destroy
  * is a thin wrapper around g_object_unref.
  **/
-void            gegl_buffer_destroy           (GeglBuffer       *buffer);
+void            gegl_buffer_destroy           (GeglBuffer          *buffer);
 
 /**
  * gegl_buffer_extent:
@@ -85,7 +85,14 @@ void            gegl_buffer_destroy           (GeglBuffer       *buffer);
  * specific GeglBuffer, this is also the default width/height of buffers passed
  * in to gegl_buffer_set and gegl_buffer_get (with a scale of 1.0 at least).
  */
-GeglRectangle * gegl_buffer_extent            (GeglBuffer       *buffer);
+G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
+
+/* convenience access macros */
+#define gegl_buffer_x(buffer)           (gegl_buffer_extent(buffer)->x)
+#define gegl_buffer_y(buffer)           (gegl_buffer_extent(buffer)->y)
+#define gegl_buffer_width(buffer)       (gegl_buffer_extent(buffer)->width)
+#define gegl_buffer_height(buffer)      (gegl_buffer_extent(buffer)->height)
+#define gegl_buffer_pixel_count(buffer) (gegl_buffer_width(buffer) * gegl_buffer_height(buffer))
 
 /**
  * gegl_buffer_get:

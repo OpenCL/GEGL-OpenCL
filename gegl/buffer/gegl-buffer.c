@@ -82,15 +82,15 @@ get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_WIDTH:
-        g_value_set_int (value, buffer->width);
+        g_value_set_int (value, buffer->extent.width);
         break;
 
       case PROP_HEIGHT:
-        g_value_set_int (value, buffer->height);
+        g_value_set_int (value, buffer->extent.height);
         break;
 
       case PROP_PIXELS:
-        g_value_set_int (value, buffer->width * buffer->height);
+        g_value_set_int (value, buffer->extent.width * buffer->extent.height);
         break;
 
       case PROP_PX_SIZE:
@@ -110,11 +110,11 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_X:
-        g_value_set_int (value, buffer->x);
+        g_value_set_int (value, buffer->extent.x);
         break;
 
       case PROP_Y:
-        g_value_set_int (value, buffer->y);
+        g_value_set_int (value, buffer->extent.y);
         break;
 
       case PROP_SHIFT_X:
@@ -142,19 +142,19 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_X:
-        buffer->x = g_value_get_int (value);
+        buffer->extent.x = g_value_get_int (value);
         break;
 
       case PROP_Y:
-        buffer->y = g_value_get_int (value);
+        buffer->extent.y = g_value_get_int (value);
         break;
 
       case PROP_WIDTH:
-        buffer->width = g_value_get_int (value);
+        buffer->extent.width = g_value_get_int (value);
         break;
 
       case PROP_HEIGHT:
-        buffer->height = g_value_get_int (value);
+        buffer->extent.height = g_value_get_int (value);
         break;
 
       case PROP_SHIFT_X:
@@ -166,19 +166,19 @@ set_property (GObject      *gobject,
         break;
 
       case PROP_ABYSS_X:
-        buffer->abyss_x = g_value_get_int (value);
+        buffer->abyss.x = g_value_get_int (value);
         break;
 
       case PROP_ABYSS_Y:
-        buffer->abyss_y = g_value_get_int (value);
+        buffer->abyss.y = g_value_get_int (value);
         break;
 
       case PROP_ABYSS_WIDTH:
-        buffer->abyss_width = g_value_get_int (value);
+        buffer->abyss.width = g_value_get_int (value);
         break;
 
       case PROP_ABYSS_HEIGHT:
-        buffer->abyss_height = g_value_get_int (value);
+        buffer->abyss.height = g_value_get_int (value);
         break;
 
       case PROP_FORMAT:
@@ -323,10 +323,10 @@ gegl_buffer_constructor (GType                  type,
       g_assert (buffer->format);
 
       provider = GEGL_PROVIDER (gegl_buffer_new_from_format (buffer->format,
-                                                             buffer->x,
-                                                             buffer->y,
-                                                             buffer->width,
-                                                             buffer->height));
+                                                             buffer->extent.x,
+                                                             buffer->extent.y,
+                                                             buffer->extent.width,
+                                                             buffer->extent.height));
       /* after construction,. x and y should be set to reflect
        * the top level behavior exhibited by this buffer object.
        */
@@ -345,52 +345,52 @@ gegl_buffer_constructor (GType                  type,
   tile_width  = backend->tile_width;
   tile_height = backend->tile_height;
 
-  if (buffer->width == -1 &&
-      buffer->height == -1) /* no specified extents, inheriting from provider */
+  if (buffer->extent.width == -1 &&
+      buffer->extent.height == -1) /* no specified extents, inheriting from provider */
     {
       if (GEGL_IS_BUFFER (provider))
         {
-          buffer->x = GEGL_BUFFER (provider)->x;
-          buffer->y = GEGL_BUFFER (provider)->y;
-          buffer->width  = GEGL_BUFFER (provider)->width;
-          buffer->height = GEGL_BUFFER (provider)->height;
+          buffer->extent.x = GEGL_BUFFER (provider)->extent.x;
+          buffer->extent.y = GEGL_BUFFER (provider)->extent.y;
+          buffer->extent.width  = GEGL_BUFFER (provider)->extent.width;
+          buffer->extent.height = GEGL_BUFFER (provider)->extent.height;
         }
       else if (GEGL_IS_STORAGE (provider))
         {
-          buffer->x = 0;
-          buffer->y = 0;
-          buffer->width  = GEGL_STORAGE (provider)->width;
-          buffer->height = GEGL_STORAGE (provider)->height;
+          buffer->extent.x = 0;
+          buffer->extent.y = 0;
+          buffer->extent.width  = GEGL_STORAGE (provider)->width;
+          buffer->extent.height = GEGL_STORAGE (provider)->height;
         }
     }
 
-  if (buffer->abyss_width == 0 &&
-      buffer->abyss_height == 0 &&
-      buffer->abyss_x == 0 &&
-      buffer->abyss_y == 0)      /* 0 sized extent == inherit buffer extent
+  if (buffer->abyss.width == 0 &&
+      buffer->abyss.height == 0 &&
+      buffer->abyss.x == 0 &&
+      buffer->abyss.y == 0)      /* 0 sized extent == inherit buffer extent
                                   */
     {
-      buffer->abyss_x      = buffer->x;
-      buffer->abyss_y      = buffer->y;
-      buffer->abyss_width  = buffer->width;
-      buffer->abyss_height = buffer->height;
+      buffer->abyss.x      = buffer->extent.x;
+      buffer->abyss.y      = buffer->extent.y;
+      buffer->abyss.width  = buffer->extent.width;
+      buffer->abyss.height = buffer->extent.height;
     }
-  else if (buffer->abyss_width == 0 &&
-           buffer->abyss_height == 0)
+  else if (buffer->abyss.width == 0 &&
+           buffer->abyss.height == 0)
     {
       g_warning ("peculiar abyss dimensions: %i,%i %ix%i",
-                 buffer->abyss_x,
-                 buffer->abyss_y,
-                 buffer->abyss_width,
-                 buffer->abyss_height);
+                 buffer->abyss.x,
+                 buffer->abyss.y,
+                 buffer->abyss.width,
+                 buffer->abyss.height);
     }
-  else if (buffer->abyss_width == -1 ||
-           buffer->abyss_height == -1)
+  else if (buffer->abyss.width == -1 ||
+           buffer->abyss.height == -1)
     {
-      buffer->abyss_x      = GEGL_BUFFER (provider)->abyss_x - buffer->shift_x; 
-      buffer->abyss_y      = GEGL_BUFFER (provider)->abyss_y - buffer->shift_y;
-      buffer->abyss_width  = GEGL_BUFFER (provider)->abyss_width;
-      buffer->abyss_height = GEGL_BUFFER (provider)->abyss_height;
+      buffer->abyss.x      = GEGL_BUFFER (provider)->abyss.x - buffer->shift_x; 
+      buffer->abyss.y      = GEGL_BUFFER (provider)->abyss.y - buffer->shift_y;
+      buffer->abyss.width  = GEGL_BUFFER (provider)->abyss.width;
+      buffer->abyss.height = GEGL_BUFFER (provider)->abyss.height;
     }
 
   /* intersect our own abyss with parent's abyss if it exists
@@ -398,24 +398,24 @@ gegl_buffer_constructor (GType                  type,
   if (GEGL_IS_BUFFER (provider))
     {
       GeglRectangle parent = {
-        GEGL_BUFFER (provider)->abyss_x - buffer->shift_x,
-        GEGL_BUFFER (provider)->abyss_y - buffer->shift_y,
-        GEGL_BUFFER (provider)->abyss_width,
-        GEGL_BUFFER (provider)->abyss_height
+        GEGL_BUFFER (provider)->abyss.x - buffer->shift_x,
+        GEGL_BUFFER (provider)->abyss.y - buffer->shift_y,
+        GEGL_BUFFER (provider)->abyss.width,
+        GEGL_BUFFER (provider)->abyss.height
       };
       GeglRectangle request = {
-        buffer->abyss_x,
-        buffer->abyss_y,
-        buffer->abyss_width,
-        buffer->abyss_height
+        buffer->abyss.x,
+        buffer->abyss.y,
+        buffer->abyss.width,
+        buffer->abyss.height
       };
       GeglRectangle self;
       gegl_rectangle_intersect (&self, &parent, &request);
 
-      buffer->abyss_x      = self.x;
-      buffer->abyss_y      = self.y;
-      buffer->abyss_width  = self.width;
-      buffer->abyss_height = self.height;
+      buffer->abyss.x      = self.x;
+      buffer->abyss.y      = self.y;
+      buffer->abyss.width  = self.width;
+      buffer->abyss.height = self.height;
     }
 
   /* compute our own total shift <- this should probably happen approximatly first */
@@ -442,10 +442,10 @@ gegl_buffer_constructor (GType                  type,
    * have a enough tiles to be scanline iteratable.
    */
 
-  if (0 && buffer->width < 1 << 14)
+  if (0 && buffer->extent.width < 1 << 14)
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
                                                 "size",
-                                                needed_tiles (buffer->width, tile_width) + 1,
+                                                needed_tiles (buffer->extent.width, tile_width) + 1,
                                                 NULL));
 
   return object;
@@ -578,16 +578,16 @@ gegl_buffer_class_init (GeglBufferClass *class)
 static void
 gegl_buffer_init (GeglBuffer *buffer)
 {
-  buffer->x            = 0;
-  buffer->y            = 0;
-  buffer->width        = 0;
-  buffer->height       = 0;
+  buffer->extent.x            = 0;
+  buffer->extent.y            = 0;
+  buffer->extent.width        = 0;
+  buffer->extent.height       = 0;
   buffer->shift_x      = 0;
   buffer->shift_y      = 0;
-  buffer->abyss_x      = 0;
-  buffer->abyss_y      = 0;
-  buffer->abyss_width  = 0;
-  buffer->abyss_height = 0;
+  buffer->abyss.x      = 0;
+  buffer->abyss.y      = 0;
+  buffer->abyss.width  = 0;
+  buffer->abyss.height = 0;
   buffer->format       = NULL;
   buffer->hot_tile     = NULL;
   allocated_buffers++;
@@ -627,8 +627,8 @@ static void *int_gegl_buffer_get_format (GeglBuffer *buffer)
 static void
 gegl_buffer_void (GeglBuffer *buffer)
 {
-  gint width       = buffer->width;
-  gint height      = buffer->height;
+  gint width       = buffer->extent.width;
+  gint height      = buffer->extent.height;
   gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint tile_height = gegl_buffer_storage (buffer)->tile_height;
   gint bufy        = 0;
@@ -641,13 +641,13 @@ gegl_buffer_void (GeglBuffer *buffer)
         bufy = 0;
         while (bufy < height)
           {
-            gint tiledy  = buffer->y + buffer->shift_y + bufy;
+            gint tiledy  = buffer->extent.y + buffer->shift_y + bufy;
             gint offsety = gegl_tile_offset (tiledy, tile_height);
             gint bufx    = 0;
 
             while (bufx < width)
               {
-                gint tiledx  = buffer->x + buffer->shift_x + bufx;
+                gint tiledx  = buffer->extent.x + buffer->shift_x + bufx;
                 gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
                 gint tx = gegl_tile_indice (tiledx / factor, tile_width);
@@ -698,12 +698,12 @@ pset (GeglBuffer *buffer,
   gint  bpx_size    = FMTPXS (format);
   Babl *fish        = NULL;
 
-  gint  abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
-  gint  abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
-  gint  buffer_x       = buffer->x;
-  gint  buffer_y       = buffer->y;
-  gint  buffer_abyss_x = buffer->abyss_x;
-  gint  buffer_abyss_y = buffer->abyss_y;
+  gint  abyss_x_total  = buffer->abyss.x + buffer->abyss.width;
+  gint  abyss_y_total  = buffer->abyss.y + buffer->abyss.height;
+  gint  buffer_x       = buffer->extent.x;
+  gint  buffer_y       = buffer->extent.y;
+  gint  buffer_abyss_x = buffer->abyss.x;
+  gint  buffer_abyss_y = buffer->abyss.y;
 
   if (format != buffer->format)
     {
@@ -766,10 +766,10 @@ pset (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
+  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  px_size        = FMTPXS (buffer->format);
 
   if (format != buffer->format)
@@ -849,10 +849,10 @@ pget (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
+  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  px_size        = FMTPXS (buffer->format);
 
   if (format != buffer->format)
@@ -935,8 +935,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                      Babl       *format,
                      gint        level)
 {
-  gint  width       = buffer->width;
-  gint  height      = buffer->height;
+  gint  width       = buffer->extent.width;
+  gint  height      = buffer->extent.height;
   gint  tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint  tile_height = gegl_buffer_storage (buffer)->tile_height;
   gint  px_size     = FMTPXS (buffer->format);
@@ -948,12 +948,12 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->x + buffer_shift_x;
-  gint  buffer_y       = buffer->y + buffer_shift_y;
-  gint  buffer_abyss_x = buffer->abyss_x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss_y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss_width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss_height;
+  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
+  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  i;
   gint  factor = 1;
 
@@ -1647,14 +1647,10 @@ gegl_buffer_get (GeglBuffer    *buffer,
     }
 }
 
-GeglRectangle
+const GeglRectangle *
 gegl_buffer_get_abyss (GeglBuffer *buffer)
 {
-  GeglRectangle ret = { 0, 0, 0, 0 };
-
-  gegl_rectangle_set (&ret, buffer->abyss_x, buffer->abyss_y,
-                      buffer->abyss_width, buffer->abyss_height);
-  return ret;
+  return &buffer->abyss;
 }
 
 #include "gegl-interpolator-nearest.h"
@@ -1721,15 +1717,15 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-GeglRectangle *
+G_GNUC_CONST GeglRectangle *
 gegl_buffer_extent (GeglBuffer *buffer)
 {
-  return (GeglRectangle*)&(buffer->x);
+  return &(buffer->extent);
 }
 
 GeglBuffer *
-gegl_buffer_new (GeglRectangle *extent,
-                 Babl          *format)
+gegl_buffer_new (const GeglRectangle *extent,
+                 Babl                *format)
 {
   GeglRectangle empty={0,0,0,0};
 

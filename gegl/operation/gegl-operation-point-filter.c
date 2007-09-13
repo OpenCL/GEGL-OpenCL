@@ -95,7 +95,7 @@ process_inner (GeglOperation *operation,
         {
           gfloat *buf;
           buf = g_malloc (in_format->format.bytes_per_pixel *
-                          output->width * output->height);
+                          output->extent.width * output->extent.height);
 
           gegl_buffer_get (input, result, 1.0, in_format, buf);
 
@@ -103,7 +103,7 @@ process_inner (GeglOperation *operation,
             operation,
             buf,
             buf,
-            output->width * output->height);
+            output->extent.width * output->extent.height);
 
           gegl_buffer_set (output, result, out_format, buf);
           g_free (buf);
@@ -113,9 +113,9 @@ process_inner (GeglOperation *operation,
           gfloat *in_buf;
           gfloat *out_buf;
           in_buf = g_malloc (in_format->format.bytes_per_pixel *
-                             input->width * input->height);
+                             input->extent.width * input->extent.height);
           out_buf = g_malloc (out_format->format.bytes_per_pixel *
-                             output->width * output->height);
+                             output->extent.width * output->extent.height);
 
           gegl_buffer_get (input, result, 1.0, in_format, in_buf);
 
@@ -123,7 +123,7 @@ process_inner (GeglOperation *operation,
             operation,
             in_buf,
             out_buf,
-            output->width * output->height);
+            output->extent.width * output->extent.height);
 
           gegl_buffer_set (output, result, out_format, out_buf);
           g_free (in_buf);

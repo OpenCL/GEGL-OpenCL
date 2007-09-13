@@ -159,8 +159,8 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
 
   if (x >= 0 &&
       y >= 0 &&
-      x < buffer->width &&
-      y < buffer->height)
+      x < buffer->extent.width &&
+      y < buffer->extent.height)
     {
       gint u = (gint) (x - rectangle->x);
       gint v = (gint) (y - rectangle->y);

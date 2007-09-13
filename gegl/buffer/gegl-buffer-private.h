@@ -40,10 +40,7 @@ struct _GeglBuffer
                                       provider field which is used for chaining
                                       sub buffers with their anchestors */
 
-  gint              x;       /* exported through gegl_buffer_extents()       */
-  gint              y;       /*  -"-     as a GeglRectangle                  */
-  gint              width;   /*  -"-  XXX: should perhaps actually be        */
-  gint              height;  /*  -"-       a GeglRectangle?                  */
+  GeglRectangle     extent;		   /* the dimensions of the buffer */
 
   Babl             *format;  /* the pixel format used for pixels in this
                                 buffer */
@@ -52,10 +49,7 @@ struct _GeglBuffer
   gint              shift_y; /* anchestral storage buffer, during            */
                              /* construction relative to immediate provider  */
 
-  gint              abyss_x; /* The abyss (bounding rectangle) in the buffers */
-  gint              abyss_y; /* local coordinates XXX: should perhaps be an */
-  gint              abyss_width; /* inlined GeglRectangle? */
-  gint              abyss_height;
+  GeglRectangle     abyss;
 
   GeglTile         *hot_tile; /* cached tile for speeding up pget/pset (1x1
                                  sized gets/sets)*/
@@ -72,7 +66,7 @@ struct _GeglBufferClass
 
 GeglStorage  * gegl_buffer_storage    (GeglBuffer    *buffer);
 
-GeglRectangle  gegl_buffer_get_abyss  (GeglBuffer    *buffer);
+const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer    *buffer);
 
 gint           gegl_buffer_leaks      (void);
 

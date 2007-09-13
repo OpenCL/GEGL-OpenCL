@@ -289,6 +289,14 @@ gegl_cache_invalidate (GeglCache     *self,
 {
   if (roi)
     {
+      g_print ("invalidate of %i,%i %i×%i\n", roi->x, roi->y, roi->width, roi->height);
+    }
+  else
+    {
+      g_print ("full invalidate of a GeglCache\n");
+    }
+  if (roi)
+    {
       GeglRegion *temp_region;
       temp_region = gegl_region_rectangle (roi);
       gegl_region_subtract (self->valid_region, temp_region);

@@ -70,25 +70,25 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
 
   g_assert (allocator);
 
-  if (needed_width > buffer->width)
+  if (needed_width > buffer->extent.width)
     {
       g_warning ("requested a %i wide allocation, but storage is only %i wide",
-                 needed_width, buffer->width);
+                 needed_width, buffer->extent.width);
     }
 
-  if (allocator->y_used + needed_height > buffer->height)
+  if (allocator->y_used + needed_height > buffer->extent.height)
     {
       g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-                 width, height, buffer->width, buffer->height);
+                 width, height, buffer->extent.width, buffer->extent.height);
       return NULL;
     }
 
-  if (allocator->x_used + needed_width > buffer->width)
+  if (allocator->x_used + needed_width > buffer->extent.width)
     {
-      if (allocator->y_used + allocator->max_height + needed_height > buffer->height)
+      if (allocator->y_used + allocator->max_height + needed_height > buffer->extent.height)
         {
           g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-                     width, height, buffer->width, buffer->height);
+                     width, height, buffer->extent.width, buffer->extent.height);
           return NULL;
         }
       allocator->y_used    += allocator->max_height;

@@ -180,8 +180,8 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
 
   if (x >= 0 &&
       y >= 0 &&
-      x < buffer->width &&
-      y < buffer->height)
+      x < buffer->extent.width &&
+      y < buffer->extent.height)
     {
       gint u = (gint) x;
       gint v = (gint) y;
@@ -207,9 +207,9 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
       for (j = 0; j < lanczos_width2; j++)
         for (i = 0; i < lanczos_width2; i++)
           {
-            pu         = CLAMP (u + i - lanczos_width, 0, buffer->width - 1);
-            pv         = CLAMP (v + j - lanczos_width, 0, buffer->height - 1);
-            buf_ptr    = cache_buffer + ((pv * buffer->width + pu) * 4);
+            pu         = CLAMP (u + i - lanczos_width, 0, buffer->extent.width - 1);
+            pv         = CLAMP (v + j - lanczos_width, 0, buffer->extent.height - 1);
+            buf_ptr    = cache_buffer + ((pv * buffer->extent.width + pu) * 4);
             newval[0] += y_kernel[j] * x_kernel[i] * buf_ptr[0] * buf_ptr[3];
             newval[1] += y_kernel[j] * x_kernel[i] * buf_ptr[1] * buf_ptr[3];
             newval[2] += y_kernel[j] * x_kernel[i] * buf_ptr[2] * buf_ptr[3];
