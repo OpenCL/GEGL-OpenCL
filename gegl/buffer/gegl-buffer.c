@@ -1197,6 +1197,10 @@ gegl_buffer_set (GeglBuffer    *buffer,
       pset (buffer, rect->x, rect->y, format, src);
       return;
     }
+  /* FIXME: if rect->width == TILE_WIDTH and rect->height == TILE_HEIGHT and
+   * aligned with tile grid, do a fast path, also provide helper functions
+   * for getting the upper left coords of tiles.
+   */
   if (rect == NULL)
     {
       gegl_buffer_iterate (buffer, src, TRUE, format, 0);
@@ -1267,270 +1271,168 @@ static void resample_nearest (void   *dest_buf,
     }
 }
 
-#include <math.h>
-
-#if 0
-static inline guchar
-bilinear_8 (gdouble x,
-            gdouble y,
-            guchar *values)
-{
-  gdouble m0, m1;
-
-  g_return_val_if_fail (values != NULL, 0);
-
-  x = fmod (x, 1.0);
-  y = fmod (y, 1.0);
-
-  if (x < 0.0)
-    x += 1.0;
-  if (y < 0.0)
-    y += 1.0;
-
-  m0 = (1.0 - x) * values[0] + x * values[1];
-  m1 = (1.0 - x) * values[2] + x * values[3];
-
-  return (guchar) ((1.0 - y) * m0 + y * m1);
-}
-#endif
-
-#if 0
-
 static inline void
-bilinear_8 (gdouble x,
-            gdouble y,
-            guchar *src0,
-            guchar *src1,
-            guchar *src2,
-            guchar *src3,
-            guchar *dst,
-            gint    components)
+box_filter (guint          left_weight,
+            guint          center_weight,
+            guint          right_weight,
+            guint          top_weight,
+            guint          middle_weight,
+            guint          bottom_weight,
+            guint          sum,
+            const guchar **src,   /* the 9 surrounding source pixels */
+            guchar        *dest,
+            gint           components)
 {
+  /* NOTE: this box filter presumes pre-multiplied alpha, if there
+   * is alpha.
+   */
   gint i;
-  gint dx, dy;
-
-  x = fmod (x, 1.0);
-  y = fmod (y, 1.0);
-
-  if (x < 0.0)
-    x += 1.0;
-  if (y < 0.0)
-    y += 1.0;
-  dx = x * 255;
-  dy = y * 255;
-
   for (i = 0; i < components; i++)
     {
-      gint m0, m1;
-      m0     = ((255 - dx) * src0[i] + dx * src1[i]) >> 8;
-      m1     = ((255 - dx) * src2[i] + dx * src3[i]) >> 8;
-      dst[i] = (((255 - dy) * m0 + dy * m1)) >> 8;
+      dest[i] = ( left_weight   * ((src[0][i] * top_weight) +
+                                   (src[3][i] * middle_weight) +
+                                   (src[6][i] * bottom_weight))
+                + center_weight * ((src[1][i] * top_weight) +
+                                   (src[4][i] * middle_weight) +
+                                   (src[7][i] * bottom_weight))
+                + right_weight  * ((src[2][i] * top_weight) +
+                                   (src[5][i] * middle_weight) +
+                                   (src[8][i] * bottom_weight))) / sum;
     }
 }
 
-static void resample_bilinear_u8 (void   *dest_buf,
-                                  void   *source_buf,
-                                  gint    dest_w,
-                                  gint    dest_h,
-                                  gint    source_w,
-                                  gint    source_h,
-                                  gdouble scale,
-                                  gint    components)
-{
-  gint x, y;
-
-  for (y = 0; y < dest_h; y++)
-    {
-      gdouble sy;
-      guchar *dst;
-      guchar *src_base;
-
-      sy = y / scale;
-
-      if (sy > source_h - 1)
-        sy = source_h - 2;
-
-      dst      = ((guchar *) dest_buf) + y * dest_w * components;
-      src_base = ((guchar *) source_buf) + ((gint) sy) * source_w * components;
-
-      for (x = 0; x < dest_w; x++)
-        {
-          gdouble sx;
-          guchar *src0;
-          guchar *src1;
-          guchar *src2;
-          guchar *src3;
-          sx = x / scale;
-
-          if (sx > source_w - 1)
-            sx = source_w - 2;
-          src0 = src_base + ((gint) sx) * components;
-          src1 = src0 + components;
-          src2 = src0 + source_w * components;
-          src3 = src1 + source_w * components;
-
-          bilinear_8 (sx, sy, src0, src1, src2, src3, dst, components);
-          dst += components;
-        }
-    }
-}
-
-#endif
-
-static inline void
-bilinear_8 (gint    dx,
-            gint    dy,
-            guchar *src0,
-            guchar *src1,
-            guchar *src2,
-            guchar *src3,
-            guchar *dst,
-            gint    components)
-{
-#define DO_COMPONENT(iter) \
-  { \
-    gint m0, m1; \
-    m0        = ((255 - dx) * src0[iter] + dx * src1[iter]) >> 8; \
-    m1        = ((255 - dx) * src2[iter] + dx * src3[iter]) >> 8; \
-    dst[iter] = (((255 - dy) * m0 + dy * m1)) >> 8; \
-  }
-
-  switch (components)
-    {
-      case 1:
-        DO_COMPONENT (0);
-        break;
-
-      case 2:
-        DO_COMPONENT (0);
-        DO_COMPONENT (1);
-        break;
-
-      case 3:
-        DO_COMPONENT (0);
-        DO_COMPONENT (1);
-        DO_COMPONENT (2);
-        break;
-
-      case 4:
-        DO_COMPONENT (0);
-        DO_COMPONENT (1);
-        DO_COMPONENT (2);
-        DO_COMPONENT (3);
-        break;
-    }
-}
-
-static void resample_bilinear_u8 (void   *dest_buf,
-                                  void   *source_buf,
-                                  gint    dest_w,
-                                  gint    dest_h,
-                                  gint    source_w,
-                                  gint    source_h,
-                                  gdouble scale,
-                                  gint    components)
+static void resample_boxfilter_u8 (void   *dest_buf,
+                                   void   *source_buf,
+                                   gint    dest_w,
+                                   gint    dest_h,
+                                   gint    source_w,
+                                   gint    source_h,
+                                   gdouble scale,
+                                   gint    components)
 {
   gint x, y;
   gint iscale      = scale * 256;
   gint s_rowstride = source_w * components;
   gint d_rowstride = dest_w * components;
 
-  if (components == 3)  /* optimize specially for the 3 component case since that is
-                           the normal projection and needs to be FAST
-                         */
+  gint          footprint_x;
+  gint          footprint_y;
+  guint         foosum;
+
+  guint         left_weight;
+  guint         center_weight;
+  guint         right_weight;
+
+  guint         top_weight;
+  guint         middle_weight;
+  guint         bottom_weight;
+
+  footprint_y = (1.0 / scale) * 256; 
+  footprint_x = (1.0 / scale) * 256; 
+  foosum = footprint_x * footprint_y;
+
+  for (y = 0; y < dest_h; y++)
     {
-      for (y = 0; y < dest_h; y++)
+      gint    sy;
+      gint    dy;
+      guchar *dst;
+      const guchar *src_base;
+
+      sy = (y << 16) / iscale;
+
+      if (sy >= (source_h - 1) << 8)
+        sy = (source_h - 2) << 8;/* is this the right thing to do? */
+
+      dy = sy & 255;
+
+      dst      = ((guchar *) dest_buf) + y * d_rowstride;
+      src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
+
+      if (dy > footprint_y / 2)
+        top_weight = 0;
+      else
+        top_weight = footprint_y / 2 - dy;
+
+      if (0xff - dy > footprint_y / 2)
+        bottom_weight = 0;
+      else
+        bottom_weight = footprint_y / 2 - (0xff - dy);
+
+      middle_weight = footprint_y - top_weight - bottom_weight;
+
+      gint sx = 0;
+      gint xskip = 65536/iscale;
+      for (x = 0; x < dest_w; x++)
         {
-          gint    sy;
-          gint    dy;
-          guchar *dst;
-          guchar *src_base;
+          gint          dx;
+          const guchar *src[9];
 
-          sy = (y << 16) / iscale;
+          /*sx = (x << 16) / iscale;*/
+          dx = sx & 255;
 
-          if (sy >= (source_h - 1) << 8)
-            sy = (source_h - 2) << 8;/* is this the right thing to do? */
+          if (dx > footprint_x / 2)
+            left_weight = 0;
+          else
+            left_weight = footprint_x / 2 - dx;
 
-          dy = sy & 255;
+          if (0xff - dx > footprint_x / 2)
+            right_weight = 0;
+          else
+            right_weight = footprint_x / 2 - (0xff - dx);
 
-          dst      = ((guchar *) dest_buf) + y * d_rowstride;
-          src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
+          center_weight = footprint_x - left_weight - right_weight;
 
-          for (x = 0; x < dest_w; x++)
+          src[4] = src_base + (sx >> 8) * components;
+          src[7] = src[4] + s_rowstride;
+          src[5] = src[4] + components;
+          src[8] = src[7] + components;
+          src[3] = src[4] - components;
+          src[6] = src[7] - components;
+          src[1] = src[4] - s_rowstride;
+          src[0] = src[1] - components;
+          src[2] = src[1] + components;
+
+          if (sx - 1<0)
             {
-              gint    sx;
-              gint    dx;
-              guchar *src0;
-              guchar *src1;
-              guchar *src2;
-              guchar *src3;
-
-              sx = (x << 16) / iscale;
-
-              if (sx >= (source_w - 1) << 8) /* this check to see if we're within bounds is expensive */
-                sx = (source_w - 2) << 8;/* and the action taken might not be quite right either */
-
-              dx = sx & 255;
-
-              src0 = src_base + (sx >> 8) * 3;
-              src2 = src0 + s_rowstride;
-              src1 = src0 + 3;
-              src3 = src2 + 3;
-
-              DO_COMPONENT (0)
-              DO_COMPONENT (1)
-              DO_COMPONENT (2)
-              dst += 3;
+              src[0]=src[1];
+              src[3]=src[4];
+              src[6]=src[7];
             }
-        }
-    }
-  else
-    {
-      for (y = 0; y < dest_h; y++)
-        {
-          gint    sy;
-          gint    dy;
-          guchar *dst;
-          guchar *src_base;
-
-          sy = (y << 16) / iscale;
-
-          if (sy > (source_h - 1) << 8)
-            sy = (source_h - 2) << 8;/* is this the right thing to do? */
-
-          dy = sy & 255;
-
-          dst      = ((guchar *) dest_buf) + y * d_rowstride;
-          src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
-
-          for (x = 0; x < dest_w; x++)
+          if ((sy >> 8) - 1 < 0)
             {
-              gint    sx;
-              gint    dx;
-              guchar *src0;
-              guchar *src1;
-              guchar *src2;
-              guchar *src3;
-
-              sx = (x << 16) / iscale;
-
-              if (sx > (source_w - 1) << 8) /* this check to see if we're within bounds is expensive */
-                sx = (source_w - 2) << 8;/* and the action taken might not be quite right either */
-
-              dx = sx & 255;
-
-              src0 = src_base + (sx >> 8) * components;
-              src2 = src0 + s_rowstride;
-              src1 = src0 + components;
-              src3 = src2 + components;
-
-              bilinear_8 (dx, dy, src0, src1, src2, src3, dst, components);
-              dst += components;
+              src[0]=src[3];
+              src[1]=src[4];
+              src[2]=src[5];
             }
+          if (sx + 1 >= source_w)
+            {
+              src[2]=src[1];
+              src[5]=src[4];
+              src[8]=src[7];
+            }
+          if ((sy >> 8) + 1 >= source_h)
+            {
+              src[6]=src[3];
+              src[7]=src[4];
+              src[8]=src[5];
+            }
+
+          box_filter (left_weight,
+                      center_weight,
+                      right_weight,
+                      top_weight,
+                      middle_weight,
+                      bottom_weight,
+                      foosum,
+                      src,   /* the 9 surrounding source pixels */
+                      dst,
+                      components);
+          dst += components;
+          sx += xskip;
         }
     }
 }
-#undef DO_COMPONENT
+
 
 void
 gegl_buffer_get (GeglBuffer    *buffer,
@@ -1596,8 +1498,7 @@ gegl_buffer_get (GeglBuffer    *buffer,
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
 
-      if (scale > 1.0 - 0.001 &&
-          scale < 1.0 + 0.001)
+      if (GEGL_FLOAT_EQUAL (scale, 1.0))
         { /* avoid resampling if the pyramidial level we've got is close */
           gint y;
           for (y = 0; y < rect->height; y++)
@@ -1622,14 +1523,14 @@ gegl_buffer_get (GeglBuffer    *buffer,
                                                                            */
       )
         { /* do bilinear resampling if we're 8bit (which projections are) */
-          resample_bilinear_u8 (dest_buf,
-                                sample_buf,
-                                rect->width,
-                                rect->height,
-                                buf_width,
-                                buf_height,
-                                scale,
-                                bpp);
+          resample_boxfilter_u8 (dest_buf,
+                                 sample_buf,
+                                 rect->width,
+                                 rect->height,
+                                 buf_width,
+                                 buf_height,
+                                 scale,
+                                 bpp);
         }
       else
         {

@@ -1,3 +1,9 @@
+2007-09-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get and friends )replaced
+	the bilinear resampling from the next larger level with a box filter.
+	Only for 8bit formats for now.
+
 2007-09-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-cache.c: (gegl_cache_invalidate): removed
