@@ -292,7 +292,7 @@ gegl_handler_cache_wash (GeglHandlerCache *cache)
     }
   if (last_dirty != NULL)
     {
-      gegl_provider (last_dirty);
+      gegl_tile_store (last_dirty);
       return TRUE;
     }
   return FALSE;

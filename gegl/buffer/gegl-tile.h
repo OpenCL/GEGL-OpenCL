@@ -82,7 +82,7 @@ void       * gegl_tile_get_format      (GeglTile    *tile);
 void         gegl_tile_lock            (GeglTile    *tile);
 void         gegl_tile_unlock          (GeglTile    *tile);
 gboolean     gegl_tile_is_stored       (GeglTile    *tile);
-gboolean     gegl_provider           (GeglTile    *tile);
+gboolean     gegl_tile_store           (GeglTile    *tile);
 void         gegl_tile_void            (GeglTile    *tile);
 GeglTile    *gegl_tile_dup             (GeglTile    *tile);
 /* utility low-level functions used by undo system */

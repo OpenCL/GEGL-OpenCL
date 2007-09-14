@@ -104,7 +104,7 @@ dispose (GObject *object)
   GeglTile *tile = (GeglTile *) object;
 
   if (!gegl_tile_is_stored (tile))
-    gegl_provider (tile);
+    gegl_tile_store (tile);
 
   if (tile->data)
     {
@@ -388,7 +388,7 @@ gegl_tile_get_data (GeglTile *tile)
   return tile->data;
 }
 
-gboolean gegl_provider (GeglTile *tile)
+gboolean gegl_tile_store (GeglTile *tile)
 {
   if (tile->storage == NULL)
     return FALSE;

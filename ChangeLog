@@ -1,5 +1,13 @@
 2007-09-14  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_provider /gegl_tile_store / reverting an erroneous regexp
+	refactoring replacement.
+
+	* gegl/buffer/gegl-tile.[ch]: 
+	* gegl/buffer/gegl-handler-cache.c:
+
+2007-09-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get and friends )replaced
 	the bilinear resampling from the next larger level with a box filter.
 	Only for 8bit formats for now.
