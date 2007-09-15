@@ -382,8 +382,8 @@ typedef enum
 /**
  * gegl_node_blit:
  * @node: a #GeglNode
- * @roi: the upper left coordinates to render, and the width/height of the
- * destination buffer.
+ * @roi: the rectangle to render from the node, the coordinate system used is
+ * coordinates after scale has been applied.
  * @scale: the scale to render at 1.0 is default, other values changes the
  * width/height of the sampled region.
  * @format: the #BablFormat desired.

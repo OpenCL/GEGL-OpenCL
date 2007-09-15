@@ -7,8 +7,10 @@
 	remains is unchanged. Fixes some display glitches, but display is
 	still not artifact free.
 
-	* gegl/buffer/gegl-buffer.c: 
-	* bin/gegl-view.c: 
+	* gegl/buffer/gegl-buffer.c:  changed interpretation of scale/rect.
+	* gegl/buffer/gegl-buffer.h: updated documentation.
+	* gegl/gegl.h: updated documentation.
+	* bin/gegl-view.c: updated use of coordinates to reflect new behavior.
 
 2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 	

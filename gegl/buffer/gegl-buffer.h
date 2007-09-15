@@ -97,8 +97,9 @@ G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
 /**
  * gegl_buffer_get:
  * @buffer: the buffer to retrieve data from.
- * @rect: the coordinates we want to retrieve data from, and width/height
- * of destination buffer, if NULL equal to the extent of the buffer.
+ * @rect: the coordinates we want to retrieve data from, and width/height of
+ * destination buffer, if NULL equal to the extent of the buffer. The
+ * coordinates and dimensions are after scale has been applied.
  * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
  * @format: the BablFormat to store in the linear buffer @dest.
  * @dest: the memory destination for a linear buffer for the pixels, the size needed
@@ -106,7 +107,7 @@ G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the data is
  * converted to the desired BablFormat, if the BablFormat stored and fetched is the
- * same this amounts to s series of memcpy's aligned to demux the tile structure into
+ * same this amounts to a series of memcpy's aligned to demux the tile structure into
  * a linear buffer.
  */
 void            gegl_buffer_get               (GeglBuffer       *buffer,
