@@ -1,7 +1,7 @@
 2007-09-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/stretch-contrast.c: (prepare): specify desired
-	input and output formats.
+	input and output formats. (change suggested by Håkon Hitland).
 
 2007-09-15  Øyvind Kolås  <pippin@gimp.org>
 
