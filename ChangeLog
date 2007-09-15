@@ -1,3 +1,10 @@
+2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
+	
+	* configure.ac: Define name of gegl library file.
+
+	* gegl/gegl-init.c: Use name of gegl library defined when ./configure
+	was run.
+
 2007-09-14  Øyvind Kolås  <pippin@gimp.org>
 
 	%s/gegl_provider /gegl_tile_store / reverting an erroneous regexp

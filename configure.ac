@@ -79,6 +79,8 @@ AC_SUBST(GEGL_API_VERSION)
 GEGL_RELEASE=gegl_api_version
 AC_SUBST(GEGL_RELEASE)
 
+AC_DEFINE_UNQUOTED(GEGL_LIBRARY, "$PACKAGE_NAME-$GEGL_API_VERSION", [name of GEGL library])
+
 
 dnl The symbol GEGL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol
@@ -508,7 +510,6 @@ AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" = "xyes")
 AC_SUBST(HAVE_SDL) 
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
-
 
 ####################
 # Check for graphviz
