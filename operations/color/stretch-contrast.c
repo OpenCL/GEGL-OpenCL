@@ -29,6 +29,7 @@
 #define GEGL_CHANT_CLASS_INIT /*< we need to modify the standard class init
                                   of the super class */
 #define GEGL_CHANT_CATEGORIES      "color:enhance"
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
 static gboolean
@@ -131,6 +132,13 @@ compute_input_request (GeglOperation *operation,
 {
   GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
   return result;
+}
+
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 /* This is called at the end of the gobject class_init function, the

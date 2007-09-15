@@ -1,5 +1,10 @@
 2007-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/stretch-contrast.c: (prepare): specify desired
+	input and output formats.
+
+2007-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified the behavior of the interaction between scale parameter and
 	rectangle requested from gegl_buffer_get as well as gegl_node_blit.
 	The scale is now applied first, and the coordinates/extent describes
