@@ -1,7 +1,18 @@
+2007-09-15  Øyvind Kolås  <pippin@gimp.org>
+
+	Modified the behavior of the interaction between scale parameter and
+	rectangle requested from gegl_buffer_get as well as gegl_node_blit.
+	The scale is now applied first, and the coordinates/extent describes
+	an operation on this transformed buffer. The behavior for scale==1.0
+	remains is unchanged. Fixes some display glitches, but display is
+	still not artifact free.
+
+	* gegl/buffer/gegl-buffer.c: 
+	* bin/gegl-view.c: 
+
 2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 	
 	* configure.ac: Define name of gegl library file.
-
 	* gegl/gegl-init.c: Use name of gegl library defined when ./configure
 	was run.
 

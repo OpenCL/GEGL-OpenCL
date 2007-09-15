@@ -134,10 +134,10 @@ computed_event (GeglNode      *self,
                 GeglRectangle *rect,
                 GeglView      *view)
 {
-  gint x = view->scale * (rect->x - view->x);
-  gint y = view->scale * (rect->y - view->y);
-  gint w = ceil (view->scale * rect->width );
-  gint h = ceil (view->scale * rect->height);
+  gint x = view->scale * (rect->x) - view->x;
+  gint y = view->scale * (rect->y) - view->y;
+  gint w = ceil (view->scale * rect->width  + 1);
+  gint h = ceil (view->scale * rect->height + 1);
 
   gtk_widget_queue_draw_area (GTK_WIDGET (view), x, y, w, h);
 }
@@ -248,8 +248,8 @@ button_press_event (GtkWidget      *widget,
   view->orig_x = view->x;
   view->orig_y = view->y;
 
-  view->start_buf_x = view->x + x/view->scale;
-  view->start_buf_y = view->y + y/view->scale;
+  view->start_buf_x = (view->x + x)/view->scale;
+  view->start_buf_y = (view->y + y)/view->scale;
 
   view->prev_x = x;
   view->prev_y = y;
@@ -259,8 +259,8 @@ button_press_event (GtkWidget      *widget,
 
   {
     GeglNode *detected = gegl_node_detect (view->node,
-                                           view->x + event->x / view->scale,
-                                           view->y + event->y / view->scale);
+                                           (view->x + event->x) / view->scale,
+                                           (view->y + event->y) / view->scale);
     if (detected)
       {
 #if 0
@@ -272,7 +272,6 @@ button_press_event (GtkWidget      *widget,
         g_free (name);
         g_free (operation);
 #endif
-
         tree_editor_set_active (editor.tree_editor, detected);
       }
   }
@@ -290,14 +289,13 @@ motion_notify_event (GtkWidget      *widget,
 
   if (event->state & GDK_BUTTON1_MASK)
     {
-      gint pre_x = floor (view->x * view->scale);
-      gint pre_y = floor (view->y * view->scale);
+      gint diff_x = x - view->prev_x;
+      gint diff_y = y - view->prev_y;
 
-      view->x = view->orig_x + (view->screen_x-x) / view->scale;
-      view->y = view->orig_y + (view->screen_y-y) / view->scale;
+      view->x -= diff_x;
+      view->y -= diff_y;
 
-      gdk_window_scroll (widget->window, pre_x - floor (view->x * view->scale),
-                                         pre_y - floor (view->y * view->scale));
+      gdk_window_scroll (widget->window, diff_x, diff_y);
 
       g_object_notify (G_OBJECT (view), "x");
       g_object_notify (G_OBJECT (view), "y");
@@ -322,8 +320,8 @@ motion_notify_event (GtkWidget      *widget,
             }
         }
 
-      view->x = view->start_buf_x - (view->screen_x) / view->scale;
-      view->y = view->start_buf_y - (view->screen_y) / view->scale;
+      view->x = (view->start_buf_x - view->screen_x / view->scale) * view->scale;
+      view->y = (view->start_buf_y - view->screen_y / view->scale) * view->scale;
 
       gtk_widget_queue_draw (GTK_WIDGET (view));
 
@@ -357,12 +355,12 @@ expose_event (GtkWidget      *widget,
       GeglRectangle  roi;
       guchar        *buf;
 
-      roi.x = view->x + (rectangles[i].x / view->scale);
-      roi.y = view->y + (rectangles[i].y / view->scale);
+      roi.x = view->x + rectangles[i].x;
+      roi.y = view->y + rectangles[i].y;
       roi.width  = rectangles[i].width;
-      roi.height  = rectangles[i].height;
+      roi.height = rectangles[i].height;
 
-      buf = g_malloc ((roi.width +1) * (roi.height+1) * 3);
+      buf = g_malloc ((roi.width) * (roi.height) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
 
       gegl_node_blit (view->node,
@@ -404,9 +402,9 @@ void
 gegl_view_repaint (GeglView *view)
 {
   GtkWidget     *widget = GTK_WIDGET (view);
-  GeglRectangle  roi    = { view->x, view->y,
-                            widget->allocation.width / view->scale,
-                            widget->allocation.height / view->scale };
+  GeglRectangle  roi    = { view->x / view->scale, view->y / view->scale,
+                            ceil(widget->allocation.width / view->scale+1),
+                            ceil(widget->allocation.height / view->scale+1) };
 
 #if 0
   /* forget all already queued repaints */
