@@ -1234,6 +1234,13 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
   g_object_unref (sub_buf);
 }
 
+#if 0
+
+/*
+ *  slow nearest neighbour resampler that seems to be
+ *  completely correct.
+ */
+
 static void resample_nearest (void   *dest_buf,
                               void   *source_buf,
                               gint    dest_w,
@@ -1279,6 +1286,70 @@ static void resample_nearest (void   *dest_buf,
           memcpy (dst, src, bpp);
           dst += bpp;
         }
+    }
+}
+#endif
+
+/* Optimized|obfuscated version of the nearest neighbour resampler 
+ * XXX: seems to contains some very slight inprecision in the rendering.
+ */
+static void resample_nearest (void   *dest_buf,
+                              void   *source_buf,
+                              gint    dest_w,
+                              gint    dest_h,
+                              gint    source_w,
+                              gint    source_h,
+                              gdouble offset_x,
+                              gdouble offset_y,
+                              gdouble scale,
+                              gint    bpp,
+                              gint    rowstride)
+{
+  gint x, y;
+
+  if (rowstride == GEGL_AUTO_ROWSTRIDE)
+     rowstride = dest_w * bpp;
+
+  guint xdiff = 65536 / scale;
+  guint ydiff = 65536 / scale;
+  guint xstart = (offset_x * 65536) / scale;
+  guint sy = (offset_y * 65536) / scale;
+
+  for (y = 0; y < dest_h; y++)
+    {
+      guchar *dst;
+      guchar *src_base;
+
+      if (sy >= source_h << 16)
+        sy = (source_h - 1) << 16;
+
+      dst      = ((guchar *) dest_buf) + y * rowstride;
+      src_base = ((guchar *) source_buf) + (sy >> 16) * source_w * bpp;
+
+      guint sx;
+      guint px = 0; 
+
+      sx = xstart;
+      guchar *src = src_base;
+
+      /* this is the loop that is actually properly optimized,
+       * portions of the setup is done for all the rows outside the y
+       * loop as well */
+      for (x = 0; x < dest_w; x++)
+        {
+          gint diff;
+          gint ssx = sx>>16;
+          if ( (diff = ssx - px) > 0)
+            {
+              if (ssx < source_w)
+                src += diff * bpp;
+              px += diff;
+            }
+          memcpy (dst, src, bpp);
+          dst += bpp;
+          sx += xdiff;
+        }
+      sy += ydiff;
     }
 }
 

@@ -1,5 +1,12 @@
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (resample_nearest): added an optimized
+	code path for the nearest neighbour case, since it seems to contain
+	some slight inprecision the original unoptimized code is left beside
+	it #if 0'd out.
+
+2007-09-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate): fix rendering
 	glitch due to incorrect handling of rowstride.
 
