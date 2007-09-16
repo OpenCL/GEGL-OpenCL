@@ -728,7 +728,7 @@ gegl_node_blit (GeglNode      *node,
 
         if (destination_buf)
           {
-            gegl_buffer_get (roi_buf, 1.0, NULL, format, destination_buf, GEGL_AUTO_ROWSTRIDE);
+            gegl_buffer_get (roi_buf, 1.0, NULL, format, destination_buf, rowstride);
           }
         g_object_unref (roi_buf);
         if (scale != 1.0)
