@@ -1236,8 +1236,8 @@ static void resample_nearest (void   *dest_buf,
                               gint    dest_h,
                               gint    source_w,
                               gint    source_h,
-                              gint    offset_x,
-                              gint    offset_y,
+                              gdouble offset_x,
+                              gdouble offset_y,
                               gdouble scale,
                               gint    bpp)
 {
@@ -1311,8 +1311,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
                                    gint    dest_h,
                                    gint    source_w,
                                    gint    source_h,
-                                   gint    offset_x,
-                                   gint    offset_y,
+                                   gdouble offset_x,
+                                   gdouble offset_y,
                                    gdouble scale,
                                    gint    components)
 {
@@ -1344,7 +1344,7 @@ static void resample_boxfilter_u8 (void   *dest_buf,
       guchar *dst;
       const guchar *src_base;
 
-      sy = ((y + offset_y) << 16) / iscale;
+      sy = ((y + offset_y) * 65536) / iscale;
 
       if (sy >= (source_h - 1) << 8)
         sy = (source_h - 2) << 8;/* is this the right thing to do? */
@@ -1366,9 +1366,10 @@ static void resample_boxfilter_u8 (void   *dest_buf,
 
       middle_weight = footprint_y - top_weight - bottom_weight;
 
-      gint sx = (offset_x << 16) / iscale;
+      gint sx = (offset_x *65536) / iscale;
       gint xdelta = 65536/iscale;
 
+      /* XXX: needs quite a bit of optimization */
       for (x = 0; x < dest_w; x++)
         {
           gint          dx;
@@ -1487,8 +1488,8 @@ gegl_buffer_get (GeglBuffer    *buffer,
                                     buf_height };
       void         *sample_buf;
       gint          factor = 1;
-      gint          offset_x;
-      gint          offset_y;
+      gdouble       offset_x;
+      gdouble       offset_y;
 
       while (scale <= 0.5)
         {
@@ -1507,8 +1508,9 @@ gegl_buffer_get (GeglBuffer    *buffer,
       buf_height         += 2;
 
 
-      offset_x = rect->x-floor(rect->x/scale)*scale;
-      offset_y = rect->y-floor(rect->y/scale)*scale;
+      offset_x = rect->x-floor(rect->x/scale) * scale;
+      offset_y = rect->y-floor(rect->y/scale) * scale;
+
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
@@ -1533,10 +1535,14 @@ gegl_buffer_get (GeglBuffer    *buffer,
               memcpy (dst, src_base, bpp * rect->width);
             }
         }
-      else if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") &&
-               !(level == 0 && scale > 1.99)
+      else if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") 
+               && !(level == 0 && scale > 1.99) 
       )
         { /* do box-filter resampling if we're 8bit (which projections are) */
+
+          /* XXX: use box-filter also for > 1.99 when testing and probably later,
+           * there are some bugs when doing so
+           */
           resample_boxfilter_u8 (dest_buf,
                                  sample_buf,
                                  rect->width,

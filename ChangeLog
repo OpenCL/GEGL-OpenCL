@@ -1,3 +1,8 @@
+2007-09-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: improved precision of rendering in
+	gegl_buffer_get slightly.
+
 2007-09-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/stretch-contrast.c: (prepare): specify desired
