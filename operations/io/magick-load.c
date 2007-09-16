@@ -51,7 +51,7 @@ load_cache (GeglChantOperation *op_magick_load)
     temp_gegl = gegl_parse_xml (xml, "/");
     rect = gegl_node_get_bounding_box (temp_gegl);
 
-    gegl_node_blit (temp_gegl, &rect, 1.0, NULL, 0, NULL, GEGL_BLIT_CACHE); /* force a render
+    gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE); /* force a render
                                                                                of the cache,
                                                                                passing in a NULL
                                                                                buffer indicating that

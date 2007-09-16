@@ -94,16 +94,22 @@ G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
 #define gegl_buffer_height(buffer)      (gegl_buffer_extent(buffer)->height)
 #define gegl_buffer_pixel_count(buffer) (gegl_buffer_width(buffer) * gegl_buffer_height(buffer))
 
+#ifndef GEGL_AUTO_ROWSTRIDE
+#define GEGL_AUTO_ROWSTRIDE 0
+#endif
+
 /**
  * gegl_buffer_get:
  * @buffer: the buffer to retrieve data from.
+ * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
  * @rect: the coordinates we want to retrieve data from, and width/height of
  * destination buffer, if NULL equal to the extent of the buffer. The
  * coordinates and dimensions are after scale has been applied.
- * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
  * @format: the BablFormat to store in the linear buffer @dest.
  * @dest: the memory destination for a linear buffer for the pixels, the size needed
  * depends on the requested BablFormat.
+ * @rowstride: rowstride in bytes, or GEGL_ROWSTRIDE_AUTO to compute the
+ * rowstride based on the width and bytes per pixel for the specified format.
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the data is
  * converted to the desired BablFormat, if the BablFormat stored and fetched is the
@@ -111,10 +117,11 @@ G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
  * a linear buffer.
  */
 void            gegl_buffer_get               (GeglBuffer       *buffer,
-                                               GeglRectangle    *rect,
                                                gdouble           scale,
+                                               GeglRectangle    *rect,
                                                Babl             *format,
-                                               void             *dest);
+                                               gpointer          dest,
+                                               gint              rowstride);
 
 /**
  * gegl_buffer_set:

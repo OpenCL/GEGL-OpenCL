@@ -710,13 +710,14 @@ gegl_node_apply_roi (GeglNode      *self,
   return buffer;
 }
 
-void          gegl_node_blit (GeglNode      *node,
-                              GeglRectangle *roi,
-                              gdouble        scale,
-                              void          *format,
-                              gint           rowstride,
-                              gpointer      *destination_buf,
-                              GeglBlitFlags  flags)
+void
+gegl_node_blit (GeglNode      *node,
+                gdouble        scale,
+                GeglRectangle *roi,
+                Babl          *format,
+                gpointer       destination_buf,
+                gint           rowstride,
+                GeglBlitFlags  flags)
 {
   if (flags == GEGL_BLIT_DEFAULT)
     {
@@ -727,7 +728,7 @@ void          gegl_node_blit (GeglNode      *node,
 
         if (destination_buf)
           {
-            gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
+            gegl_buffer_get (roi_buf, 1.0, NULL, format, destination_buf, GEGL_AUTO_ROWSTRIDE);
           }
         g_object_unref (roi_buf);
         if (scale != 1.0)
@@ -751,7 +752,8 @@ void          gegl_node_blit (GeglNode      *node,
         }
       if (destination_buf)
         {
-          gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
+          gegl_buffer_get (GEGL_BUFFER (cache), scale, roi,
+                           format, destination_buf, rowstride);
         }
     }
 }

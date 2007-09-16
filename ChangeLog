@@ -1,5 +1,31 @@
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: modified order of arguments for gegl_node_blit (scale
+	comes before rectangle) as well as added GEGL_AUTO_ROWSTRIDE =0 define
+	to be used for automatic computation of rowstride for gegl_node_blit
+	and gegl_buffer_get
+	* gegl/buffer/gegl-buffer.[ch]: modified order of arguments for
+	gegl_buffer_get() as well as added a rowstride argument.
+
+	These files in the gegl core needed changes to adapt:
+
+	* bin/export.c:
+	* bin/gegl-view.c:
+	* gegl/buffer/gegl-cache.c:
+	* gegl/buffer/gegl-interpolator.c:
+	* gegl/graph/gegl-node.[ch]:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation.c:
+	* gegl/process/gegl-processor.c:
+
+	And all operations were touched as well.
+
+	* operations/*/*.c:
+	* operations/*/*/*.c:
+
+2007-09-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: improved precision of rendering in
 	gegl_buffer_get slightly.
 

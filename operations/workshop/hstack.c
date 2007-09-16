@@ -63,8 +63,8 @@ process (GeglOperation *operation,
       gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
       gfloat *bufB = g_malloc0 (result->width * result->height * 4 * 4);
 
-      gegl_buffer_get (temp_in, NULL, 1.0, babl_format ("RGBA float"), buf);
-      gegl_buffer_get (temp_aux, NULL, 1.0, babl_format ("RGBA float"), bufB);
+      gegl_buffer_get (temp_in, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (temp_aux, 1.0, NULL, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);
         {
           gint offset=0;
           gint x,y;

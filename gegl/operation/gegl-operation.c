@@ -651,7 +651,7 @@ gegl_operation_get_target (GeglOperation *operation,
 /* uncomment the following to enable the experimental per node
    caching
 */
-/* #define ENABLE_CACHE */
+#define ENABLE_CACHE
 #ifdef ENABLE_CACHE
   /* FIXME: make the cache be of the format indicated by the format,.. */
   if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)

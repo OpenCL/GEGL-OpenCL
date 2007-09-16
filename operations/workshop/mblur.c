@@ -83,8 +83,8 @@ process (GeglOperation *operation,
         gint bufsize = pixels*4*sizeof(gfloat);
         gfloat *buf = g_malloc(bufsize);
         gfloat *acc = g_malloc(bufsize);
-        gegl_buffer_get (p->acc, result, 1.0, babl_format ("RGBA float"), acc);
-        gegl_buffer_get (temp_in, result, 1.0, babl_format ("RGBA float"), buf);
+        gegl_buffer_get (p->acc, 1.0, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_get (temp_in, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
         gfloat dampness = self->dampness;
         gint i;
         for (i=0;i<pixels;i++)

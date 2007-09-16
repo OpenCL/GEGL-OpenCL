@@ -1445,10 +1445,11 @@ static void resample_boxfilter_u8 (void   *dest_buf,
 
 void
 gegl_buffer_get (GeglBuffer    *buffer,
-                 GeglRectangle *rect,
                  gdouble        scale,
+                 GeglRectangle *rect,
                  Babl          *format,
-                 void          *dest_buf)
+                 gpointer       dest_buf,
+                 gint           rowstride)
 {
 
   if (format == NULL)
@@ -1724,7 +1725,7 @@ gegl_buffer_copy (GeglBuffer    *src,
 
   for (i=0; i<src_rect->height; i++)
     {
-      gegl_buffer_get (src, &src_line, 1.0, format, temp);
+      gegl_buffer_get (src, 1.0, &src_line, format, temp, GEGL_AUTO_ROWSTRIDE);
       gegl_buffer_set (dst, &dst_line, format, temp);
       src_line.y++;
       dst_line.y++;

@@ -328,7 +328,7 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
   for (i=0; i< rect->height; i++)
     {
       GeglRectangle    line = {rect->x, rect->y + i, rect->width , 1};
-      gegl_buffer_get (gegl_buffer, &line, 1.0, babl_format (format_string), pixels);
+      gegl_buffer_get (gegl_buffer, 1.0, &line, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE);
       png_write_rows (png, &pixels, 1);
     }
   png_write_end (png, info);

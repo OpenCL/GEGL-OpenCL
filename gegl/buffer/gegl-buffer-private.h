@@ -40,7 +40,7 @@ struct _GeglBuffer
                                       provider field which is used for chaining
                                       sub buffers with their anchestors */
 
-  GeglRectangle     extent;		   /* the dimensions of the buffer */
+  GeglRectangle     extent;        /* the dimensions of the buffer */
 
   Babl             *format;  /* the pixel format used for pixels in this
                                 buffer */

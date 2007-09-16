@@ -156,9 +156,9 @@ process (GeglOperation *operation,
       min = g_malloc (pixels * sizeof (gfloat) * 3);
       max = g_malloc (pixels * sizeof (gfloat) * 3);
 
-      gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf);
-      gegl_buffer_get (low,   result, 1.0, babl_format ("RGB float"), min);
-      gegl_buffer_get (high,  result, 1.0, babl_format ("RGB float"), max);
+      gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
 
       output = gegl_operation_get_target (operation, context_id, "output");
 

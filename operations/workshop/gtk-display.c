@@ -126,7 +126,7 @@ process (GeglOperation *operation,
 
   source = gegl_buffer_create_sub_buffer (input, requested);
 
-  gegl_buffer_get (source, NULL, 1.0, babl_format ("R'G'B'A u8"), priv->buf);
+  gegl_buffer_get (source, 1.0, NULL, babl_format ("R'G'B'A u8"), priv->buf, GEGL_AUTO_ROWSTRIDE);
   gtk_widget_queue_draw (priv->drawing_area);
 
   if (priv->window)

@@ -364,11 +364,11 @@ expose_event (GtkWidget      *widget,
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
 
       gegl_node_blit (view->node,
-                      &roi,
                       view->scale,
+                      &roi,
                       babl_format ("R'G'B' u8"),
-                      0, /* rowstride, currently unused */
                       (gpointer)buf,
+                      GEGL_AUTO_ROWSTRIDE,
                       GEGL_BLIT_CACHE|GEGL_BLIT_DIRTY);
 
       gdk_draw_rgb_image (widget->window,

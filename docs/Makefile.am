@@ -105,3 +105,6 @@ website:
 	    (mkdir -p $$WEBSITE_DESTINATION;\
 	     cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION;);\
 	fi
+
+hello-world: hello-world.c
+	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`

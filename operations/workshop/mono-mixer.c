@@ -68,7 +68,7 @@ process (GeglOperation *operation,
      in_buf = g_malloc (4 * sizeof (gfloat) * num_pixels);
      out_buf = g_malloc (2 * sizeof(gfloat) * num_pixels);
 
-     gegl_buffer_get (input, result_rect, 1.0, babl_format ("RGBA float"), in_buf);
+     gegl_buffer_get (input, 1.0, result_rect, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
 
      in_pixel = in_buf;
      out_pixel = out_buf;

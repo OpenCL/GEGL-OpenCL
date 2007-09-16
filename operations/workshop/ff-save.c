@@ -705,7 +705,7 @@ fill_yuv_image (GeglChantOperation *op,
 
           op->input_pad[0]->width * op->input_pad[0]->height * 3);*/
   GeglRectangle rect={0,0,width,height};
-  gegl_buffer_get (p->input, &rect, 1.0, babl_format ("R'G'B' u8"), pict->data[0]);
+  gegl_buffer_get (p->input, 1.0, &rect, babl_format ("R'G'B' u8"), pict->data[0], GEGL_AUTO_ROWSTRIDE);
 }
 
 static void

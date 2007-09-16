@@ -140,8 +140,8 @@ process (GeglOperation *operation,
    */
   source = gegl_buffer_create_sub_buffer (input, result);
   gegl_buffer_get (source,
-       NULL,
        1.0,
+       NULL,
        babl_format_new (babl_model ("R'G'B'A"),
                         babl_type ("u8"),
                         babl_component ("B'"),
@@ -149,7 +149,7 @@ process (GeglOperation *operation,
                         babl_component ("R'"),
                         babl_component ("A"),
                         NULL),
-       ((SDL_Surface*)self->screen)->pixels);
+       ((SDL_Surface*)self->screen)->pixels, GEGL_AUTO_ROWSTRIDE);
   g_object_unref (source);
 
   if (!sdl_outwin)

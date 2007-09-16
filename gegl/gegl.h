@@ -22,7 +22,7 @@
 #define __GEGL_H__
 
 #include <glib-object.h>
-
+#include <babl/babl.h>
 
 /***
  * The GEGL API:
@@ -379,17 +379,22 @@ typedef enum
 } GeglBlitFlags;
 #endif
 
+#ifndef GEGL_AUTO_ROWSTRIDE
+#define GEGL_AUTO_ROWSTRIDE 0
+#endif
+
 /**
  * gegl_node_blit:
  * @node: a #GeglNode
- * @roi: the rectangle to render from the node, the coordinate system used is
- * coordinates after scale has been applied.
  * @scale: the scale to render at 1.0 is default, other values changes the
  * width/height of the sampled region.
+ * @roi: the rectangle to render from the node, the coordinate system used is
+ * coordinates after scale has been applied.
  * @format: the #BablFormat desired.
- * @rowstride: rowstride in bytes (currently ignored)
  * @destination_buf: a memory buffer large enough to contain the data, can be
  * left as NULL when forcing a rendering of a region.
+ * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
+ * rowstride based on the width and bytes per pixel for the specified format.
  * @flags: an or'ed combination of GEGL_BLIT_DEFAULT, GEGL_BLIT_CACHE and
  * GEGL_BLIT_DIRTY. if cache is enabled, a cache will be set up for subsequent
  * requests of image data from this node. By passing in GEGL_BLIT_DIRTY the
@@ -399,11 +404,11 @@ typedef enum
  * Render a rectangular region from a node.
  */
 void          gegl_node_blit             (GeglNode      *node,
-                                          GeglRectangle *roi,
                                           gdouble        scale,
-                                          void          *format,
+                                          GeglRectangle *roi,
+                                          Babl          *format,
+                                          gpointer       destination_buf,
                                           gint           rowstride,
-                                          gpointer      *destination_buf,
                                           GeglBlitFlags  flags);
 
 /**

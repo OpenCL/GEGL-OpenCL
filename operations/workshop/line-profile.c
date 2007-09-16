@@ -50,7 +50,7 @@ buffer_sample (GeglBuffer *buffer,
   gfloat rgba[4];
   GeglRectangle roi = {x,y,1,1};
 
-  gegl_buffer_get (buffer, &roi, 1.0, babl_format ("RGBA float"), &rgba[0]);
+  gegl_buffer_get (buffer, 1.0, &roi, babl_format ("RGBA float"), &rgba[0], GEGL_AUTO_ROWSTRIDE);
   return rgba[component];
 }
 

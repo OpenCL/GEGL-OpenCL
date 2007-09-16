@@ -1,3 +1,9 @@
+2007-09-16  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* Makefile.am:
+
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: include UNCONFIRMED and NEEDINFO bug statuses

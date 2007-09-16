@@ -132,7 +132,7 @@ hor_min (GeglBuffer *src,
   src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
   dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
 
-  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
   for (v=0; v<gegl_buffer_height (dst); v++)
@@ -170,7 +170,7 @@ ver_min (GeglBuffer *src,
   src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
   dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
   
-  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
   for (v=0; v<gegl_buffer_height (dst); v++)

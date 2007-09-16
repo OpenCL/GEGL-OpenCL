@@ -128,13 +128,13 @@ process_inner (GeglOperation *operation,
                               output->extent.width * output->extent.height);
         }
 
-      gegl_buffer_get (input, result, 1.0, in_format, in_buf);
+      gegl_buffer_get (input, 1.0, result, in_format, in_buf, GEGL_AUTO_ROWSTRIDE);
 
       if (aux)
         {
           aux_buf = g_malloc (aux_format->format.bytes_per_pixel *
                              output->extent.width * output->extent.height);
-          gegl_buffer_get (aux, result, 1.0, aux_format, aux_buf);
+          gegl_buffer_get (aux, 1.0, result, aux_format, aux_buf, GEGL_AUTO_ROWSTRIDE);
         }
       {
         GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (

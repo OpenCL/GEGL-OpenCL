@@ -201,9 +201,9 @@ gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
   interpolator->cache_rectangle = surround;
   interpolator->interpolate_format = babl_format ("RaGaBaA float");
 
-  gegl_buffer_get (buffer, &surround, 1.0,
+  gegl_buffer_get (buffer, 1.0, &surround,
                    interpolator->interpolate_format,
-                   interpolator->cache_buffer);
+                   interpolator->cache_buffer, GEGL_AUTO_ROWSTRIDE);
 }
 
 static void

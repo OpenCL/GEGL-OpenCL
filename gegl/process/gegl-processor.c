@@ -342,7 +342,7 @@ static gboolean render_rectangle (GeglProcessor *processor)
       buf = g_malloc (dr->width * dr->height * pxsize);
       g_assert (buf);
 
-      gegl_node_blit (cache->node, dr, 1.0, cache->format, 0, (gpointer *) buf, GEGL_BLIT_DEFAULT);
+      gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
       gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
 
       gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);

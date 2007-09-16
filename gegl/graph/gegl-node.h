@@ -86,11 +86,11 @@ struct _GeglNodeClass
 /* renders the desired region of interest to a buffer of the specified
  * bablformat */
 void          gegl_node_blit                (GeglNode      *node,
-                                             GeglRectangle *roi,
                                              gdouble        scale,
-                                             void          *format,
+                                             GeglRectangle *roi,
+                                             Babl          *format,
+                                             gpointer       destination_buf,
                                              gint           rowstride,
-                                             gpointer      *destination_buf,
                                              GeglBlitFlags  flags);
 
 GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);

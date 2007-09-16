@@ -69,7 +69,7 @@ process (GeglOperation *operation,
       babl = babl_format (name);
 
       temp = g_malloc (rect->width * rect->height * bps);
-      gegl_buffer_get (input, rect, 1., babl, temp);
+      gegl_buffer_get (input, 1.0, rect, babl, temp, GEGL_AUTO_ROWSTRIDE);
       
       *pixbuf = gdk_pixbuf_new_from_data (temp,
 					 GDK_COLORSPACE_RGB,

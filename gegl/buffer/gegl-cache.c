@@ -283,10 +283,42 @@ get_property (GObject    *gobject,
     }
 }
 
+#if 0
+static void
+gegl_buffer_clear (GeglBuffer    *buffer,
+                   GeglRectangle *rectangle)
+{
+  gint pixels = rectangle->width * rectangle->height;
+  guchar *buf = g_malloc (pixels * 4);
+  gint i;
+
+  for (i=0;i<pixels;i++)
+    {
+      buf[i*4+0]=25;
+      buf[i*4+1]=0;
+      buf[i*4+2]=25;
+      buf[i*4+3]=40;
+    }
+  gegl_buffer_set (buffer, rectangle, babl_format ("RGBA u8"), buf);
+  g_free (buf);
+}
+#endif
+
 void
 gegl_cache_invalidate (GeglCache     *self,
                        GeglRectangle *roi)
 {
+#if 0
+  if (roi)
+    {
+      g_print ("invalidate of %i,%i %i×%i\n", roi->x, roi->y, roi->width, roi->height);
+      gegl_buffer_clear (GEGL_BUFFER (self), roi);
+    }
+  else
+    {
+      g_print ("full invalidate of a GeglCache\n");
+    }
+#endif
   if (roi)
     {
       GeglRegion *temp_region;

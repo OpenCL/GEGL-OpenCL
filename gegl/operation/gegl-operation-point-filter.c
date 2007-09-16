@@ -97,7 +97,7 @@ process_inner (GeglOperation *operation,
           buf = g_malloc (in_format->format.bytes_per_pixel *
                           output->extent.width * output->extent.height);
 
-          gegl_buffer_get (input, result, 1.0, in_format, buf);
+          gegl_buffer_get (input, 1.0, result, in_format, buf, GEGL_AUTO_ROWSTRIDE);
 
           GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
             operation,
@@ -117,7 +117,7 @@ process_inner (GeglOperation *operation,
           out_buf = g_malloc (out_format->format.bytes_per_pixel *
                              output->extent.width * output->extent.height);
 
-          gegl_buffer_get (input, result, 1.0, in_format, in_buf);
+          gegl_buffer_get (input, 1.0, result, in_format, in_buf, GEGL_AUTO_ROWSTRIDE);
 
           GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
             operation,
