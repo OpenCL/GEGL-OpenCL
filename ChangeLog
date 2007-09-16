@@ -1,5 +1,10 @@
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate): fix rendering
+	glitch due to incorrect handling of rowstride.
+
+2007-09-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: added logic to make use of rowstride
 	argument of gegl_node_blit and gegl_buffer_get.
 

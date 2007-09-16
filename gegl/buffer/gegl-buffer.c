@@ -1028,7 +1028,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
             gint    pixels;
             guchar *bp;
 
-            bp = buf + (bufy * width + bufx) * bpx_size;
+            bp = buf + bufy * buf_stride + bufx * bpx_size;
 
             if (width + offsetx - bufx < tile_width)
               pixels = (width + offsetx - bufx) - offsetx;
@@ -1402,16 +1402,18 @@ static void resample_boxfilter_u8 (void   *dest_buf,
           center_weight = footprint_x - left_weight - right_weight;
 
           src[4] = src_base + (sx >> 8) * components;
+          src[1] = src[4] - s_rowstride;
           src[7] = src[4] + s_rowstride;
+
+          src[2] = src[1] + components;
           src[5] = src[4] + components;
           src[8] = src[7] + components;
+
+          src[0] = src[1] - components;
           src[3] = src[4] - components;
           src[6] = src[7] - components;
-          src[1] = src[4] - s_rowstride;
-          src[0] = src[1] - components;
-          src[2] = src[1] + components;
 
-          if (sx - 1<0)
+          if ((sx >>8) - 1<0)
             {
               src[0]=src[1];
               src[3]=src[4];
@@ -1423,11 +1425,12 @@ static void resample_boxfilter_u8 (void   *dest_buf,
               src[1]=src[4];
               src[2]=src[5];
             }
-          if (sx + 1 >= source_w)
+          if ((sx >>8) + 1 >= source_w)
             {
               src[2]=src[1];
               src[5]=src[4];
               src[8]=src[7];
+              break;
             }
           if ((sy >> 8) + 1 >= source_h)
             {
@@ -1446,6 +1449,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
                       src,   /* the 9 surrounding source pixels */
                       dst,
                       components);
+
+
           dst += components;
           sx += xdelta;
         }
@@ -1528,7 +1533,7 @@ gegl_buffer_get (GeglBuffer    *buffer,
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, format, level);
 
       if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") 
-               && !(level == 0 && scale > 1.99))
+          && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
           /* XXX: use box-filter also for > 1.99 when testing and probably later,
