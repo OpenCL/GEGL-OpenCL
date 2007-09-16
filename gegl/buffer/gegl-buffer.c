@@ -931,6 +931,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
 static void inline
 gegl_buffer_iterate (GeglBuffer *buffer,
                      guchar     *buf,
+                     gint        rowstride,
                      gboolean    write,
                      Babl       *format,
                      gint        level)
@@ -972,6 +973,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   height         /= factor;
 
   buf_stride = width * bpx_size;
+  if (rowstride != GEGL_AUTO_ROWSTRIDE)
+    buf_stride = rowstride;
 
   if (format == buffer->format)
     {
@@ -1203,11 +1206,11 @@ gegl_buffer_set (GeglBuffer    *buffer,
    */
   if (rect == NULL)
     {
-      gegl_buffer_iterate (buffer, src, TRUE, format, 0);
+      gegl_buffer_iterate (buffer, src, GEGL_AUTO_ROWSTRIDE, TRUE, format, 0);
       return;
     }
   sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-  gegl_buffer_iterate (sub_buf, src, TRUE, format, 0);
+  gegl_buffer_iterate (sub_buf, src, GEGL_AUTO_ROWSTRIDE, TRUE, format, 0);
   g_object_unref (sub_buf);
 }
 
@@ -1222,11 +1225,12 @@ gegl_buffer_set (GeglBuffer    *buffer,
 static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                     GeglRectangle *rect,
                                     void          *dst,
+                                    gint           rowstride,
                                     void          *format,
                                     gint           level)
 {
   GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-  gegl_buffer_iterate (sub_buf, dst, FALSE, format, level);
+  gegl_buffer_iterate (sub_buf, dst, rowstride, FALSE, format, level);
   g_object_unref (sub_buf);
 }
 
@@ -1239,10 +1243,13 @@ static void resample_nearest (void   *dest_buf,
                               gdouble offset_x,
                               gdouble offset_y,
                               gdouble scale,
-                              gint    bpp)
+                              gint    bpp,
+                              gint    rowstride)
 {
   gint x, y;
 
+  if (rowstride == GEGL_AUTO_ROWSTRIDE)
+     rowstride = dest_w * bpp;
 
   for (y = 0; y < dest_h; y++)
     {
@@ -1256,7 +1263,7 @@ static void resample_nearest (void   *dest_buf,
       if (sy >= source_h)
         sy = source_h - 1;
 
-      dst      = ((guchar *) dest_buf) + y * dest_w * bpp;
+      dst      = ((guchar *) dest_buf) + y * rowstride;
       src_base = ((guchar *) source_buf) + sy * source_w * bpp;
 
       for (x = 0; x < dest_w; x++)
@@ -1314,7 +1321,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
                                    gdouble offset_x,
                                    gdouble offset_y,
                                    gdouble scale,
-                                   gint    components)
+                                   gint    components,
+                                   gint    rowstride)
 {
   gint x, y;
   gint iscale      = scale * 256;
@@ -1336,6 +1344,9 @@ static void resample_boxfilter_u8 (void   *dest_buf,
   footprint_y = (1.0 / scale) * 256; 
   footprint_x = (1.0 / scale) * 256; 
   foosum = footprint_x * footprint_y;
+
+  if (rowstride != GEGL_AUTO_ROWSTRIDE)
+    d_rowstride = rowstride;
 
   for (y = 0; y < dest_h; y++)
     {
@@ -1466,15 +1477,15 @@ gegl_buffer_get (GeglBuffer    *buffer,
 
   if (!rect && scale == 1.0)
     {
-      gegl_buffer_iterate (buffer, dest_buf, FALSE, format, 0);
+      gegl_buffer_iterate (buffer, dest_buf, rowstride, FALSE, format, 0);
       return;
     }
   if (rect->width == 0 ||
       rect->height == 0)
     return;
-  if (scale == 1.0)
+  if (GEGL_FLOAT_EQUAL (scale, 1.0))
     {
-      gegl_buffer_get_scaled (buffer, rect, dest_buf, format, 0);
+      gegl_buffer_get_scaled (buffer, rect, dest_buf, rowstride, format, 0);
       return;
     }
   else
@@ -1514,31 +1525,10 @@ gegl_buffer_get (GeglBuffer    *buffer,
 
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
-      gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
+      gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, format, level);
 
-      if (GEGL_FLOAT_EQUAL (scale, 1.0))
-        { /* avoid resampling if the pyramidial level we've got is close */
-          gint y;
-          for (y = 0; y < rect->height; y++)
-            {
-              gint    sy;
-              guchar *dst;
-              guchar *src_base;
-
-              sy = y / scale;
-
-              if (sy > buf_height)
-                sy = buf_height - 1;
-
-              dst      = ((guchar *) dest_buf) + y * rect->width * bpp;
-              src_base = ((guchar *) sample_buf) + sy * buf_width * bpp;
-
-              memcpy (dst, src_base, bpp * rect->width);
-            }
-        }
-      else if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") 
-               && !(level == 0 && scale > 1.99) 
-      )
+      if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") 
+               && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
           /* XXX: use box-filter also for > 1.99 when testing and probably later,
@@ -1553,7 +1543,8 @@ gegl_buffer_get (GeglBuffer    *buffer,
                                  offset_x,
                                  offset_y,
                                  scale,
-                                 bpp);
+                                 bpp,
+                                 rowstride);
         }
       else
         {
@@ -1566,7 +1557,8 @@ gegl_buffer_get (GeglBuffer    *buffer,
                             offset_x,
                             offset_y,
                             scale,
-                            bpp);
+                            bpp,
+                            rowstride);
         }
       g_free (sample_buf);
     }
