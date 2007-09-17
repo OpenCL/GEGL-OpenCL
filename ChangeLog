@@ -1,3 +1,10 @@
+2007-09-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: added Håkon Hitland.
+	* gegl/gegl-xml.c: (serialize_properties), (serialize_layer): applied
+	patch from Håkon Hitland that fixes relative paths in serialization of
+	relative paths. Fixes bug #477339.
+
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (resample_nearest): added an optimized

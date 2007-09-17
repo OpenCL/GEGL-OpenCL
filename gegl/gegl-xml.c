@@ -956,7 +956,7 @@ static void serialize_properties (SerializeState *ss,
                   if (ss->path_root &&
                       !strncmp (ss->path_root, value, strlen (ss->path_root)))
                     {
-                      xml_param (ss, indent + 2, properties[i]->name, &value[strlen (ss->path_root)]);
+                      xml_param (ss, indent + 2, properties[i]->name, &value[strlen (ss->path_root) + 1]);
                     }
                   else
                     {
@@ -1091,7 +1091,7 @@ static void serialize_layer (SerializeState *ss,
       if (ss->path_root &&
           !strncmp (ss->path_root, src, strlen (ss->path_root)))
         {
-          g_string_append_printf (ss->buf, " src='%s'", &src[strlen (ss->path_root)]);
+          g_string_append_printf (ss->buf, " src='%s'", &src[strlen (ss->path_root) + 1]);
         }
       else
         {
