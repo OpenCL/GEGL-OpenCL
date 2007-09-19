@@ -1,8 +1,8 @@
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* Makefile.am:
+	* index-static.html.in: modified wording of bit-depth and color model
+	support to avoid confusion on bits per pixel/bits per component. As
+	a response to bug #476671.
 
 2007-09-12  Øyvind Kolås  <pippin@gimp.org>
 

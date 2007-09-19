@@ -87,8 +87,10 @@
         <a name='Features'></a>
         <h3>Features</h3>
         <ul>
-            <li>8bit, 16bit integer and 32bit floating point, RGB, CIE Lab,
-            and Y'CbCr output.</li>
+            <li>Output in RGB, CIE Lab and Y'CbCr color models with 8bit, 16bit
+            integer and 32bit floating point per component. Possible to extend
+            to ICC managed output in <a href='http://www.gegl.org/babl/'>babl</a>.
+            </li>
             <li>Non destructive editing</li>
             <li>C, <a href='http://www.gegl.org/gegl-sharp/'>C#</a>,
             <a href='http://www.gegl.org/pygegl/'>Python</a> and 
