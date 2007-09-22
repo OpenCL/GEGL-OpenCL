@@ -44,7 +44,7 @@ process (GeglOperation *operation,
       Babl          	*babl;
       BablFormat    	*format;
       guchar        	*temp;
-      GeglRectangle	*rect = gegl_operation_result_rect (operation, context_id);
+      GeglRectangle	*rect = gegl_operation_source_get_defined_region (operation, "input");
       gchar *name;
       gboolean has_alpha;
       gint bps;
@@ -71,7 +71,6 @@ process (GeglOperation *operation,
       temp = g_malloc (rect->width * rect->height * bps);
       gegl_buffer_get (input, 1.0, rect, babl, temp, GEGL_AUTO_ROWSTRIDE);
       if (temp) {
-	g_debug (G_STRLOC ": creating pixbuf");
 	*pixbuf = gdk_pixbuf_new_from_data (temp,
 					    GDK_COLORSPACE_RGB,
 					    has_alpha,
