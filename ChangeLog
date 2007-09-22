@@ -1,5 +1,7 @@
 2007-09-22  Étienne Bersac  <bersace03@laposte.net>
 
+	* configure.ac: Added --disable-docs ./configure switch.
+
 	* operations/io/save-pixbuf.c: make save-pixbuf more robust if no
 	data are passed as input.
 

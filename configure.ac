@@ -197,6 +197,12 @@ if eval "test x$GCC = xyes"; then
 fi
 changequote([,])dnl
 
+dnl disable docs generation.
+AC_ARG_ENABLE([docs],
+              [  --disable-docs           Disable docs generation],
+	      if test "x"$enableval = "xyes" ; then DOCS_SUBDIR=[docs]; fi)
+
+AC_SUBST(DOCS_SUBDIR)
 
 dnl Cache $ACLOCAL_FLAGS
 AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
