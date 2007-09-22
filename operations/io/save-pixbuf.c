@@ -40,11 +40,11 @@ process (GeglOperation *operation,
 
   if (self->pixbuf)
     {
-      GdkPixbuf **pixbuf = self->pixbuf;
-      Babl          *babl;
-      BablFormat    *format;
-      guchar        *temp;
-      GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
+      GdkPixbuf		**pixbuf = self->pixbuf;
+      Babl          	*babl;
+      BablFormat    	*format;
+      guchar        	*temp;
+      GeglRectangle	*rect = gegl_operation_result_rect (operation, context_id);
       gchar *name;
       gboolean has_alpha;
       gint bps;
@@ -70,14 +70,19 @@ process (GeglOperation *operation,
 
       temp = g_malloc (rect->width * rect->height * bps);
       gegl_buffer_get (input, 1.0, rect, babl, temp, GEGL_AUTO_ROWSTRIDE);
-      
-      *pixbuf = gdk_pixbuf_new_from_data (temp,
-					 GDK_COLORSPACE_RGB,
-					 has_alpha,
-					 bps,
-					 rect->width, rect->height,
-					 rect->width * (has_alpha ? 4 : 3) * bps/8,
-					 (GdkPixbufDestroyNotify) g_free, NULL);
+      if (temp) {
+	g_debug (G_STRLOC ": creating pixbuf");
+	*pixbuf = gdk_pixbuf_new_from_data (temp,
+					    GDK_COLORSPACE_RGB,
+					    has_alpha,
+					    bps,
+					    rect->width, rect->height,
+					    rect->width * (has_alpha ? 4 : 3) * bps/8,
+					    (GdkPixbufDestroyNotify) g_free, NULL);
+      }
+      else {
+	g_warning (G_STRLOC ": inexistant data, unable to create GdkPixbuf.");
+      }
 
       g_free (name);
     }

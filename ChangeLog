@@ -1,3 +1,8 @@
+2007-09-22  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/io/save-pixbuf.c: make save-pixbuf more robust if no
+	data are passed as input.
+
 2007-09-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: added Håkon Hitland.
