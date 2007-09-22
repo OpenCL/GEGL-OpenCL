@@ -93,8 +93,6 @@ void          gegl_node_blit                (GeglNode      *node,
                                              gint           rowstride,
                                              GeglBlitFlags  flags);
 
-GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
-
 void          gegl_node_link                (GeglNode      *source,
                                              GeglNode      *sink);
 
