@@ -18,7 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_object (buffer, "GeglBuffer to write into")
+gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 #else
 
 #define GEGL_CHANT_SINK
@@ -26,22 +26,7 @@ gegl_chant_object (buffer, "GeglBuffer to write into")
 #define GEGL_CHANT_DESCRIPTION     "A GEGL buffer destination surface."
 #define GEGL_CHANT_SELF            "save-buffer.c"
 #define GEGL_CHANT_CATEGORIES      "programming:output"
-#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
-
-static void
-dispose (GObject *object)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-
-  if (self->buffer)
-    {
-      g_object_unref (self->buffer);
-      self->buffer = NULL;
-    }
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
-}
 
 static gboolean
 process (GeglOperation *operation,
@@ -52,16 +37,12 @@ process (GeglOperation *operation,
 
   if (self->buffer)
     {
-      GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
       input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-      gegl_buffer_copy (input, rect, GEGL_BUFFER (self->buffer), rect);
+      g_assert (input);
+      GeglBuffer **output = self->buffer;
+      *output = g_object_ref (input);
     }
   return TRUE;
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif

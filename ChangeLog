@@ -1,3 +1,9 @@
+2007-09-23  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/io/save-buffer.c: Change save-buffer to only returns
+	GeglBuffer address instead of creating another buffer. save-buffer
+	is now the exact reverse op of load-buffer.
+
 2007-09-22  Étienne Bersac  <bersace03@laposte.net>
 
 	* configure.ac: Added --disable-docs ./configure switch.
