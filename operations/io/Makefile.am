@@ -55,3 +55,6 @@ display$(SHREXT): display.c $(GEGLHEADERS)
 	@[ ! -z "$(SDL_LIBS)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)) \
 	|| true
+
+convert-format$(SHRECT): convert-format.c $(GEGLHEADERS)
+	@(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $a $< $(LDADD))

@@ -1,3 +1,8 @@
+2007-09-25  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/core/convert-format.c: Added convert-format op
+	created from grey op.
+
 2007-09-23  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/io/save-buffer.c: Change save-buffer to only returns
