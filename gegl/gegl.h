@@ -367,7 +367,8 @@ void          gegl_node_get              (GeglNode      *node,
  * query any node providing output for a rectangular region to be rendered
  * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
  * display node, an image file writer or similar). To do iterative processing
- * you need to use a #GeglProcessor see #gegl_processor_work for a code sample.
+ * you need to use a #GeglProcessor. See #gegl_processor_work for a code
+ * sample.
  */
 
 #ifndef GEGL_INTERNAL
@@ -417,7 +418,8 @@ void          gegl_node_blit             (GeglNode      *node,
  *
  * Render a composition. This can be used for instance on a node with a "png-save"
  * operation to render all neccesary data, and make it be written to file. The
- * function is blocking for a non blocking way of doing the same see #GeglProcessor.
+ * function is blocking for a non blocking way of doing the same. See
+ * #GeglProcessor.
  * ---
  * GeglNode      *gegl;
  * GeglRectangle  roi;
@@ -834,49 +836,49 @@ struct _GeglRectangle
  * API is frozen.
  */
 typedef struct _GeglCurve       GeglCurve;
-GType	     gegl_curve_get_type	       (void) G_GNUC_CONST;
+GType        gegl_curve_get_type           (void) G_GNUC_CONST;
 #define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
 #define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
 #endif
 
 
-GeglCurve*   gegl_curve_new		       (gfloat	     y_min,
-						gfloat	     y_max);
+GeglCurve*   gegl_curve_new            (gfloat       y_min,
+                        gfloat       y_max);
 
 GeglCurve*   gegl_curve_default_curve          (void) G_GNUC_CONST;
 
 void         gegl_curve_get_y_bounds           (GeglCurve    *self,
-						gfloat       *min_y,
-						gfloat       *max_y);
+                        gfloat       *min_y,
+                        gfloat       *max_y);
 
-guint	     gegl_curve_add_point	       (GeglCurve    *self,
-						gfloat       x,
-						gfloat       y);
+guint        gegl_curve_add_point          (GeglCurve    *self,
+                        gfloat       x,
+                        gfloat       y);
 
 void         gegl_curve_remove_point_index     (GeglCurve   *self,
-						guint        index);
+                        guint        index);
 
-void	     gegl_curve_get_point	       (GeglCurve    *self,
-						guint	     index,
-						gfloat	     *x,
-						gfloat	     *y);
+void         gegl_curve_get_point          (GeglCurve    *self,
+                        guint        index,
+                        gfloat       *x,
+                        gfloat       *y);
 
-void	     gegl_curve_set_point	       (GeglCurve    *self,
-						guint	     index,
-						gfloat	     x,
-						gfloat	     y);
+void         gegl_curve_set_point          (GeglCurve    *self,
+                        guint        index,
+                        gfloat       x,
+                        gfloat       y);
 
-guint	     gegl_curve_num_points	       (GeglCurve   *self);
+guint        gegl_curve_num_points         (GeglCurve   *self);
 
-gfloat	     gegl_curve_calc_value	       (GeglCurve   *self,
-						gfloat      x);
+gfloat       gegl_curve_calc_value         (GeglCurve   *self,
+                        gfloat      x);
 
-void	     gegl_curve_calc_values	       (GeglCurve   *self,
-						gfloat	    x_min,
-						gfloat      x_max,
-						guint       num_samples,
-						gfloat      *xs,
-						gfloat      *ys);
+void         gegl_curve_calc_values        (GeglCurve   *self,
+                        gfloat      x_min,
+                        gfloat      x_max,
+                        guint       num_samples,
+                        gfloat      *xs,
+                        gfloat      *ys);
 
 G_END_DECLS
 

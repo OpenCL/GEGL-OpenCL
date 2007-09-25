@@ -1,3 +1,17 @@
+2007-09-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl.c: Minor tidying up of the code. Fixed some memory leaks.
+
+	* bin/gegl-options.c: Trivial changes including fixing wrapping of
+	a usage information.
+
+	* gegl/gegl.h: Fixed a couple of grammatical errors.
+
+	* gegl/gegl-xml.c (gegl_parse_xml): Fixed a memory leak.
+
+	* gegl/buffer/gegl-interpolator-cubic.c: Fixed tests for type of
+	interpolation to be performed in gegl_interpolator_cubic_prepare().
+
 2007-09-25  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/core/convert-format.c: Added convert-format op

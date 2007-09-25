@@ -29,8 +29,7 @@ static GeglOptions *opts_new (void)
 
 #ifdef HAVE_GTK
   o->mode     = GEGL_RUN_MODE_EDITOR;
-#endif
-#ifndef HAVE_GTK
+#else
   o->mode     = GEGL_RUN_MODE_HELP;
 #endif
   o->xml      = NULL;
@@ -63,7 +62,8 @@ usage (char *application_name)
 "     --output    output generated image to named file\n"
 "     -o          (file is saved in PNG format)\n"
 "\n"
-"     -p          (increment frame counters of various elements when processing is done.)\n"
+"     -p          (increment frame counters of various elements when\n"
+"                  processing is done.)\n"
 "\n"
 "     -X          output the XML that was read in\n"
 "\n"

@@ -101,7 +101,7 @@ gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
       self->b = 0.0;
       self->c = 0.5;
     }
-  else if (strcmp (self->type, "cubic"))
+  else if (strcmp (self->type, "catmullrom"))
     {
       /* Catmull-Rom spline */
       self->b = 1.0;
@@ -110,15 +110,6 @@ gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
   else if (strcmp (self->type, "formula"))
     {
       self->c = (1 - self->b) / 2.0;
-    }
-  else
-    {
-      /* cubic B-spline */
-      if (self->type)
-        g_free (self->type);
-      self->type = g_strdup ("cubic");
-      self->b    = 0.0;
-      self->c    = 0.5;
     }
 }
 

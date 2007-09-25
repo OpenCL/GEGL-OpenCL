@@ -81,7 +81,6 @@ main (gint    argc,
     }
   else if (o->file)
     {
-
       if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
           gchar *tmp = g_malloc(PATH_MAX);
@@ -101,12 +100,10 @@ main (gint    argc,
 
   if (o->xml)
     {
-
       script = g_strdup (o->xml);
     }
   else if (o->file)
     {
-
       if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
           gint  buf_size = 128;
@@ -199,18 +196,17 @@ main (gint    argc,
           editor_main (gegl, o);
 #endif
           g_object_unref (gegl);
-          g_free (o);
-          gegl_exit ();
           return 0;
         break;
       case GEGL_RUN_MODE_XML:
           g_print (gegl_to_xml (gegl, path_root));
-          gegl_exit ();
+          g_object_unref (gegl);
+          g_free (path_root);
           return 0;
         break;
       case GEGL_RUN_MODE_DOT:
           g_print (gegl_to_dot (gegl));
-          gegl_exit ();
+          g_object_unref (gegl);
           return 0;
         break;
       case GEGL_RUN_MODE_PNG:
@@ -222,10 +218,8 @@ main (gint    argc,
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
 
+          g_object_unref (output);
           g_object_unref (gegl);
-          g_free (o);
-          gegl_exit ();
-
         }
         break;
       case GEGL_RUN_MODE_HELP:
@@ -233,6 +227,12 @@ main (gint    argc,
       default:
         break;
     }
+
+  g_free (o);
+  g_object_unref (gegl);
+  g_free (script);
+  g_error_free (err);
   g_free (path_root);
+  gegl_exit ();
   return 0;
 }
