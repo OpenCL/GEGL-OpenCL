@@ -195,18 +195,14 @@ main (gint    argc,
           gtk_init (&argc, &argv);
           editor_main (gegl, o);
 #endif
-          g_object_unref (gegl);
           return 0;
         break;
       case GEGL_RUN_MODE_XML:
           g_print (gegl_to_xml (gegl, path_root));
-          g_object_unref (gegl);
-          g_free (path_root);
           return 0;
         break;
       case GEGL_RUN_MODE_DOT:
           g_print (gegl_to_dot (gegl));
-          g_object_unref (gegl);
           return 0;
         break;
       case GEGL_RUN_MODE_PNG:
@@ -217,9 +213,7 @@ main (gint    argc,
                                NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
-
           g_object_unref (output);
-          g_object_unref (gegl);
         }
         break;
       case GEGL_RUN_MODE_HELP:
@@ -231,7 +225,8 @@ main (gint    argc,
   g_free (o);
   g_object_unref (gegl);
   g_free (script);
-  g_error_free (err);
+  if (err != NULL)
+    g_error_free (err);
   g_free (path_root);
   gegl_exit ();
   return 0;

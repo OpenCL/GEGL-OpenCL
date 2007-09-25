@@ -1,3 +1,8 @@
+2007-09-25  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl.c: Removed some unref's left in by mistake. Don't call
+	g_error_free () unless 'err' is not NULL.
+
 2007-09-24  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl.c: Minor tidying up of the code. Fixed some memory leaks.
