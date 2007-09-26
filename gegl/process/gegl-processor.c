@@ -146,6 +146,8 @@ static void finalize (GObject *self_object)
     g_object_unref (processor->node);
   if (processor->input)
     g_object_unref (processor->input);
+  if (processor->queued_region)
+    gegl_region_destroy (processor->queued_region);
 
   G_OBJECT_CLASS (gegl_processor_parent_class)->finalize (self_object);
 }

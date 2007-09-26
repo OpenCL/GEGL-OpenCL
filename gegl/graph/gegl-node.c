@@ -29,22 +29,17 @@
 #include "gegl-types.h"
 
 #include "gegl-node.h"
-#include "gegl-node-dynamic.h"
-#include "gegl-visitor.h"
-#include "gegl-visitable.h"
-#include "gegl-pad.h"
 #include "gegl-connection.h"
-#include "process/gegl-eval-mgr.h"
-#include "buffer/gegl-buffer.h"
-#include "process/gegl-have-visitor.h"  /* XXX: can any of these be removed?*/
-#include "process/gegl-prepare-visitor.h"
-#include "process/gegl-finish-visitor.h"
-#include "gegl-node-dynamic.h"
+#include "gegl-pad.h"
 #include "gegl-utils.h"
-#include "buffer/gegl-cache.h"
-#include "process/gegl-processor.h"
+#include "gegl-visitable.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operation-meta.h"
+#include "process/gegl-eval-mgr.h"
+#include "process/gegl-have-visitor.h"
+#include "process/gegl-prepare-visitor.h"
+#include "process/gegl-finish-visitor.h"
+#include "process/gegl-processor.h"
 
 
 enum

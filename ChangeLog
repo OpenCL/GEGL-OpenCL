@@ -1,3 +1,16 @@
+2007-09-26  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl.c: Use g_clear_error() instead of g_error_free() as
+	suggested by Sven Neumann.
+
+	* gegl/graph/gegl-node.c: Removed obsolete #include statements.
+
+	* gegl/process/gegl-processor.c: Fixed a possible memory leak.
+
+	* operations/Makefile-operations.am: Fixed path to gegl library. From
+	a patch by Deji Akingunola. This change plus the recent change in
+	bin/Makefile.am fixes bug #477215.
+
 2007-09-25  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/Makefile.am: Fix to make link stage find the needed gtk+
