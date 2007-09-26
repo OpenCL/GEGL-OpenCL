@@ -1,5 +1,10 @@
 2007-09-25  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* bin/Makefile.am: Fix to make link stage find the needed gtk+
+	libraries when building with automake-1.10.
+
+2007-09-25  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* bin/gegl.c: Removed some unref's left in by mistake. Don't call
 	g_error_free () unless 'err' is not NULL.
 

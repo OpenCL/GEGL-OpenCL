@@ -37,8 +37,5 @@ INCLUDES = \
 	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@ @PNG_CFLAGS@
 
 AM_LDFLAGS =  \
-	-no-undefined \
+	-no-undefined ../gegl/libgegl-@GEGL_API_VERSION@.la \
 	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@ @PNG_LIBS@
-
-gegl_LDFLAGS = \
-	../gegl/libgegl-@GEGL_API_VERSION@.la
