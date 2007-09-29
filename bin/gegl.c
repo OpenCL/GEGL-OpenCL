@@ -225,7 +225,7 @@ main (gint    argc,
   g_free (o);
   g_object_unref (gegl);
   g_free (script);
-  g_clear_error (err);
+  g_clear_error (&err);
   g_free (path_root);
   gegl_exit ();
   return 0;

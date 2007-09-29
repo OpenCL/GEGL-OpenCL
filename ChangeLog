@@ -1,3 +1,7 @@
+2007-09-29  Manish Singh  <yosh@gimp.org>
+
+	* bin/gegl.c: Call g_clear_error() properly.
+
 2007-09-26  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl.c: Use g_clear_error() instead of g_error_free() as
