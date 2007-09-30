@@ -1,3 +1,12 @@
+2007-09-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* autogen.sh: Added check for existence of automake-1.10.
+
+	* gegl.defs
+	* gegl.override: Updated due to API change of gegl_node_blit().
+
+	* generate_api_bindings.sh: Updated path to header file.
+
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* README: s/BABL/babl/.

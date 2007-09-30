@@ -329,7 +329,7 @@ _wrap_gegl_node_render(PyGObject *self, PyObject *args, PyObject *kwargs)
     }
 
     gegl_node_blit(GEGL_NODE(self->obj), 
-                   &roi, scale, bablfmt, 0, buffer, flags);
+		   scale, &roi, bablfmt, buffer, 0, flags);
 
     return Py_BuildValue("s#", buffer, buflen);
 }

@@ -159,13 +159,12 @@
 ;  (c-name "gegl_node_blit")
 ;  (return-type "none")
 ;  (parameters
-;    '("GeglRectangle*" "roi")
 ;    '("gdouble" "scale")
-;    '("void*" "format")
+;    '("GeglRectangle*" "roi")
+;    '("Babl*" "format")
+;    '("gpointer" "destination_buf")
 ;    '("gint" "rowstride")
-;    '("gpointer*" "destination_buf")
 ;    '("GeglBlitFlags" "flags")
-;    '("gint" "flags")
 ;  )
 ;)
 
