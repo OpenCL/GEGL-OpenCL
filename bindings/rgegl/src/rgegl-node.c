@@ -161,7 +161,7 @@ cnode_render (self, r_rectangle, r_scale, r_format, r_flags)
     rbuf = rb_str_new (NULL, buflen);
     buf = RSTRING(rbuf)->ptr;
 
-    gegl_node_blit (_SELF(self), rectangle, scale, format, 0, buf, flags);
+    gegl_node_blit (_SELF(self), scale, rectangle, format, buf, 0, flags);
     return rbuf;
 }
 
@@ -173,14 +173,14 @@ cnode_get_property (self, property_name)
 
     GValue gval = {0,};
     GParamSpec *prop;
-   
+
     if (SYMBOL_P(property_name)) {
       name = rb_id2name(SYM2ID(property_name));
     } else {
       StringValue(property_name);
       name = StringValuePtr(property_name);
     }
-   
+
     prop = gegl_node_find_property (_SELF (self), name);
     if (!prop){
       return Qnil;
@@ -198,14 +198,14 @@ cnode_find_property (self, property_name)
     GParamSpec *prop;
     VALUE result;
     const char *name;
-   
+
     if (SYMBOL_P(property_name)) {
       name = rb_id2name(SYM2ID(property_name));
     } else {
       StringValue(property_name);
       name = StringValuePtr(property_name);
     }
-    
+
     prop = gegl_node_find_property (_SELF (self), name);
     if (!prop){
       return Qnil;
@@ -294,16 +294,16 @@ cnode_set_property (self, property_name, value)
     GValue gval = {0,};
     g_value_init(&gval, RVAL2GTYPE (value));
     rbgobj_rvalue_to_gvalue (value, &gval);
-      { 
+      {
     const char *name;
-   
+
     if (SYMBOL_P(property_name)) {
       name = rb_id2name(SYM2ID(property_name));
     } else {
       StringValue(property_name);
       name = StringValuePtr(property_name);
     }
-    
+
     gegl_node_set_property (_SELF (self), name, &gval);
       }
     return self;

@@ -1,3 +1,7 @@
+2007-10-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* src/rgegl-node.c: Updated due to API change of gegl_node_blit().
+
 2007-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* samples/render-test.rb: added a greyscale UTF8 text rendering
