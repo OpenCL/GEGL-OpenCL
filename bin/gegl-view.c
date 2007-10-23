@@ -34,6 +34,9 @@ enum
   PROP_SCALE
 };
 
+G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
+#define GEGL_VIEW_GET_PRIVATE(obj) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GEGL_TYPE_VIEW, GeglViewPrivate))
 
 static void      gegl_view_class_init (GeglViewClass  *klass);
 static void      gegl_view_init       (GeglView       *self);
@@ -54,7 +57,31 @@ static gboolean  expose_event         (GtkWidget      *widget,
                                        GdkEventExpose *event);
 
 
-G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
+
+struct _GeglViewPrivate
+{
+  GeglNode      *node;
+  gint           x;
+  gint           y;
+  gdouble        scale;
+  gint           screen_x;  /* coordinates of drag start */
+  gint           screen_y;
+
+  gint           orig_x;    /* coordinates of drag start */
+  gint           orig_y;
+
+  gint           start_buf_x;    /* coordinates of drag start */
+  gint           start_buf_y;
+
+  gint           prev_x;
+  gint           prev_y;
+  gdouble        prev_scale;
+
+  guint          monitor_id;
+  GeglProcessor *processor;
+};
+
+
 
 
 static void
@@ -99,19 +126,21 @@ gegl_view_class_init (GeglViewClass * klass)
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
+   g_type_class_add_private (klass, sizeof (GeglViewPrivate));
 }
 
 static void
 gegl_view_init (GeglView *self)
 {
-  self->node        = NULL;
-  self->x           = 0;
-  self->y           = 0;
-  self->prev_x      = -1;
-  self->prev_y      = -1;
-  self->scale       = 1.0;
-  self->monitor_id  = 0;
-  self->processor   = NULL;
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
+  priv->node        = NULL;
+  priv->x           = 0;
+  priv->y           = 0;
+  priv->prev_x      = -1;
+  priv->prev_y      = -1;
+  priv->scale       = 1.0;
+  priv->monitor_id  = 0;
+  priv->processor   = NULL;
 
   gtk_widget_add_events (GTK_WIDGET (self), (GDK_EXPOSURE_MASK     |
                                              GDK_BUTTON_PRESS_MASK |
@@ -122,9 +151,10 @@ static void
 finalize (GObject *gobject)
 {
   GeglView * self = GEGL_VIEW (gobject);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
 
-  if (self->node)
-    g_object_unref (self->node);
+  if (priv->node)
+    g_object_unref (priv->node);
 
   G_OBJECT_CLASS (gegl_view_parent_class)->finalize (gobject);
 }
@@ -134,10 +164,11 @@ computed_event (GeglNode      *self,
                 GeglRectangle *rect,
                 GeglView      *view)
 {
-  gint x = view->scale * (rect->x) - view->x;
-  gint y = view->scale * (rect->y) - view->y;
-  gint w = ceil (view->scale * rect->width  + 1);
-  gint h = ceil (view->scale * rect->height + 1);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
+  gint x = priv->scale * (rect->x) - priv->x;
+  gint y = priv->scale * (rect->y) - priv->y;
+  gint w = ceil (priv->scale * rect->width  + 1);
+  gint h = ceil (priv->scale * rect->height + 1);
 
   gtk_widget_queue_draw_area (GTK_WIDGET (view), x, y, w, h);
 }
@@ -158,45 +189,46 @@ set_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   GeglView *self = GEGL_VIEW (gobject);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
 
   switch (property_id)
     {
     case PROP_NODE:
-      if (self->node)
+      if (priv->node)
         {
 #if 0
-          gegl_node_disable_cache (self->node); /* FIXME: should we really? */
+          gegl_node_disable_cache (priv->node); /* FIXME: should we really? */
 #endif
-          g_object_unref (self->node);
+          g_object_unref (priv->node);
         }
 
       if (g_value_get_object (value))
         {
-          self->node = GEGL_NODE (g_value_dup_object (value));
+          priv->node = GEGL_NODE (g_value_dup_object (value));
 
-          g_signal_connect_object (self->node, "computed",
+          g_signal_connect_object (priv->node, "computed",
                                    G_CALLBACK (computed_event),
                                    self, 0);
-          g_signal_connect_object (self->node, "invalidated",
+          g_signal_connect_object (priv->node, "invalidated",
                                    G_CALLBACK (invalidated_event),
                                    self, 0);
           gegl_view_repaint (self);
         }
       else
         {
-          self->node = NULL;
+          priv->node = NULL;
         }
       break;
     case PROP_X:
-      self->x = g_value_get_int (value);
+      priv->x = g_value_get_int (value);
       gtk_widget_queue_draw (GTK_WIDGET (self));
       break;
     case PROP_Y:
-      self->y = g_value_get_int (value);
+      priv->y = g_value_get_int (value);
       gtk_widget_queue_draw (GTK_WIDGET (self));
       break;
     case PROP_SCALE:
-      self->scale = g_value_get_double (value);
+      priv->scale = g_value_get_double (value);
       gtk_widget_queue_draw (GTK_WIDGET (self));
       break;
     default:
@@ -213,20 +245,21 @@ get_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   GeglView *self = GEGL_VIEW (gobject);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
 
   switch (property_id)
     {
     case PROP_NODE:
-      g_value_set_object (value, self->node);
+      g_value_set_object (value, priv->node);
       break;
     case PROP_X:
-      g_value_set_int (value, self->x);
+      g_value_set_int (value, priv->x);
       break;
     case PROP_Y:
-      g_value_set_int (value, self->y);
+      g_value_set_int (value, priv->y);
       break;
     case PROP_SCALE:
-      g_value_set_double (value, self->scale);
+      g_value_set_double (value, priv->scale);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -239,28 +272,29 @@ button_press_event (GtkWidget      *widget,
                     GdkEventButton *event)
 {
   GeglView *view = GEGL_VIEW (widget);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
   gint      x    = event->x;
   gint      y    = event->y;
 
-  view->screen_x = x;
-  view->screen_y = y;
+  priv->screen_x = x;
+  priv->screen_y = y;
 
-  view->orig_x = view->x;
-  view->orig_y = view->y;
+  priv->orig_x = priv->x;
+  priv->orig_y = priv->y;
 
-  view->start_buf_x = (view->x + x)/view->scale;
-  view->start_buf_y = (view->y + y)/view->scale;
+  priv->start_buf_x = (priv->x + x)/priv->scale;
+  priv->start_buf_y = (priv->y + y)/priv->scale;
 
-  view->prev_x = x;
-  view->prev_y = y;
+  priv->prev_x = x;
+  priv->prev_y = y;
 
-  x = x / view->scale + view->x;
-  y = y / view->scale + view->y;
+  x = x / priv->scale + priv->x;
+  y = y / priv->scale + priv->y;
 
   {
-    GeglNode *detected = gegl_node_detect (view->node,
-                                           (view->x + event->x) / view->scale,
-                                           (view->y + event->y) / view->scale);
+    GeglNode *detected = gegl_node_detect (priv->node,
+                                           (priv->x + event->x) / priv->scale,
+                                           (priv->y + event->y) / priv->scale);
     if (detected)
       {
 #if 0
@@ -284,16 +318,17 @@ motion_notify_event (GtkWidget      *widget,
                      GdkEventMotion *event)
 {
   GeglView *view = GEGL_VIEW (widget);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
   gint      x    = event->x;
   gint      y    = event->y;
 
   if (event->state & GDK_BUTTON1_MASK)
     {
-      gint diff_x = x - view->prev_x;
-      gint diff_y = y - view->prev_y;
+      gint diff_x = x - priv->prev_x;
+      gint diff_y = y - priv->prev_y;
 
-      view->x -= diff_x;
-      view->y -= diff_y;
+      priv->x -= diff_x;
+      priv->y -= diff_y;
 
       gdk_window_scroll (widget->window, diff_x, diff_y);
 
@@ -302,26 +337,26 @@ motion_notify_event (GtkWidget      *widget,
     }
   else if (event->state & GDK_BUTTON3_MASK)
     {
-      gint diff = view->prev_y - y;
+      gint diff = priv->prev_y - y;
       gint i;
 
       if (diff < 0)
         {
           for (i=0;i>diff;i--)
             {
-              view->scale /= 1.006;
+              priv->scale /= 1.006;
             }
         }
       else
         {
           for (i=0;i<diff;i++)
             {
-              view->scale *= 1.006;
+              priv->scale *= 1.006;
             }
         }
 
-      view->x = (view->start_buf_x - view->screen_x / view->scale) * view->scale;
-      view->y = (view->start_buf_y - view->screen_y / view->scale) * view->scale;
+      priv->x = (priv->start_buf_x - priv->screen_x / priv->scale) * priv->scale;
+      priv->y = (priv->start_buf_y - priv->screen_y / priv->scale) * priv->scale;
 
       gtk_widget_queue_draw (GTK_WIDGET (view));
 
@@ -330,8 +365,8 @@ motion_notify_event (GtkWidget      *widget,
       g_object_notify (G_OBJECT (view), "scale");
     }
 
-  view->prev_x = x;
-  view->prev_y = y;
+  priv->prev_x = x;
+  priv->prev_y = y;
 
   return TRUE;
 }
@@ -341,11 +376,12 @@ expose_event (GtkWidget      *widget,
               GdkEventExpose *event)
 {
   GeglView      *view = GEGL_VIEW (widget);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
   GdkRectangle  *rectangles;
   gint           count;
   gint           i;
 
-  if (! view->node)
+  if (! priv->node)
     return FALSE;
 
   gdk_region_get_rectangles (event->region, &rectangles, &count);
@@ -355,16 +391,16 @@ expose_event (GtkWidget      *widget,
       GeglRectangle  roi;
       guchar        *buf;
 
-      roi.x = view->x + rectangles[i].x;
-      roi.y = view->y + rectangles[i].y;
+      roi.x = priv->x + rectangles[i].x;
+      roi.y = priv->y + rectangles[i].y;
       roi.width  = rectangles[i].width;
       roi.height = rectangles[i].height;
 
       buf = g_malloc ((roi.width) * (roi.height) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
 
-      gegl_node_blit (view->node,
-                      view->scale,
+      gegl_node_blit (priv->node,
+                      priv->scale,
                       &roi,
                       babl_format ("R'G'B' u8"),
                       (gpointer)buf,
@@ -390,10 +426,11 @@ expose_event (GtkWidget      *widget,
 static gboolean
 task_monitor (GeglView *view)
 {
-  if (gegl_processor_work (view->processor, NULL))
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
+  if (gegl_processor_work (priv->processor, NULL))
     return TRUE;
 
-  view->monitor_id = 0;
+  priv->monitor_id = 0;
 
   return FALSE;
 }
@@ -402,30 +439,37 @@ void
 gegl_view_repaint (GeglView *view)
 {
   GtkWidget     *widget = GTK_WIDGET (view);
-  GeglRectangle  roi    = { view->x / view->scale, view->y / view->scale,
-                            ceil(widget->allocation.width / view->scale+1),
-                            ceil(widget->allocation.height / view->scale+1) };
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
+  GeglRectangle  roi    = { priv->x / priv->scale, priv->y / priv->scale,
+                            ceil(widget->allocation.width / priv->scale+1),
+                            ceil(widget->allocation.height / priv->scale+1) };
 
 #if 0
   /* forget all already queued repaints */
-  gegl_cache_dequeue (gegl_node_get_cache (view->node), NULL);
+  gegl_cache_dequeue (gegl_node_get_cache (priv->node), NULL);
   /* then enqueue our selves */
-  gegl_cache_enqueue (gegl_node_get_cache (view->node), roi);
+  gegl_cache_enqueue (gegl_node_get_cache (priv->node), roi);
 #endif
 
-  if (view->monitor_id == 0)
+  if (priv->monitor_id == 0)
     {
-      view->monitor_id = g_idle_add_full (G_PRIORITY_LOW,
+      priv->monitor_id = g_idle_add_full (G_PRIORITY_LOW,
                                           (GSourceFunc) task_monitor, view,
                                           NULL);
 
-      if (view->processor == NULL)
+      if (priv->processor == NULL)
         {
-          if (view->node)
-            view->processor = gegl_node_new_processor (view->node, &roi);
+          if (priv->node)
+            priv->processor = gegl_node_new_processor (priv->node, &roi);
         }
     }
 
-  if (view->processor)
-    gegl_processor_set_rectangle (view->processor, &roi);
+  if (priv->processor)
+    gegl_processor_set_rectangle (priv->processor, &roi);
+}
+
+GeglProcessor *gegl_view_get_processor (GeglView *self)
+{
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
+  return priv->processor;
 }

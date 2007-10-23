@@ -32,34 +32,14 @@ G_BEGIN_DECLS
 #define GEGL_IS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_VIEW))
 #define GEGL_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VIEW, GeglViewClass))
 
-typedef struct _GeglView      GeglView;
-typedef struct _GeglViewClass GeglViewClass;
-
+typedef struct _GeglView        GeglView;
+typedef struct _GeglViewClass   GeglViewClass;
+typedef struct _GeglViewPrivate GeglViewPrivate;
 
 struct _GeglView
 {
   GtkDrawingArea parent_instance;
 
-  /*< private >*/
-  GeglNode      *node;
-  gint           x;
-  gint           y;
-  gdouble        scale;
-  gint           screen_x;  /* coordinates of drag start */
-  gint           screen_y;
-
-  gint           orig_x;    /* coordinates of drag start */
-  gint           orig_y;
-
-  gint           start_buf_x;    /* coordinates of drag start */
-  gint           start_buf_y;
-
-  gint           prev_x;
-  gint           prev_y;
-  gdouble        prev_scale;
-
-  guint          monitor_id;
-  GeglProcessor *processor;
 };
 
 struct _GeglViewClass
@@ -67,8 +47,8 @@ struct _GeglViewClass
   GtkDrawingAreaClass parent_class;
 };
 
-GType      gegl_view_get_type  (void) G_GNUC_CONST;
-void       gegl_view_repaint   (GeglView *view);
+GType          gegl_view_get_type      (void) G_GNUC_CONST;
+void           gegl_view_repaint       (GeglView *view);
 
 G_END_DECLS
 

@@ -116,7 +116,7 @@ static void button_render_clicked (GtkButton *button,
   rect.height  = atoi (gtk_entry_get_text (height));
 
   path = gtk_entry_get_text (pathe);
-  node = GEGL_VIEW (editor.view)->node;
+  g_object_get (GEGL_VIEW(editor.view), "node", &node, NULL);
  
   processor = gegl_node_new_processor (node, &rect);
   

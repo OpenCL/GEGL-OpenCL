@@ -170,13 +170,17 @@ static GeglNode *input_stream(GeglNode *root)
   return iter;
 }
 
+/* avoided to make this a really public function, since the need
+ * is a bit of a hack
+ */
+GeglProcessor *gegl_view_get_processor (GeglView *view);
 
 static gboolean play(gpointer data)
 {
   Editor *editor=data;
   GeglView *view=GEGL_VIEW (editor->view);
   gdouble   progress;
-  g_object_get (view->processor, "progress", &progress, NULL);
+  g_object_get (gegl_view_get_processor (view), "progress", &progress, NULL);
   if (progress >= 1.0)
     {
       /* modify source to trigger consumption of a new element */
@@ -946,7 +950,10 @@ void          gegl_node_disable_cache       (GeglNode      *node);
 
 static void cb_recompute (GtkAction *action)
 {
-  gegl_node_disable_cache (GEGL_VIEW(editor.view)->node);
+  GeglNode *node;
+
+  g_object_get (GEGL_VIEW(editor.view), "node", &node, NULL);
+  gegl_node_disable_cache (node);
   gegl_gui_flush ();
 }
 
