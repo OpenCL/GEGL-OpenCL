@@ -1,3 +1,8 @@
+2007-10-31  Tor Lillqvist  <tml@novell.com>
+
+	* configure.ac: Bump glib_required_version to 2.10.0 as g_slice
+	and other API new in GLib 2.10 are used.
+
 2007-10-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.[ch]: moved all private information from the header
