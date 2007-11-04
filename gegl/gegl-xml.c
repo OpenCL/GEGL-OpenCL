@@ -480,6 +480,39 @@ GeglNode *gegl_parse_xml (const gchar *xmldata,
   return ret;
 }
 
+GeglNode *
+gegl_parse_file (const gchar   *path)
+{
+ GeglNode *node;
+  GError   *err = NULL;
+  gchar    *script;
+
+  g_assert (path);
+  g_file_get_contents (path, &script, NULL, &err);
+
+  gchar *temp1 = g_strdup (path);
+  gchar *temp2;
+  gchar *path_root;
+
+  temp2 = g_strdup (g_path_get_dirname (temp1));
+  path_root = g_strdup (realpath (temp2, NULL));
+
+  g_file_get_contents (path, &script, NULL, &err);
+  if (err != NULL)
+    {
+      g_warning ("Unable to read file: %s", err->message);
+      g_error_free (err);
+      return NULL;
+    }
+
+  node = gegl_parse_xml (script, path_root);
+
+  g_free (temp1);
+  g_free (temp2);
+  g_free (path_root);
+  return node;
+}
+
 /****/
 
 

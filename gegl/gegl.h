@@ -662,6 +662,18 @@ GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
                                           const gchar   *path_root);
 
 /**
+ * gegl_parse_file:
+ * @path: the path to a file on the local file system to be parsed.
+ *
+ * The #GeglNode returned contains the graph described by the tree of stacks
+ * in the XML document. The tree is connected to the "output" pad of the
+ * returned node and thus can be used directly for processing.
+ *
+ * Returns a GeglNode containing the parsed XML as a subgraph.
+ */
+GeglNode    * gegl_parse_file            (const gchar   *path);
+
+/**
  * gegl_to_xml:
  * @node: a #GeglNode
  * @path_root: filesystem path to construct relative paths from.

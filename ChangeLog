@@ -1,3 +1,10 @@
+2007-11-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: added gegl_parse_file()
+	* gegl/gegl-xml.[ch]: (gegl_parse_file): added API function that
+	loads a gegl composition from disk, which automatically computes
+	the path_root needed when it internally calls gegl_parse_xml.
+
 2007-10-31  Tor Lillqvist  <tml@novell.com>
 
 	* configure.ac: Bump glib_required_version to 2.10.0 as g_slice
