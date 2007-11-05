@@ -1,5 +1,11 @@
 2007-11-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-eval-visitor.c: (visit_pad): Emit "computed"
+	signal for cache (and thus in turn node) if a cache is associated
+	with the node being processed.
+
+2007-11-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (expose_event): deleted deprecated comment.
 
 2007-11-04  Øyvind Kolås  <pippin@gimp.org>
