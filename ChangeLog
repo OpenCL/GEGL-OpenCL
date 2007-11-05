@@ -1,5 +1,11 @@
 2007-11-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: (render_rectangle): do extra sanity
+	check that a rectangle just about to be rendered is not already
+	rendered.
+
+2007-11-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-eval-visitor.c: (visit_pad): Emit "computed"
 	signal for cache (and thus in turn node) if a cache is associated
 	with the node being processed.

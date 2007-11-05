@@ -17,7 +17,7 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
-#define GEGL_PROCESSOR_CHUNK_SIZE 256*256
+#define GEGL_PROCESSOR_CHUNK_SIZE 128*128
 
 #include "config.h"
 #include <glib-object.h>
@@ -339,19 +339,27 @@ static gboolean render_rectangle (GeglProcessor *processor)
       processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
 
       if (!dr->width || !dr->height)
-        return TRUE;
+        {
+          g_free (dr);
+          return TRUE;
+        }
 
-      buf = g_malloc (dr->width * dr->height * pxsize);
-      g_assert (buf);
+      if (gegl_region_rect_in (cache->valid_region, (GeglRectangle *) dr) !=
+          GEGL_OVERLAP_RECTANGLE_IN)
+        {
+          gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);
+          buf = g_malloc (dr->width * dr->height * pxsize);
+          g_assert (buf);
 
-      gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-      gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
+          gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+          gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
 
-      gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);
+          gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);
 
-      g_signal_emit (cache, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, dr, NULL, NULL);
+          g_signal_emit (cache, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, dr, NULL, NULL);
 
-      g_free (buf);
+          g_free (buf);
+        }
       g_free (dr);
     }
   return processor->dirty_rectangles != NULL;
