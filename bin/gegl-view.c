@@ -397,7 +397,6 @@ expose_event (GtkWidget      *widget,
       roi.height = rectangles[i].height;
 
       buf = g_malloc ((roi.width) * (roi.height) * 3);
-      /* FIXME: this padding should not be needed, but it avoids some segfaults */
 
       gegl_node_blit (priv->node,
                       priv->scale,
