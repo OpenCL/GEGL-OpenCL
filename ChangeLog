@@ -1,5 +1,9 @@
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/export.[ch]: added GPLv.2 or later heading to files.
+
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/envelopes.h: reverted to more simpler envelope
 	computation that provides minimum envelopes that are more intuitively
 	correct.
