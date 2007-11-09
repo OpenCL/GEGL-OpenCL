@@ -1,3 +1,12 @@
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Upgraded rgegl from LGPLv2 to LGPLv3. 
+
+	* COPYING.LIB: removed.
+	* COPYING: added GPLv3
+	* COPYING.LESSER: added LGPLv3
+	* src/*.[ch]: added missing copyright statements.
+
 2007-10-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* src/rgegl-node.c: Updated due to API change of gegl_node_blit().
