@@ -1,5 +1,11 @@
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/envelopes.h: reverted to more simpler envelope
+	computation that provides minimum envelopes that are more intuitively
+	correct.
+
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-dot.[ch]: adjusted license from GPLv2 or later to LGPLv2
 	or later, it being GPL was a copy and paste mistake.
 

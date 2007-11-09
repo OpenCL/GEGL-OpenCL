@@ -157,10 +157,10 @@ static void compute_envelopes (gfloat  *buf,
 {
   gint    i;
   gint    c;
-  gfloat  range_avg[4]  = {0,0,0,0};
+  /*gfloat  range_avg[4]  = {0,0,0,0};*/
   gfloat  dark_avg[4]   = {0,0,0,0};
   gfloat  bright_avg[4] = {0,0,0,0};
-  gfloat *pixel = buf + (width*y+x)*4;
+  /*gfloat *pixel = buf + (width*y+x)*4;*/
 
   compute_luts(rgamma);
 
@@ -183,7 +183,7 @@ static void compute_envelopes (gfloat  *buf,
 
       for (c=0;c<3;c++)
         {
-          gfloat range, bright, dark;
+          /*gfloat range, bright, dark;
 
           range = max[c] - min[c];
 
@@ -196,11 +196,10 @@ static void compute_envelopes (gfloat  *buf,
             {
               bright = 0.5;
               dark = 0.5;
-            }
+            }*/
 
-          dark_avg[c] += dark;
-          bright_avg[c] += bright;
-          range_avg[c] += range;
+          dark_avg[c] += min[c];
+          bright_avg[c] += max[c];
         }
     }
 
@@ -208,14 +207,13 @@ static void compute_envelopes (gfloat  *buf,
       {
         dark_avg[c]   /= iterations;
         bright_avg[c] /= iterations;
-        range_avg[c]  /= iterations;
       }
 
     if (max_envelope)
       for (c=0;c<3;c++)
-        max_envelope[c] = pixel[c] + bright_avg[c] * range_avg[c];
+        max_envelope[c] = bright_avg[c];/*pixel[c] + bright_avg[c] * range_avg[c];*/
 
     if (min_envelope)
       for (c=0;c<3;c++)
-        min_envelope[c] = pixel[c] - dark_avg[c] * range_avg[c];
+        min_envelope[c] = dark_avg[c];/*pixel[c] - dark_avg[c] * range_avg[c];*/
 }
