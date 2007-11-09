@@ -1,3 +1,8 @@
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-dot.[ch]: adjusted license from GPLv2 or later to LGPLv2
+	or later, it being GPL was a copy and paste mistake.
+
 2007-11-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-processor.c: (render_rectangle): do extra sanity
