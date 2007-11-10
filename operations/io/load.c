@@ -20,8 +20,6 @@
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_path (path, "", "Path of file to load.")
-gegl_chant_boolean (cache, TRUE,
-                    "Whether to cache the entire buffer loaded from the file.")
 
 #else
 
@@ -179,6 +177,8 @@ static void class_init (GeglOperationClass *klass)
   
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
+
+  klass->no_cache = TRUE;
 }
 
 

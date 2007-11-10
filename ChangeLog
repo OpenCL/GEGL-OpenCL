@@ -1,3 +1,10 @@
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/io/load.c: (class_init): simplified code, set as
+	non-caching (the actual loaders used by the meta-op "load" do the
+	needed caching, as well as expansion of result rects in the default
+	implementations in the GeglOperationSource base class.
+
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Upgraded GEGL from (L)GPLv2 to (L)GPLv3. The library itself and the
