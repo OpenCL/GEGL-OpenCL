@@ -1,5 +1,16 @@
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Upgraded GEGL from (L)GPLv2 to (L)GPLv3. The library itself and the
+	operations are under LGPLv3 and the sample programs using the GEGL
+	library are licensed under GPLv3. Copyright statements in all files
+	have been updated to reflect this change, the permission to use leter
+	versions of the GNU licenses have been retained in all instances.)
+
+	* COPYING: changed to GPLv3
+	* COPYING.LESSER: added (LGPLv3 's exceptions over GPLv3)
+
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/export.[ch]: added GPLv.2 or later heading to files.
 
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>

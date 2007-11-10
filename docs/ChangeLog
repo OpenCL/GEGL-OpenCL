@@ -1,3 +1,8 @@
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: LGPLv2->LGPLv3 transition.
+	* rgegl/index.html: LGPLv2->LGPLv3 transition.
+
 2007-09-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: modified wording of bit-depth and color model
