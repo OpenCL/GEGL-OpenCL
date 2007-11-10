@@ -1,5 +1,10 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.c: (gegl_cache_computed): emit the right
+	signal (invalidated was being emitted).
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/layer.c: (refresh_cache): removed reference to
 	deprecated property "cache" for the load op.
 

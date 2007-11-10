@@ -350,5 +350,5 @@ gegl_cache_computed (GeglCache     *self,
   g_assert (self);
   g_assert (rect);
   gegl_region_union_with_rect (self->valid_region, rect);
-  g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, rect, NULL);
+  g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, rect, NULL);
 }
