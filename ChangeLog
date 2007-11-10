@@ -1,5 +1,10 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/layer.c: (refresh_cache): removed reference to
+	deprecated property "cache" for the load op.
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.[ch]: moved all signal
 	related hooks to the .c file. Assed gegl_cache_computed() which
 	triggers the computed signal of the cache.

@@ -17,6 +17,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+/* FIXME: need to make this OpenRaster inspired layer integrate better
+ * with the newer caching system
+ */
+
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(composite_op, "over", "Composite operation to use")
@@ -211,9 +216,8 @@ refresh_cache (GeglChantOperation *self)
 
       gegl = g_object_new (GEGL_TYPE_NODE, NULL);
       load = gegl_node_new_child (gegl, "operation", "load",
-                                           "cache", FALSE,
-                                           "path", self->src,
-                                           NULL);
+                                        "path", self->src,
+                                        NULL);
       priv->cached_buffer = gegl_node_apply (load, "output");
 
 #if 0
