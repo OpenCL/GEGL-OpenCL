@@ -354,12 +354,15 @@ static gboolean render_rectangle (GeglProcessor *processor)
           gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
           gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
 
-          gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);
-
-          g_signal_emit (cache, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, dr, NULL, NULL);
+          gegl_cache_computed (cache, (GeglRectangle *) dr);
 
           g_free (buf);
         }
+/*      else if (gegl_region_rect_in (cache->valid_region, (GeglRectangle *) dr) ==
+          GEGL_OVERLAP_RECTANGLE_PART)
+        {
+          g_warning ("part");
+        }*/
       g_free (dr);
     }
   return processor->dirty_rectangles != NULL;

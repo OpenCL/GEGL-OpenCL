@@ -88,12 +88,7 @@ visit_pad (GeglVisitor *self,
 
           if (node->cache) 
             { 
-              /* update the valid region of the cache */
-              gegl_region_union_with_rect (node->cache->valid_region,
-                                           gegl_operation_result_rect (operation, context_id));
-
-			  /* XXX: this should perhaps be the requested rect and not the result rect? */
-              g_signal_emit (node->cache, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, gegl_operation_result_rect (operation, context_id), NULL);
+              gegl_cache_computed (node->cache, &dynamic->result_rect);
             }
         }
     }

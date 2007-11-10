@@ -1,5 +1,15 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.[ch]: moved all signal
+	related hooks to the .c file. Assed gegl_cache_computed() which
+	triggers the computed signal of the cache.
+	* gegl/process/gegl-eval-visitor.c: (visit_pad): use
+	gegl_cache_computed()
+	* gegl/process/gegl-processor.c: (render_rectangle): use
+	gegl_cache_computed()
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/load.c: (class_init): simplified code, set as
 	non-caching (the actual loaders used by the meta-op "load" do the
 	needed caching, as well as expansion of result rects in the default

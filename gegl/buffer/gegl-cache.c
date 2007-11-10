@@ -40,6 +40,12 @@ enum
   PROP_NODE,
 };
 
+enum
+{
+  GEGL_CACHE_INVALIDATED,
+  GEGL_CACHE_COMPUTED,
+  GEGL_CACHE_LAST_SIGNAL
+};
 
 static void            gegl_cache_class_init (GeglCacheClass *klass);
 static void            gegl_cache_init (GeglCache *self);
@@ -335,4 +341,14 @@ gegl_cache_invalidate (GeglCache     *self,
       self->valid_region = gegl_region_new ();
       g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, &rect, NULL);
     }
+}
+
+void
+gegl_cache_computed (GeglCache     *self,
+                     GeglRectangle *rect)
+{
+  g_assert (self);
+  g_assert (rect);
+  gegl_region_union_with_rect (self->valid_region, rect);
+  g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, rect, NULL);
 }
