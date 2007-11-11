@@ -80,6 +80,14 @@ file_tail = '
   return TRUE;
 }
 
+static void class_init (GeglOperationClass *klass)
+{
+  klass->no_cache = TRUE;  /* the over op has special fast paths
+                              that makes caching be buggy in
+                              many circumstances.
+                            */
+}
+
 #endif
 '
 
@@ -110,6 +118,7 @@ a.each do
 
 #define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_CLASS_INIT
 
 #include \"gegl-chant.h\"
 "
@@ -137,6 +146,9 @@ a.each do
       aux += 4;
       out += 4;
     }
+
+
+
 "
   file.write file_tail
   file.close

@@ -1,3 +1,9 @@
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/generated/other-blend.rb: made "over" op refuse caching
+	due to fast-path optimization in gegl-operation-point-composer for the
+	"over" op that conflict with the caching system.
+
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-cache.c: (gegl_cache_computed): emit the right
