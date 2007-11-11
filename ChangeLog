@@ -1,3 +1,9 @@
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+	
+	* replaced civic address for FSF with URL to
+	<http://www.gnu.org/licenses> in copyright statements at top of source
+	files.
+
 2007-11-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl-node-editor.c: Use check boxes for boolean parameters.

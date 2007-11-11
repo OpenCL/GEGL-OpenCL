@@ -1,4 +1,4 @@
-/* LIBGEGL - The GEGL Library
+/* Originally from: LIBGIMP - The GIMP Library
  * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
  *
  * This library is free software; you can redistribute it and/or
@@ -12,11 +12,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * (C) 1999 Austin Donnelly <austin@gegl.org>
+ * (C) 1999 Austin Donnelly <austin@gimp.org>
  */
 
 #ifndef __GEGL_MODULE_H__
