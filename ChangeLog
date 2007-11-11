@@ -1,4 +1,13 @@
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-cache.c: (gegl_cache_class_init): added dispose
+	as well as finalize.
+	(dispose): unreference node we rely on.
+	(set_property): do not add a reference to the node the cache is based
+	on, this reference made the dispose of nodes with caches not being
+	called at all.
+
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 	
 	* replaced civic address for FSF with URL to
 	<http://www.gnu.org/licenses> in copyright statements at top of source

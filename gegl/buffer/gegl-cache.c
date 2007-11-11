@@ -49,6 +49,7 @@ enum
 static void            gegl_cache_class_init (GeglCacheClass *klass);
 static void            gegl_cache_init (GeglCache *self);
 static void            finalize (GObject *self_object);
+static void            dispose (GObject *self_object);
 static void            set_property (GObject      *gobject,
                                      guint         prop_id,
                                      const GValue *value,
@@ -89,6 +90,7 @@ gegl_cache_class_init (GeglCacheClass *klass)
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->finalize     = finalize;
+  gobject_class->dispose      = dispose;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
@@ -100,7 +102,7 @@ gegl_cache_class_init (GeglCacheClass *klass)
                                                         "The GeglNode to cache results for",
                                                         GEGL_TYPE_NODE,
                                                         G_PARAM_WRITABLE |
-                                                        G_PARAM_CONSTRUCT));
+                                                        G_PARAM_CONSTRUCT_ONLY));
 
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
@@ -159,13 +161,11 @@ gegl_cache_init (GeglCache *self)
 }
 
 static void
-finalize (GObject *gobject)
+dispose (GObject *gobject)
 {
   GeglCache *self = GEGL_CACHE (gobject);
 
-
   while (g_idle_remove_by_data (gobject)) ;
-
 
   if (self->node)
     {
@@ -176,8 +176,17 @@ finalize (GObject *gobject)
         {
           g_signal_handler_disconnect (self->node, handler);
         }
-      g_object_unref (self->node);
+      self->node = NULL;
     }
+
+  G_OBJECT_CLASS (gegl_cache_parent_class)->dispose (gobject);
+}
+
+static void
+finalize (GObject *gobject)
+{
+  GeglCache *self = GEGL_CACHE (gobject);
+
   if (self->valid_region)
     gegl_region_destroy (self->valid_region);
   G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
@@ -213,7 +222,6 @@ set_property (GObject      *gobject,
       case PROP_NODE:
         if (self->node)
           {
-            /* disconnecting dirt propagation */
             gulong handler;
             handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
                                              gegl_node_signals[GEGL_NODE_INVALIDATED],
@@ -222,9 +230,11 @@ set_property (GObject      *gobject,
               {
                 g_signal_handler_disconnect (self->node, handler);
               }
-            g_object_unref (self->node);
           }
-        self->node = GEGL_NODE (g_value_dup_object (value));
+        /* just getting the node, the cache holds no reference on the node,
+         * it is the node that holds reference on the cache
+         */
+        self->node = GEGL_NODE (g_value_get_object (value));
         g_signal_connect (G_OBJECT (self->node), "invalidated",
                           G_CALLBACK (node_invalidated), self);
         break;
