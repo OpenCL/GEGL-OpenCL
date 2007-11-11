@@ -1,3 +1,8 @@
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/clones.xml: removed deprecated cache property from load
+	nodes.
+
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: LGPLv2->LGPLv3 transition.

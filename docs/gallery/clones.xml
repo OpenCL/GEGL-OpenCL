@@ -26,7 +26,6 @@
       <node operation='load' id='clone0'>
           <params>
             <param name='path'>data/car-stack.jpg</param>
-            <param name='cache'>true</param>
           </params>
       </node>
   </node>
@@ -196,7 +195,6 @@
           <node operation='load' id='clone3'>
               <params>
                 <param name='path'>data/gegl.png</param>
-                <param name='cache'>true</param>
               </params>
           </node>
       </node>
