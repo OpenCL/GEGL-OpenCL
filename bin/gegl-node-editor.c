@@ -133,7 +133,7 @@ gegl_node_editor_construct (GeglNodeEditor *self)
   GeglNodeEditorClass *klass;
 
   g_return_if_fail (GEGL_IS_NODE_EDITOR (self));
-  
+
   klass = GEGL_NODE_EDITOR_GET_CLASS (self);
   g_assert (klass->construct);
   klass->construct(self);
@@ -174,7 +174,8 @@ type_editor_generic_changed (GtkWidget *entry,
   const gchar *entry_text;
   const gchar *prop_name = param_spec->name;
 
-  entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
+  if (param_spec->value_type != G_TYPE_BOOLEAN)
+    entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
 
   if (param_spec->value_type == G_TYPE_INT)
     {
@@ -191,7 +192,9 @@ type_editor_generic_changed (GtkWidget *entry,
     }
   else if (param_spec->value_type == G_TYPE_BOOLEAN)
     {
-      gegl_node_set (node, prop_name, !strcmp(entry_text, "yes"), NULL);
+      gegl_node_set (node, prop_name,
+                     gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (entry)),
+                     NULL);
     }
   else if (param_spec->value_type == GEGL_TYPE_COLOR)
     {
@@ -557,7 +560,7 @@ static void scalar_expose (GtkWidget      *widget,
 
   cairo_set_font_size (cr, 12.0);
   gegl_node_get (node, param_spec->name, &value, NULL);
-  
+
   /*cairo_scale (cr, width, height);*/
   cairo_set_line_width (cr, 0.01);
   {
@@ -700,9 +703,18 @@ type_editor_generic (GtkSizeGroup *col1,
   GtkWidget *label = gtk_label_new (param_spec->name);
   GtkWidget *entry = gtk_entry_new ();
 
-  gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_size_group_add_widget (col1, label);
+
+  if (param_spec->value_type == G_TYPE_BOOLEAN)
+    entry = gtk_check_button_new ();
+  else
+    {
+      entry = gtk_entry_new ();
+
+      gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
+    }
+
   gtk_size_group_add_widget (col2, entry);
 
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
@@ -718,10 +730,10 @@ type_editor_generic (GtkSizeGroup *col1,
     {
       gboolean value;
       gegl_node_get (node, param_spec->name, &value, NULL);
-      if (value)
-        gtk_entry_set_text (GTK_ENTRY (entry), "yes");
-      else
-        gtk_entry_set_text (GTK_ENTRY (entry), "no");
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (entry), value);
+      g_signal_connect (G_OBJECT (entry), "toggled",
+                        G_CALLBACK (type_editor_generic_changed),
+                        (gpointer) param_spec);
     }
   else if (param_spec->value_type == G_TYPE_FLOAT)
     {
@@ -783,7 +795,7 @@ property_editor_general (GeglNodeEditor *node_editor,
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
-  
+
   properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
   col1 = node_editor->col1;
   col2 = node_editor->col2;
@@ -796,7 +808,7 @@ property_editor_general (GeglNodeEditor *node_editor,
           strcmp (properties[i]->name, "aux"))
         {
           GtkWidget *prop_editor;
-       
+
           if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_PATH))
             {
               prop_editor = type_editor_path (col1, col2, node, properties[i]);
@@ -816,7 +828,7 @@ property_editor_general (GeglNodeEditor *node_editor,
             }
 #endif
           else
-            { 
+            {
               prop_editor = type_editor_generic (col1, col2, node, properties[i]);
             }
           gtk_box_pack_start (GTK_BOX (vbox), prop_editor, FALSE, FALSE, 0);
@@ -906,8 +918,8 @@ static GType *gegl_type_heirs (GType  supertype,
     }
   *count = g_slist_length (subtypes);
   heirs = g_malloc (sizeof (GType) * (*count));
-   
-  for (iter = subtypes, i=0; iter; iter = g_slist_next (iter), i++) 
+
+  for (iter = subtypes, i=0; iter; iter = g_slist_next (iter), i++)
     {
       GType type = GPOINTER_TO_UINT (iter->data);
       heirs[i]=type;

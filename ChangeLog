@@ -1,3 +1,7 @@
+2007-11-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl-node-editor.c: Use check boxes for boolean parameters.
+
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/generated/other-blend.rb: made "over" op refuse caching
