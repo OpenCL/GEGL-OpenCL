@@ -55,6 +55,12 @@ struct _GeglBuffer
   GeglInterpolator *interpolator; /* cached interpolator for speeding up random
                                      access interpolated fetches from the
                                      buffer */
+
+  gint              min_x; /* the extent of tile indices that has been */
+  gint              min_y; /* produced by _get_tile for this buffer */
+  gint              max_x; /* this is used in gegl_buffer_void to narrow */
+  gint              max_y; /* down the tiles kill messages are sent for */
+  gint              max_z;
 };
 
 struct _GeglBufferClass

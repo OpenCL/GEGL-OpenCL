@@ -1,5 +1,16 @@
 2007-11-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: added minimum and maximum x,y and
+	z tile indices valid for a buffer.
+	* gegl/buffer/gegl-buffer.c: (get_tile): check if the currently gotten
+	tile exceeds the current limits.
+	(gegl_buffer_init): start out with 0,0,0,0,0 for the tile inidices
+	extents.
+	(gegl_buffer_void): avoid sending TILE_VOID messages down the tile bus
+	unnecesarily.
+
+2007-11-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/layer.c: (prepare), (attach), (class_init):
 	copied the implementation of the load op into the layer op instead
 	of creating a separate GEGL instance for loading the buffer (and

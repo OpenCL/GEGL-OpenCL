@@ -451,9 +451,9 @@ gegl_buffer_constructor (GType                  type,
 
 static GeglTile *
 get_tile (GeglProvider *tile_store,
-          gint           x,
-          gint           y,
-          gint           z)
+          gint          x,
+          gint          y,
+          gint          z)
 {
   GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
   GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
@@ -469,16 +469,24 @@ get_tile (GeglProvider *tile_store,
 
   if (tile)
     {
+      GeglBuffer *buffer = GEGL_BUFFER (tile_store);
       tile->x = x;
       tile->y = y;
       tile->z = z;
 
-      /* storing information in tile, to enable the dispose
-       * function of the tile instance to "hook" back to the storage with correct coordinates.
-       *
-       * this used to involve the shifting that had occured through TILE_OFFSETS, the shift
-       * handling has been moved to the buffer level of abstraction instead to allow pixel
-       * precise shifts.
+      if (x < buffer->min_x)
+        buffer->min_x = x;
+      if (y < buffer->min_y)
+        buffer->min_y = y;
+      if (x > buffer->max_x)
+        buffer->max_x = x;
+      if (y > buffer->max_y)
+        buffer->max_y = y;
+      if (z > buffer->max_z)
+        buffer->max_z = z;
+
+      /* storing information in tile, to enable the dispose function of the
+       * tile instance to "hook" back to the storage with correct coordinates.
        */
       {
         tile->storage   = gegl_buffer_storage (GEGL_BUFFER (tile_store));
@@ -497,17 +505,17 @@ static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
   GObjectClass       *gobject_class;
-  GeglProviderClass *tile_store_class;
+  GeglProviderClass *tile_provider_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglProviderClass *) class;
+  tile_provider_class = (GeglProviderClass *) class;
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
   gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  tile_store_class->get_tile  = get_tile;
+  tile_provider_class->get_tile  = get_tile;
 
   g_object_class_install_property (gobject_class, PROP_PX_SIZE,
                                    g_param_spec_int ("px-size", "pixel-size", "size of a single pixel in bytes.",
@@ -588,6 +596,13 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->abyss.height = 0;
   buffer->format       = NULL;
   buffer->hot_tile     = NULL;
+
+  buffer->min_x = 0;
+  buffer->min_y = 0;
+  buffer->max_x = 0;
+  buffer->max_y = 0;
+  buffer->max_z = 0;
+
   allocated_buffers++;
 }
 
@@ -634,7 +649,7 @@ gegl_buffer_void (GeglBuffer *buffer)
   {
     gint z;
     gint factor = 1;
-    for (z = 0; z < 10; z++)
+    for (z = 0; z <= buffer->max_z; z++)
       {
         bufy = 0;
         while (bufy < height)
@@ -642,21 +657,34 @@ gegl_buffer_void (GeglBuffer *buffer)
             gint tiledy  = buffer->extent.y + buffer->shift_y + bufy;
             gint offsety = gegl_tile_offset (tiledy, tile_height);
             gint bufx    = 0;
+            gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-            while (bufx < width)
-              {
-                gint tiledx  = buffer->extent.x + buffer->shift_x + bufx;
-                gint offsetx = gegl_tile_offset (tiledx, tile_width);
+            if (z != 0 ||  /* FIXME: handle z==0 correctly */
+                ty >= buffer->min_y)
+              while (bufx < width)
+                {
+                  gint tiledx  = buffer->extent.x + buffer->shift_x + bufx;
+                  gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
-                gint tx = gegl_tile_indice (tiledx / factor, tile_width);
-                gint ty = gegl_tile_indice (tiledy / factor, tile_height);
+                  gint tx = gegl_tile_indice (tiledx / factor, tile_width);
 
-                gegl_provider_message (GEGL_PROVIDER (buffer),
+                  if (z != 0 ||
+                      tx >= buffer->min_x)
+                  gegl_provider_message (GEGL_PROVIDER (buffer),
                                          GEGL_TILE_VOID, tx, ty, z, NULL);
 
-                bufx += (tile_width - offsetx) * factor;
-              }
+                  if (z != 0 ||
+                      tx > buffer->max_x)
+                    goto done_with_row;
+
+                  bufx += (tile_width - offsetx) * factor;
+                }
+done_with_row:
             bufy += (tile_height - offsety) * factor;
+
+                  if (z != 0 ||
+                      ty > buffer->max_y)
+                    break;
           }
         factor *= 2;
       }
