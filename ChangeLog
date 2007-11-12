@@ -1,3 +1,9 @@
+2007-11-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-graph.c: (gegl_node_get_pad_proxy): unref
+	the created proxy node, since gegl_node_add_child increments
+	the reference count (and should hold the only reference).
+
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-cache.c: (gegl_cache_class_init): added dispose
