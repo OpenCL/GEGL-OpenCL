@@ -1,3 +1,8 @@
+2007-11-12  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/meta/layer.c: (refresh_cache): unref the created buffer
+	here since node_blit increments ref count twice.
+
 2007-11-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-graph.c: (gegl_node_get_pad_proxy): unref

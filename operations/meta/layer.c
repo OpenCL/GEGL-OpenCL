@@ -70,7 +70,7 @@ prepare (GeglOperation *operation,
   Priv *priv;
   priv = (Priv*)self->priv;
 
-  
+
   /* warning: this might trigger regeneration of the graph,
    *          for now this is evaded by just ignoring additional
    *          requests to be made into members of the graph
@@ -89,7 +89,7 @@ prepare (GeglOperation *operation,
     {
       if (refresh_cache (self))
         {
-          gegl_node_set (priv->load, 
+          gegl_node_set (priv->load,
                          "buffer", priv->cached_buffer,
                          NULL);
         }
@@ -101,7 +101,7 @@ prepare (GeglOperation *operation,
 
   if (self->opacity != priv->p_opacity)
     {
-      gegl_node_set (priv->opacity, 
+      gegl_node_set (priv->opacity,
                      "value",  self->opacity,
                      NULL);
       priv->p_opacity = self->opacity;
@@ -110,7 +110,7 @@ prepare (GeglOperation *operation,
   if (self->x != priv->p_x ||
       self->y != priv->p_y)
     {
-      gegl_node_set (priv->shift, 
+      gegl_node_set (priv->shift,
                      "x",  self->x,
                      "y",  self->y,
                      NULL);
@@ -142,7 +142,7 @@ static void attach (GeglOperation *operation)
 
   priv->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
   priv->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
-  
+
   priv->load = gegl_node_new_child (gegl,
                                     "operation", "load-buffer",
                                     NULL);
@@ -188,7 +188,7 @@ static void class_init (GeglOperationClass *klass)
 {
   klass->prepare = prepare;
   klass->attach = attach;
-    
+
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
 }
@@ -218,13 +218,11 @@ refresh_cache (GeglChantOperation *self)
                                         NULL);
       priv->cached_buffer = gegl_node_apply (load, "output");
 
-#if 0
-      /* we unref the buffer since we effectifly need to steal the
+      /* we unref the buffer since we effectively need to steal the
        * contents XXX, only once here,. twice in node_blit.. since
        * we do not have any more use for it there.
        */
       g_object_unref (priv->cached_buffer);
-#endif
       g_object_unref (gegl);
 
       priv->cached_path = g_strdup (self->src);
