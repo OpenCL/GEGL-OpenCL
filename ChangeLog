@@ -1,3 +1,11 @@
+2007-11-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/meta/layer.c: (prepare), (attach), (class_init):
+	copied the implementation of the load op into the layer op instead
+	of creating a separate GEGL instance for loading the buffer (and
+	keeping it around). This is an intermediate solution until the layer
+	meta-op can invoke the layer-op directly as one of it's children.
+
 2007-11-12  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/meta/layer.c: (refresh_cache): unref the created buffer

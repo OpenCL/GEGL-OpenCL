@@ -37,6 +37,8 @@ gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 #define GEGL_CHANT_CATEGORIES      "meta"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
+#include "gegl/operation/gegl-extension-handler.h"
+#include <glib/gprintf.h>
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -52,15 +54,12 @@ struct _Priv
     GeglNode *load;
 
     gchar *cached_path;
-    GeglBuffer *cached_buffer;
 
   gdouble p_opacity;
   gdouble p_x;
   gdouble p_y;
   gchar *p_composite_op;
 };
-
-static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
 prepare (GeglOperation *operation,
@@ -85,18 +84,53 @@ prepare (GeglOperation *operation,
         g_free (priv->p_composite_op);
       priv->p_composite_op = g_strdup (self->composite_op);
     }
-  if (self->src[0])
-    {
-      if (refresh_cache (self))
-        {
-          gegl_node_set (priv->load,
-                         "buffer", priv->cached_buffer,
-                         NULL);
-        }
-    }
-  else
+
+  if (self->src[0]==0 && priv->cached_path == NULL)
     {
       gegl_node_connect_from (priv->opacity, "input", priv->aux, "output");
+    }
+  else
+    { /* FIXME:
+       * this reimplements the "load" op, which shouldn't be neccesary, but
+       * currently seems to be neccesary since GEGL doesn't like a meta-op
+       * to be implemented using another meta-op.
+       */
+      if (self->src[0] &&
+          (priv->cached_path == NULL || strcmp (self->src, priv->cached_path)))
+        {
+          const gchar *extension = strrchr (self->src, '.');
+          const gchar *handler = NULL;
+
+          if (!g_file_test (self->src, G_FILE_TEST_EXISTS))
+            {
+              gchar *tmp = g_malloc(strlen (self->src) + 100);
+              g_sprintf (tmp, "File '%s' does not exist", self->src);
+              g_warning ("load: %s", tmp);
+              gegl_node_set (priv->load,
+                             "operation", "text",
+                             "size", 12.0,
+                             "string", tmp,
+                             NULL);
+              g_free (tmp);
+            }
+          else
+            {
+              if (extension)
+                handler = gegl_extension_handler_get (extension);
+              gegl_node_set (priv->load, 
+                             "operation", handler,
+                             NULL);
+              gegl_node_set (priv->load, 
+                             "path",  self->src,
+                             NULL);
+            }
+          if (priv->cached_path)
+            g_free (priv->cached_path);
+          priv->cached_path = g_strdup (self->src);
+        }
+      else
+        {
+        }
     }
 
   if (self->opacity != priv->p_opacity)
@@ -144,27 +178,13 @@ static void attach (GeglOperation *operation)
   priv->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
 
   priv->load = gegl_node_new_child (gegl,
-                                    "operation", "load-buffer",
+                                    "operation", "text",
+                                    "string", "foo",
                                     NULL);
 
   gegl_node_link_many (priv->load, priv->opacity, priv->shift, NULL);
   gegl_node_link_many (priv->input, priv->composite_op, priv->output, NULL);
   gegl_node_connect_from (priv->composite_op, "aux", priv->shift, "output");
-}
-
-static void
-dispose (GObject *object)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  Priv *priv = (Priv*)self->priv;
-
-  if (priv->cached_buffer)
-    {
-      g_object_unref (priv->cached_buffer);
-      priv->cached_buffer = NULL;
-    }
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
 }
 
 
@@ -189,47 +209,7 @@ static void class_init (GeglOperationClass *klass)
   klass->prepare = prepare;
   klass->attach = attach;
 
-  G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
 }
-
-static gboolean
-refresh_cache (GeglChantOperation *self)
-{
-  Priv *priv = (Priv*)self->priv;
-
-  if (!priv->cached_buffer ||
-      ((priv->cached_path && self->src) &&
-        strcmp (self->src, priv->cached_path)))
-    {
-      GeglNode *gegl;
-      GeglNode *load;
-
-      if (priv->cached_buffer)
-        {
-          g_object_unref (priv->cached_buffer);
-          priv->cached_buffer = NULL;
-          g_free (priv->cached_path);
-        }
-
-      gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-      load = gegl_node_new_child (gegl, "operation", "load",
-                                        "path", self->src,
-                                        NULL);
-      priv->cached_buffer = gegl_node_apply (load, "output");
-
-      /* we unref the buffer since we effectively need to steal the
-       * contents XXX, only once here,. twice in node_blit.. since
-       * we do not have any more use for it there.
-       */
-      g_object_unref (priv->cached_buffer);
-      g_object_unref (gegl);
-
-      priv->cached_path = g_strdup (self->src);
-      return TRUE;
-    }
-  return FALSE;
-}
-
 
 #endif
