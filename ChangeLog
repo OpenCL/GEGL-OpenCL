@@ -1,3 +1,9 @@
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: modified to write a gegl.devhelp file
+	into the current directory in addition to generating the requested
+	html document.
+
 2007-11-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl-node-editor.c: Left align label for colour button. Center
@@ -1217,7 +1223,7 @@
 
 	Added a new base class for operations that includes computations for
 	the defined, needed and affected neighbourhood based on extents in
-	four dimensions. The implementing operation has to implement the
+	four directions. The implementing operation has to implement the
 	virutal method tickle, which updates the extents from the properties
 	in an operation specific manner before the computations are made.
 

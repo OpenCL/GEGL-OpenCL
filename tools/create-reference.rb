@@ -517,10 +517,39 @@ file.puts "<div class='toc'>
     file.puts "</ul></div>\n"
    
     file.puts "<div class='paper'><div class='content'>" 
-    elements.each {|element| file.puts "<div class='section' id='section_#{element.name.gsub(' ','_')}'><a name='#{element.name.gsub(' ','_')}'></a>#{element.to_html}</div>"
+    elements.each {|element| 
+        if !element.name.empty?
+        file.puts "<div class='section' id='section_#{element.name.gsub(' ','_')}'><a name='#{element.name.gsub(' ','_')}'></a>#{element.to_html}</div>"
+        end
     }
     file.puts "</div></div>
   </body>
 </html>"
 
+}
+
+File.open("gegl.devhelp", "w") {|file|
+    file.puts "<?xml version='1.0' encoding='utf-8' standalone='no'?>
+<!DOCTYPE book PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' ''>
+<book xmlns='http://www.devhelp.net/book' title='GEGL Reference Manual' link='api.html' author='' name='gegl'>"
+    file.puts "<chapters>"
+    elements.each { |element|
+       if element.is_a? Section and !element.name.empty?
+         file.puts "<sub name='#{element.name}' link='api.html\##{element.name.gsub(' ','_')}'/>"
+       end
+    }
+    file.puts "</chapters>"
+    file.puts "<functions>"
+
+    elements.each { |element|
+       if element.is_a? Function and !element.name.empty?
+         file.puts "<function name='#{element.name}' link='api.html\##{element.name.gsub(' ','_')}'/>"
+       end
+       if element.is_a? Section and !element.name.empty? and element.name=~ /^Gegl/
+         file.puts "<function name='#{element.name}' link='api.html\##{element.name.gsub(' ','_')}'/>"
+       end
+    }
+
+    file.puts "</functions>"
+    file.puts "</book>"
 }
