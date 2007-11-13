@@ -89,12 +89,12 @@ get_tile (GeglProvider *tile_store,
           gint          y,
           gint          z)
 {
-  GeglHandlers  *handlers = GEGL_HANDLERS (tile_store);
-  GeglProvider  *provider = GEGL_HANDLER (tile_store)->provider;
+  GeglHandlers  *handlers = (GeglHandlers*)tile_store;
+  GeglProvider  *provider = ((GeglHandler*)tile_store)->provider;
   GeglTile       *tile   = NULL;
 
   if (handlers->chain != NULL)
-    tile = gegl_provider_get_tile (GEGL_PROVIDER (handlers->chain->data),
+    tile = gegl_provider_get_tile ((GeglProvider*)(handlers->chain->data),
                                      x, y, z);
   else if (provider)
     tile = gegl_provider_get_tile (provider, x, y, z);
@@ -111,11 +111,11 @@ message (GeglProvider  *tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglHandlers *handlers = GEGL_HANDLERS (tile_store);
-  GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
+  GeglHandlers *handlers = (GeglHandlers*)tile_store;
+  GeglProvider *provider = ((GeglHandler*)tile_store)->provider;
 
   if (handlers->chain != NULL)
-    return gegl_provider_message (GEGL_PROVIDER (handlers->chain->data), message, x, y, z, data);
+    return gegl_provider_message ((GeglProvider*)(handlers->chain->data), message, x, y, z, data);
   else if (provider)
     return gegl_provider_message (provider, message, x, y, z, data);
   else

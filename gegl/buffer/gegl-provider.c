@@ -72,7 +72,7 @@ gegl_provider_get_tile (GeglProvider *gegl_provider,
 {
   GeglProviderClass *klass;
 
-  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), NULL);
+  /*g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), NULL);*/
 
   klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
 
@@ -89,7 +89,7 @@ gegl_provider_message (GeglProvider  *gegl_provider,
 {
   GeglProviderClass *klass;
 
-  g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), -1);
+  /*g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_provider), -1);*/
 
   klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
 

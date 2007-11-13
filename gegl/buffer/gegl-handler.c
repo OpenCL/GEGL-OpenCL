@@ -53,7 +53,7 @@ get_tile (GeglProvider *gegl_provider,
           gint           y,
           gint           z)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_provider);
+  GeglHandler *handler = (GeglHandler*)(gegl_provider);
   GeglTile      *tile  = NULL;
 
   if (handler->provider)
@@ -71,7 +71,7 @@ message (GeglProvider  *gegl_provider,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_provider);
+  GeglHandler *handler = (GeglHandler*)gegl_provider;
 
   if (handler->provider)
     return gegl_provider_message (handler->provider, message, x, y, z, data);

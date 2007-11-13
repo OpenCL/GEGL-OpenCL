@@ -1,5 +1,14 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed type-checking from casts directly involved in the tile-bus.
+
+	* gegl/buffer/gegl-handler.c: (get_tile), (message):
+	* gegl/buffer/gegl-handlers.c: (get_tile), (message):
+	* gegl/buffer/gegl-provider.c: (gegl_provider_get_tile),
+	(gegl_provider_message):
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: added ->storage field to cache
 	the GeglStorage of a buffer.
 	* gegl/buffer/gegl-buffer.c:
