@@ -1,3 +1,8 @@
+2007-11-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl-node-editor.c: Left align label for colour button. Center
+	colour button in second column.
+
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-point-composer.c:

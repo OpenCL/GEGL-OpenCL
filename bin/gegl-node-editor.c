@@ -246,8 +246,8 @@ type_editor_color (GtkSizeGroup *col1,
   gtk_size_group_add_widget (col1, label);
   gtk_size_group_add_widget (col2, button);
 
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, FALSE, 0);
 
   g_object_set_data (G_OBJECT (button), "node", node);
 
