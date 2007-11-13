@@ -158,14 +158,14 @@ gegl_buffer_save (GeglBuffer    *buffer,
   info->header.height      = buffer->extent.height;
   info->header.x           = buffer->extent.x;
   info->header.y           = buffer->extent.y;
-  info->header.tile_width  = gegl_buffer_storage (buffer)->tile_width;
-  info->header.tile_height = gegl_buffer_storage (buffer)->tile_height;
+  info->header.tile_width  = buffer->storage->tile_width;
+  info->header.tile_height = buffer->storage->tile_height;
 
   g_object_get (buffer, "px-size", &(info->header.bpp), NULL);
 /*  = gegl_buffer_px_size (buffer);*/
 
   info->tile_size = info->header.tile_width * info->header.tile_height * info->header.bpp;
-  strcpy (info->header.format, ((Babl *) (gegl_buffer_storage (buffer)->format))->instance.name);
+  strcpy (info->header.format, ((Babl *) (buffer->storage->format))->instance.name);
 
   /* collect list of tiles to be written */
   {

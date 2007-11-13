@@ -1,3 +1,17 @@
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-private.h: added ->storage field to cache
+	the GeglStorage of a buffer.
+	* gegl/buffer/gegl-buffer.c:
+	  (get_tile): replace type-checked casts, replace lookup of storage
+	  with the cached version in the buffer itself.
+	(gegl_buffer_iterate): lookup the tile_width and tile_height on cached
+	GeglStorage instead of traversing buffer chain to get at storage.
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): make
+	direct use of the buffer->storage.
+	* gegl/buffer/gegl-buffer-save.c: (gegl_buffer_save): make direct use
+	of buffer->storage.
+
 2007-11-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-private.h: added minimum and maximum x,y and

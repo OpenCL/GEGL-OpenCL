@@ -56,7 +56,7 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
                    gint                 height)
 {
   GeglBuffer  *buffer      = GEGL_BUFFER (allocator);
-  GeglStorage *storage     = gegl_buffer_storage (buffer);
+  GeglStorage *storage     = buffer->storage;
   gint         tile_width  = storage->tile_width;
   gint         tile_height = storage->tile_height;
 

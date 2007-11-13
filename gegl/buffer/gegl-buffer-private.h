@@ -56,6 +56,8 @@ struct _GeglBuffer
                                      access interpolated fetches from the
                                      buffer */
 
+  GeglStorage      *storage;
+
   gint              min_x; /* the extent of tile indices that has been */
   gint              min_y; /* produced by _get_tile for this buffer */
   gint              max_x; /* this is used in gegl_buffer_void to narrow */
@@ -68,7 +70,6 @@ struct _GeglBufferClass
   GeglHandlersClass parent_class;
 };
 
-GeglStorage  * gegl_buffer_storage    (GeglBuffer    *buffer);
 
 const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer    *buffer);
 
