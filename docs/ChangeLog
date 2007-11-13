@@ -1,3 +1,15 @@
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added rules to install api.html as a devhelp book.
+	* devhelp.css: customized (visually stripped down) CSS for devhelp
+	use.
+
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/clones.xml: downloaded clones.xml from the gallery of
+	gegl.org (the previous release), and updated it to work with current
+	gegl.
+
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gallery/clones.xml: removed deprecated cache property from load

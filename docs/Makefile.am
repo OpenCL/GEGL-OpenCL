@@ -15,6 +15,7 @@ HTML_FILES = index-static.html 		\
 EXTRA_DIST= 			\
 	ChangeLog		\
 	gegl.css  		\
+	devhelp.css		\
 	hello-world.c		\
 	index-static.html.in	\
 	api.html		\
@@ -77,6 +78,12 @@ distclean-local:
 	if test $(srcdir) = .; then :; else 	\
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
+help_dir = $(prefix)/share/gtk-doc/html/gegl
+
+install-exec-local: all-local
+	$(INSTALL) -d $(help_dir)
+	$(INSTALL) api.html gegl.devhelp $(help_dir)
+	$(INSTALL) -T devhelp.css $(help_dir)/gegl.css
 
 web: all
 	echo -n " WEB: "
