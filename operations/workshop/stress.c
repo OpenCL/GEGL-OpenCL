@@ -98,23 +98,23 @@ static void stress (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
-  for (y=radius; y<gegl_buffer_height (dst)+radius; y++)
+  for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
     {
-      gint src_offset = ((gegl_buffer_width (src)*y)+radius)*4;
-      for (x=radius; x<gegl_buffer_width (dst)+radius; x++)
+      gint src_offset = ((gegl_buffer_get_width (src)*y)+radius)*4;
+      for (x=radius; x<gegl_buffer_get_width (dst)+radius; x++)
         {
           gfloat *center_pix= src_buf + src_offset;
           gfloat  min_envelope[4];
           gfloat  max_envelope[4];
 
           compute_envelopes (src_buf,
-                             gegl_buffer_width (src),
-                             gegl_buffer_height (src),
+                             gegl_buffer_get_width (src),
+                             gegl_buffer_get_height (src),
                              x, y,
                              radius, samples,
                              iterations,

@@ -93,7 +93,7 @@ process (GeglOperation *operation,
   self = GEGL_CHANT_OPERATION (operation);
   input = gegl_operation_get_source (operation, context_id, "input");
   output = gegl_operation_get_target (operation, context_id, "output");
-  temp  = gegl_buffer_new (gegl_buffer_extent (input),
+  temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
   {
@@ -224,18 +224,18 @@ iir_young_hor_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
-  w   = g_malloc0 (gegl_buffer_width (src) * 4);
+  buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  w   = g_malloc0 (gegl_buffer_get_width (src) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
-  w_len = gegl_buffer_width (src);
-  for (v=0; v<gegl_buffer_height (src); v++)
+  w_len = gegl_buffer_get_width (src);
+  for (v=0; v<gegl_buffer_get_height (src); v++)
     {
       for (c = 0; c < 4; c++)
         {
           iir_young_blur_1D (buf,
-                             v*gegl_buffer_width (src)*4+c,
+                             v*gegl_buffer_get_width (src)*4+c,
                              4,
                              B,
                              b,
@@ -262,20 +262,20 @@ iir_young_ver_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
-  w   = g_malloc0 (gegl_buffer_height (src) * 4);
+  buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
+  w   = g_malloc0 (gegl_buffer_get_height (src) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
-  w_len = gegl_buffer_height (src);
+  w_len = gegl_buffer_get_height (src);
 
-  for (v=0; v<gegl_buffer_width (dst); v++)
+  for (v=0; v<gegl_buffer_get_width (dst); v++)
     {
       for (c = 0; c < 4; c++)
         {
           iir_young_blur_1D (buf,
                              (v+offset)*4 + c,
-                             gegl_buffer_width (src)*4,
+                             gegl_buffer_get_width (src)*4,
                              B,
                              b,
                              w,
@@ -283,7 +283,7 @@ iir_young_ver_blur (GeglBuffer *src,
         }
     }
 
-  gegl_buffer_set (dst, gegl_buffer_extent (src), babl_format ("RaGaBaA float"), buf);
+  gegl_buffer_set (dst, gegl_buffer_get_extent (src), babl_format ("RaGaBaA float"), buf);
   g_free (buf);
   g_free (w);
 }
@@ -378,21 +378,21 @@ fir_hor_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gint i;
 
         for (i=0; i<4; i++)
           dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       gegl_buffer_width (src),
-                                                       gegl_buffer_height (src),
+                                                       gegl_buffer_get_width (src),
+                                                       gegl_buffer_get_height (src),
                                                        u - (matrix_length/2),
                                                        v,
                                                        matrix_length,
@@ -419,21 +419,21 @@ fir_ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gint c;
 
         for (c=0; c<4; c++)
           dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       gegl_buffer_width (src),
-                                                       gegl_buffer_height (src),
+                                                       gegl_buffer_get_width (src),
+                                                       gegl_buffer_get_height (src),
                                                        u + skipoffsetX,
                                                        v - (matrix_length/2) + skipoffsetY,
                                                        1,

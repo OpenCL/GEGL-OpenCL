@@ -1210,10 +1210,10 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 }
 
 void
-gegl_buffer_set (GeglBuffer    *buffer,
-                 GeglRectangle *rect,
-                 Babl          *format,
-                 void          *src)
+gegl_buffer_set (GeglBuffer          *buffer,
+                 const GeglRectangle *rect,
+                 Babl                *format,
+                 void                *src)
 {
   GeglBuffer *sub_buf;
 
@@ -1250,12 +1250,12 @@ gegl_buffer_set (GeglBuffer    *buffer,
  * level:  halving levels 0 = 1:1 1=1:2 2=1:4 3=1:8 ..
  *
  */
-static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
-                                    GeglRectangle *rect,
-                                    void          *dst,
-                                    gint           rowstride,
-                                    void          *format,
-                                    gint           level)
+static void gegl_buffer_get_scaled (GeglBuffer          *buffer,
+                                    const GeglRectangle *rect,
+                                    void                *dst,
+                                    gint                 rowstride,
+                                    void                *format,
+                                    gint                 level)
 {
   GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
   gegl_buffer_iterate (sub_buf, dst, rowstride, FALSE, format, level);
@@ -1559,12 +1559,12 @@ static void resample_boxfilter_u8 (void   *dest_buf,
 #include <math.h>
 
 void
-gegl_buffer_get (GeglBuffer    *buffer,
-                 gdouble        scale,
-                 GeglRectangle *rect,
-                 Babl          *format,
-                 gpointer       dest_buf,
-                 gint           rowstride)
+gegl_buffer_get (GeglBuffer          *buffer,
+                 gdouble              scale,
+                 const GeglRectangle *rect,
+                 Babl                *format,
+                 gpointer             dest_buf,
+                 gint                 rowstride)
 {
 
   if (format == NULL)
@@ -1738,8 +1738,8 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-G_GNUC_CONST GeglRectangle *
-gegl_buffer_extent (GeglBuffer *buffer)
+const GeglRectangle *
+gegl_buffer_get_extent (GeglBuffer *buffer)
 {
   return &(buffer->extent);
 }
@@ -1766,8 +1766,8 @@ gegl_buffer_new (const GeglRectangle *extent,
 }
 
 GeglBuffer* 
-gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
-                               GeglRectangle *extent)
+gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
+                               const GeglRectangle *extent)
 {
   return g_object_new (GEGL_TYPE_BUFFER,
                        "provider", buffer,
@@ -1781,10 +1781,10 @@ gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
 }
 
 void
-gegl_buffer_copy (GeglBuffer    *src,
-                  GeglRectangle *src_rect,
-                  GeglBuffer    *dst,
-                  GeglRectangle *dst_rect)
+gegl_buffer_copy (GeglBuffer          *src,
+                  const GeglRectangle *src_rect,
+                  GeglBuffer          *dst,
+                  const GeglRectangle *dst_rect)
 {
   /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
 
@@ -1799,7 +1799,7 @@ gegl_buffer_copy (GeglBuffer    *src,
   g_assert (dst);
   if (!src_rect)
     {
-      src_rect = gegl_buffer_extent (src);
+      src_rect = gegl_buffer_get_extent (src);
     }
 
   if (!dst_rect)
@@ -1835,9 +1835,9 @@ gegl_buffer_dup (GeglBuffer *buffer)
   GeglBuffer *new;
 
   g_assert (buffer);
-  new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
-  gegl_buffer_copy (buffer, gegl_buffer_extent (buffer),
-                    new, gegl_buffer_extent (buffer));
+  new = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
+  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
+                    new, gegl_buffer_get_extent (buffer));
   return new;
 }
 

@@ -100,8 +100,8 @@ bilateral_filter (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_pixel_count(src) * 4 *4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count(dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count(src) * 4 *4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count(dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -114,23 +114,23 @@ bilateral_filter (GeglBuffer *src,
         gauss[x+(int)radius][y+(int)radius] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
       }
 
-  for (y=0; y<gegl_buffer_height (dst); y++)
-    for (x=0; x<gegl_buffer_width (dst); x++)
+  for (y=0; y<gegl_buffer_get_height (dst); y++)
+    for (x=0; x<gegl_buffer_get_width (dst); x++)
       {
         gint u,v;
-        gfloat *center_pix = src_buf + (x+(y * gegl_buffer_width (src))) * 4;
+        gfloat *center_pix = src_buf + (x+(y * gegl_buffer_get_width (src))) * 4;
         gfloat  accumulated[4]={0,0,0,0};
         gfloat  count=0.0;
         
         for (v=-radius;v<=radius;v++)
           for (u=-radius;u<=radius;u++)
             {
-              if (x+u >= 0 && x+u < gegl_buffer_width (dst) &&
-                  y+v >= 0 && y+v < gegl_buffer_height (dst))
+              if (x+u >= 0 && x+u < gegl_buffer_get_width (dst) &&
+                  y+v >= 0 && y+v < gegl_buffer_get_height (dst))
                 {
                   gint c;
                   
-                  gfloat *src_pix = src_buf + ((x+u)+((y+v) * gegl_buffer_width (src))) * 4;
+                  gfloat *src_pix = src_buf + ((x+u)+((y+v) * gegl_buffer_get_width (src))) * 4;
 
                   gfloat diff_map   = exp (- (POW2(center_pix[0] - src_pix[0])+
                                               POW2(center_pix[1] - src_pix[1])+

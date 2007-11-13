@@ -55,7 +55,7 @@ process (GeglOperation *operation,
 
   input = gegl_operation_get_source (operation, context_id, "input");
   output = gegl_operation_get_target (operation, context_id, "output");
-  temp  = gegl_buffer_new (gegl_buffer_extent (input),
+  temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
   hor_blur (input, temp,  self->radius);
@@ -162,21 +162,21 @@ hor_blur (GeglBuffer *src,
   gfloat *dst_buf;
 
   /* src == dst for hor blur */
-  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gint i;
         gfloat components[4];
 
         get_mean_components (src_buf,
-                             gegl_buffer_width (src),
-                             gegl_buffer_height (src),
+                             gegl_buffer_get_width (src),
+                             gegl_buffer_get_height (src),
                              u - radius,
                              v,
                              1 + radius*2,
@@ -204,21 +204,21 @@ ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_width (src) * gegl_buffer_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_width (dst) * gegl_buffer_height (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
   
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gfloat components[4];
         gint c;
 
         get_mean_components (src_buf,
-                             gegl_buffer_width (src),
-                             gegl_buffer_height (src),
+                             gegl_buffer_get_width (src),
+                             gegl_buffer_get_height (src),
                              u + radius,  /* 1x radius is the offset between the bufs */
                              v - radius + radius, /* 1x radius is the offset between the bufs */
                              1,

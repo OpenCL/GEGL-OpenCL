@@ -67,7 +67,7 @@ get_defined_region (GeglOperation *operation)
     {
       return result;
     }
-  result = *gegl_buffer_extent (GEGL_BUFFER (self->buffer));
+  result = *gegl_buffer_get_extent (GEGL_BUFFER (self->buffer));
   return result;
 }
 

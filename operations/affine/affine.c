@@ -583,19 +583,19 @@ affine_generic (GeglBuffer        *dest,
                 Matrix3            matrix,
                 GeglInterpolation  interpolation)
 {
-  GeglRectangle *dest_extent;
-  gint           x, y;
-  gfloat        *dest_buf,
-                *dest_ptr;
-  Matrix3        inverse;
-  gdouble        u_start,
-                 v_start,
-                 u_float,
-                 v_float;
+  const GeglRectangle *dest_extent;
+  gint                  x, y;
+  gfloat               *dest_buf,
+                       *dest_ptr;
+  Matrix3               inverse;
+  gdouble               u_start,
+                        v_start,
+                        u_float,
+                        v_float;
 
-  Babl          *format; 
+  Babl                 *format; 
   
-  gint           dest_pixels;
+  gint                  dest_pixels;
 
   format = babl_format ("RaGaBaA float");
 
@@ -604,7 +604,7 @@ affine_generic (GeglBuffer        *dest,
    *      the generic code.
    */
   g_object_get (dest, "pixels", &dest_pixels, NULL);
-  dest_extent = gegl_buffer_extent (dest);
+  dest_extent = gegl_buffer_get_extent (dest);
 
   dest_buf = g_new (gfloat, dest_pixels * 4);
 

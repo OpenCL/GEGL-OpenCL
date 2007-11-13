@@ -63,7 +63,7 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
  * Create a new sub GeglBuffer, that is a view on a larger buffer.
  */
 GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
-                                               GeglRectangle       *extent);
+                                               const GeglRectangle *extent);
 
 /**
  * gegl_buffer_destroy:
@@ -76,21 +76,21 @@ GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
 void            gegl_buffer_destroy           (GeglBuffer          *buffer);
 
 /**
- * gegl_buffer_extent:
+ * gegl_buffer_get_extent:
  * @buffer: the buffer to operate on.
  *
  * Returns a pointer to a GeglRectangle structure defining the geometry of a
  * specific GeglBuffer, this is also the default width/height of buffers passed
  * in to gegl_buffer_set and gegl_buffer_get (with a scale of 1.0 at least).
  */
-G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
+const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
 
 /* convenience access macros */
-#define gegl_buffer_x(buffer)           (gegl_buffer_extent(buffer)->x)
-#define gegl_buffer_y(buffer)           (gegl_buffer_extent(buffer)->y)
-#define gegl_buffer_width(buffer)       (gegl_buffer_extent(buffer)->width)
-#define gegl_buffer_height(buffer)      (gegl_buffer_extent(buffer)->height)
-#define gegl_buffer_pixel_count(buffer) (gegl_buffer_width(buffer) * gegl_buffer_height(buffer))
+#define gegl_buffer_get_x(buffer)           (gegl_buffer_get_extent(buffer)->x)
+#define gegl_buffer_get_y(buffer)           (gegl_buffer_get_extent(buffer)->y)
+#define gegl_buffer_get_width(buffer)       (gegl_buffer_get_extent(buffer)->width)
+#define gegl_buffer_get_height(buffer)      (gegl_buffer_get_extent(buffer)->height)
+#define gegl_buffer_get_pixel_count(buffer) (gegl_buffer_get_width(buffer) * gegl_buffer_get_height(buffer))
 
 #ifndef GEGL_AUTO_ROWSTRIDE
 #define GEGL_AUTO_ROWSTRIDE 0
@@ -114,12 +114,12 @@ G_GNUC_CONST GeglRectangle * gegl_buffer_extent (GeglBuffer *buffer);
  * same this amounts to a series of memcpy's aligned to demux the tile structure into
  * a linear buffer.
  */
-void            gegl_buffer_get               (GeglBuffer       *buffer,
-                                               gdouble           scale,
-                                               GeglRectangle    *rect,
-                                               Babl             *format,
-                                               gpointer          dest,
-                                               gint              rowstride);
+void            gegl_buffer_get               (GeglBuffer          *buffer,
+                                               gdouble              scale,
+                                               const GeglRectangle *rect,
+                                               Babl                *format,
+                                               gpointer             dest,
+                                               gint                 rowstride);
 
 /**
  * gegl_buffer_set:
@@ -130,10 +130,10 @@ void            gegl_buffer_get               (GeglBuffer       *buffer,
  *
  * Store a linear raster buffer into the GeglBuffer.
  */
-void            gegl_buffer_set               (GeglBuffer       *buffer,
-                                               GeglRectangle    *rect,
-                                               Babl             *format,
-                                               void             *src);
+void            gegl_buffer_set               (GeglBuffer          *buffer,
+                                               const GeglRectangle *rect,
+                                               Babl                *format,
+                                               void                *src);
 
 
 /**
@@ -150,10 +150,10 @@ void            gegl_buffer_set               (GeglBuffer       *buffer,
  * align, this should optimally lead to shared tiles that are copy on write,
  * this functionality is not implemented yet.
  */
-void            gegl_buffer_copy              (GeglBuffer       *src,
-                                               GeglRectangle    *src_rect,
-                                               GeglBuffer       *dst,
-                                               GeglRectangle    *dst_rect);
+void            gegl_buffer_copy              (GeglBuffer          *src,
+                                               const GeglRectangle *src_rect,
+                                               GeglBuffer          *dst,
+                                               const GeglRectangle *dst_rect);
 
 
 /** 

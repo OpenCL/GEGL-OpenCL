@@ -1,5 +1,39 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: renamed gegl_buffer_extent to
+	gegl_buffer_get_extent. Made marked GeglRectangle parameters of
+	GeglRectangle methods as const. renamed gegl_buffer_x gegl_buffer_y
+	gegl_buffer_width gegl_buffer_height and gegl_buffer_pixel_count to
+	to containt _get_ as well.
+
+	* operations/affine/affine.c:
+	* operations/blur/box-blur.c: 
+	* operations/blur/gaussian-blur.c:
+	* operations/color/stretch-contrast.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/load-buffer.c:
+	* operations/io/raw-load.c: 
+	* operations/render/introspect.c:
+	* operations/workshop/bilateral-filter.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/box-percentile.c: 
+	* operations/workshop/c2g.c: 
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara.c: 
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/rawbayer-load.c: 
+	* operations/workshop/snn-mean.c: 
+	* operations/workshop/snn-percentile.c: 
+	* operations/workshop/stress.c: 
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: modified to write a gegl.devhelp file
 	into the current directory in addition to generating the requested
 	html document.

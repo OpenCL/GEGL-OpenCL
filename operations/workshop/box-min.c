@@ -127,21 +127,21 @@ hor_min (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gint i;
 
         for (i=0; i<4; i++)
           dst_buf [offset++] = get_min_component (src_buf,
-                               gegl_buffer_width (src),
-                               gegl_buffer_height (src),
+                               gegl_buffer_get_width (src),
+                               gegl_buffer_get_height (src),
                                u - radius,
                                v,
                                1 + radius*2,
@@ -165,22 +165,22 @@ ver_min (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
   
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
-  for (v=0; v<gegl_buffer_height (dst); v++)
-    for (u=0; u<gegl_buffer_width (dst); u++)
+  for (v=0; v<gegl_buffer_get_height (dst); v++)
+    for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
         gint c;
 
         for (c=0; c<4; c++)
           dst_buf [offset++] =
            get_min_component (src_buf,
-                              gegl_buffer_width (src),
-                              gegl_buffer_height (src),
+                              gegl_buffer_get_width (src),
+                              gegl_buffer_get_height (src),
                               u,
                               v - radius,
                               1,

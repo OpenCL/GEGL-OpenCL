@@ -78,15 +78,15 @@ demosaic (GeglChantOperation *op,
           GeglBuffer *src,
           GeglBuffer *dst)
 {
-  GeglRectangle *src_extent = gegl_buffer_extent (src);
-  GeglRectangle *dst_extent = gegl_buffer_extent (dst);
+  const GeglRectangle *src_extent = gegl_buffer_get_extent (src);
+  const GeglRectangle *dst_extent = gegl_buffer_get_extent (dst);
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_pixel_count (src) * 4);
-  dst_buf = g_malloc0 (gegl_buffer_pixel_count (dst) * 4 * 3);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 3);
   
   gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
