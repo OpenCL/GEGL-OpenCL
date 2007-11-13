@@ -1,5 +1,11 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-point-composer.c:
+	(gegl_operation_point_composer_class_init): disable caching
+	for the over-op for now.
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed type-checking from casts directly involved in the tile-bus.
 
 	* gegl/buffer/gegl-handler.c: (get_tile), (message):

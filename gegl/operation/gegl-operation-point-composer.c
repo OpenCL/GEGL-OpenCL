@@ -43,6 +43,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
 
   composer_class->process = process_inner;
   operation_class->prepare = prepare;
+  operation_class->no_cache =TRUE;
 }
 
 static void
