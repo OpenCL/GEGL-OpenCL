@@ -1,5 +1,10 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-point-composer.c: (fast_paths):
+	silence gcc about potentially unintialized variable.
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: renamed gegl_buffer_extent to
 	gegl_buffer_get_extent. Made marked GeglRectangle parameters of
 	GeglRectangle methods as const. renamed gegl_buffer_x gegl_buffer_y

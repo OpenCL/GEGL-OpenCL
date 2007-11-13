@@ -205,13 +205,13 @@ fast_paths (GeglOperation *operation,
             }
 /* SKIP_EMPTY_AUX */
             {
-              const GeglRectangle *aux_abyss;
+              const GeglRectangle *aux_abyss = NULL;
 
               if (aux)
                 aux_abyss = gegl_buffer_get_abyss (aux);
 
               if (!aux ||
-                  !gegl_rectangle_intersect (NULL, aux_abyss, result))
+                  (aux && !gegl_rectangle_intersect (NULL, aux_abyss, result)))
                 {
                   g_object_ref (input);
                   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
