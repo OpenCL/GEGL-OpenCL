@@ -1,5 +1,26 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Moved bilateral-filter, ssn-mean, contrast-curve, mono-mixer and
+	value-invert from the workshop to be official operations for the
+	next release.
+
+	* configure.ac: added enhance Makefile.am
+	* operations/Makefile.am: added enhance subdir
+	* operations/enhance/: added directory.
+	* operations/enhance/Makefile.am: added
+	* operations/workshop/bilateral-filter.c: moved ...
+	* operations/enhance/bilateral-filter.c: ... here
+	* operations/workshop/snn-mean.c: moved ...
+	* operations/enhance/snn-mean.c: ... here
+	* operations/workshop/contrast-curve.c: moved ...
+	* operations/color/contrast-curve.c: ... here
+	* operations/workshop/mono-mixer.c: moved ...
+	* operations/color/mono-mixer.c: ... here
+	* operations/workshop/value-invert.c: moved ...
+	* operations/color/value-invert.c: ... here
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-point-composer.c: (fast_paths):
 	silence gcc about potentially unintialized variable.
 

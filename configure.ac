@@ -617,6 +617,7 @@ operations/affine/Makefile
 operations/blur/Makefile
 operations/color/Makefile
 operations/core/Makefile
+operations/enhance/Makefile
 operations/generated/Makefile
 operations/io/Makefile
 operations/meta/Makefile
