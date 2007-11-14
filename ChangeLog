@@ -1,5 +1,9 @@
 2007-11-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* docs/Makefile.am: Additional fixes needed for distcheck.
+
+2007-11-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* configure.ac
 	* Makefile.am: Changed method used to make building of docs optional.
 	Fix needed for distcheck.

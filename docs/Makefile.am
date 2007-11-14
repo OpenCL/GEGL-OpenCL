@@ -6,15 +6,16 @@ SUBDIRS= gallery
 #	
 #
 #
-HTML_FILES = index-static.html 		\
-	     index.html			\
-	     operations.html		\
-	     class-hierarchy.html	\
-	     gegl.h.html
+HTML_FILES = index-static.html 	\
+	index.html		\
+	operations.html		\
+	class-hierarchy.html	\
+	gegl.h.html
 
 EXTRA_DIST= 			\
 	ChangeLog		\
 	gegl.css  		\
+	gegl.devhelp		\
 	devhelp.css		\
 	hello-world.c		\
 	index-static.html.in	\
@@ -82,8 +83,12 @@ help_dir = $(prefix)/share/gtk-doc/html/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(help_dir)
-	$(INSTALL) api.html gegl.devhelp $(help_dir)
-	$(INSTALL) -T devhelp.css $(help_dir)/gegl.css
+	$(INSTALL) $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
+	$(INSTALL) -T $(srcdir)/devhelp.css $(help_dir)/gegl.css
+
+uninstall-local:
+	rm -f $(help_dir)/api.html $(help_dir)/gegl.devhelp
+	rm -f $(help_dir)/gegl.css
 
 web: all
 	echo -n " WEB: "
