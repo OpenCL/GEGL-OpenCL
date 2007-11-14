@@ -1,3 +1,10 @@
+2007-11-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/introspect.c:
+	- make the generated markup valid XHTML 1.0 Transitional.
+	- Use the devhelp css (to work around what is probably
+	a rendering glitch in gecko.)
+
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Moved bilateral-filter, ssn-mean, contrast-curve, mono-mixer and

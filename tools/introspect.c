@@ -8,7 +8,7 @@ void collapse_all (GType type);
 void expand_all (GType type);
 
 static gchar *collapsibles_html =
-"   <script type='text/javascript'>"
+"   <script type='text/javascript'>/*<!--*/"
 "    function hide(id)"
 "    {"
 "      (document.getElementById(id)).style.display = \"none\";"
@@ -46,7 +46,45 @@ static gchar *collapsibles_html =
 "      else"
 "        set_visible(id,true);"
 "    }"
-"    </script>";
+"    /*-->*/</script>";
+
+gchar *escape (const gchar *string)
+{
+  gchar buf[4095]="";
+  const gchar *p=string;
+  gint i=0;
+
+  while (*p)
+    {
+      switch (*p)
+        {
+          case '<':
+            buf[i++]='&';
+            buf[i++]='l';
+            buf[i++]='t';
+            buf[i++]=';';
+            break;
+          case '>':
+            buf[i++]='&';
+            buf[i++]='g';
+            buf[i++]='t';
+            buf[i++]=';';
+            break;
+          case '&':
+            buf[i++]='&';
+            buf[i++]='a';
+            buf[i++]='m';
+            buf[i++]='p';
+            buf[i++]=';';
+            break;
+          default:
+            buf[i++]=*p;
+        }
+      p++;
+      buf[i]='\0';
+    }
+  return g_strdup (buf);
+}
 
 void  introspect_overview (GType type, gint  indent);
 void  introspect (GType type, gint  indent);
@@ -55,13 +93,16 @@ gint  stuff      (gint    argc, gchar **argv);
 static void introspection (void)
 {
   file = stdout;
-  fprintf (file, "<html><head><title>GObject class introspection</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);</style>%s</head><body>\n", collapsibles_html);
+  fprintf (file, "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'\n'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>\n"
+                 "<html xmlns='http://www.w3.org/1999/xhtml' lang='en' xml:lang='en'>");
+
+  fprintf (file, "<head><title>GObject class introspection</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(devhelp.css);</style>%s</head><body>\n", collapsibles_html);
   fprintf (file, "<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#top'>Class hierarchy</a></li>\n");
   fprintf (file, "</ul></div>\n");
   fprintf (file, "<div class='paper'><div class='content'>\n");
 
 
-  fprintf (file, "<a name='#top'></a>\n");
+  fprintf (file, "<a name='top'></a>\n");
   fprintf (file, "<div>\n");
   fprintf (file, "<a href='javascript:");
   collapse_all (G_TYPE_OBJECT);
@@ -181,7 +222,7 @@ list_properties_simple (GType type)
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              g_param_spec_get_blurb (self[prop_no]));
+              escape (g_param_spec_get_blurb (self[prop_no])));
         }
     }
   if (!first)
@@ -237,7 +278,7 @@ list_properties (GType type,
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              g_param_spec_get_blurb (self[prop_no]));
+              escape(g_param_spec_get_blurb (self[prop_no])));
         }
     }
   if (!first)
@@ -265,7 +306,7 @@ list_properties (GType type,
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              g_param_spec_get_blurb (self[prop_no]));
+              escape(g_param_spec_get_blurb (self[prop_no])));
         }
     }
   if (!first)
@@ -349,7 +390,7 @@ introspect (GType type,
     return;
 
   fprintf (file, "<hr/>\n");
-  fprintf (file, "<a name='%s'><h3>%s</h3></a>\n", g_type_name (type),
+  fprintf (file, "<h3><a name='%s'>%s</a></h3>\n", g_type_name (type),
                                                    g_type_name (type));
   list_superclasses (type);
   details_for_type (type);
