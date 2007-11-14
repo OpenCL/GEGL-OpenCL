@@ -199,10 +199,11 @@ changequote([,])dnl
 
 dnl disable docs generation.
 AC_ARG_ENABLE([docs],
-              [  --disable-docs           Disable docs generation],
-	      if test "x"$enableval = "xyes" ; then DOCS_SUBDIR=[docs]; fi)
+              [  --disable-docs          disable docs generation (default=no)],,
+              enable_docs="yes")
 
-AC_SUBST(DOCS_SUBDIR)
+AM_CONDITIONAL(ENABLE_DOCS, test "x$enable_docs" == "xyes")
+
 
 dnl Cache $ACLOCAL_FLAGS
 AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
@@ -273,8 +274,7 @@ AC_SUBST(SHREXT)
 # Threads and multi processor 
 #############################
 
-AC_ARG_ENABLE(mp, [  --disable-mp            disable support for multiple proces
-sors])
+AC_ARG_ENABLE(mp, [  --disable-mp            disable support for multiple processors])
 if test "x$enable_mp" != "xno"; then
   PKG_CHECK_MODULES(GTHREAD, gthread-2.0,
     [AC_DEFINE(ENABLE_MP, 1,
@@ -638,6 +638,9 @@ gegl-uninstalled.pc
 dnl Print a summary of features enabled/disabled:
 AC_MSG_RESULT([
 Building GEGL with prefix=$prefix
+
+Optional features:
+  GEGL docs:      $enable_docs
 
 Optional dependencies:
   Ruby:           $have_ruby
