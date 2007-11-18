@@ -1,4 +1,9 @@
 2007-11-18  Shlomi Fish  <shlomif@iglu.org.il>
+
+	* gegl/gegl.h: clarified a sentence in the docs for gegl_node_process.
+	Thanks to pippin for suggesting a better sentence, which I revised.
+
+2007-11-18  Shlomi Fish  <shlomif@iglu.org.il>
 	
 	* gegl/gegl.h: fixed the formatting of "--" to "---" to make sure it
 	is formatted as a code block.

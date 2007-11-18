@@ -415,9 +415,11 @@ void          gegl_node_blit             (GeglNode      *node,
  * @sink_node: a #GeglNode without outputs.
  *
  * Render a composition. This can be used for instance on a node with a "png-save"
- * operation to render all neccesary data, and make it be written to file. The
- * function is blocking for a non blocking way of doing the same. See
- * #GeglProcessor.
+ * operation to render all neccesary data, and make it be written to file. This
+ * function wraps the usage of a GeglProcessor in a single blocking function
+ * call. If you need a non-blocking operation, then make a direct use of
+ * #gegl_processor_work. See #GeglProcessor.
+ *
  * ---
  * GeglNode      *gegl;
  * GeglRectangle  roi;
