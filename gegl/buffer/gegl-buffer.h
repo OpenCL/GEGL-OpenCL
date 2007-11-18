@@ -86,10 +86,45 @@ void            gegl_buffer_destroy           (GeglBuffer          *buffer);
 const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
 
 /* convenience access macros */
+
+/**
+ * gegl_buffer_get_x:
+ * @buffer: a GeglBuffer
+ *
+ * Evaluates to the X coordinate of the upper left corner of the buffers extent.
+ */
 #define gegl_buffer_get_x(buffer)           (gegl_buffer_get_extent(buffer)->x)
+
+/**
+ * gegl_buffer_get_y:
+ * @buffer: a GeglBuffer
+ *
+ * Evaluates to the Y coordinate of the upper left corner of the buffers extent.
+ */
 #define gegl_buffer_get_y(buffer)           (gegl_buffer_get_extent(buffer)->y)
+
+/**
+ * gegl_buffer_get_width:
+ * @buffer: a GeglBuffer
+ *
+ * Evaluates to the width of the buffers extent.
+ */
 #define gegl_buffer_get_width(buffer)       (gegl_buffer_get_extent(buffer)->width)
+
+/**
+ * gegl_buffer_get_height:
+ * @buffer: a GeglBuffer
+ *
+ * Evaluates to the height of the buffers extent.
+ */
 #define gegl_buffer_get_height(buffer)      (gegl_buffer_get_extent(buffer)->height)
+
+/**
+ * gegl_buffer_get_pixel_count:
+ * @buffer: a GeglBuffer
+ *
+ * Evaluates to the total number of pixels in a buffer.
+ */
 #define gegl_buffer_get_pixel_count(buffer) (gegl_buffer_get_width(buffer) * gegl_buffer_get_height(buffer))
 
 #ifndef GEGL_AUTO_ROWSTRIDE
@@ -202,7 +237,7 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
  *
  * Clean up resources used by sampling framework of buffer (will be freed
  * automatically later when the buffer is destroyed, for long lived buffers
- * cleaning up the sampling infrastructure when it has been used for it's
+ * cleaning up the sampling infrastructure when it has been used for its
  * purpose will sometimes be more efficient).
  */ 
 void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);

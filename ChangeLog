@@ -1,3 +1,9 @@
+2007-11-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: fixed it's typo (from rindolf)
+	* gegl/buffer/gegl-buffer.h: documented getter macros. fixed it's type
+	(from rindolf)
+
 2007-11-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* docs/Makefile.am: Additional fixes needed for distcheck.

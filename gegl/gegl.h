@@ -29,7 +29,7 @@
  * The concepts covered in this reference should also be applicable when
  * using other languages.
  *
- * The core API of GEGL isn't frozen yet and feedback regarding it's use as
+ * The core API of GEGL isn't frozen yet and feedback regarding its use as
  * well as the clarity of this documentation is most welcome.
  */
 
