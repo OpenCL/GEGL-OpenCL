@@ -1,3 +1,8 @@
+2007-11-18  Shlomi Fish  <shlomif@iglu.org.il>
+	
+	* gegl/gegl.h: fixed the formatting of "--" to "---" to make sure it
+	is formatted as a code block.
+
 2007-11-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: fixed it's typo (from rindolf)

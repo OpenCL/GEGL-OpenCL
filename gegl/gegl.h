@@ -120,7 +120,7 @@ void           gegl_exit                 (void);
  *
  * Returns an alphabetically sorted array of available operation names. The
  * list should be freed with g_free after use.
- * --
+ * ---
  * gchar **operations;
  * guint   n_operations;
  * gint i;
