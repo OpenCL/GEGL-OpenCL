@@ -779,7 +779,7 @@ GType gegl_color_get_type (void) G_GNUC_CONST;
 
 /**
  * gegl_color_new:
- * @string: an CSS style color string.
+ * @string: a CSS-style color string.
  *
  * Returns a #GeglColor object suitable for use with #gegl_node_set.
  */

@@ -1,5 +1,10 @@
 2007-11-19  Shlomi Fish  <shlomif@iglu.org.il>
 
+	* gegl/gegl.h: fixed "an CSS style color string." into "a CSS-style color 
+	string." in the documentation.
+
+2007-11-19  Shlomi Fish  <shlomif@iglu.org.il>
+
 	* docs/index-static.html.in: fixed "GEGLs" into "GEGL's" and "GIMPs"
 	into "GIMP's" in the homepage.
 
