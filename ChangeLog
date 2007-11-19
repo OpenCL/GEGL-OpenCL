@@ -1,3 +1,8 @@
+2007-11-19  Shlomi Fish  <shlomif@iglu.org.il>
+
+	* docs/index-static.html.in: fixed "GEGLs" into "GEGL's" and "GIMPs"
+	into "GIMP's" in the homepage.
+
 2007-11-18  Shlomi Fish  <shlomif@iglu.org.il>
 
 	* gegl/gegl.h: clarified a sentence in the docs for gegl_node_process.
