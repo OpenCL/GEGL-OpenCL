@@ -32,9 +32,9 @@ enum
   PROP_0,
 };
 
-typedef struct _GeglCurvePoint GeglCurvePoint;
+typedef struct _GeglCurvePoint   GeglCurvePoint;
 typedef struct _GeglCurvePrivate GeglCurvePrivate;
-typedef struct _CurveNameEntity CurveNameEntity;
+typedef struct _CurveNameEntity  CurveNameEntity;
 
 struct _GeglCurvePoint
 {
@@ -45,37 +45,38 @@ struct _GeglCurvePoint
 
 struct _GeglCurvePrivate
 {
-  gfloat y_min;
-  gfloat y_max;
-  GArray *points;
-  gboolean need_recalc;
+  gfloat           y_min;
+  gfloat           y_max;
+  GArray          *points;
+  gboolean         need_recalc;
   GeglCurvePoint **indir;
 };
 
-static void      finalize     (GObject      *self);
-static void      set_property (GObject      *gobject,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec);
-static void      get_property (GObject    *gobject,
-                               guint       prop_id,
-                               GValue     *value,
-                               GParamSpec *pspec);
+static void finalize     (GObject      *self);
+static void set_property (GObject      *gobject,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec);
+static void get_property (GObject      *gobject,
+                          guint         prop_id,
+                          GValue       *value,
+                          GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GeglCurve, gegl_curve, G_TYPE_OBJECT);
 
-#define GEGL_CURVE_GET_PRIVATE(o)    (G_TYPE_INSTANCE_GET_PRIVATE ((o), GEGL_TYPE_CURVE, GeglCurvePrivate))
+#define GEGL_CURVE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
+                                   GEGL_TYPE_CURVE, GeglCurvePrivate))
 
 static void
 gegl_curve_init (GeglCurve *self)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
 
-  priv->y_min = 0.0;
-  priv->y_max = 1.0;
+  priv->y_min       = 0.0;
+  priv->y_max       = 1.0;
   priv->need_recalc = FALSE;
-  priv->indir = NULL;
-  priv->points = g_array_new(FALSE, FALSE, sizeof(GeglCurvePoint));
+  priv->indir       = NULL;
+  priv->points      = g_array_new (FALSE, FALSE, sizeof (GeglCurvePoint));
 }
 
 static void
@@ -93,17 +94,17 @@ gegl_curve_class_init (GeglCurveClass *klass)
 static void
 finalize (GObject *gobject)
 {
-  GeglCurve *self = GEGL_CURVE (gobject);
+  GeglCurve        *self = GEGL_CURVE (gobject);
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
 
-  g_array_free(priv->points, TRUE);
+  g_array_free (priv->points, TRUE);
   priv->points = NULL;
 
   if (priv->indir != NULL)
-  {
-    g_free(priv->indir);
-    priv->indir = NULL;
-  }
+    {
+      g_free (priv->indir);
+      priv->indir = NULL;
+    }
 
   G_OBJECT_CLASS (gegl_curve_parent_class)->finalize (gobject);
 }
@@ -138,12 +139,12 @@ get_property (GObject    *gobject,
 
 GeglCurve *
 gegl_curve_new (gfloat y_min,
-		gfloat y_max)
+                gfloat y_max)
 {
-  GeglCurve *self = GEGL_CURVE (g_object_new (GEGL_TYPE_CURVE, NULL));
+  GeglCurve        *self = GEGL_CURVE (g_object_new (GEGL_TYPE_CURVE, NULL));
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
 
-  gegl_curve_init(self);
+  gegl_curve_init (self);
   priv->y_min = y_min;
   priv->y_max = y_max;
 
@@ -153,38 +154,38 @@ gegl_curve_new (gfloat y_min,
 GeglCurve*
 gegl_curve_default_curve (void)
 {
-    static GeglCurve *curve = NULL;
+  static GeglCurve *curve = NULL;
 
-    if (curve == NULL)
+  if (curve == NULL)
     {
-	curve = gegl_curve_new(0.0, 1.0);
-	gegl_curve_add_point(curve, 0.0, 0.0);
-	gegl_curve_add_point(curve, 1.0, 1.0);
+      curve = gegl_curve_new (0.0, 1.0);
+      gegl_curve_add_point (curve, 0.0, 0.0);
+      gegl_curve_add_point (curve, 1.0, 1.0);
     }
 
-    return curve;
+  return curve;
 }
 
 void
 gegl_curve_get_y_bounds (GeglCurve    *self,
-			 gfloat       *min_y,
-			 gfloat       *max_y)
+                         gfloat       *min_y,
+                         gfloat       *max_y)
 {
-    GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
+  GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
 
-    *min_y = priv->y_min;
-    *max_y = priv->y_max;
+  *min_y = priv->y_min;
+  *max_y = priv->y_max;
 }
 
 guint
 gegl_curve_add_point (GeglCurve    *self,
-		      gfloat       x,
-		      gfloat       y)
+                      gfloat        x,
+                      gfloat        y)
 {
-  GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  GeglCurvePoint point = { x, y };
+  GeglCurvePrivate *priv  = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
+  GeglCurvePoint    point = { x, y };
 
-  g_array_append_val(priv->points, point);
+  g_array_append_val (priv->points, point);
 
   priv->need_recalc = TRUE;
 
@@ -193,15 +194,15 @@ gegl_curve_add_point (GeglCurve    *self,
 
 void
 gegl_curve_get_point (GeglCurve      *self,
-		      guint	      index,
-		      gfloat	     *x,
-		      gfloat	     *y)
+                      guint           index,
+                      gfloat         *x,
+                      gfloat         *y)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  GeglCurvePoint point;
+  GeglCurvePoint    point;
 
-  g_assert(index < priv->points->len);
-  point = g_array_index(priv->points, GeglCurvePoint, index);
+  g_assert (index < priv->points->len);
+  point = g_array_index (priv->points, GeglCurvePoint, index);
 
   *x = point.x;
   *y = point.y;
@@ -209,15 +210,15 @@ gegl_curve_get_point (GeglCurve      *self,
 
 void
 gegl_curve_set_point (GeglCurve      *self,
-		      guint	     index,
-		      gfloat	     x,
-		      gfloat	     y)
+                      guint           index,
+                      gfloat          x,
+                      gfloat          y)
 {
-  GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  GeglCurvePoint point = { x, y };
+  GeglCurvePrivate *priv  = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
+  GeglCurvePoint    point = { x, y };
 
-  g_assert(index < priv->points->len);
-  g_array_index(priv->points, GeglCurvePoint, index) = point;
+  g_assert (index < priv->points->len);
+  g_array_index (priv->points, GeglCurvePoint, index) = point;
 
   priv->need_recalc = TRUE;
 }
@@ -231,10 +232,11 @@ gegl_curve_num_points (GeglCurve   *self)
 }
 
 static int
-compare_point_indirs (const void *_p1, const void *_p2)
+compare_point_indirs (const void *_p1,
+                      const void *_p2)
 {
-  GeglCurvePoint *p1 = *(GeglCurvePoint**)_p1;
-  GeglCurvePoint *p2 = *(GeglCurvePoint**)_p2;
+  GeglCurvePoint *p1 = *(GeglCurvePoint**) _p1;
+  GeglCurvePoint *p2 = *(GeglCurvePoint**) _p2;
 
   if (p1->x < p2->x)
     return -1;
@@ -243,17 +245,19 @@ compare_point_indirs (const void *_p1, const void *_p2)
   return 0;
 }
 
-#define X(i)      (priv->indir[(i)]->x)
-#define Y(i)      (priv->indir[(i)]->y)
-#define Y2(i)     (priv->indir[(i)]->y2)
-#define YCLAMP(y)         ((y)<priv->y_min ? priv->y_min : ((y)>priv->y_max ? priv->y_max : (y)))
+#define X(i)        (priv->indir[(i)]->x)
+#define Y(i)        (priv->indir[(i)]->y)
+#define Y2(i)       (priv->indir[(i)]->y2)
+#define YCLAMP(y)   ((y) < priv->y_min ? priv->y_min  : \
+                    ((y) > priv->y_max ? priv-> y_max : \
+                     (y)))
 
 static void
 recalculate (GeglCurvePrivate *priv)
 {
-  guint len = priv->points->len;
-  guint i;
-  gint k;
+  guint   len = priv->points->len;
+  guint   i;
+  gint    k;
   gfloat *b;
 
   if (!priv->need_recalc)
@@ -265,128 +269,142 @@ recalculate (GeglCurvePrivate *priv)
     return;
 
   if (priv->indir != NULL)
-    g_free(priv->indir);
-  priv->indir = (GeglCurvePoint**)g_malloc(sizeof(GeglCurvePoint*) * len);
+    {
+      g_free (priv->indir);
+    }
+  priv->indir = (GeglCurvePoint**) g_malloc (sizeof (GeglCurvePoint*) * len);
 
   for (i = 0; i < len; ++i)
-    priv->indir[i] = &g_array_index(priv->points, GeglCurvePoint, i);
+    {
+      priv->indir[i] = &g_array_index (priv->points, GeglCurvePoint, i);
+    }
 
-  qsort(priv->indir, len, sizeof(GeglCurvePoint*), compare_point_indirs);
+  qsort (priv->indir, len, sizeof (GeglCurvePoint*), compare_point_indirs);
 
-  b = (gfloat*)g_malloc(sizeof(gfloat) * (len - 1));
+  b = (gfloat*) g_malloc (sizeof (gfloat) * (len - 1));
 
-  // lower natural boundary conditions
-  Y2(0) = b[0] = 0.0;
+  /* lower natural boundary conditions */
+  Y2 (0) = b[0] = 0.0;
 
   for (i = 1; i < len - 1; ++i)
-  {
-    gfloat sig = (X(i) - X(i-1)) / (X(i+1) - X(i-1));
-    gfloat p = sig * Y2(i-1) + 2;
+    {
+      gfloat sig = (X (i) - X (i - 1)) / (X (i + 1) - X (i - 1));
+      gfloat p   = sig * Y2 (i - 1) + 2;
 
-    Y2(i) = (sig - 1) / p;
-    b[i] = ((Y(i+1) - Y(i))
-	    / (X(i+1) - X(i)) - (Y(i) - Y(i-1)) / (X(i) - X(i-1)));
-    b[i] = (6 * b[i] / (X(i+1) - X(i-1)) - sig * b[i-1]) / p;
-  }
+      Y2 (i) = (sig - 1) / p;
+      b[i]   = (Y (i + 1) - Y (i)) / (X (i + 1) - X (i)) -
+               (Y (i) - Y (i - 1)) / (X (i) - X (i - 1));
+      b[i] = (6 * b[i] / (X (i + 1) - X (i - 1)) - sig * b[i - 1]) / p;
+    }
 
-  // upper natural boundary condition
-  Y2(len-1) = 0.0;
+  /* upper natural boundary condition */
+  Y2 (len - 1) = 0.0;
   for (k = len - 2; k >= 0; --k)
-    Y2(k) = Y2(k) * Y2(k+1) + b[k];
+    {
+      Y2 (k) = Y2 (k) * Y2 (k + 1) + b[k];
+    }
 
-  /*
-  for (i = 0; i < len; ++i)
-  {
-    printf("y2: %f   ", Y2(i))
-  */
-
-  g_free(b);
+  g_free (b);
 }
 
 static guint
-find_interval (GeglCurvePrivate *priv, gfloat u)
+find_interval (GeglCurvePrivate *priv,
+               gfloat            u)
 {
   guint len = priv->points->len;
-  guint i = 0, j = len - 1;
+  guint i   = 0, j = len - 1;
 
   while (j - i > 1)
-  {
-    guint k = (i + j) / 2;
-    if (X(k) > u)
-      j = k;
-    else
-      i = k;
-  }
+    {
+      guint k = (i + j) / 2;
+      if (X (k) > u)
+        j = k;
+      else
+        i = k;
+    }
 
   return i;
 }
 
 static gfloat
-apply (GeglCurvePrivate *priv, gfloat u, guint i)
+apply (GeglCurvePrivate *priv,
+       gfloat            u,
+       guint             i)
 {
-  gfloat h = X(i+1) - X(i);
-  gfloat a = (X(i+1) - u) / h;
-  gfloat b = (u - X(i)) / h;
-  gfloat y = a*Y(i) + b*Y(i+1) + ((a*a*a-a)*Y2(i) + (b*b*b-b)*Y2(i+1)) * (h*h)/6;
+  gfloat h = X (i + 1) - X (i);
+  gfloat a = (X (i + 1) - u) / h;
+  gfloat b = (u - X (i)) / h;
+  gfloat y = a * Y (i) + b*
+             Y (i +
+                1) +
+             ((a * a * a -
+               a) * Y2 (i) + (b * b * b - b) * Y2 (i + 1)) * (h * h) / 6;
 
-  return YCLAMP(y);
+  return YCLAMP (y);
 }
 
 gfloat
 gegl_curve_calc_value (GeglCurve   *self,
-		       gfloat      x)
+                       gfloat       x)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
 
-  recalculate(priv);
+  recalculate (priv);
 
   if (priv->points->len >= 2)
-    return apply(priv, x, find_interval(priv, x));
+    {
+      return apply (priv, x, find_interval (priv, x));
+    }
   else if (priv->points->len == 1)
-    return YCLAMP(g_array_index(priv->points, GeglCurvePoint, 0).y);
+    {
+      return YCLAMP (g_array_index (priv->points, GeglCurvePoint, 0).y);
+    }
   else
-  {
-    g_assert(priv->points->len == 0);
-    return priv->y_min;
-  }
+    {
+      g_assert (priv->points->len == 0);
+      return priv->y_min;
+    }
 }
 
 void
 gegl_curve_calc_values (GeglCurve   *self,
-			gfloat	    x_min,
-			gfloat      x_max,
-			guint       num_samples,
-			gfloat      *xs,
-			gfloat      *ys)
+                        gfloat       x_min,
+                        gfloat       x_max,
+                        guint        num_samples,
+                        gfloat      *xs,
+                        gfloat      *ys)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  guint len = priv->points->len;
-  guint i, j;
+  guint             len  = priv->points->len;
+  guint             i, j;
 
-  recalculate(priv);
+  recalculate (priv);
 
   j = 0;
   for (i = 0; i < num_samples; ++i)
-  {
-    gfloat u = x_min + (x_max - x_min) * (double)i / (double)(num_samples - 1);
-
-    xs[i] = u;
-
-    if (len >= 2)
     {
-      while (j < len - 2 && X(j+1) < u)
-	++j;
+      gfloat u = x_min +
+                 (x_max - x_min) * (double) i / (double) (num_samples - 1);
 
-      ys[i] = apply(priv, u, j);
+      xs[i] = u;
+
+      if (len >= 2)
+        {
+          while (j < len - 2 && X (j + 1) < u)
+            ++j;
+
+          ys[i] = apply (priv, u, j);
+        }
+      else if (len == 1)
+        {
+          ys[i] = YCLAMP (g_array_index (priv->points, GeglCurvePoint, 0).y);
+        }
+      else
+        {
+          g_assert (len == 0);
+          ys[i] = priv->y_min;
+        }
     }
-    else if (len == 1)
-      ys[i] = YCLAMP(g_array_index(priv->points, GeglCurvePoint, 0).y);
-    else
-    {
-      g_assert(len == 0);
-      ys[i] = priv->y_min;
-    }
-  }
 }
 
 #undef X
@@ -400,10 +418,19 @@ gegl_curve_calc_values (GeglCurve   *self,
  * --------------------------------------------------------------------------
  */
 
-#define GEGL_TYPE_PARAM_CURVE               (gegl_param_curve_get_type ())
-#define GEGL_PARAM_CURVE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
-#define GEGL_IS_PARAM_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_CURVE))
-#define GEGL_IS_PARAM_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_CURVE))
+#define GEGL_TYPE_PARAM_CURVE              \
+    (gegl_param_curve_get_type ())
+#define GEGL_PARAM_CURVE(obj)              \
+    (G_TYPE_CHECK_INSTANCE_CAST ((obj),    \
+    GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
+
+#define GEGL_IS_PARAM_CURVE(obj)           \
+    (G_TYPE_CHECK_INSTANCE_TYPE ((obj),    \
+    GEGL_TYPE_PARAM_CURVE))
+
+#define GEGL_IS_PARAM_CURVE_CLASS(klass)   \
+    (G_TYPE_CHECK_CLASS_TYPE ((klass),     \
+    GEGL_TYPE_PARAM_CURVE))
 
 typedef struct _GeglParamCurve GeglParamCurve;
 
@@ -424,7 +451,8 @@ static void
 gegl_param_curve_finalize (GParamSpec *self)
 {
   GeglParamCurve  *param_curve  = GEGL_PARAM_CURVE (self);
-  GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_CURVE));
+  GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (
+                                                       GEGL_TYPE_PARAM_CURVE));
 
   if (param_curve->default_curve)
     {

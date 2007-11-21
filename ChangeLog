@@ -1,3 +1,8 @@
+2007-11-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-curve.[ch]: reindented, removed C++ style
+	comments.
+
 2007-11-19  Shlomi Fish  <shlomif@iglu.org.il>
 
 	* gegl/gegl.h: fixed "an CSS style color string." into "a CSS-style color 
