@@ -158,6 +158,7 @@ AC_SUBST(GEGL_LIBS)
 AC_CONFIG_FILES([
   Makefile
   Gegl/Makefile
+  samples/Makefile
 ])
 
 AC_OUTPUT
