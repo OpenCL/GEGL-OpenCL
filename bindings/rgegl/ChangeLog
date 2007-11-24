@@ -1,3 +1,8 @@
+2007-11-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* src/rgegl-node.c: updated to reflect naming changes in xml
+	parsing/serialization API.
+
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Upgraded rgegl from LGPLv2 to LGPLv3. 

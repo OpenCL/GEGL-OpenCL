@@ -353,7 +353,7 @@ cnode_to_xml (self,
               path_root)
   VALUE self, path_root;
 {
-    gchar *xml = gegl_to_xml (_SELF (self), RVAL2CSTR(path_root));
+    gchar *xml = gegl_node_to_xml (_SELF (self), RVAL2CSTR(path_root));
     return CSTR2RVAL (xml);
 }
 
@@ -434,7 +434,7 @@ c_gegl_parse_xml(self, str, path_root)
     VALUE self, str, path_root;
 {
     GeglNode *root;
-    root = gegl_parse_xml (RVAL2CSTR (str), RVAL2CSTR (path_root));
+    root = gegl_node_new_from_xml (RVAL2CSTR (str), RVAL2CSTR (path_root));
     return GOBJ2RVAL(root);
 }
 
