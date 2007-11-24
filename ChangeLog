@@ -3,8 +3,8 @@
 	* gegl/property-types/gegl-curve.[ch]: (gegl_curve_new): switched to use
 	gdoubles in public api instead of floats.
 	* gegl/gegl.h: updated this copy of the function prototypes as well.
-	* gegl/gegl-xml.c: (xml_curve): updated to use floats instead of
-	doubles.
+	* gegl/gegl-xml.c: (xml_curve): updated to use doubles instead of
+	floats.
 
 2007-11-21  Øyvind Kolås  <pippin@gimp.org>
 
