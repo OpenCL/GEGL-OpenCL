@@ -1,0 +1,3 @@
+2007-11-24  Manish Singh  <yosh@gimp.org>
+
+	Complete rewrite of the python binding.
