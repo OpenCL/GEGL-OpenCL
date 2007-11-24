@@ -1,4 +1,0 @@
-export PYTHONPATH=../.libs
-python test1.py
-python pygegl.py
-python graph_construction.py
