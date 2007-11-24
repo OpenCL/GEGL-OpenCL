@@ -930,7 +930,7 @@ static void xml_curve (SerializeState *ss,
 		       GeglCurve      *curve)
 {
   gchar str[G_ASCII_DTOSTR_BUF_SIZE];
-  gfloat min_y, max_y;
+  gdouble min_y, max_y;
   guint num_points = gegl_curve_num_points (curve);
   guint i;
 
@@ -945,7 +945,7 @@ static void xml_curve (SerializeState *ss,
   g_string_append (ss->buf, "'>\n");
   for (i = 0; i < num_points; ++i)
     {
-      gfloat x, y;
+      gdouble x, y;
       gegl_curve_get_point (curve, i, &x, &y);
       xml_curve_point (ss, indent + 2, x, y);
     }

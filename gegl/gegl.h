@@ -783,7 +783,7 @@ GType gegl_color_get_type (void) G_GNUC_CONST;
  *
  * Returns a #GeglColor object suitable for use with #gegl_node_set.
  */
-GeglColor   * gegl_color_new             (const gchar   *string);
+GeglColor   * gegl_color_new                (const gchar   *string);
 
 /**
  * gegl_color_get_rgba:
@@ -795,11 +795,11 @@ GeglColor   * gegl_color_new             (const gchar   *string);
  *
  * Retrieve RGB component values from a #GeglColor.
  */
-void          gegl_color_get_rgba        (GeglColor     *color,
-                                          gfloat        *r,
-                                          gfloat        *g,
-                                          gfloat        *b,
-                                          gfloat        *a);
+void          gegl_color_get_rgba           (GeglColor     *color,
+                                             gfloat        *r,
+                                             gfloat        *g,
+                                             gfloat        *b,
+                                             gfloat        *a);
 
 /**
  * gegl_color_set_rgba:
@@ -811,11 +811,11 @@ void          gegl_color_get_rgba        (GeglColor     *color,
  *
  * Retrieve RGB component values from a GeglColor.
  */
-void          gegl_color_set_rgba        (GeglColor     *color,
-                                          gfloat         r,
-                                          gfloat         g,
-                                          gfloat         b,
-                                          gfloat         a);
+void          gegl_color_set_rgba           (GeglColor     *color,
+                                             gfloat         r,
+                                             gfloat         g,
+                                             gfloat         b,
+                                             gfloat         a);
 
 #ifndef GEGL_INTERNAL
 /***
@@ -848,49 +848,48 @@ struct _GeglRectangle
  * API is frozen.
  */
 typedef struct _GeglCurve       GeglCurve;
-GType        gegl_curve_get_type           (void) G_GNUC_CONST;
+GType        gegl_curve_get_type            (void) G_GNUC_CONST;
 #define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
 #define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
 #endif
 
+GeglCurve*   gegl_curve_new                 (gdouble         y_min,
+                                             gdouble         y_max);
 
-GeglCurve*   gegl_curve_new            (gfloat       y_min,
-                        gfloat       y_max);
+GeglCurve*   gegl_curve_default_curve       (void) G_GNUC_CONST;
 
-GeglCurve*   gegl_curve_default_curve          (void) G_GNUC_CONST;
+void         gegl_curve_get_y_bounds        (GeglCurve      *self,
+                                             gdouble        *min_y,
+                                             gdouble        *max_y);
 
-void         gegl_curve_get_y_bounds           (GeglCurve    *self,
-                        gfloat       *min_y,
-                        gfloat       *max_y);
+guint        gegl_curve_add_point           (GeglCurve      *self,
+                                             gdouble         x,
+                                             gdouble         y);
 
-guint        gegl_curve_add_point          (GeglCurve    *self,
-                        gfloat       x,
-                        gfloat       y);
+void         gegl_curve_remove_point_index  (GeglCurve      *self,
+                                             guint           index);
 
-void         gegl_curve_remove_point_index     (GeglCurve   *self,
-                        guint        index);
+void         gegl_curve_get_point           (GeglCurve      *self,
+                                             guint           index,
+                                             gdouble        *x,
+                                             gdouble        *y);
 
-void         gegl_curve_get_point          (GeglCurve    *self,
-                        guint        index,
-                        gfloat       *x,
-                        gfloat       *y);
+void         gegl_curve_set_point           (GeglCurve      *self,
+                                             guint           index,
+                                             gdouble         x,
+                                             gdouble         y);
+ 
+guint        gegl_curve_num_points          (GeglCurve      *self);
 
-void         gegl_curve_set_point          (GeglCurve    *self,
-                        guint        index,
-                        gfloat       x,
-                        gfloat       y);
+gdouble     gegl_curve_calc_value           (GeglCurve      *self,
+                                             gdouble         x);
 
-guint        gegl_curve_num_points         (GeglCurve   *self);
-
-gfloat       gegl_curve_calc_value         (GeglCurve   *self,
-                        gfloat      x);
-
-void         gegl_curve_calc_values        (GeglCurve   *self,
-                        gfloat      x_min,
-                        gfloat      x_max,
-                        guint       num_samples,
-                        gfloat      *xs,
-                        gfloat      *ys);
+void         gegl_curve_calc_values         (GeglCurve      *self,
+                                             gdouble         x_min,
+                                             gdouble         x_max,
+                                             guint           num_samples,
+                                             gdouble        *xs,
+                                             gdouble        *ys);
 
 G_END_DECLS
 
