@@ -1,3 +1,8 @@
+2007-11-24  Manish Singh  <yosh@gimp.org>
+
+	* operations/color/contrast-curve.c: convert to match GeglCurve API
+	change to use gdoubles.
+
 2007-11-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-curve.[ch]: (gegl_curve_new): switched to use

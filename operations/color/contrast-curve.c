@@ -52,7 +52,7 @@ process (GeglOperation *op,
   gfloat *in  = in_buf;
   gfloat *out = out_buf;
   gint num_sampling_points;
-  gfloat *xs, *ys;
+  gdouble *xs, *ys;
 
   self = GEGL_CHANT_OPERATION (op);
 
@@ -60,8 +60,8 @@ process (GeglOperation *op,
 
   if (num_sampling_points > 0)
   {
-    xs = (gfloat*)g_malloc(sizeof(gfloat) * num_sampling_points);
-    ys = (gfloat*)g_malloc(sizeof(gfloat) * num_sampling_points);
+    xs = g_new(gdouble, num_sampling_points);
+    ys = g_new(gdouble, num_sampling_points);
 
     gegl_curve_calc_values(self->curve, 0.0, 1.0, num_sampling_points, xs, ys);
 
