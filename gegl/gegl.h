@@ -647,7 +647,7 @@ void          gegl_node_set_property     (GeglNode      *node,
  */
 
 /**
- * gegl_parse_xml:
+ * gegl_node_new_from_xml:
  * @xmldata: a \0 terminated string containing XML data to be parsed.
  * @path_root: a file system path that relative paths in the XML will be
  * resolved in relation to.
@@ -658,11 +658,11 @@ void          gegl_node_set_property     (GeglNode      *node,
  *
  * Returns a GeglNode containing the parsed XML as a subgraph.
  */
-GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
+GeglNode    * gegl_node_new_from_xml     (const gchar   *xmldata,
                                           const gchar   *path_root);
 
 /**
- * gegl_parse_file:
+ * gegl_node_new_from_file:
  * @path: the path to a file on the local file system to be parsed.
  *
  * The #GeglNode returned contains the graph described by the tree of stacks
@@ -671,20 +671,21 @@ GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
  *
  * Returns a GeglNode containing the parsed XML as a subgraph.
  */
-GeglNode    * gegl_parse_file            (const gchar   *path);
+GeglNode    * gegl_node_new_from_file    (const gchar   *path);
 
 /**
- * gegl_to_xml:
+ * gegl_node_to_xml:
  * @node: a #GeglNode
  * @path_root: filesystem path to construct relative paths from.
  *
  * Returns a freshly allocated \0 terminated string containing a XML
  * serialization of the composition produced by a node (and thus also
  * the nodes contributing data to the specified node). To export a
- * gegl graph, connect the internal output node to an output proxy(see
- * #gegl_node_get_output_proxy.
+ * gegl graph, connect the internal output node to an output proxy (see
+ * #gegl_node_get_output_proxy.) and use the proxy node as the basis
+ * for the serialization.
  */
-gchar       * gegl_to_xml                (GeglNode      *node,
+gchar       * gegl_node_to_xml           (GeglNode      *node,
                                           const gchar   *path_root);
 /***
  * GeglProcessor:

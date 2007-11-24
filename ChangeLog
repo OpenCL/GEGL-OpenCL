@@ -1,3 +1,17 @@
+2007-11-24  Øyvind Kolås  <pippin@gimp.org>
+
+	API renaming:
+	gegl_parse_file -> gegl_node_new_from_file
+	gegl_parse_xml -> gegl_node_new_from_xml
+	gegl_to_xml -> gegl_node_to_xml
+
+	* gegl/gegl.h:
+	* gegl/gegl-xml.c:
+	* gegl/gegl-xml.h:
+	* operations/io/magick-load.c: (load_cache):
+	* bin/editor.c:
+	* bin/gegl.c:
+
 2007-11-24  Manish Singh  <yosh@gimp.org>
 
 	* operations/color/contrast-curve.c: convert to match GeglCurve API

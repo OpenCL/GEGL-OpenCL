@@ -160,7 +160,7 @@ main (gint    argc,
         }
     }
 
-  gegl = gegl_parse_xml (script, path_root);
+  gegl = gegl_node_new_from_xml (script, path_root);
 
   if (o->rest)
     {
@@ -197,7 +197,7 @@ main (gint    argc,
           return 0;
         break;
       case GEGL_RUN_MODE_XML:
-          g_print (gegl_to_xml (gegl, path_root));
+          g_print (gegl_node_to_xml (gegl, path_root));
           return 0;
         break;
       case GEGL_RUN_MODE_DOT:

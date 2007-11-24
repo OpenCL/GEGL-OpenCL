@@ -21,10 +21,10 @@
 
 #include "gegl-types.h"
 
-gchar    * gegl_to_xml     (GeglNode    *gegl,
-                            const gchar *path_root);
-GeglNode * gegl_parse_xml  (const gchar *xmldata,
-                            const gchar *path_root);
-GeglNode * gegl_parse_file (const gchar *path);
+gchar    * gegl_node_to_xml        (GeglNode    *gegl,
+                                    const gchar *path_root);
+GeglNode * gegl_node_new_from_xml  (const gchar *xmldata,
+                                    const gchar *path_root);
+GeglNode * gegl_node_new_from_file (const gchar *path);
 
 #endif

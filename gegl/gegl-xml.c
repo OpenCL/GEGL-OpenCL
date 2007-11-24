@@ -445,8 +445,8 @@ static void each_ref (gpointer value,
   gegl_node_connect_from (dest_node, "input", source_node, "output");
 }
 
-GeglNode *gegl_parse_xml (const gchar *xmldata,
-                          const gchar *path_root)
+GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
+                                  const gchar *path_root)
 {
   glong                time = gegl_ticks ();
   GeglNode            *ret;
@@ -479,9 +479,9 @@ GeglNode *gegl_parse_xml (const gchar *xmldata,
 }
 
 GeglNode *
-gegl_parse_file (const gchar   *path)
+gegl_node_new_from_file (const gchar   *path)
 {
- GeglNode *node;
+  GeglNode *node;
   GError   *err = NULL;
   gchar    *script;
 
@@ -503,7 +503,7 @@ gegl_parse_file (const gchar   *path)
       return NULL;
     }
 
-  node = gegl_parse_xml (script, path_root);
+  node = gegl_node_new_from_xml (script, path_root);
 
   g_free (temp1);
   g_free (temp2);
@@ -799,8 +799,8 @@ static void add_stack_old (SerializeState *ss,
 
 
 gchar *
-gegl_to_xml_old (GeglNode    *gegl,
-                 const gchar *path_root)
+gegl_node_to_xml_old (GeglNode    *gegl,
+                      const gchar *path_root)
 {
   gchar          *ret;
   SerializeState *ss = g_new0 (SerializeState, 1);
@@ -1281,8 +1281,8 @@ static void add_stack (SerializeState *ss,
 }
 
 gchar *
-gegl_to_xml (GeglNode    *gegl,
-             const gchar *path_root)
+gegl_node_to_xml (GeglNode    *gegl,
+                  const gchar *path_root)
 {
   gchar          *ret;
   SerializeState *ss = g_new0 (SerializeState, 1);

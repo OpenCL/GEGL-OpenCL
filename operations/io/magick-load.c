@@ -46,7 +46,7 @@ load_cache (GeglChantOperation *op_magick_load)
             sprintf (xml, "<gegl><node operation='png-load' path='/tmp/gegl-magick.png'></node></gegl>");
           }
 
-    temp_gegl = gegl_parse_xml (xml, "/");
+    temp_gegl = gegl_node_new_from_xml (xml, "/");
     rect = gegl_node_get_bounding_box (temp_gegl);
 
     gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE); /* force a render
