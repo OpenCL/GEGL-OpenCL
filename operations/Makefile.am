@@ -11,7 +11,11 @@ SUBDIRS = \
 	svg		\
 	transparency
 
-EXTRA_DIST=workshop	\
+if ENABLE_WORKSHOP
+SUBDIRS+= workshop
+endif
+
+EXTRA_DIST= \
 	Makefile-operations.am
 
 clean-local:

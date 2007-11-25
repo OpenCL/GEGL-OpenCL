@@ -1,4 +1,6 @@
+if HAVE_GTK
 SUBDIRS = node-editors
+endif
 
 bin_PROGRAMS = gegl
 

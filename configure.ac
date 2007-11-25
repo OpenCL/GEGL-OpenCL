@@ -359,6 +359,20 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test "x$enable_gtk_doc" = "xyes")
 AC_CHECK_PROGS(PERL, perl5 perl)
 
 
+###############
+# Check for Lua
+###############
+
+PKG_CHECK_MODULES(LUA, lua,
+  have_lua="yes",
+  have_lua="no  (usable lua not found)")
+AM_CONDITIONAL(HAVE_LUA, test "x$have_lua" = "xyes")
+
+AC_SUBST(HAVE_LUA) 
+AC_SUBST(LUA_CFLAGS) 
+AC_SUBST(LUA_LIBS) 
+
+
 #######################################
 # Checks for Ruby used to make API docs
 #######################################
@@ -600,6 +614,13 @@ AC_SUBST(AVFORMAT_LIBS)
 AC_PATH_PROG(W3M, w3m, no)
 AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
 
+dnl disable build of workshop operations.
+AC_ARG_ENABLE([workshop],
+              [  --enable-workshop       enable build of workshop operations (default=no)],,
+              enable_workshop="no")
+
+AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" == "xyes")
+
 
 AC_OUTPUT([
 Makefile
@@ -641,10 +662,12 @@ Building GEGL with prefix=$prefix
 
 Optional features:
   GEGL docs:      $enable_docs
+  Build workshop: $enable_workshop
 
 Optional dependencies:
-  Ruby:           $have_ruby
   GTK+:           $have_gtk
+  Ruby:           $have_ruby
+  Lua:            $have_lua
   Cairo:          $have_cairo
   Pango:          $have_pango
   pangocairo:     $have_pangocairo

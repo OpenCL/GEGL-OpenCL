@@ -16,8 +16,12 @@ max-envelope.so: max-envelope.c $(GEGLHEADERS) envelopes.h
 
 lum-profile.so: lum-profile.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+
 gluas.so: gluas.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `lua-config --libs --include`
+	@if [ ! -z "$(LUA_LIBS)" ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LUA_CFLAGS) $(LUA_LIBS);\
+	fi
 
 gst.so: gst.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
@@ -31,6 +35,3 @@ gtk-display.so: gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
 	||true
-
-distcheck:
-	@:

@@ -1,3 +1,23 @@
+2007-11-25  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	'make distcheck' works once again with this set of changes.
+
+	* configure.ac: Added --enable-workshop to allow optional building
+	of workshop operations. Updated results to show whether workshop
+	will be built, and if Lua is available.
+
+	* bin/Makefile.am: Don't build files in node-editors directory if
+	GTK+ is not available.
+
+	* bin/node-editors/Makefile.am: Don't include /gui at end of the
+	install commands since it is already in ext_dir.
+
+	* operations/Makefile.am: Only include workshop sub-directory when
+	configure was run with --enable-workshop option.
+
+	* operations/workshop/Makefile.am: Use LUA_CFLAGS and LUA_LIBS
+	determined during ./configure instead of calling lua-config.
+
 2007-11-25  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/editor.c (cb_zoom_in, cb_zoom_out): Fix zooming when using

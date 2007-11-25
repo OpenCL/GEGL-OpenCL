@@ -25,8 +25,8 @@ clean-local:
 ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@/gui
 
 install-exec-local: all-local
-	$(INSTALL) -d $(ext_dir)/gui
-	-$(INSTALL) $(SOBJS) $(ext_dir)/gui
+	$(INSTALL) -d $(ext_dir)
+	-$(INSTALL) $(SOBJS) $(ext_dir)
 
 uninstall-local:
 	rm -f $(INSTALLED_ITEMS)
