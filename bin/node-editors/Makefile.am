@@ -22,7 +22,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
 clean-local:
 	rm -f $(SOBJS) *~
 
-ext_dir = $(DESTDIR)$(prefix)/lib/gegl
+ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@/gui
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)/gui

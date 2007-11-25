@@ -1,3 +1,9 @@
+2007-11-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/Makefile.am:
+	* bin/node-editors/Makefile.am: Build and install the cairo based
+	custom GUIs for editing the properties of some operations.
+
 2007-11-24  Øyvind Kolås  <pippin@gimp.org>
 
 	API renaming:
