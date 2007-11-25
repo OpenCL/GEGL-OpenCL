@@ -54,7 +54,6 @@ ignore
   gegl_node_get
   gegl_node_blit
   gegl_node_new_from_file
-  gegl_node_to_xml
   gegl_processor_destroy
   gegl_node_new_from_file
 %%
@@ -372,6 +371,79 @@ _wrap_gegl_node_set_property(PyGObject *self, PyObject *args, PyObject *kwargs)
     return Py_None;
 }
 %%
+override gegl_node_new_processor kwargs
+static PyObject *
+_wrap_gegl_node_new_processor(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    GeglRectangle *rectangle;
+    GeglRectangle conv_rect;
+    GeglProcessor *processor;
+    PyObject *ret, *py_rectangle = NULL;
+
+    static char *kwlist[] = { "rectangle", NULL };
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "|O:GeglNode.new_processor", kwlist,
+                                     &py_rectangle)) 
+        return NULL;
+
+    if (py_rectangle == NULL) {
+        rectangle = NULL;
+    } else if (!pyg_boxed_check(py_rectangle, GEGL_TYPE_RECTANGLE)) {
+        if (!pygegl_rectangle_from_pyobject(py_rectangle, &conv_rect)) {
+            PyErr_Clear();
+            PyErr_SetString(PyExc_TypeError,
+                            "rectangle must be a GeglRectangle or 4-tuple");
+            return NULL;
+        }
+        rectangle = &conv_rect;
+    } else {
+        rectangle = pyg_boxed_get(py_rectangle, GeglRectangle);
+    }
+
+    processor = gegl_node_new_processor(GEGL_NODE(self->obj), rectangle);
+
+    ret = pygobject_new(G_OBJECT(processor));
+    g_object_unref(processor);
+
+    return ret;
+}
+%%
+override gegl_processor_set_rectangle kwargs
+static PyObject *
+_wrap_gegl_processor_set_rectangle(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    GeglRectangle *rectangle;
+    GeglRectangle conv_rect;
+    PyObject *py_rectangle;
+
+    static char *kwlist[] = { "rectangle", NULL };
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "O:GeglProcessor.set_rectangle", kwlist,
+                                     &py_rectangle)) 
+        return NULL;
+
+    if (py_rectangle == Py_None) {
+        rectangle = NULL;
+    } else if (!pyg_boxed_check(py_rectangle, GEGL_TYPE_RECTANGLE)) {
+        if (!pygegl_rectangle_from_pyobject(py_rectangle, &conv_rect)) {
+            PyErr_Clear();
+            PyErr_SetString(PyExc_TypeError,
+                            "rectangle must be a GeglRectangle or 4-tuple");
+            return NULL;
+        }
+        rectangle = &conv_rect;
+    } else {
+        rectangle = pyg_boxed_get(py_rectangle, GeglRectangle);
+    }
+
+    gegl_processor_set_rectangle(GEGL_PROCESSOR(self->obj), rectangle);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
 override gegl_processor_work noargs
 static PyObject *
 _wrap_gegl_processor_work(PyGObject *self)
@@ -546,6 +618,30 @@ _wrap_gegl_node_lookup(PyGObject *self, PyObject *args)
     return Py_None;
 }
 %%
+define GeglNode.get_consumer kwargs
+static PyObject *
+_wrap_gegl_node_get_consumer(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *py_list, *ret;
+
+    py_list = _wrap_gegl_node_get_consumers(self, args, kwargs);
+    if (!py_list)
+        return NULL;
+
+    if (PyList_Size(py_list) > 0) {
+        ret = PyList_GetItem(py_list, 0);
+        if (!ret)
+            return NULL;
+    } else {
+        ret = Py_None;
+    }
+
+    Py_INCREF(ret);
+    Py_DECREF(py_list);
+
+    return ret;
+}
+%%
 override gegl_node_new_from_xml kwargs
 static PyObject *
 _wrap_gegl_node_new_from_xml(PyObject *self, PyObject *args, PyObject *kwargs)
@@ -575,4 +671,36 @@ _wrap_gegl_node_new_from_xml(PyObject *self, PyObject *args, PyObject *kwargs)
     g_object_unref(node);
 
     return py_node;
+}
+%%
+override gegl_node_to_xml kwargs
+static PyObject *
+_wrap_gegl_node_to_xml(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    char *path_root = "";
+    char *xml;
+
+    static char *kwlist[] = { "path_root", NULL };
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "|z:GeglNode.to_xml", kwlist,
+                                     &path_root))
+        return NULL;
+
+    if (path_root == NULL)
+        path_root = "";
+
+    xml = gegl_node_to_xml(GEGL_NODE(self->obj), path_root);
+
+    return PyString_FromString(xml);
+}
+%%
+define GeglNode.to_dot noargs
+gchar *gegl_to_dot(GeglNode *self);
+
+static PyObject *
+_wrap_gegl_node_to_dot(PyGObject *self)
+{
+    char *dot = gegl_to_dot(GEGL_NODE(self->obj));
+    return PyString_FromString(dot);
 }

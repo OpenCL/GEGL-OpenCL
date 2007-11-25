@@ -1,5 +1,12 @@
 2007-11-24  Manish Singh  <yosh@gimp.org>
 
+	* gegl.override: wrap gegl_node_to_xml, gegl_node_to_dot.
+	GeglNode.new_processor and GeglProcessor.set_rectangle now
+	take 4-tuples, and None for NULL rectangle. Also provide
+	an API to get a single consumer, like the Ruby binding.
+
+2007-11-24  Manish Singh  <yosh@gimp.org>
+
 	* Gegl/Makefile.am
 	* Gegl/fifthleg.py: place for higher level python wrapping.
 
