@@ -1,3 +1,15 @@
 2007-11-24  Manish Singh  <yosh@gimp.org>
 
+	* Gegl/Makefile.am
+	* Gegl/fifthleg.py: place for higher level python wrapping.
+
+	* Gegl/__init__.py: import fifthleg.
+
+	* Gegl/gegl.defs: updates for new xml parsing/serialization API.
+
+	* Gegl/gegl.override: implementation for gegl_node_new_from_xml
+	binding.
+
+2007-11-24  Manish Singh  <yosh@gimp.org>
+
 	Complete rewrite of the python binding.

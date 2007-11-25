@@ -313,9 +313,8 @@
   )
 )
 
-(define-function parse_xml
-  (c-name "gegl_parse_xml")
-  (caller-owns-return #t)
+(define-function node_new_from_xml
+  (c-name "gegl_node_new_from_xml")
   (return-type "GeglNode*")
   (parameters
     '("const-gchar*" "xmldata")
@@ -323,19 +322,19 @@
   )
 )
 
-(define-function parse_file
-  (c-name "gegl_parse_file")
+(define-function node_new_from_file
+  (c-name "gegl_node_new_from_file")
   (return-type "GeglNode*")
   (parameters
     '("const-gchar*" "path")
   )
 )
 
-(define-function gegl_to_xml
-  (c-name "gegl_to_xml")
+(define-method to_xml
+  (of-object "GeglNode")
+  (c-name "gegl_node_to_xml")
   (return-type "gchar*")
   (parameters
-    '("GeglNode*" "node")
     '("const-gchar*" "path_root")
   )
 )

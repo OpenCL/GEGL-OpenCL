@@ -3,7 +3,7 @@ INCLUDES = $(PYTHON_INCLUDES) $(PYGOBJECT_CFLAGS) $(GEGL_CFLAGS)
 AM_CFLAGS = $(PYGEGL_EXTRA_CFLAGS)
 
 pygegldir = $(pyexecdir)/Gegl
-pygegl_PYTHON = __init__.py
+pygegl_PYTHON = __init__.py fifthleg.py
 
 pygegl_LTLIBRARIES = _gegl.la
 

@@ -53,8 +53,10 @@ ignore
   gegl_node_set
   gegl_node_get
   gegl_node_blit
-  gegl_to_xml
+  gegl_node_new_from_file
+  gegl_node_to_xml
   gegl_processor_destroy
+  gegl_node_new_from_file
 %%
 ignore-glob
   gegl_log_*
@@ -542,4 +544,35 @@ _wrap_gegl_node_lookup(PyGObject *self, PyObject *args)
 
     Py_INCREF(Py_None);
     return Py_None;
+}
+%%
+override gegl_node_new_from_xml kwargs
+static PyObject *
+_wrap_gegl_node_new_from_xml(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    char *xmldata, *path_root = "";
+    GeglNode *node;
+    PyObject *py_node;
+
+    static char *kwlist[] = { "xmldata", "path_root", NULL };
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "s|z:parse_xml", kwlist,
+                                     &xmldata, &path_root))
+        return NULL;
+
+    if (path_root == NULL)
+        path_root = "";
+
+    node = gegl_node_new_from_xml(xmldata, path_root);
+
+    if (!node) {
+        PyErr_SetString(PyExc_RuntimeError, "Error processing XML");
+        return NULL;
+    }
+
+    py_node = pygobject_new(G_OBJECT(node));
+    g_object_unref(node);
+
+    return py_node;
 }
