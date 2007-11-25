@@ -32,6 +32,10 @@
 #define realpath(a,b) _fullpath(b,a,_MAX_PATH)
 #endif
 
+
+#define  KEY_ZOOM_FACTOR  2.0
+
+
 static gchar *blank_composition =
     "<gegl>"
         "<color value='white'/>"
@@ -1064,60 +1068,62 @@ static void cb_zoom_50 (GtkAction *action)
 
 static void cb_zoom_in (GtkAction *action)
 {
-  gint width, height;
-  gint x,y;
+  gint    width, height;
+  gint    x, y;
   gdouble scale;
+  gdouble focus_x, focus_y;
 
-  width = editor.view->allocation.width;
+  width  = editor.view->allocation.width;
   height = editor.view->allocation.height;
 
   g_object_get (editor.view,
-                "x", &x,
-                "y", &y,
+                "x",     &x,
+                "y",     &y,
                 "scale", &scale,
                 NULL);
 
-  x += (width/2) * scale;
-  y += (height/2) * scale;
+  focus_x = (x + width  / 2) / scale;
+  focus_y = (y + height / 2) / scale;
 
-  scale *= 2.0;
+  scale *= KEY_ZOOM_FACTOR;
 
-  x -= (width/2) * scale;
-  y -= (height/2) * scale;
+  x = focus_x * scale - width  / 2;
+  y = focus_y * scale - height / 2;
 
   g_object_set (editor.view,
-                "x", x,
-                "y", y,
+                "x",     x,
+                "y",     y,
                 "scale", scale,
                 NULL);
 }
 
 static void cb_zoom_out (GtkAction *action)
 {
-  gint width, height;
-  gint x,y;
+  gint    width, height;
+  gint    x, y;
   gdouble scale;
+  gdouble focus_x, focus_y;
 
-  width = editor.view->allocation.width;
+  width  = editor.view->allocation.width;
   height = editor.view->allocation.height;
 
   g_object_get (editor.view,
-                "x", &x,
-                "y", &y,
+                "x",     &x,
+                "y",     &y,
                 "scale", &scale,
                 NULL);
 
-  x += (width/2) / scale;
-  y += (height/2) / scale;
+  focus_x = (x + width  / 2) / scale;
+  focus_y = (y + height / 2) / scale;
 
-  scale /= 2.0;
+  scale /= KEY_ZOOM_FACTOR;
 
-  x -= (width/2) / scale;
-  y -= (height/2) / scale;
+  x = focus_x * scale - width  / 2;
+  y = focus_y * scale - height / 2;
 
   g_object_set (editor.view,
-                "x", x,
-                "y", y,
+                "x",     x,
+                "y",     y,
                 "scale", scale,
                 NULL);
 
