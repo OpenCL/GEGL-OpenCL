@@ -455,15 +455,16 @@ Some examples:
  │   │
  │   ├──core          Basic operations tightly coupled with GEGL.
  │   │
+ │   ├──affine        transforming operations (rotate/scale/translate)
  │   ├──blur          Blurring operations.
  │   ├──color         Color adjustments.
- │   ├──io            sources and sinks (file loaders/savers etc.)
- │   ├──meta          Operations that are made by gegl graphs.
- │   ├──render        Operations providing patters, graidents, fills, ...
- │   ├──transform     transforming/resampling operations
- │   ├──transparency  opacity/mask control
  │   ├──generated     Operations generated from scripts (currently
- │   │                ruby scripts.) (arithmetic, compositing, ...)
+ │   │                ruby scripts.) (arithmetic, compositors, ...)
+ │   ├──io            sources and sinks (file loaders/savers etc.)
+ │   ├──meta          Operations that themselves are made by gegl graphs.
+ │   ├──render        Operations providing patters, graidents, fills, ...
+ │   ├──svg           Non-compositors part of the SVG 1.2 specification.
+ │   ├──transparency  opacity/mask control
  │   └──workshop      Works in progress, (not built/installed by default)
  │       └──generated generated operations that are in the workshop.
  │                    

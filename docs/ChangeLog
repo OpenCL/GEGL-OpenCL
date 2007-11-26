@@ -1,5 +1,9 @@
 2007-11-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: updated directory guide.
+
+2007-11-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: prepended $(DESTDIR) to help_path. (now passes
 	distcheck)
 
