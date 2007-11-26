@@ -79,7 +79,7 @@ distclean-local:
 	if test $(srcdir) = .; then :; else 	\
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
-help_dir = $(prefix)/share/gtk-doc/html/gegl
+help_dir = $(DESTDIR)$(prefix)/share/gtk-doc/html/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(help_dir)

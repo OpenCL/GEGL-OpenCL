@@ -1,3 +1,8 @@
+2007-11-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: prepended $(DESTDIR) to help_path. (now passes
+	distcheck)
+
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: added rules to install api.html as a devhelp book.
