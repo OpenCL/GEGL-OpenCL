@@ -1,7 +1,6 @@
-EXTRA_DIST      = $(wildcard *.c) $(wildcard perlin/*.[ch])
 CFILES          = $(wildcard $(srcdir)/*.c)
 SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+#INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/buffer/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/bin/*.h)
@@ -22,13 +21,13 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
 clean-local:
 	rm -f $(SOBJS) *~
 
-ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@/gui
+#ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@/gui
 
-install-exec-local: all-local
-	$(INSTALL) -d $(ext_dir)
-	-$(INSTALL) $(SOBJS) $(ext_dir)
+#install-exec-local: all-local
+#	$(INSTALL) -d $(ext_dir)
+#	-$(INSTALL) $(SOBJS) $(ext_dir)
 
-uninstall-local:
-	rm -f $(INSTALLED_ITEMS)
+#uninstall-local:
+#	rm -f $(INSTALLED_ITEMS)
 
 check-local: all-local

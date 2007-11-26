@@ -1,5 +1,21 @@
 2007-11-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/node-editors/Makefile.am: do not install the custom gui's for
+	some apps by default. (point GEGL_PATH to this dir in addition to the
+	regular GEGL_PATH, or move the .so's to GEGL_PATH to enable them.) The
+	reason they are removed is that they result in unresolved symbols when
+	loaded by other GEGL using apps than the sample binary.
+
+2007-11-26  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* NEWS:
+	* bin/node-editors/Makefile.am:
+	* gegl/process/gegl-processor.c:
+
+2007-11-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added Shlomi Fish to list of people contributing
 	documentation.
 
