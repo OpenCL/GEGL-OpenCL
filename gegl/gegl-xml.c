@@ -23,7 +23,6 @@
 #include <string.h>
 #include <limits.h>
 #include "gegl-types.h"
-#include "graph/gegl-graph.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include "property-types/gegl-color.h"

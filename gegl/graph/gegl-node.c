@@ -48,7 +48,20 @@ enum
   PROP_NAME
 };
 
+typedef struct _GeglNodePriv
+{
+  GSList         *children;  /*  used for children */
+  GeglNode       *parent;
+  gchar          *name;
+} GeglNodePriv;
+
+
+#define GEGL_NODE_GET_PRIVATE(obj) \
+  ((GeglNodePriv *)(((GeglNode *) obj)->priv))
+
+
 guint gegl_node_signals[GEGL_NODE_LAST_SIGNAL] = {0};
+
 
 static void            gegl_node_class_init           (GeglNodeClass *klass);
 static void            gegl_node_init                 (GeglNode      *self);
@@ -95,6 +108,8 @@ static void
 gegl_node_class_init (GeglNodeClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  g_type_class_add_private (klass, sizeof (GeglNodePriv));
 
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
@@ -150,6 +165,14 @@ gegl_node_class_init (GeglNodeClass *klass)
 static void
 gegl_node_init (GeglNode *self)
 {
+  GeglNodePriv *priv;
+
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                                            GEGL_TYPE_NODE,
+                                            GeglNodePriv);
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
+
   self->pads        = NULL;
   self->input_pads  = NULL;
   self->output_pads = NULL;
@@ -158,9 +181,11 @@ gegl_node_init (GeglNode *self)
   self->operation   = NULL;
   self->enabled     = TRUE;
   self->is_graph    = FALSE;
-  self->children    = NULL;
   self->cache       = NULL;
-  self->name        = NULL;
+
+  priv->parent      = NULL;
+  priv->children    = NULL;
+  priv->name        = NULL;
 }
 
 static void
@@ -177,12 +202,13 @@ visitable_init (gpointer ginterface,
 static void
 dispose (GObject *gobject)
 {
-  GeglNode *self = GEGL_NODE (gobject);
+  GeglNode     *self = GEGL_NODE (gobject);
+  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
 
-  if (self->parent != NULL)
+  if (priv->parent != NULL)
     {
-      GeglNode *parent = self->parent;
-      self->parent = NULL;
+      GeglNode *parent = priv->parent;
+      priv->parent = NULL;
       gegl_node_remove_child (parent, self);
     }
 
@@ -195,7 +221,8 @@ dispose (GObject *gobject)
 static void
 finalize (GObject *gobject)
 {
-  GeglNode *self = GEGL_NODE (gobject);
+  GeglNode     *self = GEGL_NODE (gobject);
+  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
 
   gegl_node_disconnect_sources (self);
   gegl_node_disconnect_sinks (self);
@@ -216,9 +243,9 @@ finalize (GObject *gobject)
       self->operation = NULL;
     }
 
-  if (self->name)
+  if (priv->name)
     {
-      g_free (self->name);
+      g_free (priv->name);
     }
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
@@ -762,8 +789,6 @@ gegl_node_apply (GeglNode    *self,
   return gegl_node_apply_roi (self, "output", &defined);
 }
 
-#include <stdio.h>
-#include "gegl-graph.h"
 GSList *
 gegl_node_get_depends_on (GeglNode *self)
 {
@@ -1682,13 +1707,248 @@ gegl_node_disable_cache (GeglNode *node)
 const gchar *
 gegl_node_get_name (GeglNode *self)
 {
-  return self->name;
+  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+
+  return priv->name;
 }
 
-void gegl_node_set_name (GeglNode     *self,
+void gegl_node_set_name (GeglNode    *self,
                          const gchar *name)
 {
-  if (self->name)
-    g_free (self->name);
-  self->name = g_strdup (name);
+  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+
+  if (priv->name)
+    g_free (priv->name);
+  priv->name = g_strdup (name);
+}
+
+void
+gegl_node_remove_children (GeglNode *self)
+{
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  while (TRUE)
+    {
+      GeglNode *child = gegl_node_get_nth_child (self, 0);
+
+      if (child)
+        gegl_node_remove_child (self, child);
+      else
+        break;
+    }
+}
+
+GeglNode *
+gegl_node_add_child (GeglNode *self,
+                     GeglNode *child)
+{
+  GeglNodePriv *priv;
+  GeglNodePriv *child_priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
+
+  priv       = GEGL_NODE_GET_PRIVATE (self);
+  child_priv = GEGL_NODE_GET_PRIVATE (child);
+
+  priv->children = g_slist_prepend (priv->children, g_object_ref (child));
+  self->is_graph = TRUE;
+  child_priv->parent  = self;
+
+  return child;
+}
+
+GeglNode *
+gegl_node_remove_child (GeglNode *self,
+                        GeglNode *child)
+{
+  GeglNodePriv *priv;
+  GeglNodePriv *child_priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
+
+  priv       = GEGL_NODE_GET_PRIVATE (self);
+  child_priv = GEGL_NODE_GET_PRIVATE (self);
+
+  priv->children = g_slist_remove (priv->children, child);
+
+  if (child_priv->parent != NULL)
+    {
+      /* if parent isn't set then the node is already in dispose
+       */
+      child_priv->parent = NULL;
+      g_object_unref (child);
+    }
+
+
+  if (priv->children == NULL)
+    self->is_graph = FALSE;
+
+  return child;
+}
+
+gint
+gegl_node_get_num_children (GeglNode *self)
+{
+  GeglNodePriv *priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
+
+  return g_slist_length (priv->children);
+}
+
+GeglNode *
+gegl_node_get_nth_child (GeglNode *self,
+                         gint      n)
+{
+  GeglNodePriv *priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
+
+  return g_slist_nth_data (priv->children, n);
+}
+
+/*
+ * Returns a copy of the graphs internal list of nodes
+ */
+GSList *
+gegl_node_get_children (GeglNode *self)
+{
+  GeglNodePriv *priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
+
+  return g_slist_copy (priv->children);
+}
+
+/*
+ *  returns a freshly created node, owned by the graph, and thus freed with it
+ */
+GeglNode *
+gegl_node_new_child (GeglNode    *node,
+                     const gchar *first_property_name,
+                     ...)
+{
+  GeglNode    *self = node;
+  va_list      var_args;
+  const gchar *name;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  node = g_object_new (GEGL_TYPE_NODE, NULL);
+  gegl_node_add_child (self, node);
+
+  name = first_property_name;
+  va_start (var_args, first_property_name);
+  gegl_node_set_valist (node, first_property_name, var_args);
+  va_end (var_args);
+
+  g_object_unref (node);
+  return node;
+}
+
+GeglNode *gegl_node_create_child (GeglNode    *self,
+                                  const gchar *operation)
+{
+  return gegl_node_new_child (self, "operation", operation, NULL);
+}
+
+static void
+graph_source_invalidated (GeglNode      *source,
+                          GeglRectangle *rect,
+                          gpointer       data)
+{
+  GeglRectangle dirty_rect;
+  GeglNode     *destination = GEGL_NODE (data);
+  gchar        *source_name;
+  gchar        *destination_name;
+
+  destination_name = g_strdup (gegl_node_get_debug_name (destination));
+  source_name      = g_strdup (gegl_node_get_debug_name (source));
+
+  if (0) g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
+                    destination_name,
+                    source_name,
+                    rect->x, rect->y,
+                    rect->width, rect->height);
+
+  dirty_rect = *rect;
+
+  g_signal_emit (destination, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+
+  g_free (source_name);
+  g_free (destination_name);
+}
+
+
+static GeglNode *
+gegl_node_get_pad_proxy (GeglNode    *graph,
+                         const gchar *name,
+                         gboolean     is_graph_input)
+{
+  GeglNode *node = graph;
+  GeglPad  *pad;
+
+  pad = gegl_node_get_pad (node, name);
+  if (!pad)
+    {
+      GeglNode *nop     = g_object_new (GEGL_TYPE_NODE, "operation", "nop", "name", is_graph_input ? "proxynop-input" : "proxynop-output", NULL);
+      GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input ? "input" : "output");
+      gegl_node_add_child (graph, nop);
+      g_object_unref (nop); /* our reference is made by the
+                               gegl_node_add_child call */
+
+      {
+        GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
+        gegl_pad_set_param_spec (new_pad, nop_pad->param_spec);
+        gegl_pad_set_node (new_pad, nop);
+        gegl_pad_set_name (new_pad, name);
+        gegl_node_add_pad (node, new_pad);
+
+        /* hack, decoreating the pad to make it recognized in later
+         * processing
+         */
+        if (!strcmp (name, "aux"))
+          {
+            g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
+          }
+      }
+
+      g_object_set_data (G_OBJECT (nop), "graph", graph);
+
+      if (!is_graph_input)
+        {
+          g_signal_connect (G_OBJECT (nop), "invalidated",
+                            G_CALLBACK (graph_source_invalidated), graph);
+        }
+      return nop;
+    }
+  return gegl_pad_get_node (pad);
+}
+
+GeglNode *
+gegl_node_get_input_proxy (GeglNode    *node,
+                           const gchar *name)
+{
+  return gegl_node_get_pad_proxy (node, name, TRUE);
+}
+
+GeglNode *
+gegl_node_get_output_proxy (GeglNode    *node,
+                            const gchar *name)
+{
+  return gegl_node_get_pad_proxy (node, name, FALSE);
+}
+
+GeglNode *
+gegl_node_new (void)
+{
+  return g_object_new (GEGL_TYPE_NODE, NULL);
 }

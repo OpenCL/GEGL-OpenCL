@@ -27,7 +27,6 @@
 #include "gegl-utils.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-connection.h"
-#include "graph/gegl-graph.h"
 #include "graph/gegl-pad.h"
 #include "buffer/gegl-region.h"
 

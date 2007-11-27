@@ -25,7 +25,6 @@
 #include <gegl/graph/gegl-connection.h>
 #include <gegl/graph/gegl-node.h>
 #include <gegl/graph/gegl-pad.h>
-#include <gegl/graph/gegl-graph.h>
 #include <gegl/graph/gegl-visitable.h>
 #include <gegl/graph/gegl-visitor.h>
 #include <gegl/property-types/gegl-color.h>

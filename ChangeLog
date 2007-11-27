@@ -1,3 +1,18 @@
+2007-11-27  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.[ch]: Made the `cache' member of GeglNode
+	public and the rest of the private-marked members
+	g_type_class_add_private() managed. Also merged gegl-graph.[ch]
+	into here.
+
+	* gegl/graph/gegl-graph.[ch]: Removed.
+
+	* gegl/graph/Makefile.am: Removed gegl-graph.[ch].
+
+	* gegl/gegl-xml.c:
+	* gegl/gegl-plugin.h:
+	* gegl/operation/gegl-operation.c: Removed gegl-graph.h reference.
+
 2007-11-27  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from  Jesper de Jong fixing bug #481593.

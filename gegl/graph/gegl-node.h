@@ -20,7 +20,6 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "gegl-graph.h"
 #include "gegl-node-dynamic.h"
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/buffer/gegl-cache.h>
@@ -53,13 +52,12 @@ struct _GeglNode
 
   GSList         *dynamic;   /*< list of GeglNodeDynamic's corresponding to
                                  evaluation contexts */
-
   gboolean        is_graph;
-  /*< private >*/
-  GSList         *children;  /*  used for children */
-  GeglNode       *parent;
+
   GeglCache      *cache;
-  gchar          *name;
+
+  /*< private >*/
+  gpointer        priv;
 };
 
 typedef enum
@@ -166,7 +164,32 @@ void          gegl_node_set_need_rect       (GeglNode      *node,
                                              gint           y,
                                              gint           width,
                                              gint           height);
- 
+
+
+/* Graph related member functions of the GeglNode class */
+
+GeglNode *    gegl_node_add_child           (GeglNode    *self,
+                                             GeglNode    *child);
+GeglNode *    gegl_node_remove_child        (GeglNode    *self,
+                                             GeglNode     *child);
+GeglNode *    gegl_node_get_nth_child       (GeglNode    *self,
+                                             gint          n);
+GSList   *    gegl_node_get_children        (GeglNode    *self);
+void          gegl_node_remove_children     (GeglNode    *self);
+gint          gegl_node_get_num_children    (GeglNode    *self);
+
+GeglNode *    gegl_node_new                 (void);
+
+GeglNode *    gegl_node_new_child           (GeglNode    *self,
+                                             const gchar  *first_property_name,
+                                             ...) G_GNUC_NULL_TERMINATED;
+GeglNode *    gegl_node_create_child        (GeglNode    *self,
+                                             const gchar  *operation);
+GeglNode *    gegl_node_get_input_proxy     (GeglNode     *graph,
+                                             const gchar  *name);
+GeglNode *    gegl_node_get_output_proxy    (GeglNode     *graph,
+                                             const gchar  *name);
+
 const gchar * gegl_node_get_operation       (GeglNode      *node);
 
 const gchar * gegl_node_get_debug_name      (GeglNode      *node);

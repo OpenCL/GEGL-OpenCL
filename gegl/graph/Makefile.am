@@ -2,7 +2,6 @@ noinst_LTLIBRARIES = libgraph.la
 
 GRAPH_sources = \
 	gegl-connection.c	\
-	gegl-graph.c		\
 	gegl-node.c		\
 	gegl-node-dynamic.c	\
 	gegl-pad.c		\
@@ -12,7 +11,6 @@ GRAPH_sources = \
 
 GRAPH_headers = \
 	gegl-connection.h	\
-	gegl-graph.h		\
 	gegl-node.h		\
 	gegl-node-dynamic.h	\
 	gegl-pad.h		\
