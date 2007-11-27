@@ -16,11 +16,41 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with PyGEGL; if not, see <http://www.gnu.org/licenses/>.
 
-import dl
-libgegl = dl.open("libgegl-1.0.so.0", dl.RTLD_NOW|dl.RTLD_GLOBAL)
-libbabl = dl.open("libbabl-0.0.so.0", dl.RTLD_NOW|dl.RTLD_GLOBAL)
+# dl tricks from GST python's __init__.py
+import sys
+
+def setdlopenflags():
+    oldflags = sys.getdlopenflags()
+    try:
+        from DLFCN import RTLD_GLOBAL, RTLD_LAZY
+    except ImportError:
+        RTLD_GLOBAL = -1
+        RTLD_LAZY = -1
+        import os
+        osname = os.uname()[0]
+        if osname == 'Linux' or osname == 'SunOS' or osname == 'FreeBSD':
+            RTLD_GLOBAL = 0x100
+            RTLD_LAZY = 0x1
+        elif osname == 'Darwin':
+            RTLD_GLOBAL = 0x8
+            RTLD_LAZY = 0x1
+        del os
+    except:
+        RTLD_GLOBAL = -1
+        RTLD_LAZY = -1
+
+    if RTLD_GLOBAL != -1 and RTLD_LAZY != -1:
+        sys.setdlopenflags(RTLD_LAZY | RTLD_GLOBAL)
+
+    return oldflags
+
+oldflags = setdlopenflags()
 
 from _gegl import *
+
+sys.setdlopenflags(oldflags)
+del sys, setdlopenflags
+
 from fifthleg import *
 
 import atexit

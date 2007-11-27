@@ -1,6 +1,11 @@
+2007-11-25  Manish Singh  <yosh@gimp.org>
+
+	* Gegl/__init__.py: generalize RTLD_GLOBAL stuff to work on other
+	platforms, and not hardcode library names.
+
 2007-11-24  Manish Singh  <yosh@gimp.org>
 
-	* gegl.override: wrap gegl_node_to_xml, gegl_node_to_dot.
+	* Gegl/gegl.override: wrap gegl_node_to_xml, gegl_node_to_dot.
 	GeglNode.new_processor and GeglProcessor.set_rectangle now
 	take 4-tuples, and None for NULL rectangle. Also provide
 	an API to get a single consumer, like the Ruby binding.
