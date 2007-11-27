@@ -1,3 +1,12 @@
+2007-11-27  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from  Jesper de Jong fixing bug #481593.
+
+	* gegl/operation/gegl-extension-handler.[ch]
+	(gegl_extension_handler_cleanup): added cleanup function
+	for list of file handler associations.
+	* gegl/gegl-init.c: (gegl_exit): call cleanup function upon quit.
+
 2007-11-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/node-editors/Makefile.am: do not install the custom gui's for
@@ -5,14 +14,6 @@
 	regular GEGL_PATH, or move the .so's to GEGL_PATH to enable them.) The
 	reason they are removed is that they result in unresolved symbols when
 	loaded by other GEGL using apps than the sample binary.
-
-2007-11-26  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* NEWS:
-	* bin/node-editors/Makefile.am:
-	* gegl/process/gegl-processor.c:
 
 2007-11-26  Øyvind Kolås  <pippin@gimp.org>
 
