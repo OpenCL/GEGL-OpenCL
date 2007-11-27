@@ -24,4 +24,6 @@ void          gegl_extension_handler_register (const gchar *extension,
                                                const gchar *handler);
 const gchar * gegl_extension_handler_get      (const gchar *extension);
 
+void          gegl_extension_handler_cleanup  ();
+
 #endif

@@ -43,3 +43,13 @@ gegl_extension_handler_get (const gchar *extension)
     return handler;
   return "magick-load";
 }
+
+void
+gegl_extension_handler_cleanup ()
+{
+  if (handlers)
+    {
+      g_hash_table_destroy (handlers);
+      handlers = NULL;
+    }
+}

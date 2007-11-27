@@ -2,7 +2,7 @@
 
 	Applied patch from  Jesper de Jong fixing bug #481593.
 
-	* gegl/operation/gegl-extension-handler.[ch]
+	* gegl/operation/gegl-extension-handler.[ch]:
 	(gegl_extension_handler_cleanup): added cleanup function
 	for list of file handler associations.
 	* gegl/gegl-init.c: (gegl_exit): call cleanup function upon quit.
