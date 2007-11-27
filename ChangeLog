@@ -1,5 +1,10 @@
 2007-11-27  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-node.h: Cosmetics on the function propotyopes
+	merged from gegl-graph.h.
+
+2007-11-27  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/graph/gegl-node.[ch]: Made the `cache' member of GeglNode
 	public and the rest of the private-marked members
 	g_type_class_add_private() managed. Also merged gegl-graph.[ch]
