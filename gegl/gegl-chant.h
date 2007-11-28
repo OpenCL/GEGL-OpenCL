@@ -361,13 +361,13 @@ set_property (GObject      *gobject,
     case PROP_##name:\
       if (self->name != NULL && G_IS_OBJECT (self->name))\
          g_object_unref (self->name);\
-      self->name = g_value_get_object (value);\
+      self->name = g_value_dup_object (value);\
       break;
 #define gegl_chant_curve(name, blurb)\
     case PROP_##name:\
       if (self->name != NULL && G_IS_OBJECT (self->name))\
          g_object_unref (self->name);\
-      self->name = g_value_get_object (value);\
+      self->name = g_value_dup_object (value);\
       break;
 
 #include GEGL_CHANT_SELF

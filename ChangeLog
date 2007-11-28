@@ -1,5 +1,10 @@
 2007-11-27  Manish Singh  <yosh@gimp.org>
 
+	* gegl/gegl-chant.h: setting GeglColors and GeglCurves should
+	use g_value_dup_object so a ref is taken on the passed in object.
+
+2007-11-27  Manish Singh  <yosh@gimp.org>
+
 	* gegl/gegl-xml.c: don't call g_file_get_contents on the same file
 	twice, and make sure declarations are before statements.
 
