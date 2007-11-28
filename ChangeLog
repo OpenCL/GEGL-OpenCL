@@ -1,3 +1,8 @@
+2007-11-27  Manish Singh  <yosh@gimp.org>
+
+	* gegl/gegl-xml.c: don't call g_file_get_contents on the same file
+	twice, and make sure declarations are before statements.
+
 2007-11-27  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/graph/gegl-node.h: Cosmetics on the function propotyopes

@@ -483,14 +483,13 @@ gegl_node_new_from_file (const gchar   *path)
   GeglNode *node;
   GError   *err = NULL;
   gchar    *script;
+  gchar    *temp1;
+  gchar    *temp2;
+  gchar    *path_root;
 
   g_assert (path);
-  g_file_get_contents (path, &script, NULL, &err);
 
-  gchar *temp1 = g_strdup (path);
-  gchar *temp2;
-  gchar *path_root;
-
+  temp1 = g_strdup (path);
   temp2 = g_strdup (g_path_get_dirname (temp1));
   path_root = g_strdup (realpath (temp2, NULL));
 
