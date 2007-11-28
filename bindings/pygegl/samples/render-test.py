@@ -24,8 +24,8 @@ text    = gegl.new_child("text",
 over    = gegl.new_child("over")
 display = gegl.new_child("display")
 
-fractal.link(contrast, over, display)
-text.connect_to("output", over, "aux")
+fractal >> contrast >> over >> display
+text >> over["aux"]
 
 buffer = over.render((0,0,width,height), "Y u8")
 

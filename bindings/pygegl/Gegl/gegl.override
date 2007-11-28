@@ -277,7 +277,7 @@ _wrap_gegl_node_get_consumers(PyGObject *self, PyObject *args, PyObject *kwargs)
         if (!v) {
             Py_XDECREF(o);
             Py_DECREF(py_list);
-            py_list = NULL; 
+            py_list = NULL;
             goto cleanup;
         }
 
@@ -384,7 +384,7 @@ _wrap_gegl_node_new_processor(PyGObject *self, PyObject *args, PyObject *kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                                      "|O:GeglNode.new_processor", kwlist,
-                                     &py_rectangle)) 
+                                     &py_rectangle))
         return NULL;
 
     if (py_rectangle == NULL) {
@@ -421,7 +421,7 @@ _wrap_gegl_processor_set_rectangle(PyGObject *self, PyObject *args, PyObject *kw
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                                      "O:GeglProcessor.set_rectangle", kwlist,
-                                     &py_rectangle)) 
+                                     &py_rectangle))
         return NULL;
 
     if (py_rectangle == Py_None) {
@@ -525,7 +525,7 @@ _wrap_gegl_node_link(PyGObject *self, PyObject *args)
 
         if (!pygobject_check(sink, &PyGeglNode_Type)) {
             PyErr_Format(PyExc_TypeError, "argument %d is not a GeglNode", i);
-            return NULL; 
+            return NULL;
         }
 
         gegl_node_connect_to(GEGL_NODE(pygobject_get(source)), "output",
@@ -597,7 +597,7 @@ _wrap_gegl_node_lookup(PyGObject *self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "s:GeglNode.lookup", &lookup_name))
         return NULL;
-  
+ 
     children = gegl_node_get_children(GEGL_NODE(self->obj));
 
     for (l = children; l; l = l->next) {
@@ -704,3 +704,162 @@ _wrap_gegl_node_to_dot(PyGObject *self)
     char *dot = gegl_to_dot(GEGL_NODE(self->obj));
     return PyString_FromString(dot);
 }
+%%
+override-slot GeglNode.tp_getattro
+static PyObject *
+_wrap_gegl_node_tp_getattro(PyGObject *self, PyObject *attr)
+{
+    char *prop_name;
+    GParamSpec *pspec;
+    GValue value = { 0, };
+    PyObject *ret;
+
+    prop_name = PyString_AsString(attr);
+    if (!prop_name || !strncmp(prop_name, "__", 2)) {
+        PyErr_Clear();
+        return PyGeglNode_Type.tp_base->tp_getattro((PyObject *)self, attr);
+    }
+
+    pspec = gegl_node_find_property(GEGL_NODE(self->obj), prop_name);
+
+    if (!pspec) {
+        return PyGeglNode_Type.tp_base->tp_getattro((PyObject *)self, attr);
+    }
+
+    if (!(pspec->flags & G_PARAM_READABLE)) {
+        PyErr_Format(PyExc_TypeError, "property '%s' is not readable",
+                     prop_name);
+        return NULL;
+    }
+
+    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+    gegl_node_get_property(GEGL_NODE(self->obj), prop_name, &value);
+    ret = pyg_param_gvalue_as_pyobject(&value, TRUE, pspec);
+    g_value_unset(&value);
+
+    return ret;
+}
+%%
+override-slot GeglNode.tp_setattro
+static int
+_wrap_gegl_node_tp_setattro(PyGObject *self, PyObject *attr, PyObject *pvalue)
+{
+    GParamSpec *pspec;
+    char *prop_name;
+
+    if (pvalue == NULL) {
+        PyErr_SetString(PyExc_TypeError, "properties cannot be deleted");
+        return -1;
+    }
+
+    prop_name = PyString_AsString(attr);
+    if (!prop_name || !strncmp(prop_name, "__", 2)) {
+        PyErr_Clear();
+        return PyGeglNode_Type.tp_base->tp_setattro((PyObject *)self, attr, pvalue);
+    }
+
+    pspec = gegl_node_find_property(GEGL_NODE(self->obj), prop_name);
+    if (!pspec) {
+        return PyGeglNode_Type.tp_base->tp_setattro((PyObject *)self, attr, pvalue);
+    }
+
+    if (!pygegl_set_property_from_pspec(GEGL_NODE(self->obj), prop_name,
+                                        pspec, pvalue))
+        return -1;
+
+    return 0;
+}
+%%
+override-slot GeglNode.tp_as_number
+static PyObject *
+_wrap_gegl_node_nb_rshift(PyGObject *self, PyObject *other)
+{
+    PyObject *py_input_pad;
+    char *input_pad;
+
+    if (!pygobject_check(other, &PyGeglNode_Type)) {
+        PyErr_SetString(PyExc_TypeError, "sink is not a GeglNode");
+        return NULL;
+    }
+
+    if (PyObject_HasAttrString(other, "__node_input_pad")) {
+        py_input_pad = PyObject_GetAttrString(other, "__node_input_pad");
+        if (!py_input_pad)
+            return NULL;
+
+        if (!PyString_Check(py_input_pad)) {
+            PyErr_SetString(PyExc_TypeError, "input sink has corrupt state");
+            return NULL;
+        }
+
+        input_pad = PyString_AS_STRING(py_input_pad);
+
+        gegl_node_connect_to(GEGL_NODE(self->obj), "output",
+                             GEGL_NODE(pygobject_get(other)), input_pad);
+    } else {
+        gegl_node_connect_to(GEGL_NODE(self->obj), "output",
+                             GEGL_NODE(pygobject_get(other)), "input");
+    }
+
+    Py_INCREF(other);
+    return other;
+}
+
+static PyNumberMethods _wrap_gegl_node_tp_as_number = {
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (ternaryfunc)0,
+    (unaryfunc)0,
+    (unaryfunc)0,
+    (unaryfunc)0,
+    (inquiry)0,
+    (unaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)_wrap_gegl_node_nb_rshift,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (binaryfunc)0,
+    (coercion)0,
+    (unaryfunc)0,
+    (unaryfunc)0,
+    (unaryfunc)0,
+    (unaryfunc)0,
+    (unaryfunc)0
+};
+%%
+override-slot GeglNode.tp_as_mapping
+static PyObject *
+_wrap_gegl_node_mp_subscript(PyGObject *self, PyObject *item)
+{
+    char *input_pad;
+    PyObject *input_node;
+
+    input_pad = PyString_AsString(item);
+    if (input_pad == NULL) {
+        PyErr_SetString(PyExc_TypeError, "input pad must be a string");
+        return NULL;
+    }
+
+    input_node = pygobject_new(self->obj);
+    if (!input_node) {
+        return NULL;
+    }
+
+    if (PyObject_SetAttrString(input_node, "__node_input_pad",
+                               PyString_FromString(input_pad)) < 0) {
+        Py_DECREF(input_node);
+        return NULL;
+    }
+
+    return input_node;
+}
+
+static PyMappingMethods _wrap_gegl_node_tp_as_mapping = {
+    (lenfunc)0,
+    (binaryfunc)_wrap_gegl_node_mp_subscript,
+    (objobjargproc)0
+};

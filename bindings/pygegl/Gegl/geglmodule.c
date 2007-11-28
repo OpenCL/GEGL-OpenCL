@@ -98,6 +98,8 @@ init_gegl(void)
 
     pygegl_init();
 
-    if (PyErr_Occurred())
+    if (PyErr_Occurred()) {
+        PyErr_Print();
         Py_FatalError("can't initialize module _gegl");
+    }
 }

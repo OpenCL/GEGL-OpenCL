@@ -1,3 +1,20 @@
+2007-11-27  Manish Singh  <yosh@gimp.org>
+
+	* Gegl/fifthleg.py: call _gegl.node_new_from_xml instead of parse_xml.
+
+	* Gegl/gegl.override: properties are now accessible via python
+	attributes. >> and [] are overloaded to hook up nodes, like
+	the ruby binding.
+
+	* Gegl/geglmodule.c: print error if error occurs on import.
+
+	* samples/xml-parsing.py: new sample, ported from ruby.
+
+	* samples/Makefile.am: add new sample.
+
+	* samples/render-test.py
+	* samples/subgraph.py: use new convenience syntax.
+
 2007-11-25  Manish Singh  <yosh@gimp.org>
 
 	* Gegl/__init__.py: generalize RTLD_GLOBAL stuff to work on other

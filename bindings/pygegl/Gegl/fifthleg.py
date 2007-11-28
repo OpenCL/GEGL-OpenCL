@@ -32,4 +32,4 @@ def node_new_from_file(file=None):
         path_root = os.path.realpath(os.path.dirname(filename))
         
     data = file.read()
-    return _gegl.parse_xml(data)
+    return _gegl.node_new_from_xml(data)
