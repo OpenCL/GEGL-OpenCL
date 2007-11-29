@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "gegl-types.h"
-#include "gegl-interpolator.h"
+#include "gegl-sampler.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-private.h"
 
@@ -38,23 +38,23 @@ enum
   PROP_LAST
 };
 
-static void gegl_interpolator_class_init (GeglInterpolatorClass *klass);
-static void gegl_interpolator_init       (GeglInterpolator *self);
-static void finalize                     (GObject *gobject);
-static void dispose                      (GObject *gobject);
-static void get_property                 (GObject    *gobject,
-                                          guint       prop_id,
-                                          GValue     *value,
-                                          GParamSpec *pspec);
-static void set_property                 (GObject      *gobject,
-                                          guint         prop_id,
-                                          const GValue *value,
-                                          GParamSpec   *pspec);
+static void gegl_sampler_class_init (GeglSamplerClass *klass);
+static void gegl_sampler_init       (GeglSampler *self);
+static void finalize                (GObject *gobject);
+static void dispose                 (GObject *gobject);
+static void get_property            (GObject    *gobject,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec);
+static void set_property            (GObject      *gobject,
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec);
 
-G_DEFINE_TYPE (GeglInterpolator, gegl_interpolator, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
 
 static void
-gegl_interpolator_class_init (GeglInterpolatorClass *klass)
+gegl_sampler_class_init (GeglSamplerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -90,7 +90,7 @@ gegl_interpolator_class_init (GeglInterpolatorClass *klass)
 }
 
 static void
-gegl_interpolator_init (GeglInterpolator *self)
+gegl_sampler_init (GeglSampler *self)
 {
   self->cache_buffer = NULL;
   self->buffer = NULL;
@@ -98,28 +98,28 @@ gegl_interpolator_init (GeglInterpolator *self)
 }
 
 void
-gegl_interpolator_get (GeglInterpolator *self,
+gegl_sampler_get (GeglSampler *self,
                        gdouble           x,
                        gdouble           y,
                        void             *output)
 {
-  GeglInterpolatorClass *klass;
+  GeglSamplerClass *klass;
 
-  g_return_if_fail (GEGL_IS_INTERPOLATOR (self));
+  g_return_if_fail (GEGL_IS_SAMPLER (self));
 
-  klass = GEGL_INTERPOLATOR_GET_CLASS (self);
+  klass = GEGL_SAMPLER_GET_CLASS (self);
 
   klass->get (self, x, y, output);
 }
 
 void
-gegl_interpolator_prepare (GeglInterpolator *self)
+gegl_sampler_prepare (GeglSampler *self)
 {
-  GeglInterpolatorClass *klass;
+  GeglSamplerClass *klass;
 
-  g_return_if_fail (GEGL_IS_INTERPOLATOR (self));
+  g_return_if_fail (GEGL_IS_SAMPLER (self));
 
-  klass = GEGL_INTERPOLATOR_GET_CLASS (self);
+  klass = GEGL_SAMPLER_GET_CLASS (self);
 
   if (klass->prepare)
     klass->prepare (self);
@@ -138,55 +138,55 @@ gegl_interpolator_prepare (GeglInterpolator *self)
 static void
 finalize (GObject *gobject)
 {
-  GeglInterpolator *interpolator = GEGL_INTERPOLATOR (gobject);
-  if (interpolator->cache_buffer)
+  GeglSampler *sampler = GEGL_SAMPLER (gobject);
+  if (sampler->cache_buffer)
     {
-      g_free (interpolator->cache_buffer);
-      interpolator->cache_buffer = NULL;
+      g_free (sampler->cache_buffer);
+      sampler->cache_buffer = NULL;
     }
-  G_OBJECT_CLASS (gegl_interpolator_parent_class)->finalize (gobject);
+  G_OBJECT_CLASS (gegl_sampler_parent_class)->finalize (gobject);
 }
 
 static void
 dispose (GObject *gobject)
 {
-  GeglInterpolator *interpolator = GEGL_INTERPOLATOR (gobject);
-  if (interpolator->buffer)
+  GeglSampler *sampler = GEGL_SAMPLER (gobject);
+  if (sampler->buffer)
     {
-      g_object_unref (interpolator->buffer);
-      interpolator->buffer = NULL;
+      g_object_unref (sampler->buffer);
+      sampler->buffer = NULL;
     }
-  G_OBJECT_CLASS (gegl_interpolator_parent_class)->dispose (gobject);
+  G_OBJECT_CLASS (gegl_sampler_parent_class)->dispose (gobject);
 }
 
 void
-gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
-                               gdouble           x,
-                               gdouble           y)
+gegl_sampler_fill_buffer (GeglSampler *sampler,
+                          gdouble      x,
+                          gdouble      y)
 {
   GeglBuffer    *buffer;
   GeglRectangle  surround;
  
-  buffer = interpolator->buffer;
+  buffer = sampler->buffer;
   g_assert (buffer);
 
-  if (interpolator->cache_buffer) 
+  if (sampler->cache_buffer) 
     {
-      GeglRectangle r = interpolator->cache_rectangle;
+      GeglRectangle r = sampler->cache_rectangle;
 
       /* check if the cache-buffer includes both the desired coordinates and
        * a sufficient surrounding context 
        */
-      if (x - r.x >= interpolator->context_pixels &&
-          x - r.x < r.width - interpolator->context_pixels &&
-          y - r.y >= interpolator->context_pixels &&
-          y - r.y < r.height - interpolator->context_pixels)
+      if (x - r.x >= sampler->context_pixels &&
+          x - r.x < r.width - sampler->context_pixels &&
+          y - r.y >= sampler->context_pixels &&
+          y - r.y < r.height - sampler->context_pixels)
         {
           return;  /* we can reuse our cached interpolation source buffer */
         }
 
-      g_free (interpolator->cache_buffer);
-      interpolator->cache_buffer = NULL;
+      g_free (sampler->cache_buffer);
+      sampler->cache_buffer = NULL;
     }
 
   surround.x = x - SIZE/2;
@@ -194,15 +194,15 @@ gegl_interpolator_fill_buffer (GeglInterpolator *interpolator,
   surround.width  = SIZE;
   surround.height = SIZE;
 
-  interpolator->cache_buffer = g_malloc0 (surround.width *
+  sampler->cache_buffer = g_malloc0 (surround.width *
                                           surround.height *
                                           4 * sizeof (gfloat));
-  interpolator->cache_rectangle = surround;
-  interpolator->interpolate_format = babl_format ("RaGaBaA float");
+  sampler->cache_rectangle = surround;
+  sampler->interpolate_format = babl_format ("RaGaBaA float");
 
   gegl_buffer_get (buffer, 1.0, &surround,
-                   interpolator->interpolate_format,
-                   interpolator->cache_buffer, GEGL_AUTO_ROWSTRIDE);
+                   sampler->interpolate_format,
+                   sampler->cache_buffer, GEGL_AUTO_ROWSTRIDE);
 }
 
 static void
@@ -211,7 +211,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
+  GeglSampler *self = GEGL_SAMPLER (object);
 
   switch (prop_id)
     {
@@ -238,7 +238,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglInterpolator *self = GEGL_INTERPOLATOR (object);
+  GeglSampler *self = GEGL_SAMPLER (object);
 
   switch (prop_id)
     {

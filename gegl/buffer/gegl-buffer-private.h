@@ -52,7 +52,7 @@ struct _GeglBuffer
   GeglTile         *hot_tile; /* cached tile for speeding up pget/pset (1x1
                                  sized gets/sets)*/
 
-  GeglInterpolator *interpolator; /* cached interpolator for speeding up random
+  GeglSampler      *sampler; /* cached sampler for speeding up random
                                      access interpolated fetches from the
                                      buffer */
 

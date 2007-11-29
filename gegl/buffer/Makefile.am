@@ -6,11 +6,11 @@ BUFFER_sources = \
     gegl-buffer-load.c		\
     gegl-buffer.c		\
     gegl-cache.c		\
-    gegl-interpolator.c		\
-    gegl-interpolator-cubic.c	\
-    gegl-interpolator-lanczos.c	\
-    gegl-interpolator-linear.c	\
-    gegl-interpolator-nearest.c	\
+    gegl-sampler.c		\
+    gegl-sampler-cubic.c	\
+    gegl-sampler-lanczos.c	\
+    gegl-sampler-linear.c	\
+    gegl-sampler-nearest.c	\
     gegl-region-generic.c	\
     gegl-storage.c		\
     gegl-tile.c			\
@@ -32,11 +32,11 @@ BUFFER_headers = \
     gegl-buffer-save.h		\
     gegl-buffer-types.h		\
     gegl-cache.h		\
-    gegl-interpolator.h		\
-    gegl-interpolator-cubic.h	\
-    gegl-interpolator-lanczos.h	\
-    gegl-interpolator-linear.h	\
-    gegl-interpolator-nearest.h	\
+    gegl-sampler.h		\
+    gegl-sampler-cubic.h	\
+    gegl-sampler-lanczos.h	\
+    gegl-sampler-linear.h	\
+    gegl-sampler-nearest.h	\
     gegl-region.h		\
     gegl-region-generic.h	\
     gegl-storage.h		\

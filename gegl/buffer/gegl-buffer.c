@@ -1221,7 +1221,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
     format = buffer->format;
 
   /* FIXME: go through chain of providers up to but not including
-   * storage and disassociated Interpolator */
+   * storage and disassociated Sampler */
 
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
@@ -1674,9 +1674,9 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
   return &buffer->abyss;
 }
 
-#include "gegl-interpolator-nearest.h"
-#include "gegl-interpolator-linear.h"
-#include "gegl-interpolator-cubic.h"
+#include "gegl-sampler-nearest.h"
+#include "gegl-sampler-linear.h"
+#include "gegl-sampler-cubic.h"
 
 void
 gegl_buffer_sample (GeglBuffer       *buffer,
@@ -1693,35 +1693,35 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   return;
 #endif
 
-  /* look up appropriate interpolator,. */
-  if (buffer->interpolator == NULL)
+  /* look up appropriate sampler,. */
+  if (buffer->sampler == NULL)
     {
       /* FIXME: should probably check if the desired form of interpolation
-       * changes from the currently cached interpolator.
+       * changes from the currently cached sampler.
        */
       GType interpolation_type = 0;
 
       switch (interpolation)
         {
           case GEGL_INTERPOLATION_NEAREST:
-            interpolation_type=GEGL_TYPE_INTERPOLATOR_NEAREST;
+            interpolation_type=GEGL_TYPE_SAMPLER_NEAREST;
             break;
           case GEGL_INTERPOLATION_LINEAR:
-            interpolation_type=GEGL_TYPE_INTERPOLATOR_LINEAR;
+            interpolation_type=GEGL_TYPE_SAMPLER_LINEAR;
             break;
           default:
             g_warning ("unimplemented interpolation type %i", interpolation);
         }
-      buffer->interpolator = g_object_new (interpolation_type,
+      buffer->sampler = g_object_new (interpolation_type,
                                            "buffer", buffer,
                                            "format", format,
                                            NULL);
-      gegl_interpolator_prepare (buffer->interpolator);
+      gegl_sampler_prepare (buffer->sampler);
     }
-  gegl_interpolator_get (buffer->interpolator, x, y, dest);
+  gegl_sampler_get (buffer->sampler, x, y, dest);
 
-  /* if none found, create a singleton interpolator for this buffer,
-   * a function to clean up the interpolators set for a buffer should
+  /* if none found, create a singleton sampler for this buffer,
+   * a function to clean up the samplers set for a buffer should
    * also be provided */
 
   /* if (scale < 1.0) do decimation, possibly using pyramid instead */
@@ -1731,10 +1731,10 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 void
 gegl_buffer_sample_cleanup (GeglBuffer *buffer)
 {
-  if (buffer->interpolator)
+  if (buffer->sampler)
     {
-      g_object_unref (buffer->interpolator);
-      buffer->interpolator = NULL;
+      g_object_unref (buffer->sampler);
+      buffer->sampler = NULL;
     }
 }
 

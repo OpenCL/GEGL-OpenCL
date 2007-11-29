@@ -18,7 +18,7 @@
 /* XXX WARNING: This code compiles, but is functionally broken, and
  * currently not used by the rest of GeglBuffer */
 
-#include "gegl-interpolator-lanczos.h"
+#include "gegl-sampler-lanczos.h"
 #include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
 #include <math.h>
@@ -37,7 +37,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglInterpolatorLanczos *self         = GEGL_INTERPOLATOR_LANCZOS (object);
+  GeglSamplerLanczos *self         = GEGL_SAMPLER_LANCZOS (object);
 
   switch (prop_id)
     {
@@ -60,7 +60,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglInterpolatorLanczos *self         = GEGL_INTERPOLATOR_LANCZOS (object);
+  GeglSamplerLanczos *self         = GEGL_SAMPLER_LANCZOS (object);
 
   switch (prop_id)
     {
@@ -77,41 +77,41 @@ set_property (GObject      *object,
     }
 }
 
-static void    gegl_interpolator_lanczos_get (GeglInterpolator *self,
+static void    gegl_sampler_lanczos_get (GeglSampler *self,
                                               gdouble           x,
                                               gdouble           y,
                                               void             *output);
 
-static void    gegl_interpolator_lanczos_prepare (GeglInterpolator *self);
+static void    gegl_sampler_lanczos_prepare (GeglSampler *self);
 
 static inline gdouble sinc (gdouble x);
-static void           lanczos_lookup (GeglInterpolator *interpolator);
+static void           lanczos_lookup (GeglSampler *sampler);
 
-G_DEFINE_TYPE (GeglInterpolatorLanczos, gegl_interpolator_lanczos, GEGL_TYPE_INTERPOLATOR)
+G_DEFINE_TYPE (GeglSamplerLanczos, gegl_sampler_lanczos, GEGL_TYPE_SAMPLER)
 
 static void
 finalize (GObject *object)
 {
-  GeglInterpolatorLanczos *self         = GEGL_INTERPOLATOR_LANCZOS (object);
-  GeglInterpolator        *interpolator = GEGL_INTERPOLATOR (object);
+  GeglSamplerLanczos *self         = GEGL_SAMPLER_LANCZOS (object);
+  GeglSampler        *sampler = GEGL_SAMPLER (object);
 
   g_free (self->lanczos_lookup);
-  g_free (interpolator->cache_buffer);
-  G_OBJECT_CLASS (gegl_interpolator_lanczos_parent_class)->finalize (object);
+  g_free (sampler->cache_buffer);
+  G_OBJECT_CLASS (gegl_sampler_lanczos_parent_class)->finalize (object);
 }
 
 static void
-gegl_interpolator_lanczos_class_init (GeglInterpolatorLanczosClass *klass)
+gegl_sampler_lanczos_class_init (GeglSamplerLanczosClass *klass)
 {
   GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
-  GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
+  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
 
   object_class->finalize     = finalize;
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  interpolator_class->prepare = gegl_interpolator_lanczos_prepare;
-  interpolator_class->get     = gegl_interpolator_lanczos_get;
+  sampler_class->prepare = gegl_sampler_lanczos_prepare;
+  sampler_class->get     = gegl_sampler_lanczos_get;
 
   g_object_class_install_property (object_class, PROP_LANCZOS_WIDTH,
                                    g_param_spec_int ("lanczos_width",
@@ -134,27 +134,27 @@ gegl_interpolator_lanczos_class_init (GeglInterpolatorLanczosClass *klass)
 }
 
 static void
-gegl_interpolator_lanczos_init (GeglInterpolatorLanczos *self)
+gegl_sampler_lanczos_init (GeglSamplerLanczos *self)
 {
 }
 
 void
-gegl_interpolator_lanczos_prepare (GeglInterpolator *interpolator)
+gegl_sampler_lanczos_prepare (GeglSampler *sampler)
 {
-  /*GeglBuffer *input = GEGL_BUFFER (interpolator->input);*/
+  /*GeglBuffer *input = GEGL_BUFFER (sampler->input);*/
 
   /* calculate lookup */
-  lanczos_lookup (interpolator);
+  lanczos_lookup (sampler);
 }
 
 void
-gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
-                               gdouble           x,
-                               gdouble           y,
-                               void             *output)
+gegl_sampler_lanczos_get (GeglSampler *sampler,
+                          gdouble           x,
+                          gdouble           y,
+                          void             *output)
 {
-  GeglInterpolatorLanczos *self   = GEGL_INTERPOLATOR_LANCZOS (interpolator);
-  GeglBuffer              *buffer  = interpolator->buffer;
+  GeglSamplerLanczos *self   = GEGL_SAMPLER_LANCZOS (sampler);
+  GeglBuffer              *buffer  = sampler->buffer;
   gfloat                  *cache_buffer;
   gfloat                  *buf_ptr;
 
@@ -171,8 +171,8 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
   gdouble                  x_kernel[lanczos_width2], /* 1-D kernels of Lanczos window coeffs */
                            y_kernel[lanczos_width2];
   
-  gegl_interpolator_fill_buffer (interpolator, x, y);
-  cache_buffer = interpolator->cache_buffer;
+  gegl_sampler_fill_buffer (sampler, x, y);
+  cache_buffer = sampler->cache_buffer;
   if (!cache_buffer)
     return;
 
@@ -240,7 +240,7 @@ gegl_interpolator_lanczos_get (GeglInterpolator *interpolator,
       dst[2] = abyss;
       dst[3] = abyss;
     }
-  babl_process (babl_fish (interpolator->interpolate_format, interpolator->format),
+  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
                 dst, output, 1);
 }
 
@@ -260,9 +260,9 @@ sinc (gdouble x)
 }
 
 static void
-lanczos_lookup (GeglInterpolator *interpolator)
+lanczos_lookup (GeglSampler *sampler)
 {
-  GeglInterpolatorLanczos *self = GEGL_INTERPOLATOR_LANCZOS (interpolator);
+  GeglSamplerLanczos *self = GEGL_SAMPLER_LANCZOS (sampler);
 
   if (self->lanczos_lookup != NULL)
     g_free (self->lanczos_lookup);

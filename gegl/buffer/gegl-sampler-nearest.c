@@ -14,43 +14,43 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gegl-interpolator-nearest.h"
+#include "gegl-sampler-nearest.h"
 #include "gegl-buffer-private.h"
 #include <string.h>
 
-static void    gegl_interpolator_nearest_get (GeglInterpolator *self,
-                                              gdouble           x,
-                                              gdouble           y,
-                                              void             *output);
+static void    gegl_sampler_nearest_get (GeglSampler *self,
+                                         gdouble      x,
+                                         gdouble      y,
+                                         void        *output);
 
 
-G_DEFINE_TYPE (GeglInterpolatorNearest, gegl_interpolator_nearest, GEGL_TYPE_INTERPOLATOR)
+G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
 static void
-gegl_interpolator_nearest_class_init (GeglInterpolatorNearestClass *klass)
+gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
 {
-  GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
+  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
 
-  interpolator_class->get     = gegl_interpolator_nearest_get;
+  sampler_class->get     = gegl_sampler_nearest_get;
 
 }
 
 static void
-gegl_interpolator_nearest_init (GeglInterpolatorNearest *self)
+gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
 }
 
 void
-gegl_interpolator_nearest_get (GeglInterpolator *self,
-                               gdouble           x,
-                               gdouble           y,
-                               void             *output)
+gegl_sampler_nearest_get (GeglSampler *self,
+                          gdouble      x,
+                          gdouble      y,
+                          void        *output)
 {
   gfloat        *cache_buffer;
   GeglRectangle *rect;
   gfloat         dst[4];
 
-  gegl_interpolator_fill_buffer (self, x, y);
+  gegl_sampler_fill_buffer (self, x, y);
 
   rect = &self->cache_rectangle;
   cache_buffer = self->cache_buffer;

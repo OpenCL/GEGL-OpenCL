@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "gegl-interpolator-cubic.h"
+#include "gegl-sampler-cubic.h"
 #include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
 #include <math.h>
@@ -40,28 +40,28 @@ static void     set_property (GObject      *gobject,
 static inline float cubicKernel(float x, float b, float c);
 static void    finalize                         (GObject       *gobject);
 
-static void    gegl_interpolator_cubic_get     (GeglInterpolator *self,
+static void    gegl_sampler_cubic_get     (GeglSampler *self,
                                                  gdouble           x,
                                                  gdouble           y,
                                                  void             *output);
 
-static void    gegl_interpolator_cubic_prepare (GeglInterpolator *self);
+static void    gegl_sampler_cubic_prepare (GeglSampler *self);
 
 
-G_DEFINE_TYPE (GeglInterpolatorCubic, gegl_interpolator_cubic, GEGL_TYPE_INTERPOLATOR)
+G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
 
 static void
-gegl_interpolator_cubic_class_init (GeglInterpolatorCubicClass *klass)
+gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
 {
   GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
-  GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
+  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
 
   object_class->finalize     = finalize;
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  interpolator_class->prepare = gegl_interpolator_cubic_prepare;
-  interpolator_class->get     = gegl_interpolator_cubic_get;
+  sampler_class->prepare = gegl_sampler_cubic_prepare;
+  sampler_class->get     = gegl_sampler_cubic_get;
 
   g_object_class_install_property (object_class, PROP_B,
                                    g_param_spec_double ("b",
@@ -81,14 +81,14 @@ gegl_interpolator_cubic_class_init (GeglInterpolatorCubicClass *klass)
 }
 
 static void
-gegl_interpolator_cubic_init (GeglInterpolatorCubic *self)
+gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
 }
 
 void
-gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
+gegl_sampler_cubic_prepare (GeglSampler *sampler)
 {
-  GeglInterpolatorCubic *self  = GEGL_INTERPOLATOR_CUBIC (interpolator);
+  GeglSamplerCubic *self  = GEGL_SAMPLER_CUBIC (sampler);
 
   /* fill the internal bufer */
 
@@ -113,23 +113,23 @@ gegl_interpolator_cubic_prepare (GeglInterpolator *interpolator)
 static void
 finalize (GObject *object)
 {
-  GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
+  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
 
   if (self->type)
     g_free (self->type);
-  G_OBJECT_CLASS (gegl_interpolator_cubic_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_sampler_cubic_parent_class)->finalize (object);
 }
 
 void
-gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
+gegl_sampler_cubic_get (GeglSampler *sampler,
                              gdouble           x,
                              gdouble           y,
                              void             *output)
 {
-  GeglInterpolatorCubic *self      = GEGL_INTERPOLATOR_CUBIC (interpolator);
-  gfloat                *cache_buffer = interpolator->cache_buffer;
-  GeglRectangle         *rectangle = &interpolator->cache_rectangle;
-  GeglBuffer            *buffer    = interpolator->buffer;
+  GeglSamplerCubic *self      = GEGL_SAMPLER_CUBIC (sampler);
+  gfloat                *cache_buffer = sampler->cache_buffer;
+  GeglRectangle         *rectangle = &sampler->cache_rectangle;
+  GeglBuffer            *buffer    = sampler->buffer;
   gfloat                *buf_ptr;
   gfloat                 factor;
 
@@ -140,8 +140,8 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
   gfloat                 abyss = 0.;
   gint                   i, j, pu, pv;
 
-  gegl_interpolator_fill_buffer (interpolator, x, y);
-  cache_buffer = interpolator->cache_buffer;
+  gegl_sampler_fill_buffer (sampler, x, y);
+  cache_buffer = sampler->cache_buffer;
   if (!buffer)
     return;
 
@@ -193,7 +193,7 @@ gegl_interpolator_cubic_get (GeglInterpolator *interpolator,
       dst[2] = abyss;
       dst[3] = abyss;
     }
-  babl_process (babl_fish (interpolator->interpolate_format, interpolator->format),
+  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
                 dst, output, 1);
 }
 
@@ -203,7 +203,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
+  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
 
   switch (prop_id)
     {
@@ -226,7 +226,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglInterpolatorCubic *self         = GEGL_INTERPOLATOR_CUBIC (object);
+  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
 
   switch (prop_id)
     {

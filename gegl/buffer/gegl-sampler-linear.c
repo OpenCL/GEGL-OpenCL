@@ -14,7 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gegl-interpolator-linear.h"
+#include "gegl-sampler-linear.h"
 #include "gegl-buffer-private.h"
 #include <string.h>
 enum
@@ -24,32 +24,32 @@ enum
   PROP_LAST
 };
 
-static void    gegl_interpolator_linear_get (GeglInterpolator *self,
-                                             gdouble           x,
-                                             gdouble           y,
-                                             void             *output);
-static void            set_property (GObject      *gobject,
-                                     guint         prop_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec);
-static void            get_property (GObject    *gobject,
-                                     guint       prop_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec);
+static void    gegl_sampler_linear_get (GeglSampler *self,
+                                        gdouble           x,
+                                        gdouble           y,
+                                        void             *output);
+static void    set_property            (GObject      *gobject,
+                                        guint         prop_id,
+                                        const GValue *value,
+                                        GParamSpec   *pspec);
+static void    get_property            (GObject    *gobject,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec);
 
 
-G_DEFINE_TYPE (GeglInterpolatorLinear, gegl_interpolator_linear, GEGL_TYPE_INTERPOLATOR)
+G_DEFINE_TYPE (GeglSamplerLinear, gegl_sampler_linear, GEGL_TYPE_SAMPLER)
 
 static void
-gegl_interpolator_linear_class_init (GeglInterpolatorLinearClass *klass)
+gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
 {
-  GeglInterpolatorClass *interpolator_class = GEGL_INTERPOLATOR_CLASS (klass);
+  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  interpolator_class->get     = gegl_interpolator_linear_get;
+  sampler_class->get     = gegl_sampler_linear_get;
 
   g_object_class_install_property (object_class, PROP_CONTEXT_PIXELS,
                                    g_param_spec_int ("context-pixels",
@@ -62,13 +62,13 @@ gegl_interpolator_linear_class_init (GeglInterpolatorLinearClass *klass)
 }
 
 static void
-gegl_interpolator_linear_init (GeglInterpolatorLinear *self)
+gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
-  GEGL_INTERPOLATOR (self)->context_pixels=1;
+  GEGL_SAMPLER (self)->context_pixels=1;
 }
 
 void
-gegl_interpolator_linear_get (GeglInterpolator *interpolator,
+gegl_sampler_linear_get (GeglSampler *sampler,
                               gdouble           x,
                               gdouble           y,
                               void             *output)
@@ -78,9 +78,9 @@ gegl_interpolator_linear_get (GeglInterpolator *interpolator,
   gfloat         dst[4];
   gfloat         abyss = 0.;
 
-  gegl_interpolator_fill_buffer (interpolator, x, y);
-  rect = &interpolator->cache_rectangle;
-  cache_buffer = interpolator->cache_buffer;
+  gegl_sampler_fill_buffer (sampler, x, y);
+  rect = &sampler->cache_rectangle;
+  cache_buffer = sampler->cache_buffer;
   if (!cache_buffer)
     return;
 
@@ -131,7 +131,7 @@ gegl_interpolator_linear_get (GeglInterpolator *interpolator,
       dst[2] = abyss;
       dst[3] = abyss;
     }
-  babl_process (babl_fish (interpolator->interpolate_format, interpolator->format),
+  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
                 dst, output, 1);
 }
 
@@ -146,7 +146,7 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_CONTEXT_PIXELS:
-        g_object_set_property (gobject, "GeglInterpolator::context-pixels", value);
+        g_object_set_property (gobject, "GeglSampler::context-pixels", value);
         break;
 
       default:
@@ -164,7 +164,7 @@ get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_CONTEXT_PIXELS:
-        g_object_get_property (gobject, "GeglInterpolator::context-pixels", value);
+        g_object_get_property (gobject, "GeglSampler::context-pixels", value);
         break;
 
       default:

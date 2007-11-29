@@ -18,22 +18,22 @@
 #ifndef _GEGL_BUFFER_TYPES_H
 #define _GEGL_BUFFER_TYPES_H
 
-typedef struct _GeglInterpolator         GeglInterpolator;
+typedef struct _GeglSampler              GeglSampler;
 
 typedef struct _GeglTile                 GeglTile;
 typedef struct _GeglTileClass            GeglTileClass;
 
-typedef struct _GeglProvider            GeglProvider;
-typedef struct _GeglProviderClass       GeglProviderClass;
+typedef struct _GeglProvider             GeglProvider;
+typedef struct _GeglProviderClass        GeglProviderClass;
 
 typedef struct _GeglTileBackend          GeglTileBackend;
 typedef struct _GeglTileBackendClass     GeglTileBackendClass;
 
-typedef struct _GeglHandler            GeglHandler;
-typedef struct _GeglHandlerClass       GeglHandlerClass;
+typedef struct _GeglHandler              GeglHandler;
+typedef struct _GeglHandlerClass         GeglHandlerClass;
 
-typedef struct _GeglHandlers           GeglHandlers;
-typedef struct _GeglHandlersClass      GeglHandlersClass;
+typedef struct _GeglHandlers             GeglHandlers;
+typedef struct _GeglHandlersClass        GeglHandlersClass;
 
 typedef struct _GeglStorage              GeglStorage;
 typedef struct _GeglStorageClass         GeglStorageClass;

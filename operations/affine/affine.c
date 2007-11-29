@@ -16,7 +16,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
-/* TODO: reenable different interpolators (through the sampling mechanism
+/* TODO: reenable different samplers (through the sampling mechanism
  *       of GeglBuffer intitially) */
 /* TODO: only calculate pixels inside transformed polygon */
 /* TODO: should hard edges always be used when only scaling? */
@@ -31,7 +31,7 @@
 #include "affine.h"
 #include "module.h"
 #include "matrix.h"
-#include "buffer/gegl-interpolator.h"
+#include "buffer/gegl-sampler.h"
 
 enum
 {
@@ -622,9 +622,9 @@ affine_generic (GeglBuffer        *dest,
   if (inverse [1][1] < 0.)
     v_start -= .001;
 
-  if (src->interpolator)
+  if (src->sampler)
     {
-      gegl_interpolator_prepare (src->interpolator);
+      gegl_sampler_prepare (src->sampler);
     }
 
   for (dest_ptr = dest_buf, y = dest_extent->height; y--;)
@@ -707,7 +707,7 @@ process (GeglOperation *operation,
 #endif
   else
     {
-      /* XXX: add back more interpolators */
+      /* XXX: add back more samplers */
       affine_generic (output, input, affine->matrix, gegl_buffer_interpolation_from_string (
          affine->filter));
     }
