@@ -1,3 +1,12 @@
+2007-12-03  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c
+	(gegl_node_add_child)
+	(gegl_node_remove_child): Use more explicit names for variables
+	holding private data for `self' and `child'. Also fixed a
+	copy-paste mistake in gegl_node_remove_child() introduced when
+	merging gegl-graph.c with gegl-node.c.
+
 2007-11-29  Øyvind Kolås  <pippin@gimp.org>
 
 	Renamed GeglInterpolator (and related subclasses) GeglSampler.

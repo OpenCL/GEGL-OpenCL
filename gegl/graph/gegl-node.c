@@ -1742,16 +1742,17 @@ GeglNode *
 gegl_node_add_child (GeglNode *self,
                      GeglNode *child)
 {
-  GeglNodePriv *priv;
+  GeglNodePriv *self_priv;
   GeglNodePriv *child_priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  priv       = GEGL_NODE_GET_PRIVATE (self);
+  self_priv  = GEGL_NODE_GET_PRIVATE (self);
   child_priv = GEGL_NODE_GET_PRIVATE (child);
 
-  priv->children = g_slist_prepend (priv->children, g_object_ref (child));
+  self_priv->children = g_slist_prepend (self_priv->children,
+                                         g_object_ref (child));
   self->is_graph = TRUE;
   child_priv->parent  = self;
 
@@ -1762,16 +1763,16 @@ GeglNode *
 gegl_node_remove_child (GeglNode *self,
                         GeglNode *child)
 {
-  GeglNodePriv *priv;
+  GeglNodePriv *self_priv;
   GeglNodePriv *child_priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  priv       = GEGL_NODE_GET_PRIVATE (self);
-  child_priv = GEGL_NODE_GET_PRIVATE (self);
+  self_priv  = GEGL_NODE_GET_PRIVATE (self);
+  child_priv = GEGL_NODE_GET_PRIVATE (child);
 
-  priv->children = g_slist_remove (priv->children, child);
+  self_priv->children = g_slist_remove (self_priv->children, child);
 
   if (child_priv->parent != NULL)
     {
@@ -1782,7 +1783,7 @@ gegl_node_remove_child (GeglNode *self,
     }
 
 
-  if (priv->children == NULL)
+  if (self_priv->children == NULL)
     self->is_graph = FALSE;
 
   return child;
