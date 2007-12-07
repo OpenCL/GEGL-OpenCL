@@ -1,3 +1,7 @@
+2007-12-07  Manish Singh  <yosh@gimp.org>
+
+	* pygegl/index.html: updates to reflect the rewritten binding.
+
 2007-11-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: updated directory guide.
