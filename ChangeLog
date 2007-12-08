@@ -1,3 +1,9 @@
+========================== 0.0.14 released ==================================
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: bumped version to 0.0.14
+
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: stubbed and commented away the introspection action
