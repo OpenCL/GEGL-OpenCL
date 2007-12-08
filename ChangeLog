@@ -1,5 +1,10 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: added news summary for 0.0.14.
+	* AUTHORS: added Tor Lillqvist.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (finalize), (task_monitor): stop the idle timeout
 	when the view is destroyed.
 

@@ -5,6 +5,26 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots. 
 
+Changes in GEGL 0.0.14
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Relicensed under LGPLv3+.
+ • Per node caches (faster recomputation when properties of nodes in
+   composition change)
+ • Sampler framwork for interpolation.
+ • Modified API for retrieving scaled buffers gegl_node_blit / gegl_buffer_get.
+ • Renamed XML serialization and parsing API to be descendants of GeglNode.
+ • Progress monitoring for GeglProcessor
+ • New operation base class GeglOperationAreaFilter
+ • API reference installed and browsable using devhelp.
+ • New operations: ff-load, mono-mixer, contrast-curve, save-pixbuf,
+   compositing ops from SVG-1.2 draft, value-invert, convert-format,
+   bilateral-filter, snn-mean
+
+Contributions from:
+  Étienne Bersac, Kevin Cozens, Manish Singh, Mark Probst, Martin Nordholts,
+  Michael Schumacher, Mukund Sivaraman, Shlomi Fish, Tor Lillqvist and
+  Øyvind Kolås  
+
 
 Changes in GEGL 0.0.12
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
@@ -22,8 +42,7 @@ Changes in GEGL 0.0.12
 
 Contributions from:
 
-Kevin Cozens, Øyvind Kolås, Sven Neumann and Michael Schumacher.
-
+Kevin Cozens, Michael Schumacher. Sven Neumann and Øyvind Kolås,
 
 Changes in GEGL 0.0.8
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
@@ -41,8 +60,7 @@ Changes in GEGL 0.0.6
  • png and EXR improvements.
 
 Contributions from:
-
-Dominik Ernst, Kevin Cozens, Øyvind Kolås and Michael Schumacher.
+  Dominik Ernst, Kevin Cozens, Øyvind Kolås, Michael Schumacher and Øyvind Kolås.
 
 
 Changes in GEGL 0.0.4
@@ -63,3 +81,14 @@ This was the first public release of GEGL.
       • Basic color correction tools.
       • Most processing done with High Dynamic Range routines.
       • Text layouting using pango
+
+Contributions from:
+  Dominik Ernst, Kevin Cozens, Manish Singh, Martin Nordholts, Michael Natterer.
+  Philip Lafleur, Sven Neumann and Øyvind Kolås.
+
+Changes in GEGL 0.0.x
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+Contributions from:
+  Calvin Williamson, Caroline Dahloff Daniel Rogers, Garry R. Osgood, Jay Cox
+  and Sven Neumann,
+
