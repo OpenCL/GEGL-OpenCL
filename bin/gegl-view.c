@@ -152,6 +152,12 @@ finalize (GObject *gobject)
   GeglView * self = GEGL_VIEW (gobject);
   GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
 
+  if (priv->monitor_id)
+    {  
+      g_source_remove (priv->monitor_id);
+      priv->monitor_id = 0;
+    }
+
   if (priv->node)
     g_object_unref (priv->node);
 
@@ -425,6 +431,8 @@ static gboolean
 task_monitor (GeglView *view)
 {
   GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
+  if (priv->processor==NULL)
+    return FALSE;
   if (gegl_processor_work (priv->processor, NULL))
     return TRUE;
 
