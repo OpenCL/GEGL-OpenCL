@@ -1,5 +1,9 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: commented away last bit of Introspection related code.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: added missing authors from GEGL splash.
 
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
