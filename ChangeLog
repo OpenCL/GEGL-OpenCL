@@ -1,5 +1,9 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: added missing authors from GEGL splash.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: post release bump of version to 0.0.15
 
 ========================== 0.0.14 released ==================================
