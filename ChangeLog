@@ -1,5 +1,10 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: stubbed and commented away the introspection action
+	from the menus.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (cb_about): adjust text in about dialog for license
 	change.
 	* operations/render/color.c: changed documentation string for value

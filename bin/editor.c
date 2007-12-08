@@ -247,7 +247,7 @@ editor_main (GeglNode    *gegl,
 }
 
 static void cb_about (GtkAction *action);
-static void cb_introspect (GtkAction *action);
+/*static void cb_introspect (GtkAction *action);*/
 static void cb_export (GtkAction *action);
 static void cb_quit_dialog (GtkAction *action);
 static void cb_composition_new (GtkAction *action);
@@ -300,11 +300,11 @@ static GtkActionEntry action_entries[] = {
    "_About", "",
    "About",
    G_CALLBACK (cb_about)},
-
+/*
   {"Introspect", NULL,
    "_Introspect", "<control>I",
    "Introspect",
-   G_CALLBACK (cb_introspect)},
+   G_CALLBACK (cb_introspect)},*/
 
   {"Export", GTK_STOCK_SAVE,
    "_Export", "<control><shift>E",
@@ -783,6 +783,7 @@ cb_about (GtkAction *action)
   gtk_widget_show_all (window);
 }
 
+/*
 static void
 cb_introspect (GtkAction *action)
 {
@@ -815,7 +816,7 @@ cb_introspect (GtkAction *action)
                     G_CALLBACK (gtk_widget_destroy), window);
   gtk_widget_show_all (window);
 
-}
+}*/
 
 static void cb_structure_visible (GtkAction *action, gpointer userdata)
 {
