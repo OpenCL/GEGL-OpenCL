@@ -1,10 +1,16 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: include gegl-extension-handler.h
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-extension-handler.[ch]:
 	(gegl_extension_handler_cleanup) explicitly specify void
 	as parameter list.
-	* gegl/process/gegl-processor.c: include gegl-extension-handler
-	header.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/process/gegl-processor.c: Changed processing block 256x256.
 
 2007-12-03  Martin Nordholts  <martinn@svn.gnome.org>
 

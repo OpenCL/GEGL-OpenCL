@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <glib/gstdio.h>
+#include "operation/gegl-extension-handler.h"
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
