@@ -1,5 +1,14 @@
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (cb_about): adjust text in about dialog for license
+	change.
+	* operations/render/color.c: changed documentation string for value
+	property.
+	* operations/render/noise.c: do not attempt rendering all of the
+	perlin-noise space.
+
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: added news summary for 0.0.14.
 	* AUTHORS: added Tor Lillqvist.
 

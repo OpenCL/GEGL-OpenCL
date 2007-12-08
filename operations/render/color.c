@@ -17,7 +17,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')")
+gegl_chant_color (value, "black", "The color to render (defaults to 'black')")
 #else
 
 #define GEGL_CHANT_SOURCE

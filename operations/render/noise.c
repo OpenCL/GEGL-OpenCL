@@ -31,8 +31,8 @@ gegl_chant_double (n,     0, 20.0, 3.0, "")
 #define GEGL_CHANT_CATEGORIES      "render"
 
 #define GEGL_CHANT_SOURCE
-
 #define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_CLASS_INIT
 
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
@@ -91,6 +91,12 @@ get_defined_region (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
   return result;
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  klass->adjust_result_region = NULL;
+  klass->no_cache = FALSE;
 }
 
 #endif
