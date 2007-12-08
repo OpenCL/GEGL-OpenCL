@@ -45,7 +45,7 @@ gegl_extension_handler_get (const gchar *extension)
 }
 
 void
-gegl_extension_handler_cleanup ()
+gegl_extension_handler_cleanup (void)
 {
   if (handlers)
     {
