@@ -1,3 +1,8 @@
+2007-12-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/Makefile.am: Added EXTRA_DIST to include header
+	files found in the directory when a tarball is created.
+
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: commented away last bit of Introspection related code.

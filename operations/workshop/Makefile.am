@@ -2,6 +2,9 @@ SUBDIRS = generated
 
 include $(top_srcdir)/operations/Makefile-operations.am
 
+EXTRA_DIST += $(wildcard *.h)
+
+
 line-profile.so: line-profile.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
