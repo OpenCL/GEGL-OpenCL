@@ -99,23 +99,25 @@
             <li>XML serialization format (not-finalized)</li>
             <li>Iterative processing.</li>
             <li>Efficient subregion evaluation.</li>
+            <li>Per node caches.</li>
             <li>Processing and display of image buffers larger than RAM</li>
             <li>Internal sparse pyramidial render cache.</li>
             <li>Bounding box based hit detection.</li>
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a> that internally computes
-            with HDR capable 32bit floating point.
-            <ul>
-              <li>PNG, JPEG, SVG, EXR, RAW and other image sources.</li>
-              <li><a href='operations.html#cat_render'>Pattern renderers</a></li>
-              <li><a href='operations.html#math'>Arithmetic operations</a></li>
-              <li><a href='operations.html#porter_duff'>porter duff</a> compositing</li>
-              <li><a href='operations.html#svgfilter'>SVG filter modes</a></li>
-              <li>Gaussian blur.</li>
-              <li>Unsharp mask.</li>
-              <li><a href='operations.html#cat_color'>Color correction</a>.</li>
-              <li>Text layout using <a href='http://pango.org/'>pango</a></li>
-            </ul>
+              with 32bit floating point, linear light RGB.
+              <ul>
+                <li>PNG, JPEG, SVG, EXR, RAW, ffmpeg and other image sources.</li>
+                <li><a href='operations.html#cat_render'>Pattern renderers</a></li>
+                <li><a href='operations.html#math'>Arithmetic operations</a></li>
+                <li><a href='operations.html#porter_duff'>porter duff</a> compositing</li>
+                <li>SVG filter modes and full set of compositing ops from SVG-1.2
+                draft</li>
+                <li>Gaussian blur, bilateral-filter, symmetric nearest neighbour,
+                unsharp mask.</li>
+                <li><a href='operations.html#cat_color'>Color correction</a>.</li>
+                <li>Text layout using <a href='http://pango.org/'>pango</a></li>
+              </ul>
             </li>
         </ul>
 
