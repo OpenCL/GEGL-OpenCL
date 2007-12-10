@@ -156,7 +156,9 @@ GeglNode *editor_output = NULL;
 static void cb_shrinkwrap (GtkAction *action);
 static void cb_fit (GtkAction *action);
 static void cb_fit_on_screen (GtkAction *action);
+#if 0
 static void cb_recompute (GtkAction *action);
+#endif
 static void cb_redraw (GtkAction *action);
 static void cb_next_file (GtkAction *action);
 static void cb_previous_file (GtkAction *action);
@@ -351,10 +353,12 @@ static GtkActionEntry action_entries[] = {
    "",
    G_CALLBACK (cb_zoom_200)},
 
+#if 0
   {"Recompute", NULL,
    "_Recompute View", "<shift><control>R",
    "Recalculate all image data (for working around dirt bugs)",
    G_CALLBACK (cb_recompute)},
+#endif
 
   {"Redraw", NULL,
    "_Redraw View", "<control>R",
@@ -950,16 +954,19 @@ static void cb_shrinkwrap (GtkAction *action)
   }*/
 }
 
-void          gegl_node_disable_cache       (GeglNode      *node);
-
+#if 0
 static void cb_recompute (GtkAction *action)
 {
   GeglNode *node;
 
   g_object_get (GEGL_VIEW(editor.view), "node", &node, NULL);
-  gegl_node_disable_cache (node);
+  /*gegl_node_disable_cache (node);*/
+  this used to just forcibly remove the existing cache object for the
+    toplevel cache.
+  */
   gegl_gui_flush ();
 }
+#endif
 
 static void cb_redraw (GtkAction *action)
 {

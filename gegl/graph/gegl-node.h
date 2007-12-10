@@ -54,7 +54,12 @@ struct _GeglNode
                                  evaluation contexts */
   gboolean        is_graph;
 
-  GeglCache      *cache;
+  GeglCache      *cache;  /* For a node, the cache should be created at
+                             first demand if applicable, and the cache object
+                             reused for all subsequent requests for the cache
+                             object.*/
+
+  GeglProcessor  *processor; 
 
   /*< private >*/
   gpointer        priv;
@@ -205,7 +210,6 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
                                              const gchar ***pads);
 
 GeglCache    *gegl_node_get_cache           (GeglNode      *node);
-void          gegl_node_disable_cache       (GeglNode      *node);
 void          gegl_node_invalidated         (GeglNode      *node,
                                              GeglRectangle *rect);
 GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);

@@ -1,3 +1,11 @@
+2007-12-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node.[ch]: removed gegl_node_disable cache, the
+	cache is a per instance singleton, and the lifetime should be 
+	that of the node.
+	* bin/editor.c: (cb_recompute): if#0'd out use of
+	gegl_node_disable_cache.
+
 2007-12-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/Makefile.am: Added EXTRA_DIST to include header

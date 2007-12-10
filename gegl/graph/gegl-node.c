@@ -213,8 +213,11 @@ dispose (GObject *gobject)
     }
 
   gegl_node_remove_children (self);
-  gegl_node_disable_cache (self);
-
+  if (self->cache)
+    {
+      g_object_unref (self->cache);
+      self->cache = NULL;
+    }
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
 }
 
@@ -1692,16 +1695,6 @@ gegl_node_get_cache (GeglNode *node)
                         node);
     }
   return node->cache;
-}
-
-void
-gegl_node_disable_cache (GeglNode *node)
-{
-  if (node->cache)
-    {
-      g_object_unref (node->cache);
-      node->cache = NULL;
-    }
 }
 
 const gchar *
