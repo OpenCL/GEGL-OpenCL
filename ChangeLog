@@ -1,5 +1,10 @@
 2007-12-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.[ch]: made s/GeglNodePriv/GeglNodePrivate/,
+	also moved opaque typedef to header.
+
+2007-12-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.[ch]: removed gegl_node_disable cache, the
 	cache is a per instance singleton, and the lifetime should be 
 	that of the node.

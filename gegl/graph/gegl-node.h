@@ -34,7 +34,8 @@ G_BEGIN_DECLS
 #define GEGL_NODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
 
 
-typedef struct _GeglNodeClass GeglNodeClass;
+typedef struct _GeglNodeClass   GeglNodeClass;
+typedef struct _GeglNodePrivate GeglNodePrivate;
 
 struct _GeglNode
 {
@@ -59,10 +60,8 @@ struct _GeglNode
                              reused for all subsequent requests for the cache
                              object.*/
 
-  GeglProcessor  *processor; 
-
   /*< private >*/
-  gpointer        priv;
+  GeglNodePrivate *priv;
 };
 
 typedef enum

@@ -39,7 +39,6 @@
 #include "process/gegl-finish-visitor.h"
 #include "process/gegl-processor.h"
 
-
 enum
 {
   PROP_0,
@@ -48,16 +47,18 @@ enum
   PROP_NAME
 };
 
-typedef struct _GeglNodePriv
+
+struct _GeglNodePrivate
 {
   GSList         *children;  /*  used for children */
   GeglNode       *parent;
   gchar          *name;
-} GeglNodePriv;
+  GeglProcessor  *processor;
+};
 
 
 #define GEGL_NODE_GET_PRIVATE(obj) \
-  ((GeglNodePriv *)(((GeglNode *) obj)->priv))
+  ((GeglNodePrivate *)(((GeglNode *) obj)->priv))
 
 
 guint gegl_node_signals[GEGL_NODE_LAST_SIGNAL] = {0};
@@ -109,7 +110,7 @@ gegl_node_class_init (GeglNodeClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  g_type_class_add_private (klass, sizeof (GeglNodePriv));
+  g_type_class_add_private (klass, sizeof (GeglNodePrivate));
 
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
@@ -165,11 +166,11 @@ gegl_node_class_init (GeglNodeClass *klass)
 static void
 gegl_node_init (GeglNode *self)
 {
-  GeglNodePriv *priv;
+  GeglNodePrivate *priv;
 
   self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                                             GEGL_TYPE_NODE,
-                                            GeglNodePriv);
+                                            GeglNodePrivate);
 
   priv = GEGL_NODE_GET_PRIVATE (self);
 
@@ -186,6 +187,7 @@ gegl_node_init (GeglNode *self)
   priv->parent      = NULL;
   priv->children    = NULL;
   priv->name        = NULL;
+  priv->processor   = NULL;
 }
 
 static void
@@ -202,8 +204,8 @@ visitable_init (gpointer ginterface,
 static void
 dispose (GObject *gobject)
 {
-  GeglNode     *self = GEGL_NODE (gobject);
-  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNode        *self = GEGL_NODE (gobject);
+  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
 
   if (priv->parent != NULL)
     {
@@ -218,14 +220,20 @@ dispose (GObject *gobject)
       g_object_unref (self->cache);
       self->cache = NULL;
     }
+
+  if (priv->processor)
+    {
+      gegl_processor_destroy (priv->processor);
+      priv->processor = NULL;
+    }
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
 }
 
 static void
 finalize (GObject *gobject)
 {
-  GeglNode     *self = GEGL_NODE (gobject);
-  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNode        *self = GEGL_NODE (gobject);
+  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
 
   gegl_node_disconnect_sources (self);
   gegl_node_disconnect_sinks (self);
@@ -1700,7 +1708,7 @@ gegl_node_get_cache (GeglNode *node)
 const gchar *
 gegl_node_get_name (GeglNode *self)
 {
-  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
 
   return priv->name;
 }
@@ -1708,7 +1716,7 @@ gegl_node_get_name (GeglNode *self)
 void gegl_node_set_name (GeglNode    *self,
                          const gchar *name)
 {
-  GeglNodePriv *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
 
   if (priv->name)
     g_free (priv->name);
@@ -1735,8 +1743,8 @@ GeglNode *
 gegl_node_add_child (GeglNode *self,
                      GeglNode *child)
 {
-  GeglNodePriv *self_priv;
-  GeglNodePriv *child_priv;
+  GeglNodePrivate *self_priv;
+  GeglNodePrivate *child_priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
@@ -1756,8 +1764,8 @@ GeglNode *
 gegl_node_remove_child (GeglNode *self,
                         GeglNode *child)
 {
-  GeglNodePriv *self_priv;
-  GeglNodePriv *child_priv;
+  GeglNodePrivate *self_priv;
+  GeglNodePrivate *child_priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
@@ -1785,7 +1793,7 @@ gegl_node_remove_child (GeglNode *self,
 gint
 gegl_node_get_num_children (GeglNode *self)
 {
-  GeglNodePriv *priv;
+  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
@@ -1798,7 +1806,7 @@ GeglNode *
 gegl_node_get_nth_child (GeglNode *self,
                          gint      n)
 {
-  GeglNodePriv *priv;
+  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
@@ -1813,7 +1821,7 @@ gegl_node_get_nth_child (GeglNode *self,
 GSList *
 gegl_node_get_children (GeglNode *self)
 {
-  GeglNodePriv *priv;
+  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
