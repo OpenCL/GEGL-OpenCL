@@ -396,7 +396,7 @@ static const gchar *ui_info =
   "      <menuitem action='Zoom200'/>"
   "      <separator/>"
   "      <menuitem action='Redraw'/>"
-  "      <menuitem action='Recompute'/>"
+  /*"      <menuitem action='Recompute'/>"*/
   "      <separator/>"
   "      <menuitem action='Structure'/>"
   "      <menuitem action='Tree'/>"
