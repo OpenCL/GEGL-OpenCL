@@ -8,7 +8,7 @@ SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)
-EXTRA_DIST      = $(wildcard *.c)
+EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
 all-local: $(SOBJS)
 

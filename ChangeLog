@@ -1,3 +1,11 @@
+2007-12-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/Makefile-operations.am: Add any .h files to EXTRA_DIST
+	as this is included by the Makefile's in all operations directories.
+
+	* operations/affine/Makefile.am:
+	* operations/workshop/Makefile.am: Don't add .h files to EXTRA_DIST.
+
 2007-12-11  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/io/save-buffer.c: Use gegl_buffer_create_sub_buffer
