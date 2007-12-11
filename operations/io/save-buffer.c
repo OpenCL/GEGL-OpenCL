@@ -30,17 +30,23 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *input;
+	GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+	GeglBuffer          *input;
+	GeglRectangle	    *extent;
 
-  if (self->buffer)
-    {
-      input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-      g_assert (input);
-      GeglBuffer **output = self->buffer;
-      *output = g_object_ref (input);
-    }
-  return TRUE;
+	if (self->buffer)
+		{
+			input = GEGL_BUFFER(gegl_operation_get_data(operation,
+								    context_id,
+								    "input"));
+      
+			g_assert (input);
+			GeglBuffer **output = self->buffer;
+			extent = gegl_operation_result_rect(operation,
+							    context_id);
+			*output = gegl_buffer_create_sub_buffer (input, extent);
+		}
+	return TRUE;
 }
 
 #endif
