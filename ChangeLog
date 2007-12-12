@@ -1,3 +1,13 @@
+2007-12-12  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* tools/operation_reference.c: Minor changes to improve formatting
+	of generated HTML.
+
+2007-12-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/gluas.c: Applied patch from Deji Akingunola.
+	which completes build failure fixes. See bug #502554.
+
 2007-12-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/Makefile-operations.am: Add any .h files to EXTRA_DIST

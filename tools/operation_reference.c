@@ -97,10 +97,10 @@ list_properties (GType    type,
            type_name,
             g_param_spec_get_name (self[prop_no]));
           if (g_param_spec_get_blurb (self[prop_no])[0]!='\0')
-            g_print ("<td colspan='1' class='prop_blurb'>%s</td></tr>\n",
+            g_print ("<td colspan='1' class='prop_blurb'>%s</td>\n</tr>\n",
             g_param_spec_get_blurb (self[prop_no]));
           else
-            g_print ("<td><em>not documented</em></td></tr>");
+            g_print ("<td><em>not documented</em></td>\n</tr>\n");
         }
     }
   if (self)
@@ -110,11 +110,11 @@ list_properties (GType    type,
 }
 
 
-static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);div.toc ul{font-size:70%;}"
-".category { margin-bottom: 2em; }"
-".category a { display: block; width: 10em; height: 1.2em; float: left; text-align: left; font-size: 90%;}"
-"</style></head><body><div class='paper'><div class='content'>\n";
-static gchar *html_bottom = "</div></div></body></html>";
+static gchar *html_top = "<html>\n<head>\n<title>GEGL operations</title>\n<link rel='shortcut icon' href='images/gegl.ico'/>\n<style type='text/css'>\n@import url(gegl.css);\ndiv.toc ul { font-size:70%; }\n"
+".category { margin-bottom: 2em; }\n"
+".category a {\n  display: block;\n  width: 10em;\n  height: 1.2em;\n  float: left;\n  text-align: left;\n  font-size: 90%;\n}\n"
+"</style>\n</head>\n\n<body>\n<div class='paper'>\n<div class='content'>\n";
+static gchar *html_bottom = "</div>\n</div>\n</body>\n</html>\n";
 
 #if 0
 static void category_menu_item (gpointer key,
@@ -147,7 +147,7 @@ static void category_index (gpointer key,
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
-      g_print ("%s<a href='#op_%s'>%s</a>", comma?"":"", klass->name, klass->name);
+      g_print ("%s<a href='#op_%s'>%s</a>\n", comma?"":"", klass->name, klass->name);
       comma = TRUE;
     }
   g_print ("<div style='clear:both;'></div></div>\n");
@@ -169,7 +169,7 @@ static void category_menu_index (gpointer key,
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
-      g_print ("<li><a href='#op_%s'>%s</a></li>", klass->name, klass->name);
+      g_print ("<li><a href='#op_%s'>%s</a></li>\n", klass->name, klass->name);
       comma = TRUE;
     }
 }
@@ -213,7 +213,7 @@ main (gint    argc,
 
   g_print ("%s", html_top);
 
-  g_print ("<div class='toc'><ul>\n");
+  g_print ("<div class='toc'>\n<ul>\n");
   g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
   g_print ("<li><a href='index.html#Documentation'>Documentation</a></li>\n");
   g_print ("<li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>\n");
@@ -225,11 +225,11 @@ main (gint    argc,
   /*category_menu_item ("All", NULL, NULL);
   g_hash_table_foreach (categories, category_menu_item, NULL);*/
 
-	  /*border: 0.1em dashed rgb(210,210,210);
-	   */
+      /*border: 0.1em dashed rgb(210,210,210);
+       */
   category_menu_index("All", operations, NULL);
 
-  g_print ("</ul></div>\n");
+  g_print ("</ul>\n</div>\n");
 
     g_print ("<h1>GEGL operation reference</h1>");
     g_print ("<p>Image processing operations are shared objects (plug-ins) loaded when GEGL initializes. "
@@ -243,19 +243,19 @@ main (gint    argc,
   g_hash_table_foreach (categories, category_index, NULL);
 
   /* list all operations */
-  g_print ("<table>");
+  g_print ("<table>\n");
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
 
-      g_print ("<tr><td colspan='1'>&nbsp;</td><td class='op_name' colspan='4'><a name='op_%s'>%s</a></td></tr>\n", klass->name, klass->name);
+      g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_name' colspan='4'><a name='op_%s'>%s</a></td>\n</tr>\n", klass->name, klass->name);
       if (klass->description)
-        g_print ("<tr><td colspan='1'>&nbsp;</td><td class='op_description' colspan='4'>%s</td></tr>\n", klass->description);
+        g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", klass->description);
       list_properties (G_OBJECT_CLASS_TYPE (klass), 2, TRUE);
     }
-  g_print ("</table>");
+  g_print ("</table>\n");
 
 
   g_print ("%s", html_bottom);
