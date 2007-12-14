@@ -66,7 +66,7 @@ typedef struct Priv
 
   gint              width;
   gint              height;
-  
+
   lua_State        *L;
 }
 Priv;
@@ -92,7 +92,7 @@ process (GeglOperation *operation,
   GeglBuffer          *input;
   GeglBuffer          *output;
   GeglRectangle       *result;
- 
+
   result = gegl_operation_result_rect (operation, context_id);
   self   = GEGL_CHANT_OPERATION (operation);
   input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
@@ -107,7 +107,7 @@ process (GeglOperation *operation,
     {
       drawable_lua_process (self, input, output, result, NULL, self->script, self->user_value);
     }
-  
+
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return TRUE;
 }
@@ -211,11 +211,7 @@ drawable_lua_process (GeglChantOperation *self,
     /*gimp_tile_cache_ntiles (TILE_CACHE_SIZE);*/
 
     L = lua_open ();
-    lua_baselibopen (L);
-    lua_iolibopen (L);
-    lua_strlibopen (L);
-    lua_mathlibopen (L);
-    lua_tablibopen (L);
+    luaL_openlibs (L);
 
     register_functions (L, gluas_functions);
 
@@ -243,7 +239,7 @@ drawable_lua_process (GeglChantOperation *self,
     p.in_drawable = drawable;
     p.out_drawable = result;
 
-#if 0 
+#if 0
     p.bpp = gimp_drawable_bpp (drawable->drawable_id);
     p.pft = gimp_pixel_fetcher_new (drawable, FALSE);
 
@@ -281,7 +277,7 @@ drawable_lua_process (GeglChantOperation *self,
         {
       gint status = 0;
 
-      lua_dostring (L, "os.setlocale ('C', 'numeric')");
+      luaL_loadstring (L, "os.setlocale ('C', 'numeric')");
 
       if (file && file[0]!='\0')
         status = luaL_loadfile (L, file);
@@ -341,7 +337,7 @@ get_rgba_pixel (void       *data,
 {
   Priv *p;
   gfloat buf[4];
-  
+
   p = data;
 #if 0
   if (0 || x < 0 || y < 0 || (int) x >= p->width || (int) y >= p->height)
@@ -542,7 +538,7 @@ static int l_get_rgba (lua_State * lua)
   y = lua_tonumber(lua, -1);
 
   get_rgba_pixel (p, img_no, x, y, pixel);
-  
+
   lua_pushnumber (lua, pixel[0]);
   lua_pushnumber (lua, pixel[1]);
   lua_pushnumber (lua, pixel[2]);
@@ -577,7 +573,7 @@ static int l_set_rgb (lua_State * lua)
     pixel[1] = lua_tonumber (lua, -2);
     pixel[2] = lua_tonumber (lua, -1);
     pixel[3] = 1.0;
-    
+
     set_rgba_pixel (p, x, y, pixel);
 
     return 0;
@@ -775,7 +771,7 @@ static int l_set_lab (lua_State * lua)
     b = lua_tonumber (lua, -1);
 
     /* pixel assumed to be of type double */
-    
+
     get_rgba_pixel (p, 0, x, y, pixel);
 #if 0
     cpercep_space_to_rgb (l, a, b, &(pixel[0]), &(pixel[1]), &(pixel[2]));
@@ -865,8 +861,8 @@ static int l_set_hsl (lua_State * lua)
     l = lua_tonumber (lua, -1);
 
     get_rgba_pixel (p, 0, x, y, pixel);
-   
-#if 0 
+
+#if 0
     {
       GimpRGB rgb;
       GimpHSL hsl;
@@ -874,8 +870,8 @@ static int l_set_hsl (lua_State * lua)
       hsl.h = h;
       hsl.s = s;
       hsl.l = l;
-     
-      gimp_hsl_to_rgb (&hsl, &rgb); 
+
+      gimp_hsl_to_rgb (&hsl, &rgb);
 
       pixel[0]=rgb.r;
       pixel[1]=rgb.g;
@@ -927,7 +923,7 @@ static int l_get_hsl (lua_State * lua)
       rgb.g = pixel[1];
       rgb.b = pixel[2];
 
-      gimp_rgb_to_hsl (&rgb, &hsl); 
+      gimp_rgb_to_hsl (&rgb, &hsl);
 
       lua_pushnumber (lua, hsl.h );
       lua_pushnumber (lua, hsl.s );
@@ -964,8 +960,8 @@ static int l_set_hsv (lua_State * lua)
     v = lua_tonumber (lua, -1);
 
     get_rgba_pixel (p, 0, x, y, pixel);
-   
-#if 0 
+
+#if 0
     {
       GimpRGB rgb;
       GimpHSV hsv;
@@ -973,8 +969,8 @@ static int l_set_hsv (lua_State * lua)
       hsv.h = h;
       hsv.s = s;
       hsv.v = v;
-     
-      gimp_hsv_to_rgb (&hsv, &rgb); 
+
+      gimp_hsv_to_rgb (&hsv, &rgb);
 
       pixel[0]=rgb.r;
       pixel[1]=rgb.g;
@@ -1026,7 +1022,7 @@ static int l_get_hsv (lua_State * lua)
       rgb.g = pixel[1];
       rgb.b = pixel[2];
 
-      gimp_rgb_to_hsv (&rgb, &hsv); 
+      gimp_rgb_to_hsv (&rgb, &hsv);
 
       lua_pushnumber (lua, hsv.h );
       lua_pushnumber (lua, hsv.s );
