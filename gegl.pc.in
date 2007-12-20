@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: Gegl
-Description: Gegl Graphical Library 
+Name: GEGL
+Description: Generic Graphics Library 
 Version: @GEGL_REAL_VERSION@
 Requires: @GLIB_PACKAGES@ babl
 Libs: -L${libdir} -l@PACKAGE_NAME@-@GEGL_API_VERSION@ @GTHREAD_LIBS@

@@ -1,3 +1,7 @@
+2007-12-20  Sven Neumann  <sven@gimp.org>
+
+	* gegl.pc.in: fixed spelling of GEGL and description.
+
 2007-12-12  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* tools/operation_reference.c: Minor changes to improve formatting
