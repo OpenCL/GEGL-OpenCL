@@ -1,3 +1,8 @@
+2007-12-20  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/buffer/gegl-buffer-allocator.c
+	* gegl/process/gegl-eval-mgr.c: Use g_getenv instead of getenv.
+
 2007-12-20  Sven Neumann  <sven@gimp.org>
 
 	* gegl.pc.in: fixed spelling of GEGL and description.

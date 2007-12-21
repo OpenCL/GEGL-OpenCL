@@ -130,7 +130,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE (root));
   g_object_unref (cr_visitor);
 
-  if (getenv ("GEGL_DEBUG_RECTS") != NULL)
+  if (g_getenv ("GEGL_DEBUG_RECTS") != NULL)
     {
       GeglVisitor *debug_rect_visitor;
 
@@ -144,7 +144,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   g_object_unref (eval_visitor);
 
   root->is_root = FALSE;
-  if (getenv ("GEGL_DEBUG_RECTS") != NULL)
+  if (g_getenv ("GEGL_DEBUG_RECTS") != NULL)
     {
       GeglVisitor *debug_rect_visitor;
 

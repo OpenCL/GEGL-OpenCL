@@ -134,10 +134,12 @@ gegl_buffer_new_from_format (void *babl_format,
   /* if no match, create new */
   if (allocator == NULL)
     {
-      if (getenv ("GEGL_SWAP") != NULL)
+      const gchar *gegl_swap = g_getenv ("GEGL_SWAP");
+
+      if (gegl_swap != NULL)
         {
           gchar *path;
-          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", getenv ("GEGL_SWAP"),
+          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap,
                                   getpid (), babl_name (babl_format));
           GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
                                                "format", babl_format,
