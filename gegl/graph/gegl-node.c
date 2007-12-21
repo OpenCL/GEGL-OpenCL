@@ -268,6 +268,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
+  va_list   var_args;
   GeglNode *node = GEGL_NODE (gobject);
   switch (property_id)
     {
@@ -277,7 +278,7 @@ set_property (GObject      *gobject,
 
       case PROP_OP_CLASS:
         gegl_node_set_op_class (node, g_value_get_string (value),
-                                NULL, NULL);
+                                NULL, var_args);
         break;
 
       case PROP_OPERATION:

@@ -1,3 +1,8 @@
+2007-12-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/graph/gegl-node.c: Applied patch from Deji Akingunola which
+	fixes bug #498784 (compilation error on Alpha).
+
 2007-12-20  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/buffer/gegl-buffer-allocator.c
