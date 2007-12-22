@@ -251,6 +251,9 @@ gboolean
 gegl_operation_calc_source_regions (GeglOperation *operation,
                                     gpointer       context_id);
 
+void
+gegl_extension_handler_cleanup (void);
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */

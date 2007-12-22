@@ -120,6 +120,7 @@ gegl_exit (void)
 {
   glong timing = gegl_ticks ();
 
+  gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
   gegl_buffer_allocators_free ();
   babl_destroy ();

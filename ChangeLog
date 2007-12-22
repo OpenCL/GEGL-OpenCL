@@ -1,5 +1,13 @@
 2007-12-21  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* gegl/operation/gegl-operation.h:
+	* gegl/operation/gegl-operation.c (gegl_operation_gtype_cleanup):
+	Added cleanup function for gtype_hash. Fixes bug #481730.
+
+	* gegl/gegl-init.c (gegl_exit): Call new cleanup function.
+
+2007-12-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* gegl/graph/gegl-node.c: Applied patch from Deji Akingunola which
 	fixes bug #498784 (compilation error on Alpha).
 

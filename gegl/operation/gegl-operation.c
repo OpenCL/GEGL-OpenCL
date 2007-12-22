@@ -178,7 +178,7 @@ gegl_operation_compute_input_request (GeglOperation *operation,
     return *roi;
 
   g_assert (klass->compute_input_request);
-  
+
   return klass->compute_input_request (operation, input_pad, roi);
 }
 
@@ -220,7 +220,7 @@ gegl_operation_adjust_result_region (GeglOperation *operation,
     {
       return *roi;
     }
-  
+
   return klass->adjust_result_region (operation, roi);
 }
 
@@ -627,7 +627,7 @@ gegl_operation_set_data (GeglOperation *operation,
   g_object_unref (data);  /* stealing the initial reference? */
 }
 
-GeglBuffer * 
+GeglBuffer *
 gegl_operation_get_target (GeglOperation *operation,
                            gpointer       context_id,
                            const gchar   *property_name)
@@ -641,7 +641,7 @@ gegl_operation_get_target (GeglOperation *operation,
   format = pad->format;
   g_assert (format != NULL);
 
-  g_assert (!strcmp (property_name, "output")); 
+  g_assert (!strcmp (property_name, "output"));
 
   result = gegl_operation_result_rect (operation, context_id);
 
@@ -688,7 +688,7 @@ gegl_operation_get_source (GeglOperation *operation,
   GeglBuffer    *input;
 
   GeglRectangle input_request;
- 
+
   input_request  = gegl_operation_compute_input_request (operation,
        "input", gegl_operation_need_rect (operation, context_id));
 
@@ -700,4 +700,14 @@ gegl_operation_get_source (GeglOperation *operation,
    * the buffer object isn't the responsiblity of the calling plug-in?
    */
   return input;
+}
+
+void
+gegl_operation_gtype_cleanup (void)
+{
+  if (gtype_hash)
+    {
+      g_hash_table_destroy (gtype_hash);
+      gtype_hash = NULL;
+    }
 }
