@@ -1,3 +1,10 @@
+2007-12-28  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation-sink.c (process): remove semicolon
+	after if().
+
+	Some general formatting cleanup.
+
 2007-12-28  Manish Singh  <yosh@gimp.org>
 
 	* configure.ac: support some alternate forms of detecting lua.
