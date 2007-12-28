@@ -36,12 +36,12 @@ process (GeglOperation *operation,
 
 	if (self->buffer)
 		{
+			GeglBuffer **output = self->buffer;
 			input = GEGL_BUFFER(gegl_operation_get_data(operation,
 								    context_id,
 								    "input"));
       
 			g_assert (input);
-			GeglBuffer **output = self->buffer;
 			extent = gegl_operation_result_rect(operation,
 							    context_id);
 			*output = gegl_buffer_create_sub_buffer (input, extent);
