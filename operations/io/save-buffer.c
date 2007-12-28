@@ -20,33 +20,34 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 #else
 
 #define GEGL_CHANT_SINK
-#define GEGL_CHANT_NAME            save_buffer
-#define GEGL_CHANT_DESCRIPTION     "A GEGL buffer destination surface."
-#define GEGL_CHANT_SELF            "save-buffer.c"
-#define GEGL_CHANT_CATEGORIES      "programming:output"
+#define GEGL_CHANT_NAME        save_buffer
+#define GEGL_CHANT_DESCRIPTION "A GEGL buffer destination surface."
+#define GEGL_CHANT_SELF        "save-buffer.c"
+#define GEGL_CHANT_CATEGORIES  "programming:output"
 #include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-	GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-	GeglBuffer          *input;
-	GeglRectangle	    *extent;
+  GeglChantOperation  *self;
+  GeglBuffer          *input;
+  GeglRectangle	      *extent;
 
-	if (self->buffer)
-		{
-			GeglBuffer **output = self->buffer;
-			input = GEGL_BUFFER(gegl_operation_get_data(operation,
-								    context_id,
-								    "input"));
-      
-			g_assert (input);
-			extent = gegl_operation_result_rect(operation,
-							    context_id);
-			*output = gegl_buffer_create_sub_buffer (input, extent);
-		}
-	return TRUE;
+  self = GEGL_CHANT_OPERATION (operation);
+
+  if (self->buffer)
+    {
+      GeglBuffer **output = self->buffer;
+      input = GEGL_BUFFER(gegl_operation_get_data (operation,
+                                                   context_id,
+                                                   "input"));
+  
+      g_assert (input);
+      extent = gegl_operation_result_rect (operation, context_id);
+      *output = gegl_buffer_create_sub_buffer (input, extent);
+    }
+  return TRUE;
 }
 
 #endif

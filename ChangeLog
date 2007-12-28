@@ -1,5 +1,9 @@
 2007-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/io/save-buffer.c: reindented.
+
+2007-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/save-buffer.c: (process): resolved warning: ISO C90
 	forbids mixed declarations and code.
 
