@@ -1,3 +1,7 @@
+2007-12-28  Manish Singh  <yosh@gimp.org>
+
+	* configure.ac: support some alternate forms of detecting lua.
+
 2007-12-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/io/save-buffer.c: reindented.

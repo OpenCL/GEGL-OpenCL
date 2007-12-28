@@ -365,7 +365,11 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 
 PKG_CHECK_MODULES(LUA, lua,
   have_lua="yes",
-  have_lua="no  (usable lua not found)")
+  [PKG_CHECK_MODULES(LUA, lua5.1,
+     have_lua="yes",
+     [PKG_CHECK_MODULES(LUA, lua50,
+        have_lua="yes",
+        have_lua="no  (usable lua not found)")])])
 AM_CONDITIONAL(HAVE_LUA, test "x$have_lua" = "xyes")
 
 AC_SUBST(HAVE_LUA) 
