@@ -268,8 +268,8 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  va_list   var_args;
   GeglNode *node = GEGL_NODE (gobject);
+
   switch (property_id)
     {
       case PROP_NAME:
@@ -277,8 +277,7 @@ set_property (GObject      *gobject,
         break;
 
       case PROP_OP_CLASS:
-        gegl_node_set_op_class (node, g_value_get_string (value),
-                                NULL, var_args);
+        gegl_node_set_op_class (node, g_value_get_string (value), NULL, NULL);
         break;
 
       case PROP_OPERATION:
@@ -1089,8 +1088,8 @@ gegl_node_set_valist (GeglNode    *self,
 
       if (!strcmp (property_name, "operation"))
         {
-          const gchar *op_class,
-          *op_first_property;
+          const gchar *op_class;
+          const gchar *op_first_property;
 
           op_class          = va_arg (var_args, gchar *);
           op_first_property = va_arg (var_args, gchar *);
