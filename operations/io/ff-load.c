@@ -347,10 +347,10 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle      *result_rect;
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *output = NULL;
-  Priv               *p = (Priv*)self->priv;
+  const GeglRectangle *result_rect;
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *output = NULL;
+  Priv                *p = (Priv*)self->priv;
 
   result_rect = gegl_operation_result_rect (operation, context_id);
   {
@@ -397,7 +397,7 @@ process (GeglOperation *operation,
                 }
               }
           }
-        gegl_buffer_set (output, NULL, NULL, buf);
+        gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
       }
   }
