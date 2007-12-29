@@ -1,5 +1,9 @@
 2007-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/io/exr-load.cpp: updated with GEGL_AUTO_ROWSTRIDE.
+
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.h: documentation update for rowstride in
 	gegl_buffer_set/_get.
 

@@ -250,7 +250,7 @@ fix_saturation (GeglBuffer       *buf,
       if (y>1)
         {
           gegl_rectangle_set (&rect, 0, y-2, gegl_buffer_get_width (buf), 1);
-          gegl_buffer_set (buf, &rect, buf->format, row[0]);
+          gegl_buffer_set (buf, &rect, buf->format, row[0], GEGL_AUTO_ROWSTRIDE);
         }
       
       gegl_rectangle_set (&rect, 0,y+1, gegl_buffer_get_width (buf), 1);
@@ -269,7 +269,7 @@ fix_saturation (GeglBuffer       *buf,
   for (y=gegl_buffer_get_height (buf)-2; y<gegl_buffer_get_height (buf); y++)
     {
       gegl_rectangle_set (&rect, 0, y, gegl_buffer_get_width (buf), 1);
-      gegl_buffer_set (buf, &rect, buf->format, row[y-gegl_buffer_get_height (buf)+2]);
+      gegl_buffer_set (buf, &rect, buf->format, row[y-gegl_buffer_get_height (buf)+2], GEGL_AUTO_ROWSTRIDE);
     }
 
   for (y=0; y<3; y++)
@@ -338,7 +338,7 @@ reconstruct_chroma (GeglBuffer *buf,
       gegl_buffer_get (buf, 1.0, &rect, buf->format, pixels, GEGL_AUTO_ROWSTRIDE);
 
       reconstruct_chroma_row (pixels, gegl_buffer_get_width (buf), has_alpha, tmp);
-      gegl_buffer_set (buf, &rect, buf->format, pixels);
+      gegl_buffer_set (buf, &rect, buf->format, pixels, GEGL_AUTO_ROWSTRIDE);
     }
 
   for (i=0; i<gegl_buffer_get_width (buf); i++)
@@ -347,7 +347,7 @@ reconstruct_chroma (GeglBuffer *buf,
       gegl_buffer_get (buf, 1.0, &rect, buf->format, pixels, GEGL_AUTO_ROWSTRIDE);
 
       reconstruct_chroma_row (pixels, gegl_buffer_get_height (buf), has_alpha, tmp);
-      gegl_buffer_set (buf, &rect, buf->format, pixels);
+      gegl_buffer_set (buf, &rect, buf->format, pixels, GEGL_AUTO_ROWSTRIDE);
     }
 
   g_free (tmp);
@@ -392,7 +392,7 @@ convert_yca_to_rgba (GeglBuffer *buf,
           pxl += dx;
         }
 
-      gegl_buffer_set (buf, &rect, buf->format, pixels);
+      gegl_buffer_set (buf, &rect, buf->format, pixels, GEGL_AUTO_ROWSTRIDE);
     }
 
   g_free (pixels);
@@ -484,7 +484,7 @@ import_exr (GeglBuffer  *gegl_buffer,
           {
             gegl_rectangle_set (&rect, 0, i-dw.min.y,gegl_buffer_get_width (gegl_buffer), 1);
             file.readPixels (i);
-            gegl_buffer_set (gegl_buffer, &rect, gegl_buffer->format, pixels);
+            gegl_buffer_set (gegl_buffer, &rect, gegl_buffer->format, pixels, GEGL_AUTO_ROWSTRIDE);
           }
       }
 
