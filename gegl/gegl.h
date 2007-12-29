@@ -177,14 +177,15 @@ GParamSpec** gegl_list_properties           (const gchar   *operation_type,
  *                                  NULL);
  */
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
-typedef struct _GeglNode      GeglNode;
+typedef struct _GeglNode  GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_NODE  (gegl_node_get_type())
-#define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+#define GEGL_TYPE_NODE    (gegl_node_get_type())
+#define GEGL_NODE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+#define GEGL_IS_NODE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
 
 typedef struct _GeglRectangle GeglRectangle;
-GType gegl_rectangle_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_RECTANGLE  (gegl_rectangle_get_type())
+GType gegl_rectangle_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
 #endif
 
 /**
@@ -697,10 +698,11 @@ gchar       * gegl_node_to_xml           (GeglNode      *node,
  *
  */
 #ifndef GEGL_INTERNAL
+typedef struct _GeglProcessor  GeglProcessor;
 GType gegl_processor_get_type  (void) G_GNUC_CONST;
-typedef struct _GeglProcessor      GeglProcessor;
-#define GEGL_TYPE_PROCESSOR  (gegl_processor_get_type())
-#define GEGL_PROCESSOR(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
+#define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
+#define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
+#define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
 #endif
 
 /**
@@ -772,10 +774,11 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. Hexadecimal forms like #RRGGBB
  * and #RRGGBBAA are also supported.
  */
-typedef struct _GeglColor     GeglColor;
-GType gegl_color_get_type (void) G_GNUC_CONST;
-#define GEGL_TYPE_COLOR (gegl_color_get_type())
-#define GEGL_COLOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
+typedef struct _GeglColor  GeglColor;
+GType gegl_color_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_COLOR    (gegl_color_get_type())
+#define GEGL_COLOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
+#define GEGL_IS_COLOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COLOR))
 #endif
 
 /**
@@ -848,10 +851,11 @@ struct _GeglRectangle
  * Documentation and function signatures left out of documentation until
  * API is frozen.
  */
-typedef struct _GeglCurve       GeglCurve;
-GType        gegl_curve_get_type            (void) G_GNUC_CONST;
-#define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
-#define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
+typedef struct _GeglCurve  GeglCurve;
+GType gegl_curve_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_CURVE    (gegl_curve_get_type ())
+#define GEGL_CURVE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
+#define GEGL_IS_CURVE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CURVE))
 #endif
 
 GeglCurve*   gegl_curve_new                 (gdouble         y_min,
@@ -902,10 +906,11 @@ void         gegl_curve_calc_values         (GeglCurve      *self,
  * Documentation and function signatures left out of documentation until
  * API is at least slushy, perhaps even until it is frozen.
  */
-typedef struct _GeglVector       GeglVector;
-GType        gegl_vector_get_type     (void) G_GNUC_CONST;
-#define GEGL_TYPE_VECTOR            (gegl_vector_get_type ())
-#define GEGL_VECTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VECTOR, GeglVector))
+typedef struct _GeglVector  GeglVector;
+GType gegl_vector_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_VECTOR    (gegl_vector_get_type ())
+#define GEGL_VECTOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VECTOR, GeglVector))
+#define GEGL_IS_VECTOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_VECTOR))
 #endif
 
 GeglVector*  gegl_vector_new          (void);
