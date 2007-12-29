@@ -1235,11 +1235,11 @@ gegl_buffer_set (GeglBuffer          *buffer,
    */
   if (rect == NULL)
     {
-      gegl_buffer_iterate (buffer, src, GEGL_AUTO_ROWSTRIDE, TRUE, format, 0);
+      gegl_buffer_iterate (buffer, src, rowstride, TRUE, format, 0);
       return;
     }
   sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-  gegl_buffer_iterate (sub_buf, src, GEGL_AUTO_ROWSTRIDE, TRUE, format, 0);
+  gegl_buffer_iterate (sub_buf, src, rowstride, TRUE, format, 0);
   g_object_unref (sub_buf);
 }
 

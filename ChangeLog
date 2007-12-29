@@ -1,3 +1,8 @@
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set): pass the rowstride as
+	rowstride, not the power of 2 zoom level.
+
 2007-12-29  Manish Singh  <yosh@gimp.org>
 
 	* operations/io/ff-load.c: update to match new API.
