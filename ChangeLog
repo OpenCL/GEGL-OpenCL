@@ -1,5 +1,10 @@
 2007-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.[ch]: added stand-in path
+	implementation ripped from horizon for point storage.
+
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/export.c:
 	* gegl/buffer/gegl-buffer-allocator.c:
 	* gegl/buffer/gegl-buffer-allocator.h:
