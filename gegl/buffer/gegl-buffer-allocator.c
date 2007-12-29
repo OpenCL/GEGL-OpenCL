@@ -117,11 +117,11 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
 static GHashTable *allocators = NULL;
 
 GeglBuffer *
-gegl_buffer_new_from_format (void *babl_format,
-                             gint  x,
-                             gint  y,
-                             gint  width,
-                             gint  height)
+gegl_buffer_new_from_format (const void *babl_format,
+                             gint        x,
+                             gint        y,
+                             gint        width,
+                             gint        height)
 {
   GeglBufferAllocator *allocator = NULL;
 
@@ -149,7 +149,7 @@ gegl_buffer_new_from_format (void *babl_format,
                                     "provider", storage,
                                     NULL);
           g_object_unref (storage);
-          g_hash_table_insert (allocators, babl_format, allocator);
+          g_hash_table_insert (allocators, (gpointer)babl_format, allocator);
           g_free (path);
         }
       else
@@ -161,7 +161,7 @@ gegl_buffer_new_from_format (void *babl_format,
                                     "provider", storage,
                                     NULL);
           g_object_unref (storage);
-          g_hash_table_insert (allocators, babl_format, allocator);
+          g_hash_table_insert (allocators, (gpointer)babl_format, allocator);
         }
     }
   /* check if we already have a GeglBufferAllocator for the needed tile slice */

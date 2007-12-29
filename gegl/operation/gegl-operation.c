@@ -702,6 +702,18 @@ gegl_operation_get_source (GeglOperation *operation,
   return input;
 }
 
+
+void
+gegl_operation_vector_prop_changed (GeglVector    *vector,
+                                    GeglOperation *operation)
+{
+  /* In the end forces a re-render, should be adapted to
+   * allow a smaller region to be forced for re-rendering
+   * when the vector is incrementally grown
+   */
+  g_object_notify (G_OBJECT (operation), "vector"); 
+}
+
 void
 gegl_operation_gtype_cleanup (void)
 {

@@ -39,7 +39,7 @@ struct _GeglCache
 {
   GeglBuffer    parent;
   GeglNode     *node;
-  void         *format;
+  const void   *format;
   GeglRegion   *valid_region;
 };
 

@@ -482,6 +482,7 @@ gegl_param_path_validate (GParamSpec *pspec,
   return FALSE;
 }
 
+/* rename to not be in conflict with vector based path? */
 GParamSpec *
 gegl_param_spec_path (const gchar *name,
                       const gchar *nick,

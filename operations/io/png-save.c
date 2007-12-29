@@ -95,7 +95,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   strcpy (format_string, "R'G'B'A ");
 
   {
-    Babl *babl= gegl_buffer->format;
+    const Babl *babl= gegl_buffer->format;
     BablType   **type   = babl->format.type;
 
     for (i=0; i<babl->format.components; i++)

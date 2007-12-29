@@ -39,8 +39,8 @@ process (GeglOperation *operation,
   if (self->pixbuf)
     {
       GdkPixbuf		**pixbuf = self->pixbuf;
-      Babl          	*babl;
-      BablFormat    	*format;
+      const Babl        *babl;
+      const BablFormat  *format;
       guchar        	*temp;
       GeglRectangle	*rect = gegl_operation_source_get_defined_region (operation, "input");
       gchar *name;

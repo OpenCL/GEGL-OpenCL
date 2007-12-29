@@ -1,3 +1,29 @@
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/export.c:
+	* gegl/buffer/gegl-buffer-allocator.c:
+	* gegl/buffer/gegl-buffer-allocator.h:
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-cache.h:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-init.c:
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-types.h:
+	* gegl/gegl.h:
+	* gegl/graph/gegl-node.c:
+	* gegl/graph/gegl-node.h:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/process/gegl-processor.c:
+	* gegl/property-types/Makefile.am:
+	* gegl/property-types/gegl-paramspecs.c:
+	* operations/io/png-save.c: 
+	* operations/io/save-pixbuf.c:
+	* operations/render/Makefile.am:
+	* operations/workshop/Makefile.am: constified BablFormats.
+
 2007-12-28  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/operation/gegl-operation-sink.c (process): remove semicolon

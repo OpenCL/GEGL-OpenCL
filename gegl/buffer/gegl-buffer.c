@@ -68,7 +68,7 @@ static inline gint needed_width (gint w,
   return needed_tiles (w, stride) * stride;
 }
 
-static void *int_gegl_buffer_get_format (GeglBuffer *buffer);
+static const void *int_gegl_buffer_get_format (GeglBuffer *buffer);
 static void
 get_property (GObject    *gobject,
               guint       property_id,
@@ -104,7 +104,7 @@ get_property (GObject    *gobject,
         if (buffer->format == NULL)
           buffer->format = int_gegl_buffer_get_format (buffer);
 
-        g_value_set_pointer (value, buffer->format);
+        g_value_set_pointer (value, (void*)buffer->format); /* Eeeek? */
         break;
 
       case PROP_X:
@@ -631,7 +631,7 @@ gegl_buffer_idle (GeglBuffer *buffer)
 
 /***************************************************************************/
 
-static void *int_gegl_buffer_get_format (GeglBuffer *buffer)
+static const void *int_gegl_buffer_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
   if (buffer->format != NULL)
@@ -717,7 +717,7 @@ static inline void
 pset (GeglBuffer *buffer,
       gint        x,
       gint        y,
-      Babl       *format,
+      const Babl *format,
       guchar     *buf)
 {
   gint  tile_width  = buffer->storage->tile_width;
@@ -783,7 +783,7 @@ static inline void
 pset (GeglBuffer *buffer,
       gint        x,
       gint        y,
-      Babl       *format,
+      const Babl *format,
       gpointer    data)
 {
   guchar *buf         = data;
@@ -866,7 +866,7 @@ static inline void
 pget (GeglBuffer *buffer,
       gint        x,
       gint        y,
-      Babl       *format,
+      const Babl *format,
       gpointer    data)
 {
   guchar *buf         = data;
@@ -961,7 +961,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                      guchar     *buf,
                      gint        rowstride,
                      gboolean    write,
-                     Babl       *format,
+                     const Babl *format,
                      gint        level)
 {
   gint  width       = buffer->extent.width;
@@ -1212,7 +1212,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 void
 gegl_buffer_set (GeglBuffer          *buffer,
                  const GeglRectangle *rect,
-                 Babl                *format,
+                 const Babl          *format,
                  void                *src)
 {
   GeglBuffer *sub_buf;
@@ -1254,7 +1254,7 @@ static void gegl_buffer_get_scaled (GeglBuffer          *buffer,
                                     const GeglRectangle *rect,
                                     void                *dst,
                                     gint                 rowstride,
-                                    void                *format,
+                                    const void          *format,
                                     gint                 level)
 {
   GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
@@ -1562,7 +1562,7 @@ void
 gegl_buffer_get (GeglBuffer          *buffer,
                  gdouble              scale,
                  const GeglRectangle *rect,
-                 Babl                *format,
+                 const Babl          *format,
                  gpointer             dest_buf,
                  gint                 rowstride)
 {
@@ -1684,7 +1684,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     gdouble           y,
                     gdouble           scale,
                     gpointer          dest,
-                    Babl             *format,
+                    const Babl       *format,
                     GeglInterpolation interpolation)
 {
 /*#define USE_WORKING_SHORTCUT*/
@@ -1746,7 +1746,7 @@ gegl_buffer_get_extent (GeglBuffer *buffer)
 
 GeglBuffer *
 gegl_buffer_new (const GeglRectangle *extent,
-                 Babl                *format)
+                 const Babl          *format)
 {
   GeglRectangle empty={0,0,0,0};
 
@@ -1790,7 +1790,7 @@ gegl_buffer_copy (GeglBuffer          *src,
 
   GeglRectangle src_line;
   GeglRectangle dst_line;
-  gpointer      format;
+  const Babl *format;
   guchar       *temp;
   guint         i;
   gint          pxsize;

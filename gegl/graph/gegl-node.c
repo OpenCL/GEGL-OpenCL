@@ -746,7 +746,7 @@ void
 gegl_node_blit (GeglNode      *node,
                 gdouble        scale,
                 GeglRectangle *roi,
-                Babl          *format,
+                const Babl    *format,
                 gpointer       destination_buf,
                 gint           rowstride,
                 GeglBlitFlags  flags)

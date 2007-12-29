@@ -517,9 +517,8 @@ gegl_processor_render (GeglProcessor *processor,
       gint           n_rectangles;
       gint           i;
 
-      g_warning ("hey!");
-
-      gegl_region_get_rectangles (processor->queued_region, &rectangles, &n_rectangles);
+      gegl_region_get_rectangles (processor->queued_region, &rectangles,
+                                  &n_rectangles);
 
       for (i = 0; i < n_rectangles && i < 1; i++)
         {

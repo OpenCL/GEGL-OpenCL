@@ -2,6 +2,7 @@ SUBDIRS = generated
 
 include $(top_srcdir)/operations/Makefile-operations.am
 
+CFLAGS += -I/home/pippin/src/gimp/app -I/home/pippin/src/gimp 
 
 line-profile.so: line-profile.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)

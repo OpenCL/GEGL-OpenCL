@@ -86,6 +86,7 @@ struct Generated
 #define gegl_chant_pointer(name, blurb)                gpointer   name;
 #define gegl_chant_color(name, def, blurb)             GeglColor *name;
 #define gegl_chant_curve(name, blurb)                  GeglCurve *name;
+#define gegl_chant_vector(name, blurb)                 GeglVector *name;
 
 #include GEGL_CHANT_SELF
 
@@ -103,6 +104,7 @@ struct Generated
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
 
 /****************************************************************************/
 
@@ -241,6 +243,7 @@ enum
 #define gegl_chant_pointer(name, blurb)                PROP_##name,
 #define gegl_chant_color(name, def, blurb)             PROP_##name,
 #define gegl_chant_curve(name, blurb)                  PROP_##name,
+#define gegl_chant_vector(name, blurb)                 PROP_##name,
 
 #include GEGL_CHANT_SELF
 
@@ -254,6 +257,7 @@ enum
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
   PROP_LAST
 };
 
@@ -287,6 +291,8 @@ get_property (GObject      *gobject,
     case PROP_##name: g_value_set_object (value, self->name);break;
 #define gegl_chant_curve(name, blurb)\
     case PROP_##name: g_value_set_object (value, self->name);break;
+#define gegl_chant_vector(name, blurb)\
+    case PROP_##name: g_value_set_object (value, self->name);break;/*XXX*/
 
 #include GEGL_CHANT_SELF
 
@@ -300,6 +306,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -369,6 +376,15 @@ set_property (GObject      *gobject,
          g_object_unref (self->name);\
       self->name = g_value_dup_object (value);\
       break;
+#define gegl_chant_vector(name, blurb)\
+    case PROP_##name:\
+      if (self->name != NULL && G_IS_OBJECT (self->name))\
+        {/*XXX: remove old signal */\
+         g_object_unref (self->name);\
+        }\
+      self->name = g_value_dup_object (value);\
+      g_signal_connect (G_OBJECT (self->name), "changed", G_CALLBACK(gegl_operation_vector_prop_changed), self);\
+      break; /*XXX*/
 
 #include GEGL_CHANT_SELF
 
@@ -382,6 +398,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -473,6 +490,12 @@ static void gegl_chant_destroy_notify (gpointer data)
       g_object_unref (self->name);\
       self->name = NULL;\
     }
+#define gegl_chant_vector(name, blurb)\
+  if (self->name)\
+    {\
+      g_object_unref (self->name);\
+      self->name = NULL;\
+    } /*XXX*/
 
 #include GEGL_CHANT_SELF
 
@@ -486,6 +509,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
   self = NULL; /* shut up gcc warnings if there were no properties to clean up*/
 }
 
@@ -649,6 +673,14 @@ gegl_chant_class_init (ChantClass * klass)
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PAD_INPUT)));
+#define gegl_chant_vector(name, blurb)  \
+  g_object_class_install_property (object_class, PROP_##name,\
+                                   gegl_param_spec_vector (#name, #name, blurb,\
+                                                           NULL, \
+                                                          (GParamFlags) (\
+                                                          G_PARAM_READWRITE |\
+                                                          G_PARAM_CONSTRUCT |\
+                                                          GEGL_PAD_INPUT)));
 #include GEGL_CHANT_SELF
 
 #undef gegl_chant_int
@@ -661,6 +693,7 @@ gegl_chant_class_init (ChantClass * klass)
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_vector
 }
 
 

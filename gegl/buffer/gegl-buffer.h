@@ -53,7 +53,7 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
  * buffer and a NULL format makes the buffer default to "RGBA float".
  */
 GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
-                                               Babl                *format);
+                                               const Babl          *format);
 
 /** 
  * gegl_buffer_create_sub_buffer:
@@ -152,7 +152,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
 void            gegl_buffer_get               (GeglBuffer          *buffer,
                                                gdouble              scale,
                                                const GeglRectangle *rect,
-                                               Babl                *format,
+                                               const Babl          *format,
                                                gpointer             dest,
                                                gint                 rowstride);
 
@@ -167,7 +167,7 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
  */
 void            gegl_buffer_set               (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
-                                               Babl                *format,
+                                               const Babl          *format,
                                                void                *src);
 
 
@@ -228,7 +228,7 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                gdouble           y,
                                                gdouble           scale,
                                                gpointer          dest,
-                                               Babl             *format,
+                                               const Babl       *format,
                                                GeglInterpolation interpolation);
 
 /**

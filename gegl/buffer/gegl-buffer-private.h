@@ -40,7 +40,7 @@ struct _GeglBuffer
 
   GeglRectangle     extent;        /* the dimensions of the buffer */
 
-  Babl             *format;  /* the pixel format used for pixels in this
+  const Babl       *format;  /* the pixel format used for pixels in this
                                 buffer */
  
   gint              shift_x; /* The relative offset of origins compared with */

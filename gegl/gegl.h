@@ -405,7 +405,7 @@ typedef enum
 void          gegl_node_blit             (GeglNode      *node,
                                           gdouble        scale,
                                           GeglRectangle *roi,
-                                          Babl          *format,
+                                          const Babl    *format,
                                           gpointer       destination_buf,
                                           gint           rowstride,
                                           GeglBlitFlags  flags);
@@ -882,7 +882,7 @@ void         gegl_curve_set_point           (GeglCurve      *self,
  
 guint        gegl_curve_num_points          (GeglCurve      *self);
 
-gdouble     gegl_curve_calc_value           (GeglCurve      *self,
+gdouble      gegl_curve_calc_value          (GeglCurve      *self,
                                              gdouble         x);
 
 void         gegl_curve_calc_values         (GeglCurve      *self,
@@ -892,9 +892,45 @@ void         gegl_curve_calc_values         (GeglCurve      *self,
                                              gdouble        *xs,
                                              gdouble        *ys);
 
+
+
+
+#ifndef GEGL_INTERNAL
+/***
+ * GeglVector:
+ *
+ * Documentation and function signatures left out of documentation until
+ * API is at least slushy, perhaps even until it is frozen.
+ */
+typedef struct _GeglVector       GeglVector;
+GType        gegl_vector_get_type     (void) G_GNUC_CONST;
+#define GEGL_TYPE_VECTOR            (gegl_vector_get_type ())
+#define GEGL_VECTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VECTOR, GeglVector))
+#endif
+
+GeglVector*  gegl_vector_new          (void);
+
+gdouble      gegl_vector_get_length   (GeglVector *self);
+
+void         gegl_vector_line_to      (GeglVector  *self,
+                                       gdouble      x,
+                                       gdouble      y);
+
+void         gegl_vector_calc         (GeglVector  *self,
+                                       gdouble      pos,
+                                       gdouble     *x,
+                                       gdouble     *y);
+
+void         gegl_vector_calc_values  (GeglVector  *self,
+                                       guint        num_samples,
+                                       gdouble     *xs,
+                                       gdouble     *ys);
+
+
+
 G_END_DECLS
 
-/*** this is just here to trick the parser.
+/*** this line with it's three starting *** is here to trick the API parser.
  */
 #include "gegl/property-types/gegl-paramspecs.h"
 #include <babl/babl.h>

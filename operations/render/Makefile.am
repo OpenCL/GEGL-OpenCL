@@ -10,3 +10,13 @@ text$(SHREXT): text.c $(GEGLHEADERS)
               $(PANGO_CFLAGS) $(PANGO_LIBS) \
               $(PANGOCAIRO_CFLAGS) $(PANGOCAIRO_LIBS);\
 	fi
+
+
+stroke$(SHREXT): stroke.c $(GEGLHEADERS)
+	@if [ ! -z "$(PANGO_LIBS)" ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+              $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
+              $(PANGO_CFLAGS) $(PANGO_LIBS) \
+              $(PANGOCAIRO_CFLAGS) $(PANGOCAIRO_LIBS);\
+	fi

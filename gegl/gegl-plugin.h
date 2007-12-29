@@ -29,6 +29,7 @@
 #include <gegl/graph/gegl-visitor.h>
 #include <gegl/property-types/gegl-color.h>
 #include <gegl/property-types/gegl-curve.h>
+#include <gegl/property-types/gegl-vector.h>
 #include <gegl/gegl-init.h>
 #include <gegl/gegl-utils.h>
 #include <gegl/buffer/gegl-buffer.h>
