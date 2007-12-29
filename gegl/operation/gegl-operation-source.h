@@ -20,7 +20,6 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
 #include "gegl-operation.h"
 
 #ifdef __cplusplus

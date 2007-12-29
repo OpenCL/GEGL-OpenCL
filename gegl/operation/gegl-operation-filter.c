@@ -17,6 +17,8 @@
  */
 #include "gegl-operation-filter.h"
 #include "graph/gegl-pad.h"
+#include "graph/gegl-node.h"
+#include "buffer/gegl-buffer.h"
 #include <string.h>
 
 enum

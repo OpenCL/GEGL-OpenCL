@@ -17,6 +17,7 @@
  */
 #include "gegl-operation-point-filter.h"
 #include "graph/gegl-pad.h"
+#include "graph/gegl-node.h"
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,

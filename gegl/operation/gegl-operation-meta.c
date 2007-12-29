@@ -16,6 +16,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-meta.h"
+#include "graph/gegl-node.h"
 #include <string.h>
 
 enum

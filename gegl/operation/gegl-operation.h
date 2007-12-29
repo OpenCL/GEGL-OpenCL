@@ -20,7 +20,9 @@
 #ifndef __GEGL_OPERATION_H__
 #define __GEGL_OPERATION_H__
 
-#include "graph/gegl-node.h"
+#include "gegl-types.h"
+#include "buffer/gegl-buffer-types.h"
+#include <babl/babl.h>
 
 G_BEGIN_DECLS
 

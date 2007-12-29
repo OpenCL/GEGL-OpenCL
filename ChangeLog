@@ -1,3 +1,18 @@
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-meta.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-sink.h:
+	* gegl/operation/gegl-operation-source.c:
+	* gegl/operation/gegl-operation-source.h:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h: Modified includes in headers to
+	facilitate a copy of the GEGL headers living in GIMP.
+
 2007-12-29  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/operation/gegl-operation-area-filter.c

@@ -16,6 +16,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-sink.h"
+#include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include <string.h>
 

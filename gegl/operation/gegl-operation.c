@@ -29,6 +29,7 @@
 #include "graph/gegl-connection.h"
 #include "graph/gegl-pad.h"
 #include "buffer/gegl-region.h"
+#include "buffer/gegl-buffer.h"
 
 static void          attach                  (GeglOperation       *self);
 
