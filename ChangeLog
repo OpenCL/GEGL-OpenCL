@@ -1,5 +1,10 @@
 2007-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.h: documentation update for rowstride in
+	gegl_buffer_set/_get.
+
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: added rowstride parameter to
 	gegl_buffer_set, changing it to be GEGL_AUTO_ROWSTRIDE should 
 	preserve previous behaviour.

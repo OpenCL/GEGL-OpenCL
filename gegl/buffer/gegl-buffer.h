@@ -141,7 +141,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  * @format: the BablFormat to store in the linear buffer @dest.
  * @dest: the memory destination for a linear buffer for the pixels, the size needed
  * depends on the requested BablFormat.
- * @rowstride: rowstride in bytes, or GEGL_ROWSTRIDE_AUTO to compute the
+ * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
  * rowstride based on the width and bytes per pixel for the specified format.
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the data is
@@ -162,6 +162,8 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
  * @rect: the coordinates we want to change the data of and the width/height extent, if NULL equal to the extent of the buffer.
  * @format: the babl_format the linear buffer @src.
  * @src: linear buffer of image data to be stored in @buffer.
+ * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
+ * rowstride based on the width and bytes per pixel for the specified format.
  *
  * Store a linear raster buffer into the GeglBuffer.
  */
