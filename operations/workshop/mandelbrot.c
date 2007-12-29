@@ -65,13 +65,13 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle      *need;
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  const GeglRectangle *need;
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer *output;
 
   need = gegl_operation_get_requested_region (operation, context_id);
   {
-    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
     gint pxsize;
 
@@ -103,7 +103,7 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (output, NULL, NULL, buf);
+    gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));

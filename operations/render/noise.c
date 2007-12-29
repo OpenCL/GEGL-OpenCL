@@ -73,7 +73,8 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (output, NULL, babl_format ("Y float"), buf);
+    gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
+                     GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
   return  TRUE;

@@ -70,8 +70,8 @@ process (GeglOperation *operation,
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
     {
-      GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-      GeglBuffer      *temp_in;
+      const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+      GeglBuffer          *temp_in;
 
         temp_in = gegl_buffer_create_sub_buffer (input, result);
         output = gegl_buffer_new (result, babl_format ("RGBA float"));
@@ -91,8 +91,8 @@ process (GeglOperation *operation,
             for (c=0;c<4;c++)
               acc[i*4+c]=acc[i*4+c]*dampness + buf[i*4+c]*(1.0-dampness);
           }
-        gegl_buffer_set (p->acc, result, babl_format ("RGBA float"), acc);
-        gegl_buffer_set (output, result, babl_format ("RGBA float"), acc);
+        gegl_buffer_set (p->acc, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_set (output, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
         g_free (acc);
       }

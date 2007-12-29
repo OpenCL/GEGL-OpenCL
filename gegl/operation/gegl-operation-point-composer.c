@@ -142,7 +142,7 @@ process_inner (GeglOperation *operation,
           output->extent.width * output->extent.height);
       }
 
-      gegl_buffer_set (output, NULL, out_format, out_buf);
+      gegl_buffer_set (output, NULL, out_format, out_buf, GEGL_AUTO_ROWSTRIDE);
 
       g_free (in_buf);
       if (in_format != out_format)

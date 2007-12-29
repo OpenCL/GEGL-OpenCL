@@ -70,7 +70,7 @@ process (GeglOperation *operation,
             dst += 4;
           }
       }
-    gegl_buffer_set (output, NULL, NULL, buf);
+    gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
   return  TRUE;

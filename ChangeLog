@@ -1,3 +1,53 @@
+2007-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.[ch]: added rowstride parameter to
+	gegl_buffer_set, changing it to be GEGL_AUTO_ROWSTRIDE should 
+	preserve previous behaviour.
+
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c: 
+	* gegl/process/gegl-processor.c: 
+	* operations/affine/affine.c: 
+	* operations/blur/box-blur.c: 
+	* operations/blur/gaussian-blur.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/remap.c: 
+	* operations/color/stretch-contrast.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/io/jpg-load.c: 
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/raw-load.c:
+	* operations/io/svg-load.c: 
+	* operations/render/FractalExplorer.c:
+	* operations/render/checkerboard.c: 
+	* operations/render/color.c: 
+	* operations/render/noise.c: 
+	* operations/render/text.c: added GEGL_AUTO_ROWSTRIDE to instances of
+	gegl_buffer_set.
+
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c: 
+	* operations/workshop/box-percentile.c: 
+	* operations/workshop/c2g.c: 
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c: 
+	* operations/workshop/gtk-display.c: 
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c: 
+	* operations/workshop/kuwahara-min.c: 
+	* operations/workshop/kuwahara.c: 
+	* operations/workshop/line-profile.c:
+	* operations/workshop/mandelbrot.c: 
+	* operations/workshop/max-envelope.c: 
+	* operations/workshop/mblur.c: 
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/rawbayer-load.c:
+	* operations/workshop/snn-percentile.c: 
+	* operations/workshop/stress.c:  updated for constified
+	GeglRectangles, babl formats and added rowstride to gegl_buffer_set.
+
 2007-12-29  Sven Neumann  <sven@gimp.org>
 
 	* gegl/graph/gegl-node.c (set_property): pass NULL as varargs to

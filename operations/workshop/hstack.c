@@ -41,7 +41,7 @@ process (GeglOperation *operation,
   GeglBuffer            *output;
   GeglBuffer            *temp_in;
   GeglBuffer            *temp_aux;
-  GeglRectangle         *result;
+  const GeglRectangle   *result;
  
 
   composer = GEGL_OPERATION_COMPOSER (operation);
@@ -79,7 +79,8 @@ process (GeglOperation *operation,
                 offset+=4;
               }
         }
-      gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf);
+      gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf,
+                       GEGL_AUTO_ROWSTRIDE);
 
       g_free (buf);
       g_free (bufB);
@@ -115,9 +116,9 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *self,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *self,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglRectangle request = *roi;
 

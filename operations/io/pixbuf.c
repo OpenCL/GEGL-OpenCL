@@ -43,7 +43,8 @@ process (GeglOperation *operation,
                               gdk_pixbuf_get_height (self->pixbuf)};
       GeglBuffer *output = gegl_buffer_new (&extent, 
   babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
-      gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (self->pixbuf));
+      gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (self->pixbuf),
+                       GEGL_AUTO_ROWSTRIDE);
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
     }
   return TRUE;

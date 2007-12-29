@@ -56,10 +56,10 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglRectangle *result;
-  GeglBuffer    *input,
-                *output;
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  const GeglRectangle *result;
+  GeglBuffer          *input,
+                      *output;
   gint width = MAX(MAX (self->width, self->x0), self->x1);
   gint height = MAX(MAX (self->height, self->y0), self->y1);
 
@@ -136,7 +136,7 @@ process (GeglOperation *operation,
    cairo_line_to (cr, self->x1, self->y1);
    cairo_stroke (cr);
 
-    gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf);
+    gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf, GEGL_AUTO_ROWSTRIDE);
   }
 
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
@@ -145,9 +145,9 @@ process (GeglOperation *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *self,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *self,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   return *gegl_operation_source_get_defined_region (self, "input");
 }

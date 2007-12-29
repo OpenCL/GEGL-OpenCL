@@ -418,7 +418,8 @@ process (GeglOperation *operation,
           }
       }
 
-    gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf);
+    gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf,
+                     GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
   return TRUE;

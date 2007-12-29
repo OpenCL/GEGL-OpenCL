@@ -102,7 +102,7 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (output, NULL, NULL, buf);
+    gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
   return  TRUE;

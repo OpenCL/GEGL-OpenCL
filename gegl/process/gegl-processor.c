@@ -350,7 +350,7 @@ static gboolean render_rectangle (GeglProcessor *processor)
           g_assert (buf);
 
           gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-          gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
+          gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE);
 
           gegl_cache_computed (cache, (GeglRectangle *) dr);
 

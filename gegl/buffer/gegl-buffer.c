@@ -1213,7 +1213,8 @@ void
 gegl_buffer_set (GeglBuffer          *buffer,
                  const GeglRectangle *rect,
                  const Babl          *format,
-                 void                *src)
+                 void                *src,
+                 gint                 rowstride)
 {
   GeglBuffer *sub_buf;
 
@@ -1822,7 +1823,7 @@ gegl_buffer_copy (GeglBuffer          *src,
   for (i=0; i<src_rect->height; i++)
     {
       gegl_buffer_get (src, 1.0, &src_line, format, temp, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_set (dst, &dst_line, format, temp);
+      gegl_buffer_set (dst, &dst_line, format, temp, GEGL_AUTO_ROWSTRIDE);
       src_line.y++;
       dst_line.y++;
     }

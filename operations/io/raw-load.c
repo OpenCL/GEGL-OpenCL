@@ -127,7 +127,8 @@ load_buffer (GeglChantOperation *op_raw_load)
                                         babl_component ("B"),
                                         babl_component ("R"),
                                         NULL),
-                            buf
+                            buf,
+                            GEGL_AUTO_ROWSTRIDE
                            );
            g_free (buf);
          }

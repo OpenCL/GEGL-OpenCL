@@ -650,7 +650,7 @@ affine_generic (GeglBuffer        *dest,
       v_start += inverse [1][1];
     }
   gegl_buffer_sample_cleanup (src);
-  gegl_buffer_set (dest, NULL, format, dest_buf);
+  gegl_buffer_set (dest, NULL, format, dest_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (dest_buf);
 }
 

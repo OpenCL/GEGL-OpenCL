@@ -187,7 +187,7 @@ hor_blur (GeglBuffer *src,
           dst_buf [offset++] = components[i];
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -229,7 +229,7 @@ ver_blur (GeglBuffer *src,
           dst_buf [offset++] = components[c];
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }

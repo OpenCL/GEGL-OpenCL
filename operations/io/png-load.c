@@ -283,7 +283,8 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
               gegl_buffer_get (gegl_buffer, 1.0, &rect, format, pixels, GEGL_AUTO_ROWSTRIDE);
 
             png_read_rows (load_png_ptr, &pixels, NULL, 1);
-            gegl_buffer_set (gegl_buffer, &rect, format, pixels);
+            gegl_buffer_set (gegl_buffer, &rect, format, pixels,
+                             GEGL_AUTO_ROWSTRIDE);
           }
       }
   }

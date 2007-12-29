@@ -150,7 +150,7 @@ static void stress (GeglBuffer *src,
           dst_offset+=4;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }

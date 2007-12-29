@@ -177,7 +177,8 @@ process (GeglOperation *operation,
             } 
         }
 
-      gegl_buffer_set (output, result, babl_format ("RGBA float"), buf);
+      gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,
+                       GEGL_AUTO_ROWSTRIDE);
 
       g_free (buf);
       g_free (min);

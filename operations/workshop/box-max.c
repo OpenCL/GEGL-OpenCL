@@ -55,7 +55,7 @@ process (GeglOperation *operation,
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
     {
-      GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
+      const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
       GeglBuffer      *temp_in;
       GeglBuffer *temp;
       GeglRectangle compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
@@ -147,7 +147,7 @@ hor_max (GeglBuffer *src,
                                i);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -186,7 +186,7 @@ ver_max (GeglBuffer *src,
                               c);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }

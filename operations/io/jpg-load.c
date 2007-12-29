@@ -188,7 +188,8 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
       GeglRectangle rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
-      gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B' u8"), buffer[0]);
+      gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B' u8"), buffer[0],
+                       GEGL_AUTO_ROWSTRIDE);
     }
   jpeg_destroy_decompress (&cinfo);
   fclose (infile);

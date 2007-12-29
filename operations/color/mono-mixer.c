@@ -78,7 +78,8 @@ process (GeglOperation *operation,
          out_pixel += 2;
      }
 
-     gegl_buffer_set (output, result_rect, output->format, out_buf);
+     gegl_buffer_set (output, result_rect, output->format, out_buf,
+                      GEGL_AUTO_ROWSTRIDE);
 
      g_free (in_buf);
      g_free (out_buf);

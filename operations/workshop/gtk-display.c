@@ -100,11 +100,11 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *source;
-  GeglBuffer         *input;
-  GeglRectangle      *requested  = gegl_operation_get_requested_region (operation, context_id);
-  Priv               *priv = init_priv (operation);
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *source;
+  GeglBuffer          *input;
+  const GeglRectangle *requested  = gegl_operation_get_requested_region (operation, context_id);
+ Priv                 *priv = init_priv (operation);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 

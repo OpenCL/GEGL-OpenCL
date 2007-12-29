@@ -168,7 +168,8 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
 void            gegl_buffer_set               (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
                                                const Babl          *format,
-                                               void                *src);
+                                               void                *src,
+                                               gint                 rowstride);
 
 
 /**

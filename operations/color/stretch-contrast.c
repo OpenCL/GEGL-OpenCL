@@ -114,7 +114,8 @@ process (GeglOperation *operation,
 
         gegl_buffer_get (input, 1.0, &line, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
         inner_process (min, max, buf, result->width  * chunk);
-        gegl_buffer_set (output, &line, babl_format ("RGBA float"), buf);
+        gegl_buffer_set (output, &line, babl_format ("RGBA float"), buf,
+                         GEGL_AUTO_ROWSTRIDE);
         consumed+=chunk;
       }
     g_free (buf);
