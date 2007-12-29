@@ -50,13 +50,13 @@ static gboolean
 process_inner (GeglOperation *operation,
                gpointer       context_id)
 {
-  GeglRectangle  *result = gegl_operation_result_rect (operation, context_id);
-  GeglBuffer     *input;
+  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer          *input;
 /*  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));*/
-  GeglBuffer     *output;
-  GeglPad        *pad;
-  Babl           *in_format;
-  Babl           *out_format;
+  GeglBuffer          *output;
+  GeglPad             *pad;
+  Babl                *in_format;
+  Babl                *out_format;
 
   input = gegl_operation_get_source (operation, context_id, "input");
 

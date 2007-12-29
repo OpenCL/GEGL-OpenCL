@@ -63,14 +63,14 @@ static gboolean
 process_inner (GeglOperation *operation,
                gpointer       context_id)
 {
-  GeglBuffer    *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglBuffer    *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
-  GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-  GeglBuffer    *output;
-  GeglPad       *pad;
-  Babl          *in_format;
-  Babl          *aux_format;
-  Babl          *out_format;
+  GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer          *output;
+  GeglPad             *pad;
+  Babl                *in_format;
+  Babl                *aux_format;
+  Babl                *out_format;
 
   pad       = gegl_node_get_pad (operation->node, "input");
   in_format = pad->format;
@@ -160,9 +160,9 @@ fast_paths (GeglOperation *operation,
             Babl          *aux_format,
             Babl          *out_format)
 {
-  GeglBuffer    *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglBuffer    *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
-  GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
   if (!input && aux)
     {

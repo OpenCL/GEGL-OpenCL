@@ -46,10 +46,10 @@ static GeglNode *detect                 (GeglOperation *operation,
                                          gint           x,
                                          gint           y);
 
-static GeglRectangle get_defined_region (GeglOperation *self);
-static GeglRectangle compute_input_request (GeglOperation *operation,
-                                     const gchar   *input_pad,
-                                     GeglRectangle *roi);
+static GeglRectangle get_defined_region    (GeglOperation       *self);
+static GeglRectangle compute_input_request (GeglOperation       *operation,
+                                            const gchar         *input_pad,
+                                            const GeglRectangle *roi);
 
 
 G_DEFINE_TYPE (GeglOperationFilter, gegl_operation_filter, GEGL_TYPE_OPERATION)
@@ -220,9 +220,9 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglRectangle result = *roi;
   return result;

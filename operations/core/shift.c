@@ -87,8 +87,8 @@ get_defined_region (GeglOperation *operation)
 
 static GeglRectangle
 compute_affected_region (GeglOperation *operation,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
+                         const gchar   *input_pad,
+                         GeglRectangle  region)
 {
   GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
  
@@ -98,9 +98,9 @@ compute_affected_region (GeglOperation *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglChantOperation *op_shift = (GeglChantOperation*)(operation);
   GeglRectangle result = *roi;

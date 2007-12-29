@@ -93,16 +93,16 @@ struct _GeglOperationClass
   /* computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given result rectangle
    */
-  GeglRectangle   (*compute_input_request) (GeglOperation *operation,
-                                            const gchar   *input_pad,
-                                            GeglRectangle *roi);
+  GeglRectangle   (*compute_input_request) (GeglOperation       *operation,
+                                            const gchar         *input_pad,
+                                            const GeglRectangle *roi);
 
   /* Adjust result rect, adapts the rectangle used for computing results.
    * (useful for global operations like contrast stretching, as well as
    * file loaders to force caching of the full raster).
    */
-  GeglRectangle   (*adjust_result_region)  (GeglOperation *operation,
-                                            GeglRectangle *roi);
+  GeglRectangle   (*adjust_result_region)  (GeglOperation       *operation,
+                                            const GeglRectangle *roi);
 
   /* Returns the node providing data for a specific location
    */
@@ -121,7 +121,8 @@ struct _GeglOperationClass
 GType           gegl_operation_get_type             (void) G_GNUC_CONST;
 
 /* returns the ROI passed to _this_ operation */
-GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
+const GeglRectangle *
+                gegl_operation_get_requested_region (GeglOperation *operation,
                                                      gpointer       context_id);
 
 /* retrieves the bounding box of a connected input */
@@ -139,26 +140,26 @@ void            gegl_operation_set_source_region    (GeglOperation *operation,
                                                      GeglRectangle *region);
 
 /* returns the bounding box of the buffer that needs to be computed */
-GeglRectangle * gegl_operation_result_rect          (GeglOperation *operation,
+const GeglRectangle * gegl_operation_result_rect    (GeglOperation *operation,
                                                      gpointer       context_id);
 
 /* returns the bounding box of the buffer needed for computation */
-GeglRectangle * gegl_operation_need_rect            (GeglOperation *operation,
+const GeglRectangle * gegl_operation_need_rect      (GeglOperation *operation,
                                                      gpointer       context_id);
 
 /* virtual method invokers that depends only on the set properties of a
  * operation|node
  */
-GeglRectangle   gegl_operation_compute_affected_region  (GeglOperation *operation,
+GeglRectangle   gegl_operation_compute_affected_region (GeglOperation *operation,
                                                      const gchar   *input_pad,
                                                      GeglRectangle  region);
 GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *operation);
 GeglRectangle   gegl_operation_adjust_result_region (GeglOperation *operation,
-                                                     GeglRectangle *roi);
+                                                     const GeglRectangle *roi);
 
 GeglRectangle   gegl_operation_compute_input_request(GeglOperation *operation,
                                                      const gchar   *input_pad,
-                                                     GeglRectangle *roi);
+                                                     const GeglRectangle *roi);
 
 GeglNode       *gegl_operation_detect               (GeglOperation *operation,
                                                      gint           x,

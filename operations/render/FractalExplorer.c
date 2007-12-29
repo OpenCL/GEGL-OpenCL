@@ -389,15 +389,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle *need;
-  GeglBuffer    *output = NULL;
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  const GeglRectangle *need;
+  GeglBuffer          *output = NULL;
 
   need = gegl_operation_get_requested_region (operation, context_id);
   {
-    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-    clrmap         colormap;
-    guchar        *buf;
+    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+    clrmap               colormap;
+    guchar              *buf;
 
     make_color_map (self, colormap);
 

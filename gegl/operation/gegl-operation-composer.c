@@ -30,9 +30,6 @@ enum
   PROP_LAST
 };
 
-static void  gegl_operation_composer_class_init (GeglOperationComposerClass *klass);
-static void  gegl_operation_composer_init       (GeglOperationComposer      *self);
-
 static void     get_property (GObject      *gobject,
                               guint         prop_id,
                               GValue       *value,
@@ -49,10 +46,10 @@ static GeglNode*detect       (GeglOperation *operation,
                               gint           x,
                               gint           y);
 
-static GeglRectangle get_defined_region  (GeglOperation *self);
-static GeglRectangle compute_input_request (GeglOperation *self,
-                                            const gchar *input_pad,
-                                            GeglRectangle *roi);
+static GeglRectangle get_defined_region    (GeglOperation       *self);
+static GeglRectangle compute_input_request (GeglOperation       *self,
+                                            const gchar         *input_pad,
+                                            const GeglRectangle *roi);
 
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer, GEGL_TYPE_OPERATION)
@@ -197,9 +194,10 @@ get_defined_region (GeglOperation *self)
   return result;
 }
 
-static GeglRectangle compute_input_request (GeglOperation *self,
-                                            const gchar *input_pad,
-                                            GeglRectangle *roi)
+static GeglRectangle
+compute_input_request (GeglOperation       *self,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglRectangle rect = *roi;
   return rect;

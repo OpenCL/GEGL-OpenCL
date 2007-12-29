@@ -84,15 +84,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle *result;
-  GeglBuffer    *input,
-                *output;
-  gdouble        min, max;
+  const GeglRectangle *result;
+  GeglBuffer          *input;
+  GeglBuffer          *output;
+  gdouble              min, max;
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   result = gegl_operation_get_requested_region (operation, context_id);
-  
+
   buffer_get_min_max (input, &min, &max);
 
   output = gegl_operation_get_target (operation, context_id, "output");
@@ -107,10 +107,10 @@ process (GeglOperation *operation,
     for (row=0;row<result->height;row=consumed)
       {
         gint chunk = consumed+chunk_size<result->height?chunk_size:result->height-consumed;
-        GeglRectangle line = {result->x,
-                         result->y+row,
-                         result->width ,
-                         chunk};
+        GeglRectangle line = { result->x,
+                               result->y + row,
+                               result->width,
+                               chunk};
 
         gegl_buffer_get (input, 1.0, &line, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
         inner_process (min, max, buf, result->width  * chunk);
@@ -124,9 +124,9 @@ process (GeglOperation *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
   return result;

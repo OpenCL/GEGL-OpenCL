@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, "")
 gegl_chant_double (scale, -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, "")
 gegl_chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
@@ -42,15 +42,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle        *need;
-  GeglBuffer           *output = NULL;
-  GeglChantOperation   *self   = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  const GeglRectangle *need;
+  GeglBuffer          *output = NULL;
 
   need = gegl_operation_get_requested_region (operation, context_id);
 
   {
-    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-    gfloat *buf;
+    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+    gfloat              *buf;
 
     output = gegl_operation_get_target (operation, context_id, "output");
     buf = g_malloc (result->width * result->height * 4);
@@ -86,7 +86,7 @@ prepare (GeglOperation *operation,
   gegl_operation_set_format (operation, "output", babl_format ("Y float"));
 }
 
-static GeglRectangle 
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};

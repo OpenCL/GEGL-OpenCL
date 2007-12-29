@@ -145,7 +145,7 @@ process (GeglOperation *operation,
   high = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "high"));
 
     {
-      GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+      const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
       gfloat *buf;
       gfloat *min;
       gfloat *max;
@@ -202,17 +202,17 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                        const gchar   *input_pad,
-                                               GeglRectangle *roi)
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
     return *roi;
 }
 
 static GeglRectangle
 compute_affected_region (GeglOperation *self,
-                     const gchar *input_pad,
-                     GeglRectangle region)
+                         const gchar *input_pad,
+                         GeglRectangle region)
 {
   return region;
 }
@@ -241,9 +241,9 @@ attach (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                        const gchar   *input_pad,
-                        GeglRectangle *roi);
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi);
 
 static void
 gegl_operation_remap_class_init (GeglOperationRemapClass * klass)

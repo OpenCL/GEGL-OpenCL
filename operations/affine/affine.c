@@ -44,34 +44,34 @@ enum
 
 /* *** static prototypes *** */
 
-static void          get_property         (GObject       *object,
-                                           guint          prop_id,
-                                           GValue        *value,
-                                           GParamSpec    *pspec);
-static void          set_property         (GObject       *object,
-                                           guint          prop_id,
-                                           const GValue  *value,
-                                           GParamSpec    *pspec);
-static void          bounding_box         (gdouble       *points,
-                                           gint           num_points,
-                                           GeglRectangle *output);
-static gboolean      is_intermediate_node (OpAffine      *affine);
-static gboolean      is_composite_node    (OpAffine      *affine);
-static void          get_source_matrix    (OpAffine      *affine,
-                                           Matrix3        output);
-static GeglRectangle get_defined_region   (GeglOperation *op);
-static GeglRectangle compute_affected_region  (GeglOperation *operation,
-                                           const gchar   *input_pad,
-                                           GeglRectangle  region);
-static GeglRectangle compute_input_request (GeglOperation *self,
-                                           const gchar   *input_pad,
-                                           GeglRectangle *region);
+static void          get_property            (GObject             *object,
+                                              guint                prop_id,
+                                              GValue              *value,
+                                              GParamSpec          *pspec);
+static void          set_property            (GObject             *object,
+                                              guint                prop_id,
+                                              const GValue        *value,
+                                              GParamSpec          *pspec);
+static void          bounding_box            (gdouble             *points,
+                                              gint                 num_points,
+                                              GeglRectangle       *output);
+static gboolean      is_intermediate_node    (OpAffine            *affine);
+static gboolean      is_composite_node       (OpAffine            *affine);
+static void          get_source_matrix       (OpAffine            *affine,
+                                              Matrix3              output);
+static GeglRectangle get_defined_region      (GeglOperation       *op);
+static GeglRectangle compute_affected_region (GeglOperation       *operation,
+                                              const gchar         *input_pad,
+                                              GeglRectangle        region);
+static GeglRectangle compute_input_request   (GeglOperation       *self,
+                                              const gchar         *input_pad,
+                                              const GeglRectangle *region);
 
-static gboolean      process              (GeglOperation *op,
-                                           gpointer       context_id);
-static GeglNode    * detect               (GeglOperation *operation,
-                                           gint           x,
-                                           gint           y);
+static gboolean      process                 (GeglOperation       *op,
+                                              gpointer             context_id);
+static GeglNode    * detect                  (GeglOperation       *operation,
+                                              gint                 x,
+                                              gint                 y);
 
 /* ************************* */
 
@@ -446,9 +446,10 @@ detect (GeglOperation *operation,
   return gegl_operation_detect (source_node->operation, need_points[0], need_points[1]);
 }
 
-static GeglRectangle compute_input_request (GeglOperation *op,
-                                            const gchar   *input_pad,
-                                            GeglRectangle *region)
+static GeglRectangle
+compute_input_request (GeglOperation       *op,
+                       const gchar         *input_pad,
+                       const GeglRectangle *region)
 {
   OpAffine      *affine = (OpAffine *) op;
   Matrix3        inverse;
@@ -509,8 +510,8 @@ static GeglRectangle compute_input_request (GeglOperation *op,
 
 static GeglRectangle
 compute_affected_region (GeglOperation *op,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
+                         const gchar   *input_pad,
+                         GeglRectangle  region)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
@@ -659,11 +660,11 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  OpAffine      *affine = (OpAffine *) operation;
-  GeglBuffer    *input;
-  GeglBuffer    *output;
-  GeglRectangle *result;
- 
+  OpAffine            *affine = (OpAffine *) operation;
+  GeglBuffer          *input;
+  GeglBuffer          *output;
+  const GeglRectangle *result;
+
   result = gegl_operation_result_rect (operation, context_id);
 
   input = gegl_operation_get_source (operation, context_id, "input");

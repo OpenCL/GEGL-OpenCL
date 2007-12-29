@@ -48,19 +48,19 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglRectangle      *need;
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *output = NULL;
+  const GeglRectangle *need;
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *output = NULL;
 
 
   need = gegl_operation_get_requested_region (operation, context_id);
   {
-    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-    gfloat        *buf;
-    gfloat         color1[4];
-    gfloat         color2[4];
-    gint           pxsize;
-    gint           n_pixels;
+    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+    gfloat              *buf;
+    gfloat               color1[4];
+    gfloat               color2[4];
+    gint                 pxsize;
+    gint                 n_pixels;
 
 
     gegl_color_get_rgba (self->color1,

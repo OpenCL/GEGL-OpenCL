@@ -1,3 +1,31 @@
+2007-12-29  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation-area-filter.c
+	* gegl/operation/gegl-operation-composer.c
+	* gegl/operation/gegl-operation-filter.c
+	* gegl/operation/gegl-operation-point-composer.c
+	* gegl/operation/gegl-operation-point-filter.c
+	* gegl/operation/gegl-operation-sink.c
+	* gegl/operation/gegl-operation-source.c
+	* gegl/operation/gegl-operation.[ch]
+	* operations/affine/affine.c
+	* operations/color/mono-mixer.c
+	* operations/color/remap.c
+	* operations/color/stretch-contrast.c
+	* operations/core/shift.c
+	* operations/enhance/bilateral-filter.c
+	* operations/enhance/snn-mean.c
+	* operations/io/display.c
+	* operations/io/png-save.c
+	* operations/io/save-buffer.c
+	* operations/render/FractalExplorer.c
+	* operations/render/checkerboard.c
+	* operations/render/checkerboard.c
+	* operations/render/color.c
+	* operations/render/noise.c
+	* operations/render/text.c
+	* operations/render/text.c: constified some API using GeglRectangle.
+
 2007-12-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.[ch]: added stand-in path

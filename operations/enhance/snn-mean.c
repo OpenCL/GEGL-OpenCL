@@ -58,9 +58,9 @@ process (GeglOperation *operation,
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
     {
-      GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-      GeglBuffer      *temp_in;
-      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
+      const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+      GeglBuffer          *temp_in;
+      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
 
       if (self->radius < 1.0)
         {

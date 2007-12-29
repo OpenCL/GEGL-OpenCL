@@ -32,7 +32,7 @@ process (GeglOperation *operation,
 {
   GeglChantOperation  *self;
   GeglBuffer          *input;
-  GeglRectangle	      *extent;
+  const GeglRectangle *extent;
 
   self = GEGL_CHANT_OPERATION (operation);
 

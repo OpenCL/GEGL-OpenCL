@@ -38,14 +38,13 @@ static gboolean
 process (GeglOperation *operation,
         gpointer       context_id)
 {
- GeglChantOperation *self;
- GeglBuffer         *input;
- GeglBuffer         *output;
- gfloat             *in_buf;
- gfloat             *out_buf;
- GeglRectangle      *result_rect = gegl_operation_result_rect
-(operation, context_id);
- gfloat              red, green, blue;
+ GeglChantOperation  *self;
+ GeglBuffer          *input;
+ GeglBuffer          *output;
+ gfloat              *in_buf;
+ gfloat              *out_buf;
+ const GeglRectangle *result_rect = gegl_operation_result_rect (operation, context_id);
+ gfloat               red, green, blue;
 
  self = GEGL_CHANT_OPERATION (operation);
  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id,

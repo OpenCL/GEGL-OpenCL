@@ -27,23 +27,23 @@ enum
 };
 
 
-static void          get_property          (GObject       *gobject,
-                                            guint          prop_id,
-                                            GValue        *value,
-                                            GParamSpec    *pspec);
-static void          set_property          (GObject       *gobject,
-                                            guint          prop_id,
-                                            const GValue  *value,
-                                            GParamSpec    *pspec);
+static void          get_property          (GObject             *gobject,
+                                            guint                prop_id,
+                                            GValue              *value,
+                                            GParamSpec          *pspec);
+static void          set_property          (GObject             *gobject,
+                                            guint                prop_id,
+                                            const GValue        *value,
+                                            GParamSpec          *pspec);
 
-static gboolean      process               (GeglOperation *operation,
-                                            gpointer       context_id,
-                                            const gchar   *output_prop);
-static void          attach                (GeglOperation *operation);
-static GeglRectangle get_defined_region    (GeglOperation *self);
-static GeglRectangle compute_input_request (GeglOperation *operation,
-                                            const gchar   *input_pad,
-                                            GeglRectangle *roi);
+static gboolean      process               (GeglOperation       *operation,
+                                            gpointer             context_id,
+                                            const gchar         *output_prop);
+static void          attach                (GeglOperation       *operation);
+static GeglRectangle get_defined_region    (GeglOperation       *self);
+static GeglRectangle compute_input_request (GeglOperation       *operation,
+                                            const gchar         *input_pad,
+                                            const GeglRectangle *roi);
 
 
 G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
@@ -144,9 +144,9 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation *operation,
-                       const gchar   *input_pad,
-                       GeglRectangle *roi)
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
 {
   GeglRectangle rect=*roi;
   g_warning ("I'm a sink, why do you call me?, I have no input and that includes the '%s' you asked for.", input_pad);

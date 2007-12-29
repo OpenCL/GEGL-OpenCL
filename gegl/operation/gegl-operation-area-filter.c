@@ -27,13 +27,14 @@ static void prepare (GeglOperation *operation,
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
-static GeglRectangle get_defined_region  (GeglOperation *operation);
-static GeglRectangle compute_input_request(GeglOperation *operation,
-                                           const gchar   *input_pad,
-                                           GeglRectangle *region);
-static GeglRectangle compute_affected_region (GeglOperation *operation,
-                                          const gchar   *input_pad,
-                                          GeglRectangle  region);
+static GeglRectangle get_defined_region      (GeglOperation       *operation);
+static GeglRectangle compute_input_request   (GeglOperation       *operation,
+                                              const gchar         *input_pad,
+                                              const GeglRectangle *region);
+static GeglRectangle compute_affected_region (GeglOperation       *operation,
+                                              const gchar         *input_pad,
+                                              GeglRectangle        region);
+
 static void
 gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
 {
@@ -81,9 +82,10 @@ get_defined_region (GeglOperation *operation)
 
 #include "gegl-utils.h"
 
-static GeglRectangle compute_input_request(GeglOperation *operation,
-                                           const gchar   *input_pad,
-                                           GeglRectangle *region)
+static GeglRectangle
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle       rect;

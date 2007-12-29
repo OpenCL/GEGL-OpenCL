@@ -45,9 +45,9 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *input;
-  GeglRectangle      *result  = gegl_operation_result_rect (operation, context_id);
+  GeglChantOperation  *self   = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *input;
+  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   g_assert (input);

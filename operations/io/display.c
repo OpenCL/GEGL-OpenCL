@@ -81,11 +81,11 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *input;
-  GeglBuffer         *source;
-  GeglRectangle      *result  = gegl_operation_result_rect (operation, context_id);
-  SDL_Surface       **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *input;
+  GeglBuffer          *source;
+  const GeglRectangle *result  = gegl_operation_result_rect (operation, context_id);
+  SDL_Surface        **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 

@@ -152,9 +152,9 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer         *output = NULL;
-  GeglRectangle      *result;
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *output = NULL;
+  const GeglRectangle *result;
 
   result = gegl_operation_result_rect (operation, context_id);
 
