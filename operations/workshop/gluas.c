@@ -403,7 +403,9 @@ set_rgba_pixel (void       *data,
       buf[i]=pixel[i];
     }
 
- gegl_buffer_set (p->out_drawable, &roi, p->rgba_float, buf);
+ gegl_buffer_set (p->out_drawable, &roi,
+                  p->rgba_float, buf,
+                  GEGL_AUTO_ROWSTRIDE);
 }
 
 static int

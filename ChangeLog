@@ -1,5 +1,10 @@
 2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/workshop/gluas.c (set_rgba_pixel): Updated due to change
+	in gegl_buffer_set. Pass GEGL_AUTO_ROWSTRIDE in gegl_buffer_set() call.
+
+2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* bin/node-editors/Makefile.am:
 	* operations/Makefile.am:
 	* operations/workshop/Makefile.am: Use SHREXT instead of
