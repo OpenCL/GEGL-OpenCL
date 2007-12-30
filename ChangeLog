@@ -9,8 +9,8 @@
 	* gegl/process/gegl-eval-visitor.c: (visit_pad): do processing on for
 	sink op on the input pad.
 	* gegl/process/gegl-processor.c: added code path to allow processing
-	of subregions. The logioc in this file needs refactoring and simplification,
-	with paralellization in mind.
+	of subregions. The logic in this file needs refactoring and
+	simplification, with paralellization in mind.
 
 2007-12-30  Øyvind Kolås  <pippin@gimp.org>
 	
