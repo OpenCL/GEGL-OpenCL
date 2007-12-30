@@ -1,3 +1,10 @@
+2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/node-editors/Makefile.am:
+	* operations/Makefile.am:
+	* operations/workshop/Makefile.am: Use SHREXT instead of
+	hard-coded ".so".
+
 2007-12-30  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/graph/gegl-node.c (gegl_node_set_valist): don't forget to
