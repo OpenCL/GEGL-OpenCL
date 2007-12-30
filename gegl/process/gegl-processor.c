@@ -15,7 +15,7 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
-#define GEGL_PROCESSOR_CHUNK_SIZE 256*256
+#define GEGL_PROCESSOR_CHUNK_SIZE 128*128
 
 #include "config.h"
 #include <glib-object.h>
@@ -58,6 +58,7 @@ struct _GeglProcessor
   GeglNode        *input;
   GeglNodeDynamic *dynamic;
 
+  GeglRegion *valid_region; /* used when doing unbuffered rendering */
   GeglRegion *queued_region;
   GSList     *dirty_rectangles;
   gint        chunk_size;
@@ -123,10 +124,15 @@ static GObject *constructor (GType                  type,
                    GEGL_TYPE_OPERATION_SINK))
     {
       processor->input = gegl_node_get_producer (processor->node, "input", NULL);
+      if (!gegl_operation_sink_needs_full (processor->node->operation))
+        processor->valid_region = gegl_region_new ();
+      else
+        processor->valid_region = NULL;
     }
   else
     {
       processor->input = processor->node;
+      processor->valid_region = NULL;
     }
   g_object_ref (processor->input);
 
@@ -146,6 +152,8 @@ static void finalize (GObject *self_object)
     g_object_unref (processor->input);
   if (processor->queued_region)
     gegl_region_destroy (processor->queued_region);
+  if (processor->valid_region)
+    gegl_region_destroy (processor->valid_region);
 
   G_OBJECT_CLASS (gegl_processor_parent_class)->finalize (self_object);
 }
@@ -235,7 +243,6 @@ gegl_node_new_processor (GeglNode      *node,
                          GeglRectangle *rectangle)
 {
   GeglProcessor *processor;
-  GeglCache     *cache;
 
   g_assert (GEGL_IS_NODE (node));
 
@@ -243,18 +250,24 @@ gegl_node_new_processor (GeglNode      *node,
 
 
   if (rectangle)
-    gegl_processor_set_rectangle (processor, rectangle);
+    {
+      gegl_processor_set_rectangle (processor, rectangle);
+    }
   else
     {
       GeglRectangle tmp = gegl_node_get_bounding_box (processor->input);
       gegl_processor_set_rectangle (processor, &tmp);
     }
 
-  cache = gegl_node_get_cache (processor->input);
   if (node->operation &&
-      g_type_is_a (G_OBJECT_TYPE (node->operation),
-                   GEGL_TYPE_OPERATION_SINK))
+      GEGL_IS_OPERATION_SINK (node->operation))
     {
+      GeglCache     *cache;
+
+      if (!gegl_operation_sink_needs_full (node->operation))
+          return processor;
+      cache = gegl_node_get_cache (processor->input);
+
       processor->dynamic = gegl_node_add_dynamic (node, cache);
       {
         GValue value = { 0, };
@@ -278,11 +291,13 @@ gegl_node_new_processor (GeglNode      *node,
   return processor;
 }
 
+
+
 /* returns TRUE if there is more work */
-static gboolean render_rectangle (GeglProcessor *processor)
+static gboolean render_rectangle_buffered (GeglProcessor *processor)
 {
-  GeglCache     *cache    = gegl_node_get_cache (processor->input);
-  gint           max_area = processor->chunk_size;
+  GeglCache *cache    = gegl_node_get_cache (processor->input);
+  gint       max_area = processor->chunk_size;
 
   GeglRectangle *dr;
 
@@ -356,14 +371,87 @@ static gboolean render_rectangle (GeglProcessor *processor)
 
           g_free (buf);
         }
-/*      else if (gegl_region_rect_in (cache->valid_region, (GeglRectangle *) dr) ==
-          GEGL_OVERLAP_RECTANGLE_PART)
-        {
-          g_warning ("part");
-        }*/
       g_free (dr);
     }
   return processor->dirty_rectangles != NULL;
+}
+
+/* returns TRUE if there is more work */
+static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
+{
+  gint       max_area = processor->chunk_size;
+
+  GeglRectangle *dr;
+
+  if (processor->dirty_rectangles)
+    {
+      dr = processor->dirty_rectangles->data;
+
+      if (dr->height * dr->width > max_area && 1)
+        {
+          gint band_size;
+
+          if (dr->height > dr->width)
+            {
+              band_size = dr->height / 2;
+
+              if (band_size < 1)
+                band_size = 1;
+
+              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              *fragment = *dr;
+
+              fragment->height = band_size;
+              dr->height      -= band_size;
+              dr->y           += band_size;
+
+              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+              return TRUE;
+            }
+          else
+            {
+              band_size = dr->width / 2;
+
+              if (band_size < 1)
+                band_size = 1;
+
+              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              *fragment = *dr;
+
+              fragment->width = band_size;
+              dr->width      -= band_size;
+              dr->x          += band_size;
+
+              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+              return TRUE;
+            }
+        }
+      processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
+
+      if (!dr->width || !dr->height)
+        {
+          g_free (dr);
+          return TRUE;
+        }
+
+      gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+      gegl_region_union_with_rect (processor->valid_region, (GeglRectangle *) dr);
+      g_free (dr);
+    }
+  return processor->dirty_rectangles != NULL;
+}
+
+
+/* FIXME: merge duplicated code between the two different code paths
+ */
+static gboolean render_rectangle (GeglProcessor *processor)
+{
+  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
+      !gegl_operation_sink_needs_full (processor->node->operation))
+   {
+     return render_rectangle_unbuffered (processor);
+   }
+  return render_rectangle_buffered (processor);
 }
 
 static gint rect_area (GeglRectangle *rectangle)
@@ -388,14 +476,14 @@ static gint region_area (GeglRegion *region)
   return sum;
 }
 
-static gint area_left (GeglCache     *cache,
+static gint area_left (GeglRegion    *area,
                        GeglRectangle *rectangle)
 {
   GeglRegion *region;
   gint        sum = 0;
 
   region = gegl_region_rectangle (rectangle);
-  gegl_region_subtract (region, cache->valid_region);
+  gegl_region_subtract (region, area);
   sum += region_area (region);
   gegl_region_destroy (region);
   return sum;
@@ -413,13 +501,19 @@ gegl_processor_is_rendered (GeglProcessor *processor)
 static gdouble
 gegl_processor_progress (GeglProcessor *processor)
 {
-  GeglCache *cache = gegl_node_get_cache (processor->input);
+  GeglRegion *valid_region;
+
+  if (processor->valid_region)
+    valid_region = processor->valid_region;
+  else
+    valid_region = gegl_node_get_cache (processor->input)->valid_region;
+
   gint valid;
   gint wanted;
   gdouble ret;
 
   wanted = rect_area (&(processor->rectangle));
-  valid  = wanted - area_left (cache, &(processor->rectangle));
+  valid  = wanted - area_left (valid_region, &(processor->rectangle));
   if (wanted == 0)
     {
       if (gegl_processor_is_rendered (processor))
@@ -441,9 +535,13 @@ gegl_processor_render (GeglProcessor *processor,
                        GeglRectangle *rectangle,
                        gdouble       *progress)
 {
-  GeglCache *cache = gegl_node_get_cache (processor->input);
+  GeglRegion *valid_region;
 
-  g_assert (GEGL_IS_CACHE (cache));
+  if (processor->valid_region)
+    valid_region = processor->valid_region;
+  else
+    valid_region = gegl_node_get_cache (processor->input)->valid_region;
+
   {
     gboolean more_work = render_rectangle (processor);
     if (more_work == TRUE)
@@ -455,11 +553,11 @@ gegl_processor_render (GeglProcessor *processor,
             if (rectangle)
               {
                 wanted = rect_area (rectangle);
-                valid  = wanted - area_left (cache, rectangle);
+                valid  = wanted - area_left (valid_region, rectangle);
               }
             else
               {
-                valid  = region_area (cache->valid_region);
+                valid  = region_area (valid_region);
                 wanted = region_area (processor->queued_region);
               }
             if (wanted == 0)
@@ -480,7 +578,7 @@ gegl_processor_render (GeglProcessor *processor,
     { /* we're asked to work on a specific rectangle thus we only focus
          on it */
       GeglRegion    *region = gegl_region_rectangle (rectangle);
-      gegl_region_subtract (region, cache->valid_region);
+      gegl_region_subtract (region, valid_region);
       GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
@@ -503,7 +601,7 @@ gegl_processor_render (GeglProcessor *processor,
       if (n_rectangles != 0)
         {
           if (progress)
-            *progress = 1.0 - ((double) area_left (cache, rectangle) / rect_area (rectangle));
+            *progress = 1.0 - ((double) area_left (valid_region, rectangle) / rect_area (rectangle));
           return TRUE;
         }
       return FALSE;
@@ -542,7 +640,8 @@ gegl_processor_render (GeglProcessor *processor,
 
 
 /*#define ENABLE_THREADING*/
-#ifdef ENABLE_THREADING
+/*#ifdef ENABLE_THREADING*/
+#if 0
 
 gpointer render_thread (gpointer data)
 {
@@ -588,6 +687,15 @@ gegl_processor_work (GeglProcessor *processor,
     {
       return TRUE;
     }
+
+  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
+      !gegl_operation_sink_needs_full (processor->node->operation))
+    {
+      if (progress)
+        *progress = 1.0;
+      return FALSE;
+    }
+
   cache = gegl_node_get_cache (processor->input);
 
   if (processor->dynamic)
@@ -623,7 +731,9 @@ gegl_processor_work (GeglProcessor *processor,
 
   if (processor->dynamic)
     {
-      gegl_operation_process (processor->node->operation, cache, "foo");
+      /* the actual writing to the destination */
+      gegl_operation_process (processor->node->operation, cache, /* context */
+                                                          "foo"  /* ignored output_pad */);
       gegl_node_remove_dynamic (processor->node, cache);
       processor->dynamic = NULL;
       if (progress)

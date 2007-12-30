@@ -95,7 +95,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
   /* Use the redirect output NOP of a graph instead of a graph if a traversal
    * is attempted directly on a graph */
-  if (pad->node != root)
+  if (pad && pad->node != root)
     root = pad->node;
   g_object_ref (root);
 
@@ -140,7 +140,20 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     }
 
   eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", context_id, NULL);
-  gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE (pad));
+
+  if (pad)
+    {
+      gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE (pad));
+    }
+  else
+    { /* pull on the input of our sink if no pad of the given pad-name
+         was available, we take this as an indication that we're in fact
+         doing processing on a sink (and the ROI inidcates the data to
+         be written.
+       */
+      GeglPad *pad = gegl_node_get_pad (root, "input");
+      gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE (pad));
+    }
   g_object_unref (eval_visitor);
 
   root->is_root = FALSE;
@@ -155,7 +168,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
       g_object_unref (debug_rect_visitor);
     }
 
-  {
+  if (pad) {
     /* extract return buffer before running finish visitor */
     GValue value = { 0, };
     g_value_init (&value, G_TYPE_OBJECT);
@@ -170,12 +183,13 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE (root));
   g_object_unref (finish_visitor);
 
-
   g_object_unref (root);
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "process", time);
 
-  if (!G_IS_OBJECT (buffer))
-    g_warning ("foo %p %i", buffer, ((GObject *) buffer)->ref_count);
+  if (!pad || !G_IS_OBJECT (buffer))
+    {
+      return NULL;
+    }
   return buffer;
 }

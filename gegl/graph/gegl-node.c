@@ -758,7 +758,7 @@ gegl_node_blit (GeglNode      *node,
     {
       GeglBuffer *buffer;
       buffer = gegl_node_apply_roi (node, "output", roi);
-      {
+      if (buffer && destination_buf) { 
         GeglBuffer *roi_buf = gegl_buffer_create_sub_buffer (buffer, roi);
 
         if (destination_buf)
@@ -772,7 +772,8 @@ gegl_node_blit (GeglNode      *node,
           }
       }
       /* and unrefing to ultimately clean it off from the graph */
-      g_object_unref (buffer);
+      if (buffer)
+        g_object_unref (buffer);
     }
   else if ((flags & GEGL_BLIT_CACHE) ||
            (flags & GEGL_BLIT_DIRTY))

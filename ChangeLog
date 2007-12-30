@@ -1,4 +1,18 @@
 2007-12-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node.c: (gegl_node_blit): make it possible to call
+	with a NULL buffer (if only the side-effects of processing is
+	desired).
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply): pull on the
+	input instead of output when it seems like we're operating on a sink
+	that accepts incremental consumption of data.
+	* gegl/process/gegl-eval-visitor.c: (visit_pad): do processing on for
+	sink op on the input pad.
+	* gegl/process/gegl-processor.c: added code path to allow processing
+	of subregions. The logioc in this file needs refactoring and simplification,
+	with paralellization in mind.
+
+2007-12-30  Øyvind Kolås  <pippin@gimp.org>
 	
 	Made it possible for subclasses of GeglOperationSink to specify
 	whether they need all data in one go or not.

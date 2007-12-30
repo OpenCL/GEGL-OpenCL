@@ -30,6 +30,7 @@
 #include "graph/gegl-visitable.h"
 #include "gegl-instrument.h"
 #include "operation/gegl-operation.h"
+#include "operation/gegl-operation-sink.h"
 #include "buffer/gegl-region.h"
 
 
@@ -127,6 +128,17 @@ visit_pad (GeglVisitor *self,
             }
 
           g_value_unset (&value);
+
+		  /* processing for sink operations that accepts partial consumption
+             and thus probably are being processed by the processor from the
+             this very operation.
+           */
+          if (GEGL_IS_OPERATION_SINK (operation) &&
+              !gegl_operation_sink_needs_full (operation))
+            {
+              g_print ("hi\n");
+              gegl_operation_process (operation, context_id, "output");
+            }
         }
     }
 }
