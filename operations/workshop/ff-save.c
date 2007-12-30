@@ -243,6 +243,7 @@ static void class_init (GeglOperationClass *operation_class)
   GObjectClass *gobject_class = G_OBJECT_CLASS (operation_class);
 
   gobject_class->finalize = finalize;
+  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
 }
 
 

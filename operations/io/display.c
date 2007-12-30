@@ -34,6 +34,7 @@ gegl_chant_int(height, 0, 1000, 0, "private")
 #define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
 #define GEGL_CHANT_SELF        "display.c"
 #define GEGL_CHANT_CATEGORIES  "output"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <SDL.h>
@@ -160,6 +161,11 @@ process (GeglOperation *operation,
   self->height = result->height;
 
   return  TRUE;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
 }
 
 #endif

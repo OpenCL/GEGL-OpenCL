@@ -28,6 +28,7 @@ gegl_chant_int	  (compression, 1, 9, 1, "PNG compression level from 1 to 9")
 #define GEGL_CHANT_DESCRIPTION "PNG image saver (passes the buffer through, saves as a side-effect.)"
 #define GEGL_CHANT_SELF        "png-save.c"
 #define GEGL_CHANT_CATEGORIES      "output"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <png.h>
@@ -159,6 +160,11 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
     fclose (fp);
 
   return 0;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
 }
 
 #endif

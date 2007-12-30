@@ -56,6 +56,8 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
+  klass->needs_full = FALSE;
+
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
@@ -150,6 +152,13 @@ compute_input_request (GeglOperation       *operation,
                        const GeglRectangle *roi)
 {
   GeglRectangle rect=*roi;
-  g_warning ("I'm a sink, why do you call me?, I have no input and that includes the '%s' you asked for.", input_pad);
   return rect;
+}
+
+gboolean gegl_operation_sink_needs_full (GeglOperation *operation)
+{
+  GeglOperationSinkClass *klass;
+
+  klass  = GEGL_OPERATION_SINK_CLASS (G_OBJECT_GET_CLASS (operation));
+  return klass->needs_full;
 }

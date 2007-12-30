@@ -26,6 +26,7 @@ gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
 #define GEGL_CHANT_DESCRIPTION     "Save output into a GdkPixbuf."
 #define GEGL_CHANT_SELF            "save-pixbuf.c"
 #define GEGL_CHANT_CATEGORIES      "programming:output"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -84,6 +85,11 @@ process (GeglOperation *operation,
       g_free (name);
     }
   return TRUE;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
 }
 
 #endif

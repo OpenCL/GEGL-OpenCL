@@ -24,6 +24,7 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 #define GEGL_CHANT_DESCRIPTION "A GEGL buffer destination surface."
 #define GEGL_CHANT_SELF        "save-buffer.c"
 #define GEGL_CHANT_CATEGORIES  "programming:output"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 static gboolean
@@ -48,6 +49,11 @@ process (GeglOperation *operation,
       *output = gegl_buffer_create_sub_buffer (input, extent);
     }
   return TRUE;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
 }
 
 #endif

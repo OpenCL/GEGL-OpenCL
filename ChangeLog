@@ -1,3 +1,20 @@
+2007-12-30  Øyvind Kolås  <pippin@gimp.org>
+	
+	Made it possible for subclasses of GeglOperationSink to specify
+	whether they need all data in one go or not.
+
+	* gegl/operation/gegl-operation-sink.h: added needs_full boolean to
+	class structure.
+	* gegl/operation/gegl-operation-sink.c: added
+	gegl_operation_sink_needs_full query method.
+
+	* operations/io/display.c: 
+	* operations/io/png-save.c:
+	* operations/io/save-buffer.c:
+	* operations/io/save-pixbuf.c:
+	* operations/workshop/ff-save.c: Updated writing operations that need
+	the full buffer to say so.
+
 2007-12-30  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/graph/gegl-node.c: made "operation" a read/write property.
