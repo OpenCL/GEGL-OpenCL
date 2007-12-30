@@ -136,7 +136,6 @@ visit_pad (GeglVisitor *self,
           if (GEGL_IS_OPERATION_SINK (operation) &&
               !gegl_operation_sink_needs_full (operation))
             {
-              g_print ("hi\n");
               gegl_operation_process (operation, context_id, "output");
             }
         }
