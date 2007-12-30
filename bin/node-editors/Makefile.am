@@ -1,6 +1,6 @@
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so))
-#INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
+#INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=$(SHREXT)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/buffer/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/bin/*.h)
@@ -15,7 +15,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
-%.so: %.c $(GEGLHEADERS)
+%$(SHREXT): %.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 clean-local:

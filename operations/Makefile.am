@@ -19,4 +19,4 @@ EXTRA_DIST= \
 	Makefile-operations.am
 
 clean-local:
-	rm -f */*.so */*/*.so
+	rm -f */*$(SHREXT) */*/*$(SHREXT)
