@@ -1,5 +1,10 @@
 2007-12-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: Changed processing chunks size to
+	256*256.
+
+2007-12-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.c: (gegl_node_blit): make it possible to call
 	with a NULL buffer (if only the side-effects of processing is
 	desired).

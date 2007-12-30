@@ -15,7 +15,7 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
-#define GEGL_PROCESSOR_CHUNK_SIZE 128*128
+#define GEGL_PROCESSOR_CHUNK_SIZE 256*256
 
 #include "config.h"
 #include <glib-object.h>
