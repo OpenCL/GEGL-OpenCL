@@ -118,11 +118,11 @@ gegl_node_class_init (GeglNodeClass *klass)
   gobject_class->get_property = get_property;
 
   g_object_class_install_property (gobject_class, PROP_OPERATION,
-                                   g_param_spec_object ("gegl_operation",
+                                   g_param_spec_object ("gegl-operation",
                                                         "Operation Object",
                                                         "The associated GeglOperation instance",
                                                         GEGL_TYPE_OPERATION,
-                                                        G_PARAM_WRITABLE |
+                                                        G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_OP_CLASS,
                                    g_param_spec_string ("operation",
@@ -307,6 +307,10 @@ get_property (GObject    *gobject,
 
       case PROP_NAME:
         g_value_set_string (value, gegl_node_get_name (node));
+        break;
+
+      case PROP_OPERATION:
+        g_value_set_object (value, node->operation);
         break;
 
       default:
