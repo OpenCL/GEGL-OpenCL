@@ -1119,6 +1119,7 @@ gegl_node_set_valist (GeglNode    *self,
               break;
             }
           g_object_set_property (G_OBJECT (self), property_name, &value);
+          g_value_unset (&value);
         }
       else
         {
@@ -1152,6 +1153,7 @@ gegl_node_set_valist (GeglNode    *self,
               break;
             }
           g_object_set_property (G_OBJECT (self->operation), property_name, &value);
+          g_value_unset (&value);
         }
 
       property_name = va_arg (var_args, gchar *);
