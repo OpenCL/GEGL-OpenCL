@@ -42,7 +42,7 @@ pngs:
 
 all-local: pngs index.html
 
-%.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)\
+%.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT))\
 	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
 	    $(top_builddir)/bin/gegl
 	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\

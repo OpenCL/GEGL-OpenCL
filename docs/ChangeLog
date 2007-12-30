@@ -1,3 +1,7 @@
+2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gallery/Makefile.am: Use SHREXT instead of hard-coded ".so".
+
 2007-12-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: update list of features.
