@@ -8,7 +8,7 @@
 2007-12-30  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/graph/gegl-node.c (gegl_node_set_valist): don't forget to
-	unset the GVaues after setting the property.
+	unset the GValues after setting the property.
 
 2007-12-30  Øyvind Kolås  <pippin@gimp.org>
 
