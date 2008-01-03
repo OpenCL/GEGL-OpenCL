@@ -20,13 +20,9 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
-#include "gegl-operation.h"
 #include "gegl-operation-composer.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_POINT_COMPOSER           (gegl_operation_point_composer_get_type ())
 #define GEGL_OPERATION_POINT_COMPOSER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposer))
@@ -36,16 +32,17 @@ extern "C" {
 typedef struct _GeglOperationPointComposer  GeglOperationPointComposer;
 struct _GeglOperationPointComposer
 {
-    GeglOperationComposer  operation;
-    gint                 samples;
-    /*< private >*/
+  GeglOperationComposer parent_instance;
+
+  /*< private >*/
 };
 
 typedef struct _GeglOperationPointComposerClass GeglOperationPointComposerClass;
 struct _GeglOperationPointComposerClass
 {
-   GeglOperationComposerClass operation_class;
-   gboolean (*process) (GeglOperation *self,      /* for parameters      */
+  GeglOperationComposerClass parent_class;
+
+  gboolean (* process) (GeglOperation *self,      /* for parameters      */
                         void          *in,
                         void          *aux,
                         void          *out,
@@ -55,8 +52,6 @@ struct _GeglOperationPointComposerClass
 
 GType gegl_operation_point_composer_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

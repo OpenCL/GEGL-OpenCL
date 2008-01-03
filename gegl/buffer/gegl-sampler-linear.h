@@ -20,11 +20,8 @@
 #include <glib-object.h>
 #include "gegl-types.h"
 #include "gegl-sampler.h"
-#include "buffer/gegl-buffer.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_SAMPLER_LINEAR               (gegl_sampler_linear_get_type ())
 #define GEGL_SAMPLER_LINEAR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_LINEAR, GeglSamplerLinear))
@@ -34,20 +31,19 @@ extern "C" {
 typedef struct _GeglSamplerLinear  GeglSamplerLinear;
 struct _GeglSamplerLinear
 {
-    GeglSampler sampler;
-    /*< private >*/    
+  GeglSampler parent_instance;
+
+  /*< private >*/
 };
 
 typedef struct _GeglSamplerLinearClass GeglSamplerLinearClass;
 struct _GeglSamplerLinearClass
 {
-   GeglSamplerClass sampler_class;
+  GeglSamplerClass parent_class;
 };
 
-GType                   gegl_sampler_linear_get_type  (void) G_GNUC_CONST;
+GType gegl_sampler_linear_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

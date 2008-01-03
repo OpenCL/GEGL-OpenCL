@@ -22,9 +22,7 @@
 #include "gegl-types.h"
 #include "gegl-operation.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_SOURCE               (gegl_operation_source_get_type ())
 #define GEGL_OPERATION_SOURCE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_SOURCE, GeglOperationSource))
@@ -34,21 +32,20 @@ extern "C" {
 typedef struct _GeglOperationSource  GeglOperationSource;
 struct _GeglOperationSource
 {
-    GeglOperation  operation;
+  GeglOperation parent_instance;
 };
 
 typedef struct _GeglOperationSourceClass GeglOperationSourceClass;
 struct _GeglOperationSourceClass
 {
-   GeglOperationClass operation_class;
-   gboolean (*process) (GeglOperation *self,
-                        gpointer       context_id);
+  GeglOperationClass parent_class;
+
+  gboolean (*process) (GeglOperation *self,
+                       gpointer       context_id);
 };
 
-GType             gegl_operation_source_get_type                  (void) G_GNUC_CONST;
+GType gegl_operation_source_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

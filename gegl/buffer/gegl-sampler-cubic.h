@@ -17,13 +17,11 @@
 #ifndef _GEGL_SAMPLER_CUBIC_H__
 #define _GEGL_SAMPLER_CUBIC_H__
 
-//#include <glib-object.h>
-//#include "gegl-types.h"
+#include <glib-object.h>
+#include "gegl-types.h"
 #include "gegl-sampler.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_SAMPLER_CUBIC               (gegl_sampler_cubic_get_type ())
 #define GEGL_SAMPLER_CUBIC(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_CUBIC, GeglSamplerCubic))
@@ -33,23 +31,22 @@ extern "C" {
 typedef struct _GeglSamplerCubic  GeglSamplerCubic;
 struct _GeglSamplerCubic
 {
-    GeglSampler sampler;
-    /*< private >*/
-    gdouble  b;
-    gdouble  c;
-    gchar   *type;
+  GeglSampler parent_instance;
+
+  /*< private >*/
+  gdouble  b;
+  gdouble  c;
+  gchar   *type;
 };
 
 typedef struct _GeglSamplerCubicClass GeglSamplerCubicClass;
 struct _GeglSamplerCubicClass
 {
-   GeglSamplerClass sampler_class;
+  GeglSamplerClass parent_class;
 };
 
-GType                   gegl_sampler_cubic_get_type  (void) G_GNUC_CONST;
+GType gegl_sampler_cubic_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

@@ -20,13 +20,9 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
-#include "gegl-operation.h"
 #include "gegl-operation-filter.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_POINT_FILTER           (gegl_operation_point_filter_get_type ())
 #define GEGL_OPERATION_POINT_FILTER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_POINT_FILTER, GeglOperationPointFilter))
@@ -36,15 +32,15 @@ extern "C" {
 typedef struct _GeglOperationPointFilter  GeglOperationPointFilter;
 struct _GeglOperationPointFilter
 {
-    GeglOperationFilter  operation;
-    gint                 samples;
+  GeglOperationFilter parent_instance;
 };
 
 typedef struct _GeglOperationPointFilterClass GeglOperationPointFilterClass;
 struct _GeglOperationPointFilterClass
 {
-   GeglOperationFilterClass operation_class;
-   gboolean (*process) (GeglOperation *self,      /* for parameters      */
+  GeglOperationFilterClass parent_class;
+
+  gboolean (* process) (GeglOperation *self,      /* for parameters      */
                         void          *in_buf,    /* input buffer */
                         void          *out_buf,   /* output buffer */
                         glong          samples);  /* number of samples   */
@@ -53,8 +49,6 @@ struct _GeglOperationPointFilterClass
 
 GType gegl_operation_point_filter_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

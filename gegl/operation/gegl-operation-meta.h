@@ -20,12 +20,9 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
 #include "gegl-operation.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_META           (gegl_operation_meta_get_type ())
 #define GEGL_OPERATION_META(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_META, GeglOperationMeta))
@@ -36,14 +33,15 @@ extern "C" {
 typedef struct _GeglOperationMeta  GeglOperationMeta;
 struct _GeglOperationMeta
 {
-  GeglOperation operation;
+  GeglOperation parent_instance;
+
   GSList       *redirects;
 };
 
 typedef struct _GeglOperationMetaClass GeglOperationMetaClass;
 struct _GeglOperationMetaClass
 {
-  GeglOperationClass operation_class;
+  GeglOperationClass parent_class;
 };
 
 
@@ -58,8 +56,6 @@ void gegl_operation_meta_property_changed (GeglOperationMeta *self,
                                            GParamSpec        *arg1,
                                            gpointer           user_data);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

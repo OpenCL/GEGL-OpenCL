@@ -1,3 +1,20 @@
+2008-01-03  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/buffer/gegl-sampler-cubic.h
+	* gegl/buffer/gegl-sampler-lanczos.h
+	* gegl/buffer/gegl-sampler-linear.h
+	* gegl/buffer/gegl-sampler-nearest.h
+	* gegl/operation/gegl-operation-area-filter.h
+	* gegl/operation/gegl-operation-composer.h
+	* gegl/operation/gegl-operation-filter.h
+	* gegl/operation/gegl-operation-meta.h
+	* gegl/operation/gegl-operation-point-composer.h
+	* gegl/operation/gegl-operation-point-filter.h
+	* gegl/operation/gegl-operation-sink.h
+	* gegl/operation/gegl-operation-source.h: use G_BEGIN/END_DECLS,
+	renamed parent members to "parent_instance" and "parent_class",
+	removed lots of useless includes, some formatting cleanup.
+
 2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/gluas.c (set_rgba_pixel): Updated due to change

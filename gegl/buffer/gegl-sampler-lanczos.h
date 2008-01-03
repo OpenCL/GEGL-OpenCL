@@ -17,13 +17,11 @@
 #ifndef _GEGL_SAMPLER_LANCZOS_H__
 #define _GEGL_SAMPLER_LANCZOS_H__
 
-//#include <glib-object.h>
-//#include "gegl-types.h"
+#include <glib-object.h>
+#include "gegl-types.h"
 #include "gegl-sampler.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_SAMPLER_LANCZOS               (gegl_sampler_lanczos_get_type ())
 #define GEGL_SAMPLER_LANCZOS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczos))
@@ -33,23 +31,22 @@ extern "C" {
 typedef struct _GeglSamplerLanczos  GeglSamplerLanczos;
 struct _GeglSamplerLanczos
 {
-    GeglSampler sampler;
-    /*< private >*/
-    gfloat *lanczos_lookup;
-    gint    lanczos_width;
-    gint    lanczos_spp;
+  GeglSampler parent_instance;
+
+  /*< private >*/
+  gfloat *lanczos_lookup;
+  gint    lanczos_width;
+  gint    lanczos_spp;
 };
 
 typedef struct _GeglSamplerLanczosClass GeglSamplerLanczosClass;
 struct _GeglSamplerLanczosClass
 {
-   GeglSamplerClass sampler_class;
+  GeglSamplerClass parent_class;
 };
 
-GType                   gegl_sampler_lanczos_get_type  (void) G_GNUC_CONST;
+GType gegl_sampler_lanczos_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif

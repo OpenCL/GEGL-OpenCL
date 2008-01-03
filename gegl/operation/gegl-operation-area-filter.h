@@ -20,13 +20,9 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
-#include "gegl-operation.h"
 #include "gegl-operation-filter.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_AREA_FILTER           (gegl_operation_area_filter_get_type ())
 #define GEGL_OPERATION_AREA_FILTER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilter))
@@ -36,23 +32,22 @@ extern "C" {
 typedef struct _GeglOperationAreaFilter  GeglOperationAreaFilter;
 struct _GeglOperationAreaFilter
 {
-    GeglOperationFilter  operation;
-    gint                 left;
-    gint                 right;
-    gint                 top;
-    gint                 bottom;
+  GeglOperationFilter parent_instance;
+
+  gint                left;
+  gint                right;
+  gint                top;
+  gint                bottom;
 };
 
 typedef struct _GeglOperationAreaFilterClass GeglOperationAreaFilterClass;
 struct _GeglOperationAreaFilterClass
 {
-   GeglOperationFilterClass operation_class;
+  GeglOperationFilterClass parent_class;
 };
 
 GType gegl_operation_area_filter_get_type (void) G_GNUC_CONST;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif
