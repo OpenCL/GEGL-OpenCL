@@ -29,11 +29,11 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self;
   GeglBuffer          *input;
-  const GeglRectangle *extent;
 
   self = GEGL_CHANT_OPERATION (operation);
 
@@ -45,8 +45,7 @@ process (GeglOperation *operation,
                                                    "input"));
   
       g_assert (input);
-      extent = gegl_operation_result_rect (operation, context_id);
-      *output = gegl_buffer_create_sub_buffer (input, extent);
+      *output = gegl_buffer_create_sub_buffer (input, result);
     }
   return TRUE;
 }

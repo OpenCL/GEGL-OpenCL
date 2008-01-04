@@ -62,8 +62,7 @@ a.each do
 #include \"gegl-chant.h\"
 #include \"math.h\"
 
-static void prepare (GeglOperation *self,
-                     gpointer       context_id)
+static void prepare (GeglOperation *self)
 {
   Babl *format = babl_format (\"RaGaBaA float\");
 

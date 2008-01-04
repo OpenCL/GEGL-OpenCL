@@ -71,8 +71,7 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
  */
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   /* set the babl format this operation prefers to work on */
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));

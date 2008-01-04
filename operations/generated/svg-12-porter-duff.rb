@@ -66,8 +66,7 @@ file_head1 = '
 '
 
 file_head2 = '
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("RaGaBaA float");
 

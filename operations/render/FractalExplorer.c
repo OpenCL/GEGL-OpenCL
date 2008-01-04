@@ -387,15 +387,13 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  const GeglRectangle *need;
   GeglBuffer          *output = NULL;
 
-  need = gegl_operation_get_requested_region (operation, context_id);
   {
-    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     clrmap               colormap;
     guchar              *buf;
 
@@ -426,8 +424,7 @@ process (GeglOperation *operation,
 }
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
 }

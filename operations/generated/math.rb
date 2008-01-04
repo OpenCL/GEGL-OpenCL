@@ -51,8 +51,7 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 
 #include <math.h>
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   Babl *format = babl_format (\"RGBA float\");
 

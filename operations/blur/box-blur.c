@@ -43,7 +43,8 @@ static void ver_blur (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self;
 

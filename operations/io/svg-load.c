@@ -64,7 +64,8 @@ gint query_svg (const gchar *path,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result_foo)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output = NULL;

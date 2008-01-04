@@ -36,8 +36,7 @@
 
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("Y'CbCrA float");
   gegl_operation_set_format (operation, "input", format);

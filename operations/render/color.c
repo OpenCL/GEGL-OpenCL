@@ -33,23 +33,20 @@ gegl_chant_color (value, "black", "The color to render (defaults to 'black')")
 #include "gegl-chant.h"
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  const GeglRectangle *need;
   GeglBuffer          *output = NULL;
 
-  need = gegl_operation_get_requested_region (operation, context_id);
   {
-    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat              *buf;
     gfloat               color[4];
 

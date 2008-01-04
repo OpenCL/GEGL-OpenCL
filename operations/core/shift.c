@@ -42,7 +42,8 @@ int gegl_chant_foo = 0;
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglBuffer    *input;
   GeglBuffer    *output;

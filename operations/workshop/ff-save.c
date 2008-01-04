@@ -208,8 +208,7 @@ finalize (GObject *object)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id)
+process (GeglOperation *operation)
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
   Priv     *p = (Priv*)self->priv;

@@ -35,7 +35,8 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
  ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   gboolean success = FALSE;
   GeglBuffer *buffer = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));

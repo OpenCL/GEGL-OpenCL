@@ -81,17 +81,15 @@ buffer_get_min_max (GeglBuffer *buffer,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id)
+process (GeglOperation       *operation,
+         gpointer             context_id,
+         const GeglRectangle *result)
 {
-  const GeglRectangle *result;
   GeglBuffer          *input;
   GeglBuffer          *output;
   gdouble              min, max;
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-
-  result = gegl_operation_get_requested_region (operation, context_id);
 
   buffer_get_min_max (input, &min, &max);
 
@@ -133,8 +131,7 @@ compute_input_request (GeglOperation       *operation,
   return result;
 }
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));

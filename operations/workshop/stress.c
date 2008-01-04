@@ -55,7 +55,8 @@ static void stress (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;

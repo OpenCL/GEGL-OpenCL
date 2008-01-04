@@ -39,7 +39,8 @@ static void          set_property          (GObject             *gobject,
 
 static gboolean      process               (GeglOperation       *operation,
                                             gpointer             context_id,
-                                            const gchar         *output_prop);
+                                            const gchar         *output_prop,                                            
+                                            const GeglRectangle *result);
 static void          attach                (GeglOperation       *operation);
 static GeglRectangle get_defined_region    (GeglOperation       *self);
 static GeglRectangle compute_input_request (GeglOperation       *operation,
@@ -110,7 +111,8 @@ set_property (GObject      *object,
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id,
-         const gchar   *output_prop)
+         const gchar   *output_prop,
+         const GeglRectangle *result)
 {
   GeglOperationSink      *gegl_operation_sink;
   GeglOperationSinkClass *klass;
@@ -125,7 +127,7 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   if (input)
     {
-      success = klass->process (operation, context_id);
+      success = klass->process (operation, context_id, result);
     }
 
   return success;

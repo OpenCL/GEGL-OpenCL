@@ -98,23 +98,23 @@ static Priv *init_priv (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *source;
   GeglBuffer          *input;
-  const GeglRectangle *requested  = gegl_operation_get_requested_region (operation, context_id);
  Priv                 *priv = init_priv (operation);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   g_assert (input);
 
-  if (priv->width != requested->width  ||
-      priv->height != requested->height)
+  if (priv->width != result->width  ||
+      priv->height != result->height)
     {
-      priv->width = requested->width ;
-      priv->height = requested->height;
+      priv->width = result->width ;
+      priv->height = result->height;
       gtk_widget_set_size_request (priv->drawing_area, priv->width, priv->height);
 
       if (priv->buf)
@@ -122,7 +122,7 @@ process (GeglOperation *operation,
       priv->buf = g_malloc (priv->width * priv->height * 4);
     }
 
-  source = gegl_buffer_create_sub_buffer (input, requested);
+  source = gegl_buffer_create_sub_buffer (input, result);
 
   gegl_buffer_get (source, 1.0, NULL, babl_format ("R'G'B'A u8"), priv->buf, GEGL_AUTO_ROWSTRIDE);
   gtk_widget_queue_draw (priv->drawing_area);

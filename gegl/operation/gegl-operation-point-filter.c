@@ -21,12 +21,12 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
-                               gpointer       context_id);
+                               gpointer       context_id,
+                               const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -49,9 +49,9 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 
 static gboolean
 process_inner (GeglOperation *operation,
-               gpointer       context_id)
+               gpointer       context_id,
+               const GeglRectangle *result)
 {
-  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
   GeglBuffer          *input;
 /*  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));*/
   GeglBuffer          *output;

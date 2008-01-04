@@ -82,8 +82,9 @@ fir_ver_blur (GeglBuffer *src,
               gint        offsetY);
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id)
+process (GeglOperation       *operation,
+         gpointer             context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self;
   GeglBuffer          *input;

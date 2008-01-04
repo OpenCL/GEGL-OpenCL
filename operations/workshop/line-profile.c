@@ -54,10 +54,10 @@ buffer_sample (GeglBuffer *buffer,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  const GeglRectangle *result;
   GeglBuffer          *input,
                       *output;
   gint width = MAX(MAX (self->width, self->x0), self->x1);
@@ -65,8 +65,6 @@ process (GeglOperation *operation,
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
-  result = gegl_operation_get_requested_region (operation, context_id);
- 
   { 
     GeglRectangle extent = {0,0,width,height};
     output = gegl_buffer_new (&extent, babl_format ("B'aG'aR'aA u8"));

@@ -68,7 +68,8 @@ static GeglRectangle compute_input_request   (GeglOperation       *self,
                                               const GeglRectangle *region);
 
 static gboolean      process                 (GeglOperation       *op,
-                                              gpointer             context_id);
+                                              gpointer             context_id,                                              
+                                              const GeglRectangle *result);
 static GeglNode    * detect                  (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
@@ -118,8 +119,7 @@ op_affine_get_type (void)
 /* ************************* */
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("RaGaBaA float");
 
@@ -658,14 +658,12 @@ affine_generic (GeglBuffer        *dest,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,         
+         const GeglRectangle *result)
 {
   OpAffine            *affine = (OpAffine *) operation;
   GeglBuffer          *input;
   GeglBuffer          *output;
-  const GeglRectangle *result;
-
-  result = gegl_operation_result_rect (operation, context_id);
 
   input = gegl_operation_get_source (operation, context_id, "input");
   output = gegl_operation_get_target (operation, context_id, "output");

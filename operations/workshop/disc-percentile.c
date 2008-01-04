@@ -44,7 +44,8 @@ static void median (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
@@ -57,9 +58,8 @@ process (GeglOperation *operation,
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
     {
-      const GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
       GeglBuffer      *temp_in;
-      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
+      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", result);
 
       if (self->radius < 1.0)
         {

@@ -63,15 +63,13 @@ static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
-  const GeglRectangle *need;
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer *output;
 
-  need = gegl_operation_get_requested_region (operation, context_id);
   {
-    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
     gint pxsize;
 

@@ -41,7 +41,8 @@ struct _GeglOperationComposerClass
   GeglOperationClass parent_class;
 
   gboolean (* process) (GeglOperation *self,
-                        gpointer       context_id);
+                        gpointer       context_id,                        
+                        const GeglRectangle *result);
 };
 
 GType gegl_operation_composer_get_type (void) G_GNUC_CONST;

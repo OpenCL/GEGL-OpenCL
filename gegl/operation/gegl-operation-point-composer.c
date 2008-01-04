@@ -22,12 +22,12 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
-                               gpointer       context_id);
+                               gpointer       context_id,                               
+                               const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("RGBA float");
   gegl_operation_set_format (operation, "input", format);
@@ -58,15 +58,16 @@ fast_paths (GeglOperation *operation,
             gpointer       context_id,
             Babl          *in_format,
             Babl          *aux_format,
-            Babl          *out_format);
+            Babl          *out_format,
+            const GeglRectangle *result);
 
 static gboolean
-process_inner (GeglOperation *operation,
-               gpointer       context_id)
+process_inner (GeglOperation       *operation,
+               gpointer             context_id,
+               const GeglRectangle *result)
 {
   GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
-  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
   GeglBuffer          *output;
   GeglPad             *pad;
   Babl                *in_format;
@@ -103,7 +104,7 @@ process_inner (GeglOperation *operation,
    * good idea. NB! some of the OpenRaster meta ops, depends on the
    * short-circuiting happening in fast_paths.
    * */
-  if (fast_paths (operation, context_id, in_format, aux_format, out_format))
+  if (fast_paths (operation, context_id, in_format, aux_format, out_format, result))
     return TRUE;
 
   /* retrieve the buffer we're writing to from GEGL */
@@ -159,11 +160,11 @@ fast_paths (GeglOperation *operation,
             gpointer       context_id,
             Babl          *in_format,
             Babl          *aux_format,
-            Babl          *out_format)
+            Babl          *out_format,
+            const GeglRectangle *result)
 {
   GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
-  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
   if (!input && aux)
     {

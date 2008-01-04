@@ -422,7 +422,8 @@ static gboolean process (GeglOperation *operation,
 #else
 #ifndef GEGL_CHANT_META
 static gboolean process (GeglOperation *operation,
-                         gpointer       context_id);
+                         gpointer       context_id,                         
+                         const GeglRectangle *result);
 #endif
 #endif
 #endif
@@ -438,8 +439,7 @@ static void init (GeglChantOperation *self);
 #endif
 
 #ifdef GEGL_CHANT_PREPARE
-static void prepare (GeglOperation *self,
-                     gpointer       context_id);
+static void prepare (GeglOperation *self);
 #endif
 
 #ifdef GEGL_CHANT_AREA_FILTER

@@ -36,14 +36,14 @@
 
 static gboolean
 process (GeglOperation *operation,
-        gpointer       context_id)
+        gpointer       context_id,
+        const GeglRectangle *result)
 {
  GeglChantOperation  *self;
  GeglBuffer          *input;
  GeglBuffer          *output;
  gfloat              *in_buf;
  gfloat              *out_buf;
- const GeglRectangle *result_rect = gegl_operation_result_rect (operation, context_id);
  gfloat               red, green, blue;
 
  self = GEGL_CHANT_OPERATION (operation);
@@ -54,18 +54,18 @@ process (GeglOperation *operation,
  green = self->green;
  blue = self->blue;
 
- output = gegl_buffer_new (result_rect, babl_format ("YA float"));
+ output = gegl_buffer_new (result, babl_format ("YA float"));
 
- if ((result_rect->width > 0) && (result_rect->height > 0))
+ if ((result->width > 0) && (result->height > 0))
  {
-     gint num_pixels = result_rect->width * result_rect->height;
+     gint num_pixels = result->width * result->height;
      gint i;
      gfloat *in_pixel, *out_pixel;
 
      in_buf = g_malloc (4 * sizeof (gfloat) * num_pixels);
      out_buf = g_malloc (2 * sizeof(gfloat) * num_pixels);
 
-     gegl_buffer_get (input, 1.0, result_rect, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
+     gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
 
      in_pixel = in_buf;
      out_pixel = out_buf;
@@ -78,7 +78,7 @@ process (GeglOperation *operation,
          out_pixel += 2;
      }
 
-     gegl_buffer_set (output, result_rect, output->format, out_buf,
+     gegl_buffer_set (output, result, output->format, out_buf,
                       GEGL_AUTO_ROWSTRIDE);
 
      g_free (in_buf);

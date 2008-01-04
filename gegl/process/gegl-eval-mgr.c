@@ -193,3 +193,4 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     }
   return buffer;
 }
+

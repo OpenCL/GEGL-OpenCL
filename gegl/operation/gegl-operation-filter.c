@@ -41,7 +41,8 @@ static void     set_property            (GObject       *gobject,
 
 static gboolean process                 (GeglOperation *operation,
                                          gpointer       context_id,
-                                         const gchar   *output_prop);
+                                         const gchar   *output_prop,                                         
+                                         const GeglRectangle *result);
 
 static void     attach                  (GeglOperation *operation);
 static GeglNode *detect                 (GeglOperation *operation,
@@ -171,7 +172,8 @@ set_property (GObject      *object,
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id,
-         const gchar   *output_prop)
+         const gchar   *output_prop,
+         const GeglRectangle *result)
 {
   GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;
@@ -192,7 +194,7 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   if (input != NULL)
     {
-      success = klass->process (operation, context_id);
+      success = klass->process (operation, context_id, result);
     }
   else
     {

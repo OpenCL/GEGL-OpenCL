@@ -32,8 +32,7 @@ gegl_chant_string(format, "RGBA float", "Babl ouput format string")
 
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   g_assert (self->format);

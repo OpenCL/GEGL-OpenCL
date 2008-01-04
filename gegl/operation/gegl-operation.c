@@ -98,12 +98,12 @@ gegl_operation_create_pad (GeglOperation *self,
 }
 
 gboolean
-gegl_operation_process (GeglOperation *operation,
-                        gpointer       context_id,
-                        const gchar   *output_pad)
+gegl_operation_process (GeglOperation       *operation,
+                        gpointer             context_id,
+                        const gchar         *output_pad,
+                        const GeglRectangle *result)
 {
   GeglOperationClass  *klass;
-  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
   g_return_val_if_fail (GEGL_IS_OPERATION (operation), FALSE);
 
@@ -117,7 +117,7 @@ gegl_operation_process (GeglOperation *operation,
       return TRUE;
     }
 
-  return klass->process (operation, context_id, output_pad);
+  return klass->process (operation, context_id, output_pad, result);
 }
 
 GeglRectangle
@@ -190,14 +190,14 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
   GeglRectangle    request;
 
   dynamic = gegl_node_get_dynamic (operation->node, context_id);
-  request = *gegl_operation_need_rect (operation, context_id);
+  request = dynamic->need_rect;/**gegl_operation_need_rect (operation, context_id);*/
 
   /* for each input, compute_input_request use gegl_operation_set_source_region() */
   for (input_pads = operation->node->input_pads;input_pads;input_pads=input_pads->next)
     {
       const gchar *pad_name = gegl_pad_get_name (input_pads->data);
       GeglRectangle rect;
-      rect = gegl_operation_compute_input_request (operation, context_id, &request);
+      rect = gegl_operation_compute_input_request (operation, pad_name, &request); 
 
       gegl_operation_set_source_region (operation, context_id, pad_name, &rect);
     }
@@ -243,8 +243,7 @@ gegl_operation_attach (GeglOperation *self,
 }
 
 void
-gegl_operation_prepare (GeglOperation *self,
-                        gpointer       context_id)
+gegl_operation_prepare (GeglOperation *self)
 {
   GeglOperationClass *klass;
 
@@ -253,7 +252,7 @@ gegl_operation_prepare (GeglOperation *self,
   klass = GEGL_OPERATION_GET_CLASS (self);
 
   if (klass->prepare)
-    klass->prepare (self, context_id);
+    klass->prepare (self);
   if (klass->tickle)
     klass->tickle (self);
 }
@@ -376,62 +375,6 @@ compute_affected_region (GeglOperation *self,
                region);
     }
   return region;
-}
-
-#if 0
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  if (self->node->is_graph)
-    {
-      return gegl_operation_calc_source_regions (
-               gegl_node_get_output_proxy (self->node, "output")->operation,
-               context_id);
-    }
-
-  g_warning ("Op '%s' has no calc_source_regions method",
-             G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
-  return FALSE;
-}
-#endif
-
-
-const GeglRectangle *
-gegl_operation_get_requested_region (GeglOperation *operation,
-                                     gpointer       context_id)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
-
-  g_assert (operation);
-  g_assert (operation->node);
-
-  return &dynamic->need_rect;
-}
-
-const GeglRectangle *
-gegl_operation_result_rect (GeglOperation *operation,
-                            gpointer       context_id)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
-
-  g_assert (operation);
-  g_assert (operation->node);
-
-  return &dynamic->result_rect;
-}
-
-/* returns the bounding box of the buffer needed for computation */
-const GeglRectangle *
-gegl_operation_need_rect (GeglOperation *operation,
-                          gpointer       context_id)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
-
-  g_assert (operation);
-  g_assert (operation->node);
-
-  return &dynamic->need_rect;
 }
 
 void
@@ -637,14 +580,17 @@ gegl_operation_get_target (GeglOperation *operation,
   GeglPad             *pad;
   const GeglRectangle *result;
   Babl                *format;
-
+  GeglNodeDynamic     *dynamic;
+ 
   pad = gegl_node_get_pad (operation->node, property_name);
+  dynamic = gegl_node_get_dynamic (operation->node, context_id);
   format = pad->format;
+
   g_assert (format != NULL);
-
   g_assert (!strcmp (property_name, "output"));
+  g_assert (dynamic);
 
-  result = gegl_operation_result_rect (operation, context_id);
+  result = &dynamic->result_rect;
 
 /* uncomment the following to enable the experimental per node
    caching
@@ -665,6 +611,7 @@ gegl_operation_get_target (GeglOperation *operation,
 #else
   output = gegl_buffer_new (result, format);
 #endif
+
   gegl_operation_set_data (operation, context_id, property_name, G_OBJECT (output));
   return output;
 }
@@ -685,21 +632,21 @@ gegl_operation_get_source (GeglOperation *operation,
                            gpointer       context_id,
                            const gchar   *pad_name)
 {
-  GeglBuffer    *real_input;
-  GeglBuffer    *input;
-  GeglRectangle  input_request;
+  GeglBuffer      *real_input;
+  GeglBuffer      *input;
+  GeglRectangle    input_request;
+  GeglNodeDynamic *dynamic;
+ 
+  dynamic = gegl_node_get_dynamic (operation->node, context_id);
 
   input_request  = gegl_operation_compute_input_request (operation,
                                                          "input",
-                                                         gegl_operation_need_rect (operation, context_id));
+                                                         &dynamic->need_rect);
 
   real_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   input = gegl_buffer_create_sub_buffer (real_input, &input_request);
 
-  /* fix up reference counting in such a way that the life (refcount) of
-   * the buffer object isn't the responsiblity of the calling plug-in?
-   */
   return input;
 }
 

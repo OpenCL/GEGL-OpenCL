@@ -79,21 +79,20 @@ static void
 drawable_lua_process (GeglChantOperation *self,
                       GeglBuffer  *drawable,
                       GeglBuffer  *result,
-                      GeglRectangle *roi,
+                      const GeglRectangle *roi,
                       const gchar *file,
                       const gchar *buffer,
                       gdouble      user_value);
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self;
   GeglBuffer          *input;
   GeglBuffer          *output;
-  GeglRectangle       *result;
 
-  result = gegl_operation_result_rect (operation, context_id);
   self   = GEGL_CHANT_OPERATION (operation);
   input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
@@ -191,7 +190,7 @@ static void
 drawable_lua_process (GeglChantOperation *self,
                       GeglBuffer    *drawable,
                       GeglBuffer    *result,
-                      GeglRectangle *roi,
+                      const GeglRectangle *roi,
                       const gchar   *file,
                       const gchar   *buffer,
                       gdouble        user_value)
@@ -1035,8 +1034,7 @@ static int l_get_hsv (lua_State * lua)
 }
 
 static void
-prepare (GeglOperation *operation,
-          gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "aux", babl_format ("RGBA float"));

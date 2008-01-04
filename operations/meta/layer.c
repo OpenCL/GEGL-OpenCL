@@ -62,8 +62,7 @@ struct _Priv
 };
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv;

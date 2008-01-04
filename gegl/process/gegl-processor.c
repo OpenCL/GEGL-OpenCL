@@ -733,7 +733,9 @@ gegl_processor_work (GeglProcessor *processor,
     {
       /* the actual writing to the destination */
       gegl_operation_process (processor->node->operation, cache, /* context */
-                                                          "foo"  /* ignored output_pad */);
+                                                          "foo"  /* ignored output_pad */,                              
+                              							  &processor->dynamic->result_rect
+                              );
       gegl_node_remove_dynamic (processor->node, cache);
       processor->dynamic = NULL;
       if (progress)

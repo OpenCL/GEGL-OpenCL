@@ -38,24 +38,20 @@ gegl_chant_color (color2,    "white",                "The other cell color (defa
 #include "gegl-chant.h"
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
-  const GeglRectangle *need;
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output = NULL;
 
-
-  need = gegl_operation_get_requested_region (operation, context_id);
   {
-    const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat              *buf;
     gfloat               color1[4];
     gfloat               color2[4];

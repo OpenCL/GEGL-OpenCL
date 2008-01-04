@@ -33,7 +33,8 @@
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglOperationComposer *composer;
   GeglBuffer            *input;
@@ -41,11 +42,9 @@ process (GeglOperation *operation,
   GeglBuffer            *output;
   GeglBuffer            *temp_in;
   GeglBuffer            *temp_aux;
-  const GeglRectangle   *result;
  
 
   composer = GEGL_OPERATION_COMPOSER (operation);
-  result = gegl_operation_result_rect (operation, context_id);
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 

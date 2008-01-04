@@ -39,7 +39,8 @@ gegl_chant_pointer(buf, "Buffer")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
@@ -65,9 +66,7 @@ process (GeglOperation *operation,
       system ("dot -o/tmp/gegl-temp.png -Tpng /tmp/gegl-temp.dot");
       g_free (dot);
     }
-
     /* FIXME: copy behavior from magick-load to fix this op */
-
 
     {
       GeglNode *gegl = gegl_node_new ();
@@ -102,7 +101,7 @@ get_defined_region (GeglOperation *operation)
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
  
   GeglRectangle result = {0,0, 4096, 4096};
-  process (operation, NULL);
+  process (operation, NULL, NULL);
   if (self->buf)
     {
       GeglBuffer *buffer = GEGL_BUFFER (self->buf);

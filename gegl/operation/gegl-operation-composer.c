@@ -41,7 +41,8 @@ static void     set_property (GObject      *gobject,
                               GParamSpec   *pspec);
 static gboolean process      (GeglOperation *operation,
                               gpointer       context_id,
-                              const gchar  *output_prop);
+                              const gchar  *output_prop,
+                              const GeglRectangle *result);
 static void     attach       (GeglOperation *operation);
 static GeglNode*detect       (GeglOperation *operation,
                               gint           x,
@@ -135,9 +136,10 @@ set_property (GObject      *object,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id,
-         const gchar   *output_prop)
+process (GeglOperation       *operation,
+         gpointer             context_id,
+         const gchar         *output_prop,
+         const GeglRectangle *result)
 {
   GeglBuffer                 *input;
   GeglBuffer                 *aux;
@@ -160,7 +162,7 @@ process (GeglOperation *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, context_id);
+      success = klass->process (operation, context_id, result);
     }
   else
     {

@@ -1,3 +1,96 @@
+2008-01-03  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed context_id argument from prepare method, added const
+	GeglRectangle *result to base process and many of the process
+	protoypes in other base classes to simplify logic in operations.
+
+	* gegl/gegl-chant.h:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.h:
+	* gegl/operation/gegl-operation-area-filter.c:
+	* gegl/operation/gegl-operation-composer.h:
+	* gegl/operation/gegl-operation-source.c:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.h:
+	* gegl/operation/gegl-operation.h:
+	* gegl/operation/gegl-operation-sink.h:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/process/gegl-eval-visitor.c:
+	* gegl/process/gegl-prepare-visitor.c:
+	* gegl/process/gegl-eval-mgr.c:
+	* gegl/process/gegl-processor.c:
+	* operations/render/color.c:
+	* operations/render/text.c:
+	* operations/render/introspect.c:
+	* operations/render/checkerboard.c:
+	* operations/render/FractalExplorer.c:
+	* operations/render/noise.c:
+	* operations/svg/svg_huerotate.c:
+	* operations/svg/svg_luminancetoalpha.c:
+	* operations/svg/svg_matrix.c:
+	* operations/svg/svg_saturate.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/meta/layer.c:
+	* operations/io/png-load.c:
+	* operations/io/save-buffer.c:
+	* operations/io/raw-load.c:
+	* operations/io/magick-load.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/svg-load.c:
+	* operations/io/load.c:
+	* operations/io/png-save.c:
+	* operations/io/load-buffer.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/pixbuf.c:
+	* operations/io/jpg-load.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/convert-format.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/affine/affine.c:
+	* operations/transparency/opacity.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/grey.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/generated/blend.rb:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/stress.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/mandelbrot.c:
+	* operations/workshop/ff-save.c:
+	* operations/workshop/gtk-display.c:
+	* operations/workshop/rawbayer-load.c:
+	* operations/generated/svg-12-blend.rb:
+	* operations/generated/other-blend.rb:
+	* operations/generated/math.rb:
+	* operations/generated/svg-12-porter-duff.rb:
+	* operations/color/contrast-curve.c:
+	* operations/color/brightness-contrast.c:
+	* operations/color/remap.c:
+	* operations/color/whitebalance.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/threshold.c:
+
 2008-01-03  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/buffer/gegl-sampler-cubic.h

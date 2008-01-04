@@ -90,7 +90,8 @@ set_property (GObject *gobject,
   self = ((void *)0);
 }
 static gboolean process (GeglOperation *operation,
-                         gpointer context_id);
+                         gpointer context_id,
+                         const GeglRectangle *result);
 
 static void
 gegl_operation_remap_init (GeglOperationRemap *self)
@@ -127,7 +128,8 @@ gegl_operation_remap_constructor (GType type,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer context_id)
+         gpointer context_id,
+         const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglOperationRemap *self;
@@ -145,7 +147,6 @@ process (GeglOperation *operation,
   high = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "high"));
 
     {
-      const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
       gfloat *buf;
       gfloat *min;
       gfloat *max;

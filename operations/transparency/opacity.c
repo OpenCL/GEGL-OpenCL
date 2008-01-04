@@ -27,8 +27,7 @@ gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no au
 #define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *self,
-                     gpointer       context_id)
+static void prepare (GeglOperation *self)
 {
   gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));
   gegl_operation_set_format (self, "output", babl_format ("RaGaBaA float"));

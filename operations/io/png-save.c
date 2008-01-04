@@ -44,11 +44,11 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self   = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *input;
-  const GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   g_assert (input);

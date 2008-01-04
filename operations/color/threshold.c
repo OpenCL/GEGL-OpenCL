@@ -30,8 +30,7 @@ gegl_chant_double (value, -10.0, 10.0, 0.5,
 #define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("YA float"));
   gegl_operation_set_format (operation, "aux", babl_format ("Y float"));

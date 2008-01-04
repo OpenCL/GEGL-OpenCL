@@ -32,7 +32,8 @@ gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *input;

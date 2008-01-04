@@ -78,7 +78,8 @@ visit_pad (GeglVisitor *self,
         {
           glong time      = gegl_ticks ();
           glong babl_time = babl_total_usecs;
-          gegl_operation_process (operation, context_id, gegl_pad_get_name (pad));
+          gegl_operation_process (operation, context_id, gegl_pad_get_name (pad),
+                                  &dynamic->result_rect);
           babl_time = babl_total_usecs - babl_time;
           time      = gegl_ticks () - time;
 
@@ -94,8 +95,6 @@ visit_pad (GeglVisitor *self,
   else if (gegl_pad_is_input (pad))
     {
       GeglPad *source_pad = gegl_pad_get_internal_connected_to (pad);
-
-#define USE_DYNAMIC
 
       if (source_pad)
         {
@@ -121,22 +120,27 @@ visit_pad (GeglVisitor *self,
                                           gegl_pad_get_name (pad),
                                           &value);
           /* reference counting for this source dropped to zero, freeing up */
-          if (-- gegl_node_get_dynamic (gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
+          if (-- gegl_node_get_dynamic (
+                     gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
               g_value_get_object (&value))
             {
-              gegl_node_dynamic_remove_property (gegl_node_get_dynamic (gegl_pad_get_node (source_pad), context_id), gegl_pad_get_name (source_pad));
+              gegl_node_dynamic_remove_property (
+                 gegl_node_get_dynamic (
+                    gegl_pad_get_node (source_pad), context_id),
+                    gegl_pad_get_name (source_pad));
             }
 
           g_value_unset (&value);
 
-		  /* processing for sink operations that accepts partial consumption
+	  /* processing for sink operations that accepts partial consumption
              and thus probably are being processed by the processor from the
              this very operation.
            */
           if (GEGL_IS_OPERATION_SINK (operation) &&
               !gegl_operation_sink_needs_full (operation))
             {
-              gegl_operation_process (operation, context_id, "output");
+              gegl_operation_process (operation, context_id, "output",
+                &dynamic->result_rect);
             }
         }
     }

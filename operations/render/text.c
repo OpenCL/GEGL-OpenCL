@@ -150,13 +150,11 @@ static void text_layout_text (GeglChantOperation *self,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output = NULL;
-  const GeglRectangle *result;
-
-  result = gegl_operation_result_rect (operation, context_id);
 
    output = gegl_operation_get_target (operation, context_id, "output");
   {
@@ -253,8 +251,7 @@ finalize (GObject *object)
 }
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
 }

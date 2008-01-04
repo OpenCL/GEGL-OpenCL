@@ -20,8 +20,7 @@
 
 G_DEFINE_TYPE (GeglOperationAreaFilter, gegl_operation_area_filter, GEGL_TYPE_OPERATION_FILTER)
 
-static void prepare (GeglOperation *operation,
-                     gpointer       context_id)
+static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));

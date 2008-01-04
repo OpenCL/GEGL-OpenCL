@@ -45,7 +45,8 @@ int gegl_chant_foo = 0;
  ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id)
+         gpointer       context_id,
+         const GeglRectangle *result)
 {
   GeglBuffer          *input;
   GeglBuffer          *output;
@@ -78,7 +79,6 @@ get_defined_region (GeglOperation *operation)
   result.y = op_crop->y;
   result.width  = op_crop->width;
   result.height  = op_crop->height;
-
 
   return result;
 }
