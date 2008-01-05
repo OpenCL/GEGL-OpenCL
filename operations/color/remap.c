@@ -212,11 +212,11 @@ compute_input_request (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *self,
-                         const gchar *input_pad,
-                         GeglRectangle region)
+compute_affected_region (GeglOperation       *self,
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
 {
-  return region;
+  return *region;
 }
 
 

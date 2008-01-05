@@ -80,22 +80,25 @@ get_defined_region (GeglOperation *operation)
     return result;
 
   result = *in_rect;
-  result.x += floor(op_shift->x);
-  result.y += floor(op_shift->y);
- 
+
+  result.x += floor (op_shift->x);
+  result.y += floor (op_shift->y);
+
   return result;
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *operation,
-                         const gchar   *input_pad,
-                         GeglRectangle  region)
+compute_affected_region (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
-  GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
- 
-  region.x += floor(op_shift->x);
-  region.y += floor(op_shift->y);
-  return region;
+  GeglChantOperation *op_shift = (GeglChantOperation *) operation;
+  GeglRectangle       result   = *input_region;
+
+  result.x += floor (op_shift->x);
+  result.y += floor (op_shift->y);
+
+  return result;
 }
 
 static GeglRectangle
@@ -104,9 +107,11 @@ compute_input_request (GeglOperation       *operation,
                        const GeglRectangle *roi)
 {
   GeglChantOperation *op_shift = (GeglChantOperation*)(operation);
-  GeglRectangle result = *roi;
-  result.x -= floor(op_shift->x);
-  result.y -= floor(op_shift->y);
+  GeglRectangle       result   = *roi;
+
+  result.x -= floor (op_shift->x);
+  result.y -= floor (op_shift->y);
+
   return result;
 }
 
