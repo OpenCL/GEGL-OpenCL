@@ -26,7 +26,7 @@
 #include "gegl-cr-visitor.h"
 #include "operation/gegl-operation.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-node-dynamic.h"
+#include "graph/gegl-node-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 #include "gegl-utils.h"
@@ -57,22 +57,22 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
+  GeglNodeContext *context = gegl_node_get_context (node, self->context_id);
 
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
-  if (!dynamic->cached)
+  if (!context->cached)
     {
-      gegl_rectangle_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
-      dynamic->result_rect = gegl_operation_adjust_result_region (node->operation, &dynamic->result_rect);
+      gegl_rectangle_intersect (&context->result_rect, &node->have_rect, &context->need_rect);
+      context->result_rect = gegl_operation_adjust_result_region (node->operation, &context->result_rect);
 
     }
-  dynamic->refs = gegl_node_get_num_sinks (node);
+  context->refs = gegl_node_get_num_sinks (node);
 
   if (!strcmp (gegl_node_get_name (node), "proxynop-output"))
     {
       GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
       if (graph)
-        dynamic->refs += gegl_node_get_num_sinks (graph);
+        context->refs += gegl_node_get_num_sinks (graph);
     }
 }

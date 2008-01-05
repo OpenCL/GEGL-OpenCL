@@ -1,3 +1,25 @@
+2008-01-05  Øyvind Kolås  <pippin@gimp.org>
+
+	Renamed GeglNodeDynamic to GeglNodeContext.
+
+	* gegl/gegl-types.h:
+	* gegl/graph/Makefile.am:
+	* gegl/graph/gegl-node-context.c:
+	* gegl/graph/gegl-node-context.h:
+	* gegl/graph/gegl-node-dynamic.c:
+	* gegl/graph/gegl-node-dynamic.h:
+	* gegl/graph/gegl-node.c: 
+	* gegl/graph/gegl-node.h:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/process/gegl-cr-visitor.c: 
+	* gegl/process/gegl-debug-rect-visitor.c: 
+	* gegl/process/gegl-eval-mgr.c: 
+	* gegl/process/gegl-eval-visitor.c:
+	* gegl/process/gegl-finish-visitor.c:
+	* gegl/process/gegl-prepare-visitor.c:
+	* gegl/process/gegl-processor.c: 
+
 2008-01-04  Manish Singh  <yosh@gimp.org>
 
 	* operations/io/display.c

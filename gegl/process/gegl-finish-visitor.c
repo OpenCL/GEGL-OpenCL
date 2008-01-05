@@ -74,5 +74,5 @@ visit_node (GeglVisitor *self,
       }
   }
 
-  gegl_node_remove_dynamic (node, self->context_id);
+  gegl_node_remove_context (node, self->context_id);
 }

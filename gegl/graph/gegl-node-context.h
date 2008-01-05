@@ -17,23 +17,23 @@
  *           2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_NODE_DYNAMIC_H__
-#define __GEGL_NODE_DYNAMIC_H__
+#ifndef __GEGL_NODE_CONTEXT_H__
+#define __GEGL_NODE_CONTEXT_H__
 
 #include <gegl/buffer/gegl-buffer.h>
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_NODE_DYNAMIC            (gegl_node_dynamic_get_type ())
-#define GEGL_NODE_DYNAMIC(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_DYNAMIC, GeglNodeDynamic))
-#define GEGL_NODE_DYNAMIC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE_DYNAMIC, GeglNodeDynamicClass))
-#define GEGL_IS_NODE_DYNAMIC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE_DYNAMIC))
-#define GEGL_IS_NODE_DYNAMIC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE_DYNAMIC))
-#define GEGL_NODE_DYNAMIC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE_DYNAMIC, GeglNodeDynamicClass))
+#define GEGL_TYPE_NODE_CONTEXT            (gegl_node_context_get_type ())
+#define GEGL_NODE_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_CONTEXT, GeglNodeContext))
+#define GEGL_NODE_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE_CONTEXT, GeglNodeContextClass))
+#define GEGL_IS_NODE_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE_CONTEXT))
+#define GEGL_IS_NODE_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE_CONTEXT))
+#define GEGL_NODE_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE_CONTEXT, GeglNodeContextClass))
 
-typedef struct _GeglNodeDynamicClass GeglNodeDynamicClass;
+typedef struct _GeglNodeContextClass GeglNodeContextClass;
 
-struct _GeglNodeDynamic
+struct _GeglNodeContext
 {
   GObject        parent_instance;
   GeglNode      *node;
@@ -58,32 +58,43 @@ struct _GeglNodeDynamic
   GSList        *property;      /* used internally for data being exchanged */
 };
 
-struct _GeglNodeDynamicClass
+struct _GeglNodeContextClass
 {
   GObjectClass   parent_class;
 };
 
-GType           gegl_node_dynamic_get_type         (void) G_GNUC_CONST;
-GeglRectangle * gegl_node_dynamic_get_need_rect    (GeglNodeDynamic *node);
-void            gegl_node_dynamic_set_need_rect    (GeglNodeDynamic *node,
-                                                    gint             x,
-                                                    gint             y,
-                                                    gint             width,
-                                                    gint             height);
-GeglRectangle * gegl_node_dynamic_get_result_rect  (GeglNodeDynamic *node);
-void            gegl_node_dynamic_set_result_rect  (GeglNodeDynamic *node,
-                                                    gint             x,
-                                                    gint             y,
-                                                    gint             width,
-                                                    gint             height);
-void            gegl_node_dynamic_set_property     (GeglNodeDynamic *node,
+GType           gegl_node_context_get_type         (void) G_GNUC_CONST;
+
+/* sets a GValue on a named property (pad) of the NodeContext */
+void            gegl_node_context_set_property     (GeglNodeContext *node,
                                                     const gchar     *name,
                                                     const GValue    *value);
-void            gegl_node_dynamic_get_property     (GeglNodeDynamic *node,
+
+/* retrieves the stored data from a named property (pad) of the NodeContext
+ * and stores it in a GValue
+ */
+void            gegl_node_context_get_property     (GeglNodeContext *node,
                                                     const gchar     *name,
                                                     GValue          *value);
-void            gegl_node_dynamic_remove_property  (GeglNodeDynamic *self,
+
+/* the rest of these functions are for internal use only */
+
+void            gegl_node_context_remove_property  (GeglNodeContext *self,
                                                     const gchar     *name);
+
+GeglRectangle * gegl_node_context_get_need_rect    (GeglNodeContext *node);
+void            gegl_node_context_set_need_rect    (GeglNodeContext *node,
+                                                    gint             x,
+                                                    gint             y,
+                                                    gint             width,
+                                                    gint             height);
+GeglRectangle * gegl_node_context_get_result_rect  (GeglNodeContext *node);
+void            gegl_node_context_set_result_rect  (GeglNodeContext *node,
+                                                    gint             x,
+                                                    gint             y,
+                                                    gint             width,
+                                                    gint             height);
+
 
 G_END_DECLS
 

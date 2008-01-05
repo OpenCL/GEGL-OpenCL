@@ -20,7 +20,7 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "gegl-node-dynamic.h"
+#include "gegl-node-context.h"
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/buffer/gegl-cache.h>
 
@@ -51,7 +51,7 @@ struct _GeglNode
   gboolean        is_root;
   gboolean        enabled;
 
-  GSList         *dynamic;   /*< list of GeglNodeDynamic's corresponding to
+  GSList         *context;   /*< list of GeglNodeContext's corresponding to
                                  evaluation contexts */
   gboolean        is_graph;
 
@@ -124,11 +124,11 @@ void          gegl_node_get                 (GeglNode      *self,
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
 
-GeglNodeDynamic *gegl_node_get_dynamic      (GeglNode      *self,
+GeglNodeContext *gegl_node_get_context      (GeglNode      *self,
                                              gpointer       context_id);
-void             gegl_node_remove_dynamic   (GeglNode      *self,
+void             gegl_node_remove_context   (GeglNode      *self,
                                              gpointer       context_id);
-GeglNodeDynamic *gegl_node_add_dynamic      (GeglNode      *self,
+GeglNodeContext *gegl_node_add_context      (GeglNode      *self,
                                              gpointer       context_id);
 
 void          gegl_node_add_pad             (GeglNode      *self,

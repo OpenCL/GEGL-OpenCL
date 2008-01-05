@@ -187,7 +187,7 @@ GeglNode       *gegl_operation_detect               (GeglOperation *operation,
 
 
 /* virtual method invokers that change behavior based on the roi being computed,
- * needs a context_id being based that is used for storing dynamic data.
+ * needs a context_id being based that is used for storing context data.
  */
 
 void            gegl_operation_attach               (GeglOperation *operation,
@@ -243,7 +243,7 @@ GType      gegl_operation_gtype_from_name           (const gchar *name);
 
 
 
-/* set a dynamic named instance for this node, this function takes over
+/* set a context named instance for this node, this function takes over
  * ownership of the reference (should only be used for internal GeglOperation
  * implementations that override caching behaviour, use with care)
  */
@@ -259,7 +259,7 @@ void            gegl_operation_set_data             (GeglOperation *operation,
  */
 
 
-/* retrieve a gobject previously set dynamically on an operation */
+/* retrieve a gobject previously set contextally on an operation */
 GObject       * gegl_operation_get_data             (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);

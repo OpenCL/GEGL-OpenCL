@@ -62,7 +62,7 @@ visit_node (GeglVisitor *self,
 
   if (self->context_id == NULL)
     g_warning ("hmm");
-  gegl_node_add_dynamic (node, self->context_id);
+  gegl_node_add_context (node, self->context_id);
 
   /* prepare the operation for the coming evaluation (all properties
    * should be set now).

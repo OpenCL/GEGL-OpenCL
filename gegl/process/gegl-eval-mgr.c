@@ -172,7 +172,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     /* extract return buffer before running finish visitor */
     GValue value = { 0, };
     g_value_init (&value, G_TYPE_OBJECT);
-    gegl_node_dynamic_get_property (gegl_node_get_dynamic (root, context_id),
+    gegl_node_context_get_property (gegl_node_get_context (root, context_id),
                                     "output", &value);
     buffer = g_value_get_object (&value);
     g_object_ref (buffer);/* salvage buffer from finalization */

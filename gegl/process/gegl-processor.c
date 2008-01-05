@@ -56,7 +56,7 @@ struct _GeglProcessor
   GeglNode        *node;
   GeglRectangle    rectangle;
   GeglNode        *input;
-  GeglNodeDynamic *dynamic;
+  GeglNodeContext *context;
 
   GeglRegion *valid_region; /* used when doing unbuffered rendering */
   GeglRegion *queued_region;
@@ -102,7 +102,7 @@ static void gegl_processor_init (GeglProcessor *processor)
 {
   processor->node             = NULL;
   processor->input            = NULL;
-  processor->dynamic          = NULL;
+  processor->context          = NULL;
   processor->queued_region    = NULL;
   processor->dirty_rectangles = NULL;
   processor->chunk_size       = 128 * 128;
@@ -268,16 +268,16 @@ gegl_node_new_processor (GeglNode      *node,
           return processor;
       cache = gegl_node_get_cache (processor->input);
 
-      processor->dynamic = gegl_node_add_dynamic (node, cache);
+      processor->context = gegl_node_add_context (node, cache);
       {
         GValue value = { 0, };
         g_value_init (&value, GEGL_TYPE_BUFFER);
         g_value_set_object (&value, cache);
-        gegl_node_dynamic_set_property (processor->dynamic, "input", &value);
+        gegl_node_context_set_property (processor->context, "input", &value);
         g_value_unset (&value);
       }
 
-      gegl_node_dynamic_set_result_rect (processor->dynamic,
+      gegl_node_context_set_result_rect (processor->context,
                                          processor->rectangle.x,
                                          processor->rectangle.y,
                                          processor->rectangle.width,
@@ -285,7 +285,7 @@ gegl_node_new_processor (GeglNode      *node,
     }
   else
     {
-      processor->dynamic = NULL;
+      processor->context = NULL;
     }
 
   return processor;
@@ -698,11 +698,11 @@ gegl_processor_work (GeglProcessor *processor,
 
   cache = gegl_node_get_cache (processor->input);
 
-  if (processor->dynamic)
+  if (processor->context)
     {
       gegl_operation_process (processor->node->operation, cache, "foo");
-      gegl_node_remove_dynamic (processor->node, cache);
-      processor->dynamic = NULL;
+      gegl_node_remove_context (processor->node, cache);
+      processor->context = NULL;
       if (progress)
         *progress = 1.0;
       return TRUE;
@@ -729,15 +729,15 @@ gegl_processor_work (GeglProcessor *processor,
       return TRUE;
     }
 
-  if (processor->dynamic)
+  if (processor->context)
     {
       /* the actual writing to the destination */
       gegl_operation_process (processor->node->operation, cache, /* context */
                                                           "foo"  /* ignored output_pad */,                              
-                              							  &processor->dynamic->result_rect
+                              							  &processor->context->result_rect
                               );
-      gegl_node_remove_dynamic (processor->node, cache);
-      processor->dynamic = NULL;
+      gegl_node_remove_context (processor->node, cache);
+      processor->context = NULL;
       if (progress)
         *progress = 1.0;
       return TRUE;

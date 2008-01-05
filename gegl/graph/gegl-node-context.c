@@ -25,21 +25,21 @@
 #include <glib-object.h>
 #include "gegl-types.h"
 
-#include "gegl-node-dynamic.h"
+#include "gegl-node-context.h"
 #include "gegl-node.h"
 
-static void     gegl_node_dynamic_class_init   (GeglNodeDynamicClass  *klass);
-static void     gegl_node_dynamic_init         (GeglNodeDynamic *self);
+static void     gegl_node_context_class_init   (GeglNodeContextClass  *klass);
+static void     gegl_node_context_init         (GeglNodeContext *self);
 static void     finalize                       (GObject         *gobject);
-static GValue * gegl_node_dynamic_get_value    (GeglNodeDynamic *self,
+static GValue * gegl_node_context_get_value    (GeglNodeContext *self,
                                                 const gchar     *property_name);
-static GValue * gegl_node_dynamic_add_value    (GeglNodeDynamic *self,
+static GValue * gegl_node_context_add_value    (GeglNodeContext *self,
                                                 const gchar     *property_name);
 
-G_DEFINE_TYPE (GeglNodeDynamic, gegl_node_dynamic, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglNodeContext, gegl_node_context, G_TYPE_OBJECT);
 
 static void
-gegl_node_dynamic_class_init (GeglNodeDynamicClass *klass)
+gegl_node_context_class_init (GeglNodeContextClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -47,14 +47,14 @@ gegl_node_dynamic_class_init (GeglNodeDynamicClass *klass)
 }
 
 static void
-gegl_node_dynamic_init (GeglNodeDynamic *self)
+gegl_node_context_init (GeglNodeContext *self)
 {
   self->refs = 0;
   self->cached = FALSE;
 }
 
 void
-gegl_node_dynamic_set_need_rect (GeglNodeDynamic *node,
+gegl_node_context_set_need_rect (GeglNodeContext *node,
                                  gint             x,
                                  gint             y,
                                  gint             width,
@@ -68,13 +68,13 @@ gegl_node_dynamic_set_need_rect (GeglNodeDynamic *node,
 }
 
 GeglRectangle *
-gegl_node_dynamic_get_result_rect (GeglNodeDynamic *node)
+gegl_node_context_get_result_rect (GeglNodeContext *node)
 {
   return &node->result_rect;
 }
 
 void
-gegl_node_dynamic_set_result_rect (GeglNodeDynamic *node,
+gegl_node_context_set_result_rect (GeglNodeContext *node,
                                    gint             x,
                                    gint             y,
                                    gint             width,
@@ -88,54 +88,54 @@ gegl_node_dynamic_set_result_rect (GeglNodeDynamic *node,
 }
 
 GeglRectangle *
-gegl_node_dynamic_get_need_rect (GeglNodeDynamic *node)
+gegl_node_context_get_need_rect (GeglNodeContext *node)
 {
   return &node->need_rect;
 }
 
 void
-gegl_node_dynamic_set_property (GeglNodeDynamic *dynamic,
+gegl_node_context_set_property (GeglNodeContext *context,
                                 const gchar     *property_name,
                                 const GValue    *value)
 {
   GParamSpec *pspec;
   GValue     *storage;
 
-  pspec = gegl_node_find_property (dynamic->node, property_name);
+  pspec = gegl_node_find_property (context->node, property_name);
 
   if (!pspec)
     {
       g_warning ("%s: node %s has no pad|property named '%s'",
                  G_STRFUNC,
-                 gegl_node_get_debug_name (dynamic->node),
+                 gegl_node_get_debug_name (context->node),
                  property_name);
     }
 
-  storage = gegl_node_dynamic_add_value (dynamic, property_name);
+  storage = gegl_node_context_add_value (context, property_name);
   /* storage needs to have the correct type */
   g_value_init (storage, G_PARAM_SPEC_VALUE_TYPE (pspec));
   g_value_copy (value, storage);
 }
 
 void
-gegl_node_dynamic_get_property (GeglNodeDynamic *dynamic,
+gegl_node_context_get_property (GeglNodeContext *context,
                                 const gchar     *property_name,
                                 GValue          *value)
 {
   GParamSpec *pspec;
   GValue     *storage;
 
-  pspec = gegl_node_find_property (dynamic->node, property_name);
+  pspec = gegl_node_find_property (context->node, property_name);
 
   if (!pspec)
     {
       g_warning ("%s: node %s has no pad|property named '%s'",
                  G_STRFUNC,
-                 gegl_node_get_debug_name (dynamic->node),
+                 gegl_node_get_debug_name (context->node),
                  property_name);
     }
 
-  storage = gegl_node_dynamic_get_value (dynamic, property_name);
+  storage = gegl_node_context_get_value (context, property_name);
   if (storage != NULL)
     {
       g_value_copy (storage, value);
@@ -175,7 +175,7 @@ lookup_property (gconstpointer a,
 }
 
 static GValue *
-gegl_node_dynamic_get_value (GeglNodeDynamic *self,
+gegl_node_context_get_value (GeglNodeContext *self,
                              const gchar     *property_name)
 {
   Property *property = NULL;
@@ -194,7 +194,7 @@ gegl_node_dynamic_get_value (GeglNodeDynamic *self,
 }
 
 void
-gegl_node_dynamic_remove_property (GeglNodeDynamic *self,
+gegl_node_context_remove_property (GeglNodeContext *self,
                                    const gchar     *property_name)
 {
   Property *property = NULL;
@@ -207,7 +207,7 @@ gegl_node_dynamic_remove_property (GeglNodeDynamic *self,
   }
   if (!property)
     {
-      g_warning ("didn't find dynamic %p for %s", property_name, gegl_node_get_debug_name (self->node));
+      g_warning ("didn't find context %p for %s", property_name, gegl_node_get_debug_name (self->node));
       return;
     }
   self->property = g_slist_remove (self->property, property);
@@ -215,7 +215,7 @@ gegl_node_dynamic_remove_property (GeglNodeDynamic *self,
 }
 
 static GValue *
-gegl_node_dynamic_add_value (GeglNodeDynamic *self,
+gegl_node_context_add_value (GeglNodeContext *self,
                              const gchar     *property_name)
 {
   Property *property = NULL;
@@ -239,7 +239,7 @@ gegl_node_dynamic_add_value (GeglNodeDynamic *self,
 static void
 finalize (GObject *gobject)
 {
-  GeglNodeDynamic *self = GEGL_NODE_DYNAMIC (gobject);
+  GeglNodeContext *self = GEGL_NODE_CONTEXT (gobject);
 
   while (self->property)
     {
@@ -248,6 +248,6 @@ finalize (GObject *gobject)
       property_destroy (property);
     }
 
-  G_OBJECT_CLASS (gegl_node_dynamic_parent_class)->finalize (gobject);
+  G_OBJECT_CLASS (gegl_node_context_parent_class)->finalize (gobject);
 }
 

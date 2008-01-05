@@ -1347,13 +1347,13 @@ gegl_node_set_need_rect (GeglNode *node,
                          gint      width,
                          gint      height)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
+  GeglNodeContext *context = gegl_node_get_context (node, context_id);
 
   g_assert (node);
-  dynamic->need_rect.x      = x;
-  dynamic->need_rect.y      = y;
-  dynamic->need_rect.width  = width;
-  dynamic->need_rect.height = height;
+  context->need_rect.x      = x;
+  context->need_rect.y      = y;
+  context->need_rect.width  = width;
+  context->need_rect.height = height;
 }
 
 const gchar *
@@ -1458,7 +1458,7 @@ void
 gegl_node_process (GeglNode *self)
 {
   GeglNode        *input;
-  GeglNodeDynamic *dynamic;
+  GeglNodeContext *context;
   GeglBuffer      *buffer;
   GeglRectangle    defined;
 
@@ -1471,90 +1471,90 @@ gegl_node_process (GeglNode *self)
   buffer  = gegl_node_apply_roi (input, "output", &defined);
 
   g_assert (GEGL_IS_BUFFER (buffer));
-  dynamic = gegl_node_add_dynamic (self, &defined);
+  context = gegl_node_add_context (self, &defined);
 
   {
     GValue value = { 0, };
     g_value_init (&value, GEGL_TYPE_BUFFER);
     g_value_set_object (&value, buffer);
-    gegl_node_dynamic_set_property (dynamic, "input", &value);
+    gegl_node_context_set_property (context, "input", &value);
     g_value_unset (&value);
   }
 
-  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.width, defined.h);
+  gegl_node_context_set_result_rect (context, defined.x, defined.y, defined.width, defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
-  gegl_node_remove_dynamic (self, &defined);
+  gegl_node_remove_context (self, &defined);
   g_object_unref (buffer);
 }
 #endif
 
 static gint
-lookup_dynamic (gconstpointer a,
+lookup_context (gconstpointer a,
                 gconstpointer context_id)
 {
-  GeglNodeDynamic *dynamic = (void *) a;
+  GeglNodeContext *context = (void *) a;
 
-  if (dynamic->context_id == context_id)
+  if (context->context_id == context_id)
     return 0;
   return -1;
 }
 void babl_backtrack (void);
-GeglNodeDynamic *
-gegl_node_get_dynamic (GeglNode *self,
+GeglNodeContext *
+gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GSList          *found;
-  GeglNodeDynamic *dynamic = NULL;
+  GeglNodeContext *context = NULL;
 
-  found = g_slist_find_custom (self->dynamic, context_id, lookup_dynamic);
+  found = g_slist_find_custom (self->context, context_id, lookup_context);
   if (found)
-    dynamic = found->data;
+    context = found->data;
   else
     {
       g_warning ("didn't find %p", context_id);
       babl_backtrack ();
     }
-  return dynamic;
+  return context;
 }
 
 void
-gegl_node_remove_dynamic (GeglNode *self,
+gegl_node_remove_context (GeglNode *self,
                           gpointer  context_id)
 {
-  GeglNodeDynamic *dynamic;
+  GeglNodeContext *context;
 
-  dynamic = gegl_node_get_dynamic (self, context_id);
-  if (!dynamic)
+  context = gegl_node_get_context (self, context_id);
+  if (!context)
     {
-      g_warning ("didn't find dynamic %p for %s", context_id, gegl_node_get_debug_name (self));
+      g_warning ("didn't find context %p for %s", context_id, gegl_node_get_debug_name (self));
       return;
     }
-  self->dynamic = g_slist_remove (self->dynamic, dynamic);
-  g_object_unref (dynamic);
+  self->context = g_slist_remove (self->context, context);
+  g_object_unref (context);
 }
 
-GeglNodeDynamic *
-gegl_node_add_dynamic (GeglNode *self,
+GeglNodeContext *
+gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)
 {
-  GeglNodeDynamic *dynamic = NULL;
-  GSList          *found   = g_slist_find_custom (self->dynamic, context_id, lookup_dynamic);
+  GeglNodeContext *context = NULL;
+  GSList          *found   = g_slist_find_custom (self->context, context_id, lookup_context);
 
   if (found)
-    dynamic = found->data;
+    context = found->data;
 
-  if (dynamic)
+  if (context)
     {
       /* silently ignore, since multiple traversals of prepare are done
        * to saturate the graph */
-      return dynamic;
+      return context;
     }
 
-  dynamic             = g_object_new (GEGL_TYPE_NODE_DYNAMIC, NULL);
-  dynamic->node       = self;
-  dynamic->context_id = context_id;
-  self->dynamic       = g_slist_prepend (self->dynamic, dynamic);
-  return dynamic;
+  context             = g_object_new (GEGL_TYPE_NODE_CONTEXT, NULL);
+  context->node       = self;
+  context->context_id = context_id;
+  self->context       = g_slist_prepend (self->context, context);
+  return context;
 }
 
 GeglNode *

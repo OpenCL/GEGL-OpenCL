@@ -28,7 +28,7 @@
 #include "gegl-debug-rect-visitor.h"
 #include "operation/gegl-operation.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-node-dynamic.h"
+#include "graph/gegl-node-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 
@@ -58,7 +58,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
+  GeglNodeContext *context = gegl_node_get_context (node, self->context_id);
 
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
 
@@ -71,9 +71,9 @@ visit_node (GeglVisitor *self,
     gegl_node_get_debug_name (node),
     node->have_rect.width, node->have_rect.height,
     node->have_rect.x, node->have_rect.y,
-    dynamic->need_rect.width, dynamic->need_rect.height,
-    dynamic->need_rect.x, dynamic->need_rect.y,
-    dynamic->result_rect.width, dynamic->result_rect.height,
-    dynamic->result_rect.x, dynamic->result_rect.y,
-    dynamic->refs);
+    context->need_rect.width, context->need_rect.height,
+    context->need_rect.x, context->need_rect.y,
+    context->result_rect.width, context->result_rect.height,
+    context->result_rect.x, context->result_rect.y,
+    context->refs);
 }

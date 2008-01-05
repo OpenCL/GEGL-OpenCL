@@ -186,11 +186,11 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
                                     gpointer       context_id)
 {
   GSList          *input_pads;
-  GeglNodeDynamic *dynamic;
+  GeglNodeContext *context;
   GeglRectangle    request;
 
-  dynamic = gegl_node_get_dynamic (operation->node, context_id);
-  request = dynamic->need_rect;/**gegl_operation_need_rect (operation, context_id);*/
+  context = gegl_node_get_context (operation->node, context_id);
+  request = context->need_rect;/**gegl_operation_need_rect (operation, context_id);*/
 
   /* for each input, compute_input_request use gegl_operation_set_source_region() */
   for (input_pads = operation->node->input_pads;input_pads;input_pads=input_pads->next)
@@ -319,8 +319,8 @@ gegl_operation_set_source_region (GeglOperation *operation,
   }
 
   {
-    GeglNodeDynamic *child_dynamic = gegl_node_get_dynamic (child, context_id);
-    gegl_rectangle_bounding_box (&child_need, &child_dynamic->need_rect, region);
+    GeglNodeContext *child_context = gegl_node_get_context (child, context_id);
+    gegl_rectangle_bounding_box (&child_need, &child_context->need_rect, region);
     gegl_rectangle_intersect (&child_need, &child->have_rect, &child_need);
 
       /* If we're cached */
@@ -334,8 +334,8 @@ gegl_operation_set_source_region (GeglOperation *operation,
               child_need.height == 0 ||
               gegl_region_rect_in (cache->valid_region, &child_need) == GEGL_OVERLAP_RECTANGLE_IN)
             {
-              child_dynamic->result_rect = child_need;
-              child_dynamic->cached = TRUE;
+              child_context->result_rect = child_need;
+              child_context->cached = TRUE;
               child_need.width = 0;
               child_need.height = 0;
             }
@@ -503,11 +503,11 @@ gegl_operation_get_data (GeglOperation *operation,
   GeglNode        *node = operation->node;
   GParamSpec      *pspec;
   GValue           value   = { 0, };
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
+  GeglNodeContext *context = gegl_node_get_context (node, context_id);
 
   pspec = gegl_node_find_property (node, property_name);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-  gegl_node_dynamic_get_property (dynamic, property_name, &value);
+  gegl_node_context_get_property (context, property_name, &value);
   /* FIXME: handle other things than gobjects as well? */
   ret = g_value_get_object (&value);
 
@@ -561,12 +561,12 @@ gegl_operation_set_data (GeglOperation *operation,
   GeglNode        *node = operation->node;
   GParamSpec      *pspec;
   GValue           value   = { 0, };
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
+  GeglNodeContext *context = gegl_node_get_context (node, context_id);
 
   pspec = gegl_node_find_property (node, property_name);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
   g_value_set_object (&value, data);
-  gegl_node_dynamic_set_property (dynamic, property_name, &value);
+  gegl_node_context_set_property (context, property_name, &value);
   g_value_unset (&value);
   g_object_unref (data);  /* stealing the initial reference? */
 }
@@ -580,24 +580,19 @@ gegl_operation_get_target (GeglOperation *operation,
   GeglPad             *pad;
   const GeglRectangle *result;
   Babl                *format;
-  GeglNodeDynamic     *dynamic;
+  GeglNodeContext     *context;
  
   pad = gegl_node_get_pad (operation->node, property_name);
-  dynamic = gegl_node_get_dynamic (operation->node, context_id);
+  context = gegl_node_get_context (operation->node, context_id);
   format = pad->format;
 
   g_assert (format != NULL);
   g_assert (!strcmp (property_name, "output"));
-  g_assert (dynamic);
+  g_assert (context);
 
-  result = &dynamic->result_rect;
+  result = &context->result_rect;
 
-/* uncomment the following to enable the experimental per node
-   caching
-*/
-#define ENABLE_CACHE
-#ifdef ENABLE_CACHE
-  /* FIXME: make the cache be of the format indicated by the format,.. */
+#if 1 /* change to 0 to disable per node caches */
   if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
     {
       output = gegl_buffer_new (result, format);
@@ -635,13 +630,13 @@ gegl_operation_get_source (GeglOperation *operation,
   GeglBuffer      *real_input;
   GeglBuffer      *input;
   GeglRectangle    input_request;
-  GeglNodeDynamic *dynamic;
+  GeglNodeContext *context;
  
-  dynamic = gegl_node_get_dynamic (operation->node, context_id);
+  context = gegl_node_get_context (operation->node, context_id);
 
   input_request  = gegl_operation_compute_input_request (operation,
                                                          "input",
-                                                         &dynamic->need_rect);
+                                                         &context->need_rect);
 
   real_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
