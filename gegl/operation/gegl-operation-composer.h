@@ -40,8 +40,8 @@ struct _GeglOperationComposerClass
 {
   GeglOperationClass parent_class;
 
-  gboolean (* process) (GeglOperation *self,
-                        gpointer       context_id,                        
+  gboolean (* process) (GeglOperation       *self,
+                        GeglNodeContext     *context,
                         const GeglRectangle *result);
 };
 

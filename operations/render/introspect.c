@@ -39,7 +39,7 @@ gegl_chant_pointer(buf, "Buffer")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -47,11 +47,11 @@ process (GeglOperation *operation,
   {
     if (self->buf)
       {
-        if (context_id)
+        if (context)
           {
             g_object_ref(self->buf); /* add an extra reference, since gegl_operation_set_data
                                         is stealing one */
-            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (self->buf));
+            gegl_node_context_set_object (context, "output", G_OBJECT (self->buf));
           }
         return TRUE;
       }
@@ -86,10 +86,10 @@ process (GeglOperation *operation,
       system ("rm /tmp/gegl-temp.*");
     }
 
-  if (context_id)
+  if (context)
     {
       g_object_ref (self->buf);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (self->buf));
+      gegl_node_context_set_object (context, "output", G_OBJECT (self->buf));
     }
   }
   return  TRUE;

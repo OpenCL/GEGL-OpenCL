@@ -36,8 +36,8 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 static gboolean process      (GeglOperation *operation,
-                              gpointer       context_id,
-                              const gchar   *output_prop,                              
+                              GeglNodeContext *context,
+                              const gchar   *output_prop,
                               const GeglRectangle *result);
 static void     attach       (GeglOperation *operation);
 
@@ -111,9 +111,9 @@ set_property (GObject      *object,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id,
-         const gchar   *output_prop,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         const gchar         *output_prop,
          const GeglRectangle *result)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
@@ -126,7 +126,7 @@ process (GeglOperation *operation,
     }
 
   g_assert (klass->process);
-  success = klass->process (operation, context_id, result);
+  success = klass->process (operation, context, result);
 
   return success;
 }

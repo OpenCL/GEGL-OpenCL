@@ -39,9 +39,9 @@ static void     set_property            (GObject       *gobject,
                                          const GValue  *value,
                                          GParamSpec    *pspec);
 
-static gboolean process                 (GeglOperation *operation,
-                                         gpointer       context_id,
-                                         const gchar   *output_prop,                                         
+static gboolean process                 (GeglOperation       *operation,
+                                         GeglNodeContext     *context,
+                                         const gchar         *output_prop,
                                          const GeglRectangle *result);
 
 static void     attach                  (GeglOperation *operation);
@@ -170,9 +170,9 @@ set_property (GObject      *object,
 
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id,
-         const gchar   *output_prop,
+process (GeglOperation   *operation,
+         GeglNodeContext *context,
+         const gchar     *output_prop,
          const GeglRectangle *result)
 {
   GeglOperationFilter      *gegl_operation_filter;
@@ -191,10 +191,10 @@ process (GeglOperation *operation,
       return FALSE;
     }
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  input = gegl_node_context_get_source (context, "input");
   if (input != NULL)
-    {
-      success = klass->process (operation, context_id, result);
+    { /* FIXME: perhaps input should really be passed instead of context */
+      success = klass->process (operation, context, result);
     }
   else
     {

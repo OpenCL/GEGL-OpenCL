@@ -63,7 +63,7 @@ static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
@@ -104,7 +104,7 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+  gegl_node_context_set_object (context, "output", G_OBJECT (output));
   return  TRUE;
 }
 

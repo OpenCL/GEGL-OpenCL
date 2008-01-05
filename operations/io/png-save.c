@@ -44,13 +44,13 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self   = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *input;
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  input = gegl_node_context_get_source (context, "input");
   g_assert (input);
 
   gegl_buffer_export_png (input, self->path, self->compression,

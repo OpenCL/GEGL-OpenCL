@@ -65,14 +65,20 @@ struct _GeglNodeContextClass
 
 GType           gegl_node_context_get_type         (void) G_GNUC_CONST;
 
-/* sets a GValue on a named property (pad) of the NodeContext */
+GeglBuffer     *gegl_node_context_get_target       (GeglNodeContext *self,
+                                                    const gchar     *padname);
+GeglBuffer     *gegl_node_context_get_source       (GeglNodeContext *self,
+                                                    const gchar     *padname);
+GObject        *gegl_node_context_get_object       (GeglNodeContext *context,
+                                                    const gchar     *padname);
+void            gegl_node_context_set_object       (GeglNodeContext *context,
+                                                    const gchar     *padname,
+                                                    GObject         *data);
+
+
 void            gegl_node_context_set_property     (GeglNodeContext *node,
                                                     const gchar     *name,
                                                     const GValue    *value);
-
-/* retrieves the stored data from a named property (pad) of the NodeContext
- * and stores it in a GValue
- */
 void            gegl_node_context_get_property     (GeglNodeContext *node,
                                                     const gchar     *name,
                                                     GValue          *value);
@@ -81,6 +87,11 @@ void            gegl_node_context_get_property     (GeglNodeContext *node,
 
 void            gegl_node_context_remove_property  (GeglNodeContext *self,
                                                     const gchar     *name);
+
+
+
+
+
 
 GeglRectangle * gegl_node_context_get_need_rect    (GeglNodeContext *node);
 void            gegl_node_context_set_need_rect    (GeglNodeContext *node,

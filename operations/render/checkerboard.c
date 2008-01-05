@@ -45,7 +45,7 @@ prepare (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
@@ -71,7 +71,7 @@ process (GeglOperation *operation,
                          &color2[2],
                          &color2[3]);
 
-    output = gegl_operation_get_target (operation, context_id, "output");
+    output = gegl_node_context_get_target (context, "output");
 
     g_object_get (output, "px-size", &pxsize,
                           "pixels", &n_pixels,

@@ -732,9 +732,10 @@ gegl_processor_work (GeglProcessor *processor,
   if (processor->context)
     {
       /* the actual writing to the destination */
-      gegl_operation_process (processor->node->operation, cache, /* context */
-                                                          "foo"  /* ignored output_pad */,                              
-                              							  &processor->context->result_rect
+      gegl_operation_process (processor->node->operation,
+                              gegl_node_get_context (processor->node, cache), /* context */
+                              "foo"  /* ignored output_pad */,
+                              &processor->context->result_rect
                               );
       gegl_node_remove_context (processor->node, cache);
       processor->context = NULL;

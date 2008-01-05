@@ -83,7 +83,7 @@ fir_ver_blur (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation       *operation,
-         gpointer             context_id,
+         GeglNodeContext     *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self;
@@ -92,8 +92,8 @@ process (GeglOperation       *operation,
   GeglBuffer          *output;
 
   self = GEGL_CHANT_OPERATION (operation);
-  input = gegl_operation_get_source (operation, context_id, "input");
-  output = gegl_operation_get_target (operation, context_id, "output");
+  input = gegl_node_context_get_source (context, "input");
+  output = gegl_node_context_get_target (context, "output");
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 

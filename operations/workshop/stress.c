@@ -55,7 +55,7 @@ static void stress (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
@@ -66,8 +66,8 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = gegl_operation_get_source (operation, context_id, "input");
-  output = gegl_operation_get_target (operation, context_id, "output");
+  input = gegl_node_context_get_source (context, "input");
+  output = gegl_node_context_get_target (context, "output");
 
   stress (input, output,
           self->radius,

@@ -49,7 +49,7 @@ gint query_png (const gchar *path,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
@@ -68,7 +68,7 @@ process (GeglOperation *operation,
     }
 
   gegl_operation_set_format (operation, "output", format);
-  output = gegl_operation_get_target (operation, context_id, "output");
+  output = gegl_node_context_get_target (context, "output");
 
   problem = gegl_buffer_import_png (output, self->path, 0, 0,
                                     &width, &height, format);

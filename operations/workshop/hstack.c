@@ -33,7 +33,7 @@
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglOperationComposer *composer;
@@ -45,8 +45,8 @@ process (GeglOperation *operation,
  
 
   composer = GEGL_OPERATION_COMPOSER (operation);
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  input = gegl_node_context_get_source (context, "input");
+  aux = gegl_node_context_get_source (context, "aux");
 
   /* FIXME: just pass the originals buffers if the result rectangle does not
    * include both input buffers
@@ -86,7 +86,8 @@ process (GeglOperation *operation,
     }
   g_object_unref (temp_in);
   g_object_unref (temp_aux);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+
+  gegl_node_context_set_object (context, "output", G_OBJECT (output));
   return  TRUE;
 }
 

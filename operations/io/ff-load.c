@@ -344,7 +344,7 @@ decode_frame (GeglChantOperation *op,
 
 static gboolean
 process (GeglOperation       *operation,
-         gpointer             context_id,
+         GeglNodeContext     *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
@@ -352,7 +352,7 @@ process (GeglOperation       *operation,
   Priv                *p = (Priv*)self->priv;
 
   {
-    output = gegl_operation_get_target (operation, context_id, "output");
+    output = gegl_node_context_get_target (context, "output");
 
     if (p->ic && !decode_frame (self, self->frame))
       {

@@ -45,7 +45,7 @@ bilateral_filter (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
@@ -56,8 +56,7 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  input = gegl_node_context_get_source (context, "input");
     {
       GeglBuffer    *temp_in;
       GeglRectangle  compute;
@@ -82,7 +81,7 @@ process (GeglOperation *operation,
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
 
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
+        gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
         g_object_unref (output);
       }
     }

@@ -54,7 +54,7 @@ buffer_sample (GeglBuffer *buffer,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
@@ -63,9 +63,8 @@ process (GeglOperation *operation,
   gint width = MAX(MAX (self->width, self->x0), self->x1);
   gint height = MAX(MAX (self->height, self->y0), self->y1);
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-
-  { 
+  input = gegl_node_context_get_source (context, "input");
+  {
     GeglRectangle extent = {0,0,width,height};
     output = gegl_buffer_new (&extent, babl_format ("B'aG'aR'aA u8"));
   }
@@ -137,7 +136,7 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf, GEGL_AUTO_ROWSTRIDE);
   }
 
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+  gegl_node_context_set_object (context, "output", G_OBJECT (output));
 
   return TRUE;
 }

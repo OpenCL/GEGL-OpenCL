@@ -387,7 +387,7 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
@@ -399,7 +399,7 @@ process (GeglOperation *operation,
 
     make_color_map (self, colormap);
 
-    output = gegl_operation_get_target (operation, context_id, "output");
+    output = gegl_node_context_get_target (context, "output");
 
     buf  = g_new (guchar, result->width * result->height * 4);
       {

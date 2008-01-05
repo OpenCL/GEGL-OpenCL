@@ -99,7 +99,7 @@ gegl_operation_create_pad (GeglOperation *self,
 
 gboolean
 gegl_operation_process (GeglOperation       *operation,
-                        gpointer             context_id,
+                        GeglNodeContext     *context,
                         const gchar         *output_pad,
                         const GeglRectangle *result)
 {
@@ -113,11 +113,11 @@ gegl_operation_process (GeglOperation       *operation,
       (result->width == 0 || result->height == 0))
     {
       GeglBuffer *output = gegl_buffer_new (NULL, NULL);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      gegl_node_context_set_object (context, "output", G_OBJECT (output));
       return TRUE;
     }
 
-  return klass->process (operation, context_id, output_pad, result);
+  return klass->process (operation, context, output_pad, result);
 }
 
 GeglRectangle
@@ -494,33 +494,6 @@ gegl_list_properties (const gchar *operation_type,
   return pspecs;
 }
 
-GObject *
-gegl_operation_get_data (GeglOperation *operation,
-                         gpointer       context_id,
-                         const gchar   *property_name)
-{
-  GObject         *ret;
-  GeglNode        *node = operation->node;
-  GParamSpec      *pspec;
-  GValue           value   = { 0, };
-  GeglNodeContext *context = gegl_node_get_context (node, context_id);
-
-  pspec = gegl_node_find_property (node, property_name);
-  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-  gegl_node_context_get_property (context, property_name, &value);
-  /* FIXME: handle other things than gobjects as well? */
-  ret = g_value_get_object (&value);
-
-  if (!ret)
-    {/*
-        g_warning ("some important data was not found on %s.%s",
-        gegl_node_get_debug_name (node), property_name);
-      */
-    }
-  g_value_unset (&value);
-  return ret;
-}
-
 GeglNode *
 gegl_operation_detect (GeglOperation *operation,
                        gint           x,
@@ -553,65 +526,6 @@ gegl_operation_detect (GeglOperation *operation,
 }
 
 void
-gegl_operation_set_data (GeglOperation *operation,
-                         gpointer       context_id,
-                         const gchar   *property_name,
-                         GObject       *data)
-{
-  GeglNode        *node = operation->node;
-  GParamSpec      *pspec;
-  GValue           value   = { 0, };
-  GeglNodeContext *context = gegl_node_get_context (node, context_id);
-
-  pspec = gegl_node_find_property (node, property_name);
-  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-  g_value_set_object (&value, data);
-  gegl_node_context_set_property (context, property_name, &value);
-  g_value_unset (&value);
-  g_object_unref (data);  /* stealing the initial reference? */
-}
-
-GeglBuffer *
-gegl_operation_get_target (GeglOperation *operation,
-                           gpointer       context_id,
-                           const gchar   *property_name)
-{
-  GeglBuffer          *output;
-  GeglPad             *pad;
-  const GeglRectangle *result;
-  Babl                *format;
-  GeglNodeContext     *context;
- 
-  pad = gegl_node_get_pad (operation->node, property_name);
-  context = gegl_node_get_context (operation->node, context_id);
-  format = pad->format;
-
-  g_assert (format != NULL);
-  g_assert (!strcmp (property_name, "output"));
-  g_assert (context);
-
-  result = &context->result_rect;
-
-#if 1 /* change to 0 to disable per node caches */
-  if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
-    {
-      output = gegl_buffer_new (result, format);
-    }
-  else
-    {
-      GeglBuffer    *cache;
-      cache = GEGL_BUFFER (gegl_node_get_cache (operation->node));
-      output = gegl_buffer_create_sub_buffer (cache, result);
-    }
-#else
-  output = gegl_buffer_new (result, format);
-#endif
-
-  gegl_operation_set_data (operation, context_id, property_name, G_OBJECT (output));
-  return output;
-}
-
-void
 gegl_operation_set_format (GeglOperation *self,
                            const gchar   *pad_name,
                            Babl          *format)
@@ -621,30 +535,6 @@ gegl_operation_set_format (GeglOperation *self,
   pad = gegl_node_get_pad (self->node, pad_name);
   pad->format = format;
 }
-
-GeglBuffer *
-gegl_operation_get_source (GeglOperation *operation,
-                           gpointer       context_id,
-                           const gchar   *pad_name)
-{
-  GeglBuffer      *real_input;
-  GeglBuffer      *input;
-  GeglRectangle    input_request;
-  GeglNodeContext *context;
- 
-  context = gegl_node_get_context (operation->node, context_id);
-
-  input_request  = gegl_operation_compute_input_request (operation,
-                                                         "input",
-                                                         &context->need_rect);
-
-  real_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-
-  input = gegl_buffer_create_sub_buffer (real_input, &input_request);
-
-  return input;
-}
-
 
 void
 gegl_operation_vector_prop_changed (GeglVector    *vector,

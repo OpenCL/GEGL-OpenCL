@@ -1,5 +1,76 @@
 2008-01-05  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the process methods of operations take a GeglNodeContext instead
+	of a context_id, this GeglNodeContext contains the logic to perform
+	concurrent bookkeeping of data on pads of nodes.
+
+	* gegl/gegl-chant.h:
+	* gegl/graph/gegl-node-context.[ch]:
+	* gegl/operation/gegl-operation-composer.[ch]:
+	* gegl/operation/gegl-operation-filter.[ch]:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-sink.[ch]:
+	* gegl/operation/gegl-operation-source.[ch]:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/process/gegl-eval-visitor.c:
+	* gegl/process/gegl-processor.c:
+
+	* operations/affine/affine.c:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/io/display.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/ff-load.c:
+	* operations/io/jpg-load.c:
+	* operations/io/load-buffer.c:
+	* operations/io/magick-load.c:
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/png-save.c:
+	* operations/io/raw-load.c:
+	* operations/io/save-buffer.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/svg-load.c:
+	* operations/render/FractalExplorer.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/introspect.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/gtk-display.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/mandelbrot.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/rawbayer-load.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c:
+
+2008-01-05  Øyvind Kolås  <pippin@gimp.org>
+
 	Renamed GeglNodeDynamic to GeglNodeContext.
 
 	* gegl/gegl-types.h:

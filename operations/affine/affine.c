@@ -68,7 +68,7 @@ static GeglRectangle compute_input_request   (GeglOperation       *self,
                                               const GeglRectangle *region);
 
 static gboolean      process                 (GeglOperation       *op,
-                                              gpointer             context_id,                                              
+                                              GeglNodeContext     *context,
                                               const GeglRectangle *result);
 static GeglNode    * detect                  (GeglOperation       *operation,
                                               gint                 x,
@@ -658,15 +658,15 @@ affine_generic (GeglBuffer        *dest,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,         
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   OpAffine            *affine = (OpAffine *) operation;
   GeglBuffer          *input;
   GeglBuffer          *output;
 
-  input = gegl_operation_get_source (operation, context_id, "input");
-  output = gegl_operation_get_target (operation, context_id, "output");
+  input = gegl_node_context_get_source (context, "input");
+  output = gegl_node_context_get_target (context, "output");
 
   /*g_warning ("%i,%i %ix%i | %i,%i %ix%i | %i,%i  %ix%i",
      input->x, input->y, input->width, input->height,

@@ -71,14 +71,14 @@ visit_pad (GeglVisitor *self,
   if (gegl_pad_is_output (pad))
     {
       if (context->cached)
-        {   
-          gegl_operation_get_target (operation, context_id, pad->name);
+        {
+          gegl_node_context_get_target (context, pad->name);
         }
       else
         {
           glong time      = gegl_ticks ();
           glong babl_time = babl_total_usecs;
-          gegl_operation_process (operation, context_id, gegl_pad_get_name (pad),
+          gegl_operation_process (operation, context, gegl_pad_get_name (pad),
                                   &context->result_rect);
           babl_time = babl_total_usecs - babl_time;
           time      = gegl_ticks () - time;
@@ -139,7 +139,7 @@ visit_pad (GeglVisitor *self,
           if (GEGL_IS_OPERATION_SINK (operation) &&
               !gegl_operation_sink_needs_full (operation))
             {
-              gegl_operation_process (operation, context_id, "output",
+              gegl_operation_process (operation, context, "output",
                 &context->result_rect);
             }
         }

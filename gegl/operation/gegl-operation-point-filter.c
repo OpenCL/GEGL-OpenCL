@@ -21,7 +21,7 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
-                               gpointer       context_id,
+                               GeglNodeContext *context,
                                const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
@@ -49,7 +49,7 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 
 static gboolean
 process_inner (GeglOperation *operation,
-               gpointer       context_id,
+               GeglNodeContext *context,
                const GeglRectangle *result)
 {
   GeglBuffer          *input;
@@ -59,7 +59,7 @@ process_inner (GeglOperation *operation,
   Babl                *in_format;
   Babl                *out_format;
 
-  input = gegl_operation_get_source (operation, context_id, "input");
+  input = gegl_node_context_get_source (context, "input");
 
   pad       = gegl_node_get_pad (operation->node, "input");
   in_format = pad->format;
@@ -77,7 +77,7 @@ process_inner (GeglOperation *operation,
     }
   g_assert (out_format);
 
-  output = gegl_operation_get_target (operation, context_id, "output");
+  output = gegl_node_context_get_target (context, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {

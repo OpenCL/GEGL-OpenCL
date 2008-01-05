@@ -90,7 +90,7 @@ set_property (GObject *gobject,
   self = ((void *)0);
 }
 static gboolean process (GeglOperation *operation,
-                         gpointer context_id,
+                         GeglNodeContext *context,
                          const GeglRectangle *result);
 
 static void
@@ -128,7 +128,7 @@ gegl_operation_remap_constructor (GType type,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
@@ -142,9 +142,9 @@ process (GeglOperation *operation,
   self = ((GeglOperationRemap*)(operation));
 
   
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  low = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "low"));
-  high = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "high"));
+  input = gegl_node_context_get_source (context, "input");
+  low = gegl_node_context_get_source (context, "low");
+  high = gegl_node_context_get_source (context, "high");
 
     {
       gfloat *buf;
@@ -161,7 +161,7 @@ process (GeglOperation *operation,
       gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
       gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
 
-      output = gegl_operation_get_target (operation, context_id, "output");
+      output = gegl_node_context_get_target (context, "output");
 
       for (i=0;i<pixels;i++)
         {

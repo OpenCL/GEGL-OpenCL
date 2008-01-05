@@ -32,7 +32,7 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       context_id,
+         GeglNodeContext *context,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);
@@ -46,7 +46,7 @@ process (GeglOperation *operation,
   babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
       gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (self->pixbuf),
                        GEGL_AUTO_ROWSTRIDE);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      gegl_node_context_set_object (context, "output", G_OBJECT (output));
     }
   return TRUE;
 }

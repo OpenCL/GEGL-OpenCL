@@ -31,22 +31,22 @@ enum
   PROP_LAST
 };
 
-static void     get_property (GObject      *gobject,
-                              guint         prop_id,
-                              GValue       *value,
-                              GParamSpec   *pspec);
-static void     set_property (GObject      *gobject,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec);
-static gboolean process      (GeglOperation *operation,
-                              gpointer       context_id,
-                              const gchar  *output_prop,
+static void     get_property (GObject             *gobject,
+                              guint                prop_id,
+                              GValue              *value,
+                              GParamSpec          *pspec);
+static void     set_property (GObject             *gobject,
+                              guint                prop_id,
+                              const GValue        *value,
+                              GParamSpec          *pspec);
+static gboolean process      (GeglOperation       *operation,
+                              GeglNodeContext     *context,
+                              const gchar         *output_prop,
                               const GeglRectangle *result);
-static void     attach       (GeglOperation *operation);
-static GeglNode*detect       (GeglOperation *operation,
-                              gint           x,
-                              gint           y);
+static void     attach       (GeglOperation       *operation);
+static GeglNode*detect       (GeglOperation       *operation,
+                              gint                 x,
+                              gint                 y);
 
 static GeglRectangle get_defined_region    (GeglOperation       *self);
 static GeglRectangle compute_input_request (GeglOperation       *self,
@@ -137,7 +137,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation       *operation,
-         gpointer             context_id,
+         GeglNodeContext     *context,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
@@ -153,8 +153,8 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  input = gegl_node_context_get_source (context, "input");
+  aux   = gegl_node_context_get_source (context, "aux");
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
@@ -162,7 +162,7 @@ process (GeglOperation       *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, context_id, result);
+      success = klass->process (operation, context, result);
     }
   else
     {

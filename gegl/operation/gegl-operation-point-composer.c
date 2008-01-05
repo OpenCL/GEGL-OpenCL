@@ -22,7 +22,7 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
-                               gpointer       context_id,                               
+                               GeglNodeContext *context,
                                const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
@@ -55,7 +55,7 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 static gboolean
 fast_paths (GeglOperation *operation,
-            gpointer       context_id,
+            GeglNodeContext *context,
             Babl          *in_format,
             Babl          *aux_format,
             Babl          *out_format,
@@ -63,11 +63,11 @@ fast_paths (GeglOperation *operation,
 
 static gboolean
 process_inner (GeglOperation       *operation,
-               gpointer             context_id,
+               GeglNodeContext     *context,
                const GeglRectangle *result)
 {
-  GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  GeglBuffer          *input = gegl_node_context_get_source (context, "input");
+  GeglBuffer          *aux   = gegl_node_context_get_source (context, "aux");
   GeglBuffer          *output;
   GeglPad             *pad;
   Babl                *in_format;
@@ -104,11 +104,15 @@ process_inner (GeglOperation       *operation,
    * good idea. NB! some of the OpenRaster meta ops, depends on the
    * short-circuiting happening in fast_paths.
    * */
-  if (fast_paths (operation, context_id, in_format, aux_format, out_format, result))
+  if (fast_paths (operation, context,
+                  in_format,
+                  aux_format,
+                  out_format,
+                  result))
     return TRUE;
 
   /* retrieve the buffer we're writing to from GEGL */
-  output = gegl_operation_get_target (operation, context_id, "output");
+  output = gegl_node_context_get_target (context, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
@@ -157,19 +161,19 @@ process_inner (GeglOperation       *operation,
 
 static gboolean
 fast_paths (GeglOperation *operation,
-            gpointer       context_id,
+            GeglNodeContext *context,
             Babl          *in_format,
             Babl          *aux_format,
             Babl          *out_format,
             const GeglRectangle *result)
 {
-  GeglBuffer          *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglBuffer          *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  GeglBuffer  *input = gegl_node_context_get_source (context, "input");
+  GeglBuffer  *aux   = gegl_node_context_get_source (context, "aux");
 
   if (!input && aux)
     {
       g_object_ref (aux);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
+      gegl_node_context_set_object (context, "output", G_OBJECT (aux));
       return TRUE;
     }
 
@@ -197,11 +201,11 @@ fast_paths (GeglOperation *operation,
                   if (!gegl_rectangle_intersect (NULL, aux_abyss, result))
                     {
                       GeglBuffer *output = gegl_buffer_new (NULL, NULL);
-                      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+                      gegl_node_context_set_object (context, "output", G_OBJECT (output));
                       return TRUE;
                     }
                   g_object_ref (aux);
-                  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
+                  gegl_node_context_set_object (context, "output", G_OBJECT (aux));
                   return TRUE;
                 }
             }
@@ -216,7 +220,7 @@ fast_paths (GeglOperation *operation,
                   (aux && !gegl_rectangle_intersect (NULL, aux_abyss, result)))
                 {
                   g_object_ref (input);
-                  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
+                  gegl_node_context_set_object (context, "output", G_OBJECT (input));
                   return TRUE;
                 }
             }
@@ -225,7 +229,7 @@ fast_paths (GeglOperation *operation,
     else
       {
         GeglBuffer *output = gegl_buffer_new (NULL, out_format);
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+        gegl_node_context_set_object (context, "output", G_OBJECT (output));
         return TRUE;
       }
   }

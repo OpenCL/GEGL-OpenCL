@@ -27,6 +27,8 @@
 
 #include "gegl-node-context.h"
 #include "gegl-node.h"
+#include "gegl-pad.h"
+#include "operation/gegl-operation.h"
 
 static void     gegl_node_context_class_init   (GeglNodeContextClass  *klass);
 static void     gegl_node_context_init         (GeglNodeContext *self);
@@ -250,4 +252,122 @@ finalize (GObject *gobject)
 
   G_OBJECT_CLASS (gegl_node_context_parent_class)->finalize (gobject);
 }
+
+void
+gegl_node_context_set_object (GeglNodeContext *context,
+                              const gchar     *padname,
+                              GObject         *data)
+{
+  GeglNode      *node;
+  GeglOperation *operation;
+  GParamSpec    *pspec;
+  GValue         value = {0,};
+
+  node = context->node;
+  operation = node->operation;
+  pspec = gegl_node_find_property (node, padname);
+  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+  g_value_set_object (&value, data);
+  gegl_node_context_set_property (context, padname, &value);
+  g_value_unset (&value);
+  g_object_unref (data); /* are we stealing the initial reference? */
+}
+
+GObject *
+gegl_node_context_get_object (GeglNodeContext *context,
+                              const gchar     *padname)
+{
+  GeglNode      *node;
+  GeglOperation *operation;
+  GObject       *ret;
+  GParamSpec    *pspec;
+  GValue         value = { 0, };
+
+  node = context->node;
+  operation = node->operation;
+
+  pspec = gegl_node_find_property (node, padname);
+  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+  gegl_node_context_get_property (context, padname, &value);
+  /* FIXME: handle other things than gobjects as well? */
+  ret = g_value_get_object (&value);
+
+  if (!ret)
+    {/*
+        g_warning ("some important data was not found on %s.%s",
+        gegl_node_get_debug_name (node), property_name);
+      */
+    }
+  g_value_unset (&value);
+  return ret;
+}
+
+GeglBuffer *
+gegl_node_context_get_target (GeglNodeContext *context,
+                              const gchar     *padname)
+{
+  GeglBuffer          *output;
+  GeglPad             *pad;
+  const GeglRectangle *result;
+  Babl                *format;
+  GeglNode            *node;
+  GeglOperation       *operation;
+
+  node = context->node;
+  operation = node->operation;
+ 
+  pad = gegl_node_get_pad (node, padname);
+  format = pad->format;
+
+  g_assert (format != NULL);
+  g_assert (!strcmp (padname, "output"));
+  g_assert (context);
+
+  result = &context->result_rect;
+
+#if 1 /* change to 0 to disable per node caches */
+  if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
+    {
+      output = gegl_buffer_new (result, format);
+    }
+  else
+    {
+      GeglBuffer    *cache;
+      cache = GEGL_BUFFER (gegl_node_get_cache (node));
+      output = gegl_buffer_create_sub_buffer (cache, result);
+    }
+#else
+  output = gegl_buffer_new (result, format);
+#endif
+
+  gegl_node_context_set_object (context, padname, G_OBJECT (output));
+  return output;
+}
+
+
+GeglBuffer *
+gegl_node_context_get_source (GeglNodeContext *context,
+                              const gchar     *padname)
+{
+  GeglNode            *node;
+  GeglOperation       *operation;
+  GeglBuffer      *real_input;
+  GeglBuffer      *input;
+  GeglRectangle    input_request;
+ 
+  node = context->node;
+  operation = node->operation;
+  input_request  = gegl_operation_compute_input_request (operation,
+                                                         padname,
+                                                         &context->need_rect);
+
+  real_input = GEGL_BUFFER (gegl_node_context_get_object (context, padname));
+  if (!real_input)
+    return NULL;
+
+  input = gegl_buffer_create_sub_buffer (real_input, &input_request);
+
+  return input;
+}
+
 
