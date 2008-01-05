@@ -153,8 +153,7 @@ finalize (GObject *object)
 }
 
 static void
-prepare (GeglOperation *operation,
-         gpointer       context_id)
+prepare (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *p= (Priv*)self->priv;
@@ -344,15 +343,14 @@ decode_frame (GeglChantOperation *op,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         gpointer       context_id)
+process (GeglOperation       *operation,
+         gpointer             context_id,
+         const GeglRectangle *result)
 {
-  const GeglRectangle *result_rect;
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output = NULL;
   Priv                *p = (Priv*)self->priv;
 
-  result_rect = gegl_operation_result_rect (operation, context_id);
   {
     output = gegl_operation_get_target (operation, context_id, "output");
 

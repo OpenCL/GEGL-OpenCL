@@ -1,3 +1,8 @@
+2008-01-04  Manish Singh  <yosh@gimp.org>
+
+	* operations/io/display.c
+	* operations/io/ff-load.c: Updated to match recent API changes.
+
 2008-01-03  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed context_id argument from prepare method, added const
