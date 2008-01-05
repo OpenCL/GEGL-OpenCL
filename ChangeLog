@@ -1,3 +1,9 @@
+2008-01-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/process/gegl-processor.c: (gegl_node_new_processor),
+	set the need rect on the "loose" GeglNodeContext. This makes
+	the contents of the gallery render correctly again.
+
 2008-01-05  Michael Natterer  <mitch@gimp.org>
 
 	* operations/core/crop.c

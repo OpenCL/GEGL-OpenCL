@@ -282,6 +282,13 @@ gegl_node_new_processor (GeglNode      *node,
                                          processor->rectangle.y,
                                          processor->rectangle.width,
                                          processor->rectangle.height);
+      gegl_node_context_set_need_rect   (processor->context,
+                                         processor->rectangle.x,
+                                         processor->rectangle.y,
+                                         processor->rectangle.width,
+                                         processor->rectangle.height);
+
+
     }
   else
     {
@@ -733,8 +740,8 @@ gegl_processor_work (GeglProcessor *processor,
     {
       /* the actual writing to the destination */
       gegl_operation_process (processor->node->operation,
-                              gegl_node_get_context (processor->node, cache), /* context */
-                              "foo"  /* ignored output_pad */,
+                              processor->context,
+                              "output"  /* ignored output_pad */,
                               &processor->context->result_rect
                               );
       gegl_node_remove_context (processor->node, cache);
