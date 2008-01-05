@@ -1,3 +1,12 @@
+2008-01-05  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation.[ch] (compute_affected_region):
+	changed "GeglRectangle input" parameter
+	to "const GeglRectangle *input_region".
+
+	* gegl/operation/gegl-operation-area-filter.c
+	* gegl/graph/gegl-node.c: changed accordingly.
+
 2008-01-05  Øyvind Kolås  <pippin@gimp.org>
 
 	Made the process methods of operations take a GeglNodeContext instead

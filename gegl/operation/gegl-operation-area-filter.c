@@ -32,7 +32,7 @@ static GeglRectangle compute_input_request   (GeglOperation       *operation,
                                               const GeglRectangle *region);
 static GeglRectangle compute_affected_region (GeglOperation       *operation,
                                               const gchar         *input_pad,
-                                              GeglRectangle        region);
+                                              const GeglRectangle *input_region);
 
 static void
 gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
@@ -93,7 +93,7 @@ compute_input_request (GeglOperation       *operation,
   gegl_rectangle_intersect (&rect, region, &defined);
 
   if (rect.width  != 0 &&
-      rect.height  != 0)
+      rect.height != 0)
     {
       rect.x -= area->left;
       rect.y -= area->top;
@@ -105,15 +105,17 @@ compute_input_request (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *operation,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
+compute_affected_region (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglRectangle            retval;
 
-  region.x -= area->left;
-  region.y -= area->top;
-  region.width  += area->left + area->right;
-  region.height  += area->top + area->bottom;
-  return region;
+  retval.x      = input_region->x - area->left;
+  retval.y      = input_region->y - area->top;
+  retval.width  = input_region->width  + area->left + area->right;
+  retval.height = input_region->height + area->top  + area->bottom;
+
+  return retval;
 }

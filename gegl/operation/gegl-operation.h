@@ -87,9 +87,9 @@ struct _GeglOperationClass
    * graph. A default implementation of this, if not provided should probably
    * be to report that the entire defined region is dirtied.
    */
-  GeglRectangle   (*compute_affected_region)  (GeglOperation *operation,
-                                               const gchar   *input_pad,
-                                               GeglRectangle  region);
+  GeglRectangle   (*compute_affected_region)  (GeglOperation       *operation,
+                                               const gchar         *input_pad,
+                                               const GeglRectangle *input_region);
 
   /* computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given result rectangle
@@ -144,7 +144,7 @@ GeglNode      * gegl_operation_get_source_node      (GeglOperation *operation,
                                                      const gchar   *pad_name);
 GeglRectangle   gegl_operation_compute_affected_region (GeglOperation *operation,
                                                      const gchar   *input_pad,
-                                                     GeglRectangle  region);
+                                                     const GeglRectangle *input_region);
 GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *operation);
 GeglRectangle   gegl_operation_adjust_result_region (GeglOperation *operation,
                                                      const GeglRectangle *roi);

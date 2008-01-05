@@ -36,7 +36,7 @@ static void          attach                  (GeglOperation       *self);
 static GeglRectangle get_defined_region      (GeglOperation       *self);
 static GeglRectangle compute_affected_region (GeglOperation       *self,
                                               const gchar         *input_pad,
-                                              GeglRectangle        region);
+                                              const GeglRectangle *input_region);
 static GeglRectangle compute_input_request   (GeglOperation       *self,
                                               const gchar         *input_pad,
                                               const GeglRectangle *region);
@@ -133,20 +133,27 @@ gegl_operation_get_defined_region (GeglOperation *self)
 }
 
 GeglRectangle
-gegl_operation_compute_affected_region (GeglOperation *self,
-                                        const gchar   *input_pad,
-                                        GeglRectangle  region)
+gegl_operation_compute_affected_region (GeglOperation       *self,
+                                        const gchar         *input_pad,
+                                        const GeglRectangle *input_region)
 {
-  GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (self);
+  GeglOperationClass *klass;
+  GeglRectangle       retval = { 0, };
 
-  if (region.width == 0 ||
-      region.height == 0)
-    return region;
+  g_return_val_if_fail (GEGL_IS_OPERATION (self), retval);
+  g_return_val_if_fail (input_pad != NULL, retval);
+  g_return_val_if_fail (input_region != NULL, retval);
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (input_region->width  == 0 ||
+      input_region->height == 0)
+    return *input_region;
 
   if (klass->compute_affected_region)
-    return klass->compute_affected_region (self, input_pad, region);
+    return klass->compute_affected_region (self, input_pad, input_region);
 
-  return region;
+  return *input_region;
 }
 
 static GeglRectangle
@@ -363,18 +370,19 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *self,
-                         const gchar   *input_pad,
-                         GeglRectangle  region)
+compute_affected_region (GeglOperation       *self,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
   if (self->node->is_graph)
     {
       return gegl_operation_compute_affected_region (
                gegl_node_get_output_proxy (self->node, "output")->operation,
                input_pad,
-               region);
+               input_region);
     }
-  return region;
+
+  return *input_region;
 }
 
 void
