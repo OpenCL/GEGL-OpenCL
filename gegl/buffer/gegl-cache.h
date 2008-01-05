@@ -49,10 +49,10 @@ struct _GeglCacheClass
 };
 
 GType    gegl_cache_get_type    (void) G_GNUC_CONST;
-void     gegl_cache_invalidate  (GeglCache     *self,
-                                 GeglRectangle *roi);
-void     gegl_cache_computed    (GeglCache     *self,
-                                 GeglRectangle *rect);
+void     gegl_cache_invalidate  (GeglCache           *self,
+                                 const GeglRectangle *roi);
+void     gegl_cache_computed    (GeglCache           *self,
+                                 const GeglRectangle *rect);
 
 G_END_DECLS
 

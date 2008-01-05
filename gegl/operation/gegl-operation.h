@@ -107,17 +107,14 @@ struct _GeglOperationClass
 
   /* Returns the node providing data for a specific location
    */
-  GeglNode*       (*detect)               (GeglOperation *operation,
-                                           gint           x,
-                                           gint           y);
+  GeglNode*       (*detect)                (GeglOperation       *operation,
+                                            gint                 x,
+                                            gint                 y);
 
-  gboolean        (*process) (GeglOperation       *operation,
-                              GeglNodeContext     *context,
-                              const gchar         *output_pad,
-                              const GeglRectangle *result_rect
-                              );
-
-
+  gboolean        (*process)               (GeglOperation       *operation,
+                                            GeglNodeContext     *context,
+                                            const gchar         *output_pad,
+                                            const GeglRectangle *result_rect);
 };
 
 /* returns|registers the gtype for GeglOperation */
@@ -129,10 +126,10 @@ GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operati
 
 
 /* sets the ROI needed to be computed on one of the sources */
-void            gegl_operation_set_source_region    (GeglOperation *operation,
-                                                     gpointer       context_id,
-                                                     const gchar   *pad_name,
-                                                     GeglRectangle *region);
+void            gegl_operation_set_source_region    (GeglOperation       *operation,
+                                                     gpointer             context_id,
+                                                     const gchar         *pad_name,
+                                                     const GeglRectangle *region);
 
 
 /* virtual method invokers that depends only on the set properties of a

@@ -74,55 +74,55 @@ typedef enum
   GEGL_OVERLAP_RECTANGLE_PART
 } GeglOverlapType;
 
-typedef void (*GeglSpanFunc) (GeglSpan *span,
-			     gpointer data);
+typedef void (* GeglSpanFunc) (GeglSpan *span,
+                               gpointer data);
 
-GeglRegion *gegl_region_new       (void);
-GeglRegion *gegl_region_polygon   (GeglPoint     *points,
-				 gint          npoints,
-				 GeglFillRule   fill_rule);
-GeglRegion *gegl_region_copy      (GeglRegion    *region);
-GeglRegion *gegl_region_rectangle (GeglRectangle *rectangle);
-void       gegl_region_destroy   (GeglRegion    *region);
+GeglRegion    * gegl_region_new             (void);
+GeglRegion    * gegl_region_polygon         (GeglPoint           *points,
+                                             gint                 n_points,
+                                             GeglFillRule         fill_rule);
+GeglRegion    * gegl_region_copy            (const GeglRegion    *region);
+GeglRegion    * gegl_region_rectangle       (const GeglRectangle *rectangle);
+void            gegl_region_destroy         (GeglRegion          *region);
 
-void	       gegl_region_get_clipbox    (GeglRegion     *region,
-                                           GeglRectangle  *rectangle);
-void           gegl_region_get_rectangles (GeglRegion     *region,
-                                           GeglRectangle **rectangles,
-                                           gint          *n_rectangles);
+void	        gegl_region_get_clipbox     (GeglRegion          *region,
+                                             GeglRectangle       *rectangle);
+void            gegl_region_get_rectangles  (GeglRegion          *region,
+                                             GeglRectangle      **rectangles,
+                                             gint                *n_rectangles);
 
-gboolean       gegl_region_empty    (GeglRegion    *region);
-gboolean       gegl_region_equal    (GeglRegion    *region1,
-				    GeglRegion    *region2);
-gboolean       gegl_region_point_in (GeglRegion    *region,
-				    int           x,
-				    int           y);
-GeglOverlapType gegl_region_rect_in  (GeglRegion    *region,
-				      GeglRectangle *rectangle);
+gboolean        gegl_region_empty           (const GeglRegion    *region);
+gboolean        gegl_region_equal           (const GeglRegion    *region1,
+                                             const GeglRegion    *region2);
+gboolean        gegl_region_point_in        (const GeglRegion    *region,
+                                             gint                 x,
+                                             gint                 y);
+GeglOverlapType gegl_region_rect_in         (const GeglRegion    *region,
+                                             const GeglRectangle *rectangle);
 
-void gegl_region_offset          (GeglRegion    *region,
-				 gint          dx,
-				 gint          dy);
-void gegl_region_shrink          (GeglRegion    *region,
-				 gint          dx,
-				 gint          dy);
-void gegl_region_union_with_rect (GeglRegion    *region,
-				  GeglRectangle *rect);
-void gegl_region_intersect       (GeglRegion    *source1,
-				 GeglRegion    *source2);
-void gegl_region_union           (GeglRegion    *source1,
-			 	 GeglRegion    *source2);
-void gegl_region_subtract        (GeglRegion    *source1,
-				 GeglRegion    *source2);
-void gegl_region_xor             (GeglRegion    *source1,
-				 GeglRegion    *source2);
+void            gegl_region_offset          (GeglRegion          *region,
+                                             gint                 dx,
+                                             gint                 dy);
+void            gegl_region_shrink          (GeglRegion          *region,
+                                             gint                 dx,
+                                             gint                 dy);
+void            gegl_region_union_with_rect (GeglRegion          *region,
+                                             const GeglRectangle *rect);
+void            gegl_region_intersect       (GeglRegion          *source1,
+                                             const GeglRegion    *source2);
+void            gegl_region_union           (GeglRegion          *source1,
+                                             const GeglRegion    *source2);
+void            gegl_region_subtract        (GeglRegion          *source1,
+                                             const GeglRegion    *source2);
+void            gegl_region_xor             (GeglRegion          *source1,
+                                             const GeglRegion    *source2);
 
-void gegl_region_spans_intersect_foreach (GeglRegion   *region,
-					 GeglSpan     *spans,
-					 int          n_spans,
-					 gboolean     sorted,
-					 GeglSpanFunc  function,
-					 gpointer     data);
+void    gegl_region_spans_intersect_foreach (GeglRegion          *region,
+                                             GeglSpan            *spans,
+                                             int                  n_spans,
+                                             gboolean             sorted,
+                                             GeglSpanFunc         function,
+                                             gpointer             data);
 
 G_END_DECLS
 

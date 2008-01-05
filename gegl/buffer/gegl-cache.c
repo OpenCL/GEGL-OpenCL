@@ -41,28 +41,25 @@ enum
 
 enum
 {
-  GEGL_CACHE_INVALIDATED,
-  GEGL_CACHE_COMPUTED,
-  GEGL_CACHE_LAST_SIGNAL
+  INVALIDATED,
+  COMPUTED,
+  LAST_SIGNAL
 };
 
-static void            gegl_cache_class_init (GeglCacheClass *klass);
-static void            gegl_cache_init (GeglCache *self);
-static void            finalize (GObject *self_object);
-static void            dispose (GObject *self_object);
-static void            set_property (GObject      *gobject,
+static void            finalize     (GObject      *object);
+static void            dispose      (GObject      *object);
+static void            set_property (GObject      *object,
                                      guint         prop_id,
                                      const GValue *value,
                                      GParamSpec   *pspec);
-static void            get_property (GObject    *gobject,
-                                     guint       prop_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec);
-guint gegl_cache_signals[GEGL_CACHE_LAST_SIGNAL] = { 0 };
+static void            get_property (GObject      *object,
+                                     guint         prop_id,
+                                     GValue       *value,
+                                     GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER);
 
-static GObjectClass *parent_class = NULL;
+guint gegl_cache_signals[LAST_SIGNAL] = { 0 };
 
 static GObject *
 gegl_cache_constructor (GType                  type,
@@ -72,8 +69,10 @@ gegl_cache_constructor (GType                  type,
   GObject   *object;
   GeglCache *self;
 
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self   = GEGL_CACHE (object);
+  object = G_OBJECT_CLASS (gegl_cache_parent_class)->constructor (type,
+                                                                  n_params,
+                                                                  params);
+  self = GEGL_CACHE (object);
 
   self->valid_region = gegl_region_new ();
   self->format       = GEGL_BUFFER (self)->format;
@@ -87,14 +86,11 @@ gegl_cache_class_init (GeglCacheClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent (klass);
-
+  gobject_class->constructor  = gegl_cache_constructor;
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-
-  gobject_class->constructor = gegl_cache_constructor;
 
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
@@ -106,48 +102,53 @@ gegl_cache_class_init (GeglCacheClass *klass)
 
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
-                                   g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
+                                   g_param_spec_int ("x", "x",
+                                                     "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, -4096,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
+
   g_object_class_install_property (gobject_class, PROP_Y,
-                                   g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
+                                   g_param_spec_int ("y", "y",
+                                                     "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, -4096,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
+
   g_object_class_install_property (gobject_class, PROP_WIDTH,
-                                   g_param_spec_int ("width", "width", "pixel width of buffer",
+                                   g_param_spec_int ("width", "width",
+                                                     "pixel width of buffer",
                                                      -1, G_MAXINT, 10240 * 4,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
+
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
-                                   g_param_spec_int ("height", "height", "pixel height of buffer",
+                                   g_param_spec_int ("height", "height",
+                                                     "pixel height of buffer",
                                                      -1, G_MAXINT, 10240 * 4,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 
 
-  gegl_cache_signals[GEGL_CACHE_COMPUTED] =
-    g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
+  gegl_cache_signals[COMPUTED] =
+    g_signal_new ("computed",
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0 /* class offset*/,
-                  NULL /* accumulator */,
-                  NULL /* accu_data */,
+                  0,
+                  NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
-                  G_TYPE_NONE /* return type */,
-                  1 /* n_params */,
-                  GEGL_TYPE_RECTANGLE /* param_types */);
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
 
-  gegl_cache_signals[GEGL_CACHE_INVALIDATED] =
-    g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
+  gegl_cache_signals[INVALIDATED] =
+    g_signal_new ("invalidated",
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0 /* class offset*/,
-                  NULL /* accumulator */,
-                  NULL /* accu_data */,
+                  0,
+                  NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
-                  G_TYPE_NONE /* return type */,
-                  1 /* n_params */,
-                  GEGL_TYPE_RECTANGLE /* param_types */);
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
 }
 
 static void
@@ -170,7 +171,8 @@ dispose (GObject *gobject)
   if (self->node)
     {
       gint handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
-                                            gegl_node_signals[GEGL_NODE_INVALIDATED],
+                                            g_signal_lookup ("invalidated",
+                                                             GEGL_TYPE_NODE),
                                             0, NULL, NULL, self);
       if (handler)
         {
@@ -193,9 +195,9 @@ finalize (GObject *gobject)
 }
 
 static void
-node_invalidated (GeglNode      *source,
-                  GeglRectangle *rect,
-                  gpointer       data)
+node_invalidated (GeglNode            *source,
+                  const GeglRectangle *rect,
+                  gpointer             data)
 {
   GeglCache *cache = GEGL_CACHE (data);
 
@@ -206,7 +208,7 @@ node_invalidated (GeglNode      *source,
     gegl_region_destroy (region);
   }
 
-  g_signal_emit (cache, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, rect, NULL);
+  g_signal_emit_by_name (cache, "invalidated", rect, NULL);
 }
 
 static void
@@ -224,7 +226,8 @@ set_property (GObject      *gobject,
           {
             gulong handler;
             handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
-                                             gegl_node_signals[GEGL_NODE_INVALIDATED],
+                                             g_signal_lookup ("invalidated",
+                                                              GEGL_TYPE_NODE),
                                              0, NULL, NULL, self);
             if (handler)
               {
@@ -320,8 +323,8 @@ gegl_buffer_clear (GeglBuffer    *buffer,
 #endif
 
 void
-gegl_cache_invalidate (GeglCache     *self,
-                       GeglRectangle *roi)
+gegl_cache_invalidate (GeglCache           *self,
+                       const GeglRectangle *roi)
 {
 #if 0
   if (roi)
@@ -340,7 +343,8 @@ gegl_cache_invalidate (GeglCache     *self,
       temp_region = gegl_region_rectangle (roi);
       gegl_region_subtract (self->valid_region, temp_region);
       gegl_region_destroy (temp_region);
-      g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, roi, NULL);
+      g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
+                     roi, NULL);
     }
   else
     {
@@ -348,16 +352,18 @@ gegl_cache_invalidate (GeglCache     *self,
       if (self->valid_region)
         gegl_region_destroy (self->valid_region);
       self->valid_region = gegl_region_new ();
-      g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, &rect, NULL);
+      g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
+                     &rect, NULL);
     }
 }
 
 void
-gegl_cache_computed (GeglCache     *self,
-                     GeglRectangle *rect)
+gegl_cache_computed (GeglCache           *self,
+                     const GeglRectangle *rect)
 {
-  g_assert (self);
-  g_assert (rect);
+  g_return_if_fail (GEGL_IS_CACHE (self));
+  g_return_if_fail (rect != NULL);
+
   gegl_region_union_with_rect (self->valid_region, rect);
-  g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_COMPUTED], 0, rect, NULL);
+  g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
 }

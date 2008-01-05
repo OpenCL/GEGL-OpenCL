@@ -215,8 +215,8 @@ get_property (GObject    *gobject,
 }
 
 void
-gegl_processor_set_rectangle (GeglProcessor *processor,
-                              GeglRectangle *rectangle)
+gegl_processor_set_rectangle (GeglProcessor       *processor,
+                              const GeglRectangle *rectangle)
 {
   GeglRectangle bounds;
 
@@ -239,15 +239,14 @@ gegl_processor_set_rectangle (GeglProcessor *processor,
 }
 
 GeglProcessor *
-gegl_node_new_processor (GeglNode      *node,
-                         GeglRectangle *rectangle)
+gegl_node_new_processor (GeglNode            *node,
+                         const GeglRectangle *rectangle)
 {
   GeglProcessor *processor;
 
-  g_assert (GEGL_IS_NODE (node));
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
   processor = g_object_new (GEGL_TYPE_PROCESSOR, "node", node, NULL);
-
 
   if (rectangle)
     {

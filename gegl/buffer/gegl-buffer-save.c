@@ -132,9 +132,9 @@ static gint z_order_compare (gconstpointer a,
 }
 
 void
-gegl_buffer_save (GeglBuffer    *buffer,
-                  const gchar   *path,
-                  GeglRectangle *roi)
+gegl_buffer_save (GeglBuffer          *buffer,
+                  const gchar         *path,
+                  const GeglRectangle *roi)
 {
   SaveInfo *info = g_malloc0 (sizeof (SaveInfo));
 

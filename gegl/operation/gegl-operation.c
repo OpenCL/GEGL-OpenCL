@@ -301,17 +301,17 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
 }
 
 void
-gegl_operation_set_source_region (GeglOperation *operation,
-                                  gpointer       context_id,
-                                  const gchar   *input_pad_name,
-                                  GeglRectangle *region)
+gegl_operation_set_source_region (GeglOperation       *operation,
+                                  gpointer             context_id,
+                                  const gchar         *input_pad_name,
+                                  const GeglRectangle *region)
 {
   GeglNode     *child;         /* the node which need rect we are affecting */
   GeglRectangle child_need;    /* the need rect of the child */
 
-  g_assert (operation);
-  g_assert (operation->node);
-  g_assert (input_pad_name);
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+  g_return_if_fail (GEGL_IS_NODE (operation->node));
+  g_return_if_fail (input_pad_name != NULL);
 
   {
     GeglPad *pad = gegl_node_get_pad (operation->node, input_pad_name);

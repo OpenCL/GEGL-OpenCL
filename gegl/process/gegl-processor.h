@@ -40,13 +40,13 @@ struct _GeglProcessorClass
 
 GType          gegl_processor_get_type      (void) G_GNUC_CONST;
 
-GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
-                                             GeglRectangle *rectangle);
-void           gegl_processor_set_rectangle (GeglProcessor *processor,
-                                             GeglRectangle *rectangle);
-gboolean       gegl_processor_work          (GeglProcessor *processor,
-                                             gdouble       *progress);
-void           gegl_processor_destroy       (GeglProcessor *processor);
+GeglProcessor *gegl_node_new_processor      (GeglNode            *node,
+                                             const GeglRectangle *rectangle);
+void           gegl_processor_set_rectangle (GeglProcessor       *processor,
+                                             const GeglRectangle *rectangle);
+gboolean       gegl_processor_work          (GeglProcessor       *processor,
+                                             gdouble             *progress);
+void           gegl_processor_destroy       (GeglProcessor       *processor);
 
 G_END_DECLS
 

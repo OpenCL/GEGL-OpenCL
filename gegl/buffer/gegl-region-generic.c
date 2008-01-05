@@ -76,27 +76,27 @@
 #include <gegl-region.h>
 #include "gegl-region-generic.h"
 
-typedef void (*overlapFunc)(GeglRegion    *pReg,
-                            GeglRegionBox *r1,
-                            GeglRegionBox *r1End,
-                            GeglRegionBox *r2,
-                            GeglRegionBox *r2End,
-                            gint           y1,
-                            gint           y2);
-typedef void (*nonOverlapFunc)(GeglRegion    *pReg,
-                               GeglRegionBox *r,
-                               GeglRegionBox *rEnd,
-                               gint           y1,
-                               gint           y2);
+typedef void (* overlapFunc)    (GeglRegion    *pReg,
+                                 GeglRegionBox *r1,
+                                 GeglRegionBox *r1End,
+                                 GeglRegionBox *r2,
+                                 GeglRegionBox *r2End,
+                                 gint           y1,
+                                 gint           y2);
+typedef void (* nonOverlapFunc) (GeglRegion    *pReg,
+                                 GeglRegionBox *r,
+                                 GeglRegionBox *rEnd,
+                                 gint           y1,
+                                 gint           y2);
 
-static void miRegionCopy (GeglRegion *dstrgn,
-                          GeglRegion *rgn);
-static void miRegionOp (GeglRegion    *newReg,
-                        GeglRegion    *reg1,
-                        GeglRegion    *reg2,
-                        overlapFunc    overlapFn,
-                        nonOverlapFunc nonOverlap1Fn,
-                        nonOverlapFunc nonOverlap2Fn);
+static void miRegionCopy (GeglRegion       *dstrgn,
+                          const GeglRegion *rgn);
+static void miRegionOp   (GeglRegion       *newReg,
+                          GeglRegion       *reg1,
+                          const GeglRegion *reg2,
+                          overlapFunc       overlapFn,
+                          nonOverlapFunc    nonOverlap1Fn,
+                          nonOverlapFunc    nonOverlap2Fn);
 
 /**
  * gegl_region_new:
@@ -132,7 +132,7 @@ gegl_region_new (void)
  * Return value: a new region
  **/
 GeglRegion *
-gegl_region_rectangle (GeglRectangle *rectangle)
+gegl_region_rectangle (const GeglRectangle *rectangle)
 {
   GeglRegion *temp;
 
@@ -163,7 +163,7 @@ gegl_region_rectangle (GeglRectangle *rectangle)
  * Return value: a new region identical to @region
  **/
 GeglRegion *
-gegl_region_copy (GeglRegion *region)
+gegl_region_copy (const GeglRegion *region)
 {
   GeglRegion *temp;
 
@@ -242,8 +242,8 @@ gegl_region_get_rectangles (GeglRegion     *region,
  * either @region or @rect.
  **/
 void
-gegl_region_union_with_rect (GeglRegion    *region,
-                             GeglRectangle *rect)
+gegl_region_union_with_rect (GeglRegion          *region,
+                             const GeglRectangle *rect)
 {
   GeglRegion tmp_region;
 
@@ -568,8 +568,8 @@ miIntersectO (GeglRegion    *pReg,
  * both @source1 and @source2.
  **/
 void
-gegl_region_intersect (GeglRegion *source1,
-                       GeglRegion *source2)
+gegl_region_intersect (GeglRegion       *source1,
+                       const GeglRegion *source2)
 {
   g_return_if_fail (source1 != NULL);
   g_return_if_fail (source2 != NULL);
@@ -592,8 +592,8 @@ gegl_region_intersect (GeglRegion *source1,
 }
 
 static void
-miRegionCopy (GeglRegion *dstrgn,
-              GeglRegion *rgn)
+miRegionCopy (GeglRegion       *dstrgn,
+              const GeglRegion *rgn)
 {
   if (dstrgn != rgn) /*  don't want to copy to itself */
     {
@@ -787,15 +787,15 @@ miCoalesce (GeglRegion *pReg,         /* Region to coalesce */
  */
 /* static void*/
 static void
-miRegionOp (GeglRegion    *newReg,
-            GeglRegion    *reg1,
-            GeglRegion    *reg2,
-            overlapFunc    overlapFn,           /* Function to call for over-
+miRegionOp (GeglRegion       *newReg,
+            GeglRegion       *reg1,
+            const GeglRegion *reg2,
+            overlapFunc       overlapFn,        /* Function to call for over-
                                                  * lapping bands */
-            nonOverlapFunc nonOverlap1Fn,       /* Function to call for non-
+            nonOverlapFunc    nonOverlap1Fn,    /* Function to call for non-
                                                  * overlapping bands in region
                                                  * 1 */
-            nonOverlapFunc nonOverlap2Fn)       /* Function to call for non-
+            nonOverlapFunc    nonOverlap2Fn)    /* Function to call for non-
                                                  * overlapping bands in region
                                                  * 2 */
 {
@@ -1187,8 +1187,8 @@ miUnionO (GeglRegion    *pReg,
  * either @source1 or @source2.
  **/
 void
-gegl_region_union (GeglRegion *source1,
-                   GeglRegion *source2)
+gegl_region_union (GeglRegion       *source1,
+                   const GeglRegion *source2)
 {
   g_return_if_fail (source1 != NULL);
   g_return_if_fail (source2 != NULL);
@@ -1448,8 +1448,8 @@ miSubtractO (GeglRegion    *pReg,
  * area is the set of pixels contained in @source1 but not in @source2.
  **/
 void
-gegl_region_subtract (GeglRegion *source1,
-                      GeglRegion *source2)
+gegl_region_subtract (GeglRegion       *source1,
+                      const GeglRegion *source2)
 {
   g_return_if_fail (source1 != NULL);
   g_return_if_fail (source2 != NULL);
@@ -1481,8 +1481,8 @@ gegl_region_subtract (GeglRegion *source1,
  * or the other of the two sources but not in both.
  **/
 void
-gegl_region_xor (GeglRegion *source1,
-                 GeglRegion *source2)
+gegl_region_xor (GeglRegion       *source1,
+                 const GeglRegion *source2)
 {
   GeglRegion *trb;
 
@@ -1508,7 +1508,7 @@ gegl_region_xor (GeglRegion *source1,
  * Returns: %TRUE if @region is empty.
  */
 gboolean
-gegl_region_empty (GeglRegion *region)
+gegl_region_empty (const GeglRegion *region)
 {
   g_return_val_if_fail (region != NULL, FALSE);
 
@@ -1528,8 +1528,8 @@ gegl_region_empty (GeglRegion *region)
  * Returns: %TRUE if @region1 and @region2 are equal.
  */
 gboolean
-gegl_region_equal (GeglRegion *region1,
-                   GeglRegion *region2)
+gegl_region_equal (const GeglRegion *region1,
+                   const GeglRegion *region2)
 {
   int i;
 
@@ -1564,9 +1564,9 @@ gegl_region_equal (GeglRegion *region1,
  * Returns: %TRUE if the point is in @region.
  */
 gboolean
-gegl_region_point_in (GeglRegion *region,
-                      int         x,
-                      int         y)
+gegl_region_point_in (const GeglRegion *region,
+                      gint              x,
+                      gint              y)
 {
   int i;
 
@@ -1596,8 +1596,8 @@ gegl_region_point_in (GeglRegion *region,
  *   outside, or partly inside the #GeglRegion, respectively.
  */
 GeglOverlapType
-gegl_region_rect_in (GeglRegion    *region,
-                     GeglRectangle *rectangle)
+gegl_region_rect_in (const GeglRegion    *region,
+                     const GeglRectangle *rectangle)
 {
   GeglRegionBox *pbox;
   GeglRegionBox *pboxEnd;

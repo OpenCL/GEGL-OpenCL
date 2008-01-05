@@ -403,13 +403,13 @@ typedef enum
  *
  * Render a rectangular region from a node.
  */
-void          gegl_node_blit             (GeglNode      *node,
-                                          gdouble        scale,
-                                          GeglRectangle *roi,
-                                          const Babl    *format,
-                                          gpointer       destination_buf,
-                                          gint           rowstride,
-                                          GeglBlitFlags  flags);
+void          gegl_node_blit             (GeglNode            *node,
+                                          gdouble              scale,
+                                          const GeglRectangle *roi,
+                                          const Babl          *format,
+                                          gpointer             destination_buf,
+                                          gint                 rowstride,
+                                          GeglBlitFlags        flags);
 
 /**
  * gegl_node_process:
@@ -713,8 +713,8 @@ GType gegl_processor_get_type  (void) G_GNUC_CONST;
  *
  * Returns a new #GeglProcessor.
  */
-GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
-                                             GeglRectangle *rectangle);
+GeglProcessor *gegl_node_new_processor      (GeglNode            *node,
+                                             const GeglRectangle *rectangle);
 
 /**
  * gegl_processor_set_rectangle:
@@ -724,8 +724,8 @@ GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
  *
  * Change the rectangle a #GeglProcessor is working on.
  */
-void           gegl_processor_set_rectangle (GeglProcessor *processor,
-                                             GeglRectangle *rectangle);
+void           gegl_processor_set_rectangle (GeglProcessor       *processor,
+                                             const GeglRectangle *rectangle);
 
 
 /**
@@ -883,7 +883,7 @@ void         gegl_curve_set_point           (GeglCurve      *self,
                                              guint           index,
                                              gdouble         x,
                                              gdouble         y);
- 
+
 guint        gegl_curve_num_points          (GeglCurve      *self);
 
 gdouble      gegl_curve_calc_value          (GeglCurve      *self,

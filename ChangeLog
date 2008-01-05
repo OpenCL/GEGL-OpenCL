@@ -1,3 +1,18 @@
+2008-01-05  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/buffer/gegl-buffer-private.h
+	* gegl/buffer/gegl-buffer-save.[ch]
+	* gegl/buffer/gegl-cache.[ch]
+	* gegl/buffer/gegl-region-generic.c
+	* gegl/buffer/gegl-region.h
+	* gegl/gegl.h
+	* gegl/graph/gegl-node.[ch]
+	* gegl/operation/gegl-operation.[ch]
+	* gegl/process/gegl-processor.[ch]: clean up signal code, made
+	GeglRectangle parameters const, add some g_return_if_fail() and
+	changed some g_assert() into g_return_if_fail(), some formatting
+	cleanup.
+
 2008-01-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-processor.c: (gegl_node_new_processor),

@@ -43,8 +43,8 @@ typedef struct {
   guint flags;
 } GeglTileEntry;
 
-void gegl_buffer_save (GeglBuffer    *buffer,
-                       const gchar   *path,
-                       GeglRectangle *roi);
+void gegl_buffer_save (GeglBuffer          *buffer,
+                       const gchar         *path,
+                       const GeglRectangle *roi);
 
 #endif

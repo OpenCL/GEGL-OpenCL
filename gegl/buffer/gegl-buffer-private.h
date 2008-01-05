@@ -77,9 +77,9 @@ gint           gegl_buffer_leaks      (void);
 
 void           gegl_buffer_stats      (void);
 
-void           gegl_buffer_save       (GeglBuffer    *buffer,
-                                       const gchar   *path,
-                                       GeglRectangle *roi);
+void           gegl_buffer_save       (GeglBuffer          *buffer,
+                                       const gchar         *path,
+                                       const GeglRectangle *roi);
 
 /* flush any unwritten data (flushes the hot-cache of a single
  * tile used by gegl_buffer_set for 1x1 pixel sized rectangles

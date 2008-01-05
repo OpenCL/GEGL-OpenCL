@@ -71,13 +71,6 @@ typedef enum
   GEGL_BLIT_DIRTY    = 1 << 1,
 } GeglBlitFlags;
 
-enum
-{
-  GEGL_NODE_INVALIDATED,
-  GEGL_NODE_COMPUTED,
-  GEGL_NODE_LAST_SIGNAL
-};
-
 struct _GeglNodeClass
 {
   GObjectClass parent_class;
@@ -85,13 +78,13 @@ struct _GeglNodeClass
 
 /* renders the desired region of interest to a buffer of the specified
  * bablformat */
-void          gegl_node_blit                (GeglNode      *node,
-                                             gdouble        scale,
-                                             GeglRectangle *roi,
-                                             const Babl    *format,
-                                             gpointer       destination_buf,
-                                             gint           rowstride,
-                                             GeglBlitFlags  flags);
+void          gegl_node_blit                (GeglNode            *node,
+                                             gdouble              scale,
+                                             const GeglRectangle *roi,
+                                             const Babl          *format,
+                                             gpointer             destination_buf,
+                                             gint                 rowstride,
+                                             GeglBlitFlags        flags);
 
 void          gegl_node_link                (GeglNode      *source,
                                              GeglNode      *sink);
@@ -210,7 +203,7 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
 
 GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_invalidated         (GeglNode      *node,
-                                             GeglRectangle *rect);
+                                             const GeglRectangle *rect);
 GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 
 const gchar  *gegl_node_get_name            (GeglNode      *self);

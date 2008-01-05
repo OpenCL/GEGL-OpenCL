@@ -47,6 +47,13 @@ enum
   PROP_NAME
 };
 
+enum
+{
+  INVALIDATED,
+  COMPUTED,
+  LAST_SIGNAL
+};
+
 
 struct _GeglNodePrivate
 {
@@ -61,7 +68,7 @@ struct _GeglNodePrivate
   ((GeglNodePrivate *)(((GeglNode *) obj)->priv))
 
 
-guint gegl_node_signals[GEGL_NODE_LAST_SIGNAL] = {0};
+guint gegl_node_signals[LAST_SIGNAL] = {0};
 
 
 static void            gegl_node_class_init           (GeglNodeClass *klass);
@@ -124,6 +131,7 @@ gegl_node_class_init (GeglNodeClass *klass)
                                                         GEGL_TYPE_OPERATION,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
+
   g_object_class_install_property (gobject_class, PROP_OP_CLASS,
                                    g_param_spec_string ("operation",
                                                         "Operation Type",
@@ -140,27 +148,25 @@ gegl_node_class_init (GeglNodeClass *klass)
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
 
-  gegl_node_signals[GEGL_NODE_INVALIDATED] =
-    g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
+  gegl_node_signals[INVALIDATED] =
+    g_signal_new ("invalidated",
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0 /* class offset*/,
-                  NULL /* accumulator */,
-                  NULL /* accu_data */,
+                  0,
+                  NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
-                  G_TYPE_NONE /* return type */,
-                  1 /* n_params */,
-                  GEGL_TYPE_RECTANGLE /* param_types */);
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
 
-  gegl_node_signals[GEGL_NODE_COMPUTED] =
-    g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
+  gegl_node_signals[COMPUTED] =
+    g_signal_new ("computed",
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0 /* class offset*/,
-                  NULL /* accumulator */,
-                  NULL /* accu_data */,
+                  0,
+                  NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
-                  G_TYPE_NONE /* return type */,
-                  1 /* n_params */,
-                  GEGL_TYPE_RECTANGLE /* param_types */);
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
 }
 
 static void
@@ -484,21 +490,25 @@ gegl_node_connect_to (GeglNode    *source,
 }
 
 void
-gegl_node_invalidated (GeglNode      *node,
-                       GeglRectangle *rect)
+gegl_node_invalidated (GeglNode            *node,
+                       const GeglRectangle *rect)
 {
+  g_return_if_fail (GEGL_IS_NODE (node));
+  g_return_if_fail (rect != NULL);
+
   if (node->cache)
     {
       gegl_cache_invalidate (node->cache, rect);
     }
-  g_signal_emit (node, gegl_node_signals[GEGL_NODE_INVALIDATED],
-                 0, rect, NULL);
+
+  g_signal_emit (node, gegl_node_signals[INVALIDATED], 0,
+                 rect, NULL);
 }
 
 static void
-source_invalidated (GeglNode      *source,
-                    GeglRectangle *rect,
-                    gpointer       data)
+source_invalidated (GeglNode            *source,
+                    const GeglRectangle *rect,
+                    gpointer             data)
 {
   GeglRectangle dirty_rect;
   GeglPad      *destination_pad = GEGL_PAD (data);
@@ -572,7 +582,8 @@ gegl_node_connect_from (GeglNode    *sink,
       sink->sources = g_slist_prepend (sink->sources, connection);
       source->sinks = g_slist_prepend (source->sinks, connection);
 
-      g_signal_connect (G_OBJECT (source), "invalidated", G_CALLBACK (source_invalidated), sink_pad);
+      g_signal_connect (G_OBJECT (source), "invalidated",
+                        G_CALLBACK (source_invalidated), sink_pad);
 
       property_changed (G_OBJECT (source->operation), NULL, source);
 
@@ -606,7 +617,7 @@ gegl_node_disconnect (GeglNode    *sink,
         gulong handler;
 
         handler = g_signal_handler_find (source, G_SIGNAL_MATCH_DATA,
-                                         gegl_node_signals[GEGL_NODE_INVALIDATED],
+                                         gegl_node_signals[INVALIDATED],
                                          0, NULL, NULL, sink_pad);
         if (handler)
           {
@@ -731,9 +742,9 @@ void          gegl_node_link_many (GeglNode *source,
 }
 
 static GeglBuffer *
-gegl_node_apply_roi (GeglNode      *self,
-                     const gchar   *output_pad_name,
-                     GeglRectangle *roi)
+gegl_node_apply_roi (GeglNode            *self,
+                     const gchar         *output_pad_name,
+                     const GeglRectangle *roi)
 {
   GeglEvalMgr *eval_mgr;
   GeglBuffer  *buffer;
@@ -747,13 +758,13 @@ gegl_node_apply_roi (GeglNode      *self,
 }
 
 void
-gegl_node_blit (GeglNode      *node,
-                gdouble        scale,
-                GeglRectangle *roi,
-                const Babl    *format,
-                gpointer       destination_buf,
-                gint           rowstride,
-                GeglBlitFlags  flags)
+gegl_node_blit (GeglNode            *node,
+                gdouble              scale,
+                const GeglRectangle *roi,
+                const Babl          *format,
+                gpointer             destination_buf,
+                gint                 rowstride,
+                GeglBlitFlags        flags)
 {
   if (flags == GEGL_BLIT_DEFAULT)
     {
@@ -1683,7 +1694,7 @@ static void computed_event (GeglCache *self,
 {
   GeglNode *node = GEGL_NODE (user_data);
 
-  g_signal_emit (node, gegl_node_signals[GEGL_NODE_COMPUTED], 0, foo, NULL, NULL);
+  g_signal_emit (node, gegl_node_signals[COMPUTED], 0, foo, NULL, NULL);
 }
 
 GeglCache *
@@ -1871,9 +1882,9 @@ GeglNode *gegl_node_create_child (GeglNode    *self,
 }
 
 static void
-graph_source_invalidated (GeglNode      *source,
-                          GeglRectangle *rect,
-                          gpointer       data)
+graph_source_invalidated (GeglNode            *source,
+                          const GeglRectangle *rect,
+                          gpointer             data)
 {
   GeglRectangle dirty_rect;
   GeglNode     *destination = GEGL_NODE (data);
@@ -1891,7 +1902,8 @@ graph_source_invalidated (GeglNode      *source,
 
   dirty_rect = *rect;
 
-  g_signal_emit (destination, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+  g_signal_emit (destination, gegl_node_signals[INVALIDATED], 0,
+                 &dirty_rect, NULL);
 
   g_free (source_name);
   g_free (destination_name);
