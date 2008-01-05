@@ -62,7 +62,7 @@ static void          get_source_matrix       (OpAffine            *affine,
 static GeglRectangle get_defined_region      (GeglOperation       *op);
 static GeglRectangle compute_affected_region (GeglOperation       *operation,
                                               const gchar         *input_pad,
-                                              GeglRectangle        region);
+                                              const GeglRectangle *input_region);
 static GeglRectangle compute_input_request   (GeglOperation       *self,
                                               const gchar         *input_pad,
                                               const GeglRectangle *region);
@@ -509,15 +509,16 @@ compute_input_request (GeglOperation       *op,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *op,
-                         const gchar   *input_pad,
-                         GeglRectangle  region)
+compute_affected_region (GeglOperation       *op,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
   GeglRectangle  affected_rect;
   gdouble        affected_points [8];
   gint           i;
+  GeglRectangle  region = *input_region;
 
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);

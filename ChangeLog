@@ -1,3 +1,8 @@
+2008-01-05  Manish Singh  <yosh@gimp.org>
+
+	* operations/affine/affine.c: update compute_affected_region()
+	implementation here too.
+
 2008-01-05  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/buffer/gegl-buffer-private.h
