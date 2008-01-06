@@ -1,5 +1,47 @@
 2008-01-06  Michael Natterer  <mitch@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.h
+	* gegl/buffer/gegl-buffer-load.h
+	* gegl/buffer/gegl-buffer-private.h
+	* gegl/buffer/gegl-buffer-save.h
+	* gegl/buffer/gegl-buffer-types.h
+	* gegl/buffer/gegl-buffer.h
+	* gegl/buffer/gegl-cache.h
+	* gegl/buffer/gegl-handler-cache.h
+	* gegl/buffer/gegl-handler-empty.h
+	* gegl/buffer/gegl-handler-log.h
+	* gegl/buffer/gegl-handler-zoom.h
+	* gegl/buffer/gegl-handler.h
+	* gegl/buffer/gegl-handlers.h
+	* gegl/buffer/gegl-provider.h
+	* gegl/buffer/gegl-region-generic.h
+	* gegl/buffer/gegl-region.h
+	* gegl/buffer/gegl-sampler-lanczos.h
+	* gegl/buffer/gegl-sampler-linear.h
+	* gegl/buffer/gegl-sampler-nearest.h
+	* gegl/buffer/gegl-sampler.h
+	* gegl/buffer/gegl-storage.h
+	* gegl/buffer/gegl-tile-backend.h
+	* gegl/buffer/gegl-tile-disk.h
+	* gegl/buffer/gegl-tile-mem.h
+	* gegl/buffer/gegl-tile.h
+	* gegl/operation/gegl-extension-handler.h
+	* gegl/operation/gegl-operation-area-filter.h
+	* gegl/operation/gegl-operation-composer.h
+	* gegl/operation/gegl-operation-filter.h
+	* gegl/operation/gegl-operation-meta.h
+	* gegl/operation/gegl-operation-point-composer.h
+	* gegl/operation/gegl-operation-point-filter.h
+	* gegl/operation/gegl-operation-sink.h
+	* gegl/operation/gegl-operation-source.h
+	* gegl/operation/gegl-operation.h
+	* gegl/property-types/gegl-color.h
+	* gegl/property-types/gegl-curve.h: header cleanup: added missing
+	GEGL_IS_FOO() macros, unified include guards, indentation, remove
+	tons of includes, remove trailing whitespace, stuff...
+
+2008-01-06  Michael Natterer  <mitch@gimp.org>
+
 	* gegl/buffer/gegl-buffer-save.c: #include "config.h"
 
 2007-01-06  Hans Breuer  <hans@breuer.org>

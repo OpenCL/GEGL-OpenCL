@@ -15,11 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_TILE_DISK_H
-#define _GEGL_TILE_DISK_H
 
-#include <glib.h>
-#include "gegl-buffer-types.h"
+#ifndef __GEGL_TILE_DISK_H__
+#define __GEGL_TILE_DISK_H__
+
 #include "gegl-tile-backend.h"
 
 G_BEGIN_DECLS
@@ -39,12 +38,12 @@ struct _GeglTileDisk
 {
   GeglTileBackend  parent_instance;
 
-  gchar      *path;
-  gint        fd;
-  GHashTable *entries;
-  GSList     *free_list;
-  guint       next_unused;
-  guint       total;
+  gchar           *path;
+  gint             fd;
+  GHashTable      *entries;
+  GSList          *free_list;
+  guint            next_unused;
+  guint            total;
 };
 
 struct _GeglTileDiskClass
@@ -54,7 +53,7 @@ struct _GeglTileDiskClass
 
 GType gegl_tile_disk_get_type (void) G_GNUC_CONST;
 
-void gegl_tile_disk_stats (void);
+void  gegl_tile_disk_stats    (void);
 
 G_END_DECLS
 

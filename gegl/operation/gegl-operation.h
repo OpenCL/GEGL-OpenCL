@@ -20,12 +20,12 @@
 #ifndef __GEGL_OPERATION_H__
 #define __GEGL_OPERATION_H__
 
+#include <glib-object.h>
+#include <babl/babl.h>
 #include "gegl-types.h"
 #include "buffer/gegl-buffer-types.h"
-#include <babl/babl.h>
 
 G_BEGIN_DECLS
-
 
 #define GEGL_TYPE_OPERATION            (gegl_operation_get_type ())
 #define GEGL_OPERATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION, GeglOperation))

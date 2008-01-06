@@ -15,8 +15,9 @@
  *
  * Copyright 2006 Øyvind Kolås
  */
-#ifndef _GEGL_OPERATION_META_H
-#define _GEGL_OPERATION_META_H
+
+#ifndef __GEGL_OPERATION_META_H__
+#define __GEGL_OPERATION_META_H__
 
 #include <glib-object.h>
 #include "gegl-types.h"
@@ -24,11 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_OPERATION_META           (gegl_operation_meta_get_type ())
-#define GEGL_OPERATION_META(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_META, GeglOperationMeta))
-#define GEGL_IS_OPERATION_META(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_META))
-#define GEGL_OPERATION_META_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_META, GeglOperationMetaClass))
-#define GEGL_OPERATION_META_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_META, GeglOperationMetaClass))
+#define GEGL_TYPE_OPERATION_META            (gegl_operation_meta_get_type ())
+#define GEGL_OPERATION_META(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_META, GeglOperationMeta))
+#define GEGL_OPERATION_META_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_META, GeglOperationMetaClass))
+#define GEGL_IS_OPERATION_META(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_META))
+#define GEGL_IS_OPERATION_META_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_META))
+#define GEGL_OPERATION_META_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_META, GeglOperationMetaClass))
 
 typedef struct _GeglOperationMeta  GeglOperationMeta;
 struct _GeglOperationMeta
@@ -45,16 +47,16 @@ struct _GeglOperationMetaClass
 };
 
 
-GType gegl_operation_meta_get_type   (void) G_GNUC_CONST;
+GType gegl_operation_meta_get_type         (void) G_GNUC_CONST;
 
-void  gegl_operation_meta_redirect   (GeglOperation *operation,
-                                      const gchar   *name,
-                                      GeglNode      *internal,
-                                      const gchar   *internal_name);
+void  gegl_operation_meta_redirect         (GeglOperation     *operation,
+                                            const gchar       *name,
+                                            GeglNode          *internal,
+                                            const gchar       *internal_name);
 
-void gegl_operation_meta_property_changed (GeglOperationMeta *self,
-                                           GParamSpec        *arg1,
-                                           gpointer           user_data);
+void  gegl_operation_meta_property_changed (GeglOperationMeta *self,
+                                            GParamSpec        *arg1,
+                                            gpointer           user_data);
 
 G_END_DECLS
 

@@ -15,8 +15,9 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
-#ifndef _GEGL_OPERATION_AREA_FILTER_H
-#define _GEGL_OPERATION_AREA_FILTER_H
+
+#ifndef __GEGL_OPERATION_AREA_FILTER_H__
+#define __GEGL_OPERATION_AREA_FILTER_H__
 
 #include <glib-object.h>
 #include "gegl-types.h"
@@ -24,10 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_OPERATION_AREA_FILTER           (gegl_operation_area_filter_get_type ())
-#define GEGL_OPERATION_AREA_FILTER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilter))
-#define GEGL_OPERATION_AREA_FILTER_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilterClass))
-#define GEGL_OPERATION_AREA_FILTER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilterClass))
+#define GEGL_TYPE_OPERATION_AREA_FILTER            (gegl_operation_area_filter_get_type ())
+#define GEGL_OPERATION_AREA_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilter))
+#define GEGL_OPERATION_AREA_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilterClass))
+#define GEGL_IS_OPERATION_AREA_FILTER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_AREA_FILTER))
+#define GEGL_IS_OPERATION_AREA_FILTER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_AREA_FILTER))
+#define GEGL_OPERATION_AREA_FILTER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_AREA_FILTER, GeglOperationAreaFilterClass))
 
 typedef struct _GeglOperationAreaFilter  GeglOperationAreaFilter;
 struct _GeglOperationAreaFilter

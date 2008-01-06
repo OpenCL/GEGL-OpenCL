@@ -15,11 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_TILE_MEM_H
-#define _GEGL_TILE_MEM_H
 
-#include <glib.h>
-#include "gegl-buffer-types.h"
+#ifndef __GEGL_TILE_MEM_H__
+#define __GEGL_TILE_MEM_H__
+
 #include "gegl-tile-backend.h"
 
 G_BEGIN_DECLS
@@ -31,14 +30,14 @@ G_BEGIN_DECLS
 #define GEGL_IS_TILE_MEM_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_MEM_STORE))
 #define GEGL_TILE_MEM_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_MEM_STORE, GeglTileMemClass))
 
-
 typedef struct _GeglTileMem      GeglTileMem;
 typedef struct _GeglTileMemClass GeglTileMemClass;
 
 struct _GeglTileMem
 {
   GeglTileBackend  parent_instance;
-  GHashTable *entries;
+
+  GHashTable      *entries;
 };
 
 struct _GeglTileMemClass
@@ -48,7 +47,7 @@ struct _GeglTileMemClass
 
 GType gegl_tile_mem_get_type (void) G_GNUC_CONST;
 
-void gegl_tile_mem_stats (void);
+void  gegl_tile_mem_stats    (void);
 
 G_END_DECLS
 

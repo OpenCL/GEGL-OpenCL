@@ -15,14 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_HANDLER_ZOOM_H
-#define _GEGL_HANDLER_ZOOM_H
 
-#include <glib.h>
-#include "gegl-buffer-types.h"
-#include "gegl-tile.h"
+#ifndef __GEGL_HANDLER_ZOOM_H__
+#define __GEGL_HANDLER_ZOOM_H__
+
 #include "gegl-handler.h"
-#include "gegl-storage.h"
 
 G_BEGIN_DECLS
 
@@ -40,13 +37,14 @@ typedef struct _GeglHandlerZoomClass GeglHandlerZoomClass;
 struct _GeglHandlerZoom
 {
   GeglHandler      parent_instance;
+
   GeglTileBackend *backend;
   GeglStorage     *storage;
 };
 
 struct _GeglHandlerZoomClass
 {
-  GeglHandlerClass parent_class;
+  GeglHandlerClass  parent_class;
 };
 
 GType gegl_handler_zoom_get_type (void) G_GNUC_CONST;

@@ -36,13 +36,17 @@ typedef struct _GeglColorClass  GeglColorClass;
 
 struct _GeglColor
 {
-  GObject parent;
+  GObject parent_instance;
 };
 
 struct _GeglColorClass
 {
-  GObjectClass parent;
+  GObjectClass parent_class;
 };
+
+GType        gegl_color_get_type               (void) G_GNUC_CONST;
+
+GeglColor *  gegl_color_new                    (const gchar *string);
 
 void         gegl_color_get_rgba               (GeglColor    *self,
                                                 gfloat       *r,
@@ -56,9 +60,8 @@ void         gegl_color_set_rgba               (GeglColor    *self,
                                                 gfloat       b,
                                                 gfloat       a);
 
-GeglColor *  gegl_color_new                    (const gchar *string);
 
-GType        gegl_color_get_type               (void) G_GNUC_CONST;
+GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
 
 GParamSpec * gegl_param_spec_color             (const gchar *name,
                                                 const gchar *nick,
@@ -71,8 +74,6 @@ GParamSpec * gegl_param_spec_color_from_string (const gchar *name,
                                                 const gchar *blurb,
                                                 const gchar *default_color_string,
                                                 GParamFlags  flags);
-
-GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
 
 G_END_DECLS
 

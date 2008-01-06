@@ -15,8 +15,13 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef GEGL_TILE_H
-#define GEGL_TILE_H
+
+#ifndef __GEGL_TILE_H__
+#define __GEGL_TILE_H__
+
+#include <glib-object.h>
+
+#include "gegl-buffer-types.h"
 
 #define GEGL_TYPE_TILE            (gegl_tile_get_type ())
 #define GEGL_TILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE, GeglTile))
@@ -24,16 +29,14 @@
 #define GEGL_IS_TILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE))
 #define GEGL_IS_TILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE))
 #define GEGL_TILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE, GeglTileClass))
-#include <glib-object.h>
-
-#include "gegl-buffer-types.h"
 
 /* the instance size of a GeglTile is a bit large, and should if possible be
  * trimmed down
  */
 struct _GeglTile
 {
-  GObject        parent_object;
+  GObject        parent_instance;
+
   guchar        *data;        /* A small linear buffer for pixel data */
   gint           size;        /* The size of the data element in bytes */
 
@@ -69,10 +72,10 @@ enum {
 
 struct _GeglTileClass
 {
-  GObjectClass   parent_class;
+  GObjectClass  parent_class;
 };
 
-GType  gegl_tile_get_type (void) G_GNUC_CONST;
+GType        gegl_tile_get_type        (void) G_GNUC_CONST;
 
 GeglTile   * gegl_tile_new             (gint         size);
 guchar     * gegl_tile_get_data        (GeglTile    *tile);

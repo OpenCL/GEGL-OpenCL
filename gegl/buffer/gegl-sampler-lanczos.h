@@ -14,35 +14,37 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef _GEGL_SAMPLER_LANCZOS_H__
-#define _GEGL_SAMPLER_LANCZOS_H__
 
-#include <glib-object.h>
-#include "gegl-types.h"
+#ifndef __GEGL_SAMPLER_LANCZOS_H__
+#define __GEGL_SAMPLER_LANCZOS_H__
+
 #include "gegl-sampler.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_SAMPLER_LANCZOS               (gegl_sampler_lanczos_get_type ())
-#define GEGL_SAMPLER_LANCZOS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczos))
-#define GEGL_SAMPLER_LANCZOS_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczosClass))
-#define GEGL_SAMPLER_LANCZOS_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczosClass))
+#define GEGL_TYPE_SAMPLER_LANCZOS             (gegl_sampler_lanczos_get_type ())
+#define GEGL_SAMPLER_LANCZOS(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczos))
+#define GEGL_SAMPLER_LANCZOS_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczosClass))
+#define GEGL_IS_SAMPLER_LANCZOS(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLER_LANCZOS))
+#define GEGL_IS_SAMPLER_LANCZOS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),   GEGL_TYPE_SAMPLER_LANCZOS))
+#define GEGL_SAMPLER_LANCZOS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),   GEGL_TYPE_SAMPLER_LANCZOS, GeglSamplerLanczosClass))
 
-typedef struct _GeglSamplerLanczos  GeglSamplerLanczos;
+typedef struct _GeglSamplerLanczos      GeglSamplerLanczos;
+typedef struct _GeglSamplerLanczosClass GeglSamplerLanczosClass;
+
 struct _GeglSamplerLanczos
 {
-  GeglSampler parent_instance;
+  GeglSampler  parent_instance;
 
   /*< private >*/
-  gfloat *lanczos_lookup;
-  gint    lanczos_width;
-  gint    lanczos_spp;
+  gfloat      *lanczos_lookup;
+  gint         lanczos_width;
+  gint         lanczos_spp;
 };
 
-typedef struct _GeglSamplerLanczosClass GeglSamplerLanczosClass;
 struct _GeglSamplerLanczosClass
 {
-  GeglSamplerClass parent_class;
+  GeglSamplerClass  parent_class;
 };
 
 GType gegl_sampler_lanczos_get_type (void) G_GNUC_CONST;

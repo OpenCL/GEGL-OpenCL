@@ -19,7 +19,7 @@
  * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #ifndef __GEGL_REGION_H__
@@ -29,8 +29,6 @@
 #include "gegl-buffer-types.h"
 
 G_BEGIN_DECLS
-
-
 
 struct _GeglSegment
 {

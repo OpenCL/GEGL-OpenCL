@@ -15,12 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_HANDLER_EMPTY_H
-#define _GEGL_HANDLER_EMPTY_H
 
-#include <glib.h>
-#include "gegl-buffer-types.h"
-#include "gegl-tile.h"
+#ifndef __GEGL_HANDLER_EMPTY_H__
+#define __GEGL_HANDLER_EMPTY_H__
+
 #include "gegl-handler.h"
 
 G_BEGIN_DECLS
@@ -39,6 +37,7 @@ typedef struct _GeglHandlerEmptyClass GeglHandlerEmptyClass;
 struct _GeglHandlerEmpty
 {
   GeglHandler      parent_instance;
+
   GeglTile        *tile;
   GeglTileBackend *backend;
 };

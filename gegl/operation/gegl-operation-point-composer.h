@@ -15,8 +15,9 @@
  *
  * Copyright 2006 Øyvind Kolås
  */
-#ifndef _GEGL_OPERATION_POINT_COMPOSER_H
-#define _GEGL_OPERATION_POINT_COMPOSER_H
+
+#ifndef __GEGL_OPERATION_POINT_COMPOSER_H__
+#define __GEGL_OPERATION_POINT_COMPOSER_H__
 
 #include <glib-object.h>
 #include "gegl-types.h"
@@ -24,10 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_OPERATION_POINT_COMPOSER           (gegl_operation_point_composer_get_type ())
-#define GEGL_OPERATION_POINT_COMPOSER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposer))
-#define GEGL_OPERATION_POINT_COMPOSER_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposerClass))
-#define GEGL_OPERATION_POINT_COMPOSER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposerClass))
+#define GEGL_TYPE_OPERATION_POINT_COMPOSER            (gegl_operation_point_composer_get_type ())
+#define GEGL_OPERATION_POINT_COMPOSER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposer))
+#define GEGL_OPERATION_POINT_COMPOSER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposerClass))
+#define GEGL_IS_OPERATION_POINT_COMPOSER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_POINT_COMPOSER))
+#define GEGL_IS_OPERATION_POINT_COMPOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_POINT_COMPOSER))
+#define GEGL_OPERATION_POINT_COMPOSER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_POINT_COMPOSER, GeglOperationPointComposerClass))
 
 typedef struct _GeglOperationPointComposer  GeglOperationPointComposer;
 struct _GeglOperationPointComposer

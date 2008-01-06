@@ -15,17 +15,16 @@
  *
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
-#include <glib.h>
+
+#ifndef __GEGL_BUFFER_H__
+#define __GEGL_BUFFER_H__
+
 #include <glib-object.h>
-
 #include <babl/babl.h>
-
-#ifndef _GEGL_BUFFER_H
-#define _GEGL_BUFFER_H
 
 #define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
 #define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
-#ifndef _GEGL_BUFFER_TYPES_H
+#ifndef __GEGL_BUFFER_TYPES_H__
 typedef struct _GeglBuffer     GeglBuffer;
 #endif
 

@@ -15,10 +15,12 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_PROVIDER_H
-#define _GEGL_PROVIDER_H
 
-#include <glib.h>
+#ifndef __GEGL_PROVIDER_H__
+#define __GEGL_PROVIDER_H__
+
+#include <glib-object.h>
+#include <babl/babl.h>
 #include "gegl-buffer-types.h"
 #include "gegl-tile.h"
 
@@ -50,12 +52,12 @@ enum _GeglTileMessage
 
 struct _GeglProvider
 {
-  GObject       parent_instance;
+  GObject  parent_instance;
 };
 
 struct _GeglProviderClass
 {
-  GObjectClass    parent_class;
+  GObjectClass  parent_class;
 
   GeglTile     *(*get_tile) (GeglProvider  *gegl_provider,
                              gint            x,
@@ -72,17 +74,17 @@ struct _GeglProviderClass
 
 GType      gegl_provider_get_type (void) G_GNUC_CONST;
 
-GeglTile * gegl_provider_get_tile (GeglProvider *gegl_provider,
-                                     gint           x,
-                                     gint           y,
-                                     gint           z);
+GeglTile * gegl_provider_get_tile (GeglProvider    *gegl_provider,
+                                   gint             x,
+                                   gint             y,
+                                   gint             z);
 
-gboolean   gegl_provider_message   (GeglProvider   *gegl_provider,
-                                      GeglTileMessage  message,
-                                      gint             x,
-                                      gint             y,
-                                      gint             z,
-                                      gpointer         data);
+gboolean   gegl_provider_message  (GeglProvider    *gegl_provider,
+                                   GeglTileMessage  message,
+                                   gint             x,
+                                   gint             y,
+                                   gint             z,
+                                   gpointer         data);
 
 G_END_DECLS
 

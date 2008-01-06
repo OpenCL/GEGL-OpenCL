@@ -15,13 +15,13 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#include <glib.h>
+
+#ifndef __GEGL_BUFFER_SAVE_H__
+#define __GEGL_BUFFER_SAVE_H__
+
 #include <glib-object.h>
 
 #include "gegl-buffer.h"
-
-#ifndef _GEGL_BUFFER_SAVE_H
-#define _GEGL_BUFFER_SAVE_H
 
 typedef struct {
   gchar magic[16];

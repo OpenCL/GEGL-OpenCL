@@ -14,28 +14,30 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef _GEGL_SAMPLER_NEAREST_H__
-#define _GEGL_SAMPLER_NEAREST_H__
 
-#include <glib-object.h>
-#include "gegl-types.h"
+#ifndef __GEGL_SAMPLER_NEAREST_H__
+#define __GEGL_SAMPLER_NEAREST_H__
+
 #include "gegl-sampler.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_SAMPLER_NEAREST               (gegl_sampler_nearest_get_type ())
-#define GEGL_SAMPLER_NEAREST(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearest))
-#define GEGL_SAMPLER_NEAREST_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearestClass))
-#define GEGL_SAMPLER_NEAREST_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearestClass))
+#define GEGL_TYPE_SAMPLER_NEAREST            (gegl_sampler_nearest_get_type ())
+#define GEGL_SAMPLER_NEAREST(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearest))
+#define GEGL_SAMPLER_NEAREST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearestClass))
+#define GEGL_IS_SAMPLER_NEAREST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLER_NEAREST))
+#define GEGL_IS_SAMPLER_NEAREST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SAMPLER_NEAREST))
+#define GEGL_SAMPLER_NEAREST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER_NEAREST, GeglSamplerNearestClass))
 
-typedef struct _GeglSamplerNearest  GeglSamplerNearest;
+typedef struct _GeglSamplerNearest      GeglSamplerNearest;
+typedef struct _GeglSamplerNearestClass GeglSamplerNearestClass;
+
 struct _GeglSamplerNearest
 {
   GeglSampler parent_instance;
     /*< private >*/
 };
 
-typedef struct _GeglSamplerNearestClass GeglSamplerNearestClass;
 struct _GeglSamplerNearestClass
 {
   GeglSamplerClass parent_class;

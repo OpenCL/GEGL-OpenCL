@@ -15,13 +15,11 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _TILE_TRAIT_H
-#define _TILE_TRAIT_H
 
-#include <glib.h>
-#include "gegl-tile.h"
+#ifndef __TILE_TRAIT_H__
+#define __TILE_TRAIT_H__
+
 #include "gegl-provider.h"
-#include "gegl-handler.h"
 
 G_BEGIN_DECLS
 
@@ -33,10 +31,10 @@ G_BEGIN_DECLS
 #define GEGL_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAIT, GeglHandlerClass))
 
 
-
 struct _GeglHandler
 {
   GeglProvider  parent_instance;
+
   GeglProvider *provider;
 };
 

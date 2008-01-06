@@ -15,8 +15,9 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef GEGL_EXTENSION_HANDLER_H
-#define GEGL_EXTENSION_HANDLER_H
+
+#ifndef __GEGL_EXTENSION_HANDLER_H__
+#define __GEGL_EXTENSION_HANDLER_H__
 
 #include <glib.h>
 

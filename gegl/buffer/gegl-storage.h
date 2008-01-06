@@ -15,14 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#include <glib.h>
-#include <glib-object.h>
-#include <babl/babl.h>
 
-#include "gegl-buffer-types.h"
+#ifndef __GEGL_STORAGE_H__
+#define __GEGL_STORAGE_H__
 
-#ifndef _GEGL_STORAGE_H
-#define _GEGL_STORAGE_H
+#include "gegl-handlers.h"
 
 #define GEGL_TYPE_STORAGE            (gegl_storage_get_type ())
 #define GEGL_STORAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_STORAGE, GeglStorage))
@@ -31,11 +28,10 @@
 #define GEGL_IS_STORAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_STORAGE))
 #define GEGL_STORAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_STORAGE, GeglStorageClass))
 
-#include "gegl-handlers.h"
-
 struct _GeglStorage
 {
-  GeglHandlers parent_object;
+  GeglHandlers parent_instance;
+
   Babl        *format;
   gint         tile_width;
   gint         tile_height;
@@ -45,7 +41,7 @@ struct _GeglStorage
   gint         height;
   gchar       *path;
 
-  guint          idle_swapper;
+  guint        idle_swapper;
 };
 
 struct _GeglStorageClass
@@ -53,6 +49,6 @@ struct _GeglStorageClass
   GeglHandlersClass parent_class;
 };
 
-GType        gegl_storage_get_type           (void) G_GNUC_CONST;
+GType gegl_storage_get_type (void) G_GNUC_CONST;
 
 #endif

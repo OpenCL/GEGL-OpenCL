@@ -15,11 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _GEGL_HANDLER_LOG_H
-#define _GEGL_HANDLER_LOG_H
 
-#include <glib.h>
-#include "gegl-tile.h"
+#ifndef __GEGL_HANDLER_LOG_H__
+#define __GEGL_HANDLER_LOG_H__
+
 #include "gegl-handler.h"
 
 G_BEGIN_DECLS
@@ -42,7 +41,7 @@ struct _GeglHandlerLog
 
 struct _GeglHandlerLogClass
 {
-  GeglHandlerClass parent_class;
+  GeglHandlerClass  parent_class;
 };
 
 GType gegl_handler_log_get_type (void) G_GNUC_CONST;

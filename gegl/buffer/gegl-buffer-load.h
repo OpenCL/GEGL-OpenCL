@@ -15,13 +15,13 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#include <glib.h>
+
+#ifndef __GEGL_BUFFER_LOAD_H__
+#define __GEGL_BUFFER_LOAD_H__
+
 #include <glib-object.h>
 
 #include "gegl-buffer.h"
-
-#ifndef _GEGL_BUFFER_LOAD_H
-#define _GEGL_BUFFER_LOAD_H
 
 void gegl_buffer_load (GeglBuffer    *buffer,
                        const gchar   *path);

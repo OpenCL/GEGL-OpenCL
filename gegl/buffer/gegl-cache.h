@@ -19,10 +19,8 @@
 #ifndef __GEGL_CACHE_H__
 #define __GEGL_CACHE_H__
 
-#ifndef __GEGL_H__
-#include "gegl-types.h"
-#endif
 #include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
 
 G_BEGIN_DECLS
 
@@ -33,11 +31,10 @@ G_BEGIN_DECLS
 #define GEGL_IS_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
 #define GEGL_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglCacheClass))
 
-#include "gegl-buffer-private.h"
-
 struct _GeglCache
 {
-  GeglBuffer    parent;
+  GeglBuffer    parent_instance;
+
   GeglNode     *node;
   const void   *format;
   GeglRegion   *valid_region;
@@ -45,7 +42,7 @@ struct _GeglCache
 
 struct _GeglCacheClass
 {
-  GeglBufferClass buffer_class;
+  GeglBufferClass  parent_class;
 };
 
 GType    gegl_cache_get_type    (void) G_GNUC_CONST;

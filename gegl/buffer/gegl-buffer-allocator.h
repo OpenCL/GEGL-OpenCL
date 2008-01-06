@@ -15,13 +15,12 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#include <glib.h>
-#include <glib-object.h>
 
-#include "gegl-buffer-types.h"
+#ifndef __GEGL_BUFFER_ALLOCATOR_H__
+#define __GEGL_BUFFER_ALLOCATOR_H__
 
-#ifndef _GEGL_BUFFER_ALLOCATOR_H
-#define _GEGL_BUFFER_ALLOCATOR_H
+#include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
 
 #define GEGL_TYPE_BUFFER_ALLOCATOR            (gegl_buffer_allocator_get_type ())
 #define GEGL_BUFFER_ALLOCATOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_ALLOCATOR, GeglBufferAllocator))
@@ -30,12 +29,10 @@
 #define GEGL_IS_BUFFER_ALLOCATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_ALLOCATOR))
 #define GEGL_BUFFER_ALLOCATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_ALLOCATOR, GeglBufferAllocatorClass))
 
-#include "gegl-buffer.h"
-#include "gegl-buffer-private.h"
-
 struct _GeglBufferAllocator
 {
-  GeglBuffer parent_object;
+  GeglBuffer parent_instance;
+
   gint       x_used;      /* currently used in x direction */
   gint       max_height;  /* height of the talles allocation in this run */
   gint       y_used;      /* the current y pos used for returns */
@@ -46,15 +43,14 @@ struct _GeglBufferAllocatorClass
   GeglBufferClass parent_class;
 };
 
-GType         gegl_buffer_allocator_get_type           (void) G_GNUC_CONST;
+GType        gegl_buffer_allocator_get_type (void) G_GNUC_CONST;
 
-void gegl_buffer_allocators_free (void);
+void         gegl_buffer_allocators_free    (void);
 
-GeglBuffer *
-gegl_buffer_new_from_format (const void *babl_format,
-                             gint        x,
-                             gint        y,
-                             gint        width,
-                             gint        height);
+GeglBuffer * gegl_buffer_new_from_format    (const void *babl_format,
+                                             gint        x,
+                                             gint        y,
+                                             gint        width,
+                                             gint        height);
 
 #endif

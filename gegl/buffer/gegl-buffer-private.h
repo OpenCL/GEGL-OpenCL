@@ -16,15 +16,10 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#ifndef _GEGL_BUFFER_PRIVATE_H
-#define _GEGL_BUFFER_PRIVATE_H
+#ifndef __GEGL_BUFFER_PRIVATE_H__
+#define __GEGL_BUFFER_PRIVATE_H__
 
-#include <glib.h>
-#include <glib-object.h>
-
-#include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
-#include <babl/babl.h>
 #include "gegl-handlers.h"
 
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
@@ -34,15 +29,15 @@
 
 struct _GeglBuffer
 {
-  GeglHandlers      parent_object; /* which is a GeglHandler which has a
-                                      provider field which is used for chaining
-                                      sub buffers with their anchestors */
+  GeglHandlers      parent_instance; /* which is a GeglHandler which has a
+                                        provider field which is used for chaining
+                                        sub buffers with their anchestors */
 
   GeglRectangle     extent;        /* the dimensions of the buffer */
 
   const Babl       *format;  /* the pixel format used for pixels in this
                                 buffer */
- 
+
   gint              shift_x; /* The relative offset of origins compared with */
   gint              shift_y; /* anchestral storage buffer, during            */
                              /* construction relative to immediate provider  */
@@ -84,7 +79,7 @@ void           gegl_buffer_save       (GeglBuffer          *buffer,
 /* flush any unwritten data (flushes the hot-cache of a single
  * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
  */
-void          gegl_buffer_flush      (GeglBuffer *buffer);
+void           gegl_buffer_flush      (GeglBuffer *buffer);
 
 
 #endif

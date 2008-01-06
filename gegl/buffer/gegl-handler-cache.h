@@ -15,10 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifndef _HANDLER_CACHE_H
-#define _HANDLER_CACHE_H
 
-#include "gegl-buffer-types.h"
+#ifndef __GEGL_HANDLER_CACHE_H__
+#define __GEGL_HANDLER_CACHE_H__
+
 #include "gegl-handler.h"
 
 #define GEGL_TYPE_HANDLER_CACHE            (gegl_handler_cache_get_type ())
@@ -29,18 +29,19 @@
 #define GEGL_HANDLER_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLER_CACHE, GeglHandlerCacheClass))
 
 
-typedef struct _GeglHandlerCache        GeglHandlerCache;
-typedef struct _GeglHandlerCacheClass   GeglHandlerCacheClass;
+typedef struct _GeglHandlerCache      GeglHandlerCache;
+typedef struct _GeglHandlerCacheClass GeglHandlerCacheClass;
 
 struct _GeglHandlerCache
 {
   GeglHandler parent_instance;
+
   GSList     *list;
   gint        size;
   gint        hits;
   gint        misses;
 
-  gint     wash_percentage;
+  gint        wash_percentage;
 };
 
 struct _GeglHandlerCacheClass
@@ -48,7 +49,6 @@ struct _GeglHandlerCacheClass
   GeglHandlerClass parent_class;
 };
 
-GType       gegl_handler_cache_get_type            (void) G_GNUC_CONST;
-
+GType gegl_handler_cache_get_type (void) G_GNUC_CONST;
 
 #endif
