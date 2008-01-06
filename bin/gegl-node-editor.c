@@ -15,10 +15,13 @@
  *
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "gegl.h"
 #include "gegl-node-editor.h"

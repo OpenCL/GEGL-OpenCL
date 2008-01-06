@@ -17,10 +17,22 @@
  */
 
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+
+#ifdef G_OS_WIN32
+#include <io.h>
+#ifndef S_IRUSR
+#define S_IRUSR _S_IREAD
+#endif
+#ifndef S_IWUSR
+#define S_IWUSR _S_IWRITE
+#endif
+#endif
 
 #include "../gegl-types.h"
 #include "gegl-buffer-types.h"

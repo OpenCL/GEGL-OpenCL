@@ -46,8 +46,10 @@ gegl_sampler_nearest_get (GeglSampler *self,
                           gdouble      y,
                           void        *output)
 {
-  gfloat        *cache_buffer;
-  GeglRectangle *rect;
+  gfloat        * cache_buffer;
+  GeglRectangle * rect;
+  gint  u;
+  gint  v;
   gfloat         dst[4];
 
   gegl_sampler_fill_buffer (self, x, y);
@@ -56,9 +58,8 @@ gegl_sampler_nearest_get (GeglSampler *self,
   cache_buffer = self->cache_buffer;
   if (!cache_buffer)
     return;
-
-  gint u = (x - rect->x);
-  gint v = (y - rect->y);
+  u = (x - rect->x);
+  v = (y - rect->y);
 
   if (u >= 0 &&
       v >= 0 &&

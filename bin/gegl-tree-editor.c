@@ -237,6 +237,7 @@ tree_editor_new (GtkWidget *property_editor)
 
   gtk_box_pack_start (GTK_BOX (bot_vbox), tree_scroll, TRUE, TRUE, 0);
 
+#if 0
   if(0){
     GtkWidget *butbox = gtk_hbox_new (FALSE, 1);
     GtkWidget *button;
@@ -275,6 +276,7 @@ tree_editor_new (GtkWidget *property_editor)
 
     gtk_box_pack_start (GTK_BOX (bot_vbox), butbox, FALSE, FALSE, 0);
   }
+#endif
 
   self = bot_vbox;
 

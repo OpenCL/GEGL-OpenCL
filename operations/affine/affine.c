@@ -300,7 +300,7 @@ is_intermediate_node (OpAffine *affine)
     {
       sink = gegl_connection_get_sink_node (connections->data)->operation;
       if (! IS_OP_AFFINE (sink) ||
-          strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
+          g_strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
         return FALSE;
     }
   while ((connections = g_slist_next (connections)));
@@ -323,7 +323,7 @@ is_composite_node (OpAffine *affine)
   source = gegl_connection_get_source_node (connections->data)->operation;
 
   return (IS_OP_AFFINE (source) &&
-          ! strcasecmp (affine->filter, OP_AFFINE (source)->filter));
+          ! g_strcasecmp (affine->filter, OP_AFFINE (source)->filter));
 }
 
 static void
@@ -378,7 +378,7 @@ get_defined_region (GeglOperation *op)
       return in_rect;
     }
 
-  if (! strcasecmp (affine->filter, "linear"))
+  if (! g_strcasecmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -489,7 +489,7 @@ compute_input_request (GeglOperation       *op,
                              need_points + i, need_points + i + 1);
   bounding_box (need_points, 4, &need_rect);
 
-  if (! strcasecmp (affine->filter, "linear"))
+  if (! g_strcasecmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -541,7 +541,7 @@ compute_affected_region (GeglOperation       *op,
       return region;
     }
 
-  if (! strcasecmp (affine->filter, "linear"))
+  if (! g_strcasecmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -686,7 +686,7 @@ process (GeglOperation *operation,
                 but should still be faster than a full resampling when it
                 is not needed */
   else if (matrix3_is_translate (affine->matrix) &&
-           (! strcasecmp (affine->filter, "nearest") ||
+           (! g_strcasecmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {

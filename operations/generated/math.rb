@@ -50,6 +50,9 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 #include \"gegl-chant.h\"
 
 #include <math.h>
+#ifdef _MSC_VER
+#define powf(a,b) ((gfloat)pow(a,b))
+#endif
 
 static void prepare (GeglOperation *operation)
 {

@@ -15,6 +15,8 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
+
 #if GEGL_CHANT_PROPERTIES
 gegl_chant_path (path, "/tmp/test.raw", "Path of file to load.")
 #else
@@ -27,7 +29,15 @@ gegl_chant_path (path, "/tmp/test.raw", "Path of file to load.")
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef _WIN32
+#include <io.h>
+#include <process.h>
+#define popen(n,m) _popen(n,m)
+#define pclose(f) _pclose(f)
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,7 +1,11 @@
+#include "config.h"
+
 #include <gegl-plugin.h>  /* needed to do full introspection */
 #include <stdio.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include "operation/gegl-operation-filter.h"
 #include "operation/gegl-operation-source.h"
 #include "operation/gegl-operation-composer.h"

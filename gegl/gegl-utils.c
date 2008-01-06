@@ -52,7 +52,7 @@ _gegl_float_epsilon_zero (float value)
   return value > -GEGL_FLOAT_EPSILON && value < GEGL_FLOAT_EPSILON;
 }
 
-inline gint
+gint
 _gegl_float_epsilon_equal (float v1, float v2)
 {
   register float diff = v1 - v2;

@@ -19,7 +19,7 @@
  * Datafiles module copyight (C) 1996 Federico Mena Quintero
  * federico@nuclecu.unam.mx
  */
-
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +31,18 @@
 
 #include <glib-object.h>
 #include <glib/gstdio.h>
+
+#ifdef G_OS_WIN32
+#ifndef S_ISREG
+#define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+#endif
+#ifndef S_ISDIR
+#define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#endif
+#ifndef S_IXUSR
+#define S_IXUSR _S_IEXEC
+#endif
+#endif
 
 /*
 #include "geglbasetypes.h"*/

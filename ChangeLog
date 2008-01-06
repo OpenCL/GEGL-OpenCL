@@ -1,3 +1,57 @@
+2007-01-06  Hans Breuer  <hans@breuer.org>
+
+	[porting to build with win32/msvc, see bug #507288]
+
+	* gegl/buffer/gegl-buffer-allocator.c : use HAVE_UNISTD_H, include 
+	process.h for win32 and declare variables at the start of the 
+	block (C89 requirement)
+	* gegl/buffer/gegl-buffer-load.c : use HAVE_UNISTD_H and 
+	#include <io.h> on win32 
+	* gegl/buffer/gegl-buffer-save.c : -"-, define S_IRUSR
+	* gegl/buffer/gegl-buffer.c gegl/buffer/gegl-sampler-linear.c
+	gegl/buffer/gegl-sampler-nearest.c : declare variables at the start 
+	of a block
+	* gegl/buffer/gegl-provider.c gegl/process/gegl-processor.c : use 
+	G_STRFUNC rather than raw gcc __func__
+	* gegl/buffer/gegl-tile-disk.c : #include "config.h" at the beginning 
+	of the file, use HAVE_UNISTD_H, <io.h> some conditional defines 
+	like #define ftruncate(f,d) g_win32_ftruncate(f,d)
+	* gegl/buffer/gegl-tile-mem.c gegl/buffer/gegl-tile.c : 
+	#include config.h, use HAVE_UNISTD_H
+	* gegl/gegl-init.c : on win32 resolve module directory at runtime, 
+	not compile time
+	* gegl/gegl-utils.[ch] : a 'pure' inline function can not be 
+	exported as well, either _gegl_float_epsilon_equal needs to be implemented 
+	in the header or not be inline 
+	* gegl/gegl-xml.c : #include "config.h", define PATH_MAX if needed
+	* gegl/graph/gegl-node.c : use G_STRFUNC
+	* gegl/module/gegldatafiles.c : #include "config.h" and define 
+	S_ISREG etc
+
+	* gegl/gegl-chant.h operations/color/remap.c : use G_MODULE_EXPORT to mark gegl_module_query and
+	gegl_module_register for export
+	
+	* gegl/operations/affine/affine.c : s/strcasecmp/g_strcasecmp/
+	* gegl/operations/affine/module.[ch] : use G_MODULE_EXPORT
+	* gegl/operations/core/convert-format.c 
+	  gegl/operations/workshop/mblur.c : c99ism - mixed declaration and
+	  implementation
+	* gegl/operations/enhance/bilateral-filter.c : use g_alloca() instead 
+	of a gcc-only dynamic sized array on the stack
+	* gegl/operations/generated/math.rb : define powf() for msvc build
+	* gegl/operations/io/raw-load.c : use HAVE_UNISTD_H and define 
+	popen/pclose for msvc
+
+	* tools/operation_reference.c : config.h and HAVE_UNISTD_H
+
+	* bin/gegl.c : work-around another msvc limitation (C2026:
+	string too big, trailing characters truncated) In fact it is more
+	a line-too-long limit.
+	* bin/editor.c : define PATH_MAX
+	* bin/gegl-node-editor.c : HAVE_UNISTD_H
+	* bin/gegl-node-editor.c : if (0) is not enough for msvc to get rid of
+	the unresolved StockIcon(), use #if 0
+
 2008-01-05  Manish Singh  <yosh@gimp.org>
 
 	* operations/affine/affine.c: update compute_affected_region()

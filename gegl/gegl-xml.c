@@ -15,6 +15,7 @@
  *
  * Copyright 2006 Øyvind Kolås
  */
+#include "config.h"
 
 #include <glib.h>
 #include <glib-object.h>
@@ -33,6 +34,9 @@
 #include "operation/gegl-operation.h"
 
 #ifdef G_OS_WIN32
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif
 #define realpath(a, b)    _fullpath (b, a, _MAX_PATH)
 #endif
 

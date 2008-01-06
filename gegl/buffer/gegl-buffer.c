@@ -1335,19 +1335,23 @@ static void resample_nearest (void   *dest_buf,
                               gint    rowstride)
 {
   gint x, y;
+  guint xdiff, ydiff, xstart, sy;
 
   if (rowstride == GEGL_AUTO_ROWSTRIDE)
      rowstride = dest_w * bpp;
 
-  guint xdiff = 65536 / scale;
-  guint ydiff = 65536 / scale;
-  guint xstart = (offset_x * 65536) / scale;
-  guint sy = (offset_y * 65536) / scale;
+  xdiff = 65536 / scale;
+  ydiff = 65536 / scale;
+  xstart = (offset_x * 65536) / scale;
+  sy = (offset_y * 65536) / scale;
 
   for (y = 0; y < dest_h; y++)
     {
       guchar *dst;
       guchar *src_base;
+      guint sx;
+      guint px = 0;
+      guchar *src;      
 
       if (sy >= source_h << 16)
         sy = (source_h - 1) << 16;
@@ -1355,11 +1359,8 @@ static void resample_nearest (void   *dest_buf,
       dst      = ((guchar *) dest_buf) + y * rowstride;
       src_base = ((guchar *) source_buf) + (sy >> 16) * source_w * bpp;
 
-      guint sx;
-      guint px = 0; 
-
       sx = xstart;
-      guchar *src = src_base;
+      src = src_base;
 
       /* this is the loop that is actually properly optimized,
        * portions of the setup is done for all the rows outside the y
@@ -1454,6 +1455,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
       gint    dy;
       guchar *dst;
       const guchar *src_base;
+      gint sx;
+      gint xdelta;
 
       sy = ((y + offset_y) * 65536) / iscale;
 
@@ -1477,8 +1480,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
 
       middle_weight = footprint_y - top_weight - bottom_weight;
 
-      gint sx = (offset_x *65536) / iscale;
-      gint xdelta = 65536/iscale;
+      sx = (offset_x *65536) / iscale;
+      xdelta = 65536/iscale;
 
       /* XXX: needs quite a bit of optimization */
       for (x = 0; x < dest_w; x++)

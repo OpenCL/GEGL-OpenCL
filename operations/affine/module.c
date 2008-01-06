@@ -32,13 +32,13 @@ static const GeglModuleInfo  modinfo =
   "July 2006"
 };
 
-GTypeModule *
+G_MODULE_EXPORT GTypeModule *
 affine_module_get_module (void)
 {
   return affine_module;
 }
 
-const GeglModuleInfo *
+G_MODULE_EXPORT const GeglModuleInfo *
 gegl_module_query (GTypeModule *module)
 {
   return &modinfo;
@@ -50,7 +50,7 @@ GType shear_get_type     (void);
 GType translate_get_type (void);
 GType reflect_get_type   (void);
 
-gboolean
+G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
   GType dummy;

@@ -89,36 +89,47 @@ gegl_sampler_linear_get (GeglSampler *sampler,
       x < rect->x+rect->width &&
       y < rect->y+rect->height)
     {
+      gint     i;
+      gint     x0;
+      gint     y0;
+      gint     x1;
+      gint     y1;
+      gint     u;
+      gint     v;
+      gdouble  uf;
+      gdouble  vf;
+      gdouble  q1;
+      gdouble  q2;
+      gdouble  q3;
+      gdouble  q4;
+      gfloat * p00;
+      gfloat * p01;
+      gfloat * p10;
+      gfloat * p11;
       x -= rect->x;
       y -= rect->y;
-
-      gint    i;
-      gint    x0 = 0;
-      gint    y0 = 0;
-      gint    x1 = rect->width - 1;
-      gint    y1 = rect->height - 1;
-
-      gint    u  = (gint) x;
-      gint    v  = (gint) y;
-      gdouble uf = x - u;
-      gdouble vf = y - v;
-
-      gdouble q1 = (1 - uf) * (1 - vf);
-      gdouble q2 = uf * (1 - vf);
-      gdouble q3 = (1 - uf) * vf;
-      gdouble q4 = uf * vf;
-
-      gfloat *p00 = cache_buffer + (v * rect->width + u) * 4;
+      x0 = 0;
+      y0 = 0;
+      x1 = rect->width - 1;
+      y1 = rect->height - 1;
+      u  = (gint) x;
+      v  = (gint) y;
+      uf = x - u;
+      vf = y - v;
+      q1 = (1 - uf) * (1 - vf);
+      q2 = uf * (1 - vf);
+      q3 = (1 - uf) * vf;
+      q4 = uf * vf;
+      p00 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 0, x0, x1);
       v = CLAMP ((gint) y + 1, y0, y1);
-      gfloat *p01 = cache_buffer + (v * rect->width + u) * 4;
+      p01 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 1, x0, x1);
       v = CLAMP ((gint) y + 0, y0, y1);
-      gfloat *p10 = cache_buffer + (v * rect->width + u) * 4;
+      p10 = cache_buffer + (v * rect->width + u) * 4;
       u = CLAMP ((gint) x + 1, x0, x1);
       v = CLAMP ((gint) y + 1, y0, y1);
-      gfloat *p11 = cache_buffer + (v * rect->width + u) * 4;
-
+      p11 = cache_buffer + (v * rect->width + u) * 4;
       for (i = 0; i < 4; i++)
         {
           dst[i] = q1 * p00[i] + q2 * p10[i] + q3 * p01[i] + q4 * p11[i];

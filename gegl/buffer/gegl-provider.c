@@ -27,7 +27,7 @@ get_tile (GeglProvider *gegl_provider,
           gint           y,
           gint           z)
 {
-  g_warning ("implementationless %s called", __FUNCTION__);
+  g_warning ("implementationless %s called", G_STRFUNC);
   return NULL;
 }
 

@@ -29,6 +29,9 @@
 #include <gdk/gdkkeysyms.h>
 
 #ifdef G_OS_WIN32
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif
 #define realpath(a,b) _fullpath(b,a,_MAX_PATH)
 #endif
 

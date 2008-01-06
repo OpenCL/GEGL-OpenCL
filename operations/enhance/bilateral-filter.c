@@ -94,12 +94,14 @@ bilateral_filter (GeglBuffer *src,
                   gdouble     radius,
                   gdouble     preserve)
 {
-  gfloat gauss[((int)radius*2+1)][((int)radius*2+1)];
+  gfloat *gauss;
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
+  gint width = (int)radius*2+1;
 
+  gauss = g_alloca (width*width*sizeof(gfloat));
   src_buf = g_malloc0 (gegl_buffer_get_pixel_count(src) * 4 *4);
   dst_buf = g_malloc0 (gegl_buffer_get_pixel_count(dst) * 4 * 4);
 
@@ -111,7 +113,7 @@ bilateral_filter (GeglBuffer *src,
   for (y=-radius;y<=radius;y++)
     for (x=-radius;x<=radius;x++)
       {
-        gauss[x+(int)radius][y+(int)radius] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
+        gauss[x+(int)radius + (y+(int)radius)*width] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
       }
 
   for (y=0; y<gegl_buffer_get_height (dst); y++)
@@ -139,7 +141,7 @@ bilateral_filter (GeglBuffer *src,
                   gfloat gaussian_weight;
                   gfloat weight;
                  
-                  gaussian_weight = gauss[u+(int)radius][v+(int)radius];
+                  gaussian_weight = gauss[u+(int)radius+(v+(int)radius)*width];
 
                   weight = diff_map * gaussian_weight;
 

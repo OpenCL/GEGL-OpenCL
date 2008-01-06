@@ -21,8 +21,8 @@ struct GeneratedClass
 static void gegl_operation_remap_init (GeglOperationRemap *self);
 static void gegl_operation_remap_class_init (GeglOperationRemapClass *klass);
 GType remap_get_type (GTypeModule *module);
-const GeglModuleInfo * gegl_module_query (GTypeModule *module);
-gboolean gegl_module_register (GTypeModule *module);
+G_MODULE_EXPORT const GeglModuleInfo * gegl_module_query (GTypeModule *module);
+G_MODULE_EXPORT gboolean gegl_module_register (GTypeModule *module);
 static gpointer gegl_operation_remap_parent_class = ((void *)0);
 
 static void gegl_operation_remap_class_intern_init (gpointer klass) {
@@ -41,9 +41,9 @@ GType remap_get_type (GTypeModule *module) {
 
 static const GeglModuleInfo modinfo = {
   GEGL_MODULE_ABI_VERSION, "remap", "v0.0", "(c) 2006, released under the LGPL", "June 2006"};
-  const GeglModuleInfo *gegl_module_query (GTypeModule *module){ return &modinfo;}
+  G_MODULE_EXPORT const GeglModuleInfo *gegl_module_query (GTypeModule *module){ return &modinfo;}
   
-  gboolean gegl_module_register (GTypeModule *module){
+  G_MODULE_EXPORT gboolean gegl_module_register (GTypeModule *module){
     remap_get_type (module);
     return TRUE;
 }

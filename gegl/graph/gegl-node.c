@@ -1626,7 +1626,7 @@ gegl_node_get_consumers (GeglNode      *node,
 
   if (!node)
     {
-      g_warning ("%s node==NULL", __FUNCTION__);
+      g_warning ("%s node==NULL", G_STRFUNC);
       return 0;
     }
 
@@ -1634,7 +1634,7 @@ gegl_node_get_consumers (GeglNode      *node,
 
   if (!pad)
     {
-      g_warning ("%s: no such pad %s for %s", __FUNCTION__, output_pad, gegl_node_get_debug_name (node));
+      g_warning ("%s: no such pad %s for %s", G_STRFUNC, output_pad, gegl_node_get_debug_name (node));
       return 0;
     }
 

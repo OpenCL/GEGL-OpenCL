@@ -15,6 +15,8 @@
  *
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
+
 #define _GNU_SOURCE    /* for O_DIRECT */
 
 #include <fcntl.h>
@@ -23,17 +25,27 @@
 #define O_DIRECT    0
 #endif
 
-
-#include "config.h"
-
-
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <errno.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
+
+#ifdef G_OS_WIN32
+#include <io.h>
+#ifndef S_IRUSR
+#define S_IRUSR _S_IREAD
+#endif
+#ifndef S_IWUSR
+#define S_IWUSR _S_IWRITE
+#endif
+#define ftruncate(f,d) g_win32_ftruncate(f,d)
+#endif
+
 #include "gegl-tile-backend.h"
 #include "gegl-tile-disk.h"
 #include <string.h>

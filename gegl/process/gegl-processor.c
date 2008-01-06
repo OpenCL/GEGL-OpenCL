@@ -321,12 +321,14 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
 
           if (dr->height > dr->width)
             {
+              GeglRectangle *fragment;
+
               band_size = dr->height / 2;
 
               if (band_size < 1)
                 band_size = 1;
 
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->height = band_size;
@@ -338,12 +340,14 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
             }
           else
             {
+              GeglRectangle *fragment;
+
               band_size = dr->width / 2;
 
               if (band_size < 1)
                 band_size = 1;
 
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->width = band_size;
@@ -399,12 +403,14 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
 
           if (dr->height > dr->width)
             {
+              GeglRectangle *fragment;
+
               band_size = dr->height / 2;
 
               if (band_size < 1)
                 band_size = 1;
 
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->height = band_size;
@@ -416,12 +422,14 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
             }
           else
             {
+              GeglRectangle *fragment;
+
               band_size = dr->width / 2;
 
               if (band_size < 1)
                 band_size = 1;
 
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
+              fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->width = band_size;
@@ -508,15 +516,14 @@ static gdouble
 gegl_processor_progress (GeglProcessor *processor)
 {
   GeglRegion *valid_region;
+  gint valid;
+  gint wanted;
+  gdouble ret;
 
   if (processor->valid_region)
     valid_region = processor->valid_region;
   else
     valid_region = gegl_node_get_cache (processor->input)->valid_region;
-
-  gint valid;
-  gint wanted;
-  gdouble ret;
 
   wanted = rect_area (&(processor->rectangle));
   valid  = wanted - area_left (valid_region, &(processor->rectangle));
@@ -584,11 +591,11 @@ gegl_processor_render (GeglProcessor *processor,
     { /* we're asked to work on a specific rectangle thus we only focus
          on it */
       GeglRegion    *region = gegl_region_rectangle (rectangle);
-      gegl_region_subtract (region, valid_region);
       GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
 
+      gegl_region_subtract (region, valid_region);
       gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
 
       for (i = 0; i < n_rectangles && i < 1; i++)

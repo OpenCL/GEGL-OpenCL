@@ -126,8 +126,8 @@ struct GeneratedClass
 static void     gegl_chant_init              (GeglChantOperation *self); \
 static void     gegl_chant_class_init        (ChantClass    *klass); \
 static GType    type_name##_get_type         (GTypeModule *module); \
-const GeglModuleInfo * gegl_module_query     (GTypeModule *module);\
-gboolean        gegl_module_register         (GTypeModule *module);\
+G_MODULE_EXPORT const GeglModuleInfo * gegl_module_query     (GTypeModule *module);\
+G_MODULE_EXPORT gboolean        gegl_module_register         (GTypeModule *module);\
 static gpointer gegl_chant_parent_class = NULL; \
 \
 static void \
@@ -173,13 +173,13 @@ static const GeglModuleInfo modinfo =\
  "June 2006"\
 };\
 \
-const GeglModuleInfo *\
+G_MODULE_EXPORT const GeglModuleInfo *\
 gegl_module_query (GTypeModule *module)\
 {\
   return &modinfo;\
 }\
 \
-gboolean \
+G_MODULE_EXPORT gboolean \
 gegl_module_register (GTypeModule *module)\
 {\
   type_name##_get_type (module);\

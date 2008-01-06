@@ -15,12 +15,19 @@
  *
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
 
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+
+#ifdef G_OS_WIN32
+#include <io.h>
+#endif
 
 #include "../gegl-types.h"
 #include "gegl-buffer-types.h"

@@ -74,7 +74,7 @@ GType       gegl_rectangle_get_type     (void) G_GNUC_CONST;
 #define INT_MULT(a,b,t)  ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
 
 inline gint _gegl_float_epsilon_zero  (float     value);
-inline gint _gegl_float_epsilon_equal (float     v1,
+gint _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
 

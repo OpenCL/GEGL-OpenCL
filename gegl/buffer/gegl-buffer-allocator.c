@@ -15,13 +15,21 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
 
 #include <sys/types.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
+
+#ifdef G_OS_WIN32
+#include <process.h>
+#define getpid() _getpid()
+#endif
 
 #include "../gegl-types.h"
 #include "gegl-buffer-types.h"
@@ -138,10 +146,11 @@ gegl_buffer_new_from_format (const void *babl_format,
 
       if (gegl_swap != NULL)
         {
+	  GeglStorage *storage;
           gchar *path;
           path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap,
                                   getpid (), babl_name (babl_format));
-          GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
+          storage = g_object_new (GEGL_TYPE_STORAGE,
                                                "format", babl_format,
                                                "path", path,
                                                NULL);
