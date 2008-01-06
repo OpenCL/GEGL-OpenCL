@@ -16,19 +16,19 @@
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 
-#ifndef __TILE_TRAIT_H__
-#define __TILE_TRAIT_H__
+#ifndef __GEGL_HANDLER_H__
+#define __GEGL_HANDLER_H__
 
 #include "gegl-provider.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_TRAIT            (gegl_handler_get_type ())
-#define GEGL_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAIT, GeglHandler))
-#define GEGL_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAIT, GeglHandlerClass))
-#define GEGL_IS_TILE_TRAIT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_TRAIT))
-#define GEGL_IS_TILE_TRAIT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_TRAIT))
-#define GEGL_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAIT, GeglHandlerClass))
+#define GEGL_TYPE_HANDLER            (gegl_handler_get_type ())
+#define GEGL_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HANDLER, GeglHandler))
+#define GEGL_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HANDLER, GeglHandlerClass))
+#define GEGL_IS_HANDLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HANDLER))
+#define GEGL_IS_HANDLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HANDLER))
+#define GEGL_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLER, GeglHandlerClass))
 
 
 struct _GeglHandler

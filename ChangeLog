@@ -1,3 +1,17 @@
+2008-01-06  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/buffer/gegl-handler-cache.c
+	* gegl/buffer/gegl-handler-empty.c
+	* gegl/buffer/gegl-handler-log.c
+	* gegl/buffer/gegl-handler-zoom.c
+	* gegl/buffer/gegl-handler.c
+	* gegl/buffer/gegl-handler.h
+	* gegl/buffer/gegl-handlers.c
+	* gegl/buffer/gegl-provider.h
+	* gegl/buffer/gegl-tile-backend.c: some forgotten
+	s/TILE_STORE/PROVIDER/ and s/TILE_TRAIT/HANDLER/ plus some
+	cleanups.
+
 2008-01-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-eval-visitor.c: (visit_pad): added some comments.

@@ -22,8 +22,7 @@
 #include "gegl-handler.h"
 #include "gegl-handler-log.h"
 
-G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_TILE_TRAIT)
-static GObjectClass * parent_class = NULL;
+G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_HANDLER)
 
 static GeglTile *
 get_tile (GeglProvider *gegl_provider,
@@ -67,12 +66,10 @@ message (GeglProvider  *gegl_provider,
 static void
 gegl_handler_log_class_init (GeglHandlerLogClass *klass)
 {
-  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
+  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  gegl_provider_class->get_tile = get_tile;
-  gegl_provider_class->message  = message;
-
-  parent_class = g_type_class_peek_parent (klass);
+  provider_class->get_tile = get_tile;
+  provider_class->message  = message;
 }
 
 static void

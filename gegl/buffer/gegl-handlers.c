@@ -21,11 +21,9 @@
 #include "gegl-handlers.h"
 #include "gegl-handler-cache.h"
 
-G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_TILE_TRAIT)
-static GObjectClass * parent_class = NULL;
+G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_HANDLER)
 
-static void
-gegl_handlers_rebind (GeglHandlers *handlers);
+static void   gegl_handlers_rebind (GeglHandlers *handlers);
 
 static void
 gegl_handlers_nuke_cache (GeglHandlers *handlers)
@@ -73,14 +71,14 @@ dispose (GObject *object)
     g_slist_free (handlers->chain);
   handlers->chain = NULL;
 
-  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
+  G_OBJECT_CLASS (gegl_handlers_parent_class)->dispose (object);
 }
 
 
 static void
 finalize (GObject *object)
 {
-  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
+  G_OBJECT_CLASS (gegl_handlers_parent_class)->finalize (object);
 }
 
 static GeglTile *
@@ -136,7 +134,6 @@ gegl_handlers_class_init (GeglHandlersClass *class)
   tile_store_class->get_tile = get_tile;
   tile_store_class->message  = message;
 
-  parent_class            = g_type_class_peek_parent (class);
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;
 }

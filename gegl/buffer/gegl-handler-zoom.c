@@ -22,8 +22,8 @@
 #include "gegl-handler.h"
 #include "gegl-handler-zoom.h"
 
-G_DEFINE_TYPE (GeglHandlerZoom, gegl_handler_zoom, GEGL_TYPE_TILE_TRAIT)
-static GObjectClass * parent_class = NULL;
+G_DEFINE_TYPE (GeglHandlerZoom, gegl_handler_zoom, GEGL_TYPE_HANDLER)
+
 enum
 {
   PROP_0,
@@ -434,7 +434,8 @@ constructor (GType                  type,
   GObject      *object;
   GeglHandlerZoom *zoom;
 
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  object = G_OBJECT_CLASS (gegl_handler_zoom_parent_class)->constructor (type, n_params, params);
+
   zoom   = GEGL_HANDLER_ZOOM (object);
 
   return object;
@@ -444,21 +445,23 @@ constructor (GType                  type,
 static void
 gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
 {
-  GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
+  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  gegl_provider_class->get_tile = get_tile;
-  gegl_provider_class->message  = message;
-  gobject_class->set_property     = set_property;
-  gobject_class->get_property     = get_property;
-  gobject_class->constructor      = constructor;
+  gobject_class->constructor  = constructor;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  provider_class->get_tile = get_tile;
+  provider_class->message  = message;
 
   g_object_class_install_property (gobject_class, PROP_STORAGE,
                                    g_param_spec_object ("storage",
                                                         "storage",
                                                         "storage for this tilestore (needed for tile size data)",
                                                         G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+                                                        G_PARAM_WRITABLE |
+                                                        G_PARAM_CONSTRUCT_ONLY));
 
 
   g_object_class_install_property (gobject_class, PROP_BACKEND,
@@ -466,9 +469,8 @@ gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
                                                         "backend",
                                                         "backend for this tilestore (needed for tile size data)",
                                                         G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
-
-  parent_class = g_type_class_peek_parent (klass);
+                                                        G_PARAM_WRITABLE |
+                                                        G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void

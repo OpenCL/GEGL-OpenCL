@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_STORE            (gegl_provider_get_type ())
-#define GEGL_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORE, GeglProvider))
-#define GEGL_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_STORE, GeglProviderClass))
-#define GEGL_IS_TILE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_STORE))
-#define GEGL_IS_TILE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_STORE))
-#define GEGL_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_STORE, GeglProviderClass))
+#define GEGL_TYPE_PROVIDER            (gegl_provider_get_type ())
+#define GEGL_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROVIDER, GeglProvider))
+#define GEGL_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_PROVIDER, GeglProviderClass))
+#define GEGL_IS_PROVIDER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROVIDER))
+#define GEGL_IS_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PROVIDER))
+#define GEGL_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PROVIDER, GeglProviderClass))
 
 typedef gint GeglTileMessage;
 

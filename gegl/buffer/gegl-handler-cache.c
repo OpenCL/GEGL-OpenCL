@@ -32,24 +32,24 @@ static
 gboolean    gegl_handler_cache_wash (GeglHandlerCache *cache);
 
 static
-GeglTile *gegl_handler_cache_get_tile (GeglHandlerCache *cache,
-                                    gint           x,
-                                    gint           y,
-                                    gint           z);
+GeglTile *  gegl_handler_cache_get_tile (GeglHandlerCache *cache,
+                                         gint           x,
+                                         gint           y,
+                                         gint           z);
 
 static
 gboolean    gegl_handler_cache_has_tile (GeglHandlerCache *cache,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+                                         gint           x,
+                                         gint           y,
+                                         gint           z);
 static
 void        gegl_handler_cache_insert (GeglHandlerCache *cache,
-                                    GeglTile      *tile,
-                                    gint           x,
-                                    gint           y,
-                                    gint           z);
+                                       GeglTile      *tile,
+                                       gint           x,
+                                       gint           y,
+                                       gint           z);
 
-G_DEFINE_TYPE (GeglHandlerCache, gegl_handler_cache, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglHandlerCache, gegl_handler_cache, GEGL_TYPE_HANDLER)
 
 enum
 {
@@ -57,7 +57,6 @@ enum
   PROP_SIZE,
   PROP_WASH_PERCENTAGE
 };
-static GObjectClass *parent_class = NULL;
 
 typedef struct CacheItem
 {
@@ -70,8 +69,9 @@ typedef struct CacheItem
 static void
 finalize (GObject *object)
 {
-  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
+  G_OBJECT_CLASS (gegl_handler_cache_parent_class)->finalize(object);
 }
+
 static void
 dispose (GObject *object)
 {
@@ -93,7 +93,7 @@ dispose (GObject *object)
       g_free (item);
     }
 
-  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
+  G_OBJECT_CLASS (gegl_handler_cache_parent_class)->dispose (object);
 }
 
 static GeglTile *
@@ -218,30 +218,32 @@ set_property (GObject      *gobject,
 static void
 gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
 {
-  GObjectClass       *gobject_class    = G_OBJECT_CLASS (class);
-  GeglProviderClass *tile_store_class = GEGL_PROVIDER_CLASS (class);
+  GObjectClass      *gobject_class  = G_OBJECT_CLASS (class);
+  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (class);
 
-  parent_class                = g_type_class_peek_parent (class);
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->finalize     = finalize;
+  gobject_class->dispose      = dispose;
 
-  gobject_class->finalize = finalize;
-  gobject_class->dispose  = dispose;
+  provider_class->get_tile = get_tile;
+  provider_class->message  = message;
 
   g_object_class_install_property (gobject_class, PROP_SIZE,
-                                   g_param_spec_int ("size", "size", "Number of tiles in cache",
+                                   g_param_spec_int ("size",
+                                                     "size",
+                                                     "Number of tiles in cache",
                                                      0, G_MAXINT, 32,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_WASH_PERCENTAGE,
-                                   g_param_spec_int ("wash-percentage", "wash percentage", "(integer 0..100, percentage to wash)",
+                                   g_param_spec_int ("wash-percentage",
+                                                     "wash percentage",
+                                                     "(integer 0..100, percentage to wash)",
                                                      0, 100, 20,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
-
-
-  tile_store_class->get_tile = get_tile;
-  tile_store_class->message  = message;
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -299,10 +301,11 @@ gegl_handler_cache_wash (GeglHandlerCache *cache)
 /* returns the requested Tile * if it is in the cache NULL
  * otherwize.
  */
-GeglTile *gegl_handler_cache_get_tile (GeglHandlerCache *cache,
-                                    gint           x,
-                                    gint           y,
-                                    gint           z)
+GeglTile *
+gegl_handler_cache_get_tile (GeglHandlerCache *cache,
+                             gint           x,
+                             gint           y,
+                             gint           z)
 {
   GeglTile *tile = NULL;
 
@@ -354,9 +357,9 @@ GeglTile *gegl_handler_cache_get_tile (GeglHandlerCache *cache,
 
 gboolean
 gegl_handler_cache_has_tile (GeglHandlerCache *cache,
-                          gint           x,
-                          gint           y,
-                          gint           z)
+                             gint           x,
+                             gint           y,
+                             gint           z)
 {
   GeglTile *tile = gegl_handler_cache_get_tile (cache, x, y, z);
 
@@ -395,7 +398,10 @@ gegl_handler_cache_trim (GeglHandlerCache *cache)
 
 
 static gboolean
-gegl_handler_cache_void (GeglHandlerCache *cache, gint x, gint y, gint z)
+gegl_handler_cache_void (GeglHandlerCache *cache,
+                         gint x,
+                         gint y,
+                         gint z)
 {
   CacheItem *item = NULL;
 
@@ -452,10 +458,10 @@ gegl_handler_cache_void (GeglHandlerCache *cache, gint x, gint y, gint z)
 
 void
 gegl_handler_cache_insert (GeglHandlerCache *cache,
-                        GeglTile      *tile,
-                        gint           x,
-                        gint           y,
-                        gint           z)
+                           GeglTile      *tile,
+                           gint           x,
+                           gint           y,
+                           gint           z)
 {
   guint      count;
   CacheItem *item = g_malloc (sizeof (CacheItem));

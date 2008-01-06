@@ -23,7 +23,7 @@
 #include "gegl-provider.h"
 #include "gegl-tile-backend.h"
 
-G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_TILE_STORE)
+G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_PROVIDER)
 static GObjectClass * parent_class = NULL;
 
 enum

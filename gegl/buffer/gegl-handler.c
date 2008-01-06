@@ -24,8 +24,7 @@
 #include "gegl-handler.h"
 #include "gegl-handlers.h"
 
-G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_TILE_STORE)
-static GObjectClass * parent_class = NULL;
+G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_PROVIDER)
 
 enum
 {
@@ -44,7 +43,7 @@ dispose (GObject *object)
       handler->provider = NULL;
     }
 
-  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
+  G_OBJECT_CLASS (gegl_handler_parent_class)->dispose (object);
 }
 
 static GeglTile *
@@ -138,13 +137,15 @@ set_property (GObject      *gobject,
 static void
 gegl_handler_class_init (GeglHandlerClass *klass)
 {
-  GObjectClass       *gobject_class    = G_OBJECT_CLASS (klass);
-  GeglProviderClass *tile_store_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
+  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  parent_class                = g_type_class_peek_parent (klass);
   gobject_class->dispose      = dispose;
+
+  provider_class->get_tile = get_tile;
+  provider_class->message  = message;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("provider",
@@ -152,9 +153,6 @@ gegl_handler_class_init (GeglHandlerClass *klass)
                                                         "The tilestore to be a facade for",
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
-  tile_store_class->get_tile = get_tile;
-  tile_store_class->message  = message;
 }
 
 static void

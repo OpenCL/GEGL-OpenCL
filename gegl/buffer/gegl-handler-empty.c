@@ -22,8 +22,8 @@
 #include "gegl-handler.h"
 #include "gegl-handler-empty.h"
 
-G_DEFINE_TYPE (GeglHandlerEmpty, gegl_handler_empty, GEGL_TYPE_TILE_TRAIT)
-static GObjectClass * parent_class = NULL;
+G_DEFINE_TYPE (GeglHandlerEmpty, gegl_handler_empty, GEGL_TYPE_HANDLER)
+
 enum
 {
   PROP_0,
@@ -37,7 +37,8 @@ finalize (GObject *object)
 
   if (empty->tile)
     g_object_unref (empty->tile);
-  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
+
+  G_OBJECT_CLASS (gegl_handler_empty_parent_class)->finalize (object);
 }
 
 static GeglTile *
@@ -112,7 +113,8 @@ constructor (GType                  type,
   gint           tile_height;
   gint           tile_size;
 
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  object = G_OBJECT_CLASS (gegl_handler_empty_parent_class)->constructor (type, n_params, params);
+
   empty  = GEGL_HANDLER_EMPTY (object);
 
   g_assert (empty->backend);
@@ -131,23 +133,23 @@ constructor (GType                  type,
 static void
 gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 {
-  GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
+  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  gegl_provider_class->get_tile = get_tile;
-  gobject_class->set_property     = set_property;
-  gobject_class->get_property     = get_property;
-  gobject_class->constructor      = constructor;
+  gobject_class->constructor  = constructor;
+  gobject_class->finalize     = finalize;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  provider_class->get_tile = get_tile;
 
   g_object_class_install_property (gobject_class, PROP_BACKEND,
                                    g_param_spec_object ("backend",
                                                         "backend",
                                                         "backend for this tilestore (needed for tile size data)",
                                                         G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
-
-  gobject_class->finalize = finalize;
-  parent_class            = g_type_class_peek_parent (klass);
+                                                        G_PARAM_WRITABLE |
+                                                        G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
