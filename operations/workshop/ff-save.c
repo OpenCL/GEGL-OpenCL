@@ -16,7 +16,7 @@
  * Copyright 2003,2004,2007 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_string (path, "/tmp/fnord.mp4", "Target path and filename, use '-' for stdout.")
 gegl_chant_double (bitrate, 0.0, 100000000.0, 800000.0, "target bitrate")
 gegl_chant_double (fps, 0.0, 100.0, 25, "frames per second")
@@ -62,26 +62,18 @@ typedef struct
 
   void     *oxide_audio_instance;       /*< non NULL audio_query,. means audio present */
 
-     
-     
-     
-     
-    int32_t (*oxide_audio_query) (void *audio_instance,
-                                  uint32_t * sample_rate,
-                                  uint32_t * bits,
-                                  uint32_t * channels,
-                                  uint32_t * fragment_samples,
-                                  uint32_t * fragment_size);
+  int32_t (*oxide_audio_query) (void *audio_instance,
+                                uint32_t * sample_rate,
+                                uint32_t * bits,
+                                uint32_t * channels,
+                                uint32_t * fragment_samples,
+                                uint32_t * fragment_size);
 
   /* get audio samples for the current video frame, this should provide all audiosamples
    * associated with the frame, frame centering on audio stream is undefined (FIXME:<<)
    */
 
-     
-     
-     
-     
-    int32_t (*oxide_audio_get_fragment) (void *audio_instance, uint8_t * buf);
+  int32_t (*oxide_audio_get_fragment) (void *audio_instance, uint8_t * buf);
 
   uint32_t  sample_rate;
   uint32_t  bits;
@@ -98,7 +90,6 @@ typedef struct
                                    needed for the filewrite case, perhaps a tiny margin for ntsc since it has
                                    a strange framerate */
 
-
   int       audio_outbuf_size;
   int       audio_input_frame_size;
   int16_t  *samples;
@@ -106,7 +97,7 @@ typedef struct
 } Priv;
 
 #define DISABLE_AUDIO
-  
+
   static void
 init (GeglChantOperation *operation)
 {
@@ -181,7 +172,7 @@ finalize (GObject *object)
 
     {
       Priv *p = (Priv*)self->priv;
-      
+
     if (p->oc)
       {
         gint i;
@@ -208,15 +199,16 @@ finalize (GObject *object)
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         const GeglRectangle *result)
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
   Priv     *p = (Priv*)self->priv;
   GeglBuffer         *input;
-  GeglRectangle      *result  = gegl_operation_result_rect (operation, context_id);
   static              gint inited = 0;
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  input = gegl_node_context_get_source (context, "input");
   g_assert (input);
 
   p->width = result->width;
@@ -593,7 +585,7 @@ add_video_stream (GeglChantOperation *op, AVFormatContext * oc, int codec_id)
     }
 /*    if (!strcmp (oc->oformat->name, "mp4") ||
           !strcmp (oc->oformat->name, "3gp"))
-  	c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+    c->flags |= CODEC_FLAG_GLOBAL_HEADER;
     */
   return st;
 }
@@ -697,8 +689,8 @@ fill_yuv_image (GeglChantOperation *op,
                 AVFrame * pict, int frame_index, int width, int height)
 {
   Priv     *p = (Priv*)op->priv;
-  /*memcpy (pict->data[0], 
-   
+  /*memcpy (pict->data[0],
+
    op->input_pad[0]->data,
 
           op->input_pad[0]->width * op->input_pad[0]->height * 3);*/
@@ -723,9 +715,10 @@ write_video_frame (GeglChantOperation *op,
          to the codec pixel format if needed */
       fill_yuv_image (op, p->tmp_picture, p->frame_count, c->width,
                       c->height);
+      /* FIXME: img_convert is deprecated. Update code to use sws_scale(). */
       img_convert ((AVPicture *) p->picture, c->pix_fmt,
-                   (AVPicture *) p->tmp_picture, PIX_FMT_RGB24, c->width,
-                   c->height);
+                   (AVPicture *) p->tmp_picture, PIX_FMT_RGB24,
+                   c->width, c->height);
     }
   else
     {

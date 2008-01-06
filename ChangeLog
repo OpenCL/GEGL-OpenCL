@@ -1,3 +1,9 @@
+2008-01-06  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/ff-save.c (process): Updated due to changes in
+	API. Added FIXME as a reminder to replace the deprecated img_convert()
+	with sws_scale().
+
 2008-01-06  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/buffer/gegl-handler-cache.c
