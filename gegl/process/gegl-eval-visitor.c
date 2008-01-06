@@ -57,6 +57,7 @@ gegl_eval_visitor_init (GeglEvalVisitor *self)
 
 extern long babl_total_usecs;
 
+/* this is the visitor that does the real computations for GEGL */
 static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
@@ -70,14 +71,21 @@ visit_pad (GeglVisitor *self,
 
   if (gegl_pad_is_output (pad))
     {
+      /* processing only really happens for output pads */
       if (context->cached)
-        {
+        { /* unless we've got a cache valid for the requested region 
+           * that has not been invalidated, (the validity of the cache
+           * is determined by other visitors)
+           */
           gegl_node_context_get_target (context, pad->name);
+          /* XXX: why is the _get_target call needed anyways? */
         }
       else
         {
           glong time      = gegl_ticks ();
           glong babl_time = babl_total_usecs;
+
+          /* Make the operation do it's actual processing */
           gegl_operation_process (operation, context, gegl_pad_get_name (pad),
                                   &context->result_rect);
           babl_time = babl_total_usecs - babl_time;
@@ -86,8 +94,11 @@ visit_pad (GeglVisitor *self,
           gegl_instrument ("process", gegl_node_get_operation (node), time);
           gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
 
-          if (node->cache) 
-            { 
+          if (node->cache)
+            {
+              /* if we've got a cache, notify the cache that parts
+               * of it has been computed
+               */
               gegl_cache_computed (node->cache, &context->result_rect);
             }
         }
@@ -96,6 +107,9 @@ visit_pad (GeglVisitor *self,
     {
       GeglPad *source_pad = gegl_pad_get_internal_connected_to (pad);
 
+      /* the work needed to be done on input pads is to set the
+       * data from the corresponding output pad it is connected to
+       */
       if (source_pad)
         {
           GValue           value          = { 0 };
