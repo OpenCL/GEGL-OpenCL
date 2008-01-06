@@ -16,6 +16,8 @@
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
