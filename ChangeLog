@@ -1,3 +1,7 @@
+2008-01-08  Michael Natterer  <mitch@gimp.org>
+
+	* operations/core/shift.c: more cleanup.
+
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: added Hans Breuer

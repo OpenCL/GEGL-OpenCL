@@ -57,15 +57,14 @@ GType gegl_operation_shift_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
 
-#endif
+#endif /* __GEGL_OPERATION_SHIFT_H__ */
 
 /***************************************************************************/
 
 #include "graph/gegl-pad.h"
 #include "graph/gegl-node.h"
-#include "buffer/gegl-buffer.h"
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 
 enum
@@ -94,7 +93,7 @@ static void            attach                  (GeglOperation       *operation);
 static GeglNode      * detect                  (GeglOperation       *operation,
                                                 gint                 x,
                                                 gint                 y);
-static GeglRectangle   get_defined_region      (GeglOperation       *self);
+static GeglRectangle   get_defined_region      (GeglOperation       *operation);
 static GeglRectangle   compute_input_request   (GeglOperation       *operation,
                                                 const gchar         *input_pad,
                                                 const GeglRectangle *roi);
@@ -172,10 +171,9 @@ gegl_operation_shift_init (GeglOperationShift *self)
 }
 
 static void
-attach (GeglOperation *self)
+attach (GeglOperation *operation)
 {
-  GeglOperation *operation    = GEGL_OPERATION (self);
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
+  GObjectClass *object_class = G_OBJECT_GET_CLASS (operation);
 
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
@@ -191,8 +189,8 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglNode *input_node;
   GeglOperationShift *self = GEGL_OPERATION_SHIFT (operation);
+  GeglNode           *input_node;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
@@ -200,11 +198,9 @@ detect (GeglOperation *operation,
     return gegl_operation_detect (input_node->operation,
                                   x - floor (self->x),
                                   y - floor (self->y));
+
   return operation->node;
 }
-
-
-void babl_backtrack (void);
 
 static void
 get_property (GObject    *object,
@@ -256,9 +252,9 @@ set_property (GObject      *object,
 
 
 static gboolean
-process (GeglOperation   *operation,
-         GeglNodeContext *context,
-         const gchar     *output_prop,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         const gchar         *output_prop,
          const GeglRectangle *result)
 {
   GeglOperationShift *shift   = GEGL_OPERATION_SHIFT (operation);
@@ -291,8 +287,9 @@ process (GeglOperation   *operation,
 
       gegl_node_context_set_object (context, "output", G_OBJECT (output));
 
-      success = TRUE;
       g_object_unref (input);
+
+      success = TRUE;
     }
   else
     {
