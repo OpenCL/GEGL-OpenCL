@@ -536,12 +536,34 @@ gegl_operation_detect (GeglOperation *operation,
 void
 gegl_operation_set_format (GeglOperation *self,
                            const gchar   *pad_name,
-                           Babl          *format)
+                           const Babl    *format)
 {
-  GeglPad       *pad;
+  GeglPad *pad;
+
+  g_return_if_fail (GEGL_IS_OPERATION (self));
+  g_return_if_fail (pad_name != NULL);
 
   pad = gegl_node_get_pad (self->node, pad_name);
+
+  g_return_if_fail (pad != NULL);
+
   pad->format = format;
+}
+
+const Babl *
+gegl_operation_get_format (GeglOperation *self,
+                           const gchar   *pad_name)
+{
+  GeglPad *pad;
+
+  g_return_val_if_fail (GEGL_IS_OPERATION (self), NULL);
+  g_return_val_if_fail (pad_name != NULL, NULL);
+
+  pad = gegl_node_get_pad (self->node, pad_name);
+
+  g_return_val_if_fail (pad != NULL, NULL);
+
+  return pad->format;
 }
 
 void

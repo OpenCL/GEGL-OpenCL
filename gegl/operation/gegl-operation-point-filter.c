@@ -56,12 +56,12 @@ process_inner (GeglOperation       *operation,
                GeglBuffer          *output,
                const GeglRectangle *result)
 {
-  GeglPad             *pad;
-  Babl                *in_format;
-  Babl                *out_format;
+  GeglPad    *pad;
+  const Babl *in_format;
+  const Babl *out_format;
 
   pad       = gegl_node_get_pad (operation->node, "input");
-  in_format = pad->format;
+  in_format = gegl_pad_get_format (pad);
   if (!in_format)
     {
       g_warning ("%s", gegl_node_get_debug_name (operation->node));
@@ -69,7 +69,7 @@ process_inner (GeglOperation       *operation,
   g_assert (in_format);
 
   pad        = gegl_node_get_pad (operation->node, "output");
-  out_format = pad->format;
+  out_format = gegl_pad_get_format (pad);
   if (!out_format)
     {
       g_warning ("%s", gegl_node_get_debug_name (operation->node));

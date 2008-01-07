@@ -1,3 +1,22 @@
+2008-01-07  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/graph/gegl-pad.[ch] (struct GeglPad): changed member "format"
+	from "gpointer" to "const Babl*".
+
+	(gegl_pad_get_format)
+	(gegl_pad_set_format): changed gpointer to const Babl* too.
+
+	* gegl/operation/gegl-operation.[ch] (gegl_operation_set_format):
+	constified Babl* parameter.
+
+	(gegl_operation_get_format): new function.
+
+	* gegl/graph/gegl-node.c
+	* gegl/graph/gegl-node-context.c
+	* gegl/operation/gegl-operation-point-filter.c
+	* gegl/operation/gegl-operation-point-composer.c: changed
+	accordingly (constified Babl*).
+
 2008-01-06  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl-init.c: Made variable module_db global to file. Unref it

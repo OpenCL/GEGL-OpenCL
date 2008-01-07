@@ -57,11 +57,11 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 }
 
 static gboolean
-fast_paths (GeglOperation *operation,
-            GeglNodeContext *context,
-            Babl          *in_format,
-            Babl          *aux_format,
-            Babl          *out_format,
+fast_paths (GeglOperation       *operation,
+            GeglNodeContext     *context,
+            const Babl          *in_format,
+            const Babl          *aux_format,
+            const Babl          *out_format,
             const GeglRectangle *result);
 
 static gboolean
@@ -72,21 +72,21 @@ process_inner (GeglOperation       *operation,
                GeglBuffer          *output,
                const GeglRectangle *result)
 {
-  GeglPad             *pad;
-  Babl                *in_format;
-  Babl                *aux_format;
-  Babl                *out_format;
+  GeglPad    *pad;
+  const Babl *in_format;
+  const Babl *aux_format;
+  const Babl *out_format;
 
   pad       = gegl_node_get_pad (operation->node, "input");
-  in_format = pad->format;
+  in_format = gegl_pad_get_format (pad);
   if (!in_format)
     {
       g_warning ("%s", gegl_node_get_debug_name (operation->node));
     }
   g_assert (in_format);
 
-  pad       = gegl_node_get_pad (operation->node, "aux");
-  aux_format = pad->format;
+  pad        = gegl_node_get_pad (operation->node, "aux");
+  aux_format = gegl_pad_get_format (pad);
   if (!aux_format)
     {
       g_warning ("%s", gegl_node_get_debug_name (operation->node));
@@ -94,7 +94,7 @@ process_inner (GeglOperation       *operation,
   g_assert (aux_format);
 
   pad        = gegl_node_get_pad (operation->node, "output");
-  out_format = pad->format;
+  out_format = gegl_pad_get_format (pad);
   if (!out_format)
     {
       g_warning ("%s", gegl_node_get_debug_name (operation->node));
@@ -165,11 +165,11 @@ process_inner (GeglOperation       *operation,
 
 
 static gboolean
-fast_paths (GeglOperation *operation,
-            GeglNodeContext *context,
-            Babl          *in_format,
-            Babl          *aux_format,
-            Babl          *out_format,
+fast_paths (GeglOperation       *operation,
+            GeglNodeContext     *context,
+            const Babl          *in_format,
+            const Babl          *aux_format,
+            const Babl          *out_format,
             const GeglRectangle *result)
 {
   GeglBuffer  *input = gegl_node_context_get_source (context, "input");

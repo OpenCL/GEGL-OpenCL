@@ -1700,14 +1700,16 @@ static void computed_event (GeglCache *self,
 GeglCache *
 gegl_node_get_cache (GeglNode *node)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
   if (!node->cache)
     {
-      GeglPad *pad;
-      Babl *format;
+      GeglPad    *pad;
+      const Babl *format;
 
       pad = gegl_node_get_pad (node, "output");
       g_assert (pad);
-      format = pad->format;
+      format = gegl_pad_get_format (pad);
       if (!format)
         {
           format = babl_format ("RGBA float");

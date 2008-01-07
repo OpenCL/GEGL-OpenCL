@@ -322,13 +322,18 @@ visitable_needs_visiting (GeglVisitable *visitable)
 }
 
 void
-gegl_pad_set_format (GeglPad  *self,
-                     gpointer  format)
+gegl_pad_set_format (GeglPad    *self,
+                     const Babl *format)
 {
-  self->format=format;
+  g_return_if_fail (GEGL_IS_PAD (self));
+
+  self->format = format;
 }
 
-gpointer gegl_pad_get_format (GeglPad *self)
+const Babl *
+gegl_pad_get_format (GeglPad *self)
 {
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
+
   return self->format;
 }

@@ -313,15 +313,17 @@ gegl_node_context_get_target (GeglNodeContext *context,
   GeglBuffer          *output;
   GeglPad             *pad;
   const GeglRectangle *result;
-  Babl                *format;
+  const Babl          *format;
   GeglNode            *node;
   GeglOperation       *operation;
 
+  g_return_val_if_fail (GEGL_IS_NODE_CONTEXT (context), NULL);
+
   node = context->node;
   operation = node->operation;
- 
+
   pad = gegl_node_get_pad (node, padname);
-  format = pad->format;
+  format = gegl_pad_get_format (pad);
 
   if (format == NULL)
     {
@@ -330,7 +332,6 @@ gegl_node_context_get_target (GeglNodeContext *context,
     }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));
-  g_assert (context);
 
   result = &context->result_rect;
 
