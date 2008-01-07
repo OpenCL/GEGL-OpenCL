@@ -1,3 +1,8 @@
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/shift.c: turned into a non chanted operation that
+	derives directly from GeglOperation instead of GeglOperationFilter.
+
 2008-01-07  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/graph/gegl-pad.[ch] (struct GeglPad): changed member "format"
