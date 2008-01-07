@@ -78,7 +78,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         "Ouput pad for generated image buffer.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
-                                                        GEGL_PAD_OUTPUT));
+                                                        GEGL_PARAM_PAD_OUTPUT));
 
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
@@ -86,7 +86,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PARAM_PAD_INPUT));
 
   g_object_class_install_property (object_class, PROP_AUX,
                                    g_param_spec_object ("aux",
@@ -94,7 +94,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         "Auxiliary image buffer input pad.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PARAM_PAD_INPUT));
 }
 
 static void

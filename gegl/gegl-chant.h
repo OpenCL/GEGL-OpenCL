@@ -630,7 +630,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                      (GParamFlags) (\
                                                      G_PARAM_READWRITE |\
                                                      G_PARAM_CONSTRUCT |\
-                                                     GEGL_PAD_INPUT)));
+                                                     GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_double(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_double (#name, #name, blurb,\
@@ -638,7 +638,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                         (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT)));
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_boolean(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_boolean (#name, #name, blurb,\
@@ -646,7 +646,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                          (GParamFlags) (\
                                                          G_PARAM_READWRITE |\
                                                          G_PARAM_CONSTRUCT |\
-                                                         GEGL_PAD_INPUT)));
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_string(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_string (#name, #name, blurb,\
@@ -654,7 +654,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                         (GParamFlags) ( \
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT)));
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_path(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_path (#name, #name, blurb,\
@@ -663,7 +663,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                          (GParamFlags) ( \
                                                          G_PARAM_READWRITE |\
                                                          G_PARAM_CONSTRUCT |\
-                                                         GEGL_PAD_INPUT)));
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_multiline(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_multiline (#name, #name, blurb,\
@@ -671,7 +671,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                          (GParamFlags) ( \
                                                          G_PARAM_READWRITE |\
                                                          G_PARAM_CONSTRUCT |\
-                                                         GEGL_PAD_INPUT)));
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_object(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_object (#name, #name, blurb,\
@@ -679,14 +679,14 @@ gegl_chant_class_init (ChantClass * klass)
                                                         (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT)));
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_pointer(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_pointer (#name, #name, blurb,\
                                                         (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT)));
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_color(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_color_from_string (#name, #name, blurb,\
@@ -694,15 +694,15 @@ gegl_chant_class_init (ChantClass * klass)
                                                           (GParamFlags) (\
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PAD_INPUT)));
+                                                          GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_curve(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_curve (#name, #name, blurb,\
-							  gegl_curve_default_curve(),\
+                                                          gegl_curve_default_curve(),\
                                                           (GParamFlags) (\
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PAD_INPUT)));
+                                                          GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_vector(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_vector (#name, #name, blurb,\
@@ -710,7 +710,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                           (GParamFlags) (\
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PAD_INPUT)));
+                                                          GEGL_PARAM_PAD_INPUT)));
 #include GEGL_CHANT_SELF
 
 #undef gegl_chant_int

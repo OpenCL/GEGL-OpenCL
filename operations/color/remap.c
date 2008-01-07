@@ -281,8 +281,8 @@ gegl_operation_remap_class_init (GeglOperationRemapClass * klass)
 
   operation_class->categories = "programming:hidden";
 
-g_object_class_install_property (object_class, PROP_low, g_param_spec_object ("low", "low", "low buffer", G_TYPE_OBJECT, (GParamFlags) ( G_PARAM_READWRITE | GEGL_PAD_INPUT)));
-g_object_class_install_property (object_class, PROP_high, g_param_spec_object ("high", "high", "high buffer", G_TYPE_OBJECT, (GParamFlags) ( G_PARAM_READWRITE | GEGL_PAD_INPUT)));
+g_object_class_install_property (object_class, PROP_low, g_param_spec_object ("low", "low", "low buffer", G_TYPE_OBJECT, (GParamFlags) ( G_PARAM_READWRITE | GEGL_PARAM_PAD_INPUT)));
+g_object_class_install_property (object_class, PROP_high, g_param_spec_object ("high", "high", "high buffer", G_TYPE_OBJECT, (GParamFlags) ( G_PARAM_READWRITE | GEGL_PARAM_PAD_INPUT)));
 
 
 }

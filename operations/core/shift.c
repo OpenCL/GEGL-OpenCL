@@ -129,7 +129,7 @@ gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
                                                         "Ouput pad for generated image buffer.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
-                                                        GEGL_PAD_OUTPUT));
+                                                        GEGL_PARAM_PAD_OUTPUT));
 
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
@@ -137,7 +137,7 @@ gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PARAM_PAD_INPUT));
 
   g_object_class_install_property (object_class, PROP_X,
                                    g_param_spec_float ("x",

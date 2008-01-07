@@ -1,3 +1,19 @@
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	%s/GEGL_PAD_OUTPUT/GEGL_PARAM_PAD_OUTPUT/
+	%s/GEGL_PAD_INPUT/GEGL_PARAM_PAD_INPUT/
+
+	* gegl/gegl-chant.h:
+	* gegl/graph/gegl-pad.c:
+	* gegl/graph/gegl-pad.h:
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.c:
+	* operations/affine/chant.h:
+	* operations/color/remap.c:
+	* operations/core/shift.c:
+
 2008-01-08  Michael Natterer  <mitch@gimp.org>
 
 	* operations/core/shift.c: more cleanup.

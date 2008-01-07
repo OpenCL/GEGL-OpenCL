@@ -73,7 +73,7 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PARAM_PAD_INPUT));
 }
 
 static void

@@ -75,7 +75,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
                                                         "Ouput pad for generated image buffer.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
-                                                        GEGL_PAD_OUTPUT));
+                                                        GEGL_PARAM_PAD_OUTPUT));
 }
 
 static void

@@ -291,13 +291,13 @@ gegl_pad_set_node (GeglPad  *self,
 gboolean
 gegl_pad_is_output (GeglPad *self)
 {
-  return GEGL_PAD_OUTPUT & self->param_spec->flags;
+  return GEGL_PARAM_PAD_OUTPUT & self->param_spec->flags;
 }
 
 gboolean
 gegl_pad_is_input (GeglPad *self)
 {
-  return GEGL_PAD_INPUT & self->param_spec->flags;
+  return GEGL_PARAM_PAD_INPUT & self->param_spec->flags;
 }
 
 static void
