@@ -141,10 +141,10 @@ process (GeglOperation       *operation,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
+  GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
   GeglBuffer                 *input;
   GeglBuffer                 *aux;
-
-  GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
+  GeglBuffer                 *output;
   gboolean                    success = FALSE;
 
   if (strcmp (output_prop, "output"))
@@ -155,6 +155,7 @@ process (GeglOperation       *operation,
 
   input = gegl_node_context_get_source (context, "input");
   aux   = gegl_node_context_get_source (context, "aux");
+  output = gegl_node_context_get_target (context, "output");
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
@@ -162,7 +163,11 @@ process (GeglOperation       *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, context, result);
+      success = klass->process (operation, context, input, aux, output, result);
+      if (input)
+        g_object_unref (input);
+      if (aux)
+        g_object_unref (aux);
     }
   else
     {

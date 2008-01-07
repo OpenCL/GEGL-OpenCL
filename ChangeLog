@@ -11,7 +11,7 @@
 	read from/written to as arguments of the process functions in the base
 	classes for the common operation types.
 
-	The rest of the files modified were modifications to update to never
+	The rest of the files modified were modifications to update to newer
 	API.
 	* gegl/gegl-chant.h:
 	* gegl/operation/gegl-operation-point-composer.c:

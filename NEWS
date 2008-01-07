@@ -5,6 +5,18 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots. 
 
+Changes in GEGL 0.0.16
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Build and dist fixes, general sanity improvements.
+ • constification of GeglRectangles and babl formats.
+ • Added rowstride argument to gegl_buffer_set ()
+ • Made it possible for sink operations to do their processing chunk by chunk
+   when processed using a GeglProcessor.
+
+Contributions from:
+  Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann, 
+  Manish Singh, Michael Natterer.
+
 Changes in GEGL 0.0.14
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Relicensed under LGPLv3+.

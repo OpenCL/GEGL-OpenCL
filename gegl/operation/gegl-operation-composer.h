@@ -45,6 +45,9 @@ struct _GeglOperationComposerClass
 
   gboolean (* process) (GeglOperation       *self,
                         GeglNodeContext     *context,
+                        GeglBuffer          *input,
+                        GeglBuffer          *aux,
+                        GeglBuffer          *output,
                         const GeglRectangle *result);
 };
 
