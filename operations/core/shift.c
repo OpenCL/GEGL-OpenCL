@@ -192,11 +192,14 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode *input_node;
+  GeglOperationShift *self = GEGL_OPERATION_SHIFT (operation);
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
-    return gegl_operation_detect (input_node->operation, x, y);
+    return gegl_operation_detect (input_node->operation,
+                                  x - floor (self->x),
+                                  y - floor (self->y));
   return operation->node;
 }
 
