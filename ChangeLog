@@ -1,5 +1,12 @@
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/shift.c: (gegl_operation_shift_class_init): set
+	categories.
+	* operations/core/nop.c: turned into a non chanted operation that
+	derives directly from GeglOperation instead of GeglOperationFilter.
+
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/GEGL_PAD_OUTPUT/GEGL_PARAM_PAD_OUTPUT/
 	%s/GEGL_PAD_INPUT/GEGL_PARAM_PAD_INPUT/
 

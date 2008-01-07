@@ -113,6 +113,7 @@ gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
   object_class->set_property             = set_property;
   object_class->get_property             = get_property;
 
+  operation_class->categories            = "core";
   operation_class->no_cache              = TRUE;
   operation_class->process               = process;
   operation_class->attach                = attach;
