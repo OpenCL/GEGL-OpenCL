@@ -83,17 +83,13 @@ buffer_get_min_max (GeglBuffer *buffer,
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglBuffer          *input;
-  GeglBuffer          *output;
   gdouble              min, max;
 
-  input = gegl_node_context_get_source (context, "input");
-
   buffer_get_min_max (input, &min, &max);
-
-  output = gegl_node_context_get_target (context, "output");
   {
     gint row;
     guchar *buf;

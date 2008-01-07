@@ -48,12 +48,12 @@ gint query_png (const gchar *path,
                 gpointer    *format);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer   *output = NULL;
   gint          problem;
   gpointer      format;
   gint width, height;
@@ -67,8 +67,6 @@ process (GeglOperation *operation,
       return FALSE;
     }
 
-  gegl_operation_set_format (operation, "output", format);
-  output = gegl_node_context_get_target (context, "output");
 
   problem = gegl_buffer_import_png (output, self->path, 0, 0,
                                     &width, &height, format);
@@ -102,6 +100,7 @@ get_defined_region (GeglOperation *operation)
           height=10;
         }
     }
+  gegl_operation_set_format (operation, "output", format);
   result.width  = width;
   result.height  = height;
   return result;

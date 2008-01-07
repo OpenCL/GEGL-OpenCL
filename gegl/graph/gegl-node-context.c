@@ -263,6 +263,10 @@ gegl_node_context_set_object (GeglNodeContext *context,
   GParamSpec    *pspec;
   GValue         value = {0,};
 
+  /* FIXME: check that there isn't already an existing 
+   *        output object/value set?
+   */
+
   node = context->node;
   operation = node->operation;
   pspec = gegl_node_find_property (node, padname);
@@ -319,6 +323,11 @@ gegl_node_context_get_target (GeglNodeContext *context,
   pad = gegl_node_get_pad (node, padname);
   format = pad->format;
 
+  if (format == NULL)
+    {
+      g_warning ("no format for %s\n", gegl_node_get_debug_name (node));
+      return NULL;
+    }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));
   g_assert (context);
@@ -364,10 +373,6 @@ gegl_node_context_get_source (GeglNodeContext *context,
   real_input = GEGL_BUFFER (gegl_node_context_get_object (context, padname));
   if (!real_input)
     return NULL;
-
   input = gegl_buffer_create_sub_buffer (real_input, &input_request);
-
   return input;
 }
-
-

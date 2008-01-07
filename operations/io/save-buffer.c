@@ -28,21 +28,19 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self;
-  GeglBuffer          *input;
 
   self = GEGL_CHANT_OPERATION (operation);
 
   if (self->buffer)
     {
       GeglBuffer **output = self->buffer;
-      input = gegl_node_context_get_source (context, "input");
-  
-      g_assert (input);
+
       *output = gegl_buffer_create_sub_buffer (input, result);
     }
   return TRUE;

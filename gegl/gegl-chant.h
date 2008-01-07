@@ -420,10 +420,40 @@ static gboolean process (GeglOperation *operation,
                          void          *out_buf,
                          glong          samples);
 #else
+#ifdef GEGL_CHANT_SINK
+static gboolean process (GeglOperation       *operation,
+                         GeglNodeContext     *context,
+                         GeglBuffer          *input,
+                         const GeglRectangle *result);
+#else
+#ifdef GEGL_CHANT_SOURCE
+static gboolean process (GeglOperation       *operation,
+                         GeglNodeContext     *context,
+                         GeglBuffer          *output,
+                         const GeglRectangle *result);
+#else
+#ifdef GEGL_CHANT_FILTER
+static gboolean process (GeglOperation       *operation,
+                         GeglNodeContext     *context,
+                         GeglBuffer          *input,
+                         GeglBuffer          *output,
+                         const GeglRectangle *result);
+#else
+#ifdef GEGL_CHANT_AREA_FILTER
+static gboolean process (GeglOperation       *operation,
+                         GeglNodeContext     *context,
+                         GeglBuffer          *input,
+                         GeglBuffer          *output,
+                         const GeglRectangle *result);
+#else
 #ifndef GEGL_CHANT_META
 static gboolean process (GeglOperation       *operation,
                          GeglNodeContext     *context,
                          const GeglRectangle *result);
+#endif
+#endif
+#endif
+#endif
 #endif
 #endif
 #endif

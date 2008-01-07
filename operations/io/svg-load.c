@@ -63,12 +63,12 @@ gint query_svg (const gchar *path,
                 gint        *height);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result_foo)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output = NULL;
   gint                 result;
 
   {
@@ -87,6 +87,9 @@ process (GeglOperation *operation,
 
         {
           GeglRectangle extent={0,0,width,height};
+          /* FIXME: the format should be set on the pad prior to the actual
+           * load
+           */
           output = gegl_buffer_new (&extent, babl_format ("R'G'B'A u8"));
         }
 

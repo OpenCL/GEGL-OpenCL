@@ -91,6 +91,8 @@ set_property (GObject *gobject,
 }
 static gboolean process (GeglOperation *operation,
                          GeglNodeContext *context,
+                         GeglBuffer      *foo,
+                         GeglBuffer      *bar,
                          const GeglRectangle *result);
 
 static void
@@ -126,9 +128,12 @@ gegl_operation_remap_constructor (GType type,
   return obj;
 }
 
+/* FIXME: this op is broken */
 static gboolean
 process (GeglOperation *operation,
          GeglNodeContext *context,
+         GeglBuffer      *foo,
+         GeglBuffer      *bar,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;

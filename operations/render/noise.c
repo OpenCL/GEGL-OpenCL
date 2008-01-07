@@ -39,17 +39,15 @@ gegl_chant_double (n,     0, 20.0, 3.0, "")
 #include "perlin/perlin.h"
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output = NULL;
-
   {
     gfloat              *buf;
 
-    output = gegl_node_context_get_target (context, "output");
     buf = g_malloc (result->width * result->height * 4);
       {
         gfloat *dst=buf;

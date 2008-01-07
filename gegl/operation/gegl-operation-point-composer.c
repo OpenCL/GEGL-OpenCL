@@ -21,8 +21,11 @@
 #include "graph/gegl-pad.h"
 #include <string.h>
 
-static gboolean process_inner (GeglOperation *operation,
-                               GeglNodeContext *context,
+static gboolean process_inner (GeglOperation       *operation,
+                               GeglNodeContext     *context,
+                               GeglBuffer          *input,
+                               GeglBuffer          *aux,
+                               GeglBuffer          *output,
                                const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
@@ -64,11 +67,11 @@ fast_paths (GeglOperation *operation,
 static gboolean
 process_inner (GeglOperation       *operation,
                GeglNodeContext     *context,
+               GeglBuffer          *input,
+               GeglBuffer          *aux,
+               GeglBuffer          *output,
                const GeglRectangle *result)
 {
-  GeglBuffer          *input = gegl_node_context_get_source (context, "input");
-  GeglBuffer          *aux   = gegl_node_context_get_source (context, "aux");
-  GeglBuffer          *output;
   GeglPad             *pad;
   Babl                *in_format;
   Babl                *aux_format;
@@ -104,15 +107,17 @@ process_inner (GeglOperation       *operation,
    * good idea. NB! some of the OpenRaster meta ops, depends on the
    * short-circuiting happening in fast_paths.
    * */
-  if (fast_paths (operation, context,
-                  in_format,
-                  aux_format,
-                  out_format,
-                  result))
+  if (0 && fast_paths (operation, context,
+                       in_format,
+                       aux_format,
+                       out_format,
+                       result))
     return TRUE;
 
+#if 0
   /* retrieve the buffer we're writing to from GEGL */
   output = gegl_node_context_get_target (context, "output");
+#endif
 
   if ((result->width > 0) && (result->height > 0))
     {

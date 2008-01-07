@@ -602,20 +602,18 @@ query_exr (const gchar *path,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer *output;
-
   {
     gint w,h,ff;
     gpointer format;
     gboolean ok;
 
     ok = query_exr (self->path, &w, &h, &ff, &format);
-    output = gegl_node_context_get_target (context, "output");
 
     if (ok)
       {

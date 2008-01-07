@@ -117,6 +117,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
+  GeglBuffer               *output;
   gboolean                  success;
 
   if (strcmp (output_prop, "output"))
@@ -126,7 +127,8 @@ process (GeglOperation       *operation,
     }
 
   g_assert (klass->process);
-  success = klass->process (operation, context, result);
+  output = gegl_node_context_get_target (context, "output");
+  success = klass->process (operation, context, output, result);
 
   return success;
 }

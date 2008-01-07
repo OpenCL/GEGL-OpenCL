@@ -43,8 +43,9 @@ dispose (GObject *object)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
@@ -53,6 +54,8 @@ process (GeglOperation *operation,
       g_object_ref (self->buffer); /* Add an extra reference, since gegl_operation_set_data
                                       is stealing one.
                                     */
+
+      /* override core behaviour, by resetting the buffer in the node_context */
       gegl_node_context_set_object (context, "output", G_OBJECT (self->buffer));
     }
   return TRUE;

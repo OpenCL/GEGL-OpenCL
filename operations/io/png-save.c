@@ -36,22 +36,19 @@ gegl_chant_int	  (compression, 1, 9, 1, "PNG compression level from 1 to 9")
 gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
-			gint	     compression,
+                        gint         compression,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
                         gint         height);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self   = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *input;
-
-  input = gegl_node_context_get_source (context, "input");
-  g_assert (input);
 
   gegl_buffer_export_png (input, self->path, self->compression,
                           result->x, result->y,

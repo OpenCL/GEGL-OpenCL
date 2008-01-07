@@ -149,32 +149,29 @@ static void text_layout_text (GeglChantOperation *self,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output = NULL;
 
-   output = gegl_node_context_get_target (context, "output");
-  {
-    guchar *data = g_malloc0 (result->width * result->height * 4);
-    cairo_t *cr;
+  guchar *data = g_malloc0 (result->width * result->height * 4);
+  cairo_t *cr;
 
-    cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32,
-      result->width, result->height, result->width * 4);
-    cr = cairo_create (surface);
-    cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
-    cairo_translate (cr, -result->x, -result->y);
-    text_layout_text (self, cr, 0, NULL, NULL);
+  cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32,
+    result->width, result->height, result->width * 4);
+  cr = cairo_create (surface);
+  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+  cairo_translate (cr, -result->x, -result->y);
+  text_layout_text (self, cr, 0, NULL, NULL);
 
-    gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), data,
-                     GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), data,
+                   GEGL_AUTO_ROWSTRIDE);
 
-    cairo_destroy (cr);
-    cairo_surface_destroy (surface);
-    g_free (data);
-  }
+  cairo_destroy (cr);
+  cairo_surface_destroy (surface);
+  g_free (data);
 
   return  TRUE;
 }

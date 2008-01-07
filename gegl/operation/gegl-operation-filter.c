@@ -178,6 +178,7 @@ process (GeglOperation   *operation,
   GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;
   GeglBuffer               *input;
+  GeglBuffer               *output;
   gboolean                  success = FALSE;
 
   gegl_operation_filter = GEGL_OPERATION_FILTER (operation);
@@ -191,10 +192,13 @@ process (GeglOperation   *operation,
       return FALSE;
     }
 
-  input = gegl_node_context_get_source (context, "input");
+  input  = gegl_node_context_get_source (context, "input");
+  output = gegl_node_context_get_target (context, "output");
   if (input != NULL)
     { /* FIXME: perhaps input should really be passed instead of context */
-      success = klass->process (operation, context, result);
+      success = klass->process (operation, context,
+                                input, output, result);
+      g_object_unref (input);
     }
   else
     {
@@ -202,8 +206,9 @@ process (GeglOperation   *operation,
        * we might legitimatly get NULL (at least layers might)
        */
       if (!g_object_get_data (G_OBJECT (operation->node), "graph"))
-        g_warning ("%s received NULL input",
-                   gegl_node_get_debug_name (operation->node));
+        g_warning ("%s got %s %s",
+                   gegl_node_get_debug_name (operation->node),
+                   input==NULL?"input==NULL":"", output==NULL?"output==NULL":"");
     }
   return success;
 }

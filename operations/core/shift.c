@@ -40,25 +40,28 @@ int gegl_chant_foo = 0;
 
 /*FIXME: check that all rounding done here makes sense */
 
+/* FIXME: rewrtie without chanting, wihtout deriving from GeglOperationFilter, but
+ *        directly from GeglOperation
+ */
+
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglBuffer    *input;
-  GeglBuffer    *output;
   GeglChantOperation *translate = GEGL_CHANT_OPERATION (operation);
-
-  input = gegl_node_context_get_source (context, "input");
 
   translate->x = floor (translate->x);
   translate->y = floor (translate->y);
 
-  g_assert (input);
-
   /* XXX: this shifted buffer is a behavior not readily available in the
    *      pure C (non-gobject) part of the GeglBuffer API.
    */
+
+  /* overwrites presumed output */
   output = g_object_new (GEGL_TYPE_BUFFER,
                          "provider",    input,
                          "shift-x",     (int)-translate->x,
@@ -66,6 +69,8 @@ process (GeglOperation *operation,
                          "abyss-width", -1,  /* turn of abyss (relying on abyss
                                                 of source) */
                          NULL);
+
+  /* overrides previous context_set_object */
   gegl_node_context_set_object (context, "output", G_OBJECT (output));
   return  TRUE;
 }

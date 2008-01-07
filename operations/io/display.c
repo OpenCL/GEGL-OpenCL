@@ -81,16 +81,12 @@ init_sdl (void)
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
+         GeglBuffer          *input,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *input;
   GeglBuffer          *source;
   SDL_Surface        **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
-
-  input = gegl_node_context_get_source (context, "input");
-
-  g_assert (input);
 
   init_sdl ();
 

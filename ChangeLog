@@ -1,3 +1,54 @@
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node-context.c: added some extra debug output for
+	missing formats on pads (to be ignored for some core ops for now, but
+	gives better guidance when things crash.)
+
+	* gegl/operation/gegl-operation-composer.[ch]
+	* gegl/operation/gegl-operation-filter.[ch]:
+	* gegl/operation/gegl-operation-sink.[ch]:
+	* gegl/operation/gegl-operation-source.[ch]: added the buffers being
+	read from/written to as arguments of the process functions in the base
+	classes for the common operation types.
+
+	The rest of the files modified were modifications to update to never
+	API.
+	* gegl/gegl-chant.h:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* operations/affine/affine.c:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/io/display.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/ff-load.c:
+	* operations/io/jpg-load.c:
+	* operations/io/load-buffer.c:
+	* operations/io/magick-load.c:
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/png-save.c:
+	* operations/io/raw-load.c:
+	* operations/io/save-buffer.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/svg-load.c:
+	* operations/render/FractalExplorer.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/introspect.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/workshop/stress.c:
+
 2008-01-06  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/ff-save.c (process): Updated due to changes in

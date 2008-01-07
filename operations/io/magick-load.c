@@ -73,8 +73,9 @@ load_cache (GeglChantOperation *op_magick_load)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -82,6 +83,7 @@ process (GeglOperation *operation,
   if (!self->priv)
     return FALSE;
 
+  /* overriding the predefined behavior */
   gegl_node_context_set_object (context, "output", G_OBJECT (self->priv));
   self->priv = NULL;
 

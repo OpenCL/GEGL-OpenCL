@@ -31,12 +31,12 @@ gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *input;
 
   if (self->pixbuf)
     {
@@ -49,9 +49,6 @@ process (GeglOperation *operation,
       gboolean has_alpha;
       gint bps;
       guint i;
-
-      input = gegl_node_context_get_source (context, "input");
-      g_assert (input);
 
       babl = input->format;
       format = (BablFormat*) babl;

@@ -31,8 +31,9 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,  /* ignored */
          const GeglRectangle *result)
 {
   GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);

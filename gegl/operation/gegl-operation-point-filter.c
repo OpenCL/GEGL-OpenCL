@@ -20,8 +20,10 @@
 #include "graph/gegl-node.h"
 #include <string.h>
 
-static gboolean process_inner (GeglOperation *operation,
-                               GeglNodeContext *context,
+static gboolean process_inner (GeglOperation       *operation,
+                               GeglNodeContext     *context,
+                               GeglBuffer          *input,
+                               GeglBuffer          *output,
                                const GeglRectangle *result);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
@@ -48,18 +50,15 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 }
 
 static gboolean
-process_inner (GeglOperation *operation,
-               GeglNodeContext *context,
+process_inner (GeglOperation       *operation,
+               GeglNodeContext     *context,
+               GeglBuffer          *input,
+               GeglBuffer          *output,
                const GeglRectangle *result)
 {
-  GeglBuffer          *input;
-/*  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));*/
-  GeglBuffer          *output;
   GeglPad             *pad;
   Babl                *in_format;
   Babl                *out_format;
-
-  input = gegl_node_context_get_source (context, "input");
 
   pad       = gegl_node_get_pad (operation->node, "input");
   in_format = pad->format;
@@ -76,8 +75,6 @@ process_inner (GeglOperation *operation,
       g_warning ("%s", gegl_node_get_debug_name (operation->node));
     }
   g_assert (out_format);
-
-  output = gegl_node_context_get_target (context, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
@@ -129,6 +126,5 @@ process_inner (GeglOperation *operation,
           g_free (out_buf);
         }
     }
-  gegl_buffer_destroy (input);
   return TRUE;
 }

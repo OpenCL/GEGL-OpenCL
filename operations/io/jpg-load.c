@@ -43,12 +43,12 @@ query_jpg (const gchar *path,
            gint        *height);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output;
   GeglRectangle        rect={0,0};
   gint                 problem;
   
@@ -61,8 +61,6 @@ process (GeglOperation *operation,
       return FALSE;
     }
 
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
-  output = gegl_node_context_get_target (context, "output");
 
   problem = gegl_buffer_import_jpg (output, self->path, 0, 0);
 
@@ -85,6 +83,7 @@ get_defined_region (GeglOperation *operation)
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
   gint width, height;
   gint status;
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
   status = query_jpg (self->path, &width, &height);
 
   if (status)

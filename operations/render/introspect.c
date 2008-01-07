@@ -38,8 +38,9 @@ gegl_chant_pointer(buf, "Buffer")
 
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output, /* ignored */
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -101,7 +102,7 @@ get_defined_region (GeglOperation *operation)
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
  
   GeglRectangle result = {0,0, 4096, 4096};
-  process (operation, NULL, NULL);
+  process (operation, NULL, NULL, NULL);
   if (self->buf)
     {
       GeglBuffer *buffer = GEGL_BUFFER (self->buf);

@@ -41,19 +41,23 @@ gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
 
 int gegl_chant_foo = 0;
 
+
+/* FIXME: rewrtie without chanting, wihtout deriving from GeglOperationFilter, but
+ *        directly from GeglOperation
+ */
+
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *ignored, /* crop ignored the normal way of doing things,. */
          const GeglRectangle *result)
 {
-  GeglBuffer          *input;
   GeglBuffer          *output;
   GeglChantOperation  *crop = GEGL_CHANT_OPERATION (operation);
   GeglRectangle        extent = {crop->x, crop->y, crop->width, crop->height};
-  
-  input = gegl_node_context_get_source (context, "input");
 
   g_assert (input);
 

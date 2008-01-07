@@ -49,8 +49,9 @@ gegl_chant_path (path, "/tmp/test.raw", "Path of file to load.")
 static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output_ignored,
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);

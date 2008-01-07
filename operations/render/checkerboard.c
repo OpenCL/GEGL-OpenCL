@@ -44,12 +44,12 @@ prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output = NULL;
 
   {
     gfloat              *buf;
@@ -70,8 +70,6 @@ process (GeglOperation *operation,
                          &color2[1],
                          &color2[2],
                          &color2[3]);
-
-    output = gegl_node_context_get_target (context, "output");
 
     g_object_get (output, "px-size", &pxsize,
                           "pixels", &n_pixels,

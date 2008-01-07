@@ -26,17 +26,24 @@
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
+
+/* FIXME: rewrtie without chanting, wihtout deriving from GeglOperationFilter, but
+ *        directly from GeglOperation
+ */
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output, /*ignored*/
          const GeglRectangle *process)
 {
   gboolean success = FALSE;
-  GeglBuffer *buffer = gegl_node_context_get_source (context, "input");
-  if (buffer)
+  if (input)
     {
-      g_object_ref (buffer);
-      gegl_node_context_set_object (context, "output", G_OBJECT (buffer));
+      g_object_ref (input);
+      /* overrides earlier context_set */
+      gegl_node_context_set_object (context, "output", G_OBJECT (input));
       success = TRUE;
     } 
   return success;

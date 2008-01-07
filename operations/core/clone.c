@@ -31,19 +31,25 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
 #include "gegl-chant.h"
 
 
+/* FIXME: rewrtie without chanting, wihtout deriving from GeglOperationFilter, but
+ *        directly from GeglOperation
+ */
+
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output, /* ignored */
          const GeglRectangle *result)
 {
   gboolean success = FALSE;
-  GeglBuffer *buffer = gegl_node_context_get_source (context, "input");
-  if (buffer)
+  if (input)
     {
-      g_object_ref (buffer);
-      gegl_node_context_set_object (context, "output", G_OBJECT (buffer));
+      g_object_ref (input);
+      /* overrides the _set_object, that has occured earlier */
+      gegl_node_context_set_object (context, "output", G_OBJECT (input));
       success = TRUE;
     } 
   return success;

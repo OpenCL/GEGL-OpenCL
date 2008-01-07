@@ -345,15 +345,13 @@ decode_frame (GeglChantOperation *op,
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *output = NULL;
   Priv                *p = (Priv*)self->priv;
 
   {
-    output = gegl_node_context_get_target (context, "output");
-
     if (p->ic && !decode_frame (self, self->frame))
       {
         gint pxsize;
@@ -375,13 +373,13 @@ process (GeglOperation       *operation,
 #define byteclamp(j) do{if(j<0)j=0; else if(j>255)j=255;}while(0)
 #endif
 #define YUV82RGB8(Y,U,V,R,G,B)do{\
-			                R= ((Y<<15)                 + 37355*(V-128))>>15;\
-			                G= ((Y<<15) -12911* (U-128) - 19038*(V-128))>>15;\
-			                B= ((Y<<15) +66454* (U-128)                )>>15;\
-			                byteclamp(R);\
-			                byteclamp(G);\
-			                byteclamp(B);\
-                }while(0)
+                R= ((Y<<15)                 + 37355*(V-128))>>15;\
+                G= ((Y<<15) -12911* (U-128) - 19038*(V-128))>>15;\
+                B= ((Y<<15) +66454* (U-128)                )>>15;\
+                byteclamp(R);\
+                byteclamp(G);\
+                byteclamp(B);\
+              }while(0)
 
               YUV82RGB8 (*ysrc, *usrc, *vsrc, R, G, B);
 

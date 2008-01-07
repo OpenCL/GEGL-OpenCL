@@ -127,7 +127,8 @@ process (GeglOperation *operation,
   input = gegl_node_context_get_source (context, "input");
   if (input)
     {
-      success = klass->process (operation, context, result);
+      success = klass->process (operation, context, input, result);
+      g_object_unref (input);
     }
 
   return success;

@@ -78,7 +78,6 @@ process (GeglOperation *operation,
           self->strength,
           self->gamma);
 
-  gegl_buffer_destroy (input);
   return  TRUE;
 }
 

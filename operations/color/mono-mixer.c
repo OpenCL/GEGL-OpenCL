@@ -37,23 +37,20 @@
 static gboolean
 process (GeglOperation *operation,
         GeglNodeContext *context,
+        GeglBuffer      *input,
+        GeglBuffer      *output,
         const GeglRectangle *result)
 {
  GeglChantOperation  *self;
- GeglBuffer          *input;
- GeglBuffer          *output;
  gfloat              *in_buf;
  gfloat              *out_buf;
  gfloat               red, green, blue;
 
  self = GEGL_CHANT_OPERATION (operation);
- input = gegl_node_context_get_source (context, "input");
 
  red = self->red;
  green = self->green;
  blue = self->blue;
-
- output = gegl_buffer_new (result, babl_format ("YA float"));
 
  if ((result->width > 0) && (result->height > 0))
  {
@@ -84,7 +81,6 @@ process (GeglOperation *operation,
      g_free (out_buf);
  }
 
- gegl_node_context_set_object (context, "output", G_OBJECT (output));
  return TRUE;
 }
 
