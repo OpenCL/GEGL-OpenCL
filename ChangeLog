@@ -1,5 +1,10 @@
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/affine.c: (process): do not unref the input (that
+	is done in the GeglOperationFilter superclass.
+
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/shift.c: turned into a non chanted operation that
 	derives directly from GeglOperation instead of GeglOperationFilter.
 

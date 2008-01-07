@@ -710,6 +710,5 @@ process (GeglOperation       *operation,
       affine_generic (output, input, affine->matrix, gegl_buffer_interpolation_from_string (
          affine->filter));
     }
-  g_object_unref (input);
   return TRUE;
 }
