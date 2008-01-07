@@ -1,5 +1,10 @@
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added Hans Breuer
+	* NEWS: updated a bit.
+
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/shift.c: (detect): fixed regression in hit
 	detection.
 

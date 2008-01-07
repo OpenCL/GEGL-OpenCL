@@ -7,7 +7,7 @@ from SVN whilst even micro numbers indicate released snapshots.
 
 Changes in GEGL 0.0.16
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
- • Build and dist fixes, general sanity improvements.
+ • Build and dist fixes, general sanity improvements to APIs.
  • constification of GeglRectangles and babl formats.
  • Added rowstride argument to gegl_buffer_set ()
  • Made it possible for sink operations to do their processing chunk by chunk
@@ -15,7 +15,7 @@ Changes in GEGL 0.0.16
 
 Contributions from:
   Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann, 
-  Manish Singh, Michael Natterer.
+  Manish Singh, Michael Natterer and Hans Breuer.
 
 Changes in GEGL 0.0.14
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
