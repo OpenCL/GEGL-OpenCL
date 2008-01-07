@@ -1,5 +1,9 @@
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: depend on glib-2.14.0 or newer.
+
+2008-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/affine/affine.c: (process): do not unref the input (that
 	is done in the GeglOperationFilter superclass.
 
