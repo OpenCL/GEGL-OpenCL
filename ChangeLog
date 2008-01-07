@@ -1,6 +1,6 @@
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
-	* configure.ac: depend on glib-2.14.0 or newer.
+	* configure.ac: depend on glib-2.14.1 or newer.
 
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
