@@ -467,10 +467,6 @@ value_set_default (GParamSpec *param_spec,
 {
   GeglParamCurve *gegl_curve = GEGL_PARAM_CURVE (param_spec);
 
-  g_object_ref (gegl_curve->default_curve); /* XXX:
-                                               not sure why this is needed,
-                                               but a reference is leaked
-                                               unless it his here */
   g_value_set_object (value, gegl_curve->default_curve);
 }
 

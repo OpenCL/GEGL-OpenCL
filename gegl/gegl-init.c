@@ -43,9 +43,11 @@ static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GError        **error);
 
 
-static gboolean gegl_initialized = FALSE;
+static gboolean      gegl_initialized = FALSE;
 
-static glong    global_time = 0;
+static GeglModuleDB *module_db   = NULL;
+
+static glong         global_time = 0;
 
 
 /**
@@ -130,7 +132,15 @@ gegl_exit (void)
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
   gegl_buffer_allocators_free ();
+
+  if (module_db != NULL)
+    {
+      g_object_unref (module_db);
+      module_db = NULL;
+    }
+
   babl_destroy ();
+
   timing = gegl_ticks () - timing;
   gegl_instrument ("gegl", "gegl_exit", timing);
 
@@ -192,8 +202,7 @@ gegl_post_parse_hook (GOptionContext *context,
                       gpointer        data,
                       GError        **error)
 {
-  static GeglModuleDB *module_db = NULL;
-  glong                time;
+  glong time;
 
   if (gegl_initialized)
     return TRUE;

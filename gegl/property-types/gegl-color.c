@@ -464,10 +464,6 @@ value_set_default (GParamSpec *param_spec,
 {
   GeglParamColor *gegl_color = GEGL_PARAM_COLOR (param_spec);
 
-  g_object_ref (gegl_color->default_color); /* XXX:
-                                               not sure why this is needed,
-                                               but a reference is leaked
-                                               unless it his here */
   g_value_set_object (value, gegl_color->default_color);
 }
 

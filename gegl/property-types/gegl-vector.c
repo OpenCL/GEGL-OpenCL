@@ -41,9 +41,9 @@ typedef struct _Path Path;
  *
  * The second node is always a move to, and specifies the start of the
  * first segment. Curves are automatically turned into lines upon generation.
- *              
- * s: 40, 50   
- * m: 100, 100 
+ *
+ * s: 40, 50
+ * m: 100, 100
  * l: 200, 100
  * l: 200, 50
  */
@@ -118,7 +118,7 @@ bezier (Point **curve,
         gint   t)
 {
   Point ab,bc,cd,abbc,bccd;
- 
+
   lerp (&ab, curve[0], curve[1], t);
   lerp (&bc, curve[1], curve[2], t);
   lerp (&cd, curve[2], curve[3], t);
@@ -208,7 +208,7 @@ path_add (Path *head,
       iter=iter->next;
     }
   else /* creating new path */
-    { 
+    {
       head = g_malloc0 (sizeof (Head));
       head->type = 'u';
       if (type=='u')
@@ -263,7 +263,7 @@ path_add (Path *head,
 
         /* chop off unneeded elements */
         curve[0]->next = NULL;
-        
+
         { /* create piecevize linear approximation of bezier curve */
            gint   i;
            Point  foo[4];
@@ -281,7 +281,7 @@ path_add (Path *head,
                 Point iter;
 
                 bezier (pts, &iter, i);
-                
+
                 head = path_add (head, 'l', iter.x, iter.y);
              }
         }
@@ -438,12 +438,12 @@ path_stroke_tool (Path   *path,
               gint distance;
               gint offset;
               gint leftover;
-              
+
 
               a.x = x;
               a.y = y;
 
-              b.x = iter->point.x; 
+              b.x = iter->point.x;
               b.y = iter->point.y;
 
               spacing = ts->spacing * (ts->radius * MAX_RADIUS / 65536) / 65536;
@@ -468,7 +468,7 @@ path_stroke_tool (Path   *path,
                     gint radius;
 
                     lerp (&spot, &a, &b, ratio);
-                    
+
                     radius = ts->radius  * MAX_RADIUS  / 65536,
 
                     canvas_stamp (canvas,
@@ -609,7 +609,7 @@ gegl_vector_class_init (GeglVectorClass *klass)
 
   g_type_class_add_private (klass, sizeof (GeglVectorPrivate));
 
-  gegl_vector_signals[GEGL_VECTOR_CHANGED] = 
+  gegl_vector_signals[GEGL_VECTOR_CHANGED] =
     g_signal_new ("changed", G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
                   0 /* class offset */,
@@ -713,7 +713,7 @@ gegl_vector_get_length (GeglVector *self)
               a.x = x;
               a.y = y;
 
-              b.x = iter->point.x; 
+              b.x = iter->point.x;
               b.y = iter->point.y;
 
               distance = point_dist (&a, &b);
@@ -806,12 +806,12 @@ gegl_vector_calc (GeglVector *self,
               gint distance;
               gint offset;
               gint leftover;
-              
+
 
               a.x = x;
               a.y = y;
 
-              b.x = iter->point.x; 
+              b.x = iter->point.x;
               b.y = iter->point.y;
 
               spacing = 10;
@@ -876,7 +876,7 @@ gegl_vector_calc_values (GeglVector *self,
       /* FIXME: speed this up, combine with a "stroking" of the path */
       gdouble x, y;
       gegl_vector_calc (self, (i*1.0)/num_samples * length, &x, &y);
-      
+
       xs[i] = x;
       ys[i] = y;
     }
@@ -940,10 +940,6 @@ value_set_default (GParamSpec *param_spec,
 {
   GeglParamVector *gegl_vector = GEGL_PARAM_VECTOR (param_spec);
 
-  g_object_ref (gegl_vector->default_vector); /* XXX:
-                                               not sure why this is needed,
-                                               but a reference is leaked
-                                               unless it his here */
   g_value_set_object (value, gegl_vector->default_vector);
 }
 

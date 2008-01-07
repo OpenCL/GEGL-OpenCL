@@ -1,3 +1,16 @@
+2008-01-06  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-init.c: Made variable module_db global to file. Unref it
+	in gegl_exit().
+
+	* gegl/module/geglmoduledb.c: (valid_module_name): Use G_MODULE_SUFFIX
+	instead of a hard-coded suffix.
+
+	* gegl/property-types/gegl-color.c (value_set_default):
+	* gegl/property-types/gegl-curve.c (value_set_default):
+	* gegl/property-types/gegl-vector.c (value_set_default): Removed call
+	to g_object_ref() that was causing a ref count error.
+
 2008-01-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node-context.c: added some extra debug output for

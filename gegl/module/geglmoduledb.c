@@ -310,25 +310,16 @@ valid_module_name (const gchar *filename)
 {
   gchar *basename = g_path_get_basename (filename);
 
-#if !defined(G_OS_WIN32) && !defined(G_WITH_CYGWIN)
-/*  if (strncmp (basename, "lib", 3))
-    goto no_module;*/
+  if (! gegl_datafiles_check_extension (basename, "." G_MODULE_SUFFIX))
+    {
+      g_free (basename);
 
-  if (! gegl_datafiles_check_extension (basename, ".so"))
-    goto no_module;
-#else
-  if (! gegl_datafiles_check_extension (basename, ".dll"))
-    goto no_module;
-#endif
+      return FALSE;
+    }
 
   g_free (basename);
 
   return TRUE;
-
- no_module:
-  g_free (basename);
-
-  return FALSE;
 }
 
 static void
