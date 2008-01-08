@@ -68,7 +68,6 @@ static GeglRectangle compute_input_request   (GeglOperation       *self,
                                               const GeglRectangle *region);
 
 static gboolean      process                 (GeglOperation       *op,
-                                              GeglNodeContext     *context,
                                               GeglBuffer          *input,
                                               GeglBuffer          *output,
                                               const GeglRectangle *result);
@@ -661,7 +660,6 @@ affine_generic (GeglBuffer        *dest,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)

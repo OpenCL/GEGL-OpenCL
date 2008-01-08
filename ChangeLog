@@ -1,5 +1,27 @@
 2008-01-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-composer.[ch]: removed context_id from
+	arguments on process function.
+	* gegl/operation/gegl-operation-filter.[ch]: .. same
+	* gegl/operation/gegl-operation-sink.[ch]: .. and same.
+
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c: adapt to above change.
+	* gegl/gegl-chant.h: reflect above change.
+
+	* operations/affine/affine.c:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/stretch-contrast.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/io/png-save.c:
+	* operations/io/save-buffer.c:
+	* operations/io/save-pixbuf.c: moved to new API.
+
+2008-01-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/stress.c: moved to newer API.
 	* operations/color/remap.c: unchanted.
 

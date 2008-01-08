@@ -422,7 +422,6 @@ static gboolean process (GeglOperation *operation,
 #else
 #ifdef GEGL_CHANT_SINK
 static gboolean process (GeglOperation       *operation,
-                         GeglNodeContext     *context,
                          GeglBuffer          *input,
                          const GeglRectangle *result);
 #else
@@ -434,14 +433,12 @@ static gboolean process (GeglOperation       *operation,
 #else
 #ifdef GEGL_CHANT_FILTER
 static gboolean process (GeglOperation       *operation,
-                         GeglNodeContext     *context,
                          GeglBuffer          *input,
                          GeglBuffer          *output,
                          const GeglRectangle *result);
 #else
 #ifdef GEGL_CHANT_AREA_FILTER
 static gboolean process (GeglOperation       *operation,
-                         GeglNodeContext     *context,
                          GeglBuffer          *input,
                          GeglBuffer          *output,
                          const GeglRectangle *result);

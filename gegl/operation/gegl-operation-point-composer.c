@@ -22,7 +22,6 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation       *operation,
-                               GeglNodeContext     *context,
                                GeglBuffer          *input,
                                GeglBuffer          *aux,
                                GeglBuffer          *output,
@@ -56,6 +55,9 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 }
 
+#if 0 /* FIXME: this should be re-enabled, possibly by skipping the point-composer class duplicating that
+       * code and directly implement on top of GeglOperation
+       */
 static gboolean
 fast_paths (GeglOperation       *operation,
             GeglNodeContext     *context,
@@ -63,10 +65,10 @@ fast_paths (GeglOperation       *operation,
             const Babl          *aux_format,
             const Babl          *out_format,
             const GeglRectangle *result);
+#endif
 
 static gboolean
 process_inner (GeglOperation       *operation,
-               GeglNodeContext     *context,
                GeglBuffer          *input,
                GeglBuffer          *aux,
                GeglBuffer          *output,
@@ -107,12 +109,14 @@ process_inner (GeglOperation       *operation,
    * good idea. NB! some of the OpenRaster meta ops, depends on the
    * short-circuiting happening in fast_paths.
    * */
+#if 0
   if (0 && fast_paths (operation, context,
                        in_format,
                        aux_format,
                        out_format,
                        result))
     return TRUE;
+#endif
 
 #if 0
   /* retrieve the buffer we're writing to from GEGL */
@@ -163,7 +167,7 @@ process_inner (GeglOperation       *operation,
   return TRUE;
 }
 
-
+#if 0
 static gboolean
 fast_paths (GeglOperation       *operation,
             GeglNodeContext     *context,
@@ -240,3 +244,4 @@ fast_paths (GeglOperation       *operation,
   }
   return FALSE;
 }
+#endif

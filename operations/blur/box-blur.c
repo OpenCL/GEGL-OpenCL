@@ -43,7 +43,6 @@ static void ver_blur (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)

@@ -196,8 +196,7 @@ process (GeglOperation   *operation,
   output = gegl_node_context_get_target (context, "output");
   if (input != NULL)
     { /* FIXME: perhaps input should really be passed instead of context */
-      success = klass->process (operation, context,
-                                input, output, result);
+      success = klass->process (operation, input, output, result);
       g_object_unref (input);
     }
   else

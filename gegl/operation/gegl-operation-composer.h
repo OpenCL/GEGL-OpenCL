@@ -44,7 +44,6 @@ struct _GeglOperationComposerClass
   GeglOperationClass parent_class;
 
   gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
                         GeglBuffer          *input,
                         GeglBuffer          *aux,
                         GeglBuffer          *output,

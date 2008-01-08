@@ -29,7 +29,6 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          const GeglRectangle *result)
 {

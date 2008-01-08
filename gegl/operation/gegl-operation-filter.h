@@ -44,7 +44,6 @@ struct _GeglOperationFilterClass
   GeglOperationClass parent_class;
 
   gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
                         GeglBuffer          *input,
                         GeglBuffer          *output,
                         const GeglRectangle *result);

@@ -39,7 +39,7 @@ static void          set_property          (GObject             *gobject,
 
 static gboolean      process               (GeglOperation       *operation,
                                             GeglNodeContext     *context,
-                                            const gchar         *output_prop,                                            
+                                            const gchar         *output_prop,
                                             const GeglRectangle *result);
 static void          attach                (GeglOperation       *operation);
 static GeglRectangle get_defined_region    (GeglOperation       *self);
@@ -127,7 +127,7 @@ process (GeglOperation *operation,
   input = gegl_node_context_get_source (context, "input");
   if (input)
     {
-      success = klass->process (operation, context, input, result);
+      success = klass->process (operation, input, result);
       g_object_unref (input);
     }
 

@@ -44,8 +44,7 @@ snn_mean (GeglBuffer *src,
 
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)

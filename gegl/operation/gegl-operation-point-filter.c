@@ -21,7 +21,6 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation       *operation,
-                               GeglNodeContext     *context,
                                GeglBuffer          *input,
                                GeglBuffer          *output,
                                const GeglRectangle *result);
@@ -51,7 +50,6 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 
 static gboolean
 process_inner (GeglOperation       *operation,
-               GeglNodeContext     *context,
                GeglBuffer          *input,
                GeglBuffer          *output,
                const GeglRectangle *result)

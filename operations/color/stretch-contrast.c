@@ -82,7 +82,6 @@ buffer_get_min_max (GeglBuffer *buffer,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)

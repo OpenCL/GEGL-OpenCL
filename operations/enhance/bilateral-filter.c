@@ -45,7 +45,6 @@ bilateral_filter (GeglBuffer *src,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)

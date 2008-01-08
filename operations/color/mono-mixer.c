@@ -35,11 +35,10 @@
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *operation,
-        GeglNodeContext *context,
-        GeglBuffer      *input,
-        GeglBuffer      *output,
-        const GeglRectangle *result)
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
  GeglChantOperation  *self;
  gfloat              *in_buf;

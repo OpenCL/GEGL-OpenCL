@@ -163,7 +163,7 @@ process (GeglOperation       *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, context, input, aux, output, result);
+      success = klass->process (operation, input, aux, output, result);
       if (input)
         g_object_unref (input);
       if (aux)
