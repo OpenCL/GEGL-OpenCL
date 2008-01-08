@@ -1,3 +1,8 @@
+2008-01-08  Manish Singh  <yosh@gimp.org>
+
+	* operations/io/display.c: removed context_id arg from process
+	function here too.
+
 2008-01-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-composer.[ch]: removed context_id from

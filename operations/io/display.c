@@ -80,7 +80,6 @@ init_sdl (void)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          const GeglRectangle *result)
 {
