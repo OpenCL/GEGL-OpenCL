@@ -1,5 +1,10 @@
 2008-01-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/crop.c: turned into a non chanted operation that
+	derives directly from GeglOperation instead of GeglOperationFilter.
+
+2008-01-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/clone.c: turned into a non chanted operation that
 	derives directly from GeglOperation instead of GeglOperationFilter.
 	* operations/core/nop.c: removed erronious buffer reference.
