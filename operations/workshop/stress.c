@@ -54,20 +54,17 @@ static void stress (GeglBuffer *src,
 #include <stdlib.h>
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
-
-  input = gegl_node_context_get_source (context, "input");
-  output = gegl_node_context_get_target (context, "output");
 
   stress (input, output,
           self->radius,
