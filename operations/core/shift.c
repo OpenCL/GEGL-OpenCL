@@ -45,12 +45,6 @@ struct _GeglOperationShift
 struct _GeglOperationShiftClass
 {
   GeglOperationClass parent_class;
-
-  gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
-                        GeglBuffer          *input,
-                        GeglBuffer          *output,
-                        const GeglRectangle *result);
 };
 
 GType gegl_operation_shift_get_type (void) G_GNUC_CONST;

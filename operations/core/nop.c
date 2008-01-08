@@ -37,20 +37,11 @@ typedef struct _GeglOperationNopClass GeglOperationNopClass;
 struct _GeglOperationNop
 {
   GeglOperation parent_instance;
-
-  gfloat        x;
-  gfloat        y;
 };
 
 struct _GeglOperationNopClass
 {
   GeglOperationClass parent_class;
-
-  gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
-                        GeglBuffer          *input,
-                        GeglBuffer          *output,
-                        const GeglRectangle *result);
 };
 
 GType gegl_operation_nop_get_type (void) G_GNUC_CONST;
@@ -182,15 +173,12 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglOperationNop *self = GEGL_OPERATION_NOP (operation);
   GeglNode           *input_node;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
-    return gegl_operation_detect (input_node->operation,
-                                  x - floor (self->x),
-                                  y - floor (self->y));
+    return gegl_operation_detect (input_node->operation, x, y);
 
   return operation->node;
 }
@@ -202,11 +190,7 @@ process (GeglOperation       *operation,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
-  GeglOperationNop *nop   = GEGL_OPERATION_NOP (operation);
-  GeglBuffer         *input;
-
-  nop->x = floor (nop->x);
-  nop->y = floor (nop->y);
+  GeglBuffer *input;
 
   if (strcmp (output_prop, "output"))
     {
@@ -220,7 +204,7 @@ process (GeglOperation       *operation,
       g_warning ("nop received NULL input");
       return FALSE;
     }
-  g_object_ref (input);
+
   gegl_node_context_set_object (context, "output", G_OBJECT (input));
   return TRUE;
 }
@@ -245,13 +229,7 @@ compute_affected_region (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {
-  GeglOperationNop *self   = GEGL_OPERATION_NOP (operation);
-  GeglRectangle       result = *input_region;
-
-  result.x += floor (self->x);
-  result.y += floor (self->y);
-
-  return result;
+  return *input_region;
 }
 
 static GeglRectangle
