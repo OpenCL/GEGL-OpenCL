@@ -25,7 +25,7 @@ gegl_chant_int (width, 10, 10000, 1024, "width of plot")
 gegl_chant_int (height, 10, 10000, 256, "height of plot")
 gegl_chant_double (min, -500.0, 500,  0.0, "value at bottom")
 gegl_chant_double (max, -500.0, 500,  8.0, "value at top")
- 
+
 #else
 
 #define GEGL_CHANT_NAME            line_profile
@@ -53,17 +53,16 @@ buffer_sample (GeglBuffer *buffer,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *input,
-                      *output;
   gint width = MAX(MAX (self->width, self->x0), self->x1);
   gint height = MAX(MAX (self->height, self->y0), self->y1);
 
-  input = gegl_node_context_get_source (context, "input");
   {
     GeglRectangle extent = {0,0,width,height};
     output = gegl_buffer_new (&extent, babl_format ("B'aG'aR'aA u8"));

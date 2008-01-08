@@ -17,7 +17,7 @@
  *                Ivar Farup   <ivarf@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 384, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,    3,  "number of samples to do")
@@ -34,6 +34,7 @@ gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #define GEGL_CHANT_CATEGORIES   "enhance"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -51,40 +52,40 @@ static void c2g (GeglBuffer *src,
 
 #include <stdlib.h>
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
-
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-
-  input = gegl_node_context_get_source (context, "input");
   {
     GeglBuffer      *temp_in;
-    GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+    GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
 
     temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-    output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
     c2g (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma, self->strength, self->gamma);
     g_object_unref (temp_in);
-    
 
     {
       GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
 
       gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-      g_object_unref (output);
     }
   }
+
   return  TRUE;
 }
 
@@ -132,11 +133,11 @@ static void c2g (GeglBuffer *src,
                we just wonder whether we are more black than white */
             gfloat gray;
             gint   c;
-          
+
             gray = pixel[0]*0.212671 + pixel[1] * 0.715160 + pixel[2] * 0.072169;
             {
               gfloat nominator = 0;
-              gfloat denominator = 0; 
+              gfloat denominator = 0;
               for (c=0; c<3; c++)
                 {
                   gfloat delta = max_envelope[c]-min_envelope[c];
@@ -172,7 +173,7 @@ static void c2g (GeglBuffer *src,
   g_free (src_buf);
   g_free (dst_buf);
 }
-              
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);

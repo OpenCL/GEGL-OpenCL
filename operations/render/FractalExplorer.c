@@ -393,12 +393,15 @@ process (GeglOperation       *operation,
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   {
-    clrmap               colormap;
-    guchar              *buf;
+    clrmap  colormap;
+    guchar *buf;
+    gint    pxsize;
 
     make_color_map (self, colormap);
 
-    buf  = g_new (guchar, result->width * result->height * 4);
+    g_object_get (output, "px-size", &pxsize, NULL);
+
+    buf  = g_new (guchar, result->width * result->height * pxsize);
       {
         guchar *dst=buf;
         gint y;

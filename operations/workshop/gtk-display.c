@@ -36,7 +36,7 @@ gegl_chant_string  (window_title, "",
 
 typedef struct
 {
-  GtkWidget *window; 
+  GtkWidget *window;
   GtkWidget *drawing_area;
   gint       width;
   gint       height;
@@ -97,16 +97,14 @@ static Priv *init_priv (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *source,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *source;
-  GeglBuffer          *input;
- Priv                 *priv = init_priv (operation);
-
-  input = gegl_node_context_get_source (context, "input");
+  Priv                *priv = init_priv (operation);
 
   g_assert (input);
 
@@ -136,7 +134,7 @@ process (GeglOperation *operation,
         }
       else
         {
-          gtk_window_set_title (GTK_WINDOW (priv->window), 
+          gtk_window_set_title (GTK_WINDOW (priv->window),
            gegl_node_get_debug_name (gegl_node_get_producer(operation->node, "input", NULL))
            );
         }

@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_double (radius, 0.0, 200.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
 
@@ -28,6 +28,8 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 #define GEGL_CHANT_CATEGORIES      "misc"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
 
 static void hor_max (GeglBuffer *src,
@@ -40,44 +42,44 @@ static void ver_max (GeglBuffer *src,
 
 #include <stdio.h>
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-
-  input = gegl_node_context_get_source (context, "input");
     {
-      GeglBuffer      *temp_in;
-      GeglBuffer *temp;
-      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+      GeglBuffer   *temp_in;
+      GeglBuffer   *temp;
+      GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
 
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
       temp   = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
-      output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
-
-      hor_max (temp_in, temp,  self->radius);
+      hor_max (temp_in, temp, self->radius);
       ver_max (temp, output, self->radius);
       g_object_unref (temp);
       g_object_unref (temp_in);
-      
 
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
 
         gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-        g_object_unref (output);
       }
     }
+
   return  TRUE;
 }
 
@@ -165,7 +167,7 @@ ver_max (GeglBuffer *src,
 
   src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
   dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
-  
+
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;

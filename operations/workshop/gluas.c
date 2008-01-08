@@ -85,18 +85,16 @@ drawable_lua_process (GeglChantOperation *self,
                       gdouble      user_value);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *aux,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   self   = GEGL_CHANT_OPERATION (operation);
-  input = gegl_node_context_get_source (context, "input");
-
-  output = gegl_node_context_get_target (context, "output");
 
   if (self->file && g_file_test (self->file, G_FILE_TEST_IS_REGULAR))
     {

@@ -30,6 +30,7 @@ gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
 #define GEGL_CHANT_CATEGORIES     "render"
 
 #define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
@@ -43,9 +44,9 @@ static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
   gfloat fCImg  = fViewRectImg + y * fMagLevel;
   gfloat fZReal = fCReal;
   gfloat fZImg  = fCImg;
-    
+
         gint n;
-    
+
         for (n=0;n<self->maxiter;n++)
           {
                 gfloat fZRealSquared = fZReal * fZReal;
@@ -61,22 +62,27 @@ static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
         return 1.0;
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("Y float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer *output;
 
   {
     gfloat *buf;
     gint pxsize;
 
-    output = gegl_buffer_new (result, babl_format ("Y float"));
     g_object_get (output, "px-size", &pxsize, NULL);
 
     buf = g_malloc (result->width * result->height * pxsize);
+
       {
         gfloat *dst=buf;
         gint y;
@@ -101,14 +107,18 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+
+    gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
+                     GEGL_AUTO_ROWSTRIDE);
     g_free (buf);
   }
+
   gegl_node_context_set_object (context, "output", G_OBJECT (output));
+
   return  TRUE;
 }
 
-static GeglRectangle 
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000,-10000000, 20000000, 20000000};

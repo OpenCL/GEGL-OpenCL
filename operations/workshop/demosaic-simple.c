@@ -18,7 +18,7 @@
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files.")
- 
+
 #else
 
 #define GEGL_CHANT_NAME            demosaic_simple
@@ -36,39 +36,35 @@ demosaic (GeglChantOperation *op,
           GeglBuffer *dst);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = gegl_node_context_get_source (context, "input");
-
     {
       GeglBuffer    *temp_in;
-      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
 
-      
+
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
       output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
       demosaic (self, temp_in, output);
       g_object_unref (temp_in);
-      
+
 
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
         gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-        g_object_unref (output);
       }
     }
-
 
   return  TRUE;
 }
@@ -87,7 +83,7 @@ demosaic (GeglChantOperation *op,
 
   src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 3);
-  
+
   gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
@@ -132,7 +128,7 @@ demosaic (GeglChantOperation *op,
               }
           }
         }
-        
+
         dst_buf [offset*3+0] = red;
         dst_buf [offset*3+1] = green;
         dst_buf [offset*3+2] = blue;

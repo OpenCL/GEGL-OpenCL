@@ -27,7 +27,7 @@ gegl_chant_double (fps, 0.0, 100.0, 25, "frames per second")
 #define GEGL_CHANT_NAME         ff_save
 #define GEGL_CHANT_DESCRIPTION  "FFmpeg video output sink"
 #define GEGL_CHANT_SELF         "ff-save.c"
-#define GEGL_CHANT_CATEGORIES      "output"
+#define GEGL_CHANT_CATEGORIES   "output:video"
 #define GEGL_CHANT_INIT
 #define GEGL_CHANT_CLASS_INIT
 
@@ -201,14 +201,13 @@ finalize (GObject *object)
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
+         GeglBuffer          *input,
          const GeglRectangle *result)
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
   Priv     *p = (Priv*)self->priv;
-  GeglBuffer         *input;
   static              gint inited = 0;
 
-  input = gegl_node_context_get_source (context, "input");
   g_assert (input);
 
   p->width = result->width;
@@ -220,7 +219,6 @@ process (GeglOperation       *operation,
       tfile (self);
       inited = 1;
     }
-
 
   write_video_frame (self, p->oc, p->video_st);
   if (p->audio_st)

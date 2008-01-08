@@ -41,8 +41,9 @@ gegl_chant_string (path, "/tmp/test.raw",
 static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,   /* Not used?? */
          const GeglRectangle *result)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -100,7 +101,7 @@ load_buffer (GeglChantOperation *op_raw_load)
           return;
         }
 
-      { 
+      {
         GeglRectangle extent = {0,0,width,height};
         op_raw_load->priv = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
       }

@@ -16,7 +16,7 @@
  * Copyright 2007 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 50, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
@@ -31,6 +31,7 @@ gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution"
 #define GEGL_CHANT_CATEGORIES   "enhance"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -46,22 +47,24 @@ static void max_envelope (GeglBuffer *src,
 
 #include <stdlib.h>
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
-
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-
-  input = gegl_node_context_get_source (context, "input");
   {
     GeglBuffer      *temp_in;
     GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
@@ -73,7 +76,6 @@ process (GeglOperation *operation,
     else
       {
         temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-        output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
         max_envelope (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma);
         g_object_unref (temp_in);
@@ -82,14 +84,14 @@ process (GeglOperation *operation,
     {
       GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
       gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-      g_object_unref (output);
     }
   }
+
   return  TRUE;
 }
 
 #include "envelopes.h"
-              
+
 static void max_envelope (GeglBuffer *src,
                           GeglBuffer *dst,
                           gint        radius,

@@ -17,7 +17,7 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 #define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
 gegl_chant_double (radius, 0.0, 70.0, 4.0,
@@ -32,6 +32,7 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 #define GEGL_CHANT_CATEGORIES      "misc"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
@@ -42,23 +43,27 @@ static void median (GeglBuffer *src,
 
 #include <stdio.h>
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = gegl_node_context_get_source (context, "input");
     {
       GeglBuffer      *temp_in;
-      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "input", result);
 
       if (self->radius < 1.0)
         {
@@ -66,9 +71,7 @@ process (GeglOperation *operation,
         }
       else
         {
-
           temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-          output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
           median (temp_in, output, self->radius, self->percentile / 100.0);
           g_object_unref (temp_in);
@@ -77,9 +80,9 @@ process (GeglOperation *operation,
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
         gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-        g_object_unref (output);
       }
     }
+
   return  TRUE;
 }
 
@@ -183,7 +186,7 @@ median (GeglBuffer *src,
       {
         gint u,v;
         gfloat *median_pix;
-        
+
         list_clear (&list);
 
         for (v=y-radius;v<=y+radius;v++)

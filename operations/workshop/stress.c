@@ -18,7 +18,7 @@
  *                Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 300, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   10,    "number of samples to do")
@@ -79,7 +79,7 @@ process (GeglOperation       *operation,
 }
 
 #include "envelopes.h"
-              
+
 static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
                     gint        radius,

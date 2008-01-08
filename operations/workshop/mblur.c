@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_double (dampness, 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0 is no change.")
 
 #else
@@ -28,6 +28,7 @@ gegl_chant_double (dampness, 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
@@ -47,33 +48,36 @@ init (GeglChantOperation *operation)
   self->priv = (void*) priv;
 
   /* XXX: this is not freed when the op is destroyed */
-  { 
+  {
     GeglRectangle extent = {0,0,1024,1024};
     priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
   }
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output = NULL;
   Priv *p;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
   p = (Priv*)self->priv;
 
-  input = gegl_node_context_get_source (context, "input");
     {
       GeglBuffer          *temp_in;
 
-        temp_in = gegl_buffer_create_sub_buffer (input, result);
-        output = gegl_buffer_new (result, babl_format ("RGBA float"));
+      temp_in = gegl_buffer_create_sub_buffer (input, result);
 
       {
         gint pixels  = result->width*result->height;
@@ -99,6 +103,7 @@ process (GeglOperation *operation,
       g_object_unref (temp_in);
       gegl_node_context_set_object (context, "output", G_OBJECT (output));
     }
+
   return  TRUE;
 }
 

@@ -16,7 +16,7 @@
  * Copyright 2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 
 #else
 
@@ -27,34 +27,36 @@
 
 #define GEGL_CHANT_COMPOSER
 #define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 #include <math.h>
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *aux,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationComposer *composer;
-  GeglBuffer            *input;
-  GeglBuffer            *aux;
-  GeglBuffer            *output;
   GeglBuffer            *temp_in;
   GeglBuffer            *temp_aux;
- 
 
   composer = GEGL_OPERATION_COMPOSER (operation);
-  input = gegl_node_context_get_source (context, "input");
-  aux = gegl_node_context_get_source (context, "aux");
 
   /* FIXME: just pass the originals buffers if the result rectangle does not
    * include both input buffers
    */
 
-          temp_in = gegl_buffer_create_sub_buffer (input, result);
-          temp_aux = gegl_buffer_create_sub_buffer (aux, result);
-          output = gegl_buffer_new (result, babl_format ("RGBA float"));
+  temp_in = gegl_buffer_create_sub_buffer (input, result);
+  temp_aux = gegl_buffer_create_sub_buffer (aux, result);
 
     {
       gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
@@ -111,7 +113,7 @@ get_defined_region (GeglOperation *operation)
       if (aux_rect->height > result.height)
         result.height = aux_rect->height;
     }
-  
+
   return result;
 }
 
@@ -140,19 +142,19 @@ compute_input_request (GeglOperation       *self,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation *self,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
+compute_affected_region (GeglOperation       *self,
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
 {
   if (!strcmp ("input_pad", "input"))
     {
-      return region;
+      return *region;
     }
   else
     {
       /*region.x -= radius * 2;*/
-    } 
-  return region;
+    }
+  return *region;
 }
 
 static void class_init (GeglOperationClass *operation_class)

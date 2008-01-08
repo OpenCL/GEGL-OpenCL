@@ -413,9 +413,17 @@ static gboolean process (GeglOperation *operation,
                          void          *out_buf,
                          glong          samples);
 #else
+#ifdef GEGL_CHANT_COMPOSER
+static gboolean process (GeglOperation       *operation,
+                         GeglNodeContext     *context,
+                         GeglBuffer          *in_buf,
+                         GeglBuffer          *aux_buf,
+                         GeglBuffer          *out_buf,
+                         const GeglRectangle *result);
+#else
 #ifdef GEGL_CHANT_POINT_COMPOSER
 static gboolean process (GeglOperation *operation,
-                         void          *in_buf, 
+                         void          *in_buf,
                          void          *aux_buf,
                          void          *out_buf,
                          glong          samples);
@@ -447,6 +455,7 @@ static gboolean process (GeglOperation       *operation,
 static gboolean process (GeglOperation       *operation,
                          GeglNodeContext     *context,
                          const GeglRectangle *result);
+#endif
 #endif
 #endif
 #endif

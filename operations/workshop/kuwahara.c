@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_double (radius, 0.0, 50.0, 10.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
 
@@ -39,23 +39,21 @@ kuwahara (GeglBuffer *src,
 
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = gegl_node_context_get_source (context, "input");
-
     {
       GeglBuffer          *temp_in;
-      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "input", result);
 
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
 
@@ -63,16 +61,14 @@ process (GeglOperation *operation,
 
       kuwahara (temp_in, output, self->radius);
       g_object_unref (temp_in);
-      
 
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
 
         gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-
-        g_object_unref (output);
       }
     }
+
   return  TRUE;
 }
 
@@ -165,7 +161,7 @@ kuwahara (GeglBuffer *src,
                                component,
                                NULL, /* min */
                                NULL, /* max */
-                               &mean, 
+                               &mean,
                                &variance);
             if (variance<best)
               {
@@ -183,7 +179,7 @@ kuwahara (GeglBuffer *src,
                                component,
                                NULL, /* min */
                                NULL, /* max */
-                               &mean, 
+                               &mean,
                                &variance);
             if (variance<best)
               {
@@ -202,7 +198,7 @@ kuwahara (GeglBuffer *src,
                                component,
                                NULL, /* min */
                                NULL, /* max */
-                               &mean, 
+                               &mean,
                                &variance);
             if (variance<best)
               {
@@ -220,7 +216,7 @@ kuwahara (GeglBuffer *src,
                                component,
                                NULL, /* min */
                                NULL, /* max */
-                               &mean, 
+                               &mean,
                                &variance);
 
             if (variance<best)

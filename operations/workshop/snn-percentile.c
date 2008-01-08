@@ -17,7 +17,7 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
 #define MAX_SAMPLES 20000 /* adapted to percentile level of radius */
 
 gegl_chant_double (radius, 0.0, 70.0, 8.0,
@@ -48,22 +48,21 @@ snn_percentile (GeglBuffer *src,
 
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = gegl_node_context_get_source (context, "input");
     {
       GeglBuffer          *temp_in;
-      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "inputt", result);
+      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "input", result);
 
       if (result->width == 0 ||
           result->height== 0 ||
@@ -82,9 +81,9 @@ process (GeglOperation *operation,
       {
         GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
         gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-        g_object_unref (output);
       }
     }
+
   return  TRUE;
 }
 
@@ -211,8 +210,8 @@ snn_percentile (GeglBuffer *src,
         gfloat *center_pix = src_buf + offset * 4;
 
         list_clear (&list);
-       
-        /* iterate through the upper left quater of pixels */ 
+
+        /* iterate through the upper left quater of pixels */
         for (v=-radius;v<=0;v++)
           for (u=-radius;u<= (pairs==1?radius:0);u++)
             {
