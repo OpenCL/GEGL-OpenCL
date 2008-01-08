@@ -40,10 +40,10 @@ struct _GeglOperationCrop
 {
   GeglOperation parent_instance;
 
-  gfloat        x;
-  gfloat        y;
-  gfloat        width;
-  gfloat        height;
+  gdouble       x;
+  gdouble       y;
+  gdouble       width;
+  gdouble       height;
 };
 
 struct _GeglOperationCropClass
@@ -141,7 +141,7 @@ gegl_operation_crop_class_init (GeglOperationCropClass *klass)
                                                         GEGL_PARAM_PAD_INPUT));
 
   g_object_class_install_property (object_class, PROP_X,
-                                   g_param_spec_float ("x",
+                                   g_param_spec_double ("x",
                                                        "X",
                                                        "X",
                                                        -G_MAXFLOAT, G_MAXFLOAT,
@@ -150,27 +150,27 @@ gegl_operation_crop_class_init (GeglOperationCropClass *klass)
                                                        G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_Y,
-                                   g_param_spec_float ("y",
+                                   g_param_spec_double ("y",
                                                        "Y",
                                                        "Y",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
+                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
                                                        0.0,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_WIDTH,
-                                   g_param_spec_float ("width",
+                                   g_param_spec_double ("width",
                                                        "Width",
                                                        "Width",
-                                                       0.0, G_MAXFLOAT,
+                                                       0.0, G_MAXDOUBLE,
                                                        10.0,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
   g_object_class_install_property (object_class, PROP_HEIGHT,
-                                   g_param_spec_float ("height",
+                                   g_param_spec_double ("height",
                                                        "Height",
                                                        "Height",
-                                                       0.0, G_MAXFLOAT,
+                                                       0.0, G_MAXDOUBLE,
                                                        10.0,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
@@ -231,19 +231,19 @@ get_property (GObject    *object,
   switch (property_id)
     {
     case PROP_X:
-      g_value_set_float (value, self->x);
+      g_value_set_double (value, self->x);
       break;
 
     case PROP_Y:
-      g_value_set_float (value, self->y);
+      g_value_set_double (value, self->y);
       break;
 
     case PROP_WIDTH:
-      g_value_set_float (value, self->width);
+      g_value_set_double (value, self->width);
       break;
 
     case PROP_HEIGHT:
-      g_value_set_float (value, self->height);
+      g_value_set_double (value, self->height);
       break;
 
     default:
@@ -263,19 +263,19 @@ set_property (GObject      *object,
   switch (property_id)
     {
     case PROP_X:
-      self->x = g_value_get_float (value);
+      self->x = g_value_get_double (value);
       break;
 
     case PROP_Y:
-      self->y = g_value_get_float (value);
+      self->y = g_value_get_double (value);
       break;
 
     case PROP_WIDTH:
-      self->width = g_value_get_float (value);
+      self->width = g_value_get_double (value);
       break;
 
     case PROP_HEIGHT:
-      self->height = g_value_get_float (value);
+      self->height = g_value_get_double (value);
       break;
 
     default:

@@ -1,5 +1,10 @@
 2008-01-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/crop.c: use doubles not floats ..
+	* operations/core/shift.c: .. like the rest of the GEGL ops.
+
+2008-01-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/crop.c: turned into a non chanted operation that
 	derives directly from GeglOperation instead of GeglOperationFilter.
 

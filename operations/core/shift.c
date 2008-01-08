@@ -38,8 +38,8 @@ struct _GeglOperationShift
 {
   GeglOperation parent_instance;
 
-  gfloat        x;
-  gfloat        y;
+  gdouble       x;
+  gdouble       y;
 };
 
 struct _GeglOperationShiftClass
@@ -135,19 +135,19 @@ gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
                                                         GEGL_PARAM_PAD_INPUT));
 
   g_object_class_install_property (object_class, PROP_X,
-                                   g_param_spec_float ("x",
+                                   g_param_spec_double ("x",
                                                        "X",
                                                        "X",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
+                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
                                                        0.0,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_Y,
-                                   g_param_spec_float ("y",
+                                   g_param_spec_double ("y",
                                                        "Y",
                                                        "Y",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
+                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
                                                        0.0,
                                                        G_PARAM_READWRITE |
                                                        G_PARAM_CONSTRUCT));
@@ -208,11 +208,11 @@ get_property (GObject    *object,
   switch (property_id)
     {
     case PROP_X:
-      g_value_set_float (value, self->x);
+      g_value_set_double (value, self->x);
       break;
 
     case PROP_Y:
-      g_value_set_float (value, self->y);
+      g_value_set_double (value, self->y);
       break;
 
     default:
@@ -232,11 +232,11 @@ set_property (GObject      *object,
   switch (property_id)
     {
     case PROP_X:
-      self->x = g_value_get_float (value);
+      self->x = g_value_get_double (value);
       break;
 
     case PROP_Y:
-      self->y = g_value_get_float (value);
+      self->y = g_value_get_double (value);
       break;
 
     default:
