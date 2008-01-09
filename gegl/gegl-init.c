@@ -31,7 +31,6 @@
 #endif
 #ifdef G_OS_WIN32
 #include <process.h>
-#include <gwin32.h> /* g_win32_get_package_installation_directory */
 #endif
 #include <glib/gstdio.h>
 #include "operation/gegl-operation.h"
@@ -232,7 +231,7 @@ gegl_post_parse_hook (GOptionContext *context,
       else
         {
 #ifdef G_OS_WIN32
-          module_path = g_win32_get_package_installation_subdirectory (PACKAGE, "lib" GEGL_LIBRARY ".dll", GEGL_LIBRARY);
+          module_path = g_win32_get_package_installation_subdirectory (PACKAGE_NAME, "lib" GEGL_LIBRARY ".dll", GEGL_LIBRARY);
 #else
           module_path = g_strdup (PREFIX "/lib/" GEGL_LIBRARY);
 #endif

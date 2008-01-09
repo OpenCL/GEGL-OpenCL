@@ -1,3 +1,9 @@
+2007-01-09  Hans Breuer  <hans@breuer.org>
+
+	* gegl/gegl-init.h : use PACKAGE_NAME rather than undefined PACKAGE for
+	g_win32_get_package_installation_subdirectory(). Also don't do an
+	explicit inclusion of gwin32.h, it is available by <glib-object.h>
+
 2008-01-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/mandelbrot.c: do not compute all of mandelbrot
