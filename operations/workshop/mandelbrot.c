@@ -28,9 +28,10 @@ gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
 #define GEGL_CHANT_SELF           "mandelbrot.c"
 #define GEGL_CHANT_DESCRIPTION    "Mandelbrot renderer."
 #define GEGL_CHANT_CATEGORIES     "render"
+#define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_CLASS_INIT
 
 #define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
@@ -83,6 +84,7 @@ process (GeglOperation       *operation,
 
     buf = g_malloc (result->width * result->height * pxsize);
 
+
       {
         gfloat *dst=buf;
         gint y;
@@ -113,16 +115,19 @@ process (GeglOperation       *operation,
     g_free (buf);
   }
 
-  gegl_node_context_set_object (context, "output", G_OBJECT (output));
-
   return  TRUE;
 }
 
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRectangle result = {-10000000,-10000000, 20000000, 20000000};
+  GeglRectangle result = {-256,-256, 1024, 1024};
   return result;
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  klass->adjust_result_region = NULL;
 }
 
 #endif

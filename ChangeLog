@@ -1,3 +1,8 @@
+2008-01-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/mandelbrot.c: do not compute all of mandelbrot
+	in first processing go, as well as reduce the defined reigon.
+
 2008-01-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/render/FractalExplorer.c (process): Use g_object_get to
