@@ -22,7 +22,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)
 	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 clean-local:
-	rm -f $(SOBJS) $(OFILES)
+	rm -f *$(SHREXT) $(OFILES)
 
 ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 

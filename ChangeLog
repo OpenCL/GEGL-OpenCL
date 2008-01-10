@@ -1,9 +1,16 @@
+2008-01-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/Makefile.am: Don't rm compiled operation files here.
+	* operations/Makefile-operations.am: Delete them here.
+
+	* operations/generated/Makefile.am: Added Ruby files to EXTRA_DIST.
+
 2008-01-10  Sven Neumann  <sven@gimp.org>
 
 	* operations/generated/Makefile.am: don't override automake
 	targets, use MAINTAINERCLEANFILES instead.
 
-2008-01-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+2008-01-09  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/generated/Makefile.am: Remove generated .c files in
 	maintainer-clean-generic.

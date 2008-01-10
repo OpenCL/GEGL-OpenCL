@@ -17,6 +17,3 @@ endif
 
 EXTRA_DIST= \
 	Makefile-operations.am
-
-clean-local:
-	rm -f */*$(SHREXT) */*/*$(SHREXT)
