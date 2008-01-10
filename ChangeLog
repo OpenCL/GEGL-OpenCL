@@ -1,3 +1,8 @@
+2008-01-10  Sven Neumann  <sven@gimp.org>
+
+	* operations/generated/Makefile.am: don't override automake
+	targets, use MAINTAINERCLEANFILES instead.
+
 2008-01-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/generated/Makefile.am: Remove generated .c files in
