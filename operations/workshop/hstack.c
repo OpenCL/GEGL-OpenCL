@@ -39,7 +39,6 @@ static void prepare (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
@@ -89,7 +88,6 @@ process (GeglOperation       *operation,
   g_object_unref (temp_in);
   g_object_unref (temp_aux);
 
-  gegl_node_context_set_object (context, "output", G_OBJECT (output));
   return  TRUE;
 }
 

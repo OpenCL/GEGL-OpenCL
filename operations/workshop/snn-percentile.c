@@ -34,6 +34,7 @@ gegl_chant_double (percentile, 0.0, 100.0, 50.0,
 #define GEGL_CHANT_CATEGORIES  "misc"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -46,10 +47,14 @@ snn_percentile (GeglBuffer *src,
                 gint        pairs);
 
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
@@ -73,15 +78,9 @@ process (GeglOperation       *operation,
       else
         {
           temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-          output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
           snn_percentile (temp_in, output, self->radius, self->percentile, self->pairs);
           g_object_unref (temp_in);
         }
-
-      {
-        GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
-        gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-      }
     }
 
   return  TRUE;

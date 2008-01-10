@@ -54,7 +54,6 @@ buffer_sample (GeglBuffer *buffer,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
@@ -134,8 +133,6 @@ process (GeglOperation       *operation,
 
     gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf, GEGL_AUTO_ROWSTRIDE);
   }
-
-  gegl_node_context_set_object (context, "output", G_OBJECT (output));
 
   return TRUE;
 }

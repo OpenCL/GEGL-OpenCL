@@ -59,7 +59,6 @@ static void prepare (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
@@ -78,12 +77,6 @@ process (GeglOperation       *operation,
 
     c2g (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma, self->strength, self->gamma);
     g_object_unref (temp_in);
-
-    {
-      GeglBuffer *cropped = gegl_buffer_create_sub_buffer (output, result);
-
-      gegl_node_context_set_object (context, "output", G_OBJECT (cropped));
-    }
   }
 
   return  TRUE;

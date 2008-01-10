@@ -61,7 +61,6 @@ static void prepare (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
@@ -101,7 +100,6 @@ process (GeglOperation       *operation,
         g_free (acc);
       }
       g_object_unref (temp_in);
-      gegl_node_context_set_object (context, "output", G_OBJECT (output));
     }
 
   return  TRUE;

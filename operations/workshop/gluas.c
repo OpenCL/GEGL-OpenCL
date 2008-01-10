@@ -86,7 +86,6 @@ drawable_lua_process (GeglChantOperation *self,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
@@ -105,7 +104,6 @@ process (GeglOperation       *operation,
       drawable_lua_process (self, input, output, result, NULL, self->script, self->user_value);
     }
 
-  gegl_node_context_set_object (context, "output", G_OBJECT (output));
   return TRUE;
 }
 

@@ -1,3 +1,31 @@
+2008-01-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/generated/Makefile.am: Remove generated .c files in
+	maintainer-clean-generic.
+
+	* gegl/gegl-chant.h: Removed context argument from GEGL_CHANT_COMPOSER.
+
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/stress.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/ff-save.c:
+	* operations/workshop/gtk-display.c: removed context_id from
+	arguments on process function.
+
 2007-01-09  Hans Breuer  <hans@breuer.org>
 
 	* gegl/gegl-init.h : use PACKAGE_NAME rather than undefined PACKAGE for

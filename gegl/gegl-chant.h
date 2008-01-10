@@ -415,7 +415,6 @@ static gboolean process (GeglOperation *operation,
 #else
 #ifdef GEGL_CHANT_COMPOSER
 static gboolean process (GeglOperation       *operation,
-                         GeglNodeContext     *context,
                          GeglBuffer          *in_buf,
                          GeglBuffer          *aux_buf,
                          GeglBuffer          *out_buf,

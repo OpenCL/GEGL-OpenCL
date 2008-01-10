@@ -98,7 +98,6 @@ static Priv *init_priv (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *input,
          GeglBuffer          *source,
          const GeglRectangle *result)
