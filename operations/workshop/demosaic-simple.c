@@ -27,6 +27,7 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #define GEGL_CHANT_CATEGORIES      "blur"
 
 #define GEGL_CHANT_AREA_FILTER
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
@@ -34,6 +35,11 @@ static void
 demosaic (GeglChantOperation *op,
           GeglBuffer *src,
           GeglBuffer *dst);
+
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -53,7 +59,6 @@ process (GeglOperation       *operation,
 
 
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-      output = gegl_buffer_new (&compute, babl_format ("RGBA float"));
 
       demosaic (self, temp_in, output);
       g_object_unref (temp_in);

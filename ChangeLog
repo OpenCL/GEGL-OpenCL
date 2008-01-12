@@ -1,3 +1,10 @@
+2008-01-12  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/io/ff-load.c: Added video to GEGL_CHANT_CATEGORIES.
+
+	* operations/workshop/demosaic-simple.c: Use prepare() to set
+	format for output buffer.
+
 2008-01-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/Makefile.am: Don't rm compiled operation files here.

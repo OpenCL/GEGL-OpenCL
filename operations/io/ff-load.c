@@ -27,7 +27,7 @@ gegl_chant_int (frame, 0, 1000000, 0, "frame number")
 #define GEGL_CHANT_DESCRIPTION    "FFmpeg video frame importer."
 
 #define GEGL_CHANT_SELF           "ff-load.c"
-#define GEGL_CHANT_CATEGORIES     "video"
+#define GEGL_CHANT_CATEGORIES     "input:video"
 #define GEGL_CHANT_INIT
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
@@ -400,7 +400,7 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-static GeglRectangle 
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
   GeglRectangle result = {0,0,320,200};
