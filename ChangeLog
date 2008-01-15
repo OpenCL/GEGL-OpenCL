@@ -1,3 +1,9 @@
+2008-01-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node-context.c: (gegl_node_context_get_target):
+	Improve development debug message about mising format, and fall back
+	to RGBA float if no format is specified on the output pad.
+
 2008-01-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/demosaic-bimedian.c: Added a bimedian

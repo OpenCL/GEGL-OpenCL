@@ -327,8 +327,8 @@ gegl_node_context_get_target (GeglNodeContext *context,
 
   if (format == NULL)
     {
-      g_warning ("no format for %s\n", gegl_node_get_debug_name (node));
-      return NULL;
+      g_warning ("no format for %s presuming RGBA float\n", gegl_node_get_debug_name (node));
+      format = babl_format ("RGBA float");
     }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));
