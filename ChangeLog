@@ -1,3 +1,9 @@
+2008-01-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.h: include "buffer/gegl-buffer.h"
+	instead of "buffer/gegl-buffer-types.h" since the latter will not be
+	installed and gegl-operation.h will be.
+
 2008-01-16  Michael Natterer  <mitch@gimp.org>
 
 	* operations/core/shift.c: minor indentation fix in class_init().
