@@ -1,3 +1,7 @@
+2008-01-16  Michael Natterer  <mitch@gimp.org>
+
+	* operations/core/shift.c: minor indentation fix in class_init().
+
 2008-01-16  Sven Neumann  <sven@gimp.org>
 
 	* gegl/graph/gegl-node.c (gegl_node_get_bounding_box): don't leak id.

@@ -104,16 +104,16 @@ gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->set_property             = set_property;
-  object_class->get_property             = get_property;
+  object_class->set_property               = set_property;
+  object_class->get_property               = get_property;
 
-  operation_class->categories            = "core";
-  operation_class->no_cache              = TRUE;
-  operation_class->process               = process;
-  operation_class->attach                = attach;
-  operation_class->detect                = detect;
-  operation_class->get_defined_region    = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->categories              = "core";
+  operation_class->no_cache                = TRUE;
+  operation_class->process                 = process;
+  operation_class->attach                  = attach;
+  operation_class->detect                  = detect;
+  operation_class->get_defined_region      = get_defined_region;
+  operation_class->compute_input_request   = compute_input_request;
   operation_class->compute_affected_region = compute_affected_region;
 
   gegl_operation_class_set_name (operation_class, "shift");
