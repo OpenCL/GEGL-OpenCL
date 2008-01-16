@@ -1412,7 +1412,7 @@ gegl_node_get_bounding_box (GeglNode *root)
   GeglVisitor  *prepare_visitor;
   GeglVisitor  *have_visitor;
   GeglVisitor  *finish_visitor;
-  guchar       *id = g_malloc (1);
+  guchar       *id;
   gint          i;
 
   GeglPad      *pad;
@@ -1427,6 +1427,8 @@ gegl_node_get_bounding_box (GeglNode *root)
   if (!pad || !root)
     return dummy;
   g_object_ref (root);
+
+  id = g_malloc (1);
 
   for (i = 0; i < 2; i++)
     {
