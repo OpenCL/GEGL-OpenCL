@@ -30,8 +30,13 @@ gst$(SHREXT): gst.c $(GEGLHEADERS)
 
 ff-save$(SHREXT): ff-save.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+	@if [ ! $(-z "$(AVCODEC_LIBS)") -o $(-z "$(AVFORMAT_LIBS)") ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
 		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS) \
 		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS) 
+		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS);\
+	fi
 
 gtk-display$(SHREXT): gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\

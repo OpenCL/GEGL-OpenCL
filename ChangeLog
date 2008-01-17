@@ -1,5 +1,10 @@
 2008-01-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/Makefile.am: applied patch from Deji Akingunola
+	making the build of ff-save dependenton presence of ffmpeg libraries.
+
+2008-01-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation.h: prepend gegl/ to the include path
 	for gegl/buffer/gegl-buffer.h which is needed when compiling against
 	installed headers.
