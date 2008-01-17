@@ -19,8 +19,6 @@
 #ifndef __GEGL_OPERATION_AREA_FILTER_H__
 #define __GEGL_OPERATION_AREA_FILTER_H__
 
-#include <glib-object.h>
-#include "gegl-types.h"
 #include "gegl-operation-filter.h"
 
 G_BEGIN_DECLS

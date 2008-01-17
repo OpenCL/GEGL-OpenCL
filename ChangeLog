@@ -1,3 +1,13 @@
+2008-01-17  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation-area-filter.h
+	* gegl/operation/gegl-operation-composer.h
+	* gegl/operation/gegl-operation-filter.h
+	* gegl/operation/gegl-operation-meta.h
+	* gegl/operation/gegl-operation-point-composer.h: remove all
+	includes except the parent class (which includes everything we
+	need).
+
 2008-01-17  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/Makefile.am: applied modified patch from Deji

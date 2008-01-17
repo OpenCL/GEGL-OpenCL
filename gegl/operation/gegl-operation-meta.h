@@ -19,8 +19,6 @@
 #ifndef __GEGL_OPERATION_META_H__
 #define __GEGL_OPERATION_META_H__
 
-#include <glib-object.h>
-#include "gegl-types.h"
 #include "gegl-operation.h"
 
 G_BEGIN_DECLS
