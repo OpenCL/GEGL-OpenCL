@@ -1,3 +1,8 @@
+2008-01-17  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/Makefile.am: applied modified patch from Deji
+	Akingunola which fixes syntax of 'if' used in the ff-save target.
+
 2008-01-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation.h: removed unused defines.

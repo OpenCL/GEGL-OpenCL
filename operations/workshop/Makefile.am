@@ -29,13 +29,11 @@ gst$(SHREXT): gst.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
 
 ff-save$(SHREXT): ff-save.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
-	@if [ ! $(-z "$(AVCODEC_LIBS)") -o $(-z "$(AVFORMAT_LIBS)") ]; then \
+	@if [ -n "$(AVCODEC_LIBS)" ] && [ -n "$(AVFORMAT_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
-		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS) \
-		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS) 
-		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS);\
+		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS)    \
+		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS); \
 	fi
 
 gtk-display$(SHREXT): gtk-display.c $(GEGLHEADERS)
