@@ -937,7 +937,5 @@ G_END_DECLS
 
 /*** this line with it's three starting *** is here to trick the API parser.
  */
-#include "gegl/property-types/gegl-paramspecs.h"
-#include <babl/babl.h>
 
 #endif  /* __GEGL_H__ */

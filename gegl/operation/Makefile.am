@@ -31,7 +31,8 @@ liboperation_la_SOURCES = $(OPERATION_sources) $(OPERATION_headers)
 #liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/operation
 
 INCLUDES = \
-	   -I$(top_srcdir)	\
-	   -I$(top_srcdir)/gegl	\
+	   -I$(top_srcdir)		\
+	   -I$(top_srcdir)/gegl		\
+	   -I$(top_srcdir)/gegl/buffer	\
 	   @DEP_CFLAGS@ @BABL_CFLAGS@
 

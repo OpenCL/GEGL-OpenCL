@@ -29,8 +29,6 @@ GEGL_sources = \
 	gegl-instrument.h		\
 	gegl-module.h
 
-GEGL_public_headers = gegl-utils.h
-
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
 libgegl_@GEGL_API_VERSION@_la_LIBADD =	\
@@ -52,7 +50,5 @@ INCLUDES = \
 AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
 
 libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
-libgegl_@GEGL_API_VERSION@subincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 
-libgegl_@GEGL_API_VERSION@include_HEADERS = gegl.h
-libgegl_@GEGL_API_VERSION@subinclude_HEADERS = $(GEGL_public_headers) 
+libgegl_@GEGL_API_VERSION@include_HEADERS = gegl.h gegl-utils.h buffer/gegl-buffer.h property-types/gegl-paramspecs.h

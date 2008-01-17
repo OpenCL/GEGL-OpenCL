@@ -26,6 +26,7 @@
 #include "gegl.h"
 #include "gegl-node-editor.h"
 #include "gegl-view.h"
+#include "gegl-paramspecs.h"
 #include "editor.h"
 
 GtkWidget *
@@ -173,7 +174,7 @@ type_editor_generic_changed (GtkWidget *entry,
 {
   GParamSpec *param_spec = data;
   GeglNode   *node = g_object_get_data (G_OBJECT (entry), "node");
-  const gchar *entry_text;
+  const gchar *entry_text = NULL;
   const gchar *prop_name = param_spec->name;
 
   if (param_spec->value_type != G_TYPE_BOOLEAN)

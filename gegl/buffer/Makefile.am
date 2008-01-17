@@ -53,9 +53,6 @@ BUFFER_headers = \
     gegl-provider.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
-libbufferinclude_HEADERS = gegl-buffer.h
-
-libbufferincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/buffer
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

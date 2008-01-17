@@ -1,3 +1,19 @@
+2008-01-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Reorganized all installed header files to end up in the same top-level
+	folder. Please clean out your installed gegl headers before doing 
+	make install. External applications or libraries using GeglBuffer
+	should strip the include down to <gegl-buffer.h>.
+
+	* bin/Makefile.am:
+	* bin/gegl-node-editor.c:
+	* gegl/Makefile.am:
+	* gegl/buffer/Makefile.am:
+	* gegl/gegl.h:
+	* gegl/operation/Makefile.am:
+	* gegl/operation/gegl-operation.h:
+	* gegl/property-types/Makefile.am:
+
 2008-01-17  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/operation/gegl-operation-area-filter.h
