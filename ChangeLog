@@ -1,5 +1,9 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-tile.c: don't use GSlice for the tile data.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/process/gegl-processor.c: use GSlice for GeglRectangle.
 
 2008-01-18  Sven Neumann  <sven@gimp.org>
