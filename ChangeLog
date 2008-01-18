@@ -1,3 +1,9 @@
+2008-01-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/Makefile.am:
+	* gegl/gegl-init.c: made GEGL_PATH depend on libdir and not prefix,
+	makes GEGL find it's ops also on 64bit systems.
+
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
 	* gegl/process/gegl-processor.c: moved variables to inner scopes

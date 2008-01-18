@@ -48,7 +48,7 @@ INCLUDES = \
 	-I$(top_srcdir)/gegl/buffer	\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
 
-AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
+AM_CPPFLAGS = -DLIBDIR=\""$(libdir)"\"
 
 libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 

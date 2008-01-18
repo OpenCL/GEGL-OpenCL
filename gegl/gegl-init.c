@@ -222,7 +222,7 @@ gegl_post_parse_hook (GOptionContext *context,
       gchar *module_path;
 
       if (g_getenv ("BABL_ERROR") == NULL)
-        g_setenv ("BABL_ERROR", "0.007", 0);
+          g_setenv ("BABL_ERROR", "0.0001", 0);
 
       if (g_getenv ("GEGL_PATH"))
         {
@@ -233,7 +233,7 @@ gegl_post_parse_hook (GOptionContext *context,
 #ifdef G_OS_WIN32
           module_path = g_win32_get_package_installation_subdirectory (PACKAGE_NAME, "lib" GEGL_LIBRARY ".dll", GEGL_LIBRARY);
 #else
-          module_path = g_strdup (PREFIX "/lib/" GEGL_LIBRARY);
+          module_path = g_strdup (LIBDIR "/" GEGL_LIBRARY);
 #endif
         }
 
