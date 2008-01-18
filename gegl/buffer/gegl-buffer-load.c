@@ -59,7 +59,8 @@ typedef struct
 } LoadInfo;
 
 
-static void load_info_destroy (LoadInfo *info)
+static void
+load_info_destroy (LoadInfo *info)
 {
   if (!info)
     return;
@@ -73,8 +74,7 @@ static void load_info_destroy (LoadInfo *info)
       GList *iter;
       for (iter = info->tiles; iter; iter = iter->next)
         {
-          GeglTileEntry *entry = iter->data;
-          g_free (entry);
+          g_slice_free (GeglTileEntry, iter->data);
         }
       g_list_free (info->tiles);
       info->tiles = NULL;
@@ -120,7 +120,7 @@ gegl_buffer_load (GeglBuffer  *buffer,
     gint i;
     for (i = 0; i < info->header.tile_count; i++)
       {
-        GeglTileEntry *entry = g_malloc0 (sizeof (GeglTileEntry));
+        GeglTileEntry *entry = g_slice_new0 (GeglTileEntry);
 
         read (info->fd, entry, sizeof (GeglTileEntry));
 

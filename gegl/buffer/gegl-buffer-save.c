@@ -64,11 +64,12 @@ typedef struct
 } SaveInfo;
 
 
-GeglTileEntry *tile_entry_new (gint x,
-                               gint y,
-                               gint z)
+static GeglTileEntry *
+tile_entry_new (gint x,
+                gint y,
+                gint z)
 {
-  GeglTileEntry *entry = g_malloc0 (sizeof (GeglTileEntry));
+  GeglTileEntry *entry = g_slice_new0 (GeglTileEntry);
 
   entry->x = x;
   entry->y = y;
@@ -76,12 +77,14 @@ GeglTileEntry *tile_entry_new (gint x,
   return entry;
 }
 
-void tile_entry_destroy (GeglTileEntry *entry)
+static void
+tile_entry_destroy (GeglTileEntry *entry)
 {
-  g_free (entry);
+  g_slice_free (GeglTileEntry, entry);
 }
 
-void save_info_destroy (SaveInfo *info)
+static void
+save_info_destroy (SaveInfo *info)
 {
   if (!info)
     return;

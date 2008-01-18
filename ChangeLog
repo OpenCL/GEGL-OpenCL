@@ -1,3 +1,8 @@
+2008-01-19  Sven Neumann  <sven@gimp.org>
+
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-buffer-save.c: use GSlice for GeglTileEntry.
+
 2008-01-18  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: Changed library API version to be based on the
