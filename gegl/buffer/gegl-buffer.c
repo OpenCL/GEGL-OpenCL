@@ -217,11 +217,8 @@ static void gegl_buffer_void (GeglBuffer *buffer);
 static void
 gegl_buffer_dispose (GObject *object)
 {
-  GeglBuffer    *buffer;
-  GeglHandler *handler;
-
-  buffer = (GeglBuffer *) object;
-  handler  = GEGL_HANDLER (object);
+  GeglBuffer  *buffer  = GEGL_BUFFER (object);
+  GeglHandler *handler = GEGL_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
 
@@ -242,7 +239,8 @@ gegl_buffer_dispose (GObject *object)
 
   de_allocated_buffers++; /* XXX: is it correct to count that, shouldn't that
                              only be counted in finalize? */
-  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
+
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static GeglTileBackend *
@@ -385,7 +383,7 @@ gegl_buffer_constructor (GType                  type,
   else if (buffer->abyss.width == -1 ||
            buffer->abyss.height == -1)
     {
-      buffer->abyss.x      = GEGL_BUFFER (provider)->abyss.x - buffer->shift_x; 
+      buffer->abyss.x      = GEGL_BUFFER (provider)->abyss.x - buffer->shift_x;
       buffer->abyss.y      = GEGL_BUFFER (provider)->abyss.y - buffer->shift_y;
       buffer->abyss.width  = GEGL_BUFFER (provider)->abyss.width;
       buffer->abyss.height = GEGL_BUFFER (provider)->abyss.height;
@@ -506,11 +504,8 @@ get_tile (GeglProvider *tile_store,
 static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
-  GObjectClass       *gobject_class;
-  GeglProviderClass *tile_provider_class;
-
-  gobject_class    = (GObjectClass *) class;
-  tile_provider_class = (GeglProviderClass *) class;
+  GObjectClass      *gobject_class       = G_OBJECT_CLASS (class);
+  GeglProviderClass *tile_provider_class = GEGL_PROVIDER_CLASS (class);
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
@@ -586,10 +581,11 @@ gegl_buffer_class_init (GeglBufferClass *class)
 static void
 gegl_buffer_init (GeglBuffer *buffer)
 {
-  buffer->extent.x            = 0;
-  buffer->extent.y            = 0;
-  buffer->extent.width        = 0;
-  buffer->extent.height       = 0;
+  buffer->extent.x      = 0;
+  buffer->extent.y      = 0;
+  buffer->extent.width  = 0;
+  buffer->extent.height = 0;
+
   buffer->shift_x      = 0;
   buffer->shift_y      = 0;
   buffer->abyss.x      = 0;
@@ -1025,7 +1021,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
       gint tiledy  = buffer_y + bufy;
       gint offsety = gegl_tile_offset (tiledy, tile_height);
 
-      
+
 
       gint bufx    = 0;
 
@@ -1133,7 +1129,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                             if (buffer_y + y >= buffer_abyss_y &&
                                 buffer_y + y < abyss_y_total)
                               {
-                                babl_process (fish, bp + lskip * bpx_size, tp + lskip * px_size, 
+                                babl_process (fish, bp + lskip * bpx_size, tp + lskip * px_size,
                                  pixels - lskip - rskip);
                               }
 
@@ -1319,7 +1315,7 @@ static void resample_nearest (void   *dest_buf,
 }
 #endif
 
-/* Optimized|obfuscated version of the nearest neighbour resampler 
+/* Optimized|obfuscated version of the nearest neighbour resampler
  * XXX: seems to contains some very slight inprecision in the rendering.
  */
 static void resample_nearest (void   *dest_buf,
@@ -1351,7 +1347,7 @@ static void resample_nearest (void   *dest_buf,
       guchar *src_base;
       guint sx;
       guint px = 0;
-      guchar *src;      
+      guchar *src;
 
       if (sy >= source_h << 16)
         sy = (source_h - 1) << 16;
@@ -1442,8 +1438,8 @@ static void resample_boxfilter_u8 (void   *dest_buf,
   guint         middle_weight;
   guint         bottom_weight;
 
-  footprint_y = (1.0 / scale) * 256; 
-  footprint_x = (1.0 / scale) * 256; 
+  footprint_y = (1.0 / scale) * 256;
+  footprint_x = (1.0 / scale) * 256;
   foosum = footprint_x * footprint_y;
 
   if (rowstride != GEGL_AUTO_ROWSTRIDE)
@@ -1635,7 +1631,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, format, level);
 
-      if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8") 
+      if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")
           && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
@@ -1769,7 +1765,7 @@ gegl_buffer_new (const GeglRectangle *extent,
                        NULL);
 }
 
-GeglBuffer* 
+GeglBuffer*
 gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                                const GeglRectangle *extent)
 {

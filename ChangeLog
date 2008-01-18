@@ -1,5 +1,10 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-storage.c
+	* gegl/buffer/gegl-buffer.c: minor cleanups, mainly formatting.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend.h: don't needlessly use a void
 	pointer for BablFormat.
 

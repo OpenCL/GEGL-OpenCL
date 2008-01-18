@@ -149,18 +149,6 @@ set_property (GObject      *gobject,
     }
 }
 
-static void
-gegl_storage_dispose (GObject *object)
-{
-  GeglStorage   *storage;
-  GeglHandler *handler;
-
-  storage = (GeglStorage *) object;
-  handler   = GEGL_HANDLER (object);
-
-  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
-}
-
 static gboolean
 storage_idle (gpointer data)
 {
@@ -173,7 +161,7 @@ storage_idle (gpointer data)
     }
 
   gegl_provider_message (GEGL_PROVIDER (storage),
-                           GEGL_TILE_IDLE, 0, 0, 0, NULL);
+                         GEGL_TILE_IDLE, 0, 0, 0, NULL);
 
   return TRUE;
 }
@@ -189,10 +177,11 @@ gegl_storage_constructor (GType                  type,
   GeglHandlers   *handlers;
   GeglHandler    *handler;
 
-  object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  storage = GEGL_STORAGE (object);
-  handlers  = GEGL_HANDLERS (storage);
-  handler   = GEGL_HANDLER (storage);
+  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+
+  storage  = GEGL_STORAGE (object);
+  handlers = GEGL_HANDLERS (storage);
+  handler  = GEGL_HANDLER (storage);
 
   if (storage->path != NULL)
     {
@@ -215,19 +204,11 @@ gegl_storage_constructor (GType                  type,
                                             NULL),
                     NULL);
     }
-  {
-    gint tile_size;
-    gint px_size;
 
-    g_object_get (handler->provider,
-                  "tile-size", &tile_size,
-                  "px-size", &px_size,
-                  NULL);
-    g_object_set (object,
-                  "tile-size", tile_size,
-                  "px-size", px_size,
-                  NULL);
-  }
+  g_object_get (handler->provider,
+                "tile-size", &storage->tile_size,
+                "px-size",   &storage->px_size,
+                NULL);
 
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
                                                   "size", 256,
@@ -265,14 +246,9 @@ gegl_storage_constructor (GType                  type,
 static void
 gegl_storage_class_init (GeglStorageClass *class)
 {
-  GObjectClass       *gobject_class;
-  GeglProviderClass *tile_store_class;
-
-  gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglProviderClass *) class;
+  GObjectClass *gobject_class = G_OBJECT_CLASS (class);
 
   parent_class                = g_type_class_peek_parent (class);
-  gobject_class->dispose      = gegl_storage_dispose;
   gobject_class->constructor  = gegl_storage_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
