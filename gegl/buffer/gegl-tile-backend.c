@@ -63,6 +63,7 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_FORMAT:
+        g_value_set_pointer (value, backend->format);
         break;
 
       default:
