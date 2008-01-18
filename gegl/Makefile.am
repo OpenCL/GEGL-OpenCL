@@ -45,6 +45,7 @@ libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
 
 INCLUDES = \
 	-I$(top_srcdir)	\
+	-I$(top_srcdir)/gegl/buffer	\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
 
 AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"

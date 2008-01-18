@@ -8,7 +8,9 @@ GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
 all-local: $(SOBJS)
 
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @GTK_CFLAGS@ \
-           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I$(top_srcdir)/bin -I. -fPIC
+           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl \
+	   -I$(top_srcdir)/bin -I. \
+	   -I$(top_srcdir)/gegl/buffer -fPIC
 LDFLAGS += -shared 
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
