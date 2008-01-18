@@ -105,7 +105,7 @@ gegl_instrument (const gchar *parent_name,
 
   if (root == NULL)
     {
-      root       = g_malloc0 (sizeof (Timing));
+      root       = g_slice_new0 (Timing);
       root->name = g_strdup (parent_name);
     }
   parent = timing_find (root, parent_name);
@@ -118,7 +118,7 @@ gegl_instrument (const gchar *parent_name,
   iter = timing_find (parent, name);
   if (!iter)
     {
-      iter             = g_malloc0 (sizeof (Timing));
+      iter             = g_slice_new0 (Timing);
       iter->name       = g_strdup (name);
       iter->parent     = parent;
       iter->next       = parent->children;

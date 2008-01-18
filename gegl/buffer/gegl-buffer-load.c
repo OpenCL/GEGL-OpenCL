@@ -79,14 +79,14 @@ static void load_info_destroy (LoadInfo *info)
       g_list_free (info->tiles);
       info->tiles = NULL;
     }
-  g_free (info);
+  g_slice_free (LoadInfo, info);
 }
 
 void
 gegl_buffer_load (GeglBuffer  *buffer,
                   const gchar *path)
 {
-  LoadInfo *info = g_malloc0 (sizeof (LoadInfo));
+  LoadInfo *info = g_slice_new0 (LoadInfo);
 
   if (sizeof (GeglBufferFileHeader) != 256)
     {
@@ -173,4 +173,3 @@ gegl_buffer_load (GeglBuffer  *buffer,
 
   load_info_destroy (info);
 }
-

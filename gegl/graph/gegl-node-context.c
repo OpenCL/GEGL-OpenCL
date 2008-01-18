@@ -153,7 +153,7 @@ typedef struct Property
 static Property *property_new (GeglNode    *node,
                                const gchar *property_name)
 {
-  Property *property = g_malloc0 (sizeof (Property));
+  Property *property = g_slice_new0 (Property);
 
   property->name = g_strdup (property_name);
   return property;
@@ -161,10 +161,9 @@ static Property *property_new (GeglNode    *node,
 
 static void property_destroy (Property *property)
 {
-  if (property->name)
-    g_free (property->name);
+  g_free (property->name);
   g_value_unset (&property->value); /* does an unref */
-  g_free (property);
+  g_slice_free (Property, property);
 }
 
 static gint

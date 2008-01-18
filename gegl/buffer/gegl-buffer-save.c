@@ -101,7 +101,7 @@ void save_info_destroy (SaveInfo *info)
       g_list_free (info->tiles);
       info->tiles = NULL;
     }
-  g_free (info);
+  g_slice_free (SaveInfo, info);
 }
 
 
@@ -150,7 +150,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
                   const gchar         *path,
                   const GeglRectangle *roi)
 {
-  SaveInfo *info = g_malloc0 (sizeof (SaveInfo));
+  SaveInfo *info = g_slice_new0 (SaveInfo);
 
   if (sizeof (GeglBufferFileHeader) != 256)
     {

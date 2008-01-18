@@ -73,7 +73,7 @@ mem_entry_write (GeglTileMem *mem,
 static inline MemEntry *
 mem_entry_new (GeglTileMem *mem)
 {
-  MemEntry *self = g_malloc (sizeof (MemEntry));
+  MemEntry *self = g_slice_new (MemEntry);
 
   self->offset = g_malloc (GEGL_TILE_BACKEND (mem)->tile_size);
   dbg_alloc (GEGL_TILE_BACKEND (mem)->tile_size);
@@ -88,7 +88,7 @@ mem_entry_destroy (MemEntry    *entry,
   g_hash_table_remove (mem->entries, entry);
 
   dbg_dealloc (GEGL_TILE_BACKEND (mem)->tile_size);
-  g_free (entry);
+  g_slice_free (MemEntry, entry);
 }
 
 

@@ -1,5 +1,15 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-buffer-save.c
+	* gegl/buffer/gegl-handler-cache.c
+	* gegl/buffer/gegl-tile-disk.c
+	* gegl/buffer/gegl-tile-mem.c
+	* gegl/graph/gegl-node-context.c
+	* gegl/gegl-instrument.c: use GSlice in some more places.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-storage.c (get_property): always set the value.
 
 2008-01-18  Sven Neumann  <sven@gimp.org>

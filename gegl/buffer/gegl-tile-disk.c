@@ -54,9 +54,10 @@
 static void dbg_alloc (int size);
 static void dbg_dealloc (int size);
 
-/* These entries are kept in RAM for now, they should be written as an index to the
- * swap file, at a position specified by a header block, making the header grow up
- * to a multiple of the size used in this swap file is probably a good idea
+/* These entries are kept in RAM for now, they should be written as an
+ * index to the swap file, at a position specified by a header block,
+ * making the header grow up to a multiple of the size used in this
+ * swap file is probably a good idea
  *
  * Serializing the bablformat is probably also a good idea.
  */
@@ -145,7 +146,7 @@ disk_entry_write (GeglTileDisk *disk,
 static inline DiskEntry *
 disk_entry_new (GeglTileDisk *disk)
 {
-  DiskEntry *self = g_malloc (sizeof (DiskEntry));
+  DiskEntry *self = g_slice_new (DiskEntry);
 
   if (disk->free_list)
     {
@@ -175,7 +176,7 @@ disk_entry_destroy (DiskEntry    *entry,
   g_hash_table_remove (disk->entries, entry);
 
   dbg_dealloc (GEGL_TILE_BACKEND (disk)->tile_size);
-  g_free (entry);
+  g_slice_free (DiskEntry, entry);
 }
 
 
@@ -379,8 +380,7 @@ static void get_property (GObject    *object,
   switch (property_id)
     {
       case PROP_PATH:
-        if (self->path)
-          g_value_set_string (value, self->path);
+        g_value_set_string (value, self->path);
         break;
 
       default:

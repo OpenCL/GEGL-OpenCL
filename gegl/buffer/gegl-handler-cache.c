@@ -90,7 +90,7 @@ dispose (GObject *object)
       CacheItem *item = list->data;
       g_object_unref (item->tile);
       cache->list = g_slist_remove (cache->list, item);
-      g_free (item);
+      g_slice_free (CacheItem, item);
     }
 
   G_OBJECT_CLASS (gegl_handler_cache_parent_class)->dispose (object);
@@ -390,7 +390,7 @@ gegl_handler_cache_trim (GeglHandlerCache *cache)
 
       g_object_unref (tile);
       cache->list = g_slist_remove (cache->list, last_writable);
-      g_free (last_writable);
+      g_slice_free (CacheItem, last_writable);
       return TRUE;
     }
   return FALSE;
@@ -404,7 +404,6 @@ gegl_handler_cache_void (GeglHandlerCache *cache,
                          gint z)
 {
   CacheItem *item = NULL;
-
   GeglTile  *tile = NULL;
 
   if (cache->size > 0)
@@ -447,7 +446,7 @@ gegl_handler_cache_void (GeglHandlerCache *cache,
           gegl_tile_void (tile);
           g_object_unref (tile);
           cache->list = g_slist_remove (cache->list, item);
-          g_free (item);
+          g_slice_free (CacheItem, item);
         }
       else
         {
@@ -464,7 +463,7 @@ gegl_handler_cache_insert (GeglHandlerCache *cache,
                            gint           z)
 {
   guint      count;
-  CacheItem *item = g_malloc (sizeof (CacheItem));
+  CacheItem *item = g_slice_new (CacheItem);
 
   g_object_ref (G_OBJECT (tile));
   item->tile = tile;
