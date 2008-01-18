@@ -15,7 +15,18 @@ OPERATION_sources = \
 
 OPERATION_headers = \
 	gegl-extension-handler.h	\
-    	gegl-operation.h        	\
+	gegl-operation.h        	\
+	gegl-operation-composer.h     	\
+	gegl-operation-area-filter.h    \
+	gegl-operation-filter.h       	\
+	gegl-operation-meta.h       	\
+	gegl-operation-point-composer.h \
+	gegl-operation-point-filter.h   \
+	gegl-operation-sink.h       	\
+	gegl-operation-source.h
+
+public_headers = \
+	gegl-operation.h        	\
 	gegl-operation-composer.h     	\
 	gegl-operation-area-filter.h    \
 	gegl-operation-filter.h       	\
@@ -26,9 +37,9 @@ OPERATION_headers = \
 	gegl-operation-source.h
 
 
-liboperation_la_SOURCES = $(OPERATION_sources) $(OPERATION_headers)
-#liboperationinclude_HEADERS = #
-#liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/operation
+liboperation_la_SOURCES = $(OPERATION_sources) $(public_headers)
+liboperationinclude_HEADERS = $(OPERATION_headers)
+liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/operation
 
 INCLUDES = \
 	   -I$(top_srcdir)		\

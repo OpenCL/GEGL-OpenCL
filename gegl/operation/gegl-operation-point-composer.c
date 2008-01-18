@@ -15,6 +15,13 @@
  *
  * Copyright 2006 Øyvind Kolås
  */
+
+
+#define GEGL_INTERNAL
+#include "config.h"
+
+#include <glib-object.h>
+#include "gegl-types.h"
 #include "gegl-operation-point-composer.h"
 #include "gegl-utils.h"
 #include "graph/gegl-node.h"

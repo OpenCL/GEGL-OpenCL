@@ -1,3 +1,30 @@
+2008-01-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/Makefile.am: install operation header files in
+	$(includedir)-0.0/operation/
+	* gegl/gegl-module.h: do not include gegl-types.h
+	* gegl/gegl-types.h: added some ad-hoc guards against multiple
+	typedefs.
+	* gegl/graph/gegl-node-context.c:
+	* gegl/graph/gegl-node.c:
+	* gegl/operation/gegl-operation-area-filter.c:
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-meta.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.c:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* operations/affine/module.c:
+	* operations/color/remap.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c: modified to compile with header files
+	modified to allow the operation headers being installed.
+
 2008-01-19  Sven Neumann  <sven@gimp.org>
 
 	* gegl/operation/gegl-operation-meta.c: use GSlice for the

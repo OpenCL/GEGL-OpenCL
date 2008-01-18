@@ -22,7 +22,15 @@
 
 #include <glib-object.h>
 #include <babl/babl.h>
-#include "gegl-types.h"
+
+/* Evil hack to make sure types are defined */
+#ifndef GEGL_OPERATION_TYPE
+#define GEGL_OPERATION_TYPE
+typedef struct _GeglOperation        GeglOperation;
+typedef struct _GeglNodeContext      GeglNodeContext;
+typedef struct _GeglPad              GeglPad;
+#endif
+
 #include "gegl-buffer.h"
 
 G_BEGIN_DECLS
@@ -198,8 +206,6 @@ gboolean gegl_operation_calc_source_regions  (GeglOperation *operation,
 
 void     gegl_operation_vector_prop_changed  (GeglVector    *vector,
                                               GeglOperation *operation);
-
-void     gegl_extension_handler_cleanup      (void);
 
 void     gegl_operation_gtype_cleanup        (void);
 

@@ -17,8 +17,8 @@
  */
 
 #include <glib-object.h>
+#include "gegl-types.h"
 #include <gegl-module.h>
-
 #include "module.h"
 #include "affine.h"
 

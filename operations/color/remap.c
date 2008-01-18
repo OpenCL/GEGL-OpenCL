@@ -19,8 +19,16 @@
 #ifndef __GEGL_OPERATION_REMAP_H__
 #define __GEGL_OPERATION_REMAP_H__
 
+#define GEGL_INTERNAL
+#include <glib-object.h>
+#include "gegl-types.h"
+#include "graph/gegl-node.h"
+#include "gegl.h"
+#include "gegl-utils.h"
 #include "operation/gegl-operation.h"
 #include "gegl-module.h"
+
+
 
 G_BEGIN_DECLS
 
@@ -52,7 +60,8 @@ G_END_DECLS
 
 /***************************************************************************/
 
-#include "graph/gegl-pad.h"
+#include "gegl-types.h"  /* FIXME: this include should not be needed */
+#include "graph/gegl-pad.h"  /*FIXME: neither should these */
 #include "graph/gegl-node.h"
 #include <math.h>
 #include <string.h>

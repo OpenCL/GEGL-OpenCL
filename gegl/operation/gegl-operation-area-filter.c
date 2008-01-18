@@ -15,7 +15,21 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
+#define GEGL_INTERNAL
+
+#include "config.h"
+
+#include <glib-object.h>
+#include <string.h>
+#include "gegl-types.h"
 #include "gegl-operation-area-filter.h"
+#include "gegl-utils.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-connection.h"
+#include "graph/gegl-pad.h"
+#include "buffer/gegl-region.h"
+#include "buffer/gegl-buffer.h"
+
 #include <string.h>
 
 G_DEFINE_TYPE (GeglOperationAreaFilter, gegl_operation_area_filter, GEGL_TYPE_OPERATION_FILTER)

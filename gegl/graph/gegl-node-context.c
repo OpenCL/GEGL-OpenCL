@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#define GEGL_INTERNAL
+
 #include <stdio.h>
 #include <string.h>
 

@@ -16,11 +16,20 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+#define GEGL_INTERNAL
+
+#include "config.h"
+
+#include <glib-object.h>
+#include <string.h>
+#include "gegl-types.h"
 #include "gegl-operation-composer.h"
 #include "gegl-utils.h"
-#include "graph/gegl-pad.h"
 #include "graph/gegl-node.h"
-#include <string.h>
+#include "graph/gegl-connection.h"
+#include "graph/gegl-pad.h"
+#include "buffer/gegl-region.h"
+#include "buffer/gegl-buffer.h"
 
 enum
 {
@@ -28,7 +37,6 @@ enum
   PROP_OUTPUT,
   PROP_INPUT,
   PROP_AUX,
-  PROP_LAST
 };
 
 static void     get_property (GObject             *gobject,

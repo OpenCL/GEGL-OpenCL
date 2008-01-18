@@ -17,6 +17,8 @@
  *           2005, 2006 Øyvind Kolås
  */
 
+#define GEGL_INTERNAL
+
 #include "config.h"
 
 #include <glib-object.h>

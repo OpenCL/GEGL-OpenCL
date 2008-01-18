@@ -15,18 +15,27 @@
  *
  * Copyright 2006 Øyvind Kolås
  */
-#include "gegl-operation-filter.h"
-#include "graph/gegl-pad.h"
-#include "graph/gegl-node.h"
-#include "buffer/gegl-buffer.h"
+
+#define GEGL_INTERNAL
+
+#include "config.h"
+
+#include <glib-object.h>
 #include <string.h>
+#include "gegl-types.h"
+#include "gegl-operation-filter.h"
+#include "gegl-utils.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-connection.h"
+#include "graph/gegl-pad.h"
+#include "buffer/gegl-region.h"
+#include "buffer/gegl-buffer.h"
 
 enum
 {
   PROP_0,
   PROP_OUTPUT,
   PROP_INPUT,
-  PROP_LAST
 };
 
 static void     get_property            (GObject       *gobject,
