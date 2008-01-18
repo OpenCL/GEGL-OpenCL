@@ -123,7 +123,7 @@ process (GeglOperation       *operation,
       {
         cmatrix_len =
             fir_gen_convolve_matrix (self->std_dev_y, &cmatrix);
-        fir_ver_blur (temp, output, cmatrix, cmatrix_len, 
+        fir_ver_blur (temp, output, cmatrix, cmatrix_len,
          self->std_dev_x * RADIUS_SCALE, self->std_dev_y * RADIUS_SCALE);
         g_free (cmatrix);
       }
@@ -259,7 +259,7 @@ iir_young_ver_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
+  buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
   w   = g_malloc0 (gegl_buffer_get_height (src) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
@@ -376,8 +376,8 @@ fir_hor_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -418,8 +418,8 @@ fir_ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 

@@ -1,3 +1,12 @@
+2008-01-18  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: Changed library API version to be based on the
+	major/minor number.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c: Use gegl_buffer_get_pixel_count()
+	instead of getting width/height separately and doing the math.
+
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
 	* gegl/buffer/gegl-buffer-load.c

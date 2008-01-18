@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_double (radius, 0.0, 200.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
 
@@ -179,7 +179,7 @@ hor_blur (GeglBuffer *src,
                              1 + radius*2,
                              1,
                              components);
-        
+
         for (i=0; i<4; i++)
           dst_buf [offset++] = components[i];
       }
@@ -201,9 +201,9 @@ ver_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_get_width (src) * gegl_buffer_get_height (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_width (dst) * gegl_buffer_get_height (dst) * 4 * 4);
-  
+  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
+  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
+
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
@@ -221,7 +221,7 @@ ver_blur (GeglBuffer *src,
                              1,
                              1 + radius * 2,
                              components);
-        
+
         for (c=0; c<4; c++)
           dst_buf [offset++] = components[c];
       }
