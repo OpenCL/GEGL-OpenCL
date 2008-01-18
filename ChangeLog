@@ -1,5 +1,9 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/process/gegl-processor.c: use GSlice for GeglRectangle.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* docs/Makefile.am
 	* docs/gallery/Makefile.am: don't use export to pass environment
 	variables, just pass them directly.

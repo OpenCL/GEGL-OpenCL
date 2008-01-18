@@ -221,9 +221,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
   GeglRectangle bounds;
 
   if (gegl_rectangle_equal (&processor->rectangle, rectangle))
-    {
-      return;
-    }
+    return;
 
   bounds               = gegl_node_get_bounding_box (processor->input);
   processor->rectangle = *rectangle;
@@ -231,11 +229,9 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
   /* remove already queued dirty rectangles */
   while (processor->dirty_rectangles)
-    {
-      GeglRectangle *rect = processor->dirty_rectangles->data;
-      processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, rect);
-      g_free (rect);
-    }
+    g_slice_free (GeglRectangle, processor->dirty_rectangles->data);
+  g_slist_free (processor->dirty_rectangles);
+  processor->dirty_rectangles = NULL;
 }
 
 GeglProcessor *
@@ -325,8 +321,7 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
               if (band_size < 1)
                 band_size = 1;
 
-              fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
+              fragment = g_slice_dup (GeglRectangle, dr);
 
               fragment->height = band_size;
               dr->height      -= band_size;
@@ -344,8 +339,7 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
               if (band_size < 1)
                 band_size = 1;
 
-              fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
+              fragment = g_slice_dup (GeglRectangle, dr);
 
               fragment->width = band_size;
               dr->width      -= band_size;
@@ -360,7 +354,7 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
 
       if (!dr->width || !dr->height)
         {
-          g_free (dr);
+          g_slice_free (GeglRectangle, dr);
           return TRUE;
         }
 
@@ -380,7 +374,8 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
 
           g_free (buf);
         }
-      g_free (dr);
+
+      g_slice_free (GeglRectangle, dr);
     }
 
   return processor->dirty_rectangles != NULL;
@@ -408,8 +403,7 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
               if (band_size < 1)
                 band_size = 1;
 
-              fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
+              fragment = g_slice_dup (GeglRectangle, dr);
 
               fragment->height = band_size;
               dr->height      -= band_size;
@@ -427,8 +421,7 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
               if (band_size < 1)
                 band_size = 1;
 
-              fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
+              fragment = g_slice_dup (GeglRectangle, dr);
 
               fragment->width = band_size;
               dr->width      -= band_size;
@@ -442,13 +435,13 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
 
       if (!dr->width || !dr->height)
         {
-          g_free (dr);
+          g_slice_free (GeglRectangle, dr);
           return TRUE;
         }
 
       gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
       gegl_region_union_with_rect (processor->valid_region, dr);
-      g_free (dr);
+      g_slice_free (GeglRectangle, dr);
     }
 
   return processor->dirty_rectangles != NULL;
@@ -486,6 +479,7 @@ static gint region_area (GeglRegion *region)
       sum += rect_area (&rectangles[i]);
     }
   g_free (rectangles);
+
   return sum;
 }
 
@@ -600,14 +594,12 @@ gegl_processor_render (GeglProcessor *processor,
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
           GeglRectangle  roi = rectangles[i];
-          GeglRectangle *dr;
           GeglRegion    *tr = gegl_region_rectangle(&roi);
           gegl_region_subtract (processor->queued_region, tr);
           gegl_region_destroy (tr);
 
-          dr                          = g_malloc (sizeof (GeglRectangle));
-          *dr                         = roi;
-          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, dr);
+          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
+                                                         g_slice_dup (GeglRectangle, &roi));
         }
       g_free (rectangles);
 
@@ -634,14 +626,12 @@ gegl_processor_render (GeglProcessor *processor,
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
           GeglRectangle  roi = rectangles[i];
-          GeglRectangle *dr;
           GeglRegion    *tr = gegl_region_rectangle (&roi);
           gegl_region_subtract (processor->queued_region, tr);
           gegl_region_destroy (tr);
 
-          dr                          = g_malloc (sizeof (GeglRectangle));
-          *dr                         = roi;
-          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, dr);
+          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
+                                                         g_slice_dup (GeglRectangle, &roi));
         }
       g_free (rectangles);
     }
