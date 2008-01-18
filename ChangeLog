@@ -1,5 +1,10 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend.c: made "tile-width",
+	"tile-height" and "format" construct-only properties.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer-load.c (gegl_buffer_load): fixed pointer
 	type.
 

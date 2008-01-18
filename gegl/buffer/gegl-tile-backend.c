@@ -111,12 +111,10 @@ constructor (GType                  type,
   object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   backend = GEGL_TILE_BACKEND (object);
 
-  g_assert (backend->tile_width > 0 &&
-            backend->tile_height > 0);
-
+  g_assert (backend->tile_width > 0 && backend->tile_height > 0);
   g_assert (backend->format);
-  backend->px_size = ((Babl *) (backend->format))->format.bytes_per_pixel;
 
+  backend->px_size = backend->format->format.bytes_per_pixel;
   backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
 
   return object;
@@ -126,10 +124,9 @@ constructor (GType                  type,
 static void
 gegl_tile_backend_class_init (GeglTileBackendClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   parent_class  = g_type_class_peek_parent (klass);
-  gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -138,11 +135,13 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
                                    g_param_spec_int ("tile-width", "tile-width", "Tile width in pixels",
                                                      0, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
                                    g_param_spec_int ("tile-height", "tile-height", "Tile height in pixels",
                                                      0, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_SIZE,
                                    g_param_spec_int ("tile-size", "tile-size", "Size of the tiles linear buffer in bytes",
                                                      0, G_MAXINT, 0,
@@ -154,7 +153,7 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
   g_object_class_install_property (gobject_class, PROP_FORMAT,
                                    g_param_spec_pointer ("format", "format", "babl format",
                                                          G_PARAM_READWRITE |
-                                                         G_PARAM_CONSTRUCT));
+                                                         G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
