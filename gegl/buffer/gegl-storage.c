@@ -85,8 +85,7 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_PATH:
-        if (storage->path != NULL)
-          g_value_set_string (value, storage->path);
+        g_value_set_string (value, storage->path);
         break;
 
       case PROP_FORMAT:

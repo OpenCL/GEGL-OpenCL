@@ -1,5 +1,9 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-storage.c (get_property): always set the value.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend.c: made "tile-width",
 	"tile-height" and "format" construct-only properties.
 
