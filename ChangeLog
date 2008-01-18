@@ -1,5 +1,10 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-xml.c (gegl_node_new_from_xml): destroy the hash
+	table.  Allocate ParseData on the stack. Optimized use of GList.
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* bin/gegl.c (main): removed a redundant call to g_strdup().
 
 2008-01-18  Sven Neumann  <sven@gimp.org>

@@ -61,8 +61,8 @@ struct _ParseData
                          branches */
   GeglCurve   *curve;/*< the curve whose points we are parsing */
 
-  GHashTable *ids;
-  GList      *refs;
+  GHashTable  *ids;
+  GList       *refs;
 };
 
 static const gchar *name2val (const gchar **attribute_names,
@@ -206,11 +206,9 @@ static void start_element (GMarkupParseContext *context,
                            gpointer             user_data,
                            GError             **error)
 {
-  const gchar **a = attribute_names;
-  const gchar **v = attribute_values;
-  ParseData    *pd;
-
-  pd = user_data;
+  const gchar **a  = attribute_names;
+  const gchar **v  = attribute_values;
+  ParseData    *pd = user_data;
 
   if (!strcmp (element_name, "gegl") ||
       !strcmp (element_name, "image"))
@@ -331,9 +329,8 @@ static void text (GMarkupParseContext *context,
                   gpointer             user_data,
                   GError             **error)
 {
-  ParseData *pd;
+  ParseData *pd = user_data;
 
-  pd = user_data;
   if (pd->param && pd->iter && !pd->curve)
     {
       param_set (pd, pd->iter, pd->param, text);
@@ -346,9 +343,7 @@ static void end_element (GMarkupParseContext *context,
                          gpointer             user_data,
                          GError             **error)
 {
-  ParseData *pd;
-
-  pd = user_data;
+  ParseData *pd = user_data;
 
   if (!strcmp (element_name, "gegl") ||
       !strcmp (element_name, "image"))
@@ -370,7 +365,7 @@ static void end_element (GMarkupParseContext *context,
         {
           pd->iter = NULL;
         }
-      pd->parent = g_list_remove (pd->parent, pd->parent->data);
+      pd->parent = g_list_delete_link (pd->parent, pd->parent);
       pd->state  = STATE_TREE_NORMAL;
     }
   else if (!strcmp (element_name, "graph"))
@@ -404,7 +399,7 @@ static void end_element (GMarkupParseContext *context,
            !strcmp (element_name, "filter"))
     {
       pd->iter   = pd->parent->data;
-      pd->parent = g_list_remove (pd->parent, pd->parent->data);
+      pd->parent = g_list_delete_link (pd->parent, pd->parent);
       pd->state  = STATE_TREE_NORMAL;
     }
 }
@@ -416,11 +411,9 @@ static void error (GMarkupParseContext *context,
                    GError              *error,
                    gpointer             user_data)
 {
-  ParseData *pd;
-  gint       line_number;
-  gint       char_number;
+  gint  line_number;
+  gint  char_number;
 
-  pd = user_data;
   g_markup_parse_context_get_position (context, &line_number, &char_number);
   g_warning ("XML Parse error %i:%i: %s",
              line_number, char_number, error->message);
@@ -452,33 +445,26 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
                                   const gchar *path_root)
 {
   glong                time = gegl_ticks ();
-  GeglNode            *ret;
-  ParseData           *pd;
+  ParseData            pd   = { 0, };
   GMarkupParseContext *context;
 
-  pd = g_new0 (ParseData, 1);
+  pd.ids       = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  pd.refs      = NULL;
+  pd.path_root = path_root;
 
-  pd->ids = g_hash_table_new_full (g_str_hash,
-                                   g_str_equal,
-                                   g_free,
-                                   NULL);
-  pd->refs      = NULL;
-  pd->path_root = path_root;
-
-  context = g_markup_parse_context_new (&parser, 0, pd, NULL);
+  context = g_markup_parse_context_new (&parser, 0, &pd, NULL);
   g_markup_parse_context_parse (context, xmldata, strlen (xmldata), NULL);
 
   /* connect clones */
-  g_list_foreach (pd->refs, each_ref, pd);
+  g_list_foreach (pd.refs, each_ref, &pd);
 
-  ret = GEGL_NODE (pd->gegl);
-  g_free (pd);
+  g_markup_parse_context_free (context);
+  g_hash_table_destroy (pd.ids);
 
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "gegl_parse_xml", time);
 
-  g_markup_parse_context_free (context);
-  return ret;
+  return GEGL_NODE (pd.gegl);
 }
 
 GeglNode *
