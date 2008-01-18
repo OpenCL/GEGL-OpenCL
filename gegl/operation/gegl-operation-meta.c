@@ -94,7 +94,7 @@ static Redirect *redirect_new (const gchar *name,
                                GeglNode    *internal,
                                const gchar *internal_name)
 {
-  Redirect *self = g_malloc0 (sizeof (Redirect));
+  Redirect *self = g_slice_new (Redirect);
 
   self->name          = g_strdup (name);
   self->internal      = internal;
@@ -110,7 +110,7 @@ static void redirect_destroy (Redirect *self)
     g_free (self->name);
   if (self->internal_name)
     g_free (self->internal_name);
-  g_free (self);
+  g_slice_free (Redirect, self);
 }
 
 /* FIXME: take GeglNode's as parameters, since we need
@@ -174,14 +174,12 @@ static void
 finalize (GObject *gobject)
 {
   GeglOperationMeta *self = GEGL_OPERATION_META (gobject);
-  GSList            *iter = self->redirects;
+  GSList            *iter;
 
-  while (iter)
-    {
-      Redirect *redirect = iter->data;
-      iter = g_slist_remove (iter, redirect);
-      redirect_destroy (redirect);
-    }
+  for (iter = self->redirects; iter; iter = iter->next)
+    redirect_destroy (iter->data);
+
+  g_slist_free (self->redirects);
 
   G_OBJECT_CLASS (gegl_operation_meta_parent_class)->finalize (gobject);
 }
