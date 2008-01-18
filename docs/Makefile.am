@@ -31,11 +31,11 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 all-local: $(HTML_FILES) api.html
 
 operations.html: $(top_builddir)/tools/operation_reference $(top_srcdir)/operations/*/*.c
-	export GEGL_PATH=$(top_builddir)/operations;\
+	GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/operation_reference --ops-html > $@
 
 class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
-	export GEGL_PATH=$(top_builddir)/operations;\
+	GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/introspect > $@
 
 gegl.h.html: ../gegl/gegl.h

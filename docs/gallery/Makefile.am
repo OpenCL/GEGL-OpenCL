@@ -45,10 +45,10 @@ all-local: pngs index.html
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT))\
 	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
 	    $(top_builddir)/bin/gegl
-	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
+	@GEGL_DEBUG_TIME=yes GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
-	@export GEGL_PATH=$(top_builddir)/operations;\
+	@GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
