@@ -120,7 +120,7 @@ gegl_buffer_load (GeglBuffer  *buffer,
     gint i;
     for (i = 0; i < info->header.tile_count; i++)
       {
-        GeglTile *entry = g_malloc0 (sizeof (GeglTileEntry));
+        GeglTileEntry *entry = g_malloc0 (sizeof (GeglTileEntry));
 
         read (info->fd, entry, sizeof (GeglTileEntry));
 
