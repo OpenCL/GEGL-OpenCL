@@ -1,5 +1,9 @@
 2008-01-19  Sven Neumann  <sven@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: use GSlice here as well.
+
+2008-01-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer-load.c
 	* gegl/buffer/gegl-buffer-save.c: use GSlice for GeglTileEntry.
 

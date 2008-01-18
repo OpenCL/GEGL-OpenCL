@@ -56,17 +56,13 @@ typedef struct Point
 
 struct _Path
 {
-  Point point;
-  Path *next;
-  char  type;
+  Point  point;
+  Path  *next;
+  gchar  type;
 };
 
-typedef struct _Head Head;
+typedef struct _Path Head;
 
-struct _Head
-{
-  Path  path;
-};
 
 /*** fixed point subdivision bezier ***/
 
@@ -75,7 +71,7 @@ static void
 lerp (Point *dest,
       Point *a,
       Point *b,
-      gint t)
+      gint   t)
 {
   dest->x = a->x + (b->x-a->x) * t / 65536;
   dest->y = a->y + (b->y-a->y) * t / 65536;
@@ -163,7 +159,7 @@ path_add (Path *head,
   Path *iter = head;
   Path *prev = NULL;
 
-  Path *curve[4]={NULL, NULL, NULL, NULL};
+  Path *curve[4] = { NULL, NULL, NULL, NULL };
 
   if (iter)
     {
@@ -204,21 +200,21 @@ path_add (Path *head,
     }
   if (iter)
     {
-      iter->next = g_malloc0 (sizeof (Path));
-      iter=iter->next;
+      iter->next = g_slice_new0 (Path);
+      iter = iter->next;
     }
   else /* creating new path */
     {
-      head = g_malloc0 (sizeof (Head));
+      head = g_slice_new0 (Head);
       head->type = 'u';
-      if (type=='u')
+      if (type == 'u')
         {
           iter=head;
         }
       else
         {
-          head->next = g_malloc0 (sizeof (Path));
-          iter=head->next;
+          head->next = g_slice_new0 (Path);
+          iter = head->next;
         }
     }
 
@@ -271,9 +267,9 @@ path_add (Path *head,
 
            for (i=0;i<4;i++)
              {
-               pts[i]=&foo[i];
-               pts[i]->x=curve[i]->point.x;
-               pts[i]->y=curve[i]->point.y;
+               pts[i] = &foo[i];
+               pts[i]->x = curve[i]->point.x;
+               pts[i]->y = curve[i]->point.y;
              }
 
            for (i=0;i<65536;i+=65536 / BEZIER_SEGMENTS)
@@ -287,9 +283,9 @@ path_add (Path *head,
         }
 
         /* free amputated stubs when they are no longer useful */
-        g_free (curve[1]);
-        g_free (curve[2]);
-        g_free (curve[3]);
+        g_slice_free (Path, curve[1]);
+        g_slice_free (Path, curve[2]);
+        g_slice_free (Path, curve[3]);
         break;
       case 'l':
         iter->point.x = x;
@@ -314,16 +310,10 @@ path_new (void)
 }
 
 Path *
-path_destroy      (Path *path)
+path_destroy (Path *path)
 {
-  /*Head *head = (Head*)path;*/
+  g_slice_free_chain (Path, path, next);
 
-  while (path)
-    {
-      Path *iter=path->next;
-      g_free (path);
-      path=iter;
-    }
   return NULL;
 }
 
