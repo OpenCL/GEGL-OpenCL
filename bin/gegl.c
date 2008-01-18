@@ -100,8 +100,7 @@ main (gint    argc,
       else
         {
           gchar *temp1 = g_strdup (o->file);
-          gchar *temp2;
-          temp2 = g_strdup (g_path_get_dirname (temp1));
+          gchar *temp2 = g_path_get_dirname (temp1);
           path_root = g_strdup (realpath (temp2, NULL));
           g_free (temp1);
           g_free (temp2);

@@ -1,5 +1,9 @@
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
+	* bin/gegl.c (main): removed a redundant call to g_strdup().
+
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-storage.c
 	* gegl/buffer/gegl-buffer.c: minor cleanups, mainly formatting.
 
