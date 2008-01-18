@@ -1,3 +1,8 @@
+2008-01-18  Sven Neumann  <sven@gimp.org>
+
+	* gegl/process/gegl-processor.c: moved variables to inner scopes
+	and removed some redundant casts.
+
 2008-01-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Added gegl/buffer to the include paths of quite a few makefiles.

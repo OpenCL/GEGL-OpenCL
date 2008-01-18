@@ -305,15 +305,12 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
   GeglCache *cache    = gegl_node_get_cache (processor->input);
   gint       max_area = processor->chunk_size;
 
-  GeglRectangle *dr;
-
   if (processor->dirty_rectangles)
     {
-      guchar *buf;
-      gint pxsize;
-      g_object_get (cache, "px-size", &pxsize, NULL);
+      GeglRectangle *dr = processor->dirty_rectangles->data;
+      gint           pxsize;
 
-      dr = processor->dirty_rectangles->data;
+      g_object_get (cache, "px-size", &pxsize, NULL);
 
       if (dr->height * dr->width > max_area && 1)
         {
@@ -367,35 +364,36 @@ static gboolean render_rectangle_buffered (GeglProcessor *processor)
           return TRUE;
         }
 
-      if (gegl_region_rect_in (cache->valid_region, (GeglRectangle *) dr) !=
+      if (gegl_region_rect_in (cache->valid_region, dr) !=
           GEGL_OVERLAP_RECTANGLE_IN)
         {
-          gegl_region_union_with_rect (cache->valid_region, (GeglRectangle *) dr);
+          guchar *buf;
+
+          gegl_region_union_with_rect (cache->valid_region, dr);
           buf = g_malloc (dr->width * dr->height * pxsize);
           g_assert (buf);
 
           gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
           gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE);
 
-          gegl_cache_computed (cache, (GeglRectangle *) dr);
+          gegl_cache_computed (cache, dr);
 
           g_free (buf);
         }
       g_free (dr);
     }
+
   return processor->dirty_rectangles != NULL;
 }
 
 /* returns TRUE if there is more work */
 static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
 {
-  gint       max_area = processor->chunk_size;
-
-  GeglRectangle *dr;
+  const gint max_area = processor->chunk_size;
 
   if (processor->dirty_rectangles)
     {
-      dr = processor->dirty_rectangles->data;
+      GeglRectangle *dr = processor->dirty_rectangles->data;
 
       if (dr->height * dr->width > max_area && 1)
         {
@@ -449,9 +447,10 @@ static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
         }
 
       gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-      gegl_region_union_with_rect (processor->valid_region, (GeglRectangle *) dr);
+      gegl_region_union_with_rect (processor->valid_region, dr);
       g_free (dr);
     }
+
   return processor->dirty_rectangles != NULL;
 }
 
@@ -600,9 +599,9 @@ gegl_processor_render (GeglProcessor *processor,
 
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
-          GeglRectangle  roi = *((GeglRectangle *) &rectangles[i]);
+          GeglRectangle  roi = rectangles[i];
           GeglRectangle *dr;
-          GeglRegion    *tr = gegl_region_rectangle ((void *) &roi);
+          GeglRegion    *tr = gegl_region_rectangle(&roi);
           gegl_region_subtract (processor->queued_region, tr);
           gegl_region_destroy (tr);
 
@@ -611,6 +610,7 @@ gegl_processor_render (GeglProcessor *processor,
           processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, dr);
         }
       g_free (rectangles);
+
       if (n_rectangles != 0)
         {
           if (progress)
@@ -633,9 +633,9 @@ gegl_processor_render (GeglProcessor *processor,
 
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
-          GeglRectangle  roi = *((GeglRectangle *) &rectangles[i]);
+          GeglRectangle  roi = rectangles[i];
           GeglRectangle *dr;
-          GeglRegion    *tr = gegl_region_rectangle ((void *) &roi);
+          GeglRegion    *tr = gegl_region_rectangle (&roi);
           gegl_region_subtract (processor->queued_region, tr);
           gegl_region_destroy (tr);
 
