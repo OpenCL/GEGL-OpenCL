@@ -2,7 +2,8 @@
 
 	* gegl/Makefile.am:
 	* gegl/gegl-init.c: made GEGL_PATH depend on libdir and not prefix,
-	makes GEGL find it's ops also on 64bit systems.
+	makes GEGL find it's ops also on 64bit systems. Patch from
+	Deji Akingunola fixes bug #510038.
 
 2008-01-18  Sven Neumann  <sven@gimp.org>
 
