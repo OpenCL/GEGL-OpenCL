@@ -34,6 +34,7 @@
 #endif
 #include <glib/gstdio.h>
 #include "operation/gegl-operation.h"
+#include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,

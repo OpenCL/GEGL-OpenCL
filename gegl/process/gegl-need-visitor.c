@@ -27,6 +27,7 @@
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 #include "operation/gegl-operation.h"
+#include "operation/gegl-operations.h"
 
 
 static void gegl_need_visitor_class_init (GeglNeedVisitorClass *klass);

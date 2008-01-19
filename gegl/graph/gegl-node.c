@@ -34,6 +34,7 @@
 #include "gegl-utils.h"
 #include "gegl-visitable.h"
 #include "operation/gegl-operation.h"
+#include "operation/gegl-operations.h"
 #include "operation/gegl-operation-meta.h"
 #include "process/gegl-eval-mgr.h"
 #include "process/gegl-have-visitor.h"
