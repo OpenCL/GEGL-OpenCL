@@ -14,7 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2003 Calvin Williamson
- *           2005, 2006 Øyvind Kolås
+ *           2005-2008 Øyvind Kolås
  */
 
 #ifndef __GEGL_OPERATION_H__
@@ -171,7 +171,6 @@ gboolean        gegl_operation_process              (GeglOperation       *operat
                                                      const gchar         *output_pad,
                                                      const GeglRectangle *result_rect);
 
-gchar        ** gegl_list_operations                (guint *n_operations_p);
 GParamSpec   ** gegl_list_properties                (const gchar *operation_type,
                                                      guint       *n_properties_p);
 
@@ -196,18 +195,7 @@ void       gegl_operation_set_format                (GeglOperation *operation,
 const Babl * gegl_operation_get_format              (GeglOperation *operation,
                                                      const gchar   *pad_name);
 
-/* Used to look up the gtype when changing the type of operation associated
- * a GeglNode using just a string with the registered name.
- */
-GType      gegl_operation_gtype_from_name           (const gchar *name);
 
-gboolean gegl_operation_calc_source_regions  (GeglOperation *operation,
-                                              gpointer       context_id);
-
-void     gegl_operation_vector_prop_changed  (GeglVector    *vector,
-                                              GeglOperation *operation);
-
-void     gegl_operation_gtype_cleanup        (void);
 
 G_END_DECLS
 

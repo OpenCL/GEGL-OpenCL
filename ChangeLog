@@ -1,3 +1,11 @@
+2008-01-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.[ch]: moved some code that doesn't
+	belong in the base GeglOperation implementation,.
+	* gegl/operation/gegl-operations.[ch]: .. here to a separate file
+	pertaining to all operations.
+	* gegl/operation/Makefile.am: added gegl-operations.[ch]
+
 2008-01-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/Makefile.am: install operation header files in

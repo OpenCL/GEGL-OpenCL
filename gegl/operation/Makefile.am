@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = liboperation.la
 
 OPERATION_sources = \
 	gegl-extension-handler.c	\
-    	gegl-operation.c        	\
+	gegl-operation.c        	\
 	gegl-operation-area-filter.c    \
 	gegl-operation-composer.c     	\
 	gegl-operation-filter.c       	\
@@ -10,7 +10,8 @@ OPERATION_sources = \
 	gegl-operation-point-composer.c \
 	gegl-operation-point-filter.c   \
 	gegl-operation-sink.c       	\
-	gegl-operation-source.c
+	gegl-operation-source.c		\
+	gegl-operations.c
 
 
 OPERATION_headers = \
@@ -23,7 +24,8 @@ OPERATION_headers = \
 	gegl-operation-point-composer.h \
 	gegl-operation-point-filter.h   \
 	gegl-operation-sink.h       	\
-	gegl-operation-source.h
+	gegl-operation-source.h		\
+	gegl-operations.c
 
 public_headers = \
 	gegl-operation.h        	\
