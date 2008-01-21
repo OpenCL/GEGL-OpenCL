@@ -25,7 +25,7 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/remap.c: trimmed down headers included to the
-	publiclly installed subset. (introduces some warnings).
+	publically installed subset (introduces some warnings).
 
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
