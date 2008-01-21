@@ -1,5 +1,11 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: added some functions that are not present
+	in the installed header files that some operations depends on.
+	Removing warnings about undefined prototypes for functions.
+
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/magick-load.c: define gegl_node_get cache directly in
 	file to silence warning about missing prototype.
 

@@ -31,4 +31,30 @@
 #include <geglmoduletypes.h>
 #include <geglmodule.h>
 
+GeglBuffer     *gegl_node_context_get_source (GeglNodeContext *self,
+                                              const gchar     *padname);
+GeglBuffer     *gegl_node_context_get_target (GeglNodeContext *self,
+                                              const gchar     *padname);
+void            gegl_node_context_set_object (GeglNodeContext *context,
+                                              const gchar     *padname,
+                                              GObject         *data);
+
+
+
+GParamSpec *
+gegl_param_spec_color_from_string (const gchar *name,
+                                   const gchar *nick,
+                                   const gchar *blurb,
+                                   const gchar *default_color_string,
+                                   GParamFlags  flags);
+
+/* Probably needs a more API exposed */
+GParamSpec * gegl_param_spec_curve     (const gchar *name,
+                                        const gchar *nick,
+                                        const gchar *blurb,
+                                        GeglCurve   *default_curve,
+                                        GParamFlags  flags);
+
+
+
 #endif  /* __GEGL_PLUGIN_H__ */
