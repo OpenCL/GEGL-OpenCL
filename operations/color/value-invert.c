@@ -39,6 +39,7 @@
 #define GEGL_CHANT_DESCRIPTION   "Inverts just the value component, the result is the corresponding `inverted' image."
 #define GEGL_CHANT_SELF          "value-invert.c"
 #define GEGL_CHANT_CATEGORIES    "color"
+
 #include "gegl-chant.h"
 
 static gboolean

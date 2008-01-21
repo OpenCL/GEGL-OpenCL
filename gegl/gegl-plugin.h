@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <gegl.h>
 #include <operation/gegl-operation.h>
+#include <operation/gegl-extension-handler.h>
 #include <gegl-utils.h>
 #include <gegl-buffer.h>
 #include <gegl-paramspecs.h>

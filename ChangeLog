@@ -1,5 +1,26 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: include operations/gegl-extension-handler.h as
+	well.
+
+	* operations/affine/module.c:
+	* operations/color/remap.c:
+	* operations/color/threshold.c:
+	* operations/color/value-invert.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/io/load.c:
+	* operations/meta/layer.c:
+	* operations/render/introspect.c: modified to include an absolute
+	minimum of headers directly and rather include either gegl-plugin.h
+	or gegl-chant.h (which itself pulls in gegl-plugin.h, gegl-plugin.h
+	pulls in gegl.h for most of the gegl related environment and adds
+	the extra APIs provided for operation plug-ins.
+
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Started work towards a gegl-plugin.h file which will be similar to
 	gegl.h in that it duplicates and documents API from internal header
 	files. This file might replace some of the now installed headers as

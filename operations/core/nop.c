@@ -19,15 +19,7 @@
 #ifndef __GEGL_OPERATION_NOP_H__
 #define __GEGL_OPERATION_NOP_H__
 
-#define GEGL_INTERNAL
-#include <glib-object.h>
-#include "gegl-types.h"
-#include "graph/gegl-node.h"
-#include "gegl.h"
-#include "gegl-utils.h"
-#include "operation/gegl-operation.h"
-#include "gegl-module.h"
-
+#include <gegl-plugin.h>
 
 G_BEGIN_DECLS
 

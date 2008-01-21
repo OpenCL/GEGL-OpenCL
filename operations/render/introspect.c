@@ -30,7 +30,7 @@ gegl_chant_pointer(buf, "Buffer")
 #define GEGL_CHANT_SOURCE
 
 #include "gegl-chant.h"
-#include "gegl-dot.h"
+#include "gegl-dot.h" /* XXX: internal header file */
 
 #include <stdio.h>
 #include <string.h>

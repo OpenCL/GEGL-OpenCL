@@ -16,9 +16,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#include <glib-object.h>
-#include "gegl-types.h"
-#include <gegl-module.h>
+#include <gegl-plugin.h>
 #include "module.h"
 #include "affine.h"
 

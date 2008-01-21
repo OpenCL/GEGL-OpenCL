@@ -19,12 +19,7 @@
 #ifndef __GEGL_OPERATION_REMAP_H__
 #define __GEGL_OPERATION_REMAP_H__
 
-#include <glib-object.h>
-#include "gegl.h"
-#include "operation/gegl-operation.h"
-#include "geglmodule.h"
-
-
+#include <gegl-plugin.h>
 
 G_BEGIN_DECLS
 
