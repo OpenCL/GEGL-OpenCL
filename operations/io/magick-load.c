@@ -28,6 +28,9 @@ gegl_chant_path (path, "/tmp/gegl-logo.svg", "Path of file to load.")
 #include "gegl-chant.h"
 #include <stdio.h>
 
+/* FIXME: this should not be neccesary to implement this operation */
+GeglBuffer *gegl_node_get_cache           (GeglNode      *node);
+
 static void
 load_cache (GeglChantOperation *op_magick_load)
 {

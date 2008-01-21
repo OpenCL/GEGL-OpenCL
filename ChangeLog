@@ -1,5 +1,10 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/io/magick-load.c: define gegl_node_get cache directly in
+	file to silence warning about missing prototype.
+
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: include operations/gegl-extension-handler.h as
 	well.
 
