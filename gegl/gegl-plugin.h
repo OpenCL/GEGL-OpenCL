@@ -1,4 +1,5 @@
-/* This file is part of GEGL
+/* This file is the public operation GEGL API, this API will change to much
+ * larger degrees than the api provided by gegl.h
  *
  * GEGL is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,32 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006,2007 Øyvind Kolås
+ * 2000-2008 Øyvind Kolås.
  */
 
 #ifndef __GEGL_PLUGIN_H__
 #define __GEGL_PLUGIN_H__
 
+#include <string.h>
 #include <glib-object.h>
-
-#include <gegl/gegl-types.h>
-#include <gegl/graph/gegl-connection.h>
-#include <gegl/graph/gegl-node.h>
-#include <gegl/graph/gegl-pad.h>
-#include <gegl/graph/gegl-visitable.h>
-#include <gegl/graph/gegl-visitor.h>
-#include <gegl/property-types/gegl-color.h>
-#include <gegl/property-types/gegl-curve.h>
-#include <gegl/property-types/gegl-vector.h>
-#include <gegl/gegl-init.h>
-#include <gegl/gegl-utils.h>
-#include <gegl/buffer/gegl-buffer.h>
-#include <gegl/gegl-xml.h>
-#include <gegl/operation/gegl-operation.h>
-
-#define GEGL_INTERNAL /* to avoid conflicts, when we include gegl.h just
-                         to get warnings about conflicts in the prototypes
-                         of functions. */
 #include <gegl.h>
-#include <gegl/property-types/gegl-paramspecs.h>
-#endif  /* __GEGL_H__ */
+#include <operation/gegl-operation.h>
+#include <gegl-utils.h>
+#include <gegl-buffer.h>
+#include <gegl-paramspecs.h>
+#include <geglmoduletypes.h>
+#include <geglmodule.h>
+
+#endif  /* __GEGL_PLUGIN_H__ */

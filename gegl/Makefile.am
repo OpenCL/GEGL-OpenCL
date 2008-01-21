@@ -56,6 +56,7 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl.h				\
     gegl-utils.h			\
     gegl-chant.h			\
+    gegl-plugin.h			\
     buffer/gegl-buffer.h		\
     module/geglmoduletypes.h		\
     module/geglmoduledb.h		\

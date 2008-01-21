@@ -1,3 +1,26 @@
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
+	Started work towards a gegl-plugin.h file which will be similar to
+	gegl.h in that it duplicates and documents API from internal header
+	files. This file might replace some of the now installed headers as
+	we get closer to the next release.
+
+	* gegl/Makefile.am: install gegl-plugin.h
+	* gegl/gegl-plugin.h: replaced contents with the installed plugin-api
+	related headers.
+	* gegl/gegl-chant.h: rewrote to only include gegl-plugin.h
+	* gegl/gegl.h: modified multi include guards.
+	* gegl/graph/gegl-node.h: modified multi include guards.
+	* gegl/operation/gegl-operation.h: added GeglConnection to set of
+	types defined here (these typedefs should be moved to gegl-plugin.h)
+	* operations/affine/affine.c: modified to build with gegl-plugin.h as
+	the core include.
+
+	* tools/Makefile.am:
+	* bin/Makefile.am:
+	* bin/node-editors/Makefile.am: modified include paths to respect
+	needs of gegl-plugin.h
+
 2008-01-21  Sven Neumann  <sven@gimp.org>
 
 	* gegl/buffer/gegl-handler-cache.[ch]: changed to use a GQueue

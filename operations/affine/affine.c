@@ -23,15 +23,17 @@
 /* TODO: make rect calculations depend on the sampling kernel of the
  *       interpolation filter used */
 
-#include <string.h>
 #include <math.h>
 #include <gegl-plugin.h>
-#include <gegl-module.h>
+#include <gegl-types.h>
+#include <graph/gegl-pad.h>
+#include <graph/gegl-node.h>
+#include <graph/gegl-connection.h>
+#include "buffer/gegl-sampler.h"
 
 #include "affine.h"
 #include "module.h"
 #include "matrix.h"
-#include "buffer/gegl-sampler.h"
 
 enum
 {

@@ -10,7 +10,10 @@ all-local: $(SOBJS)
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @GTK_CFLAGS@ \
            -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl \
 	   -I$(top_srcdir)/bin -I. \
-	   -I$(top_srcdir)/gegl/buffer -fPIC
+	   -I$(top_srcdir)/gegl/buffer \
+	   -I$(top_srcdir)/gegl/operation \
+	   -I$(top_srcdir)/gegl/module \
+	   -I$(top_srcdir)/gegl/property-types -fPIC
 LDFLAGS += -shared 
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@

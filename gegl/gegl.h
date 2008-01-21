@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * 2000-2007 © Calvin Williamson, Øyvind Kolås.
+ * 2000-2008 © Calvin Williamson, Øyvind Kolås.
  */
 
 #ifndef __GEGL_H__
@@ -177,11 +177,14 @@ GParamSpec** gegl_list_properties           (const gchar   *operation_type,
  *                                  NULL);
  */
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
+
+#ifndef GEGL_TYPE_NODE
 typedef struct _GeglNode  GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_NODE    (gegl_node_get_type())
 #define GEGL_NODE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
 #define GEGL_IS_NODE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
+#endif
 
 typedef struct _GeglRectangle GeglRectangle;
 GType gegl_rectangle_get_type (void) G_GNUC_CONST;
@@ -370,7 +373,8 @@ void          gegl_node_get              (GeglNode      *node,
  * sample.
  */
 
-#ifndef GEGL_INTERNAL
+#ifndef GEGL_BLIT_FLAGS
+#define  GEGL_BLIT_FLAGS
 typedef enum
 {
   GEGL_BLIT_DEFAULT  = 0,
@@ -934,13 +938,13 @@ void         gegl_vector_calc_values  (GeglVector  *self,
                                        gdouble     *ys);
 
 #ifndef GEGL_INTERNAL
+#define GEGL_PAD_TYPE
 
 typedef enum
 {
   GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
   GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
 } GeglPadType;
-
 #endif
 
 G_END_DECLS

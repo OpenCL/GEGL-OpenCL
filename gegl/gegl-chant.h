@@ -30,15 +30,7 @@
 
 /****************************************************************************/
 
-#include <string.h>
-#include <glib-object.h>
-
-#include <gegl.h>
-#include <gegl-utils.h>
-#include <gegl-buffer.h>
-#include <operation/gegl-operation.h>
-/*#include "property-types/gegl-color.h"*/
-#include <gegl-paramspecs.h>
+#include <gegl-plugin.h>
 
 
 #ifdef GEGL_CHANT_SOURCE
@@ -147,9 +139,6 @@ struct GeneratedClass
 };
 
 #define GEGL_CHANT_OPERATION(obj) ((GeglChantOperation*)(obj))
-
-#include <geglmoduletypes.h>
-#include <geglmodule.h>
 
 #ifndef GEGL_CHANT_STATIC
 #  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \

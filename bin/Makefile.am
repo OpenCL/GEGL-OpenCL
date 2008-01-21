@@ -36,6 +36,9 @@ gegl_SOURCES =			\
 INCLUDES = \
 	-I$(top_srcdir)	-I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer \
 	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/operation \
+	-I$(top_srcdir)/gegl/module \
 	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@ @PNG_CFLAGS@
 
 AM_LDFLAGS =  \
