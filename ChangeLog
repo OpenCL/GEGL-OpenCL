@@ -1,6 +1,6 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
-	First shout at installing headers making it possible to build external
+	First shot at installing headers making it possible to build external
 	operations, either as plug-ins or static objects in an application
 	using GEGL.
 
