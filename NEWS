@@ -12,10 +12,13 @@ Changes in GEGL 0.0.16
  • Added rowstride argument to gegl_buffer_set ()
  • Made it possible for sink operations to do their processing chunk by chunk
    when processed using a GeglProcessor.
+ • Install headers for external op plug-in development.
+ • Reorganized installed headers, reduced the API version to 0.0 (it has been
+   1.0 by mistake for a while).
 
 Contributions from:
   Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann, 
-  Manish Singh, Michael Natterer and Hans Breuer.
+  Manish Singh, Michael Natterer, Hand Brauer and Deji Akingunola.
 
 Changes in GEGL 0.0.14
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
@@ -35,7 +38,7 @@ Changes in GEGL 0.0.14
 Contributions from:
   Étienne Bersac, Kevin Cozens, Manish Singh, Mark Probst, Martin Nordholts,
   Michael Schumacher, Mukund Sivaraman, Shlomi Fish, Tor Lillqvist and
-  Øyvind Kolås  
+  Øyvind Kolås
 
 
 Changes in GEGL 0.0.12
