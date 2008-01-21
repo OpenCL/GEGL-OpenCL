@@ -37,7 +37,8 @@ typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
 
 struct _GeglEvalMgr
 {
-  GObject    parent_instance;
+  GObject       parent_instance;
+
   GeglRectangle roi;
 };
 
@@ -47,11 +48,11 @@ struct _GeglEvalMgrClass
 };
 
 
-GType   gegl_eval_mgr_get_type (void) G_GNUC_CONST;
+GType        gegl_eval_mgr_get_type (void) G_GNUC_CONST;
 
-GeglBuffer *gegl_eval_mgr_apply (GeglEvalMgr *self,
-                                 GeglNode    *root,
-                                 const gchar *property_name);
+GeglBuffer * gegl_eval_mgr_apply    (GeglEvalMgr *self,
+                                     GeglNode    *root,
+                                     const gchar *property_name);
 
 
 G_END_DECLS

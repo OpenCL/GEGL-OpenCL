@@ -1,3 +1,11 @@
+2008-01-21  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/graph/gegl-node.h
+	* gegl/process/gegl-eval-mgr.h: cosmetic.
+
+	* gegl/buffer/gegl-sampler-cubic.h: no need to inlcude anything but
+	the parent class; cleanup.
+
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/remap.c: trimmed down headers included to the

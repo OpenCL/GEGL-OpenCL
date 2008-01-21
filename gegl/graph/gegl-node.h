@@ -40,6 +40,7 @@ typedef struct _GeglNodePrivate GeglNodePrivate;
 struct _GeglNode
 {
   GObject         parent_instance;
+
   GeglOperation  *operation;
   GeglRectangle   have_rect;
   GSList         *pads;
