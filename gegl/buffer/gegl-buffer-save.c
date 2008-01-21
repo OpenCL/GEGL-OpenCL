@@ -98,10 +98,7 @@ save_info_destroy (SaveInfo *info)
     {
       GList *iter;
       for (iter = info->tiles; iter; iter = iter->next)
-        {
-          GeglTileEntry *entry = iter->data;
-          tile_entry_destroy (entry);
-        }
+        tile_entry_destroy (iter->data);
       g_list_free (info->tiles);
       info->tiles = NULL;
     }
@@ -143,10 +140,7 @@ static gint z_order_compare (gconstpointer a,
   const GeglTileEntry *entryA = a;
   const GeglTileEntry *entryB = b;
 
-  glong                zA = z_order (entryA);
-  glong                zB = z_order (entryB);
-
-  return zB - zA;
+  return z_order (entryB) - z_order (entryA);
 }
 
 void
@@ -228,16 +222,13 @@ gegl_buffer_save (GeglBuffer          *buffer,
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
                   gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-                  if (1)
+                  if (gegl_provider_message (GEGL_PROVIDER (buffer),
+                                             GEGL_TILE_EXIST, tx, ty, z, NULL))
                     {
-                      if (gegl_provider_message (GEGL_PROVIDER (buffer),
-                                                   GEGL_TILE_EXIST, tx, ty, z, NULL))
-                        {
-                          tx += info->x_tile_shift / factor;
-                          ty += info->y_tile_shift / factor;
+                      tx += info->x_tile_shift / factor;
+                      ty += info->y_tile_shift / factor;
 
-                          info->tiles = g_list_append (info->tiles, tile_entry_new (tx, ty, z));
-                        }
+                      info->tiles = g_list_prepend (info->tiles, tile_entry_new (tx, ty, z));
                     }
                   bufx += (tile_width - offsetx) * factor;
                 }
@@ -246,6 +237,8 @@ gegl_buffer_save (GeglBuffer          *buffer,
           factor *= 2;
         }
     }
+
+    info->tiles = g_list_reverse (info->tiles);
   }
 
   info->header.tile_count = g_list_length (info->tiles);

@@ -1,5 +1,11 @@
 2008-01-21  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-buffer-save.c: don't append to linked lists.
+	Instead prepend all items, then reverse the list.
+
+2008-01-21  Sven Neumann  <sven@gimp.org>
+
 	* gegl/graph/gegl-visitor.c (gegl_visitor_bfs_traverse): use
 	GQueue instead of GSList when a double-ended queue is needed.
 

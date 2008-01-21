@@ -125,8 +125,9 @@ gegl_buffer_load (GeglBuffer  *buffer,
 
         read (info->fd, entry, sizeof (GeglTileEntry));
 
-        info->tiles = g_list_append (info->tiles, entry);
+        info->tiles = g_list_prepend (info->tiles, entry);
       }
+    info->tiles = g_list_reverse (info->tiles);
   }
 
   /* load each tile */
