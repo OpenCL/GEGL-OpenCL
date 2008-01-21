@@ -36,12 +36,11 @@ struct _GeglHandlerCache
 {
   GeglHandler parent_instance;
 
-  GSList     *list;
+  GQueue     *queue;
   gint        size;
+  gint        wash_percentage;
   gint        hits;
   gint        misses;
-
-  gint        wash_percentage;
 };
 
 struct _GeglHandlerCacheClass

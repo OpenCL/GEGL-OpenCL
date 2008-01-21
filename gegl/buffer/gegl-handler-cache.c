@@ -15,10 +15,10 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
-#include <stdio.h>
+
+#include "config.h"
 
 #include <glib.h>
-#include <glib/gstdio.h>
 #include <glib-object.h>
 
 #include "../gegl-types.h"
@@ -26,29 +26,29 @@
 #include "gegl-tile.h"
 #include "gegl-handler-cache.h"
 
-GeglHandlerCache *gegl_handler_cache_new (void);
+GeglHandlerCache * gegl_handler_cache_new (void);
 
 
-static
-gboolean    gegl_handler_cache_wash (GeglHandlerCache *cache);
+static gboolean    gegl_handler_cache_wash     (GeglHandlerCache *cache);
 
-static
-GeglTile *  gegl_handler_cache_get_tile (GeglHandlerCache *cache,
-                                         gint           x,
-                                         gint           y,
-                                         gint           z);
+static GeglTile *  gegl_handler_cache_get_tile (GeglHandlerCache *cache,
+                                                gint              x,
+                                                gint              y,
+                                                gint              z);
 
-static
-gboolean    gegl_handler_cache_has_tile (GeglHandlerCache *cache,
-                                         gint           x,
-                                         gint           y,
-                                         gint           z);
-static
-void        gegl_handler_cache_insert (GeglHandlerCache *cache,
-                                       GeglTile      *tile,
-                                       gint           x,
-                                       gint           y,
-                                       gint           z);
+static gboolean    gegl_handler_cache_has_tile (GeglHandlerCache *cache,
+                                                gint              x,
+                                                gint              y,
+                                                gint              z);
+static void        gegl_handler_cache_insert   (GeglHandlerCache *cache,
+                                                GeglTile         *tile,
+                                                gint              x,
+                                                gint              y,
+                                                gint              z);
+static void        gegl_handler_cache_void     (GeglHandlerCache *cache,
+                                                gint              x,
+                                                gint              y,
+                                                gint              z);
 
 G_DEFINE_TYPE (GeglHandlerCache, gegl_handler_cache, GEGL_TYPE_HANDLER)
 
@@ -70,27 +70,27 @@ typedef struct CacheItem
 static void
 finalize (GObject *object)
 {
-  G_OBJECT_CLASS (gegl_handler_cache_parent_class)->finalize(object);
+  GeglHandlerCache *cache = (GeglHandlerCache *) object;
+
+  g_queue_free (cache->queue);
+
+  G_OBJECT_CLASS (gegl_handler_cache_parent_class)->finalize (object);
 }
 
 static void
 dispose (GObject *object)
 {
-  GeglHandlerCache *cache;
-  GSList        *list;
-  guint          count;
+  GeglHandlerCache *cache = (GeglHandlerCache *) object;
+  CacheItem        *item;
 
-  cache = (GeglHandlerCache *) object;
-  count = g_slist_length (cache->list);
+  if (0)
+    g_printerr ("Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n",
+                cache->size, cache->hits, cache->misses,
+                cache->hits * 100.0 / (cache->hits + cache->misses));
 
-  if (0) fprintf (stderr, "Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n", cache->size, cache->hits, cache->misses,
-                  cache->hits * 100.0 / (cache->hits + cache->misses));
-
-  while ((list = cache->list))
+  while ((item = g_queue_pop_head (cache->queue)))
     {
-      CacheItem *item = list->data;
       g_object_unref (item->tile);
-      cache->list = g_slist_remove (cache->list, item);
       g_slice_free (CacheItem, item);
     }
 
@@ -103,15 +103,14 @@ get_tile (GeglProvider *tile_store,
           gint           y,
           gint           z)
 {
-  GeglHandlerCache *cache  = GEGL_HANDLER_CACHE (tile_store);
-  GeglProvider *provider = GEGL_HANDLER (tile_store)->provider;
-  GeglTile      *tile   = NULL;
+  GeglHandlerCache *cache    = GEGL_HANDLER_CACHE (tile_store);
+  GeglProvider     *provider = GEGL_HANDLER (tile_store)->provider;
+  GeglTile         *tile     = NULL;
 
   tile = gegl_handler_cache_get_tile (cache, x, y, z);
   if (tile)
     {
       cache->hits++;
-
       return tile;
     }
   cache->misses++;
@@ -120,26 +119,22 @@ get_tile (GeglProvider *tile_store,
     tile = gegl_provider_get_tile (provider, x, y, z);
 
   if (tile)
-    {
-      gegl_handler_cache_insert (cache, tile, x, y, z);
-    }
+    gegl_handler_cache_insert (cache, tile, x, y, z);
+
   return tile;
 }
 
 
 static gboolean
-gegl_handler_cache_void (GeglHandlerCache *cache, gint x, gint y, gint z);
-
-static gboolean
-message (GeglProvider  *tile_store,
-         GeglTileMessage message,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+message (GeglProvider    *tile_store,
+         GeglTileMessage  message,
+         gint             x,
+         gint             y,
+         gint             z,
+         gpointer         data)
 {
-  GeglHandler   *handler = GEGL_HANDLER (tile_store);
-  GeglHandlerCache *cache = GEGL_HANDLER_CACHE (handler);
+  GeglHandler      *handler = GEGL_HANDLER (tile_store);
+  GeglHandlerCache *cache   = GEGL_HANDLER_CACHE (handler);
 
   if (message == GEGL_TILE_IS_CACHED)
     {
@@ -236,7 +231,7 @@ gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
                                                      "Number of tiles in cache",
                                                      0, G_MAXINT, 32,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT));
+                                                     G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class, PROP_WASH_PERCENTAGE,
                                    g_param_spec_int ("wash-percentage",
@@ -244,17 +239,17 @@ gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
                                                      "(integer 0..100, percentage to wash)",
                                                      0, 100, 20,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT));
+                                                     G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
 gegl_handler_cache_init (GeglHandlerCache *cache)
 {
-  cache->list = NULL;
+  cache->queue = g_queue_new ();
 }
 
 
-/* create a new tile cache, associated with the given gegl_buffer and capable of holding size tiles */
+/* create a new tile cache */
 GeglHandlerCache *
 gegl_handler_cache_new (void)
 {
@@ -269,16 +264,14 @@ gegl_handler_cache_new (void)
 gboolean
 gegl_handler_cache_wash (GeglHandlerCache *cache)
 {
-  GeglTile *last_dirty = NULL;
-  guint     count      = 0;
+  GeglTile  *last_dirty = NULL;
+  guint      count      = 0;
+  gint       wash_tiles = cache->wash_percentage * cache->size / 100;
+  GList     *link;
 
-  gint      wash_tiles = cache->wash_percentage * cache->size / 100;
-
-  GSList   *list = cache->list;
-
-  while (list)
+  for (link = g_queue_peek_head_link (cache->queue); link; link = link->next)
     {
-      CacheItem *item = list->data;
+      CacheItem *item = link->data;
       GeglTile  *tile = item->tile;
 
       count++;
@@ -289,8 +282,8 @@ gegl_handler_cache_wash (GeglHandlerCache *cache)
               last_dirty = tile;
             }
         }
-      list = list->next;
     }
+
   if (last_dirty != NULL)
     {
       gegl_tile_store (last_dirty);
@@ -299,60 +292,38 @@ gegl_handler_cache_wash (GeglHandlerCache *cache)
   return FALSE;
 }
 
-/* returns the requested Tile * if it is in the cache NULL
- * otherwize.
+/* returns the requested Tile if it is in the cache, NULL otherwize.
  */
 GeglTile *
 gegl_handler_cache_get_tile (GeglHandlerCache *cache,
-                             gint           x,
-                             gint           y,
-                             gint           z)
+                             gint              x,
+                             gint              y,
+                             gint              z)
 {
-  GeglTile *tile = NULL;
+  GList *link;
 
-  if (cache->size > 0)
+  for (link = g_queue_peek_head_link (cache->queue); link; link = link->next)
     {
-      GSList *list = cache->list;
-      GSList *prev = NULL;
+      CacheItem *item = link->data;
+      GeglTile  *tile = item->tile;
 
-      while (list)
+      if (tile != NULL &&
+          item->x == x &&
+          item->y == y &&
+          item->z == z)
         {
-          CacheItem *cur_item = list->data;
-          GeglTile  *cur_tile = cur_item->tile;
-
-          if (cur_tile != NULL &&
-              cur_item->x == x &&
-              cur_item->y == y &&
-              cur_item->z == z)
+          /* move the link to the front of the queue */
+          if (link->prev != NULL)
             {
-              tile = cur_tile;
-              break;
+              g_queue_unlink (cache->queue, link);
+              g_queue_push_head_link (cache->queue, link);
             }
-          prev = list;
-          list = list->next;
-        }
 
-      if (tile != NULL)
-        {
-          g_object_ref (G_OBJECT (tile));
-
-          /* reorder list */
-          if (prev)
-            {
-              if (prev->next)
-                {
-                  prev->next = list->next;
-                }
-              if (cache->list)
-                list->next = cache->list;
-              cache->list = list;
-            }
-        }
-      else
-        {
+          return g_object_ref (tile);
         }
     }
-  return tile;
+
+  return NULL;
 }
 
 
@@ -369,111 +340,71 @@ gegl_handler_cache_has_tile (GeglHandlerCache *cache,
       g_object_unref (G_OBJECT (tile));
       return TRUE;
     }
-  else
-    {
-    }
+
   return FALSE;
 }
 
 static gboolean
 gegl_handler_cache_trim (GeglHandlerCache *cache)
 {
-  CacheItem *last_writable = NULL;
-
-  if (!cache->list)
-    return FALSE;
-
-  last_writable = g_slist_last (cache->list)->data;
+  CacheItem *last_writable = g_queue_pop_tail (cache->queue);
 
   if (last_writable != NULL)
     {
-      GeglTile *tile = last_writable->tile;
-
-      g_object_unref (tile);
-      cache->list = g_slist_remove (cache->list, last_writable);
+      g_object_unref (last_writable->tile);
       g_slice_free (CacheItem, last_writable);
       return TRUE;
     }
+
   return FALSE;
 }
 
 
-static gboolean
+static void
 gegl_handler_cache_void (GeglHandlerCache *cache,
-                         gint x,
-                         gint y,
-                         gint z)
+                         gint              x,
+                         gint              y,
+                         gint              z)
 {
-  CacheItem *item = NULL;
-  GeglTile  *tile = NULL;
+  GList *link;
 
-  if (cache->size > 0)
+  for (link = g_queue_peek_head_link (cache->queue); link; link = link->next)
     {
-      GSList *list = cache->list;
-      GSList *prev = NULL;
+      CacheItem *item = link->data;
+      GeglTile  *tile = item->tile;
 
-      while (list)
+      if (tile != NULL &&
+          item->x == x &&
+          item->y == y &&
+          item->z == z)
         {
-          CacheItem *cur_item = list->data;
-          GeglTile  *cur_tile = cur_item->tile;
-
-          if (cur_tile != NULL &&
-              cur_item->x == x &&
-              cur_item->y == y &&
-              cur_item->z == z)
-            {
-              tile = cur_tile;
-              item = cur_item;
-              break;
-            }
-          prev = list;
-          list = list->next;
-        }
-
-      if (tile != NULL)
-        {
-          /* reorder list placing ourselves at start to make removal faster */
-          if (prev)
-            {
-              if (prev->next)
-                {
-                  prev->next = list->next;
-                }
-              if (cache->list)
-                list->next = cache->list;
-              cache->list = list;
-            }
-
           gegl_tile_void (tile);
           g_object_unref (tile);
-          cache->list = g_slist_remove (cache->list, item);
           g_slice_free (CacheItem, item);
-        }
-      else
-        {
+          g_queue_delete_link (cache->queue, link);
+          return;
         }
     }
-  return FALSE;
 }
 
 void
 gegl_handler_cache_insert (GeglHandlerCache *cache,
-                           GeglTile      *tile,
-                           gint           x,
-                           gint           y,
-                           gint           z)
+                           GeglTile         *tile,
+                           gint              x,
+                           gint              y,
+                           gint              z)
 {
-  guint      count;
   CacheItem *item = g_slice_new (CacheItem);
+  guint      count;
 
-  g_object_ref (G_OBJECT (tile));
-  item->tile = tile;
+  item->tile = g_object_ref (tile);
   item->x    = x;
   item->y    = y;
   item->z    = z;
 
-  cache->list = g_slist_prepend (cache->list, item);
-  count       = g_slist_length (cache->list);
+  g_queue_push_head (cache->queue, item);
+
+  count = g_queue_get_length (cache->queue);
 
   if (count > cache->size)
     {

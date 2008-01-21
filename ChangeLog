@@ -1,5 +1,10 @@
 2008-01-21  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-handler-cache.[ch]: changed to use a GQueue
+	instead of a GSList.
+
+2008-01-21  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer-load.c
 	* gegl/buffer/gegl-buffer-save.c: don't append to linked lists.
 	Instead prepend all items, then reverse the list.
