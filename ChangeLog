@@ -1,5 +1,10 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (gegl_post_parse_hook): moved BABL_ERROR mangling
+	of environment variable to be before babl_init().
+
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	First shot at installing headers making it possible to build external
 	operations, either as plug-ins or static objects in an application
 	using GEGL.
