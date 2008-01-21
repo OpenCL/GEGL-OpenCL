@@ -760,6 +760,7 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
 
 
 #ifndef GEGL_INTERNAL
+#ifndef GEGL_TYPE_COLOR
 
 
 /***
@@ -779,6 +780,7 @@ GType gegl_color_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_COLOR    (gegl_color_get_type())
 #define GEGL_COLOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
 #define GEGL_IS_COLOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COLOR))
+#endif
 #endif
 
 /**
@@ -931,7 +933,15 @@ void         gegl_vector_calc_values  (GeglVector  *self,
                                        gdouble     *xs,
                                        gdouble     *ys);
 
+#ifndef GEGL_INTERNAL
 
+typedef enum
+{
+  GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
+  GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
+} GeglPadType;
+
+#endif
 
 G_END_DECLS
 

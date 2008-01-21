@@ -22,33 +22,13 @@
 
 G_BEGIN_DECLS
 
+#ifndef __GEGL_H__
 typedef struct _GeglColor            GeglColor;
 typedef struct _GeglCurve            GeglCurve;
-typedef struct _GeglCRVisitor        GeglCRVisitor;
-typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
-typedef struct _GeglEvalMgr          GeglEvalMgr;
-typedef struct _GeglEvalVisitor      GeglEvalVisitor;
-typedef struct _GeglFinishVisitor    GeglFinishVisitor;
-typedef struct _GeglGraph            GeglGraph;
-typedef struct _GeglHaveVisitor      GeglHaveVisitor;
-typedef struct _GeglNeedVisitor      GeglNeedVisitor;
 typedef struct _GeglNode             GeglNode;
-#ifndef GEGL_OPERATION_TYPE
-#define GEGL_OPERATION_TYPE
-typedef struct _GeglPad              GeglPad;
-typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglNodeContext      GeglNodeContext;
-typedef struct _GeglConnection       GeglConnection;
-#endif
 typedef struct _GeglVector           GeglVector;
 typedef struct _GeglProcessor        GeglProcessor;
-typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
-typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
-typedef struct _GeglVisitor          GeglVisitor;
-
 typedef struct _GeglRectangle        GeglRectangle;
-typedef struct _GeglPoint            GeglPoint;
-typedef struct _GeglDimension        GeglDimension;
 
 struct _GeglRectangle
 {
@@ -57,6 +37,35 @@ struct _GeglRectangle
   gint width;
   gint height;
 };
+
+typedef enum
+{
+  GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
+  GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
+} GeglPadType;
+
+#endif
+typedef struct _GeglCRVisitor        GeglCRVisitor;
+typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
+typedef struct _GeglEvalMgr          GeglEvalMgr;
+typedef struct _GeglEvalVisitor      GeglEvalVisitor;
+typedef struct _GeglFinishVisitor    GeglFinishVisitor;
+typedef struct _GeglGraph            GeglGraph;
+typedef struct _GeglHaveVisitor      GeglHaveVisitor;
+typedef struct _GeglNeedVisitor      GeglNeedVisitor;
+#ifndef GEGL_OPERATION_TYPE
+#define GEGL_OPERATION_TYPE
+typedef struct _GeglPad              GeglPad;
+typedef struct _GeglOperation        GeglOperation;
+typedef struct _GeglNodeContext      GeglNodeContext;
+typedef struct _GeglConnection       GeglConnection;
+#endif
+typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
+typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
+typedef struct _GeglVisitor          GeglVisitor;
+
+typedef struct _GeglPoint            GeglPoint;
+typedef struct _GeglDimension        GeglDimension;
 
 struct _GeglPoint
 {
@@ -69,6 +78,7 @@ struct _GeglDimension
   gint width;
   gint height;
 };
+
 
 G_END_DECLS
 

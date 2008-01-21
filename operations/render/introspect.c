@@ -28,13 +28,12 @@ gegl_chant_pointer(buf, "Buffer")
 #define GEGL_CHANT_CATEGORIES     "render"
 
 #define GEGL_CHANT_SOURCE
-#include "gegl-chant.h"
 
+#include "gegl-chant.h"
+#include "gegl-dot.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "gegl-plugin.h"
-#include "gegl-dot.h"
 
 
 static gboolean

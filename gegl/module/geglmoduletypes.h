@@ -19,9 +19,6 @@
 
 G_BEGIN_DECLS
 
-/* For information look into the C source or the html documentation */
-
-
 #ifndef GEGL_DISABLE_DEPRECATED
 /*
  * GEGL_MODULE_PARAM_SERIALIZE is deprecated, use

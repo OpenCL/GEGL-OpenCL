@@ -157,11 +157,18 @@ detect (GeglOperation *operation,
   GeglNode *node = operation->node;
   Priv *priv = (Priv*)GEGL_CHANT_OPERATION (operation)->priv;
   GeglNode *output = priv->output;
+  GeglRectangle bounds;
 
-  if (x >= output->have_rect.x &&
-      y >= output->have_rect.y &&
-      x  < output->have_rect.x + output->have_rect.width  &&
-      y  < output->have_rect.y + output->have_rect.height )
+  bounds = gegl_node_get_bounding_box (output); /* hopefully this is
+                                                   as correct as original
+                                                   which was peeking
+                                                   directly into output->have_rect
+                                                   */
+
+  if (x >= bounds.x &&
+      y >= bounds.y &&
+      x  < bounds.x + bounds.width  &&
+      y  < bounds.y + bounds.height )
     return node;
   return NULL;
 }

@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
+#include <glib-object.h>
 
 #ifdef G_OS_WIN32
 #include <process.h>

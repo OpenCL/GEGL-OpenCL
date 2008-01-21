@@ -16,10 +16,17 @@
  * 2006 © Øyvind Kolås.
  */
 
+/* FIXME: this file should be implemented using public API only */
 
 #include <stdio.h>
 #include <string.h>
-#include "gegl-plugin.h"
+#include <glib-object.h>
+#define  GEGL_INTERNAL
+#include "gegl-types.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-pad.h"
+#include "graph/gegl-connection.h"
+#include "gegl.h"
 
 static void
 gegl_add_graph (GString     *string,

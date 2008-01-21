@@ -49,7 +49,7 @@ process (GeglOperation       *operation,
       gint bps;
       guint i;
 
-      babl = input->format;
+      g_object_get (input, "format", &babl, NULL);
       format = (BablFormat*) babl;
 
       has_alpha = FALSE;

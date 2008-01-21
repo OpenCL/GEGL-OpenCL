@@ -52,4 +52,12 @@ AM_CPPFLAGS = -DLIBDIR=\""$(libdir)"\"
 
 libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 
-libgegl_@GEGL_API_VERSION@include_HEADERS = gegl.h gegl-utils.h buffer/gegl-buffer.h property-types/gegl-paramspecs.h
+libgegl_@GEGL_API_VERSION@include_HEADERS =	\
+    gegl.h				\
+    gegl-utils.h			\
+    gegl-chant.h			\
+    buffer/gegl-buffer.h		\
+    module/geglmoduletypes.h		\
+    module/geglmoduledb.h		\
+    module/geglmodule.h			\
+    property-types/gegl-paramspecs.h

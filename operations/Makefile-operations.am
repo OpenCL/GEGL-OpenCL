@@ -13,7 +13,13 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 all-local: $(SOBJS)
 
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
-           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer -I. -fPIC
+           -I$(srcdir) -I$(top_srcdir)           \
+            -I$(top_srcdir)/gegl                 \
+           -I$(top_srcdir)/gegl/buffer           \
+           -I$(top_srcdir)/gegl/operation        \
+           -I$(top_srcdir)/gegl/property-types   \
+           -I$(top_srcdir)/gegl/module           \
+           -I. -fPIC
 LDFLAGS += -shared $(no_undefined)
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)

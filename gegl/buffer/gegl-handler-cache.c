@@ -19,6 +19,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <glib-object.h>
 
 #include "../gegl-types.h"
 #include "gegl-buffer.h"

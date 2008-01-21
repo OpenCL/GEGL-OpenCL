@@ -73,6 +73,7 @@
 #include <string.h>
 
 #include <glib.h>
+#include <glib-object.h>
 #include <gegl-region.h>
 #include "gegl-region-generic.h"
 

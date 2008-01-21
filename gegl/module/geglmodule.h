@@ -31,8 +31,8 @@ G_BEGIN_DECLS
 /*  increment the ABI version each time one of the following changes:
  *
  *  - the libgeglmodule implementation (if the change affects modules).
- *  - one of the classes implemented by modules (currently GeglColorDisplay,
- *    GeglColorSelector and GeglController).
+ *  - GeglOperation or one of it's base classes changes. (XXX: 
+ *    should be extended so a range of abi versions are accepted.
  */
 #define GEGL_MODULE_ABI_VERSION 0x0004
 
@@ -62,7 +62,6 @@ struct _GeglModuleInfo
   gchar   *copyright;
   gchar   *date;
 };
-
 
 typedef const GeglModuleInfo * (* GeglModuleQueryFunc)    (GTypeModule *module);
 typedef gboolean               (* GeglModuleRegisterFunc) (GTypeModule *module);

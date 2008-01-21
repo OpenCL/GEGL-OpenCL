@@ -27,6 +27,8 @@ gegl_chant_object (buffer, "GeglBuffer to use")
 #define GEGL_CHANT_CATEGORIES   "programming:input"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
+#include "gegl-buffer.h"
+#include "graph/gegl-node-context.h"
 
 static void
 dispose (GObject *object)

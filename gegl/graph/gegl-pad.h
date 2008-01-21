@@ -24,12 +24,6 @@
 G_BEGIN_DECLS
 
 
-typedef enum
-{
-  GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
-  GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
-} GeglPadType;
-
 
 #define GEGL_TYPE_PAD            (gegl_pad_get_type ())
 #define GEGL_PAD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PAD, GeglPad))

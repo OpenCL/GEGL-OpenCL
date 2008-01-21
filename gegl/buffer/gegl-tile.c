@@ -18,6 +18,7 @@
 #include "config.h"
 
 #include <glib.h>
+#include <glib-object.h>
 #include <glib/gprintf.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

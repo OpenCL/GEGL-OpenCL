@@ -1,3 +1,27 @@
+/* gegl-chant contains incantations to that produce the boilerplate
+ * needed to write GEGL operation plug-ins. It abstracts away inheritance
+ * by giving a limited amount of base classes, and reduced creation of
+ * a properties struct and registration of properties for that structure to
+ * a minimum amount of code through use of the C preprocessor. You should
+ * look at the operations implemented using chanting (they #include this file)
+ * to see how it is used in practice.
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * 2006-2008 © Øyvind Kolås.
+ */
+
 #ifndef GEGL_CHANT_SELF
 #error "GEGL_CHANT_SELF not defined"
 #endif
@@ -9,60 +33,66 @@
 #include <string.h>
 #include <glib-object.h>
 
-#include <gegl-plugin.h>
+#include <gegl.h>
+#include <gegl-utils.h>
+#include <gegl-buffer.h>
+#include <operation/gegl-operation.h>
+/*#include "property-types/gegl-color.h"*/
+#include <gegl-paramspecs.h>
+
 
 #ifdef GEGL_CHANT_SOURCE
-  #include <gegl/operation/gegl-operation-source.h>
-  #include <gegl/operation/gegl-extension-handler.h>
+  #include <operation/gegl-operation-source.h>
+  #include <operation/gegl-extension-handler.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationSource
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationSourceClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SOURCE
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_SOURCE_CLASS
 #endif
 #ifdef GEGL_CHANT_SINK
-  #include <gegl/operation/gegl-operation-sink.h>
+  #include <operation/gegl-operation-sink.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationSink
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationSinkClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SINK
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_SINK_CLASS
 #endif
 #ifdef GEGL_CHANT_FILTER
-  #include <gegl/operation/gegl-operation-filter.h>
+  #include <operation/gegl-operation-filter.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationFilter
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationFilterClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_FILTER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_FILTER_CLASS
 #endif
 #ifdef GEGL_CHANT_POINT_FILTER
-  #include <gegl/operation/gegl-operation-point-filter.h>
+  #include <operation/gegl-operation-point-filter.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationPointFilter
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationPointFilterClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_FILTER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_FILTER_CLASS
 #endif
 #ifdef GEGL_CHANT_AREA_FILTER
-  #include <gegl/operation/gegl-operation-area-filter.h>
+  #include <operation/gegl-operation-area-filter.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationAreaFilter
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationAreaFilterClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_AREA_FILTER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_AREA_FILTER_CLASS
 #endif
 #ifdef GEGL_CHANT_COMPOSER
-  #include <gegl/operation/gegl-operation-composer.h>
+  #include <operation/gegl-operation-composer.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationComposer
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationComposerClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_COMPOSER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_COMPOSER_CLASS
 #endif
 #ifdef GEGL_CHANT_POINT_COMPOSER
-  #include <gegl/operation/gegl-operation-point-composer.h>
+  #include <operation/gegl-operation-point-composer.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationPointComposer
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationPointComposerClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_COMPOSER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_COMPOSER_CLASS
 #endif
 #ifdef GEGL_CHANT_META
-  #include <gegl/operation/gegl-operation-meta.h>
+  #include <operation/gegl-operation-meta.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationMeta
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationMetaClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_META
@@ -118,7 +148,8 @@ struct GeneratedClass
 
 #define GEGL_CHANT_OPERATION(obj) ((GeglChantOperation*)(obj))
 
-#include <gegl-module.h>
+#include <geglmoduletypes.h>
+#include <geglmodule.h>
 
 #ifndef GEGL_CHANT_STATIC
 #  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
@@ -730,6 +761,5 @@ gegl_chant_class_init (ChantClass * klass)
 #undef gegl_chant_curve
 #undef gegl_chant_vector
 }
-
 
 /****************************************************************************/

@@ -1,3 +1,44 @@
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
+	First shout at installing headers making it possible to build external
+	operations, either as plug-ins or static objects in an application
+	using GEGL.
+
+	* gegl/Makefile.am: added gegl-chant.h and module/geglmodule*.h to the
+	set of headers to be installed in the gegl header base dir.
+	* gegl/module/geglmodule.h: added comment about module ABI versions,
+	and updated instruction on when this ABI should be incremented. (we
+	should probably allow a range of ABIs, one to be incremented on ABI
+	addition and the lower threshold to be incremented on ABI change.
+	* gegl/module/geglmoduletypes.h: removed invalid header.
+	* gegl/gegl-chant.h: added comment at top.
+	* gegl/graph/gegl-pad.h: moved definition of GeglPadType ..
+	* gegl/gegl-types.h: .. here, as well as reorganized this file a bit
+	to guard against multiple inclusion.
+	* gegl/gegl.h: added some guards against multiple inclusion.
+
+	The rest of these files were changed to make them compile, there are
+	still some warnings about undeclared functions being issued that needs
+	sorting out.
+
+	* gegl/buffer/gegl-buffer-allocator.c:
+	* gegl/buffer/gegl-buffer-load.c:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-handler-cache.c:
+	* gegl/buffer/gegl-region-generic.c:
+	* gegl/buffer/gegl-tile.c:
+	* gegl/gegl-dot.c:
+	* operations/Makefile-operations.am:
+	* operations/color/mono-mixer.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/load-buffer.c:
+	* operations/io/load.c:
+	* operations/io/png-save.c:
+	* operations/io/save-pixbuf.c:
+	* operations/render/checkerboard.c:
+	* operations/render/introspect.c:
+
 2008-01-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-processor.c: reverted commit to use GSLice for
