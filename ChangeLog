@@ -1,5 +1,10 @@
 2008-01-21  Sven Neumann  <sven@gimp.org>
 
+	* gegl/graph/gegl-visitor.c (gegl_visitor_bfs_traverse): use
+	GQueue instead of GSList when a double-ended queue is needed.
+
+2008-01-21  Sven Neumann  <sven@gimp.org>
+
 	* gegl/process/gegl-processor.c: redid the change that introduces
 	the use of GSlice for GeglRectangle; this time without the bug.
 

@@ -418,9 +418,7 @@ void
 gegl_visitor_bfs_traverse (GeglVisitor   *self,
                            GeglVisitable *visitable)
 {
-  GList *queue = NULL;
-  GList *first;
-  gint   shared_count;
+  GQueue  queue = G_QUEUE_INIT;
 
   g_return_if_fail (GEGL_IS_VISITOR (self));
 
@@ -428,38 +426,34 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
   init_bfs_traversal (self, visitable);
 
   /* Initialize the queue with this visitable */
-  queue = g_list_append (queue, visitable);
+  g_queue_push_head (&queue, visitable);
 
   /* Mark visitable as "discovered" */
   set_discovered (self, visitable, TRUE);
 
   /* Pop the top of the queue*/
-  while ((first = g_list_first (queue)))
+  while ((visitable = g_queue_pop_head (&queue)))
     {
-      GeglVisitable *visitable = first->data;
+      gint shared_count = get_shared_count (self, visitable);
 
-      queue = g_list_remove_link (queue, first);
-      g_list_free_1 (first);
-
-      /* Put this one at the end of the queue, if its active immediate
-       * parents havent all been visited yet
+      /* Put this one at the end of the queue if its active
+       * immediate parents haven't all been visited yet.
        */
-      shared_count = get_shared_count (self, visitable);
       if (shared_count > 0)
         {
-          queue = g_list_append (queue, visitable);
+          g_queue_push_tail (&queue, visitable);
           continue;
         }
 
       /* Loop through visitable's sources and examine them */
       {
-        GSList *llink;
         GSList *depends_on_list = gegl_visitable_depends_on (visitable);
-        llink = depends_on_list;
+        GSList *llink;
 
-        while (llink)
+        for (llink = depends_on_list; llink; llink = g_slist_next (llink))
           {
             GeglVisitable *depends_on_visitable = llink->data;
+
             shared_count = get_shared_count (self, depends_on_visitable);
             shared_count--;
             set_shared_count (self, depends_on_visitable, shared_count);
@@ -467,13 +461,11 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
             /* Add any undiscovered visitable to the queue at end */
             if (!get_discovered (self, depends_on_visitable))
               {
-                queue = g_list_append (queue, depends_on_visitable);
+                g_queue_push_tail (&queue, depends_on_visitable);
 
                 /* Mark it as discovered */
                 set_discovered (self, depends_on_visitable, TRUE);
               }
-
-            llink = g_slist_next (llink);
           }
 
         g_slist_free (depends_on_list);
