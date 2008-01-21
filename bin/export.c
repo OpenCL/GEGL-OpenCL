@@ -17,6 +17,7 @@
  */
 
 #include "gegl-plugin.h"
+#include "graph/gegl-node.h" /*< FIXME: including internal header */
 #include "editor.h"
 #include "export.h"
 #include <png.h>

@@ -13,6 +13,7 @@
 	* gegl/graph/gegl-node.h: modified multi include guards.
 	* gegl/operation/gegl-operation.h: added GeglConnection to set of
 	types defined here (these typedefs should be moved to gegl-plugin.h)
+	* bin/export.c:
 	* operations/affine/affine.c: modified to build with gegl-plugin.h as
 	the core include.
 
