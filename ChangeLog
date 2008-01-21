@@ -1,5 +1,10 @@
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/remap.c: trimmed down headers included to the
+	publiclly installed subset. (introduces some warnings).
+
+2008-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added  Deji Akingunola
 	* NEWS: appended more news for 0.0.16 release.
 

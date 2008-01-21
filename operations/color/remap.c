@@ -19,14 +19,10 @@
 #ifndef __GEGL_OPERATION_REMAP_H__
 #define __GEGL_OPERATION_REMAP_H__
 
-#define GEGL_INTERNAL
 #include <glib-object.h>
-#include "gegl-types.h"
-#include "graph/gegl-node.h"
 #include "gegl.h"
-#include "gegl-utils.h"
 #include "operation/gegl-operation.h"
-#include "gegl-module.h"
+#include "geglmodule.h"
 
 
 
@@ -60,9 +56,11 @@ G_END_DECLS
 
 /***************************************************************************/
 
+#if 0
 #include "gegl-types.h"  /* FIXME: this include should not be needed */
 #include "graph/gegl-pad.h"  /*FIXME: neither should these */
 #include "graph/gegl-node.h"
+#endif
 #include <math.h>
 #include <string.h>
 
@@ -214,11 +212,15 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode           *input_node;
+  GeglOperation      *input_operation;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
-    return gegl_operation_detect (input_node->operation, x, y);
+    {
+      g_object_get (input_node, "gegl-operation", &input_operation, NULL);
+      return gegl_operation_detect (input_operation, x, y);
+    }
 
   return operation->node;
 }
