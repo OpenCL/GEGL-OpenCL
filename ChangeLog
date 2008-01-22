@@ -3,6 +3,9 @@
 	* gegl/graph/gegl-pad.c (gegl_pad_get_depends_on): iterate over
 	the list using a (GSList *) iter instead of an integer index.
 
+	* gegl/buffer/gegl-buffer-save.c: count the tiles while adding
+	them instead of requesting the list length.
+
 2008-01-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed some public headers, the only way to get all the symbols
