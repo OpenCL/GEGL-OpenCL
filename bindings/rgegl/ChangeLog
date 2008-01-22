@@ -2,7 +2,8 @@
 
 	* src/rgegl-rectangle.c: gegl-utils.h no longer exists.
 
-        * src/rbgeglversion.h: removed generated file.
+	* src/rbgeglversion.h
+	* src/rgeglversion.h: removed generated files.
 
 2007-11-24  Øyvind Kolås  <pippin@gimp.org>
 
