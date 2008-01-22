@@ -46,6 +46,8 @@ libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
 INCLUDES = \
 	-I$(top_srcdir)	\
 	-I$(top_srcdir)/gegl/buffer	\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/operation\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
 
 AM_CPPFLAGS = -DLIBDIR=\""$(libdir)"\"
@@ -58,7 +60,4 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl-chant.h			\
     gegl-plugin.h			\
     buffer/gegl-buffer.h		\
-    module/geglmoduletypes.h		\
-    module/geglmoduledb.h		\
-    module/geglmodule.h			\
     property-types/gegl-paramspecs.h

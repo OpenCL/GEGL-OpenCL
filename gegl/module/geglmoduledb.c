@@ -17,8 +17,7 @@
 #include <string.h>
 
 #include <glib-object.h>
-
-#include "geglmoduletypes.h"
+#include "gegl-plugin.h"
 #include "geglmodule.h"
 #include "geglmoduledb.h"
 #include "gegldatafiles.h"

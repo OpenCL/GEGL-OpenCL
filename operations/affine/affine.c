@@ -25,11 +25,10 @@
 
 #include <math.h>
 #include <gegl-plugin.h>
-#include <gegl-types.h>
 #include <graph/gegl-pad.h>
 #include <graph/gegl-node.h>
 #include <graph/gegl-connection.h>
-#include "buffer/gegl-sampler.h"
+/*#include "buffer/gegl-sampler.h"*/
 
 #include "affine.h"
 #include "module.h"
@@ -581,6 +580,11 @@ compute_affected_region (GeglOperation       *op,
   return affected_rect;
 
 }
+
+void  gegl_sampler_prepare     (GeglSampler *self);
+  /*XXX: Eeeek, obsessive avoidance of public headers, the API needed to
+   *     satisfy this use case should probably be provided.
+   */
 
 void
 affine_generic (GeglBuffer        *dest,

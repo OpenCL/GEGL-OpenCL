@@ -23,14 +23,6 @@
 #include <glib-object.h>
 #include <babl/babl.h>
 
-/* Evil hack to make sure types are defined */
-#ifndef GEGL_OPERATION_TYPE
-#define GEGL_OPERATION_TYPE
-typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglNodeContext      GeglNodeContext;
-typedef struct _GeglPad              GeglPad;
-typedef struct _GeglConnection       GeglConnection;
-#endif
 
 #include "gegl-buffer.h"
 

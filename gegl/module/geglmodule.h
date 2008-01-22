@@ -21,21 +21,9 @@
 #define __GEGL_MODULE_H__
 
 #include <gmodule.h>
-
-#include "geglmoduletypes.h"
-#include "geglmoduledb.h"
+#include "gegl-plugin.h"
 
 G_BEGIN_DECLS
-
-
-/*  increment the ABI version each time one of the following changes:
- *
- *  - the libgeglmodule implementation (if the change affects modules).
- *  - GeglOperation or one of it's base classes changes. (XXX: 
- *    should be extended so a range of abi versions are accepted.
- */
-#define GEGL_MODULE_ABI_VERSION 0x0004
-
 
 typedef enum
 {
@@ -51,17 +39,6 @@ typedef enum
                                   * types implemented by this module
                                   */
 } GeglModuleState;
-
-
-struct _GeglModuleInfo
-{
-  guint32  abi_version;
-  gchar   *purpose;
-  gchar   *author;
-  gchar   *version;
-  gchar   *copyright;
-  gchar   *date;
-};
 
 typedef const GeglModuleInfo * (* GeglModuleQueryFunc)    (GTypeModule *module);
 typedef gboolean               (* GeglModuleRegisterFunc) (GTypeModule *module);

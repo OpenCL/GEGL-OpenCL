@@ -23,13 +23,51 @@
 #include <string.h>
 #include <glib-object.h>
 #include <gegl.h>
+
+/* Extra types needed when coding operations */
+typedef struct _GeglOperation        GeglOperation;
+typedef struct _GeglNodeContext      GeglNodeContext;
+typedef struct _GeglPad              GeglPad;
+typedef struct _GeglConnection       GeglConnection;
+
 #include <operation/gegl-operation.h>
-#include <operation/gegl-extension-handler.h>
 #include <gegl-utils.h>
 #include <gegl-buffer.h>
 #include <gegl-paramspecs.h>
-#include <geglmoduletypes.h>
-#include <geglmodule.h>
+#include <gmodule.h>
+
+typedef struct _GeglModule     GeglModule;
+typedef struct _GeglModuleInfo GeglModuleInfo;
+typedef struct _GeglModuleDB   GeglModuleDB;
+
+/*#include <geglmodule.h>*/
+
+/*  increment the ABI version each time one of the following changes:
+ *
+ *  - the libgeglmodule implementation (if the change affects modules).
+ *  - GeglOperation or one of it's base classes changes. (XXX:-
+ *    should be extended so a range of abi versions are accepted.
+ */
+#define GEGL_MODULE_ABI_VERSION 0x0004
+
+struct _GeglModuleInfo
+{
+  guint32  abi_version;
+  gchar   *purpose;
+  gchar   *author;
+  gchar   *version;
+  gchar   *copyright;
+  gchar   *date;
+};
+
+GType
+gegl_module_register_type (GTypeModule     *module,
+                           GType            parent_type,
+                           const gchar     *type_name,
+                           const GTypeInfo *type_info,
+                           GTypeFlags       flags);
+
+
 
 GeglBuffer     *gegl_node_context_get_source (GeglNodeContext *self,
                                               const gchar     *padname);
@@ -38,7 +76,6 @@ GeglBuffer     *gegl_node_context_get_target (GeglNodeContext *self,
 void            gegl_node_context_set_object (GeglNodeContext *context,
                                               const gchar     *padname,
                                               GObject         *data);
-
 
 
 GParamSpec *
@@ -55,6 +92,10 @@ GParamSpec * gegl_param_spec_curve     (const gchar *name,
                                         GeglCurve   *default_curve,
                                         GParamFlags  flags);
 
+
+void          gegl_extension_handler_register (const gchar *extension,
+                                                const gchar *handler);
+const gchar * gegl_extension_handler_get      (const gchar *extension);
 
 
 #endif  /* __GEGL_PLUGIN_H__ */

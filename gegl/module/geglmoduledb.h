@@ -19,6 +19,8 @@
 
 G_BEGIN_DECLS
 
+#include "gegl-plugin.h"
+
 
 #define GEGL_TYPE_MODULE_DB            (gegl_module_db_get_type ())
 #define GEGL_MODULE_DB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MODULE_DB, GeglModuleDB))

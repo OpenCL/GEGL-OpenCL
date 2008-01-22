@@ -1,3 +1,29 @@
+2008-01-22  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed some public headers, the only way to get all the symbols
+	and definitions needed for compiling gegl-plugins or other code
+	needing acccess to types related to gegl plug-in infrastructure
+	is now by including the catch-all gegl-plugin.h header.
+
+	* gegl/Makefile.am: reduced number of installed headers.
+	* gegl/module/geglmoduletypes.h: removed.
+	* gegl/gegl-plugin.h: duplicate portions of private api to make it
+	public. Moved operation abi version definition and geglmodule
+	structure here.
+
+	Modified the rest to accomodate change.
+	* gegl/gegl-init.c:
+	* gegl/gegl-types.h: 
+	* bin/gegl-node-editor-plugin.h:
+	* gegl/module/Makefile.am:
+	* gegl/module/geglmodule.h:
+	* gegl/module/geglmoduledb.c:
+	* gegl/module/geglmoduledb.h:
+	* gegl/operation/gegl-operation.h:
+	* operations/affine/affine.c:
+	* operations/affine/chant.h:
+	* operations/affine/module.h:
+
 2008-01-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-plugin.h: added some functions that are not present

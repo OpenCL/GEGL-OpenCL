@@ -20,11 +20,11 @@
 #include <babl/babl.h>
 #include <glib-object.h>
 #include "gegl-instrument.h"
-#include "gegl-types.h"
+/*#include "gegl-types.h"*/
 #include "gegl-init.h"
-#include "buffer/gegl-buffer-allocator.h"
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
+#include "buffer/gegl-buffer-allocator.h"
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

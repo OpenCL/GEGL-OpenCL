@@ -21,7 +21,6 @@
 
 #include <glib-object.h>
 #include <gegl-plugin.h>
-#include <gegl-module.h>
 #include "../gegl-node-editor.h"
 
 void gegl_gui_flush (void);

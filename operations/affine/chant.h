@@ -55,8 +55,6 @@ struct GeneratedClass
 
 #define GEGL_CHANT_OPERATION(obj) ((GeglChantOperation*)(obj))
 
-#include <gegl-module.h>
-
 #define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
   \
 static void     gegl_chant_init              (GeglChantOperation *self); \
