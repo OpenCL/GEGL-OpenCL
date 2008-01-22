@@ -1,3 +1,7 @@
+2008-01-22  Manish Singh  <yosh@gimp.org>
+
+	* Gegl/gegl.override: gegl-utils.h no longer exists.
+
 2007-11-27  Manish Singh  <yosh@gimp.org>
 
 	* Gegl/fifthleg.py: call _gegl.node_new_from_xml instead of parse_xml.

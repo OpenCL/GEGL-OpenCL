@@ -32,7 +32,6 @@ headers
 #define pyg_param_gvalue_as_pyobject (_PyGObject_API->param_gvalue_as_pyobject)
 
 #include <gegl.h>
-#include <gegl/gegl-utils.h>
 %%
 include
   geglrectangle.override
