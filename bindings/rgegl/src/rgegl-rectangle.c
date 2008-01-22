@@ -19,7 +19,6 @@
  */
 
 #include "rgegl.h"
-#include "gegl/gegl-utils.h"
 
 /************************************************
 

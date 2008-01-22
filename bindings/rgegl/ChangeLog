@@ -1,3 +1,9 @@
+2008-01-22  Manish Singh  <yosh@gimp.org>
+
+	* src/rgegl-rectangle.c: gegl-utils.h no longer exists.
+
+        * src/rbgeglversion.h: removed generated file.
+
 2007-11-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* src/rgegl-node.c: updated to reflect naming changes in xml
