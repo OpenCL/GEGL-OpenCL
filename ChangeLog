@@ -1,3 +1,8 @@
+2008-01-22  Sven Neumann  <sven@gimp.org>
+
+	* gegl/graph/gegl-pad.c (gegl_pad_get_depends_on): iterate over
+	the list using a (GSList *) iter instead of an integer index.
+
 2008-01-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed some public headers, the only way to get all the symbols

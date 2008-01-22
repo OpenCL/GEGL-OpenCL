@@ -228,7 +228,9 @@ gegl_buffer_save (GeglBuffer          *buffer,
                       tx += info->x_tile_shift / factor;
                       ty += info->y_tile_shift / factor;
 
-                      info->tiles = g_list_prepend (info->tiles, tile_entry_new (tx, ty, z));
+                      info->tiles = g_list_prepend (info->tiles,
+                                                    tile_entry_new (tx, ty, z));
+                      info->header.tile_count++;
                     }
                   bufx += (tile_width - offsetx) * factor;
                 }
@@ -241,7 +243,6 @@ gegl_buffer_save (GeglBuffer          *buffer,
     info->tiles = g_list_reverse (info->tiles);
   }
 
-  info->header.tile_count = g_list_length (info->tiles);
   /* FIXME: sort the index into Z-order */
 
   info->tiles = g_list_sort (info->tiles, z_order_compare);

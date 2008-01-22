@@ -175,10 +175,10 @@ gegl_pad_get_depends_on (GeglPad *self)
 
   if (gegl_pad_is_input (self))
     {
-      gint i;
-      for (i = 0; i < g_slist_length (self->connections); i++)
+      GSList *iter;
+      for (iter = self->connections; iter; iter = g_slist_next (iter))
         {
-          GeglConnection *connection = g_slist_nth_data (self->connections, i);
+          GeglConnection *connection = iter->data;
           if (connection)
             {
               depends_on = g_slist_prepend (depends_on,
@@ -196,11 +196,10 @@ gegl_pad_get_depends_on (GeglPad *self)
       if (!strcmp (gegl_node_get_name (self->node), "proxynop-input"))
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
-          GSList   *llink = graph->sources;
 
-          for (llink = graph->sources; llink; llink = g_slist_next (llink))
+          for (iter = graph->sources; iter; iter = g_slist_next (iter))
             {
-              GeglConnection *connection = llink->data;
+              GeglConnection *connection = iter->data;
               depends_on = g_slist_prepend (depends_on,
                                             gegl_connection_get_source_pad (connection));
             }
