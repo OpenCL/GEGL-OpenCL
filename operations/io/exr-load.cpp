@@ -32,7 +32,7 @@ gegl_chant_string (path, "", "Path of file to load.")
 #define GEGL_CHANT_CLASS_INIT
 
 extern "C" {
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 }
 
 #include <ImfInputFile.h>
