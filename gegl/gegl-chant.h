@@ -33,9 +33,92 @@
 
 #include <gegl-plugin.h>
 
+#ifdef GEGL_CHANT_TYPE_OPERATION
+#include <operation/gegl-operation.h>
+typedef struct
+{
+  GeglOperation parent_instance;
+  gpointer      properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+#ifdef GEGL_CHANT_TYPE_META
+#include <operation/gegl-operation.h>
+typedef struct
+{
+  GeglOperationMeta parent_instance;
+  gpointer          properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationMetaClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+#ifdef GEGL_CHANT_TYPE_SOURCE
+#include <operation/gegl-operation-source.h>
+typedef struct
+{
+  GeglOperationSource parent_instance;
+  gpointer            properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationSourceClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+#ifdef GEGL_CHANT_TYPE_SINK
+#include <operation/gegl-operation-sink.h>
+typedef struct
+{
+  GeglOperationSink parent_instance;
+  gpointer          properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationSinkClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+#ifdef GEGL_CHANT_TYPE_FILTER
+#include <operation/gegl-operation-filter.h>
+typedef struct
+{
+  GeglOperationFilter parent_instance;
+  gpointer            properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationFilterClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+#ifdef GEGL_CHANT_TYPE_COMPOSER
+#include <operation/gegl-operation-composer.h>
+typedef struct
+{
+  GeglOperationComposer parent_instance;
+  gpointer              properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationComposerClass parent_class;
+} GeglChantOperationClass;
+#endif
+
 #ifdef GEGL_CHANT_TYPE_POINT_FILTER
 #include <operation/gegl-operation-point-filter.h>
-typedef struct _GeglChantProperties GeglChantProperties;
 typedef struct
 {
   GeglOperationPointFilter parent_instance;
@@ -46,12 +129,40 @@ typedef struct
 {
   GeglOperationPointFilterClass parent_class;
 } GeglChantOperationClass;
+#endif
 
+#ifdef GEGL_CHANT_TYPE_AREA_FILTER
+#include <operation/gegl-operation-area-filter.h>
+typedef struct
+{
+  GeglOperationAreaFilter parent_instance;
+  gpointer                properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationAreaFilterClass parent_class;
+} GeglChantOperationClass;
+#endif
+
+
+#ifdef GEGL_CHANT_TYPE_POINT_COMPOSER
+#include <operation/gegl-operation-point-composer.h>
+typedef struct
+{
+  GeglOperationPointComposer parent_instance;
+  gpointer                   properties;
+} GeglChantOperation;
+
+typedef struct
+{
+  GeglOperationPointComposerClass parent_class;
+} GeglChantOperationClass;
 #endif
 
 
 
-
+typedef struct _GeglChantProperties GeglChantProperties;
 static GType operation_get_type      ();
 static void  operation_register_type (GTypeModule *module);
 
