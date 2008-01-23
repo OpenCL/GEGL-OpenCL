@@ -16,23 +16,15 @@
  * Copyright 2006 Mark Probst <mark.probst@gmail.com>
  */
 
-#if GEGL_CHANT_PROPERTIES
-
- gegl_chant_double (red, -10.0, 10.0, 0.5, "Amount of red")
+#ifdef GEGL_CHANT_PROPERTIES
+ gegl_chant_double (red,   -10.0, 10.0, 0.5,  "Amount of red")
  gegl_chant_double (green, -10.0, 10.0, 0.25, "Amount of green")
- gegl_chant_double (blue, -10.0, 10.0, 0.25, "Amount of blue")
-
+ gegl_chant_double (blue,  -10.0, 10.0, 0.25, "Amount of blue")
 #else
 
-
-#define GEGL_CHANT_NAME         mono_mixer
-#define GEGL_CHANT_SELF         "mono-mixer.c"
-#define GEGL_CHANT_DESCRIPTION  "Monochrome channel mixer"
-#define GEGL_CHANT_CATEGORIES   "color"
-
-#define GEGL_CHANT_FILTER
-
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_C_FILE      "mono-mixer.c"
+#define GEGL_CHANT_TYPE_FILTER
+#include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation       *operation,
@@ -40,16 +32,14 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
- GeglChantOperation  *self;
- gfloat              *in_buf;
- gfloat              *out_buf;
- gfloat               red, green, blue;
+  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
+  gfloat              *in_buf;
+  gfloat              *out_buf;
+  gfloat               red, green, blue;
 
- self = GEGL_CHANT_OPERATION (operation);
-
- red = self->red;
- green = self->green;
- blue = self->blue;
+  red = properties->red;
+  green = properties->green;
+  blue = properties->blue;
 
  if ((result->width > 0) && (result->height > 0))
  {
@@ -73,7 +63,7 @@ process (GeglOperation       *operation,
          out_pixel += 2;
      }
 
-     gegl_buffer_set (output, result, NULL, out_buf,
+     gegl_buffer_set (output, result, babl_format ("YA float"), out_buf,
                       GEGL_AUTO_ROWSTRIDE);
 
      g_free (in_buf);
@@ -81,6 +71,30 @@ process (GeglOperation       *operation,
  }
 
  return TRUE;
+}
+
+static void prepare (GeglOperation *operation)
+{
+  /* set the babl format this operation prefers to work on */
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
+}
+
+static void
+operation_class_init (GeglChantOperationClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "mono-mixer";
+  operation_class->categories  = "color";
+  operation_class->description = "Monochrome channel mixer";
 }
 
 #endif

@@ -1,5 +1,9 @@
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/mono-mixer.c: updated to new chanting API.
+
+2008-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: use our own GEGL_DEFINE_DYNAMIC_OPERATION instead
 	of hacking about with G_DEFINE_DYNAMIC_TYPE.
 	* operations/blur/box-blur.c: update to new API.
