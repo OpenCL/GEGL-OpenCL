@@ -30,7 +30,7 @@ gegl_chant_color (value, "black", "The color to render (defaults to 'black')")
 #define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void
 prepare (GeglOperation *operation)

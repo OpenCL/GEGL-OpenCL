@@ -25,7 +25,7 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 
 #define GEGL_CHANT_SELF            "pixbuf.c"
 #define GEGL_CHANT_CATEGORIES      "programming:input"
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>

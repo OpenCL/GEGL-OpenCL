@@ -29,7 +29,7 @@ gegl_chant_double(amount, -1.0, 2.0, 0.5, "amount")
 #define GEGL_CHANT_SELF            "tonemap.c"
 #define GEGL_CHANT_CATEGORIES      "meta:enhance"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv

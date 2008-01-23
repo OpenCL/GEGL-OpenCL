@@ -29,7 +29,7 @@ gegl_chant_int (height, 0, G_MAXINT, 100, "Height for rendered image")
 #define GEGL_CHANT_SELF            "svg-load.c"
 #define GEGL_CHANT_CATEGORIES      "input" /* not hidden because it has extra API */
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <cairo.h>
 #include <librsvg/rsvg.h>

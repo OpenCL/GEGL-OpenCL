@@ -36,7 +36,7 @@ gegl_chant_color (color2,    "white",                "The other cell color (defa
 
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void
 prepare (GeglOperation *operation)

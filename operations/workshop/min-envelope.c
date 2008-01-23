@@ -33,7 +33,7 @@ gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution"
 #define GEGL_CHANT_AREA_FILTER
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void min_envelope (GeglBuffer *src,

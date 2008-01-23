@@ -32,7 +32,7 @@ gegl_chant_double (fps, 0.0, 100.0, 25, "frames per second")
 #define GEGL_CHANT_INIT
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include "ffmpeg/avformat.h"
 
 typedef struct

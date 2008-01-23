@@ -28,7 +28,7 @@
                                   of the super class */
 #define GEGL_CHANT_CATEGORIES      "color:enhance"
 #define GEGL_CHANT_PREPARE
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static gboolean
 inner_process (gdouble        min,

@@ -35,7 +35,7 @@ gegl_chant_int(height, 0, 1000, 0, "private")
 #define GEGL_CHANT_SELF        "display.c"
 #define GEGL_CHANT_CATEGORIES  "output"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <SDL.h>
 #include <signal.h>

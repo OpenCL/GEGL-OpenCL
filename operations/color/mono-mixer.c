@@ -32,7 +32,7 @@
 
 #define GEGL_CHANT_FILTER
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static gboolean
 process (GeglOperation       *operation,

@@ -29,7 +29,7 @@ gegl_chant_path (path, "/tmp/romedalen.png", "Path of file to load.")
 #define GEGL_CHANT_SELF            "png-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <png.h>
 

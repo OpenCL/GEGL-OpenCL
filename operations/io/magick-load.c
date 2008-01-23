@@ -25,7 +25,7 @@ gegl_chant_path (path, "/tmp/gegl-logo.svg", "Path of file to load.")
 
 #define GEGL_CHANT_SELF            "magick-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <stdio.h>
 
 /* FIXME: this should not be neccesary to implement this operation */

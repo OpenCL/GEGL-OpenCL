@@ -48,7 +48,7 @@ gegl_chant_double (user_value, -1000.0, 1000.0, 1.0, "(appears in the global var
 #define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <lua.h>
 #include <lualib.h>

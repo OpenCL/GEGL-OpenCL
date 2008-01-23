@@ -30,7 +30,7 @@ gegl_chant_int (frame, 0, 1000000, 0, "frame number")
 #define GEGL_CHANT_CATEGORIES     "input:video"
 #define GEGL_CHANT_INIT
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <errno.h>
 #include <ffmpeg/avformat.h>

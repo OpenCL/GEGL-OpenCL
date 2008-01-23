@@ -47,7 +47,7 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 #define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
 
-#include \"gegl-chant.h\"
+#include \"gegl-old-chant.h\"
 
 #include <math.h>
 #ifdef _MSC_VER

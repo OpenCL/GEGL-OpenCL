@@ -29,7 +29,7 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #define GEGL_CHANT_AREA_FILTER
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void
 demosaic (GeglChantOperation *op,

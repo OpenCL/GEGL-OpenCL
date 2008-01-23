@@ -29,7 +29,7 @@ gegl_chant_int	  (compression, 1, 9, 1, "PNG compression level from 1 to 9")
 #define GEGL_CHANT_SELF        "png-save.c"
 #define GEGL_CHANT_CATEGORIES      "output"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <png.h>
 

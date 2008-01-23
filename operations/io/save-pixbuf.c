@@ -27,7 +27,7 @@ gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
 #define GEGL_CHANT_SELF            "save-pixbuf.c"
 #define GEGL_CHANT_CATEGORIES      "programming:output"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 static gboolean

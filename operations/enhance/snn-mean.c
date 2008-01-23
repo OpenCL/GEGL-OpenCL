@@ -33,7 +33,7 @@ gegl_chant_int (pairs, 1, 2, 2, "Number of pairs higher number preserves more ac
 
 #define GEGL_CHANT_AREA_FILTER
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void

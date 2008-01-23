@@ -39,7 +39,7 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
 /* The name of the operation (with lower case here, _ and - are interchangeable
  * when used by GEGL. */
 #define GEGL_CHANT_SELF         "brightness-contrast.c"
-/* we need to specify the name of the source file for gegl-chant.height  to
+/* we need to specify the name of the source file for gegl-old-chant.height  to
  * do it's magic.
  */
 
@@ -69,7 +69,7 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
 /* gegl-chant, uses the properties defined at the top, and the configuration
  * in the preceding lines to generate a GObject plug-in.
  */
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void prepare (GeglOperation *operation)
 {

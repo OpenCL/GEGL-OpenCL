@@ -38,7 +38,7 @@ gegl_chant_double (gamma, 0.0, 10.0, 1.0, "post correction gamma.")
 
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void stress (GeglBuffer *src,

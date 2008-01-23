@@ -26,7 +26,7 @@ gegl_chant_object (buffer, "GeglBuffer to use")
 #define GEGL_CHANT_SELF         "load-buffer.c"
 #define GEGL_CHANT_CATEGORIES   "programming:input"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include "gegl-buffer.h"
 #include "graph/gegl-node-context.h"
 

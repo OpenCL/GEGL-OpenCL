@@ -34,7 +34,7 @@ gegl_chant_double (n,     0, 20.0, 3.0, "")
 #define GEGL_CHANT_PREPARE
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"
 

@@ -28,7 +28,7 @@ gegl_chant_string (path, "/tmp/test.raw",
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>

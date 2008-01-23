@@ -30,7 +30,7 @@ gegl_chant_double (radius, 0.0, 50.0, 4.0,
 #define GEGL_CHANT_AREA_FILTER
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void

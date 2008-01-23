@@ -117,7 +117,7 @@ a.each do
 #define GEGL_CHANT_PREPARE
 #define GEGL_CHANT_CLASS_INIT
 
-#include \"gegl-chant.h\"
+#include \"gegl-old-chant.h\"
 "
     file.write file_head2
     file.write "

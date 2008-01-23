@@ -25,7 +25,7 @@ gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
 #define GEGL_CHANT_SELF        "save-buffer.c"
 #define GEGL_CHANT_CATEGORIES  "programming:output"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static gboolean
 process (GeglOperation       *operation,

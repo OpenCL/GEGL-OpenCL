@@ -25,7 +25,7 @@ gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no au
 #define GEGL_CHANT_SELF            "opacity.c"
 #define GEGL_CHANT_CATEGORIES      "transparency"
 #define GEGL_CHANT_PREPARE
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void prepare (GeglOperation *self)
 {

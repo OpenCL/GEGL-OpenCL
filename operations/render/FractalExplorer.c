@@ -62,7 +62,7 @@ gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
 #define GEGL_CHANT_PREPARE
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 #include <stdio.h>
 

@@ -29,7 +29,7 @@ gegl_chant_path (path, "", "Path of file to load.")
 #define GEGL_CHANT_SELF            "load.c"
 #define GEGL_CHANT_CATEGORIES      "meta:input"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <stdio.h>
 
 typedef struct _Priv Priv;

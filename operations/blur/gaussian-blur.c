@@ -38,7 +38,7 @@ gegl_chant_string (filter, NULL,
 #define GEGL_CHANT_CATEGORIES      "blur"
 
 #define GEGL_CHANT_AREA_FILTER
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <math.h>
 #include <stdio.h>

@@ -32,7 +32,7 @@ gegl_chant_double (edge_preservation, 0.0, 70.0, 8.0, "Amount of edge preservati
 #define GEGL_CHANT_CATEGORIES      "misc"
 
 #define GEGL_CHANT_AREA_FILTER
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void

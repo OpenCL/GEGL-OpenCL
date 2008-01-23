@@ -29,7 +29,7 @@
 #define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 
 static void prepare (GeglOperation *operation)

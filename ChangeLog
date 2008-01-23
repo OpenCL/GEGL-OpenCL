@@ -1,3 +1,9 @@
+2008-01-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/Makefile.am: added old-chant.h to list of sources.
+	* gegl/gegl-old-chant.h: created a copy of gegl-chant.h
+	* operations/*/*.c: include gegl-old-chant.h instead of gegl-chant.h
+
 2008-01-22  Sven Neumann  <sven@gimp.org>
 
 	* gegl/graph/gegl-pad.c (gegl_pad_get_depends_on): iterate over

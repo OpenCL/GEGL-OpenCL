@@ -36,7 +36,7 @@ gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 #define GEGL_CHANT_SELF            "layer.c"
 #define GEGL_CHANT_CATEGORIES      "meta"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <glib/gprintf.h>
 
 typedef struct _Priv Priv;

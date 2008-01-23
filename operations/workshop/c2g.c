@@ -36,7 +36,7 @@ gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #define GEGL_CHANT_AREA_FILTER
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <math.h>
 #define sq(a) ((a)*(a))
 

@@ -29,7 +29,7 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 
 #define GEGL_CHANT_AREA_FILTER
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void hor_blur (GeglBuffer *src,
                       GeglBuffer *dst,

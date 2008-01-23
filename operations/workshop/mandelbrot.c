@@ -33,7 +33,7 @@ gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
 
 #define GEGL_CHANT_SOURCE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
 {

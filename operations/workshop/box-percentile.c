@@ -34,7 +34,7 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 #define GEGL_CHANT_AREA_FILTER
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void median (GeglBuffer *src,
                     GeglBuffer *dst,

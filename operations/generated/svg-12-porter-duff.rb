@@ -126,7 +126,7 @@ a.each do
 #define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
 
-#include \"gegl-chant.h\"
+#include \"gegl-old-chant.h\"
 "
     file.write file_head2
     file.write "

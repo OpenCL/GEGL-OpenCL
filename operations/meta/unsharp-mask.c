@@ -28,7 +28,7 @@ gegl_chant_double(scale,  0.0, 100.0, 1.0, "Scale, strength of effect.")
 #define GEGL_CHANT_SELF            "unsharp-mask.c"
 #define GEGL_CHANT_CATEGORIES      "meta:enhance"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv

@@ -34,7 +34,7 @@
 #define GEGL_CHANT_CATEGORIES   "color"
 #define GEGL_CHANT_PREPARE
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static void prepare (GeglOperation *operation)
 {

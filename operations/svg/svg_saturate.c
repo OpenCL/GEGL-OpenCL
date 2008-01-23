@@ -15,7 +15,7 @@
 #define GEGL_CHANT_CATEGORIES    "compositors:svgfilter"
 #define GEGL_CHANT_SELF          "svg_saturate.c"
 #define GEGL_CHANT_PREPARE
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <math.h>
 #include <stdlib.h>

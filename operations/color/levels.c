@@ -33,7 +33,7 @@
 
 #define GEGL_CHANT_CATEGORIES   "color"
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format

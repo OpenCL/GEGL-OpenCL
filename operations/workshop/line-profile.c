@@ -36,7 +36,7 @@ gegl_chant_double (max, -500.0, 500,  8.0, "value at top")
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 #include <cairo.h>
 
 static gfloat

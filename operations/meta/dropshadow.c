@@ -33,7 +33,7 @@ gegl_chant_double (radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
 #define GEGL_CHANT_SELF            "dropshadow.c"
 #define GEGL_CHANT_CATEGORIES      "meta:effects"
 #define GEGL_CHANT_CLASS_INIT
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv

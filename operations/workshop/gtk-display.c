@@ -30,7 +30,7 @@ gegl_chant_string  (window_title, "",
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 #include <gtk/gtk.h>
 

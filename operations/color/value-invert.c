@@ -40,7 +40,7 @@
 #define GEGL_CHANT_SELF          "value-invert.c"
 #define GEGL_CHANT_CATEGORIES    "color"
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 static gboolean
 process (GeglOperation *op,

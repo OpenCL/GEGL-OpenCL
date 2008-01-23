@@ -30,7 +30,7 @@ gegl_chant_double(radius2, 0.0, 10.0, 2.0, "Radius")
 #define GEGL_CHANT_META
 #define GEGL_CHANT_CLASS_INIT
 
-#include "gegl-chant.h"
+#include "gegl-old-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv
