@@ -1,5 +1,13 @@
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: allocate and free the properties structure
+	manually, tweak the define type macro to generate the class name
+	taking the GEGL_CHANT_C_FILE into account.
+	* operations/blur/box-blur.c: ported to new chanting API.
+	* operations/color/invert.c: ported to new chanting API.
+
+2008-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: new version of gegl-chant, that overrides less
 	of gobject in a slightly more readable manner.
 

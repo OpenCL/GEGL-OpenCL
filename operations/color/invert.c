@@ -15,16 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
    /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_NAME          invert
-#define GEGL_CHANT_DESCRIPTION   "Inverts the components (except alpha), the result is the corresponding \"negative\" image."
-#define GEGL_CHANT_SELF          "invert.c"
-#define GEGL_CHANT_CATEGORIES    "color"
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE        "invert.c"
+
+
+#include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation *op,
@@ -51,6 +50,23 @@ process (GeglOperation *op,
       out+= 4;
     }
   return TRUE;
+}
+
+static void
+operation_class_init (GeglChantOperationClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  operation_class->description = "Inverts the components (except alpha), the result is the corresponding \"negative\" image.";
+  operation_class->categories = "color";
+  point_filter_class->process = process;
+
+  gegl_operation_class_set_name (operation_class, "invert");
+  gegl_chant_class_init (klass);
 }
 
 #endif

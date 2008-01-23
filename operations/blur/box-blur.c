@@ -15,21 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, 0.0, 200.0, 4.0,
-  "Radius of square pixel region, (width and height will be radius*2+1.")
+gegl_chant_double (radius, 0.0, 200.0, 4.0, "Radius of square pixel region, (width and height will be radius*2+1.")
 
 #else
 
-#define GEGL_CHANT_NAME            box_blur
-#define GEGL_CHANT_SELF            "box-blur.c"
-#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
-#define GEGL_CHANT_CATEGORIES      "blur"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE          "box-blur.c"
 
-#define GEGL_CHANT_AREA_FILTER
 
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void hor_blur (GeglBuffer *src,
                       GeglBuffer *dst,
@@ -47,17 +43,14 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self;
-
-  GeglBuffer *temp;
-
-  self  = GEGL_CHANT_OPERATION (operation);
+  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer          *temp;
 
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
-  hor_blur (input, temp,  self->radius);
-  ver_blur (temp, output, self->radius);
+  hor_blur (input, temp,  properties->radius);
+  ver_blur (temp, output, properties->radius);
 
   g_object_unref (temp);
   return  TRUE;
@@ -236,9 +229,28 @@ ver_blur (GeglBuffer *src,
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *blur = GEGL_CHANT_OPERATION (operation);
+  GeglChantProperties     *properties = GEGL_CHANT_PROPERTIES (operation);
   area->left = area->right = area->top = area->bottom =
-      ceil (blur->radius);
+      ceil (properties->radius);
+}
+
+
+static void
+operation_class_init (GeglChantOperationClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  operation_class->description = "Performs an averaging of a square box of pixels.";
+  operation_class->categories = "blur";
+  operation_class->tickle = tickle;
+  filter_class->process = process;
+
+  gegl_operation_class_set_name (operation_class, "box-blur");
+  gegl_chant_class_init (klass);
 }
 
 

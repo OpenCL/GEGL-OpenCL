@@ -26,12 +26,65 @@
 #error "GEGL_CHANT_C_FILE not defined"
 #endif
 
+#include <gegl-plugin.h>
+
+#undef G_DEFINE_DYNAMIC_TYPE
+#undef G_DEFINE_DYNAMIC_TYPE_EXTENDED
+
+#define G_DEFINE_DYNAMIC_TYPE(TN, t_n, T_P)          G_DEFINE_DYNAMIC_TYPE_EXTENDED (GEGL_CHANT_C_FILE, TN, t_n, T_P, 0, {})
+#define G_DEFINE_DYNAMIC_TYPE_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
+  static void     type_name##_init              (TypeName        *self); \
+static void     type_name##_class_init        (TypeName##Class *klass); \
+static void     type_name##_class_finalize    (TypeName##Class *klass); \
+static gpointer type_name##_parent_class = NULL; \
+static GType    type_name##_type_id = 0; \
+static void     type_name##_class_intern_init (gpointer klass) \
+  { \
+    type_name##_parent_class = g_type_class_peek_parent (klass); \
+    type_name##_class_init ((TypeName##Class*) klass); \
+  } \
+GType \
+type_name##_get_type (void) \
+  { \
+    return type_name##_type_id; \
+  } \
+static void \
+type_name##_register_type (GTypeModule *type_module) \
+  { \
+    gchar tempname[256];    \
+    gchar *p;               \
+    GType g_define_type_id; \
+    const GTypeInfo g_define_type_info = { \
+          sizeof (TypeName##Class), \
+          (GBaseInitFunc) NULL, \
+          (GBaseFinalizeFunc) NULL, \
+          (GClassInitFunc) type_name##_class_intern_init, \
+          (GClassFinalizeFunc) type_name##_class_finalize, \
+          NULL,   /* class_data */ \
+          sizeof (TypeName), \
+          0,      /* n_preallocs */ \
+          (GInstanceInitFunc) type_name##_init, \
+          NULL    /* value_table */ \
+        }; \
+    g_snprintf (tempname, 256, "%s", #TypeName GEGL_CHANT_C_FILE);\
+    for (p = &tempname[0]; *p; p++) {\
+      if (*p=='.') *p='_';\
+    }\
+    type_name##_type_id = g_type_module_register_type (type_module, \
+                                                       TYPE_PARENT, \
+                                                       tempname,    \
+                                                       &g_define_type_info, \
+                                                       (GTypeFlags) flags); \
+    g_define_type_id = type_name##_type_id; \
+    { CODE ; } \
+  }
+
+
 
 #define GEGL_CHANT_PROPERTIES(op) \
     ((GeglChantProperties*)(((GeglChantOperation*)(op))->properties))
 /****************************************************************************/
 
-#include <gegl-plugin.h>
 
 #ifdef GEGL_CHANT_TYPE_OPERATION
 #include <operation/gegl-operation.h>
@@ -45,6 +98,8 @@ typedef struct
 {
   GeglOperationClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_OPERATION);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_META
@@ -59,6 +114,8 @@ typedef struct
 {
   GeglOperationMetaClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_META);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_SOURCE
@@ -73,6 +130,8 @@ typedef struct
 {
   GeglOperationSourceClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_SOURCE);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_SINK
@@ -87,6 +146,8 @@ typedef struct
 {
   GeglOperationSinkClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_SINK);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_FILTER
@@ -101,6 +162,8 @@ typedef struct
 {
   GeglOperationFilterClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_FILTER);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_COMPOSER
@@ -115,6 +178,9 @@ typedef struct
 {
   GeglOperationComposerClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_COMPOSER);
+
 #endif
 
 #ifdef GEGL_CHANT_TYPE_POINT_FILTER
@@ -129,6 +195,10 @@ typedef struct
 {
   GeglOperationPointFilterClass parent_class;
 } GeglChantOperationClass;
+
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_POINT_FILTER);
+
+
 #endif
 
 #ifdef GEGL_CHANT_TYPE_AREA_FILTER
@@ -143,6 +213,7 @@ typedef struct
 {
   GeglOperationAreaFilterClass parent_class;
 } GeglChantOperationClass;
+G_DEFINE_DYNAMIC_TYPE (GeglChantOperation, operation, GEGL_TYPE_OPERATION_AREA_FILTER);
 #endif
 
 
@@ -163,15 +234,11 @@ typedef struct
 
 
 typedef struct _GeglChantProperties GeglChantProperties;
-static GType operation_get_type      ();
+GType operation_get_type ();
 static void  operation_register_type (GTypeModule *module);
 
 static void
-gegl_chant_init (GeglChantOperation *self)
-{
-  self->properties = G_TYPE_INSTANCE_GET_PRIVATE ((self),
-      operation_get_type (), GeglChantProperties);
-}
+gegl_chant_init (GeglChantOperation *self);
 
 /* if GEGL_CHANT_CUSTOM is defined you have to provide the following
  * code or your own implementation of it
@@ -211,6 +278,8 @@ gegl_module_register (GTypeModule *module)
 
 struct _GeglChantProperties
 {
+  gpointer dummy_filler; /* to avoid empty struct, can be done a bit more cleverly to
+                            avoid adding it when there is actual properties*/
 #define gegl_chant_int(name, min, max, def, blurb)     gint        name;
 #define gegl_chant_double(name, min, max, def, blurb)  gdouble     name;
 #define gegl_chant_boolean(name, def, blurb)           gboolean    name;
@@ -510,6 +579,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_vector
+  g_free (properties);
 }
 
 static GObject *
@@ -537,7 +607,7 @@ gegl_chant_class_init (GeglChantOperationClass * klass)
   object_class->get_property = get_property;
   object_class->constructor  = gegl_chant_constructor;
 
-  g_type_class_add_private (klass, sizeof (GeglChantProperties));
+/*  g_type_class_add_private (klass, sizeof (GeglChantProperties));*/
 
 #define gegl_chant_int(name, min, max, def, blurb)                          \
   g_object_class_install_property (object_class, PROP_##name,               \
@@ -642,5 +712,11 @@ gegl_chant_class_init (GeglChantOperationClass * klass)
 #undef gegl_chant_vector
 }
 
+
+static void
+gegl_chant_init (GeglChantOperation *self)
+{
+  self->properties = g_new0 (GeglChantProperties, 1);
+}
 
 /****************************************************************************/
