@@ -19,10 +19,8 @@
    /* no properties */
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
 #define GEGL_CHANT_C_FILE        "invert.c"
-
-
+#define GEGL_CHANT_TYPE_POINT_FILTER
 #include "gegl-chant.h"
 
 static gboolean
@@ -60,13 +58,13 @@ operation_class_init (GeglChantOperationClass *klass)
 
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
-
-  operation_class->description = "Inverts the components (except alpha), the result is the corresponding \"negative\" image.";
-  operation_class->categories = "color";
   point_filter_class->process = process;
 
-  gegl_operation_class_set_name (operation_class, "invert");
-  gegl_chant_class_init (klass);
+  operation_class->name       = "invert";
+  operation_class->categories = "color";
+  operation_class->description =
+     "Inverts the components (except alpha), the result is the "
+     "corresponding \"negative\" image.";
 }
 
 #endif

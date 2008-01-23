@@ -23,8 +23,6 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0, "Radius of square pixel region, (wid
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
 #define GEGL_CHANT_C_FILE          "box-blur.c"
-
-
 #include "gegl-chant.h"
 
 static void hor_blur (GeglBuffer *src,
@@ -56,7 +54,7 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-#ifdef DEAD
+#ifdef USE_DEAD_CODE
 static inline float
 get_mean_component (gfloat *buf,
                     gint    buf_width,
@@ -244,14 +242,13 @@ operation_class_init (GeglChantOperationClass *klass)
   operation_class  = GEGL_OPERATION_CLASS (klass);
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  operation_class->description = "Performs an averaging of a square box of pixels.";
-  operation_class->categories = "blur";
+  filter_class->process   = process;
   operation_class->tickle = tickle;
-  filter_class->process = process;
 
-  gegl_operation_class_set_name (operation_class, "box-blur");
-  gegl_chant_class_init (klass);
+  operation_class->categories = "blur";
+  operation_class->name       = "box-blur";
+  operation_class->description =
+       "Performs an averaging of a square box of pixels.";
 }
-
 
 #endif

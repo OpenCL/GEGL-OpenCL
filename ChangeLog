@@ -1,5 +1,12 @@
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: use our own GEGL_DEFINE_DYNAMIC_OPERATION instead
+	of hacking about with G_DEFINE_DYNAMIC_TYPE.
+	* operations/blur/box-blur.c: update to new API.
+	* operations/color/invert.c: update to new API.
+
+2008-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: allocate and free the properties structure
 	manually, tweak the define type macro to generate the class name
 	taking the GEGL_CHANT_C_FILE into account.
