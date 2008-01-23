@@ -1,5 +1,10 @@
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: new version of gegl-chant, that overrides less
+	of gobject in a slightly more readable manner.
+
+2008-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/Makefile.am: added old-chant.h to list of sources.
 	* gegl/gegl-old-chant.h: created a copy of gegl-chant.h
 	* operations/*/*.c: include gegl-old-chant.h instead of gegl-chant.h
