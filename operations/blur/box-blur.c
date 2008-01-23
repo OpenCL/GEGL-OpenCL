@@ -41,14 +41,14 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer          *temp;
+  GeglChantO *o = GEGL_CHANT_O (operation);
+  GeglBuffer *temp;
 
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
-  hor_blur (input, temp,  properties->radius);
-  ver_blur (temp, output, properties->radius);
+  hor_blur (input, temp,  o->radius);
+  ver_blur (temp, output, o->radius);
 
   g_object_unref (temp);
   return  TRUE;
@@ -226,15 +226,21 @@ ver_blur (GeglBuffer *src,
 
 static void tickle (GeglOperation *operation)
 {
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantProperties     *properties = GEGL_CHANT_PROPERTIES (operation);
-  area->left = area->right = area->top = area->bottom =
-      ceil (properties->radius);
+  GeglChantO              *o;
+  GeglOperationAreaFilter *op_area;
+
+  op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  o       = GEGL_CHANT_O (operation);
+
+  op_area->left   =
+  op_area->right  =
+  op_area->top    =
+  op_area->bottom = ceil (o->radius);
 }
 
 
 static void
-operation_class_init (GeglChantOperationClass *klass)
+operation_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

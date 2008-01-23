@@ -51,7 +51,7 @@ process (GeglOperation *op,
 }
 
 static void
-operation_class_init (GeglChantOperationClass *klass)
+operation_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

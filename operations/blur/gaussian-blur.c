@@ -83,44 +83,43 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer          *temp;
-  gdouble              B, b[4];
-  gdouble             *cmatrix;
-  gint                 cmatrix_len;
+  GeglChantO *o= GEGL_CHANT_O (operation);
+  GeglBuffer *temp;
+  gdouble     B, b[4];
+  gdouble    *cmatrix;
+  gint        cmatrix_len;
 
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
-  gchar   *filter = properties->filter;
-  gboolean force_iir = filter && !strcmp (filter, "iir");
-  gboolean force_fir = filter && !strcmp (filter, "fir");
+  gboolean force_iir = o->filter && !strcmp (o->filter, "iir");
+  gboolean force_fir = o->filter && !strcmp (o->filter, "fir");
 
-  if ((force_iir || properties->std_dev_x > 1.0) && !force_fir)
+  if ((force_iir || o->std_dev_x > 1.0) && !force_fir)
     {
-      iir_young_find_constants (properties->std_dev_x, &B, b);
+      iir_young_find_constants (o->std_dev_x, &B, b);
       iir_young_hor_blur (input, temp,   B, b);
     }
   else
     {
       cmatrix_len =
-          fir_gen_convolve_matrix (properties->std_dev_x, &cmatrix);
+          fir_gen_convolve_matrix (o->std_dev_x, &cmatrix);
       fir_hor_blur (input, temp, cmatrix, cmatrix_len);
       g_free (cmatrix);
     }
-  if ((force_iir || properties->std_dev_y > 1.0) && !force_fir)
+  if ((force_iir || o->std_dev_y > 1.0) && !force_fir)
     {
-      iir_young_find_constants (properties->std_dev_y, &B, b);
+      iir_young_find_constants (o->std_dev_y, &B, b);
       iir_young_ver_blur (temp, output, B, b,
-                          properties->std_dev_x * RADIUS_SCALE);
+                          o->std_dev_x * RADIUS_SCALE);
     }
   else
     {
       cmatrix_len =
-          fir_gen_convolve_matrix (properties->std_dev_y, &cmatrix);
+          fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
       fir_ver_blur (temp, output, cmatrix, cmatrix_len,
-       properties->std_dev_x * RADIUS_SCALE,
-       properties->std_dev_y * RADIUS_SCALE);
+       o->std_dev_x * RADIUS_SCALE,
+       o->std_dev_y * RADIUS_SCALE);
       g_free (cmatrix);
     }
 
@@ -448,14 +447,14 @@ fir_ver_blur (GeglBuffer *src,
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantProperties     *blur = GEGL_CHANT_PROPERTIES (operation);
-  area->left = area->right = ceil (blur->std_dev_x * RADIUS_SCALE);
-  area->top = area->bottom = ceil (blur->std_dev_y * RADIUS_SCALE);
+  GeglChantO              *o    = GEGL_CHANT_O (operation);
+  area->left = area->right = ceil (o->std_dev_x * RADIUS_SCALE);
+  area->top = area->bottom = ceil (o->std_dev_y * RADIUS_SCALE);
 }
 
 
 static void
-operation_class_init (GeglChantOperationClass *klass)
+operation_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

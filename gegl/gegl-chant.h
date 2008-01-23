@@ -29,14 +29,14 @@
 #include <gegl-plugin.h>
 
 GType operation_get_type ();
-typedef struct _GeglChantProperties GeglChantProperties;
-typedef struct _GeglChantOperation  GeglChantOperation;
+typedef struct _GeglChantO  GeglChantO;
+typedef struct _GeglChant   GeglChant;
 
 static void operation_register_type (GTypeModule *module);
-static void gegl_chant_init         (GeglChantOperation *self);
-static void gegl_chant_class_init   (gpointer klass);
+static void gegl_chant_init         (GeglChant   *self);
+static void gegl_chant_class_init   (gpointer     klass);
 
-#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_CHANT_C_FILE, GeglChantOperation, operation, T_P, 0, {})
+#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_CHANT_C_FILE, GeglChant, operation, T_P, 0, {})
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
   static void     type_name##_init              (TypeName        *self); \
 static void     type_name##_class_init        (TypeName##Class *klass); \
@@ -87,13 +87,15 @@ type_name##_register_type (GTypeModule *type_module) \
 
 
 #define GEGL_CHANT_PROPERTIES(op) \
-    ((GeglChantProperties*)(((GeglChantOperation*)(op))->properties))
+    ((GeglChantO*)(((GeglChant*)(op))->properties))
+
+#define GEGL_CHANT_O(op) GEGL_CHANT_PROPERTIES(op)
 /****************************************************************************/
 
 
 #ifdef GEGL_CHANT_TYPE_OPERATION
 #include <operation/gegl-operation.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperation parent_instance;
   gpointer      properties;
@@ -102,7 +104,7 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION);
 #endif
@@ -113,12 +115,12 @@ typedef struct
 {
   GeglOperationMeta parent_instance;
   gpointer          properties;
-} GeglChantOperation;
+} GeglChant;
 
 typedef struct
 {
   GeglOperationMetaClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
 #endif
@@ -129,19 +131,19 @@ typedef struct
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
-} GeglChantOperation;
+} GeglChant;
 
 typedef struct
 {
   GeglOperationSourceClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_SINK
 #include <operation/gegl-operation-sink.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationSink parent_instance;
   gpointer          properties;
@@ -150,14 +152,14 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationSinkClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_FILTER
 #include <operation/gegl-operation-filter.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationFilter parent_instance;
   gpointer            properties;
@@ -166,14 +168,14 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationFilterClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_COMPOSER
 #include <operation/gegl-operation-composer.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationComposer parent_instance;
   gpointer              properties;
@@ -182,7 +184,7 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationComposerClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_COMPOSER);
 
@@ -190,7 +192,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_COMPOSER);
 
 #ifdef GEGL_CHANT_TYPE_POINT_FILTER
 #include <operation/gegl-operation-point-filter.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationPointFilter parent_instance;
   gpointer                 properties;
@@ -199,7 +201,7 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationPointFilterClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_FILTER);
 
@@ -207,7 +209,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_FILTER);
 
 #ifdef GEGL_CHANT_TYPE_AREA_FILTER
 #include <operation/gegl-operation-area-filter.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationAreaFilter parent_instance;
   gpointer                properties;
@@ -216,23 +218,23 @@ struct _GeglChantOperation
 typedef struct
 {
   GeglOperationAreaFilterClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_AREA_FILTER);
 #endif
 
 
 #ifdef GEGL_CHANT_TYPE_POINT_COMPOSER
 #include <operation/gegl-operation-point-composer.h>
-struct _GeglChantOperation
+struct _GeglChant
 {
   GeglOperationPointComposer parent_instance;
   gpointer                   properties;
-} GeglChantOperation;
+} GeglChant;
 
 typedef struct
 {
   GeglOperationPointComposerClass parent_class;
-} GeglChantOperationClass;
+} GeglChantClass;
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_COMPOSER);
 #endif
 
@@ -243,13 +245,13 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_COMPOSER);
  */
 #ifndef GEGL_CHANT_CUSTOM
 static void
-operation_init (GeglChantOperation *self)
+operation_init (GeglChant *self)
 {
   gegl_chant_init (self);
 }
 
 static void
-operation_class_finalize (GeglChantOperationClass *self)
+operation_class_finalize (GeglChantClass *self)
 {
 }
 
@@ -274,7 +276,7 @@ gegl_module_register (GTypeModule *module)
 #endif
 
 
-struct _GeglChantProperties
+struct _GeglChantO
 {
   gpointer dummy_filler; /* to avoid empty struct, can be done a bit more cleverly to
                             avoid adding it when there is actual properties*/
@@ -346,7 +348,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglChantProperties *properties;
+  GeglChantO *properties;
 
   properties = GEGL_CHANT_PROPERTIES(gobject);
 
@@ -422,7 +424,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglChantProperties *properties;
+  GeglChantO *properties;
 
   properties = GEGL_CHANT_PROPERTIES(gobject);
 
@@ -513,7 +515,7 @@ set_property (GObject      *gobject,
 
 static void gegl_chant_destroy_notify (gpointer data)
 {
-  GeglChantProperties *properties;
+  GeglChantO *properties;
 
   properties = GEGL_CHANT_PROPERTIES (data);
 
@@ -605,7 +607,7 @@ gegl_chant_class_init (gpointer klass)
   object_class->get_property = get_property;
   object_class->constructor  = gegl_chant_constructor;
 
-/*  g_type_class_add_private (klass, sizeof (GeglChantProperties));*/
+/*  g_type_class_add_private (klass, sizeof (GeglChantO));*/
 
 #define gegl_chant_int(name, min, max, def, blurb)                          \
   g_object_class_install_property (object_class, PROP_##name,               \
@@ -712,9 +714,9 @@ gegl_chant_class_init (gpointer klass)
 
 
 static void
-gegl_chant_init (GeglChantOperation *self)
+gegl_chant_init (GeglChant *self)
 {
-  self->properties = g_new0 (GeglChantProperties, 1);
+  self->properties = g_new0 (GeglChantO, 1);
 }
 
 /****************************************************************************/

@@ -32,14 +32,14 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
-  gfloat              *in_buf;
-  gfloat              *out_buf;
-  gfloat               red, green, blue;
+  GeglChantO *o     = GEGL_CHANT_O (operation);
 
-  red = properties->red;
-  green = properties->green;
-  blue = properties->blue;
+  gfloat      red   = o->red;
+  gfloat      green = o->green;
+  gfloat      blue  = o->blue;
+
+  gfloat     *in_buf;
+  gfloat     *out_buf;
 
  if ((result->width > 0) && (result->height > 0))
  {
@@ -81,7 +81,7 @@ static void prepare (GeglOperation *operation)
 }
 
 static void
-operation_class_init (GeglChantOperationClass *klass)
+operation_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
