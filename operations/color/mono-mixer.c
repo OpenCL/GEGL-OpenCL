@@ -32,7 +32,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o     = GEGL_CHANT_O (operation);
+  GeglChantO *o     = GEGL_CHANT_PROPERTIES (operation);
 
   gfloat      red   = o->red;
   gfloat      green = o->green;

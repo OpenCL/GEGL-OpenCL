@@ -43,7 +43,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o = GEGL_CHANT_O (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer *temp;
 
   temp = gegl_buffer_new (gegl_buffer_get_extent (input),
@@ -176,7 +176,7 @@ static void tickle (GeglOperation *operation)
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
 
   area->left = area->right = area->top = area->bottom =
-      ceil (GEGL_CHANT_O (operation)->radius);
+      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
 }
 
 

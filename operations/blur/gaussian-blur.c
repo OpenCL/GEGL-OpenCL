@@ -83,7 +83,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o= GEGL_CHANT_O (operation);
+  GeglChantO *o= GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer *temp;
   gdouble     B, b[4];
   gdouble    *cmatrix;
@@ -447,7 +447,7 @@ fir_ver_blur (GeglBuffer *src,
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o    = GEGL_CHANT_O (operation);
+  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
   area->left = area->right = ceil (o->std_dev_x * RADIUS_SCALE);
   area->top = area->bottom = ceil (o->std_dev_y * RADIUS_SCALE);
 }

@@ -89,7 +89,6 @@ type_name##_register_type (GTypeModule *type_module) \
 #define GEGL_CHANT_PROPERTIES(op) \
     ((GeglChantO*)(((GeglChant*)(op))->properties))
 
-#define GEGL_CHANT_O(op) GEGL_CHANT_PROPERTIES(op)
 /****************************************************************************/
 
 

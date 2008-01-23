@@ -1,3 +1,18 @@
+2008-01-23  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl-node-editor.c (type_editor_generic): Use the "changed"
+	signal instead of "activate". Makes GEGL GUI more responsive to
+	changes in property values.
+
+	* gegl/gegl-chant.h: Deleted GEGL_CHANT_O #define in favour of
+	GEGL_CHANT_PROPERTIES to avoid hiding what is being accessed.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/mono-mixer.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c: Updated due to change in gegl-chant.h
+
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: Made the chanting less operation specific.

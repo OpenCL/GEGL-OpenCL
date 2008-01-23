@@ -725,9 +725,10 @@ type_editor_generic (GtkSizeGroup *col1,
 
   g_object_set_data (G_OBJECT (entry), "node", node);
 
-  g_signal_connect (G_OBJECT (entry), "activate",
-                    G_CALLBACK (type_editor_generic_changed),
-                    (gpointer) param_spec);
+  if (param_spec->value_type != G_TYPE_BOOLEAN)
+    g_signal_connect (G_OBJECT (entry), "changed",
+                      G_CALLBACK (type_editor_generic_changed),
+                      (gpointer) param_spec);
 
   if (param_spec->value_type == G_TYPE_BOOLEAN)
     {
