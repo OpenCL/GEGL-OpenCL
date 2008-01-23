@@ -21,7 +21,7 @@
  *       becomes very inaccurate.
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (std_dev_x, 0.0, 200.0, 4.0,
    "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)")
@@ -32,13 +32,9 @@ gegl_chant_string (filter, NULL,
 
 #else
 
-#define GEGL_CHANT_NAME            gaussian_blur
-#define GEGL_CHANT_SELF            "gaussian-blur.c"
-#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
-#define GEGL_CHANT_CATEGORIES      "blur"
-
-#define GEGL_CHANT_AREA_FILTER
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "gaussian-blur.c"
+#include "gegl-chant.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -87,47 +83,46 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self;
+  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer          *temp;
+  gdouble              B, b[4];
+  gdouble             *cmatrix;
+  gint                 cmatrix_len;
 
-  self = GEGL_CHANT_OPERATION (operation);
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
-  {
-    gdouble B, b[4];
-    gdouble *cmatrix;
-    gint cmatrix_len;
-    gchar *filter = self->filter;
-    gboolean force_iir = filter && !strcmp (filter, "iir");
-    gboolean force_fir = filter && !strcmp (filter, "fir");
+  gchar   *filter = properties->filter;
+  gboolean force_iir = filter && !strcmp (filter, "iir");
+  gboolean force_fir = filter && !strcmp (filter, "fir");
 
-    if ((force_iir || self->std_dev_x > 1.0) && !force_fir)
-      {
-        iir_young_find_constants (self->std_dev_x, &B, b);
-        iir_young_hor_blur (input, temp,   B, b);
-      }
-    else
-      {
-        cmatrix_len =
-            fir_gen_convolve_matrix (self->std_dev_x, &cmatrix);
-        fir_hor_blur (input, temp, cmatrix, cmatrix_len);
-        g_free (cmatrix);
-      }
-    if ((force_iir || self->std_dev_y > 1.0) && !force_fir)
-      {
-        iir_young_find_constants (self->std_dev_y, &B, b);
-        iir_young_ver_blur (temp, output, B, b, self->std_dev_x * RADIUS_SCALE);
-      }
-    else
-      {
-        cmatrix_len =
-            fir_gen_convolve_matrix (self->std_dev_y, &cmatrix);
-        fir_ver_blur (temp, output, cmatrix, cmatrix_len,
-         self->std_dev_x * RADIUS_SCALE, self->std_dev_y * RADIUS_SCALE);
-        g_free (cmatrix);
-      }
-  }
+  if ((force_iir || properties->std_dev_x > 1.0) && !force_fir)
+    {
+      iir_young_find_constants (properties->std_dev_x, &B, b);
+      iir_young_hor_blur (input, temp,   B, b);
+    }
+  else
+    {
+      cmatrix_len =
+          fir_gen_convolve_matrix (properties->std_dev_x, &cmatrix);
+      fir_hor_blur (input, temp, cmatrix, cmatrix_len);
+      g_free (cmatrix);
+    }
+  if ((force_iir || properties->std_dev_y > 1.0) && !force_fir)
+    {
+      iir_young_find_constants (properties->std_dev_y, &B, b);
+      iir_young_ver_blur (temp, output, B, b,
+                          properties->std_dev_x * RADIUS_SCALE);
+    }
+  else
+    {
+      cmatrix_len =
+          fir_gen_convolve_matrix (properties->std_dev_y, &cmatrix);
+      fir_ver_blur (temp, output, cmatrix, cmatrix_len,
+       properties->std_dev_x * RADIUS_SCALE,
+       properties->std_dev_y * RADIUS_SCALE);
+      g_free (cmatrix);
+    }
 
   g_object_unref (temp);
   return  TRUE;
@@ -453,9 +448,28 @@ fir_ver_blur (GeglBuffer *src,
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *blur = GEGL_CHANT_OPERATION (operation);
+  GeglChantProperties     *blur = GEGL_CHANT_PROPERTIES (operation);
   area->left = area->right = ceil (blur->std_dev_x * RADIUS_SCALE);
   area->top = area->bottom = ceil (blur->std_dev_y * RADIUS_SCALE);
+}
+
+
+static void
+operation_class_init (GeglChantOperationClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process   = process;
+  operation_class->tickle = tickle;
+
+  operation_class->categories = "blur";
+  operation_class->name       = "gaussian-blur";
+  operation_class->description =
+        "Performs an averaging of neighbouring pixels with the normal distribution as weighting.";
 }
 
 #endif

@@ -1,3 +1,9 @@
+2008-01-23  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/blur/gaussian_blur.c:
+	* operations/workshop/box_max.c:
+	* operations/workshop/box_min.c: updated to new chanting API.
+
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/mono-mixer.c: updated to new chanting API.

@@ -15,22 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 200.0, 4.0,
-  "Radius of square pixel region, (width and height will be radius*2+1.")
+  "Radius of square pixel region, (width and height will be radius*2+1.)")
 
 #else
 
-#define GEGL_CHANT_NAME            box_max
-#define GEGL_CHANT_SELF            "box-max.c"
-#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the value of the maximum value in a box surrounding the pixel."
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "box-max.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void hor_max (GeglBuffer *src,
                      GeglBuffer *dst,
@@ -42,36 +37,22 @@ static void ver_max (GeglBuffer *src,
 
 #include <stdio.h>
 
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantProperties *properties = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer          *temp;
 
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
+  temp = gegl_buffer_new (gegl_buffer_get_extent (input),
+                          babl_format ("RGBA float"));
 
-    {
-      GeglBuffer   *temp_in;
-      GeglBuffer   *temp;
-      GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
+  hor_max (input, temp,  properties->radius);
+  ver_max (temp, output, properties->radius);
 
-      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-      temp   = gegl_buffer_new (&compute, babl_format ("RGBA float"));
-
-      hor_max (temp_in, temp, self->radius);
-      ver_max (temp, output, self->radius);
-      g_object_unref (temp);
-      g_object_unref (temp_in);
-    }
+  g_object_unref (temp);
 
   return  TRUE;
 }
@@ -86,9 +67,9 @@ get_max_component (gfloat *buf,
                    gint    height,
                    gint    component)
 {
-  gint    x, y;
+  gint   x, y;
   gfloat max=-1000000000.0;
-  gint    count=0;
+  gint   count=0;
 
   gint offset = (y0 * buf_width + x0) * 4 + component;
 
@@ -142,7 +123,8 @@ hor_max (GeglBuffer *src,
                                i);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
+                   GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -181,18 +163,45 @@ ver_max (GeglBuffer *src,
                               c);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
+                   GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
 
 #include <math.h>
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
+  GeglChantProperties     *properties = GEGL_CHANT_PROPERTIES (operation);
   area->left = area->right = area->top = area->bottom =
-      ceil (filter->radius);
+      ceil (properties->radius);
+}
+
+
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static void
+operation_class_init (GeglChantOperationClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name       = "box-max";
+  operation_class->categories = "misc";
+  operation_class->description =
+        "Sets the target pixel to the value of the maximum value in a box surrounding the pixel.";
 }
 
 #endif
