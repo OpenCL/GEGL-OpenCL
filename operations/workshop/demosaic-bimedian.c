@@ -70,12 +70,12 @@ m4 (gfloat a, gfloat b, gfloat c, gfloat d)
       t = c;
       c = b;
       if (a > t)
-        {
-          b = a;
-          a = t;
-        }
+	{
+	  b = a;
+	  a = t;
+	}
       else
-        b = t;
+	b = t;
     }
   /* Return average of central two elements. */
   if (d >= c) /* Sorted order would be abcd */
@@ -109,76 +109,76 @@ demosaic (GeglChantOperation *op,
   dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 3);
   
   gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf,
-                   GEGL_AUTO_ROWSTRIDE);
+  		   GEGL_AUTO_ROWSTRIDE);
 
   offset = ROW + COL;
   doffset = 0;
   for (y=dst_extent->y; y<dst_extent->height + dst_extent->y; y++)
     {
       for (x=dst_extent->x; x<dst_extent->width + dst_extent->x; x++)
-        {
-          gfloat red=0.0;
-          gfloat green=0.0;
-          gfloat blue=0.0;
+	{
+	  gfloat red=0.0;
+	  gfloat green=0.0;
+	  gfloat blue=0.0;
 
-          if ((y + op->pattern%2)%2==0)
-            {
-              if ((x+op->pattern/2)%2==1)
-                {
-                  /* GRG
-                   * BGB
-                   * GRG
-                   */
-                  blue =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
-                  green=src_buf[offset];
-                  red  =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
-                }
-              else
-                {
-                  /* RGR
-                   * GBG
-                   * RGR
-                   */
-                  blue =src_buf[offset];
-                  green=m4(src_buf[offset-ROW], src_buf[offset-COL],
-                           src_buf[offset+COL], src_buf[offset+ROW]);
-                  red  =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
-                           src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
-                }
-            }
-          else
-            {
-              if ((x+op->pattern/2)%2==1)
-                {
-                  /* BGB
-                   * GRG
-                   * BGB
-                   */
-                  blue =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
-                           src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
-                  green=m4(src_buf[offset-ROW], src_buf[offset-COL],
-                           src_buf[offset+COL], src_buf[offset+ROW]);
-                  red  =src_buf[offset];
-                }
-              else
-                {
-                  /* GBG
-                   * RGR
-                   * GBG
-                   */
-                  blue =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
-                  green=src_buf[offset];
-                  red  =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
-                }
-            }
-          
-          dst_buf [doffset*3+0] = red;
-          dst_buf [doffset*3+1] = green;
-          dst_buf [doffset*3+2] = blue;
+	  if ((y + op->pattern%2)%2==0)
+	    {
+	      if ((x+op->pattern/2)%2==1)
+		{
+		  /* GRG
+		   * BGB
+		   * GRG
+		   */
+		  blue =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
+		  green=src_buf[offset];
+		  red  =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
+		}
+	      else
+		{
+		  /* RGR
+		   * GBG
+		   * RGR
+		   */
+		  blue =src_buf[offset];
+		  green=m4(src_buf[offset-ROW], src_buf[offset-COL],
+		           src_buf[offset+COL], src_buf[offset+ROW]);
+		  red  =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
+		           src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
+		}
+	    }
+	  else
+	    {
+	      if ((x+op->pattern/2)%2==1)
+		{
+		  /* BGB
+		   * GRG
+		   * BGB
+		   */
+		  blue =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
+		  	   src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
+		  green=m4(src_buf[offset-ROW], src_buf[offset-COL],
+		  	   src_buf[offset+COL], src_buf[offset+ROW]);
+		  red  =src_buf[offset];
+		}
+	      else
+		{
+		  /* GBG
+		   * RGR
+		   * GBG
+		   */
+		  blue =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
+		  green=src_buf[offset];
+		  red  =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
+		}
+	    }
+	  
+	  dst_buf [doffset*3+0] = red;
+	  dst_buf [doffset*3+1] = green;
+	  dst_buf [doffset*3+2] = blue;
 
-          offset++;
-          doffset++;
-        }
+	  offset++;
+	  doffset++;
+	}
       offset+=2;
     }
 

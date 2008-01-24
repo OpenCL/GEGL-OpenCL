@@ -1,3 +1,11 @@
+2008-01-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/lens-correct.[ch]: added a lens correction
+	operation from Bradley Broom <bmbrom@gmail.com>.
+	* operations/workshop/demosaic-bimedian.c: updated bimedian filter.
+	Also modified the files to use "gegl-old-chant.h" for the chanting
+	for now.
+
 2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/generated/math.rb:
