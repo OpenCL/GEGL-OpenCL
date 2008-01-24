@@ -35,6 +35,7 @@ static void ver_blur (GeglBuffer *src,
                       gint        radius);
 
 #include <stdio.h>
+#include <math.h>
 
 static void tickle (GeglOperation *operation)
 {
