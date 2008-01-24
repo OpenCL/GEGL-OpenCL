@@ -30,17 +30,16 @@
  *
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
    /* no properties */
+
 #else
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_NAME          value_invert
-#define GEGL_CHANT_DESCRIPTION   "Inverts just the value component, the result is the corresponding `inverted' image."
-#define GEGL_CHANT_SELF          "value-invert.c"
-#define GEGL_CHANT_CATEGORIES    "color"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "value-invert.c"
 
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation *op,
@@ -108,6 +107,24 @@ process (GeglOperation *op,
       *dest++ = *src++;
     }
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+
+  operation_class->name        = "value-invert";
+  operation_class->categories  = "color";
+  operation_class->description =
+        "Inverts just the value component, the result is the corresponding `inverted' image.";
 }
 
 #endif

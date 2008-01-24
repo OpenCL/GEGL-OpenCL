@@ -16,18 +16,21 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #ifdef GEGL_CHANT_PROPERTIES
+
    /* no properties */
+
 #else
 
-#define GEGL_CHANT_C_FILE        "invert.c"
 #define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "invert.c"
+
 #include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples) 
+         glong          samples)
 {
   glong   i;
   gfloat *in  = in_buf;
@@ -58,6 +61,7 @@ operation_class_init (GeglChantClass *klass)
 
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
   point_filter_class->process = process;
 
   operation_class->name       = "invert";

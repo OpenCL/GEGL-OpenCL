@@ -15,20 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
- 
+#ifdef GEGL_CHANT_PROPERTIES
+
 #else
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_NAME            stretch_contrast
-#define GEGL_CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that makes poor use of the available contrast (little contrast, very dark, or very bright images)."
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE       "stretch-contrast.c"
 
-#define GEGL_CHANT_SELF            "stretch-contrast.c"
-#define GEGL_CHANT_CLASS_INIT /*< we need to modify the standard class init
-                                  of the super class */
-#define GEGL_CHANT_CATEGORIES      "color:enhance"
-#define GEGL_CHANT_PREPARE
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static gboolean
 inner_process (gdouble        min,
@@ -80,6 +74,12 @@ buffer_get_min_max (GeglBuffer *buffer,
     *max = tmax;
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -126,20 +126,29 @@ compute_input_request (GeglOperation       *operation,
   return result;
 }
 
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
 /* This is called at the end of the gobject class_init function, the
  * GEGL_CHANT_CLASS_INIT was needed to make this happen
  *
  * Here we override the standard passthrough options for the rect
  * computations.
  */
-static void class_init (GeglOperationClass *operation_class)
+static void
+operation_class_init (GeglChantClass *klass)
 {
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name       = "stretch-contrast";
+  operation_class->categories = "color:enhance";
+  operation_class->description =
+        "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that makes poor use of the available contrast (little contrast, very dark, or very bright images).";
+
   operation_class->compute_input_request = compute_input_request;
 }
 

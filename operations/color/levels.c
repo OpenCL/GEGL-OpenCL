@@ -16,7 +16,8 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
   gegl_chant_double (in_low, -1.0, 4.0, 0.0,
       "Input luminance level to become lowest output")
   gegl_chant_double (in_high, -1.0, 4.0, 1.0, "Input luminance level to become white.")
@@ -25,15 +26,10 @@
 
 #else
 
-#define GEGL_CHANT_NAME         levels
-#define GEGL_CHANT_SELF         "levels.c"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE         "levels.c"
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_DESCRIPTION  "Remaps the intensity range of the image"
-
-#define GEGL_CHANT_CATEGORIES   "color"
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format
@@ -44,26 +40,25 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          n_pixels)
 {
-  GeglChantOperation *self;
-  gfloat             *pixel;
-  gfloat              in_range;
-  gfloat              out_range;
-  gfloat              in_offset;
-  gfloat              out_offset;
-  gfloat              scale;
-  glong               i;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  gfloat     *pixel;
+  gfloat      in_range;
+  gfloat      out_range;
+  gfloat      in_offset;
+  gfloat      out_offset;
+  gfloat      scale;
+  glong       i;
 
-  self = GEGL_CHANT_OPERATION (op);
   pixel = in_buf;
 
-  in_offset = self->in_low * 1.0;
-  out_offset = self->out_low * 1.0;
-  in_range = self->in_high-self->in_low;
-  out_range = self->out_high-self->out_low;
+  in_offset = o->in_low * 1.0;
+  out_offset = o->out_low * 1.0;
+  in_range = o->in_high-o->in_low;
+  out_range = o->out_high-o->out_low;
 
   if (in_range == 0.0)
     in_range = 0.00000001;
-  
+
   scale = out_range/in_range;
 
   for (i=0; i<n_pixels; i++)
@@ -74,6 +69,24 @@ process (GeglOperation *op,
       pixel += 4;
     }
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+
+  operation_class->name        = "levels";
+  operation_class->categories  = "color";
+  operation_class->description =
+        "Remaps the intensity range of the image";
 }
 
 #endif

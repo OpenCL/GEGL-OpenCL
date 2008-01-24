@@ -17,12 +17,13 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, 0.0, 200.0, 4.0, "Radius of square pixel region, (width and height will be radius*2+1.")
+gegl_chant_double (radius, 0.0, 200.0, 4.0, "Radius of square pixel region, (width and height will be radius*2+1).")
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
 #define GEGL_CHANT_C_FILE          "box-blur.c"
+
 #include "gegl-chant.h"
 
 static void hor_blur (GeglBuffer *src,
@@ -34,6 +35,20 @@ static void ver_blur (GeglBuffer *src,
                       gint        radius);
 
 #include <stdio.h>
+
+static void tickle (GeglOperation *operation)
+{
+  GeglChantO              *o;
+  GeglOperationAreaFilter *op_area;
+
+  op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  o       = GEGL_CHANT_PROPERTIES (operation);
+
+  op_area->left   =
+  op_area->right  =
+  op_area->top    =
+  op_area->bottom = ceil (o->radius);
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -223,20 +238,6 @@ ver_blur (GeglBuffer *src,
 }
 
 #include <math.h>
-
-static void tickle (GeglOperation *operation)
-{
-  GeglChantO              *o;
-  GeglOperationAreaFilter *op_area;
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
-
-  op_area->left   =
-  op_area->right  =
-  op_area->top    =
-  op_area->bottom = ceil (o->radius);
-}
 
 
 static void

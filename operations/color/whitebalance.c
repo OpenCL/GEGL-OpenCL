@@ -16,7 +16,8 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
   gegl_chant_double (high_a_delta, -2.0, 2.0, 0.0, "")
   gegl_chant_double (high_b_delta, -2.0, 2.0, 0.0, "")
   gegl_chant_double (low_a_delta,  -2.0, 2.0, 0.0, "")
@@ -25,16 +26,10 @@
 
 #else
 
-#define GEGL_CHANT_NAME         whitebalance
-#define GEGL_CHANT_SELF         "whitebalance.c"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "whitebalance.c"
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_DESCRIPTION  "Allows changing the whitepoint and blackpoint of an image."
-
-#define GEGL_CHANT_CATEGORIES   "color"
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -52,31 +47,49 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          n_pixels)
 {
-  GeglChantOperation *self;
-  gfloat             *pixel;
-  gfloat              a_base;
-  gfloat              a_scale;
-  gfloat              b_base;
-  gfloat              b_scale;
-  glong               i;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  gfloat     *pixel;
+  gfloat      a_base;
+  gfloat      a_scale;
+  gfloat      b_base;
+  gfloat      b_scale;
+  glong       i;
 
-  self = GEGL_CHANT_OPERATION (op);
   pixel = in_buf;
 
-  a_scale = (self->high_a_delta - self->low_a_delta);
-  a_base = self->low_a_delta;
-  b_scale = (self->high_b_delta - self->low_b_delta);
-  b_base = self->low_b_delta;
-  
+  a_scale = (o->high_a_delta - o->low_a_delta);
+  a_base = o->low_a_delta;
+  b_scale = (o->high_b_delta - o->low_b_delta);
+  b_base = o->low_b_delta;
+
   for (i=0; i<n_pixels; i++)
     {
       pixel[1] += pixel[0] * a_scale + a_base;
       pixel[2] += pixel[0] * b_scale + b_base;
-      pixel[1] = pixel[1] * self->saturation;
-      pixel[2] = pixel[2] * self->saturation;
+      pixel[1] = pixel[1] * o->saturation;
+      pixel[2] = pixel[2] * o->saturation;
       pixel += 4;
     }
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "whitebalance";
+  operation_class->categories  = "color";
+  operation_class->description =
+        "Allows changing the whitepoint and blackpoint of an image.";
 }
 
 #endif

@@ -15,22 +15,17 @@
  *
  * Copyright 2007 Mark Probst <mark.probst@gmail.com>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
   gegl_chant_int (sampling_points, 0, 65536, 0, "Number of curve sampling points.  0 for exact calculation.")
   gegl_chant_curve (curve, "The contrast curve.")
 
 #else
 
-#define GEGL_CHANT_NAME          contrast_curve
-#define GEGL_CHANT_SELF          "contrast-curve.c"
-#define GEGL_CHANT_DESCRIPTION   "Adjusts the contrast of the image according to a curve."
-#define GEGL_CHANT_CATEGORIES    "color"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE          "contrast-curve.c"
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -46,23 +41,23 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          samples)
 {
-  GeglChantOperation *self;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  gint        num_sampling_points;
+  GeglCurve  *curve;
   gint i;
-  gfloat *in  = in_buf;
-  gfloat *out = out_buf;
-  gint num_sampling_points;
+  gfloat  *in  = in_buf;
+  gfloat  *out = out_buf;
   gdouble *xs, *ys;
 
-  self = GEGL_CHANT_OPERATION (op);
-
-  num_sampling_points = self->sampling_points;
+  num_sampling_points = o->sampling_points;
+  curve = o->curve;
 
   if (num_sampling_points > 0)
   {
     xs = g_new(gdouble, num_sampling_points);
     ys = g_new(gdouble, num_sampling_points);
 
-    gegl_curve_calc_values(self->curve, 0.0, 1.0, num_sampling_points, xs, ys);
+    gegl_curve_calc_values(o->curve, 0.0, 1.0, num_sampling_points, xs, ys);
 
     g_free(xs);
 
@@ -92,7 +87,7 @@ process (GeglOperation *op,
     {
       gfloat u = in[0];
 
-      out[0] = gegl_curve_calc_value(self->curve, u);
+      out[0] = gegl_curve_calc_value(curve, u);
       out[1]=in[1];
 
       in += 2;
@@ -100,6 +95,25 @@ process (GeglOperation *op,
     }
 
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "contrast-curve";
+  operation_class->categories  = "color";
+  operation_class->description =
+        "Adjusts the contrast of the image according to a curve.";
 }
 
 #endif

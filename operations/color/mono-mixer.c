@@ -17,14 +17,24 @@
  */
 
 #ifdef GEGL_CHANT_PROPERTIES
+
  gegl_chant_double (red,   -10.0, 10.0, 0.5,  "Amount of red")
  gegl_chant_double (green, -10.0, 10.0, 0.25, "Amount of green")
  gegl_chant_double (blue,  -10.0, 10.0, 0.25, "Amount of blue")
+
 #else
 
-#define GEGL_CHANT_C_FILE      "mono-mixer.c"
 #define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE      "mono-mixer.c"
+
 #include "gegl-chant.h"
+
+static void prepare (GeglOperation *operation)
+{
+  /* set the babl format this operation prefers to work on */
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -32,7 +42,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o     = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gfloat      red   = o->red;
   gfloat      green = o->green;
@@ -73,21 +83,14 @@ process (GeglOperation       *operation,
  return TRUE;
 }
 
-static void prepare (GeglOperation *operation)
-{
-  /* set the babl format this operation prefers to work on */
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
-}
-
 static void
 operation_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  operation_class  = GEGL_OPERATION_CLASS (klass);
-  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
   operation_class->prepare = prepare;

@@ -1,3 +1,19 @@
+2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c: Minor formatting changes and
+	function re-ordering for consistency with other updated op files.
+
+	* operations/color/brightness-contrast.c:
+	* operations/color/contrast-curve.c:
+	* operations/color/invert.c:
+	* operations/color/levels.c:
+	* operations/color/mono-mixer.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c:
+	* operations/color/value-invert.c:
+	* operations/color/whitebalance.c: Updated to new chanting API.
+
 2008-01-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: fixed mistake in handling of boiler-plate for
