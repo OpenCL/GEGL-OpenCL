@@ -1,3 +1,8 @@
+2008-01-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: fixed mistake in handling of boiler-plate for
+	GeglOperationPointComposer's.
+
 2008-01-23  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl-node-editor.c (type_editor_generic): Use the "changed"

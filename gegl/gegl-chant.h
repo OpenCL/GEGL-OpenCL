@@ -228,7 +228,7 @@ struct _GeglChant
 {
   GeglOperationPointComposer parent_instance;
   gpointer                   properties;
-} GeglChant;
+};
 
 typedef struct
 {
