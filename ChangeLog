@@ -1,3 +1,12 @@
+2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/generated/math.rb:
+	* operations/generated/svg-12-blend.rb: De-tabified.
+
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb: Fixed error in
+	generation of operation_class_init(). De-tabified.
+
 2008-01-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/lens-correct.[ch]: added a lens correction

@@ -85,45 +85,45 @@ process (GeglOperation *op,
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
-gint    i;
+  gint    i;
 
   if (aux == NULL)
     {
       gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
       for (i=0; i<n_pixels; i++)
-	{
-	  gint   j;
-	  gfloat c;
-	  for (j=0; j<3; j++)
-	    {
-	      c=in[j];
-	      #{formula};
-	      out[j]=c;
-	    }
-	  out[3]=in[3];
-	  in += 4;
-	  out+= 4;
-	}
+        {
+          gint   j;
+          gfloat c;
+          for (j=0; j<3; j++)
+            {
+              c=in[j];
+              #{formula};
+              out[j]=c;
+            }
+          out[3]=in[3];
+          in += 4;
+          out+= 4;
+        }
     }
   else
     {
       for (i=0; i<n_pixels; i++)
-	{
-	  gint   j;
-	  gfloat c;
-	  gfloat value;
-	  for (j=0; j<3; j++)
-	    {
-	      c=in[j];
-	      value=aux[j];
-	      #{formula};
-	      out[j]=c;
-	    }
-	  out[3]=in[3];
-	  in += 4;
-	  aux += 3;
-	  out+= 4;
-	}
+        {
+          gint   j;
+          gfloat c;
+          gfloat value;
+          for (j=0; j<3; j++)
+            {
+              c=in[j];
+              value=aux[j];
+              #{formula};
+              out[j]=c;
+            }
+          out[3]=in[3];
+          in += 4;
+          aux += 3;
+          out+= 4;
+        }
     }
   
   return TRUE;

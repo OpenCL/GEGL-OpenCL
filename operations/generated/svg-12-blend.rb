@@ -179,7 +179,7 @@ a.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-	\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
+        \"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
 "
   file.write file_tail2
   file.close
@@ -243,7 +243,7 @@ b.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-	\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\";
+        \"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\";
 "
   file.write file_tail2
   file.close
@@ -312,7 +312,7 @@ c.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-	\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\";
+        \"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\";
 "
   file.write file_tail2
   file.close
@@ -355,13 +355,13 @@ d.each do
       aD = #{formula2};
 
       for (j = 0; j < 3; j++)
-	{
-	  gfloat cA, cB;
+        {
+          gfloat cA, cB;
 
-	  cB = in[j];
-	  cA = aux[j];
-	  out[j] = CLAMP (#{formula1}, 0, aD);
-	}
+          cB = in[j];
+          cA = aux[j];
+          out[j] = CLAMP (#{formula1}, 0, aD);
+        }
       out[3] = aD;
       in  += 4;
       aux += 4;
@@ -372,7 +372,7 @@ d.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-	\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
+        \"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
 "
   file.write file_tail2
   file.close

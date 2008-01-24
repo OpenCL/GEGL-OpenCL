@@ -74,7 +74,7 @@ process (GeglOperation *op,
     return TRUE;
 '
 
-file_tail = '
+file_tail1 = '
   return TRUE;
 }
 
@@ -90,11 +90,9 @@ operation_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
+'
 
-  operation_class->name        = "#{name}";
-  operation_class->categories  = "compositors:other_blend";
-  operation_class->description =
-        "Other blend operation #{name} (d = #{c_formula})";
+file_tail2 = '  operation_class->categories  = "compositors:other-blend";
 
   operation_class->no_cache = TRUE;   /* the over op has special fast paths
                                          that makes caching be buggy in
@@ -158,7 +156,13 @@ a.each do
     }
 
 "
-  file.write file_tail
+  file.write file_tail1
+  file.write "
+  operation_class->name        = \"#{name}\";
+  operation_class->description =
+        \"Other blend operation #{name} (d = #{c_formula})\";
+"
+  file.write file_tail2
   file.close
 end
 

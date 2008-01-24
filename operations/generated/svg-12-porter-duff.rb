@@ -92,7 +92,7 @@ process (GeglOperation *op,
     return TRUE;
 '
 
-file_tail = '
+file_tail1 = '
   return TRUE;
 }
 
@@ -107,11 +107,9 @@ operation_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
+'
 
-  operation_class->name        = "#{name}";
-  operation_class->categories  = "compositors:porter duff";
-  operation_class->description =
-        "Porter Duff operation #{name} (d = #{c_formula})";
+file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
 }
 
 #endif
@@ -167,7 +165,13 @@ a.each do
       out += 4;
     }
 "
-  file.write file_tail
+  file.write file_tail1
+  file.write "
+  operation_class->name        = \"#{name}\";
+  operation_class->description =
+        \"Porter Duff operation #{name} (d = #{c_formula})\";
+"
+  file.write file_tail2
   file.close
 end
 
