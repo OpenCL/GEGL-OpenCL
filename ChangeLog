@@ -1,5 +1,12 @@
 2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb: Normalize _ to -
+	in operation name.
+
+2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* operations/generated/math.rb:
 	* operations/generated/svg-12-blend.rb: De-tabified.
 

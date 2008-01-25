@@ -130,14 +130,12 @@ a.each do
     |item|
 
     name     = item[0] + ''
+    name.gsub!(/_/, '-')
     filename = name + '.c'
-    filename.gsub!(/_/, '-')
-    name.gsub!(/-/, '_')
 
     puts "generating #{filename}"
     file = File.open(filename, 'w')
 
-    name        = item[0]
     capitalized = name.capitalize
     swapcased   = name.swapcase
     formula1    = item[1]
@@ -189,14 +187,12 @@ b.each do
     |item|
 
     name     = item[0] + ''
+    name.gsub!(/_/, '-')
     filename = name + '.c'
-    filename.gsub!(/_/, '-')
-    name.gsub!(/-/, '_')
 
     puts "generating #{filename}"
     file = File.open(filename, 'w')
 
-    name        = item[0]
     capitalized = name.capitalize
     swapcased   = name.swapcase
     cond1       = item[1]
@@ -253,14 +249,12 @@ c.each do
     |item|
 
     name     = item[0] + ''
+    name.gsub!(/_/, '-')
     filename = name + '.c'
-    filename.gsub!(/_/, '-')
-    name.gsub!(/-/, '_')
 
     puts "generating #{filename}"
     file = File.open(filename, 'w')
 
-    name        = item[0]
     capitalized = name.capitalize
     swapcased   = name.swapcase
     cond1       = item[1]
@@ -322,14 +316,12 @@ d.each do
     |item|
 
     name     = item[0] + ''
+    name.gsub!(/_/, '-')
     filename = name + '.c'
-    filename.gsub!(/_/, '-')
-    name.gsub!(/-/, '_')
 
     puts "generating #{filename}"
     file = File.open(filename, 'w')
 
-    name        = item[0]
     capitalized = name.capitalize
     swapcased   = name.swapcase
     formula1    = item[1]

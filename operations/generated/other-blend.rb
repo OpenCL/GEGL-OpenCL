@@ -107,9 +107,8 @@ a.each do
     |item|
 
     name     = item[0] + ''
+    name.gsub!(/_/, '-')
     filename = name + '.c'
-    filename.gsub!(/_/, '-')
-    name.gsub!(/-/, '_')
 
     puts "generating #{filename}"
     file = File.open(filename, 'w')
