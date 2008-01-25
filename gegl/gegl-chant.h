@@ -237,7 +237,7 @@ typedef struct
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_COMPOSER);
 #endif
 
-
+#define GEGL_CHANT(obj)  ((GeglChant*)(obj))
 
 /* if GEGL_CHANT_CUSTOM is defined you have to provide the following
  * code or your own implementation of it

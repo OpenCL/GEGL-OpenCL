@@ -1,3 +1,8 @@
+2008-01-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: added GEGL_CHANT() casting macro for casting
+	objects to the chanted instance structure.
+
 2008-01-25  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/enhance/bilateral-filter.c:
