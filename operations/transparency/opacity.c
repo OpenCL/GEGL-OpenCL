@@ -15,17 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no auxiliary input buffer is provided.")
+
 #else
 
-#define GEGL_CHANT_POINT_COMPOSER
-#define GEGL_CHANT_NAME            opacity
-#define GEGL_CHANT_DESCRIPTION     "Weights the opacity of the input with either the value of the aux input or the global value property."
-#define GEGL_CHANT_SELF            "opacity.c"
-#define GEGL_CHANT_CATEGORIES      "transparency"
-#define GEGL_CHANT_PREPARE
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_POINT_COMPOSER
+#define GEGL_CHANT_C_FILE       "opacity.c"
+
+#include "gegl-chant.h"
+
 
 static void prepare (GeglOperation *self)
 {
@@ -36,12 +36,11 @@ static void prepare (GeglOperation *self)
 
 static gboolean
 process (GeglOperation *op,
-          void          *in_buf,
-          void          *aux_buf,
-          void          *out_buf,
-          glong          n_pixels)
+         void          *in_buf,
+         void          *aux_buf,
+         void          *out_buf,
+         glong          n_pixels)
 {
-
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
@@ -49,7 +48,7 @@ process (GeglOperation *op,
   if (aux == NULL)
     {
       gint i;
-      gfloat value = GEGL_CHANT_OPERATION (op)->value;
+      gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           gint j;
@@ -74,4 +73,25 @@ process (GeglOperation *op,
     }
   return TRUE;
 }
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass              *operation_class;
+  GeglOperationPointComposerClass *point_composer_class;
+
+  operation_class      = GEGL_OPERATION_CLASS (klass);
+  point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
+
+  point_composer_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "opacity";
+  operation_class->categories  = "transparency";
+  operation_class->description =
+        "Weights the opacity of the input with either the value of the aux"
+        " input or the global value property.";
+}
+
 #endif

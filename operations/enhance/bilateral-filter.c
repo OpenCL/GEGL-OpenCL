@@ -17,22 +17,19 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
-#define MAX_SAMPLES 20000 /* adapted to max level of radius */
+#ifdef GEGL_CHANT_PROPERTIES
+
 
 gegl_chant_double (blur_radius, 0.0, 70.0, 4.0,
-  "Radius of square pixel region, (width and height will be radius*2+1.")
+  "Radius of square pixel region, (width and height will be radius*2+1).")
 gegl_chant_double (edge_preservation, 0.0, 70.0, 8.0, "Amount of edge preservation")
 
 #else
 
-#define GEGL_CHANT_NAME            bilateral_filter
-#define GEGL_CHANT_SELF            "bilateral-filter.c"
-#define GEGL_CHANT_DESCRIPTION     "An edge preserving blur filter that can be used for noise reduction. It is a gaussian blur where the contribution of neighbourhood pixels are weighted by the color difference from the center pixel."
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "bilateral-filter.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
 
 static void
@@ -43,38 +40,39 @@ bilateral_filter (GeglBuffer *src,
 
 #include <stdio.h>
 
+static void tickle (GeglOperation *operation)
+{
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+
+  area->left = area->right = area->top = area->bottom = ceil (o->blur_radius);
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute;
 
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
+  compute = gegl_operation_compute_input_request (operation,
+                                                  "input", result);
 
+  if (o->blur_radius < 1.0)
     {
-      GeglBuffer    *temp_in;
-      GeglRectangle  compute;
-      
-      compute = gegl_operation_compute_input_request (operation,
-                                                      "input", result);
-
-      if (self->blur_radius < 1.0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-          bilateral_filter (temp_in, output, self->blur_radius, self->edge_preservation);
-          g_object_unref (temp_in);
-        }
-
+      output = g_object_ref (input);
     }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+      bilateral_filter (temp_in, output, o->blur_radius, o->edge_preservation);
+      g_object_unref (temp_in);
+    }
+
   return  TRUE;
 }
 
@@ -113,7 +111,7 @@ bilateral_filter (GeglBuffer *src,
         gfloat *center_pix = src_buf + (x+(y * gegl_buffer_get_width (src))) * 4;
         gfloat  accumulated[4]={0,0,0,0};
         gfloat  count=0.0;
-        
+
         for (v=-radius;v<=radius;v++)
           for (u=-radius;u<=radius;u++)
             {
@@ -121,16 +119,16 @@ bilateral_filter (GeglBuffer *src,
                   y+v >= 0 && y+v < gegl_buffer_get_height (dst))
                 {
                   gint c;
-                  
+
                   gfloat *src_pix = src_buf + ((x+u)+((y+v) * gegl_buffer_get_width (src))) * 4;
 
                   gfloat diff_map   = exp (- (POW2(center_pix[0] - src_pix[0])+
                                               POW2(center_pix[1] - src_pix[1])+
-                                              POW2(center_pix[2] - src_pix[2])) * preserve 
+                                              POW2(center_pix[2] - src_pix[2])) * preserve
                                           );
                   gfloat gaussian_weight;
                   gfloat weight;
-                 
+
                   gaussian_weight = gauss[u+(int)radius+(v+(int)radius)*width];
 
                   weight = diff_map * gaussian_weight;
@@ -138,7 +136,7 @@ bilateral_filter (GeglBuffer *src,
                   for (c=0;c<4;c++)
                     {
                       accumulated[c] += src_pix[c] * weight;
-                    }  
+                    }
                   count += weight;
                 }
             }
@@ -153,12 +151,25 @@ bilateral_filter (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-static void tickle (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *blur = GEGL_CHANT_OPERATION (operation);
-  area->left = area->right = area->top = area->bottom =
-      ceil (blur->blur_radius);
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process   = process;
+  operation_class->tickle = tickle;
+
+  operation_class->name        = "bilateral-filter";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "An edge preserving blur filter that can be used for noise reduction."
+        " It is a gaussian blur where the contribution of neighbourhood pixels"
+        " are weighted by the color difference from the center pixel.";
 }
 
 #endif

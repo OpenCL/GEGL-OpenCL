@@ -1,3 +1,18 @@
+2008-01-25  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/FractalExplorer.c:
+	* operations/render/introspect.c:
+	* operations/render/noise.c:
+	* operations/svg/svg_huerotate.c:
+	* operations/svg/svg_luminancetoalpha.c:
+	* operations/svg/svg_matrix.c:
+	* operations/svg/svg_saturate.c:
+	* operations/transparency/opacity.c: Updated to new chanting API.
+
 2008-01-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: fixed mistake in handling of boiler-plate for

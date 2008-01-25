@@ -22,7 +22,7 @@
 
 #define MAXNCOLORS 8192
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (width,  10, 10000000, 400, "Width")
 gegl_chant_int (height, 10, 10000000, 400, "Height")
@@ -52,17 +52,10 @@ gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
 
 #else
 
-#define GEGL_CHANT_NAME           FractalExplorer
-#define GEGL_CHANT_SELF           "FractalExplorer.c"
-#define GEGL_CHANT_DESCRIPTION    "Fractal Explorer"
-#define GEGL_CHANT_CATEGORIES     "render"
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "FractalExplorer.c"
 
-#define GEGL_CHANT_SOURCE
-
-#define GEGL_CHANT_PREPARE
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -96,12 +89,12 @@ typedef gucharRGB  clrmap[MAXNCOLORS];
 
 
 static void
-explorer_render_row (GeglChantOperation *self,
-                     gint                col_start,
-                     gint                col_end,
-                     gint                row,
-                     clrmap              colormap,
-                     guchar            **dest_row)
+explorer_render_row (GeglChantO *o,
+                     gint        col_start,
+                     gint        col_end,
+                     gint        row,
+                     clrmap      colormap,
+                     guchar    **dest_row)
 {
   gint    fractaltype;
   gint    col;
@@ -134,18 +127,18 @@ explorer_render_row (GeglChantOperation *self,
   gdouble ydiff;
   gdouble log2;
 
-  fractaltype = self->fractaltype;
-  xmin = self->xmin;
-  ymin = self->ymin;
-  cx = self->cx;
-  cy = self->cy;
-  iteration = self->iter;
-  ncolors = self->ncolors;
-  useloglog = self->useloglog;
+  fractaltype = o->fractaltype;
+  xmin = o->xmin;
+  ymin = o->ymin;
+  cx = o->cx;
+  cy = o->cy;
+  iteration = o->iter;
+  ncolors = o->ncolors;
+  useloglog = o->useloglog;
   log2 = log (2.0);
 
-  xdiff = (self->xmax - xmin) / self->width;
-  ydiff = (self->ymax - ymin) / self->height;
+  xdiff = (o->xmax - xmin) / o->width;
+  ydiff = (o->ymax - ymin) / o->height;
 
   for (col = col_start; col < col_end; col++)
     {
@@ -301,7 +294,7 @@ explorer_render_row (GeglChantOperation *self,
 }
 
 static void
-make_color_map (GeglChantOperation *self, clrmap colormap)
+make_color_map (GeglChantO *o, clrmap colormap)
 {
   gint     i;
   gint     r;
@@ -312,16 +305,16 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
   gdouble  bluestretch;
   gdouble  pi = atan (1) * 4;
 
-  redstretch   = self->redstretch * 127.5;
-  greenstretch = self->greenstretch * 127.5;
-  bluestretch  = self->bluestretch * 127.5;
+  redstretch   = o->redstretch * 127.5;
+  greenstretch = o->greenstretch * 127.5;
+  bluestretch  = o->bluestretch * 127.5;
 
-  for (i = 0; i < self->ncolors; i++)
+  for (i = 0; i < o->ncolors; i++)
     {
-      double x = (i*2.0) / self->ncolors;
+      double x = (i*2.0) / o->ncolors;
       r = gr = bl = 0;
 
-      switch (self->redmode)
+      switch (o->redmode)
         {
         case SINUS:
           r = (int) redstretch *(1.0 + sin((x - 1) * pi));
@@ -336,7 +329,7 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
           break;
         }
 
-      switch (self->greenmode)
+      switch (o->greenmode)
         {
         case SINUS:
           gr = (int) greenstretch *(1.0 + sin((x - 1) * pi));
@@ -351,7 +344,7 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
           break;
         }
 
-      switch (self->bluemode)
+      switch (o->bluemode)
         {
         case SINUS:
           bl = (int) bluestretch * (1.0 + sin ((x - 1) * pi));
@@ -370,57 +363,19 @@ make_color_map (GeglChantOperation *self, clrmap colormap)
       gr = MIN (gr, 255);
       bl = MIN (bl, 255);
 
-      if (self->redinvert)
+      if (o->redinvert)
         r = 255 - r;
 
-      if (self->greeninvert)
+      if (o->greeninvert)
         gr = 255 - gr;
 
-      if (self->blueinvert)
+      if (o->blueinvert)
         bl = 255 - bl;
 
       colormap[i].r = r;
       colormap[i].g = gr;
       colormap[i].b = bl;
     }
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  {
-    clrmap  colormap;
-    guchar *buf;
-    gint    pxsize;
-
-    make_color_map (self, colormap);
-
-    g_object_get (output, "px-size", &pxsize, NULL);
-
-    buf  = g_new (guchar, result->width * result->height * pxsize);
-      {
-        guchar *dst=buf;
-        gint y;
-        for (y=0; y < result->height; y++)
-          {
-            explorer_render_row (self,
-                                 result->x,
-                                 result->x + result->width ,
-                                 result->y + y,
-                                 colormap,
-                                 &dst);
-          }
-      }
-
-    gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf,
-                     GEGL_AUTO_ROWSTRIDE);
-    g_free (buf);
-  }
-  return TRUE;
 }
 
 static void
@@ -432,19 +387,72 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglRectangle       result = {0,0,0,0};
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle  result = {0,0,0,0};
 
-  result.width  = self->width;
-  result.height  = self->height;
+  result.width  = o->width;
+  result.height = o->height;
 
   return result;
 }
 
-static void class_init (GeglOperationClass *klass)
+static gboolean
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
-  klass->adjust_result_region = NULL;
-  klass->no_cache = FALSE;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  clrmap  colormap;
+  guchar *buf;
+  gint    pxsize;
+
+  make_color_map (o, colormap);
+
+  g_object_get (output, "px-size", &pxsize, NULL);
+
+  buf  = g_new (guchar, result->width * result->height * pxsize);
+    {
+      guchar *dst=buf;
+      gint y;
+      for (y=0; y < result->height; y++)
+        {
+          explorer_render_row (o,
+                               result->x,
+                               result->x + result->width ,
+                               result->y + y,
+                               colormap,
+                               &dst);
+        }
+    }
+
+  gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf,
+                   GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
+
+  return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_defined_region = get_defined_region;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "FractalExplorer";
+  operation_class->categories  = "render";
+  operation_class->description = "Fractal Explorer";
+
+  operation_class->no_cache = TRUE;
+  operation_class->adjust_result_region = NULL;
 }
 
 #endif

@@ -15,7 +15,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int   (x,        -G_MAXINT, G_MAXINT, 16, "Horizontal width of cells pixels.")
 gegl_chant_int   (y,        -G_MAXINT, G_MAXINT, 16, "Vertical width of cells in pixels.")
@@ -26,22 +26,22 @@ gegl_chant_color (color2,    "white",                "The other cell color (defa
 
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME           checkerboard
-#define GEGL_CHANT_DESCRIPTION    "Checkerboard renderer."
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "checkerboard.c"
 
-#define GEGL_CHANT_SELF           "checkerboard.c"
-#define GEGL_CHANT_CATEGORIES     "render"
-#define GEGL_CHANT_CLASS_INIT
-
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void
 prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
+{
+  GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
+  return result;
 }
 
 static gboolean
@@ -50,70 +50,77 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gfloat     *buf;
+  gfloat      color1[4];
+  gfloat      color2[4];
+  gint        pxsize;
+  gint        n_pixels;
 
-  {
-    gfloat              *buf;
-    gfloat               color1[4];
-    gfloat               color2[4];
-    gint                 pxsize;
-    gint                 n_pixels;
+  gegl_color_get_rgba (o->color1,
+                       &color1[0],
+                       &color1[1],
+                       &color1[2],
+                       &color1[3]);
 
+  gegl_color_get_rgba (o->color2,
+                       &color2[0],
+                       &color2[1],
+                       &color2[2],
+                       &color2[3]);
 
-    gegl_color_get_rgba (self->color1,
-                         &color1[0],
-                         &color1[1],
-                         &color1[2],
-                         &color1[3]);
+  g_object_get (output, "px-size", &pxsize,
+                        "pixels", &n_pixels,
+                        NULL);
+  buf = g_malloc (n_pixels * pxsize);
+    {
+      gfloat *dst=buf;
+      gint y;
+      for (y=0; y < result->height; y++)
+        {
+          gint x;
+          for (x=0; x < result->width ; x++)
+            {
+              gfloat *rgba_color;
+              gint nx,ny;
 
-    gegl_color_get_rgba (self->color2,
-                         &color2[0],
-                         &color2[1],
-                         &color2[2],
-                         &color2[3]);
+              nx = ((x + result->x + o->x_offset + 100000 * o->x)/o->x) ;
+              ny = ((y + result->y + o->y_offset + 100000 * o->y)/o->y) ;
 
-    g_object_get (output, "px-size", &pxsize,
-                          "pixels", &n_pixels,
-                          NULL);
-    buf = g_malloc (n_pixels * pxsize);
-      {
-        gfloat *dst=buf;
-        gint y;
-        for (y=0; y < result->height; y++)
-          {
-            gint x;
-            for (x=0; x < result->width ; x++)
-              {
-                gfloat *rgba_color;
-                gint nx,ny;
+              rgba_color = (nx+ny) % 2 == 0 ? color1 : color2;
 
-                nx = ((x + result->x + self->x_offset + 100000 * self->x)/self->x) ;
-                ny = ((y + result->y + self->y_offset + 100000 * self->y)/self->y) ;
+              memcpy (dst, rgba_color, 4*sizeof(gfloat));
+              dst += 4;
+            }
+        }
+    }
 
-                rgba_color = (nx+ny) % 2 == 0 ? color1 : color2;
+  gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
 
-                memcpy(dst, rgba_color, 4*sizeof(gfloat));
-                dst += 4;
-              }
-          }
-      }
-    gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
-    g_free (buf);
-  }
   return  TRUE;
 }
 
-static GeglRectangle 
-get_defined_region (GeglOperation *operation)
-{
-  GeglRectangle result = {-10000000,-10000000, 20000000, 20000000};
-  return result;
-}
 
-static void class_init (GeglOperationClass *klass)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->no_cache = TRUE;
-  klass->adjust_result_region = NULL;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_defined_region = get_defined_region;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "checkerboard";
+  operation_class->categories  = "render";
+  operation_class->description = "Checkerboard renderer.";
+
+  operation_class->no_cache = TRUE;
+  operation_class->adjust_result_region = NULL;
 }
 
 #endif

@@ -15,26 +15,36 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_object(node, "GeglNode to introspect")
 gegl_chant_pointer(buf, "Buffer")
 
 #else
 
-#define GEGL_CHANT_NAME           introspect
-#define GEGL_CHANT_SELF           "introspect.c"
-#define GEGL_CHANT_DESCRIPTION    "GEGL graph vizualizer."
-#define GEGL_CHANT_CATEGORIES     "render"
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "introspect.c"
 
-#define GEGL_CHANT_SOURCE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include "gegl-dot.h" /* XXX: internal header file */
-
 #include <stdio.h>
 #include <string.h>
 
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  GeglRectangle result = {0, 0, 4096, 4096};
+//  process (operation, NULL, NULL, NULL);
+
+  if (o->buf)
+    {
+      GeglBuffer *buffer = GEGL_BUFFER (o->buf);
+      result = *gegl_buffer_get_extent (buffer);
+    }
+  return result;
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -42,30 +52,27 @@ process (GeglOperation       *operation,
          GeglBuffer          *output, /* ignored */
          const GeglRectangle *result)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  {
-    if (self->buf)
-      {
-        if (context)
-          {
-            g_object_ref(self->buf); /* add an extra reference, since gegl_operation_set_data
-                                        is stealing one */
-            gegl_node_context_set_object (context, "output", G_OBJECT (self->buf));
-          }
-        return TRUE;
-      }
-  }
-  
-  {
-    /*GeglRectangle *result = gegl_operation_result_rect (operation, context_id);*/
-
+  if (o->buf)
     {
-      gchar *dot = gegl_to_dot ((gpointer)self->node);
+      if (context)
+        {
+          g_object_ref (o->buf); /* add an extra reference, since gegl_operation_set_data
+                                      is stealing one */
+          gegl_node_context_set_object (context, "output", G_OBJECT (o->buf));
+        }
+      return TRUE;
+    }
+
+  {
+    {
+      gchar *dot = gegl_to_dot ((gpointer)o->node);
       g_file_set_contents ("/tmp/gegl-temp.dot", dot, -1, NULL);
       system ("dot -o/tmp/gegl-temp.png -Tpng /tmp/gegl-temp.dot");
       g_free (dot);
     }
+
     /* FIXME: copy behavior from magick-load to fix this op */
 
     {
@@ -76,9 +83,9 @@ process (GeglOperation       *operation,
 
       defined = gegl_node_get_bounding_box (png_load);
 
-      self->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
+      o->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
 
-      buffer_save = gegl_node_new_child (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
+      buffer_save = gegl_node_new_child (gegl, "operation", "save-buffer", "buffer", o->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 
       gegl_node_process (buffer_save);
@@ -88,26 +95,30 @@ process (GeglOperation       *operation,
 
   if (context)
     {
-      g_object_ref (self->buf);
-      gegl_node_context_set_object (context, "output", G_OBJECT (self->buf));
+      g_object_ref (o->buf);
+      gegl_node_context_set_object (context, "output", G_OBJECT (o->buf));
     }
   }
+
   return  TRUE;
 }
 
-static GeglRectangle 
-get_defined_region (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
- 
-  GeglRectangle result = {0,0, 4096, 4096};
-  process (operation, NULL, NULL, NULL);
-  if (self->buf)
-    {
-      GeglBuffer *buffer = GEGL_BUFFER (self->buf);
-      result = *gegl_buffer_get_extent (buffer);
-    }
-  return result;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_defined_region = get_defined_region;
+
+  operation_class->name        = "introspect";
+  operation_class->categories  = "render";
+  operation_class->description = "GEGL graph vizualizer.";
 }
 
 #endif

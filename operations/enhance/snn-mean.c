@@ -17,8 +17,7 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES 
-#define MAX_SAMPLES 20000 /* adapted to mean level of radius */
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 70.0, 8.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
@@ -26,14 +25,10 @@ gegl_chant_int (pairs, 1, 2, 2, "Number of pairs higher number preserves more ac
 
 #else
 
-#define GEGL_CHANT_NAME        snn_mean
-#define GEGL_CHANT_SELF        "snn-mean.c"
-#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing blur filter based on Symmetric Nearest Neighbours"
-#define GEGL_CHANT_CATEGORIES  "misc"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "snn-mean.c"
 
-#define GEGL_CHANT_AREA_FILTER
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
 
 static void
@@ -43,36 +38,39 @@ snn_mean (GeglBuffer *src,
           gint        pairs);
 
 
+static void tickle (GeglOperation *operation)
+{
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+
+  area->left = area->right = area->top = area->bottom = ceil (o->radius);
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer          *temp_in;
+  GeglRectangle        compute;
 
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
+  compute  = gegl_operation_compute_input_request (operation,
+                                                   "input", result);
 
+  if (o->radius < 1.0)
     {
-      GeglBuffer    *temp_in;
-      GeglRectangle  compute;
-      compute  = gegl_operation_compute_input_request (operation,
-                                                       "input", result);
-
-      if (self->radius < 1.0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-          snn_mean (temp_in, output, self->radius, self->pairs);
-          g_object_unref (temp_in);
-        }
+      output = g_object_ref (input);
     }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+      snn_mean (temp_in, output, o->radius, o->pairs);
+      g_object_unref (temp_in);
+    }
+
   return  TRUE;
 }
 
@@ -123,8 +121,8 @@ snn_mean (GeglBuffer *src,
         gfloat *center_pix = src_buf + offset * 4;
         gfloat  accumulated[4]={0,};
         gint    count=0;
-       
-        /* iterate through the upper left quater of pixels */ 
+
+        /* iterate through the upper left quater of pixels */
         for (v=-radius;v<=0;v++)
           for (u=-radius;u<= (pairs==1?radius:0);u++)
             {
@@ -165,7 +163,7 @@ snn_mean (GeglBuffer *src,
               for (i=0;i<4;i++)
                 {
                   accumulated[i] += selected_pix[i];
-                }  
+                }
               count++;
 
               if (u==0 && v==0)
@@ -181,12 +179,23 @@ snn_mean (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-static void tickle (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
-  area->left = area->right = area->top = area->bottom =
-  ceil (filter->radius);
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process   = process;
+  operation_class->tickle = tickle;
+
+  operation_class->name        = "snn-mean";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "Noise reducing edge enhancing blur filter based on Symmetric Nearest Neighbours";
 }
 
 #endif
