@@ -1,3 +1,8 @@
+2008-01-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: fixed mistake in handling of boiler-plate for
+	GeglOperationMeta.
+
 2008-01-24  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/generated/other-blend.rb:

@@ -110,11 +110,11 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION);
 
 #ifdef GEGL_CHANT_TYPE_META
 #include <operation/gegl-operation.h>
-typedef struct
+struct _GeglChant
 {
   GeglOperationMeta parent_instance;
   gpointer          properties;
-} GeglChant;
+};
 
 typedef struct
 {
@@ -126,11 +126,11 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
 
 #ifdef GEGL_CHANT_TYPE_SOURCE
 #include <operation/gegl-operation-source.h>
-typedef struct
+struct _GeglChant
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
-} GeglChant;
+};
 
 typedef struct
 {
