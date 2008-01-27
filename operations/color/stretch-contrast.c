@@ -80,6 +80,15 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+static GeglRectangle
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
+{
+  GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
+  return result;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -117,17 +126,7 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
-static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
-{
-  GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
-  return result;
-}
-
-/* This is called at the end of the gobject class_init function, the
- * GEGL_CHANT_CLASS_INIT was needed to make this happen
+/* This is called at the end of the gobject class_init function.
  *
  * Here we override the standard passthrough options for the rect
  * computations.
@@ -138,18 +137,19 @@ operation_class_init (GeglChantClass *klass)
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  operation_class  = GEGL_OPERATION_CLASS (klass);
-  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
   operation_class->prepare = prepare;
-
-  operation_class->name       = "stretch-contrast";
-  operation_class->categories = "color:enhance";
-  operation_class->description =
-        "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that makes poor use of the available contrast (little contrast, very dark, or very bright images).";
-
   operation_class->compute_input_request = compute_input_request;
+
+  operation_class->name        = "stretch-contrast";
+  operation_class->categories  = "color:enhance";
+  operation_class->description =
+        "Scales the components of the buffer to be in the 0.0-1.0 range."
+        " This improves images that makes poor use of the available contrast"
+        " (little contrast, very dark, or very bright images).";
 }
 
 #endif

@@ -22,9 +22,11 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0, "Radius of square pixel region, (wid
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE          "box-blur.c"
+#define GEGL_CHANT_C_FILE       "box-blur.c"
 
 #include "gegl-chant.h"
+#include <stdio.h>
+#include <math.h>
 
 static void hor_blur (GeglBuffer *src,
                       GeglBuffer *dst,
@@ -33,42 +35,6 @@ static void hor_blur (GeglBuffer *src,
 static void ver_blur (GeglBuffer *src,
                       GeglBuffer *dst,
                       gint        radius);
-
-#include <stdio.h>
-#include <math.h>
-
-static void prepare (GeglOperation *operation)
-{
-  GeglChantO              *o;
-  GeglOperationAreaFilter *op_area;
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
-
-  op_area->left   =
-  op_area->right  =
-  op_area->top    =
-  op_area->bottom = ceil (o->radius);
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer *temp;
-
-  temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
-                           babl_format ("RaGaBaA float"));
-
-  hor_blur (input, temp,  o->radius);
-  ver_blur (temp, output, o->radius);
-
-  g_object_unref (temp);
-  return  TRUE;
-}
 
 #ifdef USE_DEAD_CODE
 static inline float
@@ -238,7 +204,38 @@ ver_blur (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-#include <math.h>
+static void prepare (GeglOperation *operation)
+{
+  GeglChantO              *o;
+  GeglOperationAreaFilter *op_area;
+
+  op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  o       = GEGL_CHANT_PROPERTIES (operation);
+
+  op_area->left   =
+  op_area->right  =
+  op_area->top    =
+  op_area->bottom = ceil (o->radius);
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer *temp;
+
+  temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
+                           babl_format ("RaGaBaA float"));
+
+  hor_blur (input, temp,  o->radius);
+  ver_blur (temp, output, o->radius);
+
+  g_object_unref (temp);
+  return  TRUE;
+}
 
 
 static void
@@ -247,14 +244,14 @@ operation_class_init (GeglChantClass *klass)
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  operation_class  = GEGL_OPERATION_CLASS (klass);
-  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process   = process;
+  filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories = "blur";
-  operation_class->name       = "box-blur";
+  operation_class->categories  = "blur";
+  operation_class->name        = "box-blur";
   operation_class->description =
        "Performs an averaging of a square box of pixels.";
 }

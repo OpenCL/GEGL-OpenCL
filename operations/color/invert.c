@@ -64,11 +64,11 @@ operation_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
 
-  operation_class->name       = "invert";
-  operation_class->categories = "color";
+  operation_class->name        = "invert";
+  operation_class->categories  = "color";
   operation_class->description =
-     "Inverts the components (except alpha), the result is the "
-     "corresponding \"negative\" image.";
+     "Inverts the components (except alpha), the result is the"
+     " corresponding \"negative\" image.";
 }
 
 #endif

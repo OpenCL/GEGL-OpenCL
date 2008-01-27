@@ -15,39 +15,50 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
+
 #else
 
-#define GEGL_CHANT_SINK
-#define GEGL_CHANT_NAME        save_buffer
-#define GEGL_CHANT_DESCRIPTION "A GEGL buffer destination surface."
-#define GEGL_CHANT_SELF        "save-buffer.c"
-#define GEGL_CHANT_CATEGORIES  "programming:output"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_SINK
+#define GEGL_CHANT_C_FILE       "save-buffer.c"
+
+#include "gegl-chant.h"
 
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  self = GEGL_CHANT_OPERATION (operation);
-
-  if (self->buffer)
+  if (o->buffer)
     {
-      GeglBuffer **output = self->buffer;
+      GeglBuffer **output = o->buffer;
 
       *output = gegl_buffer_create_sub_buffer (input, result);
     }
+
   return TRUE;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
+  GeglOperationClass     *operation_class;
+  GeglOperationSinkClass *sink_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
+
+  sink_class->process = process;
+  sink_class->needs_full = TRUE;
+
+  operation_class->name        = "save-buffer";
+  operation_class->categories  = "programming:output";
+  operation_class->description = "A GEGL buffer destination surface.";
 }
 
 #endif

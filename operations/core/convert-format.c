@@ -18,26 +18,25 @@
  *
  * This operation is just a forked grey op with format parameters.
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_string(format, "RGBA float", "Babl ouput format string")
+
 #else
 
-#define GEGL_CHANT_NAME          convert_format
-#define GEGL_CHANT_SELF          "convert-format.c"
-#define GEGL_CHANT_DESCRIPTION   "Convert the data into the specified format"
-#define GEGL_CHANT_CATEGORIES    "core:color"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "convert-format.c"
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   Babl *format;
-  g_assert (self->format);
-  format = babl_format (self->format);
+
+  g_assert (o->format);
+
+  format = babl_format (o->format);
   /* check format ? */
 
   gegl_operation_set_format (operation, "input", format);
@@ -48,9 +47,28 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples) 
+         glong          samples)
 {
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name       = "convert-format";
+  operation_class->categories = "core:color";
+  operation_class->description =
+        "Convert the data to the specified format";
 }
 
 #endif

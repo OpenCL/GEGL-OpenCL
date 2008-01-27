@@ -15,91 +15,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
- 
+#ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_path (path, "/tmp/romedalen.jpg", "Path of file to load.")
 
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME            jpg_load
-#define GEGL_CHANT_DESCRIPTION     "JPG image loader"
-#define GEGL_CHANT_SELF            "jpg-load.c"
-#define GEGL_CHANT_CATEGORIES      "hidden"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "jpg-load.c"
+
+#include "gegl-chant.h"
 #include <stdio.h>
 #include <jpeglib.h>
-
-static gint
-gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         dest_x,
-                        gint         dest_y);
-
-static gint
-query_jpg (const gchar *path,
-           gint        *width,
-           gint        *height);
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglRectangle        rect={0,0};
-  gint                 problem;
-  
-  problem = query_jpg (self->path, &rect.width, &rect.height);
-
-  if (problem)
-    {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), self->path);
-      return FALSE;
-    }
-
-
-  problem = gegl_buffer_import_jpg (output, self->path, 0, 0);
-
-  if (problem)
-    {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), self->path);
-      
-      return FALSE;
-    }
-  
-  return  TRUE;
-}
-
-
-static GeglRectangle
-get_defined_region (GeglOperation *operation)
-{
-  GeglRectangle result = {0,0,0,0};
-  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
-  gint width, height;
-  gint status;
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
-  status = query_jpg (self->path, &width, &height);
-
-  if (status)
-    {
-      /*g_warning ("calc have rect of %s failed", self->path);*/
-      result.width  = 10;
-      result.height  = 10;
-    }
-  else
-    {
-      result.width  = width;
-      result.height  = height;
-    }
-
-  return result;
-}
 
 static gint
 query_jpg (const gchar *path,
@@ -196,16 +123,88 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   return 0;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
 {
-  static gboolean done=FALSE;
-  if (done)
-    return;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {0,0,0,0};
+  gint width, height;
+  gint status;
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
+  status = query_jpg (o->path, &width, &height);
+
+  if (status)
+    {
+      /*g_warning ("calc have rect of %s failed", o->path);*/
+      result.width  = 10;
+      result.height  = 10;
+    }
+  else
+    {
+      result.width  = width;
+      result.height  = height;
+    }
+
+  return result;
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle        rect={0,0};
+  gint                 problem;
+
+  problem = query_jpg (o->path, &rect.width, &rect.height);
+
+  if (problem)
+    {
+      g_warning ("%s failed to open file %s for reading.",
+        G_OBJECT_TYPE_NAME (operation), o->path);
+      return FALSE;
+    }
+
+
+  problem = gegl_buffer_import_jpg (output, o->path, 0, 0);
+
+  if (problem)
+    {
+      g_warning ("%s failed to open file %s for reading.",
+        G_OBJECT_TYPE_NAME (operation), o->path);
+
+      return FALSE;
+    }
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_defined_region = get_defined_region;
+
+  operation_class->name        = "jpg-load";
+  operation_class->categories  = "hidden";
+  operation_class->description = "JPG image loader";
+
+//  static gboolean done=FALSE;
+//  if (done)
+//    return;
   gegl_extension_handler_register (".jpg", "jpg-load");
   gegl_extension_handler_register (".JPG", "jpg-load");
   gegl_extension_handler_register (".jpeg", "jpg-load");
   gegl_extension_handler_register (".JPEG", "jpg-load");
-  done = TRUE;
+//  done = TRUE;
 }
-
 #endif

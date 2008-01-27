@@ -43,11 +43,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
   gfloat      red   = o->red;
   gfloat      green = o->green;
   gfloat      blue  = o->blue;
-
   gfloat     *in_buf;
   gfloat     *out_buf;
 

@@ -16,153 +16,19 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_OPERATION_SHIFT_H__
-#define __GEGL_OPERATION_SHIFT_H__
+#ifdef GEGL_CHANT_PROPERTIES
 
-#include <gegl-plugin.h>
+gegl_chant_double (x, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X-axis shift")
+gegl_chant_double (y, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y-axis shift")
 
-G_BEGIN_DECLS
+#else
 
-#define GEGL_TYPE_OPERATION_SHIFT            (gegl_operation_shift_get_type ())
-#define GEGL_OPERATION_SHIFT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_SHIFT, GeglOperationShift))
-#define GEGL_OPERATION_SHIFT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_SHIFT, GeglOperationShiftClass))
-#define GEGL_IS_OPERATION_SHIFT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_SHIFT))
-#define GEGL_IS_OPERATION_SHIFT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_SHIFT))
-#define GEGL_OPERATION_SHIFT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_SHIFT, GeglOperationShiftClass))
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE       "shift.c"
 
-typedef struct _GeglOperationShift      GeglOperationShift;
-typedef struct _GeglOperationShiftClass GeglOperationShiftClass;
-
-struct _GeglOperationShift
-{
-  GeglOperation parent_instance;
-
-  gdouble       x;
-  gdouble       y;
-};
-
-struct _GeglOperationShiftClass
-{
-  GeglOperationClass parent_class;
-};
-
-GType gegl_operation_shift_get_type (void) G_GNUC_CONST;
-
-G_END_DECLS
-
-#endif /* __GEGL_OPERATION_SHIFT_H__ */
-
-/***************************************************************************/
-
-#include "graph/gegl-pad.h"
+#include "gegl-chant.h"
 #include "graph/gegl-node.h"
 #include <math.h>
-#include <string.h>
-
-
-enum
-{
-  PROP_0,
-  PROP_OUTPUT,
-  PROP_INPUT,
-  PROP_X,
-  PROP_Y
-};
-
-static void            get_property            (GObject             *object,
-                                                guint                prop_id,
-                                                GValue              *value,
-                                                GParamSpec          *pspec);
-static void            set_property            (GObject             *object,
-                                                guint                prop_id,
-                                                const GValue        *value,
-                                                GParamSpec          *pspec);
-
-static gboolean        process                 (GeglOperation       *operation,
-                                                GeglNodeContext     *context,
-                                                const gchar         *output_prop,
-                                                const GeglRectangle *result);
-static void            attach                  (GeglOperation       *operation);
-static GeglNode      * detect                  (GeglOperation       *operation,
-                                                gint                 x,
-                                                gint                 y);
-static GeglRectangle   get_defined_region      (GeglOperation       *operation);
-static GeglRectangle   compute_input_request   (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *roi);
-static GeglRectangle   compute_affected_region (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *input_region);
-
-G_DEFINE_DYNAMIC_TYPE (GeglOperationShift, gegl_operation_shift,
-                       GEGL_TYPE_OPERATION)
-
-static void
-gegl_operation_shift_class_init (GeglOperationShiftClass *klass)
-{
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->set_property               = set_property;
-  object_class->get_property               = get_property;
-
-  operation_class->categories              = "core";
-  operation_class->no_cache                = TRUE;
-  operation_class->process                 = process;
-  operation_class->attach                  = attach;
-  operation_class->detect                  = detect;
-  operation_class->get_defined_region      = get_defined_region;
-  operation_class->compute_input_request   = compute_input_request;
-  operation_class->compute_affected_region = compute_affected_region;
-
-  gegl_operation_class_set_name (operation_class, "shift");
-
-  g_object_class_install_property (object_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Ouput pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_X,
-                                   g_param_spec_double ("x",
-                                                       "X",
-                                                       "X",
-                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
-                                                       0.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (object_class, PROP_Y,
-                                   g_param_spec_double ("y",
-                                                       "Y",
-                                                       "Y",
-                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
-                                                       0.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-
-
-}
-
-static void
-gegl_operation_shift_class_finalize (GeglOperationShiftClass *klass)
-{
-}
-
-static void
-gegl_operation_shift_init (GeglOperationShift *self)
-{
-}
 
 static void
 attach (GeglOperation *operation)
@@ -177,73 +43,69 @@ attach (GeglOperation *operation)
                                                            "input"));
 }
 
-
 static GeglNode *
 detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglOperationShift *self = GEGL_OPERATION_SHIFT (operation);
-  GeglNode           *input_node;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglNode   *input_node;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
     return gegl_operation_detect (input_node->operation,
-                                  x - floor (self->x),
-                                  y - floor (self->y));
+                                  x - floor (o->x),
+                                  y - floor (o->y));
 
   return operation->node;
 }
 
-static void
-get_property (GObject    *object,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
 {
-  GeglOperationShift *self = GEGL_OPERATION_SHIFT (object);
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRectangle  result  = { 0, 0, 0, 0 };
 
-  switch (property_id)
-    {
-    case PROP_X:
-      g_value_set_double (value, self->x);
-      break;
+  if (!in_rect)
+    return result;
 
-    case PROP_Y:
-      g_value_set_double (value, self->y);
-      break;
+  result = *in_rect;
 
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
+  result.x += floor (o->x);
+  result.y += floor (o->y);
+
+  return result;
 }
 
-static void
-set_property (GObject      *object,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+static GeglRectangle
+compute_affected_region (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
-  GeglOperationShift *self = GEGL_OPERATION_SHIFT (object);
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = *input_region;
 
-  switch (property_id)
-    {
-    case PROP_X:
-      self->x = g_value_get_double (value);
-      break;
+  result.x += floor (o->x);
+  result.y += floor (o->y);
 
-    case PROP_Y:
-      self->y = g_value_get_double (value);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
+  return result;
 }
 
+static GeglRectangle
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = *roi;
+
+  result.x -= floor (o->x);
+  result.y -= floor (o->y);
+
+  return result;
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -251,12 +113,12 @@ process (GeglOperation       *operation,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
-  GeglOperationShift *shift   = GEGL_OPERATION_SHIFT (operation);
-  GeglBuffer         *input;
-  gboolean            success = FALSE;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer *input;
+  gboolean    success = FALSE;
 
-  shift->x = floor (shift->x);
-  shift->y = floor (shift->y);
+  o->x = floor (o->x);
+  o->y = floor (o->y);
 
   if (strcmp (output_prop, "output"))
     {
@@ -272,8 +134,8 @@ process (GeglOperation       *operation,
 
       output = g_object_new (GEGL_TYPE_BUFFER,
                              "provider",    input,
-                             "shift-x",     (int)-shift->x,
-                             "shift-y",     (int)-shift->y,
+                             "shift-x",     (int)-o->x,
+                             "shift-y",     (int)-o->y,
                              "abyss-width", -1,  /* turn of abyss
                                                     (relying on abyss
                                                     of source) */
@@ -296,67 +158,25 @@ process (GeglOperation       *operation,
   return success;
 }
 
-static GeglRectangle
-get_defined_region (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationShift *self    = GEGL_OPERATION_SHIFT (operation);
-  GeglRectangle       result  = { 0, 0, 0, 0 };
-  GeglRectangle      *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglOperationClass *operation_class;
 
-  if (!in_rect)
-    return result;
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->process                 = process;
+  operation_class->attach                  = attach;
+  operation_class->detect                  = detect;
+  operation_class->get_defined_region      = get_defined_region;
+  operation_class->compute_input_request   = compute_input_request;
+  operation_class->compute_affected_region = compute_affected_region;
 
-  result = *in_rect;
+  operation_class->name        = "shift";
+  operation_class->categories  = "core";
+  operation_class->description = "Shift the contents of a buffer";
 
-  result.x += floor (self->x);
-  result.y += floor (self->y);
-
-  return result;
+  operation_class->no_cache = TRUE;
 }
 
-static GeglRectangle
-compute_affected_region (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
-{
-  GeglOperationShift *self   = GEGL_OPERATION_SHIFT (operation);
-  GeglRectangle       result = *input_region;
-
-  result.x += floor (self->x);
-  result.y += floor (self->y);
-
-  return result;
-}
-
-static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
-{
-  GeglOperationShift *self   = GEGL_OPERATION_SHIFT (operation);
-  GeglRectangle       result = *roi;
-
-  result.x -= floor (self->x);
-  result.y -= floor (self->y);
-
-  return result;
-}
-
-static const GeglModuleInfo modinfo =
-{
-  GEGL_MODULE_ABI_VERSION, "shift", "", ""
-};
-
-G_MODULE_EXPORT const GeglModuleInfo *
-gegl_module_query (GTypeModule *module)
-{
-  return &modinfo;
-}
-
-G_MODULE_EXPORT gboolean
-gegl_module_register (GTypeModule *module)
-{
-  gegl_operation_shift_register_type (module);
-
-  return TRUE;
-}
+#endif

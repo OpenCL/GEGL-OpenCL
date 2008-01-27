@@ -1,3 +1,25 @@
+2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/core/clone.c:
+	* operations/core/convert-format.c:
+	* operations/core/crop.c:
+	* operations/core/shift.c:
+	* operations/io/jpg-load.c:
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/png-save.c:
+	* operations/io/save-buffer.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/svg-load.c: Updated to new chanting API.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/brightness-contrast.c
+	* operations/color/invert.c
+	* operations/color/mono-mixer.c
+	* operations/color/stretch-contrast.c
+	* operations/core/nop.c: Formatting changes.
+
 2008-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	Got rid of tickling, prepare should suffice for now.

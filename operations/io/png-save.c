@@ -16,22 +16,19 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  *           2006 Dominik Ernst <dernst@gmx.de>
  */
-#if GEGL_CHANT_PROPERTIES
- 
+#ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_string (path, "/tmp/fnord.png", "Target path and filename, use '-' for stdout.")
-gegl_chant_int	  (compression, 1, 9, 1, "PNG compression level from 1 to 9")
+gegl_chant_int    (compression, 1, 9, 1, "PNG compression level from 1 to 9")
 
 #else
 
-#define GEGL_CHANT_SINK
-#define GEGL_CHANT_NAME        png_save
-#define GEGL_CHANT_DESCRIPTION "PNG image saver (passes the buffer through, saves as a side-effect.)"
-#define GEGL_CHANT_SELF        "png-save.c"
-#define GEGL_CHANT_CATEGORIES      "output"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_SINK
+#define GEGL_CHANT_C_FILE       "png-save.c"
 
+#include "gegl-chant.h"
 #include <png.h>
+#include <stdio.h>
 
 gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
@@ -40,31 +37,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
-                        gint         height);
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         const GeglRectangle *result)
-{
-  GeglChantOperation  *self   = GEGL_CHANT_OPERATION (operation);
-
-  gegl_buffer_export_png (input, self->path, self->compression,
-                          result->x, result->y,
-                          result->width, result->height);
-  return  TRUE;
-}
-
-#include <stdio.h>
-
-gint
-gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
-                        const gchar     *path,
-			gint		 compression,
-                        gint             src_x,
-                        gint             src_y,
-                        gint             width,
-                        gint             height)
+                        gint         height)
 {
   gint           row_stride = width * 4;
   FILE          *fp;
@@ -94,7 +67,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   {
     const Babl *babl; /*= gegl_buffer->format;*/
     BablType   **type;
- 
+
     g_object_get (gegl_buffer, "format", &babl, NULL);
     type = babl->format.type;
 
@@ -161,9 +134,37 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   return 0;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         const GeglRectangle *result)
 {
-  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  gegl_buffer_export_png (input, o->path, o->compression,
+                          result->x, result->y,
+                          result->width, result->height);
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass     *operation_class;
+  GeglOperationSinkClass *sink_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
+
+  sink_class->process = process;
+  sink_class->needs_full = TRUE;
+
+  operation_class->name        = "png-save";
+  operation_class->categories  = "output";
+  operation_class->description =
+        "PNG image saver (passes the buffer through, saves as a side-effect.)";
+
 }
 
 #endif

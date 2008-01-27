@@ -16,271 +16,79 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_OPERATION_CROP_H__
-#define __GEGL_OPERATION_CROP_H__
+#ifdef GEGL_CHANT_PROPERTIES
 
-#include <gegl-plugin.h>
+gegl_chant_double (x, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X")
+gegl_chant_double (y, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y")
+gegl_chant_double (width,  -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Width")
+gegl_chant_double (height, -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Height")
 
-G_BEGIN_DECLS
+#else
 
-#define GEGL_TYPE_OPERATION_CROP            (gegl_operation_crop_get_type ())
-#define GEGL_OPERATION_CROP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_CROP, GeglOperationCrop))
-#define GEGL_OPERATION_CROP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_CROP, GeglOperationCropClass))
-#define GEGL_IS_OPERATION_CROP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_CROP))
-#define GEGL_IS_OPERATION_CROP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_CROP))
-#define GEGL_OPERATION_CROP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_CROP, GeglOperationCropClass))
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE       "crop.c"
 
-typedef struct _GeglOperationCrop      GeglOperationCrop;
-typedef struct _GeglOperationCropClass GeglOperationCropClass;
-
-struct _GeglOperationCrop
-{
-  GeglOperation parent_instance;
-
-  gdouble       x;
-  gdouble       y;
-  gdouble       width;
-  gdouble       height;
-};
-
-struct _GeglOperationCropClass
-{
-  GeglOperationClass parent_class;
-};
-
-GType gegl_operation_crop_get_type (void) G_GNUC_CONST;
-
-G_END_DECLS
-
-#endif /* __GEGL_OPERATION_CROP_H__ */
-
-/***************************************************************************/
-
-#include "graph/gegl-pad.h"
+#include "gegl-chant.h"
 #include "graph/gegl-node.h"
 #include <math.h>
-#include <string.h>
-
-
-enum
-{
-  PROP_0,
-  PROP_OUTPUT,
-  PROP_INPUT,
-  PROP_X,
-  PROP_Y,
-  PROP_WIDTH,
-  PROP_HEIGHT
-};
-
-static void            get_property            (GObject             *object,
-                                                guint                prop_id,
-                                                GValue              *value,
-                                                GParamSpec          *pspec);
-static void            set_property            (GObject             *object,
-                                                guint                prop_id,
-                                                const GValue        *value,
-                                                GParamSpec          *pspec);
-
-static gboolean        process                 (GeglOperation       *operation,
-                                                GeglNodeContext     *context,
-                                                const gchar         *output_prop,
-                                                const GeglRectangle *result);
-static void            attach                  (GeglOperation       *operation);
-static GeglNode      * detect                  (GeglOperation       *operation,
-                                                gint                 x,
-                                                gint                 y);
-static GeglRectangle   get_defined_region      (GeglOperation       *operation);
-static GeglRectangle   compute_input_request   (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *roi);
-static GeglRectangle   compute_affected_region (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *input_region);
-
-G_DEFINE_DYNAMIC_TYPE (GeglOperationCrop, gegl_operation_crop,
-                       GEGL_TYPE_OPERATION)
-
-static void
-gegl_operation_crop_class_init (GeglOperationCropClass *klass)
-{
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->set_property             = set_property;
-  object_class->get_property             = get_property;
-
-  operation_class->categories            = "core";
-  operation_class->no_cache              = TRUE;
-  operation_class->process               = process;
-  operation_class->attach                = attach;
-  operation_class->detect                = detect;
-  operation_class->get_defined_region    = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
-  operation_class->compute_affected_region = compute_affected_region;
-
-  gegl_operation_class_set_name (operation_class, "crop");
-
-  g_object_class_install_property (object_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Ouput pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_X,
-                                   g_param_spec_double ("x",
-                                                       "X",
-                                                       "X",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       0.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (object_class, PROP_Y,
-                                   g_param_spec_double ("y",
-                                                       "Y",
-                                                       "Y",
-                                                       -G_MAXDOUBLE, G_MAXDOUBLE,
-                                                       0.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (object_class, PROP_WIDTH,
-                                   g_param_spec_double ("width",
-                                                       "Width",
-                                                       "Width",
-                                                       0.0, G_MAXDOUBLE,
-                                                       10.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-  g_object_class_install_property (object_class, PROP_HEIGHT,
-                                   g_param_spec_double ("height",
-                                                       "Height",
-                                                       "Height",
-                                                       0.0, G_MAXDOUBLE,
-                                                       10.0,
-                                                       G_PARAM_READWRITE |
-                                                       G_PARAM_CONSTRUCT));
-
-
-}
-
-static void
-gegl_operation_crop_class_finalize (GeglOperationCropClass *klass)
-{
-}
-
-static void
-gegl_operation_crop_init (GeglOperationCrop *self)
-{
-}
-
-static void
-attach (GeglOperation *operation)
-{
-  GObjectClass *object_class = G_OBJECT_GET_CLASS (operation);
-
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
-}
-
 
 static GeglNode *
 detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglOperationCrop *self = GEGL_OPERATION_CROP (operation);
-  GeglNode           *input_node;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglNode   *input_node;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
     return gegl_operation_detect (input_node->operation,
-                                  x - floor (self->x),
-                                  y - floor (self->y));
+                                  x - floor (o->x),
+                                  y - floor (o->y));
 
   return operation->node;
 }
 
-static void
-get_property (GObject    *object,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
 {
-  GeglOperationCrop *self = GEGL_OPERATION_CROP (object);
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRectangle  result  = { 0, 0, 0, 0 };
 
-  switch (property_id)
-    {
-    case PROP_X:
-      g_value_set_double (value, self->x);
-      break;
+  if (!in_rect)
+    return result;
 
-    case PROP_Y:
-      g_value_set_double (value, self->y);
-      break;
+  result.x = o->x;
+  result.y = o->y;
+  result.width  = o->width;
+  result.height = o->height;
 
-    case PROP_WIDTH:
-      g_value_set_double (value, self->width);
-      break;
-
-    case PROP_HEIGHT:
-      g_value_set_double (value, self->height);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
+  return result;
 }
 
-static void
-set_property (GObject      *object,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+static GeglRectangle
+compute_affected_region (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *input_region)
 {
-  GeglOperationCrop *self = GEGL_OPERATION_CROP (object);
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {o->x, o->y, o->width, o->height};
 
-  switch (property_id)
-    {
-    case PROP_X:
-      self->x = g_value_get_double (value);
-      break;
+  gegl_rectangle_intersect (&result, &result, input_region);
 
-    case PROP_Y:
-      self->y = g_value_get_double (value);
-      break;
-
-    case PROP_WIDTH:
-      self->width = g_value_get_double (value);
-      break;
-
-    case PROP_HEIGHT:
-      self->height = g_value_get_double (value);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
+  return result;
 }
 
+static GeglRectangle
+compute_input_request (GeglOperation       *operation,
+                       const gchar         *input_pad,
+                       const GeglRectangle *roi)
+{
+  return *roi;
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -288,10 +96,10 @@ process (GeglOperation       *operation,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
-  GeglOperationCrop *crop   = GEGL_OPERATION_CROP (operation);
-  GeglBuffer         *input;
-  gboolean            success = FALSE;
-  GeglRectangle       extent = {crop->x, crop->y, crop->width, crop->height};
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *input;
+  gboolean      success = FALSE;
+  GeglRectangle extent = {o->x, o->y, o->width, o->height};
 
   if (strcmp (output_prop, "output"))
     {
@@ -321,60 +129,25 @@ process (GeglOperation       *operation,
   return success;
 }
 
-static GeglRectangle
-get_defined_region (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglRectangle      result  = { 0, 0, 0, 0 };
-  GeglOperationCrop *self    = GEGL_OPERATION_CROP (operation);
-  GeglRectangle     *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglOperationClass *operation_class;
 
-  if (!in_rect)
-    return result;
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->process = process;
+  operation_class->get_defined_region = get_defined_region;
+  operation_class->detect = detect;
+  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->get_defined_region = get_defined_region;
+  operation_class->compute_input_request = compute_input_request;
 
-  result.x = self->x;
-  result.y = self->y;
-  result.width = self->width;
-  result.height = self->height;
+  operation_class->name        = "crop";
+  operation_class->categories  = "core";
+  operation_class->description = "Crop a buffer";
 
-  return result;
+  operation_class->no_cache = TRUE;
 }
 
-static GeglRectangle
-compute_affected_region (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
-{
-  GeglOperationCrop *self   = GEGL_OPERATION_CROP (operation);
-  GeglRectangle      result = {self->x, self->y, self->width, self->height};
-
-  gegl_rectangle_intersect (&result, &result, input_region);
-
-  return result;
-}
-
-static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
-{
-  return *roi;
-}
-
-static const GeglModuleInfo modinfo =
-{
-  GEGL_MODULE_ABI_VERSION, "crop", "", ""
-};
-
-G_MODULE_EXPORT const GeglModuleInfo *
-gegl_module_query (GTypeModule *module)
-{
-  return &modinfo;
-}
-
-G_MODULE_EXPORT gboolean
-gegl_module_register (GTypeModule *module)
-{
-  gegl_operation_crop_register_type (module);
-
-  return TRUE;
-}
+#endif
