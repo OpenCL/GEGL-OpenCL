@@ -37,7 +37,7 @@ static void ver_blur (GeglBuffer *src,
 #include <stdio.h>
 #include <math.h>
 
-static void tickle (GeglOperation *operation)
+static void prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
@@ -251,7 +251,7 @@ operation_class_init (GeglChantClass *klass)
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process   = process;
-  operation_class->tickle = tickle;
+  operation_class->prepare = prepare;
 
   operation_class->categories = "blur";
   operation_class->name       = "box-blur";

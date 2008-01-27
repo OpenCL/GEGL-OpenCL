@@ -1,3 +1,27 @@
+2008-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	Got rid of tickling, prepare should suffice for now.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/workshop/Makefile.am:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-bimedian.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c:
+
 2008-01-26  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/Makefile-operations.am:

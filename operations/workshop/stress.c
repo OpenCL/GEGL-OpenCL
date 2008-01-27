@@ -110,7 +110,7 @@ static void stress (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-static void tickle (GeglOperation *operation)
+static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
@@ -159,7 +159,7 @@ operation_class_init (GeglChantClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
-  operation_class->tickle  = tickle;
+  operation_class->prepare  = prepare;
   /* we override defined region to avoid growing the size of what is defined
    * by the filter. This also allows the tricks used to treat alpha==0 pixels
    * in the image as source data not to be skipped by the stochastic sampling

@@ -143,15 +143,11 @@ ver_max (GeglBuffer *src,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static void tickle (GeglOperation *operation)
-{
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
 
   area->left = area->right = area->top = area->bottom =
       ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
@@ -186,7 +182,6 @@ operation_class_init (GeglChantClass *klass)
 
   filter_class->process = process;
   operation_class->prepare = prepare;
-  operation_class->tickle  = tickle;
 
   operation_class->name        = "box-max";
   operation_class->categories  = "misc";

@@ -40,3 +40,13 @@ gtk-display$(SHREXT): gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
 	||true
+
+stroke$(SHREXT): stroke.c $(GEGLHEADERS)
+	if [ ! -z "$(PANGO_LIBS)" ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+              $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
+              $(PANGO_CFLAGS) $(PANGO_LIBS) \
+              $(PANGOCAIRO_CFLAGS) $(PANGOCAIRO_LIBS);\
+	fi
+

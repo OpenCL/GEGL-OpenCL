@@ -40,7 +40,7 @@ bilateral_filter (GeglBuffer *src,
 
 #include <stdio.h>
 
-static void tickle (GeglOperation *operation)
+static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
@@ -162,7 +162,7 @@ operation_class_init (GeglChantClass *klass)
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process   = process;
-  operation_class->tickle = tickle;
+  operation_class->prepare = prepare;
 
   operation_class->name        = "bilateral-filter";
   operation_class->categories  = "misc";
