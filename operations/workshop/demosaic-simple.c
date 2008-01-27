@@ -15,60 +15,19 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files.")
 
 #else
 
-#define GEGL_CHANT_NAME            demosaic_simple
-#define GEGL_CHANT_SELF            "demosaic-simple.c"
-#define GEGL_CHANT_DESCRIPTION     "Performs a naive grayscale2color demosaicing of an image, no interpolation."
-#define GEGL_CHANT_CATEGORIES      "blur"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "demosaic-simple.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void
-demosaic (GeglChantOperation *op,
-          GeglBuffer *src,
-          GeglBuffer *dst);
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-    {
-      GeglBuffer    *temp_in;
-      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-
-      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-      demosaic (self, temp_in, output);
-      g_object_unref (temp_in);
-    }
-
-  return  TRUE;
-}
-
-static void
-demosaic (GeglChantOperation *op,
+demosaic (GeglChantO *op,
           GeglBuffer *src,
           GeglBuffer *dst)
 {
@@ -139,10 +98,53 @@ demosaic (GeglChantOperation *op,
   g_free (dst_buf);
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->right = area->bottom = 1;
 }
 
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
+
+  temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+  demosaic (o, temp_in, output);
+
+  g_object_unref (temp_in);
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle = tickle;
+
+  operation_class->name        = "demosaic-simple";
+  operation_class->categories  = "blur";
+  operation_class->description =
+        "Performs a naive grayscale2color demosaicing of an image, no interpolation.";
+}
 #endif

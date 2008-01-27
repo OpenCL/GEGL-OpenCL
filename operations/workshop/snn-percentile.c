@@ -17,8 +17,7 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES
-#define MAX_SAMPLES 20000 /* adapted to percentile level of radius */
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 70.0, 8.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
@@ -28,63 +27,13 @@ gegl_chant_double (percentile, 0.0, 100.0, 50.0,
 
 #else
 
-#define GEGL_CHANT_NAME        snn_percentile
-#define GEGL_CHANT_SELF        "snn-percentile.c"
-#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours"
-#define GEGL_CHANT_CATEGORIES  "misc"
+#define MAX_SAMPLES 20000 /* adapted to percentile level of radius */
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "snn-percentile.c"
 
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
-
-static void
-snn_percentile (GeglBuffer *src,
-                GeglBuffer *dst,
-                gdouble     radius,
-                gdouble     percentile,
-                gint        pairs);
-
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-    {
-      GeglBuffer          *temp_in;
-      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-      if (result->width == 0 ||
-          result->height== 0 ||
-          self->radius < 1.0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-          snn_percentile (temp_in, output, self->radius, self->percentile, self->pairs);
-          g_object_unref (temp_in);
-        }
-    }
-
-  return  TRUE;
-}
 
 #define RGB_LUMINANCE_RED    (0.212671)
 #define RGB_LUMINANCE_GREEN  (0.715160)
@@ -262,12 +211,62 @@ snn_percentile (GeglBuffer *src,
   g_free (dst_buf);
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
   area->left = area->right = area->top = area->bottom =
-  ceil (filter->radius);
+      GEGL_CHANT_PROPERTIES (operation)->radius;
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute  = gegl_operation_compute_input_request (operation, "input", result);
+
+  if (result->width == 0 ||
+      result->height== 0 ||
+      o->radius < 1.0)
+    {
+      output = g_object_ref (input);
+    }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+      snn_percentile (temp_in, output, o->radius, o->percentile, o->pairs);
+      g_object_unref (temp_in);
+    }
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name        = "snn-percentile";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours";
 }
 
 #endif

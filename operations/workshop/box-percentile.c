@@ -17,8 +17,7 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES
-#define MAX_SAMPLES 20000 /* adapted to max level of radius */
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 70.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
@@ -26,26 +25,31 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 
 #else
 
-#define GEGL_CHANT_NAME            box_percentile
-#define GEGL_CHANT_SELF            "box-percentile.c"
-#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "box-percentile.c"
 
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
+#include <stdio.h>
+#include <math.h>
 
 static void median (GeglBuffer *src,
                     GeglBuffer *dst,
                     gint        radius,
                     gdouble     rank);
 
-#include <stdio.h>
 
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static void tickle (GeglOperation *operation)
+{
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  area->left = area->right = area->top = area->bottom = ceil (o->radius);
 }
 
 static gboolean
@@ -54,27 +58,20 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
 
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
+  if (o->radius < 1.0)
     {
-      GeglBuffer      *temp_in;
-      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "input", result);
+      output = g_object_ref (input);
+    }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
 
-      if (self->radius < 1.0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-          median (temp_in, output, self->radius, self->percentile / 100.0);
-          g_object_unref (temp_in);
-        }
+      median (temp_in, output, o->radius, o->percentile / 100.0);
+      g_object_unref (temp_in);
     }
 
   return  TRUE;
@@ -208,14 +205,24 @@ median (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-#include <math.h>
 
-static void tickle (GeglOperation *operation)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
-  area->left = area->right = area->top = area->bottom =
-      ceil (filter->radius);
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name        = "box-percentile";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance.";
 }
 
 #endif

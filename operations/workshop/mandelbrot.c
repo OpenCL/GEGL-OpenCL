@@ -15,7 +15,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double(real, -200.0, 200.0, -1.77, "imaginary coordinate")
 gegl_chant_double(img,  -200.0, 200.0, 0.0, "real coordinate")
@@ -24,22 +24,17 @@ gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
 
 #else
 
-#define GEGL_CHANT_NAME           mandelbrot
-#define GEGL_CHANT_SELF           "mandelbrot.c"
-#define GEGL_CHANT_DESCRIPTION    "Mandelbrot renderer."
-#define GEGL_CHANT_CATEGORIES     "render"
-#define GEGL_CHANT_PREPARE
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE           "mandelbrot.c"
 
-#define GEGL_CHANT_SOURCE
+#include "gegl-chant.h"
 
-#include "gegl-old-chant.h"
-
-static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
+static gfloat
+mandel_calc(GeglChantO *o, gfloat x, gfloat y)
 {
-  gfloat fViewRectReal = self->real;
-  gfloat fViewRectImg  = self->img;
-  gfloat fMagLevel     = self->level;
+  gfloat fViewRectReal = o->real;
+  gfloat fViewRectImg  = o->img;
+  gfloat fMagLevel     = o->level;
 
   gfloat fCReal = fViewRectReal + x * fMagLevel;
   gfloat fCImg  = fViewRectImg + y * fMagLevel;
@@ -48,13 +43,13 @@ static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
 
         gint n;
 
-        for (n=0;n<self->maxiter;n++)
+        for (n=0;n<o->maxiter;n++)
           {
                 gfloat fZRealSquared = fZReal * fZReal;
                 gfloat fZImgSquared = fZImg * fZImg;
 
                 if (fZRealSquared + fZImgSquared > 4)
-                        return 1.0*n/(self->maxiter);
+                        return 1.0*n/(o->maxiter);
 
 /*                -- z = z^2 + c*/
                 fZImg = 2 * fZReal * fZImg + fCImg;
@@ -68,56 +63,6 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("Y float"));
 }
 
-static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-
-  {
-    gfloat *buf;
-    gint pxsize;
-
-    g_object_get (output, "px-size", &pxsize, NULL);
-
-    buf = g_malloc (result->width * result->height * pxsize);
-
-
-      {
-        gfloat *dst=buf;
-        gint y;
-        for (y=0; y < result->height; y++)
-          {
-            gint x;
-            for (x=0; x < result->width ; x++)
-              {
-                gfloat value;
-                gfloat nx,ny;
-
-                nx = (x + result->x) ;
-                ny = (y + result->y) ;
-
-                nx = (nx/512);
-                ny = (ny/512);
-
-                value = mandel_calc (self, nx, ny);
-
-                *dst = value;
-                dst ++;
-              }
-          }
-      }
-
-    gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
-                     GEGL_AUTO_ROWSTRIDE);
-    g_free (buf);
-  }
-
-  return  TRUE;
-}
-
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
@@ -125,9 +70,68 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static void class_init (GeglOperationClass *klass)
+static gboolean
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
-  klass->adjust_result_region = NULL;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gfloat     *buf;
+  gint        pxsize;
+
+  g_object_get (output, "px-size", &pxsize, NULL);
+
+  buf = g_malloc (result->width * result->height * pxsize);
+
+    {
+      gfloat *dst = buf;
+      gint y;
+      for (y=0; y < result->height; y++)
+        {
+          gint x;
+          for (x=0; x < result->width ; x++)
+            {
+              gfloat value;
+              gfloat nx,ny;
+
+              nx = (x + result->x);
+              ny = (y + result->y);
+
+              nx = (nx/512);
+              ny = (ny/512);
+
+              value = mandel_calc (o, nx, ny);
+
+              *dst++ = value;
+            }
+        }
+    }
+
+  gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
+                   GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->get_defined_region = get_defined_region;
+
+  operation_class->name        = "mandelbrot";
+  operation_class->categories  = "render";
+  operation_class->description = "Mandelbrot renderer.";
 }
 
 #endif

@@ -26,37 +26,8 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 #define GEGL_CHANT_C_FILE       "box-min.c"
 
 #include "gegl-chant.h"
-
-static void hor_min (GeglBuffer *src,
-                     GeglBuffer *dst,
-                     gint        radius);
-
-static void ver_min (GeglBuffer *src,
-                     GeglBuffer *dst,
-                     gint        radius);
-
 #include <stdio.h>
-
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer *temp;
-
-  temp = gegl_buffer_new (gegl_buffer_get_extent (input),
-                          babl_format ("RGBA float"));
-
-  hor_min (input, temp,  o->radius);
-  ver_min (temp, output, o->radius);
-
-  g_object_unref (temp);
-
-  return  TRUE;
-}
+#include <math.h>
 
 static inline gfloat
 get_min_component (gfloat *buf,
@@ -170,7 +141,10 @@ ver_min (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-#include <math.h>
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
 
 static void tickle (GeglOperation *operation)
 {
@@ -182,11 +156,26 @@ static void tickle (GeglOperation *operation)
   area->bottom = GEGL_CHANT_PROPERTIES (operation)->radius;
 }
 
-
-static void prepare (GeglOperation *operation)
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer *temp;
+
+  temp = gegl_buffer_new (gegl_buffer_get_extent (input),
+                          babl_format ("RGBA float"));
+
+  hor_min (input, temp,  o->radius);
+  ver_min (temp, output, o->radius);
+
+  g_object_unref (temp);
+
+  return  TRUE;
 }
+
 
 static void
 operation_class_init (GeglChantClass *klass)
@@ -194,15 +183,15 @@ operation_class_init (GeglChantClass *klass)
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  operation_class  = GEGL_OPERATION_CLASS (klass);
-  filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
   operation_class->prepare = prepare;
   operation_class->tickle  = tickle;
 
-  operation_class->name       = "box-min";
-  operation_class->categories = "misc";
+  operation_class->name        = "box-min";
+  operation_class->categories  = "misc";
   operation_class->description =
         "Sets the target pixel to the value of the minimum value in a box surrounding the pixel.";
 }

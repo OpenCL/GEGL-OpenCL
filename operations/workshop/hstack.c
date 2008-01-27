@@ -16,79 +16,21 @@
  * Copyright 2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
+    /* No properties */
 
 #else
 
-#define GEGL_CHANT_NAME        hstack
-#define GEGL_CHANT_SELF        "hstack.c"
-#define GEGL_CHANT_DESCRIPTION "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")"
-#define GEGL_CHANT_CATEGORIES  "misc"
+#define GEGL_CHANT_TYPE_COMPOSER
+//#define GEGL_CHANT_C_FILE       "hstack.c"
 
-#define GEGL_CHANT_COMPOSER
-#define GEGL_CHANT_CLASS_INIT
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
 
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *aux,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationComposer *composer;
-  GeglBuffer            *temp_in;
-  GeglBuffer            *temp_aux;
-
-  composer = GEGL_OPERATION_COMPOSER (operation);
-
-  /* FIXME: just pass the originals buffers if the result rectangle does not
-   * include both input buffers
-   */
-
-  temp_in = gegl_buffer_create_sub_buffer (input, result);
-  temp_aux = gegl_buffer_create_sub_buffer (aux, result);
-
-    {
-      gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
-      gfloat *bufB = g_malloc0 (result->width * result->height * 4 * 4);
-
-      gegl_buffer_get (temp_in, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_get (temp_aux, 1.0, NULL, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);
-        {
-          gint offset=0;
-          gint x,y;
-          for (y=0;y<gegl_buffer_get_height (output);y++)
-            for (x=0;x<gegl_buffer_get_width (output);x++)
-              {
-                if (x + result->x >= gegl_buffer_get_width (input))
-                  {
-                    buf[offset+0]=bufB[offset+0];
-                    buf[offset+1]=bufB[offset+1];
-                    buf[offset+2]=bufB[offset+2];
-                    buf[offset+3]=bufB[offset+3];
-                  }
-                offset+=4;
-              }
-        }
-      gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf,
-                       GEGL_AUTO_ROWSTRIDE);
-
-      g_free (buf);
-      g_free (bufB);
-    }
-  g_object_unref (temp_in);
-  g_object_unref (temp_aux);
-
-  return  TRUE;
 }
 
 static GeglRectangle
@@ -155,11 +97,80 @@ compute_affected_region (GeglOperation       *self,
   return *region;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *aux,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
-  operation_class->get_defined_region      = get_defined_region;
+  GeglOperationComposer *composer;
+  GeglBuffer            *temp_in;
+  GeglBuffer            *temp_aux;
+
+  composer = GEGL_OPERATION_COMPOSER (operation);
+
+  /* FIXME: just pass the originals buffers if the result rectangle does not
+   * include both input buffers
+   */
+
+  temp_in = gegl_buffer_create_sub_buffer (input, result);
+  temp_aux = gegl_buffer_create_sub_buffer (aux, result);
+
+    {
+      gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
+      gfloat *bufB = g_malloc0 (result->width * result->height * 4 * 4);
+
+      gegl_buffer_get (temp_in, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (temp_aux, 1.0, NULL, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);
+        {
+          gint offset=0;
+          gint x,y;
+          for (y=0;y<gegl_buffer_get_height (output);y++)
+            for (x=0;x<gegl_buffer_get_width (output);x++)
+              {
+                if (x + result->x >= gegl_buffer_get_width (input))
+                  {
+                    buf[offset+0]=bufB[offset+0];
+                    buf[offset+1]=bufB[offset+1];
+                    buf[offset+2]=bufB[offset+2];
+                    buf[offset+3]=bufB[offset+3];
+                  }
+                offset+=4;
+              }
+        }
+      gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf,
+                       GEGL_AUTO_ROWSTRIDE);
+
+      g_free (buf);
+      g_free (bufB);
+    }
+  g_object_unref (temp_in);
+  g_object_unref (temp_aux);
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass         *operation_class;
+  GeglOperationComposerClass *composer_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
+
+  composer_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->get_defined_region = get_defined_region;
   operation_class->compute_affected_region = compute_affected_region;
   operation_class->compute_input_request   = compute_input_request;
+
+  operation_class->name        = "hstack";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")";
 }
 
 #endif

@@ -16,9 +16,7 @@
  * Copyright 2005 Øyvind Kolås <pippin@gimp.org>,
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
-#if GEGL_CHANT_PROPERTIES
-
-#define MAX_SAMPLES 20000 /* adapted to max level of radius */
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 70.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
@@ -26,15 +24,12 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 
 #else
 
-#define GEGL_CHANT_NAME            disc_percentile
-#define GEGL_CHANT_SELF            "disc-percentile.c"
-#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "disc-percentile.c"
 
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
 
 static void median (GeglBuffer *src,
@@ -43,44 +38,6 @@ static void median (GeglBuffer *src,
                     gdouble     rank);
 
 #include <stdio.h>
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-    {
-      GeglBuffer      *temp_in;
-      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-      if (self->radius < 1.0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-          median (temp_in, output, self->radius, self->percentile / 100.0);
-          g_object_unref (temp_in);
-        }
-    }
-
-  return  TRUE;
-}
-
 
 typedef struct
 {
@@ -215,13 +172,64 @@ median (GeglBuffer *src,
   g_free (dst_buf);
 }
 
+
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
-  area->left = area->right = area->top = area->bottom =
-      ceil (filter->radius);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  area->left = area->right = area->top = area->bottom = ceil (o->radius);
 }
 
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute =
+        gegl_operation_compute_input_request (operation, "input", result);
+
+  if (o->radius < 1.0)
+    {
+      output = g_object_ref (input);
+    }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+      median (temp_in, output, o->radius, o->percentile / 100.0);
+      g_object_unref (temp_in);
+    }
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name        = "disc-percentile";
+  operation_class->categories  = "misc";
+  operation_class->description =
+        "Sets the target pixel to the color corresponding to a given"
+        " percentile when colors are sorted by luminance.";
+}
 
 #endif

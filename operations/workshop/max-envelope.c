@@ -16,74 +16,22 @@
  * Copyright 2007 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 50, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of exposure)")
 gegl_chant_boolean (same_spray, FALSE, "")
 gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
+
 #else
 
-#define GEGL_CHANT_NAME         max_envelope
-#define GEGL_CHANT_SELF         "max-envelope.c"
-#define GEGL_CHANT_DESCRIPTION  "Maximum envelope as used by STRESS."
-#define GEGL_CHANT_CATEGORIES   "enhance"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "max-envelope.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
-
-static void max_envelope (GeglBuffer *src,
-                          GeglBuffer *dst,
-                          gint        radius,
-                          gint        samples,
-                          gint        iterations,
-                          gboolean    same_spray,
-                          gdouble     rgamma);
-
-
 #include <stdlib.h>
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-  {
-    GeglBuffer      *temp_in;
-    GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-    if (self->radius < 1.0)
-      {
-        output = g_object_ref (input);
-      }
-    else
-      {
-        temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-        max_envelope (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma);
-        g_object_unref (temp_in);
-      }
-  }
-
-  return  TRUE;
-}
-
 #include "envelopes.h"
 
 static void max_envelope (GeglBuffer *src,
@@ -94,7 +42,7 @@ static void max_envelope (GeglBuffer *src,
                           gboolean    same_spray,
                           gdouble     rgamma)
 {
-  gint x,y;
+  gint    x, y;
   gfloat *src_buf;
   gfloat *dst_buf;
 
@@ -135,13 +83,60 @@ static void max_envelope (GeglBuffer *src,
   g_free (dst_buf);
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
   area->left = area->right = area->top = area->bottom =
-  ceil (filter->radius);
+      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
 }
 
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
+
+  if (o->radius < 1.0)
+    {
+      output = g_object_ref (input);
+    }
+  else
+    {
+      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+      max_envelope (temp_in, output, o->radius, o->samples, o->iterations, o->same_spray, o->rgamma);
+      g_object_unref (temp_in);
+    }
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name        = "max-envelope";
+  operation_class->categories  = "enhance";
+  operation_class->description = "Maximum envelope as used by STRESS.";
+}
 
 #endif

@@ -17,7 +17,7 @@
  *                Ivar Farup   <ivarf@hig.no>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 384, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,    3,  "number of samples to do")
@@ -26,18 +26,17 @@ gegl_chant_boolean (same_spray, FALSE, "")
 gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
 gegl_chant_double (strength,  -8, 8,  0.5, "how much the local optimum separation should be taken into account.")
 gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
+
 #else
 
-#define GEGL_CHANT_NAME         c2g
-#define GEGL_CHANT_SELF         "c2g.c"
-#define GEGL_CHANT_DESCRIPTION  "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement."
-#define GEGL_CHANT_CATEGORIES   "enhance"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "c2g.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
+#include <stdlib.h>
+#include "envelopes.h"
+
 #define sq(a) ((a)*(a))
 
 static void c2g (GeglBuffer *src,
@@ -50,11 +49,16 @@ static void c2g (GeglBuffer *src,
                  gfloat      strength,
                  gfloat      gamma);
 
-#include <stdlib.h>
-
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static void tickle (GeglOperation *operation)
+{
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  area->left = area->right = area->top = area->bottom = ceil (o->radius);
 }
 
 static gboolean
@@ -63,26 +67,18 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
 
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
+  temp_in = gegl_buffer_create_sub_buffer (input, &compute);
 
-  {
-    GeglBuffer      *temp_in;
-    GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-    temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-    c2g (temp_in, output, self->radius, self->samples, self->iterations, self->same_spray, self->rgamma, self->strength, self->gamma);
-    g_object_unref (temp_in);
-  }
+  c2g (temp_in, output, o->radius, o->samples, o->iterations, o->same_spray,
+       o->rgamma, o->strength, o->gamma);
+  g_object_unref (temp_in);
 
   return  TRUE;
 }
-
-#include "envelopes.h"
 
 static void c2g (GeglBuffer *src,
                  GeglBuffer *dst,
@@ -97,7 +93,6 @@ static void c2g (GeglBuffer *src,
   gint x,y;
   gfloat *src_buf;
   gfloat *dst_buf;
-
 
   src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
   dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
@@ -167,12 +162,24 @@ static void c2g (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-static void tickle (GeglOperation *operation)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
-  area->left = area->right = area->top = area->bottom =
-      ceil (filter->radius);
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle = tickle;
+
+  operation_class->name        = "c2g";
+  operation_class->categories  = "enhance";
+  operation_class->description =
+        "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement.";
 }
 
 #endif

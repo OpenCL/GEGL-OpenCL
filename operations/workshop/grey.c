@@ -15,19 +15,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
    /* no properties */
+
 #else
 
-#define GEGL_CHANT_NAME          grey
-#define GEGL_CHANT_SELF          "grey.c"
-#define GEGL_CHANT_DESCRIPTION   "turns the image greyscale"
-#define GEGL_CHANT_CATEGORIES    "color"
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "grey.c"
 
-#define GEGL_CHANT_POINT_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -41,9 +38,27 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples) 
+         glong          samples)
 {
   return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "grey";
+  operation_class->categories  = "color";
+  operation_class->description = "Turns the image greyscale";
 }
 
 #endif

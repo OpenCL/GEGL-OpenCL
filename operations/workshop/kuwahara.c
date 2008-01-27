@@ -15,60 +15,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (radius, 0.0, 50.0, 10.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
 
 #else
 
-#define GEGL_CHANT_NAME            kuwahara
-#define GEGL_CHANT_SELF            "kuwahara.c"
-#define GEGL_CHANT_DESCRIPTION     "Edge preserving blur"
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "kuwahara.c"
 
-#define GEGL_CHANT_AREA_FILTER
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
-
-static void
-kuwahara (GeglBuffer *src,
-          GeglBuffer *dst,
-          gint        radius);
-
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-    {
-      GeglBuffer          *temp_in;
-      GeglRectangle        compute  = gegl_operation_compute_input_request (operation, "input", result);
-
-      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-      kuwahara (temp_in, output, self->radius);
-      g_object_unref (temp_in);
-    }
-
-  return  TRUE;
-}
 
 static inline void
 compute_rectangle (gfloat *buf,
@@ -171,7 +129,7 @@ kuwahara (GeglBuffer *src,
                                gegl_buffer_get_width (src),
                                gegl_buffer_get_height (src),
                                u,
-                               v - radius -1,
+                               v - radius - 1,
                                1 + radius,
                                1 + radius,
                                component,
@@ -185,11 +143,10 @@ kuwahara (GeglBuffer *src,
                 value = mean;
               }
 
-
             compute_rectangle (src_buf,
                                gegl_buffer_get_width (src),
                                gegl_buffer_get_height (src),
-                               u - radius -1,
+                               u - radius - 1,
                                v,
                                1 + radius,
                                1 + radius,
@@ -233,13 +190,54 @@ kuwahara (GeglBuffer *src,
   g_free (dst_buf);
 }
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
+
   area->left = area->right = area->top = area->bottom =
-  ceil (filter->radius);
+      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
 }
 
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *temp_in;
+  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
+
+  temp_in = gegl_buffer_create_sub_buffer (input, &compute);
+
+  kuwahara (temp_in, output, o->radius);
+  g_object_unref (temp_in);
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->tickle  = tickle;
+
+  operation_class->name        = "kuwahara";
+  operation_class->categories  = "misc";
+  operation_class->description = "Edge preserving blur";
+}
 
 #endif

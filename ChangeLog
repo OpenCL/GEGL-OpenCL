@@ -1,3 +1,27 @@
+2008-01-26  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/Makefile-operations.am:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c: Formatting changes.
+
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-bimedian.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/grey.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/lens-correct.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/mandelbrot.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c: Updated to new chanting API.
+
 2008-01-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: added GEGL_CHANT() casting macro for casting

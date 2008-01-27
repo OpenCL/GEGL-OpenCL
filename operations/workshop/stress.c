@@ -18,7 +18,7 @@
  *                Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius,     2, 5000.0, 300, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   10,    "number of samples to do")
@@ -27,56 +27,15 @@ gegl_chant_boolean (same_spray, TRUE, "use the same spray for all pixels")
 gegl_chant_double (rgamma, 0.0, 8.0, 2.0, "gamma applied to radial distribution")
 gegl_chant_double (strength, -10.0, 10.0, 1.0, "amoung of correction 0=none 1.0=full")
 gegl_chant_double (gamma, 0.0, 10.0, 1.0, "post correction gamma.")
+
 #else
 
-#define GEGL_CHANT_NAME         stress
-#define GEGL_CHANT_SELF         "stress.c"
-#define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex-like Envelope with Stochastic Sampling."
-#define GEGL_CHANT_CATEGORIES   "enhance"
+#define GEGL_CHANT_TYPE_AREA_FILTER
+#define GEGL_CHANT_C_FILE       "stress.c"
 
-#define GEGL_CHANT_AREA_FILTER
-
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <math.h>
-
-static void stress (GeglBuffer *src,
-                    GeglBuffer *dst,
-                    gint        radius,
-                    gint        samples,
-                    gint        iterations,
-                    gboolean    same_spray,
-                    gdouble     rgamma,
-                    gdouble     strength,
-                    gdouble     gamma);
-
 #include <stdlib.h>
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglOperationFilter *filter;
-  GeglChantOperation  *self;
-
-  filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-
-  stress (input, output,
-          self->radius,
-          self->samples,
-          self->iterations,
-          self->same_spray,
-          self->rgamma,
-          self->strength,
-          self->gamma);
-
-  return  TRUE;
-}
-
 #include "envelopes.h"
 
 static void stress (GeglBuffer *src,
@@ -154,9 +113,8 @@ static void stress (GeglBuffer *src,
 static void tickle (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
   area->left = area->right = area->top = area->bottom =
-  ceil (filter->radius);
+      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
 }
 
 static GeglRectangle
@@ -170,14 +128,49 @@ get_defined_region (GeglOperation *operation)
   return *in_rect;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  stress (input, output,
+          o->radius,
+          o->samples,
+          o->iterations,
+          o->same_spray,
+          o->rgamma,
+          o->strength,
+          o->gamma);
+
+  return  TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->tickle  = tickle;
   /* we override defined region to avoid growing the size of what is defined
-   * by the filter, this also allows the tricks used to treat alpha==0 pixels
+   * by the filter. This also allows the tricks used to treat alpha==0 pixels
    * in the image as source data not to be skipped by the stochastic sampling
    * yielding correct edge behavior.
    */
-  operation_class->get_defined_region  = get_defined_region;
+  operation_class->get_defined_region = get_defined_region;
+
+  operation_class->name        = "stress";
+  operation_class->categories  = "enhance";
+  operation_class->description =
+        "Spatio Temporal Retinex-like Envelope with Stochastic Sampling.";
 }
 
 #endif
