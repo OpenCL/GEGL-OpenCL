@@ -450,9 +450,7 @@ gegl_module_info_new (guint32      abi_version,
                       const gchar *copyright,
                       const gchar *date)
 {
-  GeglModuleInfo *info;
-
-  info = g_new0 (GeglModuleInfo, 1);
+  GeglModuleInfo *info = g_slice_new0 (GeglModuleInfo);
 
   info->abi_version = abi_version;
   info->purpose     = g_strdup (purpose);
@@ -502,7 +500,7 @@ gegl_module_info_free (GeglModuleInfo *info)
   g_free (info->copyright);
   g_free (info->date);
 
-  g_free (info);
+  g_slice_free (GeglModuleInfo, info);
 }
 
 GType
