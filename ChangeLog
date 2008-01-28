@@ -1,5 +1,9 @@
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
+	* gegl/graph/gegl-node.[ch]: don't export gegl_node_signals array.
+
+2008-01-28  Sven Neumann  <sven@gimp.org>
+
 	* gegl/module/geglmodule.c: allocate GeglModuleInfo using GSlice.
 
 2008-01-28  Sven Neumann  <sven@gimp.org>

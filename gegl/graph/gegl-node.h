@@ -207,16 +207,14 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
                                              GeglNode    ***nodes,
                                              const gchar ***pads);
 
-GeglCache    *gegl_node_get_cache           (GeglNode      *node);
+GeglCache   * gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_invalidated         (GeglNode      *node,
                                              const GeglRectangle *rect);
 GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 
-const gchar  *gegl_node_get_name            (GeglNode      *self);
+const gchar * gegl_node_get_name            (GeglNode      *self);
 void          gegl_node_set_name            (GeglNode      *self,
                                              const gchar   *name);
-
-extern guint gegl_node_signals[];
 
 G_END_DECLS
 

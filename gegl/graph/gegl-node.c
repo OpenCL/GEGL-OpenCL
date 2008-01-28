@@ -71,7 +71,7 @@ struct _GeglNodePrivate
   ((GeglNodePrivate *)(((GeglNode *) obj)->priv))
 
 
-guint gegl_node_signals[LAST_SIGNAL] = {0};
+static guint gegl_node_signals[LAST_SIGNAL] = {0};
 
 
 static void            gegl_node_class_init           (GeglNodeClass *klass);
