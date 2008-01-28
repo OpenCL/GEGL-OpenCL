@@ -1,5 +1,9 @@
 2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/workshop/generated/blend.rb: Updated to new chanting API.
+
+2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* operations/blur/box-blur.c (prepare):
 	* operations/blur/gaussian-blur.c (prepare): Set output buffer format.
 
