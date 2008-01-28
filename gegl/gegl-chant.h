@@ -471,19 +471,19 @@ set_property (GObject      *gobject,
       break;
 #define gegl_chant_color(name, def, blurb)                            \
     case PROP_##name:                                                 \
-      if (properties->name != NULL && G_IS_OBJECT (properties->name)) \
+      if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
 #define gegl_chant_curve(name, blurb)                                 \
     case PROP_##name:                                                 \
-      if (properties->name != NULL && G_IS_OBJECT (properties->name)) \
+      if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
 #define gegl_chant_vector(name, blurb)                                \
     case PROP_##name:                                                 \
-      if (properties->name != NULL && G_IS_OBJECT (properties->name)) \
+      if (properties->name != NULL)                                   \
         {/*XXX: remove old signal */                                  \
          g_object_unref (properties->name);                           \
         }                                                             \
@@ -514,9 +514,7 @@ set_property (GObject      *gobject,
 
 static void gegl_chant_destroy_notify (gpointer data)
 {
-  GeglChantO *properties;
-
-  properties = GEGL_CHANT_PROPERTIES (data);
+  GeglChantO *properties = GEGL_CHANT_PROPERTIES (data);
 
 #define gegl_chant_int(name, min, max, def, blurb)
 #define gegl_chant_double(name, min, max, def, blurb)
@@ -578,7 +576,8 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_vector
-  g_free (properties);
+
+  g_slice_free (GeglChantO, properties);
 }
 
 static GObject *
@@ -715,7 +714,7 @@ gegl_chant_class_init (gpointer klass)
 static void
 gegl_chant_init (GeglChant *self)
 {
-  self->properties = g_new0 (GeglChantO, 1);
+  self->properties = g_slice_new0 (GeglChantO);
 }
 
 /****************************************************************************/

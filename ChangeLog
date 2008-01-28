@@ -1,3 +1,8 @@
+2008-01-28  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-chant.h: Allocate the GeglChant0 struct using GSlice.
+	Removed redundant G_IS_OBJECT() checks.
+
 2008-01-28  Tor Lillqvist  <tml@novell.com>
 
 	* gegl/operation/Makefile.am (OPERATIONS_headers): Fix typo:
