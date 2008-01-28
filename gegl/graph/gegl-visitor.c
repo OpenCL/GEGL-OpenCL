@@ -53,7 +53,7 @@ static void           dfs_traverse             (GeglVisitor      *self,
                                                 GeglVisitable    *visitable);
 static void           init_bfs_traversal       (GeglVisitor      *self,
                                                 GeglVisitable    *visitable);
-static void           visit_info_value_destroy (gpointer          data);
+static void           visit_info_destroy       (GeglVisitInfo    *visit_info);
 static void           insert                   (GeglVisitor      *self,
                                                 GeglVisitable    *visitable);
 static GeglVisitInfo* lookup                   (GeglVisitor      *self,
@@ -158,9 +158,9 @@ static void
 gegl_visitor_init (GeglVisitor *self)
 {
   self->visits_list = NULL;
-  self->hash        = g_hash_table_new_full (g_direct_hash, g_direct_equal,
-                                             NULL,
-                                             visit_info_value_destroy);
+  self->hash = g_hash_table_new_full (g_direct_hash, g_direct_equal,
+                                      NULL,
+                                      (GDestroyNotify) visit_info_destroy);
 }
 
 static void
@@ -185,21 +185,13 @@ static void
 insert (GeglVisitor   *self,
         GeglVisitable *visitable)
 {
-  GeglVisitInfo *visit_info = lookup (self, visitable);
-
-  if (!visit_info)
+  if (lookup (self, visitable))
     {
-      visit_info = g_new0 (GeglVisitInfo, 1);
-
-      visit_info->visited      = FALSE;
-      visit_info->discovered   = FALSE;
-      visit_info->shared_count = 0;
-
-      g_hash_table_insert (self->hash, visitable, visit_info);
+      g_warning ("visitable already in visitor's hash table");
     }
   else
     {
-      g_warning ("visitable already in visitor's hash table");
+      g_hash_table_insert (self->hash, visitable, g_slice_new0 (GeglVisitInfo));
     }
 }
 
@@ -289,11 +281,9 @@ gegl_visitor_get_visits_list (GeglVisitor *self)
 }
 
 static void
-visit_info_value_destroy (gpointer data)
+visit_info_destroy (GeglVisitInfo *visit_info)
 {
-  GeglVisitInfo *visit_info = data;
-
-  g_free (visit_info);
+  g_slice_free (GeglVisitInfo, visit_info);
 }
 
 /**
