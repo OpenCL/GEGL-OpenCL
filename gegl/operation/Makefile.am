@@ -25,7 +25,7 @@ OPERATION_headers = \
 	gegl-operation-point-filter.h   \
 	gegl-operation-sink.h       	\
 	gegl-operation-source.h		\
-	gegl-operations.c
+	gegl-operations.h
 
 public_headers = \
 	gegl-operation.h        	\

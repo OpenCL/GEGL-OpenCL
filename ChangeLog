@@ -1,3 +1,8 @@
+2008-01-28  Tor Lillqvist  <tml@novell.com>
+
+	* gegl/operation/Makefile.am (OPERATIONS_headers): Fix typo:
+	s/gegl-operations.c/gegl-operations.h/
+
 2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/generated/blend.rb: Updated to new chanting API.
