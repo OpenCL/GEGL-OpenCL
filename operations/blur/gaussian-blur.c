@@ -399,6 +399,9 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
   area->left = area->right = ceil (o->std_dev_x * RADIUS_SCALE);
   area->top = area->bottom = ceil (o->std_dev_y * RADIUS_SCALE);
+
+  gegl_operation_set_format (operation, "output",
+                             babl_format ("RaGaBaA float"));
 }
 
 static gboolean

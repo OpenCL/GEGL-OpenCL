@@ -216,6 +216,9 @@ static void prepare (GeglOperation *operation)
   op_area->right  =
   op_area->top    =
   op_area->bottom = ceil (o->radius);
+
+  gegl_operation_set_format (operation, "output",
+                             babl_format ("RaGaBaA float"));
 }
 
 static gboolean

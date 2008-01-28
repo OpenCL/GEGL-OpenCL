@@ -1,5 +1,10 @@
 2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/blur/box-blur.c (prepare):
+	* operations/blur/gaussian-blur.c (prepare): Set output buffer format.
+
+2008-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* operations/core/clone.c:
 	* operations/core/convert-format.c:
 	* operations/core/crop.c:
