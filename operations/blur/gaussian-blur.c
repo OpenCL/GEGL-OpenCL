@@ -166,8 +166,8 @@ iir_young_hor_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
-  w   = g_malloc0 (gegl_buffer_get_width (src) * 4);
+  buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
+  w   = g_new0 (gfloat, gegl_buffer_get_width (src));
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -204,8 +204,8 @@ iir_young_ver_blur (GeglBuffer *src,
   gfloat *buf;
   gfloat *w;
 
-  buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
-  w   = g_malloc0 (gegl_buffer_get_height (src) * 4);
+  buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
+  w   = g_new0 (gfloat, gegl_buffer_get_height (src));
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 

@@ -1,5 +1,14 @@
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
+	* operations/blur/box-blur.c
+	* operations/blur/gaussian-blur.c
+	* operations/color/mono-mixer.c
+	* operations/color/remap.c
+	* operations/color/stretch-contrast.c: use g_new() instead of
+	g_malloc() for readability and type safety.
+
+2008-01-28  Sven Neumann  <sven@gimp.org>
+
 	* gegl/graph/gegl-node.[ch]: don't export gegl_node_signals array.
 
 2008-01-28  Sven Neumann  <sven@gimp.org>

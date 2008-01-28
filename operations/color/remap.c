@@ -243,9 +243,9 @@ process (GeglOperation       *operation,
       gint pixels = result->width  * result->height;
       gint i;
 
-      buf = g_malloc (pixels * sizeof (gfloat) * 4);
-      min = g_malloc (pixels * sizeof (gfloat) * 3);
-      max = g_malloc (pixels * sizeof (gfloat) * 3);
+      buf = g_new (gfloat, pixels * 4);
+      min = g_new (gfloat, pixels * 3);
+      max = g_new (gfloat, pixels * 3);
 
       gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
       gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
@@ -253,19 +253,21 @@ process (GeglOperation       *operation,
 
       output = gegl_node_context_get_target (context, "output");
 
-      for (i=0;i<pixels;i++)
+      for (i = 0; i < pixels; i++)
         {
           gint c;
-          for (c=0;c<3;c++) 
+
+          for (c = 0; c < 3; c++)
             {
               gfloat delta = max[i*3+c]-min[i*3+c];
+
               if (delta > 0.0001 || delta < -0.0001)
                 {
                   buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
                 }
               /*else
                 buf[i*4+c] = buf[i*4+c];*/
-            } 
+            }
         }
 
       gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,

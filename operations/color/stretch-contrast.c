@@ -25,20 +25,22 @@
 #include "gegl-chant.h"
 
 static gboolean
-inner_process (gdouble        min,
-                gdouble        max,
-                guchar        *buf,
-                gint           n_pixels)
+inner_process (gdouble  min,
+               gdouble  max,
+               gfloat  *buf,
+               gint     n_pixels)
 {
   gint o;
-  gfloat *p = (gfloat*) (buf);
 
   for (o=0; o<n_pixels; o++)
     {
-      gint i;
-      for (i=0;i<3;i++)
-        p[i] = (p[i] - min) / (max-min);
-      p+=4;
+      buf[0] = (buf[0] - min) / (max-min);
+      buf[1] = (buf[1] - min) / (max-min);
+      buf[2] = (buf[2] - min) / (max-min);
+      /* FIXME: really stretch the alpha channel?? */
+      buf[3] = (buf[3] - min) / (max-min);
+
+      buf += 4;
     }
   return TRUE;
 }
@@ -51,7 +53,7 @@ buffer_get_min_max (GeglBuffer *buffer,
   gfloat tmin = 9000000.0;
   gfloat tmax =-9000000.0;
 
-  gfloat *buf = g_malloc0 (sizeof (gfloat) * 4 * gegl_buffer_get_pixel_count (buffer));
+  gfloat *buf = g_new0 (gfloat, 4 * gegl_buffer_get_pixel_count (buffer));
   gint i;
   gegl_buffer_get (buffer, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
   for (i=0;i< gegl_buffer_get_pixel_count (buffer);i++)
@@ -95,18 +97,18 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  gdouble              min, max;
+  gdouble  min, max;
 
   buffer_get_min_max (input, &min, &max);
   {
     gint row;
-    guchar *buf;
+    gfloat *buf;
     gint chunk_size=128;
     gint consumed=0;
 
-    buf = g_malloc0 (sizeof (gfloat) * 4 * result->width  * chunk_size);
+    buf = g_new0 (gfloat, 4 * result->width  * chunk_size);
 
-    for (row=0;row<result->height;row=consumed)
+    for (row = 0; row < result->height; row = consumed)
       {
         gint chunk = consumed+chunk_size<result->height?chunk_size:result->height-consumed;
         GeglRectangle line = { result->x,
