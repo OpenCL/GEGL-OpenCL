@@ -1,5 +1,10 @@
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
+	* gegl/process/gegl-processor.c (gegl_processor_render): plugged a
+	memory leak.
+
+2008-01-28  Sven Neumann  <sven@gimp.org>
+
 	* gegl/graph/gegl-connection.[ch]: added gegl_connection_destroy()
 	and GSlice-allocate the GeglConnection structs.
 

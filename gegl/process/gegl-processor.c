@@ -591,6 +591,7 @@ gegl_processor_render (GeglProcessor *processor,
 
       gegl_region_subtract (region, valid_region);
       gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
+      gegl_region_destroy (region);
 
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
@@ -607,7 +608,8 @@ gegl_processor_render (GeglProcessor *processor,
       if (n_rectangles != 0)
         {
           if (progress)
-            *progress = 1.0 - ((double) area_left (valid_region, rectangle) / rect_area (rectangle));
+            *progress = 1.0 - ((double) area_left (valid_region, rectangle) /
+                               rect_area (rectangle));
           return TRUE;
         }
       return FALSE;
