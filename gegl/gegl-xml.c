@@ -514,17 +514,20 @@ struct _SerializeState
   gboolean     terse;
 };
 
-static void free_clone_id (gpointer key,
-                           gpointer value,
-                           gpointer user_data)
+static void
+free_clone_id (gpointer key,
+               gpointer value,
+               gpointer user_data)
 {
   g_free (value);
 }
+
 #if 0
 
-static void tuple_old (GString     *buf,
-                       const gchar *key,
-                       const gchar *value)
+static void
+tuple_old (GString     *buf,
+           const gchar *key,
+           const gchar *value)
 {
   g_assert (key);
 
@@ -550,16 +553,18 @@ static void tuple_old (GString     *buf,
     }
 }
 
-static void encode_node_attributes_old (SerializeState *ss,
-                                        GeglNode       *node,
-                                        const gchar    *id)
+static void
+encode_node_attributes_old (SerializeState *ss,
+                            GeglNode       *node,
+                            const gchar    *id)
 {
   GParamSpec **properties;
   guint        n_properties;
   gchar       *class;
   gint         i;
 
-  properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
+  properties = gegl_list_properties (gegl_node_get_operation (node),
+                                     &n_properties);
 
   if (!ss->terse)
     {
@@ -662,9 +667,10 @@ static void encode_node_attributes_old (SerializeState *ss,
   g_free (properties);
 }
 
-static void add_stack_old (SerializeState *ss,
-                           gint            indent,
-                           GeglNode       *head)
+static void
+add_stack_old (SerializeState *ss,
+               gint            indent,
+               GeglNode       *head)
 {
   if (GEGL_IS_NODE (head))
     {
@@ -790,35 +796,34 @@ gchar *
 gegl_node_to_xml_old (GeglNode    *gegl,
                       const gchar *path_root)
 {
-  gchar          *ret;
-  SerializeState *ss = g_new0 (SerializeState, 1);
+  SerializeState  ss;
 
-  ss->buf       = g_string_new ("");
-  ss->clones    = g_hash_table_new (NULL, NULL);
-  ss->terse     = TRUE;
-  ss->path_root = path_root;
+  ss.buf         = g_string_new ("");
+  ss.path_root   = path_root;
+  ss.clone_count = 0;
+  ss.clones      = g_hash_table_new (NULL, NULL);
+  ss.terse       = TRUE;
 
   gegl = gegl_node_get_output_proxy (gegl, "output");
 
-  g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
-  g_string_append (ss->buf, "<gegl>\n");
+  g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
+  g_string_append (ss.buf, "<gegl>\n");
 
-  add_stack_old (ss, 2, gegl);
+  add_stack_old (&ss, 2, gegl);
 
-  g_string_append (ss->buf, "</gegl>\n");
+  g_string_append (ss.buf, "</gegl>\n");
 
-  g_hash_table_foreach (ss->clones, free_clone_id, NULL);
-  g_hash_table_destroy (ss->clones);
+  g_hash_table_foreach (ss.clones, free_clone_id, NULL);
+  g_hash_table_destroy (ss.clones);
 
-  ret = g_string_free (ss->buf, FALSE);
-  g_free (ss);
-  return ret;
+  return g_string_free (ss.buf, FALSE);
 }
 #endif
 
-static void xml_attr (GString     *buf,
-                      const gchar *key,
-                      const gchar *value)
+static void
+xml_attr (GString     *buf,
+          const gchar *key,
+          const gchar *value)
 {
   g_assert (key);
 
@@ -844,9 +849,10 @@ static void xml_attr (GString     *buf,
     }
 }
 
-static void xml_param_start (SerializeState *ss,
-			     gint            indent,
-			     const gchar    *key)
+static void
+xml_param_start (SerializeState *ss,
+                 gint            indent,
+                 const gchar    *key)
 {
   g_assert (key);
   ind; g_string_append (ss->buf, "<param name='");
@@ -854,8 +860,9 @@ static void xml_param_start (SerializeState *ss,
   g_string_append (ss->buf, "'>");
 }
 
-static void xml_param_text (SerializeState *ss,
-			    const gchar    *value)
+static void
+xml_param_text (SerializeState *ss,
+                const gchar    *value)
 {
   gchar *text;
   /*gchar *p;*/
@@ -872,21 +879,23 @@ static void xml_param_text (SerializeState *ss,
     g_string_append (ss->buf, "&#10;");
     else
     g_string_append_c (ss->buf, *p);
-    
+
     }*/
 
   g_free (text);
 }
 
-static void xml_param_end (SerializeState *ss)
+static void
+xml_param_end (SerializeState *ss)
 {
   g_string_append (ss->buf, "</param>\n");
 }
 
-static void xml_param (SerializeState *ss,
-                       gint            indent,
-                       const gchar    *key,
-                       const gchar    *value)
+static void
+xml_param (SerializeState *ss,
+           gint            indent,
+           const gchar    *key,
+           const gchar    *value)
 {
   g_assert (key);
 
@@ -898,10 +907,11 @@ static void xml_param (SerializeState *ss,
   }
 }
 
-static void xml_curve_point (SerializeState *ss,
-			     gint            indent,
-			     gfloat          x,
-			     gfloat          y)
+static void
+xml_curve_point (SerializeState *ss,
+                 gint            indent,
+                 gfloat          x,
+                 gfloat          y)
 {
   gchar str[64];
   ind; g_string_append (ss->buf, "<curve-point x='");
@@ -913,9 +923,10 @@ static void xml_curve_point (SerializeState *ss,
   g_string_append (ss->buf, "'/>\n");
 }
 
-static void xml_curve (SerializeState *ss,
-		       gint            indent,
-		       GeglCurve      *curve)
+static void
+xml_curve (SerializeState *ss,
+           gint            indent,
+           GeglCurve      *curve)
 {
   gchar str[G_ASCII_DTOSTR_BUF_SIZE];
   gdouble min_y, max_y;
@@ -940,17 +951,18 @@ static void xml_curve (SerializeState *ss,
   ind; g_string_append (ss->buf, "</curve>\n");
 }
 
-static void serialize_properties (SerializeState *ss,
-                                  gint            indent,
-                                  GeglNode       *node)
+static void
+serialize_properties (SerializeState *ss,
+                      gint            indent,
+                      GeglNode       *node)
 {
   GParamSpec **properties;
   guint        n_properties;
   gboolean     got_a_param = FALSE;
   gint         i;
 
-  properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
-
+  properties = gegl_list_properties (gegl_node_get_operation (node),
+                                     &n_properties);
 
   for (i = 0; i < n_properties; i++)
     {
@@ -1066,9 +1078,10 @@ static void serialize_properties (SerializeState *ss,
   g_free (properties);
 }
 
-static void serialize_layer (SerializeState *ss,
-                             gint            indent,
-                             GeglNode       *layer)
+static void
+serialize_layer (SerializeState *ss,
+                 gint            indent,
+                 GeglNode       *layer)
 {
   gchar  *name;
   gchar  *src;
@@ -1120,9 +1133,10 @@ static void serialize_layer (SerializeState *ss,
   g_string_append (ss->buf, "/>\n");
 }
 
-static void add_stack (SerializeState *ss,
-                       gint            indent,
-                       GeglNode       *head)
+static void
+add_stack (SerializeState *ss,
+           gint            indent,
+           GeglNode       *head)
 {
   /*ind; g_string_append (ss->buf, "<stack>\n");
      indent+=2;*/
@@ -1272,27 +1286,25 @@ gchar *
 gegl_node_to_xml (GeglNode    *gegl,
                   const gchar *path_root)
 {
-  gchar          *ret;
-  SerializeState *ss = g_new0 (SerializeState, 1);
+  SerializeState  ss;
 
-  ss->buf       = g_string_new ("");
-  ss->clones    = g_hash_table_new (NULL, NULL);
-  ss->terse     = FALSE;
-  ss->path_root = path_root;
+  ss.buf         = g_string_new ("");
+  ss.path_root   = path_root;
+  ss.clone_count = 0;
+  ss.clones      = g_hash_table_new (NULL, NULL);
+  ss.terse       = FALSE;
 
   gegl = gegl_node_get_output_proxy (gegl, "output");
 
-  g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
-  g_string_append (ss->buf, "<gegl>\n");
+  g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
+  g_string_append (ss.buf, "<gegl>\n");
 
-  add_stack (ss, 2, gegl);
+  add_stack (&ss, 2, gegl);
 
-  g_string_append (ss->buf, "</gegl>\n");
+  g_string_append (ss.buf, "</gegl>\n");
 
-  g_hash_table_foreach (ss->clones, free_clone_id, NULL);
-  g_hash_table_destroy (ss->clones);
+  g_hash_table_foreach (ss.clones, free_clone_id, NULL);
+  g_hash_table_destroy (ss.clones);
 
-  ret = g_string_free (ss->buf, FALSE);
-  g_free (ss);
-  return ret;
+  return g_string_free (ss.buf, FALSE);
 }
