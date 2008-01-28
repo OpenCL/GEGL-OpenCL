@@ -21,12 +21,14 @@
 #include "gegl-store.h"
 #include <string.h>
 
-GeglNode *gegl_children (GeglNode *item)
+GeglNode *
+gegl_children (GeglNode *item)
 {
   return gegl_node_get_producer (item, "aux", NULL);
 }
 
-GeglNode *gegl_next_sibling (GeglNode *item)
+GeglNode *
+gegl_next_sibling (GeglNode *item)
 {
   if (!strcmp (gegl_node_get_operation (item), "clone"))
     return NULL;
@@ -38,10 +40,10 @@ node_get_consumer (GeglNode     *node,
                    const gchar  *output_pad,
                    gchar       **input_pad_name)
 {
-  GeglNode   **nodes = NULL;
-  GeglNode    *ret=NULL;
+  GeglNode    **nodes = NULL;
+  GeglNode     *ret   = NULL;
   const gchar **pads;
-  gint       count = 0;
+  gint          count = 0;
 
   if (!node)
     return ret;
@@ -62,11 +64,12 @@ node_get_consumer (GeglNode     *node,
 }
 
 
-GeglNode *gegl_previous_sibling (GeglNode *item)
+GeglNode *
+gegl_previous_sibling (GeglNode *item)
 {
   GeglNode *node;
   gchar    *pad;
-  
+
   node = node_get_consumer (item, "output", &pad);
   if (node)
     {
@@ -80,7 +83,8 @@ GeglNode *gegl_previous_sibling (GeglNode *item)
   return node;
 }
 
-GeglNode *gegl_parent (GeglNode *item)
+GeglNode *
+gegl_parent (GeglNode *item)
 {
   GeglNode *iter = item;
 
@@ -92,20 +96,21 @@ GeglNode *gegl_parent (GeglNode *item)
     return NULL;
 
   {
-    gint n_consumers;
     GeglNode    **nodes;
     const gchar **pads;
+    gint          n_consumers;
 
     n_consumers = gegl_node_get_consumers (iter, "output", &nodes, &pads);
-    if (n_consumers >0 &&
+    if (n_consumers > 0 &&
         !strcmp (pads[0], "aux"))
       {
-        GeglNode *ret=nodes[0];
+        GeglNode *ret = nodes[0];
         g_free (nodes);
         g_free (pads);
         return ret;
       }
   }
+
   return NULL;
 }
 
