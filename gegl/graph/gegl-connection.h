@@ -26,6 +26,7 @@ GeglConnection * gegl_connection_new             (GeglNode       *sink,
                                                   GeglPad        *sink_pad,
                                                   GeglNode       *source,
                                                   GeglPad        *source_pad);
+void             gegl_connection_destroy         (GeglConnection *self);
 GeglNode       * gegl_connection_get_source_node (GeglConnection *self);
 GeglNode       * gegl_connection_get_sink_node   (GeglConnection *self);
 GeglPad        * gegl_connection_get_source_pad  (GeglConnection *self);

@@ -39,7 +39,7 @@ gegl_connection_new (GeglNode *sink,
                      GeglNode *source,
                      GeglPad  *source_pad)
 {
-  GeglConnection *self = g_new0 (GeglConnection, 1);
+  GeglConnection *self = g_slice_new0 (GeglConnection);
 
   self->sink       = sink;
   self->sink_pad   = sink_pad;
@@ -47,6 +47,12 @@ gegl_connection_new (GeglNode *sink,
   self->source_pad = source_pad;
 
   return self;
+}
+
+void
+gegl_connection_destroy (GeglConnection *self)
+{
+  g_slice_free (GeglConnection, self);
 }
 
 GeglNode *

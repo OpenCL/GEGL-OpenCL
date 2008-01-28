@@ -633,7 +633,7 @@ gegl_node_disconnect (GeglNode    *sink,
       sink->sources = g_slist_remove (sink->sources, connection);
       source->sinks = g_slist_remove (source->sinks, connection);
 
-      g_free (connection);
+      gegl_connection_destroy (connection);
 
       return TRUE;
     }

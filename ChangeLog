@@ -1,5 +1,12 @@
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
+	* gegl/graph/gegl-connection.[ch]: added gegl_connection_destroy()
+	and GSlice-allocate the GeglConnection structs.
+
+	* gegl/graph/gegl-node.c: changed accordingly.
+
+2008-01-28  Sven Neumann  <sven@gimp.org>
+
 	* gegl/gegl-chant.h: Allocate the GeglChant0 struct using GSlice.
 	Removed redundant G_IS_OBJECT() checks.
 
