@@ -27,7 +27,8 @@ gegl_extension_handler_register (const gchar *extension,
                                  const gchar *handler)
 {
   if (!handlers)
-    handlers = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+    handlers = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
   g_hash_table_insert (handlers, g_strdup (extension), g_strdup (handler));
 }
 
@@ -38,9 +39,11 @@ gegl_extension_handler_get (const gchar *extension)
 
   if (!handlers)
     return NULL;
+
   handler = g_hash_table_lookup (handlers, extension);
   if (handler)
     return handler;
+
   return "magick-load";
 }
 
