@@ -1,3 +1,10 @@
+2008-01-29  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation-area-filter.c
+	* gegl/operation/gegl-operation-composer.c: #include stuff only
+	at the beginning of the file, reorder some declarations and
+	function definitions, indentation, spacing, blah.
+
 2008-01-29  Sven Neumann  <sven@gimp.org>
 
 	* operations/render/color.c

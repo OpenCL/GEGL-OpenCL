@@ -15,6 +15,7 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
+
 #define GEGL_INTERNAL
 
 #include "config.h"
@@ -23,6 +24,7 @@
 #include <string.h>
 #include "gegl-types.h"
 #include "gegl-operation-area-filter.h"
+#include <math.h>
 #include "gegl-utils.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-connection.h"
@@ -30,16 +32,8 @@
 #include "buffer/gegl-region.h"
 #include "buffer/gegl-buffer.h"
 
-#include <string.h>
 
-G_DEFINE_TYPE (GeglOperationAreaFilter, gegl_operation_area_filter, GEGL_TYPE_OPERATION_FILTER)
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
+static void          prepare                 (GeglOperation       *operation);
 static GeglRectangle get_defined_region      (GeglOperation       *operation);
 static GeglRectangle compute_input_request   (GeglOperation       *operation,
                                               const gchar         *input_pad,
@@ -47,6 +41,9 @@ static GeglRectangle compute_input_request   (GeglOperation       *operation,
 static GeglRectangle compute_affected_region (GeglOperation       *operation,
                                               const gchar         *input_pad,
                                               const GeglRectangle *input_region);
+
+G_DEFINE_TYPE (GeglOperationAreaFilter, gegl_operation_area_filter,
+               GEGL_TYPE_OPERATION_FILTER)
 
 static void
 gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
@@ -68,14 +65,21 @@ gegl_operation_area_filter_init (GeglOperationAreaFilter *self)
   self->top=0;
 }
 
-#include <math.h>
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
-                                                                     "input");
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglRectangle            result = { 0, };
+  GeglRectangle           *in_rect;
+
+  in_rect = gegl_operation_source_get_defined_region (operation,
+                                                      "input");
 
   if (!in_rect)
     return result;
@@ -93,16 +97,15 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-#include "gegl-utils.h"
-
 static GeglRectangle
 compute_input_request (GeglOperation       *operation,
                        const gchar         *input_pad,
                        const GeglRectangle *region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglRectangle       rect;
-  GeglRectangle       defined;
+  GeglRectangle            rect;
+  GeglRectangle            defined;
+
   defined = get_defined_region (operation);
   gegl_rectangle_intersect (&rect, region, &defined);
 

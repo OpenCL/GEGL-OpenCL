@@ -62,13 +62,14 @@ static GeglRectangle compute_input_request (GeglOperation       *self,
                                             const GeglRectangle *roi);
 
 
-G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer, GEGL_TYPE_OPERATION)
+G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer,
+               GEGL_TYPE_OPERATION)
 
 
 static void
 gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
 {
-  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   object_class->set_property = set_property;
