@@ -354,17 +354,19 @@ process (GeglOperation       *operation,
   {
     if (p->ic && !decode_frame (self, self->frame))
       {
-        gint pxsize;
-        gchar *buf;
-        gint x,y;
+        guchar *buf;
+        gint    pxsize;
+        gint    x,y;
+
         g_object_get (output, "px-size", &pxsize, NULL);
-        buf = g_malloc (p->width * p->height * pxsize);
+        buf = g_new (guchar, p->width * p->height * pxsize);
+
         for (y=0; y < p->height; y++)
           {
-            guchar *dst = (guchar*)buf + y * p->width * 4;
-            guchar *ysrc = (guchar*) (p->lavc_frame->data[0] + y * p->lavc_frame->linesize[0]);
-            guchar *usrc = (guchar*) (p->lavc_frame->data[1] + y/2 * p->lavc_frame->linesize[1]);
-            guchar *vsrc = (guchar*) (p->lavc_frame->data[2] + y/2 * p->lavc_frame->linesize[2]);
+            guchar       *dst  = buf + y * p->width * 4;
+            const guchar *ysrc = p->lavc_frame->data[0] + y * p->lavc_frame->linesize[0];
+            const guchar *usrc = p->lavc_frame->data[1] + y/2 * p->lavc_frame->linesize[1];
+            const guchar *vsrc = p->lavc_frame->data[2] + y/2 * p->lavc_frame->linesize[2];
 
             for (x=0;x < p->width; x++)
               {
@@ -379,7 +381,7 @@ process (GeglOperation       *operation,
                 byteclamp(R);\
                 byteclamp(G);\
                 byteclamp(B);\
-              }while(0)
+              } while(0)
 
               YUV82RGB8 (*ysrc, *usrc, *vsrc, R, G, B);
 
@@ -388,8 +390,8 @@ process (GeglOperation       *operation,
               ysrc ++;
               if (x % 2)
                 {
-                  usrc ++;
-                  vsrc ++;
+                  usrc++;
+                  vsrc++;
                 }
               }
           }

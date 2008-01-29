@@ -1,3 +1,11 @@
+2008-01-29  Sven Neumann  <sven@gimp.org>
+
+	* operations/enhance/bilateral-filter.c
+	* operations/enhance/snn-mean.c
+	* operations/io/ff-load.c: use g_new() instead of g_malloc().
+
+	* operations/io/load.c (prepare): fixed bug in error handling.
+
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
 	* operations/blur/box-blur.c

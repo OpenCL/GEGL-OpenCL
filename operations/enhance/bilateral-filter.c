@@ -87,11 +87,11 @@ bilateral_filter (GeglBuffer *src,
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
-  gint width = (int)radius*2+1;
+  gint width = (gint) radius * 2 + 1;
 
-  gauss = g_alloca (width*width*sizeof(gfloat));
-  src_buf = g_malloc0 (gegl_buffer_get_pixel_count(src) * 4 *4);
-  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count(dst) * 4 * 4);
+  gauss = g_newa (gfloat, width * width);
+  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count(src) * 4);
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count(dst) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
