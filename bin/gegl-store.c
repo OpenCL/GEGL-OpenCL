@@ -574,7 +574,7 @@ gegl_store_get_value (GtkTreeModel *tree_model,
           g_value_set_string (value, STOCK_THRESHOLD);
           return;
         }
-        free (type);
+        g_free (type);
           }
 
 /* *INDENT-ON* */
@@ -638,9 +638,9 @@ gegl_store_get_value (GtkTreeModel *tree_model,
                 }
               property = gegl_next_sibling (property);
               if (prop_name)
-                free (prop_name);
+                g_free (prop_name);
               if (prop_value)
-                free (prop_value);
+                g_free (prop_value);
             }
           g_value_set_string (value, str->str);
           g_string_free (str, TRUE);

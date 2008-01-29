@@ -49,10 +49,10 @@ static void popup_properties (GeglNode *node)
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox), vbox);
 
   g_signal_connect_swapped (dialog,
-                            "response", 
+                            "response",
                             G_CALLBACK (gtk_widget_destroy),
                             dialog);
-  
+
   gtk_widget_show_all (dialog);
 }
 
@@ -136,9 +136,9 @@ menu_item_activate (GtkWidget *widget, gpointer user_data)
     property_editor_rebuild (bauxite->property_editor, item);
 
   if (old_name)
-    free (old_name);
+   g_free (old_name);
   if (old_type)
-    free (old_type);
+    g_free (old_type);
 #endif
 }
 
@@ -413,7 +413,7 @@ typeeditor_optype (GtkSizeGroup *col1,
   GtkWidget *button_arrow;
   char     *current_type;
   GeglNode  *item = NULL;
-  
+
   if (node_editor)
     item =node_editor->node;
 
@@ -454,7 +454,7 @@ typeeditor_optype (GtkSizeGroup *col1,
   if (current_type)
     {
       gtk_entry_set_text (GTK_ENTRY (entry), current_type);
-      free (current_type);
+      g_free (current_type);
     }
   gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
   gtk_entry_set_completion (GTK_ENTRY (entry), completion);
@@ -516,6 +516,6 @@ completion_match_selected (GtkEntryCompletion *completion,
   gtk_entry_set_text (GTK_ENTRY (entry), new_value);
   entry_activate (GTK_ENTRY (entry), user_data);
 
-  free (new_value);
+  g_free (new_value);
   return TRUE;
 }

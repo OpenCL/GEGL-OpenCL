@@ -1,3 +1,8 @@
+2008-01-29  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/editor-optype.c:
+	* bin/gegl-store.c: Use g_free() instead of free().
+
 2008-01-29  Sven Neumann  <sven@gimp.org>
 
 	* operations/workshop/hstack.c: define GEGL_CHANT_C_FILE to make
