@@ -54,14 +54,14 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *buf;
 
-  buf = g_malloc (result->width * result->height * 4);
+  buf = g_new (gfloat, result->width * result->height);
     {
-      gfloat *dst=buf;
-      gint y;
-      for (y=0; y < result->height; y++)
+      gfloat *dst = buf;
+      gint    y;
+      for (y = 0; y < result->height; y++)
         {
           gint x;
-          for (x=0; x < result->width ; x++)
+          for (x = 0; x < result->width ; x++)
             {
               gfloat val;
 

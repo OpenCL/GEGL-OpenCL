@@ -154,13 +154,17 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
-  guchar *data = g_malloc0 (result->width * result->height * 4);
-  cairo_t *cr;
+  guchar          *data = g_new0 (guchar, result->width * result->height * 4);
+  cairo_t         *cr;
+  cairo_surface_t *surface;
 
-  cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32,
-    result->width, result->height, result->width * 4);
+  surface = cairo_image_surface_create_for_data (data,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 result->width,
+                                                 result->height,
+                                                 result->width * 4);
   cr = cairo_create (surface);
   cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
   cairo_translate (cr, -result->x, -result->y);
@@ -235,7 +239,7 @@ static void
 finalize (GObject *object)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-    
+
   if (self->priv)
     {
       CachedExtent *extent = (CachedExtent*)self->priv;

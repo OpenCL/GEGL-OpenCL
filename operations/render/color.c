@@ -62,13 +62,13 @@ process (GeglOperation       *operation,
                        &color[2],
                        &color[3]);
 
-  buf = g_malloc (result->width * result->height * 4 * sizeof (gfloat));
+  buf = g_new (gfloat, result->width * result->height * 4);
     {
-      gfloat *dst=buf;
-      gint i;
-      for (i=0; i < result->height *result->width ; i++)
+      gfloat *dst = buf;
+      gint    i;
+      for (i = 0; i < result->height * result->width ; i++)
         {
-          memcpy(dst, color, 4*sizeof(gfloat));
+          memcpy(dst, color, 4 * sizeof (gfloat));
           dst += 4;
         }
     }

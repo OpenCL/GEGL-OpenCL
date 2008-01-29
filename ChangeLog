@@ -1,5 +1,11 @@
 2008-01-29  Sven Neumann  <sven@gimp.org>
 
+	* operations/render/color.c
+	* operations/render/text.c
+	* operations/render/noise.c: use g_new() instead of g_malloc().
+
+2008-01-29  Sven Neumann  <sven@gimp.org>
+
 	* operations/enhance/bilateral-filter.c
 	* operations/enhance/snn-mean.c
 	* operations/io/ff-load.c: use g_new() instead of g_malloc().

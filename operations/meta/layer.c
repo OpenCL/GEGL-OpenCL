@@ -101,7 +101,7 @@ prepare (GeglOperation *operation)
 
           if (!g_file_test (self->src, G_FILE_TEST_EXISTS))
             {
-              gchar *name = g_filename_display_name (self->path);
+              gchar *name = g_filename_display_name (self->src);
               gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
               g_free (name);
               g_warning ("load: %s", tmp);
