@@ -91,8 +91,8 @@ static void c2g (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
+  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
   for (y=radius; y<gegl_buffer_get_height (dst)-radius; y++)

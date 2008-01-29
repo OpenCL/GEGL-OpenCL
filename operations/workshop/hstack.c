@@ -23,7 +23,7 @@
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
-//#define GEGL_CHANT_C_FILE       "hstack.c"
+#define GEGL_CHANT_C_FILE       "hstack.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -118,8 +118,8 @@ process (GeglOperation       *operation,
   temp_aux = gegl_buffer_create_sub_buffer (aux, result);
 
     {
-      gfloat *buf = g_malloc0 (result->width * result->height * 4 * 4);
-      gfloat *bufB = g_malloc0 (result->width * result->height * 4 * 4);
+      gfloat *buf  = g_new0 (gfloat, result->width * result->height * 4);
+      gfloat *bufB = g_new0 (gfloat, result->width * result->height * 4);
 
       gegl_buffer_get (temp_in, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
       gegl_buffer_get (temp_aux, 1.0, NULL, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);

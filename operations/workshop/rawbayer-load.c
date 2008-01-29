@@ -86,15 +86,12 @@ load_buffer (GeglChantOperation *op_raw_load)
       gint width, height, val_max;
       char newline;
 
-      command = g_malloc (strlen (op_raw_load->path) + 128);
-      if (!command)
-        return;
-      sprintf (command, "dcraw -j -d -4 -c '%s'\n", op_raw_load->path);
+      command = g_strdup_printf ("dcraw -j -d -4 -c '%s'\n", op_raw_load->path);
       pfp = popen (command, PIPE_MODE);
-      free (command);
+      g_free (command);
 
       if (fscanf (pfp, "P6 %d %d %d %c",
-         &width, &height, &val_max, &newline) != 4)
+                  &width, &height, &val_max, &newline) != 4)
         {
           pclose (pfp);
           g_warning ("not able to aquire raw data");
@@ -102,11 +99,11 @@ load_buffer (GeglChantOperation *op_raw_load)
         }
 
       {
-        GeglRectangle extent = {0,0,width,height};
+        GeglRectangle extent = { 0, 0, width, height };
         op_raw_load->priv = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
       }
          {
-           guchar *buf=g_malloc (width * height * 3 * 2);
+           guchar *buf = g_new (guchar, width * height * 3 * 2);
            fread (buf, 1, width * height * 3 * 2, pfp);
            if(strstr (op_raw_load->path, "rawbayerS")){
              gint i;

@@ -1,3 +1,29 @@
+2008-01-29  Sven Neumann  <sven@gimp.org>
+
+	* operations/workshop/hstack.c: define GEGL_CHANT_C_FILE to make
+	it compile again.
+
+	* operations/workshop/rawbayer-load.c (load_buffer): fixed string
+	handling.
+
+	* operations/workshop/box-max.c
+	* operations/workshop/box-min.c
+	* operations/workshop/c2g.c
+	* operations/workshop/demosaic-bimedian.c
+	* operations/workshop/demosaic-simple.c
+	* operations/workshop/disc-percentile.c
+	* operations/workshop/hstack.c
+	* operations/workshop/kuwahara-max.c
+	* operations/workshop/kuwahara-min.c
+	* operations/workshop/kuwahara.c
+	* operations/workshop/lens-correct.c
+	* operations/workshop/line-profile.c
+	* operations/workshop/max-envelope.c
+	* operations/workshop/mblur.c
+	* operations/workshop/min-envelope.c
+	* operations/workshop/snn-percentile.c
+	* operations/workshop/stress.c: use g_new() instead of g_malloc().
+
 2008-01-29  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/operation/gegl-operation-area-filter.c

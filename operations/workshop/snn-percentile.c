@@ -143,8 +143,8 @@ snn_percentile (GeglBuffer *src,
   gfloat *dst_buf;
   RankList list = {0};
 
-  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 4);
+  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 

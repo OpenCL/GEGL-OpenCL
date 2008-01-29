@@ -227,11 +227,11 @@ copy_through_lens (LensCorrectionModel *oip,
   }
 
   /* Get src pixels. */
-  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4 * 3);
+  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 3);
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGB float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   /* Get buffer in which to place dst pixels. */
-  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 3);
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
 
   /* Compute each dst pixel in turn and store into dst buffer. */
   ccm[0] = &oip->red;

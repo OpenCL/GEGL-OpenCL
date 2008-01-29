@@ -79,10 +79,9 @@ process (GeglOperation       *operation,
       temp_in = gegl_buffer_create_sub_buffer (input, result);
 
       {
-        gint pixels  = result->width*result->height;
-        gint bufsize = pixels*4*sizeof(gfloat);
-        gfloat *buf = g_malloc(bufsize);
-        gfloat *acc = g_malloc(bufsize);
+        gint pixels = result->width * result->height;
+        gfloat *buf = g_new (gfloat, pixels * 4);
+        gfloat *acc = g_new (gfloat, pixels * 4);
         gfloat dampness;
         gint i;
         gegl_buffer_get (p->acc, 1.0, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);

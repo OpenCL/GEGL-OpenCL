@@ -63,7 +63,7 @@ process (GeglOperation       *operation,
   }
 
   {
-    guchar  *buf = g_malloc0 (width * height * 4);
+    guchar  *buf = g_new0 (guchar, width * height * 4);
     cairo_t *cr;
 
     cairo_surface_t *surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_ARGB32, width, height, width * 4);

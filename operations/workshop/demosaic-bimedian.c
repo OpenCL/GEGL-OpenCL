@@ -84,8 +84,8 @@ demosaic (GeglChantO *op,
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_malloc0 (gegl_buffer_get_pixel_count (src) * 4);
-  dst_buf = g_malloc0 (gegl_buffer_get_pixel_count (dst) * 4 * 3);
+  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src));
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf,
            GEGL_AUTO_ROWSTRIDE);
