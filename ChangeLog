@@ -5,6 +5,7 @@
 	* operations/io/ff-load.c: use g_new() instead of g_malloc().
 
 	* operations/io/load.c (prepare): fixed bug in error handling.
+	* operations/meta/layer.c (prepare): fixed the same bug here.
 
 	* operations/io/raw-load.c (load_buffer): fixed string handling.
 

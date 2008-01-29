@@ -101,8 +101,9 @@ prepare (GeglOperation *operation)
 
           if (!g_file_test (self->src, G_FILE_TEST_EXISTS))
             {
-              gchar *tmp = g_malloc(strlen (self->src) + 100);
-              g_sprintf (tmp, "File '%s' does not exist", self->src);
+              gchar *name = g_filename_display_name (self->path);
+              gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
+              g_free (name);
               g_warning ("load: %s", tmp);
               gegl_node_set (priv->load,
                              "operation", "text",
@@ -115,10 +116,10 @@ prepare (GeglOperation *operation)
             {
               if (extension)
                 handler = gegl_extension_handler_get (extension);
-              gegl_node_set (priv->load, 
+              gegl_node_set (priv->load,
                              "operation", handler,
                              NULL);
-              gegl_node_set (priv->load, 
+              gegl_node_set (priv->load,
                              "path",  self->src,
                              NULL);
             }
