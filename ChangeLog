@@ -6,6 +6,8 @@
 
 	* operations/io/load.c (prepare): fixed bug in error handling.
 
+	* operations/io/raw-load.c (load_buffer): fixed string handling.
+
 2008-01-28  Sven Neumann  <sven@gimp.org>
 
 	* operations/blur/box-blur.c

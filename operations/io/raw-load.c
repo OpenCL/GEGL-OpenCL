@@ -94,18 +94,14 @@ load_buffer (GeglChantOperation *op_raw_load)
 {
   if (!op_raw_load->priv)
     {
-      FILE *pfp;
+      FILE  *pfp;
       gchar *command;
+      gint   width, height, val_max;
+      gchar  newline;
 
-      gint width, height, val_max;
-      char newline;
-
-      command = g_malloc (strlen (op_raw_load->path) + 128);
-      if (!command)
-        return;
-      sprintf (command, "dcraw -4 -c '%s'\n", op_raw_load->path);
+      command = g_strdup_printf ("dcraw -4 -c '%s'\n", op_raw_load->path);
       pfp = popen (command, PIPE_MODE);
-      free (command);
+      g_free (command);
 
       if (fscanf (pfp, "P6 %d %d %d %c",
          &width, &height, &val_max, &newline) != 4)
@@ -116,8 +112,8 @@ load_buffer (GeglChantOperation *op_raw_load)
         }
 
         {
-          GeglRectangle extent = {0,0,width, height};
-          op_raw_load->priv = (gpointer)gegl_buffer_new (&extent,
+          GeglRectangle extent = { 0, 0, width, height };
+          op_raw_load->priv = (gpointer) gegl_buffer_new (&extent,
                                                babl_format_new (
                                                  babl_model ("RGB"),
                                                  babl_type ("u16"),
@@ -127,8 +123,8 @@ load_buffer (GeglChantOperation *op_raw_load)
                                                  NULL));
         }
          {
-           
-           guchar *buf=g_malloc (width * height * 3 * 2);
+
+           guint16 *buf = g_new (guint16, width * height * 3);
            fread (buf, 1, width * height * 3 * 2, pfp);
            gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv),
                             NULL,
