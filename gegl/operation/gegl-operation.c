@@ -58,7 +58,6 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->categories              = NULL;
   klass->attach                  = attach;
   klass->prepare                 = NULL;
-  klass->tickle                  = NULL;
   klass->no_cache                = FALSE;
   klass->get_defined_region      = get_defined_region;
   klass->compute_affected_region = compute_affected_region;
@@ -241,8 +240,6 @@ gegl_operation_prepare (GeglOperation *self)
 
   if (klass->prepare)
     klass->prepare (self);
-  if (klass->tickle)
-    klass->tickle (self);
 }
 
 GeglNode *
@@ -365,18 +362,6 @@ compute_affected_region (GeglOperation       *self,
 
   return *input_region;
 }
-
-void
-gegl_operation_class_set_name (GeglOperationClass *klass,
-                               const gchar        *new_name)
-{
-  gchar *name_copy;
-
-  name_copy = g_strdup (new_name);
-  g_strdelimit (name_copy, "_", '-');
-  klass->name = name_copy;
-}
-
 
 /* returns a freshly allocated list of the properties of the object, does not list
  * the regular gobject properties of GeglNode ('name' and 'operation') */

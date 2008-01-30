@@ -634,8 +634,8 @@ gegl_chant_class_init (ChantClass * klass)
   operation_class->get_defined_region = get_defined_region;
 #endif
 
-#define M_GEGL_CHANT_SET_NAME_EXTENDED(name) \
-  gegl_operation_class_set_name (operation_class, #name);
+#define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \
+  operation_class->name=g_strdelimit (g_strdup (#nam), "_", '-');
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
 

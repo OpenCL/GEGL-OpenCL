@@ -40,6 +40,11 @@ typedef struct _GeglModule     GeglModule;
 typedef struct _GeglModuleInfo GeglModuleInfo;
 typedef struct _GeglModuleDB   GeglModuleDB;
 
+/***
+ * Writing GEGL operations
+ *
+ */
+
 /*#include <geglmodule.h>*/
 
 /*  increment the ABI version each time one of the following changes:
@@ -48,7 +53,8 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  *  - GeglOperation or one of it's base classes changes. (XXX:-
  *    should be extended so a range of abi versions are accepted.
  */
-#define GEGL_MODULE_ABI_VERSION 0x0004
+
+#define GEGL_MODULE_ABI_VERSION 0x0005
 
 struct _GeglModuleInfo
 {

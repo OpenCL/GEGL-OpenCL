@@ -105,6 +105,7 @@ gegl_operation_remap_class_init (GeglOperationRemapClass *klass)
   object_class->get_property             = get_property;
   object_class->set_property             = set_property;
 
+  operation_class->name                  = "remap";
   operation_class->categories            = "core";
   operation_class->no_cache              = TRUE;
   operation_class->process               = process;
@@ -115,7 +116,6 @@ gegl_operation_remap_class_init (GeglOperationRemapClass *klass)
   operation_class->compute_input_request = compute_input_request;
   operation_class->compute_affected_region = compute_affected_region;
 
-  gegl_operation_class_set_name (operation_class, "remap");
 
 
   g_object_class_install_property (object_class, PROP_OUTPUT,

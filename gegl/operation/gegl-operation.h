@@ -50,10 +50,10 @@ struct _GeglOperationClass
 {
   GObjectClass  parent_class;
 
-  const gchar      *name;        /* name used to refer to this type of
+  const gchar  *name;            /* name used to refer to this type of
                                     operation in GEGL */
-  gchar            *description; /* textual description of the operation */
-  char             *categories;  /* a colon seperated list of categories */
+  const gchar  *description;     /* textual description of the operation */
+  const gchar  *categories;      /* a colon seperated list of categories */
 
 
   gboolean          no_cache;    /* do not create a cache for this operation */
@@ -63,18 +63,15 @@ struct _GeglOperationClass
    */
   void            (*attach)               (GeglOperation *operation);
 
-  /* called as a refresh before any of the region needs getters, used in
-   * the area base class for instance.
-   */
-  void            (*tickle)               (GeglOperation *operation);
-
-  /* prepare the node for processing (all properties will be set) override this
-   * if you are creating a meta operation (using the node as a GeglGraph).
+  /* prepare() is called on each operation providing data to a node that
+   * is requested to provide a rendered result. When prepare is called all
+   * properties are known. This is the time to set desired pixel formats
+   * for input and output pads.
    */
   void            (*prepare)              (GeglOperation *operation);
 
-  /* Returns a bounding rectangle for the data that is defined by this op. (is
-   * already implemented in GeglOperationPointFilter and
+  /* Returns the bounding rectangle for the data that is defined by this op.
+   * (is already implemented in GeglOperationPointFilter and
    * GeglOperationPointComposer, GeglOperationAreaFilter base classes.
    */
   GeglRectangle   (*get_defined_region)   (GeglOperation *operation);
@@ -102,19 +99,26 @@ struct _GeglOperationClass
   GeglRectangle   (*adjust_result_region)  (GeglOperation       *operation,
                                             const GeglRectangle *roi);
 
-  /* Returns the node providing data for a specific location
+  /* XXX: What is GeglNode doing in this part of the API?
+   * Returns the node providing data for a specific location within the
+   * operations output. Does this recurse?, perhaps it should only point
+   * out which pad the data is coming from?
    */
   GeglNode*       (*detect)                (GeglOperation       *operation,
                                             gint                 x,
                                             gint                 y);
 
+  /* Perform processing for the @output_pad, pad The result_rect provides
+   * the region to process. For sink operations @output_pad can be ignored
+   * but the result_rect is then then indicating the data available for
+   * consumption.
+   */
   gboolean        (*process)               (GeglOperation       *operation,
                                             GeglNodeContext     *context,
                                             const gchar         *output_pad,
                                             const GeglRectangle *result_rect);
 };
 
-/* returns|registers the gtype for GeglOperation */
 GType           gegl_operation_get_type             (void) G_GNUC_CONST;
 
 /* retrieves the bounding box of a connected input */
@@ -128,10 +132,6 @@ void            gegl_operation_set_source_region    (GeglOperation       *operat
                                                      const gchar         *pad_name,
                                                      const GeglRectangle *region);
 
-
-/* virtual method invokers that depends only on the set properties of a
- * operation|node
- */
 
 /* retrieves the node providing data to a named input pad */
 GeglNode      * gegl_operation_get_source_node      (GeglOperation *operation,
@@ -164,13 +164,6 @@ gboolean        gegl_operation_process              (GeglOperation       *operat
                                                      const gchar         *output_pad,
                                                      const GeglRectangle *result_rect);
 
-GParamSpec   ** gegl_list_properties                (const gchar *operation_type,
-                                                     guint       *n_properties_p);
-
-/* set the name of an operation, transforms all occurences of "_" into "-" */
-void       gegl_operation_class_set_name            (GeglOperationClass *operation,
-                                                     const gchar        *name);
-
 /* create a pad for a specified property for this operation, this method is
  * to be called from the attach method of operations, most operations do not
  * have to care about this since a super class like filter, sink, source or
@@ -185,9 +178,11 @@ void       gegl_operation_create_pad                (GeglOperation *operation,
 void       gegl_operation_set_format                (GeglOperation *operation,
                                                      const gchar   *pad_name,
                                                      const Babl    *format);
+
+/*
 const Babl * gegl_operation_get_format              (GeglOperation *operation,
                                                      const gchar   *pad_name);
-
+*/
 
 
 G_END_DECLS

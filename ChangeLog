@@ -1,3 +1,15 @@
+2008-01-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.[ch]: removed
+	gegl_operation_class_set_name, removed tickle virtual function.
+	* gegl/gegl-old-chant.h: directly implement
+	gegl_operation_class_set_name substitution.
+	* operations/affine/chant.h: directly implement
+	gegl_operation_class_set_name substitution.
+	* gegl/gegl-plugin.h: increased GEGL_MODULE_ABI_VERSION to 0x05
+	* operations/color/remap.c: (gegl_operation_remap_class_init): set
+	operation_class->name directly instead of using deprecated function.
+
 2008-01-29  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/editor-optype.c:
