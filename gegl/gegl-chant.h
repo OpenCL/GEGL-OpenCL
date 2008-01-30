@@ -109,7 +109,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_META
-#include <operation/gegl-operation.h>
+#include <operation/gegl-operation-meta.h>
 struct _GeglChant
 {
   GeglOperationMeta parent_instance;
