@@ -20,7 +20,7 @@
  * with the newer caching system
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(composite_op, "over", "Composite operation to use")
 gegl_chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
@@ -30,18 +30,12 @@ gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 
 #else
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            layer
-#define GEGL_CHANT_DESCRIPTION     "A layer in the traditional sense"
-#define GEGL_CHANT_SELF            "layer.c"
-#define GEGL_CHANT_CATEGORIES      "meta"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
-#include <glib/gprintf.h>
-
-typedef struct _Priv Priv;
-struct _Priv
+#include <gegl-plugin.h>
+#include <operation/gegl-operation-meta.h>
+struct _GeglChant
 {
+  GeglOperationMeta parent_instance;
+  gpointer          properties;
   GeglNode *self;
   GeglNode *input;
   GeglNode *aux;
@@ -60,32 +54,41 @@ struct _Priv
   gchar *p_composite_op;
 };
 
+typedef struct
+{
+  GeglOperationMetaClass parent_class;
+} GeglChantClass;
+
+#define GEGL_CHANT_C_FILE "layer.c"
+#include "gegl-chant.h"
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
+
+#include <glib/gprintf.h>
+
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv;
-  priv = (Priv*)self->priv;
-
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChant *self = GEGL_CHANT (operation);
 
   /* warning: this might trigger regeneration of the graph,
    *          for now this is evaded by just ignoring additional
    *          requests to be made into members of the graph
    */
 
-  if (!priv->p_composite_op || strcmp (priv->p_composite_op, self->composite_op))
+  if (!self->p_composite_op || strcmp (self->p_composite_op, o->composite_op))
     {
-      gegl_node_set (priv->composite_op,
-                     "operation", self->composite_op,
+      gegl_node_set (self->composite_op,
+                     "operation", o->composite_op,
                      NULL);
-      if (priv->p_composite_op)
-        g_free (priv->p_composite_op);
-      priv->p_composite_op = g_strdup (self->composite_op);
+      if (self->p_composite_op)
+        g_free (self->p_composite_op);
+      self->p_composite_op = g_strdup (o->composite_op);
     }
 
-  if (self->src[0]==0 && priv->cached_path == NULL)
+  if (o->src[0]==0 && self->cached_path == NULL)
     {
-      gegl_node_connect_from (priv->opacity, "input", priv->aux, "output");
+      gegl_node_connect_from (self->opacity, "input", self->aux, "output");
     }
   else
     { /* FIXME:
@@ -93,19 +96,19 @@ prepare (GeglOperation *operation)
        * currently seems to be neccesary since GEGL doesn't like a meta-op
        * to be implemented using another meta-op.
        */
-      if (self->src[0] &&
-          (priv->cached_path == NULL || strcmp (self->src, priv->cached_path)))
+      if (o->src[0] &&
+          (self->cached_path == NULL || strcmp (o->src, self->cached_path)))
         {
-          const gchar *extension = strrchr (self->src, '.');
+          const gchar *extension = strrchr (o->src, '.');
           const gchar *handler = NULL;
 
-          if (!g_file_test (self->src, G_FILE_TEST_EXISTS))
+          if (!g_file_test (o->src, G_FILE_TEST_EXISTS))
             {
-              gchar *name = g_filename_display_name (self->src);
+              gchar *name = g_filename_display_name (o->src);
               gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
               g_free (name);
               g_warning ("load: %s", tmp);
-              gegl_node_set (priv->load,
+              gegl_node_set (self->load,
                              "operation", "text",
                              "size", 12.0,
                              "string", tmp,
@@ -116,99 +119,103 @@ prepare (GeglOperation *operation)
             {
               if (extension)
                 handler = gegl_extension_handler_get (extension);
-              gegl_node_set (priv->load,
+              gegl_node_set (self->load,
                              "operation", handler,
                              NULL);
-              gegl_node_set (priv->load,
-                             "path",  self->src,
+              gegl_node_set (self->load,
+                             "path",  o->src,
                              NULL);
             }
-          if (priv->cached_path)
-            g_free (priv->cached_path);
-          priv->cached_path = g_strdup (self->src);
+          if (self->cached_path)
+            g_free (self->cached_path);
+          self->cached_path = g_strdup (o->src);
         }
       else
         {
         }
     }
 
-  if (self->opacity != priv->p_opacity)
+  if (o->opacity != self->p_opacity)
     {
-      gegl_node_set (priv->opacity,
-                     "value",  self->opacity,
+      gegl_node_set (self->opacity,
+                     "value",  o->opacity,
                      NULL);
-      priv->p_opacity = self->opacity;
+      self->p_opacity = o->opacity;
     }
 
-  if (self->x != priv->p_x ||
-      self->y != priv->p_y)
+  if (o->x != self->p_x ||
+      o->y != self->p_y)
     {
-      gegl_node_set (priv->shift,
-                     "x",  self->x,
-                     "y",  self->y,
+      gegl_node_set (self->shift,
+                     "x",  o->x,
+                     "y",  o->y,
                      NULL);
-      priv->p_x = self->x;
-      priv->p_y = self->y;
+      self->p_x = o->x;
+      self->p_y = o->y;
     }
 }
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv = (Priv*)self->priv;
+  GeglChant  *self = GEGL_CHANT (operation);
+  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
   GeglNode *gegl;
-  g_assert (priv == NULL);
 
-  priv = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
+  self->self = GEGL_OPERATION (self)->node;
+  gegl = self->self;
 
-  priv->self = GEGL_OPERATION (self)->node;
-  gegl = priv->self;
+  self->input = gegl_node_get_input_proxy (gegl, "input");
+  self->aux = gegl_node_get_input_proxy (gegl, "aux");
+  self->output = gegl_node_get_output_proxy (gegl, "output");
 
-  priv->input = gegl_node_get_input_proxy (gegl, "input");
-  priv->aux = gegl_node_get_input_proxy (gegl, "aux");
-  priv->output = gegl_node_get_output_proxy (gegl, "output");
-
-  priv->composite_op = gegl_node_new_child (gegl,
-                                         "operation", self->composite_op,
+  self->composite_op = gegl_node_new_child (gegl,
+                                         "operation", o->composite_op,
                                          NULL);
 
-  priv->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
-  priv->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
+  self->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
+  self->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
 
-  priv->load = gegl_node_new_child (gegl,
+  self->load = gegl_node_new_child (gegl,
                                     "operation", "text",
                                     "string", "foo",
                                     NULL);
 
-  gegl_node_link_many (priv->load, priv->opacity, priv->shift, NULL);
-  gegl_node_link_many (priv->input, priv->composite_op, priv->output, NULL);
-  gegl_node_connect_from (priv->composite_op, "aux", priv->shift, "output");
+  gegl_node_link_many (self->load, self->opacity, self->shift, NULL);
+  gegl_node_link_many (self->input, self->composite_op, self->output, NULL);
+  gegl_node_connect_from (self->composite_op, "aux", self->shift, "output");
 }
 
 
 static void
 finalize (GObject *object)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  Priv *priv = (Priv*)self->priv;
+  GeglChant *self = GEGL_CHANT (object);
 
-  if (priv->cached_path)
-      g_free (priv->cached_path);
-  if (priv->p_composite_op)
-      g_free (priv->p_composite_op);
-  if (self->priv)
-    g_free (self->priv);
+  if (self->cached_path)
+      g_free (self->cached_path);
+  if (self->p_composite_op)
+      g_free (self->p_composite_op);
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
 }
 
-static void class_init (GeglOperationClass *klass)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->prepare = prepare;
-  klass->attach = attach;
+  GObjectClass       *object_class;
+  GeglOperationClass *operation_class;
 
-  G_OBJECT_CLASS (klass)->finalize = finalize;
+  object_class    = G_OBJECT_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+
+  object_class->finalize = finalize;
+
+  operation_class->name        = "layer";
+  operation_class->categories  = "meta";
+  operation_class->description = "A layer in the traditional sense.";
+  operation_class->attach = attach;
+  operation_class->prepare = prepare;
 }
+
 
 #endif

@@ -1,5 +1,9 @@
 2008-01-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/layer.c: migrated to new chanting API.
+
+2008-01-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation.[ch]: removed
 	gegl_operation_class_set_name, removed tickle virtual function.
 	* gegl/gegl-old-chant.h: directly implement
