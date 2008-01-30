@@ -15,7 +15,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_multiline (string, "Hello",
                       "String to display. (utf8)")
@@ -35,22 +35,15 @@ gegl_chant_int    (height, 0, 1000000, 0,
 
 #else
 
-#define GEGL_CHANT_NAME        text
-#define GEGL_CHANT_DESCRIPTION "Display a string of text using pango and cairo."
-#define GEGL_CHANT_SELF        "text.c"
-#define GEGL_CHANT_CATEGORIES  "render"
-
-#define GEGL_CHANT_SOURCE
-
-#define GEGL_CHANT_PREPARE
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
-
+#include <gegl-plugin.h>
+#include <gegl-operation-source.h>
 #include <cairo.h>
 #include <pango/pango-attributes.h>
 #include <pango/pangocairo.h>
 
+/* XXX: this struct is unneeded and could be folded directly into
+ * struct _GeglChant
+ */
 typedef struct {
   gchar         *string;
   gchar         *font;
@@ -60,12 +53,33 @@ typedef struct {
   GeglRectangle  defined;
 } CachedExtent;
 
-static void text_layout_text (GeglChantOperation *self,
-                              cairo_t       *cr,
-                              gdouble        rowstride,
-                              gdouble       *width,
-                              gdouble       *height)
+struct _GeglChant
 {
+  GeglOperationSource parent_instance;
+  gpointer            properties;
+  CachedExtent        cex;
+};
+
+typedef struct
+{
+  GeglOperationSourceClass parent_class;
+} GeglChantClass;
+
+#define GEGL_CHANT_C_FILE "text.c"
+#include "gegl-chant.h"
+GEGL_DEFINE_DYNAMIC_OPERATION (GEGL_TYPE_OPERATION_SOURCE);
+
+
+
+
+
+static void text_layout_text (GeglChant *self,
+                              cairo_t   *cr,
+                              gdouble    rowstride,
+                              gdouble   *width,
+                              gdouble   *height)
+{
+  GeglChantO           *o = GEGL_CHANT_PROPERTIES (self);
   PangoFontDescription *desc;
   PangoLayout    *layout;
   PangoAttrList  *attrs;
@@ -77,15 +91,15 @@ static void text_layout_text (GeglChantOperation *self,
   /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
 
-  string = g_strcompress (self->string);
+  string = g_strcompress (o->string);
   pango_layout_set_text (layout, string, -1);
   g_free (string);
 
-  desc = pango_font_description_from_string (self->font);
-  pango_font_description_set_absolute_size (desc, self->size * PANGO_SCALE);
+  desc = pango_font_description_from_string (o->font);
+  pango_font_description_set_absolute_size (desc, o->size * PANGO_SCALE);
   pango_layout_set_font_description (layout, desc);
 
-  switch (self->alignment)
+  switch (o->alignment)
   {
   case 0:
     alignment = PANGO_ALIGN_LEFT;
@@ -98,12 +112,12 @@ static void text_layout_text (GeglChantOperation *self,
     break;
   }
   pango_layout_set_alignment (layout, alignment);
-  pango_layout_set_width (layout, self->wrap * PANGO_SCALE);
+  pango_layout_set_width (layout, o->wrap * PANGO_SCALE);
 
   attrs = pango_attr_list_new ();
   if (attrs)
   {
-    gegl_color_get_rgba (self->color,
+    gegl_color_get_rgba (o->color,
                          &color[0], &color[1], &color[2], &color[3]);
     attr = pango_attr_foreground_new ((guint16) (color[0] * 65535),
                                       (guint16) (color[1] * 65535),
@@ -132,12 +146,12 @@ static void text_layout_text (GeglChantOperation *self,
     {
       /* FIXME: This feels like a hack but it stops the rendered text  */
       /* from shifting position depending on the value of 'alignment'. */
-      if (self->alignment == 1)
-         cairo_move_to (cr, self->width / 2, 0);
+      if (o->alignment == 1)
+         cairo_move_to (cr, o->width / 2, 0);
       else
         {
-          if (self->alignment == 2)
-             cairo_move_to (cr, self->width, 0);
+          if (o->alignment == 2)
+             cairo_move_to (cr, o->width, 0);
         }
 
       pango_cairo_show_layout (cr, layout);
@@ -154,7 +168,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChant *self = GEGL_CHANT (operation);
 
   guchar          *data = g_new0 (guchar, result->width * result->height * 4);
   cairo_t         *cr;
@@ -183,24 +197,25 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChant *self = GEGL_CHANT (operation);
+  GeglChantO           *o = GEGL_CHANT_PROPERTIES (self);
   CachedExtent *extent;
   gint status = FALSE;
 
-  extent = (CachedExtent*)self->priv;
-  if (!self->priv)
+  extent = (CachedExtent*)&self->cex;
+  /*if (!self->priv)
     {
       self->priv = g_malloc0 (sizeof (CachedExtent));
       extent = (CachedExtent*)self->priv;
       extent->string = g_strdup ("");
       extent->font = g_strdup ("");
-    }
+    }*/
 
-  if (strcmp (extent->string, self->string) ||
-      strcmp (extent->font, self->font) ||
-      extent->size != self->size ||
-      extent->wrap != self->wrap ||
-      extent->alignment != self->alignment)
+  if ((extent->string && strcmp (extent->string, o->string)) ||
+      (extent->font && strcmp (extent->font, o->font)) ||
+      extent->size != o->size ||
+      extent->wrap != o->wrap ||
+      extent->alignment != o->alignment)
     { /* get extents */
       cairo_t *cr;
       gdouble width, height;
@@ -214,22 +229,24 @@ get_defined_region (GeglOperation *operation)
 
       extent->defined.width = width;
       extent->defined.height = height;
-      g_free (extent->string);
-      extent->string = g_strdup (self->string);
-      g_free (extent->font);
-      extent->font = g_strdup (self->font);
-      extent->size = self->size;
-      extent->wrap = self->wrap;
-      extent->alignment = self->alignment;
+      if (extent->string)
+        g_free (extent->string);
+      extent->string = g_strdup (o->string);
+      if (extent->font)
+        g_free (extent->font);
+      extent->font = g_strdup (o->font);
+      extent->size = o->size;
+      extent->wrap = o->wrap;
+      extent->alignment = o->alignment;
 
       /* store the measured size for later use */
-      self->width = width;
-      self->height = height;
+      o->width = width;
+      o->height = height;
     }
 
   if (status)
     {
-      g_warning ("get defined region for text '%s' failed", self->string);
+      g_warning ("get defined region for text '%s' failed", o->string);
     }
 
   return extent->defined;
@@ -238,15 +255,12 @@ get_defined_region (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+  GeglChant *self = GEGL_CHANT (object);
 
-  if (self->priv)
-    {
-      CachedExtent *extent = (CachedExtent*)self->priv;
-      g_free (extent->string);
-      g_free (extent->font);
-      g_free (extent);
-    }
+  if (self->cex.string)
+    g_free (self->cex.string);
+  if (self->cex.font)
+    g_free (self->cex.font);
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
 }
@@ -257,9 +271,27 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
 }
 
-static void class_init (GeglOperationClass *klass)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  G_OBJECT_CLASS (klass)->finalize = finalize;
+  GObjectClass             *object_class;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *operation_source_class;
+
+  object_class    = G_OBJECT_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  object_class->finalize = finalize;
+
+  operation_class->name        = "text";
+  operation_class->categories  = "render";
+  operation_class->description = "Display a string of text using pango and cairo.";
+  operation_class->prepare = prepare;
+  operation_class->get_defined_region = get_defined_region;
+  operation_source_class->process = process;
 }
+
 
 #endif

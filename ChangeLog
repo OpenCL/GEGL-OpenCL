@@ -1,5 +1,9 @@
 2008-01-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: migrated to new chanting API.
+
+2008-01-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: updated gegl-chant for meta ops that do not need
 	special handling of instance/class struct (not needed for the layer.c
 	one for instance).
