@@ -15,138 +15,50 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_path (path, "", "Path of file to load.")
 
 #else
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            load
-#define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other "\
-                                   "native handlers, and fallback conversion using "\
-                                   "image magick's convert."
-#define GEGL_CHANT_SELF            "load.c"
-#define GEGL_CHANT_CATEGORIES      "meta:input"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
-#include <stdio.h>
+#define GEGL_CHANT_C_FILE       "load.c"
 
-typedef struct _Priv Priv;
-struct _Priv
+#include "gegl-plugin.h"
+#include <operation/gegl-operation-meta.h>
+
+struct _GeglChant
 {
-  GeglNode   *self;
-  GeglNode   *output;
-  GeglNode   *load;
-  gchar      *cached_path;
+  GeglOperationMeta parent_instance;
+  gpointer          properties;
+
+  GeglNode *output;
+  GeglNode *load;
+  gchar    *cached_path;
 };
 
-static void
-dispose (GObject *object)
+typedef struct
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  Priv *priv = (Priv*)self->priv;
+  GeglOperationMetaClass parent_class;
+} GeglChantClass;
 
-  if (priv->cached_path)
-    {
-      g_free (priv->cached_path);
-      priv->cached_path = NULL;
-    }
+#include "gegl-chant.h"
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
-}
-
-static void
-finalize (GObject *object)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-
-  if (self->priv)
-    g_free (self->priv);
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
-}
-
-static void
-prepare (GeglOperation *operation)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv = (Priv*)self->priv;
-
-  /* warning: this might trigger regeneration of the graph,
-   *          for now this is evaded by just ignoring additional
-   *          requests to be made into members of the graph
-   */
-
-    if (self->path[0]==0 && priv->cached_path == NULL)
-      {
-          gegl_node_set (priv->load,
-                         "operation", "text",
-                         "size", 20.0,
-                         "string", "Eeeeek!",
-                         NULL);
-      }
-    else
-    {
-      if (self->path[0] &&
-          (priv->cached_path == NULL || strcmp (self->path, priv->cached_path)))
-        {
-          const gchar *extension = strrchr (self->path, '.');
-          const gchar *handler = NULL;
-
-          if (!g_file_test (self->path, G_FILE_TEST_EXISTS))
-            {
-              gchar *name = g_filename_display_name (self->path);
-              gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
-              g_free (name);
-              g_warning ("load: %s", tmp);
-              gegl_node_set (priv->load,
-                             "operation", "text",
-                             "size", 12.0,
-                             "string", tmp,
-                             NULL);
-              g_free (tmp);
-            }
-          else
-            {
-              if (extension)
-                handler = gegl_extension_handler_get (extension);
-              gegl_node_set (priv->load,
-                             "operation", handler,
-                             NULL);
-              gegl_node_set (priv->load,
-                             "path",  self->path,
-                             NULL);
-            }
-          if (priv->cached_path)
-            g_free (priv->cached_path);
-          priv->cached_path = g_strdup (self->path);
-        }
-      else
-        {
-        }
-    }
-}
+#include <stdio.h>
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv = (Priv*)self->priv;
-  g_assert (priv == NULL);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChant  *self = GEGL_CHANT (operation);
 
-  priv = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
+  self->output = gegl_node_get_output_proxy (operation->node, "output");
 
-  priv->self = GEGL_OPERATION (self)->node;
-
-  priv->output = gegl_node_get_output_proxy (priv->self, "output");
-
-  priv->load = gegl_node_new_child (priv->self,
+  self->load = gegl_node_new_child (operation->node,
                                     "operation", "text",
                                     "string", "foo",
-                                     NULL);
+                                    NULL);
 
-  gegl_node_link (priv->load, priv->output);
+  gegl_node_link (self->load, self->output);
 }
 
 static GeglNode *
@@ -154,9 +66,8 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglNode *node = operation->node;
-  Priv *priv = (Priv*)GEGL_CHANT_OPERATION (operation)->priv;
-  GeglNode *output = priv->output;
+  GeglChant *self = GEGL_CHANT (operation);
+  GeglNode *output = self->output;
   GeglRectangle bounds;
 
   bounds = gegl_node_get_bounding_box (output); /* hopefully this is
@@ -167,23 +78,112 @@ detect (GeglOperation *operation,
 
   if (x >= bounds.x &&
       y >= bounds.y &&
-      x  < bounds.x + bounds.width  &&
-      y  < bounds.y + bounds.height )
-    return node;
+      x  < bounds.x + bounds.width &&
+      y  < bounds.y + bounds.height)
+    return operation->node;
+
   return NULL;
 }
 
-static void class_init (GeglOperationClass *klass)
+static void
+prepare (GeglOperation *operation)
 {
-  klass->prepare = prepare;
-  klass->attach = attach;
-  klass->detect = detect;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChant  *self = GEGL_CHANT (operation);
+  /* warning: this might trigger regeneration of the graph,
+   *          for now this is evaded by just ignoring additional
+   *          requests to be made into members of the graph
+   */
 
+    if (o->path[0]==0 && self->cached_path == NULL)
+      {
+          gegl_node_set (self->load,
+                         "operation", "text",
+                         "size", 20.0,
+                         "string", "Eeeeek!",
+                         NULL);
+      }
+    else
+    {
+      if (o->path[0] &&
+          (self->cached_path == NULL || strcmp (o->path, self->cached_path)))
+        {
+          const gchar *extension = strrchr (o->path, '.');
+          const gchar *handler = NULL;
+
+          if (!g_file_test (o->path, G_FILE_TEST_EXISTS))
+            {
+              gchar *tmp = g_malloc(strlen (o->path) + 100);
+              sprintf (tmp, "File '%s' does not exist", o->path);
+              g_warning ("load: %s", tmp);
+              gegl_node_set (self->load,
+                             "operation", "text",
+                             "size", 12.0,
+                             "string", tmp,
+                             NULL);
+              g_free (tmp);
+            }
+          else
+            {
+              if (extension)
+                handler = gegl_extension_handler_get (extension);
+              gegl_node_set (self->load,
+                             "operation", handler,
+                             NULL);
+              gegl_node_set (self->load,
+                             "path",  o->path,
+                             NULL);
+            }
+          if (self->cached_path)
+            g_free (self->cached_path);
+          self->cached_path = g_strdup (o->path);
+        }
+    }
+}
+
+static void
+dispose (GObject *object)
+{
+  GeglChant *self = GEGL_CHANT (object);
+
+  if (self->cached_path)
+    {
+      g_free (self->cached_path);
+      self->cached_path = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+}
+
+static void
+finalize (GObject *object)
+{
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass     *operation_class;
+  GObjectClass           *object_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  object_class    = G_OBJECT_CLASS (klass);
+
+  operation_class->attach = attach;
+  operation_class->detect = detect;
+  operation_class->prepare = prepare;
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
 
-  klass->no_cache = TRUE;
-}
+  operation_class->name        = "load";
+  operation_class->categories  = "meta:input";
+  operation_class->description =
+        "Multipurpose file loader, that uses other native handlers, and"
+        " fallback conversion using image magick's convert.";
 
+  operation_class->no_cache = TRUE;
+}
 
 #endif
