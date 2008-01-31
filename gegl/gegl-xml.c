@@ -23,15 +23,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+
 #include "gegl-types.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
+#include "operation/gegl-operation.h"
 #include "property-types/gegl-color.h"
 #include "property-types/gegl-curve.h"
+#include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
-#include "property-types/gegl-paramspecs.h"
-#include "operation/gegl-operation.h"
 
 #ifdef G_OS_WIN32
 #ifndef PATH_MAX
@@ -127,14 +128,15 @@ set_clone_prop_as_well:
           else if (pd->path_root)
             {
               gchar absolute_path[PATH_MAX];
-              sprintf (buf, "%s/%s", pd->path_root, param_value);
+              g_snprintf (buf, sizeof (buf),
+                          "%s/%s", pd->path_root, param_value);
               realpath (buf, absolute_path);
               gegl_node_set (new, param_name, absolute_path, NULL);
             }
           else
             {
               gchar absolute_path[PATH_MAX];
-              sprintf (buf, "./%s", param_value);
+              g_snprintf (buf, sizeof (buf), "./%s", param_value);
               realpath (buf, absolute_path);
               gegl_node_set (new, param_name, absolute_path, NULL);
             }
@@ -621,7 +623,7 @@ encode_node_attributes_old (SerializeState *ss,
               gint  value;
               gchar str[64];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%i", value);
+              g_snprintf (str, sizeof (str), "%i", value);
               tuple_old (ss->buf, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_BOOLEAN)
@@ -698,7 +700,8 @@ add_stack_old (SerializeState *ss,
               else
                 {
                   gchar temp_id[64];
-                  sprintf (temp_id, "clone%i", ss->clone_count++);
+                  g_snprintf (temp_id, sizeof (temp_id),
+                              "clone%i", ss->clone_count++);
                   id = g_strdup (temp_id);
                   g_hash_table_insert (ss->clones, iter, (gchar *) id);
                   /* the allocation is freed by the hash table */
@@ -1018,7 +1021,7 @@ serialize_properties (SerializeState *ss,
               gint  value;
               gchar str[64];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%i", value);
+              g_snprintf (str, sizeof (str), "%i", value);
               xml_param (ss, indent + 2, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_BOOLEAN)
@@ -1169,7 +1172,8 @@ add_stack (SerializeState *ss,
               else
                 {
                   gchar temp_id[64];
-                  sprintf (temp_id, "clone%i", ss->clone_count++);
+                  g_snprintf (temp_id, sizeof (temp_id),
+                              "clone%i", ss->clone_count++);
                   id = g_strdup (temp_id);
                   g_hash_table_insert (ss->clones, iter, (gchar *) id);
                   /* the allocation is freed by the hash table */

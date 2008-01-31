@@ -171,13 +171,11 @@ gegl_add_graph (GString     *string,
         GeglNode *node = entry->data;
         {
           GSList *connections = gegl_node_get_sinks (node);
-          GSList *entry;
-          entry = connections;
+          GSList *iter;
 
-          while (entry)
+          for (iter = connections; iter; iter = g_slist_next (iter))
             {
-              GeglConnection *connection = entry->data;
-              gchar           buf[512];
+              GeglConnection *connection = iter->data;
               GeglNode       *source;
               GeglNode       *sink;
               GeglPad        *source_pad;
@@ -188,11 +186,9 @@ gegl_add_graph (GString     *string,
               source_pad = gegl_connection_get_source_pad (connection);
               sink_pad   = gegl_connection_get_sink_pad (connection);
 
-              sprintf (buf, "op_%p:%s -> op_%p:%s;\n", source,
-                       gegl_pad_get_name (source_pad), sink,
-                       gegl_pad_get_name (sink_pad));
-              g_string_append (string, buf);
-              entry = g_slist_next (entry);
+              g_string_append_printf (string, "op_%p:%s -> op_%p:%s;\n",
+                                      source, gegl_pad_get_name (source_pad),
+                                      sink,   gegl_pad_get_name (sink_pad));
             }
         }
         entry = g_slist_next (entry);
@@ -205,9 +201,11 @@ gegl_add_graph (GString     *string,
 gchar *
 gegl_to_dot (GeglNode *node)
 {
-  GString *string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
+  GString *string;
 
+  string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
   gegl_add_graph (string, node, "GEGL");
   g_string_append (string, "}");
+
   return g_string_free (string, FALSE);
 }
