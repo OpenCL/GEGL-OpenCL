@@ -1,5 +1,9 @@
 2008-01-31  Sven Neumann  <sven@gimp.org>
 
+	* operations/io/load.c (prepare): fixed error handling (again).
+
+2008-01-31  Sven Neumann  <sven@gimp.org>
+
 	* gegl/graph/gegl-node.c
 	* gegl/property-types/gegl-color.c: don't use sprintf.
 

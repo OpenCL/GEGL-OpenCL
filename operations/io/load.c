@@ -48,14 +48,13 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant  *self = GEGL_CHANT (operation);
+  GeglChant *self = GEGL_CHANT (operation);
 
   self->output = gegl_node_get_output_proxy (operation->node, "output");
 
   self->load = gegl_node_new_child (operation->node,
                                     "operation", "text",
-                                    "string", "foo",
+                                    "string",    "foo",
                                     NULL);
 
   gegl_node_link (self->load, self->output);
@@ -109,12 +108,14 @@ prepare (GeglOperation *operation)
           (self->cached_path == NULL || strcmp (o->path, self->cached_path)))
         {
           const gchar *extension = strrchr (o->path, '.');
-          const gchar *handler = NULL;
+          const gchar *handler   = NULL;
 
           if (!g_file_test (o->path, G_FILE_TEST_EXISTS))
             {
-              gchar *tmp = g_malloc(strlen (o->path) + 100);
-              sprintf (tmp, "File '%s' does not exist", o->path);
+              gchar *name = g_filename_display_name (o->path);
+              gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
+              g_free (name);
+
               g_warning ("load: %s", tmp);
               gegl_node_set (self->load,
                              "operation", "text",
