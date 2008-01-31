@@ -513,27 +513,23 @@ source_invalidated (GeglNode            *source,
                     const GeglRectangle *rect,
                     gpointer             data)
 {
-  GeglRectangle dirty_rect;
-  GeglPad      *destination_pad = GEGL_PAD (data);
-  GeglNode     *destination     = GEGL_NODE (gegl_pad_get_node (destination_pad));
-  gchar        *source_name;
-  gchar        *destination_name;
-
-  destination_name = g_strdup (gegl_node_get_debug_name (destination));
-  source_name      = g_strdup (gegl_node_get_debug_name (source));
+  GeglPad       *destination_pad = GEGL_PAD (data);
+  GeglNode      *destination     = gegl_pad_get_node (destination_pad);
+  GeglRectangle  dirty_rect;
 
   if (0) g_warning ("%s.%s is dirtied from %s (%i,%i %ix%i)",
-                    destination_name,
+                    gegl_node_get_debug_name (destination),
                     gegl_pad_get_name (destination_pad),
-                    source_name,
+                    gegl_node_get_debug_name (source),
                     rect->x, rect->y,
                     rect->width, rect->height);
 
   if (destination->operation)
     {
-      dirty_rect = gegl_operation_compute_affected_region (destination->operation,
-                                                           gegl_pad_get_name (destination_pad),
-                                                           rect);
+      dirty_rect =
+        gegl_operation_compute_affected_region (destination->operation,
+                                                gegl_pad_get_name (destination_pad),
+                                                rect);
     }
   else
     {
@@ -541,9 +537,6 @@ source_invalidated (GeglNode            *source,
     }
 
   gegl_node_invalidated (destination, &dirty_rect);
-
-  g_free (source_name);
-  g_free (destination_name);
 }
 
 gboolean
@@ -564,7 +557,8 @@ gegl_node_connect_from (GeglNode    *sink,
       other_pad = gegl_pad_get_connected_to (pad);
     else
       {
-        g_warning ("Didn't find pad '%s' of '%s'", sink_pad_name, gegl_node_get_debug_name (sink));
+        g_warning ("Didn't find pad '%s' of '%s'",
+                   sink_pad_name, gegl_node_get_debug_name (sink));
       }
 
     if (other_pad)
@@ -1146,7 +1140,8 @@ gegl_node_set_valist (GeglNode    *self,
           if (!pspec)
             {
               g_warning ("%s:%s has no property named: '%s'",
-                         G_STRFUNC, gegl_node_get_debug_name (self), property_name);
+                         G_STRFUNC,
+                         gegl_node_get_debug_name (self), property_name);
               break;
             }
           if (!(pspec->flags & G_PARAM_WRITABLE))
@@ -1232,7 +1227,8 @@ gegl_node_get_valist (GeglNode    *self,
           if (!pspec)
             {
               g_warning ("%s:%s has no property named: '%s'",
-                         G_STRFUNC, gegl_node_get_debug_name (self), property_name);
+                         G_STRFUNC,
+                         gegl_node_get_debug_name (self), property_name);
               break;
             }
           if (!(pspec->flags & G_PARAM_READABLE))
@@ -1378,10 +1374,18 @@ gegl_node_get_debug_name (GeglNode *node)
 
   if (gegl_node_get_name (node) != NULL &&
       gegl_node_get_name (node)[0] != '\0')
-    sprintf (ret_buf, "%s named %s", gegl_node_get_operation (node),
-             gegl_node_get_name (node));
+    {
+      g_snprintf (ret_buf, sizeof (ret_buf),
+                  "%s named %s",
+                  gegl_node_get_operation (node), gegl_node_get_name (node));
+    }
   else
-    sprintf (ret_buf, "%s", gegl_node_get_operation (node));
+    {
+      g_snprintf (ret_buf, sizeof (ret_buf),
+                  "%s",
+                  gegl_node_get_operation (node));
+    }
+
   return ret_buf;
 }
 
@@ -1543,7 +1547,8 @@ gegl_node_remove_context (GeglNode *self,
   context = gegl_node_get_context (self, context_id);
   if (!context)
     {
-      g_warning ("didn't find context %p for %s", context_id, gegl_node_get_debug_name (self));
+      g_warning ("didn't find context %p for %s",
+                 context_id, gegl_node_get_debug_name (self));
       return;
     }
   self->context = g_slist_remove (self->context, context);
@@ -1639,7 +1644,8 @@ gegl_node_get_consumers (GeglNode      *node,
 
   if (!pad)
     {
-      g_warning ("%s: no such pad %s for %s", G_STRFUNC, output_pad, gegl_node_get_debug_name (node));
+      g_warning ("%s: no such pad %s for %s",
+                 G_STRFUNC, output_pad, gegl_node_get_debug_name (node));
       return 0;
     }
 
@@ -1882,8 +1888,9 @@ gegl_node_new_child (GeglNode    *node,
   return node;
 }
 
-GeglNode *gegl_node_create_child (GeglNode    *self,
-                                  const gchar *operation)
+GeglNode *
+gegl_node_create_child (GeglNode    *self,
+                        const gchar *operation)
 {
   return gegl_node_new_child (self, "operation", operation, NULL);
 }
@@ -1893,27 +1900,17 @@ graph_source_invalidated (GeglNode            *source,
                           const GeglRectangle *rect,
                           gpointer             data)
 {
-  GeglRectangle dirty_rect;
-  GeglNode     *destination = GEGL_NODE (data);
-  gchar        *source_name;
-  gchar        *destination_name;
-
-  destination_name = g_strdup (gegl_node_get_debug_name (destination));
-  source_name      = g_strdup (gegl_node_get_debug_name (source));
+  GeglNode      *destination = GEGL_NODE (data);
+  GeglRectangle  dirty_rect  = *rect;
 
   if (0) g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
-                    destination_name,
-                    source_name,
+                    gegl_node_get_debug_name (destination),
+                    gegl_node_get_debug_name (source),
                     rect->x, rect->y,
                     rect->width, rect->height);
 
-  dirty_rect = *rect;
-
   g_signal_emit (destination, gegl_node_signals[INVALIDATED], 0,
                  &dirty_rect, NULL);
-
-  g_free (source_name);
-  g_free (destination_name);
 }
 
 

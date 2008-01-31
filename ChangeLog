@@ -1,5 +1,10 @@
 2008-01-31  Sven Neumann  <sven@gimp.org>
 
+	* gegl/graph/gegl-node.c
+	* gegl/property-types/gegl-color.c: don't use sprintf.
+
+2008-01-31  Sven Neumann  <sven@gimp.org>
+
 	* gegl/gegl-dot.c
 	* gegl/gegl-xml.c: don't use sprintf.
 
