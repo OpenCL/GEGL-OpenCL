@@ -36,43 +36,55 @@ load_cache (GeglChantOperation *op_magick_load)
 {
   if (!op_magick_load->priv)
     {
-        GeglRectangle rect;
-        GeglNode *temp_gegl;
-        gchar xml[1024]="";
-          {
-            /* ImageMagick backed fallback FIXME: make this robust.
-             * maybe use pipes in a manner similar to the raw loader */
-            gchar cmd_buf[1024];
-            sprintf (cmd_buf, "convert \"%s\"'[0]' /tmp/gegl-magick.png", op_magick_load->path);
-            system (cmd_buf);
+      GeglRectangle rect;
+      GeglNode *temp_gegl;
+      gchar    *filename;
+      gchar    *escaped;
+      gchar    *xml;
+      gchar    *cmd;
 
-            sprintf (xml, "<gegl><node operation='png-load' path='/tmp/gegl-magick.png'></node></gegl>");
-          }
+      /* ImageMagick backed fallback FIXME: make this robust.
+       * maybe use pipes in a manner similar to the raw loader */
 
-    temp_gegl = gegl_node_new_from_xml (xml, "/");
-    rect = gegl_node_get_bounding_box (temp_gegl);
+      filename = g_build_filename (g_get_tmp_dir (), "gegl-magick.png", NULL);
+      cmd = g_strdup_printf ("convert \"%s\"'[0]' \"%s\"",
+                             op_magick_load->path, filename);
+      system (cmd);
+      g_free (cmd);
 
-    gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE); /* force a render
-                                                                               of the cache,
-                                                                               passing in a NULL
-                                                                               buffer indicating that
-                                                                               we do not actually desire the rendered data
-                                                                               */
+      escaped = g_markup_escape_text (filename, -1);
+      g_free (filename);
 
-    {
-      GeglBuffer *cache = GEGL_BUFFER(gegl_node_get_cache (temp_gegl));
-      GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
-      op_magick_load->priv = (gpointer)newbuf;
-      g_object_unref (cache);
+      xml = g_strdup_printf ("<gegl>"
+                             "<node operation='png-load' path='%s' />"
+                             "</gegl>",
+                             escaped);
+      g_free (escaped);
+
+      temp_gegl = gegl_node_new_from_xml (xml, "/");
+      g_free (xml);
+
+      rect = gegl_node_get_bounding_box (temp_gegl);
+
+      /* Force a render of the cache, passing in a NULL buffer indicating
+       * that we do not actually desire the rendered data.
+       */
+      gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE);
+
+      {
+        GeglBuffer *cache  = GEGL_BUFFER (gegl_node_get_cache (temp_gegl));
+        GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
+        op_magick_load->priv = (gpointer) newbuf;
+        g_object_unref (cache);
+      }
+      /*g_object_ref (op_magick_load->priv);*/
+
+      /*FIXME: this should be unneccesary, using the graph
+       * directly as a node is more elegant.
+       */
+      /*gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);*/
+      g_object_unref (temp_gegl);
     }
-    /*g_object_ref (op_magick_load->priv);*/
-
-    /*FIXME: this should be unneccesary, using the graph
-     * directly as a node is more elegant.
-     */
-    /*gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);*/
-    g_object_unref (temp_gegl);
-  }
 }
 
 static gboolean

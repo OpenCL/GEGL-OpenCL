@@ -1,5 +1,10 @@
 2008-01-31  Sven Neumann  <sven@gimp.org>
 
+	* operations/io/magick-load.c (load_cache): cleanup of filename
+	handling. Use g_get_tmp_dir() instead of hardcoding "/tmp".
+
+2008-01-31  Sven Neumann  <sven@gimp.org>
+
 	* operations/io/load.c (prepare): fixed error handling (again).
 
 2008-01-31  Sven Neumann  <sven@gimp.org>
