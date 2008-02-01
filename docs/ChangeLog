@@ -1,3 +1,9 @@
+2008-02-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am:
+	* gallery/Makefile.am: removed logic lingering on since crucible
+	was in use.
+
 2007-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gallery/Makefile.am: Use SHREXT instead of hard-coded ".so".

@@ -8,12 +8,6 @@ index.html: Makefile.am pngs
 	@for XML in $(srcdir)/*.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
 	@echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	@echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
-	@if [ ! -z "$${CRUCIBLE_ID}" ]; then\
-	  echo "<ul class='crucible'>" >> index.html;\
-	  for host in amd01 ita01 nfs08 nfs11 nfs12 ppc01;do echo "<li><a href='../../$${host}/gallery/index.html'>$${host}</a></li>" >> index.html; done;\
-	  echo "</ul>" >> index.html;\
-	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$${CRUCIBLE_ID}/'>$${CRUCIBLE_ID}</a> @ $${CRUCIBLE_SUT} `date`</p>" >> index.html;\
-	fi;
 	@for XML in $(srcdir)/*.xml; do\
 	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
 	    TXT=$$BASE".txt";\
