@@ -1,3 +1,8 @@
+2008-02-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: updated with new changes.
+	* AUTHORS: added Bradley Broom.
+
 2008-01-31  Sven Neumann  <sven@gimp.org>
 
 	* operations/io/magick-load.c (load_cache): cleanup of filename

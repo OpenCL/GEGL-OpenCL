@@ -3,22 +3,23 @@
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
 GEGL only has released development snapshots thus far. Odd micro versions are
-from SVN whilst even micro numbers indicate released snapshots. 
+from SVN whilst even micro numbers indicate released snapshots.
 
-Changes in GEGL 0.0.16
+Changes in GEGL 0.0.15
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
- • Build and dist fixes, general sanity improvements to APIs.
- • constification of GeglRectangles and babl formats.
+ • Install headers for development of external operation plug-ins.
  • Added rowstride argument to gegl_buffer_set ()
- • Made it possible for sink operations to do their processing chunk by chunk
+ • Made it possible for sink operations to do cunkwise processing
+   through GeglProcessor.
    when processed using a GeglProcessor.
- • Install headers for external op plug-in development.
- • Reorganized installed headers, reduced the API version to 0.0 (it has been
-   1.0 by mistake for a while).
+ • constification of GeglRectangles and babl formats.
+ • Build and dist fixes, general sanity improvements to APIs, plugged
+   annoying buffer leaks.
 
 Contributions from:
-  Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann, 
-  Manish Singh, Michael Natterer, Hand Brauer and Deji Akingunola.
+  Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann,
+  Manish Singh, Michael Natterer, Hand Brauer, Deji Akingunola,
+  Bradley Broom and Tor Lillqvist.
 
 Changes in GEGL 0.0.14
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
