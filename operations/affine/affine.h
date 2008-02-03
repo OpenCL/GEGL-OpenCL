@@ -1,8 +1,6 @@
 #ifndef __OP_AFFINE_H__
 #define __OP_AFFINE_H__
 
-#include <gegl/operation/gegl-operation-filter.h>
-
 #include "matrix.h"
 
 G_BEGIN_DECLS

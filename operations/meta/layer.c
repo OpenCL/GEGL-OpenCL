@@ -31,7 +31,6 @@ gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 #else
 
 #include <gegl-plugin.h>
-#include <operation/gegl-operation-meta.h>
 struct _GeglChant
 {
   GeglOperationMeta parent_instance;

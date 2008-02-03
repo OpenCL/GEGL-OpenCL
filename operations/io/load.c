@@ -24,7 +24,6 @@ gegl_chant_path (path, "", "Path of file to load.")
 #define GEGL_CHANT_C_FILE       "load.c"
 
 #include "gegl-plugin.h"
-#include <operation/gegl-operation-meta.h>
 
 struct _GeglChant
 {

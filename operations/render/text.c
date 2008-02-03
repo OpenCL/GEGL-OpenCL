@@ -36,7 +36,6 @@ gegl_chant_int    (height, 0, 1000000, 0,
 #else
 
 #include <gegl-plugin.h>
-#include <gegl-operation-source.h>
 #include <cairo.h>
 #include <pango/pango-attributes.h>
 #include <pango/pangocairo.h>

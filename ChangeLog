@@ -1,3 +1,20 @@
+2008-02-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-plugin.h: modified to include the headers for
+	gegl-operation and it's subclesses (either by #include or directly
+	through an ifdef, not sure which direction to take yet)
+	* gegl/gegl-chant.h: modified to only include gegl-plugin.h
+	* gegl/gegl-old-chant.h: .. here as well.
+
+	* operations/affine/affine.h:
+	* operations/color/remap.c:
+	* operations/io/load.c:
+	* operations/meta/layer.c:
+	* operations/render/text.c:
+	* tools/operation_reference.c: modified to not include the
+	gegl-operation-foo.h's directly, but rely on them being made available
+	by gegl-plugin.h
+
 2008-02-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* NEWS: updated with new changes.

@@ -6,9 +6,6 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include "operation/gegl-operation-filter.h"
-#include "operation/gegl-operation-source.h"
-#include "operation/gegl-operation-composer.h"
 
 static GList *
 gegl_operations_build (GList *list, GType type)

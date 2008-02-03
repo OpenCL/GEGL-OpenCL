@@ -93,7 +93,6 @@ type_name##_register_type (GTypeModule *type_module) \
 
 
 #ifdef GEGL_CHANT_TYPE_OPERATION
-#include <operation/gegl-operation.h>
 struct _GeglChant
 {
   GeglOperation parent_instance;
@@ -125,7 +124,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_SOURCE
-#include <operation/gegl-operation-source.h>
 struct _GeglChant
 {
   GeglOperationSource parent_instance;
@@ -141,7 +139,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_SINK
-#include <operation/gegl-operation-sink.h>
 struct _GeglChant
 {
   GeglOperationSink parent_instance;
@@ -157,7 +154,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_FILTER
-#include <operation/gegl-operation-filter.h>
 struct _GeglChant
 {
   GeglOperationFilter parent_instance;
@@ -173,7 +169,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_COMPOSER
-#include <operation/gegl-operation-composer.h>
 struct _GeglChant
 {
   GeglOperationComposer parent_instance;
@@ -190,7 +185,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_COMPOSER);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_POINT_FILTER
-#include <operation/gegl-operation-point-filter.h>
 struct _GeglChant
 {
   GeglOperationPointFilter parent_instance;
@@ -207,7 +201,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_FILTER);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_AREA_FILTER
-#include <operation/gegl-operation-area-filter.h>
 struct _GeglChant
 {
   GeglOperationAreaFilter parent_instance;
@@ -223,7 +216,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_AREA_FILTER);
 
 
 #ifdef GEGL_CHANT_TYPE_POINT_COMPOSER
-#include <operation/gegl-operation-point-composer.h>
 struct _GeglChant
 {
   GeglOperationPointComposer parent_instance;

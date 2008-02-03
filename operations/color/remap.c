@@ -16,165 +16,20 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_OPERATION_REMAP_H__
-#define __GEGL_OPERATION_REMAP_H__
+#ifdef GEGL_CHANT_PROPERTIES
 
-#include <gegl-plugin.h>
+//gegl_chant_string ("xlow",  "hm", "low description")
+//gegl_chant_string ("xhigh", "hm", "high description")
 
-G_BEGIN_DECLS
+#else
 
-#define GEGL_TYPE_OPERATION_REMAP            (gegl_operation_remap_get_type ())
-#define GEGL_OPERATION_REMAP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_REMAP, GeglOperationRemap))
-#define GEGL_OPERATION_REMAP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_REMAP, GeglOperationRemapClass))
-#define GEGL_IS_OPERATION_REMAP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_REMAP))
-#define GEGL_IS_OPERATION_REMAP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_REMAP))
-#define GEGL_OPERATION_REMAP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_REMAP, GeglOperationRemapClass))
+#define GEGL_CHANT_TYPE_OPERATION
+#define GEGL_CHANT_C_FILE       "remap.c"
 
-typedef struct _GeglOperationRemap      GeglOperationRemap;
-typedef struct _GeglOperationRemapClass GeglOperationRemapClass;
-
-struct _GeglOperationRemap
-{
-  GeglOperation parent_instance;
-};
-
-struct _GeglOperationRemapClass
-{
-  GeglOperationClass parent_class;
-};
-
-GType gegl_operation_remap_get_type (void) G_GNUC_CONST;
-
-G_END_DECLS
-
-#endif /* __GEGL_OPERATION_REMAP_H__ */
-
-/***************************************************************************/
-
-#if 0
-#include "gegl-types.h"  /* FIXME: this include should not be needed */
-#include "graph/gegl-pad.h"  /*FIXME: neither should these */
-#include "graph/gegl-node.h"
-#endif
+#include "gegl-chant.h"
 #include <math.h>
 #include <string.h>
 
-
-enum
-{
-  PROP_0,
-  PROP_LOW,
-  PROP_HIGH,
-  PROP_INPUT,
-  PROP_OUTPUT,
-};
-
-static gboolean        process                 (GeglOperation       *operation,
-                                                GeglNodeContext     *context,
-                                                const gchar         *output_prop,
-                                                const GeglRectangle *result);
-static void            attach                  (GeglOperation       *operation);
-static void            prepare                 (GeglOperation       *operation);
-static GeglNode      * detect                  (GeglOperation       *operation,
-                                                gint                 x,
-                                                gint                 y);
-static GeglRectangle   get_defined_region      (GeglOperation       *operation);
-static GeglRectangle   compute_input_request   (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *roi);
-static GeglRectangle   compute_affected_region (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *input_region);
-static void            get_property            (GObject             *object,
-                                                guint                prop_id,
-                                                GValue              *value,
-                                                GParamSpec          *pspec);
-static void            set_property            (GObject             *object,
-                                                guint                prop_id,
-                                                const GValue        *value,
-                                                GParamSpec          *pspec);
-
-G_DEFINE_DYNAMIC_TYPE (GeglOperationRemap, gegl_operation_remap, GEGL_TYPE_OPERATION)
-
-static void
-gegl_operation_remap_class_init (GeglOperationRemapClass *klass)
-{
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->get_property             = get_property;
-  object_class->set_property             = set_property;
-
-  operation_class->name                  = "remap";
-  operation_class->categories            = "core";
-  operation_class->no_cache              = TRUE;
-  operation_class->process               = process;
-  operation_class->attach                = attach;
-  operation_class->prepare               = prepare;
-  operation_class->detect                = detect;
-  operation_class->get_defined_region    = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
-  operation_class->compute_affected_region = compute_affected_region;
-
-
-
-  g_object_class_install_property (object_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Ouput pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-
-  g_object_class_install_property (object_class, PROP_LOW,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_LOW,
-                                   g_param_spec_object ("low",
-                                                        "Low",
-                                                        "Input pad, for minimum envelope",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_HIGH,
-                                   g_param_spec_object ("high",
-                                                        "High",
-                                                        "Input pad, for maximum envelope",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-}
-
-static void
-gegl_operation_remap_class_finalize (GeglOperationRemapClass *klass)
-{
-}
-
-static void
-gegl_operation_remap_init (GeglOperationRemap *self)
-{
-}
-
-static void            get_property            (GObject             *object,
-                                                guint                prop_id,
-                                                GValue              *value,
-                                                GParamSpec          *pspec)
-{
-}
-
-static void            set_property            (GObject             *object,
-                                                guint                prop_id,
-                                                const GValue        *value,
-                                                GParamSpec          *pspec)
-{
-}
 
 static void
 attach (GeglOperation *operation)
@@ -206,8 +61,8 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglNode           *input_node;
-  GeglOperation      *input_operation;
+  GeglNode      *input_node;
+  GeglOperation *input_operation;
 
   input_node = gegl_operation_get_source_node (operation, "input");
 
@@ -218,69 +73,6 @@ detect (GeglOperation *operation,
     }
 
   return operation->node;
-}
-
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
-{
-  GeglBuffer *input;
-  GeglBuffer *low;
-  GeglBuffer *high;
-  GeglBuffer *output;
-
-  input = gegl_node_context_get_source (context, "input");
-  low = gegl_node_context_get_source (context, "low");
-  high = gegl_node_context_get_source (context, "high");
-
-    {
-      gfloat *buf;
-      gfloat *min;
-      gfloat *max;
-      gint pixels = result->width  * result->height;
-      gint i;
-
-      buf = g_new (gfloat, pixels * 4);
-      min = g_new (gfloat, pixels * 3);
-      max = g_new (gfloat, pixels * 3);
-
-      gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
-
-      output = gegl_node_context_get_target (context, "output");
-
-      for (i = 0; i < pixels; i++)
-        {
-          gint c;
-
-          for (c = 0; c < 3; c++)
-            {
-              gfloat delta = max[i*3+c]-min[i*3+c];
-
-              if (delta > 0.0001 || delta < -0.0001)
-                {
-                  buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
-                }
-              /*else
-                buf[i*4+c] = buf[i*4+c];*/
-            }
-        }
-
-      gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,
-                       GEGL_AUTO_ROWSTRIDE);
-
-      g_free (buf);
-      g_free (min);
-      g_free (max);
-    }
-  g_object_unref (input);
-  g_object_unref (high);
-  g_object_unref (low);
-  return TRUE;
 }
 
 static GeglRectangle
@@ -314,21 +106,88 @@ compute_input_request (GeglOperation       *operation,
   return *roi;
 }
 
-static const GeglModuleInfo modinfo =
+static gboolean
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         const gchar         *output_prop,
+         const GeglRectangle *result)
 {
-  GEGL_MODULE_ABI_VERSION, "remap", "", ""
-};
+  GeglBuffer *input;
+  GeglBuffer *low;
+  GeglBuffer *high;
+  GeglBuffer *output;
+  gfloat     *buf;
+  gfloat     *min;
+  gfloat     *max;
+  gint        pixels = result->width * result->height;
+  gint        i;
 
-G_MODULE_EXPORT const GeglModuleInfo *
-gegl_module_query (GTypeModule *module)
-{
-  return &modinfo;
-}
+  input = gegl_node_context_get_source (context, "input");
+  low = gegl_node_context_get_source (context, "low");
+  high = gegl_node_context_get_source (context, "high");
 
-G_MODULE_EXPORT gboolean
-gegl_module_register (GTypeModule *module)
-{
-  gegl_operation_remap_register_type (module);
+  buf = g_new (gfloat, pixels * 4);
+  min = g_new (gfloat, pixels * 3);
+  max = g_new (gfloat, pixels * 3);
+
+  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
+
+  output = gegl_node_context_get_target (context, "output");
+
+  for (i = 0; i < pixels; i++)
+    {
+      gint c;
+
+      for (c = 0; c < 3; c++)
+        {
+          gfloat delta = max[i*3+c]-min[i*3+c];
+
+          if (delta > 0.0001 || delta < -0.0001)
+            {
+              buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
+            }
+          /*else
+            buf[i*4+c] = buf[i*4+c];*/
+        }
+    }
+
+  gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,
+                   GEGL_AUTO_ROWSTRIDE);
+
+  g_free (buf);
+  g_free (min);
+  g_free (max);
+
+  g_object_unref (input);
+  g_object_unref (high);
+  g_object_unref (low);
 
   return TRUE;
 }
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass *operation_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+
+  operation_class->process = process;
+  operation_class->attach  = attach;
+  operation_class->prepare = prepare;
+  operation_class->detect  = detect;
+  operation_class->get_defined_region = get_defined_region;
+  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->compute_input_request = compute_input_request;
+
+  operation_class->name        = "remap";
+  operation_class->categories  = "color";
+  operation_class->description =
+        "Linearly remap the R,G,B based on per pixel minimum and maximum"
+        " values from the high/low input pads";
+}
+
+#endif
