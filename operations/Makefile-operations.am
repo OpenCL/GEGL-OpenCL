@@ -14,6 +14,7 @@ all-local: $(SOBJS)
 
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(srcdir) -I$(top_srcdir)           \
+           -I$(top_builddir)                     \
            -I$(top_srcdir)/gegl                  \
            -I$(top_srcdir)/gegl/buffer           \
            -I$(top_srcdir)/gegl/operation        \

@@ -1,5 +1,10 @@
 2008-02-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/Makefile-operations.am: allow ops to include config.h
+	in distcheck by allowing includes from top build_dir.
+
+2008-02-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: modified to include the headers for
 	gegl-operation and it's subclesses (either by #include or directly
 	through an ifdef, not sure which direction to take yet)
