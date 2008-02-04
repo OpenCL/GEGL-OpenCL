@@ -1,3 +1,7 @@
+2008-02-04  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl.h: Fixed typo in documentation.
+
 2008-02-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/brightness-contrast.c: improved comments describing

@@ -220,7 +220,7 @@ GeglNode     * gegl_node_new             (void);
  * Returns a newly created node. The node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
  * parent. (You may also add additional references using
- * g_object_ref/g_objecr_unref, but in general relying on the parents reference
+ * g_object_ref/g_object_unref, but in general relying on the parents reference
  * counting is easiest.)
  */
 GeglNode    * gegl_node_new_child        (GeglNode      *parent,
