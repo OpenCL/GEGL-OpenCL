@@ -236,7 +236,7 @@ GeglNode    * gegl_node_new_child        (GeglNode      *parent,
  * ---
  * gegl_node_link_many (background, over, png_save, NULL);
  * gegl_node_connect_to (translate, "output", over, "aux");
- * gegl_node_link_many (text, blur, translate);
+ * gegl_node_link_many (text, blur, translate, NULL);
  */
 
 /**

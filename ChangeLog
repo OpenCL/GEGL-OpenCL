@@ -1,5 +1,10 @@
 2008-02-04  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/gegl.h: Add terminator-NULL to argument list of second
+	gegl_node_link_many() example.
+
+2008-02-04  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl.h: Fixed typo in documentation.
 
 2008-02-04  Øyvind Kolås  <pippin@gimp.org>
