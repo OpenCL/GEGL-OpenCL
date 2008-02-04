@@ -26,39 +26,44 @@
 gegl_chant_double (contrast,   -5.0, 5.0, 1.0, "Range scale factor")
 gegl_chant_double (brightness, -3.0, 3.0, 0.0, "Amount to increase brightness")
 
-/* this will create the following structure for our use, and register the
+/* this will create the instance structure for our use, and register the
  * property with the given ranges, default values and a comment for the
  * documentation/tooltip.
  */
 #else
-/* Following an else, is then the meta information for this operation */
 
+/* Specify the base class we're building our operation on, the base class provides
+ * a lot of the legwork so we do not have to. For brightness contrast the best
+ * base class is the POINT_FILTER base class.
+ */
 #define GEGL_CHANT_TYPE_POINT_FILTER
-/* This sets the super class we are deriving from, in this case from the class
- * point filter. With a point filter we only need to implement processing for a
- * linear buffer
- */
 
+/* We specify the file we're in, this is needed to make the code generation for
+ * the properties work.
+ */
 #define GEGL_CHANT_C_FILE       "brightness-contrast.c"
-/* we need to specify the name of the source file for gegl-old-chant.height  to
- * do it's magic.
- */
 
-
-/* gegl-chant, uses the properties defined at the top, and the configuration
- * in the preceding lines to generate a GObject plug-in.
+/* Including gegl-chant.h creates most of the GObject boiler plate needed,
+ * creating a GeglChant instance structure a GeglChantClass structure for
+ * our operation, as well as the needed code to register our new gobject
+ * with GEGL.
  */
 #include "gegl-chant.h"
 
+
+/* prepare() is called on each operation providing data to a node that
+ * is requested to provide a rendered result. When prepare is called all
+ * properties are known. For brightness contrast we use this opportunity
+ * to dictate the formats of the input and output buffers.
+ */
 static void prepare (GeglOperation *operation)
 {
-  /* set the babl format this operation prefers to work on */
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
-/* GeglOperationPointFilter gives us a linear buffer to operate on
- * in our requested pixel format
+/* For GeglOperationPointFilter subclasses, we operate on linear buffers with a
+ * pixel count.
  */
 static gboolean
 process (GeglOperation *op,
@@ -66,27 +71,40 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          n_pixels)
 {
+  /* Retrieve a pointer to GeglChantO structure which contains all the chanted
+   * properties
+   */
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *pixel;
+  gfloat     *in_pixel;
+  gfloat     *out_pixel;
+  gfloat      brightness, contrast;
   glong       i;
 
-  pixel = in_buf;
+  in_pixel   = in_buf;
+  out_pixel  = out_buf;
+
+  brightness = o->brightness;
+  contrast   = o->contrast;
 
   for (i=0; i<n_pixels; i++)
     {
       gint component;
       for (component=0; component<3; component++)
         {
-          gfloat c = pixel[component];
-          c = (c - 0.5) * o->contrast + o->brightness + 0.5;
-          pixel[component] = c;
+          out_pixel[component] =
+                (in_pixel[component] - 0.5) * contrast + brightness + 0.5;
         }
-      pixel += 4;
+      out_pixel[3] = in_pixel[3]; /* copy the alpha */
+      in_pixel += 4;
+      out_pixel += 4;
     }
   return TRUE;
 }
 
-
+/*
+ * The class init function sets up information needed for this operations class
+ * (template) in the GObject OO framework.
+ */
 static void
 operation_class_init (GeglChantClass *klass)
 {
@@ -96,11 +114,22 @@ operation_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
+  /* override the prepare methods of the GeglOperation class */
   operation_class->prepare = prepare;
+  /* override the process method of the point filter class (the process methods
+   * of our superclasses deal with the handling on their level of abstraction)
+   */
+  point_filter_class->process = process;
 
+  /* specify the name this operation is found under in the GUI/when programming/in
+   * XML
+   */
   operation_class->name        = "brightness-contrast";
+
+  /* a colon separated list of categories/tags for this operations */
   operation_class->categories  = "color";
+
+  /* a description of what this operations does */
   operation_class->description = "Changes the light level and contrast.";
 }
 
