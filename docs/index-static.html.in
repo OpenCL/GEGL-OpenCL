@@ -57,6 +57,7 @@
         <li><a href='#Development'>Development</a></li>
         <!--<li><a href='#Bootstrap'>&nbsp;&nbsp;Bootstrap</a></li>-->
         <li><a href='#CodeOverview'>&nbsp;&nbsp;Code Overview</a></li>
+        <li><a href='#extending'>&nbsp;&nbsp;Extending</a></li>
 
         <li>&nbsp;</li>
         <li>&nbsp;</li>
@@ -104,15 +105,15 @@
             <li>Internal sparse pyramidial render cache.</li>
             <li>Bounding box based hit detection.</li>
             <li>Rich core set of processing <a
-                href='operations.html'>operations</a> that internally computes
-              with 32bit floating point, linear light RGB.
+                href='operations.html'>operations</a> that operates in <a href='http://en.wikipedia.org/wiki/ScRGB_color_space'>
+                scRGB</a> (32bit linear light RGBA)
               <ul>
                 <li>PNG, JPEG, SVG, EXR, RAW, ffmpeg and other image sources.</li>
                 <li><a href='operations.html#cat_render'>Pattern renderers</a></li>
                 <li><a href='operations.html#math'>Arithmetic operations</a></li>
                 <li><a href='operations.html#porter_duff'>porter duff</a> compositing</li>
                 <li>SVG filter modes and full set of compositing ops from SVG-1.2
-                draft</li>
+                draft.</li>
                 <li>Gaussian blur, bilateral-filter, symmetric nearest neighbour,
                 unsharp mask.</li>
                 <li><a href='operations.html#cat_color'>Color correction</a>.</li>
@@ -504,6 +505,53 @@ Some examples:
 
         <a name='extending'></a>
         <h3>Extending</h3>
+
+        <p>Each GEGL operation is defined in a .c file that gets turned into a single
+        shared object that is loaded. Each operation is a subclass of one of the provided
+        baseclasses:
+        <dl>
+            <dt>GeglOperation</dt>
+            <dd>The base operation class, which all the other base classes are derived from,
+            deriving from this is often quite a bit of work and is encouraged only when your
+            operation doesn't fit into any of the other categories</dd>
+
+            <dt>&nbsp;&nbsp;GeglOperationFilter</dt>
+            <dd>The filter base class sets up GeglBuffers for input and output pads</dd>
+
+            <dt>&nbsp;&nbsp;&nbsp;&nbsp;GeglOperationAreaFilter</dt>
+            <dd>The AreaFilter base class allows defining operations where the output data depends on a neighbourhood
+            with an input window that extends beyond the output window, the information about needed extra pixels in
+            different directions should be set up in the prepare callback for the operation.</dd>
+
+            <dt>&nbsp;&nbsp;&nbsp;&nbsp;GeglOperationPointFilter</dt>
+            <dd>The point-filter base class is for filters where an output
+            pixel only depends on the color and alpha values of the
+            corresponding input pixel. This allows you to do the processing on
+            linear buffers, in the future versions of GEGL operations
+            implemented using the point-filter will get speed increases due to
+            more intelligent processing possible in the point filter class</dd>
+
+            <dt>&nbsp;&nbsp;GeglOperationComposer</dt>
+            <dd>Composer operations are operations that take two inputs named 'input' and 'aux' and writes their output
+            to the output pad 'output'</dd>
+
+            <dt>&nbsp;&nbsp;&nbsp;&nbsp;GeglOperationPointComposer</dt>
+            <dd>A baseclass for composer functions where the output pixels values depends only on the values of the
+            single corresponding input and aux pixels.</dd>
+
+            <dt>&nbsp;&nbsp;GeglOperationSource</dt>
+            <dd>Operations used as render sources or file loaders, the process method receives a GeglBuffer to write
+            it's output into</dd>
+
+            <dt>&nbsp;&nbsp;GeglOperationSink</dt>
+            <dd>An operation that consumes a GeglBuffer, used for filewriters, display (for the sdl display node)
+            </dd>
+
+            <dt>&nbsp;&nbsp;GeglOperationMeta</dt>
+            <dd>Used for GEGL operations that are implemented as a sub-graph, at the moment these are defined as
+            C files but should in the future be possible to declare as XML instead.
+            </dd>
+        </dl>
 
         <p>To create your own operations you should start by looking for one
         that does approximatly what you already need. Copy it to a new .c

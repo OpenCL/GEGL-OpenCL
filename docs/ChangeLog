@@ -1,3 +1,22 @@
+2008-02-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: Added link to Development/Extending in index
+	menu. Rephrased processing format to mention and link to wikipedia
+	page describing scRGB. Added initial brain dump on documentation for
+	Operation base classes, needs re-iterating a couple of times.
+
+2008-02-03  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* Makefile.am:
+
+2008-02-03  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* Makefile.am:
+
 2008-02-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am:
