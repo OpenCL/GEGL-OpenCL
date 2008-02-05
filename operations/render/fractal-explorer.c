@@ -53,7 +53,7 @@ gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
 #else
 
 #define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "FractalExplorer.c"
+#define GEGL_CHANT_C_FILE       "fractal-explorer.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -81,9 +81,9 @@ enum
 };
 
 typedef struct
-  {
-    guchar r, g, b;
-  } gucharRGB;
+{
+  guchar r, g, b;
+} gucharRGB;
 
 typedef gucharRGB  clrmap[MAXNCOLORS];
 
@@ -447,7 +447,7 @@ operation_class_init (GeglChantClass *klass)
   operation_class->get_defined_region = get_defined_region;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "FractalExplorer";
+  operation_class->name        = "fractal-explorer";
   operation_class->categories  = "render";
   operation_class->description = "Fractal Explorer";
 
