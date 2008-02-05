@@ -343,7 +343,9 @@ gegl_node_get_pad (GeglNode    *self,
 {
   GSList *list;
 
-  g_assert (self);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (name != NULL, NULL);
+
   if (!self->pads)
     return NULL;
 
@@ -441,8 +443,8 @@ pads_exist (GeglNode    *sink,
       sink_pad = gegl_node_get_pad (sink, sink_pad_name);
       if (!sink_pad || !gegl_pad_is_input (sink_pad))
         {
-          g_warning ("Can't find sink property %s of %s", sink_pad_name,
-                     gegl_node_get_debug_name (sink));
+          g_warning ("%s: Can't find sink property %s of %s", G_STRFUNC,
+                     sink_pad_name, gegl_node_get_debug_name (sink));
           return FALSE;
         }
     }
@@ -453,8 +455,8 @@ pads_exist (GeglNode    *sink,
       source_pad = gegl_node_get_pad (source, source_pad_name);
       if (!source_pad || !gegl_pad_is_output (source_pad))
         {
-          g_warning ("Can't find source property %s of %s", source_pad_name,
-                     gegl_node_get_debug_name (source));
+          g_warning ("%s: Can't find source property %s of %s", G_STRFUNC,
+                     source_pad_name, gegl_node_get_debug_name (source));
           return FALSE;
         }
     }
@@ -489,6 +491,11 @@ gegl_node_connect_to (GeglNode    *source,
                       GeglNode    *sink,
                       const gchar *sink_pad_name)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
+  g_return_val_if_fail (source_pad_name != NULL, FALSE);
+  g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
+  g_return_val_if_fail (sink_pad_name != NULL, FALSE);
+
   return gegl_node_connect_from (sink, sink_pad_name, source, source_pad_name);
 }
 
@@ -546,7 +553,9 @@ gegl_node_connect_from (GeglNode    *sink,
                         const gchar *source_pad_name)
 {
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
+  g_return_val_if_fail (sink_pad_name != NULL, FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
+  g_return_val_if_fail (source_pad_name != NULL, FALSE);
 
   {
     GeglPad *pad;
@@ -557,8 +566,8 @@ gegl_node_connect_from (GeglNode    *sink,
       other_pad = gegl_pad_get_connected_to (pad);
     else
       {
-        g_warning ("Didn't find pad '%s' of '%s'",
-                   sink_pad_name, gegl_node_get_debug_name (sink));
+        g_warning ("%s: Didn't find pad '%s' of '%s'",
+                   G_STRFUNC, sink_pad_name, gegl_node_get_debug_name (sink));
       }
 
     if (other_pad)
@@ -595,6 +604,7 @@ gegl_node_disconnect (GeglNode    *sink,
                       const gchar *sink_pad_name)
 {
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
+  g_return_val_if_fail (sink_pad_name != NULL, FALSE);
 
   if (pads_exist (sink, sink_pad_name, NULL, NULL))
     {
@@ -707,26 +717,33 @@ gegl_node_get_num_sinks (GeglNode *self)
 GSList *
 gegl_node_get_sinks (GeglNode *self)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (self), FALSE);
+
   return self->sinks;
 }
 
-void          gegl_node_link (GeglNode *source,
-                              GeglNode *sink)
+void
+gegl_node_link (GeglNode *source,
+                GeglNode *sink)
 {
+  g_return_if_fail (GEGL_IS_NODE (source));
+  g_return_if_fail (GEGL_IS_NODE (sink));
+
   /* using connect_to is more natural here, but leads to an extra
    * function call, perhaps connect_to and connect_from should be swapped?
    */
   gegl_node_connect_to (source, "output", sink, "input");
 }
 
-void          gegl_node_link_many (GeglNode *source,
-                                   GeglNode *dest,
-                                   ...)
+void
+gegl_node_link_many (GeglNode *source,
+                     GeglNode *dest,
+                     ...)
 {
   va_list var_args;
 
-  g_assert (GEGL_IS_NODE (source));
-  g_assert (GEGL_IS_NODE (dest));
+  g_return_if_fail (GEGL_IS_NODE (source));
+  g_return_if_fail (GEGL_IS_NODE (dest));
 
   va_start (var_args, dest);
   while (dest)
@@ -746,11 +763,12 @@ gegl_node_apply_roi (GeglNode            *self,
   GeglEvalMgr *eval_mgr;
   GeglBuffer  *buffer;
 
-  g_assert (GEGL_IS_NODE (self));
   eval_mgr      = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
   eval_mgr->roi = *roi;
   buffer        = gegl_eval_mgr_apply (eval_mgr, self, output_pad_name);
+
   g_object_unref (eval_mgr);
+
   return buffer;
 }
 
@@ -763,23 +781,29 @@ gegl_node_blit (GeglNode            *node,
                 gint                 rowstride,
                 GeglBlitFlags        flags)
 {
+  g_return_if_fail (GEGL_IS_NODE (node));
+  g_return_if_fail (roi != NULL);
+
   if (flags == GEGL_BLIT_DEFAULT)
     {
       GeglBuffer *buffer;
       buffer = gegl_node_apply_roi (node, "output", roi);
-      if (buffer && destination_buf) { 
-        GeglBuffer *roi_buf = gegl_buffer_create_sub_buffer (buffer, roi);
+      if (buffer && destination_buf)
+        {
+          GeglBuffer *roi_buf = gegl_buffer_create_sub_buffer (buffer, roi);
 
-        if (destination_buf)
-          {
-            gegl_buffer_get (roi_buf, 1.0, NULL, format, destination_buf, rowstride);
-          }
-        g_object_unref (roi_buf);
-        if (scale != 1.0)
-          {
-            g_warning ("Scale %f!=1.0 in blit without cache", scale);
-          }
-      }
+          if (destination_buf)
+            {
+              gegl_buffer_get (roi_buf, 1.0, NULL,
+                               format, destination_buf, rowstride);
+            }
+          g_object_unref (roi_buf);
+          if (scale != 1.0)
+            {
+              g_warning ("Scale %f!=1.0 in blit without cache", scale);
+            }
+        }
+
       /* and unrefing to ultimately clean it off from the graph */
       if (buffer)
         g_object_unref (buffer);
@@ -809,7 +833,8 @@ gegl_node_apply (GeglNode    *self,
 {
   GeglRectangle defined;
 
-  g_assert (GEGL_IS_NODE (self));
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
   defined = gegl_node_get_bounding_box (self);
   return gegl_node_apply_roi (self, "output", &defined);
 }
@@ -818,7 +843,9 @@ GSList *
 gegl_node_get_depends_on (GeglNode *self)
 {
   GSList *depends_on = NULL;
-  GSList *llink      = self->sources;
+  GSList *llink;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
   for (llink = self->sources; llink; llink = g_slist_next (llink))
     {
@@ -860,7 +887,7 @@ visitable_accept (GeglVisitable *visitable,
   gegl_visitor_visit_node (visitor, (GeglNode *) visitable);
 }
 
-GSList *
+static GSList *
 visitable_depends_on (GeglVisitable *visitable)
 {
   GeglNode *self = GEGL_NODE (visitable);
@@ -922,9 +949,10 @@ gegl_node_set_op_class (GeglNode    *node,
 }
 
 
-static void property_changed (GObject    *gobject,
-                              GParamSpec *arg1,
-                              gpointer    user_data)
+static void
+property_changed (GObject    *gobject,
+                  GParamSpec *arg1,
+                  gpointer    user_data)
 {
   GeglNode *self = GEGL_NODE (user_data);
 
@@ -1262,6 +1290,10 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (property_name != NULL);
+  g_return_if_fail (value != NULL);
+
   if (!strcmp (property_name, "class"))
     {
       g_warning ("Setting a deprecated property \"class\", "
@@ -1291,9 +1323,12 @@ gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (property_name != NULL);
+  g_return_if_fail (value != NULL);
+
   if (!strcmp (property_name, "operation") ||
-      !strcmp (property_name, "name")
-  )
+      !strcmp (property_name, "name"))
     {
       g_object_get_property (G_OBJECT (self),
                              property_name, value);
@@ -1323,6 +1358,9 @@ gegl_node_find_property (GeglNode    *self,
                          const gchar *property_name)
 {
   GParamSpec *pspec = NULL;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (property_name != NULL, NULL);
 
   if (self->operation)
     pspec = g_object_class_find_property (
@@ -1358,9 +1396,13 @@ gegl_node_set_need_rect (GeglNode *node,
                          gint      width,
                          gint      height)
 {
-  GeglNodeContext *context = gegl_node_get_context (node, context_id);
+  GeglNodeContext *context;
 
-  g_assert (node);
+  g_return_if_fail (GEGL_IS_NODE (node));
+  g_return_if_fail (context_id != NULL);
+
+  context = gegl_node_get_context (node, context_id);
+
   context->need_rect.x      = x;
   context->need_rect.y      = y;
   context->need_rect.width  = width;
@@ -1371,6 +1413,8 @@ const gchar *
 gegl_node_get_debug_name (GeglNode *node)
 {
   static gchar ret_buf[512];
+
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
   if (gegl_node_get_name (node) != NULL &&
       gegl_node_get_name (node)[0] != '\0')
@@ -1394,7 +1438,12 @@ gegl_node_get_producer (GeglNode *node,
                         gchar    *pad_name,
                         gchar   **output_pad_name)
 {
-  GeglPad *pad = gegl_node_get_pad (node, pad_name);
+  GeglPad *pad;
+
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+  g_return_val_if_fail (pad_name != NULL, NULL);
+
+  pad = gegl_node_get_pad (node, pad_name);
 
   if (pad &&
       gegl_pad_is_input (pad) &&
@@ -1463,7 +1512,8 @@ gegl_node_process (GeglNode *self)
 {
   GeglProcessor *processor;
 
-  g_assert (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_NODE (self));
+
   processor = gegl_node_new_processor (self, NULL);
 
   while (gegl_processor_work (processor, NULL)) ;
@@ -1519,13 +1569,18 @@ lookup_context (gconstpointer a,
     return 0;
   return -1;
 }
+
 void babl_backtrack (void);
+
 GeglNodeContext *
 gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GSList          *found;
   GeglNodeContext *context = NULL;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (context_id != NULL, NULL);
 
   found = g_slist_find_custom (self->context, context_id, lookup_context);
   if (found)
@@ -1544,6 +1599,9 @@ gegl_node_remove_context (GeglNode *self,
 {
   GeglNodeContext *context;
 
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (context_id != NULL);
+
   context = gegl_node_get_context (self, context_id);
   if (!context)
     {
@@ -1560,7 +1618,12 @@ gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglNodeContext *context = NULL;
-  GSList          *found   = g_slist_find_custom (self->context, context_id, lookup_context);
+  GSList          *found;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (context_id != NULL, NULL);
+
+  found = g_slist_find_custom (self->context, context_id, lookup_context);
 
   if (found)
     context = found->data;
@@ -1612,8 +1675,14 @@ void
 gegl_node_insert_before (GeglNode *self,
                          GeglNode *to_be_inserted)
 {
-  GeglNode     *other     = gegl_node_get_producer (self, "input", NULL);/*XXX: handle pad name */
-  GeglRectangle rectangle = gegl_node_get_bounding_box (to_be_inserted);
+  GeglNode     *other;
+  GeglRectangle rectangle;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_NODE (to_be_inserted));
+
+  other     = gegl_node_get_producer (self, "input", NULL);/*XXX: handle pad name */
+  rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);
   /* the blocked handler disappears during the relinking */
@@ -1634,11 +1703,8 @@ gegl_node_get_consumers (GeglNode      *node,
   GeglPad *pad;
   gchar  **pasp = NULL;
 
-  if (!node)
-    {
-      g_warning ("%s node==NULL", G_STRFUNC);
-      return 0;
-    }
+  g_return_val_if_fail (GEGL_IS_NODE (node), 0);
+  g_return_val_if_fail (output_pad != NULL, 0);
 
   pad = gegl_node_get_pad (node, output_pad);
 
@@ -1699,9 +1765,10 @@ gegl_node_get_consumers (GeglNode      *node,
   return n_connections;
 }
 
-static void computed_event (GeglCache *self,
-                            void      *foo,
-                            void      *user_data)
+static void
+computed_event (GeglCache *self,
+                void      *foo,
+                void      *user_data)
 {
   GeglNode *node = GEGL_NODE (user_data);
 
@@ -1740,15 +1807,24 @@ gegl_node_get_cache (GeglNode *node)
 const gchar *
 gegl_node_get_name (GeglNode *self)
 {
-  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNodePrivate *priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
 
   return priv->name;
 }
 
-void gegl_node_set_name (GeglNode    *self,
-                         const gchar *name)
+void
+gegl_node_set_name (GeglNode    *self,
+                    const gchar *name)
 {
-  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNodePrivate *priv;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  priv = GEGL_NODE_GET_PRIVATE (self);
 
   if (priv->name)
     g_free (priv->name);
@@ -1892,6 +1968,9 @@ GeglNode *
 gegl_node_create_child (GeglNode    *self,
                         const gchar *operation)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (operation != NULL, NULL);
+
   return gegl_node_new_child (self, "operation", operation, NULL);
 }
 
@@ -1963,6 +2042,8 @@ GeglNode *
 gegl_node_get_input_proxy (GeglNode    *node,
                            const gchar *name)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
   return gegl_node_get_pad_proxy (node, name, TRUE);
 }
 
@@ -1970,6 +2051,8 @@ GeglNode *
 gegl_node_get_output_proxy (GeglNode    *node,
                             const gchar *name)
 {
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
   return gegl_node_get_pad_proxy (node, name, FALSE);
 }
 
