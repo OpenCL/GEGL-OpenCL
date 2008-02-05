@@ -48,13 +48,13 @@ GType        gegl_color_get_type               (void) G_GNUC_CONST;
 
 GeglColor *  gegl_color_new                    (const gchar *string);
 
-void         gegl_color_get_rgba               (GeglColor    *self,
-                                                gfloat       *r,
-                                                gfloat       *g,
-                                                gfloat       *b,
-                                                gfloat       *a);
+void         gegl_color_get_rgba               (GeglColor   *self,
+                                                gfloat      *r,
+                                                gfloat      *g,
+                                                gfloat      *b,
+                                                gfloat      *a);
 
-void         gegl_color_set_rgba               (GeglColor    *self,
+void         gegl_color_set_rgba               (GeglColor   *self,
                                                 gfloat       r,
                                                 gfloat       g,
                                                 gfloat       b,

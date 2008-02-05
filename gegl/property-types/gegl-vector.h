@@ -37,23 +37,23 @@ typedef struct _GeglVectorClass  GeglVectorClass;
 
 struct _GeglVector
 {
-  GObject parent;
+  GObject parent_instance;
 };
 
 struct _GeglVectorClass
 {
-  GObjectClass parent;
+  GObjectClass parent_class;
 };
+
+GType        gegl_vector_get_type     (void) G_GNUC_CONST;
+
+GeglVector * gegl_vector_new          (void);
 
 void         gegl_vector_get_bounds   (GeglVector   *self,
                                        gdouble      *min_x,
                                        gdouble      *max_x,
                                        gdouble      *min_y,
                                        gdouble      *max_y);
-
-GeglVector   * gegl_vector_new        (void);
-
-GType        gegl_vector_get_type     (void) G_GNUC_CONST;
 
 gdouble      gegl_vector_get_length   (GeglVector  *self);
 
@@ -71,13 +71,13 @@ void         gegl_vector_calc_values  (GeglVector  *self,
                                        gdouble     *xs,
                                        gdouble     *ys);
 
+GType        gegl_param_vector_get_type (void) G_GNUC_CONST;
+
 GParamSpec * gegl_param_spec_vector   (const gchar *name,
                                        const gchar *nick,
                                        const gchar *blurb,
                                        GeglVector  *default_vector,
                                        GParamFlags  flags);
-
-GType        gegl_param_vector_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
 

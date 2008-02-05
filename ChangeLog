@@ -1,3 +1,14 @@
+2008-02-05  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/property-types/gegl-color.h: indentation.
+
+	* gegl/property-types/gegl-color.c: replace g_assert() by
+	g_return_if_fail().
+
+	(gegl_param_spec_color): ref the default color.
+
+	* gegl/property-types/gegl-vector.h: reorder stuff, cleanup.
+
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/Makefile.am: install gegl-color.h and gegl-curve.h

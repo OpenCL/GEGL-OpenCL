@@ -256,7 +256,8 @@ gegl_color_get_rgba (GeglColor *self,
 {
   GeglColorPrivate *priv;
 
-  g_assert (self);
+  g_return_if_fail (GEGL_IS_COLOR (self));
+
   priv = GEGL_COLOR_GET_PRIVATE (self);
 
   *r = priv->rgba_color[0];
@@ -274,7 +275,8 @@ gegl_color_set_rgba (GeglColor *self,
 {
   GeglColorPrivate *priv;
 
-  g_assert (self);
+  g_return_if_fail (GEGL_IS_COLOR (self));
+
   priv = GEGL_COLOR_GET_PRIVATE (self);
 
   priv->rgba_color[0] = r;
@@ -411,6 +413,7 @@ gegl_color_new (const gchar *string)
 {
   if (string)
     return g_object_new (GEGL_TYPE_COLOR, "string", string, NULL);
+
   return g_object_new (GEGL_TYPE_COLOR, NULL);
 }
 
@@ -503,6 +506,8 @@ gegl_param_spec_color (const gchar *name,
                                        name, nick, blurb, flags);
 
   param_color->default_color = default_color;
+  if (default_color)
+    g_object_ref (default_color);
 
   return G_PARAM_SPEC (param_color);
 }
