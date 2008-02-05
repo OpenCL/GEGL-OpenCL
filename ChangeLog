@@ -1,5 +1,10 @@
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/demosaic-simple.c: (demosaic): fixed rowstride
+	issue introduce by api migration.
+
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from Bradley Broom fixing bug #510371 - Images with
 	"negative x origin are not displayed or output correctly"
 

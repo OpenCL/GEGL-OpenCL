@@ -44,54 +44,58 @@ demosaic (GeglChantO *op,
   gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
-  for (y=src_extent->y; y<dst_extent->height + src_extent->y; y++)
-    for (x=src_extent->x; x<dst_extent->width + src_extent->x; x++)
-      {
-        gfloat red=0.0;
-        gfloat green=0.0;
-        gfloat blue=0.0;
+  for (y=src_extent->y; y < dst_extent->height + src_extent->y; y++)
+    {
+      gint src_offset = (y-src_extent->y) * src_extent->width;
+      for (x=src_extent->x; x < dst_extent->width + src_extent->x; x++)
+        {
+          gfloat red=0.0;
+          gfloat green=0.0;
+          gfloat blue=0.0;
 
-        if (y<dst_extent->height+src_extent->y-1 &&
-            x<dst_extent->width+src_extent->x-1)
-          {
-        if ((y + op->pattern%2)%2==0)
-          {
-            if ((x+op->pattern/2)%2==1)
-              {
-                blue=src_buf[offset+1];
-                green=src_buf[offset];
-                red=src_buf[offset + src_extent->width];
-              }
-            else
-              {
-                blue=src_buf[offset];
-                green=src_buf[offset+1];
-                red=src_buf[offset+1+src_extent->width];
-              }
+          if (y<dst_extent->height+dst_extent->y &&
+              x<dst_extent->width+dst_extent->x)
+            {
+          if ((y + op->pattern%2)%2==0)
+            {
+              if ((x+op->pattern/2)%2==1)
+                {
+                  blue=src_buf[src_offset+1];
+                  green=src_buf[src_offset];
+                  red=src_buf[src_offset + src_extent->width];
+                }
+              else
+                {
+                  blue=src_buf[src_offset];
+                  green=src_buf[src_offset+1];
+                  red=src_buf[src_offset+1+src_extent->width];
+                }
+            }
+          else
+            {
+              if ((x+op->pattern/2)%2==1)
+                {
+                  blue=src_buf[src_offset + src_extent->width + 1];
+                  green=src_buf[src_offset + 1];
+                  red=src_buf[src_offset];
+                }
+              else
+                {
+                  blue=src_buf[src_offset + src_extent->width];
+                  green=src_buf[src_offset];
+                  red=src_buf[src_offset + 1];
+                }
+            }
           }
-        else
-          {
-            if ((x+op->pattern/2)%2==1)
-              {
-                blue=src_buf[offset + src_extent->width + 1];
-                green=src_buf[offset + 1];
-                red=src_buf[offset];
-              }
-            else
-              {
-                blue=src_buf[offset + src_extent->width];
-                green=src_buf[offset];
-                red=src_buf[offset + 1];
-              }
-          }
+
+          dst_buf [offset*3+0] = red;
+          dst_buf [offset*3+1] = green;
+          dst_buf [offset*3+2] = blue;
+
+          offset++;
+          src_offset++;
         }
-
-        dst_buf [offset*3+0] = red;
-        dst_buf [offset*3+1] = green;
-        dst_buf [offset*3+2] = blue;
-
-        offset++;
-      }
+    }
 
   gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
