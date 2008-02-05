@@ -1,3 +1,9 @@
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.h: removed comments making
+	gegl_operation_get_format not publicly visible when including the
+	header itself (like gegl-plugin.h currently does in the #if 1 case,.)
+
 2008-02-05  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/graph/gegl-node.c: added tons of g_return_if_fail()

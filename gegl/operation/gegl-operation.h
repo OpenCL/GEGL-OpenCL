@@ -179,10 +179,9 @@ void       gegl_operation_set_format                (GeglOperation *operation,
                                                      const gchar   *pad_name,
                                                      const Babl    *format);
 
-/*
+
 const Babl * gegl_operation_get_format              (GeglOperation *operation,
                                                      const gchar   *pad_name);
-*/
 
 
 G_END_DECLS
