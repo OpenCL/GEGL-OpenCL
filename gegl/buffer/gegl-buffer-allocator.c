@@ -85,17 +85,20 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
 
   if (allocator->y_used + needed_height > buffer->extent.height)
     {
-      g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-                 width, height, buffer->extent.width, buffer->extent.height);
+      g_warning (
+         "requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
+         width, height, buffer->extent.width, buffer->extent.height);
       return NULL;
     }
 
   if (allocator->x_used + needed_width > buffer->extent.width)
     {
-      if (allocator->y_used + allocator->max_height + needed_height > buffer->extent.height)
+      if (allocator->y_used + allocator->max_height + needed_height >
+          buffer->extent.height)
         {
-          g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-                     width, height, buffer->extent.width, buffer->extent.height);
+          g_warning (
+             "requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
+             width, height, buffer->extent.width, buffer->extent.height);
           return NULL;
         }
       allocator->y_used    += allocator->max_height;
@@ -103,8 +106,8 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
       allocator->max_height = 0;
     }
 
-  shift_x = allocator->x_used;
-  shift_y = allocator->y_used;
+  shift_x = allocator->x_used - x;
+  shift_y = allocator->y_used - y;
 
   allocator->x_used += needed_width;
   if (allocator->max_height < needed_height)
@@ -147,7 +150,7 @@ gegl_buffer_new_from_format (const void *babl_format,
 
       if (gegl_swap != NULL)
         {
-	  GeglStorage *storage;
+          GeglStorage *storage;
           gchar *path;
           path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap,
                                   getpid (), babl_name (babl_format));

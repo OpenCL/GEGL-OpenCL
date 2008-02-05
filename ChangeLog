@@ -1,5 +1,13 @@
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
+	Applied patch from Bradley Broom fixing bug #510371 - Images with
+	"negative x origin are not displayed or output correctly"
+
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): take the
+	requested offset into account for the shift.
+
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/enhance/bilateral-filter.c: adjust for recent changes
 	in geometry due to api cleanups.
 
