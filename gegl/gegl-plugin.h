@@ -96,7 +96,6 @@ GParamSpec * gegl_param_spec_color             (const gchar *name,
                                                 GParamFlags  flags);
 
 #define GEGL_TYPE_PARAM_COLOR           (gegl_param_color_get_type ())
-#define GEGL_PARAM_SPEC_COLOR(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_COLOR, GeglParamSpecInt16))
 #define GEGL_IS_PARAM_SPEC_COLOR(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_COLOR))
 
 /**** hack ***/
