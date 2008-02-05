@@ -44,8 +44,6 @@ gboolean    gegl_rectangle_intersect     (GeglRectangle       *dest,
 gboolean    gegl_rectangle_contains      (const GeglRectangle *r,
                                           const GeglRectangle *s);
 
-gchar     * gegl_canonicalize_identifier (const gchar    *identifier);
-
 void        gegl_log_debug               (const gchar    *file,
                                           gint            line,
                                           const gchar    *function,

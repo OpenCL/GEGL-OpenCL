@@ -592,126 +592,102 @@ static void
 gegl_chant_class_init (gpointer klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  gchar        *canon;
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
   object_class->constructor  = gegl_chant_constructor;
 
-  canon = NULL;
-
 /*  g_type_class_add_private (klass, sizeof (GeglChantO));*/
 
 #define gegl_chant_int(name, min, max, def, blurb)                           \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_int (canon, canon, blurb,    \
+                                   g_param_spec_int (#name, #name, blurb,    \
                                                      min, max, def,          \
                                                      (GParamFlags) (         \
                                                      G_PARAM_READWRITE |     \
                                                      G_PARAM_CONSTRUCT |     \
-                                                     GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                     GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_double(name, min, max, def, blurb)                        \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_double (canon, canon, blurb, \
+                                   g_param_spec_double (#name, #name, blurb, \
                                                         min, max, def,       \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
-                                                        GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_boolean(name, def, blurb)                                 \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_boolean (canon, canon, blurb,\
+                                   g_param_spec_boolean (#name, #name, blurb,\
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
-                                                         GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_string(name, def, blurb)                                  \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_string (canon, canon, blurb, \
+                                   g_param_spec_string (#name, #name, blurb, \
                                                         def,                 \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
-                                                        GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_path(name, def, blurb)                                    \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_path (canon, canon, blurb,\
+                                   gegl_param_spec_path (#name, #name, blurb,\
                                                          FALSE, FALSE,       \
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
-                                                         GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_multiline(name, def, blurb)                               \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_multiline (canon, canon, blurb, \
+                                   gegl_param_spec_multiline (#name, #name, blurb, \
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
-                                                         GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                         GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_object(name, blurb)                                       \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_object (canon, canon, blurb, \
+                                   g_param_spec_object (#name, #name, blurb, \
                                                         G_TYPE_OBJECT,       \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
-                                                        GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_pointer(name, blurb)                                      \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_pointer (canon, canon, blurb,\
+                                   g_param_spec_pointer (#name, #name, blurb,\
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
-                                                        GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                        GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_color(name, def, blurb)                                   \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_color_from_string (canon, canon, blurb,\
+                                   gegl_param_spec_color_from_string (#name, #name, blurb,\
                                                           def,               \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                          GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_curve(name, blurb)                                        \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_curve (canon, canon, blurb,\
+                                   gegl_param_spec_curve (#name, #name, blurb,\
                                                           gegl_curve_default_curve(),\
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                          GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_vector(name, blurb)                                       \
-  canon = gegl_canonicalize_identifier (#name);                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_vector (canon, canon, blurb,\
+                                   gegl_param_spec_vector (#name, #name, blurb,\
                                                            NULL,             \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PARAM_PAD_INPUT)));\
-  g_free (canon);
+                                                          GEGL_PARAM_PAD_INPUT)));
+
 
 #include GEGL_CHANT_C_FILE
 

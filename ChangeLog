@@ -1,3 +1,9 @@
+2008-02-05  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-utils.[ch]: removed gegl_canonicalize_identifier() again.
+
+	* gegl/gegl-chant.h: removed name and nick canonicalization again.
+
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation.h: removed comments making
