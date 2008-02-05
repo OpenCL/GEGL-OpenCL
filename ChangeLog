@@ -1,3 +1,8 @@
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/enhance/snn-mean.c: (prepare): specify formats on pads,
+	adjust for geometry of input buffer in innerloop.
+
 2008-02-05  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/property-types/gegl-color.[ch]

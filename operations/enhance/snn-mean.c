@@ -44,6 +44,8 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = ceil (o->radius);
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
@@ -99,13 +101,16 @@ static inline gfloat colordiff (gfloat *pixA,
 static void
 snn_mean (GeglBuffer *src,
           GeglBuffer *dst,
-          gdouble     radius,
+          gdouble     dradius,
           gint        pairs)
 {
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
+  gint radius = dradius;
+  gint src_width = gegl_buffer_get_width (src);
+  gint src_height = gegl_buffer_get_height (src);
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
@@ -115,64 +120,72 @@ snn_mean (GeglBuffer *src,
   offset = 0;
 
   for (y=0; y<gegl_buffer_get_height (dst); y++)
-    for (x=0; x<gegl_buffer_get_width (dst); x++)
-      {
-        gint u,v;
-        gfloat *center_pix = src_buf + offset * 4;
-        gfloat  accumulated[4]={0,};
-        gint    count=0;
+    {
+      gfloat *center_pix;
+     
+      center_pix = src_buf + ((radius) + (y+radius)* src_width)*4;
 
-        /* iterate through the upper left quater of pixels */
-        for (v=-radius;v<=0;v++)
-          for (u=-radius;u<= (pairs==1?radius:0);u++)
-            {
-              gfloat *selected_pix = center_pix;
-              gfloat  best_diff = 1000.0;
-              gint    i;
+      for (x=0; x<gegl_buffer_get_width (dst); x++)
+        {
+          gint u,v;
 
-              /* skip computations for the center pixel */
-              if (u != 0 &&
-                  v != 0)
-                {
-                  /* compute the coordinates of the symmetric pairs for
-                   * this locaiton in the quadrant
-                   */
-                  gint xs[4] = {x+u, x-u, x-u, x+u};
-                  gint ys[4] = {y+v, y-v, y+v, y-v};
+          gfloat  accumulated[4]={0,};
+          gint    count=0;
 
-                  /* check which member of the symmetric quadruple to use */
-                  for (i=0;i<pairs*2;i++)
-                    {
-                      if (xs[i] >= 0 && xs[i] < gegl_buffer_get_width (src) &&
-                          ys[i] >= 0 && ys[i] < gegl_buffer_get_height (src))
-                        {
-                          gfloat *tpix = src_buf + (xs[i]+ys[i]*gegl_buffer_get_width (src))*4;
-                          gfloat diff = colordiff (tpix, center_pix);
-                          if (diff < best_diff)
-                            {
-                              best_diff = diff;
-                              selected_pix = tpix;
-                            }
-                        }
-                    }
-                }
+          /* iterate through the upper left quater of pixels */
+          for (v=-radius;v<=0;v++)
+            for (u=-radius;u<= (pairs==1?radius:0);u++)
+              {
+                gfloat *selected_pix = center_pix;
+                gfloat  best_diff = 1000.0;
+                gint    i;
 
-              /* accumulate the components of the best sample from
-               * the symmetric quadruple
-               */
-              for (i=0;i<4;i++)
-                {
-                  accumulated[i] += selected_pix[i];
-                }
-              count++;
+                /* skip computations for the center pixel */
+                if (u != 0 &&
+                    v != 0)
+                  {
+                    /* compute the coordinates of the symmetric pairs for
+                     * this locaiton in the quadrant
+                     */
+                    gint xs[4] = {x+u+radius, x-u+radius, x-u+radius, x+u+radius};
+                    gint ys[4] = {y+v+radius, y-v+radius, y+v+radius, y-v+radius};
 
-              if (u==0 && v==0)
-                break; /* to avoid doubly processing when using only 1 pair */
-            }
-        for (u=0; u<4; u++)
-          dst_buf[offset*4+u] = accumulated[u]/count;
-        offset++;
-      }
+                    /* check which member of the symmetric quadruple to use */
+                    for (i=0;i<pairs*2;i++)
+                      {
+                        if (xs[i] >= 0 && xs[i] < src_width &&
+                            ys[i] >= 0 && ys[i] < src_height)
+                          {
+                            gfloat *tpix = src_buf + (xs[i]+ys[i]* src_width)*4;
+                            gfloat diff = colordiff (tpix, center_pix);
+                            if (diff < best_diff)
+                              {
+                                best_diff = diff;
+                                selected_pix = tpix;
+                              }
+                          }
+                      }
+                  }
+
+                /* accumulate the components of the best sample from
+                 * the symmetric quadruple
+                 */
+                for (i=0;i<4;i++)
+                  {
+                    accumulated[i] += selected_pix[i];
+                  }
+                count++;
+
+                if (u==0 && v==0)
+                  break; /* to avoid doubly processing when using only 1 pair */
+              }
+          for (u=0; u<4; u++)
+            dst_buf[offset*4+u] = accumulated[u]/count;
+          offset++;
+
+          center_pix += 4;
+        }
+    }
   gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
