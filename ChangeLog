@@ -1,5 +1,13 @@
 2008-02-05  Michael Natterer  <mitch@gimp.org>
 
+	* gegl/property-types/gegl-color.[ch]
+	* gegl/property-types/gegl-curve.[ch]
+	* gegl/property-types/gegl-vector.[ch]: remove #ifdefs around
+	macros, make public declaration of param spec type macros
+	consistent, remove duplicate macros from .c files, indentation.
+
+2008-02-05  Michael Natterer  <mitch@gimp.org>
+
 	* gegl/property-types/gegl-color.h: indentation.
 
 	* gegl/property-types/gegl-color.c: replace g_assert() by

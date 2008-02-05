@@ -23,10 +23,7 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_TYPE_CURVE
 #define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
-#endif
-
 #define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
 #define GEGL_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CURVE, GeglCurveClass))
 #define GEGL_IS_CURVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CURVE))
@@ -89,6 +86,9 @@ void         gegl_curve_calc_values    (GeglCurve   *self,
                                         gdouble     *ys);
 
 
+#define GEGL_TYPE_PARAM_CURVE           (gegl_param_curve_get_type ())
+#define GEGL_IS_PARAM_SPEC_CURVE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CURVE))
+
 GType        gegl_param_curve_get_type (void) G_GNUC_CONST;
 
 GParamSpec * gegl_param_spec_curve     (const gchar *name,
@@ -96,9 +96,6 @@ GParamSpec * gegl_param_spec_curve     (const gchar *name,
                                         const gchar *blurb,
                                         GeglCurve   *default_curve,
                                         GParamFlags  flags);
-
-#define GEGL_TYPE_PARAM_CURVE           (gegl_param_curve_get_type ())
-#define GEGL_IS_PARAM_SPEC_CURVE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CURVE))
 
 G_END_DECLS
 

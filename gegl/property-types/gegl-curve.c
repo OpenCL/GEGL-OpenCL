@@ -29,7 +29,7 @@
 
 enum
 {
-  PROP_0,
+  PROP_0
 };
 
 typedef struct _GeglCurvePoint   GeglCurvePoint;
@@ -416,19 +416,8 @@ gegl_curve_calc_values (GeglCurve   *self,
  * --------------------------------------------------------------------------
  */
 
-#define GEGL_TYPE_PARAM_CURVE              \
-    (gegl_param_curve_get_type ())
-#define GEGL_PARAM_CURVE(obj)              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),    \
-    GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
-
-#define GEGL_IS_PARAM_CURVE(obj)           \
-    (G_TYPE_CHECK_INSTANCE_TYPE ((obj),    \
-    GEGL_TYPE_PARAM_CURVE))
-
-#define GEGL_IS_PARAM_CURVE_CLASS(klass)   \
-    (G_TYPE_CHECK_CLASS_TYPE ((klass),     \
-    GEGL_TYPE_PARAM_CURVE))
+#define GEGL_PARAM_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
+#define GEGL_IS_PARAM_CURVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_CURVE))
 
 typedef struct _GeglParamCurve GeglParamCurve;
 

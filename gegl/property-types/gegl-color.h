@@ -23,9 +23,7 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_TYPE_COLOR
 #define GEGL_TYPE_COLOR            (gegl_color_get_type ())
-#endif
 #define GEGL_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
 #define GEGL_COLOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_COLOR, GeglColorClass))
 #define GEGL_IS_COLOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COLOR))
@@ -61,6 +59,9 @@ void         gegl_color_set_rgba               (GeglColor   *self,
                                                 gfloat       a);
 
 
+#define GEGL_TYPE_PARAM_COLOR           (gegl_param_color_get_type ())
+#define GEGL_IS_PARAM_SPEC_COLOR(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_COLOR))
+
 GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
 
 GParamSpec * gegl_param_spec_color             (const gchar *name,
@@ -74,11 +75,6 @@ GParamSpec * gegl_param_spec_color_from_string (const gchar *name,
                                                 const gchar *blurb,
                                                 const gchar *default_color_string,
                                                 GParamFlags  flags);
-
-
-#define GEGL_TYPE_PARAM_COLOR           (gegl_param_color_get_type ())
-#define GEGL_IS_PARAM_SPEC_COLOR(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_COLOR))
-
 
 G_END_DECLS
 

@@ -23,10 +23,7 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_TYPE_VECTOR
 #define GEGL_TYPE_VECTOR            (gegl_vector_get_type ())
-#endif
-
 #define GEGL_VECTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VECTOR, GeglVector))
 #define GEGL_VECTOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_VECTOR, GeglVectorClass))
 #define GEGL_IS_VECTOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_VECTOR))
@@ -45,39 +42,43 @@ struct _GeglVectorClass
   GObjectClass parent_class;
 };
 
-GType        gegl_vector_get_type     (void) G_GNUC_CONST;
+GType        gegl_vector_get_type       (void) G_GNUC_CONST;
 
-GeglVector * gegl_vector_new          (void);
+GeglVector * gegl_vector_new            (void);
 
-void         gegl_vector_get_bounds   (GeglVector   *self,
-                                       gdouble      *min_x,
-                                       gdouble      *max_x,
-                                       gdouble      *min_y,
-                                       gdouble      *max_y);
+void         gegl_vector_get_bounds     (GeglVector   *self,
+                                         gdouble      *min_x,
+                                         gdouble      *max_x,
+                                         gdouble      *min_y,
+                                         gdouble      *max_y);
 
-gdouble      gegl_vector_get_length   (GeglVector  *self);
+gdouble      gegl_vector_get_length     (GeglVector  *self);
 
-void         gegl_vector_line_to      (GeglVector  *self,
-                                       gdouble      x,
-                                       gdouble      y);
+void         gegl_vector_line_to        (GeglVector  *self,
+                                         gdouble      x,
+                                         gdouble      y);
 
-void         gegl_vector_calc         (GeglVector  *self,
-                                       gdouble      pos,
-                                       gdouble     *x,
-                                       gdouble     *y);
+void         gegl_vector_calc           (GeglVector  *self,
+                                         gdouble      pos,
+                                         gdouble     *x,
+                                         gdouble     *y);
 
-void         gegl_vector_calc_values  (GeglVector  *self,
-                                       guint        num_samples,
-                                       gdouble     *xs,
-                                       gdouble     *ys);
+void         gegl_vector_calc_values    (GeglVector  *self,
+                                         guint        num_samples,
+                                         gdouble     *xs,
+                                         gdouble     *ys);
+
+
+#define GEGL_TYPE_PARAM_VECTOR    (gegl_param_vector_get_type ())
+#define GEGL_IS_PARAM_VECTOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_VECTOR))
 
 GType        gegl_param_vector_get_type (void) G_GNUC_CONST;
 
-GParamSpec * gegl_param_spec_vector   (const gchar *name,
-                                       const gchar *nick,
-                                       const gchar *blurb,
-                                       GeglVector  *default_vector,
-                                       GParamFlags  flags);
+GParamSpec * gegl_param_spec_vector     (const gchar *name,
+                                         const gchar *nick,
+                                         const gchar *blurb,
+                                         GeglVector  *default_vector,
+                                         GParamFlags  flags);
 
 G_END_DECLS
 

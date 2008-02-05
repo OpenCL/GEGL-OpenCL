@@ -879,19 +879,8 @@ gegl_vector_calc_values (GeglVector *self,
  * --------------------------------------------------------------------------
  */
 
-#define GEGL_TYPE_PARAM_VECTOR              \
-    (gegl_param_vector_get_type ())
-#define GEGL_PARAM_VECTOR(obj)              \
-    (G_TYPE_CHECK_INSTANCE_CAST ((obj),    \
-    GEGL_TYPE_PARAM_VECTOR, GeglParamVector))
-
-#define GEGL_IS_PARAM_VECTOR(obj)           \
-    (G_TYPE_CHECK_INSTANCE_TYPE ((obj),    \
-    GEGL_TYPE_PARAM_VECTOR))
-
-#define GEGL_IS_PARAM_VECTOR_CLASS(klass)   \
-    (G_TYPE_CHECK_CLASS_TYPE ((klass),     \
-    GEGL_TYPE_PARAM_VECTOR))
+#define GEGL_PARAM_VECTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_VECTOR, GeglParamVector))
+#define GEGL_IS_PARAM_VECTOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_VECTOR))
 
 typedef struct _GeglParamVector GeglParamVector;
 
@@ -975,4 +964,3 @@ gegl_param_spec_vector (const gchar *name,
 
   return G_PARAM_SPEC (param_vector);
 }
-

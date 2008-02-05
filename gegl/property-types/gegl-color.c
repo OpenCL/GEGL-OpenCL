@@ -423,10 +423,8 @@ gegl_color_new (const gchar *string)
  * --------------------------------------------------------------------------
  */
 
-#define GEGL_TYPE_PARAM_COLOR             (gegl_param_color_get_type ())
-#define GEGL_PARAM_COLOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_COLOR, GeglParamColor))
-#define GEGL_IS_PARAM_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_COLOR))
-#define GEGL_IS_PARAM_COLOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_COLOR))
+#define GEGL_PARAM_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_COLOR, GeglParamColor))
+#define GEGL_IS_PARAM_COLOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_COLOR))
 
 typedef struct _GeglParamColor GeglParamColor;
 
