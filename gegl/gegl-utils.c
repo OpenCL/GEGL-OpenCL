@@ -27,22 +27,22 @@
 
 
 void gegl_log         (GLogLevelFlags  level,
-                       gchar          *file,
+                       const gchar    *file,
                        gint            line,
-                       gchar          *function,
-                       gchar          *format,
+                       const gchar    *function,
+                       const gchar    *format,
                        ...);
 void gegl_logv        (GLogLevelFlags  level,
-                       gchar          *file,
+                       const gchar    *file,
                        gint            line,
-                       gchar          *function,
-                       gchar          *format,
+                       const gchar    *function,
+                       const gchar    *format,
                        va_list         args);
 void gegl_direct_log  (GLogLevelFlags  level,
-                       gchar          *format,
+                       const gchar    *format,
                        ...);
 void gegl_direct_logv (GLogLevelFlags  level,
-                       gchar          *format,
+                       const gchar    *format,
                        va_list         args);
 
 
@@ -187,11 +187,12 @@ gegl_rectangle_equal_coords (const GeglRectangle *r,
 
 #define GEGL_LOG_DOMAIN    "Gegl"
 
-void gegl_log_debug (gchar *file,
-                     gint   line,
-                     gchar *function,
-                     gchar *format,
-                     ...)
+void
+gegl_log_debug (const gchar *file,
+                gint         line,
+                const gchar *function,
+                const gchar *format,
+                ...)
 {
   va_list args;
 
@@ -200,11 +201,12 @@ void gegl_log_debug (gchar *file,
   va_end (args);
 }
 
-void gegl_log_info (gchar *file,
-                    gint   line,
-                    gchar *function,
-                    gchar *format,
-                    ...)
+void
+gegl_log_info (const gchar *file,
+               gint         line,
+               const gchar *function,
+               const gchar *format,
+               ...)
 {
   va_list args;
 
@@ -213,11 +215,12 @@ void gegl_log_info (gchar *file,
   va_end (args);
 }
 
-void gegl_log_message (gchar *file,
-                       gint   line,
-                       gchar *function,
-                       gchar *format,
-                       ...)
+void
+gegl_log_message (const gchar *file,
+                  gint         line,
+                  const gchar *function,
+                  const gchar *format,
+                  ...)
 {
   va_list args;
 
@@ -226,8 +229,9 @@ void gegl_log_message (gchar *file,
   va_end (args);
 }
 
-void gegl_log_direct (gchar *format,
-                      ...)
+void
+gegl_log_direct (const gchar *format,
+                 ...)
 {
   va_list args;
 
@@ -237,11 +241,11 @@ void gegl_log_direct (gchar *format,
 }
 
 void
-gegl_log (GLogLevelFlags level,
-          gchar         *file,
-          gint           line,
-          gchar         *function,
-          gchar         *format,
+gegl_log (GLogLevelFlags  level,
+          const gchar    *file,
+          gint            line,
+          const gchar    *function,
+          const gchar    *format,
           ...)
 {
   va_list args;
@@ -252,12 +256,12 @@ gegl_log (GLogLevelFlags level,
 }
 
 void
-gegl_logv (GLogLevelFlags level,
-           gchar         *file,
-           gint           line,
-           gchar         *function,
-           gchar         *format,
-           va_list        args)
+gegl_logv (GLogLevelFlags  level,
+           const gchar    *file,
+           gint            line,
+           const gchar    *function,
+           const gchar    *format,
+           va_list         args)
 {
   if (g_getenv ("GEGL_LOG_ON"))
     {
@@ -275,8 +279,8 @@ gegl_logv (GLogLevelFlags level,
 }
 
 void
-gegl_direct_log (GLogLevelFlags level,
-                 gchar         *format,
+gegl_direct_log (GLogLevelFlags  level,
+                 const gchar    *format,
                  ...)
 {
   va_list args;
@@ -287,9 +291,9 @@ gegl_direct_log (GLogLevelFlags level,
 }
 
 void
-gegl_direct_logv (GLogLevelFlags level,
-                  gchar         *format,
-                  va_list        args)
+gegl_direct_logv (GLogLevelFlags  level,
+                  const gchar    *format,
+                  va_list         args)
 {
   if (g_getenv ("GEGL_LOG_ON"))
     {

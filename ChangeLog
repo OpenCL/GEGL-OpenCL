@@ -1,5 +1,9 @@
 2008-02-05  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-utils.[ch]: sprinkled log functions with const qualifiers.
+
+2008-02-05  Sven Neumann  <sven@gimp.org>
+
 	* gegl/gegl-utils.[ch]: added gegl_canonicalize_identifier().
 
 	* gegl/gegl-chant.h: canonicalize property names used as name and

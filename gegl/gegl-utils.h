@@ -44,25 +44,26 @@ gboolean    gegl_rectangle_intersect     (GeglRectangle       *dest,
 gboolean    gegl_rectangle_contains      (const GeglRectangle *r,
                                           const GeglRectangle *s);
 
-gchar     * gegl_canonicalize_identifier (const gchar         *identifier);
+gchar     * gegl_canonicalize_identifier (const gchar    *identifier);
 
-void        gegl_log_debug               (gchar    *file,
-                                          gint      line,
-                                          gchar    *function,
-                                          gchar    *format,
+void        gegl_log_debug               (const gchar    *file,
+                                          gint            line,
+                                          const gchar    *function,
+                                          const gchar    *format,
                                           ...);
-void        gegl_log_info                (gchar    *file,
-                                          gint      line,
-                                          gchar    *function,
-                                          gchar    *format,
+void        gegl_log_info                (const gchar    *file,
+                                          gint            line,
+                                          const gchar    *function,
+                                          const gchar    *format,
                                           ...);
-void        gegl_log_message             (gchar    *file,
-                                          gint      line,
-                                          gchar    *function,
-                                          gchar    *format,
+void        gegl_log_message             (const gchar    *file,
+                                          gint            line,
+                                          const gchar    *function,
+                                          const gchar    *format,
                                           ...);
-void        gegl_log_direct              (gchar    *format,
+void        gegl_log_direct              (const gchar    *format,
                                           ...);
+
 GType       gegl_rectangle_get_type      (void) G_GNUC_CONST;
 
 #ifndef __GEGL_H__
@@ -76,7 +77,7 @@ GType       gegl_rectangle_get_type      (void) G_GNUC_CONST;
 #define INT_MULT(a,b,t)  ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
 
 inline gint _gegl_float_epsilon_zero  (float     value);
-gint _gegl_float_epsilon_equal (float     v1,
+gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
 
