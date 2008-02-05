@@ -46,6 +46,8 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = ceil (o->blur_radius);
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static gboolean
@@ -68,7 +70,6 @@ process (GeglOperation       *operation,
   else
     {
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
       bilateral_filter (temp_in, output, o->blur_radius, o->edge_preservation);
       g_object_unref (temp_in);
     }
@@ -88,6 +89,9 @@ bilateral_filter (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
   gint width = (gint) radius * 2 + 1;
+  gint iradius = radius;
+  gint src_width = gegl_buffer_get_width (src);
+  gint src_height = gegl_buffer_get_height (src);
 
   gauss = g_newa (gfloat, width * width);
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count(src) * 4);
@@ -98,8 +102,8 @@ bilateral_filter (GeglBuffer *src,
   offset = 0;
 
 #define POW2(a) ((a)*(a))
-  for (y=-radius;y<=radius;y++)
-    for (x=-radius;x<=radius;x++)
+  for (y=-iradius;y<=iradius;y++)
+    for (x=-iradius;x<=iradius;x++)
       {
         gauss[x+(int)radius + (y+(int)radius)*width] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
       }
@@ -108,19 +112,22 @@ bilateral_filter (GeglBuffer *src,
     for (x=0; x<gegl_buffer_get_width (dst); x++)
       {
         gint u,v;
-        gfloat *center_pix = src_buf + (x+(y * gegl_buffer_get_width (src))) * 4;
+        gfloat *center_pix = src_buf + ((x+iradius)+((y+iradius) * src_width)) * 4;
         gfloat  accumulated[4]={0,0,0,0};
         gfloat  count=0.0;
 
-        for (v=-radius;v<=radius;v++)
-          for (u=-radius;u<=radius;u++)
+        for (v=-iradius;v<=iradius;v++)
+          for (u=-iradius;u<=iradius;u++)
             {
-              if (x+u >= 0 && x+u < gegl_buffer_get_width (dst) &&
-                  y+v >= 0 && y+v < gegl_buffer_get_height (dst))
+              gint i,j;
+              i = x + radius + u;
+              j = y + radius + v;
+              if (i >= 0 && i < src_width &&
+                  j >= 0 && j < src_height)
                 {
                   gint c;
 
-                  gfloat *src_pix = src_buf + ((x+u)+((y+v) * gegl_buffer_get_width (src))) * 4;
+                  gfloat *src_pix = src_buf + (i + j * src_width) * 4;
 
                   gfloat diff_map   = exp (- (POW2(center_pix[0] - src_pix[0])+
                                               POW2(center_pix[1] - src_pix[1])+
