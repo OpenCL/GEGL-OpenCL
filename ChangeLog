@@ -1,5 +1,10 @@
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: make GeglParamColor and it's type check public
+	(quick hack for now, gegl-color.h should be installed).
+
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-node-editor-plugin.h: ripped string out of GeglModuleInfo
 	struct.
 
