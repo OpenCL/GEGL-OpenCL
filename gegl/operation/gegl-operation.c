@@ -83,13 +83,13 @@ gegl_operation_create_pad (GeglOperation *self,
   GeglPad *pad;
 
   g_return_if_fail (GEGL_IS_OPERATION (self));
-  g_return_if_fail (param_spec);
+  g_return_if_fail (param_spec != NULL);
 
   if (!self->node)
     {
-      g_warning ("gegl_operation_create_pad aborting, no associated node. "
+      g_warning ("%s: aborting, no associated node. "
                  "This method should only be called after the operation is "
-                 "associated with a node.");
+                 "associated with a node.", G_STRFUNC);
       return;
     }
 

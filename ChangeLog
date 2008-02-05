@@ -1,3 +1,8 @@
+2008-02-05  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/operation/gegl-operation.c: add G_STRFUNC to a warning and
+	made precondition check warn nicer.
+
 2008-02-05  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-utils.[ch]: added format function attributes to the log API.
