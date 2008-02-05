@@ -53,16 +53,11 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  *    should be extended so a range of abi versions are accepted.
  */
 
-#define GEGL_MODULE_ABI_VERSION 0x0005
+#define GEGL_MODULE_ABI_VERSION 0x0006
 
 struct _GeglModuleInfo
 {
   guint32  abi_version;
-  gchar   *purpose;
-  gchar   *author;
-  gchar   *version;
-  gchar   *copyright;
-  gchar   *date;
 };
 
 GType

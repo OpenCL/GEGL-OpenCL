@@ -178,10 +178,6 @@ type_name##_get_type (GTypeModule *module) \
 static const GeglModuleInfo modinfo =\
 {\
  GEGL_MODULE_ABI_VERSION,\
- #type_name,\
- "v0.0",\
- "(c) 2006, released under the LGPL",\
- "June 2006"\
 };\
 \
 G_MODULE_EXPORT const GeglModuleInfo *\

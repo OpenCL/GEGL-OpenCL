@@ -443,21 +443,11 @@ gegl_module_set_last_error (GeglModule  *module,
  * Return value: The new #GeglModuleInfo struct.
  **/
 GeglModuleInfo *
-gegl_module_info_new (guint32      abi_version,
-                      const gchar *purpose,
-                      const gchar *author,
-                      const gchar *version,
-                      const gchar *copyright,
-                      const gchar *date)
+gegl_module_info_new (guint32 abi_version)
 {
   GeglModuleInfo *info = g_slice_new0 (GeglModuleInfo);
 
   info->abi_version = abi_version;
-  info->purpose     = g_strdup (purpose);
-  info->author      = g_strdup (author);
-  info->version     = g_strdup (version);
-  info->copyright   = g_strdup (copyright);
-  info->date        = g_strdup (date);
 
   return info;
 }
@@ -475,12 +465,7 @@ gegl_module_info_copy (const GeglModuleInfo *info)
 {
   g_return_val_if_fail (info != NULL, NULL);
 
-  return gegl_module_info_new (info->abi_version,
-                               info->purpose,
-                               info->author,
-                               info->version,
-                               info->copyright,
-                               info->date);
+  return gegl_module_info_new (info->abi_version);
 }
 
 /**
@@ -493,12 +478,6 @@ void
 gegl_module_info_free (GeglModuleInfo *info)
 {
   g_return_if_fail (info != NULL);
-
-  g_free (info->purpose);
-  g_free (info->author);
-  g_free (info->version);
-  g_free (info->copyright);
-  g_free (info->date);
 
   g_slice_free (GeglModuleInfo, info);
 }

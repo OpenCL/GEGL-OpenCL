@@ -1,3 +1,13 @@
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-plugin.h: bumped the GEGL_MODULE_ABI_VERSION to 0x0006 and
+	ripped out all the strings from the GeglModuleInfo struct.
+	* gegl/gegl-chant.h:
+	* gegl/gegl-old-chant.h:
+	* gegl/module/geglmodule.c:
+	* gegl/module/geglmodule.h:
+	* operations/affine/module.c:
+
 2008-02-04  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/gegl.h: Corrections to the overview description of

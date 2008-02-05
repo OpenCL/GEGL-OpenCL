@@ -109,12 +109,7 @@ const gchar * gegl_module_state_name       (GeglModuleState  state);
 
 /*  GeglModuleInfo functions  */
 
-GeglModuleInfo * gegl_module_info_new  (guint32               abi_version,
-                                        const gchar          *purpose,
-                                        const gchar          *author,
-                                        const gchar          *version,
-                                        const gchar          *copyright,
-                                        const gchar          *date);
+GeglModuleInfo * gegl_module_info_new  (guint32               abi_version);
 GeglModuleInfo * gegl_module_info_copy (const GeglModuleInfo *info);
 void             gegl_module_info_free (GeglModuleInfo       *info);
 

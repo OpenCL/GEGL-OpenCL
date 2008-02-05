@@ -23,11 +23,7 @@
 static GTypeModule          *affine_module;
 static const GeglModuleInfo  modinfo =
 {
-  GEGL_MODULE_ABI_VERSION,
-  "affine",
-  "v0.0",
-  "(c) 2006, released under the LGPL",
-  "July 2006"
+  GEGL_MODULE_ABI_VERSION
 };
 
 G_MODULE_EXPORT GTypeModule *

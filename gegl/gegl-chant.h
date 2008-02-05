@@ -248,7 +248,7 @@ operation_class_finalize (GeglChantClass *self)
 
 static const GeglModuleInfo modinfo =
 {
-  GEGL_MODULE_ABI_VERSION, GEGL_CHANT_C_FILE, "v0.0", "foo and bar"
+  GEGL_MODULE_ABI_VERSION
 };
 
 G_MODULE_EXPORT const GeglModuleInfo *
