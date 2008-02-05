@@ -301,6 +301,33 @@ gegl_direct_logv (GLogLevelFlags level,
 }
 
 
+gchar *
+gegl_canonicalize_identifier (const gchar *identifier)
+{
+  gchar *canonicalized = NULL;
+
+  if (identifier)
+    {
+      gchar *p;
+
+      canonicalized = g_strdup (identifier);
+
+      for (p = canonicalized; *p != 0; p++)
+        {
+          gchar c = *p;
+
+          if (c != '-' &&
+              (c < '0' || c > '9') &&
+              (c < 'A' || c > 'Z') &&
+              (c < 'a' || c > 'z'))
+            *p = '-';
+        }
+    }
+
+  return canonicalized;
+}
+
+
 static GeglRectangle *
 gegl_rectangle_dup (const GeglRectangle *rectangle)
 {
