@@ -69,11 +69,7 @@ type_name##_get_type (GTypeModule *module) \
 \
 static const GeglModuleInfo modinfo =\
 {\
- GEGL_MODULE_ABI_VERSION,\
- "GeglNodeEditor"#TypeName,\
- "v0.0",\
- "(c) 2006, released under the LGPL",\
- "June 2006"\
+ GEGL_MODULE_ABI_VERSION \
 };\
 \
 const GeglModuleInfo *\
