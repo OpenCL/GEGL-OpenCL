@@ -97,6 +97,9 @@ GParamSpec * gegl_param_spec_curve     (const gchar *name,
                                         GeglCurve   *default_curve,
                                         GParamFlags  flags);
 
+#define GEGL_TYPE_PARAM_CURVE           (gegl_param_curve_get_type ())
+#define GEGL_IS_PARAM_SPEC_CURVE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CURVE))
+
 G_END_DECLS
 
 #endif /* __GEGL_CURVE_H__ */

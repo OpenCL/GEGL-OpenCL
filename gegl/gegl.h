@@ -764,70 +764,6 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
 
 
 #ifndef GEGL_INTERNAL
-#ifndef GEGL_TYPE_COLOR
-
-
-/***
- * GeglColor:
- *
- * GeglColor is used for properties that use a gegl color, use #gegl_color_new
- * with a NULL string to create a new blank one, gegl_colors are destroyed
- * with g_object_unref when they no longer are needed.
- *
- * The colors used by gegls are described in a format similar to CSS. The
- * textstring "rgb(1.0,1.0,1.0)" signifies opaque white and
- * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. Hexadecimal forms like #RRGGBB
- * and #RRGGBBAA are also supported.
- */
-typedef struct _GeglColor  GeglColor;
-GType gegl_color_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_COLOR    (gegl_color_get_type())
-#define GEGL_COLOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
-#define GEGL_IS_COLOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COLOR))
-#endif
-#endif
-
-/**
- * gegl_color_new:
- * @string: a CSS-style color string.
- *
- * Returns a #GeglColor object suitable for use with #gegl_node_set.
- */
-GeglColor   * gegl_color_new                (const gchar   *string);
-
-/**
- * gegl_color_get_rgba:
- * @color: a #GeglColor
- * @r: return location for red component.
- * @g: return location for green component.
- * @b: return location for blue component.
- * @a: return location for alpha component.
- *
- * Retrieve RGB component values from a #GeglColor.
- */
-void          gegl_color_get_rgba           (GeglColor     *color,
-                                             gfloat        *r,
-                                             gfloat        *g,
-                                             gfloat        *b,
-                                             gfloat        *a);
-
-/**
- * gegl_color_set_rgba:
- * @color: a #GeglColor
- * @r: new value for red component
- * @g: new value for green component
- * @b: new value for blue component
- * @a: new value for alpha component
- *
- * Retrieve RGB component values from a GeglColor.
- */
-void          gegl_color_set_rgba           (GeglColor     *color,
-                                             gfloat         r,
-                                             gfloat         g,
-                                             gfloat         b,
-                                             gfloat         a);
-
-#ifndef GEGL_INTERNAL
 /***
  * GeglRectangle:
  *
@@ -851,93 +787,6 @@ struct _GeglRectangle
   gint height;
 };
 
-/***
- * GeglCurve:
- *
- * Documentation and function signatures left out of documentation until
- * API is frozen.
- */
-typedef struct _GeglCurve  GeglCurve;
-GType gegl_curve_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_CURVE    (gegl_curve_get_type ())
-#define GEGL_CURVE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
-#define GEGL_IS_CURVE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CURVE))
-#endif
-
-GeglCurve*   gegl_curve_new                 (gdouble         y_min,
-                                             gdouble         y_max);
-
-GeglCurve*   gegl_curve_default_curve       (void) G_GNUC_CONST;
-
-void         gegl_curve_get_y_bounds        (GeglCurve      *self,
-                                             gdouble        *min_y,
-                                             gdouble        *max_y);
-
-guint        gegl_curve_add_point           (GeglCurve      *self,
-                                             gdouble         x,
-                                             gdouble         y);
-
-void         gegl_curve_remove_point_index  (GeglCurve      *self,
-                                             guint           index);
-
-void         gegl_curve_get_point           (GeglCurve      *self,
-                                             guint           index,
-                                             gdouble        *x,
-                                             gdouble        *y);
-
-void         gegl_curve_set_point           (GeglCurve      *self,
-                                             guint           index,
-                                             gdouble         x,
-                                             gdouble         y);
-
-guint        gegl_curve_num_points          (GeglCurve      *self);
-
-gdouble      gegl_curve_calc_value          (GeglCurve      *self,
-                                             gdouble         x);
-
-void         gegl_curve_calc_values         (GeglCurve      *self,
-                                             gdouble         x_min,
-                                             gdouble         x_max,
-                                             guint           num_samples,
-                                             gdouble        *xs,
-                                             gdouble        *ys);
-
-
-
-
-#ifndef GEGL_INTERNAL
-/***
- * GeglVector:
- *
- * Documentation and function signatures left out of documentation until
- * API is at least slushy, perhaps even until it is frozen.
- */
-typedef struct _GeglVector  GeglVector;
-GType gegl_vector_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_VECTOR    (gegl_vector_get_type ())
-#define GEGL_VECTOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VECTOR, GeglVector))
-#define GEGL_IS_VECTOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_VECTOR))
-#endif
-
-GeglVector*  gegl_vector_new          (void);
-
-gdouble      gegl_vector_get_length   (GeglVector *self);
-
-void         gegl_vector_line_to      (GeglVector  *self,
-                                       gdouble      x,
-                                       gdouble      y);
-
-void         gegl_vector_calc         (GeglVector  *self,
-                                       gdouble      pos,
-                                       gdouble     *x,
-                                       gdouble     *y);
-
-void         gegl_vector_calc_values  (GeglVector  *self,
-                                       guint        num_samples,
-                                       gdouble     *xs,
-                                       gdouble     *ys);
-
-#ifndef GEGL_INTERNAL
 #define GEGL_PAD_TYPE
 
 typedef enum
@@ -945,11 +794,18 @@ typedef enum
   GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
   GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
 } GeglPadType;
+
+typedef struct _GeglCurve  GeglCurve;
+typedef struct _GeglVector  GeglVector;
+typedef struct _GeglColor  GeglColor;
 #endif
 
-G_END_DECLS
 
-/*** this line with it's three starting *** is here to trick the API parser.
+/*** foo
  */
+#include <gegl-buffer.h>
+#include <gegl-color.h>
+#include <gegl-curve.h>
 
+G_END_DECLS
 #endif  /* __GEGL_H__ */

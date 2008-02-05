@@ -77,37 +77,6 @@ void            gegl_node_context_set_object (GeglNodeContext *context,
                                               const gchar     *padname,
                                               GObject         *data);
 
-/** hack **/
-
-GParamSpec *
-gegl_param_spec_color_from_string (const gchar *name,
-                                   const gchar *nick,
-                                   const gchar *blurb,
-                                   const gchar *default_color_string,
-                                   GParamFlags  flags);
-
-
-GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
-
-GParamSpec * gegl_param_spec_color             (const gchar *name,
-                                                const gchar *nick,
-                                                const gchar *blurb,
-                                                GeglColor   *default_color,
-                                                GParamFlags  flags);
-
-#define GEGL_TYPE_PARAM_COLOR           (gegl_param_color_get_type ())
-#define GEGL_IS_PARAM_SPEC_COLOR(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_COLOR))
-
-/**** hack ***/
-
-/* Probably needs a more API exposed */
-GParamSpec * gegl_param_spec_curve     (const gchar *name,
-                                        const gchar *nick,
-                                        const gchar *blurb,
-                                        GeglCurve   *default_curve,
-                                        GParamFlags  flags);
-
-
 void          gegl_extension_handler_register (const gchar *extension,
                                                 const gchar *handler);
 const gchar * gegl_extension_handler_get      (const gchar *extension);
