@@ -24,12 +24,12 @@ copyright = '
  */'
 
 a = [
-      ['add',          'c = c + value'],
-      ['subtract',     'c = c - value'],
-      ['multiply',     'c = c * value'],
-      ['divide',       'c = value==0.0?0.0:c/value'],
-      ['gamma',        'c = powf (c, value)'],
-#     ['threshold',    'c = c>=value?1.0:0.0'],
+      ['add',          'c = c + value', 0],
+      ['subtract',     'c = c - value', 0],
+      ['multiply',     'c = c * value', 1.0],
+      ['divide',       'c = value==0.0?0.0:c/value', 1.0],
+      ['gamma',        'c = powf (c, value)', 1.0],
+#     ['threshold',    'c = c>=value?1.0:0.0', 0.5],
 #     ['invert',       'c = 1.0-c']
     ]
     
@@ -51,7 +51,7 @@ a.each do
     file.write "
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux doesn't contain data\")
+gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, #{item[2]}, \"global value used if aux doesn't contain data\")
 
 #else
 

@@ -1,5 +1,10 @@
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/generated/math.rb: provide default values for the
+	generated ops (made multiply, divide and gamma have 1.0).
+
+2008-02-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: make GeglParamColor and it's type check public
 	(quick hack for now, gegl-color.h should be installed).
 
