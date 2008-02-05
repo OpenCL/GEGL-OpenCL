@@ -26,24 +26,15 @@
 #include "gegl-types.h"
 
 
-void gegl_log         (GLogLevelFlags  level,
-                       const gchar    *file,
-                       gint            line,
-                       const gchar    *function,
-                       const gchar    *format,
-                       ...);
-void gegl_logv        (GLogLevelFlags  level,
-                       const gchar    *file,
-                       gint            line,
-                       const gchar    *function,
-                       const gchar    *format,
-                       va_list         args);
-void gegl_direct_log  (GLogLevelFlags  level,
-                       const gchar    *format,
-                       ...);
-void gegl_direct_logv (GLogLevelFlags  level,
-                       const gchar    *format,
-                       va_list         args);
+static void gegl_logv        (GLogLevelFlags  level,
+                              const gchar    *file,
+                              gint            line,
+                              const gchar    *function,
+                              const gchar    *format,
+                              va_list         args);
+static void gegl_direct_logv (GLogLevelFlags  level,
+                              const gchar    *format,
+                              va_list         args);
 
 
 inline gint
@@ -240,22 +231,7 @@ gegl_log_direct (const gchar *format,
   va_end (args);
 }
 
-void
-gegl_log (GLogLevelFlags  level,
-          const gchar    *file,
-          gint            line,
-          const gchar    *function,
-          const gchar    *format,
-          ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_logv (level, file, line, function, format, args);
-  va_end (args);
-}
-
-void
+static void
 gegl_logv (GLogLevelFlags  level,
            const gchar    *file,
            gint            line,
@@ -278,19 +254,7 @@ gegl_logv (GLogLevelFlags  level,
     }
 }
 
-void
-gegl_direct_log (GLogLevelFlags  level,
-                 const gchar    *format,
-                 ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_direct_logv (level, format, args);
-  va_end (args);
-}
-
-void
+static void
 gegl_direct_logv (GLogLevelFlags  level,
                   const gchar    *format,
                   va_list         args)

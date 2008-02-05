@@ -50,19 +50,19 @@ void        gegl_log_debug               (const gchar    *file,
                                           gint            line,
                                           const gchar    *function,
                                           const gchar    *format,
-                                          ...);
+                                          ...) G_GNUC_PRINTF (4, 5);
 void        gegl_log_info                (const gchar    *file,
                                           gint            line,
                                           const gchar    *function,
                                           const gchar    *format,
-                                          ...);
+                                          ...) G_GNUC_PRINTF (4, 5);
 void        gegl_log_message             (const gchar    *file,
                                           gint            line,
                                           const gchar    *function,
                                           const gchar    *format,
-                                          ...);
+                                          ...) G_GNUC_PRINTF (4, 5);
 void        gegl_log_direct              (const gchar    *format,
-                                          ...);
+                                          ...) G_GNUC_PRINTF (1, 2);
 
 GType       gegl_rectangle_get_type      (void) G_GNUC_CONST;
 
