@@ -1,3 +1,8 @@
+2008-02-06  Michael Natterer  <mitch@gimp.org>
+
+	* operations/io/exr-load.cpp: remove nick because this one
+	uses the old chanting.
+
 2008-02-06  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-chant.h: added nick to chanted properties.
