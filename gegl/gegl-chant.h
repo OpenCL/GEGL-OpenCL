@@ -38,56 +38,58 @@ static void gegl_chant_class_init   (gpointer     klass);
 
 #define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_CHANT_C_FILE, GeglChant, operation, T_P, 0, {})
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
-  static void     type_name##_init              (TypeName        *self); \
+static void     type_name##_init              (TypeName        *self);  \
 static void     type_name##_class_init        (TypeName##Class *klass); \
 static void     type_name##_class_finalize    (TypeName##Class *klass); \
-static gpointer type_name##_parent_class = NULL; \
-static GType    type_name##_type_id = 0; \
-static void     type_name##_class_intern_init (gpointer klass) \
-  { \
-    type_name##_parent_class = g_type_class_peek_parent (klass); \
-    type_name##_class_init ((TypeName##Class*) klass); \
-    gegl_chant_class_init (klass); \
-  } \
-GType \
-type_name##_get_type (void) \
-  { \
-    return type_name##_type_id; \
-  } \
-static void \
-type_name##_register_type (GTypeModule *type_module) \
-  { \
-    gchar tempname[256];    \
-    gchar *p;               \
-    GType g_define_type_id; \
-    const GTypeInfo g_define_type_info = { \
-          sizeof (TypeName##Class), \
-          (GBaseInitFunc) NULL, \
-          (GBaseFinalizeFunc) NULL, \
-          (GClassInitFunc) type_name##_class_intern_init, \
-          (GClassFinalizeFunc) type_name##_class_finalize, \
-          NULL,   /* class_data */ \
-          sizeof (TypeName), \
-          0,      /* n_preallocs */ \
-          (GInstanceInitFunc) type_name##_init, \
-          NULL    /* value_table */ \
-        }; \
-    g_snprintf (tempname, 256, "%s", #TypeName GEGL_CHANT_C_FILE);\
-    for (p = &tempname[0]; *p; p++) {\
-      if (*p=='.') *p='_';\
-    }\
-    type_name##_type_id = g_type_module_register_type (type_module, \
-                                                       TYPE_PARENT, \
-                                                       tempname,    \
+static gpointer type_name##_parent_class = NULL;                        \
+static GType    type_name##_type_id = 0;                                \
+static void     type_name##_class_intern_init (gpointer klass)          \
+  {                                                                     \
+    type_name##_parent_class = g_type_class_peek_parent (klass);        \
+    type_name##_class_init ((TypeName##Class*) klass);                  \
+    gegl_chant_class_init (klass);                                      \
+  }                                                                     \
+GType                                                                   \
+type_name##_get_type (void)                                             \
+  {                                                                     \
+    return type_name##_type_id;                                         \
+  }                                                                     \
+static void                                                             \
+type_name##_register_type (GTypeModule *type_module)                    \
+  {                                                                     \
+    gchar  tempname[256];                                               \
+    gchar *p;                                                           \
+    GType  g_define_type_id;                                            \
+    const GTypeInfo g_define_type_info =                                \
+    {                                                                   \
+      sizeof (TypeName##Class),                                         \
+      (GBaseInitFunc) NULL,                                             \
+      (GBaseFinalizeFunc) NULL,                                         \
+      (GClassInitFunc) type_name##_class_intern_init,                   \
+      (GClassFinalizeFunc) type_name##_class_finalize,                  \
+      NULL,   /* class_data */                                          \
+      sizeof (TypeName),                                                \
+      0,      /* n_preallocs */                                         \
+      (GInstanceInitFunc) type_name##_init,                             \
+      NULL    /* value_table */                                         \
+    };                                                                  \
+    g_snprintf (tempname, sizeof (tempname),                            \
+                "%s", #TypeName GEGL_CHANT_C_FILE);                     \
+    for (p = tempname; *p; p++)                                         \
+      if (*p=='.') *p='_';                                              \
+                                                                        \
+    type_name##_type_id = g_type_module_register_type (type_module,     \
+                                                       TYPE_PARENT,     \
+                                                       tempname,        \
                                                        &g_define_type_info, \
                                                        (GTypeFlags) flags); \
-    g_define_type_id = type_name##_type_id; \
-    { CODE ; } \
+    g_define_type_id = type_name##_type_id;                             \
+    { CODE ; }                                                          \
   }
 
 
 #define GEGL_CHANT_PROPERTIES(op) \
-    ((GeglChantO*)(((GeglChant*)(op))->properties))
+    ((GeglChantO *) (((GeglChant *) (op))->properties))
 
 /****************************************************************************/
 
@@ -271,18 +273,18 @@ struct _GeglChantO
 {
   gpointer dummy_filler; /* to avoid empty struct, can be done a bit more cleverly to
                             avoid adding it when there is actual properties*/
-#define gegl_chant_int(name, min, max, def, blurb)     gint        name;
-#define gegl_chant_double(name, min, max, def, blurb)  gdouble     name;
-#define gegl_chant_boolean(name, def, blurb)           gboolean    name;
-#define gegl_chant_string(name, def, blurb)            gchar      *name;
-#define gegl_chant_path(name, def, blurb)              gchar      *name;
-#define gegl_chant_multiline(name, def, blurb)         gchar      *name;
-#define gegl_chant_multiline(name, def, blurb)         gchar      *name;
-#define gegl_chant_object(name, blurb)                 GObject    *name;
-#define gegl_chant_pointer(name, blurb)                gpointer    name;
-#define gegl_chant_color(name, def, blurb)             GeglColor  *name;
-#define gegl_chant_curve(name, blurb)                  GeglCurve  *name;
-#define gegl_chant_vector(name, blurb)                 GeglVector *name;
+#define gegl_chant_int(name, nick, min, max, def, blurb)     gint        name;
+#define gegl_chant_double(name, nick, min, max, def, blurb)  gdouble     name;
+#define gegl_chant_boolean(name, nick, def, blurb)           gboolean    name;
+#define gegl_chant_string(name, nick, def, blurb)            gchar      *name;
+#define gegl_chant_path(name, nick, def, blurb)              gchar      *name;
+#define gegl_chant_multiline(name, nick, def, blurb)         gchar      *name;
+#define gegl_chant_multiline(name, nick, def, blurb)         gchar      *name;
+#define gegl_chant_object(name,nick,  blurb)                 GObject    *name;
+#define gegl_chant_pointer(name, nick, blurb)                gpointer    name;
+#define gegl_chant_color(name, nick, def, blurb)             GeglColor  *name;
+#define gegl_chant_curve(name, nick, blurb)                  GeglCurve  *name;
+#define gegl_chant_vector(name, nick, blurb)                 GeglVector *name;
 
 #include GEGL_CHANT_C_FILE
 
@@ -305,17 +307,17 @@ struct _GeglChantO
 enum
 {
   PROP_0,
-#define gegl_chant_int(name, min, max, def, blurb)     PROP_##name,
-#define gegl_chant_double(name, min, max, def, blurb)  PROP_##name,
-#define gegl_chant_boolean(name, def, blurb)           PROP_##name,
-#define gegl_chant_string(name, def, blurb)            PROP_##name,
-#define gegl_chant_path(name, def, blurb)              PROP_##name,
-#define gegl_chant_multiline(name, def, blurb)         PROP_##name,
-#define gegl_chant_object(name, blurb)                 PROP_##name,
-#define gegl_chant_pointer(name, blurb)                PROP_##name,
-#define gegl_chant_color(name, def, blurb)             PROP_##name,
-#define gegl_chant_curve(name, blurb)                  PROP_##name,
-#define gegl_chant_vector(name, blurb)                 PROP_##name,
+#define gegl_chant_int(name, nick, min, max, def, blurb)     PROP_##name,
+#define gegl_chant_double(name, nick, min, max, def, blurb)  PROP_##name,
+#define gegl_chant_boolean(name, nick, def, blurb)           PROP_##name,
+#define gegl_chant_string(name, nick, def, blurb)            PROP_##name,
+#define gegl_chant_path(name, nick, def, blurb)              PROP_##name,
+#define gegl_chant_multiline(name, nick, def, blurb)         PROP_##name,
+#define gegl_chant_object(name, nick, blurb)                 PROP_##name,
+#define gegl_chant_pointer(name, nick, blurb)                PROP_##name,
+#define gegl_chant_color(name, nick, def, blurb)             PROP_##name,
+#define gegl_chant_curve(name, nick, blurb)                  PROP_##name,
+#define gegl_chant_vector(name, nick, blurb)                 PROP_##name,
 
 #include GEGL_CHANT_C_FILE
 
@@ -345,47 +347,47 @@ get_property (GObject      *gobject,
 
   switch (property_id)
   {
-#define gegl_chant_int(name, min, max, def, blurb)            \
+#define gegl_chant_int(name, nick, min, max, def, blurb)      \
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
-#define gegl_chant_double(name, min, max, def, blurb)         \
+#define gegl_chant_double(name,nick,  min, max, def, blurb)   \
     case PROP_##name:                                         \
       g_value_set_double (value, properties->name);           \
       break;
-#define gegl_chant_boolean(name, def, blurb)                  \
+#define gegl_chant_boolean(name, nick, def, blurb)            \
     case PROP_##name:                                         \
       g_value_set_boolean (value, properties->name);          \
       break;
-#define gegl_chant_string(name, def, blurb)                   \
+#define gegl_chant_string(name, nick, def, blurb)             \
     case PROP_##name:                                         \
       g_value_set_string (value, properties->name);           \
       break;
-#define gegl_chant_path(name, def, blurb)                     \
+#define gegl_chant_path(name, nick, def, blurb)               \
     case PROP_##name:                                         \
       g_value_set_string (value, properties->name);           \
       break;
-#define gegl_chant_multiline(name, def, blurb)                \
+#define gegl_chant_multiline(name, nick, def, blurb)          \
     case PROP_##name:                                         \
       g_value_set_string (value, properties->name);           \
       break;
-#define gegl_chant_object(name, blurb)                        \
+#define gegl_chant_object(name, nick, blurb)                  \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_chant_pointer(name, blurb)                       \
+#define gegl_chant_pointer(name, nick, blurb)                 \
     case PROP_##name:                                         \
       g_value_set_pointer (value, properties->name);          \
       break;
-#define gegl_chant_color(name, def, blurb)                    \
+#define gegl_chant_color(name, nick, def, blurb)              \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_chant_curve(name, blurb)                         \
+#define gegl_chant_curve(name, nick, blurb)                   \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_chant_vector(name, blurb)                        \
+#define gegl_chant_vector(name, nick, blurb)                  \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;/*XXX*/
@@ -421,59 +423,59 @@ set_property (GObject      *gobject,
 
   switch (property_id)
   {
-#define gegl_chant_int(name, min, max, def, blurb)                    \
+#define gegl_chant_int(name, nick, min, max, def, blurb)              \
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       break;
-#define gegl_chant_double(name, min, max, def, blurb)                 \
+#define gegl_chant_double(name, nick, min, max, def, blurb)           \
     case PROP_##name:                                                 \
       properties->name = g_value_get_double (value);                  \
       break;
-#define gegl_chant_boolean(name, def, blurb)                          \
+#define gegl_chant_boolean(name, nick, def, blurb)                    \
     case PROP_##name:                                                 \
       properties->name = g_value_get_boolean (value);                 \
       break;
-#define gegl_chant_string(name, def, blurb)                           \
+#define gegl_chant_string(name, nick, def, blurb)                     \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
       properties->name = g_strdup (g_value_get_string (value));       \
       break;
-#define gegl_chant_path(name, def, blurb)                             \
+#define gegl_chant_path(name, nick, def, blurb)                       \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
       properties->name = g_strdup (g_value_get_string (value));       \
       break;
-#define gegl_chant_multiline(name, def, blurb)                        \
+#define gegl_chant_multiline(name, nick, def, blurb)                  \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
       properties->name = g_strdup (g_value_get_string (value));       \
       break;
-#define gegl_chant_object(name, blurb)                                \
+#define gegl_chant_object(name, nick, blurb)                          \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_chant_pointer(name, blurb)                               \
+#define gegl_chant_pointer(name, nick, blurb)                         \
     case PROP_##name:                                                 \
       properties->name = g_value_get_pointer (value);                 \
       break;
-#define gegl_chant_color(name, def, blurb)                            \
+#define gegl_chant_color(name, nick, def, blurb)                      \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_chant_curve(name, blurb)                                 \
+#define gegl_chant_curve(name, nick, blurb)                           \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_chant_vector(name, blurb)                                \
+#define gegl_chant_vector(name, nick, blurb)                          \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
         {/*XXX: remove old signal */                                  \
@@ -508,51 +510,51 @@ static void gegl_chant_destroy_notify (gpointer data)
 {
   GeglChantO *properties = GEGL_CHANT_PROPERTIES (data);
 
-#define gegl_chant_int(name, min, max, def, blurb)
-#define gegl_chant_double(name, min, max, def, blurb)
-#define gegl_chant_boolean(name, def, blurb)
-#define gegl_chant_string(name, def, blurb)   \
-  if (properties->name)                       \
-    {                                         \
-      g_free (properties->name);              \
-      properties->name = NULL;                \
+#define gegl_chant_int(name, nick, min, max, def, blurb)
+#define gegl_chant_double(name, nick, min, max, def, blurb)
+#define gegl_chant_boolean(name, nick, def, blurb)
+#define gegl_chant_string(name, nick, def, blurb)   \
+  if (properties->name)                             \
+    {                                               \
+      g_free (properties->name);                    \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_path(name, def, blurb)     \
-  if (properties->name)                       \
-    {                                         \
-      g_free (properties->name);              \
-      properties->name = NULL;                \
+#define gegl_chant_path(name, nick, def, blurb)     \
+  if (properties->name)                             \
+    {                                               \
+      g_free (properties->name);                    \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_multiline(name, def, blurb)\
-  if (properties->name)                       \
-    {                                         \
-      g_free (properties->name);              \
-      properties->name = NULL;                \
+#define gegl_chant_multiline(name, nick, def, blurb)\
+  if (properties->name)                             \
+    {                                               \
+      g_free (properties->name);                    \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_object(name, blurb)        \
-  if (properties->name)                       \
-    {                                         \
-      g_object_unref (properties->name);      \
-      properties->name = NULL;                \
+#define gegl_chant_object(name, nick, blurb)        \
+  if (properties->name)                             \
+    {                                               \
+      g_object_unref (properties->name);            \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_pointer(name, blurb)
-#define gegl_chant_color(name, def, blurb)    \
-  if (properties->name)                       \
-    {                                         \
-      g_object_unref (properties->name);      \
-      properties->name = NULL;                \
+#define gegl_chant_pointer(name, nick, blurb)
+#define gegl_chant_color(name, nick, def, blurb)    \
+  if (properties->name)                             \
+    {                                               \
+      g_object_unref (properties->name);            \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_curve(name, blurb)         \
-  if (properties->name)                       \
+#define gegl_chant_curve(name, nick, blurb)         \
+  if (properties->name)                             \
     {\
-      g_object_unref (properties->name);      \
-      properties->name = NULL;                \
+      g_object_unref (properties->name);            \
+      properties->name = NULL;                      \
     }
-#define gegl_chant_vector(name, blurb)        \
-  if (properties->name)                       \
-    {                                         \
-      g_object_unref (properties->name);      \
-      properties->name = NULL;                \
+#define gegl_chant_vector(name, nick, blurb)        \
+  if (properties->name)                             \
+    {                                               \
+      g_object_unref (properties->name);            \
+      properties->name = NULL;                      \
     }
 
 #include GEGL_CHANT_C_FILE
@@ -597,91 +599,89 @@ gegl_chant_class_init (gpointer klass)
   object_class->get_property = get_property;
   object_class->constructor  = gegl_chant_constructor;
 
-/*  g_type_class_add_private (klass, sizeof (GeglChantO));*/
-
-#define gegl_chant_int(name, min, max, def, blurb)                           \
+#define gegl_chant_int(name, nick, min, max, def, blurb)                     \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_int (#name, #name, blurb,    \
+                                   g_param_spec_int (#name, nick, blurb,     \
                                                      min, max, def,          \
                                                      (GParamFlags) (         \
                                                      G_PARAM_READWRITE |     \
                                                      G_PARAM_CONSTRUCT |     \
                                                      GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_double(name, min, max, def, blurb)                        \
+#define gegl_chant_double(name, nick, min, max, def, blurb)                  \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_double (#name, #name, blurb, \
+                                   g_param_spec_double (#name, nick, blurb,  \
                                                         min, max, def,       \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_boolean(name, def, blurb)                                 \
+#define gegl_chant_boolean(name, nick, def, blurb)                           \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_boolean (#name, #name, blurb,\
+                                   g_param_spec_boolean (#name, nick, blurb, \
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
                                                          GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_string(name, def, blurb)                                  \
+#define gegl_chant_string(name, nick, def, blurb)                            \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_string (#name, #name, blurb, \
+                                   g_param_spec_string (#name, nick, blurb,  \
                                                         def,                 \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_path(name, def, blurb)                                    \
+#define gegl_chant_path(name, nick, def, blurb)                              \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_path (#name, #name, blurb,\
+                                   gegl_param_spec_path (#name, nick, blurb, \
                                                          FALSE, FALSE,       \
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
                                                          GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_multiline(name, def, blurb)                               \
+#define gegl_chant_multiline(name, nick, def, blurb)                         \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_multiline (#name, #name, blurb, \
+                                   gegl_param_spec_multiline (#name, nick, blurb, \
                                                          def,                \
                                                          (GParamFlags) (     \
                                                          G_PARAM_READWRITE | \
                                                          G_PARAM_CONSTRUCT | \
                                                          GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_object(name, blurb)                                       \
+#define gegl_chant_object(name, nick, blurb)                                 \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_object (#name, #name, blurb, \
+                                   g_param_spec_object (#name, nick, blurb,  \
                                                         G_TYPE_OBJECT,       \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_pointer(name, blurb)                                      \
+#define gegl_chant_pointer(name, nick, blurb)                                \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_pointer (#name, #name, blurb,\
+                                   g_param_spec_pointer (#name, nick, blurb, \
                                                         (GParamFlags) (      \
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_color(name, def, blurb)                                   \
+#define gegl_chant_color(name, nick, def, blurb)                             \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_color_from_string (#name, #name, blurb,\
+                                   gegl_param_spec_color_from_string (#name, nick, blurb,\
                                                           def,               \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_curve(name, blurb)                                        \
+#define gegl_chant_curve(name, nick, blurb)                                  \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_curve (#name, #name, blurb,\
+                                   gegl_param_spec_curve (#name, nick, blurb,\
                                                           gegl_curve_default_curve(),\
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_vector(name, blurb)                                       \
+#define gegl_chant_vector(name, nick, blurb)                                 \
   g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_vector (#name, #name, blurb,\
+                                   gegl_param_spec_vector (#name, nick, blurb,\
                                                            NULL,             \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\

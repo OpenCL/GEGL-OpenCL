@@ -17,11 +17,11 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, "")
-gegl_chant_double (scale, -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, "")
-gegl_chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
-gegl_chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "")
-gegl_chant_double (n,     0, 20.0, 3.0, "")
+gegl_chant_double (alpha, "Alpha",    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, "")
+gegl_chant_double (scale, "Scale",    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, "")
+gegl_chant_double (zoff,  "Z offset", -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
+gegl_chant_double (seed,  "Seed",     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "")
+gegl_chant_int    (n,     "Iteration", 0, 20, 3, "")
 
 #else
 

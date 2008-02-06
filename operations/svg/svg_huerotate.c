@@ -23,7 +23,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-  gegl_chant_string (values, "", "list of <number>s")
+gegl_chant_string (values, "Values", "", "list of <number>s")
 
 #else
 

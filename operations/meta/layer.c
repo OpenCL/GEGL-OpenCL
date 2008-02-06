@@ -22,11 +22,16 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(composite_op, "over", "Composite operation to use")
-gegl_chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
-gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "horizontal position")
-gegl_chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "vertical position")
-gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
+gegl_chant_string(composite_op, "Operation", "over",
+                  "Composite operation to use")
+gegl_chant_double(opacity, "Opacity", 0.0, 1.0, 1.0,
+                  "Opacity")
+gegl_chant_double(x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  "Horizontal position")
+gegl_chant_double(y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  "Vertical position")
+gegl_chant_path(src, "Source", "",
+                "Source datafile (png, jpg, raw, svg, bmp, tif, ...)")
 
 #else
 

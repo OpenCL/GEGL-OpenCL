@@ -17,12 +17,18 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int   (x,        -G_MAXINT, G_MAXINT, 16, "Horizontal width of cells pixels.")
-gegl_chant_int   (y,        -G_MAXINT, G_MAXINT, 16, "Vertical width of cells in pixels.")
-gegl_chant_int   (x_offset, -G_MAXINT, G_MAXINT,  0, "Horizontal offset (from origin) for start of grid.")
-gegl_chant_int   (y_offset, -G_MAXINT, G_MAXINT,  0, "Vertical offset (from origin) for start of grid.")
-gegl_chant_color (color1,    "black",                "One of the cell colors (defaults to 'black')")
-gegl_chant_color (color2,    "white",                "The other cell color (defaults to 'white')")
+gegl_chant_int   (x,        "Width",  0, G_MAXINT, 16,
+                  "Horizontal width of cells pixels.")
+gegl_chant_int   (y,        "Height", 0, G_MAXINT, 16,
+                  "Vertical width of cells in pixels.")
+gegl_chant_int   (x_offset, "X offset", -G_MAXINT, G_MAXINT, 0,
+                  "Horizontal offset (from origin) for start of grid.")
+gegl_chant_int   (y_offset, "Y offset", -G_MAXINT, G_MAXINT,  0,
+                  "Vertical offset (from origin) for start of grid.")
+gegl_chant_color (color1,   "Color", "black",
+                  "One of the cell colors (defaults to 'black')")
+gegl_chant_color (color2,   "Other color", "white",
+                  "The other cell color (defaults to 'white')")
 
 #else
 

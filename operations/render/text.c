@@ -17,20 +17,21 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_multiline (string, "Hello",
-                      "String to display. (utf8)")
-gegl_chant_string (font, "Sans",
-                   "Font family. (utf8)")
-gegl_chant_double (size, 1.0, 2048.0, 10.0,
+gegl_chant_multiline (string, "Text", "Hello",
+                      "String to display (utf8)")
+gegl_chant_string (font, "Font family", "Sans",
+                   "Font family (utf8)")
+gegl_chant_double (size, "Size", 1.0, 2048.0, 10.0,
                    "Approximate height of text in pixels.")
-gegl_chant_color  (color, "white", "Color for the text (defaults to 'white')")
-gegl_chant_int    (wrap, -1, 1000000, -1,
+gegl_chant_color  (color, "Color", "white",
+                   "Color for the text (defaults to 'white')")
+gegl_chant_int    (wrap, "Wrap width", -1, 1000000, -1,
                    "Sets the width in pixels at which long lines will wrap. Use -1 for no wrapping.")
-gegl_chant_int    (alignment, 0, 2, 0,
+gegl_chant_int    (alignment, "Justification", 0, 2, 0,
                    "Alignment for multi-line text (0=Left, 1=Center, 2=Right)")
-gegl_chant_int    (width, 0, 1000000, 0,
+gegl_chant_int    (width, "Width", 0, 1000000, 0,
                    "Rendered width in pixels. (read only)")
-gegl_chant_int    (height, 0, 1000000, 0,
+gegl_chant_int    (height, "Height", 0, 1000000, 0,
                    "Rendered height in pixels. (read only)")
 
 #else

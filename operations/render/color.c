@@ -17,7 +17,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (value, "black", "The color to render (defaults to 'black')")
+gegl_chant_color (value, "Color", "black",
+                  "The color to render (defaults to 'black')")
 #else
 
 #define GEGL_CHANT_TYPE_SOURCE

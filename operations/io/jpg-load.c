@@ -17,7 +17,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "/tmp/romedalen.jpg", "Path of file to load.")
+gegl_chant_path (path, "File", "", "Path of file to load.")
 
 #else
 

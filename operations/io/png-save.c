@@ -18,8 +18,10 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "/tmp/fnord.png", "Target path and filename, use '-' for stdout.")
-gegl_chant_int    (compression, 1, 9, 1, "PNG compression level from 1 to 9")
+gegl_chant_string (path, "File", "",
+                   "Target path and filename, use '-' for stdout.")
+gegl_chant_int    (compression, "Compression",
+                   1, 9, 1, "PNG compression level from 1 to 9")
 
 #else
 

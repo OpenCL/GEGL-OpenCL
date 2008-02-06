@@ -18,8 +18,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X-axis shift")
-gegl_chant_double (y, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y-axis shift")
+gegl_chant_double (x, "X", -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X-axis shift")
+gegl_chant_double (y, "Y", -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y-axis shift")
 
 #else
 

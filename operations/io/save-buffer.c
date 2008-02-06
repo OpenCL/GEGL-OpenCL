@@ -17,7 +17,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (buffer, "The location where to store the output GeglBuffer")
+gegl_chant_pointer (buffer, "Buffer location",
+                    "The location where to store the output GeglBuffer")
 
 #else
 

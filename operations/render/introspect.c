@@ -17,8 +17,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_object(node, "GeglNode to introspect")
-gegl_chant_pointer(buf, "Buffer")
+gegl_chant_object(node, "Node", "GeglNode to introspect")
+gegl_chant_pointer(buf, "Buffer", "Buffer")
 
 #else
 

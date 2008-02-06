@@ -20,7 +20,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(format, "RGBA float", "Babl ouput format string")
+gegl_chant_string(format, "Output format", "RGBA float",
+                  "Babl ouput format string")
 
 #else
 

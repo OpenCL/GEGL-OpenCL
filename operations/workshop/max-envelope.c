@@ -18,11 +18,15 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius,     2, 5000.0, 50, "neighbourhood taken into account")
-gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
-gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of exposure)")
-gegl_chant_boolean (same_spray, FALSE, "")
-gegl_chant_double (rgamma, 0.0, 8.0, 1.8, "gamma applied to radial distribution")
+gegl_chant_int (radius, "Radius", 2, 5000.0, 50,
+                "Neighbourhood taken into account")
+gegl_chant_int (samples, "Samples", 0, 1000, 3,
+                "Number of samples to do")
+gegl_chant_int (iterations, "Iteration", 0, 1000, 20,
+                "Number of iterations (length of exposure)")
+gegl_chant_boolean (same_spray, "Same spray", FALSE, "")
+gegl_chant_double (rgamma, "Radial gamma", 0.0, 8.0, 1.8,
+                   "Gamma applied to radial distribution")
 
 #else
 

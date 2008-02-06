@@ -1,3 +1,61 @@
+2008-02-06  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-chant.h: added nick to chanted properties.
+
+	* operations/blur/box-blur.c
+	* operations/blur/gaussian-blur.c
+	* operations/color/brightness-contrast.c
+	* operations/color/contrast-curve.c
+	* operations/color/levels.c
+	* operations/color/mono-mixer.c
+	* operations/color/threshold.c
+	* operations/color/whitebalance.c
+	* operations/core/clone.c
+	* operations/core/convert-format.c
+	* operations/core/crop.c
+	* operations/core/shift.c
+	* operations/enhance/bilateral-filter.c
+	* operations/enhance/snn-mean.c
+	* operations/generated/math.rb
+	* operations/io/exr-load.cpp
+	* operations/io/jpg-load.c
+	* operations/io/load.c
+	* operations/io/pixbuf.c
+	* operations/io/png-load.c
+	* operations/io/png-save.c
+	* operations/io/save-buffer.c
+	* operations/io/save-pixbuf.c
+	* operations/io/svg-load.c
+	* operations/meta/layer.c
+	* operations/render/checkerboard.c
+	* operations/render/color.c
+	* operations/render/fractal-explorer.c
+	* operations/render/introspect.c
+	* operations/render/noise.c
+	* operations/render/text.c
+	* operations/svg/svg_huerotate.c
+	* operations/svg/svg_luminancetoalpha.c
+	* operations/svg/svg_matrix.c
+	* operations/svg/svg_saturate.c
+	* operations/transparency/opacity.c
+	* operations/workshop/box-max.c
+	* operations/workshop/box-min.c
+	* operations/workshop/box-percentile.c
+	* operations/workshop/c2g.c
+	* operations/workshop/demosaic-bimedian.c
+	* operations/workshop/demosaic-simple.c
+	* operations/workshop/disc-percentile.c
+	* operations/workshop/kuwahara-max.c
+	* operations/workshop/kuwahara-min.c
+	* operations/workshop/kuwahara.c
+	* operations/workshop/lens-correct.c
+	* operations/workshop/line-profile.c
+	* operations/workshop/mandelbrot.c
+	* operations/workshop/max-envelope.c
+	* operations/workshop/min-envelope.c
+	* operations/workshop/snn-percentile.c
+	* operations/workshop/stress.c: changed accordingly.
+
 2008-02-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/demosaic-simple.c: (demosaic): fixed rowstride

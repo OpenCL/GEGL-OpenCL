@@ -23,11 +23,11 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (std_dev_x, 0.0, 200.0, 4.0,
+gegl_chant_double (std_dev_x, "Size X", 0.0, 200.0, 4.0,
    "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)")
-gegl_chant_double (std_dev_y, 0.0, 200.0, 4.0,
+gegl_chant_double (std_dev_y, "Size Y", 0.0, 200.0, 4.0,
    "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)")
-gegl_chant_string (filter, NULL,
+gegl_chant_string (filter, "Filter", NULL,
    "Optional parameter to override the automatic selection of blur filter.")
 
 #else

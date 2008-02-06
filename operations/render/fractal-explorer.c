@@ -24,31 +24,47 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (width,  10, 10000000, 400, "Width")
-gegl_chant_int (height, 10, 10000000, 400, "Height")
+gegl_chant_int (width,  "Width",  10, 10000000, 400, "Width")
+gegl_chant_int (height, "Height", 10, 10000000, 400, "Height")
 
-gegl_chant_int (fractaltype, 0, 8, 0, "Fractal Type")
-gegl_chant_double (xmin, -3.0, 3.0, -2.0, "Left")
-gegl_chant_double (xmax, -3.0, 3.0, 2.0, "Right")
-gegl_chant_double (ymin, -3.0, 3.0, -2.0, "Top")
-gegl_chant_double (ymax, -3.0, 3.0, 2.0, "Bottom")
-gegl_chant_int (iter, 1, 1000, 50, "Iterations")
-gegl_chant_double (cx, -2.5, 2.5, -0.75, "CX (Only Julia)")
-gegl_chant_double (cy, -2.5, 2.5,  0.2,  "CY (Only Julia)")
+gegl_chant_int (fractaltype, "Fractal type", 0, 8, 0, "Fractal Type")
 
-gegl_chant_double (redstretch,   0.0, 1.0, 1.0, "Red stretching factor")
-gegl_chant_double (greenstretch, 0.0, 1.0, 1.0, "Green stretching factor")
-gegl_chant_double (bluestretch,  0.0, 1.0, 1.0, "Blue stretching factor")
-gegl_chant_int (redmode,   0, 2, 1, "Red application mode (0:SIN; 1:COS; 2:NONE)")
-gegl_chant_int (greenmode, 0, 2, 1, "Green application mode (0:SIN; 1:COS; 2:NONE)")
-gegl_chant_int (bluemode,  0, 2, 0, "Blue application mode (0:SIN; 1:COS; 2:NONE)")
-gegl_chant_boolean (redinvert,   FALSE, "Red inversion")
-gegl_chant_boolean (greeninvert, FALSE, "Green inversion")
-gegl_chant_boolean (blueinvert,  FALSE, "Blue inversion")
+gegl_chant_double (xmin, "Left",   -3.0, 3.0, -2.0, "Left")
+gegl_chant_double (xmax, "Right",  -3.0, 3.0, 2.0, "Right")
+gegl_chant_double (ymin, "Top",    -3.0, 3.0, -2.0, "Top")
+gegl_chant_double (ymax, "Bottom", -3.0, 3.0, 2.0, "Bottom")
 
-gegl_chant_int (ncolors, 2, MAXNCOLORS, 256, "Number of colors")
+gegl_chant_int (iter, "Iterations", 1, 1000, 50, "Iterations")
 
-gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
+gegl_chant_double (cx, "CX", -2.5, 2.5, -0.75, "CX (only Julia)")
+gegl_chant_double (cy, "CY", -2.5, 2.5,  0.2,  "CY (only Julia)")
+
+gegl_chant_double (redstretch,   "Red stretch",   0.0, 1.0, 1.0,
+                   "Red stretching factor")
+gegl_chant_double (greenstretch, "Green stretch", 0.0, 1.0, 1.0,
+                   "Green stretching factor")
+gegl_chant_double (bluestretch,  "Blue stretch",  0.0, 1.0, 1.0,
+                   "Blue stretching factor")
+
+gegl_chant_int (redmode,   "Red mode",   0, 2, 1,
+                "Red application mode (0:SIN; 1:COS; 2:NONE)")
+gegl_chant_int (greenmode, "Green mode", 0, 2, 1,
+                "Green application mode (0:SIN; 1:COS; 2:NONE)")
+gegl_chant_int (bluemode,  "Blue mode",  0, 2, 0,
+                "Blue application mode (0:SIN; 1:COS; 2:NONE)")
+
+gegl_chant_boolean (redinvert,   "Red inversion",   FALSE,
+                    "Red inversion")
+gegl_chant_boolean (greeninvert, "Green inversion", FALSE,
+                    "Green inversion")
+gegl_chant_boolean (blueinvert,  "Blue inversion",  FALSE,
+                    "Blue inversion")
+
+gegl_chant_int (ncolors, "Colors", 2, MAXNCOLORS, 256,
+                "Number of colors")
+
+gegl_chant_boolean (useloglog, "Loglog smoothing", FALSE,
+                    "Use loglog smoothing")
 
 #else
 

@@ -20,7 +20,7 @@
 
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "", "Path of file to load.")
+gegl_chant_string (path, "File", "", "Path of file to load.")
 
 #else
 

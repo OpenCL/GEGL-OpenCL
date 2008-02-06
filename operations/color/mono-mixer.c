@@ -18,9 +18,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
- gegl_chant_double (red,   -10.0, 10.0, 0.5,  "Amount of red")
- gegl_chant_double (green, -10.0, 10.0, 0.25, "Amount of green")
- gegl_chant_double (blue,  -10.0, 10.0, 0.25, "Amount of blue")
+gegl_chant_double (red,   "Red",   -10.0, 10.0, 0.5,  "Amount of red")
+gegl_chant_double (green, "Green", -10.0, 10.0, 0.25, "Amount of green")
+gegl_chant_double (blue,  "Blue",  -10.0, 10.0, 0.25, "Amount of blue")
 
 #else
 

@@ -16,7 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
+gegl_chant_pointer (pixbuf, "Pixbuf", "GdkPixbuf to use")
 #else
 
 #define GEGL_CHANT_TYPE_SOURCE

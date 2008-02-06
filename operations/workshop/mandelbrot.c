@@ -17,10 +17,14 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(real, -200.0, 200.0, -1.77, "imaginary coordinate")
-gegl_chant_double(img,  -200.0, 200.0, 0.0, "real coordinate")
-gegl_chant_double(level, -200.0, 200.0, 3.5, "")
-gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
+gegl_chant_double(real, "Real",      -200.0, 200.0, -1.77,
+                  "Real coordinate")
+gegl_chant_double(img,  "Imaginary", -200.0, 200.0, 0.0,
+                  "Imaginary coordinate")
+gegl_chant_double(level, "Level", -200.0, 200.0, 3.5,
+                  "Water level")
+gegl_chant_int (maxiter, "Iterations", 0, 512, 128,
+                "Maximum number of iterations")
 
 #else
 

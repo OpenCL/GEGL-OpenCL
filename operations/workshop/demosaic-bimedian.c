@@ -18,7 +18,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files.")
+gegl_chant_int (pattern, "Bayer pattern", 0, 3, 0,
+                "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files.")
 
 #else
 

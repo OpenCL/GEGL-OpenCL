@@ -17,14 +17,14 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (x0, 0, 1000, 0, "start x coordinate")
-gegl_chant_int (x1, 0, 1000, 200, "end x coordinate")
-gegl_chant_int (y0, 0, 1000, 0, "start y coordinate")
-gegl_chant_int (y1, 0, 1000, 200, "end y coordinate")
-gegl_chant_int (width, 10, 10000, 1024, "width of plot")
-gegl_chant_int (height, 10, 10000, 256, "height of plot")
-gegl_chant_double (min, -500.0, 500,  0.0, "value at bottom")
-gegl_chant_double (max, -500.0, 500,  8.0, "value at top")
+gegl_chant_int (x0, "X0", 0, 1000, 0, "Start x coordinate")
+gegl_chant_int (x1, "X1", 0, 1000, 200, "End x coordinate")
+gegl_chant_int (y0, "Y0", 0, 1000, 0, "Start y coordinate")
+gegl_chant_int (y1, "Y1", 0, 1000, 200, "End y coordinate")
+gegl_chant_int (width,  "Width",  10, 10000, 1024, "Width of plot")
+gegl_chant_int (height, "Height", 10, 10000, 256,  "Height of plot")
+gegl_chant_double (min, "Min", -500.0, 500,  0.0, "Value at bottom")
+gegl_chant_double (max, "Max", -500.0, 500,  8.0, "Value at top")
 
 #else
 

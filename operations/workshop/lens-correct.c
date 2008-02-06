@@ -18,7 +18,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (lens_info_pointer, "Pointer to LensCorrectionModel")
+gegl_chant_pointer (lens_info_pointer, "Model",
+                    "Pointer to LensCorrectionModel")
 
 #else
 

@@ -18,7 +18,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (ref, "ID", "The reference ID used as input (for use in XML).")
+gegl_chant_string (ref, "Reference", "ID",
+                   "The reference ID used as input (for use in XML).")
 
 #else
 

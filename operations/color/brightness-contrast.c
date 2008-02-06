@@ -23,8 +23,10 @@
  * the the parameters are:
  *                 property name,   min,   max, default, "description of property"   */
 
-gegl_chant_double (contrast,   -5.0, 5.0, 1.0, "Range scale factor")
-gegl_chant_double (brightness, -3.0, 3.0, 0.0, "Amount to increase brightness")
+gegl_chant_double (contrast, "Contrast", -5.0, 5.0, 1.0,
+                   "Range scale factor")
+gegl_chant_double (brightness, "Brightness", -3.0, 3.0, 0.0,
+                   "Amount to increase brightness")
 
 /* this will create the instance structure for our use, and register the
  * property with the given ranges, default values and a comment for the

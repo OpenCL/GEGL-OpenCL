@@ -17,7 +17,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no auxiliary input buffer is provided.")
+gegl_chant_double (value, "Opacity", -10.0, 10.0, 0.5,
+                   "Global opacity value, used if no auxiliary input buffer is provided.")
 
 #else
 

@@ -19,9 +19,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, 0.0, 70.0, 4.0,
-  "Radius of square pixel region, (width and height will be radius*2+1.")
-gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defaults to 50, which is a median filter.")
+gegl_chant_double (radius, "Radius", 0.0, 70.0, 4.0,
+  "Radius of square pixel region (width and height will be radius*2+1)")
+gegl_chant_double (percentile, "Percentile", 0.0, 100.0, 50,
+  "The percentile to compute, defaults to 50, which is a median filter.")
 
 #else
 

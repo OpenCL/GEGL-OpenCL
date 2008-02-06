@@ -17,13 +17,14 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-  gegl_chant_int (sampling_points, 0, 65536, 0, "Number of curve sampling points.  0 for exact calculation.")
-  gegl_chant_curve (curve, "The contrast curve.")
+gegl_chant_int (sampling_points, "Sample points", 0, 65536, 0,
+                "Number of curve sampling points.  0 for exact calculation.")
+gegl_chant_curve (curve, "Curve", "The contrast curve.")
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE          "contrast-curve.c"
+#define GEGL_CHANT_C_FILE  "contrast-curve.c"
 
 #include "gegl-chant.h"
 

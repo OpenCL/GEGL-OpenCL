@@ -18,10 +18,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X")
-gegl_chant_double (y, -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y")
-gegl_chant_double (width,  -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Width")
-gegl_chant_double (height, -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Height")
+gegl_chant_double (x,      "X",      -G_MAXFLOAT, G_MAXFLOAT,  0.0, "X")
+gegl_chant_double (y,      "Y",      -G_MAXFLOAT, G_MAXFLOAT,  0.0, "Y")
+gegl_chant_double (width,  "Width",  -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Width")
+gegl_chant_double (height, "Height", -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Height")
 
 #else
 
