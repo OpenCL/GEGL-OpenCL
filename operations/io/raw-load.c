@@ -74,8 +74,12 @@ get_defined_region (GeglOperation *operation)
 
   load_buffer (self);
 
-  result.width  = gegl_buffer_get_width (GEGL_BUFFER (self->priv));
-  result.height  = gegl_buffer_get_height (GEGL_BUFFER (self->priv));
+  if (self->priv)
+    {
+      result.width  = gegl_buffer_get_width  (GEGL_BUFFER (self->priv));
+      result.height = gegl_buffer_get_height (GEGL_BUFFER (self->priv));
+    }
+
   return result;
 }
 

@@ -1,5 +1,13 @@
 2008-02-06  Michael Natterer  <mitch@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: add tons of g_return_if_fail() move
+	includes to the start of the file, some formatting fixes
+
+	* operations/io/raw-load.c (get_defined_region): don't dereference
+	a NULL buffer.
+
+2008-02-06  Michael Natterer  <mitch@gimp.org>
+
 	* operations/io/exr-load.cpp: remove nick because this one
 	uses the old chanting.
 

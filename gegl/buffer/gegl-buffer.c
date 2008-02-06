@@ -16,6 +16,12 @@
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+
+#include <limits.h>
+#include <math.h>
+#include <string.h>
+
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gstdio.h>
@@ -23,6 +29,7 @@
 #include "../gegl-types.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
+#include "gegl-buffer-allocator.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-handler.h"
@@ -31,8 +38,12 @@
 #include "gegl-handler-log.h"
 #include "gegl-handler-empty.h"
 #include "gegl-buffer-allocator.h"
+#include "gegl-sampler-nearest.h"
+#include "gegl-sampler-linear.h"
+#include "gegl-sampler-cubic.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
+
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
 
@@ -208,10 +219,6 @@ gint gegl_buffer_leaks (void)
 {
   return allocated_buffers - de_allocated_buffers;
 }
-
-#include "gegl-buffer-allocator.h"
-
-#include <string.h>
 
 static void gegl_buffer_void (GeglBuffer *buffer);
 
@@ -500,8 +507,6 @@ get_tile (GeglProvider *tile_store,
   return tile;
 }
 
-#include "limits.h"
-
 static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
@@ -613,6 +618,8 @@ gegl_buffer_void_tile (GeglBuffer *buffer,
 {
   gint z = 0;
 
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
   return gegl_provider_message (GEGL_PROVIDER (buffer),
                                   GEGL_TILE_VOID, x, y, z, NULL);
 }
@@ -621,8 +628,10 @@ gegl_buffer_void_tile (GeglBuffer *buffer,
 gboolean
 gegl_buffer_idle (GeglBuffer *buffer)
 {
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
+
   return gegl_provider_message (GEGL_PROVIDER (buffer),
-                                  GEGL_TILE_IDLE, 0, 0, 0, NULL);
+                                GEGL_TILE_IDLE, 0, 0, 0, NULL);
 }
 #endif
 
@@ -695,8 +704,6 @@ done_with_row:
  * babl conversion should probably be done on a tile by tile, or even scanline by
  * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
  */
-
-#include <string.h>
 
 #ifdef BABL
 #undef BABL
@@ -945,6 +952,8 @@ pget (GeglBuffer *buffer,
 void
 gegl_buffer_flush (GeglBuffer *buffer)
 {
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
   if (buffer->hot_tile)
     {
       g_object_unref (buffer->hot_tile);
@@ -1215,6 +1224,8 @@ gegl_buffer_set (GeglBuffer          *buffer,
 {
   GeglBuffer *sub_buf;
 
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
   if (format == NULL)
     format = buffer->format;
 
@@ -1248,12 +1259,13 @@ gegl_buffer_set (GeglBuffer          *buffer,
  * level:  halving levels 0 = 1:1 1=1:2 2=1:4 3=1:8 ..
  *
  */
-static void gegl_buffer_get_scaled (GeglBuffer          *buffer,
-                                    const GeglRectangle *rect,
-                                    void                *dst,
-                                    gint                 rowstride,
-                                    const void          *format,
-                                    gint                 level)
+static void
+gegl_buffer_get_scaled (GeglBuffer          *buffer,
+                        const GeglRectangle *rect,
+                        void                *dst,
+                        gint                 rowstride,
+                        const void          *format,
+                        gint                 level)
 {
   GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
   gegl_buffer_iterate (sub_buf, dst, rowstride, FALSE, format, level);
@@ -1267,17 +1279,18 @@ static void gegl_buffer_get_scaled (GeglBuffer          *buffer,
  *  completely correct.
  */
 
-static void resample_nearest (void   *dest_buf,
-                              void   *source_buf,
-                              gint    dest_w,
-                              gint    dest_h,
-                              gint    source_w,
-                              gint    source_h,
-                              gdouble offset_x,
-                              gdouble offset_y,
-                              gdouble scale,
-                              gint    bpp,
-                              gint    rowstride)
+static void
+resample_nearest (void   *dest_buf,
+                  void   *source_buf,
+                  gint    dest_w,
+                  gint    dest_h,
+                  gint    source_w,
+                  gint    source_h,
+                  gdouble offset_x,
+                  gdouble offset_y,
+                  gdouble scale,
+                  gint    bpp,
+                  gint    rowstride)
 {
   gint x, y;
 
@@ -1319,17 +1332,18 @@ static void resample_nearest (void   *dest_buf,
 /* Optimized|obfuscated version of the nearest neighbour resampler
  * XXX: seems to contains some very slight inprecision in the rendering.
  */
-static void resample_nearest (void   *dest_buf,
-                              void   *source_buf,
-                              gint    dest_w,
-                              gint    dest_h,
-                              gint    source_w,
-                              gint    source_h,
-                              gdouble offset_x,
-                              gdouble offset_y,
-                              gdouble scale,
-                              gint    bpp,
-                              gint    rowstride)
+static void
+resample_nearest (void   *dest_buf,
+                  void   *source_buf,
+                  gint    dest_w,
+                  gint    dest_h,
+                  gint    source_w,
+                  gint    source_h,
+                  gdouble offset_x,
+                  gdouble offset_y,
+                  gdouble scale,
+                  gint    bpp,
+                  gint    rowstride)
 {
   gint x, y;
   guint xdiff, ydiff, xstart, sy;
@@ -1410,17 +1424,18 @@ box_filter (guint          left_weight,
     }
 }
 
-static void resample_boxfilter_u8 (void   *dest_buf,
-                                   void   *source_buf,
-                                   gint    dest_w,
-                                   gint    dest_h,
-                                   gint    source_w,
-                                   gint    source_h,
-                                   gdouble offset_x,
-                                   gdouble offset_y,
-                                   gdouble scale,
-                                   gint    components,
-                                   gint    rowstride)
+static void
+resample_boxfilter_u8 (void   *dest_buf,
+                       void   *source_buf,
+                       gint    dest_w,
+                       gint    dest_h,
+                       gint    source_w,
+                       gint    source_h,
+                       gdouble offset_x,
+                       gdouble offset_y,
+                       gdouble scale,
+                       gint    components,
+                       gint    rowstride)
 {
   gint x, y;
   gint iscale      = scale * 256;
@@ -1557,8 +1572,6 @@ static void resample_boxfilter_u8 (void   *dest_buf,
     }
 }
 
-#include <math.h>
-
 void
 gegl_buffer_get (GeglBuffer          *buffer,
                  gdouble              scale,
@@ -1567,6 +1580,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  gpointer             dest_buf,
                  gint                 rowstride)
 {
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
   if (format == NULL)
     format = buffer->format;
@@ -1672,12 +1686,10 @@ gegl_buffer_get (GeglBuffer          *buffer,
 const GeglRectangle *
 gegl_buffer_get_abyss (GeglBuffer *buffer)
 {
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
   return &buffer->abyss;
 }
-
-#include "gegl-sampler-nearest.h"
-#include "gegl-sampler-linear.h"
-#include "gegl-sampler-cubic.h"
 
 void
 gegl_buffer_sample (GeglBuffer       *buffer,
@@ -1688,6 +1700,8 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     const Babl       *format,
                     GeglInterpolation interpolation)
 {
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
 /*#define USE_WORKING_SHORTCUT*/
 #ifdef USE_WORKING_SHORTCUT
   pget (buffer, x, y, format, dest);
@@ -1732,6 +1746,8 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 void
 gegl_buffer_sample_cleanup (GeglBuffer *buffer)
 {
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
   if (buffer->sampler)
     {
       g_object_unref (buffer->sampler);
@@ -1742,6 +1758,8 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
 const GeglRectangle *
 gegl_buffer_get_extent (GeglBuffer *buffer)
 {
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
   return &(buffer->extent);
 }
 
@@ -1770,6 +1788,9 @@ GeglBuffer*
 gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                                const GeglRectangle *extent)
 {
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+  g_return_val_if_fail (extent != NULL, NULL);
+
   return g_object_new (GEGL_TYPE_BUFFER,
                        "provider", buffer,
                        "x", extent->x,
@@ -1791,13 +1812,14 @@ gegl_buffer_copy (GeglBuffer          *src,
 
   GeglRectangle src_line;
   GeglRectangle dst_line;
-  const Babl *format;
+  const Babl   *format;
   guchar       *temp;
   guint         i;
   gint          pxsize;
 
-  g_assert (src);
-  g_assert (dst);
+  g_return_if_fail (GEGL_IS_BUFFER (src));
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+
   if (!src_rect)
     {
       src_rect = gegl_buffer_get_extent (src);
@@ -1835,7 +1857,8 @@ gegl_buffer_dup (GeglBuffer *buffer)
 {
   GeglBuffer *new;
 
-  g_assert (buffer);
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
   new = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
   gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
                     new, gegl_buffer_get_extent (buffer));
@@ -1846,6 +1869,8 @@ gegl_buffer_dup (GeglBuffer *buffer)
 void
 gegl_buffer_destroy (GeglBuffer *buffer)
 {
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
   g_object_unref (buffer);
 }
 
@@ -1853,12 +1878,12 @@ GeglInterpolation
 gegl_buffer_interpolation_from_string (const gchar *string)
 {
   if (g_str_equal (string, "nearest") ||
-      g_str_equal (string, "none")
-   )
+      g_str_equal (string, "none"))
     return GEGL_INTERPOLATION_NEAREST;
+
   if (g_str_equal (string, "linear") ||
-      g_str_equal (string, "bilinear")
-   )
+      g_str_equal (string, "bilinear"))
     return GEGL_INTERPOLATION_LINEAR;
+
  return GEGL_INTERPOLATION_NEAREST;
 }
