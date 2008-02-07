@@ -1,3 +1,8 @@
+2008-02-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: added copy pasteable commandline for babl
+	checkout together with the gegl one.
+
 2008-02-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: Added link to Development/Extending in index

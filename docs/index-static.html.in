@@ -172,6 +172,7 @@
 href='http://svn.gnome.org/viewcvs/gegl/trunk/'>browsed online</a> and checked
 out from GNOME Subversion using: </p>
 
+    <pre>svn co http://svn.gnome.org/svn/babl/trunk/ babl</pre>
     <pre>svn co http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
 
     <a name='Building'></a>
