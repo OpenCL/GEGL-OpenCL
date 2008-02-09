@@ -14,7 +14,7 @@ main (gint    argc,
 This is the graph we're going to construct:
  
 .-----------.
-| display   |
+| ff-save   |
 `-----------'
    |
 .-------.
@@ -34,7 +34,11 @@ This is the graph we're going to construct:
 */
 
     /*< The image nodes representing operations we want to perform */
-    GeglNode *display    = gegl_node_create_child (gegl, "display");
+    GeglNode *display    = gegl_node_new_child (gegl,
+                                 "operation","ff-save",
+                                 "path", "fractal-zoom.avi",
+                                 "bitrate", 1200000.0,
+                                 NULL);
     GeglNode *layer      = gegl_node_new_child (gegl,
                                  "operation", "layer",
                                  "x", 2.0,
@@ -47,8 +51,8 @@ This is the graph we're going to construct:
                                  NULL);
     GeglNode *mandelbrot = gegl_node_new_child (gegl,
                                 "operation", "fractal-explorer",
-                                "width", 512,
-                                "height", 384,
+                                "width", 640,
+                                "height", 480,
                                 NULL);
 
     gegl_node_link_many (mandelbrot, layer, display, NULL);
@@ -59,7 +63,7 @@ This is the graph we're going to construct:
      */
     {
       gint frame;
-      gint frames = 200;
+      gint frames = 100;
 
       for (frame=0; frame<frames; frame++)
         {
@@ -89,8 +93,10 @@ This is the graph we're going to construct:
             xmin, ymin, xmax-xmin, ymax-ymin);
           gegl_node_set (text, "string", string, NULL);
           gegl_node_process (display);
+          g_print ("%3.0f%%  \r", t * 100);
         }
     }
+    g_print ("      \r");
 
     /* free resources used by the graph and the nodes it owns */
     g_object_unref (gegl);

@@ -1,3 +1,10 @@
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added rule to build hello-world-video
+	* hello-world-video.c: (main): added.
+	* hello-world.c: (main): modified to use fractal-explorer instead of
+	FractalExplorer.
+
 2008-02-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added copy pasteable commandline for babl
@@ -9,18 +16,6 @@
 	menu. Rephrased processing format to mention and link to wikipedia
 	page describing scRGB. Added initial brain dump on documentation for
 	Operation base classes, needs re-iterating a couple of times.
-
-2008-02-03  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* Makefile.am:
-
-2008-02-03  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* Makefile.am:
 
 2008-02-01  Øyvind Kolås  <pippin@gimp.org>
 

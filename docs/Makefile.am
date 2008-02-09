@@ -18,6 +18,7 @@ EXTRA_DIST= 			\
 	gegl.devhelp		\
 	devhelp.css		\
 	hello-world.c		\
+	hello-world-video.c	\
 	index-static.html.in	\
 	api.html		\
 	index.html
@@ -80,4 +81,7 @@ uninstall-local:
 	rm -f $(help_dir)/gegl.css
 
 hello-world: hello-world.c
+	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`
+
+hello-world-video: hello-world-video.c
 	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`
