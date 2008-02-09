@@ -195,7 +195,7 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChant *self = GEGL_CHANT (operation);
   GeglChantO           *o = GEGL_CHANT_PROPERTIES (self);
@@ -289,7 +289,7 @@ operation_class_init (GeglChantClass *klass)
   operation_class->categories  = "render";
   operation_class->description = "Display a string of text using pango and cairo.";
   operation_class->prepare = prepare;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_source_class->process = process;
 }
 

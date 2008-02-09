@@ -74,23 +74,23 @@ struct _GeglOperationClass
    * (is already implemented in GeglOperationPointFilter and
    * GeglOperationPointComposer, GeglOperationAreaFilter base classes.
    */
-  GeglRectangle   (*get_defined_region)   (GeglOperation *operation);
+  GeglRectangle   (*get_bounding_box)   (GeglOperation *operation);
 
   /* Computes the region in output (same affected rect assumed for all outputs)
    * when a given region has changed on an input. Used to aggregate dirt in the
    * graph. A default implementation of this, if not provided should probably
    * be to report that the entire defined region is dirtied.
    */
-  GeglRectangle   (*compute_affected_region)  (GeglOperation       *operation,
+  GeglRectangle   (*get_required_for_output)  (GeglOperation       *operation,
                                                const gchar         *input_pad,
                                                const GeglRectangle *input_region);
 
   /* computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given result rectangle
    */
-  GeglRectangle   (*compute_input_request) (GeglOperation       *operation,
-                                            const gchar         *input_pad,
-                                            const GeglRectangle *roi);
+  GeglRectangle   (*get_invalidated_by_change) (GeglOperation       *operation,
+                                                const gchar         *input_pad,
+                                                const GeglRectangle *roi);
 
   /* Adjust result rect, adapts the rectangle used for computing results.
    * (useful for global operations like contrast stretching, as well as
@@ -122,7 +122,7 @@ struct _GeglOperationClass
 GType           gegl_operation_get_type             (void) G_GNUC_CONST;
 
 /* retrieves the bounding box of a connected input */
-GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operation,
+GeglRectangle * gegl_operation_source_get_bounding_box (GeglOperation *operation,
                                                           const gchar   *pad_name);
 
 
@@ -134,22 +134,22 @@ void            gegl_operation_set_source_region    (GeglOperation       *operat
 
 
 /* retrieves the node providing data to a named input pad */
-GeglNode      * gegl_operation_get_source_node      (GeglOperation *operation,
-                                                     const gchar   *pad_name);
-GeglRectangle   gegl_operation_compute_affected_region (GeglOperation *operation,
-                                                     const gchar   *input_pad,
-                                                     const GeglRectangle *input_region);
-GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *operation);
-GeglRectangle   gegl_operation_adjust_result_region (GeglOperation *operation,
-                                                     const GeglRectangle *roi);
+GeglNode      * gegl_operation_get_source_node         (GeglOperation *operation,
+                                                        const gchar   *pad_name);
+GeglRectangle   gegl_operation_get_required_for_output (GeglOperation *operation,
+                                                        const gchar   *input_pad,
+                                                        const GeglRectangle *input_region);
+GeglRectangle   gegl_operation_get_bounding_box        (GeglOperation *operation);
+GeglRectangle   gegl_operation_adjust_result_region    (GeglOperation *operation,
+                                                        const GeglRectangle *roi);
 
-GeglRectangle   gegl_operation_compute_input_request(GeglOperation *operation,
-                                                     const gchar   *input_pad,
-                                                     const GeglRectangle *roi);
+GeglRectangle   gegl_operation_get_invalidated_by_change(GeglOperation *operation,
+                                                         const gchar   *input_pad,
+                                                         const GeglRectangle *roi);
 
-GeglNode       *gegl_operation_detect               (GeglOperation *operation,
-                                                     gint           x,
-                                                     gint           y);
+GeglNode       *gegl_operation_detect                   (GeglOperation *operation,
+                                                         gint           x,
+                                                         gint           y);
 
 
 /* virtual method invokers that change behavior based on the roi being computed,

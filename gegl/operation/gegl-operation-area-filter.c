@@ -33,14 +33,14 @@
 #include "buffer/gegl-buffer.h"
 
 
-static void          prepare                 (GeglOperation       *operation);
-static GeglRectangle get_defined_region      (GeglOperation       *operation);
-static GeglRectangle compute_input_request   (GeglOperation       *operation,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *region);
-static GeglRectangle compute_affected_region (GeglOperation       *operation,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *input_region);
+static void          prepare                  (GeglOperation       *operation);
+static GeglRectangle get_bounding_box          (GeglOperation       *operation);
+static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+                                                 const gchar         *input_pad,
+                                                 const GeglRectangle *region);
+static GeglRectangle get_required_for_output   (GeglOperation       *operation,
+                                                 const gchar         *input_pad,
+                                                 const GeglRectangle *input_region);
 
 G_DEFINE_TYPE (GeglOperationAreaFilter, gegl_operation_area_filter,
                GEGL_TYPE_OPERATION_FILTER)
@@ -51,9 +51,9 @@ gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->prepare = prepare;
-  operation_class->get_defined_region  = get_defined_region;
-  operation_class->compute_affected_region = compute_affected_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 }
 
 static void
@@ -72,14 +72,13 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            result = { 0, };
   GeglRectangle           *in_rect;
 
-  in_rect = gegl_operation_source_get_defined_region (operation,
-                                                      "input");
+  in_rect = gegl_operation_source_get_bounding_box (operation,"input");
 
   if (!in_rect)
     return result;
@@ -98,15 +97,15 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *region)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            rect;
   GeglRectangle            defined;
 
-  defined = get_defined_region (operation);
+  defined = get_bounding_box (operation);
   gegl_rectangle_intersect (&rect, region, &defined);
 
   if (rect.width  != 0 &&
@@ -122,7 +121,7 @@ compute_input_request (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *operation,
+get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {

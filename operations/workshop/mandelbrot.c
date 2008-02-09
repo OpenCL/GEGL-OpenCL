@@ -68,7 +68,7 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {-256,-256, 1024, 1024};
   return result;
@@ -131,7 +131,7 @@ operation_class_init (GeglChantClass *klass)
 
   source_class->process = process;
   operation_class->prepare = prepare;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "mandelbrot";
   operation_class->categories  = "render";

@@ -60,11 +60,11 @@ static gboolean      is_intermediate_node    (OpAffine            *affine);
 static gboolean      is_composite_node       (OpAffine            *affine);
 static void          get_source_matrix       (OpAffine            *affine,
                                               Matrix3              output);
-static GeglRectangle get_defined_region      (GeglOperation       *op);
-static GeglRectangle compute_affected_region (GeglOperation       *operation,
+static GeglRectangle get_bounding_box       (GeglOperation       *op);
+static GeglRectangle get_required_for_output (GeglOperation       *operation,
                                               const gchar         *input_pad,
                                               const GeglRectangle *input_region);
-static GeglRectangle compute_input_request   (GeglOperation       *self,
+static GeglRectangle get_invalidated_by_change(GeglOperation       *self,
                                               const gchar         *input_pad,
                                               const GeglRectangle *region);
 
@@ -140,9 +140,9 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->compute_affected_region = compute_affected_region;
-  op_class->get_defined_region  = get_defined_region;
-  op_class->compute_input_request = compute_input_request;
+  op_class->get_required_for_output = get_required_for_output;
+  op_class->get_bounding_box  = get_bounding_box;
+  op_class->get_invalidated_by_change = get_invalidated_by_change;
   op_class->detect = detect;
   op_class->categories = "transform";
   op_class->prepare = prepare;
@@ -347,7 +347,7 @@ get_source_matrix (OpAffine *affine,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *op)
+get_bounding_box (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
@@ -356,8 +356,8 @@ get_defined_region (GeglOperation *op)
   gdouble        have_points [8];
   gint           i;
 
-  if (gegl_operation_source_get_defined_region (op, "input"))
-  in_rect = *gegl_operation_source_get_defined_region (op, "input");
+  if (gegl_operation_source_get_bounding_box (op, "input"))
+  in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
@@ -449,9 +449,9 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *op,
-                       const gchar         *input_pad,
-                       const GeglRectangle *region)
+get_invalidated_by_change (GeglOperation       *op,
+                           const gchar         *input_pad,
+                           const GeglRectangle *region)
 {
   OpAffine      *affine = (OpAffine *) op;
   Matrix3        inverse;
@@ -511,7 +511,7 @@ compute_input_request (GeglOperation       *op,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *op,
+get_required_for_output (GeglOperation        *op,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {

@@ -125,10 +125,10 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
                                                                      "input");
   if (!in_rect)
     return result;
@@ -172,7 +172,7 @@ operation_class_init (GeglChantClass *klass)
    * in the image as source data not to be skipped by the stochastic sampling
    * yielding correct edge behavior.
    */
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "stress";
   operation_class->categories  = "enhance";

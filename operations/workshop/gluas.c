@@ -108,10 +108,10 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
                                                                      "input");
   if (!in_rect)
     return result;
@@ -122,7 +122,7 @@ get_defined_region (GeglOperation *operation)
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->get_defined_region  = get_defined_region;
+  operation_class->get_bounding_box  = get_bounding_box;
 }
 
 
@@ -193,7 +193,7 @@ drawable_lua_process (GeglChantOperation *self,
 {
     /*GimpRGB    background;*/
 
-    GeglRectangle *in_rect = gegl_operation_source_get_defined_region (GEGL_OPERATION (self),
+    GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (GEGL_OPERATION (self),
                                                                        "input");
 
     lua_State *L;

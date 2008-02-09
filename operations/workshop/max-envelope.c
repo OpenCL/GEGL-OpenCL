@@ -39,12 +39,12 @@ gegl_chant_double (rgamma, "Radial gamma", 0.0, 8.0, 1.8,
 #include "envelopes.h"
 
 static void max_envelope (GeglBuffer *src,
-                          GeglBuffer *dst,
-                          gint        radius,
-                          gint        samples,
-                          gint        iterations,
-                          gboolean    same_spray,
-                          gdouble     rgamma)
+                            GeglBuffer *dst,
+                            gint        radius,
+                            gint        samples,
+                            gint        iterations,
+                            gboolean    same_spray,
+                            gdouble     rgamma)
 {
   gint    x, y;
   gfloat *src_buf;
@@ -103,7 +103,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *temp_in;
-  GeglRectangle compute = gegl_operation_compute_input_request (operation, "input", result);
+  GeglRectangle compute = gegl_operation_get_invalidated_by_change (operation, "input", result);
 
   if (o->radius < 1.0)
     {

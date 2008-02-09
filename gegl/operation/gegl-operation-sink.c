@@ -43,15 +43,15 @@ static void          set_property          (GObject             *gobject,
                                             const GValue        *value,
                                             GParamSpec          *pspec);
 
-static gboolean      process               (GeglOperation       *operation,
-                                            GeglNodeContext     *context,
-                                            const gchar         *output_prop,
-                                            const GeglRectangle *result);
-static void          attach                (GeglOperation       *operation);
-static GeglRectangle get_defined_region    (GeglOperation       *self);
-static GeglRectangle compute_input_request (GeglOperation       *operation,
-                                            const gchar         *input_pad,
-                                            const GeglRectangle *roi);
+static gboolean      process                   (GeglOperation       *operation,
+                                                 GeglNodeContext     *context,
+                                                 const gchar         *output_prop,
+                                                 const GeglRectangle *result);
+static void          attach                   (GeglOperation       *operation);
+static GeglRectangle get_bounding_box          (GeglOperation       *self);
+static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+                                                 const gchar         *input_pad,
+                                                 const GeglRectangle *roi);
 
 
 G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
@@ -70,8 +70,8 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
 
   operation_class->process               = process;
   operation_class->attach                = attach;
-  operation_class->get_defined_region    = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_bounding_box    = get_bounding_box;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
@@ -141,12 +141,12 @@ process (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *self)
+get_bounding_box (GeglOperation *self)
 {
   GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
-  in_rect = gegl_operation_source_get_defined_region (self, "input");
+  in_rect = gegl_operation_source_get_bounding_box (self, "input");
   if (in_rect)
     {
       result = *in_rect;
@@ -156,9 +156,9 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   GeglRectangle rect=*roi;
   return rect;

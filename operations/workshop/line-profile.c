@@ -133,15 +133,15 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *self,
+get_invalidated_by_change (GeglOperation       *self,
                        const gchar         *input_pad,
                        const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_defined_region (self, "input");
+  return *gegl_operation_source_get_bounding_box (self, "input");
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle defined = {0,0,o->width,o->height};
@@ -162,8 +162,8 @@ operation_class_init (GeglChantClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
-  operation_class->compute_input_request = compute_input_request;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "line-profile";
   operation_class->categories  = "debug";

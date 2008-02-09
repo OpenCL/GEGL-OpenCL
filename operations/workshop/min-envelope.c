@@ -103,7 +103,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *temp_in;
-  GeglRectangle compute  = gegl_operation_compute_input_request (operation, "input", result);
+  GeglRectangle compute  = gegl_operation_get_invalidated_by_change (operation, "input", result);
 
   if (o->radius < 1.0)
     {

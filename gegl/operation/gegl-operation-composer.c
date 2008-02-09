@@ -56,11 +56,10 @@ static GeglNode*detect       (GeglOperation       *operation,
                               gint                 x,
                               gint                 y);
 
-static GeglRectangle get_defined_region    (GeglOperation       *self);
-static GeglRectangle compute_input_request (GeglOperation       *self,
-                                            const gchar         *input_pad,
-                                            const GeglRectangle *roi);
-
+static GeglRectangle get_bounding_box          (GeglOperation       *self);
+static GeglRectangle get_invalidated_by_change (GeglOperation       *self,
+                                                 const gchar         *input_pad,
+                                                 const GeglRectangle *roi);
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer,
                GEGL_TYPE_OPERATION)
@@ -78,8 +77,8 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   operation_class->process = process;
   operation_class->attach = attach;
   operation_class->detect = detect;
-  operation_class->get_defined_region = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -188,11 +187,11 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *self)
+get_bounding_box (GeglOperation *self)
 {
   GeglRectangle  result   = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect  = gegl_operation_source_get_defined_region (self, "input");
-  GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self, "aux");
+  GeglRectangle *in_rect  = gegl_operation_source_get_bounding_box (self, "input");
+  GeglRectangle *aux_rect = gegl_operation_source_get_bounding_box (self, "aux");
 
   if (!in_rect)
     {
@@ -212,9 +211,9 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *self,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *self,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   GeglRectangle rect = *roi;
   return rect;

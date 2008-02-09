@@ -34,12 +34,12 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
                                                                      "input");
-  GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle *aux_rect = gegl_operation_source_get_bounding_box (operation,
                                                                       "aux");
 
   if (!in_rect)
@@ -58,7 +58,7 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *self,
+get_invalidated_by_change (GeglOperation       *self,
                        const gchar         *input_pad,
                        const GeglRectangle *roi)
 {
@@ -66,9 +66,9 @@ compute_input_request (GeglOperation       *self,
 
   if (!strcmp (input_pad, "aux"))
     {
-      GeglRectangle *in_rect = gegl_operation_source_get_defined_region (self,
+      GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (self,
                                                                          "input");
-      GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self,
+      GeglRectangle *aux_rect = gegl_operation_source_get_bounding_box (self,
                                                                          "aux");
 
       if (request.width != 0 &&
@@ -82,7 +82,7 @@ compute_input_request (GeglOperation       *self,
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *self,
+get_required_for_output (GeglOperation       *self,
                          const gchar         *input_pad,
                          const GeglRectangle *region)
 {
@@ -163,9 +163,9 @@ operation_class_init (GeglChantClass *klass)
 
   composer_class->process = process;
   operation_class->prepare = prepare;
-  operation_class->get_defined_region = get_defined_region;
-  operation_class->compute_affected_region = compute_affected_region;
-  operation_class->compute_input_request   = compute_input_request;
+  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   operation_class->name        = "hstack";
   operation_class->categories  = "misc";

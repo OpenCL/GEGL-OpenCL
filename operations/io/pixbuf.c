@@ -27,7 +27,7 @@ gegl_chant_pointer (pixbuf, "Pixbuf", "GdkPixbuf to use")
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
@@ -85,7 +85,7 @@ operation_class_init (GeglChantClass *klass)
 
   /*source_class->process = process;*/
   source_class->process = process;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
   /*operation_class->no_cache = TRUE;*/
 

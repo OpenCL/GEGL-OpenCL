@@ -1,5 +1,65 @@
 2008-02-09  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/get_defined_region/get_bounding_box/g
+	%s/compute_affected_region/get_required_for_output/g
+	%s/compute_input_request/get_invalidated_by_change/g
+
+	* gegl/gegl-old-chant.h:
+	* gegl/gegl-plugin.h:
+	* gegl/graph/gegl-node-context.c:
+	* gegl/graph/gegl-node.c:
+	* gegl/operation/gegl-operation-area-filter.c:
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.c:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/operation/gegl-operations.c:
+	* gegl/process/gegl-have-visitor.c:
+	* operations/affine/affine.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c: 
+	* operations/core/shift.c:
+	* operations/enhance/bilateral-filter.c:
+	* operations/enhance/snn-mean.c:
+	* operations/io/ff-load.c: 
+	* operations/io/jpg-load.c:
+	* operations/io/load-buffer.c:
+	* operations/io/magick-load.c:
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/raw-load.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/svg-load.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/fractal-explorer.c:
+	* operations/render/introspect.c:
+	* operations/render/noise.c:
+	* operations/render/text.c: 
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/lens-correct.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/mandelbrot.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/rawbayer-load.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c:
+
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/io/pixbuf.c: modified to be capable of receiving varying
 	pixbufs and invalidate properly.
 	* operations/workshop/ff-save.c: indentation improvement.

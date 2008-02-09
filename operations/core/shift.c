@@ -62,10 +62,10 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   GeglRectangle  result  = { 0, 0, 0, 0 };
 
   if (!in_rect)
@@ -80,7 +80,7 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *operation,
+get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {
@@ -94,9 +94,9 @@ compute_affected_region (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = *roi;
@@ -168,9 +168,9 @@ operation_class_init (GeglChantClass *klass)
   operation_class->process                 = process;
   operation_class->attach                  = attach;
   operation_class->detect                  = detect;
-  operation_class->get_defined_region      = get_defined_region;
-  operation_class->compute_input_request   = compute_input_request;
-  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->get_bounding_box      = get_bounding_box;
+  operation_class->get_invalidated_by_change   = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 
   operation_class->name        = "shift";
   operation_class->categories  = "core";

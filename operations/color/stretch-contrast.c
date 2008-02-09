@@ -83,11 +83,11 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
-  GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
   return result;
 }
 
@@ -144,7 +144,7 @@ operation_class_init (GeglChantClass *klass)
 
   filter_class->process = process;
   operation_class->prepare = prepare;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   operation_class->name        = "stretch-contrast";
   operation_class->categories  = "color:enhance";

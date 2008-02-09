@@ -31,7 +31,7 @@ gegl_chant_pointer(buf, "Buffer", "Buffer")
 #include <string.h>
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -114,7 +114,7 @@ operation_class_init (GeglChantClass *klass)
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   source_class->process = process;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "introspect";
   operation_class->categories  = "render";

@@ -50,12 +50,12 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
-  in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   if (in_rect)
     {
       result = *in_rect;
@@ -96,7 +96,7 @@ operation_class_init (GeglChantClass *klass)
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->process = process;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_class->detect = detect;
 
   operation_class->name        = "clone";

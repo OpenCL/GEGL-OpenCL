@@ -65,7 +65,7 @@ visit_node (GeglVisitor *self,
   operation = node->operation;
   if (!operation)
     return;
-  rect = gegl_operation_get_defined_region (operation);
+  rect = gegl_operation_get_bounding_box (operation);
 
   node->have_rect = rect;
 

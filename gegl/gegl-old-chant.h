@@ -579,7 +579,7 @@ static void class_init (GeglOperationClass *operation_class);
 #endif
 
 #ifdef GEGL_CHANT_SOURCE
-static GeglRectangle get_defined_region (GeglOperation *self);
+static GeglRectangle get_bounding_box (GeglOperation *self);
 #endif
 
 static void
@@ -618,7 +618,7 @@ gegl_chant_class_init (ChantClass * klass)
 #endif
 
 #ifdef GEGL_CHANT_SOURCE
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
 #endif
 
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \

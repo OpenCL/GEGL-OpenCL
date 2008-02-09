@@ -44,7 +44,7 @@ prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
   return result;
@@ -118,7 +118,7 @@ operation_class_init (GeglChantClass *klass)
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   source_class->process = process;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
   operation_class->name        = "checkerboard";

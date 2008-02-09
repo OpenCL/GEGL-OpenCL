@@ -147,7 +147,7 @@ query_svg (const gchar *path,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
@@ -232,7 +232,7 @@ operation_class_init (GeglChantClass *klass)
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   source_class->process = process;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "svg-load";
   operation_class->categories  = "input";   /* not hidden because it has extra API */

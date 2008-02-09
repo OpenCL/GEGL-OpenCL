@@ -36,13 +36,13 @@
 
 static void          attach                  (GeglOperation       *self);
 
-static GeglRectangle get_defined_region      (GeglOperation       *self);
-static GeglRectangle compute_affected_region (GeglOperation       *self,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *input_region);
-static GeglRectangle compute_input_request   (GeglOperation       *self,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *region);
+static GeglRectangle get_bounding_box            (GeglOperation       *self);
+static GeglRectangle get_required_for_output     (GeglOperation       *self,
+                                                   const gchar         *input_pad,
+                                                   const GeglRectangle *input_region);
+static GeglRectangle get_invalidated_by_change   (GeglOperation       *self,
+                                                   const gchar         *input_pad,
+                                                   const Geg lRectangle *region);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -54,14 +54,14 @@ gegl_operation_class_init (GeglOperationClass *klass)
                                            * included when doing
                                            * operation lookup by
                                            * name */
-  klass->description             = NULL;
-  klass->categories              = NULL;
-  klass->attach                  = attach;
-  klass->prepare                 = NULL;
-  klass->no_cache                = FALSE;
-  klass->get_defined_region      = get_defined_region;
-  klass->compute_affected_region = compute_affected_region;
-  klass->compute_input_request   = compute_input_request;
+  klass->description               = NULL;
+  klass->categories                = NULL;
+  klass->attach                    = attach;
+  klass->prepare                   = NULL;
+  klass->no_cache                  = FALSE;
+  klass->get_bounding_box          = get_bounding_box;
+  klass->get_required_for_output   = get_required_for_output;
+  klass->get_invalidated_by_change = get_invalidated_by_change;
 }
 
 static void
@@ -123,19 +123,19 @@ gegl_operation_process (GeglOperation       *operation,
 }
 
 GeglRectangle
-gegl_operation_get_defined_region (GeglOperation *self)
+gegl_operation_get_bounding_box (GeglOperation *self)
 {
   GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (self);
   GeglRectangle       rect  = { 0, 0, 0, 0 };
 
-  if (klass->get_defined_region)
-    return klass->get_defined_region (self);
+  if (klass->get_bounding_box)
+    return klass->get_bounding_box (self);
 
   return rect;
 }
 
 GeglRectangle
-gegl_operation_compute_affected_region (GeglOperation       *self,
+gegl_operation_get_required_for_output (GeglOperation       *self,
                                         const gchar         *input_pad,
                                         const GeglRectangle *input_region)
 {
@@ -152,29 +152,29 @@ gegl_operation_compute_affected_region (GeglOperation       *self,
       input_region->height == 0)
     return *input_region;
 
-  if (klass->compute_affected_region)
-    return klass->compute_affected_region (self, input_pad, input_region);
+  if (klass->get_required_for_output)
+    return klass->get_required_for_output (self, input_pad, input_region);
 
   return *input_region;
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   GeglRectangle result = *roi;
 
   if (operation->node->is_graph)
     {
-      return gegl_operation_compute_input_request (operation, input_pad, roi);
+      return gegl_operation_get_invalidated_by_change (operation, input_pad, roi);
     }
 
   return result;
 }
 
 GeglRectangle
-gegl_operation_compute_input_request (GeglOperation       *operation,
+gegl_operation_get_invalidated_by_change (GeglOperation       *operation,
                                       const gchar         *input_pad,
                                       const GeglRectangle *roi)
 {
@@ -184,9 +184,9 @@ gegl_operation_compute_input_request (GeglOperation       *operation,
       roi->height == 0)
     return *roi;
 
-  g_assert (klass->compute_input_request);
+  g_assert (klass->get_invalidated_by_change);
 
-  return klass->compute_input_request (operation, input_pad, roi);
+  return klass->get_invalidated_by_change (operation, input_pad, roi);
 }
 
 
@@ -267,7 +267,7 @@ gegl_operation_get_source_node (GeglOperation *operation,
 }
 
 GeglRectangle *
-gegl_operation_source_get_defined_region (GeglOperation *operation,
+gegl_operation_source_get_bounding_box (GeglOperation *operation,
                                           const gchar   *input_pad_name)
 {
   GeglNode *node = gegl_operation_get_source_node (operation, input_pad_name);
@@ -333,13 +333,13 @@ gegl_operation_set_source_region (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *self)
+get_bounding_box (GeglOperation *self)
 {
   GeglRectangle rect = { 0, 0, 0, 0 };
 
   if (self->node->is_graph)
     {
-      return gegl_operation_get_defined_region (
+      return gegl_operation_get_bounding_box (
                gegl_node_get_output_proxy (self->node, "output")->operation);
     }
   g_warning ("Op '%s' has no defined_region method",
@@ -348,13 +348,13 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *self,
+get_required_for_output (GeglOperation       *self,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {
   if (self->node->is_graph)
     {
-      return gegl_operation_compute_affected_region (
+      return gegl_operation_get_required_for_output (
                gegl_node_get_output_proxy (self->node, "output")->operation,
                input_pad,
                input_region);

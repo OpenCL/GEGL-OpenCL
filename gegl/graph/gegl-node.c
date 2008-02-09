@@ -534,7 +534,7 @@ source_invalidated (GeglNode            *source,
   if (destination->operation)
     {
       dirty_rect =
-        gegl_operation_compute_affected_region (destination->operation,
+        gegl_operation_get_required_for_output (destination->operation,
                                                 gegl_pad_get_name (destination_pad),
                                                 rect);
     }

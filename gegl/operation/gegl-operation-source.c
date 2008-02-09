@@ -51,12 +51,12 @@ static void     attach       (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
-static GeglRectangle get_defined_region    (GeglOperation       *self);
-static GeglRectangle compute_input_request (GeglOperation       *operation,
-                                            const gchar         *input_pad,
-                                            const GeglRectangle *roi);
-static GeglRectangle  adjust_result_region (GeglOperation       *operation,
-                                            const GeglRectangle *roi);
+static GeglRectangle get_bounding_box          (GeglOperation       *self);
+static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+                                                 const gchar         *input_pad,
+                                                 const GeglRectangle *roi);
+static GeglRectangle  adjust_result_region     (GeglOperation       *operation,
+                                                 const GeglRectangle *roi);
 
 
 static void
@@ -72,8 +72,8 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   operation_class->attach  = attach;
   operation_class->adjust_result_region = adjust_result_region;
 
-  operation_class->get_defined_region  = get_defined_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_bounding_box  = get_bounding_box;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -140,7 +140,7 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *self)
+get_bounding_box (GeglOperation *self)
 {
   GeglRectangle result = { 0, 0, 0, 0 };
 
@@ -150,9 +150,9 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   return *roi;
 }

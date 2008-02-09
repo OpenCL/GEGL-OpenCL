@@ -41,7 +41,7 @@ process (GeglOperation       *operation,
       const Babl       *babl;
       const BablFormat *format;
       guchar           *temp;
-      GeglRectangle *rect = gegl_operation_source_get_defined_region (operation, "input");
+      GeglRectangle *rect = gegl_operation_source_get_bounding_box (operation, "input");
       gchar *name;
       gboolean has_alpha;
       gint bps;

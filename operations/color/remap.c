@@ -76,12 +76,12 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
-  in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   if (in_rect)
     {
       result = *in_rect;
@@ -91,7 +91,7 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-compute_affected_region (GeglOperation       *operation,
+get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *input_region)
 {
@@ -99,9 +99,9 @@ compute_affected_region (GeglOperation       *operation,
 }
 
 static GeglRectangle
-compute_input_request (GeglOperation       *operation,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *roi)
 {
   return *roi;
 }
@@ -179,9 +179,9 @@ operation_class_init (GeglChantClass *klass)
   operation_class->attach  = attach;
   operation_class->prepare = prepare;
   operation_class->detect  = detect;
-  operation_class->get_defined_region = get_defined_region;
-  operation_class->compute_affected_region = compute_affected_region;
-  operation_class->compute_input_request = compute_input_request;
+  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   operation_class->name        = "remap";
   operation_class->categories  = "color";

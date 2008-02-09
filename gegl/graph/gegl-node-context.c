@@ -368,9 +368,8 @@ gegl_node_context_get_source (GeglNodeContext *context,
  
   node = context->node;
   operation = node->operation;
-  input_request  = gegl_operation_compute_input_request (operation,
-                                                         padname,
-                                                         &context->need_rect);
+  input_request  = gegl_operation_get_invalidated_by_change (
+                                   operation, padname, &context->need_rect);
 
   real_input = GEGL_BUFFER (gegl_node_context_get_object (context, padname));
   if (!real_input)
