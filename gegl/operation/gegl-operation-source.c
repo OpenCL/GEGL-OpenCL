@@ -55,7 +55,7 @@ static GeglRectangle get_bounding_box          (GeglOperation       *self);
 static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
                                                  const gchar         *input_pad,
                                                  const GeglRectangle *roi);
-static GeglRectangle  adjust_result_region     (GeglOperation       *operation,
+static GeglRectangle  get_cached_region        (GeglOperation       *operation,
                                                  const GeglRectangle *roi);
 
 
@@ -70,7 +70,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 
   operation_class->process = process;
   operation_class->attach  = attach;
-  operation_class->adjust_result_region = adjust_result_region;
+  operation_class->get_cached_region = get_cached_region;
 
   operation_class->get_bounding_box  = get_bounding_box;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
@@ -158,8 +158,8 @@ get_invalidated_by_change (GeglOperation       *operation,
 }
 
 static GeglRectangle
-adjust_result_region (GeglOperation       *operation,
-                      const GeglRectangle *roi)
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
 {
   GeglRectangle result = *roi;
   result = operation->node->have_rect;

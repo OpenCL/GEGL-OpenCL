@@ -181,7 +181,7 @@ struct _GeglOperationClass
    * (useful for global operations like contrast stretching, as well as
    * file loaders to force caching of the full raster).
    */
-  GeglRectangle   (*adjust_result_region)  (GeglOperation       *operation,
+  GeglRectangle   (*get_cached_region)     (GeglOperation       *operation,
                                             const GeglRectangle *roi);
 
   /* XXX: What is GeglNode doing in this part of the API?
@@ -225,7 +225,7 @@ GeglRectangle   gegl_operation_get_required_for_output   (GeglOperation *operati
                                                           const gchar   *input_pad,
                                                           const GeglRectangle *input_region);
 GeglRectangle   gegl_operation_get_bounding_box          (GeglOperation *operation);
-GeglRectangle   gegl_operation_adjust_result_region      (GeglOperation *operation,
+GeglRectangle   gegl_operation_get_cached_region         (GeglOperation *operation,
                                                           const GeglRectangle *roi);
 
 GeglRectangle   gegl_operation_get_invalidated_by_change (GeglOperation *operation,

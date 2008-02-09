@@ -99,7 +99,7 @@ operation_class_init (GeglChantClass *klass)
   operation_class->description = "Perlin noise generator.";
 
   operation_class->no_cache = TRUE;
-  operation_class->adjust_result_region = NULL;
+  operation_class->get_cached_region = NULL;
 }
 
 #endif

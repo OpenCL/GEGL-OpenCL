@@ -1,5 +1,21 @@
 2008-02-09  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/adjust_result_rect/get_cached_region/
+
+	* gegl/gegl-plugin.h:
+	* gegl/operation/gegl-operation-source.c:
+	(gegl_operation_source_class_init), (get_cached_region):
+	* gegl/operation/gegl-operation.c:
+	(gegl_operation_get_cached_region):
+	* gegl/operation/gegl-operation.h:
+	* gegl/process/gegl-cr-visitor.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/fractal-explorer.c:
+	* operations/render/noise.c:
+
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation.c: removed accidental space.
 	* operations/io/exr-load.cpp: did replacement for the C++ op as well.
 

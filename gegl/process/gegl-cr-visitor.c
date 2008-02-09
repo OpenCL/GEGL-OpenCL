@@ -64,7 +64,7 @@ visit_node (GeglVisitor *self,
   if (!context->cached)
     {
       gegl_rectangle_intersect (&context->result_rect, &node->have_rect, &context->need_rect);
-      context->result_rect = gegl_operation_adjust_result_region (node->operation, &context->result_rect);
+      context->result_rect = gegl_operation_get_cached_region (node->operation, &context->result_rect);
 
     }
   context->refs = gegl_node_get_num_sinks (node);

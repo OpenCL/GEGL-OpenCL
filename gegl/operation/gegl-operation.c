@@ -192,17 +192,17 @@ gegl_operation_get_invalidated_by_change (GeglOperation       *operation,
 
 
 GeglRectangle
-gegl_operation_adjust_result_region (GeglOperation       *operation,
-                                     const GeglRectangle *roi)
+gegl_operation_get_cached_region (GeglOperation       *operation,
+                                  const GeglRectangle *roi)
 {
   GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (operation);
 
-  if (!klass->adjust_result_region)
+  if (!klass->get_cached_region)
     {
       return *roi;
     }
 
-  return klass->adjust_result_region (operation, roi);
+  return klass->get_cached_region (operation, roi);
 }
 
 static void
