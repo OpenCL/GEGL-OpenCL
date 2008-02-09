@@ -278,60 +278,6 @@ gegl_operation_source_get_bounding_box (GeglOperation  *operation,
   return NULL;
 }
 
-void
-gegl_operation_set_source_region (GeglOperation        *operation,
-                                  gpointer              context_id,
-                                  const gchar         *input_pad_name,
-                                  const GeglRectangle *region)
-{
-  GeglNode     *child;         /* the node which need rect we are affecting */
-  GeglRectangle child_need;    /* the need rect of the child */
-
-  g_return_if_fail (GEGL_IS_OPERATION (operation));
-  g_return_if_fail (GEGL_IS_NODE (operation->node));
-  g_return_if_fail (input_pad_name != NULL);
-
-  {
-    GeglPad *pad = gegl_node_get_pad (operation->node, input_pad_name);
-    if (!pad)
-      return;
-    pad = gegl_pad_get_internal_connected_to (pad);
-    if (!pad)
-      return;
-    child = gegl_pad_get_node (pad);
-    if (!child)
-      return;
-  }
-
-  {
-    GeglNodeContext *child_context = gegl_node_get_context (child, context_id);
-    gegl_rectangle_bounding_box (&child_need, &child_context->need_rect, region);
-    gegl_rectangle_intersect (&child_need, &child->have_rect, &child_need);
-
-      /* If we're cached */
-      if (child->cache)
-        {
-          GeglCache *cache = child->cache;
-          GeglRectangle valid_box;
-          gegl_region_get_clipbox (cache->valid_region, &valid_box);
-
-          if (child_need.width == 0  ||
-              child_need.height == 0 ||
-              gegl_region_rect_in (cache->valid_region, &child_need) == GEGL_OVERLAP_RECTANGLE_IN)
-            {
-              child_context->result_rect = child_need;
-              child_context->cached = TRUE;
-              child_need.width = 0;
-              child_need.height = 0;
-            }
-        }
-
-    gegl_node_set_need_rect (child, context_id,
-                             child_need.x,     child_need.y,
-                             child_need.width, child_need.height);
-  }
-}
-
 static GeglRectangle
 get_bounding_box (GeglOperation *self)
 {
