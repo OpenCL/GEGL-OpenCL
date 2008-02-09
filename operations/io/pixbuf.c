@@ -44,6 +44,13 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
+static void prepare (GeglOperation *operation)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gegl_operation_set_format (operation, "output", 
+      babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
@@ -57,11 +64,11 @@ process (GeglOperation       *operation,
       GeglRectangle extent = {0,0,
                               gdk_pixbuf_get_width (o->pixbuf),
                               gdk_pixbuf_get_height (o->pixbuf)};
-      GeglBuffer *output = gegl_buffer_new (&extent,
-  babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
+      /*GeglBuffer *output = gegl_buffer_new (&extent,
+      babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));*/
       gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (o->pixbuf),
                        GEGL_AUTO_ROWSTRIDE);
-      gegl_node_context_set_object (context, "output", G_OBJECT (output));
+      /*gegl_node_context_set_object (context, "output", G_OBJECT (output));*/
     }
   return TRUE;
 }
@@ -76,8 +83,11 @@ operation_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
+  /*source_class->process = process;*/
   source_class->process = process;
   operation_class->get_defined_region = get_defined_region;
+  operation_class->prepare = prepare;
+  /*operation_class->no_cache = TRUE;*/
 
   operation_class->name        = "pixbuf";
   operation_class->categories  = "programming:input";

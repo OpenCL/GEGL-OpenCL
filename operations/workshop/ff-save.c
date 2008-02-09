@@ -53,15 +53,16 @@ typedef struct
   int       frame_count, video_outbuf_size;
 
 
-    /** the rest is for audio handling within oxide, note that the interface used
-     *  passes all used functions in the oxide api through the reg_sym api of gggl,
-     *  this means that the ops should be usable by other applications using gggl
-     *  directly,. without needing to link with the oxide library
+    /** the rest is for audio handling within oxide, note that the interface
+     * used passes all used functions in the oxide api through the reg_sym api
+     * of gggl, this means that the ops should be usable by other applications
+     * using gggl directly,. without needing to link with the oxide library
      */
 
   AVStream *audio_st;
 
-  void     *oxide_audio_instance;       /*< non NULL audio_query,. means audio present */
+  void     *oxide_audio_instance;  
+  /*< non NULL audio_query,. means audio present */
 
   int32_t (*oxide_audio_query) (void *audio_instance,
                                 uint32_t * sample_rate,
@@ -70,8 +71,9 @@ typedef struct
                                 uint32_t * fragment_samples,
                                 uint32_t * fragment_size);
 
-  /* get audio samples for the current video frame, this should provide all audiosamples
-   * associated with the frame, frame centering on audio stream is undefined (FIXME:<<)
+  /* get audio samples for the current video frame, this should provide all
+   * audiosamples associated with the frame, frame centering on audio stream is
+   * undefined (FIXME:<<)
    */
 
   int32_t (*oxide_audio_get_fragment) (void *audio_instance, uint8_t * buf);
@@ -87,9 +89,10 @@ typedef struct
   int       buffer_size;
   int       buffer_read_pos;
   int       buffer_write_pos;
-  uint8_t  *buffer;             /* optimal buffer size should be calculated,. preferably run time,. no magic numbers
-                                   needed for the filewrite case, perhaps a tiny margin for ntsc since it has
-                                   a strange framerate */
+  uint8_t  *buffer;   /* optimal buffer size should be calculated,. preferably
+                         run time,. no magic numbers needed for the filewrite
+                         case, perhaps a tiny margin for ntsc since it has a
+                         strange framerate */
 
   int       audio_outbuf_size;
   int       audio_input_frame_size;

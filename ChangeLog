@@ -1,3 +1,9 @@
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/io/pixbuf.c: modified to be capable of receiving varying
+	pixbufs and invalidate properly.
+	* operations/workshop/ff-save.c: indentation improvement.
+
 2008-02-09  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/gegl.c (DEFAULT_COMPOSITION): Fix broken default graph, use
