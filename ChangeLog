@@ -1,5 +1,10 @@
 2008-02-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation.c: removed accidental space.
+	* operations/io/exr-load.cpp: did replacement for the C++ op as well.
+
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/get_defined_region/get_bounding_box/g
 	%s/compute_affected_region/get_required_for_output/g
 	%s/compute_input_request/get_invalidated_by_change/g

@@ -628,7 +628,7 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_defined_region (GeglOperation *operation)
+get_bounding_box (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglRectangle result = {0, 0, 10, 10};

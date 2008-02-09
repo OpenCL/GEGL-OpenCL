@@ -42,7 +42,7 @@ static GeglRectangle get_required_for_output     (GeglOperation       *self,
                                                    const GeglRectangle *input_region);
 static GeglRectangle get_invalidated_by_change   (GeglOperation       *self,
                                                    const gchar         *input_pad,
-                                                   const Geg lRectangle *region);
+                                                   const GeglRectangle *region);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
