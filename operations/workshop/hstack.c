@@ -58,7 +58,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *self,
+get_required_for_output (GeglOperation       *self,
                        const gchar         *input_pad,
                        const GeglRectangle *roi)
 {
@@ -82,9 +82,9 @@ get_invalidated_by_change (GeglOperation       *self,
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation       *self,
-                         const gchar         *input_pad,
-                         const GeglRectangle *region)
+get_invalidated_by_change (GeglOperation       *self,
+                           const gchar         *input_pad,
+                           const GeglRectangle *region)
 {
   if (!strcmp ("input_pad", "input"))
     {
@@ -164,8 +164,8 @@ operation_class_init (GeglChantClass *klass)
   composer_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 
   operation_class->name        = "hstack";
   operation_class->categories  = "misc";

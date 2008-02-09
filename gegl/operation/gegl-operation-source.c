@@ -51,8 +51,8 @@ static void     attach       (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
-static GeglRectangle get_bounding_box          (GeglOperation       *self);
-static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+static GeglRectangle get_bounding_box          (GeglOperation        *self);
+static GeglRectangle get_required_for_output   (GeglOperation        *operation,
                                                  const gchar         *input_pad,
                                                  const GeglRectangle *roi);
 static GeglRectangle  get_cached_region        (GeglOperation       *operation,
@@ -73,7 +73,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   operation_class->get_cached_region = get_cached_region;
 
   operation_class->get_bounding_box  = get_bounding_box;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -150,9 +150,9 @@ get_bounding_box (GeglOperation *self)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *roi)
+get_required_for_output (GeglOperation        *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   return *roi;
 }

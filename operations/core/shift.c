@@ -80,9 +80,9 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
+get_invalidated_by_change (GeglOperation       *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *input_region)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = *input_region;
@@ -94,9 +94,9 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *roi)
+get_required_for_output (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = *roi;
@@ -169,8 +169,8 @@ operation_class_init (GeglChantClass *klass)
   operation_class->attach                  = attach;
   operation_class->detect                  = detect;
   operation_class->get_bounding_box      = get_bounding_box;
-  operation_class->get_invalidated_by_change   = get_invalidated_by_change;
-  operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_required_for_output   = get_required_for_output;
+  operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   operation_class->name        = "shift";
   operation_class->categories  = "core";

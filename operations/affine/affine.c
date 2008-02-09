@@ -61,10 +61,10 @@ static gboolean      is_composite_node       (OpAffine            *affine);
 static void          get_source_matrix       (OpAffine            *affine,
                                               Matrix3              output);
 static GeglRectangle get_bounding_box       (GeglOperation       *op);
-static GeglRectangle get_required_for_output (GeglOperation       *operation,
+static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
                                               const gchar         *input_pad,
                                               const GeglRectangle *input_region);
-static GeglRectangle get_invalidated_by_change(GeglOperation       *self,
+static GeglRectangle get_required_for_output(GeglOperation       *self,
                                               const gchar         *input_pad,
                                               const GeglRectangle *region);
 
@@ -140,9 +140,9 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->get_required_for_output = get_required_for_output;
-  op_class->get_bounding_box  = get_bounding_box;
   op_class->get_invalidated_by_change = get_invalidated_by_change;
+  op_class->get_bounding_box = get_bounding_box;
+  op_class->get_required_for_output = get_required_for_output;
   op_class->detect = detect;
   op_class->categories = "transform";
   op_class->prepare = prepare;
@@ -449,9 +449,9 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *op,
-                           const gchar         *input_pad,
-                           const GeglRectangle *region)
+get_required_for_output (GeglOperation       *op,
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
 {
   OpAffine      *affine = (OpAffine *) op;
   Matrix3        inverse;
@@ -511,9 +511,9 @@ get_invalidated_by_change (GeglOperation       *op,
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation        *op,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
+get_invalidated_by_change (GeglOperation        *op,
+                           const gchar         *input_pad,
+                           const GeglRectangle *input_region)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);

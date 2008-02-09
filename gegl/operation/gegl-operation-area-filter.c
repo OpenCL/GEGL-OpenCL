@@ -35,10 +35,10 @@
 
 static void          prepare                  (GeglOperation       *operation);
 static GeglRectangle get_bounding_box          (GeglOperation       *operation);
-static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+static GeglRectangle get_required_for_output   (GeglOperation       *operation,
                                                  const gchar         *input_pad,
                                                  const GeglRectangle *region);
-static GeglRectangle get_required_for_output   (GeglOperation       *operation,
+static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
                                                  const gchar         *input_pad,
                                                  const GeglRectangle *input_region);
 
@@ -52,8 +52,8 @@ gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
 
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 }
 
 static void
@@ -97,9 +97,9 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *region)
+get_required_for_output (GeglOperation        *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            rect;
@@ -121,9 +121,9 @@ get_invalidated_by_change (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
+get_invalidated_by_change (GeglOperation        *operation,
+                           const gchar         *input_pad,
+                           const GeglRectangle *input_region)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            retval;

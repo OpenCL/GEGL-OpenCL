@@ -53,7 +53,7 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  *    should be extended so a range of abi versions are accepted.
  */
 
-#define GEGL_MODULE_ABI_VERSION 0x0006
+#define GEGL_MODULE_ABI_VERSION 0x0007
 
 struct _GeglModuleInfo
 {
@@ -166,16 +166,16 @@ struct _GeglOperationClass
    * graph. A default implementation of this, if not provided should probably
    * be to report that the entire defined region is dirtied.
    */
-  GeglRectangle   (*get_required_for_output)  (GeglOperation       *operation,
+  GeglRectangle   (*get_invalidated_by_change)(GeglOperation        *operation,
                                                const gchar         *input_pad,
                                                const GeglRectangle *input_region);
 
   /* computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given result rectangle
    */
-  GeglRectangle   (*get_invalidated_by_change) (GeglOperation       *operation,
-                                                const gchar         *input_pad,
-                                                const GeglRectangle *roi);
+  GeglRectangle   (*get_required_for_output) (GeglOperation        *operation,
+                                              const gchar         *input_pad,
+                                              const GeglRectangle *roi);
 
   /* Adjust result rect, adapts the rectangle used for computing results.
    * (useful for global operations like contrast stretching, as well as
@@ -221,14 +221,14 @@ void            gegl_operation_set_source_region    (GeglOperation       *operat
 /* retrieves the node providing data to a named input pad */
 GeglNode      * gegl_operation_get_source_node           (GeglOperation *operation,
                                                           const gchar   *pad_name);
-GeglRectangle   gegl_operation_get_required_for_output   (GeglOperation *operation,
+GeglRectangle   gegl_operation_get_invalidated_by_change   (GeglOperation *operation,
                                                           const gchar   *input_pad,
                                                           const GeglRectangle *input_region);
 GeglRectangle   gegl_operation_get_bounding_box          (GeglOperation *operation);
 GeglRectangle   gegl_operation_get_cached_region         (GeglOperation *operation,
                                                           const GeglRectangle *roi);
 
-GeglRectangle   gegl_operation_get_invalidated_by_change (GeglOperation *operation,
+GeglRectangle   gegl_operation_get_required_for_output (GeglOperation *operation,
                                                           const gchar   *input_pad,
                                                           const GeglRectangle *roi);
 

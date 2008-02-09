@@ -1,5 +1,12 @@
 2008-02-09  Øyvind Kolås  <pippin@gimp.org>
 
+	xchg get_required_for_output, get_invalidated_by_change (wrong
+	way around i previous commit.)
+
+	32 files changed, 232 insertions(+), 200 deletions(-)
+
+2008-02-09  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/adjust_result_rect/get_cached_region/
 
 	* gegl/gegl-plugin.h:

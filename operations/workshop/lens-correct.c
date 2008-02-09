@@ -326,14 +326,14 @@ get_bounding_box (GeglOperation *operation)
 /* Compute the input rectangle required to compute the specified region of interest (roi).
  */
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *roi)
+get_required_for_output (GeglOperation        *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   GeglChantO   *area = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
   #ifdef TRACE
-    g_warning ("> get_invalidated_by_change src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
+    g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
     if (roi)
       g_warning ("  ROI == %dx%d+%d+%d", roi->width, roi->height, roi->x, roi->y);
   #endif
@@ -343,7 +343,7 @@ get_invalidated_by_change (GeglOperation       *operation,
     result.height++;
   }
   #ifdef TRACE
-    g_warning ("< get_invalidated_by_change res=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
+    g_warning ("< get_required_for_output res=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
   #endif
   return result;
 }
@@ -391,7 +391,7 @@ operation_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 
   operation_class->name        = "lens-correct";
   operation_class->categories  = "blur";

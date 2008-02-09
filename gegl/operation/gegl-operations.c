@@ -135,12 +135,12 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
   context = gegl_node_get_context (operation->node, context_id);
   request = context->need_rect;
 
-  /* for each input, get_invalidated_by_change use gegl_operation_set_source_region() */
+  /* for each input, get_required_for_output use gegl_operation_set_source_region() */
   for (input_pads = operation->node->input_pads;input_pads;input_pads=input_pads->next)
     {
       const gchar *pad_name = gegl_pad_get_name (input_pads->data);
       GeglRectangle rect;
-      rect = gegl_operation_get_invalidated_by_change (operation, pad_name, &request); 
+      rect = gegl_operation_get_required_for_output (operation, pad_name, &request); 
 
       gegl_operation_set_source_region (operation, context_id, pad_name, &rect);
     }

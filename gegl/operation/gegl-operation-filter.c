@@ -38,12 +38,12 @@ enum
   PROP_INPUT,
 };
 
-static void     get_property            (GObject       *gobject,
+static void     get_property          (GObject       *gobject,
                                          guint          prop_id,
                                          GValue        *value,
                                          GParamSpec    *pspec);
 
-static void     set_property            (GObject       *gobject,
+static void     set_property          (GObject       *gobject,
                                          guint          prop_id,
                                          const GValue  *value,
                                          GParamSpec    *pspec);
@@ -53,13 +53,13 @@ static gboolean process                 (GeglOperation       *operation,
                                          const gchar         *output_prop,
                                          const GeglRectangle *result);
 
-static void     attach                  (GeglOperation *operation);
+static void     attach                 (GeglOperation *operation);
 static GeglNode *detect                 (GeglOperation *operation,
                                          gint           x,
                                          gint           y);
 
 static GeglRectangle get_bounding_box          (GeglOperation       *self);
-static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
+static GeglRectangle get_required_for_output   (GeglOperation       *operation,
                                                  const gchar         *input_pad,
                                                  const GeglRectangle *roi);
 
@@ -76,11 +76,11 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  operation_class->process                   = process;
-  operation_class->attach                    = attach;
-  operation_class->detect                    = detect;
-  operation_class->get_bounding_box          = get_bounding_box;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->process                 = process;
+  operation_class->attach                  = attach;
+  operation_class->detect                  = detect;
+  operation_class->get_bounding_box        = get_bounding_box;
+  operation_class->get_required_for_output = get_required_for_output;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -237,9 +237,9 @@ get_bounding_box (GeglOperation *self)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *roi)
+get_required_for_output (GeglOperation        *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   GeglRectangle result = *roi;
   return result;

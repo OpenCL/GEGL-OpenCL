@@ -534,9 +534,9 @@ source_invalidated (GeglNode            *source,
   if (destination->operation)
     {
       dirty_rect =
-        gegl_operation_get_required_for_output (destination->operation,
-                                                gegl_pad_get_name (destination_pad),
-                                                rect);
+        gegl_operation_get_invalidated_by_change (destination->operation,
+                                                  gegl_pad_get_name (destination_pad),
+                                                  rect);
     }
   else
     {

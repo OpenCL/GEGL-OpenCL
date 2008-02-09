@@ -56,10 +56,10 @@ static GeglNode*detect       (GeglOperation       *operation,
                               gint                 x,
                               gint                 y);
 
-static GeglRectangle get_bounding_box          (GeglOperation       *self);
-static GeglRectangle get_invalidated_by_change (GeglOperation       *self,
-                                                 const gchar         *input_pad,
-                                                 const GeglRectangle *roi);
+static GeglRectangle get_bounding_box        (GeglOperation        *self);
+static GeglRectangle get_required_for_output (GeglOperation        *self,
+                                               const gchar         *input_pad,
+                                               const GeglRectangle *roi);
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer,
                GEGL_TYPE_OPERATION)
@@ -78,7 +78,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -211,9 +211,9 @@ get_bounding_box (GeglOperation *self)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *self,
-                           const gchar         *input_pad,
-                           const GeglRectangle *roi)
+get_required_for_output (GeglOperation        *self,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   GeglRectangle rect = *roi;
   return rect;

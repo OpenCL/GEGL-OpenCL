@@ -133,9 +133,9 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *self,
-                       const gchar         *input_pad,
-                       const GeglRectangle *roi)
+get_required_for_output (GeglOperation        *self,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
 {
   return *gegl_operation_source_get_bounding_box (self, "input");
 }
@@ -162,7 +162,7 @@ operation_class_init (GeglChantClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
+  operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "line-profile";

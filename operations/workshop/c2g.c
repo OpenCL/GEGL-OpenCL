@@ -71,7 +71,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *temp_in;
-  GeglRectangle compute = gegl_operation_get_invalidated_by_change (operation, "input", result);
+  GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);
 
   temp_in = gegl_buffer_create_sub_buffer (input, &compute);
 

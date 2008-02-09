@@ -34,9 +34,9 @@ gegl_chant_double (percentile, "Percentile", 0.0, 100.0, 50,
 #include <math.h>
 
 static void median (GeglBuffer *src,
-                    GeglBuffer *dst,
-                    gint        radius,
-                    gdouble     rank);
+                      GeglBuffer *dst,
+                      gint        radius,
+                      gdouble     rank);
 
 #include <stdio.h>
 
@@ -190,7 +190,7 @@ process (GeglOperation       *operation,
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *temp_in;
   GeglRectangle compute =
-        gegl_operation_get_invalidated_by_change (operation, "input", result);
+        gegl_operation_get_required_for_output (operation, "input", result);
 
   if (o->radius < 1.0)
     {

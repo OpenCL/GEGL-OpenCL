@@ -61,8 +61,7 @@ process (GeglOperation       *operation,
   GeglBuffer   *temp_in;
   GeglRectangle compute;
 
-  compute = gegl_operation_get_invalidated_by_change (
-                   operation, "input", result);
+  compute = gegl_operation_get_required_for_output (operation, "input",result);
 
   if (o->blur_radius < 1.0)
     {
