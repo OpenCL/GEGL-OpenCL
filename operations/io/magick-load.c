@@ -15,26 +15,25 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
-gegl_chant_path (path, "/tmp/gegl-logo.svg", "Path of file to load.")
+#ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_path (path, "File", "/tmp/gegl-logo.svg", "Path of file to load.")
+
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME            magick_load
-#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper using the png op."
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "magick-load.c"
 
-#define GEGL_CHANT_SELF            "magick-load.c"
-#define GEGL_CHANT_CATEGORIES      "hidden"
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <stdio.h>
 
 /* FIXME: this should not be neccesary to implement this operation */
 GeglBuffer *gegl_node_get_cache           (GeglNode      *node);
 
 static void
-load_cache (GeglChantOperation *op_magick_load)
+load_cache (GeglChantO *op_magick_load)
 {
-  if (!op_magick_load->priv)
+  if (!op_magick_load->chant_data)
     {
       GeglRectangle rect;
       GeglNode *temp_gegl;
@@ -74,17 +73,35 @@ load_cache (GeglChantOperation *op_magick_load)
       {
         GeglBuffer *cache  = GEGL_BUFFER (gegl_node_get_cache (temp_gegl));
         GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
-        op_magick_load->priv = (gpointer) newbuf;
+        op_magick_load->chant_data = (gpointer) newbuf;
         g_object_unref (cache);
       }
-      /*g_object_ref (op_magick_load->priv);*/
+      /*g_object_ref (op_magick_load->chant_data);*/
 
       /*FIXME: this should be unneccesary, using the graph
        * directly as a node is more elegant.
        */
-      /*gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);*/
+      /*gegl_node_get (temp_gegl, "output", &(op_magick_load->chant_data), NULL);*/
       g_object_unref (temp_gegl);
     }
+}
+
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle result = {0,0,0,0};
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  gint width, height;
+
+  load_cache (o);
+
+  g_object_get (o->chant_data, "width", &width,
+                               "height", &height, NULL);
+
+  result.width  = width;
+  result.height = height;
+
+  return result;
 }
 
 static gboolean
@@ -93,35 +110,35 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (!self->priv)
+  if (!o->chant_data)
     return FALSE;
 
   /* overriding the predefined behavior */
-  gegl_node_context_set_object (context, "output", G_OBJECT (self->priv));
-  self->priv = NULL;
+  gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  o->chant_data = NULL;
 
   return  TRUE;
 }
 
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GeglRectangle result = {0,0,0,0};
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  gint width, height;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
 
-  load_cache (self);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  g_object_get (self->priv, "width", &width,
-                            "height", &height, NULL);
+  source_class->process = process;
+  operation_class->get_bounding_box = get_bounding_box;
 
-  result.width  = width;
-  result.height  = height;
-
-  return result;
+  operation_class->name        = "magick-load";
+  operation_class->categories  = "hidden";
+  operation_class->description =
+        "Image Magick wrapper using the png op.";
 }
 
 #endif

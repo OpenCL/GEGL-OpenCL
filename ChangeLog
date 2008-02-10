@@ -1,3 +1,9 @@
+2008-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/io/load-buffer.c:
+	* operations/io/magick-load.c:
+	* operations/io/raw-load.c: Updated to new chanting API.
+
 2008-02-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: renamed dummy_filler to chant_data, this means

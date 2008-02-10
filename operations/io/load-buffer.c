@@ -15,33 +15,29 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
-gegl_chant_object (buffer, "GeglBuffer to use")
+#ifdef GEGL_CHANT_PROPERTIES
+
+/* no properties */
+
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME         load_buffer
-#define GEGL_CHANT_DESCRIPTION  "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "load-buffer.c"
 
-#define GEGL_CHANT_SELF         "load-buffer.c"
-#define GEGL_CHANT_CATEGORIES   "programming:input"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
-#include "gegl-buffer.h"
-#include "graph/gegl-node-context.h"
+#include "gegl-chant.h"
 
-static void
-dispose (GObject *object)
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+  GeglRectangle result = {0,0,0,0};
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (self->buffer)
+  if (!o->chant_data)
     {
-      g_object_unref (self->buffer);
-      self->buffer = NULL;
+      return result;
     }
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+  result = *gegl_buffer_get_extent (GEGL_BUFFER (o->chant_data));
+  return result;
 }
 
 static gboolean
@@ -50,36 +46,54 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  if (self->buffer)
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  if (o->chant_data)
     {
-      g_object_ref (self->buffer); /* Add an extra reference, since gegl_operation_set_data
+      g_object_ref (o->chant_data); /* Add an extra reference, since gegl_operation_set_data
                                       is stealing one.
                                     */
 
       /* override core behaviour, by resetting the buffer in the node_context */
-      gegl_node_context_set_object (context, "output", G_OBJECT (self->buffer));
+      gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
     }
   return TRUE;
 }
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+static void
+dispose (GObject *object)
 {
-  GeglRectangle result = {0,0,0,0};
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
 
-  if (!self->buffer)
+  if (o->chant_data)
     {
-      return result;
+      g_object_unref (o->chant_data);
+      o->chant_data = NULL;
     }
-  result = *gegl_buffer_get_extent (GEGL_BUFFER (self->buffer));
-  return result;
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
 }
 
-static void class_init (GeglOperationClass *operation_class)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  G_OBJECT_CLASS (operation_class)->dispose = dispose;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_bounding_box = get_bounding_box;
+
+  G_OBJECT_CLASS (klass)->dispose = dispose;
+
+  operation_class->name        = "load-buffer";
+  operation_class->categories  = "programming:input";
+  operation_class->description =
+        "A source that uses an in-memory GeglBuffer, for use internally by GEGL.";
+
   operation_class->no_cache = TRUE;
 }
 
