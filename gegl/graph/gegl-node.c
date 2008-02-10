@@ -1372,7 +1372,7 @@ gegl_node_find_property (GeglNode    *self,
 }
 
 const gchar *
-gegl_node_get_operation (GeglNode *node)
+gegl_node_get_operation (const GeglNode *node)
 {
   if (node == NULL)
     {

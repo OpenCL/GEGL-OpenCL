@@ -193,7 +193,7 @@ GeglNode *    gegl_node_get_input_proxy     (GeglNode      *graph,
 GeglNode *    gegl_node_get_output_proxy    (GeglNode      *graph,
                                              const gchar   *name);
 
-const gchar * gegl_node_get_operation       (GeglNode      *node);
+const gchar * gegl_node_get_operation       (const GeglNode*node);
 
 const gchar * gegl_node_get_debug_name      (GeglNode      *node);
 
