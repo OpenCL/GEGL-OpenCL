@@ -15,28 +15,25 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (window_title, "window_title",
+gegl_chant_string  (window_title, "", "window_title",
                     "Title to be given output window")
-gegl_chant_string  (icon_title, "icon_title",
+gegl_chant_string  (icon_title, "", "icon_title",
                     "Icon to be used for output window")
-gegl_chant_pointer (screen, "private")
-gegl_chant_int(w, 0, 1000, 0, "private")
-gegl_chant_int(h, 0, 1000, 0, "private")
-gegl_chant_int(width, 0, 1000, 0, "private")
-gegl_chant_int(height, 0, 1000, 0, "private")
+
+gegl_chant_pointer (screen, "", "private")
+gegl_chant_int(w, "", 0, 1000, 0, "private")
+gegl_chant_int(h, "", 0, 1000, 0, "private")
+gegl_chant_int(width, "", 0, 1000, 0, "private")
+gegl_chant_int(height, "", 0, 1000, 0, "private")
 
 #else
 
-#define GEGL_CHANT_SINK
-#define GEGL_CHANT_NAME        display
-#define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
-#define GEGL_CHANT_SELF        "display.c"
-#define GEGL_CHANT_CATEGORIES  "output"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_SINK
+#define GEGL_CHANT_C_FILE       "display.c"
 
+#include "gegl-chant.h"
 #include <SDL.h>
 #include <signal.h>
 
@@ -83,30 +80,30 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer          *source;
-  SDL_Surface        **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *source;
+  SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   init_sdl ();
 
-  if (!self->screen ||
-       self->width  != result->width ||
-       self->height != result->height)
+  if (!o->screen ||
+       o->width  != result->width ||
+       o->height != result->height)
     {
       if (sdl_outwin)
         {
-          if (self->screen)
+          if (o->screen)
             {
-              SDL_FreeSurface (self->screen);
-              self->screen = NULL;
+              SDL_FreeSurface (o->screen);
+              o->screen = NULL;
             }
 
-          self->screen = SDL_CreateRGBSurface (SDL_SWSURFACE,
+          o->screen = SDL_CreateRGBSurface (SDL_SWSURFACE,
                                             result->width, result->height, 32, 0xff0000,
                                             0x00ff00, 0x0000ff, 0x000000);
 
-          *sdl_outwin = self->screen;
-          if (!self->screen)
+          *sdl_outwin = o->screen;
+          if (!o->screen)
             {
               fprintf (stderr, "CreateRGBSurface failed: %s\n",
                        SDL_GetError ());
@@ -115,21 +112,21 @@ process (GeglOperation       *operation,
         }
       else
         {
-          self->screen = SDL_SetVideoMode (result->width, result->height, 32, SDL_SWSURFACE);
-          if (!self->screen)
+          o->screen = SDL_SetVideoMode (result->width, result->height, 32, SDL_SWSURFACE);
+          if (!o->screen)
             {
               fprintf (stderr, "Unable to set SDL mode: %s\n",
                        SDL_GetError ());
               return -1;
             }
         }
-      self->width  = result->width ;
-      self->height = result->height;
+      o->width  = result->width ;
+      o->height = result->height;
     }
 
   /*
    * There seems to be a valid faster path to the SDL desired display format
-   * in B'G'R'A, perhaps babl should have been able to figure this out itself?
+   * in B'G'R'A, perhaps babl should have been able to figure this out ito?
    *
    */
   source = gegl_buffer_create_sub_buffer (input, result);
@@ -143,24 +140,38 @@ process (GeglOperation       *operation,
                         babl_component ("R'"),
                         babl_component ("A"),
                         NULL),
-       ((SDL_Surface*)self->screen)->pixels, GEGL_AUTO_ROWSTRIDE);
+       ((SDL_Surface*)o->screen)->pixels, GEGL_AUTO_ROWSTRIDE);
   g_object_unref (source);
 
   if (!sdl_outwin)
     {
-      SDL_UpdateRect (self->screen, 0, 0, 0, 0);
-      SDL_WM_SetCaption (self->window_title, self->icon_title);
+      SDL_UpdateRect (o->screen, 0, 0, 0, 0);
+      SDL_WM_SetCaption (o->window_title, o->icon_title);
     }
 
-  self->width = result->width ;
-  self->height = result->height;
+  o->width = result->width ;
+  o->height = result->height;
 
   return  TRUE;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
-}
+  GeglOperationClass     *operation_class;
+  GeglOperationSinkClass *sink_class;
 
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
+
+  sink_class->process = process;
+  sink_class->needs_full = TRUE;
+
+  operation_class->name        = "display";
+  operation_class->categories  = "output";
+  operation_class->description =
+        "Displays the input buffer in an SDL window (restricted to one"
+        " display op/process, due to SDL implementation issues, a gtk+"
+        " based replacement would be nice.";
+}
 #endif
