@@ -271,8 +271,11 @@ gegl_module_register (GTypeModule *module)
 
 struct _GeglChantO
 {
-  gpointer dummy_filler; /* to avoid empty struct, can be done a bit more cleverly to
-                            avoid adding it when there is actual properties*/
+  gpointer chant_data; /* Unused by the chanting framework can be used by operations
+                        * for storage of a private struct, (remember to clean up
+                        * in finalize). Also serves as a filler making sure that we
+                        * do not create an empty struct if there are no chanted properties.
+                        */
 #define gegl_chant_int(name, nick, min, max, def, blurb)     gint        name;
 #define gegl_chant_double(name, nick, min, max, def, blurb)  gdouble     name;
 #define gegl_chant_boolean(name, nick, def, blurb)           gboolean    name;

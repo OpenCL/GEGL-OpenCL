@@ -1,3 +1,12 @@
+2008-02-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: renamed dummy_filler to chant_data, this means
+	that operations implemented with the chanting framework has access
+	to a location to store a reference to data in the form of a user
+	struct that is created on demand and properly cleaned up in finalize.
+	The pointer should be accesed like the chanted properties like:
+	    o->chant_data.
+
 2008-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/io/display.c: Updated to new chanting API.
