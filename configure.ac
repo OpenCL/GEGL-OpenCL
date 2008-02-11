@@ -653,7 +653,7 @@ operations/workshop/Makefile
 operations/workshop/generated/Makefile
 tools/Makefile
 docs/Makefile
-docs/index-static.html
+docs/index-static.txt
 docs/gallery/Makefile
 docs/gallery/data/Makefile
 gegl.pc

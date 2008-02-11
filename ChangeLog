@@ -1,3 +1,11 @@
+2008-02-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: modified to adhere to ascii doc style.
+	* configure.ac: added docs/index-static.txt to list of files to
+	generate.
+	* tools/create-reference.rb: modified to make toc be an id and not a
+	class for CSS.
+
 2008-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/meta/dropshadow.c:

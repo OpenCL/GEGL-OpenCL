@@ -478,7 +478,7 @@ file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"ht
 
     <style type='text/css'>
        @import url(\"gegl.css\");
-       div.toc ul {
+       div#toc ul {
           font-size: 70%;
        }
        h3 {
@@ -500,7 +500,7 @@ file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"ht
     </head>
     <body>"
 
-file.puts "<div class='toc'>
+file.puts "<div id='toc'>
       <div class='print'>
          <h3>Contents</h3>
       </div>
