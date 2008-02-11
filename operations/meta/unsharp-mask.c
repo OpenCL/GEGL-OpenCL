@@ -15,20 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(std_dev, 0.0, 100.0, 1.0, "Standard deviation (spatial scale factor)")
-gegl_chant_double(scale,  0.0, 100.0, 1.0, "Scale, strength of effect.")
+gegl_chant_double(std_dev, "Std. Dev.", 0.0, 100.0, 1.0, "Standard deviation (spatial scale factor)")
+gegl_chant_double(scale,  "Scale", 0.0, 100.0, 1.0, "Scale, strength of effect.")
 
 #else
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            unsharp_mask
-#define GEGL_CHANT_DESCRIPTION     "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)."
-#define GEGL_CHANT_SELF            "unsharp-mask.c"
-#define GEGL_CHANT_CATEGORIES      "meta:enhance"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_META
+#define GEGL_CHANT_C_FILE       "unsharp-mask.c"
+
+#include "gegl-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -45,17 +42,14 @@ struct _Priv
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self;
-  Priv          *priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *priv = g_malloc0 (sizeof (Priv));
 
-  self       = GEGL_CHANT_OPERATION (operation);
-  priv       = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
-
+  o->chant_data = (void*) priv;
 
   if (!priv->add)
     {
-      GeglNode      *gegl;
+      GeglNode *gegl;
       gegl = operation->node;
 
       priv->input    = gegl_node_get_input_proxy (gegl, "input");
@@ -80,7 +74,6 @@ static void attach (GeglOperation *operation)
       gegl_node_link (priv->input, priv->blur);
       gegl_node_link_many (priv->input, priv->add, priv->output, NULL);
 
-
       gegl_node_connect_from (priv->subtract, "aux",   priv->blur,     "output");
       gegl_node_connect_from (priv->add,      "aux",   priv->multiply, "output");
 
@@ -90,9 +83,22 @@ static void attach (GeglOperation *operation)
     }
 }
 
-static void class_init (GeglOperationClass *klass)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->attach = attach;
+  GObjectClass       *object_class;
+  GeglOperationClass *operation_class;
+
+  object_class    = G_OBJECT_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->attach = attach;
+
+  operation_class->name        = "unsharp-mask";
+  operation_class->categories  = "meta:enhance";
+  operation_class->description =
+        "Performs an unsharp mask on the input buffer (sharpens an image by"
+        " adding false mach-bands around edges).";
 }
 
 #endif

@@ -15,21 +15,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius, 0.0, 100.0, 20.0, "radius")
-gegl_chant_double(blur, 0.0, 100.0,   15.0,   "blur")
-gegl_chant_double(amount, -1.0, 2.0, 0.5, "amount")
+gegl_chant_double(radius, "Radius", 0.0, 100.0, 20.0, "radius")
+gegl_chant_double(blur, "Blur", 0.0, 100.0,   15.0,   "blur")
+gegl_chant_double(amount, "Amount", -1.0, 2.0, 0.5, "amount")
 
 #else
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            tonemap
-#define GEGL_CHANT_DESCRIPTION     "local contrast enhancement"
-#define GEGL_CHANT_SELF            "tonemap.c"
-#define GEGL_CHANT_CATEGORIES      "meta:enhance"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_META
+#define GEGL_CHANT_C_FILE       "tonemap.c"
+
+#include "gegl-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -49,13 +46,12 @@ struct _Priv
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self;
-  Priv          *priv;
+  GeglChantO *o;
+  Priv       *priv;
 
-  self       = GEGL_CHANT_OPERATION (operation);
-  priv       = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
-
+  o    = GEGL_CHANT_PROPERTIES (operation);
+  priv = g_malloc0 (sizeof (Priv));
+  o->chant_data = (void*) priv;
 
   if (!priv->min)
     {
@@ -118,9 +114,20 @@ static void attach (GeglOperation *operation)
     }
 }
 
-static void class_init (GeglOperationClass *klass)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->attach = attach;
+  GObjectClass       *object_class;
+  GeglOperationClass *operation_class;
+
+  object_class    = G_OBJECT_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->attach = attach;
+
+  operation_class->name        = "tonemap";
+  operation_class->categories  = "meta:enhance";
+  operation_class->description = "Local contrast enhancement";
 }
 
 #endif

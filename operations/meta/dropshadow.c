@@ -15,25 +15,22 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (opacity, -10.0, 10.0, 0.5, "Opacity")
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+gegl_chant_double (opacity, "Opacity", -10.0, 10.0, 0.5, "Opacity")
+gegl_chant_double (x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
                    "Horizontal shadow offset.")
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+gegl_chant_double (y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
                    "Vertical shadow offset.")
-gegl_chant_double (radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
+gegl_chant_double (radius, "Radius", -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
                    "Blur radius.")
 
 #else
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            dropshadow
-#define GEGL_CHANT_DESCRIPTION     "Creates a dropshadow effect on the input buffer."
-#define GEGL_CHANT_SELF            "dropshadow.c"
-#define GEGL_CHANT_CATEGORIES      "meta:effects"
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
+#define GEGL_CHANT_TYPE_META
+#define GEGL_CHANT_C_FILE       "dropshadow.c"
+
+#include "gegl-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -53,14 +50,14 @@ struct _Priv
 /* in attach we hook into graph adding the needed nodes */
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv = (Priv*)self->priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv *priv = (Priv*)o->chant_data;
   g_assert (priv == NULL);
 
   priv = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
+  o->chant_data = (void*) priv;
 
-  priv->self = GEGL_OPERATION (self)->node;
+  priv->self = operation->node;
 
   if (!priv->over)
     {
@@ -88,9 +85,21 @@ static void attach (GeglOperation *operation)
     }
 }
 
-static void class_init (GeglOperationClass *klass)
+
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->attach = attach;
+  GObjectClass       *object_class;
+  GeglOperationClass *operation_class;
+
+  object_class    = G_OBJECT_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->attach = attach;
+
+  operation_class->name        = "dropshadow";
+  operation_class->categories  = "meta:effects";
+  operation_class->description =
+        "Creates a dropshadow effect on the input buffer.";
 }
 
 #endif

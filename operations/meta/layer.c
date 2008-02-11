@@ -40,22 +40,23 @@ struct _GeglChant
 {
   GeglOperationMeta parent_instance;
   gpointer          properties;
+
   GeglNode *self;
   GeglNode *input;
   GeglNode *aux;
   GeglNode *output;
 
   GeglNode *composite_op;
-    GeglNode *shift;
-    GeglNode *opacity;
-    GeglNode *load;
+  GeglNode *shift;
+  GeglNode *opacity;
+  GeglNode *load;
 
-    gchar *cached_path;
+  gchar *cached_path;
 
   gdouble p_opacity;
   gdouble p_x;
   gdouble p_y;
-  gchar *p_composite_op;
+  gchar  *p_composite_op;
 };
 
 typedef struct

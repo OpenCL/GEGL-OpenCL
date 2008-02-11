@@ -1,3 +1,9 @@
+2008-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/meta/dropshadow.c:
+	* operations/meta/tonemap.c:
+	* operations/meta/unsharp-mask.c: Updated to new chanting API.
+
 2008-02-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-source.[ch]: removed context argument
