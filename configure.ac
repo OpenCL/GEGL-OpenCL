@@ -501,6 +501,7 @@ AC_SUBST(HAVE_RSVG)
 AC_SUBST(RSVG_CFLAGS) 
 AC_SUBST(RSVG_LIBS) 
 
+
 ###################
 # Check for OpenEXR
 ###################
@@ -535,6 +536,7 @@ AC_SUBST(HAVE_SDL)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
+
 ####################
 # Check for graphviz
 ####################
@@ -565,6 +567,20 @@ fi
 AM_CONDITIONAL(HAVE_ENSCRIPT, test "x$have_enscript" = "xyes")
 
 AC_SUBST(HAVE_ENSCRIPT)
+
+
+####################
+# Check for asciidoc
+####################
+ 
+AC_PATH_PROG(ASCIIDOC, asciidoc, no)
+if test "$ASCIIDOC" = "no"; then
+  have_asciidoc="no  (asciidoc not found)"
+  AC_MSG_RESULT([*** Check for asciidoc failed.])
+else
+  have_asciidoc="yes"
+fi
+AM_CONDITIONAL(HAVE_ASCIIDOC, test "x$have_asciidoc" = "xyes")
 
 
 ##########################################
@@ -667,6 +683,7 @@ Building GEGL with prefix=$prefix
 Optional features:
   GEGL docs:      $enable_docs
   Build workshop: $enable_workshop
+  Build website:  $have_asciidoc
 
 Optional dependencies:
   GTK+:           $have_gtk

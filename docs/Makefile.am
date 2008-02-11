@@ -6,14 +6,18 @@ SUBDIRS= gallery
 #	
 #
 #
+
 HTML_FILES = index-static.txt 	\
-	index.html		\
 	operations.html		\
 	class-hierarchy.html	\
 	gegl.h.html		\
 	brightness-contrast.c.html		\
 	gegl-operation.h.html	\
 	gegl-plugin.h.html
+
+if HAVE_ASCIIDOC
+HTML_FILES += index.html
+endif
 
 EXTRA_DIST= 			\
 	ChangeLog		\
@@ -73,9 +77,14 @@ index.html: index-static.txt                     \
 	    $(top_builddir)/bin/gegl		 \
 	    Makefile.am				 \
 	    $(srcdir)/hello-world.c
+if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	cp $< $@ 
-	asciidoc --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl $<
+else
+	@echo "*** asciidoc must be available in order to make dist"
+	@false
+endif
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
@@ -97,3 +106,15 @@ hello-world: hello-world.c
 
 hello-world-video: hello-world-video.c
 	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`
+
+
+# require asciidoc when making dist
+#
+dist-check-asciidoc:
+if HAVE_ASCIIDOC
+else
+	@echo "*** asciidoc must be available in order to make dist"
+	@false
+endif
+
+dist-hook: dist-check-asciidoc

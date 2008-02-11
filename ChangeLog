@@ -1,3 +1,9 @@
+2008-02-11  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: added check for asciidoc.
+
+	* docs/Makefile.am: only build index.html when asciidoc is available.
+
 2008-02-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: modified to adhere to ascii doc style.
