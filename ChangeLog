@@ -1,3 +1,8 @@
+2008-02-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/Makefile.am: removed site specific testing
+	cflags.
+
 2008-02-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/difference-of-gaussians.c:
