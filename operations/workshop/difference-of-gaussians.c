@@ -15,22 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius1, 0.0, 10.0, 1.0, "Radius")
-gegl_chant_double(radius2, 0.0, 10.0, 2.0, "Radius")
+gegl_chant_double(radius1, "Radius 1", 0.0, 10.0, 1.0, "Radius")
+gegl_chant_double(radius2, "Radius 2", 0.0, 10.0, 2.0, "Radius")
 
 #else
 
-#define GEGL_CHANT_NAME            difference_of_gaussians
-#define GEGL_CHANT_SELF            "difference-of-gaussians.c"
-#define GEGL_CHANT_DESCRIPTION     "does an edge detection based on the differnece of two gaussian blurs."
-#define GEGL_CHANT_CATEGORIES      "meta:edge"
+#define GEGL_CHANT_TYPE_META
+#define GEGL_CHANT_C_FILE       "difference-of-gaussians.c"
 
-#define GEGL_CHANT_META
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -47,13 +42,10 @@ struct _Priv
 
 static void attach (GeglOperation *operation)
 {
-  GeglChantOperation *self;
-  Priv          *priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *priv = g_new0 (Priv, 1);
 
-  self       = GEGL_CHANT_OPERATION (operation);
-  priv       = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
-
+  o->chant_data = (void*) priv;
 
   if (!priv->blur1)
     {
@@ -87,9 +79,18 @@ static void attach (GeglOperation *operation)
     }
 }
 
-static void class_init (GeglOperationClass *klass)
+static void
+operation_class_init (GeglChantClass *klass)
 {
-  klass->attach = attach;
+  GeglOperationClass *operation_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class->attach = attach;
+
+  operation_class->name        = "difference-of-gaussians";
+  operation_class->categories  = "meta:edge";
+  operation_class->description =
+        "Does an edge detection based on the differnece of two gaussian blurs.";
 }
 
 #endif

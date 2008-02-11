@@ -15,20 +15,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
-gegl_chant_string (path, "/tmp/test.raw",
-                   "Path of file to load.")
+#ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_string (path, "File", "/tmp/test.raw", "Path of file to load.")
+
 #else
 
-#define GEGL_CHANT_NAME            rawbayer_load
-#define GEGL_CHANT_SELF            "rawbayer-load.c"
-#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as grayscale, if the fileformat is .rawbayer it will use this loader instead of the normal dcraw loader, if the fileformat is .rawbayerS it will swap the returned 16bit numbers (the pnm loader is apparently buggy)"
-#define GEGL_CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "rawbayer-load.c"
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,47 +34,10 @@ gegl_chant_string (path, "/tmp/test.raw",
 #define MAX_SAMPLE 65535
 #define ERROR -1
 
-static void load_buffer (GeglChantOperation *op_raw_load);
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         GeglBuffer          *output,   /* Not used?? */
-         const GeglRectangle *result)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-
-  g_assert (self->priv);
-  gegl_node_context_set_object (context, "output", G_OBJECT (self->priv));
-
-  self->priv = NULL;
-  return TRUE;
-}
-
-
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle result = {0,0,0,0};
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-
-  load_buffer (self);
-
-  result.width  = gegl_buffer_get_width (GEGL_BUFFER (self->priv));
-  result.height  = gegl_buffer_get_height (GEGL_BUFFER (self->priv));
-  return result;
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  gegl_extension_handler_register (".rawbayer", "rawbayer-load");
-  gegl_extension_handler_register (".rawbayerS", "rawbayer-load");
-}
-
 static void
-load_buffer (GeglChantOperation *op_raw_load)
+load_buffer (GeglChantO *op_raw_load)
 {
-  if (!op_raw_load->priv)
+  if (!op_raw_load->chant_data)
     {
       FILE *pfp;
       gchar *command;
@@ -100,7 +59,7 @@ load_buffer (GeglChantOperation *op_raw_load)
 
       {
         GeglRectangle extent = { 0, 0, width, height };
-        op_raw_load->priv = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
+        op_raw_load->chant_data = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
       }
          {
            guchar *buf = g_new (guchar, width * height * 3 * 2);
@@ -114,7 +73,7 @@ load_buffer (GeglChantOperation *op_raw_load)
                 buf[i*2+1] = tmp;
                }
            }
-           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv),
+           gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
                             NULL,
                             babl_format_new (
                                  babl_model ("RGB"),
@@ -129,6 +88,72 @@ load_buffer (GeglChantOperation *op_raw_load)
          }
        fclose (pfp);
     }
+}
+
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {0,0,0,0};
+
+  load_buffer (o);
+
+  result.width  = gegl_buffer_get_width (GEGL_BUFFER (o->chant_data));
+  result.height = gegl_buffer_get_height (GEGL_BUFFER (o->chant_data));
+  return result;
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglNodeContext     *context,
+         const gchar         *output,
+         const GeglRectangle *result)
+
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+#if 1
+  g_assert (o->chant_data);
+  gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+
+  o->chant_data = NULL;
+#else
+  if (o->chant_data)
+    {
+      g_object_ref (o->chant_data); /* Add an extra reference, since gegl_operation_set_data
+                                      is stealing one.
+                                    */
+
+      /* override core behaviour, by resetting the buffer in the node_context */
+      gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+    }
+#endif
+  return TRUE;
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_bounding_box = get_bounding_box;
+
+  operation_class->name        = "rawbayer-load";
+  operation_class->categories  = "hidden";
+  operation_class->description =
+        "Raw image loader, wrapping dcraw with pipes, provides the raw bayer"
+        " grid as grayscale, if the fileformat is .rawbayer it will use this"
+        " loader instead of the normal dcraw loader, if the fileformat is"
+        " .rawbayerS it will swap the returned 16bit numbers (the pnm loader"
+        " is apparently buggy)";
+
+  gegl_extension_handler_register (".rawbayer", "rawbayer-load");
+  gegl_extension_handler_register (".rawbayerS", "rawbayer-load");
 }
 
 #endif
