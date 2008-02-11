@@ -1,3 +1,14 @@
+2008-02-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added rule to build index.html from index.txt
+	* gegl.css: updated to also style ascii-doc output.
+	* index-static.html.in: removed.
+	* index-static.txt.in: added.
+	* gallery/Makefile.am:
+	* pygegl/index.html:
+	* gegl-sharp/index.html:
+	* rgegl/index.html: modified div.toc to be div#toc.
+
 2008-02-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: added rule to build hello-world-video

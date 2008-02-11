@@ -1,13 +1,14 @@
 
       body {
-        margin: 0;
+        margin-left: 12.5em;
+        margin-right: 2em;
         padding: 0;
+        background-color: #fff;
       }
       div.paper {
         background-color: #fff;
         margin: 1em;
-        margin-right: 2em;
-        margin-left: 12.5em;
+        /*margin-left: 12.5em;*/
       }
       iframe {
         background-color: #aaa;
@@ -35,7 +36,7 @@
       h1 {
         margin-top: 0em;
       }
-      h1, h2, h3 {
+      h1, h2, h3, h4{
         color: #112266;
       }
       h1 {
@@ -46,6 +47,9 @@
       }
       h3 {
         font-size: 1.2em;
+      }
+      h4 {
+        font-size: 1.0em;
       }
       dl {
         margin-top: 1em;
@@ -185,8 +189,8 @@
 
       @media screen {
         body {
-          background-color: #333;
           font-family: FreeSans, Verdana, sans-serif;
+          max-width: 45em;
         }
         a {
           text-decoration: none;
@@ -194,7 +198,12 @@
         pre {
           overflow: auto;
         }
-        div.toc {
+        h1 {
+            display: none;
+        }
+
+        div#toc {
+          background-color: #333;
           position: absolute;
           position: fixed;
           width: 12em;
@@ -204,29 +213,42 @@
           height: 100%;
           overflow: auto;
           float: left;
+          padding-top: 1em;
         }
-        div.toc ul {
+        div#toc ul {
           padding-top: 2em;
           padding-left: 1em;
           margin: 0;
         }
-        div.toc li {
+        div#toc li {
           display: block;
           padding-right: 1em;
         }
-        div.toc li a{
+        div#toc li a,
+        div#toc div a{
           display: block;
           padding-left: 1em;
           padding-right: 1em;
           color: #fff;
         }
-        div.toc li a:hover {
+        div#toc li a:hover,
+        div#toc div a:hover{
           color: #fff;
           background-color: #445;
         }
-        div.toc li a:active {
+        div#toc li a:active,
+        div#toc div a:active{
           color: #000;
           background-color: #445;
+        }
+        div#toc .toclevel1 {
+          padding-left: 0em;
+        }
+        div#toc .toclevel2 {
+          padding-left: 1em;
+        }
+        #toctitle {
+            display: none;
         }
         div.paper {
           max-width: 45em;
@@ -262,32 +284,32 @@
           text-decoration: none;
         }
 
-        div.toc ul {
+        div#toc ul {
           padding-left: 0em;
           float: right;
           margin: 0;
         }
-        div.toc li {
+        div#toc li {
           display: block;
           padding-right: 1em;
         }
-        div.toc li a{
+        div#toc li a{
           display: block;
           padding-left: 1em;
           padding-right: 1em;
           color: #fff;
         }
-        div.toc li a:hover {
+        div#toc li a:hover {
           color: #fff;
           background-color: #333;
         }
-        div.toc ul {
+        div#toc ul {
           padding-left: 0em;
           float: none;
           margin: 0;
           margin-left: 1em;
         }
-        div.toc {
+        div#toc {
           position: absolute;
           width: 200px;
           top: 0;
@@ -295,13 +317,13 @@
           padding-top: 2em;
           z-index: 2;
         }
-        div.toc ul {
+        div#toc ul {
           margin-left: 0;
         }
-        div.toc li a {
+        div#toc li a {
           color : #000;
         }
-        div toc h2 {
+        div#toc h2 {
           margin: 0;
           padding: 0;
         }
@@ -309,6 +331,10 @@
           margin-left: -0.75em;
         }
         h2 {
+          padding-top: 4em;
+          margin-left: -1em;
+        }
+        h3 {
           padding-top: 4em;
           margin-left: -1em;
         }

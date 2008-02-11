@@ -6,11 +6,14 @@ SUBDIRS= gallery
 #	
 #
 #
-HTML_FILES = index-static.html 	\
+HTML_FILES = index-static.txt 	\
 	index.html		\
 	operations.html		\
 	class-hierarchy.html	\
-	gegl.h.html
+	gegl.h.html		\
+	brightness-contrast.c.html		\
+	gegl-operation.h.html	\
+	gegl-plugin.h.html
 
 EXTRA_DIST= 			\
 	ChangeLog		\
@@ -19,14 +22,14 @@ EXTRA_DIST= 			\
 	devhelp.css		\
 	hello-world.c		\
 	hello-world-video.c	\
-	index-static.html.in	\
+	index-static.txt.in	\
 	api.html		\
 	index.html
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
 CLEANFILES = README $(HTML_FILES)
-DISTCLEANFILES = index-static.html class-hierarchy.html operations.html
+DISTCLEANFILES = index-static.txt class-hierarchy.html operations.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all-local: $(HTML_FILES) api.html
@@ -44,12 +47,27 @@ if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
 
-api.html: ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../tools/create-reference.rb
-if HAVE_RUBY
-	../tools/create-reference.rb ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h api.html
+gegl-operation.h.html: ../gegl/operation/gegl-operation.h
+if HAVE_ENSCRIPT
+	enscript -E --color --language=html -p$@ $<
 endif
 
-index.html: index-static.html                    \
+gegl-plugin.h.html: ../gegl/gegl-plugin.h
+if HAVE_ENSCRIPT
+	enscript -E --color --language=html -p$@ $<
+endif
+
+brightness-contrast.c.html: ../operations/color/brightness-contrast.c
+if HAVE_ENSCRIPT
+	enscript -E --color --language=html -p$@ $<
+endif
+
+api.html: ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../gegl/operation/gegl-operation.h ../tools/create-reference.rb
+if HAVE_RUBY
+	../tools/create-reference.rb ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../gegl/operation/gegl-operation.h api.html
+endif
+
+index.html: index-static.txt                     \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/NEWS                   \
 	    $(top_builddir)/bin/gegl		 \
@@ -57,13 +75,7 @@ index.html: index-static.html                    \
 	    $(srcdir)/hello-world.c
 	@echo "HTML: $@"
 	cp $< $@ 
-	$(top_srcdir)/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
-	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
-	$(top_builddir)/bin/gegl -h 2>&1 | sed -e "s_/.*gegl_gegl_" > gegl-usage.txt
-	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt encode
-	$(top_srcdir)/tools/xml_insert.sh $@ HELLO-WORLD $(srcdir)/hello-world.c encode
-	rm gegl-usage.txt
-	@echo " [OK]"
+	asciidoc --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl $<
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
@@ -73,7 +85,7 @@ help_dir = $(DESTDIR)$(prefix)/share/gtk-doc/html/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(help_dir)
-	$(INSTALL) $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
+	$(INSTALL) $(srcdir)/*.h.html $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
 	$(INSTALL) -T $(srcdir)/devhelp.css $(help_dir)/gegl.css
 
 uninstall-local:

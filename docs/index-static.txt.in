@@ -1,0 +1,417 @@
+GEGL-@GEGL_VERSION@
+===========
+
+GEGL
+----
+GEGL (Generic Graphics Library) is a graph based image processing framework.
+
+GEGL's original design was made to scratch http://www.gimp.org/[GIMP]'s itches
+for a new compositing and processing core. This core is being designed to have
+minimal dependencies. and a simple well defined API.
+
+http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup[changes]|http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugs]|http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]|http://svn.gnome.org/viewvc/gegl/trunk/[viewvc]
+
+
+Features
+~~~~~~~~
+  - Output in RGB, CIE Lab and Y'CbCr color models with 8bit, 16bit integer and
+    32bit floating point per component. Possible to extend to ICC managed
+    output in http://gegl.org/babl/[babl].
+  - Non destructive editing
+  - C, http://gegl.org/gegl-sharp/[C#], http://gegl.org/pygegl/[Python] and
+    http://gegl.org/rgegl/[Ruby] interfaces.
+  - Extendable through plug-ins.
+  - XML serialization format (not-finalized)
+  - Iterative processing.
+  - Efficient subregion evaluation.
+  - Per node caches.
+  - Processing and display of image buffers larger than RAM
+  - Internal sparse pyramidial render cache.
+  - Bounding box based hit detection.
+  - Rich core set of processing operations that operates in
+    http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (32bit linear
+    light RGBA)
+      * PNG, JPEG, SVG, EXR, RAW, ffmpeg and other image sources.
+      * link:operations.html#cat_render[Pattern renderers]
+      * link:operations.html#math[Arithmetic operations]
+      * link_operations.html#porter_duff[porter duff compositing]
+      * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
+      * Gaussian blur, bilateral-filter, symmetric nearest neighbour, unsharp
+        mask.
+      * link:operations.html#cat_color[Color correction].
+      * Text rendering using cairo and http://pango.org/[pango].
+
+Gallery
+~~~~~~~
+For examples of what GEGLs rendering engine currently can do look at the
+link:gallery/index.html[gallery].
+
+Dependencies
+~~~~~~~~~~~~
+
+GEGL is currently building on linux, the build enviroment probably needs some
+fixes before all of it builds gracefully on many platforms.
+
+  - Core
+      * glib (including gobject, and gmodule) 2.10 or newer, which provides
+        inheritance, dynamic modules, common algorithms and data structures for
+        C programming.
+      * http://gegl.org/babl/[babl] 0.0.14 or newer (for pixel-format agnostisism).
+      * libpng (png load/export ops, and image magick fallback import)
+  - GUI (sandbox for testing ops and the API)
+      * GTK+
+  - Optional dependencies for operations.
+      * SDL (display op)
+      * libjpeg (jpg loader op)
+      * libopenexr (exr loader op)
+      * cairo, pango (text source op)
+      * librsvg
+
+Download
+~~~~~~~~
+The latest development snapshot, and eventually stable versions of GEGL are
+available at ftp://ftp.gimp.org/pub/gegl/[].
+
+The current code under development can be
+http://svn.gnome.org/viewvc/gegl/trunk/[browsed online] and checked out from
+GNOME Subversion using:
+
+ $ svn co http://svn.gnome.org/svn/babl/trunk/ babl
+
+ $ svn co http://svn.gnome.org/svn/gegl/trunk/ gegl
+
+Building
+~~~~~~~~
+To build GEGL type the following in the toplevel source directory:
+
+ $ ./configure  or: ./autogen.sh if building from svn
+ $ make
+ $ sudo make install
+
+Bugzilla
+~~~~~~~~
+The GEGL project uses http://bugzilla.gnome.org/[GNOME Bugzilla], a
+bug-tracking system that allows us to coordinate bug reports. Bugzilla is also
+used for enhancement requests and the preferred way to submit patches for GEGL
+is to open a bug report and attach the patch to it.
+
+Below is a list of links to get you started with Bugzilla:
+
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED[List of Open Bugs]
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_severity=minor&bug_severity=trivial[List of Open Bugs] (excluding enhancement requests)
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO&bug_severity=enhancement[List of Enhancement Proposals]
+  - http://bugzilla.gnome.org/reports/weekly-bug-summary.cgi[Bugzilla Weekly Summary]
+
+Mailinglist
+~~~~~~~~~~~
+You can subscribe to gegl-developer and view the archives
+https://lists.XCF.Berkeley.EDU/mailman/listinfo/gegl-developer[here]. The GEGL
+developer list is the appopriate place to ask development questions, and get
+more information about GEGL development in general. You can email this list at
+mailto:gegldev%20at%20gegl.org[].
+
+
+Copyright
+~~~~~~~~~
+GEGL is free software; you can redistribute it and/or modify it under the terms
+of the link:LGPL[GNU Lesser General Public License] as published by the Free
+Software Foundation; either version 3 of the License, or (at your option) any
+later version.
+
+Contributors
+~~~~~~~~~~~~
+Multiple people have contributed to GEGL over time the following lists are are
+ordered chronologically according to when they are mentioned in the ChangeLog.
+
+include::../AUTHORS[]
+
+Documentation
+-------------
+GEGLs programmer/user interface is a Directed Acyclic Graph of nodes. The DAG
+expresses a processing chain of operations. A DAG, or any node in it, expresses
+a composited and processed image. It is possible to request rectangular regions
+in a wide range of pixel formats from any node.
+
+Glossary
+~~~~~~~~
+connection::
+    A link/pipe routing image flow between operations within the graph goes
+    from an output pad to an input pad, in graph glossary this might also be
+    reffered to as an edge. footnote:[Maybe footnotes can be made to easily work?]
+DAG::
+    Directed Acyclic Graph, see graph.
+graph::
+    A composition of nodes, the graph is a DAG.
+node::
+    The nodes are connected in the graph. A node has an associated operation or
+    can be constructed graph.
+operation::
+    The processing primitive of GEGL, is where the actual image processing
+    takes place. Operations are plug-ins and provide the actual functionality
+    of GEGL
+pad::
+    The part of a node that exchanges image content. The place where image
+    "pipes" are used to connect the various operations in the composition.
+input pad::
+  consumes image data, might also be seen as an image parameter to the
+  operation.
+output pad::
+  a place where data can be requested, multiple input pads can reference
+  the same output pad.
+property::
+    Properties are what control the behavior of operations, through the use of
+    GParamSpecs properties are self documenting through introspection.
+
+Operations
+~~~~~~~~~~
+
+The main source of documentation as GEGL grows is the
+link:operations.html[operations reference]. Plug-ins themselves register
+information about the categories they belong to, what they do, and
+documentation of the available parameters.
+
+
+Public API
+~~~~~~~~~~
+The link:api.html[public API] is the API used for creating things with GEGL,
+this API does not change much at all and is also the API provided by language
+bindings. To make the public API available when compiling a .c file add
+#include <link:gegl.h.html[gegl.h]>, compile and link with the flags provided
+by pkg-config and you should be all set.
+
+Hello world
+^^^^^^^^^^^
+
+This is a small sample GEGL application that animates a zoom on a mandelbrot
+fractal
+
+---------------------------
+sys::[cat hello-world.c]
+---------------------------
+
+ $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
+
+Bindings
+^^^^^^^^
+The bindings for use of GEGL in other programming languages than C are
+co-hosted with GEGL in GNOME subversion but are not part of the regular GEGL
+distribution. The following language bindings are currently available:
+link:rgegl/index.html[ruby], link:pygegl/idex.html[python]:: and 
+link:gegl-sharp/index.html[C#/Mono].
+
+
+Operation API
+~~~~~~~~~~~~~
+An API to extend the functionality of GEGL with new image processing primitive,
+file loaders, export formats or similar. 
+
+Each GEGL operation is defined in a .c file that gets turned into a single
+shared object that is loaded. Each operation is a subclass of one of the
+provided baseclasses:
+
+GeglOperation::
+    The base operation class, which all the other base classes are derived
+    from, deriving from this is often quite a bit of work and is encouraged
+    only when your operation doesn't fit into any of the other categories
+  GeglOperationFilter::
+    The filter base class sets up GeglBuffers for input and output pads
+    GeglOperationAreaFilter::
+    The AreaFilter base class allows defining operations where the output data
+    depends on a neighbourhood with an input window that extends beyond the
+    output window, the information about needed extra pixels in different
+    directions should be set up in the prepare callback for the operation.
+    GeglOperationPointFilter::
+    The point-filter base class is for filters where an output pixel only
+    depends on the color and alpha values of the corresponding input pixel.
+    This allows you to do the processing on linear buffers, in the future
+    versions of GEGL operations implemented using the point-filter will get
+    speed increases due to more intelligent processing possible in the point
+    filter class
+  GeglOperationComposer::
+    Composer operations are operations that take two inputs named 'input' and
+    'aux' and writes their output to the output pad 'output'
+    GeglOperationPointComposer::
+    A baseclass for composer functions where the output pixels values depends
+    only on the values of the single corresponding input and aux pixels.
+  GeglOperationSource::
+    Operations used as render sources or file loaders, the process method
+    receives a GeglBuffer to write it's output into
+  GeglOperationSink::
+    An operation that consumes a GeglBuffer, used for filewriters, display (for
+    the sdl display node)
+  GeglOperationMeta::
+    Used for GEGL operations that are implemented as a sub-graph, at the moment
+    these are defined as C files but should in the future be possible to
+    declare as XML instead.
+
+To create your own operations you should start by looking for one that does
+approximatly what you already need. Copy it to a new .c source file, and
+replace the occurences of the filename (operation name in the source.)
+
+Most of the operations try to trim down the amount of needed GObject boilerplate
+and provides a chanting framework creating with the C preprocessor that makes defining
+introspectable typed and documented properties easy.
+
+Take a look at link:brightness-contrast.c.html[the brightness contrast operation] for
+a simple point operation well sprinkled with comments.
+
+core
+~~~~
+The core implements the graph of nodes accessed in the public API as well as
+orchestrates the processing of the graph filling caches with rendered results.
+
+
+XML data model
+~~~~~~~~~~~~~~
+The tree allows clones, making it possible to express any acyclic graph where
+the nodes are all of the types: source, filter and composer.
+
+GEGL can write and reads its data model to and from XML. The XML is chains of
+image processing commands, where some chains allow a child chain (the 'over'
+operator to implement layers for instance).
+
+The type of operation associated with a node can be specified either with a
+class attribute or by using the operation name as the tag name for the node.
+
+For documentation on how this XML works, take a look at the sources in the
+gallery. And browse the documentation for operations.
+
+Environment
+~~~~~~~~~~~
+Some environment variables can be set to alter how GEGL runs, this list might
+not be exhaustive but it should list the most useful ones.
+
+BABL_STATS::
+    When set babl will write a html file (/tmp/babl-stats.html) containing a
+    matrix of used conversions, as well as all existing conversions and which
+    optimized paths are followed.
+BABL_ERROR::
+    The amount of error that babl tolerates, set it to for instance 0.1 to use
+    some conversions that trade some quality for speed.
+GEGL_DEBUG_BUFS::
+    Display tile/buffer leakage statistics.
+GEGL_DEBUG_RECTS::
+    Show the results of have/need rect negotiations.
+GEGL_DEBUG_TIME::
+    Print a performance instrumentation breakdown of GEGL and it's operations.
+GEGL_SWAP::
+    The directory where temporary swap files are written, if not specified GEGL
+    will not swap to disk. Be aware that swapping to disk is still experimental
+    and GEGL is currently not removing the per process swap files.
+
+
+gegl
+~~~~
+GEGL provides a commandline tool called gegl, for working with the XML data
+model from file, stdin or the commandline. It can display the result of
+processing the layer tree or save it to file.
+
+Some examples:
+
+Render a composition to a PNG file:
+
+ $ gegl composition.xml -o composition.png
+
+Invoke gegl like a viewer for gegl compositions:
+
+ $ gegl -ui -d 5 composition.xml
+
+Using gegl with png's passing through stdin/stdout piping.
+
+ $ cat input.png | gegl -o - -x "<gegl>
+    <tree>
+      <node class='invert'/>
+      <node class='scale' x='0.5' y='0.5'/>
+      <node class='png-load' path='-'/></tree></gegl>" > output.png
+
+The latest development version is available in the gegl module in GNOME
+Subversion.
+
+gegl usage
+~~~~~~~~~~
+The following is the usage information of the gegl binary, this documentation
+might not be complete.
+
+-------
+sys::[bash -c '../bin/gegl -h 2>&1']
+-------
+
+
+
+Code overview
+-------------
+GEGL dirs
+~~~~~~~~~
+
+ gegl-dist-root
+  │
+  │
+  ├──gegl               core source of GEGL, library init/deinit,
+  │   │
+  │   ├──buffer         contains the implementation of GeglBuffer
+  │   │                  - sparse (tiled)
+  │   │                  - recursivly subbuffer extendable
+  │   │                  - clipping rectangle (defaults to bounds when making
+  │   │                    subbuffers)
+  │   │                  - storage in any babl supported pixel format
+  │   │                  - read/write rectangular region as linear buffer for
+  │   │                    any babl supported pixel format.
+  │   ├──graph          graph storage and manipulation code.
+  │   ├──module         The code to load plug-ins located in a colon seperated
+  │   │                 list of paths from the environment variable GEGL_PATH
+  │   ├──operation      The GeglOperation base class, and subclasses that act
+  │   │                 as baseclasses for implementeting different types of
+  │   │                 operation plug-ins.
+  │   ├──process        The code controlling data processing.
+  │   └──property-types specialized classes/paramspecs for GeglOperation
+  │                     properties.
+  │
+  ├──operations        Runtime loaded plug-ins for image processing operations.
+  │   │
+  │   ├──core          Basic operations tightly coupled with GEGL.
+  │   │
+  │   ├──affine        transforming operations (rotate/scale/translate)
+  │   ├──blur          Blurring operations.
+  │   ├──color         Color adjustments.
+  │   ├──generated     Operations generated from scripts (currently
+  │   │                ruby scripts.) (arithmetic, compositors, ...)
+  │   ├──io            sources and sinks (file loaders/savers etc.)
+  │   ├──meta          Operations that themselves are made by gegl graphs.
+  │   ├──render        Operations providing patters, graidents, fills, ...
+  │   ├──svg           Non-compositors part of the SVG 1.2 specification.
+  │   ├──transparency  opacity/mask control
+  │   └──workshop      Works in progress, (not built/installed by default)
+  │       └──generated generated operations that are in the workshop.
+  │
+  │
+  ├──docs              A website for GEGL
+  │   │
+  │   └──gallery       A gallery of sample GEGL compositions, using the
+  │       │            (not yet stabilized) XML format.
+  │       │
+  │       └──data      Image data used by the sample compositions.
+  │
+  ├──bin               gegl binary, for processing XML compositions to png files.
+  ├──graph-editor      a graph editor.
+  │
+  ├──bindings          bindings for using GEGL from other programming languages
+  │                    not included in the tarball distribution but exist in
+  │                    the subversion repository.
+  │
+  └──tools             some small utilities to help the build.
+
+babl dirs
+~~~~~~~~~
+
+ babl-dist-root
+  │
+  ├──babl       the babl core
+  │   └──base   reference implementations for RGB and Grayscale Color Models,
+  │             8bit 16bit, and 32bit and 64bit floating point.
+  ├──extensions CIE-Lab color model as well as a naive-CMYK color model.
+  │             also contains a random cribbage of old conversion optimized
+  │             code from gggl. Finding more exsisting conversions in third
+  │             part libraries (hermes, lcms?, liboil?) could improve the
+  │             speed of babl.
+  ├──tests      tests used to keep babl sane during development.
+  └──docs       Documentation/webpage for babl.
