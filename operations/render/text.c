@@ -164,7 +164,6 @@ static void text_layout_text (GeglChant *self,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {

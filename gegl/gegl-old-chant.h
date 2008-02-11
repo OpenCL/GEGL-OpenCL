@@ -441,7 +441,6 @@ static gboolean process (GeglOperation       *operation,
 #else
 #ifdef GEGL_CHANT_SOURCE
 static gboolean process (GeglOperation       *operation,
-                         GeglNodeContext     *context,
                          GeglBuffer          *output,
                          const GeglRectangle *result);
 #else

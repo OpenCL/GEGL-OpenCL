@@ -46,6 +46,10 @@ typedef struct
   gint       height;
 } SvgLoadVals;
 
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
+}
 
 static gint
 gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
@@ -181,7 +185,6 @@ get_bounding_box (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *output,
          const GeglRectangle *result_foo)
 {
@@ -200,14 +203,6 @@ process (GeglOperation       *operation,
             return TRUE;
       }
 
-      {
-        GeglRectangle extent={0,0,width,height};
-        /* FIXME: the format should be set on the pad prior to the actual
-         * load
-         */
-        output = gegl_buffer_new (&extent, babl_format ("R'G'B'A u8"));
-      }
-
   result = gegl_buffer_import_svg (output, o->path,
                                    width, height, 0, 0, &width, &height);
   if (result)
@@ -216,7 +211,6 @@ process (GeglOperation       *operation,
         G_OBJECT_TYPE_NAME (operation), o->path);
       return  FALSE;
     }
-  gegl_node_context_set_object (context, "output", G_OBJECT (output));
 
   return  TRUE;
 }
@@ -232,6 +226,7 @@ operation_class_init (GeglChantClass *klass)
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   source_class->process = process;
+  operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "svg-load";

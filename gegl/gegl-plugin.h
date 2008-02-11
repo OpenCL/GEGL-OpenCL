@@ -104,6 +104,22 @@ const gchar * gegl_extension_handler_get      (const gchar *extension);
 #include <glib-object.h>
 #include <babl/babl.h>
 
+
+/***
+ * GeglOperation:
+ * 
+ * All the image processing code in GEGL is implemented as GeglOperations,
+ * GEGL oeprations are implemented as GObject with a convenience API called
+ * chanting that abstracts away the boiler plater needed to generate introspectable
+ * named properties of different types.
+ *
+ * Most types of operations like: filters, composers, sources, sinks, point
+ * operations, compositing operations, and spatial operations with fixed
+ * neighbourhoods. These base classes builds on top of the GeglOperationsClass:
+ *
+ * See <a href='gegl-operation.h.html'>gegl-operation.h</a> for details.
+ */
+
 #define GEGL_TYPE_OPERATION            (gegl_operation_get_type ())
 #define GEGL_OPERATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION, GeglOperation))
 #define GEGL_OPERATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION, GeglOperationClass))
@@ -280,7 +296,6 @@ struct _GeglOperationSourceClass
   GeglOperationClass parent_class;
 
   gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
                         GeglBuffer          *output,
                         const GeglRectangle *result);
 };

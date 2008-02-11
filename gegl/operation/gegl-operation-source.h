@@ -42,7 +42,6 @@ struct _GeglOperationSourceClass
   GeglOperationClass parent_class;
 
   gboolean (* process) (GeglOperation       *self,
-                        GeglNodeContext     *context,
                         GeglBuffer          *output,
                         const GeglRectangle *result);
 };

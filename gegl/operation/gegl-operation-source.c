@@ -134,7 +134,7 @@ process (GeglOperation       *operation,
 
   g_assert (klass->process);
   output = gegl_node_context_get_target (context, "output");
-  success = klass->process (operation, context, output, result);
+  success = klass->process (operation, output, result);
 
   return success;
 }

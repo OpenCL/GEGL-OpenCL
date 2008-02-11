@@ -46,6 +46,22 @@ struct _GeglOperation
                       with through */
 };
 
+
+/***
+ * GeglOperation:
+ * 
+ * All the image processing code in GEGL is implemented as GeglOperations,
+ * GEGL oeprations are implemented as GObject with a convenience API called
+ * chanting that abstracts away the boiler plater needed to generate introspectable
+ * named properties of different types.
+ *
+ * Most types of operations like: filters, composers, sources, sinks, point
+ * operations, compositing operations, and spatial operations with fixed
+ * neighbourhoods. These base classes builds on top of the GeglOperationsClass:
+ *
+ * See <a href='gegl-plugin.h.html'>gegl-plugin.h</a> for details.
+ */
+
 struct _GeglOperationClass
 {
   GObjectClass    parent_class;
@@ -57,7 +73,8 @@ struct _GeglOperationClass
 
   gboolean        no_cache;    /* do not create a cache for this operation */
 
-  /* attach this operation with a GeglNode, override this if you are creating a
+  /*
+   * attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
    */
   void          (*attach)                    (GeglOperation *operation);
@@ -185,5 +202,10 @@ GeglNode      * gegl_operation_get_source_node   (GeglOperation *operation,
                                                   const gchar   *pad_name);
 
 G_END_DECLS
+
+/***
+ * foo:
+ *
+ */
 
 #endif /* __GEGL_OPERATION_H__ */

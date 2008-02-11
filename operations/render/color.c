@@ -49,7 +49,6 @@ detect (GeglOperation *operation,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {

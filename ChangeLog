@@ -1,3 +1,33 @@
+2008-02-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-source.[ch]: removed context argument
+	from subclass specific process().
+	* gegl/operation/gegl-operation.h: documentation++.
+	* gegl/gegl-plugin.h: updated duplicated bits from headers.
+	* gegl/gegl-old-chant.h: updated to reflect changes in API (note that
+	the new gegl-chant.h didn't need changes when the classes used change
+	:)).
+
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/fractal-explorer.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/io/jpg-load.c:
+	* operations/io/ff-load.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/png-load.c: updated to new api.
+	* operations/io/svg-load.c: request the pixelformat in prepare,
+	updated to new api.
+
+	* operations/io/raw-load.c:
+	* operations/io/load-buffer.c:
+	* operations/io/magick-load.c:
+	* operations/render/introspect.c:
+	* operations/io/pixbuf.c: override the process of GeglOperation
+	directly, since these chear and don't write into a provided buffer
+	(if possible, this should be changed).
+
 2008-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/io/load-buffer.c:

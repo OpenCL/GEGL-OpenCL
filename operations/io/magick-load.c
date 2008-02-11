@@ -107,7 +107,7 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
-         GeglBuffer          *output,
+         const gchar         *output_pad,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -132,7 +132,7 @@ operation_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  source_class->process = process;
+  operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "magick-load";
