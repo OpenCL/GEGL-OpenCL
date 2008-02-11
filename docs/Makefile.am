@@ -46,22 +46,22 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/introspect > $@
 
-gegl.h.html: ../gegl/gegl.h
+gegl.h.html: $(top_srcdir)/gegl/gegl.h
 if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
 
-gegl-operation.h.html: ../gegl/operation/gegl-operation.h
+gegl-operation.h.html: $(top_srcdir)/gegl/operation/gegl-operation.h
 if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
 
-gegl-plugin.h.html: ../gegl/gegl-plugin.h
+gegl-plugin.h.html: $(top_srcdir)/gegl/gegl-plugin.h
 if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
 
-brightness-contrast.c.html: ../operations/color/brightness-contrast.c
+brightness-contrast.c.html: $(top_srcdir)/operations/color/brightness-contrast.c
 if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
@@ -94,7 +94,10 @@ help_dir = $(DESTDIR)$(prefix)/share/gtk-doc/html/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(help_dir)
-	$(INSTALL) $(srcdir)/*.h.html $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
+	$(INSTALL) $(srcdir)/brightness-contrast.c.html \
+	    $(srcdir)/gegl.h.html \
+	    $(srcdir)/gegl-operation.h.html \
+	    $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
 	$(INSTALL) -T $(srcdir)/devhelp.css $(help_dir)/gegl.css
 
 uninstall-local:

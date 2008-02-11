@@ -1,5 +1,10 @@
 2008-02-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: poked at misc rules in the make file, to at least
+	make it pass $ make install
+
+2008-02-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added rule to build index.html from index.txt
 	* gegl.css: updated to also style ascii-doc output.
 	* index-static.html.in: removed.
