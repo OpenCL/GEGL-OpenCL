@@ -37,13 +37,14 @@ pngs:
 all-local: pngs index.html
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT))\
-	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
+	    $(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
 	    $(top_builddir)/bin/gegl
 	@GEGL_DEBUG_TIME=yes GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
 	@GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/bin/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
+	LD_PRELOAD=$(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
+	$(top_builddir)/bin/.libs/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
 clean-local:

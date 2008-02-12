@@ -1,5 +1,12 @@
 2008-02-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/Makefile.am:
+	* Makefile.am: circumvent libtool when running tools from in-tree, we
+	want to make sure we are using the in-tree gegl library and not the
+	system installed one.
+
+2008-02-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.txt.in: minor additions.
 	* Makefile.am: added gegl-quirks to silence irc.
 	* gegl-quirks.css: added
@@ -477,12 +484,6 @@
 
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* Makefile.am:
-
-2006-09-22  Øyvind Kolås  <pippin@gimp.org>
-
 	* index-static.html.in: updated Code Overview.
 
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
@@ -600,12 +601,6 @@
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: Refined the features listing.
-
-2006-08-27  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* index-static.html.in:
 
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
