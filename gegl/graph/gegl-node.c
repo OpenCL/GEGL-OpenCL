@@ -871,10 +871,10 @@ gegl_node_get_depends_on (GeglNode *self)
       !strcmp (gegl_node_get_name (self), "proxynop-input"))
     {
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
+
       if (graph)
-        {
-          depends_on = g_slist_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
-        }
+        depends_on = g_slist_concat (depends_on,
+                                     gegl_node_get_depends_on (GEGL_NODE (graph)));
     }
 
   return depends_on;
@@ -1375,16 +1375,16 @@ const gchar *
 gegl_node_get_operation (const GeglNode *node)
 {
   if (node == NULL)
-    {
-      return NULL;
-    }
-  if (node->is_graph &&
-      node->operation == NULL)
-    return "GraphNode";
+    return NULL;
+
   if (node->operation == NULL)
     {
+      if (node->is_graph)
+        return "GraphNode";
+
       return NULL;
     }
+
   return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }
 
@@ -1412,22 +1412,25 @@ gegl_node_set_need_rect (GeglNode *node,
 const gchar *
 gegl_node_get_debug_name (GeglNode *node)
 {
-  static gchar ret_buf[512];
+  static gchar  ret_buf[512];
+
+  const gchar  *name;
+  const gchar  *operation;
 
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  if (gegl_node_get_name (node) != NULL &&
-      gegl_node_get_name (node)[0] != '\0')
+  name      = gegl_node_get_name (node);
+  operation = gegl_node_get_operation (node);
+
+  if (name && *name)
     {
       g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s named %s",
-                  gegl_node_get_operation (node), gegl_node_get_name (node));
+                  "%s named %s", operation ? operation : "(none)", name);
     }
   else
     {
       g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s",
-                  gegl_node_get_operation (node));
+                  "%s", operation ? operation : "(none)");
     }
 
   return ret_buf;
