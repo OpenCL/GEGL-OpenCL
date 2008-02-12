@@ -20,9 +20,14 @@
 #ifndef __GEGL_PLUGIN_H__
 #define __GEGL_PLUGIN_H__
 
+#ifndef GETTEXT_PACKAGE
+#define GETTEXT_PACKAGE "gegl-0.0"
+#endif
+
 #include <string.h>
 #include <glib-object.h>
 #include <gegl.h>
+#include <glib/gi18n-lib.h>
 
 /* Extra types needed when coding operations */
 typedef struct _GeglOperation        GeglOperation;

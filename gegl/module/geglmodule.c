@@ -23,14 +23,16 @@
 
 #include "geglmodule.h"
 
+#if 0
 /* define hacks to make it compile with as small modifications as possible
  * from geglmodule
  */
 #define _(string)                       (string)
 #define N_(string)                      (string)
-#define gegl_filename_to_utf8(filename) (filename)
 #define gettext(string)                 (string)
+#endif
 
+#define gegl_filename_to_utf8(filename) (filename)
 enum
 {
   MODIFIED,
