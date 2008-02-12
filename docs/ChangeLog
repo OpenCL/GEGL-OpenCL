@@ -1,5 +1,9 @@
 2008-02-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: fixed link to NEWS.
+
+2008-02-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/Makefile.am:
 	* Makefile.am: circumvent libtool when running tools from in-tree, we
 	want to make sure we are using the in-tree gegl library and not the

@@ -48,7 +48,7 @@ follow the following news sources:
 
 http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup[ChangeLog]::
   For day to day fixes, contributions and changes.
-http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup[NEWS]::
+http://svn.gnome.org/viewvc/gegl/trunk/NEWS?view=markup[NEWS]::
   The NEWS file for a list of major new features (also contains older NEWS).
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
  for known and tracked issues with GEGL and perhaps see the 
