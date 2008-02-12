@@ -1,3 +1,7 @@
+2008-02-12  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-init.c (gegl_post_parse_hook): minor code cleanup.
+
 2008-02-12  Tor Lillqvist  <tml@novell.com>
 
 	* gegl/gegl-init.c (gegl_post_parse_hook): Correct call of

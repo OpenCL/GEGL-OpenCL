@@ -222,9 +222,7 @@ gegl_post_parse_hook (GOptionContext *context,
   time = gegl_ticks ();
   if (!module_db)
     {
-      gchar *load_inhibit = g_strdup ("");
       gchar *module_path;
-
 
       if (g_getenv ("GEGL_PATH"))
         {
@@ -233,19 +231,20 @@ gegl_post_parse_hook (GOptionContext *context,
       else
         {
 #ifdef G_OS_WIN32
-          module_path = g_win32_get_package_installation_subdirectory (NULL, "lib" GEGL_LIBRARY "-0.dll", "lib/" GEGL_LIBRARY);
+          module_path =
+            g_win32_get_package_installation_subdirectory (NULL,
+                                                           "lib" GEGL_LIBRARY "-0.dll",
+                                                           "lib/" GEGL_LIBRARY);
 #else
-          module_path = g_strdup (LIBDIR "/" GEGL_LIBRARY);
+          module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
         }
 
       module_db = gegl_module_db_new (FALSE);
 
-      gegl_module_db_set_load_inhibit (module_db, load_inhibit);
       gegl_module_db_load (module_db, module_path);
 
       g_free (module_path);
-      g_free (load_inhibit);
 
       gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
