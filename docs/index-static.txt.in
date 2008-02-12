@@ -146,7 +146,7 @@ Compiling
 ~~~~~~~~
 To build GEGL type the following in the toplevel source directory:
 
- $ ./configure  or: ./autogen.sh if building from svn
+ $ ./configure  # or: ./autogen.sh if building from svn
  $ make
  $ sudo make install
 
@@ -169,14 +169,16 @@ The link:api.html[public API] is the API used for creating things with GEGL,
 this API does not change much at all and is also the API provided by language
 bindings. To make the public API available when compiling a .c file add
 #include <link:gegl.h.html[gegl.h]>, compile and link with the flags provided
-by pkg-config and you should be all set.
+by pkg-config and you should be all set. When you are comfortable with the
+public API, or are using GEGL in some project looking at the
+link:operations.html[Operation reference] might be useful.
 
 Bindings
 ^^^^^^^^
 The bindings for use of GEGL in other programming languages than C are
 co-hosted with GEGL in GNOME subversion but are not part of the regular GEGL
 distribution. The following language bindings are currently available:
-link:rgegl/index.html[ruby], link:pygegl/idex.html[python]:: and 
+link:rgegl/index.html[ruby], link:pygegl/index.html[python]:: and 
 link:gegl-sharp/index.html[C#/Mono].
 
 Hello world
@@ -207,12 +209,6 @@ link:gegl-operation.h.html[GeglOperation]::
   GeglOperationFilter::
     The filter base class sets up GeglBuffers for input and output pads
 
-  GeglOperationAreaFilter::
-    The AreaFilter base class allows defining operations where the output data
-    depends on a neighbourhood with an input window that extends beyond the
-    output window, the information about needed extra pixels in different
-    directions should be set up in the prepare callback for the operation.
-
   GeglOperationPointFilter::
     The point-filter base class is for filters where an output pixel only
     depends on the color and alpha values of the corresponding input pixel.
@@ -220,6 +216,12 @@ link:gegl-operation.h.html[GeglOperation]::
     versions of GEGL operations implemented using the point-filter will get
     speed increases due to more intelligent processing possible in the point
     filter class
+
+  GeglOperationAreaFilter::
+    The AreaFilter base class allows defining operations where the output data
+    depends on a neighbourhood with an input window that extends beyond the
+    output window, the information about needed extra pixels in different
+    directions should be set up in the prepare callback for the operation.
 
   GeglOperationComposer::
     Composer operations are operations that take two inputs named 'input' and

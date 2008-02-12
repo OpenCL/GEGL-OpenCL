@@ -1,3 +1,9 @@
+2008-02-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: minor additions.
+	* Makefile.am: added gegl-quirks to silence irc.
+	* gegl-quirks.css: added
+
 2008-02-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: made index.html depend on gegl.css (since asciidoc
