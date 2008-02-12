@@ -43,7 +43,7 @@ all-local: pngs index.html
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
 	@GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
+	$(top_builddir)/bin/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
 clean-local:

@@ -91,7 +91,6 @@ if test "x$GEGL_UNSTABLE" = "xyes"; then
             [Define to 1 if this is an unstable version of GEGL])
 fi
 AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
-AC_SUBST(GEGL_UNSTABLE)
 
 
 dnl libtool versioning
@@ -324,7 +323,6 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
   have_gtk="no  (gtk+ not found)")
 AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
 
-AC_SUBST(HAVE_GTK)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
@@ -372,7 +370,6 @@ PKG_CHECK_MODULES(LUA, lua,
         have_lua="no  (usable lua not found)")])])
 AM_CONDITIONAL(HAVE_LUA, test "x$have_lua" = "xyes")
 
-AC_SUBST(HAVE_LUA) 
 AC_SUBST(LUA_CFLAGS) 
 AC_SUBST(LUA_LIBS) 
 
@@ -394,7 +391,6 @@ else
 fi
 AM_CONDITIONAL(HAVE_RUBY, test "x$have_ruby" = "xyes")
 
-AC_SUBST(HAVE_RUBY)
 AC_SUBST(RUBY_BIN)
 
 
@@ -407,7 +403,6 @@ PKG_CHECK_MODULES(CAIRO, cairo,
   have_cairo="no  (usable cairo not found)")
 AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
 
-AC_SUBST(HAVE_CAIRO) 
 AC_SUBST(CAIRO_CFLAGS) 
 AC_SUBST(CAIRO_LIBS) 
 
@@ -426,8 +421,6 @@ PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
   have_pangocairo="no  (usable pangocairo not found)")
 AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
 
-AC_SUBST(HAVE_PANGO) 
-AC_SUBST(HAVE_PANGOCAIRO) 
 AC_SUBST(PANGO_CFLAGS) 
 AC_SUBST(PANGO_LIBS) 
 AC_SUBST(PANGOCAIRO_CFLAGS) 
@@ -470,7 +463,6 @@ AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
   fi
 AM_CONDITIONAL(HAVE_JPEG, test "x$jpeg_ok" = "xyes")
 
-AC_SUBST(HAVE_JPEG)
 AC_SUBST(LIBJPEG)
 
 
@@ -483,7 +475,6 @@ PKG_CHECK_MODULES(PNG, libpng,
   have_libpng="no  (usable libpng not found)")
 AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
 
-AC_SUBST(HAVE_PNG) 
 AC_SUBST(PNG_CFLAGS) 
 AC_SUBST(PNG_LIBS) 
 
@@ -497,7 +488,6 @@ PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= librsvg_required_version,
   have_librsvg="no  (usable librsvg not found)")
 AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
 
-AC_SUBST(HAVE_RSVG) 
 AC_SUBST(RSVG_CFLAGS) 
 AC_SUBST(RSVG_LIBS) 
 
@@ -511,7 +501,6 @@ PKG_CHECK_MODULES(OPENEXR, OpenEXR,
   have_openexr="no  (usable OpenEXR not found)")
 AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
 
-AC_SUBST(HAVE_OPENEXR) 
 AC_SUBST(OPENEXR_CFLAGS) 
 AC_SUBST(OPENEXR_LIBS) 
 
@@ -532,7 +521,6 @@ else
 fi
 AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" = "xyes")
 
-AC_SUBST(HAVE_SDL) 
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
@@ -541,8 +529,8 @@ AC_SUBST(SDL_LIBS)
 # Check for graphviz
 ####################
  
-AC_PATH_PROG(HAVE_GRAPHVIZ, dot, no)
-if test "$HAVE_GRAPHVIZ" = "no"; then
+AC_PATH_PROG(GRAPHVIZ, dot, no)
+if test "$GRAPHVIZ" = "no"; then
   have_graphviz="no  (graphviz not found)"
   AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
 else
@@ -550,23 +538,19 @@ else
 fi
 AM_CONDITIONAL(HAVE_GRAPHVIZ, test "x$have_graphviz" = "xyes")
 
-AC_SUBST(HAVE_GRAPHVIZ)
-
 
 ####################
 # Check for enscript
 ####################
  
-AC_PATH_PROG(HAVE_ENSCRIPT, enscript, no)
-if test "$HAVE_ENSCRIPT" = "no"; then
+AC_PATH_PROG(ENSCRIPT, enscript, no)
+if test "$ENSCRIPT" = "no"; then
   have_enscript="no  (enscript not found)"
   AC_MSG_RESULT([*** Check for enscript command failed.])
 else
   have_enscript="yes"
 fi
 AM_CONDITIONAL(HAVE_ENSCRIPT, test "x$have_enscript" = "xyes")
-
-AC_SUBST(HAVE_ENSCRIPT)
 
 
 ####################
@@ -597,8 +581,6 @@ PKG_CHECK_MODULES(AVFORMAT, libavformat,
   have_libavformat="no  (usable libavformat not found)")
 AM_CONDITIONAL(HAVE_AVFORMAT, test "x$have_libavformat" = "xyes")
 
-AC_SUBST(HAVE_AVCODEC)
-AC_SUBST(HAVE_AVFORMAT)
 AC_SUBST(AVCODEC_CFLAGS) 
 AC_SUBST(AVCODEC_LIBS) 
 AC_SUBST(AVFORMAT_CFLAGS) 
@@ -697,6 +679,8 @@ Optional dependencies:
   OpenEXR:        $have_openexr
   rsvg:           $have_librsvg
   SDL:            $have_sdl
+  asciidoc:       $have_asciidoc
+  enscript:       $have_enscript
   graphviz:       $have_graphviz
   avcodec:        $have_libavcodec
   avformat:       $have_libavformat
