@@ -1,3 +1,7 @@
+2008-02-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/operation_reference.c: (main): adapt to new stylesheet.
+
 2008-02-12  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/io/Makefile.am: Echo ff-load.so when building the op.
