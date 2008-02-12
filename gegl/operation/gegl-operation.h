@@ -99,7 +99,7 @@ struct _GeglOperationClass
    */
   GeglRectangle (*get_invalidated_by_change) (GeglOperation       *operation,
                                               const gchar         *input_pad,
-                                              const GeglRectangle *input_region);
+                                              const GeglRectangle *roi);
 
   /* Computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given region of interest.
@@ -122,7 +122,7 @@ struct _GeglOperationClass
   gboolean      (*process)                   (GeglOperation       *operation,
                                               GeglNodeContext     *context,
                                               const gchar         *output_pad,
-                                              const GeglRectangle *result_rect);
+                                              const GeglRectangle *roi);
 
   /* XXX: What is GeglNode doing in this part of the API?
    * Returns the node providing data for a specific location within the
@@ -140,66 +140,66 @@ struct _GeglOperationClass
 GType           gegl_operation_get_type        (void) G_GNUC_CONST;
 
 GeglRectangle   gegl_operation_get_invalidated_by_change
-                                                 (GeglOperation *operation,
-                                                  const gchar   *input_pad,
-                                                  const GeglRectangle *input_region);
+                                             (GeglOperation *operation,
+                                              const gchar   *input_pad,
+                                              const GeglRectangle *roi);
 GeglRectangle   gegl_operation_get_bounding_box  (GeglOperation *operation);
 
 /* retrieves the bounding box of an input pad */
 GeglRectangle * gegl_operation_source_get_bounding_box
-                                                 (GeglOperation *operation,
-                                                  const gchar   *pad_name);
+                                             (GeglOperation *operation,
+                                              const gchar   *pad_name);
 
 
-GeglRectangle   gegl_operation_get_cached_region (GeglOperation *operation,
-                                                  const GeglRectangle *roi);
+GeglRectangle   gegl_operation_get_cached_region
+                                             (GeglOperation *operation,
+                                              const GeglRectangle *roi);
 
 GeglRectangle   gegl_operation_get_required_for_output
-                                                 (GeglOperation *operation,
-                                                  const gchar   *input_pad,
-                                                  const GeglRectangle *roi);
+                                             (GeglOperation *operation,
+                                              const gchar   *input_pad,
+                                              const GeglRectangle *roi);
 
-GeglNode       *gegl_operation_detect            (GeglOperation *operation,
-                                                  gint           x,
-                                                  gint           y);
+GeglNode       *gegl_operation_detect        (GeglOperation *operation,
+                                              gint           x,
+                                              gint           y);
 
 
 /* virtual method invokers that change behavior based on the roi being computed,
  * needs a context_id being based that is used for storing context data.
  */
 
-void            gegl_operation_attach            (GeglOperation       *operation,
-                                                  GeglNode            *node);
-void            gegl_operation_prepare           (GeglOperation       *operation);
-gboolean        gegl_operation_process           (GeglOperation       *operation,
-                                                 GeglNodeContext     *context,
-                                                  const gchar         *output_pad,
-                                                  const GeglRectangle *result_rect);
+void            gegl_operation_attach        (GeglOperation *operation,
+                                              GeglNode      *node);
+void            gegl_operation_prepare       (GeglOperation *operation);
+gboolean        gegl_operation_process       (GeglOperation *operation,
+                                              GeglNodeContext *context,
+                                              const gchar   *output_pad,
+                                              const GeglRectangle *roi);
 
 /* create a pad for a specified property for this operation, this method is
  * to be called from the attach method of operations, most operations do not
  * have to care about this since a super class like filter, sink, source or
  * composer already does so.
  */
-void       gegl_operation_create_pad             (GeglOperation *operation,
-                                                  GParamSpec    *param_spec);
+void            gegl_operation_create_pad    (GeglOperation *operation,
+                                              GParamSpec    *param_spec);
 
 /* specify the bablformat for a pad on this operation (XXX: document when
  * this is legal, at the moment, only used internally in some ops,. but might
  * turn into a global mechanism) */
-void       gegl_operation_set_format             (GeglOperation *operation,
-                                                  const gchar   *pad_name,
-                                                  const Babl    *format);
+void            gegl_operation_set_format    (GeglOperation *operation,
+                                              const gchar   *pad_name,
+                                              const Babl    *format);
 
 
-const Babl * gegl_operation_get_format           (GeglOperation *operation,
-                                                  const gchar   *pad_name);
-
+const Babl *    gegl_operation_get_format    (GeglOperation *operation,
+                                              const gchar   *pad_name);
 
 
 /* retrieves the node providing data to a named input pad */
-GeglNode      * gegl_operation_get_source_node   (GeglOperation *operation,
-                                                  const gchar   *pad_name);
+GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
+                                                const gchar   *pad_name);
 
 G_END_DECLS
 

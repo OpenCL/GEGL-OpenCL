@@ -1,3 +1,7 @@
+2008-02-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.h: improved indentation.
+
 2008-02-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/Makefile.am: removed site specific testing
