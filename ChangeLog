@@ -1,3 +1,10 @@
+2008-02-12  Tor Lillqvist  <tml@novell.com>
+
+	* gegl/gegl-init.c (gegl_post_parse_hook): Correct call of
+	g_win32_get_package_installation_subdirectory() so that it
+	actually finds the location of the gegl DLL, its current name
+	being libgegl-0.0-0.dll.
+
 2008-02-12  Sven Neumann  <sven@gimp.org>
 
 	* gegl/graph/gegl-node.c (gegl_node_get_debug_name): don't pass

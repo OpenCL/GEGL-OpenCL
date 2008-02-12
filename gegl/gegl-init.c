@@ -233,7 +233,7 @@ gegl_post_parse_hook (GOptionContext *context,
       else
         {
 #ifdef G_OS_WIN32
-          module_path = g_win32_get_package_installation_subdirectory (PACKAGE_NAME, "lib" GEGL_LIBRARY ".dll", GEGL_LIBRARY);
+          module_path = g_win32_get_package_installation_subdirectory (NULL, "lib" GEGL_LIBRARY "-0.dll", "lib/" GEGL_LIBRARY);
 #else
           module_path = g_strdup (LIBDIR "/" GEGL_LIBRARY);
 #endif
