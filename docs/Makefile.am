@@ -73,6 +73,7 @@ endif
 
 index.html: index-static.txt                     \
 	    $(top_srcdir)/AUTHORS                \
+	    gegl.css				 \
 	    $(top_srcdir)/NEWS                   \
 	    $(top_builddir)/bin/gegl		 \
 	    Makefile.am				 \

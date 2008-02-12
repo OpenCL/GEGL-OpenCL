@@ -1,4 +1,6 @@
-
+      li>p {
+          display: inline;
+      }
       body {
         margin-left: 12.5em;
         margin-right: 2em;
