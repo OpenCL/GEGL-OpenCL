@@ -129,6 +129,15 @@ dnl Initialize maintainer mode
 AM_MAINTAINER_MODE
 
 
+######################
+# gettext i18n support
+######################
+
+GETTEXT_PACKAGE=gegl-$GEGL_API_VERSION
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
+                   [The prefix for our gettext translation domains.])
+
+
 ###############
 # Generic stuff
 ###############

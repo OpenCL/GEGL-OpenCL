@@ -16,6 +16,8 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
 
 /* Followed by this #if ... */
 #ifdef GEGL_CHANT_PROPERTIES

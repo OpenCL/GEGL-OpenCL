@@ -16,23 +16,18 @@
  * gimpmodule.c: * (C) 1999 Austin Donnelly <austin@gegl.org>
  */
 
+#include "config.h"
 
 #include <string.h>
 
 #include <glib-object.h>
+#include <glib/gi18n-lib.h>
 
 #include "geglmodule.h"
 
-#if 0
-/* define hacks to make it compile with as small modifications as possible
- * from geglmodule
- */
-#define _(string)                       (string)
-#define N_(string)                      (string)
-#define gettext(string)                 (string)
-#endif
 
 #define gegl_filename_to_utf8(filename) (filename)
+
 enum
 {
   MODIFIED,

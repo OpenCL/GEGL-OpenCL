@@ -20,14 +20,9 @@
 #ifndef __GEGL_PLUGIN_H__
 #define __GEGL_PLUGIN_H__
 
-#ifndef GETTEXT_PACKAGE
-#define GETTEXT_PACKAGE "gegl-0.0"
-#endif
-
 #include <string.h>
 #include <glib-object.h>
 #include <gegl.h>
-#include <glib/gi18n-lib.h>
 
 /* Extra types needed when coding operations */
 typedef struct _GeglOperation        GeglOperation;
@@ -112,15 +107,17 @@ const gchar * gegl_extension_handler_get      (const gchar *extension);
 
 /***
  * GeglOperation:
- * 
- * All the image processing code in GEGL is implemented as GeglOperations,
- * GEGL oeprations are implemented as GObject with a convenience API called
- * chanting that abstracts away the boiler plater needed to generate introspectable
- * named properties of different types.
  *
- * Most types of operations like: filters, composers, sources, sinks, point
- * operations, compositing operations, and spatial operations with fixed
- * neighbourhoods. These base classes builds on top of the GeglOperationsClass:
+ * All the image processing code in GEGL is implemented as
+ * GeglOperations, GEGL oeprations are implemented as GObject with a
+ * convenience API called chanting that abstracts away the boiler
+ * plater needed to generate introspectable named properties of
+ * different types.
+ *
+ * Most types of operations like: filters, composers, sources, sinks,
+ * point operations, compositing operations, and spatial operations
+ * with fixed neighbourhoods. These base classes builds on top of the
+ * GeglOperationsClass:
  *
  * See <a href='gegl-operation.h.html'>gegl-operation.h</a> for details.
  */
