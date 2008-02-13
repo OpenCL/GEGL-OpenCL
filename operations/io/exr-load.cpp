@@ -18,21 +18,17 @@
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
  */
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "", "Path of file to load.")
+gegl_chant_string (path, "File", "", "Path of file to load.")
 
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME         exr_load
-#define GEGL_CHANT_DESCRIPTION  "EXR image loader."
-#define GEGL_CHANT_SELF         "exr-load.cpp"
-#define GEGL_CHANT_CATEGORIES   "hidden"
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "exr-load.cpp"
 
 extern "C" {
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 }
 
 #include <ImfInputFile.h>
@@ -48,22 +44,22 @@ using namespace Imf;
 using namespace Imf::RgbaYca;
 using namespace Imath;
 
-enum 
+enum
 {
   COLOR_RGB    = 1<<1,
   COLOR_Y      = 1<<2,
-  COLOR_C      = 1<<3, 
+  COLOR_C      = 1<<3,
   COLOR_ALPHA  = 1<<4,
   COLOR_U32    = 1<<5,
   COLOR_FP16   = 1<<6,
   COLOR_FP32   = 1<<7
 };
 
-static gfloat chroma_sampling[] = 
+static gfloat chroma_sampling[] =
   {
      0.002128,   -0.007540,
      0.019597,   -0.043159,
-	   0.087929,   -0.186077,
+       0.087929,   -0.186077,
      0.627123,    0.627123,
     -0.186077,    0.087929,
     -0.043159,    0.019597,
@@ -115,9 +111,9 @@ static float
 saturation             (const gfloat *in);
 
 static void
-desaturate             (const gfloat *in, 
-                        gfloat        f, 
-                        const V3f    &yw, 
+desaturate             (const gfloat *in,
+                        gfloat        f,
+                        const V3f    &yw,
                         gfloat       *out,
                         int           has_alpha);
 
@@ -131,7 +127,7 @@ insert_channels        (FrameBuffer  &fb,
 
 
 
-/* The following functions saturation, desaturate, fix_saturation, 
+/* The following functions saturation, desaturate, fix_saturation,
  * reconstruct_chroma_horiz, reconstruct_chroma_vert, convert_rgba_to_yca
  * are based upon their counterparts from the OpenEXR library, and are needed
  * since OpenEXR does not handle chroma subsampled 32-bit/per channel images.
@@ -151,9 +147,9 @@ saturation (const gfloat *in)
 
 
 static void
-desaturate (const gfloat *in, 
-            gfloat        f, 
-            const V3f    &yw, 
+desaturate (const gfloat *in,
+            gfloat        f,
+            const V3f    &yw,
             gfloat       *out,
             int           has_alpha)
 {
@@ -244,7 +240,7 @@ fix_saturation (GeglBuffer       *buf,
     }
 
   fix_saturation_row (row[1], row[1], row[2], yw, gegl_buffer_get_width (buf), nc);
-  
+
   for (y=1; y<gegl_buffer_get_height (buf)-1; y++)
     {
       if (y>1)
@@ -252,7 +248,7 @@ fix_saturation (GeglBuffer       *buf,
           gegl_rectangle_set (&rect, 0, y-2, gegl_buffer_get_width (buf), 1);
           gegl_buffer_set (buf, &rect, NULL, row[0], GEGL_AUTO_ROWSTRIDE);
         }
-      
+
       gegl_rectangle_set (&rect, 0,y+1, gegl_buffer_get_width (buf), 1);
       gegl_buffer_get (buf, 1.0, &rect, NULL, row[0], GEGL_AUTO_ROWSTRIDE);
 
@@ -451,7 +447,7 @@ import_exr (GeglBuffer  *gegl_buffer,
       gint pxsize;
 
       g_object_get (gegl_buffer, "px-size", &pxsize, NULL);
-      
+
 
       char *pixels = (char*) g_malloc0 (gegl_buffer_get_width (gegl_buffer) * pxsize);
 
@@ -461,15 +457,15 @@ import_exr (GeglBuffer  *gegl_buffer,
        * The pointer we pass to insert_channels needs to be adjusted, since
        * our buffer always starts at the position where the first pixels
        * occurs, which may be a position not equal to (0 0). OpenEXR expects
-       * the pointer to point to (0 0), which may be outside our buffer, but 
+       * the pointer to point to (0 0), which may be outside our buffer, but
        * that is needed so that OpenEXR writes all pixels to the correct
        * position in our buffer.
        */
       base -= pxsize * dw.min.x;
 
-      insert_channels (frameBuffer, 
-                       file.header(), 
-                       base, 
+      insert_channels (frameBuffer,
+                       file.header(),
+                       base,
                        gegl_buffer_get_width (gegl_buffer),
                        format_flags,
                        pxsize);
@@ -479,7 +475,7 @@ import_exr (GeglBuffer  *gegl_buffer,
       {
         gint i;
         GeglRectangle rect;
-        
+
         for (i=dw.min.y; i<=dw.max.y; i++)
           {
             gegl_rectangle_set (&rect, 0, i-dw.min.y,gegl_buffer_get_width (gegl_buffer), 1);
@@ -492,14 +488,14 @@ import_exr (GeglBuffer  *gegl_buffer,
         {
           Chromaticities cr;
           V3f yw;
-  
+
           if (hasChromaticities(file.header()))
             cr = chromaticities (file.header());
 
           yw = computeYw (cr);
 
           reconstruct_chroma (gegl_buffer, format_flags & COLOR_ALPHA);
-          convert_yca_to_rgba (gegl_buffer, 
+          convert_yca_to_rgba (gegl_buffer,
                                format_flags & COLOR_ALPHA,
                                yw);
 
@@ -550,7 +546,7 @@ query_exr (const gchar *path,
           else
             pt = ch.findChannel ("B")->type;
         }
-      else if (ch.findChannel ("Y") && 
+      else if (ch.findChannel ("Y") &&
                (ch.findChannel("RY") || ch.findChannel("BY")))
         {
           strcpy (format_string, "RGB");
@@ -601,40 +597,15 @@ query_exr (const gchar *path,
   return TRUE;
 }
 
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  {
-    gint w,h,ff;
-    gpointer format;
-    gboolean ok;
-
-    ok = query_exr (self->path, &w, &h, &ff, &format);
-
-    if (ok)
-      {
-        import_exr (output, self->path, ff);
-      }
-    else
-      {
-        return FALSE;
-      }
-  }
-  return TRUE;
-}
-
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {0, 0, 10, 10};
-  gint w,h,ff;
-  gpointer format;
+  gint          w, h, ff;
+  gpointer      format;
 
-  if (query_exr (self->path, &w, &h, &ff, &format))
+  if (query_exr (o->path, &w, &h, &ff, &format))
     {
       result.width = w;
       result.height = h;
@@ -644,17 +615,50 @@ get_bounding_box (GeglOperation *operation)
   return result;
 }
 
-static void class_init (GeglOperationClass *operation_class)
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
 {
-  static gboolean done=FALSE;
-  if (done)
-    return;
-  gegl_extension_handler_register (".exr", "exr-load");
-  gegl_extension_handler_register (".EXR", "exr-load");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gint        w,h,ff;
+  gpointer    format;
+  gboolean    ok;
 
-  done = TRUE;
+  ok = query_exr (o->path, &w, &h, &ff, &format);
+
+  if (ok)
+    {
+      import_exr (output, o->path, ff);
+    }
+  else
+    {
+      return FALSE;
+    }
+
+  return TRUE;
 }
 
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_bounding_box = get_bounding_box;
+
+  operation_class->name        = "exr-load";
+  operation_class->categories  = "hidden";
+  operation_class->description = "EXR image loader.";
+
+  gegl_extension_handler_register (".exr", "exr-load");
+  gegl_extension_handler_register (".EXR", "exr-load");
+}
 
 #endif
 

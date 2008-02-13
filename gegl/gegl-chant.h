@@ -28,6 +28,7 @@
 
 #include <gegl-plugin.h>
 
+
 GType operation_get_type ();
 typedef struct _GeglChantO  GeglChantO;
 typedef struct _GeglChant   GeglChant;
@@ -35,6 +36,7 @@ typedef struct _GeglChant   GeglChant;
 static void operation_register_type (GTypeModule *module);
 static void gegl_chant_init         (GeglChant   *self);
 static void gegl_chant_class_init   (gpointer     klass);
+static gpointer gegl_chant_parent_class = NULL;
 
 #define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_CHANT_C_FILE, GeglChant, operation, T_P, 0, {})
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
@@ -46,6 +48,7 @@ static GType    type_name##_type_id = 0;                                \
 static void     type_name##_class_intern_init (gpointer klass)          \
   {                                                                     \
     type_name##_parent_class = g_type_class_peek_parent (klass);        \
+    gegl_chant_parent_class = type_name##_parent_class;                 \
     type_name##_class_init ((TypeName##Class*) klass);                  \
     gegl_chant_class_init (klass);                                      \
   }                                                                     \
@@ -583,10 +586,8 @@ gegl_chant_constructor (GType                  type,
                         GObjectConstructParam *construct_properties)
 {
   GObject *obj;
-  GObjectClass *parent_class =
-      g_type_class_peek_parent (g_type_class_peek (type));
 
-  obj = G_OBJECT_CLASS (parent_class)->constructor (
+  obj = G_OBJECT_CLASS (gegl_chant_parent_class)->constructor (
             type, n_construct_properties, construct_properties);
 
   g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);

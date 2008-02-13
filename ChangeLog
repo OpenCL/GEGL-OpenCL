@@ -1,3 +1,12 @@
+2008-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-chant.h: Added gegl_chant_parent_class and use it in
+	gegl_chant_constructor() to work around borkness which has GType
+	being defined differently in C++ than it is in C. Fixed error in
+	compilation of exr-load.cpp op file.
+
+	* operations/io/exr-load.cpp: Updated to new chanting API.
+
 2008-02-13  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac
