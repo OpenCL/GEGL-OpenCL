@@ -49,21 +49,21 @@ static GeglModuleDB *module_db   = NULL;
 
 static glong         global_time = 0;
 
+static const gchar *makefile (void);
 
 /**
  * gegl_init:
  * @argc: a pointer to the number of command line arguments.
  * @argv: a pointer to the array of command line arguments.
  *
- * Call this function before using any other GEGL functions. It will
- * initialize everything needed to operate GEGL and parses some
- * standard command line options.  @argc and @argv are adjusted
- * accordingly so your own code will never see those standard
- * arguments.
+ * Call this function before using any other GEGL functions. It will initialize
+ * everything needed to operate GEGL and parses some standard command line
+ * options.  @argc and @argv are adjusted accordingly so your own code will
+ * never see those standard arguments.
  *
- * Note that there is an alternative ways to initialize GEGL: if you
- * are calling g_option_context_parse() with the option group returned
- * by gegl_get_option_group(), you don't have to call gegl_init().
+ * Note that there is an alternative ways to initialize GEGL: if you are
+ * calling g_option_context_parse() with the option group returned by
+ * gegl_get_option_group(), you don't have to call gegl_init().
  **/
 void
 gegl_init (gint    *argc,
@@ -74,9 +74,9 @@ gegl_init (gint    *argc,
   if (!g_thread_supported())
     g_thread_init (NULL);
 
-  /*  If any command-line actions are ever added to GEGL, then the
-   *  commented out code below should be used.  Until then, we simply
-   *  call the parse hook directly.
+  /*  If any command-line actions are ever added to GEGL, then the commented
+   *  out code below should be used.  Until then, we simply call the parse hook
+   *  directly.
    */
   gegl_post_parse_hook (NULL, NULL, NULL, NULL);
 
@@ -124,6 +124,9 @@ gegl_get_option_group (void)
 
 void gegl_tile_mem_stats (void);
 
+
+const gchar *gegl_swap_dir (void);
+
 void
 gegl_exit (void)
 {
@@ -161,13 +164,12 @@ gegl_exit (void)
   if (gegl_buffer_leaks ())
     g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
 
-  if (g_getenv ("GEGL_SWAP"))
+  if (gegl_swap_dir())
     {
       /* remove all files matching <$GEGL_SWAP>/GEGL-<pid>-*.swap */
 
-      const gchar  *swapdir = g_getenv ("GEGL_SWAP");
       guint         pid     = getpid ();
-      GDir         *dir     = g_dir_open (swapdir, 0, NULL);
+      GDir         *dir     = g_dir_open (gegl_swap_dir (), 0, NULL);
 
       gchar        *glob    = g_strdup_printf ("GEGL-%i-*.swap", pid);
       GPatternSpec *pattern = g_pattern_spec_new (glob);
@@ -181,7 +183,7 @@ gegl_exit (void)
             {
               if (g_pattern_match_string (pattern, name))
                 {
-                  gchar *fname = g_strdup_printf ("%s/%s", swapdir, name);
+                  gchar *fname = g_strdup_printf ("%s/%s", gegl_swap_dir (), name);
                   g_unlink (fname);
                   g_free (fname);
                 }
@@ -195,6 +197,7 @@ gegl_exit (void)
 
   g_print ("\n");
 }
+
 
 static void
 gegl_init_i18n (void)
@@ -231,14 +234,19 @@ gegl_post_parse_hook (GOptionContext *context,
   time = gegl_ticks ();
   if (!module_db)
     {
-      gchar *module_path;
+
+      module_db = gegl_module_db_new (FALSE);
 
       if (g_getenv ("GEGL_PATH"))
         {
+          gchar *module_path;
           module_path = g_strdup (g_getenv ("GEGL_PATH"));
+          gegl_module_db_load (module_db, module_path);
+          g_free (module_path);
         }
       else
         {
+          gchar *module_path;
 #ifdef G_OS_WIN32
           module_path =
             g_win32_get_package_installation_subdirectory (NULL,
@@ -247,13 +255,26 @@ gegl_post_parse_hook (GOptionContext *context,
 #else
           module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
+          gegl_module_db_load (module_db, module_path);
+
+          /* also load plug-ins from ~/.gegl-0.0/plug-ins */
+          g_free (module_path);
+          module_path = g_build_filename (g_get_home_dir (), "." GEGL_LIBRARY, "plug-ins", NULL);
+          if (g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR)==0)
+            {
+              gchar *makefile_path = g_malloc (strlen (module_path) + 20);
+              g_sprintf (makefile_path, "%s/Makefile", module_path);
+              g_printf ("%s\n", makefile_path);
+              if (!g_file_test (makefile_path, G_FILE_TEST_EXISTS))
+                g_file_set_contents (makefile_path, makefile (), -1, NULL);
+              g_free (makefile_path);
+            }
+          gegl_module_db_load (module_db, module_path);
+          g_free (module_path);
         }
 
-      module_db = gegl_module_db_new (FALSE);
 
-      gegl_module_db_load (module_db, module_path);
 
-      g_free (module_path);
 
       gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
@@ -262,4 +283,25 @@ gegl_post_parse_hook (GOptionContext *context,
   gegl_initialized = TRUE;
 
   return TRUE;
+}
+
+static const gchar *makefile (void)
+{
+  return
+    "# This is a generic makefile for GEGL operations. Just add .c files,\n"
+    "# rename mentions of the filename and opname to the new name, and it should \n"
+    "# compile. Operations in this dir should be loaded by GEGL by default\n"
+    "# If the operation being written depends on extra libraries, you'd better\n"
+    "# add a dedicated target with the extra bits linked in.\n"
+    "\n\n"
+    "CFLAGS  += `pkg-config gegl --cflags`  -I. -fPIC\n"
+    "LDFLAGS += `pkg-config --libs` -shared\n"
+    "SHREXT=.so\n"
+    "CFILES = $(wildcard ./*.c)\n"
+    "SOBJS  = $(subst ./,,$(CFILES:.c=$(SHREXT)))\n"
+    "all: $(SOBJS)\n"
+    "%$(SHREXT): %.c $(GEGLHEADERS)\n"
+    "	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)\n"
+    "clean:\n"
+    "	rm -f *$(SHREXT) $(OFILES)\n";
 }

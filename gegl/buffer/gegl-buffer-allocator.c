@@ -128,6 +128,35 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
 
 static GHashTable *allocators = NULL;
 
+/* if this function is made to return NULL swapping is disabled */
+const gchar *gegl_swap_dir (void)
+{
+  static gchar swapdir[1024]="";
+  if (swapdir[0]=='\0')
+    {
+      if (g_getenv ("GEGL_SWAP"))
+        {
+          if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
+            return NULL;
+          g_sprintf (swapdir, "%s", g_getenv ("GEGL_SWAP"));
+        }
+      else
+        {
+          g_sprintf (swapdir, "%s/.%s/swap", g_get_home_dir(), GEGL_LIBRARY);
+        }
+
+      /* Fall back to "swapping to RAM" if not able to make
+       * sure swapping dir exist
+       */
+      if (g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR)!=0)
+        {
+          g_warning ("unable to make sure swapdir %s exist", swapdir);
+          return NULL; 
+        }
+    }
+  return swapdir;
+};
+
 GeglBuffer *
 gegl_buffer_new_from_format (const void *babl_format,
                              gint        x,
@@ -146,13 +175,11 @@ gegl_buffer_new_from_format (const void *babl_format,
   /* if no match, create new */
   if (allocator == NULL)
     {
-      const gchar *gegl_swap = g_getenv ("GEGL_SWAP");
-
-      if (gegl_swap != NULL)
+      if (gegl_swap_dir () != NULL)
         {
           GeglStorage *storage;
           gchar *path;
-          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap,
+          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap_dir (),
                                   getpid (), babl_name (babl_format));
           storage = g_object_new (GEGL_TYPE_STORAGE,
                                                "format", babl_format,
