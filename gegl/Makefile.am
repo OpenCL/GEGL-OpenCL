@@ -51,7 +51,9 @@ INCLUDES = \
 	-I$(top_srcdir)/gegl/operation\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
 
-AM_CPPFLAGS = -DLIBDIR=\""$(libdir)"\"
+AM_CPPFLAGS = \
+	-DLIBDIR=\""$(libdir)"\"	\
+	-DGEGL_LOCALEDIR=\""$(GEGL_LOCALEDIR)"\" 
 
 libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 

@@ -79,7 +79,9 @@ AC_SUBST(GEGL_API_VERSION)
 GEGL_RELEASE=gegl_api_version
 AC_SUBST(GEGL_RELEASE)
 
-AC_DEFINE_UNQUOTED(GEGL_LIBRARY, "$PACKAGE_NAME-$GEGL_API_VERSION", [name of GEGL library])
+
+AC_DEFINE_UNQUOTED(GEGL_LIBRARY, "$PACKAGE_NAME-$GEGL_API_VERSION",
+                   [The name of the GEGL library])
 
 
 dnl The symbol GEGL_UNSTABLE is defined above for substitution in
@@ -127,15 +129,6 @@ AM_PROG_LIBTOOL
 
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE
-
-
-######################
-# gettext i18n support
-######################
-
-GETTEXT_PACKAGE=gegl-$GEGL_API_VERSION
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
-                   [The prefix for our gettext translation domains.])
 
 
 ###############
@@ -334,6 +327,32 @@ AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
 
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
+
+
+######################
+# gettext i18n support
+######################
+
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "gegl-$GEGL_API_VERSION",
+                   [Our gettext translation domain.])
+
+# GNU format message catalogs go into $datadir/locale,
+# standard location is $libdir/locale. DATADIRNAME set accordingly.
+
+GEGL_LOCALEDIR="$datadir/locale"
+if test "$DATADIRNAME" = "lib"; then
+   GEGL_LOCALEDIR="$libdir/locale"
+fi
+AC_SUBST(GEGL_LOCALEDIR)
+
+# Check for bind_textdomain_codeset, including -lintl if GLib brings it in.
+gegl_save_LIBS=$LIBS
+LIBS="$LIBS $GLIB_LIBS"
+AC_CHECK_FUNCS(bind_textdomain_codeset,,
+  AC_MSG_ERROR([
+*** Check for bind_textdomain_codeset() failed!  This is required.
+]))
+LIBS=$gegl_save_LIBS
 
 
 #########################

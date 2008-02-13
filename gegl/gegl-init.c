@@ -196,6 +196,13 @@ gegl_exit (void)
   g_print ("\n");
 }
 
+static void
+gegl_init_i18n (void)
+{
+  bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+}
+
 static gboolean
 gegl_post_parse_hook (GOptionContext *context,
                       GOptionGroup   *group,
@@ -218,6 +225,8 @@ gegl_post_parse_hook (GOptionContext *context,
     g_setenv ("BABL_ERROR", "0.001", 0);
   babl_init ();
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
+
+  gegl_init_i18n ();
 
   time = gegl_ticks ();
   if (!module_db)

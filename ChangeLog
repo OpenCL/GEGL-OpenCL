@@ -1,5 +1,12 @@
 2008-02-13  Sven Neumann  <sven@gimp.org>
 
+	* configure.ac
+	* gegl/Makefile.am: define GEGL_LOCALEDIR.
+
+	* gegl/gegl-init.c (gegl_init_i18n): call bindtextdomain().
+
+2008-02-13  Sven Neumann  <sven@gimp.org>
+
 	* configure.ac: define GETTEXT_PACKAGE here so it ends up being
 	defined in config.h.
 
