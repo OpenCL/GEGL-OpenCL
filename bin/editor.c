@@ -1161,6 +1161,10 @@ void editor_refresh_structure (void)
                            GTK_TREE_MODEL (store));
 }
 
+typedef struct _GeglPad GeglPad;
+void gegl_pad_set_format (gpointer,gpointer);
+gpointer gegl_node_get_pad (gpointer, const gchar *name);
+
 static void editor_set_gegl (GeglNode    *gegl)
 {
 /*
@@ -1171,6 +1175,13 @@ static void editor_set_gegl (GeglNode    *gegl)
   if (editor.gegl)
     g_object_unref (editor.gegl);
   editor.gegl = gegl;
+
+    {
+      GeglPad *pad;
+      pad = gegl_node_get_pad (gegl, "output");
+      g_assert (pad);
+      gegl_pad_set_format (pad, babl_format ("R'G'B' u8"));
+    }
 
   g_object_set (editor.view, "node", editor.gegl, NULL);
   editor_refresh_structure ();
