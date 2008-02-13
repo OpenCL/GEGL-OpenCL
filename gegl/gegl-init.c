@@ -264,7 +264,6 @@ gegl_post_parse_hook (GOptionContext *context,
             {
               gchar *makefile_path = g_malloc (strlen (module_path) + 20);
               g_sprintf (makefile_path, "%s/Makefile", module_path);
-              g_printf ("%s\n", makefile_path);
               if (!g_file_test (makefile_path, G_FILE_TEST_EXISTS))
                 g_file_set_contents (makefile_path, makefile (), -1, NULL);
               g_free (makefile_path);
