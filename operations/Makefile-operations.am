@@ -21,7 +21,7 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(top_srcdir)/gegl/property-types   \
            -I$(top_srcdir)/gegl/module           \
            -I. -fPIC
-LDFLAGS += -shared $(no_undefined)
+LDFLAGS += $(DYNAMICLIB) $(no_undefined)
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)
 

@@ -226,6 +226,39 @@ case x"$target" in
 esac
 AC_MSG_RESULT([$target_or_host])
 
+
+
+####################################################
+# Check how to generate plug-ins (with gcc at least)
+####################################################
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$target_or_host" in 
+  *-*-darwin*)                 # darwin
+    shrext=.dylib
+    dynamiclib=-dynamiclib
+    ;;
+  *-*-mingw* | *-*-cygwin*)    # windows
+    shrext=.dll
+    dynamiclib=-shared
+    ;;
+  *)                           # linux (and BSD?)
+    dynamiclib=-shared
+    shrext=.so
+    ;;
+esac
+
+SHREXT=$shrext
+AC_SUBST(SHREXT)
+AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
+
+DYNAMICLIB=$dynamiclib
+AC_SUBST(DYNAMICLIB)
+AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
+
+dnl ===========================================================================
+
+
 #################
 # Check for Win32
 #################
@@ -234,11 +267,9 @@ AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
   *-*-mingw* | *-*-cygwin*)
     platform_win32=yes
-    shrext=.dll
     ;;
   *)
     platform_win32=no
-    shrext=.so
     ;;
 esac
 AC_MSG_RESULT([$platform_win32])
@@ -264,12 +295,6 @@ AC_SUBST(MATH_LIB)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
-#####################################
-# File extension for shared libraries
-#####################################
-
-SHREXT=$shrext
-AC_SUBST(SHREXT)
 
 #############################
 # Threads and multi processor 

@@ -1,3 +1,10 @@
+2008-02-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: added check to determine how to compile plug-ins,
+	a bit of cleanup.
+	* bin/node-editors/Makefile.am:
+	* operations/Makefile-operations.am: make it work on darwin as well.
+
 2008-02-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc),

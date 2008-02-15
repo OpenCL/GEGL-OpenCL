@@ -14,7 +14,7 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @GTK_CFLAGS@ \
 	   -I$(top_srcdir)/gegl/operation \
 	   -I$(top_srcdir)/gegl/module \
 	   -I$(top_srcdir)/gegl/property-types -fPIC
-LDFLAGS += -shared 
+LDFLAGS += $(DYNAMICLIB)
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
 
