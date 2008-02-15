@@ -7,13 +7,23 @@ SUBDIRS= gallery
 #
 #
 
-HTML_FILES = index-static.txt 	\
+HTML_FILES = \
 	operations.html		\
-	class-hierarchy.html	\
-	gegl.h.html		\
-	brightness-contrast.c.html		\
-	gegl-operation.h.html	\
+	class-hierarchy.html
+
+if HAVE_RUBY
+HTML_FILES += api.html
+endif
+
+if HAVE_ENSCRIPT
+ENSCRIPT_FILES = \
+	brightness-contrast.c.html \
+	gegl.h.html \
+	gegl-operation.h.html \
 	gegl-plugin.h.html
+
+HTML_FILES += $(ENSCRIPT_FILES)
+endif
 
 if HAVE_ASCIIDOC
 HTML_FILES += index.html
@@ -28,16 +38,15 @@ EXTRA_DIST= 			\
 	hello-world.c		\
 	hello-world-video.c	\
 	index-static.txt.in	\
-	api.html		\
-	index.html
+	$(HTML_FILES)
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
-CLEANFILES = README $(HTML_FILES)
-DISTCLEANFILES = index-static.txt class-hierarchy.html operations.html
+CLEANFILES = README $(HTML_FILES) index-static.txt
+DISTCLEANFILES = index-static.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-all-local: $(HTML_FILES) api.html
+all-local: $(HTML_FILES)
 
 operations.html: $(top_builddir)/tools/operation_reference $(top_srcdir)/operations/*/*.c
 	LD_PRELOAD=$(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
@@ -74,13 +83,13 @@ if HAVE_RUBY
 	../tools/create-reference.rb ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../gegl/operation/gegl-operation.h api.html
 endif
 
-index.html: index-static.txt                     \
-	    $(top_srcdir)/AUTHORS                \
-	    gegl.css				 \
-	    $(top_srcdir)/NEWS                   \
-	    $(top_builddir)/bin/gegl		 \
-	    Makefile.am				 \
-	    $(srcdir)/hello-world.c
+index.html: index-static.txt		\
+	$(top_srcdir)/AUTHORS		\
+	gegl.css			\
+	$(top_srcdir)/NEWS		\
+	$(top_builddir)/bin/gegl	\
+	Makefile.am			\
+	$(srcdir)/hello-world.c
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	cp $< $@ 
@@ -104,12 +113,21 @@ if HAVE_ENSCRIPT
 	    $(srcdir)/gegl-operation.h.html \
 	    $(srcdir)/gegl-plugin.h.html $(help_dir)
 endif
-	$(INSTALL) $(srcdir)/api.html $(srcdir)/gegl.devhelp $(help_dir)
+if HAVE_RUBY
+	$(INSTALL) $(srcdir)/api.html $(help_dir)
+endif
+	$(INSTALL) $(srcdir)/gegl.devhelp $(help_dir)
 	$(INSTALL) -T $(srcdir)/devhelp.css $(help_dir)/gegl.css
 
 uninstall-local:
-	rm -f $(help_dir)/api.html $(help_dir)/gegl.devhelp
-	rm -f $(help_dir)/gegl.css
+if HAVE_ENSCRIPT
+	rm -f $(help_dir)/brightness-contrast.c.html $(help_dir)/gegl.h.html
+	rm -f $(help_dir)/gegl-operation.h.html $(help_dir)/gegl-plugin.h.html
+endif
+if HAVE_RUBY
+	rm -f $(help_dir)/api.html
+endif
+	rm -f $(help_dir)/gegl.devhelp $(help_dir)/gegl.css
 
 hello-world: hello-world.c
 	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`

@@ -1,3 +1,7 @@
+2008-02-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Makefile.am: Updated to fix problems running 'make distcheck'.
+
 2008-02-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: fixed link to NEWS.
