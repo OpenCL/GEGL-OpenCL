@@ -1,6 +1,8 @@
 if OS_WIN32
 no_undefined = -no-undefined
 libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
+else
+libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION)$(SHREXT)
 endif
 
 CFILES          = $(wildcard $(srcdir)/*.c)
