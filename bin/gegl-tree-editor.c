@@ -22,8 +22,6 @@
 #include "gegl-node-editor.h"
 #include "editor.h"
 
-extern GeglNode *editor_output;
-
 void property_editor_rebuild (GtkWidget *container,
                               GeglNode  *node)
 {

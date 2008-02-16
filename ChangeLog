@@ -1,5 +1,9 @@
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/gegl-tree-editor.c: Remove obsolete extern declaration.
+
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/editor-optype.c: General cleanup and added static function
 	proptotypes.
 
