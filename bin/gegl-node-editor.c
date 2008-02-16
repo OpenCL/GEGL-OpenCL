@@ -28,10 +28,13 @@
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
 
+
+/* FIXME: EEEEEEEEEK :( */
 GtkWidget *
 typeeditor_optype (GtkSizeGroup *col1,
                    GtkSizeGroup *col2,
                    GeglNodeEditor *node_editor);
+
 enum
 {
   PROP_0,
@@ -40,33 +43,38 @@ enum
   PROP_LAST
 };
 
-static void gegl_node_editor_class_init (GeglNodeEditorClass   *klass);
-static void gegl_node_editor_init       (GeglNodeEditor        *self);
-static void set_property                (GObject               *gobject,
-                                         guint                  prop_id,
-                                         const GValue          *value,
-                                         GParamSpec            *pspec);
-static void construct                   (GeglNodeEditor        *editor);
 
-static GObject *constructor             (GType                  type,
-                                         guint                  n_params,
-                                         GObjectConstructParam *params);
+static void        gegl_node_editor_class_init     (GeglNodeEditorClass   *klass);
+static void        gegl_node_editor_init           (GeglNodeEditor        *self);
+static void        gegl_node_editor_set_property   (GObject               *gobject,
+                                                    guint                  prop_id,
+                                                    const GValue          *value,
+                                                    GParamSpec            *pspec);
+static void        gegl_node_editor_real_construct (GeglNodeEditor        *editor);
+
+static GObject *   gegl_node_editor_constructor    (GType                  type,
+                                                    guint                  n_params,
+                                                    GObjectConstructParam *params);
+static GtkWidget * property_editor_general         (GeglNodeEditor        *node_editor,
+                                                    GeglNode              *node);
+
+
 
 G_DEFINE_TYPE (GeglNodeEditor, gegl_node_editor, GTK_TYPE_VBOX)
 
-static GObjectClass *parent_class = NULL;
+
+#define parent_class gegl_node_editor_parent_class 
+
 
 static void
 gegl_node_editor_class_init (GeglNodeEditorClass *klass)
 {
-  GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
-  GeglNodeEditorClass *node_editor_class = GEGL_NODE_EDITOR_CLASS (klass);
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent (klass);
+  gobject_class->set_property  = gegl_node_editor_set_property;
+  gobject_class->constructor   = gegl_node_editor_constructor;
 
-  gobject_class->set_property = set_property;
-  gobject_class->constructor = constructor;
-  node_editor_class->construct = construct;
+  klass->construct             = gegl_node_editor_real_construct;
 
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
@@ -88,15 +96,15 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
 static void
 gegl_node_editor_init (GeglNodeEditor *self)
 {
-  self->node = NULL;
+  self->node               = NULL;
   self->operation_switcher = TRUE;
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_node_editor_set_property (GObject      *gobject,
+                               guint         property_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
   GeglNodeEditor *self = GEGL_NODE_EDITOR (gobject);
 
@@ -116,12 +124,8 @@ set_property (GObject      *gobject,
     }
 }
 
-static GtkWidget *
-property_editor_general (GeglNodeEditor *node_editor,
-                         GeglNode *node);
-
 static void
-construct (GeglNodeEditor *self)
+gegl_node_editor_real_construct (GeglNodeEditor *self)
 {
   gtk_box_set_homogeneous (GTK_BOX (self), FALSE);
   gtk_box_set_spacing (GTK_BOX (self), 0);
@@ -142,20 +146,24 @@ gegl_node_editor_construct (GeglNodeEditor *self)
 }
 
 static GObject *
-constructor (GType                  type,
-             guint                  n_params,
-             GObjectConstructParam *params)
+gegl_node_editor_constructor (GType                  type,
+                              guint                  n_params,
+                              GObjectConstructParam *params)
 {
   GObject         *object;
   GeglNodeEditor  *self;
+
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self = GEGL_NODE_EDITOR (object);
+  self   = GEGL_NODE_EDITOR (object);
 
   self->col1 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
   self->col2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   if (self->operation_switcher)
-    gtk_box_pack_start (GTK_BOX (object), typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
+    {
+      gtk_box_pack_start (GTK_BOX (object), typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
+    }
+
   gegl_node_editor_construct (GEGL_NODE_EDITOR (object));
 
   g_object_unref (self->col1);
@@ -163,21 +171,19 @@ constructor (GType                  type,
   return object;
 }
 
-GtkWidget *typeeditor_double (GtkSizeGroup *col1,
-                              GtkSizeGroup *col2,
-                              GeglNode     *node);
-
 static void
 type_editor_generic_changed (GtkWidget *entry,
                              gpointer   data)
 {
-  GParamSpec *param_spec = data;
-  GeglNode   *node = g_object_get_data (G_OBJECT (entry), "node");
-  const gchar *entry_text = NULL;
-  const gchar *prop_name = param_spec->name;
+  GParamSpec  *param_spec  = data;
+  GeglNode    *node        = g_object_get_data (G_OBJECT (entry), "node");
+  const gchar *entry_text  = NULL;
+  const gchar *prop_name   = param_spec->name;
 
   if (param_spec->value_type != G_TYPE_BOOLEAN)
-    entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
+    {
+      entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
+    }
 
   if (param_spec->value_type == G_TYPE_INT)
     {
@@ -201,6 +207,7 @@ type_editor_generic_changed (GtkWidget *entry,
   else if (param_spec->value_type == GEGL_TYPE_COLOR)
     {
       GeglColor *color = g_object_new (GEGL_TYPE_COLOR, "string", entry_text, NULL);
+
       gegl_node_set (node, prop_name, color, NULL);
       g_object_unref (color);
     }
@@ -211,11 +218,11 @@ static void
 type_editor_color_changed (GtkColorButton *button,
                            gpointer        data)
 {
-  GParamSpec *param_spec = data;
-  GeglNode   *node = g_object_get_data (G_OBJECT (button), "node");
-  const gchar *prop_name = param_spec->name;
-  GdkColor   gdkcolor;
-  gint       alpha;
+  GParamSpec  *param_spec = data;
+  GeglNode    *node       = g_object_get_data (G_OBJECT (button), "node");
+  const gchar *prop_name  = param_spec->name;
+  GdkColor     gdkcolor;
+  gint         alpha;
 
   gtk_color_button_get_color (button, &gdkcolor);
   alpha = gtk_color_button_get_alpha (button);
@@ -239,8 +246,8 @@ type_editor_color (GtkSizeGroup *col1,
                    GeglNode     *node,
                    GParamSpec   *param_spec)
 {
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
-  GtkWidget *label = gtk_label_new (param_spec->name);
+  GtkWidget *hbox   = gtk_hbox_new (FALSE, 5);
+  GtkWidget *label  = gtk_label_new (param_spec->name);
   GtkWidget *button = g_object_new (GTK_TYPE_COLOR_BUTTON, "use-alpha", TRUE, NULL);
 
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
@@ -276,9 +283,9 @@ type_editor_color (GtkSizeGroup *col1,
 static GQuark param_spec_quark = 0;
 
 static void
-set_param_spec (GObject     *object,
-                GtkWidget   *widget,
-                GParamSpec  *param_spec)
+set_param_spec (GObject    *object,
+                GtkWidget  *widget,
+                GParamSpec *param_spec)
 {
   if (object)
     {
@@ -410,8 +417,8 @@ type_editor_path (GtkSizeGroup *col1,
                   GParamSpec   *param_spec)
 {
   GObject   *config = G_OBJECT (node);
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
-  GtkWidget *label = gtk_label_new (param_spec->name);
+  GtkWidget *hbox   = gtk_hbox_new (FALSE, 5);
+  GtkWidget *label  = gtk_label_new (param_spec->name);
   gchar     *filename;
 
   GtkWidget *button = gtk_file_chooser_button_new ("title", GTK_FILE_CHOOSER_ACTION_OPEN);
@@ -456,7 +463,8 @@ type_editor_path (GtkSizeGroup *col1,
 
 
 static gboolean
-multiline_changed (GtkTextBuffer *buffer, gpointer user_data)
+multiline_changed (GtkTextBuffer *buffer,
+                   gpointer user_data)
 {
   GeglNode   *node = g_object_get_data (G_OBJECT (buffer), "node");
   GParamSpec *param_spec = user_data;
@@ -480,18 +488,16 @@ type_editor_multiline (GtkSizeGroup *col1,
                        GeglNode     *node,
                        GParamSpec   *param_spec)
 {
-  GObject   *config = G_OBJECT (node);
-  GtkWidget *vbox = gtk_vbox_new (FALSE, 5);
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
-  GtkWidget *label = gtk_label_new (param_spec->name);
-  GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
-  GtkWidget *view = gtk_text_view_new ();
-  GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-  GtkWidget *pad = gtk_label_new ("");
-  gchar     *contents;
-
-  GtkWidget *button = gtk_file_chooser_button_new ("title", GTK_FILE_CHOOSER_ACTION_OPEN);
-
+  GObject       *config    = G_OBJECT (node);
+  GtkWidget     *vbox      = gtk_vbox_new (FALSE, 5);
+  GtkWidget     *hbox      = gtk_hbox_new (FALSE, 5);
+  GtkWidget     *label     = gtk_label_new (param_spec->name);
+  GtkWidget     *scroll    = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget     *view      = gtk_text_view_new ();
+  GtkTextBuffer *buffer    = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+  GtkWidget     *pad       = gtk_label_new ("");
+  GtkWidget     *button    = gtk_file_chooser_button_new ("title", GTK_FILE_CHOOSER_ACTION_OPEN);
+  gchar         *contents;
 
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(scroll),
                                   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -528,7 +534,9 @@ type_editor_multiline (GtkSizeGroup *col1,
   connect_notify (config, param_spec->name,
                   G_CALLBACK (gegl_path_chooser_button_notify),
                   button);
+
   gtk_widget_show_all (vbox);
+
   return vbox;
 }
 
@@ -538,13 +546,13 @@ static void scalar_expose (GtkWidget      *widget,
                            GdkEventExpose *eev,
                            gpointer        user_data)
 {
-  gdouble    width  = widget->allocation.width;
-  gdouble    height = widget->allocation.height;
-  gdouble    min, max;
-  gdouble    def;
-  cairo_t *cr = gdk_cairo_create (widget->window);
-  GeglNode   *node = g_object_get_data (G_OBJECT (widget), "node");
+  gdouble     width      = widget->allocation.width;
+  gdouble     height     = widget->allocation.height;
+  cairo_t    *cr         = gdk_cairo_create (widget->window);
+  GeglNode   *node       = g_object_get_data (G_OBJECT (widget), "node");
   GParamSpec *param_spec = user_data;
+  gdouble     min, max;
+  gdouble     def;
   gdouble     value;
 
 
@@ -623,7 +631,6 @@ static void scalar_expose (GtkWidget      *widget,
 
   cairo_destroy (cr);
 }
-
 
 static gboolean
 scalar_drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
@@ -843,7 +850,7 @@ gegl_widget_get_cr (GtkWidget *widget)
 {
   gdouble    width  = widget->allocation.width;
   gdouble    height = widget->allocation.height;
-  cairo_t   *cr = gdk_cairo_create (widget->window);
+  cairo_t   *cr     = gdk_cairo_create (widget->window);
   gdouble    margin = 0.04;
 
   if (height > width)
@@ -905,7 +912,7 @@ static GSList *gegl_type_subtypes (GType   supertype,
 static GType *gegl_type_heirs (GType  supertype,
                                guint *count)
 {
-  GSList *subtypes= gegl_type_subtypes (supertype, NULL);
+  GSList *subtypes = gegl_type_subtypes (supertype, NULL);
   GSList *iter;
   GType  *heirs;
   gint    i;
@@ -933,7 +940,7 @@ GtkWidget *
 gegl_node_editor_new (GeglNode *node,
                       gboolean  operation_switcher)
 {
-  GType editor_type;
+  GType        editor_type;
   const gchar *operation;
 
   editor_type = GEGL_TYPE_NODE_EDITOR;

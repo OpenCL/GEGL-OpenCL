@@ -1,5 +1,9 @@
 2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/gegl-node-editor.c: General code cleanup.
+
+2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/gegl-node-editor.c: Removed dependency to editor.h. No need
 	to directly call gegl_gui_flush() when changing operation
 	properties for a node since the view will indirectly get updated
