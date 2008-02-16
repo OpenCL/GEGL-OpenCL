@@ -27,7 +27,6 @@
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
-#include "editor.h"
 
 GtkWidget *
 typeeditor_optype (GtkSizeGroup *col1,
@@ -205,7 +204,6 @@ type_editor_generic_changed (GtkWidget *entry,
       gegl_node_set (node, prop_name, color, NULL);
       g_object_unref (color);
     }
-  gegl_gui_flush ();
 }
 
 
@@ -233,7 +231,6 @@ type_editor_color_changed (GtkColorButton *button,
       gegl_node_set (node, prop_name, color, NULL);
       g_object_unref (color);
     }
-  gegl_gui_flush ();
 }
 
 static GtkWidget *
@@ -472,7 +469,6 @@ multiline_changed (GtkTextBuffer *buffer, gpointer user_data)
 
   gegl_node_set (node, param_spec->name, contents, NULL);
 
-  gegl_gui_flush ();
   g_free (contents);
   return TRUE;
 }
@@ -652,7 +648,6 @@ scalar_drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data
 
   gtk_widget_queue_draw (widget);
   gdk_window_get_pointer (widget->window, NULL, NULL, NULL);
-  gegl_gui_flush ();
   return TRUE;
 }
 

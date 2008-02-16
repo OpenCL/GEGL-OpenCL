@@ -1,5 +1,12 @@
 2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/gegl-node-editor.c: Removed dependency to editor.h. No need
+	to directly call gegl_gui_flush() when changing operation
+	properties for a node since the view will indirectly get updated
+	anyway through the GeglNode::invalidated signal.
+
+2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/gegl-node-editor.c: Remove dependency to gegl-view.h.
 
 2008-02-16  Øyvind Kolås  <pippin@gimp.org>
