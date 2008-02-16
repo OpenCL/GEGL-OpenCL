@@ -1,3 +1,8 @@
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* bin/editor-optype.c: General cleanup and added static function
+	proptotypes.
+
 2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/editor-optype.h: New include file to contain the

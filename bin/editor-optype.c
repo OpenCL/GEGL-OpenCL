@@ -16,25 +16,45 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include <gtk/gtk.h>
-#include "gegl-plugin.h"  /* FIXME: should just be gegl.h */
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
+
+#include <gtk/gtk.h>
+
+#include "gegl-plugin.h"  /* FIXME: should just be gegl.h */
+
 #include "editor.h"
 #include "gegl-tree-editor.h"
 #include "gegl-node-editor.h"
 #include "gegl-tree-editor-action.h"
 
 
-extern GeglNode *editor_output;
-
-
-static void     entry_activate            (GtkEntry           *entry,
-                                           gpointer            user_data);
-static gboolean completion_match_selected (GtkEntryCompletion *completion,
-                                           GtkTreeModel       *model,
-                                           GtkTreeIter        *iter,
-                                           gpointer            user_data);
+static void           popup_properties                       (GeglNode           *node);
+static void           chain_in_operation                     (const gchar        *op_type);
+static void           menu_item_activate                     (GtkWidget          *widget,
+                                                              gpointer            user_data);
+static void           operation_class_iterate_for_completion (GType               type,
+                                                              GtkListStore       *store);
+static GtkTreeModel * create_completion_model                (GeglNode           *item);
+static void           operation_class_iterate_for_menu       (GType               type,
+                                                              GtkWidget          *menu,
+                                                              GeglNode           *item);
+static GtkWidget *    optype_menu                            (GeglNode           *item);
+static void           gtk_option_menu_position               (GtkMenu            *menu,
+                                                              gint               *x,
+                                                              gint               *y,
+                                                              gboolean           *push_in,
+                                                              gpointer            user_data);
+static void           button_clicked                         (GtkButton          *button,
+                                                              gpointer            item);
+static void           entry_activate                         (GtkEntry           *entry,
+                                                              gpointer            user_data);
+static gboolean       completion_match_selected              (GtkEntryCompletion *completion,
+                                                              GtkTreeModel       *model,
+                                                              GtkTreeIter        *iter,
+                                                              gpointer            user_data);
 
 
 static void popup_properties (GeglNode *node)
@@ -87,9 +107,9 @@ chain_in_operation (const gchar *op_type)
   popup_properties (new);
 }
 
-
 static void
-menu_item_activate (GtkWidget *widget, gpointer user_data)
+menu_item_activate (GtkWidget *widget,
+                    gpointer   user_data)
 {
   GtkWidget *menu_item;
   GtkWidget *label;
@@ -125,7 +145,7 @@ menu_item_activate (GtkWidget *widget, gpointer user_data)
     }
 #if 0
 
-  item = user_data;
+  item     = user_data;
   old_type = oxide_get_property (item, "type");
   old_name = oxide_get_property (item, "name");
   oxide_set_property (item, "type", new_type);
@@ -146,7 +166,7 @@ menu_item_activate (GtkWidget *widget, gpointer user_data)
 }
 
 static void
-operation_class_iterate_for_completion (GType type,
+operation_class_iterate_for_completion (GType         type,
                                         GtkListStore *store)
 {
   GType *ops;
@@ -200,7 +220,7 @@ operation_class_iterate_for_menu (GType      type,
     return;
   ops = g_type_children (type, &children);
 
-  for (no=0; no<children; no++)
+  for (no = 0; no <children; no++)
     {
       GeglOperationClass *klass;
 
@@ -472,7 +492,8 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
 }
 
 static void
-entry_activate (GtkEntry * entry, gpointer user_data)
+entry_activate (GtkEntry *entry,
+                gpointer  user_data)
 {
   GeglNode   *item = user_data;
   const char *new_type = gtk_entry_get_text (entry);
