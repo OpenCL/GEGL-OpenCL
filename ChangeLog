@@ -1,3 +1,7 @@
+2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* bin/gegl-node-editor.c: Remove dependency to gegl-view.h.
+
 2008-02-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/node-editors/Makefile.am: link against the custom gui plug-ins

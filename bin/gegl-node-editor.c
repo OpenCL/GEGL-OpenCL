@@ -24,8 +24,8 @@
 #endif
 
 #include "gegl.h"
+
 #include "gegl-node-editor.h"
-#include "gegl-view.h"
 #include "gegl-paramspecs.h"
 #include "editor.h"
 
