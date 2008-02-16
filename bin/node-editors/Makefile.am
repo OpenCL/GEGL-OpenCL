@@ -1,3 +1,10 @@
+if OS_WIN32
+no_undefined = -no-undefined
+libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
+else
+libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION)$(SHREXT)
+endif
+
 CFILES          = $(wildcard $(srcdir)/*.c)
 SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
 #INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=$(SHREXT)))
@@ -14,9 +21,9 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @GTK_CFLAGS@ \
 	   -I$(top_srcdir)/gegl/operation \
 	   -I$(top_srcdir)/gegl/module \
 	   -I$(top_srcdir)/gegl/property-types -fPIC
-LDFLAGS += $(DYNAMICLIB)
+LDFLAGS += $(DYNAMICLIB) $(no_undefined)
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@
+LDADD    = @DEP_LIBS@ @BABL_LIBS@ @GTK_LIBS@ $(libgegldlla)
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 

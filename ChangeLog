@@ -1,5 +1,10 @@
 2008-02-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/node-editors/Makefile.am: link against the custom gui plug-ins
+	of the gegl library against libgegl.
+
+2008-02-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/Makefile-operations.am: link the operations against
 	libgegl as well.
 
