@@ -1,5 +1,17 @@
 2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/editor-optype.h: New include file to contain the
+	gegl_typeeditor_optype() function declaration (renamed from
+	typeeditor_optype()).
+
+	* bin/gegl-node-editor.c
+	* bin/editor.c
+	* bin/editor-optype.c: Use the new include file.
+
+	* bin/Makefile.am: Added the new include file.
+
+2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/gegl-node-editor.c: General code cleanup.
 
 2008-02-16  Martin Nordholts  <martinn@svn.gnome.org>

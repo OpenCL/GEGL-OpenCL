@@ -27,13 +27,7 @@
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
-
-
-/* FIXME: EEEEEEEEEK :( */
-GtkWidget *
-typeeditor_optype (GtkSizeGroup *col1,
-                   GtkSizeGroup *col2,
-                   GeglNodeEditor *node_editor);
+#include "editor-optype.h"
 
 enum
 {
@@ -161,7 +155,7 @@ gegl_node_editor_constructor (GType                  type,
 
   if (self->operation_switcher)
     {
-      gtk_box_pack_start (GTK_BOX (object), typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (object), gegl_typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
     }
 
   gegl_node_editor_construct (GEGL_NODE_EDITOR (object));

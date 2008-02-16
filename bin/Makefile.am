@@ -12,6 +12,7 @@ gui_sources = \
 	editor.c				\
 	editor.h				\
 	editor-optype.c				\
+	editor-optype.h				\
 	export.c				\
 	export.h				\
 	gegl-node-editor.c			\

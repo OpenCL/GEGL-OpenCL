@@ -26,6 +26,7 @@
 #include "gegl-node-editor.h"
 #include "editor.h"
 #include "gegl-view.h"
+#include "editor-optype.h"
 #include <gdk/gdkkeysyms.h>
 
 #ifdef G_OS_WIN32
@@ -62,11 +63,6 @@ cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
     }
   return FALSE;
 }
-
-GtkWidget *
-typeeditor_optype (GtkSizeGroup   *col1,
-                   GtkSizeGroup   *col2,
-                   GeglNodeEditor *node_editor);
 
 Editor editor;
 
@@ -123,7 +119,7 @@ create_window (Editor *editor)
   gtk_paned_pack2 (GTK_PANED (hpaned_top), editor->tree_editor, FALSE, TRUE);
 
     {
-      GtkWidget *foo = typeeditor_optype (NULL, NULL, NULL);
+      GtkWidget *foo = gegl_typeeditor_optype (NULL, NULL, NULL);
       gtk_box_pack_start (GTK_BOX (add_box), foo, TRUE, TRUE, 0);
     }
 
