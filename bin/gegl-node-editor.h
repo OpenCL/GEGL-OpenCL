@@ -21,7 +21,7 @@
 
 #include <gtk/gtkvbox.h>
 
-#include G_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #define GEGL_TYPE_NODE_EDITOR            (gegl_node_editor_get_type ())
 #define GEGL_NODE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_EDITOR, GeglNodeEditor))
