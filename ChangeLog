@@ -1,3 +1,11 @@
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* bin/node-editors/level.c
+	* bin/node-editors/whitebalance.c
+	* bin/node-editors/unsharp-mask.c
+	* bin/node-editors/gaussian-blur.c
+	* bin/node-editors/brightness-contrast.c: Fix includes.
+
 2008-02-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-init.c: (gegl_init): do not intialize the threading

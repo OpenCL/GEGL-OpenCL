@@ -16,7 +16,15 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
+#include <math.h>
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
 #include "gegl-node-editor-plugin.h"
+
 
 typedef struct _BrightnessContrast      BrightnessContrast;
 typedef struct _BrightnessContrastClass BrightnessContrastClass;

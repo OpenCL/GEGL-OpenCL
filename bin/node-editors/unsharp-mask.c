@@ -16,8 +16,14 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include "gegl-node-editor-plugin.h"
+#include "config.h"
+
 #include <math.h>
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
+#include "gegl-node-editor-plugin.h"
 
 #define SCALE 20
 
