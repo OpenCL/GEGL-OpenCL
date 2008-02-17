@@ -1,3 +1,8 @@
+2008-02-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-init.c: (gegl_init): do not intialize the threading
+	support of glib, since we do not need it yet.
+
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/gegl-node-editor.h: Tiny fix to previous commit...
