@@ -17,10 +17,15 @@
  */
 
 #include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "gegl-bin-types.h"
+
 #include "gegl-options.h"
+
 
 static GeglOptions *opts_new (void)
 {

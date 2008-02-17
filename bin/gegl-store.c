@@ -16,10 +16,18 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
 
-#include <gegl.h>
-#include "gegl-store.h"
+#include <stdio.h>
 #include <string.h>
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
+#include "gegl.h"
+
+#include "gegl-store.h"
+
 
 GeglNode *
 gegl_children (GeglNode *item)
@@ -341,8 +349,6 @@ prev_siblings (GeglNode *item)
   return cnt;
 }
 
-#include <stdio.h>
-
 static GtkTreePath *
 gegl_store_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
 {
@@ -366,8 +372,6 @@ gegl_store_get_path (GtkTreeModel *tree_model, GtkTreeIter *iter)
     }
   return path;
 }
-
-#include <string.h>
 
 static void
 gegl_store_get_value (GtkTreeModel *tree_model,

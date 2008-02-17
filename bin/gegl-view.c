@@ -16,13 +16,21 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include <glib-object.h>
-#include "gegl.h"
+#include "config.h"
+
+#include <math.h>
 #include <babl/babl.h>
+#include <glib-object.h>
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
+#include "gegl.h"
+
 #include "gegl-view.h"
 #include "gegl-tree-editor.h"
 #include "editor.h"
-#include <math.h>
+
 
 enum
 {
@@ -32,6 +40,31 @@ enum
   PROP_Y,
   PROP_SCALE
 };
+
+
+typedef struct _GeglViewPrivate
+{
+  GeglNode      *node;
+  gint           x;
+  gint           y;
+  gdouble        scale;
+  gint           screen_x;  /* coordinates of drag start */
+  gint           screen_y;
+
+  gint           orig_x;    /* coordinates of drag start */
+  gint           orig_y;
+
+  gint           start_buf_x;    /* coordinates of drag start */
+  gint           start_buf_y;
+
+  gint           prev_x;
+  gint           prev_y;
+  gdouble        prev_scale;
+
+  guint          monitor_id;
+  GeglProcessor *processor;
+} GeglViewPrivate;
+
 
 G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
 #define GEGL_VIEW_GET_PRIVATE(obj) \
@@ -54,33 +87,6 @@ static gboolean  button_press_event   (GtkWidget      *widget,
                                        GdkEventButton *event);
 static gboolean  expose_event         (GtkWidget      *widget,
                                        GdkEventExpose *event);
-
-
-
-struct _GeglViewPrivate
-{
-  GeglNode      *node;
-  gint           x;
-  gint           y;
-  gdouble        scale;
-  gint           screen_x;  /* coordinates of drag start */
-  gint           screen_y;
-
-  gint           orig_x;    /* coordinates of drag start */
-  gint           orig_y;
-
-  gint           start_buf_x;    /* coordinates of drag start */
-  gint           start_buf_y;
-
-  gint           prev_x;
-  gint           prev_y;
-  gdouble        prev_scale;
-
-  guint          monitor_id;
-  GeglProcessor *processor;
-};
-
-
 
 
 static void

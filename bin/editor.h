@@ -19,10 +19,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "gegl-options.h"
-#include "gegl-view.h"
-
-typedef struct Editor 
+struct _Editor 
 {
   GeglNode    *gegl;
   GeglOptions *options;
@@ -42,7 +39,7 @@ typedef struct Editor
 
   GtkWidget   *graph_editor;
   GtkWidget   *view;
-} Editor;
+};
 
 extern Editor editor;
 GtkWidget * StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget);

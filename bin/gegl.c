@@ -26,6 +26,9 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#include "gegl-bin-types.h"
+
 #include "gegl-options.h"
 #include "gegl-dot.h"
 
@@ -40,6 +43,7 @@
 
 #if HAVE_GTK
 #include <gtk/gtk.h>
+#include "gegl-bin-gui-types.h"
 #include "editor.h"
 #endif
 

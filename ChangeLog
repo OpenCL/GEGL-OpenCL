@@ -1,5 +1,30 @@
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Added gimp-bin-types.h and gimp-bin-gui-types.h and moved CLI and
+	GUI typedefs there.
+
+	* bin/gegl-bin-types.h
+	* bin/gegl-bin-gui-types.h: The two new files.
+
+	* bin/gegl.c
+	* bin/export.[ch]
+	* bin/editor.[ch]
+	* bin/gegl-view.[nch]
+	* bin/editor-optype.c
+	* bin/gegl-store.[ch]
+	* bin/gegl-options.[ch]
+	* bin/gegl-tree-editor.[ch]
+	* bin/gegl-node-editor.[ch]
+	* bin/gegl-tree-editor-action.[ch]: Make sure config.h is included
+	in .c files and also include the appropriate types-headers as well
+	as organize the other #include:s. Remove unneccesary #include:s in
+	header files. Don't include the system-gegl.h but the one in the
+	source tree. Also did some other minor restructuring.
+
+	* bin/Makefile.am: Added the two new files.
+
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/gegl-options.c (parse_args): Applied patch from Fredrik
 	Alströmer that makes the --file and -i options to the gegl binary
 	work.

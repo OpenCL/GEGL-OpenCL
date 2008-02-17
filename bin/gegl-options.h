@@ -30,7 +30,7 @@ typedef enum
   GEGL_RUN_MODE_XML
 } GeglRunMode;
 
-typedef struct GeglOptions
+struct _GeglOptions
 {
   GeglRunMode  mode;
 
@@ -46,7 +46,7 @@ typedef struct GeglOptions
 
   gfloat       delay;
   gboolean     play;
-} GeglOptions;
+};
 
 GeglOptions *gegl_options_parse (gint    argc,
                                  gchar **argv);

@@ -19,9 +19,7 @@
 #ifndef GEGL_NODE_EDITOR_H
 #define GEGL_NODE_EDITOR_H
 
-#include <gtk/gtk.h>
 #include <gtk/gtkvbox.h>
-#include <gegl.h>
 
 #define GEGL_TYPE_NODE_EDITOR            (gegl_node_editor_get_type ())
 #define GEGL_NODE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_EDITOR, GeglNodeEditor))
@@ -30,7 +28,6 @@
 #define GEGL_IS_NODE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE_EDITOR))
 #define GEGL_NODE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE_EDITOR, GeglNodeEditorClass))
 
-typedef struct _GeglNodeEditor      GeglNodeEditor;
 typedef struct _GeglNodeEditorClass GeglNodeEditorClass;
 
 struct _GeglNodeEditor

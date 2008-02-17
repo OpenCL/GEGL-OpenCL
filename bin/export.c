@@ -16,18 +16,28 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
+#include <stdio.h>
+#include <png.h>
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
+#include "gegl.h"
 #include "gegl-plugin.h"
+
 #include "graph/gegl-node.h" /*< FIXME: including internal header */
+
+#include "gegl-view.h"
 #include "editor.h"
 #include "export.h"
-#include <png.h>
+
 
 static gint
 gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
                         GeglRectangle *rect,
                         const gchar   *path);
-
-#include <stdio.h>
 
 
 static void set_to_defined (GtkWidget *export)

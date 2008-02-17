@@ -13,24 +13,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
+ * Copyright (C) 2008 Martin Nordholts
  */
-
-#ifndef GEGL_TREE_EDITOR_H
-#define GEGL_TREE_EDITOR_H
-
-
-GtkWidget * tree_editor_new          (GtkWidget *property_editor);
-
-GeglNode  * tree_editor_get_active   (GtkWidget *tree_editor);
-
-void        tree_editor_set_active   (GtkWidget *tree_editor,
-                                      GeglNode  *item);
-
-GtkWidget * tree_editor_get_treeview (GtkWidget *tree_editor);
-
-void        property_editor_rebuild  (GtkWidget *container,
-                                      GeglNode  *node);
+#ifndef GEGL_BIN_GUI_TYPES_H
+#define GEGL_BIN_GUI_TYPES_H
 
 
-#endif /* GEGL_TREE_EDITOR_H */
+#include "gegl-bin-types.h"
+
+
+typedef struct _Editor          Editor;
+typedef struct _GeglNodeEditor  GeglNodeEditor;
+typedef struct _GeglStore       GeglStore;
+typedef struct _GeglView        GeglView;
+
+
+#endif /* GEGL_EDITOR_TYPES_H */

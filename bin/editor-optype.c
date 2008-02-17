@@ -23,6 +23,8 @@
 
 #include <gtk/gtk.h>
 
+#include "gegl-bin-gui-types.h"
+
 #include "gegl-plugin.h"  /* FIXME: should just be gegl.h */
 
 #include "editor.h"

@@ -16,18 +16,27 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
+#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "gegl-bin-gui-types.h"
+
 #include "gegl.h"
+
+#include "editor-optype.h"
+#include "gegl-node-editor.h"
+#include "gegl-options.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
-#include "gegl-node-editor.h"
-#include "editor.h"
 #include "gegl-view.h"
-#include "editor-optype.h"
-#include <gdk/gdkkeysyms.h>
+#include "gegl-view.h"
+
+#include "editor.h"
 
 #ifdef G_OS_WIN32
 #ifndef PATH_MAX

@@ -19,9 +19,6 @@
 #ifndef __GEGL_VIEW_H__
 #define __GEGL_VIEW_H__
 
-#include <gtk/gtk.h>
-#include "gegl.h"
-
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_VIEW            (gegl_view_get_type ())
@@ -31,9 +28,7 @@ G_BEGIN_DECLS
 #define GEGL_IS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_VIEW))
 #define GEGL_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VIEW, GeglViewClass))
 
-typedef struct _GeglView        GeglView;
 typedef struct _GeglViewClass   GeglViewClass;
-typedef struct _GeglViewPrivate GeglViewPrivate;
 
 struct _GeglView
 {

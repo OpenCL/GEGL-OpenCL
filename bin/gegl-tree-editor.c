@@ -16,11 +16,21 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
 #include <gtk/gtk.h>
-#include "gegl-plugin.h"
-#include "gegl-tree-editor.h"
-#include "gegl-node-editor.h"
+
+#include "gegl-bin-gui-types.h"
+
+#include "gegl.h"
+
 #include "editor.h"
+#include "gegl-node-editor.h"
+#include "gegl-plugin.h"
+#include "gegl-store.h"
+#include "gegl-tree-editor-action.h"
+#include "gegl-tree-editor.h"
+
 
 void property_editor_rebuild (GtkWidget *container,
                               GeglNode  *node)

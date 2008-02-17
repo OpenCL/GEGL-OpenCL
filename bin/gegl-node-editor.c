@@ -23,6 +23,10 @@
 #include <unistd.h>
 #endif
 
+#include <gtk/gtk.h>
+
+#include "gegl-bin-gui-types.h"
+
 #include "gegl.h"
 
 #include "gegl-node-editor.h"

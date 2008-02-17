@@ -18,8 +18,7 @@
 #ifndef GEGL_STORE_H
 #define GEGL_STORE_H
 
-#include <gtk/gtk.h>
-#include <gegl.h>
+#include <glib-object.h>
 
 #define TYPE_GEGL_STORE                  (gegl_store_get_type ())
 #define GEGL_STORE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GEGL_STORE, GeglStore))
@@ -41,7 +40,6 @@ enum
   GEGL_STORE_N_COLUMNS
 };
 
-typedef struct _GeglStore GeglStore;
 typedef struct _GeglStoreClass GeglStoreClass;
 
 

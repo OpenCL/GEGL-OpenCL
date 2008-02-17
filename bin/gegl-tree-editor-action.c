@@ -16,12 +16,19 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
 #include <gtk/gtk.h>
 #include <string.h>
+
+#include "gegl-bin-gui-types.h"
+
 #include "gegl.h"
-#include "gegl-view.h"
+
 #include "editor.h"
+#include "gegl-store.h"
 #include "gegl-tree-editor.h"
+#include "gegl-view.h"
 
 
 /* The reason for these surviving is that it was the API used to
