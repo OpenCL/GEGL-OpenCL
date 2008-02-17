@@ -1,5 +1,11 @@
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/gegl-node-editor.[ch]: Clean up; Added missing G_BEGIN_DECLS
+	in the header, aligned function prototypes and moved documentation
+	of functions to the .c file.
+
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Added gimp-bin-types.h and gimp-bin-gui-types.h and moved CLI and
 	GUI typedefs there.
 

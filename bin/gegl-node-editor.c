@@ -842,7 +842,11 @@ property_editor_general (GeglNodeEditor *node_editor,
   return vbox;
 }
 
-/* utility method */
+/**
+ * gegl_widget_get_cr:
+ *
+ * Utility method.
+ */
 cairo_t *
 gegl_widget_get_cr (GtkWidget *widget)
 {
@@ -866,6 +870,11 @@ gegl_widget_get_cr (GtkWidget *widget)
   return cr;
 }
 
+/**
+ * gegl_node_editor_class_set_pattern:
+ *
+ * Set the pattern that this matches on.
+ */
 void
 gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
                                     const gchar         *pattern)

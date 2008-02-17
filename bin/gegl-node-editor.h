@@ -21,6 +21,8 @@
 
 #include <gtk/gtkvbox.h>
 
+#include G_BEGIN_DECLS
+
 #define GEGL_TYPE_NODE_EDITOR            (gegl_node_editor_get_type ())
 #define GEGL_NODE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_EDITOR, GeglNodeEditor))
 #define GEGL_NODE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE_EDITOR, GeglNodeEditorClass))
@@ -41,26 +43,26 @@ struct _GeglNodeEditor
 
 struct _GeglNodeEditorClass
 {
-  GtkVBoxClass parent_class;
+  GtkVBoxClass  parent_class;
+
   gchar        *pattern;
 
-  void (*construct) (GeglNodeEditor *self);  /* virtual method used to add to the container */
+  /* virtual method used to add to the container */
+  void (*construct) (GeglNodeEditor *self);
 };
 
-GType       gegl_node_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gegl_node_editor_new      (GeglNode *node,
-                                       gboolean  operation_switcher);
-/* utility method */
-cairo_t *                              gegl_widget_get_cr (GtkWidget *widget);
+GType       gegl_node_editor_get_type          (void) G_GNUC_CONST;
+cairo_t *   gegl_widget_get_cr                 (GtkWidget *widget);
+GtkWidget * gegl_node_editor_new               (GeglNode  *node,
+                                                gboolean   operation_switcher);
 
 /* class functions */
 
-/* set the pattern that this matches on */
-void     gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
-                                             const gchar         *pattern);
-gboolean gegl_node_editor_class_matches     (GeglNodeEditorClass *klass,
-                                             const gchar         *operation_name);
+void        gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
+                                                const gchar         *pattern);
+gboolean    gegl_node_editor_class_matches     (GeglNodeEditorClass *klass,
+                                                const gchar         *operation_name);
 
 G_END_DECLS
 
