@@ -227,7 +227,9 @@ parse_args (int    argc,
 
         else if (match ("--file") ||
                  match ("-i")) {
-            o->files = g_list_append (o->files, g_strdup (*curr));
+            const gchar *file_path;
+            get_string (file_path);
+            o->files = g_list_append (o->files, g_strdup (file_path));
         }
 
         else if (match ("--xml") ||

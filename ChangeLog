@@ -1,5 +1,11 @@
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* bin/gegl-options.c (parse_args): Applied patch from Fredrik
+	Alströmer that makes the --file and -i options to the gegl binary
+	work.
+
+2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* bin/gegl-tree-editor.c: Remove obsolete extern declaration.
 
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
