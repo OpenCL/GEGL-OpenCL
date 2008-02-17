@@ -298,6 +298,15 @@ get_invalidated_by_change (GeglOperation        *self,
                            const gchar         *input_pad,
                            const GeglRectangle *input_region)
 {
+#if 0
+  /* FIXME: this seems to sometimes go into an infinite loop, the
+   * current workaround of passing the rectangle straight through
+   * isn't even true for unsharp-mask/drop-shadow/difference of gaussians,
+   * but it stops a crasher bug.
+   *
+   * This needs to be revisited as part of the core processing revisit
+   * (perhaps together with a meta-op framework revwrite).
+   */
   if (self->node->is_graph)
     {
       return gegl_operation_get_invalidated_by_change (
@@ -305,7 +314,7 @@ get_invalidated_by_change (GeglOperation        *self,
                input_pad,
                input_region);
     }
-
+#endif
   return *input_region;
 }
 

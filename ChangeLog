@@ -1,3 +1,9 @@
+2008-02-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation.c: (get_invalidated_by_change):
+	removed a redirect that seems to interfere with how meta operations
+	work.
+
 2008-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/node-editors/level.c
