@@ -1,5 +1,10 @@
 2008-02-18  Michael Schumacher  <schumaml@cvs.gnome.org>
 
+	* gegl/buffer/gegl-tile-disk.c (disk_entry_read): removed debug
+	output.	Define O_BINARY if it isn't defined yet.
+
+2008-02-18  Michael Schumacher  <schumaml@cvs.gnome.org>
+
 	* gegl/buffer/gegl-tile-disk.c (gegl_tile_disk_constructor): open
 	the file descriptor in binary mode.
 

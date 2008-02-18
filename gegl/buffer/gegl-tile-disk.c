@@ -25,6 +25,15 @@
 #define O_DIRECT    0
 #endif
 
+/* Microsoft Windows does distinguish between binary and text files. 
+ * We deal with binary files here and have to tell it to open them 
+ * as binary files. Unortunately the O_BINARY flag used for this is 
+ * specific to this platform, so we define it for others.
+ */
+#ifndef O_BINARY
+#define O_BINARY    0
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -105,13 +114,6 @@ disk_entry_read (GeglTileDisk *disk,
                      g_strerror (errno), err, nleft);
           return;
         }
-      else 
-	{
-          g_message ("read tile data from disk: "
-                     "%s (%d/%d bytes read)",
-                     g_strerror (errno), err, nleft);
-	}
-
       nleft -= err;
     }
 }
