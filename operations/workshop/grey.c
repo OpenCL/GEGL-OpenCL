@@ -47,13 +47,13 @@ process (GeglOperation *op,
 static void
 operation_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  filter_class->process = process;
+  point_filter_class->process = process;
   operation_class->prepare = prepare;
 
   operation_class->name        = "grey";

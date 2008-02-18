@@ -1,3 +1,9 @@
+2008-02-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/grey.c: (operation_class_init): use
+	GeglOperationPointFilter not GeglOperationFilter as our superclass in
+	class_init.
+
 2008-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/io/ff-load.c: Wrong argument was passed to init() in
