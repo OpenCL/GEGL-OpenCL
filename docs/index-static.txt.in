@@ -1,6 +1,8 @@
 GEGL-@GEGL_VERSION@
 ===========
 
+
+[[gegl]]
 GEGL
 ----
 GEGL (Generic Graphics Library) is a graph based image processing framework.
@@ -10,7 +12,7 @@ for a new compositing and processing core. This core is being designed to have
 minimal dependencies. and a simple well defined API.
 
 
-
+[[features]]
 Features
 ~~~~~~~~
   - Output in RGB, CIE Lab and Y'CbCr color models with 8bit, 16bit integer and
@@ -448,3 +450,31 @@ babl dirs
   │             speed of babl.
   ├──tests      tests used to keep babl sane during development.
   └──docs       Documentation/webpage for babl.
+
+
+++++++++
+<div id='toc'>
+<div id="toctitle">Table of Contents</div>
+<div class="toclevel1"><a href="#gegl">GEGL</a></div>
+<div class="toclevel2"><a href="#features">Features</a></div>
+<div class="toclevel2"><a href="#toc2">News</a></div>
+<div class="toclevel2"><a href="gallery/index.html">Gallery</a></div>
+<div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">Bugzilla</a></div>
+<div class="toclevel2"><a href="#toc5">Mailinglist</a></div>
+<div class="toclevel2"><a href="#toc6">Copyright</a></div>
+<div class="toclevel2"><a href="#toc7">Contributors</a></div>
+<div class="toclevel1"><a href="#toc8">Building from source</a></div>
+<div class="toclevel2"><a href="#toc9">Download</a></div>
+<div class="toclevel2"><a href="#toc10">Dependencies</a></div>
+<div class="toclevel2"><a href="#toc11">Compiling</a></div>
+<div class="toclevel1"><a href="#toc12">Documentation</a></div>
+<div class="toclevel2"><a href="api.html">Public API</a></div>
+<div class="toclevel2"><a href="#toc14">Operation API</a></div>
+<div class="toclevel2"><a href="#toc15">Environment</a></div>
+<div class="toclevel2"><a href="#toc16">gegl</a></div>
+<div class="toclevel1"><a href="#toc17">Appendixes</a></div>
+<div class="toclevel2"><a href="#toc18">Operations</a></div>
+<div class="toclevel2"><a href="#toc19">Glossary</a></div>
+<div class="toclevel2"><a href="#toc20">Directory overview</a></div>
+</div>
+++++++++

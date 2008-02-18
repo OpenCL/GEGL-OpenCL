@@ -93,7 +93,7 @@ index.html: index-static.txt		\
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	cp $< $@ 
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
