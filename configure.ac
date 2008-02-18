@@ -41,6 +41,7 @@ m4_define([gimp_full_name], [Generic Graphical Library])
 m4_define([babl_required_version], [0.0.14])
 m4_define([glib_required_version], [2.14.1])
 m4_define([gtk_required_version], [2.8.6])
+m4_define([lua_required_version], [5.1.0])
 m4_define([cairo_required_version], [0.0.0])
 m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
@@ -111,6 +112,9 @@ GLIB_REQUIRED_VERSION=glib_required_version
 GTK_REQUIRED_VERSION=gtk_required_version
 AC_SUBST(GLIB_REQUIRED_VERSION)
 AC_SUBST(GTK_REQUIRED_VERSION)
+
+LUA_REQUIRED_VERSION=lua_required_version
+AC_SUBST(LUA_REQUIRED_VERSION)
 
 PACKAGE_NAME=gegl
 AC_SUBST(PACKAGE_NAME)
@@ -414,13 +418,9 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 # Check for Lua
 ###############
 
-PKG_CHECK_MODULES(LUA, lua,
+PKG_CHECK_MODULES(HAVE_LUA, lua >= $LUA_REQUIRED_VERSION,
   have_lua="yes",
-  [PKG_CHECK_MODULES(LUA, lua5.1,
-     have_lua="yes",
-     [PKG_CHECK_MODULES(LUA, lua50,
-        have_lua="yes",
-        have_lua="no  (usable lua not found)")])])
+  have_lua="no  (usable lua not found)")
 AM_CONDITIONAL(HAVE_LUA, test "x$have_lua" = "xyes")
 
 AC_SUBST(LUA_CFLAGS) 

@@ -1,3 +1,7 @@
+2008-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: Check for Lua 5.1.0 or newer.
+
 2008-02-18  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: use G_DISABLE_DEPRECATED for GLib version < 2.15.
