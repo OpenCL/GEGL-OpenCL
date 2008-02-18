@@ -806,7 +806,8 @@ pset (GeglBuffer *buffer,
 
   if (format != buffer->format)
     {
-      fish = babl_fish (buffer->format, format);
+      fish = babl_fish ((gpointer) buffer->format,
+                        (gpointer) format);
     }
 
   {
@@ -889,7 +890,8 @@ pget (GeglBuffer *buffer,
 
   if (format != buffer->format)
     {
-      fish = babl_fish (buffer->format, format);
+      fish = babl_fish ((gpointer) buffer->format,
+                        (gpointer) format);
     }
 
   {
@@ -1018,11 +1020,13 @@ gegl_buffer_iterate (GeglBuffer *buffer,
     {
       if (write)
         {
-          fish = babl_fish (format, buffer->format);
+          fish = babl_fish ((gpointer) format,
+                            (gpointer) buffer->format);
         }
       else
         {
-          fish = babl_fish (buffer->format, format);
+          fish = babl_fish ((gpointer) buffer->format,
+                            (gpointer) format);
         }
     }
 

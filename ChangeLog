@@ -1,3 +1,10 @@
+2008-02-18  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/buffer/gegl-buffer.c
+	* gegl/buffer/gegl-buffer-allocator.c:
+	Cast appropriately when passing around Babl formats. Fixes some
+	harmless compiler warnings.
+
 2008-02-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/grey.c: (operation_class_init): use

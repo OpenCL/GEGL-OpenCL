@@ -180,7 +180,7 @@ gegl_buffer_new_from_format (const void *babl_format,
           GeglStorage *storage;
           gchar *path;
           path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap_dir (),
-                                  getpid (), babl_name (babl_format));
+                                  getpid (), babl_name ((Babl*) babl_format));
           storage = g_object_new (GEGL_TYPE_STORAGE,
                                                "format", babl_format,
                                                "path", path,
