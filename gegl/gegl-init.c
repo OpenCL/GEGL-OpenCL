@@ -37,6 +37,9 @@
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
 
+#include <glib/gi18n.h>
+
+
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
                                        gpointer        data,

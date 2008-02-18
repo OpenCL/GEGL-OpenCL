@@ -1,3 +1,8 @@
+2008-02-18  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-init.c: Include gi18n.h to get rid of bindtextdomain()
+	warning.
+
 2008-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/mandelbrot.c: Fixed declaration of process().
