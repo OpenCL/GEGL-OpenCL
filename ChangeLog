@@ -1,3 +1,9 @@
+2008-02-18  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* operations/workshop/envelopes.h (compute_luts): replaced non-portable
+	random()*... by suitable g_rand_double_range calls(). 
+	Fixes bug #517296. 
+
 2008-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: Check for Lua 5.1.0 or newer.

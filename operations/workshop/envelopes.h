@@ -28,20 +28,26 @@ static gint     radius_no=0;
 static void compute_luts(gdouble rgamma)
 {
   gint i;
+  GRand *rand;
+
   if (luts_computed==rgamma)
     return;
   luts_computed = rgamma;
+  rand = g_rand_new();
 
   for (i=0;i<ANGLE_PRIME;i++)
     {
-      gfloat angle = (random() / (RAND_MAX*1.0)) * 3.141592653589793*2;
+      gfloat angle = g_rand_double_range (rand, 0.0, G_PI*2);
       lut_cos[i] = cos(angle);
       lut_sin[i] = sin(angle);
     }
   for (i=0;i<RADIUS_PRIME;i++)
     {
-      radiuses[i] = pow(random() / (RAND_MAX*1.0), rgamma);
+      radiuses[i] = pow(g_rand_double_range (rand, 0.0, 1.0), rgamma);
     }
+
+  g_rand_free(rand);
+
 }
 
 static inline void
