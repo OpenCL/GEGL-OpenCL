@@ -1,5 +1,10 @@
 2008-02-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/gegl-xml.c: Include gegl.h to get rid of
+	gegl_list_properties() warning.
+
+2008-02-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-init.c: Include gi18n.h to get rid of bindtextdomain()
 	warning.
 
