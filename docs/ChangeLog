@@ -1,3 +1,7 @@
+2008-02-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl.css: removed additional margins imposed on <ul> element.
+
 2008-02-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Makefile.am: Updated to fix problems running 'make distcheck'.

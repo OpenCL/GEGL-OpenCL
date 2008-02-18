@@ -218,8 +218,8 @@
           padding-top: 1em;
         }
         div#toc ul {
-          padding-top: 2em;
-          padding-left: 1em;
+          padding-top: 0em;
+          padding-left: 0em;
           margin: 0;
         }
         div#toc li {
