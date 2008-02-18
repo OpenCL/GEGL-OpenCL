@@ -1,5 +1,9 @@
 2008-02-18  Sven Neumann  <sven@gimp.org>
 
+	* configure.ac: use G_DISABLE_DEPRECATED for GLib version < 2.15.
+
+2008-02-18  Sven Neumann  <sven@gimp.org>
+
 	* gegl/gegl-init.c: never include gi18n.h from a library, use
 	g18n-lib.h instead.
 
