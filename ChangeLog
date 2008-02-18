@@ -1,3 +1,8 @@
+2008-01-18  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/generated/Makefile.am: Remove generated .c
+	files for maintainer-clean.
+
 2008-02-18  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* operations/workshop/envelopes.h (compute_luts): replaced non-portable
