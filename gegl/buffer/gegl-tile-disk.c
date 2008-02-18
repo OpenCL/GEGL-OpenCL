@@ -105,6 +105,13 @@ disk_entry_read (GeglTileDisk *disk,
                      g_strerror (errno), err, nleft);
           return;
         }
+      else 
+	{
+          g_message ("read tile data from disk: "
+                     "%s (%d/%d bytes read)",
+                     g_strerror (errno), err, nleft);
+	}
+
       nleft -= err;
     }
 }
@@ -453,7 +460,7 @@ gegl_tile_disk_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   disk   = GEGL_TILE_DISK (object);
 
-  disk->fd = g_open (disk->path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_DIRECT);
+  disk->fd = g_open (disk->path, O_CREAT | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR | O_DIRECT);
   if (disk->fd == -1)
     {
       g_message ("Unable to open swap file '%s' GEGL unable to initialize virtual memory", disk->path);
