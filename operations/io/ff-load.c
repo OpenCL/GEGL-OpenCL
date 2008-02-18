@@ -183,7 +183,7 @@ decode_frame (GeglOperation *operation,
       /* seeking backwards, since it ffmpeg doesn't allow us,. we'll reload the file */
       g_free (p->loadedfilename);
       p->loadedfilename = NULL;
-      init (operation);
+      init (o);
     }
 
   while (decodeframe <= frame)
@@ -239,6 +239,9 @@ prepare (GeglOperation *operation)
   g_assert (o->chant_data != NULL);
 
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
+
+  if (p == NULL)
+    init (o);
 
   if (!p->loadedfilename ||
       strcmp (p->loadedfilename, o->path))
@@ -427,7 +430,6 @@ operation_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
-  operation_class->attach = init;
 
   operation_class->name        = "ff-load";
   operation_class->categories  = "input:video";
