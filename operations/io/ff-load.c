@@ -15,23 +15,17 @@
  *
  * Copyright 2003, 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "/home/pippin/ed.avi", "Path of file to load.")
-gegl_chant_int (frame, 0, 1000000, 0, "frame number")
+gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_int (frame, "Frame", 0, 1000000, 0, "frame number")
 
 #else
 
-#define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME           ff_load
-#define GEGL_CHANT_DESCRIPTION    "FFmpeg video frame importer."
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE       "ff-load.c"
 
-#define GEGL_CHANT_SELF           "ff-load.c"
-#define GEGL_CHANT_CATEGORIES     "input:video"
-#define GEGL_CHANT_INIT
-#define GEGL_CHANT_CLASS_INIT
-#include "gegl-old-chant.h"
-
+#include "gegl-chant.h"
 #include <errno.h>
 #include <ffmpeg/avformat.h>
 
@@ -85,15 +79,15 @@ print_error (const char *filename, int err)
 }
 
 static void
-init (GeglChantOperation *operation)
+init (GeglChantO *o)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv               *p = (Priv*)self->priv;
-  static gint         inited = 0; /*< this is actually meant to be static, only to be done once */
+  static gint inited = 0; /*< this is actually meant to be static, only to be done once */
+  Priv       *p = (Priv*)o->chant_data;
+
   if (p==NULL)
     {
-      p = g_malloc0 (sizeof (Priv));
-      self->priv = (void*) p;
+      p = g_new0 (Priv, 1);
+      o->chant_data = (void*) p;
     }
 
   p->width = 320;
@@ -112,9 +106,9 @@ init (GeglChantOperation *operation)
 
 /* FIXME: probably some more stuff to free here */
 static void
-ff_cleanup (GeglChantOperation *operation)
+ff_cleanup (GeglChantO *o)
 {
-  Priv *p = (Priv*)operation->priv;
+  Priv *p = (Priv*)o->chant_data;
   if (p)
     {
       if (p->codec_name)
@@ -137,45 +131,131 @@ ff_cleanup (GeglChantOperation *operation)
     }
 }
 
-
-static void
-finalize (GObject *object)
+static glong
+prev_keyframe (Priv *priv, glong frame)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  if (self->priv)
+  /* no way to detect previous keyframe at the moment for ffmpeg,
+     so we'll just return 0, the first, and a forced reload happens
+     if needed
+   */
+  return 0;
+}
+
+static int
+decode_frame (GeglOperation *operation,
+              glong          frame)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->chant_data;
+  glong       prevframe = p->prevframe;
+  glong       decodeframe;        /*< frame to be requested decoded */
+
+  if (frame >= p->frames)
     {
-      ff_cleanup (self);
-      g_free (self->priv);
-      self->priv = NULL;
+      frame = p->frames - 1;
     }
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+  if (frame < 0)
+    {
+      frame = 0;
+    }
+
+  if (frame == prevframe)
+    {
+      return 0;
+    }
+
+  /* figure out which frame we should start decoding at */
+
+  if (frame == prevframe + 1)
+    {
+      decodeframe = prevframe + 1;
+    }
+  else
+    {
+      decodeframe = prev_keyframe (p, frame);
+      if (prevframe > decodeframe && prevframe < frame)
+        decodeframe = prevframe + 1;
+    }
+
+  if (decodeframe < prevframe)
+    {
+      /* seeking backwards, since it ffmpeg doesn't allow us,. we'll reload the file */
+      g_free (p->loadedfilename);
+      p->loadedfilename = NULL;
+      init (operation);
+    }
+
+  while (decodeframe <= frame)
+    {
+      int       got_picture = 0;
+
+      do
+        {
+          int       decoded_bytes;
+
+          if (p->coded_bytes <= 0)
+            {
+              do
+                {
+                  if (av_read_packet (p->ic, &p->pkt) < 0)
+                    {
+                      fprintf (stderr, "av_read_packet failed for %s\n",
+                               o->path);
+                      return -1;
+                    }
+                }
+              while (p->pkt.stream_index != p->video_stream);
+
+              p->coded_bytes = p->pkt.size;
+              p->coded_buf = p->pkt.data;
+            }
+          decoded_bytes =
+            avcodec_decode_video (p->video_st->codec, p->lavc_frame,
+                                  &got_picture, p->coded_buf, p->coded_bytes);
+          if (decoded_bytes < 0)
+            {
+              fprintf (stderr, "avcodec_decode_video failed for %s\n",
+                       o->path);
+              return -1;
+            }
+
+          p->coded_buf += decoded_bytes;
+          p->coded_bytes -= decoded_bytes;
+        }
+      while (!got_picture);
+
+      decodeframe++;
+    }
+  p->prevframe = frame;
+  return 0;
 }
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *p= (Priv*)self->priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->chant_data;
+  g_assert (o->chant_data != NULL);
 
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
 
   if (!p->loadedfilename ||
-      strcmp (p->loadedfilename, self->path))
+      strcmp (p->loadedfilename, o->path))
     {
       gint i;
       gint err;
 
-      ff_cleanup (self);
-      err = av_open_input_file (&p->ic, self->path, NULL, 0, NULL);
+      ff_cleanup (o);
+      err = av_open_input_file (&p->ic, o->path, NULL, 0, NULL);
       if (err < 0)
         {
-          print_error (self->path, err);
+          print_error (o->path, err);
         }
       err = av_find_stream_info (p->ic);
       if (err < 0)
         {
-          g_warning ("ff-load: error finding stream info for %s", self->path);
+          g_warning ("ff-load: error finding stream info for %s", o->path);
 
           return;
         }
@@ -236,110 +316,21 @@ prepare (GeglOperation *operation)
 
       if (p->loadedfilename)
         g_free (p->loadedfilename);
-      p->loadedfilename = g_strdup (self->path);
+      p->loadedfilename = g_strdup (o->path);
       p->prevframe = -1;
       p->coded_bytes = 0;
       p->coded_buf = NULL;
     }
 }
 
-static glong
-prev_keyframe (Priv *priv, glong frame)
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
 {
-  /* no way to detect previous keyframe at the moment for ffmpeg,
-     so we'll just return 0, the first, and a forced reload happens
-     if needed
-   */
-  return 0;
-}
-
-static int
-decode_frame (GeglChantOperation *op,
-              glong               frame)
-{
-  Priv     *p = (Priv*)op->priv;
-  glong     prevframe = p->prevframe;
-  glong     decodeframe;        /*< frame to be requested decoded */
-
-  if (frame >= p->frames)
-    {
-      frame = p->frames - 1;
-    }
-
-  if (frame < 0)
-    {
-      frame = 0;
-    }
-
-  if (frame == prevframe)
-    {
-      return 0;
-    }
-
-  /* figure out which frame we should start decoding at */
-
-  if (frame == prevframe + 1)
-    {
-      decodeframe = prevframe + 1;
-    }
-  else
-    {
-      decodeframe = prev_keyframe (p, frame);
-      if (prevframe > decodeframe && prevframe < frame)
-        decodeframe = prevframe + 1;
-    }
-
-  if (decodeframe < prevframe)
-    {
-      /* seeking backwards, since it ffmpeg doesn't allow us,. we'll reload the file */
-      g_free (p->loadedfilename);
-      p->loadedfilename = NULL;
-      init (op);
-    }
-
-  while (decodeframe <= frame)
-    {
-      int       got_picture = 0;
-
-      do
-        {
-          int       decoded_bytes;
-
-          if (p->coded_bytes <= 0)
-            {
-              do
-                {
-                  if (av_read_packet (p->ic, &p->pkt) < 0)
-                    {
-                      fprintf (stderr, "av_read_packet failed for %s\n",
-                               op->path);
-                      return -1;
-                    }
-                }
-              while (p->pkt.stream_index != p->video_stream);
-
-              p->coded_bytes = p->pkt.size;
-              p->coded_buf = p->pkt.data;
-            }
-          decoded_bytes =
-            avcodec_decode_video (p->video_st->codec, p->lavc_frame,
-                                  &got_picture, p->coded_buf, p->coded_bytes);
-          if (decoded_bytes < 0)
-            {
-              fprintf (stderr, "avcodec_decode_video failed for %s\n",
-                       op->path);
-              return -1;
-            }
-
-          p->coded_buf += decoded_bytes;
-          p->coded_bytes -= decoded_bytes;
-        }
-      while (!got_picture);
-
-      decodeframe++;
-    }
-  p->prevframe = frame;
-  return 0;
+  GeglRectangle result = {0,0,320,200};
+  Priv *p = (Priv*)GEGL_CHANT_PROPERTIES (operation)->chant_data;
+  result.width = p->width;
+  result.height = p->height;
+  return result;
 }
 
 static gboolean
@@ -347,11 +338,11 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  Priv                *p = (Priv*)self->priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->chant_data;
 
   {
-    if (p->ic && !decode_frame (self, self->frame))
+    if (p->ic && !decode_frame (operation, o->frame))
       {
         guchar *buf;
         gint    pxsize;
@@ -401,22 +392,46 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+static void
+finalize (GObject *object)
 {
-  GeglRectangle result = {0,0,320,200};
-  Priv *p = (Priv*)GEGL_CHANT_OPERATION (operation)->priv;
-  result.width = p->width;
-  result.height = p->height;
-  return result;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      Priv *p = (Priv*)o->chant_data;
+
+      g_free (p->loadedfilename);
+      g_free (p->fourcc);
+      g_free (p->codec_name);
+
+      g_free (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
 }
 
-static void class_init (GeglOperationClass *operation_class)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (operation_class);
 
-  gobject_class->finalize = finalize;
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
+
+  G_OBJECT_CLASS (klass)->finalize = finalize;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  source_class->process = process;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
+  operation_class->attach = init;
+
+  operation_class->name        = "ff-load";
+  operation_class->categories  = "input:video";
+  operation_class->description = "FFmpeg video frame importer.";
 }
 
 #endif

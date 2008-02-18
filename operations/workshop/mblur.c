@@ -15,22 +15,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (dampness, 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0 is no change.")
+gegl_chant_double (dampness, "Dampness", 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0 is no change.")
 
 #else
 
-#define GEGL_CHANT_NAME            mblur
-#define GEGL_CHANT_SELF            "mblur.c"
-#define GEGL_CHANT_DESCRIPTION     "Accumulating motion blur"
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE       "mblur.c"
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_INIT
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 typedef struct
 {
@@ -39,19 +33,18 @@ typedef struct
 
 
 static void
-init (GeglChantOperation *operation)
+init (GeglChantO *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv = (Priv*)self->priv;
-  g_assert (priv == NULL);
-  priv = g_malloc0 (sizeof (Priv));
-  self->priv = (void*) priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *priv = (Priv*)o->chant_data;
 
-  /* XXX: this is not freed when the op is destroyed */
-  {
-    GeglRectangle extent = {0,0,1024,1024};
-    priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
-  }
+  g_assert (priv == NULL);
+
+  priv = g_new0 (Priv, 1);
+  o->chant_data = (void*) priv;
+
+  GeglRectangle extent = {0,0,1024,1024};
+  priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
 }
 
 static void prepare (GeglOperation *operation)
@@ -66,15 +59,17 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglOperationFilter *filter;
-  GeglChantOperation  *self;
+  GeglChantO          *o;
   Priv *p;
 
   filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_OPERATION (operation);
-  p = (Priv*)self->priv;
+  o   = GEGL_CHANT_PROPERTIES (operation);
+  p = (Priv*)o->chant_data;
+  if (p == NULL)
+    init (o);
 
     {
-      GeglBuffer          *temp_in;
+      GeglBuffer *temp_in;
 
       temp_in = gegl_buffer_create_sub_buffer (input, result);
 
@@ -86,7 +81,7 @@ process (GeglOperation       *operation,
         gint i;
         gegl_buffer_get (p->acc, 1.0, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
         gegl_buffer_get (temp_in, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-        dampness = self->dampness;
+        dampness = o->dampness;
         for (i=0;i<pixels;i++)
           {
             gint c;
@@ -102,6 +97,45 @@ process (GeglOperation       *operation,
     }
 
   return  TRUE;
+}
+
+
+static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      Priv *p = (Priv*)o->chant_data;
+
+      g_object_unref (p->acc);
+
+      g_free (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  G_OBJECT_CLASS (klass)->finalize = finalize;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
+  operation_class->prepare = prepare;
+
+  operation_class->name        = "mblur";
+  operation_class->categories  = "blur:misc";
+  operation_class->description = "Accumulating motion blur";
 }
 
 #endif

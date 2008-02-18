@@ -1,3 +1,10 @@
+2008-02-17  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/io/ff-load.c:
+	* operations/workshop/ff-save.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/mblur.c: Updated to new chanting API.
+
 2008-02-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/difference-of-gaussians.c: moved ..

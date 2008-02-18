@@ -15,7 +15,7 @@
  *
  * Copyright 2004, 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 #define THRESHOLD_SCRIPT \
 "level = user_value/2\n"\
@@ -32,99 +32,36 @@
 "  progress (y/height)\n"\
 "end"
 
-gegl_chant_multiline (script, THRESHOLD_SCRIPT, "The lua script containing the implementation of this operation.")
-gegl_chant_path (file, "", "a stored lua script on disk implementing an operation.")
-gegl_chant_double (user_value, -1000.0, 1000.0, 1.0, "(appears in the global variable 'user_value' in lua.")
+gegl_chant_multiline (script, "Script", THRESHOLD_SCRIPT, "The lua script containing the implementation of this operation.")
+gegl_chant_path (file, "File", "", "a stored lua script on disk implementing an operation.")
+gegl_chant_double (user_value, "User value", -1000.0, 1000.0, 1.0, "(appears in the global variable 'user_value' in lua.")
 
 #else
 
-#define GEGL_CHANT_NAME            gluas
-#define GEGL_CHANT_SELF            "gluas.c"
-#define GEGL_CHANT_DESCRIPTION     "A general purpose filter/composer implementation proxy for the lua programming language."
-#define GEGL_CHANT_CATEGORIES      "script"
+#define GEGL_CHANT_TYPE_COMPOSER
+#define GEGL_CHANT_C_FILE       "gluas.c"
 
-#define GEGL_CHANT_COMPOSER
-#define GEGL_CHANT_INIT
-#define GEGL_CHANT_CLASS_INIT
-#define GEGL_CHANT_PREPARE
-
-#include "gegl-old-chant.h"
-
+#include "gegl-chant.h"
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 
 typedef struct Priv
 {
-  gint              bpp;
-  GeglBuffer       *in_drawable;
-  GeglBuffer       *out_drawable;
-  Babl             *rgba_float;
+  gint        bpp;
+  GeglBuffer *in_drawable;
+  GeglBuffer *out_drawable;
+  Babl       *rgba_float;
 
-  gint              bx1, by1;
-  gint              bx2, by2;    /* mask bounds */
+  gint        bx1, by1;
+  gint        bx2, by2;    /* mask bounds */
 
-  gint              width;
-  gint              height;
+  gint        width;
+  gint        height;
 
-  lua_State        *L;
+  lua_State  *L;
 }
 Priv;
-
-static void init (GeglChantOperation *self)
-{
-}
-
-static void
-drawable_lua_process (GeglChantOperation *self,
-                      GeglBuffer  *drawable,
-                      GeglBuffer  *result,
-                      const GeglRectangle *roi,
-                      const gchar *file,
-                      const gchar *buffer,
-                      gdouble      user_value);
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *aux,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantOperation  *self;
-
-  self   = GEGL_CHANT_OPERATION (operation);
-
-  if (self->file && g_file_test (self->file, G_FILE_TEST_IS_REGULAR))
-    {
-      drawable_lua_process (self, input, output, result, self->file, NULL, self->user_value);
-    }
-  else
-    {
-      drawable_lua_process (self, input, output, result, NULL, self->script, self->user_value);
-    }
-
-  return TRUE;
-}
-
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
-                                                                     "input");
-  if (!in_rect)
-    return result;
-
-  result = *in_rect;
-  return result;
-}
-
-static void class_init (GeglOperationClass *operation_class)
-{
-  operation_class->get_bounding_box  = get_bounding_box;
-}
-
 
 #define TILE_CACHE_SIZE   16
 #define SCALE_WIDTH      125
@@ -183,7 +120,7 @@ register_functions (lua_State      *L,
 }
 
 static void
-drawable_lua_process (GeglChantOperation *self,
+drawable_lua_process (GeglChantO    *self,
                       GeglBuffer    *drawable,
                       GeglBuffer    *result,
                       const GeglRectangle *roi,
@@ -282,12 +219,14 @@ drawable_lua_process (GeglChantOperation *self,
       if (status == 0)
         status = lua_pcall (L, 0, LUA_MULTRET, 0);
 
+#if 0   /* ~~~~~ */
       gegl_buffer_flush (p.out_drawable);
 #if 0
       gimp_drawable_flush (drawable);
       gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
       gimp_drawable_update (drawable->drawable_id, p.bx1, p.by1,
                             p.bx2 - p.bx1, p.by2 - p.by1);
+#endif
 #endif
 
       if (status != 0)
@@ -439,10 +378,12 @@ l_flush (lua_State * lua)
   lua_gettable(lua, LUA_REGISTRYINDEX);
   p = lua_touserdata(lua, -1);
 
+#if 0   /* ~~~~~ */
   gegl_buffer_flush (p->out_drawable);
 #if 0
   gimp_drawable_flush (p->drawable);
   gimp_drawable_merge_shadow (p->drawable->drawable_id, FALSE);
+#endif
 #endif
 
   return 0;
@@ -1037,5 +978,60 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
+                                                                     "input");
+  if (!in_rect)
+    return result;
+
+  result = *in_rect;
+  return result;
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *aux,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  if (o->file && g_file_test (o->file, G_FILE_TEST_IS_REGULAR))
+    {
+      drawable_lua_process (o, input, output, result, o->file, NULL, o->user_value);
+    }
+  else
+    {
+      drawable_lua_process (o, input, output, result, NULL, o->script, o->user_value);
+    }
+
+  return TRUE;
+}
+
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass         *operation_class;
+  GeglOperationComposerClass *composer_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
+
+  composer_class->process = process;
+  operation_class->prepare = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
+
+  operation_class->name        = "gluas";
+  operation_class->categories  = "script";
+  operation_class->description =
+        "A general purpose filter/composer implementation proxy for the"
+        " lua programming language.";
+}
 
 #endif

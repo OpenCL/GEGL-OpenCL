@@ -15,24 +15,18 @@
  *
  * Copyright 2003,2004,2007 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "/tmp/fnord.mp4", "Target path and filename, use '-' for stdout.")
-gegl_chant_double (bitrate, 0.0, 100000000.0, 800000.0, "target bitrate")
-gegl_chant_double (fps, 0.0, 100.0, 25, "frames per second")
+gegl_chant_string (path, "File", "/tmp/fnord.mp4", "Target path and filename, use '-' for stdout.")
+gegl_chant_double (bitrate, "Bitrate", 0.0, 100000000.0, 800000.0, "target bitrate")
+gegl_chant_double (fps, "FPS", 0.0, 100.0, 25, "frames per second")
 
 #else
 
-#define GEGL_CHANT_NAME         ff_save
-#define GEGL_CHANT_SELF         "ff-save.c"
-#define GEGL_CHANT_DESCRIPTION  "FFmpeg video output sink"
-#define GEGL_CHANT_CATEGORIES   "output:video"
+#define GEGL_CHANT_TYPE_SINK
+#define GEGL_CHANT_C_FILE       "ff-save.c"
 
-#define GEGL_CHANT_SINK
-#define GEGL_CHANT_INIT
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 #include "ffmpeg/avformat.h"
 
 typedef struct
@@ -47,11 +41,9 @@ typedef struct
   AVFormatContext *oc;
   AVStream *video_st;
 
-
   AVFrame  *picture, *tmp_picture;
   uint8_t  *video_outbuf;
   int       frame_count, video_outbuf_size;
-
 
     /** the rest is for audio handling within oxide, note that the interface
      * used passes all used functions in the oxide api through the reg_sym api
@@ -61,7 +53,7 @@ typedef struct
 
   AVStream *audio_st;
 
-  void     *oxide_audio_instance;  
+  void     *oxide_audio_instance;
   /*< non NULL audio_query,. means audio present */
 
   int32_t (*oxide_audio_query) (void *audio_instance,
@@ -102,16 +94,16 @@ typedef struct
 
 #define DISABLE_AUDIO
 
-  static void
-init (GeglChantOperation *operation)
+static void
+init (GeglChantO *o)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv               *p = (Priv*)self->priv;
-  static gint         inited = 0; /*< this is actually meant to be static, only to be done once */
-  if (p==NULL)
+  static gint inited = 0; /*< this is actually meant to be static, only to be done once */
+  Priv       *p = (Priv*)o->chant_data;
+
+  if (p == NULL)
     {
-      p = g_malloc0 (sizeof (Priv));
-      self->priv = (void*) p;
+      p = g_new0 (Priv, 1);
+      o->chant_data = (void*) p;
     }
 
   if (!inited)
@@ -142,7 +134,7 @@ init (GeglChantOperation *operation)
 
       if (!p->buffer)
         {
-          int       size =
+          int size =
             (p->sample_rate / p->fps) * p->channels * (p->bits / 8) * 2;
           buffer_open (op, size);
         }
@@ -153,90 +145,21 @@ init (GeglChantOperation *operation)
 #endif
 }
 
-static void close_video       (Priv               *p,
-                               AVFormatContext    *oc,
-                               AVStream           *st);
-void        close_audio       (Priv               *p,
-                               AVFormatContext    *oc,
-                               AVStream           *st);
-static int  tfile             (GeglChantOperation *self);
-static void write_video_frame (GeglChantOperation *self,
-                               AVFormatContext    *oc,
-                               AVStream           *st);
-static void write_audio_frame (GeglChantOperation *self,
-                               AVFormatContext    *oc,
-                               AVStream           *st);
+static void close_video       (Priv            *p,
+                               AVFormatContext *oc,
+                               AVStream        *st);
+void        close_audio       (Priv            *p,
+                               AVFormatContext *oc,
+                               AVStream        *st);
+static int  tfile             (GeglChantO      *self);
+static void write_video_frame (GeglChantO      *self,
+                               AVFormatContext *oc,
+                               AVStream        *st);
+static void write_audio_frame (GeglChantO      *self,
+                               AVFormatContext *oc,
+                               AVStream        *st);
 
 
-static void
-finalize (GObject *object)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  if (self->priv)
-
-    {
-      Priv *p = (Priv*)self->priv;
-
-    if (p->oc)
-      {
-        gint i;
-        if (p->video_st)
-          close_video (p, p->oc, p->video_st);
-        if (p->audio_st)
-          close_audio (p, p->oc, p->audio_st);
-
-        av_write_trailer (p->oc);
-
-        for (i = 0; i < p->oc->nb_streams; i++)
-          {
-            av_freep (&p->oc->streams[i]);
-          }
-
-        url_fclose (&p->oc->pb);
-        free (p->oc);
-      }
-      g_free (self->priv);
-      self->priv = NULL;
-    }
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         const GeglRectangle *result)
-{
-  GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
-  Priv     *p = (Priv*)self->priv;
-  static              gint inited = 0;
-
-  g_assert (input);
-
-  p->width = result->width;
-  p->height = result->height;
-  p->input = input;
-
-  if (!inited)
-    {
-      tfile (self);
-      inited = 1;
-    }
-
-  write_video_frame (self, p->oc, p->video_st);
-  if (p->audio_st)
-    write_audio_frame (self, p->oc, p->audio_st);
-
-  return  TRUE;
-}
-
-static void class_init (GeglOperationClass *operation_class)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (operation_class);
-
-  gobject_class->finalize = finalize;
-  GEGL_OPERATION_SINK_CLASS (operation_class)->needs_full = TRUE;
-}
 
 
 #define STREAM_FRAME_RATE 25    /* 25 images/s */
@@ -491,9 +414,9 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 }
 
 void
-write_audio_frame (GeglChantOperation *op, AVFormatContext * oc, AVStream * st)
+write_audio_frame (GeglChantO *op, AVFormatContext * oc, AVStream * st)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv *p = (Priv*)op->chant_data;
 
   AVCodecContext *c;
   AVPacket  pkt;
@@ -542,9 +465,9 @@ close_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* add a video output stream */
 static AVStream *
-add_video_stream (GeglChantOperation *op, AVFormatContext * oc, int codec_id)
+add_video_stream (GeglChantO *op, AVFormatContext * oc, int codec_id)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv *p = (Priv*)op->chant_data;
 
   AVCodecContext *c;
   AVStream *st;
@@ -686,10 +609,10 @@ close_video (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* prepare a dummy image */
 static void
-fill_yuv_image (GeglChantOperation *op,
-                AVFrame * pict, int frame_index, int width, int height)
+fill_yuv_image (GeglChantO *op,
+                AVFrame *pict, int frame_index, int width, int height)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv     *p = (Priv*)op->chant_data;
   /*memcpy (pict->data[0],
 
    op->input_pad[0]->data,
@@ -700,10 +623,10 @@ fill_yuv_image (GeglChantOperation *op,
 }
 
 static void
-write_video_frame (GeglChantOperation *op,
-                   AVFormatContext * oc, AVStream * st)
+write_video_frame (GeglChantO *op,
+                   AVFormatContext *oc, AVStream *st)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv     *p = (Priv*)op->chant_data;
   int       out_size, ret;
   AVCodecContext *c;
   AVFrame  *picture_ptr;
@@ -779,9 +702,9 @@ write_video_frame (GeglChantOperation *op,
 }
 
 static int
-tfile (GeglChantOperation *self)
+tfile (GeglChantO *self)
 {
-  Priv     *p = (Priv*)self->priv;
+  Priv *p = (Priv*)self->chant_data;
 
   p->fmt = guess_format (NULL, self->path, NULL);
   if (!p->fmt)
@@ -846,5 +769,89 @@ filechanged (GeglChantOperation *op, const char *att)
   return 0;
 }
 #endif
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         const GeglRectangle *result)
+{
+  static gint inited = 0;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->chant_data;
+
+  g_assert (input);
+
+  if (p == NULL)
+    init (o);
+
+  p->width = result->width;
+  p->height = result->height;
+  p->input = input;
+
+  if (!inited)
+    {
+      tfile (o);
+      inited = 1;
+    }
+
+  write_video_frame (o, p->oc, p->video_st);
+  if (p->audio_st)
+    write_audio_frame (o, p->oc, p->audio_st);
+
+  return  TRUE;
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  if (o->chant_data)
+    {
+      Priv *p = (Priv*)o->chant_data;
+
+    if (p->oc)
+      {
+        gint i;
+        if (p->video_st)
+          close_video (p, p->oc, p->video_st);
+        if (p->audio_st)
+          close_audio (p, p->oc, p->audio_st);
+
+        av_write_trailer (p->oc);
+
+        for (i = 0; i < p->oc->nb_streams; i++)
+          {
+            av_freep (&p->oc->streams[i]);
+          }
+
+        url_fclose (&p->oc->pb);
+        free (p->oc);
+      }
+      g_free (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
+
+
+static void
+operation_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass     *operation_class;
+  GeglOperationSinkClass *sink_class;
+
+  G_OBJECT_CLASS (klass)->finalize = finalize;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
+
+  sink_class->process = process;
+  sink_class->needs_full = TRUE;
+
+  operation_class->name        = "ff-save";
+  operation_class->categories  = "output:video";
+  operation_class->description = "FFmpeg video output sink";
+}
 
 #endif
