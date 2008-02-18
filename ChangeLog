@@ -1,3 +1,8 @@
+2008-02-18  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-init.c: never include gi18n.h from a library, use
+	g18n-lib.h instead.
+
 2008-02-18  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/gegl-xml.c: Include gegl.h to get rid of

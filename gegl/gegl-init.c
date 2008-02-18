@@ -17,14 +17,13 @@
  */
 
 #include "config.h"
+
 #include <babl/babl.h>
+
 #include <glib-object.h>
-#include "gegl-instrument.h"
-/*#include "gegl-types.h"*/
-#include "gegl-init.h"
-#include "module/geglmodule.h"
-#include "module/geglmoduledb.h"
-#include "buffer/gegl-buffer-allocator.h"
+#include <glib/gstdio.h>
+#include <glib/gi18n-lib.h>
+
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -32,12 +31,19 @@
 #ifdef G_OS_WIN32
 #include <process.h>
 #endif
-#include <glib/gstdio.h>
+
+#include "gegl-instrument.h"
+/*#include "gegl-types.h"*/
+#include "gegl-init.h"
+
+#include "module/geglmodule.h"
+#include "module/geglmoduledb.h"
+
+#include "buffer/gegl-buffer-allocator.h"
+
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
-
-#include <glib/gi18n.h>
 
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
