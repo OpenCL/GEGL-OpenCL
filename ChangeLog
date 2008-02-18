@@ -1,3 +1,8 @@
+2008-02-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/render/checkerboard.c: make the minimum allowed
+	width/height of the checkerboard cells 1px.
+
 2008-02-17  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/io/ff-load.c:
