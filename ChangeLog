@@ -1,3 +1,8 @@
+2008-02-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-old-chant.h: removed, migration to new chanting system
+	completed.
+
 2008-02-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/gtk-display.c: Updated to new chanting API.
