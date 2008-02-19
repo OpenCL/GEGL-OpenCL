@@ -1,3 +1,8 @@
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
+	* operations/affine/affine.c (is_intermediate_node): use
+	g_ascii_strcasecmp() instead of the deprecated g_strcasecmp().
+
 2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/rawbayer-load.c: Updated to new chanting API.

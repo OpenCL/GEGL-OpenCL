@@ -302,7 +302,7 @@ is_intermediate_node (OpAffine *affine)
     {
       sink = gegl_connection_get_sink_node (connections->data)->operation;
       if (! IS_OP_AFFINE (sink) ||
-          g_strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
+          g_ascii_strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
         return FALSE;
     }
   while ((connections = g_slist_next (connections)));
