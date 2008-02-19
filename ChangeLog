@@ -1,3 +1,7 @@
+2008-02-18  Manish Singh  <yosh@gimp.org>
+
+	* configure.ac: fix Lua configure check.
+
 2008-02-18  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* gegl/buffer/gegl-tile-disk.c (disk_entry_read): removed debug
