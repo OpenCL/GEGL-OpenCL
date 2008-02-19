@@ -16,13 +16,16 @@
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
 
-#include <glib.h>
-#include <glib-object.h>
+#include "config.h"
+
 #include <string.h>
+
+#include <glib-object.h>
 
 #include "gegl-provider.h"
 #include "gegl-handler.h"
 #include "gegl-handlers.h"
+
 
 G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_PROVIDER)
 

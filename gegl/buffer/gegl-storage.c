@@ -16,10 +16,9 @@
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 
-#include <stdlib.h>
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <glib/gstdio.h>
+#include "config.h"
+
+#include <glib-object.h>
 
 #include "gegl-storage.h"
 #include "gegl-tile.h"
@@ -29,6 +28,7 @@
 #include "gegl-tile-mem.h"
 #include "gegl-handler-cache.h"
 #include "gegl-handler-log.h"
+
 
 G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
 

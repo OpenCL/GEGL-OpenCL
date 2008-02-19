@@ -17,15 +17,17 @@
  * Spline Code Copyright 1997 David Mosberger
  */
 
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <glib-object.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
+
+#include <glib-object.h>
 
 #include "gegl-types.h"
 
 #include "gegl-curve.h"
+
 
 enum
 {

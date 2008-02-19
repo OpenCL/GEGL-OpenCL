@@ -16,14 +16,16 @@
  * Copyright 2006 Martin Nordholts <enselic@hotmail.com>
  */
 
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <glib-object.h>
+#include "config.h"
+
 #include <string.h>
+
+#include <glib-object.h>
 
 #include "gegl-types.h"
 
 #include "gegl-color.h"
+
 
 enum
 {

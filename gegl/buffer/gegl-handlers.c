@@ -15,11 +15,14 @@
  *
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+
 #include <glib.h>
-#include <glib/gprintf.h>
-#include <glib/gstdio.h>
+
 #include "gegl-handlers.h"
 #include "gegl-handler-cache.h"
+
 
 G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_HANDLER)
 
@@ -87,12 +90,12 @@ get_tile (GeglProvider *tile_store,
           gint          y,
           gint          z)
 {
-  GeglHandlers  *handlers = (GeglHandlers*)tile_store;
-  GeglProvider  *provider = ((GeglHandler*)tile_store)->provider;
-  GeglTile       *tile   = NULL;
+  GeglHandlers  *handlers = (GeglHandlers *) tile_store;
+  GeglProvider  *provider = ((GeglHandler *) tile_store)->provider;
+  GeglTile      *tile     = NULL;
 
   if (handlers->chain != NULL)
-    tile = gegl_provider_get_tile ((GeglProvider*)(handlers->chain->data),
+    tile = gegl_provider_get_tile ((GeglProvider *) (handlers->chain->data),
                                      x, y, z);
   else if (provider)
     tile = gegl_provider_get_tile (provider, x, y, z);
@@ -109,11 +112,12 @@ message (GeglProvider  *tile_store,
          gint            z,
          gpointer        data)
 {
-  GeglHandlers *handlers = (GeglHandlers*)tile_store;
-  GeglProvider *provider = ((GeglHandler*)tile_store)->provider;
+  GeglHandlers *handlers = (GeglHandlers *) tile_store;
+  GeglProvider *provider = ((GeglHandler *) tile_store)->provider;
 
   if (handlers->chain != NULL)
-    return gegl_provider_message ((GeglProvider*)(handlers->chain->data), message, x, y, z, data);
+    return gegl_provider_message ((GeglProvider *)(handlers->chain->data),
+                                  message, x, y, z, data);
   else if (provider)
     return gegl_provider_message (provider, message, x, y, z, data);
   else
@@ -125,7 +129,7 @@ message (GeglProvider  *tile_store,
 static void
 gegl_handlers_class_init (GeglHandlersClass *class)
 {
-  GObjectClass       *gobject_class;
+  GObjectClass      *gobject_class;
   GeglProviderClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
@@ -155,7 +159,7 @@ gegl_handlers_rebind (GeglHandlers *handlers)
   iter = handlers->chain;
   while (iter)
     {
-      GeglHandler   *handler;
+      GeglHandler  *handler;
       GeglProvider *provider = NULL;
 
       handler = iter->data;

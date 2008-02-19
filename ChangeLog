@@ -1,5 +1,17 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.c
+	* gegl/buffer/gegl-handler.c
+	* gegl/buffer/gegl-handlers.c
+	* gegl/buffer/gegl-storage.c
+	* gegl/buffer/gegl-tile-mem.c
+	* gegl/buffer/gegl-tile.c
+	* gegl/property-types/gegl-color.c
+	* gegl/property-types/gegl-curve.c
+	* gegl/property-types/gegl-vector.c: organized includes.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-tile-disk.c: organized includes, removed
 	trailing whitespace, fixed error handling and indentation.
 

@@ -15,19 +15,23 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include "config.h"
 
-#include <glib.h>
-#include <glib-object.h>
-#include <glib/gprintf.h>
+#include "string.h" /* memcpy */
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include "string.h" /* memcpy */
-#include "../gegl-types.h"
+
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
+
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
 enum

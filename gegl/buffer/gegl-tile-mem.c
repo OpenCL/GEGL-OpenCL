@@ -15,21 +15,23 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include "config.h"
+
+#include <string.h>
+#include <errno.h>
 
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <errno.h>
-#include <glib.h>
+
 #include <glib-object.h>
-#include <glib/gprintf.h>
 #include <glib/gstdio.h>
+
 #include "gegl-tile-backend.h"
 #include "gegl-tile-mem.h"
-#include <string.h>
-#include <stdio.h>
+
 
 static void dbg_alloc (int size);
 static void dbg_dealloc (int size);

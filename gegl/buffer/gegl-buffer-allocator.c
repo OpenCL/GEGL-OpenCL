@@ -15,6 +15,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include "config.h"
 
 #include <sys/types.h>
@@ -22,17 +23,16 @@
 #include <unistd.h>
 #endif
 
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <glib/gstdio.h>
 #include <glib-object.h>
+#include <glib/gstdio.h>
 
 #ifdef G_OS_WIN32
 #include <process.h>
 #define getpid() _getpid()
 #endif
 
-#include "../gegl-types.h"
+#include "gegl-types.h"
+
 #include "gegl-buffer-types.h"
 #include "gegl-storage.h"
 #include "gegl-buffer-allocator.h"
