@@ -136,7 +136,7 @@ gegl_swap_dir (void)
 {
   static gchar *swapdir = "";
 
-  if (swapdir[0] == '\0')
+  if (swapdir && swapdir[0] == '\0')
     {
       if (g_getenv ("GEGL_SWAP"))
         {

@@ -1,5 +1,10 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.c (gegl_swap_dir): check for
+	swap_dir != NULL before accessing it.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/module/gegldatafiles.c
 	* gegl/graph/gegl-node.c
 	* gegl/graph/gegl-node-context.c
