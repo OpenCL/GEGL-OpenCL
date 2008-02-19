@@ -1,14 +1,14 @@
+2008-02-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/gtk-display.c: Updated to new chanting API.
+	Reminder: This file has compiler warnings that need to be fixed.
+
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
 	* operations/affine/affine.c (is_intermediate_node): use
 	g_ascii_strcasecmp() instead of the deprecated g_strcasecmp().
 
-2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
-
-	* operations/workshop/gtk-display.c: Updated to new chanting API.
-	Reminder: This file has compiler warnings that need to be fixed.
-
-2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+2008-02-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/rawbayer-load.c: Updated to new chanting API.
 
@@ -68,7 +68,7 @@
 	* gegl/buffer/gegl-tile-disk.c (gegl_tile_disk_constructor): open
 	the file descriptor in binary mode.
 
-2008-01-18  Kevin Cozens  <kcozens@cvs.gnome.org>
+2008-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/generated/Makefile.am: Remove generated .c
 	files for maintainer-clean.
