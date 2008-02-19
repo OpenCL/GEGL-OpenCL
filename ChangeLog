@@ -1,3 +1,7 @@
+2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/rawbayer-load.c: Updated to new chanting API.
+
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-init.c: fixed broken filename handling.

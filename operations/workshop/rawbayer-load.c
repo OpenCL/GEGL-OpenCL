@@ -39,7 +39,7 @@ load_buffer (GeglChantO *op_raw_load)
 {
   if (!op_raw_load->chant_data)
     {
-      FILE *pfp;
+      FILE  *pfp;
       gchar *command;
 
       gint width, height, val_max;
@@ -106,7 +106,7 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglNodeContext     *context,
-         const gchar         *output,
+         const gchar         *output_pad,
          const GeglRectangle *result)
 
 {
@@ -140,7 +140,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  source_class->process = process;
+  operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "rawbayer-load";
