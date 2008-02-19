@@ -21,15 +21,16 @@
 
 #define GEGL_INTERNAL
 
-#include <stdio.h>
 #include <string.h>
 
 #include <glib-object.h>
+
 #include "gegl-types.h"
 
 #include "gegl-node-context.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
+
 #include "operation/gegl-operation.h"
 
 static void     gegl_node_context_class_init   (GeglNodeContextClass  *klass);

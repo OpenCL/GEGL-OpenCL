@@ -19,15 +19,8 @@
 #include "config.h"
 
 #include <string.h>
-#include <errno.h>
-
-#include <fcntl.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 #include <glib-object.h>
-#include <glib/gstdio.h>
 
 #include "gegl-tile-backend.h"
 #include "gegl-tile-mem.h"

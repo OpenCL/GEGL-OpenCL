@@ -18,12 +18,14 @@
 
 #include "config.h"
 
+#include <string.h>
+#include <errno.h>
+
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <string.h>
-#include <glib.h>
+
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
@@ -37,7 +39,8 @@
 #endif
 #endif
 
-#include "../gegl-types.h"
+#include "gegl-types.h"
+
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-storage.h"
@@ -158,10 +161,16 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   strcpy (info->header.magic, "_G_E_G_L");
   info->path = g_strdup (path);
-  info->fd   = g_open (info->path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  info->fd   = g_open (info->path,
+                       O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
   if (info->fd == -1)
     {
-      g_message ("Unable to open '%s' when saving a buffer", info->path);
+      gchar *name = g_filename_display_name (info->path);
+
+      g_message ("Unable to open '%s' when saving a buffer: %s",
+                 name, g_strerror (errno));
+      g_free (name);
+
       save_info_destroy (info);
       return;
     }

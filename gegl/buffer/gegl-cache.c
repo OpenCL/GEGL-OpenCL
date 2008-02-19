@@ -16,18 +16,22 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include <stdio.h>
+#include "config.h"
+
 #include <string.h>
 
 #include <glib-object.h>
-#include <gobject/gvaluecollector.h>
+
+#include <babl/babl.h>
 
 #include "gegl-types.h"
-#include <babl/babl.h>
+#include "gegl-utils.h"
+
 #include "graph/gegl-node.h"
+
 #include "gegl-cache.h"
 #include "gegl-region.h"
-#include "../gegl-utils.h"
+
 
 enum
 {

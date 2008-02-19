@@ -19,12 +19,12 @@
  * Datafiles module copyight (C) 1996 Federico Mena Quintero
  * federico@nuclecu.unam.mx
  */
+
 #include "config.h"
 
-#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
+#include <sys/types.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -198,7 +198,6 @@ gegl_datafiles_read_directories (const gchar            *path_str,
               file_data.atime    = filestat.st_atime;
               file_data.mtime    = filestat.st_mtime;
               file_data.ctime    = filestat.st_ctime;
-    
 
               if (! err)
                 {

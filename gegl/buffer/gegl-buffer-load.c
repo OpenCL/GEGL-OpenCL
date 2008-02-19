@@ -15,14 +15,17 @@
  *
  * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include "config.h"
+
+#include <string.h>
+#include <errno.h>
 
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <string.h>
-#include <glib.h>
+
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
@@ -30,7 +33,8 @@
 #include <io.h>
 #endif
 
-#include "../gegl-types.h"
+#include "gegl-types.h"
+
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-storage.h"
@@ -104,7 +108,12 @@ gegl_buffer_load (GeglBuffer  *buffer,
   info->fd   = g_open (info->path, O_RDONLY, 0);
   if (info->fd == -1)
     {
-      g_message ("Unable to open '%s' for loading a buffer", info->path);
+      gchar *name = g_filename_display_name (info->path);
+
+      g_message ("Unable to open '%s' for loading a buffer: %s",
+                 name, g_strerror (errno));
+      g_free (name);
+
       load_info_destroy (info);
       return;
     }

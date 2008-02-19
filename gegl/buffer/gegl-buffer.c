@@ -18,15 +18,13 @@
 
 #include "config.h"
 
-#include <limits.h>
 #include <math.h>
 #include <string.h>
 
-#include <glib.h>
 #include <glib-object.h>
-#include <glib/gstdio.h>
 
-#include "../gegl-types.h"
+#include "gegl-types.h"
+
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-allocator.h"

@@ -1,5 +1,17 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* gegl/module/gegldatafiles.c
+	* gegl/graph/gegl-node.c
+	* gegl/graph/gegl-node-context.c
+	* gegl/buffer/gegl-cache.c
+	* gegl/buffer/gegl-tile-mem.c
+	* gegl/buffer/gegl-buffer.c: organized includes.
+
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-buffer-save.c: fixed error handling.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c (gegl_swap_dir): rewritten
 	in a portable way.
 

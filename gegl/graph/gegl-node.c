@@ -21,11 +21,11 @@
 
 #include "config.h"
 
-#include <stdio.h>
 #include <string.h>
 
 #include <glib-object.h>
 #include <gobject/gvaluecollector.h>
+
 #include "gegl-types.h"
 
 #include "gegl-node.h"
@@ -33,9 +33,11 @@
 #include "gegl-pad.h"
 #include "gegl-utils.h"
 #include "gegl-visitable.h"
+
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
 #include "operation/gegl-operation-meta.h"
+
 #include "process/gegl-eval-mgr.h"
 #include "process/gegl-have-visitor.h"
 #include "process/gegl-prepare-visitor.h"
@@ -482,8 +484,6 @@ find_connection (GeglNode *sink,
 
   return NULL;
 }
-
-#include <stdio.h>
 
 gboolean
 gegl_node_connect_to (GeglNode    *source,
@@ -1105,8 +1105,6 @@ gegl_node_get (GeglNode    *self,
   gegl_node_get_valist (self, first_property_name, var_args);
   va_end (var_args);
 }
-
-#include <stdio.h>
 
 void
 gegl_node_set_valist (GeglNode    *self,
