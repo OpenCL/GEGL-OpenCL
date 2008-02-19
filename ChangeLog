@@ -5,6 +5,11 @@
 
 2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/workshop/gtk-display.c: Updated to new chanting API.
+	Reminder: This file has compiler warnings that need to be fixed.
+
+2008-01-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* operations/workshop/rawbayer-load.c: Updated to new chanting API.
 
 2008-02-19  Sven Neumann  <sven@gimp.org>

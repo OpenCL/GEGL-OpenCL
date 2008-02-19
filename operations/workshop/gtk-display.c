@@ -15,22 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (window_title, "",
+gegl_chant_string  (window_title, "Window Title", "",
                     "Title to give window, if no title given inherits name of the pad providing input.")
 
 #else
 
-#define GEGL_CHANT_NAME        gtk_display
-#define GEGL_CHANT_SELF        "gtk-display.c"
-#define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an GTK window ."
-#define GEGL_CHANT_CATEGORIES  "output"
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE       "gtk-display.c"
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_CLASS_INIT
-
-#include "gegl-old-chant.h"
+#include "gegl-chant.h"
 
 #include <gtk/gtk.h>
 
@@ -46,8 +41,8 @@ typedef struct
 static gboolean
 expose_event (GtkWidget *widget, GdkEventExpose * event)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (g_object_get_data (G_OBJECT (widget), "op"));
-  Priv               *priv = (Priv*)self->priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (g_object_get_data (G_OBJECT (widget), "op"));
+  Priv       *priv = (Priv*)o->chant_data;
 
   if (priv->buf)
     {
@@ -69,12 +64,12 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
 static Priv *init_priv (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (!self->priv)
+  if (!o->chant_data)
     {
-      Priv *priv = g_malloc0 (sizeof (Priv));
-      self->priv = (void*) priv;
+      Priv *priv = g_new0 (Priv, 1);
+      o->chant_data = (void*) priv;
 
       priv->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       priv->drawing_area = gtk_drawing_area_new ();
@@ -82,7 +77,7 @@ static Priv *init_priv (GeglOperation *operation)
       priv->width = -1;
       priv->height = -1;
       gtk_widget_set_size_request (priv->drawing_area, priv->width, priv->height);
-      gtk_window_set_title (GTK_WINDOW (priv->window), self->window_title);
+      gtk_window_set_title (GTK_WINDOW (priv->window), o->window_title);
 
       g_signal_connect (G_OBJECT (priv->drawing_area), "expose_event",
                         G_CALLBACK (expose_event), priv);
@@ -93,7 +88,7 @@ static Priv *init_priv (GeglOperation *operation)
 
       priv->buf = NULL;
     }
-  return (Priv*)(self->priv);
+  return (Priv*)(o->chant_data);
 }
 
 static gboolean
@@ -102,8 +97,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *source,
          const GeglRectangle *result)
 {
-  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
-  Priv                *priv = init_priv (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv       *priv = init_priv (operation);
 
   g_assert (input);
 
@@ -127,9 +122,9 @@ process (GeglOperation       *operation,
   if (priv->window)
     {
       gtk_window_resize (GTK_WINDOW (priv->window), priv->width, priv->height);
-      if (self->window_title[0]!='\0')
+      if (o->window_title[0]!='\0')
         {
-          gtk_window_set_title (GTK_WINDOW (priv->window), self->window_title);
+          gtk_window_set_title (GTK_WINDOW (priv->window), o->window_title);
         }
       else
         {
@@ -151,8 +146,8 @@ process (GeglOperation       *operation,
 static void
 dispose (GObject *object)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
-  Priv *priv = (Priv*)self->priv;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  Priv       *priv = (Priv*)o->chant_data;
 
   if (priv)
     {
@@ -160,15 +155,29 @@ dispose (GObject *object)
       if (priv->buf)
         g_free (priv->buf);
       g_free (priv);
-      self->priv = NULL;
+      o->chant_data = NULL;
     }
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
 }
 
-static void class_init (GeglOperationClass *klass)
+
+static void
+gegl_chant_class_init (GeglChantClass *klass)
 {
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+
+  filter_class->process = process;
   G_OBJECT_CLASS (klass)->dispose = dispose;
+
+  operation_class->name        = "gtk-display";
+  operation_class->categories  = "output";
+  operation_class->description =
+        "Displays the input buffer in an GTK window .";
 }
 
 #endif
