@@ -1,6 +1,10 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
-	* gegl/buffer/gegl-buffer-allocator.c
+	* gegl/buffer/gegl-buffer-allocator.c (gegl_swap_dir): rewritten
+	in a portable way.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-handler.c
 	* gegl/buffer/gegl-handlers.c
 	* gegl/buffer/gegl-storage.c

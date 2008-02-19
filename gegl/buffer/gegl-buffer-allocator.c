@@ -18,6 +18,8 @@
 
 #include "config.h"
 
+#include <errno.h>
+
 #include <sys/types.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -129,31 +131,44 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
 static GHashTable *allocators = NULL;
 
 /* if this function is made to return NULL swapping is disabled */
-const gchar *gegl_swap_dir (void)
+const gchar *
+gegl_swap_dir (void)
 {
-  static gchar swapdir[1024]="";
-  if (swapdir[0]=='\0')
+  static gchar *swapdir = "";
+
+  if (swapdir[0] == '\0')
     {
       if (g_getenv ("GEGL_SWAP"))
         {
           if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
-            return NULL;
-          g_sprintf (swapdir, "%s", g_getenv ("GEGL_SWAP"));
+            swapdir = NULL;
+          else
+            swapdir = g_strdup (g_getenv ("GEGL_SWAP"));
         }
       else
         {
-          g_sprintf (swapdir, "%s/.%s/swap", g_get_home_dir(), GEGL_LIBRARY);
+          swapdir = g_build_filename (g_get_home_dir(),
+                                      "." GEGL_LIBRARY,
+                                      "swap",
+                                      NULL);
         }
 
-      /* Fall back to "swapping to RAM" if not able to make
-       * sure swapping dir exist
+      /* Fall back to "swapping to RAM" if not able to create swap dir
        */
-      if (g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR)!=0)
+      if (swapdir &&
+          ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
+          g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
         {
-          g_warning ("unable to make sure swapdir %s exist", swapdir);
-          return NULL; 
+          gchar *name = g_filename_display_name (swapdir);
+
+          g_warning ("unable to create swapdir '%s': %s",
+                     name, g_strerror (errno));
+          g_free (name);
+
+          swapdir = NULL;
         }
     }
+
   return swapdir;
 };
 
@@ -166,30 +181,40 @@ gegl_buffer_new_from_format (const void *babl_format,
 {
   GeglBufferAllocator *allocator = NULL;
 
-  if (!allocators)
+  if (! allocators)
     allocators = g_hash_table_new (NULL, NULL);
 
   /* aquire a GeglBufferAllocator */
   /* iterate list of existing */
   allocator = g_hash_table_lookup (allocators, babl_format);
+
   /* if no match, create new */
   if (allocator == NULL)
     {
       if (gegl_swap_dir () != NULL)
         {
           GeglStorage *storage;
-          gchar *path;
-          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", gegl_swap_dir (),
-                                  getpid (), babl_name ((Babl*) babl_format));
+          gchar       *filename;
+          gchar       *path;
+
+          filename = g_strdup_printf ("GEGL-%i-%s.swap",
+                                      getpid (),
+                                      babl_name ((Babl *) babl_format));
+
+          path = g_build_filename (gegl_swap_dir (), filename, NULL);
+          g_free (filename);
+
           storage = g_object_new (GEGL_TYPE_STORAGE,
-                                               "format", babl_format,
-                                               "path", path,
-                                               NULL);
+                                  "format", babl_format,
+                                  "path",   path,
+                                  NULL);
           allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
                                     "provider", storage,
                                     NULL);
           g_object_unref (storage);
+
           g_hash_table_insert (allocators, (gpointer)babl_format, allocator);
+
           g_free (path);
         }
       else
@@ -204,6 +229,7 @@ gegl_buffer_new_from_format (const void *babl_format,
           g_hash_table_insert (allocators, (gpointer)babl_format, allocator);
         }
     }
+
   /* check if we already have a GeglBufferAllocator for the needed tile slice */
   return gegl_buffer_alloc (allocator, x, y, width, height);
 }
