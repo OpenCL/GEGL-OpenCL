@@ -30,6 +30,8 @@ gegl_chant_double(x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   "Horizontal position")
 gegl_chant_double(y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   "Vertical position")
+gegl_chant_double(scale, "scale", -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                  "Scale 1:1 size")
 gegl_chant_path(src, "Source", "",
                 "Source datafile (png, jpg, raw, svg, bmp, tif, ...)")
 
@@ -49,11 +51,13 @@ struct _GeglChant
   GeglNode *composite_op;
   GeglNode *shift;
   GeglNode *opacity;
+  GeglNode *scale;
   GeglNode *load;
 
   gchar *cached_path;
 
   gdouble p_opacity;
+  gdouble p_scale;
   gdouble p_x;
   gdouble p_y;
   gchar  *p_composite_op;
@@ -140,6 +144,15 @@ prepare (GeglOperation *operation)
         }
     }
 
+  if (o->scale != self->p_scale)
+    {
+      gegl_node_set (self->scale,
+                     "x",  o->scale,
+                     "y",  o->scale,
+                     NULL);
+      self->p_scale= o->scale;
+    }
+
   if (o->opacity != self->p_opacity)
     {
       gegl_node_set (self->opacity,
@@ -158,6 +171,8 @@ prepare (GeglOperation *operation)
       self->p_x = o->x;
       self->p_y = o->y;
     }
+
+
 }
 
 static void attach (GeglOperation *operation)
@@ -178,6 +193,7 @@ static void attach (GeglOperation *operation)
                                          NULL);
 
   self->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
+  self->scale = gegl_node_new_child (gegl, "operation", "scale", NULL);
   self->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
 
   self->load = gegl_node_new_child (gegl,
@@ -185,7 +201,8 @@ static void attach (GeglOperation *operation)
                                     "string", "foo",
                                     NULL);
 
-  gegl_node_link_many (self->load, self->opacity, self->shift, NULL);
+  gegl_node_link_many (self->load, self->scale, self->opacity, self->shift,
+                       NULL);
   gegl_node_link_many (self->input, self->composite_op, self->output, NULL);
   gegl_node_connect_from (self->composite_op, "aux", self->shift, "output");
 }
@@ -205,7 +222,7 @@ finalize (GObject *object)
 }
 
 static void
-operation_class_init (GeglChantClass *klass)
+gegl_chant_class_init (GeglChantClass *klass)
 {
   GObjectClass       *object_class;
   GeglOperationClass *operation_class;

@@ -182,7 +182,7 @@ process (GeglOperation       *operation,
 
 
 static void
-operation_class_init (GeglChantClass *klass)
+gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

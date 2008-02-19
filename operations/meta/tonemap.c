@@ -116,7 +116,7 @@ static void attach (GeglOperation *operation)
 
 
 static void
-operation_class_init (GeglChantClass *klass)
+gegl_chant_class_init (GeglChantClass *klass)
 {
   GObjectClass       *object_class;
   GeglOperationClass *operation_class;

@@ -153,7 +153,7 @@ get_bounding_box (GeglOperation *operation)
 
 
 static void
-operation_class_init (GeglChantClass *klass)
+gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
