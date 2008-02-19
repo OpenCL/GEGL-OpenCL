@@ -1,5 +1,9 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-init.c: fixed broken filename handling.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c (gegl_swap_dir): check for
 	swap_dir != NULL before accessing it.
 

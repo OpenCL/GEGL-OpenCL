@@ -192,7 +192,9 @@ gegl_exit (void)
             {
               if (g_pattern_match_string (pattern, name))
                 {
-                  gchar *fname = g_strdup_printf ("%s/%s", gegl_swap_dir (), name);
+                  gchar *fname = g_build_filename (gegl_swap_dir (),
+                                                   name,
+                                                   NULL);
                   g_unlink (fname);
                   g_free (fname);
                 }
@@ -268,21 +270,28 @@ gegl_post_parse_hook (GOptionContext *context,
 
           /* also load plug-ins from ~/.gegl-0.0/plug-ins */
           g_free (module_path);
-          module_path = g_build_filename (g_get_home_dir (), "." GEGL_LIBRARY, "plug-ins", NULL);
-          if (g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR)==0)
+
+          module_path = g_build_filename (g_get_home_dir (),
+                                          "." GEGL_LIBRARY,
+                                          "plug-ins",
+                                          NULL);
+
+          if (g_mkdir_with_parents (module_path,
+                                    S_IRUSR | S_IWUSR | S_IXUSR) == 0)
             {
-              gchar *makefile_path = g_malloc (strlen (module_path) + 20);
-              g_sprintf (makefile_path, "%s/Makefile", module_path);
-              if (!g_file_test (makefile_path, G_FILE_TEST_EXISTS))
+              gchar *makefile_path = g_build_filename (module_path,
+                                                       "Makefile",
+                                                       NULL);
+
+              if (! g_file_test (makefile_path, G_FILE_TEST_EXISTS))
                 g_file_set_contents (makefile_path, makefile (), -1, NULL);
+
               g_free (makefile_path);
             }
+
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
         }
-
-
-
 
       gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
