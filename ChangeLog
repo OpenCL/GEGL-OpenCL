@@ -1,3 +1,8 @@
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
+	* gegl/buffer/gegl-tile-disk.c: organized includes, removed
+	trailing whitespace, fixed error handling and indentation.
+
 2008-02-18  Manish Singh  <yosh@gimp.org>
 
 	* configure.ac: fix Lua configure check.
