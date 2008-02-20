@@ -1,4 +1,4 @@
-/* A spatial color to greyscale converter.
+/* STRESS, Spatio Temporal Retinex Envelope with Stochastic Sampling
  *
  * GEGL is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,24 +13,27 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Øyvind Kolås <oeyvindk@hig.no>
- *                Ivar Farup   <ivarf@hig.no>
+ * Copyright 2007 Øyvind Kolås     <oeyvindk@hig.no>
+ *                Ivar Farup       <ivarf@hig.no>
+ *                Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (radius, "Radius", 2, 5000.0, 384,
                 "Neighbourhood taken into account")
-gegl_chant_int (samples, "Samples", 0, 1000,    3,
+gegl_chant_int (samples, "Samples", 0, 1000, 3,
                 "Number of samples to do")
-gegl_chant_int (iterations, "Iteration", 0, 1000.0, 23,
+gegl_chant_int (iterations, "Iterations", 0, 1000, 23,
                 "Number of iterations (length of exposure)")
-gegl_chant_boolean (same_spray, "Same spray", FALSE, "")
-gegl_chant_double (rgamma,  "Radial gamma", 0.0, 8.0, 1.8,
+gegl_chant_boolean (same_spray, "Same spray", FALSE,
+                    "Use the same spray for all pixels")
+gegl_chant_double (rgamma, "Radial Gamma", 0.0, 8.0, 1.8,
                    "Gamma applied to radial distribution")
-gegl_chant_double (strength, "Strength", -8, 8,  0.5,
-                   "How much the local optimum separation should be taken into account.")
-gegl_chant_double (gamma, "Gamma", 0.0, 10.0, 1.6, "post correction gamma.")
+gegl_chant_double (strength, "Strength", -10.0, 10.0, 1.0,
+                   "Amount of correction 0=none 1.0=full")
+gegl_chant_double (gamma, "Gamma", 0.0, 10.0, 1.0,
+                   "Post correction gamma.")
 
 #else
 
@@ -42,57 +45,18 @@ gegl_chant_double (gamma, "Gamma", 0.0, 10.0, 1.6, "post correction gamma.")
 #include <stdlib.h>
 #include "envelopes.h"
 
-#define sq(a) ((a)*(a))
-
-static void c2g (GeglBuffer *src,
-                 GeglBuffer *dst,
-                 gint        radius,
-                 gint        samples,
-                 gint        iterations,
-                 gboolean    same_spray,
-                 gdouble     rgamma,
-                 gfloat      strength,
-                 gfloat      gamma);
-
-static void prepare (GeglOperation *operation)
-{
-  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
-  area->left = area->right = area->top = area->bottom = ceil (o->radius);
-
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
-{
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *temp_in;
-  GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);
-
-  temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-  c2g (temp_in, output, o->radius, o->samples, o->iterations, o->same_spray,
-       o->rgamma, o->strength, o->gamma);
-  g_object_unref (temp_in);
-
-  return  TRUE;
-}
-
-static void c2g (GeglBuffer *src,
-                 GeglBuffer *dst,
-                 gint        radius,
-                 gint        samples,
-                 gint        iterations,
-                 gboolean    same_spray,
-                 gdouble     rgamma,
-                 gfloat      strength,
-                 gfloat      gamma)
+static void stress (GeglBuffer *src,
+                    GeglBuffer *dst,
+                    gint        radius,
+                    gint        samples,
+                    gint        iterations,
+                    gboolean    same_spray,
+                    gdouble     rgamma,
+                    gdouble     strength,
+                    gdouble     gamma)
 {
   gint x,y;
+  gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
 
@@ -100,14 +64,15 @@ static void c2g (GeglBuffer *src,
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
-  for (y=radius; y<gegl_buffer_get_height (dst)-radius; y++)
+
+  for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
     {
-      gint offset = ((gegl_buffer_get_width (src)*y)+radius)*4;
-      for (x=radius; x<gegl_buffer_get_width (dst)-radius; x++)
+      gint src_offset = ((gegl_buffer_get_width (src)*y)+radius)*4;
+      for (x=radius; x<gegl_buffer_get_width (dst)+radius; x++)
         {
+          gfloat *pixel= src_buf + src_offset;
           gfloat  min_envelope[4];
           gfloat  max_envelope[4];
-          gfloat *pixel = src_buf + offset;
 
           compute_envelopes (src_buf,
                              gegl_buffer_get_width (src),
@@ -118,7 +83,6 @@ static void c2g (GeglBuffer *src,
                              same_spray,
                              rgamma,
                              min_envelope, max_envelope);
-
           { /* now having a local blackpoint and a local white point
                we just wonder whether we are more black than white */
             gfloat gray;
@@ -150,18 +114,56 @@ static void c2g (GeglBuffer *src,
 
                 }
             }
-
-            for (c=0; c<3;c++)
-              dst_buf[offset+c] = gray;
-            dst_buf[offset+c] = pixel[c]; /* alpha is unmodified */
+              for (c=0; c<3;c++)
+                dst_buf[dst_offset+c] = gray;
+              dst_buf[dst_offset+3] = src_buf[src_offset+3];
           }
-          offset+=4;
+
+          src_offset+=4;
+          dst_offset+=4;
         }
     }
   gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
-
   g_free (src_buf);
   g_free (dst_buf);
+}
+
+static void prepare (GeglOperation *operation)
+{
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  area->left = area->right = area->top = area->bottom =
+      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+}
+
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
+                                                                     "input");
+  if (!in_rect)
+    return result;
+  return *in_rect;
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *output,
+         const GeglRectangle *result)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  stress (input, output,
+          o->radius,
+          o->samples,
+          o->iterations,
+          o->same_spray,
+          o->rgamma,
+          o->strength,
+          o->gamma);
+
+  return  TRUE;
 }
 
 
@@ -175,12 +177,18 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   filter_class->process = process;
-  operation_class->prepare = prepare;
+  operation_class->prepare  = prepare;
+  /* we override defined region to avoid growing the size of what is defined
+   * by the filter. This also allows the tricks used to treat alpha==0 pixels
+   * in the image as source data not to be skipped by the stochastic sampling
+   * yielding correct edge behavior.
+   */
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "c2g";
   operation_class->categories  = "enhance";
   operation_class->description =
-        "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement.";
+        "Spatio Temporal Retinex-like Envelope with Stochastic Sampling.";
 }
 
 #endif
