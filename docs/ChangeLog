@@ -1,3 +1,7 @@
+2008-02-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: removed gegl-quirks.css: from list of files to install.
+
 2008-02-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: do not embed workaround css for IE browsers.

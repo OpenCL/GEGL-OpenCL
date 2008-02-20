@@ -32,7 +32,6 @@ endif
 EXTRA_DIST= 			\
 	ChangeLog		\
 	gegl.css  		\
-	gegl-quirks.css  	\
 	gegl.devhelp		\
 	devhelp.css		\
 	hello-world.c		\
