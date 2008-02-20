@@ -1,5 +1,15 @@
 2008-02-20  Øyvind Kolås  <pippin@gimp.org>
 
+	Modified makefiles to use libtool instead of directly driving CC.
+	* configure.ac: changed darwin shrext to .so.
+	* operations/Makefile-operations.am:
+	* operations/affine/Makefile.am:
+	* operations/io/Makefile.am:
+	* operations/render/Makefile.am:
+	* operations/workshop/Makefile.am:
+
+2008-02-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: do not build the custom node-editor's due to
 	portability issues.
 	* configure.ac: do not generate bin/node-editors/Makefile

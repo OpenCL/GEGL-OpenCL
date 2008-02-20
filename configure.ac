@@ -239,7 +239,7 @@ AC_MSG_RESULT([$target_or_host])
 AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
   *-*-darwin*)                 # darwin
-    shrext=.dylib
+    shrext=.so
     dynamiclib=-dynamiclib
     ;;
   *-*-mingw* | *-*-cygwin*)    # windows

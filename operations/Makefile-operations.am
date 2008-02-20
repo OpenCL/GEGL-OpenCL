@@ -1,9 +1,9 @@
-if OS_WIN32
-no_undefined = -no-undefined
-libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
-else
-libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION)$(SHREXT)
-endif
+#if OS_WIN32
+#no_undefined = -no-undefined
+#libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
+#else
+#libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION)$(SHREXT)
+#endif
 
 CFILES          = $(wildcard $(srcdir)/*.c)
 SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
@@ -23,12 +23,14 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(top_srcdir)/gegl/property-types   \
            -I$(top_srcdir)/gegl/module           \
            -I. -fPIC
-LDFLAGS += $(DYNAMICLIB) $(no_undefined)
+LDFLAGS += $(DYNAMICLIB) $(no_undefined) -module -avoid-version
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)
+LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
 %$(SHREXT): %.c $(GEGLHEADERS)
-	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+
+
 
 clean-local:
 	rm -f *$(SHREXT) $(OFILES)
