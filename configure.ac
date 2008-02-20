@@ -679,10 +679,10 @@ AC_ARG_ENABLE([workshop],
 AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" == "xyes")
 
 
+dnl bin/node-editors/Makefile
 AC_OUTPUT([
 Makefile
 bin/Makefile
-bin/node-editors/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
 gegl/graph/Makefile

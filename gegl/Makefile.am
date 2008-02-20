@@ -27,8 +27,7 @@ GEGL_sources = \
 	gegl-plugin.h			\
 	gegl-chant.h			\
 	gegl-instrument.h		\
-	gegl-module.h			\
-	gegl-old-chant.h
+	gegl-module.h
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 

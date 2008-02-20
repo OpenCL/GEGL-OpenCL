@@ -1,5 +1,17 @@
 2008-02-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/Makefile.am: do not build the custom node-editor's due to
+	portability issues.
+	* configure.ac: do not generate bin/node-editors/Makefile
+	* gegl/Makefile.am: gegl-old-chant.h has been removed.
+
+2008-02-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/Makefile.am: disable build of gegl-node-editors by
+	default.
+
+2008-02-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/c2g.c: modified to work again.
 
 2008-02-19  Øyvind Kolås  <pippin@gimp.org>
