@@ -188,7 +188,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "c2g";
   operation_class->categories  = "enhance";
   operation_class->description =
-        "Spatio Temporal Retinex-like Envelope with Stochastic Sampling.";
+        "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement.";
 }
 
 #endif
