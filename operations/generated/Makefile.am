@@ -1,4 +1,4 @@
-include $(top_srcdir)/operations/Makefile-operations.am
+include $(top_srcdir)/operations/Makefile-operations-old.am
 
 EXTRA_DIST += $(wildcard *.rb)
 

@@ -1,3 +1,15 @@
+2008-02-21  Michael Natterer  <mitch@gimp.org>
+
+	* operations/blur/Makefile.am
+	* operations/color/Makefile.am
+	* operations/core/Makefile.am
+	* operations/enhance/Makefile.am
+	* operations/generated/Makefile.am
+	* operations/meta/Makefile.am
+	* operations/svg/Makefile.am
+	* operations/transparency/Makefile.am: include the old makefile,
+	the new one doesn't work properly on linux :-( More tomorrow.
+
 2008-02-21  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/affine/Makefile.am: Modified to use libtool.
