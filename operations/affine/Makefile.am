@@ -11,7 +11,7 @@ INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(top_srcdir)/gegl/operation        \
            -I$(top_srcdir)/gegl/property-types   \
            -I$(top_srcdir)/gegl/module           \
-           -I. -fPIC
+           -I.
 
 affine_ladir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 

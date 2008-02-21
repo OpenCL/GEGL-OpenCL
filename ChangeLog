@@ -1,5 +1,9 @@
 2008-02-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/Makefile.am: it is libtools job to add -fPIC.
+
+2008-02-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/Makefile-operations.am: strip away relink_command line
 	from libtool archive, when present, making libtool not think it needs
 	to relink the library when installing.
