@@ -17,7 +17,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_path (path, "File", "/home/pippin/ed.avi", "Path of file to load.")
 gegl_chant_int (frame, "Frame", 0, 1000000, 0, "frame number")
 
 #else
@@ -236,12 +236,15 @@ prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   Priv       *p = (Priv*)o->chant_data;
+
+  if (p == NULL)
+    init (o);
+  p = (Priv*)o->chant_data;
+
   g_assert (o->chant_data != NULL);
 
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
 
-  if (p == NULL)
-    init (o);
 
   if (!p->loadedfilename ||
       strcmp (p->loadedfilename, o->path))
@@ -350,6 +353,7 @@ process (GeglOperation       *operation,
         guchar *buf;
         gint    pxsize;
         gint    x,y;
+
 
         g_object_get (output, "px-size", &pxsize, NULL);
         buf = g_new (guchar, p->width * p->height * pxsize);

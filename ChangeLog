@@ -1,3 +1,7 @@
+2008-02-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/io/ff-load.c: (prepare), (process): tentative fix.
+
 2008-02-21  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/io/load-buffer.c: Readd the "buffer" input property
