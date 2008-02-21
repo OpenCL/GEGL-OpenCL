@@ -1,11 +1,12 @@
 if OS_WIN32
 no_undefined = -no-undefined
+libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
+else
+libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION)$(SHREXT)
 endif
 
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
-
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)
@@ -13,7 +14,7 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
 all-local: $(SOBJS)
 
-AM_CPPFLAGS = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
+CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(srcdir) -I$(top_srcdir)           \
            -I$(top_builddir)                     \
            -I$(top_srcdir)/gegl                  \
@@ -21,30 +22,22 @@ AM_CPPFLAGS = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(top_srcdir)/gegl/operation        \
            -I$(top_srcdir)/gegl/property-types   \
            -I$(top_srcdir)/gegl/module           \
-           -I
+           -I. -fPIC
+LDFLAGS += $(DYNAMICLIB) $(no_undefined)
 
-AM_LDFLAGS = -avoid-version -module $(no_undefined)
+LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
-
-%.lo: %.c $(GEGLHEADERS)
-	@echo $(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
-	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
-
-%.la: %.lo
-	@echo $(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
+%$(SHREXT): %.c $(GEGLHEADERS)
+	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 clean-local:
-	rm -f *.la $(OFILES)
+	rm -f *$(SHREXT) $(OFILES)
 
 ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
-	for i in $(SOBJS); do \
-	  $(LIBTOOL) --mode=install $(INSTALL) $$i $(ext_dir) ; \
-	done
+	-$(INSTALL) $(SOBJS) $(ext_dir)
 
 uninstall-local:
 	rm -f $(INSTALLED_ITEMS)

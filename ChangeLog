@@ -1,3 +1,21 @@
+2008-02-21  Michael Natterer  <mitch@gimp.org>
+
+	* configure.ac: uncomment AM_DISABLE_STATIC.
+
+	* operations/Makefile-operations-old.am: the operations makefile
+	as it used to be.
+
+	* operations/Makefile.am: distribute it.
+
+	* operations/affine/Makefile.am
+	* operations/io/Makefile.am
+	* operations/render/Makefile.am: include it. These directories
+	build on darwin but the modules are not found.
+
+	* operations/Makefile-operations.am: hacked up to use libtool so
+	it works on darwin and possibly many other platforms. Uninstall is
+	totally broken at the moment.
+
 2008-02-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/stress.c: (prepare): specify RGBA float for
