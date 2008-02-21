@@ -122,6 +122,9 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
       ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+
+  gegl_operation_set_format (operation, "output",
+                             babl_format ("RaGaBaA float"));
 }
 
 static GeglRectangle

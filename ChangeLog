@@ -1,5 +1,10 @@
 2008-02-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/stress.c: (prepare): specify RGBA float for
+	(cached) output buffer.
+
+2008-02-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/ff-save.c: (process):
 	* operations/io/ff-load.c: (prepare), (process): tweaked ops with
 	with some hacky changes that at least make them interact with ffmpeg.
