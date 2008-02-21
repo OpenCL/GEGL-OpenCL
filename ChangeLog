@@ -1,3 +1,7 @@
+2008-02-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/affine/Makefile.am: Modified to use libtool.
+
 2008-02-21  Michael Natterer  <mitch@gimp.org>
 
 	* configure.ac: uncomment AM_DISABLE_STATIC.

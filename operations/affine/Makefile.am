@@ -1,13 +1,34 @@
-include $(top_srcdir)/operations/Makefile-operations-old.am
+if OS_WIN32     
+mwindows = -mwindows
+no_undefined = -no-undefined
+endif
 
-OFILES      = $(subst $(srcdir)/,,$(CFILES:.c=.o))
+INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
+	   -I$(srcdir) -I$(top_srcdir)           \
+           -I$(top_builddir)                     \
+           -I$(top_srcdir)/gegl                  \
+           -I$(top_srcdir)/gegl/buffer           \
+           -I$(top_srcdir)/gegl/operation        \
+           -I$(top_srcdir)/gegl/property-types   \
+           -I$(top_srcdir)/gegl/module           \
+           -I. -fPIC
 
-SOBJS          = affine$(SHREXT)
-INSTALLED_ITEMS = $(ext_dir)/$(SOBJS)
+affine_ladir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 
+affine_la_LTLIBRARIES = affine.la
 
-%.o: %.c chant.h module.h matrix.h $(GEGLHEADERS)
-	@echo $@;$(CC) $(CFLAGS) -c $< 
+affine_la_SOURCES = \
+	affine.c	\
+	matrix.c	\
+	module.c	\
+	reflect.c	\
+	rotate.c	\
+	scale.c		\
+	shear.c		\
+	translate.c
 
-affine$(SHREXT): $(OFILES)
-	@echo $@;$(CC) $(OFILES) -o affine$(SHREXT) $(LDFLAGS) $(LDADD)
+affine_la_LDFLAGS = \
+    -module          \
+    -avoid-version   \
+    $(no_undefined)  \
+    $(mwindows) 
