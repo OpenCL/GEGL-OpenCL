@@ -783,6 +783,7 @@ process (GeglOperation       *operation,
 
   if (p == NULL)
     init (o);
+  p = (Priv*)o->chant_data;
 
   p->width = result->width;
   p->height = result->height;
