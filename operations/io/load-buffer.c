@@ -17,7 +17,8 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-/* no properties */
+gegl_chant_object(buffer, "Input buffer",
+		  "The GeglBuffer to load into the pipeline")
 
 #else
 
@@ -32,11 +33,11 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle result = {0,0,0,0};
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (!o->chant_data)
+  if (!o->buffer)
     {
       return result;
     }
-  result = *gegl_buffer_get_extent (GEGL_BUFFER (o->chant_data));
+  result = *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
   return result;
 }
 
@@ -48,14 +49,16 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->chant_data)
+  if (o->buffer)
     {
-      g_object_ref (o->chant_data); /* Add an extra reference, since gegl_operation_set_data
-                                      is stealing one.
-                                    */
+      g_object_ref (o->buffer); /* Add an extra reference, since
+				     * gegl_operation_set_data is
+				     * stealing one.
+				     */
 
       /* override core behaviour, by resetting the buffer in the node_context */
-      gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+      gegl_node_context_set_object (context, "output",
+				    G_OBJECT (o->buffer));
     }
   return TRUE;
 }
@@ -65,10 +68,10 @@ dispose (GObject *object)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->buffer)
     {
-      g_object_unref (o->chant_data);
-      o->chant_data = NULL;
+      g_object_unref (o->buffer);
+      o->buffer = NULL;
     }
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
