@@ -1,3 +1,19 @@
+2008-02-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile-operations.am: strip away relink_command line
+	from libtool archive, when present, making libtool not think it needs
+	to relink the library when installing.
+
+	* operations/blur/Makefile.am:
+	* operations/color/Makefile.am:
+	* operations/core/Makefile.am:
+	* operations/enhance/Makefile.am:
+	* operations/generated/Makefile.am:
+	* operations/meta/Makefile.am:
+	* operations/svg/Makefile.am:
+	* operations/transparency/Makefile.am: use the new makefile since it
+	now works on linux again.
+
 2008-02-21  Michael Natterer  <mitch@gimp.org>
 
 	* operations/blur/Makefile.am

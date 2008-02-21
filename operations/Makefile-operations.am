@@ -34,6 +34,9 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 %.la: %.lo
 	@echo $(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
+	perl -pi -e 's/^relink_command=.*/relink_command=/g' $@
+
+
 
 clean-local:
 	rm -f *.la $(OFILES)
