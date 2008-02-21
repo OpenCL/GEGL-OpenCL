@@ -6,30 +6,29 @@ line-profile$(SHREXT): line-profile.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
 stress$(SHREXT): stress.c $(GEGLHEADERS) envelopes.h
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 c2g$(SHREXT): c2g.c $(GEGLHEADERS) envelopes.h
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 min-envelope$(SHREXT): min-envelope.c $(GEGLHEADERS) envelopes.h
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 max-envelope$(SHREXT): max-envelope.c $(GEGLHEADERS) envelopes.h
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
 lum-profile$(SHREXT): lum-profile.c $(GEGLHEADERS)
-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
 gluas$(SHREXT): gluas.c $(GEGLHEADERS)
 	@if [ ! -z "$(LUA_LIBS)" ]; then \
-	$(LIBTOOL) --mode=link \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LUA_CFLAGS) $(LUA_LIBS);\
 	fi
 
 gst$(SHREXT): gst.c $(GEGLHEADERS)
-	$(LIBTOOL) --mode=link \
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
 
 ff-save$(SHREXT): ff-save.c $(GEGLHEADERS)
 	@if [ -n "$(AVCODEC_LIBS)" ] && [ -n "$(AVFORMAT_LIBS)" ]; then \
-	$(LIBTOOL) --mode=link \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
 		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS)    \
 		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS); \
@@ -37,12 +36,12 @@ ff-save$(SHREXT): ff-save.c $(GEGLHEADERS)
 
 gtk-display$(SHREXT): gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\
-	($(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
+	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
 	||true
 
 stroke$(SHREXT): stroke.c $(GEGLHEADERS)
 	if [ ! -z "$(PANGO_LIBS)" ]; then \
-	$(LIBTOOL) --mode=link \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
               $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
               $(PANGO_CFLAGS) $(PANGO_LIBS) \

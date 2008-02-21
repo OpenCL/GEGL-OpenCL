@@ -4,7 +4,7 @@ EXTRA_DIST += $(wildcard perlin/*.[ch])
 
 text$(SHREXT): text.c $(GEGLHEADERS)
 	@if [ ! -z "$(PANGO_LIBS)" ]; then \
-	$(LIBTOOL) --mode=link \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
               $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
               $(PANGO_CFLAGS) $(PANGO_LIBS) \
@@ -14,7 +14,7 @@ text$(SHREXT): text.c $(GEGLHEADERS)
 
 stroke$(SHREXT): stroke.c $(GEGLHEADERS)
 	@if [ ! -z "$(PANGO_LIBS)" ]; then \
-	$(LIBTOOL) --mode=link \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
               $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
               $(PANGO_CFLAGS) $(PANGO_LIBS) \

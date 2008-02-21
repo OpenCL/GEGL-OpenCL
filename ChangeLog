@@ -1,5 +1,16 @@
 2008-02-20  Øyvind Kolås  <pippin@gimp.org>
 
+	Reverted previous commit as it lead to really broken behavior on all
+	platforms.
+	* configure.ac:
+	* operations/Makefile-operations.am:
+	* operations/affine/Makefile.am:
+	* operations/io/Makefile.am:
+	* operations/render/Makefile.am:
+	* operations/workshop/Makefile.am:
+
+2008-02-20  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified makefiles to use libtool instead of directly driving CC.
 	* configure.ac: changed darwin shrext to .so.
 	* operations/Makefile-operations.am:
