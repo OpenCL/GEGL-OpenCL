@@ -1,5 +1,10 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/max-envelope.c: removed.
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/c2g.c:
 	* operations/workshop/envelopes.h:
 	* operations/workshop/grey.c:
