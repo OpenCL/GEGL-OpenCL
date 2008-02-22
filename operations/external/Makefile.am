@@ -47,7 +47,6 @@ jpg_load_la_SOURCES = jpg-load.c
 jpg_load_la_LIBADD = $(op_libs) $(LIBJPEG)
 endif
 
-
 if HAVE_RSVG
 ops += svg-load.la
 svg_load_la_SOURCES = svg-load.c
@@ -55,15 +54,15 @@ svg_load_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
 svg_load_la_CFLAGS = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
 endif
 
-if HAVE_GTK
+if HAVE_GDK_PIXBUF
 ops += pixbuf.la save-pixbuf.la
 pixbuf_la_SOURCES      = pixbuf.c
-pixbuf_la_LIBADD       = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
-pixbuf_la_CFLAGS       = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
+pixbuf_la_LIBADD       = $(op_libs) $(GDK_PIXBUF_LIBS)
+pixbuf_la_CFLAGS       = $(GDK_PIXBUF_CFLAGS)
 
 save_pixbuf_la_SOURCES = save-pixbuf.c
-save_pixbuf_la_LIBADD  = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
-save_pixbuf_la_CFLAGS  = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
+save_pixbuf_la_LIBADD  = $(op_libs) $(GDK_PIXBUF_LIBS)
+save_pixbuf_la_CFLAGS  = $(GDK_PIXBUF_CFLAGS)
 endif
 
 if HAVE_OPENEXR

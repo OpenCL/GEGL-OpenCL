@@ -1,3 +1,9 @@
+2008-02-22  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac
+	* operations/external/Makefile.am: added check for GdkPixbuf and
+	pass the proper flags to the compiler and linker.
+
 2008-02-22  Michael Natterer  <mitch@gimp.org>
 
 	* svg_huerotate.c

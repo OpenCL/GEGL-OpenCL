@@ -483,6 +483,16 @@ AC_SUBST(PANGOCAIRO_CFLAGS)
 AC_SUBST(PANGOCAIRO_LIBS) 
 
 
+######################
+# Check for gdk-pixbuf
+######################
+
+PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gtk_required_version,
+  have_gdk_pixbuf="yes",
+  have_gdk_pixbuf="no  (gdk-pixbuf not found)")
+AM_CONDITIONAL(HAVE_GDK_PIXBUF, test "x$have_gdk_pixbuf" = "xyes")
+
+
 ###################
 # Check for libjpeg
 ###################
@@ -725,6 +735,7 @@ Optional dependencies:
   Cairo:          $have_cairo
   Pango:          $have_pango
   pangocairo:     $have_pangocairo
+  GDKPixbuf:      $have_gdk_pixbuf
   JPEG:           $jpeg_ok
   PNG:            $have_libpng
   OpenEXR:        $have_openexr
