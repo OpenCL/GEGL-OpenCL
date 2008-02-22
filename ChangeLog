@@ -1,5 +1,6 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac:
 	* operations/Makefile.am:
 	* operations/external: added new directory for ops with external
 	dependencies.

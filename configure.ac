@@ -126,6 +126,7 @@ AM_INIT_AUTOMAKE(no-define)
 AM_CONFIG_HEADER(config.h)
 
 dnl Initialize libtool
+AC_LIBTOOL_DLOPEN
 AC_PROG_CC
 AM_DISABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
@@ -696,6 +697,7 @@ operations/blur/Makefile
 operations/color/Makefile
 operations/core/Makefile
 operations/enhance/Makefile
+operations/external/Makefile
 operations/generated/Makefile
 operations/io/Makefile
 operations/meta/Makefile
