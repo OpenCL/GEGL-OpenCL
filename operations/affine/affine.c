@@ -207,17 +207,23 @@ get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_ORIGIN_X:
-      g_value_set_double (value, self->origin_x); break;
+      g_value_set_double (value, self->origin_x);
+      break;
     case PROP_ORIGIN_Y:
-      g_value_set_double (value, self->origin_y); break;
+      g_value_set_double (value, self->origin_y);
+      break;
     case PROP_FILTER:
-      g_value_set_string (value, self->filter); break;
+      g_value_set_string (value, self->filter);
+      break;
     case PROP_HARD_EDGES:
-      g_value_set_boolean (value, self->hard_edges); break;
+      g_value_set_boolean (value, self->hard_edges);
+      break;
     case PROP_LANCZOS_WIDTH:
-      g_value_set_int (value, self->lanczos_width); break;
+      g_value_set_int (value, self->lanczos_width);
+      break;
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec); break;
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
     }
 }
 
@@ -232,18 +238,24 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_ORIGIN_X:
-      self->origin_x = g_value_get_double (value); break;
+      self->origin_x = g_value_get_double (value);
+      break;
     case PROP_ORIGIN_Y:
-      self->origin_y = g_value_get_double (value); break;
+      self->origin_y = g_value_get_double (value);
+      break;
     case PROP_FILTER:
       g_free (self->filter);
-      self->filter = g_strdup (g_value_get_string (value)); break;
+      self->filter = g_strdup (g_value_get_string (value));
+      break;
     case PROP_HARD_EDGES:
-      self->hard_edges = g_value_get_boolean (value); break;
+      self->hard_edges = g_value_get_boolean (value);
+      break;
     case PROP_LANCZOS_WIDTH:
-      self->lanczos_width = g_value_get_int (value); break;
+      self->lanczos_width = g_value_get_int (value);
+      break;
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec); break;
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
     }
 }
 
@@ -290,8 +302,7 @@ static gboolean
 is_intermediate_node (OpAffine *affine)
 {
   GSList        *connections;
-  GeglOperation *op = GEGL_OPERATION (affine),
-                *sink;
+  GeglOperation *op = GEGL_OPERATION (affine);
 
   connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,
                                                              "output"));
@@ -300,9 +311,12 @@ is_intermediate_node (OpAffine *affine)
 
   do
     {
+      GeglOperation *sink;
+
       sink = gegl_connection_get_sink_node (connections->data)->operation;
+
       if (! IS_OP_AFFINE (sink) ||
-          g_ascii_strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
+          strcmp (affine->filter, OP_AFFINE (sink)->filter))
         return FALSE;
     }
   while ((connections = g_slist_next (connections)));
@@ -314,8 +328,8 @@ static gboolean
 is_composite_node (OpAffine *affine)
 {
   GSList        *connections;
-  GeglOperation *op = GEGL_OPERATION (affine),
-                *source;
+  GeglOperation *op = GEGL_OPERATION (affine);
+  GeglOperation *source;
 
   connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,
                                                              "input"));
@@ -325,7 +339,7 @@ is_composite_node (OpAffine *affine)
   source = gegl_connection_get_source_node (connections->data)->operation;
 
   return (IS_OP_AFFINE (source) &&
-          ! g_strcasecmp (affine->filter, OP_AFFINE (source)->filter));
+          ! strcmp (affine->filter, OP_AFFINE (source)->filter));
 }
 
 static void
@@ -333,8 +347,8 @@ get_source_matrix (OpAffine *affine,
                    Matrix3   output)
 {
   GSList        *connections;
-  GeglOperation *op = GEGL_OPERATION (affine),
-                *source;
+  GeglOperation *op = GEGL_OPERATION (affine);
+  GeglOperation *source;
 
   connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,
                                                              "input"));
@@ -380,7 +394,7 @@ get_bounding_box (GeglOperation *op)
       return in_rect;
     }
 
-  if (! g_strcasecmp (affine->filter, "linear"))
+  if (! strcmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -424,10 +438,10 @@ detect (GeglOperation *operation,
 {
   GeglNode *source_node = gegl_operation_get_source_node (operation, "input");
 
-  OpAffine      *affine = (OpAffine *) operation;
-  Matrix3        inverse;
-  gdouble        need_points [2];
-  gint           i;
+  OpAffine *affine = (OpAffine *) operation;
+  Matrix3   inverse;
+  gdouble   need_points [2];
+  gint      i;
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))
@@ -445,7 +459,8 @@ detect (GeglOperation *operation,
     matrix3_transform_point (inverse,
                              need_points + i, need_points + i + 1);
 
-  return gegl_operation_detect (source_node->operation, need_points[0], need_points[1]);
+  return gegl_operation_detect (source_node->operation,
+                                need_points[0], need_points[1]);
 }
 
 static GeglRectangle
@@ -491,7 +506,7 @@ get_required_for_output (GeglOperation       *op,
                              need_points + i, need_points + i + 1);
   bounding_box (need_points, 4, &need_rect);
 
-  if (! g_strcasecmp (affine->filter, "linear"))
+  if (! strcmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -511,7 +526,7 @@ get_required_for_output (GeglOperation       *op,
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation        *op,
+get_invalidated_by_change (GeglOperation       *op,
                            const gchar         *input_pad,
                            const GeglRectangle *input_region)
 {
@@ -543,7 +558,7 @@ get_invalidated_by_change (GeglOperation        *op,
       return region;
     }
 
-  if (! g_strcasecmp (affine->filter, "linear"))
+  if (! strcmp (affine->filter, "linear"))
     {
       if (affine->hard_edges)
         {
@@ -586,7 +601,7 @@ void  gegl_sampler_prepare     (GeglSampler *self);
    *     satisfy this use case should probably be provided.
    */
 
-void
+static void
 affine_generic (GeglBuffer        *dest,
                 GeglBuffer        *src,
                 Matrix3            matrix,
@@ -602,8 +617,8 @@ affine_generic (GeglBuffer        *dest,
                         u_float,
                         v_float;
 
-  Babl                 *format; 
-  
+  Babl                 *format;
+
   gint                  dest_pixels;
 
   format = babl_format ("RaGaBaA float");
@@ -689,7 +704,7 @@ process (GeglOperation       *operation,
                 but should still be faster than a full resampling when it
                 is not needed */
   else if (matrix3_is_translate (affine->matrix) &&
-           (! g_strcasecmp (affine->filter, "nearest") ||
+           (! strcmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
@@ -711,8 +726,9 @@ process (GeglOperation       *operation,
   else
     {
       /* XXX: add back more samplers */
-      affine_generic (output, input, affine->matrix, gegl_buffer_interpolation_from_string (
-         affine->filter));
+      affine_generic (output, input, affine->matrix,
+                      gegl_buffer_interpolation_from_string (affine->filter));
     }
+
   return TRUE;
 }

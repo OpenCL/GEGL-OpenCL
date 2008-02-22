@@ -1,5 +1,9 @@
 2008-02-22  Sven Neumann  <sven@gimp.org>
 
+	* operations/affine/affine.c: do case-sensitive string comparisons.
+
+2008-02-22  Sven Neumann  <sven@gimp.org>
+
 	* configure.ac
 	* operations/external/Makefile.am: added check for GdkPixbuf and
 	pass the proper flags to the compiler and linker.
