@@ -1,5 +1,10 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/Makefile.am:
+	* operations/workshop/external/Makefile.am: ADDED.
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/min-envelope.c:
 	* operations/workshop/max-envelope.c: removed.
 
