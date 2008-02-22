@@ -1,3 +1,9 @@
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile.am:
+	* operations/external: added new directory for ops with external
+	dependencies.
+
 2008-02-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/affine/Makefile.am: it is libtools job to add -fPIC.

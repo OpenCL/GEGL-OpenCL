@@ -1,9 +1,10 @@
 SUBDIRS = \
 	affine		\
+	core		\
 	blur      	\
 	color		\
-	core		\
 	enhance		\
+	external	\
 	io		\
 	generated	\
 	meta		\
