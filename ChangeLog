@@ -1,3 +1,8 @@
+2008-02-22  Michael Natterer  <mitch@gimp.org>
+
+	* operations/external/Makefile.am: use '-' instead of '_' in
+	module names.
+
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/external/Makefile.am: the text op depends on pangocairo

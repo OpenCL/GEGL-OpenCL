@@ -31,7 +31,7 @@ ops += text.la
 endif
 
 if HAVE_PNG
-ops += png_load.la png_save.la
+ops += png-load.la png-save.la
 png_load_la_SOURCES = png-load.c
 png_load_la_LIBADD = $(op_libs) $(PNG_LIBS)
 png_load_la_CFLAGS = $(PNG_CFLAGS)
@@ -42,21 +42,21 @@ png_save_la_CFLAGS = $(PNG_CFLAGS)
 endif
 
 if HAVE_JPEG
-ops += jpg_load.la
+ops += jpg-load.la
 jpg_load_la_SOURCES = jpg-load.c
 jpg_load_la_LIBADD = $(op_libs) $(LIBJPEG)
 endif
 
 
 if HAVE_RSVG
-ops += svg_load.la
+ops += svg-load.la
 svg_load_la_SOURCES = svg-load.c
 svg_load_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
 svg_load_la_CFLAGS = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
 endif
 
 if HAVE_GTK
-ops += pixbuf.la save_pixbuf.la
+ops += pixbuf.la save-pixbuf.la
 pixbuf_la_SOURCES      = pixbuf.c
 pixbuf_la_LIBADD       = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
 pixbuf_la_CFLAGS       = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
@@ -67,7 +67,7 @@ save_pixbuf_la_CFLAGS  = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
 endif
 
 if HAVE_OPENEXR
-ops += exr_load.la
+ops += exr-load.la
 exr_load_la_SOURCES = exr-load.cpp
 exr_load_la_LIBADD = $(op_libs) $(OPENEXR_LIBS)
 exr_load_la_CXXFLAGS = $(OPENEXR_CFLAGS)
@@ -82,7 +82,7 @@ endif
 
 if HAVE_AVCODEC
 if HAVE_AVFORMAT
-ops += ff_load.la
+ops += ff-load.la
 ff_load_la_SOURCES = ff-load.c
 ff_load_la_LIBADD = $(op_libs) $(AVCODEC_LIBS) $(AVFORMAT_LIBS)
 ff_load_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVFORMAT_CFLAGS)
