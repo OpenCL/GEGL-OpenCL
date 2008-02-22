@@ -27,11 +27,12 @@ gegl_chant_string (values, "Values", "", "list of <number>s")
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE          "svg_matrix.c"
+#define GEGL_CHANT_C_FILE          "svg-saturate.c"
 
 #include "gegl-chant.h"
 #include <math.h>
 #include <stdlib.h>
+
 
 static void prepare (GeglOperation *operation)
 {
@@ -52,48 +53,43 @@ process (GeglOperation *op,
   gfloat     *out = out_buf;
   gfloat     *m;
 
-  gfloat mi[25] = { 1.0, 0.0, 0.0, 0.0, 0.0,
-                    0.0, 1.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 1.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 1.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0, 1.0};
   gfloat ma[25] = { 1.0, 0.0, 0.0, 0.0, 0.0,
                     0.0, 1.0, 0.0, 0.0, 0.0,
                     0.0, 0.0, 1.0, 0.0, 0.0,
                     0.0, 0.0, 0.0, 1.0, 0.0,
                     0.0, 0.0, 0.0, 0.0, 1.0};
-  char        *endptr;
-  gfloat       value;
-  const gchar  delimiter=',';
-  const gchar *delimiters=" ";
-  gchar      **values;
-  glong        i;
+  char         *endptr;
+  gfloat        value;
+  const gchar   delimiter=',';
+  const gchar  *delimiters=" ";
+  gchar       **values;
+  glong         i;
 
   m = ma;
 
-  if (o->values != NULL)
+  if ( o->values != NULL )
     {
       g_strstrip(o->values);
       g_strdelimit (o->values, delimiters, delimiter);
-      values = g_strsplit (o->values, ",", 20);
-      for (i = 0 ; i < 20 ; i++)
-        if ( values[i] != NULL )
-          {
-            value = g_ascii_strtod(values[i], &endptr);
-            if (endptr != values[i])
-               ma[i] = value;
-            else
+      values = g_strsplit (o->values, &delimiter, 1);
+      if (values[0] != NULL)
+        {
+          value = g_ascii_strtod(values[0], &endptr);
+          if (endptr != values[0])
+            if ( value >= 0.0 && value <= 1.0 )
               {
-                m = mi;
-                i = 21;
+                 ma[0]  = 0.213 + 0.787 * value;
+                 ma[1]  = 0.715 - 0.715 * value;
+                 ma[2]  = 0.072 - 0.072 * value;
+                 ma[5]  = 0.213 - 0.213 * value;
+                 ma[6]  = 0.715 + 0.285 * value;
+                 ma[7]  = 0.072 - 0.072 * value;
+                 ma[10] = 0.213 - 0.213 * value;
+                 ma[11] = 0.715 - 0.715 * value;
+                 ma[12] = 0.072 + 0.928 * value;
               }
-          }
-        else
-          {
-             m = mi;
-             i = 21;
-          }
-       g_strfreev(values);
+        }
+      g_strfreev(values);
     }
 
   for (i=0; i<n_pixels; i++)
@@ -122,9 +118,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "svg-matrix";
+  operation_class->name        = "svg-saturate";
   operation_class->categories  = "compositors:svgfilter";
-  operation_class->description = "SVG color matrix operation svg_matrix";
+  operation_class->description = "SVG color matrix operation svg_saturate";
 }
 
 #endif

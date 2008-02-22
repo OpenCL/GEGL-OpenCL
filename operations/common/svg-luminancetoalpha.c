@@ -27,7 +27,7 @@ gegl_chant_string (values, "Values", "", "list of <number>s")
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "svg_luminancetoalpha.c"
+#define GEGL_CHANT_C_FILE       "svg-luminancetoalpha.c"
 
 #include "gegl-chant.h"
 #include <math.h>

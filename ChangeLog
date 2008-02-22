@@ -1,5 +1,17 @@
 2008-02-22  Michael Natterer  <mitch@gimp.org>
 
+	* svg_huerotate.c
+	* svg_luminancetoalpha.c
+	* svg_matrix.c
+	* svg_saturate.c: renamed...
+
+	* svg-huerotate.c
+	* svg-luminancetoalpha.c
+	* svg-matrix.c
+	* svg-saturate.c: ...to not have underscores.
+
+2008-02-22  Michael Natterer  <mitch@gimp.org>
+
 	* operations/common/Makefile.am: use the new makefile so they work
 	on darwin.
 
