@@ -1,5 +1,10 @@
 2008-02-22  Michael Natterer  <mitch@gimp.org>
 
+	* operations/common/Makefile.am: use the new makefile so they work
+	on darwin.
+
+2008-02-22  Michael Natterer  <mitch@gimp.org>
+
 	* operations/external/Makefile.am: use '-' instead of '_' in
 	module names.
 
