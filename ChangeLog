@@ -1,3 +1,9 @@
+2008-02-22  Michael Natterer  <mitch@gimp.org>
+
+	* operations/Makefile-operations.am
+	* operations/affine/Makefile.am
+	* operations/external/Makefile.am: clean up includes.
+
 2008-02-22  Sven Neumann  <sven@gimp.org>
 
 	* operations/affine/affine.c: do case-sensitive string comparisons.

@@ -13,19 +13,22 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
 all-local: $(SOBJS)
 
-AM_CPPFLAGS = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
-           -I$(srcdir) -I$(top_srcdir)           \
-           -I$(top_builddir)                     \
-           -I$(top_srcdir)/gegl                  \
-           -I$(top_srcdir)/gegl/buffer           \
-           -I$(top_srcdir)/gegl/operation        \
-           -I$(top_srcdir)/gegl/property-types   \
-           -I$(top_srcdir)/gegl/module           \
-           -I
+AM_CPPFLAGS = \
+	@DEP_CFLAGS@				\
+	@BABL_CFLAGS@				\
+	@CPPFLAGS@				\
+	-I$(srcdir)				\
+	-I$(top_srcdir)				\
+	-I$(top_builddir)			\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/buffer		\
+	-I$(top_srcdir)/gegl/operation		\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/module
 
 AM_LDFLAGS = -avoid-version -module $(no_undefined)
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
+LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 
 %.lo: %.c $(GEGLHEADERS)
 	@echo $(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
@@ -35,7 +38,6 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 	@echo $(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
 	perl -pi -e 's/^relink_command=.*/relink_command=/g' $@
-
 
 
 clean-local:

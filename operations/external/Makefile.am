@@ -3,21 +3,24 @@ mwindows = -mwindows
 no_undefined = -no-undefined
 endif
 
-INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
-           -I$(srcdir) -I$(top_srcdir)           \
-           -I$(top_builddir)                     \
-           -I$(top_srcdir)/gegl                  \
-           -I$(top_srcdir)/gegl/buffer           \
-           -I$(top_srcdir)/gegl/operation        \
-           -I$(top_srcdir)/gegl/property-types   \
-           -I$(top_srcdir)/gegl/module           \
-           -I.
+INCLUDES = \
+	@DEP_CFLAGS@				\
+	@BABL_CFLAGS@				\
+	@CPPFLAGS@				\
+	-I$(srcdir)				\
+	-I$(top_srcdir)				\
+	-I$(top_builddir)			\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/buffer		\
+	-I$(top_srcdir)/gegl/operation		\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/module
+
 AM_LDFLAGS = -avoid-version -module $(no_undefined)
+
 libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
 op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
-### the stuff above this line could potentially be moved to a common file
-### to reduce duplication
 
 # start out with no ops, each if/endif block contains all the bits relevant
 # for a specific dependency.

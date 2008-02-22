@@ -3,15 +3,18 @@ mwindows = -mwindows
 no_undefined = -no-undefined
 endif
 
-INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
-	   -I$(srcdir) -I$(top_srcdir)           \
-           -I$(top_builddir)                     \
-           -I$(top_srcdir)/gegl                  \
-           -I$(top_srcdir)/gegl/buffer           \
-           -I$(top_srcdir)/gegl/operation        \
-           -I$(top_srcdir)/gegl/property-types   \
-           -I$(top_srcdir)/gegl/module           \
-           -I.
+INCLUDES = \
+	@DEP_CFLAGS@				\
+	@BABL_CFLAGS@				\
+	@CPPFLAGS@				\
+	-I$(srcdir)				\
+	-I$(top_srcdir)				\
+	-I$(top_builddir)			\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/buffer		\
+	-I$(top_srcdir)/gegl/operation		\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/module
 
 affine_ladir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 
@@ -27,8 +30,4 @@ affine_la_SOURCES = \
 	shear.c		\
 	translate.c
 
-affine_la_LDFLAGS = \
-    -module          \
-    -avoid-version   \
-    $(no_undefined)  \
-    $(mwindows) 
+affine_la_LDFLAGS = -module -avoid-version $(no_undefined) $(mwindows) 
