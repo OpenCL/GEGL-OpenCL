@@ -1,5 +1,23 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/Makefile.am: added a new libtooled makefile for
+	operations with external dependencies.
+	* operations/io/Makefile.am: trimmed away unused cruft.
+
+	* operations/io/display.c:
+	* operations/io/exr-load.cpp:
+	* operations/io/ff-load.c:
+	* operations/io/jpg-load.c:
+	* operations/io/pixbuf.c:
+	* operations/io/png-load.c:
+	* operations/io/png-save.c:
+	* operations/io/save-pixbuf.c:
+	* operations/io/svg-load.c:
+	* operations/render/text.c: moved ..
+	* operations/external/: .. here
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac:
 	* operations/Makefile.am:
 	* operations/external: added new directory for ops with external
