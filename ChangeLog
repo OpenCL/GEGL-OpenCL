@@ -1,5 +1,11 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac:
+	* operations/Makefile.am: moved most ops from misc directories into
+	a common directory for gegl ops that do not have extra depenencies.
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/Makefile.am: added a new libtooled makefile for
 	operations with external dependencies.
 	* operations/io/Makefile.am: trimmed away unused cruft.

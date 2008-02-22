@@ -1,16 +1,9 @@
 SUBDIRS = \
 	affine		\
 	core		\
-	blur      	\
-	color		\
-	enhance		\
+	common		\
 	external	\
-	io		\
-	generated	\
-	meta		\
-	render		\
-	svg		\
-	transparency
+	generated
 
 if ENABLE_WORKSHOP
 SUBDIRS+= workshop
