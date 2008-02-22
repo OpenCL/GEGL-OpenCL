@@ -23,10 +23,10 @@ op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 # for a specific dependency.
 ops =
 
-if HAVE_CAIRO
+if HAVE_PANGOCAIRO
 text_la_SOURCES = text.c
-text_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(PANGO_LIBS)
-text_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS)
+text_la_LIBADD = $(op_libs) $(PANGOCAIRO_LIBS)
+text_la_CFLAGS = $(PANGOCAIRO_CFLAGS)
 ops += text.la
 endif
 

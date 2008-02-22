@@ -1,5 +1,10 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/Makefile.am: the text op depends on pangocairo
+	not pango and cairo.
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/Makefile.am:
 	* operations/workshop/external/Makefile.am: ADDED.
 
