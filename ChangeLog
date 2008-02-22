@@ -1,5 +1,13 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/c2g.c:
+	* operations/workshop/envelopes.h:
+	* operations/workshop/grey.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/stress.c: Moved these to ../common
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: added operations/workshop/external/Makefile to
 	generated makefiles.
 	* operations/workshop/ff-save.c:
