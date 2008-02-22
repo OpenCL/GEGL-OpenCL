@@ -405,18 +405,14 @@ GEGL dirs
   ├──operations        Runtime loaded plug-ins for image processing operations.
   │   │
   │   ├──core          Basic operations tightly coupled with GEGL.
-  │   │
-  │   ├──affine        transforming operations (rotate/scale/translate)
-  │   ├──blur          Blurring operations.
-  │   ├──color         Color adjustments.
+  │   ├──affine        Transforming operations (rotate/scale/translate)
   │   ├──generated     Operations generated from scripts (currently
-  │   │                ruby scripts.) (arithmetic, compositors, ...)
-  │   ├──io            sources and sinks (file loaders/savers etc.)
-  │   ├──meta          Operations that themselves are made by gegl graphs.
-  │   ├──render        Operations providing patters, graidents, fills, ...
-  │   ├──svg           Non-compositors part of the SVG 1.2 specification.
-  │   ├──transparency  opacity/mask control
-  │   └──workshop      Works in progress, (not built/installed by default)
+  │   ├──external      Operations with external dependencies.
+  │   ├──common        Other operations (drop .c files in here and they are built.)
+  │   └──workshop      Works in progress, (you must pass --enable-workshop to configure
+  │       │            for the ops in here to be built.
+  │       │
+  │       ├──external  operations in the workshop with external dependencies.
   │       └──generated generated operations that are in the workshop.
   │
   │

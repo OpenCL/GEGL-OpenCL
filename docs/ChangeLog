@@ -1,5 +1,10 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: modified directory overview to reflect changes
+	in operations/*
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: changed location of brightness-contrast.c
 
 2008-02-20  Øyvind Kolås  <pippin@gimp.org>
