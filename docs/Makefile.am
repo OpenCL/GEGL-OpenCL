@@ -72,7 +72,7 @@ if HAVE_ENSCRIPT
 	$(ENSCRIPT) -E --color --language=html -p$@ $<
 endif
 
-brightness-contrast.c.html: $(top_srcdir)/operations/color/brightness-contrast.c
+brightness-contrast.c.html: $(top_srcdir)/operations/common/brightness-contrast.c
 if HAVE_ENSCRIPT
 	$(ENSCRIPT) -E --color --language=html -p$@ $<
 endif
