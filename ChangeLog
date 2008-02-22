@@ -1,5 +1,14 @@
 2008-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: added operations/workshop/external/Makefile to
+	generated makefiles.
+	* operations/workshop/ff-save.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/gtk-display.c:
+	* operations/workshop/line-profile.c: moved into external subdir.
+
+2008-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac:
 	* operations/Makefile.am: moved most ops from misc directories into
 	a common directory for gegl ops that do not have extra depenencies.
