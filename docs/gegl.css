@@ -6,9 +6,11 @@
         margin-right: 2em;
         padding: 0;
         background-color: #fff;
+	color: black;
       }
       div.paper {
         background-color: #fff;
+	color: black;
         margin: 1em;
         /*margin-left: 12.5em;*/
       }
