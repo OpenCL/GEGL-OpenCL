@@ -1,3 +1,8 @@
+2008-02-24  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/affine/Makefile.am (affine_la_SOURCES): Add header
+	needed to build.
+
 2008-02-22  Michael Natterer  <mitch@gimp.org>
 
 	* operations/Makefile-operations.am

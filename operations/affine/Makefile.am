@@ -22,12 +22,16 @@ affine_la_LTLIBRARIES = affine.la
 
 affine_la_SOURCES = \
 	affine.c	\
+	affine.h	\
 	matrix.c	\
+	matrix.h	\
 	module.c	\
+	module.h	\
 	reflect.c	\
 	rotate.c	\
 	scale.c		\
 	shear.c		\
-	translate.c
+	translate.c	\
+	chant.h
 
 affine_la_LDFLAGS = -module -avoid-version $(no_undefined) $(mwindows) 
