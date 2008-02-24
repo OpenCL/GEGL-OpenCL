@@ -1,5 +1,8 @@
 2008-02-24  Étienne Bersac  <bersace03@laposte.net>
 
+	* operations/common/perlin/Makefile.am (EXTRA_DIST): Distribute
+	perlin.[hc] files.
+
 	* operations/affine/Makefile.am (affine_la_SOURCES): Add header
 	needed to build.
 
