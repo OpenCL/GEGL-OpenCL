@@ -11,4 +11,4 @@ endif
 
 EXTRA_DIST= \
 	Makefile-operations.am	\
-	Makefile-operations-old.am
+	Makefile-common.am

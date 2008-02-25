@@ -1,5 +1,17 @@
 2008-02-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/Makefile-operations-old.am: deleted.
+	* operations/Makefile-common.am: added.
+	* operations/Makefile.am: reflect above deletion/addition.
+
+	* operations/Makefile-operations.am:
+	* operations/affine/Makefile.am:
+	* operations/external/Makefile.am:
+	* operations/workshop/external/Makefile.am: factored out common
+	bits and include Makefile-common.am.
+
+2008-02-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/Makefile-operations.am: added uninstall rule, link with
 	libgegl on win32.
 

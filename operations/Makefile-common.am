@@ -1,0 +1,24 @@
+if OS_WIN32
+no_undefined = -no-undefined
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
+endif
+
+GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
+                  $(wildcard $(top_srcdir)/gegl/buffer/*.h)
+
+AM_CPPFLAGS = \
+	@DEP_CFLAGS@				\
+	@BABL_CFLAGS@				\
+	@CPPFLAGS@				\
+	-I$(srcdir)				\
+	-I$(top_srcdir)				\
+	-I$(top_builddir)			\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/buffer		\
+	-I$(top_srcdir)/gegl/operation		\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/module
+
+AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
+op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
+ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@

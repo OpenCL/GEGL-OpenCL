@@ -1,36 +1,16 @@
-if OS_WIN32
-no_undefined = -no-undefined
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
-endif
+include $(top_srcdir)/operations/Makefile-common.am
 
+LDADD           = $(op_libs)
 
 CFILES          = $(wildcard $(srcdir)/*.c)
 plugins           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
-GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
-                  $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
+
 
 all-local: $(plugins)
 
-AM_CPPFLAGS = \
-	@DEP_CFLAGS@				\
-	@BABL_CFLAGS@				\
-	@CPPFLAGS@				\
-	-I$(srcdir)				\
-	-I$(top_srcdir)				\
-	-I$(top_builddir)			\
-	-I$(top_srcdir)/gegl			\
-	-I$(top_srcdir)/gegl/buffer		\
-	-I$(top_srcdir)/gegl/operation		\
-	-I$(top_srcdir)/gegl/property-types	\
-	-I$(top_srcdir)/gegl/module
-
-AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
-
-LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
-
-%.la: %.c
+%.la: %.c $(GEGLHEADERS)
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LDADD)
 
@@ -38,12 +18,10 @@ LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 clean-local:
 	rm -f *.la $(OFILES)
 
-ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
-
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
 	for i in $(plugins); do \
-	  $(LIBTOOL) --mode=finish $(INSTALL) $$i $(ext_dir) ; \
+	  $(LIBTOOL) --mode=install $(INSTALL) $$i $(ext_dir) ; \
 	done
 
 uninstall-local:

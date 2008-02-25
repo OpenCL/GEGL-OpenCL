@@ -1,25 +1,4 @@
-if OS_WIN32
-mwindows = -mwindows
-no_undefined = -no-undefined
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
-endif
-
-INCLUDES = \
-	@DEP_CFLAGS@				\
-	@BABL_CFLAGS@				\
-	@CPPFLAGS@				\
-	-I$(srcdir)				\
-	-I$(top_srcdir)				\
-	-I$(top_builddir)			\
-	-I$(top_srcdir)/gegl			\
-	-I$(top_srcdir)/gegl/buffer		\
-	-I$(top_srcdir)/gegl/operation		\
-	-I$(top_srcdir)/gegl/property-types	\
-	-I$(top_srcdir)/gegl/module
-
-AM_LDFLAGS = -avoid-version -module $(no_undefined)
-
-op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
+include $(top_srcdir)/operations/Makefile-common.am
 
 # start out with no ops, each if/endif block contains all the bits relevant
 # for a specific dependency.
@@ -90,5 +69,5 @@ ff_load_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVFORMAT_CFLAGS)
 endif
 endif
 
-opdir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
+opdir = $(ext_dir)
 op_LTLIBRARIES = $(ops)
