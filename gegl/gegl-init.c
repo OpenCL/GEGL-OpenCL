@@ -237,6 +237,7 @@ gegl_post_parse_hook (GOptionContext *context,
 
   if (g_getenv ("BABL_ERROR") == NULL)
     g_setenv ("BABL_ERROR", "0.001", 0);
+
   babl_init ();
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
 
@@ -245,19 +246,18 @@ gegl_post_parse_hook (GOptionContext *context,
   time = gegl_ticks ();
   if (!module_db)
     {
+      const gchar *gegl_path = g_getenv ("GEGL_PATH");
 
       module_db = gegl_module_db_new (FALSE);
 
-      if (g_getenv ("GEGL_PATH"))
+      if (gegl_path)
         {
-          gchar *module_path;
-          module_path = g_strdup (g_getenv ("GEGL_PATH"));
-          gegl_module_db_load (module_db, module_path);
-          g_free (module_path);
+          gegl_module_db_load (module_db, gegl_path);
         }
       else
         {
           gchar *module_path;
+
 #ifdef G_OS_WIN32
           module_path =
             g_win32_get_package_installation_subdirectory (NULL,
@@ -266,11 +266,11 @@ gegl_post_parse_hook (GOptionContext *context,
 #else
           module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
-          gegl_module_db_load (module_db, module_path);
 
-          /* also load plug-ins from ~/.gegl-0.0/plug-ins */
+          gegl_module_db_load (module_db, module_path);
           g_free (module_path);
 
+          /* also load plug-ins from ~/.gegl-0.0/plug-ins */
           module_path = g_build_filename (g_get_home_dir (),
                                           "." GEGL_LIBRARY,
                                           "plug-ins",

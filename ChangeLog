@@ -1,5 +1,9 @@
 2008-02-25  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-init.c (gegl_post_parse_hook): simplified.
+
+2008-02-25  Sven Neumann  <sven@gimp.org>
+
 	* docs/Makefile.am
 	* docs/gallery/Makefile.am: don't execute binaries created in
 	.libs directory but run the libtool wrapper script instead.
