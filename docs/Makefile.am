@@ -75,9 +75,15 @@ if HAVE_ENSCRIPT
 	$(ENSCRIPT) -E --color --language=html -p$@ $<
 endif
 
-api.html: ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../gegl/operation/gegl-operation.h ../tools/create-reference.rb
+api.html: $(top_srcdir)/gegl/gegl.h\
+          $(top_srcdir)/gegl/buffer/gegl-buffer.h\
+	  $(top_srcdir)/gegl/operation/gegl-operation.h\
+	  $(top_srcdir)/tools/create-reference.rb
 if HAVE_RUBY
-	../tools/create-reference.rb ../gegl/gegl.h ../gegl/buffer/gegl-buffer.h ../gegl/operation/gegl-operation.h api.html
+	$(top_srcdir)/tools/create-reference.rb \
+	    $(top_srcdir)/gegl/gegl.h\
+	    $(top_srcdir)/gegl/buffer/gegl-buffer.h\
+	    $(top_srcdir)/gegl/operation/gegl-operation.h $@
 endif
 
 index.html: index-static.txt		\

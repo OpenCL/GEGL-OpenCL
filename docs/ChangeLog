@@ -1,3 +1,8 @@
+2008-02-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: add $(top_srcdir) to paths for sources of the api
+	reference.
+
 2008-02-23  Étienne Bersac  <bersace03@laposte.net>
 
 	* gegl.css: Set explicit black color over the explicit white
