@@ -585,7 +585,7 @@ else
   SDL_CFLAGS=`$SDL_CONFIG --cflags`
   SDL_LIBS=`$SDL_CONFIG --libs`
 fi
-AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" = "xyes")
+AM_CONDITIONAL(HAVE_SDL, test "x$have_sdl" = "xyes")
 
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)

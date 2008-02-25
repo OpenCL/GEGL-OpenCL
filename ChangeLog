@@ -1,5 +1,10 @@
 2008-02-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: fixed test for SDL so that the result can be used to
+	conditionally compile the displayt op.
+
+2008-02-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/Makefile-operations-old.am: deleted.
 	* operations/Makefile-common.am: added.
 	* operations/Makefile.am: reflect above deletion/addition.
