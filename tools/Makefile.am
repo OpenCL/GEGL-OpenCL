@@ -13,4 +13,8 @@ INCLUDES = -I$(top_srcdir) 		\
 	   -I$(top_srcdir)/gegl/module	\
 	   -I$(top_srcdir)/gegl/property-types\
 	   @DEP_CFLAGS@ @BABL_CFLAGS@
-AM_LDFLAGS =  @DEP_LIBS@ @BABL_LIBS@ $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
+
+AM_LDFLAGS = \
+	@DEP_LIBS@	\
+	@BABL_LIBS@	\
+	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la

@@ -1,3 +1,12 @@
+2008-02-25  Sven Neumann  <sven@gimp.org>
+
+	* docs/Makefile.am
+	* docs/gallery/Makefile.am: don't execute binaries created in
+	.libs directory but run the libtool wrapper script instead.
+	Removed LD_PRELOAD hacks which are now not any longer needed.
+
+	* tools/Makefile.am: minor cleanup.
+
 2008-02-24  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/common/perlin/Makefile.am (EXTRA_DIST): Distribute

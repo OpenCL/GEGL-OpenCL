@@ -17,9 +17,9 @@ endif
 
 if HAVE_ENSCRIPT
 ENSCRIPT_FILES = \
-	brightness-contrast.c.html \
-	gegl.h.html \
-	gegl-operation.h.html \
+	brightness-contrast.c.html	\
+	gegl.h.html			\
+	gegl-operation.h.html		\
 	gegl-plugin.h.html
 
 HTML_FILES += $(ENSCRIPT_FILES)
@@ -48,14 +48,12 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 all-local: $(HTML_FILES)
 
 operations.html: $(top_builddir)/tools/operation_reference $(top_srcdir)/operations/*/*.c
-	LD_PRELOAD=$(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
 	GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/.libs/operation_reference --ops-html > $@
+	$(top_builddir)/tools/operation_reference --ops-html > $@
 
 class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
-	LD_PRELOAD=$(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
 	GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/.libs/introspect > $@
+	$(top_builddir)/tools/introspect > $@
 
 gegl.h.html: $(top_srcdir)/gegl/gegl.h
 if HAVE_ENSCRIPT

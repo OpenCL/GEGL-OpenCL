@@ -4,7 +4,7 @@ EXTRA_DIST=$(wildcard *.xml)
 
 index.html: Makefile.am pngs 
 	@echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style><link rel='shortcut icon' href='../images/gegl.ico'/></head><body><div id='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
-	
+
 	@for XML in $(srcdir)/*.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
 	@echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	@echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
@@ -36,15 +36,14 @@ pngs:
 
 all-local: pngs index.html
 
-%.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT))\
-	    $(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
+%.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
+	    $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	    $(top_builddir)/bin/gegl
 	@GEGL_DEBUG_TIME=yes GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
 	@GEGL_PATH=$(top_builddir)/operations \
-	LD_PRELOAD=$(top_builddir)/gegl/.libs/libgegl-@GEGL_API_VERSION@.so \
-	$(top_builddir)/bin/.libs/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
+	$(top_builddir)/bin/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
 clean-local:
