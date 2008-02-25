@@ -2,7 +2,7 @@ SUBDIRS=data
 
 EXTRA_DIST=$(wildcard *.xml)
 
-index.html: Makefile.am pngs 
+index.html: Makefile.am images.stamp
 	@echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style><link rel='shortcut icon' href='../images/gegl.ico'/></head><body><div id='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
 
 	@for XML in $(srcdir)/*.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
@@ -27,18 +27,17 @@ index.html: Makefile.am pngs
 	   done;\
 	echo "</div></div></div></body></html>" >> index.html
 
-pngs:
-	@echo "--[Updating sample compositions]--";\
-	for XML in $(srcdir)/*.xml;do\
-	   echo $${XML};\
-	   $(MAKE) `echo $${XML}|sed s/xml/png/`>/dev/null;\
+images.stamp: $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
+	      $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
+	      $(top_builddir)/bin/gegl
+	@echo "--[Updating sample compositions]--"; \
+	for XML in $(srcdir)/*.xml; do \
+	   echo $${XML}; \
+	   $(MAKE) `echo $${XML}|sed s/xml/png/`>/dev/null; \
 	done
+	@touch images.stamp
 
-all-local: pngs index.html
-
-%.png:%.xml $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
-	    $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	    $(top_builddir)/bin/gegl
+%.png: %.xml
 	@GEGL_DEBUG_TIME=yes GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
@@ -46,5 +45,7 @@ if HAVE_GRAPHVIZ
 	$(top_builddir)/bin/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
+all-local: images.stamp index.html
+
 clean-local:
-	rm -f index.html *.png *.txt
+	rm -f index.html images.stamp *.png *.txt

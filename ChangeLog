@@ -1,3 +1,8 @@
+2008-02-25  Sven Neumann  <sven@gimp.org>
+
+	* docs/gallery/Makefile.am: use a stamp file to avoid needless
+	recreation of the image files.
+
 2008-02-25  Øyvind Kolås  <pippin@gimp.org>
 
 	Hopefully making the build more sane and more portable at the same
