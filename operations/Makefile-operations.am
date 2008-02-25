@@ -2,7 +2,7 @@ if OS_WIN32
 no_undefined = -no-undefined
 endif
 
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
+#libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
 CFILES          = $(wildcard $(srcdir)/*.c)
 SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
@@ -26,9 +26,10 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/gegl/property-types	\
 	-I$(top_srcdir)/gegl/module
 
-AM_LDFLAGS = -avoid-version -module $(no_undefined)
+AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
 
-LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
+LDADD = @DEP_LIBS@ @BABL_LIBS@
+#$(libgegl)
 
 %.lo: %.c $(GEGLHEADERS)
 	@echo $(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
@@ -37,7 +38,6 @@ LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 %.la: %.lo
 	@echo $(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
-	perl -pi -e 's/^relink_command=.*/relink_command=/g' $@
 
 
 clean-local:

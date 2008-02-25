@@ -18,9 +18,10 @@ INCLUDES = \
 
 AM_LDFLAGS = -avoid-version -module $(no_undefined)
 
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
+#libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
-op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
+op_libs = @DEP_LIBS@ @BABL_LIBS@
+#$(libgegl)
 
 # start out with no ops, each if/endif block contains all the bits relevant
 # for a specific dependency.

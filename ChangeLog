@@ -1,3 +1,13 @@
+2008-02-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Hopefully making the build more sane and more portable at the same
+	time.
+
+	* gegl/Makefile.am: added -export-dynamic to LD_FLAGS since the
+	plug-ins needs to be able to link back with gegl at runtime
+	* operations/Makefile-operations.am:
+	* operations/external/Makefile.am: do not link with the gegl library.
+
 2008-02-25  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-init.c (gegl_post_parse_hook): simplified.

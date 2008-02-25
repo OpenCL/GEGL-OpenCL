@@ -41,7 +41,7 @@ libgegl_@GEGL_API_VERSION@_la_LIBADD =	\
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
 	@DEP_LIBS@ @BABL_LIBS@	\
-	$(no_undefined) -version-info $(GEGL_LIBRARY_VERSION)
+	$(no_undefined) -export-dynamic -version-info $(GEGL_LIBRARY_VERSION)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
