@@ -1,6 +1,7 @@
 if OS_WIN32
 mwindows = -mwindows
 no_undefined = -no-undefined
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 endif
 
 INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
@@ -13,7 +14,6 @@ INCLUDES = @DEP_CFLAGS@ @BABL_CFLAGS@ @CPPFLAGS@ \
            -I$(top_srcdir)/gegl/module           \
            -I.
 AM_LDFLAGS = -avoid-version -module $(no_undefined)
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
 op_libs = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 ### the stuff above this line could potentially be moved to a common file

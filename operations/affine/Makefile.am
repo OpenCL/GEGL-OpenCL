@@ -1,6 +1,7 @@
 if OS_WIN32     
 mwindows = -mwindows
 no_undefined = -no-undefined
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 endif
 
 INCLUDES = \
@@ -33,5 +34,7 @@ affine_la_SOURCES = \
 	shear.c		\
 	translate.c	\
 	chant.h
+
+LDADD = $(libgegl)
 
 affine_la_LDFLAGS = -module -avoid-version $(no_undefined) $(mwindows) 

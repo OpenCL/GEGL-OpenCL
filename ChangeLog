@@ -1,3 +1,13 @@
+2008-02-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile-operations.am: added uninstall rule, link with
+	libgegl on win32.
+
+	* operations/affine/Makefile.am:
+	* operations/external/Makefile.am:
+	* operations/workshop/external/Makefile.am: link with libgegl on
+	win32.
+
 2008-02-25  Sven Neumann  <sven@gimp.org>
 
 	* docs/gallery/Makefile.am: use a stamp file to avoid needless

@@ -1,17 +1,17 @@
 if OS_WIN32
 no_undefined = -no-undefined
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 endif
 
-#libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
+plugins           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
-all-local: $(SOBJS)
+all-local: $(plugins)
 
 AM_CPPFLAGS = \
 	@DEP_CFLAGS@				\
@@ -28,16 +28,11 @@ AM_CPPFLAGS = \
 
 AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
 
-LDADD = @DEP_LIBS@ @BABL_LIBS@
-#$(libgegl)
+LDADD = @DEP_LIBS@ @BABL_LIBS@ $(libgegl)
 
-%.lo: %.c $(GEGLHEADERS)
-	@echo $(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
-	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@ $<
-
-%.la: %.lo
-	@echo $(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
-	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $< $(LDADD)
+%.la: %.c
+	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(LIBTOOL) --tag=CC --mode=link $(CC) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LDADD)
 
 
 clean-local:
@@ -47,11 +42,13 @@ ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
-	for i in $(SOBJS); do \
-	  $(LIBTOOL) --mode=install $(INSTALL) $$i $(ext_dir) ; \
+	for i in $(plugins); do \
+	  $(LIBTOOL) --mode=finish $(INSTALL) $$i $(ext_dir) ; \
 	done
 
 uninstall-local:
-	rm -f $(INSTALLED_ITEMS)
+	for i in $(plugins); do \
+	  $(LIBTOOL) --mode=uninstall $(RM) $(ext_dir)/$$i ; \
+	done
 
 check-local: all-local
