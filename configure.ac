@@ -52,7 +52,7 @@ m4_define([sdl_required_version], [0.0.0])
 m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
-AC_CONFIG_SRCDIR([gegl/gegl.h])
+AC_CONFIG_SRCDIR([gegl/gegl.h.in])
 
 dnl ==========================================================================
 dnl                              Versioning              

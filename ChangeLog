@@ -8,7 +8,9 @@
 
 	* gegl/gegl-init.c (gegl_get_version): Implement.
 
-	* confiure.ac: Expand gegl/gegl.h.
+	* confiure.ac: Use gegl.h.in in AC_CONFIG_SRCDIR(). Expand gegl/gegl.h.
+
+	* autogen.sh: Use gegl.h.in here, too.
 
 2008-02-26  Øyvind Kolås  <pippin@gimp.org>
 
