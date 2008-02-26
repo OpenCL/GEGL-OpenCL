@@ -217,7 +217,7 @@
           height: 100%;
           overflow: auto;
           float: left;
-          padding-top: 1em;
+          padding-top: 0.5em;
         }
         div#toc ul {
           padding-top: 0em;
@@ -246,6 +246,7 @@
           background-color: #445;
         }
         div#toc .toclevel1 {
+          padding-top: 0.5em;
           padding-left: 0em;
         }
         div#toc .toclevel2 {

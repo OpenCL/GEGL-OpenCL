@@ -1,3 +1,9 @@
+2008-02-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl.css: add some space above toplevel items in toc.
+	* index-static.txt.in: re-added bugs/mail/changelog shortcuts below
+	toc.
+
 2008-02-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: add $(top_srcdir) to paths for sources of the api

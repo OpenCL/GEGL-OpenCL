@@ -472,5 +472,13 @@ babl dirs
 <div class="toclevel2"><a href="#toc18">Operations</a></div>
 <div class="toclevel2"><a href="#toc19">Glossary</a></div>
 <div class="toclevel2"><a href="#toc20">Directory overview</a></div>
+<div>&nbsp;</div>
+<div class="toclevel1">&nbsp;</div>
+<div class="toclevel2"><a href="http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup">changes</a></div>
+<div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO">bugzilla</a></div>
+<div class="toclevel2"><a href="http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes">mailarchive</a></div>
+<div class="toclevel2"><a href="http://svn.gnome.org/viewcvs/gegl/trunk/">viewcvs</a></div>
+
+
 </div>
 ++++++++
