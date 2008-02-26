@@ -1882,6 +1882,10 @@ gegl_node_remove_child (GeglNode *self,
   self_priv  = GEGL_NODE_GET_PRIVATE (self);
   child_priv = GEGL_NODE_GET_PRIVATE (child);
 
+  g_assert (child_priv->parent == self ||
+            child_priv->parent == NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
+
   self_priv->children = g_slist_remove (self_priv->children, child);
 
   if (child_priv->parent != NULL)
@@ -1896,6 +1900,44 @@ gegl_node_remove_child (GeglNode *self,
   if (self_priv->children == NULL)
     self->is_graph = FALSE;
 
+  return child;
+}
+
+GeglNode *
+gegl_node_get_parent (GeglNode *self)
+{
+  GeglNodePrivate *self_priv;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  self_priv  = GEGL_NODE_GET_PRIVATE (self);
+  return self_priv->parent;
+}
+
+GeglNode *
+gegl_node_adopt_child (GeglNode *self,
+                       GeglNode *child)
+{
+  GeglNode *old_parent;
+
+  g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
+  g_object_ref (child);
+  old_parent = gegl_node_get_parent (child);
+  if (old_parent)
+    {
+      gegl_node_remove_child (old_parent, child);
+    }
+
+  if (self)
+    {
+      gegl_node_add_child (self, child);
+    }
+  else
+    {
+      g_object_ref (child);
+    }
+
+  g_object_unref (child);
   return child;
 }
 
@@ -1943,25 +1985,25 @@ gegl_node_get_children (GeglNode *self)
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_node_new_child (GeglNode    *node,
+gegl_node_new_child (GeglNode    *parent,
                      const gchar *first_property_name,
                      ...)
 {
-  GeglNode    *self = node;
+  GeglNode    *node;
   va_list      var_args;
   const gchar *name;
 
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-
   node = g_object_new (GEGL_TYPE_NODE, NULL);
-  gegl_node_add_child (self, node);
+  if (parent)
+    gegl_node_add_child (parent, node);
 
   name = first_property_name;
   va_start (var_args, first_property_name);
   gegl_node_set_valist (node, first_property_name, var_args);
   va_end (var_args);
 
-  g_object_unref (node);
+  if (parent)
+    g_object_unref (node);
   return node;
 }
 
@@ -1969,7 +2011,6 @@ GeglNode *
 gegl_node_create_child (GeglNode    *self,
                         const gchar *operation)
 {
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (operation != NULL, NULL);
 
   return gegl_node_new_child (self, "operation", operation, NULL);

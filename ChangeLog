@@ -1,5 +1,15 @@
 2008-02-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h.in: added gegl_node_adopt_child and
+	gegl_node_get_parent.
+	* gegl/graph/gegl-node.c: (gegl_node_remove_child): added sanity
+	assert.
+	(gegl_node_get_parent), (gegl_node_adopt_child): added
+	(gegl_node_new_child), (gegl_node_create_child): modified to allow a
+	NULL parent argument to indicate creation of orphaned nodes.
+
+2008-02-26  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from Deji Akingunola that avoids using $(ext_dir)
 	in some of the Makefile.am's which caused DESTDIR to be expanded
 	twice. closed bug #518869.
