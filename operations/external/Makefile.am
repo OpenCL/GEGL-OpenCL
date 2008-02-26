@@ -69,5 +69,5 @@ ff_load_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVFORMAT_CFLAGS)
 endif
 endif
 
-opdir = $(ext_dir)
+opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)

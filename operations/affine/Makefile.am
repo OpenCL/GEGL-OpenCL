@@ -1,6 +1,6 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
-affine_ladir = $(ext_dir)
+affine_ladir = $(libdir)/gegl-@GEGL_API_VERSION@
 
 affine_la_LTLIBRARIES = affine.la
 

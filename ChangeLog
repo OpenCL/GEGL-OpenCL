@@ -1,3 +1,13 @@
+2008-02-26  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Deji Akingunola that avoids using $(ext_dir)
+	in some of the Makefile.am's which caused DESTDIR to be expanded
+	twice. closed bug #518869.
+
+	* operations/affine/Makefile.am:
+	* operations/external/Makefile.am:
+	* operations/workshop/external/Makefile.am:
+
 2008-02-26  Tor Lillqvist  <tml@novell.com>
 
 	* gegl/gegl.h
