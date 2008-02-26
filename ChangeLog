@@ -1,3 +1,8 @@
+2008-02-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/external/save-pixbuf.c: (process): do not store linear
+	light RGB but gamma corrected RGB (sRGB) for the pixbuf.
+
 2008-02-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: fixed test for SDL so that the result can be used to

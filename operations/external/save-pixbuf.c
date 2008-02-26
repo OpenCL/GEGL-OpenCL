@@ -57,7 +57,7 @@ process (GeglOperation       *operation,
 
       /* pixbuf from data only support 8bit bps */
       bps = 8;
-      name = g_strdup_printf ("RGB%s u%i",
+      name = g_strdup_printf ("R'G'B'%s u%i",
                   has_alpha ? "A" : "",
                   bps);
       babl = babl_format (name);
