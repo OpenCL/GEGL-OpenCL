@@ -209,6 +209,21 @@ gegl_exit (void)
   g_print ("\n");
 }
 
+void
+gegl_get_version (int *major,
+		  int *minor,
+		  int *micro)
+{
+  if (major != NULL)
+    *major = GEGL_MAJOR_VERSION;
+
+  if (minor != NULL)
+    *minor = GEGL_MINOR_VERSION;
+
+  if (micro != NULL)
+    *micro = GEGL_MICRO_VERSION;
+}
+
 
 static void
 gegl_init_i18n (void)

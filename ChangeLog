@@ -1,3 +1,15 @@
+2008-02-26  Tor Lillqvist  <tml@novell.com>
+
+	* gegl/gegl.h
+	* gegl/gegl.h.in: Rename gegl.h to gegl.h.in and add
+	GEGL_MAJOR_VERSION, GEGL_MINOR_VERSION and GEGL_MICRO_VERSION
+	macros the values of which are expanded by configure. Add
+	declaration for gegl_get_version().
+
+	* gegl/gegl-init.c (gegl_get_version): Implement.
+
+	* confiure.ac: Expand gegl/gegl.h.
+
 2008-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/external/save-pixbuf.c: (process): do not store linear

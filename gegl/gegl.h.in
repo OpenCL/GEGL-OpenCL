@@ -108,6 +108,31 @@ void           gegl_exit                 (void);
 
 
 /***
+ * GEGL version information
+ *
+ * These macros tell the version of GEGL you are compiling against.
+ * GEGL's version number consists of three parts: major, minor and
+ * micro.
+ */
+
+#define GEGL_MAJOR_VERSION @GEGL_MAJOR_VERSION@
+#define GEGL_MINOR_VERSION @GEGL_MINOR_VERSION@
+#define GEGL_MICRO_VERSION @GEGL_MICRO_VERSION@
+
+/**
+ * gegl_get_version:
+ * @major: a pointer to a int where the major version number will be stored
+ * @minor: ditto for the minor version number
+ * @micro: ditto for the micro version number
+ *
+ * This function fetches the version of the GEGL library being used by
+ * the running process.
+ */
+void           gegl_get_version          (int *major,
+					  int *minor,
+					  int *micro);
+
+/***
  * Available operations:
  * Gegl provides means to check for available processing operations that
  * can be used with nodes using #gegl_list_operations and for a specified

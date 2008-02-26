@@ -695,6 +695,7 @@ AC_OUTPUT([
 Makefile
 bin/Makefile
 gegl/Makefile
+gegl/gegl.h
 gegl/buffer/Makefile
 gegl/graph/Makefile
 gegl/module/Makefile
