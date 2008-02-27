@@ -1,5 +1,10 @@
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/Makefile-common.am: link plug-ins to glib on platforms
+	other than win32 as well. (babl is only linked in only on win32)
+
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: updated.
 	* operations/Makefile-common.am: only link plug-ins to glib, babl and
 	friends on win32.
