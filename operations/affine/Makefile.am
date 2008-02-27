@@ -18,4 +18,4 @@ affine_la_SOURCES = \
 	translate.c	\
 	chant.h
 
-LDADD = $(op_libs)
+affine_la_LIBADD = $(op_libs)

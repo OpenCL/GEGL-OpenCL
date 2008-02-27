@@ -1,3 +1,8 @@
+2008-02-27  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* operations/affine/Makefile.am: use affine_la_LIBADD instead of
+	LDADD. 
+
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: depend on babl >= 0.0.18
