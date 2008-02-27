@@ -1,5 +1,11 @@
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: updated.
+	* operations/Makefile-common.am: only link plug-ins to glib, babl and
+	friends on win32.
+
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_post_parse_hook): lower BABL error tolerance
 	to 0.0001.
 

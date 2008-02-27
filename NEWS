@@ -13,12 +13,12 @@ Changes in GEGL 0.0.15
    through GeglProcessor.
    when processed using a GeglProcessor.
  • constification of GeglRectangles and babl formats.
- • Build and dist fixes, general sanity improvements to APIs, plugged
-   annoying buffer leaks.
+ • Build and dist fixes, plugged annoying buffer leaks, GEGL now
+   also works on OSX
 
 Contributions from:
   Øyvind Kolås, Étienne Bersac, Kevin Cozens, Sven Neumann,
-  Manish Singh, Michael Natterer, Hand Brauer, Deji Akingunola,
+  Manish Singh, Michael Natterer, Hans Brauer, Deji Akingunola,
   Bradley Broom and Tor Lillqvist.
 
 Changes in GEGL 0.0.14
