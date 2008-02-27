@@ -1,3 +1,7 @@
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: depend on babl >= 0.0.18
+
 2008-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h.in: added gegl_node_adopt_child and
