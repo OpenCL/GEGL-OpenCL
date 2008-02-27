@@ -1,3 +1,10 @@
+========================== 0.0.16 released ==================================
+
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: bumped version to 0.0.16, depend on babl 0.0.20.
+	* NEWS: updated version referred to.
+
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/Makefile-common.am: link plug-ins to glib on platforms

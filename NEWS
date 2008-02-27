@@ -5,7 +5,7 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots.
 
-Changes in GEGL 0.0.15
+Changes in GEGL 0.0.16
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Install headers for development of external operation plug-ins.
  • Added rowstride argument to gegl_buffer_set ()
