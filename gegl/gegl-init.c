@@ -251,7 +251,7 @@ gegl_post_parse_hook (GOptionContext *context,
   time = gegl_ticks ();
 
   if (g_getenv ("BABL_ERROR") == NULL)
-    g_setenv ("BABL_ERROR", "0.001", 0);
+    g_setenv ("BABL_ERROR", "0.0001", 0);
 
   babl_init ();
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
