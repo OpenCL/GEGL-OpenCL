@@ -1,3 +1,9 @@
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/gaussian-blur.c: default to "iir" blur method since
+	"fir" which is more accurate especially for low blur radiuses seems
+	to shift the entire image down and to the left by 1 pixel.
+
 2008-02-27  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* operations/affine/Makefile.am: use affine_la_LIBADD instead of
