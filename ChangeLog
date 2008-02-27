@@ -1,3 +1,7 @@
+2007-12-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: post release bump of version to 0.0.17
+
 ========================== 0.0.16 released ==================================
 
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
