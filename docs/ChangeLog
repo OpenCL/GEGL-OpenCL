@@ -1,3 +1,8 @@
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: fixed toc (cheated and did so on website as
+	well).
+
 2008-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl.css: add some space above toplevel items in toc.

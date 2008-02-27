@@ -453,25 +453,26 @@ babl dirs
 <div id="toctitle">Table of Contents</div>
 <div class="toclevel1"><a href="#gegl">GEGL</a></div>
 <div class="toclevel2"><a href="#features">Features</a></div>
-<div class="toclevel2"><a href="#toc2">News</a></div>
+<div class="toclevel2"><a href="#_news">News</a></div>
 <div class="toclevel2"><a href="gallery/index.html">Gallery</a></div>
 <div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">Bugzilla</a></div>
-<div class="toclevel2"><a href="#toc5">Mailinglist</a></div>
-<div class="toclevel2"><a href="#toc6">Copyright</a></div>
-<div class="toclevel2"><a href="#toc7">Contributors</a></div>
-<div class="toclevel1"><a href="#toc8">Building from source</a></div>
-<div class="toclevel2"><a href="#toc9">Download</a></div>
-<div class="toclevel2"><a href="#toc10">Dependencies</a></div>
-<div class="toclevel2"><a href="#toc11">Compiling</a></div>
-<div class="toclevel1"><a href="#toc12">Documentation</a></div>
+<div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>
+<div class="toclevel2"><a href="#_copyright">Copyright</a></div>
+<div class="toclevel2"><a href="#_code">Contributors</a></div>
+<div class="toclevel1"><a href="#_documentation">Building from source</a></div>
+<div class="toclevel2"><a href="#_download">Download</a></div>
+<div class="toclevel2"><a href="#_dependencies">Dependencies</a></div>
+<div class="toclevel2"><a href="#_compiling">Compiling</a></div>
+<div class="toclevel1"><a href="#_documentation_2">Documentation</a></div>
 <div class="toclevel2"><a href="api.html">Public API</a></div>
-<div class="toclevel2"><a href="#toc14">Operation API</a></div>
-<div class="toclevel2"><a href="#toc15">Environment</a></div>
-<div class="toclevel2"><a href="#toc16">gegl</a></div>
-<div class="toclevel1"><a href="#toc17">Appendixes</a></div>
-<div class="toclevel2"><a href="#toc18">Operations</a></div>
-<div class="toclevel2"><a href="#toc19">Glossary</a></div>
-<div class="toclevel2"><a href="#toc20">Directory overview</a></div>
+<div class="toclevel2"><a href="#_operation_api">Operation API</a></div>
+<div class="toclevel2"><a href="#_environment">Environment</a></div>
+<div class="toclevel2"><a href="#_gegl">gegl</a></div>
+<div class="toclevel1"><a href="#_appendixes">Appendixes</a></div>
+<div class="toclevel2"><a href="operations.html">Operations</a></div>
+<div class="toclevel2"><a href="#_glossart">Glossary</a></div>
+<div class="toclevel2"><a href="#_directory_overview">Directory overview</a></div>
+
 <div>&nbsp;</div>
 <div class="toclevel1">&nbsp;</div>
 <div class="toclevel2"><a href="http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup">changes</a></div>
