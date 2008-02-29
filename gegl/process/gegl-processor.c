@@ -645,9 +645,7 @@ gegl_processor_render (GeglProcessor *processor,
 }
 
 
-/*#define ENABLE_THREADING*/
-/*#ifdef ENABLE_THREADING*/
-#if 0
+#if ENABLE_MP
 
 gpointer render_thread (gpointer data)
 {
@@ -706,7 +704,11 @@ gegl_processor_work (GeglProcessor *processor,
 
   if (processor->context)
     {
-      gegl_operation_process (processor->node->operation, cache, "foo");
+      gegl_operation_process (processor->node->operation,
+                              processor->context,
+                              "output"  /* ignored output_pad */,
+                              &processor->context->result_rect
+                              );
       gegl_node_remove_context (processor->node, cache);
       processor->context = NULL;
       if (progress)

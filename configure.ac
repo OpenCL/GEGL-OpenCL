@@ -305,13 +305,15 @@ AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 # Threads and multi processor 
 #############################
 
-AC_ARG_ENABLE(mp, [  --disable-mp            disable support for multiple processors])
+AC_ARG_ENABLE(mp, [  --enable-mp             enable experimental support for multiple processors], ,
+enable_mp=no
+)
+
 if test "x$enable_mp" != "xno"; then
-  PKG_CHECK_MODULES(GTHREAD, gthread-2.0,
-    [AC_DEFINE(ENABLE_MP, 1,
-               [Define to 1 to enable support for multiple processors.])]
-  )
+  AC_DEFINE(ENABLE_MP, 1,
+               [Define to 1 to enable support for multiple processors.])
 fi
+
 
 dnl Checks for programs.
 #AC_PROG_YACC
@@ -729,6 +731,7 @@ Optional features:
   GEGL docs:      $enable_docs
   Build workshop: $enable_workshop
   Build website:  $have_asciidoc
+  Multiprocessor: $enable_mp
 
 Optional dependencies:
   GTK+:           $have_gtk
