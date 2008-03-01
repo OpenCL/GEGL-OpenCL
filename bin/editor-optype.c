@@ -70,7 +70,7 @@ static void popup_properties (GeglNode *node)
                                         GTK_STOCK_OK,
                                         GTK_RESPONSE_NONE,
                                         NULL);
-  gtk_container_add (GTK_CONTAINER (vbox), gegl_node_editor_new (node, FALSE));
+  gtk_container_add (GTK_CONTAINER (vbox), gegl_node_editor_new (node));
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox), vbox);
 
   g_signal_connect_swapped (dialog,

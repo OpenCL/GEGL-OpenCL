@@ -25,6 +25,7 @@
 #include "gegl.h"
 
 #include "editor.h"
+#include "editor-optype.h"
 #include "gegl-node-editor.h"
 #include "gegl-plugin.h"
 #include "gegl-store.h"
@@ -35,15 +36,26 @@
 void property_editor_rebuild (GtkWidget *container,
                               GeglNode  *node)
 {
-  GtkWidget *editor;
+  GeglNodeEditor *node_editor;
+  GtkWidget      *node_editor_widget;
+  GtkWidget      *operation_switcher;
 
   gtk_container_foreach (GTK_CONTAINER (container),
                          (GtkCallback) gtk_widget_destroy, NULL);
 
-  /*editor = property_editor_general (col1, col2, node);*/
-  editor = gegl_node_editor_new (node, TRUE);
-  if (editor)
-    gtk_box_pack_start (GTK_BOX (container), editor, TRUE, TRUE, 0);
+  node_editor_widget = gegl_node_editor_new (node);
+  node_editor        = GEGL_NODE_EDITOR (node_editor_widget);
+  operation_switcher = gegl_typeeditor_optype (node_editor->col1, node_editor->col2, node_editor);
+
+  if (operation_switcher)
+    {
+      gtk_box_pack_start (GTK_BOX (container), operation_switcher, FALSE, FALSE, 0);
+    }
+  if (node_editor_widget)
+    {
+      gtk_box_pack_start (GTK_BOX (container), node_editor_widget, TRUE, TRUE, 0);
+    }
+
   gtk_widget_show_all (container);
 }
 

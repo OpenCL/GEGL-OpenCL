@@ -31,7 +31,7 @@
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
-#include "editor-optype.h"
+
 
 enum
 {
@@ -81,21 +81,12 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_WRITABLE));
-
-  g_object_class_install_property (gobject_class, PROP_OPERATION_SWITCHER,
-                                   g_param_spec_boolean ("operation-switcher",
-                                                        "operation-switcher",
-                                                        "Show an operation changer widget within (at the top of) this node property editor",
-                                                        TRUE,
-                                                        G_PARAM_CONSTRUCT |
-                                                        G_PARAM_WRITABLE));
 }
 
 static void
 gegl_node_editor_init (GeglNodeEditor *self)
 {
   self->node               = NULL;
-  self->operation_switcher = TRUE;
 }
 
 static void
@@ -111,10 +102,6 @@ gegl_node_editor_set_property (GObject      *gobject,
     case PROP_NODE:
       /* FIXME: reference counting? */
       self->node = GEGL_NODE (g_value_get_object (value));
-      break;
-    case PROP_OPERATION_SWITCHER:
-      /* FIXME: reference counting? */
-      self->operation_switcher = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -156,11 +143,6 @@ gegl_node_editor_constructor (GType                  type,
 
   self->col1 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
   self->col2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-  if (self->operation_switcher)
-    {
-      gtk_box_pack_start (GTK_BOX (object), gegl_typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
-    }
 
   gegl_node_editor_construct (GEGL_NODE_EDITOR (object));
 
@@ -944,8 +926,7 @@ static GType *gegl_type_heirs (GType  supertype,
 }
 
 GtkWidget *
-gegl_node_editor_new (GeglNode *node,
-                      gboolean  operation_switcher)
+gegl_node_editor_new (GeglNode *node)
 {
   GType        editor_type;
   const gchar *operation;
@@ -976,7 +957,7 @@ gegl_node_editor_new (GeglNode *node,
     g_free (heirs);
   }
 
-  return g_object_new (editor_type, "node", node,
-                                    "operation-switcher", operation_switcher,
-                                    NULL);
+  return g_object_new (editor_type,
+                       "node", node,
+                       NULL);
 }
