@@ -128,11 +128,11 @@ dispose (GObject *object)
     }
 
 #if ENABLE_MP
-    if (self->mutex)
-          {
-                g_mutex_free (self->mutex);
-                      self->mutex = NULL;
-                          }
+  if (tile->mutex)
+    {
+      g_mutex_free (tile->mutex);
+      tile->mutex = NULL;
+    }
 #endif
 
   (*G_OBJECT_CLASS (parent_class)->dispose)(object);
@@ -181,6 +181,10 @@ gegl_tile_init (GeglTile *tile)
 
   tile->next_shared = tile;
   tile->prev_shared = tile;
+
+#if ENABLE_MP
+  tile->mutex = g_mutex_new ();
+#endif
 }
 
 GeglTile *
@@ -211,9 +215,6 @@ gegl_tile_new (gint size)
   tile->size       = size;
   tile->stored_rev = 1;
 
-#if ENABLE_MP
-  tile->mutex = g_mutex_new ();
-#endif
 
   return tile;
 }
@@ -246,7 +247,7 @@ gegl_tile_lock (GeglTile *tile)
     }
   total_locks++;
 
-#if ENABLE_MT
+#if ENABLE_MP
   g_mutex_lock (tile->mutex);
 #endif
 
@@ -336,7 +337,7 @@ gegl_tile_unlock (GeglTile *tile)
       gegl_tile_void_pyramid (tile);
       tile->rev++;
     }
-#if ENABLE_MT
+#if ENABLE_MP
   g_mutex_unlock (tile->mutex);
 #endif
 }
