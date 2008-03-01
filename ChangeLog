@@ -1,3 +1,8 @@
+2008-03-01  Manish Singh  <yosh@gimp.org>
+
+	* gegl.pc.in: remove GTHREAD_CFLAGS/LIBS references, since configure
+	no longer generates them.
+
 2008-02-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: modified --enable-mp, it is now disabled by default.
