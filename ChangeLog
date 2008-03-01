@@ -1,3 +1,9 @@
+2008-03-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile.[ch]: (dispose), (gegl_tile_new),
+	(gegl_tile_lock), (gegl_tile_unlock): Added a mutex being used when
+	writing to tiles.
+
 2008-03-01  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/gegl-node-editor.[ch]: Decouple from the operation-switcher

@@ -127,6 +127,14 @@ dispose (GObject *object)
         }
     }
 
+#if ENABLE_MP
+    if (self->mutex)
+          {
+                g_mutex_free (self->mutex);
+                      self->mutex = NULL;
+                          }
+#endif
+
   (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
@@ -203,6 +211,10 @@ gegl_tile_new (gint size)
   tile->size       = size;
   tile->stored_rev = 1;
 
+#if ENABLE_MP
+  tile->mutex = g_mutex_new ();
+#endif
+
   return tile;
 }
 
@@ -233,6 +245,11 @@ gegl_tile_lock (GeglTile *tile)
       g_warning ("locking a tile for the second time");
     }
   total_locks++;
+
+#if ENABLE_MT
+  g_mutex_lock (tile->mutex);
+#endif
+
   tile->lock++;
   /*fprintf (stderr, "global tile locking: %i %i\n", locks, unlocks);*/
 
@@ -319,6 +336,9 @@ gegl_tile_unlock (GeglTile *tile)
       gegl_tile_void_pyramid (tile);
       tile->rev++;
     }
+#if ENABLE_MT
+  g_mutex_unlock (tile->mutex);
+#endif
 }
 
 

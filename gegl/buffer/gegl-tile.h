@@ -57,6 +57,9 @@ struct _GeglTile
   gchar          lock;        /* number of times the tile is write locked
                                * should in theory just have the values 0/1
                                */
+#if ENABLE_MP
+  GMutex        *mutex;
+#endif
 
   /* the shared list is a doubly linked circular list */
   GeglTile      *next_shared;
