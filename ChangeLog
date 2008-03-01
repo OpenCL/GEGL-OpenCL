@@ -1,3 +1,8 @@
+2008-03-01  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/module/geglmoduledb.c (gegl_module_db_dump_module): Modify
+	to make the DUMP_DB-define work.
+
 2008-03-01  Manish Singh  <yosh@gimp.org>
 
 	* gegl.pc.in: remove GTHREAD_CFLAGS/LIBS references, since configure

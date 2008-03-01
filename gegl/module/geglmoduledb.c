@@ -376,7 +376,7 @@ gegl_module_db_dump_module (gpointer data,
   GeglModule *module = data;
 
   g_print ("\n%s: %s\n",
-           gegl_filename_to_utf8 (module->filename),
+           module->filename,
            gegl_module_state_name (module->state));
 
   g_print ("  module: %p  lasterr: %s  query: %p register: %p\n",
@@ -384,20 +384,6 @@ gegl_module_db_dump_module (gpointer data,
            module->last_module_error ? module->last_module_error : "NONE",
            module->query_module,
            module->register_module);
-
-  if (i->info)
-    {
-      g_print ("  purpose:   %s\n"
-               "  author:    %s\n"
-               "  version:   %s\n"
-               "  copyright: %s\n"
-               "  date:      %s\n",
-               module->info->purpose   ? module->info->purpose   : "NONE",
-               module->info->author    ? module->info->author    : "NONE",
-               module->info->version   ? module->info->version   : "NONE",
-               module->info->copyright ? module->info->copyright : "NONE",
-               module->info->date      ? module->info->date      : "NONE");
-    }
 }
 #endif
 
