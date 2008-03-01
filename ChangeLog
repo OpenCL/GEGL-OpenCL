@@ -8,8 +8,7 @@
 
 	* bin/gegl-node-editor.[ch]: Decouple from the operation-switcher
 	code, i.e. the code that knows about all existing
-	GEGL-operations. This greatly increases reusability of this
-	component.
+	GEGL-operations. This increases reusability of this component.
 
 	* bin/gegl-tree-editor.c (property_editor_rebuild): Add the
 	operation-switcher widget manually rather than having the
