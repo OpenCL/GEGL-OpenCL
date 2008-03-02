@@ -1,3 +1,13 @@
+2008-03-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set), (gegl_buffer_get),
+	(gegl_buffer_sample): Added a big buffer lock that is a recursive
+	static mutex for the multi processor case, this isn't neccesarily
+	a final solution but it should be a better catch all for paralell
+	experiments using GeglBuffers than the simplistic tile based locks.
+	This is a stopgap measure until either the buffer code, or the tile
+	backend code resides in a separate thread.
+
 2008-03-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile.[ch]: (dispose), (gegl_tile_new),

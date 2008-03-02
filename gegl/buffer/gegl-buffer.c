@@ -45,6 +45,10 @@
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
 
+#if ENABLE_MP
+GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
+#endif
+
 static GObjectClass * parent_class = NULL;
 
 enum
@@ -1227,6 +1231,9 @@ gegl_buffer_set (GeglBuffer          *buffer,
   GeglBuffer *sub_buf;
 
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
+#endif
 
   if (format == NULL)
     format = buffer->format;
@@ -1237,6 +1244,9 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
       pset (buffer, rect->x, rect->y, format, src);
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
       return;
     }
   /* FIXME: if rect->width == TILE_WIDTH and rect->height == TILE_HEIGHT and
@@ -1246,11 +1256,17 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (rect == NULL)
     {
       gegl_buffer_iterate (buffer, src, rowstride, TRUE, format, 0);
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
       return;
     }
   sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
   gegl_buffer_iterate (sub_buf, src, rowstride, TRUE, format, 0);
   g_object_unref (sub_buf);
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 }
 
 /*
@@ -1583,6 +1599,9 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  gint                 rowstride)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
+#endif
 
   if (format == NULL)
     format = buffer->format;
@@ -1593,20 +1612,34 @@ gegl_buffer_get (GeglBuffer          *buffer,
       rect->height == 1)  /* fast path */
     {
       pget (buffer, rect->x, rect->y, format, dest_buf);
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
       return;
     }
 
   if (!rect && scale == 1.0)
     {
       gegl_buffer_iterate (buffer, dest_buf, rowstride, FALSE, format, 0);
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
       return;
     }
   if (rect->width == 0 ||
       rect->height == 0)
-    return;
+    {
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
+      return;
+    }
   if (GEGL_FLOAT_EQUAL (scale, 1.0))
     {
       gegl_buffer_get_scaled (buffer, rect, dest_buf, rowstride, format, 0);
+#if ENABLE_MP
+      g_static_rec_mutex_unlock (&mutex);
+#endif
       return;
     }
   else
@@ -1683,6 +1716,9 @@ gegl_buffer_get (GeglBuffer          *buffer,
         }
       g_free (sample_buf);
     }
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 }
 
 const GeglRectangle *
@@ -1708,6 +1744,10 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 #ifdef USE_WORKING_SHORTCUT
   pget (buffer, x, y, format, dest);
   return;
+#endif
+
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
 #endif
 
   /* look up appropriate sampler,. */
@@ -1736,6 +1776,10 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       gegl_sampler_prepare (buffer->sampler);
     }
   gegl_sampler_get (buffer->sampler, x, y, dest);
+
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 
   /* if none found, create a singleton sampler for this buffer,
    * a function to clean up the samplers set for a buffer should
