@@ -294,172 +294,110 @@ gegl_node_new_processor (GeglNode            *node,
   return processor;
 }
 
-
-
 /* returns TRUE if there is more work */
-static gboolean render_rectangle_buffered (GeglProcessor *processor)
-{
-  GeglCache *cache    = gegl_node_get_cache (processor->input);
-  gint       max_area = processor->chunk_size;
-
-  if (processor->dirty_rectangles)
-    {
-      GeglRectangle *dr = processor->dirty_rectangles->data;
-      gint           pxsize;
-
-      g_object_get (cache, "px-size", &pxsize, NULL);
-
-      if (dr->height * dr->width > max_area && 1)
-        {
-          gint band_size;
-
-          if (dr->height > dr->width)
-            {
-              GeglRectangle *fragment;
-
-              band_size = dr->height / 2;
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->height = band_size;
-              dr->height      -= band_size;
-              dr->y           += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-              return TRUE;
-            }
-          else
-            {
-              GeglRectangle *fragment;
-
-              band_size = dr->width / 2;
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->width = band_size;
-              dr->width      -= band_size;
-              dr->x          += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-              return TRUE;
-            }
-        }
-
-      processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
-
-      if (!dr->width || !dr->height)
-        {
-          g_slice_free (GeglRectangle, dr);
-          return TRUE;
-        }
-
-      if (gegl_region_rect_in (cache->valid_region, dr) !=
-          GEGL_OVERLAP_RECTANGLE_IN)
-        {
-          guchar *buf;
-
-          gegl_region_union_with_rect (cache->valid_region, dr);
-          buf = g_malloc (dr->width * dr->height * pxsize);
-          g_assert (buf);
-
-          gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-          gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE);
-
-          gegl_cache_computed (cache, dr);
-
-          g_free (buf);
-        }
-
-      g_slice_free (GeglRectangle, dr);
-    }
-
-  return processor->dirty_rectangles != NULL;
-}
-
-/* returns TRUE if there is more work */
-static gboolean render_rectangle_unbuffered (GeglProcessor *processor)
-{
-  const gint max_area = processor->chunk_size;
-
-  if (processor->dirty_rectangles)
-    {
-      GeglRectangle *dr = processor->dirty_rectangles->data;
-
-      if (dr->height * dr->width > max_area && 1)
-        {
-          gint band_size;
-
-          if (dr->height > dr->width)
-            {
-              GeglRectangle *fragment;
-
-              band_size = dr->height / 2;
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->height = band_size;
-              dr->height      -= band_size;
-              dr->y           += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-              return TRUE;
-            }
-          else
-            {
-              GeglRectangle *fragment;
-
-              band_size = dr->width / 2;
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->width = band_size;
-              dr->width      -= band_size;
-              dr->x          += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-              return TRUE;
-            }
-        }
-      processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
-
-      if (!dr->width || !dr->height)
-        {
-          g_slice_free (GeglRectangle, dr);
-          return TRUE;
-        }
-
-      gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-      gegl_region_union_with_rect (processor->valid_region, dr);
-      g_slice_free (GeglRectangle, dr);
-    }
-
-  return processor->dirty_rectangles != NULL;
-}
-
-
-/* FIXME: merge duplicated code between the two different code paths
- */
 static gboolean render_rectangle (GeglProcessor *processor)
 {
-  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
-      !gegl_operation_sink_needs_full (processor->node->operation))
-   {
-     return render_rectangle_unbuffered (processor);
-   }
-  return render_rectangle_buffered (processor);
+  gboolean buffered = !(GEGL_IS_OPERATION_SINK(processor->node->operation) &&
+                        !gegl_operation_sink_needs_full (processor->node->operation));
+  const gint max_area = processor->chunk_size;
+  GeglCache *cache = NULL;
+  gint pxsize = 0;
+
+  if (buffered)
+    {
+      cache = gegl_node_get_cache (processor->input);
+      g_object_get (cache, "px-size", &pxsize, NULL);
+    }
+
+  if (processor->dirty_rectangles)
+    {
+      GeglRectangle *dr = processor->dirty_rectangles->data;
+
+      if (dr->height * dr->width > max_area && 1)
+        {
+          gint band_size;
+
+          if (dr->height > dr->width)
+            {
+              GeglRectangle *fragment;
+
+              band_size = dr->height / 2;
+
+              if (band_size < 1)
+                band_size = 1;
+
+              fragment = g_slice_dup (GeglRectangle, dr);
+
+              fragment->height = band_size;
+              dr->height      -= band_size;
+              dr->y           += band_size;
+
+              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+              return TRUE;
+            }
+          else
+            {
+              GeglRectangle *fragment;
+
+              band_size = dr->width / 2;
+
+              if (band_size < 1)
+                band_size = 1;
+
+              fragment = g_slice_dup (GeglRectangle, dr);
+
+              fragment->width = band_size;
+              dr->width      -= band_size;
+              dr->x          += band_size;
+
+              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+              return TRUE;
+            }
+        }
+      processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
+
+      if (!dr->width || !dr->height)
+        {
+          g_slice_free (GeglRectangle, dr);
+          return TRUE;
+        }
+
+	
+      if (buffered)
+        {
+          /* only do work if the rectangle is not completely inside the valid region of
+           * the cache
+           */
+          if (gegl_region_rect_in (cache->valid_region, dr) !=
+              GEGL_OVERLAP_RECTANGLE_IN)
+            {
+              guchar *buf;
+
+              gegl_region_union_with_rect (cache->valid_region, dr);
+              buf = g_malloc (dr->width * dr->height * pxsize);
+              g_assert (buf);
+
+              gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE,
+                              GEGL_BLIT_DEFAULT);
+              /* check that we haven't been recently */
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE);
+
+              gegl_cache_computed (cache, dr);
+
+              g_free (buf);
+            }
+        }
+      else
+        {
+           gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+           gegl_region_union_with_rect (processor->valid_region, dr);
+           g_slice_free (GeglRectangle, dr);
+        }
+    }
+
+  return processor->dirty_rectangles != NULL;
 }
+
 
 static gint rect_area (GeglRectangle *rectangle)
 {

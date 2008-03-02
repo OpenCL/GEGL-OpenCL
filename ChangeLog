@@ -1,5 +1,10 @@
 2008-03-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: (render_rectangle): merged buffered
+	and unbuffered code paths.
+
+2008-03-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set), (gegl_buffer_get),
 	(gegl_buffer_sample): Added a big buffer lock that is a recursive
 	static mutex for the multi processor case, this isn't neccesarily
