@@ -790,17 +790,14 @@ gegl_node_blit (GeglNode            *node,
       buffer = gegl_node_apply_roi (node, "output", roi);
       if (buffer && destination_buf)
         {
-          GeglBuffer *roi_buf = gegl_buffer_create_sub_buffer (buffer, roi);
-
           if (destination_buf)
             {
-              gegl_buffer_get (roi_buf, 1.0, NULL,
-                               format, destination_buf, rowstride);
+              gegl_buffer_get (buffer, 1.0, roi, format, destination_buf, rowstride);
             }
-          g_object_unref (roi_buf);
+
           if (scale != 1.0)
             {
-              g_warning ("Scale %f!=1.0 in blit without cache", scale);
+              g_warning ("Scale %f!=1.0 in blit without cache NYI", scale);
             }
         }
 
