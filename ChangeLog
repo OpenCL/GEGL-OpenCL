@@ -1,3 +1,10 @@
+2008-03-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile-common.am:
+	* operations/Makefile-operations.am: set GEGL_SWAP=RAM when using gegl
+	during build of docs / gallery to avoid writing swap files to the
+	builders homedir.
+
 2008-03-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node.c: (gegl_node_blit): removed temporary buffer.

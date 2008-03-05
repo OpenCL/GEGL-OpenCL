@@ -21,5 +21,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/gegl/property-types	\
 	-I$(top_srcdir)/gegl/module
 
-AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
+AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined) -Wl,--as-needed
 ext_dir = $(DESTDIR)$(libdir)/gegl-@GEGL_API_VERSION@
