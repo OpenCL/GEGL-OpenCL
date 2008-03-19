@@ -90,12 +90,23 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
   png = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (png == NULL)
-    return -1;
+    {
+      if (stdout != fp)
+        fclose (fp);
+
+      return -1;
+    }
 
   info = png_create_info_struct (png);
 
   if (setjmp (png_jmpbuf (png)))
-    return -1;
+    {
+      if (stdout != fp)
+        fclose (fp);
+
+      return -1;
+    }
+
   png_set_compression_level (png, compression);
   png_init_io (png, fp);
 
@@ -130,7 +141,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
   png_destroy_write_struct (&png, &info);
   g_free (pixels);
 
-  if (fp!=stdout)
+  if (stdout != fp)
     fclose (fp);
 
   return 0;
