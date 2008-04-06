@@ -178,30 +178,33 @@ else
   AC_MSG_RESULT([no])
 fi
 
-AC_ARG_ENABLE(ansi,
-              [  --enable-ansi           turn on strict ansi (default=no)],,
-              enable_ansi=no)
-
 changequote(,)dnl
 if eval "test x$GCC = xyes"; then
   case " $CFLAGS " in
   *[\ \	]-Wall[\ \	]*) ;;
   *) CFLAGS="$CFLAGS -Wall" ;;
   esac
-
-  if test "x$enable_ansi" = "xyes"; then
-    case " $CFLAGS " in
-    *[\ \	]-ansi[\ \	]*) ;;
-    *) CFLAGS="$CFLAGS -ansi" ;;
-    esac
-
-    case " $CFLAGS " in
-    *[\ \	]-pedantic[\ \	]*) ;;
-    *) CFLAGS="$CFLAGS -pedantic" ;;
-    esac
-  fi
 fi
 changequote([,])dnl
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
+CFLAGS="$CFLAGS $extra_warnings"
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Wmissing-prototypes')
+CFLAGS="$CFLAGS $extra_warnings"
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Wmissing-declarations')
+CFLAGS="$CFLAGS $extra_warnings"
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Winit-self')
+CFLAGS="$CFLAGS $extra_warnings"
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Wpointer-arith')
+CFLAGS="$CFLAGS $extra_warnings"
+
+GEGL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
+CFLAGS="$CFLAGS $extra_warnings"
+
 
 dnl disable docs generation.
 AC_ARG_ENABLE([docs],

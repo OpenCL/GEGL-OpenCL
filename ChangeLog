@@ -1,3 +1,9 @@
+2008-04-06  Sven Neumann  <sven@gimp.org>
+
+	* acinclude.m4: added GEGL_DETECT_CFLAGS() macro.
+
+	* configure.ac: adjust CFLAGS to get some extra compiler warnings.
+
 2008-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/buffer/gegl-buffer.c (gegl_buffer_set): Make cleaner by
