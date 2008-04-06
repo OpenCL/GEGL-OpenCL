@@ -148,7 +148,6 @@ gegl_handlers_init (GeglHandlers *self)
   self->chain = NULL;
 }
 
-GeglProvider *tprovider = NULL;
 
 static void
 gegl_handlers_rebind (GeglHandlers *handlers)
@@ -181,10 +180,8 @@ GeglHandler *
 gegl_handlers_add (GeglHandlers *handlers,
                    GeglHandler  *handler)
 {
-  tprovider       = GEGL_PROVIDER (GEGL_HANDLER (handlers)->provider);
   handlers->chain = g_slist_prepend (handlers->chain, handler);
   gegl_handlers_rebind (handlers);
-  tprovider = NULL;
   return handler;
 }
 
