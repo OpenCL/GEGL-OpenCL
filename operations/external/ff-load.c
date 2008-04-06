@@ -17,7 +17,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_path (path, "File", "/home/pippin/input.avi", "Path of file to load.")
 gegl_chant_int (frame, "Frame", 0, 1000000, 0, "frame number")
 
 #else

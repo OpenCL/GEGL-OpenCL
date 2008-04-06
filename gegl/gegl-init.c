@@ -327,7 +327,7 @@ static const gchar *makefile (void)
     "# add a dedicated target with the extra bits linked in.\n"
     "\n\n"
     "CFLAGS  += `pkg-config gegl --cflags`  -I. -fPIC\n"
-    "LDFLAGS += `pkg-config --libs` -shared\n"
+    /*"LDFLAGS += `pkg-config --libs` -shared\n"*/
     "SHREXT=.so\n"
     "CFILES = $(wildcard ./*.c)\n"
     "SOBJS  = $(subst ./,,$(CFILES:.c=$(SHREXT)))\n"

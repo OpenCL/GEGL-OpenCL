@@ -29,7 +29,7 @@
 #include <gegl-plugin.h>
 
 
-GType gegl_chant_get_type ();
+GType gegl_chant_get_type (void);
 typedef struct _GeglChantO  GeglChantO;
 typedef struct _GeglChant   GeglChant;
 
@@ -255,6 +255,10 @@ static const GeglModuleInfo modinfo =
 {
   GEGL_MODULE_ABI_VERSION
 };
+
+/* prototypes added to silence warnings from gcc for -Wmissing-prototypes*/
+gboolean                gegl_module_register (GTypeModule *module);
+const GeglModuleInfo  * gegl_module_query    (GTypeModule *module);
 
 G_MODULE_EXPORT const GeglModuleInfo *
 gegl_module_query (GTypeModule *module)

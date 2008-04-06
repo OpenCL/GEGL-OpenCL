@@ -224,10 +224,10 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   return 0;
 }
 
-gint query_png (const gchar *path,
-                gint        *width,
-                gint        *height,
-                gpointer    *format)
+static gint query_png (const gchar *path,
+                       gint        *width,
+                       gint        *height,
+                       gpointer    *format)
 {
   png_uint_32   w;
   png_uint_32   h;

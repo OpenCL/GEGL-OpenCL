@@ -28,6 +28,10 @@
 #include "graph/gegl-connection.h"
 #include "gegl.h"
 
+gchar * gegl_to_dot (GeglNode *node); /* this should be in a gegl-dot.h header
+                                       * for consistency?
+                                       */
+
 static void
 gegl_add_graph (GString     *string,
                 GeglNode    *node,

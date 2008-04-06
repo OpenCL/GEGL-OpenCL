@@ -35,15 +35,15 @@ typedef struct
 static void
 init (GeglChantO *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *priv = (Priv*)o->chant_data;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv         *priv = (Priv*)o->chant_data;
+  GeglRectangle extent = {0,0,1024,1024};
 
   g_assert (priv == NULL);
 
   priv = g_new0 (Priv, 1);
   o->chant_data = (void*) priv;
 
-  GeglRectangle extent = {0,0,1024,1024};
   priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
 }
 

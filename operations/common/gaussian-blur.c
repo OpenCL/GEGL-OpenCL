@@ -415,12 +415,14 @@ process (GeglOperation       *operation,
   gdouble     B, b[4];
   gdouble    *cmatrix;
   gint        cmatrix_len;
+  gboolean    force_iir;
+  gboolean    force_fir;
 
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
                            babl_format ("RaGaBaA float"));
 
-  gboolean force_iir = o->filter && !strcmp (o->filter, "iir");
-  gboolean force_fir = o->filter && !strcmp (o->filter, "fir");
+  force_iir = o->filter && !strcmp (o->filter, "iir");
+  force_fir = o->filter && !strcmp (o->filter, "fir");
 
   if ((force_iir || o->std_dev_x > 1.0) && !force_fir)
     {

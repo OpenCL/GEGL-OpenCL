@@ -118,7 +118,7 @@ load_get_size_callback (gint     *width,
   vals->resolution = 0.0;
 }
 
-gint
+static gint
 query_svg (const gchar *path,
            gint        *width,
            gint        *height)

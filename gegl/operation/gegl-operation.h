@@ -201,6 +201,9 @@ const Babl *    gegl_operation_get_format    (GeglOperation *operation,
 GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
                                                 const gchar   *pad_name);
 
+GParamSpec ** gegl_list_properties (const gchar *operation_type,
+                                    guint       *n_properties_p);
+
 G_END_DECLS
 
 /***

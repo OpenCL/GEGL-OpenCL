@@ -1,5 +1,23 @@
 2008-04-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: modified to not generate as many warnings about
+	not priorly declared function prototypes.
+	* gegl/gegl-dot.c: add function prototype.
+	* gegl/gegl-init.c: do not add an erronious pkg-config
+	lineto the makefile.
+	* gegl/operation/gegl-operation.h: added protoype for
+	gegl_list_properties()
+
+	* operations/common/gaussian-blur.c:
+	* operations/common/mblur.c:
+	* operations/external/ff-load.c:
+	* operations/external/png-load.c:
+	* operations/external/png-save.c:
+	* operations/external/svg-load.c: Fixed lack off function
+	declarations/made functions static.
+
+2008-04-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-handlers.c: removed unused static variable
 	tprovider (spotted by Mark Czubin).
 

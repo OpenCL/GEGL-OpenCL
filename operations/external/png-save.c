@@ -32,6 +32,18 @@ gegl_chant_int    (compression, "Compression",
 #include <png.h>
 #include <stdio.h>
 
+/* this call is available when the png-save plug-in is loaded,
+ * it might have to be dlsymed to be used?
+ */
+gint
+gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
+                        const gchar *path,
+                        gint         compression,
+                        gint         src_x,
+                        gint         src_y,
+                        gint         width,
+                        gint         height);
+
 gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
