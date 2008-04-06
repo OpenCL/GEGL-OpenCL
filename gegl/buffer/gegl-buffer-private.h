@@ -81,5 +81,6 @@ void           gegl_buffer_save       (GeglBuffer          *buffer,
  */
 void           gegl_buffer_flush      (GeglBuffer *buffer);
 
+const gchar *  gegl_swap_dir          (void);
 
 #endif

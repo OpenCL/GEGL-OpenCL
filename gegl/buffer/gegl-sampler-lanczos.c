@@ -264,16 +264,17 @@ lanczos_lookup (GeglSampler *sampler)
 {
   GeglSamplerLanczos *self = GEGL_SAMPLER_LANCZOS (sampler);
 
-  if (self->lanczos_lookup != NULL)
-    g_free (self->lanczos_lookup);
-
   const gint    lanczos_width = self->lanczos_width;
   const gint    samples       = (self->lanczos_spp * (lanczos_width + 1));
   const gdouble dx            = (gdouble) lanczos_width / (gdouble) (samples - 1);
 
-  self->lanczos_lookup = g_new (gfloat, samples);
   gdouble x = 0.0;
   gint    i;
+
+  if (self->lanczos_lookup != NULL)
+    g_free (self->lanczos_lookup);
+
+  self->lanczos_lookup = g_new (gfloat, samples);
 
   for (i = 0; i < samples; i++)
     {

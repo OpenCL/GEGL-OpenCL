@@ -37,6 +37,7 @@
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
+#include "gegl-buffer-load.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-handler.h"

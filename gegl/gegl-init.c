@@ -136,9 +136,6 @@ gegl_get_option_group (void)
 
 void gegl_tile_mem_stats (void);
 
-
-const gchar *gegl_swap_dir (void);
-
 void
 gegl_exit (void)
 {

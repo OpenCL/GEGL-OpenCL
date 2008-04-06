@@ -39,6 +39,7 @@
 #include "gegl-storage.h"
 #include "gegl-buffer-allocator.h"
 
+
 G_DEFINE_TYPE (GeglBufferAllocator, gegl_buffer_allocator, GEGL_TYPE_BUFFER)
 
 static GObjectClass * parent_class = NULL;
