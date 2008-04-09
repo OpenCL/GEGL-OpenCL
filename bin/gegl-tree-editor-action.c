@@ -28,6 +28,7 @@
 #include "editor.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
+#include "gegl-tree-editor-action.h"
 #include "gegl-view.h"
 
 

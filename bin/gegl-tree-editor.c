@@ -72,11 +72,11 @@ action_move_up (GtkAction *action,
                 gpointer   userdata);
                 */
 
-gboolean
- view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event,
-                       gpointer userdata);
+static gboolean view_onButtonPressed (GtkWidget      *treeview,
+                                      GdkEventButton *event,
+                                      gpointer        userdata);
 
-void
+static void
 cell_edited_callback (GtkCellRendererText * cell,
                       gchar *path_string, gchar *new_text, gpointer user_data)
 {
@@ -246,8 +246,9 @@ tree_editor_new (GtkWidget *property_editor)
     }
   }
 
-  g_signal_connect (G_OBJECT (treeview), "button-press-event",
-                    (GCallback) view_onButtonPressed, NULL);
+  g_signal_connect (treeview, "button-press-event",
+                    G_CALLBACK (view_onButtonPressed),
+                    NULL);
 
   tree_scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (tree_scroll),
@@ -319,7 +320,7 @@ static const gchar *ui_info =
   "  </popup>"
   "</ui>";
 
-void
+static void
 view_popup_menu (GtkWidget *treeview, GdkEventButton *event,
                  gpointer userdata)
 {
@@ -377,9 +378,10 @@ view_popup_menu (GtkWidget *treeview, GdkEventButton *event,
   return;
 }
 
-gboolean
-view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event,
-                      gpointer userdata)
+static gboolean
+view_onButtonPressed (GtkWidget      *treeview,
+                      GdkEventButton *event,
+                      gpointer        userdata)
 {
   /* single click with the right mouse button? */
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)

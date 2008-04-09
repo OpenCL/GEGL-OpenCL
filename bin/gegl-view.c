@@ -450,11 +450,11 @@ task_monitor (GeglView *view)
 void
 gegl_view_repaint (GeglView *view)
 {
-  GtkWidget     *widget = GTK_WIDGET (view);
-  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
-  GeglRectangle  roi    = { priv->x / priv->scale, priv->y / priv->scale,
-                            ceil(widget->allocation.width / priv->scale+1),
-                            ceil(widget->allocation.height / priv->scale+1) };
+  GtkWidget       *widget = GTK_WIDGET (view);
+  GeglViewPrivate *priv   = GEGL_VIEW_GET_PRIVATE (view);
+  GeglRectangle    roi    = { priv->x / priv->scale, priv->y / priv->scale,
+                              ceil(widget->allocation.width / priv->scale+1),
+                              ceil(widget->allocation.height / priv->scale+1) };
 
 #if 0
   /* forget all already queued repaints */
@@ -480,7 +480,8 @@ gegl_view_repaint (GeglView *view)
     gegl_processor_set_rectangle (priv->processor, &roi);
 }
 
-GeglProcessor *gegl_view_get_processor (GeglView *self)
+GeglProcessor *
+gegl_view_get_processor (GeglView *self)
 {
   GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
   return priv->processor;
