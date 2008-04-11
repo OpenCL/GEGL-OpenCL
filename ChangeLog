@@ -1,3 +1,7 @@
+2008-04-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: added AC_PROG_CXX, spotted by skejoe@irc
+
 2008-04-09  Sven Neumann  <sven@gimp.org>
 
 	* bin/gegl-tree-editor.c: made internal functions static.
