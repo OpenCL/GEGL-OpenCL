@@ -1,5 +1,9 @@
 2008-04-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: made configuration summary use two columns.
+
+2008-04-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: added AC_PROG_CXX, spotted by skejoe@irc
 
 2008-04-09  Sven Neumann  <sven@gimp.org>

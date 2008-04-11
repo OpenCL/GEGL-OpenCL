@@ -738,21 +738,15 @@ Optional features:
   Multiprocessor: $enable_mp
 
 Optional dependencies:
-  GTK+:           $have_gtk
-  Ruby:           $have_ruby
-  Lua:            $have_lua
-  Cairo:          $have_cairo
-  Pango:          $have_pango
-  pangocairo:     $have_pangocairo
-  GDKPixbuf:      $have_gdk_pixbuf
-  JPEG:           $jpeg_ok
-  PNG:            $have_libpng
-  OpenEXR:        $have_openexr
-  rsvg:           $have_librsvg
-  SDL:            $have_sdl
-  asciidoc:       $have_asciidoc
-  enscript:       $have_enscript
-  graphviz:       $have_graphviz
-  avcodec:        $have_libavcodec
+  GTK+:           $have_gtk		Ruby:           $have_ruby
+  Lua:            $have_lua		Cairo:          $have_cairo
+  Pango:          $have_pango		pangocairo:     $have_pangocairo
+  GDKPixbuf:      $have_gdk_pixbuf		JPEG:           $jpeg_ok
+  PNG:            $have_libpng		OpenEXR:        $have_openexr
+  rsvg:           $have_librsvg		SDL:            $have_sdl
+  asciidoc:       $have_asciidoc		enscript:       
+$have_enscript
+  graphviz:       $have_graphviz		avcodec:        
+$have_libavcodec
   avformat:       $have_libavformat
 ]);
