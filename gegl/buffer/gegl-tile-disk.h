@@ -23,12 +23,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_DISK_STORE            (gegl_tile_disk_get_type ())
-#define GEGL_TILE_DISK(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_DISK_STORE, GeglTileDisk))
-#define GEGL_TILE_DISK_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_DISK_STORE, GeglTileDiskClass))
-#define GEGL_IS_TILE_DISK_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_DISK_STORE))
-#define GEGL_IS_TILE_DISK_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_DISK_STORE))
-#define GEGL_TILE_DISK_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_DISK_STORE, GeglTileDiskClass))
+#define GEGL_TYPE_TILE_DISK            (gegl_tile_disk_get_type ())
+#define GEGL_TILE_DISK(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_DISK, GeglTileDisk))
+#define GEGL_TILE_DISK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_DISK, GeglTileDiskClass))
+#define GEGL_IS_TILE_DISK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_DISK))
+#define GEGL_IS_TILE_DISK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_DISK))
+#define GEGL_TILE_DISK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_DISK, GeglTileDiskClass))
 
 
 typedef struct _GeglTileDisk      GeglTileDisk;

@@ -185,7 +185,7 @@ gegl_storage_constructor (GType                  type,
   if (storage->path != NULL)
     {
       g_object_set (storage,
-                    "provider", g_object_new (GEGL_TYPE_TILE_DISK_STORE,
+                    "provider", g_object_new (GEGL_TYPE_TILE_DISK,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -196,7 +196,7 @@ gegl_storage_constructor (GType                  type,
   else
     {
       g_object_set (storage,
-                    "provider", g_object_new (GEGL_TYPE_TILE_MEM_STORE,
+                    "provider", g_object_new (GEGL_TYPE_TILE_MEM,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,

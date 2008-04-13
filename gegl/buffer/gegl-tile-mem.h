@@ -23,12 +23,12 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_MEM_STORE            (gegl_tile_mem_get_type ())
-#define GEGL_TILE_MEM(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_MEM_STORE, GeglTileMem))
-#define GEGL_TILE_MEM_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_MEM_STORE, GeglTileMemClass))
-#define GEGL_IS_TILE_MEM_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_MEM_STORE))
-#define GEGL_IS_TILE_MEM_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_MEM_STORE))
-#define GEGL_TILE_MEM_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_MEM_STORE, GeglTileMemClass))
+#define GEGL_TYPE_TILE_MEM            (gegl_tile_mem_get_type ())
+#define GEGL_TILE_MEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_MEM, GeglTileMem))
+#define GEGL_TILE_MEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_MEM, GeglTileMemClass))
+#define GEGL_IS_TILE_MEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_MEM))
+#define GEGL_IS_TILE_MEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_MEM))
+#define GEGL_TILE_MEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_MEM, GeglTileMemClass))
 
 typedef struct _GeglTileMem      GeglTileMem;
 typedef struct _GeglTileMemClass GeglTileMemClass;

@@ -1,3 +1,14 @@
+2008-04-13  Øyvind Kolås  <pippin@gimp.org>
+
+	Stripped of lingering _STORE suffix that should have been removed in
+	earlier naming changes.
+
+	* gegl/buffer/gegl-provider.c:
+	(gegl_provider_message):
+	* gegl/buffer/gegl-storage.c:
+	* gegl/buffer/gegl-tile-disk.h:
+	* gegl/buffer/gegl-tile-mem.h:
+
 2008-04-13  Étienne Bersac  <bersace03@gmail.com>
 
 	* gegl/property-types/gegl-paramspecs.h: Include needed headers.
