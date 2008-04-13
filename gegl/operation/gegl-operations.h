@@ -21,7 +21,6 @@
 #define __GEGL_OPERATIONS_H__
 
 #include <glib-object.h>
-#include "gegl-plugins.h"
 
 /* Used to look up the gtype when changing the type of operation associated
  * a GeglNode using just a string with the registered name.
@@ -30,9 +29,4 @@ GType      gegl_operation_gtype_from_name   (const gchar *name);
 gchar   ** gegl_list_operations             (guint *n_operations_p);
 void       gegl_operation_gtype_cleanup     (void);
 
-gboolean gegl_operation_calc_source_regions  (GeglOperation *operation,
-                                              gpointer       context_id);
-
-void     gegl_operation_vector_prop_changed  (GeglVector    *vector,
-                                              GeglOperation *operation);
 #endif

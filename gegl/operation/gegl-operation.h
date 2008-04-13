@@ -204,6 +204,14 @@ GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
 GParamSpec ** gegl_list_properties (const gchar *operation_type,
                                     guint       *n_properties_p);
 
+
+/* internal utility functions used by gegl, these should not be used
+ * externally */
+gboolean gegl_operation_calc_source_regions  (GeglOperation *operation,
+                                              gpointer       context_id);
+void     gegl_operation_vector_prop_changed  (GeglVector    *vector,
+                                              GeglOperation *operation);
+
 G_END_DECLS
 
 /***

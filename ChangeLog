@@ -1,5 +1,12 @@
 2008-04-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operations.h: do not include gegl-plugins.h,
+	move a couple of internal function declarations ..
+	* gegl/operation/gegl-operation.h:  .. here.
+	* gegl/process/gegl-need-visitor.c: do not include gegl-operations.h
+
+2008-04-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Stripped of lingering _STORE suffix that should have been removed in
 	earlier naming changes.
 
