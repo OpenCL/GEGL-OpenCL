@@ -21,7 +21,7 @@
 #define __GEGL_OPERATIONS_H__
 
 #include <glib-object.h>
-#include "gegl-types.h"
+#include "gegl-plugins.h"
 
 /* Used to look up the gtype when changing the type of operation associated
  * a GeglNode using just a string with the registered name.
