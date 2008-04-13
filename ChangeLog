@@ -1,5 +1,7 @@
 2008-04-13  Étienne Bersac  <bersace03@gmail.com>
 
+	* gegl/property-types/gegl-paramspecs.h: Include needed headers.
+
 	* gegl/operation/gegl-operations.h: Include only installed header.
 
 2008-04-11  Øyvind Kolås  <pippin@gimp.org>

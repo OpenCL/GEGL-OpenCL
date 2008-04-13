@@ -20,6 +20,8 @@
  * (c) 1995-2006 Spencer Kimball, Peter Mattis and others.
  */
 
+#include <glib-object.h>
+
 #ifndef __GEGL_PARAM_SPECS_H__
 #define __GEGL_PARAM_SPECS_H__
 
