@@ -1,5 +1,14 @@
 2008-04-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a new tile backend that stores individual tiles as files using
+	GIO.
+
+	* gegl/buffer/gegl-tile-gio.[ch]: ADDED.
+	* gegl/buffer/Makefile.am: added new files to build.
+	* configure.ac: depend on GIO.
+
+2008-04-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operations.h: do not include gegl-plugins.h,
 	move a couple of internal function declarations ..
 	* gegl/operation/gegl-operation.h:  .. here.

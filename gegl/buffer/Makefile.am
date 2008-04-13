@@ -16,6 +16,7 @@ BUFFER_sources = \
     gegl-tile.c			\
     gegl-tile-backend.c		\
     gegl-tile-disk.c		\
+    gegl-tile-gio.c		\
     gegl-tile-mem.c		\
     gegl-handler.c		\
     gegl-handlers.c		\
@@ -43,6 +44,7 @@ BUFFER_headers = \
     gegl-tile.h			\
     gegl-tile-backend.h		\
     gegl-tile-disk.h		\
+    gegl-tile-gio.h		\
     gegl-tile-mem.h		\
     gegl-handler.h		\
     gegl-handlers.h		\
