@@ -190,22 +190,22 @@ static void inline set_half (GeglTile * dst_tile,
 }
 
 static GeglTile *
-get_tile (GeglProvider *gegl_provider,
-          gint           x,
-          gint           y,
-          gint           z)
+get_tile (GeglSource *gegl_source,
+          gint        x,
+          gint        y,
+          gint        z)
 {
-  GeglProvider    *provider = GEGL_HANDLER (gegl_provider)->provider;
-  GeglHandlerZoom *zoom   = GEGL_HANDLER_ZOOM (gegl_provider);
+  GeglSource    *source = GEGL_HANDLER (gegl_source)->source;
+  GeglHandlerZoom *zoom   = GEGL_HANDLER_ZOOM (gegl_source);
   GeglTile        *tile   = NULL;
   Babl            *format = (Babl *) (zoom->backend->format);
   gint             tile_width;
   gint             tile_height;
   gint             tile_size;
 
-  if (provider)
+  if (source)
     {
-      tile = gegl_provider_get_tile (provider, x, y, z);
+      tile = gegl_source_get_tile (source, x, y, z);
     }
 
   if (tile != NULL)
@@ -265,7 +265,7 @@ get_tile (GeglProvider *gegl_provider,
           /* we get the tile from ourselves, to make successive rescales work
            * correctly */
           if (fetch[i][j])
-            source_tile[i][j] = gegl_provider_get_tile (gegl_provider,
+            source_tile[i][j] = gegl_source_get_tile (gegl_source,
                                                           x * 2 + i, y * 2 + j, z - 1);
         }
 
@@ -328,7 +328,7 @@ get_tile (GeglProvider *gegl_provider,
 }
 
 static gpointer
-command (GeglProvider  *tile_store,
+command (GeglSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -336,7 +336,7 @@ command (GeglProvider  *tile_store,
          gpointer        data)
 {
   GeglHandler *handler  = GEGL_HANDLER (tile_store);
-  /*GeglProvider *provider = handler->provider;*/
+  /*GeglSource *source = handler->source;*/
 
   if (command == GEGL_TILE_GET)
     return get_tile (tile_store, x, y, z);
@@ -345,7 +345,7 @@ command (GeglProvider  *tile_store,
       command == GEGL_TILE_VOID_BL ||
       command == GEGL_TILE_VOID_BR)
     {
-      GeglTile *tile = gegl_provider_get_tile (tile_store, x, y, z);
+      GeglTile *tile = gegl_source_get_tile (tile_store, x, y, z);
 
       if (!tile)
         return FALSE;
@@ -446,13 +446,13 @@ static void
 gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
 {
   GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
+  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
 
   gobject_class->constructor  = constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  provider_class->command  = command;
+  source_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_STORAGE,
                                    g_param_spec_object ("storage",

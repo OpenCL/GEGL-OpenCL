@@ -85,7 +85,7 @@ finalize (GObject *object)
 }
 
 static gpointer
-command (GeglProvider  *tile_store,
+command (GeglSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -93,13 +93,13 @@ command (GeglProvider  *tile_store,
          gpointer        data)
 {
   GeglHandlers *handlers = (GeglHandlers *) tile_store;
-  GeglProvider *provider = ((GeglHandler *) tile_store)->provider;
+  GeglSource *source = ((GeglHandler *) tile_store)->source;
 
   if (handlers->chain != NULL)
-    return gegl_provider_command ((GeglProvider *)(handlers->chain->data),
+    return gegl_source_command ((GeglSource *)(handlers->chain->data),
                                   command, x, y, z, data);
-  else if (provider)
-    return gegl_provider_command (provider, command, x, y, z, data);
+  else if (source)
+    return gegl_source_command (source, command, x, y, z, data);
   else
     g_assert (0);
 
@@ -110,10 +110,10 @@ static void
 gegl_handlers_class_init (GeglHandlersClass *class)
 {
   GObjectClass      *gobject_class;
-  GeglProviderClass *tile_store_class;
+  GeglSourceClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglProviderClass *) class;
+  tile_store_class = (GeglSourceClass *) class;
 
   tile_store_class->command  = command;
 
@@ -138,19 +138,19 @@ gegl_handlers_rebind (GeglHandlers *handlers)
   while (iter)
     {
       GeglHandler  *handler;
-      GeglProvider *provider = NULL;
+      GeglSource *source = NULL;
 
       handler = iter->data;
       if (iter->next)
         {
-          provider = g_object_ref (iter->next->data);
+          source = g_object_ref (iter->next->data);
         }
       else
         {
-          g_object_get (handlers, "provider", &provider, NULL);
+          g_object_get (handlers, "source", &source, NULL);
         }
-      g_object_set (G_OBJECT (handler), "provider", provider, NULL);
-      g_object_unref (provider);
+      g_object_set (G_OBJECT (handler), "source", source, NULL);
+      g_object_unref (source);
       iter = iter->next;
     }
 }

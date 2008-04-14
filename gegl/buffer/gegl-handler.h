@@ -19,7 +19,7 @@
 #ifndef __GEGL_HANDLER_H__
 #define __GEGL_HANDLER_H__
 
-#include "gegl-provider.h"
+#include "gegl-source.h"
 
 G_BEGIN_DECLS
 
@@ -33,19 +33,22 @@ G_BEGIN_DECLS
 
 struct _GeglHandler
 {
-  GeglProvider  parent_instance;
+  GeglSource  parent_instance;
 
-  GeglProvider *provider;
+  GeglSource *source; /* The source of the data, which we can rely on if
+                         our command handler doesn't handle a command, this
+                         is typically done with gegl_handler_chain_up passing
+                         ourself as the first parameter. */
 };
 
 struct _GeglHandlerClass
 {
-  GeglProviderClass parent_class;
+  GeglSourceClass parent_class;
 };
 
 GType gegl_handler_get_type (void) G_GNUC_CONST;
 
-#define gegl_handler_get_provider(handler)  (((GeglHandler*)handler)->provider)
+#define gegl_handler_get_source(handler)  (((GeglHandler*)handler)->source)
 
 
 gpointer   gegl_handler_chain_up (GeglHandler     *handler,

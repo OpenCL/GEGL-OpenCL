@@ -31,7 +31,7 @@
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
-#include "gegl-provider.h"
+#include "gegl-source.h"
 
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
@@ -284,29 +284,29 @@ gegl_tile_void_pyramid (GeglTile *tile)
       x /= 2;
       y /= 2;
 
-      gegl_provider_void (GEGL_PROVIDER (tile->storage), x, y, z);
+      gegl_source_void (GEGL_SOURCE (tile->storage), x, y, z);
 #if 0
       /* FIXME: reenable this code */
       if (!ver)
         {
           if (!hor)
             {
-              gegl_provider_void_tl (GEGL_PROVIDER (tile->storage), x,y,z);
+              gegl_source_void_tl (GEGL_SOURCE (tile->storage), x,y,z);
             }
           else
             {
-              gegl_provider_void_tr (GEGL_PROVIDER (tile->storage), x,y,z);              
+              gegl_source_void_tr (GEGL_SOURCE (tile->storage), x,y,z);              
             }
         }
       else
         {
           if (!hor)
             {
-              gegl_provider_void_bl (GEGL_PROVIDER (tile->storage), x,y,z);              
+              gegl_source_void_bl (GEGL_SOURCE (tile->storage), x,y,z);              
             }
           else
             {
-			  gegl_provider_void_br (GEGL_PROVIDER (tile->storage), x,y,z);
+			  gegl_source_void_br (GEGL_SOURCE (tile->storage), x,y,z);
             }
         }
 #endif
@@ -397,10 +397,10 @@ gboolean gegl_tile_store (GeglTile *tile)
 {
   if (tile->storage == NULL)
     return FALSE;
-  return gegl_provider_set_tile (GEGL_PROVIDER (tile->storage),
-                                 tile->storage_x,
-                                 tile->storage_y,
-                                 tile->storage_z, tile);
+  return gegl_source_set_tile (GEGL_SOURCE (tile->storage),
+                                tile->storage_x,
+                                tile->storage_y,
+                                tile->storage_z, tile);
 }
 
 /* compute the tile indice of a coordinate

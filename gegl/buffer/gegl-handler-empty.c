@@ -42,17 +42,17 @@ finalize (GObject *object)
 }
 
 static GeglTile *
-get_tile (GeglProvider *gegl_provider,
-          gint           x,
-          gint           y,
-          gint           z)
+get_tile (GeglSource *gegl_source,
+          gint        x,
+          gint        y,
+          gint        z)
 {
-  GeglProvider *provider = GEGL_HANDLER (gegl_provider)->provider;
-  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_provider);
+  GeglSource *source = GEGL_HANDLER (gegl_source)->source;
+  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_source);
   GeglTile      *tile   = NULL;
 
-  if (provider)
-    tile = gegl_provider_get_tile (provider, x, y, z);
+  if (source)
+    tile = gegl_source_get_tile (source, x, y, z);
   if (tile != NULL)
     return tile;
 
@@ -131,7 +131,7 @@ constructor (GType                  type,
 
 
 static gpointer
-command (GeglProvider   *buffer,
+command (GeglSource     *buffer,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -148,13 +148,13 @@ static void
 gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 {
   GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
+  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
 
   gobject_class->constructor  = constructor;
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  provider_class->command = command;
+  source_class->command = command;
 
   g_object_class_install_property (gobject_class, PROP_BACKEND,
                                    g_param_spec_object ("backend",

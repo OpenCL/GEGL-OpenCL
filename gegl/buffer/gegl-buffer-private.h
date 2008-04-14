@@ -30,7 +30,7 @@
 struct _GeglBuffer
 {
   GeglHandlers      parent_instance; /* which is a GeglHandler which has a
-                                        provider field which is used for chaining
+                                        source field which is used for chaining
                                         sub buffers with their anchestors */
 
   GeglRectangle     extent;        /* the dimensions of the buffer */
@@ -40,7 +40,7 @@ struct _GeglBuffer
 
   gint              shift_x; /* The relative offset of origins compared with */
   gint              shift_y; /* anchestral storage buffer, during            */
-                             /* construction relative to immediate provider  */
+                             /* construction relative to immediate source  */
 
   GeglRectangle     abyss;
 

@@ -19,7 +19,7 @@
 #ifndef __GEGL_TILE_BACKEND_H__
 #define __GEGL_TILE_BACKEND_H__
 
-#include "gegl-provider.h"
+#include "gegl-source.h"
 
 G_BEGIN_DECLS
 
@@ -32,18 +32,18 @@ G_BEGIN_DECLS
 
 struct _GeglTileBackend
 {
-  GeglProvider  parent_instance;
+  GeglSource  parent_instance;
 
-  gint          tile_width;
-  gint          tile_height;
-  Babl         *format;        /* defaults to the babl format "R'G'B'A u8" */
-  gint          px_size;       /* size of a single pixel in bytes */
-  gint          tile_size;     /* size of an entire tile in bytes */
+  gint        tile_width;
+  gint        tile_height;
+  Babl       *format;        /* defaults to the babl format "R'G'B'A u8" */
+  gint        px_size;       /* size of a single pixel in bytes */
+  gint        tile_size;     /* size of an entire tile in bytes */
 };
 
 struct _GeglTileBackendClass
 {
-  GeglProviderClass parent_class;
+  GeglSourceClass parent_class;
 };
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;

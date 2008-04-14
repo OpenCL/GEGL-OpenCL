@@ -160,7 +160,7 @@ storage_idle (gpointer data)
       return FALSE;
     }
 
-  gegl_provider_idle (GEGL_PROVIDER (storage));                        
+  gegl_source_idle (GEGL_SOURCE (storage));                        
 
   return TRUE;
 }
@@ -187,7 +187,7 @@ gegl_storage_constructor (GType                  type,
     {
 #if 0
       g_object_set (storage,
-                    "provider", g_object_new (GEGL_TYPE_TILE_DISK,
+                    "source", g_object_new (GEGL_TYPE_TILE_DISK,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -196,7 +196,7 @@ gegl_storage_constructor (GType                  type,
                     NULL);
 #else
       g_object_set (storage,
-                    "provider", g_object_new (GEGL_TYPE_TILE_GIO,
+                    "source", g_object_new (GEGL_TYPE_TILE_GIO,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -208,7 +208,7 @@ gegl_storage_constructor (GType                  type,
   else
     {
       g_object_set (storage,
-                    "provider", g_object_new (GEGL_TYPE_TILE_MEM,
+                    "source", g_object_new (GEGL_TYPE_TILE_MEM,
                                             "tile-width", storage->tile_width,
                                             "tile-height", storage->tile_height,
                                             "format", storage->format,
@@ -216,7 +216,7 @@ gegl_storage_constructor (GType                  type,
                     NULL);
     }
 
-  g_object_get (handler->provider,
+  g_object_get (handler->source,
                 "tile-size", &storage->tile_size,
                 "px-size",   &storage->px_size,
                 NULL);
@@ -238,7 +238,7 @@ gegl_storage_constructor (GType                  type,
 
 
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
-                                                  "backend", handler->provider,
+                                                  "backend", handler->source,
                                                   "storage", storage,
                                                   NULL));
 
@@ -250,7 +250,7 @@ gegl_storage_constructor (GType                  type,
    * gegl-storage for each tile.
    */
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
-                                                  "backend", handler->provider,
+                                                  "backend", handler->source,
                                                    NULL));
   if (g_getenv("GEGL_LOG_TILE_EMPTY"))
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));

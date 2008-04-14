@@ -24,8 +24,8 @@ typedef struct _GeglSampler              GeglSampler;
 typedef struct _GeglTile                 GeglTile;
 typedef struct _GeglTileClass            GeglTileClass;
 
-typedef struct _GeglProvider             GeglProvider;
-typedef struct _GeglProviderClass        GeglProviderClass;
+typedef struct _GeglSource               GeglSource;
+typedef struct _GeglSourceClass          GeglSourceClass;
 
 typedef struct _GeglTileBackend          GeglTileBackend;
 typedef struct _GeglTileBackendClass     GeglTileBackendClass;

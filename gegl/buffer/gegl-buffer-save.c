@@ -231,7 +231,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
                   gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-                  if (gegl_provider_exist (GEGL_PROVIDER (buffer), tx, ty, z))
+                  if (gegl_source_exist (GEGL_SOURCE (buffer), tx, ty, z))
                     {
                       tx += info->x_tile_shift / factor;
                       ty += info->y_tile_shift / factor;
@@ -293,10 +293,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
         GeglTile      *tile;
         gint           factor = 1 << entry->z;
 
-        tile = gegl_provider_get_tile (GEGL_PROVIDER (buffer),
-                                         entry->x - info->x_tile_shift / factor,
-                                         entry->y - info->y_tile_shift / factor,
-                                         entry->z);
+        tile = gegl_source_get_tile (GEGL_SOURCE (buffer),
+                                     entry->x - info->x_tile_shift / factor,
+                                     entry->y - info->y_tile_shift / factor,
+                                     entry->z);
         g_assert (tile);
         data = gegl_tile_get_data (tile);
         g_assert (data);

@@ -78,11 +78,11 @@ struct _GioEntry
 };
 
 static gboolean
-exist_tile (GeglProvider *store,
-            GeglTile     *tile,
-            gint          x,
-            gint          y,
-            gint          z);
+exist_tile (GeglSource *store,
+            GeglTile   *tile,
+            gint        x,
+            gint        y,
+            gint        z);
 
 static GFile *make_tile_file (GeglTileGio *gio,
                               gint         x,
@@ -157,10 +157,10 @@ gegl_tile_gio_stats (void)
  * too often.
  */
 static GeglTile *
-get_tile (GeglProvider *tile_store,
-          gint          x,
-          gint          y,
-          gint          z)
+get_tile (GeglSource *tile_store,
+          gint        x,
+          gint        y,
+          gint        z)
 {
   GeglTileGio    *tile_gio = GEGL_TILE_GIO (tile_store);
   GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
@@ -181,11 +181,11 @@ get_tile (GeglProvider *tile_store,
 }
 
 static gpointer
-set_tile (GeglProvider *store,
-          GeglTile     *tile,
-          gint          x,
-          gint          y,
-          gint          z)
+set_tile (GeglSource *store,
+          GeglTile   *tile,
+          gint        x,
+          gint        y,
+          gint        z)
 {
   GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
   GeglTileGio    *tile_gio = GEGL_TILE_GIO (backend);
@@ -201,11 +201,11 @@ set_tile (GeglProvider *store,
 }
 
 static gpointer
-void_tile (GeglProvider *store,
-           GeglTile     *tile,
-           gint          x,
-           gint          y,
-           gint          z)
+void_tile (GeglSource *store,
+           GeglTile   *tile,
+           gint        x,
+           gint        y,
+           gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileGio     *gio = GEGL_TILE_GIO (backend);
@@ -218,11 +218,11 @@ void_tile (GeglProvider *store,
 }
 
 static gboolean
-exist_tile (GeglProvider *store,
-            GeglTile     *tile,
-            gint          x,
-            gint          y,
-            gint          z)
+exist_tile (GeglSource *store,
+            GeglTile   *tile,
+            gint        x,
+            gint        y,
+            gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileGio     *gio = GEGL_TILE_GIO (backend);
@@ -251,7 +251,7 @@ enum
 };
 
 static gpointer
-command (GeglProvider  *tile_store,
+command (GeglSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -355,8 +355,8 @@ gegl_tile_gio_constructor (GType                   type,
 static void
 gegl_tile_gio_class_init (GeglTileGioClass *klass)
 {
-  GObjectClass      *gobject_class       = G_OBJECT_CLASS (klass);
-  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
+  GeglSourceClass *gegl_source_class = GEGL_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -365,7 +365,7 @@ gegl_tile_gio_class_init (GeglTileGioClass *klass)
   gobject_class->constructor  = gegl_tile_gio_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_provider_class->command  = command;
+  gegl_source_class->command  = command;
 
 
   g_object_class_install_property (gobject_class, PROP_PATH,

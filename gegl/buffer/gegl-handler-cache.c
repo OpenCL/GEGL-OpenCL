@@ -98,13 +98,13 @@ dispose (GObject *object)
 }
 
 static GeglTile *
-get_tile (GeglProvider *tile_store,
+get_tile (GeglSource *tile_store,
           gint           x,
           gint           y,
           gint           z)
 {
   GeglHandlerCache *cache    = GEGL_HANDLER_CACHE (tile_store);
-  GeglProvider     *provider = GEGL_HANDLER (tile_store)->provider;
+  GeglSource     *source = GEGL_HANDLER (tile_store)->source;
   GeglTile         *tile     = NULL;
 
   tile = gegl_handler_cache_get_tile (cache, x, y, z);
@@ -115,8 +115,8 @@ get_tile (GeglProvider *tile_store,
     }
   cache->misses++;
 
-  if (provider)
-    tile = gegl_provider_get_tile (provider, x, y, z);
+  if (source)
+    tile = gegl_source_get_tile (source, x, y, z);
 
   if (tile)
     gegl_handler_cache_insert (cache, tile, x, y, z);
@@ -126,7 +126,7 @@ get_tile (GeglProvider *tile_store,
 
 
 static gpointer
-command (GeglProvider    *tile_store,
+command (GeglSource    *tile_store,
          GeglTileCommand  command,
          gint             x,
          gint             y,
@@ -223,14 +223,14 @@ static void
 gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
 {
   GObjectClass      *gobject_class  = G_OBJECT_CLASS (class);
-  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (class);
+  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (class);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
 
-  provider_class->command  = command;
+  source_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_SIZE,
                                    g_param_spec_int ("size",

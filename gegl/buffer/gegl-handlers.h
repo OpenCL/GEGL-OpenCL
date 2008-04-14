@@ -48,7 +48,7 @@ GType         gegl_handlers_get_type   (void) G_GNUC_CONST;
  * @handler: a #GeglHandler.
  *
  * Adds @handler to the list of handlers to be processed, the order handlers
- * are added in is from original provider to last processing element, commands
+ * are added in is from original source to last processing element, commands
  * are passed from the last added to the first one in the chain, tiles
  * and other results are passed back up
  *

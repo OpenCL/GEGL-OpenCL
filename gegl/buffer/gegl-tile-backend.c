@@ -20,10 +20,10 @@
 #include <string.h>
 
 #include <babl/babl.h>
-#include "gegl-provider.h"
+#include "gegl-source.h"
 #include "gegl-tile-backend.h"
 
-G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_PROVIDER)
+G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_SOURCE)
 static GObjectClass * parent_class = NULL;
 
 enum

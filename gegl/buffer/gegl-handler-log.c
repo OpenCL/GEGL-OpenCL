@@ -44,14 +44,14 @@ static char *commands[] =
 };
 
 static gpointer
-command (GeglProvider  *gegl_provider,
+command (GeglSource     *gegl_source,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_provider);
+  GeglHandler *handler = GEGL_HANDLER (gegl_source);
   gpointer     result = NULL;
 
   result = gegl_handler_chain_up (handler, command, x, y, z, data);
@@ -62,7 +62,7 @@ command (GeglProvider  *gegl_provider,
         break;
       default:
         g_print ("(%s %p %p %i,%i,%i => %s)", 
-          commands[command], (void *) gegl_provider, data, x, y, z,
+          commands[command], (void *) gegl_source, data, x, y, z,
           result?"1":"0");
     }
   return result;
@@ -71,9 +71,9 @@ command (GeglProvider  *gegl_provider,
 static void
 gegl_handler_log_class_init (GeglHandlerLogClass *klass)
 {
-  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
+  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
 
-  provider_class->command  = command;
+  source_class->command  = command;
 }
 
 static void

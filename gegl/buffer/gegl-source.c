@@ -17,12 +17,12 @@
  */
 #include <glib.h>
 #include <glib-object.h>
-#include "gegl-provider.h"
+#include "gegl-source.h"
 
-G_DEFINE_TYPE (GeglProvider, gegl_provider, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglSource, gegl_source, G_TYPE_OBJECT)
 
 static gpointer
-command (GeglProvider  *gegl_provider,
+command (GeglSource  *gegl_source,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -34,28 +34,28 @@ command (GeglProvider  *gegl_provider,
 }
 
 static void
-gegl_provider_class_init (GeglProviderClass *klass)
+gegl_source_class_init (GeglSourceClass *klass)
 {  
   klass->command  = command;
 }
 
 static void
-gegl_provider_init (GeglProvider *self)
+gegl_source_init (GeglSource *self)
 {
 }
 
 gpointer
-gegl_provider_command (GeglProvider    *gegl_provider,
+gegl_source_command (GeglSource    *gegl_source,
                        GeglTileCommand  command,
                        gint             x,
                        gint             y,
                        gint             z,
                        gpointer         data)
 {
-  GeglProviderClass *klass;
+  GeglSourceClass *klass;
 
-  klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
+  klass = GEGL_SOURCE_GET_CLASS (gegl_source);
 
-  return klass->command (gegl_provider, command, x, y, z, data);
+  return klass->command (gegl_source, command, x, y, z, data);
 }
 

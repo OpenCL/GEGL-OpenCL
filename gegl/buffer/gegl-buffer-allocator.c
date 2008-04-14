@@ -117,7 +117,7 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
     allocator->max_height = needed_height;
 
   { GeglBuffer *tmp = g_object_new (GEGL_TYPE_BUFFER,
-                                    "provider", allocator,
+                                    "source", allocator,
                                     "x", x,
                                     "y", y,
                                     "width", width,
@@ -210,7 +210,7 @@ gegl_buffer_new_from_format (const void *babl_format,
                                   "path",   path,
                                   NULL);
           allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
-                                    "provider", storage,
+                                    "source", storage,
                                     NULL);
           g_object_unref (storage);
 
@@ -224,7 +224,7 @@ gegl_buffer_new_from_format (const void *babl_format,
                                                "format", babl_format,
                                                NULL);
           allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
-                                    "provider", storage,
+                                    "source", storage,
                                     NULL);
           g_object_unref (storage);
           g_hash_table_insert (allocators, (gpointer)babl_format, allocator);

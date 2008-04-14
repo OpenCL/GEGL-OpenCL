@@ -152,10 +152,10 @@ gegl_buffer_load (GeglBuffer  *buffer,
         gint           factor = 1 << entry->z;
 
 
-        tile = gegl_provider_get_tile (GEGL_PROVIDER (buffer),
-                                         entry->x + info->x_tile_shift / factor,
-                                         entry->y + info->y_tile_shift / factor,
-                                         entry->z);
+        tile = gegl_source_get_tile (GEGL_SOURCE (buffer),
+                                     entry->x + info->x_tile_shift / factor,
+                                     entry->y + info->y_tile_shift / factor,
+                                     entry->z);
         g_assert (tile);
         gegl_tile_lock (tile);
 

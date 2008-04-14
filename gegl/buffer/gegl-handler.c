@@ -22,12 +22,12 @@
 
 #include <glib-object.h>
 
-#include "gegl-provider.h"
+#include "gegl-source.h"
 #include "gegl-handler.h"
 #include "gegl-handlers.h"
 
 
-G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_PROVIDER)
+G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_SOURCE)
 
 enum
 {
@@ -40,24 +40,24 @@ dispose (GObject *object)
 {
   GeglHandler *handler = GEGL_HANDLER (object);
 
-  if (handler->provider != NULL)
+  if (handler->source != NULL)
     {
-      g_object_unref (handler->provider);
-      handler->provider = NULL;
+      g_object_unref (handler->source);
+      handler->source = NULL;
     }
 
   G_OBJECT_CLASS (gegl_handler_parent_class)->dispose (object);
 }
 
 static gpointer
-command (GeglProvider   *gegl_provider,
+command (GeglSource     *gegl_source,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = (GeglHandler*)gegl_provider;
+  GeglHandler *handler = (GeglHandler*)gegl_source;
 
   return gegl_handler_chain_up (handler, command, x, y, z, data);
 }
@@ -73,7 +73,7 @@ get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_SOURCE:
-        g_value_set_object (value, handler->provider);
+        g_value_set_object (value, handler->source);
         break;
 
       default:
@@ -93,9 +93,9 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_SOURCE:
-        if (handler->provider != NULL)
-          g_object_unref (handler->provider);
-        handler->provider = GEGL_PROVIDER (g_value_dup_object (value));
+        if (handler->source != NULL)
+          g_object_unref (handler->source);
+        handler->source = GEGL_SOURCE (g_value_dup_object (value));
 
         /* special case if we are the Traits subclass of Trait
          * also set the source at the end of the chain.
@@ -108,7 +108,7 @@ set_property (GObject      *gobject,
               iter = iter->next;
             if (iter)
               {
-                g_object_set (GEGL_HANDLER (iter->data), "provider", handler->provider, NULL);
+                g_object_set (GEGL_HANDLER (iter->data), "source", handler->source, NULL);
               }
           }
         return;
@@ -126,26 +126,26 @@ gpointer   gegl_handler_chain_up (GeglHandler     *handler,
                                   gint             z,
                                   gpointer         data)
 {
-  GeglProvider *provider = gegl_handler_get_provider (handler);
-  if (provider)
-    return gegl_provider_command (provider, command, x, y, z, data);
+  GeglSource *source = gegl_handler_get_source (handler);
+  if (source)
+    return gegl_source_command (source, command, x, y, z, data);
   return NULL;
 }
 
 static void
 gegl_handler_class_init (GeglHandlerClass *klass)
 {
-  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass    *gobject_class  = G_OBJECT_CLASS (klass);
+  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->dispose      = dispose;
 
-  provider_class->command  = command;
+  source_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
-                                   g_param_spec_object ("provider",
+                                   g_param_spec_object ("source",
                                                         "GeglBuffer",
                                                         "The tilestore to be a facade for",
                                                         G_TYPE_OBJECT,
@@ -155,7 +155,7 @@ gegl_handler_class_init (GeglHandlerClass *klass)
 static void
 gegl_handler_init (GeglHandler *self)
 {
-  self->provider = NULL;
+  self->source = NULL;
 }
 
 

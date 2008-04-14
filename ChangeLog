@@ -1,5 +1,99 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	s/Provider/Source/g s/provider/source/g s/PROVIDER/SOURCE/g
+
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-allocator.c:
+	* gegl/buffer/gegl-buffer-load.c: 
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-buffer-types.h:
+	* gegl/buffer/gegl-buffer.c: 
+	* gegl/buffer/gegl-handler-cache.c:
+	* gegl/buffer/gegl-handler-empty.c:
+	* gegl/buffer/gegl-handler-log.c:
+	* gegl/buffer/gegl-handler-zoom.c:
+	* gegl/buffer/gegl-handler.c: 
+	* gegl/buffer/gegl-handler.h:
+	* gegl/buffer/gegl-handlers.c:
+	* gegl/buffer/gegl-handlers.h:
+	* gegl/buffer/gegl-provider.c:
+	* gegl/buffer/gegl-provider.h:
+	* gegl/buffer/gegl-source.c: 
+	* gegl/buffer/gegl-source.h:
+	* gegl/buffer/gegl-storage.c: 
+	* gegl/buffer/gegl-tile-backend.c:
+	* gegl/buffer/gegl-tile-backend.h:
+	* gegl/buffer/gegl-tile-disk.c:
+	* gegl/buffer/gegl-tile-gio.c:
+	* gegl/buffer/gegl-tile-mem.c:
+	* gegl/buffer/gegl-tile.c: 
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* Makefile.am:
+	* autogen.sh:
+	* configure.ac:
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc),
+	(gegl_buffer_new_from_format):
+	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_load):
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer-save.c: (gegl_buffer_save):
+	* gegl/buffer/gegl-buffer-types.h:
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dispose),
+	(gegl_buffer_backend), (gegl_buffer_storage),
+	(gegl_buffer_constructor), (get_tile), (command),
+	(gegl_buffer_class_init), (gegl_buffer_void), (pset), (pget),
+	(gegl_buffer_iterate), (gegl_buffer_set),
+	(gegl_buffer_create_sub_buffer):
+	* gegl/buffer/gegl-handler-cache.c: (get_tile), (command),
+	(gegl_handler_cache_class_init):
+	* gegl/buffer/gegl-handler-empty.c: (get_tile), (command),
+	(gegl_handler_empty_class_init):
+	* gegl/buffer/gegl-handler-log.c: (command),
+	(gegl_handler_log_class_init):
+	* gegl/buffer/gegl-handler-zoom.c: (get_tile), (command),
+	(gegl_handler_zoom_class_init):
+	* gegl/buffer/gegl-handler.c: (dispose), (command), (get_property),
+	(set_property), (gegl_handler_chain_up), (gegl_handler_class_init),
+	(gegl_handler_init):
+	* gegl/buffer/gegl-handler.h:
+	* gegl/buffer/gegl-handlers.c: (command),
+	(gegl_handlers_class_init), (gegl_handlers_rebind):
+	* gegl/buffer/gegl-handlers.h:
+	* gegl/buffer/gegl-provider.c:
+	* gegl/buffer/gegl-provider.h:
+	* gegl/buffer/gegl-source.c: (command), (gegl_source_class_init),
+	(gegl_source_init), (gegl_source_command):
+	* gegl/buffer/gegl-source.h:
+	* gegl/buffer/gegl-storage.c: (storage_idle),
+	(gegl_storage_constructor):
+	* gegl/buffer/gegl-tile-backend.c:
+	* gegl/buffer/gegl-tile-backend.h:
+	* gegl/buffer/gegl-tile-disk.c: (get_tile), (set_tile),
+	(void_tile), (exist_tile), (command), (gegl_tile_disk_class_init):
+	* gegl/buffer/gegl-tile-gio.c: (get_tile), (set_tile), (void_tile),
+	(exist_tile), (command), (gegl_tile_gio_class_init):
+	* gegl/buffer/gegl-tile-mem.c: (get_tile), (set_tile), (void_tile),
+	(exist_tile), (command), (gegl_tile_mem_class_init):
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid),
+	(gegl_tile_store):
+	* gegl/gegl-types.h:
+	* gegl/graph/gegl-node.c: (gegl_node_init), (finalize),
+	(gegl_node_invalidated), (gegl_node_get_bounding_box),
+	(gegl_node_lock), (gegl_node_unlock):
+	* gegl/graph/gegl-node.h:
+	* gegl/process/Makefile.am:
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/process/gegl-have-visitor.c: (visit_node):
+	* gegl/process/gegl-processor.c: (render_rectangle):
+	* operations/Makefile-common.am:
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	s/Message/Command/g s/message/command/g, added some macros to
 	gegl_provider that works as wrappers to use the commands directly
 	as if they were functions.

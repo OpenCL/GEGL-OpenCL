@@ -135,10 +135,10 @@ lookup_entry (GeglTileMem *self,
  * too often.
  */
 static GeglTile *
-get_tile (GeglProvider *tile_store,
-          gint           x,
-          gint           y,
-          gint           z)
+get_tile (GeglSource *tile_store,
+          gint        x,
+          gint        y,
+          gint        z)
 {
   GeglTileMem     *tile_mem = GEGL_TILE_MEM (tile_store);
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (tile_store);
@@ -160,11 +160,11 @@ get_tile (GeglProvider *tile_store,
 }
 
 static
-gboolean set_tile (GeglProvider *store,
-                   GeglTile      *tile,
-                   gint           x,
-                   gint           y,
-                   gint           z)
+gboolean set_tile (GeglSource *store,
+                   GeglTile   *tile,
+                   gint        x,
+                   gint        y,
+                   gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
@@ -188,11 +188,11 @@ gboolean set_tile (GeglProvider *store,
 }
 
 static
-gboolean void_tile (GeglProvider *store,
-                    GeglTile      *tile,
-                    gint           x,
-                    gint           y,
-                    gint           z)
+gboolean void_tile (GeglSource *store,
+                    GeglTile   *tile,
+                    gint        x,
+                    gint        y,
+                    gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
@@ -207,11 +207,11 @@ gboolean void_tile (GeglProvider *store,
 }
 
 static
-gboolean exist_tile (GeglProvider *store,
-                     GeglTile      *tile,
-                     gint           x,
-                     gint           y,
-                     gint           z)
+gboolean exist_tile (GeglSource *store,
+                     GeglTile   *tile,
+                     gint        x,
+                     gint        y,
+                     gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
@@ -227,7 +227,7 @@ enum
 };
 
 static gpointer
-command (GeglProvider  *tile_store,
+command (GeglSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -260,10 +260,10 @@ command (GeglProvider  *tile_store,
   return FALSE;
 }
 
-static void set_property (GObject      *object,
-                          guint         property_id,
-                          const GValue *value,
-                          GParamSpec   *pspec)
+static void set_property (GObject       *object,
+                            guint          property_id,
+                            const GValue *value,
+                            GParamSpec    *pspec)
 {
   switch (property_id)
     {
@@ -274,9 +274,9 @@ static void set_property (GObject      *object,
 }
 
 static void get_property (GObject    *object,
-                          guint       property_id,
-                          GValue     *value,
-                          GParamSpec *pspec)
+                            guint       property_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
 {
   switch (property_id)
     {
@@ -355,8 +355,8 @@ gegl_tile_mem_constructor (GType                  type,
 static void
 gegl_tile_mem_class_init (GeglTileMemClass *klass)
 {
-  GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
-  GeglProviderClass *gegl_provider_class = GEGL_PROVIDER_CLASS (klass);
+  GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
+  GeglSourceClass *gegl_source_class = GEGL_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -365,7 +365,7 @@ gegl_tile_mem_class_init (GeglTileMemClass *klass)
   gobject_class->constructor  = gegl_tile_mem_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_provider_class->command  = command;
+  gegl_source_class->command  = command;
 }
 
 static void
