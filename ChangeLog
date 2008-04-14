@@ -1,3 +1,7 @@
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: reverted to a single column summary.
+
 2008-04-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a new tile backend that stores individual tiles as files using
