@@ -718,7 +718,6 @@ operations/generated/Makefile
 operations/workshop/Makefile
 operations/workshop/external/Makefile
 operations/workshop/generated/Makefile
-examples/Makefile
 tools/Makefile
 docs/Makefile
 docs/index-static.txt

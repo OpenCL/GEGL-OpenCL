@@ -1,5 +1,9 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: back out accidental change.
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: reverted to a single column summary.
 
 2008-04-13  Øyvind Kolås  <pippin@gimp.org>
