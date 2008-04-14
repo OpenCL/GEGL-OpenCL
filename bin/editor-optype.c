@@ -28,6 +28,7 @@
 #include "gegl-plugin.h"  /* FIXME: should just be gegl.h */
 
 #include "editor.h"
+#include "editor-optype.h"
 #include "gegl-tree-editor.h"
 #include "gegl-node-editor.h"
 #include "gegl-tree-editor-action.h"
@@ -415,6 +416,8 @@ button_clicked (GtkButton * button, gpointer item)
   menu = GTK_MENU (optype_menu (item));
   gtk_menu_popup (menu, NULL, NULL, gtk_option_menu_position, button, 0, 0);
 }
+
+
 
 GtkWidget *
 gegl_typeeditor_optype (GtkSizeGroup   *col1,

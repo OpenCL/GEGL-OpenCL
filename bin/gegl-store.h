@@ -70,4 +70,15 @@ void        gegl_store_freeze   (GeglStore  *gegl_store);
 void        gegl_store_thaw     (GeglStore  *gegl_store);
 void        gegl_store_process  (GeglStore  *gegl_store);
 
+
+/* The API that the store actually is implemented for is reimplemented using
+ * the following calls, which may be usedful for DOM like manipulation of GEGL
+ * graphs.
+ */
+
+GeglNode * gegl_children         (GeglNode *item);
+GeglNode * gegl_next_sibling     (GeglNode *item);
+GeglNode * gegl_previous_sibling (GeglNode *item);
+GeglNode * gegl_parent           (GeglNode *item);
+
 #endif /* _gegl_store_h_included_ */

@@ -48,7 +48,7 @@ static gchar *collapsibles_html =
 "    }"
 "    /*-->*/</script>";
 
-gchar *escape (const gchar *string)
+static gchar *escape (const gchar *string)
 {
   gchar buf[4095]="";
   const gchar *p=string;

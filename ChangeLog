@@ -1,5 +1,13 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor-optype.c: #include "editor-optype.h"
+	* bin/editor.c: (play): remove cruft.
+	* bin/gegl-store.h: add some protoypes for the DOM bridge
+	used to implement the model.
+	* tools/introspect.c: (escape): silenced warning.
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/Makefile.am:
 	* gegl/buffer/gegl-id-pool.[ch]: added a data structure to keep track
 	of reusable unique integer ids for pointers.

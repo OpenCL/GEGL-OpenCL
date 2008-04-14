@@ -200,14 +200,14 @@ static gboolean play(gpointer data)
       GeglNode *source = input_stream (editor->gegl);
       gint frame;
       gegl_node_get (source, "frame", &frame, NULL);
-      g_warning ("(%f) frame: %i->%i", progress, frame, frame +1);
+      /*g_warning ("(%f) frame: %i->%i", progress, frame, frame +1);*/
       frame++;
       gegl_node_set (source, "frame", frame, NULL);
       gegl_gui_flush ();
     }
   else
     {
-      g_warning ("(%f)", progress);
+      /*g_warning ("(%f)", progress);*/
     }
 
   return TRUE;
