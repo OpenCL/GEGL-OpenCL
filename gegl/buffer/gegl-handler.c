@@ -65,7 +65,7 @@ get_tile (GeglProvider *gegl_provider,
   return tile;
 }
 
-static gboolean
+static gpointer
 message (GeglProvider   *gegl_provider,
          GeglTileMessage message,
          gint            x,
@@ -135,7 +135,7 @@ set_property (GObject      *gobject,
     }
 }
 
-gboolean   gegl_handler_chain_up (GeglHandler     *handler,
+gpointer   gegl_handler_chain_up (GeglHandler     *handler,
                                   GeglTileMessage  message,
                                   gint             x,
                                   gint             y,
@@ -145,7 +145,7 @@ gboolean   gegl_handler_chain_up (GeglHandler     *handler,
   GeglProvider *provider = gegl_handler_get_provider (handler);
   if (provider)
     return gegl_provider_message (provider, message, x, y, z, data);
-  return FALSE;
+  return NULL;
 }
 
 static void

@@ -327,7 +327,7 @@ get_tile (GeglProvider *gegl_provider,
   return tile;
 }
 
-static gboolean
+static gpointer
 message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,

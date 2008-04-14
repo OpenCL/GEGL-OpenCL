@@ -267,7 +267,7 @@ get_tile (GeglProvider *tile_store,
   return tile;
 }
 
-static gboolean
+static gpointer
 set_tile (GeglProvider *store,
           GeglTile     *tile,
           gint          x,
@@ -293,10 +293,10 @@ set_tile (GeglProvider *store,
                                 */
   disk_entry_write (tile_disk, entry, tile->data);
   tile->stored_rev = tile->rev;
-  return TRUE;
+  return NULL;
 }
 
-static gboolean
+static gpointer
 void_tile (GeglProvider *store,
            GeglTile     *tile,
            gint          x,
@@ -312,10 +312,10 @@ void_tile (GeglProvider *store,
       disk_entry_destroy (entry, tile_disk);
     }
 
-  return TRUE;
+  return NULL;
 }
 
-static gboolean
+static gpointer
 exist_tile (GeglProvider *store,
             GeglTile     *tile,
             gint          x,
@@ -326,7 +326,7 @@ exist_tile (GeglProvider *store,
   GeglTileDisk    *tile_disk = GEGL_TILE_DISK (backend);
   DiskEntry       *entry     = lookup_entry (tile_disk, x, y, z);
 
-  return entry != NULL;
+  return entry!=NULL?((gpointer)0x1):NULL;
 }
 
 enum
@@ -335,7 +335,7 @@ enum
   PROP_PATH
 };
 
-static gboolean
+static gpointer
 message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
@@ -349,7 +349,7 @@ message (GeglProvider  *tile_store,
         return set_tile (tile_store, data, x, y, z);
 
       case GEGL_TILE_IDLE:
-        return FALSE;
+        return NULL;
 
       case GEGL_TILE_VOID:
         return void_tile (tile_store, data, x, y, z);

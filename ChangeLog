@@ -1,5 +1,24 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	Changed the tile message/manipulation bus to return a gpointer instead
+	of a gboolean for the calls.
+	* gegl/buffer/gegl-provider.c: (message):
+	* gegl/buffer/gegl-provider.h:
+	* gegl/buffer/gegl-handler-cache.c: (message):
+	* gegl/buffer/gegl-handler-log.c: (message):
+	* gegl/buffer/gegl-handler-zoom.c:
+	* gegl/buffer/gegl-handler.c: (gegl_handler_chain_up):
+	* gegl/buffer/gegl-handler.h:
+	* gegl/buffer/gegl-handlers.c:
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor):
+	* gegl/buffer/gegl-tile-disk.c: (set_tile), (void_tile),
+	(exist_tile), (message):
+	* gegl/buffer/gegl-tile-gio.c: (set_tile), (void_tile), (message):
+	* gegl/buffer/gegl-tile-mem.c: (message):
+	* gegl/buffer/gegl-tile.c: (gegl_tile_store):
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor-optype.c: #include "editor-optype.h"
 	* bin/editor.c: (play): remove cruft.
 	* bin/gegl-store.h: add some protoypes for the DOM bridge

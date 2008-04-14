@@ -226,7 +226,7 @@ enum
   PROP_0,
 };
 
-static gboolean
+static gpointer
 message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
@@ -237,16 +237,18 @@ message (GeglProvider  *tile_store,
   switch (message)
     {
       case GEGL_TILE_SET:
-        return set_tile (tile_store, data, x, y, z);
+        set_tile (tile_store, data, x, y, z);
+        return NULL;
 
       case GEGL_TILE_IDLE:
-        return FALSE;
+        return NULL;
 
       case GEGL_TILE_VOID:
-        return void_tile (tile_store, data, x, y, z);
+        void_tile (tile_store, data, x, y, z);
+        return NULL;
 
       case GEGL_TILE_EXIST:
-        return exist_tile (tile_store, data, x, y, z);
+        return (gpointer)exist_tile (tile_store, data, x, y, z);
 
       default:
         g_assert (message < GEGL_TILE_LAST_MESSAGE &&

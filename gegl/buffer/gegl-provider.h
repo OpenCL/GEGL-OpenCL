@@ -64,7 +64,7 @@ struct _GeglProviderClass
                              gint            y,
                              gint            z);
 
-  gboolean      (*message)  (GeglProvider  *gegl_provider,
+  gpointer      (*message)  (GeglProvider  *gegl_provider,
                              GeglTileMessage message,
                              gint            x,
                              gint            y,
@@ -79,7 +79,7 @@ GeglTile * gegl_provider_get_tile (GeglProvider    *gegl_provider,
                                    gint             y,
                                    gint             z);
 
-gboolean   gegl_provider_message  (GeglProvider    *gegl_provider,
+gpointer   gegl_provider_message  (GeglProvider    *gegl_provider,
                                    GeglTileMessage  message,
                                    gint             x,
                                    gint             y,

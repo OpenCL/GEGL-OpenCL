@@ -406,10 +406,10 @@ gboolean gegl_tile_store (GeglTile *tile)
 {
   if (tile->storage == NULL)
     return FALSE;
-  return gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                                  GEGL_TILE_SET, tile->storage_x,
-                                  tile->storage_y,
-                                  tile->storage_z, tile);
+  return GPOINTER_TO_INT (gegl_provider_message (GEGL_PROVIDER (tile->storage),
+                          GEGL_TILE_SET, tile->storage_x,
+                          tile->storage_y,
+                          tile->storage_z, tile));
 }
 
 

@@ -47,7 +47,7 @@ static char *messages[] =
   "void br", "undo start group", "last message", "eeek", NULL
 };
 
-static gboolean
+static gpointer
 message (GeglProvider  *gegl_provider,
          GeglTileMessage message,
          gint            x,
@@ -56,7 +56,7 @@ message (GeglProvider  *gegl_provider,
          gpointer        data)
 {
   GeglHandler *handler = GEGL_HANDLER (gegl_provider);
-  gboolean     result = FALSE;
+  gpointer     result = NULL;
 
   result = gegl_handler_chain_up (handler, message, x, y, z, data);
 

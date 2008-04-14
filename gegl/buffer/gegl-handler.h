@@ -48,7 +48,7 @@ GType gegl_handler_get_type (void) G_GNUC_CONST;
 #define gegl_handler_get_provider(handler)  (((GeglHandler*)handler)->provider)
 
 
-gboolean   gegl_handler_chain_up (GeglHandler     *handler,
+gpointer   gegl_handler_chain_up (GeglHandler     *handler,
                                   GeglTileMessage  message,
                                   gint             x,
                                   gint             y,

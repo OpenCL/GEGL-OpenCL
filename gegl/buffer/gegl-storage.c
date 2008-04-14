@@ -186,7 +186,7 @@ gegl_storage_constructor (GType                  type,
 
   if (storage->path != NULL)
     {
-#if 1
+#if 0
       g_object_set (storage,
                     "provider", g_object_new (GEGL_TYPE_TILE_DISK,
                                             "tile-width", storage->tile_width,

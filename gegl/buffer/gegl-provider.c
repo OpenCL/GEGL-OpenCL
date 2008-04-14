@@ -31,7 +31,7 @@ get_tile (GeglProvider *gegl_provider,
   return NULL;
 }
 
-static gboolean
+static gpointer
 message (GeglProvider  *gegl_provider,
          GeglTileMessage message,
          gint            x,
@@ -39,8 +39,8 @@ message (GeglProvider  *gegl_provider,
          gint            z,
          gpointer        data)
 {
-  g_warning ("Unhandled message: %i, %i, %i, %p", message, x, y, data);
-  return FALSE;
+  g_warning ("Unhandled message: %s %i, %i, %i, %p", G_STRFUNC, message, x, y, data);
+  return NULL;
 }
 
 static void
@@ -77,13 +77,13 @@ gegl_provider_get_tile (GeglProvider *gegl_provider,
   return klass->get_tile (gegl_provider, x, y, z);
 }
 
-gboolean
-gegl_provider_message (GeglProvider  *gegl_provider,
-                         GeglTileMessage message,
-                         gint            x,
-                         gint            y,
-                         gint            z,
-                         gpointer        data)
+gpointer
+gegl_provider_message (GeglProvider    *gegl_provider,
+                       GeglTileMessage  message,
+                       gint             x,
+                       gint             y,
+                       gint             z,
+                       gpointer         data)
 {
   GeglProviderClass *klass;
 

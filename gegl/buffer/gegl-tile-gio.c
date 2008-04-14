@@ -180,7 +180,7 @@ get_tile (GeglProvider *tile_store,
  return NULL;
 }
 
-static gboolean
+static gpointer
 set_tile (GeglProvider *store,
           GeglTile     *tile,
           gint          x,
@@ -197,10 +197,10 @@ set_tile (GeglProvider *store,
                                 */
   gio_entry_write (tile_gio, &entry, tile->data);
   tile->stored_rev = tile->rev;
-  return TRUE;
+  return NULL;
 }
 
-static gboolean
+static gpointer
 void_tile (GeglProvider *store,
            GeglTile     *tile,
            gint          x,
@@ -214,7 +214,7 @@ void_tile (GeglProvider *store,
   file = make_tile_file (gio, x, y, z);
   g_file_delete (file, NULL, NULL);
   g_object_unref (file);
-  return TRUE;
+  return NULL;
 }
 
 static gboolean
@@ -250,7 +250,7 @@ enum
   PROP_PATH
 };
 
-static gboolean
+static gpointer
 message (GeglProvider  *tile_store,
          GeglTileMessage message,
          gint            x,
@@ -265,19 +265,19 @@ message (GeglProvider  *tile_store,
 
       case GEGL_TILE_IDLE:
         /* this backend has nothing to do on idle calls */
-        return FALSE;
+        return NULL;
 
       case GEGL_TILE_VOID:
         return void_tile (tile_store, data, x, y, z);
 
       case GEGL_TILE_EXIST:
-        return exist_tile (tile_store, data, x, y, z);
+        return (gpointer)exist_tile (tile_store, data, x, y, z);
 
       default:
         g_assert (message < GEGL_TILE_LAST_MESSAGE &&
                   message >= 0);
     }
-  return FALSE;
+  return NULL;
 }
 
 static void

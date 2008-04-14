@@ -125,7 +125,7 @@ get_tile (GeglProvider *tile_store,
 }
 
 
-static gboolean
+static gpointer
 message (GeglProvider    *tile_store,
          GeglTileMessage  message,
          gint             x,
@@ -138,13 +138,13 @@ message (GeglProvider    *tile_store,
 
   if (message == GEGL_TILE_IS_CACHED)
     {
-      return gegl_handler_cache_has_tile (cache, x, y, z);
+      return (gpointer)gegl_handler_cache_has_tile (cache, x, y, z);
     }
   if (message == GEGL_TILE_EXIST)
     {
       gboolean is_cached = gegl_handler_cache_has_tile (cache, x, y, z);
       if (is_cached)
-        return TRUE; /* XXX: perhaps we could return an integer/pointer
+        return (gpointer)TRUE; /* XXX: perhaps we could return an integer/pointer
                       * value over the bus instead of a boolean?
                       */
       /* otherwise pass on the request */
@@ -154,11 +154,12 @@ message (GeglProvider    *tile_store,
     {
       gboolean action = gegl_handler_cache_wash (cache);
       if (action)
-        return action;
+        return (gpointer)action;
     }
   if (message == GEGL_TILE_VOID)
     {
       gegl_handler_cache_void (cache, x, y, z);
+      return NULL;
     }
   return gegl_handler_chain_up (handler, message, x, y, z, data);
 }
