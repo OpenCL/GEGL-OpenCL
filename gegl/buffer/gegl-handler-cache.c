@@ -26,8 +26,6 @@
 #include "gegl-tile.h"
 #include "gegl-handler-cache.h"
 
-GeglHandlerCache * gegl_handler_cache_new (void);
-
 
 static gboolean    gegl_handler_cache_wash     (GeglHandlerCache *cache);
 
@@ -255,13 +253,6 @@ gegl_handler_cache_init (GeglHandlerCache *cache)
   cache->queue = g_queue_new ();
 }
 
-
-/* create a new tile cache */
-GeglHandlerCache *
-gegl_handler_cache_new (void)
-{
-  return g_object_new (GEGL_TYPE_HANDLER_CACHE, NULL);
-}
 
 /* write the least recently used dirty tile to disk if it
  * is in the wash_percentage (20%) least recently used tiles,

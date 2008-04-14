@@ -1,5 +1,13 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-handler-cache.c: removed unused function.
+
+	* operations/affine/affine.c: (process):
+	* operations/core/shift.c: (process): updated to new property name
+	(source not provider).
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	s/Provider/Source/g s/provider/source/g s/PROVIDER/SOURCE/g
 
 	* gegl/buffer/Makefile.am:

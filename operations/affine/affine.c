@@ -709,7 +709,7 @@ process (GeglOperation       *operation,
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
       output = g_object_new (GEGL_TYPE_BUFFER,
-                             "provider",    input,
+                             "source",    input,
                              "x",           result->x,
                              "y",           result->y,
                              "width",       result->width ,

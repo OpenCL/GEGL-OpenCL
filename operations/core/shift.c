@@ -133,9 +133,9 @@ process (GeglOperation       *operation,
       GeglBuffer *output;
 
       output = g_object_new (GEGL_TYPE_BUFFER,
-                             "provider",    input,
-                             "shift-x",     (int)-o->x,
-                             "shift-y",     (int)-o->y,
+                             "source",    input,
+                             "shift-x",   (int)-o->x,
+                             "shift-y",   (int)-o->y,
                              "abyss-width", -1,  /* turn of abyss
                                                     (relying on abyss
                                                     of source) */
