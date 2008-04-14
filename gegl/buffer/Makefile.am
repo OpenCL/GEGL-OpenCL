@@ -24,6 +24,7 @@ BUFFER_sources = \
     gegl-handler-empty.c	\
     gegl-handler-log.c		\
     gegl-handler-zoom.c		\
+    gegl-id-pool.c		\
     gegl-provider.c
 
 BUFFER_headers = \
@@ -52,6 +53,7 @@ BUFFER_headers = \
     gegl-handler-empty.h	\
     gegl-handler-log.h		\
     gegl-handler-zoom.h		\
+    gegl-id-pool.h		\
     gegl-provider.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)

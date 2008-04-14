@@ -1,5 +1,11 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-id-pool.[ch]: added a data structure to keep track
+	of reusable unique integer ids for pointers.
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-handler.[ch]: added new gegl_handler_chain_up
 	method to abstract away the chain up call needed.
 	* gegl/buffer/gegl-handler-cache.c: (message): chain up
