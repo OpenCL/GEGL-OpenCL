@@ -1,5 +1,10 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-storage.c: do not use the experimental GIO swap
+	backend by default.
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-handler-cache.c: removed unused function.
 
 	* operations/affine/affine.c: (process):
