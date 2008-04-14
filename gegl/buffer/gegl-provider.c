@@ -21,34 +21,22 @@
 
 G_DEFINE_TYPE (GeglProvider, gegl_provider, G_TYPE_OBJECT)
 
-static GeglTile *
-get_tile (GeglProvider *gegl_provider,
-          gint           x,
-          gint           y,
-          gint           z)
-{
-  g_warning ("implementationless %s called", G_STRFUNC);
-  return NULL;
-}
-
 static gpointer
-message (GeglProvider  *gegl_provider,
-         GeglTileMessage message,
+command (GeglProvider  *gegl_provider,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  g_warning ("Unhandled message: %s %i, %i, %i, %p", G_STRFUNC, message, x, y, data);
+  g_warning ("Unimplemented %s %i, %i, %i, %p", G_STRFUNC, command, x, y, data);
   return NULL;
 }
 
 static void
 gegl_provider_class_init (GeglProviderClass *klass)
-{
-  /*GObjectClass *gobject_class = G_OBJECT_CLASS (klass);*/
-  klass->get_tile = get_tile;
-  klass->message  = message;
+{  
+  klass->command  = command;
 }
 
 static void
@@ -56,30 +44,9 @@ gegl_provider_init (GeglProvider *self)
 {
 }
 
-/**
- *  GeglTile
- *  @gegl_provider: a GeglProvider
- *  @x: horizontal index of requested tile
- *  @y: vertical index of requested tile
- *
- *  Return value: the tile requested (or NULL for sparse backends)
- */
-GeglTile *
-gegl_provider_get_tile (GeglProvider *gegl_provider,
-                          gint           x,
-                          gint           y,
-                          gint           z)
-{
-  GeglProviderClass *klass;
-
-  klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
-
-  return klass->get_tile (gegl_provider, x, y, z);
-}
-
 gpointer
-gegl_provider_message (GeglProvider    *gegl_provider,
-                       GeglTileMessage  message,
+gegl_provider_command (GeglProvider    *gegl_provider,
+                       GeglTileCommand  command,
                        gint             x,
                        gint             y,
                        gint             z,
@@ -89,6 +56,6 @@ gegl_provider_message (GeglProvider    *gegl_provider,
 
   klass = GEGL_PROVIDER_GET_CLASS (gegl_provider);
 
-  return klass->message (gegl_provider, message, x, y, z, data);
+  return klass->command (gegl_provider, command, x, y, z, data);
 }
 

@@ -24,32 +24,28 @@
 
 G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_HANDLER)
 
-static GeglTile *
-get_tile (GeglProvider *gegl_provider,
-          gint          x,
-          gint          y,
-          gint          z)
+
+static char *commands[] =
 {
-  GeglProvider *provider = GEGL_HANDLER (gegl_provider)->provider;
-  GeglTile      *tile   = NULL;
-
-  g_print ("(get %p %i,%i,%i)", (void *) gegl_provider, x, y, z);
-
-  if (provider)
-    tile = gegl_provider_get_tile (provider, x, y, z);
-
-  return tile;
-}
-
-static char *messages[] =
-{
-  "idle", "set",  "is_cached", "exist", "void", "void tl", "void tr", "void bl",
-  "void br", "undo start group", "last message", "eeek", NULL
+  "idle",
+  "set",
+  "get",
+  "is_cached",
+  "exist",
+  "void",
+  "void tl", 
+  "void tr", 
+  "void bl",
+  "void br",
+  "undo start group",
+  "last command",
+  "eeek",
+  NULL
 };
 
 static gpointer
-message (GeglProvider  *gegl_provider,
-         GeglTileMessage message,
+command (GeglProvider  *gegl_provider,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
@@ -58,15 +54,15 @@ message (GeglProvider  *gegl_provider,
   GeglHandler *handler = GEGL_HANDLER (gegl_provider);
   gpointer     result = NULL;
 
-  result = gegl_handler_chain_up (handler, message, x, y, z, data);
+  result = gegl_handler_chain_up (handler, command, x, y, z, data);
 
-  switch (message)
+  switch (command)
     {
       case GEGL_TILE_IDLE:
         break;
       default:
         g_print ("(%s %p %p %i,%i,%i => %s)", 
-          messages[message], (void *) gegl_provider, data, x, y, z,
+          commands[command], (void *) gegl_provider, data, x, y, z,
           result?"1":"0");
     }
   return result;
@@ -77,8 +73,7 @@ gegl_handler_log_class_init (GeglHandlerLogClass *klass)
 {
   GeglProviderClass *provider_class = GEGL_PROVIDER_CLASS (klass);
 
-  provider_class->get_tile = get_tile;
-  provider_class->message  = message;
+  provider_class->command  = command;
 }
 
 static void

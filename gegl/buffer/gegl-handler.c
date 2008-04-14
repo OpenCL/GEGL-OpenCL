@@ -49,25 +49,9 @@ dispose (GObject *object)
   G_OBJECT_CLASS (gegl_handler_parent_class)->dispose (object);
 }
 
-static GeglTile *
-get_tile (GeglProvider *gegl_provider,
-          gint           x,
-          gint           y,
-          gint           z)
-{
-  GeglHandler *handler = (GeglHandler*)(gegl_provider);
-  GeglTile      *tile  = NULL;
-
-  if (handler->provider)
-    tile = gegl_provider_get_tile (handler->provider, x, y, z);
-  if (tile != NULL)
-    return tile;
-  return tile;
-}
-
 static gpointer
-message (GeglProvider   *gegl_provider,
-         GeglTileMessage message,
+command (GeglProvider   *gegl_provider,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
@@ -75,7 +59,7 @@ message (GeglProvider   *gegl_provider,
 {
   GeglHandler *handler = (GeglHandler*)gegl_provider;
 
-  return gegl_handler_chain_up (handler, message, x, y, z, data);
+  return gegl_handler_chain_up (handler, command, x, y, z, data);
 }
 
 static void
@@ -136,7 +120,7 @@ set_property (GObject      *gobject,
 }
 
 gpointer   gegl_handler_chain_up (GeglHandler     *handler,
-                                  GeglTileMessage  message,
+                                  GeglTileCommand  command,
                                   gint             x,
                                   gint             y,
                                   gint             z,
@@ -144,7 +128,7 @@ gpointer   gegl_handler_chain_up (GeglHandler     *handler,
 {
   GeglProvider *provider = gegl_handler_get_provider (handler);
   if (provider)
-    return gegl_provider_message (provider, message, x, y, z, data);
+    return gegl_provider_command (provider, command, x, y, z, data);
   return NULL;
 }
 
@@ -158,8 +142,7 @@ gegl_handler_class_init (GeglHandlerClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->dispose      = dispose;
 
-  provider_class->get_tile = get_tile;
-  provider_class->message  = message;
+  provider_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("provider",

@@ -126,8 +126,8 @@ get_tile (GeglProvider *tile_store,
 
 
 static gpointer
-message (GeglProvider    *tile_store,
-         GeglTileMessage  message,
+command (GeglProvider    *tile_store,
+         GeglTileCommand  command,
          gint             x,
          gint             y,
          gint             z,
@@ -136,11 +136,18 @@ message (GeglProvider    *tile_store,
   GeglHandler      *handler = GEGL_HANDLER (tile_store);
   GeglHandlerCache *cache   = GEGL_HANDLER_CACHE (handler);
 
-  if (message == GEGL_TILE_IS_CACHED)
+  /* FIXME: replace with switch */
+
+  if (command == GEGL_TILE_GET)
+    {
+      return get_tile (tile_store, x, y, z);
+    }
+  
+  if (command == GEGL_TILE_IS_CACHED)
     {
       return (gpointer)gegl_handler_cache_has_tile (cache, x, y, z);
     }
-  if (message == GEGL_TILE_EXIST)
+  if (command == GEGL_TILE_EXIST)
     {
       gboolean is_cached = gegl_handler_cache_has_tile (cache, x, y, z);
       if (is_cached)
@@ -150,18 +157,18 @@ message (GeglProvider    *tile_store,
       /* otherwise pass on the request */
     }
 
-  if (message == GEGL_TILE_IDLE)
+  if (command == GEGL_TILE_IDLE)
     {
       gboolean action = gegl_handler_cache_wash (cache);
       if (action)
         return (gpointer)action;
     }
-  if (message == GEGL_TILE_VOID)
+  if (command == GEGL_TILE_VOID)
     {
       gegl_handler_cache_void (cache, x, y, z);
       return NULL;
     }
-  return gegl_handler_chain_up (handler, message, x, y, z, data);
+  return gegl_handler_chain_up (handler, command, x, y, z, data);
 }
 
 static void
@@ -223,8 +230,7 @@ gegl_handler_cache_class_init (GeglHandlerCacheClass *class)
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
 
-  provider_class->get_tile = get_tile;
-  provider_class->message  = message;
+  provider_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_SIZE,
                                    g_param_spec_int ("size",

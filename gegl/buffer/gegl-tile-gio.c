@@ -251,15 +251,18 @@ enum
 };
 
 static gpointer
-message (GeglProvider  *tile_store,
-         GeglTileMessage message,
+command (GeglProvider  *tile_store,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  switch (message)
+  switch (command)
     {
+      case GEGL_TILE_GET:
+        return get_tile (tile_store, x, y, z);
+
       case GEGL_TILE_SET:
         return set_tile (tile_store, data, x, y, z);
 
@@ -274,8 +277,8 @@ message (GeglProvider  *tile_store,
         return (gpointer)exist_tile (tile_store, data, x, y, z);
 
       default:
-        g_assert (message < GEGL_TILE_LAST_MESSAGE &&
-                  message >= 0);
+        g_assert (command < GEGL_TILE_LAST_COMMAND &&
+                  command >= 0);
     }
   return NULL;
 }
@@ -362,8 +365,7 @@ gegl_tile_gio_class_init (GeglTileGioClass *klass)
   gobject_class->constructor  = gegl_tile_gio_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_provider_class->get_tile = get_tile;
-  gegl_provider_class->message  = message;
+  gegl_provider_class->command  = command;
 
 
   g_object_class_install_property (gobject_class, PROP_PATH,

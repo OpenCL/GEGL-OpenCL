@@ -461,13 +461,13 @@ gegl_buffer_constructor (GType                  type,
 }
 
 static GeglTile *
-get_tile (GeglProvider *tile_store,
+get_tile (GeglProvider *buffer,
           gint          x,
           gint          y,
           gint          z)
 {
-  GeglHandlers *handlers = (GeglHandlers*)(tile_store);
-  GeglProvider *provider = ((GeglHandler*)tile_store)->provider;
+  GeglHandlers *handlers = (GeglHandlers*)(buffer);
+  GeglProvider *provider = ((GeglHandler*)buffer)->provider;
   GeglTile     *tile   = NULL;
 
   if (handlers->chain != NULL)
@@ -480,27 +480,27 @@ get_tile (GeglProvider *tile_store,
 
   if (tile)
     {
-      GeglBuffer *buffer = (GeglBuffer*)(tile_store);
+      GeglBuffer *buf = (GeglBuffer*)(buffer);
       tile->x = x;
       tile->y = y;
       tile->z = z;
 
-      if (x < buffer->min_x)
-        buffer->min_x = x;
-      if (y < buffer->min_y)
-        buffer->min_y = y;
-      if (x > buffer->max_x)
-        buffer->max_x = x;
-      if (y > buffer->max_y)
-        buffer->max_y = y;
-      if (z > buffer->max_z)
-        buffer->max_z = z;
+      if (x < buf->min_x)
+        buf->min_x = x;
+      if (y < buf->min_y)
+        buf->min_y = y;
+      if (x > buf->max_x)
+        buf->max_x = x;
+      if (y > buf->max_y)
+        buf->max_y = y;
+      if (z > buf->max_z)
+        buf->max_z = z;
 
       /* storing information in tile, to enable the dispose function of the
        * tile instance to "hook" back to the storage with correct coordinates.
        */
       {
-        tile->storage   = buffer->storage;
+        tile->storage   = buf->storage;
         tile->storage_x = x;
         tile->storage_y = y;
         tile->storage_z = z;
@@ -508,6 +508,20 @@ get_tile (GeglProvider *tile_store,
     }
 
   return tile;
+}
+
+
+static gpointer
+command (GeglProvider   *buffer,
+         GeglTileCommand command,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
+{
+  if (command == GEGL_TILE_GET)
+    return get_tile (buffer, x, y, z);
+  return gegl_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
 }
 
 static void
@@ -521,7 +535,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
   gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  tile_provider_class->get_tile  = get_tile;
+  tile_provider_class->command = command;
 
   g_object_class_install_property (gobject_class, PROP_PX_SIZE,
                                    g_param_spec_int ("px-size", "pixel-size", "size of a single pixel in bytes.",
@@ -613,30 +627,6 @@ gegl_buffer_init (GeglBuffer *buffer)
   allocated_buffers++;
 }
 
-#if 0
-gboolean
-gegl_buffer_void_tile (GeglBuffer *buffer,
-                       gint        x,
-                       gint        y)
-{
-  gint z = 0;
-
-  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
-
-  return gegl_provider_message (GEGL_PROVIDER (buffer),
-                                  GEGL_TILE_VOID, x, y, z, NULL);
-}
-
-/* returns TRUE if something was done */
-gboolean
-gegl_buffer_idle (GeglBuffer *buffer)
-{
-  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
-
-  return gegl_provider_message (GEGL_PROVIDER (buffer),
-                                GEGL_TILE_IDLE, 0, 0, 0, NULL);
-}
-#endif
 
 /***************************************************************************/
 
@@ -681,7 +671,7 @@ gegl_buffer_void (GeglBuffer *buffer)
 
                   if (z != 0 ||
                       tx >= buffer->min_x)
-                  gegl_provider_message (GEGL_PROVIDER (buffer),
+                  gegl_provider_command (GEGL_PROVIDER (buffer),
                                          GEGL_TILE_VOID, tx, ty, z, NULL);
 
                   if (z != 0 ||

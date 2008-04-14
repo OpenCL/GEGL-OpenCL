@@ -49,7 +49,7 @@ GType gegl_handler_get_type (void) G_GNUC_CONST;
 
 
 gpointer   gegl_handler_chain_up (GeglHandler     *handler,
-                                  GeglTileMessage  message,
+                                  GeglTileCommand  command,
                                   gint             x,
                                   gint             y,
                                   gint             z,

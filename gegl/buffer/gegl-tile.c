@@ -31,6 +31,7 @@
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
+#include "gegl-provider.h"
 
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
@@ -283,39 +284,29 @@ gegl_tile_void_pyramid (GeglTile *tile)
       x /= 2;
       y /= 2;
 
-      gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                               GEGL_TILE_VOID,
-                               x, y, z, NULL);
+      gegl_provider_void (GEGL_PROVIDER (tile->storage), x, y, z);
 #if 0
       /* FIXME: reenable this code */
       if (!ver)
         {
           if (!hor)
             {
-              gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                                       GEGL_TILE_VOID_TL,
-                                       x, y, z, NULL);
+              gegl_provider_void_tl (GEGL_PROVIDER (tile->storage), x,y,z);
             }
           else
             {
-              gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                                       GEGL_TILE_VOID_TR,
-                                       x, y, z, NULL);
+              gegl_provider_void_tr (GEGL_PROVIDER (tile->storage), x,y,z);              
             }
         }
       else
         {
           if (!hor)
             {
-              gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                                       GEGL_TILE_VOID_BL,
-                                       x, y, z, NULL);
+              gegl_provider_void_bl (GEGL_PROVIDER (tile->storage), x,y,z);              
             }
           else
             {
-              gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                                       GEGL_TILE_VOID_BR,
-                                       x, y, z, NULL);
+			  gegl_provider_void_br (GEGL_PROVIDER (tile->storage), x,y,z);
             }
         }
 #endif
@@ -406,12 +397,11 @@ gboolean gegl_tile_store (GeglTile *tile)
 {
   if (tile->storage == NULL)
     return FALSE;
-  return GPOINTER_TO_INT (gegl_provider_message (GEGL_PROVIDER (tile->storage),
-                          GEGL_TILE_SET, tile->storage_x,
-                          tile->storage_y,
-                          tile->storage_z, tile));
+  return gegl_provider_set_tile (GEGL_PROVIDER (tile->storage),
+                                 tile->storage_x,
+                                 tile->storage_y,
+                                 tile->storage_z, tile);
 }
-
 
 /* compute the tile indice of a coordinate
  * the stride is the width/height of tiles along the axis of coordinate

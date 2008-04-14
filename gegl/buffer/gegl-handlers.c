@@ -84,29 +84,9 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_handlers_parent_class)->finalize (object);
 }
 
-static GeglTile *
-get_tile (GeglProvider *tile_store,
-          gint          x,
-          gint          y,
-          gint          z)
-{
-  GeglHandlers  *handlers = (GeglHandlers *) tile_store;
-  GeglProvider  *provider = ((GeglHandler *) tile_store)->provider;
-  GeglTile      *tile     = NULL;
-
-  if (handlers->chain != NULL)
-    tile = gegl_provider_get_tile ((GeglProvider *) (handlers->chain->data),
-                                     x, y, z);
-  else if (provider)
-    tile = gegl_provider_get_tile (provider, x, y, z);
-  else
-    g_assert (0);
-  return tile;
-}
-
 static gpointer
-message (GeglProvider  *tile_store,
-         GeglTileMessage message,
+command (GeglProvider  *tile_store,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
@@ -116,10 +96,10 @@ message (GeglProvider  *tile_store,
   GeglProvider *provider = ((GeglHandler *) tile_store)->provider;
 
   if (handlers->chain != NULL)
-    return gegl_provider_message ((GeglProvider *)(handlers->chain->data),
-                                  message, x, y, z, data);
+    return gegl_provider_command ((GeglProvider *)(handlers->chain->data),
+                                  command, x, y, z, data);
   else if (provider)
-    return gegl_provider_message (provider, message, x, y, z, data);
+    return gegl_provider_command (provider, command, x, y, z, data);
   else
     g_assert (0);
 
@@ -135,8 +115,7 @@ gegl_handlers_class_init (GeglHandlersClass *class)
   gobject_class    = (GObjectClass *) class;
   tile_store_class = (GeglProviderClass *) class;
 
-  tile_store_class->get_tile = get_tile;
-  tile_store_class->message  = message;
+  tile_store_class->command  = command;
 
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;

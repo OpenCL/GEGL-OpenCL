@@ -130,6 +130,20 @@ constructor (GType                  type,
 }
 
 
+static gpointer
+command (GeglProvider   *buffer,
+         GeglTileCommand command,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
+{
+  if (command == GEGL_TILE_GET)
+    return get_tile (buffer, x, y, z);
+  return gegl_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
+}
+
+
 static void
 gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 {
@@ -140,8 +154,7 @@ gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-
-  provider_class->get_tile = get_tile;
+  provider_class->command = command;
 
   g_object_class_install_property (gobject_class, PROP_BACKEND,
                                    g_param_spec_object ("backend",

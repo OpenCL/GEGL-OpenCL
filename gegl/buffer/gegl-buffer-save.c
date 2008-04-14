@@ -231,8 +231,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
                   gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-                  if (gegl_provider_message (GEGL_PROVIDER (buffer),
-                                             GEGL_TILE_EXIST, tx, ty, z, NULL))
+                  if (gegl_provider_exist (GEGL_PROVIDER (buffer), tx, ty, z))
                     {
                       tx += info->x_tile_shift / factor;
                       ty += info->y_tile_shift / factor;

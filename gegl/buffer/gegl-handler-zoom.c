@@ -328,26 +328,28 @@ get_tile (GeglProvider *gegl_provider,
 }
 
 static gpointer
-message (GeglProvider  *tile_store,
-         GeglTileMessage message,
+command (GeglProvider  *tile_store,
+         GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
   GeglHandler *handler  = GEGL_HANDLER (tile_store);
-  GeglProvider *provider = handler->provider;
+  /*GeglProvider *provider = handler->provider;*/
 
-  if (message == GEGL_TILE_VOID_TL ||
-      message == GEGL_TILE_VOID_TR ||
-      message == GEGL_TILE_VOID_BL ||
-      message == GEGL_TILE_VOID_BR)
+  if (command == GEGL_TILE_GET)
+    return get_tile (tile_store, x, y, z);
+  if (command == GEGL_TILE_VOID_TL ||
+      command == GEGL_TILE_VOID_TR ||
+      command == GEGL_TILE_VOID_BL ||
+      command == GEGL_TILE_VOID_BR)
     {
-      GeglTile *tile = gegl_provider_get_tile (provider, x, y, z);
+      GeglTile *tile = gegl_provider_get_tile (tile_store, x, y, z);
 
       if (!tile)
         return FALSE;
-      switch (message)
+      switch (command)
         {
           case GEGL_TILE_VOID_TL:
             tile->flags |= GEGL_TILE_DIRT_TL;
@@ -371,8 +373,8 @@ message (GeglProvider  *tile_store,
       g_object_unref (tile);
       return FALSE;
     }
-  /* pass the message on */
-  return gegl_handler_chain_up (handler, message, x, y, z, data);
+  /* pass the command on */
+  return gegl_handler_chain_up (handler, command, x, y, z, data);
 }
 
 
@@ -450,8 +452,7 @@ gegl_handler_zoom_class_init (GeglHandlerZoomClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  provider_class->get_tile = get_tile;
-  provider_class->message  = message;
+  provider_class->command  = command;
 
   g_object_class_install_property (gobject_class, PROP_STORAGE,
                                    g_param_spec_object ("storage",

@@ -160,8 +160,7 @@ storage_idle (gpointer data)
       return FALSE;
     }
 
-  gegl_provider_message (GEGL_PROVIDER (storage),
-                         GEGL_TILE_IDLE, 0, 0, 0, NULL);
+  gegl_provider_idle (GEGL_PROVIDER (storage));                        
 
   return TRUE;
 }

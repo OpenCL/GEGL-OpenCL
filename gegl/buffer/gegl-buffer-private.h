@@ -56,7 +56,7 @@ struct _GeglBuffer
   gint              min_x; /* the extent of tile indices that has been */
   gint              min_y; /* produced by _get_tile for this buffer */
   gint              max_x; /* this is used in gegl_buffer_void to narrow */
-  gint              max_y; /* down the tiles kill messages are sent for */
+  gint              max_y; /* down the tiles kill commands are sent for */
   gint              max_z;
 };
 

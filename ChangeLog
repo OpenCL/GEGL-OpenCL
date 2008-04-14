@@ -1,5 +1,30 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	s/Message/Command/g s/message/command/g, added some macros to
+	gegl_provider that works as wrappers to use the commands directly
+	as if they were functions.
+
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-handler-cache.c:
+	* gegl/buffer/gegl-handler-empty.c:
+	* gegl/buffer/gegl-handler-log.c:
+	* gegl/buffer/gegl-handler-zoom.c:
+	* gegl/buffer/gegl-handler.c:
+	* gegl/buffer/gegl-handler.h:
+	* gegl/buffer/gegl-handlers.c:
+	* gegl/buffer/gegl-handlers.h:
+	* gegl/buffer/gegl-provider.c:
+	* gegl/buffer/gegl-provider.h:
+	* gegl/buffer/gegl-storage.c:
+	* gegl/buffer/gegl-tile-disk.c:
+	* gegl/buffer/gegl-tile-gio.c:
+	* gegl/buffer/gegl-tile-mem.c:
+	* gegl/buffer/gegl-tile.c:
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Changed the tile message/manipulation bus to return a gpointer instead
 	of a gboolean for the calls.
 	* gegl/buffer/gegl-provider.c: (message):
