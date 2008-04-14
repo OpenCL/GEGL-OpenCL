@@ -372,9 +372,7 @@ message (GeglProvider  *tile_store,
       return FALSE;
     }
   /* pass the message on */
-  if (handler->provider)
-    return gegl_provider_message (handler->provider, message, x, y, z, data);
-  return FALSE; /* pass it on */
+  return gegl_handler_chain_up (handler, message, x, y, z, data);
 }
 
 

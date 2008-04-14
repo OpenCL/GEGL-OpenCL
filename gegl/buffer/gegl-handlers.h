@@ -21,12 +21,12 @@
 
 #include "gegl-handler.h"
 
-#define GEGL_TYPE_TILE_TRAITS            (gegl_handlers_get_type ())
-#define GEGL_HANDLERS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_TRAITS, GeglHandlers))
-#define GEGL_HANDLERS_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_TRAITS, GeglHandlersClass))
-#define GEGL_IS_TILE_TRAITS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_TRAITS))
-#define GEGL_IS_TILE_TRAITS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_TRAITS))
-#define GEGL_HANDLERS_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_TRAITS, GeglHandlersClass))
+#define GEGL_TYPE_HANDLERS            (gegl_handlers_get_type ())
+#define GEGL_HANDLERS(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HANDLERS, GeglHandlers))
+#define GEGL_HANDLERS_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HANDLERS, GeglHandlersClass))
+#define GEGL_IS_HANDLERS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HANDLERS))
+#define GEGL_IS_HANDLERS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HANDLERS))
+#define GEGL_HANDLERS_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HANDLERS, GeglHandlersClass))
 
 struct _GeglHandlers
 {
@@ -42,7 +42,17 @@ struct _GeglHandlersClass
 
 GType         gegl_handlers_get_type   (void) G_GNUC_CONST;
 
-/* NOTE: gegl_handlers_add steals the initial assumed reference */
+/**
+ * gegl_handlers_add:
+ * @handlers: a #GeglHandlers
+ * @handler: a #GeglHandler.
+ *
+ * Adds @handler to the list of handlers to be processed, the order handlers
+ * are added in is from original provider to last processing element, messages
+ * are passed from the last added to the first one in the chain.
+ *
+ * Returns: the added handler.
+ */
 GeglHandler * gegl_handlers_add        (GeglHandlers *handlers,
                                         GeglHandler  *handler);
 

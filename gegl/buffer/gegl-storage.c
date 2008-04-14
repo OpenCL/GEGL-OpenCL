@@ -23,14 +23,15 @@
 #include "gegl-storage.h"
 #include "gegl-tile.h"
 #include "gegl-tile-disk.h"
+#include "gegl-tile-mem.h"
+#include "gegl-tile-gio.h"
 #include "gegl-handler-empty.h"
 #include "gegl-handler-zoom.h"
-#include "gegl-tile-mem.h"
 #include "gegl-handler-cache.h"
 #include "gegl-handler-log.h"
 
 
-G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
+G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_HANDLERS)
 
 #define TILE_WIDTH  128
 #define TILE_HEIGHT 64
@@ -175,6 +176,7 @@ gegl_storage_constructor (GType                  type,
   GeglStorage    *storage;
   GeglHandlers   *handlers;
   GeglHandler    *handler;
+  GeglHandler    *cache = NULL;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
@@ -184,6 +186,7 @@ gegl_storage_constructor (GType                  type,
 
   if (storage->path != NULL)
     {
+#if 1
       g_object_set (storage,
                     "provider", g_object_new (GEGL_TYPE_TILE_DISK,
                                             "tile-width", storage->tile_width,
@@ -192,6 +195,16 @@ gegl_storage_constructor (GType                  type,
                                             "path", storage->path,
                                             NULL),
                     NULL);
+#else
+      g_object_set (storage,
+                    "provider", g_object_new (GEGL_TYPE_TILE_GIO,
+                                            "tile-width", storage->tile_width,
+                                            "tile-height", storage->tile_height,
+                                            "format", storage->format,
+                                            "path", storage->path,
+                                            NULL),
+                    NULL);
+#endif
     }
   else
     {
@@ -209,31 +222,46 @@ gegl_storage_constructor (GType                  type,
                 "px-size",   &storage->px_size,
                 NULL);
 
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
-                                                  "size", 256,
-                                                   NULL));
+  if (g_getenv("GEGL_LOG_TILE_BACKEND"))
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
 
-  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG,
-                                                  NULL));
+
+  /* FIXME: the cache should be made shared between all GeglStorages,
+   * to get a better gauge of memory use (ideally we would want to make
+   * to adapt to an approximate number of bytes to be allocated)
+   */
+  if (1) 
+    cache = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
+                                                       "size", 256,
+                                                       NULL));
+  if (g_getenv("GEGL_LOG_TILE_CACHE"))
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+
 
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
                                                   "backend", handler->provider,
                                                   "storage", storage,
                                                   NULL));
 
+  if (g_getenv("GEGL_LOG_TILE_ZOOM"))
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+
   /* moved here to allow sharing between buffers (speeds up, but only
-   * allows nulled (transparent) blank tiles,..
+   * allows nulled (transparent) blank tiles, or we would need a separate
+   * gegl-storage for each tile.
    */
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
                                                   "backend", handler->provider,
                                                    NULL));
+  if (g_getenv("GEGL_LOG_TILE_EMPTY"))
+    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
 
   /* it doesn't really matter that empty tiles are not cached, since they
    * are Copy on Write.
    */
 
   storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
-                                              250,
+                                              500,
                                               storage_idle,
                                               storage,
                                               NULL);

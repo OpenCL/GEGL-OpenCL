@@ -41,9 +41,10 @@
 #include "gegl-sampler-cubic.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
+#include "gegl-id-pool.h"
 
 
-G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
+G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_HANDLERS)
 
 #if ENABLE_MP
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
@@ -1832,7 +1833,9 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                                const GeglRectangle *extent)
 {
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
-  g_return_val_if_fail (extent != NULL, NULL);
+
+  if (extent == NULL)
+    extent = gegl_buffer_get_extent (buffer);
 
   return g_object_new (GEGL_TYPE_BUFFER,
                        "provider", buffer,
@@ -1840,8 +1843,6 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                        "y", extent->y,
                        "width", extent->width,
                        "height", extent->height,
-       /*              "abyss-width", 0,
-                       "abyss-height", 0,  */
                        NULL);
 }
 
@@ -1929,4 +1930,87 @@ gegl_buffer_interpolation_from_string (const gchar *string)
     return GEGL_INTERPOLATION_LINEAR;
 
  return GEGL_INTERPOLATION_NEAREST;
+}
+
+static GeglIDPool *pool = NULL;
+
+guint
+gegl_buffer_share (GeglBuffer *buffer)
+{
+  guint id;
+  if (!pool)
+    pool = gegl_id_pool_new (16);
+  id = gegl_id_pool_add (pool, buffer);
+  /* FIXME: weak reference to void the handle when the buffer is
+   * finalized
+   */
+  return id;
+}
+
+#include <glib/gprintf.h>
+
+void
+gegl_buffer_make_uri (gchar       *buf_128,
+                      gchar       *host,
+                      gint         port,
+                      gint         process,
+                      gint         handle)
+{
+  gchar *p=buf_128;
+
+  g_sprintf (p, "buffer://%s", host?host:"");
+  p+=strlen (p);
+  if (port)
+    {
+      g_sprintf (p, ":%i", port);
+      p+=strlen (p);
+    }
+  g_sprintf (p, "/");
+  p+=strlen (p);
+  if (process)
+    {
+      g_sprintf (p, "%i", process);
+      p+=strlen (p);
+    }
+  g_sprintf (p, "/");
+  p+=strlen (p);
+  if (handle || 1)
+    {
+      g_sprintf (p, "%i", handle);
+      p+=strlen (p);
+    }
+  else
+    {
+      g_warning ("no handle provided when building uri:\n%s\n", buf_128);
+    }
+}
+
+
+GeglBuffer*
+gegl_buffer_open (const gchar *uri)
+{
+  /* only supports local addresses for now */
+  guint process; /* self */
+  guint handle;
+
+  process = 0;
+  handle = 0;
+
+  if (!pool)
+    pool = gegl_id_pool_new (16);
+
+  if (!g_str_has_prefix (uri, "buffer://"))
+   {
+     g_warning ("'%s' does not start like a valid buffer handle", uri);
+     return NULL;
+   }
+  if (g_str_has_prefix (uri, "buffer:////"))
+   {
+     /* local buffer */
+     handle = atoi (uri + 11);
+     g_print ("got %i, %p\n", handle, gegl_id_pool_lookup (pool, handle));
+     return gegl_buffer_create_sub_buffer (gegl_id_pool_lookup (pool, handle), NULL);
+   }
+  g_warning ("don't know how to handle buffer path: %s", uri);
+  return NULL;
 }

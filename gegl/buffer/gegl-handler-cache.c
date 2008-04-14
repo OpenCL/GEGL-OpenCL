@@ -144,7 +144,9 @@ message (GeglProvider    *tile_store,
     {
       gboolean is_cached = gegl_handler_cache_has_tile (cache, x, y, z);
       if (is_cached)
-        return TRUE;
+        return TRUE; /* XXX: perhaps we could return an integer/pointer
+                      * value over the bus instead of a boolean?
+                      */
       /* otherwise pass on the request */
     }
 
@@ -158,9 +160,7 @@ message (GeglProvider    *tile_store,
     {
       gegl_handler_cache_void (cache, x, y, z);
     }
-  if (handler->provider)
-    return gegl_provider_message (handler->provider, message, x, y, z, data);
-  return FALSE;
+  return gegl_handler_chain_up (handler, message, x, y, z, data);
 }
 
 static void

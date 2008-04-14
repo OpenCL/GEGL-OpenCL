@@ -26,14 +26,14 @@ G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_HANDLER)
 
 static GeglTile *
 get_tile (GeglProvider *gegl_provider,
-          gint           x,
-          gint           y,
-          gint           z)
+          gint          x,
+          gint          y,
+          gint          z)
 {
   GeglProvider *provider = GEGL_HANDLER (gegl_provider)->provider;
   GeglTile      *tile   = NULL;
 
-  g_warning ("%p get_tile (%i,%i,%i)", (void *) gegl_provider, x, y, z);
+  g_print ("(get %p %i,%i,%i)", (void *) gegl_provider, x, y, z);
 
   if (provider)
     tile = gegl_provider_get_tile (provider, x, y, z);
@@ -43,8 +43,8 @@ get_tile (GeglProvider *gegl_provider,
 
 static char *messages[] =
 {
-  "set",         "is_dirty", "is_cached", "undo_start_group",                "zoom_update", "dirty",
-  "flush_dirty", "idle",     "void",      "last_message (or added to enum)", "eekmsg",      "eekmsg"
+  "idle", "set",  "is_cached", "exist", "void", "void tl", "void tr", "void bl",
+  "void br", "undo start group", "last message", "eeek", NULL
 };
 
 static gboolean
@@ -56,11 +56,20 @@ message (GeglProvider  *gegl_provider,
          gpointer        data)
 {
   GeglHandler *handler = GEGL_HANDLER (gegl_provider);
+  gboolean     result = FALSE;
 
-  g_warning ("%p message(%s, x=%i, y=%i, z=%i, data=%p)", (void *) gegl_provider, messages[message], x, y, z, data);
-  if (handler->provider)
-    return gegl_provider_message (handler->provider, message, x, y, z, data);
-  return FALSE;
+  result = gegl_handler_chain_up (handler, message, x, y, z, data);
+
+  switch (message)
+    {
+      case GEGL_TILE_IDLE:
+        break;
+      default:
+        g_print ("(%s %p %p %i,%i,%i => %s)", 
+          messages[message], (void *) gegl_provider, data, x, y, z,
+          result?"1":"0");
+    }
+  return result;
 }
 
 static void

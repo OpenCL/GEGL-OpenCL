@@ -66,7 +66,7 @@ get_tile (GeglProvider *gegl_provider,
 }
 
 static gboolean
-message (GeglProvider  *gegl_provider,
+message (GeglProvider   *gegl_provider,
          GeglTileMessage message,
          gint            x,
          gint            y,
@@ -75,9 +75,7 @@ message (GeglProvider  *gegl_provider,
 {
   GeglHandler *handler = (GeglHandler*)gegl_provider;
 
-  if (handler->provider)
-    return gegl_provider_message (handler->provider, message, x, y, z, data);
-  return FALSE;
+  return gegl_handler_chain_up (handler, message, x, y, z, data);
 }
 
 static void
@@ -118,7 +116,7 @@ set_property (GObject      *gobject,
         /* special case if we are the Traits subclass of Trait
          * also set the source at the end of the chain.
          */
-        if (GEGL_IS_TILE_TRAITS (handler))
+        if (GEGL_IS_HANDLERS (handler))
           {
             GeglHandlers *handlers = GEGL_HANDLERS (handler);
             GSList         *iter   = (void *) handlers->chain;
@@ -135,6 +133,19 @@ set_property (GObject      *gobject,
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
     }
+}
+
+gboolean   gegl_handler_chain_up (GeglHandler     *handler,
+                                  GeglTileMessage  message,
+                                  gint             x,
+                                  gint             y,
+                                  gint             z,
+                                  gpointer         data)
+{
+  GeglProvider *provider = gegl_handler_get_provider (handler);
+  if (provider)
+    return gegl_provider_message (provider, message, x, y, z, data);
+  return FALSE;
 }
 
 static void
@@ -163,3 +174,5 @@ gegl_handler_init (GeglHandler *self)
 {
   self->provider = NULL;
 }
+
+

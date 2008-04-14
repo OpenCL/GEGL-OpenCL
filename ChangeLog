@@ -1,5 +1,19 @@
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-handler.[ch]: added new gegl_handler_chain_up
+	method to abstract away the chain up call needed.
+	* gegl/buffer/gegl-handler-cache.c: (message): chain up
+	* gegl/buffer/gegl-handler-log.c: (get_tile), (message): chain up, and
+	update log messages.
+	* gegl/buffer/gegl-handler-zoom.c: (message): chain up
+	* gegl/buffer/gegl-handlers.h: s/TILE_TRAITS/HANDLERS/g
+	* gegl/buffer/gegl-storage.c: make it possible to enable logging
+	through environment variables.
+	* gegl/buffer/gegl-tile-gio.c: (message): added comment.
+	* gegl/buffer/gegl-buffer.[ch]: general cleanup
+
+2008-04-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: back out accidental change.
 
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>

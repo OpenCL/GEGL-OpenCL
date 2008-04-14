@@ -264,6 +264,7 @@ message (GeglProvider  *tile_store,
         return set_tile (tile_store, data, x, y, z);
 
       case GEGL_TILE_IDLE:
+        /* this backend has nothing to do on idle calls */
         return FALSE;
 
       case GEGL_TILE_VOID:
