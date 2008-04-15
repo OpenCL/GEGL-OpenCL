@@ -185,7 +185,7 @@ gegl_storage_constructor (GType                  type,
 
   if (storage->path != NULL)
     {
-#if 1
+#if 0
       g_object_set (storage,
                     "source", g_object_new (GEGL_TYPE_TILE_DISK,
                                             "tile-width", storage->tile_width,
@@ -229,21 +229,21 @@ gegl_storage_constructor (GType                  type,
    * to get a better gauge of memory use (ideally we would want to make
    * to adapt to an approximate number of bytes to be allocated)
    */
+
   if (1) 
     cache = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
-                                                       "size", 256,
+                                                       "size", 128,
                                                        NULL));
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
-
 
   if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
                                                   "backend", handler->source,
                                                   "storage", storage,
                                                   NULL));
-
   if (g_getenv("GEGL_LOG_TILE_ZOOM"))
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+
 
   /* moved here to allow sharing between buffers (speeds up, but only
    * allows nulled (transparent) blank tiles, or we would need a separate
@@ -268,6 +268,16 @@ gegl_storage_constructor (GType                  type,
   return object;
 }
 
+static void
+gegl_storage_finalize (GObject *object)
+{
+  GeglStorage *self = GEGL_STORAGE (object);
+
+  if (self->idle_swapper)
+    g_source_remove (self->idle_swapper);
+
+  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
+}
 
 static void
 gegl_storage_class_init (GeglStorageClass *class)
@@ -276,6 +286,7 @@ gegl_storage_class_init (GeglStorageClass *class)
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->constructor  = gegl_storage_constructor;
+  gobject_class->finalize     = gegl_storage_finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
