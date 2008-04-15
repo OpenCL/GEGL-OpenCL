@@ -102,11 +102,14 @@ gio_entry_read (GeglTileGio *gio,
   GFile            *file;
   gint              tile_size = GEGL_TILE_BACKEND (gio)->tile_size;
   GFileInputStream *i;
+  gsize             bytes_read;
 
   file = make_tile_file (gio, entry->x, entry->y, entry->z);
   i = g_file_read (file, NULL, NULL);
 
-  g_input_stream_read (G_INPUT_STREAM (i), dest, tile_size, NULL, NULL);
+  g_input_stream_read_all (G_INPUT_STREAM (i), dest, tile_size, &bytes_read,
+                           NULL, NULL);
+  g_assert (bytes_read == tile_size);
   g_input_stream_close (G_INPUT_STREAM (i), NULL, NULL);
 
   g_object_unref (G_OBJECT (i));
@@ -121,12 +124,15 @@ gio_entry_write (GeglTileGio *gio,
   gint               tile_size = GEGL_TILE_BACKEND (gio)->tile_size;
   GFile             *file;
   GFileOutputStream *o;
+  gsize              bytes_written;
 
   file = make_tile_file (gio, entry->x, entry->y, entry->z);
   o = g_file_replace (file, NULL, FALSE, 
                       G_FILE_CREATE_NONE, NULL, NULL);
 
-  g_output_stream_write (G_OUTPUT_STREAM (o), source, tile_size, NULL, NULL);
+  g_output_stream_write_all (G_OUTPUT_STREAM (o), source, tile_size, 
+                             &bytes_written, NULL, NULL);
+  g_assert (bytes_written == tile_size);
   g_output_stream_close (G_OUTPUT_STREAM (o), NULL, NULL);
 
   g_object_unref (G_OBJECT (o));
@@ -162,9 +168,9 @@ get_tile (GeglSource *tile_store,
           gint        y,
           gint        z)
 {
-  GeglTileGio    *tile_gio = GEGL_TILE_GIO (tile_store);
-  GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
-  GeglTile        *tile      = NULL;
+  GeglTileGio     *tile_gio = GEGL_TILE_GIO (tile_store);
+  GeglTileBackend *backend  = GEGL_TILE_BACKEND (tile_store);
+  GeglTile        *tile     = NULL;
 
  if (exist_tile (tile_store, NULL, x, y, z))
   {

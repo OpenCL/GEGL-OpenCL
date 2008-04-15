@@ -1,3 +1,8 @@
+2008-04-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-gio.c: (gio_entry_read), (gio_entry_write):
+	use g_input_stream_read_all and g_output_stream_write_all.
+
 2008-04-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-storage.c: do not use the experimental GIO swap
