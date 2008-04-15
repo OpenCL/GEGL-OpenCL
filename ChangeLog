@@ -1,3 +1,7 @@
+2008-04-15  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: require glib >= 2.16.1.
+
 2008-04-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-storage.c: remove idle swapper in finalize.
