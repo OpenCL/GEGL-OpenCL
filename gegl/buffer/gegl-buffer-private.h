@@ -20,7 +20,7 @@
 #define __GEGL_BUFFER_PRIVATE_H__
 
 #include "gegl-buffer.h"
-#include "gegl-handlers.h"
+#include "gegl-handler.h"
 
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
 #define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
@@ -29,7 +29,7 @@
 
 struct _GeglBuffer
 {
-  GeglHandlers      parent_instance; /* which is a GeglHandler which has a
+  GeglHandler       parent_instance; /* which is a GeglHandler which has a
                                         source field which is used for chaining
                                         sub buffers with their anchestors */
 
@@ -62,7 +62,7 @@ struct _GeglBuffer
 
 struct _GeglBufferClass
 {
-  GeglHandlersClass parent_class;
+  GeglHandlerClass parent_class;
 };
 
 
@@ -82,5 +82,10 @@ void           gegl_buffer_save       (GeglBuffer          *buffer,
 void           gegl_buffer_flush      (GeglBuffer *buffer);
 
 const gchar *  gegl_swap_dir          (void);
+
+
+void           gegl_tile_cache_init    (void);
+
+void           gegl_tile_cache_destroy (void);
 
 #endif

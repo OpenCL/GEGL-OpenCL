@@ -1,5 +1,41 @@
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the tile caching in GeglBuffer work more correctly, earlier
+	completely fresh tiles as well as generated zoom tiles needed to
+	be written to backend/swap before being re-read into the cache.
+
+	Now the code uses a global queue for the tile cache, this can later
+	be changed to properly gauge the amount of memory used by the cache
+	(shared data should be taken into account then).
+
+	* gegl/buffer/gegl-buffer-load.c:
+	* gegl/buffer/gegl-buffer-save.c: fixed includes.
+	* gegl/buffer/gegl-buffer-private.h: makde GeglBuffer be a subclass
+	of GeglHandler not GeglHandlers.
+	* gegl/buffer/gegl-buffer.c: do not create buffers via gegl-allocator
+	but create a new storage for each toplevel buffer.
+	* gegl/buffer/gegl-handler-cache.[ch]: made all tile caches share a
+	global queue.
+
+	* gegl/buffer/gegl-handler-zoom.c: (get_tile):
+	* gegl/buffer/gegl-handler-empty.c: (get_tile): add capability to add
+	newly created tiles to the relevant tile cache. (for now the cache
+	is fetched via g_object_get_data (empty. "cache")
+
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor): set cache
+	data on empty and zoom handlers.
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void): set storage to NULL so
+	that a voided tile will not be written to storage.
+	* gegl/gegl-init.c: (gegl_exit): call gegl_tile_cache_destroy to
+	destroy the global cache queue upon GEGL shutdown.
+
+	* gegl/buffer/gegl-buffer-allocator.c: removed
+	* gegl/buffer/gegl-buffer-allocator.h: removed
+	* gegl/buffer/Makefile.am:  removed reference to
+	gegl-buffer-allocator.*
+
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-gio.c: (finalize): fixed code to nuke
 	buffer dir and tile files.
 

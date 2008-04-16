@@ -175,6 +175,8 @@ gegl_storage_constructor (GType                  type,
   GeglStorage    *storage;
   GeglHandlers   *handlers;
   GeglHandler    *handler;
+  GeglHandler    *empty = NULL;
+  GeglHandler    *zoom = NULL;
   GeglHandler    *cache = NULL;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
@@ -221,46 +223,31 @@ gegl_storage_constructor (GType                  type,
                 "px-size",   &storage->px_size,
                 NULL);
 
+  g_object_unref (handler->source); /* eeek */
+
   if (g_getenv("GEGL_LOG_TILE_BACKEND"))
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
 
 
-  /* FIXME: the cache should be made shared between all GeglStorages,
-   * to get a better gauge of memory use (ideally we would want to make
-   * to adapt to an approximate number of bytes to be allocated)
-   */
+  cache = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
+                                                     NULL));
 
-  if (1) 
-    cache = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
-                                                       "size", 128,
-                                                       NULL));
+  zoom = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
+                                                    "backend", handler->source,
+                                                    "storage", storage,
+                                                    NULL));
+  empty = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
+                                                     "backend", handler->source,
+                                                     NULL));
+
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+  g_object_set_data (G_OBJECT (empty), "cache", cache);
+  g_object_set_data (G_OBJECT (zoom), "cache", cache);
 
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
-                                                  "backend", handler->source,
-                                                  "storage", storage,
-                                                  NULL));
-  if (g_getenv("GEGL_LOG_TILE_ZOOM"))
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
-
-
-  /* moved here to allow sharing between buffers (speeds up, but only
-   * allows nulled (transparent) blank tiles, or we would need a separate
-   * gegl-storage for each tile.
-   */
-  if (1) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
-                                                  "backend", handler->source,
-                                                   NULL));
-  if (g_getenv("GEGL_LOG_TILE_EMPTY"))
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
-
-  /* it doesn't really matter that empty tiles are not cached, since they
-   * are Copy on Write.
-   */
 
   storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
-                                              500,
+                                              250,
                                               storage_idle,
                                               storage,
                                               NULL);

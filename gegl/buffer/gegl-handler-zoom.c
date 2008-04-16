@@ -21,6 +21,8 @@
 
 #include "gegl-handler.h"
 #include "gegl-handler-zoom.h"
+#include "gegl-handler-cache.h"
+
 
 G_DEFINE_TYPE (GeglHandlerZoom, gegl_handler_zoom, GEGL_TYPE_HANDLER)
 
@@ -34,6 +36,11 @@ enum
 #include <babl/babl.h>
 #include "gegl-tile-backend.h"
 
+void gegl_handler_cache_insert (GeglHandlerCache *cache,
+                                GeglTile         *tile,
+                                gint              x,
+                                gint              y,
+                                gint              z);
 static inline void set_blank (GeglTile *dst_tile,
                               gint      width,
                               gint      height,
@@ -296,8 +303,16 @@ get_tile (GeglSource *gegl_source,
         tile->y          = y;
         tile->z          = z;
         tile->storage    = zoom->storage;
-        tile->stored_rev = 0;
+        tile->stored_rev = 1;
         tile->rev        = 1;
+
+        {
+          GeglHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_source), "cache");
+          if (cache)
+            {
+              gegl_handler_cache_insert (cache, tile, x, y, z);
+            }
+        }
       }
     gegl_tile_lock (tile);
     data = gegl_tile_get_data (tile);

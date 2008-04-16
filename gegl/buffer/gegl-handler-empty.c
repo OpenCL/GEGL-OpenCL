@@ -21,6 +21,7 @@
 
 #include "gegl-handler.h"
 #include "gegl-handler-empty.h"
+#include "gegl-handler-cache.h"
 
 G_DEFINE_TYPE (GeglHandlerEmpty, gegl_handler_empty, GEGL_TYPE_HANDLER)
 
@@ -41,6 +42,12 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_handler_empty_parent_class)->finalize (object);
 }
 
+void gegl_handler_cache_insert (GeglHandlerCache *cache,
+                                GeglTile         *tile,
+                                gint              x,
+                                gint              y,
+                                gint              z);
+
 static GeglTile *
 get_tile (GeglSource *gegl_source,
           gint        x,
@@ -57,6 +64,14 @@ get_tile (GeglSource *gegl_source,
     return tile;
 
   tile = gegl_tile_dup (empty->tile);
+  tile->x = x;
+  tile->y = y;
+  tile->z = z;
+  {
+    GeglHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_source), "cache");
+    if (cache)
+      gegl_handler_cache_insert (cache, tile, x, y, z);
+  }
 
   return tile;
 }

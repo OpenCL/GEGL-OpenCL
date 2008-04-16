@@ -20,22 +20,40 @@
 
 #include <math.h>
 #include <string.h>
+#include <errno.h>
+
+#include <sys/types.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <errno.h>
+
+#include <sys/types.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef G_OS_WIN32
+#include <process.h>
+#define getpid() _getpid()
+#endif
 
 #include <glib-object.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
 
 #include "gegl-types.h"
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
-#include "gegl-buffer-allocator.h"
+#include "gegl-buffer-private.h"
+#include "gegl-handler.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
-#include "gegl-handler.h"
 #include "gegl-tile.h"
 #include "gegl-handler-cache.h"
 #include "gegl-handler-log.h"
 #include "gegl-handler-empty.h"
-#include "gegl-buffer-allocator.h"
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
@@ -44,7 +62,7 @@
 #include "gegl-id-pool.h"
 
 
-G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_HANDLERS)
+G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_HANDLER)
 
 #if ENABLE_MP
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
@@ -70,6 +88,11 @@ enum
   PROP_PIXELS
 };
 
+static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
+                                                 gint        x,
+                                                 gint        y,
+                                                 gint        width,
+                                                 gint        height);
 
 static inline gint needed_tiles (gint w,
                                  gint stride)
@@ -234,10 +257,11 @@ gegl_buffer_dispose (GObject *object)
   gegl_buffer_sample_cleanup (buffer);
 
   if (handler->source &&
-      GEGL_IS_BUFFER_ALLOCATOR (handler->source))
+      GEGL_IS_STORAGE (handler->source))
     {
       gegl_buffer_void (buffer);
 #if 0
+      g_object_unref (handler->source);
       handler->source = NULL; /* this might be a dangerous way of marking that we have already voided */
 #endif
     }
@@ -297,7 +321,6 @@ gegl_buffer_constructor (GType                  type,
 {
   GObject         *object;
   GeglBuffer      *buffer;
-  GeglHandlers    *handlers;
   GeglTileBackend *backend;
   GeglHandler     *handler;
   GeglSource    *source;
@@ -307,7 +330,6 @@ gegl_buffer_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
   buffer    = GEGL_BUFFER (object);
-  handlers  = GEGL_HANDLERS (object);
   handler   = GEGL_HANDLER (object);
   source  = handler->source;
   backend   = gegl_buffer_backend (buffer);
@@ -330,10 +352,10 @@ gegl_buffer_constructor (GType                  type,
       g_assert (buffer->format);
 
       source = GEGL_SOURCE (gegl_buffer_new_from_format (buffer->format,
-                                                             buffer->extent.x,
-                                                             buffer->extent.y,
-                                                             buffer->extent.width,
-                                                             buffer->extent.height));
+                                                         buffer->extent.x,
+                                                         buffer->extent.y,
+                                                         buffer->extent.width,
+                                                         buffer->extent.height));
       /* after construction,. x and y should be set to reflect
        * the top level behavior exhibited by this buffer object.
        */
@@ -441,66 +463,47 @@ gegl_buffer_constructor (GType                  type,
 
   buffer->storage = gegl_buffer_storage (buffer);
 
-  if (0) gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
-                                                     "backend", backend,
-                                                     NULL));
-
-  /* add a full width (should probably add height as well) sized cache for
-   * this gegl_buffer only if the width is < 16384. The huge buffers used
-   * by the allocator are thus not affected, but all other buffers should
-   * have a enough tiles to be scanline iteratable.
-   */
-
-  if (0 && buffer->extent.width < 1 << 14)
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
-                                                "size",
-                                                needed_tiles (buffer->extent.width, tile_width) + 1,
-                                                NULL));
-
   return object;
 }
 
 static GeglTile *
-get_tile (GeglSource *buffer,
+get_tile (GeglSource *source,
           gint        x,
           gint        y,
           gint        z)
 {
-  GeglHandlers *handlers = (GeglHandlers*)(buffer);
-  GeglSource *source = ((GeglHandler*)buffer)->source;
-  GeglTile     *tile   = NULL;
+  GeglHandler *handler = GEGL_HANDLER (source);
+  GeglTile    *tile   = NULL;
+  source = handler->source;
 
-  if (handlers->chain != NULL)
-    tile = gegl_source_get_tile ((GeglSource*)(handlers->chain->data),
-                                     x, y, z);
-  else if (source)
+  if (source) 
     tile = gegl_source_get_tile (source, x, y, z);
   else
     g_assert (0);
 
   if (tile)
     {
-      GeglBuffer *buf = (GeglBuffer*)(buffer);
+      GeglBuffer *buffer = GEGL_BUFFER (handler);
       tile->x = x;
       tile->y = y;
       tile->z = z;
 
-      if (x < buf->min_x)
-        buf->min_x = x;
-      if (y < buf->min_y)
-        buf->min_y = y;
-      if (x > buf->max_x)
-        buf->max_x = x;
-      if (y > buf->max_y)
-        buf->max_y = y;
-      if (z > buf->max_z)
-        buf->max_z = z;
+      if (x < buffer->min_x)
+        buffer->min_x = x;
+      if (y < buffer->min_y)
+        buffer->min_y = y;
+      if (x > buffer->max_x)
+        buffer->max_x = x;
+      if (y > buffer->max_y)
+        buffer->max_y = y;
+      if (z > buffer->max_z)
+        buffer->max_z = z;
 
       /* storing information in tile, to enable the dispose function of the
        * tile instance to "hook" back to the storage with correct coordinates.
        */
       {
-        tile->storage   = buf->storage;
+        tile->storage   = buffer->storage;
         tile->storage_x = x;
         tile->storage_y = y;
         tile->storage_z = z;
@@ -512,16 +515,21 @@ get_tile (GeglSource *buffer,
 
 
 static gpointer
-command (GeglSource   *buffer,
+command (GeglSource     *source,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  if (command == GEGL_TILE_GET)
-    return get_tile (buffer, x, y, z);
-  return gegl_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
+  GeglHandler *handler = GEGL_HANDLER (source);
+  switch (command)
+    {
+      case GEGL_TILE_GET:
+        return get_tile (source, x, y, z);
+      default:
+        return gegl_handler_chain_up (handler, command, x, y, z, data);
+    }
 }
 
 static void
@@ -692,12 +700,6 @@ done_with_row:
   }
 }
 
-
-/*
- * babl conversion should probably be done on a tile by tile, or even scanline by
- * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
- */
-
 #ifdef BABL
 #undef BABL
 #endif
@@ -749,9 +751,9 @@ pset (GeglBuffer *buffer,
         gint      tiledx = buffer_x + buffer->shift_x + x;
 
         GeglTile *tile = gegl_source_get_tile ((GeglSource *) (buffer),
-                                                   gegl_tile_indice (tiledx, tile_width),
-                                                   gegl_tile_indice (tiledy, tile_height),
-                                                   0);
+                                                gegl_tile_indice (tiledx, tile_width),
+                                                gegl_tile_indice (tiledy, tile_height),
+                                                0);
 
         if (tile)
           {
@@ -1937,7 +1939,6 @@ gegl_buffer_share (GeglBuffer *buffer)
   return id;
 }
 
-#include <glib/gprintf.h>
 
 void
 gegl_buffer_make_uri (gchar       *buf_128,
@@ -2004,3 +2005,95 @@ gegl_buffer_open (const gchar *uri)
   g_warning ("don't know how to handle buffer path: %s", uri);
   return NULL;
 }
+
+
+
+static GeglBuffer *
+gegl_buffer_new_from_format (const void *babl_format,
+                             gint        x,
+                             gint        y,
+                             gint        width,
+                             gint        height)
+{
+  GeglStorage *storage;
+  GeglBuffer  *buffer;
+  gchar       *filename;
+  gchar       *path;
+  static       gint no=1;
+
+  filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
+                              getpid (),
+                              babl_name ((Babl *) babl_format),
+                              no++);
+
+  filename = g_strdup_printf ("%i-%i", getpid(), no++);
+
+  path = g_build_filename (gegl_swap_dir (), filename, NULL);
+  g_free (filename);
+
+  if (gegl_swap_dir ())
+    {
+      storage = g_object_new (GEGL_TYPE_STORAGE,
+                              "format", babl_format,
+                              "path",   path,
+                              NULL);
+    }
+  else
+    {
+      storage = g_object_new (GEGL_TYPE_STORAGE,
+                              "format", babl_format,
+                              NULL);
+    }
+  buffer = g_object_new (GEGL_TYPE_BUFFER,
+                                    "source", storage,
+                                    "x", x,
+                                    "y", y,
+                                    "width", width,
+                                    "height", height,
+                                    NULL);
+
+  g_object_unref (storage);
+  return buffer;
+}
+
+
+/* if this function is made to return NULL swapping is disabled */
+const gchar *
+gegl_swap_dir (void)
+{
+  static gchar *swapdir = "";
+
+  if (swapdir && swapdir[0] == '\0')
+    {
+      if (g_getenv ("GEGL_SWAP"))
+        {
+          if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
+            swapdir = NULL;
+          else
+            swapdir = g_strdup (g_getenv ("GEGL_SWAP"));
+        }
+      else
+        {
+          swapdir = g_build_filename (g_get_home_dir(),
+                                      "." GEGL_LIBRARY,
+                                      "swap",
+                                      NULL);
+        }
+
+      /* Fall back to "swapping to RAM" if not able to create swap dir
+       */
+      if (swapdir &&
+          ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
+          g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
+        {
+          gchar *name = g_filename_display_name (swapdir);
+
+          g_warning ("unable to create swapdir '%s': %s",
+                     name, g_strerror (errno));
+          g_free (name);
+
+          swapdir = NULL;
+        }
+    }
+  return swapdir;
+};

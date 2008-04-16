@@ -1,7 +1,6 @@
 noinst_LTLIBRARIES = libbuffer.la
 
 BUFFER_sources = \
-    gegl-buffer-allocator.c	\
     gegl-buffer-save.c		\
     gegl-buffer-load.c		\
     gegl-buffer.c		\
@@ -28,7 +27,6 @@ BUFFER_sources = \
     gegl-source.c
 
 BUFFER_headers = \
-    gegl-buffer-allocator.h	\
     gegl-buffer.h		\
     gegl-buffer-private.h	\
     gegl-buffer-save.h		\

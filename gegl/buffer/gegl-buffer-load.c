@@ -45,7 +45,6 @@
 #include "gegl-handler-cache.h"
 #include "gegl-handler-log.h"
 #include "gegl-handler-empty.h"
-#include "gegl-buffer-allocator.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"

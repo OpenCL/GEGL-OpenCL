@@ -344,6 +344,7 @@ void
 gegl_tile_void (GeglTile *tile)
 {
   tile->stored_rev = tile->rev;
+  tile->storage = NULL;
   /* FIXME: make sure the tile is evicted from any storage/buffer caches
    * as well
    */

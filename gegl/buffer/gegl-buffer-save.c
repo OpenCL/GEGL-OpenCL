@@ -43,6 +43,7 @@
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
 #include "gegl-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-handler.h"
@@ -50,7 +51,6 @@
 #include "gegl-handler-cache.h"
 #include "gegl-handler-log.h"
 #include "gegl-handler-empty.h"
-#include "gegl-buffer-allocator.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"

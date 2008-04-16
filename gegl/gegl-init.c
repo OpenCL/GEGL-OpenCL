@@ -39,8 +39,6 @@
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
 
-#include "buffer/gegl-buffer-allocator.h"
-
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
@@ -141,9 +139,9 @@ gegl_exit (void)
 {
   glong timing = gegl_ticks ();
 
+  gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
-  gegl_buffer_allocators_free ();
 
   if (module_db != NULL)
     {
@@ -172,6 +170,7 @@ gegl_exit (void)
 
   if (gegl_buffer_leaks ())
     g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
+  gegl_tile_cache_destroy ();
 
   if (gegl_swap_dir())
     {
