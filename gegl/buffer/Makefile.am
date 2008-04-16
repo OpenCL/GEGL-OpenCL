@@ -1,9 +1,11 @@
 noinst_LTLIBRARIES = libbuffer.la
 
 BUFFER_sources = \
+    gegl-buffer.c		\
+    gegl-buffer-access.c	\
+    gegl-buffer-share.c		\
     gegl-buffer-save.c		\
     gegl-buffer-load.c		\
-    gegl-buffer.c		\
     gegl-cache.c		\
     gegl-sampler.c		\
     gegl-sampler-cubic.c	\

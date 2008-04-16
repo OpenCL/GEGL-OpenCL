@@ -1,5 +1,20 @@
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: split out bits of functionality to the
+	two files below:
+	* gegl/buffer/gegl-buffer-access.c: (pset), (pget),
+	(gegl_buffer_flush), (gegl_buffer_iterate), (gegl_buffer_set),
+	(gegl_buffer_get_scaled), (resample_nearest), (box_filter),
+	(resample_boxfilter_u8), (gegl_buffer_get),
+	(gegl_buffer_get_abyss), (gegl_buffer_sample),
+	(gegl_buffer_sample_cleanup):
+	* gegl/buffer/gegl-buffer-share.c: (gegl_buffer_share),
+	(gegl_buffer_make_uri), (gegl_buffer_open):
+
+	* gegl/buffer/Makefile.am: updated.
+
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-ram.c: (ram_entry_read),
 	(ram_entry_write): s/ramcpy/memcpy/g
 	* gegl/gegl-init.c: (gegl_exit): updated api hooks that
