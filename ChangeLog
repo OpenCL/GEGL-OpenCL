@@ -1,3 +1,8 @@
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-gio.c: (finalize): fixed code to nuke
+	buffer dir and tile files.
+
 2008-04-15  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: require glib >= 2.16.1.
