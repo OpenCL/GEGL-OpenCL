@@ -42,6 +42,7 @@
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
+#include "buffer/gegl-buffer-private.h"
 
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
@@ -132,7 +133,9 @@ gegl_get_option_group (void)
   return group;
 }
 
-void gegl_tile_mem_stats (void);
+void gegl_tile_backend_ram_stats (void);
+void gegl_tile_backend_gio_tiles_stats (void);
+void gegl_tile_backend_swapfile_stats (void);
 
 void
 gegl_exit (void)
@@ -158,7 +161,9 @@ gegl_exit (void)
   if (g_getenv ("GEGL_DEBUG_BUFS") != NULL)
     {
       gegl_buffer_stats ();
-      gegl_tile_mem_stats ();
+      gegl_tile_backend_ram_stats ();
+      gegl_tile_backend_swapfile_stats ();
+      gegl_tile_backend_gio_tiles_stats ();
     }
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);

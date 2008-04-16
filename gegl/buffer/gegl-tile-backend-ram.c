@@ -52,7 +52,7 @@ ram_entry_read (GeglTileBackendRam *ram,
 {
   gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
 
-  ramcpy (dest, entry->offset, tile_size);
+  memcpy (dest, entry->offset, tile_size);
 }
 
 static void inline
@@ -62,7 +62,7 @@ ram_entry_write (GeglTileBackendRam *ram,
 {
   gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
 
-  ramcpy (entry->offset, source, tile_size);
+  memcpy (entry->offset, source, tile_size);
 }
 
 static inline RamEntry *

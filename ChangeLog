@@ -1,5 +1,12 @@
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-ram.c: (ram_entry_read),
+	(ram_entry_write): s/ramcpy/memcpy/g
+	* gegl/gegl-init.c: (gegl_exit): updated api hooks that
+	use internal GeglBuffer API for debug output.
+
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/*: Mass rename and typename refactoring.
 
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
