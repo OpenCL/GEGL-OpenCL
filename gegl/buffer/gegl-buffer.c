@@ -824,9 +824,11 @@ gegl_buffer_new_from_format (const void *babl_format,
   return buffer;
 }
 
+const gchar *
+gegl_swap_dir (void);
 
 /* if this function is made to return NULL swapping is disabled */
-static const gchar *
+const gchar *
 gegl_swap_dir (void)
 {
   static gchar *swapdir = "";
