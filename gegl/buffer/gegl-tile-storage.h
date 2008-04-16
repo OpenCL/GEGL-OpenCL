@@ -16,21 +16,21 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#ifndef __GEGL_STORAGE_H__
-#define __GEGL_STORAGE_H__
+#ifndef __GEGL_TILE_STORAGE_H__
+#define __GEGL_TILE_STORAGE_H__
 
-#include "gegl-handlers.h"
+#include "gegl-tile-handler-chain.h"
 
-#define GEGL_TYPE_STORAGE            (gegl_storage_get_type ())
-#define GEGL_STORAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_STORAGE, GeglStorage))
-#define GEGL_STORAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_STORAGE, GeglStorageClass))
-#define GEGL_IS_STORAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_STORAGE))
-#define GEGL_IS_STORAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_STORAGE))
-#define GEGL_STORAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_STORAGE, GeglStorageClass))
+#define GEGL_TYPE_TILE_STORAGE            (gegl_tile_storage_get_type ())
+#define GEGL_TILE_STORAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORAGE, GeglTileStorage))
+#define GEGL_TILE_STORAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_STORAGE, GeglTileStorageClass))
+#define GEGL_IS_TILE_STORAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_STORAGE))
+#define GEGL_IS_TILE_STORAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_STORAGE))
+#define GEGL_TILE_STORAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_STORAGE, GeglTileStorageClass))
 
-struct _GeglStorage
+struct _GeglTileStorage
 {
-  GeglHandlers parent_instance;
+  GeglTileHandlerChain parent_instance;
 
   Babl        *format;
   gint         tile_width;
@@ -44,11 +44,11 @@ struct _GeglStorage
   guint        idle_swapper;
 };
 
-struct _GeglStorageClass
+struct _GeglTileStorageClass
 {
-  GeglHandlersClass parent_class;
+  GeglTileHandlerChainClass parent_class;
 };
 
-GType gegl_storage_get_type (void) G_GNUC_CONST;
+GType gegl_tile_storage_get_type (void) G_GNUC_CONST;
 
 #endif

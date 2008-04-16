@@ -19,36 +19,34 @@
 #ifndef __GEGL_BUFFER_TYPES_H__
 #define __GEGL_BUFFER_TYPES_H__
 
-typedef struct _GeglSampler              GeglSampler;
+typedef struct _GeglSampler               GeglSampler;
 
-typedef struct _GeglTile                 GeglTile;
-typedef struct _GeglTileClass            GeglTileClass;
+typedef struct _GeglTile                  GeglTile;
+typedef struct _GeglTileClass             GeglTileClass;
 
-typedef struct _GeglSource               GeglSource;
-typedef struct _GeglSourceClass          GeglSourceClass;
+typedef struct _GeglTileSource            GeglTileSource;
+typedef struct _GeglTileSourceClass       GeglTileSourceClass;
 
-typedef struct _GeglTileBackend          GeglTileBackend;
-typedef struct _GeglTileBackendClass     GeglTileBackendClass;
+typedef struct _GeglTileBackend           GeglTileBackend;
+typedef struct _GeglTileBackendClass      GeglTileBackendClass;
 
-typedef struct _GeglHandler              GeglHandler;
-typedef struct _GeglHandlerClass         GeglHandlerClass;
+typedef struct _GeglTileHandler           GeglTileHandler;
+typedef struct _GeglTileHandlerClass      GeglTileHandlerClass;
 
-typedef struct _GeglHandlers             GeglHandlers;
-typedef struct _GeglHandlersClass        GeglHandlersClass;
+typedef struct _GeglTileHandlerChain      GeglTileHandlerChain;
+typedef struct _GeglTileHandlerChainClass GeglTileHandlerChainClass;
 
-typedef struct _GeglStorage              GeglStorage;
-typedef struct _GeglStorageClass         GeglStorageClass;
+typedef struct _GeglTileStorage           GeglTileStorage;
+typedef struct _GeglTileStorageClass      GeglTileStorageClass;
 
 #ifndef __GEGL_BUFFER_H__
-typedef struct _GeglBuffer               GeglBuffer;
+typedef struct _GeglBuffer                GeglBuffer;
 #endif
-typedef struct _GeglBufferClass          GeglBufferClass;
+typedef struct _GeglBufferClass           GeglBufferClass;
 
-typedef struct _GeglCache                GeglCache;
-typedef struct _GeglCacheClass           GeglCacheClass;
+typedef struct _GeglCache                 GeglCache;
+typedef struct _GeglCacheClass            GeglCacheClass;
 
-typedef struct _GeglBufferAllocator      GeglBufferAllocator;
-typedef struct _GeglBufferAllocatorClass GeglBufferAllocatorClass;
-typedef struct _GeglRegion               GeglRegion;
+typedef struct _GeglRegion                GeglRegion;
 
 #endif

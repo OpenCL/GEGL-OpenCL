@@ -17,45 +17,44 @@
  */
 #include <glib.h>
 #include <glib-object.h>
-#include "gegl-source.h"
+#include "gegl-tile-source.h"
 
-G_DEFINE_TYPE (GeglSource, gegl_source, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglTileSource, gegl_tile_source, G_TYPE_OBJECT)
 
 static gpointer
-command (GeglSource  *gegl_source,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+command (GeglTileSource  *gegl_tile_source,
+         GeglTileCommand  command,
+         gint             x,
+         gint             y,
+         gint             z,
+         gpointer         data)
 {
   g_warning ("Unimplemented %s %i, %i, %i, %p", G_STRFUNC, command, x, y, data);
   return NULL;
 }
 
 static void
-gegl_source_class_init (GeglSourceClass *klass)
+gegl_tile_source_class_init (GeglTileSourceClass *klass)
 {  
   klass->command  = command;
 }
 
 static void
-gegl_source_init (GeglSource *self)
+gegl_tile_source_init (GeglTileSource *self)
 {
 }
 
 gpointer
-gegl_source_command (GeglSource    *gegl_source,
-                       GeglTileCommand  command,
-                       gint             x,
-                       gint             y,
-                       gint             z,
-                       gpointer         data)
+gegl_tile_source_command (GeglTileSource  *gegl_tile_source,
+                          GeglTileCommand  command,
+                          gint             x,
+                          gint             y,
+                          gint             z,
+                          gpointer         data)
 {
-  GeglSourceClass *klass;
+  GeglTileSourceClass *klass;
 
-  klass = GEGL_SOURCE_GET_CLASS (gegl_source);
+  klass = GEGL_TILE_SOURCE_GET_CLASS (gegl_tile_source);
 
-  return klass->command (gegl_source, command, x, y, z, data);
+  return klass->command (gegl_tile_source, command, x, y, z, data);
 }
-

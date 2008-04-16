@@ -40,7 +40,7 @@ struct _GeglTile
   guchar        *data;        /* A small linear buffer for pixel data */
   gint           size;        /* The size of the data element in bytes */
 
-  GeglStorage   *storage;     /* the buffer from which this tile was retrieved
+  GeglTileStorage   *tile_storage;     /* the buffer from which this tile was retrieved
                                * needed for the tile to be able to store itself
                                * back when it is unreffed for the last time
                                */
@@ -49,7 +49,7 @@ struct _GeglTile
 
 
   guint          rev;         /* this tile revision */
-  guint          stored_rev;  /* what revision was we when we from storage?
+  guint          stored_rev;  /* what revision was we when we from tile_storage?
                                  (currently set to 1 when loaded from disk */
 
   guint          flags;       /* used to store zoom dirt info */

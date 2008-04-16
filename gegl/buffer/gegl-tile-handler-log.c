@@ -19,10 +19,10 @@
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-handler.h"
-#include "gegl-handler-log.h"
+#include "gegl-tile-handler.h"
+#include "gegl-tile-handler-log.h"
 
-G_DEFINE_TYPE (GeglHandlerLog, gegl_handler_log, GEGL_TYPE_HANDLER)
+G_DEFINE_TYPE (GeglTileHandlerLog, gegl_tile_handler_log, GEGL_TYPE_TILE_HANDLER)
 
 
 static char *commands[] =
@@ -44,17 +44,17 @@ static char *commands[] =
 };
 
 static gpointer
-command (GeglSource     *gegl_source,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+command (GeglTileSource  *gegl_tile_source,
+         GeglTileCommand  command,
+         gint             x,
+         gint             y,
+         gint             z,
+         gpointer         data)
 {
-  GeglHandler *handler = GEGL_HANDLER (gegl_source);
-  gpointer     result = NULL;
+  GeglTileHandler *handler = GEGL_HANDLER (gegl_tile_source);
+  gpointer         result = NULL;
 
-  result = gegl_handler_chain_up (handler, command, x, y, z, data);
+  result = gegl_tile_handler_chain_up (handler, command, x, y, z, data);
 
   switch (command)
     {
@@ -62,21 +62,21 @@ command (GeglSource     *gegl_source,
         break;
       default:
         g_print ("(%s %p %p %i,%i,%i => %s)", 
-          commands[command], (void *) gegl_source, data, x, y, z,
+          commands[command], (void *) gegl_tile_source, data, x, y, z,
           result?"1":"0");
     }
   return result;
 }
 
 static void
-gegl_handler_log_class_init (GeglHandlerLogClass *klass)
+gegl_tile_handler_log_class_init (GeglTileHandlerLogClass *klass)
 {
-  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
+  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   source_class->command  = command;
 }
 
 static void
-gegl_handler_log_init (GeglHandlerLog *self)
+gegl_tile_handler_log_init (GeglTileHandlerLog *self)
 {
 }

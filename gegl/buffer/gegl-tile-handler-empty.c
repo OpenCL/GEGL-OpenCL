@@ -19,11 +19,11 @@
 #include <glib-object.h>
 #include <string.h>
 
-#include "gegl-handler.h"
-#include "gegl-handler-empty.h"
-#include "gegl-handler-cache.h"
+#include "gegl-tile-handler.h"
+#include "gegl-tile-handler-empty.h"
+#include "gegl-tile-handler-cache.h"
 
-G_DEFINE_TYPE (GeglHandlerEmpty, gegl_handler_empty, GEGL_TYPE_HANDLER)
+G_DEFINE_TYPE (GeglTileHandlerEmpty, gegl_tile_handler_empty, GEGL_TYPE_TILE_HANDLER)
 
 enum
 {
@@ -34,32 +34,32 @@ enum
 static void
 finalize (GObject *object)
 {
-  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (object);
+  GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (object);
 
   if (empty->tile)
     g_object_unref (empty->tile);
 
-  G_OBJECT_CLASS (gegl_handler_empty_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->finalize (object);
 }
 
-void gegl_handler_cache_insert (GeglHandlerCache *cache,
-                                GeglTile         *tile,
-                                gint              x,
-                                gint              y,
-                                gint              z);
+void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
+                                     GeglTile             *tile,
+                                     gint                  x,
+                                     gint                  y,
+                                     gint                  z);
 
 static GeglTile *
-get_tile (GeglSource *gegl_source,
-          gint        x,
-          gint        y,
-          gint        z)
+get_tile (GeglTileSource *gegl_tile_source,
+          gint            x,
+          gint            y,
+          gint            z)
 {
-  GeglSource *source = GEGL_HANDLER (gegl_source)->source;
-  GeglHandlerEmpty *empty  = GEGL_HANDLER_EMPTY (gegl_source);
-  GeglTile      *tile   = NULL;
+  GeglTileSource       *source = GEGL_HANDLER (gegl_tile_source)->source;
+  GeglTileHandlerEmpty *empty  = GEGL_TILE_HANDLER_EMPTY (gegl_tile_source);
+  GeglTile             *tile   = NULL;
 
   if (source)
-    tile = gegl_source_get_tile (source, x, y, z);
+    tile = gegl_tile_source_get_tile (source, x, y, z);
   if (tile != NULL)
     return tile;
 
@@ -68,9 +68,9 @@ get_tile (GeglSource *gegl_source,
   tile->y = y;
   tile->z = z;
   {
-    GeglHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_source), "cache");
+    GeglTileHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
     if (cache)
-      gegl_handler_cache_insert (cache, tile, x, y, z);
+      gegl_tile_handler_cache_insert (cache, tile, x, y, z);
   }
 
   return tile;
@@ -83,7 +83,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (gobject);
+  GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (gobject);
 
   switch (property_id)
     {
@@ -103,7 +103,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglHandlerEmpty *empty = GEGL_HANDLER_EMPTY (gobject);
+  GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (gobject);
 
   switch (property_id)
     {
@@ -123,14 +123,14 @@ constructor (GType                  type,
              GObjectConstructParam *params)
 {
   GObject       *object;
-  GeglHandlerEmpty *empty;
+  GeglTileHandlerEmpty *empty;
   gint           tile_width;
   gint           tile_height;
   gint           tile_size;
 
-  object = G_OBJECT_CLASS (gegl_handler_empty_parent_class)->constructor (type, n_params, params);
+  object = G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->constructor (type, n_params, params);
 
-  empty  = GEGL_HANDLER_EMPTY (object);
+  empty  = GEGL_TILE_HANDLER_EMPTY (object);
 
   g_assert (empty->backend);
   g_object_get (empty->backend, "tile-width", &tile_width,
@@ -146,24 +146,24 @@ constructor (GType                  type,
 
 
 static gpointer
-command (GeglSource     *buffer,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+command (GeglTileSource  *buffer,
+         GeglTileCommand  command,
+         gint             x,
+         gint             y,
+         gint             z,
+         gpointer         data)
 {
   if (command == GEGL_TILE_GET)
     return get_tile (buffer, x, y, z);
-  return gegl_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
+  return gegl_tile_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
 }
 
 
 static void
-gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
+gegl_tile_handler_empty_class_init (GeglTileHandlerEmptyClass *klass)
 {
-  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
+  GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
+  GeglTileSourceClass *source_class  = GEGL_TILE_SOURCE_CLASS (klass);
 
   gobject_class->constructor  = constructor;
   gobject_class->finalize     = finalize;
@@ -181,6 +181,6 @@ gegl_handler_empty_class_init (GeglHandlerEmptyClass *klass)
 }
 
 static void
-gegl_handler_empty_init (GeglHandlerEmpty *self)
+gegl_tile_handler_empty_init (GeglTileHandlerEmpty *self)
 {
 }

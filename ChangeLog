@@ -1,5 +1,9 @@
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/*: Mass rename and typename refactoring.
+
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the tile caching in GeglBuffer work more correctly, earlier
 	completely fresh tiles as well as generated zoom tiles needed to
 	be written to backend/swap before being re-read into the cache.

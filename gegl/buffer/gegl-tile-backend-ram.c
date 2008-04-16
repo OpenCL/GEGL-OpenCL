@@ -23,7 +23,7 @@
 #include <glib-object.h>
 
 #include "gegl-tile-backend.h"
-#include "gegl-tile-mem.h"
+#include "gegl-tile-backend-ram.h"
 
 
 static void dbg_alloc (int size);
@@ -35,9 +35,9 @@ static void dbg_dealloc (int size);
  *
  * Serializing the bablformat is probably also a good idea.
  */
-typedef struct _MemEntry MemEntry;
+typedef struct _RamEntry RamEntry;
 
-struct _MemEntry
+struct _RamEntry
 {
   gint    x;
   gint    y;
@@ -46,85 +46,85 @@ struct _MemEntry
 };
 
 static void inline
-mem_entry_read (GeglTileMem *mem,
-                MemEntry    *entry,
-                guchar      *dest)
+ram_entry_read (GeglTileBackendRam *ram,
+                RamEntry           *entry,
+                guchar             *dest)
 {
-  gint tile_size = GEGL_TILE_BACKEND (mem)->tile_size;
+  gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
 
-  memcpy (dest, entry->offset, tile_size);
+  ramcpy (dest, entry->offset, tile_size);
 }
 
 static void inline
-mem_entry_write (GeglTileMem *mem,
-                 MemEntry    *entry,
-                 guchar      *source)
+ram_entry_write (GeglTileBackendRam *ram,
+                 RamEntry           *entry,
+                 guchar             *source)
 {
-  gint tile_size = GEGL_TILE_BACKEND (mem)->tile_size;
+  gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
 
-  memcpy (entry->offset, source, tile_size);
+  ramcpy (entry->offset, source, tile_size);
 }
 
-static inline MemEntry *
-mem_entry_new (GeglTileMem *mem)
+static inline RamEntry *
+ram_entry_new (GeglTileBackendRam *ram)
 {
-  MemEntry *self = g_slice_new (MemEntry);
+  RamEntry *self = g_slice_new (RamEntry);
 
-  self->offset = g_malloc (GEGL_TILE_BACKEND (mem)->tile_size);
-  dbg_alloc (GEGL_TILE_BACKEND (mem)->tile_size);
+  self->offset = g_malloc (GEGL_TILE_BACKEND (ram)->tile_size);
+  dbg_alloc (GEGL_TILE_BACKEND (ram)->tile_size);
   return self;
 }
 
 static inline void
-mem_entry_destroy (MemEntry    *entry,
-                   GeglTileMem *mem)
+ram_entry_destroy (RamEntry           *entry,
+                   GeglTileBackendRam *ram)
 {
   g_free (entry->offset);
-  g_hash_table_remove (mem->entries, entry);
+  g_hash_table_remove (ram->entries, entry);
 
-  dbg_dealloc (GEGL_TILE_BACKEND (mem)->tile_size);
-  g_slice_free (MemEntry, entry);
+  dbg_dealloc (GEGL_TILE_BACKEND (ram)->tile_size);
+  g_slice_free (RamEntry, entry);
 }
 
 
-G_DEFINE_TYPE (GeglTileMem, gegl_tile_mem, GEGL_TYPE_TILE_BACKEND)
+G_DEFINE_TYPE (GeglTileBackendRam, gegl_tile_backend_ram, GEGL_TYPE_TILE_BACKEND)
 static GObjectClass * parent_class = NULL;
 
 
 static gint allocs        = 0;
-static gint mem_size      = 0;
+static gint ram_size      = 0;
 static gint peak_allocs   = 0;
-static gint peak_mem_size = 0;
+static gint peak_ram_size = 0;
 
-void gegl_tile_mem_stats (void)
+void gegl_tile_backend_ram_stats (void)
 {
   g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
-             allocs, mem_size / 1024 / 1024.0, peak_allocs, peak_mem_size, peak_mem_size / 1024 / 1024.0);
+             allocs, ram_size / 1024 / 1024.0, peak_allocs, peak_ram_size, peak_ram_size / 1024 / 1024.0);
 }
 
 static void dbg_alloc (gint size)
 {
   allocs++;
-  mem_size += size;
+  ram_size += size;
   if (allocs > peak_allocs)
     peak_allocs = allocs;
-  if (mem_size > peak_mem_size)
-    peak_mem_size = mem_size;
+  if (ram_size > peak_ram_size)
+    peak_ram_size = ram_size;
 }
 
 static void dbg_dealloc (gint size)
 {
   allocs--;
-  mem_size -= size;
+  ram_size -= size;
 }
 
-static inline MemEntry *
-lookup_entry (GeglTileMem *self,
+static inline RamEntry *
+lookup_entry (GeglTileBackendRam *self,
               gint         x,
               gint         y,
               gint         z)
 {
-  MemEntry key = { x, y, z, 0 };
+  RamEntry key = { x, y, z, 0 };
 
   return g_hash_table_lookup (self->entries, &key);
 }
@@ -135,17 +135,17 @@ lookup_entry (GeglTileMem *self,
  * too often.
  */
 static GeglTile *
-get_tile (GeglSource *tile_store,
+get_tile (GeglTileSource *tile_store,
           gint        x,
           gint        y,
           gint        z)
 {
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (tile_store);
+  GeglTileBackendRam     *tile_backend_ram = GEGL_TILE_BACKEND_RAM (tile_store);
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (tile_store);
   GeglTile        *tile     = NULL;
 
   {
-    MemEntry *entry = lookup_entry (tile_mem, x, y, z);
+    RamEntry *entry = lookup_entry (tile_backend_ram, x, y, z);
 
     if (!entry)
       return NULL;
@@ -154,68 +154,68 @@ get_tile (GeglSource *tile_store,
     tile->stored_rev = 1;
     tile->rev        = 1;
 
-    mem_entry_read (tile_mem, entry, tile->data);
+    ram_entry_read (tile_backend_ram, entry, tile->data);
   }
   return tile;
 }
 
 static
-gboolean set_tile (GeglSource *store,
+gboolean set_tile (GeglTileSource *store,
                    GeglTile   *tile,
                    gint        x,
                    gint        y,
                    gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
+  GeglTileBackendRam     *tile_backend_ram = GEGL_TILE_BACKEND_RAM (backend);
 
-  MemEntry        *entry = lookup_entry (tile_mem, x, y, z);
+  RamEntry        *entry = lookup_entry (tile_backend_ram, x, y, z);
 
   if (entry == NULL)
     {
-      entry    = mem_entry_new (tile_mem);
+      entry    = ram_entry_new (tile_backend_ram);
       entry->x = x;
       entry->y = y;
       entry->z = z;
-      g_hash_table_insert (tile_mem->entries, entry, entry);
+      g_hash_table_insert (tile_backend_ram->entries, entry, entry);
     }
   g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
-                                  has been tried written to persistent storage.
+                                  has been tried written to persistent tile_storage.
                                 */
-  mem_entry_write (tile_mem, entry, tile->data);
+  ram_entry_write (tile_backend_ram, entry, tile->data);
   tile->stored_rev = tile->rev;
   return TRUE;
 }
 
 static
-gboolean void_tile (GeglSource *store,
+gboolean void_tile (GeglTileSource *store,
                     GeglTile   *tile,
                     gint        x,
                     gint        y,
                     gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
-  MemEntry        *entry    = lookup_entry (tile_mem, x, y, z);
+  GeglTileBackendRam     *tile_backend_ram = GEGL_TILE_BACKEND_RAM (backend);
+  RamEntry        *entry    = lookup_entry (tile_backend_ram, x, y, z);
 
   if (entry != NULL)
     {
-      mem_entry_destroy (entry, tile_mem);
+      ram_entry_destroy (entry, tile_backend_ram);
     }
 
   return TRUE;
 }
 
 static
-gboolean exist_tile (GeglSource *store,
+gboolean exist_tile (GeglTileSource *store,
                      GeglTile   *tile,
                      gint        x,
                      gint        y,
                      gint        z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
-  MemEntry        *entry    = lookup_entry (tile_mem, x, y, z);
+  GeglTileBackendRam     *tile_backend_ram = GEGL_TILE_BACKEND_RAM (backend);
+  RamEntry        *entry    = lookup_entry (tile_backend_ram, x, y, z);
 
   return entry != NULL;
 }
@@ -227,7 +227,7 @@ enum
 };
 
 static gpointer
-command (GeglSource     *tile_store,
+command (GeglTileSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
@@ -289,7 +289,7 @@ static void get_property (GObject    *object,
 static void
 finalize (GObject *object)
 {
-  GeglTileMem *self = (GeglTileMem *) object;
+  GeglTileBackendRam *self = (GeglTileBackendRam *) object;
 
   g_hash_table_unref (self->entries);
 
@@ -298,7 +298,7 @@ finalize (GObject *object)
 
 static guint hashfunc (gconstpointer key)
 {
-  const MemEntry *e = key;
+  const RamEntry *e = key;
   guint           hash;
   gint            i;
   gint            srcA = e->x;
@@ -326,8 +326,8 @@ static guint hashfunc (gconstpointer key)
 static gboolean equalfunc (gconstpointer a,
                            gconstpointer b)
 {
-  const MemEntry *ea = a;
-  const MemEntry *eb = b;
+  const RamEntry *ea = a;
+  const RamEntry *eb = b;
 
   if (ea->x == eb->x &&
       ea->y == eb->y &&
@@ -337,39 +337,39 @@ static gboolean equalfunc (gconstpointer a,
 }
 
 static GObject *
-gegl_tile_mem_constructor (GType                  type,
-                           guint                  n_params,
-                           GObjectConstructParam *params)
+gegl_tile_backend_ram_constructor (GType                  type,
+                                   guint                  n_params,
+                                   GObjectConstructParam *params)
 {
   GObject     *object;
-  GeglTileMem *mem;
+  GeglTileBackendRam *ram;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  mem    = GEGL_TILE_MEM (object);
+  ram    = GEGL_TILE_BACKEND_RAM (object);
 
-  mem->entries = g_hash_table_new (hashfunc, equalfunc);
+  ram->entries = g_hash_table_new (hashfunc, equalfunc);
 
   return object;
 }
 
 static void
-gegl_tile_mem_class_init (GeglTileMemClass *klass)
+gegl_tile_backend_ram_class_init (GeglTileBackendRamClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
-  GeglSourceClass *gegl_source_class = GEGL_SOURCE_CLASS (klass);
+  GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor  = gegl_tile_mem_constructor;
+  gobject_class->constructor  = gegl_tile_backend_ram_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_source_class->command  = command;
+  gegl_tile_source_class->command  = command;
 }
 
 static void
-gegl_tile_mem_init (GeglTileMem *self)
+gegl_tile_backend_ram_init (GeglTileBackendRam *self)
 {
   self->entries = NULL;
 }

@@ -38,13 +38,13 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-load.h"
-#include "gegl-storage.h"
+#include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
-#include "gegl-handler.h"
+#include "gegl-tile-handler.h"
 #include "gegl-tile.h"
-#include "gegl-handler-cache.h"
-#include "gegl-handler-log.h"
-#include "gegl-handler-empty.h"
+#include "gegl-tile-handler-cache.h"
+#include "gegl-tile-handler-log.h"
+#include "gegl-tile-handler-empty.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"
@@ -151,7 +151,7 @@ gegl_buffer_load (GeglBuffer  *buffer,
         gint           factor = 1 << entry->z;
 
 
-        tile = gegl_source_get_tile (GEGL_SOURCE (buffer),
+        tile = gegl_tile_source_get_tile (GEGL_TILE_SOURCE (buffer),
                                      entry->x + info->x_tile_shift / factor,
                                      entry->y + info->y_tile_shift / factor,
                                      entry->z);

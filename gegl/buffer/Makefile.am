@@ -11,20 +11,20 @@ BUFFER_sources = \
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
     gegl-region-generic.c	\
-    gegl-storage.c		\
     gegl-tile.c			\
+    gegl-tile-source.c		\
+    gegl-tile-storage.c		\
     gegl-tile-backend.c		\
-    gegl-tile-disk.c		\
-    gegl-tile-gio.c		\
-    gegl-tile-mem.c		\
-    gegl-handler.c		\
-    gegl-handlers.c		\
-    gegl-handler-cache.c	\
-    gegl-handler-empty.c	\
-    gegl-handler-log.c		\
-    gegl-handler-zoom.c		\
-    gegl-id-pool.c		\
-    gegl-source.c
+    gegl-tile-backend-swapfile.c	\
+    gegl-tile-backend-gio-tiles.c	\
+    gegl-tile-backend-ram.c	\
+    gegl-tile-handler.c		\
+    gegl-tile-handler-chain.c	\
+    gegl-tile-handler-cache.c	\
+    gegl-tile-handler-empty.c	\
+    gegl-tile-handler-log.c	\
+    gegl-tile-handler-zoom.c	\
+    gegl-id-pool.c
 
 BUFFER_headers = \
     gegl-buffer.h		\
@@ -39,20 +39,20 @@ BUFFER_headers = \
     gegl-sampler-nearest.h	\
     gegl-region.h		\
     gegl-region-generic.h	\
-    gegl-storage.h		\
     gegl-tile.h			\
+    gegl-tile-source.h		\
+    gegl-tile-storage.h		\
     gegl-tile-backend.h		\
-    gegl-tile-disk.h		\
-    gegl-tile-gio.h		\
-    gegl-tile-mem.h		\
-    gegl-handler.h		\
-    gegl-handlers.h		\
-    gegl-handler-cache.h	\
-    gegl-handler-empty.h	\
-    gegl-handler-log.h		\
-    gegl-handler-zoom.h		\
-    gegl-id-pool.h		\
-    gegl-source.h
+    gegl-tile-backend-swapfile.h	\
+    gegl-tile-backend-gio-tiles.h	\
+    gegl-tile-backend-ram.h		\
+    gegl-tile-handler.h		\
+    gegl-tile-handler-chain.h		\
+    gegl-tile-handler-cache.h	\
+    gegl-tile-handler-empty.h	\
+    gegl-tile-handler-log.h		\
+    gegl-tile-handler-zoom.h		\
+    gegl-id-pool.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 

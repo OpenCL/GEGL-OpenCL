@@ -22,12 +22,12 @@
 
 #include <glib-object.h>
 
-#include "gegl-source.h"
-#include "gegl-handler.h"
-#include "gegl-handlers.h"
+#include "gegl-tile-source.h"
+#include "gegl-tile-handler.h"
+#include "gegl-tile-handler-chain.h"
 
 
-G_DEFINE_TYPE (GeglHandler, gegl_handler, GEGL_TYPE_SOURCE)
+G_DEFINE_TYPE (GeglTileHandler, gegl_tile_handler, GEGL_TYPE_TILE_SOURCE)
 
 enum
 {
@@ -38,7 +38,7 @@ enum
 static void
 dispose (GObject *object)
 {
-  GeglHandler *handler = GEGL_HANDLER (object);
+  GeglTileHandler *handler = GEGL_HANDLER (object);
 
   if (handler->source != NULL)
     {
@@ -46,20 +46,20 @@ dispose (GObject *object)
       handler->source = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_handler_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_tile_handler_parent_class)->dispose (object);
 }
 
 static gpointer
-command (GeglSource     *gegl_source,
+command (GeglTileSource     *gegl_tile_source,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = (GeglHandler*)gegl_source;
+  GeglTileHandler *handler = (GeglTileHandler*)gegl_tile_source;
 
-  return gegl_handler_chain_up (handler, command, x, y, z, data);
+  return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
 }
 
 static void
@@ -68,7 +68,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglHandler *handler = GEGL_HANDLER (gobject);
+  GeglTileHandler *handler = GEGL_HANDLER (gobject);
 
   switch (property_id)
     {
@@ -88,22 +88,22 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglHandler *handler = GEGL_HANDLER (gobject);
+  GeglTileHandler *handler = GEGL_HANDLER (gobject);
 
   switch (property_id)
     {
       case PROP_SOURCE:
         if (handler->source != NULL)
           g_object_unref (handler->source);
-        handler->source = GEGL_SOURCE (g_value_dup_object (value));
+        handler->source = GEGL_TILE_SOURCE (g_value_dup_object (value));
 
         /* special case if we are the Traits subclass of Trait
          * also set the source at the end of the chain.
          */
-        if (GEGL_IS_HANDLERS (handler))
+        if (GEGL_IS_TILE_HANDLER_CHAIN (handler))
           {
-            GeglHandlers *handlers = GEGL_HANDLERS (handler);
-            GSList         *iter   = (void *) handlers->chain;
+            GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (handler);
+            GSList         *iter   = (void *) tile_handler_chain->chain;
             while (iter && iter->next)
               iter = iter->next;
             if (iter)
@@ -119,24 +119,24 @@ set_property (GObject      *gobject,
     }
 }
 
-gpointer   gegl_handler_chain_up (GeglHandler     *handler,
-                                  GeglTileCommand  command,
-                                  gint             x,
-                                  gint             y,
-                                  gint             z,
-                                  gpointer         data)
+gpointer   gegl_tile_handler_chain_up (GeglTileHandler *handler,
+                                       GeglTileCommand  command,
+                                       gint             x,
+                                       gint             y,
+                                       gint             z,
+                                       gpointer         data)
 {
-  GeglSource *source = gegl_handler_get_source (handler);
+  GeglTileSource *source = gegl_tile_handler_get_source (handler);
   if (source)
-    return gegl_source_command (source, command, x, y, z, data);
+    return gegl_tile_source_command (source, command, x, y, z, data);
   return NULL;
 }
 
 static void
-gegl_handler_class_init (GeglHandlerClass *klass)
+gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
 {
   GObjectClass    *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglSourceClass *source_class = GEGL_SOURCE_CLASS (klass);
+  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -153,7 +153,7 @@ gegl_handler_class_init (GeglHandlerClass *klass)
 }
 
 static void
-gegl_handler_init (GeglHandler *self)
+gegl_tile_handler_init (GeglTileHandler *self)
 {
   self->source = NULL;
 }

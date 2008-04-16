@@ -20,29 +20,29 @@
 
 #include <glib.h>
 
-#include "gegl-handlers.h"
-#include "gegl-handler-cache.h"
+#include "gegl-tile-handler-chain.h"
+#include "gegl-tile-handler-cache.h"
 
 
-G_DEFINE_TYPE (GeglHandlers, gegl_handlers, GEGL_TYPE_HANDLER)
+G_DEFINE_TYPE (GeglTileHandlerChain, gegl_tile_handler_chain, GEGL_TYPE_TILE_HANDLER)
 
-static void   gegl_handlers_rebind (GeglHandlers *handlers);
+static void   gegl_tile_handler_chain_rebind (GeglTileHandlerChain *tile_handler_chain);
 
 static void
-gegl_handlers_nuke_cache (GeglHandlers *handlers)
+gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
 {
   GSList *iter;
 
-  while (gegl_handlers_get_first (handlers, GEGL_TYPE_HANDLER_CACHE))
+  while (gegl_tile_handler_chain_get_first (tile_handler_chain, GEGL_TYPE_TILE_HANDLER_CACHE))
     {
-      iter = handlers->chain;
+      iter = tile_handler_chain->chain;
       while (iter)
         {
-          if (GEGL_IS_HANDLER_CACHE (iter->data))
+          if (GEGL_IS_TILE_HANDLER_CACHE (iter->data))
             {
               g_object_unref (iter->data);
-              handlers->chain = g_slist_remove (handlers->chain, iter->data);
-              gegl_handlers_rebind (handlers);
+              tile_handler_chain->chain = g_slist_remove (tile_handler_chain->chain, iter->data);
+              gegl_tile_handler_chain_rebind (tile_handler_chain);
               break;
             }
           iter = iter->next;
@@ -53,16 +53,16 @@ gegl_handlers_nuke_cache (GeglHandlers *handlers)
 static void
 dispose (GObject *object)
 {
-  GeglHandlers *handlers = GEGL_HANDLERS (object);
+  GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (object);
   GSList       *iter;
 
   /* Get rid of the cache before any further parts of the deconstruction of the
    * TileStore chain, unwritten tiles need a living TileStore for their
    * deconstruction.
    */
-  gegl_handlers_nuke_cache (handlers);
+  gegl_tile_handler_chain_nuke_cache (tile_handler_chain);
 
-  iter = handlers->chain;
+  iter = tile_handler_chain->chain;
   while (iter)
     {
       if (iter->data)
@@ -70,36 +70,36 @@ dispose (GObject *object)
       iter = iter->next;
     }
 
-  if (handlers->chain)
-    g_slist_free (handlers->chain);
-  handlers->chain = NULL;
+  if (tile_handler_chain->chain)
+    g_slist_free (tile_handler_chain->chain);
+  tile_handler_chain->chain = NULL;
 
-  G_OBJECT_CLASS (gegl_handlers_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->dispose (object);
 }
 
 
 static void
 finalize (GObject *object)
 {
-  G_OBJECT_CLASS (gegl_handlers_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->finalize (object);
 }
 
 static gpointer
-command (GeglSource     *tile_store,
+command (GeglTileSource     *tile_store,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandlers *handlers = (GeglHandlers *) tile_store;
-  GeglSource *source = ((GeglHandler *) tile_store)->source;
+  GeglTileHandlerChain *tile_handler_chain = (GeglTileHandlerChain *) tile_store;
+  GeglTileSource *source = ((GeglTileHandler *) tile_store)->source;
 
-  if (handlers->chain != NULL)
-    return gegl_source_command ((GeglSource *)(handlers->chain->data),
+  if (tile_handler_chain->chain != NULL)
+    return gegl_tile_source_command ((GeglTileSource *)(tile_handler_chain->chain->data),
                                   command, x, y, z, data);
   else if (source)
-    return gegl_source_command (source, command, x, y, z, data);
+    return gegl_tile_source_command (source, command, x, y, z, data);
   else
     g_assert (0);
 
@@ -107,13 +107,13 @@ command (GeglSource     *tile_store,
 }
 
 static void
-gegl_handlers_class_init (GeglHandlersClass *class)
+gegl_tile_handler_chain_class_init (GeglTileHandlerChainClass *class)
 {
   GObjectClass      *gobject_class;
-  GeglSourceClass *tile_store_class;
+  GeglTileSourceClass *tile_store_class;
 
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglSourceClass *) class;
+  tile_store_class = (GeglTileSourceClass *) class;
 
   tile_store_class->command  = command;
 
@@ -122,23 +122,23 @@ gegl_handlers_class_init (GeglHandlersClass *class)
 }
 
 static void
-gegl_handlers_init (GeglHandlers *self)
+gegl_tile_handler_chain_init (GeglTileHandlerChain *self)
 {
   self->chain = NULL;
 }
 
 
 static void
-gegl_handlers_rebind (GeglHandlers *handlers)
+gegl_tile_handler_chain_rebind (GeglTileHandlerChain *tile_handler_chain)
 {
   GSList *iter;
 
 
-  iter = handlers->chain;
+  iter = tile_handler_chain->chain;
   while (iter)
     {
-      GeglHandler  *handler;
-      GeglSource *source = NULL;
+      GeglTileHandler  *handler;
+      GeglTileSource *source = NULL;
 
       handler = iter->data;
       if (iter->next)
@@ -147,7 +147,7 @@ gegl_handlers_rebind (GeglHandlers *handlers)
         }
       else
         {
-          g_object_get (handlers, "source", &source, NULL);
+          g_object_get (tile_handler_chain, "source", &source, NULL);
         }
       g_object_set (G_OBJECT (handler), "source", source, NULL);
       g_object_unref (source);
@@ -155,25 +155,25 @@ gegl_handlers_rebind (GeglHandlers *handlers)
     }
 }
 
-GeglHandler *
-gegl_handlers_add (GeglHandlers *handlers,
-                   GeglHandler  *handler)
+GeglTileHandler *
+gegl_tile_handler_chain_add (GeglTileHandlerChain *tile_handler_chain,
+                             GeglTileHandler      *handler)
 {
-  handlers->chain = g_slist_prepend (handlers->chain, handler);
-  gegl_handlers_rebind (handlers);
+  tile_handler_chain->chain = g_slist_prepend (tile_handler_chain->chain, handler);
+  gegl_tile_handler_chain_rebind (tile_handler_chain);
   return handler;
 }
 
 /*
  * return the first handler of a given type
  */
-GeglHandler *
-gegl_handlers_get_first (GeglHandlers *handlers,
-                         GType         type)
+GeglTileHandler *
+gegl_tile_handler_chain_get_first (GeglTileHandlerChain *tile_handler_chain,
+                                   GType                 type)
 {
   GSList *iter;
 
-  iter = handlers->chain;
+  iter = tile_handler_chain->chain;
   while (iter)
     {
       if ((G_TYPE_CHECK_INSTANCE_TYPE ((iter->data), type)))

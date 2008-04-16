@@ -20,18 +20,18 @@
 
 #include <glib-object.h>
 
-#include "gegl-storage.h"
+#include "gegl-tile-storage.h"
 #include "gegl-tile.h"
-#include "gegl-tile-disk.h"
-#include "gegl-tile-mem.h"
-#include "gegl-tile-gio.h"
-#include "gegl-handler-empty.h"
-#include "gegl-handler-zoom.h"
-#include "gegl-handler-cache.h"
-#include "gegl-handler-log.h"
+#include "gegl-tile-backend-swapfile.h"
+#include "gegl-tile-backend-ram.h"
+#include "gegl-tile-backend-gio-tiles.h"
+#include "gegl-tile-handler-empty.h"
+#include "gegl-tile-handler-zoom.h"
+#include "gegl-tile-handler-cache.h"
+#include "gegl-tile-handler-log.h"
 
 
-G_DEFINE_TYPE (GeglStorage, gegl_storage, GEGL_TYPE_HANDLERS)
+G_DEFINE_TYPE (GeglTileStorage, gegl_tile_storage, GEGL_TYPE_TILE_HANDLER_CHAIN)
 
 #define TILE_WIDTH  128
 #define TILE_HEIGHT 64
@@ -57,40 +57,40 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglStorage *storage = GEGL_STORAGE (gobject);
+  GeglTileStorage *tile_storage = GEGL_TILE_STORAGE (gobject);
 
   switch (property_id)
     {
       case PROP_WIDTH:
-        g_value_set_int (value, storage->width);
+        g_value_set_int (value, tile_storage->width);
         break;
 
       case PROP_HEIGHT:
-        g_value_set_int (value, storage->height);
+        g_value_set_int (value, tile_storage->height);
         break;
 
       case PROP_TILE_WIDTH:
-        g_value_set_int (value, storage->tile_width);
+        g_value_set_int (value, tile_storage->tile_width);
         break;
 
       case PROP_TILE_HEIGHT:
-        g_value_set_int (value, storage->tile_height);
+        g_value_set_int (value, tile_storage->tile_height);
         break;
 
       case PROP_TILE_SIZE:
-        g_value_set_int (value, storage->tile_size);
+        g_value_set_int (value, tile_storage->tile_size);
         break;
 
       case PROP_PX_SIZE:
-        g_value_set_int (value, storage->px_size);
+        g_value_set_int (value, tile_storage->px_size);
         break;
 
       case PROP_PATH:
-        g_value_set_string (value, storage->path);
+        g_value_set_string (value, tile_storage->path);
         break;
 
       case PROP_FORMAT:
-        g_value_set_pointer (value, storage->format);
+        g_value_set_pointer (value, tile_storage->format);
         break;
 
       default:
@@ -105,42 +105,42 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglStorage *storage = GEGL_STORAGE (gobject);
+  GeglTileStorage *tile_storage = GEGL_TILE_STORAGE (gobject);
 
   switch (property_id)
     {
       case PROP_WIDTH:
-        storage->width = g_value_get_int (value);
+        tile_storage->width = g_value_get_int (value);
         return;
 
       case PROP_HEIGHT:
-        storage->height = g_value_get_int (value);
+        tile_storage->height = g_value_get_int (value);
         return;
 
       case PROP_TILE_WIDTH:
-        storage->tile_width = g_value_get_int (value);
+        tile_storage->tile_width = g_value_get_int (value);
         break;
 
       case PROP_TILE_HEIGHT:
-        storage->tile_height = g_value_get_int (value);
+        tile_storage->tile_height = g_value_get_int (value);
         break;
 
       case PROP_TILE_SIZE:
-        storage->tile_size = g_value_get_int (value);
+        tile_storage->tile_size = g_value_get_int (value);
         break;
 
       case PROP_PX_SIZE:
-        storage->px_size = g_value_get_int (value);
+        tile_storage->px_size = g_value_get_int (value);
         break;
 
       case PROP_PATH:
-        if (storage->path)
-          g_free (storage->path);
-        storage->path = g_strdup (g_value_get_string (value));
+        if (tile_storage->path)
+          g_free (tile_storage->path);
+        tile_storage->path = g_strdup (g_value_get_string (value));
         break;
 
       case PROP_FORMAT:
-        storage->format = g_value_get_pointer (value);
+        tile_storage->format = g_value_get_pointer (value);
         break;
 
       default:
@@ -150,115 +150,115 @@ set_property (GObject      *gobject,
 }
 
 static gboolean
-storage_idle (gpointer data)
+tile_storage_idle (gpointer data)
 {
-  GeglStorage *storage = GEGL_STORAGE (data);
+  GeglTileStorage *tile_storage = GEGL_TILE_STORAGE (data);
 
   if (0 /* nothing to do*/)
     {
-      storage->idle_swapper = 0;
+      tile_storage->idle_swapper = 0;
       return FALSE;
     }
 
-  gegl_source_idle (GEGL_SOURCE (storage));                        
+  gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));                        
 
   return TRUE;
 }
 
 
 static GObject *
-gegl_storage_constructor (GType                  type,
-                          guint                  n_params,
-                          GObjectConstructParam *params)
+gegl_tile_storage_constructor (GType                  type,
+                               guint                  n_params,
+                               GObjectConstructParam *params)
 {
   GObject        *object;
-  GeglStorage    *storage;
-  GeglHandlers   *handlers;
-  GeglHandler    *handler;
-  GeglHandler    *empty = NULL;
-  GeglHandler    *zoom = NULL;
-  GeglHandler    *cache = NULL;
+  GeglTileStorage    *tile_storage;
+  GeglTileHandlerChain   *tile_handler_chain;
+  GeglTileHandler    *handler;
+  GeglTileHandler    *empty = NULL;
+  GeglTileHandler    *zoom = NULL;
+  GeglTileHandler    *cache = NULL;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
-  storage  = GEGL_STORAGE (object);
-  handlers = GEGL_HANDLERS (storage);
-  handler  = GEGL_HANDLER (storage);
+  tile_storage  = GEGL_TILE_STORAGE (object);
+  tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
+  handler  = GEGL_HANDLER (tile_storage);
 
-  if (storage->path != NULL)
+  if (tile_storage->path != NULL)
     {
 #if 1
-      g_object_set (storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_DISK,
-                                            "tile-width", storage->tile_width,
-                                            "tile-height", storage->tile_height,
-                                            "format", storage->format,
-                                            "path", storage->path,
+      g_object_set (tile_storage,
+                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_SWAPFILE,
+                                            "tile-width", tile_storage->tile_width,
+                                            "tile-height", tile_storage->tile_height,
+                                            "format", tile_storage->format,
+                                            "path", tile_storage->path,
                                             NULL),
                     NULL);
 #else
-      g_object_set (storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_GIO,
-                                            "tile-width", storage->tile_width,
-                                            "tile-height", storage->tile_height,
-                                            "format", storage->format,
-                                            "path", storage->path,
+      g_object_set (tile_storage,
+                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_GIO_TILES,
+                                            "tile-width", tile_storage->tile_width,
+                                            "tile-height", tile_storage->tile_height,
+                                            "format", tile_storage->format,
+                                            "path", tile_storage->path,
                                             NULL),
                     NULL);
 #endif
     }
   else
     {
-      g_object_set (storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_MEM,
-                                            "tile-width", storage->tile_width,
-                                            "tile-height", storage->tile_height,
-                                            "format", storage->format,
+      g_object_set (tile_storage,
+                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
+                                            "tile-width", tile_storage->tile_width,
+                                            "tile-height", tile_storage->tile_height,
+                                            "format", tile_storage->format,
                                             NULL),
                     NULL);
     }
 
   g_object_get (handler->source,
-                "tile-size", &storage->tile_size,
-                "px-size",   &storage->px_size,
+                "tile-size", &tile_storage->tile_size,
+                "px-size",   &tile_storage->px_size,
                 NULL);
 
   g_object_unref (handler->source); /* eeek */
 
   if (g_getenv("GEGL_LOG_TILE_BACKEND"))
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+    gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 
 
-  cache = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_CACHE,
+  cache = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE,
                                                      NULL));
 
-  zoom = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_ZOOM,
+  zoom = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
                                                     "backend", handler->source,
-                                                    "storage", storage,
+                                                    "tile_storage", tile_storage,
                                                     NULL));
-  empty = gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_EMPTY,
+  empty = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY,
                                                      "backend", handler->source,
                                                      NULL));
 
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
-    gegl_handlers_add (handlers, g_object_new (GEGL_TYPE_HANDLER_LOG, NULL));
+    gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
   g_object_set_data (G_OBJECT (empty), "cache", cache);
   g_object_set_data (G_OBJECT (zoom), "cache", cache);
 
 
-  storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
+  tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
                                               250,
-                                              storage_idle,
-                                              storage,
+                                              tile_storage_idle,
+                                              tile_storage,
                                               NULL);
 
   return object;
 }
 
 static void
-gegl_storage_finalize (GObject *object)
+gegl_tile_storage_finalize (GObject *object)
 {
-  GeglStorage *self = GEGL_STORAGE (object);
+  GeglTileStorage *self = GEGL_TILE_STORAGE (object);
 
   if (self->idle_swapper)
     g_source_remove (self->idle_swapper);
@@ -267,13 +267,13 @@ gegl_storage_finalize (GObject *object)
 }
 
 static void
-gegl_storage_class_init (GeglStorageClass *class)
+gegl_tile_storage_class_init (GeglTileStorageClass *class)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (class);
 
   parent_class                = g_type_class_peek_parent (class);
-  gobject_class->constructor  = gegl_storage_constructor;
-  gobject_class->finalize     = gegl_storage_finalize;
+  gobject_class->constructor  = gegl_tile_storage_constructor;
+  gobject_class->finalize     = gegl_tile_storage_finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
@@ -309,7 +309,7 @@ gegl_storage_class_init (GeglStorageClass *class)
   g_object_class_install_property (gobject_class, PROP_PATH,
                                    g_param_spec_string ("path",
                                                         "path",
-                                                        "The filesystem directory with swap for this sparse tile store, NULL to make this be a heap storage.",
+                                                        "The filesystem directory with swap for this sparse tile store, NULL to make this be a heap tile_storage.",
                                                         NULL,
                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 
@@ -321,6 +321,6 @@ gegl_storage_class_init (GeglStorageClass *class)
 }
 
 static void
-gegl_storage_init (GeglStorage *buffer)
+gegl_tile_storage_init (GeglTileStorage *buffer)
 {
 }

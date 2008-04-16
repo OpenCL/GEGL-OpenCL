@@ -43,13 +43,14 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 
 /** 
  * gegl_buffer_new:
- * @extent: the geometry of the buffer (origin, width and height) a GeglRectangle.
+ * @extent: the geometry of the buffer (origin, width and height) a
+ * GeglRectangle.
  * @format: the Babl pixel format to be used, create one with babl_format("RGBA
  * u8") and similar.
  *
- * Create a new GeglBuffer of a given format with a given extent. It is possible
- * to pass in NULL for both extent and format, a NULL extent creates an exmpty
- * buffer and a NULL format makes the buffer default to "RGBA float".
+ * Create a new GeglBuffer of a given format with a given extent. It is
+ * possible to pass in NULL for both extent and format, a NULL extent creates
+ * an exmpty buffer and a NULL format makes the buffer default to "RGBA float".
  */
 GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
@@ -127,7 +128,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  *
  * Evaluates to the X coordinate of the upper left corner of the buffers extent.
  */
-#define gegl_buffer_get_x(buffer)           (gegl_buffer_get_extent(buffer)->x)
+#define gegl_buffer_get_x(buffer)        (gegl_buffer_get_extent(buffer)->x)
 
 /**
  * gegl_buffer_get_y:
@@ -135,7 +136,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  *
  * Evaluates to the Y coordinate of the upper left corner of the buffers extent.
  */
-#define gegl_buffer_get_y(buffer)           (gegl_buffer_get_extent(buffer)->y)
+#define gegl_buffer_get_y(buffer)        (gegl_buffer_get_extent(buffer)->y)
 
 /**
  * gegl_buffer_get_width:
@@ -143,7 +144,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  *
  * Evaluates to the width of the buffers extent.
  */
-#define gegl_buffer_get_width(buffer)       (gegl_buffer_get_extent(buffer)->width)
+#define gegl_buffer_get_width(buffer)    (gegl_buffer_get_extent(buffer)->width)
 
 /**
  * gegl_buffer_get_height:
@@ -151,7 +152,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  *
  * Evaluates to the height of the buffers extent.
  */
-#define gegl_buffer_get_height(buffer)      (gegl_buffer_get_extent(buffer)->height)
+#define gegl_buffer_get_height(buffer)   (gegl_buffer_get_extent(buffer)->height)
 
 /**
  * gegl_buffer_get_pixel_count:
@@ -178,10 +179,10 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
  * rowstride based on the width and bytes per pixel for the specified format.
  *
- * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the data is
- * converted to the desired BablFormat, if the BablFormat stored and fetched is the
- * same this amounts to a series of memcpy's aligned to demux the tile structure into
- * a linear buffer.
+ * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the
+ * data is converted to the desired BablFormat, if the BablFormat stored and
+ * fetched is the same this amounts to a series of memcpy's aligned to demux
+ * the tile structure into a linear buffer.
  */
 void            gegl_buffer_get               (GeglBuffer          *buffer,
                                                gdouble              scale,

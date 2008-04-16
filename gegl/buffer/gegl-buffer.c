@@ -47,13 +47,13 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
-#include "gegl-handler.h"
-#include "gegl-storage.h"
+#include "gegl-tile-handler.h"
+#include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile.h"
-#include "gegl-handler-cache.h"
-#include "gegl-handler-log.h"
-#include "gegl-handler-empty.h"
+#include "gegl-tile-handler-cache.h"
+#include "gegl-tile-handler-log.h"
+#include "gegl-tile-handler-empty.h"
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
@@ -62,7 +62,7 @@
 #include "gegl-id-pool.h"
 
 
-G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_HANDLER)
+G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
 
 #if ENABLE_MP
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
@@ -130,7 +130,7 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_PX_SIZE:
-        g_value_set_int (value, buffer->storage->px_size);
+        g_value_set_int (value, buffer->tile_storage->px_size);
         break;
 
       case PROP_FORMAT:
@@ -252,12 +252,12 @@ static void
 gegl_buffer_dispose (GObject *object)
 {
   GeglBuffer  *buffer  = GEGL_BUFFER (object);
-  GeglHandler *handler = GEGL_HANDLER (object);
+  GeglTileHandler *handler = GEGL_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
 
   if (handler->source &&
-      GEGL_IS_STORAGE (handler->source))
+      GEGL_IS_TILE_STORAGE (handler->source))
     {
       gegl_buffer_void (buffer);
 #if 0
@@ -281,7 +281,7 @@ gegl_buffer_dispose (GObject *object)
 static GeglTileBackend *
 gegl_buffer_backend (GeglBuffer *buffer)
 {
-  GeglSource *tmp = GEGL_SOURCE (buffer);
+  GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
 
   if (!tmp)
     return NULL;
@@ -299,17 +299,17 @@ gegl_buffer_backend (GeglBuffer *buffer)
   return (GeglTileBackend *) tmp;
 }
 
-static GeglStorage *
-gegl_buffer_storage (GeglBuffer *buffer)
+static GeglTileStorage *
+gegl_buffer_tile_storage (GeglBuffer *buffer)
 {
-  GeglSource *tmp = GEGL_SOURCE (buffer);
+  GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
 
   do
     {
-      tmp = ((GeglHandler *) (tmp))->source;
-    } while (!GEGL_IS_STORAGE (tmp));
+      tmp = ((GeglTileHandler *) (tmp))->source;
+    } while (!GEGL_IS_TILE_STORAGE (tmp));
 
-  return (GeglStorage *) tmp;
+  return (GeglTileStorage *) tmp;
 }
 
 void babl_backtrack (void);
@@ -322,8 +322,8 @@ gegl_buffer_constructor (GType                  type,
   GObject         *object;
   GeglBuffer      *buffer;
   GeglTileBackend *backend;
-  GeglHandler     *handler;
-  GeglSource    *source;
+  GeglTileHandler     *handler;
+  GeglTileSource    *source;
   gint             tile_width;
   gint             tile_height;
 
@@ -336,8 +336,8 @@ gegl_buffer_constructor (GType                  type,
 
   if (source)
     {
-      if (GEGL_IS_STORAGE (source))
-        buffer->format = GEGL_STORAGE (source)->format;
+      if (GEGL_IS_TILE_STORAGE (source))
+        buffer->format = GEGL_TILE_STORAGE (source)->format;
       else if (GEGL_IS_BUFFER (source))
         buffer->format = GEGL_BUFFER (source)->format;
     }
@@ -351,7 +351,7 @@ gegl_buffer_constructor (GType                  type,
        */
       g_assert (buffer->format);
 
-      source = GEGL_SOURCE (gegl_buffer_new_from_format (buffer->format,
+      source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
                                                          buffer->extent.x,
                                                          buffer->extent.y,
                                                          buffer->extent.width,
@@ -375,7 +375,8 @@ gegl_buffer_constructor (GType                  type,
   tile_height = backend->tile_height;
 
   if (buffer->extent.width == -1 &&
-      buffer->extent.height == -1) /* no specified extents, inheriting from source */
+      buffer->extent.height == -1) /* no specified extents,
+                                      inheriting from source */
     {
       if (GEGL_IS_BUFFER (source))
         {
@@ -384,12 +385,12 @@ gegl_buffer_constructor (GType                  type,
           buffer->extent.width  = GEGL_BUFFER (source)->extent.width;
           buffer->extent.height = GEGL_BUFFER (source)->extent.height;
         }
-      else if (GEGL_IS_STORAGE (source))
+      else if (GEGL_IS_TILE_STORAGE (source))
         {
           buffer->extent.x = 0;
           buffer->extent.y = 0;
-          buffer->extent.width  = GEGL_STORAGE (source)->width;
-          buffer->extent.height = GEGL_STORAGE (source)->height;
+          buffer->extent.width  = GEGL_TILE_STORAGE (source)->width;
+          buffer->extent.height = GEGL_TILE_STORAGE (source)->height;
         }
     }
 
@@ -447,7 +448,8 @@ gegl_buffer_constructor (GType                  type,
       buffer->abyss.height = self.height;
     }
 
-  /* compute our own total shift <- this should probably happen approximatly first */
+  /* compute our own total shift <- this should probably happen 
+   * approximatly first */
   if (GEGL_IS_BUFFER (source))
     {
       GeglBuffer *source_buf;
@@ -461,23 +463,23 @@ gegl_buffer_constructor (GType                  type,
     {
     }
 
-  buffer->storage = gegl_buffer_storage (buffer);
+  buffer->tile_storage = gegl_buffer_tile_storage (buffer);
 
   return object;
 }
 
 static GeglTile *
-get_tile (GeglSource *source,
+get_tile (GeglTileSource *source,
           gint        x,
           gint        y,
           gint        z)
 {
-  GeglHandler *handler = GEGL_HANDLER (source);
+  GeglTileHandler *handler = GEGL_HANDLER (source);
   GeglTile    *tile   = NULL;
   source = handler->source;
 
   if (source) 
-    tile = gegl_source_get_tile (source, x, y, z);
+    tile = gegl_tile_source_get_tile (source, x, y, z);
   else
     g_assert (0);
 
@@ -500,10 +502,11 @@ get_tile (GeglSource *source,
         buffer->max_z = z;
 
       /* storing information in tile, to enable the dispose function of the
-       * tile instance to "hook" back to the storage with correct coordinates.
+       * tile instance to "hook" back to the storage with correct
+       * coordinates.
        */
       {
-        tile->storage   = buffer->storage;
+        tile->tile_storage   = buffer->tile_storage;
         tile->storage_x = x;
         tile->storage_y = y;
         tile->storage_z = z;
@@ -515,20 +518,20 @@ get_tile (GeglSource *source,
 
 
 static gpointer
-command (GeglSource     *source,
+command (GeglTileSource     *source,
          GeglTileCommand command,
          gint            x,
          gint            y,
          gint            z,
          gpointer        data)
 {
-  GeglHandler *handler = GEGL_HANDLER (source);
+  GeglTileHandler *handler = GEGL_HANDLER (source);
   switch (command)
     {
       case GEGL_TILE_GET:
         return get_tile (source, x, y, z);
       default:
-        return gegl_handler_chain_up (handler, command, x, y, z, data);
+        return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
     }
 }
 
@@ -536,7 +539,7 @@ static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
   GObjectClass      *gobject_class       = G_OBJECT_CLASS (class);
-  GeglSourceClass *tile_source_class = GEGL_SOURCE_CLASS (class);
+  GeglTileSourceClass *tile_source_class = GEGL_TILE_SOURCE_CLASS (class);
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
@@ -651,8 +654,8 @@ gegl_buffer_void (GeglBuffer *buffer)
 {
   gint width       = buffer->extent.width;
   gint height      = buffer->extent.height;
-  gint tile_width  = buffer->storage->tile_width;
-  gint tile_height = buffer->storage->tile_height;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
   gint bufy        = 0;
 
   {
@@ -679,7 +682,7 @@ gegl_buffer_void (GeglBuffer *buffer)
 
                   if (z != 0 ||
                       tx >= buffer->min_x)
-                  gegl_source_command (GEGL_SOURCE (buffer),
+                  gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
                                          GEGL_TILE_VOID, tx, ty, z, NULL);
 
                   if (z != 0 ||
@@ -719,8 +722,8 @@ pset (GeglBuffer *buffer,
       const Babl *format,
       guchar     *buf)
 {
-  gint  tile_width  = buffer->storage->tile_width;
-  gint  tile_height  = buffer->storage->tile_width;
+  gint  tile_width  = buffer->tile_storage->tile_width;
+  gint  tile_height  = buffer->tile_storage->tile_width;
   gint  px_size     = gegl_buffer_px_size (buffer);
   gint  bpx_size    = FMTPXS (format);
   Babl *fish        = NULL;
@@ -750,7 +753,7 @@ pset (GeglBuffer *buffer,
         gint      tiledy = buffer_y + buffer->shift_y + y;
         gint      tiledx = buffer_x + buffer->shift_x + x;
 
-        GeglTile *tile = gegl_source_get_tile ((GeglSource *) (buffer),
+        GeglTile *tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                                 gegl_tile_indice (tiledx, tile_width),
                                                 gegl_tile_indice (tiledy, tile_height),
                                                 0);
@@ -786,8 +789,8 @@ pset (GeglBuffer *buffer,
       gpointer    data)
 {
   guchar *buf         = data;
-  gint    tile_width  = buffer->storage->tile_width;
-  gint    tile_height = buffer->storage->tile_height;
+  gint    tile_width  = buffer->tile_storage->tile_width;
+  gint    tile_height = buffer->tile_storage->tile_height;
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
@@ -835,7 +838,7 @@ pset (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_source_get_tile ((GeglSource *) (buffer),
+            tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                              indice_x, indice_y,
                                              0);
           }
@@ -870,8 +873,8 @@ pget (GeglBuffer *buffer,
       gpointer    data)
 {
   guchar *buf         = data;
-  gint    tile_width  = buffer->storage->tile_width;
-  gint    tile_height = buffer->storage->tile_height;
+  gint    tile_width  = buffer->tile_storage->tile_width;
+  gint    tile_height = buffer->tile_storage->tile_height;
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
@@ -920,7 +923,7 @@ pget (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_source_get_tile ((GeglSource *) (buffer),
+            tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                            indice_x, indice_y,
                                            0);
           }
@@ -969,8 +972,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 {
   gint  width       = buffer->extent.width;
   gint  height      = buffer->extent.height;
-  gint  tile_width  = buffer->storage->tile_width;
-  gint  tile_height = buffer->storage->tile_height;
+  gint  tile_width  = buffer->tile_storage->tile_width;
+  gint  tile_height = buffer->tile_storage->tile_height;
   gint  px_size     = FMTPXS (buffer->format);
   gint  bpx_size    = FMTPXS (format);
   gint  tile_stride = px_size * tile_width;
@@ -1088,7 +1091,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
             else
               {
                 guchar   *tile_base, *tp;
-                GeglTile *tile = gegl_source_get_tile ((GeglSource *) (buffer),
+                GeglTile *tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                                            gegl_tile_indice (tiledx, tile_width),
                                                            gegl_tile_indice (tiledy, tile_height),
                                                            level);
@@ -1233,7 +1236,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
     format = buffer->format;
 
   /* FIXME: go through chain of sources up to but not including
-   * storage and disassociated Sampler */
+   * tile_storage and disassociated Sampler */
 
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
@@ -1675,8 +1678,8 @@ gegl_buffer_get (GeglBuffer          *buffer,
           && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
-          /* XXX: use box-filter also for > 1.99 when testing and probably later,
-           * there are some bugs when doing so
+          /* XXX: use box-filter also for > 1.99 when testing and probably
+           * later, there are some bugs when doing so
            */
           resample_boxfilter_u8 (dest_buf,
                                  sample_buf,
@@ -1866,7 +1869,7 @@ gegl_buffer_copy (GeglBuffer          *src,
       dst_rect = src_rect;
     }
 
-  pxsize = src->storage->px_size;
+  pxsize = src->tile_storage->px_size;
   format = src->format;
 
   src_line = *src_rect;
@@ -2015,7 +2018,7 @@ gegl_buffer_new_from_format (const void *babl_format,
                              gint        width,
                              gint        height)
 {
-  GeglStorage *storage;
+  GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
   gchar       *filename;
   gchar       *path;
@@ -2033,26 +2036,26 @@ gegl_buffer_new_from_format (const void *babl_format,
 
   if (gegl_swap_dir ())
     {
-      storage = g_object_new (GEGL_TYPE_STORAGE,
+      tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
                               "path",   path,
                               NULL);
     }
   else
     {
-      storage = g_object_new (GEGL_TYPE_STORAGE,
+      tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
                               NULL);
     }
   buffer = g_object_new (GEGL_TYPE_BUFFER,
-                                    "source", storage,
+                                    "source", tile_storage,
                                     "x", x,
                                     "y", y,
                                     "width", width,
                                     "height", height,
                                     NULL);
 
-  g_object_unref (storage);
+  g_object_unref (tile_storage);
   return buffer;
 }
 

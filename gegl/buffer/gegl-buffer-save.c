@@ -44,13 +44,13 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
-#include "gegl-storage.h"
+#include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
-#include "gegl-handler.h"
+#include "gegl-tile-handler.h"
 #include "gegl-tile.h"
-#include "gegl-handler-cache.h"
-#include "gegl-handler-log.h"
-#include "gegl-handler-empty.h"
+#include "gegl-tile-handler-cache.h"
+#include "gegl-tile-handler-log.h"
+#include "gegl-tile-handler-empty.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"
@@ -179,14 +179,14 @@ gegl_buffer_save (GeglBuffer          *buffer,
   info->header.height      = buffer->extent.height;
   info->header.x           = buffer->extent.x;
   info->header.y           = buffer->extent.y;
-  info->header.tile_width  = buffer->storage->tile_width;
-  info->header.tile_height = buffer->storage->tile_height;
+  info->header.tile_width  = buffer->tile_storage->tile_width;
+  info->header.tile_height = buffer->tile_storage->tile_height;
 
   g_object_get (buffer, "px-size", &(info->header.bpp), NULL);
 /*  = gegl_buffer_px_size (buffer);*/
 
   info->tile_size = info->header.tile_width * info->header.tile_height * info->header.bpp;
-  strcpy (info->header.format, ((Babl *) (buffer->storage->format))->instance.name);
+  strcpy (info->header.format, ((Babl *) (buffer->tile_storage->format))->instance.name);
 
   /* collect list of tiles to be written */
   {
@@ -231,7 +231,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
                   gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
-                  if (gegl_source_exist (GEGL_SOURCE (buffer), tx, ty, z))
+                  if (gegl_tile_source_exist (GEGL_TILE_SOURCE (buffer), tx, ty, z))
                     {
                       tx += info->x_tile_shift / factor;
                       ty += info->y_tile_shift / factor;
@@ -293,7 +293,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
         GeglTile      *tile;
         gint           factor = 1 << entry->z;
 
-        tile = gegl_source_get_tile (GEGL_SOURCE (buffer),
+        tile = gegl_tile_source_get_tile (GEGL_TILE_SOURCE (buffer),
                                      entry->x - info->x_tile_shift / factor,
                                      entry->y - info->y_tile_shift / factor,
                                      entry->z);

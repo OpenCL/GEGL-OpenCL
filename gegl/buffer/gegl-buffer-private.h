@@ -20,7 +20,7 @@
 #define __GEGL_BUFFER_PRIVATE_H__
 
 #include "gegl-buffer.h"
-#include "gegl-handler.h"
+#include "gegl-tile-handler.h"
 
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
 #define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
@@ -29,7 +29,7 @@
 
 struct _GeglBuffer
 {
-  GeglHandler       parent_instance; /* which is a GeglHandler which has a
+  GeglTileHandler   parent_instance; /* which is a GeglTileHandler which has a
                                         source field which is used for chaining
                                         sub buffers with their anchestors */
 
@@ -39,7 +39,7 @@ struct _GeglBuffer
                                 buffer */
 
   gint              shift_x; /* The relative offset of origins compared with */
-  gint              shift_y; /* anchestral storage buffer, during            */
+  gint              shift_y; /* anchestral tile_storage buffer, during            */
                              /* construction relative to immediate source  */
 
   GeglRectangle     abyss;
@@ -51,7 +51,7 @@ struct _GeglBuffer
                                      access interpolated fetches from the
                                      buffer */
 
-  GeglStorage      *storage;
+  GeglTileStorage  *tile_storage;
 
   gint              min_x; /* the extent of tile indices that has been */
   gint              min_y; /* produced by _get_tile for this buffer */
@@ -62,7 +62,7 @@ struct _GeglBuffer
 
 struct _GeglBufferClass
 {
-  GeglHandlerClass parent_class;
+  GeglTileHandlerClass parent_class;
 };
 
 

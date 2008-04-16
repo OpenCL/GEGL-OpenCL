@@ -31,7 +31,7 @@
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
-#include "gegl-source.h"
+#include "gegl-tile-source.h"
 
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
@@ -173,7 +173,7 @@ gegl_tile_class_init (GeglTileClass *class)
 static void
 gegl_tile_init (GeglTile *tile)
 {
-  tile->storage    = NULL;
+  tile->tile_storage    = NULL;
   tile->stored_rev = 0;
   tile->rev        = 0;
   tile->lock       = 0;
@@ -195,7 +195,7 @@ gegl_tile_dup (GeglTile *src)
 
   tile->rev        = 1;
   tile->stored_rev = 1;
-  tile->storage    = src->storage;
+  tile->tile_storage    = src->tile_storage;
   tile->data       = src->data;
   tile->size       = src->size;
 
@@ -262,7 +262,7 @@ gegl_tile_lock (GeglTile *tile)
 static void
 gegl_tile_void_pyramid (GeglTile *tile)
 {
-  /* should, to tile->storage, request it's toplevel tile, and mark
+  /* should, to tile->tile_storage, request it's toplevel tile, and mark
    * it as dirty, to force a recomputation of it's toplevel at the
    * next subdivision request. NB: a full voiding might not be neccesary,
    * forcing a rerender of just the dirtied part might be better, more
@@ -284,29 +284,29 @@ gegl_tile_void_pyramid (GeglTile *tile)
       x /= 2;
       y /= 2;
 
-      gegl_source_void (GEGL_SOURCE (tile->storage), x, y, z);
+      gegl_tile_source_void (GEGL_TILE_SOURCE (tile->tile_storage), x, y, z);
 #if 0
       /* FIXME: reenable this code */
       if (!ver)
         {
           if (!hor)
             {
-              gegl_source_void_tl (GEGL_SOURCE (tile->storage), x,y,z);
+              gegl_tile_source_void_tl (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);
             }
           else
             {
-              gegl_source_void_tr (GEGL_SOURCE (tile->storage), x,y,z);              
+              gegl_tile_source_void_tr (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);              
             }
         }
       else
         {
           if (!hor)
             {
-              gegl_source_void_bl (GEGL_SOURCE (tile->storage), x,y,z);              
+              gegl_tile_source_void_bl (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);              
             }
           else
             {
-			  gegl_source_void_br (GEGL_SOURCE (tile->storage), x,y,z);
+			  gegl_tile_source_void_br (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);
             }
         }
 #endif
@@ -344,8 +344,8 @@ void
 gegl_tile_void (GeglTile *tile)
 {
   tile->stored_rev = tile->rev;
-  tile->storage = NULL;
-  /* FIXME: make sure the tile is evicted from any storage/buffer caches
+  tile->tile_storage = NULL;
+  /* FIXME: make sure the tile is evicted from any tile_storage/buffer caches
    * as well
    */
 }
@@ -396,9 +396,9 @@ gegl_tile_get_data (GeglTile *tile)
 
 gboolean gegl_tile_store (GeglTile *tile)
 {
-  if (tile->storage == NULL)
+  if (tile->tile_storage == NULL)
     return FALSE;
-  return gegl_source_set_tile (GEGL_SOURCE (tile->storage),
+  return gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
                                 tile->storage_x,
                                 tile->storage_y,
                                 tile->storage_z, tile);
