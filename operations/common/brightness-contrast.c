@@ -105,6 +105,34 @@ process (GeglOperation *op,
   return TRUE;
 }
 
+
+#ifdef USE_SSE
+static gboolean
+process_sse (GeglOperation *op,
+             void          *in_buf,
+             void          *out_buf,
+             glong          samples)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglV4     *in  = in_buf;
+  GeglV4     *out = out_buf;
+  GeglV4      half={{0.5,0.5,0.5,0.5}};
+  GeglV4      brightness={{o->brightness + 0.5,
+                           o->brightness + 0.5,
+                           o->brightness + 0.5,
+                           0.0}};
+  GeglV4      contrast={{o->contrast, o->contrast,o->contrast, 1.0}};
+
+  while (--samples)
+    {
+      out->v = (in->v - half.v) * contrast.v + brightness.v;
+      in  ++;
+      out ++;
+    }
+  return TRUE;
+}
+#endif
+
 /*
  * The class init function sets up information needed for this operations class
  * (template) in the GObject OO framework.
@@ -135,6 +163,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   /* a description of what this operations does */
   operation_class->description = _("Changes the light level and contrast.");
+
+
+#ifdef USE_SSE
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_sse), "sse");
+#endif
 }
 
 #endif /* closing #ifdef GEGL_CHANT_PROPERTIES ... else ... */
