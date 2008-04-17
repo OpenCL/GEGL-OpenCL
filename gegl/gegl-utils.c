@@ -291,4 +291,35 @@ gegl_rectangle_get_type (void)
   return our_type;
 }
 
+#define GEGL_ALIGN 16
 
+void *
+gegl_malloc (gsize size);
+
+void *
+gegl_malloc (gsize size)
+{
+  gint   off;
+  gint   i;
+  gint   to_add;
+  gchar *mem = g_malloc (size + GEGL_ALIGN + 1);
+  void *ret;
+  *mem='G';
+  off = (((guint)mem) + 1) % GEGL_ALIGN;
+  to_add = GEGL_ALIGN-off;
+  ret = (void*)(mem + 1 + to_add);
+  for (i=1;i<1+to_add;i++)
+    mem[i]=' ';
+  return ret;
+}
+
+void
+gegl_free (void *buf);
+void
+gegl_free (void *buf)
+{
+  gchar *p = buf;
+  while (*p!='G')
+   p--;
+  g_free (p);
+}

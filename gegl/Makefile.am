@@ -19,6 +19,8 @@ GEGL_sources = \
 	gegl-dot.c			\
 	gegl-utils.c			\
 	gegl-xml.c			\
+	gegl-cpuaccel.c			\
+	gegl-cpuaccel.h			\
 	\
 	gegl-init.h			\
 	gegl-types.h			\

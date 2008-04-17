@@ -23,6 +23,7 @@
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
 #define GEGL_CHANT_C_FILE       "invert.c"
+#define GEGLV4
 
 #include "gegl-chant.h"
 
@@ -53,38 +54,27 @@ process (GeglOperation *op,
   return TRUE;
 }
 
-
+#ifdef USE_SSE
 static gboolean
-process_fast (GeglOperation *op,
-              void          *in_buf,
-              void          *out_buf,
-              glong          samples)
+process_sse (GeglOperation *op,
+             void          *in_buf,
+             void          *out_buf,
+             glong          samples)
 {
-  glong   i;
-  gfloat *in  = in_buf;
-  gfloat *out = out_buf;
+  GeglV4 *in  = in_buf;
+  GeglV4 *out = out_buf;
+  GeglV4  one={{1.0,1.0,1.0,1.0}};
 
-  for (i=0; i<samples; i++)
+  while (--samples)
     {
-      int  j;
-      for (j=0; j<3; j++)
-        {
-          gfloat c;
-          c = in[j];
-          c = 1.0 - c;
-          if (i%2)
-            out[j] = c;
-          else
-            out[j] = (c - 0.5) * 2.0 + 0.5;
-        }
-      out[3]=in[3];
-      in += 4;
-      out+= 4;
+      out->v = one.v - in->v;
+      out->a[3]=in->a[3];
+      in  ++;
+      out ++;
     }
   return TRUE;
 }
-
-
+#endif
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -103,9 +93,10 @@ gegl_chant_class_init (GeglChantClass *klass)
      "Inverts the components (except alpha), the result is the"
      " corresponding \"negative\" image.";
 
-  g_print ("hi\n");
+#ifdef USE_SSE
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_fast), "fast");
+                                      G_CALLBACK (process_sse), "sse");
+#endif
 }
 
 #endif

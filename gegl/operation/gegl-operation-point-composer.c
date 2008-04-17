@@ -134,7 +134,7 @@ process_inner (GeglOperation       *operation,
     {
       gfloat *in_buf = NULL, *out_buf = NULL, *aux_buf = NULL;
 
-      in_buf = g_malloc (in_format->format.bytes_per_pixel *
+      in_buf = gegl_malloc (in_format->format.bytes_per_pixel *
                          output->extent.width * output->extent.height);
       if (in_format == out_format)
         {
@@ -142,7 +142,7 @@ process_inner (GeglOperation       *operation,
         }
       else
         {
-          out_buf = g_malloc (out_format->format.bytes_per_pixel *
+          out_buf = gegl_malloc (out_format->format.bytes_per_pixel *
                               output->extent.width * output->extent.height);
         }
 
@@ -150,7 +150,7 @@ process_inner (GeglOperation       *operation,
 
       if (aux)
         {
-          aux_buf = g_malloc (aux_format->format.bytes_per_pixel *
+          aux_buf = gegl_malloc (aux_format->format.bytes_per_pixel *
                              output->extent.width * output->extent.height);
           gegl_buffer_get (aux, 1.0, result, aux_format, aux_buf, GEGL_AUTO_ROWSTRIDE);
         }
@@ -165,11 +165,11 @@ process_inner (GeglOperation       *operation,
 
       gegl_buffer_set (output, NULL, out_format, out_buf, GEGL_AUTO_ROWSTRIDE);
 
-      g_free (in_buf);
+      gegl_free (in_buf);
       if (in_format != out_format)
-        g_free (out_buf);
+        gegl_free (out_buf);
       if (aux)
-        g_free (aux_buf);
+        gegl_free (aux_buf);
     }
   return TRUE;
 }

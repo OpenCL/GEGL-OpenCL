@@ -27,6 +27,7 @@
 #include "gegl-types.h"
 #include "gegl-operation.h"
 #include "gegl-utils.h"
+#include "gegl-cpuaccel.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-connection.h"
 #include "graph/gegl-pad.h"
@@ -107,12 +108,21 @@ else
                  g_type_name (G_TYPE_FROM_CLASS (cclass)));
     }
 
+#ifdef USE_SSE
+  /* always look for sse ops */
+#else
   if (g_getenv ("GEGL_QUALITY"))
+#endif
     {
       const gchar *quality = g_getenv ("GEGL_QUALITY");
       GCallback fast      = NULL;
       GCallback good      = NULL;
       GCallback reference = NULL;
+#ifdef USE_SSE
+      GCallback sse       = NULL;
+      if (quality == NULL)
+        quality = "sse";
+#endif
 
       for (i=0;i<MAX_PROCESSOR;i++)
         {
@@ -125,6 +135,10 @@ else
                 fast = cb;
               else if (g_str_equal (string, "good"))
                 good = cb;
+#ifdef USE_SSE
+              else if (g_str_equal (string, "sse"))
+                sse = cb;
+#endif
               else if (g_str_equal (string, "reference"))
                 reference = cb;
             }
@@ -133,16 +147,37 @@ else
       g_assert (reference);
       if (g_str_equal (quality, "fast"))
         {
+#ifdef USE_SSE
+          g_print ("Setting %s processor for %s\n", fast?"fast":sse?"sse":good?"good":"reference",
+          g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          PROCESS_VFUNC = fast?fast:sse?sse:good?good:reference;
+#else
           g_print ("Setting %s processor for %s\n", fast?"fast":good?"good":"reference",
-           g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          g_type_name (G_TYPE_FROM_CLASS (cclass)));
           PROCESS_VFUNC = fast?fast:good?good:reference;
+#endif
         }
       else if (g_str_equal (quality, "good"))
         {
+#ifdef USE_SSE
+          g_print ("Setting %s processor for %s\n", sse?"sse":good?"good":"reference",
+           g_type_name (G_TYPE_FROM_CLASS (cclass)));
+#else
           g_print ("Setting %s processor for %s\n", good?"good":"reference",
            g_type_name (G_TYPE_FROM_CLASS (cclass)));
           PROCESS_VFUNC = good?good:reference;
+#endif
         }
-        /* best */
+      else
+        {
+          /* best */
+#ifdef USE_SSE
+          if (sse && gegl_cpu_accel_get_support () & GEGL_CPU_ACCEL_X86_SSE)
+            g_print ("Setting sse processor for %s\n", g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          PROCESS_VFUNC = sse?sse:reference;
+#else
+          PROCESS_VFUNC = reference;
+#endif
+        }
     }
 }

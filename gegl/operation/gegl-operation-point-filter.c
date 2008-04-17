@@ -25,6 +25,7 @@
 #include "gegl-operation-point-filter.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-node.h"
+#include "gegl-utils.h"
 #include <string.h>
 
 static gboolean process_inner (GeglOperation       *operation,
@@ -95,7 +96,7 @@ process_inner (GeglOperation       *operation,
       if (in_format == out_format)
         {
           gfloat *buf;
-          buf = g_malloc (in_format->format.bytes_per_pixel *
+          buf = gegl_malloc (in_format->format.bytes_per_pixel *
                           output->extent.width * output->extent.height);
 
           gegl_buffer_get (input, 1.0, result, in_format, buf, GEGL_AUTO_ROWSTRIDE);
@@ -107,15 +108,15 @@ process_inner (GeglOperation       *operation,
             output->extent.width * output->extent.height);
 
           gegl_buffer_set (output, result, out_format, buf, GEGL_AUTO_ROWSTRIDE);
-          g_free (buf);
+          gegl_free (buf);
         }
       else
         {
           gfloat *in_buf;
           gfloat *out_buf;
-          in_buf = g_malloc (in_format->format.bytes_per_pixel *
+          in_buf = gegl_malloc (in_format->format.bytes_per_pixel *
                              input->extent.width * input->extent.height);
-          out_buf = g_malloc (out_format->format.bytes_per_pixel *
+          out_buf = gegl_malloc (out_format->format.bytes_per_pixel *
                              output->extent.width * output->extent.height);
 
           gegl_buffer_get (input, 1.0, result, in_format, in_buf, GEGL_AUTO_ROWSTRIDE);
@@ -127,8 +128,8 @@ process_inner (GeglOperation       *operation,
             output->extent.width * output->extent.height);
 
           gegl_buffer_set (output, result, out_format, out_buf, GEGL_AUTO_ROWSTRIDE);
-          g_free (in_buf);
-          g_free (out_buf);
+          gegl_free (in_buf);
+          gegl_free (out_buf);
         }
     }
   return TRUE;

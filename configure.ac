@@ -235,6 +235,29 @@ case x"$target" in
 esac
 AC_MSG_RESULT([$target_or_host])
 
+case "$target_or_host" in
+  i*86-*-*)
+    have_x86=yes
+    AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
+    ;;
+  x86_64-*-*)
+    have_x86=yes
+    AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
+    AC_DEFINE(ARCH_X86_64, 1, [Define to 1 if you are compiling for amd64.])
+    ;;
+  ppc-*-* | powerpc-*)
+    have_ppc=yes
+    AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
+    ;;
+  ppc64-*-* | powerpc64-*)
+    have_ppc=yes
+    AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
+    AC_DEFINE(ARCH_PPC64, 1, [Define to 1 if you are compiling for PowerPC64.])
+    ;;
+  *)
+    ;;
+esac
+
 
 
 ####################################################
@@ -304,6 +327,9 @@ AC_SUBST(MATH_LIB)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
+dnl Checks for programs.
+#AC_PROG_YACC
+#AM_PROG_LEX
 
 #############################
 # Threads and multi processor 
@@ -319,9 +345,85 @@ if test "x$enable_mp" != "xno"; then
 fi
 
 
-dnl Checks for programs.
-#AC_PROG_YACC
-#AM_PROG_LEX
+
+
+########################
+# Check for MMX assembly
+########################
+
+dnl GEGL_DETECT_CFLAGS(RESULT, FLAGSET)
+dnl Detect if the compiler supports a set of flags
+
+AC_DEFUN([GEGL_DETECT_CFLAGS],
+[
+  $1=
+  for flag in $2; do
+    if test -z "[$]$1"; then
+      $1_save_CFLAGS="$CFLAGS"
+      CFLAGS="$CFLAGS $flag"
+      AC_MSG_CHECKING([whether [$]CC understands [$]flag])
+      AC_TRY_COMPILE([], [], [$1_works=yes], [$1_works=no])
+      AC_MSG_RESULT([$]$1_works)
+      CFLAGS="[$]$1_save_CFLAGS"
+      if test "x[$]$1_works" = "xyes"; then
+        $1="$flag"
+      fi
+    fi
+  done
+])
+
+AC_ARG_ENABLE(mmx,
+                [  --enable-mmx            enable MMX support (default=auto)],,
+                  enable_mmx=$have_x86)
+
+AC_ARG_ENABLE(sse,
+  [  --enable-sse            enable SSE support (default=auto)],,
+  enable_sse=$enable_mmx)
+
+if test "x$enable_mmx" = xyes; then
+  GEGL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
+  SSE_EXTRA_CFLAGS=
+
+  AC_MSG_CHECKING(whether we can compile MMX code)
+
+  mmx_save_CFLAGS="$CFLAGS"
+  CFLAGS="$mmx_save_CFLAGS $MMX_EXTRA_CFLAGS"
+
+  AC_COMPILE_IFELSE([asm ("movq 0, %mm0");],
+
+    AC_DEFINE(USE_MMX, 1, [Define to 1 if MMX assembly is available.])
+    AC_MSG_RESULT(yes)
+
+    if test "x$enable_sse" = xyes; then
+      GEGL_DETECT_CFLAGS(sse_flag, '-msse')
+      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
+
+      AC_MSG_CHECKING(whether we can compile SSE code)
+
+      CFLAGS="$CFLAGS $sse_flag"
+
+      AC_COMPILE_IFELSE([asm ("movntps %xmm0, 0");],
+        AC_DEFINE(USE_SSE, 1, [Define to 1 if SSE assembly is available.])
+        AC_MSG_RESULT(yes)
+      ,
+        enable_sse=no
+        AC_MSG_RESULT(no)
+        AC_MSG_WARN([The assembler does not support the SSE command set.])
+      )
+
+    fi
+  ,
+    enable_mmx=no
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN([The assembler does not support the MMX command set.])
+  )
+
+  CFLAGS="$mmx_save_CFLAGS"
+
+  AC_SUBST(MMX_EXTRA_CFLAGS)
+  AC_SUBST(SSE_EXTRA_CFLAGS)
+fi
+
 
 
 ###############################
@@ -659,6 +761,8 @@ AC_SUBST(AVFORMAT_CFLAGS)
 AC_SUBST(AVFORMAT_LIBS) 
 
 
+
+
 ################
 # Check for lcms
 ################
@@ -677,6 +781,8 @@ AC_SUBST(AVFORMAT_LIBS)
 # 
 #AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = "xyes")
 #AC_SUBST(LCMS_LIBS)
+
+
 
 
 #######################

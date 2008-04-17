@@ -20,6 +20,10 @@
 #ifndef __GEGL_PLUGIN_H__
 #define __GEGL_PLUGIN_H__
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string.h>
 #include <glib-object.h>
 #include <gegl.h>
@@ -53,7 +57,7 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  *    should be extended so a range of abi versions are accepted.
  */
 
-#define GEGL_MODULE_ABI_VERSION 0x0007
+#define GEGL_MODULE_ABI_VERSION 0x0008
 
 struct _GeglModuleInfo
 {
@@ -95,6 +99,17 @@ const gchar * gegl_extension_handler_get      (const gchar *extension);
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
+
+#ifdef USE_SSE
+
+typedef float v4sf __attribute__ ((vector_size (4*sizeof(float))));
+typedef union
+{
+  v4sf  v;
+  float a[4];
+} GeglV4;
+
+#endif
 
 #else
 

@@ -78,6 +78,10 @@ inline gint _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
+void *
+gegl_aligned_malloc (gsize size);
+void
+gegl_aligned_free (void *buf);
 
 G_END_DECLS
 
