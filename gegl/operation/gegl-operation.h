@@ -62,6 +62,12 @@ struct _GeglOperation
  * See <a href='gegl-plugin.h.html'>gegl-plugin.h</a> for details.
  */
 
+#define MAX_PROCESSOR 4
+
+void gegl_operation_class_add_processor (GeglOperationClass *cclass,
+                                         GCallback           process,
+                                         const gchar        *string);
+
 struct _GeglOperationClass
 {
   GObjectClass    parent_class;
@@ -132,6 +138,10 @@ struct _GeglOperationClass
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
+
+
+  GCallback      processor[MAX_PROCESSOR];
+  gchar          *processor_string[MAX_PROCESSOR];
 };
 
 

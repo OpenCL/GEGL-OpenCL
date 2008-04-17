@@ -53,6 +53,39 @@ process (GeglOperation *op,
   return TRUE;
 }
 
+
+static gboolean
+process_fast (GeglOperation *op,
+              void          *in_buf,
+              void          *out_buf,
+              glong          samples)
+{
+  glong   i;
+  gfloat *in  = in_buf;
+  gfloat *out = out_buf;
+
+  for (i=0; i<samples; i++)
+    {
+      int  j;
+      for (j=0; j<3; j++)
+        {
+          gfloat c;
+          c = in[j];
+          c = 1.0 - c;
+          if (i%2)
+            out[j] = c;
+          else
+            out[j] = (c - 0.5) * 2.0 + 0.5;
+        }
+      out[3]=in[3];
+      in += 4;
+      out+= 4;
+    }
+  return TRUE;
+}
+
+
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -69,6 +102,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description =
      "Inverts the components (except alpha), the result is the"
      " corresponding \"negative\" image.";
+
+  g_print ("hi\n");
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_fast), "fast");
 }
 
 #endif

@@ -1,3 +1,20 @@
+2008-04-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Added infrastructure to support multiple process implementations in
+	GEGL operations. Optimized versions can be added with either
+	gegl_operation_class_add_processor (class, process_fast, "fast");
+	by setting the environment variable GEGL_QUALITY to fast this
+	alternate code path will be chosen.
+
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_operation_class_add_processor): added infrastructure.
+	* gegl/operation/gegl-operation.h: added function prototype.
+	* gegl/operation/Makefile.am: added new file.
+
+	* operations/common/invert.c: (process_fast): added implementation
+	with vertical artifacts.
+	(gegl_chant_class_init): register the fast version.
+
 2008-04-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: split out bits of functionality to the

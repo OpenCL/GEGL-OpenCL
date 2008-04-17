@@ -11,6 +11,7 @@ OPERATION_sources = \
 	gegl-operation-point-filter.c   \
 	gegl-operation-sink.c       	\
 	gegl-operation-source.c		\
+	gegl-operation-processors.c     \
 	gegl-operations.c
 
 
