@@ -1,5 +1,15 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): added new more general function
+	for runtime overriding of perclass vfuncs, that takes a pointer to the
+	class structure and the vfunc to operate on.
+	(gegl_operation_class_add_processor): use the new internal function
+	internally (still uses hard-coded logic for the GEGL op base classes
+	to look up the vfunc pointer.)
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/brightness-contrast.c: (process_sse):
 	* operations/common/invert.c: (process_sse): make use of stack
 	allocated vector constants.

@@ -44,12 +44,151 @@
 #include  "gegl-operation-sink.h"
 #include  "gegl-operation-source.h"
 
+#include <glib/gprintf.h>
+
+typedef struct VFuncData
+{
+  GCallback callback[MAX_PROCESSOR];
+  gchar    *string[MAX_PROCESSOR];
+} VFuncData;
+
+
+void
+gegl_class_register_alternate_vfunc (GObjectClass *cclass,
+                                     gpointer      vfunc_ptr2,
+                                     GCallback     process,
+                                     const gchar  *string);
+
+void
+gegl_class_register_alternate_vfunc (GObjectClass *cclass,
+                                     gpointer      vfunc_ptr2,
+                                     GCallback     callback,
+                                     const gchar  *string)
+{
+  gint i;
+  GCallback *vfunc_ptr = vfunc_ptr2;
+  GType      type        = G_TYPE_FROM_CLASS (cclass);
+  gchar      tag[20];
+  GQuark     quark;
+  VFuncData *data;
+
+  g_sprintf (tag, "%p", vfunc_ptr);
+  quark = g_quark_from_string (tag);
+  data = g_type_get_qdata (type, quark);
+  if (!data)
+    {
+      data = g_new0 (VFuncData, 1);
+      g_type_set_qdata (type, quark, data);
+    }
+
+  /* Store the default implementation */
+  if (data->callback[0]==NULL)
+    {
+      if (*vfunc_ptr == NULL)
+        g_error ("%s: No exsiting default () vfunc defined for %s",
+                 G_STRFUNC, g_type_name (type));
+      data->callback[0]=callback;
+      data->string[0]=g_strdup ("reference");
+    }
+
+  /* Find a free slot for this one */
+  for (i=1; i<MAX_PROCESSOR; i++)
+    {
+      if (data->callback[i]==NULL)
+        {
+          data->callback[i]=callback;
+          data->string[i]=g_strdup (string);
+          break;
+        }
+    }
+  if (i>=MAX_PROCESSOR)
+    {
+      g_warning ("Too many callbacks added to %s",
+                 g_type_name (G_TYPE_FROM_CLASS (cclass)));
+    }
+
+#ifdef USE_SSE
+  /* always look for sse ops */
+#else
+  if (g_getenv ("GEGL_QUALITY"))
+#endif
+    {
+      const gchar *quality = g_getenv ("GEGL_QUALITY");
+      GCallback fast      = NULL;
+      GCallback good      = NULL;
+      GCallback reference = NULL;
+#ifdef USE_SSE
+      GCallback sse       = NULL;
+      if (quality == NULL)
+        quality = "sse";
+#endif
+
+      for (i=0;i<MAX_PROCESSOR;i++)
+        {
+          const gchar *string = data->string[i];
+          GCallback    cb     = data->callback[i];
+
+          if (string && cb!=NULL)
+            {
+              if (g_str_equal (string, "fast"))
+                fast = cb;
+              else if (g_str_equal (string, "good"))
+                good = cb;
+#ifdef USE_SSE
+              else if (g_str_equal (string, "sse"))
+                sse = cb;
+#endif
+              else if (g_str_equal (string, "reference"))
+                reference = cb;
+            }
+        }
+
+      g_assert (reference);
+      if (g_str_equal (quality, "fast"))
+        {
+#ifdef USE_SSE
+          g_print ("Setting %s callback for %s\n", fast?"fast":sse?"sse":good?"good":"reference",
+          g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          *vfunc_ptr = fast?fast:sse?sse:good?good:reference;
+#else
+          g_print ("Setting %s callback for %s\n", fast?"fast":good?"good":"reference",
+          g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          *vfunc_ptr = fast?fast:good?good:reference;
+#endif
+        }
+      else if (g_str_equal (quality, "good"))
+        {
+#ifdef USE_SSE
+          g_print ("Setting %s callback for %s\n", sse?"sse":good?"good":"reference",
+           g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          *vfunc_ptr = sse?sse:good?good:reference;
+#else
+          g_print ("Setting %s callback for %s\n", good?"good":"reference",
+           g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          *vfunc_ptr = good?good:reference;
+#endif
+        }
+      else
+        {
+          /* best */
+#ifdef USE_SSE
+          if (sse && gegl_cpu_accel_get_support () & GEGL_CPU_ACCEL_X86_SSE)
+            g_print ("Setting sse processor for %s\n", g_type_name (G_TYPE_FROM_CLASS (cclass)));
+          *vfunc_ptr = sse?sse:reference;
+#else
+          *vfunc_ptr = reference;
+#endif
+        }
+    }
+}
+
+
+
 void
 gegl_operation_class_add_processor (GeglOperationClass *cclass,
                                     GCallback           process,
                                     const gchar        *string)
 {
-  gint i;
   GType    type        = G_TYPE_FROM_CLASS (cclass);
   GType    parent_type = g_type_parent (type);
   gint     vfunc_offset;
@@ -81,103 +220,8 @@ else
   process_vfunc_ptr = G_STRUCT_MEMBER_P(cclass, vfunc_offset);
 #define PROCESS_VFUNC (*(GCallback*) G_STRUCT_MEMBER_P ((cclass), (vfunc_offset)))
 
-
-  /* Store the default implementation */
-  if (cclass->processor[0]==NULL)
-    {
-      if (cclass->process == NULL)
-        g_error ("No process() vfunc defined for %s",
-                 g_type_name (G_TYPE_FROM_CLASS (cclass)));
-      cclass->processor[0]=process;
-      cclass->processor_string[0]=g_strdup ("reference");
-    }
-
-  /* Find a free slot for this one */
-  for (i=1; i<MAX_PROCESSOR; i++)
-    {
-      if (cclass->processor[i]==NULL)
-        {
-          cclass->processor[i]=process;
-          cclass->processor_string[i]=g_strdup (string);
-          break;
-        }
-    }
-  if (i>=MAX_PROCESSOR)
-    {
-      g_warning ("Too many processors added to %s",
-                 g_type_name (G_TYPE_FROM_CLASS (cclass)));
-    }
-
-#ifdef USE_SSE
-  /* always look for sse ops */
-#else
-  if (g_getenv ("GEGL_QUALITY"))
-#endif
-    {
-      const gchar *quality = g_getenv ("GEGL_QUALITY");
-      GCallback fast      = NULL;
-      GCallback good      = NULL;
-      GCallback reference = NULL;
-#ifdef USE_SSE
-      GCallback sse       = NULL;
-      if (quality == NULL)
-        quality = "sse";
-#endif
-
-      for (i=0;i<MAX_PROCESSOR;i++)
-        {
-          const gchar *string = cclass->processor_string[i];
-          GCallback    cb     = cclass->processor[i];
-
-          if (string && cb!=NULL)
-            {
-              if (g_str_equal (string, "fast"))
-                fast = cb;
-              else if (g_str_equal (string, "good"))
-                good = cb;
-#ifdef USE_SSE
-              else if (g_str_equal (string, "sse"))
-                sse = cb;
-#endif
-              else if (g_str_equal (string, "reference"))
-                reference = cb;
-            }
-        }
-
-      g_assert (reference);
-      if (g_str_equal (quality, "fast"))
-        {
-#ifdef USE_SSE
-          g_print ("Setting %s processor for %s\n", fast?"fast":sse?"sse":good?"good":"reference",
-          g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          PROCESS_VFUNC = fast?fast:sse?sse:good?good:reference;
-#else
-          g_print ("Setting %s processor for %s\n", fast?"fast":good?"good":"reference",
-          g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          PROCESS_VFUNC = fast?fast:good?good:reference;
-#endif
-        }
-      else if (g_str_equal (quality, "good"))
-        {
-#ifdef USE_SSE
-          g_print ("Setting %s processor for %s\n", sse?"sse":good?"good":"reference",
-           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-#else
-          g_print ("Setting %s processor for %s\n", good?"good":"reference",
-           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          PROCESS_VFUNC = good?good:reference;
-#endif
-        }
-      else
-        {
-          /* best */
-#ifdef USE_SSE
-          if (sse && gegl_cpu_accel_get_support () & GEGL_CPU_ACCEL_X86_SSE)
-            g_print ("Setting sse processor for %s\n", g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          PROCESS_VFUNC = sse?sse:reference;
-#else
-          PROCESS_VFUNC = reference;
-#endif
-        }
-    }
+  gegl_class_register_alternate_vfunc (G_OBJECT_CLASS (cclass),
+                                       process_vfunc_ptr,
+                                       process,
+                                       string);
 }
