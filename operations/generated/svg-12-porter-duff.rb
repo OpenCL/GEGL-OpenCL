@@ -33,29 +33,42 @@ copyright = '
 
 a = [
       ['clear',         '0.0',
-                        '0.0'],
+                        '0.0',
+                        'D->v = GEGL_V4_ZERO.v'],
       ['src',           'cA',
-                        'aA'],
+                        'aA',
+                        'D->v = A->v'],
       ['dst',           'cB',
-                        'aB'],
+                        'aB',
+                        'D->v = B->v'],
       ['src_over',      'cA + cB * (1 - aA)',
-                        'aA + aB - aA * aB'],
+                        'aA + aB - aA * aB',
+                        'D->v = A->v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v)'],
       ['dst_over',      'cB + cA * (1 - aB)',
-                        'aA + aB - aA * aB'],
+                        'aA + aB - aA * aB',
+                        'D->v = B->v + A->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v)'],
       ['src_in',        'cA * aB',  # this one had special treatment wrt rectangles in deleted file porter-duff.rb before the svg ops came in, perhaps that was with good reason? /pippin
-                        'aA * aB'],
-      ['dst_in',        'cB * aA',
-                        'aA * aB'],
+                        'aA * aB',
+                        'D->v = A->v * GEGL_V4_FILL(B->a[3]).v'],
+      ['dst_in',        'cB * aA', # <- XXX: typo?
+                        'aA * aB', 
+                        'D->v = B->v * GEGL_V4_FILL(A->a[3]).v'],
       ['src_out',       'cA * (1 - aB)',
-                        'aA * (1 - aB)'],
+                        'aA * (1 - aB)',
+                        'D->v = A->v * GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v'],
       ['dst_out',       'cB * (1 - aA)',
-                        'aB * (1 - aA)'],
+                        'aB * (1 - aA)',
+                        'D->v = B->v * GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v'],
       ['src_atop',      'cA * aB + cB * (1 - aA)',
-                        'aB'],
+                        'aB',
+                        'D->v = A->v * (GEGL_V4_FILL(B->a[3])).v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v);D->a[3]=B->a[3]'],
+
       ['dst_atop',      'cB * aA + cA * (1 - aB)',
-                        'aA'],
+                        'aA',
+                        'D->v = B->v * (GEGL_V4_FILL(A->a[3])).v + A->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v);D->a[3]=A->a[3]'],
       ['xor',           'cA * (1 - aB)+ cB * (1 - aA)',
-                        'aA + aB - 2 * aA * aB']
+                        'aA + aB - 2 * aA * aB',
+                        'D->v = A->v * B->v']
     ]
 
 file_head1 = '
@@ -107,6 +120,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
+
+#ifdef USE_SSE
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_sse), "sse");
+#endif
+
 '
 
 file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
@@ -129,6 +148,7 @@ a.each do
     swapcased   = name.swapcase
     c_formula   = item[1]
     a_formula   = item[2]
+    sse_formula = item[3]
 
     file.write copyright
     file.write file_head1
@@ -162,6 +182,35 @@ a.each do
       aux += 4;
       out += 4;
     }
+  return TRUE;
+}
+
+#ifdef USE_SSE
+
+static gboolean
+process_sse (GeglOperation *op,
+             void          *in_buf,
+             void          *aux_buf,
+             void          *out_buf,
+             glong          n_pixels)
+{
+  GeglV4 *A = aux_buf;
+  GeglV4 *B = in_buf;
+  GeglV4 *D = out_buf;
+
+  if (B==NULL)
+    return TRUE;
+
+  while (--n_pixels)
+    {
+      #{sse_formula};
+
+      A++; B++; D++;
+    }
+
+#endif
+
+
 "
   file.write file_tail1
   file.write "

@@ -109,6 +109,12 @@ typedef union
   float a[4];
 } GeglV4;
 
+#define GEGL_V4(a,b,c,d)  ((GeglV4){{a,b,c,d}})
+#define GEGL_V4_FILL(val) GEGL_V4(val,val,val,val)
+#define GEGL_V4_ZERO      GEGL_V4_FILL(0.0)
+#define GEGL_V4_ONE       GEGL_V4_FILL(1.0)
+#define GEGL_V4_HALF      GEGL_V4_FILL(0.5)
+
 #endif
 
 #else

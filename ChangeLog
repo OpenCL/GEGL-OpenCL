@@ -1,5 +1,17 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: added convenience macros for one, zero, half as
+	well as an on stack constructor for constant vectors.
+	* operations/generated/svg-12-porter-duff.rb: added SSE versions of
+	porter duff ops.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/invert.c: (process_sse): store the alpha in a
+	temporary variable since gegl might pass in_buf == out_buf.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: added mmx and cpu detection.
 	* gegl/Makefile.am:
 	* gegl/gegl-cpuaccel.[ch]: added from GIMP.
