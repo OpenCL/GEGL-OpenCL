@@ -1,5 +1,12 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-utils.c: (gegl_malloc), (gegl_free): modified custom
+	aligned malloc to reserve allocation + align + sizeof(pointer) and
+	store the underlying malloc one pointer in front of the returned
+	buffer.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-utils.c: (gegl_free): start looking for free marker one
 	byte in front of allocation.
 
