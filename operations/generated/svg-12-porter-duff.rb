@@ -106,8 +106,6 @@ process (GeglOperation *op,
 '
 
 file_tail1 = '
-  return TRUE;
-}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -207,6 +205,9 @@ process_sse (GeglOperation *op,
 
       A++; B++; D++;
     }
+
+  return TRUE;
+}
 
 #endif
 

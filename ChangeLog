@@ -1,3 +1,11 @@
+2008-04-18  Manish Singh  <yosh@gimp.org>
+
+	* operations/generated/svg-12-porter-duff.rb: Generate code that
+	builds with the non-USE_SSE case too.
+
+	* operations/Makefile-operations.am: Include other CPP flag variables
+	so -DHAVE_CONFIG_H gets picked up.
+
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-plugin.h: added convenience macros for one, zero, half as

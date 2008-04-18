@@ -11,7 +11,7 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 all-local: $(plugins)
 
 %.la: %.c $(GEGLHEADERS)
-	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) $(LDADD) -o $@ -rpath $(ext_dir) $@.lo
 
 
