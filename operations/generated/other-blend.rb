@@ -33,11 +33,13 @@ copyright = '
 
 a = [
 #       Alias for porter-duff src-over
-      ['normal',        'cA + cB * (1 - aA)',
-                        'aA + aB - aA * aB'],
+      ['normal',  'cA + cB * (1 - aA)',
+                  'aA + aB - aA * aB',
+                  'D->v = A->v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v)'],
 #       Alias for porter-duff src-over
-      ['over',          'cA + cB * (1 - aA)',
-                        'aA + aB - aA * aB'],
+      ['over',    'cA + cB * (1 - aA)',
+                  'aA + aB - aA * aB',
+                  'D->v = A->v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v)'],
     ]
 
 file_head1 = '
@@ -65,19 +67,16 @@ process (GeglOperation *op,
           void          *out_buf,
           glong          n_pixels)
 {
+  gint i;
   gfloat *in = in_buf;
   gfloat *aux = aux_buf;
   gfloat *out = out_buf;
-  gint    i;
 
   if (aux==NULL)
     return TRUE;
 '
 
 file_tail1 = '
-  return TRUE;
-}
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -90,14 +89,15 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
+
+#ifdef USE_SSE
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_sse), "sse");
+#endif
+
 '
 
-file_tail2 = '  operation_class->categories  = "compositors:other-blend";
-
-  operation_class->no_cache = TRUE;   /* the over op has special fast paths
-                                         that makes caching be buggy in
-                                         many circumstances.
-                                      */
+file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
 }
 
 #endif
@@ -113,27 +113,25 @@ a.each do
     puts "generating #{filename}"
     file = File.open(filename, 'w')
 
-    name        = item[0]
     capitalized = name.capitalize
     swapcased   = name.swapcase
     c_formula   = item[1]
     a_formula   = item[2]
+    sse_formula = item[3]
 
     file.write copyright
     file.write file_head1
     file.write "
-
 #define GEGL_CHANT_TYPE_POINT_COMPOSER
 #define GEGL_CHANT_C_FILE        \"#{filename}\"
 
 #include \"gegl-chant.h\"
-
 "
     file.write file_head2
     file.write "
   for (i = 0; i < n_pixels; i++)
     {
-      int  j;
+      gint   j;
       gfloat aA, aB, aD;
 
       aB = in[3];
@@ -153,13 +151,44 @@ a.each do
       aux += 4;
       out += 4;
     }
+  return TRUE;
+}
+
+#ifdef USE_SSE
+
+static gboolean
+process_sse (GeglOperation *op,
+             void          *in_buf,
+             void          *aux_buf,
+             void          *out_buf,
+             glong          n_pixels)
+{
+  GeglV4 *A = aux_buf;
+  GeglV4 *B = in_buf;
+  GeglV4 *D = out_buf;
+
+  if (B==NULL)
+    return TRUE;
+
+  while (--n_pixels)
+    {
+      #{sse_formula};
+
+      A++; B++; D++;
+    }
+
+  return TRUE;
+}
+
+#endif
+
 
 "
   file.write file_tail1
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"Other blend operation #{name} (d = #{c_formula})\";
+        \"Porter Duff operation #{name} (d = #{c_formula})\";
 "
   file.write file_tail2
   file.close

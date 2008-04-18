@@ -1,3 +1,8 @@
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/generated/other-blend.rb: added gcc-vectorized versions
+	of the src-over aliases 'over' and 'normal'
+
 2008-04-18  Manish Singh  <yosh@gimp.org>
 
 	* operations/generated/svg-12-porter-duff.rb: Generate code that
@@ -5,6 +10,12 @@
 
 	* operations/Makefile-operations.am: Include other CPP flag variables
 	so -DHAVE_CONFIG_H gets picked up.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile-operations.am: add SSE flags for compilation of
+	opertions (gcc seems to translate the vector code into non sse code
+	when sse compilation is not enabled.)
 
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
