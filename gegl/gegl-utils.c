@@ -296,6 +296,9 @@ gegl_rectangle_get_type (void)
 void *
 gegl_malloc (gsize size);
 
+/* utility call that makes sure allocations are 16 byte aligned.
+ * making RGBA float buffers have aligned access for pixels.
+ */ 
 void *
 gegl_malloc (gsize size)
 {
@@ -319,7 +322,12 @@ void
 gegl_free (void *buf)
 {
   gchar *p = buf;
+  g_assert (buf);
+  p--;
   while (*p!='G')
+    {
+      g_assert (*p==' ');
+    }
    p--;
   g_free (p);
 }
