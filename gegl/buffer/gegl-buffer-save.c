@@ -155,7 +155,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   if (sizeof (GeglBufferFileHeader) != 256)
     {
-      g_warning ("GeglBufferFileHeader is %i bytes, should be 256 padding is off by: %i bytes %i ints", (int) sizeof (GeglBufferFileHeader), (int) sizeof (GeglBufferFileHeader) - 256, (int) (sizeof (GeglBufferFileHeader) - 256) / 4);
+      g_warning ("GeglBufferFileHeader is %i bytes, should be 256 padding is off by: %i bytes %i ints",
+         (int) sizeof (GeglBufferFileHeader),
+         (int) sizeof (GeglBufferFileHeader) - 256,
+         (int)(sizeof (GeglBufferFileHeader) - 256) / 4);
       return;
     }
 
@@ -251,8 +254,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
     info->tiles = g_list_reverse (info->tiles);
   }
 
-  /* FIXME: sort the index into Z-order */
-
+  /* sort the list of tiles into zorder */
   info->tiles = g_list_sort (info->tiles, z_order_compare);
 
   /* set the offset in the file each tile will be stored on */

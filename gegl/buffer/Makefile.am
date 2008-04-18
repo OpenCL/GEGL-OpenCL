@@ -17,12 +17,12 @@ BUFFER_sources = \
     gegl-tile-source.c		\
     gegl-tile-storage.c		\
     gegl-tile-backend.c		\
-    gegl-tile-backend-swapfile.c	\
-    gegl-tile-backend-gio-tiles.c	\
+    gegl-tile-backend-file.c	\
+    gegl-tile-backend-tiledir.c	\
     gegl-tile-backend-ram.c	\
     gegl-tile-handler.c		\
-    gegl-tile-handler-chain.c	\
     gegl-tile-handler-cache.c	\
+    gegl-tile-handler-chain.c	\
     gegl-tile-handler-empty.c	\
     gegl-tile-handler-log.c	\
     gegl-tile-handler-zoom.c	\

@@ -1,5 +1,27 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-gio-tiles.c:
+	* gegl/buffer/gegl-tile-backend-gio-tiles.h: renamed to:
+	* gegl/buffer/gegl-tile-backend-tiledir.c:
+	* gegl/buffer/gegl-tile-backend-tiledir.h:
+
+	* gegl/buffer/gegl-tile-backend-swapfile.c:
+	* gegl/buffer/gegl-tile-backend-swapfile.h: renamed to:
+	* gegl/buffer/gegl-tile-backend-file.c:
+	* gegl/buffer/gegl-tile-backend-file.h:
+
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-access.c:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-buffer-save.h:
+	* gegl/buffer/gegl-buffer.c: 
+	* gegl/buffer/gegl-tile-backend.h:
+	* gegl/buffer/gegl-tile-handler-cache.c:
+	* gegl/buffer/gegl-tile-source.h:
+	* gegl/buffer/gegl-tile-storage.c:  updated accordingly.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-utils.c: (gegl_malloc), (gegl_free): modified custom
 	aligned malloc to reserve allocation + align + sizeof(pointer) and
 	store the underlying malloc one pointer in front of the returned

@@ -44,6 +44,9 @@ struct _GeglTileBackend
 struct _GeglTileBackendClass
 {
   GeglTileSourceClass parent_class;
+
+  void (* create)  (GeglTileBackend *backend); 
+  void (* destroy) (GeglTileBackend *backend);
 };
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;

@@ -25,18 +25,16 @@
 #include <glib-object.h>
 
 #include "gegl-tile-backend.h"
-#include "gegl-tile-backend-swapfile.h"
+#include "gegl-tile-backend-file.h"
 
-struct _GeglTileBackendSwapfile
+struct _GeglTileBackendFile
 {
   GeglTileBackend  parent_instance;
 
-  gchar         *path;
-  GFile         *file;
-  GOutputStream *o;
-  GInputStream  *i;
-
-  /*gint             fd;*/
+  gchar           *path;
+  GFile           *file;
+  GOutputStream   *o;
+  GInputStream    *i;
   GHashTable      *entries;
   GSList          *free_list;
   guint            next_unused;
@@ -64,9 +62,9 @@ struct _DiskEntry
 };
 
 static void inline
-disk_entry_read (GeglTileBackendSwapfile *disk,
-                 DiskEntry               *entry,
-                 guchar                  *dest)
+disk_entry_read (GeglTileBackendFile *disk,
+                 DiskEntry           *entry,
+                 guchar              *dest)
 {
   gint  nleft;
   gboolean success;
@@ -101,9 +99,9 @@ disk_entry_read (GeglTileBackendSwapfile *disk,
 }
 
 static void inline
-disk_entry_write (GeglTileBackendSwapfile *disk,
-                  DiskEntry               *entry,
-                  guchar                  *source)
+disk_entry_write (GeglTileBackendFile *disk,
+                  DiskEntry           *entry,
+                  guchar              *source)
 {
   gint     nleft;
   gboolean success;
@@ -137,7 +135,7 @@ disk_entry_write (GeglTileBackendSwapfile *disk,
 }
 
 static inline DiskEntry *
-disk_entry_new (GeglTileBackendSwapfile *disk)
+disk_entry_new (GeglTileBackendFile *disk)
 {
   DiskEntry *self = g_slice_new (DiskEntry);
 
@@ -165,8 +163,8 @@ disk_entry_new (GeglTileBackendSwapfile *disk)
 }
 
 static inline void
-disk_entry_destroy (DiskEntry               *entry,
-                    GeglTileBackendSwapfile *disk)
+disk_entry_destroy (DiskEntry           *entry,
+                    GeglTileBackendFile *disk)
 {
   disk->free_list = g_slist_prepend (disk->free_list,
                                      GINT_TO_POINTER (entry->offset));
@@ -177,7 +175,7 @@ disk_entry_destroy (DiskEntry               *entry,
 }
 
 
-G_DEFINE_TYPE (GeglTileBackendSwapfile, gegl_tile_backend_swapfile, GEGL_TYPE_TILE_BACKEND)
+G_DEFINE_TYPE (GeglTileBackendFile, gegl_tile_backend_file, GEGL_TYPE_TILE_BACKEND)
 static GObjectClass * parent_class = NULL;
 
 
@@ -187,7 +185,7 @@ static gint peak_allocs    = 0;
 static gint peak_disk_size = 0;
 
 void
-gegl_tile_backend_swapfile_stats (void)
+gegl_tile_backend_file_stats (void)
 {
   g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
              allocs, disk_size / 1024 / 1024.0,
@@ -213,10 +211,10 @@ dbg_dealloc (gint size)
 }
 
 static inline DiskEntry *
-lookup_entry (GeglTileBackendSwapfile *self,
-              gint          x,
-              gint          y,
-              gint          z)
+lookup_entry (GeglTileBackendFile *self,
+              gint                 x,
+              gint                 y,
+              gint                 z)
 {
   DiskEntry key = { x, y, z, 0 };
 
@@ -236,13 +234,13 @@ get_tile (GeglTileSource *self,
 {
 
   GeglTileBackend         *backend;
-  GeglTileBackendSwapfile *tile_backend_swapfile;
+  GeglTileBackendFile *tile_backend_file;
   DiskEntry               *entry;
   GeglTile                *tile = NULL;
 
   backend               = GEGL_TILE_BACKEND (self);
-  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
+  tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
+  entry                 = lookup_entry (tile_backend_file, x, y, z);
 
   if (!entry)
     return NULL;
@@ -251,7 +249,7 @@ get_tile (GeglTileSource *self,
   tile->stored_rev = 1;
   tile->rev        = 1;
 
-  disk_entry_read (tile_backend_swapfile, entry, tile->data);
+  disk_entry_read (tile_backend_file, entry, tile->data);
   return tile;
 }
 
@@ -263,27 +261,27 @@ set_tile (GeglTileSource *self,
           gint            z)
 {
   GeglTileBackend         *backend;
-  GeglTileBackendSwapfile *tile_backend_swapfile;
+  GeglTileBackendFile *tile_backend_file;
   DiskEntry               *entry;
 
   backend               = GEGL_TILE_BACKEND (self);
-  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
+  tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
+  entry                 = lookup_entry (tile_backend_file, x, y, z);
 
 
   if (entry == NULL)
     {
-      entry    = disk_entry_new (tile_backend_swapfile);
+      entry    = disk_entry_new (tile_backend_file);
       entry->x = x;
       entry->y = y;
       entry->z = z;
-      g_hash_table_insert (tile_backend_swapfile->entries, entry, entry);
+      g_hash_table_insert (tile_backend_file->entries, entry, entry);
     }
 
   g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
                                   has been tried written to persistent tile_storage.
                                 */
-  disk_entry_write (tile_backend_swapfile, entry, tile->data);
+  disk_entry_write (tile_backend_file, entry, tile->data);
   tile->stored_rev = tile->rev;
   return NULL;
 }
@@ -296,16 +294,16 @@ void_tile (GeglTileSource *self,
            gint            z)
 {
   GeglTileBackend         *backend;
-  GeglTileBackendSwapfile *tile_backend_swapfile;
+  GeglTileBackendFile *tile_backend_file;
   DiskEntry               *entry;
 
   backend               = GEGL_TILE_BACKEND (self);
-  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
+  tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
+  entry                 = lookup_entry (tile_backend_file, x, y, z);
 
   if (entry != NULL)
     {
-      disk_entry_destroy (entry, tile_backend_swapfile);
+      disk_entry_destroy (entry, tile_backend_file);
     }
 
   return NULL;
@@ -319,12 +317,12 @@ exist_tile (GeglTileSource *self,
             gint            z)
 {
   GeglTileBackend         *backend;
-  GeglTileBackendSwapfile *tile_backend_swapfile;
+  GeglTileBackendFile *tile_backend_file;
   DiskEntry               *entry;
 
   backend               = GEGL_TILE_BACKEND (self);
-  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
+  tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
+  entry                 = lookup_entry (tile_backend_file, x, y, z);
 
   return entry!=NULL?((gpointer)0x1):NULL;
 }
@@ -372,7 +370,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTileBackendSwapfile *self = GEGL_TILE_BACKEND_SWAPFILE (object);
+  GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (object);
 
   switch (property_id)
     {
@@ -394,7 +392,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTileBackendSwapfile *self = GEGL_TILE_BACKEND_SWAPFILE (object);
+  GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (object);
 
   switch (property_id)
     {
@@ -411,13 +409,18 @@ get_property (GObject    *object,
 static void
 finalize (GObject *object)
 {
-  GeglTileBackendSwapfile *self = (GeglTileBackendSwapfile *) object;
+  GeglTileBackendFile *self = (GeglTileBackendFile *) object;
 
   g_hash_table_unref (self->entries);
 
   g_object_unref (self->i);
   g_object_unref (self->o);
   /* check if we should nuke the buffer or not */ 
+
+  if(0)g_print ("finalizing buffer %s", self->path);
+  if (self->path)
+  g_free (self->path);
+
   g_file_delete  (self->file, NULL, NULL);
   g_object_unref (self->file);
 
@@ -468,34 +471,25 @@ equalfunc (gconstpointer a,
 }
 
 static GObject *
-gegl_tile_backend_swapfile_constructor (GType                  type,
-                                        guint                  n_params,
-                                        GObjectConstructParam *params)
+gegl_tile_backend_file_constructor (GType                  type,
+                                    guint                  n_params,
+                                    GObjectConstructParam *params)
 {
   GObject      *object;
-  GeglTileBackendSwapfile *disk;
+  GeglTileBackendFile *disk;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  disk   = GEGL_TILE_BACKEND_SWAPFILE (object);
+  disk   = GEGL_TILE_BACKEND_FILE (object);
 
   disk->file = g_file_new_for_commandline_arg (disk->path);
   disk->o = G_OUTPUT_STREAM (g_file_replace (disk->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
   g_output_stream_flush (disk->o, NULL, NULL);
-  
   disk->i = G_INPUT_STREAM (g_file_read (disk->file, NULL, NULL));
-  /*disk->fd = g_open (disk->path,
-                     O_CREAT | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR | O_DIRECT);*/
-
 
   if (!disk->file)
     {
-      /*gchar *name = g_filename_display_name (disk->path);
-
-      g_message ("Unable to open swap file '%s': %s\n"
-                 "GEGL is unable to initialize virtual memory",
-                 name, g_strerror (errno));
-
-      g_free (name);*/
+      g_warning ("Unable to open swap file '%s'\n",disk->path);
+      return NULL;
     }
   g_assert (disk->file);
   g_assert (disk->i);
@@ -507,7 +501,7 @@ gegl_tile_backend_swapfile_constructor (GType                  type,
 }
 
 static void
-gegl_tile_backend_swapfile_class_init (GeglTileBackendSwapfileClass *klass)
+gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
   GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
@@ -516,7 +510,7 @@ gegl_tile_backend_swapfile_class_init (GeglTileBackendSwapfileClass *klass)
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor  = gegl_tile_backend_swapfile_constructor;
+  gobject_class->constructor  = gegl_tile_backend_file_constructor;
   gobject_class->finalize     = finalize;
 
   gegl_tile_source_class->command  = command;
@@ -532,7 +526,7 @@ gegl_tile_backend_swapfile_class_init (GeglTileBackendSwapfileClass *klass)
 }
 
 static void
-gegl_tile_backend_swapfile_init (GeglTileBackendSwapfile *self)
+gegl_tile_backend_file_init (GeglTileBackendFile *self)
 {
   self->path        = NULL;
   self->file        = NULL;

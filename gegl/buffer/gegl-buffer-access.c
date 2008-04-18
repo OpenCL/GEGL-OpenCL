@@ -567,16 +567,13 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->format;
 
-  /* FIXME: go through chain of sources up to but not including
-   * tile_storage and disassociated Sampler */
-
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
       pset (buffer, rect->x, rect->y, format, src);
     }
   /* FIXME: if rect->width == TILE_WIDTH and rect->height == TILE_HEIGHT and
    * aligned with tile grid, do a fast path, also provide helper functions
-   * for getting the upper left coords of tiles.
+   * for figuring out how to align accesses with the tile grid.
    */
   else if (rect == NULL)
     {
@@ -1095,9 +1092,9 @@ gegl_buffer_sample (GeglBuffer       *buffer,
             g_warning ("unimplemented interpolation type %i", interpolation);
         }
       buffer->sampler = g_object_new (interpolation_type,
-                                           "buffer", buffer,
-                                           "format", format,
-                                           NULL);
+                                      "buffer", buffer,
+                                      "format", format,
+                                      NULL);
       gegl_sampler_prepare (buffer->sampler);
     }
   gegl_sampler_get (buffer->sampler, x, y, dest);

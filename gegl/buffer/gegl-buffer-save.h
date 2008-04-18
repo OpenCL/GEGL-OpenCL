@@ -39,8 +39,10 @@ typedef struct {
   gint  x;
   gint  y;
   gint  z;
-  guint offset;
-  guint flags;
+  guint offset;  /* offset into file */
+  guint flags;   /* flags? not used? */
+
+  guint padding1[8];
 } GeglTileEntry;
 
 void gegl_buffer_save (GeglBuffer          *buffer,

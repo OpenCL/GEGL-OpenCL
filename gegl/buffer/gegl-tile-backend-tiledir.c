@@ -22,44 +22,16 @@
 #include <string.h>
 #include <errno.h>
 
-#define _GNU_SOURCE    /* for O_DIRECT */
-
-#include <fcntl.h>
-
-#ifndef O_DIRECT
-#define O_DIRECT    0
-#endif
-
-/* Microsoft Windows does distinguish between binary and text files.
- * We deal with binary files here and have to tell it to open them
- * as binary files. Unortunately the O_BINARY flag used for this is
- * specific to this platform, so we define it for others.
- */
-#ifndef O_BINARY
-#define O_BINARY    0
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>
-
-#include <glib-object.h>
-#include <glib/gstdio.h>
-
-#ifdef G_OS_WIN32
-#include <io.h>
-#ifndef S_IRUSR
-#define S_IRUSR _S_IREAD
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR _S_IWRITE
-#endif
-#define ftruncate(f,d) g_win32_ftruncate(f,d)
-#endif
-
 #include "gegl-tile-backend.h"
-#include "gegl-tile-backend-gio-tiles.h"
+#include "gegl-tile-backend-tiledir.h"
+
+struct _GeglTileBackendTileDir
+{
+  GeglTileBackend  parent_instance;
+
+  gchar           *path;         /* the base path of the buffer */
+  GFile           *buffer_dir;
+};
 
 /* These entries are kept in RAM for now, they should be written as an
  * index to the swap file, at a position specified by a header block,
@@ -84,7 +56,7 @@ exist_tile (GeglTileSource *store,
             gint            y,
             gint            z);
 
-static GFile *make_tile_file (GeglTileBackendGioTiles *gio,
+static GFile *make_tile_file (GeglTileBackendTileDir *gio,
                               gint                     x,
                               gint                     y,
                               gint                     z)
@@ -95,7 +67,7 @@ static GFile *make_tile_file (GeglTileBackendGioTiles *gio,
 }
 
 static void inline
-gio_entry_read (GeglTileBackendGioTiles *gio,
+gio_entry_read (GeglTileBackendTileDir *gio,
                 GioEntry                *entry,
                 guchar                  *dest)
 {
@@ -117,7 +89,7 @@ gio_entry_read (GeglTileBackendGioTiles *gio,
 }
 
 static void inline
-gio_entry_write (GeglTileBackendGioTiles *gio,
+gio_entry_write (GeglTileBackendTileDir *gio,
                  GioEntry                *entry,
                  guchar                  *source)
 {
@@ -140,7 +112,7 @@ gio_entry_write (GeglTileBackendGioTiles *gio,
 }
 
 
-G_DEFINE_TYPE (GeglTileBackendGioTiles, gegl_tile_backend_gio_tiles, GEGL_TYPE_TILE_BACKEND)
+G_DEFINE_TYPE (GeglTileBackendTileDir, gegl_tile_backend_tile_dir, GEGL_TYPE_TILE_BACKEND)
 static GObjectClass * parent_class = NULL;
 
 static gint allocs         = 0;
@@ -149,7 +121,7 @@ static gint peak_allocs    = 0;
 static gint peak_gio_size = 0;
 
 void
-gegl_tile_backend_gio_tiles_stats (void)
+gegl_tile_backend_tile_dir_stats (void)
 {
   g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
              allocs, gio_size / 1024 / 1024.0,
@@ -167,7 +139,7 @@ get_tile (GeglTileSource *tile_store,
           gint            y,
           gint            z)
 {
-  GeglTileBackendGioTiles     *tile_backend_gio_tiles = GEGL_TILE_BACKEND_GIO_TILES (tile_store);
+  GeglTileBackendTileDir     *tile_backend_tile_dir = GEGL_TILE_BACKEND_TILE_DIR (tile_store);
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (tile_store);
   GeglTile        *tile     = NULL;
 
@@ -179,7 +151,7 @@ get_tile (GeglTileSource *tile_store,
     tile->stored_rev = 1;
     tile->rev        = 1;
 
-    gio_entry_read (tile_backend_gio_tiles, &entry, tile->data);
+    gio_entry_read (tile_backend_tile_dir, &entry, tile->data);
     return tile;
   }
  return NULL;
@@ -193,14 +165,14 @@ set_tile (GeglTileSource *store,
           gint            z)
 {
   GeglTileBackend         *backend   = GEGL_TILE_BACKEND (store);
-  GeglTileBackendGioTiles *tile_backend_gio_tiles = GEGL_TILE_BACKEND_GIO_TILES (backend);
+  GeglTileBackendTileDir *tile_backend_tile_dir = GEGL_TILE_BACKEND_TILE_DIR (backend);
 
   GioEntry       entry = {x,y,z};
 
   g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
                                   has been tried written to persistent tile_storage.
                                 */
-  gio_entry_write (tile_backend_gio_tiles, &entry, tile->data);
+  gio_entry_write (tile_backend_tile_dir, &entry, tile->data);
   tile->stored_rev = tile->rev;
   return NULL;
 }
@@ -213,7 +185,7 @@ void_tile (GeglTileSource *store,
            gint            z)
 {
   GeglTileBackend         *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileBackendGioTiles *gio = GEGL_TILE_BACKEND_GIO_TILES (backend);
+  GeglTileBackendTileDir *gio = GEGL_TILE_BACKEND_TILE_DIR (backend);
   GFile                   *file;
 
   file = make_tile_file (gio, x, y, z);
@@ -230,7 +202,7 @@ exist_tile (GeglTileSource *store,
             gint            z)
 {
   GeglTileBackend         *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileBackendGioTiles *gio = GEGL_TILE_BACKEND_GIO_TILES (backend);
+  GeglTileBackendTileDir *gio = GEGL_TILE_BACKEND_TILE_DIR (backend);
   GFileInfo               *file_info;
   GFile                   *file;
   gboolean found = FALSE;
@@ -294,7 +266,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTileBackendGioTiles *self = GEGL_TILE_BACKEND_GIO_TILES (object);
+  GeglTileBackendTileDir *self = GEGL_TILE_BACKEND_TILE_DIR (object);
 
   switch (property_id)
     {
@@ -316,7 +288,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTileBackendGioTiles *self = GEGL_TILE_BACKEND_GIO_TILES (object);
+  GeglTileBackendTileDir *self = GEGL_TILE_BACKEND_TILE_DIR (object);
 
   switch (property_id)
     {
@@ -333,7 +305,7 @@ get_property (GObject    *object,
 static void
 finalize (GObject *object)
 {
-  GeglTileBackendGioTiles *self = (GeglTileBackendGioTiles *) object;
+  GeglTileBackendTileDir *self = (GeglTileBackendTileDir *) object;
   GFileEnumerator *enumerator;
   GFileInfo       *info;
 
@@ -366,15 +338,15 @@ finalize (GObject *object)
 }
 
 static GObject *
-gegl_tile_backend_gio_tiles_constructor (GType                  type,
+gegl_tile_backend_tile_dir_constructor (GType                  type,
                                          guint                  n_params,
                                          GObjectConstructParam *params)
 {
   GObject      *object;
-  GeglTileBackendGioTiles *gio;
+  GeglTileBackendTileDir *gio;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  gio    = GEGL_TILE_BACKEND_GIO_TILES (object);
+  gio    = GEGL_TILE_BACKEND_TILE_DIR (object);
 
   gio->buffer_dir = g_file_new_for_commandline_arg (gio->path);
   g_file_make_directory (gio->buffer_dir, NULL, NULL);
@@ -382,7 +354,7 @@ gegl_tile_backend_gio_tiles_constructor (GType                  type,
 }
 
 static void
-gegl_tile_backend_gio_tiles_class_init (GeglTileBackendGioTilesClass *klass)
+gegl_tile_backend_tile_dir_class_init (GeglTileBackendTileDirClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
   GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
@@ -391,7 +363,7 @@ gegl_tile_backend_gio_tiles_class_init (GeglTileBackendGioTilesClass *klass)
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor  = gegl_tile_backend_gio_tiles_constructor;
+  gobject_class->constructor  = gegl_tile_backend_tile_dir_constructor;
   gobject_class->finalize     = finalize;
 
   gegl_tile_source_class->command  = command;
@@ -407,7 +379,7 @@ gegl_tile_backend_gio_tiles_class_init (GeglTileBackendGioTilesClass *klass)
 }
 
 static void
-gegl_tile_backend_gio_tiles_init (GeglTileBackendGioTiles *self)
+gegl_tile_backend_tile_dir_init (GeglTileBackendTileDir *self)
 {
   self->path        = NULL;
 }

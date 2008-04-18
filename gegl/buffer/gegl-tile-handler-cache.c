@@ -120,8 +120,8 @@ dispose (GObject *object)
 {
   GeglTileHandlerCache *cache;
   CacheItem        *item;
-  cache = (GeglTileHandlerCache *) object;
   GSList *iter;
+  cache = (GeglTileHandlerCache *) object;
 
   if (0)
     g_printerr ("Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n",
@@ -143,7 +143,6 @@ dispose (GObject *object)
     }
   g_slist_free (cache->free_list);
   cache->free_list = NULL;
-#endif
 
   G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->dispose (object);
 }

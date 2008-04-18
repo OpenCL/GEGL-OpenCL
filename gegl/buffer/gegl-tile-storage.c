@@ -22,9 +22,9 @@
 
 #include "gegl-tile-storage.h"
 #include "gegl-tile.h"
-#include "gegl-tile-backend-swapfile.h"
+#include "gegl-tile-backend-file.h"
 #include "gegl-tile-backend-ram.h"
-#include "gegl-tile-backend-gio-tiles.h"
+#include "gegl-tile-backend-tiledir.h"
 #include "gegl-tile-handler-empty.h"
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
@@ -171,13 +171,13 @@ gegl_tile_storage_constructor (GType                  type,
                                guint                  n_params,
                                GObjectConstructParam *params)
 {
-  GObject        *object;
-  GeglTileStorage    *tile_storage;
-  GeglTileHandlerChain   *tile_handler_chain;
-  GeglTileHandler    *handler;
-  GeglTileHandler    *empty = NULL;
-  GeglTileHandler    *zoom = NULL;
-  GeglTileHandler    *cache = NULL;
+  GObject               *object;
+  GeglTileStorage       *tile_storage;
+  GeglTileHandlerChain  *tile_handler_chain;
+  GeglTileHandler       *handler;
+  GeglTileHandler       *empty = NULL;
+  GeglTileHandler       *zoom = NULL;
+  GeglTileHandler       *cache = NULL;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
@@ -189,7 +189,7 @@ gegl_tile_storage_constructor (GType                  type,
     {
 #if 1
       g_object_set (tile_storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_SWAPFILE,
+                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
                                             "tile-width", tile_storage->tile_width,
                                             "tile-height", tile_storage->tile_height,
                                             "format", tile_storage->format,
@@ -198,7 +198,7 @@ gegl_tile_storage_constructor (GType                  type,
                     NULL);
 #else
       g_object_set (tile_storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_GIO_TILES,
+                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
                                             "tile-width", tile_storage->tile_width,
                                             "tile-height", tile_storage->tile_height,
                                             "format", tile_storage->format,
@@ -227,22 +227,26 @@ gegl_tile_storage_constructor (GType                  type,
 
   if (g_getenv("GEGL_LOG_TILE_BACKEND")||
       g_getenv("GEGL_TILE_LOG"))
-    gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
+    gegl_tile_handler_chain_add (tile_handler_chain,
+                      g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 
 
-  cache = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE,
-                                                     NULL));
+  cache = gegl_tile_handler_chain_add (tile_handler_chain,
+                          g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE, NULL));
 
-  zoom = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
+  zoom = gegl_tile_handler_chain_add (tile_handler_chain,
+                                      g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
                                                     "backend", handler->source,
                                                     "tile_storage", tile_storage,
                                                     NULL));
-  empty = gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY,
-                                                     "backend", handler->source,
-                                                     NULL));
+  empty = gegl_tile_handler_chain_add (tile_handler_chain,
+                                     g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY,
+                                                   "backend", handler->source,
+                                                   NULL));
 
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
-    gegl_tile_handler_chain_add (tile_handler_chain, g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
+    gegl_tile_handler_chain_add (tile_handler_chain,
+                              g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
   g_object_set_data (G_OBJECT (empty), "cache", cache);
   g_object_set_data (G_OBJECT (zoom), "cache", cache);
 

@@ -309,6 +309,8 @@ gegl_buffer_tile_storage (GeglBuffer *buffer)
       tmp = ((GeglTileHandler *) (tmp))->source;
     } while (!GEGL_IS_TILE_STORAGE (tmp));
 
+  g_assert (tmp);
+
   return (GeglTileStorage *) tmp;
 }
 
