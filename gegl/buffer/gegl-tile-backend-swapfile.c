@@ -13,52 +13,35 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2007, 2008 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
 
+#include <gio/gio.h>
 #include <string.h>
 #include <errno.h>
 
-#define _GNU_SOURCE    /* for O_DIRECT */
-
-#include <fcntl.h>
-
-#ifndef O_DIRECT
-#define O_DIRECT    0
-#endif
-
-/* Microsoft Windows does distinguish between binary and text files.
- * We deal with binary files here and have to tell it to open them
- * as binary files. Unortunately the O_BINARY flag used for this is
- * specific to this platform, so we define it for others.
- */
-#ifndef O_BINARY
-#define O_BINARY    0
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/types.h>
-
 #include <glib-object.h>
-#include <glib/gstdio.h>
-
-#ifdef G_OS_WIN32
-#include <io.h>
-#ifndef S_IRUSR
-#define S_IRUSR _S_IREAD
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR _S_IWRITE
-#endif
-#define ftruncate(f,d) g_win32_ftruncate(f,d)
-#endif
 
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-swapfile.h"
+
+struct _GeglTileBackendSwapfile
+{
+  GeglTileBackend  parent_instance;
+
+  gchar         *path;
+  GFile         *file;
+  GOutputStream *o;
+  GInputStream  *i;
+
+  /*gint             fd;*/
+  GHashTable      *entries;
+  GSList          *free_list;
+  guint            next_unused;
+  guint            total;
+};
 
 static void dbg_alloc (int size);
 static void dbg_dealloc (int size);
@@ -86,35 +69,34 @@ disk_entry_read (GeglTileBackendSwapfile *disk,
                  guchar                  *dest)
 {
   gint  nleft;
-  off_t offset;
+  gboolean success;
   gint  tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
 
-  offset = lseek (disk->fd, (off_t) entry->offset * tile_size, SEEK_SET);
-  if (offset == -1)
+  success = g_seekable_seek (G_SEEKABLE (disk->i), 
+                             (goffset) entry->offset * tile_size, G_SEEK_SET,
+                             NULL, NULL);
+  if (success == FALSE)
     {
-      g_warning ("unable to seek to tile in swap: %s",
-                 g_strerror (errno));
+      g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
       return;
     }
   nleft = tile_size;
 
   while (nleft > 0)
     {
-      gint err;
+      gint read;
 
-      do
-        {
-          err = read (disk->fd, dest + tile_size - nleft, nleft);
-        } while ((err == -1) && ((errno == EAGAIN) || (errno == EINTR)));
-
-      if (err <= 0)
+      read = g_input_stream_read (G_INPUT_STREAM (disk->i),
+                                 dest + tile_size - nleft, nleft,
+                                 NULL, NULL);
+      if (read <= 0)
         {
           g_message ("unable to read tile data from disk: "
                      "%s (%d/%d bytes read)",
-                     g_strerror (errno), err, nleft);
+                     g_strerror (errno), read, nleft);
           return;
         }
-      nleft -= err;
+      nleft -= read;
     }
 }
 
@@ -123,32 +105,34 @@ disk_entry_write (GeglTileBackendSwapfile *disk,
                   DiskEntry               *entry,
                   guchar                  *source)
 {
-  gint   nleft;
-  off_t  offset;
-  gint   tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
+  gint     nleft;
+  gboolean success;
+  gint     tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
 
-  offset = lseek (disk->fd, (off_t) entry->offset * tile_size, SEEK_SET);
-  if (offset == -1)
+  success = g_seekable_seek (G_SEEKABLE (disk->o), 
+                             (goffset) entry->offset * tile_size, G_SEEK_SET,
+                             NULL, NULL);
+  if (success == FALSE)
     {
-      g_warning ("unable to seek to tile in swap: %s",
-                 g_strerror (errno));
+      g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
       return;
     }
   nleft = tile_size;
 
   while (nleft > 0)
     {
-      gint err = write (disk->fd, source + tile_size - nleft, nleft);
+      gint wrote;
+          wrote = g_output_stream_write (disk->o, source + tile_size - nleft,
+                                         nleft, NULL, NULL);
 
-      if (err <= 0)
+      if (wrote <= 0)
         {
           g_message ("unable to write tile data to disk: "
                      "%s (%d/%d bytes written)",
-                     g_strerror (errno), err, nleft);
+                     g_strerror (errno), wrote, nleft);
           return;
         }
-
-      nleft -= err;
+      nleft -= wrote;
     }
 }
 
@@ -169,8 +153,10 @@ disk_entry_new (GeglTileBackendSwapfile *disk)
       if (self->offset >= disk->total)
         {
           gint grow = 32; /* grow 32 tiles of swap space at a time */
-          g_assert (0 == ftruncate (disk->fd,
-                                    (off_t) (disk->total + grow) * (off_t) GEGL_TILE_BACKEND (disk)->tile_size));
+          gint tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
+          g_assert (g_seekable_truncate (G_SEEKABLE (disk->o),
+                    (goffset) (disk->total + grow) * (goffset) tile_size,
+                    NULL,NULL));
           disk->total = self->offset;
         }
     }
@@ -243,41 +229,47 @@ lookup_entry (GeglTileBackendSwapfile *self,
  * too often.
  */
 static GeglTile *
-get_tile (GeglTileSource *tile_store,
-          gint        x,
-          gint        y,
-          gint        z)
+get_tile (GeglTileSource *self,
+          gint            x,
+          gint            y,
+          gint            z)
 {
-  GeglTileBackendSwapfile    *tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (tile_store);
-  GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
-  GeglTile        *tile      = NULL;
 
-  {
-    DiskEntry *entry = lookup_entry (tile_backend_swapfile, x, y, z);
+  GeglTileBackend         *backend;
+  GeglTileBackendSwapfile *tile_backend_swapfile;
+  DiskEntry               *entry;
+  GeglTile                *tile = NULL;
 
-    if (!entry)
-      return NULL;
+  backend               = GEGL_TILE_BACKEND (self);
+  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
+  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
 
-    tile             = gegl_tile_new (backend->tile_size);
-    tile->stored_rev = 1;
-    tile->rev        = 1;
+  if (!entry)
+    return NULL;
 
-    disk_entry_read (tile_backend_swapfile, entry, tile->data);
-  }
+  tile             = gegl_tile_new (backend->tile_size);
+  tile->stored_rev = 1;
+  tile->rev        = 1;
+
+  disk_entry_read (tile_backend_swapfile, entry, tile->data);
   return tile;
 }
 
 static gpointer
-set_tile (GeglTileSource *store,
+set_tile (GeglTileSource *self,
           GeglTile       *tile,
           gint            x,
           gint            y,
           gint            z)
 {
-  GeglTileBackend         *backend   = GEGL_TILE_BACKEND (store);
-  GeglTileBackendSwapfile *tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
+  GeglTileBackend         *backend;
+  GeglTileBackendSwapfile *tile_backend_swapfile;
+  DiskEntry               *entry;
 
-  DiskEntry       *entry = lookup_entry (tile_backend_swapfile, x, y, z);
+  backend               = GEGL_TILE_BACKEND (self);
+  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
+  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
+
 
   if (entry == NULL)
     {
@@ -297,15 +289,19 @@ set_tile (GeglTileSource *store,
 }
 
 static gpointer
-void_tile (GeglTileSource *store,
+void_tile (GeglTileSource *self,
            GeglTile       *tile,
            gint            x,
            gint            y,
            gint            z)
 {
-  GeglTileBackend         *backend   = GEGL_TILE_BACKEND (store);
-  GeglTileBackendSwapfile *tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  DiskEntry       *entry     = lookup_entry (tile_backend_swapfile, x, y, z);
+  GeglTileBackend         *backend;
+  GeglTileBackendSwapfile *tile_backend_swapfile;
+  DiskEntry               *entry;
+
+  backend               = GEGL_TILE_BACKEND (self);
+  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
+  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
 
   if (entry != NULL)
     {
@@ -316,15 +312,19 @@ void_tile (GeglTileSource *store,
 }
 
 static gpointer
-exist_tile (GeglTileSource *store,
+exist_tile (GeglTileSource *self,
             GeglTile       *tile,
             gint            x,
             gint            y,
             gint            z)
 {
-  GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
-  GeglTileBackendSwapfile *tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
-  DiskEntry       *entry     = lookup_entry (tile_backend_swapfile, x, y, z);
+  GeglTileBackend         *backend;
+  GeglTileBackendSwapfile *tile_backend_swapfile;
+  DiskEntry               *entry;
+
+  backend               = GEGL_TILE_BACKEND (self);
+  tile_backend_swapfile = GEGL_TILE_BACKEND_SWAPFILE (backend);
+  entry                 = lookup_entry (tile_backend_swapfile, x, y, z);
 
   return entry!=NULL?((gpointer)0x1):NULL;
 }
@@ -336,7 +336,7 @@ enum
 };
 
 static gpointer
-command (GeglTileSource  *tile_store,
+command (GeglTileSource  *self,
          GeglTileCommand  command,
          gint             x,
          gint             y,
@@ -346,18 +346,18 @@ command (GeglTileSource  *tile_store,
   switch (command)
     {
       case GEGL_TILE_GET:
-        return get_tile (tile_store, x, y, z);
+        return get_tile (self, x, y, z);
       case GEGL_TILE_SET:
-        return set_tile (tile_store, data, x, y, z);
+        return set_tile (self, data, x, y, z);
 
       case GEGL_TILE_IDLE:
         return NULL;
 
       case GEGL_TILE_VOID:
-        return void_tile (tile_store, data, x, y, z);
+        return void_tile (self, data, x, y, z);
 
       case GEGL_TILE_EXIST:
-        return exist_tile (tile_store, data, x, y, z);
+        return exist_tile (self, data, x, y, z);
 
       default:
         g_assert (command < GEGL_TILE_LAST_COMMAND &&
@@ -415,8 +415,11 @@ finalize (GObject *object)
 
   g_hash_table_unref (self->entries);
 
-  close (self->fd);
-  g_unlink (self->path);
+  g_object_unref (self->i);
+  g_object_unref (self->o);
+  /* check if we should nuke the buffer or not */ 
+  g_file_delete  (self->file, NULL, NULL);
+  g_object_unref (self->file);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
@@ -475,19 +478,28 @@ gegl_tile_backend_swapfile_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   disk   = GEGL_TILE_BACKEND_SWAPFILE (object);
 
-  disk->fd = g_open (disk->path,
-                     O_CREAT | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR | O_DIRECT);
+  disk->file = g_file_new_for_commandline_arg (disk->path);
+  disk->o = G_OUTPUT_STREAM (g_file_replace (disk->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
+  g_output_stream_flush (disk->o, NULL, NULL);
+  
+  disk->i = G_INPUT_STREAM (g_file_read (disk->file, NULL, NULL));
+  /*disk->fd = g_open (disk->path,
+                     O_CREAT | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR | O_DIRECT);*/
 
-  if (disk->fd == -1)
+
+  if (!disk->file)
     {
-      gchar *name = g_filename_display_name (disk->path);
+      /*gchar *name = g_filename_display_name (disk->path);
 
       g_message ("Unable to open swap file '%s': %s\n"
                  "GEGL is unable to initialize virtual memory",
                  name, g_strerror (errno));
 
-      g_free (name);
+      g_free (name);*/
     }
+  g_assert (disk->file);
+  g_assert (disk->i);
+  g_assert (disk->o);
 
   disk->entries = g_hash_table_new (hashfunc, equalfunc);
 
@@ -523,7 +535,9 @@ static void
 gegl_tile_backend_swapfile_init (GeglTileBackendSwapfile *self)
 {
   self->path        = NULL;
-  self->fd          = 0;
+  self->file        = NULL;
+  self->i           = NULL;
+  self->o           = NULL;
   self->entries     = NULL;
   self->free_list   = NULL;
   self->next_unused = 0;

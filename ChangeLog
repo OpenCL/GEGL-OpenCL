@@ -1,5 +1,9 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-swapfile.[ch]: ported to GIO
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: add SSE_EXTRA_CFLAGS to CFLAGS.
 
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>

@@ -34,17 +34,6 @@ G_BEGIN_DECLS
 typedef struct _GeglTileBackendSwapfile      GeglTileBackendSwapfile;
 typedef struct _GeglTileBackendSwapfileClass GeglTileBackendSwapfileClass;
 
-struct _GeglTileBackendSwapfile
-{
-  GeglTileBackend  parent_instance;
-
-  gchar           *path;
-  gint             fd;
-  GHashTable      *entries;
-  GSList          *free_list;
-  guint            next_unused;
-  guint            total;
-};
 
 struct _GeglTileBackendSwapfileClass
 {
