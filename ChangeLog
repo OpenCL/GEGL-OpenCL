@@ -1,5 +1,18 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler-cache.h: moved instance struct ..
+	* gegl/buffer/gegl-tile-handler-cache.c: .. to c file since it is all
+	private and we do not expect subclasses any time soon.
+	(dispose): only dispose tiles belonging to this cache instance
+	* gegl/buffer/gegl-tile-handler-log.c: (command): improved formatting.
+	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_constructor):
+	  added GEGL_TILE_LOG as an environment flag to turn on the commands
+	  communicated to the backend.
+	* gegl/buffer/gegl-tile.c:
+	  (gegl_tile_store): bail early if rev==stored_rev.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-swapfile.[ch]: ported to GIO
 
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>

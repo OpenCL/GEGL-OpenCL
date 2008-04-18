@@ -35,6 +35,18 @@ static gint    cache_wash_percentage = 20;
 static gint    cache_hits = 0;
 static gint    cache_misses = 0;
 
+struct _GeglTileHandlerCache
+{
+  GeglTileHandler parent_instance;
+  GSList *free_list;
+
+/*  GQueue     *queue;
+  gint        size;
+  gint        wash_percentage;
+  gint        hits;
+  gint        misses;*/
+};
+
 void gegl_tile_cache_init (void)
 {
   if (cache_queue == NULL)
@@ -91,24 +103,47 @@ finalize (GObject *object)
 }
 
 static void
+queue_each (gpointer itm,
+            gpointer userdata)
+{
+  CacheItem *item = itm;
+  if (item->handler == userdata)
+    {
+      GeglTileHandlerCache *cache = userdata;
+      cache->free_list = g_slist_prepend (cache->free_list, item);
+      
+    }
+}
+
+static void
 dispose (GObject *object)
 {
   GeglTileHandlerCache *cache;
   CacheItem        *item;
   cache = (GeglTileHandlerCache *) object;
+  GSList *iter;
 
   if (0)
     g_printerr ("Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n",
                 cache_size, cache_hits, cache_misses,
                 cache_hits * 100.0 / (cache_hits + cache_misses));
 
-  /* FIXME: only throw out this cache's items */
-  while ((item = g_queue_pop_head (cache_queue)))
+  /* only throw out items belonging to this cache instance
+     (XXX: should probably have a local list for that)*/
+
+  cache->free_list = NULL;
+  g_queue_foreach (cache_queue, queue_each, cache);
+  for (iter = cache->free_list; iter; iter = g_slist_next (iter))
     {
-      g_object_unref (item->tile);
-      g_slice_free (CacheItem, item);
+        item = iter->data;
+        if (item->tile)
+          g_object_unref (item->tile);
+        g_queue_remove (cache_queue, item);
+        g_slice_free (CacheItem, item);
     }
-  /* FIXME: if queue is empty destroy global queue */
+  g_slist_free (cache->free_list);
+  cache->free_list = NULL;
+#endif
 
   G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->dispose (object);
 }
@@ -123,7 +158,7 @@ get_tile (GeglTileSource *tile_store,
   GeglTileSource       *source = GEGL_HANDLER (tile_store)->source;
   GeglTile         *tile     = NULL;
 
-  if(0)g_print ("%f%% hit:%i miss:%i  \r", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses);
+  if(0)g_print ("\r%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
@@ -142,7 +177,6 @@ get_tile (GeglTileSource *tile_store,
   return tile;
 }
 
-
 static gpointer
 command (GeglTileSource  *tile_store,
          GeglTileCommand  command,
@@ -157,7 +191,14 @@ command (GeglTileSource  *tile_store,
   /* FIXME: replace with switch */
   switch (command)
     {
+      case GEGL_TILE_SET:
+        /* nothing to do */
+        break;
       case GEGL_TILE_GET:
+        /* XXX: we should perhaps store a NIL result, and place the empty
+         * generator after the cache, this would have to be possible to disable
+         * to work in sync operation with backend.
+         */
         return get_tile (tile_store, x, y, z);
       case GEGL_TILE_IS_CACHED:
         return (gpointer)gegl_tile_handler_cache_has_tile (cache, x, y, z);
@@ -177,6 +218,8 @@ command (GeglTileSource  *tile_store,
         }
       case GEGL_TILE_VOID:
         gegl_tile_handler_cache_void (cache, x, y, z);
+        if (z!=0)
+          return (void*)0xdead700;
         /* fallthrough */
       default:
         break;

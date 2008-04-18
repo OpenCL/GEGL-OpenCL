@@ -32,12 +32,12 @@ static char *commands[] =
   "get",
   "is_cached",
   "exist",
-  "void",
+  "-", /*void*/
   "void tl", 
   "void tr", 
   "void bl",
   "void br",
-  "undo start group",
+  "flush",
   "last command",
   "eeek",
   NULL
@@ -59,11 +59,16 @@ command (GeglTileSource  *gegl_tile_source,
   switch (command)
     {
       case GEGL_TILE_IDLE:
+        /* idle messages clutter logging output */
         break;
       default:
-        g_print ("(%s %p %p %i,%i,%i => %s)", 
-          commands[command], (void *) gegl_tile_source, data, x, y, z,
-          result?"1":"0");
+        if (result)
+        g_print ("(%s %p %p %i·%i·%i ⇒%p)", 
+          commands[command], (void *) ((gint)gegl_tile_source&0xffff), (void*)((gint)data&0xffff), x, y, z,
+          result);
+        else
+        g_print ("(%s %p %p %i·%i·%i ☹)", 
+          commands[command], (void *) ((gint)gegl_tile_source&0xffff), data, x, y, z);
     }
   return result;
 }

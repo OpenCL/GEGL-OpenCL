@@ -32,16 +32,6 @@
 typedef struct _GeglTileHandlerCache      GeglTileHandlerCache;
 typedef struct _GeglTileHandlerCacheClass GeglTileHandlerCacheClass;
 
-struct _GeglTileHandlerCache
-{
-  GeglTileHandler parent_instance;
-
-/*  GQueue     *queue;
-  gint        size;
-  gint        wash_percentage;
-  gint        hits;
-  gint        misses;*/
-};
 
 struct _GeglTileHandlerCacheClass
 {
