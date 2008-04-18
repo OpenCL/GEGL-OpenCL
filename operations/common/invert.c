@@ -63,12 +63,12 @@ process_sse (GeglOperation *op,
 {
   GeglV4 *in  = in_buf;
   GeglV4 *out = out_buf;
-  GeglV4  one={{1.0,1.0,1.0,1.0}};
 
   while (--samples)
     {
-      out->v = one.v - in->v;
-      out->a[3]=in->a[3];
+      gfloat a=in->a[3];
+      out->v = GEGL_V4_ONE.v - in->v;
+      out->a[3]=a;
       in  ++;
       out ++;
     }

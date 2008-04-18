@@ -116,16 +116,15 @@ process_sse (GeglOperation *op,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   GeglV4     *in  = in_buf;
   GeglV4     *out = out_buf;
-  GeglV4      half={{0.5,0.5,0.5,0.5}};
-  GeglV4      brightness={{o->brightness + 0.5,
-                           o->brightness + 0.5,
-                           o->brightness + 0.5,
-                           0.0}};
-  GeglV4      contrast={{o->contrast, o->contrast,o->contrast, 1.0}};
+  GeglV4      brightness = GEGL_V4_FILL(o->brightness + 0.5);
+  GeglV4      contrast   = GEGL_V4_FILL(o->contrast);
+    
+  brightness.a[3]=0.5;
+  contrast.a[3]=1.0;
 
   while (--samples)
     {
-      out->v = (in->v - half.v) * contrast.v + brightness.v;
+      out->v = (in->v - GEGL_V4_HALF.v) * contrast.v + brightness.v;
       in  ++;
       out ++;
     }

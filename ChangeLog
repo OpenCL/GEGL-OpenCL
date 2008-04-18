@@ -1,5 +1,11 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/brightness-contrast.c: (process_sse):
+	* operations/common/invert.c: (process_sse): make use of stack
+	allocated vector constants.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/other-blend.rb: added gcc-vectorized versions
 	of the src-over aliases 'over' and 'normal'
 
