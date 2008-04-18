@@ -1,5 +1,9 @@
 2008-04-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: add SSE_EXTRA_CFLAGS to CFLAGS.
+
+2008-04-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-processors.c:
 	(gegl_class_register_alternate_vfunc): added new more general function
 	for runtime overriding of perclass vfuncs, that takes a pointer to the

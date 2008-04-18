@@ -310,7 +310,7 @@ $LIBTOOLIZE --force || exit $?
 # optionally feature autoheader
 ($AUTOHEADER --version)  < /dev/null > /dev/null 2>&1 && $AUTOHEADER || exit 1
 
-$AUTOMAKE --add-missing || exit $?
+$AUTOMAKE --add-missing -Wno-portability|| exit $?
 $AUTOCONF || exit $?
 
 #glib-gettextize --copy --force || exit $?
