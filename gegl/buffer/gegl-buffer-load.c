@@ -21,20 +21,10 @@
 #include <string.h>
 #include <errno.h>
 
-#include <fcntl.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
+#include <gio/gio.h>
 #include <glib-object.h>
-#include <glib/gstdio.h>
-
-#ifdef G_OS_WIN32
-#include <io.h>
-#endif
 
 #include "gegl-types.h"
-
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-load.h"
@@ -57,7 +47,8 @@ typedef struct
   GeglBufferHeader header;
   GList           *tiles;
   gchar           *path;
-  gint             fd;
+  GFile           *file;
+  GInputStream    *i;
   gint             tile_size;
   Babl            *format;
   gint             pos;
@@ -77,22 +68,26 @@ static GeglBufferItem *read_header (LoadInfo *info)
       g_print ("%s must seek\n", G_STRFUNC);
     }
 
-  info->pos += read (info->fd, &block, sizeof (GeglBufferBlock));
+  info->pos += g_input_stream_read (info->i, &block, sizeof (GeglBufferBlock), NULL, NULL);
 
   if (info->got_header)
     {
       ret = g_malloc (block.length);
       memcpy (ret, &block, sizeof (GeglBufferBlock));
-      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
-                       block.length - sizeof(GeglBufferBlock));
+      info->pos+= g_input_stream_read (info->i,
+                       ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       block.length - sizeof(GeglBufferBlock),
+                       NULL, NULL);
     }
   else
     {
       info->got_header = TRUE;
       ret = g_malloc (sizeof (GeglBufferHeader));
       memcpy (ret, &block, sizeof (GeglBufferBlock));
-      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
-                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock));
+      info->pos+= g_input_stream_read (info->i,
+                       ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock),
+                       NULL, NULL);
     }
   info->next_block = ret->block.next;
   return ret;
@@ -109,21 +104,25 @@ static GeglBufferItem *read_block (LoadInfo *info)
       g_print ("must seek\n");
     }
 
-  info->pos+=read (info->fd, &block, sizeof (GeglBufferBlock));
+  info->pos+= g_input_stream_read (info->i, &block, sizeof (GeglBufferBlock),
+                                   NULL, NULL);
   if (info->got_header)
     {
       ret = g_malloc (block.length);
       memcpy (ret, &block, sizeof (GeglBufferBlock));
-      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
-                       block.length - sizeof(GeglBufferBlock));
+      info->pos+= g_input_stream_read (info->i,
+                       ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       block.length - sizeof(GeglBufferBlock),
+                       NULL, NULL);
     }
   else
     {
       info->got_header = TRUE;
       ret = g_malloc (sizeof (GeglBufferHeader));
       memcpy (ret, &block, sizeof (GeglBufferBlock));
-      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
-                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock));
+      info->pos+= g_input_stream_read (info->i,  ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock),
+                       NULL, NULL);
     }
   info->next_block = ret->block.next;
   return ret;
@@ -136,9 +135,11 @@ load_info_destroy (LoadInfo *info)
     return;
   if (info->path)
     g_free (info->path);
-  if (info->fd != 0 &&
-      info->fd != -1)
-    close (info->fd);
+  if (info->i)
+    g_object_unref (info->i);
+  if (info->file)
+    g_object_unref (info->file);
+
   if (info->tiles != NULL)
     {
       GList *iter;
@@ -162,7 +163,9 @@ gegl_buffer_load (GeglBuffer  *buffer,
   GEGL_BUFFER_SANITY;
 
   info->path = g_strdup (path);
-  info->fd   = g_open (info->path, O_RDONLY, 0);
+  info->file = g_file_new_for_commandline_arg (info->path);
+  info->i = G_INPUT_STREAM (g_file_read (info->file, NULL, NULL));
+#if 0
   if (info->fd == -1)
     {
       gchar *name = g_filename_display_name (info->path);
@@ -174,6 +177,7 @@ gegl_buffer_load (GeglBuffer  *buffer,
       load_info_destroy (info);
       return;
     }
+#endif
 
   {
     GeglBufferItem *header= read_header (info);
@@ -234,7 +238,8 @@ gegl_buffer_load (GeglBuffer  *buffer,
             g_warning ("%s must seek", G_STRFUNC);
           }
 
-        info->pos += read (info->fd, data, info->tile_size);
+        info->pos += g_input_stream_read (info->i, data, info->tile_size,
+                                          NULL, NULL);
         /*g_print ("%i %i\n", i, data[0]);
         g_print ("%i %i %i   %i %i %i\n", entry->x, entry->y, entry->z, tile->x, tile->y, tile->z);*/
 

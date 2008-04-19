@@ -19,25 +19,9 @@
 #include "config.h"
 
 #include <string.h>
-#include <errno.h>
 
-#include <fcntl.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
+#include <gio/gio.h>
 #include <glib-object.h>
-#include <glib/gstdio.h>
-
-#ifdef G_OS_WIN32
-#include <io.h>
-#ifndef S_IRUSR
-#define S_IRUSR _S_IREAD
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR _S_IWRITE
-#endif
-#endif
 
 #include "gegl-types.h"
 
@@ -61,11 +45,16 @@ typedef struct
   GeglBufferHeader header;
   GList           *tiles;
   gchar           *path;
-  gint             fd;
+  GFile           *file;
+  GOutputStream   *o;
+
   gint             tile_size;
-  gint             x_tile_shift;
-  gint             y_tile_shift;
   gint             offset;
+  GeglBufferBlock *last_added;
+  GeglBufferBlock *in_holding; /* we need to write one block added behind
+                                * to be able to recompute the forward pointing
+                                * link from one entry to the next.
+                                */
 } SaveInfo;
 
 
@@ -88,6 +77,30 @@ tile_entry_destroy (GeglBufferTile *entry)
   g_slice_free (GeglBufferTile, entry);
 }
 
+static gsize write_block (SaveInfo        *info,
+                          GeglBufferBlock *block)
+{
+   gssize ret = 0;
+
+   if (info->in_holding)
+     {
+       glong allocated_pos = info->offset + info->in_holding->length;
+       info->in_holding->next = allocated_pos;
+
+       if (block == NULL)
+         info->in_holding->next = 0;
+
+       ret = g_output_stream_write (info->o, info->in_holding, info->in_holding->length, NULL, NULL);
+       info->offset += ret;
+       g_assert (allocated_pos == info->offset);
+     }
+  /* write block should also allocate the block and update the
+   * previously added blocks next pointer
+   */
+   info->in_holding = block;
+   return ret;
+}
+
 static void
 save_info_destroy (SaveInfo *info)
 {
@@ -95,9 +108,10 @@ save_info_destroy (SaveInfo *info)
     return;
   if (info->path)
     g_free (info->path);
-  if (info->fd != 0 &&
-      info->fd != -1)
-    close (info->fd);
+  if (info->o)
+    g_object_unref (info->o);
+  if (info->file)
+    g_object_unref (info->file);
   if (info->tiles != NULL)
     {
       GList *iter;
@@ -147,6 +161,8 @@ static gint z_order_compare (gconstpointer a,
   return z_order (entryB) - z_order (entryA);
 }
 
+
+
 void
 gegl_buffer_save (GeglBuffer          *buffer,
                   const gchar         *path,
@@ -168,8 +184,9 @@ gegl_buffer_save (GeglBuffer          *buffer,
   info->header.next = (prediction += sizeof (GeglBufferHeader));
 
   info->path = g_strdup (path);
-  info->fd   = g_open (info->path,
-                       O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  info->file = g_file_new_for_commandline_arg (info->path);
+  info->o    = G_OUTPUT_STREAM (g_file_replace (info->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
+#if 0
   if (info->fd == -1)
     {
       gchar *name = g_filename_display_name (info->path);
@@ -181,6 +198,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
       save_info_destroy (info);
       return;
     }
+#endif
 
   info->header.tile_width  = buffer->tile_storage->tile_width;
   info->header.tile_height = buffer->tile_storage->tile_height;
@@ -224,9 +242,6 @@ gegl_buffer_save (GeglBuffer          *buffer,
         width  = roi->width;
         height = roi->height;
       }
-
-    info->x_tile_shift = -buffer->shift_x / tile_width;
-    info->y_tile_shift = -buffer->shift_y / tile_height;
 
     {
       gint z;
@@ -278,9 +293,8 @@ gegl_buffer_save (GeglBuffer          *buffer,
   /* set the offset in the file each tile will be stored on */
   {
     GList *iter;
-    gint   predicted_offset = sizeof (GeglBufferHeader) + sizeof (GeglBufferTile) * (info->header.entry_count);
-    GeglBufferTile *last_entry = NULL;
-
+    gint   predicted_offset = sizeof (GeglBufferHeader) +
+                              sizeof (GeglBufferTile) * (info->header.entry_count);
     for (iter = info->tiles; iter; iter = iter->next)
       {
         GeglBufferTile *entry = iter->data;
@@ -288,13 +302,11 @@ gegl_buffer_save (GeglBuffer          *buffer,
                                 (prediction += sizeof (GeglBufferTile)):0;
         entry->offset = predicted_offset;
         predicted_offset += info->tile_size;
-        last_entry = entry;
       }
-    last_entry->blockdef.next=0; /* terminate */
   }
 
   /* save the header */
-  info->offset += write (info->fd, &info->header, sizeof (GeglBufferHeader));
+  info->offset += g_output_stream_write (info->o, &info->header, sizeof (GeglBufferHeader), NULL, NULL);
   g_assert (info->offset == info->header.next);
 
   /* save the index */
@@ -302,14 +314,15 @@ gegl_buffer_save (GeglBuffer          *buffer,
     GList *iter;
     for (iter = info->tiles; iter; iter = iter->next)
       {
-        GeglBufferTile *entry = iter->data;
-        info->offset += write (info->fd, entry, sizeof (GeglBufferTile));
-        if (entry->blockdef.next)
-          {
-            g_assert (info->offset == entry->blockdef.next);
-          }
+        GeglBufferItem *item = iter->data;
+
+        write_block (info, &item->block);
+
       }
   }
+  write_block (info, NULL); /* terminate the index */
+
+  /* update header to point to start of new index */
 
   /* save each tile */
   {
@@ -330,7 +343,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
         g_assert (data);
 
         g_assert (info->offset == entry->offset);
-        info->offset += write (info->fd, data, info->tile_size);
+        info->offset += g_output_stream_write (info->o, data, info->tile_size, NULL, NULL);
         g_object_unref (G_OBJECT (tile));
         i++;
       }

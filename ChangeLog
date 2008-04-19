@@ -1,3 +1,10 @@
+2008-04-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-load.c: (read_header), (read_block),
+	(load_info_destroy), (gegl_buffer_load):
+	* gegl/buffer/gegl-buffer-save.c: (write_block),
+	(save_info_destroy), (gegl_buffer_save): ported to GIO
+
 2008-04-19  Sven Neumann  <sven@gimp.org>
 
 	* operations/common/brightness-contrast.c: formatting.
