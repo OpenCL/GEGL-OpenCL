@@ -21,9 +21,10 @@
 
 /* Followed by this #if ... */
 #ifdef GEGL_CHANT_PROPERTIES
-/* ... are the properties of the filter, these are all scalar values (doubles),
- * the the parameters are:
- *                 property name,   min,   max, default, "description of property"   */
+/* ... are the properties of the filter, these are all scalar values
+ * (doubles), the the parameters are:
+ *       property name,   min,   max, default, "description of property"
+ */
 
 gegl_chant_double (contrast, _("Contrast"), -5.0, 5.0, 1.0,
                    _("Range scale factor"))
@@ -36,29 +37,30 @@ gegl_chant_double (brightness, _("Brightness"), -3.0, 3.0, 0.0,
  */
 #else
 
-/* Specify the base class we're building our operation on, the base class provides
- * a lot of the legwork so we do not have to. For brightness contrast the best
- * base class is the POINT_FILTER base class.
+/* Specify the base class we're building our operation on, the base
+ * class provides a lot of the legwork so we do not have to. For
+ * brightness contrast the best base class is the POINT_FILTER base
+ * class.
  */
 #define GEGL_CHANT_TYPE_POINT_FILTER
 
-/* We specify the file we're in, this is needed to make the code generation for
- * the properties work.
+/* We specify the file we're in, this is needed to make the code
+ * generation for the properties work.
  */
 #define GEGL_CHANT_C_FILE       "brightness-contrast.c"
 
-/* Including gegl-chant.h creates most of the GObject boiler plate needed,
- * creating a GeglChant instance structure a GeglChantClass structure for
- * our operation, as well as the needed code to register our new gobject
- * with GEGL.
+/* Including gegl-chant.h creates most of the GObject boiler plate
+ * needed, creating a GeglChant instance structure a GeglChantClass
+ * structure for our operation, as well as the needed code to register
+ * our new gobject with GEGL.
  */
 #include "gegl-chant.h"
 
 
 /* prepare() is called on each operation providing data to a node that
- * is requested to provide a rendered result. When prepare is called all
- * properties are known. For brightness contrast we use this opportunity
- * to dictate the formats of the input and output buffers.
+ * is requested to provide a rendered result. When prepare is called
+ * all properties are known. For brightness contrast we use this
+ * opportunity to dictate the formats of the input and output buffers.
  */
 static void prepare (GeglOperation *operation)
 {
@@ -66,8 +68,8 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
-/* For GeglOperationPointFilter subclasses, we operate on linear buffers with a
- * pixel count.
+/* For GeglOperationPointFilter subclasses, we operate on linear
+ * buffers with a pixel count.
  */
 static gboolean
 process (GeglOperation *op,
@@ -75,8 +77,8 @@ process (GeglOperation *op,
          void          *out_buf,
          glong          n_pixels)
 {
-  /* Retrieve a pointer to GeglChantO structure which contains all the chanted
-   * properties
+  /* Retrieve a pointer to GeglChantO structure which contains all the
+   * chanted properties
    */
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gfloat     *in_pixel;
@@ -118,9 +120,9 @@ process_sse (GeglOperation *op,
   GeglV4     *out = out_buf;
   GeglV4      brightness = GEGL_V4_FILL(o->brightness + 0.5);
   GeglV4      contrast   = GEGL_V4_FILL(o->contrast);
-    
-  brightness.a[3]=0.5;
-  contrast.a[3]=1.0;
+
+  brightness.a[3] = 0.5;
+  contrast.a[3] = 1.0;
 
   while (--samples)
     {
@@ -152,8 +154,8 @@ gegl_chant_class_init (GeglChantClass *klass)
    */
   point_filter_class->process = process;
 
-  /* specify the name this operation is found under in the GUI/when programming/in
-   * XML
+  /* specify the name this operation is found under in the GUI/when
+   * programming/in XML
    */
   operation_class->name        = "brightness-contrast";
 

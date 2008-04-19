@@ -1,3 +1,7 @@
+2008-04-19  Sven Neumann  <sven@gimp.org>
+
+	* operations/common/brightness-contrast.c: formatting.
+
 2008-04-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-index.h: new file with structures for on
