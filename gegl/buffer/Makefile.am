@@ -45,8 +45,8 @@ BUFFER_headers = \
     gegl-tile-source.h		\
     gegl-tile-storage.h		\
     gegl-tile-backend.h		\
-    gegl-tile-backend-swapfile.h	\
-    gegl-tile-backend-gio-tiles.h	\
+    gegl-tile-backend-file.h	\
+    gegl-tile-backend-tiledir.h	\
     gegl-tile-backend-ram.h		\
     gegl-tile-handler.h		\
     gegl-tile-handler-chain.h		\
