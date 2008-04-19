@@ -33,8 +33,6 @@
 #include "gegl-node-editor.h"
 #include "gegl-tree-editor-action.h"
 
-
-static void           popup_properties                       (GeglNode           *node);
 static void           chain_in_operation                     (const gchar        *op_type);
 static void           menu_item_activate                     (GtkWidget          *widget,
                                                               gpointer            user_data);
@@ -60,54 +58,10 @@ static gboolean       completion_match_selected              (GtkEntryCompletion
                                                               gpointer            user_data);
 
 
-static void popup_properties (GeglNode *node)
-{
-  GtkWidget *dialog;
-  GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
-
-  dialog = gtk_dialog_new_with_buttons (gegl_node_get_operation (node),
-                                        GTK_WINDOW (editor.window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_STOCK_OK,
-                                        GTK_RESPONSE_NONE,
-                                        NULL);
-  gtk_container_add (GTK_CONTAINER (vbox), gegl_node_editor_new (node));
-  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox), vbox);
-
-  g_signal_connect_swapped (dialog,
-                            "response",
-                            G_CALLBACK (gtk_widget_destroy),
-                            dialog);
-
-  gtk_widget_show_all (dialog);
-}
-
 static void
 chain_in_operation (const gchar *op_type)
 {
-#if 0
-  g_warning ("request to chain in %s", op_type);
-  GeglNode *proxy;
-  GeglNode *iter;
-  GeglNode *new;
-
-  proxy = gegl_node_get_output_proxy (editor.gegl, "output");
-  iter = gegl_node_get_producer (proxy, "input");
-  new = gegl_node_new_child (editor.gegl, "operation", op_type, NULL);
-  if (iter)
-    {
-      gegl_node_link_many (iter, new, proxy, NULL);
-    }
-  else
-    {
-      gegl_node_link_many (new, proxy, NULL);
-    }
-  editor_refresh_structure();
-  popup_properties (new);
-#endif
-  GeglNode *new = gegl_add_sibling (op_type);
-  /*editor_refresh_structure();*/
-  popup_properties (new);
+    gegl_add_sibling (op_type);
 }
 
 static void

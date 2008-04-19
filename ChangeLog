@@ -1,5 +1,10 @@
 2008-04-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor-optype.c: (chain_in_operation): removed properties popup
+	when entering a new op through the "location bar".
+
+2008-04-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-load.c: (read_header), (read_block),
 	(load_info_destroy), (gegl_buffer_load):
 	* gegl/buffer/gegl-buffer-save.c: (write_block),
