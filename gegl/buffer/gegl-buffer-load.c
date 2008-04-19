@@ -50,19 +50,84 @@
 #include "gegl-buffer-save.h"
 #include "gegl-cache.h"
 #include "gegl-region.h"
+#include "gegl-buffer-index.h"
 
 typedef struct
 {
-  GeglBufferFileHeader header;
-  GList               *tiles;
-  gchar               *path;
-  gint                 fd;
-  gint                 tile_size;
-  gint                 x_tile_shift;
-  gint                 y_tile_shift;
-  Babl                *format;
+  GeglBufferHeader header;
+  GList           *tiles;
+  gchar           *path;
+  gint             fd;
+  gint             tile_size;
+  Babl            *format;
+  gint             pos;
+  glong            next_block;
+  gboolean         got_header;
 } LoadInfo;
 
+static GeglBufferItem *read_header (LoadInfo *info)
+{
+  GeglBufferBlock block;
+  GeglBufferItem *ret;
+
+  /* XXX: initialize synchronize buffer state */
+
+  if (info->pos != 0)
+    {
+      g_print ("%s must seek\n", G_STRFUNC);
+    }
+
+  info->pos += read (info->fd, &block, sizeof (GeglBufferBlock));
+
+  if (info->got_header)
+    {
+      ret = g_malloc (block.length);
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       block.length - sizeof(GeglBufferBlock));
+    }
+  else
+    {
+      info->got_header = TRUE;
+      ret = g_malloc (sizeof (GeglBufferHeader));
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock));
+    }
+  info->next_block = ret->block.next;
+  return ret;
+}
+
+
+static GeglBufferItem *read_block (LoadInfo *info)
+{
+  GeglBufferBlock block;
+  GeglBufferItem *ret;
+
+  if (info->pos != info->next_block)
+    {
+      g_print ("must seek\n");
+    }
+
+  info->pos+=read (info->fd, &block, sizeof (GeglBufferBlock));
+  if (info->got_header)
+    {
+      ret = g_malloc (block.length);
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       block.length - sizeof(GeglBufferBlock));
+    }
+  else
+    {
+      info->got_header = TRUE;
+      ret = g_malloc (sizeof (GeglBufferHeader));
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      info->pos+=read (info->fd,  ((gchar*)ret) + sizeof(GeglBufferBlock),
+                       sizeof(GeglBufferHeader) - sizeof(GeglBufferBlock));
+    }
+  info->next_block = ret->block.next;
+  return ret;
+}
 
 static void
 load_info_destroy (LoadInfo *info)
@@ -79,7 +144,7 @@ load_info_destroy (LoadInfo *info)
       GList *iter;
       for (iter = info->tiles; iter; iter = iter->next)
         {
-          g_slice_free (GeglTileEntry, iter->data);
+          g_free (iter->data);
         }
       g_list_free (info->tiles);
       info->tiles = NULL;
@@ -87,22 +152,14 @@ load_info_destroy (LoadInfo *info)
   g_slice_free (LoadInfo, info);
 }
 
+
 void
 gegl_buffer_load (GeglBuffer  *buffer,
                   const gchar *path)
 {
   LoadInfo *info = g_slice_new0 (LoadInfo);
 
-  if (sizeof (GeglBufferFileHeader) != 256)
-    {
-      g_warning ("GeglBufferFileHeader is %i bytes, should be 256 padding is off by: %i bytes %i ints", (int) sizeof (GeglBufferFileHeader), (int) sizeof (GeglBufferFileHeader) - 256, (int) (sizeof (GeglBufferFileHeader) - 256) / 4);
-      return;
-    }
-
-  if (!strcmp (info->header.magic, "_G_E_G_L"))
-    {
-      g_warning ("Magic is wrong!");
-    }
+  GEGL_BUFFER_SANITY;
 
   info->path = g_strdup (path);
   info->fd   = g_open (info->path, O_RDONLY, 0);
@@ -118,23 +175,35 @@ gegl_buffer_load (GeglBuffer  *buffer,
       return;
     }
 
-  read (info->fd, &(info->header), sizeof (GeglBufferFileHeader));
+  {
+    GeglBufferItem *header= read_header (info);
+    g_assert (header);
+    memcpy (&(info->header), header, sizeof (GeglBufferHeader));
+    /*g_free (header);*/  /* is there a pointer to a string or something we're missing? */
+  }
 
-  info->tile_size    = info->header.tile_width * info->header.tile_height * info->header.bpp;
-  info->format       = babl_format (info->header.format);
-  info->x_tile_shift = buffer->shift_x / info->header.tile_width;
-  info->y_tile_shift = buffer->shift_y / info->header.tile_height;
+
+  if (!(info->header.magic[0]=='G' &&
+       info->header.magic[1]=='E' &&
+       info->header.magic[2]=='G' &&
+       info->header.magic[3]=='L'))
+    {
+      g_warning ("Magic is wrong! %s", info->header.magic);
+    }
+
+  info->tile_size    = info->header.tile_width *
+                       info->header.tile_height *
+                       info->header.bytes_per_pixel;
+  info->format       = babl_format (info->header.description);
 
   /* load the index */
   {
     gint i;
-    for (i = 0; i < info->header.tile_count; i++)
+    for (i = 0; i < info->header.entry_count; i++)
       {
-        GeglTileEntry *entry = g_slice_new0 (GeglTileEntry);
-
-        read (info->fd, entry, sizeof (GeglTileEntry));
-
-        info->tiles = g_list_prepend (info->tiles, entry);
+        GeglBufferItem *item = read_block (info);
+        g_assert (item);
+        info->tiles = g_list_prepend (info->tiles, item);
       }
     info->tiles = g_list_reverse (info->tiles);
   }
@@ -145,32 +214,38 @@ gegl_buffer_load (GeglBuffer  *buffer,
     gint   i = 0;
     for (iter = info->tiles; iter; iter = iter->next)
       {
-        GeglTileEntry *entry = iter->data;
-        guchar        *data;
-        GeglTile      *tile;
-        gint           factor = 1 << entry->z;
+        GeglBufferTile *entry = iter->data;
+        guchar         *data;
+        GeglTile       *tile;
 
 
         tile = gegl_tile_source_get_tile (GEGL_TILE_SOURCE (buffer),
-                                     entry->x + info->x_tile_shift / factor,
-                                     entry->y + info->y_tile_shift / factor,
-                                     entry->z);
+                                          entry->x,
+                                          entry->y,
+                                          entry->z);
         g_assert (tile);
         gegl_tile_lock (tile);
 
         data = gegl_tile_get_data (tile);
         g_assert (data);
 
-        read (info->fd, data, info->tile_size);
+        if (info->pos != entry->offset)
+          {
+            g_warning ("%s must seek", G_STRFUNC);
+          }
+
+        info->pos += read (info->fd, data, info->tile_size);
+        /*g_print ("%i %i\n", i, data[0]);
+        g_print ("%i %i %i   %i %i %i\n", entry->x, entry->y, entry->z, tile->x, tile->y, tile->z);*/
 
         gegl_tile_unlock (tile);
         g_object_unref (G_OBJECT (tile));
-        /*fprintf (stderr, "\r%f  %i %i %i  ", (1.0*i)/info->header.tile_count, entry->x - info->x_tile_shift, entry->y, entry->z);*/
         i++;
 
         if (GEGL_IS_CACHE (buffer) && entry->z == 0)
           {
             GeglRectangle rect;
+
             gegl_rectangle_set (&rect, entry->x * info->header.tile_width,
                                 entry->y * info->header.tile_height,
                                 info->header.tile_width,
@@ -180,7 +255,6 @@ gegl_buffer_load (GeglBuffer  *buffer,
       }
     /*fprintf (stderr, "done      \n");*/
   }
-
 
   load_info_destroy (info);
 }

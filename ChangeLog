@@ -1,5 +1,16 @@
 2008-04-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-index.h: new file with structures for on
+	disk serialization of indexes for tiles in files/on swap.
+	* gegl/buffer/gegl-buffer-save.[ch]: changed to use new structures
+	large amount of sanity code added.
+	* gegl/buffer/gegl-buffer-load.[ch]: adapted to use new structures.
+	* gegl/buffer/gegl-buffer-private.h: some stuff moved from here to
+	index.
+	* gegl/buffer/Makefile.am: added gegl-buffer-index.h
+
+2008-04-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-tiledir.c:
 	* gegl/buffer/gegl-tile-backend-tiledir.h:
 	* gegl/gegl-init.c: (gegl_exit): forgot in rename session.

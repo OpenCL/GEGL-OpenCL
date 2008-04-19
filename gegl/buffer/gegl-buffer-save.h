@@ -23,27 +23,6 @@
 
 #include "gegl-buffer.h"
 
-typedef struct {
-  gchar magic[16];
-  gint  width, height, x, y;
-  gchar format[32];
-  guint tile_width, tile_height;
-  guint bpp;
-  gint  tile_count;
-
-  guint padding1[12];
-  guint padding[32];
-} GeglBufferFileHeader;
-
-typedef struct {
-  gint  x;
-  gint  y;
-  gint  z;
-  guint offset;  /* offset into file */
-  guint flags;   /* flags? not used? */
-
-  guint padding1[8];
-} GeglTileEntry;
 
 void gegl_buffer_save (GeglBuffer          *buffer,
                        const gchar         *path,

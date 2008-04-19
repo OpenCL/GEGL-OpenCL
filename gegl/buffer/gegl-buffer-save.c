@@ -54,26 +54,27 @@
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"
+#include "gegl-buffer-index.h"
 
 typedef struct
 {
-  GeglBufferFileHeader header;
-  GList               *tiles;
-  gchar               *path;
-  gint                 fd;
-  gint                 tile_size;
-  gint                 x_tile_shift;
-  gint                 y_tile_shift;
-  gint                 offset;
+  GeglBufferHeader header;
+  GList           *tiles;
+  gchar           *path;
+  gint             fd;
+  gint             tile_size;
+  gint             x_tile_shift;
+  gint             y_tile_shift;
+  gint             offset;
 } SaveInfo;
 
 
-static GeglTileEntry *
+static GeglBufferTile *
 tile_entry_new (gint x,
                 gint y,
                 gint z)
 {
-  GeglTileEntry *entry = g_slice_new0 (GeglTileEntry);
+  GeglBufferTile *entry = g_slice_new0 (GeglBufferTile);
 
   entry->x = x;
   entry->y = y;
@@ -82,9 +83,9 @@ tile_entry_new (gint x,
 }
 
 static void
-tile_entry_destroy (GeglTileEntry *entry)
+tile_entry_destroy (GeglBufferTile *entry)
 {
-  g_slice_free (GeglTileEntry, entry);
+  g_slice_free (GeglBufferTile, entry);
 }
 
 static void
@@ -110,7 +111,7 @@ save_info_destroy (SaveInfo *info)
 
 
 
-static glong z_order (const GeglTileEntry *entry)
+static glong z_order (const GeglBufferTile *entry)
 {
   glong value;
 
@@ -140,8 +141,8 @@ static glong z_order (const GeglTileEntry *entry)
 static gint z_order_compare (gconstpointer a,
                              gconstpointer b)
 {
-  const GeglTileEntry *entryA = a;
-  const GeglTileEntry *entryB = b;
+  const GeglBufferTile *entryA = a;
+  const GeglBufferTile *entryB = b;
 
   return z_order (entryB) - z_order (entryA);
 }
@@ -153,16 +154,19 @@ gegl_buffer_save (GeglBuffer          *buffer,
 {
   SaveInfo *info = g_slice_new0 (SaveInfo);
 
-  if (sizeof (GeglBufferFileHeader) != 256)
-    {
-      g_warning ("GeglBufferFileHeader is %i bytes, should be 256 padding is off by: %i bytes %i ints",
-         (int) sizeof (GeglBufferFileHeader),
-         (int) sizeof (GeglBufferFileHeader) - 256,
-         (int)(sizeof (GeglBufferFileHeader) - 256) / 4);
-      return;
-    }
+  glong prediction = 0; 
 
-  strcpy (info->header.magic, "_G_E_G_L");
+  GEGL_BUFFER_SANITY;
+
+  strcpy (info->header.magic, "GEGL");
+
+  /* a header should follow the same structure as a blockdef with
+   * respect to the flags and next offsets, thus this is a valid
+   * cast shortcut.
+   */
+  info->header.flags = GEGL_FLAG_HEADER;
+  info->header.next = (prediction += sizeof (GeglBufferHeader));
+
   info->path = g_strdup (path);
   info->fd   = g_open (info->path,
                        O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
@@ -178,18 +182,29 @@ gegl_buffer_save (GeglBuffer          *buffer,
       return;
     }
 
-  info->header.width       = buffer->extent.width;
-  info->header.height      = buffer->extent.height;
-  info->header.x           = buffer->extent.x;
-  info->header.y           = buffer->extent.y;
   info->header.tile_width  = buffer->tile_storage->tile_width;
   info->header.tile_height = buffer->tile_storage->tile_height;
+  g_object_get (buffer, "px-size", &(info->header.bytes_per_pixel), NULL);
+  {
+    gchar buf[64];
+    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n\n\n\n\n\n\n\n\n\n", 
+          ((Babl *) (buffer->tile_storage->format))->instance.name, 0,
+          info->header.tile_width,
+          info->header.tile_height,
+          info->header.bytes_per_pixel);
+    memcpy (info->header.description, buf, 64);
+  }
 
-  g_object_get (buffer, "px-size", &(info->header.bpp), NULL);
-/*  = gegl_buffer_px_size (buffer);*/
+  info->header.x           = buffer->extent.x;
+  info->header.y           = buffer->extent.y;
+  info->header.width       = buffer->extent.width;
+  info->header.height      = buffer->extent.height;
 
-  info->tile_size = info->header.tile_width * info->header.tile_height * info->header.bpp;
-  strcpy (info->header.format, ((Babl *) (buffer->tile_storage->format))->instance.name);
+  info->tile_size = info->header.tile_width  *
+                    info->header.tile_height *
+                    info->header.bytes_per_pixel;
+
+  g_assert (info->tile_size % 16 == 0);
 
   /* collect list of tiles to be written */
   {
@@ -213,22 +228,21 @@ gegl_buffer_save (GeglBuffer          *buffer,
     info->x_tile_shift = -buffer->shift_x / tile_width;
     info->y_tile_shift = -buffer->shift_y / tile_height;
 
-
     {
       gint z;
       gint factor = 1;
-      for (z = 0; z < 10; z++)
+      for (z = 0; z < 1; z++)
         {
           bufy = y;
           while (bufy < buffer->extent.y + height)
             {
-              gint tiledy  = buffer->extent.y + buffer->shift_y + bufy;
+              gint tiledy  = buffer->extent.y + bufy;
               gint offsety = gegl_tile_offset (tiledy, tile_height);
               gint bufx    = x;
 
               while (bufx < buffer->extent.x + width)
                 {
-                  gint tiledx  = buffer->extent.x + bufx + buffer->shift_x;
+                  gint tiledx  = buffer->extent.x + bufx;
                   gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
                   gint tx = gegl_tile_indice (tiledx / factor, tile_width);
@@ -236,12 +250,13 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
                   if (gegl_tile_source_exist (GEGL_TILE_SOURCE (buffer), tx, ty, z))
                     {
-                      tx += info->x_tile_shift / factor;
-                      ty += info->y_tile_shift / factor;
+                      GeglBufferTile *entry;
 
-                      info->tiles = g_list_prepend (info->tiles,
-                                                    tile_entry_new (tx, ty, z));
-                      info->header.tile_count++;
+                      entry = tile_entry_new (tx, ty, z);
+                      entry->blockdef.length = sizeof (GeglBufferTile);
+                      entry->blockdef.flags = GEGL_FLAG_TILE;
+                      info->tiles = g_list_prepend (info->tiles, entry);
+                      info->header.entry_count++;
                     }
                   bufx += (tile_width - offsetx) * factor;
                 }
@@ -251,7 +266,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
         }
     }
 
-    info->tiles = g_list_reverse (info->tiles);
+
+  /* XXX:why was the list reversed here when it is just about to be sorted?
+   */
+/*    info->tiles = g_list_reverse (info->tiles);*/
   }
 
   /* sort the list of tiles into zorder */
@@ -260,27 +278,36 @@ gegl_buffer_save (GeglBuffer          *buffer,
   /* set the offset in the file each tile will be stored on */
   {
     GList *iter;
-    gint   offset = sizeof (GeglBufferFileHeader) + sizeof (GeglTileEntry) * info->header.tile_count;
+    gint   predicted_offset = sizeof (GeglBufferHeader) + sizeof (GeglBufferTile) * (info->header.entry_count);
+    GeglBufferTile *last_entry = NULL;
 
     for (iter = info->tiles; iter; iter = iter->next)
       {
-        GeglTileEntry *entry = iter->data;
-        entry->offset = offset;
-        offset       += info->tile_size;
+        GeglBufferTile *entry = iter->data;
+        entry->blockdef.next = iter->next?
+                                (prediction += sizeof (GeglBufferTile)):0;
+        entry->offset = predicted_offset;
+        predicted_offset += info->tile_size;
+        last_entry = entry;
       }
+    last_entry->blockdef.next=0; /* terminate */
   }
 
   /* save the header */
-  info->offset += write (info->fd, &info->header, sizeof (GeglBufferFileHeader));
+  info->offset += write (info->fd, &info->header, sizeof (GeglBufferHeader));
+  g_assert (info->offset == info->header.next);
 
   /* save the index */
-
   {
     GList *iter;
     for (iter = info->tiles; iter; iter = iter->next)
       {
-        GeglTileEntry *entry = iter->data;
-        info->offset += write (info->fd, entry, sizeof (GeglTileEntry));
+        GeglBufferTile *entry = iter->data;
+        info->offset += write (info->fd, entry, sizeof (GeglBufferTile));
+        if (entry->blockdef.next)
+          {
+            g_assert (info->offset == entry->blockdef.next);
+          }
       }
   }
 
@@ -290,28 +317,24 @@ gegl_buffer_save (GeglBuffer          *buffer,
     gint   i = 0;
     for (iter = info->tiles; iter; iter = iter->next)
       {
-        GeglTileEntry *entry = iter->data;
-        guchar        *data;
-        GeglTile      *tile;
-        gint           factor = 1 << entry->z;
+        GeglBufferTile *entry = iter->data;
+        guchar          *data;
+        GeglTile        *tile;
 
         tile = gegl_tile_source_get_tile (GEGL_TILE_SOURCE (buffer),
-                                     entry->x - info->x_tile_shift / factor,
-                                     entry->y - info->y_tile_shift / factor,
-                                     entry->z);
+                                          entry->x,
+                                          entry->y,
+                                          entry->z);
         g_assert (tile);
         data = gegl_tile_get_data (tile);
         g_assert (data);
 
+        g_assert (info->offset == entry->offset);
         info->offset += write (info->fd, data, info->tile_size);
         g_object_unref (G_OBJECT (tile));
-        /*fprintf (stderr, "\r%f%% (%ikb)", (1.0*i)/info->header.tile_count, info->offset /1024);*/
         i++;
       }
-    /*fprintf (stderr, "done      \n");*/
+    g_assert (i == info->header.entry_count);
   }
-
-
   save_info_destroy (info);
 }
-

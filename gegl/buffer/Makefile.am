@@ -4,6 +4,7 @@ BUFFER_sources = \
     gegl-buffer.c		\
     gegl-buffer-access.c	\
     gegl-buffer-share.c		\
+    gegl-buffer-index.h		\
     gegl-buffer-save.c		\
     gegl-buffer-load.c		\
     gegl-cache.c		\
