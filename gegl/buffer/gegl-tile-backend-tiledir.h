@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_BACKEND_TILE_DIR            (gegl_tile_backend_tile_dir_get_type ())
+#define GEGL_TYPE_TILE_BACKEND_TILE_DIR            (gegl_tile_backend_tiledir_get_type ())
 #define GEGL_TILE_BACKEND_TILE_DIR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_BACKEND_TILE_DIR, GeglTileBackendTileDir))
 #define GEGL_TILE_BACKEND_TILE_DIR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_BACKEND_TILE_DIR, GeglTileBackendTileDirClass))
 #define GEGL_IS_TILE_BACKEND_TILE_DIR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_BACKEND_TILE_DIR))
@@ -40,9 +40,9 @@ struct _GeglTileBackendTileDirClass
   GeglTileBackendClass parent_class;
 };
 
-GType gegl_tile_backend_tile_dir_get_type (void) G_GNUC_CONST;
+GType gegl_tile_backend_tiledir_get_type (void) G_GNUC_CONST;
 
-void  gegl_tile_backend_tile_dir_stats    (void);
+void  gegl_tile_backend_tiledir_stats    (void);
 
 G_END_DECLS
 

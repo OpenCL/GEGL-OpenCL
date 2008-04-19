@@ -134,8 +134,8 @@ gegl_get_option_group (void)
 }
 
 void gegl_tile_backend_ram_stats (void);
-void gegl_tile_backend_gio_tiles_stats (void);
-void gegl_tile_backend_swapfile_stats (void);
+void gegl_tile_backend_tiledir_stats (void);
+void gegl_tile_backend_file_stats (void);
 
 void
 gegl_exit (void)
@@ -162,8 +162,8 @@ gegl_exit (void)
     {
       gegl_buffer_stats ();
       gegl_tile_backend_ram_stats ();
-      gegl_tile_backend_swapfile_stats ();
-      gegl_tile_backend_gio_tiles_stats ();
+      gegl_tile_backend_file_stats ();
+      gegl_tile_backend_tiledir_stats ();
     }
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);
