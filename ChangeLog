@@ -1,5 +1,12 @@
 2008-04-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c: (file_entry_read),
+	(file_entry_write), (file_entry_new), (write_header),
+	(write_block), (flush), (finalize),
+	(gegl_tile_backend_file_constructor): added debug notes.
+
+2008-04-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: pass --enable-debug when autogen is used.
 	* configure.ac: added check for --enable-debug added sse and mmx
 	* gegl/gegl-debug.h: debug infrastructure like the one in clutter.

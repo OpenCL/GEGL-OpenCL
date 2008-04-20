@@ -29,6 +29,8 @@
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
 
+#include "gegl-debug.h"
+
 
 struct _GeglTileBackendFile
 {
@@ -86,7 +88,7 @@ file_entry_read (GeglTileBackendFile *self,
   gint     to_be_read;
   gboolean success;
   gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
-  goffset  offset = entry->offset; /* we need 64bit */
+  goffset  offset = entry->offset;
 
   success = g_seekable_seek (G_SEEKABLE (self->i), 
                              offset, G_SEEK_SET,
@@ -114,6 +116,7 @@ file_entry_read (GeglTileBackendFile *self,
         }
       to_be_read -= read;
     }
+   GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static void inline
@@ -124,7 +127,7 @@ file_entry_write (GeglTileBackendFile *self,
   gint     to_be_written;
   gboolean success;
   gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
-  goffset  offset = entry->offset; /* we need 64 bit */
+  goffset  offset = entry->offset;
 
   success = g_seekable_seek (G_SEEKABLE (self->o), 
                              offset, G_SEEK_SET,
@@ -152,6 +155,7 @@ file_entry_write (GeglTileBackendFile *self,
         }
       to_be_written -= wrote;
     }
+   GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static inline GeglBufferTile *
@@ -159,23 +163,30 @@ file_entry_new (GeglTileBackendFile *self)
 {
   GeglBufferTile *entry = gegl_tile_entry_new (0,0,0);
 
+  GEGL_NOTE (TILE_BACKEND, "Creating new entry");
+
   if (self->free_list)
     {
       /* XXX: losing precision ? */
       gint offset = GPOINTER_TO_INT (self->free_list->data);
       entry->offset = offset;
       self->free_list = g_slist_remove (self->free_list, self->free_list->data);
+      
+      GEGL_NOTE (TILE_BACKEND, "  set offset %i from free list", ((gint)entry->offset));
     }
   else
     {
       gint tile_size = GEGL_TILE_BACKEND (self)->tile_size;
 
       entry->offset = self->next_pre_alloc;
+      GEGL_NOTE (TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->offset);
       self->next_pre_alloc += tile_size;
 
       if (self->next_pre_alloc >= self->total)
         {
           self->total = self->total + 32 * tile_size;
+        
+          GEGL_NOTE (TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
 
           g_assert (g_seekable_truncate (G_SEEKABLE (self->o),
                     self->total, NULL,NULL));
@@ -210,6 +221,7 @@ static gboolean write_header (GeglTileBackendFile *self)
       return FALSE;
     }
   g_output_stream_write (self->o, &(self->header), 256, NULL, NULL);
+  GEGL_NOTE (TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
 }
 
@@ -234,9 +246,14 @@ write_block (GeglTileBackendFile *self,
                             NULL, NULL))
          goto fail;
 
+       GEGL_NOTE (TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
+             self->in_holding->length,
+             self->in_holding->flags,
+             (gint)self->in_holding->next,
+             (gint)self->offset);
        self->offset += g_output_stream_write (self->o, self->in_holding,
-                                    self->in_holding->length, 
-                                    NULL, NULL);
+                                              self->in_holding->length, 
+                                              NULL, NULL);
 
        g_assert (next_allocation == self->offset); /* true as long as
                                                       the simple allocation
@@ -437,7 +454,7 @@ flush (GeglTileSource *source,
   backend  = GEGL_TILE_BACKEND (source);
   self     = GEGL_TILE_BACKEND_FILE (backend);
 
-  g_print ("flushing %s\n", self->path);
+  GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
 
   gegl_buffer_header_init (&self->header,
                            backend->tile_width,
@@ -466,7 +483,7 @@ flush (GeglTileSource *source,
   g_list_free (tiles);
   write_header (self);
 
-  g_print ("flushed %s\n", self->path);
+  GEGL_NOTE (TILE_BACKEND, "flushed %s", self->path);
 
   return (gpointer)0xf0f;
 }
@@ -560,15 +577,15 @@ finalize (GObject *object)
 {
   GeglTileBackendFile *self = (GeglTileBackendFile *) object;
 
+  GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
+
   if (self->index)
     g_hash_table_unref (self->index);
   if (self->i)
     g_object_unref (self->i);
   if (self->o)
     g_object_unref (self->o);
-  /* check if we should nuke the buffer or not */ 
 
-  if(0)g_print ("finalizing buffer %s", self->path);
   if (self->path)
     g_free (self->path);
 
@@ -635,6 +652,7 @@ gegl_tile_backend_file_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self   = GEGL_TILE_BACKEND_FILE (object);
 
+  GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
   self->file = g_file_new_for_commandline_arg (self->path);
   self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
   g_output_stream_flush (self->o, NULL, NULL);
