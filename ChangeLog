@@ -1,5 +1,10 @@
 2008-04-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation.c: (gegl_operation_class_init):
+	indentation.
+
+2008-04-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-file.c: (file_entry_read),
 	(file_entry_write), (file_entry_new), (write_header),
 	(write_block), (flush), (finalize),

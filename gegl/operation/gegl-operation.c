@@ -38,22 +38,23 @@ static void         attach                    (GeglOperation       *self);
 
 static GeglRectangle get_bounding_box          (GeglOperation       *self);
 static GeglRectangle get_invalidated_by_change (GeglOperation       *self,
-                                                 const gchar         *input_pad,
-                                                 const GeglRectangle *input_region);
+                                                const gchar         *input_pad,
+                                                const GeglRectangle *input_region);
 static GeglRectangle get_required_for_output   (GeglOperation       *self,
-                                                 const gchar         *input_pad,
-                                                 const GeglRectangle *region);
+                                                const gchar         *input_pad,
+                                                const GeglRectangle *region);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
 static void
 gegl_operation_class_init (GeglOperationClass *klass)
 {
-  klass->name                    = NULL;  /* an operation class with
-                                           * name == NULL is not
-                                           * included when doing
-                                           * operation lookup by
-                                           * name */
+  klass->name                      = NULL;  /* an operation class with
+                                             * name == NULL is not
+                                             * included when doing
+                                             * operation lookup by
+                                             * name
+                                             */
   klass->description               = NULL;
   klass->categories                = NULL;
   klass->attach                    = attach;
