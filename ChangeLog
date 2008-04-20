@@ -1,5 +1,10 @@
 2008-04-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-share.c: make compiles with multiprocessors
+	work again (it still doesn't work properly though).
+
+2008-04-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_flush): invoke the
 	flush command for the tile infrastructure.
 	* gegl/buffer/gegl-buffer-index.h: include guards, and added some of
