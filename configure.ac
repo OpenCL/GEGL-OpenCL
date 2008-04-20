@@ -153,9 +153,9 @@ AC_SYS_LARGEFILE
 
 AC_MSG_CHECKING([whether to turn on debugging])
 AC_ARG_ENABLE(debug,
-              [  --enable-debug          turn on debugging (default=no)],
+              [  --enable-debug          turn on  debugging (default=no)],
               if eval "test x$enable_debug = xyes"; then
-                DEBUGFLAG="-g"
+                DEBUGFLAG="-g -DGEGL_ENABLE_DEBUG"
               fi)
 
 if test -n "$DEBUGFLAG"; then
@@ -291,6 +291,7 @@ AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
 dnl ===========================================================================
 
 
+
 #################
 # Check for Win32
 #################
@@ -424,6 +425,7 @@ if test "x$enable_mmx" = xyes; then
   AC_SUBST(SSE_EXTRA_CFLAGS)
 fi
 
+CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS"
 
 
 ###############################
@@ -842,6 +844,7 @@ Optional features:
   Build workshop: $enable_workshop
   Build website:  $have_asciidoc
   Multiprocessor: $enable_mp
+  SIMD:           sse:$enable_sse mmx:$enable_mmx
 
 Optional dependencies:
   GTK+:           $have_gtk

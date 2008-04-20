@@ -323,7 +323,7 @@ echo
 echo "Running ./configure..."
 echo
 
-$srcdir/configure --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS "$@"
+$srcdir/configure --enable-debug --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS "$@"
 RC=$?
 if test $RC -ne 0; then
   echo

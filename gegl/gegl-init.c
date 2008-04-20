@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#define __GEGL_INIT_C
 
 #include <babl/babl.h>
 
@@ -31,6 +32,13 @@
 #ifdef G_OS_WIN32
 #include <process.h>
 #endif
+
+#include <gegl-debug.h>
+
+
+guint gegl_debug_flags = 0; 
+
+
 
 #include "gegl-instrument.h"
 /*#include "gegl-types.h"*/
@@ -236,6 +244,7 @@ gegl_init_i18n (void)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 }
 
+
 static gboolean
 gegl_post_parse_hook (GOptionContext *context,
                       GOptionGroup   *group,
@@ -251,6 +260,22 @@ gegl_post_parse_hook (GOptionContext *context,
   global_time = gegl_ticks ();
   g_type_init ();
   gegl_instrument ("gegl", "gegl_init", 0);
+
+
+#ifdef GEGL_ENABLE_DEBUG
+  {
+    const char *env_string;
+    env_string = g_getenv ("GEGL_DEBUG");
+    if (env_string != NULL)
+      {
+        gegl_debug_flags =
+          g_parse_debug_string (env_string,
+                                gegl_debug_keys,
+                                G_N_ELEMENTS (gegl_debug_keys));
+        env_string = NULL;
+      }
+  }
+#endif /* GEGL_ENABLE_DEBUG */
 
   time = gegl_ticks ();
 
@@ -321,6 +346,52 @@ gegl_post_parse_hook (GOptionContext *context,
   return TRUE;
 }
 
+
+
+#ifdef GEGL_ENABLE_DEBUG
+static gboolean
+gegl_arg_debug_cb (const char *key,
+                   const char *value,
+                   gpointer    user_data)
+{
+  gegl_debug_flags |=
+    g_parse_debug_string (value,
+                          gegl_debug_keys,
+                          G_N_ELEMENTS (gegl_debug_keys));
+  return TRUE;
+}
+
+static gboolean
+gegl_arg_no_debug_cb (const char *key,
+                      const char *value,
+                      gpointer    user_data)
+{
+  gegl_debug_flags &=
+    ~g_parse_debug_string (value,
+                           gegl_debug_keys,
+                           G_N_ELEMENTS (gegl_debug_keys));
+  return TRUE;
+}
+#endif
+
+/*
+ * gegl_get_debug_enabled:
+ *
+ * Check if gegl has debugging turned on.
+ *
+ * Return value: TRUE if debugging is turned on, FALSE otherwise.
+ */
+gboolean
+gegl_get_debug_enabled (void)
+{
+#ifdef GEGL_ENABLE_DEBUG
+  return gegl_debug_flags != 0;
+#else
+  return FALSE;
+#endif
+}
+
+
 static const gchar *makefile (void)
 {
   return
@@ -341,3 +412,5 @@ static const gchar *makefile (void)
     "clean:\n"
     "	rm -f *$(SHREXT) $(OFILES)\n";
 }
+
+

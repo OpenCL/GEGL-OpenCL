@@ -44,24 +44,6 @@ gboolean    gegl_rectangle_intersect     (GeglRectangle       *dest,
 gboolean    gegl_rectangle_contains      (const GeglRectangle *r,
                                           const GeglRectangle *s);
 
-void        gegl_log_debug               (const gchar    *file,
-                                          gint            line,
-                                          const gchar    *function,
-                                          const gchar    *format,
-                                          ...) G_GNUC_PRINTF (4, 5);
-void        gegl_log_info                (const gchar    *file,
-                                          gint            line,
-                                          const gchar    *function,
-                                          const gchar    *format,
-                                          ...) G_GNUC_PRINTF (4, 5);
-void        gegl_log_message             (const gchar    *file,
-                                          gint            line,
-                                          const gchar    *function,
-                                          const gchar    *format,
-                                          ...) G_GNUC_PRINTF (4, 5);
-void        gegl_log_direct              (const gchar    *format,
-                                          ...) G_GNUC_PRINTF (1, 2);
-
 GType       gegl_rectangle_get_type      (void) G_GNUC_CONST;
 
 #ifndef __GEGL_H__
@@ -78,10 +60,10 @@ inline gint _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
-void *
-gegl_aligned_malloc (gsize size);
-void
-gegl_aligned_free (void *buf);
+gpointer gegl_malloc                  (gsize size);
+void     gegl_free                    (gpointer buf);
+
+
 
 G_END_DECLS
 

@@ -176,99 +176,6 @@ gegl_rectangle_equal_coords (const GeglRectangle *r,
     return FALSE;
 }
 
-#define GEGL_LOG_DOMAIN    "Gegl"
-
-void
-gegl_log_debug (const gchar *file,
-                gint         line,
-                const gchar *function,
-                const gchar *format,
-                ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_logv (G_LOG_LEVEL_DEBUG, file, line, function, format, args);
-  va_end (args);
-}
-
-void
-gegl_log_info (const gchar *file,
-               gint         line,
-               const gchar *function,
-               const gchar *format,
-               ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_logv (G_LOG_LEVEL_INFO, file, line, function, format, args);
-  va_end (args);
-}
-
-void
-gegl_log_message (const gchar *file,
-                  gint         line,
-                  const gchar *function,
-                  const gchar *format,
-                  ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_logv (G_LOG_LEVEL_MESSAGE, file, line, function, format, args);
-  va_end (args);
-}
-
-void
-gegl_log_direct (const gchar *format,
-                 ...)
-{
-  va_list args;
-
-  va_start (args, format);
-  gegl_direct_logv (G_LOG_LEVEL_DEBUG, format, args);
-  va_end (args);
-}
-
-static void
-gegl_logv (GLogLevelFlags  level,
-           const gchar    *file,
-           gint            line,
-           const gchar    *function,
-           const gchar    *format,
-           va_list         args)
-{
-  if (g_getenv ("GEGL_LOG_ON"))
-    {
-      gchar *tabbed = NULL;
-
-      /* log the file and line */
-      g_log (GEGL_LOG_DOMAIN, level, "%s:  %s:%d:", function, file, line);
-
-      /* move the regular output over a bit. */
-      tabbed = g_strconcat ("   ", format, NULL);
-      g_logv (GEGL_LOG_DOMAIN, level, tabbed, args);
-      g_log (GEGL_LOG_DOMAIN, level, "        ");
-      g_free (tabbed);
-    }
-}
-
-static void
-gegl_direct_logv (GLogLevelFlags  level,
-                  const gchar    *format,
-                  va_list         args)
-{
-  if (g_getenv ("GEGL_LOG_ON"))
-    {
-      gchar *tabbed = NULL;
-      tabbed = g_strconcat ("   ", format, NULL);
-      g_logv (GEGL_LOG_DOMAIN, level, tabbed, args);
-      g_free (tabbed);
-    }
-}
-
-
 static GeglRectangle *
 gegl_rectangle_dup (const GeglRectangle *rectangle)
 {
@@ -292,46 +199,6 @@ gegl_rectangle_get_type (void)
 }
 
 #define GEGL_ALIGN 16
-
-#if 0
-void *
-gegl_malloc (gsize size);
-
-/* utility call that makes sure allocations are 16 byte aligned.
- * making RGBA float buffers have aligned access for pixels.
- */ void * gegl_malloc (gsize size)
-{
-  gint   off;
-  gint   i;
-  gint   to_add;
-  gchar *mem = g_malloc (size + GEGL_ALIGN + 1);
-  void *ret;
-  *mem='G';
-  off = (((guint)mem) + 1) % GEGL_ALIGN;
-  to_add = GEGL_ALIGN-off;
-  ret = (void*)(mem + 1 + to_add);
-  for (i=1;i<1+to_add;i++)
-    mem[i]=' ';
-  return ret;
-}
-
-void
-gegl_free (void *buf);
-void
-gegl_free (void *buf)
-{
-  gchar *p = buf;
-  g_assert (buf);
-  p--;
-  while (*p!='G')
-    {
-      g_assert (*p==' ');
-    }
-   p--;
-  g_free (p);
-}
-#endif
-
 
 gpointer
 gegl_malloc (gsize size);
@@ -362,3 +229,4 @@ gegl_free (gpointer buf)
   g_assert (buf);
   g_free (*((gpointer*)buf -1));
 }
+

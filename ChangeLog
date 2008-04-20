@@ -1,5 +1,16 @@
 2008-04-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: pass --enable-debug when autogen is used.
+	* configure.ac: added check for --enable-debug added sse and mmx
+	* gegl/gegl-debug.h: debug infrastructure like the one in clutter.
+	* gegl/gegl-init.h: added gegl_get_debug_enabled().
+	* gegl/gegl-init.c: (gegl_post_parse_hook), (gegl_arg_debug_cb),
+	(gegl_arg_no_debug_cb), (gegl_get_debug_enabled): added debug
+	infrastructure.
+	* gegl/gegl-utils.[ch]: removed old unused log infrastructure.
+
+2008-04-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-share.c: make compiles with multiprocessors
 	work again (it still doesn't work properly though).
 
