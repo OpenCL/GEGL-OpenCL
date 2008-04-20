@@ -7,21 +7,39 @@ GeglBuffer on disk representation
 
 */
 
+
+/* Increase this number when the structures change.*/
+#define GEGL_FILE_SPEC_REV     23
 #define GEGL_MAGIC             {'G','E','G','L'}
-#define GEGL_FLAG_HEADER       1
-#define GEGL_FLAG_TILE         2
-#define GEGL_FLAG_TILE_IS_FREE 4
-#define GEGL_FLAG_TILE_FREE    (GEGL_FLAG_TILE|GEGL_FLAG_TILE_IS_FREE)
+
+#define GEGL_FLAG_TILE         1
+#define GEGL_FLAG_FREE_TILE    2
+
+/* these flags are used for the header, the lower bits of the
+ * header store the revision
+ */
+#define GEGL_FLAG_LOCKED       (0xff*(1<<0))
+#define GEGL_FLAG_FLUSHED      (0xff*(1<<1))
+#define GEGL_FLAG_IS_HEADER    (0xff*(1<<3))
+
+/* The default header we expect to see on a file is that it is
+ * flushed, and has the revision the file conforms to written
+ * to it.
+ */
+#define  GEGL_FLAG_HEADER    (GEGL_FLAG_FLUSHED  |\
+                              GEGL_FLAG_IS_HEADER|\
+                              GEGL_FILE_SPEC_REV)
 
 /*
  * This header is the first 256 bytes of the GEGL buffer.
  */
 typedef struct {
   gchar     magic[4];    /* - a 4 byte identifier */
-  guint32   flags;
-  guint64   next;        /* offset to next GeglBufferBlock */
+  guint32   flags;       /* the header flags is used to encode state and revision 
+                          */
+  guint64   next;        /* offset to first GeglBufferBlock */
 
-  guint32   tile_width;
+  guint32   tile_width;       
   guint32   tile_height;
   guint16   bytes_per_pixel;
 
@@ -29,6 +47,8 @@ typedef struct {
                               * here, as well as after the \0 a debug string
                               * describing the buffer.
                               */
+
+  /* the ROI should come as a separate block */
   gint32    x;               /* indication of bounding box for tiles stored. */
   gint32    y;               /* this isn't really needed as each GeglBuffer as */
   guint32   width;           /* represented on disk doesn't really have any */
@@ -38,10 +58,15 @@ typedef struct {
   gint32    padding[36];     /* Pad the structure to be 256 bytes long */
 } GeglBufferHeader;
 
+/* the revision of the format is stored in the flags of the header in the
+ * lower 8 bits
+ */
+#define gegl_buffer_header_get_rev(header)  (((GeglBufferHeader*)(header))->flags&0xff)
 
-/* The GeglBuffer index is written to the file as a linked list with encoded
- * offsets. Each element in the list has a GeglBufferBlock header, GeglBufferHeader
- * abuses the length field to construct a magic marker to recognise the file.
+/* The GeglBuffer index is written to the file as a linked list of
+ * GeglBufferBlock's, each block encodes it's own length and the offset
+ * of the file which the next block can be found. The last block in the
+ * list has the next offset set to 0.
  */
 
 typedef struct {
@@ -52,33 +77,17 @@ typedef struct {
   guint64  next;   /*next block element in file */
 } GeglBufferBlock;
 
-/* The header is followed by elements describing tiles stored in the swap,
+/* The header is followed by entries describing tiles stored in the swap,
  */
 typedef struct {
   GeglBufferBlock block; /* The block definition for this tile entry   */
+  guint64 offset;        /* offset into file for this tile             */
   gint32  x;             /* upperleft of tile % tile_width coordinates */
   gint32  y;           
 
   gint32  z;             /* mipmap subdivision level of tile (0=100%)  */
-  guint64 offset;        /* offset into file for this tile             */
-  guint32 padding[23];
+  guint32 padding[7];
 } GeglBufferTile;
-
-GeglBufferTile *
-gegl_tile_entry_new (gint x,
-                     gint y,
-                     gint z);
-
-
-void
-gegl_buffer_header_init (GeglBufferHeader *header,
-                         gint              tile_width,
-                         gint              tile_height,
-                         gint              bpp,
-                         Babl*             format);
-
-void
-gegl_tile_entry_destroy (GeglBufferTile *entry);
 
 /* A convenience union to allow quick and simple casting */
 typedef union {
@@ -87,6 +96,20 @@ typedef union {
   GeglBufferHeader  def;
   GeglBufferTile    tile;
 } GeglBufferItem;
+
+/* functions to initialize data structures */
+GeglBufferTile * gegl_tile_entry_new (gint x,
+                                      gint y,
+                                      gint z);
+
+void gegl_buffer_header_init (GeglBufferHeader *header,
+                              gint              tile_width,
+                              gint              tile_height,
+                              gint              bpp,
+                              Babl*             format);
+
+void gegl_tile_entry_destroy (GeglBufferTile *entry);
+
 
 #define struct_check_padding(type, size) \
   if (sizeof (type) != size) \
@@ -101,7 +124,7 @@ typedef union {
 #define GEGL_BUFFER_STRUCT_CHECK_PADDING \
   {struct_check_padding (GeglBufferBlock, 16);\
   struct_check_padding (GeglBufferHeader,   256);\
-  struct_check_padding (GeglBufferTile, 128);}
+  struct_check_padding (GeglBufferTile, 64);}
 #define GEGL_BUFFER_SANITY {static gboolean done=FALSE;if(!done){GEGL_BUFFER_STRUCT_CHECK_PADDING;done=TRUE;}}
 
 #endif

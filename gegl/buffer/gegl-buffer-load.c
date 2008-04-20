@@ -254,11 +254,12 @@ gegl_buffer_load (GeglBuffer  *buffer,
           {
             seekto (info, entry->offset);
           }
+        g_assert (info->pos == entry->offset);
 
         info->pos += g_input_stream_read (info->i, data, info->tile_size,
                                           NULL, NULL);
-        /*g_print ("%i %i\n", i, data[0]);
-        g_print ("%i %i %i   %i %i %i\n", entry->x, entry->y, entry->z, tile->x, tile->y, tile->z);*/
+
+        g_assert (info->pos == entry->offset + info->tile_size);
 
         gegl_tile_unlock (tile);
         g_object_unref (G_OBJECT (tile));

@@ -64,9 +64,6 @@
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
 
-#if ENABLE_MP
-GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
-#endif
 
 static GObjectClass * parent_class = NULL;
 
