@@ -58,12 +58,14 @@ typedef struct
 } SaveInfo;
 
 
-static GeglBufferTile *
-tile_entry_new (gint x,
-                gint y,
-                gint z)
+GeglBufferTile *
+gegl_tile_entry_new (gint x,
+                     gint y,
+                     gint z)
 {
   GeglBufferTile *entry = g_slice_new0 (GeglBufferTile);
+  entry->block.flags = GEGL_FLAG_TILE;
+  entry->block.length = sizeof (GeglBufferTile);
 
   entry->x = x;
   entry->y = y;
@@ -71,8 +73,8 @@ tile_entry_new (gint x,
   return entry;
 }
 
-static void
-tile_entry_destroy (GeglBufferTile *entry)
+void
+gegl_tile_entry_destroy (GeglBufferTile *entry)
 {
   g_slice_free (GeglBufferTile, entry);
 }
@@ -116,7 +118,7 @@ save_info_destroy (SaveInfo *info)
     {
       GList *iter;
       for (iter = info->tiles; iter; iter = iter->next)
-        tile_entry_destroy (iter->data);
+        gegl_tile_entry_destroy (iter->data);
       g_list_free (info->tiles);
       info->tiles = NULL;
     }
@@ -162,6 +164,32 @@ static gint z_order_compare (gconstpointer a,
 }
 
 
+void
+gegl_buffer_header_init (GeglBufferHeader *header,
+                         gint              tile_width,
+                         gint              tile_height,
+                         gint              bpp,
+                         Babl*             format)
+{
+  strcpy (header->magic, "GEGL");
+
+  header->flags = GEGL_FLAG_HEADER;
+
+  header->tile_width  = tile_width;
+  header->tile_height = tile_height;
+  header->bytes_per_pixel = bpp;
+  header->width = 256;
+  header->height = 256;
+  {
+    gchar buf[64];
+    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n\n\n\n\n\n\n\n\n\n", 
+          format->instance.name, 0,
+          header->tile_width,
+          header->tile_height,
+          header->bytes_per_pixel);
+    memcpy ((header->description), buf, 64);
+  }
+}
 
 void
 gegl_buffer_save (GeglBuffer          *buffer,
@@ -171,47 +199,27 @@ gegl_buffer_save (GeglBuffer          *buffer,
   SaveInfo *info = g_slice_new0 (SaveInfo);
 
   glong prediction = 0; 
+  gint bpp;
 
   GEGL_BUFFER_SANITY;
-
-  strcpy (info->header.magic, "GEGL");
 
   /* a header should follow the same structure as a blockdef with
    * respect to the flags and next offsets, thus this is a valid
    * cast shortcut.
    */
-  info->header.flags = GEGL_FLAG_HEADER;
-  info->header.next = (prediction += sizeof (GeglBufferHeader));
 
   info->path = g_strdup (path);
   info->file = g_file_new_for_commandline_arg (info->path);
   info->o    = G_OUTPUT_STREAM (g_file_replace (info->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
-#if 0
-  if (info->fd == -1)
-    {
-      gchar *name = g_filename_display_name (info->path);
 
-      g_message ("Unable to open '%s' when saving a buffer: %s",
-                 name, g_strerror (errno));
-      g_free (name);
-
-      save_info_destroy (info);
-      return;
-    }
-#endif
-
-  info->header.tile_width  = buffer->tile_storage->tile_width;
-  info->header.tile_height = buffer->tile_storage->tile_height;
-  g_object_get (buffer, "px-size", &(info->header.bytes_per_pixel), NULL);
-  {
-    gchar buf[64];
-    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n\n\n\n\n\n\n\n\n\n", 
-          ((Babl *) (buffer->tile_storage->format))->instance.name, 0,
-          info->header.tile_width,
-          info->header.tile_height,
-          info->header.bytes_per_pixel);
-    memcpy (info->header.description, buf, 64);
-  }
+  g_object_get (buffer, "px-size", &bpp, NULL);
+  gegl_buffer_header_init (&info->header,
+                           buffer->tile_storage->tile_width,
+                           buffer->tile_storage->tile_height,
+                           bpp,
+                           buffer->tile_storage->format
+                           );
+  info->header.next = (prediction += sizeof (GeglBufferHeader));
 
   info->header.x           = buffer->extent.x;
   info->header.y           = buffer->extent.y;
@@ -267,9 +275,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
                     {
                       GeglBufferTile *entry;
 
-                      entry = tile_entry_new (tx, ty, z);
-                      entry->blockdef.length = sizeof (GeglBufferTile);
-                      entry->blockdef.flags = GEGL_FLAG_TILE;
+                      entry = gegl_tile_entry_new (tx, ty, z);
                       info->tiles = g_list_prepend (info->tiles, entry);
                       info->header.entry_count++;
                     }
@@ -298,8 +304,8 @@ gegl_buffer_save (GeglBuffer          *buffer,
     for (iter = info->tiles; iter; iter = iter->next)
       {
         GeglBufferTile *entry = iter->data;
-        entry->blockdef.next = iter->next?
-                                (prediction += sizeof (GeglBufferTile)):0;
+        entry->block.next = iter->next?
+                            (prediction += sizeof (GeglBufferTile)):0;
         entry->offset = predicted_offset;
         predicted_offset += info->tile_size;
       }

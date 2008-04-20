@@ -1,3 +1,25 @@
+2008-04-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_flush): invoke the
+	flush command for the tile infrastructure.
+	* gegl/buffer/gegl-buffer-index.h: include guards, and added some of
+	the new private functions from gegl-buffer-save.c
+	* gegl/buffer/gegl-buffer-load.c: (seekto), (read_header),
+	(read_block), (gegl_buffer_load): made the loader a bit more tolerant
+	to nonsequential files, not fully tested.
+	* gegl/buffer/gegl-buffer-private.h: moved gegl_buffer_flush() ..
+	* gegl/buffer/gegl-buffer.h: .. here
+	* gegl/buffer/gegl-buffer-save.c: (gegl_tile_entry_new),
+	(gegl_tile_entry_destroy), (save_info_destroy),
+	(gegl_buffer_header_init), (gegl_buffer_save): made some of the struct
+	preparation code sharable.
+	* gegl/buffer/gegl-tile-backend-file.c: make use of shared
+	types from gegl-buffer-index.h for the tile index.
+	* gegl/buffer/gegl-tile-handler-cache.c: (command): tell all tiles in
+	our cache to store themself.
+	* gegl/buffer/gegl-tile-handler-log.c: added flush command.
+	* gegl/buffer/gegl-tile-source.h: added flush command.
+
 2008-04-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor-optype.c: (chain_in_operation): removed properties popup

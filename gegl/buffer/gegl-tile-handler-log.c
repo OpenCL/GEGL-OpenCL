@@ -38,6 +38,7 @@ static char *commands[] =
   "void bl",
   "void br",
   "flush",
+  "invalidated",
   "last command",
   "eeek",
   NULL

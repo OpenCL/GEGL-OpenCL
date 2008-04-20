@@ -192,7 +192,35 @@ command (GeglTileSource  *tile_store,
     {
       case GEGL_TILE_SET:
         /* nothing to do */
-        break;
+        break; /* chain up */
+      case GEGL_TILE_FLUSH:
+        {
+          /*FIXME*/
+          /* do this for all tiles belonging to this cache */
+          gboolean exist = gegl_tile_handler_cache_has_tile (cache, x, y, z);
+          GeglTile *tile;
+  GList     *link;
+
+  for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
+    {
+      CacheItem *item = link->data;
+      GeglTile  *tile = item->tile;
+
+      if (tile != NULL &&
+          item->handler == cache)
+        {
+          gegl_tile_store (tile);
+        }
+    }
+
+ /*        
+          if (exist)
+            {
+              tile = get_tile (tile_store, x, y, z);
+              gegl_tile_store (tile);
+            }*/
+        }
+        break; /* chain up */
       case GEGL_TILE_GET:
         /* XXX: we should perhaps store a NIL result, and place the empty
          * generator after the cache, this would have to be possible to disable

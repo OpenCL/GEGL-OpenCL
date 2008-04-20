@@ -81,7 +81,7 @@ guint           gegl_buffer_share             (GeglBuffer          *buffer);
  */
 
 GeglBuffer*     gegl_buffer_open              (const gchar         *uri);
-
+void            gegl_buffer_flush             (GeglBuffer          *buffer);
 
 void
 gegl_buffer_make_uri (gchar       *buf_128,

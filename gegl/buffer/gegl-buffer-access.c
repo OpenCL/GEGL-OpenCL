@@ -33,6 +33,9 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 
+#if ENABLE_MP
+GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
+#endif
 
 
 #ifdef BABL
@@ -291,6 +294,8 @@ gegl_buffer_flush (GeglBuffer *buffer)
       g_object_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
+  gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
+                            GEGL_TILE_FLUSH, 0,0,0,NULL);
 }
 
 

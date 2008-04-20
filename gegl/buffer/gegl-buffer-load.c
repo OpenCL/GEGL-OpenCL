@@ -42,6 +42,8 @@
 #include "gegl-region.h"
 #include "gegl-buffer-index.h"
 
+#include <glib/gprintf.h>
+
 typedef struct
 {
   GeglBufferHeader header;
@@ -56,6 +58,13 @@ typedef struct
   gboolean         got_header;
 } LoadInfo;
 
+static void seekto(LoadInfo *info, gint pos)
+{
+  info->pos = pos;
+  g_printf ("seek to %i\n", pos);
+  g_seekable_seek (G_SEEKABLE (info->i), info->pos, G_SEEK_SET, NULL, NULL);
+}
+
 static GeglBufferItem *read_header (LoadInfo *info)
 {
   GeglBufferBlock block;
@@ -65,7 +74,7 @@ static GeglBufferItem *read_header (LoadInfo *info)
 
   if (info->pos != 0)
     {
-      g_print ("%s must seek\n", G_STRFUNC);
+      seekto (info, 0);
     }
 
   info->pos += g_input_stream_read (info->i, &block, sizeof (GeglBufferBlock), NULL, NULL);
@@ -90,6 +99,8 @@ static GeglBufferItem *read_header (LoadInfo *info)
                        NULL, NULL);
     }
   info->next_block = ret->block.next;
+
+  g_printf ("header: next:%i\n", (guint)ret->block.next);
   return ret;
 }
 
@@ -99,9 +110,11 @@ static GeglBufferItem *read_block (LoadInfo *info)
   GeglBufferBlock block;
   GeglBufferItem *ret;
 
+  if (!info->next_block)
+    return NULL;
   if (info->pos != info->next_block)
     {
-      g_print ("must seek\n");
+      seekto (info, info->next_block);
     }
 
   info->pos+= g_input_stream_read (info->i, &block, sizeof (GeglBufferBlock),
@@ -202,11 +215,15 @@ gegl_buffer_load (GeglBuffer  *buffer,
 
   /* load the index */
   {
-    gint i;
-    for (i = 0; i < info->header.entry_count; i++)
+    GeglBufferItem *item; /* = read_block (info);*/
+    for (item = read_block (info); item; item = read_block (info))
       {
-        GeglBufferItem *item = read_block (info);
         g_assert (item);
+        g_print ("%i, %i, %i offset:%i next:%i\n", item->tile.x,
+                                    item->tile.y,
+                                    item->tile.z,
+                                    (guint)item->tile.offset,
+                                    (guint)item->block.next);
         info->tiles = g_list_prepend (info->tiles, item);
       }
     info->tiles = g_list_reverse (info->tiles);
@@ -235,7 +252,7 @@ gegl_buffer_load (GeglBuffer  *buffer,
 
         if (info->pos != entry->offset)
           {
-            g_warning ("%s must seek", G_STRFUNC);
+            seekto (info, entry->offset);
           }
 
         info->pos += g_input_stream_read (info->i, data, info->tile_size,

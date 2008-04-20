@@ -77,10 +77,6 @@ void           gegl_buffer_save       (GeglBuffer          *buffer,
                                        const gchar         *path,
                                        const GeglRectangle *roi);
 
-/* flush any unwritten data (flushes the hot-cache of a single
- * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
- */
-void           gegl_buffer_flush      (GeglBuffer *buffer);
 
 const gchar *  gegl_swap_dir          (void);
 
