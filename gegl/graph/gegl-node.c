@@ -40,8 +40,10 @@
 
 #include "process/gegl-eval-mgr.h"
 #include "process/gegl-have-visitor.h"
+#if ENABLE_MP
 #include "process/gegl-lock-visitor.h"
 #include "process/gegl-unlock-visitor.h"
+#endif
 #include "process/gegl-prepare-visitor.h"
 #include "process/gegl-finish-visitor.h"
 #include "process/gegl-processor.h"
@@ -1482,8 +1484,10 @@ gegl_node_get_bounding_box (GeglNode *root)
   GeglVisitor  *prepare_visitor;
   GeglVisitor  *have_visitor;
   GeglVisitor  *finish_visitor;
+#if ENABLE_MP
   GeglVisitor  *lock_visitor;
   GeglVisitor  *unlock_visitor;
+#endif
 
   guchar       *id;
   gint          i;
@@ -1502,12 +1506,12 @@ gegl_node_get_bounding_box (GeglNode *root)
   g_object_ref (root);
 
   id = g_malloc (1);
-if (0)
-  {
+
+#if ENABLE_MP
   lock_visitor = g_object_new (GEGL_TYPE_LOCK_VISITOR, "id", id, NULL);
   gegl_visitor_dfs_traverse (lock_visitor, GEGL_VISITABLE (root));
   g_object_unref (lock_visitor);
-  }
+#endif
 
   for (i = 0; i < 2; i++)
     {
@@ -1524,11 +1528,11 @@ if (0)
   gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE (root));
   g_object_unref (finish_visitor);
 
-  if(0) {
+#if ENABLE_MP
   unlock_visitor = g_object_new (GEGL_TYPE_UNLOCK_VISITOR, "id", id, NULL);
   gegl_visitor_dfs_traverse (unlock_visitor, GEGL_VISITABLE (root));
   g_object_unref (unlock_visitor);
-  }
+#endif
 
   g_object_unref (root);
   g_free (id);

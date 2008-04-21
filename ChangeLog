@@ -1,5 +1,13 @@
 2008-04-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed/disabled misc bits of broken mp code that snuck into svn.
+
+	* gegl/graph/gegl-node.c: (gegl_node_get_bounding_box):
+	* gegl/process/Makefile.am:
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+
+2008-04-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: made USE_GCC_VECTORS define possible to check
 	with both #if and #ifdef.
 	* operations/common/brightness-contrast.c: renamed process_sse to
