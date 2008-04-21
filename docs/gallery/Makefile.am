@@ -38,12 +38,8 @@ images.stamp: $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
 	@touch images.stamp
 
 %.png: %.xml
-	@GEGL_DEBUG_TIME=yes GEGL_PATH=$(top_builddir)/operations \
+	@GEGL_DEBUG_TIME=yes GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
-if HAVE_GRAPHVIZ
-	@GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/bin/gegl --dot $< | $(GRAPHVIZ) -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
-endif
 
 all-local: images.stamp index.html
 

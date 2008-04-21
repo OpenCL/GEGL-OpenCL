@@ -60,6 +60,8 @@ typedef struct _GeglNodeContext      GeglNodeContext;
 typedef struct _GeglConnection       GeglConnection;
 #endif
 typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
+typedef struct _GeglLockVisitor      GeglLockVisitor;
+typedef struct _GeglUnlockVisitor    GeglUnlockVisitor;
 typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor          GeglVisitor;
 

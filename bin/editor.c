@@ -259,6 +259,7 @@ editor_main (GeglNode    *gegl,
 static void cb_about (GtkAction *action);
 /*static void cb_introspect (GtkAction *action);*/
 static void cb_export (GtkAction *action);
+static void cb_flush   (GtkAction *action);
 static void cb_quit_dialog (GtkAction *action);
 static void cb_composition_new (GtkAction *action);
 static void cb_composition_load (GtkAction *action);
@@ -320,6 +321,11 @@ static GtkActionEntry action_entries[] = {
    "_Export", "<control><shift>E",
    "Export to PNG",
    G_CALLBACK (cb_export)},
+
+  {"Flush", GTK_STOCK_SAVE,
+   "_Flush", "<control><shift>E",
+   "Flush swap buffer",
+   G_CALLBACK (cb_flush)},
 
   {"ShrinkWrap", NULL,
    "_Shrink Wrap", "<control>E",
@@ -388,6 +394,7 @@ static const gchar *ui_info =
   "      <menuitem action='Previous'/>"
   "      <separator/>"
   "      <menuitem action='Export'/>"
+  "      <menuitem action='Flush'/>"
   "      <separator/>"
   "      <menuitem action='Quit'/>"
   "      <separator/>"
@@ -1154,6 +1161,17 @@ static void cb_export (GtkAction *action)
   export_window ();
 }
 
+#include "gegl-plugin.h"
+#include "graph/gegl-node.h" /*< FIXME: including internal header */
+
+static void cb_flush (GtkAction *action)
+{
+  GeglNode *node;
+  g_object_get (GEGL_VIEW(editor.view), "node", &node, NULL);
+  gegl_buffer_flush (GEGL_BUFFER (gegl_node_get_cache (node)));
+
+}
+
 void editor_refresh_structure (void)
 {
   GeglStore *store = gegl_store_new ();
@@ -1165,10 +1183,11 @@ void editor_refresh_structure (void)
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
                            GTK_TREE_MODEL (store));
 }
-
-typedef struct _GeglPad GeglPad;
 void gegl_pad_set_format (gpointer,gpointer);
+#if 0
+typedef struct _GeglPad GeglPad;
 gpointer gegl_node_get_pad (gpointer, const gchar *name);
+#endif
 
 static void editor_set_gegl (GeglNode    *gegl)
 {

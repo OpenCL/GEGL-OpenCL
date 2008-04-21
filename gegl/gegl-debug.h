@@ -74,20 +74,11 @@ static const GDebugKey gegl_debug_keys[] = {
 #define GEGL_MARK()      GEGL_NOTE(MISC, "== mark ==")
 #define GEGL_DBG(x) { a }
 
-#define GEGL_GLERR()                         G_STMT_START {     \
-        if (gegl_debug_flags & GEGL_DEBUG_GL)                   \
-          { GLenum _err = glGetError (); /* roundtrip */        \
-            if (_err != GL_NO_ERROR)                            \
-              g_warning (G_STRLOC ": GL Error %x", _err);       \
-          }                                     } G_STMT_END
-
-
 #else /* !GEGL_ENABLE_DEBUG */
 
 #define GEGL_NOTE(type,...)
 #define GEGL_MARK()
 #define GEGL_DBG(x)
-#define GEGL_GLERR()
 #define GEGL_TIMESTAMP(type,...)
 
 #endif /* GEGL_ENABLE_DEBUG */

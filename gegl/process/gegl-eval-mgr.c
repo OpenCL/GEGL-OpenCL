@@ -29,6 +29,8 @@
 #include "gegl-cr-visitor.h"
 #include "gegl-have-visitor.h"
 #include "gegl-need-visitor.h"
+#include "gegl-lock-visitor.h"
+#include "gegl-unlock-visitor.h"
 #include "gegl-instrument.h"
 #include "graph/gegl-node.h"
 #include "gegl-prepare-visitor.h"
@@ -99,6 +101,14 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     root = pad->node;
   g_object_ref (root);
 
+#if ENABLE_MP
+    if(0){
+      GeglVisitor *lock_visitor = g_object_new (GEGL_TYPE_LOCK_VISITOR, "id", context_id, NULL);
+      gegl_visitor_dfs_traverse (lock_visitor, GEGL_VISITABLE (root));
+      g_object_unref (lock_visitor);
+    }
+#endif
+
   for (i = 0; i < 2; i++)
     {
       prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", context_id, NULL);
@@ -109,6 +119,15 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", context_id, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE (root));
   g_object_unref (have_visitor);
+
+#if ENABLE_MP
+  if(0){
+    GeglVisitor *unlock_visitor = g_object_new (GEGL_TYPE_UNLOCK_VISITOR, "id", context_id, NULL);
+    gegl_visitor_dfs_traverse (unlock_visitor, GEGL_VISITABLE (root));
+    g_object_unref (unlock_visitor);
+  }
+#endif
+
 
   g_assert (root);
 

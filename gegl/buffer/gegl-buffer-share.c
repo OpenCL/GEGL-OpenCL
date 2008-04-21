@@ -80,7 +80,7 @@ gegl_buffer_make_uri (gchar       *buf_128,
     }
 }
 
-
+#if 0
 GeglBuffer*
 gegl_buffer_open (const gchar *uri)
 {
@@ -109,3 +109,4 @@ gegl_buffer_open (const gchar *uri)
   g_warning ("don't know how to handle buffer path: %s", uri);
   return NULL;
 }
+#endif

@@ -7,6 +7,13 @@ GEGL
 ----
 GEGL (Generic Graphics Library) is a graph based image processing framework.
 
+GEGL is a raster compositing and processing core. It provides a framework for
+organizing operations into nodes in a graph that can contain cached states to
+improve re-render performance. It currently implements a set of 32bit floating
+point buffer operations for filters, video frame loading, file loading, pattern
+generation, webcam input. As well as operations for storing individual frames,
+generate video sequences or displaying the result in fullscreen.
+
 GEGL's original design was made to scratch http://www.gimp.org/[GIMP]'s itches
 for a new compositing and processing core. This core is being designed to have
 minimal dependencies. and a simple well defined API.

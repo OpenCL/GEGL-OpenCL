@@ -5,6 +5,12 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots.
 
+Changes in GEGL 0.0.17
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Performance of GeglBuffer improved.
+ • Handle optimized versions of innerloops for operations.
+   • SSE detection and optimization for some point ops.
+
 Changes in GEGL 0.0.16
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Install headers for development of external operation plug-ins.

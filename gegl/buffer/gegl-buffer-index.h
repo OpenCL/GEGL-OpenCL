@@ -93,7 +93,7 @@ typedef struct {
 typedef union {
   guint32           length;
   GeglBufferBlock   block;
-  GeglBufferHeader  def;
+  GeglBufferHeader  header;
   GeglBufferTile    tile;
 } GeglBufferItem;
 

@@ -7,31 +7,6 @@
 
 2008-04-21  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* Makefile.am:
-	* NEWS:
-	* bin/editor.c: (cb_flush), (editor_refresh_structure):
-	* gegl/buffer/gegl-buffer-index.h:
-	* gegl/buffer/gegl-buffer-load.c: (seekto), (read_header),
-	(read_block), (sanity), (gegl_buffer_open):
-	* gegl/buffer/gegl-buffer-share.c:
-	* gegl/gegl-debug.h:
-	* gegl/gegl-plugin.h:
-	* gegl/gegl-types.h:
-	* gegl/graph/gegl-node.c: (gegl_node_init), (finalize),
-	(gegl_node_invalidated), (gegl_node_get_bounding_box),
-	(gegl_node_lock), (gegl_node_unlock):
-	* gegl/graph/gegl-node.h:
-	* gegl/process/Makefile.am:
-	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
-	* gegl/process/gegl-have-visitor.c: (visit_node):
-	* gegl/process/gegl-processor.c: (render_rectangle):
-	* operations/Makefile-common.am:
-	* operations/common/brightness-contrast.c: (process_gcc_vectors):
-
-2008-04-21  Øyvind Kolås  <pippin@gimp.org>
-
 	* gegl/gegl-plugin.h: enable Gegl4float type when compiling with gcc,
 	added more macros for working with these vectors including
 	Gegl4floatR(vector) and GBA versions to access individual components.

@@ -297,12 +297,13 @@ gegl_node_new_processor (GeglNode            *node,
 /* returns TRUE if there is more work */
 static gboolean render_rectangle (GeglProcessor *processor)
 {
-  gboolean buffered = !(GEGL_IS_OPERATION_SINK(processor->node->operation) &&
-                        !gegl_operation_sink_needs_full (processor->node->operation));
+  gboolean   buffered;
   const gint max_area = processor->chunk_size;
-  GeglCache *cache = NULL;
-  gint pxsize = 0;
+  GeglCache *cache    = NULL;
+  gint       pxsize;
 
+  buffered = !(GEGL_IS_OPERATION_SINK(processor->node->operation) &&
+               !gegl_operation_sink_needs_full (processor->node->operation));
   if (buffered)
     {
       cache = gegl_node_get_cache (processor->input);
@@ -365,8 +366,8 @@ static gboolean render_rectangle (GeglProcessor *processor)
 	
       if (buffered)
         {
-          /* only do work if the rectangle is not completely inside the valid region of
-           * the cache
+          /* only do work if the rectangle is not completely inside the valid
+           * region of the cache
            */
           if (gegl_region_rect_in (cache->valid_region, dr) !=
               GEGL_OVERLAP_RECTANGLE_IN)
@@ -377,10 +378,13 @@ static gboolean render_rectangle (GeglProcessor *processor)
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
 
-              gegl_node_blit (cache->node, 1.0, dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE,
-                              GEGL_BLIT_DEFAULT);
+              gegl_node_blit (cache->node, 1.0, dr, cache->format, buf,
+                              GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+
+
               /* check that we haven't been recently */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf, GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf,
+                               GEGL_AUTO_ROWSTRIDE);
 
               gegl_cache_computed (cache, dr);
 
@@ -389,7 +393,8 @@ static gboolean render_rectangle (GeglProcessor *processor)
         }
       else
         {
-           gegl_node_blit (processor->node, 1.0, dr, NULL, NULL, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+           gegl_node_blit (processor->node, 1.0, dr, NULL, NULL,
+                           GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
            gegl_region_union_with_rect (processor->valid_region, dr);
            g_slice_free (GeglRectangle, dr);
         }

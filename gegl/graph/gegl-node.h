@@ -63,6 +63,8 @@ struct _GeglNode
                              reused for all subsequent requests for the cache
                              object.*/
 
+  GMutex          *mutex;
+
   /*< private >*/
   GeglNodePrivate *priv;
 };
@@ -118,6 +120,12 @@ void          gegl_node_set                 (GeglNode      *self,
 void          gegl_node_get                 (GeglNode      *self,
                                              const gchar   *first_property_name,
                                              ...) G_GNUC_NULL_TERMINATED;
+
+
+
+GeglNode    * gegl_node_get_parent          (GeglNode      *self);
+GeglNode    * gegl_node_adopt_child         (GeglNode      *self,
+                                             GeglNode      *child);
 
 /* functions below are internal to gegl */
 
@@ -215,6 +223,9 @@ GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 const gchar * gegl_node_get_name            (GeglNode      *self);
 void          gegl_node_set_name            (GeglNode      *self,
                                              const gchar   *name);
+
+void          gegl_node_lock                (GeglNode *node);
+void          gegl_node_unlock              (GeglNode *node);
 
 G_END_DECLS
 

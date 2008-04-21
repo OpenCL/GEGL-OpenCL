@@ -7,9 +7,11 @@ PROCESS_sources = 			\
 	gegl-eval-visitor.c		\
 	gegl-finish-visitor.c		\
 	gegl-have-visitor.c		\
+	gegl-lock-visitor.c		\
 	gegl-need-visitor.c		\
 	gegl-prepare-visitor.c		\
-	gegl-processor.c
+	gegl-processor.c		\
+	gegl-unlock-visitor.c
 
 
 
@@ -20,9 +22,11 @@ PROCESS_headers = 			\
 	gegl-eval-visitor.h		\
 	gegl-finish-visitor.h		\
 	gegl-have-visitor.h		\
+	gegl-lock-visitor.h		\
 	gegl-need-visitor.h		\
 	gegl-prepare-visitor.h		\
-	gegl-processor.h
+	gegl-processor.h		\
+	gegl-unlock-visitor.h
 
 
 libprocess_la_SOURCES = $(PROCESS_sources) $(PROCESS_headers)
