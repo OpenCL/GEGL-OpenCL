@@ -49,8 +49,8 @@ struct _GeglBuffer
                                  sized gets/sets)*/
 
   GeglSampler      *sampler; /* cached sampler for speeding up random
-                                     access interpolated fetches from the
-                                     buffer */
+                                access interpolated fetches from the
+                                buffer */
 
   GeglTileStorage  *tile_storage;
 
@@ -59,6 +59,10 @@ struct _GeglBuffer
   gint              max_x; /* this is used in gegl_buffer_void to narrow */
   gint              max_y; /* down the tiles kill commands are sent for */
   gint              max_z;
+
+  gint              tile_width;
+  gint              tile_height;
+  gchar            *path;
 };
 
 struct _GeglBufferClass
@@ -67,22 +71,22 @@ struct _GeglBufferClass
 };
 
 
-const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer    *buffer);
+const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
 
-gint           gegl_buffer_leaks      (void);
+gint                 gegl_buffer_leaks       (void);
 
-void           gegl_buffer_stats      (void);
+void                 gegl_buffer_stats       (void);
 
-void           gegl_buffer_save       (GeglBuffer          *buffer,
-                                       const gchar         *path,
-                                       const GeglRectangle *roi);
-
-
-const gchar *  gegl_swap_dir          (void);
+void                 gegl_buffer_save        (GeglBuffer          *buffer,
+                                              const gchar         *path,
+                                              const GeglRectangle *roi);
 
 
-void           gegl_tile_cache_init    (void);
+const gchar         *gegl_swap_dir           (void);
 
-void           gegl_tile_cache_destroy (void);
+
+void                 gegl_tile_cache_init    (void);
+
+void                 gegl_tile_cache_destroy (void);
 
 #endif

@@ -80,9 +80,12 @@ enum
   PROP_ABYSS_Y,
   PROP_ABYSS_WIDTH,
   PROP_ABYSS_HEIGHT,
+  PROP_TILE_WIDTH,
+  PROP_TILE_HEIGHT,
   PROP_FORMAT,
   PROP_PX_SIZE,
-  PROP_PIXELS
+  PROP_PIXELS,
+  PROP_PATH
 };
 
 static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
@@ -121,7 +124,17 @@ get_property (GObject    *gobject,
       case PROP_HEIGHT:
         g_value_set_int (value, buffer->extent.height);
         break;
+      case PROP_TILE_WIDTH:
+        g_value_set_int (value, buffer->tile_width);
+        break;
 
+      case PROP_TILE_HEIGHT:
+        g_value_set_int (value, buffer->tile_height);
+        break;
+
+      case PROP_PATH:
+        g_value_set_string (value, buffer->path);
+        break;
       case PROP_PIXELS:
         g_value_set_int (value, buffer->extent.width * buffer->extent.height);
         break;
@@ -188,6 +201,20 @@ set_property (GObject      *gobject,
 
       case PROP_HEIGHT:
         buffer->extent.height = g_value_get_int (value);
+        break;
+
+      case PROP_TILE_WIDTH:
+        buffer->tile_height = g_value_get_int (value);
+        break;
+
+      case PROP_TILE_HEIGHT:
+        buffer->tile_width = g_value_get_int (value);
+        break;
+
+      case PROP_PATH:
+        if (buffer->path)
+          g_free (buffer->path);
+        buffer->path = g_value_dup_string (value);
         break;
 
       case PROP_SHIFT_X:
@@ -321,8 +348,8 @@ gegl_buffer_constructor (GType                  type,
   GObject         *object;
   GeglBuffer      *buffer;
   GeglTileBackend *backend;
-  GeglTileHandler     *handler;
-  GeglTileSource    *source;
+  GeglTileHandler *handler;
+  GeglTileSource  *source;
   gint             tile_width;
   gint             tile_height;
 
@@ -609,6 +636,23 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                    g_param_spec_pointer ("format", "format", "babl format",
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
+                                   g_param_spec_int ("tile-height", "tile-height", "height of a tile",
+                                                     -1, G_MAXINT, 64,
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT_ONLY));
+
+  g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
+                                   g_param_spec_int ("tile-width", "tile-width", "width of a tile",
+                                                     -1, G_MAXINT, 128,
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT_ONLY));
+
+  g_object_class_install_property (gobject_class, PROP_PATH,
+                                   g_param_spec_string ("path", "Path", "URI to where the buffer is stored",
+                                                     "/tmp/hm",
+                                                     G_PARAM_READWRITE));
 }
 
 static void
@@ -633,6 +677,10 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->max_x = 0;
   buffer->max_y = 0;
   buffer->max_z = 0;
+
+  buffer->path = NULL;
+  buffer->tile_width = 128;
+  buffer->tile_height = 64;
 
   allocated_buffers++;
 }

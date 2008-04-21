@@ -54,39 +54,37 @@ typedef struct
   GInputStream    *i;
   gint             tile_size;
   Babl            *format;
-  gint             pos;
-  glong            next_block;
+  goffset          offset;
+  goffset          next_block;
   gboolean         got_header;
 } LoadInfo;
 
-static void seekto(LoadInfo *info, gint pos)
+
+static void seekto(LoadInfo *info, gint offset)
 {
-  info->pos = pos;
-  GEGL_NOTE (BUFFER_LOAD, "seek to %i", pos);
-  if(!g_seekable_seek (G_SEEKABLE (info->i), info->pos, G_SEEK_SET, NULL, NULL))
+  info->offset = offset;
+  GEGL_NOTE (BUFFER_LOAD, "seek to %i", offset);
+  if(!g_seekable_seek (G_SEEKABLE (info->i), info->offset, G_SEEK_SET, NULL, NULL))
     {
       g_warning ("failed seeking");
     }
 }
 
-static GeglBufferItem *read_header (LoadInfo *info)
+GeglBufferItem *
+gegl_buffer_read_header (GInputStream *i,
+                         goffset      *offset)
 {
   GeglBufferItem *ret;
 
-  /* XXX: initialize synchronize buffer state */
-
-  if (info->pos != 0)
-    {
-      seekto (info, 0);
-    }
+  if(!g_seekable_seek (G_SEEKABLE (i), 0, G_SEEK_SET, NULL, NULL))
+      g_warning ("failed seeking to %i", 0);
+  *offset = 0;
 
   ret = g_malloc (sizeof (GeglBufferHeader));
-  info->pos+= g_input_stream_read (info->i,
+  *offset += g_input_stream_read (i,
                    ((gchar*)ret),
                    sizeof(GeglBufferHeader),
                    NULL, NULL);
-
-  info->next_block = ret->block.next;
 
   GEGL_NOTE (BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i\n",
                    ret->header.tile_width,
@@ -95,32 +93,93 @@ static GeglBufferItem *read_header (LoadInfo *info)
   return ret;
 }
 
-
-static GeglBufferItem *read_block (LoadInfo *info)
+/* reads a block of information from a geglbuffer that resides in an GInputStream,
+ * if offset is NULL it is read from the current offsetition of the stream. If offset
+ * is passed in the offset stored at the location is used as the initial seeking
+ * point and will be updated with the offset after the read is completed.
+ */
+static GeglBufferItem *read_block (GInputStream *i,
+                                   goffset      *offset)
 {
   GeglBufferBlock block;
   GeglBufferItem *ret;
+  gsize           read = 0;
+  gint            own_size=0;
 
-  if (!info->next_block)
+  if (*offset==0)
     return NULL;
-  if (info->pos != info->next_block)
+
+  if (offset)
+    if(!g_seekable_seek (G_SEEKABLE (i), *offset, G_SEEK_SET, NULL, NULL))
+      g_warning ("failed seeking to %i", (gint)*offset);
+
+  g_print ("offset: %i\n", (gint)*offset);
+  read += g_input_stream_read (i, &block, sizeof (GeglBufferBlock), NULL, NULL);
+  GEGL_NOTE (BUFFER_LOAD, "read block: length:%i next:%i",
+                          block.length, (guint)block.next);
+
+  switch (block.flags)
+     {
+        case GEGL_FLAG_TILE:
+        case GEGL_FLAG_FREE_TILE:
+          own_size = sizeof (GeglBufferTile); 
+          break;
+        default:
+          g_warning ("skipping unknown type of entry flags=%i", block.flags);
+          break;
+     }
+
+  if (block.length == own_size ||
+      block.length > own_size )
     {
-      seekto (info, info->next_block);
+      /* we discard any excess information that might have been added in later
+       * versions
+       */
+      ret = g_malloc (own_size);
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      read += g_input_stream_read (i, ((gchar*)ret) + sizeof(GeglBufferBlock),
+                                       own_size - sizeof(GeglBufferBlock),
+                                       NULL, NULL);
+    }
+  else if (block.length < own_size)
+    {
+      ret = g_malloc (own_size);
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      read += g_input_stream_read (i, ((gchar*)ret) + sizeof(GeglBufferBlock),
+                                       block.length - sizeof (GeglBufferBlock),
+                                       NULL, NULL);
+    }
+  else
+    {
+      ret = NULL;
+      g_warning ("skipping block : of flags:%i\n", block.flags);
     }
 
-  info->pos+= g_input_stream_read (info->i, &block, sizeof (GeglBufferBlock),
-                                   NULL, NULL);
-  GEGL_NOTE (BUFFER_LOAD, "read block: length:%i next:%i",
-                   block.length,
-                   (guint)block.next);
+  *offset += read;
+  return ret;
+}
 
-  ret = g_malloc (block.length);
-  memcpy (ret, &block, sizeof (GeglBufferBlock));
-  info->pos+= g_input_stream_read (info->i,
-                   ((gchar*)ret) + sizeof(GeglBufferBlock),
-                   block.length - sizeof(GeglBufferBlock),
-                   NULL, NULL);
-  info->next_block = ret->block.next;
+GList *
+gegl_buffer_read_index (GInputStream *i,
+                        goffset      *offset)
+/* load the index */
+{
+  GList          *ret = NULL;
+  GeglBufferItem *item;
+
+  g_print ("%i\n", (gint)*offset); 
+  for (item = read_block (i, offset); item; item = read_block (i, offset))
+    {
+      g_assert (item);
+      GEGL_NOTE (BUFFER_LOAD,"loaded item: %i, %i, %i offset:%i next:%i", item->tile.x,
+                 item->tile.y,
+                 item->tile.z,
+                 (guint)item->tile.offset,
+                 (guint)item->block.next);
+      *offset = item->block.next;
+      ret = g_list_prepend (ret, item);
+    }
+  ret = g_list_reverse (ret);
   return ret;
 }
 
@@ -151,6 +210,7 @@ load_info_destroy (LoadInfo *info)
 
 static void sanity(void) { GEGL_BUFFER_SANITY; }
 
+
 GeglBuffer *
 gegl_buffer_open (const gchar *path)
 {
@@ -164,24 +224,19 @@ gegl_buffer_open (const gchar *path)
   info->i = G_INPUT_STREAM (g_file_read (info->file, NULL, NULL));
 
   GEGL_NOTE (BUFFER_LOAD, "starting to load buffer %s", path);
-#if 0
-  if (info->fd == -1)
+  if (!info->i)
     {
-      gchar *name = g_filename_display_name (info->path);
-
-      g_message ("Unable to open '%s' for loading a buffer: %s",
-                 name, g_strerror (errno));
-      g_free (name);
-
-      load_info_destroy (info);
-      return;
+      GEGL_NOTE (BUFFER_LOAD, "failed top open %s for reading", path);
+      g_object_unref (info->file);
+      return NULL;
     }
-#endif
 
   {
-    GeglBufferItem *header= read_header (info);
+    GeglBufferItem *header = gegl_buffer_read_header (info->i, &info->offset);
     g_assert (header);
-    memcpy (&(info->header), header, sizeof (GeglBufferHeader));
+    /*memcpy (&(info->header), header, sizeof (GeglBufferHeader));*/
+    info->header = *(&header->header);
+    info->offset = info->header.next;
     /*g_free (header);*/  /* is there a pointer to a string or something we're missing? */
   }
 
@@ -199,23 +254,20 @@ gegl_buffer_open (const gchar *path)
                        info->header.bytes_per_pixel;
   info->format       = babl_format (info->header.description);
 
-  ret = g_object_new (GEGL_TYPE_BUFFER, "format", info->format, NULL);
+  ret = g_object_new (GEGL_TYPE_BUFFER,
+                      "format", info->format,
+                      "tile-width", info->header.tile_width,
+                      "tile-height", info->header.tile_height,
+                      "height", info->header.width,
+                      "width", info->header.height,
+                      "path", path,
+                      NULL);
 
-  /* load the index */
-  {
-    GeglBufferItem *item; /* = read_block (info);*/
-    for (item = read_block (info); item; item = read_block (info))
-      {
-        g_assert (item);
-        GEGL_NOTE (BUFFER_LOAD,"loaded item: %i, %i, %i offset:%i next:%i", item->tile.x,
-                                    item->tile.y,
-                                    item->tile.z,
-                                    (guint)item->tile.offset,
-                                    (guint)item->block.next);
-        info->tiles = g_list_prepend (info->tiles, item);
-      }
-    info->tiles = g_list_reverse (info->tiles);
-  }
+  /* sanity check, should probably report error condition and return safely instead
+  */
+  g_assert (info->format->format.bytes_per_pixel == info->header.bytes_per_pixel);
+
+  info->tiles = gegl_buffer_read_index (info->i, &info->offset);
 
   /* load each tile */
   {
@@ -233,11 +285,11 @@ gegl_buffer_open (const gchar *path)
                                           entry->y,
                                           entry->z);
 
-        if (info->pos != entry->offset)
+        if (info->offset != entry->offset)
           {
             seekto (info, entry->offset);
           }
-        g_assert (info->pos == entry->offset);
+        /*g_assert (info->offset == entry->offset);*/
 
 
         g_assert (tile);
@@ -246,17 +298,18 @@ gegl_buffer_open (const gchar *path)
         data = gegl_tile_get_data (tile);
         g_assert (data);
 
-        info->pos += g_input_stream_read (info->i, data, info->tile_size,
+        info->offset += g_input_stream_read (info->i, data, info->tile_size,
                                           NULL, NULL);
 
-        g_assert (info->pos == entry->offset + info->tile_size);
+        /*g_assert (info->offset == entry->offset + info->tile_size);*/
 
         gegl_tile_unlock (tile);
         g_object_unref (G_OBJECT (tile));
         i++;
       }
-    GEGL_NOTE (BUFFER_LOAD, "buffer loaded %s tiles loaded: %i", info->path, i);
+    GEGL_NOTE (BUFFER_LOAD, "%i tiles loaded",i);
   }
+  GEGL_NOTE (BUFFER_LOAD, "buffer loaded %s", info->path);
 
   load_info_destroy (info);
   return ret;

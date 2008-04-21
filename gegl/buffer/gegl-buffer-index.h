@@ -110,6 +110,10 @@ void gegl_buffer_header_init (GeglBufferHeader *header,
 
 void gegl_tile_entry_destroy (GeglBufferTile *entry);
 
+GeglBufferItem *gegl_buffer_read_header (GInputStream *i,
+                                         goffset      *offset);
+GList          *gegl_buffer_read_index  (GInputStream *i,
+                                         goffset      *offset);
 
 #define struct_check_padding(type, size) \
   if (sizeof (type) != size) \

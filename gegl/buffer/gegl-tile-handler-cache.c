@@ -195,30 +195,19 @@ command (GeglTileSource  *tile_store,
         break; /* chain up */
       case GEGL_TILE_FLUSH:
         {
-          /*FIXME*/
-          /* do this for all tiles belonging to this cache */
-          gboolean exist = gegl_tile_handler_cache_has_tile (cache, x, y, z);
-          GeglTile *tile;
-  GList     *link;
+          GList     *link;
 
-  for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
-    {
-      CacheItem *item = link->data;
-      GeglTile  *tile = item->tile;
-
-      if (tile != NULL &&
-          item->handler == cache)
-        {
-          gegl_tile_store (tile);
-        }
-    }
-
- /*        
-          if (exist)
+          for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
             {
-              tile = get_tile (tile_store, x, y, z);
-              gegl_tile_store (tile);
-            }*/
+              CacheItem *item = link->data;
+              GeglTile  *tile = item->tile;
+
+              if (tile != NULL &&
+                  item->handler == cache)
+                {
+                  gegl_tile_store (tile);
+                }
+            }
         }
         break; /* chain up */
       case GEGL_TILE_GET:
@@ -257,13 +246,12 @@ command (GeglTileSource  *tile_store,
 static void
 gegl_tile_handler_cache_class_init (GeglTileHandlerCacheClass *class)
 {
-  GObjectClass      *gobject_class  = G_OBJECT_CLASS (class);
-  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (class);
+  GObjectClass        *gobject_class = G_OBJECT_CLASS (class);
+  GeglTileSourceClass *source_class  = GEGL_TILE_SOURCE_CLASS (class);
 
-  gobject_class->finalize     = finalize;
-  gobject_class->dispose      = dispose;
-
-  source_class->command  = command;
+  gobject_class->finalize = finalize;
+  gobject_class->dispose  = dispose;
+  source_class->command   = command;
 }
 
 static void
@@ -292,12 +280,8 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
 
       count++;
       if (!gegl_tile_is_stored (tile))
-        {
-          if (count > cache_size - wash_tiles)
-            {
-              last_dirty = tile;
-            }
-        }
+        if (count > cache_size - wash_tiles)
+          last_dirty = tile;
     }
 
   if (last_dirty != NULL)

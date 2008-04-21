@@ -1,3 +1,16 @@
+2008-04-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-index.h: added gegl_buffer_read_header and
+	gegl_buffer_read_index declarations.
+	* gegl/buffer/gegl-buffer-load.c: 
+	(gegl_buffer_read_header), (read_block), (gegl_buffer_read_index),
+	(gegl_buffer_open): refactored to make reusable.
+	* gegl/buffer/gegl-buffer-private.h: added tile-width and tile-height
+	properties.
+	* gegl/buffer/gegl-buffer.c: (get_property), (set_property),
+	(gegl_buffer_class_init), (gegl_buffer_init): added properties.
+	* gegl/buffer/gegl-tile-handler-cache.c: indentation.
+
 2008-04-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-utils.c: removed unused static declarations.
