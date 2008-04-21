@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-SUBDIRS= gegl operations bin tools examples
+SUBDIRS= gegl operations bin tools
 if ENABLE_DOCS
 SUBDIRS+= docs
 endif
