@@ -43,6 +43,7 @@
 #include  "gegl-operation-point-filter.h"
 #include  "gegl-operation-sink.h"
 #include  "gegl-operation-source.h"
+#include  "gegl-debug.h"
 
 #include <glib/gprintf.h>
 
@@ -113,10 +114,11 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
   if (g_getenv ("GEGL_QUALITY"))
 #endif
     {
-      const gchar *quality = g_getenv ("GEGL_QUALITY");
-      GCallback fast      = NULL;
-      GCallback good      = NULL;
-      GCallback reference = NULL;
+      const gchar *quality  = g_getenv ("GEGL_QUALITY");
+      GCallback fast        = NULL;
+      GCallback good        = NULL;
+      GCallback reference   = NULL;
+      GCallback gcc_vectors = NULL;
 #ifdef USE_SSE
       GCallback sse       = NULL;
       if (quality == NULL)
@@ -132,6 +134,8 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
             {
               if (g_str_equal (string, "fast"))
                 fast = cb;
+              if (g_str_equal (string, "gcc-vectors"))
+                gcc_vectors = cb;
               else if (g_str_equal (string, "good"))
                 good = cb;
 #ifdef USE_SSE
@@ -147,25 +151,25 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
       if (g_str_equal (quality, "fast"))
         {
 #ifdef USE_SSE
-          g_print ("Setting %s callback for %s\n", fast?"fast":sse?"sse":good?"good":"reference",
+          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", fast?"fast":sse?"sse":gcc_vectors?"gcc-vectors":good?"good":"reference",
           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = fast?fast:sse?sse:good?good:reference;
+          *vfunc_ptr = fast?fast:sse?sse:gcc_vectors?gcc_vectors:good?good:reference;
 #else
-          g_print ("Setting %s callback for %s\n", fast?"fast":good?"good":"reference",
+          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", fast?"fast":gcc_vectors?"gcc-vectors":good?"good":"reference",
           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = fast?fast:good?good:reference;
+          *vfunc_ptr = fast?fast:gcc_vectors?gcc_vectors:good?good:reference;
 #endif
         }
       else if (g_str_equal (quality, "good"))
         {
 #ifdef USE_SSE
-          g_print ("Setting %s callback for %s\n", sse?"sse":good?"good":"reference",
+          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", sse?"sse":gcc_vectors?"gcc-vectors":good?"good":"reference",
            g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = sse?sse:good?good:reference;
+          *vfunc_ptr = sse?sse:gcc_vectors?gcc_vectors:good?good:reference;
 #else
-          g_print ("Setting %s callback for %s\n", good?"good":"reference",
+          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", gcc_vectors?"gcc-vectors":good?"good":"reference",
            g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = good?good:reference;
+          *vfunc_ptr = gcc_vectors?"gcc-vectors":good?good:reference;
 #endif
         }
       else
@@ -173,7 +177,7 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
           /* best */
 #ifdef USE_SSE
           if (sse && gegl_cpu_accel_get_support () & GEGL_CPU_ACCEL_X86_SSE)
-            g_print ("Setting sse processor for %s\n", g_type_name (G_TYPE_FROM_CLASS (cclass)));
+            GEGL_NOTE(PROCESSOR, "Setting sse processor for %s", g_type_name (G_TYPE_FROM_CLASS (cclass)));
           *vfunc_ptr = sse?sse:reference;
 #else
           *vfunc_ptr = reference;

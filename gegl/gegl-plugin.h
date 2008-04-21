@@ -100,20 +100,25 @@ const gchar * gegl_extension_handler_get      (const gchar *extension);
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
 
-#ifdef USE_SSE
+#define USE_GCC_VECTORS defined(__GNUC__) && (__GNUC__ >= 4)
 
-typedef float v4sf __attribute__ ((vector_size (4*sizeof(float))));
-typedef union
-{
-  v4sf  v;
-  float a[4];
-} GeglV4;
+#if USE_GCC_VECTORS
 
-#define GEGL_V4(a,b,c,d)  ((GeglV4){{a,b,c,d}})
-#define GEGL_V4_FILL(val) GEGL_V4(val,val,val,val)
-#define GEGL_V4_ZERO      GEGL_V4_FILL(0.0)
-#define GEGL_V4_ONE       GEGL_V4_FILL(1.0)
-#define GEGL_V4_HALF      GEGL_V4_FILL(0.5)
+typedef float Gegl4float __attribute__ ((vector_size (4*sizeof(float))));
+
+#define Gegl4float_a(a)      ((float *)(&a))
+#define Gegl4floatR(a)       Gegl4float_a(a)[0]
+#define Gegl4floatG(a)       Gegl4float_a(a)[0]
+#define Gegl4floatB(a)       Gegl4float_a(a)[0]
+#define Gegl4floatA(a)       Gegl4float_a(a)[0]
+#define Gegl4float(a,b,c,d)  ((Gegl4float){a,b,c,d})
+#define Gegl4float_all(val)  Gegl4float(val,val,val,val)
+#define Gegl4float_zero      Gegl4float_all(0.0)
+#define Gegl4float_one       Gegl4float_all(1.0)
+#define Gegl4float_half      Gegl4float_all(0.5)
+
+
+#define Gegl4float_mul(vec,val)  ((vec) * Gegl4float_all(val))
 
 #endif
 

@@ -54,21 +54,22 @@ process (GeglOperation *op,
   return TRUE;
 }
 
-#ifdef USE_SSE
+#ifdef USE_GCC_VECTORS
 static gboolean
 process_sse (GeglOperation *op,
              void          *in_buf,
              void          *out_buf,
              glong          samples)
 {
-  GeglV4 *in  = in_buf;
-  GeglV4 *out = out_buf;
+  Gegl4float *in  = in_buf;
+  Gegl4float *out = out_buf;
+  Gegl4float  one = Gegl4float_one;
 
   while (--samples)
     {
-      gfloat a=in->a[3];
-      out->v = GEGL_V4_ONE.v - in->v;
-      out->a[3]=a;
+      gfloat a= Gegl4float_a(*in)[3];
+      *out = one - *in;
+      Gegl4float_a(*out)[3]=a;
       in  ++;
       out ++;
     }
@@ -93,9 +94,9 @@ gegl_chant_class_init (GeglChantClass *klass)
      "Inverts the components (except alpha), the result is the"
      " corresponding \"negative\" image.";
 
-#ifdef USE_SSE
+#ifdef USE_GCC_VECTORS
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_sse), "sse");
+                                      G_CALLBACK (process_sse), "gcc-vectors");
 #endif
 }
 

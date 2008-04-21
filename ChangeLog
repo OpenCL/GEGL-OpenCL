@@ -1,3 +1,21 @@
+2008-04-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-plugin.h: enable Gegl4float type when compiling with gcc,
+	added more macros for working with these vectors including
+	Gegl4floatR(vector) and GBA versions to access individual components.
+
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): enable gcc-vectors for good
+	setting.
+
+	* operations/common/brightness-contrast.c: (process_sse),
+	(gegl_chant_class_init):
+	* operations/common/invert.c: (process_sse),
+	(gegl_chant_class_init):
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb: Simplified syntax used
+	gcc vectors.
+
 2008-04-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: removed mutex.

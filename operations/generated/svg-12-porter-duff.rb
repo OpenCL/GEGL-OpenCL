@@ -34,41 +34,41 @@ copyright = '
 a = [
       ['clear',         '0.0',
                         '0.0',
-                        'D->v = GEGL_V4_ZERO.v'],
+                        '*D = Gegl4float_zero'],
       ['src',           'cA',
                         'aA',
-                        'D->v = A->v'],
+                        '*D = *A'],
       ['dst',           'cB',
                         'aB',
-                        'D->v = B->v'],
+                        '*D = *B'],
       ['src_over',      'cA + cB * (1 - aA)',
                         'aA + aB - aA * aB',
-                        'D->v = A->v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v)'],
+                        '*D = *A + Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A))'],
       ['dst_over',      'cB + cA * (1 - aB)',
                         'aA + aB - aA * aB',
-                        'D->v = B->v + A->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v)'],
+                        '*D = *B + Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B))'],
       ['src_in',        'cA * aB',  # this one had special treatment wrt rectangles in deleted file porter-duff.rb before the svg ops came in, perhaps that was with good reason? /pippin
                         'aA * aB',
-                        'D->v = A->v * GEGL_V4_FILL(B->a[3]).v'],
+                        '*D = Gegl4float_mul(*A,  Gegl4floatA(*B))'],
       ['dst_in',        'cB * aA', # <- XXX: typo?
                         'aA * aB', 
-                        'D->v = B->v * GEGL_V4_FILL(A->a[3]).v'],
+                        '*D = Gegl4float_mul (*B, Gegl4floatA(*A))'],
       ['src_out',       'cA * (1 - aB)',
                         'aA * (1 - aB)',
-                        'D->v = A->v * GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v'],
+                        '*D = Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B))'],
       ['dst_out',       'cB * (1 - aA)',
                         'aB * (1 - aA)',
-                        'D->v = B->v * GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v'],
+                        '*D = Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A))'],
       ['src_atop',      'cA * aB + cB * (1 - aA)',
                         'aB',
-                        'D->v = A->v * (GEGL_V4_FILL(B->a[3])).v + B->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(A->a[3]).v);D->a[3]=B->a[3]'],
+                         '*D = Gegl4float_mul (*A, Gegl4floatA(*B)) + Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A));Gegl4floatA(*D)=Gegl4floatA(*B)'],
 
       ['dst_atop',      'cB * aA + cA * (1 - aB)',
                         'aA',
-                        'D->v = B->v * (GEGL_V4_FILL(A->a[3])).v + A->v * (GEGL_V4_ONE.v - GEGL_V4_FILL(B->a[3]).v);D->a[3]=A->a[3]'],
+                         '*D = Gegl4float_mul (*B, Gegl4floatA(*A)) + Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B));Gegl4floatA(*D)=Gegl4floatA(*A)'],
       ['xor',           'cA * (1 - aB)+ cB * (1 - aA)',
                         'aA + aB - 2 * aA * aB',
-                        'D->v = A->v * B->v']
+                        '*D = *A * *B'] # FIXME this is wrong
     ]
 
 file_head1 = '
@@ -119,9 +119,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-#ifdef USE_SSE
+#ifdef USE_GCC_VECTORS
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_sse), "sse");
+                                      G_CALLBACK (process_gegl4float), "gcc-vectors");
 #endif
 
 '
@@ -183,18 +183,18 @@ a.each do
   return TRUE;
 }
 
-#ifdef USE_SSE
+#ifdef USE_GCC_VECTORS
 
 static gboolean
-process_sse (GeglOperation *op,
-             void          *in_buf,
-             void          *aux_buf,
-             void          *out_buf,
-             glong          n_pixels)
+process_gegl4float (GeglOperation *op,
+                    void          *in_buf,
+                    void          *aux_buf,
+                    void          *out_buf,
+                    glong          n_pixels)
 {
-  GeglV4 *A = aux_buf;
-  GeglV4 *B = in_buf;
-  GeglV4 *D = out_buf;
+  Gegl4float *A = aux_buf;
+  Gegl4float *B = in_buf;
+  Gegl4float *D = out_buf;
 
   if (B==NULL)
     return TRUE;
