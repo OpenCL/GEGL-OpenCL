@@ -111,10 +111,10 @@ process (GeglOperation *op,
 #ifdef USE_GCC_VECTORS
 
 static gboolean
-process_sse (GeglOperation *op,
-             void          *in_buf,
-             void          *out_buf,
-             glong          samples)
+process_gcc_vectors (GeglOperation *op,
+                     void          *in_buf,
+                     void          *out_buf,
+                     glong          samples)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   Gegl4float *in  = in_buf;
@@ -175,7 +175,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    * broken and not conforming to the reference implementation.
    */
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_sse), "gcc-vectors");
+                                      G_CALLBACK (process_gcc_vectors), "gcc-vectors");
 #endif
 }
 

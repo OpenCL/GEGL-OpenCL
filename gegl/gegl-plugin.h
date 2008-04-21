@@ -86,23 +86,10 @@ void          gegl_extension_handler_register (const gchar *extension,
 const gchar * gegl_extension_handler_get      (const gchar *extension);
 
 
-#if 1
+#define CHECK_GCC_VECTORS defined(__GNUC__) && (__GNUC__ >= 4)
 
-#include <glib-object.h>
-#include <babl/babl.h>
-#include <operation/gegl-operation.h>
-#include <operation/gegl-operation-filter.h>
-#include <operation/gegl-operation-area-filter.h>
-#include <operation/gegl-operation-point-filter.h>
-#include <operation/gegl-operation-composer.h>
-#include <operation/gegl-operation-point-composer.h>
-#include <operation/gegl-operation-source.h>
-#include <operation/gegl-operation-sink.h>
-#include <operation/gegl-operation-meta.h>
-
-#define USE_GCC_VECTORS defined(__GNUC__) && (__GNUC__ >= 4)
-
-#if USE_GCC_VECTORS
+#if CHECK_GCC_VECTORS
+#define USE_GCC_VECTORS 1
 
 typedef float Gegl4float __attribute__ ((vector_size (4*sizeof(float))));
 
@@ -120,7 +107,23 @@ typedef float Gegl4float __attribute__ ((vector_size (4*sizeof(float))));
 
 #define Gegl4float_mul(vec,val)  ((vec) * Gegl4float_all(val))
 
+
 #endif
+
+#if 1
+
+#include <glib-object.h>
+#include <babl/babl.h>
+#include <operation/gegl-operation.h>
+#include <operation/gegl-operation-filter.h>
+#include <operation/gegl-operation-area-filter.h>
+#include <operation/gegl-operation-point-filter.h>
+#include <operation/gegl-operation-composer.h>
+#include <operation/gegl-operation-point-composer.h>
+#include <operation/gegl-operation-source.h>
+#include <operation/gegl-operation-sink.h>
+#include <operation/gegl-operation-meta.h>
+
 
 #else
 
