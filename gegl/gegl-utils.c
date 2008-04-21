@@ -26,17 +26,6 @@
 #include "gegl-types.h"
 
 
-static void gegl_logv        (GLogLevelFlags  level,
-                              const gchar    *file,
-                              gint            line,
-                              const gchar    *function,
-                              const gchar    *format,
-                              va_list         args);
-static void gegl_direct_logv (GLogLevelFlags  level,
-                              const gchar    *format,
-                              va_list         args);
-
-
 inline gint
 _gegl_float_epsilon_zero (float value)
 {
