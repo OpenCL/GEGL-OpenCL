@@ -306,7 +306,7 @@ gegl_buffer_dispose (GObject *object)
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-static GeglTileBackend *
+GeglTileBackend *
 gegl_buffer_backend (GeglBuffer *buffer)
 {
   GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);

@@ -178,8 +178,6 @@ gegl_buffer_header_init (GeglBufferHeader *header,
   header->tile_width  = tile_width;
   header->tile_height = tile_height;
   header->bytes_per_pixel = bpp;
-  header->width = 256;
-  header->height = 256;
   {
     gchar buf[64];
     g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n\n\n\n\n\n\n\n\n\n", 

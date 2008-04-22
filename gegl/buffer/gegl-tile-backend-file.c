@@ -460,12 +460,6 @@ flush (GeglTileSource *source,
 
   GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
 
-  gegl_buffer_header_init (&self->header,
-                           backend->tile_width,
-                           backend->tile_height,
-                           backend->px_size,
-                           backend->format
-                           );
   self->header.next = self->next_pre_alloc; /* this is the offset
                                                we start handing
                                                out headers from*/
@@ -700,6 +694,7 @@ gegl_tile_backend_file_constructor (GType                  type,
         self->next_pre_alloc = max;
         self->total          = max;
         self->tiles = NULL;
+
       }
     }
   else
@@ -710,6 +705,14 @@ gegl_tile_backend_file_constructor (GType                  type,
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
       g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
+
+      gegl_buffer_header_init (&self->header,
+                               backend->tile_width,
+                               backend->tile_height,
+                               backend->px_size,
+                               backend->format
+                               );
+      /* FIXME: should probably write an initial header */
     }
 
   g_assert (self->file);

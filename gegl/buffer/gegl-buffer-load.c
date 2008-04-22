@@ -45,6 +45,7 @@
 
 #include <glib/gprintf.h>
 
+#if 0
 typedef struct
 {
   GeglBufferHeader header;
@@ -59,7 +60,6 @@ typedef struct
   gboolean         got_header;
 } LoadInfo;
 
-
 static void seekto(LoadInfo *info, gint offset)
 {
   info->offset = offset;
@@ -69,6 +69,33 @@ static void seekto(LoadInfo *info, gint offset)
       g_warning ("failed seeking");
     }
 }
+
+static void
+load_info_destroy (LoadInfo *info)
+{
+  if (!info)
+    return;
+  if (info->path)
+    g_free (info->path);
+  if (info->i)
+    g_object_unref (info->i);
+  if (info->file)
+    g_object_unref (info->file);
+
+  if (info->tiles != NULL)
+    {
+      GList *iter;
+      for (iter = info->tiles; iter; iter = iter->next)
+        {
+          g_free (iter->data);
+        }
+      g_list_free (info->tiles);
+      info->tiles = NULL;
+    }
+  g_slice_free (LoadInfo, info);
+}
+
+#endif
 
 GeglBufferItem *
 gegl_buffer_read_header (GInputStream *i,
@@ -86,10 +113,12 @@ gegl_buffer_read_header (GInputStream *i,
                    sizeof(GeglBufferHeader),
                    NULL, NULL);
 
-  GEGL_NOTE (BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i\n",
+  GEGL_NOTE (BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i  %ix%i\n",
                    ret->header.tile_width,
                    ret->header.tile_height,
-                   (guint)ret->block.next);
+                   (guint)ret->block.next,
+                   ret->header.width,
+                   ret->header.height);
 
   if (!(ret->header.magic[0]=='G' &&
        ret->header.magic[1]=='E' &&
@@ -192,30 +221,6 @@ gegl_buffer_read_index (GInputStream *i,
   return ret;
 }
 
-static void
-load_info_destroy (LoadInfo *info)
-{
-  if (!info)
-    return;
-  if (info->path)
-    g_free (info->path);
-  if (info->i)
-    g_object_unref (info->i);
-  if (info->file)
-    g_object_unref (info->file);
-
-  if (info->tiles != NULL)
-    {
-      GList *iter;
-      for (iter = info->tiles; iter; iter = iter->next)
-        {
-          g_free (iter->data);
-        }
-      g_list_free (info->tiles);
-      info->tiles = NULL;
-    }
-  g_slice_free (LoadInfo, info);
-}
 
 static void sanity(void) { GEGL_BUFFER_SANITY; }
 

@@ -22,6 +22,7 @@
 
 #include <glib-object.h>
 #include <glib/gprintf.h>
+#include <gio/gio.h>
 
 #include "gegl-types.h"
 #include "gegl-buffer-types.h"
@@ -32,6 +33,8 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-buffer-index.h"
+#include "gegl-tile-backend.h"
 
 #if ENABLE_MP
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
@@ -294,6 +297,14 @@ gegl_buffer_flush (GeglBuffer *buffer)
       g_object_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
+  if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))
+    {   
+      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->x =buffer->extent.x;
+      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->y =buffer->extent.y;
+      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->width =buffer->extent.width;
+      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->height =buffer->extent.height;
+    }
+
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
                             GEGL_TILE_FLUSH, 0,0,0,NULL);
 }

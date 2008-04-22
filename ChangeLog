@@ -1,5 +1,20 @@
 2008-04-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: fix the component access macros.
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_flush): store the
+	dimensions in the header of the file.
+	* gegl/buffer/gegl-buffer-save.c: (gegl_buffer_header_init): do
+	not set height/width of buffer in header_init.
+	* gegl/buffer/gegl-buffer-load.c: (load_info_destroy),
+	(gegl_buffer_read_header): #if 0'd unused code.
+	* gegl/buffer/gegl-buffer-private.h: added gegl_buffer_backend call.
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-tile-backend-file.c: 
+	(gegl_tile_backend_file_constructor): initialize the header here ..
+	(flush): .. instead of here.
+
+2008-04-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Make GeglBuffer able to use a serialized buffer directly as swap, as
 	well as synchronize a buffer so that it can be resumed from swap.
 
