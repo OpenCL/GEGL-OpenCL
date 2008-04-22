@@ -1,5 +1,20 @@
 2008-04-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: renamed gegl4float to g4float.
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): code simplification and
+	cleanup.
+
+	Migrated with API:
+	* operations/common/brightness-contrast.c:
+	(gegl_chant_class_init):
+	* operations/common/invert.c:
+	(gegl_chant_class_init):
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb:
+
+2008-04-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: tell that we're going to --enable-debug.
 	* bin/gegl-node-editor.c: (gegl_node_editor_constructor): fix warning
 	about size group by not unreffing them after first use.

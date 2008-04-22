@@ -35,11 +35,11 @@ a = [
 #       Alias for porter-duff src-over
       ['normal',  'cA + cB * (1 - aA)',
                   'aA + aB - aA * aB',
-                  '*D = *A + *B * (Gegl4float_one - Gegl4float_all(Gegl4float_a(*A)[3]))'],
+                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
 #       Alias for porter-duff src-over
       ['over',    'cA + cB * (1 - aA)',
                   'aA + aB - aA * aB',
-                  '*D = *A + *B * (Gegl4float_one - Gegl4float_all(Gegl4float_a(*A)[3]))'],
+                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
     ]
 
 file_head1 = '
@@ -90,9 +90,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gegl4float), "gcc-vectors");
+                                      G_CALLBACK (process_gegl4float), "g4float");
 #endif
 
 '
@@ -154,7 +154,7 @@ a.each do
   return TRUE;
 }
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
 
 static gboolean
 process_gegl4float (GeglOperation *op,
@@ -163,11 +163,11 @@ process_gegl4float (GeglOperation *op,
                     void          *out_buf,
                     glong          n_pixels)
 {
-  Gegl4float *A = aux_buf;
-  Gegl4float *B = in_buf;
-  Gegl4float *D = out_buf;
+  g4float *A = aux_buf;
+  g4float *B = in_buf;
+  g4float *D = out_buf;
 
-  if (B==NULL)
+  if (B==NULL || n_pixels == 0)
     return TRUE;
 
   while (--n_pixels)

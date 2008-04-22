@@ -86,27 +86,53 @@ void          gegl_extension_handler_register (const gchar *extension,
 const gchar * gegl_extension_handler_get      (const gchar *extension);
 
 
-#define CHECK_GCC_VECTORS defined(__GNUC__) && (__GNUC__ >= 4)
+#if defined(__GNUC__) && (__GNUC__ >= 4)
+#define HAS_G4FLOAT 1
+#include <math.h>
 
-#if CHECK_GCC_VECTORS
-#define USE_GCC_VECTORS 1
+typedef float g4float __attribute__ ((vector_size (4*sizeof(float))));
 
-typedef float Gegl4float __attribute__ ((vector_size (4*sizeof(float))));
+#define g4float_a(a)      ((float *)(&a))
+#define g4floatR(a)       g4float_a(a)[0]
+#define g4floatG(a)       g4float_a(a)[1]
+#define g4floatB(a)       g4float_a(a)[2]
+#define g4floatA(a)       g4float_a(a)[3]
+#define g4float(a,b,c,d)  ((g4float){a,b,c,d})
+#define g4float_all(val)  g4float(val,val,val,val)
+#define g4float_zero      g4float_all(0.0)
+#define g4float_one       g4float_all(1.0)
+#define g4float_half      g4float_all(0.5)
+#define g4float_half      g4float_all(0.5)
+#define g4float_mul(a,val)  g4float_all(val)*(a)
 
-#define Gegl4float_a(a)      ((float *)(&a))
-#define Gegl4floatR(a)       Gegl4float_a(a)[0]
-#define Gegl4floatG(a)       Gegl4float_a(a)[1]
-#define Gegl4floatB(a)       Gegl4float_a(a)[2]
-#define Gegl4floatA(a)       Gegl4float_a(a)[3]
-#define Gegl4float(a,b,c,d)  ((Gegl4float){a,b,c,d})
-#define Gegl4float_all(val)  Gegl4float(val,val,val,val)
-#define Gegl4float_zero      Gegl4float_all(0.0)
-#define Gegl4float_one       Gegl4float_all(1.0)
-#define Gegl4float_half      Gegl4float_all(0.5)
+#ifdef USE_SSE
 
+#define g4float_sqrt(v)     __builtin_ia32_sqrtps((v))
+#define g4float_max(a,b)    __builtin_ia32_maxps((a,b))
+#define g4float_min(a,b)    __builtin_ia32_minps((a,b))
+#define g4float_rcp(a,b)    __builtin_ia32_rcpps((v))
 
-#define Gegl4float_mul(vec,val)  ((vec) * Gegl4float_all(val))
+#else
 
+#define g4float_sqrt(v)     g4float(sqrt(g4floatR(v)),\
+                                    sqrt(g4floatG(v)),\
+                                    sqrt(g4floatB(v)),\
+                                    sqrt(g4floatA(v)))
+#define g4float_rcp(v)      g4float(1.0/(g4floatR(v)),\
+                                    1.0/(g4floatG(v)),\
+                                    1.0/(g4floatB(v)),\
+                                    1.0/(g4floatA(v)))
+#define g4float_max(a,b)   g4float(\
+                               gfloat4R(a)>gfloat4R(b)?gfloat4R(a):gfloat4R(b),\
+                               gfloat4G(a)>gfloat4G(b)?gfloat4G(a):gfloat4G(b),\
+                               gfloat4B(a)>gfloat4B(b)?gfloat4B(a):gfloat4B(b),\
+                               gfloat4A(a)>gfloat4A(b)?gfloat4A(a):gfloat4A(b))
+#define g4float_min(a,b)   g4float(\
+                               gfloat4R(a)<gfloat4R(b)?gfloat4R(a):gfloat4R(b),\
+                               gfloat4G(a)<gfloat4G(b)?gfloat4G(a):gfloat4G(b),\
+                               gfloat4B(a)<gfloat4B(b)?gfloat4B(a):gfloat4B(b),\
+                               gfloat4A(a)<gfloat4A(b)?gfloat4A(a):gfloat4A(b))
+#endif
 
 #endif
 

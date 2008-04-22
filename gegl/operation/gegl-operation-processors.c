@@ -108,81 +108,54 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
                  g_type_name (G_TYPE_FROM_CLASS (cclass)));
     }
 
-#ifdef USE_SSE
-  /* always look for sse ops */
-#else
-  if (g_getenv ("GEGL_QUALITY"))
-#endif
     {
       const gchar *quality  = g_getenv ("GEGL_QUALITY");
-      GCallback fast        = NULL;
-      GCallback good        = NULL;
-      GCallback reference   = NULL;
-      GCallback gcc_vectors = NULL;
-#ifdef USE_SSE
-      GCallback sse       = NULL;
+      gint fast        = 0;
+      gint good        = 0;
+      gint reference   = 0;
+      gint g4f         = 0;
+
+      gint choice = 0;
+
+      /* if no quality is specified, look for good, which also includes the
+       * g4float implementation */
       if (quality == NULL)
-        quality = "sse";
-#endif
+        quality = "good";
 
       for (i=0;i<MAX_PROCESSOR;i++)
         {
           const gchar *string = data->string[i];
-          GCallback    cb     = data->callback[i];
+          GCallback cb = data->callback[i];
 
           if (string && cb!=NULL)
             {
               if (g_str_equal (string, "fast"))
-                fast = cb;
-              if (g_str_equal (string, "gcc-vectors"))
-                gcc_vectors = cb;
+                fast = i;
+              if (g_str_equal (string, "g4float"))
+                g4f = i;
               else if (g_str_equal (string, "good"))
-                good = cb;
-#ifdef USE_SSE
-              else if (g_str_equal (string, "sse"))
-                sse = cb;
-#endif
+                good = i;
               else if (g_str_equal (string, "reference"))
-                reference = cb;
+                reference = i;
             }
         }
+      reference = 0;
+      g_assert (data->callback[reference]);
 
-      g_assert (reference);
+      if (g_str_equal (quality, "good")||
+          g_str_equal (quality, "fast"))
+        {
+          if (good) choice = good;
+          if (g4f) choice = g4f;
+        }
       if (g_str_equal (quality, "fast"))
         {
-#ifdef USE_SSE
-          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", fast?"fast":sse?"sse":gcc_vectors?"gcc-vectors":good?"good":"reference",
-          g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = fast?fast:sse?sse:gcc_vectors?gcc_vectors:good?good:reference;
-#else
-          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", fast?"fast":gcc_vectors?"gcc-vectors":good?"good":"reference",
-          g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = fast?fast:gcc_vectors?gcc_vectors:good?good:reference;
-#endif
+          if (good) choice = good;
+          if (g4f) choice = g4f;
         }
-      else if (g_str_equal (quality, "good"))
-        {
-#ifdef USE_SSE
-          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", sse?"sse":gcc_vectors?"gcc-vectors":good?"good":"reference",
-           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = sse?sse:gcc_vectors?gcc_vectors:good?good:reference;
-#else
-          GEGL_NOTE(PROCESSOR, "Setting %s callback for %s", gcc_vectors?"gcc-vectors":good?"good":"reference",
-           g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = gcc_vectors?"gcc-vectors":good?good:reference;
-#endif
-        }
-      else
-        {
-          /* best */
-#ifdef USE_SSE
-          if (sse && gegl_cpu_accel_get_support () & GEGL_CPU_ACCEL_X86_SSE)
-            GEGL_NOTE(PROCESSOR, "Setting sse processor for %s", g_type_name (G_TYPE_FROM_CLASS (cclass)));
-          *vfunc_ptr = sse?sse:reference;
-#else
-          *vfunc_ptr = reference;
-#endif
-        }
+
+      GEGL_NOTE(PROCESSOR, "Using %s implementation for %s", data->string[choice], g_type_name (G_TYPE_FROM_CLASS (cclass)));
+      *vfunc_ptr = data->callback[choice];
     }
 }
 

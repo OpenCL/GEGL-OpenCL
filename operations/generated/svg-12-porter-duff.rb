@@ -34,7 +34,7 @@ copyright = '
 a = [
       ['clear',         '0.0',
                         '0.0',
-                        '*D = Gegl4float_zero'],
+                        '*D = g4float_zero'],
       ['src',           'cA',
                         'aA',
                         '*D = *A'],
@@ -43,29 +43,29 @@ a = [
                         '*D = *B'],
       ['src_over',      'cA + cB * (1 - aA)',
                         'aA + aB - aA * aB',
-                        '*D = *A + Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A))'],
+                        '*D = *A + g4float_mul (*B, 1.0 - g4floatA(*A))'],
       ['dst_over',      'cB + cA * (1 - aB)',
                         'aA + aB - aA * aB',
-                        '*D = *B + Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B))'],
+                        '*D = *B + g4float_mul (*A, 1.0 - g4floatA(*B))'],
       ['src_in',        'cA * aB',  # this one had special treatment wrt rectangles in deleted file porter-duff.rb before the svg ops came in, perhaps that was with good reason? /pippin
                         'aA * aB',
-                        '*D = Gegl4float_mul(*A,  Gegl4floatA(*B))'],
+                        '*D = g4float_mul(*A,  g4floatA(*B))'],
       ['dst_in',        'cB * aA', # <- XXX: typo?
                         'aA * aB', 
-                        '*D = Gegl4float_mul (*B, Gegl4floatA(*A))'],
+                        '*D = g4float_mul (*B, g4floatA(*A))'],
       ['src_out',       'cA * (1 - aB)',
                         'aA * (1 - aB)',
-                        '*D = Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B))'],
+                        '*D = g4float_mul (*A, 1.0 - g4floatA(*B))'],
       ['dst_out',       'cB * (1 - aA)',
                         'aB * (1 - aA)',
-                        '*D = Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A))'],
+                        '*D = g4float_mul (*B, 1.0 - g4floatA(*A))'],
       ['src_atop',      'cA * aB + cB * (1 - aA)',
                         'aB',
-                         '*D = Gegl4float_mul (*A, Gegl4floatA(*B)) + Gegl4float_mul (*B, 1.0 - Gegl4floatA(*A));Gegl4floatA(*D)=Gegl4floatA(*B)'],
+                         '*D = g4float_mul (*A, g4floatA(*B)) + g4float_mul (*B, 1.0 - g4floatA(*A));g4floatA(*D)=g4floatA(*B)'],
 
       ['dst_atop',      'cB * aA + cA * (1 - aB)',
                         'aA',
-                         '*D = Gegl4float_mul (*B, Gegl4floatA(*A)) + Gegl4float_mul (*A, 1.0 - Gegl4floatA(*B));Gegl4floatA(*D)=Gegl4floatA(*A)'],
+                         '*D = g4float_mul (*B, g4floatA(*A)) + g4float_mul (*A, 1.0 - g4floatA(*B));g4floatA(*D)=g4floatA(*A)'],
       ['xor',           'cA * (1 - aB)+ cB * (1 - aA)',
                         'aA + aB - 2 * aA * aB',
                         '*D = *A * *B'] # FIXME this is wrong
@@ -119,9 +119,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gegl4float), "gcc-vectors");
+                                      G_CALLBACK (process_gegl4float), "g4float");
 #endif
 
 '
@@ -183,7 +183,7 @@ a.each do
   return TRUE;
 }
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
 
 static gboolean
 process_gegl4float (GeglOperation *op,
@@ -192,13 +192,13 @@ process_gegl4float (GeglOperation *op,
                     void          *out_buf,
                     glong          n_pixels)
 {
-  Gegl4float *A = aux_buf;
-  Gegl4float *B = in_buf;
-  Gegl4float *D = out_buf;
+  g4float *A = aux_buf;
+  g4float *B = in_buf;
+  g4float *D = out_buf;
 
-  if (B==NULL)
+  if (B==NULL || n_pixels == 0)
     return TRUE;
-
+    
   while (--n_pixels)
     {
       #{sse_formula};

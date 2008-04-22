@@ -108,7 +108,7 @@ process (GeglOperation *op,
 }
 
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
 
 static gboolean
 process_gcc_vectors (GeglOperation *op,
@@ -117,19 +117,19 @@ process_gcc_vectors (GeglOperation *op,
                      glong          samples)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  Gegl4float *in  = in_buf;
-  Gegl4float *out = out_buf;
+  g4float *in  = in_buf;
+  g4float *out = out_buf;
 
   /* add 0.5 to brightness here to make the logic in the innerloop tighter
    */
-  Gegl4float  brightness = Gegl4float_all(o->brightness + 0.5);
-  Gegl4float  contrast   = Gegl4float_all(o->contrast);
-  Gegl4float  half       = Gegl4float_half;
+  g4float  brightness = g4float_all(o->brightness + 0.5);
+  g4float  contrast   = g4float_all(o->contrast);
+  g4float  half       = g4float_half;
     
   while (--samples)
     {
       *out = (*in - half) * contrast + brightness;
-      Gegl4floatA(*out)=Gegl4floatA(*in);
+      g4floatA(*out)=g4floatA(*in);
       in  ++;
       out ++;
     }
@@ -169,13 +169,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description = _("Changes the light level and contrast.");
 
 
-#ifdef USE_GCC_VECTORS
+#ifdef HAS_G4FLOAT
   /* add conditionally compiled variation of process(), gegl should be able
    * to determine which is fastest and hopefully if any implementation is
    * broken and not conforming to the reference implementation.
    */
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gcc_vectors), "gcc-vectors");
+                                      G_CALLBACK (process_gcc_vectors), "g4float");
 #endif
 }
 
