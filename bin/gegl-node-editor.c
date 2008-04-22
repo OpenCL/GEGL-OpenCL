@@ -146,8 +146,8 @@ gegl_node_editor_constructor (GType                  type,
 
   gegl_node_editor_construct (GEGL_NODE_EDITOR (object));
 
-  g_object_unref (self->col1);
-  g_object_unref (self->col2);
+  /*g_object_unref (self->col1);
+  g_object_unref (self->col2);*/
   return object;
 }
 

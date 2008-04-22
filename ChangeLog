@@ -1,5 +1,11 @@
 2008-04-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: tell that we're going to --enable-debug.
+	* bin/gegl-node-editor.c: (gegl_node_editor_constructor): fix warning
+	about size group by not unreffing them after first use.
+
+2008-04-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: fix the component access macros.
 	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_flush): store the
 	dimensions in the header of the file.
