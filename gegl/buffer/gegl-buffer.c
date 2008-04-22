@@ -41,6 +41,7 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
+#include <gio/gio.h>
 
 #include "gegl-types.h"
 
@@ -60,6 +61,7 @@
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-id-pool.h"
+#include "gegl-buffer-index.h"
 
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
@@ -93,6 +95,8 @@ static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        y,
                                                  gint        width,
                                                  gint        height);
+static GeglBuffer *
+gegl_buffer_new_from_path (const gchar *path);
 
 static inline gint needed_tiles (gint w,
                                  gint stride)
@@ -375,24 +379,52 @@ gegl_buffer_constructor (GType                  type,
        * source (this adds a redirectin buffer in between for
        * all "allocated from format", type buffers.
        */
-      g_assert (buffer->format);
+      if (buffer->path)
+        {
+          GeglBufferHeader *header;
+          source = GEGL_TILE_SOURCE (gegl_buffer_new_from_path (buffer->path));
+          /* after construction,. x and y should be set to reflect
+           * the top level behavior exhibited by this buffer object.
+           */
+          g_object_set (buffer,
+                        "source", source,
+                        NULL);
+          g_object_unref (source);
 
-      source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
-                                                         buffer->extent.x,
-                                                         buffer->extent.y,
-                                                         buffer->extent.width,
-                                                         buffer->extent.height));
-      /* after construction,. x and y should be set to reflect
-       * the top level behavior exhibited by this buffer object.
-       */
-      g_object_set (buffer,
-                    "source", source,
-                    NULL);
-      g_object_unref (source);
+          g_assert (source);
+          backend = gegl_buffer_backend (GEGL_BUFFER (source));
+          g_assert (backend);
+          header = backend->header;
+          buffer->extent.x = header->x;
+          buffer->extent.y = header->y;
+          buffer->extent.width = header->width;
+          buffer->extent.height = header->height;
+          buffer->format = backend->format;
+        }
+      else if (buffer->format)
+        {
 
-      g_assert (source);
-      backend = gegl_buffer_backend (GEGL_BUFFER (source));
-      g_assert (backend);
+          source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
+                                                             buffer->extent.x,
+                                                             buffer->extent.y,
+                                                             buffer->extent.width,
+                                                             buffer->extent.height));
+          /* after construction,. x and y should be set to reflect
+           * the top level behavior exhibited by this buffer object.
+           */
+          g_object_set (buffer,
+                        "source", source,
+                        NULL);
+          g_object_unref (source);
+
+          g_assert (source);
+          backend = gegl_buffer_backend (GEGL_BUFFER (source));
+          g_assert (backend);
+        }
+      else
+        {
+          g_warning ("not enough data to have a tile source for our buffer");
+        }
     }
 
   g_assert (backend);
@@ -650,9 +682,9 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class, PROP_PATH,
-                                   g_param_spec_string ("path", "Path", "URI to where the buffer is stored",
-                                                     "/tmp/hm",
-                                                     G_PARAM_READWRITE));
+                                   g_param_spec_string ("path", "Path",
+                                                        "URI to where the buffer is stored",
+                                     NULL, G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -822,6 +854,30 @@ gegl_buffer_interpolation_from_string (const gchar *string)
 
 
 
+
+
+static GeglBuffer *
+gegl_buffer_new_from_path (const gchar *path)
+{
+  GeglTileStorage *tile_storage;
+  GeglBuffer  *buffer;
+
+  tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
+                              "format", babl_format,
+                              "path",   path,
+                              NULL);
+  buffer = g_object_new (GEGL_TYPE_BUFFER,
+                                    "source", tile_storage,
+                                    /*"x", x,
+                                    "y", y,
+                                    "width", width,
+                                    "height", height,*/
+                                    NULL);
+  /* XXX: query backend about width/height? (this seems odd) */
+
+  g_object_unref (tile_storage);
+  return buffer;
+}
 
 static GeglBuffer *
 gegl_buffer_new_from_format (const void *babl_format,

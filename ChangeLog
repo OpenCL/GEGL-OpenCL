@@ -1,5 +1,23 @@
 2008-04-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Make GeglBuffer able to use a serialized buffer directly as swap, as
+	well as synchronize a buffer so that it can be resumed from swap.
+
+	* gegl/buffer/gegl-buffer-load.c:
+	(gegl_buffer_read_header): moved magic check to header read.
+	(gegl_buffer_open): replaced by GeglBuffer being backed by a
+			    serialized GeglBuffer.
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
+	(gegl_buffer_class_init), (gegl_buffer_new_from_path):
+	  made it possible to create buffer using a path.
+	* gegl/buffer/gegl-tile-backend-file.c: (flush),
+	(gegl_tile_backend_file_constructor): allow opening already
+	written swap files.
+	* gegl/buffer/gegl-tile-backend.h: provide some private storage to
+	store a pointer to the header used to read in a buffer.
+
+2008-04-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-index.h: added gegl_buffer_read_header and
 	gegl_buffer_read_index declarations.
 	* gegl/buffer/gegl-buffer-load.c: 

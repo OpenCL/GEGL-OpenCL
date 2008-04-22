@@ -90,6 +90,15 @@ gegl_buffer_read_header (GInputStream *i,
                    ret->header.tile_width,
                    ret->header.tile_height,
                    (guint)ret->block.next);
+
+  if (!(ret->header.magic[0]=='G' &&
+       ret->header.magic[1]=='E' &&
+       ret->header.magic[2]=='G' &&
+       ret->header.magic[3]=='L'))
+    {
+      g_warning ("Magic is wrong! %s", ret->header.magic);
+    }
+
   return ret;
 }
 
@@ -214,10 +223,16 @@ static void sanity(void) { GEGL_BUFFER_SANITY; }
 GeglBuffer *
 gegl_buffer_open (const gchar *path)
 {
-  GeglBuffer *ret;
-  LoadInfo *info = g_slice_new0 (LoadInfo);
-
   sanity();
+
+  return g_object_new (GEGL_TYPE_BUFFER, "path", path, NULL);
+
+#if 0  /* old code that feeds tile by tile into the buffer */
+
+  GeglBuffer *ret;
+
+  LoadInfo *info = g_slice_new0 (LoadInfo);
+  
 
   info->path = g_strdup (path);
   info->file = g_file_new_for_commandline_arg (info->path);
@@ -241,13 +256,6 @@ gegl_buffer_open (const gchar *path)
   }
 
 
-  if (!(info->header.magic[0]=='G' &&
-       info->header.magic[1]=='E' &&
-       info->header.magic[2]=='G' &&
-       info->header.magic[3]=='L'))
-    {
-      g_warning ("Magic is wrong! %s", info->header.magic);
-    }
 
   info->tile_size    = info->header.tile_width *
                        info->header.tile_height *
@@ -313,4 +321,5 @@ gegl_buffer_open (const gchar *path)
 
   load_info_destroy (info);
   return ret;
+#endif
 }

@@ -70,6 +70,10 @@ struct _GeglTileBackendFile
                                 * to be able to keep track of the ->next
                                 * offsets in the blocks.
                                 */
+
+  /* loading buffer */
+
+  GList *tiles;
 };
 
 
@@ -468,6 +472,7 @@ flush (GeglTileSource *source,
 
   tiles = g_hash_table_get_keys (self->index);
 
+/*  g_assert(g_seekable_seek (G_SEEKABLE (self->o), self->header.next, G_SEEK_SET, NULL, NULL));*/
   /* save the index */
   {
     GList *iter;
@@ -648,32 +653,71 @@ gegl_tile_backend_file_constructor (GType                  type,
 {
   GObject      *object;
   GeglTileBackendFile *self;
+  GeglTileBackend *backend;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self   = GEGL_TILE_BACKEND_FILE (object);
+  backend = GEGL_TILE_BACKEND (object);
 
   GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
   self->file = g_file_new_for_commandline_arg (self->path);
-  self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
-  g_output_stream_flush (self->o, NULL, NULL);
-  self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+  
+  self->index = g_hash_table_new (hashfunc, equalfunc);
 
-
-  self->next_pre_alloc = 256;  /* reserved space for header */
-  self->total          = 256;  /* reserved space for header */
-  g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
-
-
-  if (!self->file)
+  /* if the file already exist we try to open it for appending instead of replacing */
+  if (g_file_query_exists (self->file, NULL))
     {
-      g_warning ("Unable to open swap file '%s'\n",self->path);
-      return NULL;
+      goffset offset;
+
+      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_NONE, NULL, NULL));
+      self->header = gegl_buffer_read_header (self->i, &offset)->header;
+      backend->tile_width = self->header.tile_width;
+      backend->tile_height = self->header.tile_height;
+      backend->format = babl_format (self->header.description);
+      /* we are overriding all of the work of the actual constructor here */
+      backend->px_size = backend->format->format.bytes_per_pixel;
+      backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
+
+      offset = self->header.next;
+      self->tiles = gegl_buffer_read_index (self->i, &offset);
+
+      /* insert each of the entries into the hash table */
+      {
+        /* compute total from and next pre alloc by monitoring tiles as they
+         * are added here
+         */
+        goffset max=0;
+        GList *iter;
+        for (iter = self->tiles; iter; iter=iter->next)
+          {
+            GeglBufferItem *item = iter->data;
+            if (item->tile.offset > max)
+              max = item->tile.offset + backend->tile_size;
+            g_hash_table_insert (self->index, iter->data, iter->data);
+          }
+        g_list_free (self->tiles);
+        self->next_pre_alloc = max;
+        self->total          = max;
+        self->tiles = NULL;
+      }
     }
+  else
+    {
+      self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
+      g_output_stream_flush (self->o, NULL, NULL);
+      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+      self->next_pre_alloc = 256;  /* reserved space for header */
+      self->total          = 256;  /* reserved space for header */
+      g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
+    }
+
   g_assert (self->file);
   g_assert (self->i);
   g_assert (self->o);
 
-  self->index = g_hash_table_new (hashfunc, equalfunc);
+
+  backend->header = &self->header;
 
   return object;
 }

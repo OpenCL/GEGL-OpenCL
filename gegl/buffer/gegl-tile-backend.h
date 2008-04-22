@@ -39,6 +39,9 @@ struct _GeglTileBackend
   Babl           *format;        /* defaults to the babl format "R'G'B'A u8" */
   gint            px_size;       /* size of a single pixel in bytes */
   gint            tile_size;     /* size of an entire tile in bytes */
+
+  /* private */
+  gpointer        header;
 };
 
 struct _GeglTileBackendClass
