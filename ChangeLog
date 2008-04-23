@@ -1,3 +1,13 @@
+2008-04-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-init.c: (gegl_get_version): add back accidentally removed
+	gegl_get_version.
+
+2008-04-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (get_property): made GeglBuffers return
+	the path they are stored at in their path property.
+
 2008-04-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-index.h: removed padding from tile struct,

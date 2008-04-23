@@ -311,7 +311,20 @@ gegl_init_i18n (void)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 }
 
-
+void     
+gegl_get_version (int *major,   
+                  int *minor,   
+                  int *micro)   
+{       
+  if (major != NULL)    
+    *major = GEGL_MAJOR_VERSION;        
+                 
+  if (minor != NULL)    
+    *minor = GEGL_MINOR_VERSION;        
+                 
+  if (micro != NULL)    
+    *micro = GEGL_MICRO_VERSION;        
+}
 
 
 static gboolean
