@@ -21,19 +21,21 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gegl-config.h"
 #include "../gegl-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-handler-cache.h"
-
-/* FIXME: this global cache should have configurable size and wash percentage */
+#include "gegl-debug.h"
 
 static GQueue *cache_queue = NULL;
-static gint    cache_size = 512;
 static gint    cache_wash_percentage = 20;
 static gint    cache_hits = 0;
 static gint    cache_misses = 0;
+
+static gint    cache_total = 0;  /* approximate amount of bytes stored */
+static gint    clones_ones = 0;  /* approximate amount of bytes stored */
 
 struct _GeglTileHandlerCache
 {
@@ -123,10 +125,6 @@ dispose (GObject *object)
   GSList *iter;
   cache = (GeglTileHandlerCache *) object;
 
-  if (0)
-    g_printerr ("Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n",
-                cache_size, cache_hits, cache_misses,
-                cache_hits * 100.0 / (cache_hits + cache_misses));
 
   /* only throw out items belonging to this cache instance
      (XXX: should probably have a local list for that)*/
@@ -137,7 +135,11 @@ dispose (GObject *object)
     {
         item = iter->data;
         if (item->tile)
-          g_object_unref (item->tile);
+          {
+            cache_total -= item->tile->size;
+            clones_ones = 0; /* XXX */
+            g_object_unref (item->tile);
+          }
         g_queue_remove (cache_queue, item);
         g_slice_free (CacheItem, item);
     }
@@ -157,7 +159,6 @@ get_tile (GeglTileSource *tile_store,
   GeglTileSource       *source = GEGL_HANDLER (tile_store)->source;
   GeglTile         *tile     = NULL;
 
-  if(0)g_print ("\r%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
@@ -270,7 +271,8 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
 {
   GeglTile  *last_dirty = NULL;
   guint      count      = 0;
-  gint       wash_tiles = cache_wash_percentage * cache_size / 100;
+  gint       length     = g_queue_get_length (cache_queue);
+  gint       wash_tiles = cache_wash_percentage * length / 100;
   GList     *link;
 
   for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
@@ -280,7 +282,7 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
 
       count++;
       if (!gegl_tile_is_stored (tile))
-        if (count > cache_size - wash_tiles)
+        if (count > length - wash_tiles)
           last_dirty = tile;
     }
 
@@ -352,6 +354,7 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
 
   if (last_writable != NULL)
     {
+      cache_total  -= last_writable->tile->size;
       g_object_unref (last_writable->tile);
       g_slice_free (CacheItem, last_writable);
       return TRUE;
@@ -381,6 +384,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
           item->handler == cache)
         {
           gegl_tile_void (tile);
+          cache_total  -= item->tile->size;
           g_object_unref (tile);
           g_slice_free (CacheItem, item);
           g_queue_delete_link (cache_queue, link);
@@ -404,15 +408,16 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   item->x       = x;
   item->y       = y;
   item->z       = z;
+  cache_total  += item->tile->size;
 
   g_queue_push_head (cache_queue, item);
 
   count = g_queue_get_length (cache_queue);
 
-  if (count > cache_size)
+  if (cache_total > gegl_config()->cache_size)
     {
-      gint to_remove = count - cache_size;
-
-      while (--to_remove && gegl_tile_handler_cache_trim (cache)) ;
+      GEGL_NOTE(CACHE, "cache_total:%i > cache_size:%i\n", cache_total, gegl_config()->cache_size);
+      GEGL_NOTE(CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
+      gegl_tile_handler_cache_trim (cache);
     }
 }

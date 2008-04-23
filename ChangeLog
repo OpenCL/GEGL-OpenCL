@@ -1,5 +1,11 @@
 2008-04-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler-cache.c: roughly obey requested cache
+	size.
+	* gegl/gegl-debug.h: added CACHE debuging domain.
+
+2008-04-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-config.c: New files for configuration object, that stores
 	* gegl/gegl-config.h: the settings that GEGL determines its behavior
 	from.
