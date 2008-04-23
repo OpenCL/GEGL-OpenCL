@@ -151,7 +151,6 @@ static GeglBufferItem *read_block (GInputStream *i,
     if(!g_seekable_seek (G_SEEKABLE (i), *offset, G_SEEK_SET, NULL, NULL))
       g_warning ("failed seeking to %i", (gint)*offset);
 
-  g_print ("offset: %i\n", (gint)*offset);
   read += g_input_stream_read (i, &block, sizeof (GeglBufferBlock), NULL, NULL);
   GEGL_NOTE (BUFFER_LOAD, "read block: length:%i next:%i",
                           block.length, (guint)block.next);
@@ -167,6 +166,12 @@ static GeglBufferItem *read_block (GInputStream *i,
           break;
      }
 
+  if (block.length != own_size)
+    {
+      GEGL_NOTE(BUFFER_LOAD, "read block of size %i which is different from expected %i only using available expected",
+        block.length, own_size);
+    }
+
   if (block.length == own_size ||
       block.length > own_size )
     {
@@ -178,6 +183,7 @@ static GeglBufferItem *read_block (GInputStream *i,
       read += g_input_stream_read (i, ((gchar*)ret) + sizeof(GeglBufferBlock),
                                        own_size - sizeof(GeglBufferBlock),
                                        NULL, NULL);
+      ret->block.length = own_size;
     }
   else if (block.length < own_size)
     {
@@ -186,6 +192,7 @@ static GeglBufferItem *read_block (GInputStream *i,
       read += g_input_stream_read (i, ((gchar*)ret) + sizeof(GeglBufferBlock),
                                        block.length - sizeof (GeglBufferBlock),
                                        NULL, NULL);
+      ret->block.length = own_size;
     }
   else
     {

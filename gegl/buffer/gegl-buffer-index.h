@@ -86,7 +86,6 @@ typedef struct {
   gint32  y;           
 
   gint32  z;             /* mipmap subdivision level of tile (0=100%)  */
-  guint32 padding[7];
 } GeglBufferTile;
 
 /* A convenience union to allow quick and simple casting */
@@ -127,8 +126,7 @@ GList          *gegl_buffer_read_index  (GInputStream *i,
     }
 #define GEGL_BUFFER_STRUCT_CHECK_PADDING \
   {struct_check_padding (GeglBufferBlock, 16);\
-  struct_check_padding (GeglBufferHeader,   256);\
-  struct_check_padding (GeglBufferTile, 64);}
+  struct_check_padding (GeglBufferHeader,   256);}
 #define GEGL_BUFFER_SANITY {static gboolean done=FALSE;if(!done){GEGL_BUFFER_STRUCT_CHECK_PADDING;done=TRUE;}}
 
 #endif

@@ -1,5 +1,13 @@
 2008-04-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-index.h: removed padding from tile struct,
+	since the loader is fault tolerant and only loads the available of
+	expected data from disk.
+	* gegl/buffer/gegl-buffer-load.c: (read_block): log block size
+	discrepancies.
+
+2008-04-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_post_parse_hook): read GEGL_CACHE_SIZE from
 	environment.
 	* gegl/gegl-config.c: (gegl_config_init): made the default cache size
