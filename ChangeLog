@@ -1,3 +1,9 @@
+2008-04-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/color-reduction.c: added a color reduction
+	operation from Hans Petter Jansson <hpj at copyleft.no>
+	* AUTHORS: added Hans Petter Jansson.
+
 2008-04-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-plugin.h: renamed gegl4float to g4float.
