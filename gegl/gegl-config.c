@@ -152,5 +152,5 @@ gegl_config_init (GeglConfig *self)
 {
   self->swap = NULL;
   self->quality = 1.0;
-  self->cache_size = 64*1024*1024;
+  self->cache_size = 256*1024*1024;
 }

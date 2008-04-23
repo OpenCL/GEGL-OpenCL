@@ -1,5 +1,12 @@
 2008-04-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (gegl_post_parse_hook): read GEGL_CACHE_SIZE from
+	environment.
+	* gegl/gegl-config.c: (gegl_config_init): made the default cache size
+	256mb.
+
+2008-04-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler-cache.c: roughly obey requested cache
 	size.
 	* gegl/gegl-debug.h: added CACHE debuging domain.

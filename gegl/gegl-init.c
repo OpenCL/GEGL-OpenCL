@@ -334,6 +334,10 @@ gegl_post_parse_hook (GOptionContext *context,
   config = g_object_new (GEGL_TYPE_CONFIG, NULL);
   if (g_getenv ("GEGL_QUALITY"))
     config->quality = atof(g_getenv("GEGL_QUALITY")); 
+  if (g_getenv ("GEGL_CACHE_SIZE"))
+    config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
+
+
   if (gegl_swap_dir())
     config->swap = g_strdup(gegl_swap_dir ());
   if (cmd_gegl_swap)
@@ -423,7 +427,7 @@ gegl_post_parse_hook (GOptionContext *context,
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
 
   if (g_getenv ("GEGL_SWAP"))
-    g_object_set (config, "swap-path", g_getenv ("GEGL_SWAP"), NULL);
+    g_object_set (config, "swap", g_getenv ("GEGL_SWAP"), NULL);
   if (g_getenv ("GEGL_QUALITY"))
     {
       const gchar *quality = g_getenv ("GEGL_QUALITY");
