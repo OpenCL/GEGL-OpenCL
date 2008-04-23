@@ -14,22 +14,24 @@ libpropertytypes = $(top_builddir)/gegl/property-types/libpropertytypes.la
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
 GEGL_sources = \
+	gegl-config.c			\
+	gegl-cpuaccel.c			\
+	gegl-dot.c			\
 	gegl-init.c			\
 	gegl-instrument.c		\
-	gegl-dot.c			\
 	gegl-utils.c			\
 	gegl-xml.c			\
-	gegl-cpuaccel.c			\
-	gegl-cpuaccel.h			\
 	\
-	gegl-init.h			\
-	gegl-types.h			\
-	gegl-dot.h			\
-	gegl-xml.h			\
-	gegl-plugin.h			\
 	gegl-chant.h			\
+	gegl-config.h			\
+	gegl-cpuaccel.h			\
+	gegl-dot.h			\
+	gegl-init.h			\
 	gegl-instrument.h		\
-	gegl-module.h
+	gegl-module.h			\
+	gegl-plugin.h			\
+	gegl-types.h			\
+	gegl-xml.h
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
@@ -63,6 +65,7 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl-utils.h			\
     gegl-chant.h			\
     gegl-plugin.h			\
+    gegl-config.c			\
     buffer/gegl-buffer.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\

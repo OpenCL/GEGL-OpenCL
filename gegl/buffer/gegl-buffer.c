@@ -62,6 +62,7 @@
 #include "gegl-utils.h"
 #include "gegl-id-pool.h"
 #include "gegl-buffer-index.h"
+#include "gegl-config.h"
 
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
@@ -899,10 +900,10 @@ gegl_buffer_new_from_format (const void *babl_format,
 
   filename = g_strdup_printf ("%i-%i", getpid(), no++);
 
-  path = g_build_filename (gegl_swap_dir (), filename, NULL);
+  path = g_build_filename (gegl_config()->swap, filename, NULL);
   g_free (filename);
 
-  if (gegl_swap_dir ())
+  if (gegl_config()->swap)
     {
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
@@ -926,50 +927,6 @@ gegl_buffer_new_from_format (const void *babl_format,
   g_object_unref (tile_storage);
   return buffer;
 }
-
-const gchar *
-gegl_swap_dir (void);
-
-/* if this function is made to return NULL swapping is disabled */
-const gchar *
-gegl_swap_dir (void)
-{
-  static gchar *swapdir = "";
-
-  if (swapdir && swapdir[0] == '\0')
-    {
-      if (g_getenv ("GEGL_SWAP"))
-        {
-          if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
-            swapdir = NULL;
-          else
-            swapdir = g_strdup (g_getenv ("GEGL_SWAP"));
-        }
-      else
-        {
-          swapdir = g_build_filename (g_get_home_dir(),
-                                      "." GEGL_LIBRARY,
-                                      "swap",
-                                      NULL);
-        }
-
-      /* Fall back to "swapping to RAM" if not able to create swap dir
-       */
-      if (swapdir &&
-          ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
-          g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
-        {
-          gchar *name = g_filename_display_name (swapdir);
-
-          g_warning ("unable to create swapdir '%s': %s",
-                     name, g_strerror (errno));
-          g_free (name);
-
-          swapdir = NULL;
-        }
-    }
-  return swapdir;
-};
 
 
 static const void *int_gegl_buffer_get_format (GeglBuffer *buffer)

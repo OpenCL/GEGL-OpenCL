@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "gegl-types.h"
+#include  "gegl-config.h"
 #include "gegl-operation.h"
 #include "gegl-utils.h"
 #include "gegl-cpuaccel.h"
@@ -47,12 +48,17 @@
 
 #include <glib/gprintf.h>
 
+/* FIXME:
+ *
+ *   pick the correct processor at runtime rather than at class init time
+ *   to allow the gegl_config request to override the initial conditions
+ */
+
 typedef struct VFuncData
 {
   GCallback callback[MAX_PROCESSOR];
   gchar    *string[MAX_PROCESSOR];
 } VFuncData;
-
 
 void
 gegl_class_register_alternate_vfunc (GObjectClass *cclass,
@@ -86,7 +92,7 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
   if (data->callback[0]==NULL)
     {
       if (*vfunc_ptr == NULL)
-        g_error ("%s: No exsiting default () vfunc defined for %s",
+        g_error ("%s: No existing default () vfunc defined for %s",
                  G_STRFUNC, g_type_name (type));
       data->callback[0]=callback;
       data->string[0]=g_strdup ("reference");
@@ -109,18 +115,12 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
     }
 
     {
-      const gchar *quality  = g_getenv ("GEGL_QUALITY");
       gint fast        = 0;
       gint good        = 0;
       gint reference   = 0;
       gint g4f         = 0;
 
       gint choice = 0;
-
-      /* if no quality is specified, look for good, which also includes the
-       * g4float implementation */
-      if (quality == NULL)
-        quality = "good";
 
       for (i=0;i<MAX_PROCESSOR;i++)
         {
@@ -142,24 +142,22 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
       reference = 0;
       g_assert (data->callback[reference]);
 
-      if (g_str_equal (quality, "good")||
-          g_str_equal (quality, "fast"))
+      if (gegl_config()->quality <= 0.5)
         {
           if (good) choice = good;
           if (g4f) choice = g4f;
         }
-      if (g_str_equal (quality, "fast"))
+      if (gegl_config()->quality <= 0.2)
         {
           if (good) choice = good;
           if (g4f) choice = g4f;
+          if (fast) choice = fast;
         }
 
       GEGL_NOTE(PROCESSOR, "Using %s implementation for %s", data->string[choice], g_type_name (G_TYPE_FROM_CLASS (cclass)));
       *vfunc_ptr = data->callback[choice];
     }
 }
-
-
 
 void
 gegl_operation_class_add_processor (GeglOperationClass *cclass,

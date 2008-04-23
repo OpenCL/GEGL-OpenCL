@@ -1,5 +1,21 @@
 2008-04-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-config.c: New files for configuration object, that stores
+	* gegl/gegl-config.h: the settings that GEGL determines its behavior
+	from.
+
+	* gegl/buffer/gegl-buffer.c: use swap from gegl-config
+	* gegl/gegl-init.[ch]: initialize GeglConfig from
+	default->environment->commandline->application, the control from the
+	application might not be fully working for all properties.
+	* gegl/gegl.h.in: added gegl_config()
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): determine quality to use from
+	gegl_config.
+	* gegl/Makefile.am: added new files.
+
+2008-04-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/color-reduction.c: added a color reduction
 	operation from Hans Petter Jansson <hpj at copyleft.no>
 	* AUTHORS: added Hans Petter Jansson.

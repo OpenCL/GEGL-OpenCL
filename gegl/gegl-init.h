@@ -26,7 +26,12 @@ void           gegl_init              (gint    *argc,
                                        gchar ***argv);
 GOptionGroup * gegl_get_option_group  (void);
 void           gegl_exit              (void);
-gboolean       gegl_get_debug_enabled (void);
+
+gboolean       gegl_get_debug_enabled (void); /* should be moved into config */
+
+void           gegl_get_version          (int *major,
+                                          int *minor,
+                                          int *micro);
 
 
 G_END_DECLS

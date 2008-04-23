@@ -820,6 +820,7 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
  */
 void           gegl_processor_destroy       (GeglProcessor *processor);
 
+GObject      * gegl_config (void);
 
 
 #ifndef GEGL_INTERNAL

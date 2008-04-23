@@ -39,19 +39,60 @@
 guint gegl_debug_flags = 0; 
 
 
-
 #include "gegl-instrument.h"
-/*#include "gegl-types.h"*/
 #include "gegl-init.h"
-
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
-
+#include "gegl-types.h"
+#include "buffer/gegl-buffer.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
 #include "buffer/gegl-buffer-private.h"
+#include "gegl-config.h"
 
+
+/* if this function is made to return NULL swapping is disabled */
+const gchar *
+gegl_swap_dir (void)
+{
+  static gchar *swapdir = "";
+
+  if (swapdir && swapdir[0] == '\0')
+    {
+      if (g_getenv ("GEGL_SWAP"))
+        {
+          if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
+            swapdir = NULL;
+          else
+            swapdir = g_strdup (g_getenv ("GEGL_SWAP"));
+        }
+      else
+        {
+          swapdir = g_build_filename (g_get_home_dir(),
+                                      "." GEGL_LIBRARY,
+                                      "swap",
+                                      NULL);
+        }
+
+      /* Fall back to "swapping to RAM" if not able to create swap dir
+       */
+      if (swapdir &&
+          ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
+          g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
+        {
+#if 0
+          gchar *name = g_filename_display_name (swapdir);
+          g_warning ("unable to create swapdir '%s': %s",
+                     name, g_strerror (errno));
+          g_free (name);
+#endif
+
+          swapdir = NULL;
+        }
+    }
+  return swapdir;
+};
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
@@ -59,7 +100,8 @@ static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GError        **error);
 
 
-static gboolean      gegl_initialized = FALSE;
+static GeglConfig   *config = NULL;
+
 
 static GeglModuleDB *module_db   = NULL;
 
@@ -85,7 +127,9 @@ void
 gegl_init (gint    *argc,
            gchar ***argv)
 {
-  if (gegl_initialized)
+  GOptionContext *context;
+  GError         *error = NULL;
+  if (config)
     return;
 
 #if ENABLE_MP
@@ -97,11 +141,9 @@ gegl_init (gint    *argc,
    *  out code below should be used.  Until then, we simply call the parse hook
    *  directly.
    */
-  gegl_post_parse_hook (NULL, NULL, NULL, NULL);
-
 #if 0
-  GOptionContext *context;
-  GError         *error = NULL;
+  gegl_post_parse_hook (NULL, NULL, NULL, NULL);
+#else
 
   context = g_option_context_new (NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);
@@ -117,6 +159,36 @@ gegl_init (gint    *argc,
   g_option_context_free (context);
 #endif
 }
+
+static gchar   *cmd_gegl_swap=NULL;
+static gchar   *cmd_gegl_cache_size=NULL;
+static gchar   *cmd_gegl_quality=NULL;
+static gchar   *cmd_babl_error=NULL;
+
+static const GOptionEntry cmd_entries[]=
+{
+    {
+     "babl-error", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_babl_error, 
+     N_("babls error tolerance, a value beteen 0.2 and 0.000000001"), "<float>"
+    },
+    {
+     "gegl-swap", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_gegl_swap, 
+     N_("Where GEGL stores it's swap"), "<uri>"
+    },
+    {
+     "gegl-cache-size", 0, 0, 
+     G_OPTION_ARG_STRING, &cmd_gegl_cache_size, 
+     N_("How much memory to (approximately) use for caching imagery"), "<megabytes>"
+    },
+    {
+     "gegl-quality", 0, 0, 
+     G_OPTION_ARG_STRING, &cmd_gegl_quality, 
+     N_("The quality of rendering a value between 0.0(fast) and 1.0(reference)"), "<quality>"
+    },
+    { NULL }
+};
 
 /**
  * gegl_get_option_group:
@@ -135,10 +207,17 @@ gegl_get_option_group (void)
 
   group = g_option_group_new ("gegl", "GEGL Options", "Show GEGL Options",
                               NULL, NULL);
+  g_option_group_add_entries (group, cmd_entries);
 
   g_option_group_set_parse_hooks (group, NULL, gegl_post_parse_hook);
 
   return group;
+}
+
+GObject *gegl_config (void);
+GObject *gegl_config (void)
+{
+  return G_OBJECT (config);
 }
 
 void gegl_tile_backend_ram_stats (void);
@@ -217,24 +296,12 @@ gegl_exit (void)
 
       g_pattern_spec_free (pattern);
     }
+  g_object_unref (config);
+  config = NULL;
 
   g_print ("\n");
 }
 
-void
-gegl_get_version (int *major,
-		  int *minor,
-		  int *micro)
-{
-  if (major != NULL)
-    *major = GEGL_MAJOR_VERSION;
-
-  if (minor != NULL)
-    *minor = GEGL_MINOR_VERSION;
-
-  if (micro != NULL)
-    *micro = GEGL_MICRO_VERSION;
-}
 
 
 static void
@@ -245,6 +312,8 @@ gegl_init_i18n (void)
 }
 
 
+
+
 static gboolean
 gegl_post_parse_hook (GOptionContext *context,
                       GOptionGroup   *group,
@@ -253,14 +322,28 @@ gegl_post_parse_hook (GOptionContext *context,
 {
   glong time;
 
-  if (gegl_initialized)
+  if (config)
     return TRUE;
+
 
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
   g_type_init ();
   gegl_instrument ("gegl", "gegl_init", 0);
 
+  config = g_object_new (GEGL_TYPE_CONFIG, NULL);
+  if (g_getenv ("GEGL_QUALITY"))
+    config->quality = atof(g_getenv("GEGL_QUALITY")); 
+  if (gegl_swap_dir())
+    config->swap = g_strdup(gegl_swap_dir ());
+  if (cmd_gegl_swap)
+    g_object_set (config, "swap", cmd_gegl_swap, NULL);
+  if (cmd_gegl_quality)
+    config->quality = atof (cmd_gegl_quality);
+  if (cmd_gegl_cache_size)
+    config->cache_size = atoi (cmd_gegl_cache_size)*1024*1024;
+  if (cmd_babl_error)
+    g_object_set (config, "babl-error", atof(cmd_babl_error), NULL);
 
 #ifdef GEGL_ENABLE_DEBUG
   {
@@ -278,9 +361,6 @@ gegl_post_parse_hook (GOptionContext *context,
 #endif /* GEGL_ENABLE_DEBUG */
 
   time = gegl_ticks ();
-
-  if (g_getenv ("BABL_ERROR") == NULL)
-    g_setenv ("BABL_ERROR", "0.0001", 0);
 
   babl_init ();
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
@@ -341,7 +421,19 @@ gegl_post_parse_hook (GOptionContext *context,
     }
 
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
-  gegl_initialized = TRUE;
+
+  if (g_getenv ("GEGL_SWAP"))
+    g_object_set (config, "swap-path", g_getenv ("GEGL_SWAP"), NULL);
+  if (g_getenv ("GEGL_QUALITY"))
+    {
+      const gchar *quality = g_getenv ("GEGL_QUALITY");
+      if (g_str_equal (quality, "fast"))
+        g_object_set (config, "quality", 0.0, NULL);
+      if (g_str_equal (quality, "good"))
+        g_object_set (config, "quality", 0.5, NULL);
+      if (g_str_equal (quality, "best"))
+        g_object_set (config, "quality", 1.0, NULL);
+    }
 
   return TRUE;
 }
@@ -349,6 +441,7 @@ gegl_post_parse_hook (GOptionContext *context,
 
 
 #ifdef GEGL_ENABLE_DEBUG
+#if 0
 static gboolean
 gegl_arg_debug_cb (const char *key,
                    const char *value,
@@ -372,6 +465,7 @@ gegl_arg_no_debug_cb (const char *key,
                            G_N_ELEMENTS (gegl_debug_keys));
   return TRUE;
 }
+#endif
 #endif
 
 /*
