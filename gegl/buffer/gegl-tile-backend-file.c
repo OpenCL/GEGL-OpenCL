@@ -460,27 +460,29 @@ flush (GeglTileSource *source,
 
   GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
 
+
   self->header.next = self->next_pre_alloc; /* this is the offset
                                                we start handing
                                                out headers from*/
-
   tiles = g_hash_table_get_keys (self->index);
 
-/*  g_assert(g_seekable_seek (G_SEEKABLE (self->o), self->header.next, G_SEEK_SET, NULL, NULL));*/
-  /* save the index */
-  {
-    GList *iter;
-    for (iter = tiles; iter; iter = iter->next)
-      {
-        GeglBufferItem *item = iter->data;
+  if (tiles == NULL)
+    self->header.next = 0;
+  else
+    {
+      GList *iter;
+      for (iter = tiles; iter; iter = iter->next)
+        {
+          GeglBufferItem *item = iter->data;
 
-        write_block (self, &item->block);
-      }
-  }
-  write_block (self, NULL); /* terminate the index */
-  g_output_stream_flush (self->o, NULL, NULL);
-  g_list_free (tiles);
+          write_block (self, &item->block);
+        }
+      write_block (self, NULL); /* terminate the index */
+      g_list_free (tiles);
+    }
+
   write_header (self);
+  g_output_stream_flush (self->o, NULL, NULL);
 
   GEGL_NOTE (TILE_BACKEND, "flushed %s", self->path);
 

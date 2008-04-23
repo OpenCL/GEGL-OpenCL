@@ -1,5 +1,14 @@
 2008-04-24  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixes that makes it possible to reopen a buffer with the same path
+	when a buffer in the same process has been flushed using the path
+	retrieved from the original buffer.
+
+	* gegl/buffer/gegl-buffer.c: (get_property):
+	* gegl/buffer/gegl-tile-backend-file.c: (flush):
+
+2008-04-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_get_version): add back accidentally removed
 	gegl_get_version.
 

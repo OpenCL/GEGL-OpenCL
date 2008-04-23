@@ -51,6 +51,7 @@
 #include "gegl-tile-handler.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
+#include "gegl-tile-backend-file.h"
 #include "gegl-tile.h"
 #include "gegl-tile-handler-cache.h"
 #include "gegl-tile-handler-log.h"
@@ -138,7 +139,17 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_PATH:
-        g_value_set_string (value, buffer->path);
+          {
+            GeglTileBackend *backend = gegl_buffer_backend (buffer);
+            if (GEGL_IS_TILE_BACKEND_FILE(backend))
+              {
+                if (buffer->path)
+                  g_free (buffer->path);
+                buffer->path = NULL;
+                g_object_get (backend, "path", &buffer->path, NULL);
+              }
+          }
+          g_value_set_string (value, buffer->path);
         break;
       case PROP_PIXELS:
         g_value_set_int (value, buffer->extent.width * buffer->extent.height);
