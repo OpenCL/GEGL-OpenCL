@@ -914,19 +914,24 @@ gegl_buffer_new_from_format (const void *babl_format,
   path = g_build_filename (gegl_config()->swap, filename, NULL);
   g_free (filename);
 
-  if (gegl_config()->swap)
+  if (!gegl_config()->swap ||
+      g_str_equal (gegl_config()->swap, "RAM") ||
+      g_str_equal (gegl_config()->swap, "ram")
+      )
     {
+      tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
+                              "format", babl_format,
+                              NULL);
+    }
+  else
+    {
+      g_warning ("swap is: %s", gegl_config()->swap);
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
                               "path",   path,
                               NULL);
     }
-  else
-    {
-      tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                              "format", babl_format,
-                              NULL);
-    }
+
   buffer = g_object_new (GEGL_TYPE_BUFFER,
                                     "source", tile_storage,
                                     "x", x,

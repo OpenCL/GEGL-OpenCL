@@ -1,5 +1,17 @@
 2008-04-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_new_from_format): treat the
+	swap locations RAM and ram specially (this means that GEGL cannot use
+	a file in the current directory named RAM or ram as it's swap file.
+
+2008-04-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-backend-file.c:
+	(gegl_tile_backend_file_constructor): write an initial header before
+	trying to open the input stream.
+
+2008-04-24  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixes that makes it possible to reopen a buffer with the same path
 	when a buffer in the same process has been flushed using the path
 	retrieved from the original buffer.
