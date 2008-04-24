@@ -1,3 +1,26 @@
+2008-04-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a diff based test suite for tracking the stability
+	of GeglBuffer's core set of operations.
+
+	* tests/buffer/Makefile:
+	* tests/buffer/README:
+	* tests/buffer/buffer-test.c:
+
+	The following are reference images for the GeglBuffer tests.
+	
+	* tests/buffer/reference/buffer_inherit_parent_extent:
+	* tests/buffer/reference/buffer_shift_diagonal:
+	* tests/buffer/reference/buffer_shift_horizontal:
+	* tests/buffer/reference/buffer_shift_vertical:
+	* tests/buffer/reference/disabled_abyss:
+	* tests/buffer/reference/sub_rect_fills_and_gets:
+	* tests/buffer/reference/sub_sub_fill:
+	* tests/buffer/reference/test_blank:
+	* tests/buffer/reference/test_checkerboard:
+	* tests/buffer/reference/test_gegl_buffer_copy:
+	* tests/buffer/reference/test_get_buffer_scaled2:
+
 2008-04-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_new_from_format): treat the

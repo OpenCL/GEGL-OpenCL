@@ -1,0 +1,5 @@
+GeglBuffer test-suite.
+
+Run make check to test that GeglBuffer hasn't introduced any regressions to the
+core API. Bein able to adjust the tile size to be very small would be a useful
+addition.
