@@ -925,7 +925,6 @@ gegl_buffer_new_from_format (const void *babl_format,
     }
   else
     {
-      g_warning ("swap is: %s", gegl_config()->swap);
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
                               "path",   path,
@@ -952,7 +951,6 @@ static const void *int_gegl_buffer_get_format (GeglBuffer *buffer)
     return buffer->format;
   return gegl_buffer_backend (buffer)->format;
 }
-
 
 static void
 gegl_buffer_void (GeglBuffer *buffer)
