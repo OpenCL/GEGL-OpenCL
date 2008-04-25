@@ -1,5 +1,18 @@
 2008-04-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): moved the logic of selecting
+	an implementation to use to method invocation, by replacing the
+	default impementation with a dispatcher that handles virtual functions
+	with up to 10 arguments.
+	(dispatch): the static helper function that dispatches.
+	
+	This change makes the code less general since it now only can have
+	one overridden vfunc per gtype. This should not be a problem for GEGLs
+	current use of the infrastructure.
+
+2008-04-25  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a diff based test suite for tracking the stability
 	of GeglBuffer's core set of operations.
 
