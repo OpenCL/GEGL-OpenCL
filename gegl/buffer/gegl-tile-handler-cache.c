@@ -41,12 +41,6 @@ struct _GeglTileHandlerCache
 {
   GeglTileHandler parent_instance;
   GSList *free_list;
-
-/*  GQueue     *queue;
-  gint        size;
-  gint        wash_percentage;
-  gint        hits;
-  gint        misses;*/
 };
 
 void gegl_tile_cache_init (void)
@@ -121,13 +115,12 @@ static void
 dispose (GObject *object)
 {
   GeglTileHandlerCache *cache;
-  CacheItem        *item;
-  GSList *iter;
-  cache = (GeglTileHandlerCache *) object;
+  CacheItem            *item;
+  GSList               *iter;
 
+  cache = GEGL_TILE_HANDLER_CACHE (object);
 
-  /* only throw out items belonging to this cache instance
-     (XXX: should probably have a local list for that)*/
+  /* only throw out items belonging to this cache instance */
 
   cache->free_list = NULL;
   g_queue_foreach (cache_queue, queue_each, cache);
@@ -157,8 +150,7 @@ get_tile (GeglTileSource *tile_store,
 {
   GeglTileHandlerCache *cache    = GEGL_TILE_HANDLER_CACHE (tile_store);
   GeglTileSource       *source = GEGL_HANDLER (tile_store)->source;
-  GeglTile         *tile     = NULL;
-
+  GeglTile             *tile     = NULL;
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
@@ -414,10 +406,10 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
   count = g_queue_get_length (cache_queue);
 
-  if (cache_total > gegl_config()->cache_size)
+  while (cache_total > gegl_config()->cache_size)
     {
-      GEGL_NOTE(CACHE, "cache_total:%i > cache_size:%i\n", cache_total, gegl_config()->cache_size);
-      GEGL_NOTE(CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
+      /*GEGL_NOTE(CACHE, "cache_total:%i > cache_size:%i", cache_total, gegl_config()->cache_size);
+      GEGL_NOTE(CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));*/
       gegl_tile_handler_cache_trim (cache);
     }
 }

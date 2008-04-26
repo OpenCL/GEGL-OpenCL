@@ -1,5 +1,10 @@
 2008-04-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler-cache.c: (dispose), (get_tile),
+	(gegl_tile_handler_cache_insert): indentation and dead code removal.
+
+2008-04-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/color-temperature.c: added a manual white balance
 	corrector that computes the adjustment based on color temperature
 	values from Jan Heller.
