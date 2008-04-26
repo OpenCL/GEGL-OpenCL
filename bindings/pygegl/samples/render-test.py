@@ -13,7 +13,7 @@ width = 40
 height = 40
 
 gegl    = Gegl.Node()
-fractal = gegl.new_child("FractalExplorer",
+fractal = gegl.new_child("fractal-explorer",
                          width=width,
                          height=height,
                          ncolors=3)
@@ -22,7 +22,7 @@ text    = gegl.new_child("text",
                          string="GEGL\n\n term",
                          size=height/4)
 over    = gegl.new_child("over")
-display = gegl.new_child("display")
+display = gegl.new_child("screen")
 
 fractal >> contrast >> over >> display
 text >> over["aux"]

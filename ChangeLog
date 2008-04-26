@@ -1,3 +1,7 @@
+2008-04-25 João S. O. Bueno <gwidion@mpc.com.br>
+       * bindings/pygegl/samples/render-test.py: Updated operation names
+       for fractal-explorer and screen
+
 2008-04-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-processors.c:
