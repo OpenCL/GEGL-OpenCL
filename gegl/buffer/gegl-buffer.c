@@ -577,9 +577,9 @@ get_tile (GeglTileSource *source,
        */
       {
         tile->tile_storage   = buffer->tile_storage;
-        tile->storage_x = x;
-        tile->storage_y = y;
-        tile->storage_z = z;
+        tile->x = x;
+        tile->y = y;
+        tile->z = z;
       }
     }
 

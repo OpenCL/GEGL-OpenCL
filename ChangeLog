@@ -1,5 +1,16 @@
 2008-04-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.h: removed storage_x, storage_y and storage_z
+	bits since tiles themselves should only exist in one coordinate
+	system, the one of the storage buffer.
+	* gegl/buffer/gegl-buffer-access.c: (pset), (pget):
+	* gegl/buffer/gegl-buffer.c: (get_tile):
+	* gegl/buffer/gegl-tile-handler-zoom.c: (get_tile):
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid),
+	(gegl_tile_store):
+
+2008-04-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler-cache.c: (dispose), (get_tile),
 	(gegl_tile_handler_cache_insert): indentation and dead code removal.
 

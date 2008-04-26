@@ -164,8 +164,8 @@ pset (GeglBuffer *buffer,
         GeglTile *tile     = NULL;
 
         if (buffer->hot_tile &&
-            buffer->hot_tile->storage_x == indice_x &&
-            buffer->hot_tile->storage_y == indice_y)
+            buffer->hot_tile->x == indice_x &&
+            buffer->hot_tile->y == indice_y)
           {
             tile = buffer->hot_tile;
           }
@@ -249,8 +249,8 @@ pget (GeglBuffer *buffer,
         GeglTile *tile     = NULL;
 
         if (buffer->hot_tile &&
-            buffer->hot_tile->storage_x == indice_x &&
-            buffer->hot_tile->storage_y == indice_y)
+            buffer->hot_tile->x == indice_x &&
+            buffer->hot_tile->y == indice_y)
           {
             tile = buffer->hot_tile;
           }

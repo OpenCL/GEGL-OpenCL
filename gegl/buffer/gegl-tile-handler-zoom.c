@@ -296,13 +296,10 @@ get_tile (GeglTileSource *gegl_tile_source,
         /* it is a bit hacky, but adding enough information (probably too much)
          * enabling the tile_storage system to attempt swapping out of zoom tiles
          */
-        tile->storage_x  = x;
-        tile->storage_y  = y;
-        tile->storage_z  = z;
         tile->x          = x;
         tile->y          = y;
         tile->z          = z;
-        tile->tile_storage    = zoom->tile_storage;
+        tile->tile_storage = zoom->tile_storage;
         tile->stored_rev = 1;
         tile->rev        = 1;
 

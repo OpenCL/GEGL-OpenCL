@@ -271,9 +271,9 @@ gegl_tile_void_pyramid (GeglTile *tile)
    */
   gint x, y, z;
 
-  x = tile->storage_x;
-  y = tile->storage_y;
-  z = 0;/*tile->storage_z;*/
+  x = tile->x;
+  y = tile->y;
+  z = 0;/*tile->z;*/
 
   for (z = 1; z < 10; z++)
     {
@@ -401,9 +401,9 @@ gboolean gegl_tile_store (GeglTile *tile)
   if (tile->tile_storage == NULL)
     return FALSE;
   return gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
-                                    tile->storage_x,
-                                    tile->storage_y,
-                                    tile->storage_z, tile);
+                                    tile->x,
+                                    tile->y,
+                                    tile->z, tile);
 }
 
 /* compute the tile indice of a coordinate
