@@ -33,10 +33,6 @@ static char *commands[] =
   "is_cached",
   "exist",
   "-", /*void*/
-  "void tl", 
-  "void tr", 
-  "void bl",
-  "void br",
   "flush",
   "invalidated",
   "last command",

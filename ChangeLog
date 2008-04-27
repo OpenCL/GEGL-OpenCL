@@ -1,5 +1,26 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.h: removed flags from tile, as well as the
+	only user the for now deprecated quarter dirtying code. Not storing
+	per tile flags simplifies the tile storage backends, adding this back
+	can be considered with a working implementation.
+	* gegl/buffer/gegl-tile-source.h: 
+	* gegl/buffer/gegl-tile-backend-file.c:
+	* gegl/buffer/gegl-tile-backend-ram.c:
+	* gegl/buffer/gegl-tile-backend-tiledir.c:
+	* gegl/buffer/gegl-tile-handler-log.c:
+	* gegl/buffer/gegl-tile-handler-zoom.c:
+	* gegl/buffer/gegl-tile.c: refactored to use a much smaller recurse
+	function and removed defunct quarter dirtying code in favor of voiding
+	all smaller versions of a tile.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile.c: (_gegl_tile_void_pyramid),
+	(gegl_tile_void_pyramid), (gegl_tile_void), (gegl_tile_store):
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.c: (gegl_tile_unlock): made the revisions of
 	tiles on the mipmap levels also get tile->rev++, making the finalize
 	method of tiles cause them to be written to backend storage.

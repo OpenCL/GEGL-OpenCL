@@ -178,7 +178,6 @@ gegl_tile_init (GeglTile *tile)
   tile->rev        = 0;
   tile->lock       = 0;
   tile->data       = NULL;
-  tile->flags      = 0;
 
   tile->next_shared = tile;
   tile->prev_shared = tile;
@@ -260,56 +259,27 @@ gegl_tile_lock (GeglTile *tile)
 }
 
 static void
+_gegl_tile_void_pyramid (GeglTileSource *source,
+                         gint            x,
+                         gint            y,
+                         gint            z)
+{
+  if (z>10)
+    return;
+  gegl_tile_source_void (source, x, y, z);
+  _gegl_tile_void_pyramid (source, x/2, y/2, z+1);
+}
+
+static void
 gegl_tile_void_pyramid (GeglTile *tile)
 {
-  /* should, to tile->tile_storage, request it's toplevel tile, and mark
-   * it as dirty, to force a recomputation of it's toplevel at the
-   * next subdivision request. NB: a full voiding might not be neccesary,
-   * forcing a rerender of just the dirtied part might be better, more
-   * similar to how it was done in horizon, this will only work with 4->1 px
-   * averageing.
-   */
-  gint x, y, z;
-
-  x = tile->x;
-  y = tile->y;
-  z = 0;/*tile->z;*/
-
-  for (z = 1; z < 10; z++)
+  if (tile->z == 0) /* we only accepting voiding the base level */
     {
-#if 0
-      gint ver = (y % 2);
-      gint hor = (x % 2);
-#endif
-      x /= 2;
-      y /= 2;
-
-      gegl_tile_source_void (GEGL_TILE_SOURCE (tile->tile_storage), x, y, z);
-#if 0
-      /* FIXME: reenable this code */
-      if (!ver)
-        {
-          if (!hor)
-            {
-              gegl_tile_source_void_tl (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);
-            }
-          else
-            {
-              gegl_tile_source_void_tr (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);              
-            }
-        }
-      else
-        {
-          if (!hor)
-            {
-              gegl_tile_source_void_bl (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);              
-            }
-          else
-            {
-			  gegl_tile_source_void_br (GEGL_TILE_SOURCE (tile->tile_storage), x,y,z);
-            }
-        }
-#endif
+      _gegl_tile_void_pyramid (GEGL_TILE_SOURCE (tile->tile_storage), 
+                               tile->x/2,
+                               tile->y/2,
+                               tile->z+1);
+      return;
     }
 }
 
@@ -346,9 +316,8 @@ gegl_tile_void (GeglTile *tile)
 {
   tile->stored_rev = tile->rev;
   tile->tile_storage = NULL;
-  /* FIXME: make sure the tile is evicted from any tile_storage/buffer caches
-   * as well
-   */
+  if (tile->z==0)
+    gegl_tile_void_pyramid (tile);
 }
 
 void
@@ -404,7 +373,8 @@ gboolean gegl_tile_store (GeglTile *tile)
   return gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
                                     tile->x,
                                     tile->y,
-                                    tile->z, tile);
+                                    tile->z,
+                                    tile);
 }
 
 /* compute the tile indice of a coordinate

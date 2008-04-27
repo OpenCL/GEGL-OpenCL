@@ -215,15 +215,8 @@ get_tile (GeglTileSource *gegl_tile_source,
       tile = gegl_tile_source_get_tile (source, x, y, z);
     }
 
-  if (tile != NULL)
-    {
-      /* Check that the tile is fully valid */
-      if (!(tile->flags & (GEGL_TILE_DIRT_TL |
-                           GEGL_TILE_DIRT_TR |
-                           GEGL_TILE_DIRT_BL |
-                           GEGL_TILE_DIRT_BR)))
-        return tile;
-    }
+  if (tile)
+    return tile;
 
   if (z == 0)/* at base level with no tile found->send null, and shared empty
                tile will be used instead */
@@ -240,38 +233,13 @@ get_tile (GeglTileSource *gegl_tile_source,
   {
     gint      i, j;
     guchar   *data;
-    gboolean  had_tile          = tile != NULL;
     GeglTile *source_tile[2][2] = { { NULL, NULL }, { NULL, NULL } };
-    gboolean  fetch[2][2]       = { { FALSE, FALSE },
-                                    { FALSE, FALSE } };
-
-    if (had_tile)
-      {
-        if (tile->flags & GEGL_TILE_DIRT_TL)
-          fetch[0][0] = TRUE;
-        if (tile->flags & GEGL_TILE_DIRT_TR)
-          fetch[1][0] = TRUE;
-        if (tile->flags & GEGL_TILE_DIRT_BL)
-          fetch[0][1] = TRUE;
-        if (tile->flags & GEGL_TILE_DIRT_BR)
-          fetch[1][1] = TRUE;
-
-        tile->flags = 0;
-      }
-    else
-      {
-        fetch[0][0] = TRUE;
-        fetch[1][0] = TRUE;
-        fetch[0][1] = TRUE;
-        fetch[1][1] = TRUE;
-      }
 
     for (i = 0; i < 2; i++)
       for (j = 0; j < 2; j++)
         {
           /* we get the tile from ourselves, to make successive rescales work
            * correctly */
-          if (fetch[i][j])
             source_tile[i][j] = gegl_tile_source_get_tile (gegl_tile_source,
                                                           x * 2 + i, y * 2 + j, z - 1);
         }
@@ -281,21 +249,15 @@ get_tile (GeglTileSource *gegl_tile_source,
         source_tile[1][0] == NULL &&
         source_tile[1][1] == NULL)
       {
-        if (had_tile)
-          {
-            g_object_unref (tile);
-          }
         return NULL;   /* no data from level below, return NULL and let GeglTileHandlerEmpty
                           fill in the shared empty tile */
       }
 
-    if (!had_tile)
+    g_assert (tile == NULL);
+    if (tile == NULL)
       {
         tile = gegl_tile_new (tile_size);
 
-        /* it is a bit hacky, but adding enough information (probably too much)
-         * enabling the tile_storage system to attempt swapping out of zoom tiles
-         */
         tile->x          = x;
         tile->y          = y;
         tile->z          = z;
@@ -304,7 +266,8 @@ get_tile (GeglTileSource *gegl_tile_source,
         tile->rev        = 1;
 
         {
-          GeglTileHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
+          GeglTileHandlerCache *cache;
+          cacje = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
           if (cache)
             {
               gegl_tile_handler_cache_insert (cache, tile, x, y, z);
@@ -334,8 +297,6 @@ get_tile (GeglTileSource *gegl_tile_source,
     gegl_tile_unlock (tile);
   }
 
-  tile->flags = 0;
-
   return tile;
 }
 
@@ -350,43 +311,14 @@ command (GeglTileSource  *tile_store,
   GeglTileHandler *handler  = GEGL_HANDLER (tile_store);
   /*GeglTileSource *source = handler->source;*/
 
-  if (command == GEGL_TILE_GET)
-    return get_tile (tile_store, x, y, z);
-  if (command == GEGL_TILE_VOID_TL ||
-      command == GEGL_TILE_VOID_TR ||
-      command == GEGL_TILE_VOID_BL ||
-      command == GEGL_TILE_VOID_BR)
+  switch (command)
     {
-      GeglTile *tile = gegl_tile_source_get_tile (tile_store, x, y, z);
-
-      if (!tile)
-        return FALSE;
-      switch (command)
-        {
-          case GEGL_TILE_VOID_TL:
-            tile->flags |= GEGL_TILE_DIRT_TL;
-            break;
-
-          case GEGL_TILE_VOID_TR:
-            tile->flags |= GEGL_TILE_DIRT_TR;
-            break;
-
-          case GEGL_TILE_VOID_BL:
-            tile->flags |= GEGL_TILE_DIRT_BL;
-            break;
-
-          case GEGL_TILE_VOID_BR:
-            tile->flags |= GEGL_TILE_DIRT_BR;
-            break;
-
-          default:
-            break;
-        }
-      g_object_unref (tile);
-      return FALSE;
+      case GEGL_TILE_GET:
+        return get_tile (tile_store, x, y, z);
+      default:
+        /* pass the command on */
+        return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
     }
-  /* pass the command on */
-  return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
 }
 
 

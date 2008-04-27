@@ -393,9 +393,6 @@ set_tile (GeglTileSource *self,
       g_hash_table_insert (tile_backend_file->index, entry, entry);
     }
 
-  g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
-                                  has been tried written to persistent tile_storage.
-                                */
   file_entry_write (tile_backend_file, entry, tile->data);
   tile->stored_rev = tile->rev;
   return NULL;

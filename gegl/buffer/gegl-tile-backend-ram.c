@@ -179,9 +179,6 @@ gboolean set_tile (GeglTileSource *store,
       entry->z = z;
       g_hash_table_insert (tile_backend_ram->entries, entry, entry);
     }
-  g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
-                                  has been tried written to persistent tile_storage.
-                                */
   ram_entry_write (tile_backend_ram, entry, tile->data);
   tile->stored_rev = tile->rev;
   return TRUE;
