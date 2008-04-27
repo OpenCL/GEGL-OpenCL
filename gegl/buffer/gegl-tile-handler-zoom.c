@@ -267,7 +267,7 @@ get_tile (GeglTileSource *gegl_tile_source,
 
         {
           GeglTileHandlerCache *cache;
-          cacje = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
+          cache = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
           if (cache)
             {
               gegl_tile_handler_cache_insert (cache, tile, x, y, z);
@@ -285,13 +285,9 @@ get_tile (GeglTileSource *gegl_tile_source,
               set_half (tile, source_tile[i][j], tile_width, tile_height, format, i, j);
               g_object_unref (source_tile[i][j]);
             }
-          else if (fetch[i][j])
+          else 
             {
               set_blank (tile, tile_width, tile_height, format, i, j);
-            }
-          else
-            {
-              /* keep old data around */
             }
         }
     gegl_tile_unlock (tile);

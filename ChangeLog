@@ -1,5 +1,10 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler-zoom.c: (get_tile): make the trimming
+	in the previous commit actually compile.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.h: removed flags from tile, as well as the
 	only user the for now deprecated quarter dirtying code. Not storing
 	per tile flags simplifies the tile storage backends, adding this back
