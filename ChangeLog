@@ -1,5 +1,10 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/open-buffer.c: added new operation for opening
+	an existing GeglBuffer on disk.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid): only perform
 	voiding if a tile_storage is attached to the tile.
 
