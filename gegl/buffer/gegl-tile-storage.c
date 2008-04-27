@@ -31,6 +31,7 @@
 #include "gegl-tile-handler-log.h"
 
 
+
 G_DEFINE_TYPE (GeglTileStorage, gegl_tile_storage, GEGL_TYPE_TILE_HANDLER_CHAIN)
 
 #define TILE_WIDTH  128
@@ -165,6 +166,7 @@ tile_storage_idle (gpointer data)
   return TRUE;
 }
 
+GeglTileBackend *gegl_buffer_backend (GObject *buffer);
 
 static GObject *
 gegl_tile_storage_constructor (GType                  type,
@@ -252,6 +254,11 @@ gegl_tile_storage_constructor (GType                  type,
   g_object_set_data (G_OBJECT (empty), "cache", cache);
   g_object_set_data (G_OBJECT (zoom), "cache", cache);
 
+  {
+    GeglTileBackend *backend;
+    backend = gegl_buffer_backend (object);
+    backend->storage = (gpointer)object;
+  }
 
   tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
                                               250,

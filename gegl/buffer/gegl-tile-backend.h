@@ -42,6 +42,7 @@ struct _GeglTileBackend
 
   /* private */
   gpointer        header;
+  gpointer        storage;
 };
 
 struct _GeglTileBackendClass

@@ -64,7 +64,7 @@ gegl_tile_entry_new (gint x,
                      gint y,
                      gint z)
 {
-  GeglBufferTile *entry = g_slice_new0 (GeglBufferTile);
+  GeglBufferTile *entry = g_malloc (sizeof(GeglBufferTile));
   entry->block.flags = GEGL_FLAG_TILE;
   entry->block.length = sizeof (GeglBufferTile);
 
@@ -77,7 +77,7 @@ gegl_tile_entry_new (gint x,
 void
 gegl_tile_entry_destroy (GeglBufferTile *entry)
 {
-  g_slice_free (GeglBufferTile, entry);
+  g_free (entry);
 }
 
 static gsize write_block (SaveInfo        *info,

@@ -35,7 +35,6 @@ static gint    cache_hits = 0;
 static gint    cache_misses = 0;
 
 static gint    cache_total = 0;  /* approximate amount of bytes stored */
-static gint    clones_ones = 0;  /* approximate amount of bytes stored */
 
 struct _GeglTileHandlerCache
 {
@@ -73,6 +72,10 @@ void               gegl_tile_handler_cache_insert   (GeglTileHandlerCache *cache
                                                      gint              y,
                                                      gint              z);
 static void        gegl_tile_handler_cache_void     (GeglTileHandlerCache *cache,
+                                                     gint              x,
+                                                     gint              y,
+                                                     gint              z);
+static void        gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
                                                      gint              x,
                                                      gint              y,
                                                      gint              z);
@@ -130,7 +133,6 @@ dispose (GObject *object)
         if (item->tile)
           {
             cache_total -= item->tile->size;
-            clones_ones = 0; /* XXX */
             g_object_unref (item->tile);
           }
         g_queue_remove (cache_queue, item);
@@ -225,11 +227,12 @@ command (GeglTileSource  *tile_store,
             return (gpointer)action;
           break;
         }
+      case GEGL_TILE_INVALIDATED:
+        gegl_tile_handler_cache_invalidate (cache, x, y, z);
+        break;
       case GEGL_TILE_VOID:
         gegl_tile_handler_cache_void (cache, x, y, z);
-        /*if (z!=0)
-          return (void*)0xdead700;*/
-        /* fallthrough */
+        break;
       default:
         break;
     }
@@ -353,6 +356,36 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
     }
 
   return FALSE;
+}
+
+static void
+gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
+                                    gint                  x,
+                                    gint                  y,
+                                    gint                  z)
+{
+  GList *link;
+
+  for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
+    {
+      CacheItem *item = link->data;
+      GeglTile  *tile = item->tile;
+
+      if (tile != NULL &&
+          item->x == x &&
+          item->y == y &&
+          item->z == z &&
+          item->handler == cache)
+        {
+          cache_total  -= item->tile->size;
+          tile->tile_storage = NULL;
+          tile->stored_rev = tile->rev; /* to cheat it out of being stored */
+          g_object_unref (tile);
+          g_slice_free (CacheItem, item);
+          g_queue_delete_link (cache_queue, link);
+          return;
+        }
+    }
 }
 
 

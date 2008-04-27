@@ -31,7 +31,8 @@
 
 #include "gegl-debug.h"
 
-/*#define HACKED_GIO_WITH_READWRITE 1
+/*
+#define HACKED_GIO_WITH_READWRITE 1
 */
 
 struct _GeglTileBackendFile
@@ -79,6 +80,14 @@ struct _GeglTileBackendFile
   /* loading buffer */
 
   GList *tiles;
+
+  /* cooperative sharing of file */
+
+  GFileMonitor    *monitor; /* Before using mmap we'll use GIO's infrastructure
+                             * for monitoring the file for changes, this should
+                             * also be more portable.
+                             */
+  guint32          rev;     /* revision of last index sync */
 };
 
 static void ensure_exist (GeglTileBackendFile *self);
@@ -225,7 +234,7 @@ file_entry_destroy (GeglBufferTile      *entry,
   g_hash_table_remove (self->index, entry);
 
   dbg_dealloc (GEGL_TILE_BACKEND (self)->tile_size);
-  g_slice_free (GeglBufferTile, entry);
+  g_free (entry);
 }
 
 static gboolean write_header (GeglTileBackendFile *self)
@@ -381,8 +390,8 @@ get_tile (GeglTileSource *self,
     return NULL;
 
   tile             = gegl_tile_new (backend->tile_size);
-  tile->stored_rev = 1;
-  tile->rev        = 1;
+  tile->rev        = entry->rev;
+  tile->stored_rev = entry->rev;
 
   file_entry_read (tile_backend_file, entry, tile->data);
   return tile;
@@ -411,6 +420,7 @@ set_tile (GeglTileSource *self,
       entry->z = z;
       g_hash_table_insert (tile_backend_file->index, entry, entry);
     }
+  entry->rev = tile->rev;
 
   file_entry_write (tile_backend_file, entry, tile->data);
   tile->stored_rev = tile->rev;
@@ -447,13 +457,13 @@ exist_tile (GeglTileSource *self,
             gint            y,
             gint            z)
 {
-  GeglTileBackend         *backend;
+  GeglTileBackend     *backend;
   GeglTileBackendFile *tile_backend_file;
-  GeglBufferTile               *entry;
+  GeglBufferTile      *entry;
 
-  backend               = GEGL_TILE_BACKEND (self);
+  backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
-  entry                 = lookup_entry (tile_backend_file, x, y, z);
+  entry             = lookup_entry (tile_backend_file, x, y, z);
 
   return entry!=NULL?((gpointer)0x1):NULL;
 }
@@ -479,6 +489,7 @@ flush (GeglTileSource *source,
   GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
 
 
+  self->header.rev ++;
   self->header.next = self->next_pre_alloc; /* this is the offset
                                                we start handing
                                                out headers from*/
@@ -665,6 +676,88 @@ equalfunc (gconstpointer a,
   return FALSE;
 }
 
+
+static void load_index (GeglTileBackendFile *self)
+{
+  GeglBufferHeader new_header;
+  GList           *iter;
+  GeglTileBackend *backend;
+  goffset offset;
+  goffset max=0;
+
+/* compute total from and next pre alloc by monitoring tiles as they
+ * are added here
+ */
+  /* reload header */
+  new_header = gegl_buffer_read_header (self->i, &offset)->header;
+  if (new_header.rev == self->header.rev)
+    {
+      GEGL_NOTE(TILE_BACKEND, "header not changed: %s", self->path);
+      return;
+    }
+  else
+    {
+      self->header=new_header;
+      GEGL_NOTE(TILE_BACKEND, "loading index: %s", self->path);
+    }
+
+
+  offset      = self->header.next;
+  self->tiles = gegl_buffer_read_index (self->i, &offset);
+  backend     = GEGL_TILE_BACKEND (self);
+
+  for (iter = self->tiles; iter; iter=iter->next)
+    {
+      GeglBufferItem *item = iter->data;
+
+      GeglBufferItem *existing = g_hash_table_lookup (self->index, item);
+
+      if (item->tile.offset > max)
+        max = item->tile.offset + backend->tile_size;
+
+      if (existing)
+        {
+          if (existing->tile.rev == item->tile.rev)
+            {
+              g_assert (existing->tile.offset == item->tile.offset);
+              existing->tile = item->tile;
+              g_free (item);
+              continue;
+            }
+          else
+            {
+              g_hash_table_remove (self->index, existing);
+              g_free (existing);
+              gegl_tile_source_invalidated (GEGL_TILE_SOURCE (backend->storage),
+                                            existing->tile.x,
+                                            existing->tile.y,
+                                            existing->tile.z);
+            }
+        }
+        g_hash_table_insert (self->index, iter->data, iter->data);
+    }
+  g_list_free (self->tiles);
+  g_slist_free (self->free_list);
+  self->free_list      = NULL;
+  self->next_pre_alloc = max; /* if bigger than own? */
+  self->total          = max;
+  self->tiles          = NULL;
+}
+
+static void file_changed (GFileMonitor     *monitor,
+                          GFile            *file,
+                          GFile            *other_file,
+                          GFileMonitorEvent event_type,
+                          gpointer          user_data)
+{
+  GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (user_data);
+ 
+  if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)
+  /*if (event_type == G_FILE_MONITOR_EVENT_CHANGED)*/
+    { 
+      load_index (self);
+    }
+}
 static GObject *
 gegl_tile_backend_file_constructor (GType                  type,
                                     guint                  n_params,
@@ -674,59 +767,44 @@ gegl_tile_backend_file_constructor (GType                  type,
   GeglTileBackendFile *self;
   GeglTileBackend *backend;
 
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self   = GEGL_TILE_BACKEND_FILE (object);
+  object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  self    = GEGL_TILE_BACKEND_FILE (object);
   backend = GEGL_TILE_BACKEND (object);
 
   GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
   self->file = g_file_new_for_commandline_arg (self->path);
+
+  self->monitor = g_file_monitor_file (self->file, G_FILE_MONITOR_NONE,
+                                       NULL, NULL);
+  g_signal_connect (self->monitor, "changed", G_CALLBACK(file_changed), self);
   
   self->index = g_hash_table_new (hashfunc, equalfunc);
 
   /* if the file already exist we try to open it for appending instead of replacing */
   if (g_file_query_exists (self->file, NULL))
     {
-      goffset offset;
-
+      goffset offset=0;
 #ifdef HACKED_GIO_WITH_READWRITE
       self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_READWRITE, NULL, NULL));
       self->i = g_object_get_data (G_OBJECT (self->o), "istream");
 #else
+      g_error ("not able to open a file readwrite properly with gio");
       /* don't know how to deal with this properly with normal GIO */
       self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
 #endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
+      self->header.rev = self->header.rev -1;
+
+      /* we are overriding all of the work of the actual constructor here */
       backend->tile_width = self->header.tile_width;
       backend->tile_height = self->header.tile_height;
       backend->format = babl_format (self->header.description);
-      /* we are overriding all of the work of the actual constructor here */
       backend->px_size = backend->format->format.bytes_per_pixel;
       backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
 
-      offset = self->header.next;
-      self->tiles = gegl_buffer_read_index (self->i, &offset);
-
       /* insert each of the entries into the hash table */
-      {
-        /* compute total from and next pre alloc by monitoring tiles as they
-         * are added here
-         */
-        goffset max=0;
-        GList *iter;
-        for (iter = self->tiles; iter; iter=iter->next)
-          {
-            GeglBufferItem *item = iter->data;
-            if (item->tile.offset > max)
-              max = item->tile.offset + backend->tile_size;
-            g_hash_table_insert (self->index, iter->data, iter->data);
-          }
-        g_list_free (self->tiles);
-        self->next_pre_alloc = max;
-        self->total          = max;
-        self->tiles = NULL;
-
-      }
+      load_index (self);
       self->exist = TRUE;
       g_assert (self->i);
       g_assert (self->o);
@@ -737,7 +815,6 @@ gegl_tile_backend_file_constructor (GType                  type,
     }
 
   g_assert (self->file);
-
 
   backend->header = &self->header;
 

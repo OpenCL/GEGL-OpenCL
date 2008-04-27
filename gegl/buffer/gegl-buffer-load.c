@@ -101,7 +101,10 @@ GeglBufferItem *
 gegl_buffer_read_header (GInputStream *i,
                          goffset      *offset)
 {
+  goffset         placeholder;
   GeglBufferItem *ret;
+  if (offset==0)
+    offset = &placeholder;
 
   if(!g_seekable_seek (G_SEEKABLE (i), 0, G_SEEK_SET, NULL, NULL))
       g_warning ("failed seeking to %i", 0);

@@ -44,7 +44,7 @@ enum _GeglTileCommand
   GEGL_TILE_EXIST,
   GEGL_TILE_VOID,
   GEGL_TILE_FLUSH,
-  GEGL_TILE_INVALIDATED,
+  GEGL_TILE_INVALIDATED, /* command sent by some backends through storage*/
   GEGL_TILE_LAST_COMMAND
 };
 
@@ -94,20 +94,8 @@ gpointer   gegl_tile_source_command  (GeglTileSource    *gegl_tile_source,
 #define gegl_tile_source_void(source,x,y,z) \
    gegl_tile_source_command(source,GEGL_TILE_VOID,x,y,z,NULL)
 
-#define gegl_tile_source_void_tl(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_VOID_TL,x,y,z,NULL)
-
-#define gegl_tile_source_void_tr(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_VOID_TR,x,y,z,NULL)
-
-#define gegl_tile_source_void_bl(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_VOID_BL,x,y,z,NULL)
-
-#define gegl_tile_source_void_br(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_VOID_BR,x,y,z,NULL)
-
-#define gegl_tile_source_undo_start_group(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_UNDO_START_GROUP,x,y,z,NULL)
+#define gegl_tile_source_invalidated(source,x,y,z) \
+   gegl_tile_source_command(source,GEGL_TILE_INVALIDATED,x,y,z,NULL)
 
  
 G_END_DECLS

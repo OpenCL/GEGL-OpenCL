@@ -1,5 +1,28 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-index.h: added rev to header and tiles,
+	added sketch of collaborative datastructures.
+	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_read_header): made 
+	it possible to call with offset == NULL
+	* gegl/buffer/gegl-buffer-save.c: (gegl_tile_entry_new),
+	(gegl_tile_entry_destroy): do not use slice allocations for entries.
+	* gegl/buffer/gegl-tile-backend-file.c: (file_entry_destroy),
+	(get_tile), (set_tile), (flush), (load_index), (file_changed),
+	(gegl_tile_backend_file_constructor): monitor buffer for changes and
+	reload index if revision in header has changed.
+	* gegl/buffer/gegl-tile-backend.h: added private pointer to storage a
+	backend is member of, allows the backend to send messages through the
+	storage's bus.
+	* gegl/buffer/gegl-tile-handler-cache.c: (dispose), (command),
+	(gegl_tile_handler_cache_invalidate): remove tiles from cache when
+	they've changed on disk.
+	* gegl/buffer/gegl-tile-source.h: added macro for
+	gegl_tile_source_invalidated
+	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_constructor):
+	store pointer to storage in backend.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/open-buffer.c: added new operation for opening
 	an existing GeglBuffer on disk.
 
