@@ -1138,3 +1138,68 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
       buffer->sampler = NULL;
     }
 }
+
+
+void
+gegl_buffer_copy (GeglBuffer          *src,
+                  const GeglRectangle *src_rect,
+                  GeglBuffer          *dst,
+                  const GeglRectangle *dst_rect)
+{
+  /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
+
+  GeglRectangle src_line;
+  GeglRectangle dst_line;
+  const Babl   *format;
+  guchar       *temp;
+  guint         i;
+  gint          pxsize;
+
+  g_return_if_fail (GEGL_IS_BUFFER (src));
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+
+  if (!src_rect)
+    {
+      src_rect = gegl_buffer_get_extent (src);
+    }
+
+  if (!dst_rect)
+    {
+      dst_rect = src_rect;
+    }
+
+  pxsize = src->tile_storage->px_size;
+  format = src->format;
+
+  src_line = *src_rect;
+  src_line.height = 1;
+
+  dst_line = *dst_rect;
+  dst_line.width = src_line.width;
+  dst_line.height = src_line.height;
+
+  temp = g_malloc (src_line.width * pxsize);
+
+  for (i=0; i<src_rect->height; i++)
+    {
+      gegl_buffer_get (src, 1.0, &src_line, format, temp, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &dst_line, format, temp, GEGL_AUTO_ROWSTRIDE);
+      src_line.y++;
+      dst_line.y++;
+    }
+  g_free (temp);
+}
+
+GeglBuffer *
+gegl_buffer_dup (GeglBuffer *buffer)
+{
+  GeglBuffer *new;
+
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
+  new = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
+  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
+                    new, gegl_buffer_get_extent (buffer));
+  return new;
+}
+

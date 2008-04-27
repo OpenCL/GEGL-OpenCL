@@ -97,8 +97,6 @@ static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        y,
                                                  gint        width,
                                                  gint        height);
-static GeglBuffer *
-gegl_buffer_new_from_path (const gchar *path);
 
 static inline gint needed_tiles (gint w,
                                  gint stride)
@@ -275,6 +273,28 @@ set_property (GObject      *gobject,
 static gint allocated_buffers    = 0;
 static gint de_allocated_buffers = 0;
 
+  /* this should only be possible if this buffer matches all the buffers down to
+   * storage, all of those parent buffers would change size as well, no tiles
+   * would be voided as a result of changing the extent.
+   */
+gboolean
+gegl_buffer_set_extent (GeglBuffer          *buffer,
+                        const GeglRectangle *extent)
+{
+   (*(GeglRectangle*)gegl_buffer_get_extent (buffer))=*extent;
+
+  if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))
+    {   
+      GeglBufferHeader *header = ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header));
+      header->x = buffer->extent.x;
+      header->y = buffer->extent.x;
+      header->width = buffer->extent.width;
+      header->height = buffer->extent.height;
+    }
+
+  return TRUE;
+}
+
 void gegl_buffer_stats (void)
 {
   g_warning ("Buffer statistics: allocated:%i deallocated:%i balance:%i",
@@ -369,12 +389,22 @@ gegl_buffer_constructor (GType                  type,
   gint             tile_width;
   gint             tile_height;
 
+  gint width;
+  gint height;
+  gint x;
+  gint y;
+
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
   buffer    = GEGL_BUFFER (object);
   handler   = GEGL_HANDLER (object);
   source  = handler->source;
   backend   = gegl_buffer_backend (buffer);
+
+  x=buffer->extent.x;
+  y=buffer->extent.y;
+  width=buffer->extent.width;
+  height=buffer->extent.height;
 
   if (source)
     {
@@ -388,13 +418,31 @@ gegl_buffer_constructor (GType                  type,
     {
       /* if no source is specified if a format is specified, we
        * we need to create our own
-       * source (this adds a redirectin buffer in between for
+       * source (this adds a redirection buffer in between for
        * all "allocated from format", type buffers.
        */
       if (buffer->path)
         {
           GeglBufferHeader *header;
-          source = GEGL_TILE_SOURCE (gegl_buffer_new_from_path (buffer->path));
+          GeglTileSource   *storage;
+
+          if (buffer->format)
+            {
+              storage = GEGL_TILE_SOURCE (g_object_new (GEGL_TYPE_TILE_STORAGE,
+                                                       "path", buffer->path,
+                                                       "format", buffer->format,
+                                                       NULL));
+            }
+          else
+            {
+              storage = GEGL_TILE_SOURCE (g_object_new (GEGL_TYPE_TILE_STORAGE,
+                                                       "path", buffer->path,
+                                                       "format", babl_format ("RGBA float"),
+                                                       NULL));
+            }
+
+          source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
+                                                   
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
@@ -437,6 +485,20 @@ gegl_buffer_constructor (GType                  type,
         {
           g_warning ("not enough data to have a tile source for our buffer");
         }
+      {
+        /* we reset the size if it seems to have been set to 0 during a on
+         * disk buffer creation, nasty but it seems to do the job.
+         */
+
+        if (buffer->extent.width == 0 &&
+            buffer->extent.width == 0)
+          {
+            buffer->extent.width = width;
+            buffer->extent.height = height;
+            buffer->extent.x = x;
+            buffer->extent.y = y;
+          }
+      }
     }
 
   g_assert (backend);
@@ -630,22 +692,22 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
                                                      -1, G_MAXINT, -1,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT_ONLY));
+                                                     G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", "height", "pixel height of buffer",
                                                      -1, G_MAXINT, -1,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT_ONLY));
+                                                     G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT_ONLY));
+                                                     G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, 0,
                                                      G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT_ONLY));
+                                                     G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_ABYSS_WIDTH,
                                    g_param_spec_int ("abyss-width", "abyss-width", "pixel width of abyss",
                                                      -1, G_MAXINT, 0,
@@ -778,69 +840,6 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                        NULL);
 }
 
-void
-gegl_buffer_copy (GeglBuffer          *src,
-                  const GeglRectangle *src_rect,
-                  GeglBuffer          *dst,
-                  const GeglRectangle *dst_rect)
-{
-  /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
-
-  GeglRectangle src_line;
-  GeglRectangle dst_line;
-  const Babl   *format;
-  guchar       *temp;
-  guint         i;
-  gint          pxsize;
-
-  g_return_if_fail (GEGL_IS_BUFFER (src));
-  g_return_if_fail (GEGL_IS_BUFFER (dst));
-
-  if (!src_rect)
-    {
-      src_rect = gegl_buffer_get_extent (src);
-    }
-
-  if (!dst_rect)
-    {
-      dst_rect = src_rect;
-    }
-
-  pxsize = src->tile_storage->px_size;
-  format = src->format;
-
-  src_line = *src_rect;
-  src_line.height = 1;
-
-  dst_line = *dst_rect;
-  dst_line.width = src_line.width;
-  dst_line.height = src_line.height;
-
-  temp = g_malloc (src_line.width * pxsize);
-
-  for (i=0; i<src_rect->height; i++)
-    {
-      gegl_buffer_get (src, 1.0, &src_line, format, temp, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_set (dst, &dst_line, format, temp, GEGL_AUTO_ROWSTRIDE);
-      src_line.y++;
-      dst_line.y++;
-    }
-  g_free (temp);
-}
-
-GeglBuffer *
-gegl_buffer_dup (GeglBuffer *buffer)
-{
-  GeglBuffer *new;
-
-  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
-
-  new = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
-  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
-                    new, gegl_buffer_get_extent (buffer));
-  return new;
-}
-
 
 void
 gegl_buffer_destroy (GeglBuffer *buffer)
@@ -867,29 +866,6 @@ gegl_buffer_interpolation_from_string (const gchar *string)
 
 
 
-
-static GeglBuffer *
-gegl_buffer_new_from_path (const gchar *path)
-{
-  GeglTileStorage *tile_storage;
-  GeglBuffer  *buffer;
-
-  tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                              "format", babl_format,
-                              "path",   path,
-                              NULL);
-  buffer = g_object_new (GEGL_TYPE_BUFFER,
-                                    "source", tile_storage,
-                                    /*"x", x,
-                                    "y", y,
-                                    "width", width,
-                                    "height", height,*/
-                                    NULL);
-  /* XXX: query backend about width/height? (this seems odd) */
-
-  g_object_unref (tile_storage);
-  return buffer;
-}
 
 static GeglBuffer *
 gegl_buffer_new_from_format (const void *babl_format,

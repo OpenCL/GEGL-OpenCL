@@ -120,6 +120,21 @@ void            gegl_buffer_destroy           (GeglBuffer          *buffer);
  */
 const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
 
+
+/**
+ * gegl_buffer_set_extent:
+ * @buffer: the buffer to operate on.
+ * @extent: new extent.
+ *
+ * Changes the size and position that is considered active in a buffer, this
+ * operation is valid on any buffer, reads on subbuffers outside the master
+ * buffers extent are at the moment undefined.
+ *
+ * Returns TRUE if the change of extent was succesful.
+ */
+gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
+                                 const GeglRectangle *extent);
+
 /* convenience access macros */
 
 /**
