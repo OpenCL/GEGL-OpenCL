@@ -1,5 +1,15 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c:
+	Create actual file and input/output streams on demand, also added
+	alternate codepath for a hacked up GIO that allows simultanous
+	readwrite access to existing files.
+	(file_entry_read), (file_entry_write), (file_entry_new),
+	(write_header), (write_block), (flush), (finalize),
+	(gegl_tile_backend_file_constructor), (ensure_exist):
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler-zoom.c: (get_tile): make the trimming
 	in the previous commit actually compile.
 

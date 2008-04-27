@@ -31,6 +31,8 @@
 
 #include "gegl-debug.h"
 
+/*#define HACKED_GIO_WITH_READWRITE 1
+*/
 
 struct _GeglTileBackendFile
 {
@@ -40,14 +42,17 @@ struct _GeglTileBackendFile
   GFile           *file;    /* gfile refering to our buffer */
   GOutputStream   *o;       /* for writing */
   GInputStream    *i;       /* for reading */
+  gboolean         exist;   /* the file exist (and we've thus been able
+                             * to initialize i and o, the utility_call ensure_exist
+                             * should be called before any code using i and o)
+                             */
 
-  /*gint             fd;*/
   GHashTable      *index;   /* hashtable containing all entries
-                               * of buffer, the index is
-                               * written to the swapfile conforming
-                               * to the structures laid out in
-                               * gegl-buffer-index.h
-                               */
+                             * of buffer, the index is
+                             * written to the swapfile conforming
+                             * to the structures laid out in
+                             * gegl-buffer-index.h
+                             */
 
   GSList          *free_list; /* list of offsets to tiles that are free */
 
@@ -76,6 +81,7 @@ struct _GeglTileBackendFile
   GList *tiles;
 };
 
+static void ensure_exist (GeglTileBackendFile *self);
 
 static gboolean
 write_block (GeglTileBackendFile *self,
@@ -93,6 +99,8 @@ file_entry_read (GeglTileBackendFile *self,
   gboolean success;
   gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
   goffset  offset = entry->offset;
+
+  ensure_exist (self);
 
   success = g_seekable_seek (G_SEEKABLE (self->i), 
                              offset, G_SEEK_SET,
@@ -120,7 +128,9 @@ file_entry_read (GeglTileBackendFile *self,
         }
       to_be_read -= read;
     }
-   GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
+
+
+  GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static void inline
@@ -132,6 +142,8 @@ file_entry_write (GeglTileBackendFile *self,
   gboolean success;
   gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
   goffset  offset = entry->offset;
+
+  ensure_exist (self);
 
   success = g_seekable_seek (G_SEEKABLE (self->o), 
                              offset, G_SEEK_SET,
@@ -159,7 +171,7 @@ file_entry_write (GeglTileBackendFile *self,
         }
       to_be_written -= wrote;
     }
-   GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
+   GEGL_NOTE (TILE_BACKEND, "wrote entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static inline GeglBufferTile *
@@ -168,6 +180,8 @@ file_entry_new (GeglTileBackendFile *self)
   GeglBufferTile *entry = gegl_tile_entry_new (0,0,0);
 
   GEGL_NOTE (TILE_BACKEND, "Creating new entry");
+
+  ensure_exist (self);
 
   if (self->free_list)
     {
@@ -217,6 +231,9 @@ file_entry_destroy (GeglBufferTile      *entry,
 static gboolean write_header (GeglTileBackendFile *self)
 {
   gboolean success;
+
+  ensure_exist (self);
+
   success = g_seekable_seek (G_SEEKABLE (self->o), 0, G_SEEK_SET,
                              NULL, NULL);
   if (success == FALSE)
@@ -224,6 +241,7 @@ static gboolean write_header (GeglTileBackendFile *self)
       g_warning ("unable to seek in buffer");
       return FALSE;
     }
+  strcpy (&(self->header.description[0]) + 20, "fnord");
   g_output_stream_write (self->o, &(self->header), 256, NULL, NULL);
   GEGL_NOTE (TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
@@ -233,6 +251,7 @@ static gboolean
 write_block (GeglTileBackendFile *self,
              GeglBufferBlock     *block)
 {
+  ensure_exist (self);
    if (self->in_holding)
      {
        guint64 next_allocation = self->offset + self->in_holding->length;
@@ -455,6 +474,8 @@ flush (GeglTileSource *source,
   backend  = GEGL_TILE_BACKEND (source);
   self     = GEGL_TILE_BACKEND_FILE (backend);
 
+  ensure_exist (self);
+
   GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
 
 
@@ -575,23 +596,28 @@ finalize (GObject *object)
 {
   GeglTileBackendFile *self = (GeglTileBackendFile *) object;
 
-  GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
 
   if (self->index)
     g_hash_table_unref (self->index);
-  if (self->i)
-    g_object_unref (self->i);
-  if (self->o)
-    g_object_unref (self->o);
+  if (self->exist)
+    {
+      GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
+
+      if (self->i)
+        g_object_unref (self->i);
+      if (self->o)
+        g_object_unref (self->o);
+
+      if (self->file)
+        {
+          g_file_delete  (self->file, NULL, NULL);
+          g_object_unref (self->file);
+        }
+    }
 
   if (self->path)
     g_free (self->path);
 
-  if (self->file)
-    {
-      g_file_delete  (self->file, NULL, NULL);
-      g_object_unref (self->file);
-    }
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
@@ -662,8 +688,14 @@ gegl_tile_backend_file_constructor (GType                  type,
     {
       goffset offset;
 
+#ifdef HACKED_GIO_WITH_READWRITE
+      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_READWRITE, NULL, NULL));
+      self->i = g_object_get_data (G_OBJECT (self->o), "istream");
+#else
+      /* don't know how to deal with this properly with normal GIO */
       self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
-      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_NONE, NULL, NULL));
+#endif
+      /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
       backend->tile_width = self->header.tile_width;
       backend->tile_height = self->header.tile_height;
@@ -695,12 +727,49 @@ gegl_tile_backend_file_constructor (GType                  type,
         self->tiles = NULL;
 
       }
+      self->exist = TRUE;
+      g_assert (self->i);
+      g_assert (self->o);
     }
   else
     {
+      self->exist = FALSE; /* this is also the default, the file will be created on demand */
+    }
+
+  g_assert (self->file);
+
+
+  backend->header = &self->header;
+
+  return object;
+}
+
+static void ensure_exist (GeglTileBackendFile *self)
+{
+  if (!self->exist)
+    {
+      GeglTileBackend *backend;
+
+      self->exist = TRUE;
+      backend = GEGL_TILE_BACKEND (self);
+
+      GEGL_NOTE (TILE_BACKEND, "creating swapfile  %s", self->path);
+#ifdef HACKED_GIO_WITH_READWRITE
+
+      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_READWRITE, NULL, NULL));
+      gegl_buffer_header_init (&self->header,
+                               backend->tile_width,
+                               backend->tile_height,
+                               backend->px_size,
+                               backend->format
+                             );
+      write_header (self);
+      g_output_stream_flush (self->o, NULL, NULL);
+      self->i = g_object_get_data (G_OBJECT (self->o), "istream");
+#else
       self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
       g_output_stream_flush (self->o, NULL, NULL);
-      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
       g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
@@ -711,17 +780,16 @@ gegl_tile_backend_file_constructor (GType                  type,
                                backend->px_size,
                                backend->format
                                );
-      /* FIXME: should probably write an initial header */
+      write_header (self);
+      g_output_stream_flush (self->o, NULL, NULL);
+      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+#endif
+      /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
+      self->next_pre_alloc = 256;  /* reserved space for header */
+      self->total          = 256;  /* reserved space for header */
+      g_assert (self->i);
+      g_assert (self->o);
     }
-
-  g_assert (self->file);
-  g_assert (self->i);
-  g_assert (self->o);
-
-
-  backend->header = &self->header;
-
-  return object;
 }
 
 static void
