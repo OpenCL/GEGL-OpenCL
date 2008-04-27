@@ -1,3 +1,12 @@
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile.c: (gegl_tile_unlock): made the revisions of
+	tiles on the mipmap levels also get tile->rev++, making the finalize
+	method of tiles cause them to be written to backend storage.
+	* gegl/buffer/gegl-tile-handler-cache.c: (command): made the void
+	command chain up for z!=0 as well thus deleting (even partially)
+	invalidated zoome tiles also from the backend.
+
 2008-04-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile.h: removed storage_x, storage_y and storage_z

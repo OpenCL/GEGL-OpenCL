@@ -227,8 +227,8 @@ command (GeglTileSource  *tile_store,
         }
       case GEGL_TILE_VOID:
         gegl_tile_handler_cache_void (cache, x, y, z);
-        if (z!=0)
-          return (void*)0xdead700;
+        /*if (z!=0)
+          return (void*)0xdead700;*/
         /* fallthrough */
       default:
         break;

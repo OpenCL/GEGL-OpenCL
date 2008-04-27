@@ -326,8 +326,9 @@ gegl_tile_unlock (GeglTile *tile)
       tile->z == 0)
     {
       gegl_tile_void_pyramid (tile);
-      tile->rev++;
     }
+  if (tile->lock==0)
+    tile->rev++;
 #if ENABLE_MP
   g_mutex_unlock (tile->mutex);
 #endif
