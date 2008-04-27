@@ -1,5 +1,10 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_read_index): removed
+	debug printf.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: added signal "changed" which is relaying
 	for the storage's changed signal. (might not work entirely correctly
 	with sub buffers.)

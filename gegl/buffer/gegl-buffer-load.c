@@ -215,7 +215,6 @@ gegl_buffer_read_index (GInputStream *i,
   GList          *ret = NULL;
   GeglBufferItem *item;
 
-  g_print ("%i\n", (gint)*offset); 
   for (item = read_block (i, offset); item; item = read_block (i, offset))
     {
       g_assert (item);
