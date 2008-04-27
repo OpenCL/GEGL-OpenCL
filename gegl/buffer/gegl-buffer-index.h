@@ -95,7 +95,7 @@ typedef struct {
   guint32 rev;           /* revision */
 } GeglBufferTile;
 
-/* The following structs are sketches for collaborative use of the b
+/* The following structs are sketches for collaborative use of the buffer*/
 
 typedef struct {
   GeglBufferBlock block; /* The block definition for this tile entry   */

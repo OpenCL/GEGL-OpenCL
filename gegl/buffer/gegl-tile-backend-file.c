@@ -31,9 +31,7 @@
 
 #include "gegl-debug.h"
 
-/*
 #define HACKED_GIO_WITH_READWRITE 1
-*/
 
 struct _GeglTileBackendFile
 {
