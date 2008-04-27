@@ -5,7 +5,7 @@
 	method of tiles cause them to be written to backend storage.
 	* gegl/buffer/gegl-tile-handler-cache.c: (command): made the void
 	command chain up for z!=0 as well thus deleting (even partially)
-	invalidated zoome tiles also from the backend.
+	invalidated zoom tiles from the backend.
 
 2008-04-26  Øyvind Kolås  <pippin@gimp.org>
 
