@@ -1,5 +1,11 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/write-buffer.c: added operation that allows
+	writing to an already existing GeglBuffer (as opposed to save-buffer
+	which emits a buffer.)
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_read_index): removed
 	debug printf.
 
