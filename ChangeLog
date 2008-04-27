@@ -1,5 +1,10 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid): only perform
+	voiding if a tile_storage is attached to the tile.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_set_extent.
 	* gegl/buffer/gegl-buffer-access.c:
 	(gegl_buffer_copy), (gegl_buffer_dup): moved here from gegl-buffer.c

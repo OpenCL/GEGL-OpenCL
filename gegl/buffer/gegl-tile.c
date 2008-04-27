@@ -273,7 +273,8 @@ _gegl_tile_void_pyramid (GeglTileSource *source,
 static void
 gegl_tile_void_pyramid (GeglTile *tile)
 {
-  if (tile->z == 0) /* we only accepting voiding the base level */
+  if (tile->tile_storage && 
+      tile->z == 0) /* we only accepting voiding the base level */
     {
       _gegl_tile_void_pyramid (GEGL_TILE_SOURCE (tile->tile_storage), 
                                tile->x/2,
