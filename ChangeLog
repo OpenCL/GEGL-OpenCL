@@ -1,5 +1,11 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-save.c:
+	(gegl_buffer_header_init): store more verbose ascii information about
+	the buffer in the padding zone.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-file.c:
 	Create actual file and input/output streams on demand, also added
 	alternate codepath for a hacked up GIO that allows simultanous

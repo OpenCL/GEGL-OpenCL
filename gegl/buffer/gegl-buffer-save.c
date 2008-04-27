@@ -50,6 +50,7 @@ typedef struct
 
   gint             tile_size;
   gint             offset;
+  gint             entry_count;
   GeglBufferBlock *last_added;
   GeglBufferBlock *in_holding; /* we need to write one block added behind
                                 * to be able to recompute the forward pointing
@@ -174,17 +175,18 @@ gegl_buffer_header_init (GeglBufferHeader *header,
   strcpy (header->magic, "GEGL");
 
   header->flags = GEGL_FLAG_HEADER;
-
   header->tile_width  = tile_width;
   header->tile_height = tile_height;
   header->bytes_per_pixel = bpp;
   {
     gchar buf[64];
-    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n\n\n\n\n\n\n\n\n\n", 
+    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n%ix%i\n\n\n\n\n\n\n\n\n", 
           format->instance.name, 0,
           header->tile_width,
           header->tile_height,
-          header->bytes_per_pixel);
+          header->bytes_per_pixel,
+          (gint)header->width,
+          (gint)header->height);
     memcpy ((header->description), buf, 64);
   }
 }
@@ -211,6 +213,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
   info->o    = G_OUTPUT_STREAM (g_file_replace (info->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
 
   g_object_get (buffer, "px-size", &bpp, NULL);
+  info->header.x           = buffer->extent.x;
+  info->header.y           = buffer->extent.y;
+  info->header.width       = buffer->extent.width;
+  info->header.height      = buffer->extent.height;
   gegl_buffer_header_init (&info->header,
                            buffer->tile_storage->tile_width,
                            buffer->tile_storage->tile_height,
@@ -219,10 +225,6 @@ gegl_buffer_save (GeglBuffer          *buffer,
                            );
   info->header.next = (prediction += sizeof (GeglBufferHeader));
 
-  info->header.x           = buffer->extent.x;
-  info->header.y           = buffer->extent.y;
-  info->header.width       = buffer->extent.width;
-  info->header.height      = buffer->extent.height;
 
   info->tile_size = info->header.tile_width  *
                     info->header.tile_height *
@@ -275,7 +277,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
                       entry = gegl_tile_entry_new (tx, ty, z);
                       info->tiles = g_list_prepend (info->tiles, entry);
-                      info->header.entry_count++;
+                      info->entry_count++;
                     }
                   bufx += (tile_width - offsetx) * factor;
                 }
@@ -298,7 +300,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
   {
     GList *iter;
     gint   predicted_offset = sizeof (GeglBufferHeader) +
-                              sizeof (GeglBufferTile) * (info->header.entry_count);
+                              sizeof (GeglBufferTile) * (info->entry_count);
     for (iter = info->tiles; iter; iter = iter->next)
       {
         GeglBufferTile *entry = iter->data;
@@ -326,7 +328,9 @@ gegl_buffer_save (GeglBuffer          *buffer,
   }
   write_block (info, NULL); /* terminate the index */
 
-  /* update header to point to start of new index */
+  /* update header to point to start of new index (already done for
+   * this serial saver, and the header is already written.
+   */
 
   /* save each tile */
   {
@@ -351,7 +355,6 @@ gegl_buffer_save (GeglBuffer          *buffer,
         g_object_unref (G_OBJECT (tile));
         i++;
       }
-    g_assert (i == info->header.entry_count);
   }
   save_info_destroy (info);
 }
