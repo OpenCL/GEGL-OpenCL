@@ -406,3 +406,18 @@ gegl_operation_get_format (GeglOperation *self,
   return pad->format;
 }
 
+
+void
+gegl_operation_invalidate (GeglOperation       *operation,
+                           const GeglRectangle *roi)
+{
+  GeglNode *node = NULL;
+
+  if (!operation)
+    return;
+
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+  node = operation->node;
+
+  gegl_node_invalidated (node, roi);
+}

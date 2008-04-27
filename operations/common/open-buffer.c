@@ -26,22 +26,35 @@ gegl_chant_string(path, "File", "", "a GeglBuffer on disk to open")
 
 #include "gegl-chant.h"
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+static void buffer_changed (GeglBuffer          *buffer,
+                            const GeglRectangle *rect,
+                            gpointer             userdata)
 {
-  GeglRectangle result = {0,0,0,0};
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *buffer = o->chant_data; /* since we only have one member
-                                         * of extra state data we want to
-                                         * carry we use the chant_data provided
-                                         * for all chanted ops.
-                                         */
+  gegl_operation_invalidate (GEGL_OPERATION (userdata), rect);
+}
 
+static GeglBuffer *ensure_buffer (GeglOperation *operation)
+{
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer   *buffer = o->chant_data; 
+  if (buffer)
+    return buffer;
   if (!buffer)
     {
       buffer = gegl_buffer_open (o->path);
       o->chant_data = buffer;
     }
+  g_signal_connect (buffer, "changed",
+                    G_CALLBACK(buffer_changed), operation);
+  return buffer;
+}
+
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle result = {0,0,0,0};
+  GeglBuffer   *buffer = ensure_buffer (operation);
+
   result = *gegl_buffer_get_extent (GEGL_BUFFER (buffer));
   return result;
 }
@@ -60,14 +73,8 @@ process (GeglOperation       *operation,
          const gchar         *output_pad,
          const GeglRectangle *result)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer *buffer = o->chant_data;
+  GeglBuffer *buffer = ensure_buffer (operation);
 
-  if (!buffer)
-    {
-      buffer = gegl_buffer_open (o->path);
-      o->chant_data = buffer;
-    }
   if (buffer)
     {
       g_object_ref (buffer); /* Add an extra reference, since

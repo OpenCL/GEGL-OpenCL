@@ -1,5 +1,20 @@
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: added signal "changed" which is relaying
+	for the storage's changed signal. (might not work entirely correctly
+	with sub buffers.)
+	* gegl/buffer/gegl-tile-storage.c: added signal "changed"
+	* gegl/buffer/gegl-tile-backend-file.c:
+	(load_index): emit changed signal on storage for tiles that have
+	changed in the index.
+	* gegl/operation/gegl-operation.[ch]: (gegl_operation_invalidate):
+	added a function to allow an operation to invalidate a region that it
+	already has provided.
+	* operations/common/open-buffer.c: propagate changed from the buffer
+	to the node.
+
+2008-04-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-index.h: added rev to header and tiles,
 	added sketch of collaborative datastructures.
 	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_read_header): made 

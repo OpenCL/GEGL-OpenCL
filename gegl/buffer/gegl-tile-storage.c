@@ -29,7 +29,8 @@
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
 #include "gegl-tile-handler-log.h"
-
+#include "gegl-types.h"
+#include "gegl-utils.h"
 
 
 G_DEFINE_TYPE (GeglTileStorage, gegl_tile_storage, GEGL_TYPE_TILE_HANDLER_CHAIN)
@@ -51,6 +52,14 @@ enum
   PROP_PX_SIZE,
   PROP_PATH
 };
+
+enum
+{
+  CHANGED,
+  LAST_SIGNAL
+};
+
+guint gegl_tile_storage_signals[LAST_SIGNAL] = { 0 };
 
 static void
 get_property (GObject    *gobject,
@@ -332,6 +341,17 @@ gegl_tile_storage_class_init (GeglTileStorageClass *class)
                                    g_param_spec_pointer ("format", "format", "babl format",
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
+
+  gegl_tile_storage_signals[CHANGED] =
+        g_signal_new ("changed",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__BOXED,
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
+
 }
 
 static void

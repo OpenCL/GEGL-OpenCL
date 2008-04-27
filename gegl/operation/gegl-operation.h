@@ -217,10 +217,12 @@ GParamSpec ** gegl_list_properties (const gchar *operation_type,
 
 /* internal utility functions used by gegl, these should not be used
  * externally */
-gboolean gegl_operation_calc_source_regions  (GeglOperation *operation,
-                                              gpointer       context_id);
-void     gegl_operation_vector_prop_changed  (GeglVector    *vector,
-                                              GeglOperation *operation);
+gboolean gegl_operation_calc_source_regions  (GeglOperation       *operation,
+                                              gpointer             context_id);
+void     gegl_operation_vector_prop_changed  (GeglVector          *vector,
+                                              GeglOperation       *operation);
+void     gegl_operation_invalidate            (GeglOperation       *operation,
+                                               const GeglRectangle *roi);
 
 G_END_DECLS
 

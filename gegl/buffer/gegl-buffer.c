@@ -92,6 +92,13 @@ enum
   PROP_PATH
 };
 
+enum {
+  CHANGED,
+  LAST_SIGNAL
+};
+
+guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
+
 static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        x,
                                                  gint        y,
@@ -376,6 +383,13 @@ gegl_buffer_tile_storage (GeglBuffer *buffer)
 
 void babl_backtrack (void);
 
+static void storage_changed (GeglTileStorage     *storage,
+                             const GeglRectangle *rect,
+                             gpointer             userdata)
+{
+  g_signal_emit_by_name (GEGL_BUFFER (userdata), "changed", rect, NULL);
+}
+
 static GObject *
 gegl_buffer_constructor (GType                  type,
                          guint                  n_params,
@@ -450,6 +464,9 @@ gegl_buffer_constructor (GType                  type,
                         "source", source,
                         NULL);
           g_object_unref (source);
+
+          g_signal_connect (storage, "changed",
+                            G_CALLBACK(storage_changed), buffer);
 
           g_assert (source);
           backend = gegl_buffer_backend (GEGL_BUFFER (source));
@@ -759,6 +776,17 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                    g_param_spec_string ("path", "Path",
                                                         "URI to where the buffer is stored",
                                      NULL, G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
+
+  gegl_buffer_signals[CHANGED] =
+        g_signal_new ("changed",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__BOXED,
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_RECTANGLE);
+
 }
 
 static void

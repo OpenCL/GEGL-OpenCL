@@ -30,6 +30,7 @@
 #include "gegl-buffer-index.h"
 
 #include "gegl-debug.h"
+#include "gegl-types.h"
 
 /*#define HACKED_GIO_WITH_READWRITE 1*/
 
@@ -724,12 +725,22 @@ static void load_index (GeglTileBackendFile *self)
             }
           else
             {
+              GeglRectangle rect;
               g_hash_table_remove (self->index, existing);
-              g_free (existing);
               gegl_tile_source_invalidated (GEGL_TILE_SOURCE (backend->storage),
                                             existing->tile.x,
                                             existing->tile.y,
                                             existing->tile.z);
+
+              if (existing->tile.z == 0)
+                {
+                  rect.width = self->header.tile_width;
+                  rect.height = self->header.tile_height;
+                  rect.x = existing->tile.x * self->header.tile_width;
+                  rect.y = existing->tile.y * self->header.tile_height;
+                }
+              g_free (existing);
+              g_signal_emit_by_name (backend->storage, "changed", &rect, NULL);
             }
         }
         g_hash_table_insert (self->index, iter->data, iter->data);
@@ -750,8 +761,8 @@ static void file_changed (GFileMonitor     *monitor,
 {
   GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (user_data);
  
-  if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)
-  /*if (event_type == G_FILE_MONITOR_EVENT_CHANGED)*/
+  /*if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)*/
+  if (event_type == G_FILE_MONITOR_EVENT_CHANGED)
     { 
       load_index (self);
     }
