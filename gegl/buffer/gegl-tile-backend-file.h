@@ -44,6 +44,9 @@ GType gegl_tile_backend_file_get_type (void) G_GNUC_CONST;
 
 void  gegl_tile_backend_file_stats    (void);
 
+gboolean gegl_tile_backend_file_try_lock (GeglTileBackendFile *file);
+gboolean gegl_tile_backend_file_unlock   (GeglTileBackendFile *file);
+
 G_END_DECLS
 
 #endif

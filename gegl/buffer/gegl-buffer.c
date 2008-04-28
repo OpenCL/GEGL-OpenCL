@@ -1009,3 +1009,24 @@ done_with_row:
       }
   }
 }
+
+gboolean gegl_buffer_is_shared (GeglBuffer *buffer)
+{
+  GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  return backend->shared;
+}
+
+gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
+{
+  GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  if (!backend->shared)
+    return FALSE;
+  return gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+}
+gboolean gegl_buffer_unlock (GeglBuffer *buffer)
+{
+  GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  if (!backend->shared)
+    return FALSE;
+  return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
+}

@@ -9,7 +9,7 @@ GeglBuffer on disk representation
 
 
 /* Increase this number when the structures change.*/
-#define GEGL_FILE_SPEC_REV     23
+#define GEGL_FILE_SPEC_REV     0
 #define GEGL_MAGIC             {'G','E','G','L'}
 
 #define GEGL_FLAG_TILE         1
@@ -21,9 +21,9 @@ GeglBuffer on disk representation
 /* these flags are used for the header, the lower bits of the
  * header store the revision
  */
-#define GEGL_FLAG_LOCKED       (0xff*(1<<0))
-#define GEGL_FLAG_FLUSHED      (0xff*(1<<1))
-#define GEGL_FLAG_IS_HEADER    (0xff*(1<<3))
+#define GEGL_FLAG_LOCKED       (1<<(8+0))
+#define GEGL_FLAG_FLUSHED      (1<<(8+1))
+#define GEGL_FLAG_IS_HEADER    (1<<(8+3))
 
 /* The default header we expect to see on a file is that it is
  * flushed, and has the revision the file conforms to written

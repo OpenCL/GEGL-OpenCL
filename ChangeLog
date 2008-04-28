@@ -1,5 +1,26 @@
 2008-04-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Made on disk-buffers opened on disk perform locking when invoking
+	gegl_buffer_set, this allows transparent use of the buffers for writes
+	since only one write will happen at a time. (At the moment the lock
+	is implemented in the files header, and a GeglBuffer might get stuck
+	in a locked state on disk if gegl is aborted when it holds the lock.)
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_set): lock buffer
+	on write if the buffer is shared.
+	* gegl/buffer/gegl-buffer-index.h: fixed flags for header.
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer.c:
+	(gegl_buffer_is_shared): new function reports if the buffer is shared
+	(gegl_buffer_try_lock): tries to lock a shared buffer, if failed try
+	again a bit later.
+	(gegl_buffer_unlock): unlock a locked buffer, allows other clients to
+	use the buffer.
+	* gegl/buffer/gegl-tile-backend-file.[ch]: added _try_lock() _unlock()
+	* gegl/buffer/gegl-tile-backend.[ch]: added shared flag to backend.
+
+2008-04-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-file.c:
 	(gegl_tile_backend_file_constructor): only add a monitor when opening
 	an already existing file.

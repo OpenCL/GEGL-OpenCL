@@ -579,6 +579,14 @@ gegl_buffer_set (GeglBuffer          *buffer,
 #if ENABLE_MP
   g_static_rec_mutex_lock (&mutex);
 #endif
+  if (gegl_buffer_is_shared(buffer))
+    {
+      while (gegl_buffer_try_lock (buffer)==FALSE)
+        {
+          g_print ("failed to aquire lock sleeping 1s");
+          g_usleep (1000000);
+        }
+    }
 
   if (format == NULL)
     format = buffer->format;
@@ -602,6 +610,11 @@ gegl_buffer_set (GeglBuffer          *buffer,
       g_object_unref (sub_buf);
     }
 
+  if (gegl_buffer_is_shared(buffer))
+    {
+      gegl_buffer_flush (buffer);
+      gegl_buffer_unlock (buffer);
+    }
 #if ENABLE_MP
   g_static_rec_mutex_unlock (&mutex);
 #endif

@@ -43,6 +43,7 @@ struct _GeglTileBackend
   /* private */
   gpointer        header;
   gpointer        storage;
+  gboolean        shared;
 };
 
 struct _GeglTileBackendClass

@@ -681,7 +681,7 @@ load_index (GeglTileBackendFile *self)
   GeglBufferHeader new_header;
   GList           *iter;
   GeglTileBackend *backend;
-  goffset offset;
+  goffset offset = 0;
   goffset max=0;
 
 /* compute total from and next pre alloc by monitoring tiles as they
@@ -689,6 +689,13 @@ load_index (GeglTileBackendFile *self)
  */
   /* reload header */
   new_header = gegl_buffer_read_header (self->i, &offset)->header;
+
+  while (new_header.flags & GEGL_FLAG_LOCKED)
+    {
+      g_usleep (500000);
+      new_header = gegl_buffer_read_header (self->i, &offset)->header;
+    }
+
   if (new_header.rev == self->header.rev)
     {
       GEGL_NOTE(TILE_BACKEND, "header not changed: %s", self->path);
@@ -827,6 +834,9 @@ gegl_tile_backend_file_constructor (GType                  type,
       self->exist = TRUE;
       g_assert (self->i);
       g_assert (self->o);
+
+      /* to autoflush gegl_buffer_set */
+      backend->shared = TRUE;
     }
   else
     {
@@ -927,4 +937,32 @@ gegl_tile_backend_file_init (GeglTileBackendFile *self)
   self->free_list      = NULL;
   self->next_pre_alloc = 256;  /* reserved space for header */
   self->total          = 256;  /* reserved space for header */
+}
+
+gboolean
+gegl_tile_backend_file_try_lock (GeglTileBackendFile *self)
+{
+  GeglBufferHeader new_header;
+  new_header = gegl_buffer_read_header (self->i, NULL)->header;
+  if (new_header.flags & GEGL_FLAG_LOCKED)
+    {
+      return FALSE;
+    }
+  self->header.flags += GEGL_FLAG_LOCKED;
+  write_header (self);
+  g_output_stream_flush (self->o, NULL, NULL);
+  return TRUE;
+}
+
+gboolean gegl_tile_backend_file_unlock (GeglTileBackendFile *self)
+{
+  if (!(self->header.flags & GEGL_FLAG_LOCKED))
+    {
+      g_warning ("tried to unlock unlocked buffer");
+      return FALSE;
+    }
+  self->header.flags -= GEGL_FLAG_LOCKED;
+  write_header (self);
+  g_output_stream_flush (self->o, NULL, NULL);
+  return TRUE;
 }

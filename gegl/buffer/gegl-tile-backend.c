@@ -159,4 +159,5 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
 static void
 gegl_tile_backend_init (GeglTileBackend *self)
 {
+  self->shared = FALSE;
 }
