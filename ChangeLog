@@ -1,3 +1,8 @@
+2008-04-28  Sven Neumann  <sven@gimp.org>
+
+	* gegl/buffer/gegl-tile-backend-file.c (finalize): unref the file
+	monitor.
+
 2008-04-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/write-buffer.c: added operation that allows

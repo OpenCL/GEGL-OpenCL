@@ -110,7 +110,7 @@ file_entry_read (GeglTileBackendFile *self,
 
   ensure_exist (self);
 
-  success = g_seekable_seek (G_SEEKABLE (self->i), 
+  success = g_seekable_seek (G_SEEKABLE (self->i),
                              offset, G_SEEK_SET,
                              NULL, NULL);
   if (success == FALSE)
@@ -153,7 +153,7 @@ file_entry_write (GeglTileBackendFile *self,
 
   ensure_exist (self);
 
-  success = g_seekable_seek (G_SEEKABLE (self->o), 
+  success = g_seekable_seek (G_SEEKABLE (self->o),
                              offset, G_SEEK_SET,
                              NULL, NULL);
   if (success == FALSE)
@@ -197,7 +197,7 @@ file_entry_new (GeglTileBackendFile *self)
       gint offset = GPOINTER_TO_INT (self->free_list->data);
       entry->offset = offset;
       self->free_list = g_slist_remove (self->free_list, self->free_list->data);
-      
+
       GEGL_NOTE (TILE_BACKEND, "  set offset %i from free list", ((gint)entry->offset));
     }
   else
@@ -211,7 +211,7 @@ file_entry_new (GeglTileBackendFile *self)
       if (self->next_pre_alloc >= self->total)
         {
           self->total = self->total + 32 * tile_size;
-        
+
           GEGL_NOTE (TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
 
           g_assert (g_seekable_truncate (G_SEEKABLE (self->o),
@@ -236,7 +236,8 @@ file_entry_destroy (GeglBufferTile      *entry,
   g_free (entry);
 }
 
-static gboolean write_header (GeglTileBackendFile *self)
+static gboolean
+write_header (GeglTileBackendFile *self)
 {
   gboolean success;
 
@@ -283,7 +284,7 @@ write_block (GeglTileBackendFile *self,
              (gint)self->in_holding->next,
              (gint)self->offset);
        self->offset += g_output_stream_write (self->o, self->in_holding,
-                                              self->in_holding->length, 
+                                              self->in_holding->length,
                                               NULL, NULL);
 
        g_assert (next_allocation == self->offset); /* true as long as
@@ -301,7 +302,7 @@ write_block (GeglTileBackendFile *self,
                                               * header inside free list later
                                               */
 
-        if(!g_seekable_seek (G_SEEKABLE (self->o), 
+        if(!g_seekable_seek (G_SEEKABLE (self->o),
                              (goffset) self->offset, G_SEEK_SET,
                              NULL, NULL))
           goto fail;
@@ -606,9 +607,9 @@ finalize (GObject *object)
 {
   GeglTileBackendFile *self = (GeglTileBackendFile *) object;
 
-
   if (self->index)
     g_hash_table_unref (self->index);
+
   if (self->exist)
     {
       GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
@@ -628,6 +629,8 @@ finalize (GObject *object)
   if (self->path)
     g_free (self->path);
 
+  if (self->monitor)
+    g_object_unref (self->monitor);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
@@ -676,7 +679,8 @@ equalfunc (gconstpointer a,
 }
 
 
-static void load_index (GeglTileBackendFile *self)
+static void
+load_index (GeglTileBackendFile *self)
 {
   GeglBufferHeader new_header;
   GList           *iter;
@@ -753,17 +757,16 @@ static void load_index (GeglTileBackendFile *self)
   self->tiles          = NULL;
 }
 
-static void file_changed (GFileMonitor     *monitor,
-                          GFile            *file,
-                          GFile            *other_file,
-                          GFileMonitorEvent event_type,
-                          gpointer          user_data)
+static void
+file_changed (GFileMonitor        *monitor,
+              GFile               *file,
+              GFile               *other_file,
+              GFileMonitorEvent    event_type,
+              GeglTileBackendFile *self)
 {
-  GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (user_data);
- 
   /*if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)*/
   if (event_type == G_FILE_MONITOR_EVENT_CHANGED)
-    { 
+    {
       load_index (self);
     }
 }
@@ -772,9 +775,9 @@ gegl_tile_backend_file_constructor (GType                  type,
                                     guint                  n_params,
                                     GObjectConstructParam *params)
 {
-  GObject      *object;
+  GObject             *object;
   GeglTileBackendFile *self;
-  GeglTileBackend *backend;
+  GeglTileBackend     *backend;
 
   object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self    = GEGL_TILE_BACKEND_FILE (object);
@@ -785,16 +788,22 @@ gegl_tile_backend_file_constructor (GType                  type,
 
   self->monitor = g_file_monitor_file (self->file, G_FILE_MONITOR_NONE,
                                        NULL, NULL);
-  g_signal_connect (self->monitor, "changed", G_CALLBACK(file_changed), self);
-  
+  g_signal_connect (self->monitor, "changed",
+                    G_CALLBACK (file_changed),
+                    self);
+
   self->index = g_hash_table_new (hashfunc, equalfunc);
 
-  /* if the file already exist we try to open it for appending instead of replacing */
+  /* if the file already exist we try to open it for appending instead
+     of replacing */
   if (g_file_query_exists (self->file, NULL))
     {
-      goffset offset=0;
+      goffset offset = 0;
+
 #ifdef HACKED_GIO_WITH_READWRITE
-      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_READWRITE, NULL, NULL));
+      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,
+                                                   G_FILE_CREATE_READWRITE,
+                                                   NULL, NULL));
       self->i = g_object_get_data (G_OBJECT (self->o), "istream");
 #else
       g_error ("not able to open a file readwrite properly with gio");
@@ -830,7 +839,8 @@ gegl_tile_backend_file_constructor (GType                  type,
   return object;
 }
 
-static void ensure_exist (GeglTileBackendFile *self)
+static void
+ensure_exist (GeglTileBackendFile *self)
 {
   if (!self->exist)
     {
@@ -842,7 +852,9 @@ static void ensure_exist (GeglTileBackendFile *self)
       GEGL_NOTE (TILE_BACKEND, "creating swapfile  %s", self->path);
 #ifdef HACKED_GIO_WITH_READWRITE
 
-      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file, G_FILE_CREATE_READWRITE, NULL, NULL));
+      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,
+                                                   G_FILE_CREATE_READWRITE,
+                                                   NULL, NULL));
       gegl_buffer_header_init (&self->header,
                                backend->tile_width,
                                backend->tile_height,
