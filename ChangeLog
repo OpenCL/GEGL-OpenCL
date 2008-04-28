@@ -1,3 +1,9 @@
+2008-04-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-backend-file.c:
+	(gegl_tile_backend_file_constructor): only add a monitor when opening
+	an already existing file.
+
 2008-04-28  Sven Neumann  <sven@gimp.org>
 
 	* gegl/buffer/gegl-tile-backend-file.c (finalize): unref the file

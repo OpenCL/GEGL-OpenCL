@@ -28,11 +28,8 @@
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
-
 #include "gegl-debug.h"
 #include "gegl-types.h"
-
-/*#define HACKED_GIO_WITH_READWRITE 1*/
 
 struct _GeglTileBackendFile
 {
@@ -468,7 +465,6 @@ exist_tile (GeglTileSource *self,
   return entry!=NULL?((gpointer)0x1):NULL;
 }
 
-#include "gegl-buffer-index.h"
 
 static gpointer
 flush (GeglTileSource *source,
@@ -786,29 +782,34 @@ gegl_tile_backend_file_constructor (GType                  type,
   GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
   self->file = g_file_new_for_commandline_arg (self->path);
 
-  self->monitor = g_file_monitor_file (self->file, G_FILE_MONITOR_NONE,
-                                       NULL, NULL);
-  g_signal_connect (self->monitor, "changed",
-                    G_CALLBACK (file_changed),
-                    self);
-
   self->index = g_hash_table_new (hashfunc, equalfunc);
 
-  /* if the file already exist we try to open it for appending instead
-     of replacing */
+  /* If the file already exists open it, assuming it is a GeglBuffer. */
   if (g_file_query_exists (self->file, NULL))
     {
       goffset offset = 0;
 
-#ifdef HACKED_GIO_WITH_READWRITE
+      /* Install a monitor for changes to the file in case other applications
+       * might be writing to the buffer
+       */
+      self->monitor = g_file_monitor_file (self->file, G_FILE_MONITOR_NONE,
+                                           NULL, NULL);
+      g_signal_connect (self->monitor, "changed",
+                        G_CALLBACK (file_changed),
+                        self);
+
+#ifndef HACKED_GIO_WITH_READWRITE
+      g_error ("not able to open a file readwrite properly with GIO");
+#else
+      /* this construct uses a hacked up version of GIO that detects the
+       * createflag to be passed as G_FILE_CREATE_READWRITE for the append
+       * call on local files, and provides a suitable inputstream as istream
+       * data on the object.
+       */
       self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,
                                                    G_FILE_CREATE_READWRITE,
                                                    NULL, NULL));
       self->i = g_object_get_data (G_OBJECT (self->o), "istream");
-#else
-      g_error ("not able to open a file readwrite properly with gio");
-      /* don't know how to deal with this properly with normal GIO */
-      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
 #endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
