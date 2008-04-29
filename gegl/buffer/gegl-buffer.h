@@ -71,15 +71,42 @@ guint           gegl_buffer_share             (GeglBuffer          *buffer);
 
 /**
  * gegl_buffer_open:
- * @uri: a uri referring to a local, other process or other host buffer to
+ * @path: the path to a gegl buffer on disk.
  * be opened.
  *
- * buffer://host:port/process/handle
- * buffer:////42      handle 42 from same GEGL instance.
+ * Open an existing on-disk GeglBuffer, this buffer is opened in a monitored
+ * state so multiple instances of gegl can share the same buffer. Sets on
+ * one buffer are reflected in the other.
  *
  * Returns: a GeglBuffer object.
  */
-GeglBuffer*     gegl_buffer_open              (const gchar         *uri);
+GeglBuffer*     gegl_buffer_open              (const gchar         *path);
+
+/**
+ * gegl_buffer_save:
+ * @buffer: a #GeglBuffer.
+ * @path: the path where the gegl buffer will be saved, any writable GIO uri is valid.
+ * @roi: the region of interest to write, this is the tiles that will be collected and
+ * written to disk.
+ *
+ * Write a GeglBuffer to a file.
+ */
+void            gegl_buffer_save              (GeglBuffer          *buffer,
+                                               const gchar         *path,
+                                               const GeglRectangle *roi);
+
+/**
+ * gegl_buffer_load:
+ * @path: the path to a gegl buffer on disk.
+ * be opened.
+ *
+ * Loads an existing GeglBuffer from disk, if it has previously been saved with
+ * gegl_buffer_save it should be possible to open through any GIO transport, buffers
+ * that have been used as swap needs random access to be opened.
+ *
+ * Returns: a #GeglBuffer object.
+ */
+GeglBuffer     *gegl_buffer_load              (const gchar         *path);
 
 /**
  * gegl_buffer_flush:

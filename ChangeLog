@@ -1,5 +1,14 @@
 2008-04-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.h: added new public API to GeglBuffer
+	gegl_buffer_load, gegl_buffer_write and gegl_buffer_open.
+	* gegl/buffer/gegl-buffer-load.c:
+	* gegl/buffer/gegl-buffer-load.h:
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer-share.c:
+
+2008-04-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.h:
 	* gegl/gegl.h.in: added missing documentation.
 

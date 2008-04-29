@@ -23,7 +23,5 @@
 
 #include "gegl-buffer.h"
 
-void gegl_buffer_load (GeglBuffer    *buffer,
-                       const gchar   *path);
 
 #endif

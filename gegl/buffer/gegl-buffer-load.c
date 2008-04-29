@@ -27,7 +27,6 @@
 #include "gegl-types.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
-#include "gegl-buffer-load.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-handler.h"
@@ -45,7 +44,6 @@
 
 #include <glib/gprintf.h>
 
-#if 0
 typedef struct
 {
   GeglBufferHeader header;
@@ -94,8 +92,6 @@ load_info_destroy (LoadInfo *info)
     }
   g_slice_free (LoadInfo, info);
 }
-
-#endif
 
 GeglBufferItem *
 gegl_buffer_read_header (GInputStream *i,
@@ -240,9 +236,11 @@ gegl_buffer_open (const gchar *path)
   sanity();
 
   return g_object_new (GEGL_TYPE_BUFFER, "path", path, NULL);
+}
 
-#if 0  /* old code that feeds tile by tile into the buffer */
-
+GeglBuffer *
+gegl_buffer_load (const gchar *path)
+{
   GeglBuffer *ret;
 
   LoadInfo *info = g_slice_new0 (LoadInfo);
@@ -335,5 +333,4 @@ gegl_buffer_open (const gchar *path)
 
   load_info_destroy (info);
   return ret;
-#endif
 }

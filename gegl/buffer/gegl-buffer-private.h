@@ -96,4 +96,5 @@ gboolean             gegl_buffer_is_shared   (GeglBuffer *buffer);
 gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
 gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
 
+
 #endif

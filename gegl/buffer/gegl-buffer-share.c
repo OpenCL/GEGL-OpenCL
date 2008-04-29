@@ -43,43 +43,6 @@ gegl_buffer_share (GeglBuffer *buffer)
   return id;
 }
 
-
-void
-gegl_buffer_make_uri (gchar       *buf_128,
-                      gchar       *host,
-                      gint         port,
-                      gint         process,
-                      gint         handle)
-{
-  gchar *p=buf_128;
-
-  g_sprintf (p, "buffer://%s", host?host:"");
-  p+=strlen (p);
-  if (port)
-    {
-      g_sprintf (p, ":%i", port);
-      p+=strlen (p);
-    }
-  g_sprintf (p, "/");
-  p+=strlen (p);
-  if (process)
-    {
-      g_sprintf (p, "%i", process);
-      p+=strlen (p);
-    }
-  g_sprintf (p, "/");
-  p+=strlen (p);
-  if (handle || 1)
-    {
-      g_sprintf (p, "%i", handle);
-      p+=strlen (p);
-    }
-  else
-    {
-      g_warning ("no handle provided when building uri:\n%s\n", buf_128);
-    }
-}
-
 #if 0
 GeglBuffer*
 gegl_buffer_open (const gchar *uri)
