@@ -538,6 +538,7 @@ File.open("gegl.devhelp", "w") {|file|
          file.puts "<sub name='#{element.name}' link='api.html\##{element.name.gsub(' ','_')}'/>"
        end
     }
+    file.puts "<sub name='Operations' link='operations.html'/>"
     file.puts "</chapters>"
     file.puts "<functions>"
 
@@ -548,6 +549,15 @@ File.open("gegl.devhelp", "w") {|file|
        if element.is_a? Section and !element.name.empty? and element.name=~ /^Gegl/
          file.puts "<function name='#{element.name}' link='api.html\##{element.name.gsub(' ','_')}'/>"
        end
+
+
+    }
+
+    IO.foreach("operations.html"){ |line|
+        if line =~ /^<li><a href='#op_.*'>.*<\/a><\/li>/
+            opname=line.gsub(/.*op_/,'').gsub(/'.*/,'').strip
+            file.puts "<function name='gegl-#{opname}' link='operations.html#op_#{opname}'/>"
+        end
     }
 
     file.puts "</functions>"
