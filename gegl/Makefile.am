@@ -25,6 +25,7 @@ GEGL_sources = \
 	gegl-chant.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
+	gegl-debug.h			\
 	gegl-dot.h			\
 	gegl-init.h			\
 	gegl-instrument.h		\

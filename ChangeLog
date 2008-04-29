@@ -1,5 +1,10 @@
 2008-04-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/Makefile.am: added gegl-debug.h
+	* gegl/buffer/Makefile.am: added gegl-buffer-load.h
+
+2008-04-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/v4l.c: added v4l source operation from gggl.
 	* operations/external/v4lutils/: added v4lutils from effectv.
 	* operations/external/Makefile.am: updated.

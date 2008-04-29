@@ -32,6 +32,7 @@ BUFFER_sources = \
 BUFFER_headers = \
     gegl-buffer.h		\
     gegl-buffer-private.h	\
+    gegl-buffer-load.h		\
     gegl-buffer-save.h		\
     gegl-buffer-types.h		\
     gegl-cache.h		\
@@ -62,5 +63,6 @@ libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 INCLUDES = \
 	   -I$(top_srcdir)	\
 	   -I$(top_srcdir)/gegl	\
+	   -I$(top_srcdir)/gegl/buffer	\
 	   @DEP_CFLAGS@ @BABL_CFLAGS@
 
