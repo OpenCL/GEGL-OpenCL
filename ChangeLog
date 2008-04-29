@@ -1,3 +1,9 @@
+2008-04-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/external/v4l.c: added v4l source operation from gggl.
+	* operations/external/v4lutils/: added v4lutils from effectv.
+	* operations/external/Makefile.am: updated.
+
 2008-04-28  Øyvind Kolås  <pippin@gimp.org>
 
 	Made on disk-buffers opened on disk perform locking when invoking

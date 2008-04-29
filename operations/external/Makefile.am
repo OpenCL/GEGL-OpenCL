@@ -60,6 +60,14 @@ display_la_LIBADD = $(op_libs) $(SDL_LIBS)
 display_la_CFLAGS = $(SDL_CFLAGS)
 endif
 
+#if HAVE_V4L
+ops += v4l.la
+v4l_la_SOURCES = v4l.c
+v4l_la_LIBADD = $(op_libs)
+#endif
+
+EXTRA_DIST=v4lutils/v4lutils.c v4lutils/v4lutils.h
+
 if HAVE_AVCODEC
 if HAVE_AVFORMAT
 ops += ff-load.la

@@ -1,0 +1,37 @@
+v4lutils - utility library for Video4Linux
+
+GENERAL INFORMATION
+===================
+V4lutils is a utility library wraps Video4Linux API.
+Currently, v4lutils is developled and released as a part of EffecTV, but you
+can use and/or release this library separated from EffecTV.
+
+SUMMARY OF USAGE
+================
+V4lutils employs OO-like model. All of status is stored in "v4ldevice" struct.
+Please read comments in v4lutils.c for the details.
+V4lutils is almost thread safe (I belive). v4lperror() may cause problem.
+I'll try to fix this problem ASAP.
+
+CONTACT
+=======
+Bug-reporting & Suggestions
+---------------------------
+Send an e-mail to:
+
+fukuchi@users.sourceforge.net
+
+LICENSING INFORMATION
+=====================
+This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option) any
+later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+AUTHOR
+======
+Kentaro Fukuchi <fukuchi@users.sourceforge.net>
