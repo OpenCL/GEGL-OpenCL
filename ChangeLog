@@ -1,5 +1,10 @@
 2008-04-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/gegl.h.in: added missing documentation.
+
+2008-04-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/Makefile.am: added gegl-debug.h
 	* gegl/buffer/Makefile.am: added gegl-buffer-load.h
 

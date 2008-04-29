@@ -79,16 +79,17 @@ guint           gegl_buffer_share             (GeglBuffer          *buffer);
  *
  * Returns: a GeglBuffer object.
  */
-
 GeglBuffer*     gegl_buffer_open              (const gchar         *uri);
+
+/**
+ * gegl_buffer_flush:
+ * @buffer: a #GeglBuffer
+ *
+ * Flushes all unsaved data to disk, this is not neccesary for shared
+ * geglbuffers opened with gegl_buffer_open since they auto-sync on writes.
+ */
 void            gegl_buffer_flush             (GeglBuffer          *buffer);
 
-void
-gegl_buffer_make_uri (gchar       *buf_128,
-                      gchar       *host,
-                      gint         port,
-                      gint         process,
-                      gint         handle);
 
 /** 
  * gegl_buffer_create_sub_buffer:
