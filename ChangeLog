@@ -1,5 +1,11 @@
 2008-04-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/color-temperature.c: (convert_k_to_rgb):
+	Commited new version of op from Jan Heller that replaces large lookup
+	table that is used outside innerloop with a function approximating it.
+
+2008-04-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-backend-file.c: (write_header),
 	(gegl_tile_backend_file_class_init): check GeglBufferHeader and
 	GeglBufferBlock struct sizes for sanity at launch.
