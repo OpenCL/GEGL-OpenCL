@@ -201,7 +201,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * gegl_buffer_get_pixel_count:
  * @buffer: a GeglBuffer
  *
- * Evaluates to the total number of pixels in a buffer.
+ * Returns the number of pixels of the extent of the buffer.
  */
 #define gegl_buffer_get_pixel_count(buffer) (gegl_buffer_get_width(buffer) * gegl_buffer_get_height(buffer))
 

@@ -91,38 +91,11 @@ typedef struct {
 
   gint32  z;             /* mipmap subdivision level of tile (0=100%)  */
 
-  /** used for shared buffers can be ignored for normal use */
-  guint32 rev;           /* revision */
+  guint32 rev;           /* revision, if a buffer is monitored for header
+                            revision changes, the existing loaded index
+                            can be compare the revision of tiles and update
+                            own state when revision differs. */
 } GeglBufferTile;
-
-/* The following structs are sketches for collaborative use of the buffer*/
-
-typedef struct {
-  GeglBufferBlock block; /* The block definition for this tile entry   */
-  guint32 rev;           /* buffer rev this change belongs to */
-  gint32  x;             /* upperleft of tile % tile_width coordinates */
-  gint32  y;           
-
-  gint32  z;             /* mipmap subdivision level of tile (0=100%)  */
-} GeglInvalidated;
-
-#define MAX_CLIENTS
-
-typedef struct {
-  GeglBufferBlock block; /* The block definition for this tile entry   */
-  gchar    lock;         /* mmap like lock, we poll and sync to get it  */
-} GeglMaster;
-
-typedef struct {
-  GeglBufferBlock block; /* The block definition for this tile entry   */
-  guchar  id[64];        /* a string identifying the client */
-  guint32  timestamp; 
-  guint64  invalidated;  /* local storage for the client to build it's
-                          * invalidated list
-                          */
-  guint32  startreserved;
-  guint32  endreserved;
-} GeglClient;
 
 /* A convenience union to allow quick and simple casting */
 typedef union {
@@ -166,7 +139,7 @@ GList          *gegl_buffer_read_index (GInputStream *i,
     }
 #define GEGL_BUFFER_STRUCT_CHECK_PADDING \
   {struct_check_padding (GeglBufferBlock, 16);\
-  struct_check_padding (GeglBufferHeader,   256);}
+  struct_check_padding (GeglBufferHeader, 256);}
 #define GEGL_BUFFER_SANITY {static gboolean done=FALSE;if(!done){GEGL_BUFFER_STRUCT_CHECK_PADDING;done=TRUE;}}
 
 #endif

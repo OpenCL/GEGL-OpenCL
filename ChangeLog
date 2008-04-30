@@ -1,5 +1,11 @@
 2008-04-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-index.h: removed unused structs and improved
+	documentation.
+	* gegl/buffer/gegl-buffer.h: mended docs.
+
+2008-04-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: make documentation for operations appear
 	in devhelp.
 
