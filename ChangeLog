@@ -1,5 +1,11 @@
 2008-04-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c: (write_header),
+	(gegl_tile_backend_file_class_init): check GeglBufferHeader and
+	GeglBufferBlock struct sizes for sanity at launch.
+
+2008-04-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-index.h: removed unused structs and improved
 	documentation.
 	* gegl/buffer/gegl-buffer.h: mended docs.

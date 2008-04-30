@@ -247,7 +247,6 @@ write_header (GeglTileBackendFile *self)
       g_warning ("unable to seek in buffer");
       return FALSE;
     }
-  strcpy (&(self->header.description[0]) + 20, "fnord");
   g_output_stream_write (self->o, &(self->header), 256, NULL, NULL);
   GEGL_NOTE (TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
@@ -916,6 +915,7 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
 
   gegl_tile_source_class->command  = command;
 
+  GEGL_BUFFER_STRUCT_CHECK_PADDING;
 
   g_object_class_install_property (gobject_class, PROP_PATH,
                                    g_param_spec_string ("path",
