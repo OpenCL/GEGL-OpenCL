@@ -46,6 +46,39 @@ GType        gegl_vector_get_type       (void) G_GNUC_CONST;
 
 GeglVector * gegl_vector_new            (void);
 
+
+void         gegl_vector_line_to        (GeglVector  *self,
+                                         gdouble      x,
+                                         gdouble      y);
+
+void         gegl_vector_move_to        (GeglVector *self,
+                                         gdouble     x,
+                                         gdouble     y);
+
+void         gegl_vector_curve_to       (GeglVector *self,
+                                         gdouble     x1,
+                                         gdouble     y1,
+                                         gdouble     x2,
+                                         gdouble     y2,
+                                         gdouble     x3,
+                                         gdouble     y3);
+
+void         gegl_vector_rel_line_to    (GeglVector  *self,
+                                         gdouble      x,
+                                         gdouble      y);
+
+void         gegl_vector_rel_move_to    (GeglVector *self,
+                                         gdouble     x,
+                                         gdouble     y);
+
+void         gegl_vector_rel_curve_to   (GeglVector *self,
+                                         gdouble     x1,
+                                         gdouble     y1,
+                                         gdouble     x2,
+                                         gdouble     y2,
+                                         gdouble     x3,
+                                         gdouble     y3);
+
 void         gegl_vector_get_bounds     (GeglVector   *self,
                                          gdouble      *min_x,
                                          gdouble      *max_x,
@@ -54,9 +87,6 @@ void         gegl_vector_get_bounds     (GeglVector   *self,
 
 gdouble      gegl_vector_get_length     (GeglVector  *self);
 
-void         gegl_vector_line_to        (GeglVector  *self,
-                                         gdouble      x,
-                                         gdouble      y);
 
 void         gegl_vector_calc           (GeglVector  *self,
                                          gdouble      pos,
@@ -79,6 +109,20 @@ GParamSpec * gegl_param_spec_vector     (const gchar *name,
                                          const gchar *blurb,
                                          GeglVector  *default_vector,
                                          GParamFlags  flags);
+
+#include <gegl-buffer.h>
+
+void gegl_vector_fill (GeglBuffer *buffer,
+                       GeglVector *vector,
+                       GeglColor  *color,
+                       gboolean    winding);
+
+void gegl_vector_stroke (GeglBuffer *buffer,
+                         GeglVector *vector,
+                         GeglColor  *color,
+                         gdouble     linewidth,
+                         gint        linecap,
+                         gint        linejoin);
 
 G_END_DECLS
 

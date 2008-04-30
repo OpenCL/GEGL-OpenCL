@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
+ * Copyright 2008 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2006 Mark Probst <mark.probst@gmail.com>
- * Spline Code Copyright 1997 David Mosberger
  */
 
 #include "config.h"
@@ -26,6 +26,7 @@
 #include "gegl-types.h"
 
 #include "gegl-vector.h"
+#include "gegl-color.h"
 
 /* ###################################################################### */
 /* path code copied from horizon */
@@ -123,8 +124,8 @@ bezier (Point **curve,
   lerp (dest, &abbc, &bccd, t);
 }
 
-
-gint
+#if 0
+static gint
 path_last_x (Path   *path)
 {
   if (path)
@@ -132,13 +133,14 @@ path_last_x (Path   *path)
   return 0;
 }
 
-gint
+static gint
 path_last_y (Path   *path)
 {
   if (path)
     return path->point.y;
   return 0;
 }
+#endif
 
 /* types:
  *   'u' : unitilitlalized state
@@ -260,7 +262,7 @@ path_add (Path *head,
         /* chop off unneeded elements */
         curve[0]->next = NULL;
 
-        { /* create piecevize linear approximation of bezier curve */
+        { /* create piecevise linear approximation of bezier curve */
            gint   i;
            Point  foo[4];
            Point *pts[4];
@@ -303,13 +305,15 @@ path_add (Path *head,
   return head;
 }
 
-Path *
+#if 0
+static Path *
 path_new (void)
 {
   return path_add (NULL, 'u', 0, 0);
 }
+#endif
 
-Path *
+static Path *
 path_destroy (Path *path)
 {
   g_slice_free_chain (Path, path, next);
@@ -317,7 +321,7 @@ path_destroy (Path *path)
   return NULL;
 }
 
-Path *
+static Path *
 path_move_to (Path *path,
               gint  x,
               gint  y)
@@ -326,7 +330,7 @@ path_move_to (Path *path,
   return path;
 }
 
-Path *
+static Path *
 path_line_to (Path *path,
               gint  x,
               gint  y)
@@ -335,7 +339,7 @@ path_line_to (Path *path,
   return path;
 }
 
-Path *
+static Path *
 path_curve_to (Path *path,
                gint  x1,
                gint  y1,
@@ -350,7 +354,7 @@ path_curve_to (Path *path,
   return path;
 }
 
-Path *
+static Path *
 path_rel_move_to (Path *path,
                   gint  x,
                   gint  y)
@@ -358,7 +362,7 @@ path_rel_move_to (Path *path,
   return path_move_to (path, path->point.x + x, path->point.y + y);
 }
 
-Path *
+static Path *
 path_rel_line_to (Path *path,
                   gint  x,
                   gint  y)
@@ -366,7 +370,7 @@ path_rel_line_to (Path *path,
   return path_line_to (path, path->point.x + x, path->point.y + y);
 }
 
-Path *
+static Path *
 path_rel_curve_to (Path *path,
                    gint  x1,
                    gint  y1,
@@ -379,6 +383,167 @@ path_rel_curve_to (Path *path,
                         path->point.x + x1, path->point.y + y1,
                         path->point.x + x2, path->point.y + y2,
                         path->point.x + x3, path->point.y + y3);
+}
+
+#include <gegl-buffer.h>
+
+static gint compare_ints (gconstpointer a,
+                          gconstpointer b)
+{
+  return GPOINTER_TO_INT (a)-GPOINTER_TO_INT (b);
+}
+
+/* speedy way of doing vectors on gegl, would be to build a runlength
+ * encoded instruction stream for fill n pixels which could be used on
+ * linear buffers.
+ */
+
+
+void gegl_vector_fill (GeglBuffer *buffer,
+                       GeglVector *vector,
+                       GeglColor  *color,
+                       gboolean    winding)
+{
+  gdouble xmin, xmax, ymin, ymax;
+  GeglRectangle extent;
+  gint    samples = gegl_vector_get_length (vector);
+  gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
+
+  extent.x = floor (xmin);
+  extent.y = floor (ymin);
+  extent.width = ceil (xmax) - extent.x;
+  extent.height = ceil (ymax) - extent.y;
+
+  {
+    GSList *scanlines[extent.height];
+
+    gdouble xs[samples];
+    gdouble ys[samples];
+
+    gint i;
+    gdouble prev_x;
+    gint    prev_y;
+    gdouble first_x;
+    gint    first_y;
+    gint    lastline=-1;
+    gint    lastdir=-2;
+
+    gegl_vector_calc_values (vector, samples, xs, ys);
+
+    /* clear scanline intersection lists */
+    for (i=0; i < extent.height; i++)
+      scanlines[i]=NULL;
+
+    first_x = prev_x = xs[0];
+    first_y = prev_y = ys[0];
+    
+
+    /* saturate scanline intersection list */
+    for (i=1; i<samples; i++)
+      {
+        gint dest_x = xs[i];
+        gint dest_y = ys[i];
+        gint ydir;
+        gint dx;
+        gint dy;
+        gint y;
+fill_close:  /* label used for goto to close last segment */
+        dx = dest_x - prev_x;
+        dy = dest_y - prev_y;
+
+        if (dy < 0)
+          ydir = -1;
+        else
+          ydir = 1;
+
+        /* do linear interpolation between vertexes */
+        for (y=prev_y; y!= dest_y; y += ydir)
+          {
+            if (y-extent.y >= 0 &&
+                y-extent.y < extent.height &&
+                lastline != y)
+              {
+                gint x = prev_x + (dx * (y-prev_y)) / dy;
+
+                scanlines[ y - extent.y ]=
+                  g_slist_insert_sorted (scanlines[ y - extent.y],
+                                         GINT_TO_POINTER(x),
+                                         compare_ints);
+                if (ydir != lastdir &&
+                    lastdir != -2)
+                  scanlines[ y - extent.y ]=
+                    g_slist_insert_sorted (scanlines[ y - extent.y],
+                                           GINT_TO_POINTER(x),
+                                           compare_ints);
+                lastdir = ydir;
+                lastline = y;
+              }
+          }
+
+        prev_x = dest_x;
+        prev_y = dest_y;
+
+        /* if we're on the last knot, fake the first vertex being a next one */
+        if (i+1 == samples)
+          {
+            dest_x = first_x;
+            dest_y = first_y;
+            i++; /* to make the loop finally end */
+            goto fill_close;
+          }
+      }
+
+    /* for each scanline */
+{
+    gfloat *buf = NULL;
+    const gfloat *col = gegl_color_float4 (color);
+    Babl *format = babl_format ("RGBA float");
+    buf = g_malloc (extent.width * 4 *4);
+    for (i=0; i < extent.width; i++)
+      {
+        buf[i*4+0] = col[0];
+        buf[i*4+1] = col[1];
+        buf[i*4+2] = col[2];
+        buf[i*4+3] = col[3];
+      }
+
+    for (i=0; i < extent.height; i++)
+      {
+        GSList *iter = scanlines[i];
+        while (iter)
+          {
+            GSList *next = iter->next;
+            gint startx, endx;
+            if (!next)
+              break;
+
+            startx = GPOINTER_TO_INT (iter->data);
+            endx   = GPOINTER_TO_INT (next->data);
+
+            {
+              GeglRectangle roi={startx, extent.y + i, endx - startx, 1};
+              gegl_buffer_set (buffer, &roi, format, buf, 0);
+            }
+
+            iter = next->next;
+          }
+        if (scanlines[i])
+          g_slist_free (scanlines[i]);
+      }
+    g_free (buf);
+}
+  }
+
+}
+
+void gegl_vector_stroke (GeglBuffer *buffer,
+                         GeglVector *vector,
+                         GeglColor  *color,
+                         gdouble     linewidth,
+                         gint        linecap,
+                         gint        linejoin)
+{
+
 }
 
 #if 0
@@ -623,6 +788,8 @@ finalize (GObject *gobject)
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
 
   self = NULL;
+  if (priv->path)
+    path_destroy (priv->path);
   priv = NULL;
 
   G_OBJECT_CLASS (gegl_vector_parent_class)->finalize (gobject);
@@ -678,6 +845,71 @@ gegl_vector_line_to (GeglVector *self,
   priv->path = path_line_to (priv->path, x, y);
   gegl_vector_emit_changed (self);
 }
+
+void
+gegl_vector_move_to (GeglVector *self,
+                     gdouble     x,
+                     gdouble     y)
+{
+  GeglVectorPrivate *priv;
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  priv->path = path_move_to (priv->path, x, y);
+  gegl_vector_emit_changed (self);
+}
+
+void
+gegl_vector_curve_to (GeglVector *self,
+                      gdouble     x1,
+                      gdouble     y1,
+                      gdouble     x2,
+                      gdouble     y2,
+                      gdouble     x3,
+                      gdouble     y3)
+{
+  GeglVectorPrivate *priv;
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
+  gegl_vector_emit_changed (self);
+}
+
+
+void
+gegl_vector_rel_line_to (GeglVector *self,
+                         gdouble     x,
+                         gdouble     y)
+{
+  GeglVectorPrivate *priv;
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  priv->path = path_rel_line_to (priv->path, x, y);
+  gegl_vector_emit_changed (self);
+}
+
+void
+gegl_vector_rel_move_to (GeglVector *self,
+                         gdouble     x,
+                         gdouble     y)
+{
+  GeglVectorPrivate *priv;
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  priv->path = path_rel_move_to (priv->path, x, y);
+  gegl_vector_emit_changed (self);
+}
+
+void
+gegl_vector_rel_curve_to (GeglVector *self,
+                          gdouble     x1,
+                          gdouble     y1,
+                          gdouble     x2,
+                          gdouble     y2,
+                          gdouble     x3,
+                          gdouble     y3)
+{
+  GeglVectorPrivate *priv;
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  priv->path = path_rel_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
+  gegl_vector_emit_changed (self);
+}
+
 
 gdouble
 gegl_vector_get_length (GeglVector *self)

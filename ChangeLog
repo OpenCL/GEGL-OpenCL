@@ -1,3 +1,9 @@
+2008-04-30  Øyvind Kolås  <pippin@openedhand.com>
+
+	* gegl/property-types/gegl-vector.[ch]: expanded the drawing commands
+	set to be more complete, also added gegl_vector_fill which does a
+	simple alias fill of a GeglColor for a single path.
+
 2008-04-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/color-temperature.c: (convert_k_to_rgb):
