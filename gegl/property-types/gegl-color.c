@@ -249,6 +249,15 @@ parse_hex (GeglColor   *color,
   return FALSE;
 }
 
+const gfloat *
+gegl_color_float4 (GeglColor *self)
+{
+  GeglColorPrivate *priv;
+  /*g_return_val_if_fail (GEGL_IS_COLOR (self), NULL);*/
+  priv = GEGL_COLOR_GET_PRIVATE (self);
+  return &priv->rgba_color[0];
+}
+
 void
 gegl_color_get_rgba (GeglColor *self,
                      gfloat    *r,

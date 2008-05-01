@@ -1,3 +1,8 @@
+2008-05-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-color.[ch]: (gegl_color_float4): added
+	utility accessor function (might be removed again).
+
 2008-05-01  Étienne Bersac  <bersace03@gmail.com>
 
 	* gegl/property-types/Makefile.am (INCLUDES): Added
