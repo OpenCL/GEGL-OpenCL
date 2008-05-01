@@ -19,5 +19,6 @@ libpropertytypes_la_SOURCES = $(PROPERTYTYPES_sources) $(PROPERTYTYPES_headers)
 INCLUDES = \
 	   -I$(top_srcdir)	\
 	   -I$(top_srcdir)/gegl	\
+	   -I$(top_srcdir)/gegl/buffer \
 	   @DEP_CFLAGS@ @BABL_CFLAGS@
 

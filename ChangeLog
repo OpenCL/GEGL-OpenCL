@@ -1,3 +1,9 @@
+2008-05-01  Étienne Bersac  <bersace03@gmail.com>
+
+	* gegl/property-types/Makefile.am (INCLUDES): Added
+	$(top_srcdir)/gegl/buffer in include path to fix building in
+	preperttypes directory.
+
 2008-04-30  Øyvind Kolås  <pippin@openedhand.com>
 
 	* gegl/property-types/gegl-vector.[ch]: expanded the drawing commands
