@@ -635,6 +635,8 @@ get_tile (GeglTileSource *source,
   if (tile)
     {
       GeglBuffer *buffer = GEGL_BUFFER (handler);
+
+      /* not sure if this plays well with shifting */
       tile->x = x;
       tile->y = y;
       tile->z = z;
@@ -655,7 +657,7 @@ get_tile (GeglTileSource *source,
        * coordinates.
        */
       {
-        tile->tile_storage   = buffer->tile_storage;
+        tile->tile_storage = buffer->tile_storage;
         tile->x = x;
         tile->y = y;
         tile->z = z;
@@ -1019,14 +1021,28 @@ gboolean gegl_buffer_is_shared (GeglBuffer *buffer)
 gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  gboolean ret;
   if (!backend->shared)
     return FALSE;
-  return gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+  if (buffer->lock_count>0)
+    {
+      buffer->lock_count++;
+      return TRUE;
+    }
+  ret =gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+  if (ret)
+    buffer->lock_count++;
+  return TRUE;
 }
 gboolean gegl_buffer_unlock (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
   if (!backend->shared)
     return FALSE;
-  return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
+  g_assert (buffer->lock_count>=0);
+  buffer->lock_count--;
+  g_assert (buffer->lock_count>=0);
+  if (buffer->lock_count==0)
+    return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
+  return TRUE;
 }

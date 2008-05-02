@@ -675,7 +675,8 @@ equalfunc (gconstpointer a,
 
 
 static void
-load_index (GeglTileBackendFile *self)
+load_index (GeglTileBackendFile *self,
+            gboolean             block)
 {
   GeglBufferHeader new_header;
   GList           *iter;
@@ -691,7 +692,7 @@ load_index (GeglTileBackendFile *self)
 
   while (new_header.flags & GEGL_FLAG_LOCKED)
     {
-      g_usleep (500000);
+      g_usleep (50000);
       new_header = gegl_buffer_read_header (self->i, &offset)->header;
     }
 
@@ -733,7 +734,7 @@ load_index (GeglTileBackendFile *self)
             {
               GeglRectangle rect;
               g_hash_table_remove (self->index, existing);
-              gegl_tile_source_invalidated (GEGL_TILE_SOURCE (backend->storage),
+              gegl_tile_source_refetch (GEGL_TILE_SOURCE (backend->storage),
                                             existing->tile.x,
                                             existing->tile.y,
                                             existing->tile.z);
@@ -766,10 +767,10 @@ file_changed (GFileMonitor        *monitor,
               GFileMonitorEvent    event_type,
               GeglTileBackendFile *self)
 {
-  /*if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)*/
   if (event_type == G_FILE_MONITOR_EVENT_CHANGED)
+  /*if (event_type == G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT)*/
     {
-      load_index (self);
+      load_index (self, TRUE);
     }
 }
 static GObject *
@@ -829,7 +830,7 @@ gegl_tile_backend_file_constructor (GType                  type,
       backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
 
       /* insert each of the entries into the hash table */
-      load_index (self);
+      load_index (self, TRUE);
       self->exist = TRUE;
       g_assert (self->i);
       g_assert (self->o);

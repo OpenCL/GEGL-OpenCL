@@ -185,9 +185,6 @@ command (GeglTileSource  *tile_store,
   /* FIXME: replace with switch */
   switch (command)
     {
-      case GEGL_TILE_SET:
-        /* nothing to do */
-        break; /* chain up */
       case GEGL_TILE_FLUSH:
         {
           GList     *link;
@@ -204,7 +201,7 @@ command (GeglTileSource  *tile_store,
                 }
             }
         }
-        break; /* chain up */
+        break;
       case GEGL_TILE_GET:
         /* XXX: we should perhaps store a NIL result, and place the empty
          * generator after the cache, this would have to be possible to disable
@@ -219,7 +216,7 @@ command (GeglTileSource  *tile_store,
           if (exist)
             return (gpointer)TRUE;
         }
-        break; /* chain up */
+        break;
       case GEGL_TILE_IDLE:
         {
           gboolean action = gegl_tile_handler_cache_wash (cache);
@@ -227,7 +224,7 @@ command (GeglTileSource  *tile_store,
             return (gpointer)action;
           break;
         }
-      case GEGL_TILE_INVALIDATED:
+      case GEGL_TILE_REFETCH:
         gegl_tile_handler_cache_invalidate (cache, x, y, z);
         break;
       case GEGL_TILE_VOID:
@@ -236,6 +233,7 @@ command (GeglTileSource  *tile_store,
       default:
         break;
     }
+
   return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
 }
 

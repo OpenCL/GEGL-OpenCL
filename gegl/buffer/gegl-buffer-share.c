@@ -28,6 +28,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-id-pool.h"
 
+#if 0
 static GeglIDPool *pool = NULL;
 
 guint
@@ -43,7 +44,6 @@ gegl_buffer_share (GeglBuffer *buffer)
   return id;
 }
 
-#if 0
 GeglBuffer*
 gegl_buffer_open (const gchar *uri)
 {

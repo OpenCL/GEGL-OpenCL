@@ -1,3 +1,22 @@
+2008-05-02  Øyvind Kolås  <pippin@gimp.org>
+
+	Added some documentation to internal tile level interface to
+	GeglBuffer, renamed the invalidated command to refetch.
+
+	* gegl/buffer/gegl-tile-source.h: added fake funcction calls to be
+	documented in lieu of the macros.
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_set):
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer-share.c:
+	* gegl/buffer/gegl-buffer.c: (get_tile), (gegl_buffer_try_lock),
+	(gegl_buffer_unlock):
+	* gegl/buffer/gegl-tile-backend-file.c: (load_index),
+	(file_changed), (gegl_tile_backend_file_constructor):
+	* gegl/buffer/gegl-tile-handler-cache.c: (command):
+	* gegl/buffer/gegl-tile-handler-log.c:
+	* gegl/buffer/gegl-tile.h:
+	* gegl/buffer/gegl-buffer.h:
+
 2008-05-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-color.[ch]: (gegl_color_float4): added

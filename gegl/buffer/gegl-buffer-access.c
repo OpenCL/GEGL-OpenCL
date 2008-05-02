@@ -583,8 +583,8 @@ gegl_buffer_set (GeglBuffer          *buffer,
     {
       while (gegl_buffer_try_lock (buffer)==FALSE)
         {
-          g_print ("failed to aquire lock sleeping 1s");
-          g_usleep (1000000);
+          g_print ("failed to aquire lock sleeping 100ms");
+          g_usleep (100000);
         }
     }
 

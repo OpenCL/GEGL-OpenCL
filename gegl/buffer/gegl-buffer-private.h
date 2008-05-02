@@ -63,6 +63,8 @@ struct _GeglBuffer
   gint              tile_width;
   gint              tile_height;
   gchar            *path;
+
+  gint              lock_count;
 };
 
 struct _GeglBufferClass

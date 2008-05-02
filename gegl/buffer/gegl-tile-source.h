@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_SOURCE       (gegl_tile_source_get_type ())
+#define GEGL_TYPE_TILE_SOURCE            (gegl_tile_source_get_type ())
 #define GEGL_TILE_SOURCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_SOURCE, GeglTileSource))
 #define GEGL_TILE_SOURCE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_SOURCE, GeglTileSourceClass))
 #define GEGL_IS_TILE_SOURCE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_SOURCE))
@@ -34,19 +34,6 @@ G_BEGIN_DECLS
 #define GEGL_TILE_SOURCE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_SOURCE, GeglTileSourceClass))
 
 typedef gint GeglTileCommand;
-
-enum _GeglTileCommand
-{
-  GEGL_TILE_IDLE = 0,
-  GEGL_TILE_SET,
-  GEGL_TILE_GET,
-  GEGL_TILE_IS_CACHED,
-  GEGL_TILE_EXIST,
-  GEGL_TILE_VOID,
-  GEGL_TILE_FLUSH,
-  GEGL_TILE_INVALIDATED, /* command sent by some backends through storage*/
-  GEGL_TILE_LAST_COMMAND
-};
 
 struct _GeglTileSource
 {
@@ -67,35 +54,152 @@ struct _GeglTileSourceClass
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
 
+gpointer   gegl_tile_source_command  (GeglTileSource  *tile_source,
+                                      GeglTileCommand  command,
+                                      gint             x,
+                                      gint             y,
+                                      gint             z,
+                                      gpointer         data);
 
 
-gpointer   gegl_tile_source_command  (GeglTileSource    *gegl_tile_source,
-                                   GeglTileCommand  command,
-                                   gint             x,
-                                   gint             y,
-                                   gint             z,
-                                   gpointer         data);
 
-#define gegl_tile_source_idle(source) \
-   gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL)
+/* All commands have the ability to pass commands to all tiles the handlers
+ * add abstraction to the commands the documentaiton given here is valid
+ * when the commands are issued to a full blown GeglBuffer instance.
+ */
+
+enum _GeglTileCommand
+{
+  GEGL_TILE_IDLE = 0,
+  GEGL_TILE_SET, 
+  GEGL_TILE_GET,
+  GEGL_TILE_IS_CACHED,
+  GEGL_TILE_EXIST,
+  GEGL_TILE_VOID,
+  GEGL_TILE_FLUSH,
+  GEGL_TILE_REFETCH,
+  GEGL_TILE_LAST_COMMAND
+};
+
+#ifdef NOT_REALLY_COS_THIS_IS_MACROS
+
+/**
+ * gegl_tile_source_get_tile:
+ * @source: a GeglTileSource *
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: tile zoom level
+ *
+ * Get a GeglTile *from the buffer.
+ *
+ * Returns: the tile at x,y,z or NULL if the tile could not be provided.
+ */
+GeglTile *gegl_tile_source_get_tile  (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
+
+/**
+ * gegl_tile_source_set_tile:
+ * @source: a GeglTileSource *
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: tile zoom level
+ * @tile: a #GeglTile
+ *
+ * Get a GeglTile *from the buffer.
+ *
+ * Returns: the TRUE if the set was successful.
+ */
+gboolean  gegl_tile_source_set_tile  (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z,
+                                      GeglTile      *tile);
+/**
+ * gegl_tile_source_is_cached:
+ * @source: a GeglTileSource *
+ * @x: tile x coordinate
+ * @y: tile y coordinate
+ * @z: tile zoom level
+ *
+ * Checks if a tile is in cache and easily retrieved.
+ */
+gboolean  gegl_tile_source_is_cached (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
+/**
+ * gegl_tile_source_exist:
+ * @source: a GeglTileSource *
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: tile zoom level
+ *
+ * Checks if a tile exists, this check would not cause the tile to be swapped
+ * in.
+ */
+gboolean  gegl_tile_source_exist     (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
+/**
+ * gegl_tile_source_void:
+ * @source: a GeglTileSource *
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: tile zoom level
+ *
+ * Checks if a tile exists, this check would not cause the tile to be swapped
+ * in.
+ */
+void      gegl_tile_source_void      (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
+/*    INTERNAL API
+ * gegl_tile_source_refetch:
+ * @source: a GeglTileSource *
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: tile zoom level
+ *
+ * A message used internally when watching external buffers to indicate that
+ * a refresh of all data relating to the coordinates needs to be refetched.
+ * Subsequent get calls should get new and valid data for the tile coordinates.
+ */
+void      gegl_tile_source_refetch   (GegTileSource *source,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
+/*   INTERNAL API
+ * gegl_tile_source_idle:
+ * @source: a GeglTileSource *
+ *
+ * Allow different parts of the buffer to do idle work (saving cached
+ * data lazily, perhaps prefetching in the future?), monitoring for
+ * changes or other tasks. Used internally by the buffer object.
+ *
+ * Returns: the TRUE if some work was done.
+ */
+gboolean  gegl_tile_source_idle      (GegTileSource *source);
+
+#endif
 
 #define gegl_tile_source_set_tile(source,x,y,z,tile) \
    (gboolean)gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile)
-
 #define gegl_tile_source_get_tile(source,x,y,z) \
    (GeglTile*)gegl_tile_source_command(source,GEGL_TILE_GET,x,y,z,NULL)
-
 #define gegl_tile_source_is_cached(source,x,y,z) \
    (gboolean)gegl_tile_source_command(source,GEGL_TILE_IS_CACHED,x,y,z,NULL)
-
 #define gegl_tile_source_exist(source,x,y,z) \
    (gboolean)gegl_tile_source_command(source,GEGL_TILE_EXIST,x,y,z,NULL)
-
 #define gegl_tile_source_void(source,x,y,z) \
    gegl_tile_source_command(source,GEGL_TILE_VOID,x,y,z,NULL)
-
-#define gegl_tile_source_invalidated(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_INVALIDATED,x,y,z,NULL)
+#define gegl_tile_source_refetch(source,x,y,z) \
+   gegl_tile_source_command(source,GEGL_TILE_REFETCH,x,y,z,NULL)
+#define gegl_tile_source_idle(source) \
+   (gboolean)gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL)
 
  
 G_END_DECLS

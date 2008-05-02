@@ -56,19 +56,6 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
 
 
-/** 
- * gegl_buffer_share:
- * @buffer: a #GeglBuffer.
- *
- * return a integer handle or 0 upon error, the handle returned is
- * unique for this process on this host,
- *
- * An uri for this buffer can be constructed by gegl_buffer_make_uri.
- *
- * Returns: an integer handle for referring to this buffer.
- */
-guint           gegl_buffer_share             (GeglBuffer          *buffer);
-
 /**
  * gegl_buffer_open:
  * @path: the path to a gegl buffer on disk.

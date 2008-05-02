@@ -34,7 +34,7 @@ static char *commands[] =
   "exist",
   "-", /*void*/
   "flush",
-  "invalidated",
+  "refetch",
   "last command",
   "eeek",
   NULL

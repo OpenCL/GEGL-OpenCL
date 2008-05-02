@@ -73,9 +73,22 @@ GType        gegl_tile_get_type   (void) G_GNUC_CONST;
 
 GeglTile   * gegl_tile_new        (gint     size);
 void       * gegl_tile_get_format (GeglTile *tile);
+
+
+/* lock a tile for writing, this would allow writing to buffers
+ * later gotten with get_data()
+ */
 void         gegl_tile_lock       (GeglTile *tile);
+/* get a pointer to the linear buffer of the tile.
+ */
 guchar     * gegl_tile_get_data   (GeglTile *tile);
+/* unlock the tile notifying the tile that we're done manipulating
+ * the data.
+ */
 void         gegl_tile_unlock     (GeglTile *tile);
+
+
+
 gboolean     gegl_tile_is_stored  (GeglTile *tile);
 gboolean     gegl_tile_store      (GeglTile *tile);
 void         gegl_tile_void       (GeglTile *tile);
