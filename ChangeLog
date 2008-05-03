@@ -1,3 +1,7 @@
+2008-05-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: expanded room for function arguments.
+
 2008-05-02  Øyvind Kolås  <pippin@gimp.org>
 
 	Added some documentation to internal tile level interface to
