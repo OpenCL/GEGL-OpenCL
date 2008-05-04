@@ -1,3 +1,8 @@
+2008-05-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/rectangle.c: added new operation that renders a
+	rectangle of a solid color.
+
 2008-05-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* tools/create-reference.rb: expanded room for function arguments.
