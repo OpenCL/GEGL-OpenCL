@@ -240,6 +240,18 @@ void            gegl_buffer_set               (GeglBuffer          *buffer,
 
 
 /**
+ * gegl_buffer_clear:
+ * @buffer: a #GeglBuffer
+ * @roi: a rectangular region
+ *
+ * Clears the provided rectangular region by setting all the associated memory
+ * to 0
+ */
+void            gegl_buffer_clear             (GeglBuffer          *buffer,
+                                               const GeglRectangle *roi);
+
+
+/**
  * gegl_buffer_copy:
  * @src: source buffer.
  * @src_rect: source rectangle (or NULL to copy entire source buffer)
