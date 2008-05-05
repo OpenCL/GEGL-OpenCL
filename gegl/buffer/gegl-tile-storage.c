@@ -170,9 +170,7 @@ tile_storage_idle (gpointer data)
       return FALSE;
     }
 
-  gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));                        
-
-  return TRUE;
+  return gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));                        
 }
 
 GeglTileBackend *gegl_buffer_backend (GObject *buffer);

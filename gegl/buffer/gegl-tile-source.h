@@ -90,7 +90,9 @@ enum _GeglTileCommand
  * @y: y coordinate
  * @z: tile zoom level
  *
- * Get a GeglTile *from the buffer.
+ * Get a GeglTile *from the buffer, mipmap tiles for levels z!=0 will be
+ * created on the fly as needed, empty tiles returned are copy on write
+ * and must be locked before written to, and unlocked afterwards.
  *
  * Returns: the tile at x,y,z or NULL if the tile could not be provided.
  */
@@ -150,8 +152,7 @@ gboolean  gegl_tile_source_exist     (GegTileSource *source,
  * @y: y coordinate
  * @z: tile zoom level
  *
- * Checks if a tile exists, this check would not cause the tile to be swapped
- * in.
+ * Causes all references to a tile to be removed.
  */
 void      gegl_tile_source_void      (GegTileSource *source,
                                       gint           x,
@@ -201,7 +202,6 @@ gboolean  gegl_tile_source_idle      (GegTileSource *source);
 #define gegl_tile_source_idle(source) \
    (gboolean)gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL)
 
- 
 G_END_DECLS
 
 #endif
