@@ -1,3 +1,9 @@
+2008-05-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.[ch]: ported to use floating point
+	instead of fixedpoint/integer for coordinates. Initial port of brush
+	stamping core from horizon for a gegl_vector_stroke method.
+
 2008-05-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/rectangle.c: added new operation that renders a

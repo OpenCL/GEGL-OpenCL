@@ -25,8 +25,11 @@
 
 #include "gegl-types.h"
 
+#include "gegl-buffer-private.h"
 #include "gegl-vector.h"
 #include "gegl-color.h"
+
+
 
 /* ###################################################################### */
 /* path code copied from horizon */
@@ -51,8 +54,8 @@ typedef struct _Path Path;
 
 typedef struct Point
 {
-  gint x;
-  gint y;
+  gfloat x;
+  gfloat y;
 } Point;
 
 struct _Path
@@ -62,45 +65,71 @@ struct _Path
   gchar  type;
 };
 
+
+
 typedef struct _Path Head;
 
+typedef struct _GeglVectorPrivate GeglVectorPrivate;
+typedef struct _VectorNameEntity  VectorNameEntity;
 
-/*** fixed point subdivision bezier ***/
+struct _GeglVectorPrivate
+{
+  Path *path;
+
+  Path *axis[8];
+  gint  n_axes;
+};
+
+enum
+{
+  PROP_0,
+};
+
+
+enum
+{
+  GEGL_VECTOR_CHANGED,
+  GEGL_VECTOR_LAST_SIGNAL
+};
+
+guint gegl_vector_signals[GEGL_VECTOR_LAST_SIGNAL] = { 0 };
+
+
+static void finalize     (GObject      *self);
+static void set_property (GObject      *gobject,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec);
+static void get_property (GObject      *gobject,
+                          guint         prop_id,
+                          GValue       *value,
+                          GParamSpec   *pspec);
+
+G_DEFINE_TYPE (GeglVector, gegl_vector, G_TYPE_OBJECT);
+
+#define GEGL_VECTOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
+                                   GEGL_TYPE_VECTOR, GeglVectorPrivate))
+
+
+/*** subdivision bezier approximation: ***/
 
 /* linear interpolation between two point */
 static void
 lerp (Point *dest,
       Point *a,
       Point *b,
-      gint   t)
+      gfloat   t)
 {
-  dest->x = a->x + (b->x-a->x) * t / 65536;
-  dest->y = a->y + (b->y-a->y) * t / 65536;
+  dest->x = a->x + (b->x-a->x) * t;
+  dest->y = a->y + (b->y-a->y) * t;
 }
 
-#define iter1(N) \
-    try = root + (1 << (N)); \
-    if (n >= try << (N))   \
-    {   n -= try << (N);   \
-        root |= 2 << (N); \
-    }
-
-static inline guint isqrt (guint n)
-{
-    guint root = 0, try;
-    iter1 (15);    iter1 (14);    iter1 (13);    iter1 (12);
-    iter1 (11);    iter1 (10);    iter1 ( 9);    iter1 ( 8);
-    iter1 ( 7);    iter1 ( 6);    iter1 ( 5);    iter1 ( 4);
-    iter1 ( 3);    iter1 ( 2);    iter1 ( 1);    iter1 ( 0);
-    return root >> 1;
-}
-
-static gint
+static gfloat
 point_dist (Point *a,
             Point *b)
 {
-  return isqrt ((a->x-b->x)*(a->x-b->x) +
-                (a->y-b->y)*(a->y-b->y));
+  return sqrt ((a->x-b->x)*(a->x-b->x) +
+               (a->y-b->y)*(a->y-b->y));
 }
 
 
@@ -112,7 +141,7 @@ point_dist (Point *a,
 static void
 bezier (Point **curve,
         Point *dest,
-        gint   t)
+        gfloat t)
 {
   Point ab,bc,cd,abbc,bccd;
 
@@ -153,10 +182,10 @@ path_last_y (Path   *path)
  */
 
 static Path *
-path_add (Path *head,
-          gchar type,
-          gint  x,
-          gint  y)
+path_add (Path   *head,
+          gchar   type,
+          gfloat  x,
+          gfloat  y)
 {
   Path *iter = head;
   Path *prev = NULL;
@@ -264,6 +293,7 @@ path_add (Path *head,
 
         { /* create piecevise linear approximation of bezier curve */
            gint   i;
+           gfloat f;
            Point  foo[4];
            Point *pts[4];
 
@@ -274,11 +304,11 @@ path_add (Path *head,
                pts[i]->y = curve[i]->point.y;
              }
 
-           for (i=0;i<65536;i+=65536 / BEZIER_SEGMENTS)
+           for (f=0; f<1.0; f += 1.0 / BEZIER_SEGMENTS)
              {
                 Point iter;
 
-                bezier (pts, &iter, i);
+                bezier (pts, &iter, f);
 
                 head = path_add (head, 'l', iter.x, iter.y);
              }
@@ -322,31 +352,31 @@ path_destroy (Path *path)
 }
 
 static Path *
-path_move_to (Path *path,
-              gint  x,
-              gint  y)
+path_move_to (Path   *path,
+              gfloat  x,
+              gfloat  y)
 {
   path = path_add (path, 'm', x, y);
   return path;
 }
 
 static Path *
-path_line_to (Path *path,
-              gint  x,
-              gint  y)
+path_line_to (Path   *path,
+              gfloat  x,
+              gfloat  y)
 {
   path = path_add (path, 'l', x, y);
   return path;
 }
 
 static Path *
-path_curve_to (Path *path,
-               gint  x1,
-               gint  y1,
-               gint  x2,
-               gint  y2,
-               gint  x3,
-               gint  y3)
+path_curve_to (Path   *path,
+               gfloat  x1,
+               gfloat  y1,
+               gfloat  x2,
+               gfloat  y2,
+               gfloat  x3,
+               gfloat  y3)
 {
   path = path_add (path, 'c', x1, y1);
   path = path_add (path, '.', x2, y2);
@@ -355,29 +385,29 @@ path_curve_to (Path *path,
 }
 
 static Path *
-path_rel_move_to (Path *path,
-                  gint  x,
-                  gint  y)
+path_rel_move_to (Path   *path,
+                  gfloat  x,
+                  gfloat  y)
 {
   return path_move_to (path, path->point.x + x, path->point.y + y);
 }
 
 static Path *
-path_rel_line_to (Path *path,
-                  gint  x,
-                  gint  y)
+path_rel_line_to (Path   *path,
+                  gfloat  x,
+                  gfloat  y)
 {
   return path_line_to (path, path->point.x + x, path->point.y + y);
 }
 
 static Path *
-path_rel_curve_to (Path *path,
-                   gint  x1,
-                   gint  y1,
-                   gint  x2,
-                   gint  y2,
-                   gint  x3,
-                   gint  y3)
+path_rel_curve_to (Path   *path,
+                   gfloat  x1,
+                   gfloat  y1,
+                   gfloat  x2,
+                   gfloat  y2,
+                   gfloat  x3,
+                   gfloat  y3)
 {
   return path_curve_to (path,
                         path->point.x + x1, path->point.y + y1,
@@ -507,6 +537,8 @@ fill_close:  /* label used for goto to close last segment */
         buf[i*4+3] = col[3];
       }
 
+    if (gegl_buffer_is_shared (buffer))
+    while (!gegl_buffer_try_lock (buffer));
     for (i=0; i < extent.height; i++)
       {
         GSList *iter = scanlines[i];
@@ -530,46 +562,122 @@ fill_close:  /* label used for goto to close last segment */
         if (scanlines[i])
           g_slist_free (scanlines[i]);
       }
+    if (gegl_buffer_is_shared (buffer))
+    gegl_buffer_unlock (buffer);
     g_free (buf);
 }
   }
 
 }
 
+typedef struct StampStatic {
+  gboolean  valid;
+  Babl     *format;
+  gfloat   *buf;
+  gdouble   radius;
+}StampStatic;
+
+void gegl_vector_stamp (GeglBuffer *buffer,
+                        gdouble     x,
+                        gdouble     y,
+                        gdouble     radius,
+                        gdouble     hardness,
+                        GeglColor  *color);
+
+void gegl_vector_stamp (GeglBuffer *buffer,
+                        gdouble     x,
+                        gdouble     y,
+                        gdouble     radius,
+                        gdouble     hardness,
+                        GeglColor  *color)
+{
+  const gfloat *col = gegl_color_float4 (color);
+  static StampStatic s = {FALSE,}; /* XXX: 
+                                      we will ultimately leak the last valid
+                                      cached brush. */
+
+  GeglRectangle roi = {floor(x-radius),
+                       floor(y-radius),
+                       ceil (x+radius) - floor (x-radius),
+                       ceil (y+radius) - floor (y-radius)};
+
+  if (s.format == NULL)
+    s.format = babl_format ("RGBA float");
+  if (s.buf == NULL ||
+      s.radius != radius)
+    {
+      if (s.buf != NULL)
+        g_free (s.buf);
+      s.buf = g_malloc (4*4* roi.width * roi.height);
+      s.radius = radius;
+      s.valid = TRUE;  
+    }
+  g_assert (s.buf);
+
+  gegl_buffer_get (buffer, 1.0, &roi, s.format, s.buf, 0);
+
+  {
+    gint u, v;
+    gint i=0;
+
+    gfloat radius_squared = radius * radius;
+    gfloat inner_radius_squared = (radius * hardness)*(radius * hardness);
+    gfloat soft_range = radius_squared - inner_radius_squared;
+
+    for (u= roi.x; u < roi.x + roi.width; u++)
+      for (v= roi.y; v < roi.y + roi.height ; v++)
+        {
+          gfloat o = (u-x) * (u-x) + (v-y) * (v-y);
+
+          if (o < inner_radius_squared)
+             o = col[3];
+          else if (o < radius_squared)
+            {
+              o = (1.0 - (o-inner_radius_squared) / (soft_range)) * col[3];
+            }
+          else
+            {
+              o=0.0;
+            }
+         if (o!=0.0)
+           {
+             gint c;
+             for (c=0;c<4;c++)
+               s.buf[i*4+c] = (s.buf[i*4+c] * (1.0-o) + col[c] * o);
+             /*s.buf[i*4+3] = s.buf[i*4+3] + o * (1.0-o);*/
+           }
+         i++;
+        }
+  }
+  gegl_buffer_set (buffer, &roi, s.format, s.buf, 0);
+}
+
+
 void gegl_vector_stroke (GeglBuffer *buffer,
                          GeglVector *vector,
                          GeglColor  *color,
                          gdouble     linewidth,
-                         gint        linecap,
-                         gint        linejoin)
+                         gdouble     hardness)
 {
-
-}
-
-#if 0
-
-/* drawing code follows */
-
-#include "canvas/canvas.h"
-#include "brush.h"
-#include "tools/tool_library.h"
-
-/* code to stroke with a specified tool */
-
-void
-path_stroke_tool (Path   *path,
-                  Canvas *canvas,
-                  Tool   *tool)
-{
-  Path *iter = path;
-  gint traveled_length = 0;
-  gint need_to_travel = 0;
-  gint x = 0,y = 0;
-
-  if (!tool)
-    tool = lookup_tool ("Paint");
-
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  gfloat traveled_length = 0;
+  gfloat need_to_travel = 0;
+  gfloat x = 0,y = 0;
   gboolean had_move_to = FALSE;
+  Path *iter = priv->path;
+  gdouble       xmin, xmax, ymin, ymax;
+  GeglRectangle extent;
+
+  gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
+  extent.x = floor (xmin);
+  extent.y = floor (ymin);
+  extent.width = ceil (xmax) - extent.x;
+  extent.height = ceil (ymax) - extent.y;
+
+  if (gegl_buffer_is_shared (buffer))
+  while (!gegl_buffer_try_lock (buffer));
+
+  gegl_buffer_clear (buffer, &extent);
 
   while (iter)
     {
@@ -586,13 +694,13 @@ path_stroke_tool (Path   *path,
           case 'l':
             {
               Point a,b;
-              ToolSetting *ts = tool_with_brush_get_toolsetting (tool);
 
-              gint spacing;
-              gint local_pos;
-              gint distance;
-              gint offset;
-              gint leftover;
+              gfloat spacing;
+              gfloat local_pos;
+              gfloat distance;
+              gfloat offset;
+              gfloat leftover;
+              gfloat radius = linewidth / 2.0;
 
 
               a.x = x;
@@ -601,10 +709,7 @@ path_stroke_tool (Path   *path,
               b.x = iter->point.x;
               b.y = iter->point.y;
 
-              spacing = ts->spacing * (ts->radius * MAX_RADIUS / 65536) / 65536;
-
-              if (spacing < MIN_SPACING * SPP / 65536)
-                spacing = MIN_SPACING * SPP / 65536;
+              spacing = 0.2 * radius;
 
               distance = point_dist (&a, &b);
 
@@ -619,18 +724,17 @@ path_stroke_tool (Path   *path,
                      local_pos += spacing)
                   {
                     Point spot;
-                    gint ratio = 65536 * local_pos / distance;
-                    gint radius;
+                    gfloat ratio = local_pos / distance;
+                    gfloat radius = linewidth / 2;
+                                 /* horizon used to refetch the radius
+                                  * for each step from the tool, to be
+                                  * able to have variable line width
+                                  */
 
                     lerp (&spot, &a, &b, ratio);
 
-                    radius = ts->radius  * MAX_RADIUS  / 65536,
-
-                    canvas_stamp (canvas,
-                      spot.x, spot.y, radius,
-                      ts->opacity * MAX_OPACITY / 65536,
-                      ts->hardness,
-                      ts->red, ts->green, ts->blue);
+                    gegl_vector_stamp (buffer,
+                      spot.x, spot.y, radius, hardness, color);
 
                     traveled_length += spacing;
                   }
@@ -653,98 +757,11 @@ path_stroke_tool (Path   *path,
         }
       iter=iter->next;
     }
+
+  if (gegl_buffer_is_shared (buffer))
+  gegl_buffer_unlock (buffer);
 }
 
-extern Tool *tool_paint_new ();
-
-static Tool *path_tool (Path *path)
-{
-  Head *head = (Head*)path;
-  if (!head)
-    return NULL;
-  if (head->tool == NULL)
-    head->tool = tool_paint_new ();
-  return head->tool;
-}
-
-void
-path_set_line_width (Path *path,
-                     gint  line_width)
-{
-  ToolSetting *ts = tool_with_brush_get_toolsetting (path_tool (path));
-  ts->radius = line_width / 2;
-}
-
-void
-path_set_rgba (Path *path,
-               gint  red,
-               gint  green,
-               gint  blue,
-               gint  alpha)
-{
-  ToolSetting *ts = tool_with_brush_get_toolsetting (path_tool (path));
-  ts->red   = red;
-  ts->green = green;
-  ts->blue  = blue;
-  ts->opacity = alpha;
-}
-
-void
-path_set_hardness (Path *path,
-                   gint  hardness)
-{
-  ToolSetting *ts = tool_with_brush_get_toolsetting (path_tool (path));
-  ts->hardness = hardness;
-}
-
-void
-path_stroke (Path   *path,
-             Canvas *canvas)
-{
-  path_stroke_tool (path, canvas, path_tool (path));
-}
-#endif
-
-/* ###################################################################### */
-
-
-
-enum
-{
-  PROP_0,
-};
-
-typedef struct _GeglVectorPrivate GeglVectorPrivate;
-typedef struct _VectorNameEntity  VectorNameEntity;
-
-struct _GeglVectorPrivate
-{
-  Path *path;
-};
-
-enum
-{
-  GEGL_VECTOR_CHANGED,
-  GEGL_VECTOR_LAST_SIGNAL
-};
-
-guint gegl_vector_signals[GEGL_VECTOR_LAST_SIGNAL] = { 0 };
-
-
-static void finalize     (GObject      *self);
-static void set_property (GObject      *gobject,
-                          guint         prop_id,
-                          const GValue *value,
-                          GParamSpec   *pspec);
-static void get_property (GObject      *gobject,
-                          guint         prop_id,
-                          GValue       *value,
-                          GParamSpec   *pspec);
-
-G_DEFINE_TYPE (GeglVector, gegl_vector, G_TYPE_OBJECT);
-
-#define GEGL_VECTOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
-                                   GEGL_TYPE_VECTOR, GeglVectorPrivate))
 
 static void
 gegl_vector_init (GeglVector *self)
@@ -867,9 +884,11 @@ gegl_vector_curve_to (GeglVector *self,
                       gdouble     y3)
 {
   GeglVectorPrivate *priv;
+  g_print ("foo\n");
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
   gegl_vector_emit_changed (self);
+  g_print ("bar\n");
 }
 
 
@@ -916,8 +935,8 @@ gegl_vector_get_length (GeglVector *self)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
   Path *iter = priv->path;
-  gint traveled_length = 0;
-  gint x = 0, y = 0;
+  gfloat traveled_length = 0;
+  gfloat x = 0, y = 0;
 
   while (iter)
     {
@@ -930,7 +949,7 @@ gegl_vector_get_length (GeglVector *self)
           case 'l':
             {
               Point a,b;
-              gint distance;
+              gfloat distance;
 
               a.x = x;
               a.y = y;
@@ -1001,9 +1020,9 @@ gegl_vector_calc (GeglVector *self,
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
   Path *iter = priv->path;
-  gint traveled_length = 0;
-  gint need_to_travel = 0;
-  gint x = 0, y = 0;
+  gfloat traveled_length = 0;
+  gfloat need_to_travel = 0;
+  gfloat x = 0, y = 0;
 
   gboolean had_move_to = FALSE;
 
@@ -1023,11 +1042,11 @@ gegl_vector_calc (GeglVector *self,
             {
               Point a,b;
 
-              gint spacing;
-              gint local_pos;
-              gint distance;
-              gint offset;
-              gint leftover;
+              gfloat spacing;
+              gfloat local_pos;
+              gfloat distance;
+              gfloat offset;
+              gfloat leftover;
 
 
               a.x = x;
@@ -1036,7 +1055,7 @@ gegl_vector_calc (GeglVector *self,
               b.x = iter->point.x;
               b.y = iter->point.y;
 
-              spacing = 10;
+              spacing = 0.2;
 
               distance = point_dist (&a, &b);
 
@@ -1051,7 +1070,7 @@ gegl_vector_calc (GeglVector *self,
                      local_pos += spacing)
                   {
                     Point spot;
-                    gint ratio = 65536 * local_pos / distance;
+                    gfloat ratio = local_pos / distance;
 
                     lerp (&spot, &a, &b, ratio);
 

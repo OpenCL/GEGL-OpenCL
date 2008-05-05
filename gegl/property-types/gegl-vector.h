@@ -121,8 +121,7 @@ void gegl_vector_stroke (GeglBuffer *buffer,
                          GeglVector *vector,
                          GeglColor  *color,
                          gdouble     linewidth,
-                         gint        linecap,
-                         gint        linejoin);
+                         gdouble     hardness);
 
 G_END_DECLS
 
