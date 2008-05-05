@@ -1,5 +1,9 @@
 2008-05-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: update GeglVector's binding for new chanting.
+
+2008-05-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.h: added new method gegl_buffer_clear()
 	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_clear):
 
