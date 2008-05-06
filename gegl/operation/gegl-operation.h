@@ -138,12 +138,7 @@ struct _GeglOperationClass
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
-
-
-  GCallback      processor[MAX_PROCESSOR];
-  gchar          *processor_string[MAX_PROCESSOR];
 };
-
 
 
 

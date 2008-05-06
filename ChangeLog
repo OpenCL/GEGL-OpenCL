@@ -1,3 +1,15 @@
+2008-05-06  Øyvind Kolås  <pippin@gimp.org>
+
+	Improved indentation/argument naming/docs.
+
+	* gegl/operation/gegl-operation-area-filter.h:
+	* gegl/operation/gegl-operation-filter.h:
+	* gegl/operation/gegl-operation-sink.h:
+	* gegl/operation/gegl-operation-source.h:
+	* gegl/operation/gegl-operation.h:
+	* operations/common/brightness-contrast.c: (process_simd),
+	(gegl_chant_class_init):
+
 2008-05-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile-source.h: improved docs.

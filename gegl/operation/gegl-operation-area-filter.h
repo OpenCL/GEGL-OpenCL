@@ -35,7 +35,7 @@ struct _GeglOperationAreaFilter
 {
   GeglOperationFilter parent_instance;
 
-  gint                left;
+  gint                left;   /* extra pixels needed in each direction */
   gint                right;
   gint                top;
   gint                bottom;

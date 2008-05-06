@@ -43,7 +43,7 @@ struct _GeglOperationSourceClass
 
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *output,
-                        const GeglRectangle *result);
+                        const GeglRectangle *roi);
 };
 
 GType gegl_operation_source_get_type (void) G_GNUC_CONST;

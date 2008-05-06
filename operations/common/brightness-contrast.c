@@ -109,12 +109,16 @@ process (GeglOperation *op,
 
 
 #ifdef HAS_G4FLOAT
+/* The compiler supports vector extensions allowing an version of
+ * the process code that produces more optimal instructions on the
+ * target platform.
+ */
 
 static gboolean
-process_gcc_vectors (GeglOperation *op,
-                     void          *in_buf,
-                     void          *out_buf,
-                     glong          samples)
+process_simd (GeglOperation *op,
+              void          *in_buf,
+              void          *out_buf,
+              glong          samples)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   g4float *in  = in_buf;
@@ -175,7 +179,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    * broken and not conforming to the reference implementation.
    */
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gcc_vectors), "g4float");
+                                      G_CALLBACK (process_simd), "g4float");
 #endif
 }
 

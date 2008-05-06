@@ -45,7 +45,7 @@ struct _GeglOperationSinkClass
 
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *input,
-                        const GeglRectangle *result);
+                        const GeglRectangle *roi);
 };
 
 GType    gegl_operation_sink_get_type   (void) G_GNUC_CONST;

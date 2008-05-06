@@ -44,7 +44,7 @@ struct _GeglOperationFilterClass
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *input,
                         GeglBuffer          *output,
-                        const GeglRectangle *result);
+                        const GeglRectangle *roi);
 };
 
 GType gegl_operation_filter_get_type (void) G_GNUC_CONST;
