@@ -1,3 +1,9 @@
+2008-05-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_vector_stamp): allocate
+	some extra space for the brush, to include potential rounding issues
+	with the roi computation.
+
 2008-05-06  Øyvind Kolås  <pippin@gimp.org>
 
 	Improved indentation/argument naming/docs.
