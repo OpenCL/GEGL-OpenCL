@@ -1,3 +1,8 @@
+2008-05-08  Manish Singh  <yosh@gimp.org>
+
+	* samples/render-test.rb: the display op isn't really needed, remove.
+	Also, update for fractal-explorer op name change.
+
 2008-01-23  Øyvind Kolås  <pippin@gimp.org>
 
 	reviewed by: <delete if not using a buddy>

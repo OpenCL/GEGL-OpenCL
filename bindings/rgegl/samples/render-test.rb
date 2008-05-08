@@ -11,13 +11,12 @@ width=40
 height=40
 
 gegl    = Gegl::Node.new
-fractal = gegl.new_child :FractalExplorer,:width=>width,:height=>height, :ncolors=>3
+fractal = gegl.new_child :fractal_explorer, :width=>width, :height=>height, :ncolors=>3
 contrast= gegl.new_child :threshold, :value=>0.5
 text    = gegl.new_child :text, :string=>'GEGL\n\n term', :size=>height/4
 over    = gegl.new_child :over
-display = gegl.new_child :display
 
-fractal >> contrast >> over >> display
+fractal >> contrast >> over
 text >> over[:aux]
 
 x=0
