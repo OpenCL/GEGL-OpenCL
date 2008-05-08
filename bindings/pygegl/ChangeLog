@@ -1,3 +1,7 @@
+2008-05-08  Manish Singh  <yosh@gimp.org>
+
+	* samples/render-test.py: the display op isn't really needed, remove.
+
 2008-01-22  Manish Singh  <yosh@gimp.org>
 
 	* Gegl/gegl.override: gegl-utils.h no longer exists.

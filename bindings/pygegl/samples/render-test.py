@@ -22,9 +22,8 @@ text    = gegl.new_child("text",
                          string="GEGL\n\n term",
                          size=height/4)
 over    = gegl.new_child("over")
-display = gegl.new_child("screen")
 
-fractal >> contrast >> over >> display
+fractal >> contrast >> over
 text >> over["aux"]
 
 buffer = over.render((0,0,width,height), "Y u8")
