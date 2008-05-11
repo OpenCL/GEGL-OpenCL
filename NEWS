@@ -7,15 +7,27 @@ from SVN whilst even micro numbers indicate released snapshots.
 
 Changes in GEGL 0.0.17
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
- • Performance of GeglBuffer improved.
- • Handle optimized versions of innerloops for operations.
-   • SSE detection and optimization for some point ops.
+ • Configuration both from commandline arguments and at runtime.
+ • GeglBuffer
+   • Transparently sharable across processes.
+   • Fileformat compatible with swap format.
+   • Tunable cache size.
+ • Operations
+   • Handle variant implementations of GeglOperations.
+   • Optimized variants of some point and compositing operations reimplemented
+     using a new data type /g4float/ that allows writing cpu agnostic vectorized
+     code for GCC.
+   • New operations: write-buffer, v4l, color-temperature.
+
+Contributions from:
+  Øyvind Kolås, Kevin Cozens, Sven Neumann, Manish Singh, Martin Nordholts,
+  Étienne Bersac, Hans Petter Jansson, Jan Heller.
 
 Changes in GEGL 0.0.16
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Install headers for development of external operation plug-ins.
  • Added rowstride argument to gegl_buffer_set ()
- • Made it possible for sink operations to do cunkwise processing
+ • Made it possible for sink operations to do chunkwise processing
    through GeglProcessor.
    when processed using a GeglProcessor.
  • constification of GeglRectangles and babl formats.
