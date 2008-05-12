@@ -24,7 +24,7 @@
 #include <gegl.h>
 #include "rbgtk.h"
 #include "rbgobject.h"
-#include "rbgeglversion.h"
+/*#include "rbgeglversion.h"*/
 
 extern void Init_gegl(void);
 extern void Init_gegl_buffer(VALUE);

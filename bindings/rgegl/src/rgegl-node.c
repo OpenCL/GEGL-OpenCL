@@ -357,6 +357,7 @@ cnode_to_xml (self,
     return CSTR2RVAL (xml);
 }
 
+#if 0
 gpointer gegl_node_get_cache (GeglNode *node);
 void gegl_buffer_save (gpointer buffer,
        const gchar *path,
@@ -364,13 +365,14 @@ void gegl_buffer_save (gpointer buffer,
 void gegl_buffer_load (gpointer buffer,
        const gchar *path);
 
+
 static VALUE
 cnode_save_cache (self,
                   path)
   VALUE self, path;
 {
-    gpointer cache = gegl_node_get_cache (_SELF (self));
-    gegl_buffer_save (cache, RVAL2CSTR(path), NULL);
+    /*gpointer cache = gegl_node_get_cache (_SELF (self));
+    gegl_buffer_save (cache, RVAL2CSTR(path), NULL);*/
     return Qnil;
 }
 
@@ -379,11 +381,12 @@ cnode_load_cache (self,
                   path)
   VALUE self, path;
 {
-    gpointer cache = gegl_node_get_cache (_SELF (self));
-    gegl_buffer_load (cache, RVAL2CSTR(path));
+    /*gpointer cache = gegl_node_get_cache (_SELF (self));
+    gegl_buffer_load (cache, RVAL2CSTR(path));*/
     /* FIXME: fix what is legal data for cache (or do it in load?)*/
     return Qnil;
 }
+#endif
 
 gchar *gegl_to_dot (GeglNode *self);
 
@@ -483,8 +486,8 @@ Init_gegl_node(mGegl)
     rb_define_method(geglGeglNode, "set_property", cnode_set_property, 2);
     rb_define_method(geglGeglNode, "processor", cnode_new_processor, 1);
     rb_define_method(geglGeglNode, "xml", cnode_to_xml, 1);
-    rb_define_method(geglGeglNode, "save_cache", cnode_save_cache, 1);
-    rb_define_method(geglGeglNode, "load_cache", cnode_load_cache, 1);
+/*    rb_define_method(geglGeglNode, "save_cache", cnode_save_cache, 1);
+    rb_define_method(geglGeglNode, "load_cache", cnode_load_cache, 1);*/
 
     rb_define_module_function (mGegl, "init", c_gegl_init, 0);
     rb_define_module_function (mGegl, "exit", c_gegl_exit, 0);
