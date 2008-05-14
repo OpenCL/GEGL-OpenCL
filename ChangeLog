@@ -1,3 +1,8 @@
+2008-05-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/whitebalance.c: (process): do not assume that
+	input buffer == output buffer.
+
 2008-05-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* NEWS: detailed most new changes.

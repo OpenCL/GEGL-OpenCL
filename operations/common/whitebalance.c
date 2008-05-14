@@ -48,14 +48,16 @@ process (GeglOperation *op,
          glong          n_pixels)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *pixel;
+  gfloat     *in_pixel;
+  gfloat     *out_pixel;
   gfloat      a_base;
   gfloat      a_scale;
   gfloat      b_base;
   gfloat      b_scale;
   glong       i;
 
-  pixel = in_buf;
+  in_pixel = in_buf;
+  out_pixel = out_buf;
 
   a_scale = (o->high_a_delta - o->low_a_delta);
   a_base = o->low_a_delta;
@@ -64,11 +66,16 @@ process (GeglOperation *op,
 
   for (i=0; i<n_pixels; i++)
     {
-      pixel[1] += pixel[0] * a_scale + a_base;
-      pixel[2] += pixel[0] * b_scale + b_base;
-      pixel[1] = pixel[1] * o->saturation;
-      pixel[2] = pixel[2] * o->saturation;
-      pixel += 4;
+      out_pixel[0] = in_pixel[0];
+      out_pixel[1] = in_pixel[1];
+      out_pixel[2] = in_pixel[2];
+      out_pixel[3] = in_pixel[3];
+      out_pixel[1] += in_pixel[0] * a_scale + a_base;
+      out_pixel[2] += in_pixel[0] * b_scale + b_base;
+      out_pixel[1] = out_pixel[1] * o->saturation;
+      out_pixel[2] = out_pixel[2] * o->saturation;
+      in_pixel += 4;
+      out_pixel += 4;
     }
   return TRUE;
 }
