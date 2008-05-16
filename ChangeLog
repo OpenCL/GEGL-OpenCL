@@ -1,5 +1,15 @@
 2008-05-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c: added gegl_buffer_scan_iterator.
+	* gegl/buffer/gegl-buffer-private.h: added iterator data structures
+	for tiles as well as scanlines.
+	* gegl/buffer/gegl-tile.c: use gegl_malloc for allocating aligned
+	tile memory.
+	* gegl/operation/gegl-operation-point-filter.c: make use of scan
+	iteration when possible between formats.
+
+2008-05-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/whitebalance.c: (process): do not assume that
 	input buffer == output buffer.
 

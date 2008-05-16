@@ -41,6 +41,226 @@ GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 #endif
 
 
+
+void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
+                                            GeglBuffer             *buffer,
+                                            GeglRectangle           roi,
+                                            gboolean                write)
+{
+  g_assert (i);
+  memset (i, 0, sizeof (GeglBufferTileIterator));
+  i->buffer = buffer;
+  i->roi = roi;
+  i->row    = 0;
+  i->col = 0;
+  i->tile = NULL;
+  i->write = write;
+}
+
+
+GeglBufferTileIterator *
+gegl_buffer_tile_iterator_new (GeglBuffer    *buffer,
+                               GeglRectangle  roi,
+                               gboolean       write)
+{
+  GeglBufferTileIterator *i = g_malloc (sizeof (GeglBufferTileIterator));
+  gegl_buffer_tile_iterator_init (i, buffer, roi, write);
+  return i; 
+}
+
+void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
+                                     GeglBuffer             *buffer,
+                                     GeglRectangle           roi,
+                                     gboolean                write)
+{
+  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
+  g_assert (i);
+  memset (i, 0, sizeof (GeglBufferScanIterator));
+  gegl_buffer_tile_iterator_init (tile_i, buffer, roi, write);
+  i->max_size = tile_i->buffer->tile_storage->tile_width *
+                tile_i->buffer->tile_storage->tile_height *
+                tile_i->buffer->format->format.bytes_per_pixel;
+}
+
+GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer             *buffer,
+                                                       GeglRectangle           roi,
+                                                       gboolean                write)
+{
+  GeglBufferScanIterator *i = g_malloc (sizeof (GeglBufferScanIterator));
+  gegl_buffer_scan_iterator_init (i, buffer, roi, write);
+  return i;
+}
+
+gboolean
+gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
+{
+  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
+
+  if (tile_i->tile==NULL)
+    {
+      gulp:
+      if (!gegl_buffer_tile_iterator_next (tile_i))
+        return FALSE;
+      i->width = tile_i->subrect.width;
+      i->row = 0;
+    }
+  /* we should now have a valid tile */
+
+  if (tile_i->subrect.width == tile_i->buffer->tile_storage->tile_width &&
+      i->row < tile_i->subrect.height)
+    /* the entire contents of the tile can be expressed as one long scan */
+    {
+      gint  px_size = tile_i->buffer->format->format.bytes_per_pixel;
+      guchar *data = tile_i->data;
+      i->width = tile_i->subrect.width * tile_i->subrect.height;
+      i->data = data + px_size * (tile_i->subrect.width * tile_i->subrect.y);
+      i->row = tile_i->subrect.height;
+      return TRUE;
+    }
+  else if (i->row < tile_i->subrect.height)
+    /* iterate thorugh the scanlines in the subrect */
+    {
+      guchar *data = tile_i->sub_data;
+      i->data = data + i->row * tile_i->rowstride;
+      i->row ++;
+      return TRUE;
+    }
+  else
+    { /* we're done with that tile go get another one if possible */
+      goto gulp;
+    }
+
+  return FALSE;
+}
+
+
+gboolean gegl_buffer_scan_compatible (GeglBuffer *input,
+                                      GeglBuffer *output)
+{
+  if (input->tile_storage->tile_width !=
+      output->tile_storage->tile_width)
+    return FALSE;
+  if (input->tile_storage->tile_height !=
+      output->tile_storage->tile_height)
+    return FALSE;
+  if (input->shift_x !=
+      output->shift_x)
+    return FALSE;
+  if (input->shift_y !=
+      output->shift_y)
+    return FALSE;
+  return TRUE;
+}
+
+gboolean
+gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
+{
+  GeglBuffer *buffer = i->buffer;
+  gint  tile_width   = buffer->tile_storage->tile_width;
+  gint  tile_height  = buffer->tile_storage->tile_height;
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
+  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
+  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+
+  if (i->roi.width == 0 || i->roi.height == 0)
+    return FALSE;
+
+gulp:
+
+  /* unref previous held tile */
+  if (i->tile)
+    {
+      if (i->write)
+        {
+          gegl_tile_unlock (i->tile);
+        }
+      g_object_unref (i->tile);
+      i->tile = NULL;
+    }
+
+  if (i->col < i->roi.width)
+    { /* return tile on this row */
+      gint tiledx = buffer_x + i->col;
+      gint tiledy = buffer_y + i->row;
+      gint offsetx = gegl_tile_offset (tiledx, tile_width);
+      gint offsety = gegl_tile_offset (tiledy, tile_height);
+      gint pixels; 
+
+      if (i->roi.width + offsetx - i->col < tile_width)
+        pixels = (i->roi.width + offsetx - i->col) - offsetx;
+      else
+        pixels = tile_width - offsetx;
+
+     if (!(buffer_x + i->col + tile_width >= buffer_abyss_x &&
+                      buffer_x + i->col < abyss_x_total))
+       { 
+          g_warning ("entire tile in abyss?");
+
+          i->col += tile_width - offsetx;
+       }
+     else
+       {
+         /* gap between left side of tile, and abyss */
+         i->subrect.x = offsetx;
+         i->subrect.y = offsety;
+         /* gap between right side of tile, and abyss */
+
+
+         i->subrect.width = (i->roi.width - i->col < tile_width) ?
+                             (i->roi.width - i->col) - i->subrect.x:
+                             tile_width - i->subrect.x;
+
+         i->subrect.height = (i->roi.height - i->row < tile_height) ?
+                             (i->roi.height - i->row) - i->subrect.y:
+                             tile_height - i->subrect.y;
+
+         i->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                               gegl_tile_indice (tiledx, tile_width),
+                                               gegl_tile_indice (tiledy, tile_height),
+                                               0);
+         if (i->write)
+           {
+             gegl_tile_lock (i->tile);
+           }
+         i->data = gegl_tile_get_data (i->tile);
+
+         {
+         gint bpp = i->buffer->format->format.bytes_per_pixel;
+         i->rowstride = bpp * tile_width;
+         i->sub_data = (guchar*)(i->data) + bpp * (i->subrect.y * tile_width + i->subrect.x);
+         }
+
+         /* update with new future position (note this means that the
+          * coordinates read from the iterator do not make full sense 
+          * */
+         i->col += tile_width - offsetx;
+
+         return TRUE;
+       }
+    }
+  else /* move down to next row */
+    {
+      gint tiledy = buffer_y + i->row;
+      gint offsety = gegl_tile_offset (tiledy, tile_height);
+
+      i->row += tile_height - offsety;
+      i->col=0;
+
+      if (i->row < i->roi.height)
+        {
+          goto gulp; /* return the first tile in the next row */
+        }
+
+      return FALSE;
+    }
+  return FALSE;
+}
+                                    
+
+
 #ifdef BABL
 #undef BABL
 #endif
@@ -308,6 +528,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
                             GEGL_TILE_FLUSH, 0,0,0,NULL);
 }
+
 
 
 static void inline
@@ -579,14 +800,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
 #if ENABLE_MP
   g_static_rec_mutex_lock (&mutex);
 #endif
-  if (gegl_buffer_is_shared(buffer))
-    {
-      while (gegl_buffer_try_lock (buffer)==FALSE)
-        {
-          g_print ("failed to aquire lock sleeping 100ms");
-          g_usleep (100000);
-        }
-    }
+  gegl_buffer_lock (buffer);
 
   if (format == NULL)
     format = buffer->format;
@@ -613,8 +827,8 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (gegl_buffer_is_shared(buffer))
     {
       gegl_buffer_flush (buffer);
-      gegl_buffer_unlock (buffer);
     }
+  gegl_buffer_unlock (buffer); /* XXX: should this happen before flush? */
 #if ENABLE_MP
   g_static_rec_mutex_unlock (&mutex);
 #endif
@@ -1250,4 +1464,3 @@ gegl_buffer_dup (GeglBuffer *buffer)
                     new, gegl_buffer_get_extent (buffer));
   return new;
 }
-

@@ -106,6 +106,8 @@ set_property (GObject      *gobject,
     }
 }
 
+#include "gegl-utils.h"
+
 static void
 dispose (GObject *object)
 {
@@ -118,7 +120,7 @@ dispose (GObject *object)
     {
       if (tile->next_shared == tile)
         { /* no clones */
-          g_free (tile->data);
+          gegl_free (tile->data);
           tile->data = NULL;
         }
       else
@@ -211,12 +213,21 @@ gegl_tile_new (gint size)
 {
   GeglTile *tile = g_object_new (GEGL_TYPE_TILE, NULL);
 
-  tile->data       = g_malloc (size);
+  tile->data       = gegl_malloc (size);
   tile->size       = size;
   tile->stored_rev = 1;
 
 
   return tile;
+}
+
+static gpointer
+gegl_memdup (gpointer src, gsize size)
+{
+  gpointer ret;
+  ret = gegl_malloc (size);
+  memcpy (ret, src, size);
+  return ret;
 }
 
 static void
@@ -227,7 +238,7 @@ gegl_tile_unclone (GeglTile *tile)
       /* the tile data is shared with other tiles,
        * create a local copy
        */
-      tile->data                     = g_memdup (tile->data, tile->size);
+      tile->data                     = gegl_memdup (tile->data, tile->size);
       tile->prev_shared->next_shared = tile->next_shared;
       tile->next_shared->prev_shared = tile->prev_shared;
       tile->prev_shared              = tile;
@@ -243,7 +254,8 @@ gegl_tile_lock (GeglTile *tile)
 {
   if (tile->lock != 0)
     {
-      g_warning ("locking a tile for the second time");
+      g_print ("hm\n");
+      g_warning ("strange tile lock count: %i", tile->lock);
     }
   total_locks++;
 
@@ -327,7 +339,7 @@ gegl_tile_cpy (GeglTile *src,
 {
   gegl_tile_lock (dst);
 
-  g_free (dst->data);
+  gegl_free (dst->data);
   dst->data = NULL;
 
   dst->next_shared              = src->next_shared;
