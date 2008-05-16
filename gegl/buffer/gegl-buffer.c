@@ -68,7 +68,6 @@
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
 
-
 static GObjectClass * parent_class = NULL;
 
 enum
@@ -339,10 +338,15 @@ gegl_buffer_dispose (GObject *object)
       buffer->hot_tile = NULL;
     }
 
-  de_allocated_buffers++; /* XXX: is it correct to count that, shouldn't that
-                             only be counted in finalize? */
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static void
+gegl_buffer_finalize (GObject *object)
+{
+  de_allocated_buffers++;
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 GeglTileBackend *
@@ -694,6 +698,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
 
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
+  gobject_class->finalize     = gegl_buffer_finalize;
   gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -1022,27 +1027,38 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
   gboolean ret;
-  if (!backend->shared)
-    return FALSE;
+
   if (buffer->lock_count>0)
     {
       buffer->lock_count++;
       return TRUE;
     }
-  ret =gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+  if (gegl_buffer_is_shared(buffer))
+    ret =gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+  else
+    ret = TRUE;
   if (ret)
     buffer->lock_count++;
   return TRUE;
 }
+
+gboolean gegl_buffer_lock (GeglBuffer *buffer)
+{
+  while (gegl_buffer_try_lock (buffer)==FALSE)
+    {
+      g_print ("failed to aquire lock blocking ..");
+        g_usleep (100000);
+    }
+  return TRUE;
+}
+
 gboolean gegl_buffer_unlock (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
-  if (!backend->shared)
-    return FALSE;
   g_assert (buffer->lock_count>=0);
   buffer->lock_count--;
   g_assert (buffer->lock_count>=0);
-  if (buffer->lock_count==0)
+  if (buffer->lock_count==0 && gegl_buffer_is_shared (buffer))
     return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
   return TRUE;
 }
