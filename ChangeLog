@@ -1,5 +1,24 @@
 2008-05-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-processors.c:
+	(gegl_class_register_alternate_vfunc): code reorganization.
+	(dispatch): cache the found codepath for a given quality, made the
+	order the checked for strings are used be:
+
+	choice = reference;
+	if (gegl_config()->quality <= 1.0  && simd) choice = simd;
+	if (gegl_config()->quality <= 0.75 && good) choice = good;
+	if (gegl_config()->quality <= 0.25 && fast) choice = fast;
+
+	Register the following operations with the new name "simd" instead of
+	g4float.
+	* operations/common/brightness-contrast.c:
+	* operations/common/invert.c:
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb:
+
+2008-05-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-point-filter.c: avoid unneeded
 	mallocs.
 

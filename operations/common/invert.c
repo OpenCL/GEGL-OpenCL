@@ -96,7 +96,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 #ifdef HAS_G4FLOAT
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_g4f), "g4float");
+                                      G_CALLBACK (process_g4f), "simd");
 #endif
 }
 

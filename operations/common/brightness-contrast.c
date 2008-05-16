@@ -179,7 +179,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    * broken and not conforming to the reference implementation.
    */
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_simd), "g4float");
+                                      G_CALLBACK (process_simd), "simd");
 #endif
 }
 

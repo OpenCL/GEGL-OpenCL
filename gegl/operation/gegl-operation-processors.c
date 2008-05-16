@@ -52,6 +52,8 @@ typedef struct VFuncData
 {
   GCallback callback[MAX_PROCESSOR];
   gchar    *string[MAX_PROCESSOR];
+  gdouble   cached_quality;
+  gint      cached;
 } VFuncData;
 
 void
@@ -90,15 +92,23 @@ dispatch (GObject *object,
   gint fast      = 0;
   gint good      = 0;
   gint reference = 0;
-  gint g4f       = 0;
+  gint simd      = 0;
   gint i;
   gint choice;
+
 
   data = g_type_get_qdata (G_OBJECT_TYPE(object),
                            g_quark_from_string("dispatch-data"));
   if (!data)
     {
       g_error ("dispatch called on object without dispatch-data");
+    }
+
+  if (gegl_config()->quality == data->cached_quality)
+    {
+      dispatch = (void*)data->callback[data->cached];
+      dispatch (object, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+      return;
     }
 
   for (i=0;i<MAX_PROCESSOR;i++)
@@ -108,12 +118,9 @@ dispatch (GObject *object,
 
       if (string && cb!=NULL)
         {
-          if (g_str_equal (string, "fast"))
-            fast = i;
-          if (g_str_equal (string, "g4float"))
-            g4f = i;
-          else if (g_str_equal (string, "good"))
-            good = i;
+          if (g_str_equal (string, "fast"))      fast = i;
+          if (g_str_equal (string, "simd"))      simd = i;
+          else if (g_str_equal (string, "good")) good = i;
           else if (g_str_equal (string, "reference"))
             reference = i;
         }
@@ -122,18 +129,15 @@ dispatch (GObject *object,
   g_assert (data->callback[reference]);
 
   choice = reference;
-  if (gegl_config()->quality <= 0.5)
-    {
-      if (good) choice = good;
-      if (g4f)  choice = g4f;
-    }
-  if (gegl_config()->quality <= 0.2)
-    {
-      if (fast) choice = fast;
-    }
+  if (gegl_config()->quality <= 1.0  && simd) choice = simd;
+  if (gegl_config()->quality <= 0.75 && good) choice = good;
+  if (gegl_config()->quality <= 0.25 && fast) choice = fast;
 
   GEGL_NOTE(PROCESSOR, "Using %s implementation for %s", data->string[choice], g_type_name (G_OBJECT_TYPE(object)));
-  dispatch = (void*)data->callback[choice];
+
+  data->cached = choice;
+  data->cached_quality = gegl_config()->quality;
+  dispatch = (void*)data->callback[data->cached];
   dispatch (object, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 }
 
@@ -156,6 +160,7 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
   if (!data)
     {
       data = g_new0 (VFuncData, 1);
+      data->cached_quality = -1.0;
       g_type_set_qdata (type, quark, data);
       g_type_set_qdata (type, g_quark_from_string("dispatch-data"), data);
     }
