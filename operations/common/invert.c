@@ -56,7 +56,7 @@ process (GeglOperation *op,
 
 #ifdef HAS_G4FLOAT
 static gboolean
-process_g4f (GeglOperation *op,
+process_simd (GeglOperation *op,
              void          *in_buf,
              void          *out_buf,
              glong          samples)
@@ -65,7 +65,7 @@ process_g4f (GeglOperation *op,
   g4float *out = out_buf;
   g4float  one = g4float_one;
 
-  while (--samples)
+  while (samples--)
     {
       gfloat a= g4float_a(*in)[3];
       *out = one - *in;
@@ -96,7 +96,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 #ifdef HAS_G4FLOAT
   gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_g4f), "simd");
+                                      G_CALLBACK (process_simd), "simd");
 #endif
 }
 

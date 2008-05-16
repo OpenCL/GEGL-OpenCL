@@ -1,5 +1,11 @@
 2008-05-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/brightness-contrast.c:
+	(process_simd): fixed buggy loop.
+	* operations/common/invert.c: (process_g4f): and another one.
+
+2008-05-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-processors.c:
 	(gegl_class_register_alternate_vfunc): code reorganization.
 	(dispatch): cache the found codepath for a given quality, made the

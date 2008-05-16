@@ -95,13 +95,13 @@ process (GeglOperation *op,
   for (i=0; i<n_pixels; i++)
     {
       gint component;
-      for (component=0; component<3; component++)
+      for (component=0; component <3 ; component++)
         {
           out_pixel[component] =
                 (in_pixel[component] - 0.5) * contrast + brightness + 0.5;
         }
       out_pixel[3] = in_pixel[3]; /* copy the alpha */
-      in_pixel += 4;
+      in_pixel  += 4;
       out_pixel += 4;
     }
   return TRUE;
@@ -130,7 +130,7 @@ process_simd (GeglOperation *op,
   g4float  contrast   = g4float_all(o->contrast);
   g4float  half       = g4float_half;
     
-  while (--samples)
+  while (samples--)
     {
       *out = (*in - half) * contrast + brightness;
       g4floatA(*out)=g4floatA(*in);
