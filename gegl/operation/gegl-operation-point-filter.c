@@ -97,7 +97,6 @@ process_inner (GeglOperation       *operation,
          * read write access to buffers.
          */
         {
-          GTimer       *timer       = g_timer_new ();
           gint input_bpp  = in_format->format.bytes_per_pixel;
           gint output_bpp = output->format->format.bytes_per_pixel;
           gpointer     *in_buf = NULL;
@@ -112,10 +111,6 @@ process_inner (GeglOperation       *operation,
 
           g_assert (input->tile_storage->tile_width == output->tile_storage->tile_width);
 
-          in_buf  = gegl_malloc (input_bpp * input->tile_storage->tile_width *
-                                             input->tile_storage->tile_height);
-          out_buf = gegl_malloc (output_bpp * output->tile_storage->tile_width *
-                                              output->tile_storage->tile_height);
 
           infish = babl_fish (input->format, in_format);
           outfish = babl_fish (out_format, output->format);
@@ -136,6 +131,7 @@ process_inner (GeglOperation       *operation,
           else if (in_format == input->format &&
                    out_format != output->format)
             {
+              out_buf = gegl_malloc (output_bpp * write.max_size);
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
@@ -147,6 +143,7 @@ process_inner (GeglOperation       *operation,
           else if (in_format != input->format &&
                    out_format == output->format)
             {
+              in_buf  = gegl_malloc (input_bpp * read.max_size);
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
@@ -160,6 +157,8 @@ process_inner (GeglOperation       *operation,
           else if (in_format != input->format &&
                    out_format != output->format)
             {
+              in_buf  = gegl_malloc (input_bpp * read.max_size);
+              out_buf = gegl_malloc (output_bpp * write.max_size);
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
@@ -176,30 +175,15 @@ process_inner (GeglOperation       *operation,
             while (gegl_buffer_scan_iterator_next (&write));
           }
 
-          gegl_free (in_buf);
-          gegl_free (out_buf);
+          if (in_buf)
+            gegl_free (in_buf);
+          if (out_buf)
+            gegl_free (out_buf);
           gegl_buffer_unlock (output); 
-
-          g_printerr ("%s: %d x %d %g Mpixels/sec\n",
-              G_STRFUNC,
-              output->extent.width,
-              output->extent.height,
-              ( output->extent.width* output->extent.height) /
-               (1000000 * g_timer_elapsed (timer, NULL)));
-          g_timer_destroy (timer);
         }
-    /* eek: this fails,..
-      if (!(input->width == output->width &&
-          input->height == output->height))
-        {
-          g_warning ("%ix%i -> %ix%i", input->width, input->height, output->width, output->height);
-        }
-      g_assert (input->width == output->width &&
-                input->height == output->height);
-     */
-
 #if 0
       else
+        /* do the entire buffer */
         {
           gfloat *in_buf;
           gfloat *out_buf;
@@ -221,6 +205,7 @@ process_inner (GeglOperation       *operation,
           gegl_free (out_buf);
 #else
       else
+        /* do it in vertical chunks of 32 scanlines */
         {
           gfloat *in_buf;
           GeglRectangle roi;
