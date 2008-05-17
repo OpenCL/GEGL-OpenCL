@@ -1,5 +1,15 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added examples subdir.
+	* configure.ac: added examples/Makefile.am
+	* examples/: new dir.
+	* examples/Makefile.am: added a make file with wildcards that builds,
+	dists and cleans .c files, each .c file in the dir turns into an
+	executable.
+	* examples/gegl-paint.c: a tiny drawing app.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-bin-gui-types.h: removed GeglView from list of types.
 	* bin/gegl-view.[ch]: (button_press_event): made it less dependent on
 	the rest of the GEGL binary code base.

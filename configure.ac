@@ -831,6 +831,7 @@ docs/Makefile
 docs/index-static.txt
 docs/gallery/Makefile
 docs/gallery/data/Makefile
+examples/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
