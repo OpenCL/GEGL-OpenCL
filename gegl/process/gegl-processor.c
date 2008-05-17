@@ -587,86 +587,6 @@ gegl_processor_render (GeglProcessor *processor,
   return !gegl_processor_is_rendered (processor);
 }
 
-
-#if ENABLE_MP
-
-gpointer render_thread (gpointer data)
-{
-  GeglProcessor *processor = data;
-
-  while (gegl_processor_render (processor, &processor->rectangle, &processor->progress));
-  processor->thread_done = TRUE;
-  return NULL;
-}
-
-gboolean
-gegl_processor_work (GeglProcessor *processor,
-                     gdouble       *progress)
-{
-  gboolean   more_work = FALSE;
-  GeglCache *cache;
-
-  if (!processor->thread)
-    {
-      processor->thread = g_thread_create (render_thread,
-                                           processor,
-                                           FALSE,
-                                           NULL);
-      processor->thread_done = FALSE;
-      if (progress)
-        *progress = processor->progress;
-      more_work = !processor->thread_done;
-    }
-  else
-    {
-      if (progress)
-        *progress = processor->progress;
-      if (processor->thread_done)
-        {
-          processor->thread = NULL;
-        }
-      more_work = !processor->thread_done;
-    }
-
-  /*more_work = gegl_processor_render (processor, &processor->rectangle, progress);*/
-
-  if (more_work)
-    {
-      return TRUE;
-    }
-
-  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
-      !gegl_operation_sink_needs_full (processor->node->operation))
-    {
-      if (progress)
-        *progress = 1.0;
-      return FALSE;
-    }
-
-  cache = gegl_node_get_cache (processor->input);
-
-  if (processor->context)
-    {
-      gegl_operation_process (processor->node->operation,
-                              processor->context,
-                              "output"  /* ignored output_pad */,
-                              &processor->context->result_rect
-                              );
-      gegl_node_remove_context (processor->node, cache);
-      processor->context = NULL;
-      if (progress)
-        *progress = 1.0;
-      return TRUE;
-    }
-
-  if (progress)
-    *progress = 1.0;
-
-  return FALSE;
-}
-
-#else
-
 gboolean
 gegl_processor_work (GeglProcessor *processor,
                      gdouble       *progress)
@@ -700,7 +620,6 @@ gegl_processor_work (GeglProcessor *processor,
 
   return FALSE;
 }
-#endif
 
 void
 gegl_processor_destroy (GeglProcessor *processor)

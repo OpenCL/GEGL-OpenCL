@@ -332,21 +332,6 @@ dnl Checks for programs.
 #AC_PROG_YACC
 #AM_PROG_LEX
 
-#############################
-# Threads and multi processor 
-#############################
-
-AC_ARG_ENABLE(mp, [  --enable-mp             enable experimental support for multiple processors], ,
-enable_mp=no
-)
-
-if test "x$enable_mp" != "xno"; then
-  AC_DEFINE(ENABLE_MP, 1,
-               [Define to 1 to enable support for multiple processors.])
-fi
-
-
-
 
 ########################
 # Check for MMX assembly
@@ -844,7 +829,6 @@ Optional features:
   GEGL docs:      $enable_docs
   Build workshop: $enable_workshop
   Build website:  $have_asciidoc
-  Multiprocessor: $enable_mp
   SIMD:           sse:$enable_sse mmx:$enable_mmx
 
 Optional dependencies:

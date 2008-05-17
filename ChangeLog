@@ -1,5 +1,17 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed initial broken thread enabled processing from GEGL,
+	paralellization should be attempted through multiple processes instead
+	of multiple threads instead.
+
+	* configure.ac: 
+	* gegl/gegl-init.c:
+	* gegl/graph/gegl-node.c:
+	* gegl/process/gegl-eval-mgr.c:
+	* gegl/process/gegl-processor.c:
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-options.[ch]: moved GeglOptions typedef to .h file.
 	* bin/gegl-bin-types.h: removed.
 

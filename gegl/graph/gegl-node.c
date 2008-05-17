@@ -40,10 +40,8 @@
 
 #include "process/gegl-eval-mgr.h"
 #include "process/gegl-have-visitor.h"
-#if ENABLE_MP
 #include "process/gegl-lock-visitor.h"
 #include "process/gegl-unlock-visitor.h"
-#endif
 #include "process/gegl-prepare-visitor.h"
 #include "process/gegl-finish-visitor.h"
 #include "process/gegl-processor.h"
@@ -196,10 +194,6 @@ gegl_node_init (GeglNode *self)
                                             GEGL_TYPE_NODE,
                                             GeglNodePrivate);
 
-#if ENABLE_MP
-  self->mutex = g_mutex_new ();
-#endif
-
   priv = GEGL_NODE_GET_PRIVATE (self);
 
   self->pads        = NULL;
@@ -286,14 +280,6 @@ finalize (GObject *gobject)
     {
       g_free (priv->name);
     }
-
-#if ENABLE_MP
-  if (self->mutex)
-    {
-      g_mutex_free (self->mutex);
-      self->mutex = NULL;
-    }
-#endif
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
@@ -538,7 +524,6 @@ gegl_node_invalidated (GeglNode            *node,
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (rect != NULL);
 
-  gegl_node_lock (node);
   if (node->cache)
     {
       gegl_cache_invalidate (node->cache, rect);
@@ -546,7 +531,6 @@ gegl_node_invalidated (GeglNode            *node,
 
   g_signal_emit (node, gegl_node_signals[INVALIDATED], 0,
                  rect, NULL);
-  gegl_node_unlock (node);
 }
 
 static void
@@ -1500,10 +1484,6 @@ gegl_node_get_bounding_box (GeglNode *root)
   GeglVisitor  *prepare_visitor;
   GeglVisitor  *have_visitor;
   GeglVisitor  *finish_visitor;
-#if ENABLE_MP
-  GeglVisitor  *lock_visitor;
-  GeglVisitor  *unlock_visitor;
-#endif
 
   guchar       *id;
   gint          i;
@@ -1523,12 +1503,6 @@ gegl_node_get_bounding_box (GeglNode *root)
 
   id = g_malloc (1);
 
-#if ENABLE_MP
-  lock_visitor = g_object_new (GEGL_TYPE_LOCK_VISITOR, "id", id, NULL);
-  gegl_visitor_dfs_traverse (lock_visitor, GEGL_VISITABLE (root));
-  g_object_unref (lock_visitor);
-#endif
-
   for (i = 0; i < 2; i++)
     {
       prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", id, NULL);
@@ -1543,12 +1517,6 @@ gegl_node_get_bounding_box (GeglNode *root)
   finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", id, NULL);
   gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE (root));
   g_object_unref (finish_visitor);
-
-#if ENABLE_MP
-  unlock_visitor = g_object_new (GEGL_TYPE_UNLOCK_VISITOR, "id", id, NULL);
-  gegl_visitor_dfs_traverse (unlock_visitor, GEGL_VISITABLE (root));
-  g_object_unref (unlock_visitor);
-#endif
 
   g_object_unref (root);
   g_free (id);
@@ -2160,24 +2128,4 @@ GeglNode *
 gegl_node_new (void)
 {
   return g_object_new (GEGL_TYPE_NODE, NULL);
-}
-
-void
-gegl_node_lock (GeglNode *node)
-{
-#if ENABLE_MP
-  g_return_if_fail (GEGL_IS_NODE (node));
-  g_print ("locking %s %p\n", gegl_node_get_debug_name (node), node->mutex);
-  g_mutex_lock (node->mutex);
-#endif
-}
-
-void
-gegl_node_unlock (GeglNode *node)
-{
-#if ENABLE_MP
-  g_return_if_fail (GEGL_IS_NODE (node));
-  g_print ("unlocking %s %p\n", gegl_node_get_debug_name (node), node->mutex);
-  g_mutex_unlock (node->mutex);
-#endif
 }
