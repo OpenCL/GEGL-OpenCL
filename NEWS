@@ -13,6 +13,8 @@ Changes in GEGL 0.0.17
    • Fileformat compatible with swap format.
    • Tunable cache size.
  • Operations
+   • Optimized iteration over buffer in pointer filters when possible using a
+     scan iterator.
    • Handle variant implementations of GeglOperations.
    • Optimized variants of some point and compositing operations reimplemented
      using a new data type /g4float/ that allows writing cpu agnostic vectorized
@@ -21,7 +23,8 @@ Changes in GEGL 0.0.17
 
 Contributions from:
   Øyvind Kolås, Kevin Cozens, Sven Neumann, Manish Singh, Martin Nordholts,
-  Étienne Bersac, Hans Petter Jansson, Jan Heller.
+  Étienne Bersac, Hans Petter Jansson, Jan Heller, dmacs@netspace.org and
+  Sven Anders.
 
 Changes in GEGL 0.0.16
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺

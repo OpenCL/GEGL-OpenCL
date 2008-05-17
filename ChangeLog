@@ -1,5 +1,10 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS:
+	* AUTHORS: synced up NEWS and AUTHORS.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed initial broken thread enabled processing from GEGL,
 	paralellization should be attempted through multiple processes instead
 	of multiple threads instead.
