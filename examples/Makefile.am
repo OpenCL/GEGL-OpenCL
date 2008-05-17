@@ -1,5 +1,6 @@
 #include $(top_srcdir)/operations/Makefile-common.am
 
+SUBDIRS = data
 CFILES = $(wildcard $(srcdir)/*.c)
 bins   = $(subst $(srcdir)/,,$(CFILES:.c=))
 EXTRA_DIST = $(wildcard *.c)
