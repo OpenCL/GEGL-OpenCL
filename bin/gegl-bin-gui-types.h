@@ -19,8 +19,6 @@
 #define GEGL_BIN_GUI_TYPES_H
 
 
-#include "gegl-bin-types.h"
-
 
 typedef struct _Editor          Editor;
 typedef struct _GeglNodeEditor  GeglNodeEditor;

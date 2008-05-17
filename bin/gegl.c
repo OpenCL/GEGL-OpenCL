@@ -27,8 +27,6 @@
 #include <unistd.h>
 #endif
 
-#include "gegl-bin-types.h"
-
 #include "gegl-options.h"
 #include "gegl-dot.h"
 
@@ -79,10 +77,8 @@ main (gint    argc,
   GError      *err      = NULL;
   gchar       *path_root = NULL;
 
-  gegl_init (&argc, &argv);
-
   o = gegl_options_parse (argc, argv);
-
+  gegl_init (&argc, &argv);
 
   if (o->xml)
     {

@@ -30,6 +30,8 @@ typedef enum
   GEGL_RUN_MODE_XML
 } GeglRunMode;
 
+typedef struct _GeglOptions GeglOptions;
+
 struct _GeglOptions
 {
   GeglRunMode  mode;

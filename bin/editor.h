@@ -19,6 +19,8 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "gegl-options.h"
+
 struct _Editor 
 {
   GeglNode    *gegl;
