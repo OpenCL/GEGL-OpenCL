@@ -1,5 +1,11 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/stroke.c: added operation that renders a stroked
+	path, using the path object, the actual rendering code currently
+	resides in the vector code and should probably be moved here.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-config.[ch]: (get_property), (set_property),
 	(gegl_config_class_init), (gegl_config_init): added a node_caches
 	property.
