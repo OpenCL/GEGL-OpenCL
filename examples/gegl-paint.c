@@ -24,8 +24,8 @@
 #include "../bin/gegl-view.c"
 #include "property-types/gegl-vector.h"
 
-#define HARDNESS    0.8
-#define LINEWIDTH  23.0
+#define HARDNESS     0.8
+#define LINEWIDTH   10.0
 
 GtkWidget *window;
 GtkWidget *view;
