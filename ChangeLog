@@ -1,3 +1,8 @@
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS:
+	* AUTHORS: added Hubert Figuiere.
+
 2008-05-17  Hubert Figuiere  <hub@figuiere.net>
 
 	Made gio an optional dependency and revert to standard posix
