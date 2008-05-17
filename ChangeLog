@@ -1,5 +1,10 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: (main): fix unportable use of realpath (bug #525050)
+	spotted by dmacks@netspace.org.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/stroke.c: added operation that renders a stroked
 	path, using the path object, the actual rendering code currently
 	resides in the vector code and should probably be moved here.
