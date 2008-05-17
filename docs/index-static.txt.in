@@ -196,7 +196,7 @@ This is a small sample GEGL application that animates a zoom on a mandelbrot
 fractal
 
 ---------------------------
-sys::[cat hello-world.c]
+sys::[cat ../examples/hello-world.c]
 ---------------------------
 
  $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
@@ -386,6 +386,9 @@ Directory overview
 GEGL dirs
 ^^^^^^^^^
 
+Directories marked with ⊙ use GNU make extensions to include any .c file
+dropped into the directory in the build.
+
  gegl-dist-root
   │
   │
@@ -409,23 +412,32 @@ GEGL dirs
   │   └──property-types specialized classes/paramspecs for GeglOperation
   │                     properties.
   │
+  ├──examples ⊙        hello-world and other example uses of the GEGL API.
+  │
+  ├──tests             various tests used to maintain stability when developing
+  │                    GEGL.
+  │
   ├──operations        Runtime loaded plug-ins for image processing operations.
   │   │
-  │   ├──core          Basic operations tightly coupled with GEGL.
+  │   ├──core ⊙        Basic operations tightly coupled with GEGL.
   │   ├──affine        Transforming operations (rotate/scale/translate)
-  │   ├──generated     Operations generated from scripts (currently
+  │   ├──generated ⊙   Operations generated from scripts (currently
   │   ├──external      Operations with external dependencies.
-  │   ├──common        Other operations (drop .c files in here and they are built.)
-  │   └──workshop      Works in progress, (you must pass --enable-workshop to configure
-  │       │            for the ops in here to be built.
+  │   ├──common ⊙      Other operations. 
+  │   └──workshop ⊙    Works in progress, (you must pass --enable-workshop 
+  │       │            when configurig to build these by default, you can enter
+  │       │            the directory manually and type make && sudo make install
+  │       │            as well.
   │       │
   │       ├──external  operations in the workshop with external dependencies.
   │       └──generated generated operations that are in the workshop.
   │
   │
-  ├──docs              A website for GEGL
+  ├──docs              The GEGL website (this documentation), built for your
+  │   │                the corresponding sourcetree with correct documentation
+  │   │                etc.
   │   │
-  │   └──gallery       A gallery of sample GEGL compositions, using the
+  │   └──gallery ⊙     A gallery of sample GEGL compositions, using the
   │       │            (not yet stabilized) XML format.
   │       │
   │       └──data      Image data used by the sample compositions.

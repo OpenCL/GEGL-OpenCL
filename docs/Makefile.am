@@ -34,8 +34,6 @@ EXTRA_DIST= 			\
 	gegl.css  		\
 	gegl.devhelp		\
 	devhelp.css		\
-	hello-world.c		\
-	hello-world-video.c	\
 	index-static.txt.in	\
 	$(HTML_FILES)
 
@@ -80,9 +78,9 @@ api.html: $(top_srcdir)/gegl/gegl.h\
 	  $(top_srcdir)/gegl/operation/gegl-operation.h\
 	  $(top_srcdir)/tools/create-reference.rb
 if HAVE_RUBY
-	$(top_srcdir)/tools/create-reference.rb \
-	    $(top_srcdir)/gegl/gegl.h\
-	    $(top_srcdir)/gegl/buffer/gegl-buffer.h\
+	$(top_srcdir)/tools/create-reference.rb 	\
+	    $(top_srcdir)/gegl/gegl.h			\
+	    $(top_srcdir)/gegl/buffer/gegl-buffer.h	\
 	    $(top_srcdir)/gegl/operation/gegl-operation.h $@
 endif
 
@@ -90,9 +88,9 @@ index.html: index-static.txt		\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
 	$(top_srcdir)/NEWS		\
+	$(top_srcdir)/examples/hello-world.c \
 	$(top_builddir)/bin/gegl	\
-	Makefile.am			\
-	$(srcdir)/hello-world.c
+	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	cp $< $@ 
@@ -112,8 +110,8 @@ install-exec-local: all-local
 	$(INSTALL) -d $(help_dir)
 if HAVE_ENSCRIPT
 	$(INSTALL) $(srcdir)/brightness-contrast.c.html \
-	    $(srcdir)/gegl.h.html \
-	    $(srcdir)/gegl-operation.h.html \
+	    $(srcdir)/gegl.h.html 			\
+	    $(srcdir)/gegl-operation.h.html 		\
 	    $(srcdir)/gegl-plugin.h.html $(help_dir)
 endif
 if HAVE_RUBY
@@ -131,13 +129,6 @@ if HAVE_RUBY
 	rm -f $(help_dir)/api.html
 endif
 	rm -f $(help_dir)/gegl.devhelp $(help_dir)/gegl.css
-
-hello-world: hello-world.c
-	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`
-
-hello-world-video: hello-world-video.c
-	$(CC) $< -o $@ `pkg-config --cflags --libs gegl`
-
 
 # require asciidoc when making dist
 #
