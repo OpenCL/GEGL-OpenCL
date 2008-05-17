@@ -164,6 +164,7 @@ static gchar   *cmd_gegl_swap=NULL;
 static gchar   *cmd_gegl_cache_size=NULL;
 static gchar   *cmd_gegl_quality=NULL;
 static gchar   *cmd_babl_error=NULL;
+static gboolean cmd_no_node_caches=FALSE;
 
 static const GOptionEntry cmd_entries[]=
 {
@@ -181,6 +182,11 @@ static const GOptionEntry cmd_entries[]=
      "gegl-cache-size", 0, 0, 
      G_OPTION_ARG_STRING, &cmd_gegl_cache_size, 
      N_("How much memory to (approximately) use for caching imagery"), "<megabytes>"
+    },
+    {
+     "gegl-no-node-caches", 0, 0, 
+     G_OPTION_ARG_NONE, &cmd_no_node_caches, 
+     N_("Don't use per node caches to speed up _re_evaluation of the graph"), 
     },
     {
      "gegl-quality", 0, 0, 
@@ -350,7 +356,9 @@ gegl_post_parse_hook (GOptionContext *context,
   if (g_getenv ("GEGL_CACHE_SIZE"))
     config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
 
-
+  config->node_caches = !cmd_no_node_caches;
+  if (g_getenv ("GEGL_NO_NODE_CACHES"))
+    g_object_set (config, "node-caches", FALSE, NULL);
   if (gegl_swap_dir())
     config->swap = g_strdup(gegl_swap_dir ());
   if (cmd_gegl_swap)

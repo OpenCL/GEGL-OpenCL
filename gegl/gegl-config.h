@@ -36,19 +36,19 @@ typedef struct _GeglConfigClass GeglConfigClass;
 
 struct _GeglConfig
 {
-  GObject         parent_instance;
+  GObject  parent_instance;
 
-  gchar          *swap;
-  gint            cache_size;
-  gdouble         quality;
-  gdouble         babl_error;
+  gchar   *swap;
+  gint     cache_size;
+  gdouble  quality;
+  gdouble  babl_error;
+  gboolean node_caches;
 };
 
 struct _GeglConfigClass
 {
   GObjectClass parent_class;
 };
-
 
 GType gegl_config_get_type (void) G_GNUC_CONST;
 #ifndef __GEGL_INIT_H__

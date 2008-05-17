@@ -30,6 +30,7 @@
 #include "gegl-node-context.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
+#include "gegl-config.h"
 
 #include "operation/gegl-operation.h"
 
@@ -337,20 +338,17 @@ gegl_node_context_get_target (GeglNodeContext *context,
 
   result = &context->result_rect;
 
-#if 1 /* change to 0 to disable per node caches */
-  if (GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
+  if (gegl_config()->node_caches &&
+      ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
     {
-      output = gegl_buffer_new (result, format);
+          GeglBuffer    *cache;
+          cache = GEGL_BUFFER (gegl_node_get_cache (node));
+          output = gegl_buffer_create_sub_buffer (cache, result);
     }
   else
     {
-      GeglBuffer    *cache;
-      cache = GEGL_BUFFER (gegl_node_get_cache (node));
-      output = gegl_buffer_create_sub_buffer (cache, result);
+      output = gegl_buffer_new (result, format);
     }
-#else
-  output = gegl_buffer_new (result, format);
-#endif
 
   gegl_node_context_set_object (context, padname, G_OBJECT (output));
   return output;

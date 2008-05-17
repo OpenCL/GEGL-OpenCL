@@ -31,7 +31,8 @@ enum
   PROP_QUALITY,
   PROP_CACHE_SIZE,
   PROP_SWAP,
-  PROP_BABL_ERROR
+  PROP_BABL_ERROR,
+  PROP_NODE_CACHES
 };
 
 static void
@@ -58,6 +59,10 @@ get_property (GObject    *gobject,
 
       case PROP_SWAP:
         g_value_set_string (value, config->swap);
+        break;
+
+      case PROP_NODE_CACHES:
+        g_value_set_boolean (value, config->node_caches);
         break;
 
       default:
@@ -88,8 +93,9 @@ set_property (GObject      *gobject,
             config->babl_error = g_value_get_double (value);
             g_sprintf (buf, "%f", config->babl_error);
             g_setenv ("BABL_ERROR", buf, 0);
-            /* babl picks up the babl error through the environment,
-             * not sure if it is cached or not
+            /* babl picks up the babl error through the environment, babl
+             * caches valid conversions though so this needs to be set
+             * before any processing is done
              */
           }
         return;
@@ -98,7 +104,9 @@ set_property (GObject      *gobject,
          g_free (config->swap);
         config->swap = g_value_dup_string (value);
         break;
-
+      case PROP_NODE_CACHES:
+        config->node_caches  = g_value_get_boolean (value);
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -127,6 +135,10 @@ gegl_config_class_init (GeglConfigClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
 
+  g_object_class_install_property (gobject_class, PROP_NODE_CACHES,
+                                   g_param_spec_boolean ("node-caches", "Node caches", "Whether GEGL caches the results at each node in the graph.", TRUE,
+                                                     G_PARAM_READWRITE));
+
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
                                    g_param_spec_double ("cachei-size", "Cache size", "size of cache in bytes",
                                                      0.0, 1.0, 1.0,
@@ -153,4 +165,5 @@ gegl_config_init (GeglConfig *self)
   self->swap = NULL;
   self->quality = 1.0;
   self->cache_size = 256*1024*1024;
+  self->node_caches = TRUE;
 }
