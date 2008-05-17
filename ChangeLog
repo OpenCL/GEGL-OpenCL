@@ -1,5 +1,11 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/multiplayer-paint.sh: improved launcher script with a
+	monitor using the gegl binary that has live update of clock and the
+	two concurrent painters.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* examples/2gegl.c: tool to convert image files to native GeglBuffers.
 	* examples/clock.c: test/toy to write the current timestamp
 	continously to a geglbuffer.
