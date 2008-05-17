@@ -342,6 +342,7 @@ gegl_node_context_get_target (GeglNodeContext *context,
   result = &context->result_rect;
 
   if (gegl_config()->node_caches &&
+      node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
     {
           GeglBuffer    *cache;

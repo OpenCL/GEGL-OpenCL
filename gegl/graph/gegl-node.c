@@ -53,7 +53,8 @@ enum
   PROP_0,
   PROP_OP_CLASS,
   PROP_OPERATION,
-  PROP_NAME
+  PROP_NAME,
+  PROP_DONT_CACHE
 };
 
 enum
@@ -148,6 +149,14 @@ gegl_node_class_init (GeglNodeClass *klass)
                                                         "",
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_DONT_CACHE,
+                                   g_param_spec_boolean ("dont-cache",
+                                                         "Do not cache",
+                                                        "Do not cache the result of this operation, the property is inherithed by children created from a node.",
+                                                        TRUE, 
+                                                        G_PARAM_READWRITE));
+
 
   g_object_class_install_property (gobject_class, PROP_NAME,
                                    g_param_spec_string ("name",
@@ -303,6 +312,10 @@ set_property (GObject      *gobject,
         gegl_node_set_name (node, g_value_get_string (value));
         break;
 
+      case PROP_DONT_CACHE:
+        node->dont_cache = g_value_get_boolean (value);
+        break;
+
       case PROP_OP_CLASS:
         gegl_node_set_op_class (node, g_value_get_string (value), NULL, NULL);
         break;
@@ -332,6 +345,9 @@ get_property (GObject    *gobject,
           g_value_set_string (value, GEGL_OPERATION_GET_CLASS (node->operation)->name);
         break;
 
+      case PROP_DONT_CACHE:
+        g_value_set_boolean (value, node->dont_cache);
+        break;
       case PROP_NAME:
         g_value_set_string (value, gegl_node_get_name (node));
         break;
@@ -1898,6 +1914,8 @@ gegl_node_add_child (GeglNode *self,
   self->is_graph = TRUE;
   child_priv->parent  = self;
 
+  child->dont_cache = self->dont_cache;
+
   return child;
 }
 
@@ -2027,7 +2045,9 @@ gegl_node_new_child (GeglNode    *parent,
 
   node = g_object_new (GEGL_TYPE_NODE, NULL);
   if (parent)
-    gegl_node_add_child (parent, node);
+    {
+      gegl_node_add_child (parent, node);
+    }
 
   name = first_property_name;
   va_start (var_args, first_property_name);
@@ -2043,9 +2063,15 @@ GeglNode *
 gegl_node_create_child (GeglNode    *self,
                         const gchar *operation)
 {
+  GeglNode *ret;
   g_return_val_if_fail (operation != NULL, NULL);
 
-  return gegl_node_new_child (self, "operation", operation, NULL);
+  ret = gegl_node_new_child (self, "operation", operation, NULL);
+  if (ret && self)
+    {
+      ret->dont_cache = self->dont_cache;
+    }
+  return ret;
 }
 
 static void

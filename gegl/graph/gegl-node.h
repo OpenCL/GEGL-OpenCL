@@ -63,6 +63,8 @@ struct _GeglNode
                              reused for all subsequent requests for the cache
                              object.*/
 
+  gboolean        dont_cache; /* whether result is cached or not, inherited
+                                 by children */
   GMutex          *mutex;
 
   /*< private >*/

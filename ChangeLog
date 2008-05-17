@@ -1,5 +1,13 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.[ch]:  added a "dont-cache" property to make a
+	GeglNode (and it's children) avoid allocating cache buffers and
+	instead pass temporary buffers.
+	* gegl/graph/gegl-node-context.c: (gegl_node_context_get_target): obey
+	the request to not use a cache.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* examples/hello-world.c:
 	* examples/hello-world-video.c: moved here from docs.
 
