@@ -1,3 +1,19 @@
+2008-05-17  Hubert Figuiere  <hub@figuiere.net>
+
+	Made gio an optional dependency and revert to standard posix
+	io if it is missing.
+
+	* configure.ac:
+	* gegl/gegl-init.c:
+	* gegl/buffer/gegl-buffer-load.c:
+	* gegl/buffer/gegl-tile-storage.c:
+	* gegl/buffer/gegl-buffer-save.c:
+	* gegl/buffer/gegl-buffer-access.c:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer-index.h:
+	* gegl/buffer/gegl-tile-backend-file.c:
+	* gegl/buffer/Makefile.am:
+
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed no-node-caches configuration option, since this is now handled
