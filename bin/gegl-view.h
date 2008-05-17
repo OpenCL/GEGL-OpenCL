@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 #define GEGL_IS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_VIEW))
 #define GEGL_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VIEW, GeglViewClass))
 
+typedef struct _GeglView        GeglView;
 typedef struct _GeglViewClass   GeglViewClass;
 
 struct _GeglView

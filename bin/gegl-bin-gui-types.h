@@ -25,7 +25,6 @@
 typedef struct _Editor          Editor;
 typedef struct _GeglNodeEditor  GeglNodeEditor;
 typedef struct _GeglStore       GeglStore;
-typedef struct _GeglView        GeglView;
 
 
 #endif /* GEGL_EDITOR_TYPES_H */

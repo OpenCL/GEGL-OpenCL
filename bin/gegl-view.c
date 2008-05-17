@@ -23,14 +23,8 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gegl-bin-gui-types.h"
-
 #include "gegl.h"
-
 #include "gegl-view.h"
-#include "gegl-tree-editor.h"
-#include "editor.h"
-
 
 enum
 {
@@ -48,13 +42,13 @@ typedef struct _GeglViewPrivate
   gint           x;
   gint           y;
   gdouble        scale;
-  gint           screen_x;  /* coordinates of drag start */
+  gint           screen_x;    /* coordinates of drag start */
   gint           screen_y;
 
-  gint           orig_x;    /* coordinates of drag start */
+  gint           orig_x;      /* coordinates of drag start */
   gint           orig_y;
 
-  gint           start_buf_x;    /* coordinates of drag start */
+  gint           start_buf_x; /* coordinates of drag start */
   gint           start_buf_y;
 
   gint           prev_x;
@@ -317,7 +311,9 @@ button_press_event (GtkWidget      *widget,
         g_free (name);
         g_free (operation);
 #endif
+#if 0
         tree_editor_set_active (editor.tree_editor, detected);
+#endif
       }
   }
 

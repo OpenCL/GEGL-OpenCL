@@ -1,8 +1,14 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-bin-gui-types.h: removed GeglView from list of types.
+	* bin/gegl-view.[ch]: (button_press_event): made it less dependent on
+	the rest of the GEGL binary code base.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node-context.c: (gegl_node_context_set_object):
-	applied patch from Sven Anders that avoids some crashes when some ops
-	do not exist. bug #(522293).
+	applied patch from Sven Anders (sven at anduras.de) that avoids some
+	crashes when some ops do not exist. bug #(522293).
 
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
