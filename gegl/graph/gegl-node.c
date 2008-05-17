@@ -40,8 +40,6 @@
 
 #include "process/gegl-eval-mgr.h"
 #include "process/gegl-have-visitor.h"
-#include "process/gegl-lock-visitor.h"
-#include "process/gegl-unlock-visitor.h"
 #include "process/gegl-prepare-visitor.h"
 #include "process/gegl-finish-visitor.h"
 #include "process/gegl-processor.h"
