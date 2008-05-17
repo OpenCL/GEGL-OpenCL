@@ -273,9 +273,12 @@ gegl_node_context_set_object (GeglNodeContext *context,
   node = context->node;
   operation = node->operation;
   pspec = gegl_node_find_property (node, padname);
-  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-  g_value_set_object (&value, data);
-  gegl_node_context_set_property (context, padname, &value);
+  if (pspec)
+  {
+    g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+    g_value_set_object (&value, data);
+    gegl_node_context_set_property (context, padname, &value);
+  }
   g_value_unset (&value);
   g_object_unref (data); /* are we stealing the initial reference? */
 }

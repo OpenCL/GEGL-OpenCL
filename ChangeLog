@@ -1,5 +1,11 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node-context.c: (gegl_node_context_set_object):
+	applied patch from Sven Anders that avoids some crashes when some ops
+	do not exist. bug #(522293).
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: (main): fix unportable use of realpath (bug #525050)
 	spotted by dmacks@netspace.org.
 
