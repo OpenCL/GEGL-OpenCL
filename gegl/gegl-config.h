@@ -42,7 +42,6 @@ struct _GeglConfig
   gint     cache_size;
   gdouble  quality;
   gdouble  babl_error;
-  gboolean node_caches;
 };
 
 struct _GeglConfigClass

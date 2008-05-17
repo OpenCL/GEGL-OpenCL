@@ -204,15 +204,15 @@ gegl_node_context_remove_property (GeglNodeContext *self,
 {
   Property *property = NULL;
 
-  {
-    GSList *found;
-    found = g_slist_find_custom (self->property, property_name, lookup_property);
-    if (found)
-      property = found->data;
-  }
+  GSList *found;
+  found = g_slist_find_custom (self->property, property_name, lookup_property);
+  if (found)
+    property = found->data;
+
   if (!property)
     {
-      g_warning ("didn't find context %p for %s", property_name, gegl_node_get_debug_name (self->node));
+      g_warning ("didn't find context %p for %s", property_name,
+                 gegl_node_get_debug_name (self->node));
       return;
     }
   self->property = g_slist_remove (self->property, property);
@@ -224,7 +224,9 @@ gegl_node_context_add_value (GeglNodeContext *self,
                              const gchar     *property_name)
 {
   Property *property = NULL;
-  GSList   *found    = g_slist_find_custom (self->property, property_name, lookup_property);
+  GSList   *found;
+    
+  found = g_slist_find_custom (self->property, property_name, lookup_property);
 
   if (found)
     property = found->data;
@@ -333,7 +335,8 @@ gegl_node_context_get_target (GeglNodeContext *context,
 
   if (format == NULL)
     {
-      g_warning ("no format for %s presuming RGBA float\n", gegl_node_get_debug_name (node));
+      g_warning ("no format for %s presuming RGBA float\n",
+                 gegl_node_get_debug_name (node));
       format = babl_format ("RGBA float");
     }
   g_assert (format != NULL);
@@ -341,8 +344,7 @@ gegl_node_context_get_target (GeglNodeContext *context,
 
   result = &context->result_rect;
 
-  if (gegl_config()->node_caches &&
-      node->dont_cache == FALSE &&
+  if (node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
     {
           GeglBuffer    *cache;

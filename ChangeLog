@@ -1,5 +1,32 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed no-node-caches configuration option, since this is now handled
+	by the no-cache property on GeglNode instead.
+
+	* gegl/gegl-config.c: (get_property), (set_property),
+	(gegl_config_class_init), (gegl_config_init):
+	* gegl/gegl-config.h:
+	* gegl/gegl-init.c: (gegl_post_parse_hook):
+	* gegl/graph/gegl-node-context.c:
+	(gegl_node_context_remove_property), (gegl_node_context_add_value),
+	(gegl_node_context_get_target):
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* examples/2gegl.c: renamed to:
+	* examples/2geglbuffer.c:
+	* examples/clock.c: renamed to:
+	* examples/geglbuffer-clock.c:
+	* examples/geglbuffer-add-image.c: added.
+	* examples/multiplayer-paint.sh: make use of new files.
+	* examples/Makefile.am: added subdir data
+	* examples/data: added
+	* examples/data/Makefile.am: added
+	* examples/data/surfer.png: added
+	* configure.ac: added examples/data/Makefile
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.c: removed deprecated includes.
 
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
