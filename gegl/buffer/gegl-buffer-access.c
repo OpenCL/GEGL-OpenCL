@@ -22,7 +22,9 @@
 
 #include <glib-object.h>
 #include <glib/gprintf.h>
+#if HAVE_GIO
 #include <gio/gio.h>
+#endif
 
 #include "gegl-types.h"
 #include "gegl-buffer-types.h"

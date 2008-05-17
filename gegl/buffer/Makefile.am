@@ -1,6 +1,13 @@
 noinst_LTLIBRARIES = libbuffer.la
 
+if HAVE_GIO
+GIO_SUPPORT_SOURCES=\
+    gegl-tile-backend-tiledir.c	\
+    $(null__)
+endif
+
 BUFFER_sources = \
+    $(GIO_SUPPORT_SOURCES)      \
     gegl-buffer.c		\
     gegl-buffer-access.c	\
     gegl-buffer-share.c		\
@@ -19,7 +26,6 @@ BUFFER_sources = \
     gegl-tile-storage.c		\
     gegl-tile-backend.c		\
     gegl-tile-backend-file.c	\
-    gegl-tile-backend-tiledir.c	\
     gegl-tile-backend-ram.c	\
     gegl-tile-handler.c		\
     gegl-tile-handler-cache.c	\

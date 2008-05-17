@@ -39,7 +39,7 @@ m4_define([gimp_full_name], [Generic Graphical Library])
 
 # required versions of external libraries
 m4_define([babl_required_version], [0.0.20])
-m4_define([glib_required_version], [2.16.1])
+m4_define([glib_required_version], [2.12.0])
 m4_define([gtk_required_version], [2.8.6])
 m4_define([lua_required_version], [5.1.0])
 m4_define([cairo_required_version], [0.0.0])
@@ -419,7 +419,7 @@ CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS"
 
 PKG_CHECK_MODULES(BABL, babl >= babl_required_version)
 
-GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0"
+GLIB_PACKAGES="gobject-2.0 gmodule-2.0 "
 AC_SUBST(GLIB_PACKAGES)
 
 dnl This PATH_GLIB is somewhat redundant, but does a sanity compile and 
@@ -437,6 +437,13 @@ PKG_CHECK_MODULES(DEP,
         *** GLib not found. You can find it on ftp://ftp.gtk.org
         *** Errors follow:
             $DEP_PKG_ERRORS]))
+
+PKG_CHECK_MODULES(GIO, gio-2.0, 
+	have_gio="yes"
+	AC_DEFINE(HAVE_GIO, 1, [Define to 1 to compile with gio support.])
+	GLIB_PACKAGES="$GLIB_PACKAGES gio-2.0",
+	have_gio="no (gio not found)")
+AM_CONDITIONAL(HAVE_GIO, test "x$have_gio" = "xyes")
 
 # Rerun PKG_CONFIG to add gthread-2.0 cflags and libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
@@ -833,6 +840,7 @@ Optional features:
 
 Optional dependencies:
   GTK+:           $have_gtk
+  GIO:            $have_gio
   Ruby:           $have_ruby
   Lua:            $have_lua
   Cairo:          $have_cairo

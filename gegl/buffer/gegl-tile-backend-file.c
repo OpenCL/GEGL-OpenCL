@@ -18,7 +18,14 @@
 
 #include "config.h"
 
+#if HAVE_GIO
 #include <gio/gio.h>
+#else
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 #include <string.h>
 #include <errno.h>
 
@@ -36,9 +43,14 @@ struct _GeglTileBackendFile
   GeglTileBackend  parent_instance;
 
   gchar           *path;    /* the path to our buffer */
+#if HAVE_GIO
   GFile           *file;    /* gfile refering to our buffer */
   GOutputStream   *o;       /* for writing */
   GInputStream    *i;       /* for reading */
+#else
+  int             o;
+  int             i;
+#endif
   gboolean         exist;   /* the file exist (and we've thus been able
                              * to initialize i and o, the utility_call ensure_exist
                              * should be called before any code using i and o)
@@ -78,11 +90,12 @@ struct _GeglTileBackendFile
   GList *tiles;
 
   /* cooperative sharing of file */
-
+#if HAVE_GIO
   GFileMonitor    *monitor; /* Before using mmap we'll use GIO's infrastructure
                              * for monitoring the file for changes, this should
                              * also be more portable.
                              */
+#endif
   guint32          rev;     /* revision of last index sync */
 };
 
@@ -107,9 +120,13 @@ file_entry_read (GeglTileBackendFile *self,
 
   ensure_exist (self);
 
+#if HAVE_GIO
   success = g_seekable_seek (G_SEEKABLE (self->i),
                              offset, G_SEEK_SET,
                              NULL, NULL);
+#else
+  success = (lseek (self->i, offset, SEEK_SET) >= 0);
+#endif
   if (success == FALSE)
     {
       g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
@@ -119,19 +136,23 @@ file_entry_read (GeglTileBackendFile *self,
 
   while (to_be_read > 0)
     {
-      gint read;
+      gint byte_read;
 
-      read = g_input_stream_read (G_INPUT_STREAM (self->i),
+#if HAVE_GIO
+      byte_read = g_input_stream_read (G_INPUT_STREAM (self->i),
                                  dest + tile_size - to_be_read, to_be_read,
                                  NULL, NULL);
-      if (read <= 0)
+#else
+      byte_read = read (self->i, dest + tile_size - to_be_read, to_be_read);
+#endif
+      if (byte_read <= 0)
         {
           g_message ("unable to read tile data from self: "
                      "%s (%d/%d bytes read)",
-                     g_strerror (errno), read, to_be_read);
+                     g_strerror (errno), byte_read, to_be_read);
           return;
         }
-      to_be_read -= read;
+      to_be_read -= byte_read;
     }
 
 
@@ -150,9 +171,13 @@ file_entry_write (GeglTileBackendFile *self,
 
   ensure_exist (self);
 
+#if HAVE_GIO
   success = g_seekable_seek (G_SEEKABLE (self->o),
                              offset, G_SEEK_SET,
                              NULL, NULL);
+#else
+  success = (lseek (self->o, offset, SEEK_SET) >= 0);
+#endif
   if (success == FALSE)
     {
       g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
@@ -163,10 +188,14 @@ file_entry_write (GeglTileBackendFile *self,
   while (to_be_written > 0)
     {
       gint wrote;
+#if HAVE_GIO
       wrote = g_output_stream_write (self->o,
                                      source + tile_size - to_be_written,
                                      to_be_written, NULL, NULL);
-
+#else
+	  wrote = write (self->o, source + tile_size - to_be_written,
+					  to_be_written);
+#endif
       if (wrote <= 0)
         {
           g_message ("unable to write tile data to self: "
@@ -211,8 +240,12 @@ file_entry_new (GeglTileBackendFile *self)
 
           GEGL_NOTE (TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
 
+#if HAVE_GIO
           g_assert (g_seekable_truncate (G_SEEKABLE (self->o),
                     self->total, NULL,NULL));
+#else
+		  g_assert (ftruncate (self->o, self->total) == 0);
+#endif
         }
     }
   dbg_alloc (GEGL_TILE_BACKEND (self)->tile_size);
@@ -240,14 +273,22 @@ write_header (GeglTileBackendFile *self)
 
   ensure_exist (self);
 
+#if HAVE_GIO
   success = g_seekable_seek (G_SEEKABLE (self->o), 0, G_SEEK_SET,
                              NULL, NULL);
+#else
+  success = (lseek (self->o, 0, SEEK_SET) != -1);
+#endif
   if (success == FALSE)
     {
       g_warning ("unable to seek in buffer");
       return FALSE;
     }
+#if HAVE_GIO
   g_output_stream_write (self->o, &(self->header), 256, NULL, NULL);
+#else
+  write (self->o, &(self->header), 256);
+#endif
   GEGL_NOTE (TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
 }
@@ -269,9 +310,13 @@ write_block (GeglTileBackendFile *self,
            self->in_holding->next = 0;
          }
 
+#if HAVE_GIO
        if(!g_seekable_seek (G_SEEKABLE (self->o),
                             self->offset, G_SEEK_SET,
                             NULL, NULL))
+#else
+       if(lseek (self->o, self->offset, G_SEEK_SET) == -1)
+#endif
          goto fail;
 
        GEGL_NOTE (TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
@@ -279,9 +324,18 @@ write_block (GeglTileBackendFile *self,
              self->in_holding->flags,
              (gint)self->in_holding->next,
              (gint)self->offset);
+#if HAVE_GIO
        self->offset += g_output_stream_write (self->o, self->in_holding,
                                               self->in_holding->length,
                                               NULL, NULL);
+#else
+       {
+         ssize_t written = write (self->o, self->in_holding,
+                                  self->in_holding->length);
+         if(written != -1)
+           self->offset += written;
+       }
+#endif
 
        g_assert (next_allocation == self->offset); /* true as long as
                                                       the simple allocation
@@ -297,10 +351,13 @@ write_block (GeglTileBackendFile *self,
                                               * of file, worry about writing
                                               * header inside free list later
                                               */
-
+#if HAVE_GIO
         if(!g_seekable_seek (G_SEEKABLE (self->o),
                              (goffset) self->offset, G_SEEK_SET,
                              NULL, NULL))
+#else
+        if(lseek (self->o, self->offset, G_SEEK_SET) == -1)
+#endif
           goto fail;
      }
    self->in_holding = block;
@@ -506,7 +563,11 @@ flush (GeglTileSource *source,
     }
 
   write_header (self);
+#if HAVE_GIO
   g_output_stream_flush (self->o, NULL, NULL);
+#else
+  fsync (self->o);
+#endif
 
   GEGL_NOTE (TILE_BACKEND, "flushed %s", self->path);
 
@@ -609,6 +670,7 @@ finalize (GObject *object)
     {
       GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
 
+#if HAVE_GIO
       if (self->i)
         g_object_unref (self->i);
       if (self->o)
@@ -619,13 +681,27 @@ finalize (GObject *object)
           g_file_delete  (self->file, NULL, NULL);
           g_object_unref (self->file);
         }
+#else
+      if (self->i != -1) 
+	    {
+          close(self->i);
+          self->i = -1;
+        }
+      if (self->o != -1) 
+	    {
+          close(self->o);
+		  self->o = -1;
+        }
+#endif
     }
 
   if (self->path)
     g_free (self->path);
 
+#if HAVE_GIO
   if (self->monitor)
     g_object_unref (self->monitor);
+#endif
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
@@ -760,6 +836,7 @@ load_index (GeglTileBackendFile *self,
   self->tiles          = NULL;
 }
 
+#if HAVE_GIO
 static void
 file_changed (GFileMonitor        *monitor,
               GFile               *file,
@@ -773,6 +850,8 @@ file_changed (GFileMonitor        *monitor,
       load_index (self, TRUE);
     }
 }
+#endif
+
 static GObject *
 gegl_tile_backend_file_constructor (GType                  type,
                                     guint                  n_params,
@@ -787,15 +866,23 @@ gegl_tile_backend_file_constructor (GType                  type,
   backend = GEGL_TILE_BACKEND (object);
 
   GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
+#if HAVE_GIO
   self->file = g_file_new_for_commandline_arg (self->path);
-
+#else
+  self->i = self->o = -1;
+#endif
   self->index = g_hash_table_new (hashfunc, equalfunc);
 
   /* If the file already exists open it, assuming it is a GeglBuffer. */
+#if HAVE_GIO
   if (g_file_query_exists (self->file, NULL))
+#else
+  if (access (self->path, F_OK) != -1)
+#endif
     {
       goffset offset = 0;
 
+#if HAVE_GIO
       /* Install a monitor for changes to the file in case other applications
        * might be writing to the buffer
        */
@@ -817,6 +904,10 @@ gegl_tile_backend_file_constructor (GType                  type,
                                                    G_FILE_CREATE_READWRITE,
                                                    NULL, NULL));
       self->i = g_object_get_data (G_OBJECT (self->o), "istream");
+#endif
+#else
+	  self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+	  self->i = self->o;
 #endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
@@ -843,7 +934,9 @@ gegl_tile_backend_file_constructor (GType                  type,
       self->exist = FALSE; /* this is also the default, the file will be created on demand */
     }
 
+#if HAVE_GIO
   g_assert (self->file);
+#endif
 
   backend->header = &self->header;
 
@@ -876,13 +969,19 @@ ensure_exist (GeglTileBackendFile *self)
       g_output_stream_flush (self->o, NULL, NULL);
       self->i = g_object_get_data (G_OBJECT (self->o), "istream");
 #else
+
+#if HAVE_GIO
       self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
       g_output_stream_flush (self->o, NULL, NULL);
+#else
+	  self->o = open (self->path, O_RDWR);
+#endif
 
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
+#if HAVE_GIO
       g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
-
+#endif
       gegl_buffer_header_init (&self->header,
                                backend->tile_width,
                                backend->tile_height,
@@ -890,14 +989,25 @@ ensure_exist (GeglTileBackendFile *self)
                                backend->format
                                );
       write_header (self);
+#if HAVE_GIO
       g_output_stream_flush (self->o, NULL, NULL);
       self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
+#else
+      fsync (self->o);
+      self->i = open (self->path, O_RDONLY);  
+#endif
+
 #endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
+#if HAVE_GIO
       g_assert (self->i);
       g_assert (self->o);
+#else
+      g_assert (self->i != -1);
+      g_assert (self->o != -1);      
+#endif
     }
 }
 
@@ -931,9 +1041,14 @@ static void
 gegl_tile_backend_file_init (GeglTileBackendFile *self)
 {
   self->path           = NULL;
+#if HAVE_GIO
   self->file           = NULL;
   self->i              = NULL;
   self->o              = NULL;
+#else
+  self->i              = -1;
+  self->o              = -1;
+#endif
   self->index          = NULL;
   self->free_list      = NULL;
   self->next_pre_alloc = 256;  /* reserved space for header */
@@ -951,7 +1066,11 @@ gegl_tile_backend_file_try_lock (GeglTileBackendFile *self)
     }
   self->header.flags += GEGL_FLAG_LOCKED;
   write_header (self);
+#if HAVE_GIO
   g_output_stream_flush (self->o, NULL, NULL);
+#else
+  fsync (self->o);
+#endif
   return TRUE;
 }
 
@@ -964,6 +1083,10 @@ gboolean gegl_tile_backend_file_unlock (GeglTileBackendFile *self)
     }
   self->header.flags -= GEGL_FLAG_LOCKED;
   write_header (self);
+#if HAVE_GIO
   g_output_stream_flush (self->o, NULL, NULL);
+#else
+  fsync (self->o);
+#endif
   return TRUE;
 }

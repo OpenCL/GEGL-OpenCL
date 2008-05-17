@@ -41,7 +41,9 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
+#if HAVE_GIO
 #include <gio/gio.h>
+#endif
 
 #include "gegl-types.h"
 
