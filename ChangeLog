@@ -1,5 +1,10 @@
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/hello-world.c:
+	* examples/hello-world-video.c: moved here from docs.
+
+2008-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added examples subdir.
 	* configure.ac: added examples/Makefile.am
 	* examples/: new dir.
