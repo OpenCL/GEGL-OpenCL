@@ -1,3 +1,7 @@
+2008-05-18  Manish Singh  <yosh@gimp.org>
+
+	* configure.ac: added reference to new examples/data directory.
+
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* examples/2gegl.c: renamed to:
