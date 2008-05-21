@@ -1,3 +1,9 @@
+2008-05-20  Hubert Figuiere  <hub@figuiere.net>
+
+	* gegl/buffer/gegl-tile-backend-file.c (ensure_exist): 
+	Fix ensure_exist() to really create the file (posix).
+	Use dup() for the input fd.
+
 2008-05-20  Michael Natterer  <mitch@gimp.org>
 
 	* operations/external/Makefile.am: comment out V4L section until

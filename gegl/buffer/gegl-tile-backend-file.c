@@ -684,12 +684,12 @@ finalize (GObject *object)
 #else
       if (self->i != -1) 
 	    {
-          close(self->i);
+          close (self->i);
           self->i = -1;
         }
       if (self->o != -1) 
 	    {
-          close(self->o);
+          close (self->o);
 		  self->o = -1;
         }
 #endif
@@ -907,7 +907,7 @@ gegl_tile_backend_file_constructor (GType                  type,
 #endif
 #else
 	  self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-	  self->i = self->o;
+	  self->i = dup (self->o);
 #endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
@@ -923,8 +923,13 @@ gegl_tile_backend_file_constructor (GType                  type,
       /* insert each of the entries into the hash table */
       load_index (self, TRUE);
       self->exist = TRUE;
+#if HAVE_GIO
       g_assert (self->i);
       g_assert (self->o);
+#else
+      g_assert (self->i != -1);
+      g_assert (self->o != -1);
+#endif
 
       /* to autoflush gegl_buffer_set */
       backend->shared = TRUE;
@@ -974,7 +979,7 @@ ensure_exist (GeglTileBackendFile *self)
       self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
       g_output_stream_flush (self->o, NULL, NULL);
 #else
-	  self->o = open (self->path, O_RDWR);
+	  self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 #endif
 
       self->next_pre_alloc = 256;  /* reserved space for header */
@@ -994,7 +999,7 @@ ensure_exist (GeglTileBackendFile *self)
       self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
 #else
       fsync (self->o);
-      self->i = open (self->path, O_RDONLY);  
+      self->i = dup (self->o);
 #endif
 
 #endif
