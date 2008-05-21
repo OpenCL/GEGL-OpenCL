@@ -755,6 +755,15 @@ AC_SUBST(AVFORMAT_CFLAGS)
 AC_SUBST(AVFORMAT_LIBS) 
 
 
+###############
+# Check for V4L
+###############
+ 
+have_v4l=no
+AC_CHECK_HEADER(linux/videodev.h, have_v4l=yes)
+
+AM_CONDITIONAL(HAVE_V4L, test "x$have_v4l" = "xyes")
+
 
 
 ################
@@ -858,4 +867,5 @@ Optional dependencies:
   graphviz:       $have_graphviz
   avcodec:        $have_libavcodec
   avformat:       $have_libavformat
+  V4L:            $have_v4l
 ]);

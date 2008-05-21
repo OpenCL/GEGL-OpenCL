@@ -1,3 +1,13 @@
+2008-05-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Fix for problem when building on a Mac.
+
+	* configure.ac: Added check for linux/videodev.h and set HAVE_V4L
+	if available.
+
+	* operations/external/Makefile.am: Only build the v4l operation if
+	HAVE_V4L is set.
+
 2008-05-20  Hubert Figuiere  <hub@figuiere.net>
 
 	* gegl/buffer/gegl-tile-backend-file.c (ensure_exist): 
