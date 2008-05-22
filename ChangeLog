@@ -1,3 +1,9 @@
+2008-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node.c: (gegl_node_get_valist),
+	(gegl_node_set_property): removed warnings about use of deprecated
+	"class" virtual property for the nodes.
+
 2008-05-21  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Fix for problem when building on a Mac.

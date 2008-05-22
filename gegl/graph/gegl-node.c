@@ -1231,13 +1231,6 @@ gegl_node_get_valist (GeglNode    *self,
       GParamSpec *pspec;
       gchar      *error;
 
-      if (!strcmp (property_name, "class"))
-        {
-          g_warning ("Getting a deprecated property \"class\" "
-                     "use \"operation\" instead");
-          property_name = "operation";
-        }
-
       if (!strcmp (property_name, "operation") ||
           !strcmp (property_name, "name"))
         {
@@ -1304,14 +1297,6 @@ gegl_node_set_property (GeglNode     *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (property_name != NULL);
   g_return_if_fail (value != NULL);
-
-  if (!strcmp (property_name, "class"))
-    {
-      g_warning ("Setting a deprecated property \"class\", "
-                 "use \"operation\" instead.");
-
-      g_object_set_property (G_OBJECT (self), "operation", value);
-    }
 
   if (!strcmp (property_name, "operation") ||
       !strcmp (property_name, "name"))
