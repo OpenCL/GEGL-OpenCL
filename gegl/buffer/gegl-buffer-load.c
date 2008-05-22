@@ -365,8 +365,8 @@ gegl_buffer_load (const gchar *path)
                       "format", info->format,
                       "tile-width", info->header.tile_width,
                       "tile-height", info->header.tile_height,
-                      "height", info->header.width,
-                      "width", info->header.height,
+                      "height", info->header.height,
+                      "width", info->header.width,
                       "path", path,
                       NULL);
 
