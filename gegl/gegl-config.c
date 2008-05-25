@@ -30,6 +30,7 @@ enum
   PROP_0,
   PROP_QUALITY,
   PROP_CACHE_SIZE,
+  PROP_CHUNK_SIZE,
   PROP_SWAP,
   PROP_BABL_ERROR
 };
@@ -46,6 +47,10 @@ get_property (GObject    *gobject,
     {
       case PROP_CACHE_SIZE:
         g_value_set_int (value, config->cache_size);
+        break;
+
+      case PROP_CHUNK_SIZE:
+        g_value_set_int (value, config->chunk_size);
         break;
 
       case PROP_QUALITY:
@@ -78,6 +83,9 @@ set_property (GObject      *gobject,
     {
       case PROP_CACHE_SIZE:
         config->cache_size = g_value_get_int (value);
+        break;
+      case PROP_CHUNK_SIZE:
+        config->chunk_size = g_value_get_int (value);
         break;
       case PROP_QUALITY:
         config->quality = g_value_get_double (value);
@@ -128,8 +136,15 @@ gegl_config_class_init (GeglConfigClass *klass)
   gobject_class->finalize = finalize;
 
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
-                                   g_param_spec_double ("cachei-size", "Cache size", "size of cache in bytes",
-                                                     0.0, 1.0, 1.0,
+                                   g_param_spec_int ("cache-size", "Cache size", "size of cache in bytes",
+                                                     0, G_MAXINT, 256*1024*1024,
+                                                     G_PARAM_READWRITE));
+
+
+  g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
+                                   g_param_spec_int ("chunk-size", "Chunk size",
+                                     "the number of pixels processed simulatnously by GEGL.",
+                                                     0.0, G_MAXINT, 256*300,
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_QUALITY,
@@ -153,4 +168,5 @@ gegl_config_init (GeglConfig *self)
   self->swap = NULL;
   self->quality = 1.0;
   self->cache_size = 256*1024*1024;
+  self->chunk_size = 256*300;
 }

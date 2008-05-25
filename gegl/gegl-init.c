@@ -38,7 +38,6 @@
 
 guint gegl_debug_flags = 0; 
 
-
 #include "gegl-instrument.h"
 #include "gegl-init.h"
 #include "module/geglmodule.h"
@@ -157,6 +156,7 @@ gegl_init (gint    *argc,
 
 static gchar   *cmd_gegl_swap=NULL;
 static gchar   *cmd_gegl_cache_size=NULL;
+static gchar   *cmd_gegl_chunk_size=NULL;
 static gchar   *cmd_gegl_quality=NULL;
 static gchar   *cmd_babl_error=NULL;
 
@@ -176,6 +176,11 @@ static const GOptionEntry cmd_entries[]=
      "gegl-cache-size", 0, 0, 
      G_OPTION_ARG_STRING, &cmd_gegl_cache_size, 
      N_("How much memory to (approximately) use for caching imagery"), "<megabytes>"
+    },
+    {
+     "gegl-chunk-size", 0, 0, 
+     G_OPTION_ARG_STRING, &cmd_gegl_chunk_size, 
+     N_("The count of pixels to compute simulantous"), "pixel count"
     },
     {
      "gegl-quality", 0, 0, 
@@ -348,6 +353,8 @@ gegl_post_parse_hook (GOptionContext *context,
     config->quality = atof(g_getenv("GEGL_QUALITY")); 
   if (g_getenv ("GEGL_CACHE_SIZE"))
     config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
+  if (g_getenv ("GEGL_CHUNK_SIZE"))
+    config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
 
   if (gegl_swap_dir())
     config->swap = g_strdup(gegl_swap_dir ());
@@ -357,6 +364,9 @@ gegl_post_parse_hook (GOptionContext *context,
     config->quality = atof (cmd_gegl_quality);
   if (cmd_gegl_cache_size)
     config->cache_size = atoi (cmd_gegl_cache_size)*1024*1024;
+  if (cmd_gegl_chunk_size)
+    config->chunk_size = atoi (cmd_gegl_chunk_size);
+
   if (cmd_babl_error)
     g_object_set (config, "babl-error", atof(cmd_babl_error), NULL);
 

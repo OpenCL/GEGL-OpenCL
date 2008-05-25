@@ -1,3 +1,14 @@
+2008-05-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Add the ability to configure the default chunk size used during
+	processing, this is the amount of pixels the output is computed for
+	when doing one iteraiton of work for a processor. For now this needs
+	to be set configured before GEGL is initialized to take effect.
+	* gegl/gegl-config.[ch]: also fixed the installed property for
+	cache-size.
+	* gegl/gegl-init.c: (gegl_post_parse_hook):
+	* gegl/process/gegl-processor.c: (gegl_processor_class_init):
+
 2008-05-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_load): made the

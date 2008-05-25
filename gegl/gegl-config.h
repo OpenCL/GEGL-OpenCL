@@ -40,6 +40,7 @@ struct _GeglConfig
 
   gchar   *swap;
   gint     cache_size;
+  gint     chunk_size; /* The size of elements being processed at once */
   gdouble  quality;
   gdouble  babl_error;
 };

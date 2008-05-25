@@ -15,7 +15,6 @@
  *
  * Copyright 2007 Øyvind Kolås
  */
-#define GEGL_PROCESSOR_CHUNK_SIZE 256*256
 
 #include "config.h"
 #include <glib-object.h>
@@ -25,6 +24,7 @@
 #include "gegl-utils.h"
 #include "buffer/gegl-region.h"
 #include "operation/gegl-operation-sink.h"
+#include "gegl-config.h"
 
 enum
 {
@@ -93,7 +93,8 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
                                                      G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunksize", "chunksize", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8 * 8, 2048 * 2048, GEGL_PROCESSOR_CHUNK_SIZE,
+                                                     8 * 8, 2048*204, 
+                                                     gegl_config()->chunk_size, 
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
