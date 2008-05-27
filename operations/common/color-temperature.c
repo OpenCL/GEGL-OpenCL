@@ -108,6 +108,7 @@ process (GeglOperation *op,
       out_pixel[0] = in_pixel[0] * coefs[0];
       out_pixel[1] = in_pixel[1] * coefs[1];
       out_pixel[2] = in_pixel[2] * coefs[2];
+      out_pixel[3] = in_pixel[3];
 
       in_pixel += 4;
       out_pixel += 4;

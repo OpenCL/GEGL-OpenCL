@@ -1,5 +1,10 @@
 2008-05-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/color-temperature.c: (process): copy the alpha
+	component from input to output.
+
+2008-05-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/mblur.c: (process), (gegl_chant_class_init): fixed
 	initialization of private data.
 
