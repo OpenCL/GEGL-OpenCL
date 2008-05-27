@@ -17,7 +17,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (dampness, "Dampness", 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0 is no change.")
+gegl_chant_double (dampness, "Dampness", 0.0, 1.0, 0.95, "The value represents the contribution of the past to the new frame.")
 
 #else
 
@@ -33,9 +33,8 @@ typedef struct
 
 
 static void
-init (GeglChantO *operation)
+init (GeglChantO *o)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   Priv         *priv = (Priv*)o->chant_data;
   GeglRectangle extent = {0,0,1024,1024};
 
@@ -67,6 +66,7 @@ process (GeglOperation       *operation,
   p = (Priv*)o->chant_data;
   if (p == NULL)
     init (o);
+  p = (Priv*)o->chant_data;
 
     {
       GeglBuffer *temp_in;
@@ -134,7 +134,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->name        = "mblur";
-  operation_class->categories  = "blur:misc";
+  operation_class->categories  = "blur:video";
   operation_class->description = "Accumulating motion blur";
 }
 

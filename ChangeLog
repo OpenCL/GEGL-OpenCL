@@ -1,3 +1,8 @@
+2008-05-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/mblur.c: (process), (gegl_chant_class_init): fixed
+	initialization of private data.
+
 2008-05-25  Øyvind Kolås  <pippin@gimp.org>
 
 	Add the ability to configure the default chunk size used during
