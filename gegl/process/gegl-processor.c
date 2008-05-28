@@ -472,7 +472,6 @@ gegl_processor_progress (GeglProcessor *processor)
       return 0.999;
     }
   ret = (double) valid / wanted;
-  g_warning ("%f", ret);
   if (ret>=1.0)
     {
       if (!gegl_processor_is_rendered (processor))

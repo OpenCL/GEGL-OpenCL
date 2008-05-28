@@ -1,5 +1,10 @@
 2008-05-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: (gegl_processor_progress): removed
+	g_warning used for temporary development debug printf.
+
+2008-05-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/color-temperature.c: (process): copy the alpha
 	component from input to output.
 
