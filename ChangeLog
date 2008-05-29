@@ -1,3 +1,8 @@
+2008-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node.c: (gegl_node_set_op_class): bail out early and
+	do not touch the var_args if first_property == NULL.
+
 2008-05-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/process/gegl-processor.c: (gegl_processor_progress): removed

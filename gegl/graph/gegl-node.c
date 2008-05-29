@@ -301,7 +301,12 @@ set_property (GObject      *gobject,
         break;
 
       case PROP_OP_CLASS:
-        gegl_node_set_op_class (node, g_value_get_string (value), NULL, NULL);
+        {
+          va_list null; /* dummy to pass along, it's not used anyways since
+                         * the preceding argument is NULL
+                         */
+          gegl_node_set_op_class (node, g_value_get_string (value), NULL, null);
+        }
         break;
 
       case PROP_OPERATION:
@@ -948,7 +953,8 @@ gegl_node_set_op_class (GeglNode    *node,
         }
 
       if (node->operation &&
-          type == G_OBJECT_TYPE (node->operation))
+          type == G_OBJECT_TYPE (node->operation) &&
+          first_property)
         {
           gegl_node_set_valist (node, first_property, var_args);
           return;
