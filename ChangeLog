@@ -1,5 +1,16 @@
 2008-06-01  Øyvind Kolås  <pippin@gimp.org>
 
+	Add point-render operation that does as few as possible copies when
+	rendering potentially based on x,y coordinates in buffer.
+
+	* gegl/operation/gegl-operation-point-render.c: new file.
+	* gegl/operation/gegl-operation-point-render.h: new file.
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-chant.h: made available to plug-ins.
+	* gegl/operation/Makefile.am: added new files.
+
+2008-06-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: incremented ABI version.
 	* gegl/operation/gegl-operation-point-filter.[ch]: added roi as an
 	argument for the point filter process() function.

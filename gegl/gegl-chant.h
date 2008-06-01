@@ -205,6 +205,38 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_FILTER);
 
 #endif
 
+
+#ifdef GEGL_CHANT_TYPE_POINT_RENDER
+struct _GeglChant
+{
+  GeglOperationPointRender parent_instance;
+  gpointer                 properties;
+};
+
+typedef struct
+{
+  GeglOperationPointRenderClass parent_class;
+} GeglChantClass;
+
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_RENDER);
+
+#endif
+
+
+#ifdef GEGL_CHANT_TYPE_TEMPORAL_FILTER
+struct _GeglChant
+{
+  GeglOperationTemporalFilter parent_instance;
+  gpointer                    properties;
+};
+
+typedef struct
+{
+  GeglOperationTemporalFilterClass parent_class;
+} GeglChantClass;
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_TEMPORAL_FILTER);
+#endif
+
 #ifdef GEGL_CHANT_TYPE_AREA_FILTER
 struct _GeglChant
 {

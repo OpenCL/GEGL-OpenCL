@@ -146,10 +146,10 @@ typedef float g4float __attribute__ ((vector_size (4*sizeof(float))));
 #include <operation/gegl-operation-point-filter.h>
 #include <operation/gegl-operation-composer.h>
 #include <operation/gegl-operation-point-composer.h>
+#include <operation/gegl-operation-point-render.h>
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
-#include <operation/gegl-operation-temporal-filter.h>
 
 
 #else
