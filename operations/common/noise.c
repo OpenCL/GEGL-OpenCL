@@ -25,7 +25,7 @@ gegl_chant_int    (n,     "Iteration", 0, 20, 3, "")
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_TYPE_POINT_RENDER
 #define GEGL_CHANT_C_FILE       "noise.c"
 
 #include "gegl-chant.h"
@@ -46,50 +46,49 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
+process (GeglOperation *operation,
+         void          *out_buf,
+         glong          n_pixels,
+         GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat     *buf;
+  gfloat     *out_pixel = out_buf;
+  gint        x = roi->x; /* initial x                   */
+  gint        y = roi->y; /*           and y coordinates */
 
-  buf = g_new (gfloat, result->width * result->height);
+
+  while (n_pixels--)
     {
-      gfloat *dst = buf;
-      gint    y;
-      for (y = 0; y < result->height; y++)
-        {
-          gint x;
-          for (x = 0; x < result->width ; x++)
-            {
-              gfloat val;
+      gfloat val;
 
-              val = PerlinNoise3D ((double) (x + result->x)/50.0,
-                                   (double) (y + result->y)/50.0,
-                                   (double) o->zoff, o->alpha, o->scale,
-                                   o->n);
-              *dst = val * 0.5 + 0.5;
-              dst ++;
-            }
+      val = PerlinNoise3D ((double) (x)/50.0,
+                           (double) (y)/50.0,
+                           (double) o->zoff, o->alpha, o->scale,
+                           o->n);
+      *out_pixel = val * 0.5 + 0.5;
+      out_pixel ++;
+
+      /* update x and y coordinates */
+      x++;
+      if (x>=roi->x + roi->width)
+        {
+          x=roi->x;
+          y++;
         }
     }
-  gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
-                   GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
-
   return  TRUE;
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
+  GeglOperationClass            *operation_class;
+  GeglOperationPointRenderClass *point_render_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
 
-  source_class->process = process;
+  point_render_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
