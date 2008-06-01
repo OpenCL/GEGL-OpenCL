@@ -1,5 +1,11 @@
 2008-06-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/color.c: (process), (gegl_chant_class_init): base
+	the color op on gegl-operation-point-render insteal of
+	gegl-operation-source. One copy and buffer allocation less.
+
+2008-06-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Add point-render operation that does as few as possible copies when
 	rendering potentially based on x,y coordinates in buffer.
 
@@ -15,7 +21,7 @@
 	* gegl/operation/gegl-operation-point-filter.[ch]: added roi as an
 	argument for the point filter process() function.
 
- 	Modified the process() vfuncs for the following operations accordingly:
+	Modified the process() vfuncs for the following operations accordingly:
 
 	* operations/common/brightness-contrast.c: 
 	* operations/common/color-temperature.c: 

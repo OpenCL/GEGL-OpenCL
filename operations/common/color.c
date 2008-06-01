@@ -21,7 +21,7 @@ gegl_chant_color (value, "Color", "black",
                   "The color to render (defaults to 'black')")
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_TYPE_POINT_RENDER
 #define GEGL_CHANT_C_FILE           "color.c"
 
 #include "gegl-chant.h"
@@ -48,12 +48,13 @@ detect (GeglOperation *operation,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
+process (GeglOperation *operation,
+         void          *out_buf,
+         glong          n_pixels,
+         GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat     *buf;
+  gfloat     *out_pixel = out_buf;
   gfloat      color[4];
 
   gegl_color_get_rgba (o->value,
@@ -62,19 +63,15 @@ process (GeglOperation       *operation,
                        &color[2],
                        &color[3]);
 
-  buf = g_new (gfloat, result->width * result->height * 4);
+  while (n_pixels--)
     {
-      gfloat *dst = buf;
-      gint    i;
-      for (i = 0; i < result->height * result->width ; i++)
-        {
-          memcpy(dst, color, 4 * sizeof (gfloat));
-          dst += 4;
-        }
-    }
-  gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
+      out_pixel[0]=color[0];
+      out_pixel[1]=color[1];
+      out_pixel[2]=color[2];
+      out_pixel[3]=color[3];
 
+      out_pixel += 4;
+    }
   return  TRUE;
 }
 
@@ -82,13 +79,13 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
+  GeglOperationClass            *operation_class;
+  GeglOperationPointRenderClass *point_render_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
 
-  source_class->process = process;
+  point_render_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
