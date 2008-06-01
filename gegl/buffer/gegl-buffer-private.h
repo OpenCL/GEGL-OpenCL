@@ -107,6 +107,8 @@ typedef struct GeglBufferTileIterator
   GeglRectangle  roi;
   gint           col;
   gint           row;
+  gint           real_col;
+  gint           real_row;
   gboolean       write;   /* perhaps in a subclass struct? */
   GeglRectangle  subrect; /* has x==-1 when entire tile is valid */
   gpointer       data;
@@ -120,22 +122,25 @@ typedef struct GeglBufferScanIterator {
   gint                   rowstride; /* allows computing  */
   gint                   length;
   gint                   row;
+  gint                   real_row;
   gpointer               data;
 } GeglBufferScanIterator;
 
 #define gegl_buffer_scan_iterator_get_x(i) \
-    (((GeglBufferTileIterator*)(i))->col)
+    ((((GeglBufferTileIterator*)(i))->roi.x) + \
+    (((GeglBufferTileIterator*)(i))->real_col))
 #define gegl_buffer_scan_iterator_get_y(i) \
-    ((((GeglBufferTileIterator*)(i))->col)+ ((GeglBufferScanIterator*)(i))->row - 1)
+    ( (((GeglBufferTileIterator*)(i))->roi.y)+ \
+      (((GeglBufferTileIterator*)(i))->real_row)+ \
+      ((GeglBufferScanIterator*)(i))->real_row)
 
 #define gegl_buffer_scan_iterator_get_rectangle(i,rect_ptr) \
   if(i){GeglRectangle *foo = rect_ptr;\
    if (foo) {\
    foo->x=gegl_buffer_scan_iterator_get_x(i);\
    foo->y=gegl_buffer_scan_iterator_get_y(i);\
-   foo->width= ((GeglBufferScanIterator*)i)->rowstride;\
-   foo->height=((GeglBufferScanIterator*)i)->length/ \
-                                       ((GeglBufferScanIterator*)i)->rowstride;\
+   foo->width= ((GeglBufferTileIterator*)i)->subrect.width;\
+   foo->height=((GeglBufferScanIterator*)i)->length/ foo->width;\
    }}
 
 

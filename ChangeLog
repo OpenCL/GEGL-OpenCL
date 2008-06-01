@@ -1,5 +1,19 @@
 2008-06-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_tile_iterator_init), (gegl_buffer_scan_iterator_init),
+	(gegl_buffer_scan_iterator_next), (gegl_buffer_tile_iterator_next):
+	modified to make the roi for the scan iterator reported be correct.
+	* gegl/buffer/gegl-buffer-private.h: modified computation of roi.
+	* gegl/operation/gegl-operation-point-render.c: override some of the
+	base source op's modifications of base operation wrt caching.
+	* operations/common/checkerboard.c: port to be subclass of
+	point-render.
+	* operations/common/color.c: (gegl_chant_class_init): removed
+	initialization now moved to base class.
+
+2008-06-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/color.c: (process), (gegl_chant_class_init): base
 	the color op on gegl-operation-point-render insteal of
 	gegl-operation-source. One copy and buffer allocation less.

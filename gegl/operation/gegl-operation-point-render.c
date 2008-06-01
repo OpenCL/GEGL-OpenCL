@@ -39,18 +39,31 @@ G_DEFINE_TYPE (GeglOperationPointRender, gegl_operation_point_render, GEGL_TYPE_
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  return NULL;
 }
 
 static void
 gegl_operation_point_render_class_init (GeglOperationPointRenderClass *klass)
 {
-  GeglOperationSourceClass *source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
+  GeglOperationSourceClass *source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  GeglOperationClass       *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  source_class->process = process_inner;
+  source_class->process    = process_inner;
   operation_class->prepare = prepare;
+
+  operation_class->detect = detect;
+  operation_class->no_cache = TRUE;
+  operation_class->get_cached_region = NULL; /* we are able to compute anything
+                                                 anywhere when we're our kind
+                                                 of class */
 }
 
 static void

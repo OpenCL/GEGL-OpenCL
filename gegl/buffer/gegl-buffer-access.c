@@ -45,9 +45,9 @@ GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 
 
 void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
-                                            GeglBuffer             *buffer,
-                                            GeglRectangle           roi,
-                                            gboolean                write)
+                                     GeglBuffer             *buffer,
+                                     GeglRectangle           roi,
+                                     gboolean                write)
 {
   g_assert (i);
   memset (i, 0, sizeof (GeglBufferTileIterator));
@@ -56,6 +56,8 @@ void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
   i->row    = 0;
   i->col = 0;
   i->tile = NULL;
+  i->real_col = 0;
+  i->real_row = 0;
   i->write = write;
 }
 
@@ -82,6 +84,7 @@ void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
   i->max_size = tile_i->buffer->tile_storage->tile_width *
                 tile_i->buffer->tile_storage->tile_height *
                 tile_i->buffer->format->format.bytes_per_pixel;
+  i->real_row = 0;
 }
 
 GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer             *buffer,
@@ -106,6 +109,7 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
       i->length = tile_i->subrect.width;
       i->rowstride = tile_i->subrect.width;
       i->row = 0;
+      i->real_row = 0;
     }
   /* we should now have a valid tile */
 
@@ -119,6 +123,11 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
       i->rowstride = tile_i->subrect.width;
       i->data = data + px_size * (tile_i->subrect.width * tile_i->subrect.y);
       i->row = tile_i->subrect.height;
+      i->real_row = 0;
+      if (i->rowstride < 0)
+        {
+          return FALSE;
+        }
       return TRUE;
     }
   else if (i->row < tile_i->subrect.height)
@@ -126,6 +135,7 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
     {
       guchar *data = tile_i->sub_data;
       i->data = data + i->row * tile_i->rowstride;
+      i->real_row = i->row;
       i->row ++;
       return TRUE;
     }
@@ -168,6 +178,8 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   gint  buffer_y       = buffer->extent.y + buffer_shift_y;
   gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;
@@ -207,19 +219,34 @@ gulp:
        }
      else
        {
-         /* gap between left side of tile, and abyss */
          i->subrect.x = offsetx;
          i->subrect.y = offsety;
+
+         i->subrect.width = pixels;
+        /* (i->roi.width - i->col + tile_width < tile_width) ?
+                             (i->roi.width - i->col + tile_width) - i->subrect.x:
+                             tile_width - i->subrect.x;*/
+
+         i->subrect.height = (i->roi.height - i->row + tile_height < tile_height) ?
+                             (i->roi.height - i->row + tile_height) - i->subrect.y:
+                             tile_height - i->subrect.y;
+
+         if(1){
+         gint lskip = (buffer_abyss_x) - (buffer_x + i->col);
+         /* gap between left side of tile, and abyss */
+         gint rskip = (buffer_x + i->col + i->subrect.width) - abyss_x_total;
          /* gap between right side of tile, and abyss */
 
-
-         i->subrect.width = (i->roi.width - i->col < tile_width) ?
-                             (i->roi.width - i->col) - i->subrect.x:
-                             tile_width - i->subrect.x;
-
-         i->subrect.height = (i->roi.height - i->row < tile_height) ?
-                             (i->roi.height - i->row) - i->subrect.y:
-                             tile_height - i->subrect.y;
+           if (lskip < 0)
+              lskip = 0;
+           if (lskip > i->subrect.width)
+              lskip = i->subrect.width;
+           if (rskip < 0)
+              rskip = 0;
+           if (rskip > i->subrect.width)
+              rskip = i->subrect.width;
+           i->subrect.width = i->subrect.width - rskip - lskip;
+         }
 
          i->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                                gegl_tile_indice (tiledx, tile_width),
@@ -240,6 +267,8 @@ gulp:
          /* update with new future position (note this means that the
           * coordinates read from the iterator do not make full sense 
           * */
+         i->real_col = i->col;
+         i->real_row = i->row;
          i->col += tile_width - offsetx;
 
          return TRUE;
@@ -250,6 +279,8 @@ gulp:
       gint tiledy = buffer_y + i->row;
       gint offsety = gegl_tile_offset (tiledy, tile_height);
 
+      i->real_row = i->row;
+      i->real_col = i->col;
       i->row += tile_height - offsety;
       i->col=0;
 

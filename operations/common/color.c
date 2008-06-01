@@ -39,14 +39,6 @@ get_bounding_box (GeglOperation *operation)
   return result;
 }
 
-static GeglNode *
-detect (GeglOperation *operation,
-        gint           x,
-        gint           y)
-{
-  return NULL;
-}
-
 static gboolean
 process (GeglOperation *operation,
          void          *out_buf,
@@ -93,10 +85,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "render";
   operation_class->description =
         "Generates a buffer entirely filled with the specified color, crop it to get smaller dimensions.";
-
-  operation_class->no_cache = TRUE;
-  operation_class->detect = detect;
-  operation_class->get_cached_region = NULL;
 }
 
 #endif
