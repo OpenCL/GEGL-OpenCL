@@ -57,7 +57,7 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  *    should be extended so a range of abi versions are accepted.
  */
 
-#define GEGL_MODULE_ABI_VERSION 0x0008
+#define GEGL_MODULE_ABI_VERSION 0x0009
 
 struct _GeglModuleInfo
 {
@@ -149,6 +149,7 @@ typedef float g4float __attribute__ ((vector_size (4*sizeof(float))));
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
+#include <operation/gegl-operation-temporal-filter.h>
 
 
 #else

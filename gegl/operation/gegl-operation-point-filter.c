@@ -124,8 +124,10 @@ process_inner (GeglOperation       *operation,
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
-                  g_assert (read.width == write.width);
-                  point_filter_class->process (operation, read.data, write.data, write.width);
+                  GeglRectangle roi;
+                  gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
+                  g_assert (read.length == write.length);
+                  point_filter_class->process (operation, read.data, write.data, write.length, &roi);
                 }
             }
           else if (in_format == input->format &&
@@ -135,9 +137,11 @@ process_inner (GeglOperation       *operation,
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
-                  g_assert (read.width == write.width);
-                  point_filter_class->process (operation, read.data, out_buf, read.width);
-                  babl_process (outfish, out_buf, write.data, write.width);
+                  GeglRectangle roi;
+                  gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
+                  g_assert (read.length == write.length);
+                  point_filter_class->process (operation, read.data, out_buf, read.length, &roi);
+                  babl_process (outfish, out_buf, write.data, write.length);
                 }
             }
           else if (in_format != input->format &&
@@ -147,25 +151,29 @@ process_inner (GeglOperation       *operation,
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
-                  if (read.width < 0)
+                  GeglRectangle roi;
+                  gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
+                  if (read.length < 0)
                     continue;
-                  g_assert (read.width == write.width);
-                  babl_process (infish, read.data, in_buf, read.width);
-                  point_filter_class->process (operation, in_buf, write.data, read.width);
+                  g_assert (read.length == write.length);
+                  babl_process (infish, read.data, in_buf, read.length);
+                  point_filter_class->process (operation, in_buf, write.data, read.length, &roi);
                 }
             }
           else if (in_format != input->format &&
                    out_format != output->format)
             {
+              GeglRectangle roi;
+              gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
               in_buf  = gegl_malloc (input_bpp * read.max_size);
               out_buf = gegl_malloc (output_bpp * write.max_size);
               while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                        (b = gegl_buffer_scan_iterator_next (&write)))
                 {
-                  g_assert (read.width == write.width);
-                  babl_process (infish, read.data, in_buf, read.width);
-                  point_filter_class->process (operation, in_buf, out_buf, read.width);
-                  babl_process (outfish, out_buf, write.data, write.width);
+                  g_assert (read.length == write.length);
+                  babl_process (infish, read.data, in_buf, read.length);
+                  point_filter_class->process (operation, in_buf, out_buf, read.length, &roi);
+                  babl_process (outfish, out_buf, write.data, write.length);
                 }
             }
 
@@ -227,7 +235,7 @@ process_inner (GeglOperation       *operation,
                     operation,
                     in_buf,
                     out_buf,
-                    result->width * skip);
+                    result->width * skip, &roi);
 
                   gegl_buffer_set (output, &roi, out_format, out_buf, GEGL_AUTO_ROWSTRIDE);
                 }

@@ -31,7 +31,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples)
+         glong          samples,
+         GeglRectangle *roi)
 {
   glong   i;
   gfloat *in  = in_buf;
@@ -59,7 +60,8 @@ static gboolean
 process_simd (GeglOperation *op,
              void          *in_buf,
              void          *out_buf,
-             glong          samples)
+             glong          samples,
+             GeglRectangle *roi)
 {
   g4float *in  = in_buf;
   g4float *out = out_buf;

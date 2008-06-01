@@ -75,7 +75,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          n_pixels)
+         glong          n_pixels,
+         GeglRectangle *roi)
 {
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties
@@ -118,7 +119,8 @@ static gboolean
 process_simd (GeglOperation *op,
               void          *in_buf,
               void          *out_buf,
-              glong          samples)
+              glong          samples,
+              GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   g4float *in  = in_buf;

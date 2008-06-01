@@ -45,7 +45,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          n_pixels)
+         glong          n_pixels,
+         GeglRectangle *roi)
 {
   gfloat      *in = in_buf;
   gfloat      *out = out_buf;

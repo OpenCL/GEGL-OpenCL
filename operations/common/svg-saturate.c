@@ -46,7 +46,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          n_pixels)
+         glong          n_pixels,
+         GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gfloat     *in = in_buf;

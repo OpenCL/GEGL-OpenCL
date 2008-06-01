@@ -48,7 +48,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples)
+         glong          samples,
+         GeglRectangle *roi)
 {
   return TRUE;
 }

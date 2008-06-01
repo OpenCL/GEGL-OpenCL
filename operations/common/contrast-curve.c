@@ -40,7 +40,8 @@ static gboolean
 process (GeglOperation *op,
          void          *in_buf,
          void          *out_buf,
-         glong          samples)
+         glong          samples,
+         GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gint        num_sampling_points;
