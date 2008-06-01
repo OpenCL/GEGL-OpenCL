@@ -103,7 +103,8 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
       gulp:
       if (!gegl_buffer_tile_iterator_next (tile_i))
         return FALSE;
-      i->width = tile_i->subrect.width;
+      i->length = tile_i->subrect.width;
+      i->rowstride = tile_i->subrect.width;
       i->row = 0;
     }
   /* we should now have a valid tile */
@@ -114,7 +115,8 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
     {
       gint  px_size = tile_i->buffer->format->format.bytes_per_pixel;
       guchar *data = tile_i->data;
-      i->width = tile_i->subrect.width * tile_i->subrect.height;
+      i->length = tile_i->subrect.width * tile_i->subrect.height;
+      i->rowstride = tile_i->subrect.width;
       i->data = data + px_size * (tile_i->subrect.width * tile_i->subrect.y);
       i->row = tile_i->subrect.height;
       return TRUE;

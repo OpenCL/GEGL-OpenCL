@@ -1,3 +1,10 @@
+2008-06-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-private.h: added
+	gegl_buffer_scan_iterator_get_rectangle to get the coordinates of the
+	buffer represented by a linear buffer.
+	* gegl/buffer/gegl-buffer-access.c: improved naming.
+
 2008-05-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node.c: (gegl_node_set_op_class): bail out early and

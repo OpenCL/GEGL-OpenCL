@@ -107,8 +107,8 @@ typedef struct GeglBufferTileIterator
   GeglRectangle  roi;
   gint           col;
   gint           row;
-  gboolean       write; /* perhaps in a subclass struct? */
-  GeglRectangle  subrect; /* has negative x when entire tile is valid */
+  gboolean       write;   /* perhaps in a subclass struct? */
+  GeglRectangle  subrect; /* has x==-1 when entire tile is valid */
   gpointer       data;
   gpointer       sub_data;
   gint           rowstride;
@@ -116,11 +116,28 @@ typedef struct GeglBufferTileIterator
 
 typedef struct GeglBufferScanIterator {
   GeglBufferTileIterator tile_iterator;
-  gint                   max_size; /*  in bytes */
-  gint                   width;
+  gint                   max_size;  /* in bytes */
+  gint                   rowstride; /* allows computing  */
+  gint                   length;
   gint                   row;
   gpointer               data;
 } GeglBufferScanIterator;
+
+#define gegl_buffer_scan_iterator_get_x(i) \
+    (((GeglBufferTileIterator*)(i))->col)
+#define gegl_buffer_scan_iterator_get_y(i) \
+    ((((GeglBufferTileIterator*)(i))->col)+ ((GeglBufferScanIterator*)(i))->row - 1)
+
+#define gegl_buffer_scan_iterator_get_rectangle(i,rect_ptr) \
+  if(i){GeglRectangle *foo = rect_ptr;\
+   if (foo) {\
+   foo->x=gegl_buffer_scan_iterator_get_x(i);\
+   foo->y=gegl_buffer_scan_iterator_get_y(i);\
+   foo->width= ((GeglBufferScanIterator*)i)->rowstride;\
+   foo->height=((GeglBufferScanIterator*)i)->length/ \
+                                       ((GeglBufferScanIterator*)i)->rowstride;\
+   }}
+
 
 gboolean                gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
 gboolean                gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i);
@@ -136,11 +153,11 @@ void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
                                      GeglBuffer             *buffer,
                                      GeglRectangle           roi,
                                      gboolean                write);
-GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer             *buffer,
-                                                       GeglRectangle           roi,
-                                                       gboolean                write);
-gboolean                gegl_buffer_scan_compatible   (GeglBuffer *input,
-                                                       GeglBuffer *output);
+GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer    *buffer,
+                                                       GeglRectangle  roi,
+                                                       gboolean       write);
+gboolean                gegl_buffer_scan_compatible   (GeglBuffer    *input,
+                                                       GeglBuffer    *output);
 
 
 #endif
