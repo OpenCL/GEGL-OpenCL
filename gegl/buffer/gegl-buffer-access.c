@@ -179,7 +179,6 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;

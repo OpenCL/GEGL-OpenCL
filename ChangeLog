@@ -1,5 +1,10 @@
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_tile_iterator_next): removed unused variable.
+
+2008-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: quieten gcc.
 
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
