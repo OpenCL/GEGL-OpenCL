@@ -1,5 +1,14 @@
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-point-composer.c: re-enabled fast
+	paths when roi makes compositing unnecesary for over op.
+	* gegl/operation/gegl-operation-point-filter.c: use
+	gegl_operation_get_format()
+	* gegl/operation/gegl-operation.c: (gegl_operation_get_format): add a
+	warning when no pad|format is found.
+
+2008-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the process functions contain the full prefix of the class to
 	make backtraces more readable.
 	* gegl/operation/gegl-operation-composer.c:

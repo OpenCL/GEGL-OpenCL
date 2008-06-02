@@ -35,6 +35,12 @@ static gboolean gegl_operation_point_composer_process
                                GeglBuffer          *output,
                                const GeglRectangle *result);
 
+static gboolean
+gegl_operation_composer_process2 (GeglOperation       *operation,
+                        GeglNodeContext     *context,
+                        const gchar         *output_prop,
+                        const GeglRectangle *result);
+
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
 
 static void prepare (GeglOperation *operation)
@@ -55,6 +61,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
   composer_class->process = gegl_operation_point_composer_process;
   operation_class->prepare = prepare;
   operation_class->no_cache =TRUE;
+  operation_class->process = gegl_operation_composer_process2;
 }
 
 static void
@@ -63,17 +70,124 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 }
 
-#if 0 /* FIXME: this should be re-enabled, possibly by skipping the point-composer class duplicating that
-       * code and directly implement on top of GeglOperation
-       */
+/* we replicate the process function from GeglOperationComposer to be
+ * able to bail out earlier for some common processing time pitfalls
+ */
 static gboolean
-fast_paths (GeglOperation       *operation,
-            GeglNodeContext     *context,
-            const Babl          *in_format,
-            const Babl          *aux_format,
-            const Babl          *out_format,
-            const GeglRectangle *result);
+gegl_operation_composer_process2 (GeglOperation       *operation,
+                                  GeglNodeContext     *context,
+                                  const gchar         *output_prop,
+                                  const GeglRectangle *result)
+{
+  GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
+  GeglBuffer                 *input;
+  GeglBuffer                 *aux;
+  GeglBuffer                 *output;
+  gboolean                    success = FALSE;
+
+  if (strcmp (output_prop, "output"))
+    {
+      g_warning ("requested processing of %s pad on a composer", output_prop);
+      return FALSE;
+    }
+
+  input = gegl_node_context_get_source (context, "input");
+  aux   = gegl_node_context_get_source (context, "aux");
+
+  /* we could be even faster by not alway writing to this buffer, that
+   * would potentially break other assumptions we want to make from the
+   * GEGL core so we avoid doing that
+   */
+  output = gegl_node_context_get_target (context, "output");
+
+
+  if (input != NULL ||
+      aux != NULL)
+    {
+      gboolean done = FALSE;
+
+      if (result->width == 0 ||
+          result->height == 0)
+        done = TRUE;
+
+#if 1  /* this can be set to 0, and everything should work normally,
+          but some fast paths would not be taken */
+      if (!strcmp (gegl_node_get_operation (operation->node), "over"))
+        {
+          /* these optimizations probably apply to more than over */
+
+          if ((result->width > 0) && (result->height > 0))
+
+          if (input && aux==NULL)
+            {
+              gegl_buffer_copy (input, result, output, result);
+              g_print ("copied\n");
+              done = TRUE;
+            }
+
+          /* SKIP_EMPTY_IN */
+          if(!done)
+            {
+              const GeglRectangle *in_abyss;
+
+              in_abyss = gegl_buffer_get_abyss (input);
+
+              if ((!input ||
+                   !gegl_rectangle_intersect (NULL, in_abyss, result)) &&
+                  aux)
+                {
+                  const GeglRectangle *aux_abyss;
+                  aux_abyss = gegl_buffer_get_abyss (aux);
+
+                  if (!gegl_rectangle_intersect (NULL, aux_abyss, result))
+                    {
+                      g_print ("skipped\n");
+                      done = TRUE;
+                    }
+                  else
+                    {
+                      gegl_buffer_copy (aux, result, output, result);
+                      g_print ("copied aux\n");
+                      done = TRUE;
+                    }
+                }
+            }
+/* SKIP_EMPTY_AUX */
+            {
+              const GeglRectangle *aux_abyss = NULL;
+
+              if (aux)
+                aux_abyss = gegl_buffer_get_abyss (aux);
+
+              if (!aux ||
+                  (aux && !gegl_rectangle_intersect (NULL, aux_abyss, result)))
+                {
+                  gegl_buffer_copy (input, result, output, result);
+                  g_print ("copied input\n");
+                  done = TRUE;
+                }
+            }
+      }
 #endif
+
+      success = done;
+      if (!done)
+        {
+          success = klass->process (operation, input, aux, output, result);
+        }
+      if (input)
+         g_object_unref (input);
+      if (aux)
+         g_object_unref (aux);
+    }
+  else
+    {
+      g_warning ("%s received NULL input and aux",
+                 gegl_node_get_debug_name (operation->node));
+    }
+
+  return success;
+}
 
 static gboolean
 gegl_operation_point_composer_process (GeglOperation       *operation,
@@ -82,54 +196,9 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                                        GeglBuffer          *output,
                                        const GeglRectangle *result)
 {
-  GeglPad    *pad;
-  const Babl *in_format;
-  const Babl *aux_format;
-  const Babl *out_format;
-
-  pad       = gegl_node_get_pad (operation->node, "input");
-  in_format = gegl_pad_get_format (pad);
-  if (!in_format)
-    {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
-    }
-  g_assert (in_format);
-
-  pad        = gegl_node_get_pad (operation->node, "aux");
-  aux_format = gegl_pad_get_format (pad);
-  if (!aux_format)
-    {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
-    }
-  g_assert (aux_format);
-
-  pad        = gegl_node_get_pad (operation->node, "output");
-  out_format = gegl_pad_get_format (pad);
-  if (!out_format)
-    {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
-    }
-  g_assert (out_format);
-
-  /* XXX: when disabling fast_paths everything should work, albeit slower,
-   * disabling of fast paths can be tried when things appear strange, debugging
-   * with and without fast paths when tracking buffer leaks is probably also a
-   * good idea. NB! some of the OpenRaster meta ops, depends on the
-   * short-circuiting happening in fast_paths.
-   * */
-#if 0
-  if (0 && fast_paths (operation, context,
-                       in_format,
-                       aux_format,
-                       out_format,
-                       result))
-    return TRUE;
-#endif
-
-#if 0
-  /* retrieve the buffer we're writing to from GEGL */
-  output = gegl_node_context_get_target (context, "output");
-#endif
+  const Babl *in_format = gegl_operation_get_format (operation, "input");
+  const Babl *aux_format = gegl_operation_get_format (operation, "aux");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
@@ -174,82 +243,3 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
     }
   return TRUE;
 }
-
-#if 0
-static gboolean
-fast_paths (GeglOperation       *operation,
-            GeglNodeContext     *context,
-            const Babl          *in_format,
-            const Babl          *aux_format,
-            const Babl          *out_format,
-            const GeglRectangle *result)
-{
-  GeglBuffer  *input = gegl_node_context_get_source (context, "input");
-  GeglBuffer  *aux   = gegl_node_context_get_source (context, "aux");
-
-  if (!input && aux)
-    {
-      g_object_ref (aux);
-      gegl_node_context_set_object (context, "output", G_OBJECT (aux));
-      return TRUE;
-    }
-
-  {
-    if ((result->width > 0) && (result->height > 0))
-      {
-
-        const gchar *op = gegl_node_get_operation (operation->node);
-        if (!strcmp (op, "over")) /* these optimizations probably apply to more than
-                                     over */
-          {
-/* SKIP_EMPTY_IN */
-            {
-              const GeglRectangle *in_abyss;
-
-              in_abyss = gegl_buffer_get_abyss (input);
-
-              if ((!input ||
-                   !gegl_rectangle_intersect (NULL, in_abyss, result)) &&
-                  aux)
-                {
-                  const GeglRectangle *aux_abyss;
-                  aux_abyss = gegl_buffer_get_abyss (aux);
-
-                  if (!gegl_rectangle_intersect (NULL, aux_abyss, result))
-                    {
-                      GeglBuffer *output = gegl_buffer_new (NULL, NULL);
-                      gegl_node_context_set_object (context, "output", G_OBJECT (output));
-                      return TRUE;
-                    }
-                  g_object_ref (aux);
-                  gegl_node_context_set_object (context, "output", G_OBJECT (aux));
-                  return TRUE;
-                }
-            }
-/* SKIP_EMPTY_AUX */
-            {
-              const GeglRectangle *aux_abyss = NULL;
-
-              if (aux)
-                aux_abyss = gegl_buffer_get_abyss (aux);
-
-              if (!aux ||
-                  (aux && !gegl_rectangle_intersect (NULL, aux_abyss, result)))
-                {
-                  g_object_ref (input);
-                  gegl_node_context_set_object (context, "output", G_OBJECT (input));
-                  return TRUE;
-                }
-            }
-          }
-      }
-    else
-      {
-        GeglBuffer *output = gegl_buffer_new (NULL, out_format);
-        gegl_node_context_set_object (context, "output", G_OBJECT (output));
-        return TRUE;
-      }
-  }
-  return FALSE;
-}
-#endif

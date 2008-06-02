@@ -67,28 +67,11 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
                                      GeglBuffer          *output,
                                      const GeglRectangle *result)
 {
-  GeglPad    *pad;
-  const Babl *in_format;
-  const Babl *out_format;
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
   GeglOperationPointFilterClass *point_filter_class;
 
   point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
-
-  pad       = gegl_node_get_pad (operation->node, "input");
-  in_format = gegl_pad_get_format (pad);
-  if (!in_format)
-    {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
-    }
-  g_assert (in_format);
-
-  pad        = gegl_node_get_pad (operation->node, "output");
-  out_format = gegl_pad_get_format (pad);
-  if (!out_format)
-    {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
-    }
-  g_assert (out_format);
 
   if ((result->width > 0) && (result->height > 0))
     {
