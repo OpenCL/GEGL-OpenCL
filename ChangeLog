@@ -1,5 +1,18 @@
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the process functions contain the full prefix of the class to
+	make backtraces more readable.
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-point-filter.h:
+	* gegl/operation/gegl-operation-point-render.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.c:
+
+2008-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-access.c:
 	(gegl_buffer_tile_iterator_next): removed unused variable.
 

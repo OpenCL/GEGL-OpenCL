@@ -39,24 +39,25 @@ enum
 };
 
 static void     get_property          (GObject       *gobject,
-                                         guint          prop_id,
-                                         GValue        *value,
-                                         GParamSpec    *pspec);
+                                       guint          prop_id,
+                                       GValue        *value,
+                                       GParamSpec    *pspec);
 
 static void     set_property          (GObject       *gobject,
-                                         guint          prop_id,
-                                         const GValue  *value,
-                                         GParamSpec    *pspec);
+                                       guint          prop_id,
+                                       const GValue  *value,
+                                       GParamSpec    *pspec);
 
-static gboolean process                 (GeglOperation       *operation,
-                                         GeglNodeContext     *context,
-                                         const gchar         *output_prop,
-                                         const GeglRectangle *result);
+static gboolean gegl_operation_filter_process 
+                                      (GeglOperation       *operation,
+                                       GeglNodeContext     *context,
+                                       const gchar         *output_prop,
+                                       const GeglRectangle *result);
 
 static void     attach                 (GeglOperation *operation);
-static GeglNode *detect                 (GeglOperation *operation,
-                                         gint           x,
-                                         gint           y);
+static GeglNode *detect                (GeglOperation *operation,
+                                        gint           x,
+                                        gint           y);
 
 static GeglRectangle get_bounding_box          (GeglOperation       *self);
 static GeglRectangle get_required_for_output   (GeglOperation       *operation,
@@ -76,7 +77,7 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  operation_class->process                 = process;
+  operation_class->process                 = gegl_operation_filter_process;
   operation_class->attach                  = attach;
   operation_class->detect                  = detect;
   operation_class->get_bounding_box        = get_bounding_box;
@@ -179,10 +180,10 @@ set_property (GObject      *object,
 
 
 static gboolean
-process (GeglOperation   *operation,
-         GeglNodeContext *context,
-         const gchar     *output_prop,
-         const GeglRectangle *result)
+gegl_operation_filter_process (GeglOperation   *operation,
+                               GeglNodeContext *context,
+                               const gchar     *output_prop,
+                               const GeglRectangle *result)
 {
   GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;

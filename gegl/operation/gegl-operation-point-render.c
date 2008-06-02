@@ -31,7 +31,8 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 
-static gboolean process_inner (GeglOperation       *operation,
+static gboolean gegl_operation_point_render_process 
+                              (GeglOperation       *operation,
                                GeglBuffer          *output,
                                const GeglRectangle *result);
 
@@ -56,7 +57,7 @@ gegl_operation_point_render_class_init (GeglOperationPointRenderClass *klass)
   GeglOperationSourceClass *source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
   GeglOperationClass       *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  source_class->process    = process_inner;
+  source_class->process    = gegl_operation_point_render_process;
   operation_class->prepare = prepare;
 
   operation_class->detect = detect;
@@ -73,9 +74,9 @@ gegl_operation_point_render_init (GeglOperationPointRender *self)
 
 
 static gboolean
-process_inner (GeglOperation       *operation,
-               GeglBuffer          *output,
-               const GeglRectangle *result)
+gegl_operation_point_render_process (GeglOperation       *operation,
+                                     GeglBuffer          *output,
+                                     const GeglRectangle *result)
 {
   GeglPad    *pad;
   const Babl *out_format;

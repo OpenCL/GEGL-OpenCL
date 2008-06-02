@@ -43,10 +43,11 @@ static void          set_property          (GObject             *gobject,
                                             const GValue        *value,
                                             GParamSpec          *pspec);
 
-static gboolean      process                 (GeglOperation       *operation,
-                                               GeglNodeContext     *context,
-                                               const gchar         *output_prop,
-                                               const GeglRectangle *result);
+static gboolean      gegl_operation_sink_process 
+                                            (GeglOperation       *operation,
+                                             GeglNodeContext     *context,
+                                             const gchar         *output_prop,
+                                             const GeglRectangle *result);
 static void          attach                 (GeglOperation       *operation);
 static GeglRectangle get_bounding_box        (GeglOperation       *self);
 static GeglRectangle get_required_for_output (GeglOperation       *operation,
@@ -68,7 +69,7 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  operation_class->process                 = process;
+  operation_class->process                 = gegl_operation_sink_process;
   operation_class->attach                  = attach;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
@@ -115,10 +116,10 @@ set_property (GObject      *object,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         GeglNodeContext *context,
-         const gchar   *output_prop,
-         const GeglRectangle *result)
+gegl_operation_sink_process (GeglOperation *operation,
+                             GeglNodeContext *context,
+                             const gchar   *output_prop,
+                             const GeglRectangle *result)
 {
   GeglOperationSink      *gegl_operation_sink;
   GeglOperationSinkClass *klass;

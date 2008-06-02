@@ -28,7 +28,8 @@
 #include "graph/gegl-pad.h"
 #include <string.h>
 
-static gboolean process_inner (GeglOperation       *operation,
+static gboolean gegl_operation_point_composer_process 
+                              (GeglOperation       *operation,
                                GeglBuffer          *input,
                                GeglBuffer          *aux,
                                GeglBuffer          *output,
@@ -51,7 +52,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationComposerClass *composer_class = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
-  composer_class->process = process_inner;
+  composer_class->process = gegl_operation_point_composer_process;
   operation_class->prepare = prepare;
   operation_class->no_cache =TRUE;
 }
@@ -75,11 +76,11 @@ fast_paths (GeglOperation       *operation,
 #endif
 
 static gboolean
-process_inner (GeglOperation       *operation,
-               GeglBuffer          *input,
-               GeglBuffer          *aux,
-               GeglBuffer          *output,
-               const GeglRectangle *result)
+gegl_operation_point_composer_process (GeglOperation       *operation,
+                                       GeglBuffer          *input,
+                                       GeglBuffer          *aux,
+                                       GeglBuffer          *output,
+                                       const GeglRectangle *result)
 {
   GeglPad    *pad;
   const Babl *in_format;

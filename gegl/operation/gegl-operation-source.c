@@ -41,7 +41,8 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean process      (GeglOperation *operation,
+static gboolean gegl_operation_source_process 
+                             (GeglOperation *operation,
                               GeglNodeContext *context,
                               const gchar   *output_prop,
                               const GeglRectangle *result);
@@ -68,7 +69,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  operation_class->process = process;
+  operation_class->process = gegl_operation_source_process;
   operation_class->attach  = attach;
   operation_class->get_cached_region = get_cached_region;
 
@@ -117,10 +118,10 @@ set_property (GObject      *object,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+gegl_operation_source_process (GeglOperation       *operation,
+                               GeglNodeContext     *context,
+                               const gchar         *output_prop,
+                               const GeglRectangle *result)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   GeglBuffer               *output;

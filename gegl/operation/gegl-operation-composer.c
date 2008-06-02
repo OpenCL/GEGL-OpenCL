@@ -47,7 +47,7 @@ static void     set_property (GObject             *gobject,
                               guint                prop_id,
                               const GValue        *value,
                               GParamSpec          *pspec);
-static gboolean process      (GeglOperation       *operation,
+static gboolean gegl_operation_composer_process (GeglOperation       *operation,
                               GeglNodeContext     *context,
                               const gchar         *output_prop,
                               const GeglRectangle *result);
@@ -74,7 +74,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  operation_class->process = process;
+  operation_class->process = gegl_operation_composer_process;
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->get_bounding_box = get_bounding_box;
@@ -144,10 +144,10 @@ set_property (GObject      *object,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglNodeContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+gegl_operation_composer_process (GeglOperation       *operation,
+                        GeglNodeContext     *context,
+                        const gchar         *output_prop,
+                        const GeglRectangle *result)
 {
   GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
   GeglBuffer                 *input;

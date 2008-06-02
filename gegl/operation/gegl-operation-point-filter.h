@@ -45,7 +45,9 @@ struct _GeglOperationPointFilterClass
                         void          *in_buf,    /* input buffer      */
                         void          *out_buf,   /* output buffer     */
                         glong          samples,   /* number of samples */
-                        GeglRectangle *roi);      /* can be used if position is of importance*/
+                        GeglRectangle *roi);      /* rectangle out_buf spans in
+                                                     in buffer, see the checkerboard
+                                                     op for semantics */
 };
 
 GType gegl_operation_point_filter_get_type (void) G_GNUC_CONST;
