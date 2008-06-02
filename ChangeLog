@@ -1,5 +1,9 @@
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: quieten gcc.
+
+2008-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/noise.c: (process), (gegl_chant_class_init):
 	ported to be a subclass of GeglOperationPointRender.
 

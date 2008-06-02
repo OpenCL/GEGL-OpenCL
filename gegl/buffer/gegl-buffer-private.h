@@ -135,13 +135,13 @@ typedef struct GeglBufferScanIterator {
       ((GeglBufferScanIterator*)(i))->real_row)
 
 #define gegl_buffer_scan_iterator_get_rectangle(i,rect_ptr) \
-  if(i){GeglRectangle *foo = rect_ptr;\
+  do{GeglRectangle *foo = rect_ptr;\
    if (foo) {\
    foo->x=gegl_buffer_scan_iterator_get_x(i);\
    foo->y=gegl_buffer_scan_iterator_get_y(i);\
    foo->width= ((GeglBufferTileIterator*)i)->subrect.width;\
    foo->height=((GeglBufferScanIterator*)i)->length/ foo->width;\
-   }}
+   }}while(0)
 
 
 gboolean                gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
