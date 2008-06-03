@@ -223,7 +223,6 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
 	 /* FIXME use direct access when possible (avoid conversions and buffers) 
           */
            {
-              GeglRectangle roi;
               if (aux)
                 aux_buf = gegl_malloc (aux_bpp * write.max_size);
 
@@ -233,11 +232,9 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                   while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                            (b = gegl_buffer_scan_iterator_next (&write)))
                     {
-                   gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-
                    g_assert (read.length == write.length);
 
-                   if (aux) gegl_buffer_get (aux, 1.0, &roi, aux_format, aux_buf,
+                   if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
                                              GEGL_AUTO_ROWSTRIDE);
 
                    GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
@@ -255,11 +252,9 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                   while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                            (b = gegl_buffer_scan_iterator_next (&write)))
                     {
-                      gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-
                       g_assert (read.length == write.length);
 
-                      if (aux) gegl_buffer_get (aux, 1.0, &roi, aux_format, aux_buf,
+                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
                                                 GEGL_AUTO_ROWSTRIDE);
 
                       GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
@@ -279,12 +274,10 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                   while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                            (b = gegl_buffer_scan_iterator_next (&write)))
                     {
-                      gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-
                       g_assert (read.length == write.length);
                       babl_process (infish, read.data, in_buf, read.length);
 
-                      if (aux) gegl_buffer_get (aux, 1.0, &roi, aux_format, aux_buf,
+                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
                                                 GEGL_AUTO_ROWSTRIDE);
 
                       GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
@@ -304,12 +297,10 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                   while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                            (b = gegl_buffer_scan_iterator_next (&write)))
                     {
-                      gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-
                       g_assert (read.length == write.length);
                       babl_process (infish, read.data, in_buf, read.length);
 
-                      if (aux) gegl_buffer_get (aux, 1.0, &roi, aux_format, aux_buf,
+                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
                                                 GEGL_AUTO_ROWSTRIDE);
 
                       GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (

@@ -1,3 +1,15 @@
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-private.h: added roi to scan iterator
+	struct, removed accesor macro.
+	* gegl/buffer/gegl-buffer-access.c: handle roi of scan iterator
+	internally.
+
+	Updated code using scan iterator to use roi from iterator struct.
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-point-render.c:
+
 2008-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-access.c:

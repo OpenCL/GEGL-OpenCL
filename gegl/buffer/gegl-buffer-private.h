@@ -124,24 +124,11 @@ typedef struct GeglBufferScanIterator {
   gint                   row;
   gint                   real_row;
   gpointer               data;
+  GeglRectangle          roi;
 } GeglBufferScanIterator;
 
-#define gegl_buffer_scan_iterator_get_x(i) \
-    ((((GeglBufferTileIterator*)(i))->roi.x) + \
-    (((GeglBufferTileIterator*)(i))->real_col))
-#define gegl_buffer_scan_iterator_get_y(i) \
-    ( (((GeglBufferTileIterator*)(i))->roi.y)+ \
-      (((GeglBufferTileIterator*)(i))->real_row)+ \
-      ((GeglBufferScanIterator*)(i))->real_row)
 
-#define gegl_buffer_scan_iterator_get_rectangle(i,rect_ptr) \
-  do{GeglRectangle *foo = rect_ptr;\
-   if (foo) {\
-   foo->x=gegl_buffer_scan_iterator_get_x(i);\
-   foo->y=gegl_buffer_scan_iterator_get_y(i);\
-   foo->width= ((GeglBufferTileIterator*)i)->subrect.width;\
-   foo->height=((GeglBufferScanIterator*)i)->length/ foo->width;\
-   }}while(0)
+
 
 
 gboolean                gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);

@@ -43,6 +43,22 @@ GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 #endif
 
 
+#define gegl_buffer_scan_iterator_get_x(i) \
+    ((((GeglBufferTileIterator*)(i))->roi.x) + \
+    (((GeglBufferTileIterator*)(i))->real_col))
+#define gegl_buffer_scan_iterator_get_y(i) \
+    ( (((GeglBufferTileIterator*)(i))->roi.y)+ \
+      (((GeglBufferTileIterator*)(i))->real_row)+ \
+      ((GeglBufferScanIterator*)(i))->real_row)
+
+#define gegl_buffer_scan_iterator_get_rectangle(i,rect_ptr) \
+  do{GeglRectangle *foo = rect_ptr;\
+   if (foo) {\
+   foo->x=gegl_buffer_scan_iterator_get_x(i);\
+   foo->y=gegl_buffer_scan_iterator_get_y(i);\
+   foo->width= ((GeglBufferTileIterator*)i)->subrect.width;\
+   foo->height=((GeglBufferScanIterator*)i)->length/ foo->width;\
+   }}while(0)
 
 void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                      GeglBuffer             *buffer,
@@ -130,6 +146,7 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
         {
           return FALSE;
         }*/
+      gegl_buffer_scan_iterator_get_rectangle (i, &(i->roi));
       return TRUE;
     }
   else if (i->row < tile_i->subrect.height)
@@ -1475,11 +1492,6 @@ gegl_buffer_copy (GeglBuffer          *src,
       while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                (b = gegl_buffer_scan_iterator_next (&write)))
         {
-          GeglRectangle roi;
-          gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-          /* XXX: check if we have a full tile, if we do we can clone
-           * it
-           */
           g_assert (read.length == write.length);
           babl_process (fish, read.data, write.data, write.length);
         }

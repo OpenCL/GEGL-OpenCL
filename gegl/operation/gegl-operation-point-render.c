@@ -107,10 +107,7 @@ gegl_operation_point_render_process (GeglOperation       *operation,
       out_buf = gegl_malloc (output_bpp * write.max_size);
       while (gegl_buffer_scan_iterator_next (&write))
         {
-          GeglRectangle roi;
-          gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
-
-          point_render_class->process (operation, out_buf, write.length, &roi);
+          point_render_class->process (operation, out_buf, write.length, &write.roi);
 
           /* this is the actual write happening directly to the underlying
            * scan on the tile.
