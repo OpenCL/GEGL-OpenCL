@@ -103,7 +103,6 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
       outfish = babl_fish (out_format, output->format);
       
-      gegl_buffer_lock (output); 
 
       out_buf = gegl_malloc (output_bpp * write.max_size);
       while (gegl_buffer_scan_iterator_next (&write))
@@ -121,7 +120,6 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
       if (out_buf)
         gegl_free (out_buf);
-      gegl_buffer_unlock (output); 
     }
   return TRUE;
 }

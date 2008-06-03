@@ -85,6 +85,8 @@ void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
                 tile_i->buffer->tile_storage->tile_height *
                 tile_i->buffer->format->format.bytes_per_pixel;
   i->real_row = 0;
+  if (write)
+    gegl_buffer_lock (buffer);
 }
 
 GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer             *buffer,
@@ -143,6 +145,9 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
     { /* we're done with that tile go get another one if possible */
       goto gulp;
     }
+
+  if (tile_i->write)
+    gegl_buffer_unlock (tile_i->buffer);
 
   return FALSE;
 }
@@ -1467,8 +1472,6 @@ gegl_buffer_copy (GeglBuffer          *src,
       gegl_buffer_scan_iterator_init (&read,  src, *dst_rect, FALSE);
       gegl_buffer_scan_iterator_init (&write, dst, *dst_rect, TRUE);
 
-      gegl_buffer_lock (dst);
-
       while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
                (b = gegl_buffer_scan_iterator_next (&write)))
         {
@@ -1485,8 +1488,6 @@ gegl_buffer_copy (GeglBuffer          *src,
         while (gegl_buffer_scan_iterator_next (&read));
       if (b)
         while (gegl_buffer_scan_iterator_next (&write));
-
-      gegl_buffer_unlock (dst);
 
       return;
     }

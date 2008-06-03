@@ -1,5 +1,23 @@
 2008-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_scan_iterator_init), (gegl_buffer_scan_iterator_next):
+	made the locking of the buffer when using the scan iterator for write
+	access implicit.
+	(gegl_buffer_copy): removed unneeded lock/unlcok.
+	* gegl/operation/gegl-operation-point-composer.c: ..
+	* gegl/operation/gegl-operation-point-filter.c: ..
+	* gegl/operation/gegl-operation-point-render.c: removed unneeded
+	lock/unlock pair.
+
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-point-composer.c:
+	(gegl_operation_point_composer_process): use direct tile access when
+	possible from input/output buffers.
+
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Enable scan iteration for compositing.
 
 	* gegl/buffer/gegl-buffer-access.c:

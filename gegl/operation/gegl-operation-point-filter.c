@@ -100,7 +100,6 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
           infish = babl_fish (input->format, in_format);
           outfish = babl_fish (out_format, output->format);
          
-          gegl_buffer_lock (output); 
           {
           gboolean a = FALSE, b = FALSE;
           if (in_format == input->format &&
@@ -172,7 +171,6 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
             gegl_free (in_buf);
           if (out_buf)
             gegl_free (out_buf);
-          gegl_buffer_unlock (output); 
         }
 #if 0
       else
