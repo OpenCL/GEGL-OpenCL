@@ -1,3 +1,21 @@
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/generated/other-blend.rb: fixed off by one in simd loop.
+	* operations/generated/svg-12-porter-duff.rb: fixed off by one in simd
+	loop.
+
+2008-06-02  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_scan_compatible): added x and y offsets as arguments.
+	(gegl_buffer_copy): use scan iterator if buffers are scan compatible.
+	* gegl/buffer/gegl-buffer-private: updated prototype.
+	* gegl/operation/gegl-operation-point-composer.c: make use of scan
+	iterator like the filter op only fetching aux when the buffers
+	are scan compatible.
+	* gegl/operation/gegl-operation-point-filter.c: updated check for scan
+	compatibility.
+
 2008-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-point-composer.c: re-enabled fast

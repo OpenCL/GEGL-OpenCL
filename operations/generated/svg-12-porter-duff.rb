@@ -199,7 +199,7 @@ process_gegl4float (GeglOperation *op,
   if (B==NULL || n_pixels == 0)
     return TRUE;
     
-  while (--n_pixels)
+  while (n_pixels--)
     {
       #{sse_formula};
 
