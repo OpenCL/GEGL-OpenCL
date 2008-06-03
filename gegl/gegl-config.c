@@ -32,7 +32,9 @@ enum
   PROP_CACHE_SIZE,
   PROP_CHUNK_SIZE,
   PROP_SWAP,
-  PROP_BABL_ERROR
+  PROP_BABL_ERROR,
+  PROP_TILE_WIDTH,
+  PROP_TILE_HEIGHT
 };
 
 static void
@@ -51,6 +53,14 @@ get_property (GObject    *gobject,
 
       case PROP_CHUNK_SIZE:
         g_value_set_int (value, config->chunk_size);
+        break;
+
+      case PROP_TILE_WIDTH:
+        g_value_set_int (value, config->tile_width);
+        break;
+
+      case PROP_TILE_HEIGHT:
+        g_value_set_int (value, config->tile_height);
         break;
 
       case PROP_QUALITY:
@@ -86,6 +96,12 @@ set_property (GObject      *gobject,
         break;
       case PROP_CHUNK_SIZE:
         config->chunk_size = g_value_get_int (value);
+        break;
+      case PROP_TILE_WIDTH:
+        config->tile_width = g_value_get_int (value);
+        break;
+      case PROP_TILE_HEIGHT:
+        config->tile_height = g_value_get_int (value);
         break;
       case PROP_QUALITY:
         config->quality = g_value_get_double (value);
@@ -135,6 +151,17 @@ gegl_config_class_init (GeglConfigClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
 
+
+  g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
+                                   g_param_spec_int ("tile-width", "Tile width", "default tile width for created buffers.",
+                                                     0, G_MAXINT, 64,
+                                                     G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
+                                   g_param_spec_int ("tile-height", "Tile height", "default tile heightfor created buffers.",
+                                                     0, G_MAXINT, 64,
+                                                     G_PARAM_READWRITE));
+
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
                                    g_param_spec_int ("cache-size", "Cache size", "size of cache in bytes",
                                                      0, G_MAXINT, 256*1024*1024,
@@ -168,5 +195,7 @@ gegl_config_init (GeglConfig *self)
   self->swap = NULL;
   self->quality = 1.0;
   self->cache_size = 256*1024*1024;
-  self->chunk_size = 256*300;
+  self->chunk_size = 256*256;
+  self->tile_width = 128;
+  self->tile_height = 64;
 }

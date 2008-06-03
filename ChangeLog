@@ -1,5 +1,16 @@
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-storage.c: depend on gegl_config()'s
+	tile_width and tile_height for default values. (should be more dynamic
+	than default of paramspec, but this will do for now.)
+
+	* gegl/gegl-config.c: added GEGL_TILE_SIZE --gegl-tile-size
+	configuration which takes 128x128 type settings.
+	* gegl/gegl-config.h:
+	* gegl/gegl-init.c:
+
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: added roi to scan iterator
 	struct, removed accesor macro.
 	* gegl/buffer/gegl-buffer-access.c: handle roi of scan iterator

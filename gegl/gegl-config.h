@@ -43,6 +43,8 @@ struct _GeglConfig
   gint     chunk_size; /* The size of elements being processed at once */
   gdouble  quality;
   gdouble  babl_error;
+  gint     tile_width;
+  gint     tile_height;
 };
 
 struct _GeglConfigClass
