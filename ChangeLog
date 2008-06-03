@@ -1,5 +1,21 @@
 2008-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Enable scan iteration for compositing.
+
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_scan_iterator_next), (gegl_buffer_scan_compatible),
+	(gegl_buffer_tile_iterator_next), (gegl_buffer_iterate),
+	(gegl_buffer_copy): commit earlier missed changes.
+	* gegl/buffer/gegl-buffer-private.h: fix prototype for scan
+	compatible.
+	* gegl/operation/gegl-operation-point-composer.c:
+	(gegl_operation_point_composer_process): process using scan iterator
+	when possible.
+	* gegl/operation/gegl-operation-point-filter.c: commit missed file
+	from earlier commit.
+
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/other-blend.rb: fixed off by one in simd loop.
 	* operations/generated/svg-12-porter-duff.rb: fixed off by one in simd
 	loop.

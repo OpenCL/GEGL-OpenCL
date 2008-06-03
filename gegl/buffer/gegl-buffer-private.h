@@ -109,8 +109,8 @@ typedef struct GeglBufferTileIterator
   gint           row;
   gint           real_col;
   gint           real_row;
-  gboolean       write;   /* perhaps in a subclass struct? */
-  GeglRectangle  subrect; /* has x==-1 when entire tile is valid */
+  gboolean       write;
+  GeglRectangle  subrect;
   gpointer       data;
   gpointer       sub_data;
   gint           rowstride;
@@ -161,8 +161,12 @@ void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
 GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer    *buffer,
                                                        GeglRectangle  roi,
                                                        gboolean       write);
-gboolean                gegl_buffer_scan_compatible   (GeglBuffer    *input,
-                                                       GeglBuffer    *output);
+gboolean gegl_buffer_scan_compatible (GeglBuffer *input,
+                                      gint        x0,
+                                      gint        y0,
+                                      GeglBuffer *output,
+                                      gint        x1,
+                                      gint        y1);
 
 
 #endif

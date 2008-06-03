@@ -124,10 +124,10 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
       i->data = data + px_size * (tile_i->subrect.width * tile_i->subrect.y);
       i->row = tile_i->subrect.height;
       i->real_row = 0;
-      if (i->rowstride < 0)
+/*      if (i->rowstride < 0)
         {
           return FALSE;
-        }
+        }*/
       return TRUE;
     }
   else if (i->row < tile_i->subrect.height)
@@ -149,7 +149,11 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
 
 
 gboolean gegl_buffer_scan_compatible (GeglBuffer *input,
-                                      GeglBuffer *output)
+                                      gint        x0,
+                                      gint        y0,
+                                      GeglBuffer *output,
+                                      gint        x1,
+                                      gint        y1)
 {
   if (input->tile_storage->tile_width !=
       output->tile_storage->tile_width)
@@ -162,6 +166,12 @@ gboolean gegl_buffer_scan_compatible (GeglBuffer *input,
     return FALSE;
   if (input->shift_y !=
       output->shift_y)
+    return FALSE;
+  if (x0!=x1 || y0!=y1)
+    return FALSE;
+  if ( (abs(x0 - x1) % input->tile_storage->tile_width) != 0)
+    return FALSE;
+  if ( (abs(y0 - y1) % input->tile_storage->tile_height) != 0)
     return FALSE;
   return TRUE;
 }
@@ -178,7 +188,6 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   gint  buffer_y       = buffer->extent.y + buffer_shift_y;
   gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
-  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;
@@ -209,28 +218,32 @@ gulp:
       else
         pixels = tile_width - offsetx;
 
-     if (!(buffer_x + i->col + tile_width >= buffer_abyss_x &&
+     /*if (!(buffer_x + i->col + tile_width >= buffer_abyss_x &&
                       buffer_x + i->col < abyss_x_total))
        { 
           g_warning ("entire tile in abyss?");
 
           i->col += tile_width - offsetx;
+          goto gulp;
        }
-     else
+     else*/
        {
          i->subrect.x = offsetx;
          i->subrect.y = offsety;
 
-         i->subrect.width = pixels;
-        /* (i->roi.width - i->col + tile_width < tile_width) ?
+         i->subrect.width = 
+           //pixels;
+        (i->roi.width - i->col + tile_width < tile_width) ?
                              (i->roi.width - i->col + tile_width) - i->subrect.x:
-                             tile_width - i->subrect.x;*/
+                             tile_width - i->subrect.x;
+
+
 
          i->subrect.height = (i->roi.height - i->row + tile_height < tile_height) ?
                              (i->roi.height - i->row + tile_height) - i->subrect.y:
                              tile_height - i->subrect.y;
 
-         if(1){
+         if(0){
          gint lskip = (buffer_abyss_x) - (buffer_x + i->col);
          /* gap between left side of tile, and abyss */
          gint rskip = (buffer_x + i->col + i->subrect.width) - abyss_x_total;
@@ -595,6 +608,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   gint  i;
   gint  factor = 1;
 
+
   for (i = 0; i < level; i++)
     {
       factor *= 2;
@@ -673,6 +687,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
               pixels = (width + offsetx - bufx) - offsetx;
             else
               pixels = tile_width - offsetx;
+
 
             if (!(buffer_x + bufx + tile_width >= buffer_abyss_x &&
                   buffer_x + bufx < abyss_x_total))
@@ -1411,7 +1426,7 @@ gegl_buffer_copy (GeglBuffer          *src,
 
   GeglRectangle src_line;
   GeglRectangle dst_line;
-  const Babl   *format;
+  Babl         *fish;
   guchar       *temp;
   guint         i;
   gint          pxsize;
@@ -1430,7 +1445,7 @@ gegl_buffer_copy (GeglBuffer          *src,
     }
 
   pxsize = src->tile_storage->px_size;
-  format = src->format;
+  fish = babl_fish (src->format, dst->format);
 
   src_line = *src_rect;
   src_line.height = 1;
@@ -1439,12 +1454,49 @@ gegl_buffer_copy (GeglBuffer          *src,
   dst_line.width = src_line.width;
   dst_line.height = src_line.height;
 
+  if (gegl_buffer_scan_compatible (src, src_rect->x, src_rect->y,
+                                   dst, dst_rect->x, dst_rect->y)) /*  is this check good enough
+                                               *  with the shifts we might
+                                               *  do?
+                                               */
+    {
+      GeglBufferScanIterator read;
+      GeglBufferScanIterator write;
+      gboolean a=FALSE,b=FALSE;
+
+      gegl_buffer_scan_iterator_init (&read,  src, *dst_rect, FALSE);
+      gegl_buffer_scan_iterator_init (&write, dst, *dst_rect, TRUE);
+
+      gegl_buffer_lock (dst);
+
+      while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
+               (b = gegl_buffer_scan_iterator_next (&write)))
+        {
+          GeglRectangle roi;
+          gegl_buffer_scan_iterator_get_rectangle (&write, &roi);
+          /* XXX: check if we have a full tile, if we do we can clone
+           * it
+           */
+          g_assert (read.length == write.length);
+          babl_process (fish, read.data, write.data, write.length);
+        }
+
+      if (a)
+        while (gegl_buffer_scan_iterator_next (&read));
+      if (b)
+        while (gegl_buffer_scan_iterator_next (&write));
+
+      gegl_buffer_unlock (dst);
+
+      return;
+    }
+
   temp = g_malloc (src_line.width * pxsize);
 
   for (i=0; i<src_rect->height; i++)
     {
-      gegl_buffer_get (src, 1.0, &src_line, format, temp, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_set (dst, &dst_line, format, temp, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (src, 1.0, &src_line, dst->format, temp, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &dst_line, dst->format, temp, GEGL_AUTO_ROWSTRIDE);
       src_line.y++;
       dst_line.y++;
     }

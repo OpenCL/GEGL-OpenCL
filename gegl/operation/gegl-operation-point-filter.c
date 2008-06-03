@@ -75,7 +75,8 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (gegl_buffer_scan_compatible (input, output))
+      if (gegl_buffer_scan_compatible (input, result->x, result->y,
+                                       output, result->x, result->y))
         /* We can use the fastest possible path with the least possible
          * copies using paralell scan iteratator with possibly direct
          * read write access to buffers.
