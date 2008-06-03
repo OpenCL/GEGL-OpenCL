@@ -1,3 +1,9 @@
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* samples/subgraph.py: s/FractalEXplorer/fractal-explorer/
+	* samples/xml-parsing.py: s/FractalEXplorer/fractal-explorer/ added
+	some more animation.
+
 2008-05-08  Manish Singh  <yosh@gimp.org>
 
 	* samples/render-test.py: the display op isn't really needed, remove.

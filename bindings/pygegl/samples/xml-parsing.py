@@ -10,20 +10,29 @@ gegl = Gegl.node_new_from_xml(
 <gegl>
    <crop x='0' y='145' width='400' height='200'/>
    <over>
-     <gaussian-blur std_dev_y='0' name='blur'/>
-     <shift x='20' y='170' name='shift'/>
+     <translate x='20' y='170' name='translate'/>
+     <gaussian-blur std_dev_x='10' std_dev_y='0' name='blur'/>
      <text string='pygegl' size='110' color='rgb(0.5,0.5,1.0)'/>
    </over>
-   <FractalExplorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
-                    width='400' height='400'/>
+   <fractal-explorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
+                     width='400' height='400'/>
 </gegl>
 """)
 
 display = gegl.new_child("display")
 gegl >> display
 
-frames = 10
+frames=30
 for frame in range(frames):
-    gegl.lookup("blur").std_dev_x = (frames-frame)*3.0 # animate the composition
-    gegl.lookup("shift").y        = 20*frame           #
+    gegl.lookup("translate").y        = (frame*1.0)/frames*200.0           #
+    display.process()
+
+frames=10
+for frame in range(frames):
+    gegl.lookup("blur").std_dev_x = (1.0-((frame*1.0)/frames))*10.0 # animate the composition
+    display.process()
+
+frames=10
+for frame in range(frames):
+    gegl.lookup("translate").y        = 200+(frame*1.0)/frames*200.0           #
     display.process()

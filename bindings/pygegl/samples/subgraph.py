@@ -8,7 +8,7 @@ from time import sleep
 
 gegl = Gegl.Node()                    # create a new GEGL graph
 
-fractal = gegl.new_child("FractalExplorer")
+fractal = gegl.new_child("fractal-explorer")
 
 unsharp = gegl.new_child("unsharp-mask")
 
