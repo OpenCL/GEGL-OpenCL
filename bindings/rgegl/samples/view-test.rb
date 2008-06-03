@@ -13,7 +13,7 @@ gegl=Gegl.parse_xml(
      <shift x='20' y='170' name='shift'/>
      <text string='rgegl' size='120' color='rgb(0.5,0.5,1.0)'/>
    </over>
-   <FractalExplorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
+   <fractal-explorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
                     width='400' height='400'/>
 </gegl>", "")
 

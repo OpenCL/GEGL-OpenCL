@@ -1,3 +1,12 @@
+2008-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* samples/view-test.rb: s/FractalExplorer/fractal-explorer/
+	* samples/xml-parsing.rb: s/FractalExplorer/fractal-explorer/
+	* src/lib/gegl-view.rb: s/FractalExplorer/fractal-explorer/
+	* src/rgegl-node.c: moved gegl_init()
+	* src/rgegl.c: (Init_gegl): here, since some of the initialization
+	code in some of the classes seems to depend on gegl_config() working.
+
 2008-05-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* src/rgegl.h: do not include rbgeglversion.h since gegl provides its

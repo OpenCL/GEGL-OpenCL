@@ -20,16 +20,17 @@ module Gegl
           signal_connect("expose-event") { |view, event|
               if @node!=nil
                   event.region.rectangles.each { |rect|
-                     roi = Gegl::Rectangle.new(view.x + rect.x/view.scale,
-                                              view.y + rect.y/view.scale,
-                                              rect.width, rect.height)
+                     roi = Gegl::Rectangle.new(view.x / view.scale + rect.x,
+                                               view.y / view.scale + rect.y,
+                                              rect.width,
+                                              rect.height)
                      buf = view.node.render(roi, view.scale, "R'G'B' u8", 3)
 
                      Gdk::RGB.draw_rgb_image(view.window,
                                              view.style.black_gc,
                                              rect.x, rect.y,
                                              rect.width, rect.height,
-                                             0, buf, rect.width*3)
+                                             0, buf, roi.width*3)
                   }
               end
               repaint
@@ -44,7 +45,7 @@ module Gegl
           self.processor.rectangle=roi
 
           if @handler==nil
-              @handler=GLib::Idle.add(200){ #refresh view twice a second
+              @handler=GLib::Idle.add(100){ #refresh view twice a second
                  more=self.processor.work # returns true if there is more work
                  @handler=nil if !more
                  more
@@ -83,12 +84,12 @@ module Gegl
           @node=new_node
 
           @node.signal_connect("computed") {|node, rectangle|
-              rectangle.x = self.scale * (rectangle.x - self.x)
-              rectangle.y = self.scale * (rectangle.y - self.y)
-              rectangle.width = (rectangle.width * self.scale).ceil
-              rectangle.height = (rectangle.height * self.scale).ceil
 
-              self.queue_draw_area(rectangle.x, rectangle.y, rectangle.width, rectangle.height) 
+              self.queue_draw_area(
+                  self.scale * (rectangle.x - self.x),
+                  self.scale * (rectangle.y - self.y),
+                  (rectangle.width * self.scale).ceil,
+                  (rectangle.height * self.scale).ceil)
           }
           @node.signal_connect("invalidated") {|node, event|
               repaint

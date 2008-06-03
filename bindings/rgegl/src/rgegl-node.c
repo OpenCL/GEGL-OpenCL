@@ -415,12 +415,14 @@ static VALUE
 c_gegl_init (self)
   VALUE self;
 {
+  /*
   static gboolean inited=FALSE;
   if (!inited)
     {
       gegl_init (NULL, NULL);
       inited = TRUE;
     }
+  */
   return Qnil;
 }
 

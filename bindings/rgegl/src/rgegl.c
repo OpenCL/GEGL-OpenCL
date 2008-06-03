@@ -24,6 +24,13 @@ Init_gegl(void)
 {
     VALUE mGegl = rb_define_module("Gegl");
 
+    static gboolean inited=FALSE;
+    if (!inited)
+      {
+        gegl_init (NULL, NULL);
+        inited = TRUE;
+      }
+
     Init_gegl_color(mGegl);
     Init_gegl_node(mGegl);
     Init_gegl_processor(mGegl);

@@ -8,22 +8,24 @@ require 'gegl'
 
 gegl=Gegl.parse_xml(
 "<gegl>
-   <crop x='0' y='145' width='400' height='200'/>
+   <crop x='0' y='145' width='320' height='240'/>
    <over>
      <gaussian-blur std_dev_y='0' name='blur'/>
      <shift x='20' y='170' name='shift'/>
      <text string='rgegl' size='120' color='rgb(0.5,0.5,1.0)'/>
    </over>
-   <FractalExplorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
-                    width='400' height='400'/>
+   <fractal-explorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'
+                    width='320' height='400'/>
 </gegl>", "")
 
 display = gegl.new_child :display
 gegl >> display
 
-frames=10
+frames=50
 frames.times do |frame|
-  gegl.lookup("blur").std_dev_x = (frames-frame)*3.0  # animate the composition
-  gegl.lookup("shift").y       = 20*frame            #
+  t = 1.0*frame/frames
+  puts t
+#  gegl.lookup("blur").std_dev_x = t * 20.0
+  gegl.lookup("shift").y       =  t * 200
   display.process
 end
