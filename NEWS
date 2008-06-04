@@ -9,13 +9,12 @@ Changes in GEGL 0.0.17
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Configuration both from commandline arguments and at runtime.
  • GeglBuffer
-   • Transparently sharable across processes.
-   • Fileformat compatible with swap format.
-   • Tunable cache size.
+   • New raw tiled raster file format, used both as swap and stored buffers.
+   • Buffers shared between processes through synced swap.
+   • Internal linear scan iterator for optimized access.
  • Operations
-   • Optimized iteration over buffer in pointer filters when possible using a
-     scan iterator.
-   • Handle variant implementations of GeglOperations.
+   • Use scan iterator for point-filter, point-composer and point-render base
+     classes internally for minimal amount of copies.
    • Optimized variants of some point and compositing operations reimplemented
      using a new data type /g4float/ that allows writing cpu agnostic vectorized
      code for GCC.

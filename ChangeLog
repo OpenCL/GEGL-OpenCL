@@ -1,5 +1,9 @@
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: synced up with changelog.
+
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_post_parse_hook): removed debug printf.
 
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
