@@ -1,5 +1,9 @@
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/Makefile.am: removed reference removed file gegl-bin-types.h
+
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: synced up with changelog.
 
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
