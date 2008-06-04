@@ -389,8 +389,6 @@ gegl_post_parse_hook (GOptionContext *context,
         config->tile_height = atoi(str+1);
     }
 
-  g_print ("%i %i\n", config->tile_width, config->tile_height);
-
   if (cmd_babl_error)
     g_object_set (config, "babl-error", atof(cmd_babl_error), NULL);
 

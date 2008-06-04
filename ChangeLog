@@ -1,5 +1,9 @@
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (gegl_post_parse_hook): removed debug printf.
+
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-storage.c: depend on gegl_config()'s
 	tile_width and tile_height for default values. (should be more dynamic
 	than default of paramspec, but this will do for now.)
