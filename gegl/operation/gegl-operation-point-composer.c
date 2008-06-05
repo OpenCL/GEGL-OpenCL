@@ -193,171 +193,33 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                                        GeglBuffer          *output,
                                        const GeglRectangle *result)
 {
+  GeglOperationPointComposerClass *point_composer_class = GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation);
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *aux_format = gegl_operation_get_format (operation, "aux");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
-      gfloat *in_buf = NULL, *out_buf = NULL, *aux_buf = NULL;
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, *result, out_format, GEGL_BUFFER_WRITE);
+      gint read  = gegl_buffer_iterator_add (i, input,  *result, in_format, GEGL_BUFFER_READ);
 
-      if (gegl_buffer_scan_compatible (input, result->x, result->y,
-                                       output, result->x, result->y))
+      if (aux)
         {
-          gint input_bpp  = in_format->format.bytes_per_pixel;
-          gint output_bpp = output->format->format.bytes_per_pixel;
-          gint aux_bpp    = aux?aux->format->format.bytes_per_pixel:1;
+          gint foo = gegl_buffer_iterator_add (i, aux,  *result, aux_format, GEGL_BUFFER_READ);
 
-          Babl *infish;
-          Babl *outfish;
-          GeglBufferScanIterator read;
-          GeglBufferScanIterator write;
-          gboolean a = FALSE, b = FALSE;
-
-          gegl_buffer_scan_iterator_init (&read,  input,  *result, FALSE);
-          gegl_buffer_scan_iterator_init (&write, output, *result, TRUE);
-          
-          infish = babl_fish (input->format, in_format);
-          outfish = babl_fish (out_format, output->format);
-
-	 /* FIXME use direct access when possible (avoid conversions and buffers) 
-          */
-           {
-              if (aux)
-                aux_buf = gegl_malloc (aux_bpp * write.max_size);
-
-              if (input->format == in_format &&
-                  output->format == out_format)
-                {
-                  while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
-                           (b = gegl_buffer_scan_iterator_next (&write)))
-                    {
-                   g_assert (read.length == write.length);
-
-                   if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
-                                             GEGL_AUTO_ROWSTRIDE);
-
-                   GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-                            operation,
-                            read.data,
-                            aux_buf, /* can be NULL */
-                            write.data,
-                            write.length);
-                    }
-                }
-              else if (input->format == in_format &&
-                       output->format != out_format)
-                {
-                  out_buf = gegl_malloc (output_bpp * write.max_size);
-                  while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
-                           (b = gegl_buffer_scan_iterator_next (&write)))
-                    {
-                      g_assert (read.length == write.length);
-
-                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
-                                                GEGL_AUTO_ROWSTRIDE);
-
-                      GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-                            operation,
-                            read.data,
-                            aux_buf, /* can be NULL */
-                            out_buf,
-                            write.length);
-                      babl_process (outfish, out_buf, write.data, write.length);
-                    }
-                  gegl_free (out_buf);
-                }
-              else if (input->format != in_format &&
-                       output->format == out_format)
-                {
-                  in_buf  = gegl_malloc (input_bpp * read.max_size);
-                  while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
-                           (b = gegl_buffer_scan_iterator_next (&write)))
-                    {
-                      g_assert (read.length == write.length);
-                      babl_process (infish, read.data, in_buf, read.length);
-
-                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
-                                                GEGL_AUTO_ROWSTRIDE);
-
-                      GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-                            operation,
-                            in_buf,
-                            aux_buf, /* can be NULL */
-                            write.data,
-                            write.length);
-                    }
-                  gegl_free (in_buf);
-                }
-              else if (input->format != in_format &&
-                       output->format != out_format)
-                {
-                  in_buf  = gegl_malloc (input_bpp * read.max_size);
-                  out_buf = gegl_malloc (output_bpp * write.max_size);
-                  while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
-                           (b = gegl_buffer_scan_iterator_next (&write)))
-                    {
-                      g_assert (read.length == write.length);
-                      babl_process (infish, read.data, in_buf, read.length);
-
-                      if (aux) gegl_buffer_get (aux, 1.0, &write.roi, aux_format, aux_buf,
-                                                GEGL_AUTO_ROWSTRIDE);
-
-                      GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-                            operation,
-                            in_buf,
-                            aux_buf, /* can be NULL */
-                            out_buf,
-                            write.length);
-                      babl_process (outfish, out_buf, write.data, write.length);
-                    }
-                  gegl_free (in_buf);
-                  gegl_free (out_buf);
-                }
-
+          while (gegl_buffer_iterator_next (i))
+            {
+               point_composer_class->process (operation, i->data[read], i->data[foo], i->data[0], i->length);
             }
-
-          if (aux)
-            gegl_free (aux_buf);
-          return TRUE;
-        }
-
-      in_buf = gegl_malloc (in_format->format.bytes_per_pixel *
-                         output->extent.width * output->extent.height);
-      if (in_format == out_format)
-        {
-          out_buf = in_buf;
         }
       else
         {
-          out_buf = gegl_malloc (out_format->format.bytes_per_pixel *
-                              output->extent.width * output->extent.height);
+          while (gegl_buffer_iterator_next (i))
+            {
+               point_composer_class->process (operation, i->data[read], NULL, i->data[0], i->length);
+            }
         }
-
-      gegl_buffer_get (input, 1.0, result, in_format, in_buf, GEGL_AUTO_ROWSTRIDE);
-
-      if (aux)
-        {
-          aux_buf = gegl_malloc (aux_format->format.bytes_per_pixel *
-                             output->extent.width * output->extent.height);
-          gegl_buffer_get (aux, 1.0, result, aux_format, aux_buf, GEGL_AUTO_ROWSTRIDE);
-        }
-      {
-        GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-          operation,
-          in_buf,
-          aux_buf,
-          out_buf,
-          output->extent.width * output->extent.height);
-      }
-
-      gegl_buffer_set (output, NULL, out_format, out_buf, GEGL_AUTO_ROWSTRIDE);
-
-      gegl_free (in_buf);
-      if (in_format != out_format)
-        gegl_free (out_buf);
-      if (aux)
-        gegl_free (aux_buf);
+      return TRUE;
     }
   return TRUE;
 }

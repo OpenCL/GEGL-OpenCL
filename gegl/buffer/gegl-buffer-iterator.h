@@ -21,51 +21,77 @@
 #define __GEGL_BUFFER_ITERATOR_H__
 
 #include "gegl-buffer.h"
-#include "gegl-buffer-private.h"
 
-typedef struct GeglBufferTileIterator
+#define GEGL_BUFFER_MAX_ITERATORS 6
+
+#define GEGL_BUFFER_READ      1
+#define GEGL_BUFFER_WRITE     2
+#define GEGL_BUFFER_READWRITE (GEGL_BUFFER_READ|GEGL_BUFFER_WRITE)
+
+typedef struct GeglBufferIterator
 {
-  GeglBuffer    *buffer;
-  GeglTile      *tile;
   GeglRectangle  roi;
-  gint           col;
-  gint           row;
-  gint           real_col;
-  gint           real_row;
-  gboolean       write;
-  GeglRectangle  subrect;
-  gpointer       data;
-  gpointer       sub_data;
-  gint           rowstride;
-} GeglBufferTileIterator;
-
-typedef struct GeglBufferScanIterator {
-  GeglBufferTileIterator tile_iterator;
-  gint                   max_size;  /* in bytes */
-  gint                   rowstride; /* allows computing  */
-  gint                   length;
-  gint                   row;
-  gint                   real_row;
-  gpointer               data;
-  GeglRectangle          roi;
-} GeglBufferScanIterator;
+  gint           length;
+  gpointer       data[GEGL_BUFFER_MAX_ITERATORS];
+} GeglBufferIterator;
 
 
-GeglBufferScanIterator *gegl_buffer_scan_iterator_new (GeglBuffer    *buffer,
-                                                       GeglRectangle  roi,
-                                                       gboolean       write);
+/**
+ * gegl_buffer_iterator_new:
+ * @buffer: a #GeglBuffer
+ * @roi: the rectangle to iterate over
+ * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
+ * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
+ *
+ * Create a new buffer iterator, this buffer will be iterated through
+ * in linear chunks, some chunks might be full tiles the coordinates, see
+ * the documentation of gegl_buffer_iterator_next for how to use it and
+ * destroy it.
+ *
+ * Returns: a new buffer iterator that can be used to iterate through the
+ * buffers pixels.
+ */
+GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer         *buffer,
+                                                GeglRectangle       roi, 
+                                                const Babl         *format,
+                                                guint               flags);
 
-void      gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
-                                          GeglBuffer             *buffer,
-                                          GeglRectangle           roi,
-                                          gboolean                write);
-gboolean  gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i);
-gboolean  gegl_buffer_scan_compatible    (GeglBuffer *input,
-                                          gint        x0,
-                                          gint        y0,
-                                          GeglBuffer *output,
-                                          gint        x1,
-                                          gint        y1);
+/**
+ * gegl_buffer_iterator_add:
+ * @iterator: a #GeglBufferIterator
+ * @buffer: a #GeglBuffer
+ * @roi: the rectangle to iterate over
+ * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
+ * @flags: whether we need reading or writing to this buffer.
+ *
+ * Adds an additional buffer iterator that will be processed in sync with
+ * the original one, if the buffer doesn't align with the other for tile access
+ * the corresponding scans and regions will be serialized automatically using
+ * gegl_buffer_get.
+ *
+ * Returns: an integer handle refering to the indice in the iterator structure
+ * of the added buffer.
+ */
+gint                 gegl_buffer_iterator_add  (GeglBufferIterator *iterator,
+                                                GeglBuffer         *buffer,
+                                                GeglRectangle       roi, 
+                                                const Babl         *format,
+                                                guint               flags);
+
+
+/**
+ * gegl_buffer_iterator_next:
+ * @iterator: a #GeglBufferIterator
+ *
+ * Do an iteration, this causes a new set of iterator->data[] to become
+ * available if there is more data to process. Changed data from a previous
+ * iteration step will also be saved now. When there is no more data to
+ * be processed NULL will be returned (and the iterator handle is no longer
+ * valid).
+ *
+ * Returns: TRUE if there is more work FALSE if iteration is complete.
+ */
+gboolean             gegl_buffer_iterator_next (GeglBufferIterator *iterator);
 
 
 #endif

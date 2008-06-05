@@ -1157,14 +1157,7 @@ gegl_buffer_copy (GeglBuffer          *src,
                   GeglBuffer          *dst,
                   const GeglRectangle *dst_rect)
 {
-  /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
-
-  GeglRectangle src_line;
-  GeglRectangle dst_line;
   Babl         *fish;
-  guchar       *temp;
-  guint         i;
-  gint          pxsize;
 
   g_return_if_fail (GEGL_IS_BUFFER (src));
   g_return_if_fail (GEGL_IS_BUFFER (dst));
@@ -1179,54 +1172,21 @@ gegl_buffer_copy (GeglBuffer          *src,
       dst_rect = src_rect;
     }
 
-  pxsize = src->tile_storage->px_size;
   fish = babl_fish (src->format, dst->format);
 
-  src_line = *src_rect;
-  src_line.height = 1;
-
-  dst_line = *dst_rect;
-  dst_line.width = src_line.width;
-  dst_line.height = src_line.height;
-
-  if (gegl_buffer_scan_compatible (src, src_rect->x, src_rect->y,
-                                   dst, dst_rect->x, dst_rect->y)) /*  is this check good enough
-                                               *  with the shifts we might
-                                               *  do?
-                                               */
     {
-      GeglBufferScanIterator read;
-      GeglBufferScanIterator write;
-      gboolean a=FALSE,b=FALSE;
+      GeglRectangle dest_rect_r = *dst_rect;
+      GeglBufferIterator *i;
+      gint read;
 
-      gegl_buffer_scan_iterator_init (&read,  src, *dst_rect, FALSE);
-      gegl_buffer_scan_iterator_init (&write, dst, *dst_rect, TRUE);
+      dest_rect_r.width = src_rect->width;
+      dest_rect_r.height = src_rect->height;
 
-      while (  (a = gegl_buffer_scan_iterator_next (&read)) &&
-               (b = gegl_buffer_scan_iterator_next (&write)))
-        {
-          g_assert (read.length == write.length);
-          babl_process (fish, read.data, write.data, write.length);
-        }
-
-      if (a)
-        while (gegl_buffer_scan_iterator_next (&read));
-      if (b)
-        while (gegl_buffer_scan_iterator_next (&write));
-
-      return;
+      i = gegl_buffer_iterator_new (dst, dest_rect_r, dst->format, GEGL_BUFFER_WRITE);
+      read = gegl_buffer_iterator_add (i, src, *src_rect, src->format, GEGL_BUFFER_READ);
+      while (gegl_buffer_iterator_next (i))
+        babl_process (fish, i->data[read], i->data[0], i->length);
     }
-
-  temp = g_malloc (src_line.width * pxsize);
-
-  for (i=0; i<src_rect->height; i++)
-    {
-      gegl_buffer_get (src, 1.0, &src_line, dst->format, temp, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_set (dst, &dst_line, dst->format, temp, GEGL_AUTO_ROWSTRIDE);
-      src_line.y++;
-      dst_line.y++;
-    }
-  g_free (temp);
 }
 
 void

@@ -94,29 +94,12 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      gint output_bpp = output->format->format.bytes_per_pixel;
-      gpointer     *out_buf = NULL;
-      Babl         *outfish;
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, *result, out_format, GEGL_BUFFER_WRITE);
 
-      GeglBufferScanIterator write;
-      gegl_buffer_scan_iterator_init (&write, output, *result, TRUE);
-
-      outfish = babl_fish (out_format, output->format);
-      
-
-      out_buf = gegl_malloc (output_bpp * write.max_size);
-      while (gegl_buffer_scan_iterator_next (&write))
+      while (gegl_buffer_iterator_next (i))
         {
-          point_render_class->process (operation, out_buf, write.length, &write.roi);
-
-          /* this is the actual write happening directly to the underlying
-           * scan on the tile.
-           */
-          babl_process (outfish, out_buf, write.data, write.length);
+          point_render_class->process (operation, i->data[0], i->length, &i->roi);
         }
-
-      if (out_buf)
-        gegl_free (out_buf);
     }
   return TRUE;
 }

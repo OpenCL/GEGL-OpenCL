@@ -1,5 +1,15 @@
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-iterator.[ch]: trimmed down
+	GeglBufferIterator to a tiny babl powered API.
+
+	* gegl/buffer/gegl-buffer-access.c: ported to new API.
+	* gegl/operation/gegl-operation-point-composer.c: ..
+	* gegl/operation/gegl-operation-point-filter.c: ..
+	* gegl/operation/gegl-operation-point-render.c: ..
+
+2008-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/Makefile.am: added gegl-buffer-iterator.[ch]
 	* gegl/buffer/gegl-buffer-access.c: moved iterator logic ..
 	* gegl/buffer/gegl-buffer-iterator.c: .. here.
