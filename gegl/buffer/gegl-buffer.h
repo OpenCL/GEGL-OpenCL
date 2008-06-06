@@ -239,6 +239,8 @@ void            gegl_buffer_set               (GeglBuffer          *buffer,
                                                gint                 rowstride);
 
 
+const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer);
+
 /**
  * gegl_buffer_clear:
  * @buffer: a #GeglBuffer

@@ -1,5 +1,9 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_get_format accessor.
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-processor.c: (gegl_processor_class_init): made the
 	minimum chunk size 1pixel.
 

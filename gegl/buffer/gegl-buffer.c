@@ -1019,6 +1019,12 @@ done_with_row:
   }
 }
 
+
+const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer)
+{
+  return buffer?buffer->format:0;
+}
+
 gboolean gegl_buffer_is_shared (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
