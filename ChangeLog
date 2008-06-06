@@ -1,3 +1,8 @@
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/crop.c: (get_required_for_output): report the
+	intersection of crop with request.
+
 2008-06-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.[ch]: trimmed down

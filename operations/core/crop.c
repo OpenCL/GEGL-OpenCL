@@ -87,7 +87,10 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  return *roi;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {o->x, o->y, o->width, o->height};
+  gegl_rectangle_intersect (&result, &result, roi);
+  return result;
 }
 
 static gboolean
