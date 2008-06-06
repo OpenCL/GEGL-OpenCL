@@ -24,13 +24,13 @@ copyright = '
  */'
 
 a = [
-      ['add',          'c = c + value', 0],
-      ['subtract',     'c = c - value', 0],
-      ['multiply',     'c = c * value', 1.0],
-      ['divide',       'c = value==0.0?0.0:c/value', 1.0],
-      ['gamma',        'c = powf (c, value)', 1.0],
-#     ['threshold',    'c = c>=value?1.0:0.0', 0.5],
-#     ['invert',       'c = 1.0-c']
+      ['add',       'c = c + value', 0],
+      ['subtract',  'c = c - value', 0],
+      ['multiply',  'c = c * value', 1.0],
+      ['divide',    'c = value==0.0?0.0:c/value', 1.0],
+      ['gamma',     'c = powf (c, value)', 1.0],
+#     ['threshold', 'c = c>=value?1.0:0.0', 0.5],
+#     ['invert',    'c = 1.0-c']
     ]
     
 a.each do
@@ -76,11 +76,12 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *op,
-          void         *in_buf,
-          void         *aux_buf,
-          void         *out_buf,
-          glong         n_pixels)
+process (GeglOperation        *op,
+          void                *in_buf,
+          void                *aux_buf,
+          void                *out_buf,
+          glong                n_pixels,
+          const GeglRectangle *roi)
 {
   gfloat *in = in_buf;
   gfloat *out = out_buf;

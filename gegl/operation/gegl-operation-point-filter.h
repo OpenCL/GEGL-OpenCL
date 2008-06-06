@@ -41,13 +41,14 @@ struct _GeglOperationPointFilterClass
 {
   GeglOperationFilterClass parent_class;
 
-  gboolean (* process) (GeglOperation *self,      /* for parameters    */
-                        void          *in_buf,    /* input buffer      */
-                        void          *out_buf,   /* output buffer     */
-                        glong          samples,   /* number of samples */
-                        GeglRectangle *roi);      /* rectangle out_buf spans in
-                                                     in buffer, see the checkerboard
-                                                     op for semantics */
+  gboolean (* process) (GeglOperation      *self,    /* for parameters    */
+                        void               *in_buf,  /* input buffer      */
+                        void               *out_buf, /* output buffer     */
+                        glong               samples, /* number of samples */
+                        const GeglRectangle *roi);   /* rectangle out_buf spans
+                                                        in in buffer, see the
+                                                        checkerboard op for
+                                                        semantics */
 };
 
 GType gegl_operation_point_filter_get_type (void) G_GNUC_CONST;

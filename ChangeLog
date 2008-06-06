@@ -1,5 +1,22 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-iterator.[ch]: made each iterated buffer
+	have it's own roi argument.
+
+	Updated the following files according to iterator API.
+	* gegl/operation/gegl-operation-point-composer.h: added output roi to
+	process() argument.
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-point-filter.h:
+	* gegl/operation/gegl-operation-point-render.c:
+	* operations/generated/math.rb:
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb:
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_get_format accessor.
 
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>

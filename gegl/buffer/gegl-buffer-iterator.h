@@ -30,9 +30,9 @@
 
 typedef struct GeglBufferIterator
 {
-  GeglRectangle  roi;
-  gint           length;
-  gpointer       data[GEGL_BUFFER_MAX_ITERATORS];
+  gint          length;
+  gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
+  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
 } GeglBufferIterator;
 
 

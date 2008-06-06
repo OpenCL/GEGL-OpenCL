@@ -209,14 +209,14 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
 
           while (gegl_buffer_iterator_next (i))
             {
-               point_composer_class->process (operation, i->data[read], i->data[foo], i->data[0], i->length);
+               point_composer_class->process (operation, i->data[read], i->data[foo], i->data[0], i->length, &(i->roi[0]));
             }
         }
       else
         {
           while (gegl_buffer_iterator_next (i))
             {
-               point_composer_class->process (operation, i->data[read], NULL, i->data[0], i->length);
+               point_composer_class->process (operation, i->data[read], NULL, i->data[0], i->length, &(i->roi[0]));
             }
         }
       return TRUE;

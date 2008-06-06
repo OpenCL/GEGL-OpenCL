@@ -65,16 +65,17 @@ typedef struct GeglBufferScanIterator {
 
 typedef struct GeglBufferIterators
 {
-  GeglRectangle  roi;                /* current region of interest */
-  gint           length;             /* length of current data in pixels */
-  gpointer       data       [GEGL_BUFFER_MAX_ITERATORS]; 
+  /* current region of interest */
+  gint          length;             /* length of current data in pixels */
+  gpointer      data[GEGL_BUFFER_MAX_ITERATORS]; 
+  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];                 
 
-  gint           iterators;
   /* the following is private: */
+  gint           iterators;
   gint           iteration_no;
   GeglRectangle  rect       [GEGL_BUFFER_MAX_ITERATORS];
   const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS];
-  Babl          *fish       [GEGL_BUFFER_MAX_ITERATORS];
+  Babl          *fish_from  [GEGL_BUFFER_MAX_ITERATORS];
   Babl          *fish_to    [GEGL_BUFFER_MAX_ITERATORS];
   GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS];
   guint          flags      [GEGL_BUFFER_MAX_ITERATORS];
@@ -94,13 +95,45 @@ static void      gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
                                                  GeglRectangle           roi,
                                                  gboolean                write);
 static gboolean  gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i);
-static gboolean  gegl_buffer_scan_compatible    (GeglBuffer             *input,
-                                                 gint                    x0,
-                                                 gint                    y0,
-                                                 GeglBuffer             *output,
-                                                 gint                    x1,
-                                                 gint                    y1);
 
+/*
+ *  check whether iterations on two buffers starting from the given coordinates with
+ *  the same width and height would be able to run parallell.
+ */
+static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
+                                             gint        xA,
+                                             gint        yA,
+                                             GeglBuffer *bufferB,
+                                             gint        xB,
+                                             gint        yB)
+{ 
+  return FALSE;
+  if (bufferA->tile_storage->tile_width !=
+      bufferB->tile_storage->tile_width)
+    return FALSE;
+  if (bufferA->tile_storage->tile_height !=
+      bufferB->tile_storage->tile_height)
+    return FALSE;
+
+
+  /* FIXME: incorporate the shift with the difference below to
+   * allow some more combinations to be considered scan compatible
+   */
+
+  if (bufferA->shift_x !=
+      bufferB->shift_x)
+    return FALSE;
+  if (bufferA->shift_y !=
+      bufferB->shift_y)
+    return FALSE;
+  if (xA!=xB || yA!=yB)
+    return FALSE;
+  if ( (abs(xA - xB) % bufferA->tile_storage->tile_width) != 0)
+    return FALSE;
+  if ( (abs(yA - yB) % bufferA->tile_storage->tile_height) != 0)
+    return FALSE;
+  return TRUE;
+}
 
 static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                             GeglBuffer             *buffer,
@@ -122,123 +155,23 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
   i->write = write;
 }
 
-static void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
-                                            GeglBuffer             *buffer,
-                                            GeglRectangle           roi,
-                                            gboolean                write)
-{
-  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
-  g_assert (i);
-  memset (i, 0, sizeof (GeglBufferScanIterator));
-  gegl_buffer_tile_iterator_init (tile_i, buffer, roi, write);
-  i->max_size = tile_i->buffer->tile_storage->tile_width *
-                tile_i->buffer->tile_storage->tile_height *
-                tile_i->buffer->format->format.bytes_per_pixel;
-  i->row = 0;
-  if (write)
-    gegl_buffer_lock (buffer);
-}
-
-static gboolean
-gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
-{
-  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
-
-  if (tile_i->tile==NULL)
-    {
-      gulp:
-      if (!gegl_buffer_tile_iterator_next (tile_i))
-        return FALSE; /* this is where the scan iterator terminates */
-
-      i->length = tile_i->subrect.width;
-      i->next_row = 0;
-      i->row = 0;
-
-      i->roi.x      = tile_i->roi.x + tile_i->col;
-      i->roi.y      = tile_i->roi.y+ tile_i->row+ i->row;
-      i->roi.width  = tile_i->subrect.width;
-      i->roi.height = tile_i->subrect.height;
-    }
-  /* we should now have a valid tile */
-
-  if (i->next_row < tile_i->subrect.height)
-    {
-      if (tile_i->subrect.width == tile_i->buffer->tile_storage->tile_width)
-        /* the entire contents of the tile can be expressed as one long scan */
-        {
-          i->length = tile_i->subrect.width * tile_i->subrect.height;
-          i->data = tile_i->sub_data;
-          i->row = 0;
-          i->next_row = tile_i->subrect.height;
-          return TRUE;
-        }
-      else 
-        /* iterate thorugh the scanlines in the subrect */
-        {
-          guchar *data = tile_i->sub_data;
-
-          i->roi.height = 1;
-
-          i->data = data + i->next_row * tile_i->rowstride;
-          i->row = i->next_row;
-          i->next_row ++;
-          return TRUE;
-        }
-    }
-  else
-    { /* we're done with that tile go get another one if possible */
-      goto gulp;
-    }
-
-  return FALSE;
-}
-
-
-static gboolean gegl_buffer_scan_compatible (GeglBuffer *input,
-                                             gint        x0,
-                                             gint        y0,
-                                             GeglBuffer *output,
-                                             gint        x1,
-                                             gint        y1)
-{ 
-  if (input->tile_storage->tile_width !=
-      output->tile_storage->tile_width)
-    return FALSE;
-  if (input->tile_storage->tile_height !=
-      output->tile_storage->tile_height)
-    return FALSE;
-  if (input->shift_x !=
-      output->shift_x)
-    return FALSE;
-  if (input->shift_y !=
-      output->shift_y)
-    return FALSE;
-  if (x0!=x1 || y0!=y1)
-    return FALSE;
-  if ( (abs(x0 - x1) % input->tile_storage->tile_width) != 0)
-    return FALSE;
-  if ( (abs(y0 - y1) % input->tile_storage->tile_height) != 0)
-    return FALSE;
-  return TRUE;
-}
-
 static gboolean
 gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
 {
-  GeglBuffer *buffer = i->buffer;
-  gint  tile_width   = buffer->tile_storage->tile_width;
-  gint  tile_height  = buffer->tile_storage->tile_height;
+  GeglBuffer *buffer   = i->buffer;
+  gint  tile_width     = buffer->tile_storage->tile_width;
+  gint  tile_height    = buffer->tile_storage->tile_height;
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
-  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint  buffer_x       = buffer->extent.x + buffer_shift_x/* + i->roi.x*/;
+  gint  buffer_y       = buffer->extent.y + buffer_shift_y/* + i->roi.y*/;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;
 
 gulp:
 
-  /* unref previous held tile */
+  /* unref previously held tile */
   if (i->tile)
     {
       if (i->write)
@@ -316,6 +249,81 @@ gulp:
   return FALSE;
 }
 
+static void gegl_buffer_scan_iterator_init (GeglBufferScanIterator *i,
+                                            GeglBuffer             *buffer,
+                                            GeglRectangle           roi,
+                                            gboolean                write)
+{
+  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
+  g_assert (i);
+  memset (i, 0, sizeof (GeglBufferScanIterator));
+  gegl_buffer_tile_iterator_init (tile_i, buffer, roi, write);
+  i->max_size = tile_i->buffer->tile_storage->tile_width *
+                tile_i->buffer->tile_storage->tile_height *
+                tile_i->buffer->format->format.bytes_per_pixel;
+  i->row = 0;
+  if (write)
+    gegl_buffer_lock (buffer);
+}
+
+static gboolean
+gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
+{
+  GeglBufferTileIterator *tile_i = (GeglBufferTileIterator*)i;
+
+  if (tile_i->tile==NULL)
+    {
+      gulp:
+      if (!gegl_buffer_tile_iterator_next (tile_i))
+        return FALSE; /* this is where the scan iterator terminates */
+
+      i->length = tile_i->subrect.width;
+      i->next_row = 0;
+      i->row = 0;
+
+      i->roi.x      = tile_i->roi.x + tile_i->col;
+      i->roi.y      = tile_i->roi.y + tile_i->row + i->row;
+      i->roi.width  = tile_i->subrect.width;
+      i->roi.height = tile_i->subrect.height;
+    }
+  /* we should now have a valid tile */
+
+  if (i->next_row < tile_i->subrect.height)
+    {
+      if (tile_i->subrect.width == tile_i->buffer->tile_storage->tile_width)
+        /* the entire contents of the tile can be expressed as one long scan */
+        {
+          i->length = tile_i->subrect.width * tile_i->subrect.height;
+          i->data = tile_i->sub_data;
+          i->row = 0;
+          i->next_row = tile_i->subrect.height;
+          return TRUE;
+        }
+      else 
+        /* iterate thorugh the scanlines in the subrect */
+        {
+          guchar *data = tile_i->sub_data;
+
+          i->roi.height = 1;
+          if (i->next_row!=0)
+            i->roi.y++;
+
+          i->data = data + i->next_row * tile_i->rowstride;
+          i->row = i->next_row;
+          i->next_row ++;
+          return TRUE;
+        }
+    }
+  else
+    { /* we're done with that tile go get another one if possible */
+      goto gulp;
+    }
+
+  return FALSE;
+}
+
+
+
 
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
@@ -353,28 +361,31 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
     }
   else
     {
+      /* we make all subsequently added iterators share the width and height of the first one */
       i->rect[self].width = i->rect[0].width;
       i->rect[self].height = i->rect[0].height;
+
       if (gegl_buffer_scan_compatible (i->buffer[0], i->rect[0].x, i->rect[0].y,
                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
           i->compatible[self] = TRUE;
           gegl_buffer_scan_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0));
         }
-      else
-        {
-          i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
-                                      i->i[0].max_size);
-        }
     }
 
+  /* the iterator needs to allocate a buffer if the desired pixel format and
+   * the buffers pixel format differ or the scan iterators are not compatible.
+   */
   if (i->format[self] != i->buffer[self]->format ||
       i->compatible[self] == FALSE)
     {
       i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
                                   i->i[0].max_size);
+
+      g_assert (i->flags[self]);
+      /* create babl fishes needed for desired operations */
       if (i->flags[self] & GEGL_BUFFER_READ)
-        i->fish[self] = babl_fish (i->buffer[self]->format, i->format[self]);
+        i->fish_from[self] = babl_fish (i->buffer[self]->format, i->format[self]);
       if (i->flags[self] & GEGL_BUFFER_WRITE)
         i->fish_to[self] = babl_fish (i->format[self], i->buffer[self]->format);
      }
@@ -404,10 +415,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
                 }
               else
                 {
-                  GeglRectangle rect = i->roi;
-                  rect.x += (i->rect[no].x-i->rect[0].x);
-                  rect.y += (i->rect[no].y-i->rect[0].y);
-                  gegl_buffer_set (i->buffer[no], &rect, i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+#define DRUMROLL(message) {gboolean message = FALSE; g_assert (message);}
+
+                  DRUMROLL(just_remove_this_when_reached);
+                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
         }
@@ -425,41 +436,49 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
           if (no == 0)
             {
               result = res;
-              i->roi = i->i->roi; /* the "clock" we're operating from is
-                                     the first buffer*/
-              i->length = i->i->length;
+              i->length = i->i[0].length;
             }
           else
             {
-              g_assert (i->length == i->i->length);
+              g_assert (i->length == i->i[0].length);
             }
+          i->roi[no] = i->i[no].roi;
 
           /* since they were scan compatible this should be true */
           if (res != result)
             {
-              g_print ("%i %i %i\n", res, result);
+              g_print ("%i==%i != 0==%i\n", no, res, result);
              } 
           g_assert (res == result);
 
           if (i->buf[no]!=NULL)
             {
-              if (i->flags[no] & GEGL_BUFFER_READ)
-                babl_process (i->fish[no], i->i[no].data, i->buf[no], i->i[no].length);
+              /* convert to temporary buffer if temporary buffer is present,
+               * the presence indicates that the desired format is different
+               * from the native one
+               */
+              if (i->fish_from[no])
+                babl_process (i->fish_from[no], i->i[no].data, i->buf[no], i->i[no].length);
               i->data[no]=i->buf[no];
             }
           else
             {
+              /* ideal situation, direct data access */
               i->data[no]=i->i[no].data;
             }
         }
       else
         {
-          GeglRectangle rect = i->roi;
-          rect.x += (i->rect[no].x-i->rect[0].x);
-          rect.y += (i->rect[no].y-i->rect[0].y);
+          /* we copy the roi from iterator 0  */
+          i->roi[no] = i->roi[0];
+          i->roi[no].x += (i->rect[no].x-i->rect[0].x);
+          i->roi[no].y += (i->rect[no].y-i->rect[0].y);
+
+          g_assert (i->length == i->roi[no].width * i->roi[no].height);
+
           g_assert (i->buf[no]);
 
-          gegl_buffer_get (i->buffer[no], 1.0, &rect, i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+          gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
           i->data[no]=i->buf[no];
         }
     }
@@ -477,6 +496,13 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
       i->buf[0]=(void*)0xdeadbeef;
       g_free (i);
     }
+
+  /*g_print ("%i: %i,%i %ix%i\n", 
+   i->iteration_no,
+   i->roi[0].x,
+   i->roi[0].y,
+   i->roi[0].width,
+   i->roi[0].height);*/
 
   return result;
 }

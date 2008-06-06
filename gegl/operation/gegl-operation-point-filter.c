@@ -78,7 +78,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
       GeglBufferIterator *i = gegl_buffer_iterator_new (output, *result, out_format, GEGL_BUFFER_WRITE);
       gint read  = gegl_buffer_iterator_add (i, input,  *result, in_format, GEGL_BUFFER_READ);
       while (gegl_buffer_iterator_next (i))
-           point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi);
+           point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi[0]);
 
     }
   return TRUE;

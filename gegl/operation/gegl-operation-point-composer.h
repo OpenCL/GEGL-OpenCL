@@ -43,11 +43,13 @@ struct _GeglOperationPointComposerClass
 {
   GeglOperationComposerClass parent_class;
 
-  gboolean (* process) (GeglOperation *self,      /* for parameters      */
-                        void          *in,
-                        void          *aux,
-                        void          *out,
-                        glong          samples);  /* number of samples   */
+  gboolean (* process) (GeglOperation       *self,      /* for parameters      */
+                        void                *in,
+                        void                *aux,
+                        void                *out,
+                        glong                samples, /* number of samples   */
+                        const GeglRectangle *roi      /* rectangular region in output buffer */
+                        ); 
 
 };
 

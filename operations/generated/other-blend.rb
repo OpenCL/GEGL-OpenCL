@@ -61,11 +61,12 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *op,
-          void          *in_buf,
-          void          *aux_buf,
-          void          *out_buf,
-          glong          n_pixels)
+process (GeglOperation        *op,
+          void                *in_buf,
+          void                *aux_buf,
+          void                *out_buf,
+          glong                n_pixels,
+          const GeglRectangle *roi)
 {
   gint i;
   gfloat *in = in_buf;
@@ -157,11 +158,12 @@ a.each do
 #ifdef HAS_G4FLOAT
 
 static gboolean
-process_gegl4float (GeglOperation *op,
-                    void          *in_buf,
-                    void          *aux_buf,
-                    void          *out_buf,
-                    glong          n_pixels)
+process_gegl4float (GeglOperation      *op,
+                    void               *in_buf,
+                    void                *aux_buf,
+                    void                *out_buf,
+                    glong                n_pixels,
+                    const GeglRectangle *roi)
 {
   g4float *A = aux_buf;
   g4float *B = in_buf;

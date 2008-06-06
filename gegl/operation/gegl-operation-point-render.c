@@ -61,7 +61,7 @@ gegl_operation_point_render_class_init (GeglOperationPointRenderClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->detect = detect;
-  operation_class->no_cache = TRUE;
+  operation_class->no_cache = FALSE;
   operation_class->get_cached_region = NULL; /* we are able to compute anything
                                                  anywhere when we're our kind
                                                  of class */
@@ -94,12 +94,10 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, *result, out_format, GEGL_BUFFER_WRITE);
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, *result, out_format, GEGL_BUFFER_WRITE);      
 
       while (gegl_buffer_iterator_next (i))
-        {
-          point_render_class->process (operation, i->data[0], i->length, &i->roi);
-        }
+          point_render_class->process (operation, i->data[0], i->length, &i->roi[0]);
     }
   return TRUE;
 }
