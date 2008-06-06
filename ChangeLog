@@ -1,5 +1,10 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: (gegl_processor_class_init): made the
+	minimum chunk size 1pixel.
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/crop.c: (get_required_for_output): report the
 	intersection of crop with request.
 
