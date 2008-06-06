@@ -1,5 +1,9 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-plugin.h: incremented ABI version.
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-iterator.[ch]: made each iterated buffer
 	have it's own roi argument.
 
