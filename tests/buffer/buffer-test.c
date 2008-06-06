@@ -498,18 +498,110 @@ static gchar * test_gegl_buffer_copy ()
   GeglBuffer    *buffer, *buffer2;
   GeglRectangle  bound = {0, 0, 20, 20};
   GeglRectangle  source = {2, 2, 5, 5};
-  GeglRectangle  dest = {10, 10, 0, 0};
+  GeglRectangle  dest = {10, 10, 5, 5};
   test_start ();
   buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
   buffer2 = gegl_buffer_new (&bound, babl_format ("Y float"));
 
   vgrad (buffer);
-  gegl_buffer_copy (buffer, &source, buffer2, &dest); /* copying to self */
+  gegl_buffer_copy (buffer, &source, buffer2, &dest); 
   print_buffer (buffer2);
   gegl_buffer_destroy (buffer);
   gegl_buffer_destroy (buffer2);
   test_end ();
 }
+
+static gchar * test_gegl_buffer_copy_upper_left ()
+{
+  GeglBuffer    *buffer, *buffer2;
+  GeglRectangle  bound = {0, 0, 20, 20};
+  test_start ();
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
+  vgrad (buffer);
+  {
+    GeglRectangle rect = *gegl_buffer_get_extent(buffer);
+
+    rect.width-=10;
+    rect.height-=10;
+  buffer2 = gegl_buffer_new (gegl_buffer_get_extent (buffer), gegl_buffer_get_format (buffer));
+  gegl_buffer_copy (buffer, &rect, buffer2, &rect);
+  }
+  print_buffer (buffer2);
+  gegl_buffer_destroy (buffer);
+  gegl_buffer_destroy (buffer2);
+  test_end ();
+}
+
+
+static gchar * test_gegl_buffer_copy_upper_right ()
+{
+  GeglBuffer    *buffer, *buffer2;
+  GeglRectangle  bound = {0, 0, 20, 20};
+  test_start ();
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
+  vgrad (buffer);
+  {
+    GeglRectangle rect = *gegl_buffer_get_extent(buffer);
+
+    rect.x=10;
+    rect.width-=10;
+    rect.height-=10;
+  buffer2 = gegl_buffer_new (gegl_buffer_get_extent (buffer), gegl_buffer_get_format (buffer));
+  gegl_buffer_copy (buffer, &rect, buffer2, &rect);
+  }
+  print_buffer (buffer2);
+  gegl_buffer_destroy (buffer);
+  gegl_buffer_destroy (buffer2);
+  test_end ();
+}
+
+
+static gchar * test_gegl_buffer_copy_lower_right ()
+{
+  GeglBuffer    *buffer, *buffer2;
+  GeglRectangle  bound = {0, 0, 20, 20};
+  test_start ();
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
+  vgrad (buffer);
+  {
+    GeglRectangle rect = *gegl_buffer_get_extent(buffer);
+
+    rect.x=10;
+    rect.y=10;
+    rect.width-=10;
+    rect.height-=10;
+  buffer2 = gegl_buffer_new (gegl_buffer_get_extent (buffer), gegl_buffer_get_format (buffer));
+  gegl_buffer_copy (buffer, &rect, buffer2, &rect);
+  }
+  print_buffer (buffer2);
+  gegl_buffer_destroy (buffer);
+  gegl_buffer_destroy (buffer2);
+  test_end ();
+}
+
+static gchar * test_gegl_buffer_copy_lower_left ()
+{
+  GeglBuffer    *buffer, *buffer2;
+  GeglRectangle  bound = {0, 0, 20, 20};
+  test_start ();
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
+  vgrad (buffer);
+  {
+    GeglRectangle rect = *gegl_buffer_get_extent(buffer);
+
+    rect.x=0;
+    rect.y=10;
+    rect.width-=10;
+    rect.height-=10;
+  buffer2 = gegl_buffer_new (gegl_buffer_get_extent (buffer), gegl_buffer_get_format (buffer));
+  gegl_buffer_copy (buffer, &rect, buffer2, &rect);
+  }
+  print_buffer (buffer2);
+  gegl_buffer_destroy (buffer);
+  gegl_buffer_destroy (buffer2);
+  test_end ();
+}
+
 
 static gchar * test_gegl_buffer_duplicate ()
 {
@@ -517,7 +609,6 @@ static gchar * test_gegl_buffer_duplicate ()
   GeglRectangle  bound = {0, 0, 20, 20};
   test_start ();
   buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
-
   vgrad (buffer);
   buffer2 = gegl_buffer_dup (buffer);
   print_buffer (buffer2);
@@ -744,8 +835,8 @@ gint main (gint argc, gchar **argv)
       else
         {
           gchar output_file[1024];
-          ret=tests[i]();
           printf ("%s ", test_names[i]);
+          ret=tests[i]();
           sprintf (output_file, "output/%s", test_names[i]);
           g_file_set_contents (output_file, ret, -1, NULL);
         }

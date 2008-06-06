@@ -1,4 +1,20 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+	
+	Added four new gegl_buffer_copy (buffer iteration) tests with
+	reference outputs. (Some of these tests as well as two other tests
+	currently fail after the refactoring the iteration api into place.
+
+	* tests/buffer/buffer-test.c:
+	(test_gegl_buffer_copy_upper_left),
+	(test_gegl_buffer_copy_upper_right),
+	(test_gegl_buffer_copy_lower_right),
+	(test_gegl_buffer_copy_lower_left): 
+	* tests/buffer/reference/test_gegl_buffer_copy_lower_left:
+	* tests/buffer/reference/test_gegl_buffer_copy_lower_right:
+	* tests/buffer/reference/test_gegl_buffer_copy_upper_left:
+	* tests/buffer/reference/test_gegl_buffer_copy_upper_right:
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-plugin.h: incremented ABI version.
 
