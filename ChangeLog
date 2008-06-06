@@ -1,4 +1,8 @@
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/svg-matrix.c: (process): cadded const to argument.
+
+2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 	
 	Added four new gegl_buffer_copy (buffer iteration) tests with
 	reference outputs. (Some of these tests as well as two other tests
