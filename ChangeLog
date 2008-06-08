@@ -1,3 +1,18 @@
+2008-06-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a new temporal base class, to be used as a base class for
+	operations operating on video needing access to data from neighbouring
+	frames.
+
+	* gegl/operation/gegl-operation-temporal.c: new file.
+	* gegl/operation/gegl-operation-temporal.h: new file.
+	* operations/common/Makefile.am: added new files.
+
+2008-06-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-processors.c: (dispatch),
+	(gegl_class_register_alternate_vfunc): added more logging.
+
 2008-06-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/svg-matrix.c: (process): cadded const to argument.
