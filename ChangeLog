@@ -1,3 +1,23 @@
+2008-06-09  Sven Neumann  <sven@gimp.org>
+
+	* gegl/operation/gegl-operation-point-render.h: added 'const' to
+	the GeglRectangle* roi argument in process().
+
+	* operations/common/brightness-contrast.c
+	* operations/common/checkerboard.c
+	* operations/common/color-temperature.c
+	* operations/common/color.c
+	* operations/common/contrast-curve.c
+	* operations/common/grey.c
+	* operations/common/invert.c
+	* operations/common/levels.c
+	* operations/common/noise.c
+	* operations/common/svg-huerotate.c
+	* operations/common/svg-luminancetoalpha.c
+	* operations/common/svg-saturate.c
+	* operations/common/value-invert.c
+	* operations/common/whitebalance.c: const-ified the roi argument.
+	
 2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c:

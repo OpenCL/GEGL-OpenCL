@@ -52,10 +52,10 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         void          *out_buf,
-         glong          n_pixels,
-         GeglRectangle *roi)
+process (GeglOperation       *operation,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *out_pixel = out_buf;

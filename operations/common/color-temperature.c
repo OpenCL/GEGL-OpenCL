@@ -28,13 +28,13 @@ gegl_chant_double (intended_temp, "Intended temperature", 1000, 12000, 6500, "Co
 
 #include "gegl-chant.h"
 
-#define LOWEST_TEMPERATURE     1000  
+#define LOWEST_TEMPERATURE     1000
 #define HIGHEST_TEMPERATURE   12000
 
-gfloat rgb_r55[][12];
+static const gfloat rgb_r55[][12];
 
 static void
-convert_k_to_rgb (gfloat temperature, 
+convert_k_to_rgb (gfloat temperature,
                   gfloat *rgb)
 {
   gfloat nomin, denom;
@@ -56,13 +56,13 @@ convert_k_to_rgb (gfloat temperature,
       nomin = rgb_r55[channel][0];
       for (deg = 1; deg < 6; deg++)
         nomin = nomin * temperature + rgb_r55[channel][deg];
-      
+
       denom = rgb_r55[channel][6];
       for (deg = 1; deg < 6; deg++)
         denom = denom * temperature + rgb_r55[channel][6 + deg];
-      
-      rgb[channel] = nomin / denom; 
-    }   
+
+      rgb[channel] = nomin / denom;
+    }
 }
 
 
@@ -77,11 +77,11 @@ static void prepare (GeglOperation *operation)
  * in our requested pixel format
  */
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          n_pixels,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gfloat     *in_pixel;
@@ -96,13 +96,13 @@ process (GeglOperation *op,
 
   original_temp = o->original_temp;
   intended_temp = o->intended_temp;
-  
+
   convert_k_to_rgb (original_temp, original_temp_rgb);
   convert_k_to_rgb (intended_temp, intended_temp_rgb);
-  
-  coefs[0] = original_temp_rgb[0] / intended_temp_rgb[0]; 
-  coefs[1] = original_temp_rgb[1] / intended_temp_rgb[1]; 
-  coefs[2] = original_temp_rgb[2] / intended_temp_rgb[2]; 
+
+  coefs[0] = original_temp_rgb[0] / intended_temp_rgb[0];
+  coefs[1] = original_temp_rgb[1] / intended_temp_rgb[1];
+  coefs[2] = original_temp_rgb[2] / intended_temp_rgb[2];
 
   for (i = 0; i < n_pixels; i++)
     {
@@ -136,15 +136,15 @@ gegl_chant_class_init (GeglChantClass *klass)
         "Allows changing the color temperature of an image.";
 }
 
-/* Coefficients of rational functions of degree 5 fitted per color channel to 
- * the linear RGB coordinates of the range 1000K-12000K of the Planckian locus 
+/* Coefficients of rational functions of degree 5 fitted per color channel to
+ * the linear RGB coordinates of the range 1000K-12000K of the Planckian locus
  * with the 20K step. Original CIE-xy data from
  *
  * http://www.aim-dtp.net/aim/technology/cie_xyz/k2xy.txt
  *
  * converted to the linear RGB space assuming the ITU-R BT.709-5/sRGB primaries
  */
-gfloat rgb_r55[][12] = {{
+static const gfloat rgb_r55[][12] = {{
  6.9389923563552169e-01, 2.7719388100974670e+03,
  2.0999316761104289e+07,-4.8889434162208414e+09,
 -1.1899785506796783e+07,-4.7418427686099203e+04,

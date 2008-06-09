@@ -28,11 +28,11 @@
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          samples,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi)
 {
   glong   i;
   gfloat *in  = in_buf;
@@ -57,11 +57,11 @@ process (GeglOperation *op,
 
 #ifdef HAS_G4FLOAT
 static gboolean
-process_simd (GeglOperation *op,
-             void          *in_buf,
-             void          *out_buf,
-             glong          samples,
-             GeglRectangle *roi)
+process_simd (GeglOperation       *op,
+              void                *in_buf,
+              void                *out_buf,
+              glong                samples,
+              const GeglRectangle *roi)
 {
   g4float *in  = in_buf;
   g4float *out = out_buf;

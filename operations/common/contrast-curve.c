@@ -37,11 +37,11 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          samples,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gint        num_sampling_points;

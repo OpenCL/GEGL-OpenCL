@@ -42,11 +42,11 @@
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          samples,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi)
 {
   glong   j;
   gfloat *src  = in_buf;

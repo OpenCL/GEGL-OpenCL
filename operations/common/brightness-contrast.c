@@ -72,11 +72,11 @@ static void prepare (GeglOperation *operation)
  * buffers with a pixel count.
  */
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          n_pixels,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi)
 {
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties
@@ -116,22 +116,22 @@ process (GeglOperation *op,
  */
 
 static gboolean
-process_simd (GeglOperation *op,
-              void          *in_buf,
-              void          *out_buf,
-              glong          samples,
-              GeglRectangle *roi)
+process_simd (GeglOperation       *op,
+              void                *in_buf,
+              void                *out_buf,
+              glong                samples,
+              const GeglRectangle *roi)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  g4float *in  = in_buf;
-  g4float *out = out_buf;
+  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
+  g4float    *in  = in_buf;
+  g4float    *out = out_buf;
 
   /* add 0.5 to brightness here to make the logic in the innerloop tighter
    */
   g4float  brightness = g4float_all(o->brightness + 0.5);
   g4float  contrast   = g4float_all(o->contrast);
   g4float  half       = g4float_half;
-    
+
   while (samples--)
     {
       *out = (*in - half) * contrast + brightness;

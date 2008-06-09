@@ -41,10 +41,10 @@ struct _GeglOperationPointRenderClass
 {
   GeglOperationSourceClass parent_class;
 
-  gboolean (* process) (GeglOperation *self,      /* for parameters    */
-                        void          *out_buf,   /* output buffer     */
-                        glong          samples,   /* number of samples */
-                        GeglRectangle *roi);      /* can be used if position is of importance*/
+  gboolean (* process) (GeglOperation       *self,      /* for parameters    */
+                        void                *out_buf,   /* output buffer     */
+                        glong                samples,   /* number of samples */
+                        const GeglRectangle *roi);      /* can be used if position is of importance*/
 };
 
 GType gegl_operation_point_render_get_type (void) G_GNUC_CONST;
