@@ -1,5 +1,10 @@
 2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-iterator.c: removed FALSE statement that
+	caused conversions on all subsequently added iterator buffers.
+
+2008-06-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/opacity.c: (process):
 	* operations/common/threshold.c: (process):
 	* operations/core/convert-format.c: (process): added 'const' to the

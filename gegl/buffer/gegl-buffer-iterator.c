@@ -107,7 +107,6 @@ static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
                                              gint        xB,
                                              gint        yB)
 { 
-  return FALSE;
   if (bufferA->tile_storage->tile_width !=
       bufferB->tile_storage->tile_width)
     return FALSE;
