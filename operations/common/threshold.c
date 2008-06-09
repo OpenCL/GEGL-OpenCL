@@ -35,11 +35,12 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *aux_buf,
-         void          *out_buf,
-         glong          n_pixels)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *aux_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi)
 {
   gfloat *in = in_buf;
   gfloat *out = out_buf;

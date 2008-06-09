@@ -45,11 +45,11 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *op,
-         void          *in_buf,
-         void          *out_buf,
-         glong          samples,
-         GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi)
 {
   return TRUE;
 }

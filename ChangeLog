@@ -1,5 +1,12 @@
 2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/opacity.c: (process):
+	* operations/common/threshold.c: (process):
+	* operations/core/convert-format.c: (process): added 'const' to the
+	GeglRectangle *roi argument in process().
+
+2008-06-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-iterator.c: (gegl_buffer_iterator_add),
 	(gegl_buffer_iterator_next): create a temporary sub buffer the size
 	of the roi for each buffer iterated over, this fixed roi problems.
