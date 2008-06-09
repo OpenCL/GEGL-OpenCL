@@ -1182,8 +1182,8 @@ gegl_buffer_copy (GeglBuffer          *src,
       dest_rect_r.width = src_rect->width;
       dest_rect_r.height = src_rect->height;
 
-      i = gegl_buffer_iterator_new (dst, dest_rect_r, dst->format, GEGL_BUFFER_WRITE);
-      read = gegl_buffer_iterator_add (i, src, *src_rect, src->format, GEGL_BUFFER_READ);
+      i = gegl_buffer_iterator_new (dst, &dest_rect_r, dst->format, GEGL_BUFFER_WRITE);
+      read = gegl_buffer_iterator_add (i, src, src_rect, src->format, GEGL_BUFFER_READ);
       while (gegl_buffer_iterator_next (i))
         babl_process (fish, i->data[read], i->data[0], i->length);
     }

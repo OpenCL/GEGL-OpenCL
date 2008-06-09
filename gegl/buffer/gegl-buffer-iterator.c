@@ -114,23 +114,11 @@ static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
   if (bufferA->tile_storage->tile_height !=
       bufferB->tile_storage->tile_height)
     return FALSE;
-
-
-  /* FIXME: incorporate the shift with the difference below to
-   * allow some more combinations to be considered scan compatible
-   */
-
-  if (bufferA->shift_x !=
-      bufferB->shift_x)
+  if ( (abs((bufferA->shift_x+xA) - (bufferB->shift_x+xB))
+        % bufferA->tile_storage->tile_width) != 0)
     return FALSE;
-  if (bufferA->shift_y !=
-      bufferB->shift_y)
-    return FALSE;
-  if (xA!=xB || yA!=yB)
-    return FALSE;
-  if ( (abs(xA - xB) % bufferA->tile_storage->tile_width) != 0)
-    return FALSE;
-  if ( (abs(yA - yB) % bufferA->tile_storage->tile_height) != 0)
+  if ( (abs((bufferA->shift_y+yA) - (bufferB->shift_y+yB))
+        % bufferA->tile_storage->tile_height) != 0)
     return FALSE;
   return TRUE;
 }
@@ -161,10 +149,10 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   GeglBuffer *buffer   = i->buffer;
   gint  tile_width     = buffer->tile_storage->tile_width;
   gint  tile_height    = buffer->tile_storage->tile_height;
-  gint  buffer_shift_x = buffer->shift_x;
-  gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->extent.x + buffer_shift_x/* + i->roi.x*/;
-  gint  buffer_y       = buffer->extent.y + buffer_shift_y/* + i->roi.y*/;
+  gint  buffer_shift_x = buffer->shift_x /*+ i->roi.x*/;
+  gint  buffer_shift_y = buffer->shift_y /*+ i->roi.y*/;
+  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
+  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;
@@ -243,7 +231,6 @@ gulp:
         {
           goto gulp; /* return the first tile in the next row */
         }
-
       return FALSE;
     }
   return FALSE;
@@ -328,7 +315,7 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
-                          GeglRectangle        roi,
+                          const GeglRectangle *roi,
                           const Babl          *format,
                           guint                flags)
 {
@@ -346,7 +333,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
 
   self = i->iterators++;
 
-  i->rect[self]=roi;
+  /* FIXME: handle roi == NULL, by copying from where it makes sense */
+  i->rect[self]=*roi;
   i->buffer[self]=buffer;
   if (format)
     i->format[self]=format;
@@ -508,7 +496,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 }
 
 GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
-                                              GeglRectangle        roi, 
+                                              const GeglRectangle *roi, 
                                               const Babl          *format,
                                               guint                flags)
 {

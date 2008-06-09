@@ -1,3 +1,19 @@
+2008-06-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-iterator.c:
+	(gegl_buffer_scan_compatible): improved test making more cases
+	succeed.
+	(gegl_buffer_iterator_add), (gegl_buffer_iterator_new):
+	* gegl/buffer/gegl-buffer-iterator.h: made the buffer iterator
+	construction functions take a const GeglRectangle * instead of passing
+	the rois by value.
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_copy):
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-point-filter.c:
+	* gegl/operation/gegl-operation-point-render.c: updated according to
+	API changes.
+
 2008-06-08  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a new temporal base class, to be used as a base class for

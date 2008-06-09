@@ -51,10 +51,10 @@ typedef struct GeglBufferIterator
  * Returns: a new buffer iterator that can be used to iterate through the
  * buffers pixels.
  */
-GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer         *buffer,
-                                                GeglRectangle       roi, 
-                                                const Babl         *format,
-                                                guint               flags);
+GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
+                                                const GeglRectangle *roi, 
+                                                const Babl          *format,
+                                                guint                flags);
 
 /**
  * gegl_buffer_iterator_add:
@@ -72,11 +72,11 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer         *buffer,
  * Returns: an integer handle refering to the indice in the iterator structure
  * of the added buffer.
  */
-gint                 gegl_buffer_iterator_add  (GeglBufferIterator *iterator,
-                                                GeglBuffer         *buffer,
-                                                GeglRectangle       roi, 
-                                                const Babl         *format,
-                                                guint               flags);
+gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
+                                                GeglBuffer          *buffer,
+                                                const GeglRectangle *roi, 
+                                                const Babl          *format,
+                                                guint                flags);
 
 
 /**
