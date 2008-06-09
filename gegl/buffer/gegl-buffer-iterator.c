@@ -335,7 +335,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
 
   /* FIXME: handle roi == NULL, by copying from where it makes sense */
   i->rect[self]=*roi;
-  i->buffer[self]=buffer;
+
+  i->buffer[self]=gegl_buffer_create_sub_buffer (buffer, roi);
   if (format)
     i->format[self]=format;
   else
@@ -480,6 +481,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
           if (i->buf[no])
             gegl_free (i->buf[no]);
           i->buf[no]=NULL;
+          g_object_unref (i->buffer[no]);
         }
       i->buf[0]=(void*)0xdeadbeef;
       g_free (i);
