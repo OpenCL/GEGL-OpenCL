@@ -1,3 +1,7 @@
+2008-06-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/Makefile.am: added missing gegl-operation-temporal.h
+
 2008-06-09  Sven Neumann  <sven@gimp.org>
 
 	* gegl/operation/gegl-operation-point-render.h: added 'const' to
