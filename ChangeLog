@@ -1,5 +1,17 @@
 2008-06-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Added more buffer tests and their associated reference images.
+
+	* tests/buffer/buffer-test.c:
+	* tests/buffer/reference/test_gegl_buffer_iterator2:
+	* tests/buffer/reference/test_gegl_buffer_iterator2sub:
+	* tests/buffer/reference/test_gegl_buffer_iterator3:
+	* tests/buffer/reference/test_gegl_buffer_iterator3sub:
+	* tests/buffer/reference/test_gegl_buffer_iterator4:
+	* tests/buffer/reference/test_gegl_buffer_iterator4sub:
+
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: removed unneeded include.
 	* gegl/gegl-config.c: (gegl_config_class_init): changed the range of
 	CHUNK_SIZE to 1-max int.

@@ -555,7 +555,6 @@ static gchar * test_gegl_buffer_copy_upper_right ()
   test_end ();
 }
 
-
 static gchar * test_gegl_buffer_copy_lower_right ()
 {
   GeglBuffer    *buffer, *buffer2;
@@ -615,6 +614,142 @@ static gchar * test_gegl_buffer_duplicate ()
   gegl_buffer_destroy (buffer);
   gegl_buffer_destroy (buffer2);
   test_end ();
+}
+
+#include "../../gegl/buffer/gegl-buffer-iterator.h"
+
+static void fill_rect (GeglBuffer          *buffer,
+                       const GeglRectangle *roi,
+                       gfloat               value
+                       )
+{
+  GeglBufferIterator *gi;
+  gi = gegl_buffer_iterator_new (buffer, roi, NULL, GEGL_BUFFER_WRITE);
+  while (gegl_buffer_iterator_next (gi))
+    {
+      gfloat *buf = gi->data[0];
+      gint    i;
+      for (i=0; i<gi->length; i++)
+        {
+          buf[i]=value;
+        }
+    }
+}
+
+static gchar * test_gegl_buffer_iterator1 ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle roi = {0,0,20,20};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator2 ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle roi = {0,0,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator3 ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle roi = {5,5,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator4 ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle roi = {1,1,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
+
+static gchar * test_gegl_buffer_iterator1sub ()
+{
+  GeglBuffer   *buffer;
+  GeglBuffer   *sub;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle sextent = {2,2,20,20};
+  GeglRectangle roi = {0,0,20,20};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
+
+  fill_rect (sub, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (sub);
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator2sub ()
+{
+  GeglBuffer   *buffer;
+  GeglBuffer   *sub;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle sextent = {2,2,20,20};
+  GeglRectangle roi = {0,0,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
+  fill_rect (sub, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (sub);
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator3sub ()
+{
+  GeglBuffer   *buffer;
+  GeglBuffer   *sub;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle sextent = {2,2,20,20};
+  GeglRectangle roi = {5,5,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
+  fill_rect (sub, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (sub);
+  gegl_buffer_destroy (buffer);
+}
+static gchar * test_gegl_buffer_iterator4sub ()
+{
+  GeglBuffer   *buffer;
+  GeglBuffer   *sub;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle sextent = {2,2,20,20};
+  GeglRectangle roi = {1,1,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
+  fill_rect (sub, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (sub);
+  gegl_buffer_destroy (buffer);
 }
 
 
