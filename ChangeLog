@@ -1,5 +1,9 @@
 2008-06-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (set_property): quieten gcc.
+
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: refer to GeglOperationTemporal correctly.
 	* gegl/gegl-plugin.h: include gegl-operation-temporal.h
 	* gegl/operation/gegl-operation-temporal.c: rewrote to use

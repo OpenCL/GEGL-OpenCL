@@ -305,6 +305,7 @@ set_property (GObject      *gobject,
           va_list null; /* dummy to pass along, it's not used anyways since
                          * the preceding argument is NULL
                          */
+          null = 0;
           gegl_node_set_op_class (node, g_value_get_string (value), NULL, null);
         }
         break;
