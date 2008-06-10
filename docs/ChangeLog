@@ -1,3 +1,9 @@
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: updated environment section, rearranged sidebar
+	menu a bit, updated babl version requirement in anticipation of a new
+	babl release for the next GEGL tarball.
+
 2008-05-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: updated directory overview with examples and

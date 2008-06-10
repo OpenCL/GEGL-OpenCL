@@ -25,20 +25,18 @@ Features
   - Output in RGB, CIE Lab and Y'CbCr color models with 8bit, 16bit integer and
     32bit floating point per component. Possible to extend to ICC managed
     output in http://gegl.org/babl/[babl].
-  - Non destructive editing
-  - C, http://gegl.org/gegl-sharp/[C#], http://gegl.org/pygegl/[Python] and
-    http://gegl.org/rgegl/[Ruby] interfaces.
-  - Extendable through plug-ins.
-  - XML serialization format (not-finalized)
-  - Iterative processing.
-  - Efficient subregion evaluation.
-  - Per node caches.
-  - Processing and display of image buffers larger than RAM
-  - Internal sparse pyramidial render cache.
-  - Bounding box based hit detection.
-  - Rich core set of processing operations that operates in
-    http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (32bit linear
-    light RGBA)
+  - C, http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#], http://
+    http://gegl.org/pygegl/[Python] and http://gegl.org/rgegl/[Ruby] interfaces.
+  - Processing
+     * Iterative chunk-wise processing.
+     * Processes subregions and dependencies.
+     * Subgraph caches to aid non destructive editing performance.
+  - GeglBuffer
+     * Storage of all babl supported formats.
+     * Tiled sparse buffers (larger than RAM images).
+     * On demand tiled mipmapping.
+     * inter process shared storage
+  - Operations
       * PNG, JPEG, SVG, EXR, RAW, ffmpeg and other image sources.
       * link:operations.html#cat_render[Pattern renderers]
       * link:operations.html#math[Arithmetic operations]
@@ -48,6 +46,11 @@ Features
         mask.
       * link:operations.html#cat_color[Color correction].
       * Text rendering using cairo and http://pango.org/[pango].
+      * Most operations operates in
+        http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
+        linear light RGBA)
+  - Bounding box based hit detection.
+  - XML serialization format (not-finalized)
 
 News
 ~~~~
@@ -102,8 +105,10 @@ later version.
 
 Contributors
 ~~~~~~~~~~~~
-Multiple people have contributed to GEGL over time the following lists are are
-ordered chronologically according to when they are mentioned in the ChangeLog.
+Multiple people have contributed to GEGL
+http://www.ohloh.net/projects/4349/analyses/latest[over time] the following
+lists are are ordered chronologically according to when they are mentioned in
+the ChangeLog.
 
 include::../AUTHORS[]
 
@@ -111,8 +116,8 @@ include::../AUTHORS[]
 
 Building from source
 --------------------
-GEGL and it's dependencies are known to work on Linux based systems, windows with msys/mingw,
-and probably other platforms.
+GEGL and it's dependencies are known to work on Linux based systems, windows
+with msys/mingw, and probably other platforms.
 
 Download
 ~~~~~~~~
@@ -134,10 +139,11 @@ fixes before all of it builds gracefully on many platforms. If building from
 a subversion checkout you need to have ruby installed.
 
   - Core
-      * glib (including gobject, and gmodule) 2.10 or newer, which provides
+      * glib (including gobject, and gmodule) 2.12 or newer, which provides
         inheritance, dynamic modules, common algorithms and data structures for
         C programming.
-      * http://gegl.org/babl/[babl] 0.0.14 or newer (for pixel-format agnostisism).
+      * http://gegl.org/babl/[babl] 0.0.22 or newer (for pixel-format
+        agnostisism).
       * libpng (png load/export ops, and image magick fallback import)
   - GUI (sandbox for testing ops and the API)
       * GTK+
@@ -248,6 +254,12 @@ link:gegl-operation.h.html[GeglOperation]::
     An operation that consumes a GeglBuffer, used for filewriters, display (for
     the sdl display node)
 
+  GeglOperationTemporal::
+    Base class for operations that want access to previous frames in a video
+    sequence, it contains API to configure the amounts of frames to store as
+    well as getting a GeglBuffer pointing to any of the previously stored
+    frames.
+
   GeglOperationMeta::
     Used for GEGL operations that are implemented as a sub-graph, at the moment
     these are defined as C files but should in the future be possible to
@@ -257,12 +269,12 @@ To create your own operations you should start by looking for one that does
 approximatly what you already need. Copy it to a new .c source file, and
 replace the occurences of the filename (operation name in the source.)
 
-Most of the operations try to trim down the amount of needed GObject boilerplate
-and provides a chanting framework creating with the C preprocessor that makes defining
-introspectable typed and documented properties easy.
+Most of the operations try to trim down the amount of needed GObject
+boilerplate and provides a chanting framework creating with the C preprocessor
+that makes defining introspectable typed and documented properties easy.
 
-Take a look at link:brightness-contrast.c.html[the brightness contrast operation] for
-a simple point operation well sprinkled with comments.
+Take a look at link:brightness-contrast.c.html[the brightness contrast
+operation] for a simple point operation well sprinkled with comments.
 
 //XML data model
 //~~~~~~~~~~~~~~
@@ -284,23 +296,38 @@ Environment
 Some environment variables can be set to alter how GEGL runs, this list might
 not be exhaustive but it should list the most useful ones.
 
+GEGL_QUALITY::
+    A value between 0.0 and 1.0 indicating a trade-off between quality and
+    speed. Defaults to 1.0 (max quality).
+BABL_ERROR::
+    The amount of error that babl tolerates, set it to for instance 0.1 to use
+    some conversions that trade some quality for speed.
+
+GEGL_CHUNK_SIZE:
+    The number of pixels processed simulatnously.
+
+GEGL_TILE_SIZE:
+    The tile size used internally by GEGL, defaults to 128x64
+GEGL_SWAP::
+    The directory where temporary swap files are written, if not specified GEGL
+    will not swap to disk. Be aware that swapping to disk is still experimental
+    and GEGL is currently not removing the per process swap files.
+GEGL_CACHE_SIZE::
+    The size of the tile cache used by GeglBuffer specified in megabytes.
+
+GEGL_DEBUG::
+    set it to "all" to enable all debugging, more specific domains for
+    debugging information are also available.
 BABL_STATS::
     When set babl will write a html file (/tmp/babl-stats.html) containing a
     matrix of used conversions, as well as all existing conversions and which
     optimized paths are followed.
-BABL_ERROR::
-    The amount of error that babl tolerates, set it to for instance 0.1 to use
-    some conversions that trade some quality for speed.
 GEGL_DEBUG_BUFS::
     Display tile/buffer leakage statistics.
 GEGL_DEBUG_RECTS::
     Show the results of have/need rect negotiations.
 GEGL_DEBUG_TIME::
     Print a performance instrumentation breakdown of GEGL and it's operations.
-GEGL_SWAP::
-    The directory where temporary swap files are written, if not specified GEGL
-    will not swap to disk. Be aware that swapping to disk is still experimental
-    and GEGL is currently not removing the per process swap files.
 
 
 gegl
@@ -474,8 +501,8 @@ babl dirs
 <div class="toclevel2"><a href="#features">Features</a></div>
 <div class="toclevel2"><a href="#_news">News</a></div>
 <div class="toclevel2"><a href="gallery/index.html">Gallery</a></div>
-<div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">Bugzilla</a></div>
-<div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>
+<!--<div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">Bugzilla</a></div>
+<div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>-->
 <div class="toclevel2"><a href="#_copyright">Copyright</a></div>
 <div class="toclevel2"><a href="#_code">Contributors</a></div>
 <div class="toclevel1"><a href="#_documentation">Building from source</a></div>
@@ -483,6 +510,7 @@ babl dirs
 <div class="toclevel2"><a href="#_dependencies">Dependencies</a></div>
 <div class="toclevel2"><a href="#_compiling">Compiling</a></div>
 <div class="toclevel1"><a href="#_documentation_2">Documentation</a></div>
+<div class="toclevel2"><a href="operations.html">Operations</a></div>
 <div class="toclevel2"><a href="api.html">Public API</a></div>
 <div class="toclevel2"><a href="#_operation_api">Operation API</a></div>
 <div class="toclevel2"><a href="#_environment">Environment</a></div>
@@ -494,10 +522,10 @@ babl dirs
 
 <div>&nbsp;</div>
 <div class="toclevel1">&nbsp;</div>
-<div class="toclevel2"><a href="http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup">changes</a></div>
+<div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup">changes</a></div>
 <div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO">bugzilla</a></div>
 <div class="toclevel2"><a href="http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes">mailarchive</a></div>
-<div class="toclevel2"><a href="http://svn.gnome.org/viewcvs/gegl/trunk/">viewcvs</a></div>
+<div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/">viewcvs</a></div>
 
 
 </div>
