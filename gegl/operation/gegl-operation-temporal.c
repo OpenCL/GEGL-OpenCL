@@ -55,25 +55,34 @@ G_DEFINE_TYPE (GeglOperationTemporal,
 
 GeglBuffer *
 gegl_operation_temporal_get_frame (GeglOperation *op,
-                                          gint           frame)
+                                   gint           frame)
 {
   GeglOperationTemporal *temporal= GEGL_OPERATION_TEMPORAL (op);
   GeglOperationTemporalPrivate *priv = temporal->priv;
-  GeglRectangle rect = {0, 0, priv->width, priv->height};
   GeglBuffer   *buffer;
 
-   if (frame * -1 > priv->count)
+   if (frame > priv->count)
      {
-       g_print ("%i > priv->count(%i), using frame 0", frame*-1, priv->count);
-       frame = 0;
+       frame = (priv->count-1);
+       if (frame<0)
+         frame=0;
+       g_print ("%i > priv->count(%i), using frame %i", frame, priv->count,
+        frame);
      }
    else
      {
        frame = (priv->next_to_write - 1 + priv->history_length + frame) % priv->history_length;
+       g_print ("using frame %i", frame);
      }
-
-  rect.y = frame * priv->height;
-  buffer = gegl_buffer_create_sub_buffer (priv->frame_store, &rect);
+  /* build in shift */
+  buffer = g_object_new (GEGL_TYPE_BUFFER,
+                         "source",  priv->frame_store,
+                         "shift-y", frame * priv->height,
+                         "width", priv->width,
+                         "height", priv->height,
+                         "x", 0,
+                         "y", 0,
+                         NULL);
   return buffer; 
 }
 
@@ -85,33 +94,22 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
   GeglOperationTemporal *temporal = GEGL_OPERATION_TEMPORAL (self);
   GeglOperationTemporalPrivate *priv = temporal->priv;
   GeglOperationTemporalClass *temporal_class;
-  GeglBuffer *temp_in;
-  gint        pixels = result->width * result->height;
-  gfloat     *buf    = g_new (gfloat, pixels * 4 * 4);
 
   temporal_class = GEGL_OPERATION_TEMPORAL_GET_CLASS (self);
 
   priv->width  = result->width;
   priv->height = result->height;
 
-  temp_in = gegl_buffer_create_sub_buffer (input, result);
-  gegl_buffer_get (temp_in, 1.0, result,
-                  babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-  g_object_unref (temp_in);
-
   {
    GeglRectangle write_rect = *result;
    write_rect.y = priv->next_to_write * priv->height;
 
-
-   gegl_buffer_set (priv->frame_store, &write_rect,
-                    babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+   gegl_buffer_copy (input, result, priv->frame_store, &write_rect);
    priv->count++;
    priv->next_to_write++;
    if (priv->next_to_write >= priv->history_length)
      priv->next_to_write=0;
   }
-  g_free (buf);
 
  if (temporal_class->process)
    return temporal_class->process (self, input, output, result);
@@ -120,8 +118,8 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
 
 static void gegl_operation_temporal_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGB u8"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGB u8"));
 }
 
 static void
@@ -132,6 +130,8 @@ gegl_operation_temporal_class_init (GeglOperationTemporalClass *klass)
 
   operation_class->prepare = gegl_operation_temporal_prepare;
   operation_filter_class->process = gegl_operation_temporal_process;
+
+  g_type_class_add_private (klass, sizeof (GeglOperationTemporalPrivate));
 }
 
 static void
@@ -150,7 +150,7 @@ gegl_operation_temporal_init (GeglOperationTemporal *self)
    * input
    */
   priv->frame_store    =
-      gegl_buffer_new (&((GeglRectangle){0,0,4096,4096*600}), babl_format ("RGBA u8"));
+      gegl_buffer_new (&((GeglRectangle){0,0,4096,4096*600}), babl_format ("RGB u8"));
 ;
 }
 

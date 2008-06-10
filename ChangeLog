@@ -1,3 +1,10 @@
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: refer to GeglOperationTemporal correctly.
+	* gegl/gegl-plugin.h: include gegl-operation-temporal.h
+	* gegl/operation/gegl-operation-temporal.c: rewrote to use
+	gegl_buffer_copy, also register the private data in class_init.
+
 2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c:

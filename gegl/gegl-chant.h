@@ -223,18 +223,18 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_RENDER);
 #endif
 
 
-#ifdef GEGL_CHANT_TYPE_TEMPORAL_FILTER
+#ifdef GEGL_CHANT_TYPE_TEMPORAL
 struct _GeglChant
 {
-  GeglOperationTemporalFilter parent_instance;
-  gpointer                    properties;
+  GeglOperationTemporal parent_instance;
+  gpointer              properties;
 };
 
 typedef struct
 {
-  GeglOperationTemporalFilterClass parent_class;
+  GeglOperationTemporalClass parent_class;
 } GeglChantClass;
-GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_TEMPORAL_FILTER);
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_TEMPORAL);
 #endif
 
 #ifdef GEGL_CHANT_TYPE_AREA_FILTER
