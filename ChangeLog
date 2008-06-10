@@ -1,4 +1,10 @@
 2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/buffer/gegl-buffer-iterator.c: Reverted commit with message
+	'Made GeglBufferIterator potentially able of handling different
+	pyramid levels' since it caused regressions.
+
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node.c: (set_property): quieten gcc.
 
