@@ -1,8 +1,9 @@
-2008-06-09  Sven Neumann  <sven@gimp.org>
+2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/common/svg-*.c: removed misleading comments. These
-	files are not auto-generated. At least not from scripts that are
-	part of this source tree.
+	* gegl/buffer/gegl-buffer-iterator.c:
+	(gegl_buffer_tile_iterator_init), (gegl_buffer_tile_iterator_next),
+	(gegl_buffer_scan_iterator_init), (gegl_buffer_iterator_add): Made
+	GeglBufferIterator potentially able of handling different pyramid levels
 
 2008-06-09  Øyvind Kolås  <pippin@gimp.org>
 
