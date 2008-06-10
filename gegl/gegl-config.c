@@ -171,7 +171,7 @@ gegl_config_class_init (GeglConfigClass *klass)
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunk-size", "Chunk size",
                                      "the number of pixels processed simulatnously by GEGL.",
-                                                     0.0, G_MAXINT, 256*300,
+                                                     1, G_MAXINT, 256*300,
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_QUALITY,

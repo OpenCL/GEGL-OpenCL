@@ -34,7 +34,6 @@
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
 #include "gegl-view.h"
-#include "gegl-view.h"
 
 #include "editor.h"
 

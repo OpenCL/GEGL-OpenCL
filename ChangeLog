@@ -1,4 +1,10 @@
 2008-06-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: removed unneeded include.
+	* gegl/gegl-config.c: (gegl_config_class_init): changed the range of
+	CHUNK_SIZE to 1-max int.
+
+2008-06-10  Øyvind Kolås  <pippin@gimp.org>
 	
 	* gegl/buffer/gegl-buffer-iterator.c: Reverted commit with message
 	'Made GeglBufferIterator potentially able of handling different
