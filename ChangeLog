@@ -1,5 +1,14 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Made GeglBuffer be the object setting it's default tile-width and
+	tile-height properties according to gegl_config() instead of
+	gegl-tile-storage.
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_class_init):
+	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_class_init):
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: (gegl_vector_stamp): migrated
 	innerloop to user iterator.
 

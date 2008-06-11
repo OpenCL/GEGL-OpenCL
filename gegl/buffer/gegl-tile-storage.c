@@ -302,12 +302,12 @@ gegl_tile_storage_class_init (GeglTileStorageClass *class)
 
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
                                    g_param_spec_int ("tile-width", "tile-width", "width of a tile in pixels",
-                                                     0, G_MAXINT, gegl_config()->tile_width,
+                                                     0, G_MAXINT, 128,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
                                    g_param_spec_int ("tile-height", "tile-height", "height of a tile in pixels",
-                                                     0, G_MAXINT, gegl_config()->tile_height,
+                                                     0, G_MAXINT, 64,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_TILE_SIZE,
