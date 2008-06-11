@@ -1,3 +1,8 @@
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_vector_stamp): migrated
+	innerloop to user iterator.
+
 2008-06-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/buffer/buffer-test.c: added three new tests.
