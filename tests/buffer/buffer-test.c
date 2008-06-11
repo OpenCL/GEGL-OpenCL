@@ -752,6 +752,83 @@ static gchar * test_gegl_buffer_iterator4sub ()
   gegl_buffer_destroy (buffer);
 }
 
+#include "../../gegl/buffer/gegl-buffer-private.h"
+
+static gchar * linear_new ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,40,20};
+  GeglRectangle roi = {1,1,30,10};
+  test_start();
+  g_print ("foo!\n");
+  buffer = gegl_buffer_linear_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  roi.y+=3;
+  roi.x+=20;
+  fill_rect (buffer, &roi, 0.2);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
+
+static gchar * linear_modify ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,40,20};
+  GeglRectangle roi = {1,1,30,10};
+  test_start();
+  buffer = gegl_buffer_linear_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  roi.y+=3;
+  roi.x+=20;
+
+  {
+    gint    width;
+    gint    height;
+    gint    rowstride;
+    gfloat *buf;
+    gint    x, y, i;
+
+    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride);
+    g_assert (buf);
+
+    i=0;
+    for (y=0;y<height;y++)
+      for (x=0;x<width;x++)
+        {
+          buf[i++]= ((x+y)*1.0) / width;
+        }
+    gegl_buffer_linear_close (buffer);
+  }
+  fill_rect (buffer, &roi, 0.2);
+
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
+static gchar * linear_from_data ()
+{
+  GeglBuffer   *buffer;
+  gfloat       *buf;
+  test_start();
+
+  buf = g_malloc (sizeof (float) * 10 * 10);
+  gint i;
+  for (i=0;i<100;i++)
+    buf[i]=i/100.0;
+
+  buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
+                                             10, /* width */
+                                             10, /* height */
+                                             G_CALLBACK(g_free), /* destroy_notify */
+                                             NULL   /* destroy_notify_data */);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
 
 /**************************************************************************/
 
@@ -761,7 +838,7 @@ print_linear_buffer_internal_float (GString    *gstring,
                                     gint        height,
                                     gfloat     *buf)
 {
-  gchar *scale[]={" ", "░", "▒", "▓", "█"};
+  gchar *scale[]={" ", "░", "▒", "▓", "█", "█", "!"};
   gint x,y;
   print ("▛");
   for (x=0;x<width;x++)
@@ -771,7 +848,14 @@ print_linear_buffer_internal_float (GString    *gstring,
     {
       print ("▌");
       for (x=0;x<width;x++)
-        print ("%s", scale[ (gint)floor ( buf[y*width+x] * 4 + 0.5)]);
+        {
+          gint val = floor ( buf[y*width+x] * 4 + 0.5);
+          if (val>4)
+            val=4;
+          if (val<0)
+            val=0;
+          print ("%s", scale[val]);
+        }
       print ("▐\n");
     }
   print ("▙");

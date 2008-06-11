@@ -1,5 +1,12 @@
 2008-06-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/buffer/buffer-test.c: added three new tests.
+	* tests/buffer/reference/linear_from_data:
+	* tests/buffer/reference/linear_modify:
+	* tests/buffer/reference/linear_new: new reference images.
+
+2008-06-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/Makefile.am: added gegl-buffer-linear.c
 	* gegl/buffer/gegl-buffer-private.h: new functions for dealing with
 	linear buffers (internal only for now).
