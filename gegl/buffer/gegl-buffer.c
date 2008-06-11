@@ -104,7 +104,9 @@ static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        x,
                                                  gint        y,
                                                  gint        width,
-                                                 gint        height);
+                                                 gint        height,
+                                                 gint        tile_width,
+                                                 gint        tile_height);
 
 static inline gint needed_tiles (gint w,
                                  gint stride)
@@ -225,11 +227,11 @@ set_property (GObject      *gobject,
         buffer->extent.height = g_value_get_int (value);
         break;
 
-      case PROP_TILE_WIDTH:
+      case PROP_TILE_HEIGHT:
         buffer->tile_height = g_value_get_int (value);
         break;
 
-      case PROP_TILE_HEIGHT:
+      case PROP_TILE_WIDTH:
         buffer->tile_width = g_value_get_int (value);
         break;
 
@@ -491,7 +493,9 @@ gegl_buffer_constructor (GType                  type,
                                                              buffer->extent.x,
                                                              buffer->extent.y,
                                                              buffer->extent.width,
-                                                             buffer->extent.height));
+                                                             buffer->extent.height,
+                                                             buffer->tile_width,
+                                                             buffer->tile_height));
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
@@ -909,7 +913,9 @@ gegl_buffer_new_from_format (const void *babl_format,
                              gint        x,
                              gint        y,
                              gint        width,
-                             gint        height)
+                             gint        height,
+                             gint        tile_width,
+                             gint        tile_height)
 {
   GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
@@ -934,23 +940,29 @@ gegl_buffer_new_from_format (const void *babl_format,
     {
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
+                              "tile-width", tile_width,
+                              "tile-height", tile_height,
                               NULL);
     }
   else
     {
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
                               "format", babl_format,
+                              "tile-width", tile_width,
+                              "tile-height", tile_height,
                               "path",   path,
                               NULL);
     }
 
   buffer = g_object_new (GEGL_TYPE_BUFFER,
-                                    "source", tile_storage,
-                                    "x", x,
-                                    "y", y,
-                                    "width", width,
-                                    "height", height,
-                                    NULL);
+                         "source", tile_storage,
+                         "x", x,
+                         "y", y,
+                         "width", width,
+                         "height", height,
+                         "tile-width", tile_width,
+                         "tile-height", tile_height,
+                         NULL);
 
   g_object_unref (tile_storage);
   return buffer;

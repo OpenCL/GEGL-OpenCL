@@ -13,6 +13,7 @@ BUFFER_sources = \
     gegl-buffer-share.c		\
     gegl-buffer-index.h		\
     gegl-buffer-iterator.c	\
+    gegl-buffer-linear.c	\
     gegl-buffer-save.c		\
     gegl-buffer-load.c		\
     gegl-cache.c		\

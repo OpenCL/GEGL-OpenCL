@@ -1,5 +1,23 @@
 2008-06-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/Makefile.am: added gegl-buffer-linear.c
+	* gegl/buffer/gegl-buffer-private.h: new functions for dealing with
+	linear buffers (internal only for now).
+	* gegl/buffer/gegl-buffer-linear.c: new file with the main logic to
+	use GeglBuffer with linear buffers as backing store.
+	* gegl/buffer/gegl-buffer.c: (set_property): width and height were
+	swapped.
+	(gegl_buffer_constructor): pass tile_width and height to tile_storage,
+	(gegl_buffer_new_from_format): added tile_width and tile_height
+	arguments.
+	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_constructor):
+	set the "cache" data on the tile-storage itself as well.
+	* gegl/buffer/gegl-tile.[ch]: (default_free), (dispose),
+	(gegl_tile_init), (gegl_tile_new): added a destroy callback for the
+	tile data in a tile.
+
+2008-06-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_clear): ported to use
 	GeglBufferIterator.
 

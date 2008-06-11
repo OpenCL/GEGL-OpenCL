@@ -30,6 +30,7 @@
 #define GEGL_IS_TILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE))
 #define GEGL_TILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE, GeglTileClass))
 
+
 /* the instance size of a GeglTile is a bit large, and should if possible be
  * trimmed down
  */
@@ -62,11 +63,15 @@ struct _GeglTile
   /* the shared list is a doubly linked circular list */
   GeglTile        *next_shared;
   GeglTile        *prev_shared;
+
+  void (*destroy_notify) (gpointer pixels,
+                          gpointer data);
+  gpointer destroy_notify_data;
 };
 
 struct _GeglTileClass
 {
-  GObjectClass  parent_class;
+  GObjectClass parent_class;
 };
 
 GType        gegl_tile_get_type   (void) G_GNUC_CONST;

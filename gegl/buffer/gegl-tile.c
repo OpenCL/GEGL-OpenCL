@@ -108,6 +108,12 @@ set_property (GObject      *gobject,
 
 #include "gegl-utils.h"
 
+static void default_free (gpointer data,
+                          gpointer userdata)
+{
+  gegl_free (data);
+}
+
 static void
 dispose (GObject *object)
 {
@@ -120,7 +126,8 @@ dispose (GObject *object)
     {
       if (tile->next_shared == tile)
         { /* no clones */
-          gegl_free (tile->data);
+          if (tile->destroy_notify)
+            tile->destroy_notify (tile->data, tile->destroy_notify_data);
           tile->data = NULL;
         }
       else
@@ -187,6 +194,7 @@ gegl_tile_init (GeglTile *tile)
 #if ENABLE_MP
   tile->mutex = g_mutex_new ();
 #endif
+  tile->destroy_notify = default_free;
 }
 
 GeglTile *
@@ -216,7 +224,6 @@ gegl_tile_new (gint size)
   tile->data       = gegl_malloc (size);
   tile->size       = size;
   tile->stored_rev = 1;
-
 
   return tile;
 }

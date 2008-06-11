@@ -194,6 +194,7 @@ gegl_tile_storage_constructor (GType                  type,
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
   handler  = GEGL_HANDLER (tile_storage);
 
+
   if (tile_storage->path != NULL)
     {
 #if 1
@@ -258,6 +259,7 @@ gegl_tile_storage_constructor (GType                  type,
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_tile_handler_chain_add (tile_handler_chain,
                               g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
+  g_object_set_data (G_OBJECT (tile_storage), "cache", cache);
   g_object_set_data (G_OBJECT (empty), "cache", cache);
   g_object_set_data (G_OBJECT (zoom), "cache", cache);
 
