@@ -1,3 +1,9 @@
+2008-06-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: made all operation base classes link to
+	enscripted versions of themselves.
+	* Makefile.am: generate html for header files.
+
 2008-06-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: updated environment section, rearranged sidebar

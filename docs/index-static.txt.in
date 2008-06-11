@@ -221,10 +221,10 @@ link:gegl-operation.h.html[GeglOperation]::
     The base operation class, which all the other base classes are derived
     from, deriving from this is often quite a bit of work and is encouraged
     only when your operation doesn't fit into any of the other categories
-  GeglOperationFilter::
+link:gegl-operation-filter.h.html[GeglOperationFilter]::
     The filter base class sets up GeglBuffers for input and output pads
 
-  GeglOperationPointFilter::
+link:gegl-operation-point-filter.h.html[GeglOperationPointFilter]::
     The point-filter base class is for filters where an output pixel only
     depends on the color and alpha values of the corresponding input pixel.
     This allows you to do the processing on linear buffers, in the future
@@ -232,35 +232,35 @@ link:gegl-operation.h.html[GeglOperation]::
     speed increases due to more intelligent processing possible in the point
     filter class
 
-  GeglOperationAreaFilter::
+link:gegl-operation-area-filter.h.html[GeglOperationAreaFilter]::
     The AreaFilter base class allows defining operations where the output data
     depends on a neighbourhood with an input window that extends beyond the
     output window, the information about needed extra pixels in different
     directions should be set up in the prepare callback for the operation.
 
-  GeglOperationComposer::
+link:gegl-operation-composer.h.html[GeglOperationComposer]::
     Composer operations are operations that take two inputs named 'input' and
     'aux' and writes their output to the output pad 'output'
 
-  GeglOperationPointComposer::
+link:gegl-operation-point-composer.h.html[GeglOperationPointComposer]::
     A baseclass for composer functions where the output pixels values depends
     only on the values of the single corresponding input and aux pixels.
 
-  GeglOperationSource::
+link:gegl-operation-source.h.html[GeglOperationSource]::
     Operations used as render sources or file loaders, the process method
     receives a GeglBuffer to write it's output into
 
-  GeglOperationSink::
+link:gegl-operation-sink.h.html[GeglOperationSink]::
     An operation that consumes a GeglBuffer, used for filewriters, display (for
     the sdl display node)
 
-  GeglOperationTemporal::
+link:gegl-operation-temporal.h.html[GeglOperationTemporal]::
     Base class for operations that want access to previous frames in a video
     sequence, it contains API to configure the amounts of frames to store as
     well as getting a GeglBuffer pointing to any of the previously stored
     frames.
 
-  GeglOperationMeta::
+link:gegl-operation-meta.h.html[GeglOperationMeta]::
     Used for GEGL operations that are implemented as a sub-graph, at the moment
     these are defined as C files but should in the future be possible to
     declare as XML instead.
@@ -302,11 +302,9 @@ GEGL_QUALITY::
 BABL_ERROR::
     The amount of error that babl tolerates, set it to for instance 0.1 to use
     some conversions that trade some quality for speed.
-
-GEGL_CHUNK_SIZE:
+GEGL_CHUNK_SIZE::
     The number of pixels processed simulatnously.
-
-GEGL_TILE_SIZE:
+GEGL_TILE_SIZE::
     The tile size used internally by GEGL, defaults to 128x64
 GEGL_SWAP::
     The directory where temporary swap files are written, if not specified GEGL
@@ -314,7 +312,6 @@ GEGL_SWAP::
     and GEGL is currently not removing the per process swap files.
 GEGL_CACHE_SIZE::
     The size of the tile cache used by GeglBuffer specified in megabytes.
-
 GEGL_DEBUG::
     set it to "all" to enable all debugging, more specific domains for
     debugging information are also available.
@@ -505,7 +502,7 @@ babl dirs
 <div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>-->
 <div class="toclevel2"><a href="#_copyright">Copyright</a></div>
 <div class="toclevel2"><a href="#_code">Contributors</a></div>
-<div class="toclevel1"><a href="#_documentation">Building from source</a></div>
+<div class="toclevel1"><a href="#_building_from_source">Building from source</a></div>
 <div class="toclevel2"><a href="#_download">Download</a></div>
 <div class="toclevel2"><a href="#_dependencies">Dependencies</a></div>
 <div class="toclevel2"><a href="#_compiling">Compiling</a></div>
@@ -517,7 +514,7 @@ babl dirs
 <div class="toclevel2"><a href="#_gegl">gegl</a></div>
 <div class="toclevel1"><a href="#_appendixes">Appendixes</a></div>
 <div class="toclevel2"><a href="operations.html">Operations</a></div>
-<div class="toclevel2"><a href="#_glossart">Glossary</a></div>
+<div class="toclevel2"><a href="#_glossary">Glossary</a></div>
 <div class="toclevel2"><a href="#_directory_overview">Directory overview</a></div>
 
 <div>&nbsp;</div>
@@ -525,7 +522,7 @@ babl dirs
 <div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup">changes</a></div>
 <div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO">bugzilla</a></div>
 <div class="toclevel2"><a href="http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes">mailarchive</a></div>
-<div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/">viewcvs</a></div>
+<div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/">viewvc</a></div>
 
 
 </div>
