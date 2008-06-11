@@ -1,3 +1,8 @@
+2008-06-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_clear): ported to use
+	GeglBufferIterator.
+
 2008-06-11  Sven Neumann  <sven@gimp.org>
 
 	* gegl/operation/Makefile.am: tried to fix confusion with public

@@ -1193,13 +1193,8 @@ void
 gegl_buffer_clear (GeglBuffer          *dst,
                    const GeglRectangle *dst_rect)
 {
-  /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
-
-  GeglRectangle dst_line;
-  const Babl   *format;
-  guchar       *temp;
-  guint         i;
-  gint          pxsize;
+  GeglBufferIterator *i;
+  gint                pxsize;
 
   g_return_if_fail (GEGL_IS_BUFFER (dst));
 
@@ -1209,19 +1204,14 @@ gegl_buffer_clear (GeglBuffer          *dst,
     }
 
   pxsize = dst->tile_storage->px_size;
-  format = dst->format;
 
-  dst_line = *dst_rect;
-  dst_line.height = 1;
-
-  temp = g_malloc0 (dst_line.width * pxsize);
-
-  for (i=0; i<dst_rect->height; i++)
+  i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE);
+  while (gegl_buffer_iterator_next (i))
     {
-      gegl_buffer_set (dst, &dst_line, format, temp, GEGL_AUTO_ROWSTRIDE);
-      dst_line.y++;
+      gint j;
+      for (j=0;j<i->length * pxsize;j++)
+        i->data[j]=0;
     }
-  g_free (temp);
 }
 
 GeglBuffer *
