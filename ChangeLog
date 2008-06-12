@@ -1,5 +1,9 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/create-reference.rb: fixed link to glossary.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	s/BABL_ACCURACY/BABL_TOLERANCE/
 
 	* gegl/gegl-config.c: (get_property), (set_property),

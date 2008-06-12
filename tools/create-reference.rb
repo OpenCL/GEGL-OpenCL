@@ -507,7 +507,7 @@ file.puts "<div id='toc'>
       <ul>
         <li><a href='index.html' style='padding-top: 0.5em;'>GEGL</a></li>
         <li><a href='index.html#Documentation' style='padding-top: 0.5em;'>Documentation</a></li>
-        <li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>
+        <li><a href='index.html#_glossary'>&nbsp;&nbsp;Glossary</a></li>
         <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
 
 "
