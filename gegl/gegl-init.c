@@ -159,13 +159,13 @@ static gchar   *cmd_gegl_cache_size=NULL;
 static gchar   *cmd_gegl_chunk_size=NULL;
 static gchar   *cmd_gegl_quality=NULL;
 static gchar   *cmd_gegl_tile_size=NULL;
-static gchar   *cmd_babl_error=NULL;
+static gchar   *cmd_babl_tolerance =NULL;
 
 static const GOptionEntry cmd_entries[]=
 {
     {
-     "babl-error", 0, 0,
-     G_OPTION_ARG_STRING, &cmd_babl_error, 
+     "babl-tolerance", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_babl_tolerance, 
      N_("babls error tolerance, a value beteen 0.2 and 0.000000001"), "<float>"
     },
     {
@@ -389,8 +389,8 @@ gegl_post_parse_hook (GOptionContext *context,
         config->tile_height = atoi(str+1);
     }
 
-  if (cmd_babl_error)
-    g_object_set (config, "babl-error", atof(cmd_babl_error), NULL);
+  if (cmd_babl_tolerance)
+    g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
 
 #ifdef GEGL_ENABLE_DEBUG
   {

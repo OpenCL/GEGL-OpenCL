@@ -1,5 +1,14 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	s/BABL_ACCURACY/BABL_TOLERANCE/
+
+	* gegl/gegl-config.c: (get_property), (set_property),
+	(gegl_config_class_init):
+	* gegl/gegl-config.h:
+	* gegl/gegl-init.c: (gegl_post_parse_hook):
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-config.c: (get_property), (set_property),
 	(gegl_config_class_init): s/BABL_ERROR/BABL_ACCURACY/
 
