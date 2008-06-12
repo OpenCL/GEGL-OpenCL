@@ -1,5 +1,11 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: move compile command above hello-world example,
+	refer to more examples to be found in the examples dir. Document
+	gegl_config() together with the environment.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.txt.in: rearranged the menu items and improved the
 	links available for navigation in the navigation column.
 

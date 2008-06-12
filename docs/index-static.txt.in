@@ -198,14 +198,17 @@ link:gegl-sharp/index.html[C#/Mono].
 
 Hello world
 ^^^^^^^^^^^
-This is a small sample GEGL application that animates a zoom on a mandelbrot
-fractal
+The follwing is a small sample GEGL application that animates a zoom on a
+mandelbrot fractal compile it with:
+
+ $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
+
+This example and others can be found in the examples subdir of the GEGL distribution.
 
 ---------------------------
 sys::[cat ../examples/hello-world.c]
 ---------------------------
 
- $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
 
 
 Operation API
@@ -293,8 +296,9 @@ operation] for a simple point operation well sprinkled with comments.
 
 Environment
 ~~~~~~~~~~~
-Some environment variables can be set to alter how GEGL runs, this list might
-not be exhaustive but it should list the most useful ones.
+Some environment variables can be set to alter how GEGL runs, all of these
+options are also available as properties on a singleton GObject returned from
+gegl_config ().
 
 GEGL_QUALITY::
     A value between 0.0 and 1.0 indicating a trade-off between quality and
