@@ -1,5 +1,9 @@
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: depend on the newest released babl, version 0.0.22.
+
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/Makefile.am: removed accidentally added
 	invert-simd target.
 
