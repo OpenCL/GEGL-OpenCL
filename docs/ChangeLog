@@ -1,3 +1,7 @@
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: s/BABL_ERROR/BABL_ACCURACY/
+
 2008-06-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: made all operation base classes link to
