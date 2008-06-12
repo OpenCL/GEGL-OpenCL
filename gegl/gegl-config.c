@@ -32,7 +32,7 @@ enum
   PROP_CACHE_SIZE,
   PROP_CHUNK_SIZE,
   PROP_SWAP,
-  PROP_BABL_ERROR,
+  PROP_BABL_ACCURACY,
   PROP_TILE_WIDTH,
   PROP_TILE_HEIGHT
 };
@@ -67,7 +67,7 @@ get_property (GObject    *gobject,
         g_value_set_double (value, config->quality);
         break;
 
-      case PROP_BABL_ERROR:
+      case PROP_BABL_ACCURACY:
         g_value_set_double (value, config->babl_error);
         break;
 
@@ -106,12 +106,12 @@ set_property (GObject      *gobject,
       case PROP_QUALITY:
         config->quality = g_value_get_double (value);
         return;
-      case PROP_BABL_ERROR:
+      case PROP_BABL_ACCURACY:
           {
             gchar buf[256];
             config->babl_error = g_value_get_double (value);
             g_sprintf (buf, "%f", config->babl_error);
-            g_setenv ("BABL_ERROR", buf, 0);
+            g_setenv ("BABL_ACCURACY", buf, 0);
             /* babl picks up the babl error through the environment, babl
              * caches valid conversions though so this needs to be set
              * before any processing is done
@@ -179,7 +179,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      0.0, 1.0, 1.0,
                                                      G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_BABL_ERROR,
+  g_object_class_install_property (gobject_class, PROP_BABL_ACCURACY,
                                    g_param_spec_double ("babl-error", "babl error", "the error tolerance babl operates with",
                                                      0.0, 0.2, 0.0001,
                                                      G_PARAM_READWRITE));
