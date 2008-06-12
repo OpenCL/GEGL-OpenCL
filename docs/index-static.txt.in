@@ -31,7 +31,7 @@ Features
      * Iterative chunk-wise processing.
      * Processes subregions and dependencies.
      * Subgraph caches to aid non destructive editing performance.
-  - GeglBuffer
+  - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Tiled sparse buffers (larger than RAM images).
      * On demand tiled mipmapping.
@@ -180,21 +180,26 @@ in a wide range of pixel formats from any node.
 
 Public API
 ~~~~~~~~~~
-The link:api.html[public API] is the API used for creating things with GEGL,
-this API does not change much at all and is also the API provided by language
-bindings. To make the public API available when compiling a .c file add
-#include <link:gegl.h.html[gegl.h]>, compile and link with the flags provided
-by pkg-config and you should be all set. When you are comfortable with the
-public API, or are using GEGL in some project looking at the
-link:operations.html[Operation reference] might be useful.
+The link:api.html[public API reference] documents the API used for creating
+things with GEGL, this API does not change much at all and is also the API
+provided by language bindings. To make the public API available when compiling
+a .c file add #include <link:gegl.h.html[gegl.h]>, compile and link with the
+flags provided by pkg-config and you should be all set. When you are
+comfortable with the public API, or are using GEGL in some project looking at
+the link:operations.html[Operation reference] might be useful.
+
+The public API also includes link:api.html#GeglBuffer[GeglBuffer], a flexible
+tiled and linear raster buffer storage system.
 
 Bindings
 ^^^^^^^^
 The bindings for use of GEGL in other programming languages than C are
 co-hosted with GEGL in GNOME subversion but are not part of the regular GEGL
 distribution. The following language bindings are currently available:
-link:rgegl/index.html[ruby], link:pygegl/index.html[python]:: and 
-link:gegl-sharp/index.html[C#/Mono].
+
+http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#], http://
+http://gegl.org/pygegl/[Python] and http://gegl.org/rgegl/[Ruby].
+
 
 Hello world
 ^^^^^^^^^^^
@@ -477,23 +482,6 @@ dropped into the directory in the build.
   │                    the subversion repository.
   │
   └──tools             some small utilities to help the build.
-
-babl dirs
-^^^^^^^^^
-
- babl-dist-root
-  │
-  ├──babl       the babl core
-  │   └──base   reference implementations for RGB and Grayscale Color Models,
-  │             8bit 16bit, and 32bit and 64bit floating point.
-  ├──extensions CIE-Lab color model as well as a naive-CMYK color model.
-  │             also contains a random cribbage of old conversion optimized
-  │             code from gggl. Finding more exsisting conversions in third
-  │             part libraries (hermes, lcms?, liboil?) could improve the
-  │             speed of babl.
-  ├──tests      tests used to keep babl sane during development.
-  └──docs       Documentation/webpage for babl.
-
 
 ++++++++
 <div id='toc'>
