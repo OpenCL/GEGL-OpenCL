@@ -1,3 +1,8 @@
+2008-06-11  Manish Singh  <yosh@gimp.org>
+
+	* docs/Makefile.am: delete duplicate references to
+	gegl-operation-filter.h.html.
+
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Made GeglBuffer be the object setting it's default tile-width and

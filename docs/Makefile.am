@@ -23,7 +23,6 @@ ENSCRIPT_FILES = \
 	gegl-operation-filter.h.html 	\
 	gegl-operation-composer.h.html 	\
 	gegl-operation-area-filter.h.html     \
-	gegl-operation-filter.h.html          \
 	gegl-operation-meta.h.html            \
 	gegl-operation-point-composer.h.html  \
 	gegl-operation-point-filter.h.html    \
@@ -171,7 +170,6 @@ if HAVE_ENSCRIPT
 	    $(srcdir)/gegl-operation-filter.h.html 	\
 	    $(srcdir)/gegl-operation-composer.h.html 	\
 	    $(srcdir)/gegl-operation-area-filter.h.html     \
-	    $(srcdir)/gegl-operation-filter.h.html          \
 	    $(srcdir)/gegl-operation-meta.h.html            \
 	    $(srcdir)/gegl-operation-point-composer.h.html  \
 	    $(srcdir)/gegl-operation-point-filter.h.html    \
@@ -194,7 +192,6 @@ if HAVE_ENSCRIPT
 	    $(helpdir)/gegl-operation-filter.h.html 	\
 	    $(helpdir)/gegl-operation-composer.h.html 	\
 	    $(helpdir)/gegl-operation-area-filter.h.html     \
-	    $(helpdir)/gegl-operation-filter.h.html          \
 	    $(helpdir)/gegl-operation-meta.h.html            \
 	    $(helpdir)/gegl-operation-temporal.h.html            \
 	    $(helpdir)/gegl-operation-point-composer.h.html  \
