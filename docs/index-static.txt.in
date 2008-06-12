@@ -299,7 +299,7 @@ not be exhaustive but it should list the most useful ones.
 GEGL_QUALITY::
     A value between 0.0 and 1.0 indicating a trade-off between quality and
     speed. Defaults to 1.0 (max quality).
-BABL_ACCURACY::
+BABL_TOLERANCE::
     The amount of error that babl tolerates, set it to for instance 0.1 to use
     some conversions that trade some quality for speed.
 GEGL_CHUNK_SIZE::
