@@ -573,6 +573,7 @@ fill_close:  /* label used for goto to close last segment */
 typedef struct StampStatic {
   gboolean  valid;
   Babl     *format;
+  gfloat   *buf;
   gdouble   radius;
 }StampStatic;
 
@@ -601,61 +602,56 @@ void gegl_vector_stamp (GeglBuffer *buffer,
                        ceil (y+radius) - floor (y-radius)};
 
   if (s.format == NULL)
-    s.format = babl_format ("RaGaBaA float");
-  if (s.radius != radius)
+    s.format = babl_format ("RGBA float");
+  if (s.buf == NULL ||
+      s.radius != radius)
     {
+      if (s.buf != NULL)
+        g_free (s.buf);
+      /* allocate a little bit more, just in case due to rounding errors and
+       * such */
+      s.buf = g_malloc (4*4* (roi.width + 2 ) * (roi.height + 2));
       s.radius = radius;
       s.valid = TRUE;  
     }
+  g_assert (s.buf);
+
+  gegl_buffer_get (buffer, 1.0, &roi, s.format, s.buf, 0);
 
   {
-    GeglBufferIterator *i = gegl_buffer_iterator_new (buffer,
-        &roi, s.format, GEGL_BUFFER_READWRITE);
-    gint u,v;
+    gint u, v;
+    gint i=0;
 
     gfloat radius_squared = radius * radius;
     gfloat inner_radius_squared = (radius * hardness)*(radius * hardness);
     gfloat soft_range = radius_squared - inner_radius_squared;
 
-    u = roi.x,
-    v = roi.y;
-    while (gegl_buffer_iterator_next (i))
-      {
-        gint length = i->length;
-        gfloat *data = i->data[0];
+    for (u= roi.x; u < roi.x + roi.width; u++)
+      for (v= roi.y; v < roi.y + roi.height ; v++)
+        {
+          gfloat o = (u-x) * (u-x) + (v-y) * (v-y);
 
-        while (length--)
-          {
-            gfloat o = (u-x) * (u-x) + (v-y) * (v-y);
-
-            if (o < inner_radius_squared)
-               o = col[3];
-            else if (o < radius_squared)
-              {
-                o = (1.0 - (o-inner_radius_squared) / (soft_range)) * col[3];
-              }
-            else
-              {
-                o=0.0;
-              }
-           if (o!=0.0)
-             {
-               gint c;
-
-               for (c=0;c<4;c++)
-                 data[c] = (data[c] * (1.0-o) + col[c] * o);
-             }
-          }
-
-         u++;
-         data+=4;
-         if (u > i->roi[0].x + i->roi[0].width) 
+          if (o < inner_radius_squared)
+             o = col[3];
+          else if (o < radius_squared)
+            {
+              o = (1.0 - (o-inner_radius_squared) / (soft_range)) * col[3];
+            }
+          else
+            {
+              o=0.0;
+            }
+         if (o!=0.0)
            {
-             u=i->roi[0].x;
-             v++;
+             gint c;
+             for (c=0;c<4;c++)
+               s.buf[i*4+c] = (s.buf[i*4+c] * (1.0-o) + col[c] * o);
+             /*s.buf[i*4+3] = s.buf[i*4+3] + o * (1.0-o);*/
            }
-      }
+         i++;
+        }
   }
+  gegl_buffer_set (buffer, &roi, s.format, s.buf, 0);
 }
 
 
