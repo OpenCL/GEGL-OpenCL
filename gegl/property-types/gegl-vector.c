@@ -1205,6 +1205,19 @@ gegl_param_vector_get_type (void)
   return param_vector_type;
 }
 
+
+void
+gegl_operation_vector_prop_changed (GeglVector    *vector,
+                                     GeglOperation *operation)
+{
+  /* In the end forces a re-render, should be adapted to
+   *    * allow a smaller region to be forced for re-rendering
+   *       * when the vector is incrementally grown
+   *          */
+  g_object_notify (G_OBJECT (operation), "vector");
+}
+
+
 GParamSpec *
 gegl_param_spec_vector (const gchar *name,
                        const gchar *nick,
@@ -1221,3 +1234,5 @@ gegl_param_spec_vector (const gchar *name,
 
   return G_PARAM_SPEC (param_vector);
 }
+
+

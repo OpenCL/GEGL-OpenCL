@@ -1,5 +1,11 @@
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operations.c: moved
+	gegl_operation_calc_source_regions
+	* gegl/property-types/gegl-vector.c: here.
+
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: depend on the newest released babl, version 0.0.22.
 
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>

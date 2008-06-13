@@ -201,14 +201,3 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
     }
   return TRUE;
 }
-
-void
-gegl_operation_vector_prop_changed (GeglVector    *vector,
-                                    GeglOperation *operation)
-{
-  /* In the end forces a re-render, should be adapted to
-   * allow a smaller region to be forced for re-rendering
-   * when the vector is incrementally grown
-   */
-  g_object_notify (G_OBJECT (operation), "vector"); 
-}
