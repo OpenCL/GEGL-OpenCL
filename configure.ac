@@ -491,17 +491,19 @@ LIBS=$gegl_save_LIBS
 # Disable deprecated APIs
 #########################
 
-AC_MSG_CHECKING([if GLib is version 2.15.0 or newer])
-if $PKG_CONFIG --atleast-version=2.15.0 glib-2.0; then
-  have_glib_2_15=yes
+AC_MSG_CHECKING([if GLib is version 2.17.0 or newer])
+if $PKG_CONFIG --atleast-version=2.17.0 glib-2.0; then
+  have_glib_2_17=yes
 else
-  have_glib_2_15=no
+  have_glib_2_17=no
 fi
-AC_MSG_RESULT($have_glib_2_15)
+AC_MSG_RESULT($have_glib_2_17)
 
-if test "x$have_glib_2_15" != "xyes"; then
+if test "x$have_glib_2_17" != "xyes"; then
   CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
 fi
+
+CPPFLAGS="${CPPFLAGS} -DG_DISABLE_SINGLE_INCLUDES"
 
 
 ######################################
