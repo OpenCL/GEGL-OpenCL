@@ -15,6 +15,10 @@ if HAVE_RUBY
 HTML_FILES += api.html
 endif
 
+# dummy target to force the operations be available for scanning when
+# creating the docbook index when doing parallel builds.
+api.html: operations.html
+
 if HAVE_ENSCRIPT
 ENSCRIPT_FILES = \
 	brightness-contrast.c.html	\
