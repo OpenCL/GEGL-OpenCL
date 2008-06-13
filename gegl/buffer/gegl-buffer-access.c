@@ -1202,15 +1202,18 @@ gegl_buffer_clear (GeglBuffer          *dst,
     {
       dst_rect = gegl_buffer_get_extent (dst);
     }
+  if (dst_rect->width == 0 ||
+      dst_rect->height == 0)
+    return;
 
-  pxsize = dst->tile_storage->px_size;
+  pxsize = dst->format->format.bytes_per_pixel;
 
   i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE);
   while (gegl_buffer_iterator_next (i))
     {
       gint j;
       for (j=0;j<i->length * pxsize;j++)
-        i->data[j]=0;
+        ((guchar*)(i->data[0]))[j]=0;
     }
 }
 

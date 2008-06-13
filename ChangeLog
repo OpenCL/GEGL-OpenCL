@@ -1,5 +1,10 @@
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_clear): fixed access
+	to data in iterator.
+
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operations.c: moved
 	gegl_operation_calc_source_regions
 	* gegl/property-types/gegl-vector.c: here.
