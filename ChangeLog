@@ -1,3 +1,13 @@
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-color.c:
+	(gegl_param_spec_color_get_default): added call to retrieve the
+	default color from a color paramspec.
+	* operations/generated/math.rb: pass floating point values to property
+	installer.
+	* tools/operation_reference.c: (list_properties): added default,
+	minimum and maximum values to output listing.
+
 2008-06-13  Michael Natterer  <mitch@gimp.org>
 
 	* configure.ac: use G_DISABLE_DEPRECATED for glib < 2.17, add

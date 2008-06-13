@@ -55,6 +55,9 @@ static GList *gegl_operations (void)
   return operations;
 }
 
+GeglColor *
+gegl_param_spec_color_get_default (GParamSpec *self);
+
 
 static void
 list_properties (GType    type,
@@ -94,14 +97,104 @@ list_properties (GType    type,
 
           type_name = strstr (type_name, "Param");
           type_name+=5;
-          g_print("<tr><td colspan='1'>&nbsp;&nbsp;</td><td colspan='1' class='prop_type' valign='top'>%s</td><td class='prop_name' valign='top'>%s</td>\n",
-           type_name,
+
+          g_print("<tr><td colspan='1'>&nbsp;&nbsp;</td><td colspan='1' class='prop_type' valign='top'>%s<br/><span style='font-style:normal;text-align:right;float:right;padding-right:1em;'>", type_name);
+
+          if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
+            {
+
+            g_print ("%2.2f", G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value);
+
+            {
+            gdouble min = G_PARAM_SPEC_DOUBLE (self[prop_no])->minimum;
+            gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
+            g_print ("<br/>");
+            if (min<-10000000)
+              g_print ("-inf ");
+            else
+              g_print ("%2.2f", min);
+            
+            g_print ("-");
+
+            if (max>10000000)
+              g_print (" +inf");
+            else
+              g_print ("%2.2f", max);
+            }
+
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
+            {
+              g_print ("%i", G_PARAM_SPEC_INT (self[prop_no])->default_value);
+
+            {
+            gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
+            gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
+            g_print ("<br/>");
+            if (min<-10000000)
+              g_print ("-inf ");
+            else
+              g_print ("%i", min);
+            
+            g_print ("-");
+
+            if (max>10000000)
+              g_print (" +inf");
+            else
+              g_print ("%i", max);
+            }
+
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_FLOAT))
+            {
+              g_print ("%2.2f", G_PARAM_SPEC_FLOAT (self[prop_no])->default_value);
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
+            {
+              g_print ("%s", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_STRING))
+            {
+              const gchar *string = G_PARAM_SPEC_STRING (self[prop_no])->default_value;
+
+              if (strlen (string) > 8)
+                {
+                  gchar copy[16];
+                  g_snprintf (copy, 12, "%s..", string);
+                  g_print (copy);
+                }
+              else
+                g_print ("%s", string);
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), GEGL_TYPE_COLOR))
+            {
+              GeglColor *color = gegl_param_spec_color_get_default (self[prop_no]);
+              if (color)
+                {
+                  gchar *string;
+                  g_object_get (color, "string", &string, NULL);
+                  g_print ("%s", string);
+                  g_free (string);
+                }
+              g_object_unref (color);
+            }
+          else 
+            {
+              g_print ("\n");
+            }
+          g_print ("</span></td>");
+
+          g_print("<td class='prop_name' valign='top'>%s</td>\n",
             g_param_spec_get_name (self[prop_no]));
+
           if (g_param_spec_get_blurb (self[prop_no])[0]!='\0')
-            g_print ("<td colspan='1' class='prop_blurb'>%s</td>\n</tr>\n",
+            g_print ("<td colspan='1' class='prop_blurb'>%s</td>\n",
             g_param_spec_get_blurb (self[prop_no]));
           else
-            g_print ("<td><em>not documented</em></td>\n</tr>\n");
+            g_print ("<td><em>not documented</em></td>\n\n");
+
+          g_print ("</tr>\n");
+
         }
     }
   if (self)

@@ -452,6 +452,14 @@ gegl_param_color_init (GParamSpec *self)
   GEGL_PARAM_COLOR (self)->default_color = NULL;
 }
 
+GeglColor *
+gegl_param_spec_color_get_default (GParamSpec *self);
+GeglColor *
+gegl_param_spec_color_get_default (GParamSpec *self)
+{
+  return GEGL_PARAM_COLOR (self)->default_color;
+}
+
 static void
 gegl_param_color_finalize (GParamSpec *self)
 {

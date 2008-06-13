@@ -24,8 +24,8 @@ copyright = '
  */'
 
 a = [
-      ['add',       'c = c + value', 0],
-      ['subtract',  'c = c - value', 0],
+      ['add',       'c = c + value', 0.0],
+      ['subtract',  'c = c - value', 0.0],
       ['multiply',  'c = c * value', 1.0],
       ['divide',    'c = value==0.0?0.0:c/value', 1.0],
       ['gamma',     'c = powf (c, value)', 1.0],
