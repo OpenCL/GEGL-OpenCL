@@ -188,7 +188,7 @@ list_properties (GType    type,
             g_param_spec_get_name (self[prop_no]));
 
           if (g_param_spec_get_blurb (self[prop_no])[0]!='\0')
-            g_print ("<td colspan='1' class='prop_blurb'>%s</td>\n",
+            g_print ("<td colspan='1' valign='top' class='prop_blurb'>%s</td>\n",
             g_param_spec_get_blurb (self[prop_no]));
           else
             g_print ("<td><em>not documented</em></td>\n\n");
