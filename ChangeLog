@@ -1,5 +1,11 @@
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor-optype.c: (chain_in_operation): show the structure view
+	when a new operation has been added. (need now that the popup is
+	properly gone).
+
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-color.c:
 	(gegl_param_spec_color_get_default): added call to retrieve the
 	default color from a color paramspec.

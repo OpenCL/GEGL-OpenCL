@@ -61,7 +61,9 @@ static gboolean       completion_match_selected              (GtkEntryCompletion
 static void
 chain_in_operation (const gchar *op_type)
 {
+    GtkWidget *widget = editor.structure;
     gegl_add_sibling (op_type);
+    gtk_widget_show (widget);
 }
 
 static void
