@@ -28,6 +28,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-vector.h"
 #include "gegl-color.h"
+#include "gegl-utils.h"
 
 
 
@@ -78,6 +79,8 @@ struct _GeglVectorPrivate
 
   Path *axis[8];
   gint  n_axes;
+
+  GeglRectangle dirtied;
 };
 
 enum
@@ -392,6 +395,7 @@ path_rel_move_to (Path   *path,
   return path_move_to (path, path->point.x + x, path->point.y + y);
 }
 
+#if 0
 static Path *
 path_rel_line_to (Path   *path,
                   gfloat  x,
@@ -414,6 +418,7 @@ path_rel_curve_to (Path   *path,
                         path->point.x + x2, path->point.y + y2,
                         path->point.x + x3, path->point.y + y3);
 }
+#endif
 
 #include <gegl-buffer.h>
 
@@ -601,8 +606,14 @@ void gegl_vector_stamp (GeglBuffer *buffer,
                        ceil (x+radius) - floor (x-radius),
                        ceil (y+radius) - floor (y-radius)};
 
+  GeglRectangle foo;
+
   if (s.format == NULL)
     s.format = babl_format ("RGBA float");
+
+  if (!gegl_rectangle_intersect (&foo, &roi, gegl_buffer_get_extent (buffer)))
+      return;
+
   if (s.buf == NULL ||
       s.radius != radius)
     {
@@ -662,6 +673,7 @@ void gegl_vector_stroke (GeglBuffer *buffer,
                          gdouble     hardness)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  GeglRectangle bufext;
   gfloat traveled_length = 0;
   gfloat need_to_travel = 0;
   gfloat x = 0,y = 0;
@@ -676,9 +688,13 @@ void gegl_vector_stroke (GeglBuffer *buffer,
   extent.width = ceil (xmax) - extent.x;
   extent.height = ceil (ymax) - extent.y;
 
+  bufext = *gegl_buffer_get_extent (buffer);
+
   if (gegl_buffer_is_shared (buffer))
   while (!gegl_buffer_try_lock (buffer));
 
+  if (!gegl_rectangle_intersect (&extent, &bufext, &bufext))
+    return;
   gegl_buffer_clear (buffer, &extent);
 
   while (iter)
@@ -732,7 +748,6 @@ void gegl_vector_stroke (GeglBuffer *buffer,
                                   * for each step from the tool, to be
                                   * able to have variable line width
                                   */
-
                     lerp (&spot, &a, &b, ratio);
 
                     gegl_vector_stamp (buffer,
@@ -789,15 +804,17 @@ gegl_vector_class_init (GeglVectorClass *klass)
                   0 /* class offset */,
                   NULL /* accumulator */,
                   NULL /* accu_data */,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE /*return type */,
-                  0 /* n_params */);
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, /*return type */
+                  1, G_TYPE_POINTER);
 }
 
 static void
-gegl_vector_emit_changed (GeglVector *vector)
+gegl_vector_emit_changed (GeglVector          *vector,
+                          const GeglRectangle *bounds)
 {
-  g_signal_emit (vector, gegl_vector_signals[GEGL_VECTOR_CHANGED], 0);
+  g_signal_emit (vector, gegl_vector_signals[GEGL_VECTOR_CHANGED], 0,
+                 bounds, NULL);
 }
 
 static void
@@ -854,6 +871,33 @@ gegl_vector_new (void)
   return self;
 }
 
+static void gen_rect (GeglRectangle *r,
+                      gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+{
+  if (x1>x2)
+    {
+      gint t;
+      t=x1;
+      x1=x2;
+      x2=x1;
+    }
+  if (y1>y2)
+    {
+      gint t;
+      t=y1;
+      y1=y2;
+      y2=y1;
+    }
+  x1=floor (x1);
+  y1=floor (y1);
+  x2=ceil (x2);
+  y2=ceil (y2);
+  r->x=x1;
+  r->y=y1;
+  r->width=x2-x1;
+  r->height=y2-y1;
+}
+
 void
 gegl_vector_line_to (GeglVector *self,
                      gdouble     x,
@@ -861,8 +905,14 @@ gegl_vector_line_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
+
+  if (priv->path)
+  gen_rect (&priv->dirtied, x, y, priv->path->point.x,
+                         priv->path->point.y);
   priv->path = path_line_to (priv->path, x, y);
-  gegl_vector_emit_changed (self);
+
+  if (priv->path)
+    gegl_vector_emit_changed (self, &priv->dirtied);
 }
 
 void
@@ -873,7 +923,7 @@ gegl_vector_move_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_move_to (priv->path, x, y);
-  gegl_vector_emit_changed (self);
+  /*gegl_vector_emit_changed (self);*/
 }
 
 void
@@ -889,8 +939,7 @@ gegl_vector_curve_to (GeglVector *self,
   g_print ("foo\n");
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
-  gegl_vector_emit_changed (self);
-  g_print ("bar\n");
+  /*gegl_vector_emit_changed (self);*/
 }
 
 
@@ -901,8 +950,7 @@ gegl_vector_rel_line_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_rel_line_to (priv->path, x, y);
-  gegl_vector_emit_changed (self);
+  gegl_vector_line_to (self, priv->path->point.x + x, priv->path->point.y + y);
 }
 
 void
@@ -913,7 +961,7 @@ gegl_vector_rel_move_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_rel_move_to (priv->path, x, y);
-  gegl_vector_emit_changed (self);
+/*  gegl_vector_emit_changed (self);*/
 }
 
 void
@@ -927,8 +975,10 @@ gegl_vector_rel_curve_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_rel_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
-  gegl_vector_emit_changed (self);
+  gegl_vector_curve_to (self,
+      priv->path->point.x + x1, priv->path->point.y + y1,
+      priv->path->point.x + x2, priv->path->point.y + y2,
+      priv->path->point.x + x3, priv->path->point.y + y3);
 }
 
 
@@ -1201,17 +1251,57 @@ gegl_param_vector_get_type (void)
   return param_vector_type;
 }
 
+const GeglRectangle *gegl_vector_changed_rect (GeglVector *vector);
+
+const GeglRectangle *gegl_vector_changed_rect (GeglVector *vector)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  return &priv->dirtied;
+}
+
 
 void
-gegl_operation_vector_prop_changed (GeglVector    *vector,
-                                     GeglOperation *operation)
+gegl_operation_invalidate (GeglOperation       *operation,
+                            const GeglRectangle *roi);
+
+void
+gegl_operation_vector_prop_changed (GeglVector          *vector,
+                                    const GeglRectangle *roi,
+                                     GeglOperation      *operation);
+
+void
+gegl_operation_vector_prop_changed (GeglVector          *vector,
+                                    const GeglRectangle *roi,
+                                    GeglOperation       *operation)
 {
   /* In the end forces a re-render, should be adapted to
    *    * allow a smaller region to be forced for re-rendering
    *       * when the vector is incrementally grown
    *          */
-  g_object_notify (G_OBJECT (operation), "vector");
+  /* g_object_notify (G_OBJECT (operation), "vector"); */
+  GeglRectangle rect = *roi;
+  gint radius = 8;
+
+  radius = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "vector-radius"));
+
+  rect.width += radius * 2;
+  rect.height += radius * 2;
+  rect.x -= radius;
+  rect.y -= radius;
+
+    {
+      gint align = 127;
+      gint x= rect.x & (0xffff-align);
+
+      rect.width +=(rect.x-x);
+      x=rect.width & align;
+      if (x)
+        rect.width += (align-x);
+    }
+
+  gegl_operation_invalidate (operation, &rect);
 }
+
 
 
 GParamSpec *

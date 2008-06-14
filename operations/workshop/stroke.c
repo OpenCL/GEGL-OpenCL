@@ -70,6 +70,7 @@ process (GeglOperation       *operation,
   GeglRectangle box = get_bounding_box (operation);
 
   gegl_buffer_clear (output, &box);
+  g_object_set_data (operation, "vector-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
   gegl_vector_stroke (output, o->vector, o->color, o->linewidth, o->hardness);
 
   return  TRUE;
