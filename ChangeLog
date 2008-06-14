@@ -1,5 +1,10 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: changes that should have been
+	included in previous commit.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from Bug #360888 - Adapt cubic and lanczos samplers for
 	new framework.
 

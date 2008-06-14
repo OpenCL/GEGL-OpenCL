@@ -21,7 +21,9 @@
 #define __GEGL_BUFFER_PRIVATE_H__
 
 #include "gegl-buffer.h"
+#include "gegl-sampler.h"
 #include "gegl-tile-handler.h"
+#include "gegl-buffer-iterator.h"
 
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
 #define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
@@ -117,6 +119,17 @@ gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
 /* needed if the linear buffer is faked */
 void            gegl_buffer_linear_close      (GeglBuffer          *buffer);
 
-#include "gegl-buffer-iterator.h"
+
+GType
+gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
+
+void            gegl_buffer_sampler           (GeglBuffer       *buffer,
+                                               gdouble           x,
+                                               gdouble           y,
+                                               gdouble           scale,
+                                               gpointer          dest,
+                                               const Babl       *format,
+                                               gpointer          sampler);
+
 
 #endif
