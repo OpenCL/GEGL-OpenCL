@@ -157,6 +157,11 @@ else
 	@false
 endif
 
+clean-local:
+	if test $(srcdir) = .; then :; else 	\
+	    rm -f gegl.devhelp;	\
+	fi
+
 
 
 distclean-local:

@@ -1,5 +1,9 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: remove gegl.devhelp upon make clean.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: s/helpdir/help_dir/ to make sure additional generated
 	html files get uninstalled.
 
