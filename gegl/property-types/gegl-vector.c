@@ -606,13 +606,14 @@ void gegl_vector_stamp (GeglBuffer *buffer,
                        ceil (x+radius) - floor (x-radius),
                        ceil (y+radius) - floor (y-radius)};
 
-  GeglRectangle foo;
+  GeglRectangle temp;
+
+  /* bail out if we wouldn't leave a mark on the buffer */
+  if (!gegl_rectangle_intersect (&temp, &roi, gegl_buffer_get_extent (buffer)))
+      return;
 
   if (s.format == NULL)
     s.format = babl_format ("RGBA float");
-
-  if (!gegl_rectangle_intersect (&foo, &roi, gegl_buffer_get_extent (buffer)))
-      return;
 
   if (s.buf == NULL ||
       s.radius != radius)
@@ -637,10 +638,12 @@ void gegl_vector_stamp (GeglBuffer *buffer,
     gfloat inner_radius_squared = (radius * hardness)*(radius * hardness);
     gfloat soft_range = radius_squared - inner_radius_squared;
 
-    for (u= roi.x; u < roi.x + roi.width; u++)
-      for (v= roi.y; v < roi.y + roi.height ; v++)
+    for (v= roi.y; v < roi.y + roi.height ; v++)
+    {
+      gfloat vy2 = (v-y)*(v-y);
+      for (u= roi.x; u < roi.x + roi.width; u++)
         {
-          gfloat o = (u-x) * (u-x) + (v-y) * (v-y);
+          gfloat o = (u-x) * (u-x) + vy2;
 
           if (o < inner_radius_squared)
              o = col[3];
@@ -657,10 +660,10 @@ void gegl_vector_stamp (GeglBuffer *buffer,
              gint c;
              for (c=0;c<4;c++)
                s.buf[i*4+c] = (s.buf[i*4+c] * (1.0-o) + col[c] * o);
-             /*s.buf[i*4+3] = s.buf[i*4+3] + o * (1.0-o);*/
            }
          i++;
         }
+    }
   }
   gegl_buffer_set (buffer, &roi, s.format, s.buf, 0);
 }

@@ -24,8 +24,9 @@
 #include "../bin/gegl-view.c"
 #include "property-types/gegl-vector.h"
 
-#define HARDNESS     0.8
-#define LINEWIDTH   10.0
+#define HARDNESS     0.2
+#define LINEWIDTH   60.0
+#define COLOR       "rgba(0.0,0.0,0.0,0.4)"
 
 GtkWidget *window;
 GtkWidget *view;
@@ -51,7 +52,7 @@ static gboolean  paint_press   (GtkWidget      *widget,
       over       = gegl_node_new_child (gegl, "operation", "over", NULL);
       stroke     = gegl_node_new_child (gegl, "operation", "stroke",
                                         "vector", vector,
-                                        "color", gegl_color_new ("rgba(1.0,0.5,0.5,0.4)"),
+                                        "color", gegl_color_new (COLOR),
                                         "linewidth", LINEWIDTH,
                                         "hardness", HARDNESS,
                                         NULL);
@@ -144,7 +145,7 @@ main (gint    argc,
       buffer = gegl_buffer_new (&(GeglRectangle){0,0,512,512},
                                 babl_format("RGBA float"));
       buf = g_malloc(512*512);
-      memset (buf, 255, 512*512);
+      memset (buf, 255, 512*512); /* FIXME: we need a babl_buffer_paint () */
       gegl_buffer_set (buffer, NULL, babl_format ("Y' u8"), buf, 0);
       g_free (buf);
     }
@@ -153,9 +154,8 @@ main (gint    argc,
 
 
   gegl = gegl_node_new ();
-
 {
-        GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "load-buffer", "buffer", buffer, NULL);
+   GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "load-buffer", "buffer", buffer, NULL);
    out = gegl_node_new_child (gegl, "operation", "nop", NULL);
 
     gegl_node_link_many (loadbuf, out, NULL);

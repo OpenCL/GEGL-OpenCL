@@ -1,5 +1,19 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/gegl-paint.c: (paint_press), (main): modified the default
+	stroke to be thicker, and black.
+	* gegl/property-types/gegl-vector.c: (gegl_vector_stamp): fixed
+	rendering by swapping the x/y coordinates (actually the loops) in the
+	brush rendering/compositing code.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* examples/gegl-paint.c: (paint_press), (main):
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the stroke operation only emit and draw changes around the region
 	where lines segments have been added to the path.
 
