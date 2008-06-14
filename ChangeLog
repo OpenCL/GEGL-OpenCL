@@ -2,12 +2,14 @@
 
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
-	* configure.ac: bumped version to 0.0.18
+	* configure.ac: bumped version to 0.0.18.
 	* NEWS: updated with last minute changes.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl.c: fixed typo in splash.
 	* bin/editor-optype.c: (gegl_typeeditor_optype): do not add to size
-	gorup if it doesn't exist.
+	group if it doesn't exist.
 
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
