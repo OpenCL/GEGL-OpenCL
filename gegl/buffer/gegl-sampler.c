@@ -103,13 +103,14 @@ gegl_sampler_init (GeglSampler *self)
 
 void
 gegl_sampler_get (GeglSampler *self,
-                       gdouble           x,
-                       gdouble           y,
-                       void             *output)
+                  gdouble           x,
+                  gdouble           y,
+                  void             *output)
 {
   GeglSamplerClass *klass;
-
+#if 0  /* avoiding expensive typecheck here */
   g_return_if_fail (GEGL_IS_SAMPLER (self));
+#endif
 
   klass = GEGL_SAMPLER_GET_CLASS (self);
 
@@ -310,12 +311,10 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_NEAREST;
       case GEGL_INTERPOLATION_LINEAR:
         return GEGL_TYPE_SAMPLER_LINEAR;
-#if 0 /* disabled for now */
       case GEGL_INTERPOLATION_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
       case GEGL_INTERPOLATION_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
-#endif
       default:        
         return GEGL_TYPE_SAMPLER_LINEAR;
     }

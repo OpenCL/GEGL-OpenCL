@@ -1,5 +1,18 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	Bug 360888 – Adapt cubic and lanczos samplers for new framework
+
+	This bug is fixed now, further improvements might be desirable for the
+	code but all the interpolation code is in a working state now.
+
+	* gegl/buffer/gegl-sampler.c: 
+	(gegl_sampler_type_from_interpolation): enable lanczos and cubic.
+	* gegl/buffer/gegl-sampler-cubic.c:
+	* gegl/buffer/gegl-sampler-lanczos.c:
+	* gegl/buffer/gegl-sampler-linear.c:
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: commited new splash with updated list of contributors.
 
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>

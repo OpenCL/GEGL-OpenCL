@@ -93,10 +93,10 @@ static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
  GEGL_SAMPLER (self)->context_rect= (GeglRectangle){-1,-1,4,4};
- self->b=1;
- self->c=0;
+ GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+ self->b=1.0;
+ self->c=0.0;
  self->type = g_strdup("cubic");
- return;
  if (strcmp (self->type, "cubic"))
     {
       /* cubic B-spline */
@@ -113,7 +113,6 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
     {
       self->c = (1.0 - self->b) / 2.0;
     }
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 void
@@ -132,6 +131,7 @@ gegl_sampler_cubic_get (GeglSampler *self,
   gfloat            dst[4];
   gint              u,v;
   gint              dx,dy;
+  gint              i;
 
   context_rect = self->context_rect;
   dx = (gint) x;
@@ -163,11 +163,11 @@ gegl_sampler_cubic_get (GeglSampler *self,
       arecip = 1.0 / newval[3];
     }
 
-  /* FIXME: shouldn't clamp a computed value like this, it gets evaluated twice */
-  dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
-  dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
-  dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
-  dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+  for ( i=0 ;  i < 3 ; i++ )
+    newval[i] *= arecip;
+  for ( i=0 ;  i < 4 ; i++ )
+    dst[i] = CLAMP (newval[i], 0, G_MAXDOUBLE);
+
 
   babl_process (babl_fish (self->interpolate_format, self->format),
                 dst, output, 1);

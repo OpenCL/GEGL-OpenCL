@@ -206,11 +206,10 @@ gegl_sampler_lanczos_get (GeglSampler *self,
     {
       arecip = 1.0 / newval[3];
     }
-
-  dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
-  dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
-  dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
-  dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+  for ( i=0 ;  i < 3 ; i++ )
+    newval[i] *= arecip;
+  for ( i=0 ;  i < 4 ; i++ )
+    dst[i] = CLAMP (newval[i], 0, G_MAXDOUBLE);
 
   babl_process (babl_fish (self->interpolate_format, self->format),
                 dst, output, 1);
