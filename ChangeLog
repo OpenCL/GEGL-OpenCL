@@ -1,5 +1,11 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: fixed typo in splash.
+	* bin/editor-optype.c: (gegl_typeeditor_optype): do not add to size
+	gorup if it doesn't exist.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.c: (set_property): remove change to quieten
 	gcc, the variable is not used but we need something of it's type, and
 	what it can be initialized with varies from platform to platform.

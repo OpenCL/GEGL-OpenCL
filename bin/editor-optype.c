@@ -423,7 +423,7 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
   gtk_box_pack_start (GTK_BOX (hbox2), entry, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (button), button_arrow);
-  if (label)
+  if (label && col1)
     {
       gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
       gtk_size_group_add_widget (col1, label);
