@@ -17,14 +17,19 @@
  */
 
 #include "config.h"
+
 #include <glib-object.h>
-#include "gegl-types.h"
-#include "graph/gegl-node.h"
-#include "gegl-processor.h"
-#include "gegl-utils.h"
+
 #include "buffer/gegl-region.h"
+
+#include "graph/gegl-node.h"
+
 #include "operation/gegl-operation-sink.h"
+
 #include "gegl-config.h"
+#include "gegl-processor.h"
+#include "gegl-types.h"
+#include "gegl-utils.h"
 
 
 enum

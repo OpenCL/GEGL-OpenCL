@@ -1,5 +1,9 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/process/gegl-processor.c: Organize #includes.
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/process/gegl-processor.c: Further general cleanup.
 
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
