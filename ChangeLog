@@ -1,5 +1,11 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (set_property): remove change to quieten
+	gcc, the variable is not used but we need something of it's type, and
+	what it can be initialized with varies from platform to platform.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Bug 360888 – Adapt cubic and lanczos samplers for new framework
 
 	This bug is fixed now, further improvements might be desirable for the

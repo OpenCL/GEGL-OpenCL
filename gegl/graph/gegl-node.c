@@ -150,7 +150,7 @@ gegl_node_class_init (GeglNodeClass *klass)
                                    g_param_spec_boolean ("dont-cache",
                                                          "Do not cache",
                                                         "Do not cache the result of this operation, the property is inherithed by children created from a node.",
-                                                        TRUE, 
+                                                        TRUE,
                                                         G_PARAM_READWRITE));
 
 
@@ -303,9 +303,9 @@ set_property (GObject      *gobject,
       case PROP_OP_CLASS:
         {
           va_list null; /* dummy to pass along, it's not used anyways since
-                         * the preceding argument is NULL
+                         * the preceding argument is NULL, gcc might warn about
+                         * use of uninitialized variable.
                          */
-          null = 0;
           gegl_node_set_op_class (node, g_value_get_string (value), NULL, null);
         }
         break;
