@@ -33,7 +33,7 @@ ENSCRIPT_FILES = \
 	gegl-operation-point-render.h.html    \
 	gegl-operation-temporal.h.html        \
 	gegl-operation-sink.h.html            \
-	gegl-operation-source.h.html
+	gegl-operation-source.h.html	      \
 	gegl-plugin.h.html
 
 HTML_FILES += $(ENSCRIPT_FILES)
@@ -193,16 +193,16 @@ uninstall-local:
 if HAVE_ENSCRIPT
 	rm -f $(help_dir)/brightness-contrast.c.html $(help_dir)/gegl.h.html
 	rm -f $(help_dir)/gegl-operation.h.html $(help_dir)/gegl-plugin.h.html \
-	    $(helpdir)/gegl-operation-filter.h.html 	\
-	    $(helpdir)/gegl-operation-composer.h.html 	\
-	    $(helpdir)/gegl-operation-area-filter.h.html     \
-	    $(helpdir)/gegl-operation-meta.h.html            \
-	    $(helpdir)/gegl-operation-temporal.h.html            \
-	    $(helpdir)/gegl-operation-point-composer.h.html  \
-	    $(helpdir)/gegl-operation-point-filter.h.html    \
-	    $(helpdir)/gegl-operation-point-render.h.html    \
-	    $(helpdir)/gegl-operation-sink.h.html            \
-	    $(helpdir)/gegl-operation-source.h.html
+	    $(help_dir)/gegl-operation-filter.h.html 	\
+	    $(help_dir)/gegl-operation-composer.h.html 	\
+	    $(help_dir)/gegl-operation-area-filter.h.html     \
+	    $(help_dir)/gegl-operation-meta.h.html            \
+	    $(help_dir)/gegl-operation-temporal.h.html            \
+	    $(help_dir)/gegl-operation-point-composer.h.html  \
+	    $(help_dir)/gegl-operation-point-filter.h.html    \
+	    $(help_dir)/gegl-operation-point-render.h.html    \
+	    $(help_dir)/gegl-operation-sink.h.html            \
+	    $(help_dir)/gegl-operation-source.h.html
 endif
 if HAVE_RUBY
 	rm -f $(help_dir)/api.html
