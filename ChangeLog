@@ -1,5 +1,9 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* operations/workshop/stroke.c (get_bounding_box): Format
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* examples/gegl-paint.c: Some cleanup.
 
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>

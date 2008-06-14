@@ -48,15 +48,15 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle defined = {0,0, 512,512};
-  gdouble x0,x1,y0,y1;
+  GeglChantO    *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle  defined = { 0, 0, 512, 512 };
+  gdouble        x0, x1, y0, y1;
 
   gegl_vector_get_bounds (o->vector, &x0, &x1, &y0, &y1);
-  defined.x = x0 - o->linewidth;
-  defined.y = y0 - o->linewidth;
-  defined.width = x1-x0 + o->linewidth * 2;
-  defined.height = y1-y0 + o->linewidth * 2;
+  defined.x      = x0 - o->linewidth;
+  defined.y      = y0 - o->linewidth;
+  defined.width  = x1 - x0 + o->linewidth * 2;
+  defined.height = y1 - y0 + o->linewidth * 2;
 
   return defined;
 }
