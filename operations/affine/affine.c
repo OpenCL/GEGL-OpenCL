@@ -635,10 +635,6 @@ get_invalidated_by_change (GeglOperation       *op,
 
 }
 
-void  gegl_sampler_prepare     (GeglSampler *self);
-  /*XXX: Eeeek, obsessive avoidance of public headers, the API needed to
-   *     satisfy this use case should probably be provided.
-   */
 
 static void
 affine_generic (GeglBuffer        *dest,
@@ -646,6 +642,7 @@ affine_generic (GeglBuffer        *dest,
                 Matrix3            matrix,
                 GeglSampler       *sampler)
 {
+  GeglBufferIterator *i;
   const GeglRectangle *dest_extent;
   gint                  x, y;
   gfloat               *dest_buf,
@@ -669,45 +666,45 @@ affine_generic (GeglBuffer        *dest,
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
 
-  dest_buf = g_new (gfloat, dest_pixels * 4);
 
-  matrix3_copy (inverse, matrix);
-  matrix3_invert (inverse);
-
-  u_start = inverse[0][0] * dest_extent->x + inverse[0][1] * dest_extent->y
-            + inverse[0][2];
-  v_start = inverse[1][0] * dest_extent->x + inverse[1][1] * dest_extent->y
-            + inverse[1][2];
-
-    /* correct rounding on e.g. negative scaling (is this sound?) */
-  if (inverse [0][0] < 0.)
-    u_start -= .001;
-  if (inverse [1][1] < 0.)
-    v_start -= .001;
-
-  for (dest_ptr = dest_buf, y = dest_extent->height; y--;)
+  i = gegl_buffer_iterator_new (dest, dest_extent, format, GEGL_BUFFER_WRITE);
+  while (gegl_buffer_iterator_next (i))
     {
-      u_float = u_start;
-      v_float = v_start;
+      GeglRectangle *roi = &i->roi[0];
+      dest_buf           = (gfloat *)i->data[0];
 
-      for (x = dest_extent->width; x--;)
+      matrix3_copy (inverse, matrix);
+      matrix3_invert (inverse);
+
+      u_start = inverse[0][0] * roi->x + inverse[0][1] * roi->y + inverse[0][2];
+      v_start = inverse[1][0] * roi->x + inverse[1][1] * roi->y + inverse[1][2];
+
+      /* correct rounding on e.g. negative scaling (is this sound?) */
+      if (inverse [0][0] < 0.)  u_start -= .001;
+      if (inverse [1][1] < 0.)  v_start -= .001;
+
+      for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
-          gegl_sampler_get (sampler, u_float, v_float, dest_ptr);
+           u_float = u_start;
+           v_float = v_start;
 
-          dest_ptr+=4;
-
-          u_float += inverse [0][0];
-          v_float += inverse [1][0];
+           for (x = roi->width; x--;)
+             {
+               gegl_sampler_get (sampler, u_float, v_float, dest_ptr);
+               dest_ptr+=4;
+               u_float += inverse [0][0];
+               v_float += inverse [1][0];
+             }
+           u_start += inverse [0][1];
+           v_start += inverse [1][1];
         }
-      u_start += inverse [0][1];
-      v_start += inverse [1][1];
     }
-
-  gegl_buffer_set (dest, NULL, format, dest_buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (dest_buf);
 }
 
-
+void  gegl_sampler_prepare     (GeglSampler *self);
+  /*XXX: Eeeek, obsessive avoidance of public headers, the API needed to
+   *     satisfy this use case should probably be provided.
+   */
 
 static gboolean
 process (GeglOperation       *operation,
@@ -733,19 +730,10 @@ process (GeglOperation       *operation,
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                             "source",    input,
-                             "x",           result->x,
-                             "y",           result->y,
-                             "width",       result->width ,
-                             "height",      result->height,
-                             "shift-x",     (gint) - affine->matrix [0][2],
-                             "shift-y",     (gint) - affine->matrix [1][2],
-                             "abyss-width", -1, /* use source's abyss */
-                             NULL);
-      /* fast path for affine translate with integer coordinates */
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-      return TRUE;
+      GeglRectangle input_rectangle = *result;
+      input_rectangle.x += (gint) affine->matrix [0][2];
+      input_rectangle.y += (gint) affine->matrix [1][2];
+      gegl_buffer_copy (input, NULL, output, &input_rectangle);
     }
 #endif
   else

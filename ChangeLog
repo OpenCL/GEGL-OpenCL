@@ -1,3 +1,10 @@
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-sampler.c: (gegl_sampler_get_from_buffer):
+	indentation.
+	* operations/affine/affine.c: (affine_generic), (process): migrated to
+	use GeglBufferIterator for efficiency (patch from Geer Jordaens).
+
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/process/gegl-processor.c

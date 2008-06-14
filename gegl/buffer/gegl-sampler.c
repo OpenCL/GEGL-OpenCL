@@ -180,8 +180,8 @@ dispose (GObject *gobject)
 
 gfloat *
 gegl_sampler_get_from_buffer (GeglSampler *sampler,
-                              gint       x,
-                              gint       y)
+                              gint         x,
+                              gint         y)
 {
    const GeglRectangle *buffer_rectangle;
    guchar              *buffer_ptr;
@@ -193,16 +193,17 @@ gegl_sampler_get_from_buffer (GeglSampler *sampler,
    /* Initialise */
    bpp = sampler->interpolate_format->format.bytes_per_pixel;
    buffer_rectangle  = gegl_buffer_get_extent(sampler->buffer);
+
    if ( !gegl_rectangle_contains (buffer_rectangle, &sampler->sampler_rectangle) ||
         sampler->sampler_buffer == NULL )
      {
        gint buffer_size = (buffer_rectangle->width *
                            buffer_rectangle->height *
                            bpp);
-       if (  sampler->sampler_buffer == NULL )
-         sampler->sampler_buffer    = g_malloc0 (buffer_size);
+       if (sampler->sampler_buffer == NULL )
+         sampler->sampler_buffer = g_malloc0 (buffer_size);
        else
-         sampler->sampler_buffer    = g_realloc (sampler->sampler_buffer, buffer_size);
+         sampler->sampler_buffer = g_realloc (sampler->sampler_buffer, buffer_size);
        gegl_buffer_get (sampler->buffer,
                         1.0,
                         buffer_rectangle,
