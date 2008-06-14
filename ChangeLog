@@ -1,3 +1,7 @@
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl.c: commited new splash with updated list of contributors.
+
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/process/gegl-processor.c: Function definition cleanups.
@@ -10,6 +14,10 @@
 
 	* gegl/process/gegl-processor.c: Aligned static function
 	prototypes.
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: updates news.
 
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
