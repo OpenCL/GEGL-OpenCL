@@ -1,5 +1,10 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/process/gegl-processor.c: Prefix local functions with
+	gegl_processor_.
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/process/gegl-processor.c: Formating. Adjusted newlines,
 	added brackets around single-lined ifs, and aligned stuff.
 

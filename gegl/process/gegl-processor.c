@@ -37,21 +37,21 @@ enum
 };
 
 
-static void      gegl_processor_class_init (GeglProcessorClass    *klass);
-static void      gegl_processor_init       (GeglProcessor         *self);
-static void      finalize                  (GObject               *self_object);
-static void      set_property              (GObject               *gobject,
-                                            guint                  prop_id,
-                                            const GValue          *value,
-                                            GParamSpec            *pspec);
-static void      get_property              (GObject               *gobject,
-                                            guint                  prop_id,
-                                            GValue                *value,
-                                            GParamSpec            *pspec);
-static GObject * constructor               (GType                  type,
-                                            guint                  n_params,
-                                            GObjectConstructParam *params);
-static gdouble   gegl_processor_progress   (GeglProcessor         *processor);
+static void      gegl_processor_class_init   (GeglProcessorClass    *klass);
+static void      gegl_processor_init         (GeglProcessor         *self);
+static void      gegl_processor_finalize     (GObject               *self_object);
+static void      gegl_processor_set_property (GObject               *gobject,
+                                              guint                  prop_id,
+                                              const GValue          *value,
+                                              GParamSpec            *pspec);
+static void      gegl_processor_get_property (GObject               *gobject,
+                                              guint                  prop_id,
+                                              GValue                *value,
+                                              GParamSpec            *pspec);
+static GObject * gegl_processor_constructor  (GType                  type,
+                                              guint                  n_params,
+                                              GObjectConstructParam *params);
+static gdouble   gegl_processor_progress     (GeglProcessor         *processor);
 
 
 struct _GeglProcessor
@@ -81,10 +81,10 @@ gegl_processor_class_init (GeglProcessorClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->finalize     = finalize;
-  gobject_class->constructor  = constructor;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
+  gobject_class->finalize     = gegl_processor_finalize;
+  gobject_class->constructor  = gegl_processor_constructor;
+  gobject_class->set_property = gegl_processor_set_property;
+  gobject_class->get_property = gegl_processor_get_property;
 
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
@@ -128,9 +128,9 @@ gegl_processor_init (GeglProcessor *processor)
 }
 
 static GObject *
-constructor (GType                  type,
-             guint                  n_params,
-             GObjectConstructParam *params)
+gegl_processor_constructor (GType                  type,
+                            guint                  n_params,
+                            GObjectConstructParam *params)
 {
   GObject       *object;
   GeglProcessor *processor;
@@ -166,7 +166,7 @@ constructor (GType                  type,
 }
 
 static void
-finalize (GObject *self_object)
+gegl_processor_finalize (GObject *self_object)
 {
   GeglProcessor *processor = GEGL_PROCESSOR (self_object);
 
@@ -194,10 +194,10 @@ finalize (GObject *self_object)
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_processor_set_property (GObject      *gobject,
+                             guint         property_id,
+                             const GValue *value,
+                             GParamSpec   *pspec)
 {
   GeglProcessor *self = GEGL_PROCESSOR (gobject);
 
@@ -226,10 +226,10 @@ set_property (GObject      *gobject,
 }
 
 static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_processor_get_property (GObject    *gobject,
+                             guint       property_id,
+                             GValue     *value,
+                             GParamSpec *pspec)
 {
   GeglProcessor *self = GEGL_PROCESSOR (gobject);
 
