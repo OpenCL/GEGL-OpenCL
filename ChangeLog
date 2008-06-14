@@ -1,5 +1,9 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/gegl-config.c (gegl_config_init): Formating.
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/process/gegl-processor.c: Aligned static function
 	prototypes.
 
