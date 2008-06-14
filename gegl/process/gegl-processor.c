@@ -31,7 +31,8 @@ enum
   PROP_0,
   PROP_NODE,
   PROP_CHUNK_SIZE,
-  PROP_PROGRESS
+  PROP_PROGRESS,
+  PROP_RECTANGLE
 };
 
 static void      gegl_processor_class_init (GeglProcessorClass    *klass);
@@ -87,6 +88,10 @@ gegl_processor_class_init (GeglProcessorClass *klass)
                                                         GEGL_TYPE_NODE,
                                                         G_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_RECTANGLE,
+                                   g_param_spec_pointer ("rectangle", "rectangle", "The rectangle of the region to process.",
+                                                         G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_PROGRESS,
                                    g_param_spec_double ("progress", "progress", "query progress 0.0 is not started 1.0 is done.",
@@ -186,6 +191,10 @@ set_property (GObject      *gobject,
         self->chunk_size = g_value_get_int (value);
         break;
 
+      case PROP_RECTANGLE:
+        gegl_processor_set_rectangle (self, g_value_get_pointer (value));
+        break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -204,6 +213,10 @@ get_property (GObject    *gobject,
     {
       case PROP_NODE:
         g_value_set_object (value, self->node);
+        break;
+
+      case PROP_RECTANGLE:
+        g_value_set_pointer (value, &self->rectangle);
         break;
 
       case PROP_CHUNK_SIZE:
@@ -225,6 +238,13 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 {
   GSList        *iter;
   GeglRectangle  bounds;
+  GeglRectangle  input_bounding_box;
+
+  if (! rectangle)
+    {
+      input_bounding_box = gegl_node_get_bounding_box (processor->input);
+      rectangle          = &input_bounding_box;
+    }
 
   if (gegl_rectangle_equal (&processor->rectangle, rectangle))
     return;
@@ -248,17 +268,10 @@ gegl_node_new_processor (GeglNode            *node,
 
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  processor = g_object_new (GEGL_TYPE_PROCESSOR, "node", node, NULL);
-
-  if (rectangle)
-    {
-      gegl_processor_set_rectangle (processor, rectangle);
-    }
-  else
-    {
-      GeglRectangle tmp = gegl_node_get_bounding_box (processor->input);
-      gegl_processor_set_rectangle (processor, &tmp);
-    }
+  processor = g_object_new (GEGL_TYPE_PROCESSOR,
+                            "node",      node,
+                            "rectangle", rectangle,
+                            NULL);
 
   if (node->operation &&
       GEGL_IS_OPERATION_SINK (node->operation))

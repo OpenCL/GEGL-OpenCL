@@ -1,3 +1,14 @@
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-processor.c: Made the processing rectangle
+	accessible as a GObject property.
+
+	(gegl_processor_set_rectangle): When passed a NULL rectangle, use
+	the bounding box of the input node.
+
+	(gegl_node_new_processor): Simply pass the rectangle to
+	g_object_new().
+
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: bumped version to 0.0.19.
