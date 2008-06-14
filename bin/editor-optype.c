@@ -396,6 +396,8 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
 
   hbox = gtk_hbox_new (FALSE, 5);
   if (col1) label = gtk_label_new ("operation");
+    else
+  label = gtk_label_new ("add:");
   hbox2 = gtk_hbox_new (FALSE, 0);
   entry = gtk_entry_new ();
   if (!col1)
@@ -413,7 +415,7 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
     }
   else
     {
-      current_type = g_strdup ("Enter action here");
+      current_type = g_strdup ("Type a GEGL operation, or examine to dropdown menu to the right");
     }
 
   if (label) gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
