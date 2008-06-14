@@ -34,21 +34,21 @@ enum
   PROP_PROGRESS
 };
 
-static void gegl_processor_class_init (GeglProcessorClass *klass);
-static void gegl_processor_init       (GeglProcessor      *self);
-static void finalize                  (GObject            *self_object);
-static void set_property              (GObject            *gobject,
-                                       guint               prop_id,
-                                       const GValue       *value,
-                                       GParamSpec         *pspec);
-static void get_property              (GObject            *gobject,
-                                       guint               prop_id,
-                                       GValue             *value,
-                                       GParamSpec         *pspec);
-static GObject * constructor          (GType                  type,
-                                       guint                  n_params,
-                                       GObjectConstructParam *params);
-static gdouble   gegl_processor_progress (GeglProcessor *processor);
+static void      gegl_processor_class_init (GeglProcessorClass    *klass);
+static void      gegl_processor_init       (GeglProcessor         *self);
+static void      finalize                  (GObject               *self_object);
+static void      set_property              (GObject               *gobject,
+                                            guint                  prop_id,
+                                            const GValue          *value,
+                                            GParamSpec            *pspec);
+static void      get_property              (GObject               *gobject,
+                                            guint                  prop_id,
+                                            GValue                *value,
+                                            GParamSpec            *pspec);
+static GObject * constructor               (GType                  type,
+                                            guint                  n_params,
+                                            GObjectConstructParam *params);
+static gdouble   gegl_processor_progress   (GeglProcessor         *processor);
 
 struct _GeglProcessor
 {
