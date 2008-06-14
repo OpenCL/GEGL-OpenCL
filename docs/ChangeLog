@@ -1,5 +1,10 @@
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: rearranged dependencies so ruby is a bullet
+	(with a note).
+
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: remove gegl.devhelp upon make clean.
 
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
