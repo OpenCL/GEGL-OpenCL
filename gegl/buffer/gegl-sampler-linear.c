@@ -14,28 +14,36 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gegl-sampler-linear.h"
+
+
+#include <glib-object.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
+#include "gegl-types.h"
 #include "gegl-buffer-private.h"
+#include "gegl-sampler-linear.h"
 #include <string.h>
+#include <math.h>
+
+
 enum
 {
   PROP_0,
-  PROP_CONTEXT_PIXELS,
   PROP_LAST
 };
 
-static void    gegl_sampler_linear_get (GeglSampler *self,
-                                        gdouble           x,
-                                        gdouble           y,
-                                        void             *output);
+static void    gegl_sampler_linear_get (GeglSampler  *self,
+                                        gdouble       x,
+                                        gdouble       y,
+                                        void         *output);
 static void    set_property            (GObject      *gobject,
                                         guint         prop_id,
                                         const GValue *value,
                                         GParamSpec   *pspec);
-static void    get_property            (GObject    *gobject,
-                                        guint       prop_id,
-                                        GValue     *value,
-                                        GParamSpec *pspec);
+static void    get_property            (GObject      *gobject,
+                                        guint         prop_id,
+                                        GValue       *value,
+                                        GParamSpec   *pspec);
 
 
 G_DEFINE_TYPE (GeglSamplerLinear, gegl_sampler_linear, GEGL_TYPE_SAMPLER)
@@ -50,99 +58,73 @@ gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
   object_class->get_property = get_property;
 
   sampler_class->get     = gegl_sampler_linear_get;
-
-  g_object_class_install_property (object_class, PROP_CONTEXT_PIXELS,
-                                   g_param_spec_int ("context-pixels",
-                                                     "ContextPixels",
-                                                     "number of neighbourhood pixels needed in each direction",
-                                                     0, 16, 1,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
-
 }
 
 static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
-  GEGL_SAMPLER (self)->context_pixels=1;
+  GEGL_SAMPLER (self)->context_rect = (GeglRectangle){ 0, 0, 2, 2};
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 void
-gegl_sampler_linear_get (GeglSampler *sampler,
-                              gdouble           x,
-                              gdouble           y,
-                              void             *output)
+gegl_sampler_linear_get (GeglSampler *self,
+                         gdouble      x,
+                         gdouble      y,
+                         void        *output)
 {
-  GeglRectangle *rect;
-  gfloat        *cache_buffer;
-  gfloat         dst[4];
-  gfloat         abyss = 0.;
+  GeglRectangle      context_rect = self->context_rect;
+  gfloat            *sampler_bptr;
+  gfloat             abyss = 0.;
+  gfloat             dst[4];
+  gdouble            arecip;
+  gdouble            newval[4];
+  gdouble            q[4];
+  gdouble            dx,dy;
+  gdouble            uf, vf;
+  gint               u,v;
+  gint               i;
 
-  gegl_sampler_fill_buffer (sampler, x, y);
-  rect = &sampler->cache_rectangle;
-  cache_buffer = sampler->cache_buffer;
-  if (!cache_buffer)
-    return;
 
-  if (x >= rect->x &&
-      y >= rect->y &&
-      x < rect->x+rect->width &&
-      y < rect->y+rect->height)
+  uf = x - (gint) x;
+  vf = y - (gint) y;
+
+  q[0] = (1 - uf) * (1 - vf);
+  q[1] = uf * (1 - vf);
+  q[2] = (1 - uf) * vf;
+  q[3] = uf * vf;
+  dx = (gint) x;
+  dy = (gint) y;
+  newval[0] = newval[1] = newval[2] = newval[3] = 0.;
+  for (i=0, v=dy+context_rect.y; v < dy+context_rect.height ; v++)
+    for (u=dx+context_rect.x; u < dx+context_rect.width  ; u++, i++)
+      {
+        sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
+        newval[0] += q[i] * sampler_bptr[0] * sampler_bptr[3];
+        newval[1] += q[i] * sampler_bptr[1] * sampler_bptr[3];
+        newval[2] += q[i] * sampler_bptr[2] * sampler_bptr[3];
+        newval[3] += q[i] * sampler_bptr[3];
+      }
+
+  if (newval[3] <= abyss)
     {
-      gint     i;
-      gint     x0;
-      gint     y0;
-      gint     x1;
-      gint     y1;
-      gint     u;
-      gint     v;
-      gdouble  uf;
-      gdouble  vf;
-      gdouble  q1;
-      gdouble  q2;
-      gdouble  q3;
-      gdouble  q4;
-      gfloat * p00;
-      gfloat * p01;
-      gfloat * p10;
-      gfloat * p11;
-      x -= rect->x;
-      y -= rect->y;
-      x0 = 0;
-      y0 = 0;
-      x1 = rect->width - 1;
-      y1 = rect->height - 1;
-      u  = (gint) x;
-      v  = (gint) y;
-      uf = x - u;
-      vf = y - v;
-      q1 = (1 - uf) * (1 - vf);
-      q2 = uf * (1 - vf);
-      q3 = (1 - uf) * vf;
-      q4 = uf * vf;
-      p00 = cache_buffer + (v * rect->width + u) * 4;
-      u = CLAMP ((gint) x + 0, x0, x1);
-      v = CLAMP ((gint) y + 1, y0, y1);
-      p01 = cache_buffer + (v * rect->width + u) * 4;
-      u = CLAMP ((gint) x + 1, x0, x1);
-      v = CLAMP ((gint) y + 0, y0, y1);
-      p10 = cache_buffer + (v * rect->width + u) * 4;
-      u = CLAMP ((gint) x + 1, x0, x1);
-      v = CLAMP ((gint) y + 1, y0, y1);
-      p11 = cache_buffer + (v * rect->width + u) * 4;
-      for (i = 0; i < 4; i++)
-        {
-          dst[i] = q1 * p00[i] + q2 * p10[i] + q3 * p01[i] + q4 * p11[i];
-        }
+      arecip    = abyss;
+      newval[3] = abyss;
+    }
+  else if (newval[3] > G_MAXDOUBLE)
+    {
+      arecip    = 1.0 / newval[3];
+      newval[3] = G_MAXDOUBLE;
     }
   else
     {
-      dst[0] = abyss;
-      dst[1] = abyss;
-      dst[2] = abyss;
-      dst[3] = abyss;
+      arecip = 1.0 / newval[3];
     }
-  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
+  dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
+  dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
+  dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
+  dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+  babl_process (babl_fish (self->interpolate_format, self->format),
                 dst, output, 1);
 }
 
@@ -156,9 +138,6 @@ set_property (GObject      *gobject,
 {
   switch (property_id)
     {
-      case PROP_CONTEXT_PIXELS:
-        g_object_set_property (gobject, "GeglSampler::context-pixels", value);
-        break;
 
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -174,9 +153,6 @@ get_property (GObject    *gobject,
 {
   switch (property_id)
     {
-      case PROP_CONTEXT_PIXELS:
-        g_object_get_property (gobject, "GeglSampler::context-pixels", value);
-        break;
 
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);

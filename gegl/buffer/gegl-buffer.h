@@ -41,7 +41,7 @@ typedef struct _GeglBuffer     GeglBuffer;
  */
 GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 
-/** 
+/**
  * gegl_buffer_new:
  * @extent: the geometry of the buffer (origin, width and height) a
  * GeglRectangle.
@@ -105,7 +105,7 @@ GeglBuffer     *gegl_buffer_load              (const gchar         *path);
 void            gegl_buffer_flush             (GeglBuffer          *buffer);
 
 
-/** 
+/**
  * gegl_buffer_create_sub_buffer:
  * @buffer: parent buffer.
  * @extent: coordinates of new buffer.
@@ -273,7 +273,7 @@ void            gegl_buffer_copy              (GeglBuffer          *src,
                                                const GeglRectangle *dst_rect);
 
 
-/** 
+/**
  * gegl_buffer_dup:
  * @buffer: the GeglBuffer to duplicate.
  *
@@ -286,6 +286,8 @@ GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
 typedef enum {
   GEGL_INTERPOLATION_NEAREST = 0,
   GEGL_INTERPOLATION_LINEAR,
+  GEGL_INTERPOLATION_CUBIC,
+  GEGL_INTERPOLATION_LANCZOS,
 } GeglInterpolation;
 
 /**
@@ -298,7 +300,9 @@ typedef enum {
  * @format: the format to store the sampled color in.
  * @interpolation: the interpolation behavior to use, currently only nearest
  * neighbour is implemented for this API, bilinear, bicubic and lanczos needs
- * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST
+ * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST and
+ * GEGL_INTERPOLATION_LINEAR, CUBIC and LANCZOS will become available for now they
+ * fall back to linear.
  *
  * Resample the buffer at some given coordinates using a specified format. For
  * some operations this might be sufficient, but it might be considered
@@ -313,6 +317,7 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                const Babl       *format,
                                                GeglInterpolation interpolation);
 
+
 /**
  * gegl_buffer_sample_cleanup:
  * @buffer: the GeglBuffer to sample from
@@ -321,7 +326,7 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
  * automatically later when the buffer is destroyed, for long lived buffers
  * cleaning up the sampling infrastructure when it has been used for its
  * purpose will sometimes be more efficient).
- */ 
+ */
 void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
 /**
@@ -332,6 +337,7 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
  * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
  */
 GeglInterpolation gegl_buffer_interpolation_from_string (const gchar *string);
+
 
 /**
  */

@@ -18,10 +18,16 @@
 /* XXX WARNING: This code compiles, but is functionally broken, and
  * currently not used by the rest of GeglBuffer */
 
+
+#include <glib-object.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
+#include "gegl-types.h"
+#include "gegl-buffer-private.h"
 #include "gegl-sampler-lanczos.h"
-#include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
 #include <math.h>
+
 
 enum
 {
@@ -30,6 +36,185 @@ enum
   PROP_LANCZOS_SAMPLES,
   PROP_LAST
 };
+
+static inline gdouble sinc (gdouble x);
+static void           lanczos_lookup (GeglSamplerLanczos *sampler);
+static void           gegl_sampler_lanczos_get (GeglSampler  *sampler,
+                                                gdouble       x,
+                                                gdouble       y,
+                                                void         *output);
+static void           get_property             (GObject      *gobject,
+                                                guint         prop_id,
+                                                GValue       *value,
+                                                GParamSpec   *pspec);
+static void           set_property             (GObject      *gobject,
+                                                guint         prop_id,
+                                                const GValue *value,
+                                                GParamSpec   *pspec);
+static GObject *
+gegl_sampler_lanczos_constructor (GType                  type,
+                                  guint                  n_params,
+                                  GObjectConstructParam *params);
+static void finalize (GObject *object);
+
+
+G_DEFINE_TYPE (GeglSamplerLanczos, gegl_sampler_lanczos, GEGL_TYPE_SAMPLER)
+static GObjectClass * parent_class = NULL;
+
+
+static void
+gegl_sampler_lanczos_class_init (GeglSamplerLanczosClass *klass)
+{
+  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
+  GObjectClass     *object_class = G_OBJECT_CLASS (klass);
+  parent_class                = g_type_class_peek_parent (klass);
+  object_class->finalize     = finalize;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
+  object_class->constructor  = gegl_sampler_lanczos_constructor;
+
+  sampler_class->get     = gegl_sampler_lanczos_get;
+
+  g_object_class_install_property (object_class, PROP_LANCZOS_WIDTH,
+                                   g_param_spec_int ("lanczos_width",
+                                                     "lanczos_width",
+                                                     "Width of the lanczos filter",
+                                                     3,
+                                                     21,
+                                                     3,
+                                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+
+  g_object_class_install_property (object_class, PROP_LANCZOS_SAMPLES,
+                                   g_param_spec_int ("lanczos_spp",
+                                                     "lanczos_spp",
+                                                     "Sampels per pixels",
+                                                     4000,
+                                                     10000,
+                                                     4000,
+                                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+
+}
+
+static void
+gegl_sampler_lanczos_init (GeglSamplerLanczos *self)
+{
+
+}
+
+static GObject *
+gegl_sampler_lanczos_constructor (GType                  type,
+                                  guint                  n_params,
+                                  GObjectConstructParam *params)
+{
+  GObject            *object;
+  GeglSamplerLanczos *self;
+  gint                i;
+
+  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  self   = GEGL_SAMPLER_LANCZOS (object);
+  for (i = 0; i < n_params; i++) {
+    if (!strcmp (params[i].pspec->name, "lanczos_spp"))
+      g_object_set(object, params[i].pspec->name, g_value_get_int (params[i].value), NULL);
+    if (!strcmp (params[i].pspec->name, "lanczos_width"))
+      g_object_set(object, params[i].pspec->name, g_value_get_int (params[i].value), NULL);
+  }
+
+  lanczos_lookup (self);
+  return object;
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglSamplerLanczos *self    = GEGL_SAMPLER_LANCZOS (object);
+
+  if ( self->lanczos_lookup != NULL )
+    {
+       g_free (self->lanczos_lookup);
+       self->lanczos_lookup = NULL;
+     }
+
+  G_OBJECT_CLASS (gegl_sampler_lanczos_parent_class)->finalize (object);
+}
+
+void
+gegl_sampler_lanczos_get (GeglSampler *self,
+                          gdouble      x,
+                          gdouble      y,
+                          void        *output)
+{
+  GeglSamplerLanczos      *lanczos      = GEGL_SAMPLER_LANCZOS (self);
+  GeglRectangle            context_rect = self->context_rect;
+  gfloat                  *sampler_bptr;
+  gdouble                  x_sum, y_sum, arecip;
+  gdouble                  newval[4];
+
+  gfloat                   dst[4];
+  gint                     i, j;
+  gint                     spp    = lanczos->lanczos_spp;
+  gint                     width  = lanczos->lanczos_width;
+  gint                     width2 = context_rect.width;
+  gint                     dx,dy;
+  gint                     u,v;
+
+  gdouble                  x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
+                           y_kernel[width2];
+
+  self->interpolate_format = babl_format ("RaGaBaA float");
+
+  dx = (gint) ((x - ((gint) x)) * spp + 0.5);
+  dy = (gint) ((y - ((gint) y)) * spp + 0.5);
+  /* fill 1D kernels */
+  for (x_sum = y_sum = 0.0, i = width; i >= -width; i--)
+    {
+      gint pos    = i * spp;
+      x_sum += x_kernel[width + i] = lanczos->lanczos_lookup[ABS (dx - pos)];
+      y_sum += y_kernel[width + i] = lanczos->lanczos_lookup[ABS (dy - pos)];
+    }
+
+  /* normalise the weighted arrays */
+  for (i = 0; i < width2; i++)
+    {
+      x_kernel[i] /= x_sum;
+      y_kernel[i] /= y_sum;
+    }
+  arecip    = 0.0;
+  newval[0] = newval[1] = newval[2] = newval[3] = 0.0;
+
+  dx = (gint) x;
+  dy = (gint) y;
+  for (v=dy+context_rect.y, j = 0; v < dy+context_rect.y+context_rect.height; j++, v++)
+    for (u=dx+context_rect.x, i = 0; u < dx+context_rect.x+context_rect.width; i++, u++)
+      {
+         sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
+         newval[0] += y_kernel[j] * x_kernel[i] * sampler_bptr[0] * sampler_bptr[3];
+         newval[1] += y_kernel[j] * x_kernel[i] * sampler_bptr[1] * sampler_bptr[3];
+         newval[2] += y_kernel[j] * x_kernel[i] * sampler_bptr[2] * sampler_bptr[3];
+         newval[3] += y_kernel[j] * x_kernel[i] * sampler_bptr[3];
+      }
+  if (newval[3] <= 0.0)
+    {
+      arecip    = 0.0;
+      newval[3] = 0;
+    }
+  else if (newval[3] > G_MAXDOUBLE)
+    {
+      arecip    = 1.0 / newval[3];
+      newval[3] = G_MAXDOUBLE;
+    }
+  else
+    {
+      arecip = 1.0 / newval[3];
+    }
+
+  dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
+  dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
+  dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
+  dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+
+  babl_process (babl_fish (self->interpolate_format, self->format),
+                dst, output, 1);
+}
 
 static void
 get_property (GObject    *object,
@@ -65,7 +250,13 @@ set_property (GObject      *object,
   switch (prop_id)
     {
       case PROP_LANCZOS_WIDTH:
+        {
         self->lanczos_width = g_value_get_int (value);
+        GEGL_SAMPLER (self)->context_rect.x = - self->lanczos_width;
+        GEGL_SAMPLER (self)->context_rect.y = - self->lanczos_width;
+        GEGL_SAMPLER (self)->context_rect.width = self->lanczos_width*2+1;
+        GEGL_SAMPLER (self)->context_rect.height = self->lanczos_width*2+1;
+        }
         break;
 
       case PROP_LANCZOS_SAMPLES:
@@ -76,175 +267,6 @@ set_property (GObject      *object,
         break;
     }
 }
-
-static void    gegl_sampler_lanczos_get (GeglSampler *self,
-                                              gdouble           x,
-                                              gdouble           y,
-                                              void             *output);
-
-static void    gegl_sampler_lanczos_prepare (GeglSampler *self);
-
-static inline gdouble sinc (gdouble x);
-static void           lanczos_lookup (GeglSampler *sampler);
-
-G_DEFINE_TYPE (GeglSamplerLanczos, gegl_sampler_lanczos, GEGL_TYPE_SAMPLER)
-
-static void
-finalize (GObject *object)
-{
-  GeglSamplerLanczos *self         = GEGL_SAMPLER_LANCZOS (object);
-  GeglSampler        *sampler = GEGL_SAMPLER (object);
-
-  g_free (self->lanczos_lookup);
-  g_free (sampler->cache_buffer);
-  G_OBJECT_CLASS (gegl_sampler_lanczos_parent_class)->finalize (object);
-}
-
-static void
-gegl_sampler_lanczos_class_init (GeglSamplerLanczosClass *klass)
-{
-  GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
-  GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
-
-  object_class->finalize     = finalize;
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
-
-  sampler_class->prepare = gegl_sampler_lanczos_prepare;
-  sampler_class->get     = gegl_sampler_lanczos_get;
-
-  g_object_class_install_property (object_class, PROP_LANCZOS_WIDTH,
-                                   g_param_spec_int ("lanczos_width",
-                                                     "lanczos_width",
-                                                     "Width of the lanczos filter",
-                                                     3,
-                                                     21,
-                                                     3,
-                                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
-  g_object_class_install_property (object_class, PROP_LANCZOS_SAMPLES,
-                                   g_param_spec_int ("lanczos_spp",
-                                                     "lanczos_spp",
-                                                     "Sampels per pixels",
-                                                     4000,
-                                                     10000,
-                                                     4000,
-                                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
-}
-
-static void
-gegl_sampler_lanczos_init (GeglSamplerLanczos *self)
-{
-}
-
-void
-gegl_sampler_lanczos_prepare (GeglSampler *sampler)
-{
-  /*GeglBuffer *input = GEGL_BUFFER (sampler->input);*/
-
-  /* calculate lookup */
-  lanczos_lookup (sampler);
-}
-
-void
-gegl_sampler_lanczos_get (GeglSampler *sampler,
-                          gdouble           x,
-                          gdouble           y,
-                          void             *output)
-{
-  GeglSamplerLanczos *self   = GEGL_SAMPLER_LANCZOS (sampler);
-  GeglBuffer              *buffer  = sampler->buffer;
-  gfloat                  *cache_buffer;
-  gfloat                  *buf_ptr;
-
-  gdouble                  x_sum, y_sum, arecip;
-  gdouble                  newval[4];
-
-  gfloat                   dst[4];
-  gfloat                   abyss = 0.;
-  gint                     i, j, pos, pu, pv;
-  gint                     lanczos_spp    = self->lanczos_spp;
-  gint                     lanczos_width  = self->lanczos_width;
-  gint                     lanczos_width2 = lanczos_width * 2 + 1;
-
-  gdouble                  x_kernel[lanczos_width2], /* 1-D kernels of Lanczos window coeffs */
-                           y_kernel[lanczos_width2];
-  
-  gegl_sampler_fill_buffer (sampler, x, y);
-  cache_buffer = sampler->cache_buffer;
-  if (!cache_buffer)
-    return;
-
-  if (x >= 0 &&
-      y >= 0 &&
-      x < buffer->extent.width &&
-      y < buffer->extent.height)
-    {
-      gint u = (gint) x;
-      gint v = (gint) y;
-      /* get weight for fractional error */
-      gint su = (gint) ((x - u) * lanczos_spp + 0.5);
-      gint sv = (gint) ((y - v) * lanczos_spp + 0.5);
-      /* fill 1D kernels */
-      for (x_sum = y_sum = 0.0, i = lanczos_width; i >= -lanczos_width; i--)
-        {
-          pos    = i * lanczos_spp;
-          x_sum += x_kernel[lanczos_width + i] = self->lanczos_lookup[ABS (su - pos)];
-          y_sum += y_kernel[lanczos_width + i] = self->lanczos_lookup[ABS (sv - pos)];
-        }
-
-      /* normalise the weighted arrays */
-      for (i = 0; i < lanczos_width2; i++)
-        {
-          x_kernel[i] /= x_sum;
-          y_kernel[i] /= y_sum;
-        }
-
-      newval[0] = newval[1] = newval[2] = newval[3] = 0.0;
-      for (j = 0; j < lanczos_width2; j++)
-        for (i = 0; i < lanczos_width2; i++)
-          {
-            pu         = CLAMP (u + i - lanczos_width, 0, buffer->extent.width - 1);
-            pv         = CLAMP (v + j - lanczos_width, 0, buffer->extent.height - 1);
-            buf_ptr    = cache_buffer + ((pv * buffer->extent.width + pu) * 4);
-            newval[0] += y_kernel[j] * x_kernel[i] * buf_ptr[0] * buf_ptr[3];
-            newval[1] += y_kernel[j] * x_kernel[i] * buf_ptr[1] * buf_ptr[3];
-            newval[2] += y_kernel[j] * x_kernel[i] * buf_ptr[2] * buf_ptr[3];
-            newval[3] += y_kernel[j] * x_kernel[i] * buf_ptr[3];
-          }
-      if (newval[3] <= 0.0)
-        {
-          arecip    = 0.0;
-          newval[3] = 0;
-        }
-      else if (newval[3] > G_MAXDOUBLE)
-        {
-          arecip    = 1.0 / newval[3];
-          newval[3] = G_MAXDOUBLE;
-        }
-      else
-        {
-          arecip = 1.0 / newval[3];
-        }
-
-      dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
-      dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
-      dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
-      dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
-    }
-  else
-    {
-      dst[0] = abyss;
-      dst[1] = abyss;
-      dst[2] = abyss;
-      dst[3] = abyss;
-    }
-  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
-                dst, output, 1);
-}
-
-
 
 /* Internal lanczos */
 
@@ -260,14 +282,13 @@ sinc (gdouble x)
 }
 
 static void
-lanczos_lookup (GeglSampler *sampler)
+lanczos_lookup (GeglSamplerLanczos *sampler)
 {
   GeglSamplerLanczos *self = GEGL_SAMPLER_LANCZOS (sampler);
 
   const gint    lanczos_width = self->lanczos_width;
   const gint    samples       = (self->lanczos_spp * (lanczos_width + 1));
   const gdouble dx            = (gdouble) lanczos_width / (gdouble) (samples - 1);
-
   gdouble x = 0.0;
   gint    i;
 

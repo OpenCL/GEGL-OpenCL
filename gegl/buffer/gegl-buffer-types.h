@@ -19,7 +19,7 @@
 #ifndef __GEGL_BUFFER_TYPES_H__
 #define __GEGL_BUFFER_TYPES_H__
 
-typedef struct _GeglSampler               GeglSampler;
+
 
 typedef struct _GeglTile                  GeglTile;
 typedef struct _GeglTileClass             GeglTileClass;

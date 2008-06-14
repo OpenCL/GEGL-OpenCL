@@ -20,8 +20,8 @@
 
 #include <glib-object.h>
 #include <babl/babl.h>
-#include "gegl-types.h"
-#include "buffer/gegl-buffer-types.h"
+
+/* this file needs to be included by gegl-buffer-private */
 
 G_BEGIN_DECLS
 
@@ -33,6 +33,7 @@ G_BEGIN_DECLS
 #define GEGL_SAMPLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER, GeglSamplerClass))
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
+typedef struct _GeglSampler    GeglSampler;
 
 struct _GeglSampler
 {
@@ -41,22 +42,24 @@ struct _GeglSampler
   /*< private >*/
   GeglBuffer    *buffer;
   Babl          *format;
-
-  GeglRectangle  cache_rectangle;
-  void          *cache_buffer;
   Babl          *interpolate_format;
-  gint           context_pixels;
+  GeglRectangle  context_rect;
+  void          *sampler_buffer;
+  GeglRectangle  sampler_rectangle;
+
 };
 
 struct _GeglSamplerClass
 {
   GObjectClass  parent_class;
 
-  void (* prepare) (GeglSampler *self);
-  void (* get)     (GeglSampler *self,
-                    gdouble      x,
-                    gdouble      y,
-                    void        *output);
+  void (* prepare)   (GeglSampler *self);
+  void (* get)       (GeglSampler *self,
+                      gdouble      x,
+                      gdouble      y,
+                      void        *output);
+ void  (*set_buffer) (GeglSampler  *self,
+                      GeglBuffer   *buffer);
 };
 
 GType gegl_sampler_get_type    (void) G_GNUC_CONST;
@@ -67,10 +70,13 @@ void  gegl_sampler_get         (GeglSampler *self,
                                 gdouble      x,
                                 gdouble      y,
                                 void        *output);
+void  gegl_sampler_set_buffer  (GeglSampler *self,
+                                GeglBuffer  *buffer);
 
-void  gegl_sampler_fill_buffer (GeglSampler *sampler,
-                                gdouble      x,
-                                gdouble      y);
+gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
+                                       gint         x,
+                                       gint         y);
+
 
 G_END_DECLS
 

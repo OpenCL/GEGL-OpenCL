@@ -35,6 +35,7 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-sampler-lanczos.h"
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
@@ -300,7 +301,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
       buffer->hot_tile = NULL;
     }
   if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))
-    {   
+    {
       ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->x =buffer->extent.x;
       ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->y =buffer->extent.y;
       ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->width =buffer->extent.width;
@@ -1087,6 +1088,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     const Babl       *format,
                     GeglInterpolation interpolation)
 {
+  GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
 /*#define USE_WORKING_SHORTCUT*/
@@ -1099,26 +1101,19 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   g_static_rec_mutex_lock (&mutex);
 #endif
 
+  desired_type = gegl_sampler_type_from_interpolation (interpolation);
+
+  if (buffer->sampler != NULL &&
+      !G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type))
+    {
+      g_object_unref(buffer->sampler);
+      buffer->sampler = NULL;
+    }
+
   /* look up appropriate sampler,. */
   if (buffer->sampler == NULL)
     {
-      /* FIXME: should probably check if the desired form of interpolation
-       * changes from the currently cached sampler.
-       */
-      GType interpolation_type = 0;
-
-      switch (interpolation)
-        {
-          case GEGL_INTERPOLATION_NEAREST:
-            interpolation_type=GEGL_TYPE_SAMPLER_NEAREST;
-            break;
-          case GEGL_INTERPOLATION_LINEAR:
-            interpolation_type=GEGL_TYPE_SAMPLER_LINEAR;
-            break;
-          default:
-            g_warning ("unimplemented interpolation type %i", interpolation);
-        }
-      buffer->sampler = g_object_new (interpolation_type,
+      buffer->sampler = g_object_new (desired_type,
                                       "buffer", buffer,
                                       "format", format,
                                       NULL);
@@ -1220,12 +1215,36 @@ gegl_buffer_clear (GeglBuffer          *dst,
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  GeglBuffer *new;
+  GeglBuffer *new_buffer;
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-  new = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
+  new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
   gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
-                    new, gegl_buffer_get_extent (buffer));
-  return new;
+                    new_buffer, gegl_buffer_get_extent (buffer));
+  return new_buffer;
+}
+
+void
+gegl_buffer_sampler (GeglBuffer       *buffer,
+                    gdouble           x,
+                    gdouble           y,
+                    gdouble           scale,
+                    gpointer          dest,
+                    const Babl       *format,
+                    gpointer          sampler2)
+{
+  GeglSampler *sampler = sampler2;
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  g_return_if_fail (GEGL_IS_SAMPLER (sampler));
+
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
+#endif
+
+  gegl_sampler_get (sampler, x, y, dest);
+
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 }

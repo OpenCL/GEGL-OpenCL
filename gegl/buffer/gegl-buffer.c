@@ -61,6 +61,7 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-sampler-lanczos.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-id-pool.h"
@@ -294,7 +295,7 @@ gegl_buffer_set_extent (GeglBuffer          *buffer,
    (*(GeglRectangle*)gegl_buffer_get_extent (buffer))=*extent;
 
   if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))
-    {   
+    {
       GeglBufferHeader *header = ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header));
       header->x = buffer->extent.x;
       header->y = buffer->extent.x;
@@ -464,7 +465,7 @@ gegl_buffer_constructor (GType                  type,
             }
 
           source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
-                                                   
+
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
@@ -607,7 +608,7 @@ gegl_buffer_constructor (GType                  type,
       buffer->abyss.height = self.height;
     }
 
-  /* compute our own total shift <- this should probably happen 
+  /* compute our own total shift <- this should probably happen
    * approximatly first */
   if (GEGL_IS_BUFFER (source))
     {
@@ -637,7 +638,7 @@ get_tile (GeglTileSource *source,
   GeglTile    *tile   = NULL;
   source = handler->source;
 
-  if (source) 
+  if (source)
     tile = gegl_tile_source_get_tile (source, x, y, z);
   else
     g_assert (0);
@@ -890,19 +891,6 @@ gegl_buffer_destroy (GeglBuffer *buffer)
   g_object_unref (buffer);
 }
 
-GeglInterpolation
-gegl_buffer_interpolation_from_string (const gchar *string)
-{
-  if (g_str_equal (string, "nearest") ||
-      g_str_equal (string, "none"))
-    return GEGL_INTERPOLATION_NEAREST;
-
-  if (g_str_equal (string, "linear") ||
-      g_str_equal (string, "bilinear"))
-    return GEGL_INTERPOLATION_LINEAR;
-
- return GEGL_INTERPOLATION_NEAREST;
-}
 
 
 

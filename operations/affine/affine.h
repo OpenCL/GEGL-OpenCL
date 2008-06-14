@@ -2,6 +2,7 @@
 #define __OP_AFFINE_H__
 
 #include "matrix.h"
+#include "gegl-buffer-private.h"
 
 G_BEGIN_DECLS
 
@@ -19,12 +20,13 @@ struct _OpAffine
 {
   GeglOperationFilter parent;
 
-  Matrix3   matrix;
-  gdouble   origin_x,
-            origin_y;
-  gchar    *filter;
-  gboolean  hard_edges;
-  gint      lanczos_width;
+  Matrix3      matrix;
+  gdouble      origin_x,
+               origin_y;
+  gchar       *filter;
+  gboolean     hard_edges;
+  gint         lanczos_width;
+  GeglSampler *sampler;
 };
 
 typedef struct _OpAffineClass OpAffineClass;

@@ -25,10 +25,11 @@
 
 #include <math.h>
 #include <gegl-plugin.h>
+#include "buffer/gegl-sampler.h"
 #include <graph/gegl-pad.h>
 #include <graph/gegl-node.h>
 #include <graph/gegl-connection.h>
-/*#include "buffer/gegl-sampler.h"*/
+
 
 #include "affine.h"
 #include "module.h"
@@ -118,16 +119,71 @@ op_affine_get_type (void)
   return g_define_type_id;
 }
 
+
+GType
+gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
+
 /* ************************* */
+static void
+op_affine_sampler_init (OpAffine *self)
+{
+  Babl                 *format;
+  GeglSampler          *sampler;
+  GType                 desired_type;
+  GeglInterpolation     interpolation;
+
+  format = babl_format ("RaGaBaA float");
+
+  interpolation = gegl_buffer_interpolation_from_string (self->filter);
+  desired_type = gegl_sampler_type_from_interpolation (interpolation);
+
+  if (self->sampler != NULL &&
+      !G_TYPE_CHECK_INSTANCE_TYPE (self->sampler, desired_type))
+    {
+      self->sampler->buffer=NULL;
+      g_object_unref(self->sampler);
+      self->sampler = NULL;
+    }
+
+  if (self->sampler == NULL)
+    {
+      if (interpolation == GEGL_INTERPOLATION_LANCZOS)
+        {
+          sampler = g_object_new (desired_type,
+                                  "format", format,
+                                  "lanczos_width",  self->lanczos_width,
+                                  NULL);
+        }
+      else
+        {
+          sampler = g_object_new (desired_type,
+                                  "format", format,
+                                  NULL);
+        }
+      self->sampler = g_object_ref(sampler);
+    }
+}
 
 static void
 prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("RaGaBaA float");
-
+  OpAffine  *affine = (OpAffine *) operation;
+  Babl      *format = babl_format ("RaGaBaA float");
+  op_affine_sampler_init (affine);
   /*gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
   gegl_operation_set_format (operation, "output", format);
+}
+
+static void
+finalize (GObject *object)
+{
+  OpAffine  *affine = (OpAffine *) object;
+  if (affine->sampler != NULL)
+    {
+      g_object_unref(affine->sampler);
+      affine->sampler = NULL;
+    }
 }
 
 static void
@@ -139,6 +195,7 @@ op_affine_class_init (OpAffineClass *klass)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->finalize = finalize;
 
   op_class->get_invalidated_by_change = get_invalidated_by_change;
   op_class->get_bounding_box = get_bounding_box;
@@ -146,6 +203,7 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->detect = detect;
   op_class->categories = "transform";
   op_class->prepare = prepare;
+
 
   filter_class->process = process;
 
@@ -171,7 +229,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_string (
                                      "filter",
                                      "Filter",
-                                     "Filter type (nearest, linear, lanczos)",
+                                     "Filter type (nearest, linear, lanczos, cubic)",
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
@@ -189,6 +247,7 @@ op_affine_class_init (OpAffineClass *klass)
                                      3, 6, 3,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
+
 
 static void
 op_affine_init (OpAffine *self)
@@ -370,8 +429,15 @@ get_bounding_box (GeglOperation *op)
   gdouble        have_points [8];
   gint           i;
 
+  GeglRectangle  context_rect;
+  GeglSampler   *sampler;
+
+  sampler = affine->sampler;
+  context_rect = sampler->context_rect;
+
+
   if (gegl_operation_source_get_bounding_box (op, "input"))
-  in_rect = *gegl_operation_source_get_bounding_box (op, "input");
+    in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
@@ -394,21 +460,10 @@ get_bounding_box (GeglOperation *op)
       return in_rect;
     }
 
-  if (! strcmp (affine->filter, "linear"))
-    {
-      if (affine->hard_edges)
-        {
-          in_rect.width ++;
-          in_rect.height ++;
-        }
-      else
-        {
-          in_rect.x--;
-          in_rect.y--;
-          in_rect.width  += 2;
-          in_rect.height  += 2;
-        }
-    }
+  in_rect.x      += context_rect.x;
+  in_rect.y      += context_rect.y;
+  in_rect.width  += context_rect.width;
+  in_rect.height += context_rect.height;
 
   have_points [0] = in_rect.x;
   have_points [1] = in_rect.y;
@@ -427,7 +482,6 @@ get_bounding_box (GeglOperation *op)
                              have_points + i, have_points + i + 1);
 
   bounding_box (have_points, 4, &have_rect);
-
   return have_rect;
 }
 
@@ -472,10 +526,14 @@ get_required_for_output (GeglOperation       *op,
   Matrix3        inverse;
   GeglRectangle  requested_rect,
                  need_rect;
+  GeglRectangle  context_rect;
+  GeglSampler   *sampler;
   gdouble        need_points [8];
   gint           i;
 
   requested_rect = *region;
+  sampler = affine->sampler;
+  context_rect = sampler->context_rect;
 
   matrix3_copy (inverse, affine->matrix);
   matrix3_invert (inverse);
@@ -506,22 +564,10 @@ get_required_for_output (GeglOperation       *op,
                              need_points + i, need_points + i + 1);
   bounding_box (need_points, 4, &need_rect);
 
-  if (! strcmp (affine->filter, "linear"))
-    {
-      if (affine->hard_edges)
-        {
-          need_rect.width ++;
-          need_rect.height ++;
-        }
-      else
-        {
-          need_rect.x--;
-          need_rect.y--;
-          need_rect.width  += 2;
-          need_rect.height  += 2;
-        }
-    }
-
+  need_rect.x      += context_rect.x;
+  need_rect.y      += context_rect.y;
+  need_rect.width  += context_rect.width;
+  need_rect.height += context_rect.height;
   return need_rect;
 }
 
@@ -530,13 +576,18 @@ get_invalidated_by_change (GeglOperation       *op,
                            const gchar         *input_pad,
                            const GeglRectangle *input_region)
 {
-  OpAffine      *affine  = (OpAffine *) op;
-  OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
-  GeglRectangle  affected_rect;
-  gdouble        affected_points [8];
-  gint           i;
-  GeglRectangle  region = *input_region;
+  OpAffine          *affine  = (OpAffine *) op;
+  OpAffineClass     *klass   = OP_AFFINE_GET_CLASS (affine);
+  GeglRectangle      affected_rect;
+  GeglRectangle      context_rect;
+  GeglSampler       *sampler;
+  gdouble            affected_points [8];
+  gint               i;
+  GeglRectangle      region = *input_region;
 
+  op_affine_sampler_init (affine);
+  sampler = affine->sampler;
+  context_rect = sampler->context_rect;
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
   matrix3_identity (affine->matrix);
@@ -558,21 +609,10 @@ get_invalidated_by_change (GeglOperation       *op,
       return region;
     }
 
-  if (! strcmp (affine->filter, "linear"))
-    {
-      if (affine->hard_edges)
-        {
-          region.width ++;
-          region.height ++;
-        }
-      else
-        {
-          region.x--;
-          region.y--;
-          region.width  += 2;
-          region.height  += 2;
-        }
-    }
+  region.x      += context_rect.x;
+  region.y      += context_rect.y;
+  region.width  += context_rect.width;
+  region.height += context_rect.height;
 
   affected_points [0] = region.x;
   affected_points [1] = region.y;
@@ -591,7 +631,6 @@ get_invalidated_by_change (GeglOperation       *op,
                              affected_points + i, affected_points + i + 1);
 
   bounding_box (affected_points, 4, &affected_rect);
-
   return affected_rect;
 
 }
@@ -605,7 +644,7 @@ static void
 affine_generic (GeglBuffer        *dest,
                 GeglBuffer        *src,
                 Matrix3            matrix,
-                GeglInterpolation  interpolation)
+                GeglSampler       *sampler)
 {
   const GeglRectangle *dest_extent;
   gint                  x, y;
@@ -640,16 +679,11 @@ affine_generic (GeglBuffer        *dest,
   v_start = inverse[1][0] * dest_extent->x + inverse[1][1] * dest_extent->y
             + inverse[1][2];
 
-  /* correct rounding on e.g. negative scaling (is this sound?) */
+    /* correct rounding on e.g. negative scaling (is this sound?) */
   if (inverse [0][0] < 0.)
     u_start -= .001;
   if (inverse [1][1] < 0.)
     v_start -= .001;
-
-  if (src->sampler)
-    {
-      gegl_sampler_prepare (src->sampler);
-    }
 
   for (dest_ptr = dest_buf, y = dest_extent->height; y--;)
     {
@@ -658,13 +692,9 @@ affine_generic (GeglBuffer        *dest,
 
       for (x = dest_extent->width; x--;)
         {
-          gfloat  pix[4];
-          gegl_buffer_sample (src, u_float, v_float, 1.0, pix, format, interpolation);
+          gegl_sampler_get (sampler, u_float, v_float, dest_ptr);
 
-          *dest_ptr++ = pix[0];
-          *dest_ptr++ = pix[1];
-          *dest_ptr++ = pix[2];
-          *dest_ptr++ = pix[3];
+          dest_ptr+=4;
 
           u_float += inverse [0][0];
           v_float += inverse [1][0];
@@ -672,7 +702,7 @@ affine_generic (GeglBuffer        *dest,
       u_start += inverse [0][1];
       v_start += inverse [1][1];
     }
-  gegl_buffer_sample_cleanup (src);
+
   gegl_buffer_set (dest, NULL, format, dest_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (dest_buf);
 }
@@ -686,11 +716,6 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   OpAffine            *affine = (OpAffine *) operation;
-
-  /*g_warning ("%i,%i %ix%i | %i,%i %ix%i | %i,%i  %ix%i",
-     input->x, input->y, input->width, input->height,
-     output->x, output->y, output->width, output->height,
-     result->x, result->y, result->width, result->height);*/
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
@@ -726,9 +751,12 @@ process (GeglOperation       *operation,
   else
     {
       /* XXX: add back more samplers */
-      affine_generic (output, input, affine->matrix,
-                      gegl_buffer_interpolation_from_string (affine->filter));
+      g_object_set(affine->sampler, "buffer", input, NULL);
+      affine_generic (output, input, affine->matrix, affine->sampler);
+      g_object_unref(affine->sampler->buffer);
+      affine->sampler->buffer = NULL;
     }
 
   return TRUE;
 }
+

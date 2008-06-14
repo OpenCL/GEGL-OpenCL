@@ -1,3 +1,26 @@
+2008-06-14  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Bug #360888 - Adapt cubic and lanczos samplers for
+	new framework.
+
+	The patch isn't closed yet, but the code for nearest and linear is
+	stable now and the rest of the code delta is quite large. The patch
+	has been adapted to not introduce new API and the cubic and lanczos
+	filters are disabled due to artifacts.
+
+	* gegl/buffer/gegl-buffer-access.c:
+	* gegl/buffer/gegl-buffer-types.h:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-sampler-cubic.c:
+	* gegl/buffer/gegl-sampler-lanczos.c:
+	* gegl/buffer/gegl-sampler-linear.c:
+	* gegl/buffer/gegl-sampler-nearest.c:
+	* gegl/buffer/gegl-sampler.c:
+	* gegl/buffer/gegl-sampler.h:
+	* operations/affine/affine.c:
+	* operations/affine/affine.h:
+
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/workshop/stroke.c (get_bounding_box): Format

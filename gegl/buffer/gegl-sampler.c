@@ -15,26 +15,31 @@
  *
  * 2007 © Øyvind Kolås
  */
-
-#define SIZE 16  /* the cached region around a fetched pixel value is
-                    SIZE×SIZE pixels. */
-
 #include "config.h"
 
 #include <glib-object.h>
 #include <string.h>
 
 #include "gegl-types.h"
-#include "gegl-sampler.h"
+#include "gegl-buffer.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-private.h"
+
+#include "gegl-sampler-nearest.h"
+#include "gegl-sampler-linear.h"
+#include "gegl-sampler-cubic.h"
+#include "gegl-sampler-lanczos.h"
+
+#if ENABLE_MP
+GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
+#endif
 
 enum
 {
   PROP_0,
   PROP_BUFFER,
   PROP_FORMAT,
-  PROP_CONTEXT_PIXELS,
+  PROP_CONTEXT_RECT,
   PROP_LAST
 };
 
@@ -50,6 +55,8 @@ static void set_property            (GObject      *gobject,
                                      guint         prop_id,
                                      const GValue *value,
                                      GParamSpec   *pspec);
+static void set_buffer              (GeglSampler  *self,
+                                     GeglBuffer   *buffer);
 
 G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
 
@@ -63,16 +70,11 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
 
   klass->prepare = NULL;
   klass->get     = NULL;
+  klass->set_buffer   = set_buffer;
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  g_object_class_install_property (object_class, PROP_BUFFER,
-                                   g_param_spec_object ("buffer",
-                                                        "Buffer",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_FORMAT,
                                    g_param_spec_pointer ("format",
@@ -80,21 +82,23 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
                                                          "babl format",
                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_CONTEXT_PIXELS,
-                                   g_param_spec_int ("context-pixels",
-                                                     "ContextPixels",
-                                                     "number of neighbourhood pixels needed in each direction",
-                                                     0, 16, 0,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
+  g_object_class_install_property (object_class, PROP_BUFFER,
+                                   g_param_spec_object ("buffer",
+                                                        "Buffer",
+                                                        "Input pad, for image buffer input.",
+                                                        GEGL_TYPE_BUFFER,
+                                                        G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
 }
 
 static void
 gegl_sampler_init (GeglSampler *self)
 {
-  self->cache_buffer = NULL;
+  GeglRectangle context_rect = {0,0,1,1};
+  GeglRectangle sampler_rectangle = {0,0,0,0};
+  self->sampler_buffer = NULL;
   self->buffer = NULL;
-  self->context_pixels = 0;
+  self->context_rect = context_rect;
+  self->sampler_rectangle = sampler_rectangle;
 }
 
 void
@@ -135,14 +139,28 @@ gegl_sampler_prepare (GeglSampler *self)
 #endif
 }
 
+void
+gegl_sampler_set_buffer (GeglSampler *self, GeglBuffer *buffer)
+{
+  GeglSamplerClass *klass;
+
+  g_return_if_fail (GEGL_IS_SAMPLER (self));
+
+  klass = GEGL_SAMPLER_GET_CLASS (self);
+
+  if (klass->set_buffer)
+    klass->set_buffer (self, buffer);
+}
+
+
 static void
 finalize (GObject *gobject)
 {
   GeglSampler *sampler = GEGL_SAMPLER (gobject);
-  if (sampler->cache_buffer)
+  if (sampler->sampler_buffer)
     {
-      g_free (sampler->cache_buffer);
-      sampler->cache_buffer = NULL;
+      g_free (sampler->sampler_buffer);
+      sampler->sampler_buffer = NULL;
     }
   G_OBJECT_CLASS (gegl_sampler_parent_class)->finalize (gobject);
 }
@@ -159,50 +177,45 @@ dispose (GObject *gobject)
   G_OBJECT_CLASS (gegl_sampler_parent_class)->dispose (gobject);
 }
 
-void
-gegl_sampler_fill_buffer (GeglSampler *sampler,
-                          gdouble      x,
-                          gdouble      y)
+gfloat *
+gegl_sampler_get_from_buffer (GeglSampler *sampler,
+                              gint       x,
+                              gint       y)
 {
-  GeglBuffer    *buffer;
-  GeglRectangle  surround;
- 
-  buffer = sampler->buffer;
-  g_assert (buffer);
+   const GeglRectangle *buffer_rectangle;
+   guchar              *buffer_ptr;
+   gint                 dx;
+   gint                 dy;
+   gint                 bpp;
+   gint                 sof;
 
-  if (sampler->cache_buffer) 
-    {
-      GeglRectangle r = sampler->cache_rectangle;
+   /* Initialise */
+   bpp = sampler->interpolate_format->format.bytes_per_pixel;
+   buffer_rectangle  = gegl_buffer_get_extent(sampler->buffer);
+   if ( !gegl_rectangle_contains (buffer_rectangle, &sampler->sampler_rectangle) ||
+        sampler->sampler_buffer == NULL )
+     {
+       gint buffer_size = (buffer_rectangle->width *
+                           buffer_rectangle->height *
+                           bpp);
+       if (  sampler->sampler_buffer == NULL )
+         sampler->sampler_buffer    = g_malloc0 (buffer_size);
+       else
+         sampler->sampler_buffer    = g_realloc (sampler->sampler_buffer, buffer_size);
+       gegl_buffer_get (sampler->buffer,
+                        1.0,
+                        buffer_rectangle,
+                        sampler->interpolate_format,
+                        sampler->sampler_buffer,
+                        GEGL_AUTO_ROWSTRIDE);
+       gegl_rectangle_copy (&sampler->sampler_rectangle,buffer_rectangle);
+     }
 
-      /* check if the cache-buffer includes both the desired coordinates and
-       * a sufficient surrounding context 
-       */
-      if (x - r.x >= sampler->context_pixels &&
-          x - r.x < r.width - sampler->context_pixels &&
-          y - r.y >= sampler->context_pixels &&
-          y - r.y < r.height - sampler->context_pixels)
-        {
-          return;  /* we can reuse our cached interpolation source buffer */
-        }
-
-      g_free (sampler->cache_buffer);
-      sampler->cache_buffer = NULL;
-    }
-
-  surround.x = x - SIZE/2;
-  surround.y = y - SIZE/2;
-  surround.width  = SIZE;
-  surround.height = SIZE;
-
-  sampler->cache_buffer = g_malloc0 (surround.width *
-                                          surround.height *
-                                          4 * sizeof (gfloat));
-  sampler->cache_rectangle = surround;
-  sampler->interpolate_format = babl_format ("RaGaBaA float");
-
-  gegl_buffer_get (buffer, 1.0, &surround,
-                   sampler->interpolate_format,
-                   sampler->cache_buffer, GEGL_AUTO_ROWSTRIDE);
+   dx = x - buffer_rectangle->x;
+   dy = y - buffer_rectangle->y;
+   buffer_ptr = (guchar *)sampler->sampler_buffer;
+   sof = ( dx +  (dy * buffer_rectangle->width)) * bpp;
+   return (gfloat*)(buffer_ptr+sof);
 }
 
 static void
@@ -221,10 +234,6 @@ get_property (GObject    *object,
 
       case PROP_FORMAT:
         g_value_set_pointer (value, self->format);
-        break;
-
-      case PROP_CONTEXT_PIXELS:
-        g_value_set_int (value, self->context_pixels);
         break;
 
       default:
@@ -250,11 +259,64 @@ set_property (GObject      *object,
         self->format = g_value_get_pointer (value);
         break;
 
-      case PROP_CONTEXT_PIXELS:
-        self->context_pixels = g_value_get_int (value);
-        break;
-
       default:
         break;
+    }
+}
+
+
+static void
+set_buffer (GeglSampler *self, GeglBuffer *buffer)
+{
+   if (self->buffer != buffer)
+     {
+        if (GEGL_IS_BUFFER(self->buffer))
+          g_object_unref(self->buffer);
+        if (GEGL_IS_BUFFER (buffer))
+          self->buffer = gegl_buffer_dup (buffer);
+        else
+          self->buffer = NULL;
+     }
+}
+
+GeglInterpolation
+gegl_buffer_interpolation_from_string (const gchar *string)
+{
+  if (g_str_equal (string, "nearest") ||
+      g_str_equal (string, "none"))
+    return GEGL_INTERPOLATION_NEAREST;
+
+  if (g_str_equal (string, "linear") ||
+      g_str_equal (string, "bilinear"))
+    return GEGL_INTERPOLATION_LINEAR;
+
+  if (g_str_equal (string, "cubic") ||
+      g_str_equal (string, "bicubic"))
+    return GEGL_INTERPOLATION_CUBIC;
+
+  if (g_str_equal (string, "lanczos"))
+    return GEGL_INTERPOLATION_LANCZOS;
+
+  return GEGL_INTERPOLATION_NEAREST;
+}
+
+
+GType
+gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
+{
+  switch (interpolation)
+    {
+      case GEGL_INTERPOLATION_NEAREST:
+        return GEGL_TYPE_SAMPLER_NEAREST;
+      case GEGL_INTERPOLATION_LINEAR:
+        return GEGL_TYPE_SAMPLER_LINEAR;
+#if 0 /* disabled for now */
+      case GEGL_INTERPOLATION_CUBIC:
+        return GEGL_TYPE_SAMPLER_CUBIC;
+      case GEGL_INTERPOLATION_LANCZOS:
+        return GEGL_TYPE_SAMPLER_LANCZOS;
+#endif
+      default:        
+        return GEGL_TYPE_SAMPLER_LINEAR;
     }
 }

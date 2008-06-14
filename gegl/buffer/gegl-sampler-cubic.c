@@ -13,39 +13,40 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <glib-object.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
+#include "gegl-types.h"
+#include "gegl-buffer-private.h"
 #include "gegl-sampler-cubic.h"
-#include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
 #include <math.h>
-
-/* XXX WARNING: This code compiles, but is functionally broken, and
- * currently not used by the rest of GeglBuffer */
 
 enum
 {
   PROP_0,
   PROP_B,
+  PROP_C,
   PROP_TYPE,
   PROP_LAST
 };
 
-static void     get_property (GObject      *gobject,
-                              guint         prop_id,
-                              GValue       *value,
-                              GParamSpec   *pspec);
-static void     set_property (GObject      *gobject,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec);
-static inline float cubicKernel(float x, float b, float c);
-static void    finalize                         (GObject       *gobject);
-
-static void    gegl_sampler_cubic_get     (GeglSampler *self,
-                                                 gdouble           x,
-                                                 gdouble           y,
-                                                 void             *output);
-
-static void    gegl_sampler_cubic_prepare (GeglSampler *self);
+static void      gegl_sampler_cubic_get (GeglSampler  *sampler,
+                                         gdouble       x,
+                                         gdouble       y,
+                                         void         *output);
+static void      get_property           (GObject      *gobject,
+                                         guint         prop_id,
+                                         GValue       *value,
+                                         GParamSpec   *pspec);
+static void      set_property           (GObject      *gobject,
+                                         guint         prop_id,
+                                         const GValue *value,
+                                         GParamSpec   *pspec);
+static inline gfloat cubicKernel       (gfloat        x,
+                                        gfloat        b,
+                                        gfloat        c);
 
 
 G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
@@ -53,20 +54,27 @@ G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
 static void
 gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
 {
-  GObjectClass          *object_class       = G_OBJECT_CLASS (klass);
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
+  GObjectClass     *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = finalize;
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  sampler_class->prepare = gegl_sampler_cubic_prepare;
   sampler_class->get     = gegl_sampler_cubic_get;
 
   g_object_class_install_property (object_class, PROP_B,
                                    g_param_spec_double ("b",
                                                         "B",
                                                         "B-spline parameter",
+                                                        0.0,
+                                                        1.0,
+                                                        1.0,
+                                                        G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+
+  g_object_class_install_property (object_class, PROP_C,
+                                   g_param_spec_double ("c",
+                                                        "C",
+                                                        "C-spline parameter",
                                                         0.0,
                                                         1.0,
                                                         0.0,
@@ -78,21 +86,18 @@ gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
                                                         "B-spline type (cubic | catmullrom | formula) 2c+b=1",
                                                         "cubic",
                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+
 }
 
 static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
-}
-
-void
-gegl_sampler_cubic_prepare (GeglSampler *sampler)
-{
-  GeglSamplerCubic *self  = GEGL_SAMPLER_CUBIC (sampler);
-
-  /* fill the internal bufer */
-
-  if (strcmp (self->type, "cubic"))
+ GEGL_SAMPLER (self)->context_rect= (GeglRectangle){-1,-1,4,4};
+ self->b=1;
+ self->c=0;
+ self->type = g_strdup("cubic");
+ return;
+ if (strcmp (self->type, "cubic"))
     {
       /* cubic B-spline */
       self->b = 0.0;
@@ -106,95 +111,67 @@ gegl_sampler_cubic_prepare (GeglSampler *sampler)
     }
   else if (strcmp (self->type, "formula"))
     {
-      self->c = (1 - self->b) / 2.0;
+      self->c = (1.0 - self->b) / 2.0;
     }
-}
-
-static void
-finalize (GObject *object)
-{
-  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
-
-  if (self->type)
-    g_free (self->type);
-  G_OBJECT_CLASS (gegl_sampler_cubic_parent_class)->finalize (object);
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 void
-gegl_sampler_cubic_get (GeglSampler *sampler,
-                             gdouble           x,
-                             gdouble           y,
-                             void             *output)
+gegl_sampler_cubic_get (GeglSampler *self,
+                        gdouble      x,
+                        gdouble      y,
+                        void        *output)
 {
-  GeglSamplerCubic *self      = GEGL_SAMPLER_CUBIC (sampler);
-  gfloat                *cache_buffer = sampler->cache_buffer;
-  GeglRectangle         *rectangle = &sampler->cache_rectangle;
-  GeglBuffer            *buffer    = sampler->buffer;
-  gfloat                *buf_ptr;
-  gfloat                 factor;
+  GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
+  GeglRectangle     context_rect;
+  gfloat           *sampler_bptr;
+  gfloat            factor;
+  gdouble           arecip;
+  gdouble           newval[4];
+  gfloat            abyss = 0.;
+  gfloat            dst[4];
+  gint              u,v;
+  gint              dx,dy;
 
-  gdouble                arecip;
-  gdouble                newval[4];
-
-  gfloat                 dst[4];
-  gfloat                 abyss = 0.;
-  gint                   i, j, pu, pv;
-
-  gegl_sampler_fill_buffer (sampler, x, y);
-  cache_buffer = sampler->cache_buffer;
-  if (!buffer)
-    return;
-
-  if (x >= 0 &&
-      y >= 0 &&
-      x < buffer->extent.width &&
-      y < buffer->extent.height)
+  context_rect = self->context_rect;
+  dx = (gint) x;
+  dy = (gint) y;
+  newval[0] = newval[1] = newval[2] = newval[3] = 0.;
+  for (v=dy+context_rect.y ; v < dy+context_rect.y+context_rect.height ; v++)
+    for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++)
+      {
+        sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
+        factor     = cubicKernel (y - v, cubic->b, cubic->c) *
+                     cubicKernel (x - u, cubic->b, cubic->c);
+        newval[0] += factor * sampler_bptr[0] * sampler_bptr[3];
+        newval[1] += factor * sampler_bptr[1] * sampler_bptr[3];
+        newval[2] += factor * sampler_bptr[2] * sampler_bptr[3];
+        newval[3] += factor * sampler_bptr[3];
+      }
+  if (newval[3] <= abyss)
     {
-      gint u = (gint) (x - rectangle->x);
-      gint v = (gint) (y - rectangle->y);
-      newval[0] = newval[1] = newval[2] = newval[3] = 0.0;
-      for (j = -1; j <= 2; j++)
-        for (i = -1; i <= 2; i++)
-          {
-            pu         = CLAMP (u + i, 0, rectangle->width - 1);
-            pv         = CLAMP (v + j, 0, rectangle->height - 1);
-            factor     = cubicKernel ((y - rectangle->y) - pv, self->b, self->c) *
-                         cubicKernel ((x - rectangle->x) - pu, self->b, self->c);
-            buf_ptr    = cache_buffer + ((pv * rectangle->width + pu) * 4);
-            newval[0] += factor * buf_ptr[0] * buf_ptr[3];
-            newval[1] += factor * buf_ptr[1] * buf_ptr[3];
-            newval[2] += factor * buf_ptr[2] * buf_ptr[3];
-            newval[3] += factor * buf_ptr[3];
-          }
-      if (newval[3] <= 0.0)
-        {
-          arecip    = 0.0;
-          newval[3] = 0;
-        }
-      else if (newval[3] > G_MAXDOUBLE)
-        {
-          arecip    = 1.0 / newval[3];
-          newval[3] = G_MAXDOUBLE;
-        }
-      else
-        {
-          arecip = 1.0 / newval[3];
-        }
-
-      dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
-      dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
-      dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
-      dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+      arecip    = abyss;
+      newval[3] = abyss;
+    }
+  else if (newval[3] > G_MAXDOUBLE)
+    {
+      arecip    = 1.0 / newval[3];
+      newval[3] = G_MAXDOUBLE;
     }
   else
     {
-      dst[0] = abyss;
-      dst[1] = abyss;
-      dst[2] = abyss;
-      dst[3] = abyss;
+      arecip = 1.0 / newval[3];
     }
-  babl_process (babl_fish (sampler->interpolate_format, sampler->format),
+
+  /* FIXME: shouldn't clamp a computed value like this, it gets evaluated twice */
+  dst[0] = CLAMP (newval[0] * arecip, 0, G_MAXDOUBLE);
+  dst[1] = CLAMP (newval[1] * arecip, 0, G_MAXDOUBLE);
+  dst[2] = CLAMP (newval[2] * arecip, 0, G_MAXDOUBLE);
+  dst[3] = CLAMP (newval[3], 0, G_MAXDOUBLE);
+
+  babl_process (babl_fish (self->interpolate_format, self->format),
                 dst, output, 1);
+
 }
 
 static void
@@ -236,10 +213,9 @@ set_property (GObject      *object,
 
       case PROP_TYPE:
       {
-        const gchar *type = g_value_get_string (value);
         if (self->type)
           g_free (self->type);
-        self->type = g_strdup (type);
+        self->type = g_strdup (g_value_get_string (value));
         break;
       }
 
@@ -248,10 +224,13 @@ set_property (GObject      *object,
     }
 }
 
-static inline float cubicKernel (float x, float b, float c)
-{
-  float weight, x2, x3;
-  float ax = (float) fabs (x);
+static inline gfloat
+cubicKernel (gfloat x,
+             gfloat b,
+             gfloat c)
+ {
+  gfloat weight, x2, x3;
+  gfloat ax = (gfloat) fabs (x);
 
   if (ax > 2) return 0;
 
@@ -270,3 +249,4 @@ static inline float cubicKernel (float x, float b, float c)
 
   return weight * (1.0 / 6.0);
 }
+
