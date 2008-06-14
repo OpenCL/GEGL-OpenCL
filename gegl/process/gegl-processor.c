@@ -70,7 +70,8 @@ struct _GeglProcessor
 
 G_DEFINE_TYPE (GeglProcessor, gegl_processor, G_TYPE_OBJECT);
 
-static void gegl_processor_class_init (GeglProcessorClass *klass)
+static void
+gegl_processor_class_init (GeglProcessorClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -99,7 +100,8 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
 
-static void gegl_processor_init (GeglProcessor *processor)
+static void
+gegl_processor_init (GeglProcessor *processor)
 {
   processor->node             = NULL;
   processor->input            = NULL;
@@ -110,9 +112,10 @@ static void gegl_processor_init (GeglProcessor *processor)
 }
 
 
-static GObject *constructor (GType                  type,
-                             guint                  n_params,
-                             GObjectConstructParam *params)
+static GObject *
+constructor (GType                  type,
+             guint                  n_params,
+             GObjectConstructParam *params)
 {
   GObject       *object;
   GeglProcessor *processor;
@@ -143,7 +146,8 @@ static GObject *constructor (GType                  type,
 }
 
 
-static void finalize (GObject *self_object)
+static void
+finalize (GObject *self_object)
 {
   GeglProcessor *processor = GEGL_PROCESSOR (self_object);
 
@@ -296,7 +300,8 @@ gegl_node_new_processor (GeglNode            *node,
 }
 
 /* returns TRUE if there is more work */
-static gboolean render_rectangle (GeglProcessor *processor)
+static gboolean
+render_rectangle (GeglProcessor *processor)
 {
   gboolean   buffered;
   const gint max_area = processor->chunk_size;
@@ -405,12 +410,14 @@ static gboolean render_rectangle (GeglProcessor *processor)
 }
 
 
-static gint rect_area (GeglRectangle *rectangle)
+static gint
+rect_area (GeglRectangle *rectangle)
 {
   return rectangle->width * rectangle->height;
 }
 
-static gint region_area (GeglRegion *region)
+static gint
+region_area (GeglRegion *region)
 {
   GeglRectangle *rectangles;
   gint           n_rectangles;
@@ -428,7 +435,8 @@ static gint region_area (GeglRegion *region)
   return sum;
 }
 
-static gint area_left (GeglRegion    *area,
+static gint
+area_left (GeglRegion    *area,
                        GeglRectangle *rectangle)
 {
   GeglRegion *region;
