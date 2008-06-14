@@ -26,6 +26,7 @@
 #include "operation/gegl-operation-sink.h"
 #include "gegl-config.h"
 
+
 enum
 {
   PROP_0,
@@ -34,6 +35,7 @@ enum
   PROP_PROGRESS,
   PROP_RECTANGLE
 };
+
 
 static void      gegl_processor_class_init (GeglProcessorClass    *klass);
 static void      gegl_processor_init       (GeglProcessor         *self);
@@ -50,6 +52,7 @@ static GObject * constructor               (GType                  type,
                                             guint                  n_params,
                                             GObjectConstructParam *params);
 static gdouble   gegl_processor_progress   (GeglProcessor         *processor);
+
 
 struct _GeglProcessor
 {
@@ -69,7 +72,9 @@ struct _GeglProcessor
   gdouble  progress;
 };
 
+
 G_DEFINE_TYPE (GeglProcessor, gegl_processor, G_TYPE_OBJECT);
+
 
 static void
 gegl_processor_class_init (GeglProcessorClass *klass)
@@ -90,17 +95,23 @@ gegl_processor_class_init (GeglProcessorClass *klass)
                                                         G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_RECTANGLE,
-                                   g_param_spec_pointer ("rectangle", "rectangle", "The rectangle of the region to process.",
+                                   g_param_spec_pointer ("rectangle",
+                                                         "rectangle",
+                                                         "The rectangle of the region to process.",
                                                          G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_PROGRESS,
-                                   g_param_spec_double ("progress", "progress", "query progress 0.0 is not started 1.0 is done.",
-                                                     0.0, 1.0, 0.0,
-                                                     G_PARAM_READWRITE));
+                                   g_param_spec_double ("progress",
+                                                        "progress",
+                                                        "query progress 0.0 is not started 1.0 is done.",
+                                                        0.0, 1.0, 0.0,
+                                                        G_PARAM_READWRITE));
+
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
-                                   g_param_spec_int ("chunksize", "chunksize", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     1, 1024*1024, 
-                                                     gegl_config()->chunk_size, 
+                                   g_param_spec_int ("chunksize",
+                                                     "chunksize",
+                                                     "Size of chunks being rendered (larger chunks need more memory to do the processing).",
+                                                     1, 1024 * 1024, gegl_config()->chunk_size, 
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -115,7 +126,6 @@ gegl_processor_init (GeglProcessor *processor)
   processor->dirty_rectangles = NULL;
   processor->chunk_size       = 128 * 128;
 }
-
 
 static GObject *
 constructor (GType                  type,
@@ -134,15 +144,20 @@ constructor (GType                  type,
     {
       processor->input = gegl_node_get_producer (processor->node, "input", NULL);
       if (!gegl_operation_sink_needs_full (processor->node->operation))
-        processor->valid_region = gegl_region_new ();
+        {
+          processor->valid_region = gegl_region_new ();
+        }
       else
-        processor->valid_region = NULL;
+        {
+          processor->valid_region = NULL;
+        }
     }
   else
     {
       processor->input = processor->node;
       processor->valid_region = NULL;
     }
+
   g_object_ref (processor->input);
 
   processor->queued_region = gegl_region_new ();
@@ -150,24 +165,33 @@ constructor (GType                  type,
   return object;
 }
 
-
 static void
 finalize (GObject *self_object)
 {
   GeglProcessor *processor = GEGL_PROCESSOR (self_object);
 
   if (processor->node)
-    g_object_unref (processor->node);
+    {
+      g_object_unref (processor->node);
+    }
+
   if (processor->input)
-    g_object_unref (processor->input);
+    {
+      g_object_unref (processor->input);
+    }
+
   if (processor->queued_region)
-    gegl_region_destroy (processor->queued_region);
+    {
+      gegl_region_destroy (processor->queued_region);
+    }
+
   if (processor->valid_region)
-    gegl_region_destroy (processor->valid_region);
+    {
+      gegl_region_destroy (processor->valid_region);
+    }
 
   G_OBJECT_CLASS (gegl_processor_parent_class)->finalize (self_object);
 }
-
 
 static void
 set_property (GObject      *gobject,
@@ -247,7 +271,9 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
     }
 
   if (gegl_rectangle_equal (&processor->rectangle, rectangle))
-    return;
+    {
+      return;
+    }
 
   bounds               = gegl_node_get_bounding_box (processor->input);
   processor->rectangle = *rectangle;
@@ -255,8 +281,11 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
   /* remove already queued dirty rectangles */
   for (iter = processor->dirty_rectangles; iter; iter = g_slist_next (iter))
-    g_slice_free (GeglRectangle, iter->data);
+    {
+      g_slice_free (GeglRectangle, iter->data);
+    }
   g_slist_free (processor->dirty_rectangles);
+
   processor->dirty_rectangles = NULL;
 }
 
@@ -279,7 +308,9 @@ gegl_node_new_processor (GeglNode            *node,
       GeglCache     *cache;
 
       if (!gegl_operation_sink_needs_full (node->operation))
+        {
           return processor;
+        }
       cache = gegl_node_get_cache (processor->input);
 
       processor->context = gegl_node_add_context (node, cache);
@@ -301,8 +332,6 @@ gegl_node_new_processor (GeglNode            *node,
                                          processor->rectangle.y,
                                          processor->rectangle.width,
                                          processor->rectangle.height);
-
-
     }
   else
     {
@@ -450,7 +479,7 @@ region_area (GeglRegion *region)
 
 static gint
 area_left (GeglRegion    *area,
-                       GeglRectangle *rectangle)
+           GeglRectangle *rectangle)
 {
   GeglRegion *region;
   gint        sum = 0;
@@ -475,14 +504,18 @@ static gdouble
 gegl_processor_progress (GeglProcessor *processor)
 {
   GeglRegion *valid_region;
-  gint valid;
-  gint wanted;
-  gdouble ret;
+  gint        valid;
+  gint        wanted;
+  gdouble     ret;
 
   if (processor->valid_region)
-    valid_region = processor->valid_region;
+    {
+      valid_region = processor->valid_region;
+    }
   else
-    valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    {
+      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    }
 
   wanted = rect_area (&(processor->rectangle));
   valid  = wanted - area_left (valid_region, &(processor->rectangle));
@@ -492,12 +525,16 @@ gegl_processor_progress (GeglProcessor *processor)
         return 1.0;
       return 0.999;
     }
+
   ret = (double) valid / wanted;
   if (ret>=1.0)
     {
       if (!gegl_processor_is_rendered (processor))
-        return 0.9999;
+        {
+          return 0.9999;
+        }
     }
+
   return ret;
 }
 
@@ -509,9 +546,13 @@ gegl_processor_render (GeglProcessor *processor,
   GeglRegion *valid_region;
 
   if (processor->valid_region)
-    valid_region = processor->valid_region;
+    {
+      valid_region = processor->valid_region;
+    }
   else
-    valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    {
+      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    }
 
   {
     gboolean more_work = render_rectangle (processor);
@@ -567,6 +608,7 @@ gegl_processor_render (GeglProcessor *processor,
           processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
                                                          g_slice_dup (GeglRectangle, &roi));
         }
+
       g_free (rectangles);
 
       if (n_rectangles != 0)
@@ -602,8 +644,11 @@ gegl_processor_render (GeglProcessor *processor,
         }
       g_free (rectangles);
     }
+
   if (progress)
-    *progress = 0.69;
+    {
+      *progress = 0.69;
+    }
 
   return !gegl_processor_is_rendered (processor);
 }
@@ -637,7 +682,9 @@ gegl_processor_work (GeglProcessor *processor,
     }
 
   if (progress)
-    *progress = 1.0;
+    {
+      *progress = 1.0;
+    }
 
   return FALSE;
 }
