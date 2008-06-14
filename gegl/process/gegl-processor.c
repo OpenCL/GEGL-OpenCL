@@ -62,14 +62,14 @@ struct _GeglProcessor
   GeglNode        *input;
   GeglNodeContext *context;
 
-  GeglRegion *valid_region; /* used when doing unbuffered rendering */
-  GeglRegion *queued_region;
-  GSList     *dirty_rectangles;
-  gint        chunk_size;
+  GeglRegion      *valid_region;     /* used when doing unbuffered rendering */
+  GeglRegion      *queued_region;
+  GSList          *dirty_rectangles;
+  gint             chunk_size;
 
-  GThread *thread;
-  gboolean thread_done;
-  gdouble  progress;
+  GThread         *thread;
+  gboolean         thread_done;
+  gdouble          progress;
 };
 
 
@@ -165,12 +165,13 @@ gegl_processor_constructor (GType                  type,
   if (processor->node->operation &&
       GEGL_IS_OPERATION_SINK (processor->node->operation))
     {
-      GeglCache     *cache;
+      GeglCache *cache;
 
       if (!gegl_operation_sink_needs_full (processor->node->operation))
         {
           return object;
         }
+
       cache = gegl_node_get_cache (processor->input);
 
       processor->context = gegl_node_add_context (processor->node, cache);
@@ -378,6 +379,7 @@ render_rectangle (GeglProcessor *processor)
               dr->y           += band_size;
 
               processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+
               return TRUE;
             }
           else
@@ -396,6 +398,7 @@ render_rectangle (GeglProcessor *processor)
               dr->x          += band_size;
 
               processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+
               return TRUE;
             }
         }
@@ -404,9 +407,9 @@ render_rectangle (GeglProcessor *processor)
       if (!dr->width || !dr->height)
         {
           g_slice_free (GeglRectangle, dr);
+
           return TRUE;
         }
-
 	
       if (buffered)
         {
@@ -552,6 +555,7 @@ gegl_processor_render (GeglProcessor *processor,
 
   {
     gboolean more_work = render_rectangle (processor);
+
     if (more_work == TRUE)
       {
         if (progress)
@@ -578,6 +582,7 @@ gegl_processor_render (GeglProcessor *processor,
               }
             wanted = 1;
           }
+
         return more_work;
       }
   }
@@ -614,6 +619,7 @@ gegl_processor_render (GeglProcessor *processor,
                                rect_area (rectangle));
           return TRUE;
         }
+
       return FALSE;
     }
   else if (!gegl_region_empty (processor->queued_region) &&
@@ -638,6 +644,7 @@ gegl_processor_render (GeglProcessor *processor,
           processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
                                                          g_slice_dup (GeglRectangle, &roi));
         }
+
       g_free (rectangles);
     }
 
@@ -673,7 +680,10 @@ gegl_processor_work (GeglProcessor *processor,
       gegl_node_remove_context (processor->node, cache);
       processor->context = NULL;
       if (progress)
-        *progress = 1.0;
+        {
+          *progress = 1.0;
+        }
+
       return TRUE;
     }
 

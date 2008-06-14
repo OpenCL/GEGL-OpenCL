@@ -1,5 +1,9 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/process/gegl-processor.c: Further general cleanup.
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/process/gegl-processor.c (gegl_node_new_processor): Move
 	the extra initialization code to the constructor so that this is a
 	clean wrapper around g_object_new().
