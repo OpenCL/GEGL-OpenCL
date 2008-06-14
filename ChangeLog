@@ -1,5 +1,12 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/process/gegl-processor.c
+	(gegl_processor_set_rectangle)
+	(gegl_processor_constructor): Refactor away return:s in the middle
+	of these functions.
+
+2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/process/gegl-processor.c: Organize #includes.
 
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>

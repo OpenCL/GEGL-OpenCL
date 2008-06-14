@@ -167,15 +167,11 @@ gegl_processor_constructor (GType                  type,
 
   processor->queued_region = gegl_region_new ();
 
-  if (processor->node->operation &&
-      GEGL_IS_OPERATION_SINK (processor->node->operation))
+  if (processor->node->operation                          &&
+      GEGL_IS_OPERATION_SINK (processor->node->operation) &&
+      gegl_operation_sink_needs_full (processor->node->operation))
     {
       GeglCache *cache;
-
-      if (!gegl_operation_sink_needs_full (processor->node->operation))
-        {
-          return object;
-        }
 
       cache = gegl_node_get_cache (processor->input);
 
@@ -198,10 +194,6 @@ gegl_processor_constructor (GType                  type,
                                          processor->rectangle.y,
                                          processor->rectangle.width,
                                          processor->rectangle.height);
-    }
-  else
-    {
-      processor->context = NULL;
     }
 
   return object;
@@ -312,23 +304,21 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       rectangle          = &input_bounding_box;
     }
 
-  if (gegl_rectangle_equal (&processor->rectangle, rectangle))
+  if (! gegl_rectangle_equal (&processor->rectangle, rectangle))
     {
-      return;
+      bounds               = gegl_node_get_bounding_box (processor->input);
+      processor->rectangle = *rectangle;
+      gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
+
+      /* remove already queued dirty rectangles */
+      for (iter = processor->dirty_rectangles; iter; iter = g_slist_next (iter))
+        {
+          g_slice_free (GeglRectangle, iter->data);
+        }
+      g_slist_free (processor->dirty_rectangles);
+
+      processor->dirty_rectangles = NULL;
     }
-
-  bounds               = gegl_node_get_bounding_box (processor->input);
-  processor->rectangle = *rectangle;
-  gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
-
-  /* remove already queued dirty rectangles */
-  for (iter = processor->dirty_rectangles; iter; iter = g_slist_next (iter))
-    {
-      g_slice_free (GeglRectangle, iter->data);
-    }
-  g_slist_free (processor->dirty_rectangles);
-
-  processor->dirty_rectangles = NULL;
 }
 
 GeglProcessor *
