@@ -47,6 +47,7 @@ gegl_buffer_linear_new_from_data (const gpointer data,
                                   const Babl   *format,
                                   gint width,
                                   gint height,
+                                  gint rowstride,
                                   GCallback destroy_fn,
                                   gpointer destroy_fn_data)
 {
@@ -115,7 +116,9 @@ gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
   return NULL;
 }
 
-void            gegl_buffer_linear_close      (GeglBuffer          *buffer)
+void
+gegl_buffer_linear_close (GeglBuffer *buffer,
+                          gpointer    linear)
 {
   GeglTile *tile;
   tile = g_object_get_data (G_OBJECT (buffer), "linear-tile");

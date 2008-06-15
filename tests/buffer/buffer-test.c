@@ -799,7 +799,7 @@ static gchar * linear_modify ()
         {
           buf[i++]= ((x+y)*1.0) / width;
         }
-    gegl_buffer_linear_close (buffer);
+    gegl_buffer_linear_close (buffer, buf);
   }
   fill_rect (buffer, &roi, 0.2);
 
@@ -822,6 +822,7 @@ static gchar * linear_from_data ()
   buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
                                              10, /* width */
                                              10, /* height */
+                                             10 * 4,
                                              G_CALLBACK(g_free), /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
   print_buffer (buffer);

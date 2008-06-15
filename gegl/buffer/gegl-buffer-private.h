@@ -101,35 +101,35 @@ gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
 gboolean             gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
 
-GeglBuffer*     gegl_buffer_linear_new        (const GeglRectangle *extent,
-                                               const Babl          *format);
+GeglBuffer *gegl_buffer_linear_new           (const GeglRectangle *extent,
+                                              const Babl          *format);
 
-GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer data,
-                                               const Babl   *format,
-                                               gint          width,
-                                               gint          height,
-                                          /*   gint          rowstride,   FIXME: this should be supported */
-                                               GCallback     destroy_fn,
-                                               gpointer      destroy_fn_data);
+GeglBuffer *gegl_buffer_linear_new_from_data (const gpointer data,
+                                              const Babl    *format,
+                                              gint           width,
+                                              gint           height,
+                                              gint           rowstride,
+                                              GCallback      destroy_fn,
+                                              gpointer       destroy_fn_data);
 
-gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
-                                               gint                *width,
-                                               gint                *height,
-                                               gint                *rowstride);
+gpointer       *gegl_buffer_linear_open      (GeglBuffer    *buffer,
+                                              gint          *width,
+                                              gint          *height,
+                                              gint          *rowstride);
 /* needed if the linear buffer is faked */
-void            gegl_buffer_linear_close      (GeglBuffer          *buffer);
+void            gegl_buffer_linear_close      (GeglBuffer    *buffer,
+                                               gpointer       linear);
 
 
-GType
-gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
+GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
 
-void            gegl_buffer_sampler           (GeglBuffer       *buffer,
-                                               gdouble           x,
-                                               gdouble           y,
-                                               gdouble           scale,
-                                               gpointer          dest,
-                                               const Babl       *format,
-                                               gpointer          sampler);
+void            gegl_buffer_sampler           (GeglBuffer     *buffer,
+                                               gdouble         x,
+                                               gdouble         y,
+                                               gdouble         scale,
+                                               gpointer        dest,
+                                               const Babl     *format,
+                                               gpointer        sampler);
 
 
 #endif
