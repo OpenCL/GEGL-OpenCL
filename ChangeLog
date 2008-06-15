@@ -1,3 +1,8 @@
+2008-06-15  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operation.c (get_bounding_box): Refactor
+	away return in-the-middle and update warning message.
+
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-sampler.c: (gegl_sampler_get_from_buffer):

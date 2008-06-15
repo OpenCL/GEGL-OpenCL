@@ -286,11 +286,17 @@ get_bounding_box (GeglOperation *self)
 
   if (self->node->is_graph)
     {
-      return gegl_operation_get_bounding_box (
-               gegl_node_get_output_proxy (self->node, "output")->operation);
+      GeglOperation *operation;
+
+      operation = gegl_node_get_output_proxy (self->node, "output")->operation;
+      rect      = gegl_operation_get_bounding_box (operation);
     }
-  g_warning ("Op '%s' has no defined_region method",
-             G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
+  else
+    {
+      g_warning ("Operation '%s' has no get_bounding_box() method",
+                 G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
+    }
+
   return rect;
 }
 
