@@ -1,5 +1,11 @@
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/Makefile.am: added gegl-simd.h
+	* gegl/gegl-plugin.h: moved g4float macros and typedef 
+	* gegl/gegl-simd.h: .. here
+
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
 	renamed GeglNodeContext GeglOperation context and replaced the node
 	field with an operation field.
 
