@@ -30,7 +30,7 @@
 #include "gegl-operations.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
-#include "graph/gegl-node-context.h"
+#include "graph/gegl-operation-context.h"
 #include "buffer/gegl-region.h"
 
 static void
@@ -152,7 +152,7 @@ gegl_operation_set_source_region (GeglOperation        *operation,
   }
 
   {
-    GeglNodeContext *child_context = gegl_node_get_context (child, context_id);
+    GeglOperationContext *child_context = gegl_node_get_context (child, context_id);
     gegl_rectangle_bounding_box (&child_need, &child_context->need_rect, region);
     gegl_rectangle_intersect (&child_need, &child->have_rect, &child_need);
 
@@ -184,7 +184,7 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
                                     gpointer       context_id)
 {
   GSList          *input_pads;
-  GeglNodeContext *context;
+  GeglOperationContext *context;
   GeglRectangle    request;
 
   context = gegl_node_get_context (operation->node, context_id);

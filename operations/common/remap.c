@@ -108,7 +108,7 @@ get_required_for_output (GeglOperation       *operation,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
@@ -122,9 +122,9 @@ process (GeglOperation       *operation,
   gint        pixels = result->width * result->height;
   gint        i;
 
-  input = gegl_node_context_get_source (context, "input");
-  low = gegl_node_context_get_source (context, "low");
-  high = gegl_node_context_get_source (context, "high");
+  input = gegl_operation_context_get_source (context, "input");
+  low = gegl_operation_context_get_source (context, "low");
+  high = gegl_operation_context_get_source (context, "high");
 
   buf = g_new (gfloat, pixels * 4);
   min = g_new (gfloat, pixels * 3);
@@ -134,7 +134,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
   gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
 
-  output = gegl_node_context_get_target (context, "output");
+  output = gegl_operation_context_get_target (context, "output");
 
   for (i = 0; i < pixels; i++)
     {

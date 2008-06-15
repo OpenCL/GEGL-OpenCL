@@ -102,7 +102,7 @@ gegl_operation_create_pad (GeglOperation *self,
 
 gboolean
 gegl_operation_process (GeglOperation       *operation,
-                        GeglNodeContext     *context,
+                        GeglOperationContext     *context,
                         const gchar         *output_pad,
                         const GeglRectangle *result)
 {
@@ -116,7 +116,7 @@ gegl_operation_process (GeglOperation       *operation,
       (result->width == 0 || result->height == 0))
     {
       GeglBuffer *output = gegl_buffer_new (NULL, NULL);
-      gegl_node_context_set_object (context, "output", G_OBJECT (output));
+      gegl_operation_context_set_object (context, "output", G_OBJECT (output));
       return TRUE;
     }
 

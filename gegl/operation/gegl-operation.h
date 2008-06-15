@@ -126,7 +126,7 @@ struct _GeglOperationClass
    * result_rect is then then indicating the data available for consumption.
    */
   gboolean      (*process)                   (GeglOperation       *operation,
-                                              GeglNodeContext     *context,
+                                              GeglOperationContext     *context,
                                               const gchar         *output_pad,
                                               const GeglRectangle *roi);
 
@@ -178,7 +178,7 @@ void            gegl_operation_attach        (GeglOperation *operation,
                                               GeglNode      *node);
 void            gegl_operation_prepare       (GeglOperation *operation);
 gboolean        gegl_operation_process       (GeglOperation *operation,
-                                              GeglNodeContext *context,
+                                              GeglOperationContext *context,
                                               const gchar   *output_pad,
                                               const GeglRectangle *roi);
 

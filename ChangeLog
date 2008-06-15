@@ -1,5 +1,44 @@
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
+	renamed GeglNodeContext GeglOperation context and replaced the node
+	field with an operation field.
+
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-types.h:
+	* gegl/graph/Makefile.am:
+	* gegl/graph/gegl-node-context.c:
+	* gegl/graph/gegl-node-context.h:
+	* gegl/graph/gegl-node.c: 
+	* gegl/graph/gegl-node.h:
+	* gegl/graph/gegl-operation-context.c:
+	* gegl/graph/gegl-operation-context.h:
+	* gegl/operation/gegl-operation-composer.c:
+	* gegl/operation/gegl-operation-filter.c:
+	* gegl/operation/gegl-operation-point-composer.c:
+	* gegl/operation/gegl-operation-sink.c:
+	* gegl/operation/gegl-operation-source.c:
+	* gegl/operation/gegl-operation.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/operation/gegl-operations.c:
+	* gegl/process/gegl-cr-visitor.c:
+	* gegl/process/gegl-debug-rect-visitor.c:
+	* gegl/process/gegl-eval-mgr.c:
+	* gegl/process/gegl-eval-visitor.c:
+	* gegl/process/gegl-processor.c:
+	* operations/common/introspect.c:
+	* operations/common/load-buffer.c:
+	* operations/common/magick-load.c:
+	* operations/common/open-buffer.c:
+	* operations/common/raw-load.c:
+	* operations/common/remap.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/workshop/rawbayer-load.c:
+
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/Makefile.am: do not install gegl-config.c as if it was a
 	header.
 

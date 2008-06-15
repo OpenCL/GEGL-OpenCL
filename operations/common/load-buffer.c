@@ -43,7 +43,7 @@ get_bounding_box (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_pad,
          const GeglRectangle *result)
 {
@@ -56,8 +56,8 @@ process (GeglOperation       *operation,
 				     * stealing one.
 				     */
 
-      /* override core behaviour, by resetting the buffer in the node_context */
-      gegl_node_context_set_object (context, "output",
+      /* override core behaviour, by resetting the buffer in the operation_context */
+      gegl_operation_context_set_object (context, "output",
 				    G_OBJECT (o->buffer));
     }
   return TRUE;

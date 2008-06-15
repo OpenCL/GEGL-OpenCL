@@ -20,7 +20,7 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "gegl-node-context.h"
+#include "gegl-operation-context.h"
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/buffer/gegl-cache.h>
 
@@ -54,7 +54,7 @@ struct _GeglNode
   gboolean        is_root;
   gboolean        enabled;
 
-  GSList         *context;   /*< list of GeglNodeContext's corresponding to
+  GSList         *context;   /*< list of GeglOperationContext's corresponding to
                                  evaluation contexts */
   gboolean        is_graph;
 
@@ -133,11 +133,11 @@ GeglNode    * gegl_node_adopt_child         (GeglNode      *self,
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
 
-GeglNodeContext *gegl_node_get_context      (GeglNode      *self,
+GeglOperationContext *gegl_node_get_context      (GeglNode      *self,
                                              gpointer       context_id);
 void             gegl_node_remove_context   (GeglNode      *self,
                                              gpointer       context_id);
-GeglNodeContext *gegl_node_add_context      (GeglNode      *self,
+GeglOperationContext *gegl_node_add_context      (GeglNode      *self,
                                              gpointer       context_id);
 
 void          gegl_node_add_pad             (GeglNode      *self,

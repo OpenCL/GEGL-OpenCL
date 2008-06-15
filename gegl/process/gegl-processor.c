@@ -65,7 +65,7 @@ struct _GeglProcessor
   GeglNode        *node;
   GeglRectangle    rectangle;
   GeglNode        *input;
-  GeglNodeContext *context;
+  GeglOperationContext *context;
 
   GeglRegion      *valid_region;     /* used when doing unbuffered rendering */
   GeglRegion      *queued_region;
@@ -180,16 +180,16 @@ gegl_processor_constructor (GType                  type,
         GValue value = { 0, };
         g_value_init (&value, GEGL_TYPE_BUFFER);
         g_value_set_object (&value, cache);
-        gegl_node_context_set_property (processor->context, "input", &value);
+        gegl_operation_context_set_property (processor->context, "input", &value);
         g_value_unset (&value);
       }
 
-      gegl_node_context_set_result_rect (processor->context,
+      gegl_operation_context_set_result_rect (processor->context,
                                          processor->rectangle.x,
                                          processor->rectangle.y,
                                          processor->rectangle.width,
                                          processor->rectangle.height);
-      gegl_node_context_set_need_rect   (processor->context,
+      gegl_operation_context_set_need_rect   (processor->context,
                                          processor->rectangle.x,
                                          processor->rectangle.y,
                                          processor->rectangle.width,

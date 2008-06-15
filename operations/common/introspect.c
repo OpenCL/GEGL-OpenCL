@@ -48,7 +48,7 @@ get_bounding_box (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_pad,
          const GeglRectangle *result)
 {
@@ -60,7 +60,7 @@ process (GeglOperation       *operation,
         {
           g_object_ref (o->buf); /* add an extra reference, since gegl_operation_set_data
                                       is stealing one */
-          gegl_node_context_set_object (context, "output", G_OBJECT (o->buf));
+          gegl_operation_context_set_object (context, "output", G_OBJECT (o->buf));
         }
       return TRUE;
     }
@@ -96,7 +96,7 @@ process (GeglOperation       *operation,
   if (context)
     {
       g_object_ref (o->buf);
-      gegl_node_context_set_object (context, "output", G_OBJECT (o->buf));
+      gegl_operation_context_set_object (context, "output", G_OBJECT (o->buf));
     }
   }
 

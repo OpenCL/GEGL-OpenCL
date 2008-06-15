@@ -95,7 +95,7 @@ get_required_for_output (GeglOperation       *operation,
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
@@ -110,14 +110,14 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  input  = gegl_node_context_get_source (context, "input");
+  input  = gegl_operation_context_get_source (context, "input");
 
   if (input != NULL)
     {
       GeglBuffer *output;
 
       output = gegl_buffer_create_sub_buffer (input, &extent);
-      gegl_node_context_set_object (context, "output", G_OBJECT (output));
+      gegl_operation_context_set_object (context, "output", G_OBJECT (output));
       g_object_unref (input);
       success = TRUE;
     }

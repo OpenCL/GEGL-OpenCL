@@ -45,7 +45,7 @@ static void          set_property          (GObject             *gobject,
 
 static gboolean      gegl_operation_sink_process 
                                             (GeglOperation       *operation,
-                                             GeglNodeContext     *context,
+                                             GeglOperationContext     *context,
                                              const gchar         *output_prop,
                                              const GeglRectangle *result);
 static void          attach                 (GeglOperation       *operation);
@@ -117,7 +117,7 @@ set_property (GObject      *object,
 
 static gboolean
 gegl_operation_sink_process (GeglOperation *operation,
-                             GeglNodeContext *context,
+                             GeglOperationContext *context,
                              const gchar   *output_prop,
                              const GeglRectangle *result)
 {
@@ -131,7 +131,7 @@ gegl_operation_sink_process (GeglOperation *operation,
 
   g_assert (klass->process);
 
-  input = gegl_node_context_get_source (context, "input");
+  input = gegl_operation_context_get_source (context, "input");
   if (input)
     {
       success = klass->process (operation, input, result);

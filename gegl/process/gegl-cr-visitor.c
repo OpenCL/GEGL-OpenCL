@@ -26,7 +26,7 @@
 #include "gegl-cr-visitor.h"
 #include "operation/gegl-operation.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-node-context.h"
+#include "graph/gegl-operation-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 #include "gegl-utils.h"
@@ -57,7 +57,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglNodeContext *context = gegl_node_get_context (node, self->context_id);
+  GeglOperationContext *context = gegl_node_get_context (node, self->context_id);
 
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 

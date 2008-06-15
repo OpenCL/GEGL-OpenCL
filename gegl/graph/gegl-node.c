@@ -306,6 +306,9 @@ set_property (GObject      *gobject,
                          * the preceding argument is NULL, gcc might warn about
                          * use of uninitialized variable.
                          */
+#if defined(__GNUC__)
+          null = NULL;
+#endif
           gegl_node_set_op_class (node, g_value_get_string (value), NULL, null);
         }
         break;
@@ -1399,7 +1402,7 @@ gegl_node_set_need_rect (GeglNode *node,
                          gint      width,
                          gint      height)
 {
-  GeglNodeContext *context;
+  GeglOperationContext *context;
 
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (context_id != NULL);
@@ -1536,7 +1539,7 @@ void
 gegl_node_process (GeglNode *self)
 {
   GeglNode        *input;
-  GeglNodeContext *context;
+  GeglOperationContext *context;
   GeglBuffer      *buffer;
   GeglRectangle    defined;
 
@@ -1555,11 +1558,11 @@ gegl_node_process (GeglNode *self)
     GValue value = { 0, };
     g_value_init (&value, GEGL_TYPE_BUFFER);
     g_value_set_object (&value, buffer);
-    gegl_node_context_set_property (context, "input", &value);
+    gegl_operation_context_set_property (context, "input", &value);
     g_value_unset (&value);
   }
 
-  gegl_node_context_set_result_rect (context, defined.x, defined.y, defined.width, defined.h);
+  gegl_operation_context_set_result_rect (context, defined.x, defined.y, defined.width, defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
   gegl_node_remove_context (self, &defined);
   g_object_unref (buffer);
@@ -1570,7 +1573,7 @@ static gint
 lookup_context (gconstpointer a,
                 gconstpointer context_id)
 {
-  GeglNodeContext *context = (void *) a;
+  GeglOperationContext *context = (void *) a;
 
   if (context->context_id == context_id)
     return 0;
@@ -1579,12 +1582,12 @@ lookup_context (gconstpointer a,
 
 void babl_backtrack (void);
 
-GeglNodeContext *
+GeglOperationContext *
 gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GSList          *found;
-  GeglNodeContext *context = NULL;
+  GeglOperationContext *context = NULL;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
@@ -1604,7 +1607,7 @@ void
 gegl_node_remove_context (GeglNode *self,
                           gpointer  context_id)
 {
-  GeglNodeContext *context;
+  GeglOperationContext *context;
 
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (context_id != NULL);
@@ -1620,11 +1623,11 @@ gegl_node_remove_context (GeglNode *self,
   g_object_unref (context);
 }
 
-GeglNodeContext *
+GeglOperationContext *
 gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)
 {
-  GeglNodeContext *context = NULL;
+  GeglOperationContext *context = NULL;
   GSList          *found;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
@@ -1642,8 +1645,8 @@ gegl_node_add_context (GeglNode *self,
       return context;
     }
 
-  context             = g_object_new (GEGL_TYPE_NODE_CONTEXT, NULL);
-  context->node       = self;
+  context             = g_object_new (GEGL_TYPE_OPERATION_CONTEXT, NULL);
+  context->operation  = self->operation;
   context->context_id = context_id;
   self->context       = g_slist_prepend (self->context, context);
   return context;

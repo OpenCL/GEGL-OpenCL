@@ -106,7 +106,7 @@ get_bounding_box (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_pad,
          const GeglRectangle *result)
 {
@@ -116,7 +116,7 @@ process (GeglOperation       *operation,
     return FALSE;
 
   /* overriding the predefined behavior */
-  gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
   o->chant_data = NULL;
 
   return  TRUE;

@@ -48,7 +48,7 @@ static void     set_property (GObject             *gobject,
                               const GValue        *value,
                               GParamSpec          *pspec);
 static gboolean gegl_operation_composer_process (GeglOperation       *operation,
-                              GeglNodeContext     *context,
+                              GeglOperationContext     *context,
                               const gchar         *output_prop,
                               const GeglRectangle *result);
 static void     attach       (GeglOperation       *operation);
@@ -145,7 +145,7 @@ set_property (GObject      *object,
 
 static gboolean
 gegl_operation_composer_process (GeglOperation       *operation,
-                        GeglNodeContext     *context,
+                        GeglOperationContext     *context,
                         const gchar         *output_prop,
                         const GeglRectangle *result)
 {
@@ -161,9 +161,9 @@ gegl_operation_composer_process (GeglOperation       *operation,
       return FALSE;
     }
 
-  input = gegl_node_context_get_source (context, "input");
-  aux   = gegl_node_context_get_source (context, "aux");
-  output = gegl_node_context_get_target (context, "output");
+  input = gegl_operation_context_get_source (context, "input");
+  aux   = gegl_operation_context_get_source (context, "aux");
+  output = gegl_operation_context_get_target (context, "output");
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.

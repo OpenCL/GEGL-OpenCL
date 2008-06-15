@@ -56,7 +56,7 @@ typedef struct _GeglNeedVisitor      GeglNeedVisitor;
 #ifndef __GEGL_PLUGIN_H__
 typedef struct _GeglPad              GeglPad;
 typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglNodeContext      GeglNodeContext;
+typedef struct _GeglOperationContext GeglOperationContext;
 typedef struct _GeglConnection       GeglConnection;
 #endif
 typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;

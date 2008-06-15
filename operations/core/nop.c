@@ -29,7 +29,7 @@
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_prop,
          const GeglRectangle *result)
 {
@@ -41,14 +41,14 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  input  = gegl_node_context_get_source (context, "input");
+  input  = gegl_operation_context_get_source (context, "input");
   if (!input)
     {
       g_warning ("nop received NULL input");
       return FALSE;
     }
 
-  gegl_node_context_set_object (context, "output", G_OBJECT (input));
+  gegl_operation_context_set_object (context, "output", G_OBJECT (input));
   return TRUE;
 }
 

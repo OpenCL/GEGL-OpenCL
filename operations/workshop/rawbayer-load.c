@@ -105,7 +105,7 @@ get_bounding_box (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglNodeContext     *context,
+         GeglOperationContext     *context,
          const gchar         *output_pad,
          const GeglRectangle *result)
 
@@ -113,7 +113,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 #if 1
   g_assert (o->chant_data);
-  gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
 
   o->chant_data = NULL;
 #else
@@ -123,8 +123,8 @@ process (GeglOperation       *operation,
                                       is stealing one.
                                     */
 
-      /* override core behaviour, by resetting the buffer in the node_context */
-      gegl_node_context_set_object (context, "output", G_OBJECT (o->chant_data));
+      /* override core behaviour, by resetting the buffer in the operation_context */
+      gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
     }
 #endif
   return TRUE;

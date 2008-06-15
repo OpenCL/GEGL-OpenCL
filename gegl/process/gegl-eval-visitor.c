@@ -25,7 +25,7 @@
 
 #include "gegl-eval-visitor.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-node-context.h"
+#include "graph/gegl-operation-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 #include "gegl-instrument.h"
@@ -64,7 +64,7 @@ visit_pad (GeglVisitor *self,
 {
   GeglNode        *node       = gegl_pad_get_node (pad);
   gpointer         context_id = self->context_id;
-  GeglNodeContext *context    = gegl_node_get_context (node, context_id);
+  GeglOperationContext *context    = gegl_node_get_context (node, context_id);
   GeglOperation   *operation  = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
@@ -77,7 +77,7 @@ visit_pad (GeglVisitor *self,
            * that has not been invalidated, (the validity of the cache
            * is determined by other visitors)
            */
-          gegl_node_context_get_target (context, pad->name);
+          gegl_operation_context_get_target (context, pad->name);
           /* XXX: why is the _get_target call needed anyways? */
         }
       else
@@ -115,11 +115,11 @@ visit_pad (GeglVisitor *self,
           GValue           value          = { 0 };
           GParamSpec      *prop_spec      = gegl_pad_get_param_spec (pad);
           GeglNode        *source_node    = gegl_pad_get_node (source_pad);
-          GeglNodeContext *source_context = gegl_node_get_context (source_node, context_id);
+          GeglOperationContext *source_context = gegl_node_get_context (source_node, context_id);
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
-          gegl_node_context_get_property (source_context,
+          gegl_operation_context_get_property (source_context,
                                           gegl_pad_get_name (source_pad),
                                           &value);
 
@@ -130,7 +130,7 @@ visit_pad (GeglVisitor *self,
                        gegl_pad_get_name (source_pad),
                        g_value_get_object (&value));
 
-          gegl_node_context_set_property (context,
+          gegl_operation_context_set_property (context,
                                           gegl_pad_get_name (pad),
                                           &value);
           /* reference counting for this source dropped to zero, freeing up */
@@ -138,7 +138,7 @@ visit_pad (GeglVisitor *self,
                      gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
               g_value_get_object (&value))
             {
-              gegl_node_context_remove_property (
+              gegl_operation_context_remove_property (
                  gegl_node_get_context (
                     gegl_pad_get_node (source_pad), context_id),
                     gegl_pad_get_name (source_pad));

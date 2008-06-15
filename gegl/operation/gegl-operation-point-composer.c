@@ -37,7 +37,7 @@ static gboolean gegl_operation_point_composer_process
 
 static gboolean
 gegl_operation_composer_process2 (GeglOperation       *operation,
-                        GeglNodeContext     *context,
+                        GeglOperationContext     *context,
                         const gchar         *output_prop,
                         const GeglRectangle *result);
 
@@ -75,7 +75,7 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
  */
 static gboolean
 gegl_operation_composer_process2 (GeglOperation       *operation,
-                                  GeglNodeContext     *context,
+                                  GeglOperationContext     *context,
                                   const gchar         *output_prop,
                                   const GeglRectangle *result)
 {
@@ -91,14 +91,14 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
       return FALSE;
     }
 
-  input = gegl_node_context_get_source (context, "input");
-  aux   = gegl_node_context_get_source (context, "aux");
+  input = gegl_operation_context_get_source (context, "input");
+  aux   = gegl_operation_context_get_source (context, "aux");
 
   /* we could be even faster by not alway writing to this buffer, that
    * would potentially break other assumptions we want to make from the
    * GEGL core so we avoid doing that
    */
-  output = gegl_node_context_get_target (context, "output");
+  output = gegl_operation_context_get_target (context, "output");
 
 
   if (input != NULL ||
