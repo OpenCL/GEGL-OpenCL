@@ -1,5 +1,10 @@
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/Makefile.am: do not install gegl-config.c as if it was a
+	header.
+
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-linear.c:
 	(gegl_buffer_linear_new_from_data): added rowstride parameter,
 	(gegl_buffer_linear_close): added the linear buffer itself as a
