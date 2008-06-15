@@ -37,8 +37,8 @@ struct _GeglOperationContext
 {
   GObject        parent_instance;
   GeglOperation *operation;
-  gpointer       context_id;
 
+  GSList        *property;    /* used internally for data being exchanged */
   GeglRectangle  need_rect;   /* the rectangle needed from the operation */
   GeglRectangle  result_rect; /* the result computation rectangle for the operation ,
                                  (will differ if the needed rect extends beyond
@@ -46,6 +46,8 @@ struct _GeglOperationContext
                                  force/suggest expansion of the result
                                  rect, like contrast stretching.
                                */
+
+
   gboolean       cached;       /* true if the cache can be used directly, and
                                   recomputation of inputs is unneccesary) */
 
@@ -57,7 +59,6 @@ struct _GeglOperationContext
                                   incorporated into the refcount of
                                   GeglOperationContext?
                                 */
-  GSList        *property;      /* used internally for data being exchanged */
 };
 
 struct _GeglOperationContextClass
@@ -89,16 +90,10 @@ void            gegl_operation_context_remove_property (GeglOperationContext *se
                                                         const gchar          *name);
 GeglRectangle * gegl_operation_context_get_need_rect   (GeglOperationContext *self);
 void            gegl_operation_context_set_need_rect   (GeglOperationContext *self,
-                                                        gint                  x,
-                                                        gint                  y,
-                                                        gint                  width,
-                                                        gint                  height);
+                                                        const GeglRectangle  *rect);
 GeglRectangle * gegl_operation_context_get_result_rect (GeglOperationContext *node);
 void            gegl_operation_context_set_result_rect (GeglOperationContext *node,
-                                                        gint                  x,
-                                                        gint                  y,
-                                                        gint                  width,
-                                                        gint                  height);
+                                                        const GeglRectangle  *rect);
 
 
 G_END_DECLS

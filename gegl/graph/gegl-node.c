@@ -67,6 +67,7 @@ struct _GeglNodePrivate
   GeglNode       *parent;
   gchar          *name;
   GeglProcessor  *processor;
+  GHashTable     *contexts;
 };
 
 
@@ -208,6 +209,7 @@ gegl_node_init (GeglNode *self)
   priv->children    = NULL;
   priv->name        = NULL;
   priv->processor   = NULL;
+  priv->contexts    = g_hash_table_new (NULL, NULL);
 }
 
 static void
@@ -278,6 +280,7 @@ finalize (GObject *gobject)
     {
       g_free (priv->name);
     }
+  g_hash_table_destroy (priv->contexts);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
@@ -1408,7 +1411,6 @@ gegl_node_set_need_rect (GeglNode *node,
   g_return_if_fail (context_id != NULL);
 
   context = gegl_node_get_context (node, context_id);
-
   context->need_rect.x      = x;
   context->need_rect.y      = y;
   context->need_rect.width  = width;
@@ -1517,6 +1519,8 @@ gegl_node_get_bounding_box (GeglNode *root)
   return root->have_rect;
 }
 
+#if 1
+
 void
 gegl_node_process (GeglNode *self)
 {
@@ -1530,7 +1534,7 @@ gegl_node_process (GeglNode *self)
   gegl_processor_destroy (processor);
 }
 
-#if 0
+#else
 /* simplest form of GeglProcess that processes all data in one
  *
  * single large chunk
@@ -1569,33 +1573,22 @@ gegl_node_process (GeglNode *self)
 }
 #endif
 
-static gint
-lookup_context (gconstpointer a,
-                gconstpointer context_id)
-{
-  GeglOperationContext *context = (void *) a;
-
-  if (context->context_id == context_id)
-    return 0;
-  return -1;
-}
-
 void babl_backtrack (void);
 
 GeglOperationContext *
 gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
-  GSList          *found;
   GeglOperationContext *context = NULL;
+  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-  found = g_slist_find_custom (self->context, context_id, lookup_context);
-  if (found)
-    context = found->data;
-  else
+  priv = GEGL_NODE_GET_PRIVATE (self);
+
+  context = g_hash_table_lookup (priv->contexts, context_id);
+  if (!context)
     {
       g_warning ("didn't find %p", context_id);
       babl_backtrack ();
@@ -1608,6 +1601,7 @@ gegl_node_remove_context (GeglNode *self,
                           gpointer  context_id)
 {
   GeglOperationContext *context;
+  GeglNodePrivate *priv;
 
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (context_id != NULL);
@@ -1619,7 +1613,8 @@ gegl_node_remove_context (GeglNode *self,
                  context_id, gegl_node_get_debug_name (self));
       return;
     }
-  self->context = g_slist_remove (self->context, context);
+  priv = GEGL_NODE_GET_PRIVATE (self);
+  g_hash_table_remove (priv->contexts, context_id);
   g_object_unref (context);
 }
 
@@ -1628,15 +1623,13 @@ gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-  GSList          *found;
+  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-  found = g_slist_find_custom (self->context, context_id, lookup_context);
-
-  if (found)
-    context = found->data;
+  priv = GEGL_NODE_GET_PRIVATE (self);
+  context = g_hash_table_lookup (priv->contexts, context_id);
 
   if (context)
     {
@@ -1647,8 +1640,7 @@ gegl_node_add_context (GeglNode *self,
 
   context             = g_object_new (GEGL_TYPE_OPERATION_CONTEXT, NULL);
   context->operation  = self->operation;
-  context->context_id = context_id;
-  self->context       = g_slist_prepend (self->context, context);
+  g_hash_table_insert (priv->contexts, context_id, context);
   return context;
 }
 

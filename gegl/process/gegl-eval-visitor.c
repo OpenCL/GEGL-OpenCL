@@ -25,11 +25,11 @@
 
 #include "gegl-eval-visitor.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-operation-context.h"
+#include "operation/gegl-operation.h"
+#include "operation/gegl-operation-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 #include "gegl-instrument.h"
-#include "operation/gegl-operation.h"
 #include "operation/gegl-operation-sink.h"
 #include "buffer/gegl-region.h"
 

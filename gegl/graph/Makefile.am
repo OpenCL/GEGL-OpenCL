@@ -3,7 +3,6 @@ noinst_LTLIBRARIES = libgraph.la
 GRAPH_sources = \
 	gegl-connection.c	\
 	gegl-node.c		\
-	gegl-operation-context.c	\
 	gegl-pad.c		\
 	gegl-visitor.c		\
 	gegl-visitable.c
@@ -12,7 +11,6 @@ GRAPH_sources = \
 GRAPH_headers = \
 	gegl-connection.h	\
 	gegl-node.h		\
-	gegl-operation-context.h	\
 	gegl-pad.h		\
 	gegl-visitor.h		\
 	gegl-visitable.h

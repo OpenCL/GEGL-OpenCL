@@ -28,8 +28,7 @@
 #include "gegl-types.h"
 
 #include "gegl-operation-context.h"
-#include "gegl-node.h"
-#include "gegl-pad.h"
+#include "gegl/graph/gegl-node.h"
 #include "gegl-config.h"
 
 #include "operation/gegl-operation.h"
@@ -61,16 +60,10 @@ gegl_operation_context_init (GeglOperationContext *self)
 
 void
 gegl_operation_context_set_need_rect (GeglOperationContext *self,
-                                      gint                  x,
-                                      gint                  y,
-                                      gint                  width,
-                                      gint                  height)
+                                      const GeglRectangle  *rect)
 {
   g_assert (self);
-  self->need_rect.x      = x;
-  self->need_rect.y      = y;
-  self->need_rect.width  = width;
-  self->need_rect.height = height;
+  self->need_rect = *rect;
 }
 
 GeglRectangle *
@@ -81,16 +74,10 @@ gegl_operation_context_get_result_rect (GeglOperationContext *self)
 
 void
 gegl_operation_context_set_result_rect (GeglOperationContext *self,
-                                        gint                  x,
-                                        gint                  y,
-                                        gint                  width,
-                                        gint                  height)
+                                        const GeglRectangle  *rect)
 {
   g_assert (self);
-  self->result_rect.x      = x;
-  self->result_rect.y      = y;
-  self->result_rect.width  = width;
-  self->result_rect.height = height;
+  self->result_rect = *rect;
 }
 
 GeglRectangle *
@@ -280,6 +267,12 @@ gegl_operation_context_set_object (GeglOperationContext *context,
     g_value_set_object (&value, data);
     gegl_operation_context_set_property (context, padname, &value);
   }
+  else
+    {
+      g_warning ("eeek! %s\n", padname);
+      if (data)
+        g_object_unref (data); /* are we stealing the initial reference? */
+    }
   g_value_unset (&value);
   g_object_unref (data); /* are we stealing the initial reference? */
 }

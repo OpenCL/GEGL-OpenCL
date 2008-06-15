@@ -30,7 +30,7 @@
 #include "gegl-operations.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
-#include "graph/gegl-operation-context.h"
+#include "gegl-operation-context.h"
 #include "buffer/gegl-region.h"
 
 static void
@@ -174,7 +174,7 @@ gegl_operation_set_source_region (GeglOperation        *operation,
             }
         }
 
-    gegl_node_set_need_rect (child, context_id,
+    gegl_node_set_need_rect (child,            context_id,
                              child_need.x,     child_need.y,
                              child_need.width, child_need.height);
   }

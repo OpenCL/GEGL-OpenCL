@@ -323,15 +323,9 @@ gegl_node_new_processor (GeglNode            *node,
       }
 
       gegl_operation_context_set_result_rect (processor->context,
-                                              processor->rectangle.x,
-                                              processor->rectangle.y,
-                                              processor->rectangle.width,
-                                              processor->rectangle.height);
+                                              &processor->rectangle);
       gegl_operation_context_set_need_rect   (processor->context,
-                                              processor->rectangle.x,
-                                              processor->rectangle.y,
-                                              processor->rectangle.width,
-                                              processor->rectangle.height);
+                                              &processor->rectangle);
     }
 
   return processor;

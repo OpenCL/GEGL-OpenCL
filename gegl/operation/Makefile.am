@@ -14,6 +14,7 @@ OPERATION_sources = \
 	gegl-operation-source.c		  \
 	gegl-operation-temporal.c 	  \
 	gegl-operation-processors.c       \
+	gegl-operation-context.c          \
 	gegl-operations.c
 
 OPERATION_headers = \
@@ -29,6 +30,7 @@ OPERATION_headers = \
 	gegl-operation-sink.h       	 \
 	gegl-operation-source.h		 \
 	gegl-operation-temporal.h	 \
+	gegl-operation-context.h          \
 	gegl-operations.h
 
 public_headers = \

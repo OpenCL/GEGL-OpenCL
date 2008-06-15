@@ -1,3 +1,23 @@
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/Makefile.am:
+	* gegl/operation/Makefile.am:
+	* gegl/graph/gegl-node.[ch]: made operation contexts be stored in a
+	hash table.
+
+	* gegl/graph/gegl-operation-context.c:
+	* gegl/graph/gegl-operation-context.h: moved these ...
+
+	* gegl/operation/gegl-operation-context.c: ... here.
+	* gegl/operation/gegl-operation-context.h: also made the set_rect
+	functions take rectangles as the argument.
+
+	* gegl/operation/gegl-operations.c:
+	* gegl/process/gegl-cr-visitor.c:
+	* gegl/process/gegl-debug-rect-visitor.c:
+	* gegl/process/gegl-eval-visitor.c: fixed include path.
+	* gegl/process/gegl-processor.c: fix include path, updated api use.
+
 2008-06-15  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/process/gegl-processor.c: Revert change that moved
@@ -95,12 +115,6 @@
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/process/gegl-processor.c: Further general cleanup.
-
-2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
-
-	* gegl/process/gegl-processor.c (gegl_node_new_processor): Move
-	the extra initialization code to the constructor so that this is a
-	clean wrapper around g_object_new().
 
 2008-06-14  Martin Nordholts  <martinn@svn.gnome.org>
 

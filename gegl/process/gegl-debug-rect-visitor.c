@@ -27,8 +27,8 @@
 
 #include "gegl-debug-rect-visitor.h"
 #include "operation/gegl-operation.h"
+#include "operation/gegl-operation-context.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-operation-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
 

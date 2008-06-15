@@ -20,7 +20,7 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "gegl-operation-context.h"
+#include "operation/gegl-operation-context.h"
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/buffer/gegl-cache.h>
 
@@ -54,8 +54,6 @@ struct _GeglNode
   gboolean        is_root;
   gboolean        enabled;
 
-  GSList         *context;   /*< list of GeglOperationContext's corresponding to
-                                 evaluation contexts */
   gboolean        is_graph;
 
   GeglCache      *cache;  /* For a node, the cache should be created at
