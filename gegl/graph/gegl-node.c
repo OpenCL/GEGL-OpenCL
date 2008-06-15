@@ -1400,10 +1400,7 @@ gegl_node_get_operation (const GeglNode *node)
 void
 gegl_node_set_need_rect (GeglNode *node,
                          gpointer  context_id,
-                         gint      x,
-                         gint      y,
-                         gint      width,
-                         gint      height)
+                         const GeglRectangle *rect)
 {
   GeglOperationContext *context;
 
@@ -1411,10 +1408,7 @@ gegl_node_set_need_rect (GeglNode *node,
   g_return_if_fail (context_id != NULL);
 
   context = gegl_node_get_context (node, context_id);
-  context->need_rect.x      = x;
-  context->need_rect.y      = y;
-  context->need_rect.width  = width;
-  context->need_rect.height = height;
+  gegl_operation_context_set_need_rect (context, rect);
 }
 
 const gchar *

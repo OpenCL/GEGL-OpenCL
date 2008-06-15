@@ -118,8 +118,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
       self->roi = root->have_rect;
     }
 
-  gegl_node_set_need_rect (root, context_id, self->roi.x, self->roi.y,
-                           self->roi.width, self->roi.height);
+  gegl_node_set_need_rect (root, context_id, &self->roi);
   root->is_root = TRUE;
 
   need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, "id", context_id, NULL);

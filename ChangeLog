@@ -1,5 +1,14 @@
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.[ch]: (gegl_node_set_need_rect): replaced
+	x,y,width,height arguments with a GeglRectangle.
+	* gegl/operation/gegl-operations.c:
+	(gegl_operation_set_source_region):
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/process/gegl-prepare-visitor.c: (visit_node):
+
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/Makefile.am:
 	* gegl/operation/Makefile.am:
 	* gegl/graph/gegl-node.[ch]: made operation contexts be stored in a

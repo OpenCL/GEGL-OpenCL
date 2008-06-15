@@ -171,10 +171,7 @@ GParamSpec *  gegl_node_find_property       (GeglNode      *self,
                                              const gchar   *property_name);
 void          gegl_node_set_need_rect       (GeglNode      *node,
                                              gpointer       context_id,
-                                             gint           x,
-                                             gint           y,
-                                             gint           width,
-                                             gint           height);
+                                             const GeglRectangle *rect);
 
 
 /* Graph related member functions of the GeglNode class */

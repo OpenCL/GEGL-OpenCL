@@ -174,9 +174,7 @@ gegl_operation_set_source_region (GeglOperation        *operation,
             }
         }
 
-    gegl_node_set_need_rect (child,            context_id,
-                             child_need.x,     child_need.y,
-                             child_need.width, child_need.height);
+    gegl_node_set_need_rect (child, context_id, &child_need);
   }
 }
 gboolean
