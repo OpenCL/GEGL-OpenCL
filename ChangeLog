@@ -1,5 +1,26 @@
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Extended the gegl-chanting and the build system to easily allow
+	defining an alternate process function that will be compiled to mmx
+	and sse by gcc, coupled with runtime cpu detection at class init time
+	to determine which variant to use.
+
+	* configure.ac: make USE_SSE available to makefiles.
+	* gegl/Makefile.am: install gegl-cpuaccel.h
+	* gegl/gegl-chant.h: added logic to detect various SIMD compile modes,
+	generating different .o 's based on compiler flags.
+	* gegl/gegl-plugin.h: include gegl-cpuaccel.h
+	* operations/Makefile-operations.am: added separete recipe for
+	compiling .c files that contains the string GEGL_SIMD.
+
+	* operations/common/brightness-contrast.c: 
+	* operations/common/invert.c: 
+	* operations/generated/other-blend.rb:
+	* operations/generated/svg-12-porter-duff.rb: The rest, updated to
+	specify their SIMD code using GEGL_SIMD.
+
+2008-06-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-linear.c: Made it possible to create linear
 	buffers from existing data that have a rowstride != bpp * width.
 

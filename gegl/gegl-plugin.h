@@ -35,6 +35,7 @@ typedef struct _GeglPad              GeglPad;
 typedef struct _GeglConnection       GeglConnection;
 
 #include <gegl-utils.h>
+#include <gegl-cpuaccel.h>
 #include <gegl-buffer.h>
 #include <gegl-paramspecs.h>
 #include <gmodule.h>

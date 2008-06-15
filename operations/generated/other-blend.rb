@@ -90,12 +90,6 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
-
-#ifdef HAS_G4FLOAT
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gegl4float), "simd");
-#endif
-
 '
 
 file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
@@ -155,15 +149,15 @@ a.each do
   return TRUE;
 }
 
-#ifdef HAS_G4FLOAT
+#ifdef GEGL_SIMD
 
 static gboolean
-process_gegl4float (GeglOperation      *op,
-                    void               *in_buf,
-                    void                *aux_buf,
-                    void                *out_buf,
-                    glong                n_pixels,
-                    const GeglRectangle *roi)
+process_simd (GeglOperation      *op,
+              void               *in_buf,
+              void                *aux_buf,
+              void                *out_buf,
+              glong                n_pixels,
+              const GeglRectangle *roi)
 {
   g4float *A = aux_buf;
   g4float *B = in_buf;
@@ -181,6 +175,8 @@ process_gegl4float (GeglOperation      *op,
 
   return TRUE;
 }
+GEGL_SIMD (process_simd);
+
 
 #endif
 

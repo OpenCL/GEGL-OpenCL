@@ -66,6 +66,7 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl-utils.h			\
     gegl-chant.h			\
     gegl-simd.h				\
+    gegl-cpuaccel.h			\
     gegl-plugin.h			\
     buffer/gegl-buffer.h		\
     property-types/gegl-paramspecs.h	\

@@ -38,6 +38,10 @@ static void gegl_chant_init_properties     (GeglChant   *self);
 static void gegl_chant_class_intern_init   (gpointer     klass);
 static gpointer chant_parent_class = NULL;
 
+#ifdef SIMD_COMPILE
+#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  
+#else
+
 #define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_CHANT_C_FILE, GeglChant, gegl_chant, T_P, 0, {})
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
 static void     type_name##_init              (TypeName        *self);  \
@@ -89,6 +93,7 @@ type_name##_register_type (GTypeModule *type_module)                    \
     g_define_type_id = type_name##_type_id;                             \
     { CODE ; }                                                          \
   }
+#endif
 
 
 #define GEGL_CHANT_PROPERTIES(op) \
@@ -288,6 +293,63 @@ static const GeglModuleInfo modinfo =
   GEGL_MODULE_ABI_VERSION
 };
 
+#if (defined SIMD_COMPILE) | (defined SIMD_MASTER)
+
+void simd_add_default (GObjectClass *klass);
+void simd_add_sse (GObjectClass *klass);
+void simd_add_mmx (GObjectClass *klass);
+
+#endif
+
+#ifdef SIMD_COMPILE
+
+/* the following is just to consume defined functions to quieten gcc for
+ * the simd compiles, where some of the static functions are left unused.
+ */
+void gegl_chant_register_type (GTypeModule *module) { };
+static void bar(void);
+static void gegl_chant_class_init (GeglChantClass *klass);
+static void foo(void) {
+  gegl_chant_init (NULL);
+  gegl_chant_class_init (NULL);
+  gegl_chant_class_finalize (NULL);
+  gegl_chant_class_intern_init (NULL);
+  gegl_chant_register_type (NULL);
+  bar();
+}
+static void bar(void) {
+  foo();
+}
+
+#ifdef SIMD_DEFAULT
+#define GEGL_SIMD(callback) \
+void simd_add_default (GObjectClass *klass) { \
+    gegl_operation_class_add_processor (GEGL_OPERATION_CLASS (klass), G_CALLBACK (process_simd), "simd");\
+  }
+#else
+
+#ifdef SIMD_SSE
+#define GEGL_SIMD(callback) \
+void simd_add_sse (GObjectClass *klass) { \
+    gegl_operation_class_add_processor (GEGL_OPERATION_CLASS (klass), G_CALLBACK (process_simd), "simd");\
+  }
+#else
+
+#ifdef SIMD_MMX
+#define GEGL_SIMD(callback) \
+void simd_add_mmx (GObjectClass *klass) { \
+    gegl_operation_class_add_processor (GEGL_OPERATION_CLASS (klass), G_CALLBACK (process_simd), "simd");\
+  }
+#else
+
+#error capable simd not included in gegl-chant
+
+#endif
+
+#endif
+#endif
+
+#else
 /* prototypes added to silence warnings from gcc for -Wmissing-prototypes*/
 gboolean                gegl_module_register (GTypeModule *module);
 const GeglModuleInfo  * gegl_module_query    (GTypeModule *module);
@@ -305,6 +367,8 @@ gegl_module_register (GTypeModule *module)
 
   return TRUE;
 }
+#endif
+
 #endif
 
 
@@ -742,6 +806,27 @@ gegl_chant_class_intern_init (gpointer klass)
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_vector
+
+
+#ifdef SIMD_MASTER
+  {
+    GeglCpuAccelFlags flags = gegl_cpu_accel_get_support ();
+
+    if (flags & GEGL_CPU_ACCEL_X86_SSE &&
+        flags & GEGL_CPU_ACCEL_X86_MMX)
+      {
+        simd_add_sse (klass);
+      }
+    else if (flags & GEGL_CPU_ACCEL_X86_MMX)
+      {
+        simd_add_mmx (klass);
+      }
+    else
+      {
+        simd_add_default (klass);
+      }
+  }
+#endif
 }
 
 
