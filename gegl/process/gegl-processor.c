@@ -167,35 +167,6 @@ gegl_processor_constructor (GType                  type,
 
   processor->queued_region = gegl_region_new ();
 
-  if (processor->node->operation                          &&
-      GEGL_IS_OPERATION_SINK (processor->node->operation) &&
-      gegl_operation_sink_needs_full (processor->node->operation))
-    {
-      GeglCache *cache;
-
-      cache = gegl_node_get_cache (processor->input);
-
-      processor->context = gegl_node_add_context (processor->node, cache);
-      {
-        GValue value = { 0, };
-        g_value_init (&value, GEGL_TYPE_BUFFER);
-        g_value_set_object (&value, cache);
-        gegl_operation_context_set_property (processor->context, "input", &value);
-        g_value_unset (&value);
-      }
-
-      gegl_operation_context_set_result_rect (processor->context,
-                                         processor->rectangle.x,
-                                         processor->rectangle.y,
-                                         processor->rectangle.width,
-                                         processor->rectangle.height);
-      gegl_operation_context_set_need_rect   (processor->context,
-                                         processor->rectangle.x,
-                                         processor->rectangle.y,
-                                         processor->rectangle.width,
-                                         processor->rectangle.height);
-    }
-
   return object;
 }
 
@@ -325,12 +296,45 @@ GeglProcessor *
 gegl_node_new_processor (GeglNode            *node,
                          const GeglRectangle *rectangle)
 {
+  GeglProcessor *processor;
+
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  return g_object_new (GEGL_TYPE_PROCESSOR,
-                       "node",      node,
-                       "rectangle", rectangle,
-                       NULL);
+  processor = g_object_new (GEGL_TYPE_PROCESSOR,
+                            "node",      node,
+                            "rectangle", rectangle,
+                            NULL);
+
+  if (node->operation                          &&
+      GEGL_IS_OPERATION_SINK (node->operation) &&
+      gegl_operation_sink_needs_full (node->operation))
+    {
+      GeglCache *cache;
+
+      cache = gegl_node_get_cache (processor->input);
+
+      processor->context = gegl_node_add_context (node, cache);
+      {
+        GValue value = { 0, };
+        g_value_init (&value, GEGL_TYPE_BUFFER);
+        g_value_set_object (&value, cache);
+        gegl_operation_context_set_property (processor->context, "input", &value);
+        g_value_unset (&value);
+      }
+
+      gegl_operation_context_set_result_rect (processor->context,
+                                              processor->rectangle.x,
+                                              processor->rectangle.y,
+                                              processor->rectangle.width,
+                                              processor->rectangle.height);
+      gegl_operation_context_set_need_rect   (processor->context,
+                                              processor->rectangle.x,
+                                              processor->rectangle.y,
+                                              processor->rectangle.width,
+                                              processor->rectangle.height);
+    }
+
+  return processor;
 }
 
 /* returns TRUE if there is more work */
