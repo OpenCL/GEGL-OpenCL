@@ -1,5 +1,10 @@
 2008-06-15  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/operation/gegl-operation-sink.h): Describe the needs_full
+	class variable.
+
+2008-06-15  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/operation/gegl-operation.c (get_bounding_box): Refactor
 	away return in-the-middle and update warning message.
 
