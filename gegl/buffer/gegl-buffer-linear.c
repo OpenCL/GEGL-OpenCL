@@ -12,9 +12,10 @@
 #include "gegl-tile-handler-cache.h"
 #include "gegl-utils.h"
 
-GeglBuffer *
-gegl_buffer_linear_new (const GeglRectangle *extent,
-                        const Babl          *format)
+static GeglBuffer *
+gegl_buffer_linear_new2 (const GeglRectangle *extent,
+                         const Babl          *format,
+                         gint                 rowstride)
 {
   GeglRectangle empty={0,0,0,0};
 
@@ -24,15 +25,25 @@ gegl_buffer_linear_new (const GeglRectangle *extent,
   if (format==NULL)
     format = babl_format ("RGBA float");
 
+  if (rowstride <= 0)
+    rowstride = extent->width;
+
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
                        "y", extent->y,
                        "width", extent->width,
                        "height", extent->height,
-                       "tile-width", extent->width,
+                       "tile-width", rowstride,
                        "tile-height", extent->height,
                        "format", format,
                        NULL);
+}
+
+GeglBuffer *
+gegl_buffer_linear_new (const GeglRectangle *extent,
+                        const Babl          *format)
+{
+  return gegl_buffer_linear_new2 (extent, format, 0);
 }
 
 
@@ -44,17 +55,23 @@ void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
 GeglBuffer *
 gegl_buffer_linear_new_from_data (const gpointer data,
-                                  const Babl   *format,
-                                  gint width,
-                                  gint height,
-                                  gint rowstride,
-                                  GCallback destroy_fn,
-                                  gpointer destroy_fn_data)
+                                  const Babl    *format,
+                                  gint           width,
+                                  gint           height,
+                                  gint           rowstride,
+                                  GCallback      destroy_fn,
+                                  gpointer       destroy_fn_data)
 {
   GeglBuffer *buffer;
   GeglRectangle extent={0,0,width, height};
 
-  buffer = gegl_buffer_linear_new (&extent, format);
+  g_assert (format);
+
+  if (rowstride <= 0)
+    rowstride = width;
+  else
+    rowstride = rowstride / format->format.bytes_per_pixel;
+  buffer = gegl_buffer_linear_new2 (&extent, format, rowstride);
 
   {
     GeglTile *tile = g_object_new (GEGL_TYPE_TILE, NULL);
@@ -66,7 +83,7 @@ gegl_buffer_linear_new_from_data (const gpointer data,
     tile->y = 0;
     tile->z = 0;
     tile->data       = (gpointer)data;
-    tile->size       = format->format.bytes_per_pixel * width * height;
+    tile->size       = format->format.bytes_per_pixel * rowstride * height;
     tile->next_shared = tile;
     tile->prev_shared = tile;
 
@@ -93,7 +110,7 @@ gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
     {
       GeglTile *tile;
 
-      g_assert (buffer->tile_width == buffer->tile_storage->tile_width);
+      g_assert (buffer->tile_width <= buffer->tile_storage->tile_width);
       g_assert (buffer->tile_height == buffer->tile_storage->tile_height);
 
       tile = g_object_get_data (G_OBJECT (buffer), "linear-tile");
@@ -108,7 +125,7 @@ gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
 
       *width = buffer->extent.width;
       *height = buffer->extent.height;
-      *rowstride = buffer->extent.width * buffer->format->format.bytes_per_pixel;
+      *rowstride = buffer->tile_storage->tile_width * buffer->format->format.bytes_per_pixel;
       return (gpointer)gegl_tile_get_data (tile);
     }
 
