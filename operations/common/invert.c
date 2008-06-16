@@ -23,6 +23,7 @@
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
 #define GEGL_CHANT_C_FILE       "invert.c"
+#define GEGLV4
 
 #include "gegl-chant.h"
 
@@ -54,27 +55,7 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-
-static void
-gegl_chant_class_init (GeglChantClass *klass)
-{
-  GeglOperationClass            *operation_class;
-  GeglOperationPointFilterClass *point_filter_class;
-
-  operation_class    = GEGL_OPERATION_CLASS (klass);
-  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
-
-  point_filter_class->process = process;
-
-  operation_class->name        = "invert";
-  operation_class->categories  = "color";
-  operation_class->description =
-     "Inverts the components (except alpha), the result is the"
-     " corresponding \"negative\" image.";
-}
-
-
-#ifdef GEGL_SIMD
+#ifdef HAS_G4FLOAT
 static gboolean
 process_simd (GeglOperation       *op,
               void                *in_buf,
@@ -96,7 +77,29 @@ process_simd (GeglOperation       *op,
     }
   return TRUE;
 }
-GEGL_SIMD(process_simd)
 #endif
+
+static void
+gegl_chant_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  point_filter_class->process = process;
+
+  operation_class->name        = "invert";
+  operation_class->categories  = "color";
+  operation_class->description =
+     "Inverts the components (except alpha), the result is the"
+     " corresponding \"negative\" image.";
+
+#ifdef HAS_G4FLOAT
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_simd), "simd");
+#endif
+}
 
 #endif

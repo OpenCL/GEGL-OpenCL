@@ -10,29 +10,10 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
 all-local: $(plugins)
 
-if USE_SSE
-
-%.la: %.c $(GEGLHEADERS)
-	grep GEGL_SIMD $< && (\
-        $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $< \
-            -DSIMD_MASTER && \
-        $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@-simd.lo $< \
-            -DSIMD_COMPILE -DSIMD_DEFAULT &&\
-        $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(MMX_EXTRA_CFLAGS) -c -o $@-mmx.lo $< \
-            -DSIMD_COMPILE -DSIMD_MMX &&\
-        $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(SSE_EXTRA_CFLAGS) -c -o $@-sse.lo $< \
-            -DSIMD_COMPILE -DSIMD_SSE &&\
-        $(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) $(LDADD) -o $@ -rpath $(ext_dir) $@-sse.lo $@-mmx.lo $@-simd.lo $@.lo ) || (\
-        $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $< &&\
-        $(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) $(LDADD) -o $@ -rpath $(ext_dir) $@.lo )
-
-else
-
 %.la: %.c $(GEGLHEADERS)
 	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
 	$(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) $(LDADD) -o $@ -rpath $(ext_dir) $@.lo
 
-endif
 
 clean-local:
 	rm -f *.la $(OFILES)

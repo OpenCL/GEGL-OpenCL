@@ -410,7 +410,7 @@ if test "x$enable_mmx" = xyes; then
   AC_SUBST(SSE_EXTRA_CFLAGS)
 fi
 
-AM_CONDITIONAL(USE_SSE, test "x$enable_sse" = "xyes")
+CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS"
 
 
 ###############################
@@ -849,7 +849,6 @@ Optional features:
   Build workshop: $enable_workshop
   Build website:  $have_asciidoc
   SIMD:           sse:$enable_sse mmx:$enable_mmx
-
 
 Optional dependencies:
   GTK+:           $have_gtk
