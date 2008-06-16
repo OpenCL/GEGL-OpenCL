@@ -115,10 +115,10 @@ GeglBuffer *gegl_buffer_linear_new_from_data (const gpointer data,
 gpointer       *gegl_buffer_linear_open      (GeglBuffer    *buffer,
                                               gint          *width,
                                               gint          *height,
-                                              gint          *rowstride);
-/* needed if the linear buffer is faked */
-void            gegl_buffer_linear_close      (GeglBuffer    *buffer,
-                                               gpointer       linear);
+                                              gint          *rowstride,
+                                              const Babl    *format);
+void            gegl_buffer_linear_close     (GeglBuffer    *buffer,
+                                              gpointer       linear);
 
 
 GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);

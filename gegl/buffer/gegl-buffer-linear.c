@@ -98,15 +98,25 @@ gegl_buffer_linear_new_from_data (const gpointer data,
   return buffer;
 }
 
+typedef struct {
+  gpointer       buf;
+  GeglRectangle  extent;
+  const Babl    *format;
+} BufferInfo;
 
-
-gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
-                                               gint                *width,
-                                               gint                *height,
-                                               gint                *rowstride)
+gpointer *
+gegl_buffer_linear_open (GeglBuffer *buffer,
+                         gint       *width,
+                         gint       *height,
+                         gint       *rowstride,
+                         const Babl *format)
 {
+  if (!format)
+    format = buffer->format;
+
   if (buffer->extent.width == buffer->tile_width &&
-      buffer->extent.height == buffer->tile_height)
+      buffer->extent.height == buffer->tile_height &&
+      buffer->format == format)
     {
       GeglTile *tile;
 
@@ -123,13 +133,34 @@ gpointer       *gegl_buffer_linear_open       (GeglBuffer          *buffer,
 
       g_object_set_data (G_OBJECT (buffer), "linear-tile", tile);
 
-      *width = buffer->extent.width;
-      *height = buffer->extent.height;
-      *rowstride = buffer->tile_storage->tile_width * buffer->format->format.bytes_per_pixel;
+      if(width)*width = buffer->extent.width;
+      if(height)*height = buffer->extent.height;
+      if(rowstride)*rowstride = buffer->tile_storage->tile_width * format->format.bytes_per_pixel;
       return (gpointer)gegl_tile_get_data (tile);
     }
+  /* FIXME: first check if there is a linear buffer, we should share that one to
+   * avoid conflicts.
+   */
+  {
+    BufferInfo *info = g_new0 (BufferInfo, 1);
+    GList *linear_buffers;
+    gint rs;
+    linear_buffers = g_object_get_data (G_OBJECT (buffer), "linear-buffers");
+    linear_buffers = g_list_append (linear_buffers, info);
+    g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
 
-  g_warning ("doesn't seem to be a linear buffer");
+    info->extent = buffer->extent;
+    info->format = format;
+
+    rs = info->extent.width * format->format.bytes_per_pixel;
+    if(width)*width = info->extent.width;
+    if(height)*height = info->extent.height;
+    if(rowstride)*rowstride = rs;
+
+    info->buf = gegl_malloc (rs * info->extent.height);
+    gegl_buffer_get (buffer, 1.0, &info->extent, format, info->buf, rs);
+    return info->buf;
+  }
   return NULL;
 }
 
@@ -139,10 +170,42 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
 {
   GeglTile *tile;
   tile = g_object_get_data (G_OBJECT (buffer), "linear-tile");
-  if (!tile)
-    return;
-  gegl_tile_unlock (tile);
-  gegl_buffer_unlock (buffer);
-  g_object_set_data (G_OBJECT (buffer), "linear-tile", NULL);
+  if (tile)
+    {
+      gegl_tile_unlock (tile);
+      gegl_buffer_unlock (buffer);
+      g_object_set_data (G_OBJECT (buffer), "linear-tile", NULL);
+      tile = NULL;
+    }
+  else
+    {
+      GList *linear_buffers;
+      GList *iter;
+      BufferInfo *info = NULL;
+      linear_buffers = g_object_get_data (G_OBJECT (buffer), "linear-buffers");
+
+      for (iter = linear_buffers; iter; iter=iter->next)
+        {
+          info = iter->data;
+          if (info->buf == linear)
+            {
+              gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
+              break;
+            }
+          else
+            {
+              info = NULL;
+            }
+        }
+
+      if (info)
+        {
+          linear_buffers = g_list_remove (linear_buffers, linear);
+          gegl_free (info->buf);
+          g_free (info);
+        }
+
+      g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
+    }
   return;
 }

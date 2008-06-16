@@ -1,3 +1,15 @@
+2008-06-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-linear.c: (gegl_buffer_linear_open): added
+	format parameter, which might be NULL to use the buffers format and
+	made it fake a buffer if dimensions are not right or format does not
+	match.
+	(gegl_buffer_linear_close): free the linear proxy buffer.
+	* gegl/buffer/gegl-buffer-private.h:
+	* tests/buffer/buffer-test.c: (linear_modify),
+	(linear_from_data_rows), (linear_proxy_modify): added new test and
+	slightly clarified others.
+
 2008-06-16  Sam Hocevar  <sam@zoy.org>
 
 	* gegl/graph/gegl-node.c: do not try to assign a va_list variable to

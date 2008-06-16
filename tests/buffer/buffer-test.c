@@ -790,7 +790,7 @@ static gchar * linear_modify ()
     gfloat *buf;
     gint    x, y, i;
 
-    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride);
+    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride, NULL);
     g_assert (buf);
 
     i=0;
@@ -825,6 +825,65 @@ static gchar * linear_from_data ()
                                              10 * 4,
                                              G_CALLBACK(g_free), /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
+static gchar * linear_from_data_rows ()
+{
+  GeglBuffer   *buffer;
+  gfloat       *buf;
+  test_start();
+
+  buf = g_malloc (sizeof (float) * 12 * 10);
+  gint i;
+  for (i=0;i<120;i++)
+    buf[i]=i%12==5?0.5:0.0;
+
+  buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
+                                             10, /* width */
+                                             10, /* height */
+                                             12 * 4,
+                                             G_CALLBACK(g_free), /* destroy_notify */
+                                             NULL   /* destroy_notify_data */);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (buffer);
+}
+
+
+static gchar * linear_proxy_modify ()
+{
+  GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0,40,20};
+  GeglRectangle roi = {1,1,30,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  fill_rect (buffer, &roi, 0.5);
+  roi.y+=3;
+  roi.x+=20;
+
+  {
+    gint    width;
+    gint    height;
+    gint    rowstride;
+    gfloat *buf;
+    gint    x, y, i;
+
+    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride, NULL);
+    g_assert (buf);
+
+    i=0;
+    for (y=0;y<height;y++)
+      for (x=0;x<width;x++)
+        {
+          buf[i++]= ((x+y)*1.0) / width;
+        }
+    gegl_buffer_linear_close (buffer, buf);
+  }
+  fill_rect (buffer, &roi, 0.2);
+
   print_buffer (buffer);
   test_end ();
   gegl_buffer_destroy (buffer);
