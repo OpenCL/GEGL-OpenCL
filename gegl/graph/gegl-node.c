@@ -310,7 +310,7 @@ set_property (GObject      *gobject,
                          * use of uninitialized variable.
                          */
 #if defined(__GNUC__)
-          null = NULL;
+          memset(&null, 0, sizeof(null));
 #endif
           gegl_node_set_op_class (node, g_value_get_string (value), NULL, null);
         }

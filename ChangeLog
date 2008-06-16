@@ -1,3 +1,9 @@
+2008-06-16  Sam Hocevar  <sam@zoy.org>
+
+	* gegl/graph/gegl-node.c: do not try to assign a va_list variable to
+	NULL, it's opaque and gcc will error out; instead, just zero its
+	bytes.
+
 2008-06-15  Øyvind Kolås  <pippin@gimp.org>
 
 	Extended the gegl-chanting and the build system to easily allow
