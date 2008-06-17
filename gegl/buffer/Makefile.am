@@ -41,6 +41,7 @@ BUFFER_headers = \
     gegl-buffer.h		\
     gegl-buffer-private.h	\
     gegl-buffer-iterator.h	\
+    gegl-buffer-linear.h	\
     gegl-buffer-load.h		\
     gegl-buffer-save.h		\
     gegl-buffer-types.h		\

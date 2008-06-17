@@ -17,10 +17,10 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
                          const Babl          *format,
                          gint                 rowstride)
 {
-  GeglRectangle empty={0,0,0,0};
-
   if (extent==NULL)
-    extent = &empty;
+    {
+      g_error ("got a NULL extent");
+    }
 
   if (format==NULL)
     format = babl_format ("RGBA float");
@@ -28,11 +28,17 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
   if (rowstride <= 0)
     rowstride = extent->width;
 
+  /* creating a linear buffer for GeglBuffer is a matter of
+   * requesting the correct parameters when creating the
+   * buffer
+   */
   return g_object_new (GEGL_TYPE_BUFFER,
-                       "x", extent->x,
-                       "y", extent->y,
-                       "width", extent->width,
-                       "height", extent->height,
+                       "x",          extent->x,
+                       "y",          extent->y,
+                       "shift-x",    extent->x,
+                       "shift-y",    extent->y,
+                       "width",      extent->width,
+                       "height",     extent->height,
                        "tile-width", rowstride,
                        "tile-height", extent->height,
                        "format", format,
@@ -46,7 +52,8 @@ gegl_buffer_linear_new (const GeglRectangle *extent,
   return gegl_buffer_linear_new2 (extent, format, 0);
 }
 
-
+/* XXX:
+ * this should probably be abstracted into a gegl_buffer_cache_insert_tile */
 void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
                                      GeglTile             *tile,
                                      gint                  x,
@@ -54,24 +61,24 @@ void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
                                      gint                  z);
 
 GeglBuffer *
-gegl_buffer_linear_new_from_data (const gpointer data,
-                                  const Babl    *format,
-                                  gint           width,
-                                  gint           height,
-                                  gint           rowstride,
-                                  GCallback      destroy_fn,
-                                  gpointer       destroy_fn_data)
+gegl_buffer_linear_new_from_data (const gpointer       data,
+                                  const Babl          *format,
+                                  const GeglRectangle *extent,
+                                  gint                 rowstride,
+                                  GCallback            destroy_fn,
+                                  gpointer             destroy_fn_data)
 {
   GeglBuffer *buffer;
-  GeglRectangle extent={0,0,width, height};
 
   g_assert (format);
 
-  if (rowstride <= 0)
-    rowstride = width;
+  if (rowstride <= 0) /* handle both 0 and negative coordinates as a request
+                       * for a rowstride, negative rowstrides are not supported.
+                       */
+    rowstride = extent->width;
   else
     rowstride = rowstride / format->format.bytes_per_pixel;
-  buffer = gegl_buffer_linear_new2 (&extent, format, rowstride);
+    buffer = gegl_buffer_linear_new2 (extent, format, rowstride);
 
   {
     GeglTile *tile = g_object_new (GEGL_TYPE_TILE, NULL);
@@ -83,7 +90,7 @@ gegl_buffer_linear_new_from_data (const gpointer data,
     tile->y = 0;
     tile->z = 0;
     tile->data       = (gpointer)data;
-    tile->size       = format->format.bytes_per_pixel * rowstride * height;
+    tile->size       = format->format.bytes_per_pixel * rowstride * extent->height;
     tile->next_shared = tile;
     tile->prev_shared = tile;
 
@@ -98,24 +105,36 @@ gegl_buffer_linear_new_from_data (const gpointer data,
   return buffer;
 }
 
+/* the information kept about a linear buffer, multiple requests can
+ * be handled by the same structure, the multiple clients would have
+ * an immediate shared access to the linear buffer.
+ */
 typedef struct {
   gpointer       buf;
   GeglRectangle  extent;
   const Babl    *format;
+  gint           refs;
 } BufferInfo;
 
+/* FIXME: make this use direct data access in more cases than the
+ * case of the base buffer.
+ */
 gpointer *
-gegl_buffer_linear_open (GeglBuffer *buffer,
-                         gint       *width,
-                         gint       *height,
-                         gint       *rowstride,
-                         const Babl *format)
+gegl_buffer_linear_open (GeglBuffer          *buffer,
+                         const GeglRectangle *extent,   /* if NULL, use buf  */
+                         gint                *rowstride,/* returns rowstride */
+                         const Babl          *format)   /* if NULL, from buf */
 {
   if (!format)
     format = buffer->format;
 
-  if (buffer->extent.width == buffer->tile_width &&
-      buffer->extent.height == buffer->tile_height &&
+  if (extent == NULL)
+    extent=&buffer->extent;
+
+  if (extent->x     == buffer->extent.x &&
+      extent->y     == buffer->extent.y &&
+      extent->width == buffer->tile_width &&
+      extent->height <= buffer->tile_height &&
       buffer->format == format)
     {
       GeglTile *tile;
@@ -124,7 +143,10 @@ gegl_buffer_linear_open (GeglBuffer *buffer,
       g_assert (buffer->tile_height == buffer->tile_storage->tile_height);
 
       tile = g_object_get_data (G_OBJECT (buffer), "linear-tile");
-      g_assert (tile == NULL);
+      g_assert (tile == NULL); /* We need to reference count returned direct
+                                * linear buffers to allow multiple open like
+                                * the copying case.
+                                */
       tile = gegl_tile_source_get_tile ((GeglTileSource*) (buffer),
                                         0,0,0);
       g_assert (tile);
@@ -133,14 +155,34 @@ gegl_buffer_linear_open (GeglBuffer *buffer,
 
       g_object_set_data (G_OBJECT (buffer), "linear-tile", tile);
 
-      if(width)*width = buffer->extent.width;
-      if(height)*height = buffer->extent.height;
       if(rowstride)*rowstride = buffer->tile_storage->tile_width * format->format.bytes_per_pixel;
       return (gpointer)gegl_tile_get_data (tile);
     }
-  /* FIXME: first check if there is a linear buffer, we should share that one to
-   * avoid conflicts.
+  /* first check if there is a linear buffer, share the existing buffer if one
+   * exists.
    */
+    {
+      GList *linear_buffers;
+      GList *iter;
+      BufferInfo *info = NULL;
+      linear_buffers = g_object_get_data (G_OBJECT (buffer), "linear-buffers");
+
+      for (iter = linear_buffers; iter; iter=iter->next)
+        {
+          info = iter->data;
+          if (info->format        == format           &&
+              info->extent.x      == buffer->extent.x &&
+              info->extent.y      == buffer->extent.y &&
+              info->extent.width  == buffer->extent.width &&
+              info->extent.height == buffer->extent.height
+              )
+            {
+              info->refs++;
+              return info->buf;
+            }
+        }
+    }
+
   {
     BufferInfo *info = g_new0 (BufferInfo, 1);
     GList *linear_buffers;
@@ -153,8 +195,6 @@ gegl_buffer_linear_open (GeglBuffer *buffer,
     info->format = format;
 
     rs = info->extent.width * format->format.bytes_per_pixel;
-    if(width)*width = info->extent.width;
-    if(height)*height = info->extent.height;
     if(rowstride)*rowstride = rs;
 
     info->buf = gegl_malloc (rs * info->extent.height);
@@ -189,6 +229,13 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
           info = iter->data;
           if (info->buf == linear)
             {
+              info->refs--;
+
+              if (info->refs>0)
+                return; /* there are still others holding a reference to
+                         * this linear buffer
+                         */
+
               gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
               break;
             }

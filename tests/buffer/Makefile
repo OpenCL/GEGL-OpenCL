@@ -25,6 +25,7 @@ test: report
 	@cat report
 	@echo ''
 	@echo `cat report | grep identical | wc -l` of `ls -1 reference | wc -l` tests succesful.
+	@cat report | grep Only
 	rm report
 
 clean:

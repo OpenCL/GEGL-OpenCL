@@ -1,5 +1,16 @@
 2008-06-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: moved the linear API ..
+	* gegl/buffer/gegl-buffer-linear.h: into it's own header.
+	* gegl/buffer/Makefile.am: added gegl-buffer-linear.h
+	* gegl/buffer/gegl-buffer-linear.c: made all accesor functions take
+	a GeglRectangle instead of passing width and height as individual ints.
+	* gegl/buffer/gegl-buffer-iterator.h: improved documentation.
+	* tests/buffer/Makefile: output which files are only found in output
+	after running.
+
+2008-06-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/buffer/buffer-test.c: (linear_modify), (linear_from_data),
 	(linear_from_data_rows), (linear_proxy_modify): updated tests
 	according to API.
@@ -15,9 +26,9 @@
 	Reverted:
 
 	Extended the gegl-chanting and the build system to easily allow
-	defining an alternate process function that will be compiled to mmx and sse by
-	gcc, coupled with runtime cpu detection at class init time to determine which
-	variant to use.
+	defining an alternate process function that will be compiled to mmx
+	and sse by gcc, coupled with runtime cpu detection at class init time
+	to determine which variant to use.
 
 	* configure.ac: make USE_SSE available to makefiles.
 	* gegl/Makefile.am: install gegl-cpuaccel.h

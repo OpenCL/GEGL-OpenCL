@@ -24,6 +24,7 @@
 #include "gegl-sampler.h"
 #include "gegl-tile-handler.h"
 #include "gegl-buffer-iterator.h"
+#include "gegl-buffer-linear.h"
 
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
 #define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
@@ -101,24 +102,6 @@ gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
 gboolean             gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
 
-GeglBuffer *gegl_buffer_linear_new           (const GeglRectangle *extent,
-                                              const Babl          *format);
-
-GeglBuffer *gegl_buffer_linear_new_from_data (const gpointer data,
-                                              const Babl    *format,
-                                              gint           width,
-                                              gint           height,
-                                              gint           rowstride,
-                                              GCallback      destroy_fn,
-                                              gpointer       destroy_fn_data);
-
-gpointer       *gegl_buffer_linear_open      (GeglBuffer    *buffer,
-                                              gint          *width,
-                                              gint          *height,
-                                              gint          *rowstride,
-                                              const Babl    *format);
-void            gegl_buffer_linear_close     (GeglBuffer    *buffer,
-                                              gpointer       linear);
 
 
 GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
