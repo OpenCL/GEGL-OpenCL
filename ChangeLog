@@ -1,3 +1,15 @@
+2008-06-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/buffer/buffer-test.c: (linear_modify), (linear_from_data),
+	(linear_from_data_rows), (linear_proxy_modify): updated tests
+	according to API.
+
+	* tests/buffer/reference/linear_from_data_rows:
+	* tests/buffer/reference/linear_proxy_modify:
+	* tests/buffer/reference/test_gegl_buffer_iterator1:
+	* tests/buffer/reference/test_gegl_buffer_iterator1sub: added
+	reference images.
+
 2008-06-16  Øyvind Kolås  <pippin@gimp.org>
 
 	Reverted:

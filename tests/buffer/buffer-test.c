@@ -784,20 +784,18 @@ static gchar * linear_modify ()
   roi.x+=20;
 
   {
-    gint    width;
-    gint    height;
     gint    rowstride;
     gfloat *buf;
     gint    x, y, i;
 
-    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride, NULL);
+    buf = (gpointer)gegl_buffer_linear_open (buffer, &extent, &rowstride, NULL);
     g_assert (buf);
 
     i=0;
-    for (y=0;y<height;y++)
-      for (x=0;x<width;x++)
+    for (y=0;y<extent.height;y++)
+      for (x=0;x<extent.width;x++)
         {
-          buf[i++]= ((x+y)*1.0) / width;
+          buf[i++]= ((x+y)*1.0) / extent.width;
         }
     gegl_buffer_linear_close (buffer, buf);
   }
@@ -811,6 +809,7 @@ static gchar * linear_modify ()
 static gchar * linear_from_data ()
 {
   GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0, 10, 10};
   gfloat       *buf;
   test_start();
 
@@ -820,8 +819,7 @@ static gchar * linear_from_data ()
     buf[i]=i/100.0;
 
   buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
-                                             10, /* width */
-                                             10, /* height */
+                                             &extent,
                                              10 * 4,
                                              G_CALLBACK(g_free), /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
@@ -833,6 +831,7 @@ static gchar * linear_from_data ()
 static gchar * linear_from_data_rows ()
 {
   GeglBuffer   *buffer;
+  GeglRectangle extent = {0,0, 10, 10};
   gfloat       *buf;
   test_start();
 
@@ -842,8 +841,7 @@ static gchar * linear_from_data_rows ()
     buf[i]=i%12==5?0.5:0.0;
 
   buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
-                                             10, /* width */
-                                             10, /* height */
+                                             &extent,
                                              12 * 4,
                                              G_CALLBACK(g_free), /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
@@ -865,20 +863,18 @@ static gchar * linear_proxy_modify ()
   roi.x+=20;
 
   {
-    gint    width;
-    gint    height;
     gint    rowstride;
     gfloat *buf;
     gint    x, y, i;
 
-    buf = (gpointer)gegl_buffer_linear_open (buffer, &width, &height, &rowstride, NULL);
+    buf = (gpointer)gegl_buffer_linear_open (buffer, &extent, &rowstride, NULL);
     g_assert (buf);
 
     i=0;
-    for (y=0;y<height;y++)
-      for (x=0;x<width;x++)
+    for (y=0;y<extent.height;y++)
+      for (x=0;x<extent.width;x++)
         {
-          buf[i++]= ((x+y)*1.0) / width;
+          buf[i++]= ((x+y)*1.0) / extent.width;
         }
     gegl_buffer_linear_close (buffer, buf);
   }
