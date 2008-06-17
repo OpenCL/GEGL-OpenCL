@@ -123,12 +123,12 @@ static void text_layout_text (GeglChant *self,
                                       (guint16) (color[1] * 65535),
                                       (guint16) (color[2] * 65535));
     if (attr)
-    {
-      attr->start_index = 0;
-      attr->end_index   = -1;
-      pango_attr_list_insert (attrs, attr);
-      pango_layout_set_attributes (layout, attrs);
-    }
+      {
+        attr->start_index = 0;
+        attr->end_index   = -1;
+        pango_attr_list_insert (attrs, attr);
+        pango_layout_set_attributes (layout, attrs);
+      }
   }
 
   /* Inform Pango to re-layout the text with the new transformation */

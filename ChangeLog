@@ -1,5 +1,12 @@
 2008-06-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/buffer/buffer-test.c: moved the tests into individual .c files
+	in the tests subdir.
+	* tests/buffer/Makefile: updated to handle test per file architecture.
+	* tests/buffer/tests/: new dir (with 37 new files).
+
+2008-06-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: moved the linear API ..
 	* gegl/buffer/gegl-buffer-linear.h: into it's own header.
 	* gegl/buffer/Makefile.am: added gegl-buffer-linear.h

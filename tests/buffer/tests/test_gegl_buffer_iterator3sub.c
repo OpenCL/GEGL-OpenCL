@@ -1,0 +1,16 @@
+TEST ()
+{
+  GeglBuffer   *buffer;
+  GeglBuffer   *sub;
+  GeglRectangle extent = {0,0,20,20};
+  GeglRectangle sextent = {2,2,20,20};
+  GeglRectangle roi = {5,5,10,10};
+  test_start();
+  buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
+  sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
+  fill_rect (sub, &roi, 0.5);
+  print_buffer (buffer);
+  test_end ();
+  gegl_buffer_destroy (sub);
+  gegl_buffer_destroy (buffer);
+}
