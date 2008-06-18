@@ -46,7 +46,8 @@ struct _GeglSampler
   GeglRectangle  context_rect;
   void          *sampler_buffer;
   GeglRectangle  sampler_rectangle;
-
+  gdouble        x; /* mirrors the currently requested */
+  gdouble        y; /* coordinates in the instance     */
 };
 
 struct _GeglSamplerClass
@@ -66,17 +67,18 @@ GType gegl_sampler_get_type    (void) G_GNUC_CONST;
 
 /* virtual method invokers */
 void  gegl_sampler_prepare     (GeglSampler *self);
+void  gegl_sampler_set_buffer  (GeglSampler *self,
+                                GeglBuffer  *buffer);
+
 void  gegl_sampler_get         (GeglSampler *self,
                                 gdouble      x,
                                 gdouble      y,
                                 void        *output);
-void  gegl_sampler_set_buffer  (GeglSampler *self,
-                                GeglBuffer  *buffer);
-
 gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,
                                        gint         y);
 
+GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
 
 G_END_DECLS
 

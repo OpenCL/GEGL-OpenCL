@@ -1,5 +1,10 @@
 2008-06-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler.h: added update of GeglSampler that should
+	have gone in with the previous commit.
+
+2008-06-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-sampler.c: (gegl_sampler_get),
 	(gegl_sampler_get_from_buffer): modified to fetch a 64x64 buffer of
 	data around the requested pixel (when the buffer doesn't already
