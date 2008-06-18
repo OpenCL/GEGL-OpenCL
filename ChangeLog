@@ -1,3 +1,11 @@
+2008-06-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-sampler.c: (gegl_sampler_get),
+	(gegl_sampler_get_from_buffer): modified to fetch a 64x64 buffer of
+	data around the requested pixel (when the buffer doesn't already
+	contain the desired data). The samplers could probably be further
+	modified to assume this 64x64 buffer in their code.
+
 2008-06-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/buffer/buffer-test.c: moved the tests into individual .c files
