@@ -131,6 +131,11 @@ gegl_sampler_prepare (GeglSampler *self)
   if (klass->prepare)
     klass->prepare (self);
 
+  /* this makes the cache rect invalid, in case the data in the buffer has
+   * changed
+  */
+  self->sampler_rectangle.width=0;
+  self->sampler_rectangle.height=0;
 #if 0
   if (self->cache_buffer) /* to force a regetting of the region, even
                              if the cached getter might be valid

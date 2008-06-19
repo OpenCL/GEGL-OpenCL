@@ -740,6 +740,7 @@ process (GeglOperation       *operation,
     {
       /* XXX: add back more samplers */
       g_object_set(affine->sampler, "buffer", input, NULL);
+      gegl_sampler_prepare (affine->sampler);
       affine_generic (output, input, affine->matrix, affine->sampler);
       g_object_unref(affine->sampler->buffer);
       affine->sampler->buffer = NULL;

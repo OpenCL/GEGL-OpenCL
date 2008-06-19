@@ -1,3 +1,10 @@
+2008-06-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-sampler.c: (gegl_sampler_prepare): reset the
+	valid rectangle when prepare is called.
+	* operations/affine/affine.c: (process): reset the valid rectangle
+	before starting processing.
+
 2008-06-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-sampler.c: (gegl_sampler_get_from_buffer): fetch
