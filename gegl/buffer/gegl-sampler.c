@@ -204,8 +204,8 @@ gegl_sampler_get_from_buffer (GeglSampler *sampler,
      {
        GeglRectangle  fetch_rectangle/* = sampler->context_rect*/;
 
-       fetch_rectangle.x = (gint) sampler->x;
-       fetch_rectangle.y = (gint) sampler->y;
+       fetch_rectangle.x = x;
+       fetch_rectangle.y = y;
 
        /* we override the fetch rectangle needed by the sampler, hoping that
         * the extra pixels we fetch comes in useful in subsequent requests,
