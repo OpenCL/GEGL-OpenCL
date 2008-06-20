@@ -59,7 +59,7 @@ static void
 gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
    GEGL_SAMPLER (self)->context_rect = (GeglRectangle){0,0,1,1};
-   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
 }
 
 void

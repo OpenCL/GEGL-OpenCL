@@ -123,12 +123,13 @@ gegl_sampler_cubic_get (GeglSampler *self,
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
   GeglRectangle     context_rect;
+  const gint        offsets[16]={-4-64*4, 4, 4, 4,
+                                (64-3)*4, 4, 4, 4,
+                                (64-3)*4, 4, 4, 4,
+                                (64-3)*4, 4, 4, 4};
   gfloat           *sampler_bptr;
   gfloat            factor;
-  gdouble           arecip;
-  gdouble           newval[4];
-  gfloat            abyss = 0.;
-  gfloat            dst[4];
+  gfloat            newval[4];
   gint              u,v;
   gint              dx,dy;
   gint              i;
@@ -137,40 +138,22 @@ gegl_sampler_cubic_get (GeglSampler *self,
   dx = (gint) x;
   dy = (gint) y;
   newval[0] = newval[1] = newval[2] = newval[3] = 0.;
-  for (v=dy+context_rect.y ; v < dy+context_rect.y+context_rect.height ; v++)
-    for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++)
+  sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
+  for (v=dy+context_rect.y, i=0; v < dy+context_rect.y+context_rect.height ; v++)
+    for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++, i++)
       {
-        sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
+        /*sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);*/
+        sampler_bptr += offsets[i];
         factor     = cubicKernel (y - v, cubic->b, cubic->c) *
                      cubicKernel (x - u, cubic->b, cubic->c);
-        newval[0] += factor * sampler_bptr[0] * sampler_bptr[3];
-        newval[1] += factor * sampler_bptr[1] * sampler_bptr[3];
-        newval[2] += factor * sampler_bptr[2] * sampler_bptr[3];
+        newval[0] += factor * sampler_bptr[0];
+        newval[1] += factor * sampler_bptr[1];
+        newval[2] += factor * sampler_bptr[2];
         newval[3] += factor * sampler_bptr[3];
       }
-  if (newval[3] <= abyss)
-    {
-      arecip    = abyss;
-      newval[3] = abyss;
-    }
-  else if (newval[3] > G_MAXDOUBLE)
-    {
-      arecip    = 1.0 / newval[3];
-      newval[3] = G_MAXDOUBLE;
-    }
-  else
-    {
-      arecip = 1.0 / newval[3];
-    }
-
-  for ( i=0 ;  i < 3 ; i++ )
-    newval[i] *= arecip;
-  for ( i=0 ;  i < 4 ; i++ )
-    dst[i] = CLAMP (newval[i], 0, G_MAXDOUBLE);
-
 
   babl_process (babl_fish (self->interpolate_format, self->format),
-                dst, output, 1);
+                newval, output, 1);
 
 }
 
@@ -230,7 +213,9 @@ cubicKernel (gfloat x,
              gfloat c)
  {
   gfloat weight, x2, x3;
-  gfloat ax = (gfloat) fabs (x);
+  gfloat ax = x;
+  if (ax < 0.0)
+    ax *= -1.0;
 
   if (ax > 2) return 0;
 
@@ -247,6 +232,6 @@ cubicKernel (gfloat x,
              (-12 * b - 48 * c) * ax +
              (8 * b + 24 * c);
 
-  return weight * (1.0 / 6.0);
+  return weight / 6.0;
 }
 

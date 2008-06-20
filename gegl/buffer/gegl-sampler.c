@@ -185,6 +185,70 @@ dispose (GObject *gobject)
   G_OBJECT_CLASS (gegl_sampler_parent_class)->dispose (gobject);
 }
 
+
+/* gets a pointer to the center pixel, within a buffer that has
+ * a rowstride of 64px * 16bpp
+ */
+gfloat *
+gegl_sampler_get_ptr (GeglSampler         *sampler,
+                      gint                 x,
+                      gint                 y)
+{
+   guchar        *buffer_ptr;
+   gint           dx;
+   gint           dy;
+   gint           bpp;
+   gint           sof;
+
+
+   bpp = sampler->interpolate_format->format.bytes_per_pixel;
+
+   if (sampler->sampler_buffer == NULL ||
+       x + sampler->context_rect.x < sampler->sampler_rectangle.x ||
+       y + sampler->context_rect.y < sampler->sampler_rectangle.y ||
+       x + sampler->context_rect.x + sampler->context_rect.width >= sampler->sampler_rectangle.x + sampler->sampler_rectangle.width ||
+       y + sampler->context_rect.y + sampler->context_rect.height >= sampler->sampler_rectangle.y + sampler->sampler_rectangle.height)
+     {
+       GeglRectangle  fetch_rectangle/* = sampler->context_rect*/;
+
+       fetch_rectangle.x = x + sampler->context_rect.x;
+       fetch_rectangle.y = y + sampler->context_rect.y;
+
+       /* we override the fetch rectangle needed by the sampler, hoping that
+        * the extra pixels we fetch comes in useful in subsequent requests,
+        * we assume that it is more likely that further access is to the right
+        * or down of our currently requested position.
+        */
+       fetch_rectangle.x -= 8;
+       fetch_rectangle.y -= 8;
+       fetch_rectangle.width = 64;
+       fetch_rectangle.height = 64;
+
+
+       if (sampler->sampler_buffer == NULL )
+         { /* we always request the same amount of pixels (64kb worth) */
+           sampler->sampler_buffer = g_malloc0 (fetch_rectangle.width *
+                                                fetch_rectangle.height *
+                                                bpp);
+         }
+
+       gegl_buffer_get (sampler->buffer,
+                        1.0,
+                        &fetch_rectangle,
+                        sampler->interpolate_format,
+                        sampler->sampler_buffer,
+                        GEGL_AUTO_ROWSTRIDE);
+
+       sampler->sampler_rectangle = fetch_rectangle;
+     }
+
+   dx = x - sampler->sampler_rectangle.x;
+   dy = y - sampler->sampler_rectangle.y;
+   buffer_ptr = (guchar *)sampler->sampler_buffer;
+   sof = ( dx +  (dy * sampler->sampler_rectangle.width)) * bpp;
+   return (gfloat*)(buffer_ptr+sof);
+}
+
 #include <math.h>
 
 gfloat *

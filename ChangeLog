@@ -1,5 +1,19 @@
 2008-06-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler.[ch]: (gegl_sampler_get_ptr): added a
+	function used to prime a linear buffer with all needed samples for
+	interpolation.
+
+	For all the interpolators, removed unneded alpha multiplications
+	(we're interpolating on premultiplied pixels), also moved linear and
+	cubic to skip unneeded function calls in innerloop.
+	* gegl/buffer/gegl-sampler-cubic.c:
+	* gegl/buffer/gegl-sampler-lanczos.c:
+	* gegl/buffer/gegl-sampler-linear.c:
+	* gegl/buffer/gegl-sampler-nearest.c:
+
+2008-06-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-sampler.c: (gegl_sampler_prepare): reset the
 	valid rectangle when prepare is called.
 	* operations/affine/affine.c: (process): reset the valid rectangle

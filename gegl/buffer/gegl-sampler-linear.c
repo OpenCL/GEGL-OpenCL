@@ -75,13 +75,12 @@ gegl_sampler_linear_get (GeglSampler *self,
 {
   GeglRectangle      context_rect = self->context_rect;
   gfloat            *sampler_bptr;
-  gfloat             abyss = 0.;
-  gfloat             dst[4];
-  gdouble            arecip;
-  gdouble            newval[4];
-  gdouble            q[4];
-  gdouble            dx,dy;
-  gdouble            uf, vf;
+  const gint         offsets[4]={0,        4,
+                                 (64-1)*4, 4};
+  gfloat             newval[4] = {0.0, 0.0, 0.0, 0.0};
+  gfloat             q[4];
+  gfloat             dx,dy;
+  gfloat             uf, vf;
   gint               u,v;
   gint               i;
 
@@ -95,38 +94,22 @@ gegl_sampler_linear_get (GeglSampler *self,
   q[3] = uf * vf;
   dx = (gint) x;
   dy = (gint) y;
-  newval[0] = newval[1] = newval[2] = newval[3] = 0.;
+
+  sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
+
+  /* FIXME: unroll this loop */
   for (i=0, v=dy+context_rect.y; v < dy+context_rect.height ; v++)
     for (u=dx+context_rect.x; u < dx+context_rect.width  ; u++, i++)
       {
-        sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
-        newval[0] += q[i] * sampler_bptr[0] * sampler_bptr[3];
-        newval[1] += q[i] * sampler_bptr[1] * sampler_bptr[3];
-        newval[2] += q[i] * sampler_bptr[2] * sampler_bptr[3];
+        sampler_bptr += offsets[i];
+        newval[0] += q[i] * sampler_bptr[0];
+        newval[1] += q[i] * sampler_bptr[1];
+        newval[2] += q[i] * sampler_bptr[2];
         newval[3] += q[i] * sampler_bptr[3];
       }
 
-  if (newval[3] <= abyss)
-    {
-      arecip    = abyss;
-      newval[3] = abyss;
-    }
-  else if (newval[3] > G_MAXDOUBLE)
-    {
-      arecip    = 1.0 / newval[3];
-      newval[3] = G_MAXDOUBLE;
-    }
-  else
-    {
-      arecip = 1.0 / newval[3];
-    }
-  for ( i=0 ;  i < 3 ; i++ )
-    newval[i] *= arecip;
-  for ( i=0 ;  i < 4 ; i++ )
-    dst[i] = CLAMP (newval[i], 0, G_MAXDOUBLE);
-
   babl_process (babl_fish (self->interpolate_format, self->format),
-                dst, output, 1);
+                newval, output, 1);
 }
 
 

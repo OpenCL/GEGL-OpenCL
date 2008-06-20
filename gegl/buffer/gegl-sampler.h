@@ -78,6 +78,10 @@ gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,
                                        gint         y);
 
+gfloat *
+gegl_sampler_get_ptr (GeglSampler         *sampler,
+                      gint                 x,
+                      gint                 y);
 GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
 
 G_END_DECLS

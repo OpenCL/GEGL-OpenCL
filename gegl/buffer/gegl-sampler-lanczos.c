@@ -146,10 +146,8 @@ gegl_sampler_lanczos_get (GeglSampler *self,
   GeglSamplerLanczos      *lanczos      = GEGL_SAMPLER_LANCZOS (self);
   GeglRectangle            context_rect = self->context_rect;
   gfloat                  *sampler_bptr;
-  gdouble                  x_sum, y_sum, arecip;
-  gdouble                  newval[4];
-
-  gfloat                   dst[4];
+  gdouble                  x_sum, y_sum;
+  gfloat                   newval[4] = {0.0, 0.0, 0.0, 0.0};
   gint                     i, j;
   gint                     spp    = lanczos->lanczos_spp;
   gint                     width  = lanczos->lanczos_width;
@@ -157,7 +155,7 @@ gegl_sampler_lanczos_get (GeglSampler *self,
   gint                     dx,dy;
   gint                     u,v;
 
-  gdouble                  x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
+  gfloat                   x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
                            y_kernel[width2];
 
   self->interpolate_format = babl_format ("RaGaBaA float");
@@ -178,8 +176,6 @@ gegl_sampler_lanczos_get (GeglSampler *self,
       x_kernel[i] /= x_sum;
       y_kernel[i] /= y_sum;
     }
-  arecip    = 0.0;
-  newval[0] = newval[1] = newval[2] = newval[3] = 0.0;
 
   dx = (gint) x;
   dy = (gint) y;
@@ -187,32 +183,14 @@ gegl_sampler_lanczos_get (GeglSampler *self,
     for (u=dx+context_rect.x, i = 0; u < dx+context_rect.x+context_rect.width; i++, u++)
       {
          sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);
-         newval[0] += y_kernel[j] * x_kernel[i] * sampler_bptr[0] * sampler_bptr[3];
-         newval[1] += y_kernel[j] * x_kernel[i] * sampler_bptr[1] * sampler_bptr[3];
-         newval[2] += y_kernel[j] * x_kernel[i] * sampler_bptr[2] * sampler_bptr[3];
+         newval[0] += y_kernel[j] * x_kernel[i] * sampler_bptr[0];
+         newval[1] += y_kernel[j] * x_kernel[i] * sampler_bptr[1];
+         newval[2] += y_kernel[j] * x_kernel[i] * sampler_bptr[2];
          newval[3] += y_kernel[j] * x_kernel[i] * sampler_bptr[3];
       }
-  if (newval[3] <= 0.0)
-    {
-      arecip    = 0.0;
-      newval[3] = 0;
-    }
-  else if (newval[3] > G_MAXDOUBLE)
-    {
-      arecip    = 1.0 / newval[3];
-      newval[3] = G_MAXDOUBLE;
-    }
-  else
-    {
-      arecip = 1.0 / newval[3];
-    }
-  for ( i=0 ;  i < 3 ; i++ )
-    newval[i] *= arecip;
-  for ( i=0 ;  i < 4 ; i++ )
-    dst[i] = CLAMP (newval[i], 0, G_MAXDOUBLE);
 
   babl_process (babl_fish (self->interpolate_format, self->format),
-                dst, output, 1);
+                newval, output, 1);
 }
 
 static void
