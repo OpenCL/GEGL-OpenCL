@@ -155,6 +155,9 @@ gegl_sampler_lanczos_get (GeglSampler *self,
   gint                     dx,dy;
   gint                     u,v;
 
+  /* FIXME: move the initialization of these arrays into the _prepare function
+   * to speed up actual resampling
+   */
   gfloat                   x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
                            y_kernel[width2];
 

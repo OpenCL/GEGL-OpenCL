@@ -1,5 +1,11 @@
 2008-06-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler-lanczos.c: (gegl_sampler_lanczos_get):
+	added comment about section that can be moved from the sampler
+	function to prepare to avoid per sampling overhead.
+
+2008-06-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-sampler.[ch]: (gegl_sampler_get_ptr): added a
 	function used to prime a linear buffer with all needed samples for
 	interpolation.
