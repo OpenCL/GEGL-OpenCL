@@ -27,9 +27,9 @@ gegl_chant_double(x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 gegl_chant_double(y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   "Vertical position")
 gegl_chant_double(width, "Width", 0, G_MAXDOUBLE, 0.0,
-                  "Horizontal position")
+                  "Horizontal extent")
 gegl_chant_double(height, "Height", 0, G_MAXDOUBLE, 0.0,
-                  "Vertical position")
+                  "Vertical extent")
 gegl_chant_color(color, "Color", "white",
                   "Color to render")
 

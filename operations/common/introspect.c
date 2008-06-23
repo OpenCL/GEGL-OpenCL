@@ -118,7 +118,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "introspect";
   operation_class->categories  = "render";
-  operation_class->description = "GEGL graph vizualizer.";
+  operation_class->description = "GEGL graph visualizer.";
 }
 
 #endif

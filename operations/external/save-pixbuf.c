@@ -18,7 +18,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_pointer (pixbuf, "Pixbuf location",
-                    "The location where to store the output GdkPixuf.")
+                    "The location where to store the output GdkPixbuf.")
 
 #else
 

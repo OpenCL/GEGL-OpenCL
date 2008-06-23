@@ -50,7 +50,7 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
  *
  * Create a new GeglBuffer of a given format with a given extent. It is
  * possible to pass in NULL for both extent and format, a NULL extent creates
- * an exmpty buffer and a NULL format makes the buffer default to "RGBA float".
+ * an empty buffer and a NULL format makes the buffer default to "RGBA float".
  */
 GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
@@ -59,7 +59,6 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
 /**
  * gegl_buffer_open:
  * @path: the path to a gegl buffer on disk.
- * be opened.
  *
  * Open an existing on-disk GeglBuffer, this buffer is opened in a monitored
  * state so multiple instances of gegl can share the same buffer. Sets on
@@ -85,7 +84,6 @@ void            gegl_buffer_save              (GeglBuffer          *buffer,
 /**
  * gegl_buffer_load:
  * @path: the path to a gegl buffer on disk.
- * be opened.
  *
  * Loads an existing GeglBuffer from disk, if it has previously been saved with
  * gegl_buffer_save it should be possible to open through any GIO transport, buffers
@@ -143,7 +141,7 @@ const GeglRectangle * gegl_buffer_get_extent (GeglBuffer *buffer);
  *
  * Changes the size and position that is considered active in a buffer, this
  * operation is valid on any buffer, reads on subbuffers outside the master
- * buffers extent are at the moment undefined.
+ * buffer's extent are at the moment undefined.
  *
  * Returns TRUE if the change of extent was succesful.
  */
@@ -156,7 +154,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * gegl_buffer_get_x:
  * @buffer: a GeglBuffer
  *
- * Evaluates to the X coordinate of the upper left corner of the buffers extent.
+ * Evaluates to the X coordinate of the upper left corner of the buffer's extent.
  */
 #define gegl_buffer_get_x(buffer)        (gegl_buffer_get_extent(buffer)->x)
 
@@ -164,7 +162,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * gegl_buffer_get_y:
  * @buffer: a GeglBuffer
  *
- * Evaluates to the Y coordinate of the upper left corner of the buffers extent.
+ * Evaluates to the Y coordinate of the upper left corner of the buffer's extent.
  */
 #define gegl_buffer_get_y(buffer)        (gegl_buffer_get_extent(buffer)->y)
 
@@ -172,7 +170,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * gegl_buffer_get_width:
  * @buffer: a GeglBuffer
  *
- * Evaluates to the width of the buffers extent.
+ * Evaluates to the width of the buffer's extent.
  */
 #define gegl_buffer_get_width(buffer)    (gegl_buffer_get_extent(buffer)->width)
 
@@ -180,7 +178,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * gegl_buffer_get_height:
  * @buffer: a GeglBuffer
  *
- * Evaluates to the height of the buffers extent.
+ * Evaluates to the height of the buffer's extent.
  */
 #define gegl_buffer_get_height(buffer)   (gegl_buffer_get_extent(buffer)->height)
 
@@ -295,7 +293,7 @@ typedef enum {
  * @buffer: the GeglBuffer to sample from
  * @x: x coordinate to sample in buffer coordinates
  * @y: y coordinate to sample in buffer coordinates
- * @scale: the scale we're fetching at (<1.0 can leads to decimation)
+ * @scale: the scale we're fetching at (<1.0 can lead to decimation)
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
  * @interpolation: the interpolation behavior to use, currently only nearest

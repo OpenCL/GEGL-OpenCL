@@ -158,7 +158,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
-                                   g_param_spec_int ("tile-height", "Tile height", "default tile heightfor created buffers.",
+                                   g_param_spec_int ("tile-height", "Tile height", "default tile height for created buffers.",
                                                      0, G_MAXINT, 64,
                                                      G_PARAM_READWRITE));
 
@@ -170,7 +170,7 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunk-size", "Chunk size",
-                                     "the number of pixels processed simulatnously by GEGL.",
+                                     "the number of pixels processed simultaneously by GEGL.",
                                                      1, G_MAXINT, 256*300,
                                                      G_PARAM_READWRITE));
 

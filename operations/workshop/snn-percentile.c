@@ -22,7 +22,7 @@
 gegl_chant_double (radius, "Radius", 0.0, 70.0, 8.0,
   "Radius of square pixel region (width and height will be radius*2+1)")
 gegl_chant_int (pairs, "Pairs", 1, 2, 2,
-  "Number of pairs higher number preserves more acute features")
+  "Number of pairs, higher number preserves more acute features")
 gegl_chant_double (percentile, "Percentile", 0.0, 100.0, 50.0,
   "The percentile to return, the default value 50 is equal to the median.")
 

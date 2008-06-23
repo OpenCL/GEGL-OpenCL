@@ -94,7 +94,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
                                                         "GeglNode",
-                                                        "The GeglNode to process (will saturate the providers cache if it the provided node is a sink node)",
+                                                        "The GeglNode to process (will saturate the provider's cache if the provided node is a sink node)",
                                                         GEGL_TYPE_NODE,
                                                         G_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT));
@@ -108,7 +108,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
   g_object_class_install_property (gobject_class, PROP_PROGRESS,
                                    g_param_spec_double ("progress",
                                                         "progress",
-                                                        "query progress 0.0 is not started 1.0 is done.",
+                                                        "query progress; 0.0 is not started, 1.0 is done.",
                                                         0.0, 1.0, 0.0,
                                                         G_PARAM_READWRITE));
 

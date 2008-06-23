@@ -716,7 +716,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      0, G_MAXINT, 0,
                                                      G_PARAM_READABLE));
   g_object_class_install_property (gobject_class, PROP_PIXELS,
-                                   g_param_spec_int ("pixels", "pixels", "total amount of pixels in image (width×height)",
+                                   g_param_spec_int ("pixels", "pixels", "total amount of pixels in image (width x height)",
                                                      0, G_MAXINT, 0,
                                                      G_PARAM_READABLE));
   g_object_class_install_property (gobject_class, PROP_WIDTH,

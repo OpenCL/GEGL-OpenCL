@@ -90,7 +90,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "difference-of-gaussians";
   operation_class->categories  = "meta:edge";
   operation_class->description =
-        "Does an edge detection based on the differnece of two gaussian blurs.";
+        "Does an edge detection based on the difference of two gaussian blurs.";
 }
 
 #endif

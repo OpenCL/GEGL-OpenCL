@@ -51,13 +51,13 @@ struct _GeglOperation
  * GeglOperation:
  * 
  * All the image processing code in GEGL is implemented as GeglOperations,
- * GEGL oeprations are implemented as GObject with a convenience API called
+ * GEGL operations are implemented as GObject with a convenience API called
  * chanting that abstracts away the boiler plater needed to generate introspectable
  * named properties of different types.
  *
  * Most types of operations like: filters, composers, sources, sinks, point
  * operations, compositing operations, and spatial operations with fixed
- * neighbourhoods. These base classes builds on top of the GeglOperationsClass:
+ * neighbourhoods. These base classes build on top of the GeglOperationsClass:
  *
  * See <a href='gegl-plugin.h.html'>gegl-plugin.h</a> for details.
  */

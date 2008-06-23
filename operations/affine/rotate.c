@@ -23,7 +23,7 @@ gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "Angle to rotate (clo
 #else
 
 #define GEGL_CHANT_NAME rotate
-#define GEGL_CHANT_DESCRIPTION  "Rotate the buffer around the specfied origin."
+#define GEGL_CHANT_DESCRIPTION  "Rotate the buffer around the specified origin."
 #define GEGL_CHANT_SELF "rotate.c"
 #include "chant.h"
 

@@ -150,7 +150,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "color:enhance";
   operation_class->description =
         "Scales the components of the buffer to be in the 0.0-1.0 range."
-        " This improves images that makes poor use of the available contrast"
+        " This improves images that make poor use of the available contrast"
         " (little contrast, very dark, or very bright images).";
 }
 

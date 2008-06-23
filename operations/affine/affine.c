@@ -243,7 +243,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_int (
                                      "lanczos-width",
                                      "Lanczos-width",
-                                     "Lanczos-width width of lanczos function",
+                                     "Width of lanczos function",
                                      3, 6, 3,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }

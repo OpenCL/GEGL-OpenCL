@@ -1,5 +1,27 @@
 2008-06-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Documentation improvements (mostly orthographic) from Peter
+	(gib_mir_mehl at gmx.net).
+
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/gegl-config.c:
+	* gegl/graph/gegl-node.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/process/gegl-processor.c:
+	* operations/affine/affine.c:
+	* operations/affine/rotate.c:
+	* operations/common/c2g.c:
+	* operations/common/difference-of-gaussians.c:
+	* operations/common/introspect.c:
+	* operations/common/rectangle.c:
+	* operations/common/stretch-contrast.c:
+	* operations/external/display.c:
+	* operations/external/save-pixbuf.c:
+	* operations/workshop/snn-percentile.c:
+
+2008-06-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-color.c: (gegl_color_get_string): applied
 	change from Peter gib_mir_mehl at gmx.net.
 
