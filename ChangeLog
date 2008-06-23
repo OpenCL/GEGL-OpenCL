@@ -1,3 +1,8 @@
+2008-06-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-color.c: (gegl_color_get_string): applied
+	change from Peter gib_mir_mehl at gmx.net.
+
 2008-06-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-sampler-lanczos.c: (gegl_sampler_lanczos_get):
