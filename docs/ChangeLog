@@ -1,3 +1,9 @@
+2008-06-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* images/GEGL.svg: replaced with new logo, designed with help and
+	hints for improvements from various places.
+	* images/gegl-logo.svg: removed old logo.
+
 2008-06-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: rearranged dependencies so ruby is a bullet
