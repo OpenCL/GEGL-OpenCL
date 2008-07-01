@@ -1,3 +1,16 @@
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Made the linear buffer access API of GeglBuffer public.
+
+	* gegl/buffer/gegl-buffer-linear.h: removed.
+	* gegl/buffer/Makefile.am: updated.
+	* gegl/buffer/gegl-buffer-private.h: removed include of
+	gegl-buffer-linear.h
+	* gegl/buffer/gegl-buffer.h: moved definitions of linear buffer API
+	here.
+	* tests/buffer/buffer-test.c: do not directly include the
+	gegl-buffer-linear.h header from the GEGL sourcetree anymore.
+
 2008-06-23  Øyvind Kolås  <pippin@gimp.org>
 
 	Documentation improvements (mostly orthographic) from Peter

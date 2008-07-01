@@ -13,7 +13,6 @@
  */
 
 #include "../../gegl/buffer/gegl-buffer-iterator.h"
-#include "../../gegl/buffer/gegl-buffer-linear.h"
 
 
 
