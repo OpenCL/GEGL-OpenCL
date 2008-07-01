@@ -151,48 +151,55 @@ gegl_node_editor_constructor (GType                  type,
   return object;
 }
 
+
+
 static void
-type_editor_generic_changed (GtkWidget *entry,
+type_editor_boolean_changed (GtkWidget *entry,
                              gpointer   data)
 {
   GParamSpec  *param_spec  = data;
   GeglNode    *node        = g_object_get_data (G_OBJECT (entry), "node");
-  const gchar *entry_text  = NULL;
   const gchar *prop_name   = param_spec->name;
 
-  if (param_spec->value_type != G_TYPE_BOOLEAN)
-    {
-      entry_text = gtk_entry_get_text (GTK_ENTRY (entry));
-    }
+  gegl_node_set (node, prop_name,
+                 gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (entry)),
+                 NULL);
+}
+
+static void
+type_editor_numeric_changed (GtkWidget *spin_button,
+                             gpointer   data)
+{
+  GParamSpec  *param_spec  = data;
+  GeglNode    *node        = g_object_get_data (G_OBJECT (spin_button), "node");
+  const gchar *prop_name   = param_spec->name;
 
   if (param_spec->value_type == G_TYPE_INT)
     {
-      gegl_node_set (node, prop_name, atoi (entry_text), NULL);
-    }
-  else if (param_spec->value_type == G_TYPE_FLOAT ||
-           param_spec->value_type == G_TYPE_DOUBLE)
-    {
-      gegl_node_set (node, prop_name, atof (entry_text), NULL);
-    }
-  else if (param_spec->value_type == G_TYPE_STRING)
-    {
-      gegl_node_set (node, prop_name, entry_text, NULL);
-    }
-  else if (param_spec->value_type == G_TYPE_BOOLEAN)
-    {
       gegl_node_set (node, prop_name,
-                     gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (entry)),
+                     gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (spin_button)),
                      NULL);
     }
-  else if (param_spec->value_type == GEGL_TYPE_COLOR)
+  else
     {
-      GeglColor *color = g_object_new (GEGL_TYPE_COLOR, "string", entry_text, NULL);
-
-      gegl_node_set (node, prop_name, color, NULL);
-      g_object_unref (color);
+      gegl_node_set (node, prop_name,
+                     gtk_spin_button_get_value (GTK_SPIN_BUTTON (spin_button)),
+                     NULL);
     }
 }
 
+static void
+type_editor_string_changed (GtkWidget *entry,
+                             gpointer   data)
+{
+  GParamSpec  *param_spec  = data;
+  GeglNode    *node        = g_object_get_data (G_OBJECT (entry), "node");
+  const gchar *prop_name   = param_spec->name;
+
+  gegl_node_set (node, prop_name,
+                 gtk_entry_get_text (GTK_ENTRY (entry)),
+                 NULL);
+}
 
 static void
 type_editor_color_changed (GtkColorButton *button,
@@ -220,25 +227,36 @@ type_editor_color_changed (GtkColorButton *button,
     }
 }
 
+
+
+
+static GtkWidget *
+hbox_type_editor (const gchar* labeltext,
+                  GtkWidget* entry,
+                  GtkSizeGroup *col1,
+                  GtkSizeGroup *col2)
+{
+  /* label and align the type editor widget */
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+  GtkWidget *label = gtk_label_new (labeltext);
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+  gtk_size_group_add_widget (col1, label);
+  gtk_size_group_add_widget (col2, entry);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  return hbox;
+}
+
+
 static GtkWidget *
 type_editor_color (GtkSizeGroup *col1,
                    GtkSizeGroup *col2,
                    GeglNode     *node,
                    GParamSpec   *param_spec)
 {
-  GtkWidget *hbox   = gtk_hbox_new (FALSE, 5);
-  GtkWidget *label  = gtk_label_new (param_spec->name);
+  const gchar* labeltext = param_spec->name;
   GtkWidget *button = g_object_new (GTK_TYPE_COLOR_BUTTON, "use-alpha", TRUE, NULL);
-
-  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-  gtk_size_group_add_widget (col1, label);
-  gtk_size_group_add_widget (col2, button);
-
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, FALSE, 0);
-
   g_object_set_data (G_OBJECT (button), "node", node);
-
   /*gulong handler = */g_signal_connect (G_OBJECT (button), "color-set",
                                      G_CALLBACK (type_editor_color_changed),
                                      (gpointer) param_spec);
@@ -257,7 +275,7 @@ type_editor_color (GtkSizeGroup *col1,
       gtk_color_button_set_alpha (GTK_COLOR_BUTTON (button), a*65535);
       g_object_unref (color);
     }
-  return hbox;
+  return hbox_type_editor (labeltext, button, col1, col2);
 }
 
 static GQuark param_spec_quark = 0;
@@ -678,96 +696,129 @@ type_editor_scalar (GtkSizeGroup *col1,
 }
 #endif
 
+
+
+
 static GtkWidget *
-type_editor_generic (GtkSizeGroup *col1,
+type_editor_boolean (GtkSizeGroup *col1,
                      GtkSizeGroup *col2,
                      GeglNode     *node,
                      GParamSpec   *param_spec)
 {
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
-  GtkWidget *label = gtk_label_new (param_spec->name);
-  GtkWidget *entry = gtk_entry_new ();
-
-  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-  gtk_size_group_add_widget (col1, label);
-
-  if (param_spec->value_type == G_TYPE_BOOLEAN)
-    entry = gtk_check_button_new ();
-  else
-    {
-      entry = gtk_entry_new ();
-
-      gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
-    }
-
-  gtk_size_group_add_widget (col2, entry);
-
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
-
+  gboolean value;
+  const gchar* labeltext = param_spec->name;
+  GtkWidget *entry = gtk_check_button_new ();
   g_object_set_data (G_OBJECT (entry), "node", node);
-
-  if (param_spec->value_type != G_TYPE_BOOLEAN)
-    g_signal_connect (G_OBJECT (entry), "changed",
-                      G_CALLBACK (type_editor_generic_changed),
+  g_signal_connect (G_OBJECT (entry), "toggled",
+                      G_CALLBACK (type_editor_boolean_changed),
                       (gpointer) param_spec);
 
-  if (param_spec->value_type == G_TYPE_BOOLEAN)
+  gegl_node_get (node, param_spec->name, &value, NULL);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (entry), value);
+
+  return hbox_type_editor (labeltext, entry, col1, col2);
+}
+
+
+static GtkAdjustment *
+adjustment_from_param_spec (GParamSpec *param_spec, gdouble value)
+{
+  gdouble   lower, upper, step_inc, page_inc, page_size;
+  gdouble   intwidth;
+
+  switch (param_spec->value_type)
     {
-      gboolean value;
-      gegl_node_get (node, param_spec->name, &value, NULL);
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (entry), value);
-      g_signal_connect (G_OBJECT (entry), "toggled",
-                        G_CALLBACK (type_editor_generic_changed),
-                        (gpointer) param_spec);
+      case G_TYPE_INT:
+          lower = G_PARAM_SPEC_INT (param_spec)->minimum;
+          upper = G_PARAM_SPEC_INT (param_spec)->maximum;
+          break;
+      case G_TYPE_FLOAT:
+          lower = G_PARAM_SPEC_FLOAT (param_spec)->minimum;
+          upper = G_PARAM_SPEC_FLOAT (param_spec)->maximum;
+      case G_TYPE_DOUBLE:          
+          lower = G_PARAM_SPEC_DOUBLE (param_spec)->minimum;
+          upper = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
+          break;
+      default:          
+          g_warn_if_reached();  /* broken type dispatch */
+          lower = -10000000;
+          upper =  10000000;
     }
-  else if (param_spec->value_type == G_TYPE_FLOAT)
+
+  intwidth = upper - lower;
+  step_inc = intwidth <= 50 ? 0.1 : intwidth <= 500 ? 1 : 10;
+  if (param_spec->value_type == G_TYPE_INT && step_inc < 1)
+      step_inc = 1;
+
+  page_inc = 10 * step_inc;
+  page_size = page_inc;
+
+  return (GtkAdjustment*) gtk_adjustment_new (value, lower, upper,
+                                              step_inc, page_inc, page_size);  
+}
+
+static GtkWidget *
+type_editor_numeric (GtkSizeGroup *col1,
+                     GtkSizeGroup *col2,
+                     GeglNode     *node,
+                     GParamSpec   *param_spec)
+{
+  const gchar* labeltext = param_spec->name;
+  GtkWidget *spin_button;
+ 
+  gdouble value;
+  gint n_digits = 2;
+  if (param_spec->value_type == G_TYPE_INT)
     {
-      gfloat value;
-      gchar str[64];
-      gegl_node_get (node, param_spec->name, &value, NULL);
-      sprintf (str, "!!!float!!!%f", value);
-      gtk_entry_set_text (GTK_ENTRY (entry), str);
+      gint intval;
+      gegl_node_get (node, param_spec->name, &intval, NULL);
+      value = intval;
+      n_digits = 0;
     }
-  else if (param_spec->value_type == G_TYPE_DOUBLE)
+  else
     {
-      gdouble value;
-      gchar str[64];
       gegl_node_get (node, param_spec->name, &value, NULL);
-      sprintf (str, "%3.3f", value);
-      gtk_entry_set_text (GTK_ENTRY (entry), str);
     }
-  else if (param_spec->value_type == G_TYPE_INT)
-    {
-      gint value;
-      gchar str[64];
-      gegl_node_get (node, param_spec->name, &value, NULL);
-      sprintf (str, "%i", value);
-      gtk_entry_set_text (GTK_ENTRY (entry), str);
-    }
-  else if (param_spec->value_type == G_TYPE_STRING)
+
+  spin_button = gtk_spin_button_new (adjustment_from_param_spec (param_spec, value),
+                                     1, n_digits );
+  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spin_button), TRUE);
+  gtk_entry_set_width_chars (GTK_ENTRY (spin_button), 6);
+
+  g_object_set_data (G_OBJECT (spin_button), "node", node);
+  g_signal_connect (G_OBJECT (spin_button), "value-changed",
+                    G_CALLBACK (type_editor_numeric_changed),
+                    (gpointer) param_spec);
+
+  return hbox_type_editor(labeltext, spin_button, col1, col2);
+}
+
+
+static GtkWidget *
+type_editor_string (GtkSizeGroup *col1,
+                    GtkSizeGroup *col2,
+                    GeglNode     *node,
+                    GParamSpec   *param_spec)
+{
+  const gchar* labeltext = param_spec->name;
+  GtkWidget *entry = gtk_entry_new ();
+  gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
+
+  g_object_set_data (G_OBJECT (entry), "node", node);
+  g_signal_connect (G_OBJECT (entry), "changed",
+                    G_CALLBACK (type_editor_string_changed),
+                    (gpointer) param_spec);
     {
       gchar *value;
       gegl_node_get (node, param_spec->name, &value, NULL);
       gtk_entry_set_text (GTK_ENTRY (entry), value);
       g_free (value);
     }
-  else if (param_spec->value_type == GEGL_TYPE_COLOR)
-    {
-      GeglColor *color;
-      gchar     *color_string;
-      gegl_node_get (node, param_spec->name, &color, NULL);
-      g_object_get (color, "string", &color_string, NULL);
-      gtk_entry_set_text (GTK_ENTRY (entry), color_string);
-      g_free (color_string);
-      g_object_unref (color);
-    }
-  else
-    {
-      gtk_entry_set_text (GTK_ENTRY (entry), "hm");
-    }
-  return hbox;
+
+  return hbox_type_editor(labeltext, entry, col1, col2);
 }
+
+
 
 static GtkWidget *
 property_editor_general (GeglNodeEditor *node_editor,
@@ -813,9 +864,26 @@ property_editor_general (GeglNodeEditor *node_editor,
               prop_editor = type_editor_scalar (col1, col2, node, properties[i]);
             }
 #endif
-          else
+          else if (properties[i]->value_type == G_TYPE_BOOLEAN)
             {
-              prop_editor = type_editor_generic (col1, col2, node, properties[i]);
+              prop_editor = type_editor_boolean (col1, col2, node, properties[i]);
+            }
+          else if (properties[i]->value_type == G_TYPE_INT    ||
+                   properties[i]->value_type == G_TYPE_FLOAT  ||
+                   properties[i]->value_type == G_TYPE_DOUBLE)
+            {
+              prop_editor = type_editor_numeric (col1, col2, node, properties[i]);
+            }
+          else if (properties[i]->value_type == G_TYPE_STRING)
+            {
+              prop_editor = type_editor_string (col1, col2, node, properties[i]);
+            }
+          else 
+            {
+              GParamSpec *param_spec = properties[i];
+              const gchar *labeltext = param_spec->name;
+              GtkWidget *label2 = gtk_label_new ("unsupported type");
+              prop_editor = hbox_type_editor(labeltext, label2, col1, col2);
             }
           gtk_box_pack_start (GTK_BOX (vbox), prop_editor, FALSE, FALSE, 0);
         }

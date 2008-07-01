@@ -1,5 +1,15 @@
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (type_editor_boolean_changed),
+	(type_editor_numeric_changed), (type_editor_string_changed),
+	(hbox_type_editor), (type_editor_color), (type_editor_boolean),
+	(adjustment_from_param_spec), (type_editor_numeric),
+	(type_editor_string), (property_editor_general): added support for
+	node editors using spinbuttons ito allow wasy adjustments within
+	property limits, patch from yahvuu at gmail.com bug #539953.
+
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-sampler-cubic.c: (gegl_sampler_cubic_get): commited
 	reworked bits of patch from Geert Jordaens that adds gcc vector
 	extension based SSE code paths to cubic. Bug #540540
