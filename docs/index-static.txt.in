@@ -7,7 +7,7 @@ GEGL
 ----
 GEGL (Generic Graphics Library) is a graph based image processing framework.
 
-GEGL provides infratructure to do demand based cached non destructive image
+GEGL provides infrastructure to do demand based cached non destructive image
 editing on larger than RAM buffers. Through link:http://gegl.org/babl/[babl]
 it provides support for a wide range of color models and pixel storage formats
 for input and output.
@@ -39,7 +39,7 @@ Features
         mask.
       * link:operations.html#cat_color[Color correction].
       * Text rendering using cairo and http://pango.org/[pango].
-      * Most operations operates in
+      * Most operations operate in
         http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
         linear light RGBA)
   - Bounding box based hit detection.
@@ -62,7 +62,7 @@ http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]::
 
 Gallery
 ~~~~~~~
-For examples of what GEGLs rendering engine currently can do look at the
+For examples of what GEGL's rendering engine currently can do look at the
 link:gallery/index.html[gallery].
 
 Bugzilla
@@ -163,9 +163,9 @@ Documentation
 -------------
 With GEGL you chain together image processing operations represented by nodes
 into a graph. GEGL provides such operations for loading and storing images,
-adjusting colors, filtering images in different ways, translating images and
+adjusting colors, filtering in different ways, transforming and compositing images.
 
-GEGLs programmer/user interface is a Directed Acyclic Graph of nodes. The DAG
+GEGL's programmer/user interface is a Directed Acyclic Graph of nodes. The DAG
 expresses a processing chain of operations. A DAG, or any node in it, expresses
 a composited and processed image. It is possible to request rectangular regions
 in a wide range of pixel formats from any node.
@@ -196,8 +196,8 @@ http://gegl.org/pygegl/[Python] and http://gegl.org/rgegl/[Ruby].
 
 Hello world
 ^^^^^^^^^^^
-The follwing is a small sample GEGL application that animates a zoom on a
-mandelbrot fractal compile it with:
+The following is a small sample GEGL application that animates a zoom on a
+mandelbrot fractal. compile it with:
 
  $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
 
@@ -241,10 +241,10 @@ link:gegl-operation-area-filter.h.html[GeglOperationAreaFilter]::
 
 link:gegl-operation-composer.h.html[GeglOperationComposer]::
     Composer operations are operations that take two inputs named 'input' and
-    'aux' and writes their output to the output pad 'output'
+    'aux' and write their output to the output pad 'output'
 
 link:gegl-operation-point-composer.h.html[GeglOperationPointComposer]::
-    A baseclass for composer functions where the output pixels values depends
+    A baseclass for composer functions where the output pixels' values depends
     only on the values of the single corresponding input and aux pixels.
 
 link:gegl-operation-source.h.html[GeglOperationSource]::
@@ -378,7 +378,7 @@ Glossary
 connection::
     A link/pipe routing image flow between operations within the graph goes
     from an output pad to an input pad, in graph glossary this might also be
-    reffered to as an edge.
+    referred to as an edge.
 DAG::
     Directed Acyclic Graph, see graph.
 graph::
@@ -400,8 +400,8 @@ output pad::
   a place where data can be requested, multiple input pads can reference
   the same output pad.
 property::
-    Properties are what control the behavior of operations, through the use of
-    GParamSpecs properties are self documenting through introspection.
+    Properties are what controls the behavior of operations. Through the use of
+    GParamSpecs properties they are self documenting via introspection.
 
 Directory overview
 ~~~~~~~~~~~~~~~~~~
