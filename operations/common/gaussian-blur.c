@@ -27,8 +27,9 @@ gegl_chant_double (std_dev_x, "Size X", 0.0, 200.0, 4.0,
    "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)")
 gegl_chant_double (std_dev_y, "Size Y", 0.0, 200.0, 4.0,
    "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)")
-gegl_chant_string (filter, "Filter", "iir",
-   "Optional parameter to override the automatic selection of blur filter.")
+gegl_chant_string (filter, "Filter", "auto",
+   "Optional parameter to override the automatic selection of blur filter."
+   " Choices are fir, iir, auto")
 
 #else
 
@@ -41,6 +42,7 @@ gegl_chant_string (filter, "Filter", "iir",
 
 #define RADIUS_SCALE   4
 
+
 static void
 iir_young_hor_blur (GeglBuffer *src,
                     GeglBuffer *dst,
@@ -51,8 +53,7 @@ static void
 iir_young_ver_blur (GeglBuffer *src,
                     GeglBuffer *dst,
                     gdouble     B,
-                    gdouble    *b,
-                    gint        offset);
+                    gdouble    *b);
 
 static void
 iir_young_find_constants (gfloat   radius,
@@ -67,15 +68,15 @@ static void
 fir_hor_blur (GeglBuffer *src,
               GeglBuffer *dst,
               gdouble    *cmatrix,
-              gint        matrix_length);
+              gint        matrix_length,
+              gint        xoff);
 
 static void
 fir_ver_blur (GeglBuffer *src,
               GeglBuffer *dst,
               gdouble    *cmatrix,
               gint        matrix_length,
-              gint        offsetX,
-              gint        offsetY);
+              gint        yoff);
 
 
 static void
@@ -84,6 +85,16 @@ iir_young_find_constants (gfloat   sigma,
                           gdouble *b)
 {
   gdouble q;
+
+  if (sigma == 0.0)
+    {
+      /* to prevent unexpected ringing at tile boundaries,
+         we define an (expensive) copy operation here */
+      *B = 1.0;
+      b[0] = 1.0;
+      b[1] = b[2] = b[3] = 0.0;
+      return;
+    }
 
   if(sigma >= 2.5)
     q = 0.98711*sigma - 0.96330;
@@ -154,6 +165,7 @@ iir_young_blur_1D (gfloat  * buf,
     }
 }
 
+/* expects src and dst buf to have the same height and no y-offset */
 static void
 iir_young_hor_blur (GeglBuffer *src,
                     GeglBuffer *dst,
@@ -169,7 +181,8 @@ iir_young_hor_blur (GeglBuffer *src,
   buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   w   = g_new0 (gfloat, gegl_buffer_get_width (src));
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
+                   buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = gegl_buffer_get_width (src);
   for (v=0; v<gegl_buffer_get_height (src); v++)
@@ -186,19 +199,20 @@ iir_young_hor_blur (GeglBuffer *src,
         }
     }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, gegl_buffer_get_extent(src), babl_format ("RaGaBaA float"),
+                   buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
   g_free (w);
 }
 
+/* expects src and dst buf to have the same width and no x-offset */
 static void
 iir_young_ver_blur (GeglBuffer *src,
                     GeglBuffer *dst,
                     gdouble     B,
-                    gdouble    *b,
-                    gint        offset)
+                    gdouble    *b)
 {
-  gint v;
+  gint u;
   gint c;
   gint w_len;
   gfloat *buf;
@@ -210,13 +224,12 @@ iir_young_ver_blur (GeglBuffer *src,
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = gegl_buffer_get_height (src);
-
-  for (v=0; v<gegl_buffer_get_width (dst); v++)
+  for (u=0; u<gegl_buffer_get_width (dst); u++)
     {
       for (c = 0; c < 4; c++)
         {
           iir_young_blur_1D (buf,
-                             (v+offset)*4 + c,
+                             u*4 + c,
                              gegl_buffer_get_width (src)*4,
                              B,
                              b,
@@ -233,176 +246,185 @@ iir_young_ver_blur (GeglBuffer *src,
 
 
 static gint
+fir_calc_convolve_matrix_length (gdouble sigma)
+{
+  return sigma ? ceil (sigma)*6.0+1.0 : 1;
+}
+
+static gint
 fir_gen_convolve_matrix (gdouble   sigma,
                          gdouble **cmatrix_p)
 {
   gint     matrix_length;
   gdouble *cmatrix;
 
-  if (!sigma)
-    {
-      *cmatrix_p = NULL;
-      return 0;
-    }
-
-  matrix_length = ceil (sigma)*6.0+1.0;
+  matrix_length = fir_calc_convolve_matrix_length (sigma);
   cmatrix = g_new (gdouble, matrix_length);
   if (!cmatrix)
     return 0;
 
-  {
-    gint i,x;
-    gdouble y;
+  if (matrix_length == 1)
+    {
+      cmatrix[0] = 1;
+    }
+  else
+    {
+      gint i,x;
+      gdouble sum = 0;
 
-    for (i=0; i<matrix_length/2+1; i++)
+      for (i=0; i<matrix_length/2+1; i++)
+        {
+          gdouble y;
+
+          x = i - (matrix_length/2);
+          y = (1.0/(sigma*sqrt(2.0*G_PI))) * exp(-(x*x) / (2.0*sigma*sigma));
+
+          cmatrix[i] = y;
+          sum += cmatrix[i];
+        }
+
+      for (i=matrix_length/2 + 1; i<matrix_length; i++)
+        {
+          cmatrix[i] = cmatrix[matrix_length-i-1];
+          sum += cmatrix[i];
+        }
+
+      for (i=0; i<matrix_length; i++)
       {
-        x = i - (matrix_length/2);
-        y = (1.0/(sigma*sqrt(2*G_PI))) * exp(-(x*x) / (2*sigma*sigma));
-
-        cmatrix[i] = y;
+        cmatrix[i] /= sum;
       }
-
-    for (i=matrix_length/2 + 1; i<matrix_length; i++)
-      {
-        cmatrix[i] = cmatrix[matrix_length-i-1];
-      }
-  }
+    }
 
   *cmatrix_p = cmatrix;
   return matrix_length;
 }
 
-
 static inline float
-fir_get_mean_component (gfloat  * buf,
-                        gint      buf_width,
-                        gint      buf_height,
-                        gint      x0,
-                        gint      y0,
-                        gint      width,
-                        gint      height,
-                        gint      component,
-                        gdouble * cmatrix)
+fir_get_mean_component_1D (gfloat  * buf,
+                           gint      offset,
+                           gint      delta_offset,
+                           gdouble * cmatrix,
+                           gint      matrix_length)
 {
-  gint    x, y;
-  gdouble acc=0, count=0.0;
-  gint    mcount=0;
+  gint    i;
+  gdouble acc=0;
 
-  gint offset = (y0 * buf_width + x0) * 4 + component;
-
-  for (y=y0; y<y0+height; y++)
+  for (i=0; i < matrix_length; i++)
     {
-    for (x=x0; x<x0+width; x++)
-      {
-        if (x>=0 && x<buf_width &&
-            y>=0 && y<buf_height)
-          {
-            acc += buf [offset] * cmatrix[mcount];
-            count += cmatrix[mcount];
-          }
-        offset+=4;
-        mcount++;
-      }
-      offset+= (buf_width * 4) - 4 * width;
+      acc += buf[offset] * cmatrix[i];
+      offset += delta_offset;
     }
-   if (count)
-     return acc/count;
-   return buf [offset];
+
+  return acc;
 }
 
+/* expects src and dst buf to have the same height and no y-offset */
 static void
 fir_hor_blur (GeglBuffer *src,
               GeglBuffer *dst,
               gdouble    *cmatrix,
-              gint        matrix_length)
+              gint        matrix_length,
+              gint        xoff)             /* offset between src and dst */
 {
-  gint u,v;
-  gint offset;
-  gfloat *src_buf;
-  gfloat *dst_buf;
+  gint        u,v;
+  gint        offset;
+  gfloat     *src_buf;
+  gfloat     *dst_buf;
+  const gint  radius = matrix_length/2;
+  const gint  src_width = gegl_buffer_get_width (src);
+
+  g_assert (xoff >= radius);
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
+                   src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
   for (v=0; v<gegl_buffer_get_height (dst); v++)
     for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
-        gint i;
-
-        for (i=0; i<4; i++)
-          dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       gegl_buffer_get_width (src),
-                                                       gegl_buffer_get_height (src),
-                                                       u - (matrix_length/2),
-                                                       v,
-                                                       matrix_length,
-                                                       1,
-                                                       i,
-                                                       cmatrix);
+        gint src_offset = (u-radius+xoff + v*src_width) * 4;
+        gint c;
+        for (c=0; c<4; c++)
+          dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
+                                                          src_offset + c,
+                                                          4,
+                                                          cmatrix,
+                                                          matrix_length);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf,
-                   GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"),
+                   dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
 
+/* expects src and dst buf to have the same width and no x-offset */
 void
 fir_ver_blur (GeglBuffer *src,
               GeglBuffer *dst,
               gdouble    *cmatrix,
               gint        matrix_length,
-              gint        skipoffsetX,
-              gint        skipoffsetY)
+              gint        yoff)             /* offset between src and dst */
 {
-  gint u,v;
-  gint offset;
-  gfloat *src_buf;
-  gfloat *dst_buf;
+  gint        u,v;
+  gint        offset;
+  gfloat     *src_buf;
+  gfloat     *dst_buf;
+  const gint  radius = matrix_length/2;
+  const gint  src_width = gegl_buffer_get_width (src);
+
+  g_assert (yoff >= radius);
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
+                   src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
   for (v=0; v<gegl_buffer_get_height (dst); v++)
     for (u=0; u<gegl_buffer_get_width (dst); u++)
       {
+        gint src_offset = (u + (v-radius+yoff)*src_width) * 4;
         gint c;
-
         for (c=0; c<4; c++)
-          dst_buf [offset++] = fir_get_mean_component (src_buf,
-                                                       gegl_buffer_get_width (src),
-                                                       gegl_buffer_get_height (src),
-                                                       u + skipoffsetX,
-                                                       v - (matrix_length/2) + skipoffsetY,
-                                                       1,
-                                                       matrix_length,
-                                                       c,
-                                                       cmatrix);
+          dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
+                                                          src_offset + c,
+                                                          src_width * 4,
+                                                          cmatrix,
+                                                          matrix_length);
       }
 
-
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf,
-                   GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"),
+                   dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
 
 static void prepare (GeglOperation *operation)
 {
+#define max(A,B) ((A) > (B) ? (A) : (B))
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
-  area->left = area->right = ceil (o->std_dev_x * RADIUS_SCALE);
-  area->top = area->bottom = ceil (o->std_dev_y * RADIUS_SCALE);
+
+  gfloat fir_radius_x = fir_calc_convolve_matrix_length (o->std_dev_x) / 2;
+  gfloat fir_radius_y = fir_calc_convolve_matrix_length (o->std_dev_y) / 2;
+  gfloat iir_radius_x = o->std_dev_x * RADIUS_SCALE;  
+  gfloat iir_radius_y = o->std_dev_y * RADIUS_SCALE;  
+
+  /* these could be calculated exactly considering o->filter,
+   * but we just make shure there is enough space */
+  area->left = area->right = ceil ( max (fir_radius_x, iir_radius_x));
+  area->top = area->bottom = ceil ( max (fir_radius_y, iir_radius_y));
 
   gegl_operation_set_format (operation, "output",
                              babl_format ("RaGaBaA float"));
+#undef max
 }
+
 
 static gboolean
 process (GeglOperation       *operation,
@@ -410,16 +432,22 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer *temp;
-  gdouble     B, b[4];
-  gdouble    *cmatrix;
-  gint        cmatrix_len;
-  gboolean    force_iir;
-  gboolean    force_fir;
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
 
-  temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
-                           babl_format ("RaGaBaA float"));
+  GeglBuffer   *temp;
+  GeglRectangle temp_extend;
+  gdouble       B, b[4];
+  gdouble      *cmatrix;
+  gint          cmatrix_len;
+  gboolean      force_iir;
+  gboolean      force_fir;
+
+  temp_extend.x      = gegl_buffer_get_x      (output);
+  temp_extend.width  = gegl_buffer_get_width  (output);
+  temp_extend.y      = gegl_buffer_get_y      (input);
+  temp_extend.height = gegl_buffer_get_height (input);
+  temp = gegl_buffer_new (&temp_extend, babl_format ("RaGaBaA float"));
 
   force_iir = o->filter && !strcmp (o->filter, "iir");
   force_fir = o->filter && !strcmp (o->filter, "fir");
@@ -431,24 +459,20 @@ process (GeglOperation       *operation,
     }
   else
     {
-      cmatrix_len =
-          fir_gen_convolve_matrix (o->std_dev_x, &cmatrix);
-      fir_hor_blur (input, temp, cmatrix, cmatrix_len);
+      cmatrix_len = fir_gen_convolve_matrix (o->std_dev_x, &cmatrix);
+      fir_hor_blur (input, temp, cmatrix, cmatrix_len, op_area->left);
       g_free (cmatrix);
     }
+
   if ((force_iir || o->std_dev_y > 1.0) && !force_fir)
     {
       iir_young_find_constants (o->std_dev_y, &B, b);
-      iir_young_ver_blur (temp, output, B, b,
-                          o->std_dev_x * RADIUS_SCALE);
+      iir_young_ver_blur (temp, output, B, b);
     }
   else
-    {
-      cmatrix_len =
-          fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
-      fir_ver_blur (temp, output, cmatrix, cmatrix_len,
-       o->std_dev_x * RADIUS_SCALE,
-       o->std_dev_y * RADIUS_SCALE);
+    { 
+      cmatrix_len = fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
+      fir_ver_blur (temp, output, cmatrix, cmatrix_len, op_area->top);
       g_free (cmatrix);
     }
 

@@ -1,5 +1,11 @@
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/gaussian-blur.c: commited patch from
+	yahvuu at gmail.com fixing shift and adding new default filtermode
+	'auto'. bug #518970
+
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-node-editor.c: (type_editor_boolean_changed),
 	(type_editor_numeric_changed), (type_editor_string_changed),
 	(hbox_type_editor), (type_editor_color), (type_editor_boolean),
