@@ -264,7 +264,7 @@ esac
 # Check how to generate plug-ins (with gcc at least)
 ####################################################
 
-AC_MSG_CHECKING([for some Win32 platform])
+AC_MSG_CHECKING([for how to make dynamic libraries])
 case "$target_or_host" in 
   *-*-darwin*)                 # darwin
     shrext=.dylib
@@ -280,6 +280,8 @@ case "$target_or_host" in
     ;;
 esac
 
+AC_MSG_RESULT([flag=${dynamiclib}, extension=${shrext}])
+
 SHREXT=$shrext
 AC_SUBST(SHREXT)
 AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
@@ -290,7 +292,20 @@ AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
 
 dnl ===========================================================================
 
-
+#######################
+# Check for Darwin/OSX
+#######################
+AC_MSG_CHECKING([for some Darwin platform])
+case "${host}" in
+  *-apple-darwin*)
+    platform_darwin=yes
+    ;;
+  *)
+    platform_darwin=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_darwin])
+AM_CONDITIONAL(PLATFORM_DARWIN, test "$platform_darwin" = "yes")
 
 #################
 # Check for Win32

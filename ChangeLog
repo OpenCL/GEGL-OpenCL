@@ -1,5 +1,10 @@
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: applied patch from Marianne Gagnon fixing make install
+	on Mac OS X (Bug #539504)
+
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/gaussian-blur.c: commited patch from
 	yahvuu at gmail.com fixing shift and adding new default filtermode
 	'auto'. bug #518970
