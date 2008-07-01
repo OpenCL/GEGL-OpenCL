@@ -1,5 +1,11 @@
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler-cubic.c: (gegl_sampler_cubic_get): commited
+	reworked bits of patch from Geert Jordaens that adds gcc vector
+	extension based SSE code paths to cubic. Bug #540540
+
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the linear buffer access API of GeglBuffer public.
 
 	* gegl/buffer/gegl-buffer-linear.h: removed.
