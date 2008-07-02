@@ -367,7 +367,7 @@ GeglBuffer *gegl_buffer_linear_new           (const GeglRectangle *extent,
  * @extent: the dimensions (and upper left coordinates) of linear buffer.
  * @rowstride: the number of bytes between rowstarts in memory (or 0 to
  *             autodetect)
- * @destory_fn: function to call to free data or NULL if memory should not be
+ * @destroy_fn: function to call to free data or NULL if memory should not be
  *              freed.
  * @destroy_fn_data: extra argument to be passed to void destroy(ptr, data) type
  *              function.

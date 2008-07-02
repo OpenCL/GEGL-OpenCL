@@ -1,3 +1,7 @@
+2008-07-02  Manish Singh  <yosh@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h: typo fix: destory->destroy
+
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: applied patch from Marianne Gagnon fixing make install
