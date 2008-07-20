@@ -1,3 +1,9 @@
+2008-07-19  Hubert Figuiere  <hub@figuiere.net>
+
+	* AUTHORS:
+	* bin/gegl.c (DEFAULT_COMPOSITION): Fix typo in my first name. And
+	add accent in the last.
+
 2008-07-02  Manish Singh  <yosh@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h: typo fix: destory->destroy
