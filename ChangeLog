@@ -1,5 +1,14 @@
 2008-07-21  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-tile-storage.c (gegl_tile_storage_finalize):
+	plugged a memory leak.
+	(set_property): use g_value_dup_string (value) instead of
+	g_strdup (g_value_get_string (value)).
+
+	* gegl/buffer/gegl-sampler-cubic.c (set_property): ditto.
+
+2008-07-21  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c (gegl_buffer_new_from_format): plugged
 	memory leak. Moved filename-related code to the code path where it
 	is used and commented out some unused code.

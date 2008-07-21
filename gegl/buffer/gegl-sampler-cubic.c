@@ -156,7 +156,7 @@ gegl_sampler_cubic_get (GeglSampler *self,
           {
             sampler_bptr += offsets[i];
             factor = cubicKernel (y - v, cubic->b, cubic->c) *
-                     cubicKernel (x - u, cubic->b, cubic->c);            
+                     cubicKernel (x - u, cubic->b, cubic->c);
             newval4 += g4float_mul(&sampler_bptr[0], factor);
            }
      }
@@ -189,7 +189,7 @@ get_property (GObject    *object,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
+  GeglSamplerCubic *self = GEGL_SAMPLER_CUBIC (object);
 
   switch (prop_id)
     {
@@ -212,7 +212,7 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglSamplerCubic *self         = GEGL_SAMPLER_CUBIC (object);
+  GeglSamplerCubic *self = GEGL_SAMPLER_CUBIC (object);
 
   switch (prop_id)
     {
@@ -221,12 +221,10 @@ set_property (GObject      *object,
         break;
 
       case PROP_TYPE:
-      {
         if (self->type)
           g_free (self->type);
-        self->type = g_strdup (g_value_get_string (value));
+        self->type = g_value_dup_string (value);
         break;
-      }
 
       default:
         break;

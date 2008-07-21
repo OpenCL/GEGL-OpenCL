@@ -146,7 +146,7 @@ set_property (GObject      *gobject,
       case PROP_PATH:
         if (tile_storage->path)
           g_free (tile_storage->path);
-        tile_storage->path = g_strdup (g_value_get_string (value));
+        tile_storage->path = g_value_dup_string (value);
         break;
 
       case PROP_FORMAT:
@@ -170,7 +170,7 @@ tile_storage_idle (gpointer data)
       return FALSE;
     }
 
-  return gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));                        
+  return gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));
 }
 
 GeglTileBackend *gegl_buffer_backend (GObject *buffer);
@@ -285,6 +285,9 @@ gegl_tile_storage_finalize (GObject *object)
 
   if (self->idle_swapper)
     g_source_remove (self->idle_swapper);
+
+  if (self->path)
+    g_free (self->path);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
