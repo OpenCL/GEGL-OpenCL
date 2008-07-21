@@ -677,17 +677,14 @@ finalize (GObject *object)
         g_object_unref (self->o);
 
       if (self->file)
-        {
-          g_file_delete  (self->file, NULL, NULL);
-          g_object_unref (self->file);
-        }
+        g_file_delete  (self->file, NULL, NULL);
 #else
-      if (self->i != -1) 
+      if (self->i != -1)
 	    {
           close (self->i);
           self->i = -1;
         }
-      if (self->o != -1) 
+      if (self->o != -1)
 	    {
           close (self->o);
 		  self->o = -1;
@@ -701,6 +698,9 @@ finalize (GObject *object)
 #if HAVE_GIO
   if (self->monitor)
     g_object_unref (self->monitor);
+
+  if (self->file)
+    g_object_unref (self->file);
 #endif
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
@@ -1011,7 +1011,7 @@ ensure_exist (GeglTileBackendFile *self)
       g_assert (self->o);
 #else
       g_assert (self->i != -1);
-      g_assert (self->o != -1);      
+      g_assert (self->o != -1);
 #endif
     }
 }

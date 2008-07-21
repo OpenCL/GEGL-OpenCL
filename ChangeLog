@@ -1,5 +1,10 @@
 2008-07-21  Sven Neumann  <sven@gimp.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c (finalize): always unref
+	self->file, not only when the file existed.
+
+2008-07-21  Sven Neumann  <sven@gimp.org>
+
 	* gegl/buffer/gegl-tile-storage.c (gegl_tile_storage_finalize):
 	plugged a memory leak.
 	(set_property): use g_value_dup_string (value) instead of
