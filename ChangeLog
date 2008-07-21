@@ -1,3 +1,9 @@
+2008-07-21  Sven Neumann  <sven@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c (gegl_buffer_new_from_format): plugged
+	memory leak. Moved filename-related code to the code path where it
+	is used and commented out some unused code.
+
 2008-07-19  Hubert Figuiere  <hub@figuiere.net>
 
 	* AUTHORS:

@@ -907,52 +907,56 @@ gegl_buffer_new_from_format (const void *babl_format,
 {
   GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
-  gchar       *filename;
-  gchar       *path;
-  static       gint no=1;
-
-  filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
-                              getpid (),
-                              babl_name ((Babl *) babl_format),
-                              no++);
-
-  filename = g_strdup_printf ("%i-%i", getpid(), no++);
-
-  path = g_build_filename (gegl_config()->swap, filename, NULL);
-  g_free (filename);
 
   if (!gegl_config()->swap ||
       g_str_equal (gegl_config()->swap, "RAM") ||
-      g_str_equal (gegl_config()->swap, "ram")
-      )
+      g_str_equal (gegl_config()->swap, "ram"))
     {
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                              "format", babl_format,
-                              "tile-width", tile_width,
-                              "tile-height", tile_height,
-                              NULL);
+                                   "format",      babl_format,
+                                   "tile-width",  tile_width,
+                                   "tile-height", tile_height,
+                                   NULL);
     }
   else
     {
+      static gint no = 1;
+
+      gchar *filename;
+      gchar *path;
+
+#if 0
+      filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
+                                  getpid (),
+                                  babl_name ((Babl *) babl_format),
+                                  no++);
+#endif
+
+      filename = g_strdup_printf ("%i-%i", getpid(), no++);
+      path = g_build_filename (gegl_config()->swap, filename, NULL);
+      g_free (filename);
+
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                              "format", babl_format,
-                              "tile-width", tile_width,
-                              "tile-height", tile_height,
-                              "path",   path,
-                              NULL);
+                                   "format",      babl_format,
+                                   "tile-width",  tile_width,
+                                   "tile-height", tile_height,
+                                   "path",        path,
+                                   NULL);
+      g_free (path);
     }
 
   buffer = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", tile_storage,
-                         "x", x,
-                         "y", y,
-                         "width", width,
-                         "height", height,
-                         "tile-width", tile_width,
+                         "source",      tile_storage,
+                         "x",           x,
+                         "y",           y,
+                         "width",       width,
+                         "height",      height,
+                         "tile-width",  tile_width,
                          "tile-height", tile_height,
                          NULL);
 
   g_object_unref (tile_storage);
+
   return buffer;
 }
 
