@@ -34,11 +34,10 @@ gegl_chant_double (intended_temperature, "Intended temperature", LOWEST_TEMPERAT
 static const gfloat rgb_r55[][12];
 
 static void
-convert_k_to_rgb (gfloat temperature,
+convert_k_to_rgb (gfloat  temperature,
                   gfloat *rgb)
 {
-  gfloat nomin, denom;
-  int    channel, deg;
+  gint channel;
 
   if (temperature < LOWEST_TEMPERATURE)
     temperature = LOWEST_TEMPERATURE;
@@ -53,6 +52,9 @@ convert_k_to_rgb (gfloat temperature,
    */
   for (channel = 0; channel < 3; channel++)
     {
+      gfloat nomin, denom;
+      gint   deg;
+
       nomin = rgb_r55[channel][0];
       for (deg = 1; deg < 6; deg++)
         nomin = nomin * temperature + rgb_r55[channel][deg];
@@ -91,7 +93,7 @@ process (GeglOperation       *op,
   gfloat      coeffs[3];
   glong       i;
 
-  in_pixel  = in_buf;
+  in_pixel = in_buf;
   out_pixel = out_buf;
 
   convert_k_to_rgb (o->original_temperature, original_temperature_rgb);
