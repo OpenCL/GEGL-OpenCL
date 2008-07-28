@@ -1,3 +1,8 @@
+2008-07-29  Sven Neumann  <sven@gimp.org>
+
+	* operations/common/color-temperature.c: renamed properties to not
+	abbreviate 'temperature'. Some minor cleanups.
+
 2008-07-21  Sven Neumann  <sven@gimp.org>
 
 	* gegl/buffer/gegl-tile-backend-file.c (finalize): always unref

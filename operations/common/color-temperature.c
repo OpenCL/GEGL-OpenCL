@@ -16,10 +16,13 @@
  * Copyright 2008 Jan Heller <jan.heller (at) matfyz.cz>
  */
 
+#define LOWEST_TEMPERATURE     1000
+#define HIGHEST_TEMPERATURE   12000
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (original_temp, "Original temperature", 1000, 12000, 6500, "Estimated temperature of the light source in K the image was taken with.")
-gegl_chant_double (intended_temp, "Intended temperature", 1000, 12000, 6500, "Corrected estimation of the temperature of the light source in K.")
+gegl_chant_double (original_temperature, "Original temperature", LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, "Estimated temperature of the light source in Kelvin the image was taken with.")
+gegl_chant_double (intended_temperature, "Intended temperature", LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, "Corrected estimation of the temperature of the light source in Kelvin.")
 
 #else
 
@@ -27,9 +30,6 @@ gegl_chant_double (intended_temp, "Intended temperature", 1000, 12000, 6500, "Co
 #define GEGL_CHANT_C_FILE       "color-temperature.c"
 
 #include "gegl-chant.h"
-
-#define LOWEST_TEMPERATURE     1000
-#define HIGHEST_TEMPERATURE   12000
 
 static const gfloat rgb_r55[][12];
 
@@ -86,34 +86,32 @@ process (GeglOperation       *op,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
   gfloat     *in_pixel;
   gfloat     *out_pixel;
-  gfloat      original_temp, original_temp_rgb[3];
-  gfloat      intended_temp, intended_temp_rgb[3];
-  gfloat      coefs[3];
+  gfloat      original_temperature_rgb[3];
+  gfloat      intended_temperature_rgb[3];
+  gfloat      coeffs[3];
   glong       i;
 
-  in_pixel = in_buf;
+  in_pixel  = in_buf;
   out_pixel = out_buf;
 
-  original_temp = o->original_temp;
-  intended_temp = o->intended_temp;
+  convert_k_to_rgb (o->original_temperature, original_temperature_rgb);
+  convert_k_to_rgb (o->intended_temperature, intended_temperature_rgb);
 
-  convert_k_to_rgb (original_temp, original_temp_rgb);
-  convert_k_to_rgb (intended_temp, intended_temp_rgb);
-
-  coefs[0] = original_temp_rgb[0] / intended_temp_rgb[0];
-  coefs[1] = original_temp_rgb[1] / intended_temp_rgb[1];
-  coefs[2] = original_temp_rgb[2] / intended_temp_rgb[2];
+  coeffs[0] = original_temperature_rgb[0] / intended_temperature_rgb[0];
+  coeffs[1] = original_temperature_rgb[1] / intended_temperature_rgb[1];
+  coeffs[2] = original_temperature_rgb[2] / intended_temperature_rgb[2];
 
   for (i = 0; i < n_pixels; i++)
     {
-      out_pixel[0] = in_pixel[0] * coefs[0];
-      out_pixel[1] = in_pixel[1] * coefs[1];
-      out_pixel[2] = in_pixel[2] * coefs[2];
+      out_pixel[0] = in_pixel[0] * coeffs[0];
+      out_pixel[1] = in_pixel[1] * coeffs[1];
+      out_pixel[2] = in_pixel[2] * coeffs[2];
       out_pixel[3] = in_pixel[3];
 
       in_pixel += 4;
       out_pixel += 4;
     }
+
   return TRUE;
 }
 
@@ -128,6 +126,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+
   operation_class->prepare = prepare;
 
   operation_class->name        = "color-temperature";
@@ -144,27 +143,32 @@ gegl_chant_class_init (GeglChantClass *klass)
  *
  * converted to the linear RGB space assuming the ITU-R BT.709-5/sRGB primaries
  */
-static const gfloat rgb_r55[][12] = {{
- 6.9389923563552169e-01, 2.7719388100974670e+03,
- 2.0999316761104289e+07,-4.8889434162208414e+09,
--1.1899785506796783e+07,-4.7418427686099203e+04,
- 1.0000000000000000e+00, 3.5434394338546258e+03,
--5.6159353379127791e+05, 2.7369467137870544e+08,
- 1.6295814912940913e+08, 4.3975072422421846e+05
- },{
- 9.5417426141210926e-01, 2.2041043287098860e+03,
--3.0142332673634286e+06,-3.5111986367681120e+03,
--5.7030969525354260e+00, 6.1810926909962016e-01,
- 1.0000000000000000e+00, 1.3728609973644000e+03,
- 1.3099184987576159e+06,-2.1757404458816318e+03,
--2.3892456292510311e+00, 8.1079012401293249e-01
- },{
--7.1151622540856201e+10, 3.3728185802339764e+16,
--7.9396187338868539e+19, 2.9699115135330123e+22,
--9.7520399221734228e+22,-2.9250107732225114e+20,
- 1.0000000000000000e+00, 1.3888666482167408e+16,
- 2.3899765140914549e+19, 1.4583606312383295e+23,
- 1.9766018324502894e+22, 2.9395068478016189e+18
-}};
+static const gfloat rgb_r55[][12] =
+{
+  {
+     6.9389923563552169e-01,  2.7719388100974670e+03,
+     2.0999316761104289e+07, -4.8889434162208414e+09,
+    -1.1899785506796783e+07, -4.7418427686099203e+04,
+     1.0000000000000000e+00,  3.5434394338546258e+03,
+    -5.6159353379127791e+05,  2.7369467137870544e+08,
+     1.6295814912940913e+08,  4.3975072422421846e+05
+  },
+  {
+     9.5417426141210926e-01,  2.2041043287098860e+03,
+    -3.0142332673634286e+06, -3.5111986367681120e+03,
+    -5.7030969525354260e+00,  6.1810926909962016e-01,
+     1.0000000000000000e+00,  1.3728609973644000e+03,
+     1.3099184987576159e+06, -2.1757404458816318e+03,
+    -2.3892456292510311e+00,  8.1079012401293249e-01
+  },
+  {
+    -7.1151622540856201e+10,  3.3728185802339764e+16,
+    -7.9396187338868539e+19,  2.9699115135330123e+22,
+    -9.7520399221734228e+22, -2.9250107732225114e+20,
+     1.0000000000000000e+00,  1.3888666482167408e+16,
+     2.3899765140914549e+19,  1.4583606312383295e+23,
+     1.9766018324502894e+22,  2.9395068478016189e+18
+  }
+};
 
 #endif
