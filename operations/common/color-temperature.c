@@ -75,6 +75,63 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
+static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      g_free (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (chant_parent_class)->finalize (object);
+}
+
+static void
+notify (GObject    *object,
+        GParamSpec *pspec)
+{
+  if (strcmp (pspec->name, "original-temperature") == 0 ||
+      strcmp (pspec->name, "intended-temperature") == 0)
+    {
+      GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+      /* one of the properties has changed,
+       * invalidate the preprocessed coefficients
+       */
+      if (o->chant_data)
+        {
+          g_free (o->chant_data);
+          o->chant_data = NULL;
+        }
+    }
+
+  if (G_OBJECT_CLASS (chant_parent_class)->notify)
+    G_OBJECT_CLASS (chant_parent_class)->notify (object, pspec);
+}
+
+
+static gfloat *
+preprocess (GeglChantO *o)
+{
+  gfloat *coeffs = g_new (gfloat, 3);
+  gfloat  original_temperature_rgb[3];
+  gfloat  intended_temperature_rgb[3];
+
+  g_printerr ("preprocess\n");
+
+  convert_k_to_rgb (o->original_temperature, original_temperature_rgb);
+  convert_k_to_rgb (o->intended_temperature, intended_temperature_rgb);
+
+  coeffs[0] = original_temperature_rgb[0] / intended_temperature_rgb[0];
+  coeffs[1] = original_temperature_rgb[1] / intended_temperature_rgb[1];
+  coeffs[2] = original_temperature_rgb[2] / intended_temperature_rgb[2];
+
+  return coeffs;
+}
+
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format
  */
@@ -85,25 +142,20 @@ process (GeglOperation       *op,
          glong                n_pixels,
          const GeglRectangle *roi)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *in_pixel;
-  gfloat     *out_pixel;
-  gfloat      original_temperature_rgb[3];
-  gfloat      intended_temperature_rgb[3];
-  gfloat      coeffs[3];
-  glong       i;
+  GeglChantO   *o         = GEGL_CHANT_PROPERTIES (op);
+  gfloat       *in_pixel  = in_buf;
+  gfloat       *out_pixel = out_buf;
+  const gfloat *coeffs    = o->chant_data;
 
   in_pixel = in_buf;
   out_pixel = out_buf;
 
-  convert_k_to_rgb (o->original_temperature, original_temperature_rgb);
-  convert_k_to_rgb (o->intended_temperature, intended_temperature_rgb);
+  if (! coeffs)
+    {
+      coeffs = o->chant_data = preprocess (o);
+    }
 
-  coeffs[0] = original_temperature_rgb[0] / intended_temperature_rgb[0];
-  coeffs[1] = original_temperature_rgb[1] / intended_temperature_rgb[1];
-  coeffs[2] = original_temperature_rgb[2] / intended_temperature_rgb[2];
-
-  for (i = 0; i < n_pixels; i++)
+  while (n_pixels--)
     {
       out_pixel[0] = in_pixel[0] * coeffs[0];
       out_pixel[1] = in_pixel[1] * coeffs[1];
@@ -121,15 +173,20 @@ process (GeglOperation       *op,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass                  *object_class;
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
 
+  object_class       = G_OBJECT_CLASS (klass);
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
+  object_class->finalize = finalize;
+  object_class->notify   = notify;
 
   operation_class->prepare = prepare;
+
+  point_filter_class->process = process;
 
   operation_class->name        = "color-temperature";
   operation_class->categories  = "color";

@@ -1,5 +1,11 @@
 2008-07-29  Sven Neumann  <sven@gimp.org>
 
+	* operations/common/color-temperature.c: cache the coefficients
+	that depend on the temperature properties instead of recalculating
+	them in each call to process().
+
+2008-07-29  Sven Neumann  <sven@gimp.org>
+
 	* operations/common/color-temperature.c: renamed properties to not
 	abbreviate 'temperature'. Some minor cleanups.
 
