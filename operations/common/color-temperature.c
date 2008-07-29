@@ -120,8 +120,6 @@ preprocess (GeglChantO *o)
   gfloat  original_temperature_rgb[3];
   gfloat  intended_temperature_rgb[3];
 
-  g_printerr ("preprocess\n");
-
   convert_k_to_rgb (o->original_temperature, original_temperature_rgb);
   convert_k_to_rgb (o->intended_temperature, intended_temperature_rgb);
 
