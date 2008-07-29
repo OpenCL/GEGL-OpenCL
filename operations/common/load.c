@@ -152,30 +152,20 @@ dispose (GObject *object)
       self->cached_path = NULL;
     }
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+  G_OBJECT_CLASS (chant_parent_class)->dispose (object);
 }
-
-static void
-finalize (GObject *object)
-{
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
-}
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass     *operation_class;
-  GObjectClass           *object_class;
+  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
-  object_class    = G_OBJECT_CLASS (klass);
+  object_class->dispose = dispose;
 
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->prepare = prepare;
-  G_OBJECT_CLASS (klass)->dispose = dispose;
-  G_OBJECT_CLASS (klass)->finalize = finalize;
 
   operation_class->name        = "load";
   operation_class->categories  = "meta:input";

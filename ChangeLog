@@ -1,5 +1,18 @@
 2008-07-29  Sven Neumann  <sven@gimp.org>
 
+	* operations/common/layer.c
+	* operations/common/load-buffer.c
+	* operations/common/load.c
+	* operations/common/mblur.c
+	* operations/common/open-buffer.c
+	* operations/common/rectangle.c
+	* operations/external/ff-load.c
+	* operations/external/text.c
+	* operations/external/v4l.c: use chant_parent_class instead of
+	doing the g_type_class_peek_parent() dance.
+
+2008-07-29  Sven Neumann  <sven@gimp.org>
+
 	* operations/common/color-temperature.c: cache the coefficients
 	that depend on the temperature properties instead of recalculating
 	them in each call to process().

@@ -214,11 +214,11 @@ finalize (GObject *object)
   GeglChant *self = GEGL_CHANT (object);
 
   if (self->cached_path)
-      g_free (self->cached_path);
+    g_free (self->cached_path);
   if (self->p_composite_op)
-      g_free (self->p_composite_op);
+    g_free (self->p_composite_op);
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+  G_OBJECT_CLASS (chant_parent_class)->finalize (object);
 }
 
 static void

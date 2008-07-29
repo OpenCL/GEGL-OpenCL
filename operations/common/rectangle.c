@@ -114,14 +114,6 @@ prepare (GeglOperation *operation)
 }
 
 static void
-finalize (GObject *object)
-{
-  /*GeglChant *self = GEGL_CHANT (object);*/
-
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
-}
-
-static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GObjectClass       *object_class;
@@ -129,8 +121,6 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->finalize = finalize;
 
   operation_class->name        = "rectangle";
   operation_class->categories  = "input";

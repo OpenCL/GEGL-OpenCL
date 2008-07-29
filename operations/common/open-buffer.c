@@ -101,7 +101,7 @@ dispose (GObject *object)
       o->chant_data = NULL;
     }
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+  G_OBJECT_CLASS (chant_parent_class)->dispose (object);
 }
 
 
@@ -114,11 +114,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
+  G_OBJECT_CLASS (klass)->dispose = dispose;
+
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_cached_region = get_cached_region;
-
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 
   operation_class->name        = "open-buffer";
   operation_class->categories  = "input";

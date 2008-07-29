@@ -74,7 +74,7 @@ dispose (GObject *object)
       o->buffer = NULL;
     }
 
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+  G_OBJECT_CLASS (chant_parent_class)->dispose (object);
 }
 
 
