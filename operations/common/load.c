@@ -152,7 +152,7 @@ dispose (GObject *object)
       self->cached_path = NULL;
     }
 
-  G_OBJECT_CLASS (chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
 }
 
 static void

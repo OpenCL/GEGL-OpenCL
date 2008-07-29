@@ -261,7 +261,7 @@ finalize (GObject *object)
   if (self->cex.font)
     g_free (self->cex.font);
 
-  G_OBJECT_CLASS (chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
 static void

@@ -182,7 +182,7 @@ finalize (GObject *object)
       o->chant_data = NULL;
     }
 
-  G_OBJECT_CLASS (chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
 static gboolean

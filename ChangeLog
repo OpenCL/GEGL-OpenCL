@@ -1,5 +1,21 @@
 2008-07-29  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-chant.h: renamed chant_parent_class to
+	gegl_chant_parent_class. Removed ##type_parent_class as that was
+	only an alias for gegl_chant_parent_class.
+
+	* operations/common/layer.c
+	* operations/common/load-buffer.c
+	* operations/common/load.c
+	* operations/common/mblur.c
+	* operations/common/open-buffer.c
+	* operations/common/rectangle.c
+	* operations/external/ff-load.c
+	* operations/external/text.c
+	* operations/external/v4l.c: changed accordingly.
+
+2008-07-29  Sven Neumann  <sven@gimp.org>
+
 	* operations/common/layer.c
 	* operations/common/load-buffer.c
 	* operations/common/load.c
