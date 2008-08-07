@@ -135,7 +135,7 @@ GEGL currently builds and works on linux, win32 and OSX most probably also on
 other systems where glib and gtk+ work.
 
   - Core
-      * glib (including gobject, and gmodule) 2.12 or newer, which provides
+      * glib (including gobject, and gmodule) 2.14 or newer, which provides
         inheritance, dynamic modules, common algorithms and data structures for
         C programming.
       * http://gegl.org/babl/[babl] 0.0.22 or newer (for pixel-format

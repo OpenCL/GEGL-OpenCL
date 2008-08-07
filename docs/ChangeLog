@@ -1,5 +1,9 @@
 2008-08-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: updated listed glib dependency to 2.14.0
+
+2008-08-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl.css: do not display the first heading.
 	* index-static.txt.in: use GEGL logo as main title.
 	* images/GEGL.png: added a png rendition of the GEGL logo.
