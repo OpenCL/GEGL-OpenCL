@@ -1,3 +1,9 @@
+2008-08-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl.css: do not display the first heading.
+	* index-static.txt.in: use GEGL logo as main title.
+	* images/GEGL.png: added a png rendition of the GEGL logo.
+
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: change acidentaly left out of commit.

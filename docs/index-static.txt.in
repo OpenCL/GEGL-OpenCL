@@ -5,7 +5,10 @@ GEGL-@GEGL_VERSION@
 [[gegl]]
 GEGL
 ----
-GEGL (Generic Graphics Library) is a graph based image processing framework.
+
+image::images/GEGL.png[GEGL]
+
+*GEGL* (Generic Graphics Library) is a graph based image processing framework.
 
 GEGL provides infrastructure to do demand based cached non destructive image
 editing on larger than RAM buffers. Through link:http://gegl.org/babl/[babl]
@@ -87,7 +90,8 @@ You can subscribe to gegl-developer and view the archives
 https://lists.XCF.Berkeley.EDU/mailman/listinfo/gegl-developer[here]. The GEGL
 developer list is the appopriate place to ask development questions, and get
 more information about GEGL development in general. You can email this list at
-mailto:gegldev%20at%20gegl.org[].
+mailto:gegldev@trimaddressfromatuptoandincludingfirstdot.gegl.org[].
+
 
 Copyright
 ~~~~~~~~~
@@ -498,12 +502,15 @@ dropped into the directory in the build.
 <div class="toclevel2"><a href="#_glossary">Glossary</a></div>
 <div class="toclevel2"><a href="#_directory_overview">Directory overview</a></div>
 
+<div class='graphic'></div>
+
 <div>&nbsp;</div>
 <div class="toclevel1">&nbsp;</div>
 <div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/ChangeLog?view=markup">changes</a></div>
 <div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO">bugzilla</a></div>
 <div class="toclevel2"><a href="http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes">mailarchive</a></div>
 <div class="toclevel2"><a href="http://svn.gnome.org/viewvc/gegl/trunk/">viewvc</a></div>
+
 
 
 </div>

@@ -190,7 +190,6 @@
       td.prop_blurb {
           padding-bottom: 0.5em;
       }
-
       @media screen {
         body {
           font-family: FreeSans, Verdana, sans-serif;
@@ -271,6 +270,10 @@
         }
         ul.crucible {margin:0; padding:0}
         ul.crucible li{display: inline;}
+      }
+
+      h2#gegl {
+          display: none;
       }
 
       @media print {
