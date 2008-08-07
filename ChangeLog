@@ -1,3 +1,8 @@
+2008-08-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: updated minimal glib requirement to 2.14.0
+	Fixing (bug #545331).
+
 2008-07-29  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-chant.h: renamed chant_parent_class to
