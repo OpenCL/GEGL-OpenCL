@@ -1,0 +1,695 @@
+<?xml version="1.0"?>
+<api>
+  <!--
+
+        This file was automatically generated.
+        Please DO NOT MODIFY THIS FILE, modify .metadata files instead.
+
+-->
+  <namespace name="Gegl" library="libgegl-1.0.dll">
+    <enum name="BlitFlags" cname="GeglBlitFlags" type="flags">
+      <member cname="GEGL_BLIT_DEFAULT" name="Default" />
+      <member cname="GEGL_BLIT_CACHE" name="Cache" value="1 &lt;&lt; 0" />
+      <member cname="GEGL_BLIT_DIRTY" name="Dirty" value="1 &lt;&lt; 1" />
+    </enum>
+    <enum name="PadType" cname="GeglPadType" type="flags">
+      <member cname="GEGL_PARAM_PAD_OUTPUT" name="Output" value="1 &lt;&lt; G_PARAM_USER_SHIFT" />
+      <member cname="GEGL_PARAM_PAD_INPUT" name="Input" value="1 &lt;&lt; (G_PARAM_USER_SHIFT + 1)" />
+    </enum>
+    <object name="Color" cname="GeglColor" parent="GObject">
+      <property name="String" cname="string" type="gchar*" readable="true" writeable="true" />
+      <method name="Float4" cname="gegl_color_float4">
+        <return-type type="const-gfloat*" />
+      </method>
+      <method name="GetRgba" cname="gegl_color_get_rgba">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gfloat*" name="r" />
+          <parameter type="gfloat*" name="g" />
+          <parameter type="gfloat*" name="b" />
+          <parameter type="gfloat*" name="a" />
+        </parameters>
+      </method>
+      <method name="GetType" cname="gegl_color_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <constructor cname="gegl_color_new">
+        <parameters>
+          <parameter type="const-gchar*" name="string" />
+        </parameters>
+      </constructor>
+      <method name="SetRgba" cname="gegl_color_set_rgba">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gfloat" name="r" />
+          <parameter type="gfloat" name="g" />
+          <parameter type="gfloat" name="b" />
+          <parameter type="gfloat" name="a" />
+        </parameters>
+      </method>
+    </object>
+    <object name="Curve" cname="GeglCurve" parent="GObject">
+      <method name="AddPoint" cname="gegl_curve_add_point">
+        <return-type type="guint" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+      <method name="CalcValue" cname="gegl_curve_calc_value">
+        <return-type type="gdouble" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+        </parameters>
+      </method>
+      <method name="CalcValues" cname="gegl_curve_calc_values">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x_min" />
+          <parameter type="gdouble" name="x_max" />
+          <parameter type="guint" name="num_samples" />
+          <parameter type="gdouble*" name="xs" />
+          <parameter type="gdouble*" name="ys" />
+        </parameters>
+      </method>
+      <method name="DefaultCurve" cname="gegl_curve_default_curve" shared="true">
+        <return-type type="GeglCurve*" />
+      </method>
+      <method name="GetBounds" cname="gegl_curve_get_bounds">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble*" name="min_x" />
+          <parameter type="gdouble*" name="max_x" />
+          <parameter type="gdouble*" name="min_y" />
+          <parameter type="gdouble*" name="max_y" />
+        </parameters>
+      </method>
+      <method name="GetPoint" cname="gegl_curve_get_point">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="guint" name="index" />
+          <parameter type="gdouble*" name="x" />
+          <parameter type="gdouble*" name="y" />
+        </parameters>
+      </method>
+      <method name="GetType" cname="gegl_curve_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="GetYBounds" cname="gegl_curve_get_y_bounds">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble*" name="min_y" />
+          <parameter type="gdouble*" name="max_y" />
+        </parameters>
+      </method>
+      <constructor cname="gegl_curve_new">
+        <parameters>
+          <parameter type="gdouble" name="y_min" />
+          <parameter type="gdouble" name="y_max" />
+        </parameters>
+      </constructor>
+      <method name="NumPoints" cname="gegl_curve_num_points">
+        <return-type type="guint" />
+      </method>
+      <method name="SetPoint" cname="gegl_curve_set_point">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="guint" name="index" />
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+    </object>
+    <object name="Node" cname="GeglNode">
+      <method name="AdoptChild" cname="gegl_node_adopt_child">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="GeglNode*" name="child" />
+        </parameters>
+      </method>
+      <method name="Blit" cname="gegl_node_blit">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="scale" />
+          <parameter type="const-GeglRectangle*" name="roi" />
+          <parameter type="const-Babl*" name="format" />
+          <parameter type="gpointer" name="destination_buf" />
+          <parameter type="gint" name="rowstride" />
+          <parameter type="GeglBlitFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="ConnectFrom" cname="gegl_node_connect_from">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-gchar*" name="input_pad_name" />
+          <parameter type="GeglNode*" name="source" />
+          <parameter type="const-gchar*" name="output_pad_name" />
+        </parameters>
+      </method>
+      <method name="ConnectTo" cname="gegl_node_connect_to">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-gchar*" name="output_pad_name" />
+          <parameter type="GeglNode*" name="sink" />
+          <parameter type="const-gchar*" name="input_pad_name" />
+        </parameters>
+      </method>
+      <method name="CreateChild" cname="gegl_node_create_child">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="const-gchar*" name="operation" />
+        </parameters>
+      </method>
+      <method name="Detect" cname="gegl_node_detect">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="gint" name="x" />
+          <parameter type="gint" name="y" />
+        </parameters>
+      </method>
+      <method name="Disconnect" cname="gegl_node_disconnect">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-gchar*" name="input_pad" />
+        </parameters>
+      </method>
+      <method name="FindProperty" cname="gegl_node_find_property">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="property_name" />
+        </parameters>
+      </method>
+      <method name="Get" cname="gegl_node_get">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-gchar*" name="first_property_name" />
+          <parameter ellipsis="true" />
+        </parameters>
+      </method>
+      <method name="GetBoundingBox" cname="gegl_node_get_bounding_box">
+        <return-type type="GeglRectangle" />
+      </method>
+      <method name="GetChildren" cname="gegl_node_get_children">
+        <return-type type="GSList*" />
+      </method>
+      <method name="GetConsumers" cname="gegl_node_get_consumers">
+        <return-type type="gint" />
+        <parameters>
+          <parameter type="const-gchar*" name="output_pad" />
+          <parameter type="GeglNode***" name="nodes" />
+          <parameter type="const-gchar***" name="pads" />
+        </parameters>
+      </method>
+      <method name="GetInputProxy" cname="gegl_node_get_input_proxy">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="const-gchar*" name="pad_name" />
+        </parameters>
+      </method>
+      <method name="GetOperation" cname="gegl_node_get_operation">
+        <return-type type="const-gchar*" />
+      </method>
+      <method name="GetOutputProxy" cname="gegl_node_get_output_proxy">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="const-gchar*" name="pad_name" />
+        </parameters>
+      </method>
+      <method name="GetParent" cname="gegl_node_get_parent">
+        <return-type type="GeglNode*" />
+      </method>
+      <method name="GetProducer" cname="gegl_node_get_producer">
+        <return-type type="GeglNode*" />
+        <parameters>
+          <parameter type="gchar*" name="input_pad_name" />
+          <parameter type="gchar**" name="output_pad_name" />
+        </parameters>
+      </method>
+      <method name="GetProperty" cname="gegl_node_get_property">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-gchar*" name="property_name" />
+          <parameter type="GValue*" name="value" />
+        </parameters>
+      </method>
+      <method name="GetType" cname="gegl_node_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="Link" cname="gegl_node_link">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="GeglNode*" name="sink" />
+        </parameters>
+      </method>
+      <method name="LinkMany" cname="gegl_node_link_many">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="GeglNode*" name="first_sink" />
+          <parameter ellipsis="true" />
+        </parameters>
+      </method>
+      <constructor cname="gegl_node_new" />
+      <constructor cname="gegl_node_new_child">
+        <parameters>
+          <parameter type="GeglNode*" name="parent" />
+          <parameter type="const-gchar*" name="first_property_name" />
+          <parameter ellipsis="true" />
+        </parameters>
+      </constructor>
+      <constructor cname="gegl_node_new_from_file">
+        <parameters>
+          <parameter type="const-gchar*" name="path" />
+        </parameters>
+      </constructor>
+      <constructor cname="gegl_node_new_from_xml">
+        <parameters>
+          <parameter type="const-gchar*" name="xmldata" />
+          <parameter type="const-gchar*" name="path_root" />
+        </parameters>
+      </constructor>
+      <constructor cname="gegl_node_new_processor">
+        <parameters>
+          <parameter type="GeglNode*" name="node" />
+          <parameter type="const-GeglRectangle*" name="rectangle" />
+        </parameters>
+      </constructor>
+      <method name="Process" cname="gegl_node_process">
+        <return-type type="void" />
+      </method>
+      <method name="Set" cname="gegl_node_set">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-gchar*" name="first_property_name" />
+          <parameter ellipsis="true" />
+        </parameters>
+      </method>
+      <method name="SetProperty" cname="gegl_node_set_property">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-gchar*" name="property_name" />
+          <parameter type="const-GValue*" name="value" />
+        </parameters>
+      </method>
+      <method name="ToXml" cname="gegl_node_to_xml">
+        <return-type type="gchar*" />
+        <parameters>
+          <parameter type="const-gchar*" name="path_root" />
+        </parameters>
+      </method>
+    </object>
+    <object name="ParamSpecEnum" cname="GeglParamSpecEnum" parent="GParamSpecEnum">
+      <field name="ExcludedValues" cname="excluded_values" type="GSList*" />
+      <method name="ExcludeValue" cname="gegl_param_spec_enum_exclude_value">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gint" name="value" />
+        </parameters>
+      </method>
+    </object>
+    <object name="ParamSpecInt16" cname="GeglParamSpecInt16" parent="GParamSpecInt" />
+    <object name="ParamSpecInt32" cname="GeglParamSpecInt32" parent="GParamSpecInt" />
+    <object name="ParamSpecInt8" cname="GeglParamSpecInt8" parent="GParamSpecUInt" />
+    <object name="ParamSpecMultiline" cname="GeglParamSpecMultiline" parent="GParamSpecString">
+      <field name="NoValidate" cname="no_validate" bits="1" type="guint" />
+      <field name="NullOk" cname="null_ok" bits="1" type="guint" />
+    </object>
+    <object name="ParamSpecPath" cname="GeglParamSpecPath" parent="GParamSpecString">
+      <field name="NoValidate" cname="no_validate" bits="1" type="guint" />
+      <field name="NullOk" cname="null_ok" bits="1" type="guint" />
+    </object>
+    <object name="ParamSpecString" cname="GeglParamSpecString" parent="GParamSpecString">
+      <field name="NoValidate" cname="no_validate" bits="1" type="guint" />
+      <field name="NullOk" cname="null_ok" bits="1" type="guint" />
+    </object>
+    <object name="Processor" cname="GeglProcessor">
+      <method name="Destroy" cname="gegl_processor_destroy">
+        <return-type type="void" />
+      </method>
+      <method name="GetType" cname="gegl_processor_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="SetRectangle" cname="gegl_processor_set_rectangle">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="rectangle" />
+        </parameters>
+      </method>
+      <method name="Work" cname="gegl_processor_work">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="gdouble*" name="progress" />
+        </parameters>
+      </method>
+    </object>
+    <object name="Vector" cname="GeglVector" parent="GObject">
+      <signal name="Changed" cname="changed" when="LAST">
+        <return-type type="void" />
+        <parameters>
+          <parameter name="inst" type="GeglVector*" />
+          <parameter name="p0" type="gpointer" />
+        </parameters>
+      </signal>
+      <method name="Calc" cname="gegl_vector_calc">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="pos" />
+          <parameter type="gdouble*" name="x" />
+          <parameter type="gdouble*" name="y" />
+        </parameters>
+      </method>
+      <method name="CalcValues" cname="gegl_vector_calc_values">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="guint" name="num_samples" />
+          <parameter type="gdouble*" name="xs" />
+          <parameter type="gdouble*" name="ys" />
+        </parameters>
+      </method>
+      <method name="CurveTo" cname="gegl_vector_curve_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x1" />
+          <parameter type="gdouble" name="y1" />
+          <parameter type="gdouble" name="x2" />
+          <parameter type="gdouble" name="y2" />
+          <parameter type="gdouble" name="x3" />
+          <parameter type="gdouble" name="y3" />
+        </parameters>
+      </method>
+      <method name="Fill" cname="gegl_vector_fill" shared="true">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="GeglBuffer*" name="buffer" />
+          <parameter type="GeglVector*" name="vector" />
+          <parameter type="GeglColor*" name="color" />
+          <parameter type="gboolean" name="winding" />
+        </parameters>
+      </method>
+      <method name="GetBounds" cname="gegl_vector_get_bounds">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble*" name="min_x" />
+          <parameter type="gdouble*" name="max_x" />
+          <parameter type="gdouble*" name="min_y" />
+          <parameter type="gdouble*" name="max_y" />
+        </parameters>
+      </method>
+      <method name="GetLength" cname="gegl_vector_get_length">
+        <return-type type="gdouble" />
+      </method>
+      <method name="GetType" cname="gegl_vector_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="LineTo" cname="gegl_vector_line_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+      <method name="MoveTo" cname="gegl_vector_move_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+      <constructor cname="gegl_vector_new" />
+      <method name="RelCurveTo" cname="gegl_vector_rel_curve_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x1" />
+          <parameter type="gdouble" name="y1" />
+          <parameter type="gdouble" name="x2" />
+          <parameter type="gdouble" name="y2" />
+          <parameter type="gdouble" name="x3" />
+          <parameter type="gdouble" name="y3" />
+        </parameters>
+      </method>
+      <method name="RelLineTo" cname="gegl_vector_rel_line_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+      <method name="RelMoveTo" cname="gegl_vector_rel_move_to">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gdouble" name="x" />
+          <parameter type="gdouble" name="y" />
+        </parameters>
+      </method>
+      <method name="Stroke" cname="gegl_vector_stroke" shared="true">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="GeglBuffer*" name="buffer" />
+          <parameter type="GeglVector*" name="vector" />
+          <parameter type="GeglColor*" name="color" />
+          <parameter type="gdouble" name="linewidth" />
+          <parameter type="gdouble" name="hardness" />
+        </parameters>
+      </method>
+    </object>
+    <struct name="Rectangle" cname="GeglRectangle">
+      <field name="X" cname="x" type="gint" />
+      <field name="Y" cname="y" type="gint" />
+      <field name="Width" cname="width" type="gint" />
+      <field name="Height" cname="height" type="gint" />
+      <method name="BoundingBox" cname="gegl_rectangle_bounding_box">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="src1" />
+          <parameter type="const-GeglRectangle*" name="src2" />
+        </parameters>
+      </method>
+      <method name="Contains" cname="gegl_rectangle_contains">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="s" />
+        </parameters>
+      </method>
+      <method name="Copy" cname="gegl_rectangle_copy">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="from" />
+        </parameters>
+      </method>
+      <method name="Equal" cname="gegl_rectangle_equal">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="s" />
+        </parameters>
+      </method>
+      <method name="EqualCoords" cname="gegl_rectangle_equal_coords">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="gint" name="x" />
+          <parameter type="gint" name="y" />
+          <parameter type="gint" name="width" />
+          <parameter type="gint" name="height" />
+        </parameters>
+      </method>
+      <method name="GetType" cname="gegl_rectangle_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="Intersect" cname="gegl_rectangle_intersect">
+        <return-type type="gboolean" />
+        <parameters>
+          <parameter type="const-GeglRectangle*" name="src1" />
+          <parameter type="const-GeglRectangle*" name="src2" />
+        </parameters>
+      </method>
+      <method name="Set" cname="gegl_rectangle_set">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="gint" name="x" />
+          <parameter type="gint" name="y" />
+          <parameter type="guint" name="width" />
+          <parameter type="guint" name="height" />
+        </parameters>
+      </method>
+    </struct>
+    <class name="Global" cname="GeglGlobal">
+      <method name="GetOptionGroup" cname="gegl_get_option_group" shared="true">
+        <return-type type="GOptionGroup*" />
+      </method>
+      <method name="GetVersion" cname="gegl_get_version" shared="true">
+        <return-type type="void" />
+        <parameters>
+          <parameter type="int*" name="major" />
+          <parameter type="int*" name="minor" />
+          <parameter type="int*" name="micro" />
+        </parameters>
+      </method>
+    </class>
+    <class name="List" cname="GeglList_">
+      <method name="Operations" cname="gegl_list_operations" shared="true">
+        <return-type type="gchar**" />
+        <parameters>
+          <parameter type="guint*" name="n_operations_p" />
+        </parameters>
+      </method>
+      <method name="Properties" cname="gegl_list_properties" shared="true">
+        <return-type type="GParamSpec**" />
+        <parameters>
+          <parameter type="const-gchar*" name="operation_type" />
+          <parameter type="guint*" name="n_properties_p" />
+        </parameters>
+      </method>
+    </class>
+    <class name="Param" cname="GeglParam_">
+      <method name="ColorGetType" cname="gegl_param_color_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="CurveGetType" cname="gegl_param_curve_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="EnumGetType" cname="gegl_param_enum_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="Int16GetType" cname="gegl_param_int16_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="Int32GetType" cname="gegl_param_int32_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="Int8GetType" cname="gegl_param_int8_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="MultilineGetType" cname="gegl_param_multiline_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="PathGetType" cname="gegl_param_path_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="SpecColor" cname="gegl_param_spec_color" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="GeglColor*" name="default_color" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecColorFromString" cname="gegl_param_spec_color_from_string" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="const-gchar*" name="default_color_string" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecCurve" cname="gegl_param_spec_curve" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="GeglCurve*" name="default_curve" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecEnum" cname="gegl_param_spec_enum" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="GType" name="enum_type" />
+          <parameter type="gint" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecInt16" cname="gegl_param_spec_int16" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="gint" name="minimum" />
+          <parameter type="gint" name="maximum" />
+          <parameter type="gint" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecInt32" cname="gegl_param_spec_int32" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="gint" name="minimum" />
+          <parameter type="gint" name="maximum" />
+          <parameter type="gint" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecInt8" cname="gegl_param_spec_int8" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="guint" name="minimum" />
+          <parameter type="guint" name="maximum" />
+          <parameter type="guint" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecMultiline" cname="gegl_param_spec_multiline" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="const-gchar*" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecPath" cname="gegl_param_spec_path" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="gboolean" name="no_validate" />
+          <parameter type="gboolean" name="null_ok" />
+          <parameter type="const-gchar*" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecString" cname="gegl_param_spec_string" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="gboolean" name="no_validate" />
+          <parameter type="gboolean" name="null_ok" />
+          <parameter type="const-gchar*" name="default_value" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="SpecVector" cname="gegl_param_spec_vector" shared="true">
+        <return-type type="GParamSpec*" />
+        <parameters>
+          <parameter type="const-gchar*" name="name" />
+          <parameter type="const-gchar*" name="nick" />
+          <parameter type="const-gchar*" name="blurb" />
+          <parameter type="GeglVector*" name="default_vector" />
+          <parameter type="GParamFlags" name="flags" />
+        </parameters>
+      </method>
+      <method name="StringGetType" cname="gegl_param_string_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+      <method name="VectorGetType" cname="gegl_param_vector_get_type" shared="true">
+        <return-type type="GType" />
+      </method>
+    </class>
+  </namespace>
+</api>

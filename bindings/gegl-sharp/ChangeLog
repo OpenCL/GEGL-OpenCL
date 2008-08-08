@@ -1,3 +1,45 @@
+2008-08-08  Ruben Vermeersch  <ruben@savanne.be>
+
+	Completely revamp the Gegl# bindings, to make sure they work again.
+
+	* AUTHORS:
+	* ChangeLog:
+	* INSTALL: Added.
+	* Makefile.am:
+	* README:
+	* aclocal.m4: Added.
+	* autogen.sh:
+	* configure: Added.
+	* configure.in:
+	* gapi/Makefile.am: Removed.
+	* gapi/custom/Global.custom: Removed.
+	* gapi/custom/Node.custom: Removed.
+	* gapi/metadata.gegl: Removed.
+	* gapi/sources.gegl.in: Removed.
+	* gegl-sharp-1.0.pc.in: Removed.
+	* gegl/Makefile.am: Added.
+	* gegl/custom/.Node.custom.swp: Added.
+	* gegl/custom/Global.custom: Added.
+	* gegl/custom/Node.custom: Added.
+	* gegl/gegl-api.raw: Added.
+	* gegl/gegl-sharp.dll.config.in: Added.
+	* gegl/gegl-sharp.pc.in: Added.
+	* gegl/generated/.Node.cs.swp: Added.
+	* gegl/metadata: Added.
+	* gegl/sources.in: Added.
+	* lib/AssemblyInfo.cs.in: Removed.
+	* lib/gegl-sharp.dll.config.in: Removed.
+	* sample/Makefile.am: Added.
+	* sample/TestGegl.cs: Added.
+	* sample/old/GeglView.cs: Added.
+	* sample/old/test.cs: Added.
+	* sample/old/view-test.cs: Added.
+	* sample/sample-out.png: Added.
+	* test/GeglView.cs: Removed.
+	* test/Makefile.am: Removed.
+	* test/test.cs: Removed.
+	* test/view-test.cs: Removed.
+
 2007-06-02  Mark Probst  <mark.probst@gmail.com>
 
 	* test/Makefile.am: made view-test.cs depend on GeglView.cs

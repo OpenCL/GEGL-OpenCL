@@ -1,9 +1,0 @@
-prefix=@prefix@
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-
-Name: 
-Description: Gegl# - A .NET GEGL binding
-Version: @VERSION@
-Requires: gtk-sharp-1.0
-Libs: -r:${libdir}/mono/gegl-sharp-1.0/gegl-sharp.dll
