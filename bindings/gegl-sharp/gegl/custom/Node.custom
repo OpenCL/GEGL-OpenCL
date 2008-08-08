@@ -8,8 +8,12 @@
 
 		public void SetProperty(string property_name, object value)
 		{
+			IntPtr native_property_name = GLib.Marshaller.StringToPtrGStrdup (property_name);
 			GLib.Value value_as_native = new GLib.Value(value);
-			SetProperty (property_name, value_as_native);
+			IntPtr native_value = GLib.Marshaller.StructureToPtrAlloc (value_as_native);
+			gegl_node_set_property(Handle, native_property_name, native_value);
+			GLib.Marshaller.Free (native_property_name);
+			Marshal.FreeHGlobal (native_value);
 		}
 
 		[DllImport("libgegl-1.0.dll")]

@@ -1,5 +1,10 @@
 2008-08-08  Ruben Vermeersch  <ruben@savanne.be>
 
+	* gegl/custom/Node.custom: Directly call the native method, instead of
+	using the overload.
+
+2008-08-08  Ruben Vermeersch  <ruben@savanne.be>
+
 	Completely revamp the Gegl# bindings, to make sure they work again.
 
 	* AUTHORS:
