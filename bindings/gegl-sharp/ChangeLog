@@ -1,3 +1,24 @@
+2008-08-09  Ruben Vermeersch  <ruben@savanne.be>
+
+	* AUTHORS: Add Gabriel back.
+
+	* COPYING: Turn into real file.
+
+	* INSTALL: Add very basic note about having to build GEGL first (because
+	we reparse every time).
+
+	* README: Add and adjust the old README.
+
+	* configure: Removed. Shouldn't be in SVN.
+
+	* configure.in: Hook up docs.
+
+	* docs: Readd the documentation.
+
+	* gegl/Makefile.am: Make sure the raw API file is removed on clean.
+
+	* gegl/gegl-api.raw: Removed.
+
 2008-08-08  Ruben Vermeersch  <ruben@savanne.be>
 
 	* gegl/custom/Node.custom: Directly call the native method, instead of

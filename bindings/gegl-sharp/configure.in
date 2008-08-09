@@ -110,6 +110,7 @@ AC_SUBST(CFLAGS)
 
 AC_OUTPUT([
 Makefile
+docs/Makefile
 gegl/Makefile
 gegl/gegl-sharp.dll.config
 gegl/gegl-sharp.pc

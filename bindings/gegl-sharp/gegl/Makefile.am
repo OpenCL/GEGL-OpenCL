@@ -9,7 +9,7 @@ ASSEMBLY = gegl-sharp.dll
 TARGET = $(ASSEMBLY) $(ASSEMBLY).config
 assemblydir = $(libdir)/gegl-sharp
 assembly_DATA = $(TARGET)
-CLEANFILES = $(ASSEMBLY) $(ASSEMBLY).mdb generated-stamp generated/*.cs $(API)
+CLEANFILES = $(ASSEMBLY) $(ASSEMBLY).mdb generated-stamp generated/*.cs $(API) $(RAW_API)
 DISTCLEANFILES = $(ASSEMBLY).config
 EXTRA_DIST = $(RAW_API) $(METADATA) $(CUSTOM_SOURCES) gegl-sharp.pc.in gegl-sharp.dll.config.in
 
