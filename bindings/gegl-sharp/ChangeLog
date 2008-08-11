@@ -1,3 +1,7 @@
+2008-08-11  Ruben Vermeersch  <ruben@savanne.be>
+
+	* configure.in: Make sure BUILD_DOCS is set.
+
 2008-08-09  Ruben Vermeersch  <ruben@savanne.be>
 
 	* AUTHORS: Add Gabriel back.
