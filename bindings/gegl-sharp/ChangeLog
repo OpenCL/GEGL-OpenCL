@@ -1,3 +1,8 @@
+2008-08-12  Ruben Vermeersch  <ruben@savanne.be>
+
+	* gegl/gegl-sharp.pc.in: Removed gegl from the requirements, as it caused
+	the flags in pkg-config to be incompatible with gmcs.
+
 2008-08-11  Ruben Vermeersch  <ruben@savanne.be>
 
 	* configure.in: Make sure BUILD_DOCS is set.

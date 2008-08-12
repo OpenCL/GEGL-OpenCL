@@ -7,6 +7,6 @@ Name: Gegl#
 Description: Gegl# - Gegl .NET Binding
 Version: @VERSION@
 Libraries: ${assemblies_dir}/gegl-sharp.dll ${assemblies_dir}/gegl-sharp.dll.config
-Requires: glib-sharp-2.0 gegl
+Requires: glib-sharp-2.0
 Cflags:
 Libs: -r:${assemblies_dir}/gegl-sharp.dll
