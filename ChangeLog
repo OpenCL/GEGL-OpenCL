@@ -1,3 +1,21 @@
+2008-08-16  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied slightly modified patch from Luidnel Maignan that adds
+	point composers with 3 inputs as requested in bug #548007.
+
+	* gegl/operation/gegl-operation-composer3.c: new file
+	* gegl/operation/gegl-operation-composer3.h: new file
+	* gegl/operation/gegl-operation-point-composer3.c: new file
+	* gegl/operation/gegl-operation-point-composer3.h: new file
+	* gegl/operation/Makefile.am: added new files.
+
+	Added the new classes to the following places:
+	* gegl/gegl-chant.h: allow subclassing the new classes with the
+	chanting framework.
+	* gegl/gegl-plugin.h: include the new headers.
+	* gegl/operation/gegl-operation-processors.c: make the type-aware
+	functions pointer lookup aware of the new classes.
+
 2008-08-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: updated minimal glib requirement to 2.14.0

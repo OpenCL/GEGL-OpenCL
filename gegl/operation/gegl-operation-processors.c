@@ -37,9 +37,11 @@
 #include "gegl-operations.h"
 
 #include  "gegl-operation-area-filter.h"
+#include  "gegl-operation-composer3.h"
 #include  "gegl-operation-composer.h"
 #include  "gegl-operation-filter.h"
 #include  "gegl-operation-meta.h"
+#include  "gegl-operation-point-composer3.h"
 #include  "gegl-operation-point-composer.h"
 #include  "gegl-operation-point-filter.h"
 #include  "gegl-operation-sink.h"
@@ -225,6 +227,10 @@ ELSE_IF( GEGL_TYPE_OPERATION_COMPOSER)
   vfunc_offset = G_STRUCT_OFFSET (GeglOperationComposerClass, process);
 ELSE_IF( GEGL_TYPE_OPERATION_POINT_COMPOSER)
   vfunc_offset = G_STRUCT_OFFSET (GeglOperationPointComposerClass, process);
+ELSE_IF( GEGL_TYPE_OPERATION_COMPOSER3)
+  vfunc_offset = G_STRUCT_OFFSET (GeglOperationComposer3Class, process);
+ELSE_IF( GEGL_TYPE_OPERATION_POINT_COMPOSER3)
+  vfunc_offset = G_STRUCT_OFFSET (GeglOperationPointComposer3Class, process);
 #undef ELSE_IF
 else
   {

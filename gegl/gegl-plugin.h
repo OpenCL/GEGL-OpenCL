@@ -90,7 +90,9 @@ const gchar   * gegl_extension_handler_get         (const gchar         *extensi
 #include <operation/gegl-operation-area-filter.h>
 #include <operation/gegl-operation-point-filter.h>
 #include <operation/gegl-operation-composer.h>
+#include <operation/gegl-operation-composer3.h>
 #include <operation/gegl-operation-point-composer.h>
+#include <operation/gegl-operation-point-composer3.h>
 #include <operation/gegl-operation-point-render.h>
 #include <operation/gegl-operation-temporal.h>
 #include <operation/gegl-operation-source.h>

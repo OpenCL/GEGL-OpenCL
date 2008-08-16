@@ -187,6 +187,22 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_COMPOSER);
 
 #endif
 
+#ifdef GEGL_CHANT_TYPE_COMPOSER3
+struct _GeglChant
+{
+  GeglOperationComposer3 parent_instance;
+  gpointer               properties;
+};
+
+typedef struct
+{
+  GeglOperationComposer3Class parent_class;
+} GeglChantClass;
+
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_COMPOSER3);
+
+#endif
+
 #ifdef GEGL_CHANT_TYPE_POINT_FILTER
 struct _GeglChant
 {
@@ -262,6 +278,20 @@ typedef struct
   GeglOperationPointComposerClass parent_class;
 } GeglChantClass;
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_COMPOSER);
+#endif
+
+#ifdef GEGL_CHANT_TYPE_POINT_COMPOSER3
+struct _GeglChant
+{
+  GeglOperationPointComposer3 parent_instance;
+  gpointer                    properties;
+};
+
+typedef struct
+{
+  GeglOperationPointComposer3Class parent_class;
+} GeglChantClass;
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_POINT_COMPOSER3);
 #endif
 
 #define GEGL_CHANT(obj)  ((GeglChant*)(obj))
