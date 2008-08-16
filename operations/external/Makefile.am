@@ -60,6 +60,13 @@ display_la_LIBADD = $(op_libs) $(SDL_LIBS)
 display_la_CFLAGS = $(SDL_CFLAGS)
 endif
 
+if HAVE_OPENRAW
+ops += openraw.la
+openraw_la_SOURCES = openraw.c
+openraw_la_LIBADD = $(op_libs) $(OPENRAW_LIBS)
+openraw_la_CFLAGS = $(OPENRAW_CFLAGS)
+endif
+
 if HAVE_V4L
 ops += v4l.la
 v4l_la_SOURCES = v4l.c

@@ -1,3 +1,11 @@
+2008-08-16  Hubert Figuiere  <hub@figuiere.net>
+
+	* operations/external/openraw.c: 
+	* operations/external/Makefile.am:
+	* configure.ac:
+	RAW loader using libopenraw. Libopenraw is now an optional
+	dependency.
+
 2008-08-16  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied slightly modified patch from Luidnel Maignan that adds

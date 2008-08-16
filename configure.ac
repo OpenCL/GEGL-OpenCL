@@ -711,6 +711,20 @@ AC_SUBST(SDL_LIBS)
 
 
 ####################
+# Check for libopenraw
+####################
+
+dnl check for libopenraw
+PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0,
+  have_openraw="yes",
+  have_openraw="no (usable libopenraw not found)")
+AM_CONDITIONAL(HAVE_OPENRAW, test "x$have_openraw" = "xyes")
+
+AC_SUBST(OPENRAW_CFLAGS) 
+AC_SUBST(OPENRAW_LIBS) 
+
+
+####################
 # Check for graphviz
 ####################
  
@@ -879,6 +893,7 @@ Optional dependencies:
   OpenEXR:        $have_openexr
   rsvg:           $have_librsvg
   SDL:            $have_sdl
+  openraw:        $have_openraw
   asciidoc:       $have_asciidoc
   enscript:       $have_enscript
   graphviz:       $have_graphviz
