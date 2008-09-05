@@ -1,3 +1,20 @@
+2008-09-05  Øyvind Kolås  <pippin@gimp.org>
+
+	Added YAFR sampler from Nicolas Robidoux from bug #550569, this
+	is a sampler with seemingly better quality than cubic with good
+	performance, it could perhaps form the default method used for
+	enlargement in combination with a different approach for scaling
+	down.
+
+	* gegl/buffer/gegl-sampler-yafr.c: new file
+	* gegl/buffer/gegl-sampler-yafr.h: new file.
+
+	* gegl/buffer/Makefile.am: ..
+	* gegl/buffer/gegl-buffer-access.c: ..
+	* gegl/buffer/gegl-buffer.c: ..
+	* gegl/buffer/gegl-buffer.h: ..
+	* gegl/buffer/gegl-sampler.c: .. updated to add a new sampler.
+
 2008-09-05  Sven Neumann  <sven@gimp.org>
 
 	* gegl/operation/gegl-operation-composer3.c

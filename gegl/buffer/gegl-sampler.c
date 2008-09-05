@@ -29,6 +29,7 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 #include "gegl-sampler-lanczos.h"
+#include "gegl-sampler-yafr.h"
 
 #if ENABLE_MP
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
@@ -387,6 +388,10 @@ gegl_buffer_interpolation_from_string (const gchar *string)
       g_str_equal (string, "bicubic"))
     return GEGL_INTERPOLATION_CUBIC;
 
+  if (g_str_equal (string, "yafr") ||
+      g_str_equal (string, "yafr"))
+    return GEGL_INTERPOLATION_YAFR;
+
   if (g_str_equal (string, "lanczos"))
     return GEGL_INTERPOLATION_LANCZOS;
 
@@ -405,6 +410,8 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_LINEAR;
       case GEGL_INTERPOLATION_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
+      case GEGL_INTERPOLATION_YAFR:
+        return GEGL_TYPE_SAMPLER_YAFR;
       case GEGL_INTERPOLATION_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
       default:        

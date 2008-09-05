@@ -62,6 +62,7 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 #include "gegl-sampler-lanczos.h"
+#include "gegl-sampler-yafr.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
 #include "gegl-id-pool.h"
