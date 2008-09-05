@@ -37,10 +37,10 @@ static gboolean gegl_operation_point_composer3_process
                                const GeglRectangle *result);
 
 static gboolean
-gegl_operation_composer3_process2 (GeglOperation       *operation,
-                        GeglOperationContext     *context,
-                        const gchar         *output_prop,
-                        const GeglRectangle *result);
+gegl_operation_composer3_process2 (GeglOperation        *operation,
+                                   GeglOperationContext *context,
+                                   const gchar          *output_prop,
+                                   const GeglRectangle  *result);
 
 G_DEFINE_TYPE (GeglOperationPointComposer3, gegl_operation_point_composer3, GEGL_TYPE_OPERATION_COMPOSER3)
 
@@ -76,17 +76,17 @@ gegl_operation_point_composer3_init (GeglOperationPointComposer3 *self)
  * able to bail out earlier for some common processing time pitfalls
  */
 static gboolean
-gegl_operation_composer3_process2 (GeglOperation       *operation,
-                                  GeglOperationContext     *context,
-                                  const gchar         *output_prop,
-                                  const GeglRectangle *result)
+gegl_operation_composer3_process2 (GeglOperation        *operation,
+                                   GeglOperationContext *context,
+                                   const gchar          *output_prop,
+                                   const GeglRectangle  *result)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
-  GeglBuffer                 *input;
-  GeglBuffer                 *aux;
-  GeglBuffer                 *aux2;
-  GeglBuffer                 *output;
-  gboolean                    success = FALSE;
+  GeglBuffer                  *input;
+  GeglBuffer                  *aux;
+  GeglBuffer                  *aux2;
+  GeglBuffer                  *output;
+  gboolean                     success = FALSE;
 
   if (strcmp (output_prop, "output"))
     {
@@ -138,11 +138,11 @@ gegl_operation_composer3_process2 (GeglOperation       *operation,
 
 static gboolean
 gegl_operation_point_composer3_process (GeglOperation       *operation,
-                                       GeglBuffer          *input,
-                                       GeglBuffer          *aux,
-                                       GeglBuffer          *aux2,
-                                       GeglBuffer          *output,
-                                       const GeglRectangle *result)
+                                        GeglBuffer          *input,
+                                        GeglBuffer          *aux,
+                                        GeglBuffer          *aux2,
+                                        GeglBuffer          *output,
+                                        const GeglRectangle *result)
 {
   GeglOperationPointComposer3Class *point_composer3_class = GEGL_OPERATION_POINT_COMPOSER3_GET_CLASS (operation);
   const Babl *in_format   = gegl_operation_get_format (operation, "input");

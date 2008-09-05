@@ -40,22 +40,23 @@ enum
   PROP_AUX2,
 };
 
-static void     get_property (GObject             *gobject,
-                              guint                prop_id,
-                              GValue              *value,
-                              GParamSpec          *pspec);
-static void     set_property (GObject             *gobject,
-                              guint                prop_id,
-                              const GValue        *value,
-                              GParamSpec          *pspec);
-static gboolean gegl_operation_composer3_process (GeglOperation       *operation,
-                              GeglOperationContext     *context,
-                              const gchar         *output_prop,
-                              const GeglRectangle *result);
-static void     attach       (GeglOperation       *operation);
-static GeglNode*detect       (GeglOperation       *operation,
-                              gint                 x,
-                              gint                 y);
+static void     get_property (GObject              *gobject,
+                              guint                 prop_id,
+                              GValue               *value,
+                              GParamSpec           *pspec);
+static void     set_property (GObject              *gobject,
+                              guint                 prop_id,
+                              const GValue         *value,
+                              GParamSpec           *pspec);
+static gboolean gegl_operation_composer3_process
+                             (GeglOperation        *operation,
+                              GeglOperationContext *context,
+                              const gchar          *output_prop,
+                              const GeglRectangle  *result);
+static void     attach       (GeglOperation        *operation);
+static GeglNode*detect       (GeglOperation        *operation,
+                              gint                  x,
+                              gint                  y);
 
 static GeglRectangle get_bounding_box        (GeglOperation        *self);
 static GeglRectangle get_required_for_output (GeglOperation        *self,
@@ -157,17 +158,17 @@ set_property (GObject      *object,
 }
 
 static gboolean
-gegl_operation_composer3_process (GeglOperation       *operation,
-                        GeglOperationContext     *context,
-                        const gchar         *output_prop,
-                        const GeglRectangle *result)
+gegl_operation_composer3_process (GeglOperation        *operation,
+                                  GeglOperationContext *context,
+                                  const gchar          *output_prop,
+                                  const GeglRectangle  *result)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
-  GeglBuffer                 *input;
-  GeglBuffer                 *aux;
-  GeglBuffer                 *aux2;
-  GeglBuffer                 *output;
-  gboolean                    success = FALSE;
+  GeglBuffer                  *input;
+  GeglBuffer                  *aux;
+  GeglBuffer                  *aux2;
+  GeglBuffer                  *output;
+  gboolean                     success = FALSE;
 
   if (strcmp (output_prop, "output"))
     {
@@ -241,7 +242,7 @@ get_bounding_box (GeglOperation *self)
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation        *self,
+get_required_for_output (GeglOperation       *self,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
