@@ -1,5 +1,10 @@
 2008-10-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.txt.in: clarify licenseing difference between gegl
+	binary and the library.
+
+2008-10-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.txt.in: mention optional libopenraw dependency.
 
 2008-08-07  Øyvind Kolås  <pippin@gimp.org>
