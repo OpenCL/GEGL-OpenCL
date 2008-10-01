@@ -1,3 +1,7 @@
+2008-10-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: mention optional libopenraw dependency.
+
 2008-08-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: updated listed glib dependency to 2.14.0

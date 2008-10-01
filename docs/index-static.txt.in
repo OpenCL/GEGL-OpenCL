@@ -148,6 +148,8 @@ other systems where glib and gtk+ work.
       * SDL (display op)
       * libjpeg (jpg loader op)
       * libopenexr (exr loader op)
+      * http://freedesktop.org/wiki/Software/libopenraw[libopenraw] (raw
+        loader op)
       * cairo, pango (text source op)
       * avcodec, avformat (ff-load and experimental ff-save)
       * librsvg (svg loader)
