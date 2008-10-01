@@ -1,3 +1,9 @@
+2008-10-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: added Sam Hocevar and Nicolas Robidoux.
+	* NEWS: summarized changes from changelog and collected list of
+	contributors.
+
 2008-09-05  Øyvind Kolås  <pippin@gimp.org>
 
 	Added YAFR sampler from Nicolas Robidoux from bug #550569, this

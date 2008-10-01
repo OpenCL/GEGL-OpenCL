@@ -5,6 +5,20 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots.
 
+Changes in GEGL 0.0.20
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Build and code clean ups and fixes.
+ • RAW loader using libopenraw.
+ • GeglBuffer
+   • Support for linear buffers as well as tiled buffers, linear buffers
+     can be created from existing data.
+   • Reworked samplers using a shared caching neighbourhood infrastructure.
+   • YAFR - a new resampler contributed by Nicolas Robidoux.
+
+Contributions from:
+  Martin Nordholts, Øyvind Kolås, Sam Hocevar, Manish Singh, Hubert Figuiere,
+  and Sven Neumann.
+
 Changes in GEGL 0.0.18
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Configuration both from commandline arguments and at runtime.
