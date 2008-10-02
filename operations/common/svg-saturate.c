@@ -17,9 +17,13 @@
  * Copyright 2006 Geert Jordaens <geert.jordaens@telenet.be>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (values, "Values", "", "list of <number>s")
+gegl_chant_string (values, _("Values"), "", _("list of <number>s"))
 
 #else
 
@@ -118,7 +122,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "svg-saturate";
   operation_class->categories  = "compositors:svgfilter";
-  operation_class->description = "SVG color matrix operation svg_saturate";
+  operation_class->description = _("SVG color matrix operation svg_saturate");
 }
 
 #endif

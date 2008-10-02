@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (window_title, "Window Title", "",
-                    "Title to give window, if no title given inherits name of the pad providing input.")
+gegl_chant_string  (window_title, _("Window Title"), "",
+                    _("Title to give window, if no title given inherits name of the pad providing input."))
 
 #else
 
@@ -177,7 +182,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gtk-display";
   operation_class->categories  = "output";
   operation_class->description =
-        "Displays the input buffer in an GTK window .";
+        _("Displays the input buffer in an GTK window .");
 }
 
 #endif

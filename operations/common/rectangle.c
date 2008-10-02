@@ -20,18 +20,22 @@
  * with the newer caching system
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  "Horizontal position")
-gegl_chant_double(y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  "Vertical position")
-gegl_chant_double(width, "Width", 0, G_MAXDOUBLE, 0.0,
-                  "Horizontal extent")
-gegl_chant_double(height, "Height", 0, G_MAXDOUBLE, 0.0,
-                  "Vertical extent")
-gegl_chant_color(color, "Color", "white",
-                  "Color to render")
+gegl_chant_double(x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  _("Horizontal position"))
+gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  _("Vertical position"))
+gegl_chant_double(width, _("Width"), 0, G_MAXDOUBLE, 0.0,
+                  _("Horizontal extent"))
+gegl_chant_double(height, _("Height"), 0, G_MAXDOUBLE, 0.0,
+                  _("Vertical extent"))
+gegl_chant_color(color, _("Color"), "white",
+                  _("Color to render"))
 
 #else
 
@@ -124,7 +128,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "rectangle";
   operation_class->categories  = "input";
-  operation_class->description = "A rectangular source of a fixed size with a solid color";
+  operation_class->description = 
+        _("A rectangular source of a fixed size with a solid color");
   operation_class->attach = attach;
   operation_class->prepare = prepare;
 }

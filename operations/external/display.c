@@ -15,12 +15,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (window_title, "", "window_title",
-                    "Title to be given to output window")
-gegl_chant_string  (icon_title, "", "icon_title",
-                    "Icon to be used for output window")
+gegl_chant_string  (window_title, _(""), "window_title",
+                    _("Title to be given to output window"))
+gegl_chant_string  (icon_title, _(""), "icon_title",
+                    _("Icon to be used for output window"))
 
 gegl_chant_pointer (screen, "", "private")
 gegl_chant_int(w, "", 0, 1000, 0, "private")
@@ -170,8 +175,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "display";
   operation_class->categories  = "output";
   operation_class->description =
-        "Displays the input buffer in an SDL window (restricted to one"
-        " display op/process, due to SDL implementation issues, a gtk+"
-        " based replacement would be nice.";
+        _("Displays the input buffer in an SDL window (restricted to one"
+          " display op/process, due to SDL implementation issues, a gtk+"
+          " based replacement would be nice.");
 }
 #endif

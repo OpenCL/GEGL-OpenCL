@@ -15,6 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
    /* no properties */
@@ -59,7 +64,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "grey";
   operation_class->categories  = "color";
-  operation_class->description = "Turns the image greyscale";
+  operation_class->description = _("Turns the image greyscale");
 }
 
 #endif

@@ -16,12 +16,17 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  *           2006 Dominik Ernst <dernst@gmx.de>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "File", "",
-                   "Target path and filename, use '-' for stdout.")
-gegl_chant_int    (compression, "Compression",
-                   1, 9, 1, "PNG compression level from 1 to 9")
+gegl_chant_string (path, _("File"), "",
+                   _("Target path and filename, use '-' for stdout."))
+gegl_chant_int    (compression, _("Compression"),
+                   1, 9, 1, _("PNG compression level from 1 to 9"))
 
 #else
 
@@ -188,7 +193,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "png-save";
   operation_class->categories  = "output";
   operation_class->description =
-        "PNG image saver (passes the buffer through, saves as a side-effect.)";
+        _("PNG image saver (passes the buffer through, saves as a side-effect.)");
 
 }
 

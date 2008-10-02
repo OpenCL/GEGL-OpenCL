@@ -17,12 +17,17 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, "Radius", 0.0, 70.0, 4.0,
-  "Radius of square pixel region (width and height will be radius*2+1)")
-gegl_chant_double (percentile, "Percentile", 0.0, 100.0, 50,
-  "The percentile to compute, defaults to 50, which is a median filter.")
+gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 4.0,
+  _("Radius of square pixel region (width and height will be radius*2+1)"))
+gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50,
+  _("The percentile to compute, defaults to 50, which is a median filter."))
 
 #else
 
@@ -219,7 +224,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "box-percentile";
   operation_class->categories  = "misc";
   operation_class->description =
-        "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance.";
+        _("Sets the target pixel to the color corresponding to a given percentile "
+          "when colors are sorted by luminance.");
 }
 
 #endif

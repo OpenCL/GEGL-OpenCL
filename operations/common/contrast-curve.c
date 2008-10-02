@@ -15,11 +15,16 @@
  *
  * Copyright 2007 Mark Probst <mark.probst@gmail.com>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (sampling_points, "Sample points", 0, 65536, 0,
-                "Number of curve sampling points.  0 for exact calculation.")
-gegl_chant_curve (curve, "Curve", "The contrast curve.")
+gegl_chant_int (sampling_points, _("Sample points"), 0, 65536, 0,
+                _("Number of curve sampling points.  0 for exact calculation."))
+gegl_chant_curve (curve, _("Curve"), _("The contrast curve."))
 
 #else
 
@@ -115,7 +120,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "contrast-curve";
   operation_class->categories  = "color";
   operation_class->description =
-        "Adjusts the contrast of the image according to a curve.";
+        _("Adjusts the contrast of the image according to a curve.");
 }
 
 #endif

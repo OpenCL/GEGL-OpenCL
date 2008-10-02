@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (buffer, "Buffer location",
-                    "The location where to store the output GeglBuffer")
+gegl_chant_pointer (buffer, _("Buffer location"),
+                    _("The location where to store the output GeglBuffer"))
 
 #else
 
@@ -59,7 +64,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "save-buffer";
   operation_class->categories  = "programming:output";
-  operation_class->description = "A GEGL buffer destination surface.";
+  operation_class->description = _("A GEGL buffer destination surface.");
 }
 
 #endif

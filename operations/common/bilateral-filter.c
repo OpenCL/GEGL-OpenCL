@@ -17,13 +17,17 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_double (blur_radius, "Blur radius", 0.0, 70.0, 4.0,
-  "Radius of square pixel region, (width and height will be radius*2+1).")
-gegl_chant_double (edge_preservation, "Edge preservation", 0.0, 70.0, 8.0,
-  "Amount of edge preservation")
+gegl_chant_double (blur_radius, _("Blur radius"), 0.0, 70.0, 4.0,
+  _("Radius of square pixel region, (width and height will be radius*2+1)."))
+gegl_chant_double (edge_preservation, _("Edge preservation"), 0.0, 70.0, 8.0,
+  _("Amount of edge preservation"))
 
 #else
 
@@ -174,9 +178,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "bilateral-filter";
   operation_class->categories  = "misc";
   operation_class->description =
-        "An edge preserving blur filter that can be used for noise reduction."
-        " It is a gaussian blur where the contribution of neighbourhood pixels"
-        " are weighted by the color difference from the center pixel.";
+        _("An edge preserving blur filter that can be used for noise reduction. "
+          "It is a gaussian blur where the contribution of neighbourhood pixels "
+          "are weighted by the color difference from the center pixel.");
 }
 
 #endif

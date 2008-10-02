@@ -15,8 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_pointer (pixbuf, "Pixbuf", "GdkPixbuf to use")
+
+gegl_chant_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
+
 #else
 
 #define GEGL_CHANT_TYPE_SOURCE
@@ -87,7 +94,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "pixbuf";
   operation_class->categories  = "programming:input";
   operation_class->description =
-        "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>.";
+        _("Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>.");
 }
 
 #endif

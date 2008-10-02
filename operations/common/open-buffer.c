@@ -15,9 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(path, "File", "", "a GeglBuffer on disk to open")
+gegl_chant_string(path, _("File"), "", _("a GeglBuffer on disk to open"))
 
 #else
 
@@ -122,7 +127,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "open-buffer";
   operation_class->categories  = "input";
-  operation_class->description = "A source that uses an on-disk GeglBuffer.";
+  operation_class->description = _("A source that uses an on-disk GeglBuffer.");
 
   operation_class->no_cache = TRUE;
 }

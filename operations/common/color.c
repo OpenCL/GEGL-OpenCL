@@ -15,10 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (value, "Color", "black",
-                  "The color to render (defaults to 'black')")
+gegl_chant_color (value, _("Color"), "black",
+                  _("The color to render (defaults to 'black')"))
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
@@ -84,7 +88,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "color";
   operation_class->categories  = "render";
   operation_class->description =
-        "Generates a buffer entirely filled with the specified color, crop it to get smaller dimensions.";
+        _("Generates a buffer entirely filled with the specified color, "
+          "crop it to get smaller dimensions.");
 }
 
 #endif

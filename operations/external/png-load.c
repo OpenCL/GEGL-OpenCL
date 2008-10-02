@@ -17,9 +17,14 @@
  *           2006 Dominik Ernst <dernst@gmx.de>
  *           2006 Kevin Cozens <kcozens@cvs.gnome.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_path (path, _("File"), "", _("Path of file to load."))
 
 #else
 
@@ -417,7 +422,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "png-load";
   operation_class->categories  = "hidden";
-  operation_class->description = "PNG image loader.";
+  operation_class->description = _("PNG image loader.");
 
 //  static gboolean done=FALSE;
 //  if (done)

@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_object(buffer, "Input buffer",
-		  "The GeglBuffer to load into the pipeline")
+gegl_chant_object(buffer, _("Input buffer"),
+		  _("The GeglBuffer to load into the pipeline"))
 
 #else
 
@@ -95,7 +100,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "load-buffer";
   operation_class->categories  = "programming:input";
   operation_class->description =
-        "A source that uses an in-memory GeglBuffer, for use internally by GEGL.";
+        _("A source that uses an in-memory GeglBuffer, for use internally by GEGL.");
 
   operation_class->no_cache = TRUE;
 }

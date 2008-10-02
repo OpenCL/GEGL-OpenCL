@@ -15,9 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "/tmp/gegl-logo.svg", "Path of file to load.")
+gegl_chant_path (path, _("File"), "/tmp/gegl-logo.svg", _("Path of file to load."))
 
 #else
 
@@ -138,7 +143,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "magick-load";
   operation_class->categories  = "hidden";
   operation_class->description =
-        "Image Magick wrapper using the png op.";
+        _("Image Magick wrapper using the png op.");
 }
 
 #endif

@@ -16,10 +16,15 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (lens_info_pointer, "Model",
-                    "Pointer to LensCorrectionModel")
+gegl_chant_pointer (lens_info_pointer, _("Model"),
+                    _("Pointer to LensCorrectionModel"))
 
 #else
 
@@ -396,7 +401,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "lens-correct";
   operation_class->categories  = "blur";
   operation_class->description =
-        "Copies image performing lens distortion correction.";
+        _("Copies image performing lens distortion correction.");
 }
 
 #endif

@@ -15,6 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 #else
@@ -149,9 +154,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "stretch-contrast";
   operation_class->categories  = "color:enhance";
   operation_class->description =
-        "Scales the components of the buffer to be in the 0.0-1.0 range."
-        " This improves images that make poor use of the available contrast"
-        " (little contrast, very dark, or very bright images).";
+        _("Scales the components of the buffer to be in the 0.0-1.0 range. "
+          "This improves images that make poor use of the available contrast "
+          "(little contrast, very dark, or very bright images).");
 }
 
 #endif

@@ -16,11 +16,16 @@
  * Copyright 2006 Mark Probst <mark.probst@gmail.com>
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (red,   "Red",   -10.0, 10.0, 0.5,  "Amount of red")
-gegl_chant_double (green, "Green", -10.0, 10.0, 0.25, "Amount of green")
-gegl_chant_double (blue,  "Blue",  -10.0, 10.0, 0.25, "Amount of blue")
+gegl_chant_double (red,   _("Red"),   -10.0, 10.0, 0.5,  _("Amount of red"))
+gegl_chant_double (green, _("Green"), -10.0, 10.0, 0.25, _("Amount of green"))
+gegl_chant_double (blue,  _("Blue"),  -10.0, 10.0, 0.25, _("Amount of blue"))
 
 #else
 
@@ -95,7 +100,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "mono-mixer";
   operation_class->categories  = "color";
-  operation_class->description = "Monochrome channel mixer";
+  operation_class->description = _("Monochrome channel mixer");
 }
 
 #endif

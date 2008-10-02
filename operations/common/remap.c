@@ -16,10 +16,17 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-//gegl_chant_string ("xlow",  "hm", "low description")
-//gegl_chant_string ("xhigh", "hm", "high description")
+#if 0
+//gegl_chant_string ("xlow",  "hm", _("low description"))
+//gegl_chant_string ("xhigh", "hm", _("high description"))
+#endif
 
 #else
 
@@ -186,8 +193,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "remap";
   operation_class->categories  = "color";
   operation_class->description =
-        "Linearly remap the R,G,B based on per pixel minimum and maximum"
-        " values from the high/low input pads";
+        _("Linearly remap the R,G,B based on per pixel minimum and maximum"
+          " values from the high/low input pads");
 }
 
 #endif

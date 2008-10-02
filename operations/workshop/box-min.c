@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, "Radius", 0.0, 200.0, 4.0,
-  "Radius of square pixel region (width and height will be radius*2+1)")
+gegl_chant_double (radius, _("Radius"), 0.0, 200.0, 4.0,
+  _("Radius of square pixel region (width and height will be radius*2+1)"))
 
 #else
 
@@ -187,7 +192,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "box-min";
   operation_class->categories  = "misc";
   operation_class->description =
-        "Sets the target pixel to the value of the minimum value in a box surrounding the pixel.";
+        _("Sets the target pixel to the value of the minimum value in a box surrounding the pixel.");
 }
 
 #endif

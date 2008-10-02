@@ -23,6 +23,10 @@
 /* TODO: make rect calculations depend on the sampling kernel of the
  *       interpolation filter used */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #include <math.h>
 #include <gegl-plugin.h>
 #include "buffer/gegl-sampler.h"
@@ -212,38 +216,38 @@ op_affine_class_init (OpAffineClass *klass)
   g_object_class_install_property (gobject_class, PROP_ORIGIN_X,
                                    g_param_spec_double (
                                      "origin-x",
-                                     "Origin-x",
-                                     "X-coordinate of origin",
+                                     _("Origin-x"),
+                                     _("X-coordinate of origin"),
                                      -G_MAXDOUBLE, G_MAXDOUBLE,
                                      0.,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_ORIGIN_Y,
                                    g_param_spec_double (
                                      "origin-y",
-                                     "Origin-y",
-                                     "Y-coordinate of origin",
+                                     _("Origin-y"),
+                                     _("Y-coordinate of origin"),
                                      -G_MAXDOUBLE, G_MAXDOUBLE,
                                      0.,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_FILTER,
                                    g_param_spec_string (
                                      "filter",
-                                     "Filter",
-                                     "Filter type (nearest, linear, lanczos, cubic)",
+                                     _("Filter"),
+                                     _("Filter type (nearest, linear, lanczos, cubic)"),
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
                                    g_param_spec_boolean (
                                      "hard-edges",
-                                     "Hard-edges",
-                                     "Hard edges",
+                                     _("Hard-edges"),
+                                     _("Hard edges"),
                                      FALSE,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_LANCZOS_WIDTH,
                                    g_param_spec_int (
                                      "lanczos-width",
-                                     "Lanczos-width",
-                                     "Width of lanczos function",
+                                     _("Lanczos-width"),
+                                     _("Width of lanczos function"),
                                      3, 6, 3,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }

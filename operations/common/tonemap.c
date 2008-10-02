@@ -15,11 +15,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius, "Radius", 0.0, 100.0, 20.0, "radius")
-gegl_chant_double(blur, "Blur", 0.0, 100.0,   15.0,   "blur")
-gegl_chant_double(amount, "Amount", -1.0, 2.0, 0.5, "amount")
+gegl_chant_double(radius, _("Radius"),  0.0, 100.0, 20.0, _("radius"))
+gegl_chant_double(blur,   _("Blur"),    0.0, 100.0, 15.0, _("blur"))
+gegl_chant_double(amount, _("Amount"), -1.0,   2.0,  0.5, _("amount"))
 
 #else
 
@@ -127,7 +132,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "tonemap";
   operation_class->categories  = "meta:enhance";
-  operation_class->description = "Local contrast enhancement";
+  operation_class->description = _("Local contrast enhancement");
 }
 
 #endif

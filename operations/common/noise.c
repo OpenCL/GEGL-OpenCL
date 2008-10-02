@@ -15,13 +15,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (alpha, "Alpha",    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, "")
-gegl_chant_double (scale, "Scale",    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, "")
-gegl_chant_double (zoff,  "Z offset", -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
-gegl_chant_double (seed,  "Seed",     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "")
-gegl_chant_int    (n,     "Iteration", 0, 20, 3, "")
+gegl_chant_double (alpha, _("Alpha"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, _(""))
+gegl_chant_double (scale, _("Scale"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, _(""))
+gegl_chant_double (zoff,  _("Z offset"), -G_MAXDOUBLE, G_MAXDOUBLE,  -1, _(""))
+gegl_chant_double (seed,  _("Seed"),     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _(""))
+gegl_chant_int    (n,     _("Iteration"), 0, 20, 3, _(""))
 
 #else
 
@@ -94,7 +99,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "perlin-noise";
   operation_class->categories  = "render";
-  operation_class->description = "Perlin noise generator.";
+  operation_class->description = _("Perlin noise generator.");
 
   operation_class->no_cache = TRUE;
   operation_class->get_cached_region = NULL;

@@ -16,14 +16,19 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "Angle to rotate (clockwize)")
+gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
+                   _("Angle to rotate (clockwize)"))
 
 #else
 
 #define GEGL_CHANT_NAME rotate
-#define GEGL_CHANT_DESCRIPTION  "Rotate the buffer around the specified origin."
+#define GEGL_CHANT_DESCRIPTION  _("Rotate the buffer around the specified origin.")
 #define GEGL_CHANT_SELF "rotate.c"
 #include "chant.h"
 

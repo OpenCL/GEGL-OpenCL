@@ -16,15 +16,19 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "Horizontal scale factor.")
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "Vertical scale factor.")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Horizontal scale factor."))
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor."))
 
 #else
 
 #define GEGL_CHANT_NAME scale
-#define GEGL_CHANT_DESCRIPTION "Scales the buffer."
+#define GEGL_CHANT_DESCRIPTION _("Scales the buffer.")
 #define GEGL_CHANT_SELF "scale.c"
 #include "chant.h"
 

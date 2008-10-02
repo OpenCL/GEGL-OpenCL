@@ -189,7 +189,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "color-temperature";
   operation_class->categories  = "color";
   operation_class->description =
-        "Allows changing the color temperature of an image.";
+        _("Allows changing the color temperature of an image.");
 }
 
 /* Coefficients of rational functions of degree 5 fitted per color channel to

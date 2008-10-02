@@ -17,9 +17,14 @@
  */
 #include "config.h"
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "/tmp/test.raw", "Path of file to load.")
+gegl_chant_path (path, _("File"), "/tmp/test.raw", _("Path of file to load."))
 
 #else
 
@@ -151,7 +156,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "raw-load";
   operation_class->categories  = "hidden";
   operation_class->description =
-        "Raw image loader, wrapping dcraw with pipes.";
+        _("Raw image loader, wrapping dcraw with pipes.");
 
   gegl_extension_handler_register (".raw", "raw-load");
   gegl_extension_handler_register (".RAW", "raw-load");

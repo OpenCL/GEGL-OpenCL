@@ -16,13 +16,18 @@
  * Copyright 2008 Hans Petter Jansson <hpj@copyleft.no>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (red_bits, "Red bits", 1, 16, 16, "Number of bits for red channel")
-gegl_chant_int (green_bits, "Green bits", 1, 16, 16, "Number of bits for green channel")
-gegl_chant_int (blue_bits, "Blue bits", 1, 16, 16, "Number of bits for blue channel")
-gegl_chant_int (alpha_bits, "Alpha bits", 1, 16, 16, "Number of bits for alpha channel")
-gegl_chant_string (dither_type, "Dither", "none", "Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)")
+gegl_chant_int (red_bits,   _("Red bits"),   1, 16, 16, _("Number of bits for red channel"))
+gegl_chant_int (green_bits, _("Green bits"), 1, 16, 16, _("Number of bits for green channel"))
+gegl_chant_int (blue_bits,  _("Blue bits"),  1, 16, 16, _("Number of bits for blue channel"))
+gegl_chant_int (alpha_bits, _("Alpha bits"), 1, 16, 16, _("Number of bits for alpha channel"))
+gegl_chant_string (dither_type, _("Dither"), "none",
+              _("Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)"))
 
 #else
 
@@ -453,7 +458,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "color-reduction";
   operation_class->categories  = "misc";
-  operation_class->description = "Reduces the number of bits per channel (colors and alpha), with optional dithering.";
+  operation_class->description = 
+          _("Reduces the number of bits per channel (colors and alpha), with optional dithering.");
 }
 
 #endif

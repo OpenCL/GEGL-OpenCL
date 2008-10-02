@@ -15,9 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "File", "/tmp/test.raw", "Path of file to load.")
+gegl_chant_string (path, _("File"), "/tmp/test.raw", _("Path of file to load."))
 
 #else
 
@@ -146,11 +151,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "rawbayer-load";
   operation_class->categories  = "hidden";
   operation_class->description =
-        "Raw image loader, wrapping dcraw with pipes, provides the raw bayer"
-        " grid as grayscale, if the fileformat is .rawbayer it will use this"
-        " loader instead of the normal dcraw loader, if the fileformat is"
-        " .rawbayerS it will swap the returned 16bit numbers (the pnm loader"
-        " is apparently buggy)";
+        _("Raw image loader, wrapping dcraw with pipes, provides the raw bayer"
+          " grid as grayscale, if the fileformat is .rawbayer it will use this"
+          " loader instead of the normal dcraw loader, if the fileformat is"
+          " .rawbayerS it will swap the returned 16bit numbers (the pnm loader"
+          " is apparently buggy)");
 
   gegl_extension_handler_register (".rawbayer", "rawbayer-load");
   gegl_extension_handler_register (".rawbayerS", "rawbayer-load");

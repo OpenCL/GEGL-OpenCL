@@ -20,51 +20,54 @@
  * Copyright 2006 Kevin Cozens <kcozens@cvs.gnome.org>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
 #define MAXNCOLORS 8192
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (width,  "Width",  10, 10000000, 400, "Width")
-gegl_chant_int (height, "Height", 10, 10000000, 400, "Height")
+gegl_chant_int (width,  _("Width"),  10, 10000000, 400, _("Width"))
+gegl_chant_int (height, _("Height"), 10, 10000000, 400, _("Height"))
 
-gegl_chant_int (fractaltype, "Fractal type", 0, 8, 0, "Fractal Type")
+gegl_chant_int (fractaltype, _("Fractal type"), 0, 8, 0, _("Fractal Type"))
 
-gegl_chant_double (xmin, "Left",   -3.0, 3.0, -2.0, "Left")
-gegl_chant_double (xmax, "Right",  -3.0, 3.0, 2.0, "Right")
-gegl_chant_double (ymin, "Top",    -3.0, 3.0, -2.0, "Top")
-gegl_chant_double (ymax, "Bottom", -3.0, 3.0, 2.0, "Bottom")
+gegl_chant_double (xmin, _("Left"),   -3.0, 3.0, -2.0, _("Left"))
+gegl_chant_double (xmax, _("Right"),  -3.0, 3.0,  2.0, _("Right"))
+gegl_chant_double (ymin, _("Top"),    -3.0, 3.0, -2.0, _("Top"))
+gegl_chant_double (ymax, _("Bottom"), -3.0, 3.0,  2.0, _("Bottom"))
 
-gegl_chant_int (iter, "Iterations", 1, 1000, 50, "Iterations")
+gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
 
-gegl_chant_double (cx, "CX", -2.5, 2.5, -0.75, "CX (only Julia)")
-gegl_chant_double (cy, "CY", -2.5, 2.5,  0.2,  "CY (only Julia)")
+gegl_chant_double (cx, _("CX"), -2.5, 2.5, -0.75, _("CX (only Julia)"))
+gegl_chant_double (cy, _("CY"), -2.5, 2.5,  0.2,  _("CY (only Julia)"))
 
-gegl_chant_double (redstretch,   "Red stretch",   0.0, 1.0, 1.0,
-                   "Red stretching factor")
-gegl_chant_double (greenstretch, "Green stretch", 0.0, 1.0, 1.0,
-                   "Green stretching factor")
-gegl_chant_double (bluestretch,  "Blue stretch",  0.0, 1.0, 1.0,
-                   "Blue stretching factor")
+gegl_chant_double (redstretch,   _("Red stretch"),   0.0, 1.0, 1.0,
+                   _("Red stretching factor"))
+gegl_chant_double (greenstretch, _("Green stretch"), 0.0, 1.0, 1.0,
+                   _("Green stretching factor"))
+gegl_chant_double (bluestretch,  _("Blue stretch"),  0.0, 1.0, 1.0,
+                   _("Blue stretching factor"))
 
-gegl_chant_int (redmode,   "Red mode",   0, 2, 1,
-                "Red application mode (0:SIN; 1:COS; 2:NONE)")
-gegl_chant_int (greenmode, "Green mode", 0, 2, 1,
-                "Green application mode (0:SIN; 1:COS; 2:NONE)")
-gegl_chant_int (bluemode,  "Blue mode",  0, 2, 0,
-                "Blue application mode (0:SIN; 1:COS; 2:NONE)")
+gegl_chant_int (redmode,   _("Red mode"),   0, 2, 1,
+                _("Red application mode (0:SIN; 1:COS; 2:NONE)"))
+gegl_chant_int (greenmode, _("Green mode"), 0, 2, 1,
+                _("Green application mode (0:SIN; 1:COS; 2:NONE)"))
+gegl_chant_int (bluemode,  _("Blue mode"),  0, 2, 0,
+                _("Blue application mode (0:SIN; 1:COS; 2:NONE)"))
 
-gegl_chant_boolean (redinvert,   "Red inversion",   FALSE,
-                    "Red inversion")
-gegl_chant_boolean (greeninvert, "Green inversion", FALSE,
-                    "Green inversion")
-gegl_chant_boolean (blueinvert,  "Blue inversion",  FALSE,
-                    "Blue inversion")
+gegl_chant_boolean (redinvert,   _("Red inversion"),   FALSE,
+                    _("Red inversion"))
+gegl_chant_boolean (greeninvert, _("Green inversion"), FALSE,
+                    _("Green inversion"))
+gegl_chant_boolean (blueinvert,  _("Blue inversion"),  FALSE,
+                    _("Blue inversion"))
 
-gegl_chant_int (ncolors, "Colors", 2, MAXNCOLORS, 256,
-                "Number of colors")
+gegl_chant_int (ncolors, _("Colors"), 2, MAXNCOLORS, 256,
+                _("Number of colors"))
 
-gegl_chant_boolean (useloglog, "Loglog smoothing", FALSE,
-                    "Use loglog smoothing")
+gegl_chant_boolean (useloglog, _("Loglog smoothing"), FALSE,
+                    _("Use loglog smoothing"))
 
 #else
 
@@ -464,7 +467,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "fractal-explorer";
   operation_class->categories  = "render";
-  operation_class->description = "Fractal Explorer";
+  operation_class->description = _("Fractal Explorer");
 
   operation_class->no_cache = TRUE;
   operation_class->get_cached_region = NULL;

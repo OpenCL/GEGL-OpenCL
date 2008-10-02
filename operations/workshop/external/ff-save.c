@@ -15,11 +15,16 @@
  *
  * Copyright 2003,2004,2007 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "File", "/tmp/fnord.mp4", "Target path and filename, use '-' for stdout.")
-gegl_chant_double (bitrate, "Bitrate", 0.0, 100000000.0, 800000.0, "target bitrate")
-gegl_chant_double (fps, "FPS", 0.0, 100.0, 25, "frames per second")
+gegl_chant_string (path, _("File"), "/tmp/fnord.mp4", _("Target path and filename, use '-' for stdout."))
+gegl_chant_double (bitrate, _("Bitrate"), 0.0, 100000000.0, 800000.0, _("target bitrate"))
+gegl_chant_double (fps, _("FPS"), 0.0, 100.0, 25, _("frames per second"))
 
 #else
 
@@ -852,7 +857,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "ff-save";
   operation_class->categories  = "output:video";
-  operation_class->description = "FFmpeg video output sink";
+  operation_class->description = _("FFmpeg video output sink");
 }
 
 #endif

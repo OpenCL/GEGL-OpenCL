@@ -16,10 +16,15 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (pattern, "Bayer pattern", 0, 3, 0,
-                "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files.")
+gegl_chant_int (pattern, _("Bayer pattern"), 0, 3, 0,
+                _("Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files."))
 
 #else
 
@@ -205,7 +210,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "demosaic-bimedian";
   operation_class->categories  = "blur";
   operation_class->description =
-        "Performs a grayscale2color demosaicing of an image, using bimedian interpolation.";
+        _("Performs a grayscale2color demosaicing of an image, using bimedian interpolation.");
 }
 
 #endif

@@ -30,6 +30,11 @@
  *
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
    /* no properties */
@@ -125,7 +130,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "value-invert";
   operation_class->categories  = "color";
   operation_class->description =
-        "Inverts just the value component, the result is the corresponding `inverted' image.";
+        _("Inverts just the value component, the result is the corresponding "
+          "`inverted' image.");
 }
 
 #endif

@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_object(node, "Node", "GeglNode to introspect")
-gegl_chant_pointer(buf, "Buffer", "Buffer")
+gegl_chant_object(node, _("Node"), _("GeglNode to introspect"))
+gegl_chant_pointer(buf, _("Buffer"), _("Buffer"))
 
 #else
 
@@ -118,7 +123,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "introspect";
   operation_class->categories  = "render";
-  operation_class->description = "GEGL graph visualizer.";
+  operation_class->description = _("GEGL graph visualizer.");
 }
 
 #endif

@@ -16,16 +16,21 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (in_low, "Low input", -1.0, 4.0, 0.0,
-                   "Input luminance level to become lowest output")
-gegl_chant_double (in_high, "High input", -1.0, 4.0, 1.0,
-                   "Input luminance level to become white.")
-gegl_chant_double (out_low, "Low output", -1.0, 4.0, 0.0,
-                   "Lowest luminance level in output")
-gegl_chant_double (out_high, "High output",
-                   -1.0, 4.0, 1.0, "Highest luminance level in output")
+gegl_chant_double (in_low, _("Low input"), -1.0, 4.0, 0.0,
+                   _("Input luminance level to become lowest output"))
+gegl_chant_double (in_high, _("High input"), -1.0, 4.0, 1.0,
+                   _("Input luminance level to become white."))
+gegl_chant_double (out_low, _("Low output"), -1.0, 4.0, 0.0,
+                   _("Lowest luminance level in output"))
+gegl_chant_double (out_high, _("High output"),
+                   -1.0, 4.0, 1.0, _("Highest luminance level in output"))
 
 #else
 
@@ -90,7 +95,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "levels";
   operation_class->categories  = "color";
   operation_class->description =
-        "Remaps the intensity range of the image";
+        _("Remaps the intensity range of the image");
 }
 
 #endif

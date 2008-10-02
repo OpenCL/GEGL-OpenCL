@@ -16,16 +16,21 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_vector (vector,   "Vector",
-                             "A GeglVector representing the path of the stroke")
-gegl_chant_color  (color,    "Color",      "rgba(0.1,0.2,0.3,1.0)",
-                             "Color of paint to use")
-gegl_chant_double (linewidth,"Linewidth",  0.0, 100.0, 3.0,
-                             "width of stroke")
-gegl_chant_double (hardness, "Hardness",   0.0, 1.0, 0.7,
-                             "hardness of brush, 0.0 for soft brush 1.0 for hard brush.")
+gegl_chant_vector (vector,   _("Vector"),
+                             _("A GeglVector representing the path of the stroke"))
+gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,1.0)",
+                             _("Color of paint to use"))
+gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 3.0,
+                             _("width of stroke"))
+gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.7,
+                             _("hardness of brush, 0.0 for soft brush 1.0 for hard brush."))
 
 #else
 
@@ -92,7 +97,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "stroke";
   operation_class->categories  = "render";
-  operation_class->description = "Renders a brush stroke";
+  operation_class->description = _("Renders a brush stroke");
   operation_class->get_cached_region = NULL;
 }
 

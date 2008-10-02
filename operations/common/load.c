@@ -15,9 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_path (path, _("File"), "", _("Path of file to load."))
 
 #else
 
@@ -170,8 +175,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "load";
   operation_class->categories  = "meta:input";
   operation_class->description =
-        "Multipurpose file loader, that uses other native handlers, and"
-        " fallback conversion using image magick's convert.";
+        _("Multipurpose file loader, that uses other native handlers, and "
+          "fallback conversion using image magick's convert.");
 
   operation_class->no_cache = TRUE;
 }

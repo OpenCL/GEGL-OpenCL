@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, "Opacity", -10.0, 10.0, 0.5,
-                   "Global opacity value, used if no auxiliary input buffer is provided.")
+gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 0.5,
+         _("Global opacity value, used if no auxiliary input buffer is provided."))
 
 #else
 
@@ -92,8 +97,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "opacity";
   operation_class->categories  = "transparency";
   operation_class->description =
-        "Weights the opacity of the input with either the value of the aux"
-        " input or the global value property.";
+        _("Weights the opacity of the input with either the value of the aux"
+          " input or the global value property.");
 }
 
 #endif

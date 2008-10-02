@@ -15,6 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
    /* no properties */
@@ -62,7 +67,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name       = "nop";
   operation_class->categories = "core";
-  operation_class->description = "No operation (can be used as a routing point)";
+  operation_class->description = _("No operation (can be used as a routing point)");
 }
 
 #endif

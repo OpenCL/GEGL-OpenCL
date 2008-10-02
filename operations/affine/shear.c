@@ -16,17 +16,21 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   "Horizontal shear amount.")
+                   _("Horizontal shear amount."))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   "Vertical shear amount.")
+                   _("Vertical shear amount."))
 
 #else
 
 #define GEGL_CHANT_NAME shear
-#define GEGL_CHANT_DESCRIPTION    "Shears the buffer."
+#define GEGL_CHANT_DESCRIPTION    _("Shears the buffer.")
 #define GEGL_CHANT_SELF "shear.c"
 #include "chant.h"
 

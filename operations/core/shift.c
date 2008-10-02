@@ -16,10 +16,15 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, "X", -G_MAXFLOAT, G_MAXFLOAT, 0.0, "X-axis shift")
-gegl_chant_double (y, "Y", -G_MAXFLOAT, G_MAXFLOAT, 0.0, "Y-axis shift")
+gegl_chant_double (x, _("X"), -G_MAXFLOAT, G_MAXFLOAT, 0.0, _("X-axis shift"))
+gegl_chant_double (y, _("Y"), -G_MAXFLOAT, G_MAXFLOAT, 0.0, _("Y-axis shift"))
 
 #else
 
@@ -174,7 +179,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "shift";
   operation_class->categories  = "core";
-  operation_class->description = "Shift the contents of a buffer";
+  operation_class->description = _("Shift the contents of a buffer");
 
   operation_class->no_cache = TRUE;
 }

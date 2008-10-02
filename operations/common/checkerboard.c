@@ -15,20 +15,24 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int   (x,        "Width",  1, G_MAXINT, 16,
-                  "Horizontal width of cells pixels.")
-gegl_chant_int   (y,        "Height", 1, G_MAXINT, 16,
-                  "Vertical width of cells in pixels.")
-gegl_chant_int   (x_offset, "X offset", -G_MAXINT, G_MAXINT, 0,
-                  "Horizontal offset (from origin) for start of grid.")
-gegl_chant_int   (y_offset, "Y offset", -G_MAXINT, G_MAXINT,  0,
-                  "Vertical offset (from origin) for start of grid.")
-gegl_chant_color (color1,   "Color", "black",
-                  "One of the cell colors (defaults to 'black')")
-gegl_chant_color (color2,   "Other color", "white",
-                  "The other cell color (defaults to 'white')")
+gegl_chant_int   (x,        _("Width"),  1, G_MAXINT, 16,
+                  _("Horizontal width of cells pixels."))
+gegl_chant_int   (y,        _("Height"), 1, G_MAXINT, 16,
+                  _("Vertical width of cells in pixels."))
+gegl_chant_int   (x_offset, _("X offset"), -G_MAXINT, G_MAXINT, 0,
+                  _("Horizontal offset (from origin) for start of grid."))
+gegl_chant_int   (y_offset, _("Y offset"), -G_MAXINT, G_MAXINT,  0,
+                  _("Vertical offset (from origin) for start of grid."))
+gegl_chant_color (color1,   _("Color"), "black",
+                  _("One of the cell colors (defaults to 'black')"))
+gegl_chant_color (color2,   _("Other color"), "white",
+                  _("The other cell color (defaults to 'white')"))
 
 #else
 
@@ -128,7 +132,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "checkerboard";
   operation_class->categories  = "render";
-  operation_class->description = "Checkerboard renderer.";
+  operation_class->description = _("Checkerboard renderer");
 }
 
 #endif

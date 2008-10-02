@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, "Threshold", -10.0, 10.0, 0.5,
-   "Global threshold level (used when there is no auxiliary input buffer).")
+gegl_chant_double (value, _("Threshold"), -10.0, 10.0, 0.5,
+   _("Global threshold level (used when there is no auxiliary input buffer)."))
 
 #else
 
@@ -98,8 +103,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "threshold";
   operation_class->categories  = "color";
   operation_class->description =
-        "Thresholds the image to white/black based on either the global value"
-        " set in the value property, or per pixel from the aux input.";
+        _("Thresholds the image to white/black based on either the global value "
+          "set in the value property, or per pixel from the aux input.");
 }
 
 #endif

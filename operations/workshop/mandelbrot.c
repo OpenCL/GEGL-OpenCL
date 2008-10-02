@@ -15,16 +15,21 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(real, "Real",      -200.0, 200.0, -1.77,
-                  "Real coordinate")
-gegl_chant_double(img,  "Imaginary", -200.0, 200.0, 0.0,
-                  "Imaginary coordinate")
-gegl_chant_double(level, "Level", -200.0, 200.0, 3.5,
-                  "Water level")
-gegl_chant_int (maxiter, "Iterations", 0, 512, 128,
-                "Maximum number of iterations")
+gegl_chant_double(real, _("Real"),      -200.0, 200.0, -1.77,
+                  _("Real coordinate"))
+gegl_chant_double(img,  _("Imaginary"), -200.0, 200.0, 0.0,
+                  _("Imaginary coordinate"))
+gegl_chant_double(level, _("Level"), -200.0, 200.0, 3.5,
+                  _("Water level"))
+gegl_chant_int (maxiter, _("Iterations"), 0, 512, 128,
+                _("Maximum number of iterations"))
 
 #else
 
@@ -134,7 +139,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "mandelbrot";
   operation_class->categories  = "render";
-  operation_class->description = "Mandelbrot renderer.";
+  operation_class->description = _("Mandelbrot renderer.");
 }
 
 #endif

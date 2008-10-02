@@ -16,13 +16,17 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (high_a_delta, "High a delta", -2.0, 2.0, 0.0, "")
-gegl_chant_double (high_b_delta, "High b delta", -2.0, 2.0, 0.0, "")
-gegl_chant_double (low_a_delta,  "Low a delta",  -2.0, 2.0, 0.0, "")
-gegl_chant_double (low_b_delta,  "Low b delta",  -2.0, 2.0, 0.0, "")
-gegl_chant_double (saturation,   "Saturation",   -3.0, 3.0, 1.0, "")
+gegl_chant_double (high_a_delta, _("High a delta"), -2.0, 2.0, 0.0, _(""))
+gegl_chant_double (high_b_delta, _("High b delta"), -2.0, 2.0, 0.0, _(""))
+gegl_chant_double (low_a_delta,  _("Low a delta"),  -2.0, 2.0, 0.0, _(""))
+gegl_chant_double (low_b_delta,  _("Low b delta"),  -2.0, 2.0, 0.0, _(""))
+gegl_chant_double (saturation,   _("Saturation"),   -3.0, 3.0, 1.0, _(""))
 
 #else
 
@@ -97,7 +101,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "whitebalance";
   operation_class->categories  = "color";
   operation_class->description =
-        "Allows changing the whitepoint and blackpoint of an image.";
+        _("Allows changing the whitepoint and blackpoint of an image.");
 }
 
 #endif

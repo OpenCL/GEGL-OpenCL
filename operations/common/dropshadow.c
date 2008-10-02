@@ -15,15 +15,20 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (opacity, "Opacity", -10.0, 10.0, 0.5, "Opacity")
-gegl_chant_double (x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
-                   "Horizontal shadow offset.")
-gegl_chant_double (y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
-                   "Vertical shadow offset.")
-gegl_chant_double (radius, "Radius", -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
-                   "Blur radius.")
+gegl_chant_double (opacity, _("Opacity"), -10.0, 10.0, 0.5, _("Opacity"))
+gegl_chant_double (x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+                   _("Horizontal shadow offset."))
+gegl_chant_double (y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+                   _("Vertical shadow offset."))
+gegl_chant_double (radius, _("Radius"), -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
+                   _("Blur radius."))
 
 #else
 
@@ -99,7 +104,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "dropshadow";
   operation_class->categories  = "meta:effects";
   operation_class->description =
-        "Creates a dropshadow effect on the input buffer.";
+        _("Creates a dropshadow effect on the input buffer.");
 }
 
 #endif

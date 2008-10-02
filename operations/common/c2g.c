@@ -18,22 +18,26 @@
  *                Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, "Radius", 2, 5000.0, 384,
-                "Neighbourhood taken into account")
-gegl_chant_int (samples, "Samples", 0, 1000, 3,
-                "Number of samples to do")
-gegl_chant_int (iterations, "Iterations", 0, 1000, 23,
-                "Number of iterations (length of exposure)")
-gegl_chant_boolean (same_spray, "Same spray", FALSE,
-                    "Use the same spray for all pixels")
-gegl_chant_double (rgamma, "Radial Gamma", 0.0, 8.0, 1.8,
-                   "Gamma applied to radial distribution")
-gegl_chant_double (strength, "Strength", -10.0, 10.0, 1.0,
-                   "Amount of correction 0=none 1.0=full")
-gegl_chant_double (gamma, "Gamma", 0.0, 10.0, 1.0,
-                   "Post correction gamma.")
+gegl_chant_int (radius, _("Radius"), 2, 5000.0, 384,
+                _("Neighbourhood taken into account"))
+gegl_chant_int (samples, _("Samples"), 0, 1000, 3,
+                _("Number of samples to do"))
+gegl_chant_int (iterations, _("Iterations"), 0, 1000, 23,
+                _("Number of iterations (length of exposure)"))
+gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
+                _("Use the same spray for all pixels"))
+gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 1.8,
+                _("Gamma applied to radial distribution"))
+gegl_chant_double (strength, _("Strength"), -10.0, 10.0, 1.0,
+                _("Amount of correction 0=none 1.0=full"))
+gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
+                _("Post correction gamma."))
 
 #else
 
@@ -188,7 +192,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "c2g";
   operation_class->categories  = "enhance";
   operation_class->description =
-        "Color to grayscale conversion, uses spatial color differences to perform local grayscale contrast enhancement.";
+        _("Color to grayscale conversion, uses spatial color differences "
+          "to perform local grayscale contrast enhancement.");
 }
 
 #endif

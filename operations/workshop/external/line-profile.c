@@ -15,16 +15,21 @@
  *
  * Copyright 2007 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (x0, "X0", 0, 1000, 0, "Start x coordinate")
-gegl_chant_int (x1, "X1", 0, 1000, 200, "End x coordinate")
-gegl_chant_int (y0, "Y0", 0, 1000, 0, "Start y coordinate")
-gegl_chant_int (y1, "Y1", 0, 1000, 200, "End y coordinate")
-gegl_chant_int (width,  "Width",  10, 10000, 1024, "Width of plot")
-gegl_chant_int (height, "Height", 10, 10000, 256,  "Height of plot")
-gegl_chant_double (min, "Min", -500.0, 500,  0.0, "Value at bottom")
-gegl_chant_double (max, "Max", -500.0, 500,  8.0, "Value at top")
+gegl_chant_int (x0, _("X0"), 0, 1000, 0, _("Start x coordinate"))
+gegl_chant_int (x1, _("X1"), 0, 1000, 200, _("End x coordinate"))
+gegl_chant_int (y0, _("Y0"), 0, 1000, 0, _("Start y coordinate"))
+gegl_chant_int (y1, _("Y1"), 0, 1000, 200, _("End y coordinate"))
+gegl_chant_int (width,  _("Width"),  10, 10000, 1024, _("Width of plot"))
+gegl_chant_int (height, _("Height"), 10, 10000, 256,  _("Height of plot"))
+gegl_chant_double (min, _("Min"), -500.0, 500,  0.0, _("Value at bottom"))
+gegl_chant_double (max, _("Max"), -500.0, 500,  8.0, _("Value at top"))
 
 #else
 
@@ -168,9 +173,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "line-profile";
   operation_class->categories  = "debug";
   operation_class->description =
-        "Renders luminance profiles for red green and blue components along"
-        " the specified line in the input buffer, plotted in a buffer of the"
-        " specified size.";
+        _("Renders luminance profiles for red green and blue components along"
+          " the specified line in the input buffer, plotted in a buffer of the"
+          " specified size.");
 }
 
 #endif

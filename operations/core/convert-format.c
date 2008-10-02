@@ -18,10 +18,15 @@
  *
  * This operation is just a forked grey op with format parameters.
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(format, "Output format", "RGBA float",
-                  "Babl ouput format string")
+gegl_chant_string(format, _("Output format"), "RGBA float",
+                  _("Babl ouput format string"))
 
 #else
 
@@ -70,7 +75,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name       = "convert-format";
   operation_class->categories = "core:color";
   operation_class->description =
-        "Convert the data to the specified format";
+        _("Convert the data to the specified format");
 }
 
 #endif

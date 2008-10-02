@@ -15,6 +15,11 @@
  *
  * Copyright 2004, 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 #define THRESHOLD_SCRIPT \
@@ -32,9 +37,11 @@
 "  progress (y/height)\n"\
 "end"
 
-gegl_chant_multiline (script, "Script", THRESHOLD_SCRIPT, "The lua script containing the implementation of this operation.")
-gegl_chant_path (file, "File", "", "a stored lua script on disk implementing an operation.")
-gegl_chant_double (user_value, "User value", -1000.0, 1000.0, 1.0, "(appears in the global variable 'user_value' in lua.")
+gegl_chant_multiline (script, _("Script"), THRESHOLD_SCRIPT,
+         _("The lua script containing the implementation of this operation."))
+gegl_chant_path (file, _("File"), "", _("a stored lua script on disk implementing an operation."))
+gegl_chant_double (user_value, _("User value"), -1000.0, 1000.0, 1.0,
+         _("(appears in the global variable 'user_value' in lua."))
 
 #else
 
@@ -1030,8 +1037,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gluas";
   operation_class->categories  = "script";
   operation_class->description =
-        "A general purpose filter/composer implementation proxy for the"
-        " lua programming language.";
+        _("A general purpose filter/composer implementation proxy for the"
+          " lua programming language.");
 }
 
 #endif

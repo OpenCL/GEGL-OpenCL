@@ -21,15 +21,19 @@
  *       becomes very inaccurate.
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (std_dev_x, "Size X", 0.0, 200.0, 4.0,
-   "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)")
-gegl_chant_double (std_dev_y, "Size Y", 0.0, 200.0, 4.0,
-   "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)")
-gegl_chant_string (filter, "Filter", "auto",
-   "Optional parameter to override the automatic selection of blur filter."
-   " Choices are fir, iir, auto")
+gegl_chant_double (std_dev_x, _("Size X"), 0.0, 200.0, 4.0,
+   _("Standard deviation for the horizontal axis. (multiply by ~2 to get radius)"))
+gegl_chant_double (std_dev_y, _("Size Y"), 0.0, 200.0, 4.0,
+   _("Standard deviation for the vertical axis. (multiply by ~2 to get radius.)"))
+gegl_chant_string (filter, _("Filter"), "auto",
+   _("Optional parameter to override the automatic selection of blur filter. "
+     "Choices are fir, iir, auto"))
 
 #else
 
@@ -496,7 +500,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "blur";
   operation_class->name        = "gaussian-blur";
   operation_class->description =
-        "Performs an averaging of neighbouring pixels with the normal distribution as weighting.";
+        _("Performs an averaging of neighbouring pixels with the "
+          "normal distribution as weighting.");
 }
 
 #endif

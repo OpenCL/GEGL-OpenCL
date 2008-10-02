@@ -16,6 +16,10 @@
  * Copyright 2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
     /* No properties */
@@ -170,7 +174,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "hstack";
   operation_class->categories  = "misc";
   operation_class->description =
-        "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")";
+        _("Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")");
 }
 
 #endif

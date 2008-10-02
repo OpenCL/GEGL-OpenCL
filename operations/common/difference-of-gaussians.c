@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius1, "Radius 1", 0.0, 10.0, 1.0, "Radius")
-gegl_chant_double(radius2, "Radius 2", 0.0, 10.0, 2.0, "Radius")
+gegl_chant_double(radius1, _("Radius 1"), 0.0, 10.0, 1.0, _("Radius"))
+gegl_chant_double(radius2, _("Radius 2"), 0.0, 10.0, 2.0, _("Radius"))
 
 #else
 
@@ -90,7 +95,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "difference-of-gaussians";
   operation_class->categories  = "meta:edge";
   operation_class->description =
-        "Does an edge detection based on the difference of two gaussian blurs.";
+        _("Does an edge detection based on the difference of two gaussian blurs.");
 }
 
 #endif

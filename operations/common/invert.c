@@ -15,6 +15,11 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
    /* no properties */
@@ -93,8 +98,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "invert";
   operation_class->categories  = "color";
   operation_class->description =
-     "Inverts the components (except alpha), the result is the"
-     " corresponding \"negative\" image.";
+     _("Inverts the components (except alpha), the result is the "
+       "corresponding \"negative\" image.");
 
 #ifdef HAS_G4FLOAT
   gegl_operation_class_add_processor (operation_class,

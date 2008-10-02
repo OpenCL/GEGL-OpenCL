@@ -15,10 +15,15 @@
  *
  * Copyright 2003, 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "/home/pippin/input.avi", "Path of file to load.")
-gegl_chant_int (frame, "Frame", 0, 1000000, 0, "frame number")
+gegl_chant_path (path, _("File"), "/home/pippin/input.avi", _("Path of file to load."))
+gegl_chant_int (frame, _("Frame"), 0, 1000000, 0, _("frame number"))
 
 #else
 
@@ -437,7 +442,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "ff-load";
   operation_class->categories  = "input:video";
-  operation_class->description = "FFmpeg video frame importer.";
+  operation_class->description = _("FFmpeg video frame importer.");
 }
 
 #endif

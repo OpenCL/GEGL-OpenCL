@@ -61,6 +61,10 @@ a.each do
 
     file.write copyright
     file.write "
+#include \"config.h\"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 /* no properties */
@@ -137,7 +141,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = \"#{name}\";
   operation_class->categories  = \"compositors:blend\";
   operation_class->description =
-        \"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\";
+        _(\"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\");
 }
 
 #endif

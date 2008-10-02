@@ -19,12 +19,16 @@
  * vector that is defined by the x and y properties.
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 
-  "Direction vector's x component")
+  _("Direction vector's x component"))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 
-  "Direction vector's y component")
+  _("Direction vector's y component"))
 
 #else
 

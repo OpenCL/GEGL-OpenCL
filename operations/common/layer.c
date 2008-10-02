@@ -20,20 +20,25 @@
  * with the newer caching system
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(composite_op, "Operation", "over",
-                  "Composite operation to use")
-gegl_chant_double(opacity, "Opacity", 0.0, 1.0, 1.0,
-                  "Opacity")
-gegl_chant_double(x, "X", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  "Horizontal position")
-gegl_chant_double(y, "Y", -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  "Vertical position")
-gegl_chant_double(scale, "scale", -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                  "Scale 1:1 size")
-gegl_chant_path(src, "Source", "",
-                "Source datafile (png, jpg, raw, svg, bmp, tif, ...)")
+gegl_chant_string(composite_op, _("Operation"), "over",
+                  _("Composite operation to use"))
+gegl_chant_double(opacity, _("Opacity"), 0.0, 1.0, 1.0,
+                  _("Opacity"))
+gegl_chant_double(x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  _("Horizontal position"))
+gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+                  _("Vertical position"))
+gegl_chant_double(scale, _("scale"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                  _("Scale 1:1 size"))
+gegl_chant_path(src, _("Source"), "",
+                _("Source datafile (png, jpg, raw, svg, bmp, tif, ...)"))
 
 #else
 
@@ -234,7 +239,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "layer";
   operation_class->categories  = "meta";
-  operation_class->description = "A layer in the traditional sense.";
+  operation_class->description = _("A layer in the traditional sense.");
   operation_class->attach = attach;
   operation_class->prepare = prepare;
 }

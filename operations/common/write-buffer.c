@@ -15,10 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_object (buffer, "Buffer location",
-                   "Write to an existing GeglBuffer")
+gegl_chant_object (buffer, _("Buffer location"),
+                   _("Write to an existing GeglBuffer"))
 
 #else
 
@@ -59,7 +64,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "write-buffer";
   operation_class->categories  = "programming:output";
-  operation_class->description = "A GEGL buffer destination surface.";
+  operation_class->description = _("A GEGL buffer destination surface.");
 }
 
 #endif

@@ -72,6 +72,10 @@ a = [
     ]
 
 file_head1 = '
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 /* no properties */
@@ -219,7 +223,7 @@ process_simd (GeglOperation       *op,
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"Porter Duff operation #{name} (d = #{c_formula})\";
+        _(\"Porter Duff operation #{name} (d = #{c_formula})\");
 "
   file.write file_tail2
   file.close

@@ -16,12 +16,18 @@
  * Copyright 2004-2008 Øyvind Kolås <pippin@gimp.org>
  *                     originally written for gggl
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path,   "Path", "/dev/video0", "Path to v4l device")
-gegl_chant_int  (width,  "Width", 0, G_MAXINT, 320, "Width for rendered image")
-gegl_chant_int  (height, "Height", 0, G_MAXINT, 240, "Height for rendered image")
-gegl_chant_int  (frame,  "Frame", 0, G_MAXINT, 0, "current frame number, can be changed to trigger a reload of the image.")
+gegl_chant_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
+gegl_chant_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
+gegl_chant_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
+gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0, 
+        _("current frame number, can be changed to trigger a reload of the image."))
 
 #else
 
@@ -287,7 +293,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "v4l";
   operation_class->categories  = "input:video";
-  operation_class->description = "Video4Linux input, webcams framegrabbers and similar devices.";
+  operation_class->description = 
+    _("Video4Linux input, webcams framegrabbers and similar devices.");
 }
 
 

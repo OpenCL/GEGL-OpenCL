@@ -16,12 +16,16 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x,      "X",      -G_MAXFLOAT, G_MAXFLOAT,  0.0, "X")
-gegl_chant_double (y,      "Y",      -G_MAXFLOAT, G_MAXFLOAT,  0.0, "Y")
-gegl_chant_double (width,  "Width",  -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Width")
-gegl_chant_double (height, "Height", -G_MAXFLOAT, G_MAXFLOAT, 10.0, "Height")
+gegl_chant_double (x,      _("X"),      -G_MAXFLOAT, G_MAXFLOAT,  0.0, _("X"))
+gegl_chant_double (y,      _("Y"),      -G_MAXFLOAT, G_MAXFLOAT,  0.0, _("Y"))
+gegl_chant_double (width,  _("Width"),  -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Width"))
+gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height"))
 
 #else
 
@@ -148,7 +152,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "crop";
   operation_class->categories  = "core";
-  operation_class->description = "Crop a buffer";
+  operation_class->description = _("Crop a buffer");
 
   operation_class->no_cache = TRUE;
 }

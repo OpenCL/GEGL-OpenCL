@@ -15,10 +15,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(std_dev, "Std. Dev.", 0.0, 100.0, 1.0, "Standard deviation (spatial scale factor)")
-gegl_chant_double(scale,  "Scale", 0.0, 100.0, 1.0, "Scale, strength of effect.")
+gegl_chant_double(std_dev, _("Std. Dev."), 0.0, 100.0, 1.0,
+                  _("Standard deviation (spatial scale factor)"))
+gegl_chant_double(scale,  _("Scale"), 0.0, 100.0, 1.0, _("Scale, strength of effect."))
 
 #else
 
@@ -97,8 +103,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "unsharp-mask";
   operation_class->categories  = "meta:enhance";
   operation_class->description =
-        "Performs an unsharp mask on the input buffer (sharpens an image by"
-        " adding false mach-bands around edges).";
+        _("Performs an unsharp mask on the input buffer (sharpens an image by "
+          "adding false mach-bands around edges).");
 }
 
 #endif

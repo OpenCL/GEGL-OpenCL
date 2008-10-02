@@ -17,14 +17,19 @@
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, "Radius", 0.0, 70.0, 8.0,
-  "Radius of square pixel region (width and height will be radius*2+1)")
-gegl_chant_int (pairs, "Pairs", 1, 2, 2,
-  "Number of pairs, higher number preserves more acute features")
-gegl_chant_double (percentile, "Percentile", 0.0, 100.0, 50.0,
-  "The percentile to return, the default value 50 is equal to the median.")
+gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 8.0,
+  _("Radius of square pixel region (width and height will be radius*2+1)"))
+gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
+  _("Number of pairs, higher number preserves more acute features"))
+gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50.0,
+  _("The percentile to return, the default value 50 is equal to the median."))
 
 #else
 
@@ -262,7 +267,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "snn-percentile";
   operation_class->categories  = "misc";
   operation_class->description =
-        "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours";
+        _("Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours");
 }
 
 #endif

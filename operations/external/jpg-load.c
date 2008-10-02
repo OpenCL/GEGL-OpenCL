@@ -15,9 +15,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "", "Path of file to load.")
+gegl_chant_path (path, _("File"), "", _("Path of file to load."))
 
 #else
 
@@ -195,7 +200,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "jpg-load";
   operation_class->categories  = "hidden";
-  operation_class->description = "JPG image loader";
+  operation_class->description = _("JPG image loader");
 
 //  static gboolean done=FALSE;
 //  if (done)

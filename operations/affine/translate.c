@@ -16,17 +16,21 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   "Horizontal translation.")
+                   _("Horizontal translation."))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   "Vertical translation.")
+                   _("Vertical translation."))
 
 #else
 
 #define GEGL_CHANT_NAME translate
-#define GEGL_CHANT_DESCRIPTION "Repositions the buffer (with subpixel precision)."
+#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision).")
 #define GEGL_CHANT_SELF "translate.c"
 #include "chant.h"
 

@@ -15,14 +15,19 @@
  *
  * Copyright 2006 Kevin Cozens <kcozens@cvs.gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path, "File", "",
-                 "Path to SVG file to load")
-gegl_chant_int (width,  "Width",  1, G_MAXINT, 100,
-                "Width for rendered image")
-gegl_chant_int (height, "Height", 1, G_MAXINT, 100,
-                "Height for rendered image")
+gegl_chant_path (path, _("File"), "",
+                 _("Path to SVG file to load"))
+gegl_chant_int (width,  _("Width"),  1, G_MAXINT, 100,
+                _("Width for rendered image"))
+gegl_chant_int (height, _("Height"), 1, G_MAXINT, 100,
+                _("Height for rendered image"))
 
 #else
 
@@ -231,7 +236,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "svg-load";
   operation_class->categories  = "input";   /* not hidden because it has extra API */
-  operation_class->description = "Load an SVG file using librsvg";
+  operation_class->description = _("Load an SVG file using librsvg");
 
 //  static gboolean done=FALSE;
 //  if (done)

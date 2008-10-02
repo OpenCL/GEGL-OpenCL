@@ -15,24 +15,30 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_multiline (string, "Text", "Hello",
-                      "String to display (utf8)")
-gegl_chant_string (font, "Font family", "Sans",
-                   "Font family (utf8)")
-gegl_chant_double (size, "Size", 1.0, 2048.0, 10.0,
-                   "Approximate height of text in pixels.")
-gegl_chant_color  (color, "Color", "white",
-                   "Color for the text (defaults to 'white')")
-gegl_chant_int    (wrap, "Wrap width", -1, 1000000, -1,
-                   "Sets the width in pixels at which long lines will wrap. Use -1 for no wrapping.")
-gegl_chant_int    (alignment, "Justification", 0, 2, 0,
-                   "Alignment for multi-line text (0=Left, 1=Center, 2=Right)")
-gegl_chant_int    (width, "Width", 0, 1000000, 0,
-                   "Rendered width in pixels. (read only)")
-gegl_chant_int    (height, "Height", 0, 1000000, 0,
-                   "Rendered height in pixels. (read only)")
+gegl_chant_multiline (string, _("Text"), "Hello",
+                      _("String to display (utf8)"))
+gegl_chant_string (font, _("Font family"), "Sans",
+                   _("Font family (utf8)"))
+gegl_chant_double (size, _("Size"), 1.0, 2048.0, 10.0,
+                   _("Approximate height of text in pixels."))
+gegl_chant_color  (color, _("Color"), "white",
+                   _("Color for the text (defaults to 'white')"))
+gegl_chant_int    (wrap, _("Wrap width"), -1, 1000000, -1,
+                   _("Sets the width in pixels at which long lines will wrap. "
+                     "Use -1 for no wrapping."))
+gegl_chant_int    (alignment, _("Justification"), 0, 2, 0,
+                   _("Alignment for multi-line text (0=Left, 1=Center, 2=Right)"))
+gegl_chant_int    (width, _("Width"), 0, 1000000, 0,
+                   _("Rendered width in pixels. (read only)"))
+gegl_chant_int    (height, _("Height"), 0, 1000000, 0,
+                   _("Rendered height in pixels. (read only)"))
 
 #else
 
@@ -286,7 +292,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "text";
   operation_class->categories  = "render";
-  operation_class->description = "Display a string of text using pango and cairo.";
+  operation_class->description = _("Display a string of text using pango and cairo.");
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
   operation_source_class->process = process;

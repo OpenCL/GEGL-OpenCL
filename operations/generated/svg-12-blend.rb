@@ -70,6 +70,10 @@ d = [
     ]
 
 file_head1 = '
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 /* no properties */
@@ -178,7 +182,7 @@ a.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
+        _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "
   file.write file_tail2
   file.close
@@ -240,7 +244,7 @@ b.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\";
+        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\");
 "
   file.write file_tail2
   file.close
@@ -307,7 +311,7 @@ c.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\";
+        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\");
 "
   file.write file_tail2
   file.close
@@ -365,7 +369,7 @@ d.each do
   file.write "
   operation_class->name        = \"#{name}\";
   operation_class->description =
-        \"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\";
+        _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "
   file.write file_tail2
   file.close

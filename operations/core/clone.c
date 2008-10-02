@@ -16,10 +16,14 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (ref, "Reference", "ID",
-                   "The reference ID used as input (for use in XML).")
+gegl_chant_string (ref, _("Reference"), "ID",
+                   _("The reference ID used as input (for use in XML)."))
 
 #else
 
@@ -101,7 +105,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "clone";
   operation_class->categories  = "core";
-  operation_class->description = "Clone a buffer";
+  operation_class->description = _("Clone a buffer");
 
   operation_class->no_cache = TRUE;
 }

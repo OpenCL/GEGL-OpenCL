@@ -18,22 +18,26 @@
  *                Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, "Radius", 2, 5000.0, 300,
-                "Neighbourhood taken into account")
-gegl_chant_int (samples, "Samples", 0, 1000, 10,
-                "Number of samples to do")
-gegl_chant_int (iterations, "Iterations", 0, 1000, 10,
-                "Number of iterations (length of exposure)")
-gegl_chant_boolean (same_spray, "Same spray", TRUE,
-                    "Use the same spray for all pixels")
-gegl_chant_double (rgamma, "Radial Gamma", 0.0, 8.0, 2.0,
-                   "Gamma applied to radial distribution")
-gegl_chant_double (strength, "Strength", -10.0, 10.0, 1.0,
-                   "Amount of correction 0=none 1.0=full")
-gegl_chant_double (gamma, "Gamma", 0.0, 10.0, 1.0,
-                   "Post correction gamma.")
+gegl_chant_int (radius, _("Radius"), 2, 5000.0, 300,
+                _("Neighbourhood taken into account"))
+gegl_chant_int (samples, _("Samples"), 0, 1000, 10,
+                _("Number of samples to do"))
+gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
+                _("Number of iterations (length of exposure)"))
+gegl_chant_boolean (same_spray, _("Same spray"), TRUE,
+                    _("Use the same spray for all pixels"))
+gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
+                   _("Gamma applied to radial distribution"))
+gegl_chant_double (strength, _("Strength"), -10.0, 10.0, 1.0,
+                   _("Amount of correction 0=none 1.0=full"))
+gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
+                   _("Post correction gamma"))
 
 #else
 
@@ -180,7 +184,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "stress";
   operation_class->categories  = "enhance";
   operation_class->description =
-        "Spatio Temporal Retinex-like Envelope with Stochastic Sampling.";
+        _("Spatio Temporal Retinex-like Envelope with Stochastic Sampling.");
 }
 
 #endif

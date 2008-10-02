@@ -49,9 +49,13 @@ a.each do
 
     file.write copyright
     file.write "
+#include \"config.h\"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, \"Value\", -G_MAXDOUBLE, G_MAXDOUBLE, #{item[2]}, \"global value used if aux doesn't contain data\")
+gegl_chant_double (value, _(\"Value\"), -G_MAXDOUBLE, G_MAXDOUBLE, #{item[2]}, _(\"global value used if aux doesn't contain data\"))
 
 #else
 
@@ -145,7 +149,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = \"#{name}\";
   operation_class->categories  = \"compositors:math\";
   operation_class->description =
-       \"Math operation #{name} (#{formula})\";
+       _(\"Math operation #{name} (#{formula})\");
 }
 #endif
 "

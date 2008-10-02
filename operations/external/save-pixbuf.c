@@ -15,10 +15,15 @@
  *
  * Copyright 2007 Étienne Bersac <bersace03@laposte.net>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (pixbuf, "Pixbuf location",
-                    "The location where to store the output GdkPixbuf.")
+gegl_chant_pointer (pixbuf, _("Pixbuf location"),
+                    _("The location where to store the output GdkPixbuf."))
 
 #else
 
@@ -97,7 +102,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "save-pixbuf";
   operation_class->categories  = "programming:output";
-  operation_class->description = "Save output into a GdkPixbuf.";
+  operation_class->description = _("Save output into a GdkPixbuf.");
 
 }
 

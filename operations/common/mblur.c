@@ -15,9 +15,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (dampness, "Dampness", 0.0, 1.0, 0.95, "The value represents the contribution of the past to the new frame.")
+gegl_chant_double (dampness, _("Dampness"), 0.0, 1.0, 0.95,
+    _("The value represents the contribution of the past to the new frame."))
 
 #else
 
@@ -135,7 +141,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "mblur";
   operation_class->categories  = "blur:video";
-  operation_class->description = "Accumulating motion blur";
+  operation_class->description = _("Accumulating motion blur");
 }
 
 #endif
