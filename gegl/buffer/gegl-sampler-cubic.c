@@ -144,7 +144,6 @@ gegl_sampler_cubic_get (GeglSampler *self,
   context_rect = self->context_rect;
   dx = (gint) x;
   dy = (gint) y;
-  newval[0] = newval[1] = newval[2] = newval[3] = 0.;
   sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
 
 #ifdef HAS_G4FLOAT

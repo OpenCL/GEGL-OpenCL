@@ -1,5 +1,12 @@
 2008-10-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler-cubic.c: (gegl_sampler_cubic_get):
+
+	Removed redundant clearing of newval, spotted by Nicolas Robidoux
+	(bug #540540).
+
+2008-10-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch witch cosmetic improvements from  Nicolas Robidoux
 	for bug #552159 cleaning up the YAFR code.
 
