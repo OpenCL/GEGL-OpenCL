@@ -1,305 +1,823 @@
 /* This file is part of GEGL
  *
- * GEGL is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
+ * GEGL is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
  *
- * GEGL is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * GEGL is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ * License along with GEGL; if not, see
+ * <http://www.gnu.org/licenses/>.
  *
- * 2008 (c) Nicolas Robidoux (developer of Yet Another Fast Resampler):
+ * 2008 (c) Nicolas Robidoux (developer of Yet Another Fast
+ * Resampler).
  */
 
 #include <glib-object.h>
-#include <glib/gstdio.h>
-#include <glib/gprintf.h>
 #include "gegl-types.h"
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-yafr.h"
-#include <string.h>
+
+/*
+ * This source code contains two versions of Catmull-Rom YAFR:
+ *
+ * One is for actual use in gegl.
+ *
+ * The other one is there to show what implementing a better abyss
+ * policy (either inside or outside of the samplers) or passing to the
+ * samplers information about where the valid data starts and ends,
+ * could do.  Uncomment the following #define and recompile to
+ * activate this demo version.
+ *
+ * Once installed, you can quickly see the difference by typing gegl
+ * in a terminal.
+ *
+ * Then, on the default "GEGL banner image", try shear with origin-x =
+ * 590, origin-y = -200, x (shear coefficient) = 0.1, y (shear
+ * coefficient) = -.2, and toggle the various samplers.
+ *
+ * Or try rotation by 7 degrees with origin-x = 150 and origin-y =
+ * 150.
+ *
+ * The demo version makes the incorrect assumption that the "real"
+ * data starts at index 0, which may or may not hold. Also, it does
+ * not use information regarding where the real data ends because,
+ * despite helpful hints from Geert Jordaens, I have not figured out
+ * how to make the sampler access this information.
+ *
+ */
+
+/* #define ___DEMO_OF_YAFR_WITH_CAREFUL_BOUNDARY_CONDITIONS___ */
+
+#ifndef ___DEMO_OF_YAFR_WITH_CAREFUL_BOUNDARY_CONDITIONS___
 #include <math.h>
+#endif
+
+#ifndef restrict
+#ifdef __restrict
+#define restrict __restrict
+#else
+#ifdef __restrict__
+#define restrict __restrict__
+#else
+#define restrict
+#endif
+#endif
+#endif
+
+#ifndef unlikely
+#ifdef __builtin_expect
+#define unlikely(x) __builtin_expect((x),0)
+#else
+#define unlikely(x) (x)
+#endif
+#endif
 
 enum
 {
   PROP_0,
-  PROP_B,
-  PROP_C,
-  PROP_TYPE,
   PROP_LAST
 };
 
-static void      gegl_sampler_yafr_get (GeglSampler  *sampler,
-                                         gdouble       x,
-                                         gdouble       y,
-                                         void         *output);
-static void      get_property           (GObject      *gobject,
-                                         guint         prop_id,
-                                         GValue       *value,
-                                         GParamSpec   *pspec);
-static void      set_property           (GObject      *gobject,
-                                         guint         prop_id,
-                                         const GValue *value,
-                                         GParamSpec   *pspec);
-static inline gfloat yafrKernel       (gfloat        x,
-                                        gfloat        b,
-                                        gfloat        c);
+static void gegl_sampler_yafr_get (      GeglSampler *self,
+                                   const gdouble      x,
+                                   const gdouble      y,
+                                         void        *output);
 
+static void set_property (      GObject    *gobject,
+                                guint       property_id,
+                          const GValue     *value,
+                                GParamSpec *pspec);
+
+static void get_property (GObject    *gobject,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec);
 
 G_DEFINE_TYPE (GeglSamplerYafr, gegl_sampler_yafr, GEGL_TYPE_SAMPLER)
+
+/*
+ * YAFR = Yet Another Fast Resampler
+ *
+ * Yet Another Fast Resampler is a nonlinear resampler which consists
+ * of Catmull-Rom (which is a linear scheme) plus a nonlinear
+ * sharpening correction which is tuned for the straightening of
+ * diagonal interfaces between flat colour areas.
+ *
+ * Key properties:
+ *
+ * YAFR is interpolatory:
+ *
+ * If asked for the value at the center of an input pixel, it will
+ * return the corresponding value, unchanged.
+ *
+ * YAFR preserves local averages:
+ *
+ * The average of the reconstructed intensity surface over any region
+ * is the same as the average of the piecewise constant surface with
+ * values over pixel areas equal to the input pixel values (the
+ * "nearest neighbour" surface), except for a small amount of blur at
+ * the boundary of the region. More precicely: YAFR is a box filtered
+ * exact area method.
+ *
+ * Main weakness of YAFR:
+ *
+ * Executive summary: YAFR improves on Catmull-Rom only for images
+ * with at least a little bit of smoothness.
+ *
+ * More specifically: If a portion of the image is such that every
+ * pixel has immediate neighbours in the horizontal and vertical
+ * directions which have exactly the same pixel value, then YAFR boils
+ * down to Catmull-Rom, and the computation of the correction is a
+ * waste.  Extreme case: If all the pixels are either pure black or
+ * pure white in some region, as in some text images (more generally,
+ * if the region is "bichromatic"), then the correction is 0 in the
+ * interior of the bichromatic region.
+ */
 
 static void
 gegl_sampler_yafr_class_init (GeglSamplerYafrClass *klass)
 {
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
-  GObjectClass     *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass     *object_class  = G_OBJECT_CLASS (klass);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  sampler_class->get     = gegl_sampler_yafr_get;
-
-  g_object_class_install_property (object_class, PROP_B,
-                                   g_param_spec_double 
-                                   ("b",
-                                    "B",
-                                    "B-spline parameter",
-                                    0.0,
-                                    1.0,
-                                    1.0,
-                                    G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
-  g_object_class_install_property (object_class, PROP_C,
-                                   g_param_spec_double 
-                                   ("c",
-                                    "C",
-                                    "C-spline parameter",
-                                    0.0,
-                                    1.0,
-                                    0.0,
-                                    G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
-  g_object_class_install_property (object_class, PROP_TYPE,
-                                   g_param_spec_string 
-                                   ("type",
-                                    "type",
-                          "B-spline type (yafr | catmullrom | formula) 2c+b=1",
-                                    "yafr",
-                                    G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-}
+  sampler_class->get = gegl_sampler_yafr_get;
+ }
 
 static void
 gegl_sampler_yafr_init (GeglSamplerYafr *self)
 {
- GEGL_SAMPLER (self)->context_rect= (GeglRectangle){-1,-1,4,4};
- GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
- self->b=1.0;
- self->c=0.0;
- self->type = g_strdup("yafr");
- if (strcmp (self->type, "yafr"))
-    {
-      /* yafr B-spline */
-      self->b = 0.0;
-      self->c = 0.5;
-    }
-  else if (strcmp (self->type, "catmullrom"))
-    {
-      /* Catmull-Rom spline */
-      self->b = 1.0;
-      self->c = 0.0;
-    }
-  else if (strcmp (self->type, "formula"))
-    {
-      self->c = (1.0 - self->b) / 2.0;
-    }
+  GEGL_SAMPLER (self)->context_rect = (GeglRectangle){-1,-1,4,4};
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
-void
-gegl_sampler_yafr_get (GeglSampler *self,
-                        gdouble      x,
-                        gdouble      y,
-                        void        *output)
-{
-  GeglSamplerYafr *yafr = (GeglSamplerYafr*)(self);
-  const GeglRectangle context_rect = self->context_rect;
-  /* 
-   * Yet Another Fast Resampler is a nonlinear two-parameter family of
-   * schemes which includes both bilinear and Catmull-Rom as members.
-   *
-   * For all values of the parameters, the sampler is interpolatory,
-   * meaning that if a sample value is desired right at a pixel
-   * location, the scheme returns this same value; another way of
-   * saying the same thing is that it does not "change the original's
-   * pixel values; a method without this property will not return an
-   * almost identical image when the scaling is almost 1.
-   *
-   * For all values of the parameters, the sampler is local average
-   * preserving, meaning that (except for a small "blur"), the average
-   * of the sampling surface over any region is the same as the
-   * average of the piecewise constant surface with values the input
-   * pixel values. Consequently, all methods are almost "exact area."
-   *
-   * Finally: For some values of the parameters, the method is
-   * monotone; for some of those values, the method is co-convex.
-   */
-  /*
-   * MODIFY THE VALUES OF THE FOLLOWING VARIABLES TO EXPLORE ALL THE
-   * BUILT-IN SCHEMES. 
-   *
-   * smooth = .85 
-   * 
-   * and 
-   *
-   * straighten = ( 64. - 35.*smooth ) / ( 16. * (1.-smooth) ) 
-   * 
-   * are "good overall" default values, but others work well (and give
-   * quite different results).
-   */
-  const gdouble smooth = .85;
-  const gdouble straighten = ( 64. - 35.*smooth ) / ( 16. * (1.-smooth) );
-  /*
-   * smooth is a continuous parameter which specifies how much to
-   * blend the output of the nonlinear part of the method with
-   * Catmul-Rom.
-   *
-   * Range of values: 
-   *
-   * 0 <= smooth <= 1.
-   *
-   * If smooth = 1, it's pure Catmul-Rom.
-   *
-   * If smooth = 0, it's pure "nonlinear" scheme (bilinear if
-   * straigten = 0 as well).
-   *
-   */
-  /*
-   * NICOLAS TO DO:
-   *
-   * The default value smooth = .85 is an approximation of the
-   * "optimal" anisotropy reducing value. I'll need to compute several
-   * 2D integrals to figure out the exact number to put here. Without
-   * this computation, I looked at a bunch of blending of bilinear and
-   * Catmull-Rom cardinal basis functions and picked the one which
-   * looks the most anisotropic to me.
-   */
-  /*
-   * straighten is a continuous method parameter which correlates with
-   * the amount of straighten which the nonlinear part of the method
-   * may add. You may also think of it as a sharpening parameter:
-   * within the range of practical values, higher values correspond to
-   * more sharpening, less aliasing and, for positive values, more
-   * posterization.
-   *
-   * The "useable" range of values for this parameter are basically
-   * contained in
-   *
-   * 0 <= straighten <= ( 64 - 35*smooth ) / ( 16 * (1-smooth) )
-   *
-   * Note that if smooth = 0, then the overall scheme is pure
-   * Catmull-Rom, and consequently the value of straighten is
-   * irrelevant.
-   *
-   * The upper bound is always at least 4 (for acceptable blending
-   * values of smooth).
-   *
-   * If straighten = 0, there is no nonlinear component to the method,
-   * and the overall scheme is linear, being a linear combination of
-   * bilinear and Catmull-Rom.
-   * 
-   * Values outside of this range will produce increasingly "artistic"
-   * results.
-   *
-   * The default value
-   *
-   * straighten = ( 64 - 35*smooth ) / ( 16 * (1-smooth) )
-   *
-   * corresponds to "maximum reasonable straigtening" (at the expense
-   * of some haloin, posterization, and texture). Probably, straighten
-   * should go down from this value---or smooth increased---if
-   * unwanted artifacts are introduced by the method.
-   *
-   * If sampling seems to add unwanted texture artifacts, push
-   * straighten toward 0. The scheme is very strongly sharpening for
-   * values above 2.
-   * 
-   * This default value is most suitable for upsampling. For
-   * downsampling, straighten = 1 or 2 is probably best.
-   *
-   * straighten = 1 works well with smooth images, and can be
-   * described as a sharper and less aliased relative of bilinear. For
-   * value of straighten in the interval [0,1], the box filtered
-   * piecewise linear (non Catmull-Rom) part of the method is
-   * co-convex ("does not add kinks").
-   *
-   * For values of straighten in the interval [0,2], the
-   * non Catmull-Rom part of the method is co-monotone ("does not add
-   * oscillations").
-   *
-   * Because these properties persist somewhat even when blended with
-   * Catmull-Rom and/or using larger values of straighten, the method,
-   * to some extent, mimicks Lanczos's ability to reduce jaggies,
-   * without much haloing and texturing.
-   *
-   * straighten = 2 is the highest value which does not add any
-   * haloing in the non-Catmull-Rom part (by virtue of being
-   * monotone). If your transparency pattern is complex, you probably
-   * want to stick to values which satisfy straighten <= 2, and
-   * reasonably low values of smooth.
-   * 
-   * straighten = 4 is a good choice for images with fairly sharp
-   * diagonal lines, at the expense, typically, of a very small amount
-   * of posterization, haloin, and texture. When smooth > 0, larger
-   * values work well.
-   *
-   * Main shortcoming of the method: 
-   *
-   * If a portion of the image is such that every pixel has immediate
-   * neighbours in both diagonal directions which have exactly (or
-   * almost exactly, relative to the local dynamic range) the same
-   * pixel values, then the box filtered piecewise linear portion of
-   * the method---the part which is multiplied by (1-smooth)---boils
-   * down to bilinear (except possibly near the boundary, since the
-   * values near the boundary depend on the abyss policy). For
-   * example, if all the pixels are either pure black or pure white in
-   * some region (as in some text images), then the nonlinear part of
-   * the method is no better than bilinear.  Of course, you may like
-   * the way the method blends bilinear and Catmull-Rom, but a lot of
-   * the above computation is wasted: all the computed slopes are
-   * zero. This being said, the current version of the code takes
-   * between 10 and 20% longer to scale images than the current,
-   * stock, gegl-sampler-linear (when driven from a simple xml file),
-   * and is actually a little faster than the current, stock,
-   * gegl-sample-yafr.
-   */
-  /*
-   * FUTURE PROGRAMMING: smooth and straighten should be settable by
-   * the caller.
-   */
-  /*
-   * Note: As apparently is the convention used throughout, x is
-   * understand to increase from left to right, but y increases from
-   * top to bottom.
-   */
-  /*
-   * FUTURE PROGRAMMING: The following should be implemented to be
-   * safe for values of x/y which are less than -.5. Right now, the
-   * rounding is toward +infinity when x (y) is sufficiently negative,
-   * toward -infinity when positive. This may cause problems.
-   */
-  /*
-   * dx and dy are the indices of the pixel at or to the left of the
-   * sampling point.
-   */
-  const gint dx = (gint) x;
-  const gint dy = (gint) y;
+#ifndef ___DEMO_OF_YAFR_WITH_CAREFUL_BOUNDARY_CONDITIONS___
 
-  const gfloat* __restrict__ sampler_bptr = 
-    gegl_sampler_get_ptr (self, dx, dy);
+static inline gfloat
+catrom_yafr (const gfloat cardinal_one,
+             const gfloat cardinal_two,
+             const gfloat cardinal_thr,
+             const gfloat cardinal_fou,
+             const gfloat cardinal_uno,
+             const gfloat cardinal_dos,
+             const gfloat cardinal_tre,
+             const gfloat cardinal_qua,
+             const gfloat left_width_times_up__height_times_rite_width,
+             const gfloat left_width_times_dow_height_times_rite_width,
+             const gfloat left_width_times_up__height_times_dow_height,
+             const gfloat rite_width_times_up__height_times_dow_height,
+             const gfloat* restrict this_channels_one_uno_bptr)
+{
+  const gfloat sharpening_over_two = 0.453125f;
+  /*
+   * "sharpening" is a continuous method parameter which is
+   * proportional to the amount of "diagonal straightening" which the
+   * nonlinear correction part of the method may add. You may also
+   * think of it as a sharpening parameter: higher values correspond
+   * to more sharpening, negative values to strange looking effects.
+   *
+   * The default value is sharpening = 29/32. When the scheme being
+   * "straightened" is Catmull-Rom---as is the case here---this value
+   * fixes key pixel values near a diagonal boundary between two
+   * monochrome regions (the diagonal boundary pixel values being set
+   * to the halfway colour).
+   *
+   * If resampling seems to add unwanted texture artifacts, push
+   * sharpening toward 0. It is not recommended to set sharpening to a
+   * value larger than 4.
+   *
+   * We scale sharpening by half because the .5 which has to do with
+   * the relative coordinates of the evaluation points (which has to
+   * do with .5*rite_width etc) is folded into the constant to save
+   * flops.
+   */
+
+  /*
+   * Load the useful pixel values for the channel under
+   * consideration. The pointer is assumed to point to one_uno.
+   */
+  const gint channels = 4;
+  const gint pixels_per_row = 64;
+  /*
+   * The input pixel values are described by the following stencil.
+   * English abbreviations are used to label positions from left to
+   * right, Spanish ones to label positions from top to bottom:
+   *
+   *   (dx-1,dy-1)     (dx,dy-1)       (dx+1,dy-1)     (dx+2,dy-1)
+   *   =one_uno        =two_uno        =thr_uno        = fou_uno
+   *
+   *   (dx-1,dy)       (dx,dy)         (dx+1,dy)       (dx+2,dy)
+   *   =one_dos        =two_dos        =thr_dos        = fou_dos
+   *
+   *   (dx-1,dy+1)     (dx,dy+1)       (dx+1,dy+1)     (dx+2,dy+1)
+   *   =one_tre        =two_tre        =thr_tre        = fou_tre
+   *
+   *   (dx-1,dy+2)     (dx,dy+2)       (dx+1,dy+2)     (dx+2,dy+2)
+   *   =one_qua        =two_qua        =thr_qua        = fou_qua
+   */
+  const gfloat one_uno =
+    this_channels_one_uno_bptr[          0                             ];
+  const gfloat two_uno =
+    this_channels_one_uno_bptr[   channels                             ];
+  const gfloat thr_uno =
+    this_channels_one_uno_bptr[ 2*channels                             ];
+  const gfloat fou_uno =
+    this_channels_one_uno_bptr[ 3*channels                             ];
+
+  const gfloat one_dos =
+    this_channels_one_uno_bptr[                pixels_per_row*channels ];
+  const gfloat two_dos =
+    this_channels_one_uno_bptr[   channels +   pixels_per_row*channels ];
+  const gfloat thr_dos =
+    this_channels_one_uno_bptr[ 2*channels +   pixels_per_row*channels ];
+  const gfloat fou_dos =
+    this_channels_one_uno_bptr[ 3*channels +   pixels_per_row*channels ];
+
+  const gfloat one_tre =
+    this_channels_one_uno_bptr[              2*pixels_per_row*channels ];
+  const gfloat two_tre =
+    this_channels_one_uno_bptr[   channels + 2*pixels_per_row*channels ];
+  const gfloat thr_tre =
+    this_channels_one_uno_bptr[ 2*channels + 2*pixels_per_row*channels ];
+  const gfloat fou_tre =
+    this_channels_one_uno_bptr[ 3*channels + 2*pixels_per_row*channels ];
+
+  const gfloat one_qua =
+    this_channels_one_uno_bptr[              3*pixels_per_row*channels ];
+  const gfloat two_qua =
+    this_channels_one_uno_bptr[   channels + 3*pixels_per_row*channels ];
+  const gfloat thr_qua =
+    this_channels_one_uno_bptr[ 2*channels + 3*pixels_per_row*channels ];
+  const gfloat fou_qua =
+    this_channels_one_uno_bptr[ 3*channels + 3*pixels_per_row*channels ];
+
+  /*
+   * Computation of the YAFR correction:
+   *
+   * Basically, if two consecutive pixel value differences have the
+   * same sign, the smallest one (in absolute value) is taken to be
+   * the corresponding slope. Otherwise, the corresponding slope is
+   * set to 0.
+   *
+   * Four such pairs (vertical and horizontal) of slopes need to be
+   * computed, one pair for each of the pixels which potentially
+   * overlap the unit area centered at the interpolation point.
+   */
+  /*
+   * Beginning of the computation of the "up" horizontal slopes:
+   */
+  const gfloat prem__up = two_dos - one_dos;
+  const gfloat deux__up = thr_dos - two_dos;
+  const gfloat troi__up = fou_dos - thr_dos;
+  /*
+   * "down" horizontal slopes:
+   */
+  const gfloat prem_dow = two_tre - one_tre;
+  const gfloat deux_dow = thr_tre - two_tre;
+  const gfloat troi_dow = fou_tre - thr_tre;
+  /*
+   * "left" vertical slopes:
+   */
+  const gfloat prem_left = two_dos - two_uno;
+  const gfloat deux_left = two_tre - two_dos;
+  const gfloat troi_left = two_qua - two_tre;
+  /*
+   * "right" vertical slopes:
+   */
+  const gfloat prem_rite = thr_dos - thr_uno;
+  const gfloat deux_rite = thr_tre - thr_dos;
+  const gfloat troi_rite = thr_qua - thr_tre;
+
+  /*
+   * Branching parts of the computation of the YAFR correction (could
+   * be unbranched using C99 math intrinsics, or by the compiler):
+   */
+  /*
+   * Back to "up":
+   */
+  const gfloat abs_prem__up = prem__up < 0.f ? -prem__up : prem__up;
+  const gfloat abs_deux__up = deux__up < 0.f ? -deux__up : deux__up;
+  const gfloat abs_troi__up = troi__up < 0.f ? -troi__up : troi__up;
+  /*
+   * Back to "down":
+   */
+  const gfloat abs_prem_dow = prem_dow < 0.f ? -prem_dow : prem_dow;
+  const gfloat abs_deux_dow = deux_dow < 0.f ? -deux_dow : deux_dow;
+  const gfloat abs_troi_dow = troi_dow < 0.f ? -troi_dow : troi_dow;
+  /*
+   * Back to "left":
+   */
+  const gfloat abs_prem_left = prem_left < 0.f ? -prem_left : prem_left;
+  const gfloat abs_deux_left = deux_left < 0.f ? -deux_left : deux_left;
+  const gfloat abs_troi_left = troi_left < 0.f ? -troi_left : troi_left;
+  /*
+   * Back to "right":
+   */
+  const gfloat abs_prem_rite = prem_rite < 0.f ? -prem_rite : prem_rite;
+  const gfloat abs_deux_rite = deux_rite < 0.f ? -deux_rite : deux_rite;
+  const gfloat abs_troi_rite = troi_rite < 0.f ? -troi_rite : troi_rite;
+
+  /*
+   * "up":
+   */
+  const gfloat prem__up_times_deux__up = prem__up * deux__up;
+  const gfloat deux__up_times_troi__up = deux__up * troi__up;
+  /*
+   * "down":
+   */
+  const gfloat prem_dow_times_deux_dow = prem_dow * deux_dow;
+  const gfloat deux_dow_times_troi_dow = deux_dow * troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat prem_left_times_deux_left = prem_left * deux_left;
+  const gfloat deux_left_times_troi_left = deux_left * troi_left;
+  /*
+   * "right":
+   */
+  const gfloat prem_rite_times_deux_rite = prem_rite * deux_rite;
+  const gfloat deux_rite_times_troi_rite = deux_rite * troi_rite;
+
+  /*
+   * "up":
+   */
+  const gfloat prem__up_vs_deux__up =
+    abs_prem__up < abs_deux__up ? prem__up : deux__up;
+  const gfloat deux__up_vs_troi__up =
+    abs_deux__up < abs_troi__up ? deux__up : troi__up;
+  /*
+   * "down":
+   */
+  const gfloat prem_dow_vs_deux_dow =
+    abs_prem_dow < abs_deux_dow ? prem_dow : deux_dow;
+  const gfloat deux_dow_vs_troi_dow =
+    abs_deux_dow < abs_troi_dow ? deux_dow : troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat prem_left_vs_deux_left =
+    abs_prem_left < abs_deux_left ? prem_left : deux_left;
+  const gfloat deux_left_vs_troi_left =
+    abs_deux_left < abs_troi_left ? deux_left : troi_left;
+  /*
+   * "right":
+   */
+  const gfloat prem_rite_vs_deux_rite =
+    abs_prem_rite < abs_deux_rite ? prem_rite : deux_rite;
+  const gfloat deux_rite_vs_troi_rite =
+    abs_deux_rite < abs_troi_rite ? deux_rite : troi_rite;
+  /*
+   * The YAFR correction computation will resume after the computation
+   * of the Catmull-Rom baseline.
+   */
+
+  /*
+   * Catmull-Rom baseline contribution:
+   */
+  const gfloat catmull_rom =
+    cardinal_uno *
+    (
+      cardinal_one * one_uno
+      +
+      cardinal_two * two_uno
+      +
+      cardinal_thr * thr_uno
+      +
+      cardinal_fou * fou_uno
+    )
+    +
+    cardinal_dos *
+    (
+      cardinal_one * one_dos
+      +
+      cardinal_two * two_dos
+      +
+      cardinal_thr * thr_dos
+      +
+      cardinal_fou * fou_dos
+    )
+    +
+    cardinal_tre *
+    (
+      cardinal_one * one_tre
+      +
+      cardinal_two * two_tre
+      +
+      cardinal_thr * thr_tre
+      +
+      cardinal_fou * fou_tre
+    )
+    +
+    cardinal_qua *
+    (
+      cardinal_one * one_qua
+      +
+      cardinal_two * two_qua
+      +
+      cardinal_thr * thr_qua
+      +
+      cardinal_fou * fou_qua
+    );
+
+  /*
+   * Computation of the YAFR slopes.
+   */
+  /*
+   * "up":
+   */
+  const gfloat mx_left__up =
+    prem__up_times_deux__up < 0.f ? 0.f : prem__up_vs_deux__up;
+  const gfloat mx_rite__up =
+    deux__up_times_troi__up < 0.f ? 0.f : deux__up_vs_troi__up;
+  /*
+   * "down":
+   */
+  const gfloat mx_left_dow =
+    prem_dow_times_deux_dow < 0.f ? 0.f : prem_dow_vs_deux_dow;
+  const gfloat mx_rite_dow =
+    deux_dow_times_troi_dow < 0.f ? 0.f : deux_dow_vs_troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat my_left__up =
+    prem_left_times_deux_left < 0.f ? 0.f : prem_left_vs_deux_left;
+  const gfloat my_left_dow =
+    deux_left_times_troi_left < 0.f ? 0.f : deux_left_vs_troi_left;
+  /*
+   * "down":
+   */
+  const gfloat my_rite__up =
+    prem_rite_times_deux_rite < 0.f ? 0.f : prem_rite_vs_deux_rite;
+  const gfloat my_rite_dow =
+    deux_rite_times_troi_rite < 0.f ? 0.f : deux_rite_vs_troi_rite;
+
+  /*
+   * Assemble the YAFR correction:
+   */
+  const gfloat unweighted_yafr_correction =
+    left_width_times_up__height_times_rite_width
+    *
+    ( mx_left__up - mx_rite__up )
+    +
+    left_width_times_dow_height_times_rite_width
+    *
+    ( mx_left_dow - mx_rite_dow )
+    +
+    left_width_times_up__height_times_dow_height
+    *
+    ( my_left__up - my_left_dow )
+    +
+    rite_width_times_up__height_times_dow_height
+    *
+    ( my_rite__up - my_rite_dow );
+
+  /*
+   * Add the Catmull-Rom baseline and the weighted YAFR correction:
+   */
+  const gfloat newval =
+    sharpening_over_two * unweighted_yafr_correction + catmull_rom;
+
+  return newval;
+}
+
+#else
+
+static inline gfloat
+catrom_yafr (const gfloat cardinal_one,
+             const gfloat cardinal_two,
+             const gfloat cardinal_thr,
+             const gfloat cardinal_fou,
+             const gfloat cardinal_uno,
+             const gfloat cardinal_dos,
+             const gfloat cardinal_tre,
+             const gfloat cardinal_qua,
+             const gfloat left_width_times_up__height_times_rite_width,
+             const gfloat left_width_times_dow_height_times_rite_width,
+             const gfloat left_width_times_up__height_times_dow_height,
+             const gfloat rite_width_times_up__height_times_dow_height,
+             const gfloat one_uno,
+             const gfloat two_uno,
+             const gfloat thr_uno,
+             const gfloat fou_uno,
+             const gfloat one_dos,
+             const gfloat two_dos,
+             const gfloat thr_dos,
+             const gfloat fou_dos,
+             const gfloat one_tre,
+             const gfloat two_tre,
+             const gfloat thr_tre,
+             const gfloat fou_tre,
+             const gfloat one_qua,
+             const gfloat two_qua,
+             const gfloat thr_qua,
+             const gfloat fou_qua)
+{
+  const gfloat sharpening_over_two = 0.453125f;
+  /*
+   * "sharpening" is a continuous method parameter which is
+   * proportional to the amount of "diagonal straightening" which the
+   * nonlinear correction part of the method may add. You may also
+   * think of it as a sharpening parameter: higher values correspond
+   * to more sharpening, negative values to strange looking effects.
+   *
+   * The default value is sharpening = 29/32. When the scheme being
+   * "straightened" is Catmull-Rom---as is the case here---this value
+   * fixes key pixel values near a diagonal boundary between two
+   * monochrome regions (the diagonal boundary pixel values being set
+   * to the halfway colour).
+   *
+   * If resampling seems to add unwanted texture artifacts, push
+   * sharpening toward 0. It is not recommended to set sharpening to a
+   * value larger than 4.
+   *
+   * We scale sharpening by half because the .5 which has to do with
+   * the relative coordinates of the evaluation points (which has to
+   * do with .5*rite_width etc) is folded into the constant to save
+   * flops.
+   */
+
+  /*
+   * Computation of the YAFR correction:
+   *
+   * Basically, if two consecutive pixel value differences have the
+   * same sign, the smallest one (in absolute value) is taken to be
+   * the corresponding slope. Otherwise, the corresponding slope is
+   * set to 0.
+   *
+   * Four such pairs (vertical and horizontal) of slopes need to be
+   * computed, one pair for each of the pixels which potentially
+   * overlap the unit area centered at the interpolation point.
+   */
+  /*
+   * Beginning of the computation of the "up" horizontal slopes:
+   */
+  const gfloat prem__up = two_dos - one_dos;
+  const gfloat deux__up = thr_dos - two_dos;
+  const gfloat troi__up = fou_dos - thr_dos;
+  /*
+   * "down" horizontal slopes:
+   */
+  const gfloat prem_dow = two_tre - one_tre;
+  const gfloat deux_dow = thr_tre - two_tre;
+  const gfloat troi_dow = fou_tre - thr_tre;
+  /*
+   * "left" vertical slopes:
+   */
+  const gfloat prem_left = two_dos - two_uno;
+  const gfloat deux_left = two_tre - two_dos;
+  const gfloat troi_left = two_qua - two_tre;
+  /*
+   * "right" vertical slopes:
+   */
+  const gfloat prem_rite = thr_dos - thr_uno;
+  const gfloat deux_rite = thr_tre - thr_dos;
+  const gfloat troi_rite = thr_qua - thr_tre;
+
+  /*
+   * Branching parts of the computation of the YAFR correction (could
+   * be unbranched using C99 math intrinsics, or by the compiler):
+   */
+  /*
+   * Back to "up":
+   */
+  const gfloat abs_prem__up = prem__up < 0.f ? -prem__up : prem__up;
+  const gfloat abs_deux__up = deux__up < 0.f ? -deux__up : deux__up;
+  const gfloat abs_troi__up = troi__up < 0.f ? -troi__up : troi__up;
+  /*
+   * Back to "down":
+   */
+  const gfloat abs_prem_dow = prem_dow < 0.f ? -prem_dow : prem_dow;
+  const gfloat abs_deux_dow = deux_dow < 0.f ? -deux_dow : deux_dow;
+  const gfloat abs_troi_dow = troi_dow < 0.f ? -troi_dow : troi_dow;
+  /*
+   * Back to "left":
+   */
+  const gfloat abs_prem_left = prem_left < 0.f ? -prem_left : prem_left;
+  const gfloat abs_deux_left = deux_left < 0.f ? -deux_left : deux_left;
+  const gfloat abs_troi_left = troi_left < 0.f ? -troi_left : troi_left;
+  /*
+   * Back to "right":
+   */
+  const gfloat abs_prem_rite = prem_rite < 0.f ? -prem_rite : prem_rite;
+  const gfloat abs_deux_rite = deux_rite < 0.f ? -deux_rite : deux_rite;
+  const gfloat abs_troi_rite = troi_rite < 0.f ? -troi_rite : troi_rite;
+
+  /*
+   * "up":
+   */
+  const gfloat prem__up_times_deux__up = prem__up * deux__up;
+  const gfloat deux__up_times_troi__up = deux__up * troi__up;
+  /*
+   * "down":
+   */
+  const gfloat prem_dow_times_deux_dow = prem_dow * deux_dow;
+  const gfloat deux_dow_times_troi_dow = deux_dow * troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat prem_left_times_deux_left = prem_left * deux_left;
+  const gfloat deux_left_times_troi_left = deux_left * troi_left;
+  /*
+   * "right":
+   */
+  const gfloat prem_rite_times_deux_rite = prem_rite * deux_rite;
+  const gfloat deux_rite_times_troi_rite = deux_rite * troi_rite;
+
+  /*
+   * "up":
+   */
+  const gfloat prem__up_vs_deux__up =
+    abs_prem__up < abs_deux__up ? prem__up : deux__up;
+  const gfloat deux__up_vs_troi__up =
+    abs_deux__up < abs_troi__up ? deux__up : troi__up;
+  /*
+   * "down":
+   */
+  const gfloat prem_dow_vs_deux_dow =
+    abs_prem_dow < abs_deux_dow ? prem_dow : deux_dow;
+  const gfloat deux_dow_vs_troi_dow =
+    abs_deux_dow < abs_troi_dow ? deux_dow : troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat prem_left_vs_deux_left =
+    abs_prem_left < abs_deux_left ? prem_left : deux_left;
+  const gfloat deux_left_vs_troi_left =
+    abs_deux_left < abs_troi_left ? deux_left : troi_left;
+  /*
+   * "right":
+   */
+  const gfloat prem_rite_vs_deux_rite =
+    abs_prem_rite < abs_deux_rite ? prem_rite : deux_rite;
+  const gfloat deux_rite_vs_troi_rite =
+    abs_deux_rite < abs_troi_rite ? deux_rite : troi_rite;
+  /*
+   * The YAFR correction computation will resume after the computation
+   * of the Catmull-Rom baseline.
+   */
+
+  /*
+   * Catmull-Rom baseline contribution:
+   */
+  const gfloat catmull_rom =
+    cardinal_uno *
+    (
+      cardinal_one * one_uno
+      +
+      cardinal_two * two_uno
+      +
+      cardinal_thr * thr_uno
+      +
+      cardinal_fou * fou_uno
+    )
+    +
+    cardinal_dos *
+    (
+      cardinal_one * one_dos
+      +
+      cardinal_two * two_dos
+      +
+      cardinal_thr * thr_dos
+      +
+      cardinal_fou * fou_dos
+    )
+    +
+    cardinal_tre *
+    (
+      cardinal_one * one_tre
+      +
+      cardinal_two * two_tre
+      +
+      cardinal_thr * thr_tre
+      +
+      cardinal_fou * fou_tre
+    )
+    +
+    cardinal_qua *
+    (
+      cardinal_one * one_qua
+      +
+      cardinal_two * two_qua
+      +
+      cardinal_thr * thr_qua
+      +
+      cardinal_fou * fou_qua
+    );
+
+  /*
+   * Computation of the YAFR slopes.
+   */
+  /*
+   * "up":
+   */
+  const gfloat mx_left__up =
+    prem__up_times_deux__up < 0.f ? 0.f : prem__up_vs_deux__up;
+  const gfloat mx_rite__up =
+    deux__up_times_troi__up < 0.f ? 0.f : deux__up_vs_troi__up;
+  /*
+   * "down":
+   */
+  const gfloat mx_left_dow =
+    prem_dow_times_deux_dow < 0.f ? 0.f : prem_dow_vs_deux_dow;
+  const gfloat mx_rite_dow =
+    deux_dow_times_troi_dow < 0.f ? 0.f : deux_dow_vs_troi_dow;
+  /*
+   * "left":
+   */
+  const gfloat my_left__up =
+    prem_left_times_deux_left < 0.f ? 0.f : prem_left_vs_deux_left;
+  const gfloat my_left_dow =
+    deux_left_times_troi_left < 0.f ? 0.f : deux_left_vs_troi_left;
+  /*
+   * "down":
+   */
+  const gfloat my_rite__up =
+    prem_rite_times_deux_rite < 0.f ? 0.f : prem_rite_vs_deux_rite;
+  const gfloat my_rite_dow =
+    deux_rite_times_troi_rite < 0.f ? 0.f : deux_rite_vs_troi_rite;
+
+  /*
+   * Assemble the YAFR correction:
+   */
+  const gfloat unweighted_yafr_correction =
+    left_width_times_up__height_times_rite_width
+    *
+    ( mx_left__up - mx_rite__up )
+    +
+    left_width_times_dow_height_times_rite_width
+    *
+    ( mx_left_dow - mx_rite_dow )
+    +
+    left_width_times_up__height_times_dow_height
+    *
+    ( my_left__up - my_left_dow )
+    +
+    rite_width_times_up__height_times_dow_height
+    *
+    ( my_rite__up - my_rite_dow );
+
+  /*
+   * Add the Catmull-Rom baseline and the weighted YAFR correction:
+   */
+  const gfloat newval =
+    sharpening_over_two * unweighted_yafr_correction + catmull_rom;
+
+  return newval;
+}
+
+#endif
+
+#ifndef ___DEMO_OF_YAFR_WITH_CAREFUL_BOUNDARY_CONDITIONS___
+
+static void
+gegl_sampler_yafr_get (      GeglSampler *self,
+                       const gdouble      x,
+                       const gdouble      y,
+                             void        *output)
+{
+  /*
+   * The computation is structured to foster software pipelining.
+   */
+
+  /*
+   * x is understood to increase from left to right (like the index
+   * "j"), y, from top to bottom (like the index "i").  Consequently,
+   * dx and dy are the indices of the pixel located at or to the left,
+   * and at or above. the sampling point.
+   */
+  /* floor is used to make sure that the transition through 0 is
+   * smooth:
+   */
+  const gint dx = floorf (x);
+  const gint dy = floorf (y);
+
+  /*
+   * Pointer to enlarged input stencil values:
+   */
+  const gfloat* restrict sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
+
+  /*
+   * Each (channel's) output pixel value is obtained by combining four
+   * "pieces," each piece corresponding to the set of points which are
+   * closest to the four pixels closest to the (x,y) position, pixel
+   * positions which have coordinates and labels as follows:
+   *
+   *                   (dx,dy)         (dx+1,dy)
+   *                   =left__up       =rite__up
+   *
+   *                          <- (x,y) is somewhere in the convex hull
+   *
+   *                   (dx,dy+1)       (dx+1,dy+1)
+   *                   =left_dow       =rite_dow
+   */
   /*
    * rite_width is the width of the overlaps of the unit averaging box
    * (which is centered at the position where an interpolated value is
@@ -310,1089 +828,512 @@ gegl_sampler_yafr_get (GeglSampler *self,
    * desired), with the closest unit pixel areas to the left.
    */
   const gfloat rite_width = x - dx;
-  const gfloat left_width = (gfloat) 1. - rite_width;
-
   const gfloat dow_height = y - dy;
-  const gfloat up__height = (gfloat) 1. - dow_height;
+  const gfloat left_width = 1.f - rite_width;
+  const gfloat up__height = 1.f - dow_height;
   /*
    * .5*rite_width is the x-coordinate of the center of the overlap of
    * the averaging box with the left pixel areas, relative to the
    * position of the centers of the left pixels.
-   * 
+   *
    * -.5*left_width is the x-coordinate ... right pixel areas,
    * relative to ... the right pixels.
    *
    * .5*dow_height is the y-coordinate of the center of the overlap
    * of the averaging box with the up pixel areas, relative to the
    * position of the centers of the up pixels.
-   * 
+   *
    * -.5*up__height is the y-coordinate ... down pixel areas, relative
    * to ... the down pixels.
    */
-  const gfloat rite_width_times_dow_height = rite_width * dow_height;
-  const gfloat left_width_times_dow_height = left_width * dow_height;
-  const gfloat rite_width_times_up__height = rite_width * up__height;
-  const gfloat left_width_times_up__height = left_width * up__height;
 
-  const gfloat s_factor = .25 * straighten;
-
-  const gfloat s_factor_times_rite_width = s_factor * rite_width;
-  const gfloat s_factor_times_dow_height = s_factor * dow_height;
-  const gfloat s_factor_times_left_width = s_factor * left_width;
-  const gfloat s_factor_times_up__height = s_factor * up__height;
   /*
-   * The following are only useful if smooth is not zero, that is,
-   * if Catmul-Rom is blended in. We calculate these coefficients no
-   * matter what since this is most likely cheaper than branching.
+   * Values of the Catmull-Rom cardinal basis functions at the
+   * sampling point. Recyclable quantities are computed at the same
+   * time:
    */
-  const gfloat minus_half_left_width_times_rite_width
-    = (gfloat) -.5 * left_width * rite_width;
-  const gfloat first_cardinal = 
-    left_width * minus_half_left_width_times_rite_width;
-  const gfloat fourt_cardinal = 
-    rite_width * minus_half_left_width_times_rite_width;
-  const gfloat secon_cardinal =
-    left_width 
-    * 
-    ( 
-      (gfloat) 1. 
-      + 
-      rite_width * ( (gfloat) 1. + (gfloat) -1.5 * rite_width )
-    );
-  const gfloat third_cardinal =
-    (gfloat) 1. 
-    -
-    ( first_cardinal + fourt_cardinal + secon_cardinal );
+  const gfloat left_width_times_rite_width = left_width * rite_width;
+  const gfloat up__height_times_dow_height = up__height * dow_height;
 
+  const gfloat cardinal_two =
+    left_width_times_rite_width * ( -1.5f * rite_width + 1.f )
+    + left_width;
+  const gfloat cardinal_dos =
+    up__height_times_dow_height * ( -1.5f * dow_height + 1.f )
+    + up__height;
+
+  const gfloat minus_half_left_width_times_rite_width =
+    -.5f * left_width_times_rite_width;
   const gfloat minus_half_up__height_times_dow_height =
-    (gfloat) -.5 * up__height * dow_height;
-  const gfloat top_cardinal = 
-    up__height * minus_half_up__height_times_dow_height;
-  const gfloat bot_cardinal = 
-    dow_height * minus_half_up__height_times_dow_height;
-  const gfloat up__cardinal =
-    up__height * 
-    ( 
-      (gfloat) 1. 
-      + 
-      dow_height * ( (gfloat) 1. + (gfloat) -1.5 * dow_height ) 
-    );
-  const gfloat dow_cardinal =
-    (gfloat) 1. 
-    - 
-    ( top_cardinal + bot_cardinal + up__cardinal );
+    -.5f * up__height_times_dow_height;
 
-  const gint absolute_offsets[] = 
-    { (-1*64+-1)*4, (-1*64+ 0)*4, (-1*64+ 1)*4, (-1*64+ 2)*4,
-      ( 0*64+-1)*4, ( 0*64+ 0)*4, ( 0*64+ 1)*4, ( 0*64+ 2)*4,
-      ( 1*64+-1)*4, ( 1*64+ 0)*4, ( 1*64+ 1)*4, ( 1*64+ 2)*4,
-      ( 2*64+-1)*4, ( 2*64+ 0)*4, ( 2*64+ 1)*4, ( 2*64+ 2)*4 };
+  const gfloat left_width_times_up__height_times_rite_width =
+    left_width_times_rite_width * up__height;
+  const gfloat left_width_times_dow_height_times_rite_width =
+    left_width_times_rite_width * dow_height;
+  const gfloat left_width_times_up__height_times_dow_height =
+    up__height_times_dow_height * left_width;
+  const gfloat rite_width_times_up__height_times_dow_height =
+    up__height_times_dow_height * rite_width;
 
-  const gfloat* __restrict__ ptr_0  = sampler_bptr + absolute_offsets[0];
-  const gfloat first_top_0 = ptr_0[0];
-  const gfloat first_top_1 = ptr_0[1];
-  const gfloat first_top_2 = ptr_0[2];
-  const gfloat first_top_3 = ptr_0[3];
+  const gfloat cardinal_one =
+    minus_half_left_width_times_rite_width * left_width;
+  const gfloat cardinal_fou =
+    minus_half_left_width_times_rite_width * rite_width;
 
-  const gfloat* __restrict__ ptr_1  = sampler_bptr + absolute_offsets[1];
-  const gfloat secon_top_0 = ptr_1[0];
-  const gfloat secon_top_1 = ptr_1[1];
-  const gfloat secon_top_2 = ptr_1[2];
-  const gfloat secon_top_3 = ptr_1[3];
+  const gfloat cardinal_uno =
+    minus_half_up__height_times_dow_height * up__height;
+  const gfloat cardinal_qua =
+    minus_half_up__height_times_dow_height * dow_height;
 
-  const gfloat* __restrict__ ptr_2  = sampler_bptr + absolute_offsets[2];
-  const gfloat third_top_0 = ptr_2[0];
-  const gfloat third_top_1 = ptr_2[1];
-  const gfloat third_top_2 = ptr_2[2];
-  const gfloat third_top_3 = ptr_2[3];
+  const gfloat cardinal_thr =
+    1.f - ( minus_half_left_width_times_rite_width + cardinal_two );
+  const gfloat cardinal_tre =
+    1.f - ( minus_half_up__height_times_dow_height + cardinal_dos );
 
-  const gfloat* __restrict__ ptr_3  = sampler_bptr + absolute_offsets[3];
-  const gfloat fourt_top_0 = ptr_3[0];
-  const gfloat fourt_top_1 = ptr_3[1];
-  const gfloat fourt_top_2 = ptr_3[2];
-  const gfloat fourt_top_3 = ptr_3[3];
+  /*
+   * The newval array will contain the four (one per channel)
+   * computed resampled values:
+   */
+  gfloat newval[4];
 
-  const gfloat* __restrict__ ptr_4  = sampler_bptr + absolute_offsets[4];
-  const gfloat first__up_0 = ptr_4[0];
-  const gfloat first__up_1 = ptr_4[1];
-  const gfloat first__up_2 = ptr_4[2];
-  const gfloat first__up_3 = ptr_4[3];
+  /*
+   * Set the tile pointer to the first relevant value:
+   */
+  const gint channels = 4;
+  const gint pixels_per_row = 64;
+  sampler_bptr -= channels + pixels_per_row * channels;
 
-  const gfloat* __restrict__ ptr_5  = sampler_bptr + absolute_offsets[5];
-  const gfloat secon__up_0 = ptr_5[0];
-  const gfloat secon__up_1 = ptr_5[1];
-  const gfloat secon__up_2 = ptr_5[2];
-  const gfloat secon__up_3 = ptr_5[3];
+  newval[0] = catrom_yafr (cardinal_one,
+                           cardinal_two,
+                           cardinal_thr,
+                           cardinal_fou,
+                           cardinal_uno,
+                           cardinal_dos,
+                           cardinal_tre,
+                           cardinal_qua,
+                           left_width_times_up__height_times_rite_width,
+                           left_width_times_dow_height_times_rite_width,
+                           left_width_times_up__height_times_dow_height,
+                           rite_width_times_up__height_times_dow_height,
+                           sampler_bptr++);
+  newval[1] = catrom_yafr (cardinal_one,
+                           cardinal_two,
+                           cardinal_thr,
+                           cardinal_fou,
+                           cardinal_uno,
+                           cardinal_dos,
+                           cardinal_tre,
+                           cardinal_qua,
+                           left_width_times_up__height_times_rite_width,
+                           left_width_times_dow_height_times_rite_width,
+                           left_width_times_up__height_times_dow_height,
+                           rite_width_times_up__height_times_dow_height,
+                           sampler_bptr++);
+  newval[2] = catrom_yafr (cardinal_one,
+                           cardinal_two,
+                           cardinal_thr,
+                           cardinal_fou,
+                           cardinal_uno,
+                           cardinal_dos,
+                           cardinal_tre,
+                           cardinal_qua,
+                           left_width_times_up__height_times_rite_width,
+                           left_width_times_dow_height_times_rite_width,
+                           left_width_times_up__height_times_dow_height,
+                           rite_width_times_up__height_times_dow_height,
+                           sampler_bptr++);
+  newval[3] = catrom_yafr (cardinal_one,
+                           cardinal_two,
+                           cardinal_thr,
+                           cardinal_fou,
+                           cardinal_uno,
+                           cardinal_dos,
+                           cardinal_tre,
+                           cardinal_qua,
+                           left_width_times_up__height_times_rite_width,
+                           left_width_times_dow_height_times_rite_width,
+                           left_width_times_up__height_times_dow_height,
+                           rite_width_times_up__height_times_dow_height,
+                           sampler_bptr);
 
-  const gfloat* __restrict__ ptr_6  = sampler_bptr + absolute_offsets[6];
-  const gfloat third__up_0 = ptr_6[0];
-  const gfloat third__up_1 = ptr_6[1];
-  const gfloat third__up_2 = ptr_6[2];
-  const gfloat third__up_3 = ptr_6[3];
+  /*
+   * Ship out newval:
+   */
+  babl_process (babl_fish (self->interpolate_format, self->format),
+                newval,
+                output,
+                1);
+}
 
-  const gfloat* __restrict__ ptr_7  = sampler_bptr + absolute_offsets[7];
-  const gfloat fourt__up_0 = ptr_7[0];
-  const gfloat fourt__up_1 = ptr_7[1];
-  const gfloat fourt__up_2 = ptr_7[2];
-  const gfloat fourt__up_3 = ptr_7[3];
+#else
 
-  const gfloat* __restrict__ ptr_8  = sampler_bptr + absolute_offsets[8];
-  const gfloat first_dow_0 = ptr_8[0];
-  const gfloat first_dow_1 = ptr_8[1];
-  const gfloat first_dow_2 = ptr_8[2];
-  const gfloat first_dow_3 = ptr_8[3];
+void
+gegl_sampler_yafr_get (      GeglSampler *self,
+                       const gdouble      x,
+                       const gdouble      y,
+                             void        *output)
+{
+  /*
+   * The input pixel values are described by the following stencil.
+   * English abbreviations are used to label positions from left to
+   * right, Spanish ones to label positions from top to bottom:
+   *
+   *   (dx-1,dy-1)     (dx,dy-1)       (dx+1,dy-1)     (dx+2,dy-1)
+   *   =one_uno        =two_uno        =thr_uno        = fou_uno
+   *
+   *   (dx-1,dy)       (dx,dy)         (dx+1,dy)       (dx+2,dy)
+   *   =one_dos        =two_dos        =thr_dos        = fou_dos
+   *
+   *   (dx-1,dy+1)     (dx,dy+1)       (dx+1,dy+1)     (dx+2,dy+1)
+   *   =one_tre        =two_tre        =thr_tre        = fou_tre
+   *
+   *   (dx-1,dy+2)     (dx,dy+2)       (dx+1,dy+2)     (dx+2,dy+2)
+   *   =one_qua        =two_qua        =thr_qua        = fou_qua
+   *
+   * They are further differentiated by channel ("_0," ,,, "_3").
+   */
+  gfloat one_uno_0, one_uno_1, one_uno_2, one_uno_3;
+  gfloat two_uno_0, two_uno_1, two_uno_2, two_uno_3;
+  gfloat thr_uno_0, thr_uno_1, thr_uno_2, thr_uno_3;
+  gfloat fou_uno_0, fou_uno_1, fou_uno_2, fou_uno_3;
+  gfloat one_dos_0, one_dos_1, one_dos_2, one_dos_3;
+  gfloat two_dos_0, two_dos_1, two_dos_2, two_dos_3;
+  gfloat thr_dos_0, thr_dos_1, thr_dos_2, thr_dos_3;
+  gfloat fou_dos_0, fou_dos_1, fou_dos_2, fou_dos_3;
+  gfloat one_tre_0, one_tre_1, one_tre_2, one_tre_3;
+  gfloat two_tre_0, two_tre_1, two_tre_2, two_tre_3;
+  gfloat thr_tre_0, thr_tre_1, thr_tre_2, thr_tre_3;
+  gfloat fou_tre_0, fou_tre_1, fou_tre_2, fou_tre_3;
+  gfloat one_qua_0, one_qua_1, one_qua_2, one_qua_3;
+  gfloat two_qua_0, two_qua_1, two_qua_2, two_qua_3;
+  gfloat thr_qua_0, thr_qua_1, thr_qua_2, thr_qua_3;
+  gfloat fou_qua_0, fou_qua_1, fou_qua_2, fou_qua_3;
+  /*
+   * Each (channel's) output pixel value is obtained by combining four
+   * "pieces," each piece corresponding to the set of points which are
+   * closest to the four pixels closest to the (x,y) position, pixel
+   * positions which have coordinates and labels as follows:
+   *
+   *                   (dx,dy)         (dx+1,dy)
+   *                   =left__up       =rite__up
+   *
+   *                          <- (x,y) is somewhere in the convex hull
+   *
+   *                   (dx,dy+1)       (dx+1,dy+1)
+   *                   =left_dow       =rite_dow
+   *
+   * See the first comment of the catrom_yafr function for the
+   * corresponding "input values" picture.
+   */
+  /*
+   * x is understood to increase from left to right (like the index
+   * "j"), y, from top to bottom (like the index "i"). If the sampling
+   * position is outside the image extent, replace it by the closest
+   * one on the boundary of the image:
+   */
+  const gfloat local_x = x < 0.f ? 0.f : x;
+  const gfloat local_y = y < 0.f ? 0.f : y;
+  /*
+   * dx and dy are the positions of the pixel which is at or to the
+   * left, and at or above, the sampling position:
+   */
+  const gint dx = (gint) local_x;
+  const gint dy = (gint) local_y;
+  /*
+   * Pointer to enlarged input stencil with 64x64(x4) entries pointing
+   * to the leftmost/uppermost (one_uno for channel 0) value in the
+   * 4x4(x4) stencil:
+   */
+  gfloat* restrict sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
 
-  const gfloat* __restrict__ ptr_9  = sampler_bptr + absolute_offsets[9];
-  const gfloat secon_dow_0 = ptr_9[0];
-  const gfloat secon_dow_1 = ptr_9[1];
-  const gfloat secon_dow_2 = ptr_9[2];
-  const gfloat secon_dow_3 = ptr_9[3];
+  /*
+   * Set the tile pointer to the first relevant value:
+   */
+  const gint channels = 4;
+  const gint pixels_per_row = 64;
+  const gint stencil_width = 4;
+  sampler_bptr -= channels + pixels_per_row * channels;
 
-  const gfloat* __restrict__ ptr_10 = sampler_bptr + absolute_offsets[10];
-  const gfloat third_dow_0 = ptr_10[0];
-  const gfloat third_dow_1 = ptr_10[1];
-  const gfloat third_dow_2 = ptr_10[2];
-  const gfloat third_dow_3 = ptr_10[3];
-
-  const gfloat* __restrict__ ptr_11 = sampler_bptr + absolute_offsets[11];
-  const gfloat fourt_dow_0 = ptr_11[0];
-  const gfloat fourt_dow_1 = ptr_11[1];
-  const gfloat fourt_dow_2 = ptr_11[2];
-  const gfloat fourt_dow_3 = ptr_11[3];
-
-  const gfloat* __restrict__ ptr_12 = sampler_bptr + absolute_offsets[12];
-  const gfloat first_bot_0 = ptr_12[0];
-  const gfloat first_bot_1 = ptr_12[1];
-  const gfloat first_bot_2 = ptr_12[2];
-  const gfloat first_bot_3 = ptr_12[3];
-
-  const gfloat* __restrict__ ptr_13 = sampler_bptr + absolute_offsets[13];
-  const gfloat secon_bot_0 = ptr_13[0];
-  const gfloat secon_bot_1 = ptr_13[1];
-  const gfloat secon_bot_2 = ptr_13[2];
-  const gfloat secon_bot_3 = ptr_13[3];
-
-  const gfloat* __restrict__ ptr_14 = sampler_bptr + absolute_offsets[14];
-  const gfloat third_bot_0 = ptr_14[0];
-  const gfloat third_bot_1 = ptr_14[1];
-  const gfloat third_bot_2 = ptr_14[2];
-  const gfloat third_bot_3 = ptr_14[3];
-
-  const gfloat* __restrict__ ptr_15 = sampler_bptr + absolute_offsets[15];
-  const gfloat fourt_bot_0 = ptr_15[0];
-  const gfloat fourt_bot_1 = ptr_15[1];
-  const gfloat fourt_bot_2 = ptr_15[2];
-  const gfloat fourt_bot_3 = ptr_15[3];
-
-  gfloat newval_0;
-  gfloat newval_1;
-  gfloat newval_2;
-  gfloat newval_3;
+  one_uno_0 = *sampler_bptr++;
+  one_uno_1 = *sampler_bptr++;
+  one_uno_2 = *sampler_bptr++;
+  one_uno_3 = *sampler_bptr++;
+  two_uno_0 = *sampler_bptr++;
+  two_uno_1 = *sampler_bptr++;
+  two_uno_2 = *sampler_bptr++;
+  two_uno_3 = *sampler_bptr++;
+  thr_uno_0 = *sampler_bptr++;
+  thr_uno_1 = *sampler_bptr++;
+  thr_uno_2 = *sampler_bptr++;
+  thr_uno_3 = *sampler_bptr++;
+  fou_uno_0 = *sampler_bptr++;
+  fou_uno_1 = *sampler_bptr++;
+  fou_uno_2 = *sampler_bptr++;
+  fou_uno_3 = *sampler_bptr;
+  sampler_bptr += 1 + ( pixels_per_row - stencil_width ) * channels;
+  one_dos_0 = *sampler_bptr++;
+  one_dos_1 = *sampler_bptr++;
+  one_dos_2 = *sampler_bptr++;
+  one_dos_3 = *sampler_bptr++;
+  two_dos_0 = *sampler_bptr++;
+  two_dos_1 = *sampler_bptr++;
+  two_dos_2 = *sampler_bptr++;
+  two_dos_3 = *sampler_bptr++;
+  thr_dos_0 = *sampler_bptr++;
+  thr_dos_1 = *sampler_bptr++;
+  thr_dos_2 = *sampler_bptr++;
+  thr_dos_3 = *sampler_bptr++;
+  fou_dos_0 = *sampler_bptr++;
+  fou_dos_1 = *sampler_bptr++;
+  fou_dos_2 = *sampler_bptr++;
+  fou_dos_3 = *sampler_bptr;
+  sampler_bptr += 1 + ( pixels_per_row - stencil_width ) * channels;
+  one_tre_0 = *sampler_bptr++;
+  one_tre_1 = *sampler_bptr++;
+  one_tre_2 = *sampler_bptr++;
+  one_tre_3 = *sampler_bptr++;
+  two_tre_0 = *sampler_bptr++;
+  two_tre_1 = *sampler_bptr++;
+  two_tre_2 = *sampler_bptr++;
+  two_tre_3 = *sampler_bptr++;
+  thr_tre_0 = *sampler_bptr++;
+  thr_tre_1 = *sampler_bptr++;
+  thr_tre_2 = *sampler_bptr++;
+  thr_tre_3 = *sampler_bptr++;
+  fou_tre_0 = *sampler_bptr++;
+  fou_tre_1 = *sampler_bptr++;
+  fou_tre_2 = *sampler_bptr++;
+  fou_tre_3 = *sampler_bptr;
+  sampler_bptr += 1 + ( pixels_per_row - stencil_width ) * channels;
+  one_qua_0 = *sampler_bptr++;
+  one_qua_1 = *sampler_bptr++;
+  one_qua_2 = *sampler_bptr++;
+  one_qua_3 = *sampler_bptr++;
+  two_qua_0 = *sampler_bptr++;
+  two_qua_1 = *sampler_bptr++;
+  two_qua_2 = *sampler_bptr++;
+  two_qua_3 = *sampler_bptr++;
+  thr_qua_0 = *sampler_bptr++;
+  thr_qua_1 = *sampler_bptr++;
+  thr_qua_2 = *sampler_bptr++;
+  thr_qua_3 = *sampler_bptr++;
+  fou_qua_0 = *sampler_bptr++;
+  fou_qua_1 = *sampler_bptr++;
+  fou_qua_2 = *sampler_bptr++;
+  fou_qua_3 = *sampler_bptr;
+  /*
+   * If the stencil sticks out to the left---and consequently was
+   * filled with values computed with the default abyss
+   * policy)---replace the corresponding "made up" (abyss) values by
+   * values computed using (bi)yafr extrapolation:
+   */
+  if unlikely (dx == (gint) 0)
+    {
+      one_uno_0 = 2.f * two_uno_0 - thr_uno_0;
+      one_uno_1 = 2.f * two_uno_1 - thr_uno_1;
+      one_uno_2 = 2.f * two_uno_2 - thr_uno_2;
+      one_uno_3 = 2.f * two_uno_3 - thr_uno_3;
+      one_dos_0 = 2.f * two_dos_0 - thr_dos_0;
+      one_dos_1 = 2.f * two_dos_1 - thr_dos_1;
+      one_dos_2 = 2.f * two_dos_2 - thr_dos_2;
+      one_dos_3 = 2.f * two_dos_3 - thr_dos_3;
+      one_tre_0 = 2.f * two_tre_0 - thr_tre_0;
+      one_tre_1 = 2.f * two_tre_1 - thr_tre_1;
+      one_tre_2 = 2.f * two_tre_2 - thr_tre_2;
+      one_tre_3 = 2.f * two_tre_3 - thr_tre_3;
+      one_qua_0 = 2.f * two_qua_0 - thr_qua_0;
+      one_qua_1 = 2.f * two_qua_1 - thr_qua_1;
+      one_qua_2 = 2.f * two_qua_2 - thr_qua_2;
+      one_qua_3 = 2.f * two_qua_3 - thr_qua_3;
+    }
+  /*
+   * Same if the stencil sticks out of the top:
+   */
+  if unlikely (dy == (gint) 0)
+    {
+      one_uno_0 = 2.f * one_dos_0 - one_tre_0;
+      one_uno_1 = 2.f * one_dos_1 - one_tre_1;
+      one_uno_2 = 2.f * one_dos_2 - one_tre_2;
+      one_uno_3 = 2.f * one_dos_3 - one_tre_3;
+      two_uno_0 = 2.f * two_dos_0 - two_tre_0;
+      two_uno_1 = 2.f * two_dos_1 - two_tre_1;
+      two_uno_2 = 2.f * two_dos_2 - two_tre_2;
+      two_uno_3 = 2.f * two_dos_3 - two_tre_3;
+      thr_uno_0 = 2.f * thr_dos_0 - thr_tre_0;
+      thr_uno_1 = 2.f * thr_dos_1 - thr_tre_1;
+      thr_uno_2 = 2.f * thr_dos_2 - thr_tre_2;
+      thr_uno_3 = 2.f * thr_dos_3 - thr_tre_3;
+      fou_uno_0 = 2.f * fou_dos_0 - fou_tre_0;
+      fou_uno_1 = 2.f * fou_dos_1 - fou_tre_1;
+      fou_uno_2 = 2.f * fou_dos_2 - fou_tre_2;
+      fou_uno_3 = 2.f * fou_dos_3 - fou_tre_3;
+    }
 
   {
     /*
-     * First channel:
+     * Each (channel's) output pixel value is obtained by combining
+     * four "pieces," each piece corresponding to the set of points
+     * which are closest to the four pixels closest to the (x,y)
+     * position, pixel positions which have coordinates and labels as
+     * follows:
+     *
+     *                   (dx,dy)         (dx+1,dy)
+     *                   =left__up       =rite__up
+     *
+     *                          <- (x,y) is somewhere in the convex hull
+     *
+     *                   (dx,dy+1)       (dx+1,dy+1)
+     *                   =left_dow       =rite_dow
      */
-    gfloat rising_left__up = 0.;
-    gfloat rising_left_dow = 0.;
-    gfloat rising_rite__up = 0.;
-    gfloat rising_rite_dow = 0.;
-    gfloat settin_left_dow = 0.;
-    gfloat settin_left__up = 0.;
-    gfloat settin_rite_dow = 0.;
-    gfloat settin_rite__up = 0.;
-    {
-      const gfloat premiere = secon__up_0 - first_dow_0;
-      const gfloat deuxieme = third_top_0 - secon__up_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left__up = prem_vs_deux;
-    }
-    {
-      const gfloat deuxieme = third__up_0 - secon_dow_0;
-      const gfloat premiere = secon_dow_0 - first_bot_0;
-      const gfloat troisiem = fourt_top_0 - third__up_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left_dow = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        rising_rite__up = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third_dow_0 - secon_bot_0;
-      const gfloat deuxieme = fourt__up_0 - third_dow_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_rite_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon_dow_0 - first__up_0;
-      const gfloat deuxieme = third_bot_0 - secon_dow_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon__up_0 - first_top_0;
-      const gfloat deuxieme = third_dow_0 - secon__up_0;
-      const gfloat troisiem = fourt_bot_0 - third_dow_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left__up = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        settin_rite_dow = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third__up_0 - secon_top_0;
-      const gfloat deuxieme = fourt_dow_0 - third__up_0;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_rite__up = prem_vs_deux;
-    }
-    {
-      const gfloat mx_left__up = settin_left__up + rising_left__up;
-      const gfloat my_left__up = settin_left__up - rising_left__up;
-
-      const gfloat mx_rite__up = settin_rite__up + rising_rite__up;
-      const gfloat my_rite__up = settin_rite__up - rising_rite__up;
-
-      const gfloat mx_left_dow = settin_left_dow + rising_left_dow;
-      const gfloat my_left_dow = settin_left_dow - rising_left_dow;
-
-      const gfloat mx_rite_dow = settin_rite_dow + rising_rite_dow;
-      const gfloat my_rite_dow = settin_rite_dow - rising_rite_dow;
-    
-      newval_0 =
-        left_width_times_up__height
-        *
-        ( 
-          secon__up_0 
-          + 
-          ( 
-            mx_left__up * s_factor_times_rite_width
-            + 
-            my_left__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        rite_width_times_up__height
-        * 
-        ( 
-          third__up_0 
-          - 
-          ( 
-            mx_rite__up * s_factor_times_left_width 
-            - 
-            my_rite__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        left_width_times_dow_height 
-        * 
-        ( 
-          secon_dow_0 
-          + 
-          ( 
-            mx_left_dow * s_factor_times_rite_width
-            - 
-            my_left_dow * s_factor_times_up__height 
-          )
-        )
-        +
-        rite_width_times_dow_height  
-        * 
-        ( 
-          third_dow_0 
-          - 
-          ( 
-            mx_rite_dow * s_factor_times_left_width 
-            + 
-            my_rite_dow * s_factor_times_up__height 
-          )
-        );
-
-      newval_0 *= (gfloat) 1. - smooth;
-
-      newval_0 +=
-        smooth *
-        (
-          top_cardinal *
-          (
-            first_cardinal * first_top_0 
-            +
-            secon_cardinal * secon_top_0
-            +
-            third_cardinal * third_top_0
-            +
-            fourt_cardinal * fourt_top_0
-          )
-          +
-          up__cardinal *
-          (
-            first_cardinal * first__up_0 
-            +
-            secon_cardinal * secon__up_0
-            +
-            third_cardinal * third__up_0
-            +
-            fourt_cardinal * fourt__up_0
-          )
-          +
-          dow_cardinal *
-          (
-            first_cardinal * first_dow_0 
-            +
-            secon_cardinal * secon_dow_0
-            +
-            third_cardinal * third_dow_0
-            +
-            fourt_cardinal * fourt_dow_0
-          )
-          +
-          bot_cardinal *
-          (
-            first_cardinal * first_bot_0 
-            +
-            secon_cardinal * secon_bot_0
-            +
-            third_cardinal * third_bot_0
-            +
-            fourt_cardinal * fourt_bot_0
-          )
-        );
-    }
-  }
-  {
     /*
-     * Second channel (just like the first):
+     * rite_width is the width of the overlaps of the unit averaging
+     * box (which is centered at the position where an interpolated
+     * value is desired), with the closest unit pixel areas to the
+     * right.
+     *
+     * left_width is the width of the overlaps of the unit averaging
+     * box (which is centered at the position where an interpolated
+     * value is desired), with the closest unit pixel areas to the
+     * left.
      */
-    gfloat rising_left__up = 0.;
-    gfloat rising_left_dow = 0.;
-    gfloat rising_rite__up = 0.;
-    gfloat rising_rite_dow = 0.;
-    gfloat settin_left_dow = 0.;
-    gfloat settin_left__up = 0.;
-    gfloat settin_rite_dow = 0.;
-    gfloat settin_rite__up = 0.;
-    {
-      const gfloat premiere = secon__up_1 - first_dow_1;
-      const gfloat deuxieme = third_top_1 - secon__up_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left__up = prem_vs_deux;
-    }
-    {
-      const gfloat deuxieme = third__up_1 - secon_dow_1;
-      const gfloat premiere = secon_dow_1 - first_bot_1;
-      const gfloat troisiem = fourt_top_1 - third__up_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left_dow = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        rising_rite__up = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third_dow_1 - secon_bot_1;
-      const gfloat deuxieme = fourt__up_1 - third_dow_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_rite_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon_dow_1 - first__up_1;
-      const gfloat deuxieme = third_bot_1 - secon_dow_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon__up_1 - first_top_1;
-      const gfloat deuxieme = third_dow_1 - secon__up_1;
-      const gfloat troisiem = fourt_bot_1 - third_dow_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left__up = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        settin_rite_dow = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third__up_1 - secon_top_1;
-      const gfloat deuxieme = fourt_dow_1 - third__up_1;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_rite__up = prem_vs_deux;
-    }
-    {
-      const gfloat mx_left__up = settin_left__up + rising_left__up;
-      const gfloat my_left__up = settin_left__up - rising_left__up;
-
-      const gfloat mx_rite__up = settin_rite__up + rising_rite__up;
-      const gfloat my_rite__up = settin_rite__up - rising_rite__up;
-
-      const gfloat mx_left_dow = settin_left_dow + rising_left_dow;
-      const gfloat my_left_dow = settin_left_dow - rising_left_dow;
-
-      const gfloat mx_rite_dow = settin_rite_dow + rising_rite_dow;
-      const gfloat my_rite_dow = settin_rite_dow - rising_rite_dow;
-    
-      newval_1 =
-        left_width_times_up__height
-        *
-        ( 
-          secon__up_1 
-          + 
-          ( 
-            mx_left__up * s_factor_times_rite_width
-            + 
-            my_left__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        rite_width_times_up__height
-        * 
-        ( 
-          third__up_1 
-          - 
-          ( 
-            mx_rite__up * s_factor_times_left_width 
-            - 
-            my_rite__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        left_width_times_dow_height 
-        * 
-        ( 
-          secon_dow_1 
-          + 
-          ( 
-            mx_left_dow * s_factor_times_rite_width
-            - 
-            my_left_dow * s_factor_times_up__height 
-          )
-        )
-        +
-        rite_width_times_dow_height  
-        * 
-        ( 
-          third_dow_1 
-          - 
-          ( 
-            mx_rite_dow * s_factor_times_left_width 
-            + 
-            my_rite_dow * s_factor_times_up__height 
-          )
-        );
-
-      newval_1 *= (gfloat) 1. - smooth;
-
-      newval_1 +=
-        smooth *
-        (
-          top_cardinal *
-          (
-            first_cardinal * first_top_1 
-            +
-            secon_cardinal * secon_top_1
-            +
-            third_cardinal * third_top_1
-            +
-            fourt_cardinal * fourt_top_1
-          )
-          +
-          up__cardinal *
-          (
-            first_cardinal * first__up_1 
-            +
-            secon_cardinal * secon__up_1
-            +
-            third_cardinal * third__up_1
-            +
-            fourt_cardinal * fourt__up_1
-          )
-          +
-          dow_cardinal *
-          (
-            first_cardinal * first_dow_1 
-            +
-            secon_cardinal * secon_dow_1
-            +
-            third_cardinal * third_dow_1
-            +
-            fourt_cardinal * fourt_dow_1
-          )
-          +
-          bot_cardinal *
-          (
-            first_cardinal * first_bot_1 
-            +
-            secon_cardinal * secon_bot_1
-            +
-            third_cardinal * third_bot_1
-            +
-            fourt_cardinal * fourt_bot_1
-          )
-        );
-    }
-  }
-  {
+    const gfloat rite_width = x - dx;
+    const gfloat dow_height = y - dy;
+    const gfloat left_width = 1.f - rite_width;
+    const gfloat up__height = 1.f - dow_height;
     /*
-     * Third channel:
+     * .5*rite_width is the x-coordinate of the center of the overlap of
+     * the averaging box with the left pixel areas, relative to the
+     * position of the centers of the left pixels.
+     *
+     * -.5*left_width is the x-coordinate ... right pixel areas,
+     * relative to ... the right pixels.
+     *
+     * .5*dow_height is the y-coordinate of the center of the overlap
+     * of the averaging box with the up pixel areas, relative to the
+     * position of the centers of the up pixels.
+     *
+     * -.5*up__height is the y-coordinate ... down pixel areas,
+     * relative to ... the down pixels.
      */
-    gfloat rising_left__up = 0.;
-    gfloat rising_left_dow = 0.;
-    gfloat rising_rite__up = 0.;
-    gfloat rising_rite_dow = 0.;
-    gfloat settin_left_dow = 0.;
-    gfloat settin_left__up = 0.;
-    gfloat settin_rite_dow = 0.;
-    gfloat settin_rite__up = 0.;
-    {
-      const gfloat premiere = secon__up_2 - first_dow_2;
-      const gfloat deuxieme = third_top_2 - secon__up_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left__up = prem_vs_deux;
-    }
-    {
-      const gfloat deuxieme = third__up_2 - secon_dow_2;
-      const gfloat premiere = secon_dow_2 - first_bot_2;
-      const gfloat troisiem = fourt_top_2 - third__up_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left_dow = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        rising_rite__up = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third_dow_2 - secon_bot_2;
-      const gfloat deuxieme = fourt__up_2 - third_dow_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_rite_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon_dow_2 - first__up_2;
-      const gfloat deuxieme = third_bot_2 - secon_dow_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon__up_2 - first_top_2;
-      const gfloat deuxieme = third_dow_2 - secon__up_2;
-      const gfloat troisiem = fourt_bot_2 - third_dow_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left__up = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        settin_rite_dow = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third__up_2 - secon_top_2;
-      const gfloat deuxieme = fourt_dow_2 - third__up_2;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_rite__up = prem_vs_deux;
-    }
-    {
-      const gfloat mx_left__up = settin_left__up + rising_left__up;
-      const gfloat my_left__up = settin_left__up - rising_left__up;
 
-      const gfloat mx_rite__up = settin_rite__up + rising_rite__up;
-      const gfloat my_rite__up = settin_rite__up - rising_rite__up;
-
-      const gfloat mx_left_dow = settin_left_dow + rising_left_dow;
-      const gfloat my_left_dow = settin_left_dow - rising_left_dow;
-
-      const gfloat mx_rite_dow = settin_rite_dow + rising_rite_dow;
-      const gfloat my_rite_dow = settin_rite_dow - rising_rite_dow;
-    
-      newval_2 =
-        left_width_times_up__height
-        *
-        ( 
-          secon__up_2 
-          + 
-          ( 
-            mx_left__up * s_factor_times_rite_width
-            + 
-            my_left__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        rite_width_times_up__height
-        * 
-        ( 
-          third__up_2 
-          - 
-          ( 
-            mx_rite__up * s_factor_times_left_width 
-            - 
-            my_rite__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        left_width_times_dow_height 
-        * 
-        ( 
-          secon_dow_2 
-          + 
-          ( 
-            mx_left_dow * s_factor_times_rite_width
-            - 
-            my_left_dow * s_factor_times_up__height 
-          )
-        )
-        +
-        rite_width_times_dow_height  
-        * 
-        ( 
-          third_dow_2 
-          - 
-          ( 
-            mx_rite_dow * s_factor_times_left_width 
-            + 
-            my_rite_dow * s_factor_times_up__height 
-          )
-        );
-
-      newval_2 *= (gfloat) 1. - smooth;
-
-      newval_2 +=
-        smooth *
-        (
-          top_cardinal *
-          (
-            first_cardinal * first_top_2 
-            +
-            secon_cardinal * secon_top_2
-            +
-            third_cardinal * third_top_2
-            +
-            fourt_cardinal * fourt_top_2
-          )
-          +
-          up__cardinal *
-          (
-            first_cardinal * first__up_2 
-            +
-            secon_cardinal * secon__up_2
-            +
-            third_cardinal * third__up_2
-            +
-            fourt_cardinal * fourt__up_2
-          )
-          +
-          dow_cardinal *
-          (
-            first_cardinal * first_dow_2 
-            +
-            secon_cardinal * secon_dow_2
-            +
-            third_cardinal * third_dow_2
-            +
-            fourt_cardinal * fourt_dow_2
-          )
-          +
-          bot_cardinal *
-          (
-            first_cardinal * first_bot_2 
-            +
-            secon_cardinal * secon_bot_2
-            +
-            third_cardinal * third_bot_2
-            +
-            fourt_cardinal * fourt_bot_2
-          )
-        );
-    }
-  }
-  {
     /*
-     * Fourth channel:
+     * Values of the Catmull-Rom cardinal basis functions at the
+     * sampling point. Recyclable quantities are computed at the same
+     * time:
      */
-    gfloat rising_left__up = 0.;
-    gfloat rising_left_dow = 0.;
-    gfloat rising_rite__up = 0.;
-    gfloat rising_rite_dow = 0.;
-    gfloat settin_left_dow = 0.;
-    gfloat settin_left__up = 0.;
-    gfloat settin_rite_dow = 0.;
-    gfloat settin_rite__up = 0.;
-    {
-      const gfloat premiere = secon__up_3 - first_dow_3;
-      const gfloat deuxieme = third_top_3 - secon__up_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left__up = prem_vs_deux;
-    }
-    {
-      const gfloat deuxieme = third__up_3 - secon_dow_3;
-      const gfloat premiere = secon_dow_3 - first_bot_3;
-      const gfloat troisiem = fourt_top_3 - third__up_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_left_dow = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        rising_rite__up = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third_dow_3 - secon_bot_3;
-      const gfloat deuxieme = fourt__up_3 - third_dow_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        rising_rite_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon_dow_3 - first__up_3;
-      const gfloat deuxieme = third_bot_3 - secon_dow_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left_dow = prem_vs_deux;
-    }
-    {
-      const gfloat premiere = secon__up_3 - first_top_3;
-      const gfloat deuxieme = third_dow_3 - secon__up_3;
-      const gfloat troisiem = fourt_bot_3 - third_dow_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat deuxieme_times_troisiem = deuxieme * troisiem;
-      const gfloat troisiem_squared        = troisiem * troisiem;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      const gfloat deux_vs_troi =
-        deuxieme_squared <= troisiem_squared ? deuxieme : troisiem;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_left__up = prem_vs_deux;
-      if (deuxieme_times_troisiem > (gfloat) 0.)
-        settin_rite_dow = deux_vs_troi;
-    }
-    {
-      const gfloat premiere = third__up_3 - secon_top_3;
-      const gfloat deuxieme = fourt_dow_3 - third__up_3;
-      const gfloat premiere_squared        = premiere * premiere;
-      const gfloat premiere_times_deuxieme = premiere * deuxieme;
-      const gfloat deuxieme_squared        = deuxieme * deuxieme;
-      const gfloat prem_vs_deux =
-        premiere_squared <= deuxieme_squared ? premiere : deuxieme;
-      if (premiere_times_deuxieme > (gfloat) 0.)
-        settin_rite__up = prem_vs_deux;
-    }
-    {
-      const gfloat mx_left__up = settin_left__up + rising_left__up;
-      const gfloat my_left__up = settin_left__up - rising_left__up;
+    const gfloat left_width_times_rite_width = left_width * rite_width;
+    const gfloat up__height_times_dow_height = up__height * dow_height;
 
-      const gfloat mx_rite__up = settin_rite__up + rising_rite__up;
-      const gfloat my_rite__up = settin_rite__up - rising_rite__up;
+    const gfloat cardinal_two =
+      left_width_times_rite_width * ( -1.5f * rite_width + 1.f )
+      + left_width;
+    const gfloat cardinal_dos =
+    up__height_times_dow_height * ( -1.5f * dow_height + 1.f )
+    + up__height;
 
-      const gfloat mx_left_dow = settin_left_dow + rising_left_dow;
-      const gfloat my_left_dow = settin_left_dow - rising_left_dow;
+    const gfloat minus_half_left_width_times_rite_width =
+      -.5f * left_width_times_rite_width;
+    const gfloat minus_half_up__height_times_dow_height =
+      -.5f * up__height_times_dow_height;
 
-      const gfloat mx_rite_dow = settin_rite_dow + rising_rite_dow;
-      const gfloat my_rite_dow = settin_rite_dow - rising_rite_dow;
-    
-      newval_3 =
-        left_width_times_up__height
-        *
-        ( 
-          secon__up_3 
-          + 
-          ( 
-            mx_left__up * s_factor_times_rite_width
-            + 
-            my_left__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        rite_width_times_up__height
-        * 
-        ( 
-          third__up_3 
-          - 
-          ( 
-            mx_rite__up * s_factor_times_left_width 
-            - 
-            my_rite__up * s_factor_times_dow_height 
-          )
-        )
-        +
-        left_width_times_dow_height 
-        * 
-        ( 
-          secon_dow_3 
-          + 
-          ( 
-            mx_left_dow * s_factor_times_rite_width
-            - 
-            my_left_dow * s_factor_times_up__height 
-          )
-        )
-        +
-        rite_width_times_dow_height  
-        * 
-        ( 
-          third_dow_3 
-          - 
-          ( 
-            mx_rite_dow * s_factor_times_left_width 
-            + 
-            my_rite_dow * s_factor_times_up__height 
-          )
-        );
+    const gfloat left_width_times_up__height_times_rite_width =
+      left_width_times_rite_width * up__height;
+    const gfloat left_width_times_dow_height_times_rite_width =
+      left_width_times_rite_width * dow_height;
+    const gfloat left_width_times_up__height_times_dow_height =
+      up__height_times_dow_height * left_width;
+    const gfloat rite_width_times_up__height_times_dow_height =
+      up__height_times_dow_height * rite_width;
 
-      newval_3 *= (gfloat) 1. - smooth;
+    const gfloat cardinal_one =
+      minus_half_left_width_times_rite_width * left_width;
+    const gfloat cardinal_fou =
+      minus_half_left_width_times_rite_width * rite_width;
 
-      newval_3 +=
-        smooth *
-        (
-          top_cardinal *
-          (
-            first_cardinal * first_top_3 
-            +
-            secon_cardinal * secon_top_3
-            +
-            third_cardinal * third_top_3
-            +
-            fourt_cardinal * fourt_top_3
-          )
-          +
-          up__cardinal *
-          (
-            first_cardinal * first__up_3 
-            +
-            secon_cardinal * secon__up_3
-            +
-            third_cardinal * third__up_3
-            +
-            fourt_cardinal * fourt__up_3
-          )
-          +
-          dow_cardinal *
-          (
-            first_cardinal * first_dow_3 
-            +
-            secon_cardinal * secon_dow_3
-            +
-            third_cardinal * third_dow_3
-            +
-            fourt_cardinal * fourt_dow_3
-          )
-          +
-          bot_cardinal *
-          (
-            first_cardinal * first_bot_3 
-            +
-            secon_cardinal * secon_bot_3
-            +
-            third_cardinal * third_bot_3
-            +
-            fourt_cardinal * fourt_bot_3
-          )
-        );
-    }
-  }
-  {
+    const gfloat cardinal_uno =
+      minus_half_up__height_times_dow_height * up__height;
+    const gfloat cardinal_qua =
+      minus_half_up__height_times_dow_height * dow_height;
+
+    const gfloat cardinal_thr =
+      1.f - ( minus_half_left_width_times_rite_width + cardinal_two );
+    const gfloat cardinal_tre =
+      1.f - ( minus_half_up__height_times_dow_height + cardinal_dos );
+
     gfloat newval[4];
-    newval[0] = newval_0;
-    newval[1] = newval_1;
-    newval[2] = newval_2;
-    newval[3] = newval_3;
+
+    newval[0] =
+      catrom_yafr (cardinal_one, cardinal_two, cardinal_thr, cardinal_fou,
+                   cardinal_uno, cardinal_dos, cardinal_tre, cardinal_qua,
+                   left_width_times_up__height_times_rite_width,
+                   left_width_times_dow_height_times_rite_width,
+                   left_width_times_up__height_times_dow_height,
+                   rite_width_times_up__height_times_dow_height,
+                   one_uno_0, two_uno_0, thr_uno_0, fou_uno_0,
+                   one_dos_0, two_dos_0, thr_dos_0, fou_dos_0,
+                   one_tre_0, two_tre_0, thr_tre_0, fou_tre_0,
+                   one_qua_0, two_qua_0, thr_qua_0, fou_qua_0);
+    newval[1] =
+      catrom_yafr (cardinal_one, cardinal_two, cardinal_thr, cardinal_fou,
+                   cardinal_uno, cardinal_dos, cardinal_tre, cardinal_qua,
+                   left_width_times_up__height_times_rite_width,
+                   left_width_times_dow_height_times_rite_width,
+                   left_width_times_up__height_times_dow_height,
+                   rite_width_times_up__height_times_dow_height,
+                   one_uno_1, two_uno_1, thr_uno_1, fou_uno_1,
+                   one_dos_1, two_dos_1, thr_dos_1, fou_dos_1,
+                   one_tre_1, two_tre_1, thr_tre_1, fou_tre_1,
+                   one_qua_1, two_qua_1, thr_qua_1, fou_qua_1);
+    newval[2] =
+      catrom_yafr (cardinal_one, cardinal_two, cardinal_thr, cardinal_fou,
+                   cardinal_uno, cardinal_dos, cardinal_tre, cardinal_qua,
+                   left_width_times_up__height_times_rite_width,
+                   left_width_times_dow_height_times_rite_width,
+                   left_width_times_up__height_times_dow_height,
+                   rite_width_times_up__height_times_dow_height,
+                   one_uno_2, two_uno_2, thr_uno_2, fou_uno_2,
+                   one_dos_2, two_dos_2, thr_dos_2, fou_dos_2,
+                   one_tre_2, two_tre_2, thr_tre_2, fou_tre_2,
+                   one_qua_2, two_qua_2, thr_qua_2, fou_qua_2);
+    newval[3] =
+      catrom_yafr (cardinal_one, cardinal_two, cardinal_thr, cardinal_fou,
+                   cardinal_uno, cardinal_dos, cardinal_tre, cardinal_qua,
+                   left_width_times_up__height_times_rite_width,
+                   left_width_times_dow_height_times_rite_width,
+                   left_width_times_up__height_times_dow_height,
+                   rite_width_times_up__height_times_dow_height,
+                   one_uno_3, two_uno_3, thr_uno_3, fou_uno_3,
+                   one_dos_3, two_dos_3, thr_dos_3, fou_dos_3,
+                   one_tre_3, two_tre_3, thr_tre_3, fou_tre_3,
+                   one_qua_3, two_qua_3, thr_qua_3, fou_qua_3);
+
+    /*
+     * Ship out the new values:
+     */
     babl_process (babl_fish (self->interpolate_format, self->format),
-                  newval, output, 1);
+                  newval,
+                  output,
+                  1);
   }
 }
 
+#endif
+
 static void
-get_property (GObject    *object,
-              guint       prop_id,
+set_property (      GObject      *gobject,
+                    guint         property_id,
+              const GValue       *value,
+                    GParamSpec   *pspec)
+{
+  G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+}
+
+static void
+get_property (GObject    *gobject,
+              guint       property_id,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglSamplerYafr *self = GEGL_SAMPLER_YAFR (object);
-
-  switch (prop_id)
-    {
-      case PROP_B:
-        g_value_set_double (value, self->b);
-        break;
-
-      case PROP_TYPE:
-        g_value_set_string (value, self->type);
-        break;
-
-      default:
-        break;
-    }
+  G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
 }
-
-static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglSamplerYafr *self = GEGL_SAMPLER_YAFR (object);
-
-  switch (prop_id)
-    {
-      case PROP_B:
-        self->b = g_value_get_double (value);
-        break;
-
-      case PROP_TYPE:
-        if (self->type)
-          g_free (self->type);
-        self->type = g_value_dup_string (value);
-        break;
-
-      default:
-        break;
-    }
-}
-
-static inline gfloat
-yafrKernel (gfloat x,
-             gfloat b,
-             gfloat c)
- {
-  gfloat weight, x2, x3;
-  gfloat ax = x;
-  if (ax < 0.0)
-    ax *= -1.0;
-
-  if (ax > 2) return 0;
-
-  x3 = ax * ax * ax;
-  x2 = ax * ax;
-
-  if (ax < 1)
-    weight = (12 - 9 * b - 6 * c) * x3 +
-             (-18 + 12 * b + 6 * c) * x2 +
-             (6 - 2 * b);
-  else
-    weight = (-b - 6 * c) * x3 +
-             (6 * b + 30 * c) * x2 +
-             (-12 * b - 48 * c) * ax +
-             (8 * b + 24 * c);
-
-  return weight / 6.0;
-}
-
