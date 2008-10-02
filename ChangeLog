@@ -1,5 +1,11 @@
 2008-10-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (adjustment_from_param_spec): removed 
+	g_warn_if_reached to avoid having to bump glib requirement yet.
+	Closing bug #552470.
+
+2008-10-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added yahvuu at gmail.com.
 	* NEWS: added item about strings marked for translation.
 

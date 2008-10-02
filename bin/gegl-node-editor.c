@@ -740,7 +740,9 @@ adjustment_from_param_spec (GParamSpec *param_spec, gdouble value)
           upper = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
           break;
       default:          
+#if 0
           g_warn_if_reached();  /* broken type dispatch */
+#endif
           lower = -10000000;
           upper =  10000000;
     }
