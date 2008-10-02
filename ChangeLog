@@ -1,5 +1,10 @@
 2008-10-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added yahvuu at gmail.com.
+	* NEWS: added item about strings marked for translation.
+
+2008-10-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patches from  yahvuu at gmail.com for bug #307195 that
 	marks strings in operation for translation.
 

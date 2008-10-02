@@ -14,10 +14,12 @@ Changes in GEGL 0.0.20
      can be created from existing data.
    • Reworked samplers using a shared caching neighbourhood infrastructure.
    • YAFR - a new resampler contributed by Nicolas Robidoux.
+ • GeglOperations
+   • Marked user visible strings for translation.
 
 Contributions from:
   Martin Nordholts, Øyvind Kolås, Sam Hocevar, Manish Singh, Hubert Figuiere,
-  and Sven Neumann.
+  Sven Neumann and yahvuu at gmail.com.
 
 Changes in GEGL 0.0.18
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
