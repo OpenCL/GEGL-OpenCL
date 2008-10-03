@@ -723,7 +723,7 @@ type_editor_boolean (GtkSizeGroup *col1,
 static GtkAdjustment *
 adjustment_from_param_spec (GParamSpec *param_spec, gdouble value)
 {
-  gdouble   lower, upper, step_inc, page_inc, page_size;
+  gdouble   lower, upper, step_inc, page_inc;
   gdouble   intwidth;
 
   switch (param_spec->value_type)
@@ -753,10 +753,9 @@ adjustment_from_param_spec (GParamSpec *param_spec, gdouble value)
       step_inc = 1;
 
   page_inc = 10 * step_inc;
-  page_size = page_inc;
 
   return (GtkAdjustment*) gtk_adjustment_new (value, lower, upper,
-                                              step_inc, page_inc, page_size);  
+                                              step_inc, page_inc, 0);
 }
 
 static GtkWidget *

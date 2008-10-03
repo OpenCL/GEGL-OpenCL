@@ -1,3 +1,8 @@
+2008-10-03  Michael Natterer  <mitch@gimp.org>
+
+	* bin/gegl-node-editor.c (adjustment_from_param_spec): set the
+	adjustment's page size to 0 and not to page_inc.
+
 2008-10-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-node-editor.c: (adjustment_from_param_spec): removed 
