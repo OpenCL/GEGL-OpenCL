@@ -1,3 +1,8 @@
+2008-10-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* Makefile.am: Removed -T option from install line for devhelp.css
+	file. Fixes bug #554643.
+
 2008-10-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: clarify licenseing difference between gegl

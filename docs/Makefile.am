@@ -192,11 +192,7 @@ if HAVE_RUBY
 	$(INSTALL) $(srcdir)/api.html $(help_dir)
 endif
 	$(INSTALL) $(srcdir)/gegl.devhelp $(help_dir)
-if PLATFORM_DARWIN
 	$(INSTALL) $(srcdir)/devhelp.css $(help_dir)/gegl.css
-else
-	$(INSTALL) -T $(srcdir)/devhelp.css $(help_dir)/gegl.css
-endif
 
 uninstall-local:
 if HAVE_ENSCRIPT
