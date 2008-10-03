@@ -404,7 +404,7 @@ typedef enum
 {
   GEGL_BLIT_DEFAULT  = 0,
   GEGL_BLIT_CACHE    = 1 << 0,
-  GEGL_BLIT_DIRTY    = 1 << 1,
+  GEGL_BLIT_DIRTY    = 1 << 1
 } GeglBlitFlags;
 #endif
 

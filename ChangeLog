@@ -1,3 +1,9 @@
+2008-10-03  Hubert Figuiere  <hub@figuiere.net>
+
+	* gegl/gegl.h.in (enum): 
+	* gegl/buffer/gegl-buffer.h (enum): remove trailing ',' for
+	strict compilation options.
+
 2008-10-03  Michael Natterer  <mitch@gimp.org>
 
 	* bin/gegl-node-editor.c (adjustment_from_param_spec): set the
