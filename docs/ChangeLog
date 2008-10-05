@@ -1,3 +1,8 @@
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: install operations.html
+	* index-static.txt.in: updated contents.
+
 2008-10-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Makefile.am: Removed -T option from install line for devhelp.css

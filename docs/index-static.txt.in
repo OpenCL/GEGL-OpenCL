@@ -26,10 +26,11 @@ Features
   - Processing
      * Iterative chunk-wise processing.
      * Processes subregions and dependencies.
-     * Subgraph caches to aid non destructive editing performance.
+     * Subgraph caches to aid performance of non-destructive editing.
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Tiled sparse buffers (larger than RAM images).
+     * linear buffers (allocated internally or from external allocation.)
      * On demand tiled mipmapping.
      * inter process shared storage
   - Operations

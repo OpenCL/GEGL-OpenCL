@@ -188,6 +188,7 @@ if HAVE_ENSCRIPT
 	    $(srcdir)/gegl-operation-source.h.html          \
 	    $(srcdir)/gegl-plugin.h.html $(help_dir)
 endif
+	$(INSTALL) $(srcdir)/operations.html $(help_dir)
 if HAVE_RUBY
 	$(INSTALL) $(srcdir)/api.html $(help_dir)
 endif
@@ -198,6 +199,7 @@ uninstall-local:
 if HAVE_ENSCRIPT
 	rm -f $(help_dir)/brightness-contrast.c.html $(help_dir)/gegl.h.html
 	rm -f $(help_dir)/gegl-operation.h.html $(help_dir)/gegl-plugin.h.html \
+	    $(help_dir)/operations.html 	\
 	    $(help_dir)/gegl-operation-filter.h.html 	\
 	    $(help_dir)/gegl-operation-composer.h.html 	\
 	    $(help_dir)/gegl-operation-area-filter.h.html     \
