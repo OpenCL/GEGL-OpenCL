@@ -10,12 +10,15 @@ Changes in GEGL 0.0.20
  • Build and code clean ups and fixes.
  • RAW loader using libopenraw.
  • GeglBuffer
-   • Support for linear buffers as well as tiled buffers, linear buffers
-     can be created from existing data.
+   • Linear buffer support, amongst other things enabling GeglBuffer API access
+     to external linear buffers in memory.
    • Reworked samplers using a shared caching neighbourhood infrastructure.
    • YAFR - a new resampler contributed by Nicolas Robidoux.
+ • GeglVector
+   • Added SVG parsing capability (no serialisation yet).
  • GeglOperations
    • Marked user visible strings for translation.
+   • Added a fill operation that renders a path.
 
 Contributions from:
   Martin Nordholts, Øyvind Kolås, Sam Hocevar, Manish Singh, Hubert Figuiere,

@@ -1,3 +1,11 @@
+========================== 0.0.20 released ==================================
+
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: bumped version for release.
+	* NEWS: updated.
+	* bin/gegl.c: evolved splash screen.
+
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/color-temperature.c: include config.h and
