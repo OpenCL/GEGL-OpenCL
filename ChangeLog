@@ -1,5 +1,10 @@
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/color-temperature.c: include config.h and
+	gi18n-lib.h
+
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: improved handling of vectors.
 	* operations/common/fill.c: new operation to fill a vector.
 

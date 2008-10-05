@@ -16,6 +16,9 @@
  * Copyright 2008 Jan Heller <jan.heller (at) matfyz.cz>
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
 #define LOWEST_TEMPERATURE     1000
 #define HIGHEST_TEMPERATURE   12000
 
