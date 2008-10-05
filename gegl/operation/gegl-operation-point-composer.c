@@ -129,7 +129,8 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
             {
               const GeglRectangle *in_abyss;
 
-              in_abyss = gegl_buffer_get_abyss (input);
+              if (input)
+                in_abyss = gegl_buffer_get_abyss (input);
 
               if ((!input ||
                    !gegl_rectangle_intersect (NULL, in_abyss, result)) &&

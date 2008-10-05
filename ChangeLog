@@ -1,3 +1,9 @@
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-point-composer.c:
+	(gegl_operation_composer_process2): only check the in_abyss if
+	in is defined.
+
 2008-10-03  Hubert Figuiere  <hub@figuiere.net>
 
 	* gegl/gegl.h.in (enum): 
