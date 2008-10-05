@@ -123,6 +123,9 @@ void gegl_vector_stroke (GeglBuffer *buffer,
                          gdouble     linewidth,
                          gdouble     hardness);
 
+void gegl_vector_parse_svg_path (GeglVector *vector,
+                                 const gchar *path);
+
 G_END_DECLS
 
 #endif /* __GEGL_VECTOR_H__ */

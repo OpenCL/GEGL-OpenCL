@@ -939,7 +939,6 @@ gegl_vector_curve_to (GeglVector *self,
                       gdouble     y3)
 {
   GeglVectorPrivate *priv;
-  g_print ("foo\n");
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
   /*gegl_vector_emit_changed (self);*/
@@ -1324,4 +1323,70 @@ gegl_param_spec_vector (const gchar *name,
   return G_PARAM_SPEC (param_vector);
 }
 
+static const gchar *parse_float_pair (const gchar *p,
+                                      gdouble *x,
+                                      gdouble *y)
+{
+  gchar *t = (void*) p;
+  while (*t && (*t<'0' || *t > '9')) t++;
+  if (!t)
+    return p;
+  *x = g_ascii_strtod (t, &t); 
+  while (*t && (*t<'0' || *t > '9')) t++;
+  if (!t)
+    return p;
+  *y = g_ascii_strtod (t, &t); 
+  return t;
+}
+  
 
+void gegl_vector_parse_svg_path (GeglVector *vector,
+                                 const gchar *path)
+{
+  /* This isn't really a fully compliant SVG path parser, but it will work
+   * for at least */
+  const gchar *p = path;
+  gdouble x0, y0, x1, y1, x2, y2;
+
+  while (*p)
+    {
+      switch (*p)
+        {
+          case 'M':
+            p = parse_float_pair (p, &x0, &y0);
+            gegl_vector_move_to (vector, x0, y0);
+            continue;
+          case 'L':
+            p = parse_float_pair (p, &x0, &y0);
+            gegl_vector_line_to (vector, x0, y0);
+            continue;
+          case 'C':
+            p = parse_float_pair (p, &x0, &y0);
+            p = parse_float_pair (p, &x1, &y1);
+            p = parse_float_pair (p, &x2, &y2);
+            gegl_vector_curve_to (vector, x0, y0, x1, y1, x2, y2);
+            continue;
+          case 'm':
+            p = parse_float_pair (p, &x0, &y0);
+            gegl_vector_rel_move_to (vector, x0, y0);
+            continue;
+          case 'l':
+            p = parse_float_pair (p, &x0, &y0);
+            gegl_vector_rel_line_to (vector, x0, y0);
+            continue;
+          case 'c':
+            p = parse_float_pair (p, &x0, &y0);
+            p = parse_float_pair (p, &x1, &y1);
+            p = parse_float_pair (p, &x2, &y2);
+            gegl_vector_rel_curve_to (vector, x0, y0, x1, y1, x2, y2);
+            continue;
+          case 'z':
+            break;
+          case ' ':
+            break;
+          default:
+            g_print ("seeing '%c' not sure what to do\n", *p);
+        }
+      p++;
+    }
+}

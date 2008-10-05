@@ -31,6 +31,7 @@
 #include "operation/gegl-operation.h"
 #include "property-types/gegl-color.h"
 #include "property-types/gegl-curve.h"
+#include "property-types/gegl-vector.h"
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
@@ -193,6 +194,12 @@ set_clone_prop_as_well:
 	      g_object_unref (pd->curve);
 	      pd->curve = NULL;
 	    }
+	}
+      else if (paramspec->value_type == GEGL_TYPE_VECTOR)
+        {
+          GeglVector *vector = gegl_vector_new ();
+          gegl_vector_parse_svg_path (vector, param_value);
+	  gegl_node_set (new, param_name, vector, NULL);
 	}
       else
         {
@@ -1066,6 +1073,10 @@ serialize_properties (SerializeState *ss,
 	      xml_curve (ss, indent + 4, curve);
 	      indent += 2; ind; indent -= 2; xml_param_end (ss);
 	      g_object_unref (curve);
+	    }
+	  else if (properties[i]->value_type == GEGL_TYPE_VECTOR)
+	    {
+              g_print ("serialization of GeglVector NYI\n");
 	    }
           else
             {

@@ -1,5 +1,13 @@
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (param_set), (serialize_properties): parse
+	properties that are GeglVectors as SVG paths.
+	* gegl/property-types/gegl-vector.[ch]: (gegl_vector_parse_svg_path):
+	added SVG path parser that directly builds a path for the GeglVector
+	object.
+
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-point-composer.c:
 	(gegl_operation_composer_process2): only check the in_abyss if
 	in is defined.
