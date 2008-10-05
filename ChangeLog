@@ -1,5 +1,10 @@
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: improved handling of vectors.
+	* operations/common/fill.c: new operation to fill a vector.
+
+2008-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (param_set), (serialize_properties): parse
 	properties that are GeglVectors as SVG paths.
 	* gegl/property-types/gegl-vector.[ch]: (gegl_vector_parse_svg_path):

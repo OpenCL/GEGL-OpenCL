@@ -551,9 +551,13 @@ set_property (GObject      *gobject,
         {/*XXX: remove old signal */                                  \
          g_object_unref (properties->name);                           \
         }                                                             \
-      properties->name = g_value_dup_object (value);                  \
-      g_signal_connect (G_OBJECT (properties->name), "changed",       \
-       G_CALLBACK(gegl_operation_vector_prop_changed), gobject);      \
+      properties->name = NULL;                                        \
+      if (g_value_peek_pointer (value))                               \
+        {                                                             \
+          properties->name = g_value_dup_object (value);              \
+          g_signal_connect (G_OBJECT (properties->name), "changed",   \
+          G_CALLBACK(gegl_operation_vector_prop_changed), gobject);   \
+         }
       break; /*XXX*/
 
 #include GEGL_CHANT_C_FILE
