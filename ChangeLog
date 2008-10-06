@@ -1,7 +1,7 @@
 2008-10-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl.c: replace splash with the real GEGL logo, currently
-	to aliased to serve as the splash of the current release.
+	to aliased to serve as the splash of the stable release.
 
 2008-10-06  Sven Neumann  <sven@gimp.org>
 
@@ -14,7 +14,7 @@
 
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
-	* configure.ac: post release versuon bump to 0.0.21
+	* configure.ac: post release version bump to 0.0.21
 
 ========================== 0.0.20 released ==================================
 
