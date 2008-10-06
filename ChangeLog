@@ -1,3 +1,8 @@
+2008-10-06  Hubert Figuiere  <hub@figuiere.net>
+
+	* operations/workshop/external/gtk-display.c: 
+	include graph/gegl-node.h for a missing prototype.
+
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: post release versuon bump to 0.0.21

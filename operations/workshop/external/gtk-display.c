@@ -31,6 +31,7 @@ gegl_chant_string  (window_title, _("Window Title"), "",
 #define GEGL_CHANT_C_FILE       "gtk-display.c"
 
 #include "gegl-chant.h"
+#include "graph/gegl-node.h"
 
 #include <gtk/gtk.h>
 
