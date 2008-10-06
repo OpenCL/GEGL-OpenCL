@@ -717,7 +717,7 @@ AC_SUBST(SDL_LIBS)
 dnl check for libopenraw
 PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0,
   have_openraw="yes",
-  have_openraw="no (usable libopenraw not found)")
+  have_openraw="no  (usable libopenraw not found)")
 AM_CONDITIONAL(HAVE_OPENRAW, test "x$have_openraw" = "xyes")
 
 AC_SUBST(OPENRAW_CFLAGS) 
