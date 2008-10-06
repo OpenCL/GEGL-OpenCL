@@ -1,3 +1,8 @@
+2008-10-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl.c: replace splash with the real GEGL logo, currently
+	to aliased to serve as the splash of the current release.
+
 2008-10-06  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: restored alignment of configure status output.
