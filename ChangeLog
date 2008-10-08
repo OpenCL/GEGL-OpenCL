@@ -1,5 +1,12 @@
 2008-10-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: (gegl_vector_fill): accumulate
+	horizontal contribution to do AA, the supersampling grid now in use is
+	4x4, this can be programattically increased to increase the fidelity
+	of the resulting rendering.
+
+2008-10-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: (gegl_buffer_accumulate),
 	(gegl_vector_fill): do vertical antialiasing on spans by accumulating
 	subscanlines. (5 subscanlines currently used).

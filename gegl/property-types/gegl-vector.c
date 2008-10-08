@@ -467,6 +467,8 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
 #define TOFLOAT (x) ((float) ((int)(x) / 65536.0))
 #define TOFIXED (x) ((int) ((float)(x) * 65536.0))
 
+
+
 void gegl_vector_fill (GeglBuffer *buffer,
                        GeglVector *vector,
                        GeglColor  *color,
@@ -474,8 +476,8 @@ void gegl_vector_fill (GeglBuffer *buffer,
 {
   gdouble xmin, xmax, ymin, ymax;
   GeglRectangle extent;
-  gfloat  horsub = 1;
-  gint    versubi = 5;
+  gfloat  horsub = 4;
+  gint    versubi = horsub;
   gfloat  versub = versubi;
   gint    samples = gegl_vector_get_length (vector);
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
@@ -508,7 +510,6 @@ void gegl_vector_fill (GeglBuffer *buffer,
     first_x = prev_x = xs[0] * horsub;
     first_y = prev_y = ys[0] * versub;
     
-
     /* saturate scanline intersection list */
     for (i=1; i<samples; i++)
       {
@@ -535,6 +536,7 @@ fill_close:  /* label used for goto to close last segment */
                 lastline != y)
               {
                 gint x = prev_x + (dx * (y-prev_y)) / dy;
+                /* XXX: * clamp the spans to the width/height of the buffer ? */
 
                 scanlines[ y - extent.y * versubi]=
                   g_slist_insert_sorted (scanlines[ y - extent.y * versubi],
@@ -583,6 +585,7 @@ fill_close:  /* label used for goto to close last segment */
         while (iter)
           {
             GSList *next = iter->next;
+            gint    j;
             gint startx, endx;
             if (!next)
               break;
@@ -590,8 +593,14 @@ fill_close:  /* label used for goto to close last segment */
             startx = GPOINTER_TO_INT (iter->data);
             endx   = GPOINTER_TO_INT (next->data);
 
+
+            /* XXX: the horizontal subsampling bit can be done more efficiently
+             * by only special treating the start and end of each span being
+             * accumulated to.
+             */
+            for (j=0;j<horsub;j++)
             {
-              GeglRectangle roi={startx/horsub, extent.y + i/versub, (endx - startx) / horsub, 1};
+              GeglRectangle roi={(startx+j)/horsub, extent.y + i/versub, (endx - startx + j) / horsub, 1};
               gegl_buffer_accumulate (buffer, &roi, col);
             }
 
