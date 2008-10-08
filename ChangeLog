@@ -1,3 +1,9 @@
+2008-10-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_buffer_accumulate),
+	(gegl_vector_fill): do vertical antialiasing on spans by accumulating
+	subscanlines. (5 subscanlines currently used).
+
 2008-10-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl.c: replace splash with the real GEGL logo, currently

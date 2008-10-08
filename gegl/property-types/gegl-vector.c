@@ -433,6 +433,39 @@ static gint compare_ints (gconstpointer a,
  * linear buffers.
  */
 
+static void gegl_buffer_accumulate (GeglBuffer    *buffer,
+                                    GeglRectangle *roi,
+                                    const gfloat  *col)
+{
+  static Babl   *format = NULL;
+  static gfloat *buf = NULL;
+  static gint len = 0;
+  gint i;
+
+  if (!format)
+    format = babl_format ("RaGaBaA float");
+
+  if (!buf || len < roi->width)
+    {
+      len = roi->width;
+      if (buf)
+        g_free (buf);
+      buf = g_malloc (len * 4 *4);
+      /* final scratch buf will be "leaked" */
+    }
+
+  gegl_buffer_get (buffer, 1.0, roi, format, buf, 0);
+  for (i=0; i< roi->width; i++)
+    {
+      gint j;
+      for (j=0; j<4; j++)
+        buf[i*4 + j] += col[j];
+    }
+  gegl_buffer_set (buffer, roi, format, buf, 0);
+}
+
+#define TOFLOAT (x) ((float) ((int)(x) / 65536.0))
+#define TOFIXED (x) ((int) ((float)(x) * 65536.0))
 
 void gegl_vector_fill (GeglBuffer *buffer,
                        GeglVector *vector,
@@ -441,6 +474,9 @@ void gegl_vector_fill (GeglBuffer *buffer,
 {
   gdouble xmin, xmax, ymin, ymax;
   GeglRectangle extent;
+  gfloat  horsub = 1;
+  gint    versubi = 5;
+  gfloat  versub = versubi;
   gint    samples = gegl_vector_get_length (vector);
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
 
@@ -450,7 +486,7 @@ void gegl_vector_fill (GeglBuffer *buffer,
   extent.height = ceil (ymax) - extent.y;
 
   {
-    GSList *scanlines[extent.height];
+    GSList *scanlines[extent.height * versubi];
 
     gdouble xs[samples];
     gdouble ys[samples];
@@ -466,18 +502,18 @@ void gegl_vector_fill (GeglBuffer *buffer,
     gegl_vector_calc_values (vector, samples, xs, ys);
 
     /* clear scanline intersection lists */
-    for (i=0; i < extent.height; i++)
+    for (i=0; i < extent.height * versub; i++)
       scanlines[i]=NULL;
 
-    first_x = prev_x = xs[0];
-    first_y = prev_y = ys[0];
+    first_x = prev_x = xs[0] * horsub;
+    first_y = prev_y = ys[0] * versub;
     
 
     /* saturate scanline intersection list */
     for (i=1; i<samples; i++)
       {
-        gint dest_x = xs[i];
-        gint dest_y = ys[i];
+        gint dest_x = xs[i] * horsub;
+        gint dest_y = ys[i] * versub;
         gint ydir;
         gint dx;
         gint dy;
@@ -494,20 +530,20 @@ fill_close:  /* label used for goto to close last segment */
         /* do linear interpolation between vertexes */
         for (y=prev_y; y!= dest_y; y += ydir)
           {
-            if (y-extent.y >= 0 &&
-                y-extent.y < extent.height &&
+            if (y-extent.y * versub >= 0 &&
+                y-extent.y * versub < extent.height * versub &&
                 lastline != y)
               {
                 gint x = prev_x + (dx * (y-prev_y)) / dy;
 
-                scanlines[ y - extent.y ]=
-                  g_slist_insert_sorted (scanlines[ y - extent.y],
+                scanlines[ y - extent.y * versubi]=
+                  g_slist_insert_sorted (scanlines[ y - extent.y * versubi],
                                          GINT_TO_POINTER(x),
                                          compare_ints);
                 if (ydir != lastdir &&
                     lastdir != -2)
-                  scanlines[ y - extent.y ]=
-                    g_slist_insert_sorted (scanlines[ y - extent.y],
+                  scanlines[ y - extent.y * versubi]=
+                    g_slist_insert_sorted (scanlines[ y - extent.y * versubi],
                                            GINT_TO_POINTER(x),
                                            compare_ints);
                 lastdir = ydir;
@@ -530,21 +566,18 @@ fill_close:  /* label used for goto to close last segment */
 
     /* for each scanline */
 {
-    gfloat *buf = NULL;
-    const gfloat *col = gegl_color_float4 (color);
-    Babl *format = babl_format ("RGBA float");
-    buf = g_malloc (extent.width * 4 *4);
-    for (i=0; i < extent.width; i++)
-      {
-        buf[i*4+0] = col[0];
-        buf[i*4+1] = col[1];
-        buf[i*4+2] = col[2];
-        buf[i*4+3] = col[3];
-      }
+    const gfloat *colc = gegl_color_float4 (color);
+    gfloat col[4] = {colc[0],colc[1],colc[2],colc[3]};
+    gfloat factor = 1.0/(horsub * versub);
+
+    col[0] *= factor;
+    col[1] *= factor;
+    col[2] *= factor;
+    col[3] *= factor;
 
     if (gegl_buffer_is_shared (buffer))
     while (!gegl_buffer_try_lock (buffer));
-    for (i=0; i < extent.height; i++)
+    for (i=0; i < extent.height * versub; i++)
       {
         GSList *iter = scanlines[i];
         while (iter)
@@ -558,8 +591,8 @@ fill_close:  /* label used for goto to close last segment */
             endx   = GPOINTER_TO_INT (next->data);
 
             {
-              GeglRectangle roi={startx, extent.y + i, endx - startx, 1};
-              gegl_buffer_set (buffer, &roi, format, buf, 0);
+              GeglRectangle roi={startx/horsub, extent.y + i/versub, (endx - startx) / horsub, 1};
+              gegl_buffer_accumulate (buffer, &roi, col);
             }
 
             iter = next->next;
@@ -569,7 +602,6 @@ fill_close:  /* label used for goto to close last segment */
       }
     if (gegl_buffer_is_shared (buffer))
     gegl_buffer_unlock (buffer);
-    g_free (buf);
 }
   }
 
@@ -1308,10 +1340,10 @@ gegl_operation_vector_prop_changed (GeglVector          *vector,
 
 GParamSpec *
 gegl_param_spec_vector (const gchar *name,
-                       const gchar *nick,
-                       const gchar *blurb,
-                       GeglVector   *default_vector,
-                       GParamFlags  flags)
+                        const gchar *nick,
+                        const gchar *blurb,
+                        GeglVector  *default_vector,
+                        GParamFlags  flags)
 {
   GeglParamVector *param_vector;
 
