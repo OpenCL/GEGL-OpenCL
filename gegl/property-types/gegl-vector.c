@@ -30,7 +30,9 @@
 #include "gegl-color.h"
 #include "gegl-utils.h"
 
-
+/* FIXME: relative commands are currently broken as they depend on
+ * a head sentinel
+ */
 
 /* ###################################################################### */
 /* path code copied from horizon */
@@ -59,16 +61,452 @@ typedef struct Point
   gfloat y;
 } Point;
 
+typedef struct PathKnot
+{
+  gchar  type; /* should perhaps be padded out? */
+  Point  point[4];
+} PathKnot;
+
+
 struct _Path
 {
-  Point  point;
-  Path  *next;
-  gchar  type;
+  PathKnot d;
+  Path    *next;
 };
 
+typedef struct KnotType
+{
+  gchar  type;
+  gint   pairs;
+  gchar *name;
+  Path *(*flatten) (Path *head, Path *prev, Path *self);
+} KnotType;
 
+#if 0
+/* it would be possible to compile paths like this into the library */
+static PathKnot test[] = 
+      {{'m', {{0.0, 0.0}}},
+       {'l', {{20.0, 20.0}}},
+       {'C', {{20.0, 20.0}, {40, 40}, {50, 50}}}
+  };
+#endif
+
+static Path *flatten_copy  (Path *head, Path *prev, Path *self);
+static Path *flatten_nop   (Path *head, Path *prev, Path *self);
+static Path *flatten_curve (Path *head, Path *prev, Path *self);
+
+/* FIXME: handling of relative commands should be moved to the flattening stage */
+
+/* this table should be possible to replace at runtime */
+
+static KnotType knot_types[]=
+{
+    {'m',  1, "rel move to", flatten_copy},
+    {'l',  1, "rel line to", flatten_copy},
+    {'M',  1, "move to",     flatten_copy},
+    {'L',  1, "line to",     flatten_copy},
+    {'c',  3, "curve to",    flatten_curve},
+    {'s',  1, "sentinel",    flatten_nop},
+    {'\0', 1, "curve to",    flatten_copy},
+};
+
+static KnotType *find_knot_type(gchar type)
+{
+  gint i;
+  for (i=0; knot_types[i].type != '\0'; i++)
+    if (knot_types[i].type == type)
+      return &knot_types[i];
+  g_warning ("eeek didnt find knot type %c\n", type);
+  return NULL;
+}
+
+static Path *
+path_append (Path  *head,
+             Path **res);
+
+static Path *flatten_nop (Path *head, Path *prev, Path *self)
+{
+  return head;
+}
+
+static Path *flatten_copy (Path *head, Path *prev, Path *self)
+{
+  Path *newp;
+  head = path_append (head, &newp);
+  newp->d = self->d;
+  return head;
+}
+
+/* linear interpolation between two point */
+static void
+lerp (Point *dest,
+      Point *a,
+      Point *b,
+      gfloat   t)
+{
+  dest->x = a->x + (b->x-a->x) * t;
+  dest->y = a->y + (b->y-a->y) * t;
+}
+
+static gfloat
+point_dist (Point *a,
+            Point *b)
+{
+  return sqrt ((a->x-b->x)*(a->x-b->x) +
+               (a->y-b->y)*(a->y-b->y));
+}
+
+static void
+bezier2 (Path  *prev,   /* we need the previous node as well when rendering a path */
+         Path  *curve,
+         Point *dest,
+         gfloat t)
+{
+  Point ab,bc,cd,abbc,bccd;
+
+  if (prev->d.type == 'c')
+    lerp (&ab, &prev->d.point[2], &curve->d.point[0], t);
+  else
+    lerp (&ab, &prev->d.point[0], &curve->d.point[0], t);
+  lerp (&bc, &curve->d.point[0], &curve->d.point[1], t);
+  lerp (&cd, &curve->d.point[1], &curve->d.point[2], t);
+  lerp (&abbc, &ab, &bc,t);
+  lerp (&bccd, &bc, &cd,t);
+  lerp (dest, &abbc, &bccd, t);
+}
+
+static Path *
+path_add1 (Path   *head,
+           gchar   type,
+           gfloat  x,
+           gfloat  y);
+
+static Path *flatten_curve (Path *head, Path *prev, Path *self)
+{ /* create piecevise linear approximation of bezier curve */
+  gfloat f;
+
+  for (f=0; f<1.0; f += 1.0 / BEZIER_SEGMENTS)
+    {
+      Point res;
+      bezier2 (prev, self, &res, f);
+      head = path_add1 (head, 'l', res.x, res.y);
+    }
+  return head;
+}
+
+static Path *path_flatten (Path *original)
+{
+  Path *iter;
+  Path *prev = NULL;
+  Path *self = NULL;
+
+  for (iter=original; iter; iter=iter->next)
+    {
+      self = find_knot_type (iter->d.type)->flatten (self, prev, iter);
+      prev = iter;
+    }
+  return self;
+}
+
+
+static Path   *path_flatten (Path *original);
+static gdouble path_get_length (Path *path);
 
 typedef struct _Path Head;
+
+
+#if 0
+static gint
+path_last_x (Path   *path)
+{
+  if (path)
+    return path->d.point[0].x;
+  return 0;
+}
+
+static gint
+path_last_y (Path   *path)
+{
+  if (path)
+    return path->d.point[0].y;
+  return 0;
+}
+#endif
+
+static Path *
+path_append (Path  *head,
+             Path **res)
+{
+  Path *iter = head;
+  while (iter && iter->next)
+    iter=iter->next;
+
+  if (iter)
+    {
+      iter->next = g_slice_new0 (Path);
+      iter = iter->next;
+    }
+  else /* creating new path */
+    {
+      head = g_slice_new0 (Head);
+      iter=head;
+    }
+  g_assert (res);
+    *res = iter;
+
+  return head;
+}
+
+static Path *
+path_add4 (Path   *head,
+           gchar   type,
+           gfloat  x0,
+           gfloat  y0,
+           gfloat  x1,
+           gfloat  y1,
+           gfloat  x2,
+           gfloat  y2,
+           gfloat  x3,
+           gfloat  y3)
+{
+  Path *iter;
+
+  head = path_append (head, &iter);
+
+  iter->d.type = type;
+  iter->d.point[0].x =x0;
+  iter->d.point[0].y =y0;
+  iter->d.point[1].x =x1;
+  iter->d.point[1].y =y1;
+  iter->d.point[2].x =x2;
+  iter->d.point[2].y =y2;
+  iter->d.point[3].x =x3;
+  iter->d.point[3].y =y3;
+
+  return head;
+}
+
+
+static Path *
+path_add1 (Path   *head,
+           gchar   type,
+           gfloat  x,
+           gfloat  y)
+{
+  return path_add4 (head, type, x, y, 0, 0, 0, 0, 0, 0);
+}
+
+#if 0
+static Path *
+path_add2 (Path   *head,
+           gchar   type,
+           gfloat  x,
+           gfloat  y,
+           gfloat  x1,
+           gfloat  y1)
+{
+  return path_add4 (head, type, x, y, x1, y1, 0, 0, 0, 0);
+}
+#endif
+
+static Path *
+path_add3 (Path   *head,
+           gchar   type,
+           gfloat  x,
+           gfloat  y,
+           gfloat  x1,
+           gfloat  y1,
+           gfloat  x2,
+           gfloat  y2)
+{
+  return path_add4 (head, type, x, y, x1, y1, x2, y2, 0, 0);
+}
+
+static Path *
+path_destroy (Path *path)
+{
+  g_slice_free_chain (Path, path, next);
+
+  return NULL;
+}
+
+static Path *
+path_move_to (Path   *path,
+              gfloat  x,
+              gfloat  y)
+{
+  return path_add1 (path, 'm', x, y);
+}
+
+static Path *
+path_line_to (Path   *path,
+              gfloat  x,
+              gfloat  y)
+{
+  return path_add1 (path, 'l', x, y);
+}
+
+static Path *
+path_curve_to (Path   *path,
+               gfloat  x1,
+               gfloat  y1,
+               gfloat  x2,
+               gfloat  y2,
+               gfloat  x3,
+               gfloat  y3)
+{
+  return path_add3 (path, 'c', x1, y1, x2, y2, x3, y3);
+}
+
+static Path *
+path_rel_move_to (Path   *path,
+                  gfloat  x,
+                  gfloat  y)
+{
+  return path_move_to (path, path->d.point[0].x + x, path->d.point[0].y + y);
+}
+
+#if 0
+static Path *
+path_rel_line_to (Path   *path,
+                  gfloat  x,
+                  gfloat  y)
+{
+  return path_line_to (path, path->d.point[0].x + x, path->d.point[0].y + y);
+}
+
+static Path *
+path_rel_curve_to (Path   *path,
+                   gfloat  x1,
+                   gfloat  y1,
+                   gfloat  x2,
+                   gfloat  y2,
+                   gfloat  x3,
+                   gfloat  y3)
+{
+  return path_curve_to (path,
+                        path->d.point[0].x + x1, path->d.point[0].y + y1,
+                        path->d.point[0].x + x2, path->d.point[0].y + y2,
+                        path->d.point[0].x + x3, path->d.point[0].y + y3);
+}
+#endif
+
+
+
+static void
+path_calc (Path       *path,
+           gdouble     pos,
+           gdouble    *xd,
+           gdouble    *yd)
+{
+  Path *iter = path;
+  gfloat traveled_length = 0;
+  gfloat need_to_travel = 0;
+  gfloat x = 0, y = 0;
+
+  gboolean had_move_to = FALSE;
+
+  while (iter)
+    {
+      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      switch (iter->d.type)
+        {
+          case 'm':
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            need_to_travel = 0;
+            traveled_length = 0;
+            had_move_to = TRUE;
+            break;
+
+          case 'l':
+            {
+              Point a,b;
+
+              gfloat spacing;
+              gfloat local_pos;
+              gfloat distance;
+              gfloat offset;
+              gfloat leftover;
+
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              spacing = 0.2;
+
+              distance = point_dist (&a, &b);
+
+              leftover = need_to_travel - traveled_length;
+              offset = spacing - leftover;
+
+              local_pos = offset;
+
+              if (distance > 0)
+                for (;
+                     local_pos <= distance;
+                     local_pos += spacing)
+                  {
+                    Point spot;
+                    gfloat ratio = local_pos / distance;
+
+                    lerp (&spot, &a, &b, ratio);
+
+                    traveled_length += spacing;
+                    if (traveled_length > pos)
+                      {
+                        *xd = spot.x;
+                        *yd = spot.y;
+                        return;
+                      }
+                  }
+
+              need_to_travel += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+
+            break;
+          case 's':
+            break;
+          default:
+            g_error ("can't compute for instruction: %i\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+}
+
+static void
+path_calc_values (Path    *path,
+                  guint    num_samples,
+                  gdouble *xs,
+                  gdouble *ys)
+{
+  /* FIXME: flatten first */
+  gdouble length = path_get_length (path);
+  gint i;
+  for (i=0; i<num_samples; i++)
+    {
+      /* FIXME: speed this up, combine with a "stroking" of the path
+       * or even inlining for the fill case as well
+       */
+      gdouble x, y;
+      path_calc (path, (i*1.0)/num_samples * length, &x, &y);
+
+      xs[i] = x;
+      ys[i] = y;
+    }
+}
+
+
+
+/******************/
+
 
 typedef struct _GeglVectorPrivate GeglVectorPrivate;
 typedef struct _VectorNameEntity  VectorNameEntity;
@@ -114,311 +552,6 @@ G_DEFINE_TYPE (GeglVector, gegl_vector, G_TYPE_OBJECT);
                                    GEGL_TYPE_VECTOR, GeglVectorPrivate))
 
 
-/*** subdivision bezier approximation: ***/
-
-/* linear interpolation between two point */
-static void
-lerp (Point *dest,
-      Point *a,
-      Point *b,
-      gfloat   t)
-{
-  dest->x = a->x + (b->x-a->x) * t;
-  dest->y = a->y + (b->y-a->y) * t;
-}
-
-static gfloat
-point_dist (Point *a,
-            Point *b)
-{
-  return sqrt ((a->x-b->x)*(a->x-b->x) +
-               (a->y-b->y)*(a->y-b->y));
-}
-
-
-/* evaluate a point on a bezier-curve.
- * t goes from 0 to 65536
- *
- * curve contains four control points
- */
-static void
-bezier (Point **curve,
-        Point *dest,
-        gfloat t)
-{
-  Point ab,bc,cd,abbc,bccd;
-
-  lerp (&ab, curve[0], curve[1], t);
-  lerp (&bc, curve[1], curve[2], t);
-  lerp (&cd, curve[2], curve[3], t);
-  lerp (&abbc, &ab, &bc,t);
-  lerp (&bccd, &bc, &cd,t);
-  lerp (dest, &abbc, &bccd, t);
-}
-
-#if 0
-static gint
-path_last_x (Path   *path)
-{
-  if (path)
-    return path->point.x;
-  return 0;
-}
-
-static gint
-path_last_y (Path   *path)
-{
-  if (path)
-    return path->point.y;
-  return 0;
-}
-#endif
-
-/* types:
- *   'u' : unitilitlalized state
- *   's' : initialized state (last pen coordinates)
- *   'm' : move_to
- *   'l' : line_to
- *   'c' : curve_to
- *   '.' : curve_to_
- *   'C' : curve_to_
- */
-
-static Path *
-path_add (Path   *head,
-          gchar   type,
-          gfloat  x,
-          gfloat  y)
-{
-  Path *iter = head;
-  Path *prev = NULL;
-
-  Path *curve[4] = { NULL, NULL, NULL, NULL };
-
-  if (iter)
-    {
-      while (iter->next)
-        {
-          switch (iter->type)
-            {
-              case 'c':
-                if (prev)
-                  curve[0]=prev;
-                curve[1]=iter;
-                break;
-              case '.':
-                curve[2]=iter;
-                break;
-              case 'C':
-                curve[3]=iter;
-                break;
-            }
-          prev=iter;
-          iter=iter->next;
-        }
-      /* XXX: code duplication from above*/
-      switch (iter->type)
-        {
-          case 'c':
-            if (prev)
-              curve[0]=prev;
-            curve[1]=iter;
-            break;
-          case '.':
-            curve[2]=iter;
-            break;
-          case 'C':
-            curve[3]=iter;
-            break;
-        }
-    }
-  if (iter)
-    {
-      iter->next = g_slice_new0 (Path);
-      iter = iter->next;
-    }
-  else /* creating new path */
-    {
-      head = g_slice_new0 (Head);
-      head->type = 'u';
-      if (type == 'u')
-        {
-          iter=head;
-        }
-      else
-        {
-          head->next = g_slice_new0 (Path);
-          iter = head->next;
-        }
-    }
-
-  if (head->type=='u' &&
-      type!='u' &&
-      type!='m')
-        {
-          if (type=='l')
-            {
-              type='m'; /* turn an initial line_to into a move_to */
-            }
-          else
-            {
-              g_error ("move_to or line_to is the only legal initial element for a path");
-              return NULL;
-            }
-        }
-
-  iter->type=type;
-
-  switch (type)
-    {
-      case 'm':
-        if (head->type=='u')
-          head->type='s';
-
-        iter->point.x = x;
-        iter->point.y = y;
-        break;
-      case 'c':
-        iter->point.x = x;
-        iter->point.y = y;
-        break;
-      case '.':
-        iter->point.x = x;
-        iter->point.y = y;
-        break;
-      case 'C':
-        curve[3]=iter;
-        iter->point.x = x;
-        iter->point.y = y;
-
-        /* chop off unneeded elements */
-        curve[0]->next = NULL;
-
-        { /* create piecevise linear approximation of bezier curve */
-           gint   i;
-           gfloat f;
-           Point  foo[4];
-           Point *pts[4];
-
-           for (i=0;i<4;i++)
-             {
-               pts[i] = &foo[i];
-               pts[i]->x = curve[i]->point.x;
-               pts[i]->y = curve[i]->point.y;
-             }
-
-           for (f=0; f<1.0; f += 1.0 / BEZIER_SEGMENTS)
-             {
-                Point iter;
-
-                bezier (pts, &iter, f);
-
-                head = path_add (head, 'l', iter.x, iter.y);
-             }
-        }
-
-        /* free amputated stubs when they are no longer useful */
-        g_slice_free (Path, curve[1]);
-        g_slice_free (Path, curve[2]);
-        g_slice_free (Path, curve[3]);
-        break;
-      case 'l':
-        iter->point.x = x;
-        iter->point.y = y;
-        break;
-      case 'u':
-        break;
-      default:
-        g_error ("unknown path instruction '%c'", type);
-        break;
-    }
-
-  head->point.x=x;
-  head->point.y=y;
-  return head;
-}
-
-#if 0
-static Path *
-path_new (void)
-{
-  return path_add (NULL, 'u', 0, 0);
-}
-#endif
-
-static Path *
-path_destroy (Path *path)
-{
-  g_slice_free_chain (Path, path, next);
-
-  return NULL;
-}
-
-static Path *
-path_move_to (Path   *path,
-              gfloat  x,
-              gfloat  y)
-{
-  path = path_add (path, 'm', x, y);
-  return path;
-}
-
-static Path *
-path_line_to (Path   *path,
-              gfloat  x,
-              gfloat  y)
-{
-  path = path_add (path, 'l', x, y);
-  return path;
-}
-
-static Path *
-path_curve_to (Path   *path,
-               gfloat  x1,
-               gfloat  y1,
-               gfloat  x2,
-               gfloat  y2,
-               gfloat  x3,
-               gfloat  y3)
-{
-  path = path_add (path, 'c', x1, y1);
-  path = path_add (path, '.', x2, y2);
-  path = path_add (path, 'C', x3, y3);
-  return path;
-}
-
-static Path *
-path_rel_move_to (Path   *path,
-                  gfloat  x,
-                  gfloat  y)
-{
-  return path_move_to (path, path->point.x + x, path->point.y + y);
-}
-
-#if 0
-static Path *
-path_rel_line_to (Path   *path,
-                  gfloat  x,
-                  gfloat  y)
-{
-  return path_line_to (path, path->point.x + x, path->point.y + y);
-}
-
-static Path *
-path_rel_curve_to (Path   *path,
-                   gfloat  x1,
-                   gfloat  y1,
-                   gfloat  x2,
-                   gfloat  y2,
-                   gfloat  x3,
-                   gfloat  y3)
-{
-  return path_curve_to (path,
-                        path->point.x + x1, path->point.y + y1,
-                        path->point.x + x2, path->point.y + y2,
-                        path->point.x + x3, path->point.y + y3);
-}
-#endif
 
 #include <gegl-buffer.h>
 
@@ -427,11 +560,6 @@ static gint compare_ints (gconstpointer a,
 {
   return GPOINTER_TO_INT (a)-GPOINTER_TO_INT (b);
 }
-
-/* speedy way of doing vectors on gegl, would be to build a runlength
- * encoded instruction stream for fill n pixels which could be used on
- * linear buffers.
- */
 
 static void gegl_buffer_accumulate (GeglBuffer    *buffer,
                                     GeglRectangle *roi,
@@ -464,28 +592,35 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
   gegl_buffer_set (buffer, roi, format, buf, 0);
 }
 
-#define TOFLOAT (x) ((float) ((int)(x) / 65536.0))
-#define TOFIXED (x) ((int) ((float)(x) * 65536.0))
-
-
+static void
+path_calc_values (Path *path,
+                  guint      num_samples,
+                  gdouble   *xs,
+                  gdouble   *ys);
 
 void gegl_vector_fill (GeglBuffer *buffer,
                        GeglVector *vector,
                        GeglColor  *color,
                        gboolean    winding)
 {
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
   gdouble xmin, xmax, ymin, ymax;
   GeglRectangle extent;
+  Path *flat_path;
   gfloat  horsub = 4;
   gint    versubi = horsub;
   gfloat  versub = versubi;
-  gint    samples = gegl_vector_get_length (vector);
+  gint    samples;
+
+  flat_path = path_flatten (priv->path);
+  samples = path_get_length (flat_path);
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
 
   extent.x = floor (xmin);
   extent.y = floor (ymin);
   extent.width = ceil (xmax) - extent.x;
   extent.height = ceil (ymax) - extent.y;
+
 
   {
     GSList *scanlines[extent.height * versubi];
@@ -501,7 +636,7 @@ void gegl_vector_fill (GeglBuffer *buffer,
     gint    lastline=-1;
     gint    lastdir=-2;
 
-    gegl_vector_calc_values (vector, samples, xs, ys);
+    path_calc_values (flat_path, samples, xs, ys);
 
     /* clear scanline intersection lists */
     for (i=0; i < extent.height * versub; i++)
@@ -611,8 +746,9 @@ fill_close:  /* label used for goto to close last segment */
       }
     if (gegl_buffer_is_shared (buffer))
     gegl_buffer_unlock (buffer);
-}
   }
+  }
+  path_destroy (flat_path);
 
 }
 
@@ -726,6 +862,8 @@ void gegl_vector_stroke (GeglBuffer *buffer,
   gdouble       xmin, xmax, ymin, ymax;
   GeglRectangle extent;
 
+  /* FIXME: flatten path first */
+
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
   extent.x = floor (xmin);
   extent.y = floor (ymin);
@@ -743,12 +881,12 @@ void gegl_vector_stroke (GeglBuffer *buffer,
 
   while (iter)
     {
-      //fprintf (stderr, "%c, %i %i\n", iter->type, iter->point.x, iter->point.y);
-      switch (iter->type)
+      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      switch (iter->d.type)
         {
           case 'm':
-            x = iter->point.x;
-            y = iter->point.y;
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
             need_to_travel = 0;
             traveled_length = 0;
             had_move_to = TRUE;
@@ -768,8 +906,8 @@ void gegl_vector_stroke (GeglBuffer *buffer,
               a.x = x;
               a.y = y;
 
-              b.x = iter->point.x;
-              b.y = iter->point.y;
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
 
               spacing = 0.2 * radius;
 
@@ -813,7 +951,7 @@ void gegl_vector_stroke (GeglBuffer *buffer,
           case 's':
             break;
           default:
-            g_error ("can't stroke for instruction: %i\n", iter->type);
+            g_error ("can't stroke for instruction: %i\n", iter->d.type);
             break;
         }
       iter=iter->next;
@@ -951,8 +1089,8 @@ gegl_vector_line_to (GeglVector *self,
   priv = GEGL_VECTOR_GET_PRIVATE (self);
 
   if (priv->path)
-  gen_rect (&priv->dirtied, x, y, priv->path->point.x,
-                         priv->path->point.y);
+  gen_rect (&priv->dirtied, x, y, priv->path->d.point[0].x,
+                         priv->path->d.point[0].y);
   priv->path = path_line_to (priv->path, x, y);
 
   if (priv->path)
@@ -993,7 +1131,7 @@ gegl_vector_rel_line_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
-  gegl_vector_line_to (self, priv->path->point.x + x, priv->path->point.y + y);
+  gegl_vector_line_to (self, priv->path->d.point[0].x + x, priv->path->d.point[0].y + y);
 }
 
 void
@@ -1019,27 +1157,44 @@ gegl_vector_rel_curve_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   gegl_vector_curve_to (self,
-      priv->path->point.x + x1, priv->path->point.y + y1,
-      priv->path->point.x + x2, priv->path->point.y + y2,
-      priv->path->point.x + x3, priv->path->point.y + y3);
+      priv->path->d.point[0].x + x1, priv->path->d.point[0].y + y1,
+      priv->path->d.point[0].x + x2, priv->path->d.point[0].y + y2,
+      priv->path->d.point[0].x + x3, priv->path->d.point[0].y + y3);
 }
 
-
-gdouble
-gegl_vector_get_length (GeglVector *self)
+static gdouble
+path_get_length (Path *path)
 {
-  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
-  Path *iter = priv->path;
+  Path *iter = path;
   gfloat traveled_length = 0;
   gfloat x = 0, y = 0;
 
   while (iter)
     {
-      switch (iter->type)
+      switch (iter->d.type)
         {
           case 'm':
-            x = iter->point.x;
-            y = iter->point.y;
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            break;
+          case 'c':
+            {
+              Point a,b;
+              gfloat distance;
+              g_print ("eeek computing distance of c\n");
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[2].x;
+              b.y = iter->d.point[2].y;
+
+              distance = point_dist (&a, &b);
+              traveled_length += distance;
+
+              x = b.x;
+              y = b.y;
+            }
             break;
           case 'l':
             {
@@ -1049,8 +1204,8 @@ gegl_vector_get_length (GeglVector *self)
               a.x = x;
               a.y = y;
 
-              b.x = iter->point.x;
-              b.y = iter->point.y;
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
 
               distance = point_dist (&a, &b);
               traveled_length += distance;
@@ -1064,7 +1219,72 @@ gegl_vector_get_length (GeglVector *self)
           case 's':
             break;
           default:
-            g_error ("can't compute length for instruction: %i\n", iter->type);
+            g_error ("can't compute length for instruction: %i\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+  return traveled_length;
+}
+
+gdouble
+gegl_vector_get_length (GeglVector *self)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  Path *iter = priv->path;
+  gfloat traveled_length = 0;
+  gfloat x = 0, y = 0;
+
+  while (iter)
+    {
+      switch (iter->d.type)
+        {
+          case 'm':
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            break;
+          case 'c':
+            {
+              Point a,b;
+              gfloat distance;
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[2].x;
+              b.y = iter->d.point[2].y;
+
+              distance = point_dist (&a, &b);
+              traveled_length += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+            break;
+          case 'l':
+            {
+              Point a,b;
+              gfloat distance;
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              distance = point_dist (&a, &b);
+              traveled_length += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+            break;
+          case 'u':
+            break;
+          case 's':
+            break;
+          default:
+            g_error ("can't compute length for instruction: %i\n", iter->d.type);
             break;
         }
       iter=iter->next;
@@ -1092,20 +1312,30 @@ void         gegl_vector_get_bounds   (GeglVector   *self,
 
   while (iter)
     {
-      if (iter->type == 'l')
+      gint i;
+      gint max = 0;
+
+      if (iter->d.type == 'l')
+        max = 1;
+      else if (iter->d.type == 'c')
+        max = 3;
+
+      for (i=0;i<max;i++)
         {
-          if (iter->point.x < *min_x)
-            *min_x = iter->point.x;
-          if (iter->point.x > *max_x)
-            *max_x = iter->point.x;
-          if (iter->point.y < *min_y)
-            *min_y = iter->point.y;
-          if (iter->point.y > *max_y)
-            *max_y = iter->point.y;
+          if (iter->d.point[i].x < *min_x)
+            *min_x = iter->d.point[i].x;
+          if (iter->d.point[i].x > *max_x)
+            *max_x = iter->d.point[i].x;
+          if (iter->d.point[i].y < *min_y)
+            *min_y = iter->d.point[i].y;
+          if (iter->d.point[i].y > *max_y)
+            *max_y = iter->d.point[i].y;
         }
       iter=iter->next;
     }
 }
+
+
 
 void
 gegl_vector_calc (GeglVector *self,
@@ -1114,88 +1344,7 @@ gegl_vector_calc (GeglVector *self,
                   gdouble    *yd)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
-  Path *iter = priv->path;
-  gfloat traveled_length = 0;
-  gfloat need_to_travel = 0;
-  gfloat x = 0, y = 0;
-
-  gboolean had_move_to = FALSE;
-
-  while (iter)
-    {
-      //fprintf (stderr, "%c, %i %i\n", iter->type, iter->point.x, iter->point.y);
-      switch (iter->type)
-        {
-          case 'm':
-            x = iter->point.x;
-            y = iter->point.y;
-            need_to_travel = 0;
-            traveled_length = 0;
-            had_move_to = TRUE;
-            break;
-          case 'l':
-            {
-              Point a,b;
-
-              gfloat spacing;
-              gfloat local_pos;
-              gfloat distance;
-              gfloat offset;
-              gfloat leftover;
-
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->point.x;
-              b.y = iter->point.y;
-
-              spacing = 0.2;
-
-              distance = point_dist (&a, &b);
-
-              leftover = need_to_travel - traveled_length;
-              offset = spacing - leftover;
-
-              local_pos = offset;
-
-              if (distance > 0)
-                for (;
-                     local_pos <= distance;
-                     local_pos += spacing)
-                  {
-                    Point spot;
-                    gfloat ratio = local_pos / distance;
-
-                    lerp (&spot, &a, &b, ratio);
-
-                    traveled_length += spacing;
-                    if (traveled_length > pos)
-                      {
-                        *xd = spot.x;
-                        *yd = spot.y;
-                        return;
-                      }
-                  }
-
-              need_to_travel += distance;
-
-              x = b.x;
-              y = b.y;
-            }
-
-            break;
-          case 'u':
-            g_error ("computing uninitialized path\n");
-            break;
-          case 's':
-            break;
-          default:
-            g_error ("can't compute for instruction: %i\n", iter->type);
-            break;
-        }
-      iter=iter->next;
-    }
+  return path_calc (priv->path, pos, xd, yd);
 }
 
 
@@ -1209,7 +1358,9 @@ gegl_vector_calc_values (GeglVector *self,
   gint i;
   for (i=0; i<num_samples; i++)
     {
-      /* FIXME: speed this up, combine with a "stroking" of the path */
+      /* FIXME: speed this up, combine with a "stroking" of the path
+       * or even inlining for the fill case as well
+       */
       gdouble x, y;
       gegl_vector_calc (self, (i*1.0)/num_samples * length, &x, &y);
 
@@ -1384,8 +1535,10 @@ static const gchar *parse_float_pair (const gchar *p,
 void gegl_vector_parse_svg_path (GeglVector *vector,
                                  const gchar *path)
 {
-  /* This isn't really a fully compliant SVG path parser, but it will work
-   * for at least */
+  /* FIXME: extend this to be a more tolerant SVG path parser that can
+   * also be extended with new knot types.
+   */
+
   const gchar *p = path;
   gdouble x0, y0, x1, y1, x2, y2;
 

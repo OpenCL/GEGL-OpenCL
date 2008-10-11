@@ -1,5 +1,11 @@
 2008-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: bezier curve interpretation
+	rework. The path is now stored non-flattened, no API to introspect
+	and modify the points on the path yet though.
+
+2008-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: updated artists sectoin.
 
 2008-10-08  Øyvind Kolås  <pippin@gimp.org>
