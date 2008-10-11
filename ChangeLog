@@ -1,5 +1,10 @@
 2008-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: use new more compact beizer paths for the characters of
+	the GEGL logo.
+
+2008-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: (bezier2), (flatten_curve),
 	(path_flatten), (gegl_vector_fill): make a line_to to the final
 	control point at the end of flatttening bezier components.
