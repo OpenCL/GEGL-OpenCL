@@ -1,3 +1,9 @@
+2008-10-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* images/GEGL.svg: updated logo with simplified SVG paths and hand
+	trimmed SVG. Path simplification courtesy of Tonda Kavalec.
+	* images/GEGL.png: png rendition of above.
+
 2008-10-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: install operations.html
