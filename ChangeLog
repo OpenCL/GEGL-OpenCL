@@ -1,3 +1,7 @@
+2008-10-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: updated artists sectoin.
+
 2008-10-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.c: (gegl_vector_fill): accumulate
