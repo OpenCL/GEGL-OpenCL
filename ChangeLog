@@ -1,5 +1,11 @@
 2008-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: (bezier2), (flatten_curve),
+	(path_flatten), (gegl_vector_fill): make a line_to to the final
+	control point at the end of flatttening bezier components.
+
+2008-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: bezier curve interpretation
 	rework. The path is now stored non-flattened, no API to introspect
 	and modify the points on the path yet though.

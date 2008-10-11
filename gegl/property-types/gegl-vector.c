@@ -35,10 +35,11 @@
  */
 
 /* ###################################################################### */
-/* path code copied from horizon */
+/* path-list code originating in horizon */
 
 typedef struct _Path Path;
-#define BEZIER_SEGMENTS 10
+#define BEZIER_SEGMENTS 16
+#define AA 4
 
 #include <glib.h>
 #include <math.h>
@@ -101,13 +102,14 @@ static Path *flatten_curve (Path *head, Path *prev, Path *self);
 
 static KnotType knot_types[]=
 {
-    {'m',  1, "rel move to", flatten_copy},
-    {'l',  1, "rel line to", flatten_copy},
-    {'M',  1, "move to",     flatten_copy},
-    {'L',  1, "line to",     flatten_copy},
-    {'c',  3, "curve to",    flatten_curve},
-    {'s',  1, "sentinel",    flatten_nop},
-    {'\0', 1, "curve to",    flatten_copy},
+  {'m',  1, "rel move to",          flatten_copy},
+  {'l',  1, "rel line to",          flatten_copy},
+  {'M',  1, "move to",              flatten_copy},
+  {'L',  1, "line to",              flatten_copy},
+  {'c',  3, "curve to",             flatten_curve},
+  {'s',  0, "sentinel",             flatten_nop},
+  {'z',  0, "sentinel",             flatten_nop},
+  {'\0', 0, "marker for end of",    flatten_copy},
 };
 
 static KnotType *find_knot_type(gchar type)
@@ -137,7 +139,7 @@ static Path *flatten_copy (Path *head, Path *prev, Path *self)
   return head;
 }
 
-/* linear interpolation between two point */
+/* linear interpolation between two points */
 static void
 lerp (Point *dest,
       Point *a,
@@ -157,7 +159,7 @@ point_dist (Point *a,
 }
 
 static void
-bezier2 (Path  *prev,   /* we need the previous node as well when rendering a path */
+bezier2 (Path  *prev,/* we need the previous node as well when rendering a path */
          Path  *curve,
          Point *dest,
          gfloat t)
@@ -188,9 +190,12 @@ static Path *flatten_curve (Path *head, Path *prev, Path *self)
   for (f=0; f<1.0; f += 1.0 / BEZIER_SEGMENTS)
     {
       Point res;
+
       bezier2 (prev, self, &res, f);
+
       head = path_add1 (head, 'l', res.x, res.y);
     }
+  head = path_add1 (head, 'l', self->d.point[2].x, self->d.point[2].y);
   return head;
 }
 
@@ -200,9 +205,15 @@ static Path *path_flatten (Path *original)
   Path *prev = NULL;
   Path *self = NULL;
 
+  Path *endp = NULL;
+  
   for (iter=original; iter; iter=iter->next)
     {
-      self = find_knot_type (iter->d.type)->flatten (self, prev, iter);
+      self = find_knot_type (iter->d.type)->flatten (self, endp, iter);
+      if (!endp)
+        endp = self;
+      while (endp && endp->next)
+        endp=endp->next;
       prev = iter;
     }
   return self;
@@ -607,7 +618,7 @@ void gegl_vector_fill (GeglBuffer *buffer,
   gdouble xmin, xmax, ymin, ymax;
   GeglRectangle extent;
   Path *flat_path;
-  gfloat  horsub = 4;
+  gfloat  horsub = AA;
   gint    versubi = horsub;
   gfloat  versub = versubi;
   gint    samples;
