@@ -518,8 +518,6 @@ if test "x$have_glib_2_17" != "xyes"; then
   CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
 fi
 
-CPPFLAGS="${CPPFLAGS} -DG_DISABLE_SINGLE_INCLUDES"
-
 
 ######################################
 # Checks for gtk-doc and docbook-tools
