@@ -1,3 +1,12 @@
+2008-10-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.[ch]: restricted to the absolute
+	subset of svg path commands for now (M, L and C). Added
+	gegl_vector_to_svg_path which directly translates the Path list into
+	a condensed ascii form compatible with SVG paths.
+	* gegl/gegl-xml.c: (serialize_properties): write GeglVectors out as
+	a string.
+
 2008-10-11  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: removed G_DISABLE_SINGLE_INCLUDES from compiler

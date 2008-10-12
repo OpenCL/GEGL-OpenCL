@@ -29,6 +29,8 @@
 #include "gegl-vector.h"
 #include "gegl-color.h"
 #include "gegl-utils.h"
+#include <glib/gprintf.h>
+
 
 /* FIXME: relative commands are currently broken as they depend on
  * a head sentinel
@@ -102,11 +104,16 @@ static Path *flatten_curve (Path *head, Path *prev, Path *self);
 
 static KnotType knot_types[]=
 {
-  {'m',  1, "rel move to",          flatten_copy},
-  {'l',  1, "rel line to",          flatten_copy},
   {'M',  1, "move to",              flatten_copy},
   {'L',  1, "line to",              flatten_copy},
-  {'c',  3, "curve to",             flatten_curve},
+  {'C',  3, "curve to",             flatten_curve},
+
+  /* FIXME: these are wrong 
+  {'m',  1, "rel move to",          flatten_copy},
+  {'l',  1, "rel line to",          flatten_copy},
+  {'c',  1, "rel curve to",         flatten_copy},
+  */
+
   {'s',  0, "sentinel",             flatten_nop},
   {'z',  0, "sentinel",             flatten_nop},
   {'\0', 0, "marker for end of",    flatten_copy},
@@ -193,9 +200,9 @@ static Path *flatten_curve (Path *head, Path *prev, Path *self)
 
       bezier2 (prev, self, &res, f);
 
-      head = path_add1 (head, 'l', res.x, res.y);
+      head = path_add1 (head, 'L', res.x, res.y);
     }
-  head = path_add1 (head, 'l', self->d.point[2].x, self->d.point[2].y);
+  head = path_add1 (head, 'L', self->d.point[2].x, self->d.point[2].y);
   return head;
 }
 
@@ -346,7 +353,7 @@ path_move_to (Path   *path,
               gfloat  x,
               gfloat  y)
 {
-  return path_add1 (path, 'm', x, y);
+  return path_add1 (path, 'M', x, y);
 }
 
 static Path *
@@ -354,7 +361,7 @@ path_line_to (Path   *path,
               gfloat  x,
               gfloat  y)
 {
-  return path_add1 (path, 'l', x, y);
+  return path_add1 (path, 'L', x, y);
 }
 
 static Path *
@@ -366,7 +373,7 @@ path_curve_to (Path   *path,
                gfloat  x3,
                gfloat  y3)
 {
-  return path_add3 (path, 'c', x1, y1, x2, y2, x3, y3);
+  return path_add3 (path, 'C', x1, y1, x2, y2, x3, y3);
 }
 
 static Path *
@@ -422,7 +429,7 @@ path_calc (Path       *path,
       //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
       switch (iter->d.type)
         {
-          case 'm':
+          case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
             need_to_travel = 0;
@@ -430,7 +437,7 @@ path_calc (Path       *path,
             had_move_to = TRUE;
             break;
 
-          case 'l':
+          case 'L':
             {
               Point a,b;
 
@@ -895,14 +902,14 @@ void gegl_vector_stroke (GeglBuffer *buffer,
       //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
       switch (iter->d.type)
         {
-          case 'm':
+          case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
             need_to_travel = 0;
             traveled_length = 0;
             had_move_to = TRUE;
             break;
-          case 'l':
+          case 'L':
             {
               Point a,b;
 
@@ -1184,11 +1191,11 @@ path_get_length (Path *path)
     {
       switch (iter->d.type)
         {
-          case 'm':
+          case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
             break;
-          case 'c':
+          case 'C':
             {
               Point a,b;
               gfloat distance;
@@ -1207,7 +1214,7 @@ path_get_length (Path *path)
               y = b.y;
             }
             break;
-          case 'l':
+          case 'L':
             {
               Point a,b;
               gfloat distance;
@@ -1250,11 +1257,11 @@ gegl_vector_get_length (GeglVector *self)
     {
       switch (iter->d.type)
         {
-          case 'm':
+          case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
             break;
-          case 'c':
+          case 'C':
             {
               Point a,b;
               gfloat distance;
@@ -1272,7 +1279,7 @@ gegl_vector_get_length (GeglVector *self)
               y = b.y;
             }
             break;
-          case 'l':
+          case 'L':
             {
               Point a,b;
               gfloat distance;
@@ -1326,9 +1333,11 @@ void         gegl_vector_get_bounds   (GeglVector   *self,
       gint i;
       gint max = 0;
 
-      if (iter->d.type == 'l')
+      if (iter->d.type == 'M')
         max = 1;
-      else if (iter->d.type == 'c')
+      else if (iter->d.type == 'L')
+        max = 1;
+      else if (iter->d.type == 'C')
         max = 3;
 
       for (i=0;i<max;i++)
@@ -1531,23 +1540,74 @@ static const gchar *parse_float_pair (const gchar *p,
                                       gdouble *y)
 {
   gchar *t = (void*) p;
-  while (*t && (*t<'0' || *t > '9')) t++;
+  while (*t && ((*t<'0' || *t > '9') && *t!='-')) t++;
   if (!t)
     return p;
   *x = g_ascii_strtod (t, &t); 
-  while (*t && (*t<'0' || *t > '9')) t++;
+  while (*t && ((*t<'0' || *t > '9') && *t!='-')) t++;
   if (!t)
     return p;
   *y = g_ascii_strtod (t, &t); 
   return t;
 }
-  
+
+
+/* this code is generic and should also work for extensions providing 
+ * new knot types to the infrastructure
+ */
+gchar *
+gegl_vector_to_svg_path (GeglVector  *vector)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  GString *str = g_string_new ("");
+  gchar *ret;
+  Path *iter;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      gint i;
+      KnotType *info = find_knot_type(iter->d.type);
+
+      g_string_append_c (str, iter->d.type);
+      for (i=0;i<info->pairs;i++)
+        {
+          gchar buf[16];
+          gchar *eptr;
+          g_sprintf (buf, "%f", iter->d.point[i].x);
+
+          for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
+              *eptr='\0';
+          if (*eptr=='.')
+            *eptr='\0';
+          g_string_append_printf (str, "%s,", buf);
+          sprintf (buf, "%f", iter->d.point[i].y);
+
+          for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
+              *eptr='\0';
+          if (*eptr=='.')
+            *eptr='\0';
+
+          g_string_append_printf (str, "%s ", buf);
+        }
+    }
+  ret = str->str;
+  g_string_free (str, FALSE);
+  return ret;
+}
+
+void gegl_vector_clear (GeglVector *vector)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  if (priv->path)
+    path_destroy (priv->path);
+  priv->path = NULL;
+}
 
 void gegl_vector_parse_svg_path (GeglVector *vector,
                                  const gchar *path)
 {
   /* FIXME: extend this to be a more tolerant SVG path parser that can
-   * also be extended with new knot types.
+   * also be extended with new knot types by making use of KnotInfo instead
+   * of hardcoding a few commands.
    */
 
   const gchar *p = path;
@@ -1571,27 +1631,29 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
             p = parse_float_pair (p, &x2, &y2);
             gegl_vector_curve_to (vector, x0, y0, x1, y1, x2, y2);
             continue;
-          case 'm':
-            p = parse_float_pair (p, &x0, &y0);
-            gegl_vector_rel_move_to (vector, x0, y0);
-            continue;
-          case 'l':
-            p = parse_float_pair (p, &x0, &y0);
-            gegl_vector_rel_line_to (vector, x0, y0);
-            continue;
-          case 'c':
-            p = parse_float_pair (p, &x0, &y0);
-            p = parse_float_pair (p, &x1, &y1);
-            p = parse_float_pair (p, &x2, &y2);
-            gegl_vector_rel_curve_to (vector, x0, y0, x1, y1, x2, y2);
-            continue;
           case 'z':
             break;
           case ' ':
+          case '\n':
             break;
           default:
             g_print ("seeing '%c' not sure what to do\n", *p);
         }
       p++;
     }
+
+  {
+   gdouble min_x;
+   gdouble max_x;
+   gdouble min_y;
+   gdouble max_y;
+   GeglRectangle rect;
+   gegl_vector_get_bounds (vector, &min_x, &max_x, &min_y, &max_y);
+   rect.x = min_x;
+   rect.y = min_y;
+   rect.width = max_x - min_x;
+   rect.height = max_y - min_y;
+
+   gegl_vector_emit_changed (vector, &rect);
+  }
 }

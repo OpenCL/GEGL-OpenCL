@@ -1076,7 +1076,17 @@ serialize_properties (SerializeState *ss,
 	    }
 	  else if (properties[i]->value_type == GEGL_TYPE_VECTOR)
 	    {
-              g_print ("serialization of GeglVector NYI\n");
+          gchar *svg_path;
+          GeglVector *vector;
+	      gegl_node_get (node, properties[i]->name, &vector, NULL);
+	      xml_param_start (ss, indent + 2, properties[i]->name);
+	      g_string_append (ss->buf, "\n");
+
+          svg_path = gegl_vector_to_svg_path (vector);	      
+	      g_string_append (ss->buf, svg_path);
+	      indent += 2; ind; indent -= 2; xml_param_end (ss);
+
+          g_object_unref (vector);
 	    }
           else
             {
