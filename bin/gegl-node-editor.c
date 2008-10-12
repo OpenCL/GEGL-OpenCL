@@ -31,6 +31,7 @@
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
+#include "gegl-vector.h"
 
 
 enum
@@ -819,6 +820,50 @@ type_editor_string (GtkSizeGroup *col1,
   return hbox_type_editor(labeltext, entry, col1, col2);
 }
 
+static void
+type_editor_vector_changed (GtkWidget *entry,
+                            gpointer   data)
+{
+  GParamSpec  *param_spec  = data;
+  GeglNode    *node        = g_object_get_data (G_OBJECT (entry), "node");
+  const gchar *prop_name   = param_spec->name;
+  GeglVector *vector;
+
+  gegl_node_get (node, prop_name, &vector, NULL);
+  gegl_vector_clear (vector);
+  gegl_vector_parse_svg_path (vector, gtk_entry_get_text (GTK_ENTRY (entry)));
+  g_object_unref (vector);
+}
+
+
+static GtkWidget *
+type_editor_vector (GtkSizeGroup *col1,
+                    GtkSizeGroup *col2,
+                    GeglNode     *node,
+                    GParamSpec   *param_spec)
+{
+  const gchar* labeltext = param_spec->name;
+  GtkWidget *entry = gtk_entry_new ();
+  gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
+
+  g_object_set_data (G_OBJECT (entry), "node", node);
+  g_signal_connect (G_OBJECT (entry), "changed",
+                    G_CALLBACK (type_editor_vector_changed),
+                    (gpointer) param_spec);
+    {
+      gchar *value;
+      GeglVector *vector;
+
+      gegl_node_get (node, param_spec->name, &vector, NULL);
+      value = gegl_vector_to_svg_path (vector);
+      gtk_entry_set_text (GTK_ENTRY (entry), value);
+      g_object_unref (vector);
+      g_free (value);
+    }
+
+  return hbox_type_editor(labeltext, entry, col1, col2);
+}
+
 
 
 static GtkWidget *
@@ -878,6 +923,10 @@ property_editor_general (GeglNodeEditor *node_editor,
           else if (properties[i]->value_type == G_TYPE_STRING)
             {
               prop_editor = type_editor_string (col1, col2, node, properties[i]);
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_VECTOR)
+            {
+              prop_editor = type_editor_vector (col1, col2, node, properties[i]);
             }
           else 
             {

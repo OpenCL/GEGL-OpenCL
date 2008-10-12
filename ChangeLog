@@ -1,5 +1,11 @@
 2008-10-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (type_editor_vector_changed),
+	(type_editor_vector), (property_editor_general): Duplicated the string
+	handling to also work for vectors.
+
+2008-10-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.[ch]: restricted to the absolute
 	subset of svg path commands for now (M, L and C). Added
 	gegl_vector_to_svg_path which directly translates the Path list into
