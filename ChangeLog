@@ -1,5 +1,10 @@
 2008-10-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: integrated relative paths with
+	the new flattened cache framework.
+
+2008-10-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: keep an internal cached flattened
 	path.
 

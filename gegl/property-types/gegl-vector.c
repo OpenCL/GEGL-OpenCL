@@ -83,9 +83,10 @@ static GeglVectorKnot test[] =
   };
 #endif
 
-static Path *flatten_copy  (Path *head, Path *prev, Path *self);
-static Path *flatten_nop   (Path *head, Path *prev, Path *self);
-static Path *flatten_curve (Path *head, Path *prev, Path *self);
+static Path *flatten_copy      (Path *head, Path *prev, Path *self);
+static Path *flatten_rel_copy  (Path *head, Path *prev, Path *self);
+static Path *flatten_nop       (Path *head, Path *prev, Path *self);
+static Path *flatten_curve     (Path *head, Path *prev, Path *self);
 
 /* FIXME: handling of relative commands should be moved to the flattening stage */
 
@@ -97,11 +98,9 @@ static KnotInfo knot_types[]=
   {'L',  1, "line to",              flatten_copy},
   {'C',  3, "curve to",             flatten_curve},
 
-  /* FIXME: these are handled wrong 
-  {'m',  1, "rel move to",          flatten_copy},
-  {'l',  1, "rel line to",          flatten_copy},
-  {'c',  1, "rel curve to",         flatten_copy},
-  */
+  {'m',  1, "rel move to",          flatten_rel_copy},
+  {'l',  1, "rel line to",          flatten_rel_copy},
+  {'c',  3, "rel curve to",         flatten_rel_copy},
 
   {'s',  0, "sentinel",             flatten_nop},
   {'z',  0, "sentinel",             flatten_nop},
@@ -114,7 +113,6 @@ static KnotInfo *find_knot_type(gchar type)
   for (i=0; knot_types[i].type != '\0'; i++)
     if (knot_types[i].type == type)
       return &knot_types[i];
-  g_warning ("eeek didnt find knot type %c\n", type);
   return NULL;
 }
 
@@ -132,6 +130,32 @@ static Path *flatten_copy (Path *head, Path *prev, Path *self)
   Path *newp;
   head = path_append (head, &newp);
   newp->d = self->d;
+  return head;
+}
+
+static Path *flatten_rel_copy (Path *head, Path *prev, Path *self)
+{
+  Path *newp;
+  gint i;
+  head = path_append (head, &newp);
+  newp->d = self->d;
+  for (i=0;i<4;i++)
+    {
+      newp->d.point[i].x += prev->d.point[0].x;
+      newp->d.point[i].y += prev->d.point[0].y;
+    }
+  switch (newp->d.type)
+    {
+      case 'l':
+        newp->d.type = 'L';
+        break;
+      case 'm':
+        newp->d.type = 'M';
+        break;
+      case 'c':
+        newp->d.type = 'C';
+        break;
+    }
   return head;
 }
 
@@ -368,16 +392,15 @@ path_rel_move_to (Path   *path,
                   gfloat  x,
                   gfloat  y)
 {
-  return path_move_to (path, path->d.point[0].x + x, path->d.point[0].y + y);
+  return path_add1 (path, 'm', x, y);
 }
 
-#if 0
 static Path *
 path_rel_line_to (Path   *path,
                   gfloat  x,
                   gfloat  y)
 {
-  return path_line_to (path, path->d.point[0].x + x, path->d.point[0].y + y);
+  return path_add1 (path, 'l', x, y);
 }
 
 static Path *
@@ -389,12 +412,8 @@ path_rel_curve_to (Path   *path,
                    gfloat  x3,
                    gfloat  y3)
 {
-  return path_curve_to (path,
-                        path->d.point[0].x + x1, path->d.point[0].y + y1,
-                        path->d.point[0].x + x2, path->d.point[0].y + y2,
-                        path->d.point[0].x + x3, path->d.point[0].y + y3);
+  return path_add3 (path, 'c', x1, y1, x2, y2, x3, y3);
 }
-#endif
 
 
 
@@ -479,7 +498,7 @@ path_calc (Path       *path,
           case 's':
             break;
           default:
-            g_error ("can't compute for instruction: %i\n", iter->d.type);
+            g_warning ("can't compute length for instruction: %c\n", iter->d.type);
             break;
         }
       iter=iter->next;
@@ -542,7 +561,8 @@ path_get_length (Path *path)
           case 's':
             break;
           default:
-            g_error ("can't compute length for instruction: %i\n", iter->d.type);
+            g_warning ("can't compute length for instruction: %c\n", iter->d.type);
+            return traveled_length;
             break;
         }
       iter=iter->next;
@@ -1053,6 +1073,20 @@ static void
 gegl_vector_emit_changed (GeglVector          *vector,
                           const GeglRectangle *bounds)
 {
+  GeglRectangle rect;
+  if (!bounds)
+    {
+       gdouble min_x;
+       gdouble max_x;
+       gdouble min_y;
+       gdouble max_y;
+       gegl_vector_get_bounds (vector, &min_x, &max_x, &min_y, &max_y);
+       rect.x = min_x;
+       rect.y = min_y;
+       rect.width = max_x - min_x;
+       rect.height = max_y - min_y;
+       bounds = &rect;
+    }
   g_signal_emit (vector, gegl_vector_signals[GEGL_VECTOR_CHANGED], 0,
                  bounds, NULL);
 }
@@ -1182,8 +1216,8 @@ gegl_vector_curve_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
-  /*gegl_vector_emit_changed (self);*/
   priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (self, NULL);
 }
 
 
@@ -1194,8 +1228,9 @@ gegl_vector_rel_line_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
-  gegl_vector_line_to (self, priv->path->d.point[0].x + x, priv->path->d.point[0].y + y);
+  priv->path = path_rel_line_to (priv->path, x, y);
   priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (self, NULL);
 }
 
 void
@@ -1206,8 +1241,8 @@ gegl_vector_rel_move_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_rel_move_to (priv->path, x, y);
-/*  gegl_vector_emit_changed (self);*/
   priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (self, NULL);
 }
 
 void
@@ -1221,11 +1256,9 @@ gegl_vector_rel_curve_to (GeglVector *self,
 {
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
-  gegl_vector_curve_to (self,
-      priv->path->d.point[0].x + x1, priv->path->d.point[0].y + y1,
-      priv->path->d.point[0].x + x2, priv->path->d.point[0].y + y2,
-      priv->path->d.point[0].x + x3, priv->path->d.point[0].y + y3);
+  priv->path = path_rel_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
   priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (self, NULL);
 }
 
 gdouble
@@ -1536,7 +1569,7 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
       KnotInfo *info = find_knot_type(type);
       if (!info)
         {
-          g_warning ("failed to find knot info for %c\n", *p);
+          goto parse_problem;
         }
 
       switch (info->pairs)
@@ -1583,23 +1616,15 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
           case '\n':
             break;
           default:
-            g_print ("seeing '%c' not sure what to do\n", *p);
+            g_warning ("path: swallowing '%c'", *p);
         }
       p++;
     }
 
+parse_problem:
+
   priv->flat_path_clean = FALSE;
   {
-   gdouble min_x;
-   gdouble max_x;
-   gdouble min_y;
-   gdouble max_y;
-   GeglRectangle rect;
-   gegl_vector_get_bounds (vector, &min_x, &max_x, &min_y, &max_y);
-   rect.x = min_x;
-   rect.y = min_y;
-   rect.width = max_x - min_x;
-   rect.height = max_y - min_y;
-   gegl_vector_emit_changed (vector, &rect);
+   gegl_vector_emit_changed (vector, NULL);
   }
 }
