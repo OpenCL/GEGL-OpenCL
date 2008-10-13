@@ -1,3 +1,14 @@
+2008-10-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (find_knot_type), (path_add2),
+	(gegl_vector_parse_svg_path): use the KnotInfo data structure to
+	determine the number of coordinate pairs to load for each knot type.
+
+2008-10-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/fill.c: (gegl_chant_class_init): do not 
+	override default cacheing behavior.
+
 2008-10-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-node-editor.c: (type_editor_vector_changed),

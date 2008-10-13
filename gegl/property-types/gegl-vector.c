@@ -58,36 +58,25 @@ typedef struct _Path Path;
  * l: 200, 50
  */
 
-typedef struct Point
-{
-  gfloat x;
-  gfloat y;
-} Point;
-
-typedef struct PathKnot
-{
-  gchar  type; /* should perhaps be padded out? */
-  Point  point[4];
-} PathKnot;
 
 
 struct _Path
 {
-  PathKnot d;
-  Path    *next;
+  GeglVectorKnot d;
+  Path          *next;
 };
 
-typedef struct KnotType
+typedef struct KnotInfo
 {
   gchar  type;
   gint   pairs;
   gchar *name;
   Path *(*flatten) (Path *head, Path *prev, Path *self);
-} KnotType;
+} KnotInfo;
 
 #if 0
 /* it would be possible to compile paths like this into the library */
-static PathKnot test[] = 
+static GeglVectorKnot test[] = 
       {{'m', {{0.0, 0.0}}},
        {'l', {{20.0, 20.0}}},
        {'C', {{20.0, 20.0}, {40, 40}, {50, 50}}}
@@ -102,13 +91,13 @@ static Path *flatten_curve (Path *head, Path *prev, Path *self);
 
 /* this table should be possible to replace at runtime */
 
-static KnotType knot_types[]=
+static KnotInfo knot_types[]=
 {
   {'M',  1, "move to",              flatten_copy},
   {'L',  1, "line to",              flatten_copy},
   {'C',  3, "curve to",             flatten_curve},
 
-  /* FIXME: these are wrong 
+  /* FIXME: these are handled wrong 
   {'m',  1, "rel move to",          flatten_copy},
   {'l',  1, "rel line to",          flatten_copy},
   {'c',  1, "rel curve to",         flatten_copy},
@@ -119,7 +108,7 @@ static KnotType knot_types[]=
   {'\0', 0, "marker for end of",    flatten_copy},
 };
 
-static KnotType *find_knot_type(gchar type)
+static KnotInfo *find_knot_type(gchar type)
 {
   gint i;
   for (i=0; knot_types[i].type != '\0'; i++)
@@ -314,7 +303,6 @@ path_add1 (Path   *head,
   return path_add4 (head, type, x, y, 0, 0, 0, 0, 0, 0);
 }
 
-#if 0
 static Path *
 path_add2 (Path   *head,
            gchar   type,
@@ -325,7 +313,6 @@ path_add2 (Path   *head,
 {
   return path_add4 (head, type, x, y, x1, y1, 0, 0, 0, 0);
 }
-#endif
 
 static Path *
 path_add3 (Path   *head,
@@ -1565,7 +1552,7 @@ gegl_vector_to_svg_path (GeglVector  *vector)
   for (iter = priv->path; iter; iter=iter->next)
     {
       gint i;
-      KnotType *info = find_knot_type(iter->d.type);
+      KnotInfo *info = find_knot_type(iter->d.type);
 
       g_string_append_c (str, iter->d.type);
       for (i=0;i<info->pairs;i++)
@@ -1605,16 +1592,41 @@ void gegl_vector_clear (GeglVector *vector)
 void gegl_vector_parse_svg_path (GeglVector *vector,
                                  const gchar *path)
 {
-  /* FIXME: extend this to be a more tolerant SVG path parser that can
-   * also be extended with new knot types by making use of KnotInfo instead
-   * of hardcoding a few commands.
-   */
-
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
   const gchar *p = path;
   gdouble x0, y0, x1, y1, x2, y2;
 
   while (*p)
     {
+      gchar     type = *p;
+      KnotInfo *info = find_knot_type(type);
+      if (!info)
+        {
+          g_warning ("failed to find knot info for %c\n", *p);
+        }
+
+      switch (info->pairs)
+        {
+          case 0:
+            priv->path = path_add1 (priv->path, type, x0, y0);
+            /* coordinates are ignored, all of these could have used add3)*/
+            break;
+          case 1:
+            p = parse_float_pair (p, &x0, &y0);
+            priv->path = path_add1 (priv->path, type, x0, y0);
+            break;
+          case 2:
+            p = parse_float_pair (p, &x0, &y0);
+            p = parse_float_pair (p, &x1, &y1);
+            priv->path = path_add2 (priv->path, type, x0, y0, x1, y1);
+            break;
+          case 3:
+            p = parse_float_pair (p, &x0, &y0);
+            p = parse_float_pair (p, &x1, &y1);
+            p = parse_float_pair (p, &x2, &y2);
+            priv->path = path_add3 (priv->path, type, x0, y0, x1, y1, x2, y2);
+            break;
+        }
       switch (*p)
         {
           case 'M':
