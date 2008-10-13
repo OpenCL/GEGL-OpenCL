@@ -492,20 +492,62 @@ path_calc_values (Path    *path,
                   gdouble *xs,
                   gdouble *ys)
 {
-  /* FIXME: flatten first */
   gdouble length = path_get_length (path);
   gint i;
   for (i=0; i<num_samples; i++)
     {
-      /* FIXME: speed this up, combine with a "stroking" of the path
-       * or even inlining for the fill case as well
-       */
       gdouble x, y;
       path_calc (path, (i*1.0)/num_samples * length, &x, &y);
 
       xs[i] = x;
       ys[i] = y;
     }
+}
+
+static gdouble
+path_get_length (Path *path)
+{
+  Path *iter = path;
+  gfloat traveled_length = 0;
+  gfloat x = 0, y = 0;
+
+  while (iter)
+    {
+      switch (iter->d.type)
+        {
+          case 'M':
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            break;
+          case 'L':
+            {
+              Point a,b;
+              gfloat distance;
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              distance = point_dist (&a, &b);
+              traveled_length += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+            break;
+          case 'u':
+            break;
+          case 's':
+            break;
+          default:
+            g_error ("can't compute length for instruction: %i\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+  return traveled_length;
 }
 
 
@@ -518,7 +560,9 @@ typedef struct _VectorNameEntity  VectorNameEntity;
 
 struct _GeglVectorPrivate
 {
-  Path *path;
+  Path     *path;
+  Path     *flat_path;
+  gboolean  flat_path_clean;
 
   Path *axis[8];
   gint  n_axes;
@@ -597,11 +641,23 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
   gegl_buffer_set (buffer, roi, format, buf, 0);
 }
 
+static void ensure_flattened (GeglVector *vector)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  if (priv->flat_path_clean)
+    return;
+  if (priv->flat_path)
+    path_destroy (priv->flat_path);
+  priv->flat_path = path_flatten (priv->path);
+  priv->flat_path_clean = TRUE;
+}
+
 static void
 path_calc_values (Path *path,
                   guint      num_samples,
                   gdouble   *xs,
                   gdouble   *ys);
+
 
 void gegl_vector_fill (GeglBuffer *buffer,
                        GeglVector *vector,
@@ -611,21 +667,19 @@ void gegl_vector_fill (GeglBuffer *buffer,
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
   gdouble xmin, xmax, ymin, ymax;
   GeglRectangle extent;
-  Path *flat_path;
   gfloat  horsub = AA;
   gint    versubi = horsub;
   gfloat  versub = versubi;
   gint    samples;
 
-  flat_path = path_flatten (priv->path);
-  samples = path_get_length (flat_path);
+  ensure_flattened (vector);
+  samples = path_get_length (priv->flat_path);
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
 
   extent.x = floor (xmin);
   extent.y = floor (ymin);
   extent.width = ceil (xmax) - extent.x;
   extent.height = ceil (ymax) - extent.y;
-
 
   {
     GSList *scanlines[extent.height * versubi];
@@ -641,7 +695,7 @@ void gegl_vector_fill (GeglBuffer *buffer,
     gint    lastline=-1;
     gint    lastdir=-2;
 
-    path_calc_values (flat_path, samples, xs, ys);
+    path_calc_values (priv->flat_path, samples, xs, ys);
 
     /* clear scanline intersection lists */
     for (i=0; i < extent.height * versub; i++)
@@ -753,8 +807,6 @@ fill_close:  /* label used for goto to close last segment */
     gegl_buffer_unlock (buffer);
   }
   }
-  path_destroy (flat_path);
-
 }
 
 typedef struct StampStatic {
@@ -863,12 +915,13 @@ void gegl_vector_stroke (GeglBuffer *buffer,
   gfloat need_to_travel = 0;
   gfloat x = 0,y = 0;
   gboolean had_move_to = FALSE;
-  Path *iter = priv->path;
+  Path *iter;
   gdouble       xmin, xmax, ymin, ymax;
   GeglRectangle extent;
 
-  /* FIXME: flatten path first */
+  ensure_flattened (vector);
 
+  iter = priv->flat_path;
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
   extent.x = floor (xmin);
   extent.y = floor (ymin);
@@ -1013,6 +1066,8 @@ finalize (GObject *gobject)
   self = NULL;
   if (priv->path)
     path_destroy (priv->path);
+  if (priv->flat_path)
+    path_destroy (priv->flat_path);
   priv = NULL;
 
   G_OBJECT_CLASS (gegl_vector_parent_class)->finalize (gobject);
@@ -1053,7 +1108,7 @@ gegl_vector_new (void)
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
 
   gegl_vector_init (self);
-  priv = NULL;
+  priv->flat_path_clean = FALSE;
 
   return self;
 }
@@ -1100,6 +1155,7 @@ gegl_vector_line_to (GeglVector *self,
 
   if (priv->path)
     gegl_vector_emit_changed (self, &priv->dirtied);
+  priv->flat_path_clean = FALSE;
 }
 
 void
@@ -1111,6 +1167,7 @@ gegl_vector_move_to (GeglVector *self,
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_move_to (priv->path, x, y);
   /*gegl_vector_emit_changed (self);*/
+  priv->flat_path_clean = FALSE;
 }
 
 void
@@ -1126,6 +1183,7 @@ gegl_vector_curve_to (GeglVector *self,
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
   /*gegl_vector_emit_changed (self);*/
+  priv->flat_path_clean = FALSE;
 }
 
 
@@ -1137,6 +1195,7 @@ gegl_vector_rel_line_to (GeglVector *self,
   GeglVectorPrivate *priv;
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   gegl_vector_line_to (self, priv->path->d.point[0].x + x, priv->path->d.point[0].y + y);
+  priv->flat_path_clean = FALSE;
 }
 
 void
@@ -1148,6 +1207,7 @@ gegl_vector_rel_move_to (GeglVector *self,
   priv = GEGL_VECTOR_GET_PRIVATE (self);
   priv->path = path_rel_move_to (priv->path, x, y);
 /*  gegl_vector_emit_changed (self);*/
+  priv->flat_path_clean = FALSE;
 }
 
 void
@@ -1165,136 +1225,15 @@ gegl_vector_rel_curve_to (GeglVector *self,
       priv->path->d.point[0].x + x1, priv->path->d.point[0].y + y1,
       priv->path->d.point[0].x + x2, priv->path->d.point[0].y + y2,
       priv->path->d.point[0].x + x3, priv->path->d.point[0].y + y3);
-}
-
-static gdouble
-path_get_length (Path *path)
-{
-  Path *iter = path;
-  gfloat traveled_length = 0;
-  gfloat x = 0, y = 0;
-
-  while (iter)
-    {
-      switch (iter->d.type)
-        {
-          case 'M':
-            x = iter->d.point[0].x;
-            y = iter->d.point[0].y;
-            break;
-          case 'C':
-            {
-              Point a,b;
-              gfloat distance;
-              g_print ("eeek computing distance of c\n");
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->d.point[2].x;
-              b.y = iter->d.point[2].y;
-
-              distance = point_dist (&a, &b);
-              traveled_length += distance;
-
-              x = b.x;
-              y = b.y;
-            }
-            break;
-          case 'L':
-            {
-              Point a,b;
-              gfloat distance;
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->d.point[0].x;
-              b.y = iter->d.point[0].y;
-
-              distance = point_dist (&a, &b);
-              traveled_length += distance;
-
-              x = b.x;
-              y = b.y;
-            }
-            break;
-          case 'u':
-            break;
-          case 's':
-            break;
-          default:
-            g_error ("can't compute length for instruction: %i\n", iter->d.type);
-            break;
-        }
-      iter=iter->next;
-    }
-  return traveled_length;
+  priv->flat_path_clean = FALSE;
 }
 
 gdouble
 gegl_vector_get_length (GeglVector *self)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
-  Path *iter = priv->path;
-  gfloat traveled_length = 0;
-  gfloat x = 0, y = 0;
-
-  while (iter)
-    {
-      switch (iter->d.type)
-        {
-          case 'M':
-            x = iter->d.point[0].x;
-            y = iter->d.point[0].y;
-            break;
-          case 'C':
-            {
-              Point a,b;
-              gfloat distance;
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->d.point[2].x;
-              b.y = iter->d.point[2].y;
-
-              distance = point_dist (&a, &b);
-              traveled_length += distance;
-
-              x = b.x;
-              y = b.y;
-            }
-            break;
-          case 'L':
-            {
-              Point a,b;
-              gfloat distance;
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->d.point[0].x;
-              b.y = iter->d.point[0].y;
-
-              distance = point_dist (&a, &b);
-              traveled_length += distance;
-
-              x = b.x;
-              y = b.y;
-            }
-            break;
-          case 'u':
-            break;
-          case 's':
-            break;
-          default:
-            g_error ("can't compute length for instruction: %i\n", iter->d.type);
-            break;
-        }
-      iter=iter->next;
-    }
-  return traveled_length;
+  ensure_flattened (self);
+  return path_get_length (priv->flat_path);
 }
 
 void         gegl_vector_get_bounds   (GeglVector   *self,
@@ -1304,11 +1243,15 @@ void         gegl_vector_get_bounds   (GeglVector   *self,
                                        gdouble      *max_y)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
-  Path *iter = priv->path;
+  Path *iter;
+ 
   *min_x = 256.0;
   *min_y = 256.0;
   *max_x = -256.0;
   *max_y = -256.0;
+
+  ensure_flattened (self);
+  iter = priv->flat_path;
 
   if (*max_x < *min_x)
     *max_x = *min_x;
@@ -1351,7 +1294,8 @@ gegl_vector_calc (GeglVector *self,
                   gdouble    *yd)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
-  return path_calc (priv->path, pos, xd, yd);
+  ensure_flattened (self);
+  return path_calc (priv->flat_path, pos, xd, yd);
 }
 
 
@@ -1361,19 +1305,9 @@ gegl_vector_calc_values (GeglVector *self,
                          gdouble   *xs,
                          gdouble   *ys)
 {
-  gdouble length = gegl_vector_get_length (self);
-  gint i;
-  for (i=0; i<num_samples; i++)
-    {
-      /* FIXME: speed this up, combine with a "stroking" of the path
-       * or even inlining for the fill case as well
-       */
-      gdouble x, y;
-      gegl_vector_calc (self, (i*1.0)/num_samples * length, &x, &y);
-
-      xs[i] = x;
-      ys[i] = y;
-    }
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  ensure_flattened (self);
+  return path_calc_values (priv->flat_path, num_samples, xs, ys);
 }
 
 
@@ -1654,6 +1588,7 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
       p++;
     }
 
+  priv->flat_path_clean = FALSE;
   {
    gdouble min_x;
    gdouble max_x;
@@ -1665,7 +1600,6 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
    rect.y = min_y;
    rect.width = max_x - min_x;
    rect.height = max_y - min_y;
-
    gegl_vector_emit_changed (vector, &rect);
   }
 }

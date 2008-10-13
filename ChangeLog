@@ -1,5 +1,10 @@
 2008-10-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: keep an internal cached flattened
+	path.
+
+2008-10-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: (find_knot_type), (path_add2),
 	(gegl_vector_parse_svg_path): use the KnotInfo data structure to
 	determine the number of coordinate pairs to load for each knot type.
