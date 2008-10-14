@@ -1,5 +1,10 @@
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (gegl_node_set_op_class): when failing to
+	find an op create a 'gegl:nop' op instead of 'nop'.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: do not add a gegl- prefix to the op names
 	for the devhelp index as they are now already prefixed by gegl:
 
