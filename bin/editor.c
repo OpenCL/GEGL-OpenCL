@@ -660,14 +660,13 @@ cb_quit_dialog (GtkAction *action)
   GtkWidget *label;
   GtkWidget *hbox;
   GtkWidget *alert;
-  gint      result;
 
   dialog = gtk_dialog_new_with_buttons ("GEGL - Confirm Quit",
                                         GTK_WINDOW (editor.window),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
-                                        GTK_STOCK_SAVE, 4,
-                                        GTK_STOCK_QUIT, GTK_RESPONSE_ACCEPT,
+                                        GTK_STOCK_SAVE,   4,
+                                        GTK_STOCK_QUIT,   GTK_RESPONSE_ACCEPT,
                                         NULL);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
 
@@ -679,13 +678,13 @@ cb_quit_dialog (GtkAction *action)
                                     GTK_ICON_SIZE_DIALOG);
   gtk_container_add (GTK_CONTAINER (hbox), alert);
 
-  label = gtk_label_new ("Really quit?\nAll unsaved data will be lost.");
+  label = gtk_label_new ("Really quit?\n"
+                         "All unsaved data will be lost.");
   gtk_container_add (GTK_CONTAINER (hbox), label);
 
   gtk_widget_show_all (hbox);
 
-  result = gtk_dialog_run (GTK_DIALOG (dialog));
-  switch (result)
+  switch (gtk_dialog_run (GTK_DIALOG (dialog)))
     {
     case GTK_RESPONSE_ACCEPT:
       gtk_main_quit ();
@@ -695,6 +694,7 @@ cb_quit_dialog (GtkAction *action)
     default:
       break;
     }
+
   gtk_widget_destroy (dialog);
 }
 
@@ -729,28 +729,29 @@ static void do_load (void)
 
   if (file_is_gegl_xml (o->file))
     {
-      GError      *err      = NULL;
+      GError *err = NULL;
+
       g_file_get_contents (o->file, &xml, NULL, &err);
+
       if (err != NULL)
         {
-          g_warning ("Unable to read file: %s", err->message);
+          g_printerr ("Unable to read file: %s", err->message);
+          g_error_free (err);
         }
     }
   else
     {
       GString *acc = g_string_new ("");
 
-            {gchar *file_basename;
-             gchar *tmp;
-             tmp=g_strdup (o->file);
-             file_basename = g_path_get_basename (tmp);
+      {
+        gchar *basename = g_path_get_basename (o->file);
 
-             g_string_append (acc, "<gegl><load path='");
-             g_string_append (acc, file_basename);
-             g_string_append (acc, "'/></gegl>");
+        g_string_append (acc, "<gegl><load path='");
+        g_string_append (acc, basename);
+        g_string_append (acc, "'/></gegl>");
 
-             g_free (tmp);
-            }
+        g_free (basename);
+      }
 
       xml = g_string_free (acc, FALSE);
     }
