@@ -1,3 +1,7 @@
+2008-10-14  Hubert Figuiere  <hub@figuiere.net>
+
+	* configure.ac: require libopenraw 0.0.5 or later.
+
 2008-10-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.c: (gegl_vector_fill),
