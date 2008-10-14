@@ -32,16 +32,24 @@
 #include <glib/gprintf.h>
 
 
-/* FIXME: relative commands are currently broken as they depend on
- * a head sentinel
- */
+typedef struct Point
+{
+  gfloat x;
+  gfloat y;
+} Point;
+
+typedef struct GeglVectorKnot
+{
+  gchar  type; /* should perhaps be padded out? */
+  Point  point[4];
+} GeglVectorKnot;
 
 /* ###################################################################### */
 /* path-list code originating in horizon */
 
 typedef struct _Path Path;
-#define BEZIER_SEGMENTS 16
-#define AA 4
+#define BEZIER_SEGMENTS 32
+#define AA 3
 
 #include <glib.h>
 #include <math.h>
@@ -780,7 +788,7 @@ fill_close:  /* label used for goto to close last segment */
           }
       }
 
-    /* for each scanline */
+    /* Fill the spans */
 {
     const gfloat *colc = gegl_color_float4 (color);
     gfloat col[4] = {colc[0],colc[1],colc[2],colc[3]};
@@ -793,6 +801,7 @@ fill_close:  /* label used for goto to close last segment */
 
     if (gegl_buffer_is_shared (buffer))
     while (!gegl_buffer_try_lock (buffer));
+
     for (i=0; i < extent.height * versub; i++)
       {
         GSList *iter = scanlines[i];
@@ -807,14 +816,9 @@ fill_close:  /* label used for goto to close last segment */
             startx = GPOINTER_TO_INT (iter->data);
             endx   = GPOINTER_TO_INT (next->data);
 
-
-            /* XXX: the horizontal subsampling bit can be done more efficiently
-             * by only special treating the start and end of each span being
-             * accumulated to.
-             */
             for (j=0;j<horsub;j++)
             {
-              GeglRectangle roi={(startx+j)/horsub, extent.y + i/versub, (endx - startx + j) / horsub, 1};
+              GeglRectangle roi={(startx+j)/horsub, extent.y + i/versub, (endx - startx-j) / horsub, 1};
               gegl_buffer_accumulate (buffer, &roi, col);
             }
 
@@ -823,6 +827,7 @@ fill_close:  /* label used for goto to close last segment */
         if (scanlines[i])
           g_slist_free (scanlines[i]);
       }
+
     if (gegl_buffer_is_shared (buffer))
     gegl_buffer_unlock (buffer);
   }
@@ -1443,9 +1448,9 @@ gegl_operation_vector_prop_changed (GeglVector          *vector,
                                     GeglOperation       *operation)
 {
   /* In the end forces a re-render, should be adapted to
-   *    * allow a smaller region to be forced for re-rendering
-   *       * when the vector is incrementally grown
-   *          */
+   * allow a smaller region to be forced for re-rendering
+   * when the vector is incrementally grown
+   * */
   /* g_object_notify (G_OBJECT (operation), "vector"); */
   GeglRectangle rect = *roi;
   gint radius = 8;

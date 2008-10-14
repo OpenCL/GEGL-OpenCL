@@ -1,3 +1,10 @@
+2008-10-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_vector_fill),
+	(gegl_operation_vector_prop_changed): fixed horizontal anti aliasaing,
+	re-added GeglVectorKnot and Point definitions that were accidentally
+	removed from the .c file.
+
 2008-10-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.c: integrated relative paths with
