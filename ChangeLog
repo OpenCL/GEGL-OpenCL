@@ -1,3 +1,8 @@
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: do not add a gegl- prefix to the op names
+	for the devhelp index as they are now already prefixed by gegl:
+
 2008-10-14  Michael Natterer  <mitch@gimp.org>
 
 	* operations/affine/chant.h

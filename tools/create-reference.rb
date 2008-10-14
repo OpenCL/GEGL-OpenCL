@@ -556,7 +556,7 @@ File.open("gegl.devhelp", "w") {|file|
     IO.foreach("operations.html"){ |line|
         if line =~ /^<li><a href='#op_.*'>.*<\/a><\/li>/
             opname=line.gsub(/.*op_/,'').gsub(/'.*/,'').strip
-            file.puts "<function name='gegl-#{opname}' link='operations.html#op_#{opname}'/>"
+            file.puts "<function name='#{opname}' link='operations.html#op_#{opname}'/>"
         end
     }
 
