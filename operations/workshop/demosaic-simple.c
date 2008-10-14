@@ -147,7 +147,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "demosaic-simple";
+  operation_class->name        = "gegl:demosaic-simple";
   operation_class->categories  = "blur";
   operation_class->description =
         _("Performs a naive grayscale2color demosaicing of an image, no interpolation.");

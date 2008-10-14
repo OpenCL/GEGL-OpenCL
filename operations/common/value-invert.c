@@ -127,7 +127,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
 
-  operation_class->name        = "value-invert";
+  operation_class->name        = "gegl:value-invert";
   operation_class->categories  = "color";
   operation_class->description =
         _("Inverts just the value component, the result is the corresponding "

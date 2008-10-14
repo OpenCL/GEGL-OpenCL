@@ -181,7 +181,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    */
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "stress";
+  operation_class->name        = "gegl:stress";
   operation_class->categories  = "enhance";
   operation_class->description =
         _("Spatio Temporal Retinex-like Envelope with Stochastic Sampling.");

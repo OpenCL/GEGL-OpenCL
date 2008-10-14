@@ -234,17 +234,17 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "svg-load";
+  operation_class->name        = "gegl:svg-load";
   operation_class->categories  = "input";   /* not hidden because it has extra API */
   operation_class->description = _("Load an SVG file using librsvg");
 
 //  static gboolean done=FALSE;
 //  if (done)
 //    return;
-  gegl_extension_handler_register (".svg", "svg-load");
-  gegl_extension_handler_register (".SVG", "svg-load");
-  gegl_extension_handler_register (".svgz", "svg-load");
-  gegl_extension_handler_register (".SVGZ", "svg-load");
+  gegl_extension_handler_register (".svg", "gegl:svg-load");
+  gegl_extension_handler_register (".SVG", "gegl:svg-load");
+  gegl_extension_handler_register (".svgz", "gegl:svg-load");
+  gegl_extension_handler_register (".SVGZ", "gegl:svg-load");
 //  done = TRUE;
 }
 

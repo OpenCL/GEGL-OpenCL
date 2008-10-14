@@ -57,7 +57,7 @@ static void attach (GeglOperation *operation)
   self->output = gegl_node_get_output_proxy (operation->node, "output");
 
   self->load = gegl_node_new_child (operation->node,
-                                    "operation", "text",
+                                    "operation", "gegl:text",
                                     "string",    "foo",
                                     NULL);
 
@@ -101,7 +101,7 @@ prepare (GeglOperation *operation)
     if (o->path[0]==0 && self->cached_path == NULL)
       {
           gegl_node_set (self->load,
-                         "operation", "text",
+                         "operation", "gegl:text",
                          "size", 20.0,
                          "string", "Eeeeek!",
                          NULL);
@@ -122,7 +122,7 @@ prepare (GeglOperation *operation)
 
               g_warning ("load: %s", tmp);
               gegl_node_set (self->load,
-                             "operation", "text",
+                             "operation", "gegl:text",
                              "size", 12.0,
                              "string", tmp,
                              NULL);
@@ -172,7 +172,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->detect = detect;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "load";
+  operation_class->name        = "gegl:load";
   operation_class->categories  = "meta:input";
   operation_class->description =
         _("Multipurpose file loader, that uses other native handlers, and "

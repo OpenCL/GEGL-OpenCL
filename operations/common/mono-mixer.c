@@ -98,7 +98,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "mono-mixer";
+  operation_class->name        = "gegl:mono-mixer";
   operation_class->categories  = "color";
   operation_class->description = _("Monochrome channel mixer");
 }

@@ -72,10 +72,10 @@ static void attach (GeglOperation *operation)
 
   self->output = gegl_node_get_output_proxy (gegl, "output");
 
-  self->color = gegl_node_new_child (gegl, "operation", "color",
+  self->color = gegl_node_new_child (gegl, "operation", "gegl:color",
                                            "value", o->color,
                                            NULL);
-  self->crop = gegl_node_new_child (gegl, "operation", "crop", NULL);
+  self->crop = gegl_node_new_child (gegl, "operation", "gegl:crop", NULL);
 
   gegl_node_link_many (self->color, self->crop, self->output, NULL);
 }
@@ -126,7 +126,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->name        = "rectangle";
+  operation_class->name        = "gegl:rectangle";
   operation_class->categories  = "input";
   operation_class->description = 
         _("A rectangular source of a fixed size with a solid color");

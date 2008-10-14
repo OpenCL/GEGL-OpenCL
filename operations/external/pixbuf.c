@@ -91,7 +91,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   /*operation_class->no_cache = TRUE;*/
 
-  operation_class->name        = "pixbuf";
+  operation_class->name        = "gegl:pixbuf";
   operation_class->categories  = "programming:input";
   operation_class->description =
         _("Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>.");

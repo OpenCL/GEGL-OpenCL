@@ -264,7 +264,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "snn-percentile";
+  operation_class->name        = "gegl:snn-percentile";
   operation_class->categories  = "misc";
   operation_class->description =
         _("Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours");

@@ -190,7 +190,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "png-save";
+  operation_class->name        = "gegl:png-save";
   operation_class->categories  = "output";
   operation_class->description =
         _("PNG image saver (passes the buffer through, saves as a side-effect.)");

@@ -100,7 +100,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "threshold";
+  operation_class->name        = "gegl:threshold";
   operation_class->categories  = "color";
   operation_class->description =
         _("Thresholds the image to white/black based on either the global value "

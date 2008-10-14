@@ -210,7 +210,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process   = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "snn-mean";
+  operation_class->name        = "gegl:snn-mean";
   operation_class->categories  = "misc";
   operation_class->description =
         _("Noise reducing edge enhancing blur filter based "

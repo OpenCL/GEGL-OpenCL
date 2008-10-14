@@ -175,7 +175,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process   = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "bilateral-filter";
+  operation_class->name        = "gegl:bilateral-filter";
   operation_class->categories  = "misc";
   operation_class->description =
         _("An edge preserving blur filter that can be used for noise reduction. "

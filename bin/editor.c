@@ -814,7 +814,7 @@ cb_introspect (GtkAction *action)
 
   gegl = gegl_node_new ();
   dot = gegl_node_new_child (gegl,
-                             "operation", "introspect",
+                             "operation", "gegl:introspect",
                              "node", editor.gegl,
                              NULL);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);

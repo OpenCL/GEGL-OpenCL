@@ -100,7 +100,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "save-pixbuf";
+  operation_class->name        = "gegl:save-pixbuf";
   operation_class->categories  = "programming:output";
   operation_class->description = _("Save output into a GdkPixbuf.");
 

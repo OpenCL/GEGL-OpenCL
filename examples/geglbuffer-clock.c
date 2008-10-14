@@ -30,12 +30,12 @@ main (gint    argc,
 
 
   blank      = gegl_node_new_child (gegl,
-                                    "operation", "color",
+                                    "operation", "gegl:color",
                                     "value", gegl_color_new ("rgba(0.0,0.0,0.0,0.4)"),
                                     NULL);
 
   crop       = gegl_node_new_child (gegl,
-                                    "operation", "crop",
+                                    "operation", "gegl:crop",
                                     "x", 0.0,
                                     "y", 0.0,
                                     "width", 260.0,
@@ -43,22 +43,22 @@ main (gint    argc,
                                     NULL);
 
   layer      = gegl_node_new_child (gegl,
-                                    "operation", "layer",
+                                    "operation", "gegl:layer",
                                     NULL);
 
   shift      = gegl_node_new_child (gegl,
-                                    "operation", "shift",
+                                    "operation", "gegl:shift",
                                     "x", 0.0,
                                     "y", 0.0,
                                     NULL);
 
   text       = gegl_node_new_child (gegl,
-                                   "operation", "text",
+                                   "operation", "gegl:text",
                                    "size", 20.0,
                              /*      "color", gegl_color_new ("rgb(0.0,0.0,0.0)"),*/
                                    NULL);
   display    = gegl_node_new_child (gegl,
-                                    "operation", "composite-buffer",
+                                    "operation", "gegl:composite-buffer",
                                     "path", argv[1],
                                     NULL);
 

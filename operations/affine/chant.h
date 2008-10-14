@@ -277,7 +277,7 @@ gegl_chant_class_init (ChantClass * klass)
 #endif
 
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \
-  operation_class->name=g_strdup(#nam);
+  operation_class->name=g_strdup("gegl:"#nam);
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
 

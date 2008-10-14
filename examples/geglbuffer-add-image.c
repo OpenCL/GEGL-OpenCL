@@ -37,16 +37,16 @@ main (gint    argc,
   gegl = gegl_node_new ();
 
   write_buffer = gegl_node_new_child (gegl,
-                                    "operation", "write-buffer",
+                                    "operation", "gegl:write-buffer",
                                     "buffer", buffer,
                                     NULL);
   shift      = gegl_node_new_child (gegl,
-                                    "operation", "shift",
+                                    "operation", "gegl:shift",
                                     "x", x,
                                     "y", y,
                                     NULL);
   load        = gegl_node_new_child (gegl,
-                                   "operation", "load",
+                                   "operation", "gegl:load",
                                    "path", in_file,
                                    NULL);
 

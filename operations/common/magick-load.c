@@ -60,7 +60,7 @@ load_cache (GeglChantO *op_magick_load)
       g_free (filename);
 
       xml = g_strdup_printf ("<gegl>"
-                             "<node operation='png-load' path='%s' />"
+                             "<node operation='gegl:png-load' path='%s' />"
                              "</gegl>",
                              escaped);
       g_free (escaped);
@@ -140,7 +140,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "magick-load";
+  operation_class->name        = "gegl:magick-load";
   operation_class->categories  = "hidden";
   operation_class->description =
         _("Image Magick wrapper using the png op.");

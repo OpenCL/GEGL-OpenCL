@@ -190,7 +190,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "remap";
+  operation_class->name        = "gegl:remap";
   operation_class->categories  = "color";
   operation_class->description =
         _("Linearly remap the R,G,B based on per pixel minimum and maximum"

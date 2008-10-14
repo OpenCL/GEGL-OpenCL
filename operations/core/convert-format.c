@@ -72,7 +72,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name       = "convert-format";
+  operation_class->name       = "gegl:convert-format";
   operation_class->categories = "core:color";
   operation_class->description =
         _("Convert the data to the specified format");

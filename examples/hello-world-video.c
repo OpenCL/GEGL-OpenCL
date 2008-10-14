@@ -35,22 +35,22 @@ This is the graph we're going to construct:
 
     /*< The image nodes representing operations we want to perform */
     GeglNode *display    = gegl_node_new_child (gegl,
-                                 "operation","ff-save",
+                                 "operation", "gegl:ff-save",
                                  "path", "fractal-zoom.avi",
                                  "bitrate", 1200000.0,
                                  NULL);
     GeglNode *layer      = gegl_node_new_child (gegl,
-                                 "operation", "layer",
+                                 "operation", "gegl:layer",
                                  "x", 2.0,
                                  "y", 4.0,
                                  NULL);
     GeglNode *text       = gegl_node_new_child (gegl,
-                                 "operation", "text",
+                                 "operation", "gegl:text",
                                  "size", 10.0,
                                  "color", gegl_color_new ("rgb(1.0,1.0,1.0)"),
                                  NULL);
     GeglNode *mandelbrot = gegl_node_new_child (gegl,
-                                "operation", "fractal-explorer",
+                                "operation", "gegl:fractal-explorer",
                                 "width", 640,
                                 "height", 480,
                                 NULL);

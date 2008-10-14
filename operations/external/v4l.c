@@ -291,7 +291,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare          = prepare;
 
-  operation_class->name        = "v4l";
+  operation_class->name        = "gegl:v4l";
   operation_class->categories  = "input:video";
   operation_class->description = 
     _("Video4Linux input, webcams framegrabbers and similar devices.");

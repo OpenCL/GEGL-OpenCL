@@ -174,7 +174,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "openraw-load";
+  operation_class->name        = "gegl:openraw-load";
   operation_class->categories  = "hidden";
   operation_class->description = "Camera RAW image loader";
 
@@ -183,18 +183,18 @@ gegl_chant_class_init (GeglChantClass *klass)
     return;
 
   /* query libopenraw instead. need a new API */
-  gegl_extension_handler_register (".cr2", "openraw-load");
-  gegl_extension_handler_register (".CR2", "openraw-load");
-  gegl_extension_handler_register (".crw", "openraw-load");
-  gegl_extension_handler_register (".CRW", "openraw-load");
-  gegl_extension_handler_register (".erf", "openraw-load");
-  gegl_extension_handler_register (".ERF", "openraw-load");
-  gegl_extension_handler_register (".mrw", "openraw-load");
-  gegl_extension_handler_register (".MRW", "openraw-load");
-  gegl_extension_handler_register (".nef", "openraw-load");
-  gegl_extension_handler_register (".NEF", "openraw-load");
-  gegl_extension_handler_register (".dng", "openraw-load");
-  gegl_extension_handler_register (".DNG", "openraw-load");
+  gegl_extension_handler_register (".cr2", "gegl:openraw-load");
+  gegl_extension_handler_register (".CR2", "gegl:openraw-load");
+  gegl_extension_handler_register (".crw", "gegl:openraw-load");
+  gegl_extension_handler_register (".CRW", "gegl:openraw-load");
+  gegl_extension_handler_register (".erf", "gegl:openraw-load");
+  gegl_extension_handler_register (".ERF", "gegl:openraw-load");
+  gegl_extension_handler_register (".mrw", "gegl:openraw-load");
+  gegl_extension_handler_register (".MRW", "gegl:openraw-load");
+  gegl_extension_handler_register (".nef", "gegl:openraw-load");
+  gegl_extension_handler_register (".NEF", "gegl:openraw-load");
+  gegl_extension_handler_register (".dng", "gegl:openraw-load");
+  gegl_extension_handler_register (".DNG", "gegl:openraw-load");
 
   done = TRUE;
 }

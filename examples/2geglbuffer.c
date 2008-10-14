@@ -22,11 +22,11 @@ main (gint    argc,
 
   gegl = gegl_node_new ();
   load_file = gegl_node_new_child (gegl,
-                              "operation", "load",
+                              "operation", "gegl:load",
                               "path", argv[1],
                               NULL);
   save_file = gegl_node_new_child (gegl,
-                                     "operation", "save-buffer",
+                                     "operation", "gegl:save-buffer",
                                      "buffer", &buffer,
                                      NULL);
 

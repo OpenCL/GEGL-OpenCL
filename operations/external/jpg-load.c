@@ -198,17 +198,17 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "jpg-load";
+  operation_class->name        = "gegl:jpg-load";
   operation_class->categories  = "hidden";
   operation_class->description = _("JPG image loader");
 
 //  static gboolean done=FALSE;
 //  if (done)
 //    return;
-  gegl_extension_handler_register (".jpg", "jpg-load");
-  gegl_extension_handler_register (".JPG", "jpg-load");
-  gegl_extension_handler_register (".jpeg", "jpg-load");
-  gegl_extension_handler_register (".JPEG", "jpg-load");
+  gegl_extension_handler_register (".jpg", "gegl:jpg-load");
+  gegl_extension_handler_register (".JPG", "gegl:jpg-load");
+  gegl_extension_handler_register (".jpeg", "gegl:jpg-load");
+  gegl_extension_handler_register (".JPEG", "gegl:jpg-load");
 //  done = TRUE;
 }
 #endif

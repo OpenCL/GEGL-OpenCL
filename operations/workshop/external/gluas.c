@@ -1034,7 +1034,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gluas";
+  operation_class->name        = "gegl:gluas";
   operation_class->categories  = "script";
   operation_class->description =
         _("A general purpose filter/composer implementation proxy for the"

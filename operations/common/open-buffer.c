@@ -125,7 +125,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_cached_region = get_cached_region;
 
-  operation_class->name        = "open-buffer";
+  operation_class->name        = "gegl:open-buffer";
   operation_class->categories  = "input";
   operation_class->description = _("A source that uses an on-disk GeglBuffer.");
 

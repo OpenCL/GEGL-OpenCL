@@ -420,15 +420,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "png-load";
+  operation_class->name        = "gegl:png-load";
   operation_class->categories  = "hidden";
   operation_class->description = _("PNG image loader.");
 
 //  static gboolean done=FALSE;
 //  if (done)
 //    return;
-  gegl_extension_handler_register (".png", "png-load");
-  gegl_extension_handler_register (".PNG", "png-load");
+  gegl_extension_handler_register (".png", "gegl:png-load");
+  gegl_extension_handler_register (".PNG", "gegl:png-load");
 //  done = TRUE;
 }
 

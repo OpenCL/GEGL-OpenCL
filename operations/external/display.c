@@ -172,7 +172,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "display";
+  operation_class->name        = "gegl:display";
   operation_class->categories  = "output";
   operation_class->description =
         _("Displays the input buffer in an SDL window (restricted to one"

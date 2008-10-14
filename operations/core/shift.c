@@ -177,7 +177,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output   = get_required_for_output;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
-  operation_class->name        = "shift";
+  operation_class->name        = "gegl:shift";
   operation_class->categories  = "core";
   operation_class->description = _("Shift the contents of a buffer");
 

@@ -440,7 +440,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "ff-load";
+  operation_class->name        = "gegl:ff-load";
   operation_class->categories  = "input:video";
   operation_class->description = _("FFmpeg video frame importer.");
 }

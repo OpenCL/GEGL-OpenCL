@@ -87,7 +87,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "svg-luminancetoalpha";
+  operation_class->name        = "gegl:svg-luminancetoalpha";
   operation_class->categories  = "compositors:svgfilter";
   operation_class->description =
         _("SVG color matrix operation svg_luminancetoalpha");

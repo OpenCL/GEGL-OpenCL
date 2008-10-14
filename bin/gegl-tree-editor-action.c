@@ -380,7 +380,7 @@ add_sibling_op (GtkAction *action, gpointer userdata)
       GeglNode *previous = gegl_previous_sibling (item);
 
       new_item = gegl_node_new_child (GEGL_STORE (model)->gegl,
-                                         "operation", "nop",
+                                         "operation", "gegl:nop",
                                          NULL);
 
       if (previous)  /* we're just chaining in */
@@ -443,7 +443,7 @@ add_child_op (GtkAction *action, gpointer userdata)
       else
         {
           new_item = gegl_node_new_child (GEGL_STORE (model)->gegl,
-                                             "operation", "blank",
+                                             "operation", "gegl:blank",
                                              NULL);
           gegl_node_connect_from (item, "aux", new_item, "output");
         }

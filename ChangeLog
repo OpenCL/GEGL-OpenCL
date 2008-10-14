@@ -1,3 +1,30 @@
+2008-10-14  Michael Natterer  <mitch@gimp.org>
+
+	* operations/affine/chant.h
+	* operations/common/*.c
+	* operations/core/*.c
+	* operations/external/*.c
+	* operations/generated/math.rb
+	* operations/generated/other-blend.rb
+	* operations/generated/svg-12-blend.rb
+	* operations/generated/svg-12-porter-duff.rb
+	* operations/workshop/*.c
+	* operations/workshop/external/*.c: prefix all operation names
+	with "gegl:".
+
+	* bin/editor.c
+	* bin/gegl-tree-editor-action.c
+	* bin/gegl.c
+	* docs/gallery/clones.xml
+	* examples/2geglbuffer.c
+	* examples/gegl-paint.c
+	* examples/geglbuffer-add-image.c
+	* examples/geglbuffer-clock.c
+	* examples/hello-world-video.c
+	* examples/hello-world.c
+	* gegl/graph/gegl-node.c
+	* tools/introspect.c: changed accordingly.
+
 2008-10-14  Sven Neumann  <sven@gimp.org>
 
 	* bin/editor.c: minor cleanups.

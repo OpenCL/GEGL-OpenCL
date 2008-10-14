@@ -69,12 +69,12 @@ static void attach (GeglOperation *operation)
       GeglNode *gegl  = priv->self;
       priv->input     = gegl_node_get_input_proxy (gegl, "input");
       priv->output    = gegl_node_get_output_proxy (gegl, "output");
-      priv->over      = gegl_node_new_child (gegl, "operation", "over", NULL);
-      priv->translate = gegl_node_new_child (gegl, "operation", "translate", NULL);
-      priv->opacity   = gegl_node_new_child (gegl, "operation", "opacity", NULL);
-      priv->blur      = gegl_node_new_child (gegl, "operation", "gaussian-blur", NULL);
-      priv->darken    = gegl_node_new_child (gegl, "operation", "src-in", NULL);
-      priv->black     = gegl_node_new_child (gegl, "operation", "color",
+      priv->over      = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
+      priv->translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
+      priv->opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
+      priv->blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
+      priv->darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
+      priv->black     = gegl_node_new_child (gegl, "operation", "gegl:color",
                                          "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
                                          NULL);
 
@@ -101,7 +101,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->attach = attach;
 
-  operation_class->name        = "dropshadow";
+  operation_class->name        = "gegl:dropshadow";
   operation_class->categories  = "meta:effects";
   operation_class->description =
         _("Creates a dropshadow effect on the input buffer.");

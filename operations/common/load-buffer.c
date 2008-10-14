@@ -97,7 +97,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
-  operation_class->name        = "load-buffer";
+  operation_class->name        = "gegl:load-buffer";
   operation_class->categories  = "programming:input";
   operation_class->description =
         _("A source that uses an in-memory GeglBuffer, for use internally by GEGL.");

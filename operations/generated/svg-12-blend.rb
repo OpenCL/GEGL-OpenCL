@@ -180,7 +180,7 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"#{name}\";
+  operation_class->name        = \"gegl:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "
@@ -242,7 +242,7 @@ b.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"#{name}\";
+  operation_class->name        = \"gegl:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\");
 "
@@ -309,7 +309,7 @@ c.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"#{name}\";
+  operation_class->name        = \"gegl:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\");
 "
@@ -367,7 +367,7 @@ d.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"#{name}\";
+  operation_class->name        = \"gegl:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "

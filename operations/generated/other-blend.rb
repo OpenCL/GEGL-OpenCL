@@ -192,7 +192,7 @@ process_gegl4float (GeglOperation      *op,
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"#{name}\";
+  operation_class->name        = \"gegl:#{name}\";
   operation_class->description =
         _(\"Porter Duff operation #{name} (d = #{c_formula})\");
 "

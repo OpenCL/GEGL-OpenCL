@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>280.000000</param>
           </params>
       </node>
-      <node operation='scale'>
+      <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -18,30 +18,30 @@
             <param name='y'>0.200000</param>
           </params>
       </node>
-      <node operation='box-blur'>
+      <node operation='gegl:box-blur'>
           <params>
             <param name='radius'>5.000000</param>
           </params>
       </node>
-      <node operation='load' id='clone0'>
+      <node operation='gegl:load' id='clone0'>
           <params>
             <param name='path'>data/car-stack.jpg</param>
           </params>
       </node>
   </node>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>190.000000</param>
           </params>
       </node>
-      <node operation='gamma'>
+      <node operation='gegl:gamma'>
           <params>
             <param name='value'>2.500000</param>
           </params>
       </node>
-      <node operation='scale'>
+      <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -54,16 +54,16 @@
       </node>
       <clone ref='clone0'/>
   </node>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>100.000000</param>
           </params>
       </node>
-      <node operation='invert'>
+      <node operation='gegl:invert'>
       </node>
-      <node operation='scale'>
+      <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -76,19 +76,19 @@
       </node>
       <clone ref='clone0'/>
   </node>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>10.000000</param>
           </params>
       </node>
-      <node operation='threshold'>
+      <node operation='gegl:threshold'>
           <params>
             <param name='value'>0.500000</param>
           </params>
       </node>
-      <node operation='scale'>
+      <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -101,49 +101,49 @@
       </node>
       <clone ref='clone0'/>
   </node>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>335.000000</param>
             <param name='y'>210.000000</param>
           </params>
       </node>
-      <node operation='over'>
-          <node operation='shift'>
+      <node operation='gegl:over'>
+          <node operation='gegl:shift'>
               <params>
                 <param name='x'>-10.000000</param>
                 <param name='y'>120.000000</param>
               </params>
           </node>
-          <node operation='opacity'>
+          <node operation='gegl:opacity'>
               <params>
                 <param name='value'>0.600000</param>
               </params>
           </node>
-          <node operation='dst-over'>
-              <node operation='opacity'>
+          <node operation='gegl:dst-over'>
+              <node operation='gegl:opacity'>
                   <params>
                     <param name='value'>2.000000</param>
                   </params>
               </node>
-              <node operation='shift'>
+              <node operation='gegl:shift'>
                   <params>
                     <param name='x'>0.000000</param>
                     <param name='y'>0.000000</param>
                   </params>
               </node>
-              <node operation='box-blur'>
+              <node operation='gegl:box-blur'>
                   <params>
                     <param name='radius'>4.000000</param>
                   </params>
               </node>
-              <node operation='brightness-contrast'>
+              <node operation='gegl:brightness-contrast'>
                   <params>
                     <param name='contrast'>1.000000</param>
                     <param name='brightness'>-1.000000</param>
                   </params>
               </node>
-              <node operation='text' id='clone1'>
+              <node operation='gegl:text' id='clone1'>
                   <params>
                     <param name='string'>warming up</param>
                     <param name='font'>Sans</param>
@@ -158,7 +158,7 @@
           </node>
           <clone ref='clone1'/>
       </node>
-      <node operation='scale'>
+      <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -169,30 +169,30 @@
             <param name='y'>0.500000</param>
           </params>
       </node>
-      <node operation='dst-over' id='clone2'>
-          <node operation='opacity'>
+      <node operation='gegl:dst-over' id='clone2'>
+          <node operation='gegl:opacity'>
               <params>
                 <param name='value'>0.800000</param>
               </params>
           </node>
-          <node operation='shift'>
+          <node operation='gegl:shift'>
               <params>
                 <param name='x'>5.000000</param>
                 <param name='y'>-2.000000</param>
               </params>
           </node>
-          <node operation='add'>
+          <node operation='gegl:add'>
               <params>
                 <param name='value'>0.500000</param>
               </params>
           </node>
-          <node operation='gaussian-blur'>
+          <node operation='gegl:gaussian-blur'>
               <params>
                 <param name='std-dev-x'>5.000000</param>
                 <param name='std-dev-y'>5.000000</param>
               </params>
           </node>
-          <node operation='load' id='clone3'>
+          <node operation='gegl:load' id='clone3'>
               <params>
                 <param name='path'>data/gegl.png</param>
               </params>
@@ -200,19 +200,19 @@
       </node>
       <clone ref='clone3'/>
   </node>
-  <node operation='over'>
-      <node operation='shift'>
+  <node operation='gegl:over'>
+      <node operation='gegl:shift'>
           <params>
             <param name='x'>90.000000</param>
             <param name='y'>90.000000</param>
           </params>
       </node>
-      <node operation='opacity'>
+      <node operation='gegl:opacity'>
           <params>
             <param name='value'>-0.500000</param>
           </params>
       </node>
-      <node operation='box-blur'>
+      <node operation='gegl:box-blur'>
           <params>
             <param name='radius'>15.000000</param>
           </params>

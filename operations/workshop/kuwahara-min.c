@@ -235,7 +235,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "kuwahara-min";
+  operation_class->name        = "gegl:kuwahara-min";
   operation_class->categories  = "misc";
   operation_class->description = _("Edge preserving min filter");
 }

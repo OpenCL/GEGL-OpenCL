@@ -189,7 +189,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    */
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "c2g";
+  operation_class->name        = "gegl:c2g";
   operation_class->categories  = "enhance";
   operation_class->description =
         _("Color to grayscale conversion, uses spatial color differences "

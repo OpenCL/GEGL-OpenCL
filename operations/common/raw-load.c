@@ -153,17 +153,17 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "raw-load";
+  operation_class->name        = "gegl:raw-load";
   operation_class->categories  = "hidden";
   operation_class->description =
         _("Raw image loader, wrapping dcraw with pipes.");
 
-  gegl_extension_handler_register (".raw", "raw-load");
-  gegl_extension_handler_register (".RAW", "raw-load");
-  gegl_extension_handler_register (".raf", "raw-load");
-  gegl_extension_handler_register (".RAF", "raw-load");
-  gegl_extension_handler_register (".nef", "raw-load");
-  gegl_extension_handler_register (".NEF", "raw-load");
+  gegl_extension_handler_register (".raw", "gegl:raw-load");
+  gegl_extension_handler_register (".RAW", "gegl:raw-load");
+  gegl_extension_handler_register (".raf", "gegl:raw-load");
+  gegl_extension_handler_register (".RAF", "gegl:raw-load");
+  gegl_extension_handler_register (".nef", "gegl:raw-load");
+  gegl_extension_handler_register (".NEF", "gegl:raw-load");
 }
 
 #endif

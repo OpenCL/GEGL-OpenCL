@@ -48,8 +48,8 @@ static gboolean paint_press (GtkWidget      *widget,
     {
       vector     = gegl_vector_new ();
 
-      over       = gegl_node_new_child (gegl, "operation", "over", NULL);
-      stroke     = gegl_node_new_child (gegl, "operation", "stroke",
+      over       = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
+      stroke     = gegl_node_new_child (gegl, "operation", "gegl:stroke",
                                         "vector", vector,
                                         "color", gegl_color_new (COLOR),
                                         "linewidth", LINEWIDTH,
@@ -101,7 +101,7 @@ static gboolean paint_release (GtkWidget      *widget,
                                  x1 - x0 + LINEWIDTH * 2, y1 - y0 + LINEWIDTH * 2};
 
       writebuf = gegl_node_new_child (gegl,
-                                      "operation", "write-buffer",
+                                      "operation", "gegl:write-buffer",
                                       "buffer",    buffer,
                                       NULL);
       gegl_node_link_many (over, writebuf, NULL);
@@ -155,8 +155,8 @@ main (gint    argc,
 
   gegl = gegl_node_new ();
   {
-    GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "load-buffer", "buffer", buffer, NULL);
-    out  = gegl_node_new_child (gegl, "operation", "nop", NULL);
+    GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "gegl:load-buffer", "buffer", buffer, NULL);
+    out  = gegl_node_new_child (gegl, "operation", "gegl:nop", NULL);
 
     gegl_node_link_many (loadbuf, out, NULL);
 

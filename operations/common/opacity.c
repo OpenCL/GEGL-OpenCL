@@ -94,7 +94,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "opacity";
+  operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";
   operation_class->description =
         _("Weights the opacity of the input with either the value of the aux"

@@ -465,7 +465,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "fractal-explorer";
+  operation_class->name        = "gegl:fractal-explorer";
   operation_class->categories  = "render";
   operation_class->description = _("Fractal Explorer");
 

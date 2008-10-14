@@ -92,7 +92,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
 
-  operation_class->name        = "levels";
+  operation_class->name        = "gegl:levels";
   operation_class->categories  = "color";
   operation_class->description =
         _("Remaps the intensity range of the image");

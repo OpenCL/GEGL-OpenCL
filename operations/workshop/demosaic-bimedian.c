@@ -207,7 +207,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "demosaic-bimedian";
+  operation_class->name        = "gegl:demosaic-bimedian";
   operation_class->categories  = "blur";
   operation_class->description =
         _("Performs a grayscale2color demosaicing of an image, using bimedian interpolation.");

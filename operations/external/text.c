@@ -290,7 +290,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   object_class->finalize = finalize;
 
-  operation_class->name        = "text";
+  operation_class->name        = "gegl:text";
   operation_class->categories  = "render";
   operation_class->description = _("Display a string of text using pango and cairo.");
   operation_class->prepare = prepare;

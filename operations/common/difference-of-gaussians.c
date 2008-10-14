@@ -61,15 +61,15 @@ static void attach (GeglOperation *operation)
       priv->output   = gegl_node_get_output_proxy (gegl, "output");
 
       priv->subtract = gegl_node_new_child (gegl,
-                                            "operation", "subtract",
+                                            "operation", "gegl:subtract",
                                             NULL);
 
       priv->blur1    = gegl_node_new_child (gegl,
-                                            "operation", "gaussian-blur",
+                                            "operation", "gegl:gaussian-blur",
                                             NULL);
 
       priv->blur2    = gegl_node_new_child (gegl,
-                                            "operation", "gaussian-blur",
+                                            "operation", "gegl:gaussian-blur",
                                             NULL);
 
       gegl_node_link_many (priv->input, priv->blur1, priv->subtract, priv->output, NULL);
@@ -92,7 +92,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->attach = attach;
 
-  operation_class->name        = "difference-of-gaussians";
+  operation_class->name        = "gegl:difference-of-gaussians";
   operation_class->categories  = "meta:edge";
   operation_class->description =
         _("Does an edge detection based on the difference of two gaussian blurs.");

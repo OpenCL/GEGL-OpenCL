@@ -67,31 +67,31 @@ static void attach (GeglOperation *operation)
       priv->output   = gegl_node_get_output_proxy (gegl, "output");
 
       priv->min = gegl_node_new_child (gegl,
-                                       "operation", "box-min",
+                                       "operation", "gegl:box-min",
                                        NULL);
 
       priv->blur_min = gegl_node_new_child (gegl,
-                                            "operation", "box-blur",
+                                            "operation", "gegl:box-blur",
                                             NULL);
 
       priv->max = gegl_node_new_child (gegl,
-                                       "operation", "box-max",
+                                       "operation", "gegl:box-max",
                                        NULL);
 
       priv->blur_max = gegl_node_new_child (gegl,
-                                            "operation", "box-blur",
+                                            "operation", "gegl:box-blur",
                                             NULL);
 
       priv->remap = gegl_node_new_child (gegl,
-                                         "operation", "remap",
+                                         "operation", "gegl:remap",
                                          NULL);
 
       priv->over = gegl_node_new_child (gegl,
-                                         "operation", "over",
+                                         "operation", "gegl:over",
                                          NULL);
 
       priv->opacity = gegl_node_new_child (gegl,
-                                         "operation", "opacity",
+                                         "operation", "gegl:opacity",
                                          NULL);
 
       gegl_node_link_many (priv->input, priv->min, priv->blur_min, NULL);
@@ -130,7 +130,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->attach = attach;
 
-  operation_class->name        = "tonemap";
+  operation_class->name        = "gegl:tonemap";
   operation_class->categories  = "meta:enhance";
   operation_class->description = _("Local contrast enhancement");
 }

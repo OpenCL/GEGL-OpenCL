@@ -180,7 +180,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
-  operation_class->name        = "gtk-display";
+  operation_class->name        = "gegl:gtk-display";
   operation_class->categories  = "output";
   operation_class->description =
         _("Displays the input buffer in an GTK window .");

@@ -148,7 +148,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "rawbayer-load";
+  operation_class->name        = "gegl:rawbayer-load";
   operation_class->categories  = "hidden";
   operation_class->description =
         _("Raw image loader, wrapping dcraw with pipes, provides the raw bayer"
@@ -157,8 +157,8 @@ gegl_chant_class_init (GeglChantClass *klass)
           " .rawbayerS it will swap the returned 16bit numbers (the pnm loader"
           " is apparently buggy)");
 
-  gegl_extension_handler_register (".rawbayer", "rawbayer-load");
-  gegl_extension_handler_register (".rawbayerS", "rawbayer-load");
+  gegl_extension_handler_register (".rawbayer", "gegl:rawbayer-load");
+  gegl_extension_handler_register (".rawbayerS", "gegl:rawbayer-load");
 }
 
 #endif

@@ -259,7 +259,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->categories  = "blur";
-  operation_class->name        = "box-blur";
+  operation_class->name        = "gegl:box-blur";
   operation_class->description =
        _("Performs an averaging of a square box of pixels.");
 }

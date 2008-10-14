@@ -235,7 +235,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "kuwahara-max";
+  operation_class->name        = "gegl:kuwahara-max";
   operation_class->categories  = "misc";
   operation_class->description = _("Edge preserving max filter");
 }

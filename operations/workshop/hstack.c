@@ -171,7 +171,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "hstack";
+  operation_class->name        = "gegl:hstack";
   operation_class->categories  = "misc";
   operation_class->description =
         _("Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")");

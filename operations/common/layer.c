@@ -27,7 +27,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(composite_op, _("Operation"), "over",
+gegl_chant_string(composite_op, _("Operation"), "gegl:over",
                   _("Composite operation to use"))
 gegl_chant_double(opacity, _("Opacity"), 0.0, 1.0, 1.0,
                   _("Opacity"))
@@ -123,7 +123,7 @@ prepare (GeglOperation *operation)
               g_free (name);
               g_warning ("load: %s", tmp);
               gegl_node_set (self->load,
-                             "operation", "text",
+                             "operation", "gegl:text",
                              "size", 12.0,
                              "string", tmp,
                              NULL);
@@ -197,12 +197,12 @@ static void attach (GeglOperation *operation)
                                          "operation", o->composite_op,
                                          NULL);
 
-  self->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
-  self->scale = gegl_node_new_child (gegl, "operation", "scale", NULL);
-  self->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
+  self->shift = gegl_node_new_child (gegl, "operation", "gegl:shift", NULL);
+  self->scale = gegl_node_new_child (gegl, "operation", "gegl:scale", NULL);
+  self->opacity = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
 
   self->load = gegl_node_new_child (gegl,
-                                    "operation", "text",
+                                    "operation", "gegl:text",
                                     "string", "foo",
                                     NULL);
 
@@ -237,7 +237,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   object_class->finalize = finalize;
 
-  operation_class->name        = "layer";
+  operation_class->name        = "gegl:layer";
   operation_class->categories  = "meta";
   operation_class->description = _("A layer in the traditional sense.");
   operation_class->attach = attach;

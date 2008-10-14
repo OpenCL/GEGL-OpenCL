@@ -188,7 +188,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "box-max";
+  operation_class->name        = "gegl:box-max";
   operation_class->categories  = "misc";
   operation_class->description =
         _("Sets the target pixel to the value of the maximum value in a box surrounding the pixel.");

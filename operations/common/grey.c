@@ -62,7 +62,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "grey";
+  operation_class->name        = "gegl:grey";
   operation_class->categories  = "color";
   operation_class->description = _("Turns the image greyscale");
 }
