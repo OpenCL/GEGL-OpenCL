@@ -297,6 +297,12 @@ static void start_element (GMarkupParseContext *context,
                                      "operation", "gegl:clone",
                                      NULL);
         }
+      else if (!strcmp (element_name, "layer"))
+        {
+          new = gegl_node_new_child (pd->gegl,
+                                     "operation", "gegl:layer",
+                                     NULL);
+        }
       else if (!strcmp (element_name, "node"))
         {
           new = gegl_node_new_child (pd->gegl,

@@ -1,5 +1,10 @@
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (start_element): special case layer elements and
+	make them generate gegl:layer ops.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (start_element), (add_stack): special case clone
 	elements and make them generate gegl:clone ops.
 
