@@ -1,5 +1,10 @@
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (start_element), (add_stack): special case clone
+	elements and make them generate gegl:clone ops.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/fill.c: (get_cached_region),
 	(gegl_chant_class_init): cache the bounding box of the fill, this
 	forces a re-render of the boundingbox each time the fill changes,

@@ -291,7 +291,13 @@ static void start_element (GMarkupParseContext *context,
     {
       GeglNode *new;
 
-      if (!strcmp (element_name, "node"))
+      if (!strcmp (element_name, "clone"))
+        {
+          new = gegl_node_new_child (pd->gegl,
+                                     "operation", "gegl:clone",
+                                     NULL);
+        }
+      else if (!strcmp (element_name, "node"))
         {
           new = gegl_node_new_child (pd->gegl,
                                      "operation", name2val (a, v, "operation"),
@@ -1250,8 +1256,8 @@ add_stack (SerializeState *ss,
                 {
                   if (class)
                     {
-                      if (strcmp (class, "nop") &&
-                          strcmp (class, "clone"))
+                      if (strcmp (class, "gegl:nop") &&
+                          strcmp (class, "gegl:clone"))
                         {
                           ind; g_string_append (ss->buf, "<node");
 
