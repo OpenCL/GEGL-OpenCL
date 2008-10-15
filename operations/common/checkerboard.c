@@ -50,8 +50,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  /*GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};*/
-  GeglRectangle result = {40,40,540,540};
+  GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
   return result;
 }
 
