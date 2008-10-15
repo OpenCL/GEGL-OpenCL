@@ -700,6 +700,9 @@ void gegl_vector_fill (GeglBuffer *buffer,
   gfloat  versub = versubi;
   gint    samples;
 
+  if (!vector)
+    return;
+
   ensure_flattened (vector);
   samples = path_get_length (priv->flat_path);
   gegl_vector_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
@@ -943,6 +946,9 @@ void gegl_vector_stroke (GeglBuffer *buffer,
   Path *iter;
   gdouble       xmin, xmax, ymin, ymax;
   GeglRectangle extent;
+
+  if (!vector)
+    return;
 
   ensure_flattened (vector);
 
@@ -1270,6 +1276,8 @@ gdouble
 gegl_vector_get_length (GeglVector *self)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  if (!self)
+    return 0.0;
   ensure_flattened (self);
   return path_get_length (priv->flat_path);
 }
@@ -1280,13 +1288,19 @@ void         gegl_vector_get_bounds   (GeglVector   *self,
                                        gdouble      *min_y,
                                        gdouble      *max_y)
 {
-  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  GeglVectorPrivate *priv;
   Path *iter;
- 
+
   *min_x = 256.0;
   *min_y = 256.0;
   *max_x = -256.0;
   *max_y = -256.0;
+
+  if (!self)
+    return;
+
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+ 
 
   ensure_flattened (self);
   iter = priv->flat_path;
@@ -1332,6 +1346,8 @@ gegl_vector_calc (GeglVector *self,
                   gdouble    *yd)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  if (!self)
+    return;
   ensure_flattened (self);
   return path_calc (priv->flat_path, pos, xd, yd);
 }
@@ -1344,6 +1360,8 @@ gegl_vector_calc_values (GeglVector *self,
                          gdouble   *ys)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (self);
+  if (!self)
+    return;
   ensure_flattened (self);
   return path_calc_values (priv->flat_path, num_samples, xs, ys);
 }

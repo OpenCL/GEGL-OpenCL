@@ -1,5 +1,22 @@
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.c: (gegl_vector_fill),
+	(gegl_vector_stroke), (gegl_vector_get_length),
+	(gegl_vector_get_bounds), (gegl_vector_calc),
+	(gegl_vector_calc_values): bail out on NULL vector arguments.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_vector_get_bounds): 
+	bail out if no vector is provided.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/checkerboard.c: (get_bounding_box): revert
+	accidental commit of a rather limited bounding box.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.c: (gegl_node_set_op_class): when failing to
 	find an op create a 'gegl:nop' op instead of 'nop'.
 
