@@ -1,5 +1,12 @@
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/fill.c: (get_cached_region),
+	(gegl_chant_class_init): cache the bounding box of the fill, this
+	forces a re-render of the boundingbox each time the fill changes,
+	until clipping to roi is added to the fill code this should be faster.
+
+2008-10-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/checkerboard.c: (get_bounding_box): revert
 	accidental commit of a rather limited bounding box.
 

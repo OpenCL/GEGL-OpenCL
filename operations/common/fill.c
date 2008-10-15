@@ -78,6 +78,13 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *self,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (self);
+}
+
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -95,7 +102,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:fill";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a fill of the provided GeglVector in a given color");
-  operation_class->get_cached_region = NULL;
+ operation_class->get_cached_region = get_cached_region;
 }
 
 
