@@ -1,5 +1,10 @@
 2008-10-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (serialize_properties): Do not insert an extra
+	newline at the start of serialized path data.
+
+2008-10-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (gegl_view_class_init), (detected_event),
 	(button_press_event): added a detected event which is emitted when
 	the hit detection in GEGL detects that a mouse press starts at a
