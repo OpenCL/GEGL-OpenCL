@@ -32,17 +32,6 @@
 #include <glib/gprintf.h>
 
 
-typedef struct Point
-{
-  gfloat x;
-  gfloat y;
-} Point;
-
-typedef struct GeglVectorKnot
-{
-  gchar  type; /* should perhaps be padded out? */
-  Point  point[4];
-} GeglVectorKnot;
 
 /* ###################################################################### */
 /* path-list code originating in horizon */
@@ -1590,64 +1579,200 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
     {
       gchar     type = *p;
       KnotInfo *info = find_knot_type(type);
-      if (!info)
-        {
-          goto parse_problem;
-        }
-
-      switch (info->pairs)
-        {
-          case 0:
-            priv->path = path_add1 (priv->path, type, x0, y0);
-            /* coordinates are ignored, all of these could have used add3)*/
-            break;
-          case 1:
-            p = parse_float_pair (p, &x0, &y0);
-            priv->path = path_add1 (priv->path, type, x0, y0);
-            break;
-          case 2:
-            p = parse_float_pair (p, &x0, &y0);
-            p = parse_float_pair (p, &x1, &y1);
-            priv->path = path_add2 (priv->path, type, x0, y0, x1, y1);
-            break;
-          case 3:
-            p = parse_float_pair (p, &x0, &y0);
-            p = parse_float_pair (p, &x1, &y1);
-            p = parse_float_pair (p, &x2, &y2);
-            priv->path = path_add3 (priv->path, type, x0, y0, x1, y1, x2, y2);
-            break;
-        }
-      switch (*p)
-        {
-          case 'M':
-            p = parse_float_pair (p, &x0, &y0);
-            gegl_vector_move_to (vector, x0, y0);
-            continue;
-          case 'L':
-            p = parse_float_pair (p, &x0, &y0);
-            gegl_vector_line_to (vector, x0, y0);
-            continue;
-          case 'C':
-            p = parse_float_pair (p, &x0, &y0);
-            p = parse_float_pair (p, &x1, &y1);
-            p = parse_float_pair (p, &x2, &y2);
-            gegl_vector_curve_to (vector, x0, y0, x1, y1, x2, y2);
-            continue;
-          case 'z':
-            break;
-          case ' ':
-          case '\n':
-            break;
-          default:
-            g_warning ("path: swallowing '%c'", *p);
-        }
+      if (info)
+        switch (info->pairs)
+          {
+            case 0:
+              priv->path = path_add1 (priv->path, type, x0, y0);
+              /* coordinates are ignored, all of these could have used add3)*/
+              break;
+            case 1:
+              p = parse_float_pair (p, &x0, &y0);
+              priv->path = path_add1 (priv->path, type, x0, y0);
+              break;
+            case 2:
+              p = parse_float_pair (p, &x0, &y0);
+              p = parse_float_pair (p, &x1, &y1);
+              priv->path = path_add2 (priv->path, type, x0, y0, x1, y1);
+              break;
+            case 3:
+              p = parse_float_pair (p, &x0, &y0);
+              p = parse_float_pair (p, &x1, &y1);
+              p = parse_float_pair (p, &x2, &y2);
+              priv->path = path_add3 (priv->path, type, x0, y0, x1, y1, x2, y2);
+              break;
+          }
       p++;
     }
-
-parse_problem:
 
   priv->flat_path_clean = FALSE;
   {
    gegl_vector_emit_changed (vector, NULL);
   }
 }
+
+
+
+gint
+gegl_vector_get_knot_count  (GeglVector *vector)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  gint count=0;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      count ++;
+    }
+  return count;
+
+}
+
+const GeglVectorKnot *
+gegl_vector_get_knot (GeglVector *vector,
+                      gint        pos)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  GeglVectorKnot *last = NULL;
+  gint count=0;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      last=&iter->d;
+      if (count == pos)
+        return last;
+      count ++;
+    }
+  if (count==-1)
+    {
+      return last;
+    }
+  return NULL;
+}
+
+/* -1 means last */
+
+/* pos = 0, pushes the existing 0 if any to 1,
+ * passing -1 means add at end
+ */
+
+void  gegl_vector_remove_knot  (GeglVector *vector,
+                                gint        pos)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  Path *prev = NULL;
+  Path *last = NULL;
+
+  gint count=0;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      if (count == pos)
+        {
+          prev->next = iter->next;
+          g_free (iter);
+        }
+      prev = iter;
+      if (prev->next)
+        last=iter;
+      count ++;
+    }
+  if (count==-1)
+    {
+      last->next = NULL;
+      g_free (prev);
+    }
+  priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (vector, NULL);
+}
+
+void  gegl_vector_add_knot     (GeglVector           *vector,
+                                gint                  pos,
+                                const GeglVectorKnot *knot)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  Path *prev = NULL;
+
+  gint count=0;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      if (count == pos)
+        {
+          Path *new = g_new0(Path, 1);
+          new->d = *knot;
+          new->next = iter->next;
+          if (prev)
+            prev->next = new;
+          priv->flat_path_clean = FALSE;
+          gegl_vector_emit_changed (vector, NULL);
+          return;
+        }
+      prev = iter;
+      count ++;
+    }
+  if (count==-1)
+    {
+      Path *new = g_new0(Path, 1);
+      new->d = *knot;
+      new->next = iter->next;
+      if (prev)
+        prev->next = new;
+      else
+        priv->path = new;
+    }
+  priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (vector, NULL);
+}
+
+void  gegl_vector_replace_knot (GeglVector           *vector,
+                                gint                  pos,
+                                const GeglVectorKnot *knot)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  Path *prev = NULL;
+
+  gint count=0;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      if (count == pos)
+        {
+          iter->d = *knot;
+          priv->flat_path_clean = FALSE;
+          gegl_vector_emit_changed (vector, NULL);
+          return;
+        }
+      prev = iter;
+      count ++;
+    }
+  if (count==-1)
+    {
+      if (prev)
+        prev->d = *knot;
+    }
+  priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (vector, NULL);
+}
+
+void  gegl_vector_knot_foreach (GeglVector *vector,
+                                void (*func) (GeglVectorKnot *knot,
+                                              gpointer  data),
+                                gpointer    data)
+{
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  Path *iter;
+  for (iter = priv->path; iter; iter=iter->next)
+    {
+      func (&iter->d, data);
+    }
+}
+
+#if 0
+const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector)
+{
+}
+GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
+                                   const GeglMatrix *matrix)
+{
+}
+#endif

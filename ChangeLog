@@ -1,5 +1,15 @@
 2008-10-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.[ch]: (gegl_vector_parse_svg_path):
+	simplified and made more robust.
+
+	Added the following API:
+	(gegl_vector_get_knot_count), (gegl_vector_get_knot),
+	(gegl_vector_remove_knot), (gegl_vector_add_knot),
+	(gegl_vector_replace_knot), (gegl_vector_knot_foreach).
+
+2008-10-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (serialize_properties): Do not insert an extra
 	newline at the start of serialized path data.
 

@@ -42,6 +42,18 @@ struct _GeglVectorClass
   GObjectClass parent_class;
 };
 
+typedef struct Point
+{
+  gfloat x;
+  gfloat y;
+} Point;
+
+typedef struct GeglVectorKnot
+{
+  gchar  type; /* should perhaps be padded out? */
+  Point  point[4];
+} GeglVectorKnot;
+
 GType        gegl_vector_get_type       (void) G_GNUC_CONST;
 
 GeglVector * gegl_vector_new            (void);
@@ -130,6 +142,35 @@ void gegl_vector_clear (GeglVector *vector);
 
 gchar * gegl_vector_to_svg_path (GeglVector  *vector);
 
+
+
+gint                  gegl_vector_get_knot_count  (GeglVector *vector);
+const GeglVectorKnot *gegl_vector_get_knot        (GeglVector *vector,
+                                                   gint        pos);
+
+/* -1 means last */
+/* pos = 0, pushes the existing 0 if any to 1,
+ * passing -1 means add at end
+ */
+
+void  gegl_vector_remove_knot  (GeglVector           *vector,
+                                gint                  pos);
+void  gegl_vector_add_knot     (GeglVector           *vector,
+                                gint                  pos,
+                                const GeglVectorKnot *knot);
+void  gegl_vector_replace_knot (GeglVector           *vector,
+                                gint                  pos,
+                                const GeglVectorKnot *knot);
+void  gegl_vector_knot_foreach (GeglVector           *vector,
+                                void (*func) (GeglVectorKnot *knot,
+                                              gpointer        data),
+                                gpointer              data);
+#if 0
+const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector);
+GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
+                                   const GeglMatrix *matrix);
+
+#endif
 G_END_DECLS
 
 #endif /* __GEGL_VECTOR_H__ */
