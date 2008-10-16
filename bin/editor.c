@@ -74,6 +74,22 @@ cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
 
 Editor editor;
 
+static void cb_detected_event (GeglView *view,
+                               GeglNode *node,
+                               gpointer  userdata)
+{
+  gchar *name;
+  gchar *operation;
+
+  gegl_node_get (node, "name", &name, "operation", &operation, NULL);
+  g_print ("%s: %p %s:%s(%p)\n", G_STRLOC, view, operation, name, node);
+
+  tree_editor_set_active (GTK_WIDGET (userdata), node);
+
+  g_free (name);
+  g_free (operation);
+}
+
 static void editor_set_gegl (GeglNode    *gegl);
 static GtkWidget *create_menubar (Editor *editor);
 static GtkWidget *
@@ -137,6 +153,9 @@ create_window (Editor *editor)
   gtk_widget_set_size_request (editor->tree_editor, -1, 100);
   gtk_widget_set_size_request (property_scroll, -1, 100);
   gtk_widget_set_size_request (view, 89, 55);
+
+  g_signal_connect (view, "detected",
+                    G_CALLBACK (cb_detected_event), editor->tree_editor);
 
   g_signal_connect (self, "delete-event",
                     G_CALLBACK (cb_window_delete_event), NULL);

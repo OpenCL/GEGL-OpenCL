@@ -1,3 +1,13 @@
+2008-10-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-view.c: (gegl_view_class_init), (detected_event),
+	(button_press_event): added a detected event which is emitted when
+	the hit detection in GEGL detects that a mouse press starts at a
+	node in the composition, the implementation and semantics of what
+	is considered a hit is not well defined at the moment.
+	* bin/editor.c: (cb_detected_event), (create_window): print a debug
+	message about which node was hit.
+
 2008-10-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: (start_element): special case layer elements and

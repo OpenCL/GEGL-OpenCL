@@ -59,6 +59,15 @@ typedef struct _GeglViewPrivate
   GeglProcessor *processor;
 } GeglViewPrivate;
 
+enum
+{
+  DETECTED,
+  LAST_SIGNAL
+};
+
+
+static gint gegl_view_signals[LAST_SIGNAL] = {0, };
+
 
 G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
 #define GEGL_VIEW_GET_PRIVATE(obj) \
@@ -125,6 +134,18 @@ gegl_view_class_init (GeglViewClass * klass)
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
+
+ gegl_view_signals[DETECTED] =
+   g_signal_new ("detected",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__OBJECT,
+                  G_TYPE_NONE, 1,
+                  GEGL_TYPE_NODE);
+
+
    g_type_class_add_private (klass, sizeof (GeglViewPrivate));
 }
 
@@ -272,6 +293,14 @@ get_property (GObject      *gobject,
     }
 }
 
+static void
+detected_event (GeglView *self,
+                GeglNode *node)
+{
+  g_signal_emit (self, gegl_view_signals[DETECTED], 0, node, NULL, NULL);
+}
+
+
 static gboolean
 button_press_event (GtkWidget      *widget,
                     GdkEventButton *event)
@@ -302,18 +331,7 @@ button_press_event (GtkWidget      *widget,
                                            (priv->y + event->y) / priv->scale);
     if (detected)
       {
-#if 0
-        gchar *name;
-        gchar *operation;
-
-        gegl_node_get (detected, "name", &name, "operation", &operation, NULL);
-        g_warning ("%s:%s(%p)", operation, name, detected);
-        g_free (name);
-        g_free (operation);
-#endif
-#if 0
-        tree_editor_set_active (editor.tree_editor, detected);
-#endif
+        detected_event (view, detected);
       }
   }
 
