@@ -37,10 +37,12 @@ struct _GeglVector
   GObject parent_instance;
 };
 
-struct _GeglVectorClass
-{
-  GObjectClass parent_class;
-};
+/* Internally the following structures are used, parts
+ * of the internal implementation are exposed through
+ * the path access API. The linked list api is currently
+ * only used for adding new path interpolators/flatteners
+ * with new knot interpretations.
+ */
 
 typedef struct Point
 {
@@ -53,6 +55,19 @@ typedef struct GeglVectorKnot
   gchar  type; /* should perhaps be padded out? */
   Point  point[4];
 } GeglVectorKnot;
+
+typedef struct GeglVectorPath
+{
+  GeglVectorKnot         d;
+  struct GeglVectorPath *next;
+} GeglVectorPath;
+
+struct _GeglVectorClass
+{
+  GObjectClass parent_class;
+  GeglVectorPath *(*flattener) (GeglVectorPath *original);
+};
+
 
 GType        gegl_vector_get_type       (void) G_GNUC_CONST;
 
@@ -162,15 +177,46 @@ void  gegl_vector_replace_knot (GeglVector           *vector,
                                 gint                  pos,
                                 const GeglVectorKnot *knot);
 void  gegl_vector_knot_foreach (GeglVector           *vector,
-                                void (*func) (GeglVectorKnot *knot,
-                                              gpointer        data),
+                                void (*func) (const GeglVectorKnot *knot,
+                                              gpointer              data),
                                 gpointer              data);
+void  gegl_vector_flat_knot_foreach (GeglVector *vector,
+                                     void (*func) (const GeglVectorKnot *knot,
+                                                   gpointer              data),
+                                     gpointer    data);
 #if 0
 const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector);
 GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
                                    const GeglMatrix *matrix);
 
 #endif
+
+
+GeglVectorPath *gegl_vector_path_flatten (GeglVectorPath *original);
+
+void gegl_vector_add_flattener (GeglVectorPath *(*func) (GeglVectorPath *original));
+void gegl_vector_add_knot_type (gchar type, gint pairs, const gchar *description);
+
+GeglVectorPath * gegl_vector_path_add1 (GeglVectorPath *head,
+                                        gchar           type,
+                                        gfloat          x,  gfloat  y);
+GeglVectorPath * gegl_vector_path_add2 (GeglVectorPath *head,
+                                        gchar           type,
+                                        gfloat          x,  gfloat y,
+                                        gfloat          x1, gfloat y1);
+GeglVectorPath * gegl_vector_path_add3 (GeglVectorPath *head,
+                                        gchar           type,
+                                        gfloat          x,  gfloat y,
+                                        gfloat          x1, gfloat y1,
+                                        gfloat          x2, gfloat y2);
+GeglVectorPath * gegl_vector_path_add4 (GeglVectorPath *head,
+                                        gchar           type,
+                                        gfloat          x0, gfloat  y0,
+                                        gfloat          x1, gfloat  y1,
+                                        gfloat          x2, gfloat  y2,
+                                        gfloat          x3, gfloat  y3);
+GeglVectorPath *gegl_vector_path_destroy (GeglVectorPath *path);
+
 G_END_DECLS
 
 #endif /* __GEGL_VECTOR_H__ */

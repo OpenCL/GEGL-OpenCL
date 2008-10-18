@@ -1,5 +1,11 @@
 2008-10-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-vector.[ch]: refactored and made it
+	possible to add external path flatteneres. Making it posisble to
+	add new methods to interpret, smoothen and flatten paths.
+
+2008-10-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/fill.c: moved
 	* operations/external/fill.c: .. here and made it render using cairo.
 	* operations/external/Makefile.am: added fill.c's dependencies.
