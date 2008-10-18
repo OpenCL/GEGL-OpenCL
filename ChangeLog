@@ -1,3 +1,9 @@
+2008-10-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/fill.c: moved
+	* operations/external/fill.c: .. here and made it render using cairo.
+	* operations/external/Makefile.am: added fill.c's dependencies.
+
 2008-10-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.[ch]: (gegl_vector_parse_svg_path):

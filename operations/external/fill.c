@@ -41,11 +41,12 @@ gegl_chant_boolean(winding,  _("Winding"),    TRUE,
 #include "property-types/gegl-vector.h"
 
 #include "gegl-chant.h"
+#include <cairo/cairo.h>
 
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
 }
 
 static GeglRectangle
@@ -64,27 +65,64 @@ get_bounding_box (GeglOperation *operation)
   return defined;
 }
 
+
+static void foreach_cairo (const GeglVectorKnot *knot,
+                           gpointer              cr)
+{
+  switch (knot->type)
+    {
+      case 'M':
+        cairo_move_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'L':
+        cairo_line_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'C':
+        cairo_curve_to (cr, knot->point[0].x, knot->point[0].y,
+                            knot->point[1].x, knot->point[1].y,
+                            knot->point[2].x, knot->point[2].y);
+        break;
+      case 'z':
+        cairo_close_path (cr);
+        break;
+      default:
+        g_print ("%s uh?:%c\n", G_STRLOC, knot->type);
+    }
+}
+
+static void gegl_vector_cairo_play (GeglVector *vector,
+                                    cairo_t *cr)
+{
+  gegl_vector_flat_knot_foreach (vector, foreach_cairo, cr);
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle box = get_bounding_box (operation);
+  cairo_t *cr;
+  cairo_surface_t *surface;
+  gfloat r,g,b,a;
+  guchar *data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
 
-  gegl_buffer_clear (output, &box);
-  gegl_vector_fill (output, o->vector, o->color, TRUE);
+  surface = cairo_image_surface_create_for_data (data,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 result->width,
+                                                 result->height,
+                                                 result->width * 4);
+  memset (data, 0, result->width * result->height * 4);
+  cr = cairo_create (surface);
+  cairo_translate (cr, -result->x, -result->y);
 
+  gegl_vector_cairo_play (o->vector, cr);
+  gegl_color_get_rgba (o->color, &r,&g,&b,&a);
+  cairo_set_source_rgba (cr, r,g,b,a);
+  cairo_fill (cr);
+  gegl_buffer_linear_close (output, data);
   return  TRUE;
 }
-
-static GeglRectangle
-get_cached_region (GeglOperation       *self,
-                   const GeglRectangle *roi)
-{
-  return get_bounding_box (self);
-}
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -102,7 +140,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:fill";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a fill of the provided GeglVector in a given color");
- operation_class->get_cached_region = get_cached_region;
+
+ /* operation_class->get_cached_region = get_cached_region;*/
 }
 
 

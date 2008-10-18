@@ -11,6 +11,13 @@ text_la_CFLAGS = $(PANGOCAIRO_CFLAGS)
 ops += text.la
 endif
 
+if HAVE_CAIRO
+fill_la_SOURCES = fill.c
+fill_la_LIBADD = $(op_libs) $(CAIRO_LIBS)
+fill_la_CFLAGS = $(CAIRO_CFLAGS)
+ops += fill.la
+endif
+
 if HAVE_PNG
 ops += png-load.la png-save.la
 png_load_la_SOURCES = png-load.c
