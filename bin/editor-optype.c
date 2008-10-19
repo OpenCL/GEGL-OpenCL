@@ -415,7 +415,7 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
     }
   else
     {
-      current_type = g_strdup ("Type a GEGL operation, or examine to dropdown menu to the right");
+      current_type = g_strdup ("Write the name of a GEGL operation to apply or examine use the dropdown menu in the upper right");
     }
 
   if (label) gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);

@@ -1,5 +1,10 @@
 2008-10-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor-optype.c: (gegl_typeeditor_optype): replaced hint in
+	entry with one that hopefully is more gramatically correct.
+
+2008-10-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: build gegl-spiro if spiro is available.
 	* bin/gegl-spiro.c: file to initialize GeglVector with knowledge about
 	spiro knot types as well as logic to flatten a spiro path to a
