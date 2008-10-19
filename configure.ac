@@ -816,6 +816,34 @@ AM_CONDITIONAL(HAVE_V4L, test "x$have_v4l" = "xyes")
 #AC_SUBST(LCMS_LIBS)
 
 
+####################
+# Check for libspiro
+####################
+
+AC_ARG_WITH(libspiro, [  --without-spiro         build without SPIRO support])
+
+spiro_ok="no"
+if test "x$with_libspiro" != "xno" && test -z "$LIBSPIRO"; then
+  AC_CHECK_LIB(spiro, run_spiro,
+    spiro_ok="yes",
+    spiro_ok="no  (usable SPIRO library not found)")
+  if test "$spiro_ok" = "yes"; then
+    AC_MSG_CHECKING([for spirolib.h])
+    AC_TRY_CPP([#include <spiro.h>],
+      spiro_ok="yes"
+      AC_DEFINE(HAVE_SPIRO, 1,
+                [Define to 1 if the spiro library is available])
+      LIBSPIRO='-lspiro',
+      spiro_ok="no  (Can't include spiro.h)")
+      AC_MSG_RESULT($spiro_ok)
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_SPIRO, test "$spiro_ok" = "yes")
+
+AC_SUBST(LIBSPIRO)
+
+
 
 
 #######################
@@ -899,4 +927,5 @@ Optional dependencies:
   avcodec:        $have_libavcodec
   avformat:       $have_libavformat
   V4L:            $have_v4l
+  spiro:          $spiro_ok
 ]);
