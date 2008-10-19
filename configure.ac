@@ -49,6 +49,7 @@ m4_define([png_required_version], [0.0.0])
 m4_define([librsvg_required_version], [2.14.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
+m4_define([openraw_required_version], [0.0.5])
 m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
@@ -708,12 +709,12 @@ AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
 
-####################
+######################
 # Check for libopenraw
-####################
+######################
 
 dnl check for libopenraw
-PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0 >= 0.0.5,
+PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0 >= openraw_required_version,
   have_openraw="yes",
   have_openraw="no  (usable libopenraw not found)")
 AM_CONDITIONAL(HAVE_OPENRAW, test "x$have_openraw" = "xyes")

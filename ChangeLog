@@ -1,3 +1,7 @@
+2008-05-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: Use m4_define to set required version of libopenraw.
+
 2008-10-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.[ch]: refactored and made it
