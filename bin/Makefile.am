@@ -29,11 +29,17 @@ gui_sources = \
 	gegl-view.h
 endif
 
+
 gegl_SOURCES =			\
 	gegl.c			\
 	gegl-options.c		\
 	gegl-options.h		\
         $(gui_sources)
+
+
+if HAVE_GTK
+gegl_SOURCES += gegl-spiro.h gegl-spiro.c
+endif
 
 INCLUDES = \
 	-I$(top_srcdir)	-I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer \
@@ -45,4 +51,4 @@ INCLUDES = \
 
 AM_LDFLAGS =  \
 	-no-undefined ../gegl/libgegl-@GEGL_API_VERSION@.la \
-	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@ @PNG_LIBS@
+	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@ @PNG_LIBS@ @LIBSPIRO@

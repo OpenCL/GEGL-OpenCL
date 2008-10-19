@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008 Øyvind Kolås
  */
 
 #include "config.h"
@@ -29,6 +29,9 @@
 
 #include "gegl-options.h"
 #include "gegl-dot.h"
+#ifdef HAVE_SPIRO
+#include "gegl-spiro.h"
+#endif
 
 #ifdef G_OS_WIN32
 #include <direct.h>
@@ -77,6 +80,9 @@ main (gint    argc,
 
   o = gegl_options_parse (argc, argv);
   gegl_init (&argc, &argv);
+#ifdef HAVE_SPIRO
+  gegl_spiro_init ();
+#endif
 
   if (o->xml)
     {

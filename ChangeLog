@@ -1,3 +1,12 @@
+2008-10-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/Makefile.am: build gegl-spiro if spiro is available.
+	* bin/gegl-spiro.c: file to initialize GeglVector with knowledge about
+	spiro knot types as well as logic to flatten a spiro path to a
+	piece-wize linear path (through beziers).
+	* bin/gegl-spiro.h: 
+	* bin/gegl.c: (main): initialize gegl-spiro
+
 2008-10-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: Added checks for the spiro library.
