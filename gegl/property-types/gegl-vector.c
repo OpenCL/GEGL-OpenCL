@@ -239,10 +239,15 @@ gegl_vector_path_flatten (GeglVectorPath *original)
   GeglVectorPath *self = NULL;
 
   GeglVectorPath *endp = NULL;
+
+  if (!original)
+    return NULL;
   
   for (iter=original; iter; iter=iter->next)
     {
-      self = find_knot_type (iter->d.type)->flatten (self, endp, iter);
+      KnotInfo *info = find_knot_type (iter->d.type);
+      if(info)
+        self = info->flatten (self, endp, iter);
       if (!endp)
         endp = self;
       while (endp && endp->next)
@@ -253,8 +258,6 @@ gegl_vector_path_flatten (GeglVectorPath *original)
 }
 
 static gdouble path_get_length (GeglVectorPath *path);
-
-typedef GeglVectorPath Head;
 
 static GeglVectorPath *
 path_append (GeglVectorPath  *head,
@@ -271,7 +274,7 @@ path_append (GeglVectorPath  *head,
     }
   else /* creating new path */
     {
-      head = g_slice_new0 (Head);
+      head = g_slice_new0 (GeglVectorPath);
       iter=head;
     }
   g_assert (res);
@@ -299,17 +302,15 @@ gegl_vector_path_add4 (GeglVectorPath   *head,
   GeglVectorPath *iter;
 
   head = path_append (head, &iter);
-
-  iter->d.type = type;
-  iter->d.point[0].x =x0;
-  iter->d.point[0].y =y0;
-  iter->d.point[1].x =x1;
-  iter->d.point[1].y =y1;
-  iter->d.point[2].x =x2;
-  iter->d.point[2].y =y2;
-  iter->d.point[3].x =x3;
-  iter->d.point[3].y =y3;
-
+  iter->d.type       = type;
+  iter->d.point[0].x = x0;
+  iter->d.point[0].y = y0;
+  iter->d.point[1].x = x1;
+  iter->d.point[1].y = y1;
+  iter->d.point[2].x = x2;
+  iter->d.point[2].y = y2;
+  iter->d.point[3].x = x3;
+  iter->d.point[3].y = y3;
   return head;
 }
 
@@ -576,6 +577,7 @@ struct _GeglVectorPrivate
 
   GeglRectangle dirtied;
 
+  GeglRectangle cached_extent;
 };
 
 enum
@@ -1056,7 +1058,7 @@ gegl_vector_class_init (GeglVectorClass *klass)
   gegl_vector_signals[GEGL_VECTOR_CHANGED] =
     g_signal_new ("changed", G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0 /* class offset */,
+                  0    /* class offset */,
                   NULL /* accumulator */,
                   NULL /* accu_data */,
                   g_cclosure_marshal_VOID__POINTER,
@@ -1068,7 +1070,9 @@ static void
 gegl_vector_emit_changed (GeglVector          *vector,
                           const GeglRectangle *bounds)
 {
+  GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
   GeglRectangle rect;
+  GeglRectangle temp;
   if (!bounds)
     {
        gdouble min_x;
@@ -1080,7 +1084,12 @@ gegl_vector_emit_changed (GeglVector          *vector,
        rect.y = min_y;
        rect.width = max_x - min_x;
        rect.height = max_y - min_y;
-       bounds = &rect;
+
+       temp = priv->cached_extent;
+       priv->cached_extent = rect;
+
+       gegl_rectangle_bounding_box (&temp, &temp, &rect);
+       bounds = &temp;
     }
   g_signal_emit (vector, gegl_vector_signals[GEGL_VECTOR_CHANGED], 0,
                  bounds, NULL);
@@ -1442,7 +1451,7 @@ gegl_operation_invalidate (GeglOperation       *operation,
 void
 gegl_operation_vector_prop_changed (GeglVector          *vector,
                                     const GeglRectangle *roi,
-                                     GeglOperation      *operation);
+                                    GeglOperation       *operation);
 
 void
 gegl_operation_vector_prop_changed (GeglVector          *vector,
@@ -1458,12 +1467,7 @@ gegl_operation_vector_prop_changed (GeglVector          *vector,
   gint radius = 8;
 
   radius = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "vector-radius"));
-
-  rect.width += radius * 2;
-  rect.height += radius * 2;
-  rect.x -= radius;
-  rect.y -= radius;
-
+#if 0
     {
       gint align = 127;
       gint x= rect.x & (0xffff-align);
@@ -1473,6 +1477,7 @@ gegl_operation_vector_prop_changed (GeglVector          *vector,
       if (x)
         rect.width += (align-x);
     }
+#endif
 
   gegl_operation_invalidate (operation, &rect);
 }
@@ -1705,11 +1710,11 @@ void  gegl_vector_add_knot     (GeglVector           *vector,
       prev = iter;
       count ++;
     }
-  if (count==-1)
+  if (pos==-1)
     {
-      GeglVectorPath *new = g_new0(GeglVectorPath, 1);
+      GeglVectorPath *new = g_slice_new0(GeglVectorPath);
       new->d = *knot;
-      new->next = iter->next;
+      new->next = NULL;
       if (prev)
         prev->next = new;
       else

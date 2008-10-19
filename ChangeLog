@@ -1,3 +1,8 @@
+2008-10-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: use slice allocator when
+	allocating new chain alements for a path.
+
 2008-05-21  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: Use m4_define to set required version of libopenraw.
