@@ -124,6 +124,31 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static GeglNode *detect (GeglOperation *operation,
+                         gint           x,
+                         gint           y)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  cairo_t *cr;
+  cairo_surface_t *surface;
+  gchar *data = "     ";
+  gboolean result;
+
+  surface = cairo_image_surface_create_for_data ((guchar*)data,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 1,1,4);
+  cr = cairo_create (surface);
+  /*cairo_translate (cr, -result->x, -result->y);*/
+  gegl_vector_cairo_play (o->vector, cr);
+  result = cairo_in_fill (cr, x, y);
+  cairo_destroy (cr);
+
+  if (result)
+    return operation->node;
+
+  return NULL;
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -136,6 +161,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
+  operation_class->detect = detect;
 
   operation_class->name        = "gegl:fill";
   operation_class->categories  = "render";

@@ -1,5 +1,10 @@
 2008-10-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/fill.c: (detect), (gegl_chant_class_init): use
+	cairo for hit detection.
+
+2008-10-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.c: (gegl_cache_invalidate): clear region
 	being invalidated in the cache (the cache is being used as the abyss
 	when the bounding-box shrinks.)
