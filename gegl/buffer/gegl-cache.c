@@ -330,15 +330,14 @@ void
 gegl_cache_invalidate (GeglCache           *self,
                        const GeglRectangle *roi)
 {
-#if 0
+#if 1
   if (roi)
     {
-      g_print ("invalidate of %i,%i %i×%i\n", roi->x, roi->y, roi->width, roi->height);
       gegl_buffer_clear (GEGL_BUFFER (self), roi);
     }
   else
     {
-      g_print ("full invalidate of a GeglCache\n");
+      g_warning ("XXX: full invalidation of GeglCache NYI\n");
     }
 #endif
   if (roi)

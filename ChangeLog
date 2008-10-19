@@ -1,5 +1,11 @@
 2008-10-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.c: (gegl_cache_invalidate): clear region
+	being invalidated in the cache (the cache is being used as the abyss
+	when the bounding-box shrinks.)
+
+2008-10-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: use slice allocator when
 	allocating new chain alements for a path.
 
