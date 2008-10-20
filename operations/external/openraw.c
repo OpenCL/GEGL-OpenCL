@@ -165,6 +165,8 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  static gboolean done = FALSE;
+
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
@@ -178,7 +180,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "hidden";
   operation_class->description = "Camera RAW image loader";
 
-  static gboolean done=FALSE;
   if (done)
     return;
 

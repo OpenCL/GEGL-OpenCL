@@ -66,7 +66,6 @@ static void curveto(bezctx *bc,
 
 static GeglVectorPath *gegl_vector_spiro_flatten (GeglVectorPath *original)
 {
-  GeglVectorPath *ret;
   GeglVectorPath *iter;
   spiro_cp *points;
   gboolean is_spiro = TRUE;
