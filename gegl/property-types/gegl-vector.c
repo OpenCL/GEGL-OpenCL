@@ -1588,13 +1588,21 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
   const gchar *p = path;
+  KnotInfo *previnfo = NULL;
   gdouble x0, y0, x1, y1, x2, y2;
 
   while (*p)
     {
       gchar     type = *p;
       KnotInfo *info = find_knot_type(type);
+      if (!info && type!= ' ')
+        {
+          /* FIXME: make L/l follow M/m */
+          info = previnfo;
+          type = previnfo->type;
+        }
       if (info)
+        {
         switch (info->pairs)
           {
             case 0:
@@ -1617,6 +1625,8 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
               priv->path = gegl_vector_path_add3 (priv->path, type, x0, y0, x1, y1, x2, y2);
               break;
           }
+        previnfo = info;
+        }
       p++;
     }
 
