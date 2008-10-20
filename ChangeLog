@@ -1,3 +1,9 @@
+2008-10-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/introspect.c: Adapt it so that it is
+	attachable to the GEGL bin graph without crashing (still doesn't
+	work though).
+
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-vector.[ch]: 
