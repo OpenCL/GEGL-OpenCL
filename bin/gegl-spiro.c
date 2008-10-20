@@ -18,7 +18,7 @@
 
 #include "gegl-spiro.h"
 #include <gegl/gegl.h>
-#include "gegl-vector.h"
+#include "gegl-path.h"
 #include <math.h>
 
 #include <spiroentrypoints.h>
@@ -41,16 +41,16 @@ struct {
 
 	/* I'm not entirely sure what this does -- I just leave it blank */
     void (*mark_knot)(bezctx *bc, int knot_idx);
-    GeglVectorPath *path;
+    GeglPathList *path;
 } bezcontext;
 
 static void moveto (bezctx *bc, double x, double y, int is_open)
 {
-  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'M', x, y);
+  bezcontext.path = gegl_path_list_append (bezcontext.path, 'M', x, y);
 }
 static void lineto (bezctx *bc, double x, double y)
 {
-  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'L', x, y);
+  bezcontext.path = gegl_path_list_append (bezcontext.path, 'L', x, y);
 }
 static void quadto (bezctx *bc, double x1, double y1, double x2, double y2)
 {
@@ -61,12 +61,12 @@ static void curveto(bezctx *bc,
                     double x2, double y2,
  		    double x3, double y3)
 {
-  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'C', x1, y1, x2, y2, x3, y3);
+  bezcontext.path = gegl_path_list_append (bezcontext.path, 'C', x1, y1, x2, y2, x3, y3);
 }
 
-static GeglVectorPath *gegl_vector_spiro_flatten (GeglVectorPath *original)
+static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
 {
-  GeglVectorPath *iter;
+  GeglPathList *iter;
   spiro_cp *points;
   gboolean is_spiro = TRUE;
   gint count;
@@ -155,12 +155,12 @@ static GeglVectorPath *gegl_vector_spiro_flatten (GeglVectorPath *original)
   return bezcontext.path;
 }
 
-static GeglVectorPath *
+static GeglPathList *
 points_to_bezier_path (gdouble  coord_x[],
                        gdouble  coord_y[],
                        gint     n_coords)
 {
-  GeglVectorPath *ret = NULL;
+  GeglPathList *ret = NULL;
   gint    i;
   gdouble smooth_value;
  
@@ -169,7 +169,7 @@ points_to_bezier_path (gdouble  coord_x[],
   if (!n_coords)
     return NULL;
 
-  ret = gegl_vector_path_add (ret, 'M', coord_x[0], coord_y[0]);
+  ret = gegl_path_list_append (ret, 'M', coord_x[0], coord_y[0]);
 
   for (i=1;i<n_coords;i++)
     {
@@ -231,7 +231,7 @@ points_to_bezier_path (gdouble  coord_x[],
             ctrl2_y = y2;
           }
 
-        ret = gegl_vector_path_add (ret, 'C', ctrl1_x, ctrl1_y,
+        ret = gegl_path_list_append (ret, 'C', ctrl1_x, ctrl1_y,
                                               ctrl2_x, ctrl2_y,
                                               x2,      y2);
       }
@@ -240,10 +240,10 @@ points_to_bezier_path (gdouble  coord_x[],
 }
 
 
-static GeglVectorPath *gegl_vector_spiro_flatten2 (GeglVectorPath *original)
+static GeglPathList *gegl_path_spiro_flatten2 (GeglPathList *original)
 {
-  GeglVectorPath *ret;
-  GeglVectorPath *iter;
+  GeglPathList *ret;
+  GeglPathList *iter;
   gdouble *coordsx;
   gdouble *coordsy;
   gboolean is_spiro = TRUE;
@@ -293,14 +293,14 @@ void gegl_spiro_init (void)
   if (done)
     return;
   done = TRUE;
-  gegl_vector_add_knot_type ('v', 1, "spiro corner");
-  gegl_vector_add_knot_type ('o', 1, "spiro g4");
-  gegl_vector_add_knot_type ('O', 1, "spiro g2");
-  gegl_vector_add_knot_type ('[', 1, "spiro left");
-  gegl_vector_add_knot_type (']', 1, "spiro right");
+  gegl_path_add_type ('v', 1, "spiro corner");
+  gegl_path_add_type ('o', 1, "spiro g4");
+  gegl_path_add_type ('O', 1, "spiro g2");
+  gegl_path_add_type ('[', 1, "spiro left");
+  gegl_path_add_type (']', 1, "spiro right");
 
-  gegl_vector_add_knot_type ('*', 1, "path");
+  gegl_path_add_type ('*', 1, "path");
 
-  gegl_vector_add_flattener (gegl_vector_spiro_flatten);
-  gegl_vector_add_flattener (gegl_vector_spiro_flatten2);
+  gegl_path_add_flattener (gegl_path_spiro_flatten);
+  gegl_path_add_flattener (gegl_path_spiro_flatten2);
 }

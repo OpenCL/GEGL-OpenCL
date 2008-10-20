@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 typedef struct _GeglColor            GeglColor;
 typedef struct _GeglCurve            GeglCurve;
 typedef struct _GeglNode             GeglNode;
-typedef struct _GeglVector           GeglVector;
+typedef struct _GeglPath             GeglPath;
 typedef struct _GeglProcessor        GeglProcessor;
 typedef struct _GeglRectangle        GeglRectangle;
 

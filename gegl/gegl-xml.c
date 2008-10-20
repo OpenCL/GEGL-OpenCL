@@ -31,7 +31,7 @@
 #include "operation/gegl-operation.h"
 #include "property-types/gegl-color.h"
 #include "property-types/gegl-curve.h"
-#include "property-types/gegl-vector.h"
+#include "property-types/gegl-path.h"
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
@@ -119,7 +119,7 @@ set_clone_prop_as_well:
                      param_name, gegl_node_get_debug_name (new));
         }
       else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec),
-                            GEGL_TYPE_PARAM_PATH))
+                            GEGL_TYPE_PARAM_FILE_PATH))
         {
           gchar buf[PATH_MAX];
 
@@ -195,11 +195,11 @@ set_clone_prop_as_well:
 	      pd->curve = NULL;
 	    }
 	}
-      else if (paramspec->value_type == GEGL_TYPE_VECTOR)
+      else if (paramspec->value_type == GEGL_TYPE_PATH)
         {
-          GeglVector *vector = gegl_vector_new ();
-          gegl_vector_parse_svg_path (vector, param_value);
-	  gegl_node_set (new, param_name, vector, NULL);
+          GeglPath *path = gegl_path_new ();
+          gegl_path_parse_string (path, param_value);
+	  gegl_node_set (new, param_name, path, NULL);
 	}
       else
         {
@@ -1000,7 +1000,7 @@ serialize_properties (SerializeState *ss,
             }
 
           if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]),
-                           GEGL_TYPE_PARAM_PATH))
+                           GEGL_TYPE_PARAM_FILE_PATH))
             {
               gchar *value;
               gegl_node_get (node, properties[i]->name, &value, NULL);
@@ -1086,17 +1086,17 @@ serialize_properties (SerializeState *ss,
 	      indent += 2; ind; indent -= 2; xml_param_end (ss);
 	      g_object_unref (curve);
 	    }
-	  else if (properties[i]->value_type == GEGL_TYPE_VECTOR)
+	  else if (properties[i]->value_type == GEGL_TYPE_PATH)
 	    {
           gchar *svg_path;
-          GeglVector *vector;
-	      gegl_node_get (node, properties[i]->name, &vector, NULL);
+          GeglPath *path;
+	      gegl_node_get (node, properties[i]->name, &path, NULL);
 	      xml_param_start (ss, indent + 2, properties[i]->name);
-          svg_path = gegl_vector_to_svg_path (vector);	      
+          svg_path = gegl_path_to_string (path);	      
 	      g_string_append (ss->buf, svg_path);
 	      indent += 2; ind; indent -= 2; xml_param_end (ss);
 
-          g_object_unref (vector);
+          g_object_unref (path);
 	    }
           else
             {

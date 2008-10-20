@@ -403,16 +403,16 @@ gegl_param_spec_string (const gchar *name,
 }
 
 /*
- * GEGL_TYPE_PARAM_PATH
+ * GEGL_TYPE_PARAM_FILE_PATH
  */
 
-static void       gegl_param_path_class_init (GParamSpecClass *klass);
-static void       gegl_param_path_init (GParamSpec *pspec);
-static gboolean   gegl_param_path_validate (GParamSpec *pspec,
-                                            GValue     *value);
+static void       gegl_param_file_path_class_init (GParamSpecClass *klass);
+static void       gegl_param_file_path_init       (GParamSpec *pspec);
+static gboolean   gegl_param_file_path_validate   (GParamSpec *pspec,
+                                                   GValue     *value);
 
 GType
-gegl_param_path_get_type (void)
+gegl_param_file_path_get_type (void)
 {
   static GType type = 0;
 
@@ -422,42 +422,42 @@ gegl_param_path_get_type (void)
       {
         sizeof (GParamSpecClass),
         NULL,                                        NULL,
-        (GClassInitFunc) gegl_param_path_class_init,
+        (GClassInitFunc) gegl_param_file_path_class_init,
         NULL,                                        NULL,
         sizeof (GeglParamSpecString),
         0,
-        (GInstanceInitFunc) gegl_param_path_init
+        (GInstanceInitFunc) gegl_param_file_path_init
       };
 
       type = g_type_register_static (G_TYPE_PARAM_STRING,
-                                     "GeglParamPath", &info, 0);
+                                     "GeglParamFilePath", &info, 0);
     }
 
   return type;
 }
 
 static void
-gegl_param_path_class_init (GParamSpecClass *klass)
+gegl_param_file_path_class_init (GParamSpecClass *klass)
 {
   klass->value_type     = G_TYPE_STRING;
-  klass->value_validate = gegl_param_path_validate;
+  klass->value_validate = gegl_param_file_path_validate;
 }
 
 static void
-gegl_param_path_init (GParamSpec *pspec)
+gegl_param_file_path_init (GParamSpec *pspec)
 {
-  GeglParamSpecPath *sspec = GEGL_PARAM_SPEC_PATH (pspec);
+  GeglParamSpecFilePath *sspec = GEGL_PARAM_SPEC_FILE_PATH (pspec);
 
   sspec->no_validate = FALSE;
   sspec->null_ok     = FALSE;
 }
 
 static gboolean
-gegl_param_path_validate (GParamSpec *pspec,
-                          GValue     *value)
+gegl_param_file_path_validate (GParamSpec *pspec,
+                               GValue     *value)
 {
-  GeglParamSpecPath *sspec = GEGL_PARAM_SPEC_PATH (pspec);
-  gchar             *path  = value->data[0].v_pointer;
+  GeglParamSpecFilePath *sspec = GEGL_PARAM_SPEC_FILE_PATH (pspec);
+  gchar                 *path  = value->data[0].v_pointer;
 
   if (path)
     {
@@ -482,19 +482,18 @@ gegl_param_path_validate (GParamSpec *pspec,
   return FALSE;
 }
 
-/* rename to not be in conflict with vector based path? */
 GParamSpec *
-gegl_param_spec_path (const gchar *name,
-                      const gchar *nick,
-                      const gchar *blurb,
-                      gboolean     no_validate,
-                      gboolean     null_ok,
-                      const gchar *default_value,
-                      GParamFlags  flags)
+gegl_param_spec_file_path (const gchar *name,
+                           const gchar *nick,
+                           const gchar *blurb,
+                           gboolean     no_validate,
+                           gboolean     null_ok,
+                           const gchar *default_value,
+                           GParamFlags  flags)
 {
-  GeglParamSpecPath *sspec;
+  GeglParamSpecFilePath *sspec;
 
-  sspec = g_param_spec_internal (GEGL_TYPE_PARAM_PATH,
+  sspec = g_param_spec_internal (GEGL_TYPE_PARAM_FILE_PATH,
                                  name, nick, blurb, flags);
 
   if (sspec)

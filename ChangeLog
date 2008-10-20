@@ -1,3 +1,36 @@
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: renamed this ..
+	* gegl/property-types/gegl-vector.h: .. and this to ..
+	* gegl/property-types/gegl-path.c: .. this and ..
+	* gegl/property-types/gegl-path.h: .. this.
+
+	These files needed updating:
+	* bin/editor.c:
+	* bin/gegl-node-editor.c:
+	* bin/gegl-spiro.c:
+	* bin/gegl.c:
+	* examples/gegl-paint.c:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-types.h:
+	* gegl/gegl-xml.c:
+	* gegl/operation/gegl-operation.h:
+	* gegl/property-types/Makefile.am:
+	* gegl/property-types/gegl-paramspecs.c:
+	* gegl/property-types/gegl-paramspecs.h:
+	* operations/common/layer.c:
+	* operations/common/load.c:
+	* operations/common/magick-load.c:
+	* operations/common/raw-load.c:
+	* operations/external/ff-load.c:
+	* operations/external/fill.c: 
+	* operations/external/jpg-load.c:
+	* operations/external/openraw.c:
+	* operations/external/png-load.c:
+	* operations/external/svg-load.c:
+	* operations/external/v4l.c:
+	* operations/workshop/stroke.c:
+
 2008-10-20  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/common/introspect.c: Adapt it so that it is

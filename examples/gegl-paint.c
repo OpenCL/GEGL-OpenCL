@@ -22,7 +22,7 @@
 #include <gtk/gtk.h>
 #include "../bin/gegl-view.h"
 #include "../bin/gegl-view.c"
-#include "property-types/gegl-vector.h"
+#include "property-types/gegl-path.h"
 
 #define HARDNESS     0.2
 #define LINEWIDTH   60.0
@@ -35,7 +35,7 @@ static GeglNode   *gegl     = NULL;
 static GeglNode   *out      = NULL;
 static GeglNode   *top      = NULL;
 static gboolean    pen_down = FALSE;
-static GeglVector *vector   = NULL;
+static GeglPath   *vector   = NULL;
 
 static GeglNode   *over     = NULL;
 static GeglNode   *stroke   = NULL;
@@ -46,7 +46,7 @@ static gboolean paint_press (GtkWidget      *widget,
 {
   if (event->button == 1)
     {
-      vector     = gegl_vector_new ();
+      vector     = gegl_path_new ();
 
       over       = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
       stroke     = gegl_node_new_child (gegl, "operation", "gegl:stroke",
@@ -76,9 +76,7 @@ static gboolean paint_motion (GtkWidget      *widget,
           return TRUE;
         }
 
-      gegl_vector_line_to (vector,
-                           event->x,
-                           event->y);
+      gegl_path_append (vector, 'L', event->x, event->y);
       return TRUE;
     }
   return FALSE;
@@ -95,7 +93,7 @@ static gboolean paint_release (GtkWidget      *widget,
       GeglNode      *writebuf;
       GeglRectangle  roi;
 
-      gegl_vector_get_bounds (vector, &x0, &x1, &y0, &y1);
+      gegl_path_get_bounds (vector, &x0, &x1, &y0, &y1);
 
       roi      = (GeglRectangle){x0 - LINEWIDTH, y0 - LINEWIDTH,
                                  x1 - x0 + LINEWIDTH * 2, y1 - y0 + LINEWIDTH * 2};

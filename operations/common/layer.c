@@ -37,7 +37,7 @@ gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   _("Vertical position"))
 gegl_chant_double(scale, _("scale"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                   _("Scale 1:1 size"))
-gegl_chant_path(src, _("Source"), "",
+gegl_chant_file_path(src, _("Source"), "",
                 _("Source datafile (png, jpg, raw, svg, bmp, tif, ...)"))
 
 #else

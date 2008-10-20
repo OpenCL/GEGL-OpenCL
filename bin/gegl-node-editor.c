@@ -31,7 +31,7 @@
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
-#include "gegl-vector.h"
+#include "gegl-path.h"
 
 
 enum
@@ -410,10 +410,10 @@ gegl_path_chooser_button_notify (GObject        *config,
 
 
 static GtkWidget *
-type_editor_path (GtkSizeGroup *col1,
-                  GtkSizeGroup *col2,
-                  GeglNode     *node,
-                  GParamSpec   *param_spec)
+type_editor_file_path (GtkSizeGroup *col1,
+                       GtkSizeGroup *col2,
+                       GeglNode     *node,
+                       GParamSpec   *param_spec)
 {
   GObject   *config = G_OBJECT (node);
   GtkWidget *hbox   = gtk_hbox_new (FALSE, 5);
@@ -827,17 +827,17 @@ type_editor_vector_changed (GtkWidget *entry,
   GParamSpec  *param_spec  = data;
   GeglNode    *node        = g_object_get_data (G_OBJECT (entry), "node");
   const gchar *prop_name   = param_spec->name;
-  GeglVector *vector;
+  GeglPath *vector;
 
   gegl_node_get (node, prop_name, &vector, NULL);
-  gegl_vector_clear (vector);
-  gegl_vector_parse_svg_path (vector, gtk_entry_get_text (GTK_ENTRY (entry)));
+  gegl_path_clear (vector);
+  gegl_path_parse_string (vector, gtk_entry_get_text (GTK_ENTRY (entry)));
   g_object_unref (vector);
 }
 
 
 static GtkWidget *
-type_editor_vector (GtkSizeGroup *col1,
+type_editor_path (GtkSizeGroup *col1,
                     GtkSizeGroup *col2,
                     GeglNode     *node,
                     GParamSpec   *param_spec)
@@ -852,10 +852,10 @@ type_editor_vector (GtkSizeGroup *col1,
                     (gpointer) param_spec);
     {
       gchar *value;
-      GeglVector *vector;
+      GeglPath *vector;
 
       gegl_node_get (node, param_spec->name, &vector, NULL);
-      value = gegl_vector_to_svg_path (vector);
+      value = gegl_path_to_string (vector);
       gtk_entry_set_text (GTK_ENTRY (entry), value);
       g_object_unref (vector);
       g_free (value);
@@ -892,9 +892,9 @@ property_editor_general (GeglNodeEditor *node_editor,
         {
           GtkWidget *prop_editor;
 
-          if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_PATH))
+          if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_FILE_PATH))
             {
-              prop_editor = type_editor_path (col1, col2, node, properties[i]);
+              prop_editor = type_editor_file_path (col1, col2, node, properties[i]);
             }
           else if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_MULTILINE))
             {
@@ -924,9 +924,9 @@ property_editor_general (GeglNodeEditor *node_editor,
             {
               prop_editor = type_editor_string (col1, col2, node, properties[i]);
             }
-          else if (properties[i]->value_type == GEGL_TYPE_VECTOR)
+          else if (properties[i]->value_type == GEGL_TYPE_PATH)
             {
-              prop_editor = type_editor_vector (col1, col2, node, properties[i]);
+              prop_editor = type_editor_path (col1, col2, node, properties[i]);
             }
           else 
             {

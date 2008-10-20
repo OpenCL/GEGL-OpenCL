@@ -173,16 +173,16 @@ GParamSpec * gegl_param_spec_string     (const gchar *name,
 
 
 /*
- * GEGL_TYPE_PARAM_PATH
+ * GEGL_TYPE_PARAM_FILEPATH
  */
 
-#define GEGL_TYPE_PARAM_PATH           (gegl_param_path_get_type ())
-#define GEGL_PARAM_SPEC_PATH(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_PATH, GeglParamSpecPath))
-#define GEGL_IS_PARAM_SPEC_PATH(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_PATH))
+#define GEGL_TYPE_PARAM_FILE_PATH           (gegl_param_file_path_get_type ())
+#define GEGL_PARAM_SPEC_FILE_PATH(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_FILE_PATH, GeglParamSpecFilePath))
+#define GEGL_IS_PARAM_SPEC_FILE_PATH(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_FILE_PATH))
 
-typedef struct _GeglParamSpecPath GeglParamSpecPath;
+typedef struct _GeglParamSpecFilePath GeglParamSpecFilePath;
 
-struct _GeglParamSpecPath
+struct _GeglParamSpecFilePath
 {
   GParamSpecString parent_instance;
 
@@ -190,15 +190,15 @@ struct _GeglParamSpecPath
   guint            null_ok     : 1;
 };
 
-GType        gegl_param_path_get_type (void) G_GNUC_CONST;
+GType        gegl_param_file_path_get_type (void) G_GNUC_CONST;
 
-GParamSpec * gegl_param_spec_path (const gchar *name,
-                                   const gchar *nick,
-                                   const gchar *blurb,
-                                   gboolean     no_validate,
-                                   gboolean     null_ok,
-                                   const gchar *default_value,
-                                   GParamFlags  flags);
+GParamSpec * gegl_param_spec_file_path (const gchar *name,
+                                        const gchar *nick,
+                                        const gchar *blurb,
+                                        gboolean     no_validate,
+                                        gboolean     null_ok,
+                                        const gchar *default_value,
+                                        GParamFlags  flags);
 
 
 /*

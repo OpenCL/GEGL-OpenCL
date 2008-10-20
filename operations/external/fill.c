@@ -23,8 +23,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_vector (vector,   _("Vector"),
-                             _("A GeglVector representing the path of the fill"))
+gegl_chant_path   (path,   _("Path"),
+                             _("A GeglPath representing the path of the fill"))
 gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,1.0)",
                              _("Color of paint to use"))
 gegl_chant_boolean(winding,  _("Winding"),    TRUE,
@@ -36,9 +36,7 @@ gegl_chant_boolean(winding,  _("Winding"),    TRUE,
 #define GEGL_CHANT_C_FILE "fill.c"
 
 #include "gegl-plugin.h"
-
-/* the vector api isn't public yet */
-#include "property-types/gegl-vector.h"
+#include "property-types/gegl-path.h"
 
 #include "gegl-chant.h"
 #include <cairo/cairo.h>
@@ -56,7 +54,7 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  defined = { 0, 0, 512, 512 };
   gdouble        x0, x1, y0, y1;
 
-  gegl_vector_get_bounds (o->vector, &x0, &x1, &y0, &y1);
+  gegl_path_get_bounds (o->path, &x0, &x1, &y0, &y1);
   defined.x      = x0;
   defined.y      = y0;
   defined.width  = x1 - x0;
@@ -66,7 +64,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 
-static void foreach_cairo (const GeglVectorKnot *knot,
+static void foreach_cairo (const GeglPathItem *knot,
                            gpointer              cr)
 {
   switch (knot->type)
@@ -90,10 +88,10 @@ static void foreach_cairo (const GeglVectorKnot *knot,
     }
 }
 
-static void gegl_vector_cairo_play (GeglVector *vector,
+static void gegl_path_cairo_play (GeglPath *path,
                                     cairo_t *cr)
 {
-  gegl_vector_flat_knot_foreach (vector, foreach_cairo, cr);
+  gegl_path_foreach_flat (path, foreach_cairo, cr);
 }
 
 static gboolean
@@ -116,7 +114,7 @@ process (GeglOperation       *operation,
   cr = cairo_create (surface);
   cairo_translate (cr, -result->x, -result->y);
 
-  gegl_vector_cairo_play (o->vector, cr);
+  gegl_path_cairo_play (o->path, cr);
   gegl_color_get_rgba (o->color, &r,&g,&b,&a);
   cairo_set_source_rgba (cr, r,g,b,a);
   cairo_fill (cr);
@@ -139,7 +137,7 @@ static GeglNode *detect (GeglOperation *operation,
                                                  1,1,4);
   cr = cairo_create (surface);
   /*cairo_translate (cr, -result->x, -result->y);*/
-  gegl_vector_cairo_play (o->vector, cr);
+  gegl_path_cairo_play (o->path, cr);
   result = cairo_in_fill (cr, x, y);
   cairo_destroy (cr);
 
@@ -165,7 +163,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "gegl:fill";
   operation_class->categories  = "render";
-  operation_class->description = _("Renders a fill of the provided GeglVector in a given color");
+  operation_class->description = _("Renders a fill of the provided GeglPath in a given color");
 
  /* operation_class->get_cached_region = get_cached_region;*/
 }

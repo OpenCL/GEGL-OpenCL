@@ -23,7 +23,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
+gegl_chant_file_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
 gegl_chant_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
 gegl_chant_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
 gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0, 

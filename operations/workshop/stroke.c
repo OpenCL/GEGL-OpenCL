@@ -23,7 +23,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_vector (vector,   _("Vector"),
+gegl_chant_path   (path,   _("Vector"),
                              _("A GeglVector representing the path of the stroke"))
 gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,1.0)",
                              _("Color of paint to use"))
@@ -39,8 +39,8 @@ gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.7,
 
 #include "gegl-plugin.h"
 
-/* the vector api isn't public yet */
-#include "property-types/gegl-vector.h"
+/* the path api isn't public yet */
+#include "property-types/gegl-path.h"
 
 #include "gegl-chant.h"
 
@@ -57,13 +57,19 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  defined = { 0, 0, 512, 512 };
   gdouble        x0, x1, y0, y1;
 
-  gegl_vector_get_bounds (o->vector, &x0, &x1, &y0, &y1);
+  gegl_path_get_bounds (o->path, &x0, &x1, &y0, &y1);
   defined.x      = x0 - o->linewidth;
   defined.y      = y0 - o->linewidth;
   defined.width  = x1 - x0 + o->linewidth * 2;
   defined.height = y1 - y0 + o->linewidth * 2;
 
   return defined;
+}
+
+static GeglRectangle
+get_cached_region (GeglOperation *operation)
+{
+  return get_bounding_box (operation);
 }
 
 static gboolean
@@ -75,8 +81,8 @@ process (GeglOperation       *operation,
   GeglRectangle box = get_bounding_box (operation);
 
   gegl_buffer_clear (output, &box);
-  g_object_set_data (operation, "vector-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
-  gegl_vector_stroke (output, o->vector, o->color, o->linewidth, o->hardness);
+  g_object_set_data (operation, "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
+  gegl_path_stroke (output, o->path, o->color, o->linewidth, o->hardness);
 
   return  TRUE;
 }
@@ -98,7 +104,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:stroke";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a brush stroke");
-  operation_class->get_cached_region = NULL;
+  operation_class->get_cached_region = get_cached_region;
 }
 
 
