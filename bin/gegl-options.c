@@ -223,6 +223,11 @@ parse_args (int    argc,
             o->verbose=1;
         }
 
+        else if (match ("--g-fatal-warnings") ||
+                 match ("-v")) {
+            o->fatal_warnings=1;
+        }
+
         else if (match ("-p")){
             o->play=TRUE;
         }

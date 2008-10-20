@@ -1,3 +1,10 @@
+2008-10-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* bin/gegl.c 
+	* bin/gegl-options.[ch]: Copy --g-fatal-warnings from GIMP so that
+	one can pass control to the debugger as soon as something goes
+	wrong.
+
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/Makefile.am: depending on HAVE_SPIRO not HAVE_GTK (doh!).

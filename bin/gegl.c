@@ -52,6 +52,18 @@
 "<?xml version='1.0'?> <gegl> <node operation='gegl:crop'> <params> <param name='x'>0</param> <param name='y'>0</param> <param name='width'>512</param> <param name='height'>216</param> </params> </node> <node operation='gegl:over'> <node operation='gegl:shift'> <params> <param name='x'>15</param> <param name='y'>150</param> </params> </node> <gegl:opacity value='0.6'/> <node name='text' operation='gegl:text'> <params> <param name='string'>2000-2008 &#xA9; Calvin Williamson, Caroline Dahloff, Manish Singh, Jay Cox, Daniel Rogers, Sven Neumann, Michael Natterer,  &#xD8;yvind Kol&#xE5;s, Philip Lafleur, Dominik Ernst, Richard Kralovic, Kevin Cozens, Victor Bogado, Martin Nordholts, Geert Jordaens, Michael Schumacher, John Marshall, &#xC9;tienne Bersac, Mark Probst, H&#xE5;kon Hitland, Tor Lillqvist, Hans Breuer, Deji Akingunola, Bradley Broom, Hans Petter Jansson, Jan Heller, dmacks@netspace.org, Sven Anders, Hubert Figui&#xE8;re, Sam Hocevar, yahvuu at gmail.com, Nicolas Robidoux, Garry R. Osgood, Shlomi Fish and Jakub Steiner</param> <param name='font'>Sans</param> <param name='size'>8</param> <param name='color'>#000000</param> <param name='wrap'>485</param> <param name='alignment'>0</param> <param name='width'>355</param> <param name='height'>70</param> </params> </node> </node> <node operation='gegl:over'> <gegl:shift x='80' y='30'/> <gegl:over> <gegl:shift y='0' x='0'/> <gegl:dropshadow radius='8.0' x='0' y='0' opacity='1.2'/> <gegl:fill vector='M 0,50 C 0,78 24,100 50,100 C 77,100 100,78 100,50 C 100,45 99,40 98,35 C 82,35 66,35 50,35 C 42,35 35,42 35,50 C 35,58 42,65 50,65 C 56,65 61,61 64,56 C 67,51 75,55 73,60 C 69,69 60,75 50,75 C 36,75 25,64 25,50 C 25,36 36,25 50,25 L 93,25 C 83,9 67,0 49,0 C 25,0 0,20 0,50 z' color='#ffffffff'/> </gegl:over> <gegl:over> <gegl:shift x='88' y='0'/> <gegl:dropshadow radius='8.0' x='0' y='0' opacity='1.2'/> <gegl:fill vector='M 50,0 C 23,0 0,22 0,50 C 0,77 22,100 50,100 C 68,100 85,90 93,75 L 40,75 C 35,75 35,65 40,65 L 98,65 C 100,55 100,45 98,35 L 40,35 C 35,35 35,25 40,25 L 93,25 C 84,10 68,0 50,0 z' color='#ffffffff'/> </gegl:over> <gegl:over> <gegl:shift x='176' y='0'/> <gegl:dropshadow radius='8.0' x='0' y='0' opacity='1.2'/> <gegl:fill vector='M 0,50 C 0,78 24,100 50,100 C 77,100 100,78 100,50 C 100,45 99,40 98,35 C 82,35 66,35 50,35 C 42,35 35,42 35,50 C 35,58 42,65 50,65 C 56,65 61,61 64,56 C 67,51 75,55 73,60 C 69,69 60,75 50,75 C 36,75 25,64 25,50 C 25,36 36,25 50,25 L 93,25 C 83,9 67,0 49,0 C 25,0 0,20 0,50 z' color='#ffffffff'/> </gegl:over> <gegl:shift x='264' y='0'/> <gegl:dropshadow radius='8.0' x='0' y='0' opacity='1.2'/> <gegl:fill vector='M 30,4 C 12,13 0,30 0,50 C 0,78 23,100 50,100 C 71,100 88,88 96,71 L 56,71 C 42,71 30,59 30,45 L 30,4 z' color='#ffffffff'/> </node> <gegl:color value='white'/> </gegl>"
 /******************/
 
+
+static void
+gegl_enable_fatal_warnings (void)
+{
+  GLogLevelFlags fatal_mask;
+
+  fatal_mask = g_log_set_always_fatal (G_LOG_FATAL_MASK);
+  fatal_mask |= G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL;
+
+  g_log_set_always_fatal (fatal_mask);
+}
+
 static gboolean file_is_gegl_xml (const gchar *path)
 {
   gchar *extension;
@@ -79,6 +91,12 @@ main (gint    argc,
   gchar       *path_root = NULL;
 
   o = gegl_options_parse (argc, argv);
+
+  if (o->fatal_warnings)
+    {
+      gegl_enable_fatal_warnings ();
+    }
+
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
   gegl_spiro_init ();

@@ -45,6 +45,7 @@ struct _GeglOptions
   gchar      **rest;
 
   gboolean     verbose;
+  gboolean     fatal_warnings;
 
   gfloat       delay;
   gboolean     play;
