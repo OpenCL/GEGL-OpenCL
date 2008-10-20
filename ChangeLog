@@ -1,5 +1,11 @@
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.[ch]: (gegl_path_replace): renamed from
+	gegl_path_replace_knot.
+	* bin/editor.c: (path_editor_keybinding), (motion_notify_event):
+
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: renamed this ..
 	* gegl/property-types/gegl-vector.h: .. and this to ..
 	* gegl/property-types/gegl-path.c: .. this and ..

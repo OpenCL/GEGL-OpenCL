@@ -74,7 +74,7 @@ void                 gegl_path_insert         (GeglPath    *path,
                                                const GeglPathItem *knot);
 const GeglPathItem * gegl_path_get            (GeglPath    *path,
                                                gint         pos);
-void                 gegl_path_replace_knot   (GeglPath    *path,
+void                 gegl_path_replace        (GeglPath    *path,
                                                gint         pos,
                                                const GeglPathItem *knot);
 void                 gegl_path_remove         (GeglPath    *path,

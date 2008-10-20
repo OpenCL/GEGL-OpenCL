@@ -1139,9 +1139,9 @@ void  gegl_path_insert     (GeglPath           *vector,
   gegl_path_emit_changed (vector, NULL);
 }
 
-void  gegl_path_replace_knot (GeglPath           *vector,
-                                gint                  pos,
-                                const GeglPathItem *knot)
+void  gegl_path_replace (GeglPath           *vector,
+                         gint                pos,
+                         const GeglPathItem *knot)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;

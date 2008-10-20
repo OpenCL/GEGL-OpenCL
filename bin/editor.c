@@ -221,7 +221,7 @@ path_editor_keybinding (GdkEventKey *event)
                 break;
             }
           g_print ("setting %c\n", knot.type);
-          gegl_path_replace_knot (da_vector, selected_no, &knot);
+          gegl_path_replace (da_vector, selected_no, &knot);
         }
         return TRUE;
       default:
@@ -436,17 +436,17 @@ motion_notify_event (GtkWidget      *widget,
               new_knot.point[1].y -= ry;
               new_knot.point[2].x -= rx;
               new_knot.point[2].y -= ry;
-              gegl_path_replace_knot (vector, drag_no, &new_knot);
+              gegl_path_replace (vector, drag_no, &new_knot);
               new_knot = *gegl_path_get (vector, drag_no + 1);
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace_knot (vector, drag_no + 1, &new_knot);
+              gegl_path_replace (vector, drag_no + 1, &new_knot);
             }
           else
             {
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace_knot (vector, drag_no, &new_knot);
+              gegl_path_replace (vector, drag_no, &new_knot);
             }
           gtk_widget_queue_draw (widget);
         }
@@ -455,7 +455,7 @@ motion_notify_event (GtkWidget      *widget,
           new_knot = *gegl_path_get (vector, drag_no);
           new_knot.point[1].x -= rx;
           new_knot.point[1].y -= ry;
-          gegl_path_replace_knot (vector, drag_no, &new_knot);
+          gegl_path_replace (vector, drag_no, &new_knot);
           gtk_widget_queue_draw (widget);
         }
       else if (drag_sub == -1)
@@ -463,7 +463,7 @@ motion_notify_event (GtkWidget      *widget,
           new_knot = *gegl_path_get (vector, drag_no + 1);
           new_knot.point[0].x -= rx;
           new_knot.point[0].y -= ry;
-          gegl_path_replace_knot (vector, drag_no + 1, &new_knot);
+          gegl_path_replace (vector, drag_no + 1, &new_knot);
           gtk_widget_queue_draw (widget);
         }
 
