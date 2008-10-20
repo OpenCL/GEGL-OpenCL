@@ -81,7 +81,7 @@ process (GeglOperation       *operation,
   GeglRectangle box = get_bounding_box (operation);
 
   gegl_buffer_clear (output, &box);
-  g_object_set_data (operation, "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
+  g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
   gegl_path_stroke (output, o->path, o->color, o->linewidth, o->hardness);
 
   return  TRUE;
@@ -104,7 +104,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:stroke";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a brush stroke");
-  operation_class->get_cached_region = get_cached_region;
+  operation_class->get_cached_region = (void*)get_cached_region;
 }
 
 

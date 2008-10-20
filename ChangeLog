@@ -1,3 +1,9 @@
+2008-10-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h.in: missed in s/Vector/Path/ replace.
+	* operations/workshop/stroke.c: (process), (gegl_chant_class_init):
+	updated to work with new path api.
+
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: (gegl_path_replace): renamed from

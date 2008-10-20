@@ -866,7 +866,7 @@ typedef enum
 } GeglPadType;
 
 typedef struct _GeglCurve  GeglCurve;
-typedef struct _GeglVector  GeglVector;
+typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;
 #endif
 
