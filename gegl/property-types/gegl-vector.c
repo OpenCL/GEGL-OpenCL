@@ -654,15 +654,30 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
 static void ensure_flattened (GeglVector *vector)
 {
   GeglVectorPrivate *priv = GEGL_VECTOR_GET_PRIVATE (vector);
+  gint i;
+  GeglVectorPath *path = priv->path;
+  GeglVectorPath *new_path;
+  GeglVectorClass *klass= GEGL_VECTOR_GET_CLASS (vector);
+
   if (priv->flat_path_clean)
     return;
   if (priv->flat_path)
     gegl_vector_path_destroy (priv->flat_path);
 
-  if (GEGL_VECTOR_GET_CLASS (vector)->flattener)
-    priv->flat_path = GEGL_VECTOR_GET_CLASS (vector)->flattener (priv->path);
-  else
-    priv->flat_path = gegl_vector_path_flatten (priv->path);
+  for (i=0;klass->flattener[i];i++)
+    {
+      new_path = klass->flattener[i] (path);
+      if (new_path != path)
+        {
+          if (path != priv->path)
+            gegl_vector_path_destroy (path);
+          path = new_path;
+        }
+    }
+
+  priv->flat_path = gegl_vector_path_flatten (path);
+  if (path != priv->path)
+    gegl_vector_path_destroy (path);
   priv->flat_path_clean = TRUE;
 }
 
@@ -1698,11 +1713,12 @@ void  gegl_vector_add_knot     (GeglVector           *vector,
     {
       if (count == pos)
         {
-          GeglVectorPath *new = g_new0(GeglVectorPath, 1);
+          GeglVectorPath *new = g_slice_new (GeglVectorPath);
           new->d = *knot;
           new->next = iter->next;
-          if (prev)
-            prev->next = new;
+          /*if (prev)
+            prev->next = new;*/
+          iter->next = new;
           priv->flat_path_clean = FALSE;
           gegl_vector_emit_changed (vector, NULL);
           return;
@@ -1788,17 +1804,25 @@ void  gegl_vector_flat_knot_foreach (GeglVector *vector,
     }
 }
 
-
-
 void  gegl_vector_add_flattener (GeglVectorPath *(*flattener) (GeglVectorPath *original))
 {
   GeglVector *vector = g_object_new (GEGL_TYPE_VECTOR, NULL);
+  GeglVectorClass *klass= GEGL_VECTOR_GET_CLASS (vector);
+  gint i;
+  g_object_unref (vector);
   /* currently only one additional flattener is supported, this should be fixed,
    * and flatteners should be able to return the original pointer to indicate
    * that no op was done, making memory handling more efficient
    */
-  GEGL_VECTOR_GET_CLASS (vector)->flattener = flattener;
-  g_object_unref (vector);
+  for (i=0;i<8;i++)
+    {
+      if (klass->flattener[i]==NULL)
+        {
+          klass->flattener[i] = flattener;
+          klass->flattener[i+1] = NULL;
+          return;
+        }
+    }
 }
 
 #if 0

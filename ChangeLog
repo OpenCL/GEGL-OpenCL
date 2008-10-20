@@ -1,3 +1,15 @@
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.[ch]: allow registering multiple
+	path flattening algorithms, algorithms can be chained (both spiros
+	and at least one other alogrithms produce beziers instead of linetos).
+
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.c: (gegl_vector_add_knot):
+	make this actually add the knot instead of replacing the one at the
+	position indicated.
+
 2008-10-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor-optype.c: (gegl_typeeditor_optype): replaced hint in

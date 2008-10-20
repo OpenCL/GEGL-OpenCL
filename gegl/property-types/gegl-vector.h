@@ -65,7 +65,7 @@ typedef struct GeglVectorPath
 struct _GeglVectorClass
 {
   GObjectClass parent_class;
-  GeglVectorPath *(*flattener) (GeglVectorPath *original);
+  GeglVectorPath *(*flattener[8]) (GeglVectorPath *original);
 };
 
 
