@@ -39,7 +39,7 @@
 
 gegl_chant_multiline (script, _("Script"), THRESHOLD_SCRIPT,
          _("The lua script containing the implementation of this operation."))
-gegl_chant_path (file, _("File"), "", _("a stored lua script on disk implementing an operation."))
+gegl_chant_file_path (file, _("File"), "", _("a stored lua script on disk implementing an operation."))
 gegl_chant_double (user_value, _("User value"), -1000.0, 1000.0, 1.0,
          _("(appears in the global variable 'user_value' in lua."))
 

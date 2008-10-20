@@ -50,7 +50,7 @@ static gboolean paint_press (GtkWidget      *widget,
 
       over       = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
       stroke     = gegl_node_new_child (gegl, "operation", "gegl:stroke",
-                                        "vector", vector,
+                                        "path", vector,
                                         "color", gegl_color_new (COLOR),
                                         "linewidth", LINEWIDTH,
                                         "hardness", HARDNESS,
