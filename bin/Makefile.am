@@ -37,7 +37,7 @@ gegl_SOURCES =			\
         $(gui_sources)
 
 
-if HAVE_GTK
+if HAVE_SPIRO
 gegl_SOURCES += gegl-spiro.h gegl-spiro.c
 endif
 

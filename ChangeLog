@@ -1,3 +1,7 @@
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/Makefile.am: depending on HAVE_SPIRO not HAVE_GTK (doh!).
+
 2008-10-20  Sam Hocevar  <sam@zoy.org>
 
 	* operations/external/openraw.c: (gegl_chant_class_init): don't
