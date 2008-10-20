@@ -56,38 +56,634 @@ static gchar *blank_composition =
 static void gegl_editor_update_title (void);
 static gboolean
 cb_window_delete_event (GtkWidget *widget, GdkEvent *event, gpointer data);
+
+
+static gboolean
+path_editor_keybinding (GdkEventKey *event);
+
 static gboolean
 cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-  if (event->keyval == GDK_l &&
-      (event->state & (GDK_CONTROL_MASK & gtk_accelerator_get_default_mod_mask())))
+  switch (event->keyval)
     {
-      if (editor.search_entry)
-        gtk_widget_grab_focus (editor.search_entry);
-      return TRUE;
-    }
-  else
-    {
+      case GDK_l:
+      if(event->state & (GDK_CONTROL_MASK &
+                         gtk_accelerator_get_default_mod_mask()))
+        {
+          if (editor.search_entry)
+            gtk_widget_grab_focus (editor.search_entry);
+          return TRUE;
+        }
+      break;
+      default:
+        return path_editor_keybinding (event);
+        break;
     }
   return FALSE;
 }
 
+#include "gegl-vector.h"
+
 Editor editor;
+
+static void gegl_node_get_translation (GeglNode *node,
+                                       gdouble  *x,
+                                       gdouble  *y)
+{
+  GeglNode **consumers=NULL;
+
+  if (x)
+    *x = 0;
+  if (y)
+    *y = 0;
+
+  while (node)
+    {
+      if (gegl_node_get_consumers (node, "output", &consumers, NULL))
+        {
+          const gchar *opname;
+          node = *consumers;
+          g_free (consumers);
+          opname = gegl_node_get_operation (node);
+          if (g_str_equal (opname, "gegl:shift") ||
+              g_str_equal (opname, "gegl:translate"))
+            {
+              gdouble tx, ty;
+              gegl_node_get (node, "x", &tx, "y", &ty, NULL);
+
+              if (x)
+                *x += tx;
+              if (y)
+                *y += ty;
+            }
+        }
+      else
+        node = NULL;
+    }
+
+}
+
+static void foreach_cairo (const GeglVectorKnot *knot,
+                           gpointer              cr)
+{
+  switch (knot->type)
+    {
+      case 'M':
+        cairo_move_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'L':
+        cairo_line_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'C':
+        cairo_curve_to (cr, knot->point[0].x, knot->point[0].y,
+                            knot->point[1].x, knot->point[1].y,
+                            knot->point[2].x, knot->point[2].y);
+        break;
+      case 'z':
+        cairo_close_path (cr);
+        break;
+      default:
+        g_print ("%s uh?:%c\n", G_STRLOC, knot->type);
+    }
+}
+
+static void gegl_vector_cairo_play (GeglVector *vector,
+                                    cairo_t *cr)
+{
+  gegl_vector_flat_knot_foreach (vector, foreach_cairo, cr);
+}
+
+static void get_loc (const GeglVectorKnot *knot, 
+                     gdouble        *x,
+                     gdouble        *y)
+{
+  if (knot->type == 'C')
+    {
+      *x = knot->point[2].x;
+      *y = knot->point[2].y;
+    }
+  else
+    {
+      *x = knot->point[0].x;
+      *y = knot->point[0].y;
+    }
+}
+
+static gboolean path_editing_active = FALSE;
+static GeglVector *da_vector = NULL;
+static gint     selected_no = 0;
+static gint     drag_no = -1;
+static gint     drag_sub = 0;
+static gdouble  prevx = 0;
+static gdouble  prevy = 0;
+
+static gboolean
+path_editor_keybinding (GdkEventKey *event)
+{
+  if (!path_editing_active)
+    return FALSE;
+  switch (event->keyval)
+    {
+      case GDK_i:
+        {
+          GeglVectorKnot knot = *gegl_vector_get_knot (da_vector, selected_no);
+          knot.point[0].x += 10;
+          gegl_vector_add_knot (da_vector, selected_no, &knot);
+          selected_no ++;
+        }
+        return TRUE;
+      case GDK_BackSpace:
+        gegl_vector_remove_knot (da_vector, selected_no);
+        if (selected_no>0)
+          selected_no --;
+        else
+          selected_no = 0;
+        return TRUE;
+      case GDK_m:
+        {
+          GeglVectorKnot knot = *gegl_vector_get_knot (da_vector, selected_no);
+          switch (knot.type)
+            {
+              case 'v':
+                knot.type = 'o';
+                break;
+              case 'o':
+                knot.type = 'O';
+                break;
+              case 'O':
+                knot.type = '[';
+                break;
+              case '[':
+                knot.type = ']';
+                break;
+              case ']':
+                knot.type = 'v';
+                break;
+            }
+          g_print ("setting %c\n", knot.type);
+          gegl_vector_replace_knot (da_vector, selected_no, &knot);
+        }
+        return TRUE;
+      default:
+        return FALSE;
+    }
+  return FALSE;
+}
+
+static gboolean
+button_press_event (GtkWidget      *widget,
+                    GdkEventButton *event,
+                    gpointer        data)
+{
+  gint   x, y;
+  gdouble scale;
+  gdouble tx, ty;
+  gdouble ex, ey;
+
+  cairo_t *cr = gdk_cairo_create (widget->window);
+  GeglVector *vector;
+  const GeglVectorKnot *knot;
+  const GeglVectorKnot *prev_knot = NULL;
+  gint i;
+  gint n;
+
+  g_object_get (G_OBJECT (widget),
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+  gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+
+  ex = (event->x + x) / scale - tx;
+  ey = (event->y + y) / scale - ty;
+
+  /*cairo_translate (cr, -x, -y);
+  cairo_scale (cr, scale, scale);
+  cairo_translate (cr, tx, ty);*/
+
+  gegl_node_get (data, "vector", &vector, NULL);
+
+  gegl_vector_cairo_play (vector, cr);
+
+  n= gegl_vector_get_knot_count (vector);
+
+  prev_knot = NULL;
+  for (i=0;i<n;i++)
+    {
+      gdouble x, y;
+      knot = gegl_vector_get_knot (vector, i);
+      if (knot->type == 'C')
+        {
+
+#define ACTIVE_ARC 6.0
+#define INACTIVE_ARC 3.0
+
+#define ACTIVE_COLOR cairo_set_source_rgba (cr, 1.0, 0.0, 0.0, 0.5)
+#define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
+
+
+          if ( i == selected_no + 1)
+            {
+              x = knot->point[0].x;
+              y = knot->point[0].y;
+              cairo_new_path (cr);
+              cairo_move_to (cr, x, y);
+              cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+              if (cairo_in_fill (cr, ex, ey))
+                {
+                  drag_no = i -1;
+                  drag_sub = -1;
+                  prevx = ex;
+                  prevy = ey;
+                }
+            }
+
+          x = knot->point[1].x;
+          y = knot->point[1].y;
+          cairo_move_to (cr, x, y);
+
+          if ( i == selected_no)
+            {
+              cairo_new_path (cr);
+              cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+              if (cairo_in_fill (cr, ex, ey))
+                {
+                  prevx = ex;
+                  prevy = ey;
+                  drag_no = i;
+                  drag_sub = 1;
+                }
+            }
+        }
+
+      get_loc (knot, &x, &y);
+      cairo_new_path (cr);
+      cairo_move_to (cr, x, y);
+      cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+
+      if (cairo_in_fill (cr, ex, ey))
+        {
+          selected_no = i;
+          drag_no = i;
+          drag_sub = 0;
+          prevx = ex;
+          prevy = ey;
+          gtk_widget_queue_draw (widget);
+        }
+      prev_knot = knot;
+    }
+
+  g_object_unref (vector);
+  cairo_destroy (cr);
+
+  if (((i-1 == selected_no) ||( i==0 && selected_no==0))   && drag_no < 0  )
+    {
+      /* append a node */
+      if (!prev_knot)
+        goto foo;
+
+      switch (prev_knot->type)
+        {
+          case '*':
+foo:
+            {
+              GeglVectorKnot knot = {'*', {{ex, ey}}};
+              gegl_vector_add_knot (vector, -1, &knot);
+              selected_no = drag_no = n;
+              drag_sub = 0;
+              prevx = ex;
+              prevy = ey;
+            }
+            break;
+          case 'o':
+          case 'O':
+            {
+              GeglVectorKnot knot = {'o', {{ex, ey}}};
+              gegl_vector_add_knot (vector, -1, &knot);
+              selected_no = drag_no = n;
+              drag_sub = 0;
+              prevx = ex;
+              prevy = ey;
+            }
+            break;
+          case 'c':
+          case 'C':
+          case 'l':
+          case 'L':
+            {
+              GeglVectorKnot knot = {'L', {{ex, ey}}};
+              gegl_vector_add_knot (vector, -1, &knot);
+              selected_no = drag_no = n;
+              drag_sub = 0;
+              prevx = ex;
+              prevy = ey;
+            }
+            break;
+          default:
+            g_warning ("failing to append after a %c\n", prev_knot->type);
+        }
+    }
+
+  return FALSE;
+}
+
+static gboolean
+button_release_event (GtkWidget      *widget,
+                      GdkEventButton *event,
+                      gpointer        data)
+{
+  drag_no = -1;
+  return TRUE;
+}
+
+static gboolean
+motion_notify_event (GtkWidget      *widget,
+                     GdkEventMotion *event,
+                     gpointer        data)
+{
+  if (drag_no != -1)
+    {
+      gint   x, y;
+      gdouble scale;
+      gdouble tx, ty;
+      gdouble ex, ey;
+      gdouble rx, ry;
+
+      GeglVector *vector;
+      GeglVectorKnot  new_knot;
+
+      g_object_get (G_OBJECT (widget),
+                    "x", &x,
+                    "y", &y,
+                    "scale", &scale,
+                    NULL);
+      gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+
+      ex = (event->x + x) / scale - tx;
+      ey = (event->y + y) / scale - ty;
+
+      rx = prevx - ex;
+      ry = prevy - ey;
+
+      gegl_node_get (data, "vector", &vector, NULL);
+
+      if (drag_sub == 0)
+        {
+          new_knot = *gegl_vector_get_knot (vector, drag_no);
+          if (new_knot.type == 'C')
+            {
+              new_knot.point[1].x -= rx;
+              new_knot.point[1].y -= ry;
+              new_knot.point[2].x -= rx;
+              new_knot.point[2].y -= ry;
+              gegl_vector_replace_knot (vector, drag_no, &new_knot);
+              new_knot = *gegl_vector_get_knot (vector, drag_no + 1);
+              new_knot.point[0].x -= rx;
+              new_knot.point[0].y -= ry;
+              gegl_vector_replace_knot (vector, drag_no + 1, &new_knot);
+            }
+          else
+            {
+              new_knot.point[0].x -= rx;
+              new_knot.point[0].y -= ry;
+              gegl_vector_replace_knot (vector, drag_no, &new_knot);
+            }
+          gtk_widget_queue_draw (widget);
+        }
+      else if (drag_sub == 1)
+        {
+          new_knot = *gegl_vector_get_knot (vector, drag_no);
+          new_knot.point[1].x -= rx;
+          new_knot.point[1].y -= ry;
+          gegl_vector_replace_knot (vector, drag_no, &new_knot);
+          gtk_widget_queue_draw (widget);
+        }
+      else if (drag_sub == -1)
+        {
+          new_knot = *gegl_vector_get_knot (vector, drag_no + 1);
+          new_knot.point[0].x -= rx;
+          new_knot.point[0].y -= ry;
+          gegl_vector_replace_knot (vector, drag_no + 1, &new_knot);
+          gtk_widget_queue_draw (widget);
+        }
+
+
+      g_object_unref (vector);
+      prevx = ex;
+      prevy = ey;
+      return TRUE;
+
+    }
+  return FALSE;
+}
+
+
+static gboolean cairo_expose (GtkWidget *widget,
+                              GdkEvent  *event,
+                              gpointer   user_data)
+{
+
+  gint   x, y;
+  gdouble scale;
+  gdouble tx, ty;
+
+  cairo_t *cr = gdk_cairo_create (widget->window);
+  GeglVector *vector;
+  const GeglVectorKnot *knot;
+  const GeglVectorKnot *prev_knot = NULL;
+  gint i;
+  gint n;
+
+  g_object_get (G_OBJECT (widget),
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+  gegl_node_get_translation (GEGL_NODE (user_data), &tx, &ty);
+
+  cairo_translate (cr, -x, -y);
+  cairo_scale (cr, scale, scale);
+  cairo_translate (cr, tx, ty);
+
+  gegl_node_get (user_data, "vector", &vector, NULL);
+
+  gegl_vector_cairo_play (vector, cr);
+
+  n= gegl_vector_get_knot_count (vector);
+  prev_knot = NULL;
+  for (i=0;i<n;i++)
+    {
+      gdouble x, y;
+      knot = gegl_vector_get_knot (vector, i);
+      if (knot->type == 'C')
+        {
+          get_loc (prev_knot, &x, &y);
+          cairo_move_to (cr, x, y);
+          cairo_line_to (cr, knot->point[0].x, knot->point[0].y);
+          cairo_move_to (cr, knot->point[1].x, knot->point[1].y);
+          cairo_line_to (cr, knot->point[2].x, knot->point[2].y);
+        }
+      prev_knot = knot;
+    }
+
+  cairo_set_line_width (cr, 3.5/scale);
+  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+  cairo_stroke_preserve (cr);
+  cairo_set_line_width (cr, 2.0/scale);
+  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5);
+  cairo_stroke (cr);
+
+  n= gegl_vector_get_knot_count (vector);
+  prev_knot = NULL;
+  for (i=0;i<n;i++)
+    {
+      gdouble x, y;
+      knot = gegl_vector_get_knot (vector, i);
+      if (knot->type == 'C')
+        {
+          x = knot->point[0].x;
+          y = knot->point[0].y;
+          cairo_move_to (cr, x, y);
+
+#define ACTIVE_COLOR cairo_set_source_rgba (cr, 1.0, 0.0, 0.0, 0.5)
+#define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
+
+          if ( i == selected_no + 1)
+            {
+              ACTIVE_COLOR;
+              cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+            }
+          else
+            {
+              NORMAL_COLOR;
+              cairo_arc (cr, x, y, INACTIVE_ARC/scale, 0.0, 3.1415*2);
+            }
+          cairo_fill (cr);
+
+          x = knot->point[1].x;
+          y = knot->point[1].y;
+          cairo_move_to (cr, x, y);
+
+          if ( i == selected_no)
+            {
+              ACTIVE_COLOR;
+              cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+            }
+          else
+            {
+              NORMAL_COLOR;
+              cairo_arc (cr, x, y, INACTIVE_ARC/scale, 0.0, 3.1415*2);
+            }
+          cairo_fill (cr);
+        }
+
+
+      get_loc (knot, &x, &y);
+      cairo_move_to (cr, x, y);
+      cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
+
+      if ( i == selected_no)
+        ACTIVE_COLOR;
+      else
+        NORMAL_COLOR;
+      cairo_fill (cr);
+
+      prev_knot = knot;
+    }
+
+  g_object_unref (vector);
+
+  cairo_destroy (cr);
+  return FALSE;
+}
+
+
+void editor_set_active (gpointer view, gpointer node);
+void editor_set_active (gpointer view, gpointer node)
+{
+  static guint paint_handler = 0;
+  static guint press_handler = 0;
+  static guint motion_handler = 0;
+  static guint release_handler = 0;
+  const gchar *opname;
+
+  if (!view || ! node)
+    return;
+
+  if (paint_handler)
+    {
+      g_signal_handler_disconnect (view, paint_handler);
+      paint_handler = 0;
+    }
+
+  if (motion_handler)
+    {
+      g_signal_handler_disconnect (view, motion_handler);
+      motion_handler = 0;
+    }
+  if (release_handler)
+    {
+      g_signal_handler_disconnect (view, release_handler);
+      release_handler = 0;
+    }
+  if (press_handler)
+    {
+      g_signal_handler_disconnect (view, press_handler);
+      press_handler = 0;
+    }
+
+  opname = gegl_node_get_operation (node);
+
+  if (g_str_equal (opname, "gegl:fill"))
+    {
+      GeglVector *vector;
+      gegl_node_get (node, "vector", &vector, NULL);
+
+      da_vector = vector;
+      g_object_unref (vector);
+      paint_handler = g_signal_connect_after (view, "expose-event",
+                              G_CALLBACK (cairo_expose), node);
+      press_handler = g_signal_connect (view, "button-press-event",
+                              G_CALLBACK (button_press_event), node);
+      release_handler = g_signal_connect (view, "button-release-event",
+                              G_CALLBACK (button_release_event), node);
+      motion_handler = g_signal_connect (view, "motion-notify-event",
+                              G_CALLBACK (motion_notify_event), node);
+      path_editing_active = TRUE;
+    }
+  else
+    {
+      path_editing_active = FALSE;
+      da_vector = NULL;
+    }
+  gtk_widget_queue_draw (GTK_WIDGET (view));
+}
+
 
 static void cb_detected_event (GeglView *view,
                                GeglNode *node,
                                gpointer  userdata)
 {
+#if 0
   gchar *name;
   gchar *operation;
 
   gegl_node_get (node, "name", &name, "operation", &operation, NULL);
   g_print ("%s: %p %s:%s(%p)\n", G_STRLOC, view, operation, name, node);
 
-  tree_editor_set_active (GTK_WIDGET (userdata), node);
+
+  if (g_str_equal (operation, "gegl:fill"))
+    {
+      GeglVector *vector;
+
+      gegl_node_get (node, "vector", &vector, NULL);
+      g_object_unref (vector);
+    }
 
   g_free (name);
   g_free (operation);
+#endif
+  tree_editor_set_active (GTK_WIDGET (userdata), node);
 }
 
 static void editor_set_gegl (GeglNode    *gegl);
@@ -243,6 +839,7 @@ editor_main (GeglNode    *gegl,
 {
   GtkWidget *treeview;
 
+
   editor.options = options;
   editor.property_editor = gtk_vbox_new (FALSE, 0);
   editor.tree_editor = tree_editor_new (editor.property_editor);
@@ -253,6 +850,8 @@ editor_main (GeglNode    *gegl,
                      gtk_label_new (editor.options->file));
   gtk_widget_show (editor.window);
   gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 6);
+
+
 
   editor_set_gegl (gegl);
 

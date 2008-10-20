@@ -164,6 +164,7 @@ gegl_view_init (GeglView *self)
 
   gtk_widget_add_events (GTK_WIDGET (self), (GDK_EXPOSURE_MASK     |
                                              GDK_BUTTON_PRESS_MASK |
+                                             GDK_BUTTON_RELEASE_MASK |
                                              GDK_POINTER_MOTION_MASK));
 }
 

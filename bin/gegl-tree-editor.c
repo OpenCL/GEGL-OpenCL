@@ -102,6 +102,8 @@ cell_edited_callback (GtkCellRendererText * cell,
   gtk_tree_path_free (path);
 }
 
+void editor_set_active (gpointer, gpointer);
+
 static void
 selection_changed (GtkTreeSelection * selection, gpointer user_data)
 {
@@ -113,9 +115,7 @@ selection_changed (GtkTreeSelection * selection, gpointer user_data)
   top_vbox = user_data;
   if (!gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-#ifdef HAVE_GRAPH_EDITOR
-      graph_editor_set_root (editor->graph_editor, NULL);
-#endif
+      editor_set_active (editor.view, NULL);
       return;
     }
 
@@ -124,16 +124,8 @@ selection_changed (GtkTreeSelection * selection, gpointer user_data)
   if (item)
     {
       property_editor_rebuild (top_vbox, item);
-
-#ifdef HAVE_CURVE_EDITOR
-      curve_editor_set_gegl (editor->curve_editor, item);
-#endif
-#ifdef HAVE_GRAPH_EDITOR
-      if (gegl_type (item) == GeglGraph)
-        graph_editor_set_root (editor->graph_editor, item);
-      else
-        graph_editor_set_root (editor->graph_editor, NULL);
-#endif
+      editor_set_active (editor.view, item);
+      /* a signal would have been the correct approach here */
     }
 }
 

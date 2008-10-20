@@ -1,5 +1,12 @@
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c:
+	* bin/gegl-tree-editor.c:
+	* bin/gegl-view.c: beginnings of an ad-hoc generic path manipulation
+	gui.
+
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.c: (gegl_vector_parse_svg_path):
 	made perser tolerant of skipped path instructions (doesn't do M->L)
 	properly yet.
