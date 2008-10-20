@@ -46,11 +46,11 @@ struct {
 
 static void moveto (bezctx *bc, double x, double y, int is_open)
 {
-  bezcontext.path = gegl_vector_path_add1 (bezcontext.path, 'M', x, y);
+  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'M', x, y);
 }
 static void lineto (bezctx *bc, double x, double y)
 {
-  bezcontext.path = gegl_vector_path_add1 (bezcontext.path, 'L', x, y);
+  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'L', x, y);
 }
 static void quadto (bezctx *bc, double x1, double y1, double x2, double y2)
 {
@@ -61,7 +61,7 @@ static void curveto(bezctx *bc,
                     double x2, double y2,
  		    double x3, double y3)
 {
-  bezcontext.path = gegl_vector_path_add3 (bezcontext.path, 'C', x1, y1, x2, y2, x3, y3);
+  bezcontext.path = gegl_vector_path_add (bezcontext.path, 'C', x1, y1, x2, y2, x3, y3);
 }
 
 static GeglVectorPath *gegl_vector_spiro_flatten (GeglVectorPath *original)
@@ -169,7 +169,7 @@ points_to_bezier_path (gdouble  coord_x[],
   if (!n_coords)
     return NULL;
 
-  ret = gegl_vector_path_add1 (ret, 'M', coord_x[0], coord_y[0]);
+  ret = gegl_vector_path_add (ret, 'M', coord_x[0], coord_y[0]);
 
   for (i=1;i<n_coords;i++)
     {
@@ -231,9 +231,9 @@ points_to_bezier_path (gdouble  coord_x[],
             ctrl2_y = y2;
           }
 
-        ret = gegl_vector_path_add3 (ret, 'C', ctrl1_x, ctrl1_y,
-                                               ctrl2_x, ctrl2_y,
-                                               x2,      y2);
+        ret = gegl_vector_path_add (ret, 'C', ctrl1_x, ctrl1_y,
+                                              ctrl2_x, ctrl2_y,
+                                              x2,      y2);
       }
    }
   return ret;

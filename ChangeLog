@@ -1,3 +1,12 @@
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-vector.[ch]: 
+	(gegl_vector_path_add): new API call replacing move_to, line_to etc.
+	(gegl_vector_add): new API call replacing move_to, curve_to etc.
+	* bin/gegl-spiro.c: (moveto), (lineto), (curveto),
+	(points_to_bezier_path): use the new var_args powered internal path
+	list API.
+
 2008-10-20  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* bin/gegl.c 

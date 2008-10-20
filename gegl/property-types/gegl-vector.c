@@ -31,6 +31,7 @@
 #include "gegl-utils.h"
 #include <glib/gprintf.h>
 
+#include <stdarg.h>
 
 
 /* ###################################################################### */
@@ -79,9 +80,11 @@ static GeglVectorPath *flatten_curve     (GeglVectorPath *head, GeglVectorPath *
 
 /* FIXME: handling of relative commands should be moved to the flattening stage */
 
-/* this table should be possible to replace at runtime */
+/* This table can be extended at runtime and extends the type of knots understood by the
+ * "SVG path" parser/serializer.
+ */
 
-static KnotInfo knot_types[256]=
+static KnotInfo knot_types[64]= /* reserve space for a total of up to 64 types of instructions. */
 {
   {'M',  1, "move to",              flatten_copy},
   {'L',  1, "line to",              flatten_copy},
@@ -93,7 +96,7 @@ static KnotInfo knot_types[256]=
 
   {'s',  0, "sentinel",             flatten_nop},
   {'z',  0, "sentinel",             flatten_nop},
-  {'\0', 0, "marker for end of",    flatten_copy},
+  {'\0', 0, "end of instructions",  flatten_copy},
 };
 
 void
@@ -209,11 +212,7 @@ bezier2 (GeglVectorPath  *prev,/* we need the previous node as well when renderi
   lerp (dest, &abbc, &bccd, t);
 }
 
-GeglVectorPath *
-gegl_vector_path_add1 (GeglVectorPath *head,
-                       gchar           type,
-                       gfloat          x,
-                       gfloat          y);
+
 
 static GeglVectorPath *flatten_curve (GeglVectorPath *head, GeglVectorPath *prev, GeglVectorPath *self)
 { /* create piecevise linear approximation of bezier curve */
@@ -225,9 +224,9 @@ static GeglVectorPath *flatten_curve (GeglVectorPath *head, GeglVectorPath *prev
 
       bezier2 (prev, self, &res, f);
 
-      head = gegl_vector_path_add1 (head, 'L', res.x, res.y);
+      head = gegl_vector_path_add (head, 'L', res.x, res.y);
     }
-  head = gegl_vector_path_add1 (head, 'L', self->d.point[2].x, self->d.point[2].y);
+  head = gegl_vector_path_add (head, 'L', self->d.point[2].x, self->d.point[2].y);
   return head;
 }
 
@@ -290,120 +289,33 @@ gegl_vector_path_destroy (GeglVectorPath *path)
   return NULL;
 }
 
-
-GeglVectorPath *
-gegl_vector_path_add4 (GeglVectorPath   *head,
-                       gchar             type,
-                       gfloat  x0, gfloat  y0,
-                       gfloat  x1, gfloat  y1,
-                       gfloat  x2, gfloat  y2,
-                       gfloat  x3, gfloat  y3)
+GeglVectorPath * gegl_vector_path_add (GeglVectorPath *head,
+                                       ...)
 {
+  KnotInfo *info;
   GeglVectorPath *iter;
+  gchar type;
+  gint pair_no;
+
+  va_list var_args;
+  va_start (var_args, head);
+  type = va_arg (var_args, int); /* we pass in a char, but it is promoted to int by varargs*/
+
+  info = find_knot_type(type);
+  if (!info)
+    g_error ("didn't find [%c]", type);
 
   head = path_append (head, &iter);
+
   iter->d.type       = type;
-  iter->d.point[0].x = x0;
-  iter->d.point[0].y = y0;
-  iter->d.point[1].x = x1;
-  iter->d.point[1].y = y1;
-  iter->d.point[2].x = x2;
-  iter->d.point[2].y = y2;
-  iter->d.point[3].x = x3;
-  iter->d.point[3].y = y3;
+  for (pair_no=0;pair_no<info->pairs;pair_no++)
+    {
+      iter->d.point[pair_no].x = va_arg (var_args, gdouble);
+      iter->d.point[pair_no].y = va_arg (var_args, gdouble);
+    }
+  va_end (var_args);
   return head;
 }
-
-
-GeglVectorPath *
-gegl_vector_path_add1 (GeglVectorPath *head,
-                       gchar           type,
-                       gfloat          x, gfloat  y)
-{
-  return gegl_vector_path_add4 (head, type, x, y, 0, 0, 0, 0, 0, 0);
-}
-
-GeglVectorPath *
-gegl_vector_path_add2 (GeglVectorPath   *head,
-                       gchar   type,
-                       gfloat  x,
-                       gfloat  y,
-                       gfloat  x1,
-                       gfloat  y1)
-{
-  return gegl_vector_path_add4 (head, type, x, y, x1, y1, 0, 0, 0, 0);
-}
-
-GeglVectorPath *
-gegl_vector_path_add3 (GeglVectorPath *head,
-                       gchar           type,
-                       gfloat          x,
-                       gfloat          y,
-                       gfloat          x1,
-                       gfloat          y1,
-                       gfloat          x2,
-                       gfloat          y2)
-{
-  return gegl_vector_path_add4 (head, type, x, y, x1, y1, x2, y2, 0, 0);
-}
-
-static GeglVectorPath *
-path_move_to (GeglVectorPath   *path,
-              gfloat  x,
-              gfloat  y)
-{
-  return gegl_vector_path_add1 (path, 'M', x, y);
-}
-
-static GeglVectorPath *
-path_line_to (GeglVectorPath   *path,
-              gfloat  x,
-              gfloat  y)
-{
-  return gegl_vector_path_add1 (path, 'L', x, y);
-}
-
-static GeglVectorPath *
-path_curve_to (GeglVectorPath   *path,
-               gfloat  x1,
-               gfloat  y1,
-               gfloat  x2,
-               gfloat  y2,
-               gfloat  x3,
-               gfloat  y3)
-{
-  return gegl_vector_path_add3 (path, 'C', x1, y1, x2, y2, x3, y3);
-}
-
-static GeglVectorPath *
-path_rel_move_to (GeglVectorPath   *path,
-                  gfloat  x,
-                  gfloat  y)
-{
-  return gegl_vector_path_add1 (path, 'm', x, y);
-}
-
-static GeglVectorPath *
-path_rel_line_to (GeglVectorPath   *path,
-                  gfloat  x,
-                  gfloat  y)
-{
-  return gegl_vector_path_add1 (path, 'l', x, y);
-}
-
-static GeglVectorPath *
-path_rel_curve_to (GeglVectorPath   *path,
-                   gfloat  x1,
-                   gfloat  y1,
-                   gfloat  x2,
-                   gfloat  y2,
-                   gfloat  x3,
-                   gfloat  y3)
-{
-  return gegl_vector_path_add3 (path, 'c', x1, y1, x2, y2, x3, y3);
-}
-
-
 
 static void
 path_calc (GeglVectorPath       *path,
@@ -1166,119 +1078,6 @@ gegl_vector_new (void)
   return self;
 }
 
-static void gen_rect (GeglRectangle *r,
-                      gdouble x1, gdouble y1, gdouble x2, gdouble y2)
-{
-  if (x1>x2)
-    {
-      gint t;
-      t=x1;
-      x1=x2;
-      x2=x1;
-    }
-  if (y1>y2)
-    {
-      gint t;
-      t=y1;
-      y1=y2;
-      y2=y1;
-    }
-  x1=floor (x1);
-  y1=floor (y1);
-  x2=ceil (x2);
-  y2=ceil (y2);
-  r->x=x1;
-  r->y=y1;
-  r->width=x2-x1;
-  r->height=y2-y1;
-}
-
-void
-gegl_vector_line_to (GeglVector *self,
-                     gdouble     x,
-                     gdouble     y)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-
-  if (priv->path)
-  gen_rect (&priv->dirtied, x, y, priv->path->d.point[0].x,
-                         priv->path->d.point[0].y);
-  priv->path = path_line_to (priv->path, x, y);
-
-  if (priv->path)
-    gegl_vector_emit_changed (self, &priv->dirtied);
-  priv->flat_path_clean = FALSE;
-}
-
-void
-gegl_vector_move_to (GeglVector *self,
-                     gdouble     x,
-                     gdouble     y)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_move_to (priv->path, x, y);
-  /*gegl_vector_emit_changed (self);*/
-  priv->flat_path_clean = FALSE;
-}
-
-void
-gegl_vector_curve_to (GeglVector *self,
-                      gdouble     x1,
-                      gdouble     y1,
-                      gdouble     x2,
-                      gdouble     y2,
-                      gdouble     x3,
-                      gdouble     y3)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
-  priv->flat_path_clean = FALSE;
-  gegl_vector_emit_changed (self, NULL);
-}
-
-
-void
-gegl_vector_rel_line_to (GeglVector *self,
-                         gdouble     x,
-                         gdouble     y)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_rel_line_to (priv->path, x, y);
-  priv->flat_path_clean = FALSE;
-  gegl_vector_emit_changed (self, NULL);
-}
-
-void
-gegl_vector_rel_move_to (GeglVector *self,
-                         gdouble     x,
-                         gdouble     y)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_rel_move_to (priv->path, x, y);
-  priv->flat_path_clean = FALSE;
-  gegl_vector_emit_changed (self, NULL);
-}
-
-void
-gegl_vector_rel_curve_to (GeglVector *self,
-                          gdouble     x1,
-                          gdouble     y1,
-                          gdouble     x2,
-                          gdouble     y2,
-                          gdouble     x3,
-                          gdouble     y3)
-{
-  GeglVectorPrivate *priv;
-  priv = GEGL_VECTOR_GET_PRIVATE (self);
-  priv->path = path_rel_curve_to (priv->path, x1, y1, x2, y2, x3, y3);
-  priv->flat_path_clean = FALSE;
-  gegl_vector_emit_changed (self, NULL);
-}
 
 gdouble
 gegl_vector_get_length (GeglVector *self)
@@ -1606,23 +1405,23 @@ void gegl_vector_parse_svg_path (GeglVector *vector,
         switch (info->pairs)
           {
             case 0:
-              priv->path = gegl_vector_path_add1 (priv->path, type, x0, y0);
+              priv->path = gegl_vector_path_add (priv->path, type, x0, y0);
               /* coordinates are ignored, all of these could have used add3)*/
               break;
             case 1:
               p = parse_float_pair (p, &x0, &y0);
-              priv->path = gegl_vector_path_add1 (priv->path, type, x0, y0);
+              priv->path = gegl_vector_path_add (priv->path, type, x0, y0);
               break;
             case 2:
               p = parse_float_pair (p, &x0, &y0);
               p = parse_float_pair (p, &x1, &y1);
-              priv->path = gegl_vector_path_add2 (priv->path, type, x0, y0, x1, y1);
+              priv->path = gegl_vector_path_add (priv->path, type, x0, y0, x1, y1);
               break;
             case 3:
               p = parse_float_pair (p, &x0, &y0);
               p = parse_float_pair (p, &x1, &y1);
               p = parse_float_pair (p, &x2, &y2);
-              priv->path = gegl_vector_path_add3 (priv->path, type, x0, y0, x1, y1, x2, y2);
+              priv->path = gegl_vector_path_add (priv->path, type, x0, y0, x1, y1, x2, y2);
               break;
           }
         previnfo = info;
@@ -1835,6 +1634,39 @@ void  gegl_vector_add_flattener (GeglVectorPath *(*flattener) (GeglVectorPath *o
     }
 }
 
+
+void
+gegl_vector_add (GeglVector *self,
+                 ...)
+{
+  GeglVectorPrivate *priv;
+  KnotInfo *info;
+  GeglVectorPath *iter;
+  gchar type;
+  gint pair_no;
+  va_list var_args;
+
+  priv = GEGL_VECTOR_GET_PRIVATE (self);
+  va_start (var_args, self);
+  type = va_arg (var_args, int); /* we pass in a char, but it is promoted to int by varargs*/
+
+  info = find_knot_type(type);
+  if (!info)
+    g_error ("didn't find [%c]", type);
+
+  priv->path = path_append (priv->path, &iter);
+
+  iter->d.type       = type;
+  for (pair_no=0;pair_no<info->pairs;pair_no++)
+    {
+      iter->d.point[pair_no].x = va_arg (var_args, gdouble);
+      iter->d.point[pair_no].y = va_arg (var_args, gdouble);
+    }
+  va_end (var_args);
+  priv->flat_path_clean = FALSE;
+  gegl_vector_emit_changed (self, NULL);
+}
+
 #if 0
 const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector)
 {
@@ -1842,5 +1674,35 @@ const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector)
 GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
                                    const GeglMatrix *matrix)
 {
+}
+#endif
+
+
+#if 0
+static void gen_rect (GeglRectangle *r,
+                      gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+{
+  if (x1>x2)
+    {
+      gint t;
+      t=x1;
+      x1=x2;
+      x2=x1;
+    }
+  if (y1>y2)
+    {
+      gint t;
+      t=y1;
+      y1=y2;
+      y2=y1;
+    }
+  x1=floor (x1);
+  y1=floor (y1);
+  x2=ceil (x2);
+  y2=ceil (y2);
+  r->x=x1;
+  r->y=y1;
+  r->width=x2-x1;
+  r->height=y2-y1;
 }
 #endif

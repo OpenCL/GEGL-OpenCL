@@ -73,38 +73,15 @@ GType        gegl_vector_get_type       (void) G_GNUC_CONST;
 
 GeglVector * gegl_vector_new            (void);
 
-
-void         gegl_vector_line_to        (GeglVector  *self,
-                                         gdouble      x,
-                                         gdouble      y);
-
-void         gegl_vector_move_to        (GeglVector *self,
-                                         gdouble     x,
-                                         gdouble     y);
-
-void         gegl_vector_curve_to       (GeglVector *self,
-                                         gdouble     x1,
-                                         gdouble     y1,
-                                         gdouble     x2,
-                                         gdouble     y2,
-                                         gdouble     x3,
-                                         gdouble     y3);
-
-void         gegl_vector_rel_line_to    (GeglVector  *self,
-                                         gdouble      x,
-                                         gdouble      y);
-
-void         gegl_vector_rel_move_to    (GeglVector *self,
-                                         gdouble     x,
-                                         gdouble     y);
-
-void         gegl_vector_rel_curve_to   (GeglVector *self,
-                                         gdouble     x1,
-                                         gdouble     y1,
-                                         gdouble     x2,
-                                         gdouble     y2,
-                                         gdouble     x3,
-                                         gdouble     y3);
+/* Adds a path knot/instuction,. e.g:
+ *
+ *  gegl_vector_add ('m', 10.0, 10.0);  for a relative move_to 10, 10
+ *  the number of arguments are determined automatically through the
+ *  command used, for language bindings append knots at position -1
+ *  with gegl_vector_add_knot
+ *
+ */
+void         gegl_vector_add            (GeglVector *self, ...);
 
 void         gegl_vector_get_bounds     (GeglVector   *self,
                                          gdouble      *min_x,
@@ -114,22 +91,22 @@ void         gegl_vector_get_bounds     (GeglVector   *self,
 
 gdouble      gegl_vector_get_length     (GeglVector  *self);
 
-
+/*
+ * compute x,y coordinates at pos along the path (0.0 to gegl_vector_length() is valid positions
+ */
 void         gegl_vector_calc           (GeglVector  *self,
                                          gdouble      pos,
                                          gdouble     *x,
                                          gdouble     *y);
 
+/*
+ * compute a set of samples for the entire path
+ */
 void         gegl_vector_calc_values    (GeglVector  *self,
                                          guint        num_samples,
                                          gdouble     *xs,
                                          gdouble     *ys);
 
-
-#define GEGL_TYPE_PARAM_VECTOR    (gegl_param_vector_get_type ())
-#define GEGL_IS_PARAM_VECTOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_VECTOR))
-
-GType        gegl_param_vector_get_type (void) G_GNUC_CONST;
 
 GParamSpec * gegl_param_spec_vector     (const gchar *name,
                                          const gchar *nick,
@@ -137,37 +114,23 @@ GParamSpec * gegl_param_spec_vector     (const gchar *name,
                                          GeglVector  *default_vector,
                                          GParamFlags  flags);
 
-#include <gegl-buffer.h>
-
-void gegl_vector_fill (GeglBuffer *buffer,
-                       GeglVector *vector,
-                       GeglColor  *color,
-                       gboolean    winding);
-
-void gegl_vector_stroke (GeglBuffer *buffer,
-                         GeglVector *vector,
-                         GeglColor  *color,
-                         gdouble     linewidth,
-                         gdouble     hardness);
-
+/* parse an SVG path (or any other path with additional valid path instructions */
 void gegl_vector_parse_svg_path (GeglVector *vector,
                                  const gchar *path);
 
-void gegl_vector_clear (GeglVector *vector);
-
+/* serialie the path in an SVG manner (not yet flattened to any specified level) */
 gchar * gegl_vector_to_svg_path (GeglVector  *vector);
 
 
+/* clear path for all knots */
+void gegl_vector_clear (GeglVector *vector);
+
+
+/* for pos parameters -1 can be used to indicate the end of the path */
 
 gint                  gegl_vector_get_knot_count  (GeglVector *vector);
 const GeglVectorKnot *gegl_vector_get_knot        (GeglVector *vector,
                                                    gint        pos);
-
-/* -1 means last */
-/* pos = 0, pushes the existing 0 if any to 1,
- * passing -1 means add at end
- */
-
 void  gegl_vector_remove_knot  (GeglVector           *vector,
                                 gint                  pos);
 void  gegl_vector_add_knot     (GeglVector           *vector,
@@ -184,38 +147,46 @@ void  gegl_vector_flat_knot_foreach (GeglVector *vector,
                                      void (*func) (const GeglVectorKnot *knot,
                                                    gpointer              data),
                                      gpointer    data);
-#if 0
-const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector);
-GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
-                                   const GeglMatrix *matrix);
-
-#endif
 
 
-GeglVectorPath *gegl_vector_path_flatten (GeglVectorPath *original);
+#define GEGL_TYPE_PARAM_VECTOR    (gegl_param_vector_get_type ())
+#define GEGL_IS_PARAM_VECTOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_VECTOR))
+
+GType        gegl_param_vector_get_type (void) G_GNUC_CONST;
+
+
+/* the following API is for hooking in additional path types, that can be flattened by
+ * external flatterners, it allows acces to a linked list version of the paths, which
+ * is what is used internally
+ */
+
 
 void gegl_vector_add_flattener (GeglVectorPath *(*func) (GeglVectorPath *original));
 void gegl_vector_add_knot_type (gchar type, gint pairs, const gchar *description);
 
-GeglVectorPath * gegl_vector_path_add1 (GeglVectorPath *head,
-                                        gchar           type,
-                                        gfloat          x,  gfloat  y);
-GeglVectorPath * gegl_vector_path_add2 (GeglVectorPath *head,
-                                        gchar           type,
-                                        gfloat          x,  gfloat y,
-                                        gfloat          x1, gfloat y1);
-GeglVectorPath * gegl_vector_path_add3 (GeglVectorPath *head,
-                                        gchar           type,
-                                        gfloat          x,  gfloat y,
-                                        gfloat          x1, gfloat y1,
-                                        gfloat          x2, gfloat y2);
-GeglVectorPath * gegl_vector_path_add4 (GeglVectorPath *head,
-                                        gchar           type,
-                                        gfloat          x0, gfloat  y0,
-                                        gfloat          x1, gfloat  y1,
-                                        gfloat          x2, gfloat  y2,
-                                        gfloat          x3, gfloat  y3);
-GeglVectorPath *gegl_vector_path_destroy (GeglVectorPath *path);
+GeglVectorPath * gegl_vector_path_add     (GeglVectorPath *head, ...);
+GeglVectorPath * gegl_vector_path_destroy (GeglVectorPath *path);
+GeglVectorPath * gegl_vector_path_flatten (GeglVectorPath *original);
+#if 0
+const GeglMatrix *gegl_vector_get_matrix (GeglVector *vector);
+GeglMatrix gegl_vector_set_matrix (GeglVector *vector,
+                                   const GeglMatrix *matrix);
+#endif
+
+/* this can and should be the responsiblity of cairo */
+#include <gegl-buffer.h>
+
+void gegl_vector_fill (GeglBuffer *buffer,
+                       GeglVector *vector,
+                       GeglColor  *color,
+                       gboolean    winding);
+
+/* this will go away, it is the stroke routines */
+void gegl_vector_stroke (GeglBuffer *buffer,
+                         GeglVector *vector,
+                         GeglColor  *color,
+                         gdouble     linewidth,
+                         gdouble     hardness);
 
 G_END_DECLS
 
