@@ -1,5 +1,13 @@
 2008-10-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-spiro.c: (gegl_vector_spiro_flatten),
+	(points_to_bezier_path), (gegl_vector_spiro_flatten2),
+	(gegl_spiro_init): added a new knot type '*' used for a simpler all
+	control points on curve path. (should probably be replaced with
+	catmull-rom interpolation and placed in its own file).
+
+2008-10-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-vector.[ch]: allow registering multiple
 	path flattening algorithms, algorithms can be chained (both spiros
 	and at least one other alogrithms produce beziers instead of linetos).
