@@ -1,6 +1,11 @@
 2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
 
-	* gegl/operation/gegl-operation.h: Clarified the documenation of
+	* gegl/operation/gegl-operation-filter.c
+	(gegl_operation_filter_process): Remove fixed FIXME.
+
+2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operation.h: Clarified the documentation of
 	GeglOperationClass::process().
 
 	* gegl/process/gegl-processor.c (gegl_node_new_processor): Added a
