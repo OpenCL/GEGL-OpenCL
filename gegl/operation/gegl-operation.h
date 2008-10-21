@@ -121,14 +121,15 @@ struct _GeglOperationClass
   GeglRectangle (*get_cached_region)         (GeglOperation       *operation,
                                               const GeglRectangle *roi);
 
-  /* Perform processing for the @output_pad, pad The result_rect provides the
-   * region to process. For sink operations @output_pad can be ignored but the
-   * result_rect is then then indicating the data available for consumption.
+  /* Perform processing for the @output_pad. The @roi provides the
+   * region to process. For sink operations @output_pad can be ignored
+   * but the @roi is then indicating the data available for
+   * consumption.
    */
-  gboolean      (*process)                   (GeglOperation       *operation,
-                                              GeglOperationContext     *context,
-                                              const gchar         *output_pad,
-                                              const GeglRectangle *roi);
+  gboolean      (*process)                   (GeglOperation        *operation,
+                                              GeglOperationContext *context,
+                                              const gchar          *output_pad,
+                                              const GeglRectangle  *roi);
 
   /* XXX: What is GeglNode doing in this part of the API?
    * Returns the node providing data for a specific location within the

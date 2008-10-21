@@ -1,3 +1,9 @@
+2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operation.h: Update docs for
+	GeglOperationClass::process(), the 'result_rect' parameter is now
+	called 'roi'.
+
 2008-10-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* examples/gegl-paint.c: (paint_press): used s/"vector"/"path"/
