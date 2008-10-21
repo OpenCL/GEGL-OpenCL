@@ -1,5 +1,10 @@
 2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/process/gegl-processor.c (gegl_processor_work): Simplified
+	by putting duplicated code in one place.
+
+2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/operation/gegl-operation-filter.c
 	(gegl_operation_filter_process): Remove fixed FIXME.
 

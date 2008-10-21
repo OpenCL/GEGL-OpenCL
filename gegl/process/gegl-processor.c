@@ -665,6 +665,11 @@ gegl_processor_work (GeglProcessor *processor,
       return TRUE;
     }
 
+  if (progress)
+    {
+      *progress = 1.0;
+    }
+
   if (processor->context)
     {
       /* the actual writing to the destination */
@@ -675,17 +680,8 @@ gegl_processor_work (GeglProcessor *processor,
                               );
       gegl_node_remove_context (processor->node, cache);
       processor->context = NULL;
-      if (progress)
-        {
-          *progress = 1.0;
-        }
 
       return TRUE;
-    }
-
-  if (progress)
-    {
-      *progress = 1.0;
     }
 
   return FALSE;
