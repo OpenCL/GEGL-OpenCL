@@ -1,3 +1,8 @@
+2008-10-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/OpenRaster-04.xml: updated to gegl: prefix. (this was
+	the only missed file, (as well as this ChangeLog))
+
 2008-10-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* images/GEGL.svg: updated logo with simplified SVG paths and hand
