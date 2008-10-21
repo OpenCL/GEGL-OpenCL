@@ -1,5 +1,13 @@
 2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/operation/gegl-operation.h: Clarified the documenation of
+	GeglOperationClass::process().
+
+	* gegl/process/gegl-processor.c (gegl_node_new_processor): Added a
+	FIXME about how to get rid of the GeglOperationSink dependency.
+
+2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/operation/gegl-operation.h: Update docs for
 	GeglOperationClass::process(), the 'result_rect' parameter is now
 	called 'roi'.

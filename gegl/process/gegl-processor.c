@@ -305,6 +305,9 @@ gegl_node_new_processor (GeglNode            *node,
                             "rectangle", rectangle,
                             NULL);
 
+  /* FIXME: Look for what pads that are available rather than looking
+   * at what type of operation we are dealing with
+   */
   if (node->operation                          &&
       GEGL_IS_OPERATION_SINK (node->operation) &&
       gegl_operation_sink_needs_full (node->operation))

@@ -121,10 +121,12 @@ struct _GeglOperationClass
   GeglRectangle (*get_cached_region)         (GeglOperation       *operation,
                                               const GeglRectangle *roi);
 
-  /* Perform processing for the @output_pad. The @roi provides the
-   * region to process. For sink operations @output_pad can be ignored
-   * but the @roi is then indicating the data available for
-   * consumption.
+  /* Perform processing and provide @output_pad with data for the
+   * region of interest @roi.
+   *
+   * For a GeglOperation _without_ output pads, for example a PNG save
+   * operation, @output_pad shall be ignored and @roi then instead
+   * specifies the data available for consumption.
    */
   gboolean      (*process)                   (GeglOperation        *operation,
                                               GeglOperationContext *context,
