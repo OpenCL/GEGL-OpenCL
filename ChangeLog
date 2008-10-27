@@ -1,3 +1,8 @@
+2008-10-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.[ch]: added lists of key/value
+	pairs for auxiliary information for positions along the path.
+
 2008-10-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/process/gegl-processor.c (gegl_processor_work): Simplified

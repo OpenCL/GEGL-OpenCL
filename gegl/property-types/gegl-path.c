@@ -113,6 +113,7 @@ gegl_path_add_type (gchar        type,
 
 static GeglPathList *
 gegl_path_list_append_item  (GeglPathList  *head,
+                             gchar          type,
                              GeglPathList **res)
 {
   GeglPathList *iter = head;
@@ -147,7 +148,7 @@ static GeglPathList *flatten_copy (GeglPathList *head,
                                    GeglPathList *self)
 {
   GeglPathList *newp;
-  head = gegl_path_list_append_item (head, &newp);
+  head = gegl_path_list_append_item (head, self->d.type, &newp);
   newp->d = self->d;
   return head;
 }
@@ -159,7 +160,7 @@ flatten_rel_copy (GeglPathList *head,
 {
   GeglPathList *newp;
   gint i;
-  head = gegl_path_list_append_item (head, &newp);
+  head = gegl_path_list_append_item (head, self->d.type, &newp);
   newp->d = self->d;
   for (i=0;i<4;i++)
     {
@@ -285,7 +286,7 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   if (!info)
     g_error ("didn't find [%c]", type);
 
-  head = gegl_path_list_append_item (head, &iter);
+  head = gegl_path_list_append_item (head, type, &iter);
 
   iter->d.type       = type;
   for (pair_no=0;pair_no<info->pairs;pair_no++)
@@ -385,6 +386,7 @@ path_calc (GeglPathList *path,
     }
 }
 
+/* FIXME: this is terribly inefficient */
 static void
 path_calc_values (GeglPathList *path,
                   guint         num_samples,
@@ -465,15 +467,15 @@ typedef struct _PathNameEntity  PathNameEntity;
 
 struct _GeglPathPrivate
 {
-  GeglPathList     *path;
-  GeglPathList     *flat_path;
-  gboolean  flat_path_clean;
+  GeglPathList *path;
+  GeglPathList *flat_path; /*< cache of flat path */
+  gboolean      flat_path_clean;
+  GeglPath     *parent_path;
 
-  GeglPathList *axis[8];
-  gint  n_axes;
+  GSList *parameter_names;
+  GSList *parameter_paths;
 
   GeglRectangle dirtied;
-
   GeglRectangle cached_extent;
 };
 
@@ -583,6 +585,8 @@ gegl_path_class_init (GeglPathClass *klass)
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, /*return type */
                   1, G_TYPE_POINTER);
+
+  gegl_path_add_type ('_', 1, "linear curve position associated value");
 }
 
 static void
@@ -1244,7 +1248,7 @@ gegl_path_append (GeglPath *self,
   if (!info)
     g_error ("didn't find [%c]", type);
 
-  priv->path = gegl_path_list_append_item (priv->path, &iter);
+  priv->path = gegl_path_list_append_item (priv->path, type, &iter);
 
   iter->d.type       = type;
   for (pair_no=0;pair_no<info->pairs;pair_no++)
@@ -1252,10 +1256,170 @@ gegl_path_append (GeglPath *self,
       iter->d.point[pair_no].x = va_arg (var_args, gdouble);
       iter->d.point[pair_no].y = va_arg (var_args, gdouble);
     }
+  if (priv->parent_path && iter->d.point[0].x < 0.0)
+    {
+      iter->d.point[0].x = gegl_path_get_length (priv->parent_path);
+    }
+
   va_end (var_args);
   priv->flat_path_clean = FALSE;
   gegl_path_emit_changed (self, NULL);
 }
+
+
+GeglPath *gegl_path_parameter_path (GeglPath    *path,
+                                    const gchar *parameter_name)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  GeglPath *parameter_path;
+  GSList *iter;
+  gint i;
+  for (iter=priv->parameter_names,i=0;iter;iter=iter->next,i++)
+    {
+      if (g_str_equal (parameter_name, (gchar*)iter->data))
+        return (GeglPath*) g_slist_nth_data (priv->parameter_paths, i);
+    }
+  priv->parameter_names = g_slist_append (priv->parameter_names, g_strdup (parameter_name));
+  parameter_path = gegl_path_new ();
+  GEGL_PATH_GET_PRIVATE (parameter_path)->parent_path = path;
+  priv->parameter_paths = g_slist_append (priv->parameter_paths, parameter_path);
+  return parameter_path;
+}
+
+GSList              *gegl_path_parameter_get_names   (GeglPath   *path,
+                                                      gint        count)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  return priv->parameter_names;
+}
+
+static gdouble param_calc (GeglPath *path,
+                           gdouble   pos)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  GeglPathList *iter;
+
+  /* for linear,. I need one value above, and one below */
+  gboolean  got_below = FALSE;
+  gboolean  got_above = FALSE;
+  gdouble    belowpos = -999999999;
+  gdouble    abovepos = 999999999;
+  gdouble    below = 0;
+  gdouble    above = 0;
+
+  iter = priv->path;
+  while (iter && (!got_above || !got_below))
+    {
+      gdouble iterpos = iter->d.point[0].x;
+      gdouble iterval = iter->d.point[0].y;
+
+      if (iterpos <= pos && iterpos >= belowpos)
+        {
+          belowpos = iterpos;
+          below = iterval;
+          got_below = 1;
+        }
+      if (iterpos > pos && iterpos < abovepos)
+        {
+          abovepos = iterpos;
+          above = iterval;
+          got_above = 1;
+        }
+      iter = iter->next;
+    }
+  if (got_below)
+    {
+      if (got_above)
+        {
+          if (fabs (belowpos - abovepos) < 0.0001)
+            {
+              return above;
+            }
+          else
+            {
+              return
+                below + (pos -
+                      belowpos) * ((above - below) / (abovepos - belowpos));
+            }
+        }
+      else
+        {
+          return below;
+        }
+    }
+  else if (got_above)
+    {
+      return above;
+    }
+  else
+    {
+      return 0.0;
+    }
+}
+
+static void param_bounds (GeglPath *path,
+                          gdouble   max_pos,
+                          gdouble  *min_ret,
+                          gdouble  *max_ret)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  GeglPathList *iter;
+
+  gdouble    min =  99999999;
+  gdouble    max = -99999999;
+  gdouble iterpos = max_pos-1;
+
+  iter = priv->path;
+  while (iter && iterpos < max_pos)
+    {
+      gdouble iterval = iter->d.point[0].y;
+      iterpos = iter->d.point[0].x;
+
+      if (iterval > max)
+        max = iterval;
+      if (iterval < min)
+        min = iterval;
+      iter = iter->next;
+    }
+  if (min_ret)
+    *min_ret = min;
+  if (max_ret)
+    *max_ret = max;
+}
+
+gdouble              gegl_path_parameter_calc        (GeglPath     *path,
+                                                      const gchar  *parameter_name,
+                                                      gdouble       pos)
+{
+  GeglPath *parameter_path = gegl_path_parameter_path (path, parameter_name);
+  return param_calc (parameter_path, pos);
+}
+
+void                 gegl_path_parameter_get_bounds  (GeglPath     *self,
+                                                      const gchar  *parameter_name,
+                                                      gdouble      *min_value,
+                                                      gdouble      *max_value)
+{
+  GeglPath *parameter_path = gegl_path_parameter_path (self, parameter_name);
+  param_bounds (parameter_path, gegl_path_get_length (self), min_value, max_value);
+}
+
+/* FIXME: this is terribly inefficient */
+void                 gegl_path_parameter_calc_values (GeglPath    *self,
+                                                      const gchar *parameter_name,
+                                                      guint        num_samples,
+                                                      gdouble     *samples)
+{
+  GeglPath *parameter_path = gegl_path_parameter_path (self, parameter_name);
+  gdouble length = gegl_path_get_length (self);
+  gint i;
+  for (i=0; i<num_samples; i++)
+    {
+      samples[i] = param_calc (parameter_path, (i*1.0)/num_samples * length);
+    }
+}
+
+
 
 /**************************************/
 
