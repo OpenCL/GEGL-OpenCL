@@ -1,4 +1,18 @@
 2008-10-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.[ch]:
+	Reduce memory usage by making the information kept about each control
+	point depend on it's type. External API remains the same as before,
+	the changes only affect internal storage (and how far the array
+	at the end of the struct can be accessed in const * returns.
+	
+	(copy_data),
+	(gegl_path_list_append_item), (flatten_copy), (flatten_rel_copy),
+	(gegl_path_list_destroy), (gegl_path_item_free),
+	(gegl_path_remove), (gegl_path_insert), (gegl_path_replace),
+	(gegl_path_parameter_path), (gegl_path_stroke): 
+
+2008-10-29  Øyvind Kolås  <pippin@gimp.org>
 	* bin/editor.c: (editor_set_active): make the paths of strokes
 	editable.
 

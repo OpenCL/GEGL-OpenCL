@@ -44,6 +44,7 @@ struct _GeglPath
  * with new knot interpretations.
  */
 
+#ifndef GEGL_PATH_INTERNAL
 typedef struct Point
 {
   gfloat x;
@@ -52,9 +53,12 @@ typedef struct Point
 
 typedef struct GeglPathItem
 {
-  gchar  type; /* should perhaps be padded out? */
-  Point  point[4];
+  gchar  type;     /* should perhaps be padded out? */
+  Point  point[4]; /* Note: internally GeglPath operates with paths that
+                    * have the exact number of pairs allocated.
+                    */
 } GeglPathItem;
+#endif
 
 
 GType                gegl_path_get_type       (void) G_GNUC_CONST;
@@ -159,8 +163,8 @@ GType                gegl_param_path_get_type (void) G_GNUC_CONST;
  */
 typedef struct GeglPathList
 {
-  GeglPathItem         d;
   struct GeglPathList *next;
+  GeglPathItem         d;
 } GeglPathList;
 
 /* appends to path list, if head is NULL a new list is created */
