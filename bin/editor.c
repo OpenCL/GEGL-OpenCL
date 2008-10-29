@@ -634,7 +634,8 @@ void editor_set_active (gpointer view, gpointer node)
 
   opname = gegl_node_get_operation (node);
 
-  if (g_str_equal (opname, "gegl:fill"))
+  if (g_str_equal (opname, "gegl:fill") ||
+      g_str_equal (opname, "gegl:stroke"))
     {
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);

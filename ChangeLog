@@ -1,3 +1,7 @@
+2008-10-29  Øyvind Kolås  <pippin@gimp.org>
+	* bin/editor.c: (editor_set_active): make the paths of strokes
+	editable.
+
 2008-10-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: added lists of key/value
