@@ -16,6 +16,8 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+
+
 #include "config.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -45,9 +47,30 @@
 #define realpath(a,b) _fullpath(b,a,_MAX_PATH)
 #endif
 
-
 #define  KEY_ZOOM_FACTOR  2.0
 
+#include "gegl-path.h"
+
+
+typedef struct _Tools Tools;
+struct _Tools
+{
+/* paint core globals */
+  gint         state; /* 0: modify, 1: add strokes, 2: */
+  
+  gboolean  stroke_active;
+  gboolean  path_editing_active;
+
+  GeglPath *da_vector;
+  gint      selected_no;
+  gint      drag_no; /* -1 */
+  gint      drag_sub;
+  gdouble   prevx;
+  gdouble   prevy;
+};
+
+Editor editor;
+Tools  tools;
 
 static gchar *blank_composition =
     "<gegl>"
@@ -83,9 +106,6 @@ cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
   return FALSE;
 }
 
-#include "gegl-path.h"
-
-Editor editor;
 
 static void gegl_node_get_translation (GeglNode *node,
                                        gdouble  *x,
@@ -170,39 +190,41 @@ static void get_loc (const GeglPathItem *knot,
     }
 }
 
-static gboolean path_editing_active = FALSE;
-static GeglPath *da_vector = NULL;
-static gint     selected_no = 0;
-static gint     drag_no = -1;
-static gint     drag_sub = 0;
-static gdouble  prevx = 0;
-static gdouble  prevy = 0;
+#if 0
+static gboolean editor.path_editing_active = FALSE;
+static GeglPath *editor.da_vector = NULL;
+static gint     editor.selected_no = 0;
+static gint     editor.drag_no = -1;
+static gint     editor.drag_sub = 0;
+static gdouble  editor.prevx = 0;
+static gdouble  editor.prevy = 0;
+#endif
 
 static gboolean
 path_editor_keybinding (GdkEventKey *event)
 {
-  if (!path_editing_active)
+  if (!tools.path_editing_active)
     return FALSE;
   switch (event->keyval)
     {
       case GDK_i:
         {
-          GeglPathItem knot = *gegl_path_get (da_vector, selected_no);
+          GeglPathItem knot = *gegl_path_get (tools.da_vector, tools.selected_no);
           knot.point[0].x += 10;
-          gegl_path_insert (da_vector, selected_no, &knot);
-          selected_no ++;
+          gegl_path_insert (tools.da_vector, tools.selected_no, &knot);
+          tools.selected_no ++;
         }
         return TRUE;
       case GDK_BackSpace:
-        gegl_path_remove (da_vector, selected_no);
-        if (selected_no>0)
-          selected_no --;
+        gegl_path_remove (tools.da_vector, tools.selected_no);
+        if (tools.selected_no>0)
+          tools.selected_no --;
         else
-          selected_no = 0;
+          tools.selected_no = 0;
         return TRUE;
       case GDK_m:
         {
-          GeglPathItem knot = *gegl_path_get (da_vector, selected_no);
+          GeglPathItem knot = *gegl_path_get (tools.da_vector, tools.selected_no);
           switch (knot.type)
             {
               case 'v':
@@ -222,7 +244,7 @@ path_editor_keybinding (GdkEventKey *event)
                 break;
             }
           g_print ("setting %c\n", knot.type);
-          gegl_path_replace (da_vector, selected_no, &knot);
+          gegl_path_replace (tools.da_vector, tools.selected_no, &knot);
         }
         return TRUE;
       default:
@@ -283,7 +305,7 @@ fill_press_event (GtkWidget      *widget,
 #define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
 
 
-          if ( i == selected_no + 1)
+          if ( i == tools.selected_no + 1)
             {
               x = knot->point[0].x;
               y = knot->point[0].y;
@@ -292,10 +314,10 @@ fill_press_event (GtkWidget      *widget,
               cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
               if (cairo_in_fill (cr, ex, ey))
                 {
-                  drag_no = i -1;
-                  drag_sub = -1;
-                  prevx = ex;
-                  prevy = ey;
+                  tools.drag_no = i -1;
+                  tools.drag_sub = -1;
+                  tools.prevx = ex;
+                  tools.prevy = ey;
                 }
             }
 
@@ -303,16 +325,16 @@ fill_press_event (GtkWidget      *widget,
           y = knot->point[1].y;
           cairo_move_to (cr, x, y);
 
-          if ( i == selected_no)
+          if ( i == tools.selected_no)
             {
               cairo_new_path (cr);
               cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
               if (cairo_in_fill (cr, ex, ey))
                 {
-                  prevx = ex;
-                  prevy = ey;
-                  drag_no = i;
-                  drag_sub = 1;
+                  tools.prevx = ex;
+                  tools.prevy = ey;
+                  tools.drag_no = i;
+                  tools.drag_sub = 1;
                 }
             }
         }
@@ -324,11 +346,11 @@ fill_press_event (GtkWidget      *widget,
 
       if (cairo_in_fill (cr, ex, ey))
         {
-          selected_no = i;
-          drag_no = i;
-          drag_sub = 0;
-          prevx = ex;
-          prevy = ey;
+          tools.selected_no = i;
+          tools.drag_no = i;
+          tools.drag_sub = 0;
+          tools.prevx = ex;
+          tools.prevy = ey;
           gtk_widget_queue_draw (widget);
         }
       prev_knot = knot;
@@ -337,7 +359,7 @@ fill_press_event (GtkWidget      *widget,
   g_object_unref (vector);
   cairo_destroy (cr);
 
-  if (((i-1 == selected_no) ||( i==0 && selected_no==0))   && drag_no < 0  )
+  if (((i-1 == tools.selected_no) ||( i==0 && tools.selected_no==0))   && tools.drag_no < 0  )
     {
       /* append a node */
       if (!prev_knot)
@@ -350,10 +372,10 @@ foo:
             {
               GeglPathItem knot = {'*', {{ex, ey}}};
               gegl_path_insert (vector, -1, &knot);
-              selected_no = drag_no = n;
-              drag_sub = 0;
-              prevx = ex;
-              prevy = ey;
+              tools.selected_no = tools.drag_no = n;
+              tools.drag_sub = 0;
+              tools.prevx = ex;
+              tools.prevy = ey;
             }
             break;
           case 'o':
@@ -361,10 +383,10 @@ foo:
             {
               GeglPathItem knot = {'o', {{ex, ey}}};
               gegl_path_insert (vector, -1, &knot);
-              selected_no = drag_no = n;
-              drag_sub = 0;
-              prevx = ex;
-              prevy = ey;
+              tools.selected_no = tools.drag_no = n;
+              tools.drag_sub = 0;
+              tools.prevx = ex;
+              tools.prevy = ey;
             }
             break;
           case 'c':
@@ -374,10 +396,10 @@ foo:
             {
               GeglPathItem knot = {'L', {{ex, ey}}};
               gegl_path_insert (vector, -1, &knot);
-              selected_no = drag_no = n;
-              drag_sub = 0;
-              prevx = ex;
-              prevy = ey;
+              tools.selected_no = tools.drag_no = n;
+              tools.drag_sub = 0;
+              tools.prevx = ex;
+              tools.prevy = ey;
             }
             break;
           default:
@@ -393,7 +415,7 @@ fill_release_event (GtkWidget      *widget,
                       GdkEventButton *event,
                       gpointer        data)
 {
-  drag_no = -1;
+  tools.drag_no = -1;
   return TRUE;
 }
 
@@ -402,7 +424,7 @@ fill_motion_notify_event (GtkWidget      *widget,
                      GdkEventMotion *event,
                      gpointer        data)
 {
-  if (drag_no != -1)
+  if (tools.drag_no != -1)
     {
       gint   x, y;
       gdouble scale;
@@ -423,55 +445,55 @@ fill_motion_notify_event (GtkWidget      *widget,
       ex = (event->x + x) / scale - tx;
       ey = (event->y + y) / scale - ty;
 
-      rx = prevx - ex;
-      ry = prevy - ey;
+      rx = tools.prevx - ex;
+      ry = tools.prevy - ey;
 
       gegl_node_get (data, "path", &vector, NULL);
 
-      if (drag_sub == 0)
+      if (tools.drag_sub == 0)
         {
-          new_knot = *gegl_path_get (vector, drag_no);
+          new_knot = *gegl_path_get (vector, tools.drag_no);
           if (new_knot.type == 'C')
             {
               new_knot.point[1].x -= rx;
               new_knot.point[1].y -= ry;
               new_knot.point[2].x -= rx;
               new_knot.point[2].y -= ry;
-              gegl_path_replace (vector, drag_no, &new_knot);
-              new_knot = *gegl_path_get (vector, drag_no + 1);
+              gegl_path_replace (vector, tools.drag_no, &new_knot);
+              new_knot = *gegl_path_get (vector, tools.drag_no + 1);
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace (vector, drag_no + 1, &new_knot);
+              gegl_path_replace (vector, tools.drag_no + 1, &new_knot);
             }
           else
             {
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace (vector, drag_no, &new_knot);
+              gegl_path_replace (vector, tools.drag_no, &new_knot);
             }
           gtk_widget_queue_draw (widget);
         }
-      else if (drag_sub == 1)
+      else if (tools.drag_sub == 1)
         {
-          new_knot = *gegl_path_get (vector, drag_no);
+          new_knot = *gegl_path_get (vector, tools.drag_no);
           new_knot.point[1].x -= rx;
           new_knot.point[1].y -= ry;
-          gegl_path_replace (vector, drag_no, &new_knot);
+          gegl_path_replace (vector, tools.drag_no, &new_knot);
           gtk_widget_queue_draw (widget);
         }
-      else if (drag_sub == -1)
+      else if (tools.drag_sub == -1)
         {
-          new_knot = *gegl_path_get (vector, drag_no + 1);
+          new_knot = *gegl_path_get (vector, tools.drag_no + 1);
           new_knot.point[0].x -= rx;
           new_knot.point[0].y -= ry;
-          gegl_path_replace (vector, drag_no + 1, &new_knot);
+          gegl_path_replace (vector, tools.drag_no + 1, &new_knot);
           gtk_widget_queue_draw (widget);
         }
 
 
       g_object_unref (vector);
-      prevx = ex;
-      prevy = ey;
+      tools.prevx = ex;
+      tools.prevy = ey;
       return TRUE;
 
     }
@@ -550,7 +572,7 @@ static gboolean cairo_expose (GtkWidget *widget,
 #define ACTIVE_COLOR cairo_set_source_rgba (cr, 1.0, 0.0, 0.0, 0.5)
 #define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
 
-          if ( i == selected_no + 1)
+          if ( i == tools.selected_no + 1)
             {
               ACTIVE_COLOR;
               cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
@@ -566,7 +588,7 @@ static gboolean cairo_expose (GtkWidget *widget,
           y = knot->point[1].y;
           cairo_move_to (cr, x, y);
 
-          if ( i == selected_no)
+          if ( i == tools.selected_no)
             {
               ACTIVE_COLOR;
               cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
@@ -584,7 +606,7 @@ static gboolean cairo_expose (GtkWidget *widget,
       cairo_move_to (cr, x, y);
       cairo_arc (cr, x, y, ACTIVE_ARC/scale, 0.0, 3.1415*2);
 
-      if ( i == selected_no)
+      if ( i == tools.selected_no)
         ACTIVE_COLOR;
       else
         NORMAL_COLOR;
@@ -598,9 +620,6 @@ static gboolean cairo_expose (GtkWidget *widget,
   cairo_destroy (cr);
   return FALSE;
 }
-
-
-static gboolean stroke_active = FALSE;
 
 static gboolean
 stroke_press_event (GtkWidget      *widget,
@@ -628,7 +647,7 @@ stroke_press_event (GtkWidget      *widget,
 
   gegl_path_clear (vector);
   gegl_path_append (vector, 'M', ex, ey);
-  stroke_active = TRUE;
+  tools.stroke_active = TRUE;
   g_object_unref (vector);
   return TRUE;
 }
@@ -670,7 +689,7 @@ stroke_release_event (GtkWidget      *widget,
       gegl_node_set (stroke, "path", gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
     }
 
-  stroke_active = FALSE;
+  tools.stroke_active = FALSE;
   return TRUE;
 }
 
@@ -680,7 +699,7 @@ stroke_motion_notify_event (GtkWidget      *widget,
                             GdkEventMotion *event,
                             gpointer        data)
 {
-  if (stroke_active)
+  if (tools.stroke_active)
     {
       gint   x, y;
       gdouble scale;
@@ -700,27 +719,20 @@ stroke_motion_notify_event (GtkWidget      *widget,
       ex = (event->x + x) / scale - tx;
       ey = (event->y + y) / scale - ty;
 
-      rx = prevx - ex;
-      ry = prevy - ey;
+      rx = tools.prevx - ex;
+      ry = tools.prevy - ey;
 
       gegl_node_get (data, "path", &vector, NULL);
 
       gegl_path_append (vector, 'L', ex, ey);
 
       g_object_unref (vector);
-      prevx = ex;
-      prevy = ey;
+      tools.prevx = ex;
+      tools.prevy = ey;
       return TRUE;
 
     }
   return FALSE;
-}
-
-static void path_changed (GeglPath *path,
-                          const GeglRectangle *roi,
-                          gpointer userdata)
-{
-  g_print ("path changed\n");
 }
 
 void editor_set_active (gpointer view, gpointer node);
@@ -764,7 +776,7 @@ void editor_set_active (gpointer view, gpointer node)
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
 
-      da_vector = vector;
+      tools.da_vector = vector;
       g_object_unref (vector);
       paint_handler = g_signal_connect_after (view, "expose-event",
                               G_CALLBACK (cairo_expose), node);
@@ -774,14 +786,14 @@ void editor_set_active (gpointer view, gpointer node)
                               G_CALLBACK (fill_release_event), node);
       motion_handler = g_signal_connect (view, "motion-notify-event",
                               G_CALLBACK (fill_motion_notify_event), node);
-      path_editing_active = TRUE;
+      tools.path_editing_active = TRUE;
     }
    else if(g_str_equal (opname, "gegl:stroke"))
     {
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
 
-      da_vector = vector;
+      tools.da_vector = vector;
       g_object_unref (vector);
 #if 0
       paint_handler = g_signal_connect_after (view, "expose-event",
@@ -793,12 +805,12 @@ void editor_set_active (gpointer view, gpointer node)
                               G_CALLBACK (stroke_release_event), node);
       motion_handler = g_signal_connect (view, "motion-notify-event",
                               G_CALLBACK (stroke_motion_notify_event), node);
-      path_editing_active = TRUE;
+      tools.path_editing_active = TRUE;
     }
   else
     {
-      path_editing_active = FALSE;
-      da_vector = NULL;
+      tools.path_editing_active = FALSE;
+      tools.da_vector = NULL;
     }
   gtk_widget_queue_draw (GTK_WIDGET (view));
 }

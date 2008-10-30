@@ -1,5 +1,13 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: Moved static globals for interaction code into a struct
+	(path_editor_keybinding), (fill_press_event),
+	(fill_release_event), (fill_motion_notify_event), (cairo_expose),
+	(stroke_press_event), (stroke_release_event),
+	(stroke_motion_notify_event), (editor_set_active):
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (fill_press_event), (fill_release_event),
 	(fill_motion_notify_event), (stroke_press_event),
 	(stroke_release_event), (stroke_motion_notify_event),
