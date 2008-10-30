@@ -359,30 +359,31 @@ render_rectangle (GeglProcessor *processor)
         {
           gint band_size;
 
-          if (dr->height > dr->width)
+          if (dr->width > dr->height)
             {
               GeglRectangle *fragment;
 
-              band_size = dr->height / 2;
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->height = band_size;
-              dr->height      -= band_size;
-              dr->y           += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-
-              return TRUE;
-            }
-          else
-            {
-              GeglRectangle *fragment;
-
+/* try to make the rects generated match better with potential 2^n sized
+ * tiles, XXX: should be improved to make the next slice fit as well.
+ */
               band_size = dr->width / 2;
+#if 1
+              if (band_size <= 128)
+                {
+                  band_size = MIN(band_size, 64); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+              else if (band_size <= 256)
+                {
+                  band_size = MIN(band_size, 128); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+              else if (band_size <= 512)
+                {
+                  band_size = MIN(band_size, 256); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+#endif
 
               if (band_size < 1)
                 band_size = 1;
@@ -392,6 +393,42 @@ render_rectangle (GeglProcessor *processor)
               fragment->width = band_size;
               dr->width      -= band_size;
               dr->x          += band_size;
+
+              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
+
+              return TRUE;
+            }
+          else
+            {
+              GeglRectangle *fragment;
+
+              band_size = dr->height / 2;
+
+
+              if (band_size <= 128)
+                {
+                  band_size = MIN(band_size, 64); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+              else if (band_size <= 256)
+                {
+                  band_size = MIN(band_size, 128); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+              else if (band_size <= 512)
+                {
+                  band_size = MIN(band_size, 256); /* prefer a band_size of 128,
+                                                      hoping to hit tiles */
+                }
+
+              if (band_size < 1)
+                band_size = 1;
+
+              fragment = g_slice_dup (GeglRectangle, dr);
+
+              fragment->height = band_size;
+              dr->height      -= band_size;
+              dr->y           += band_size;
 
               processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
 

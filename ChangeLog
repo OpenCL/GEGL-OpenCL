@@ -1,5 +1,11 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-processor.c: (render_rectangle): Initial steps
+	aiming towards more tile aligned access for the chunks that are pulled
+	by GeglProcessor.
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.c: (gegl_cache_invalidate): turn of
 	forced blanking of regions that are invalidated.
 
