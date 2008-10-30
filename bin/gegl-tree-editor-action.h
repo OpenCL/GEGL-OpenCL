@@ -21,5 +21,6 @@
 
 GtkActionGroup *tree_editor_action_group (GtkWidget *tree_editor);
 GeglNode *gegl_add_sibling (const gchar *type);
+GeglNode *gegl_add_child (const gchar *type);
 
 #endif

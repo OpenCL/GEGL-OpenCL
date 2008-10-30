@@ -1,5 +1,17 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (fill_press_event), (fill_release_event),
+	(fill_motion_notify_event), (stroke_press_event),
+	(stroke_release_event), (stroke_motion_notify_event),
+	(path_changed), (editor_set_active): made pointer events when the
+	selected node is a gegl:stroke append to the path and a new path
+	insert above it uppon button release, making it ready to start the
+	cycle afresh.
+	* bin/gegl-tree-editor-action.[ch]: (gegl_add_child): exposed to rest
+	of GEGL binary.
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: removed ad-hoc code for path
 	changes, special cased the damaged rectangle when appending line-to
 	instructions to the path.

@@ -33,6 +33,7 @@
 #include "gegl-options.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
+#include "gegl-tree-editor-action.h"
 #include "gegl-view.h"
 
 #include "editor.h"
@@ -231,7 +232,7 @@ path_editor_keybinding (GdkEventKey *event)
 }
 
 static gboolean
-button_press_event (GtkWidget      *widget,
+fill_press_event (GtkWidget      *widget,
                     GdkEventButton *event,
                     gpointer        data)
 {
@@ -388,7 +389,7 @@ foo:
 }
 
 static gboolean
-button_release_event (GtkWidget      *widget,
+fill_release_event (GtkWidget      *widget,
                       GdkEventButton *event,
                       gpointer        data)
 {
@@ -397,7 +398,7 @@ button_release_event (GtkWidget      *widget,
 }
 
 static gboolean
-motion_notify_event (GtkWidget      *widget,
+fill_motion_notify_event (GtkWidget      *widget,
                      GdkEventMotion *event,
                      gpointer        data)
 {
@@ -476,6 +477,7 @@ motion_notify_event (GtkWidget      *widget,
     }
   return FALSE;
 }
+
 
 
 static gboolean cairo_expose (GtkWidget *widget,
@@ -598,6 +600,129 @@ static gboolean cairo_expose (GtkWidget *widget,
 }
 
 
+static gboolean stroke_active = FALSE;
+
+static gboolean
+stroke_press_event (GtkWidget      *widget,
+                    GdkEventButton *event,
+                    gpointer        data)
+{
+  gint   x, y;
+  gdouble scale;
+  gdouble tx, ty;
+  gdouble ex, ey;
+
+  GeglPath *vector;
+
+  g_object_get (G_OBJECT (widget),
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+  gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+
+  ex = (event->x + x) / scale - tx;
+  ey = (event->y + y) / scale - ty;
+
+  gegl_node_get (GEGL_NODE (data), "path", &vector, NULL);
+
+  gegl_path_clear (vector);
+  gegl_path_append (vector, 'M', ex, ey);
+  stroke_active = TRUE;
+  g_object_unref (vector);
+  return TRUE;
+}
+
+static gboolean
+stroke_release_event (GtkWidget      *widget,
+                      GdkEventButton *event,
+                      gpointer        data)
+{
+  GeglNode *stroke;
+  GeglColor *color = gegl_color_new ("red");
+
+  /* if our parent is an over op, insert our own over op before
+   * that over op
+   */
+  GeglNode *self = tree_editor_get_active (editor.tree_editor);
+  GeglNode *parent = gegl_parent (self);
+
+  if (g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
+    {
+
+      GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
+      GtkTreeIter iter;
+      iter.user_data = parent;
+      gtk_tree_selection_select_iter (selection, &iter);
+    }
+
+  gegl_add_sibling ("gegl:over");
+  stroke = gegl_add_child ("gegl:stroke");
+
+    {
+      GeglColor *color2;
+      gdouble    linewidth;
+      gfloat r,g,b,a;
+      gegl_node_get (self, "color", &color2, "linewidth", &linewidth, NULL);
+
+      gegl_color_get_rgba (color2, &r, &g, &b, &a);
+      gegl_color_set_rgba (color, r,g,b,a);
+      gegl_node_set (stroke, "path", gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
+    }
+
+  stroke_active = FALSE;
+  return TRUE;
+}
+
+
+static gboolean
+stroke_motion_notify_event (GtkWidget      *widget,
+                            GdkEventMotion *event,
+                            gpointer        data)
+{
+  if (stroke_active)
+    {
+      gint   x, y;
+      gdouble scale;
+      gdouble tx, ty;
+      gdouble ex, ey;
+      gdouble rx, ry;
+
+      GeglPath *vector;
+
+      g_object_get (G_OBJECT (widget),
+                    "x", &x,
+                    "y", &y,
+                    "scale", &scale,
+                    NULL);
+      gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+
+      ex = (event->x + x) / scale - tx;
+      ey = (event->y + y) / scale - ty;
+
+      rx = prevx - ex;
+      ry = prevy - ey;
+
+      gegl_node_get (data, "path", &vector, NULL);
+
+      gegl_path_append (vector, 'L', ex, ey);
+
+      g_object_unref (vector);
+      prevx = ex;
+      prevy = ey;
+      return TRUE;
+
+    }
+  return FALSE;
+}
+
+static void path_changed (GeglPath *path,
+                          const GeglRectangle *roi,
+                          gpointer userdata)
+{
+  g_print ("path changed\n");
+}
+
 void editor_set_active (gpointer view, gpointer node);
 void editor_set_active (gpointer view, gpointer node)
 {
@@ -634,8 +759,7 @@ void editor_set_active (gpointer view, gpointer node)
 
   opname = gegl_node_get_operation (node);
 
-  if (g_str_equal (opname, "gegl:fill") ||
-      g_str_equal (opname, "gegl:stroke"))
+  if (g_str_equal (opname, "gegl:fill"))
     {
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
@@ -645,11 +769,30 @@ void editor_set_active (gpointer view, gpointer node)
       paint_handler = g_signal_connect_after (view, "expose-event",
                               G_CALLBACK (cairo_expose), node);
       press_handler = g_signal_connect (view, "button-press-event",
-                              G_CALLBACK (button_press_event), node);
+                              G_CALLBACK (fill_press_event), node);
       release_handler = g_signal_connect (view, "button-release-event",
-                              G_CALLBACK (button_release_event), node);
+                              G_CALLBACK (fill_release_event), node);
       motion_handler = g_signal_connect (view, "motion-notify-event",
-                              G_CALLBACK (motion_notify_event), node);
+                              G_CALLBACK (fill_motion_notify_event), node);
+      path_editing_active = TRUE;
+    }
+   else if(g_str_equal (opname, "gegl:stroke"))
+    {
+      GeglPath *vector;
+      gegl_node_get (node, "path", &vector, NULL);
+
+      da_vector = vector;
+      g_object_unref (vector);
+#if 0
+      paint_handler = g_signal_connect_after (view, "expose-event",
+                              G_CALLBACK (cairo_expose), node);
+#endif
+      press_handler = g_signal_connect (view, "button-press-event",
+                              G_CALLBACK (stroke_press_event), node);
+      release_handler = g_signal_connect (view, "button-release-event",
+                              G_CALLBACK (stroke_release_event), node);
+      motion_handler = g_signal_connect (view, "motion-notify-event",
+                              G_CALLBACK (stroke_motion_notify_event), node);
       path_editing_active = TRUE;
     }
   else

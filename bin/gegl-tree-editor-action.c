@@ -418,7 +418,7 @@ GeglNode *gegl_add_sibling (const gchar *type)
   return node;
 }
 
-static void
+static GeglNode *
 add_child_op (GtkAction *action, gpointer userdata)
 {
   /* we passed the view as userdata when we connected the signal */
@@ -431,7 +431,10 @@ add_child_op (GtkAction *action, gpointer userdata)
   tree_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
 
   if (!gtk_tree_selection_get_selected (tree_selection, &model, &iter))
-    return;
+    {
+      g_error ("Eeeek!");
+      return NULL;
+    }
 
   item = iter.user_data;
   g_assert (item);
@@ -443,7 +446,7 @@ add_child_op (GtkAction *action, gpointer userdata)
       else
         {
           new_item = gegl_node_new_child (GEGL_STORE (model)->gegl,
-                                             "operation", "gegl:blank",
+                                             "operation", "gegl:nop",
                                              NULL);
           gegl_node_connect_from (item, "aux", new_item, "output");
         }
@@ -452,6 +455,23 @@ add_child_op (GtkAction *action, gpointer userdata)
       gtk_tree_model_row_inserted (model, gtk_tree_model_get_path (model, &iter), &iter);
     }
   gtk_tree_selection_select_iter (tree_selection, &iter);
+  return new_item;
+}
+
+GeglNode *gegl_add_child (const gchar *type)
+{
+  GeglNode *node;
+
+  /* hack hack */ 
+  tree_editor_set_active (editor.tree_editor, 
+    tree_editor_get_active (editor.tree_editor));
+  node = add_child_op (NULL, tree_editor_get_treeview (editor.tree_editor));
+  gegl_node_set (node, "operation", type, NULL);
+  tree_editor_set_active (editor.tree_editor, node);
+  property_editor_rebuild (editor.property_editor, node);
+
+
+  return node;
 }
 
 static void
