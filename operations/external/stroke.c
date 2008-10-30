@@ -46,6 +46,7 @@ static void path_changed (GeglPath *path,
                           gpointer userdata);
 
 #include "gegl-chant.h"
+#include <cairo/cairo.h>
 
 
 static void path_changed (GeglPath *path,
@@ -108,6 +109,61 @@ process (GeglOperation       *operation,
 }
 
 
+static void foreach_cairo (const GeglPathItem *knot,
+                           gpointer              cr)
+{
+  switch (knot->type)
+    {
+      case 'M':
+        cairo_move_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'L':
+        cairo_line_to (cr, knot->point[0].x, knot->point[0].y);
+        break;
+      case 'C':
+        cairo_curve_to (cr, knot->point[0].x, knot->point[0].y,
+                            knot->point[1].x, knot->point[1].y,
+                            knot->point[2].x, knot->point[2].y);
+        break;
+      case 'z':
+        cairo_close_path (cr);
+        break;
+      default:
+        g_print ("%s uh?:%c\n", G_STRLOC, knot->type);
+    }
+}
+
+static void gegl_path_cairo_play (GeglPath *path,
+                                    cairo_t *cr)
+{
+  gegl_path_foreach_flat (path, foreach_cairo, cr);
+}
+
+static GeglNode *detect (GeglOperation *operation,
+                         gint           x,
+                         gint           y)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  cairo_t *cr;
+  cairo_surface_t *surface;
+  gchar *data = "     ";
+  gboolean result;
+
+  surface = cairo_image_surface_create_for_data ((guchar*)data,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 1,1,4);
+  cr = cairo_create (surface);
+  gegl_path_cairo_play (o->path, cr);
+  cairo_set_line_width (cr, o->linewidth);
+  result = cairo_in_stroke (cr, x, y);
+  cairo_destroy (cr);
+
+  if (result)
+    return operation->node;
+
+  return NULL;
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -120,6 +176,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
+  operation_class->detect = detect;
 
   operation_class->name        = "gegl:stroke";
   operation_class->categories  = "render";

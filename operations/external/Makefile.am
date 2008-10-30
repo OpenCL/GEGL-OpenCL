@@ -15,7 +15,10 @@ if HAVE_CAIRO
 fill_la_SOURCES = fill.c
 fill_la_LIBADD = $(op_libs) $(CAIRO_LIBS)
 fill_la_CFLAGS = $(CAIRO_CFLAGS)
-ops += fill.la
+stroke_la_SOURCES = stroke.c
+stroke_la_LIBADD = $(op_libs) $(CAIRO_LIBS)
+stroke_la_CFLAGS = $(CAIRO_CFLAGS)
+ops += fill.la stroke.la
 endif
 
 if HAVE_PNG
