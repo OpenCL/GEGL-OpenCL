@@ -34,11 +34,13 @@ gegl_SOURCES =			\
 	gegl.c			\
 	gegl-options.c		\
 	gegl-options.h		\
+	gegl-path-smooth.c	\
+	gegl-path-smooth.h	\
         $(gui_sources)
 
 
 if HAVE_SPIRO
-gegl_SOURCES += gegl-spiro.h gegl-spiro.c
+gegl_SOURCES += gegl-path-spiro.h gegl-path-spiro.c
 endif
 
 INCLUDES = \

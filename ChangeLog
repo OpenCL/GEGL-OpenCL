@@ -1,5 +1,18 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/Makefile.am: added gegl-path-smooth.[ch]
+
+	* bin/gegl-spiro.c: 
+	* bin/gegl-spiro.h: renamed to:
+	* bin/gegl-path-spiro.c: 
+	* bin/gegl-path-spiro.h: 
+
+	And split out the path smoother to:
+	* bin/gegl-path-smooth.c: [NEW]
+	* bin/gegl-path-smooth.h: [NEW]
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: Moved static globals for interaction code into a struct
 	(path_editor_keybinding), (fill_press_event),
 	(fill_release_event), (fill_motion_notify_event), (cairo_expose),
