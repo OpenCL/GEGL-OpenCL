@@ -1,5 +1,11 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.c: removed ad-hoc code for path
+	changes, special cased the damaged rectangle when appending line-to
+	instructions to the path.
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: changed the path change singaling behavior,
 	ops having a GeglPath property now needs to have a path_changed
 	function within the compilation unit, that will be invoked when

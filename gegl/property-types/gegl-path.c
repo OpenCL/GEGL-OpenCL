@@ -642,21 +642,23 @@ gegl_path_emit_changed (GeglPath            *self,
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
   GeglRectangle rect;
   GeglRectangle temp;
+  gdouble min_x;
+  gdouble max_x;
+  gdouble min_y;
+  gdouble max_y;
+
+  gegl_path_get_bounds (self, &min_x, &max_x, &min_y, &max_y);
+
+  rect.x = floor (min_x);
+  rect.y = floor (min_y);
+  rect.width = ceil (max_x) - floor (min_x);
+  rect.height = ceil (max_y) - floor (min_y);
+
+  temp = priv->cached_extent;
+  priv->cached_extent = rect;
+
   if (!bounds)
     {
-       gdouble min_x;
-       gdouble max_x;
-       gdouble min_y;
-       gdouble max_y;
-       gegl_path_get_bounds (self, &min_x, &max_x, &min_y, &max_y);
-       rect.x = min_x;
-       rect.y = min_y;
-       rect.width = max_x - min_x;
-       rect.height = max_y - min_y;
-
-       temp = priv->cached_extent;
-       priv->cached_extent = rect;
-
        gegl_rectangle_bounding_box (&temp, &temp, &rect);
        bounds = &temp;
     }
@@ -899,45 +901,6 @@ const GeglRectangle *gegl_path_changed_rect (GeglPath *vector)
   return &priv->dirtied;
 }
 
-
-void
-gegl_operation_invalidate (GeglOperation       *operation,
-                            const GeglRectangle *roi);
-
-void
-gegl_operation_path_prop_changed (GeglPath          *vector,
-                                  const GeglRectangle *roi,
-                                  GeglOperation       *operation);
-
-void
-gegl_operation_path_prop_changed (GeglPath            *vector,
-                                  const GeglRectangle *roi,
-                                  GeglOperation       *operation)
-{
-  /* In the end forces a re-render, should be adapted to
-   * allow a smaller region to be forced for re-rendering
-   * when the vector is incrementally grown
-   * */
-  /* g_object_notify (G_OBJECT (operation), "vector"); */
-  GeglRectangle rect = *roi;
-  gint radius = 8;
-
-  radius = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "vector-radius"));
-#if 0
-    {
-      gint align = 127;
-      gint x= rect.x & (0xffff-align);
-
-      rect.width +=(rect.x-x);
-      x=rect.width & align;
-      if (x)
-        rect.width += (align-x);
-    }
-#endif
-  gegl_operation_invalidate (operation, &rect);
-}
-
-
 GParamSpec *
 gegl_param_spec_path   (const gchar *name,
                         const gchar *nick,
@@ -978,10 +941,14 @@ static const gchar *parse_float_pair (const gchar *p,
 gchar *
 gegl_path_to_string (GeglPath  *vector)
 {
-  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
-  GString *str = g_string_new ("");
+  GeglPathPrivate *priv;
+  GString *str;
   gchar *ret;
   GeglPathList *iter;
+  if (!vector)
+    return g_strdup ("");
+  str = g_string_new ("");
+  priv = GEGL_PATH_GET_PRIVATE (vector);
   for (iter = priv->path; iter; iter=iter->next)
     {
       gint i;
@@ -1319,7 +1286,68 @@ gegl_path_append (GeglPath *self,
 
   va_end (var_args);
   priv->flat_path_clean = FALSE;
-  gegl_path_emit_changed (self, NULL);
+
+  if (type == 'L')
+    {
+	  /* special case lineto so that the full path doesn't need
+         to be re-rendered */
+
+      GeglPathList *iter2;
+      GeglRectangle rect;
+      gdouble x0, y0, x1, y1;
+      x0 = iter->d.point[0].x;
+      y0 = iter->d.point[0].y;
+      for (iter2=priv->path;iter2 && iter2->next != iter;iter2=iter2->next);
+      x1 = iter2->d.point[0].x;
+      y1 = iter2->d.point[0].y;
+
+      if (x0<x1)
+        {
+          rect.x=x0;
+          rect.width = x1-x0;
+        }
+      else
+        {
+          rect.x=x1;
+          rect.width = x0-x1;
+        }
+      if (y0<y1)
+        {
+          rect.y=y0;
+          rect.height = y1-y0;
+        }
+      else
+        {
+          rect.y=y1;
+          rect.height = y0-y1;
+        }
+
+      {
+        gint x0,y0,x1,y1;
+        x0 = rect.x;
+        y0 = rect.y;
+        x1 = x0 + rect.width;
+        y1 = y0 + rect.height;
+
+        x0 = x0 & (0xffffff-15);
+        y0 = y0 & (0xffffff-15);
+
+        x1 = (x1+15) & (0xffffff-15);
+        y1 = (y1+15) & (0xffffff-15);
+
+        rect.x=x0;
+        rect.y=y0;
+        rect.width = x1-x0;
+        rect.height = y1-y0;
+      }
+      
+
+      gegl_path_emit_changed (self, &rect);
+    }
+  else
+    {
+      gegl_path_emit_changed (self, NULL);
+    }
 }
 
 
@@ -1338,6 +1366,8 @@ GeglPath *gegl_path_parameter_path (GeglPath    *path,
   priv->parameter_names = g_slist_append (priv->parameter_names, g_strdup (parameter_name));
   parameter_path = gegl_path_new ();
   GEGL_PATH_GET_PRIVATE (parameter_path)->parent_path = path;
+#if 0
+  /* hard coded for line width,.. */
 
   gegl_path_append (parameter_path, '_', 0.0, 4.0);
   gegl_path_append (parameter_path, '_', 10.0, 8.0);
@@ -1347,6 +1377,7 @@ GeglPath *gegl_path_parameter_path (GeglPath    *path,
   gegl_path_append (parameter_path, '_', 120.0, 8.0);
   gegl_path_append (parameter_path, '_', 250.0, 4.0);
   gegl_path_append (parameter_path, '_', 340.0, 3.0);
+#endif
 
   priv->parameter_paths = g_slist_append (priv->parameter_paths, parameter_path);
   return parameter_path;
@@ -1889,8 +1920,8 @@ void gegl_path_stroke (GeglBuffer *buffer,
                   {
                     Point spot;
                     gfloat ratio = local_pos / distance;
-                    gfloat radius = gegl_path_parameter_calc (vector, "linewidth",
-                                       traveled_length) / 2;
+                    gfloat radius = linewidth/2; /* XXX: gegl_path_parameter_calc (vector, "linewidth",
+                                       traveled_length) / 2;*/
                                  /* horizon used to refetch the radius
                                   * for each step from the tool, to be
                                   * able to have variable line width
