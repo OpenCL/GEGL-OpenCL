@@ -1,3 +1,8 @@
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-cache.c: (gegl_cache_invalidate): turn of
+	forced blanking of regions that are invalidated.
+
 2008-10-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]:

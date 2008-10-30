@@ -330,7 +330,7 @@ void
 gegl_cache_invalidate (GeglCache           *self,
                        const GeglRectangle *roi)
 {
-#if 1
+#if 0
   if (roi)
     {
       gegl_buffer_clear (GEGL_BUFFER (self), roi);
