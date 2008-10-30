@@ -35,7 +35,7 @@ static void buffer_changed (GeglBuffer          *buffer,
                             const GeglRectangle *rect,
                             gpointer             userdata)
 {
-  gegl_operation_invalidate (GEGL_OPERATION (userdata), rect);
+  gegl_operation_invalidate (GEGL_OPERATION (userdata), rect, FALSE);
 }
 
 static GeglBuffer *ensure_buffer (GeglOperation *operation)

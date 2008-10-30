@@ -62,7 +62,7 @@ static void path_changed (GeglPath *path,
   rect.width += o->linewidth;
   rect.height += o->linewidth;
 
-  gegl_operation_invalidate (userdata, &rect);
+  gegl_operation_invalidate (userdata, &rect, FALSE);
 };
 
 static void

@@ -529,13 +529,16 @@ gegl_node_connect_to (GeglNode    *source,
 
 void
 gegl_node_invalidated (GeglNode            *node,
-                       const GeglRectangle *rect)
+                       const GeglRectangle *rect,
+                       gboolean             clear_cache)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (rect != NULL);
 
   if (node->cache)
     {
+      if (rect && clear_cache)
+        gegl_buffer_clear (GEGL_BUFFER (node->cache), rect);
       gegl_cache_invalidate (node->cache, rect);
     }
 
@@ -571,7 +574,7 @@ source_invalidated (GeglNode            *source,
       dirty_rect = *rect;
     }
 
-  gegl_node_invalidated (destination, &dirty_rect);
+  gegl_node_invalidated (destination, &dirty_rect, FALSE);
 }
 
 gboolean
@@ -1012,7 +1015,7 @@ property_changed (GObject    *gobject,
                                        &dirty_rect,
                                        &new_have_rect);*/
 
-          gegl_node_invalidated (self, &dirty_rect);
+          gegl_node_invalidated (self, &dirty_rect, FALSE);
         }
       else
         {
@@ -1027,7 +1030,7 @@ property_changed (GObject    *gobject,
                                        &dirty_rect,
                                        &new_have_rect);
 
-          gegl_node_invalidated (self, &dirty_rect);
+          gegl_node_invalidated (self, &dirty_rect, FALSE);
         }
     }
 }
@@ -1685,7 +1688,7 @@ gegl_node_insert_before (GeglNode *self,
   gegl_node_link_many (other, to_be_inserted, self, NULL);
 
   /* emit the change ourselves */
-  gegl_node_invalidated (self, &rectangle);
+  gegl_node_invalidated (self, &rectangle, FALSE);
 }
 
 gint

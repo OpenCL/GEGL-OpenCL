@@ -1,5 +1,18 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation.[ch]: (gegl_operation_invalidate):
+	added a boolean argument as a final argument, if TRUE the op
+	requests that it's output cache should be cleared for the region
+	that is invalidated.
+	* gegl/graph/gegl-node.[ch]: (gegl_node_invalidated),
+	(source_invalidated), (property_changed),
+	(gegl_node_insert_before):
+	* operations/external/fill.c: pass TRUE.
+	* operations/external/stroke.c: pass FALSE.
+	* operations/common/open-buffer.c: pass FALSE.
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/stroke.c: moded ..
 	* operations/external/stroke.c: .. here and added cairo based
 	hitdetection (for fixed/max linewidth).

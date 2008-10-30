@@ -58,7 +58,7 @@ static void path_changed (GeglPath *path,
                           gpointer userdata)
 {
   /* invalidate the incoming rectangle */
-  gegl_operation_invalidate (userdata, roi);
+  gegl_operation_invalidate (userdata, roi, TRUE);
 };
 
 static GeglRectangle

@@ -220,7 +220,8 @@ gboolean gegl_operation_calc_source_regions  (GeglOperation       *operation,
 void     gegl_operation_path_prop_changed    (GeglPath            *path,
                                               GeglOperation       *operation);
 void     gegl_operation_invalidate            (GeglOperation       *operation,
-                                               const GeglRectangle *roi);
+                                               const GeglRectangle *roi,
+                                               gboolean             clear_cache);
 
 G_END_DECLS
 

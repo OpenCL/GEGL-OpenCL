@@ -419,7 +419,8 @@ gegl_operation_get_format (GeglOperation *self,
 
 void
 gegl_operation_invalidate (GeglOperation       *operation,
-                           const GeglRectangle *roi)
+                           const GeglRectangle *roi,
+                           gboolean             clear_cache)
 {
   GeglNode *node = NULL;
 
@@ -429,5 +430,5 @@ gegl_operation_invalidate (GeglOperation       *operation,
   g_return_if_fail (GEGL_IS_OPERATION (operation));
   node = operation->node;
 
-  gegl_node_invalidated (node, roi);
+  gegl_node_invalidated (node, roi, TRUE);
 }
