@@ -354,7 +354,8 @@ struct _GeglChantO
 #define gegl_chant_pointer(name, nick, blurb)                gpointer    name;
 #define gegl_chant_color(name, nick, def, blurb)             GeglColor  *name;
 #define gegl_chant_curve(name, nick, blurb)                  GeglCurve  *name;
-#define gegl_chant_path(name, nick, blurb)                   GeglPath   *name;
+#define gegl_chant_path(name, nick, blurb)                   GeglPath   *name;\
+                                                   guint path_changed_handler;
 
 #include GEGL_CHANT_C_FILE
 
@@ -548,15 +549,18 @@ set_property (GObject      *gobject,
 #define gegl_chant_path(name, nick, blurb)                            \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
-        {/*XXX: remove old signal */                                  \
+        {\
+          if (properties->path_changed_handler) \
+            g_signal_handler_disconnect (G_OBJECT (properties->name), properties->path_changed_handler);\
+         properties->path_changed_handler = 0;\
          g_object_unref (properties->name);                           \
         }                                                             \
       properties->name = NULL;                                        \
       if (g_value_peek_pointer (value))                               \
         {                                                             \
           properties->name = g_value_dup_object (value);              \
-          g_signal_connect (G_OBJECT (properties->name), "changed",   \
-          G_CALLBACK(gegl_operation_path_prop_changed), gobject);     \
+          properties->path_changed_handler = g_signal_connect (G_OBJECT (properties->name), "changed",   \
+          G_CALLBACK(path_changed), gobject);     \
          }
       break; /*XXX*/
 

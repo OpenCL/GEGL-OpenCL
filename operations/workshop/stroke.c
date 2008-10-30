@@ -25,7 +25,7 @@
 
 gegl_chant_path   (path,   _("Vector"),
                              _("A GeglVector representing the path of the stroke"))
-gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,1.0)",
+gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,0.1)",
                              _("Color of paint to use"))
 gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 3.0,
                              _("width of stroke"))
@@ -41,8 +41,28 @@ gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.7,
 
 /* the path api isn't public yet */
 #include "property-types/gegl-path.h"
+static void path_changed (GeglPath *path,
+                          const GeglRectangle *roi,
+                          gpointer userdata);
 
 #include "gegl-chant.h"
+
+
+static void path_changed (GeglPath *path,
+                          const GeglRectangle *roi,
+                          gpointer userdata)
+{
+  GeglRectangle rect = *roi;
+  GeglChantO    *o   = GEGL_CHANT_PROPERTIES (userdata);
+  /* invalidate the incoming rectangle */
+
+  rect.x -= o->linewidth/2;
+  rect.y -= o->linewidth/2;
+  rect.width += o->linewidth;
+  rect.height += o->linewidth;
+
+  gegl_operation_invalidate (userdata, &rect);
+};
 
 static void
 prepare (GeglOperation *operation)

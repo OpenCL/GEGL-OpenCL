@@ -38,6 +38,11 @@ gegl_chant_boolean(winding,  _("Winding"),    TRUE,
 #include "gegl-plugin.h"
 #include "property-types/gegl-path.h"
 
+
+static void path_changed (GeglPath *path,
+                          const GeglRectangle *roi,
+                          gpointer userdata);
+
 #include "gegl-chant.h"
 #include <cairo/cairo.h>
 
@@ -46,6 +51,15 @@ prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
 }
+
+
+static void path_changed (GeglPath *path,
+                          const GeglRectangle *roi,
+                          gpointer userdata)
+{
+  /* invalidate the incoming rectangle */
+  gegl_operation_invalidate (userdata, roi);
+};
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)

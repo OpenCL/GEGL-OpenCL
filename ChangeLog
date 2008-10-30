@@ -1,5 +1,14 @@
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: changed the path change singaling behavior,
+	ops having a GeglPath property now needs to have a path_changed
+	function within the compilation unit, that will be invoked when
+	the path property changes.
+	* operations/external/fill.c: (path_changed): changed ..
+	* operations/workshop/stroke.c: (path_changed): .. accordingly.
+
+2008-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-processor.c: (render_rectangle): Initial steps
 	aiming towards more tile aligned access for the chunks that are pulled
 	by GeglProcessor.
