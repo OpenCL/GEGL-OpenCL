@@ -27,8 +27,6 @@ gegl_chant_path   (path,   _("Path"),
                              _("A GeglPath representing the path of the fill"))
 gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,1.0)",
                              _("Color of paint to use"))
-gegl_chant_boolean(winding,  _("Winding"),    TRUE,
-                             _("what kind of fill rule to use"))
 
 #else
 
