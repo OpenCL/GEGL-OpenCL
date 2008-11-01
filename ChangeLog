@@ -1,5 +1,9 @@
 2008-11-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: (main): initialize the smooth path (used for stroking)
+
+2008-11-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.[ch]:
 	(gegl_path_is_empty): added a new call to quickly determine if there
 	are any control points in the path.
