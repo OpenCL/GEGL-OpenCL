@@ -30,7 +30,7 @@
 #include "gegl-options.h"
 #include "gegl-dot.h"
 #ifdef HAVE_SPIRO
-#include "gegl-spiro.h"
+#include "gegl-path-spiro.h"
 #endif
 
 #ifdef G_OS_WIN32
@@ -99,7 +99,7 @@ main (gint    argc,
 
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
-  gegl_spiro_init ();
+  gegl_path_spiro_init ();
 #endif
 
   if (o->xml)

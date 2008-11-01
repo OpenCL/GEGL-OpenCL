@@ -1,3 +1,7 @@
+2008-10-31  Manish Singh  <yosh@gimp.org>
+
+	* bin/gegl.c: follow gegl-spiro -> gegl-path-spiro rename here too.
+
 2008-10-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation.[ch]: (gegl_operation_invalidate):
