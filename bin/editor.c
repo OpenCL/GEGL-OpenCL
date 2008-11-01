@@ -51,6 +51,18 @@
 
 #include "gegl-path.h"
 
+enum 
+{
+  STATE_PICK = 0,
+  STATE_STROKES,
+  STATE_EDIT_NODES,
+  STATE_EDIT_LINEWIDTH,
+  STATE_EDIT_OPACITY,
+  STATE_FREE_REPLACE,
+  STATE_REDO_PART, /* redoes part of a path, starting on
+                      the first intersection */
+};
+
 
 typedef struct _Tools Tools;
 struct _Tools
@@ -58,19 +70,45 @@ struct _Tools
 /* paint core globals */
   gint         state; /* 0: modify, 1: add strokes, 2: */
   
-  gboolean  stroke_active;
-  gboolean  path_editing_active;
-
-  GeglPath *da_vector;
+  GeglNode *node;
+  GeglPath *path;
   gint      selected_no;
   gint      drag_no; /* -1 */
   gint      drag_sub;
   gdouble   prevx;
   gdouble   prevy;
+
+  gboolean  in_stroke;
+  /* the pie menu code is written to handle only one pie menu
+   * at a time for now
+   */
+  gboolean  menu_active;
+  gdouble   menux;
+  gdouble   menuy;
+
+  gint      menu_segments;
+  gchar     menu_segment_label[10][10];
+  GCallback menu_segment_callback[10];
 };
 
-Editor editor;
 Tools  tools;
+
+static void
+menu_clear (void)
+{
+  tools.menu_segments=0;
+}
+
+static void
+menu_add (const gchar *label, GCallback callback)
+{
+  strcpy (tools.menu_segment_label[tools.menu_segments], label);
+  
+  tools.menu_segment_callback[tools.menu_segments]=callback;
+  tools.menu_segments++;
+}
+
+Editor editor;
 
 static gchar *blank_composition =
     "<gegl>"
@@ -190,33 +228,23 @@ static void get_loc (const GeglPathItem *knot,
     }
 }
 
-#if 0
-static gboolean editor.path_editing_active = FALSE;
-static GeglPath *editor.da_vector = NULL;
-static gint     editor.selected_no = 0;
-static gint     editor.drag_no = -1;
-static gint     editor.drag_sub = 0;
-static gdouble  editor.prevx = 0;
-static gdouble  editor.prevy = 0;
-#endif
-
 static gboolean
 path_editor_keybinding (GdkEventKey *event)
 {
-  if (!tools.path_editing_active)
+  if (tools.state != STATE_EDIT_NODES)
     return FALSE;
   switch (event->keyval)
     {
       case GDK_i:
         {
-          GeglPathItem knot = *gegl_path_get (tools.da_vector, tools.selected_no);
+          GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
           knot.point[0].x += 10;
-          gegl_path_insert (tools.da_vector, tools.selected_no, &knot);
+          gegl_path_insert (tools.path, tools.selected_no, &knot);
           tools.selected_no ++;
         }
         return TRUE;
       case GDK_BackSpace:
-        gegl_path_remove (tools.da_vector, tools.selected_no);
+        gegl_path_remove (tools.path, tools.selected_no);
         if (tools.selected_no>0)
           tools.selected_no --;
         else
@@ -224,7 +252,7 @@ path_editor_keybinding (GdkEventKey *event)
         return TRUE;
       case GDK_m:
         {
-          GeglPathItem knot = *gegl_path_get (tools.da_vector, tools.selected_no);
+          GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
           switch (knot.type)
             {
               case 'v':
@@ -244,7 +272,7 @@ path_editor_keybinding (GdkEventKey *event)
                 break;
             }
           g_print ("setting %c\n", knot.type);
-          gegl_path_replace (tools.da_vector, tools.selected_no, &knot);
+          gegl_path_replace (tools.path, tools.selected_no, &knot);
         }
         return TRUE;
       default:
@@ -253,10 +281,13 @@ path_editor_keybinding (GdkEventKey *event)
   return FALSE;
 }
 
+
+
+
 static gboolean
 fill_press_event (GtkWidget      *widget,
-                    GdkEventButton *event,
-                    gpointer        data)
+                  GdkEventButton *event,
+                  gpointer        data)
 {
   gint   x, y;
   gdouble scale;
@@ -275,7 +306,7 @@ fill_press_event (GtkWidget      *widget,
                 "y", &y,
                 "scale", &scale,
                 NULL);
-  gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+  gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
   ex = (event->x + x) / scale - tx;
   ey = (event->y + y) / scale - ty;
@@ -284,7 +315,7 @@ fill_press_event (GtkWidget      *widget,
   cairo_scale (cr, scale, scale);
   cairo_translate (cr, tx, ty);*/
 
-  gegl_node_get (data, "path", &vector, NULL);
+  gegl_node_get (tools.node, "path", &vector, NULL);
 
   gegl_path_cairo_play (vector, cr);
 
@@ -416,13 +447,13 @@ fill_release_event (GtkWidget      *widget,
                       gpointer        data)
 {
   tools.drag_no = -1;
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean
 fill_motion_notify_event (GtkWidget      *widget,
-                     GdkEventMotion *event,
-                     gpointer        data)
+                          GdkEventMotion *event,
+                          gpointer        data)
 {
   if (tools.drag_no != -1)
     {
@@ -440,7 +471,7 @@ fill_motion_notify_event (GtkWidget      *widget,
                     "y", &y,
                     "scale", &scale,
                     NULL);
-      gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+      gegl_node_get_translation (tools.node, &tx, &ty);
 
       ex = (event->x + x) / scale - tx;
       ey = (event->y + y) / scale - ty;
@@ -448,7 +479,7 @@ fill_motion_notify_event (GtkWidget      *widget,
       rx = tools.prevx - ex;
       ry = tools.prevy - ey;
 
-      gegl_node_get (data, "path", &vector, NULL);
+      gegl_node_get (tools.node, "path", &vector, NULL);
 
       if (tools.drag_sub == 0)
         {
@@ -489,18 +520,13 @@ fill_motion_notify_event (GtkWidget      *widget,
           gegl_path_replace (vector, tools.drag_no + 1, &new_knot);
           gtk_widget_queue_draw (widget);
         }
-
-
       g_object_unref (vector);
       tools.prevx = ex;
       tools.prevy = ey;
       return TRUE;
-
     }
   return FALSE;
 }
-
-
 
 static gboolean cairo_expose (GtkWidget *widget,
                               GdkEvent  *event,
@@ -523,14 +549,15 @@ static gboolean cairo_expose (GtkWidget *widget,
                 "y", &y,
                 "scale", &scale,
                 NULL);
-  gegl_node_get_translation (GEGL_NODE (user_data), &tx, &ty);
+  gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
   cairo_translate (cr, -x, -y);
   cairo_scale (cr, scale, scale);
   cairo_translate (cr, tx, ty);
 
-  gegl_node_get (user_data, "path", &vector, NULL);
+  gegl_node_get (tools.node, "path", &vector, NULL);
 
+  cairo_new_path (cr);
   gegl_path_cairo_play (vector, cr);
 
   n= gegl_path_get_count (vector);
@@ -621,6 +648,97 @@ static gboolean cairo_expose (GtkWidget *widget,
   return FALSE;
 }
 
+
+static gboolean cairo_gui_expose (GtkWidget *widget,
+                                  GdkEvent  *event,
+                                  gpointer   user_data)
+{
+  switch (tools.state)
+    {
+      case STATE_PICK:
+        break;
+      case STATE_EDIT_NODES:
+        cairo_expose (widget, event, user_data);
+        break;
+      case STATE_STROKES:
+        break;
+      case STATE_EDIT_LINEWIDTH:
+      case STATE_EDIT_OPACITY:
+      case STATE_FREE_REPLACE:
+      default:
+        g_warning ("not handling expose of state %i\n", tools.state);
+        break;
+    }
+
+  if (tools.menu_active)
+    {
+      gint x, y;
+      gdouble scale;
+      cairo_t *cr = gdk_cairo_create (widget->window);
+      g_object_get (G_OBJECT (widget),
+                    "x", &x,
+                    "y", &y,
+                    "scale", &scale,
+                    NULL);
+
+      cairo_translate (cr, -x, -y);
+
+      cairo_set_source_rgba (cr, 1.0, 0.0, 1.0, 1.0);
+
+      x = tools.menux;
+      y = tools.menuy;
+#if 0
+      cairo_move_to (cr, x, y);
+      cairo_arc (cr, x, y, 100, 0.0, 3.1415*2);
+      cairo_fill (cr);
+#endif
+
+      {
+        gint segment;
+        gint segments = tools.menu_segments;
+
+        gint inner = 35;
+        gint outher = 100;
+        gint middle = (inner+outher)/2;
+        gdouble adjustment = 3.0; /* adjustments to make the margin produce
+                                     a straight line from the centre
+                                     (set by trial and error) */
+
+
+        for (segment=0;segment<segments;segment++)
+          {
+            cairo_text_extents_t text_extents;
+            gdouble margin = 0.05 * (3.1415*2)/segments;
+            cairo_new_path (cr);
+            cairo_arc (cr, x, y, outher, segment*(3.1415*2)/segments + margin, (segment+1)*(3.1415*2)/segments -margin);
+            margin *= adjustment;
+            cairo_arc_negative (cr, x, y, inner, (segment+1)*(3.1415*2)/segments - margin, (segment)*(3.1415*2)/segments + margin);
+            cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+            cairo_stroke_preserve (cr);
+            cairo_set_source_rgba (cr, 0.0, 1.0, 1.0, 1.0);
+            cairo_fill (cr);
+
+            cairo_new_path (cr);
+            cairo_arc (cr, x, y, middle, (segment+0.5)*(3.1415*2)/segments,
+                                         (segment+0.5)*(3.1415*2)/segments);
+            cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+
+            cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
+                                                CAIRO_FONT_WEIGHT_NORMAL);
+            cairo_set_font_size (cr, 20);
+            cairo_text_extents (cr, tools.menu_segment_label[segment], &text_extents);
+            cairo_rel_move_to (cr, -text_extents.width/2, +text_extents.height/2);
+            cairo_show_text (cr, tools.menu_segment_label[segment]);
+          }
+      }
+
+
+      cairo_destroy (cr);
+    }
+
+  return FALSE;
+}
+
 static gboolean
 stroke_press_event (GtkWidget      *widget,
                     GdkEventButton *event,
@@ -638,16 +756,16 @@ stroke_press_event (GtkWidget      *widget,
                 "y", &y,
                 "scale", &scale,
                 NULL);
-  gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+  gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
   ex = (event->x + x) / scale - tx;
   ey = (event->y + y) / scale - ty;
 
-  gegl_node_get (GEGL_NODE (data), "path", &vector, NULL);
+  gegl_node_get (GEGL_NODE (tools.node), "path", &vector, NULL);
 
   gegl_path_clear (vector);
   gegl_path_append (vector, 'M', ex, ey);
-  tools.stroke_active = TRUE;
+  tools.in_stroke = TRUE;
   g_object_unref (vector);
   return TRUE;
 }
@@ -655,7 +773,7 @@ stroke_press_event (GtkWidget      *widget,
 static gboolean
 stroke_release_event (GtkWidget      *widget,
                       GdkEventButton *event,
-                      gpointer        data)
+                      gpointer        dataa)
 {
   GeglNode *stroke;
   GeglColor *color = gegl_color_new ("red");
@@ -686,11 +804,12 @@ stroke_release_event (GtkWidget      *widget,
 
       gegl_color_get_rgba (color2, &r, &g, &b, &a);
       gegl_color_set_rgba (color, r,g,b,a);
-      gegl_node_set (stroke, "path", gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
+      gegl_node_set (stroke, "path", tools.path=gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
+      tools.node = stroke;
     }
 
-  tools.stroke_active = FALSE;
-  return TRUE;
+  tools.in_stroke = FALSE;
+  return FALSE;
 }
 
 
@@ -699,7 +818,7 @@ stroke_motion_notify_event (GtkWidget      *widget,
                             GdkEventMotion *event,
                             gpointer        data)
 {
-  if (tools.stroke_active)
+  if (tools.in_stroke)
     {
       gint   x, y;
       gdouble scale;
@@ -707,14 +826,12 @@ stroke_motion_notify_event (GtkWidget      *widget,
       gdouble ex, ey;
       gdouble rx, ry;
 
-      GeglPath *vector;
-
       g_object_get (G_OBJECT (widget),
                     "x", &x,
-                    "y", &y,
-                    "scale", &scale,
-                    NULL);
-      gegl_node_get_translation (GEGL_NODE (data), &tx, &ty);
+                      "y", &y,
+                      "scale", &scale,
+                      NULL);
+      gegl_node_get_translation (tools.node, &tx, &ty);
 
       ex = (event->x + x) / scale - tx;
       ey = (event->y + y) / scale - ty;
@@ -722,11 +839,8 @@ stroke_motion_notify_event (GtkWidget      *widget,
       rx = tools.prevx - ex;
       ry = tools.prevy - ey;
 
-      gegl_node_get (data, "path", &vector, NULL);
+      gegl_path_append (tools.path, 'L', ex, ey);
 
-      gegl_path_append (vector, 'L', ex, ey);
-
-      g_object_unref (vector);
       tools.prevx = ex;
       tools.prevy = ey;
       return TRUE;
@@ -735,39 +849,115 @@ stroke_motion_notify_event (GtkWidget      *widget,
   return FALSE;
 }
 
+
+static gboolean
+gui_press_event (GtkWidget      *widget,
+                    GdkEventButton *event,
+                    gpointer        data)
+{
+  if (event->button == 3)
+    {
+      if (tools.menu_active)
+        {
+          tools.menu_active = FALSE;
+        }
+      else
+        {
+          gint   x, y;
+          gdouble scale;
+
+          tools.menu_active = TRUE;
+          g_object_get (G_OBJECT (widget),
+                        "x", &x,
+                        "y", &y,
+                        "scale", &scale,
+                      NULL);
+  
+            tools.menux = (event->x + x);
+            tools.menuy = (event->y + y);
+            menu_clear ();
+            menu_add ("foo", NULL);
+            menu_add ("bar", NULL);
+            menu_add ("baz", NULL);
+          }
+      gtk_widget_queue_draw (widget);
+      return TRUE;
+    }
+
+  switch (tools.state)
+    {
+      case STATE_PICK:
+        break;
+      case STATE_EDIT_NODES:
+        return fill_press_event (widget, event, data);
+      case STATE_STROKES:
+        return stroke_press_event (widget, event, data);
+      case STATE_EDIT_LINEWIDTH:
+      case STATE_EDIT_OPACITY:
+      case STATE_FREE_REPLACE:
+      default:
+        g_warning ("not handling top release of state %i\n", tools.state);
+        break;
+    }
+
+  return FALSE;
+}
+
+
+static gboolean
+gui_motion_event (GtkWidget      *widget,
+                  GdkEventMotion *event,
+                  gpointer        data)
+{
+  switch (tools.state)
+    {
+      case STATE_PICK:
+        break;
+      case STATE_STROKES:
+        return stroke_motion_notify_event (widget, event, data);
+      case STATE_EDIT_NODES:
+        return fill_motion_notify_event (widget, event, data);
+      case STATE_EDIT_LINEWIDTH:
+      case STATE_EDIT_OPACITY:
+      case STATE_FREE_REPLACE:
+      default:
+        g_warning ("not handling top motion of state %i\n", tools.state);
+        break;
+    }
+  return FALSE;
+}
+
+
+static gboolean
+gui_release_event (GtkWidget      *widget,
+                   GdkEventButton *event,
+                   gpointer        data)
+{
+  switch (tools.state)
+    {
+      case STATE_PICK:
+        break;
+      case STATE_EDIT_NODES:
+        return fill_release_event (widget, event, data);
+      case STATE_STROKES:
+        return stroke_release_event (widget, event, data);
+      case STATE_EDIT_LINEWIDTH:
+      case STATE_EDIT_OPACITY:
+      case STATE_FREE_REPLACE:
+      default:
+        g_warning ("not handling top release of state %i\n", tools.state);
+        break;
+    }
+  return FALSE;
+}
+
 void editor_set_active (gpointer view, gpointer node);
 void editor_set_active (gpointer view, gpointer node)
 {
-  static guint paint_handler = 0;
-  static guint press_handler = 0;
-  static guint motion_handler = 0;
-  static guint release_handler = 0;
   const gchar *opname;
 
   if (!view || ! node)
     return;
-
-  if (paint_handler)
-    {
-      g_signal_handler_disconnect (view, paint_handler);
-      paint_handler = 0;
-    }
-
-  if (motion_handler)
-    {
-      g_signal_handler_disconnect (view, motion_handler);
-      motion_handler = 0;
-    }
-  if (release_handler)
-    {
-      g_signal_handler_disconnect (view, release_handler);
-      release_handler = 0;
-    }
-  if (press_handler)
-    {
-      g_signal_handler_disconnect (view, press_handler);
-      press_handler = 0;
-    }
 
   opname = gegl_node_get_operation (node);
 
@@ -776,44 +966,34 @@ void editor_set_active (gpointer view, gpointer node)
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
 
-      tools.da_vector = vector;
+      tools.path = vector;
+      tools.node = node;
+
       g_object_unref (vector);
-      paint_handler = g_signal_connect_after (view, "expose-event",
-                              G_CALLBACK (cairo_expose), node);
-      press_handler = g_signal_connect (view, "button-press-event",
-                              G_CALLBACK (fill_press_event), node);
-      release_handler = g_signal_connect (view, "button-release-event",
-                              G_CALLBACK (fill_release_event), node);
-      motion_handler = g_signal_connect (view, "motion-notify-event",
-                              G_CALLBACK (fill_motion_notify_event), node);
-      tools.path_editing_active = TRUE;
+      tools.state = STATE_EDIT_NODES;
     }
    else if(g_str_equal (opname, "gegl:stroke"))
     {
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
-
-      tools.da_vector = vector;
+      if (!vector)
+        {
+          vector = gegl_path_new ();
+          gegl_node_set (node, "path", vector, NULL);
+        }
+      tools.path = vector;
+      tools.node = node;
       g_object_unref (vector);
-#if 0
-      paint_handler = g_signal_connect_after (view, "expose-event",
-                              G_CALLBACK (cairo_expose), node);
-#endif
-      press_handler = g_signal_connect (view, "button-press-event",
-                              G_CALLBACK (stroke_press_event), node);
-      release_handler = g_signal_connect (view, "button-release-event",
-                              G_CALLBACK (stroke_release_event), node);
-      motion_handler = g_signal_connect (view, "motion-notify-event",
-                              G_CALLBACK (stroke_motion_notify_event), node);
-      tools.path_editing_active = TRUE;
+      tools.state = STATE_STROKES;
     }
   else
     {
-      tools.path_editing_active = FALSE;
-      tools.da_vector = NULL;
+      tools.state = STATE_PICK;
+      tools.path = NULL;
     }
   gtk_widget_queue_draw (GTK_WIDGET (view));
 }
+
 
 
 static void cb_detected_event (GeglView *view,
@@ -1007,7 +1187,15 @@ editor_main (GeglNode    *gegl,
   gtk_widget_show (editor.window);
   gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 6);
 
+  g_signal_connect_after (editor.view, "expose-event",
+                          G_CALLBACK (cairo_gui_expose), NULL);
 
+  g_signal_connect (editor.view, "button-press-event",
+                          G_CALLBACK (gui_press_event), NULL);
+  g_signal_connect (editor.view, "button-release-event",
+                          G_CALLBACK (gui_release_event), NULL);
+  g_signal_connect (editor.view, "motion-notify-event",
+                          G_CALLBACK (gui_motion_event), NULL);
 
   editor_set_gegl (gegl);
 
