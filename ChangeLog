@@ -1,3 +1,16 @@
+2008-11-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.[ch]:
+	(gegl_path_is_empty): added a new call to quickly determine if there
+	are any control points in the path.
+	(ensure_tail): added caching code for the tail of the linked list
+	to avoid having to traverse it fully on each add.
+	(flatten_copy), (flatten_rel_copy), (gegl_path_list_append),
+	(gegl_path_clear), (gegl_path_remove), (gegl_path_replace),
+	(gegl_path_append),
+	(gegl_path_list_append_item): make use of the cache tail to speed up
+	instruction appends.
+
 2008-10-31  Manish Singh  <yosh@gimp.org>
 
 	* bin/gegl.c: follow gegl-spiro -> gegl-path-spiro rename here too.

@@ -63,7 +63,7 @@ typedef struct GeglPathItem
 
 GType                gegl_path_get_type       (void) G_GNUC_CONST;
 GeglPath           * gegl_path_new            (void);
-
+gboolean             gegl_path_is_empty       (GeglPath    *path);
 void                 gegl_path_parse_string   (GeglPath    *path,
                                                const gchar *path_string);
 gchar              * gegl_path_to_string      (GeglPath    *path);

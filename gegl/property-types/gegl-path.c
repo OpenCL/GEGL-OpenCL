@@ -143,15 +143,16 @@ gegl_path_add_type (gchar        type,
   return;
 }
 
-
 static GeglPathList *
 gegl_path_list_append_item  (GeglPathList  *head,
                              gchar          type,
-                             GeglPathList **res)
+                             GeglPathList **res,
+                             GeglPathList  *tail)
 {
-  GeglPathList *iter = head;
+  GeglPathList *iter = tail?tail:head;
   InstructionInfo *info = lookup_instruction_info (type);
   g_assert (info);
+
   while (iter && iter->next)
     iter=iter->next;
 
@@ -172,6 +173,7 @@ gegl_path_list_append_item  (GeglPathList  *head,
   g_assert (res);
     *res = iter;
 
+  tail = iter;
   return head;
 }
 
@@ -187,7 +189,7 @@ static GeglPathList *flatten_copy (GeglPathList *head,
                                    GeglPathList *self)
 {
   GeglPathList *newp;
-  head = gegl_path_list_append_item (head, self->d.type, &newp);
+  head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
   copy_data (&self->d, &newp->d);
   return head;
 }
@@ -199,7 +201,7 @@ flatten_rel_copy (GeglPathList *head,
 {
   GeglPathList *newp;
   gint i;
-  head = gegl_path_list_append_item (head, self->d.type, &newp);
+  head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
   copy_data (&self->d, &newp->d);
   for (i=0;i<4;i++)
     {
@@ -332,7 +334,7 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   if (!info)
     g_error ("didn't find [%c]", type);
 
-  head = gegl_path_list_append_item (head, type, &iter);
+  head = gegl_path_list_append_item (head, type, &iter, NULL);
 
   iter->d.type       = type;
   for (pair_no=0;pair_no<info->pairs;pair_no++)
@@ -514,6 +516,7 @@ typedef struct _PathNameEntity  PathNameEntity;
 struct _GeglPathPrivate
 {
   GeglPathList *path;
+  GeglPathList *tail; /*< for fast appending */
   GeglPathList *flat_path; /*< cache of flat path */
   gboolean      flat_path_clean;
   GeglPath     *parent_path;
@@ -524,6 +527,31 @@ struct _GeglPathPrivate
   GeglRectangle dirtied;
   GeglRectangle cached_extent;
 };
+
+static GeglPathList *ensure_tail (GeglPathPrivate *priv)
+{
+  GeglPathList *tail_attempt = NULL;
+  GeglPathList *tail;
+
+  if (priv->tail)
+    {
+      for (tail_attempt=priv->tail;
+           tail_attempt && tail_attempt->next;
+           tail_attempt=tail_attempt->next);
+      return tail_attempt; /* comment his out, and
+                           let failures be shown by
+                           the assert below,.. */
+    }
+  for (tail=priv->tail;
+       tail && tail->next;
+       tail=tail->next);
+  if (tail_attempt)
+    {
+      g_assert (tail_attempt == tail);
+    }
+  priv->tail = tail;
+  return tail;
+}
 
 enum
 {
@@ -987,6 +1015,7 @@ void gegl_path_clear (GeglPath *vector)
   if (priv->path)
     gegl_path_list_destroy (priv->path);
   priv->path = NULL;
+  priv->tail = NULL;
 }
 
 void gegl_path_parse_string (GeglPath *vector,
@@ -1042,7 +1071,11 @@ void gegl_path_parse_string (GeglPath *vector,
   }
 }
 
-
+gboolean gegl_path_is_empty (GeglPath *path)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  return priv->path != NULL;
+}
 
 gint
 gegl_path_get_count  (GeglPath *vector)
@@ -1119,6 +1152,7 @@ void  gegl_path_remove  (GeglPath *vector,
       gegl_path_item_free (prev);
     }
   priv->flat_path_clean = FALSE;
+  priv->tail = NULL;
   gegl_path_emit_changed (vector, NULL);
 }
 
@@ -1181,6 +1215,7 @@ void  gegl_path_replace (GeglPath           *vector,
           /* check that it is large enough to contain us */
           copy_data (knot, &iter->d);
           priv->flat_path_clean = FALSE;
+          priv->tail = NULL;
           gegl_path_emit_changed (vector, NULL);
           return;
         }
@@ -1271,7 +1306,7 @@ gegl_path_append (GeglPath *self,
   if (!info)
     g_error ("didn't find [%c]", type);
 
-  priv->path = gegl_path_list_append_item (priv->path, type, &iter);
+  priv->path = gegl_path_list_append_item (priv->path, type, &iter, ensure_tail(priv));
 
   iter->d.type       = type;
   for (pair_no=0;pair_no<info->pairs;pair_no++)
