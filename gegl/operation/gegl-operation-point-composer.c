@@ -127,7 +127,7 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
           /* SKIP_EMPTY_IN */
           if(!done)
             {
-              const GeglRectangle *in_abyss;
+              const GeglRectangle *in_abyss = NULL;
 
               if (input)
                 in_abyss = gegl_buffer_get_abyss (input);
