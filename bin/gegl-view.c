@@ -88,6 +88,8 @@ static gboolean  motion_notify_event  (GtkWidget      *widget,
                                        GdkEventMotion *event);
 static gboolean  button_press_event   (GtkWidget      *widget,
                                        GdkEventButton *event);
+static gboolean  button_release_event (GtkWidget      *widget,
+                                       GdkEventButton *event);
 static gboolean  expose_event         (GtkWidget      *widget,
                                        GdkEventExpose *event);
 
@@ -104,6 +106,7 @@ gegl_view_class_init (GeglViewClass * klass)
 
   widget_class->motion_notify_event = motion_notify_event;
   widget_class->button_press_event  = button_press_event;
+  widget_class->button_release_event = button_release_event;
   widget_class->expose_event        = expose_event;
 
   g_object_class_install_property (gobject_class, PROP_X,
@@ -301,6 +304,7 @@ detected_event (GeglView *self,
   g_signal_emit (self, gegl_view_signals[DETECTED], 0, node, NULL, NULL);
 }
 
+static gboolean drag_started = FALSE;
 
 static gboolean
 button_press_event (GtkWidget      *widget,
@@ -336,7 +340,16 @@ button_press_event (GtkWidget      *widget,
       }
   }
 
+  drag_started = TRUE;
   return TRUE;
+}
+
+static gboolean
+button_release_event (GtkWidget      *widget,
+                      GdkEventButton *event)
+{
+  drag_started = FALSE;
+  return FALSE;
 }
 
 static gboolean
@@ -348,6 +361,8 @@ motion_notify_event (GtkWidget      *widget,
   gint      x    = event->x;
   gint      y    = event->y;
 
+  if (drag_started)
+    {
   if (event->state & GDK_BUTTON1_MASK)
     {
       gint diff_x = x - priv->prev_x;
@@ -361,40 +376,42 @@ motion_notify_event (GtkWidget      *widget,
       g_object_notify (G_OBJECT (view), "x");
       g_object_notify (G_OBJECT (view), "y");
     }
-  else if (event->state & GDK_BUTTON3_MASK)
+  else if (event->state & GDK_BUTTON2_MASK)
     {
-      gint diff = priv->prev_y - y;
-      gint i;
+        gint diff = priv->prev_y - y;
+        gint i;
 
-      if (diff < 0)
-        {
-          for (i=0;i>diff;i--)
-            {
-              priv->scale /= 1.006;
-            }
-        }
-      else
-        {
-          for (i=0;i<diff;i++)
-            {
-              priv->scale *= 1.006;
-            }
-        }
+        if (diff < 0)
+          {
+            for (i=0;i>diff;i--)
+              {
+                priv->scale /= 1.006;
+              }
+          }
+        else
+          {
+            for (i=0;i<diff;i++)
+              {
+                priv->scale *= 1.006;
+              }
+          }
 
-      priv->x = (priv->start_buf_x - priv->screen_x / priv->scale) * priv->scale;
-      priv->y = (priv->start_buf_y - priv->screen_y / priv->scale) * priv->scale;
+        priv->x = (priv->start_buf_x - priv->screen_x / priv->scale) * priv->scale;
+        priv->y = (priv->start_buf_y - priv->screen_y / priv->scale) * priv->scale;
 
-      gtk_widget_queue_draw (GTK_WIDGET (view));
+        gtk_widget_queue_draw (GTK_WIDGET (view));
 
-      g_object_notify (G_OBJECT (view), "x");
-      g_object_notify (G_OBJECT (view), "y");
-      g_object_notify (G_OBJECT (view), "scale");
+        g_object_notify (G_OBJECT (view), "x");
+        g_object_notify (G_OBJECT (view), "y");
+        g_object_notify (G_OBJECT (view), "scale");
+      }
+
+      priv->prev_x = x;
+      priv->prev_y = y;
+
+      return TRUE;
     }
-
-  priv->prev_x = x;
-  priv->prev_y = y;
-
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean

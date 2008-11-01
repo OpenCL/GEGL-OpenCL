@@ -1,5 +1,12 @@
 2008-11-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (gegl_view_class_init), (button_press_event),
+	(button_release_event), (motion_notify_event): do zoom on middle
+	mouse, since the editor now uses right mouse button for a
+	context-menu.
+
+2008-11-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: refactored cairo code that shows on screen drawings
 	and pointer interaction code to operate with a state machine for
 	different modes. (menu_clear), (menu_add), (path_editor_keybinding),
