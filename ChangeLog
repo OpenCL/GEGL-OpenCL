@@ -1,5 +1,10 @@
 2008-11-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.c: (gegl_path_insert): fix slice
+	allocation to only allocate enough memory for stored coordinates.
+
+2008-11-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-point-composer.c:
 	(gegl_operation_composer_process2): quiten gcc about variable that
 	really is only accessed when set.

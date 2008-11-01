@@ -1164,13 +1164,15 @@ void  gegl_path_insert     (GeglPath           *vector,
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
   GeglPathList *prev = NULL;
+  InstructionInfo *info = lookup_instruction_info (knot->type);
 
   gint count=0;
   for (iter = priv->path; iter; iter=iter->next)
     {
       if (count == pos)
         {
-          GeglPathList *new = g_slice_new (GeglPathList);
+          GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
+          new->d.type=knot->type;
           copy_data (knot, &new->d);
           new->next = iter->next;
           /*if (prev)
@@ -1185,7 +1187,6 @@ void  gegl_path_insert     (GeglPath           *vector,
     }
   if (pos==-1)
     {
-      InstructionInfo *info = lookup_instruction_info (knot->type);
       GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
       new->d.type = knot->type;
       copy_data (knot, &new->d);
