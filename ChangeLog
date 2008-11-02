@@ -1,5 +1,11 @@
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.c: (gegl_path_stroke): when stroking
+	make the linewidth and opacity parameter paths act as weights on the
+	values from properties.
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: (subpath_changed),
 	(gegl_path_add_parameter_path), Make changes to subpaths cause a full
 	invalidation of the parent path object.

@@ -1990,6 +1990,7 @@ void gegl_path_stroke (GeglBuffer *buffer,
                      local_pos += spacing)
                   {
                     Point spot;
+                    gfloat gopacity;
                     gfloat ratio = local_pos / distance;
                     gfloat radius = linewidth/2;
                        /* XXX: gegl_path_parameter_calc (vector, "linewidth",
@@ -1999,14 +2000,15 @@ void gegl_path_stroke (GeglBuffer *buffer,
                                   * able to have variable line width
                                   */
                     if (gegl_path_get_parameter_path (vector, "linewidth"))
-                      radius = gegl_path_parameter_calc (vector, "linewidth", traveled_length) /2;
+                      radius *= gegl_path_parameter_calc (vector, "linewidth", traveled_length);
+                    gopacity = opacity;
                     if (gegl_path_get_parameter_path (vector, "opacity"))
-                      radius = gegl_path_parameter_calc (vector, "opacity", traveled_length);
+                      gopacity *= gegl_path_parameter_calc (vector, "opacity", traveled_length);
 
                     lerp (&spot, &a, &b, ratio);
 
                     gegl_path_stamp (buffer, clip_rect,
-                      spot.x, spot.y, radius, hardness, color, opacity);
+                      spot.x, spot.y, radius, hardness, color, gopacity);
 
                     traveled_length += spacing;
                   }
