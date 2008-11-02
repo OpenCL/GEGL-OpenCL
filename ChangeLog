@@ -1,5 +1,10 @@
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.c: cache length of path, and
+	incrementally updated it on line_to's.
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: (gegl_path_stroke): when stroking
 	make the linewidth and opacity parameter paths act as weights on the
 	values from properties.

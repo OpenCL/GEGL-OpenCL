@@ -521,6 +521,9 @@ struct _GeglPathPrivate
   gboolean      flat_path_clean;
   GeglPath     *parent_path;
 
+  gdouble       length;
+  gboolean      length_clean;
+
   GSList *parameter_names;
   GSList *parameter_paths;
 
@@ -621,6 +624,7 @@ static void ensure_flattened (GeglPath *vector)
   if (path != priv->path)
     gegl_path_list_destroy (path);
   priv->flat_path_clean = TRUE;
+  priv->length_clean = FALSE;
 }
 
 static void
@@ -746,6 +750,7 @@ gegl_path_new (void)
 
   gegl_path_init (self);
   priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
 
   return self;
 }
@@ -757,8 +762,14 @@ gegl_path_get_length (GeglPath *self)
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
   if (!self)
     return 0.0;
-  ensure_flattened (self);
-  return path_get_length (priv->flat_path);
+
+  if (!priv->length_clean)
+    {
+      ensure_flattened (self);
+      priv->length = path_get_length (priv->flat_path);
+      priv->length_clean = TRUE;
+    }
+  return priv->length;
 }
 
 void gegl_path_get_bounds (GeglPath *self,
@@ -1061,6 +1072,7 @@ void gegl_path_parse_string (GeglPath *vector,
     }
 
   priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
   {
    gegl_path_emit_changed (vector, NULL);
   }
@@ -1147,6 +1159,7 @@ void  gegl_path_remove  (GeglPath *vector,
       gegl_path_item_free (prev);
     }
   priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
   priv->tail = NULL;
   gegl_path_emit_changed (vector, NULL);
 }
@@ -1174,6 +1187,7 @@ void  gegl_path_insert     (GeglPath           *vector,
             prev->next = new;*/
           iter->next = new;
           priv->flat_path_clean = FALSE;
+          priv->length_clean = FALSE;
           gegl_path_emit_changed (vector, NULL);
           return;
         }
@@ -1192,6 +1206,7 @@ void  gegl_path_insert     (GeglPath           *vector,
         priv->path = new;
     }
   priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
   gegl_path_emit_changed (vector, NULL);
 }
 
@@ -1211,6 +1226,7 @@ void  gegl_path_replace (GeglPath           *vector,
           /* check that it is large enough to contain us */
           copy_data (knot, &iter->d);
           priv->flat_path_clean = FALSE;
+          priv->length_clean = FALSE;
           priv->tail = NULL;
           gegl_path_emit_changed (vector, NULL);
           return;
@@ -1224,6 +1240,7 @@ void  gegl_path_replace (GeglPath           *vector,
         copy_data (knot, &prev->d);
     }
   priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
   gegl_path_emit_changed (vector, NULL);
 }
 
@@ -1326,11 +1343,15 @@ gegl_path_append (GeglPath *self,
       GeglPathList *iter2;
       GeglRectangle rect;
       gdouble x0, y0, x1, y1;
+      gdouble len;
+
       x0 = iter->d.point[0].x;
       y0 = iter->d.point[0].y;
       for (iter2=priv->path;iter2 && iter2->next != iter;iter2=iter2->next);
       x1 = iter2->d.point[0].x;
       y1 = iter2->d.point[0].y;
+
+      len = sqrt ((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
 
       if (x0<x1)
         {
@@ -1372,12 +1393,14 @@ gegl_path_append (GeglPath *self,
         rect.height = y1-y0;
       }
       
-
+      if (priv->length_clean)
+        priv->length += len;
       gegl_path_emit_changed (self, &rect);
     }
   else
     {
       gegl_path_emit_changed (self, NULL);
+      priv->length_clean = FALSE;
     }
 }
 
