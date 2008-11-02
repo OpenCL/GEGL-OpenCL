@@ -855,9 +855,12 @@ type_editor_path (GtkSizeGroup *col1,
       GeglPath *vector;
 
       gegl_node_get (node, param_spec->name, &vector, NULL);
-      value = gegl_path_to_string (vector);
-      gtk_entry_set_text (GTK_ENTRY (entry), value);
-      g_object_unref (vector);
+      if (vector)
+        {
+          value = gegl_path_to_string (vector);
+          gtk_entry_set_text (GTK_ENTRY (entry), value);
+          g_object_unref (vector);
+        }
       g_free (value);
     }
 

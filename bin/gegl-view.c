@@ -315,6 +315,8 @@ button_press_event (GtkWidget      *widget,
   gint      x    = event->x;
   gint      y    = event->y;
 
+  return FALSE;
+
   priv->screen_x = x;
   priv->screen_y = y;
 

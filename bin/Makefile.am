@@ -38,6 +38,15 @@ gegl_SOURCES =			\
 	gegl-path-smooth.h	\
         $(gui_sources)
 
+editor.o: editor-actions.inc
+editor-actions.inc: editor.c
+        echo ''> $@
+        for action in `cat $< | grep "^static gint [0-9a-z_A-Z]* (" | sed -e 's/^.* gint //' -e 's/ .*//'`;do \
+            echo "o(\""`echo $$action | sed -e 's/_/-/g' -e 's/action-//'`"\", $$action);" >> $@; \
+        done
+
+CLEANFILES = editor-actions.inc bkl-tasks.inc
+
 
 if HAVE_SPIRO
 gegl_SOURCES += gegl-path-spiro.h gegl-path-spiro.c
