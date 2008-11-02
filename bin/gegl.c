@@ -32,6 +32,7 @@
 #ifdef HAVE_SPIRO
 #include "gegl-path-spiro.h"
 #endif
+#include "gegl-path-smooth.h"
 
 #ifdef G_OS_WIN32
 #include <direct.h>

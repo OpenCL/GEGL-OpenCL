@@ -756,8 +756,6 @@ width_motion_notify_event (GtkWidget      *widget,
       gdouble linewidth;
       const GeglPathItem *knot;
       GeglPathItem new_knot;
-      gint i;
-      gint n;
       gdouble cx, cy;
 
       GeglPath *vector;
@@ -1042,11 +1040,6 @@ static gboolean cairo_gui_expose (GtkWidget *widget,
 
       x = tools.menux;
       y = tools.menuy;
-#if 0
-      cairo_move_to (cr, x, y);
-      cairo_arc (cr, x, y, 100, 0.0, 3.1415*2);
-      cairo_fill (cr);
-#endif
 
       {
         gint segment;
@@ -1325,8 +1318,8 @@ gui_press_event (GtkWidget      *widget,
 
           gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
-          ex = (event->x + x) / scale - tx;
-          ey = (event->y + y) / scale - ty;
+          ex = (event->x + x) / scale;
+          ey = (event->y + y) / scale;
 
           tools.prevx = ex;
           tools.prevy = ey;
@@ -1457,8 +1450,8 @@ gui_motion_event (GtkWidget      *widget,
 
             gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
-            ex = (event->x + x) / scale - tx;
-            ey = (event->y + y) / scale - ty;
+            ex = (event->x + x) / scale;
+            ey = (event->y + y) / scale;
 
             move_rel (tools.node, ex-tools.prevx, ey-tools.prevy);
 

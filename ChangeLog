@@ -1,5 +1,11 @@
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: #include "gegl-path-smooth.h"
+	* bin/editor.c: removed unusded variables.
+	* bin/Makefile.am: fix whitespace issues.
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/introspect.c: (process): move unused variable
 	inside #if 0 block.
 

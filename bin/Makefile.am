@@ -40,10 +40,10 @@ gegl_SOURCES =			\
 
 editor.o: editor-actions.inc
 editor-actions.inc: editor.c
-        echo ''> $@
-        for action in `cat $< | grep "^static gint [0-9a-z_A-Z]* (" | sed -e 's/^.* gint //' -e 's/ .*//'`;do \
-            echo "o(\""`echo $$action | sed -e 's/_/-/g' -e 's/action-//'`"\", $$action);" >> $@; \
-        done
+	echo ''> $@
+	for action in `cat $< | grep "^static gint [0-9a-z_A-Z]* (" | sed -e 's/^.* gint //' -e 's/ .*//'`;do \
+	    echo "o(\""`echo $$action | sed -e 's/_/-/g' -e 's/action-//'`"\", $$action);" >> $@; \
+	done
 
 CLEANFILES = editor-actions.inc bkl-tasks.inc
 
