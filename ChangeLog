@@ -1,3 +1,8 @@
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.[ch]: cleaned up header and made
+	it possible to query a path if it has any interpolated parameters.
+
 2008-11-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/external/fill.c: removed unused winding parameter.

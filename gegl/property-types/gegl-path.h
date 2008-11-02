@@ -95,12 +95,18 @@ void                 gegl_path_foreach_flat   (GeglPath   *path,
                                                      gpointer            data),
                                                gpointer     data);
 
-/* auxilary data is handled as external data that is owned by the path,
- * fill it with positions stored in x and values stored in y, with type '0'
- * to get linear interpolation between the values stored.
+/* creates a new path if one doesn't already exist */
+GeglPath *           gegl_path_add_parameter_path (GeglPath    *path,
+                                                   const gchar *parameter_name);
+
+/* the returned path is a special path that returns 1d
+ * data when rendering it's results, NULL is returned if
+ * this path does not exist on the queried path.
  */
-GeglPath            *gegl_path_parameter_path        (GeglPath    *path,
+GeglPath            *gegl_path_get_parameter_path    (GeglPath    *path,
                                                       const gchar *parameter_name);
+
+
 /* get a list of the named datas following this path, should not be freed */
 GSList              *gegl_path_parameter_get_names   (GeglPath   *path,
                                                       gint        count);
@@ -130,22 +136,8 @@ void                 gegl_path_calc_values    (GeglPath    *self,
                                                guint        num_samples,
                                                gdouble     *dest_xs,
                                                gdouble     *dest_ys);
-/* the returned path is a special path that returns 1d
- * data when rendering it's results.
- */
-GeglPath *gegl_path_get_param_path (GeglPath    *self,
-                                    const gchar *name);
 
-/* pass in -1 to append at the current position (tail) of the path */
-void                 gegl_path_param_set (GeglPath    *self,
-                                          gdouble      pos, 
-                                          const gchar *name, /* perhaps use a quark? */
-                                          gdouble      value);
-gdouble              gegl_path_param_calc (GeglPath    *self,
-                                           gdouble      pos);
-gdouble              gegl_path_param_calc_values (GeglPath    *self,
-                                                  guint        num_samples,
-                                                  gdouble     *values);
+
 
 GParamSpec         * gegl_param_spec_path     (const gchar *name,
                                                const gchar *nick,

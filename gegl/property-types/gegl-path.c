@@ -779,15 +779,9 @@ void gegl_path_get_bounds (GeglPath *self,
     return;
 
   priv = GEGL_PATH_GET_PRIVATE (self);
- 
 
   ensure_flattened (self);
   iter = priv->flat_path;
-
-  if (*max_x < *min_x)
-    *max_x = *min_x;
-  if (*max_y < *min_y)
-    *max_y = *min_y;
 
   while (iter)
     {
@@ -811,6 +805,7 @@ void gegl_path_get_bounds (GeglPath *self,
             *min_y = iter->d.point[i].y;
           if (iter->d.point[i].y > *max_y)
             *max_y = iter->d.point[i].y;
+
         }
       iter=iter->next;
     }
@@ -1386,12 +1381,10 @@ gegl_path_append (GeglPath *self,
     }
 }
 
-
-GeglPath *gegl_path_parameter_path (GeglPath    *path,
-                                    const gchar *parameter_name)
+GeglPath *gegl_path_get_parameter_path (GeglPath    *path,
+                                        const gchar *parameter_name)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
-  GeglPath *parameter_path;
   GSList *iter;
   gint i;
   for (iter=priv->parameter_names,i=0;iter;iter=iter->next,i++)
@@ -1399,9 +1392,23 @@ GeglPath *gegl_path_parameter_path (GeglPath    *path,
       if (g_str_equal (parameter_name, (gchar*)iter->data))
         return (GeglPath*) g_slist_nth_data (priv->parameter_paths, i);
     }
+  return NULL;
+}
+
+/* creates a new path if one doesn't already exist */
+GeglPath *gegl_path_add_parameter_path (GeglPath    *self,
+                                        const gchar *parameter_name)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
+  GeglPath *parameter_path;
+
+  parameter_path = gegl_path_get_parameter_path (self, parameter_name);
+  if (parameter_path)
+    return parameter_path;
+
   priv->parameter_names = g_slist_append (priv->parameter_names, g_strdup (parameter_name));
   parameter_path = gegl_path_new ();
-  GEGL_PATH_GET_PRIVATE (parameter_path)->parent_path = path;
+  GEGL_PATH_GET_PRIVATE (parameter_path)->parent_path = self;
 #if 0
   /* hard coded for line width,.. */
 
@@ -1524,7 +1531,7 @@ gdouble              gegl_path_parameter_calc        (GeglPath     *path,
                                                       const gchar  *parameter_name,
                                                       gdouble       pos)
 {
-  GeglPath *parameter_path = gegl_path_parameter_path (path, parameter_name);
+  GeglPath *parameter_path = gegl_path_get_parameter_path (path, parameter_name);
   return param_calc (parameter_path, pos);
 }
 
@@ -1533,7 +1540,7 @@ void                 gegl_path_parameter_get_bounds  (GeglPath     *self,
                                                       gdouble      *min_value,
                                                       gdouble      *max_value)
 {
-  GeglPath *parameter_path = gegl_path_parameter_path (self, parameter_name);
+  GeglPath *parameter_path = gegl_path_get_parameter_path (self, parameter_name);
   param_bounds (parameter_path, gegl_path_get_length (self), min_value, max_value);
 }
 
@@ -1543,7 +1550,7 @@ void                 gegl_path_parameter_calc_values (GeglPath    *self,
                                                       guint        num_samples,
                                                       gdouble     *samples)
 {
-  GeglPath *parameter_path = gegl_path_parameter_path (self, parameter_name);
+  GeglPath *parameter_path = gegl_path_get_parameter_path (self, parameter_name);
   gdouble length = gegl_path_get_length (self);
   gint i;
   for (i=0; i<num_samples; i++)
@@ -1620,7 +1627,7 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
     }
 
   gegl_buffer_get (buffer, 1.0, roi, format, buf, 0);
-  for (i=0; i< roi->width; i++)
+  for (i=0; i < roi->width; i++)
     {
       gint j;
       for (j=0; j<4; j++)
