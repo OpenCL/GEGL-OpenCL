@@ -1,5 +1,11 @@
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (stroke_press_event), (stroke_motion_notify_event):
+	disable use of dynamics by default (it slows things down too
+	much for now).
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: added rules to build commands for pie menu.
 	* bin/editor.c: reorganized path/stroke/pie-menu interaction code to
 	be a statemachine,.. editor.c is getting a bit bulky. Added code

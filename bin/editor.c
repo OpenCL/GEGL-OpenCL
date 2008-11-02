@@ -20,6 +20,8 @@
 #define ACTIVE_COLOR cairo_set_source_rgba (cr, 1.0, 0.0, 0.0, 0.5)
 #define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
 
+#define USE_DYNAMICS 0
+
 #include "config.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -1124,7 +1126,9 @@ stroke_press_event (GtkWidget      *widget,
   gegl_path_clear (vector);
   gegl_path_append (vector, 'M', ex, ey);
   tools.in_drag = TRUE;
+#if USE_DYNAMICS
   tools.width_path = gegl_path_add_parameter_path (vector, "linewidth");
+#endif
   g_object_unref (vector);
   return TRUE;
 }
@@ -1202,6 +1206,7 @@ stroke_motion_notify_event (GtkWidget      *widget,
 
       gegl_path_append (tools.path, 'L', ex, ey);
 
+#if USE_DYNAMICS
       if(foo%3==0){
         gdouble magnitude = 1.0;
 
@@ -1221,6 +1226,7 @@ stroke_motion_notify_event (GtkWidget      *widget,
 
         gegl_path_append (tools.width_path, '_', -1.0, magnitude);
       }
+#endif
 
       tools.prevx = ex;
       tools.prevy = ey;
