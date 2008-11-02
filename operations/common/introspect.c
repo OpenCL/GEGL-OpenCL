@@ -137,7 +137,6 @@ process (GeglOperation       *operation,
     {
       GeglNode *gegl = gegl_node_new ();
       GeglNode *png_load = gegl_node_new_child (gegl, "operation", "gegl:load", "path", "/tmp/gegl-temp.png", NULL);
-      GeglNode *buffer_save;
       GeglRectangle defined;
 
       defined = gegl_node_get_bounding_box (png_load);
@@ -145,6 +144,7 @@ process (GeglOperation       *operation,
       o->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
 
       /* FIXME
+      GeglNode *buffer_save;
       buffer_save = gegl_node_new_child (gegl, "operation", "gegl:save-buffer", "buffer", o->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 

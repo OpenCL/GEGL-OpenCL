@@ -1,5 +1,17 @@
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/introspect.c: (process): move unused variable
+	inside #if 0 block.
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (width_motion_notify_event), (cairo_gui_expose),
+	(gui_press_event), (gui_motion_event): do not take the node shift
+	into account when computing moves (since we only need relative
+	coordinates and the local ones depends on the change itself.)
+
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (stroke_press_event), (stroke_motion_notify_event):
 	disable use of dynamics by default (it slows things down too
 	much for now).
