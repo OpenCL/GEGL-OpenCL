@@ -1,3 +1,10 @@
+2008-11-02  Michael Natterer  <mitch@gimp.org>
+
+	* operations/common/opacity.c: always take the "value" property
+	into account even if there is an aux mask input. This way we can
+	optimize one node away when a graph has both opacity and mask
+	nodes (as in the gimp layer stack).
+
 2008-11-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: cleaned up header and made

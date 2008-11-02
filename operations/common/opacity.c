@@ -22,8 +22,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 0.5,
-         _("Global opacity value, used if no auxiliary input buffer is provided."))
+gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
+         _("Global opacity value that is always used on top of the optional auxiliary input buffer."))
 
 #else
 
@@ -51,21 +51,36 @@ process (GeglOperation       *op,
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
+  gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
 
   if (aux == NULL)
     {
-      gint i;
-      gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
-      for (i=0; i<n_pixels; i++)
+      if (value == 1.0)
         {
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * value;
-          in  += 4;
-          out += 4;
+          gint i;
+          for (i=0; i<n_pixels; i++)
+            {
+              gint j;
+              for (j=0; j<4; j++)
+                out[j] = in[j];
+              in  += 4;
+              out += 4;
+            }
+        }
+      else
+        {
+          gint i;
+          for (i=0; i<n_pixels; i++)
+            {
+              gint j;
+              for (j=0; j<4; j++)
+                out[j] = in[j] * value;
+              in  += 4;
+              out += 4;
+            }
         }
     }
-  else
+  else if (value == 1.0)
     {
       gint i;
       for (i=0; i<n_pixels; i++)
@@ -73,6 +88,20 @@ process (GeglOperation       *op,
           gint j;
           for (j=0; j<4; j++)
             out[j] = in[j] * (*aux);
+          in  += 4;
+          out += 4;
+          aux += 1;
+        }
+    }
+  else
+    {
+      gint i;
+      for (i=0; i<n_pixels; i++)
+        {
+          gint v = (*aux) * value;
+          gint j;
+          for (j=0; j<4; j++)
+            out[j] = in[j] * v;
           in  += 4;
           out += 4;
           aux += 1;
@@ -97,8 +126,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";
   operation_class->description =
-        _("Weights the opacity of the input with either the value of the aux"
-          " input or the global value property.");
+        _("Weights the opacity of the input both the value of the aux"
+          " input and the global value property.");
 }
 
 #endif
