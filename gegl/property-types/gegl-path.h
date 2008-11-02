@@ -199,10 +199,12 @@ void gegl_path_fill (GeglBuffer *buffer,
  * (code from horizon)
  */
 void gegl_path_stroke (GeglBuffer *buffer,
-                       GeglPath   *path,
+                       const GeglRectangle *clip_rect,
+                       GeglPath *vector,
                        GeglColor  *color,
                        gdouble     linewidth,
-                       gdouble     hardness);
+                       gdouble     hardness,
+                       gdouble     opacity);
 
 
 

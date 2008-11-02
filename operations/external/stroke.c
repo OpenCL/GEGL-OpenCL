@@ -27,9 +27,11 @@ gegl_chant_path   (path,   _("Vector"),
                              _("A GeglVector representing the path of the stroke"))
 gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,0.1)",
                              _("Color of paint to use"))
-gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 3.0,
+gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 12.0,
                              _("width of stroke"))
-gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.7,
+gegl_chant_double (opacity,  _("Opacity"),  -2.0, 2.0, 1.0,
+                             _("opacity of stroke"))
+gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.6,
                              _("hardness of brush, 0.0 for soft brush 1.0 for hard brush."))
 
 #else
@@ -79,19 +81,21 @@ get_bounding_box (GeglOperation *operation)
   gdouble        x0, x1, y0, y1;
 
   gegl_path_get_bounds (o->path, &x0, &x1, &y0, &y1);
-  defined.x      = x0 - o->linewidth;
-  defined.y      = y0 - o->linewidth;
-  defined.width  = x1 - x0 + o->linewidth * 2;
-  defined.height = y1 - y0 + o->linewidth * 2;
+  defined.x      = x0 - o->linewidth/2;
+  defined.y      = y0 - o->linewidth/2;
+  defined.width  = x1 - x0 + o->linewidth;
+  defined.height = y1 - y0 + o->linewidth;
 
   return defined;
 }
 
+#if 0
 static GeglRectangle
 get_cached_region (GeglOperation *operation)
 {
   return get_bounding_box (operation);
 }
+#endif
 
 static gboolean
 process (GeglOperation       *operation,
@@ -103,7 +107,12 @@ process (GeglOperation       *operation,
 
   gegl_buffer_clear (output, &box);
   g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
-  gegl_path_stroke (output, o->path, o->color, o->linewidth, o->hardness);
+  gegl_path_stroke (output, result,
+                            o->path,
+                            o->color,
+                            o->linewidth,
+                            o->hardness,
+                            o->opacity);
 
   return  TRUE;
 }
@@ -181,7 +190,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:stroke";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a brush stroke");
+#if 0
   operation_class->get_cached_region = (void*)get_cached_region;
+#endif
 }
 
 

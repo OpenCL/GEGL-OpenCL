@@ -1395,6 +1395,16 @@ GeglPath *gegl_path_get_parameter_path (GeglPath    *path,
   return NULL;
 }
 
+static void subpath_changed (GeglPath *path, const GeglRectangle *roi,
+                             gpointer userdata)
+{
+  gegl_path_emit_changed (userdata, NULL); /* change the full path for
+                                            now, shouldbe possible to
+                                            limit for the bounding box
+                                            of the length that has been
+                                            changed. */
+}
+
 /* creates a new path if one doesn't already exist */
 GeglPath *gegl_path_add_parameter_path (GeglPath    *self,
                                         const gchar *parameter_name)
@@ -1408,6 +1418,8 @@ GeglPath *gegl_path_add_parameter_path (GeglPath    *self,
 
   priv->parameter_names = g_slist_append (priv->parameter_names, g_strdup (parameter_name));
   parameter_path = gegl_path_new ();
+
+  g_signal_connect (parameter_path, "changed", G_CALLBACK (subpath_changed), self);
   GEGL_PATH_GET_PRIVATE (parameter_path)->parent_path = self;
 #if 0
   /* hard coded for line width,.. */
@@ -1793,19 +1805,24 @@ typedef struct StampStatic {
   gdouble   radius;
 }StampStatic;
 
+#if 0
 void gegl_path_stamp (GeglBuffer *buffer,
                       gdouble     x,
                       gdouble     y,
                       gdouble     radius,
                       gdouble     hardness,
-                      GeglColor  *color);
+                      GeglColor  *color,
+                      gdouble     opacity);
+#endif
 
-void gegl_path_stamp (GeglBuffer *buffer,
-                      gdouble     x,
-                      gdouble     y,
-                      gdouble     radius,
-                      gdouble     hardness,
-                      GeglColor  *color)
+static void gegl_path_stamp (GeglBuffer *buffer,
+                             const GeglRectangle *clip_rect,
+                             gdouble     x,
+                             gdouble     y,
+                             gdouble     radius,
+                             gdouble     hardness,
+                             GeglColor  *color,
+                             gdouble     opacity)
 {
   const gfloat *col = gegl_color_float4 (color);
   static StampStatic s = {FALSE,}; /* XXX: 
@@ -1820,11 +1837,14 @@ void gegl_path_stamp (GeglBuffer *buffer,
   GeglRectangle temp;
 
   /* bail out if we wouldn't leave a mark on the buffer */
-  if (!gegl_rectangle_intersect (&temp, &roi, gegl_buffer_get_extent (buffer)))
+  if (!gegl_rectangle_intersect (&temp, &roi, clip_rect))
+    {
+      g_print ("bailing\n");
       return;
+    }
 
   if (s.format == NULL)
-    s.format = babl_format ("RGBA float");
+    s.format = babl_format ("RaGaBaA float");
 
   if (s.buf == NULL ||
       s.radius != radius)
@@ -1869,6 +1889,7 @@ void gegl_path_stamp (GeglBuffer *buffer,
          if (o!=0.0)
            {
              gint c;
+             o = o*opacity;
              for (c=0;c<4;c++)
                s.buf[i*4+c] = (s.buf[i*4+c] * (1.0-o) + col[c] * o);
            }
@@ -1881,10 +1902,12 @@ void gegl_path_stamp (GeglBuffer *buffer,
 
 
 void gegl_path_stroke (GeglBuffer *buffer,
+                       const GeglRectangle *clip_rect,
                        GeglPath *vector,
                        GeglColor  *color,
                        gdouble     linewidth,
-                       gdouble     hardness)
+                       gdouble     hardness,
+                       gdouble     opacity)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglRectangle bufext;
@@ -1898,6 +1921,11 @@ void gegl_path_stroke (GeglBuffer *buffer,
 
   if (!vector)
     return;
+
+  if (!clip_rect)
+    {
+      clip_rect = gegl_buffer_get_extent (buffer);
+    }
 
   ensure_flattened (vector);
 
@@ -1963,16 +1991,22 @@ void gegl_path_stroke (GeglBuffer *buffer,
                   {
                     Point spot;
                     gfloat ratio = local_pos / distance;
-                    gfloat radius = linewidth/2; /* XXX: gegl_path_parameter_calc (vector, "linewidth",
+                    gfloat radius = linewidth/2;
+                       /* XXX: gegl_path_parameter_calc (vector, "linewidth",
                                        traveled_length) / 2;*/
                                  /* horizon used to refetch the radius
                                   * for each step from the tool, to be
                                   * able to have variable line width
                                   */
+                    if (gegl_path_get_parameter_path (vector, "linewidth"))
+                      radius = gegl_path_parameter_calc (vector, "linewidth", traveled_length) /2;
+                    if (gegl_path_get_parameter_path (vector, "opacity"))
+                      radius = gegl_path_parameter_calc (vector, "opacity", traveled_length);
+
                     lerp (&spot, &a, &b, ratio);
 
-                    gegl_path_stamp (buffer,
-                      spot.x, spot.y, radius, hardness, color);
+                    gegl_path_stamp (buffer, clip_rect,
+                      spot.x, spot.y, radius, hardness, color, opacity);
 
                     traveled_length += spacing;
                   }

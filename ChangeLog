@@ -1,3 +1,15 @@
+2008-11-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.c: (subpath_changed),
+	(gegl_path_add_parameter_path), Make changes to subpaths cause a full
+	invalidation of the parent path object.
+	(gegl_path_stamp), (gegl_path_stroke): take parameter scaling factors
+	from "linewidth" and "opacity" path parameters if they are available.
+	* gegl/property-types/gegl-path.h:
+	* operations/external/stroke.c: (get_bounding_box), (process),
+	(gegl_chant_class_init): pass in extra information that might be
+	useful to limit un-needed composites of stamps outside the roi.
+
 2008-11-02  Michael Natterer  <mitch@gimp.org>
 
 	* operations/common/opacity.c: always take the "value" property
