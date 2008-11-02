@@ -98,7 +98,7 @@ process (GeglOperation       *op,
       gint i;
       for (i=0; i<n_pixels; i++)
         {
-          gint v = (*aux) * value;
+          gfloat v = (*aux) * value;
           gint j;
           for (j=0; j<4; j++)
             out[j] = in[j] * v;
