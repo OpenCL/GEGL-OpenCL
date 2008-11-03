@@ -266,7 +266,6 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
                               const GeglRectangle *rectangle)
 {
   GSList        *iter;
-  GeglRectangle  bounds;
   GeglRectangle  input_bounding_box;
 
   if (! rectangle)
@@ -277,9 +276,17 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
   if (! gegl_rectangle_equal (&processor->rectangle, rectangle))
     {
-      bounds               = gegl_node_get_bounding_box (processor->input);
+
+#if 0
+    /* XXX: this is a large penalty hit, so we assume the rectangle
+     * we're getting is part of the bounding box we're hitting */
+      GeglRectangle  bounds;
+      bounds               = processor->bounds;/*gegl_node_get_bounding_box (processor->input);*/
+#endif
       processor->rectangle = *rectangle;
+#if 0
       gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
+#endif
 
       /* remove already queued dirty rectangles */
       for (iter = processor->dirty_rectangles; iter; iter = g_slist_next (iter))
@@ -368,12 +375,7 @@ render_rectangle (GeglProcessor *processor)
  */
               band_size = dr->width / 2;
 #if 1
-              if (band_size <= 128)
-                {
-                  band_size = MIN(band_size, 64); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-              else if (band_size <= 256)
+              if (band_size <= 256)
                 {
                   band_size = MIN(band_size, 128); /* prefer a band_size of 128,
                                                       hoping to hit tiles */
@@ -405,12 +407,7 @@ render_rectangle (GeglProcessor *processor)
               band_size = dr->height / 2;
 
 
-              if (band_size <= 128)
-                {
-                  band_size = MIN(band_size, 64); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-              else if (band_size <= 256)
+              if (band_size <= 256)
                 {
                   band_size = MIN(band_size, 128); /* prefer a band_size of 128,
                                                       hoping to hit tiles */
