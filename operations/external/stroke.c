@@ -70,7 +70,7 @@ static void path_changed (GeglPath *path,
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
 static GeglRectangle

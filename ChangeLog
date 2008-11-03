@@ -1,5 +1,9 @@
 2008-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/stroke.c: (prepare): use RaGaBaA float.
+
+2008-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-processor.c: (gegl_processor_set_rectangle): do
 	not intersect with the incoming rectangle with the bounding box of the
 	composition (computing the bounding box is expensive and not yet cache, the
