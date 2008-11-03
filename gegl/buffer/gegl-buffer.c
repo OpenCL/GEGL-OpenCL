@@ -865,6 +865,11 @@ gegl_buffer_new (const GeglRectangle *extent,
                        NULL);
 }
 
+
+/* FIXME: this function needs optimizing, perhaps keep a pool
+ * of GeglBuffer shells that can be adapted to the needs
+ * on runtime, and recycling them through a hashtable?
+ */
 GeglBuffer*
 gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                                const GeglRectangle *extent)

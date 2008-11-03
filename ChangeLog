@@ -1,5 +1,12 @@
 2008-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: added FIXME that
+	gegl_buffer_create_sub_buffer needs optimizing (It uses g_object_new
+	and is called by gegl_buffer_get making object creation a bottleneck
+	for a lowlevel operation that should be fast.)
+
+2008-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/stroke.c: (prepare): use RaGaBaA float.
 
 2008-11-03  Øyvind Kolås  <pippin@gimp.org>
