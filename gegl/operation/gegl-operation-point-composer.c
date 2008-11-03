@@ -112,7 +112,7 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
 
 #if 1  /* this can be set to 0, and everything should work normally,
           but some fast paths would not be taken */
-      if (!strcmp (gegl_node_get_operation (operation->node), "over"))
+      if (!strcmp (gegl_node_get_operation (operation->node), "gegl:over"))
         {
           /* these optimizations probably apply to more than over */
 
