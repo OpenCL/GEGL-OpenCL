@@ -316,15 +316,17 @@ gegl_buffer_flush (GeglBuffer *buffer)
 
 
 static void inline
-gegl_buffer_iterate (GeglBuffer *buffer,
-                     guchar     *buf,
-                     gint        rowstride,
-                     gboolean    write,
-                     const Babl *format,
-                     gint        level)
+gegl_buffer_iterate (GeglBuffer          *buffer,
+                     const GeglRectangle *roi, /* or NULL for extent */
+                     guchar              *buf,
+                     gint                 rowstride,
+                     gboolean             write,
+                     const Babl          *format,
+                     gint                 level)
 {
   gint  width       = buffer->extent.width;
   gint  height      = buffer->extent.height;
+
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height = buffer->tile_storage->tile_height;
   gint  px_size     = FMTPXS (buffer->format);
@@ -336,8 +338,10 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
+
   gint  buffer_x       = buffer->extent.x + buffer_shift_x;
   gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+
   gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
@@ -345,6 +349,14 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   gint  i;
   gint  factor = 1;
 
+  /* roi specified, override buffers extent */
+  if (roi)
+    {
+      width  = roi->width;
+      height = roi->height;
+      buffer_x = roi->x + buffer_shift_x;
+      buffer_y = roi->y + buffer_shift_y;
+    }
 
   for (i = 0; i < level; i++)
     {
@@ -601,12 +613,12 @@ gegl_buffer_set (GeglBuffer          *buffer,
    */
   else if (rect == NULL)
     {
-      gegl_buffer_iterate (buffer, src, rowstride, TRUE, format, 0);
+      gegl_buffer_iterate (buffer, NULL, src, rowstride, TRUE, format, 0);
     }
   else
     {
       sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-      gegl_buffer_iterate (sub_buf, src, rowstride, TRUE, format, 0);
+      gegl_buffer_iterate (sub_buf, NULL, src, rowstride, TRUE, format, 0);
       g_object_unref (sub_buf);
     }
 
@@ -620,26 +632,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
 #endif
 }
 
-/*
- * buffer: the buffer to get data from
- * rect:   the (full size rectangle to sample)
- * dst:    the destination buffer to write to
- * format: the format to write in
- * level:  halving levels 0 = 1:1 1=1:2 2=1:4 3=1:8 ..
- *
- */
-static void
-gegl_buffer_get_scaled (GeglBuffer          *buffer,
-                        const GeglRectangle *rect,
-                        void                *dst,
-                        gint                 rowstride,
-                        const void          *format,
-                        gint                 level)
-{
-  GeglBuffer *sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-  gegl_buffer_iterate (sub_buf, dst, rowstride, FALSE, format, level);
-  g_object_unref (sub_buf);
-}
+
 
 #if 0
 
@@ -971,7 +964,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
 
   if (!rect && scale == 1.0)
     {
-      gegl_buffer_iterate (buffer, dest_buf, rowstride, FALSE, format, 0);
+      gegl_buffer_iterate (buffer, NULL, dest_buf, rowstride, FALSE, format, 0);
 #if ENABLE_MP
       g_static_rec_mutex_unlock (&mutex);
 #endif
@@ -987,7 +980,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
     }
   if (GEGL_FLOAT_EQUAL (scale, 1.0))
     {
-      gegl_buffer_get_scaled (buffer, rect, dest_buf, rowstride, format, 0);
+      gegl_buffer_iterate (buffer, rect, dest_buf, rowstride, FALSE, format, 0);
 #if ENABLE_MP
       g_static_rec_mutex_unlock (&mutex);
 #endif
@@ -1030,7 +1023,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
 
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
-      gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, format, level);
+      gegl_buffer_iterate (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, FALSE, format, level);
 
       if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")
           && !(level == 0 && scale > 1.99))
