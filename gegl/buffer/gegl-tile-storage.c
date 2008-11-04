@@ -274,6 +274,7 @@ gegl_tile_storage_constructor (GType                  type,
                                               tile_storage_idle,
                                               tile_storage,
                                               NULL);
+  tile_storage->seen_zoom = FALSE;
 
   return object;
 }

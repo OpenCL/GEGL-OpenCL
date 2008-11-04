@@ -32,6 +32,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-source.h"
+#include "gegl-tile-storage.h"
 
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
@@ -293,6 +294,7 @@ static void
 gegl_tile_void_pyramid (GeglTile *tile)
 {
   if (tile->tile_storage && 
+      tile->tile_storage->seen_zoom &&
       tile->z == 0) /* we only accepting voiding the base level */
     {
       _gegl_tile_void_pyramid (GEGL_TILE_SOURCE (tile->tile_storage), 

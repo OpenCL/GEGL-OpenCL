@@ -35,6 +35,7 @@ enum
 
 #include <babl/babl.h>
 #include "gegl-tile-backend.h"
+#include "gegl-tile-storage.h"
 
 void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
                                      GeglTile             *tile,
@@ -223,6 +224,7 @@ get_tile (GeglTileSource *gegl_tile_source,
     {
       return NULL;
     }
+  zoom->tile_storage->seen_zoom = TRUE;
 
   g_assert (zoom->backend);
   g_object_get (zoom->backend, "tile-width", &tile_width,
