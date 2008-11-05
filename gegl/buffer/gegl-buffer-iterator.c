@@ -63,6 +63,9 @@ typedef struct GeglBufferScanIterator {
   gint                   next_row;  /* used internally */
 } GeglBufferScanIterator;
 
+#define GEGL_BUFFER_SCAN_COMPATIBLE   128   /* should be integrated into enum */
+#define GEGL_BUFFER_FORMAT_COMPATIBLE 256   /* should be integrated into enum */
+
 typedef struct GeglBufferIterators
 {
   /* current region of interest */
@@ -80,7 +83,6 @@ typedef struct GeglBufferIterators
   GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS];
   guint          flags      [GEGL_BUFFER_MAX_ITERATORS];
   gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS]; 
-  gboolean       compatible [GEGL_BUFFER_MAX_ITERATORS];
   GeglBufferScanIterator   i[GEGL_BUFFER_MAX_ITERATORS]; 
 } GeglBufferIterators;
 
@@ -344,7 +346,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
 
   if (self==0) /* The first buffer which is always scan aligned */
     {
-      i->compatible[self]= TRUE;
+      i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
       gegl_buffer_scan_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0) );
     }
   else
@@ -356,27 +358,29 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
       if (gegl_buffer_scan_compatible (i->buffer[0], i->rect[0].x, i->rect[0].y,
                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
-          i->compatible[self] = TRUE;
+          i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
           gegl_buffer_scan_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0));
         }
     }
 
+  /* always allocating */
+  i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
+                              i->i[0].max_size);
   /* the iterator needs to allocate a buffer if the desired pixel format and
    * the buffers pixel format differ or the scan iterators are not compatible.
    */
-  if (i->format[self] != i->buffer[self]->format ||
-      i->compatible[self] == FALSE)
+  if (i->format[self] == i->buffer[self]->format)
     {
-      i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
-                                  i->i[0].max_size);
-
       g_assert (i->flags[self]);
+      i->flags[self] |= GEGL_BUFFER_FORMAT_COMPATIBLE;
+    }
+
+
       /* create babl fishes needed for desired operations */
-      if (i->flags[self] & GEGL_BUFFER_READ)
-        i->fish_from[self] = babl_fish (i->buffer[self]->format, i->format[self]);
-      if (i->flags[self] & GEGL_BUFFER_WRITE)
-        i->fish_to[self] = babl_fish (i->format[self], i->buffer[self]->format);
-     }
+  if (i->flags[self] & GEGL_BUFFER_READ)
+    i->fish_from[self] = babl_fish (i->buffer[self]->format, i->format[self]);
+  if (i->flags[self] & GEGL_BUFFER_WRITE)
+    i->fish_to[self] = babl_fish (i->format[self], i->buffer[self]->format);
 
   return self;
 }
@@ -396,10 +400,16 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
         {
           if (i->flags[no] & GEGL_BUFFER_WRITE)
             {
-              if (i->compatible[no])
+              if (i->flags[no] & GEGL_BUFFER_SCAN_COMPATIBLE)
                 {
-                  if (i->fish_to[no])
-                    babl_process (i->fish_to[no], i->buf[no], i->i[no].data, i->i[no].length);
+                  if (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE)
+                    {
+                      /* we don't need to do anything */
+                    }
+                  else
+                    {
+                      babl_process (i->fish_to[no], i->buf[no], i->i[no].data, i->i[no].length);
+                    }
                 }
               else
                 {
@@ -417,7 +427,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
   /* then we iterate all */
   for (no=0; no<i->iterators;no++)
     {
-      if (i->compatible[no])
+      if (i->flags[no] & GEGL_BUFFER_SCAN_COMPATIBLE)
         {
           gboolean res;
           res = gegl_buffer_scan_iterator_next (&i->i[no]);
@@ -439,11 +449,11 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
              } 
           g_assert (res == result);
 
-          if (i->buf[no]!=NULL)
+          if (!(i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
             {
-              /* convert to temporary buffer if temporary buffer is present,
-               * the presence indicates that the desired format is different
-               * from the native one
+              /* convert to temporary buffer if the correct conversion
+               * fish is present,  the presence indicates that the desired
+               * format is different from the native one
                */
               if (i->fish_from[no])
                 babl_process (i->fish_from[no], i->i[no].data, i->buf[no], i->i[no].length);
@@ -456,7 +466,8 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
             }
         }
       else
-        {
+        { 
+          /* we should also fall into this one when merging scans */
           /* we copy the roi from iterator 0  */
           i->roi[no] = i->roi[0];
           i->roi[no].x += (i->rect[no].x-i->rect[0].x);
