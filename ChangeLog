@@ -1,3 +1,11 @@
+2008-11-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-iterator.c: Modified code to only pass
+	accesses spans the full tile width as direct pointers to the tile data
+	(as well as correct format). For all other cases convert to a
+	temporary linear buffer. (gegl_buffer_tile_iterator_next),
+	(gegl_buffer_scan_iterator_next), (gegl_buffer_iterator_next): 
+
 2008-11-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c: (gegl_buffer_iterator_add),

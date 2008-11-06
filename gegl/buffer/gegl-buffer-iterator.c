@@ -163,7 +163,7 @@ gulp:
   /* unref previously held tile */
   if (i->tile)
     {
-      if (i->write)
+      if (i->write && i->subrect.width == tile_width)
         {
           gegl_tile_unlock (i->tile);
         }
@@ -195,7 +195,7 @@ gulp:
                                                gegl_tile_indice (tiledx, tile_width),
                                                gegl_tile_indice (tiledy, tile_height),
                                                0);
-         if (i->write)
+         if (i->write && tile_width==i->subrect.width)
            {
              gegl_tile_lock (i->tile);
            }
@@ -278,7 +278,7 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
 
   if (i->next_row < tile_i->subrect.height)
     {
-      if (tile_i->subrect.width == tile_i->buffer->tile_storage->tile_width)
+      if (tile_i->subrect.width == tile_i->buffer->tile_storage->tile_width || 1)
         /* the entire contents of the tile can be expressed as one long scan */
         {
           i->length = tile_i->subrect.width * tile_i->subrect.height;
@@ -309,8 +309,6 @@ gegl_buffer_scan_iterator_next (GeglBufferScanIterator *i)
 
   return FALSE;
 }
-
-
 
 
 gint
@@ -400,22 +398,15 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
         {
           if (i->flags[no] & GEGL_BUFFER_WRITE)
             {
-              if (i->flags[no] & GEGL_BUFFER_SCAN_COMPATIBLE)
+
+              if (i->flags[no] & GEGL_BUFFER_SCAN_COMPATIBLE &&
+                  i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE &&
+                  i->roi[no].width == i->i[no].tile_iterator.buffer->tile_storage->tile_width && (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
                 {
-                  if (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE)
-                    {
-                      /* we don't need to do anything */
-                    }
-                  else
-                    {
-                      babl_process (i->fish_to[no], i->buf[no], i->i[no].data, i->i[no].length);
-                    }
+                   /* direct access */
                 }
               else
                 {
-#define DRUMROLL(message) {gboolean message = FALSE; g_assert (message);}
-
-                  DRUMROLL(just_remove_this_when_reached);
                   gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
@@ -449,25 +440,19 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
              } 
           g_assert (res == result);
 
-          if (!(i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
+          if (i->roi[no].width == i->i[no].tile_iterator.buffer->tile_storage->tile_width && (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
             {
-              /* convert to temporary buffer if the correct conversion
-               * fish is present,  the presence indicates that the desired
-               * format is different from the native one
-               */
-              if (i->fish_from[no])
-                babl_process (i->fish_from[no], i->i[no].data, i->buf[no], i->i[no].length);
-              i->data[no]=i->buf[no];
+              /* direct access */
+              i->data[no]=i->i[no].data;
             }
           else
             {
-              /* ideal situation, direct data access */
-              i->data[no]=i->i[no].data;
+            gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+              i->data[no]=i->buf[no];
             }
         }
       else
         { 
-          /* we should also fall into this one when merging scans */
           /* we copy the roi from iterator 0  */
           i->roi[no] = i->roi[0];
           i->roi[no].x += (i->rect[no].x-i->rect[0].x);
@@ -496,14 +481,6 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
       i->buf[0]=(void*)0xdeadbeef;
       g_free (i);
     }
-
-  /*g_print ("%i: %i,%i %ix%i\n", 
-   i->iteration_no,
-   i->roi[0].x,
-   i->roi[0].y,
-   i->roi[0].width,
-   i->roi[0].height);*/
-
   return result;
 }
 
