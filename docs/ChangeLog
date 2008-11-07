@@ -1,3 +1,8 @@
+2008-11-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/clones.xml: temporary disabled this test, since
+	it throws GEGL into some infinite loop.
+
 2008-10-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* gallery/OpenRaster-04.xml: updated to gegl: prefix. (this was
