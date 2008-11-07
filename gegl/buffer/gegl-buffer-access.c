@@ -591,8 +591,6 @@ gegl_buffer_set (GeglBuffer          *buffer,
                  void                *src,
                  gint                 rowstride)
 {
-  GeglBuffer *sub_buf;
-
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
 #if ENABLE_MP
@@ -607,19 +605,9 @@ gegl_buffer_set (GeglBuffer          *buffer,
     {
       pset (buffer, rect->x, rect->y, format, src);
     }
-  /* FIXME: if rect->width == TILE_WIDTH and rect->height == TILE_HEIGHT and
-   * aligned with tile grid, do a fast path, also provide helper functions
-   * for figuring out how to align accesses with the tile grid.
-   */
-  else if (rect == NULL)
-    {
-      gegl_buffer_iterate (buffer, NULL, src, rowstride, TRUE, format, 0);
-    }
   else
     {
-      sub_buf = gegl_buffer_create_sub_buffer (buffer, rect);
-      gegl_buffer_iterate (sub_buf, NULL, src, rowstride, TRUE, format, 0);
-      g_object_unref (sub_buf);
+      gegl_buffer_iterate (buffer, rect, src, rowstride, TRUE, format, 0);
     }
 
   if (gegl_buffer_is_shared(buffer))

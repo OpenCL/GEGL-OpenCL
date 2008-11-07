@@ -1,3 +1,22 @@
+2008-11-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_set): avoid unneeded
+	sub buffer.
+	* gegl/buffer/gegl-buffer-iterator.c:
+	(gegl_buffer_tile_iterator_init), (gegl_buffer_tile_iterator_next),
+	(gegl_buffer_iterator_add), (gegl_buffer_iterator_next): refactored
+	away the scan iterator sitting in front of the tile iterator, operate
+	directly on the tiles.
+
+2008-11-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* examples/hello-world.c: (main): add prefix to op-name.
+
+2008-11-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_set): avoid creating
+	a temporary sub_buffer since object creation is expensive.
+
 2008-11-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c: Modified code to only pass
