@@ -34,7 +34,7 @@ This is the graph we're going to construct:
 */
 
     /*< The image nodes representing operations we want to perform */
-    GeglNode *display    = gegl_node_create_child (gegl, "display");
+    GeglNode *display    = gegl_node_create_child (gegl, "gegl:display");
     GeglNode *layer      = gegl_node_new_child (gegl,
                                  "operation", "gegl:layer",
                                  "x", 2.0,

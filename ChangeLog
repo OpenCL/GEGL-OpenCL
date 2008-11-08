@@ -1,5 +1,9 @@
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/hello-world.c: (main): s/"display"/"gegl:display"
+
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-iterator.c: (gegl_buffer_iterator_next):
 	added instrumentation code (disabled by default) that counts how
 	many of the pixels ended up being accessed with direct memory access
