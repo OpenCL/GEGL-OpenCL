@@ -223,6 +223,26 @@ gegl_get_option_group (void)
 GObject *gegl_config (void);
 GObject *gegl_config (void)
 {
+  if (!config)
+    {
+      config = g_object_new (GEGL_TYPE_CONFIG, NULL);
+      if (g_getenv ("GEGL_QUALITY"))
+        config->quality = atof(g_getenv("GEGL_QUALITY")); 
+      if (g_getenv ("GEGL_CACHE_SIZE"))
+        config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
+      if (g_getenv ("GEGL_CHUNK_SIZE"))
+        config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
+      if (g_getenv ("GEGL_TILE_SIZE"))
+        {
+          const gchar *str = g_getenv ("GEGL_TILE_SIZE");
+          config->tile_width = atoi(str);
+          str = strchr (str, 'x');
+          if (str)
+            config->tile_height = atoi(str+1);
+        }
+      if (gegl_swap_dir())
+        config->swap = g_strdup(gegl_swap_dir ());
+    }
   return G_OBJECT (config);
 }
 
@@ -354,24 +374,8 @@ gegl_post_parse_hook (GOptionContext *context,
   g_type_init ();
   gegl_instrument ("gegl", "gegl_init", 0);
 
-  config = g_object_new (GEGL_TYPE_CONFIG, NULL);
-  if (g_getenv ("GEGL_QUALITY"))
-    config->quality = atof(g_getenv("GEGL_QUALITY")); 
-  if (g_getenv ("GEGL_CACHE_SIZE"))
-    config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
-  if (g_getenv ("GEGL_CHUNK_SIZE"))
-    config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
-  if (g_getenv ("GEGL_TILE_SIZE"))
-    {
-      const gchar *str = g_getenv ("GEGL_TILE_SIZE");
-      config->tile_width = atoi(str);
-      str = strchr (str, 'x');
-      if (str)
-        config->tile_height = atoi(str+1);
-    }
+  config = (void*)gegl_config ();
 
-  if (gegl_swap_dir())
-    config->swap = g_strdup(gegl_swap_dir ());
   if (cmd_gegl_swap)
     g_object_set (config, "swap", cmd_gegl_swap, NULL);
   if (cmd_gegl_quality)

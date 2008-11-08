@@ -1,3 +1,9 @@
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-init.c: (gegl_config), (gegl_post_parse_hook): treat
+	gegl_config() as a singleton that initializes its own base, this
+	hopefully allows the introspection to work.
+
 2008-11-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-access.c: (gegl_buffer_set): avoid unneeded
