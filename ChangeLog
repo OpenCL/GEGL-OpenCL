@@ -1,5 +1,10 @@
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (cairo_gui_expose), (gui_press_event): made moving the
+	default action (instead of just selecting).
+
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/text.c: (prepare)
 	* operations/external/fill.c: (prepare): cache in "RaGaBaA float"
 	assuming multiple rerenders.

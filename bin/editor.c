@@ -58,9 +58,9 @@
 
 typedef enum 
 {
-  STATE_PICK = 0,
+  STATE_MOVE = 0,
   STATE_STROKES,
-  STATE_MOVE,
+  STATE_PICK,
   STATE_PAN,
   STATE_EDIT_NODES,
   STATE_EDIT_WIDTH,
@@ -997,10 +997,15 @@ static gboolean cairo_gui_expose (GtkWidget *widget,
 
           cairo_translate (cr, -x, -y);
           if(1)cairo_scale (cr, scale, scale);
+
+
           cairo_translate (cr, tx, ty);
               ACTIVE_COLOR;
               bounds = gegl_node_get_bounding_box (tools.node);
               cairo_rectangle (cr, bounds.x, bounds.y, bounds.width, bounds.height);
+              cairo_clip_preserve (cr);
+
+              cairo_set_line_width (cr, 4.0 / scale);
               cairo_stroke (cr);
             }
           cairo_restore (cr);
@@ -1261,11 +1266,11 @@ gui_press_event (GtkWidget      *widget,
             
             switch (tools.state)
               {
-                case STATE_PICK:
+                case STATE_MOVE:
                   menu_add ("paint", G_CALLBACK (do_command), "set-state strokes");
                   menu_add ("path",  G_CALLBACK (do_command), "set-state edit-nodes");
                   menu_add ("width",  G_CALLBACK (do_command), "set-state edit-width");
-                  menu_add ("move",  G_CALLBACK (do_command), "set-state move");
+                  menu_add ("remove",  G_CALLBACK (do_command), "remove-item");
                   /* check the current curve type,. */
                   break;
                 case STATE_EDIT_NODES:
@@ -1274,7 +1279,7 @@ gui_press_event (GtkWidget      *widget,
                   menu_add ("--", G_CALLBACK (do_command), "help");
                   menu_add ("smooth", G_CALLBACK (do_command), "help");
                   menu_add ("spiro", G_CALLBACK (do_command), "help");
-                  menu_add ("pick", G_CALLBACK (do_command), "set-state pick");
+                  menu_add ("move", G_CALLBACK (do_command), "set-state move");
                   break;
                 case STATE_EDIT_WIDTH:
                 case STATE_STROKES:
@@ -1285,7 +1290,6 @@ gui_press_event (GtkWidget      *widget,
                   menu_add ("path",  G_CALLBACK (do_command), "set-state edit-nodes");
                   menu_add ("width",  G_CALLBACK (do_command), "set-state edit-width");
                   menu_add ("move",  G_CALLBACK (do_command), "set-state move");
-                  menu_add ("pick", G_CALLBACK (do_command), "set-state pick");
                   break;
               }
 
