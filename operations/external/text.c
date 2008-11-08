@@ -273,7 +273,7 @@ finalize (GObject *object)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
+  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
 

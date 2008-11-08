@@ -1,5 +1,11 @@
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/text.c: (prepare)
+	* operations/external/fill.c: (prepare): cache in "RaGaBaA float"
+	assuming multiple rerenders.
+
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* examples/hello-world.c: (main): s/"display"/"gegl:display"
 
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
