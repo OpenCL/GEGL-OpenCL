@@ -252,6 +252,49 @@ void gegl_tile_backend_tiledir_stats (void);
 #endif
 void gegl_tile_backend_file_stats (void);
 
+static gboolean
+pid_is_running (gint pid)
+{
+  gchar buf[512];
+  g_sprintf (buf, "/proc/%i", pid);
+  return g_file_test (buf, G_FILE_TEST_EXISTS);
+}
+
+
+static void swap_clean (void)
+{ 
+  GDir         *dir     = g_dir_open (gegl_swap_dir (), 0, NULL);
+  gchar        *glob    = g_strdup_printf ("*");
+  GPatternSpec *pattern = g_pattern_spec_new (glob);
+  g_free (glob);
+
+  if (dir != NULL)
+    {
+      const gchar *name;
+
+      while ((name = g_dir_read_name (dir)) != NULL)
+        {
+          if (g_pattern_match_string (pattern, name))
+            {
+              gint readpid = atoi (name);
+                  
+              if (!pid_is_running (readpid))
+                {
+                  gchar *fname = g_build_filename (gegl_swap_dir (),
+                                                       name,
+                                                       NULL);
+                  g_unlink (fname);
+                  g_free (fname);
+                }
+            }
+         }
+       g_dir_close (dir);
+    }
+
+ g_pattern_spec_free (pattern);
+}
+
+
 void
 gegl_exit (void)
 {
@@ -301,7 +344,7 @@ gegl_exit (void)
       guint         pid     = getpid ();
       GDir         *dir     = g_dir_open (gegl_swap_dir (), 0, NULL);
 
-      gchar        *glob    = g_strdup_printf ("GEGL-%i-*.swap", pid);
+      gchar        *glob    = g_strdup_printf ("%i-*", pid);
       GPatternSpec *pattern = g_pattern_spec_new (glob);
       g_free (glob);
 
@@ -332,6 +375,7 @@ gegl_exit (void)
   g_print ("\n");
 }
 
+static void swap_clean (void);
 
 
 static void
@@ -486,6 +530,7 @@ gegl_post_parse_hook (GOptionContext *context,
         g_object_set (config, "quality", 1.0, NULL);
     }
 
+  swap_clean ();
   return TRUE;
 }
 

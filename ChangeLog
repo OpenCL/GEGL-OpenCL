@@ -1,5 +1,12 @@
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (pid_is_running), (swap_clean), (gegl_exit),
+	(gegl_post_parse_hook): Made GEGL clean up the swap dir on launch
+	for all swap files belonging to non running processes, also fixed
+	the glob used to find the current process' swaps.
+
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: updated splash, fixed utf8 encodings of names and
 	removed reference to deprecated winding property.
 
