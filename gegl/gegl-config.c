@@ -195,7 +195,7 @@ gegl_config_init (GeglConfig *self)
   self->swap        = NULL;
   self->quality     = 1.0;
   self->cache_size  = 256 * 1024 * 1024;
-  self->chunk_size  = 256 * 256;
+  self->chunk_size  = 1024 * 1024;
   self->tile_width  = 128;
   self->tile_height = 64;
 }
