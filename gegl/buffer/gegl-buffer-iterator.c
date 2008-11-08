@@ -57,6 +57,8 @@ typedef struct GeglBufferTileIterator
 #define GEGL_BUFFER_SCAN_COMPATIBLE   128   /* should be integrated into enum */
 #define GEGL_BUFFER_FORMAT_COMPATIBLE 256   /* should be integrated into enum */
 
+#define DEBUG_DIRECT 0
+
 typedef struct GeglBufferIterators
 {
   /* current region of interest */
@@ -229,6 +231,11 @@ gulp:
   return FALSE;
 }
 
+static glong direct_read = 0;
+static glong direct_write = 0;
+static glong in_direct_read = 0;
+static glong in_direct_write = 0;
+
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
@@ -311,9 +318,15 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
                   i->roi[no].width == i->i[no].buffer->tile_storage->tile_width && (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
                 {
                    /* direct access */
+#if DEBUG_DIRECT
+                   direct_write += i->roi[no].width * i->roi[no].height;
+#endif
                 }
               else
                 {
+#if DEBUG_DIRECT
+                  in_direct_write += i->roi[no].width * i->roi[no].height;
+#endif
                   gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
@@ -348,11 +361,17 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
             {
               /* direct access */
               i->data[no]=i->i[no].sub_data;
+#if DEBUG_DIRECT
+              direct_read += i->roi[no].width * i->roi[no].height;
+#endif
             }
           else
             {
             gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
               i->data[no]=i->buf[no];
+#if DEBUG_DIRECT
+              in_direct_read += i->roi[no].width * i->roi[no].height;
+#endif
             }
         }
       else
@@ -366,6 +385,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
           gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
           i->data[no]=i->buf[no];
+
+#if DEBUG_DIRECT
+          in_direct_read += i->roi[no].width * i->roi[no].height;
+#endif
         }
       i->length = i->roi[no].width * i->roi[no].height;
     }
@@ -381,6 +404,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
           i->buf[no]=NULL;
           g_object_unref (i->buffer[no]);
         }
+#if DEBUG_DIRECT
+      g_print ("%f %f\n", (100.0*direct_read/(in_direct_read+direct_read)),
+                           100.0*direct_write/(in_direct_write+direct_write));
+#endif
       i->buf[0]=(void*)0xdeadbeef;
       g_free (i);
     }
