@@ -1,5 +1,12 @@
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-context.c: (emptybuf),
+	(gegl_operation_context_get_target): keep an 0x0 sized buffer around
+	that is shared by all needs for such a buffer to be passed as a dummy
+	token between nodes.
+
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: created draft NEWS from ChangeLog entries.
 
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
@@ -13,18 +20,6 @@
 	* gegl/gegl-config.c: (gegl_config_init): increased the default
 	chunk-size (number of output pixels computed simultanously) from
 	256*256 to 1024*1024.
-
-2008-11-08  Øyvind Kolås  <pippin@gimp.org>
-
-	* gegl/operation/gegl-operation-point-composer.c:
-	(gegl_operation_point_composer_class_init): enable caching.
-	* gegl/operation/gegl-operation-point-render.c:
-	(gegl_operation_point_render_class_init): enable caching.
-
-	* gegl/property-types/gegl-path.c: (gegl_param_vector_init):
-	* gegl/operation/gegl-operation-context.c: indentation.
-	* gegl/buffer/gegl-buffer.c: (gegl_buffer_create_sub_buffer):
-	extra sanity (XXX)
 
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
