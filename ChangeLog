@@ -1,5 +1,10 @@
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (raise_item), (gui_press_event): renamed raise command
+	to raise_item to avoid collision with system function call.
+
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (raise), (lower), (gui_press_event):
 	* bin/gegl-tree-editor-action.c: (gegl_move_item_up),
 	(gegl_move_item_down): added raise/lower commands to the menu when in

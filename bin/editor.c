@@ -937,7 +937,7 @@ void gegl_move_item_up (GeglNode *node);
 void gegl_move_item_down (GeglNode *node);
 
 
-static gint raise (gint argc, char **argv)
+static gint raise_item (gint argc, char **argv)
 {
   GeglNode *self = tree_editor_get_active (editor.tree_editor);
   GeglNode *parent = gegl_parent (self);
@@ -1313,7 +1313,7 @@ gui_press_event (GtkWidget      *widget,
                 case STATE_MOVE:
                   menu_add ("paint", G_CALLBACK (do_command), "set-state strokes");
                   menu_add ("path",  G_CALLBACK (do_command), "set-state edit-nodes");
-                  menu_add ("raise",  G_CALLBACK (do_command), "raise");
+                  menu_add ("raise",  G_CALLBACK (do_command), "raise-item");
                   menu_add ("lower",  G_CALLBACK (do_command), "lower");
                   menu_add ("width",  G_CALLBACK (do_command), "set-state edit-width");
                   menu_add ("remove",  G_CALLBACK (do_command), "remove-item");
