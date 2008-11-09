@@ -932,6 +932,21 @@ static void path_slice (cairo_t *cr,
   cairo_close_path (cr);
 }
 
+void gegl_remove_item (GeglNode *node);
+
+static gint remove_item (gint argc, char **argv)
+{
+  GeglNode *self = tree_editor_get_active (editor.tree_editor);
+  GeglNode *parent = gegl_parent (self);
+
+  if (g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
+    {
+      gegl_remove_item (parent);
+      g_print ("removed item\n");
+    }
+  return 0;
+}
+
 static gint set_state (gint argc, char **argv)
 {
   if (argv[1]==NULL)

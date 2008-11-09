@@ -403,6 +403,17 @@ add_sibling_op (GtkAction *action, gpointer userdata)
   gtk_tree_selection_select_iter (tree_selection, &iter);
 }
 
+
+void gegl_remove_item (GeglNode *node);
+void gegl_remove_item (GeglNode *node)
+{
+  /* hack hack */
+  tree_editor_set_active (editor.tree_editor, node);
+  remove_itm (NULL, tree_editor_get_treeview (editor.tree_editor));
+  node = tree_editor_get_active (editor.tree_editor);
+  property_editor_rebuild (editor.property_editor, node);
+}
+
 GeglNode *gegl_add_sibling (const gchar *type)
 {
   GeglNode *node;

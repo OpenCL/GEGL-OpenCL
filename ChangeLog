@@ -1,5 +1,14 @@
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-tree-editor-action.c: (gegl_remove_item): added a function
+	to remove a node from the tree programatically.
+	* bin/editor.c: (remove_item): hooked the remove action up to remove
+	the parent of the currently selected item, this should remove the
+	selected drawable, and it's filters as well since they are the
+	children of the parent (the composite op).
+
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-config.c: (gegl_config_init): changed tile size to 64x128
 	* gegl/operation/gegl-operation-point-filter.c: 
 	(gegl_operation_point_filter_class_init): do not cache results of
