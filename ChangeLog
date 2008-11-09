@@ -1,20 +1,19 @@
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-config.c: (gegl_config_init): changed tile size to 64x128
+	* gegl/operation/gegl-operation-point-filter.c: 
+	(gegl_operation_point_filter_class_init): do not cache results of
+	point filters.
+	* gegl/property-types/gegl-path.c: (gegl_param_vector_init),
+	(gegl_path_stroke): clear only the region bein rerendered.
+	* operations/external/fill.c: (gegl_chant_class_init): do not cache
+	fills, as they are cheap to redo.
+
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/svg-12-porter-duff.rb: made the output
 	boundingbox of src-in op be the bounding box of input only. This
 	makes the dropshadow op have save extents again.
-
-2008-11-08  Øyvind Kolås  <pippin@gimp.org>
-
-	* gegl/operation/gegl-operation-point-composer.c:
-	(gegl_operation_point_composer_class_init): enable caching.
-	* gegl/operation/gegl-operation-point-render.c:
-	(gegl_operation_point_render_class_init): enable caching.
-
-	* gegl/property-types/gegl-path.c: (gegl_param_vector_init):
-	* gegl/operation/gegl-operation-context.c: indentation.
-	* gegl/buffer/gegl-buffer.c: (gegl_buffer_create_sub_buffer):
-	extra sanity (XXX)
 
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 

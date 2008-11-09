@@ -873,7 +873,7 @@ struct _GeglParamPath
 static void
 gegl_param_vector_init (GParamSpec *self)
 {
-  GEGL_PARAM_PATH (self)->default_vector = NULL;
+  GEGL_PARAM_PATH (self)->default_vector = gegl_path_new ();
 }
 
 static void
@@ -1933,7 +1933,6 @@ void gegl_path_stroke (GeglBuffer *buffer,
                        gdouble     opacity)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
-  GeglRectangle bufext;
   gfloat traveled_length = 0;
   gfloat need_to_travel = 0;
   gfloat x = 0,y = 0;
@@ -1959,13 +1958,13 @@ void gegl_path_stroke (GeglBuffer *buffer,
   extent.width = ceil (xmax) - extent.x;
   extent.height = ceil (ymax) - extent.y;
 
-  bufext = *gegl_buffer_get_extent (buffer);
-
+  if (!gegl_rectangle_intersect (&extent, &extent, clip_rect))
+   {
+     return;
+   }
   if (gegl_buffer_is_shared (buffer))
-  while (!gegl_buffer_try_lock (buffer));
+    while (!gegl_buffer_try_lock (buffer));
 
-  if (!gegl_rectangle_intersect (&extent, &bufext, &bufext))
-    return;
   gegl_buffer_clear (buffer, &extent);
 
   while (iter)

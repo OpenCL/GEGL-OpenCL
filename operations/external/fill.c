@@ -173,6 +173,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->detect = detect;
 
+  operation_class->no_cache = TRUE;
   operation_class->name        = "gegl:fill";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a fill of the provided GeglPath in a given color");
