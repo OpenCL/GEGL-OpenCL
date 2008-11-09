@@ -5,6 +5,23 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots.
 
+Changes in GEGL 0.0.21
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • GeglOperation
+   • operations now carry a prefix in their name, the native GEGL ops
+     now all start with "gegl:"
+   • gegl:opacity - combine value and aux mask input when both are available.
+ • GeglPath
+   • Vector graphics infrastructure, supporting poly lines, beziers and
+     from application extendable with cornu curves and other types of
+     nodes for the paths. Also support for variable line widths.
+ • GeglBuffer
+   • Profiling motivated speed ups in data reading/writing.
+
+Contributions from:
+  Hubert Figuiere, Sven Neumann, Øyvind Kolås, Michael Natterer, Kevin Cozens,
+  Sam Hocevar, Martin Nordholts, Manish Singh
+
 Changes in GEGL 0.0.20
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Build and code clean ups and fixes.

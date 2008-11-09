@@ -1,3 +1,13 @@
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: created draft NEWS from ChangeLog entries.
+
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-point-composer.c:
+	(gegl_operation_point_composer_class_init): enable caching for point
+	composers.
+
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-config.c: (gegl_config_init): increased the default
