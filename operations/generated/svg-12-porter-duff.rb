@@ -47,9 +47,6 @@ a = [
       ['dst_over',      'cB + cA * (1 - aB)',
                         'aA + aB - aA * aB',
                         '*D = *B + g4float_mul (*A, 1.0 - g4floatA(*B))'],
-      ['src_in',        'cA * aB',  # this one had special treatment wrt rectangles in deleted file porter-duff.rb before the svg ops came in, perhaps that was with good reason? /pippin
-                        'aA * aB',
-                        '*D = g4float_mul(*A,  g4floatA(*B))'],
       ['dst_in',        'cB * aA', # <- XXX: typo?
                         'aA * aB', 
                         '*D = g4float_mul (*B, g4floatA(*A))'],
@@ -70,6 +67,10 @@ a = [
                         'aA + aB - 2 * aA * aB',
                         '*D = *A * *B'] # FIXME this is wrong
     ]
+
+b = [ ['src_in',        'cA * aB',  # the bounding box of this mode is the
+                        'aA * aB',  # bounding box of the input only.
+                        '*D = g4float_mul(*A,  g4floatA(*B))']]
 
 file_head1 = '
 #include "config.h"
@@ -229,3 +230,107 @@ process_simd (GeglOperation       *op,
   file.close
 end
 
+
+
+
+
+b.each do
+    |item|
+
+    name     = item[0] + ''
+    name.gsub!(/_/, '-')
+    filename = name + '.c'
+
+    puts "generating #{filename}"
+    file = File.open(filename, 'w')
+
+    capitalized = name.capitalize
+    swapcased   = name.swapcase
+    c_formula   = item[1]
+    a_formula   = item[2]
+    sse_formula = item[3]
+
+    file.write copyright
+    file.write file_head1
+    file.write "
+#define GEGL_CHANT_TYPE_POINT_COMPOSER
+#define GEGL_CHANT_C_FILE        \"#{filename}\"
+
+#include \"gegl-chant.h\"
+"
+    file.write file_head2
+    file.write "
+  for (i = 0; i < n_pixels; i++)
+    {
+      gint   j;
+      gfloat aA, aB, aD;
+
+      aB = in[3];
+      aA = aux[3];
+      aD = #{a_formula};
+
+      for (j = 0; j < 3; j++)
+        {
+          gfloat cA, cB;
+
+          cB = in[j];
+          cA = aux[j];
+          out[j] = #{c_formula};
+        }
+      out[3] = aD;
+      in  += 4;
+      aux += 4;
+      out += 4;
+    }
+  return TRUE;
+}
+
+#ifdef HAS_G4FLOAT
+
+static gboolean
+process_simd (GeglOperation       *op,
+              void                *in_buf,
+              void                *aux_buf,
+              void                *out_buf,
+              glong                n_pixels,
+              const GeglRectangle *roi)
+{
+  g4float *A = aux_buf;
+  g4float *B = in_buf;
+  g4float *D = out_buf;
+
+  if (B==NULL || n_pixels == 0)
+    return TRUE;
+    
+  while (n_pixels--)
+    {
+      #{sse_formula};
+
+      A++; B++; D++;
+    }
+
+  return TRUE;
+}
+
+#endif
+
+
+static GeglRectangle get_bounding_box (GeglOperation *self)
+{
+  GeglRectangle  result   = { 0, 0, 0, 0 };
+  GeglRectangle *in_rect  = gegl_operation_source_get_bounding_box (self, \"input\");
+  return *in_rect;
+}
+
+
+"
+  file.write file_tail1
+  file.write "
+  operation_class->name        = \"gegl:#{name}\";
+  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->description =
+        _(\"Porter Duff operation #{name} (d = #{c_formula})\");
+"
+  file.write file_tail2
+  file.close
+end
