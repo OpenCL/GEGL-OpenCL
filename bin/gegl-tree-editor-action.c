@@ -403,6 +403,27 @@ add_sibling_op (GtkAction *action, gpointer userdata)
   gtk_tree_selection_select_iter (tree_selection, &iter);
 }
 
+void gegl_move_item_up (GeglNode *node);
+void gegl_move_item_up (GeglNode *node)
+{
+  /* hack hack */
+  tree_editor_set_active (editor.tree_editor, node);
+  move_up (NULL, tree_editor_get_treeview (editor.tree_editor));
+  node = tree_editor_get_active (editor.tree_editor);
+  property_editor_rebuild (editor.property_editor, node);
+}
+
+
+void gegl_move_item_down (GeglNode *node);
+void gegl_move_item_down (GeglNode *node)
+{
+  /* hack hack */
+  tree_editor_set_active (editor.tree_editor, node);
+  move_down (NULL, tree_editor_get_treeview (editor.tree_editor));
+  node = tree_editor_get_active (editor.tree_editor);
+  property_editor_rebuild (editor.property_editor, node);
+}
+
 
 void gegl_remove_item (GeglNode *node);
 void gegl_remove_item (GeglNode *node)
