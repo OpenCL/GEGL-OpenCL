@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-    <!--
   <node operation='gegl:over'>
       <node operation='gegl:shift'>
           <params>
@@ -221,5 +220,4 @@
       <clone ref='clone2'/>
   </node>
   <clone ref='clone0'/>
-  -->
 </gegl>
