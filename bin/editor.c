@@ -1285,10 +1285,40 @@ gui_press_event (GtkWidget      *widget,
                     GdkEventButton *event,
                     gpointer        data)
 {
+  if (tools.menu_active)
+    {
+        {
+          if (event->button==1)
+            {
+              gint active = tools.menu_segment_active;
+              if (active >= 0)
+                {
+                  void (*cb) (gpointer) = (void*)tools.menu_segment_callback[active];
+
+                  if (cb)
+                   cb (tools.menu_segment_userdata[active]);
+                }
+            }
+          gtk_widget_queue_draw (widget);
+          tools.menu_active = FALSE;
+          return TRUE;
+        }
+    }
   if (event->button == 3)
     {
       if (tools.menu_active)
         {
+          gint active = tools.menu_segment_active;
+
+          tools.menu_active = FALSE;
+          if (active >= 0)
+            {
+              void (*cb) (gpointer) = (void*)tools.menu_segment_callback[active];
+
+              if (cb)
+               cb (tools.menu_segment_userdata[active]);
+            }
+          gtk_widget_queue_draw (widget);
           tools.menu_active = FALSE;
         }
       else
@@ -1533,6 +1563,7 @@ gui_release_event (GtkWidget      *widget,
 {
   if (tools.menu_active)
       {
+#if 0
         gint active = tools.menu_segment_active;
 
         tools.menu_active = FALSE;
@@ -1544,6 +1575,7 @@ gui_release_event (GtkWidget      *widget,
              cb (tools.menu_segment_userdata[active]);
           }
         gtk_widget_queue_draw (widget);
+#endif
       }
 
   switch (tools.state)
