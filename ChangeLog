@@ -1,3 +1,8 @@
+2008-11-10  Sven Neumann  <sven@gimp.org>
+
+	* operations/external/ff-load.c: fix include path for avformat.h.
+	The pkg-config file will pull in the proper include path for us.
+
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: (raise_item), (gui_press_event): renamed raise command
