@@ -1,5 +1,10 @@
 2008-11-10  Sven Neumann  <sven@gimp.org>
 
+	* configure.ac: test for the presence of avformat.h in the
+	expected location.
+
+2008-11-10  Sven Neumann  <sven@gimp.org>
+
 	* configure.in: added --without-libavformat option to disable build
 	of the FFmpeg video frame operations.
 

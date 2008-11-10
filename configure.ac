@@ -775,6 +775,13 @@ if test "x$with_libavformat" != xno; then
   PKG_CHECK_MODULES(AVFORMAT, libavformat libavcodec,
     have_libavformat="yes",
     have_libavformat="no  (libavformat not found)")
+  if test "x$have_libavformat" = "xyes"; then
+    gegl_save_CPPFLAGS=$CPPFLAGS
+    CPPFLAGS="$AVFORMAT_CFLAGS $CPPFLAGS"
+    AC_CHECK_HEADER([libavformat/avformat.h], ,
+      [have_libavformat="no  (avformat.h not found where expected)"])
+    CPPFLAGS=$gegl_save_CPPFLAGS
+  fi
 else
   have_libavformat="no  (disabled)"
 fi
