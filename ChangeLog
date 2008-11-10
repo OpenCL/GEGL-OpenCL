@@ -1,5 +1,14 @@
 2008-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.c: (gegl_rectangle_expand),
+	(node_invalidated), (gegl_cache_invalidate):  expand invalidated
+	regions to be align with coordinates divisible by 8 in both
+	directions. This improves improves the performance of GeglProcessor
+	when it iterates the resulting dirtied rectangles in the GeglRegion.
+	* gegl/property-types/gegl-path.c: removed similar expansion.
+
+2008-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (cairo_gui_expose), (gui_press_event): made the pie
 	menu a bit more friendly.
 

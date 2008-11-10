@@ -1373,25 +1373,6 @@ gegl_path_append (GeglPath *self,
           rect.y=y1;
           rect.height = y0-y1;
         }
-
-      {
-        gint x0,y0,x1,y1;
-        x0 = rect.x;
-        y0 = rect.y;
-        x1 = x0 + rect.width;
-        y1 = y0 + rect.height;
-
-        x0 = x0 & (0xffffff-15);
-        y0 = y0 & (0xffffff-15);
-
-        x1 = (x1+15) & (0xffffff-15);
-        y1 = (y1+15) & (0xffffff-15);
-
-        rect.x=x0;
-        rect.y=y0;
-        rect.width = x1-x0;
-        rect.height = y1-y0;
-      }
       
       if (priv->length_clean)
         priv->length += len;

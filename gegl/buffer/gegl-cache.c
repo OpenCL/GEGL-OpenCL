@@ -84,6 +84,31 @@ gegl_cache_constructor (GType                  type,
   return object;
 }
 
+/* expand invalidated regions to be align with coordinates divisible by 8 in both
+ * directions. This improves improves the performance of GeglProcessor when it
+ * iterates the resulting dirtied rectangles in the GeglRegion.
+ */
+static GeglRectangle gegl_rectangle_expand (const GeglRectangle *rectangle)
+{
+  gint align = 8;
+  GeglRectangle expanded = *rectangle;
+  gint xdiff;
+  gint ydiff;
+
+  xdiff = expanded.x % align;
+  expanded.width += xdiff;
+  expanded.x -= xdiff;
+  xdiff = align -(expanded.width % align);
+  expanded.width += xdiff;
+
+  ydiff = expanded.y % align;
+  expanded.height += ydiff;
+  expanded.y -= ydiff;
+  ydiff = align -(expanded.height % align);
+  expanded.height += ydiff;
+
+  return expanded;
+}
 
 static void
 gegl_cache_class_init (GeglCacheClass *klass)
@@ -204,15 +229,16 @@ node_invalidated (GeglNode            *source,
                   gpointer             data)
 {
   GeglCache *cache = GEGL_CACHE (data);
+  GeglRectangle expanded = gegl_rectangle_expand (rect);
 
   {
     GeglRegion *region;
-    region = gegl_region_rectangle (rect);
+    region = gegl_region_rectangle (&expanded);
     gegl_region_subtract (cache->valid_region, region);
     gegl_region_destroy (region);
   }
 
-  g_signal_emit_by_name (cache, "invalidated", rect, NULL);
+  g_signal_emit_by_name (cache, "invalidated", &expanded, NULL);
 }
 
 static void
@@ -340,10 +366,14 @@ gegl_cache_invalidate (GeglCache           *self,
       g_warning ("XXX: full invalidation of GeglCache NYI\n");
     }
 #endif
+
+
   if (roi)
     {
+      GeglRectangle expanded = gegl_rectangle_expand (roi);
+
       GeglRegion *temp_region;
-      temp_region = gegl_region_rectangle (roi);
+      temp_region = gegl_region_rectangle (&expanded);
       gegl_region_subtract (self->valid_region, temp_region);
       gegl_region_destroy (temp_region);
       g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
