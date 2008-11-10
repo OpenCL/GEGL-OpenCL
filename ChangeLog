@@ -1,5 +1,10 @@
 2008-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (cairo_gui_expose), (gui_press_event): made the pie
+	menu a bit more friendly.
+
+2008-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (gui_press_event), (gui_release_event): made pie menu
 	remain visible on right mouse button release. After it is brought up
 	it is activate with left mouse button click inside the pies, all other

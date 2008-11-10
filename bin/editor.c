@@ -130,7 +130,7 @@ Editor editor;
 
 static gchar *blank_composition =
     "<gegl>"
-        "<color value='white'/>"
+        "<gegl:color value='white'/>"
     "</gegl>";
 
 static void gegl_editor_update_title (void);
@@ -1125,12 +1125,26 @@ static gboolean cairo_gui_expose (GtkWidget *widget,
                                          (segment+0.5)*(3.1415*2)/segments);
             cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 1.0);
 
-            cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
+            cairo_save (cr);
+
+            cairo_select_font_face (cr, "DejaVu Sans", CAIRO_FONT_SLANT_NORMAL,
                                                 CAIRO_FONT_WEIGHT_NORMAL);
-            cairo_set_font_size (cr, 20);
+            cairo_set_font_size (cr, 40);
             cairo_text_extents (cr, tools.menu_segment_label[segment], &text_extents);
             cairo_rel_move_to (cr, -text_extents.width/2, +text_extents.height/2);
             cairo_show_text (cr, tools.menu_segment_label[segment]);
+
+            cairo_restore (cr);
+
+            if (segment == tools.menu_segment_active)
+              {
+                cairo_select_font_face (cr, "DejaVu Sans", CAIRO_FONT_SLANT_NORMAL,
+                                                    CAIRO_FONT_WEIGHT_NORMAL);
+                cairo_set_font_size (cr, 15);
+                cairo_text_extents (cr, tools.menu_segment_userdata[segment], &text_extents);
+                cairo_rel_move_to (cr, -text_extents.width/2, +text_extents.height/2 + 20);
+                cairo_show_text (cr, tools.menu_segment_userdata[segment]);
+              }
           }
       }
 
@@ -1340,32 +1354,36 @@ gui_press_event (GtkWidget      *widget,
             
             switch (tools.state)
               {
-                case STATE_MOVE:
-                  menu_add ("paint", G_CALLBACK (do_command), "set-state strokes");
-                  menu_add ("path",  G_CALLBACK (do_command), "set-state edit-nodes");
-                  menu_add ("raise",  G_CALLBACK (do_command), "raise-item");
-                  menu_add ("lower",  G_CALLBACK (do_command), "lower");
-                  menu_add ("width",  G_CALLBACK (do_command), "set-state edit-width");
-                  menu_add ("remove",  G_CALLBACK (do_command), "remove-item");
+                case STATE_MOVE: /* � ￼ */
+                  menu_add ("✐", G_CALLBACK (do_command), "set-state strokes");
+                  menu_add ("~",  G_CALLBACK (do_command), "set-state edit-nodes");
+                  menu_add ("↓",  G_CALLBACK (do_command), "lower");
+                  menu_add ("↑",  G_CALLBACK (do_command), "raise-item");
+                  menu_add ("☠",  G_CALLBACK (do_command), "remove-item");
                   /* check the current curve type,. */
                   break;
                 case STATE_EDIT_NODES:
                   menu_add ("+", G_CALLBACK (do_command), "insert-node");
-                  menu_add ("del", G_CALLBACK (do_command), "remove-node");
-                  menu_add ("--", G_CALLBACK (do_command), "help");
-                  menu_add ("smooth", G_CALLBACK (do_command), "help");
-                  menu_add ("spiro", G_CALLBACK (do_command), "help");
-                  menu_add ("move", G_CALLBACK (do_command), "set-state move");
+                  menu_add ("☠", G_CALLBACK (do_command), "remove-node");
+                  menu_add ("⚡",  G_CALLBACK (do_command), "set-state edit-width");
+                  menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
+                  break;
+                case STATE_STROKES:
+                  menu_add ("~",  G_CALLBACK (do_command), "set-state edit-nodes");
+                  menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
                   break;
                 case STATE_EDIT_WIDTH:
-                case STATE_STROKES:
+                  menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
+                  menu_add ("✍", G_CALLBACK (do_command), "set-state strokes");
+                  break;
                 case STATE_EDIT_OPACITY:
+                  menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
+                  menu_add ("✍", G_CALLBACK (do_command), "set-state strokes");
+                  break;
                 case STATE_FREE_REPLACE:
                 default:
-                  menu_add ("paint", G_CALLBACK (do_command), "set-state strokes");
-                  menu_add ("path",  G_CALLBACK (do_command), "set-state edit-nodes");
-                  menu_add ("width",  G_CALLBACK (do_command), "set-state edit-width");
-                  menu_add ("move",  G_CALLBACK (do_command), "set-state move");
+                  menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
+                  menu_add ("✍", G_CALLBACK (do_command), "set-state strokes");
                   break;
               }
 
