@@ -85,13 +85,11 @@ endif
 
 EXTRA_DIST=v4lutils/v4lutils.c v4lutils/v4lutils.h
 
-if HAVE_AVCODEC
 if HAVE_AVFORMAT
 ops += ff-load.la
 ff_load_la_SOURCES = ff-load.c
-ff_load_la_LIBADD = $(op_libs) $(AVCODEC_LIBS) $(AVFORMAT_LIBS)
-ff_load_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVFORMAT_CFLAGS)
-endif
+ff_load_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
+ff_load_la_CFLAGS = $(AVFORMAT_CFLAGS)
 endif
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@

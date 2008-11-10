@@ -1,5 +1,17 @@
 2008-11-10  Sven Neumann  <sven@gimp.org>
 
+	* configure.in: added --without-libavformat option to disable build
+	of the FFmpeg video frame operations.
+
+	* operations/external/Makefile.am
+	* operations/workshop/external/Makefile.am: AVCODEC was folded into
+	AVFORMAT.
+
+	* operations/workshop/external/ff-save.c
+	* operations/external/ff-load.c: include <libavformat/avformat.h>.
+
+2008-11-10  Sven Neumann  <sven@gimp.org>
+
 	* operations/external/ff-load.c: fix include path for avformat.h.
 	The pkg-config file will pull in the proper include path for us.
 

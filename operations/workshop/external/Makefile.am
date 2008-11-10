@@ -18,13 +18,11 @@ gtk_display_la_LIBADD  = $(op_libs) $(GTK_LIBS)
 gtk_display_la_CFLAGS  = $(GTK_CFLAGS)
 endif
 
-if HAVE_AVCODEC
 if HAVE_AVFORMAT
 ops += ff_save.la
 ff_save_la_SOURCES = ff-save.c
-ff_save_la_LIBADD = $(op_libs) $(AVCODEC_LIBS) $(AVFORMAT_LIBS)
-ff_save_la_CFLAGS = $(AVCODEC_CFLAGS) $(AVFORMAT_CFLAGS)
-endif
+ff_save_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
+ff_save_la_CFLAGS = $(AVFORMAT_CFLAGS)
 endif
 
 if HAVE_LUA

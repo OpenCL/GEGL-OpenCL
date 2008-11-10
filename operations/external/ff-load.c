@@ -32,7 +32,7 @@ gegl_chant_int (frame, _("Frame"), 0, 1000000, 0, _("frame number"))
 
 #include "gegl-chant.h"
 #include <errno.h>
-#include <avformat.h>
+#include <libavformat/avformat.h>
 
 typedef struct
 {

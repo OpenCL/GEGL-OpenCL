@@ -765,24 +765,20 @@ fi
 AM_CONDITIONAL(HAVE_ASCIIDOC, test "x$have_asciidoc" = "xyes")
 
 
-##########################################
-# Check for avcodec and avformat libraries
-##########################################
+####################################
+# Check for libavformat / libavcodec
+####################################
 
-PKG_CHECK_MODULES(AVCODEC, libavcodec,
-  have_libavcodec="yes",
-  have_libavcodec="no  (usable libavcodec not found)")
-AM_CONDITIONAL(HAVE_AVCODEC, test "x$have_libavcodec" = "xyes")
- 
-PKG_CHECK_MODULES(AVFORMAT, libavformat,
-  have_libavformat="yes",
-  have_libavformat="no  (usable libavformat not found)")
+AC_ARG_WITH(libavformat,  [  --without-libavformat   build without libavformat support])
+
+if test "x$with_libavformat" != xno; then
+  PKG_CHECK_MODULES(AVFORMAT, libavformat libavcodec,
+    have_libavformat="yes",
+    have_libavformat="no  (libavformat not found)")
+else
+  have_libavformat="no  (disabled)"
+fi
 AM_CONDITIONAL(HAVE_AVFORMAT, test "x$have_libavformat" = "xyes")
-
-AC_SUBST(AVCODEC_CFLAGS) 
-AC_SUBST(AVCODEC_LIBS) 
-AC_SUBST(AVFORMAT_CFLAGS) 
-AC_SUBST(AVFORMAT_LIBS) 
 
 
 ###############
@@ -924,7 +920,6 @@ Optional dependencies:
   asciidoc:       $have_asciidoc
   enscript:       $have_enscript
   graphviz:       $have_graphviz
-  avcodec:        $have_libavcodec
   avformat:       $have_libavformat
   V4L:            $have_v4l
   spiro:          $spiro_ok
