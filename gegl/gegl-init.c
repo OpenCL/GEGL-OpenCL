@@ -36,7 +36,7 @@
 #include <gegl-debug.h>
 
 
-guint gegl_debug_flags = 0; 
+guint gegl_debug_flags = 0;
 
 #include "gegl-instrument.h"
 #include "gegl-init.h"
@@ -90,6 +90,7 @@ gegl_swap_dir (void)
           swapdir = NULL;
         }
     }
+
   return swapdir;
 };
 
@@ -165,32 +166,32 @@ static const GOptionEntry cmd_entries[]=
 {
     {
      "babl-tolerance", 0, 0,
-     G_OPTION_ARG_STRING, &cmd_babl_tolerance, 
+     G_OPTION_ARG_STRING, &cmd_babl_tolerance,
      N_("babls error tolerance, a value beteen 0.2 and 0.000000001"), "<float>"
     },
     {
      "gegl-swap", 0, 0,
-     G_OPTION_ARG_STRING, &cmd_gegl_swap, 
+     G_OPTION_ARG_STRING, &cmd_gegl_swap,
      N_("Where GEGL stores it's swap"), "<uri>"
     },
     {
-     "gegl-cache-size", 0, 0, 
-     G_OPTION_ARG_STRING, &cmd_gegl_cache_size, 
+     "gegl-cache-size", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_gegl_cache_size,
      N_("How much memory to (approximately) use for caching imagery"), "<megabytes>"
     },
     {
-     "gegl-tile-size", 0, 0, 
-     G_OPTION_ARG_STRING, &cmd_gegl_tile_size, 
+     "gegl-tile-size", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_gegl_tile_size,
      N_("Default size of tiles in GeglBuffers"), "<widthxheight>"
     },
     {
-     "gegl-chunk-size", 0, 0, 
-     G_OPTION_ARG_STRING, &cmd_gegl_chunk_size, 
+     "gegl-chunk-size", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_gegl_chunk_size,
      N_("The count of pixels to compute simulantous"), "pixel count"
     },
     {
-     "gegl-quality", 0, 0, 
-     G_OPTION_ARG_STRING, &cmd_gegl_quality, 
+     "gegl-quality", 0, 0,
+     G_OPTION_ARG_STRING, &cmd_gegl_quality,
      N_("The quality of rendering a value between 0.0(fast) and 1.0(reference)"), "<quality>"
     },
     { NULL }
@@ -227,9 +228,9 @@ GObject *gegl_config (void)
     {
       config = g_object_new (GEGL_TYPE_CONFIG, NULL);
       if (g_getenv ("GEGL_QUALITY"))
-        config->quality = atof(g_getenv("GEGL_QUALITY")); 
+        config->quality = atof(g_getenv("GEGL_QUALITY"));
       if (g_getenv ("GEGL_CACHE_SIZE"))
-        config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024; 
+        config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024;
       if (g_getenv ("GEGL_CHUNK_SIZE"))
         config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
       if (g_getenv ("GEGL_TILE_SIZE"))
@@ -256,42 +257,46 @@ static gboolean
 pid_is_running (gint pid)
 {
   gchar buf[512];
-  g_sprintf (buf, "/proc/%i", pid);
+  g_snprintf (buf, sizeof (buf), "/proc/%i", pid);
   return g_file_test (buf, G_FILE_TEST_EXISTS);
 }
 
 
 static void swap_clean (void)
-{ 
-  GDir         *dir     = g_dir_open (gegl_swap_dir (), 0, NULL);
-  gchar        *glob    = g_strdup_printf ("*");
-  GPatternSpec *pattern = g_pattern_spec_new (glob);
-  g_free (glob);
+{
+  const gchar  *swap_dir = gegl_swap_dir ();
+  GDir         *dir;
+
+  if (! swap_dir)
+    return;
+
+  dir = g_dir_open (gegl_swap_dir (), 0, NULL);
 
   if (dir != NULL)
     {
-      const gchar *name;
+      GPatternSpec *pattern = g_pattern_spec_new ("*");
+      const gchar  *name;
 
       while ((name = g_dir_read_name (dir)) != NULL)
         {
           if (g_pattern_match_string (pattern, name))
             {
               gint readpid = atoi (name);
-                  
+
               if (!pid_is_running (readpid))
                 {
                   gchar *fname = g_build_filename (gegl_swap_dir (),
-                                                       name,
-                                                       NULL);
+                                                   name,
+                                                   NULL);
                   g_unlink (fname);
                   g_free (fname);
                 }
             }
          }
-       g_dir_close (dir);
-    }
 
- g_pattern_spec_free (pattern);
+      g_pattern_spec_free (pattern);
+      g_dir_close (dir);
+    }
 }
 
 
@@ -337,7 +342,7 @@ gegl_exit (void)
     g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
   gegl_tile_cache_destroy ();
 
-  if (gegl_swap_dir())
+  if (gegl_swap_dir ())
     {
       /* remove all files matching <$GEGL_SWAP>/GEGL-<pid>-*.swap */
 
@@ -385,19 +390,19 @@ gegl_init_i18n (void)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 }
 
-void     
-gegl_get_version (int *major,   
-                  int *minor,   
-                  int *micro)   
-{       
-  if (major != NULL)    
-    *major = GEGL_MAJOR_VERSION;        
-                 
-  if (minor != NULL)    
-    *minor = GEGL_MINOR_VERSION;        
-                 
-  if (micro != NULL)    
-    *micro = GEGL_MICRO_VERSION;        
+void
+gegl_get_version (int *major,
+                  int *minor,
+                  int *micro)
+{
+  if (major != NULL)
+    *major = GEGL_MAJOR_VERSION;
+
+  if (minor != NULL)
+    *minor = GEGL_MINOR_VERSION;
+
+  if (micro != NULL)
+    *micro = GEGL_MICRO_VERSION;
 }
 
 

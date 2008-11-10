@@ -1,5 +1,10 @@
 2008-11-10  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-init.c (swap_clean): gegl_swap_dir() may return NULL,
+	so don't pass the return value unchecked to g_dir_open().
+
+2008-11-10  Sven Neumann  <sven@gimp.org>
+
 	* configure.ac: test for the presence of avformat.h in the
 	expected location.
 
