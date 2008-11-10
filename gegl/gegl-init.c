@@ -33,6 +33,25 @@
 #include <process.h>
 #endif
 
+#ifdef G_OS_WIN32
+
+  /*I guess what is below doesn't work on win32 ...
+  or does it overlap with posix here somehow?*/
+  eeeeeek();
+
+#else
+
+#include <sys/types.h>
+#include <signal.h>
+
+static inline gboolean
+pid_is_running (gint pid)
+{
+  return (kill (pid, 0) == 0);
+}
+#endif
+
+
 #include <gegl-debug.h>
 
 
@@ -252,14 +271,6 @@ void gegl_tile_backend_ram_stats (void);
 void gegl_tile_backend_tiledir_stats (void);
 #endif
 void gegl_tile_backend_file_stats (void);
-
-static gboolean
-pid_is_running (gint pid)
-{
-  gchar buf[512];
-  g_snprintf (buf, sizeof (buf), "/proc/%i", pid);
-  return g_file_test (buf, G_FILE_TEST_EXISTS);
-}
 
 
 static void swap_clean (void)
