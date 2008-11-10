@@ -91,6 +91,7 @@ struct _Tools
    * at a time for now
    */
   gboolean  menu_active;
+
   gdouble   menux;
   gdouble   menuy;
 
@@ -1064,6 +1065,26 @@ static gboolean cairo_gui_expose (GtkWidget *widget,
         cairo_expose_width (widget, event, user_data);
         break;
       case STATE_STROKES:
+#if 0
+        {
+          gint x, y;
+          gdouble scale;
+          cairo_t *cr = gdk_cairo_create (widget->window);
+          g_object_get (G_OBJECT (widget),
+                        "x", &x,
+                        "y", &y,
+                        "scale", &scale,
+                        NULL);
+
+          cairo_translate (cr, -x, -y);
+          cairo_set_source_rgba (cr, 1.0, 0.0, 1.0, 1.0);
+
+          cairo_move_to (cr, 10, 10);
+          cairo_rectangle (cr, 10, 10, 100, 100);
+          cairo_fill (cr);
+          cairo_destroy (cr);
+        }
+#endif
         break;
       case STATE_EDIT_OPACITY:
       case STATE_FREE_REPLACE:
@@ -1165,45 +1186,23 @@ stroke_press_event (GtkWidget      *widget,
   gdouble tx, ty;
   gdouble ex, ey;
 
-  GeglPath *vector;
-
   g_object_get (G_OBJECT (widget),
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
                 NULL);
-  gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
 
-  ex = (event->x + x) / scale - tx;
-  ey = (event->y + y) / scale - ty;
-
-  gegl_node_get (GEGL_NODE (tools.node), "path", &vector, NULL);
-
-  gegl_path_clear (vector);
-  gegl_path_append (vector, 'M', ex, ey);
-  tools.in_drag = TRUE;
-#if USE_DYNAMICS
-  tools.width_path = gegl_path_add_parameter_path (vector, "linewidth");
-#endif
-  g_object_unref (vector);
-  return TRUE;
-}
-
-static gboolean
-stroke_release_event (GtkWidget      *widget,
-                      GdkEventButton *event,
-                      gpointer        dataa)
-{
+    {
   GeglNode *stroke;
-  GeglColor *color = gegl_color_new ("red");
+  GeglColor *color = gegl_color_new ("black");
 
   /* if our parent is an over op, insert our own over op before
    * that over op
    */
-  GeglNode *self = tree_editor_get_active (editor.tree_editor);
+  GeglNode *self = tools.node;
   GeglNode *parent = gegl_parent (self);
 
-  if (g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
+  if (parent && g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
     {
 
       GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
@@ -1219,13 +1218,46 @@ stroke_release_event (GtkWidget      *widget,
       GeglColor *color2;
       gdouble    linewidth;
       gfloat r,g,b,a;
-      gegl_node_get (self, "color", &color2, "linewidth", &linewidth, NULL);
+  
+      if (g_str_equal (gegl_node_get_operation (self), "gegl:stroke"))
+        {
+          gegl_node_get (self, "color", &color2, "linewidth", &linewidth, NULL);
+          gegl_color_get_rgba (color2, &r, &g, &b, &a);
+          gegl_color_set_rgba (color, r,g,b,a);
+        }
+      else
+        {
+          linewidth = 20;
+        }
 
-      gegl_color_get_rgba (color2, &r, &g, &b, &a);
-      gegl_color_set_rgba (color, r,g,b,a);
       gegl_node_set (stroke, "path", tools.path=gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
       tools.node = stroke;
     }
+    }
+
+
+  gegl_node_get_translation (GEGL_NODE (tools.node), &tx, &ty);
+
+  ex = (event->x + x) / scale - tx;
+  ey = (event->y + y) / scale - ty;
+
+  gegl_path_clear (tools.path);
+  gegl_path_append (tools.path, 'M', ex, ey);
+  tools.in_drag = TRUE;
+#if USE_DYNAMICS
+  tools.width_path = gegl_path_add_parameter_path (tools.path, "linewidth");
+#endif
+
+  property_editor_rebuild (editor.property_editor, tools.node);
+
+  return TRUE;
+}
+
+static gboolean
+stroke_release_event (GtkWidget      *widget,
+                      GdkEventButton *event,
+                      gpointer        dataa)
+{
 
   tools.in_drag = FALSE;
   return FALSE;
@@ -1436,6 +1468,8 @@ gui_press_event (GtkWidget      *widget,
       case STATE_EDIT_WIDTH:
         return width_press_event (widget, event, data);
       case STATE_STROKES:
+        if (!tools.node)
+          return FALSE;
         return stroke_press_event (widget, event, data);
       case STATE_EDIT_OPACITY:
       case STATE_FREE_REPLACE:
@@ -1642,16 +1676,11 @@ void editor_set_active (gpointer view, gpointer node)
     {
       GeglPath *vector;
       gegl_node_get (node, "path", &vector, NULL);
+
+      tools.path = vector;
       if (vector)
         {
-          tools.path = vector;
           g_object_unref (vector);
-        }
-      else
-        {
-          vector = gegl_path_new ();
-          gegl_node_set (node, "path", vector, NULL);
-          tools.path = vector;
         }
     }
   else
