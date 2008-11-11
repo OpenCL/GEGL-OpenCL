@@ -529,6 +529,7 @@ struct _GeglPathPrivate
 
   GeglRectangle dirtied;
   GeglRectangle cached_extent;
+  gint frozen;
 };
 
 static GeglPathList *ensure_tail (GeglPathPrivate *priv)
@@ -594,6 +595,22 @@ static gint compare_ints (gconstpointer a,
                           gconstpointer b)
 {
   return GPOINTER_TO_INT (a)-GPOINTER_TO_INT (b);
+}
+
+static void
+gegl_path_emit_changed (GeglPath            *self,
+                        const GeglRectangle *bounds);
+
+void gegl_path_freeze (GeglPath *path)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  priv->frozen ++;
+}
+void gegl_path_thaw (GeglPath *path)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  priv->frozen --;
+  gegl_path_emit_changed (path, NULL); /* expose a full changed */
 }
 
 static void ensure_flattened (GeglPath *vector)
@@ -678,6 +695,9 @@ gegl_path_emit_changed (GeglPath            *self,
   gdouble max_x;
   gdouble min_y;
   gdouble max_y;
+
+  if (priv->frozen)
+    return;
 
   gegl_path_get_bounds (self, &min_x, &max_x, &min_y, &max_y);
 

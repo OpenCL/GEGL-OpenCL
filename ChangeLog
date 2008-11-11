@@ -1,5 +1,12 @@
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.[ch]: (gegl_path_freeze),
+	(gegl_path_thaw), (gegl_path_emit_changed): added freeze and thaw
+	functions to the path, the full extent of the path fill be invalidated
+	upon the final thaw. Recursive hypothermia is permitted.
+
+2008-11-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (sumdist), (path_smoothen), (stroke_release_event),
 	(gui_press_event): add a very simple, rather broken, slow, path
 	smoothener.

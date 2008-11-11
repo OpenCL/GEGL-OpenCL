@@ -206,6 +206,8 @@ void gegl_path_stroke (GeglBuffer *buffer,
                        gdouble     hardness,
                        gdouble     opacity);
 
+void gegl_path_freeze (GeglPath *path);
+void gegl_path_thaw (GeglPath *path);
 
 
 G_END_DECLS
