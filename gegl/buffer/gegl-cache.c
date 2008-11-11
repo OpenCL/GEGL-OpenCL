@@ -96,12 +96,16 @@ static GeglRectangle gegl_rectangle_expand (const GeglRectangle *rectangle)
   gint ydiff;
 
   xdiff = expanded.x % align;
+  if (xdiff < 0)
+    xdiff = align + xdiff;
   expanded.width += xdiff;
   expanded.x -= xdiff;
   xdiff = align -(expanded.width % align);
   expanded.width += xdiff;
 
   ydiff = expanded.y % align;
+  if (ydiff < 0)
+    ydiff = align + ydiff;
   expanded.height += ydiff;
   expanded.y -= ydiff;
   ydiff = align -(expanded.height % align);

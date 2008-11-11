@@ -1,3 +1,8 @@
+2008-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-cache.c: (gegl_rectangle_expand): fix expansion for
+	negative x,y coordinates.
+
 2008-11-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: Made the use of the stroke tool a bit saner. The
