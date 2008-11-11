@@ -30,10 +30,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <gegl.h>
 
 #include "gegl-bin-gui-types.h"
 
-#include "gegl.h"
 
 #include "editor-optype.h"
 #include "gegl-node-editor.h"
@@ -409,8 +409,18 @@ fill_press_event (GtkWidget      *widget,
 
       switch (prev_knot->type)
         {
-          case '*':
+          case 'v':
 foo:
+            {
+              GeglPathItem knot = {'v', {{ex, ey}}};
+              gegl_path_insert (vector, -1, &knot);
+              tools.selected_no = tools.drag_no = n;
+              tools.drag_sub = 0;
+              tools.prevx = ex;
+              tools.prevy = ey;
+            }
+            break;
+          case '*':
             {
               GeglPathItem knot = {'*', {{ex, ey}}};
               gegl_path_insert (vector, -1, &knot);
@@ -423,7 +433,7 @@ foo:
           case 'o':
           case 'O':
             {
-              GeglPathItem knot = {'o', {{ex, ey}}};
+              GeglPathItem knot = {'O', {{ex, ey}}};
               gegl_path_insert (vector, -1, &knot);
               tools.selected_no = tools.drag_no = n;
               tools.drag_sub = 0;

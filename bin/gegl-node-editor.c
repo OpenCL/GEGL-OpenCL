@@ -27,11 +27,10 @@
 
 #include "gegl-bin-gui-types.h"
 
-#include "gegl.h"
+#include <gegl.h>
 
 #include "gegl-node-editor.h"
 #include "gegl-paramspecs.h"
-#include "gegl-path.h"
 
 
 enum

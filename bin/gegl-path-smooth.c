@@ -17,7 +17,7 @@
  */
 
 #include "gegl-path-smooth.h"
-#include <gegl/gegl.h>
+#include <gegl.h>
 #include "gegl-path.h"
 #include <math.h>
 

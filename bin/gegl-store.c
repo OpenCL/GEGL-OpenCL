@@ -17,15 +17,12 @@
  */
 
 #include "config.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <gegl.h>
 
 #include "gegl-bin-gui-types.h"
-
-#include "gegl.h"
-
 #include "gegl-store.h"
 
 

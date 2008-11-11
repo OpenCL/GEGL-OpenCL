@@ -20,11 +20,9 @@
 
 #include <gtk/gtk.h>
 #include <string.h>
+#include <gegl.h>
 
 #include "gegl-bin-gui-types.h"
-
-#include "gegl.h"
-
 #include "editor.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"

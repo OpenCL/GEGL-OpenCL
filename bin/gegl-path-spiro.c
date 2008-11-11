@@ -17,8 +17,7 @@
  */
 
 #include "gegl-path-spiro.h"
-#include <gegl/gegl.h>
-#include "gegl-path.h"
+#include <gegl.h>
 #include <math.h>
 
 #include <spiroentrypoints.h>

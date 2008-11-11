@@ -1,5 +1,16 @@
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h.in: include gegl-path.h
+
+	* bin/editor.c: Clean up includes,.
+	* bin/gegl-node-editor.c: ..
+	* bin/gegl-path-smooth.c: .
+	* bin/gegl-path-spiro.c: .
+	* bin/gegl-store.c:  
+	* bin/gegl-tree-editor-action.c: .
+
+2008-11-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/Makefile.am: install gegl-path.h
 
 2008-11-11  Étienne Bersac  <bersace03@gmail.com>
