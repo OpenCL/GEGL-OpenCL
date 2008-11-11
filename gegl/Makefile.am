@@ -70,4 +70,5 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     buffer/gegl-buffer.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\
+    property-types/gegl-path.h		\
     property-types/gegl-curve.h
