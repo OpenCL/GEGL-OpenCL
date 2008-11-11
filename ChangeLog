@@ -1,5 +1,11 @@
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (sumdist), (path_smoothen), (stroke_release_event),
+	(gui_press_event): add a very simple, rather broken, slow, path
+	smoothener.
+
+2008-11-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/fill.c: (gegl_chant_class_init): cache the
 	result of fills. (ping ponging changes).
 

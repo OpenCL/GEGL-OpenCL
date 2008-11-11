@@ -977,6 +977,83 @@ static gint remove_item (gint argc, char **argv)
   return 0;
 }
 
+static gdouble sumdist (gint n,
+                        gdouble *samples_x,
+                        gdouble *samples_y,
+                        gdouble *samples_x2,
+                        gdouble *samples_y2)
+{
+  gint i;
+  gdouble squaresum =0;
+  for (i=0;i<n;i++)
+    {
+      gdouble dx = samples_x2[i] - samples_x[i];
+      gdouble dy = samples_y2[i] - samples_y[i];
+      squaresum += (dx*dx + dx*dy);
+    }
+  return sqrt (squaresum);
+}
+
+static gint path_smoothen (gint argc, char **argv)
+{
+  GeglPath *path = tools.path;
+  gdouble length = gegl_path_get_length (path);
+  gint     i, n;
+  gdouble  *samples_x;
+  gdouble  *samples_y;
+
+  gdouble  *samples_x2;
+  gdouble  *samples_y2;
+
+  gboolean *skiplist;
+  gint iter = 0;
+
+  n = length / 5;
+
+  samples_x = g_malloc (sizeof (gdouble)* n);
+  samples_y = g_malloc (sizeof (gdouble)* n);
+  samples_x2 = g_malloc (sizeof (gdouble)* n);
+  samples_y2 = g_malloc (sizeof (gdouble)* n);
+  skiplist = g_malloc0 (sizeof (gboolean)* n);
+
+  gegl_path_calc_values (path, n, samples_x, samples_y);
+  gegl_path_freeze (path);
+
+  for (iter=1; iter < n * 0.9 ;iter++)
+    {
+      gint tryno = -1;
+      tryno = g_random_int_range (0, n-1);
+      while (tryno <0 ||
+             skiplist[tryno])
+        tryno++;
+      if (tryno >= n)
+        continue;
+
+      gegl_path_clear (path);
+      for (i=0;i<n;i++)
+        {
+          if (i != tryno && skiplist[i] == FALSE)
+            gegl_path_append (path, 'O', samples_x[i], samples_y[i]);
+        }
+      gegl_path_calc_values (path, n, samples_x2, samples_y2);
+      if (sumdist (n, samples_x, samples_y, samples_x2, samples_y2) < 25)
+        {
+          skiplist[tryno]=TRUE;
+          g_print ("(%2.1f)x", (iter*100.0/n));
+        }
+      else
+          g_print ("[%2.1f]", (iter*100.0/n));
+    }
+
+  g_free (samples_x);
+  g_free (samples_y);
+  g_free (samples_x2);
+  g_free (samples_y2);
+  gegl_path_thaw (path);
+
+  return 0;
+}
+
 static gint set_state (gint argc, char **argv)
 {
   if (argv[1]==NULL)
@@ -1258,11 +1335,9 @@ stroke_release_event (GtkWidget      *widget,
                       GdkEventButton *event,
                       gpointer        dataa)
 {
-
   tools.in_drag = FALSE;
   return FALSE;
 }
-
 
 static gboolean
 stroke_motion_notify_event (GtkWidget      *widget,
@@ -1398,6 +1473,7 @@ gui_press_event (GtkWidget      *widget,
                   menu_add ("+", G_CALLBACK (do_command), "insert-node");
                   menu_add ("☠", G_CALLBACK (do_command), "remove-node");
                   menu_add ("⚡",  G_CALLBACK (do_command), "set-state edit-width");
+                  menu_add ("S",  G_CALLBACK (do_command), "path-smoothen");
                   menu_add ("✜",  G_CALLBACK (do_command), "set-state move");
                   break;
                 case STATE_STROKES:
