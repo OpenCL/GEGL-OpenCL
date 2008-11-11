@@ -1,3 +1,12 @@
+2008-11-11  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: test different ways to include avformat.h and
+	define HAVE_LIBAVFORMAT_AVFORMAT_H accordingly.
+
+	* operations/external/ff-load.c
+	* operations/workshop/external/ff-save.c: include the avformat.h
+	header according to the results of the configure tests.
+
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-cache.c: (gegl_rectangle_expand): fix expansion for

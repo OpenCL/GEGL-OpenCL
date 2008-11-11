@@ -32,7 +32,12 @@ gegl_chant_double (fps, _("FPS"), 0.0, 100.0, 25, _("frames per second"))
 #define GEGL_CHANT_C_FILE       "ff-save.c"
 
 #include "gegl-chant.h"
+
+#ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
 #include <libavformat/avformat.h>
+#else
+#include <avformat.h>
+#endif
 
 typedef struct
 {

@@ -775,11 +775,18 @@ if test "x$with_libavformat" != xno; then
   PKG_CHECK_MODULES(AVFORMAT, libavformat libavcodec,
     have_libavformat="yes",
     have_libavformat="no  (libavformat not found)")
+  # verify the presence of the avformat.h header
   if test "x$have_libavformat" = "xyes"; then
     gegl_save_CPPFLAGS=$CPPFLAGS
     CPPFLAGS="$AVFORMAT_CFLAGS $CPPFLAGS"
-    AC_CHECK_HEADER([libavformat/avformat.h], ,
+    AC_CHECK_HEADER([libavformat/avformat.h],
+      AC_DEFINE(HAVE_LIBAVFORMAT_AVFORMAT_H, 1,
+                [define to 1 if avformat.h is found in libavformat]),
       [have_libavformat="no  (avformat.h not found where expected)"])
+    # on some systems the header needs to be included differently
+    if test "x$have_libavformat" != "xyes"; then
+      AC_CHECK_HEADER([avformat.h], [have_libavformat="yes"])
+    fi
     CPPFLAGS=$gegl_save_CPPFLAGS
   fi
 else
