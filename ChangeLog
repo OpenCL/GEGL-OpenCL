@@ -1,3 +1,8 @@
+2008-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/external/fill.c: (gegl_chant_class_init): cache the
+	result of fills. (ping ponging changes).
+
 2008-11-11  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: test different ways to include avformat.h and
