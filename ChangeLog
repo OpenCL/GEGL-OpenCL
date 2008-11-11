@@ -1,3 +1,7 @@
+2008-11-11  Étienne Bersac  <bersace03@gmail.com>
+
+	* operations/core/convert-format.c: Copy input to output buffer.
+
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: (gegl_path_freeze),
