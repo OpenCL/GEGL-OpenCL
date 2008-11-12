@@ -1,8 +1,8 @@
 2008-11-12  Øyvind Kolås  <pippin@gimp.org>
 
-	* gegl/property-types/gegl-path.c: (path_calc_values),
-	(gegl_path_closest_point): use the same approach as the stroker when
-	computing the values.
+	* gegl/property-types/gegl-path.[ch]: (path_calc_values): use the same
+	approach as the stroker when computing the values. Added function to
+	compute closest point for coordinates.
 
 2008-11-11  Øyvind Kolås  <pippin@gimp.org>
 

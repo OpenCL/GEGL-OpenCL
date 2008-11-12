@@ -502,6 +502,11 @@ static void path_calc_values (GeglPathList *path,
                     traveled_length += spacing;
                     i++;
                   }
+              if (!iter->next)
+                {
+                  xs[num_samples-1]=b.x;
+                  ys[num_samples-1]=b.y;
+                }
 
               need_to_travel += distance;
 
@@ -1510,13 +1515,13 @@ gegl_path_closest_point (GeglPath *path,
   gint   closest_val = 0;
   gdouble  *samples_x;
   gdouble  *samples_y;
-  n = length;
+  n = ceil(length);
   samples_x = g_malloc (sizeof (gdouble)* n);
   samples_y = g_malloc (sizeof (gdouble)* n);
 
   gegl_path_calc_values (path, n, samples_x, samples_y);
 
-  for (i=0;i<length;i++)
+  for (i=0;i<n;i++)
     {
       gdouble dist = (samples_x[i]-x) * (samples_x[i]-x)  +
                      (samples_y[i]-y) * (samples_y[i]-y);

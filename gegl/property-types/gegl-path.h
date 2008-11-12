@@ -122,8 +122,17 @@ void                 gegl_path_parameter_calc_values (GeglPath    *self,
                                                       guint        num_samples,
                                                       gdouble     *samples);
 
-gdouble              gegl_path_get_length     (GeglPath     *self);
+gdouble              gegl_path_get_length     (GeglPath     *path);
+gdouble              gegl_path_closest_point  (GeglPath     *path,
+                                               gdouble       x,
+                                               gdouble       y,
+                                               gdouble      *dx,
+                                               gdouble      *dy);
 void                 gegl_path_calc           (GeglPath     *path,
+                                               gdouble       pos,
+                                               gdouble      *dest_x,
+                                               gdouble      *dest_y);
+void                 gegl_path_node           (GeglPath     *path,
                                                gdouble       pos,
                                                gdouble      *dest_x,
                                                gdouble      *dest_y);
