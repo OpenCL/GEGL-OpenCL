@@ -434,9 +434,100 @@ path_calc (GeglPathList *path,
     }
 }
 
+static void path_calc_values (GeglPathList *path,
+                              guint         num_samples,
+                              gdouble      *xs,
+                              gdouble      *ys)
+{
+  gdouble length = path_get_length (path);
+  gint i=0;
+  gfloat traveled_length = 0;
+  gfloat need_to_travel = 0;
+  gfloat x = 0,y = 0;
+  gboolean had_move_to = FALSE;
+  GeglPathList *iter;
+  gfloat spacing = length / num_samples;
+
+  iter = path;
+  while (iter)
+    {
+      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      switch (iter->d.type)
+        {
+          case 'M':
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            need_to_travel = 0;
+            traveled_length = 0;
+            had_move_to = TRUE;
+            break;
+          case 'L':
+            {
+              Point a,b;
+
+              gfloat local_pos;
+              gfloat distance;
+              gfloat offset;
+              gfloat leftover;
+
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              distance = point_dist (&a, &b);
+
+              leftover = need_to_travel - traveled_length;
+              offset = spacing - leftover;
+
+              local_pos = offset;
+
+              if (distance > 0)
+                for (;
+                     local_pos <= distance;
+                     local_pos += spacing)
+                  {
+                    Point spot;
+                    gfloat ratio = local_pos / distance;
+
+                    lerp (&spot, &a, &b, ratio);
+
+                    /*gegl_path_stamp (buffer, clip_rect,
+                      spot.x, spot.y, radius, hardness, color, gopacity);*/
+                    xs[i]=spot.x;
+                    ys[i]=spot.y;
+
+                    traveled_length += spacing;
+                    i++;
+                  }
+
+              need_to_travel += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+
+            break;
+          case 'u':
+            g_error ("stroking uninitialized path\n");
+            break;
+          case 's':
+            break;
+          default:
+            g_error ("can't stroke for instruction: %i\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+}
+
+#if 0
 /* FIXME: this is terribly inefficient */
 static void
-path_calc_values (GeglPathList *path,
+path_calc_values (
+   GeglPathList *path,
                   guint         num_samples,
                   gdouble      *xs,
                   gdouble      *ys)
@@ -452,6 +543,7 @@ path_calc_values (GeglPathList *path,
       ys[i] = y;
     }
 }
+#endif
 
 static gdouble
 path_get_length (GeglPathList *path)
@@ -1403,6 +1495,50 @@ gegl_path_append (GeglPath *self,
       gegl_path_emit_changed (self, NULL);
       priv->length_clean = FALSE;
     }
+}
+
+gdouble
+gegl_path_closest_point (GeglPath *path,
+                         gdouble   x,
+                         gdouble   y,
+                         gdouble  *dx,
+                         gdouble  *dy)
+{
+  gdouble length = gegl_path_get_length (path);
+  gint     i, n;
+  gdouble closest_dist = 100000;
+  gint   closest_val = 0;
+  gdouble  *samples_x;
+  gdouble  *samples_y;
+  n = length;
+  samples_x = g_malloc (sizeof (gdouble)* n);
+  samples_y = g_malloc (sizeof (gdouble)* n);
+
+  gegl_path_calc_values (path, n, samples_x, samples_y);
+
+  for (i=0;i<length;i++)
+    {
+      gdouble dist = (samples_x[i]-x) * (samples_x[i]-x)  +
+                     (samples_y[i]-y) * (samples_y[i]-y);
+      if (dist < closest_dist)
+        {
+          closest_dist = dist;
+          closest_val = i;
+        }
+    }
+
+  if (dx)
+    {
+      *dx = samples_x[closest_val];
+    }
+  if (dy)
+    {
+      *dy = samples_y[closest_val];
+    }
+  g_free (samples_x);
+  g_free (samples_y);
+
+  return sqrt (closest_val);
 }
 
 GeglPath *gegl_path_get_parameter_path (GeglPath    *path,
