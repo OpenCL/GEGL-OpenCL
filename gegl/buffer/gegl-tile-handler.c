@@ -119,19 +119,6 @@ set_property (GObject      *gobject,
     }
 }
 
-gpointer   gegl_tile_handler_chain_up (GeglTileHandler *handler,
-                                       GeglTileCommand  command,
-                                       gint             x,
-                                       gint             y,
-                                       gint             z,
-                                       gpointer         data)
-{
-  GeglTileSource *source = gegl_tile_handler_get_source (handler);
-  if (source)
-    return gegl_tile_source_command (source, command, x, y, z, data);
-  return NULL;
-}
-
 static void
 gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
 {

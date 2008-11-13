@@ -1,5 +1,10 @@
 2008-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler.[ch]: made gegl_tile_handler_chain_up
+	a macro.
+
+2008-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Gave the command functions names reflecting the file they live in to
 	improve profile readability.
 	* gegl/buffer/gegl-buffer.c: 

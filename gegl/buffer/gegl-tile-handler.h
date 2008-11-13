@@ -50,12 +50,8 @@ GType gegl_tile_handler_get_type (void) G_GNUC_CONST;
 
 #define gegl_tile_handler_get_source(handler)  (((GeglTileHandler*)handler)->source)
 
-gpointer   gegl_tile_handler_chain_up (GeglTileHandler *handler,
-                                       GeglTileCommand  command,
-                                       gint             x,
-                                       gint             y,
-                                       gint             z,
-                                       gpointer         data);
+#define gegl_tile_handler_chain_up(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)
+
 
 G_END_DECLS
 
