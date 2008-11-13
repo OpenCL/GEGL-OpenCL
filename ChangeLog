@@ -1,3 +1,8 @@
+2008-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-source.[ch]: made gegl_tile_source_command be
+	a macro instead of a function.
+
 2008-11-13  Sven Neumann  <sven@gimp.org>
 
 	* bin/editor-optype.c (gegl_typeeditor_optype): fixed string and

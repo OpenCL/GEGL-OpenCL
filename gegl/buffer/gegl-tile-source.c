@@ -43,18 +43,3 @@ static void
 gegl_tile_source_init (GeglTileSource *self)
 {
 }
-
-gpointer
-gegl_tile_source_command (GeglTileSource  *gegl_tile_source,
-                          GeglTileCommand  command,
-                          gint             x,
-                          gint             y,
-                          gint             z,
-                          gpointer         data)
-{
-  GeglTileSourceClass *klass;
-
-  klass = GEGL_TILE_SOURCE_GET_CLASS (gegl_tile_source);
-
-  return klass->command (gegl_tile_source, command, x, y, z, data);
-}

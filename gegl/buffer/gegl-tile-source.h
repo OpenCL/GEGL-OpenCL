@@ -54,12 +54,14 @@ struct _GeglTileSourceClass
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
 
+#if 0
 gpointer   gegl_tile_source_command  (GeglTileSource  *tile_source,
                                       GeglTileCommand  command,
                                       gint             x,
                                       gint             y,
                                       gint             z,
                                       gpointer         data);
+#endif
 
 
 
@@ -186,6 +188,10 @@ void      gegl_tile_source_refetch   (GegTileSource *source,
 gboolean  gegl_tile_source_idle      (GegTileSource *source);
 
 #endif
+
+#define gegl_tile_source_command(source,cmd,x,y,z,tile)\
+(GEGL_TILE_SOURCE_GET_CLASS(source)->command(source,cmd,x,y,z,tile))
+
 
 #define gegl_tile_source_set_tile(source,x,y,z,tile) \
    (gboolean)gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile)
