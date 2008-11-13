@@ -231,10 +231,12 @@ gulp:
   return FALSE;
 }
 
+#if DEBUG_DIRECT
 static glong direct_read = 0;
 static glong direct_write = 0;
 static glong in_direct_read = 0;
 static glong in_direct_write = 0;
+#endif
 
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
