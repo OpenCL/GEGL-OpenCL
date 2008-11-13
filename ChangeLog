@@ -1,5 +1,11 @@
 2008-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_command),
+	(gegl_buffer_class_init): improved naming of command callback for
+	backtraces.
+
+2008-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler.[ch]: made gegl_tile_handler_chain_up
 	a macro.
 

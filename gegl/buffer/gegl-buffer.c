@@ -676,12 +676,12 @@ get_tile (GeglTileSource *source,
 
 
 static gpointer
-command (GeglTileSource     *source,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+gegl_buffer_command (GeglTileSource *source,
+                     GeglTileCommand command,
+                     gint            x,
+                     gint            y,
+                     gint            z,
+                     gpointer        data)
 {
   GeglTileHandler *handler = GEGL_HANDLER (source);
   switch (command)
@@ -705,7 +705,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
   gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  tile_source_class->command = command;
+  tile_source_class->command = gegl_buffer_command;
 
   g_object_class_install_property (gobject_class, PROP_PX_SIZE,
                                    g_param_spec_int ("px-size", "pixel-size", "size of a single pixel in bytes.",
