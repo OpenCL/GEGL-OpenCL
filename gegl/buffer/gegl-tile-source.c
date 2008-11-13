@@ -22,7 +22,7 @@
 G_DEFINE_TYPE (GeglTileSource, gegl_tile_source, G_TYPE_OBJECT)
 
 static gpointer
-command (GeglTileSource  *gegl_tile_source,
+gegl_tile_source_command_eek (GeglTileSource  *gegl_tile_source,
          GeglTileCommand  command,
          gint             x,
          gint             y,
@@ -36,7 +36,7 @@ command (GeglTileSource  *gegl_tile_source,
 static void
 gegl_tile_source_class_init (GeglTileSourceClass *klass)
 {  
-  klass->command  = command;
+  klass->command = gegl_tile_source_command_eek;
 }
 
 static void

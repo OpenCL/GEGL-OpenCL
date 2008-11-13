@@ -85,12 +85,12 @@ finalize (GObject *object)
 }
 
 static gpointer
-command (GeglTileSource     *tile_store,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+gegl_tile_handler_chain_command (GeglTileSource *tile_store,
+                                 GeglTileCommand command,
+                                 gint            x,
+                                 gint            y,
+                                 gint            z,
+                                 gpointer        data)
 {
   GeglTileHandlerChain *tile_handler_chain = (GeglTileHandlerChain *) tile_store;
   GeglTileSource *source = ((GeglTileHandler *) tile_store)->source;
@@ -115,7 +115,7 @@ gegl_tile_handler_chain_class_init (GeglTileHandlerChainClass *class)
   gobject_class    = (GObjectClass *) class;
   tile_store_class = (GeglTileSourceClass *) class;
 
-  tile_store_class->command  = command;
+  tile_store_class->command = gegl_tile_handler_chain_command;
 
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;

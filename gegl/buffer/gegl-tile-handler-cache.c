@@ -172,17 +172,16 @@ get_tile (GeglTileSource *tile_store,
 }
 
 static gpointer
-command (GeglTileSource  *tile_store,
-         GeglTileCommand  command,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
+                                 GeglTileCommand  command,
+                                 gint             x,
+                                 gint             y,
+                                 gint             z,
+                                 gpointer         data)
 {
   GeglTileHandler      *handler = GEGL_HANDLER (tile_store);
   GeglTileHandlerCache *cache   = GEGL_TILE_HANDLER_CACHE (handler);
 
-  /* FIXME: replace with switch */
   switch (command)
     {
       case GEGL_TILE_FLUSH:
@@ -245,7 +244,7 @@ gegl_tile_handler_cache_class_init (GeglTileHandlerCacheClass *class)
 
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;
-  source_class->command   = command;
+  source_class->command   = gegl_tile_handler_cache_command;
 }
 
 static void

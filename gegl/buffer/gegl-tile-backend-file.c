@@ -581,12 +581,12 @@ enum
 };
 
 static gpointer
-command (GeglTileSource  *self,
-         GeglTileCommand  command,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+gegl_tile_backend_file_command (GeglTileSource  *self,
+                                GeglTileCommand  command,
+                                gint             x,
+                                gint             y,
+                                gint             z,
+                                gpointer         data)
 {
   switch (command)
     {
@@ -1029,7 +1029,7 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
   gobject_class->constructor  = gegl_tile_backend_file_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_tile_source_class->command  = command;
+  gegl_tile_source_class->command = gegl_tile_backend_file_command;
 
   GEGL_BUFFER_STRUCT_CHECK_PADDING;
 

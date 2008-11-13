@@ -226,12 +226,12 @@ enum
 };
 
 static gpointer
-command (GeglTileSource  *tile_store,
-         GeglTileCommand  command,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+gegl_tile_backend_tiledir_command (GeglTileSource  *tile_store,
+                                   GeglTileCommand  command,
+                                   gint             x,
+                                   gint             y,
+                                   gint             z,
+                                   gpointer         data)
 {
   switch (command)
     {
@@ -364,7 +364,7 @@ gegl_tile_backend_tiledir_class_init (GeglTileBackendTileDirClass *klass)
   gobject_class->constructor  = gegl_tile_backend_tiledir_constructor;
   gobject_class->finalize     = finalize;
 
-  gegl_tile_source_class->command  = command;
+  gegl_tile_source_class->command = gegl_tile_backend_tiledir_command;
 
 
   g_object_class_install_property (gobject_class, PROP_PATH,

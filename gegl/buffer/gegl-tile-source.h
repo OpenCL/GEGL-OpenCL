@@ -54,17 +54,6 @@ struct _GeglTileSourceClass
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
 
-#if 0
-gpointer   gegl_tile_source_command  (GeglTileSource  *tile_source,
-                                      GeglTileCommand  command,
-                                      gint             x,
-                                      gint             y,
-                                      gint             z,
-                                      gpointer         data);
-#endif
-
-
-
 /* All commands have the ability to pass commands to all tiles the handlers
  * add abstraction to the commands the documentaiton given here is valid
  * when the commands are issued to a full blown GeglBuffer instance.

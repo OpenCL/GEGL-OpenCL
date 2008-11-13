@@ -285,10 +285,10 @@ set_property (GObject      *gobject,
 static gint allocated_buffers    = 0;
 static gint de_allocated_buffers = 0;
 
-  /* this should only be possible if this buffer matches all the buffers down to
-   * storage, all of those parent buffers would change size as well, no tiles
-   * would be voided as a result of changing the extent.
-   */
+/* this should only be possible if this buffer matches all the buffers down to
+ * storage, all of those parent buffers would change size as well, no tiles
+ * would be voided as a result of changing the extent.
+ */
 gboolean
 gegl_buffer_set_extent (GeglBuffer          *buffer,
                         const GeglRectangle *extent)
@@ -648,11 +648,6 @@ get_tile (GeglTileSource *source,
     {
       GeglBuffer *buffer = GEGL_BUFFER (handler);
 
-      /* not sure if this plays well with shifting */
-      tile->x = x;
-      tile->y = y;
-      tile->z = z;
-
       if (x < buffer->min_x)
         buffer->min_x = x;
       if (y < buffer->min_y)
@@ -879,6 +874,17 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
   if (extent == NULL)
     extent = gegl_buffer_get_extent (buffer);
 
+  if (extent->width < 0 || extent->height < 0)
+    {
+      g_warning ("avoiding creating buffer of size: %ix%i returning an empty buffer instead.\n", extent->width, extent->height);
+      return g_object_new (GEGL_TYPE_BUFFER,
+                           "source", buffer,
+                           "x", extent->x,
+                           "y", extent->y,
+                           "width", 0,
+                           "height", 0,
+                           NULL);
+    }
   return g_object_new (GEGL_TYPE_BUFFER,
                        "source", buffer,
                        "x", extent->x,

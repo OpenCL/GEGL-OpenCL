@@ -1,5 +1,23 @@
 2008-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Gave the command functions names reflecting the file they live in to
+	improve profile readability.
+	* gegl/buffer/gegl-buffer.c: 
+	* gegl/buffer/gegl-sampler-linear.c: 
+	* gegl/buffer/gegl-tile-backend-file.c:
+	* gegl/buffer/gegl-tile-backend-ram.c:
+	* gegl/buffer/gegl-tile-backend-tiledir.c:
+	* gegl/buffer/gegl-tile-handler-cache.c:
+	* gegl/buffer/gegl-tile-handler-chain.c:
+	* gegl/buffer/gegl-tile-handler-empty.c:
+	* gegl/buffer/gegl-tile-handler-log.c:
+	* gegl/buffer/gegl-tile-handler-zoom.c:
+	* gegl/buffer/gegl-tile-handler.c: 
+	* gegl/buffer/gegl-tile-source.c: 
+	* gegl/buffer/gegl-tile-source.h:
+
+2008-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-source.[ch]: made gegl_tile_source_command be
 	a macro instead of a function.
 

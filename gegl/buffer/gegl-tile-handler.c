@@ -50,12 +50,12 @@ dispose (GObject *object)
 }
 
 static gpointer
-command (GeglTileSource     *gegl_tile_source,
-         GeglTileCommand command,
-         gint            x,
-         gint            y,
-         gint            z,
-         gpointer        data)
+gegl_tile_handler_command (GeglTileSource *gegl_tile_source,
+                           GeglTileCommand command,
+                           gint            x,
+                           gint            y,
+                           gint            z,
+                           gpointer        data)
 {
   GeglTileHandler *handler = (GeglTileHandler*)gegl_tile_source;
 
@@ -142,7 +142,7 @@ gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->dispose      = dispose;
 
-  source_class->command  = command;
+  source_class->command = gegl_tile_handler_command;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("source",

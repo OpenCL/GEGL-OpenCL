@@ -41,12 +41,12 @@ static char *commands[] =
 };
 
 static gpointer
-command (GeglTileSource  *gegl_tile_source,
-         GeglTileCommand  command,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+gegl_tile_handler_log_command (GeglTileSource  *gegl_tile_source,
+                               GeglTileCommand  command,
+                               gint             x,
+                               gint             y,
+                               gint             z,
+                               gpointer         data)
 {
   GeglTileHandler *handler = GEGL_HANDLER (gegl_tile_source);
   gpointer         result = NULL;
@@ -75,7 +75,7 @@ gegl_tile_handler_log_class_init (GeglTileHandlerLogClass *klass)
 {
   GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
-  source_class->command  = command;
+  source_class->command = gegl_tile_handler_log_command;
 }
 
 static void

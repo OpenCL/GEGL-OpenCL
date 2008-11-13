@@ -98,8 +98,8 @@ gegl_sampler_linear_get (GeglSampler *self,
   sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
 
   /* FIXME: unroll this loop */
-  for (i=0, v=dy+context_rect.y; v < dy+context_rect.height ; v++)
-    for (u=dx+context_rect.x; u < dx+context_rect.width  ; u++, i++)
+  for (i=0, v=dy; v < dy+2; v++)
+    for (u=dx; u < dx+2; u++, i++)
       {
         sampler_bptr += offsets[i];
         newval[0] += q[i] * sampler_bptr[0];

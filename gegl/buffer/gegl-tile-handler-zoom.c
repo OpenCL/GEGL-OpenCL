@@ -299,13 +299,13 @@ get_tile (GeglTileSource *gegl_tile_source,
 }
 
 static gpointer
-command (GeglTileSource  *tile_store,
-         GeglTileCommand  command,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
-{
+gegl_tile_handler_zoom_command (GeglTileSource  *tile_store,
+                                GeglTileCommand  command,
+                                gint             x,
+                                gint             y,
+                                gint             z,
+                                gpointer         data)
+  {
   GeglTileHandler *handler  = GEGL_HANDLER (tile_store);
   /*GeglTileSource *source = handler->source;*/
 
@@ -394,7 +394,7 @@ gegl_tile_handler_zoom_class_init (GeglTileHandlerZoomClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  source_class->command  = command;
+  source_class->command = gegl_tile_handler_zoom_command;
 
   g_object_class_install_property (gobject_class, PROP_TILE_STORAGE,
                                    g_param_spec_object ("tile_storage",
