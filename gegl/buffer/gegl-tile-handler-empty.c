@@ -155,7 +155,7 @@ gegl_tile_handler_empty_command (GeglTileSource  *buffer,
 {
   if (command == GEGL_TILE_GET)
     return get_tile (buffer, x, y, z);
-  return gegl_tile_handler_chain_up (GEGL_HANDLER(buffer), command, x, y, z, data);
+  return gegl_tile_handler_chain_up (buffer, command, x, y, z, data);
 }
 
 

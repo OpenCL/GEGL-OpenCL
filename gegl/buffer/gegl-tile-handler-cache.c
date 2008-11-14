@@ -288,7 +288,7 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
 
 /* returns the requested Tile if it is in the cache, NULL otherwize.
  */
-GeglTile *
+static GeglTile *
 gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
                                   gint                  x,
                                   gint                  y,
@@ -321,8 +321,7 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
   return NULL;
 }
 
-
-gboolean
+static gboolean
 gegl_tile_handler_cache_has_tile (GeglTileHandlerCache *cache,
                                   gint                  x,
                                   gint                  y,

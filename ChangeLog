@@ -1,3 +1,8 @@
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-handler-cache.c: made functions inline.
+	* gegl/buffer/gegl-tile-handler-empty.c: removed unneeded cast.
+
 2008-11-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c: enclose definition of counters
