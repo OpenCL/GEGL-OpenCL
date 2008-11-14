@@ -289,7 +289,9 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
         }
     }
 
-  /* always allocating */
+  /* maybe keeping a pool of such buffers around would be good, to avoid
+   * memory fragmentation
+   */
   i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
                               i->i[0].max_size);
   if (i->format[self] == i->buffer[self]->format)
@@ -369,7 +371,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
             }
           else
             {
-            gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+              if (i->flags[no] & GEGL_BUFFER_READ)
+                {
+                  gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+                }
               i->data[no]=i->buf[no];
 #if DEBUG_DIRECT
               in_direct_read += i->roi[no].width * i->roi[no].height;
@@ -385,7 +390,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
           g_assert (i->buf[no]);
 
-          gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+          if (i->flags[no] & GEGL_BUFFER_READ)
+            {
+              gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+            }
           i->data[no]=i->buf[no];
 
 #if DEBUG_DIRECT
