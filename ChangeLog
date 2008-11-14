@@ -2,6 +2,8 @@
 
 	* gegl/buffer/gegl-buffer-access.c:
 	(gegl_buffer_clear): replaced for loop with memset.
+	(gegl_buffer_iterator_next): avoid gegl_buffer_get for the non-direct
+	case when reading has not been requested.
 
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
