@@ -138,8 +138,8 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   GeglBuffer *buffer   = i->buffer;
   gint  tile_width     = buffer->tile_storage->tile_width;
   gint  tile_height    = buffer->tile_storage->tile_height;
-  gint  buffer_shift_x = buffer->shift_x /*+ i->roi.x*/;
-  gint  buffer_shift_y = buffer->shift_y /*+ i->roi.y*/;
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
   gint  buffer_x       = buffer->extent.x + buffer_shift_x;
   gint  buffer_y       = buffer->extent.y + buffer_shift_y;
 
@@ -289,16 +289,74 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
         }
     }
 
-  /* maybe keeping a pool of such buffers around would be good, to avoid
-   * memory fragmentation
-   */
-  i->buf[self] = gegl_malloc (i->format[self]->format.bytes_per_pixel *
-                              i->i[0].max_size);
+  i->buf[self] = NULL;
+  
   if (i->format[self] == i->buffer[self]->format)
     {
       i->flags[self] |= GEGL_BUFFER_FORMAT_COMPATIBLE;
     }
   return self;
+}
+
+/* FIXME: we are currently leaking this buf pool, it should be
+ * freeing it when gegl is uninitialized
+ */
+
+typedef struct BufInfo {
+  gint     size;
+  gint     used;  /* if this buffer is currently allocated */
+  gpointer buf;
+} BufInfo;
+
+static GArray *buf_pool = NULL;
+
+static gpointer iterator_buf_pool_get (gint size)
+{
+  gint i;
+  if (G_UNLIKELY (!buf_pool))
+    {
+      buf_pool = g_array_new (TRUE, TRUE, sizeof (BufInfo));
+    }
+  for (i=0; i<buf_pool->len; i++)
+    {
+      BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
+      if (info->size >= size && info->used == 0)
+        {
+          info->used ++;
+          return info->buf;
+        }
+    }
+  {
+    BufInfo info = {size, 1, NULL};
+    info.buf = gegl_malloc (size);
+    g_array_append_val (buf_pool, info);
+    return info.buf;
+  }
+}
+
+static void iterator_buf_pool_release (gpointer buf)
+{
+  gint i;
+  for (i=0; i<buf_pool->len; i++)
+    {
+      BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
+      if (info->buf == buf)
+        {
+          info->used --;
+          return;
+        }
+    }
+  g_assert (0);
+}
+
+static void ensure_buf (GeglBufferIterators *i, gint no)
+{
+  /* XXX: keeping a small pool of such buffres around for the used formats
+   * would probably improve performance
+   */
+  if (i->buf[no]==NULL)
+    i->buf[no] = iterator_buf_pool_get (i->format[no]->format.bytes_per_pixel *
+                                        i->i[0].max_size);
 }
 
 gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
@@ -331,6 +389,9 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 #if DEBUG_DIRECT
                   in_direct_write += i->roi[no].width * i->roi[no].height;
 #endif
+
+                  ensure_buf (i, no);
+
                   gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
@@ -371,10 +432,13 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
             }
           else
             {
+              ensure_buf (i, no);
+
               if (i->flags[no] & GEGL_BUFFER_READ)
                 {
                   gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
+
               i->data[no]=i->buf[no];
 #if DEBUG_DIRECT
               in_direct_read += i->roi[no].width * i->roi[no].height;
@@ -388,7 +452,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
           i->roi[no].x += (i->rect[no].x-i->rect[0].x);
           i->roi[no].y += (i->rect[no].y-i->rect[0].y);
 
-          g_assert (i->buf[no]);
+          ensure_buf (i, no);
 
           if (i->flags[no] & GEGL_BUFFER_READ)
             {
@@ -410,7 +474,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
       for (no=0; no<i->iterators;no++)
         {
           if (i->buf[no])
-            gegl_free (i->buf[no]);
+            iterator_buf_pool_release (i->buf[no]);
           i->buf[no]=NULL;
           g_object_unref (i->buffer[no]);
         }

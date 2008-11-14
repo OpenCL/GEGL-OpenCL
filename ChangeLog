@@ -1,5 +1,13 @@
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-iterator.c:
+	(gegl_buffer_tile_iterator_next), (gegl_buffer_iterator_add),
+	(iterator_buf_pool_get), (iterator_buf_pool_release), (ensure_buf),
+	(gegl_buffer_iterator_next): added a small pool of buffers to be used
+	for intermediate copies.
+
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.[ch]: made gegl_tile_offset, gegl_tile_indice
 	and gegl_tile_get_data macros.
 
