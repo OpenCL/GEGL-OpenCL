@@ -35,9 +35,16 @@
 
 #ifdef G_OS_WIN32
 
-  /*I guess what is below doesn't work on win32 ...
-  or does it overlap with posix here somehow?*/
-  eeeeeek();
+#include <windows.h>
+
+static inline gboolean
+pid_is_running (gint pid)
+{
+  HANDLE h;
+
+  h = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+  return (TerminateProcess(h, 0));
+}
 
 #else
 

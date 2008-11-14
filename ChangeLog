@@ -1,3 +1,8 @@
+2008-11-14  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* gegl/gegl-init.c (pid_is_running): added Microsoft Windows
+	version of this function.
+
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-iterator.c:
