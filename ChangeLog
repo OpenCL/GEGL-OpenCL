@@ -1,5 +1,10 @@
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.[ch]: made gegl_tile_offset, gegl_tile_indice
+	and gegl_tile_get_data macros.
+
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-iterator.c: (gegl_buffer_iterator_add),
 	(gegl_buffer_iterator_next): avoid gegl_buffer_get for the non-direct
 	case when reading has not been requested.

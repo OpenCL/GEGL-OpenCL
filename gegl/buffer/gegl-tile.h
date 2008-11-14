@@ -86,7 +86,8 @@ void       * gegl_tile_get_format (GeglTile *tile);
 void         gegl_tile_lock       (GeglTile *tile);
 /* get a pointer to the linear buffer of the tile.
  */
-guchar     * gegl_tile_get_data   (GeglTile *tile);
+#define gegl_tile_get_data(tile)  ((guchar*)((tile)->data))
+
 /* unlock the tile notifying the tile that we're done manipulating
  * the data.
  */
@@ -99,14 +100,22 @@ gboolean     gegl_tile_store      (GeglTile *tile);
 void         gegl_tile_void       (GeglTile *tile);
 GeglTile    *gegl_tile_dup        (GeglTile *tile);
 
+/* computes the positive integer remainder (also for negative dividends)
+ */
+#define GEGL_REMAINDER(dividend, divisor) \
+                   (((dividend) < 0) ? \
+                    (divisor) - 1 - ((-((dividend) + 1)) % (divisor)) : \
+                    (dividend) % (divisor))
 
-/* helper functions to compute tile indices and offsets for coordinates
+#define gegl_tile_offset(coordinate, stride) GEGL_REMAINDER((coordinate), (stride))
+
+/* helper function to compute tile indices and offsets for coordinates
  * based on a tile stride (tile_width or tile_height)
  */
-gint         gegl_tile_indice     (gint      coordinate,
-                                   gint      stride);
-gint         gegl_tile_offset     (gint      coordinate,
-                                   gint      stride);
+#define gegl_tile_indice(coordinate,stride) \
+  (((coordinate) >= 0)?\
+      (coordinate) / (stride):\
+      ((((coordinate) + 1) /(stride)) - 1))
 
 /* utility low-level functions used by undo system */
 void         gegl_tile_swp        (GeglTile *a,

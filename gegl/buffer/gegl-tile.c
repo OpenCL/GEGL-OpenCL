@@ -380,12 +380,6 @@ gegl_tile_swp (GeglTile *a,
   b->data = tmp;
 }
 
-unsigned char *
-gegl_tile_get_data (GeglTile *tile)
-{
-  return tile->data;
-}
-
 gboolean gegl_tile_store (GeglTile *tile)
 {
   if (gegl_tile_is_stored (tile))
@@ -399,32 +393,6 @@ gboolean gegl_tile_store (GeglTile *tile)
                                     tile);
 }
 
-/* compute the tile indice of a coordinate
- * the stride is the width/height of tiles along the axis of coordinate
- */
-gint
-gegl_tile_indice (gint coordinate,
-                  gint stride)
-{
-  if (coordinate >= 0)
-    return coordinate / stride;
-  return (((coordinate + 1) / stride) - 1);
-}
-
-/* computes the positive integer remainder (also for negative dividends)
- */
-#define REMAINDER(dividend, divisor) \
-                   (((dividend) < 0) ? \
-                    (divisor) - 1 - ((-((dividend) + 1)) % (divisor)) : \
-                    (dividend) % (divisor))
 
 
-/* compute the offset into the containing tile a coordinate has,
- * the stride is the width/height of tiles along the axis of coordinate
- */
-gint
-gegl_tile_offset (gint coordinate,
-                  gint stride)
-{
-  return REMAINDER (coordinate, stride);
-}
+
