@@ -1,5 +1,10 @@
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c:
+	(gegl_buffer_clear): replaced for loop with memset.
+
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-storage.h: store the max z value seen instead
 	of whether we've seen != 0.
 	* gegl/buffer/gegl-tile.c: (_gegl_tile_void_pyramid): bail out at the

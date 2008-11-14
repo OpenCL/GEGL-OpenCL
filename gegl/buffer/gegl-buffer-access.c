@@ -1013,6 +1013,11 @@ gegl_buffer_get (GeglBuffer          *buffer,
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_iterate (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, FALSE, format, level);
 
+#if 1
+  /* slows testing of rendering code speed to much for now and
+   * no time to make a fast implementation
+   */
+
       if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")
           && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
@@ -1033,6 +1038,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
                                  rowstride);
         }
       else
+#endif
         {
           resample_nearest (dest_buf,
                             sample_buf,
@@ -1185,12 +1191,13 @@ gegl_buffer_clear (GeglBuffer          *dst,
 
   pxsize = dst->format->format.bytes_per_pixel;
 
+  /* FIXME: this can be even further optimized by special casing it so
+   * that fully voided tiles are dropped.
+   */
   i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE);
   while (gegl_buffer_iterator_next (i))
     {
-      gint j;
-      for (j=0;j<i->length * pxsize;j++)
-        ((guchar*)(i->data[0]))[j]=0;
+      memset (((guchar*)(i->data[0])), 0, i->length * pxsize);
     }
 }
 
