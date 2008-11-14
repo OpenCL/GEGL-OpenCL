@@ -40,8 +40,7 @@ struct _GeglTileStorage
   gint         width;
   gint         height;
   gchar       *path;
-  gboolean     seen_zoom; /* if the storage has seen any tiles that are
-                             not at level 0 */
+  gint         seen_zoom; /* the maximum zoom level we've seen tiles for */
 
   guint        idle_swapper;
 };

@@ -1,5 +1,14 @@
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-storage.h: store the max z value seen instead
+	of whether we've seen != 0.
+	* gegl/buffer/gegl-tile.c: (_gegl_tile_void_pyramid): bail out at the
+	appropriate z-level for the underlying storage.
+	* gegl/buffer/gegl-tile-handler-zoom.c: (get_tile): update z value
+	seen.
+
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler-cache.c: made functions inline.
 	* gegl/buffer/gegl-tile-handler-empty.c: removed unneeded cast.
 

@@ -224,7 +224,9 @@ get_tile (GeglTileSource *gegl_tile_source,
     {
       return NULL;
     }
-  zoom->tile_storage->seen_zoom = TRUE;
+
+  if (z>zoom->tile_storage->seen_zoom)
+    zoom->tile_storage->seen_zoom = z;
 
   g_assert (zoom->backend);
   g_object_get (zoom->backend, "tile-width", &tile_width,

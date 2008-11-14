@@ -284,7 +284,7 @@ _gegl_tile_void_pyramid (GeglTileSource *source,
                          gint            y,
                          gint            z)
 {
-  if (z>10)
+  if (z > ((GeglTileStorage*)source)->seen_zoom)
     return;
   gegl_tile_source_void (source, x, y, z);
   _gegl_tile_void_pyramid (source, x/2, y/2, z+1);
