@@ -1,3 +1,12 @@
+2008-11-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-node.[ch]: (gegl_node_invalidated),
+	(gegl_node_apply), (invalidate_have_rect),
+	(gegl_node_set_operation_object), (gegl_node_get_bounding_box),
+	(gegl_node_process), (gegl_node_get_cache): keep track of whether
+	we have a valid computed have_rect in the node or not to avoid
+	needlessly traversing the graph to recompute the value.
+
 2008-11-14  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* gegl/gegl-init.c (pid_is_running): added Microsoft Windows
@@ -15,6 +24,12 @@
 
 	* gegl/buffer/gegl-tile.[ch]: made gegl_tile_offset, gegl_tile_indice
 	and gegl_tile_get_data macros.
+
+2008-11-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-iterator.c: (gegl_buffer_iterator_add),
+	(ensure_buf), (gegl_buffer_iterator_next): do allocation of temporary
+	buffers on demand.
 
 2008-11-14  Øyvind Kolås  <pippin@gimp.org>
 

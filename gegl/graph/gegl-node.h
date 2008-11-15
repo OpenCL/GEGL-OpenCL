@@ -45,6 +45,9 @@ struct _GeglNode
 
   GeglOperation  *operation;
   GeglRectangle   have_rect;
+  gboolean        valid_have_rect; /* <- if TRUE the above have_rect is correct
+                                         and can be returned directly instead of
+                                         computed */
   GSList         *pads;
   GSList         *input_pads;
   GSList         *output_pads;

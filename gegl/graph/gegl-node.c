@@ -541,6 +541,7 @@ gegl_node_invalidated (GeglNode            *node,
         gegl_buffer_clear (GEGL_BUFFER (node->cache), rect);
       gegl_cache_invalidate (node->cache, rect);
     }
+  node->valid_have_rect = FALSE;
 
   g_signal_emit (node, gegl_node_signals[INVALIDATED], 0,
                  rect, NULL);
@@ -803,6 +804,19 @@ gegl_node_apply_roi (GeglNode            *self,
   return buffer;
 }
 
+GeglBuffer *
+gegl_node_apply (GeglNode    *self,
+                 const gchar *output_prop_name)
+{
+  GeglRectangle defined;
+
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  defined = gegl_node_get_bounding_box (self);
+  return gegl_node_apply_roi (self, "output", &defined);
+}
+
+
 void
 gegl_node_blit (GeglNode            *node,
                 gdouble              scale,
@@ -855,17 +869,6 @@ gegl_node_blit (GeglNode            *node,
     }
 }
 
-GeglBuffer *
-gegl_node_apply (GeglNode    *self,
-                 const gchar *output_prop_name)
-{
-  GeglRectangle defined;
-
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-
-  defined = gegl_node_get_bounding_box (self);
-  return gegl_node_apply_roi (self, "output", &defined);
-}
 
 GSList *
 gegl_node_get_depends_on (GeglNode *self)
@@ -975,6 +978,15 @@ gegl_node_set_op_class (GeglNode    *node,
       gegl_node_set_operation_object (node, operation);
       g_object_unref (operation);
     }
+}
+
+static gboolean
+invalidate_have_rect (GObject    *gobject,
+                      gpointer    foo,
+                      gpointer    user_data)
+{
+  GEGL_NODE (user_data)->valid_have_rect = FALSE;
+  return TRUE;
 }
 
 
@@ -1102,6 +1114,7 @@ gegl_node_set_operation_object (GeglNode      *self,
       g_free (output_dest_pad);
   }
 
+  g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (invalidate_have_rect), self);
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
   property_changed (G_OBJECT (operation), (GParamSpec *) self, self);
 }
@@ -1484,6 +1497,10 @@ gegl_node_get_bounding_box (GeglNode *root)
 
   if (!root)
     return dummy;
+
+  if (root->valid_have_rect)
+    return root->have_rect;
+
   pad = gegl_node_get_pad (root, "output");
   if (pad && pad->node != root)
     {
@@ -1513,6 +1530,7 @@ gegl_node_get_bounding_box (GeglNode *root)
   g_object_unref (root);
   g_free (id);
 
+  root->valid_have_rect = TRUE;
   return root->have_rect;
 }
 
@@ -1563,8 +1581,8 @@ gegl_node_process (GeglNode *self)
     g_value_unset (&value);
   }
 
-  gegl_operation_context_set_result_rect (context, defined.x, defined.y, defined.width, defined.h);
-  gegl_operation_process (self->operation, &defined, "foo");
+  gegl_operation_context_set_result_rect (context, &defined);
+  gegl_operation_process (self->operation, context, "output", &defined);
   gegl_node_remove_context (self, &defined);
   g_object_unref (buffer);
 }
