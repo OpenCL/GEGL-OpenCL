@@ -123,6 +123,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
+  /* overriding the caching behavior that point-composers do
+   * not have caches, this means that an opacity op can be
+   * inserted where you want a cache to be in the graph
+   */
+  operation_class->no_cache = FALSE;
+
   operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";
   operation_class->description =

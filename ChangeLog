@@ -1,5 +1,11 @@
 2008-11-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/opacity.c: (gegl_chant_class_init): flipped
+	operation_class->no_cache to FALSE. Inserting an opacity op with
+	opacity of 1.0 can be used as an explicit cache in the graph.
+
+2008-11-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-access.c: (box_filter): unrolled and
 	optimized the inner loop a bit.
 
