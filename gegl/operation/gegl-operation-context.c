@@ -332,7 +332,7 @@ static GeglBuffer *emptybuf (void)
   if (!empty)
     {
       GeglRectangle rect={0,0,0,0};
-      empty = gegl_buffer_new (&empty, babl_format ("RGBA float"));
+      empty = gegl_buffer_new (&rect, babl_format ("RGBA float"));
     }
   return empty;
 }
