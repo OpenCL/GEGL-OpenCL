@@ -871,8 +871,11 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
 {
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-  if (extent == NULL)
-    extent = gegl_buffer_get_extent (buffer);
+  if (extent == NULL || gegl_rectangle_equal (extent, &buffer->extent))
+    {
+      g_object_ref (buffer);
+      return buffer;
+    }
 
   if (extent->width < 0 || extent->height < 0)
     {
@@ -1066,6 +1069,7 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
   return TRUE;
 }
 
+#if 0
 gboolean gegl_buffer_lock (GeglBuffer *buffer)
 {
   while (gegl_buffer_try_lock (buffer)==FALSE)
@@ -1086,3 +1090,4 @@ gboolean gegl_buffer_unlock (GeglBuffer *buffer)
     return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
   return TRUE;
 }
+#endif
