@@ -98,8 +98,10 @@ GeglTileBackend    * gegl_buffer_backend     (GeglBuffer *buffer);
 gboolean             gegl_buffer_is_shared   (GeglBuffer *buffer);
 
 gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
+#if 0
 gboolean             gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
+#endif
 
 
 
@@ -113,5 +115,7 @@ void            gegl_buffer_sampler           (GeglBuffer     *buffer,
                                                const Babl     *format,
                                                gpointer        sampler);
 
+#define gegl_buffer_lock(o)  {}
+#define gegl_buffer_unlock(o)  {}
 
 #endif
