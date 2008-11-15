@@ -1,5 +1,10 @@
 2008-11-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-access.c: (box_filter): unrolled and
+	optimized the inner loop a bit.
+
+2008-11-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-node.[ch]: (gegl_node_invalidated),
 	(gegl_node_apply), (invalidate_have_rect),
 	(gegl_node_set_operation_object), (gegl_node_get_bounding_box),

@@ -759,19 +759,33 @@ box_filter (guint          left_weight,
   /* NOTE: this box filter presumes pre-multiplied alpha, if there
    * is alpha.
    */
-  gint i;
-  for (i = 0; i < components; i++)
+   guint lt, lm, lb;
+   guint ct, cm, cb;
+   guint rt, rm, rb;
+
+   lt = left_weight * top_weight;
+   lm = left_weight * middle_weight;
+   lb = left_weight * bottom_weight;
+   ct = center_weight * top_weight;
+   cm = center_weight * middle_weight;
+   cb = center_weight * bottom_weight;
+   rt = right_weight * top_weight;
+   rm = right_weight * middle_weight;
+   rb = right_weight * bottom_weight;
+
+#define docomponent(i) \
+      dest[i] = (src[0][i] * lt + src[3][i] * lm + src[6][i] * lb + \
+                 src[1][i] * ct + src[4][i] * cm + src[7][i] * cb + \
+                 src[2][i] * rt + src[5][i] * rm + src[8][i] * rb) / sum
+  switch (components)
     {
-      dest[i] = ( left_weight   * ((src[0][i] * top_weight) +
-                                   (src[3][i] * middle_weight) +
-                                   (src[6][i] * bottom_weight))
-                + center_weight * ((src[1][i] * top_weight) +
-                                   (src[4][i] * middle_weight) +
-                                   (src[7][i] * bottom_weight))
-                + right_weight  * ((src[2][i] * top_weight) +
-                                   (src[5][i] * middle_weight) +
-                                   (src[8][i] * bottom_weight))) / sum;
+      case 5: docomponent(4);
+      case 4: docomponent(3);
+      case 3: docomponent(2);
+      case 2: docomponent(1);
+      case 1: docomponent(0);
     }
+#undef docomponent
 }
 
 static void
@@ -1005,14 +1019,11 @@ gegl_buffer_get (GeglBuffer          *buffer,
       buf_width          += 2;
       buf_height         += 2;
 
-
       offset_x = rect->x-floor(rect->x/scale) * scale;
       offset_y = rect->y-floor(rect->y/scale) * scale;
 
-
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_iterate (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, FALSE, format, level);
-
 #if 1
   /* slows testing of rendering code speed to much for now and
    * no time to make a fast implementation
