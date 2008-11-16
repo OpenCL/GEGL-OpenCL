@@ -1,5 +1,15 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-context.[ch]:
+	(gegl_operation_context_new), (gegl_operation_context_destroy),
+	(gegl_operation_context_get_target): made GeglOperationContext be a
+	struct the is slice allocated instead of a full blown GObject.
+	* gegl/graph/gegl-node.c: (gegl_node_remove_context),
+	(gegl_node_add_context): use the new functions to create/destroy
+	the GeglOperationContexts.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-eval-mgr.[ch]: (gegl_eval_mgr_class_init),
 	(gegl_eval_mgr_init), (gegl_eval_mgr_finalize),
 	(change_notification), (gegl_eval_mgr_apply), (gegl_eval_mgr_new):

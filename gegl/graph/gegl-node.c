@@ -1655,7 +1655,7 @@ gegl_node_remove_context (GeglNode *self,
     }
   priv = GEGL_NODE_GET_PRIVATE (self);
   g_hash_table_remove (priv->contexts, context_id);
-  g_object_unref (context);
+  gegl_operation_context_destroy (context);
 }
 
 GeglOperationContext *
@@ -1678,7 +1678,7 @@ gegl_node_add_context (GeglNode *self,
       return context;
     }
 
-  context             = g_object_new (GEGL_TYPE_OPERATION_CONTEXT, NULL);
+  context             = gegl_operation_context_new ();
   context->operation  = self->operation;
   g_hash_table_insert (priv->contexts, context_id, context);
   return context;

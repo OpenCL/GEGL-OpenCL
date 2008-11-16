@@ -33,9 +33,6 @@
 
 #include "operation/gegl-operation.h"
 
-static void     gegl_operation_context_class_init   (GeglOperationContextClass  *klass);
-static void     gegl_operation_context_init         (GeglOperationContext *self);
-static void     finalize                       (GObject         *gobject);
 static GValue * gegl_operation_context_get_value    (GeglOperationContext *self,
                                                 const gchar     *property_name);
 static GValue *
@@ -43,22 +40,6 @@ gegl_operation_context_add_value (GeglOperationContext *self,
                                   const gchar          *property_name,
                                   GType                 proptype);
 
-G_DEFINE_TYPE (GeglOperationContext, gegl_operation_context, G_TYPE_OBJECT);
-
-static void
-gegl_operation_context_class_init (GeglOperationContextClass *klass)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  gobject_class->finalize = finalize;
-}
-
-static void
-gegl_operation_context_init (GeglOperationContext *self)
-{
-  self->refs = 0;
-  self->cached = FALSE;
-}
 
 void
 gegl_operation_context_set_need_rect (GeglOperationContext *self,
@@ -239,10 +220,14 @@ gegl_operation_context_add_value (GeglOperationContext *self,
   return &property->value;
 }
 
-static void
-finalize (GObject *gobject)
+GeglOperationContext *gegl_operation_context_new (void)
 {
-  GeglOperationContext *self = GEGL_OPERATION_CONTEXT (gobject);
+  GeglOperationContext *self = g_slice_new0 (GeglOperationContext);
+  return self;
+}
+
+void gegl_operation_context_destroy (GeglOperationContext *self)
+{
 
   while (self->property)
     {
@@ -250,9 +235,9 @@ finalize (GObject *gobject)
       self->property = g_slist_remove (self->property, property);
       property_destroy (property);
     }
-
-  G_OBJECT_CLASS (gegl_operation_context_parent_class)->finalize (gobject);
+  g_slice_free (GeglOperationContext, self);
 }
+
 
 void
 gegl_operation_context_set_object (GeglOperationContext *context,
@@ -355,7 +340,9 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   GeglNode            *node;
   GeglOperation       *operation;
 
+#if 0
   g_return_val_if_fail (GEGL_IS_OPERATION_CONTEXT (context), NULL);
+#endif
 
   operation = context->operation;
   node = operation->node; /* <ick */

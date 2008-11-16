@@ -24,18 +24,8 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_OPERATION_CONTEXT            (gegl_operation_context_get_type ())
-#define GEGL_OPERATION_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION_CONTEXT, GeglOperationContext))
-#define GEGL_OPERATION_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION_CONTEXT, GeglOperationContextClass))
-#define GEGL_IS_OPERATION_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION_CONTEXT))
-#define GEGL_IS_OPERATION_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION_CONTEXT))
-#define GEGL_OPERATION_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION_CONTEXT, GeglOperationContextClass))
-
-typedef struct _GeglOperationContextClass GeglOperationContextClass;
-
 struct _GeglOperationContext
 {
-  GObject        parent_instance;
   GeglOperation *operation;
 
   GSList        *property;    /* used internally for data being exchanged */
@@ -60,13 +50,6 @@ struct _GeglOperationContext
                                   GeglOperationContext?
                                 */
 };
-
-struct _GeglOperationContextClass
-{
-  GObjectClass   parent_class;
-};
-
-GType           gegl_operation_context_get_type        (void) G_GNUC_CONST;
 
 GeglBuffer     *gegl_operation_context_get_target      (GeglOperationContext *self,
                                                         const gchar          *padname);
@@ -95,6 +78,8 @@ GeglRectangle * gegl_operation_context_get_result_rect (GeglOperationContext *no
 void            gegl_operation_context_set_result_rect (GeglOperationContext *node,
                                                         const GeglRectangle  *rect);
 
+GeglOperationContext *gegl_operation_context_new (void);
+void gegl_operation_context_destroy (GeglOperationContext *opcontext);
 
 G_END_DECLS
 
