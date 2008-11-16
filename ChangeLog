@@ -1,5 +1,12 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/radial-gradient.c: added a simple radial
+	gradient renderer center/edge points and the end color stops to
+	use. Blending of the gradient is done using non-premultiplied
+	colors.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (gegl_view_class_init), (set_property),
 	(get_property), (expose_event): added a "block" property that makes
 	GeglView not blit dirt cache data but always block for a re-render.
