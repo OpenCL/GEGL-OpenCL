@@ -40,8 +40,24 @@ struct _GeglEvalMgr
   GObject    parent_instance;
   GeglNode  *node;
   gchar     *pad_name;
-
   GeglRectangle roi;
+
+  gint       state; /* whether we can fire off rendering requests straight
+                           away or we have to re-prepare etc the graph
+                           0: mean uninitialized.
+                           1: means we need to redo an extra prepare and
+                              have_rect traversal.
+                           2: means we need a prepare traversal to set
+                              up the contexts on the nodes.
+                         */
+
+  /* we keep these objects around, they are to expensive to throw away */
+  GeglVisitor *prepare_visitor;
+  GeglVisitor *cr_visitor;
+  GeglVisitor *eval_visitor;
+  GeglVisitor *have_visitor;
+  GeglVisitor *finish_visitor;
+
 };
 
 struct _GeglEvalMgrClass
@@ -54,8 +70,7 @@ GType        gegl_eval_mgr_get_type (void) G_GNUC_CONST;
 
 GeglBuffer * gegl_eval_mgr_apply    (GeglEvalMgr *self);
 GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
-                                     const gchar *property_name);
-
+                                     const gchar *pad_name);
 
 G_END_DECLS
 

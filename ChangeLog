@@ -1,5 +1,13 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-eval-mgr.[ch]: (gegl_eval_mgr_class_init),
+	(gegl_eval_mgr_init), (gegl_eval_mgr_finalize),
+	(change_notification), (gegl_eval_mgr_apply), (gegl_eval_mgr_new):
+	* gegl/process/gegl-eval-mgr.h: reuse the visitors between runs,
+	avoid recomputing some of the static state.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-context.c:
 	(gegl_operation_context_set_property),
 	(gegl_operation_context_add_value): made the operation context

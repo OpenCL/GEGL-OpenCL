@@ -40,23 +40,74 @@
 
 static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
 static void gegl_eval_mgr_init (GeglEvalMgr *self);
-
+static void gegl_eval_mgr_finalize (GObject *self_object);
 
 G_DEFINE_TYPE (GeglEvalMgr, gegl_eval_mgr, G_TYPE_OBJECT)
-
 
 static void
 gegl_eval_mgr_class_init (GeglEvalMgrClass *klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  gobject_class->finalize = gegl_eval_mgr_finalize;
 }
 
 static void
 gegl_eval_mgr_init (GeglEvalMgr *self)
 {
   GeglRectangle roi = { 0, 0, -1, -1 };
+  gpointer     context_id = self;
 
   self->roi = roi;
+  self->prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", context_id, NULL);
+  self->have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", context_id, NULL);
+  self->eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", context_id, NULL);
+  self->cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", context_id, NULL);
+  self->finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", context_id, NULL);
+  self->state = 0;
 }
+
+static void
+gegl_eval_mgr_finalize (GObject *self_object)
+{
+  GeglEvalMgr *self = GEGL_EVAL_MGR (self_object);
+#if 0
+  GeglNode    *root;
+  GeglPad     *pad;
+  root=self->node;
+  pad = gegl_node_get_pad (root, self->pad_name);
+  /* Use the redirect output NOP of a graph instead of a graph if a traversal
+   * is attempted directly on a graph */
+  if (pad && pad->node != self->node)
+    root = pad->node;
+  else
+    root = self->node;
+
+  gegl_visitor_reset (self->finish_visitor);
+  gegl_visitor_dfs_traverse (self->finish_visitor, GEGL_VISITABLE (root));
+#endif
+
+  g_object_unref (self->prepare_visitor);
+  g_object_unref (self->eval_visitor);
+  g_object_unref (self->cr_visitor);
+  g_object_unref (self->finish_visitor);
+
+  G_OBJECT_CLASS (gegl_eval_mgr_parent_class)->finalize (self_object);
+}
+
+static gboolean
+change_notification (GObject    *gobject,
+         gpointer    foo,
+         gpointer    user_data)
+{
+  GeglEvalMgr *mgr = GEGL_EVAL_MGR (user_data);
+  if (mgr->state)
+    {
+      mgr->state = 1;
+    }
+  return FALSE;
+}
+
 
 /**
  * gegl_eval_mgr_apply:
@@ -71,13 +122,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
 {
   GeglNode    *root;
   GeglBuffer  *buffer;
-  GeglVisitor *prepare_visitor;
-  GeglVisitor *have_visitor;
-  GeglVisitor *cr_visitor;
-  GeglVisitor *eval_visitor;
-  GeglVisitor *finish_visitor;
   GeglPad     *pad;
-  gint         i;
   glong        time       = gegl_ticks ();
   gpointer     context_id = self;
 
@@ -89,22 +134,29 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   pad = gegl_node_get_pad (root, self->pad_name);
   /* Use the redirect output NOP of a graph instead of a graph if a traversal
    * is attempted directly on a graph */
-  if (pad && pad->node != root)
+  if (pad && pad->node != self->node)
     root = pad->node;
+  else
+    root = self->node;
+  g_assert (root);
+
   g_object_ref (root);
 
-  for (i = 0; i < 2; i++)
+  switch (self->state)
     {
-      prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", context_id, NULL);
-      gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE (root));
-      g_object_unref (prepare_visitor);
-    }
-
-  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", context_id, NULL);
-  gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE (root));
-  g_object_unref (have_visitor);
-
-  g_assert (root);
+      case 0:
+        gegl_visitor_reset (self->prepare_visitor);
+        gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
+        gegl_visitor_reset (self->prepare_visitor);
+        gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
+      case 1:
+        gegl_visitor_reset (self->have_visitor);
+        gegl_visitor_dfs_traverse (self->have_visitor, GEGL_VISITABLE (root));
+      case 2:
+        gegl_visitor_reset (self->prepare_visitor);
+        gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));      
+        self->state = 2;
+     }
 
   if (self->roi.width == -1 &&
       self->roi.height == -1)
@@ -115,24 +167,25 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   gegl_node_set_need_rect (root, context_id, &self->roi);
   root->is_root = TRUE;
 
-  cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", context_id, NULL);
-  gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE (root));
-  g_object_unref (cr_visitor);
+  gegl_visitor_reset (self->cr_visitor);
+  gegl_visitor_bfs_traverse (self->cr_visitor, GEGL_VISITABLE (root));
 
+#if 0
   if (g_getenv ("GEGL_DEBUG_RECTS") != NULL)
     {
       GeglVisitor *debug_rect_visitor;
 
+      g_warning ("---------------------");
       debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, "id", context_id, NULL);
       gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE (root));
       g_object_unref (debug_rect_visitor);
     }
+#endif
 
-  eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", context_id, NULL);
-
+  gegl_visitor_reset (self->eval_visitor);
   if (pad)
     {
-      gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE (pad));
+      gegl_visitor_dfs_traverse (self->eval_visitor, GEGL_VISITABLE (pad));
     }
   else
     { /* pull on the input of our sink if no pad of the given pad-name
@@ -141,36 +194,25 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
          be written.
        */
       GeglPad *pad = gegl_node_get_pad (root, "input");
-      gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE (pad));
+      gegl_visitor_dfs_traverse (self->eval_visitor, GEGL_VISITABLE (pad));
     }
-  g_object_unref (eval_visitor);
 
   root->is_root = FALSE;
-  if (g_getenv ("GEGL_DEBUG_RECTS") != NULL)
+
+  if (pad)
     {
-      GeglVisitor *debug_rect_visitor;
-
-      g_warning ("---------------------");
-
-      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, "id", context_id, NULL);
-      gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE (root));
-      g_object_unref (debug_rect_visitor);
+      /* extract return buffer before running finish visitor */
+      GValue value = { 0, };
+      g_value_init (&value, G_TYPE_OBJECT);
+      gegl_operation_context_get_property (gegl_node_get_context (root, context_id),
+                                      "output", &value);
+      buffer = g_value_get_object (&value);
+      g_object_ref (buffer);/* salvage buffer from finalization */
+      g_value_unset (&value);
     }
 
-  if (pad) {
-    /* extract return buffer before running finish visitor */
-    GValue value = { 0, };
-    g_value_init (&value, G_TYPE_OBJECT);
-    gegl_operation_context_get_property (gegl_node_get_context (root, context_id),
-                                    "output", &value);
-    buffer = g_value_get_object (&value);
-    g_object_ref (buffer);/* salvage buffer from finalization */
-    g_value_unset (&value);
-  }
-
-  finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", context_id, NULL);
-  gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE (root));
-  g_object_unref (finish_visitor);
+  gegl_visitor_reset (self->finish_visitor);
+  gegl_visitor_dfs_traverse (self->finish_visitor, GEGL_VISITABLE (root));
 
   g_object_unref (root);
   time = gegl_ticks () - time;
@@ -193,8 +235,7 @@ GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
     self->pad_name = g_strdup (pad_name);
   else
     self->pad_name = g_strdup ("output");
-/*  g_signal_connect (G_OBJECT (node->operation), "notify", G_CALLBACK (deprime), self);
-  g_signal_connect (G_OBJECT (node), "invalidated", G_CALLBACK (deprime), self);*/
+  g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (change_notification), self);
+  g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (change_notification), self);
   return self;
 }
-
