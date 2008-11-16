@@ -57,6 +57,7 @@ static gboolean paint_press (GtkWidget      *widget,
                                         NULL);
       gegl_node_link_many (top, over, out, NULL);
       gegl_node_connect_to (stroke, "output", over, "aux");
+      gegl_path_append (vector, 'M', event->x, event->y);
 
       pen_down = TRUE;
 

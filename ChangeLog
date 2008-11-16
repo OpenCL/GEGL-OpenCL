@@ -1,5 +1,10 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/gegl-paint.c: (paint_press): add an initial move-to
+	command at the beginning of new paths.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: create a dummy gegl_path when requested if it
 	is NULL.
 
