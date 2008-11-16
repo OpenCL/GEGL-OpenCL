@@ -198,34 +198,31 @@ gegl_tile_storage_constructor (GType                  type,
   if (tile_storage->path != NULL)
     {
 #if 1
-      g_object_set (tile_storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+      gegl_tile_handler_set_source (handler,
+                              g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
                                             "tile-width", tile_storage->tile_width,
                                             "tile-height", tile_storage->tile_height,
                                             "format", tile_storage->format,
                                             "path", tile_storage->path,
-                                            NULL),
-                    NULL);
+                                            NULL));
 #else
-      g_object_set (tile_storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
+      gegl_tile_handler_set_source (handler,
+                    g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
                                             "tile-width", tile_storage->tile_width,
                                             "tile-height", tile_storage->tile_height,
                                             "format", tile_storage->format,
                                             "path", tile_storage->path,
-                                            NULL),
-                    NULL);
+                                            NULL));
 #endif
     }
   else
     {
-      g_object_set (tile_storage,
-                    "source", g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
+      gegl_tile_handler_set_source (handler,
+                              g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
                                             "tile-width", tile_storage->tile_width,
                                             "tile-height", tile_storage->tile_height,
                                             "format", tile_storage->format,
-                                            NULL),
-                    NULL);
+                                            NULL));
     }
 
   g_object_get (handler->source,

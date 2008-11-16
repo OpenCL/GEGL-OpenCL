@@ -1,5 +1,10 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_constructor):
+	avoid using g_object_set.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-handler.[ch]: (gegl_tile_handler_set_source):
 	added accessor method.
 	* gegl/buffer/gegl-tile-handler-chain.c:
