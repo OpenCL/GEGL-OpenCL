@@ -38,8 +38,10 @@ static void     gegl_operation_context_init         (GeglOperationContext *self)
 static void     finalize                       (GObject         *gobject);
 static GValue * gegl_operation_context_get_value    (GeglOperationContext *self,
                                                 const gchar     *property_name);
-static GValue * gegl_operation_context_add_value    (GeglOperationContext *self,
-                                                const gchar     *property_name);
+static GValue *
+gegl_operation_context_add_value (GeglOperationContext *self,
+                                  const gchar          *property_name,
+                                  GType                 proptype);
 
 G_DEFINE_TYPE (GeglOperationContext, gegl_operation_context, G_TYPE_OBJECT);
 
@@ -104,9 +106,9 @@ gegl_operation_context_set_property (GeglOperationContext *context,
                  property_name);
     }
 
-  storage = gegl_operation_context_add_value (context, property_name);
+  /* if the value already exists in the context it will be reused */
+  storage = gegl_operation_context_add_value (context, property_name, G_PARAM_SPEC_VALUE_TYPE(pspec));
   /* storage needs to have the correct type */
-  g_value_init (storage, G_PARAM_SPEC_VALUE_TYPE (pspec));
   g_value_copy (value, storage);
 }
 
@@ -209,24 +211,30 @@ gegl_operation_context_remove_property (GeglOperationContext *self,
 
 static GValue *
 gegl_operation_context_add_value (GeglOperationContext *self,
-                                  const gchar          *property_name)
+                                  const gchar          *property_name,
+                                  GType                 proptype)
 {
   Property *property = NULL;
   GSList   *found;
-    
+  
   found = g_slist_find_custom (self->property, property_name, lookup_property);
 
   if (found)
-    property = found->data;
+    {
+      property = found->data;
+    }
 
   if (property)
     {
+      /* XXX: check that the existing one was of the right type */
+      g_value_reset (&property->value);
       return &property->value;
     }
 
   property = property_new (property_name);
 
   self->property = g_slist_prepend (self->property, property);
+  g_value_init (&property->value, proptype);
 
   return &property->value;
 }

@@ -1,5 +1,12 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-context.c:
+	(gegl_operation_context_set_property),
+	(gegl_operation_context_add_value): made the operation context
+	bail out early if the same property is added multiple times.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/graph/gegl-visitor.[ch]: (gegl_visitor_reset): added method
 	to make a visitor ready for reuse.
 
