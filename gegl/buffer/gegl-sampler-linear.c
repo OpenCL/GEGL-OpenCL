@@ -73,7 +73,6 @@ gegl_sampler_linear_get (GeglSampler *self,
                          gdouble      y,
                          void        *output)
 {
-  GeglRectangle      context_rect = self->context_rect;
   gfloat            *sampler_bptr;
   const gint         offsets[4]={0,        4,
                                  (64-1)*4, 4};

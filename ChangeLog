@@ -1,5 +1,10 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-sampler-linear.c: (gegl_sampler_linear_get):
+	removed unused variable.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-cr-visitor.c: (visit_node): folded logic of need
 	visitor into this visitor pass.
 	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply): removed called
