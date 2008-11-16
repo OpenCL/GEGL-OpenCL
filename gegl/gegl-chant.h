@@ -452,14 +452,16 @@ get_property (GObject      *gobject,
       break;
 #define gegl_chant_color(name, nick, def, blurb)              \
     case PROP_##name:                                         \
+      if (!properties->name)properties->name = gegl_color_new ("red"); /* feels ugly as well */\
       g_value_set_object (value, properties->name);           \
       break;
 #define gegl_chant_curve(name, nick, blurb)                   \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_chant_path(name, nick, blurb)                  \
+#define gegl_chant_path(name, nick, blurb)                    \
     case PROP_##name:                                         \
+      if (!properties->name)properties->name = gegl_path_new (); /* this feels ugly */\
       g_value_set_object (value, properties->name);           \
       break;/*XXX*/
 
