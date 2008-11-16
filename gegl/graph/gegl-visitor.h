@@ -55,6 +55,7 @@ struct _GeglVisitorClass
 GType    gegl_visitor_get_type         (void) G_GNUC_CONST;
 
 GSList * gegl_visitor_get_visits_list (GeglVisitor   *self);
+void     gegl_visitor_reset           (GeglVisitor   *self);
 void     gegl_visitor_visit_visitable (GeglVisitor   *self,
                                        GeglVisitable *visitable);
 void     gegl_visitor_visit_pad       (GeglVisitor   *self,

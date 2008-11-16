@@ -1,3 +1,8 @@
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/gegl-visitor.[ch]: (gegl_visitor_reset): added method
+	to make a visitor ready for reuse.
+
 2008-11-16  Hubert Figuiere  <hub@figuiere.net>
 
 	* gegl/property-types/gegl-paramspecs.h: Surround by

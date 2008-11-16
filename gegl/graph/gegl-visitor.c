@@ -181,6 +181,16 @@ lookup (GeglVisitor   *self,
   return g_hash_table_lookup (self->hash, visitable);
 }
 
+void gegl_visitor_reset (GeglVisitor   *self)
+{
+  if (self->visits_list)
+    {
+      g_slist_free (self->visits_list);
+      self->visits_list = NULL;
+    }
+  g_hash_table_remove_all (self->hash);
+}
+
 static void
 insert (GeglVisitor   *self,
         GeglVisitable *visitable)
