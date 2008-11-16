@@ -15,7 +15,7 @@
  *
  * Copyright 2003 Calvin Williamson
  *           2006 Øyvind Kolås
- * 
+ *
  * Original contents copied from gimp/app/core/gimpparamspecs.h
  * (c) 1995-2006 Spencer Kimball, Peter Mattis and others.
  */
@@ -25,6 +25,7 @@
 #ifndef __GEGL_PARAM_SPECS_H__
 #define __GEGL_PARAM_SPECS_H__
 
+G_BEGIN_DECLS
 
 /*
  * Keep in sync with libgeglconfig/geglconfig-params.h
@@ -261,5 +262,5 @@ void   gegl_param_spec_enum_exclude_value (GeglParamSpecEnum *espec,
 
 
 
-
+G_END_DECLS
 #endif  /*  __GEGL_PARAM_SPECS_H__  */

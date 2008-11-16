@@ -1,3 +1,8 @@
+2008-11-16  Hubert Figuiere  <hub@figuiere.net>
+
+	* gegl/property-types/gegl-paramspecs.h: Surround by
+	G_BEGIN_DECLS and G_END_DECLS.
+
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node.c: (dispose), (ensure_eval_mgr),
