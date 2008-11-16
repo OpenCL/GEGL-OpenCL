@@ -143,14 +143,13 @@ gegl_tile_handler_chain_rebind (GeglTileHandlerChain *tile_handler_chain)
       handler = iter->data;
       if (iter->next)
         {
-          source = g_object_ref (iter->next->data);
+          source = iter->next->data;
         }
       else
         {
-          g_object_get (tile_handler_chain, "source", &source, NULL);
+          source = gegl_tile_handler_get_source (tile_handler_chain);
         }
-      g_object_set (G_OBJECT (handler), "source", source, NULL);
-      g_object_unref (source);
+      gegl_tile_handler_set_source (handler, source);
       iter = iter->next;
     }
 }

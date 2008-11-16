@@ -82,6 +82,36 @@ get_property (GObject    *gobject,
     }
 }
 
+void
+gegl_tile_handler_set_source (GeglTileHandler *handler,
+                              GeglTileSource  *source)
+{
+  if (handler->source != NULL)
+    g_object_unref (handler->source);
+
+  if (source == NULL)
+    {
+      handler->source = NULL;
+      return;
+    }
+  handler->source = g_object_ref (source);
+
+  /* special case if we are the Traits subclass of Trait
+   * also set the source at the end of the chain.
+   */
+  if (GEGL_IS_TILE_HANDLER_CHAIN (handler))
+    {
+      GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (handler);
+      GSList         *iter   = (void *) tile_handler_chain->chain;
+      while (iter && iter->next)
+             iter = iter->next;
+            if (iter)
+              {
+                gegl_tile_handler_set_source (GEGL_HANDLER (iter->data), handler->source);
+              }
+          }
+}
+
 static void
 set_property (GObject      *gobject,
               guint         property_id,
@@ -93,24 +123,7 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_SOURCE:
-        if (handler->source != NULL)
-          g_object_unref (handler->source);
-        handler->source = GEGL_TILE_SOURCE (g_value_dup_object (value));
-
-        /* special case if we are the Traits subclass of Trait
-         * also set the source at the end of the chain.
-         */
-        if (GEGL_IS_TILE_HANDLER_CHAIN (handler))
-          {
-            GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (handler);
-            GSList         *iter   = (void *) tile_handler_chain->chain;
-            while (iter && iter->next)
-              iter = iter->next;
-            if (iter)
-              {
-                g_object_set (GEGL_HANDLER (iter->data), "source", handler->source, NULL);
-              }
-          }
+        gegl_tile_handler_set_source (handler, GEGL_TILE_SOURCE (g_value_get_object (value)));
         return;
 
       default:

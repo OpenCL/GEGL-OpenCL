@@ -48,6 +48,11 @@ struct _GeglTileHandlerClass
 
 GType gegl_tile_handler_get_type (void) G_GNUC_CONST;
 
+void
+gegl_tile_handler_set_source (GeglTileHandler *handler,
+                              GeglTileSource  *source);
+
+
 #define gegl_tile_handler_get_source(handler)  (((GeglTileHandler*)handler)->source)
 
 #define gegl_tile_handler_chain_up(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)

@@ -1,5 +1,13 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler.[ch]: (gegl_tile_handler_set_source):
+	added accessor method.
+	* gegl/buffer/gegl-tile-handler-chain.c:
+	(gegl_tile_handler_chain_rebind): use accesor methods/macros instead
+	of g_object_get and g_object_set.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-context.[ch]:
 	(gegl_operation_context_new), (gegl_operation_context_destroy),
 	(gegl_operation_context_get_target): made GeglOperationContext be a
