@@ -32,7 +32,8 @@ enum
   PROP_NODE,
   PROP_X,
   PROP_Y,
-  PROP_SCALE
+  PROP_SCALE,
+  PROP_BLOCK
 };
 
 
@@ -42,6 +43,8 @@ typedef struct _GeglViewPrivate
   gint           x;
   gint           y;
   gdouble        scale;
+  gboolean       block;    /* blocking render */
+
   gint           screen_x;    /* coordinates of drag start */
   gint           screen_y;
 
@@ -136,6 +139,12 @@ gegl_view_class_init (GeglViewClass * klass)
                                                         "The node to render",
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_BLOCK,
+                                   g_param_spec_boolean ("block",
+                                                        "Blocking render",
+                                                        "Make sure all data requested to blit is generated.",
+                                                        FALSE,
                                                         G_PARAM_READWRITE));
 
  gegl_view_signals[DETECTED] =
@@ -253,6 +262,9 @@ set_property (GObject      *gobject,
       priv->x = g_value_get_int (value);
       gtk_widget_queue_draw (GTK_WIDGET (self));
       break;
+    case PROP_BLOCK:
+      priv->block = g_value_get_boolean (value);
+      break;
     case PROP_Y:
       priv->y = g_value_get_int (value);
       gtk_widget_queue_draw (GTK_WIDGET (self));
@@ -284,6 +296,9 @@ get_property (GObject      *gobject,
       break;
     case PROP_X:
       g_value_set_int (value, priv->x);
+      break;
+    case PROP_BLOCK:
+      g_value_set_boolean (value, priv->block);
       break;
     case PROP_Y:
       g_value_set_int (value, priv->y);
@@ -449,7 +464,7 @@ expose_event (GtkWidget      *widget,
                       babl_format ("R'G'B' u8"),
                       (gpointer)buf,
                       GEGL_AUTO_ROWSTRIDE,
-                      GEGL_BLIT_CACHE|GEGL_BLIT_DIRTY);
+                      GEGL_BLIT_CACHE|(priv->block?0:GEGL_BLIT_DIRTY));
 
       gdk_draw_rgb_image (widget->window,
                           widget->style->black_gc,

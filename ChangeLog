@@ -1,5 +1,14 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (gegl_view_class_init), (set_property),
+	(get_property), (expose_event): added a "block" property that makes
+	GeglView not blit dirt cache data but always block for a re-render.
+	* bin/editor.c: (create_window): make the testbed use blocking render.
+	* examples/gegl-paint.c: (main): make backing buffer be in "RaGaBaA
+	float".
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* examples/gegl-paint.c: (paint_press): add an initial move-to
 	command at the beginning of new paths.
 

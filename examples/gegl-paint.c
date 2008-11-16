@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
+ * Copyright (C) 2003, 2004, 2006, 2008 Øyvind Kolås
  */
 
 #include <string.h>
@@ -133,19 +133,17 @@ main (gint    argc,
   gegl_init (&argc, &argv);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "GEGL painter");
-
-  /*gegl = gegl_node_new_from_xml ("<gegl><rectangle width='512' height='512' color='red'/></gegl>", NULL);*/
+  gtk_window_set_title (GTK_WINDOW (window), "GEGL destructive painter");
 
   if (argv[1] == NULL)
     {
-      gchar *buf = NULL;
+      gpointer buf;
+
       buffer = gegl_buffer_new (&(GeglRectangle){0, 0, 512, 512},
-                                babl_format("RGBA float"));
-      buf    = g_malloc(512 * 512);
+                                babl_format("RaGaBaA float"));
+      buf    = gegl_buffer_linear_open (buffer, NULL, NULL, babl_format ("Y' u8"));
       memset (buf, 255, 512 * 512); /* FIXME: we need a babl_buffer_paint () */
-      gegl_buffer_set (buffer, NULL, babl_format ("Y' u8"), buf, 0);
-      g_free (buf);
+      gegl_buffer_linear_close (buffer, buf);
     }
   else
     {
@@ -184,7 +182,6 @@ main (gint    argc,
   gtk_main ();
   g_object_unref (gegl);
   gegl_buffer_destroy (buffer);
-
 
   gegl_exit ();
   return 0;

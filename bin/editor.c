@@ -1801,7 +1801,7 @@ create_window (Editor *editor)
   vbox2 = gtk_vbox_new (FALSE, 1);
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
-  view = g_object_new (GEGL_TYPE_VIEW, NULL);
+  view = g_object_new (GEGL_TYPE_VIEW, "block", TRUE, NULL);
   property_scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (property_scroll), editor->property_editor);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (property_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
