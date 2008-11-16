@@ -7,7 +7,6 @@ PROCESS_sources = 			\
 	gegl-eval-visitor.c		\
 	gegl-finish-visitor.c		\
 	gegl-have-visitor.c		\
-	gegl-need-visitor.c		\
 	gegl-prepare-visitor.c		\
 	gegl-processor.c
 
@@ -20,7 +19,6 @@ PROCESS_headers = 			\
 	gegl-eval-visitor.h		\
 	gegl-finish-visitor.h		\
 	gegl-have-visitor.h		\
-	gegl-need-visitor.h		\
 	gegl-prepare-visitor.h		\
 	gegl-processor.h
 

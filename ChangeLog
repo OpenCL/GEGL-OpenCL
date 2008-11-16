@@ -1,3 +1,13 @@
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/process/gegl-cr-visitor.c: (visit_node): folded logic of need
+	visitor into this visitor pass.
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_apply): removed called
+	to need visitor.
+	* gegl/process/gegl-need-visitor.c: removed.
+	* gegl/process/gegl-need-visitor.h: removed.
+	* gegl/process/Makefile.am: removed file.
+
 2008-11-15  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/operation/gegl-operation-context.c (emptybuf): Address

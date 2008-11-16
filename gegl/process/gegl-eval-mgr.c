@@ -28,7 +28,6 @@
 #include "gegl-debug-rect-visitor.h"
 #include "gegl-cr-visitor.h"
 #include "gegl-have-visitor.h"
-#include "gegl-need-visitor.h"
 #include "gegl-instrument.h"
 #include "graph/gegl-node.h"
 #include "gegl-prepare-visitor.h"
@@ -75,7 +74,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglBuffer  *buffer;
   GeglVisitor *prepare_visitor;
   GeglVisitor *have_visitor;
-  GeglVisitor *need_visitor;
   GeglVisitor *cr_visitor;
   GeglVisitor *eval_visitor;
   GeglVisitor *finish_visitor;
@@ -120,10 +118,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
   gegl_node_set_need_rect (root, context_id, &self->roi);
   root->is_root = TRUE;
-
-  need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, "id", context_id, NULL);
-  gegl_visitor_bfs_traverse (need_visitor, GEGL_VISITABLE (root));
-  g_object_unref (need_visitor);
 
   cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", context_id, NULL);
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE (root));
