@@ -373,9 +373,8 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     }
   else
     {
-      output = gegl_buffer_new (result, format);
+      output = gegl_buffer_new_ram (result, format);
     }
-
 
   gegl_operation_context_set_object (context, padname, G_OBJECT (output));
   return output;

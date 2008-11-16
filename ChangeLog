@@ -1,5 +1,11 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-context.c:
+	(gegl_operation_context_get_target): use gegl_buffer_new_ram for
+	temporary buffers passed in the graph.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: added gegl_buffer_new_ram.
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
 	(gegl_buffer_new_ram), (gegl_buffer_create_sub_buffer),
