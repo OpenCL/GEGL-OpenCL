@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006-2008 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -108,7 +108,8 @@ static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        width,
                                                  gint        height,
                                                  gint        tile_width,
-                                                 gint        tile_height);
+                                                 gint        tile_height,
+                                                 gboolean    use_ram);
 
 static inline gint needed_tiles (gint w,
                                  gint stride)
@@ -445,7 +446,29 @@ gegl_buffer_constructor (GType                  type,
        * source (this adds a redirection buffer in between for
        * all "allocated from format", type buffers.
        */
-      if (buffer->path)
+      if (buffer->path && g_str_equal (buffer->path, "RAM"))
+        {
+          g_print ("using RAM\n");
+          source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
+                                                             buffer->extent.x,
+                                                             buffer->extent.y,
+                                                             buffer->extent.width,
+                                                             buffer->extent.height,
+                                                             buffer->tile_width,
+                                                             buffer->tile_height, TRUE));
+          /* after construction,. x and y should be set to reflect
+           * the top level behavior exhibited by this buffer object.
+           */
+          g_object_set (buffer,
+                        "source", source,
+                        NULL);
+          g_object_unref (source);
+
+          g_assert (source);
+          backend = gegl_buffer_backend (GEGL_BUFFER (source));
+          g_assert (backend);
+        }
+      else if (buffer->path)
         {
           GeglBufferHeader *header;
           GeglTileSource   *storage;
@@ -490,14 +513,13 @@ gegl_buffer_constructor (GType                  type,
         }
       else if (buffer->format)
         {
-
           source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
                                                              buffer->extent.x,
                                                              buffer->extent.y,
                                                              buffer->extent.width,
                                                              buffer->extent.height,
                                                              buffer->tile_width,
-                                                             buffer->tile_height));
+                                                             buffer->tile_height, FALSE));
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
@@ -839,6 +861,29 @@ gegl_buffer_get_extent (GeglBuffer *buffer)
   return &(buffer->extent);
 }
 
+
+GeglBuffer *
+gegl_buffer_new_ram (const GeglRectangle *extent,
+                     const Babl          *format)
+{
+  GeglRectangle empty={0,0,0,0};
+
+  if (extent==NULL)
+    extent = &empty;
+
+  if (format==NULL)
+    format = babl_format ("RGBA float");
+
+  return g_object_new (GEGL_TYPE_BUFFER,
+                       "x", extent->x,
+                       "y", extent->y,
+                       "width", extent->width,
+                       "height", extent->height,
+                       "format", format,
+                       "path", "RAM",
+                       NULL);
+}
+
 GeglBuffer *
 gegl_buffer_new (const GeglRectangle *extent,
                  const Babl          *format)
@@ -871,11 +916,16 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
 {
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
+#if 1
   if (extent == NULL || gegl_rectangle_equal (extent, &buffer->extent))
     {
       g_object_ref (buffer);
       return buffer;
     }
+#else
+   if (extent == NULL)
+      extent = gegl_buffer_get_extent (buffer);
+#endif
 
   if (extent->width < 0 || extent->height < 0)
     {
@@ -918,12 +968,14 @@ gegl_buffer_new_from_format (const void *babl_format,
                              gint        width,
                              gint        height,
                              gint        tile_width,
-                             gint        tile_height)
+                             gint        tile_height,
+                             gboolean    use_ram)
 {
   GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
 
-  if (!gegl_config()->swap ||
+  if (use_ram || 
+      !gegl_config()->swap ||
       g_str_equal (gegl_config()->swap, "RAM") ||
       g_str_equal (gegl_config()->swap, "ram"))
     {

@@ -1,5 +1,13 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: added gegl_buffer_new_ram.
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
+	(gegl_buffer_new_ram), (gegl_buffer_create_sub_buffer),
+	(gegl_buffer_new_from_format): added gegl_buffer_new_ram an internal
+	method that makes the buffer created use the memory backend.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-storage.c: (gegl_tile_storage_constructor):
 	avoid using g_object_set.
 

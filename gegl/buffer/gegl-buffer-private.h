@@ -101,9 +101,15 @@ gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
 #if 0
 gboolean             gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
+#else
+#define gegl_buffer_lock(o)  {}
+#define gegl_buffer_unlock(o)  {}
 #endif
 
 
+GeglBuffer *
+gegl_buffer_new_ram (const GeglRectangle *extent,
+                     const Babl          *format);
 
 GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
 
@@ -115,7 +121,5 @@ void            gegl_buffer_sampler           (GeglBuffer     *buffer,
                                                const Babl     *format,
                                                gpointer        sampler);
 
-#define gegl_buffer_lock(o)  {}
-#define gegl_buffer_unlock(o)  {}
 
 #endif
