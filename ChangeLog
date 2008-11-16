@@ -1,5 +1,13 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.c: (dispose), (ensure_eval_mgr),
+	(gegl_node_apply_roi), (gegl_node_blit), (gegl_node_process):
+	* gegl/graph/gegl-node.h: keep a cached eval_mgr with the node.
+	* gegl/process/gegl-eval-mgr.[ch]: (gegl_eval_mgr_apply): made
+	the eval mgr keep track of the node and pad it is computing for.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-sampler-linear.c: (gegl_sampler_linear_get):
 	removed unused variable.
 

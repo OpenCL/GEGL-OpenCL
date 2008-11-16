@@ -97,6 +97,7 @@ void          gegl_node_blit                (GeglNode            *node,
                                              gint                 rowstride,
                                              GeglBlitFlags        flags);
 
+void          gegl_node_process             (GeglNode      *self);
 void          gegl_node_link                (GeglNode      *source,
                                              GeglNode      *sink);
 
@@ -155,9 +156,6 @@ GeglNode    * gegl_node_get_producer        (GeglNode      *self,
                                              gchar         *pad_name,
                                              gchar        **output_pad);
 GSList      * gegl_node_get_depends_on      (GeglNode      *self);
-GeglBuffer  * gegl_node_apply               (GeglNode      *self,
-                                             const gchar   *output_pad_name);
-void          gegl_node_process             (GeglNode      *self);
 void          gegl_node_set_valist          (GeglNode      *object,
                                              const gchar   *first_property_name,
                                              va_list        var_args);

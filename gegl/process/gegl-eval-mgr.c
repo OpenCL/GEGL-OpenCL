@@ -67,10 +67,9 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
  * Update this property.
  **/
 GeglBuffer *
-gegl_eval_mgr_apply (GeglEvalMgr *self,
-                     GeglNode    *root,
-                     const gchar *pad_name)
+gegl_eval_mgr_apply (GeglEvalMgr *self)
 {
+  GeglNode    *root;
   GeglBuffer  *buffer;
   GeglVisitor *prepare_visitor;
   GeglVisitor *have_visitor;
@@ -83,14 +82,11 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gpointer     context_id = self;
 
   g_assert (GEGL_IS_EVAL_MGR (self));
-  g_assert (GEGL_IS_NODE (root));
 
   gegl_instrument ("gegl", "process", 0);
 
-  if (pad_name == NULL)
-    pad_name = "output";
-  pad = gegl_node_get_pad (root, pad_name);
-
+  root=self->node;
+  pad = gegl_node_get_pad (root, self->pad_name);
   /* Use the redirect output NOP of a graph instead of a graph if a traversal
    * is attempted directly on a graph */
   if (pad && pad->node != root)
@@ -186,3 +182,19 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     }
   return buffer;
 }
+
+GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
+                                     const gchar *pad_name)
+{
+  GeglEvalMgr *self = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
+  g_assert (GEGL_IS_NODE (node));
+  self->node = node;
+  if (pad_name)
+    self->pad_name = g_strdup (pad_name);
+  else
+    self->pad_name = g_strdup ("output");
+/*  g_signal_connect (G_OBJECT (node->operation), "notify", G_CALLBACK (deprime), self);
+  g_signal_connect (G_OBJECT (node), "invalidated", G_CALLBACK (deprime), self);*/
+  return self;
+}
+

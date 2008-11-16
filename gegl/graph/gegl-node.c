@@ -67,6 +67,7 @@ struct _GeglNodePrivate
   GeglNode       *parent;
   gchar          *name;
   GeglProcessor  *processor;
+  GeglEvalMgr    *eval_mgr;
   GHashTable     *contexts;
 };
 
@@ -241,6 +242,12 @@ dispose (GObject *gobject)
     {
       g_object_unref (self->cache);
       self->cache = NULL;
+    }
+
+  if (priv->eval_mgr)
+    {
+      g_object_unref (priv->eval_mgr);
+      priv->eval_mgr = NULL;
     }
 
   if (priv->processor)
@@ -787,35 +794,37 @@ gegl_node_link_many (GeglNode *source,
   va_end (var_args);
 }
 
+static void ensure_eval_mgr (GeglNode *node,
+                             const gchar *pad)
+{
+  GeglNodePrivate *priv;
+  priv = GEGL_NODE_GET_PRIVATE (node);
+  if (!priv->eval_mgr)
+    priv->eval_mgr = gegl_eval_mgr_new (node, pad);
+}
+
 static GeglBuffer *
 gegl_node_apply_roi (GeglNode            *self,
                      const gchar         *output_pad_name,
                      const GeglRectangle *roi)
 {
-  GeglEvalMgr *eval_mgr;
+  GeglNodePrivate *priv;
   GeglBuffer  *buffer;
 
-  eval_mgr      = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
-  eval_mgr->roi = *roi;
-  buffer        = gegl_eval_mgr_apply (eval_mgr, self, output_pad_name);
+  priv = GEGL_NODE_GET_PRIVATE (self);
+  ensure_eval_mgr (self, output_pad_name);
 
-  g_object_unref (eval_mgr);
-
+  if (roi)
+    {
+      priv->eval_mgr->roi = *roi;
+    }
+  else
+    {
+      priv->eval_mgr->roi = gegl_node_get_bounding_box (self);
+    }
+  buffer = gegl_eval_mgr_apply (priv->eval_mgr);
   return buffer;
 }
-
-GeglBuffer *
-gegl_node_apply (GeglNode    *self,
-                 const gchar *output_prop_name)
-{
-  GeglRectangle defined;
-
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-
-  defined = gegl_node_get_bounding_box (self);
-  return gegl_node_apply_roi (self, "output", &defined);
-}
-
 
 void
 gegl_node_blit (GeglNode            *node,
@@ -829,9 +838,20 @@ gegl_node_blit (GeglNode            *node,
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (roi != NULL);
 
+#if 0
+  if (flags == GEGL_BLIT_DEFAULT)
+    flags = GEGL_BLIT_CACHE;
+#endif
+
+  /* temporarily made blit use caching, but render
+   * blocking, this to be able to have less coupling
+   * with the processor
+   */
+#if 1
   if (flags == GEGL_BLIT_DEFAULT)
     {
       GeglBuffer *buffer;
+
       buffer = gegl_node_apply_roi (node, "output", roi);
       if (buffer && destination_buf)
         {
@@ -850,16 +870,20 @@ gegl_node_blit (GeglNode            *node,
       if (buffer)
         g_object_unref (buffer);
     }
-  else if ((flags & GEGL_BLIT_CACHE) ||
+  else 
+#endif
+    
+    if ((flags & GEGL_BLIT_CACHE) ||
            (flags & GEGL_BLIT_DIRTY))
     {
       GeglCache *cache = gegl_node_get_cache (node);
       if (!(flags & GEGL_BLIT_DIRTY))
-        { /* if we're not blitting dirtily, we need to make sure
-             that the data is available */
-          GeglProcessor *processor = gegl_node_new_processor (node, roi);
-          while (gegl_processor_work (processor, NULL)) ;
-          g_object_unref (G_OBJECT (processor));
+        { 
+          GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (node);
+          if (!priv->processor) 
+           priv->processor = gegl_node_new_processor (node, roi);
+          gegl_processor_set_rectangle (priv->processor, roi);
+          while (gegl_processor_work (priv->processor, NULL)) ;
         }
       if (destination_buf)
         {
@@ -1539,6 +1563,7 @@ gegl_node_get_bounding_box (GeglNode *root)
 void
 gegl_node_process (GeglNode *self)
 {
+  /* XXX: should perhaps use the internal processor? */
   GeglProcessor *processor;
 
   g_return_if_fail (GEGL_IS_NODE (self));
