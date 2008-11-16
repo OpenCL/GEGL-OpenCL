@@ -448,7 +448,6 @@ gegl_buffer_constructor (GType                  type,
        */
       if (buffer->path && g_str_equal (buffer->path, "RAM"))
         {
-          g_print ("using RAM\n");
           source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
                                                              buffer->extent.x,
                                                              buffer->extent.y,

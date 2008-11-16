@@ -1,5 +1,10 @@
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor): removed
+	debug printf.
+
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-context.c:
 	(gegl_operation_context_get_target): use gegl_buffer_new_ram for
 	temporary buffers passed in the graph.
