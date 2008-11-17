@@ -1,3 +1,10 @@
+2008-11-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* samples/render-test.rb:
+	* samples/view-test.rb:
+	* samples/xml-parsing.rb: updated samples to use the gegl: prefixed op
+	names.
+
 2008-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* samples/view-test.rb: s/FractalExplorer/fractal-explorer/
