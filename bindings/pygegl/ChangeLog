@@ -1,3 +1,10 @@
+2008-11-17  Manish Singh  <yosh@gimp.org>
+
+	* samples/render-test.py
+	* samples/subgraph.py
+	* samples/xml-parsing.py: updated samples to use the gegl: prefixed op
+	names.
+
 2008-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* samples/subgraph.py: s/FractalEXplorer/fractal-explorer/
