@@ -1094,7 +1094,7 @@ serialize_properties (SerializeState *ss,
 	      xml_param_start (ss, indent + 2, properties[i]->name);
           svg_path = gegl_path_to_string (path);	      
 	      g_string_append (ss->buf, svg_path);
-	      indent += 2; ind; indent -= 2; xml_param_end (ss);
+	      xml_param_end (ss);
 
           g_object_unref (path);
 	    }

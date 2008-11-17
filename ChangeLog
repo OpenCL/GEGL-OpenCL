@@ -1,3 +1,8 @@
+2008-11-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-xml.c: (serialize_properties): don't put trailing spaces
+	at the end of strings from serialized GeglPaths.
+
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/linear-gradient.c: added a linear gradient
