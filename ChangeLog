@@ -1,5 +1,11 @@
 2008-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/stroke.c: (process): do both fill and stroke in
+	this op. (needs better logic for hit detection now,.. as well as
+	avoiding to stroke if stroke opacity / color has alpha==0.0)
+
+2008-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.[ch]: (gegl_path_remove): fix removing
 	of first node.
 	(gegl_path_closest_point): added out_param indicating last node.

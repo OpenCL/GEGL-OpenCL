@@ -25,6 +25,9 @@
 
 gegl_chant_path   (path,   _("Vector"),
                              _("A GeglVector representing the path of the stroke"))
+
+gegl_chant_color  (fill,    _("Fill Color"),    "rgba(0.1,0.9,1.0,0.2)",
+                             _("Color of paint to use"))
 gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,0.1)",
                              _("Color of paint to use"))
 gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 12.0,
@@ -96,6 +99,8 @@ get_cached_region (GeglOperation *operation)
   return get_bounding_box (operation);
 }
 #endif
+static void gegl_path_cairo_play (GeglPath *path,
+                                    cairo_t *cr);
 
 static gboolean
 process (GeglOperation       *operation,
@@ -106,6 +111,34 @@ process (GeglOperation       *operation,
   GeglRectangle box = get_bounding_box (operation);
 
   gegl_buffer_clear (output, &box);
+
+
+    {
+      gfloat r,g,b,a;
+      gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
+      if (a>0.001)
+        {
+          cairo_t *cr;
+          cairo_surface_t *surface;
+          guchar *data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
+
+          surface = cairo_image_surface_create_for_data (data,
+                                                         CAIRO_FORMAT_ARGB32,
+                                                         result->width,
+                                                         result->height,
+                                                         result->width * 4);
+          memset (data, 0, result->width * result->height * 4);
+          cr = cairo_create (surface);
+          cairo_translate (cr, -result->x, -result->y);
+
+          gegl_path_cairo_play (o->path, cr);
+          cairo_set_source_rgba (cr, r,g,b,a);
+          cairo_fill (cr);
+          gegl_buffer_linear_close (output, data);
+        }
+    }
+
+
   g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
   gegl_path_stroke (output, result,
                             o->path,
