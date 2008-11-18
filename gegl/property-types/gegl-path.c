@@ -1250,31 +1250,28 @@ static void gegl_path_item_free (GeglPathList *p)
 }
 
 void  gegl_path_remove  (GeglPath *vector,
-                                gint        pos)
+                         gint      pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
   GeglPathList *prev = NULL;
-  GeglPathList *last = NULL;
 
   gint count=0;
   for (iter = priv->path; iter; iter=iter->next)
     {
       if (count == pos)
         {
-          prev->next = iter->next;
+          if (prev)
+            prev->next = iter->next;
+          else
+            priv->path = iter->next;
           gegl_path_item_free (iter);
+          break;
         }
       prev = iter;
-      if (prev->next)
-        last=iter;
       count ++;
     }
-  if (count==-1)
-    {
-      last->next = NULL;
-      gegl_path_item_free (prev);
-    }
+
   priv->flat_path_clean = FALSE;
   priv->length_clean = FALSE;
   priv->tail = NULL;
@@ -1507,7 +1504,8 @@ gegl_path_closest_point (GeglPath *path,
                          gdouble   x,
                          gdouble   y,
                          gdouble  *dx,
-                         gdouble  *dy)
+                         gdouble  *dy,
+                         gint     *node_pos_before)
 {
   gdouble length = gegl_path_get_length (path);
   gint     i, n;
@@ -1518,6 +1516,13 @@ gegl_path_closest_point (GeglPath *path,
   n = ceil(length);
   samples_x = g_malloc (sizeof (gdouble)* n);
   samples_y = g_malloc (sizeof (gdouble)* n);
+
+  if (length == 0)
+    {
+      if (node_pos_before)
+        *node_pos_before = 0;
+      return 0.0;
+    }
 
   gegl_path_calc_values (path, n, samples_x, samples_y);
 
@@ -1540,10 +1545,38 @@ gegl_path_closest_point (GeglPath *path,
     {
       *dy = samples_y[closest_val];
     }
+
+  if (node_pos_before)
+    {
+      GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+      GeglPathList *iter;
+      /* what node was the one before us ? */
+      iter = priv->path;
+      i=0;
+      while (iter)
+        {
+          gdouble dist;
+          dist = gegl_path_closest_point (path, 
+                                   iter->d.point[0].x,
+                                   iter->d.point[0].y,
+                                   NULL, NULL, NULL);
+          *node_pos_before = -2;
+          if(dist > closest_val - 2)
+            {
+              *node_pos_before = i-1;
+            }
+          if(dist > closest_val)
+              break;
+          i++;
+          iter=iter->next;
+        }
+    }
+
+
   g_free (samples_x);
   g_free (samples_y);
 
-  return sqrt (closest_val);
+  return closest_val * 1.0;
 }
 
 GeglPath *gegl_path_get_parameter_path (GeglPath    *path,
@@ -2107,7 +2140,7 @@ void gegl_path_stroke (GeglBuffer *buffer,
   if (gegl_buffer_is_shared (buffer))
     while (!gegl_buffer_try_lock (buffer));
 
-  gegl_buffer_clear (buffer, &extent);
+  /*gegl_buffer_clear (buffer, &extent);*/
 
   while (iter)
     {

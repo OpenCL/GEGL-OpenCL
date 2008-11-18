@@ -127,7 +127,8 @@ gdouble              gegl_path_closest_point  (GeglPath     *path,
                                                gdouble       x,
                                                gdouble       y,
                                                gdouble      *dx,
-                                               gdouble      *dy);
+                                               gdouble      *dy,
+                                               gint         *node_pos_before);
 void                 gegl_path_calc           (GeglPath     *path,
                                                gdouble       pos,
                                                gdouble      *dest_x,
