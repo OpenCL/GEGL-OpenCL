@@ -1,5 +1,10 @@
 2008-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-path-spiro.c: (gegl_path_spiro_flatten): make spiro curves
+	be closed when the initial node is "O".
+
+2008-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/stroke.c: (process): do both fill and stroke in
 	this op. (needs better logic for hit detection now,.. as well as
 	avoiding to stroke if stroke opacity / color has alpha==0.0)

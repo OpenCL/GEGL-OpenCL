@@ -68,6 +68,7 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
   GeglPathList *iter;
   spiro_cp *points;
   gboolean is_spiro = TRUE;
+  gboolean closed = FALSE;
   gint count;
   gint i;
   /* first we do a run through the path checking it's length
@@ -99,6 +100,11 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
     }
 
   points = g_new0 (spiro_cp, count);
+
+
+  if (original && original->d.type!='v')
+    closed = TRUE;
+
   for (i=0, iter = original; iter; iter=iter->next, i++)
     {
       points[i].x = iter->d.point[0].x;
@@ -148,7 +154,7 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
   bezcontext.curveto = curveto;
   bezcontext.quadto = quadto;
   bezcontext.path = NULL;
-  SpiroCPsToBezier(points,count, FALSE, (void*)&bezcontext);
+  SpiroCPsToBezier(points,count, closed, (void*)&bezcontext);
   g_free (points);
 
   return bezcontext.path;
