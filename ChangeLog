@@ -1,5 +1,10 @@
 2008-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: commit to kind of make spiros work, probably breaking
+	other stuff :d
+
+2008-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-path-spiro.c: (gegl_path_spiro_flatten): make spiro curves
 	be closed when the initial node is "O".
 
