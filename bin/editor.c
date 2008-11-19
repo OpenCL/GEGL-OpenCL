@@ -838,11 +838,12 @@ nodes_release_event (GtkWidget      *widget,
 
 static gboolean
 nodes_motion_notify_event (GtkWidget      *widget,
-                          GdkEventMotion *event,
-                          gpointer        data)
+                           GdkEventMotion *event,
+                           gpointer        data)
 {
     {
       gint   x, y;
+      gint n;
       gdouble scale;
       gdouble tx, ty;
       gdouble ex, ey;
@@ -917,11 +918,14 @@ nodes_motion_notify_event (GtkWidget      *widget,
 
       /* make the closest the selected */
 
+      n = gegl_path_get_count (vector);
+      if (tools.selected_no != 0 &&
+          tools.selected_no != n -1)
       {
         gint i;
         gint closest=0;
         gdouble bestdist = 100000;
-        for (i=0;i<gegl_path_get_count (vector);i++)
+        for (i=0;i<n;i++)
           {
             const GeglPathItem *node;
             gdouble dist;
