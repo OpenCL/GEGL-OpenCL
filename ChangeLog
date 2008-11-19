@@ -1,3 +1,8 @@
+2008-11-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (nodes_press_event): allow splitting segments by
+	click-dragging when end nodes are active.
+
 2008-11-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: (nodes_motion_notify_event): made the active status of

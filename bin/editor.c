@@ -464,8 +464,8 @@ static gint spiro_mode_change (gint argc, gchar **argv)
 
 static gboolean
 nodes_press_event (GtkWidget      *widget,
-                  GdkEventButton *event,
-                  gpointer        data)
+                   GdkEventButton *event,
+                   gpointer        data)
 {
   gint   x, y;
   gdouble scale;
@@ -702,7 +702,36 @@ nodes_press_event (GtkWidget      *widget,
     }
 
 
-  if (((n-1 == tools.selected_no) ||( i==0 && tools.selected_no==0))   && tools.drag_no < 0  )
+
+      {
+        gdouble linewidth;
+        cairo_new_path (cr);
+        gegl_path_cairo_play (vector, cr);
+        gegl_node_get (tools.node, "linewidth", &linewidth, NULL);
+        cairo_set_line_width (cr, linewidth);
+      if (cairo_in_stroke (cr, ex, ey))
+        {
+          gdouble pos;
+          gint node_before;
+          pos = gegl_path_closest_point (vector, ex,ey, &ex, &ey, &node_before);
+
+            {
+              gchar buf[256];
+              tools.selected_no = node_before;
+              sprintf (buf, "insert-node-after %f %f", ex, ey);
+              do_command (buf);
+              g_print ("insert and start drag node after\n");
+
+              tools.selected_no = node_before + 1;
+              tools.drag_no = tools.selected_no;
+              tools.drag_sub = 0;
+              tools.prevx = ex;
+              tools.prevy = ey;
+              gtk_widget_queue_draw (widget);
+            }
+        }
+      else if (((n-1 == tools.selected_no) /*||
+       (i==0 && tools.selected_no==0)*/) && tools.drag_no < 0)
     {
       /* append a node */
       if (!prev_knot)
@@ -764,55 +793,30 @@ foo:
       gtk_widget_queue_draw (widget);
       return FALSE;
     }
-
-    if (tools.selected_no == 0)
+  else if (tools.selected_no == 0)
       {
         g_print ("start add\n");
         {
           gchar buf[256];
-          sprintf (buf, "insert-node-before %f %f", ex, ey);
-          do_command (buf);
-          g_print ("insert and start drag node after\n");
 
-          tools.selected_no = 0;
-          tools.drag_no = tools.selected_no;
+          if (!prev_knot)
+            {
+              GeglPathItem knot = {'v', {{ex, ey}}};
+              gegl_path_insert (vector, -1, &knot);
+            }
+          else
+            {
+              sprintf (buf, "insert-node-before %f %f", ex, ey);
+              do_command (buf);
+            }
+
+          tools.selected_no = tools.drag_no = 0;
           tools.drag_sub = 0;
           tools.prevx = ex;
           tools.prevy = ey;
           gtk_widget_queue_draw (widget);
         }
       }
-    else
-      {
-        gdouble linewidth;
-        g_print ("what to do?   ");
-        cairo_new_path (cr);
-        gegl_path_cairo_play (vector, cr);
-        gegl_node_get (tools.node, "linewidth", &linewidth, NULL);
-        cairo_set_line_width (cr, linewidth);
-      if (cairo_in_stroke (cr, ex, ey))
-        {
-          gdouble pos;
-          gint node_before;
-          pos = gegl_path_closest_point (vector, ex,ey, &ex, &ey, &node_before);
-
-            {
-              gchar buf[256];
-              tools.selected_no = node_before;
-              sprintf (buf, "insert-node-after %f %f", ex, ey);
-              do_command (buf);
-              g_print ("insert and start drag node after\n");
-
-              tools.selected_no = node_before + 1;
-              tools.drag_no = tools.selected_no;
-              tools.drag_sub = 0;
-              tools.prevx = ex;
-              tools.prevy = ey;
-              gtk_widget_queue_draw (widget);
-            }
-
-          g_print ("subdivide!\n");
-        }
       else
         {
           goto new_stroke;
