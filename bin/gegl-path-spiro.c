@@ -78,6 +78,9 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
     {
       switch (iter->d.type)
         {
+          case '0':
+            count--;
+            break;
           case 'v':
           case 'o':
           case 'O':
@@ -102,10 +105,14 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
   points = g_new0 (spiro_cp, count);
 
 
-  if (original && original->d.type!='v')
-    closed = TRUE;
+  iter = original;
+  if (original && original->d.type=='0')
+    {
+      closed = TRUE;
+      iter = original->next;
+    }
 
-  for (i=0, iter = original; iter; iter=iter->next, i++)
+  for (i=0; iter; iter=iter->next, i++)
     {
       points[i].x = iter->d.point[0].x;
       points[i].y = iter->d.point[0].y;
@@ -140,6 +147,8 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
           case '{':
             points[i].ty = SPIRO_OPEN_CONTOUR;
             break;
+          case '0':
+            break;
           /*case '}':
             points[i].ty = SPIRO_END_CONTOUR;
             break;*/
@@ -166,6 +175,7 @@ void gegl_path_spiro_init (void)
   if (done)
     return;
   done = TRUE;
+  gegl_path_add_type ('0', 1, "spiro closed marker");
   gegl_path_add_type ('v', 1, "spiro corner");
   gegl_path_add_type ('o', 1, "spiro g4");
   gegl_path_add_type ('O', 1, "spiro g2");

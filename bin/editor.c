@@ -21,6 +21,7 @@
 #define NORMAL_COLOR cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.5)
 
 #define USE_DYNAMICS 0
+#define SUBDIVIDE_DIST 10
 
 #include "config.h"
 
@@ -268,6 +269,15 @@ static void get_loc (const GeglPathItem *knot,
     }
 }
 
+static void select_node (GeglNode *node)
+{
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
+  GtkTreeIter iter;
+  iter.user_data = node;
+  gtk_tree_selection_select_iter (selection, &iter);
+  tree_editor_set_active (editor.tree_editor, node);
+}
+
 
 static gint add_path (gint argc, gchar **argv)
 {
@@ -291,21 +301,11 @@ static gint add_path (gint argc, gchar **argv)
 
       if (parent && g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
         {
-
-          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
-          GtkTreeIter iter;
-          iter.user_data = parent;
-          gtk_tree_selection_select_iter (selection, &iter);
-          tree_editor_set_active (editor.tree_editor, parent);
+          select_node (parent);
         }
       else
         {
-          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
-          GtkTreeIter iter;
-          iter.user_data = self;
-          g_assert (self);
-          gtk_tree_selection_select_iter (selection, &iter);
-          tree_editor_set_active (editor.tree_editor, self);
+          select_node (self);
         }
 
       gegl_add_sibling ("gegl:over");
@@ -347,6 +347,19 @@ static gint insert_node (gint argc, gchar **argv)
   return 0;
 }
 
+static gint spiro_close (gint argc, gchar **argv)
+{
+  GeglPathItem knot = *gegl_path_get (tools.path, 0);
+
+  if (knot.type == '0')
+    return -1;
+  gegl_path_insert (tools.path, 0, &knot);
+  knot.type = '0';
+  tools.selected_no = tools.drag_no = 0;
+  gegl_path_replace (tools.path, 0, &knot);
+  g_print ("closed spiro\n");
+  return 0;
+}
 
 static gint insert_node_before (gint argc, gchar **argv)
 {
@@ -504,6 +517,8 @@ nodes_press_event (GtkWidget      *widget,
     {
       gdouble x, y;
       knot = gegl_path_get (vector, i);
+      if (knot->type =='0')
+        knot = gegl_path_get (vector, ++i);
 
       /* handling of handles on beziers */
       if (knot->type == 'C')
@@ -553,8 +568,19 @@ nodes_press_event (GtkWidget      *widget,
       shapeaction (x, y, 2, 0, ".");
       if (cairo_in_fill (cr, ex, ey))
         {
-          tools.selected_no = i;
-          tools.drag_no = i;
+
+          if (i==0 && tools.selected_no == n-1)
+            {
+              do_command ("spiro-close");
+              tools.selected_no = tools.drag_no = 0;
+            }
+          else if (i==n-1 && tools.selected_no == 0)
+            {
+              do_command ("spiro-close");
+              tools.selected_no = tools.drag_no = n;
+            }
+          else tools.selected_no = tools.drag_no = i;
+
           tools.drag_sub = 0;
           tools.prevx = ex;
           tools.prevy = ey;
@@ -562,7 +588,7 @@ nodes_press_event (GtkWidget      *widget,
 
           /* dragging a knot */
 
-      cairo_destroy (cr);
+          cairo_destroy (cr);
           return TRUE;
         }
 
@@ -602,7 +628,7 @@ nodes_press_event (GtkWidget      *widget,
           else
             {
               sx = 0;
-              sy = -ACTIVE_ARC * 3 / scale;
+              sy = -ACTIVE_ARC * 3.5 / scale;
             }
 
 
@@ -614,7 +640,7 @@ nodes_press_event (GtkWidget      *widget,
                     return TRUE;\
                   }
 
-          shapeaction (x-sx*2, y-sy*2, 1.5, 0.5, "X");
+          shapeaction (x-sx*1, y-sy*1, 1.5, 0.5, "X");
           CMD("remove-node");
 
           if (i==0 && i==n-1)
@@ -622,32 +648,32 @@ nodes_press_event (GtkWidget      *widget,
             {
 
               case 'v':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "O");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
                 break;
               case 'o':
               case 'O':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
                 break;
               case '[':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "]");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "]");
                 CMD("spiro-mode ]");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
                 break;
               case ']':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "[");
                 CMD("spiro-mode [");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
                 break;
               case '*':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
               default:
                 break;
@@ -656,40 +682,40 @@ nodes_press_event (GtkWidget      *widget,
             {
 
               case 'v':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "O");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "[");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
                 CMD("spiro-mode [");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "]");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "]");
                 CMD("spiro-mode ]");
                 break;
               case 'o':
               case 'O':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "[");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
                 CMD("spiro-mode [");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "]");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "]");
                 CMD("spiro-mode ]");
                 break;
               case '[':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "]");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "]");
                 CMD("spiro-mode ]");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
                 break;
               case ']':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "[");
                 CMD("spiro-mode [");
-                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
+                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
-                shapeaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                shapeaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                 CMD("spiro-mode O");
                 break;
               case '*':
-                shapeaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                shapeaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                 CMD("spiro-mode v");
               default:
                 break;
@@ -708,9 +734,11 @@ nodes_press_event (GtkWidget      *widget,
         cairo_new_path (cr);
         gegl_path_cairo_play (vector, cr);
         gegl_node_get (tools.node, "linewidth", &linewidth, NULL);
-        cairo_set_line_width (cr, linewidth);
-      if (cairo_in_stroke (cr, ex, ey))
+        cairo_set_line_width (cr, (SUBDIVIDE_DIST*2)/scale);  /* 5px wide active zone */
+      if (cairo_in_stroke (cr, ex, ey)) 
         {
+          /* subdivide segment */
+
           gdouble pos;
           gint node_before;
           pos = gegl_path_closest_point (vector, ex,ey, &ex, &ey, &node_before);
@@ -720,7 +748,6 @@ nodes_press_event (GtkWidget      *widget,
               tools.selected_no = node_before;
               sprintf (buf, "insert-node-after %f %f", ex, ey);
               do_command (buf);
-              g_print ("insert and start drag node after\n");
 
               tools.selected_no = node_before + 1;
               tools.drag_no = tools.selected_no;
@@ -730,99 +757,122 @@ nodes_press_event (GtkWidget      *widget,
               gtk_widget_queue_draw (widget);
             }
         }
-      else if (((n-1 == tools.selected_no) /*||
-       (i==0 && tools.selected_no==0)*/) && tools.drag_no < 0)
-    {
-      /* append a node */
-      if (!prev_knot)
-        goto foo;       /* force the initial node to be a v node - we make
-                         * poly lines by default
-                         */
-
-      switch (prev_knot->type)
+      else 
         {
-          case 'v':
+          /* deal with clicks outside path */
+          GeglNode *detected;
+          GeglNode *node;
+
+          g_object_get (editor.view, "node", &node, NULL);
+          
+          detected = gegl_node_detect (node, ex + tx, ey + tx);
+
+          g_object_unref (node);
+
+          if (detected)
+            {
+              if (g_str_equal (gegl_node_get_operation (detected), "gegl:stroke"))
+                {
+                  select_node (detected);
+                  goto done;
+                }
+            }
+
+
+          if ((n-1 == tools.selected_no) && tools.drag_no < 0)
+            {
+              /* append a node */
+              if (!prev_knot)
+                goto foo;       /* force the initial node to be a v node - we make
+                                 * poly lines by default
+                                 */
+
+              switch (prev_knot->type)
+                {
+                  case 'v':
 foo:
-            {
-              GeglPathItem knot = {'v', {{ex, ey}}};
-              gegl_path_insert (vector, -1, &knot);
-              tools.selected_no = tools.drag_no = n;
-              tools.drag_sub = 0;
-              tools.prevx = ex;
-              tools.prevy = ey;
+                    {
+                      GeglPathItem knot = {'v', {{ex, ey}}};
+                      gegl_path_insert (vector, -1, &knot);
+                      tools.selected_no = tools.drag_no = n;
+                      tools.drag_sub = 0;
+                      tools.prevx = ex;
+                      tools.prevy = ey;
+                    }
+                    break;
+                  case '*':
+                    {
+                      GeglPathItem knot = {'*', {{ex, ey}}};
+                      gegl_path_insert (vector, -1, &knot);
+                      tools.selected_no = tools.drag_no = n;
+                      tools.drag_sub = 0;
+                      tools.prevx = ex;
+                      tools.prevy = ey;
+                    }
+                    break;
+                  case 'o':
+                  case 'O':
+                    {
+                      GeglPathItem knot = {'O', {{ex, ey}}};
+                      gegl_path_insert (vector, -1, &knot);
+                      tools.selected_no = tools.drag_no = n;
+                      tools.drag_sub = 0;
+                      tools.prevx = ex;
+                      tools.prevy = ey;
+                    }
+                    break;
+                  case 'c':
+                  case 'C':
+                  case 'l':
+                  case 'L':
+                    {
+                      GeglPathItem knot = {'L', {{ex, ey}}};
+                      gegl_path_insert (vector, -1, &knot);
+                      tools.selected_no = tools.drag_no = n;
+                      tools.drag_sub = 0;
+                      tools.prevx = ex;
+                      tools.prevy = ey;
+                    }
+                    break;
+                  default:
+                    g_warning ("failing to append after a %c\n", prev_knot->type);
+                }
+              cairo_destroy (cr);
+              gtk_widget_queue_draw (widget);
+              return FALSE;
             }
-            break;
-          case '*':
+          else if (tools.selected_no == 0)
             {
-              GeglPathItem knot = {'*', {{ex, ey}}};
-              gegl_path_insert (vector, -1, &knot);
-              tools.selected_no = tools.drag_no = n;
-              tools.drag_sub = 0;
-              tools.prevx = ex;
-              tools.prevy = ey;
-            }
-            break;
-          case 'o':
-          case 'O':
-            {
-              GeglPathItem knot = {'O', {{ex, ey}}};
-              gegl_path_insert (vector, -1, &knot);
-              tools.selected_no = tools.drag_no = n;
-              tools.drag_sub = 0;
-              tools.prevx = ex;
-              tools.prevy = ey;
-            }
-            break;
-          case 'c':
-          case 'C':
-          case 'l':
-          case 'L':
-            {
-              GeglPathItem knot = {'L', {{ex, ey}}};
-              gegl_path_insert (vector, -1, &knot);
-              tools.selected_no = tools.drag_no = n;
-              tools.drag_sub = 0;
-              tools.prevx = ex;
-              tools.prevy = ey;
-            }
-            break;
-          default:
-            g_warning ("failing to append after a %c\n", prev_knot->type);
-        }
-      cairo_destroy (cr);
-      gtk_widget_queue_draw (widget);
-      return FALSE;
-    }
-  else if (tools.selected_no == 0)
-      {
-        g_print ("start add\n");
-        {
-          gchar buf[256];
+              g_print ("start add\n");
+              {
+                gchar buf[256];
 
-          if (!prev_knot)
-            {
-              GeglPathItem knot = {'v', {{ex, ey}}};
-              gegl_path_insert (vector, -1, &knot);
-            }
-          else
-            {
-              sprintf (buf, "insert-node-before %f %f", ex, ey);
-              do_command (buf);
-            }
+                if (!prev_knot)
+                  {
+                    GeglPathItem knot = {'v', {{ex, ey}}};
+                    gegl_path_insert (vector, -1, &knot);
+                  }
+                else
+                  {
+                    sprintf (buf, "insert-node-before %f %f", ex, ey);
+                    do_command (buf);
+                  }
 
-          tools.selected_no = tools.drag_no = 0;
-          tools.drag_sub = 0;
-          tools.prevx = ex;
-          tools.prevy = ey;
-          gtk_widget_queue_draw (widget);
+                tools.selected_no = tools.drag_no = 0;
+                tools.drag_sub = 0;
+                tools.prevx = ex;
+                tools.prevy = ey;
+                gtk_widget_queue_draw (widget);
+              }
+            }
+            else
+              {
+                goto new_stroke;
+              }
         }
       }
-      else
-        {
-          goto new_stroke;
-        }
-    }
 
+done:
   cairo_destroy (cr);
   gtk_widget_queue_draw (widget);
 
@@ -1023,10 +1073,25 @@ static gboolean nodes_expose (GtkWidget *widget,
   n= gegl_path_get_count (vector);
   prev_knot = NULL;
   if (tools.drag_no==-1)
+    {
+
+     {
+       gdouble pos;
+       gdouble px, py;
+       gint node_before;
+       pos = gegl_path_closest_point (vector, tools.prevx,tools.prevy, &px, &py, &node_before);
+
+       if (DIST(px,py,tools.prevx,tools.prevy) < SUBDIVIDE_DIST/scale)
+         {
+            drawaction (px, py, 1.5, 0.5, "+");
+         }
+     }
   for (i=0;i<n;i++)
     {
       gdouble x, y;
       knot = gegl_path_get (vector, i);
+      if (knot->type =='0')
+        knot = gegl_path_get (vector, ++i);
       if (knot->type == 'C')
         {
           x = knot->point[0].x;
@@ -1123,36 +1188,36 @@ static gboolean nodes_expose (GtkWidget *widget,
           else
             {
               sx = 0;
-              sy = -ACTIVE_ARC * 3 / scale;
+              sy = -ACTIVE_ARC * 3.5 / scale;
 
             }
 
         /* don't draw the action items while dragging */
         if (tools.drag_no == -1)
           {
-            drawaction (x-sx*2, y-sy*2, 1.5, 0.5, "X");
+            drawaction (x-sx*1, y-sy*1, 1.5, 0.5, "X");
             if (i==0 || i==n-1)
             switch (knot->type)
               {
                 case 'v':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "O");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "O");
                   break;
                 case 'o':
                 case 'O':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                   break;
                 case '[':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "]");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "]");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                   break;
                 case ']':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "[");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                   break;
                 case '*':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                   break;
                   break;
                 default:
@@ -1161,28 +1226,28 @@ static gboolean nodes_expose (GtkWidget *widget,
             else switch (knot->type)
               {
                 case 'v':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "O");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "[");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "]");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "O");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "]");
                   break;
                 case 'o':
                 case 'O':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "[");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "]");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "]");
                   break;
                 case '[':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "]");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "]");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                   break;
                 case ']':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "[");
-                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "v");
-                  drawaction (x+sx*4, y+sy*4, 1.5, 0.5, "O");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "[");
+                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*3, y+sy*3, 1.5, 0.5, "O");
                   break;
                 case '*':
-                  drawaction (x+sx*2, y+sy*2, 1.5, 0.5, "v");
+                  drawaction (x+sx*1, y+sy*1, 1.5, 0.5, "v");
                   break;
                   break;
                 default:
@@ -1191,6 +1256,9 @@ static gboolean nodes_expose (GtkWidget *widget,
           }
         }
     }
+    }
+
+
 
   cairo_destroy (cr);
   return FALSE;
@@ -1815,11 +1883,7 @@ stroke_press_event (GtkWidget      *widget,
 
   if (parent && g_str_equal (gegl_node_get_operation (parent), "gegl:over"))
     {
-
-      GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
-      GtkTreeIter iter;
-      iter.user_data = parent;
-      gtk_tree_selection_select_iter (selection, &iter);
+      select_node (parent);
     }
 
   gegl_add_sibling ("gegl:over");
@@ -2105,11 +2169,7 @@ static void move_rel (GeglNode *node,
     {
       shift = gegl_add_sibling ("gegl:shift");
         {
-
-          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_editor_get_treeview (editor.tree_editor)));
-          GtkTreeIter iter;
-          iter.user_data = node;
-          gtk_tree_selection_select_iter (selection, &iter);
+          select_node (node);
         }
     }
     {
