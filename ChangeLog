@@ -1,5 +1,19 @@
 2008-11-19  Øyvind Kolås  <pippin@gimp.org>
 
+	Made a 'z' instruction (shared with normal mixed bezier/linear paths)
+	also be the closed curve indicator for spiro curves. Made the GUI
+	for all nodes appear the same and give all nodes the same
+	functionality when the path is closed.
+
+	* bin/editor.c: (spiro_is_closed), (spiro_close),
+	(nodes_press_event), (nodes_motion_notify_event), (nodes_expose):
+	* bin/gegl-path-spiro.c: (gegl_path_spiro_flatten),
+	(gegl_path_spiro_init):
+	* gegl/property-types/gegl-path.c: (gegl_path_get),
+	(gegl_path_closest_point):
+
+2008-11-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: (gegl_path_closest_point): skip '0'
 	typed nodes when traversing.
 

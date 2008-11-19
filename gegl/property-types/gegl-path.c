@@ -1217,7 +1217,7 @@ gegl_path_get_count  (GeglPath *vector)
 
 const GeglPathItem *
 gegl_path_get (GeglPath *vector,
-                      gint        pos)
+               gint        pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -1230,7 +1230,7 @@ gegl_path_get (GeglPath *vector,
         return last;
       count ++;
     }
-  if (count==-1)
+  if (pos==-1)
     {
       return last;
     }
@@ -1537,6 +1537,14 @@ gegl_path_closest_point (GeglPath *path,
         }
     }
 
+  if (fabs (samples_x[n-1] - samples_x[0]) < 2.1)
+    {
+      if (closest_val == n-1)
+        {
+          closest_val = 0;
+        }
+    }
+
   if (dx)
     {
       *dx = samples_x[closest_val];
@@ -1553,31 +1561,33 @@ gegl_path_closest_point (GeglPath *path,
       /* what node was the one before us ? */
       iter = priv->path;
       i=0;
-      while (iter)
+
+      for (iter=priv->path,i=0; iter;i++,iter=iter->next)
         {
           gdouble dist;
-          if (iter->d.type !='0')
+          if (iter->d.type == 'z')
+            continue;
+          dist = gegl_path_closest_point (path, 
+                                   iter->d.point[0].x,
+                                   iter->d.point[0].y,
+                                   NULL, NULL, NULL);
+          *node_pos_before = i;
+          if(dist >= closest_val - 2)
             {
-              dist = gegl_path_closest_point (path, 
-                                       iter->d.point[0].x,
-                                       iter->d.point[0].y,
-                                       NULL, NULL, NULL);
-              *node_pos_before = -2;
-              if(dist > closest_val - 2)
-                {
-                  *node_pos_before = i-1;
-                }
-              if(dist > closest_val)
-                  break;
+              *node_pos_before = i-1;
+              break;
             }
-          i++;
-          iter=iter->next;
+          /*if(dist > closest_val)
+            {
+              break;
+            }*/
         }
     }
 
 
   g_free (samples_x);
   g_free (samples_y);
+
 
   return closest_val * 1.0;
 }

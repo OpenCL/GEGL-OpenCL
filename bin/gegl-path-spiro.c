@@ -78,15 +78,13 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
     {
       switch (iter->d.type)
         {
-          case '0':
-            count--;
-            break;
+          case 'z':
+            closed = TRUE;
           case 'v':
           case 'o':
           case 'O':
           case '[':
           case ']':
-          case 'z':
           case '{':
             break;
           default:
@@ -104,16 +102,12 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
 
   points = g_new0 (spiro_cp, count);
 
-
   iter = original;
-  if (original && original->d.type=='0')
-    {
-      closed = TRUE;
-      iter = original->next;
-    }
 
   for (i=0; iter; iter=iter->next, i++)
     {
+      if (iter->d.type == 'z')
+        continue;
       points[i].x = iter->d.point[0].x;
       points[i].y = iter->d.point[0].y;
       switch (iter->d.type)
@@ -141,13 +135,16 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
           case ']':
             points[i].ty = SPIRO_RIGHT;
             break;
-          case 'z':
-            points[i].ty = SPIRO_END;
-            break;
           case '{':
             points[i].ty = SPIRO_OPEN_CONTOUR;
             break;
           case '0':
+            points[i].ty = SPIRO_G2;
+            break;
+          case 'V':
+            points[i].ty = SPIRO_CORNER;
+            break;
+          case 'z':
             break;
           /*case '}':
             points[i].ty = SPIRO_END_CONTOUR;
@@ -163,7 +160,7 @@ static GeglPathList *gegl_path_spiro_flatten (GeglPathList *original)
   bezcontext.curveto = curveto;
   bezcontext.quadto = quadto;
   bezcontext.path = NULL;
-  SpiroCPsToBezier(points,count, closed, (void*)&bezcontext);
+  SpiroCPsToBezier(points,count - (closed?1:0), closed, (void*)&bezcontext);
   g_free (points);
 
   return bezcontext.path;
@@ -175,7 +172,6 @@ void gegl_path_spiro_init (void)
   if (done)
     return;
   done = TRUE;
-  gegl_path_add_type ('0', 1, "spiro closed marker");
   gegl_path_add_type ('v', 1, "spiro corner");
   gegl_path_add_type ('o', 1, "spiro g4");
   gegl_path_add_type ('O', 1, "spiro g2");

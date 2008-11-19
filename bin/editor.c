@@ -347,16 +347,32 @@ static gint insert_node (gint argc, gchar **argv)
   return 0;
 }
 
+static gboolean spiro_is_closed (GeglPath *path)
+{
+  const GeglPathItem *knot;
+ 
+  if (!path)
+    return FALSE;
+  knot = gegl_path_get (tools.path, -1);
+  if (!knot)
+    return FALSE;
+  if (knot->type == 'z')
+    {
+      return TRUE;
+    }
+  return FALSE;
+}
+
+
 static gint spiro_close (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, 0);
-
-  if (knot.type == '0')
-    return -1;
-  gegl_path_insert (tools.path, 0, &knot);
-  knot.type = '0';
-  tools.selected_no = tools.drag_no = 0;
-  gegl_path_replace (tools.path, 0, &knot);
+  GeglPathItem knot = *gegl_path_get (tools.path, -1);
+  if (knot.type == 'z')
+    {
+      g_print ("already closed\n");
+      return -1;
+    }
+  gegl_path_append (tools.path, 'z');
   g_print ("closed spiro\n");
   return 0;
 }
@@ -517,8 +533,6 @@ nodes_press_event (GtkWidget      *widget,
     {
       gdouble x, y;
       knot = gegl_path_get (vector, i);
-      if (knot->type =='0')
-        knot = gegl_path_get (vector, ++i);
 
       /* handling of handles on beziers */
       if (knot->type == 'C')
@@ -577,7 +591,7 @@ nodes_press_event (GtkWidget      *widget,
           else if (i==n-1 && tools.selected_no == 0)
             {
               do_command ("spiro-close");
-              tools.selected_no = tools.drag_no = n;
+              tools.selected_no = tools.drag_no = n-1;
             }
           else tools.selected_no = tools.drag_no = i;
 
@@ -643,7 +657,7 @@ nodes_press_event (GtkWidget      *widget,
           shapeaction (x-sx*1, y-sy*1, 1.5, 0.5, "X");
           CMD("remove-node");
 
-          if (i==0 && i==n-1)
+          if ((i==0 || i==n-1) && !spiro_is_closed (vector))
           switch (knot->type)
             {
 
@@ -721,13 +735,8 @@ nodes_press_event (GtkWidget      *widget,
                 break;
             }
         }
-
-
-
       prev_knot = knot;
     }
-
-
 
       {
         gdouble linewidth;
@@ -747,6 +756,7 @@ nodes_press_event (GtkWidget      *widget,
               gchar buf[256];
               tools.selected_no = node_before;
               sprintf (buf, "insert-node-after %f %f", ex, ey);
+              g_print ("%s %i\n", buf, node_before);
               do_command (buf);
 
               tools.selected_no = node_before + 1;
@@ -779,7 +789,7 @@ nodes_press_event (GtkWidget      *widget,
             }
 
 
-          if ((n-1 == tools.selected_no) && tools.drag_no < 0)
+          if ((n-1 == tools.selected_no) && tools.drag_no < 0 && !spiro_is_closed (vector))
             {
               /* append a node */
               if (!prev_knot)
@@ -789,10 +799,9 @@ nodes_press_event (GtkWidget      *widget,
 
               switch (prev_knot->type)
                 {
-                  case 'v':
 foo:
                     {
-                      GeglPathItem knot = {'v', {{ex, ey}}};
+                      GeglPathItem knot = {'V', {{ex, ey}}};
                       gegl_path_insert (vector, -1, &knot);
                       tools.selected_no = tools.drag_no = n;
                       tools.drag_sub = 0;
@@ -800,9 +809,11 @@ foo:
                       tools.prevy = ey;
                     }
                     break;
-                  case '*':
+
+                  case 'V':
+                  case 'v':
                     {
-                      GeglPathItem knot = {'*', {{ex, ey}}};
+                      GeglPathItem knot = {'v', {{ex, ey}}};
                       gegl_path_insert (vector, -1, &knot);
                       tools.selected_no = tools.drag_no = n;
                       tools.drag_sub = 0;
@@ -814,6 +825,16 @@ foo:
                   case 'O':
                     {
                       GeglPathItem knot = {'O', {{ex, ey}}};
+                      gegl_path_insert (vector, -1, &knot);
+                      tools.selected_no = tools.drag_no = n;
+                      tools.drag_sub = 0;
+                      tools.prevx = ex;
+                      tools.prevy = ey;
+                    }
+                    break;
+                  case '*':
+                    {
+                      GeglPathItem knot = {'*', {{ex, ey}}};
                       gegl_path_insert (vector, -1, &knot);
                       tools.selected_no = tools.drag_no = n;
                       tools.drag_sub = 0;
@@ -841,7 +862,7 @@ foo:
               gtk_widget_queue_draw (widget);
               return FALSE;
             }
-          else if (tools.selected_no == 0)
+          else if (tools.selected_no == 0 && !spiro_is_closed (vector))
             {
               g_print ("start add\n");
               {
@@ -973,8 +994,9 @@ nodes_motion_notify_event (GtkWidget      *widget,
       /* make the closest the selected */
 
       n = gegl_path_get_count (vector);
-      if (tools.selected_no != 0 &&
+      if ((tools.selected_no != 0 &&
           tools.selected_no != n -1)
+          || spiro_is_closed (vector))
       {
         gint i;
         gint closest=0;
@@ -1090,8 +1112,8 @@ static gboolean nodes_expose (GtkWidget *widget,
     {
       gdouble x, y;
       knot = gegl_path_get (vector, i);
-      if (knot->type =='0')
-        knot = gegl_path_get (vector, ++i);
+      if (!knot)
+        g_error ("EEEK!");
       if (knot->type == 'C')
         {
           x = knot->point[0].x;
@@ -1196,7 +1218,7 @@ static gboolean nodes_expose (GtkWidget *widget,
         if (tools.drag_no == -1)
           {
             drawaction (x-sx*1, y-sy*1, 1.5, 0.5, "X");
-            if (i==0 || i==n-1)
+            if ((i==0 || i==n-1) && !spiro_is_closed (vector))
             switch (knot->type)
               {
                 case 'v':
