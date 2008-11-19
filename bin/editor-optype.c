@@ -388,7 +388,7 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
   GtkTreeModel *completion_model;
   GtkWidget   *button;
   GtkWidget   *button_arrow;
-  const gchar *current_type;
+  gchar       *current_type = NULL;
   GeglNode    *item = NULL;
 
   if (node_editor)
@@ -411,13 +411,11 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
 
   if (item)
     {
-      current_type = gegl_node_get_operation (item);
+      current_type = g_strdup (gegl_node_get_operation (item));
     }
   else
     {
-      current_type =
-	"Write the name of a GEGL operation to apply "
-	"or use the dropdown menu to the right";
+      current_type = g_strdup ("Write the name of a GEGL operation to apply or examine use the dropdown menu in the upper right");
     }
 
   if (label) gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
@@ -435,6 +433,7 @@ gegl_typeeditor_optype (GtkSizeGroup   *col1,
   if (current_type)
     {
       gtk_entry_set_text (GTK_ENTRY (entry), current_type);
+      g_free (current_type);
     }
   gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
   gtk_entry_set_completion (GTK_ENTRY (entry), completion);

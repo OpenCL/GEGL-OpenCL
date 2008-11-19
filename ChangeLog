@@ -1,5 +1,10 @@
 2008-11-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor-optype.c: (gegl_typeeditor_optype): fix invalid free.
+	* bin/gegl.c: (main): enlarged splash, making it a canvas.
+
+2008-11-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (select_node), (add_path), (spiro_close),
 	(nodes_press_event), (nodes_expose), (stroke_press_event),
 	(move_rel): Made clicking on the opposite end of the path close it.
