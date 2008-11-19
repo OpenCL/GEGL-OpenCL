@@ -1556,17 +1556,20 @@ gegl_path_closest_point (GeglPath *path,
       while (iter)
         {
           gdouble dist;
-          dist = gegl_path_closest_point (path, 
-                                   iter->d.point[0].x,
-                                   iter->d.point[0].y,
-                                   NULL, NULL, NULL);
-          *node_pos_before = -2;
-          if(dist > closest_val - 2)
+          if (iter->d.type !='0')
             {
-              *node_pos_before = i-1;
+              dist = gegl_path_closest_point (path, 
+                                       iter->d.point[0].x,
+                                       iter->d.point[0].y,
+                                       NULL, NULL, NULL);
+              *node_pos_before = -2;
+              if(dist > closest_val - 2)
+                {
+                  *node_pos_before = i-1;
+                }
+              if(dist > closest_val)
+                  break;
             }
-          if(dist > closest_val)
-              break;
           i++;
           iter=iter->next;
         }
