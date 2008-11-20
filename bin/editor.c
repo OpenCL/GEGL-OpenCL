@@ -398,18 +398,26 @@ static gint insert_node_before (gint argc, gchar **argv)
   return 0;
 }
 
+static gint override_node_after = -1;
 static gint insert_node_after (gint argc, gchar **argv)
 {
   GeglPathItem knot;
  
   if (tools.selected_no <0)
-    return -1;
-  knot = *gegl_path_get (tools.path, tools.selected_no);
+    {
+      override_node_after = -1;
+      return -1;
+    }
+  if (override_node_after != -1)
+    knot = *gegl_path_get (tools.path, override_node_after);
+  else
+    knot = *gegl_path_get (tools.path, tools.selected_no);
   g_assert (argv[1] && argv[2]);
   knot.point[0].x = atof (argv[1]);
   knot.point[0].y = atof (argv[2]);
   gegl_path_insert (tools.path, tools.selected_no, &knot);
   tools.selected_no ++;
+  override_node_after = -1;
   return 0;
 }
 
@@ -754,6 +762,7 @@ nodes_press_event (GtkWidget      *widget,
 
             {
               gchar buf[256];
+              override_node_after = tools.selected_no; /* evil hack */
               tools.selected_no = node_before;
               sprintf (buf, "insert-node-after %f %f", ex, ey);
               g_print ("%s %i\n", buf, node_before);

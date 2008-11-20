@@ -1,3 +1,8 @@
+2008-11-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (insert_node_after), (nodes_press_event): always
+	insert the same node type as the selected node when subdividing.
+
 2008-11-19  Øyvind Kolås  <pippin@gimp.org>
 
 	Made a 'z' instruction (shared with normal mixed bezier/linear paths)
