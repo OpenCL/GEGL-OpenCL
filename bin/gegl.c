@@ -157,17 +157,18 @@ main (gint    argc,
           gchar *leaked_string = g_malloc (strlen (o->file) + 5);
           GString *acc = g_string_new ("");
 
-            {gchar *file_basename;
-             gchar *tmp;
-             tmp=g_strdup (o->file);
-             file_basename = g_path_get_basename (tmp);
+	  {
+	    gchar *file_basename;
+	    gchar *tmp;
+	    tmp = g_strdup (o->file);
+	    file_basename = g_path_get_basename (tmp);
 
-             g_string_append (acc, "<gegl><gegl:load path='");
-             g_string_append (acc, file_basename);
-             g_string_append (acc, "'/></gegl>");
+	    g_string_append (acc, "<gegl><gegl:load path='");
+	    g_string_append (acc, file_basename);
+	    g_string_append (acc, "'/></gegl>");
 
-             g_free (tmp);
-            }
+	    g_free (tmp);
+	  }
 
           script = g_string_free (acc, FALSE);
 
@@ -202,7 +203,9 @@ main (gint    argc,
 
       while (*operation)
         {
-          GeglNode *new = gegl_node_new_child (gegl, "operation", *operation, NULL);
+          GeglNode *new;
+
+	  new = gegl_node_new_child (gegl, "operation", *operation, NULL);
           if (iter)
             {
               gegl_node_link_many (iter, new, proxy, NULL);
@@ -220,27 +223,27 @@ main (gint    argc,
     {
       case GEGL_RUN_MODE_EDITOR:
 #if HAVE_GTK
-          gtk_init (&argc, &argv);
-          editor_main (gegl, o);
+	gtk_init (&argc, &argv);
+	editor_main (gegl, o);
 #endif
-          return 0;
+	return 0;
         break;
       case GEGL_RUN_MODE_XML:
-          g_print (gegl_node_to_xml (gegl, path_root));
-          return 0;
+	g_print ("%s\n", gegl_node_to_xml (gegl, path_root));
+	return 0;
         break;
 #if 0
       case GEGL_RUN_MODE_DOT:
-          g_print (gegl_to_dot (gegl));
-          return 0;
+	g_print ("%s\n", gegl_to_dot (gegl));
+	return 0;
         break;
 #endif
       case GEGL_RUN_MODE_PNG:
         {
           GeglNode *output = gegl_node_new_child (gegl,
-                               "operation", "gegl:png-save",
-                               "path", o->output,
-                               NULL);
+						  "operation", "gegl:png-save",
+						  "path", o->output,
+						  NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
           g_object_unref (output);
