@@ -1,3 +1,13 @@
+2008-11-20  Øyvind Kolås  <pippin@gimp.org>
+
+	Made dragging inside closed shapes move the shape itself.
+
+	* bin/editor.c: (add_path), (spiro_close), (move_rel),
+	(nodes_press_event), (nodes_release_event),
+	(nodes_motion_notify_event), (nodes_expose), (gui_keybinding):
+	* operations/external/stroke.c: (process), (detect):
+	* gegl/gegl-chant.h: temporary duct tape solution to unintialized path.
+
 2008-11-20  Sven Neumann  <sven@gimp.org>
 
 	* bin/gegl.c (main): fixed compiler warnings.

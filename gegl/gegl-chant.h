@@ -555,7 +555,6 @@ set_property (GObject      *gobject,
           if (properties->path_changed_handler) \
             g_signal_handler_disconnect (G_OBJECT (properties->name), properties->path_changed_handler);\
          properties->path_changed_handler = 0;\
-         g_object_unref (properties->name);                           \
         }                                                             \
       properties->name = NULL;                                        \
       if (g_value_peek_pointer (value))                               \

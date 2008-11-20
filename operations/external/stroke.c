@@ -113,6 +113,7 @@ process (GeglOperation       *operation,
   gegl_buffer_clear (output, &box);
 
 
+  if (o->fill)
     {
       gfloat r,g,b,a;
       gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
@@ -138,14 +139,17 @@ process (GeglOperation       *operation,
         }
     }
 
-
   g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
-  gegl_path_stroke (output, result,
-                            o->path,
-                            o->color,
-                            o->linewidth,
-                            o->hardness,
-                            o->opacity);
+
+  if (o->linewidth > 0.1 && o->opacity > 0.0001)
+    {
+      gegl_path_stroke (output, result,
+                                o->path,
+                                o->color,
+                                o->linewidth,
+                                o->hardness,
+                                o->opacity);
+    }
 
   return  TRUE;
 }
@@ -189,7 +193,7 @@ static GeglNode *detect (GeglOperation *operation,
   cairo_t *cr;
   cairo_surface_t *surface;
   gchar *data = "     ";
-  gboolean result;
+  gboolean result = FALSE;
 
   surface = cairo_image_surface_create_for_data ((guchar*)data,
                                                  CAIRO_FORMAT_ARGB32,
@@ -197,7 +201,23 @@ static GeglNode *detect (GeglOperation *operation,
   cr = cairo_create (surface);
   gegl_path_cairo_play (o->path, cr);
   cairo_set_line_width (cr, o->linewidth);
-  result = cairo_in_stroke (cr, x, y);
+
+
+  if (o->linewidth > 0.1 && o->opacity > 0.0001)
+    result = cairo_in_stroke (cr, x, y);
+
+  if (!result)
+    {
+      if (o->fill)
+        {
+          gfloat r,g,b,a;
+          gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
+          if (a>0.001)
+            result = cairo_in_fill (cr, x, y);
+        }
+    }
+
+
   cairo_destroy (cr);
 
   if (result)
