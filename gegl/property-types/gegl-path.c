@@ -922,6 +922,8 @@ void gegl_path_get_bounds (GeglPath *self,
         max = 1;
       else if (iter->d.type == 'C')
         max = 3;
+      else if (iter->d.type == 'z')
+        max = 0;
 
       for (i=0;i<max;i++)
         {

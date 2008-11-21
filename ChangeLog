@@ -1,3 +1,8 @@
+2008-11-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.c: (gegl_path_get_bounds): do not
+	include 'z' instructions when computing the bounding box of paths.
+
 2008-11-20  Øyvind Kolås  <pippin@gimp.org>
 
 	Made dragging inside closed shapes move the shape itself.
