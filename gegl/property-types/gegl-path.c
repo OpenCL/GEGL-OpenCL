@@ -1259,6 +1259,10 @@ void  gegl_path_remove  (GeglPath *vector,
   GeglPathList *prev = NULL;
 
   gint count=0;
+
+  if (pos == -1)
+    pos = gegl_path_get_count (vector)-1;
+
   for (iter = priv->path; iter; iter=iter->next)
     {
       if (count == pos)
@@ -1350,7 +1354,7 @@ void  gegl_path_replace (GeglPath           *vector,
       prev = iter;
       count ++;
     }
-  if (count==-1)
+  if (pos==-1)
     {
       if (prev)
         copy_data (knot, &prev->d);

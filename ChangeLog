@@ -1,3 +1,8 @@
+2008-11-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.c: (gegl_path_remove),
+	(gegl_path_replace): made -1 mean the last node of the path.
+
 2008-11-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.c: (gegl_path_get_bounds): do not
