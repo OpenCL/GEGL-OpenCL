@@ -1,3 +1,8 @@
+2008-11-23  Sven Neumann  <sven@gimp.org>
+
+	* tools/operation_reference.c (list_properties): don't unref a
+	NULL object.
+
 2008-11-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: Create the default value of color properties in

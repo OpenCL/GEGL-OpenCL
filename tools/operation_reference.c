@@ -172,13 +172,15 @@ list_properties (GType    type,
               if (color)
                 {
                   gchar *string;
+
                   g_object_get (color, "string", &string, NULL);
                   g_print ("%s", string);
                   g_free (string);
+
+                  g_object_unref (color);
                 }
-              g_object_unref (color);
             }
-          else 
+          else
             {
               g_print ("\n");
             }
