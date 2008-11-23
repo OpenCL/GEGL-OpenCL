@@ -1,6 +1,18 @@
+2008-11-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: Create the default value of color properties in
+	in the constructor if they are no set manually in the varargs.
+	* gegl/property-types/gegl-color.c: (gegl_param_color_get_type),
+	(gegl_param_spec_color), (gegl_param_spec_color_from_string):
+
 2008-11-23  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: we actually need GLib 2.16.
+
+2008-11-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/external/v4l.c: (update), (process): added an fps
+	parameter that makes it into a continously self updating image source.
 
 2008-11-22  Øyvind Kolås  <pippin@gimp.org>
 

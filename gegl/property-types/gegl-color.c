@@ -499,7 +499,7 @@ gegl_param_color_get_type (void)
         gegl_param_color_init,
         0,
         gegl_param_color_finalize,
-        value_set_default,
+        NULL, /*value_set_default,*/
         NULL,
         NULL
       };
@@ -523,10 +523,10 @@ gegl_param_spec_color (const gchar *name,
 
   param_color = g_param_spec_internal (GEGL_TYPE_PARAM_COLOR,
                                        name, nick, blurb, flags);
-
+/*
   param_color->default_color = default_color;
   if (default_color)
-    g_object_ref (default_color);
+    g_object_ref (default_color);*/
 
   return G_PARAM_SPEC (param_color);
 }
@@ -542,9 +542,9 @@ gegl_param_spec_color_from_string (const gchar *name,
 
   param_color = g_param_spec_internal (GEGL_TYPE_PARAM_COLOR,
                                        name, nick, blurb, flags);
-
+/*
   param_color->default_color = g_object_new (GEGL_TYPE_COLOR,
                                              "string", default_color_string,
-                                             NULL);
+                                             NULL);*/
   return G_PARAM_SPEC (param_color);
 }

@@ -452,7 +452,6 @@ get_property (GObject      *gobject,
       break;
 #define gegl_chant_color(name, nick, def, blurb)              \
     case PROP_##name:                                         \
-      if (!properties->name)properties->name = gegl_color_new ("red"); /* feels ugly as well */\
       g_value_set_object (value, properties->name);           \
       break;
 #define gegl_chant_curve(name, nick, blurb)                   \
@@ -659,9 +658,42 @@ gegl_chant_constructor (GType                  type,
                         GObjectConstructParam *construct_properties)
 {
   GObject *obj;
+  GeglChantO *properties;
 
   obj = G_OBJECT_CLASS (gegl_chant_parent_class)->constructor (
             type, n_construct_properties, construct_properties);
+
+  /* create dummy colors and vectors */
+  properties = GEGL_CHANT_PROPERTIES (obj);
+
+#define gegl_chant_int(name, nick, min, max, def, blurb)              
+#define gegl_chant_double(name, nick, min, max, def, blurb)           
+#define gegl_chant_boolean(name, nick, def, blurb)                    
+#define gegl_chant_string(name, nick, def, blurb)                     
+#define gegl_chant_file_path(name, nick, def, blurb)                  
+#define gegl_chant_multiline(name, nick, def, blurb)                  
+#define gegl_chant_object(name, nick, blurb)                          
+#define gegl_chant_pointer(name, nick, blurb)                         
+#define gegl_chant_color(name, nick, def, blurb)              \
+    if (properties->name == NULL) \
+    {properties->name = gegl_color_new(def?def:"black");}
+#define gegl_chant_path(name, nick, blurb)
+#define gegl_chant_curve(name, nick, blurb)
+
+#include GEGL_CHANT_C_FILE
+
+#undef gegl_chant_int
+#undef gegl_chant_double
+#undef gegl_chant_boolean
+#undef gegl_chant_string
+#undef gegl_chant_file_path
+#undef gegl_chant_multiline
+#undef gegl_chant_object
+#undef gegl_chant_pointer
+#undef gegl_chant_color
+#undef gegl_chant_curve
+#undef gegl_chant_path
+
 
   g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);
   return obj;
@@ -746,20 +778,20 @@ gegl_chant_class_intern_init (gpointer klass)
                                                           def,               \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
+														  G_PARAM_CONSTRUCT | \
+                                                          GEGL_PARAM_PAD_INPUT)));
+#define gegl_chant_path(name, nick, blurb)                                 \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   gegl_param_spec_path (#name, nick, blurb,\
+                                                           NULL,             \
+                                                          (GParamFlags) (    \
+                                                          G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_curve(name, nick, blurb)                                  \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    gegl_param_spec_curve (#name, nick, blurb,\
                                                           gegl_curve_default_curve(),\
-                                                          (GParamFlags) (    \
-                                                          G_PARAM_READWRITE |\
-                                                          G_PARAM_CONSTRUCT |\
-                                                          GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_path(name, nick, blurb)                                 \
-  g_object_class_install_property (object_class, PROP_##name,                \
-                                   gegl_param_spec_path (#name, nick, blurb,\
-                                                           NULL,             \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
