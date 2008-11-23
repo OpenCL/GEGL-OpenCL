@@ -1,3 +1,7 @@
+2008-11-23  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: we actually need GLib 2.16.
+
 2008-11-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.c: (gegl_path_remove),
