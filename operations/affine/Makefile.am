@@ -15,6 +15,7 @@ affine_la_SOURCES = \
 	rotate.c	\
 	scale.c		\
 	shear.c		\
+	transform.c	\
 	translate.c	\
 	chant.h
 

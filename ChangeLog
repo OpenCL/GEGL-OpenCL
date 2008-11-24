@@ -1,5 +1,13 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/transform.c: (create_matrix): added an op
+	that makes an affine op from a string (like <g> in svg).
+	* operations/affine/module.c: (gegl_module_register): register
+	transform op.
+	* operations/affine/Makefile.am: added new op.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-filter.c:
 	(gegl_operation_filter_process): allow NULL inputs.
 
