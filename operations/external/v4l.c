@@ -28,6 +28,8 @@ gegl_chant_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered im
 gegl_chant_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
 gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0, 
         _("current frame number, can be changed to trigger a reload of the image."))
+gegl_chant_int  (fps,    _("FPS"),  0, G_MAXINT, 0, 
+        _("autotrigger reload this many times a second."))
 
 #else
 
@@ -191,6 +193,13 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
+static gboolean update (GeglOperation *operation)
+{
+  GeglRectangle bounds = gegl_operation_get_bounding_box (operation);
+  gegl_operation_invalidate (operation, &bounds, FALSE);
+  return TRUE;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
@@ -199,6 +208,13 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   Priv       *p = (Priv*)o->chant_data;
   guchar     *capbuf;
+  static gboolean inited = FALSE;
+
+    if (!inited && o->fps != 0)
+      {
+        inited= TRUE;
+        g_timeout_add (1000/o->fps, update, operation);
+      }
 
   if (!p->active)
     return FALSE;

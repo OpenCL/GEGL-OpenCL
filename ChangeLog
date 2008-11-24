@@ -1,5 +1,10 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/v4l.c: (update), (process): made the v4l source
+	able to auto-update.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-color.c: added entry for "none" color which
 	 is fully transparent.
 
