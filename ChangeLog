@@ -1,5 +1,10 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-filter.c:
+	(gegl_operation_filter_process): allow NULL inputs.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	Updated code to refer to new gegl:path op.
 
 	* bin/editor.c: (add_path), (spiro_open), (spiro_close),
@@ -17,11 +22,6 @@
 	* operations/external/Makefile.am: added new op.
 	* operations/external/stroke.c: removed.
 	* operations/external/fill.c: removed.
-
-2008-11-24  Øyvind Kolås  <pippin@gimp.org>
-
-	* gegl/operation/gegl-operation-filter.c:
-	(gegl_operation_filter_process): allow NULL inputs.
 
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
