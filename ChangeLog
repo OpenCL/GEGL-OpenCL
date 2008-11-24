@@ -1,5 +1,20 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/path.c: added new op that takes over the
+	roles of gegl:fill and gegl:stroke, it uses mostly the same names
+	for properties as the svg fill op. The op can be used both as a filter
+	and as an image source.
+	* operations/external/Makefile.am: added new op.
+	* operations/external/stroke.c: removed.
+	* operations/external/fill.c: removed.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-filter.c:
+	(gegl_operation_filter_process): allow NULL inputs.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: (gegl_path_stamp),
 	(gegl_path_stroke): removed debug printf.
 

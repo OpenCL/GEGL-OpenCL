@@ -23,24 +23,35 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_path   (path,   _("Vector"),
-                             _("A GeglVector representing the path of the stroke"))
 
-gegl_chant_color  (fill,    _("Fill Color"),    "rgba(0.1,0.9,1.0,0.2)",
-                             _("Color of paint to use"))
-gegl_chant_color  (color,    _("Color"),      "rgba(0.1,0.2,0.3,0.1)",
-                             _("Color of paint to use"))
-gegl_chant_double (linewidth,_("Linewidth"),  0.0, 100.0, 12.0,
-                             _("width of stroke"))
-gegl_chant_double (opacity,  _("Opacity"),  -2.0, 2.0, 1.0,
-                             _("opacity of stroke"))
-gegl_chant_double (hardness, _("Hardness"),   0.0, 1.0, 0.6,
+gegl_chant_color  (fill, _("Fill Color"),  "black",
+                         _("Color of paint to use for filling, use 0 opacity to disable filling."))
+gegl_chant_color  (stroke,    _("Stroke Color"),      "rgba(0.0,0.0,0.0,0.0)",
+                             _("Color of paint to use for stroking."))
+
+gegl_chant_double (stroke_width,_("Stroke width"),  0.0, 200.0, 2.0,
+                             _("The width of the brush used to stroke the path."))
+
+gegl_chant_double (stroke_opacity,  _("Stroke opacity"),  -2.0, 2.0, 1.0,
+                             _("Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool."))
+
+gegl_chant_double (stroke_hardness, _("Hardness"),   0.0, 1.0, 0.6,
                              _("hardness of brush, 0.0 for soft brush 1.0 for hard brush."))
+
+gegl_chant_string (fill_rule,_("Fill rule."), "nonzero",
+                             _("how to determine what to fill (nonzero|evenodd"))
+
+gegl_chant_double (fill_opacity, _("Fill opacity"),  -2.0, 2.0, 1.0,
+                             _("The fill opacity to use."))
+
+gegl_chant_path   (d,        _("Vector"),
+                             _("A GeglVector representing the path of the stroke"))
+gegl_chant_pointer (pad,  "", "")
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE "stroke.c"
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE "path.c"
 
 #include "gegl-plugin.h"
 
@@ -62,10 +73,10 @@ static void path_changed (GeglPath *path,
   GeglChantO    *o   = GEGL_CHANT_PROPERTIES (userdata);
   /* invalidate the incoming rectangle */
 
-  rect.x -= o->linewidth/2;
-  rect.y -= o->linewidth/2;
-  rect.width += o->linewidth;
-  rect.height += o->linewidth;
+  rect.x -= o->stroke_width/2;
+  rect.y -= o->stroke_width/2;
+  rect.width += o->stroke_width;
+  rect.height += o->stroke_width;
 
   gegl_operation_invalidate (userdata, &rect, FALSE);
 };
@@ -83,11 +94,11 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  defined = { 0, 0, 512, 512 };
   gdouble        x0, x1, y0, y1;
 
-  gegl_path_get_bounds (o->path, &x0, &x1, &y0, &y1);
-  defined.x      = x0 - o->linewidth/2;
-  defined.y      = y0 - o->linewidth/2;
-  defined.width  = x1 - x0 + o->linewidth;
-  defined.height = y1 - y0 + o->linewidth;
+  gegl_path_get_bounds (o->d, &x0, &x1, &y0, &y1);
+  defined.x      = x0 - o->stroke_width/2;
+  defined.y      = y0 - o->stroke_width/2;
+  defined.width  = x1 - x0 + o->stroke_width;
+  defined.height = y1 - y0 + o->stroke_width;
 
   return defined;
 }
@@ -104,19 +115,26 @@ static void gegl_path_cairo_play (GeglPath *path,
 
 static gboolean
 process (GeglOperation       *operation,
+         GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle box = get_bounding_box (operation);
 
-  gegl_buffer_clear (output, &box);
+  if (input)
+    {
+      gegl_buffer_copy (input, result, output, result);
+    }
+  else
+    {
+      gegl_buffer_clear (output, result);
+    }
 
-
-  if (o->fill)
+  if (o->fill_opacity > 0.0001 && o->fill)
     {
       gfloat r,g,b,a;
       gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
+      a *= o->fill_opacity;
       if (a>0.001)
         {
           cairo_t *cr;
@@ -128,27 +146,31 @@ process (GeglOperation       *operation,
                                                          result->width,
                                                          result->height,
                                                          result->width * 4);
-          memset (data, 0, result->width * result->height * 4);
           cr = cairo_create (surface);
           cairo_translate (cr, -result->x, -result->y);
 
-          gegl_path_cairo_play (o->path, cr);
+          if (g_str_equal (o->fill_rule, "evenodd"))
+            {
+              cairo_set_fill_rule (cr, CAIRO_FILL_RULE_EVEN_ODD);
+            }
+
+          gegl_path_cairo_play (o->d, cr);
           cairo_set_source_rgba (cr, r,g,b,a);
           cairo_fill (cr);
           gegl_buffer_linear_close (output, data);
         }
     }
 
-  g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->linewidth+1)/2));
+  g_object_set_data (G_OBJECT (operation), "path-radius", GINT_TO_POINTER((gint)(o->stroke_width+1)/2));
 
-  if (o->linewidth > 0.1 && o->opacity > 0.0001)
+  if (o->stroke_width > 0.1 && o->stroke_opacity > 0.0001)
     {
       gegl_path_stroke (output, result,
-                                o->path,
-                                o->color,
-                                o->linewidth,
-                                o->hardness,
-                                o->opacity);
+                                o->d,
+                                o->stroke,
+                                o->stroke_width,
+                                o->stroke_hardness,
+                                o->stroke_opacity);
     }
 
   return  TRUE;
@@ -199,16 +221,16 @@ static GeglNode *detect (GeglOperation *operation,
                                                  CAIRO_FORMAT_ARGB32,
                                                  1,1,4);
   cr = cairo_create (surface);
-  gegl_path_cairo_play (o->path, cr);
-  cairo_set_line_width (cr, o->linewidth);
+  gegl_path_cairo_play (o->d, cr);
+  cairo_set_line_width (cr, o->stroke_width);
 
 
-  if (o->linewidth > 0.1 && o->opacity > 0.0001)
+  if (o->stroke_width > 0.1 && o->stroke_opacity > 0.0001)
     result = cairo_in_stroke (cr, x, y);
 
   if (!result)
     {
-      if (o->fill)
+      if (o->d)
         {
           gfloat r,g,b,a;
           gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
@@ -240,7 +262,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->detect = detect;
 
-  operation_class->name        = "gegl:stroke";
+  operation_class->name        = "gegl:path";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a brush stroke");
 #if 0
