@@ -1,5 +1,10 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/path.c: (gegl_chant_class_init): initialize
+	correct superclass' process() vfunc.
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/affine/transform.c: (create_matrix): added an op
 	that makes an affine op from a string (like <g> in svg).
 	* operations/affine/module.c: (gegl_module_register): register

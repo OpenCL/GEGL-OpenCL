@@ -252,12 +252,12 @@ static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
+  GeglOperationFilterClass *filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  source_class->process = process;
+  filter_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
   operation_class->detect = detect;
