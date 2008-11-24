@@ -2056,7 +2056,6 @@ static void gegl_path_stamp (GeglBuffer *buffer,
   /* bail out if we wouldn't leave a mark on the buffer */
   if (!gegl_rectangle_intersect (&temp, &roi, clip_rect))
     {
-      g_print ("bailing\n");
       return;
     }
 
@@ -2140,6 +2139,7 @@ void gegl_path_stroke (GeglBuffer *buffer,
 
   if (!clip_rect)
     {
+      g_print ("using buffer extent\n");
       clip_rect = gegl_buffer_get_extent (buffer);
     }
 
