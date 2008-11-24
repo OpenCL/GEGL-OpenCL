@@ -309,16 +309,16 @@ static gint add_path (gint argc, gchar **argv)
         }
 
       gegl_add_sibling ("gegl:over");
-      stroke = gegl_add_child ("gegl:stroke");
+      stroke = gegl_add_child ("gegl:path");
 
       {
         GeglColor *color2;
         gdouble    linewidth;
         gfloat r,g,b,a;
     
-        if (self && g_str_equal (gegl_node_get_operation (self), "gegl:stroke"))
+        if (self && g_str_equal (gegl_node_get_operation (self), "gegl:path"))
           {
-            gegl_node_get (self, "color", &color2, "linewidth", &linewidth, NULL);
+            gegl_node_get (self, "stroke", &color2, "stroke-width", &linewidth, NULL);
             gegl_color_get_rgba (color2, &r, &g, &b, &a);
             gegl_color_set_rgba (color, r,g,b,a);
           }
@@ -327,7 +327,7 @@ static gint add_path (gint argc, gchar **argv)
             linewidth = 10;
           }
 
-        gegl_node_set (stroke, "path", tools.path=gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
+        gegl_node_set (stroke, "d", tools.path=gegl_path_new (), "stroke", color, "stroke-width", linewidth, NULL);
         tools.node = stroke;
         tools.selected_no = 0;
         tools.drag_no = -1;  /* to start dragging at the end? of the path,
@@ -364,6 +364,20 @@ static gboolean spiro_is_closed (GeglPath *path)
 }
 
 
+static gint spiro_open (gint argc, gchar **argv)
+{
+  GeglPathItem knot = *gegl_path_get (tools.path, -1);
+  if (knot.type == 'z')
+    {
+      gegl_path_remove (tools.path, -1);
+      g_print ("opened path\n");
+      return 0;
+    }
+  g_print ("already open\n");
+
+  return 0;
+}
+
 static gint spiro_close (gint argc, gchar **argv)
 {
   GeglPathItem knot = *gegl_path_get (tools.path, -1);
@@ -376,9 +390,9 @@ static gint spiro_close (gint argc, gchar **argv)
   g_print ("closed spiro\n");
 
   {
-    GeglColor *color= gegl_color_new ("green");
+    /*GeglColor *color= gegl_color_new ("green");
     gegl_node_set (tools.node, "fill", color, "linewidth", 0.0, NULL);
-    g_object_unref (color);
+    g_object_unref (color);*/
   }
 
   return 0;
@@ -836,7 +850,7 @@ nodes_press_event (GtkWidget      *widget,
 
           if (detected)
             {
-              if (g_str_equal (gegl_node_get_operation (detected), "gegl:stroke"))
+              if (g_str_equal (gegl_node_get_operation (detected), "gegl:path"))
                 {
                   select_node (detected);
                   goto done;
@@ -1077,7 +1091,6 @@ static gboolean nodes_expose (GtkWidget *widget,
 
   if (!tools.node || !tools.path)
     {
-      g_print ("press the canvas\n");
       return FALSE;
     }
 
@@ -1566,11 +1579,12 @@ gui_keybinding (GdkEventKey *event)
         switch (event->keyval)
           {
             case GDK_i: do_command ("insert-node"); return TRUE;
-            case GDK_BackSpace: do_command ("remove-node"); return TRUE;
             case GDK_s: do_command ("spiro-mode-change"); return TRUE;
 
+            case GDK_m: do_command ("spiro-open"); return TRUE;
+
             case GDK_x: do_command ("remove-node"); return TRUE;
-            case GDK_c: do_command ("spiro-mode O"); return TRUE;
+            case GDK_o: do_command ("spiro-mode O"); return TRUE;
             case GDK_v: do_command ("spiro-mode v"); return TRUE;
             default:
               return FALSE;
@@ -1948,16 +1962,16 @@ stroke_press_event (GtkWidget      *widget,
     }
 
   gegl_add_sibling ("gegl:over");
-  stroke = gegl_add_child ("gegl:stroke");
+  stroke = gegl_add_child ("gegl:path");
 
     {
       GeglColor *color2;
       gdouble    linewidth;
       gfloat r,g,b,a;
   
-      if (g_str_equal (gegl_node_get_operation (self), "gegl:stroke"))
+      if (g_str_equal (gegl_node_get_operation (self), "gegl:path"))
         {
-          gegl_node_get (self, "color", &color2, "linewidth", &linewidth, NULL);
+          gegl_node_get (self, "stroke", &color2, "stroke-width", &linewidth, NULL);
           gegl_color_get_rgba (color2, &r, &g, &b, &a);
           gegl_color_set_rgba (color, r,g,b,a);
         }
@@ -1966,7 +1980,7 @@ stroke_press_event (GtkWidget      *widget,
           linewidth = 20;
         }
 
-      gegl_node_set (stroke, "path", tools.path=gegl_path_new (), "color", color, "linewidth", linewidth, NULL);
+      gegl_node_set (stroke, "d", tools.path=gegl_path_new (), "stroke", color, "stroke-width", linewidth, NULL);
       tools.node = stroke;
     }
     }
@@ -2369,22 +2383,13 @@ void editor_set_active (gpointer view, gpointer node)
   opname = gegl_node_get_operation (node);
   tools.node = node;
 
-  if (g_str_equal (opname, "gegl:fill"))
+  if (g_str_equal (opname, "gegl:path"))
     {
       GeglPath *vector;
-      gegl_node_get (node, "path", &vector, NULL);
+      gegl_node_get (node, "d", &vector, NULL);
 
       tools.path = vector;
 
-      if (vector)
-        g_object_unref (vector);
-    }
-   else if(g_str_equal (opname, "gegl:stroke"))
-    {
-      GeglPath *vector;
-      gegl_node_get (node, "path", &vector, NULL);
-
-      tools.path = vector;
       if (vector)
         g_object_unref (vector);
     }
@@ -2420,7 +2425,7 @@ create_window (Editor *editor)
   vbox2 = gtk_vbox_new (FALSE, 1);
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
-  view = g_object_new (GEGL_TYPE_VIEW, "block", TRUE, NULL);
+  view = g_object_new (GEGL_TYPE_VIEW, NULL, "block", TRUE, NULL);
   property_scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (property_scroll), editor->property_editor);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (property_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);

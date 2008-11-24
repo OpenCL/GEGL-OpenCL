@@ -1,5 +1,15 @@
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	Updated code to refer to new gegl:path op.
+
+	* bin/editor.c: (add_path), (spiro_open), (spiro_close),
+	(nodes_press_event), (nodes_expose), (gui_keybinding),
+	(stroke_press_event), (editor_set_active), (create_window):
+	* bin/gegl.c:
+	* examples/gegl-paint.c: (paint_press): 
+
+2008-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/path.c: added new op that takes over the
 	roles of gegl:fill and gegl:stroke, it uses mostly the same names
 	for properties as the svg fill op. The op can be used both as a filter
