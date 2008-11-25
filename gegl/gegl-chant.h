@@ -561,7 +561,7 @@ set_property (GObject      *gobject,
           properties->name = g_value_dup_object (value);              \
           properties->path_changed_handler = g_signal_connect (G_OBJECT (properties->name), "changed",   \
           G_CALLBACK(path_changed), gobject);     \
-         }
+         }\
       break; /*XXX*/
 
 #include GEGL_CHANT_C_FILE
