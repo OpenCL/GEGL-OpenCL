@@ -63,37 +63,71 @@ typedef struct GeglPathItem
 
 GType                gegl_path_get_type       (void) G_GNUC_CONST;
 GeglPath           * gegl_path_new            (void);
+GeglPath           * gegl_path_new_from_string(const gchar *path_string);
+
 gboolean             gegl_path_is_empty       (GeglPath    *path);
-void                 gegl_path_parse_string   (GeglPath    *path,
-                                               const gchar *path_string);
+gint                 gegl_path_get_n_nodes    (GeglPath    *path);
+gdouble              gegl_path_get_length     (GeglPath     *path);
+const GeglPathItem * gegl_path_get_node       (GeglPath    *path,
+                                               gint         pos);
 gchar              * gegl_path_to_string      (GeglPath    *path);
 
-gint                 gegl_path_get_count      (GeglPath    *path);
-
-void                 gegl_path_clear          (GeglPath    *path);
-void                 gegl_path_append         (GeglPath    *self,
-                                                            ...);
-void                 gegl_path_insert         (GeglPath    *path,
-                                               gint         pos,
-                                               const GeglPathItem *knot);
-const GeglPathItem * gegl_path_get            (GeglPath    *path,
-                                               gint         pos);
-void                 gegl_path_replace        (GeglPath    *path,
-                                               gint         pos,
-                                               const GeglPathItem *knot);
-void                 gegl_path_remove         (GeglPath    *path,
-                                               gint         pos);
+gdouble              gegl_path_closest_point  (GeglPath     *path,
+                                               gdouble       x,
+                                               gdouble       y,
+                                               gdouble      *dx,
+                                               gdouble      *dy,
+                                               gint         *node_pos_before);
+void                 gegl_path_calc           (GeglPath     *path,
+                                               gdouble       pos,
+                                               gdouble      *dest_x,
+                                               gdouble      *dest_y);
+void                 gegl_path_calc_values    (GeglPath    *self,
+                                               guint        num_samples,
+                                               gdouble     *dest_xs,
+                                               gdouble     *dest_ys);
+void                 gegl_path_get_bounds     (GeglPath     *self,
+                                               gdouble      *min_x,
+                                               gdouble      *max_x,
+                                               gdouble      *min_y,
+                                               gdouble      *max_y);
 
 void                 gegl_path_foreach        (GeglPath    *path,
                                                void       (*each_item) (
                                                      const GeglPathItem *knot,
                                                      gpointer            data),
                                                gpointer     data);
+
+/* iterate through only line_to / move_to commands approximating the
+ * same path
+ */
 void                 gegl_path_foreach_flat   (GeglPath   *path,
                                                void       (*each_item) (
                                                      const GeglPathItem *knot,
                                                      gpointer            data),
                                                gpointer     data);
+
+
+void                 gegl_path_clear          (GeglPath    *path);
+void                 gegl_path_insert_node    (GeglPath    *path,
+                                               gint         pos,
+                                               const GeglPathItem *knot);
+void                 gegl_path_replace_node   (GeglPath    *path,
+                                               gint         pos,
+                                               const GeglPathItem *knot);
+void                 gegl_path_remove_node    (GeglPath    *path,
+                                               gint         pos);
+
+void                 gegl_path_parse_string   (GeglPath    *path,
+                                               const gchar *path_string);
+
+/* convenience function for C */
+void                 gegl_path_append         (GeglPath    *self,
+                                                            ...);
+
+
+
+
 
 /* creates a new path if one doesn't already exist */
 GeglPath *           gegl_path_add_parameter_path (GeglPath    *path,
@@ -122,30 +156,6 @@ void                 gegl_path_parameter_calc_values (GeglPath    *self,
                                                       guint        num_samples,
                                                       gdouble     *samples);
 
-gdouble              gegl_path_get_length     (GeglPath     *path);
-gdouble              gegl_path_closest_point  (GeglPath     *path,
-                                               gdouble       x,
-                                               gdouble       y,
-                                               gdouble      *dx,
-                                               gdouble      *dy,
-                                               gint         *node_pos_before);
-void                 gegl_path_calc           (GeglPath     *path,
-                                               gdouble       pos,
-                                               gdouble      *dest_x,
-                                               gdouble      *dest_y);
-void                 gegl_path_node           (GeglPath     *path,
-                                               gdouble       pos,
-                                               gdouble      *dest_x,
-                                               gdouble      *dest_y);
-void                 gegl_path_get_bounds     (GeglPath     *self,
-                                               gdouble      *min_x,
-                                               gdouble      *max_x,
-                                               gdouble      *min_y,
-                                               gdouble      *max_y);
-void                 gegl_path_calc_values    (GeglPath    *self,
-                                               guint        num_samples,
-                                               gdouble     *dest_xs,
-                                               gdouble     *dest_ys);
 
 
 

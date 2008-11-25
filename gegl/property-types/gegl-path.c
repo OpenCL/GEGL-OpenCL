@@ -872,6 +872,13 @@ gegl_path_new (void)
   return self;
 }
 
+GeglPath *
+gegl_path_new_from_string (const gchar *path_string)
+{
+  GeglPath *self = gegl_path_new ();
+  gegl_path_parse_string (self, path_string);
+  return self;
+}
 
 gdouble
 gegl_path_get_length (GeglPath *self)
@@ -985,39 +992,20 @@ typedef struct _GeglParamPath GeglParamPath;
 struct _GeglParamPath
 {
   GParamSpec parent_instance;
-
-  GeglPath *default_vector;
 };
 
 static void
 gegl_param_vector_init (GParamSpec *self)
 {
-  GEGL_PARAM_PATH (self)->default_vector = gegl_path_new ();
 }
 
 static void
 gegl_param_vector_finalize (GParamSpec *self)
 {
-  GeglParamPath  *param_vector  = GEGL_PARAM_PATH (self);
   GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (
                                                        GEGL_TYPE_PARAM_PATH));
 
-  if (param_vector->default_vector)
-    {
-      g_object_unref (param_vector->default_vector);
-      param_vector->default_vector = NULL;
-    }
-
   parent_class->finalize (self);
-}
-
-static void
-value_set_default (GParamSpec *param_spec,
-                   GValue     *value)
-{
-  GeglParamPath *gegl_vector = GEGL_PARAM_PATH (param_spec);
-
-  g_value_set_object (value, gegl_vector->default_vector);
 }
 
 GType
@@ -1033,7 +1021,7 @@ gegl_param_path_get_type (void)
         gegl_param_vector_init,
         0,
         gegl_param_vector_finalize,
-        value_set_default,
+        NULL,
         NULL,
         NULL
       };
@@ -1065,8 +1053,6 @@ gegl_param_spec_path   (const gchar *name,
 
   param_vector = g_param_spec_internal (GEGL_TYPE_PARAM_PATH,
                                        name, nick, blurb, flags);
-
-  param_vector->default_vector = default_vector;
 
   return G_PARAM_SPEC (param_vector);
 }
@@ -1204,7 +1190,7 @@ gboolean gegl_path_is_empty (GeglPath *path)
 }
 
 gint
-gegl_path_get_count  (GeglPath *vector)
+gegl_path_get_n_nodes  (GeglPath *vector)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -1218,8 +1204,8 @@ gegl_path_get_count  (GeglPath *vector)
 }
 
 const GeglPathItem *
-gegl_path_get (GeglPath *vector,
-               gint        pos)
+gegl_path_get_node (GeglPath *vector,
+                    gint      pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -1251,7 +1237,7 @@ static void gegl_path_item_free (GeglPathList *p)
   g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs, p);
 }
 
-void  gegl_path_remove  (GeglPath *vector,
+void  gegl_path_remove_node  (GeglPath *vector,
                          gint      pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
@@ -1261,7 +1247,7 @@ void  gegl_path_remove  (GeglPath *vector,
   gint count=0;
 
   if (pos == -1)
-    pos = gegl_path_get_count (vector)-1;
+    pos = gegl_path_get_n_nodes (vector)-1;
 
   for (iter = priv->path; iter; iter=iter->next)
     {
@@ -1285,7 +1271,7 @@ void  gegl_path_remove  (GeglPath *vector,
 }
 
 
-void  gegl_path_insert     (GeglPath           *vector,
+void  gegl_path_insert_node     (GeglPath           *vector,
                             gint                pos,
                             const GeglPathItem *knot)
 {
@@ -1330,7 +1316,7 @@ void  gegl_path_insert     (GeglPath           *vector,
   gegl_path_emit_changed (vector, NULL);
 }
 
-void  gegl_path_replace (GeglPath           *vector,
+void  gegl_path_replace_node (GeglPath           *vector,
                          gint                pos,
                          const GeglPathItem *knot)
 {

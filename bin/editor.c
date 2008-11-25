@@ -340,9 +340,9 @@ static gint add_path (gint argc, gchar **argv)
 
 static gint insert_node (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
+  GeglPathItem knot = *gegl_path_get_node (tools.path, tools.selected_no);
   knot.point[0].x += 10;
-  gegl_path_insert (tools.path, tools.selected_no, &knot);
+  gegl_path_insert_node (tools.path, tools.selected_no, &knot);
   tools.selected_no ++;
   return 0;
 }
@@ -353,7 +353,7 @@ static gboolean spiro_is_closed (GeglPath *path)
  
   if (!path)
     return FALSE;
-  knot = gegl_path_get (tools.path, -1);
+  knot = gegl_path_get_node (tools.path, -1);
   if (!knot)
     return FALSE;
   if (knot->type == 'z')
@@ -366,10 +366,10 @@ static gboolean spiro_is_closed (GeglPath *path)
 
 static gint spiro_open (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, -1);
+  GeglPathItem knot = *gegl_path_get_node (tools.path, -1);
   if (knot.type == 'z')
     {
-      gegl_path_remove (tools.path, -1);
+      gegl_path_remove_node (tools.path, -1);
       g_print ("opened path\n");
       return 0;
     }
@@ -380,7 +380,7 @@ static gint spiro_open (gint argc, gchar **argv)
 
 static gint spiro_close (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, -1);
+  GeglPathItem knot = *gegl_path_get_node (tools.path, -1);
   if (knot.type == 'z')
     {
       g_print ("already closed\n");
@@ -400,21 +400,21 @@ static gint spiro_close (gint argc, gchar **argv)
 
 static gint insert_node_before (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
+  GeglPathItem knot = *gegl_path_get_node (tools.path, tools.selected_no);
   g_assert (argv[1] && argv[2]);
 
   if (tools.selected_no == 0)
     {
-      gegl_path_insert (tools.path, 0, &knot);
+      gegl_path_insert_node (tools.path, 0, &knot);
       knot.point[0].x = atof (argv[1]);
       knot.point[0].y = atof (argv[2]);
-      gegl_path_replace (tools.path, 0, &knot);
+      gegl_path_replace_node (tools.path, 0, &knot);
     }
   else
     {
       knot.point[0].x = atof (argv[1]);
       knot.point[0].y = atof (argv[2]);
-      gegl_path_insert (tools.path, tools.selected_no-1, &knot);
+      gegl_path_insert_node (tools.path, tools.selected_no-1, &knot);
     }
   return 0;
 }
@@ -430,13 +430,13 @@ static gint insert_node_after (gint argc, gchar **argv)
       return -1;
     }
   if (override_node_after != -1)
-    knot = *gegl_path_get (tools.path, override_node_after);
+    knot = *gegl_path_get_node (tools.path, override_node_after);
   else
-    knot = *gegl_path_get (tools.path, tools.selected_no);
+    knot = *gegl_path_get_node (tools.path, tools.selected_no);
   g_assert (argv[1] && argv[2]);
   knot.point[0].x = atof (argv[1]);
   knot.point[0].y = atof (argv[2]);
-  gegl_path_insert (tools.path, tools.selected_no, &knot);
+  gegl_path_insert_node (tools.path, tools.selected_no, &knot);
   tools.selected_no ++;
   override_node_after = -1;
   return 0;
@@ -444,7 +444,7 @@ static gint insert_node_after (gint argc, gchar **argv)
 
 static gint remove_node (gint argc, gchar **argv)
 {
-  gegl_path_remove (tools.path, tools.selected_no);
+  gegl_path_remove_node (tools.path, tools.selected_no);
   if (tools.selected_no>0)
     tools.selected_no --;
   else
@@ -460,16 +460,16 @@ static gint clear_path (gint argc, gchar **argv)
 
 static gint spiro_mode (gint argc, gchar **argv)
 {
-  GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
+  GeglPathItem knot = *gegl_path_get_node (tools.path, tools.selected_no);
   knot.type = argv[1][0];
   g_print ("setting %c\n", knot.type);
-  gegl_path_replace (tools.path, tools.selected_no, &knot);
+  gegl_path_replace_node (tools.path, tools.selected_no, &knot);
   return 0;
 }
 
 static gint spiro_mode_change (gint argc, gchar **argv)
 {
-        GeglPathItem knot = *gegl_path_get (tools.path, tools.selected_no);
+        GeglPathItem knot = *gegl_path_get_node (tools.path, tools.selected_no);
           switch (knot.type)
             {
               case 'v':
@@ -489,7 +489,7 @@ static gint spiro_mode_change (gint argc, gchar **argv)
                 break;
             }
           g_print ("setting %c\n", knot.type);
-          gegl_path_replace (tools.path, tools.selected_no, &knot);
+          gegl_path_replace_node (tools.path, tools.selected_no, &knot);
  
   return 0;
 }
@@ -583,13 +583,13 @@ nodes_press_event (GtkWidget      *widget,
   vector = tools.path;
 
 
-  n= gegl_path_get_count (vector);
+  n= gegl_path_get_n_nodes (vector);
 
   prev_knot = NULL;
   for (i=0;i<n;i++)
     {
       gdouble x, y;
-      knot = gegl_path_get (vector, i);
+      knot = gegl_path_get_node (vector, i);
 
       /* handling of handles on beziers */
       if (knot->type == 'C')
@@ -680,7 +680,7 @@ nodes_press_event (GtkWidget      *widget,
               gdouble px, py, nx, ny; /* prev, next */
               px = prev_knot->point[0].x;
               py = prev_knot->point[0].y;
-              knot2 = gegl_path_get (vector, i + 1);
+              knot2 = gegl_path_get_node (vector, i + 1);
 
               nx = knot2->point[0].x;
               ny = knot2->point[0].y;
@@ -863,7 +863,7 @@ nodes_press_event (GtkWidget      *widget,
               if (prev_knot)
                 {
                       GeglPathItem knot = {prev_knot->type, {{ex, ey}}};
-                      gegl_path_insert (vector, -1, &knot);
+                      gegl_path_insert_node (vector, -1, &knot);
                       tools.selected_no = tools.drag_no = n;
                       tools.drag_sub = 0;
                       tools.prevx = ex;
@@ -872,7 +872,7 @@ nodes_press_event (GtkWidget      *widget,
               else
                 {
                       GeglPathItem knot = {'V', {{ex, ey}}};
-                      gegl_path_insert (vector, -1, &knot);
+                      gegl_path_insert_node (vector, -1, &knot);
                       tools.selected_no = tools.drag_no = n;
                       tools.drag_sub = 0;
                       tools.prevx = ex;
@@ -892,7 +892,7 @@ nodes_press_event (GtkWidget      *widget,
                 if (!prev_knot)
                   {
                     GeglPathItem knot = {'v', {{ex, ey}}};
-                    gegl_path_insert (vector, -1, &knot);
+                    gegl_path_insert_node (vector, -1, &knot);
                   }
                 else
                   {
@@ -989,48 +989,48 @@ nodes_motion_notify_event (GtkWidget      *widget,
       {
       if (tools.drag_sub == 0)
         {
-          new_knot = *gegl_path_get (vector, tools.drag_no);
+          new_knot = *gegl_path_get_node (vector, tools.drag_no);
           if (new_knot.type == 'C')
             {
               new_knot.point[1].x -= rx;
               new_knot.point[1].y -= ry;
               new_knot.point[2].x -= rx;
               new_knot.point[2].y -= ry;
-              gegl_path_replace (vector, tools.drag_no, &new_knot);
-              new_knot = *gegl_path_get (vector, tools.drag_no + 1);
+              gegl_path_replace_node (vector, tools.drag_no, &new_knot);
+              new_knot = *gegl_path_get_node (vector, tools.drag_no + 1);
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace (vector, tools.drag_no + 1, &new_knot);
+              gegl_path_replace_node (vector, tools.drag_no + 1, &new_knot);
             }
           else
             {
               new_knot.point[0].x -= rx;
               new_knot.point[0].y -= ry;
-              gegl_path_replace (vector, tools.drag_no, &new_knot);
+              gegl_path_replace_node (vector, tools.drag_no, &new_knot);
             }
           gtk_widget_queue_draw (widget);
         }
       else if (tools.drag_sub == 1)
         {
-          new_knot = *gegl_path_get (vector, tools.drag_no);
+          new_knot = *gegl_path_get_node (vector, tools.drag_no);
           new_knot.point[1].x -= rx;
           new_knot.point[1].y -= ry;
-          gegl_path_replace (vector, tools.drag_no, &new_knot);
+          gegl_path_replace_node (vector, tools.drag_no, &new_knot);
           gtk_widget_queue_draw (widget);
         }
       else if (tools.drag_sub == -1)
         {
-          new_knot = *gegl_path_get (vector, tools.drag_no + 1);
+          new_knot = *gegl_path_get_node (vector, tools.drag_no + 1);
           new_knot.point[0].x -= rx;
           new_knot.point[0].y -= ry;
-          gegl_path_replace (vector, tools.drag_no + 1, &new_knot);
+          gegl_path_replace_node (vector, tools.drag_no + 1, &new_knot);
           gtk_widget_queue_draw (widget);
         }
       }
 
       /* make the closest the selected */
 
-      n = gegl_path_get_count (vector);
+      n = gegl_path_get_n_nodes (vector);
       if ((tools.selected_no != 0 &&
           tools.selected_no != n -1)
           || spiro_is_closed (vector))
@@ -1042,7 +1042,7 @@ nodes_motion_notify_event (GtkWidget      *widget,
           {
             const GeglPathItem *node;
             gdouble dist;
-            node = gegl_path_get (vector, i);
+            node = gegl_path_get_node (vector, i);
             dist = DIST(ex,ey,node->point[0].x,
                               node->point[0].y);
             if (dist < bestdist)
@@ -1104,12 +1104,12 @@ static gboolean nodes_expose (GtkWidget *widget,
   cairo_new_path (cr);
   gegl_path_cairo_play (vector, cr);
 
-  n= gegl_path_get_count (vector);
+  n= gegl_path_get_n_nodes (vector);
   prev_knot = NULL;
   for (i=0;i<n;i++)
     {
       gdouble x, y;
-      knot = gegl_path_get (vector, i);
+      knot = gegl_path_get_node (vector, i);
       if (knot->type == 'C')
         {
           get_loc (prev_knot, &x, &y);
@@ -1128,7 +1128,7 @@ static gboolean nodes_expose (GtkWidget *widget,
   cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.8);
   cairo_stroke (cr);
 
-  n= gegl_path_get_count (vector);
+  n= gegl_path_get_n_nodes (vector);
   prev_knot = NULL;
   if (tools.drag_no==-1)
     {
@@ -1154,7 +1154,7 @@ static gboolean nodes_expose (GtkWidget *widget,
   for (i=0;i<n;i++)
     {
       gdouble x, y;
-      knot = gegl_path_get (vector, i);
+      knot = gegl_path_get_node (vector, i);
       if (!knot)
         g_error ("EEEK!");
          
@@ -1239,7 +1239,7 @@ static gboolean nodes_expose (GtkWidget *widget,
               gdouble px, py, nx, ny; /* prev, next */
               px = prev_knot->point[0].x;
               py = prev_knot->point[0].y;
-              knot2 = gegl_path_get (vector, i + 1);
+              knot2 = gegl_path_get_node (vector, i + 1);
 
               nx = knot2->point[0].x;
               ny = knot2->point[0].y;
@@ -1372,11 +1372,11 @@ width_press_event (GtkWidget      *widget,
 
   if (width_profile)
     {
-      n= gegl_path_get_count (width_profile);
+      n= gegl_path_get_n_nodes (width_profile);
       for (i=0;i<n;i++)
         {
           gdouble x, y;
-          knot = gegl_path_get (width_profile, i);
+          knot = gegl_path_get_node (width_profile, i);
           if (knot->type == '_')
             {
               gegl_path_calc (vector, knot->point[0].x, &x, &y);
@@ -1456,7 +1456,7 @@ width_motion_notify_event (GtkWidget      *widget,
 
       if (width_profile)
         {
-          knot = gegl_path_get (width_profile, tools.drag_no);
+          knot = gegl_path_get_node (width_profile, tools.drag_no);
           if (knot->type == '_')
             {
               gdouble radius;
@@ -1470,7 +1470,7 @@ width_motion_notify_event (GtkWidget      *widget,
               else if (new_knot.point[0].y < 0.05)
                 new_knot.point[0].y = 0.05;
 
-              gegl_path_replace (width_profile, tools.drag_no, &new_knot);
+              gegl_path_replace_node (width_profile, tools.drag_no, &new_knot);
             }
         }
      }
@@ -1537,11 +1537,11 @@ static gboolean cairo_expose_width (GtkWidget *widget,
   cairo_stroke (cr);
 
     {
-      n= gegl_path_get_count (width_profile);
+      n= gegl_path_get_n_nodes (width_profile);
       for (i=0;i<n;i++)
         {
           gdouble x, y;
-          knot = gegl_path_get (width_profile, i);
+          knot = gegl_path_get_node (width_profile, i);
           if (knot->type == '_')
             {
               gegl_path_calc (vector, knot->point[0].x, &x, &y);

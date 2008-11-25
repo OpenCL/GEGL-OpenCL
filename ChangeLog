@@ -1,5 +1,10 @@
 2008-11-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.[ch]: improved API consistency.
+	* bin/editor.c: synced up with above.
+
+2008-11-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: fix broken \ at end of line.
 
 2008-11-24  Øyvind Kolås  <pippin@gimp.org>
