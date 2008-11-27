@@ -24,7 +24,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_color  (fill, _("Fill Color"),  "black",
+gegl_chant_color  (fill, _("Fill Color"),  "rgba(0.0,0.0,0.0,0.6)",
                          _("Color of paint to use for filling, use 0 opacity to disable filling."))
 gegl_chant_color  (stroke,    _("Stroke Color"),      "rgba(0.0,0.0,0.0,0.0)",
                              _("Color of paint to use for stroking."))
@@ -46,7 +46,6 @@ gegl_chant_double (fill_opacity, _("Fill opacity"),  -2.0, 2.0, 1.0,
 
 gegl_chant_path   (d,        _("Vector"),
                              _("A GeglVector representing the path of the stroke"))
-gegl_chant_pointer (pad,  "", "")
 
 #else
 
@@ -234,7 +233,7 @@ static GeglNode *detect (GeglOperation *operation,
         {
           gfloat r,g,b,a;
           gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
-          if (a>0.001)
+          if (a * o->fill_opacity>0.8)
             result = cairo_in_fill (cr, x, y);
         }
     }

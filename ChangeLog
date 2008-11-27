@@ -1,5 +1,10 @@
 2008-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/path.c: (detect): only cause detects inside the
+	path if opacity is > 0.8
+
+2008-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/operation/gegl-operation-filter.c:
 	(gegl_operation_filter_process): only unref input buffer if there was
 	one.
