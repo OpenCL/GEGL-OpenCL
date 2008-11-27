@@ -1,3 +1,10 @@
+2008-11-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.c: (flatten_rel_copy): only copy the
+	number of points relevant for the instruction. 
+	(gegl_path_parse_string): handle path descriptions with minimal
+	amounts of white space.
+
 2008-11-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: improved API consistency.

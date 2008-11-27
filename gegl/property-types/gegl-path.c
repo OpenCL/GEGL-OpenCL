@@ -200,10 +200,13 @@ flatten_rel_copy (GeglPathList *head,
                   GeglPathList *self)
 {
   GeglPathList *newp;
+  InstructionInfo *info;
   gint i;
+  
   head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
   copy_data (&self->d, &newp->d);
-  for (i=0;i<4;i++)
+  info = lookup_instruction_info (self->d.type);
+  for (i=0;i<info->pairs;i++)
     {
       newp->d.point[i].x += prev->d.point[0].x;
       newp->d.point[i].y += prev->d.point[0].y;
@@ -1130,7 +1133,7 @@ void gegl_path_clear (GeglPath *vector)
 }
 
 void gegl_path_parse_string (GeglPath *vector,
-                                 const gchar *path)
+                             const gchar *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   const gchar *p = path;
@@ -1141,12 +1144,28 @@ void gegl_path_parse_string (GeglPath *vector,
     {
       gchar     type = *p;
       InstructionInfo *info = lookup_instruction_info(type);
-      if (!info && type!= ' ')
+      if (!info && ((type>= '0' && type <= '9') || type == '-'))
         {
-          /* FIXME: make L/l follow M/m */
-          info = previnfo;
-          type = previnfo->type;
+          if (!previnfo)
+            {
+              info = previnfo;
+              type = previnfo->type;
+            }
+          else
+            {
+              if (previnfo->type == 'M')
+                {
+                  info = lookup_instruction_info(type = 'L');
+                }
+              else if (previnfo->type == 'm')
+                {
+                  info = lookup_instruction_info(type = 'l');
+                }
+              else if (previnfo->type == ' ')
+                g_warning ("EEEK");
+            }
         }
+
       if (info)
         {
         switch (info->pairs)
@@ -1158,22 +1177,23 @@ void gegl_path_parse_string (GeglPath *vector,
             case 1:
               p = parse_float_pair (p, &x0, &y0);
               priv->path = gegl_path_list_append (priv->path, type, x0, y0);
-              break;
+              continue;
             case 2:
               p = parse_float_pair (p, &x0, &y0);
               p = parse_float_pair (p, &x1, &y1);
               priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
-              break;
+              continue;
             case 3:
               p = parse_float_pair (p, &x0, &y0);
               p = parse_float_pair (p, &x1, &y1);
               p = parse_float_pair (p, &x2, &y2);
               priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
-              break;
+              continue;
           }
         previnfo = info;
         }
-      p++;
+      if (*p)
+        p++;
     }
 
   priv->flat_path_clean = FALSE;
