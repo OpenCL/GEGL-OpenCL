@@ -1,5 +1,10 @@
 2008-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/operation/gegl-operation-source.c: (get_cached_region): do not
+	default to cache the full result of a source renderer.
+
+2008-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.c: (flatten_rel_copy): only copy the
 	number of points relevant for the instruction. 
 	(gegl_path_parse_string): handle path descriptions with minimal

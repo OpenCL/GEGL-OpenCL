@@ -163,6 +163,7 @@ get_cached_region (GeglOperation       *operation,
                    const GeglRectangle *roi)
 {
   GeglRectangle result = *roi;
-  result = operation->node->have_rect;
+  /*result = operation->node->have_rect;*/
+  result = *roi;
   return result;
 }
