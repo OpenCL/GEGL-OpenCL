@@ -235,7 +235,8 @@ GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
     self->pad_name = g_strdup (pad_name);
   else
     self->pad_name = g_strdup ("output");
-  g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (change_notification), self);
+  /*g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (change_notification), self);*/
   g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (change_notification), self);
+  g_signal_connect (G_OBJECT (self->node), "notify", G_CALLBACK (change_notification), self);
   return self;
 }

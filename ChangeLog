@@ -1,5 +1,11 @@
 2008-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_new): do not reference
+	potential NULL property on operation, "notify" property changed 
+	signals should be relayed through the node.
+
+2008-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/path.c: (detect): only cause detects inside the
 	path if opacity is > 0.8
 
