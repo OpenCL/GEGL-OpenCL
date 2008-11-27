@@ -204,11 +204,12 @@ gegl_operation_filter_process (GeglOperation   *operation,
 
   input  = gegl_operation_context_get_source (context, "input");
   output = gegl_operation_context_get_target (context, "output");
-  if (input != NULL || 1)
     {
       success = klass->process (operation, input, output, result);
-      g_object_unref (input);
+      if (input != NULL)
+        g_object_unref (input);
     }
+#if 0
   else
     {
       /* if we have the data "graph" associated" we're a proxy-nop, and thus
@@ -219,6 +220,7 @@ gegl_operation_filter_process (GeglOperation   *operation,
                    gegl_node_get_debug_name (operation->node),
                    input==NULL?"input==NULL":"", output==NULL?"output==NULL":"");
     }
+#endif
   return success;
 }
 
