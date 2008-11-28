@@ -20,6 +20,7 @@ GEGL_sources = \
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-utils.c			\
+	gegl-matrix.c			\
 	gegl-xml.c			\
 	\
 	gegl-chant.h			\
@@ -30,6 +31,7 @@ GEGL_sources = \
 	gegl-init.h			\
 	gegl-instrument.h		\
 	gegl-module.h			\
+	gegl-matrix.h			\
 	gegl-plugin.h			\
 	gegl-types.h			\
 	gegl-xml.h
@@ -64,6 +66,7 @@ libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl.h				\
     gegl-utils.h			\
+    gegl-matrix.h			\
     gegl-chant.h			\
     gegl-simd.h				\
     gegl-plugin.h			\

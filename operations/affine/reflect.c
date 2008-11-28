@@ -40,7 +40,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 
 static void
 create_matrix (GeglChantOperation *op,
-               Matrix3        matrix)
+               GeglMatrix3        matrix)
 {
   gdouble ux=0, uy=0;
   gdouble l;

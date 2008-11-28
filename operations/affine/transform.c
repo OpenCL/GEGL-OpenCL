@@ -35,24 +35,9 @@ gegl_chant_string (transform, "", _("Transformation string"))
 
 static void
 create_matrix (GeglChantOperation *op,
-               Matrix3        matrix)
+               GeglMatrix3         matrix)
 {
-
-  gchar *p = strchr (op->transform, '(');
-  gfloat a;
-  gfloat b;
-  if (!p) return;
-  p++;
-  a = strtod(p, &p);
-  if (!p) return;
-  p = strchr (op->transform, ',');
-  if (!p) return;
-  p++;
-  b = strtod (p, &p);
-  if (!p) return;
-
-  matrix [0][2] = a;
-  matrix [1][2] = b;
+  gegl_matrix3_parse_string (matrix, op->transform);
 }
 
 #endif

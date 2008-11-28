@@ -1,5 +1,32 @@
 2008-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/matrix.c:
+	* operations/affine/matrix.h: moved these,..
+	* operations/affine/Makefile.am: ..
+
+	* gegl/Makefile.am: .. here, and made it be GeglMatrix3 instead of
+	just Matrix3.
+	* gegl/gegl-matrix.c:
+	* gegl/gegl-matrix.h:
+	* gegl/gegl-plugin.h:
+
+	Fixed up affine op to use the new code.
+
+	* operations/affine/affine.c: (op_affine_init),
+	(get_source_matrix), (get_bounding_box), (detect),
+	(get_required_for_output), (get_invalidated_by_change),
+	(affine_generic), (process):
+	* operations/affine/affine.h:
+	* operations/affine/chant.h:
+	* operations/affine/reflect.c: (create_matrix):
+	* operations/affine/rotate.c: (create_matrix):
+	* operations/affine/scale.c: (create_matrix):
+	* operations/affine/shear.c: (create_matrix):
+	* operations/affine/transform.c: (create_matrix):
+	* operations/affine/translate.c: (create_matrix):
+
+2008-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/process/gegl-eval-mgr.c: (gegl_eval_mgr_new): do not reference
 	potential NULL property on operation, "notify" property changed 
 	signals should be relayed through the node.

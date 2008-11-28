@@ -7,8 +7,6 @@ affine_la_LTLIBRARIES = affine.la
 affine_la_SOURCES = \
 	affine.c	\
 	affine.h	\
-	matrix.c	\
-	matrix.h	\
 	module.c	\
 	module.h	\
 	reflect.c	\

@@ -36,7 +36,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor.")
 
 static void
 create_matrix (GeglChantOperation *op,
-               Matrix3        matrix)
+               GeglMatrix3         matrix)
 {
   matrix [0][0] = op->x;
   matrix [1][1] = op->y;

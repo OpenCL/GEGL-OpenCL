@@ -36,7 +36,7 @@ gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
 
 static void
 create_matrix (GeglChantOperation *op,
-               Matrix3        matrix)
+               GeglMatrix3        matrix)
 {
   gdouble radians = op->degrees * (2 * G_PI / 360.);
 

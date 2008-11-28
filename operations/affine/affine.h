@@ -1,8 +1,8 @@
 #ifndef __OP_AFFINE_H__
 #define __OP_AFFINE_H__
 
-#include "matrix.h"
 #include "gegl-buffer-private.h"
+#include <gegl-matrix.h>
 
 G_BEGIN_DECLS
 
@@ -14,13 +14,13 @@ G_BEGIN_DECLS
 #define OP_AFFINE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  TYPE_OP_AFFINE, OpAffineClass))
 
 typedef void (*OpAffineCreateMatrixFunc) (GeglOperation *op,
-                                          Matrix3        matrix);
+                                          GeglMatrix3        matrix);
 typedef struct _OpAffine OpAffine;
 struct _OpAffine
 {
   GeglOperationFilter parent;
 
-  Matrix3      matrix;
+  GeglMatrix3  matrix;
   gdouble      origin_x,
                origin_y;
   gchar       *filter;

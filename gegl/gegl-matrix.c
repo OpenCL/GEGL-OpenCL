@@ -18,11 +18,12 @@
 
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
 
-#include "matrix.h"
+#include "gegl-matrix.h"
 
 void
-matrix3_identity (Matrix3 matrix)
+gegl_matrix3_identity (GeglMatrix3 matrix)
 {
   matrix [0][0] = matrix [1][1] = matrix [2][2] = 1.;
 
@@ -32,8 +33,8 @@ matrix3_identity (Matrix3 matrix)
 }
 
 gboolean
-matrix3_equal (Matrix3 matrix1,
-               Matrix3 matrix2)
+gegl_matrix3_equal (GeglMatrix3 matrix1,
+                    GeglMatrix3 matrix2)
 {
   gint x, y;
 
@@ -45,38 +46,38 @@ matrix3_equal (Matrix3 matrix1,
 }
 
 gboolean
-matrix3_is_identity (Matrix3 matrix)
+gegl_matrix3_is_identity (GeglMatrix3 matrix)
 {
-  Matrix3 identity;
+  GeglMatrix3 identity;
 
-  matrix3_identity (identity);
-  return matrix3_equal (identity, matrix);
+  gegl_matrix3_identity (identity);
+  return gegl_matrix3_equal (identity, matrix);
 }
 
 gboolean
-matrix3_is_scale (Matrix3 matrix)
+gegl_matrix3_is_scale (GeglMatrix3 matrix)
 {
-  Matrix3 copy;
+  GeglMatrix3 copy;
 
-  matrix3_copy (copy, matrix);
+  gegl_matrix3_copy (copy, matrix);
   copy [0][0] = copy [1][1] = 1.;
   copy [0][2] = copy [1][2] = 0.;
-  return matrix3_is_identity (copy);
+  return gegl_matrix3_is_identity (copy);
 }
 
 gboolean
-matrix3_is_translate (Matrix3 matrix)
+gegl_matrix3_is_translate (GeglMatrix3 matrix)
 {
-  Matrix3 copy;
+  GeglMatrix3 copy;
 
-  matrix3_copy (copy, matrix);
+  gegl_matrix3_copy (copy, matrix);
   copy [0][2] = copy [1][2] = 0.;
-  return matrix3_is_identity (copy);
+  return gegl_matrix3_is_identity (copy);
 }
 
 void
-matrix3_copy (Matrix3 dst,
-              Matrix3 src)
+gegl_matrix3_copy (GeglMatrix3 dst,
+                   GeglMatrix3 src)
 {
   memcpy (dst [0], src [0], 3 * sizeof (gdouble));
   memcpy (dst [1], src [1], 3 * sizeof (gdouble));
@@ -84,7 +85,7 @@ matrix3_copy (Matrix3 dst,
 }
 
 gdouble
-matrix3_determinant (Matrix3 matrix)
+gegl_matrix3_determinant (GeglMatrix3 matrix)
 {
   gdouble determinant;
 
@@ -98,13 +99,13 @@ matrix3_determinant (Matrix3 matrix)
 }
 
 void
-matrix3_invert (Matrix3 matrix)
+gegl_matrix3_invert (GeglMatrix3 matrix)
 {
-  Matrix3 copy;
+  GeglMatrix3 copy;
   gdouble coeff;
 
-  matrix3_copy (copy, matrix);
-  coeff = 1 / matrix3_determinant (matrix);
+  gegl_matrix3_copy (copy, matrix);
+  coeff = 1 / gegl_matrix3_determinant (matrix);
 
   matrix [0][0] = (copy [1][1] * copy [2][2] -
                    copy [1][2] * copy [2][1]) * coeff;
@@ -129,11 +130,11 @@ matrix3_invert (Matrix3 matrix)
 }
 
 void
-matrix3_multiply (Matrix3 left,
-                  Matrix3 right,
-                  Matrix3 product)
+gegl_matrix3_multiply (GeglMatrix3 left,
+                       GeglMatrix3 right,
+                       GeglMatrix3 product)
 {
-  Matrix3 temp;
+  GeglMatrix3 temp;
   gint    i;
 
   for (i = 0; i < 3; i++)
@@ -146,11 +147,11 @@ matrix3_multiply (Matrix3 left,
                     + left [i][2] * right [2][2];
     }
 
-  matrix3_copy (product, temp);
+  gegl_matrix3_copy (product, temp);
 }
 
 void
-matrix3_originate (Matrix3 matrix,
+gegl_matrix3_originate (GeglMatrix3 matrix,
                    gdouble x,
                    gdouble y)
 {
@@ -164,9 +165,9 @@ matrix3_originate (Matrix3 matrix,
 }
 
 void
-matrix3_transform_point (Matrix3  matrix,
-                         gdouble *x,
-                         gdouble *y)
+gegl_matrix3_transform_point (GeglMatrix3  matrix,
+                              gdouble     *x,
+                              gdouble     *y)
 {
   gdouble xp,
           yp;
@@ -177,4 +178,51 @@ matrix3_transform_point (Matrix3  matrix,
 
   *x = xp;
   *y = yp;
+}
+
+void
+gegl_matrix3_parse_string (GeglMatrix3  matrix,
+                           const gchar *string)
+{
+  if (strstr (string, "translate"))
+    {
+      gchar *p = strchr (string, '(');
+      gfloat a;
+      gfloat b;
+      if (!p) return;
+      p++;
+      a = strtod(p, &p);
+      if (!p) return;
+      p = strchr (string, ',');
+      if (!p) return;
+      p++;
+      b = strtod (p, &p);
+      if (!p) return;
+
+      matrix [0][2] = a;
+      matrix [1][2] = b;
+    }
+  else if (strstr (string, "matrix"))
+    {
+      gchar *p = strchr (string, '(');
+      gfloat a;
+      gint i,j;
+      if (!p) return;
+      p++;
+
+      /* last row should always be this for affine transforms */
+      matrix[0][2] = matrix[1][2] = 0;
+      matrix[2][2] = 1;
+
+      for (i=0;i<3;i++)
+        for (j=0;j<2;j++)
+          {
+            a = strtod(p, &p);
+            matrix [i][j] = a;
+            if (!p) return;
+            p = strchr (string, ',');
+            if (!p) return;
+            p++;
+          }
+    }
 }
