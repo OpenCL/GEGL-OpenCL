@@ -72,10 +72,20 @@ static GeglRectangle get_required_for_output(GeglOperation       *self,
                                               const gchar         *input_pad,
                                               const GeglRectangle *region);
 
+#if 0
 static gboolean      process                 (GeglOperation       *op,
                                               GeglBuffer          *input,
                                               GeglBuffer          *output,
                                               const GeglRectangle *result);
+#endif
+
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglOperationContext *context,
+         const gchar         *output_prop,
+         const GeglRectangle *result);
+
 static GeglNode    * detect                  (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
@@ -193,7 +203,7 @@ static void
 op_affine_class_init (OpAffineClass *klass)
 {
   GObjectClass             *gobject_class = G_OBJECT_CLASS (klass);
-  GeglOperationFilterClass *filter_class  = GEGL_OPERATION_FILTER_CLASS (klass);
+  /*GeglOperationFilterClass *filter_class  = GEGL_OPERATION_FILTER_CLASS (klass);*/
   GeglOperationClass       *op_class      = GEGL_OPERATION_CLASS (klass);
 
   gobject_class->set_property = set_property;
@@ -206,9 +216,11 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->detect = detect;
   op_class->categories = "transform";
   op_class->prepare = prepare;
+  op_class->no_cache = TRUE;
 
 
-  filter_class->process = process;
+  /*filter_class->process = process;*/
+  op_class->process = process;
 
   klass->create_matrix = NULL;
 
@@ -711,42 +723,65 @@ void  gegl_sampler_prepare     (GeglSampler *self);
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
+         GeglOperationContext *context,
+         const gchar         *output_prop,
          const GeglRectangle *result)
 {
+  GeglBuffer          *input;
+  GeglBuffer          *output;
   OpAffine            *affine = (OpAffine *) operation;
 
   if (is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (affine->matrix))
     {
-      /* XXX: make the copying smarter, by perhaps even COW sharing
-       * of tiles (in the gegl_buffer_copy code)
-       */
-      gegl_buffer_copy (input, NULL, output, NULL);
+      /* passing straight through (like gegl:nop) */
+      input  = gegl_operation_context_get_source (context, "input");
+      if (!input)
+        {
+          g_warning ("transform received NULL input");
+          return FALSE;
+        }
+
+      gegl_operation_context_set_object (context, "output", G_OBJECT (input));
     }
-#if 0  /* XXX: port to use newer APIs, perhaps not possible to achieve COW,
-                but should still be faster than a full resampling when it
-                is not needed */
   else if (gegl_matrix3_is_translate (affine->matrix) &&
            (! strcmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
+      /* doing a buffer shifting trick, (enhanced nop) */
       GeglRectangle input_rectangle = *result;
-      input_rectangle.x += (gint) affine->matrix [0][2];
-      input_rectangle.y += (gint) affine->matrix [1][2];
-      gegl_buffer_copy (input, NULL, output, &input_rectangle);
+      input  = gegl_operation_context_get_source (context, "input");
+
+      output = g_object_new (GEGL_TYPE_BUFFER,
+                             "source",    input,
+                             "shift-x",   (int)-affine->matrix[0][2],
+                             "shift-y",   (int)-affine->matrix[1][2],
+                             "abyss-width", -1,  /* turn of abyss
+                                                    (relying on abyss
+                                                    of source) */
+                         NULL);
+
+      gegl_operation_context_set_object (context, "output", G_OBJECT (output));
+
+      if (input != NULL)
+        g_object_unref (input);
     }
-#endif
   else
     {
-      /* XXX: add back more samplers */
+      /* for all other cases, do a proper resampling */
+
+      input  = gegl_operation_context_get_source (context, "input");
+      output = gegl_operation_context_get_target (context, "output");
+
       g_object_set(affine->sampler, "buffer", input, NULL);
       gegl_sampler_prepare (affine->sampler);
       affine_generic (output, input, affine->matrix, affine->sampler);
       g_object_unref(affine->sampler->buffer);
       affine->sampler->buffer = NULL;
+
+      if (input != NULL)
+        g_object_unref (input);
     }
 
   return TRUE;

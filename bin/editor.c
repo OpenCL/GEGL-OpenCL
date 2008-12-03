@@ -205,7 +205,7 @@ static void gegl_node_get_translation (GeglNode *node,
           node = *consumers;
           g_free (consumers);
           opname = gegl_node_get_operation (node);
-          if (g_str_equal (opname, "gegl:shift") ||
+          if (g_str_equal (opname, "gegl:translate") ||
               g_str_equal (opname, "gegl:translate"))
             {
               gdouble tx, ty;
@@ -501,13 +501,13 @@ static void move_rel (GeglNode *node,
 {
   GeglNode *shift;
  
-  for (shift = node; shift && !g_str_equal (gegl_node_get_operation (shift), "gegl:shift");shift=gegl_previous_sibling (shift))
+  for (shift = node; shift && !g_str_equal (gegl_node_get_operation (shift), "gegl:translate");shift=gegl_previous_sibling (shift))
     {
     }
 
   if (!shift)
     {
-      shift = gegl_add_sibling ("gegl:shift");
+      shift = gegl_add_sibling ("gegl:translate");
         {
           select_node (node);
         }

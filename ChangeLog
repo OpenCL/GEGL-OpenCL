@@ -1,3 +1,16 @@
+2008-12-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/affine/affine.c: (op_affine_class_init), (process): made
+	the affine op not cache it's results, also make it pass the data
+	through like nop if the transform is the identity transform and create
+	a shifted sub-buffer for integer translates and translates using the
+	"nearest" resampler.
+	* bin/editor.c: (gegl_node_get_translation), (move_rel):
+	s/gegl:shift/gegl:translate/
+	* bin/gegl.c: s/gegl:shift/gegl:translate/
+
+	The gegl:shift operation will be deprecated in the next GEGL release.
+
 2008-11-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/affine/matrix.c:
