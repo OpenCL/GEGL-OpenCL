@@ -54,7 +54,7 @@ struct _GeglChant
   GeglNode *output;
 
   GeglNode *composite_op;
-  GeglNode *shift;
+  GeglNode *translate;
   GeglNode *opacity;
   GeglNode *scale;
   GeglNode *load;
@@ -169,7 +169,7 @@ prepare (GeglOperation *operation)
   if (o->x != self->p_x ||
       o->y != self->p_y)
     {
-      gegl_node_set (self->shift,
+      gegl_node_set (self->translate,
                      "x",  o->x,
                      "y",  o->y,
                      NULL);
@@ -197,7 +197,7 @@ static void attach (GeglOperation *operation)
                                          "operation", o->composite_op,
                                          NULL);
 
-  self->shift = gegl_node_new_child (gegl, "operation", "gegl:shift", NULL);
+  self->translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
   self->scale = gegl_node_new_child (gegl, "operation", "gegl:scale", NULL);
   self->opacity = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
 
@@ -206,10 +206,10 @@ static void attach (GeglOperation *operation)
                                     "string", "foo",
                                     NULL);
 
-  gegl_node_link_many (self->load, self->scale, self->opacity, self->shift,
+  gegl_node_link_many (self->load, self->scale, self->opacity, self->translate,
                        NULL);
   gegl_node_link_many (self->input, self->composite_op, self->output, NULL);
-  gegl_node_connect_from (self->composite_op, "aux", self->shift, "output");
+  gegl_node_connect_from (self->composite_op, "aux", self->translate, "output");
 }
 
 

@@ -41,7 +41,7 @@ main (gint    argc,
                                     "buffer", buffer,
                                     NULL);
   shift      = gegl_node_new_child (gegl,
-                                    "operation", "gegl:shift",
+                                    "operation", "gegl:translate",
                                     "x", x,
                                     "y", y,
                                     NULL);
