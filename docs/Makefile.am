@@ -132,13 +132,20 @@ endif
 
 api.html: $(top_srcdir)/gegl/gegl.h\
           $(top_srcdir)/gegl/buffer/gegl-buffer.h\
+          $(top_srcdir)/gegl/property-types/gegl-color.h\
+          $(top_srcdir)/gegl/property-types/gegl-curve.h\
+          $(top_srcdir)/gegl/property-types/gegl-path.h\
 	  $(top_srcdir)/gegl/operation/gegl-operation.h\
 	  $(top_srcdir)/tools/create-reference.rb
 if HAVE_RUBY
 	$(top_srcdir)/tools/create-reference.rb 	\
 	    $(top_srcdir)/gegl/gegl.h			\
 	    $(top_srcdir)/gegl/buffer/gegl-buffer.h	\
-	    $(top_srcdir)/gegl/operation/gegl-operation.h $@
+	    $(top_srcdir)/gegl/operation/gegl-operation.h \
+            $(top_srcdir)/gegl/property-types/gegl-color.h\
+            $(top_srcdir)/gegl/property-types/gegl-curve.h\
+            $(top_srcdir)/gegl/property-types/gegl-path.h\
+	    $@
 endif
 
 index.html: index-static.txt		\

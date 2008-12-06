@@ -1,5 +1,9 @@
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: include more headers for API-doc scanning.
+
+2008-12-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/clones.xml: s/gegl:shift/gegl:translate/
 
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
