@@ -1,5 +1,23 @@
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a transform property to the path op, that allows specifying a
+	transformation matrix to be applied when flattening the path.
+
+	* gegl/gegl-matrix.[ch]: (gegl_matrix3_parse_string),
+	(gegl_matrix3_to_string): added functions that parse from svg style
+	transforms, as well as serializes to that format.
+	* gegl/property-types/gegl-path.[ch]: (transform_data), (flatten_nop),
+	(flatten_copy), (flatten_rel_copy), (bezier2), (flatten_curve),
+	(gegl_path_list_flatten), (gegl_path_get_matrix),
+	(gegl_path_set_matrix), (ensure_flattened), (gegl_path_init),
+	(gegl_path_get_n_nodes): added a transform property to the path, this
+	transform is applied at the flattening stage of rendering paths.
+	* operations/external/path.c: (prepare), (get_bounding_box),
+	(gegl_path_is_closed), (process), (gegl_chant_class_init): add
+	transform property.
+
+2008-12-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/shift.c: (attach), (gegl_chant_class_init): warn
 	when using the shift operation.
 

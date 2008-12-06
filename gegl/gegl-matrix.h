@@ -19,12 +19,13 @@ void       gegl_matrix3_multiply        (GeglMatrix3 left,
                                          GeglMatrix3 right,
                                          GeglMatrix3 product);
 void       gegl_matrix3_originate       (GeglMatrix3 matrix,
-                                         gdouble x,
-                                         gdouble y);
-void       gegl_matrix3_transform_point (GeglMatrix3   matrix,
-                                         gdouble *x,
-                                         gdouble *y);
+                                         gdouble     x,
+                                         gdouble     y);
+void       gegl_matrix3_transform_point (GeglMatrix3 matrix,
+                                         gdouble    *x,
+                                         gdouble    *y);
 void       gegl_matrix3_parse_string    (GeglMatrix3 matrix,
                                          const gchar *string);
+gchar *    gegl_matrix3_to_string       (GeglMatrix3 matrix);
 
 #endif

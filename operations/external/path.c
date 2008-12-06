@@ -41,6 +41,9 @@ gegl_chant_double (stroke_hardness, _("Hardness"),   0.0, 1.0, 0.6,
 gegl_chant_string (fill_rule,_("Fill rule."), "nonzero",
                              _("how to determine what to fill (nonzero|evenodd"))
 
+gegl_chant_string (transform,_("Transform"), "",
+                             _("svg style description of transform."))
+
 gegl_chant_double (fill_opacity, _("Fill opacity"),  -2.0, 2.0, 1.0,
                              _("The fill opacity to use."))
 
@@ -83,7 +86,14 @@ static void path_changed (GeglPath *path,
 static void
 prepare (GeglOperation *operation)
 {
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  if (o->transform && o->transform[0] != '\0')
+    {
+      GeglMatrix3 matrix;
+      gegl_matrix3_parse_string (matrix, o->transform);
+      gegl_path_set_matrix (o->d, matrix);
+    }
 }
 
 static GeglRectangle
@@ -91,7 +101,10 @@ get_bounding_box (GeglOperation *operation)
 {
   GeglChantO    *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle  defined = { 0, 0, 512, 512 };
+  GeglRectangle *in_rect;
   gdouble        x0, x1, y0, y1;
+
+  in_rect =  gegl_operation_source_get_bounding_box (operation, "input");
 
   gegl_path_get_bounds (o->d, &x0, &x1, &y0, &y1);
   defined.x      = x0 - o->stroke_width/2;
@@ -99,8 +112,30 @@ get_bounding_box (GeglOperation *operation)
   defined.width  = x1 - x0 + o->stroke_width;
   defined.height = y1 - y0 + o->stroke_width;
 
+  if (in_rect)
+    {
+      gegl_rectangle_bounding_box (&defined, &defined, in_rect);
+    }
+
   return defined;
 }
+
+static gboolean gegl_path_is_closed (GeglPath *path)
+{
+  const GeglPathItem *knot;
+
+  if (!path)
+    return FALSE;
+  knot = gegl_path_get_node (path, -1);
+  if (!knot)
+    return FALSE;
+  if (knot->type == 'z')
+    {
+      return TRUE;
+    }
+  return FALSE;
+}
+
 
 #if 0
 static GeglRectangle
@@ -129,6 +164,8 @@ process (GeglOperation       *operation,
       gegl_buffer_clear (output, result);
     }
 
+
+
   if (o->fill_opacity > 0.0001 && o->fill)
     {
       gfloat r,g,b,a;
@@ -156,6 +193,19 @@ process (GeglOperation       *operation,
           gegl_path_cairo_play (o->d, cr);
           cairo_set_source_rgba (cr, r,g,b,a);
           cairo_fill (cr);
+
+#if 0
+    if (o->stroke_width > 0.1 && o->stroke_opacity > 0.0001)
+      {
+        gfloat r,g,b,a;
+        gegl_color_get_rgba (o->stroke, &r,&g,&b,&a);
+        a *= o->stroke_opacity;
+
+        cairo_set_line_width (cr, o->stroke_width);
+        cairo_stroke (cr);
+      }
+#endif
+
           gegl_buffer_linear_close (output, data);
         }
     }
@@ -260,6 +310,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
   operation_class->detect = detect;
+  /*operation_class->no_cache = TRUE;*/
 
   operation_class->name        = "gegl:path";
   operation_class->categories  = "render";

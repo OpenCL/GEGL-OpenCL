@@ -65,16 +65,17 @@ typedef struct InstructionInfo
   /* a flatten function pointer is kept for all stored InstructionInfo's but are only
    * used for the internal ones
    */
-  GeglPathList *(*flatten) (GeglPathList *head,
+  GeglPathList *(*flatten) (GeglMatrix3   matrix,
+                            GeglPathList *head,
                             GeglPathList *prev,
                             GeglPathList *self);
 } InstructionInfo;
 
 
-static GeglPathList *flatten_copy      (GeglPathList *head, GeglPathList *prev, GeglPathList *self);
-static GeglPathList *flatten_rel_copy  (GeglPathList *head, GeglPathList *prev, GeglPathList *self);
-static GeglPathList *flatten_nop       (GeglPathList *head, GeglPathList *prev, GeglPathList *self);
-static GeglPathList *flatten_curve     (GeglPathList *head, GeglPathList *prev, GeglPathList *self);
+static GeglPathList *flatten_copy      (GeglMatrix3 matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
+static GeglPathList *flatten_rel_copy  (GeglMatrix3 matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
+static GeglPathList *flatten_nop       (GeglMatrix3 matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
+static GeglPathList *flatten_curve     (GeglMatrix3 matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
 
 /* FIXME: handling of relative commands should be moved to the flattening stage */
 
@@ -104,6 +105,24 @@ static InstructionInfo *lookup_instruction_info (gchar type)
     if (knot_types[i].type == type)
       return &knot_types[i];
   return NULL;
+}
+
+static void transform_data (
+ GeglMatrix3         matrix,
+ GeglPathItem       *dst
+                            )
+{
+  InstructionInfo *dst_info = lookup_instruction_info(dst->type);
+  gint i;
+
+  for (i=0;i<dst_info->pairs;i++)
+    {
+      gdouble x = dst->point[i].x;
+      gdouble y = dst->point[i].y;
+      gegl_matrix3_transform_point (matrix, &x, &y);
+      dst->point[i].x=x;
+      dst->point[i].y=y;
+    }
 }
 
 static void copy_data (const GeglPathItem *src,
@@ -177,25 +196,29 @@ gegl_path_list_append_item  (GeglPathList  *head,
   return head;
 }
 
-static GeglPathList *flatten_nop (GeglPathList *head,
+static GeglPathList *flatten_nop (GeglMatrix3   matrix,
+                                  GeglPathList *head,
                                   GeglPathList *prev,
                                   GeglPathList *self)
 {
   return head;
 }
 
-static GeglPathList *flatten_copy (GeglPathList *head,
+static GeglPathList *flatten_copy (GeglMatrix3   matrix,
+                                   GeglPathList *head,
                                    GeglPathList *prev,
                                    GeglPathList *self)
 {
   GeglPathList *newp;
   head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
   copy_data (&self->d, &newp->d);
+  transform_data (matrix, &newp->d);
   return head;
 }
 
 static GeglPathList *
-flatten_rel_copy (GeglPathList *head,
+flatten_rel_copy (GeglMatrix3   matrix,
+                  GeglPathList *head,
                   GeglPathList *prev,
                   GeglPathList *self)
 {
@@ -217,6 +240,7 @@ flatten_rel_copy (GeglPathList *head,
       case 'm': newp->d.type = 'M'; break;
       case 'c': newp->d.type = 'C'; break;
     }
+  transform_data (matrix, &newp->d);
   return head;
 }
 
@@ -231,7 +255,7 @@ lerp (Point  *dest,
   dest->y = a->y + (b->y-a->y) * t;
 }
 
-static gfloat
+static gdouble
 point_dist (Point *a,
             Point *b)
 {
@@ -240,19 +264,19 @@ point_dist (Point *a,
 }
 
 static void
-bezier2 (GeglPathList  *prev,
-         GeglPathList  *curve,
+bezier2 (GeglPathItem  *prev,
+         GeglPathItem  *curve,
          Point *dest,
          gfloat t)
 {
   Point ab,bc,cd,abbc,bccd;
 
-  if (prev->d.type == 'c')
-    lerp (&ab, &prev->d.point[2], &curve->d.point[0], t);
+  if (prev->type == 'c')
+    lerp (&ab, &prev->point[2], &curve->point[0], t);
   else
-    lerp (&ab, &prev->d.point[0], &curve->d.point[0], t);
-  lerp (&bc, &curve->d.point[0], &curve->d.point[1], t);
-  lerp (&cd, &curve->d.point[1], &curve->d.point[2], t);
+    lerp (&ab, &prev->point[0], &curve->point[0], t);
+  lerp (&bc, &curve->point[0], &curve->point[1], t);
+  lerp (&cd, &curve->point[1], &curve->point[2], t);
   lerp (&abbc, &ab, &bc,t);
   lerp (&bccd, &bc, &cd,t);
   lerp (dest, &abbc, &bccd, t);
@@ -260,26 +284,33 @@ bezier2 (GeglPathList  *prev,
 
 
 
-static GeglPathList *flatten_curve (GeglPathList *head,
+static GeglPathList *flatten_curve (GeglMatrix3   matrix,
+                                    GeglPathList *head,
                                     GeglPathList *prev,
                                     GeglPathList *self)
 { /* create piecevise linear approximation of bezier curve */
   gfloat f;
+  Point res;
+  gchar buf[64]="C";
+
+  copy_data (&self->d, (void*)buf);
+  transform_data (matrix, (void*)buf);
 
   for (f=0; f<1.0; f += 1.0 / BEZIER_SEGMENTS)
     {
-      Point res;
-
-      bezier2 (prev, self, &res, f);
-
+      bezier2 (&prev->d, (void*)buf, &res, f);
       head = gegl_path_list_append (head, 'L', res.x, res.y);
     }
-  head = gegl_path_list_append (head, 'L', self->d.point[2].x, self->d.point[2].y);
+
+  res = ((GeglPathItem*)buf)->point[2];
+  head = gegl_path_list_append (head, 'L', res.x, res.y);
+
   return head;
 }
 
 static GeglPathList *
-gegl_path_list_flatten (GeglPathList *original)
+gegl_path_list_flatten (GeglMatrix3   matrix,
+                        GeglPathList *original)
 {
   GeglPathList *iter;
   GeglPathList *prev = NULL;
@@ -294,7 +325,7 @@ gegl_path_list_flatten (GeglPathList *original)
     {
       InstructionInfo *info = lookup_instruction_info (iter->d.type);
       if(info)
-        self = info->flatten (self, endp, iter);
+        self = info->flatten (matrix, self, endp, iter);
       if (!endp)
         endp = self;
       while (endp && endp->next)
@@ -613,6 +644,7 @@ struct _GeglPathClass
 typedef struct _GeglPathPrivate GeglPathPrivate;
 typedef struct _PathNameEntity  PathNameEntity;
 
+
 struct _GeglPathPrivate
 {
   GeglPathList *path;
@@ -629,6 +661,7 @@ struct _GeglPathPrivate
 
   GeglRectangle dirtied;
   GeglRectangle cached_extent;
+  GeglMatrix3   matrix;
   gint frozen;
 };
 
@@ -713,6 +746,30 @@ void gegl_path_thaw (GeglPath *path)
   gegl_path_emit_changed (path, NULL); /* expose a full changed */
 }
 
+void
+gegl_path_get_matrix (GeglPath    *path,
+                      GeglMatrix3  matrix)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  gegl_matrix3_copy (matrix, priv->matrix);
+}
+
+void
+gegl_path_set_matrix (GeglPath    *path,
+                      GeglMatrix3  matrix)
+{
+  GeglPathPrivate *priv;
+  if (!path)
+    {
+      g_warning ("EEek! no path\n");
+      return;
+    }
+  priv = GEGL_PATH_GET_PRIVATE (path);
+  gegl_matrix3_copy (priv->matrix, matrix);
+  priv->flat_path_clean = FALSE;
+  priv->length_clean = FALSE;
+}
+
 static void ensure_flattened (GeglPath *vector)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
@@ -737,7 +794,7 @@ static void ensure_flattened (GeglPath *vector)
         }
     }
 
-  priv->flat_path = gegl_path_list_flatten (path);
+  priv->flat_path = gegl_path_list_flatten (priv->matrix, path);
   if (path != priv->path)
     gegl_path_list_destroy (path);
   priv->flat_path_clean = TRUE;
@@ -750,14 +807,12 @@ path_calc_values (GeglPathList *path,
                   gdouble      *xs,
                   gdouble      *ys);
 
-
-
-
 static void
 gegl_path_init (GeglPath *self)
 {
   GeglPathPrivate *priv;
   priv = GEGL_PATH_GET_PRIVATE (self);
+  gegl_matrix3_identity (priv->matrix);
 }
 
 static void
@@ -1212,9 +1267,13 @@ gboolean gegl_path_is_empty (GeglPath *path)
 gint
 gegl_path_get_n_nodes  (GeglPath *vector)
 {
-  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
+  GeglPathPrivate *priv;
   GeglPathList *iter;
   gint count=0;
+  if (!vector)
+    return 0;
+  priv = GEGL_PATH_GET_PRIVATE (vector);
+
   for (iter = priv->path; iter; iter=iter->next)
     {
       count ++;
@@ -1797,17 +1856,6 @@ void                 gegl_path_parameter_calc_values (GeglPath    *self,
 
 
 /**************************************/
-
-#if 0
-const GeglMatrix *gegl_path_get_matrix (GeglPath *vector)
-{
-}
-GeglMatrix gegl_path_set_matrix (GeglPath *vector,
-                                   const GeglMatrix *matrix)
-{
-}
-#endif
-
 
 #if 0
 static void gen_rect (GeglRectangle *r,

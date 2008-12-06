@@ -22,6 +22,21 @@
 
 #include "gegl-matrix.h"
 
+
+void gegl_matrix3_debug (GeglMatrix3 matrix)
+{
+  if (matrix)
+    {
+      gchar *str = gegl_matrix3_to_string (matrix);
+      g_print("%s\n", str);
+      g_free (str);
+    }
+  else
+    {
+      g_print("NULL matrix\n");
+    }
+}
+
 void
 gegl_matrix3_identity (GeglMatrix3 matrix)
 {
@@ -184,6 +199,7 @@ void
 gegl_matrix3_parse_string (GeglMatrix3  matrix,
                            const gchar *string)
 {
+  gegl_matrix3_identity (matrix);
   if (strstr (string, "translate"))
     {
       gchar *p = strchr (string, '(');
@@ -210,19 +226,40 @@ gegl_matrix3_parse_string (GeglMatrix3  matrix,
       if (!p) return;
       p++;
 
-      /* last row should always be this for affine transforms */
-      matrix[0][2] = matrix[1][2] = 0;
-      matrix[2][2] = 1;
 
       for (i=0;i<3;i++)
         for (j=0;j<2;j++)
           {
             a = strtod(p, &p);
-            matrix [i][j] = a;
+            matrix [j][i] = a;
+            g_print ("%f\n", a);
             if (!p) return;
-            p = strchr (string, ',');
+            p = strchr (p, ',');
             if (!p) return;
             p++;
           }
     }
+}
+
+gchar *gegl_matrix3_to_string (GeglMatrix3 matrix)
+{
+  gchar *res;
+  GString *str = g_string_new ("matrix(");
+  gint i, j;
+  gint a=0;
+
+  for (i=0;i<3;i++)
+    for (j=0;j<2;j++)
+      {
+        if (a!=0)
+          g_string_append (str, ",");
+        a=1;
+        g_string_append_printf (str, "%f", matrix[j][i]);
+      }
+  g_string_append (str, ")");
+  res = str->str;
+  g_string_free (str, FALSE);
+
+  g_print (",,.. %s ,....\n", res);
+  return res;
 }

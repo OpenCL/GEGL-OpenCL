@@ -20,6 +20,7 @@
 #define __GEGL_PATH_H__
 
 #include <glib-object.h>
+#include <gegl-matrix.h>
 
 G_BEGIN_DECLS
 
@@ -71,7 +72,10 @@ gdouble              gegl_path_get_length     (GeglPath     *path);
 const GeglPathItem * gegl_path_get_node       (GeglPath    *path,
                                                gint         pos);
 gchar              * gegl_path_to_string      (GeglPath    *path);
-
+void                 gegl_path_get_matrix     (GeglPath    *path,
+                                               GeglMatrix3  matrix);
+void                 gegl_path_set_matrix     (GeglPath    *path,
+                                               GeglMatrix3  matrix);
 gdouble              gegl_path_closest_point  (GeglPath     *path,
                                                gdouble       x,
                                                gdouble       y,
@@ -200,12 +204,6 @@ void gegl_path_add_type (gchar        type,
  */
 void gegl_path_add_flattener (GeglPathList *(*func) (GeglPathList *original));
 
-
-#if 0
-const GeglMatrix *gegl_path_get_matrix (GeglPath *path);
-GeglMatrix gegl_path_set_matrix (GeglPath *path,
-                                   const GeglMatrix *matrix);
-#endif
 
 #include <gegl-buffer.h>
 
