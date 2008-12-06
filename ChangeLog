@@ -1,5 +1,10 @@
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/shift.c: (attach), (gegl_chant_class_init): warn
+	when using the shift operation.
+
+2008-12-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* examples/gegl-slicer.c: (main): added a utility for slicing images
 	into subcomponents based on descriptions in a text file.
 

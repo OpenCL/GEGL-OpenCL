@@ -40,6 +40,8 @@ attach (GeglOperation *operation)
 {
   GObjectClass *object_class = G_OBJECT_GET_CLASS (operation);
 
+  g_warning ("using depreacted operation 'gegl:shift'\n");
+
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
                                                            "output"));
@@ -177,9 +179,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output   = get_required_for_output;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
-  operation_class->name        = "gegl:shift";
+  operation_class->name        = "gegl:shifto";
   operation_class->categories  = "core";
-  operation_class->description = _("Shift the contents of a buffer");
+  operation_class->description = _("Shift the contents of a buffer this op is deprecated and gegl:translate should be used instead.");
 
   operation_class->no_cache = TRUE;
 }
