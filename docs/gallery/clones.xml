@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>280.000000</param>
@@ -30,7 +30,7 @@
       </node>
   </node>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>190.000000</param>
@@ -55,7 +55,7 @@
       <clone ref='clone0'/>
   </node>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>100.000000</param>
@@ -77,7 +77,7 @@
       <clone ref='clone0'/>
   </node>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>10.000000</param>
             <param name='y'>10.000000</param>
@@ -102,14 +102,14 @@
       <clone ref='clone0'/>
   </node>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>335.000000</param>
             <param name='y'>210.000000</param>
           </params>
       </node>
       <node operation='gegl:over'>
-          <node operation='gegl:shift'>
+          <node operation='gegl:translate'>
               <params>
                 <param name='x'>-10.000000</param>
                 <param name='y'>120.000000</param>
@@ -126,7 +126,7 @@
                     <param name='value'>2.000000</param>
                   </params>
               </node>
-              <node operation='gegl:shift'>
+              <node operation='gegl:translate'>
                   <params>
                     <param name='x'>0.000000</param>
                     <param name='y'>0.000000</param>
@@ -175,7 +175,7 @@
                 <param name='value'>0.800000</param>
               </params>
           </node>
-          <node operation='gegl:shift'>
+          <node operation='gegl:translate'>
               <params>
                 <param name='x'>5.000000</param>
                 <param name='y'>-2.000000</param>
@@ -201,7 +201,7 @@
       <clone ref='clone3'/>
   </node>
   <node operation='gegl:over'>
-      <node operation='gegl:shift'>
+      <node operation='gegl:translate'>
           <params>
             <param name='x'>90.000000</param>
             <param name='y'>90.000000</param>
