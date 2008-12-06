@@ -1,5 +1,10 @@
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/gegl-slicer.c: (main): added a utility for slicing images
+	into subcomponents based on descriptions in a text file.
+
+2008-12-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/png-save.c: (gegl_buffer_export_png),
 	(process): allow forcing the bitdepth down to 8bit.
 
