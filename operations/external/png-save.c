@@ -27,6 +27,8 @@ gegl_chant_string (path, _("File"), "",
                    _("Target path and filename, use '-' for stdout."))
 gegl_chant_int    (compression, _("Compression"),
                    1, 9, 1, _("PNG compression level from 1 to 9"))
+gegl_chant_int    (bitdepth, _("Bitdepth"),
+                   8, 16, 16, _("8 and 16 are amongst the currently accepted values."))
 
 #else
 
@@ -44,6 +46,7 @@ gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
                         gint         compression,
+                        gint         bd,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
@@ -53,6 +56,7 @@ gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
                         gint         compression,
+                        gint         bd,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
@@ -93,6 +97,11 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
     for (i=0; i<babl->format.components; i++)
       if ((*type)->bits > 8)
         bit_depth = 16;
+
+    if (bd == 16)
+      bit_depth = 16;
+    else
+      bit_depth = 8;
   }
 
   if (bit_depth == 16)
@@ -171,7 +180,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  gegl_buffer_export_png (input, o->path, o->compression,
+  gegl_buffer_export_png (input, o->path, o->compression, o->bitdepth,
                           result->x, result->y,
                           result->width, result->height);
   return  TRUE;
