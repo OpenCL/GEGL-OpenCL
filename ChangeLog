@@ -1,3 +1,8 @@
+2008-12-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h.in: make gegl_node_add_child and gegl_node_remove_child
+	public API.
+
 2008-12-03  Øyvind Kolås  <pippin@gimp.org>
 
 	s/gegl:shift/gegl:translate/

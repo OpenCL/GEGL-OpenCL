@@ -485,7 +485,10 @@ void          gegl_node_process          (GeglNode      *sink_node);
  *
  * Sometimes it is useful to be able to move nodes between graphs or even
  * handle orphaned nods that are not part of a graph. gegl_node_adopt_child
- * and gegl_node_get_parent are provided ot handle such cases.
+ * and gegl_node_get_parent are provided to handle such cases.
+ *
+ * (gegl_node_adopt_child is deprecated, and will be removed in a future
+ * release)
  */
 
 /**
@@ -503,6 +506,33 @@ void          gegl_node_process          (GeglNode      *sink_node);
  */
 GeglNode    * gegl_node_adopt_child        (GeglNode      *parent,
                                             GeglNode      *child);
+
+/**
+ * gegl_node_add_child:
+ * @graph: a GeglNode (graph)
+ * @child: a GeglNode.
+ *
+ * Make the GeglNode @graph, take a reference on child. This reference
+ * will be dropped when the reference count on the graph reaches zero.
+ *
+ * Returns the child.
+ */
+GeglNode *    gegl_node_add_child           (GeglNode      *graph,
+                                             GeglNode      *child);
+
+/**
+ * gegl_node_remove_child:
+ * @graph: a GeglNode (graph)
+ * @child: a GeglNode.
+ *
+ * Removes a child from a GeglNode. The reference previously held will be
+ * dropped so increase the reference count before removing when reparenting
+ * a child between two graphs.
+ *
+ * Returns the child.
+ */
+GeglNode *    gegl_node_remove_child        (GeglNode      *graph,
+                                             GeglNode      *child);
 
 /**
  * gegl_node_get_parent:
