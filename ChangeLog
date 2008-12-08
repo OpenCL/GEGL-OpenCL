@@ -1,3 +1,8 @@
+2008-12-08  Sven Neumann  <sven@gimp.org>
+
+	* tools/operation_reference.c (list_properties): fix compiler
+	warning "format not a string literal and no format arguments".
+
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a transform property to the path op, that allows specifying a

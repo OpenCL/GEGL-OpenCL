@@ -161,7 +161,7 @@ list_properties (GType    type,
                 {
                   gchar copy[16];
                   g_snprintf (copy, 12, "%s..", string);
-                  g_print (copy);
+                  g_print ("%s", copy);
                 }
               else
                 g_print ("%s", string);
