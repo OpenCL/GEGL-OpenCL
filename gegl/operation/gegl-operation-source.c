@@ -145,8 +145,10 @@ get_bounding_box (GeglOperation *self)
 {
   GeglRectangle result = { 0, 0, 0, 0 };
 
-  g_warning ("Gegl Source '%s' has no proper have_rect function",
-             G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
+  g_warning ("Gegl Source '%s' does not override %s()",
+             G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)),
+             G_STRFUNC);
+
   return result;
 }
 

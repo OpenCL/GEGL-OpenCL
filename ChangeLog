@@ -1,3 +1,9 @@
+2008-12-16  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operation-source.c (get_bounding_box):
+	Update warning given when subclasses does not override this
+	method.
+
 2008-12-08  Sven Neumann  <sven@gimp.org>
 
 	* tools/operation_reference.c (list_properties): fix compiler
