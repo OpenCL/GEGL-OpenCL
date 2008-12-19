@@ -294,6 +294,7 @@ gboolean
 gegl_buffer_set_extent (GeglBuffer          *buffer,
                         const GeglRectangle *extent)
 {
+  g_return_val_if_fail(GEGL_IS_BUFFER(buffer), FALSE);
    (*(GeglRectangle*)gegl_buffer_get_extent (buffer))=*extent;
 
   if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))

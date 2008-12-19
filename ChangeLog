@@ -1,3 +1,8 @@
+2008-12-19  Étienne BERSAC  <bersace03@laposte.net>
+
+	* gegl/buffer/gegl-buffer.c (gegl_buffer_set_extent): Add a check
+	before calling gegl_buffer_get_extent(). Avoid segfault.
+
 2008-12-16  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/operation/gegl-operation-source.c (get_bounding_box):
