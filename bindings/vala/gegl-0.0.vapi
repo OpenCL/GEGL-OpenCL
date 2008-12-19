@@ -82,7 +82,7 @@ namespace Gegl {
 		public Gegl.Rectangle get_extent ();
 		public static Gegl.Interpolation interpolation_from_string (string str);
 		public static weak Gegl.Buffer load (string path);
-		public Buffer (Gegl.Rectangle extent, void* format);
+		public Buffer (Gegl.Rectangle? extent, void* format);
 		public static weak Gegl.Buffer open (string path);
 		public void sample (double x, double y, double scale, void* dest, void* format, Gegl.Interpolation interpolation);
 		public void sample_cleanup ();
