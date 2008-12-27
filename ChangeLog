@@ -1,3 +1,8 @@
+2008-12-27  Sven Neumann  <sven@gimp.org>
+
+	* operations/external/ff-load.c (prepare): fix compilation with
+	newer versions of FFmpeg.
+
 2008-12-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.[ch]: (gegl_path_to_string),

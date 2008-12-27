@@ -288,7 +288,7 @@ prepare (GeglOperation *operation)
       p->enc = p->video_st->codec;
       p->codec = avcodec_find_decoder (p->enc->codec_id);
 
-      p->enc->error_resilience = 2;
+      /* p->enc->error_resilience = 2; */
       p->enc->error_concealment = 3;
       p->enc->workaround_bugs = FF_BUG_AUTODETECT;
 
