@@ -1,4 +1,15 @@
-2008-12-19  Étienne BERSAC  <bersace03@laposte.net>
+2008-12-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.[ch]: (gegl_path_to_string),
+	(gegl_path_parse_string), (gegl_path_parameter_get_names):
+	
+	gegl_path_parameter_get_names,
+	made count argument be a pointer. Made an initial implementation of
+	serialization for the path parameters. a '!' is followed by the name
+	of a parameter (up to the next space char). The path itself is then
+	encoded using '_' as the node instructions.
+
+2008-12-19  Étienne Bersac  <bersace03@laposte.net>
 
 	* gegl/buffer/gegl-buffer.c (gegl_buffer_set_extent): Add a check
 	before calling gegl_buffer_get_extent(). Avoid segfault.

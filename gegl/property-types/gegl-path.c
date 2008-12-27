@@ -1173,6 +1173,52 @@ gegl_path_to_string (GeglPath  *vector)
           g_string_append_printf (str, "%s ", buf);
         }
     }
+
+  /* iterate through the parameter datas */
+  {
+    GSList *names = gegl_path_parameter_get_names (vector, NULL);
+    GSList *iterb;
+
+    for (iterb = names; iterb; iterb=iterb->next)
+      {
+        GeglPath *subpath;
+        g_string_append_printf (str, "!%s ", (gchar*)iterb->data);
+        subpath = gegl_path_get_parameter_path (vector, iterb->data);
+
+        priv = GEGL_PATH_GET_PRIVATE (subpath);
+        for (iter = priv->path; iter; iter=iter->next)
+          {
+            gint i;
+            InstructionInfo *info = lookup_instruction_info(iter->d.type);
+
+            g_string_append_c (str, iter->d.type);
+            for (i=0;i<info->pairs;i++)
+              {
+                gchar buf[16];
+                gchar *eptr;
+                g_sprintf (buf, "%f", iter->d.point[i].x);
+
+                for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
+                    *eptr='\0';
+                if (*eptr=='.')
+                  *eptr='\0';
+                g_string_append_printf (str, "%s,", buf);
+                sprintf (buf, "%f", iter->d.point[i].y);
+
+                for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
+                    *eptr='\0';
+                if (*eptr=='.')
+                  *eptr='\0';
+
+                g_string_append_printf (str, "%s ", buf);
+              }
+          }
+
+
+      }
+  }
+
+
   ret = str->str;
   g_string_free (str, FALSE);
   return ret;
@@ -1194,61 +1240,114 @@ void gegl_path_parse_string (GeglPath *vector,
   const gchar *p = path;
   InstructionInfo *previnfo = NULL;
   gdouble x0, y0, x1, y1, x2, y2;
+  gchar *param_name = NULL;
 
   while (*p)
     {
       gchar     type = *p;
-      InstructionInfo *info = lookup_instruction_info(type);
-      if (!info && ((type>= '0' && type <= '9') || type == '-'))
+
+      if (type == '!')
         {
-          if (!previnfo)
+          gint i = 0;
+          if (param_name)
+            g_free (param_name);
+          param_name = g_malloc0 (32); /* XXX: nasty limitation, might have
+                                          security issues */
+          p++;
+          while (*p != ' ')
             {
-              info = previnfo;
-              type = previnfo->type;
+              param_name[i++]=*p;
+              p++;
+            }
+        }
+      else
+        {
+          InstructionInfo *info = lookup_instruction_info(type);
+          if (!info && ((type>= '0' && type <= '9') || type == '-'))
+            {
+              if (!previnfo)
+                {
+                  info = previnfo;
+                  type = previnfo->type;
+                }
+              else
+                {
+                  if (previnfo->type == 'M')
+                    {
+                      info = lookup_instruction_info(type = 'L');
+                    }
+                  else if (previnfo->type == 'm')
+                    {
+                      info = lookup_instruction_info(type = 'l');
+                    }
+                  else if (previnfo->type == ' ')
+                    g_warning ("EEEK");
+                }
+            }
+
+          if (param_name)
+            {
+              GeglPathPrivate *priv2 = GEGL_PATH_GET_PRIVATE (gegl_path_add_parameter_path (vector, param_name));
+              g_assert (priv2);
+              if (info)
+                {
+                  switch (info->pairs)
+                    {
+                      case 0:
+                        priv2->path = gegl_path_list_append (priv2->path, type, x0, y0);
+                        /* coordinates are ignored, all of these could have used add3)*/
+                        break;
+                      case 1:
+                        p = parse_float_pair (p, &x0, &y0);
+                        priv2->path = gegl_path_list_append (priv2->path, type, x0, y0);
+                        continue;
+                      case 2:
+                        p = parse_float_pair (p, &x0, &y0);
+                        p = parse_float_pair (p, &x1, &y1);
+                        priv2->path = gegl_path_list_append (priv2->path, type, x0, y0, x1, y1);
+                        continue;
+                      case 3:
+                        p = parse_float_pair (p, &x0, &y0);
+                        p = parse_float_pair (p, &x1, &y1);
+                        p = parse_float_pair (p, &x2, &y2);
+                        priv2->path = gegl_path_list_append (priv2->path, type, x0, y0, x1, y1, x2, y2);
+                        continue;
+                    }
+                  previnfo = info;
+                }
             }
           else
             {
-              if (previnfo->type == 'M')
+              if (info)
                 {
-                  info = lookup_instruction_info(type = 'L');
+                  switch (info->pairs)
+                    {
+                      case 0:
+                        priv->path = gegl_path_list_append (priv->path, type, x0, y0);
+                        /* coordinates are ignored, all of these could have used add3)*/
+                        break;
+                      case 1:
+                        p = parse_float_pair (p, &x0, &y0);
+                        priv->path = gegl_path_list_append (priv->path, type, x0, y0);
+                        continue;
+                      case 2:
+                        p = parse_float_pair (p, &x0, &y0);
+                        p = parse_float_pair (p, &x1, &y1);
+                        priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
+                        continue;
+                      case 3:
+                        p = parse_float_pair (p, &x0, &y0);
+                        p = parse_float_pair (p, &x1, &y1);
+                        p = parse_float_pair (p, &x2, &y2);
+                        priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
+                        continue;
+                    }
+                  previnfo = info;
                 }
-              else if (previnfo->type == 'm')
-                {
-                  info = lookup_instruction_info(type = 'l');
-                }
-              else if (previnfo->type == ' ')
-                g_warning ("EEEK");
             }
+          if (*p)
+            p++;
         }
-
-      if (info)
-        {
-        switch (info->pairs)
-          {
-            case 0:
-              priv->path = gegl_path_list_append (priv->path, type, x0, y0);
-              /* coordinates are ignored, all of these could have used add3)*/
-              break;
-            case 1:
-              p = parse_float_pair (p, &x0, &y0);
-              priv->path = gegl_path_list_append (priv->path, type, x0, y0);
-              continue;
-            case 2:
-              p = parse_float_pair (p, &x0, &y0);
-              p = parse_float_pair (p, &x1, &y1);
-              priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
-              continue;
-            case 3:
-              p = parse_float_pair (p, &x0, &y0);
-              p = parse_float_pair (p, &x1, &y1);
-              p = parse_float_pair (p, &x2, &y2);
-              priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
-              continue;
-          }
-        previnfo = info;
-        }
-      if (*p)
-        p++;
     }
 
   priv->flat_path_clean = FALSE;
@@ -1721,9 +1820,10 @@ GeglPath *gegl_path_add_parameter_path (GeglPath    *self,
 }
 
 GSList              *gegl_path_parameter_get_names   (GeglPath   *path,
-                                                      gint        count)
+                                                      gint       *count)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+  /* XXX: count NYI */
   return priv->parameter_names;
 }
 

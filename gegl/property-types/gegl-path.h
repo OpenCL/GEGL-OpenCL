@@ -147,7 +147,7 @@ GeglPath            *gegl_path_get_parameter_path    (GeglPath    *path,
 
 /* get a list of the named datas following this path, should not be freed */
 GSList              *gegl_path_parameter_get_names   (GeglPath   *path,
-                                                      gint        count);
+                                                      gint       *count);
 gdouble              gegl_path_parameter_calc        (GeglPath     *path,
                                                       const gchar  *parameter_name,
                                                       gdouble       pos);
