@@ -1,3 +1,10 @@
+2008-12-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/external/exr-load.cpp: Restore exr-load to behave like
+	before the source op base class no longer dictated caching the full
+	extent. (EXR supports sparse reading of data; thus the behavior could
+	be improved quite a bit.)
+
 2008-12-27  Sven Neumann  <sven@gimp.org>
 
 	* operations/external/ff-load.c (prepare): fix compilation with

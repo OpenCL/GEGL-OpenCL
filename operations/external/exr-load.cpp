@@ -639,6 +639,12 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -652,12 +658,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "exr-load";
+  operation_class->get_cached_region = get_cached_region;
+  operation_class->name        = "gegl:exr-load";
   operation_class->categories  = "hidden";
   operation_class->description = "EXR image loader.";
 
-  gegl_extension_handler_register (".exr", "exr-load");
-  gegl_extension_handler_register (".EXR", "exr-load");
+  gegl_extension_handler_register (".exr", "gegl:exr-load");
+  gegl_extension_handler_register (".EXR", "gegl:exr-load");
 }
 
 #endif
