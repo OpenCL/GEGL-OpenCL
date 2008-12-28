@@ -1,3 +1,7 @@
+2008-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: updated draft NEWS.
+
 2008-12-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: re-enable export dialog and menu item.

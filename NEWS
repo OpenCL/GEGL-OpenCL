@@ -8,19 +8,26 @@ from SVN whilst even micro numbers indicate released snapshots.
 Changes in GEGL 0.0.21
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • GeglOperation
-   • operations now carry a prefix in their name, the native GEGL ops
-     now all start with "gegl:"
+   • operation names are now prefixed, the ops in GEGL use 'gegl:' as prefix.
    • gegl:opacity - combine value and aux mask input when both are available.
- • GeglPath
-   • Vector graphics infrastructure, supporting poly lines, beziers and
-     from application extendable with cornu curves and other types of
-     nodes for the paths. Also support for variable line widths.
+   • gegl:src-in - deal correctly with extens.
+   • gegl:path - new op covering the stroke/fill needs of SVG.
+   • deprecated gegl:shift, the affine familiy of operations now 
+     uses the same fast code paths for integer translations.
  • GeglBuffer
    • Profiling motivated speed ups in data reading/writing.
+   • Remove left-over swapfiles from dead processes at startup.
+ • GeglNode
+   • made gegl_node_add_child and gegl_node_remove_child public API. (#507298)
+ • GeglPath
+   Vector path representation infrastructure, supporting poly lines and beziers
+   by default, the infrastructure allows extensions from applications with
+   other curve types (smooth curves, spiro curves and others.).
 
 Contributions from:
-  Hubert Figuiere, Sven Neumann, Øyvind Kolås, Michael Natterer, Kevin Cozens,
-  Sam Hocevar, Martin Nordholts, Manish Singh
+  Hubert Figuiere, Sven Neumann, Øyvind Kolås, Michael Natterer,
+  Kevin Cozens, Sam Hocevar, Martin Nordholts, Manish Singh,
+  Étienne Bersac and Michael Schumacher.
 
 Changes in GEGL 0.0.20
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
