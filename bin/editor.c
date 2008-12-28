@@ -2599,7 +2599,7 @@ editor_main (GeglNode    *gegl,
 
 static void cb_about (GtkAction *action);
 /*static void cb_introspect (GtkAction *action);*/
-/*static void cb_export (GtkAction *action);*/
+static void cb_export (GtkAction *action);
 /*static void cb_flush   (GtkAction *action);*/
 static void cb_quit_dialog (GtkAction *action);
 static void cb_composition_new (GtkAction *action);
@@ -2658,11 +2658,12 @@ static GtkActionEntry action_entries[] = {
    "Introspect",
    G_CALLBACK (cb_introspect)},*/
 
-/*
+
   {"Export", GTK_STOCK_SAVE,
    "_Export", "<control><shift>E",
    "Export to PNG",
    G_CALLBACK (cb_export)},
+  /*
   {"Flush", GTK_STOCK_SAVE,
    "_Flush", "<control><shift>E",
    "Flush swap buffer",
@@ -2734,9 +2735,9 @@ static const gchar *ui_info =
   "      <menuitem action='Next'/>"
   "      <menuitem action='Previous'/>"
   "      <separator/>"
-  /*"      <menuitem action='Export'/>"
-  "      <menuitem action='Flush'/>"
-  "      <separator/>"*/
+  "      <menuitem action='Export'/>"
+  /*"      <menuitem action='Flush'/>"*/
+  "      <separator/>"
   "      <menuitem action='Quit'/>"
   "      <separator/>"
   "    </menu>"
@@ -3495,7 +3496,7 @@ static void cb_zoom_out (GtkAction *action)
   gegl_gui_flush ();
 }
 
-#if 0
+#if 1
 #include "export.h"
 
 static void cb_export (GtkAction *action)

@@ -1,3 +1,7 @@
+2008-12-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: re-enable export dialog and menu item.
+
 2008-12-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/external/exr-load.cpp: Restore exr-load to behave like
