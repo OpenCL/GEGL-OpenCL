@@ -164,14 +164,12 @@ get_required_for_output (GeglOperation        *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle result = *roi;
-
   if (operation->node->is_graph)
     {
       return gegl_operation_get_required_for_output (operation, input_pad, roi);
     }
 
-  return result;
+  return *roi;
 }
 
 GeglRectangle

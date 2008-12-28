@@ -1,3 +1,17 @@
+2008-12-28  Øyvind Kolås  <pippin@gimp.org>
+
+	Simplified code for functions returning a dereferenced on stack
+	GeglRectangle structs from *roi arguments.
+
+	* gegl/operation/gegl-operation-composer.c:
+	(get_required_for_output):
+	* gegl/operation/gegl-operation-composer3.c:
+	(get_required_for_output):
+	* gegl/operation/gegl-operation-filter.c:
+	(get_required_for_output):
+	* gegl/operation/gegl-operation-source.c: (get_cached_region):
+	* gegl/operation/gegl-operation.c: (get_required_for_output):
+
 2008-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* NEWS: updated draft NEWS.

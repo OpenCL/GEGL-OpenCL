@@ -244,6 +244,5 @@ get_required_for_output (GeglOperation        *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle result = *roi;
-  return result;
+  return *roi;
 }

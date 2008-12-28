@@ -215,8 +215,7 @@ get_required_for_output (GeglOperation        *self,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle rect = *roi;
-  return rect;
+  return *roi;
 }
 
 static GeglNode *
