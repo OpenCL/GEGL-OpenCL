@@ -1,3 +1,7 @@
+2008-12-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: added mention of irc channel.
+
 2008-12-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: include more headers for API-doc scanning.
