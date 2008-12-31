@@ -400,10 +400,10 @@ gegl_exit (void)
 
 static void swap_clean (void);
 
-
 static void
 gegl_init_i18n (void)
 {
+  setlocale (LC_ALL, "");
   bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 }

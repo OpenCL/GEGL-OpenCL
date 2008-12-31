@@ -1,5 +1,9 @@
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (gegl_init_i18n): call setlocale (LC_ALL, "")
+
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: (file_is_gegl_xml), (main): output the parsed and
 	reformmated XML using g_printf instead of g_print to preserve utf8
 	(why is this needed?)
