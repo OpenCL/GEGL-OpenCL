@@ -1,5 +1,10 @@
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: Released GEGL 0.22
+	* configure.ac: updated to 0.22
+
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/ff-load.c: (get_cached_region),
 	* operations/external/jpg-load.c: (get_cached_region),
 	* operations/external/png-load.c: (get_cached_region),

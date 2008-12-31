@@ -5,7 +5,10 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots.
 
-Changes in GEGL 0.0.21
+This is a release introduces a feature freeze, no feature additions but perhaps
+some feature removals will occure before the 0.1.0 release. 
+
+Changes in GEGL 0.0.22
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • GeglOperation
    • operation names are now prefixed, the ops in GEGL use 'gegl:' as prefix.
