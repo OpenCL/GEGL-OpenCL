@@ -750,7 +750,6 @@ process (GeglOperation       *operation,
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     {
       /* doing a buffer shifting trick, (enhanced nop) */
-      GeglRectangle input_rectangle = *result;
       input  = gegl_operation_context_get_source (context, "input");
 
       output = g_object_new (GEGL_TYPE_BUFFER,

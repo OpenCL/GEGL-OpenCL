@@ -1,5 +1,9 @@
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/affine.c: (process) removed unused variable.
+
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_init_i18n): call setlocale (LC_ALL, "")
 
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
