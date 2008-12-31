@@ -1,5 +1,12 @@
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: set version to 0.0.23. the next released tarball will
+	be 0.1.0.
+
+========================== 0.0.22 released ==================================
+
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: Released GEGL 0.22
 	* configure.ac: updated to 0.22
 
