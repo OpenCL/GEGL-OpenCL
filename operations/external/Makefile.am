@@ -35,11 +35,13 @@ jpg_load_la_SOURCES = jpg-load.c
 jpg_load_la_LIBADD = $(op_libs) $(LIBJPEG)
 endif
 
+if HAVE_CAIRO
 if HAVE_RSVG
 ops += svg-load.la
 svg_load_la_SOURCES = svg-load.c
 svg_load_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(RSVG_LIBS)
 svg_load_la_CFLAGS = $(CAIRO_CFLAGS) $(RSVG_CFLAGS)
+endif
 endif
 
 if HAVE_GDK_PIXBUF

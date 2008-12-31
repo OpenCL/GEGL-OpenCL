@@ -1,3 +1,14 @@
+2008-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	The configure.ac file still needs changes related to building
+	without docs enabled. Also, --without-gtk will break the build.
+	
+	* configure.ac: A lot of changes which add support for --without
+	so GEGL can be built without some of its (optional) dependencies.
+
+	* operations/external/Makefile.am: Don't build SVG load op if
+	building without Cairo.
+
 2008-12-28  Øyvind Kolås  <pippin@gimp.org>
 
 	Simplified code for functions returning a dereferenced on stack

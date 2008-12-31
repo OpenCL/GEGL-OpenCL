@@ -213,7 +213,7 @@ AC_ARG_ENABLE([docs],
               [  --disable-docs          disable docs generation (default=no)],,
               enable_docs="yes")
 
-AM_CONDITIONAL(ENABLE_DOCS, test "x$enable_docs" == "xyes")
+AM_CONDITIONAL(ENABLE_DOCS, test "x$enable_docs" = "xyes")
 
 
 dnl Cache $ACLOCAL_FLAGS
@@ -296,6 +296,7 @@ dnl ===========================================================================
 #######################
 # Check for Darwin/OSX
 #######################
+
 AC_MSG_CHECKING([for some Darwin platform])
 case "${host}" in
   *-apple-darwin*)
@@ -307,6 +308,7 @@ case "${host}" in
 esac
 AC_MSG_RESULT([$platform_darwin])
 AM_CONDITIONAL(PLATFORM_DARWIN, test "$platform_darwin" = "yes")
+
 
 #################
 # Check for Win32
@@ -382,7 +384,7 @@ AC_ARG_ENABLE(sse,
   [  --enable-sse            enable SSE support (default=auto)],,
   enable_sse=$enable_mmx)
 
-if test "x$enable_mmx" = xyes; then
+if test "x$enable_mmx" = "xyes"; then
   GEGL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
   SSE_EXTRA_CFLAGS=
 
@@ -396,7 +398,7 @@ if test "x$enable_mmx" = xyes; then
     AC_DEFINE(USE_MMX, 1, [Define to 1 if MMX assembly is available.])
     AC_MSG_RESULT(yes)
 
-    if test "x$enable_sse" = xyes; then
+    if test "x$enable_sse" = "xyes"; then
       GEGL_DETECT_CFLAGS(sse_flag, '-msse')
       SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
 
@@ -454,24 +456,36 @@ PKG_CHECK_MODULES(DEP,
         *** Errors follow:
             $DEP_PKG_ERRORS]))
 
+AC_ARG_WITH(gio, [  --without-gio           build without gio support])
+
+have_gio="no"
+if test "x$with_gio" != "xno"; then
 PKG_CHECK_MODULES(GIO, gio-2.0, 
 	have_gio="yes"
 	AC_DEFINE(HAVE_GIO, 1, [Define to 1 to compile with gio support.])
 	GLIB_PACKAGES="$GLIB_PACKAGES gio-2.0",
 	have_gio="no (gio not found)")
+fi
+
 AM_CONDITIONAL(HAVE_GIO, test "x$have_gio" = "xyes")
 
 # Rerun PKG_CONFIG to add gthread-2.0 cflags and libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
 
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
-  have_gtk="yes"
-  AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
-  GTK_CFLAGS="$GTK_CFLAGS"
-  GTK_LIBS="$GTK_LIBS",
-  have_gtk="no  (gtk+ not found)")
-AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
+AC_ARG_WITH(gtk, [  --without-gtk           build without gtk+ support])
+
+have_gtk="no"
+if test "x$with_gtk" != "xno"; then
+  PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
+    have_gtk="yes"
+    AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
+    GTK_CFLAGS="$GTK_CFLAGS"
+    GTK_LIBS="$GTK_LIBS",
+    have_gtk="no  (gtk+ not found)")
+fi
+
+AM_CONDITIONAL(HAVE_GTK, test "$have_gtk" = "yes")
 
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
@@ -533,21 +547,6 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test "x$enable_gtk_doc" = "xyes")
 AC_CHECK_PROGS(PERL, perl5 perl)
 
 
-###############
-# Check for Lua
-###############
-
-PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED_VERSION,
-  have_lua="yes",
-  [PKG_CHECK_MODULES(LUA, lua5.1 >= $LUA_REQUIRED_VERSION,
-     have_lua="yes",
-     have_lua="no  (usable lua not found)")])
-AM_CONDITIONAL(HAVE_LUA, test "x$have_lua" = "xyes")
-
-AC_SUBST(LUA_CFLAGS) 
-AC_SUBST(LUA_LIBS) 
-
-
 #######################################
 # Checks for Ruby used to make API docs
 #######################################
@@ -558,183 +557,14 @@ if test "$RUBY" = "no"; then
 *** Could not find Ruby interpreter. The HTML API reference
 will not be updated.
 ])
-  have_ruby=no
+  have_ruby="no"
 else
   RUBY_BIN="$RUBY"
-  have_ruby=yes
+  have_ruby="yes"
 fi
 AM_CONDITIONAL(HAVE_RUBY, test "x$have_ruby" = "xyes")
 
 AC_SUBST(RUBY_BIN)
-
-
-#################
-# Check for Cairo
-#################
-
-PKG_CHECK_MODULES(CAIRO, cairo,
-  have_cairo="yes",
-  have_cairo="no  (usable cairo not found)")
-AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
-
-AC_SUBST(CAIRO_CFLAGS) 
-AC_SUBST(CAIRO_LIBS) 
-
-
-########################
-# Checks for Pango stuff
-########################
-
-PKG_CHECK_MODULES(PANGO, pango,
-  have_pango="yes",
-  have_pango="no  (usable pango not found)")
-AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
-
-PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
-  have_pangocairo="yes",
-  have_pangocairo="no  (usable pangocairo not found)")
-AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
-
-AC_SUBST(PANGO_CFLAGS) 
-AC_SUBST(PANGO_LIBS) 
-AC_SUBST(PANGOCAIRO_CFLAGS) 
-AC_SUBST(PANGOCAIRO_LIBS) 
-
-
-######################
-# Check for gdk-pixbuf
-######################
-
-PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gtk_required_version,
-  have_gdk_pixbuf="yes",
-  have_gdk_pixbuf="no  (gdk-pixbuf not found)")
-AM_CONDITIONAL(HAVE_GDK_PIXBUF, test "x$have_gdk_pixbuf" = "xyes")
-
-
-###################
-# Check for libjpeg
-###################
-
-AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
-  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
-    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
-      jpeg_ok=yes,
-      [jpeg_ok="no  (usable JPEG library not found)"])
-    if test "$jpeg_ok" = yes; then
-      AC_MSG_CHECKING([for jpeglib.h])
-      AC_TRY_CPP([
-#include <stdio.h>
-#undef HAVE_STDDEF_H
-#undef HAVE_STDLIB_H
-#undef PACKAGE
-#undef VERSION
-#include <jpeglib.h>],
-        jpeg_ok="yes",
-        jpeg_ok="no  (Can't include jpeglib.h)")
-      AC_MSG_RESULT($jpeg_ok)
-      if test "$jpeg_ok" = yes; then
-        AC_CHECK_LIB(jpeg, jpeg_save_markers,
-        LIBJPEG='-ljpeg',
-        jpeg_ok="no  (JPEG library is too old)")
-      else
-        jpeg_ok="no  (JPEG header file not found)"
-      fi
-    fi
-  fi
-
-  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
-     AC_MSG_RESULT([*** Checks for JPEG library failed.])
-  fi
-AM_CONDITIONAL(HAVE_JPEG, test "x$jpeg_ok" = "xyes")
-
-AC_SUBST(LIBJPEG)
-
-
-##################
-# Check for libpng
-##################
-
-PKG_CHECK_MODULES(PNG, libpng,
-  have_libpng="yes",
-  have_libpng="no  (usable libpng not found)")
-AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
-
-AC_SUBST(PNG_CFLAGS) 
-AC_SUBST(PNG_LIBS) 
-
-
-###################
-# Check for librsvg
-###################
-
-PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= librsvg_required_version,
-  have_librsvg="yes",
-  have_librsvg="no  (usable librsvg not found)")
-AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
-
-AC_SUBST(RSVG_CFLAGS) 
-AC_SUBST(RSVG_LIBS) 
-
-
-###################
-# Check for OpenEXR
-###################
-
-PKG_CHECK_MODULES(OPENEXR, OpenEXR,
-  have_openexr="yes",
-  have_openexr="no  (usable OpenEXR not found)")
-AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
-
-AC_SUBST(OPENEXR_CFLAGS) 
-AC_SUBST(OPENEXR_LIBS) 
-
-
-###############
-# Check for SDL
-###############
-
-dnl check for SDL
-AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-if test "$SDL_CONFIG" = "no"; then
-  have_sdl="no  (usable libsdl not found)"
-  AC_MSG_RESULT([*** Check for SDL library failed.])
-else
-  have_sdl="yes"
-  SDL_CFLAGS=`$SDL_CONFIG --cflags`
-  SDL_LIBS=`$SDL_CONFIG --libs`
-fi
-AM_CONDITIONAL(HAVE_SDL, test "x$have_sdl" = "xyes")
-
-AC_SUBST(SDL_CFLAGS)
-AC_SUBST(SDL_LIBS)
-
-
-######################
-# Check for libopenraw
-######################
-
-dnl check for libopenraw
-PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0 >= openraw_required_version,
-  have_openraw="yes",
-  have_openraw="no  (usable libopenraw not found)")
-AM_CONDITIONAL(HAVE_OPENRAW, test "x$have_openraw" = "xyes")
-
-AC_SUBST(OPENRAW_CFLAGS) 
-AC_SUBST(OPENRAW_LIBS) 
-
-
-####################
-# Check for graphviz
-####################
- 
-AC_PATH_PROG(GRAPHVIZ, dot, no)
-if test "$GRAPHVIZ" = "no"; then
-  have_graphviz="no  (graphviz not found)"
-  AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
-else
-  have_graphviz="yes"
-fi
-AM_CONDITIONAL(HAVE_GRAPHVIZ, test "x$have_graphviz" = "xyes")
 
 
 ####################
@@ -763,6 +593,253 @@ else
   have_asciidoc="yes"
 fi
 AM_CONDITIONAL(HAVE_ASCIIDOC, test "x$have_asciidoc" = "xyes")
+
+
+#################
+# Check for Cairo
+#################
+
+AC_ARG_WITH(cairo, [  --without-cairo         build without Cairo support])
+
+have_cairo="no"
+if test "x$with_cairo" != "xno"; then
+  PKG_CHECK_MODULES(CAIRO, cairo,
+    have_cairo="yes",
+    have_cairo="no  (Cairo not found)")
+fi
+
+AM_CONDITIONAL(HAVE_CAIRO, test "$have_cairo" = "yes")
+
+AC_SUBST(CAIRO_CFLAGS) 
+AC_SUBST(CAIRO_LIBS) 
+
+
+########################
+# Checks for Pango stuff
+########################
+
+AC_ARG_WITH(pango, [  --without-pango         build without Pango support])
+AC_ARG_WITH(pangocairo, [  --without-pangocairo    build without pangocairo support])
+
+have_pango="no"
+if test "x$with_pango" != "xno"; then
+  PKG_CHECK_MODULES(PANGO, pango,
+    have_pango="yes",
+    have_pango="no  (Pango not found)")
+fi
+
+have_pangocairo="no"
+if test "x$with_pangocairo" != "xno"; then
+  PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
+    have_pangocairo="yes",
+    have_pangocairo="no  (pangocairo not found)")
+fi
+
+AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
+AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
+
+AC_SUBST(PANGO_CFLAGS) 
+AC_SUBST(PANGO_LIBS) 
+AC_SUBST(PANGOCAIRO_CFLAGS) 
+AC_SUBST(PANGOCAIRO_LIBS) 
+
+
+######################
+# Check for gdk-pixbuf
+######################
+
+AC_ARG_WITH(gdk_pixbuf, [  --without-gdk-pixbuf    build without gdk-pixbuf support])
+
+have_gdk_pixbuf="no"
+if test "x$with_gdk_pixbuf" != "xno"; then
+  PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gtk_required_version,
+    have_gdk_pixbuf="yes",
+    have_gdk_pixbuf="no  (gdk-pixbuf not found)")
+fi
+
+AM_CONDITIONAL(HAVE_GDK_PIXBUF, test "$have_gdk_pixbuf" = "yes")
+
+
+###################
+# Check for libjpeg
+###################
+
+AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
+
+jpeg_ok="no"
+if test "x$with_libjpeg" != "xno" && test -z "$LIBJPEG"; then
+  AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+    jpeg_ok="yes",
+    jpeg_ok="no  (usable JPEG library not found)")
+  if test "$jpeg_ok" = "yes"; then
+    AC_MSG_CHECKING([for jpeglib.h])
+    AC_TRY_CPP([
+#include <stdio.h>
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+#undef PACKAGE
+#undef VERSION
+#include <jpeglib.h>],
+      jpeg_ok="yes",
+      jpeg_ok="no  (Can't include jpeglib.h)")
+    AC_MSG_RESULT($jpeg_ok)
+    if test "$jpeg_ok" = "yes"; then
+      AC_CHECK_LIB(jpeg, jpeg_save_markers,
+        LIBJPEG='-ljpeg',
+        [jpeg_ok="no  (JPEG library is too old)"])
+    else
+      jpeg_ok="no  (JPEG header file not found)"
+    fi
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_JPEG, test "$jpeg_ok" = "yes")
+
+AC_SUBST(LIBJPEG)
+
+
+##################
+# Check for libpng
+##################
+
+AC_ARG_WITH(libpng, [  --without-libpng        build without PNG support])
+
+echo "with_png '$with_png', with_libpng '$with_libpng'"
+have_libpng="no"
+if test "x$with_libpng" != "xno"; then
+  PKG_CHECK_MODULES(PNG, libpng,
+    have_libpng="yes",
+    have_libpng="no  (libpng not found)")
+fi
+
+AM_CONDITIONAL(HAVE_PNG, test "$have_libpng" = "yes")
+
+AC_SUBST(PNG_CFLAGS) 
+AC_SUBST(PNG_LIBS) 
+
+
+###################
+# Check for librsvg
+###################
+
+AC_ARG_WITH(librsvg, [  --without-librsvg       build without SVG support])
+
+have_librsvg="no"
+if test "x$with_librsvg" != "xno"; then
+  PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= librsvg_required_version,
+    have_librsvg="yes",
+    have_librsvg="no  (usable librsvg not found)")
+fi
+
+AM_CONDITIONAL(HAVE_RSVG, test "$have_librsvg" = "yes")
+
+AC_SUBST(RSVG_CFLAGS) 
+AC_SUBST(RSVG_LIBS) 
+
+
+###################
+# Check for OpenEXR
+###################
+
+AC_ARG_WITH(openexr, [  --without-openexr       build without OpenEXR support])
+
+have_openexr="no"
+if test "x$with_openexr" != "xno"; then
+  PKG_CHECK_MODULES(OPENEXR, OpenEXR,
+    have_openexr="yes",
+    have_openexr="no  (OpenEXR library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_OPENEXR, test "$have_openexr" = "yes")
+
+AC_SUBST(OPENEXR_CFLAGS) 
+AC_SUBST(OPENEXR_LIBS) 
+
+
+###############
+# Check for SDL
+###############
+
+AC_ARG_WITH(sdl, [  --without-sdl           build without SDL support])
+
+have_sdl="no"
+if test "x$with_sdl" != "xno"; then
+  AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+  if test "$SDL_CONFIG" = "no"; then
+    have_sdl="no  (SDL library not found)"
+    AC_MSG_RESULT([*** Check for SDL library failed.])
+  else
+    have_sdl="yes"
+    SDL_CFLAGS=`$SDL_CONFIG --cflags`
+    SDL_LIBS=`$SDL_CONFIG --libs`
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_SDL, test "$have_sdl" = "yes")
+ 
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LIBS)
+
+
+######################
+# Check for libopenraw
+######################
+
+AC_ARG_WITH(libopenraw, [  --without-libopenraw    build without openraw support])
+
+have_libopenraw="no"
+if test "x$with_libopenraw" != "xno"; then
+  PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0 >= openraw_required_version,
+    have_libopenraw="yes",
+    have_libopenraw="no  (openraw library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_OPENRAW, test "$have_libopenraw" = "yes")
+
+AC_SUBST(OPENRAW_CFLAGS) 
+AC_SUBST(OPENRAW_LIBS) 
+
+
+####################
+# Check for graphviz
+####################
+ 
+AC_ARG_WITH(graphviz, [  --without-graphviz      build without graphviz support])
+
+have_graphviz="no"
+if test "x$with_graphviz" != "xno"; then
+  AC_PATH_PROG(GRAPHVIZ, dot, no)
+
+  if test "$GRAPHVIZ" = "no"; then
+    have_graphviz="no  (graphviz not found)"
+    AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
+  else
+    have_graphviz="yes"
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_GRAPHVIZ, test "$have_graphviz" = "yes")
+
+
+###############
+# Check for Lua
+###############
+
+AC_ARG_WITH(lua, [  --without-lua           build without Lua support])
+
+have_lua="no"
+if test "x$with_lua" != "xno"; then
+PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED_VERSION,
+  have_lua="yes",
+  [PKG_CHECK_MODULES(LUA, lua5.1 >= $LUA_REQUIRED_VERSION,
+     have_lua="yes",
+     have_lua="no  (usable lua not found)")])
+fi
+
+AM_CONDITIONAL(HAVE_LUA, test "$with_lua" = "yes")
+
+AC_SUBST(LUA_CFLAGS) 
+AC_SUBST(LUA_LIBS) 
 
 
 ####################################
@@ -799,10 +876,14 @@ AM_CONDITIONAL(HAVE_AVFORMAT, test "x$have_libavformat" = "xyes")
 # Check for V4L
 ###############
  
-have_v4l=no
-AC_CHECK_HEADER(linux/videodev.h, have_v4l=yes)
+AC_ARG_WITH(libv4l, [  --without-libv4l        build without V4L support])
 
-AM_CONDITIONAL(HAVE_V4L, test "x$have_v4l" = "xyes")
+have_v4l="no"
+if test "x$with_libv4l" != "xno"; then
+  AC_CHECK_HEADER(linux/videodev.h, have_v4l="yes")
+fi
+
+AM_CONDITIONAL(HAVE_V4L, test "$have_v4l" = "yes")
 
 
 
@@ -810,17 +891,21 @@ AM_CONDITIONAL(HAVE_V4L, test "x$have_v4l" = "xyes")
 # Check for lcms
 ################
  
-#have_lcms=no
-#AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
-#  AC_CHECK_HEADER(lcms.h,
-#    have_lcms=yes
-#    LCMS_LIBS="-llcms", [
-#    AC_CHECK_HEADER(lcms/lcms.h,
+#AC_ARG_WITH(liblcms, [  --without-lcms          build without CMS support])
+#
+#have_lcms="no"
+#if test x$with_liblcms != xno; then
+#  AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
+#    AC_CHECK_HEADER(lcms.h,
 #      have_lcms=yes
-#      AC_DEFINE(HAVE_LCMS_LCMS_H, 1,
-#        [Define to 1 if the lcms header must be included as lcms/lcms.h])
-#      LCMS_LIBS="-llcms")])
-#])
+#      LCMS_LIBS="-llcms", [
+#      AC_CHECK_HEADER(lcms/lcms.h,
+#      have_lcms=yes
+#        AC_DEFINE(HAVE_LCMS_LCMS_H, 1,
+#          [Define to 1 if the lcms header must be included as lcms/lcms.h])
+#        LCMS_LIBS="-llcms")])
+#  ])
+#fi
 # 
 #AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = "xyes")
 #AC_SUBST(LCMS_LIBS)
@@ -830,7 +915,7 @@ AM_CONDITIONAL(HAVE_V4L, test "x$have_v4l" = "xyes")
 # Check for libspiro
 ####################
 
-AC_ARG_WITH(libspiro, [  --without-spiro         build without SPIRO support])
+AC_ARG_WITH(libspiro, [  --without-libspiro      build without SPIRO support])
 
 spiro_ok="no"
 if test "x$with_libspiro" != "xno" && test -z "$LIBSPIRO"; then
@@ -870,7 +955,7 @@ AC_ARG_ENABLE([workshop],
               [  --enable-workshop       enable build of workshop operations (default=no)],,
               enable_workshop="no")
 
-AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" == "xyes")
+AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" = "xyes")
 
 
 dnl bin/node-editors/Makefile
@@ -917,8 +1002,10 @@ Optional features:
   SIMD:           sse:$enable_sse mmx:$enable_mmx
 
 Optional dependencies:
-  GTK+:           $have_gtk
+  asciidoc:       $have_asciidoc
+  enscript:       $have_enscript
   GIO:            $have_gio
+  GTK+:           $have_gtk
   Ruby:           $have_ruby
   Lua:            $have_lua
   Cairo:          $have_cairo
@@ -930,9 +1017,7 @@ Optional dependencies:
   OpenEXR:        $have_openexr
   rsvg:           $have_librsvg
   SDL:            $have_sdl
-  openraw:        $have_openraw
-  asciidoc:       $have_asciidoc
-  enscript:       $have_enscript
+  openraw:        $have_libopenraw
   graphviz:       $have_graphviz
   avformat:       $have_libavformat
   V4L:            $have_v4l
