@@ -353,11 +353,11 @@ gegl_exit (void)
 
   if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
     {
-      g_print ("\n%s", gegl_instrument_utf8 ());
+      g_printf ("\n%s", gegl_instrument_utf8 ());
     }
 
   if (gegl_buffer_leaks ())
-    g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
+    g_printf ("  buffer-leaks: %i", gegl_buffer_leaks ());
   gegl_tile_cache_destroy ();
 
   if (gegl_swap_dir ())
@@ -395,7 +395,7 @@ gegl_exit (void)
   g_object_unref (config);
   config = NULL;
 
-  g_print ("\n");
+  g_printf ("\n");
 }
 
 static void swap_clean (void);

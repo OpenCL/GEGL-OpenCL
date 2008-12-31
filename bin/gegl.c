@@ -73,7 +73,9 @@ static gboolean file_is_gegl_xml (const gchar *path)
   if (extension[0]=='\0')
     return FALSE;
   if (!strcmp (extension, "xml")||
-      !strcmp (extension, "XML"))
+      !strcmp (extension, "XML")||
+      !strcmp (extension, "svg")
+      )
     return TRUE;
   return FALSE;
 }
@@ -229,7 +231,7 @@ main (gint    argc,
 	return 0;
         break;
       case GEGL_RUN_MODE_XML:
-	g_print ("%s\n", gegl_node_to_xml (gegl, path_root));
+	g_printf ("%s\n", gegl_node_to_xml (gegl, path_root));
 	return 0;
         break;
 #if 0

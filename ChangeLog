@@ -1,3 +1,11 @@
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl.c: (file_is_gegl_xml), (main): output the parsed and
+	reformmated XML using g_printf instead of g_print to preserve utf8
+	(why is this needed?)
+	* gegl/gegl-init.c: (gegl_exit): output time instrumentation using
+	g_printf instead of g_print
+
 2008-12-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	The configure.ac file still needs changes related to building
