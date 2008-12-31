@@ -429,6 +429,12 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -443,6 +449,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;
   operation_class->prepare = prepare;
 
   operation_class->name        = "gegl:ff-load";

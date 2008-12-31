@@ -1,5 +1,14 @@
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/ff-load.c: (get_cached_region),
+	* operations/external/jpg-load.c: (get_cached_region),
+	* operations/external/png-load.c: (get_cached_region),
+	* operations/external/v4l.c: (get_cached_region): make these ops
+	request a cache the size of the bounding box of the file (only load
+	data once).
+
+2008-12-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/affine/affine.c: (process) removed unused variable.
 
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>

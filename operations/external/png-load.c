@@ -407,6 +407,12 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -419,6 +425,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;
 
   operation_class->name        = "gegl:png-load";
   operation_class->categories  = "hidden";

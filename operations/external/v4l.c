@@ -193,7 +193,7 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
-static gboolean update (GeglOperation *operation)
+static gboolean update (gpointer operation)
 {
   GeglRectangle bounds = gegl_operation_get_bounding_box (operation);
   gegl_operation_invalidate (operation, &bounds, FALSE);
@@ -292,6 +292,13 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -305,6 +312,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   source_class->process             = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;
   operation_class->prepare          = prepare;
 
   operation_class->name        = "gegl:v4l";
