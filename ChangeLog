@@ -1,5 +1,12 @@
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.h: documented the path API.
+	* gegl/property-types/gegl-path.c: (gegl_path_stroke): include the
+	declaration for gegl_path_stroke here as well (rendering code
+	shouldn't be in this file).
+
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.h: Removed path parameters API.
 	* gegl/property-types/gegl-path.c: (GeglPathPrivate), (gegl_path_to_string),
 	(gegl_path_parse_string), (gegl_path_append), (gegl_path_stroke):

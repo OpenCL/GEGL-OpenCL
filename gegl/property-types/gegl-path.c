@@ -1739,6 +1739,15 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
   gegl_buffer_set (buffer, roi, format, buf, 0);
 }
 
+
+/* XXX: should be removed?  */
+void gegl_path_fill (GeglBuffer *buffer,
+                     GeglPath   *vector,
+                     GeglColor  *color,
+                     gboolean    winding);
+
+
+
 void gegl_path_fill (GeglBuffer *buffer,
                      GeglPath   *vector,
                      GeglColor  *color,
@@ -1989,6 +1998,15 @@ static void gegl_path_stamp (GeglBuffer *buffer,
   }
   gegl_buffer_set (buffer, &roi, s.format, s.buf, 0);
 }
+
+
+void gegl_path_stroke (GeglBuffer *buffer,
+                       const GeglRectangle *clip_rect,
+                       GeglPath *vector,
+                       GeglColor  *color,
+                       gdouble     linewidth,
+                       gdouble     hardness,
+                       gdouble     opacity);
 
 
 void gegl_path_stroke (GeglBuffer *buffer,
