@@ -66,6 +66,16 @@ static void path_changed (GeglPath *path,
 #include "gegl-chant.h"
 #include <cairo/cairo.h>
 
+/* the stroke code should move into this op, or a specific stroke op */
+
+void gegl_path_stroke (GeglBuffer          *buffer,
+                       const GeglRectangle *clip_rect,
+                       GeglPath            *vector,
+                       GeglColor           *color,
+                       gdouble              linewidth,
+                       gdouble              hardness,
+                       gdouble              opacity);
+
 
 static void path_changed (GeglPath *path,
                           const GeglRectangle *roi,
@@ -119,6 +129,9 @@ get_bounding_box (GeglOperation *operation)
 
   return defined;
 }
+
+
+
 
 static gboolean gegl_path_is_closed (GeglPath *path)
 {

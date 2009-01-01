@@ -1,5 +1,10 @@
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/external/path.c: include own declaration of
+	gegl_path_stroke()
+
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.h: documented the path API.
 	* gegl/property-types/gegl-path.c: (gegl_path_stroke): include the
 	declaration for gegl_path_stroke here as well (rendering code
