@@ -358,6 +358,9 @@ void gegl_path_freeze (GeglPath *path);
  */
 void gegl_path_thaw (GeglPath *path);
 
+/***
+ * :
+ */
 
 GParamSpec         * gegl_param_spec_path     (const gchar *name,
                                                const gchar *nick,
@@ -400,9 +403,6 @@ GeglPathList       * gegl_path_list_destroy   (GeglPathList *path);
  */
 void gegl_path_add_flattener (GeglPathList *(*func) (GeglPathList *original));
 
-/**
- * foo:
- */
 
 G_END_DECLS
 

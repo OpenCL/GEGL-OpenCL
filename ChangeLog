@@ -1,5 +1,14 @@
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-color.c:
+	* gegl/property-types/gegl-color.h:
+	* gegl/property-types/gegl-curve.h: Added documentation of public
+	methods of GeglColor and GeglCurve.
+
+	* gegl/property-types/gegl-path.h: formatting update.
+
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: reset state machine for each header file parsed.
 
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>

@@ -44,21 +44,70 @@ struct _GeglColorClass
 
 GType        gegl_color_get_type               (void) G_GNUC_CONST;
 
+
+/***
+ * GeglColor:
+ *
+ * GeglColor is an object containing a color at the moment only RGB colors
+ * are supported, in the future a GeglColor might also indicate other
+ * enumerated or natively in other color representations colors.
+ */
+
+/**
+ * gegl_color_new:
+ * @string: a string describing the color to be created.
+ *
+ * Creates a new #GeglColor.
+ *
+ * Returns the newly created #GeglColor.
+ */
 GeglColor *  gegl_color_new                    (const gchar *string);
 
-void         gegl_color_get_rgba               (GeglColor   *self,
+/**
+ * gegl_color_get_rgba:
+ * @color: a #GeglColor
+ * @r: red return location.
+ * @g: green return location.
+ * @b: blue return location.
+ * @a: alpha return location.
+ *
+ * Retrieves the current set color as linear light non premultipled RGBA data,
+ * any of the return pointers can be omitted.
+ */
+void         gegl_color_get_rgba               (GeglColor   *color,
                                                 gfloat      *r,
                                                 gfloat      *g,
                                                 gfloat      *b,
                                                 gfloat      *a);
 
-void         gegl_color_set_rgba               (GeglColor   *self,
+/**
+ * gegl_color_set_rgba:
+ * @color: a #GeglColor
+ * @r: red value
+ * @g: green value
+ * @b: blue value
+ * @a: alpha value
+ *
+ * Retrieves the current set color as linear light non premultipled RGBA data
+ */
+void         gegl_color_set_rgba               (GeglColor   *color,
                                                 gfloat       r,
                                                 gfloat       g,
                                                 gfloat       b,
                                                 gfloat       a);
 
+/**
+ * gegl_color_float4:
+ * @color: a #GeglColor
+ *
+ * Returns a direct pointer to the internal representation
+ * XXX: should probably be removed from the public API.
+ */
 const gfloat*gegl_color_float4                 (GeglColor *color);
+
+
+/***
+ */
 
 #define GEGL_TYPE_PARAM_COLOR           (gegl_param_color_get_type ())
 #define GEGL_IS_PARAM_SPEC_COLOR(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_COLOR))

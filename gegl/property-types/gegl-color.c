@@ -478,6 +478,7 @@ gegl_param_color_finalize (GParamSpec *self)
   parent_class->finalize (self);
 }
 
+#if 0
 static void
 value_set_default (GParamSpec *param_spec,
                    GValue     *value)
@@ -486,6 +487,7 @@ value_set_default (GParamSpec *param_spec,
 
   g_value_set_object (value, gegl_color->default_color);
 }
+#endif
 
 GType
 gegl_param_color_get_type (void)
