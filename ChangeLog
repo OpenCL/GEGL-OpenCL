@@ -1,3 +1,17 @@
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/property-types/gegl-path.h: Removed path parameters API.
+	* gegl/property-types/gegl-path.c: (GeglPathPrivate), (gegl_path_to_string),
+	(gegl_path_parse_string), (gegl_path_append), (gegl_path_stroke):
+	removed path parameters implemented as child objects owned by
+	gegl-path with string based names, and further complexities on top of
+	the format of SVG paths.
+
+	* bin/editor.c: (cairo_gui_expose), (gui_press_event),
+	(gui_motion_event), (gui_release_event): made the line width
+	visualisation code be dead, much of the cairo etc logic is kept since
+	other approaches APIs will be similar here.
+
 2008-12-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: set version to 0.0.23. the next released tarball will

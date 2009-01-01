@@ -1334,6 +1334,7 @@ static gboolean nodes_expose (GtkWidget *widget,
   return FALSE;
 }
 
+#if 0
 static gboolean
 width_press_event (GtkWidget      *widget,
                    GdkEventButton *event,
@@ -1567,6 +1568,7 @@ static gboolean cairo_expose_width (GtkWidget *widget,
   cairo_destroy (cr);
   return FALSE;
 }
+#endif
 
 static gboolean
 gui_keybinding (GdkEventKey *event)
@@ -1816,7 +1818,9 @@ static gboolean cairo_gui_expose (GtkWidget *widget,
         nodes_expose (widget, event, user_data);
         break;
       case STATE_EDIT_WIDTH:
+#if 0
         cairo_expose_width (widget, event, user_data);
+#endif
         break;
       case STATE_STROKES:
 #if 0
@@ -2215,7 +2219,9 @@ gui_press_event (GtkWidget      *widget,
       case STATE_EDIT_NODES:
         return nodes_press_event (widget, event, data);
       case STATE_EDIT_WIDTH:
+#if 0
         return width_press_event (widget, event, data);
+#endif
       case STATE_STROKES:
         if (!tools.node)
           return FALSE;
@@ -2317,7 +2323,9 @@ gui_motion_event (GtkWidget      *widget,
       case STATE_EDIT_NODES:
         return nodes_motion_notify_event (widget, event, data);
       case STATE_EDIT_WIDTH:
+#if 0
         return width_motion_notify_event (widget, event, data);
+#endif
       case STATE_EDIT_OPACITY:
       case STATE_FREE_REPLACE:
       default:
@@ -2362,7 +2370,9 @@ gui_release_event (GtkWidget      *widget,
       case STATE_STROKES:
         return stroke_release_event (widget, event, data);
       case STATE_EDIT_WIDTH:
+#if 0
         return width_release_event (widget, event, data);
+#endif
       case STATE_EDIT_OPACITY:
       case STATE_FREE_REPLACE:
       default:

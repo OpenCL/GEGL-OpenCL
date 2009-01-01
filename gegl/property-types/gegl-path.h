@@ -133,36 +133,6 @@ void                 gegl_path_append         (GeglPath    *self,
 
 
 
-/* creates a new path if one doesn't already exist */
-GeglPath *           gegl_path_add_parameter_path (GeglPath    *path,
-                                                   const gchar *parameter_name);
-
-/* the returned path is a special path that returns 1d
- * data when rendering it's results, NULL is returned if
- * this path does not exist on the queried path.
- */
-GeglPath            *gegl_path_get_parameter_path    (GeglPath    *path,
-                                                      const gchar *parameter_name);
-
-
-/* get a list of the named datas following this path, should not be freed */
-GSList              *gegl_path_parameter_get_names   (GeglPath   *path,
-                                                      gint       *count);
-gdouble              gegl_path_parameter_calc        (GeglPath     *path,
-                                                      const gchar  *parameter_name,
-                                                      gdouble       pos);
-void                 gegl_path_parameter_get_bounds  (GeglPath     *self,
-                                                      const gchar  *parameter_name,
-                                                      gdouble      *min_value,
-                                                      gdouble      *max_value);
-void                 gegl_path_parameter_calc_values (GeglPath    *self,
-                                                      const gchar  *parameter_name,
-                                                      guint        num_samples,
-                                                      gdouble     *samples);
-
-
-
-
 GParamSpec         * gegl_param_spec_path     (const gchar *name,
                                                const gchar *nick,
                                                const gchar *blurb,
