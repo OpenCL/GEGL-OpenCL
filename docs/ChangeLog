@@ -1,3 +1,8 @@
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: fix which extra files are parsed for documentation
+	strings (make the GeglPath documentation appear.)
+
 2008-12-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: added mention of irc channel.
