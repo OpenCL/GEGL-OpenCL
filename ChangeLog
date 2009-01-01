@@ -1,5 +1,9 @@
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/create-reference.rb: reset state machine for each header file parsed.
+
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/external/path.c: include own declaration of
 	gegl_path_stroke()
 

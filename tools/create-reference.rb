@@ -316,6 +316,10 @@ arg_no=0
 (ARGV.length-1).times {
     |file_no|
 line_no=0
+
+state=:none
+puts ARGV[file_no]
+
 IO.foreach(ARGV[file_no]) {
     |line|
     line_no = line_no+1
