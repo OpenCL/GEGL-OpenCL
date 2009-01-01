@@ -1,5 +1,11 @@
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-matrix.[ch]: (gegl_matrix3_debug),
+	(gegl_matrix3_parse_string), (gegl_matrix3_to_string): document
+	GeglMatrix.
+
+2009-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-color.c:
 	* gegl/property-types/gegl-color.h:
 	* gegl/property-types/gegl-curve.h: Added documentation of public

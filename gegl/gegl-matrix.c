@@ -23,7 +23,8 @@
 #include "gegl-matrix.h"
 
 
-void gegl_matrix3_debug (GeglMatrix3 matrix)
+#if 0
+static void gegl_matrix3_debug (GeglMatrix3 matrix)
 {
   if (matrix)
     {
@@ -36,6 +37,7 @@ void gegl_matrix3_debug (GeglMatrix3 matrix)
       g_print("NULL matrix\n");
     }
 }
+#endif
 
 void
 gegl_matrix3_identity (GeglMatrix3 matrix)
@@ -232,7 +234,6 @@ gegl_matrix3_parse_string (GeglMatrix3  matrix,
           {
             a = strtod(p, &p);
             matrix [j][i] = a;
-            g_print ("%f\n", a);
             if (!p) return;
             p = strchr (p, ',');
             if (!p) return;
@@ -260,6 +261,5 @@ gchar *gegl_matrix3_to_string (GeglMatrix3 matrix)
   res = str->str;
   g_string_free (str, FALSE);
 
-  g_print (",,.. %s ,....\n", res);
   return res;
 }
