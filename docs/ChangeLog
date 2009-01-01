@@ -1,3 +1,7 @@
+2009-01-01  Sven Neumann  <sven@gimp.org>
+
+	* index-static.txt.in: updated glib version in Dependencies section.
+
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: fix which extra files are parsed for documentation
