@@ -1854,9 +1854,10 @@ fill_close:  /* label used for goto to close last segment */
 
     /* Fill the spans */
 {
-    const gfloat *colc = gegl_color_float4 (color);
-    gfloat col[4] = {colc[0],colc[1],colc[2],colc[3]};
+    gfloat col[4];
     gfloat factor = 1.0/(horsub * versub);
+
+    gegl_color_get_rgba4f (color, col);
 
     col[0] *= factor;
     col[1] *= factor;
@@ -1924,7 +1925,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
                              GeglColor  *color,
                              gdouble     opacity)
 {
-  const gfloat *col = gegl_color_float4 (color);
+  gfloat col[4];
   static StampStatic s = {FALSE,}; /* XXX: 
                                       we will ultimately leak the last valid
                                       cached brush. */
@@ -1935,6 +1936,8 @@ static void gegl_path_stamp (GeglBuffer *buffer,
                        ceil (y+radius) - floor (y-radius)};
 
   GeglRectangle temp;
+
+  gegl_color_get_rgba4f (color, col);
 
   /* bail out if we wouldn't leave a mark on the buffer */
   if (!gegl_rectangle_intersect (&temp, &roi, clip_rect))
