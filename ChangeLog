@@ -1,5 +1,11 @@
 2009-01-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/levels.c: (process): treat input and output
+	buffers separately. (levels assumed that it could do in-place
+	processing).
+
+2009-01-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: add gegl-utils.h
 	* gegl/gegl-utils.h: documented.
 	* gegl/gegl.h.in: do not document the GeglRectangle struct here but in

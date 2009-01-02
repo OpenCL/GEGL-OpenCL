@@ -50,7 +50,8 @@ process (GeglOperation       *op,
          const GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *pixel;
+  gfloat     *in_pixel;
+  gfloat     *out_pixel;
   gfloat      in_range;
   gfloat      out_range;
   gfloat      in_offset;
@@ -58,7 +59,8 @@ process (GeglOperation       *op,
   gfloat      scale;
   glong       i;
 
-  pixel = in_buf;
+  in_pixel = in_buf;
+  out_pixel = out_buf;
 
   in_offset = o->in_low * 1.0;
   out_offset = o->out_low * 1.0;
@@ -74,8 +76,10 @@ process (GeglOperation       *op,
     {
       int c;
       for (c=0;c<3;c++)
-        pixel[c] = (pixel[c]- in_offset) * scale + out_offset;
-      pixel += 4;
+        out_pixel[c] = (in_pixel[c]- in_offset) * scale + out_offset;
+      out_pixel[3] = in_pixel[3];
+      out_pixel += 4;
+      in_pixel += 4;
     }
   return TRUE;
 }
