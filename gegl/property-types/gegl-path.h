@@ -46,6 +46,8 @@ struct _GeglPath
   GObject parent_instance;
 };
 
+GType                gegl_path_get_type       (void) G_GNUC_CONST;
+
 /* Internally the following structures are used, parts
  * of the internal implementation are exposed through
  * the path access API. The linked list api is currently
@@ -54,6 +56,31 @@ struct _GeglPath
  */
 
 #ifndef GEGL_PATH_INTERNAL
+
+
+
+/**
+ * GeglPathItem:
+ *
+ * A #GeglPathItem contains the type of instruction to perform as
+ * well as it's arguments. In the public API the PathItem always has
+ * 4 points internally only the needed amount of memory is stored
+ * for a GeglPathItem.
+ *
+ *  </p><pre>typedef struct Point
+ * {
+ *   gfloat x;
+ *   gfloat y;
+ * } Point;</pre></p>
+ * </p><pre>typedef struct GeglPathItem
+ * {
+ *   gchar  type;
+ *   Point  point[4]; 
+ * } GeglPathItem;</pre></p>
+ *
+ */
+
+
 typedef struct Point
 {
   gfloat x;
@@ -70,7 +97,6 @@ typedef struct GeglPathItem
 #endif
 
 
-GType                gegl_path_get_type       (void) G_GNUC_CONST;
 
 /**
  * gegl_path_new:

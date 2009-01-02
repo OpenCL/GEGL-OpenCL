@@ -157,6 +157,8 @@ class Function
 
 
     def to_html
+
+
         ret = "<div class='function'>
                  <!--<h3>#{@name}</h3>-->
                  <div class='function_signature'>
@@ -168,7 +170,7 @@ class Function
 
         first=true
         i=0
-        if @arguments.length==0
+        if @arguments.length==0 and @return_type!=""
             ret += "<div class='argument'><div class='arg_type'><span class='const'>(void)</span></div></div>\n"
         end
         @arguments.each {|arg|

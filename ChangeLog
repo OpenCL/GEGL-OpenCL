@@ -1,3 +1,9 @@
+2009-01-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: do not print (void) arglist if there is
+	not return type.
+	* gegl/property-types/gegl-path.h: modified docs markup.
+
 2009-01-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-matrix.[ch]: (gegl_matrix3_debug),
