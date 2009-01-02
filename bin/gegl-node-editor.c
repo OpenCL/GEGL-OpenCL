@@ -264,7 +264,7 @@ type_editor_color (GtkSizeGroup *col1,
     {
       GeglColor *color;
       GdkColor   gdkcolor;
-      gfloat     r,g,b,a;
+      gdouble    r,g,b,a;
 
       gegl_node_get (node, param_spec->name, &color, NULL);
       gegl_color_get_rgba (color, &r, &g, &b, &a);

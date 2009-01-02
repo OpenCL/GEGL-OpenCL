@@ -314,7 +314,7 @@ static gint add_path (gint argc, gchar **argv)
       {
         GeglColor *color2;
         gdouble    linewidth;
-        gfloat r,g,b,a;
+        gdouble    r,g,b,a;
     
         if (self && g_str_equal (gegl_node_get_operation (self), "gegl:path"))
           {
@@ -1971,7 +1971,7 @@ stroke_press_event (GtkWidget      *widget,
     {
       GeglColor *color2;
       gdouble    linewidth;
-      gfloat r,g,b,a;
+      gdouble r,g,b,a;
   
       if (g_str_equal (gegl_node_get_operation (self), "gegl:path"))
         {

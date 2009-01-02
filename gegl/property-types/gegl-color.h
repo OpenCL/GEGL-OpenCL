@@ -66,45 +66,46 @@ GeglColor *  gegl_color_new                    (const gchar *string);
 /**
  * gegl_color_get_rgba:
  * @color: a #GeglColor
- * @r: red return location.
- * @g: green return location.
- * @b: blue return location.
- * @a: alpha return location.
+ * @red: red return location.
+ * @green: green return location.
+ * @blue: blue return location.
+ * @alpha: alpha return location.
  *
  * Retrieves the current set color as linear light non premultipled RGBA data,
  * any of the return pointers can be omitted.
  */
 void         gegl_color_get_rgba               (GeglColor   *color,
-                                                gfloat      *r,
-                                                gfloat      *g,
-                                                gfloat      *b,
-                                                gfloat      *a);
+                                                gdouble     *red,
+                                                gdouble     *green,
+                                                gdouble     *blue,
+                                                gdouble     *alpha);
+
+/**
+ * gegl_color_get_rgba4f:
+ * @color: a #GeglColor
+ * @buf: pointer to a buffer for a single "RGBA float" pixel.
+ *
+ * Retrieves the current set color as linear light non premultipled RGBA data,
+ * and stores it at the memory location in @buf
+ */
+void         gegl_color_get_rgba4f             (GeglColor   *color,
+                                                gfloat      *buf);
 
 /**
  * gegl_color_set_rgba:
  * @color: a #GeglColor
- * @r: red value
- * @g: green value
- * @b: blue value
- * @a: alpha value
+ * @red: red value
+ * @green: green value
+ * @blue: blue value
+ * @alpha: alpha value
  *
  * Retrieves the current set color as linear light non premultipled RGBA data
  */
 void         gegl_color_set_rgba               (GeglColor   *color,
-                                                gfloat       r,
-                                                gfloat       g,
-                                                gfloat       b,
-                                                gfloat       a);
-
-/**
- * gegl_color_float4:
- * @color: a #GeglColor
- *
- * Returns a direct pointer to the internal representation
- * XXX: should probably be removed from the public API.
- */
-const gfloat*gegl_color_float4                 (GeglColor *color);
-
+                                                gdouble      red,
+                                                gdouble      green,
+                                                gdouble      blue,
+                                                gdouble      alpha);
 
 /***
  */

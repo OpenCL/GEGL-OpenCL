@@ -250,6 +250,7 @@ parse_hex (GeglColor   *color,
   return FALSE;
 }
 
+#if 0
 const gfloat *
 gegl_color_float4 (GeglColor *self)
 {
@@ -258,32 +259,29 @@ gegl_color_float4 (GeglColor *self)
   priv = GEGL_COLOR_GET_PRIVATE (self);
   return &priv->rgba_color[0];
 }
+#endif
 
 void
-gegl_color_get_rgba (GeglColor *self,
-                     gfloat    *r,
-                     gfloat    *g,
-                     gfloat    *b,
-                     gfloat    *a)
+gegl_color_get_rgba4f (GeglColor   *color,
+                       gfloat      *rgba)
 {
   GeglColorPrivate *priv;
+  gint i;
 
-  g_return_if_fail (GEGL_IS_COLOR (self));
+  g_return_if_fail (GEGL_IS_COLOR (color));
 
-  priv = GEGL_COLOR_GET_PRIVATE (self);
+  priv = GEGL_COLOR_GET_PRIVATE (color);
 
-  *r = priv->rgba_color[0];
-  *g = priv->rgba_color[1];
-  *b = priv->rgba_color[2];
-  *a = priv->rgba_color[3];
+  for (i=0; i< 4; i++)
+    rgba[i] = priv->rgba_color[i];
 }
 
 void
 gegl_color_set_rgba (GeglColor *self,
-                     gfloat     r,
-                     gfloat     g,
-                     gfloat     b,
-                     gfloat     a)
+                     gdouble    r,
+                     gdouble    g,
+                     gdouble    b,
+                     gdouble    a)
 {
   GeglColorPrivate *priv;
 
@@ -295,6 +293,25 @@ gegl_color_set_rgba (GeglColor *self,
   priv->rgba_color[1] = g;
   priv->rgba_color[2] = b;
   priv->rgba_color[3] = a;
+}
+
+void
+gegl_color_get_rgba (GeglColor *self,
+                     gdouble   *r,
+                     gdouble   *g,
+                     gdouble   *b,
+                     gdouble   *a)
+{
+  GeglColorPrivate *priv;
+
+  g_return_if_fail (GEGL_IS_COLOR (self));
+
+  priv = GEGL_COLOR_GET_PRIVATE (self);
+
+  *r = priv->rgba_color[0];
+  *g = priv->rgba_color[1];
+  *b = priv->rgba_color[2];
+  *a = priv->rgba_color[3];
 }
 
 static void

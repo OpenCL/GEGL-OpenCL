@@ -132,7 +132,7 @@ get_bounding_box (GeglOperation *operation)
 
 
 
-
+#if 0
 static gboolean gegl_path_is_closed (GeglPath *path)
 {
   const GeglPathItem *knot;
@@ -148,6 +148,7 @@ static gboolean gegl_path_is_closed (GeglPath *path)
     }
   return FALSE;
 }
+#endif
 
 
 #if 0
@@ -181,7 +182,7 @@ process (GeglOperation       *operation,
 
   if (o->fill_opacity > 0.0001 && o->fill)
     {
-      gfloat r,g,b,a;
+      gdouble r,g,b,a;
       gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
       a *= o->fill_opacity;
       if (a>0.001)
@@ -294,7 +295,7 @@ static GeglNode *detect (GeglOperation *operation,
     {
       if (o->d)
         {
-          gfloat r,g,b,a;
+          gdouble r,g,b,a;
           gegl_color_get_rgba (o->fill, &r,&g,&b,&a);
           if (a * o->fill_opacity>0.8)
             result = cairo_in_fill (cr, x, y);

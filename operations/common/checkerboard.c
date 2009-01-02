@@ -67,17 +67,8 @@ process (GeglOperation       *operation,
   gint        x = roi->x; /* initial x                   */
   gint        y = roi->y; /*           and y coordinates */
 
-  gegl_color_get_rgba (o->color1,
-                       &color1[0],
-                       &color1[1],
-                       &color1[2],
-                       &color1[3]);
-
-  gegl_color_get_rgba (o->color2,
-                       &color2[0],
-                       &color2[1],
-                       &color2[2],
-                       &color2[3]);
+  gegl_color_get_rgba4f (o->color1, color1);
+  gegl_color_get_rgba4f (o->color2, color2);
 
   while (n_pixels--)
     {

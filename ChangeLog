@@ -1,4 +1,26 @@
 2009-01-02  Øyvind Kolås  <pippin@gimp.org>
+	
+	Made GeglColor primarily operate on double arguments, (internals
+	are still 32bit floating point but not directly exposed).
+
+	* gegl/property-types/gegl-color.[ch]:
+	(gegl_color_get_rgba4f): gets the color to a buffer of 4floats (might
+	need better name)
+	(gegl_color_set_rgba), (gegl_color_get_rgba): use doubles.
+
+	Updated the following code / operations to reflect the change.
+
+	* bin/editor.c: (add_path), (stroke_press_event):
+	* bin/gegl-node-editor.c: (type_editor_color):
+	* bin/gegl.c:
+	* operations/common/checkerboard.c: (process):
+	* operations/common/color.c: (process):
+	* operations/external/path.c: (process), (detect):
+	* operations/external/text.c: (text_layout_text):
+	* operations/workshop/linear-gradient.c: (process):
+	* operations/workshop/radial-gradient.c: (process):
+
+2009-01-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/levels.c: (process): treat input and output
 	buffers separately. (levels assumed that it could do in-place
