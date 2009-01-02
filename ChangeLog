@@ -1,5 +1,12 @@
 2009-01-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: add gegl-utils.h
+	* gegl/gegl-utils.h: documented.
+	* gegl/gegl.h.in: do not document the GeglRectangle struct here but in
+	gegl-utils.h
+
+2009-01-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: do not print (void) arglist if there is
 	not return type.
 	* gegl/property-types/gegl-path.h: modified docs markup.

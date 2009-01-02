@@ -864,21 +864,7 @@ GObject      * gegl_config (void);
 
 
 #ifndef GEGL_INTERNAL
-/***
- * GeglRectangle:
- *
- * GeglRectangles are used in #gegl_node_get_bounding_box and #gegl_node_blit
- * for specifying rectangles.
- *
- * </p><pre>struct GeglRectangle
- * {
- *   gint x;
- *   gint y;
- *   gint width;
- *   gint height;
- * };</pre><p>
- *
- */
+
 struct _GeglRectangle
 {
   gint x;
