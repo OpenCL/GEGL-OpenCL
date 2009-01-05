@@ -1,3 +1,7 @@
+2009-01-05  Étienne Bersac  <bersace03@gmail.com>
+
+	* gegl-vala/index.html: Added gegl-vala web page.
+
 2009-01-01  Sven Neumann  <sven@gimp.org>
 
 	* index-static.txt.in: updated glib version in Dependencies section.
