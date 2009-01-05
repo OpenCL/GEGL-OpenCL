@@ -9,87 +9,82 @@
 -->
 <html>
   <head>
-      <title>rgegl</title>
+      <title>gegl-vala</title>
       <link rel="shortcut icon" href="../images/gegl.ico" />
     
-    <style type='text/css'>
+    <style type="text/css">
         @import url(../gegl.css);
     </style>
   </head>
   <body>
 
-    <div id='toc'>
-      <div class='print'>
+    <div id="toc">
+      <div class="print">
          <h3>Contents</h3>
       </div>
       <ul>
-        <li><a href='../index.html#GEGL'>GEGL</a></li>
+        <li><a href="../index.html#GEGL">GEGL</a></li>
         <li>&nbsp;</li>
-        <li><a href='#rgegl'>rgegl</a></li>
-        <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
-        <li><a href='#Download'>&nbsp;&nbsp;Download</a></li>
-        <li><a href='#Building'>&nbsp;&nbsp;Building</a></li>
-        <li><a href='#Samples'>&nbsp;&nbsp;Samples</a></li>
-        <li><a href='#Copyright'>&nbsp;&nbsp;Copyright</a></li>
+        <li><a href="#gegl-vala">gegl-vala</a></li>
+        <li><a href="#Features">&nbsp;&nbsp;Features</a></li>
+        <li><a href="#Download">&nbsp;&nbsp;Download</a></li>
+        <li><a href="#Building">&nbsp;&nbsp;Building</a></li>
+        <li><a href="#Samples">&nbsp;&nbsp;Samples</a></li>
+        <li><a href="#Copyright">&nbsp;&nbsp;Copyright</a></li>
       </ul>
     </div>
 
-    <div class='paper'>
-      <div class='content'>
+    <div class="paper">
+      <div class="content">
 
         <!--RUNINFO-->          
 
-        <a name='rgegl'></a>
-        <h1>rgegl</h1>
-        <p>A ruby extension providing access to <a href='../index.html'>GEGL</a>.
-        </p>
+        <a name="gegl-vala"></a>
+        <h1>gegl-vala</h1>
+        <p>A vala VAPI binding providing access
+        to <a href="../index.html">GEGL</a>. This binding is
+        maintained manually.</p>
 
-    <a name='Features'></a>
+    <a name="Features"></a>
     <h3>Features</h3>
     <ul>
-      <li>Full public GEGL API coverage.</li>
-      <li>A layer of syntactic sugar to make programming GEGL from
-      ruby easier.</li>
-      </li>
+      <li>GEGL buffer public API.</li>
+      <li>GEGL graph public API.</li>
     </ul>
 
-    <a name='Download'></a>
+    <a name="Download"></a>
     <h3>Download</h3>
 
-    <p>rgegl has no official release yet, the code lives in the GEGL module
+    <p>gegl-vala has no official release yet, the code lives in the GEGL module
     in GNOME subversion and can be 
     <a
-href='http://svn.gnome.org/viewcvs/gegl/trunk/bindings/rgegl/'>browsed online</a> and checked
+href="http://svn.gnome.org/viewcvs/gegl/trunk/bindings/vala/">browsed online</a> and checked
 out from GNOME Subversion using: </p>
-<pre>svn co http://svn.gnome.org/svn/gegl/trunk/bindings/rgegl rgegl</pre>
+<pre>svn co http://svn.gnome.org/svn/gegl/trunk/bindings/vala gegl-vala</pre>
 
-    <a name='Building'></a>
+    <a name="Building"></a>
     <h3>Building</h3>
-    <p> To build rgegl type the following in the toplevel source directory:</p>
+    <p> To build gegl-vala type the following in the toplevel source directory:</p>
 
-    <pre><b>$</b> ruby extconf.rb
-<b>$</b> make
-<b>$</b> sudo make install</pre>
+    <pre><b>$</b> ./configure && make && sudo make install</pre>
 
-    </p>
-
-    <a name='Samples'></a>
+    <a name="Samples"></a>
     <h3>Samples</h3>
-    <p>Samples of how to use rgegl are distributed with the source and can
-    be <a href='http://svn.gnome.org/viewcvs/gegl/trunk/bindings/rgegl/samples/'>browsed online</a>.
+    <p>Samples of how to use gegl-vala are distributed with the source and can
+    be <a href="http://svn.gnome.org/viewcvs/gegl/trunk/bindings/vala/samples/">browsed online</a>.
 </p>
 
-    <a name='Copyright'></a>
+    <a name="Copyright"></a>
     <h3>Copyright</h3>
 
-    <p>rgegl is free software; you can redistribute it and/or modify it
-    under the terms of the <a href='LGPL'>GNU Lesser General Public
+    <p>gegl-vala is free software; you can redistribute it and/or modify it
+    under the terms of the <a href="LGPL">GNU Lesser General Public
     License</a> as published by the Free Software Foundation; either
     version 3 of the License, or (at your option) any later version. </p>
 
-    <a name='Contributors'></a>
+    <a name="Contributors"></a>
     <h3>Contributors</h3>
-    <p>&Oslash;yvind Kol&aring;s</p>
+    <p>&Eacute;tienne Bersac</p>
     
       </div>
     </div>
