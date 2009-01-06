@@ -1,7 +1,10 @@
 #ifndef __GEGL_MATRIX_H__
 #define __GEGL_MATRIX_H__
 
+
 #include <glib.h>
+
+G_BEGIN_DECLS
 
 /***
  * GeglMatrix:
@@ -155,5 +158,7 @@ gchar *    gegl_matrix3_to_string       (GeglMatrix3 matrix);
 
 /***
  */
+
+G_END_DECLS
 
 #endif

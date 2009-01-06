@@ -1,3 +1,8 @@
+2009-01-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* gegl/gegl-matrix.h: 
+	Surround the header by G_BEGIN_DECLS/G_END_DECLS
+
 2009-01-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/property-types/gegl-path.c: (gegl_path_fill),
