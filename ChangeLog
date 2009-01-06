@@ -1,3 +1,40 @@
+2009-01-06  Øyvind Kolås  <pippin@gimp.org>
+
+	Stripped away most of the GTK+ GUI code originally ripped out of
+	bauxite, leaving the gegl binary as a commandline tool and not a
+	half broken editor (using the SDL display op, it also allows showing
+	GEGL compositions similarly to before as well.)
+
+	* bin/gegl.c: (main): removed references to GTK+.
+	* operations/external/display.c: (init_sdl), (idle), (process): spin
+	the SDL event loop in an idle handler.
+
+	* bin/Makefile.am: removed references to now removed files (the
+	following)
+	* bin/editor-optype.c: 
+	* bin/editor-optype.h:
+	* bin/editor.c: 
+	* bin/editor.h:
+	* bin/export.c:
+	* bin/export.h:
+	* bin/gegl-node-editor-plugin.h:
+	* bin/gegl-node-editor.c:
+	* bin/gegl-node-editor.h:
+	* bin/gegl-store.c:
+	* bin/gegl-store.h:
+	* bin/gegl-tree-editor-action.c:
+	* bin/gegl-tree-editor-action.h:
+	* bin/gegl-tree-editor.c:
+	* bin/gegl-tree-editor.h:
+	* bin/gegl-view.c:
+	* bin/gegl-view.h:
+	* bin/node-editors/Makefile.am:
+	* bin/node-editors/brightness-contrast.c:
+	* bin/node-editors/gaussian-blur.c:
+	* bin/node-editors/level.c:
+	* bin/node-editors/unsharp-mask.c:
+	* bin/node-editors/whitebalance.c:
+
 2009-01-05  Hubert Figuiere  <hub@figuiere.net>
 
 	* gegl/gegl-matrix.h: 

@@ -64,8 +64,8 @@ init_sdl (void)
     {
       inited = 1;
 
-      signal (SIGINT, sighandler);
-      signal (SIGQUIT, sighandler);
+      /*signal (SIGINT, sighandler);
+      signal (SIGQUIT, sighandler);*/ 
 
       if (SDL_Init (SDL_INIT_VIDEO) < 0)
         {
@@ -79,6 +79,21 @@ init_sdl (void)
 
 /*static int instances = 0;*/
 
+static gboolean idle (gpointer data)
+{
+  SDL_Event event;
+  while (SDL_PollEvent  (&event))
+    {
+      switch (event.type)
+        {
+          case SDL_QUIT:
+            sighandler (SIGQUIT);
+        }
+    }
+  return TRUE;
+}
+
+static guint handle = 0;
 
 static gboolean
 process (GeglOperation       *operation,
@@ -90,6 +105,8 @@ process (GeglOperation       *operation,
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   init_sdl ();
+  if (!handle)
+    handle = g_idle_add (idle, NULL);
 
   if (!o->screen ||
        o->width  != result->width ||
