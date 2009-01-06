@@ -1,5 +1,9 @@
 2009-01-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/Makefile.am: get rid of more remnants from the GUI code.
+
+2009-01-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Stripped away most of the GTK+ GUI code originally ripped out of
 	bauxite, leaving the gegl binary as a commandline tool and not a
 	half broken editor (using the SDL display op, it also allows showing
