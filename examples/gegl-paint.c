@@ -20,8 +20,8 @@
 #include <glib.h>
 #include <gegl.h>
 #include <gtk/gtk.h>
-#include "../bin/gegl-view.h"
-#include "../bin/gegl-view.c"
+#include "util/gegl-view.h"
+#include "util/gegl-view.c"
 #include "property-types/gegl-path.h"
 
 #define HARDNESS     0.2

@@ -1,5 +1,15 @@
 2009-01-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Re-added the GeglView class in a subdirectory of the examples code
+	for now.
+
+	* examples/util/: added dir,.. and
+	* examples/util/gegl-view.c: this and,..
+	* examples/util/gegl-view.h: this file which originally was in bin/
+	* examples/gegl-paint.c: changed include paths for gegl-view code.
+
+2009-01-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: get rid of more remnants from the GUI code.
 
 2009-01-06  Øyvind Kolås  <pippin@gimp.org>
