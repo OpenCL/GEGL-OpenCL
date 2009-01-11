@@ -248,7 +248,8 @@ test $TEST_TYPE $FILE || {
 (cd operations/generated;./other-blend.rb)
 (cd operations/generated;./math.rb)
 (cd operations/workshop/generated;./blend.rb)
-(cd docs/;../tools/create-reference.rb ../gegl/gegl.h.in api.html)
+
+#(cd docs/;../tools/create-reference.rb ../gegl/gegl.h.in api.html)
 
 echo
 echo "I am going to run ./configure with the following arguments:"

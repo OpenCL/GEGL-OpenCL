@@ -1,3 +1,10 @@
+2009-01-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* autogen.sh: do not generate api.html in autogen.sh (the attempt to
+	do so is out of sync with docs/Makefile.am anyways)
+	* gegl/operation/gegl-operation.h: indendation.
+	* configure.ac: increment version to 0.0.23 (seems to have slipped)
+
 2009-01-06  Øyvind Kolås  <pippin@gimp.org>
 
 	Re-added the GeglView class in a subdirectory of the examples code

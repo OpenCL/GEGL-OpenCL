@@ -226,8 +226,6 @@ void     gegl_operation_invalidate            (GeglOperation       *operation,
 G_END_DECLS
 
 /***
- * foo:
- *
  */
 
 #endif /* __GEGL_OPERATION_H__ */
