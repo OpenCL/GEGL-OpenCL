@@ -1,5 +1,9 @@
 2009-01-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* examples/Makefile.am: add GeglView widget to extra-dist.
+
+2009-01-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: do not generate api.html in autogen.sh (the attempt to
 	do so is out of sync with docs/Makefile.am anyways)
 	* gegl/operation/gegl-operation.h: indendation.

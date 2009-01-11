@@ -3,7 +3,7 @@
 SUBDIRS = data
 CFILES = $(wildcard $(srcdir)/*.c)
 bins   = $(subst $(srcdir)/,,$(CFILES:.c=))
-EXTRA_DIST = $(wildcard *.c)
+EXTRA_DIST = $(wildcard *.c) $(wildcard util/*.[ch])
 
 all-local: $(bins)
 
