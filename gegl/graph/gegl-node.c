@@ -1957,33 +1957,6 @@ gegl_node_get_parent (GeglNode *self)
   return self_priv->parent;
 }
 
-GeglNode *
-gegl_node_adopt_child (GeglNode *self,
-                       GeglNode *child)
-{
-  GeglNode *old_parent;
-
-  g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
-  g_object_ref (child);
-  old_parent = gegl_node_get_parent (child);
-  if (old_parent)
-    {
-      gegl_node_remove_child (old_parent, child);
-    }
-
-  if (self)
-    {
-      gegl_node_add_child (self, child);
-    }
-  else
-    {
-      g_object_ref (child);
-    }
-
-  g_object_unref (child);
-  return child;
-}
-
 gint
 gegl_node_get_num_children (GeglNode *self)
 {

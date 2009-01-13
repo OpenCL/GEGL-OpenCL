@@ -1,5 +1,9 @@
 2009-01-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph/gegl-node.[ch]: removed gegl_node_adopt_child()
+
+2009-01-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/shift.c: REMOVED op, its functionality is replaced
 	by a fast path in the affine operation when doing integer translates.
 

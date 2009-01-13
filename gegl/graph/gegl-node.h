@@ -128,8 +128,6 @@ void          gegl_node_get                 (GeglNode      *self,
 
 
 GeglNode    * gegl_node_get_parent          (GeglNode      *self);
-GeglNode    * gegl_node_adopt_child         (GeglNode      *self,
-                                             GeglNode      *child);
 
 /* functions below are internal to gegl */
 
