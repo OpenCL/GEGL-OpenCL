@@ -1,3 +1,8 @@
+2009-01-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/shift.c: REMOVED op, its functionality is replaced
+	by a fast path in the affine operation when doing integer translates.
+
 2009-01-13  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/gegl-init.c: Pull in #include <locale.h> to get LC_ALL.
