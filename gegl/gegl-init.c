@@ -25,6 +25,8 @@
 #include <glib/gstdio.h>
 #include <glib/gi18n-lib.h>
 
+#include <locale.h>
+
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

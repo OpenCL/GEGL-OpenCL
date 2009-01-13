@@ -1,3 +1,7 @@
+2009-01-13  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-init.c: Pull in #include <locale.h> to get LC_ALL.
+
 2009-01-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* examples/Makefile.am: add GeglView widget to extra-dist.
