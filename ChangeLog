@@ -1,3 +1,20 @@
+2009-01-14  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Nicolas Robidoux that adds a new sampler
+	(gegl-sampler-sharp) building on the existing YAFR resamplers.
+
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-access.c:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-sampler-linear.c: (gegl_sampler_linear_init),
+	(gegl_sampler_linear_get), (set_property), (get_property):
+	* gegl/buffer/gegl-sampler-yafr.c: (gegl_sampler_yafr_init),
+	(catrom_yafr), (gegl_sampler_yafr_get):
+	* gegl/buffer/gegl-sampler.c:
+	(gegl_buffer_interpolation_from_string),
+	(gegl_sampler_type_from_interpolation):
+
 2009-01-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/graph/gegl-node.[ch]: removed gegl_node_adopt_child()

@@ -22,6 +22,7 @@ BUFFER_sources = \
     gegl-sampler-lanczos.c	\
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
+    gegl-sampler-sharp.c	\
     gegl-sampler-yafr.c		\
     gegl-region-generic.c	\
     gegl-tile.c			\
@@ -51,6 +52,7 @@ BUFFER_headers = \
     gegl-sampler-lanczos.h	\
     gegl-sampler-linear.h	\
     gegl-sampler-nearest.h	\
+    gegl-sampler-sharp.h	\
     gegl-sampler-yafr.h		\
     gegl-region.h		\
     gegl-region-generic.h	\

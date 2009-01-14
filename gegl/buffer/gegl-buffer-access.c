@@ -36,6 +36,7 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 #include "gegl-sampler-lanczos.h"
+#include "gegl-sampler-sharp.h"
 #include "gegl-sampler-yafr.h"
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
