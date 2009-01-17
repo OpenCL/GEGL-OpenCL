@@ -67,7 +67,7 @@ static void stress (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
     {
@@ -116,7 +116,7 @@ static void stress (GeglBuffer *src,
           dst_offset+=4;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format_from_name ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -128,7 +128,7 @@ static void prepare (GeglOperation *operation)
       ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
 
   gegl_operation_set_format (operation, "output",
-                             babl_format ("RaGaBaA float"));
+                             babl_format_from_name ("RaGaBaA float"));
 }
 
 static GeglRectangle

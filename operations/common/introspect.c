@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include <stdlib.h>
 #include <glib/gi18n-lib.h>
 
 
@@ -141,7 +142,7 @@ process (GeglOperation       *operation,
 
       defined = gegl_node_get_bounding_box (png_load);
 
-      o->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
+      o->buf = gegl_buffer_new (&defined, babl_format_from_name ("R'G'B' u8"));
 
       /* FIXME
       GeglNode *buffer_save;

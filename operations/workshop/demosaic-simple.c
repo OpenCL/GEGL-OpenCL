@@ -47,7 +47,7 @@ demosaic (GeglChantO *op,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src));
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
   for (y=src_extent->y; y < dst_extent->height + src_extent->y; y++)
@@ -103,7 +103,7 @@ demosaic (GeglChantO *op,
         }
     }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format_from_name ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -112,7 +112,7 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->right = area->bottom = 1;
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
 }
 
 static gboolean

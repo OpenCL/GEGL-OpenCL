@@ -461,7 +461,7 @@ expose_event (GtkWidget      *widget,
       gegl_node_blit (priv->node,
                       priv->scale,
                       &roi,
-                      babl_format ("R'G'B' u8"),
+                      babl_format_from_name ("R'G'B' u8"),
                       (gpointer)buf,
                       GEGL_AUTO_ROWSTRIDE,
                       GEGL_BLIT_CACHE|(priv->block?0:GEGL_BLIT_DIRTY));

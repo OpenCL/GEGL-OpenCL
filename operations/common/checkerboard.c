@@ -44,7 +44,7 @@ gegl_chant_color (color2,   _("Other color"), "white",
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
 }
 
 static GeglRectangle

@@ -1718,7 +1718,7 @@ static void gegl_buffer_accumulate (GeglBuffer    *buffer,
   gint i;
 
   if (!format)
-    format = babl_format ("RaGaBaA float");
+    format = babl_format_from_name ("RaGaBaA float");
 
   if (!buf || len < roi->width)
     {
@@ -1946,7 +1946,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
     }
 
   if (s.format == NULL)
-    s.format = babl_format ("RaGaBaA float");
+    s.format = babl_format_from_name ("RaGaBaA float");
 
   if (s.buf == NULL ||
       s.radius != radius)

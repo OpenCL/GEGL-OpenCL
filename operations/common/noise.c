@@ -40,7 +40,7 @@ gegl_chant_int    (n,     _("Iteration"), 0, 20, 3, _(""))
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("Y float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("Y float"));
 }
 
 static GeglRectangle

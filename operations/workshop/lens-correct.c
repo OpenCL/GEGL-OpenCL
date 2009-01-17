@@ -234,7 +234,7 @@ copy_through_lens (LensCorrectionModel *oip,
 
   /* Get src pixels. */
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 3);
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGB float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RGB float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   /* Get buffer in which to place dst pixels. */
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
@@ -294,7 +294,7 @@ copy_through_lens (LensCorrectionModel *oip,
     }
 
   /* Store dst pixels. */
-  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format_from_name ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   /* Free acquired storage. */
   g_free (src_buf);
@@ -361,8 +361,8 @@ prepare (GeglOperation *operation)
   #ifdef TRACE
     g_warning ("> prepare");
   #endif
-  gegl_operation_set_format (operation, "input", babl_format ("RGB float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
+  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGB float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGB float"));
   #ifdef TRACE
     g_warning ("< prepare");
   #endif

@@ -141,8 +141,8 @@ main (gint    argc,
       gpointer buf;
 
       buffer = gegl_buffer_new (&(GeglRectangle){0, 0, 512, 512},
-                                babl_format("RaGaBaA float"));
-      buf    = gegl_buffer_linear_open (buffer, NULL, NULL, babl_format ("Y' u8"));
+                                babl_format_from_name("RaGaBaA float"));
+      buf    = gegl_buffer_linear_open (buffer, NULL, NULL, babl_format_from_name ("Y' u8"));
       memset (buf, 255, 512 * 512); /* FIXME: we need a babl_buffer_paint () */
       gegl_buffer_linear_close (buffer, buf);
     }

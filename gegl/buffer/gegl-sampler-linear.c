@@ -104,7 +104,7 @@ static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
   GEGL_SAMPLER (self)->context_rect = (GeglRectangle){ 0, 0, 2, 2 };
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = babl_format_from_name ("RaGaBaA float");
 }
 
 static void

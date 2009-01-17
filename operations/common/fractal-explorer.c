@@ -400,7 +400,7 @@ make_color_map (GeglChantO *o, clrmap colormap)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("R'G'B' u8"));
 }
 
 static GeglRectangle
@@ -444,7 +444,7 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf,
+  gegl_buffer_set (output, NULL, babl_format_from_name ("R'G'B' u8"), buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 

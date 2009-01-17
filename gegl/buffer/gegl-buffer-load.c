@@ -359,7 +359,7 @@ gegl_buffer_load (const gchar *path)
   info->tile_size    = info->header.tile_width *
                        info->header.tile_height *
                        info->header.bytes_per_pixel;
-  info->format       = babl_format (info->header.description);
+  info->format       = babl_format_from_name (info->header.description);
 
   ret = g_object_new (GEGL_TYPE_BUFFER,
                       "format", info->format,

@@ -118,8 +118,8 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
 
 static void gegl_operation_temporal_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGB u8"));
-  gegl_operation_set_format (operation, "input", babl_format ("RGB u8"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGB u8"));
+  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGB u8"));
 }
 
 static void
@@ -150,7 +150,7 @@ gegl_operation_temporal_init (GeglOperationTemporal *self)
    * input
    */
   priv->frame_store    =
-      gegl_buffer_new (&((GeglRectangle){0,0,4096,4096*600}), babl_format ("RGB u8"));
+      gegl_buffer_new (&((GeglRectangle){0,0,4096,4096*600}), babl_format_from_name ("RGB u8"));
 ;
 }
 

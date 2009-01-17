@@ -161,7 +161,7 @@ gegl_sampler_lanczos_get (GeglSampler *self,
   gfloat                   x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
                            y_kernel[width2];
 
-  self->interpolate_format = babl_format ("RaGaBaA float");
+  self->interpolate_format = babl_format_from_name ("RaGaBaA float");
 
   dx = (gint) ((x - ((gint) x)) * spp + 0.5);
   dy = (gint) ((y - ((gint) y)) * spp + 0.5);

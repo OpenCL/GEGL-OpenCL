@@ -5,7 +5,7 @@ TEST ()
   GeglRectangle  subsubrect = {3, 3, 4, 4};
   GeglRectangle  rect =       {0, 0, 20, 20};
   test_start ();
-  buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
+  buffer = gegl_buffer_new (&rect, babl_format_from_name ("Y float"));
   sub = gegl_buffer_create_sub_buffer (buffer, &subrect);
 
   fill (sub, 0.5);

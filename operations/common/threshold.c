@@ -34,9 +34,9 @@ gegl_chant_double (value, _("Threshold"), -10.0, 10.0, 0.5,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("YA float"));
-  gegl_operation_set_format (operation, "aux", babl_format ("Y float"));
-  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
+  gegl_operation_set_format (operation, "input", babl_format_from_name ("YA float"));
+  gegl_operation_set_format (operation, "aux", babl_format_from_name ("Y float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("YA float"));
 }
 
 static gboolean

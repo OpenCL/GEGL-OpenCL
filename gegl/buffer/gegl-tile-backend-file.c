@@ -916,7 +916,7 @@ gegl_tile_backend_file_constructor (GType                  type,
       /* we are overriding all of the work of the actual constructor here */
       backend->tile_width = self->header.tile_width;
       backend->tile_height = self->header.tile_height;
-      backend->format = babl_format (self->header.description);
+      backend->format = babl_format_from_name (self->header.description);
       backend->px_size = backend->format->format.bytes_per_pixel;
       backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
 

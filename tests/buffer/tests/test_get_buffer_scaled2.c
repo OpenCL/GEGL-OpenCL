@@ -7,11 +7,11 @@ TEST ()
 
   test_start ();
 
-  buffer = gegl_buffer_new (&rect, babl_format ("Y u8"));
+  buffer = gegl_buffer_new (&rect, babl_format_from_name ("Y u8"));
   checkerboard (buffer, 2, 0.0, 1.0);
   buf = g_malloc (getrect.width*getrect.height*sizeof(gfloat));
 
-  gegl_buffer_get (buffer, 0.66, &getrect, babl_format ("Y u8"), buf, 0);
+  gegl_buffer_get (buffer, 0.66, &getrect, babl_format_from_name ("Y u8"), buf, 0);
 
 
   print_linear_buffer_u8 (getrect.width, getrect.height, buf);

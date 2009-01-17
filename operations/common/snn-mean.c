@@ -49,8 +49,8 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = ceil (o->radius);
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
 }
 
 static gboolean
@@ -120,7 +120,7 @@ snn_mean (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
 
@@ -191,7 +191,7 @@ snn_mean (GeglBuffer *src,
           center_pix += 4;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
+  gegl_buffer_set (dst, NULL, babl_format_from_name ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);

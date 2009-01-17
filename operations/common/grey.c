@@ -33,7 +33,7 @@
 
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("YA float");
+  Babl *format = babl_format_from_name ("YA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);

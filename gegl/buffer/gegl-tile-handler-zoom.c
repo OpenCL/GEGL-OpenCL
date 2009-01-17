@@ -183,11 +183,11 @@ static void inline set_half (GeglTile * dst_tile,
   if (i) dst_data += bpp * width / 2;
   if (j) dst_data += bpp * width * height / 2;
 
-  if (format->format.type[0] == (BablType *) babl_type ("float"))
+  if (format->format.type[0] == (BablType *) babl_type_from_name ("float"))
     {
       downscale_float (components, width, height, width * bpp, src_data, dst_data);
     }
-  else if (format->format.type[0] == (BablType *) babl_type ("u8"))
+  else if (format->format.type[0] == (BablType *) babl_type_from_name ("u8"))
     {
       downscale_u8 (components, width, height, width * bpp, src_data, dst_data);
     }

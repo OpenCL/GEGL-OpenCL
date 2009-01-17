@@ -23,7 +23,7 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
     }
 
   if (format==NULL)
-    format = babl_format ("RGBA float");
+    format = babl_format_from_name ("RGBA float");
 
   if (rowstride <= 0)
     rowstride = extent->width;

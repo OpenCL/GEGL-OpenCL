@@ -97,7 +97,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RaGaBaA float"));
   if (o->transform && o->transform[0] != '\0')
     {
       GeglMatrix3 matrix;
@@ -189,7 +189,7 @@ process (GeglOperation       *operation,
         {
           cairo_t *cr;
           cairo_surface_t *surface;
-          guchar *data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
+          guchar *data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format_from_name ("B'aG'aR'aA u8"));
 
           surface = cairo_image_surface_create_for_data (data,
                                                          CAIRO_FORMAT_ARGB32,

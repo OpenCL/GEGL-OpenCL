@@ -65,7 +65,7 @@ process (GeglOperation       *operation,
       name = g_strdup_printf ("R'G'B'%s u%i",
                   has_alpha ? "A" : "",
                   bps);
-      babl = babl_format (name);
+      babl = babl_format_from_name (name);
 
       temp = g_malloc (rect->width * rect->height * bps);
       gegl_buffer_get (input, 1.0, rect, babl, temp, GEGL_AUTO_ROWSTRIDE);

@@ -325,7 +325,7 @@ static GeglBuffer *emptybuf (void)
   if (!empty)
     {
       GeglRectangle rect={0,0,0,0};
-      empty = gegl_buffer_new (&rect, babl_format ("RGBA float"));
+      empty = gegl_buffer_new (&rect, babl_format_from_name ("RGBA float"));
     }
   return empty;
 }
@@ -352,7 +352,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     {
       g_warning ("no format for %s presuming RGBA float\n",
                  gegl_node_get_debug_name (node));
-      format = babl_format ("RGBA float");
+      format = babl_format_from_name ("RGBA float");
     }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <gegl.h>
 #include <glib/gprintf.h>
 

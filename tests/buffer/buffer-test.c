@@ -141,7 +141,7 @@ print_buffer_internal (GString    *gstring,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, 1.0, NULL, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, 1.0, NULL, babl_format_from_name ("Y float"), buf, 0);
   print_linear_buffer_internal_float (gstring, width, height, buf);
   g_free (buf);
 }
@@ -160,7 +160,7 @@ fill (GeglBuffer *buffer,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, 1.0, NULL, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, 1.0, NULL, babl_format_from_name ("Y float"), buf, 0);
 
   i=0;
   for (y=0;y<height;y++)
@@ -170,7 +170,7 @@ fill (GeglBuffer *buffer,
           buf[i++]=value;
         }
     }
-  gegl_buffer_set (buffer, NULL, babl_format ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (buffer, NULL, babl_format_from_name ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 }
 
@@ -189,7 +189,7 @@ static void checkerboard          (GeglBuffer *buffer,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, 1.0, NULL, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, 1.0, NULL, babl_format_from_name ("Y float"), buf, 0);
 
   i=0;
   for (y=0;y<height;y++)
@@ -215,7 +215,7 @@ static void checkerboard          (GeglBuffer *buffer,
         }
     }
 
-  gegl_buffer_set (buffer, NULL, babl_format ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (buffer, NULL, babl_format_from_name ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (buf);
 }
@@ -232,7 +232,7 @@ static void vgrad (GeglBuffer *buffer)
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, 1.0, NULL, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, 1.0, NULL, babl_format_from_name ("Y float"), buf, 0);
 
   i=0;
   for (y=0;y<height;y++)
@@ -242,7 +242,7 @@ static void vgrad (GeglBuffer *buffer)
           buf[i++]= (1.0*y)/height;
         }
     }
-  gegl_buffer_set (buffer, NULL, babl_format ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (buffer, NULL, babl_format_from_name ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 }
 

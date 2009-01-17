@@ -188,7 +188,7 @@ process (GeglOperation       *operation,
   cairo_translate (cr, -result->x, -result->y);
   text_layout_text (self, cr, 0, NULL, NULL);
 
-  gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), data,
+  gegl_buffer_set (output, NULL, babl_format_from_name ("B'aG'aR'aA u8"), data,
                    GEGL_AUTO_ROWSTRIDE);
 
   cairo_destroy (cr);
@@ -272,7 +272,7 @@ finalize (GObject *object)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format_from_name ("RaGaBaA float"));
 }
 
 

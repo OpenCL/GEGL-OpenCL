@@ -1030,7 +1030,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
    * no time to make a fast implementation
    */
 
-      if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")
+      if (BABL (format)->format.type[0] == (BablType *) babl_type_from_name ("u8")
           && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
