@@ -79,7 +79,7 @@ a.each do
 
 static void prepare (GeglOperation *self)
 {
-  Babl *format = babl_format (\"RaGaBaA float\");
+  Babl *format = babl_format_from_name (\"RaGaBaA float\");
 
   gegl_operation_set_format (self, \"input\", format);
   gegl_operation_set_format (self, \"aux\", format);

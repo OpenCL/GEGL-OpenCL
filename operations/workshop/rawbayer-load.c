@@ -80,7 +80,7 @@ load_buffer (GeglChantO *op_raw_load)
            }
            gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
                             NULL,
-                            babl_format_from_name_new (
+                            babl_format_new (
                                  babl_model_from_name ("RGB"),
                                  babl_type_from_name ("u16"),
                                  babl_component_from_name ("R"),
