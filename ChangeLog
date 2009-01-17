@@ -1,7 +1,6 @@
 2009-01-13  Martin Nordholts  <martinn@svn.gnome.org>
 
-	Adapt to new babl API, mostly
-	s/babl_format/babl_format_from_name/
+	Adapt to new babl API, mostly s/babl_format/babl_format_from_name/
 
 	* lots/of/files.[ch]
 
