@@ -335,7 +335,7 @@ gegl_exit (void)
       module_db = NULL;
     }
 
-  babl_destroy ();
+  babl_exit ();
 
   timing = gegl_ticks () - timing;
   gegl_instrument ("gegl", "gegl_exit", timing);
