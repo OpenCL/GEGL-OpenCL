@@ -38,7 +38,7 @@ m4_define([gegl_stable],
 m4_define([gimp_full_name], [Generic Graphical Library])
 
 # required versions of external libraries
-m4_define([babl_required_version], [0.0.22])
+m4_define([babl_required_version], [0.0.23])
 m4_define([glib_required_version], [2.16.1])
 m4_define([gtk_required_version], [2.8.6])
 m4_define([lua_required_version], [5.1.0])
@@ -521,15 +521,15 @@ LIBS=$gegl_save_LIBS
 # Disable deprecated APIs
 #########################
 
-AC_MSG_CHECKING([if GLib is version 2.17.0 or newer])
-if $PKG_CONFIG --atleast-version=2.17.0 glib-2.0; then
-  have_glib_2_17=yes
+AC_MSG_CHECKING([if GLib is version 2.19.0 or newer])
+if $PKG_CONFIG --atleast-version=2.19.0 glib-2.0; then
+  have_glib_2_19=yes
 else
-  have_glib_2_17=no
+  have_glib_2_19=no
 fi
-AC_MSG_RESULT($have_glib_2_17)
+AC_MSG_RESULT($have_glib_2_19)
 
-if test "x$have_glib_2_17" != "xyes"; then
+if test "x$have_glib_2_19" != "xyes"; then
   CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
 fi
 
