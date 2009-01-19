@@ -1,3 +1,7 @@
+2009-01-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-bin-gui-types.h: removed
+
 2009-01-18  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-init.c (gegl_exit): s/babl_destroy/babl_exit/
