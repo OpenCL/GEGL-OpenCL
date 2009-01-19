@@ -1,5 +1,10 @@
 2009-01-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-handler-cache.c:
+	(gegl_tile_handler_cache_void): bail out of there are no cache_queues.
+
+2009-01-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/gegl-path.[ch]: made 
 	(gegl_path_add_type): register the number of floats not the number of
 	float pairs for the type.

@@ -393,6 +393,9 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
 {
   GList *link;
 
+  if (!cache_queue)
+    return;
+
   for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
     {
       CacheItem *item = link->data;
