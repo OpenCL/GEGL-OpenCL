@@ -159,6 +159,6 @@ void gegl_path_smooth_init (void)
     return;
   done = TRUE;
 
-  gegl_path_add_type ('*', 1, "path");
+  gegl_path_add_type ('*', 2, "path");
   gegl_path_add_flattener (gegl_path_smooth_flatten);
 }

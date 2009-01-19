@@ -152,15 +152,16 @@ gdouble              gegl_path_get_length     (GeglPath     *path);
 /**
  * gegl_path_get_node:
  * @path: a #GeglPath
- * @pos: the node number to retrieve
+ * @index: the node number to retrieve
+ * @node: a pointer to a #GeglPathItem record to be written.
  *
  * Retrieve the node of the path at positiong @pos.
  *
- * Return value: pointer to the node of the path at position @pos or NULL if no
- * such node.
+ * Returns TRUE if the node was succesfully retrieved.
  */
-const GeglPathItem * gegl_path_get_node       (GeglPath    *path,
-                                               gint         pos);
+gboolean             gegl_path_get_node       (GeglPath     *path,
+                                               gint          index,
+                                               GeglPathItem *node);
 
 /**
  * gegl_path_to_string:
@@ -397,14 +398,20 @@ GParamSpec         * gegl_param_spec_path     (const gchar *name,
 #define GEGL_TYPE_PARAM_PATH    (gegl_param_path_get_type ())
 #define GEGL_IS_PARAM_PATH(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_PATH))
 GType                gegl_param_path_get_type (void) G_GNUC_CONST;
+gint                 gegl_path_type_get_n_items (gchar type);
 
-
-/* add a new control point type to GeglPath, this new type works in everything
- * from the _add () functions (number of arguments determined automatically)
- * to the string parsing and serialization functions.
+/**
+ * gegl_path_add_type:
+ * @type: a gchar to recognize in path descriptions.
+ * @items: the number of floating point data items the instruction takes
+ * @description: a human readable description of this entry
+ *
+ * Adds a new type to the path system, FIXME this should probably
+ * return something on registration conflicts, for now it expects
+ * all registered paths to be aware of each other.
  */
 void gegl_path_add_type (gchar        type,
-                         gint         pairs,
+                         gint         items,
                          const gchar *description);
 
 /* Linked list used internally, and for the plug-in API for new path
@@ -420,7 +427,6 @@ typedef struct GeglPathList
 GeglPathList       * gegl_path_list_append    (GeglPathList *head, ...);
 /* frees up a path list */
 GeglPathList       * gegl_path_list_destroy   (GeglPathList *path);
-
 
 /* Add a new flattener, the flattener should produce a type of path that
  * GeglPath already understands, if the flattener is unable to flatten

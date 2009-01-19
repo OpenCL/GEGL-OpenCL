@@ -172,12 +172,11 @@ void gegl_path_spiro_init (void)
   if (done)
     return;
   done = TRUE;
-  gegl_path_add_type ('v', 1, "spiro corner");
-  gegl_path_add_type ('o', 1, "spiro g4");
-  gegl_path_add_type ('O', 1, "spiro g2");
-  gegl_path_add_type ('[', 1, "spiro left");
-  gegl_path_add_type (']', 1, "spiro right");
-
+  gegl_path_add_type ('v', 2, "spiro corner");
+  gegl_path_add_type ('o', 2, "spiro g4");
+  gegl_path_add_type ('O', 2, "spiro g2");
+  gegl_path_add_type ('[', 2, "spiro left");
+  gegl_path_add_type (']', 2, "spiro right");
 
   gegl_path_add_flattener (gegl_path_spiro_flatten);
 }

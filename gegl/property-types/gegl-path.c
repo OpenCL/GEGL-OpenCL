@@ -59,7 +59,7 @@ typedef struct GeglPathItem
 typedef struct InstructionInfo
 {
   gchar  type;
-  gint   pairs;
+  gint   n_items;
   gchar *name;
 
   /* a flatten function pointer is kept for all stored InstructionInfo's but are only
@@ -85,13 +85,13 @@ static GeglPathList *flatten_curve     (GeglMatrix3 matrix, GeglPathList *head, 
 
 static InstructionInfo knot_types[64]= /* reserve space for a total of up to 64 types of instructions. */
 {
-  {'M',  1, "move to",              flatten_copy},
-  {'L',  1, "line to",              flatten_copy},
-  {'C',  3, "curve to",             flatten_curve},
+  {'M',  2, "move to",              flatten_copy},
+  {'L',  2, "line to",              flatten_copy},
+  {'C',  6, "curve to",             flatten_curve},
 
-  {'m',  1, "rel move to",          flatten_rel_copy},
-  {'l',  1, "rel line to",          flatten_rel_copy},
-  {'c',  3, "rel curve to",         flatten_rel_copy},
+  {'m',  2, "rel move to",          flatten_rel_copy},
+  {'l',  2, "rel line to",          flatten_rel_copy},
+  {'c',  6, "rel curve to",         flatten_rel_copy},
 
   {'s',  0, "sentinel",             flatten_nop},
   {'z',  0, "sentinel",             flatten_nop},
@@ -115,7 +115,7 @@ static void transform_data (
   InstructionInfo *dst_info = lookup_instruction_info(dst->type);
   gint i;
 
-  for (i=0;i<dst_info->pairs;i++)
+  for (i=0;i<(dst_info->n_items+1)/2;i++)
     {
       gdouble x = dst->point[i].x;
       gdouble y = dst->point[i].y;
@@ -125,26 +125,37 @@ static void transform_data (
     }
 }
 
+/* XXX: copy_data should exit for internal to external conversions */
+
 static void copy_data (const GeglPathItem *src,
                        GeglPathItem       *dst)
 {
-  InstructionInfo *src_info = lookup_instruction_info(src->type);
-  InstructionInfo *dst_info = lookup_instruction_info(dst->type);
+  InstructionInfo *src_info;
+  InstructionInfo *dst_info;
   gint i;
 
-  g_assert (src_info->pairs <= dst_info->pairs);
+  if (!src)
+    return;
+
+  src_info = lookup_instruction_info(src->type);
+  dst_info = lookup_instruction_info(dst->type);
+
+/*
+  g_assert (src_info->pairs <= dst_info->pairs);*/
 
   dst->type = src->type;  
-  for (i=0;i<src_info->pairs;i++)
+  for (i=0;i<(src_info->n_items+1)/2;i++)
     {
       dst->point[i].x = src->point[i].x;
       dst->point[i].y = src->point[i].y;
     }
 }
 
+
+
 void
 gegl_path_add_type (gchar        type, 
-                    gint         pairs,
+                    gint         n_items,
                     const gchar *name)
 {
   gint i;
@@ -155,7 +166,7 @@ gegl_path_add_type (gchar        type,
         return;
       }
   knot_types[i].type = type;
-  knot_types[i].pairs = pairs;
+  knot_types[i].n_items = n_items;
   knot_types[i].name = g_strdup (name);
   knot_types[i].flatten = flatten_copy;
   knot_types[i+1].type = '\0';
@@ -178,14 +189,14 @@ gegl_path_list_append_item  (GeglPathList  *head,
   if (iter)
     {
       iter->next = 
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
       iter->next->d.type = type;
       iter = iter->next;
     }
   else /* creating new path */
     {
       head = 
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
       head->d.type = type;
       iter=head;
     }
@@ -229,7 +240,7 @@ flatten_rel_copy (GeglMatrix3   matrix,
   head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
   copy_data (&self->d, &newp->d);
   info = lookup_instruction_info (self->d.type);
-  for (i=0;i<info->pairs;i++)
+  for (i=0;i<(info->n_items+1)/2;i++)
     {
       newp->d.point[i].x += prev->d.point[0].x;
       newp->d.point[i].y += prev->d.point[0].y;
@@ -371,7 +382,7 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   head = gegl_path_list_append_item (head, type, &iter, NULL);
 
   iter->d.type       = type;
-  for (pair_no=0;pair_no<info->pairs;pair_no++)
+  for (pair_no=0;pair_no<(info->n_items+2)/2;pair_no++)
     {
       iter->d.point[pair_no].x = va_arg (var_args, gdouble);
       iter->d.point[pair_no].y = va_arg (var_args, gdouble);
@@ -832,7 +843,8 @@ gegl_path_class_init (GeglPathClass *klass)
                   G_TYPE_NONE, /*return type */
                   1, G_TYPE_POINTER);
 
-  gegl_path_add_type ('_', 1, "linear curve position associated value");
+  /* FIXME: should this just be 2 ? (and is this even currently in use?) */
+  gegl_path_add_type ('_', 2, "linear curve position associated value");
 }
 
 static void
@@ -1148,7 +1160,7 @@ gegl_path_to_string (GeglPath  *vector)
       InstructionInfo *info = lookup_instruction_info(iter->d.type);
 
       g_string_append_c (str, iter->d.type);
-      for (i=0;i<info->pairs;i++)
+      for (i=0;i<(info->n_items+1)/2;i++)
         {
           gchar buf[16];
           gchar *eptr;
@@ -1158,13 +1170,20 @@ gegl_path_to_string (GeglPath  *vector)
               *eptr='\0';
           if (*eptr=='.')
             *eptr='\0';
-          g_string_append_printf (str, "%s,", buf);
-          sprintf (buf, "%f", iter->d.point[i].y);
+         
+          /* FIXME: make this work better also for other odd count
+           * of n_items
+           */ 
+          if (info->n_items>1)
+            {
+              g_string_append_printf (str, "%s,", buf);
+              sprintf (buf, "%f", iter->d.point[i].y);
 
-          for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
-              *eptr='\0';
-          if (*eptr=='.')
-            *eptr='\0';
+              for (eptr = &buf[strlen(buf)-1];eptr != buf && (*eptr=='0');eptr--)
+                  *eptr='\0';
+              if (*eptr=='.')
+                *eptr='\0';
+            }
 
           g_string_append_printf (str, "%s ", buf);
         }
@@ -1238,26 +1257,29 @@ void gegl_path_parse_string (GeglPath *vector,
 
           if (info)
             {
-              switch (info->pairs)
+              switch (info->n_items)
                 {
                   case 0:
                     priv->path = gegl_path_list_append (priv->path, type, x0, y0);
                     /* coordinates are ignored, all of these could have used add3)*/
                     break;
-                  case 1:
+                  case 2:
                     p = parse_float_pair (p, &x0, &y0);
                     priv->path = gegl_path_list_append (priv->path, type, x0, y0);
                     continue;
-                  case 2:
+                  case 4:
                     p = parse_float_pair (p, &x0, &y0);
                     p = parse_float_pair (p, &x1, &y1);
                     priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
                     continue;
-                  case 3:
+                  case 6:
                     p = parse_float_pair (p, &x0, &y0);
                     p = parse_float_pair (p, &x1, &y1);
                     p = parse_float_pair (p, &x2, &y2);
                     priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
+                    continue;
+                  default:
+                    g_warning ("parsing of data %i items not implemented\n", info->n_items);
                     continue;
                 }
               previnfo = info;
@@ -1298,9 +1320,10 @@ gegl_path_get_n_nodes  (GeglPath *vector)
 
 }
 
-const GeglPathItem *
-gegl_path_get_node (GeglPath *vector,
-                    gint      pos)
+gboolean
+gegl_path_get_node (GeglPath     *vector,
+                    gint          index,
+                    GeglPathItem *node)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -1309,15 +1332,19 @@ gegl_path_get_node (GeglPath *vector,
   for (iter = priv->path; iter; iter=iter->next)
     {
       last=&iter->d;
-      if (count == pos)
-        return last;
+      if (count == index)
+        {
+          copy_data (last, node);
+          return TRUE;
+        }
       count ++;
     }
-  if (pos==-1)
+  if (index==-1)
     {
-      return last;
+      copy_data (last, node);
+      return TRUE;
     }
-  return NULL;
+  return FALSE;
 }
 
 /* -1 means last */
@@ -1329,11 +1356,11 @@ gegl_path_get_node (GeglPath *vector,
 static void gegl_path_item_free (GeglPathList *p)
 {
   InstructionInfo *info = lookup_instruction_info(p->d.type);
-  g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs, p);
+  g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 * (info->n_items+1)/2, p);
 }
 
 void  gegl_path_remove_node  (GeglPath *vector,
-                         gint      pos)
+                              gint      pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -1380,7 +1407,7 @@ void  gegl_path_insert_node     (GeglPath           *vector,
     {
       if (count == pos)
         {
-          GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
+          GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
           new->d.type=knot->type;
           copy_data (knot, &new->d);
           new->next = iter->next;
@@ -1397,7 +1424,7 @@ void  gegl_path_insert_node     (GeglPath           *vector,
     }
   if (pos==-1)
     {
-      GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *info->pairs);
+      GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
       new->d.type = knot->type;
       copy_data (knot, &new->d);
       new->next = NULL;
@@ -1523,7 +1550,7 @@ gegl_path_append (GeglPath *self,
   priv->path = gegl_path_list_append_item (priv->path, type, &iter, ensure_tail(priv));
 
   iter->d.type       = type;
-  for (pair_no=0;pair_no<info->pairs;pair_no++)
+  for (pair_no=0;pair_no < (info->n_items+1)/2;pair_no++)
     {
       iter->d.point[pair_no].x = va_arg (var_args, gdouble);
       iter->d.point[pair_no].y = va_arg (var_args, gdouble);
@@ -2133,4 +2160,12 @@ void gegl_path_stroke (GeglBuffer *buffer,
 
   if (gegl_buffer_is_shared (buffer))
   gegl_buffer_unlock (buffer);
+}
+
+gint gegl_path_type_get_n_items (gchar type)
+{
+  InstructionInfo *info = lookup_instruction_info (type);
+  if (!info)
+    return -1;
+  return info->n_items;
 }

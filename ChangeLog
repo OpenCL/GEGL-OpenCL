@@ -1,5 +1,16 @@
 2009-01-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/property-types/gegl-path.[ch]: made 
+	(gegl_path_add_type): register the number of floats not the number of
+	float pairs for the type.
+	(gegl_path_get_node): write copy to a target argument instead of
+	returning internal pathinfo struct.
+	(gegl_path_type_get_n_items): added.
+	* bin/gegl-path-smooth.c: adapted to new API
+	* bin/gegl-path-spiro.c: adapted to new API
+
+2009-01-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-bin-gui-types.h: removed
 
 2009-01-18  Sven Neumann  <sven@gimp.org>
