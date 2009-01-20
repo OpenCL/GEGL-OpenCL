@@ -1,3 +1,7 @@
+2009-01-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.txt.in: removed stray http://
+
 2009-01-05  Étienne Bersac  <bersace03@gmail.com>
 
 	* gegl-vala/index.html: Added gegl-vala web page.

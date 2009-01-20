@@ -20,7 +20,7 @@ Features
 ~~~~~~~~
   - Floating point handling and processing and output of larger 8bit, 16bit
     integer and 32bit floating point per component buffers larger than RAM.
-  - C, http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#], http://
+  - C, http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#],
     http://gegl.org/pygegl/[Python] and http://gegl.org/rgegl/[Ruby] interfaces
     using a consistent DOM like graph API to manage processing graphs.
   - Processing
