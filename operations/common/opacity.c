@@ -35,9 +35,9 @@ gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
 
 static void prepare (GeglOperation *self)
 {
-  gegl_operation_set_format (self, "input", babl_format_from_name ("RaGaBaA float"));
-  gegl_operation_set_format (self, "output", babl_format_from_name ("RaGaBaA float"));
-  gegl_operation_set_format (self, "aux", babl_format_from_name ("Y float"));
+  gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (self, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (self, "aux", babl_format ("Y float"));
 }
 
 static gboolean

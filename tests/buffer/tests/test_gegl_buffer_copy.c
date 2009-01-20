@@ -5,8 +5,8 @@ TEST ()
   GeglRectangle  source = {2, 2, 5, 5};
   GeglRectangle  dest = {10, 10, 5, 5};
   test_start ();
-  buffer = gegl_buffer_new (&bound, babl_format_from_name ("Y float"));
-  buffer2 = gegl_buffer_new (&bound, babl_format_from_name ("Y float"));
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
+  buffer2 = gegl_buffer_new (&bound, babl_format ("Y float"));
 
   vgrad (buffer);
   gegl_buffer_copy (buffer, &source, buffer2, &dest); 

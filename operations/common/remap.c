@@ -60,7 +60,7 @@ attach (GeglOperation *operation)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglNode *
@@ -137,9 +137,9 @@ process (GeglOperation       *operation,
   min = g_new (gfloat, pixels * 3);
   max = g_new (gfloat, pixels * 3);
 
-  gegl_buffer_get (input, 1.0, result, babl_format_from_name ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (low,   1.0, result, babl_format_from_name ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (high,  1.0, result, babl_format_from_name ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
 
   output = gegl_operation_context_get_target (context, "output");
 
@@ -160,7 +160,7 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, result, babl_format_from_name ("RGBA float"), buf,
+  gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,
                    GEGL_AUTO_ROWSTRIDE);
 
   g_free (buf);

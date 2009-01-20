@@ -140,7 +140,7 @@ hor_blur (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
   for (v=0; v<gegl_buffer_get_height (dst); v++)
@@ -162,7 +162,7 @@ hor_blur (GeglBuffer *src,
           dst_buf [offset++] = components[i];
       }
 
-  gegl_buffer_set (dst, NULL, babl_format_from_name ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -182,7 +182,7 @@ ver_blur (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
   for (v=0; v<gegl_buffer_get_height (dst); v++)
@@ -204,7 +204,7 @@ ver_blur (GeglBuffer *src,
           dst_buf [offset++] = components[c];
       }
 
-  gegl_buffer_set (dst, NULL, babl_format_from_name ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -223,7 +223,7 @@ static void prepare (GeglOperation *operation)
   op_area->bottom = ceil (o->radius);
 
   gegl_operation_set_format (operation, "output",
-                             babl_format_from_name ("RaGaBaA float"));
+                             babl_format ("RaGaBaA float"));
 }
 
 static gboolean
@@ -236,7 +236,7 @@ process (GeglOperation       *operation,
   GeglBuffer *temp;
 
   temp  = gegl_buffer_new (gegl_buffer_get_extent (input),
-                           babl_format_from_name ("RaGaBaA float"));
+                           babl_format ("RaGaBaA float"));
 
   hor_blur (input, temp,  o->radius);
   ver_blur (temp, output, o->radius);

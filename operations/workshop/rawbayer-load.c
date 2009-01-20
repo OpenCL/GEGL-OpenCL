@@ -64,7 +64,7 @@ load_buffer (GeglChantO *op_raw_load)
 
       {
         GeglRectangle extent = { 0, 0, width, height };
-        op_raw_load->chant_data = (void*)gegl_buffer_new (&extent, babl_format_from_name ("Y u16"));
+        op_raw_load->chant_data = (void*)gegl_buffer_new (&extent, babl_format ("Y u16"));
       }
          {
            guchar *buf = g_new (guchar, width * height * 3 * 2);
@@ -81,11 +81,11 @@ load_buffer (GeglChantO *op_raw_load)
            gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
                             NULL,
                             babl_format_new (
-                                 babl_model_from_name ("RGB"),
-                                 babl_type_from_name ("u16"),
-                                 babl_component_from_name ("R"),
-                                 babl_component_from_name ("G"),
-                                 babl_component_from_name ("B"),
+                                 babl_model ("RGB"),
+                                 babl_type ("u16"),
+                                 babl_component ("R"),
+                                 babl_component ("G"),
+                                 babl_component ("B"),
                                  NULL),
                             buf,
                             GEGL_AUTO_ROWSTRIDE);

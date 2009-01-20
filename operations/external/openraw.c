@@ -94,7 +94,7 @@ gegl_buffer_import_raw (GeglBuffer  *gegl_buffer,
       rect.height = y;
 
       data = or_rawdata_data(rawdata);
-      gegl_buffer_set(gegl_buffer, &rect, babl_format_from_name ("Y u16"),
+      gegl_buffer_set(gegl_buffer, &rect, babl_format ("Y u16"),
                       data, GEGL_AUTO_ROWSTRIDE);
     }
   }
@@ -111,7 +111,7 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle result = {0,0,0,0};
   gint width, height;
   gint status;
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("Y u16"));
+  gegl_operation_set_format (operation, "output", babl_format ("Y u16"));
   status = query_raw (o->path, &width, &height);
 
   if (status)

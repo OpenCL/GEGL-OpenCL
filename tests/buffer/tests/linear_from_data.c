@@ -10,7 +10,7 @@ TEST ()
   for (i=0;i<100;i++)
     buf[i]=i/100.0;
 
-  buffer = gegl_buffer_linear_new_from_data (buf, babl_format_from_name ("Y float"),
+  buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
                                              &extent,
                                              10 * 4,
                                              G_CALLBACK(g_free), /* destroy_notify */

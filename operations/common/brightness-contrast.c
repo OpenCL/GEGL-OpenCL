@@ -64,8 +64,8 @@ gegl_chant_double (brightness, _("Brightness"), -3.0, 3.0, 0.0,
  */
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 /* For GeglOperationPointFilter subclasses, we operate on linear

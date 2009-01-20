@@ -41,8 +41,8 @@ G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static void

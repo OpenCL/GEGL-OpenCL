@@ -93,7 +93,7 @@ static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
  GEGL_SAMPLER (self)->context_rect= (GeglRectangle){-1,-1,4,4};
- GEGL_SAMPLER (self)->interpolate_format = babl_format_from_name ("RaGaBaA float");
+ GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
  self->b=1.0;
  self->c=0.0;
  self->type = g_strdup("cubic");

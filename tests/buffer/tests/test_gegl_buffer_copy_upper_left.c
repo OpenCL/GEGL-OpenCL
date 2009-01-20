@@ -3,7 +3,7 @@ TEST ()
   GeglBuffer    *buffer, *buffer2;
   GeglRectangle  bound = {0, 0, 20, 20};
   test_start ();
-  buffer = gegl_buffer_new (&bound, babl_format_from_name ("Y float"));
+  buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
   vgrad (buffer);
   {
     GeglRectangle rect = *gegl_buffer_get_extent(buffer);

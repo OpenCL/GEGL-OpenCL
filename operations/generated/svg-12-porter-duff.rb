@@ -87,7 +87,7 @@ file_head1 = '
 file_head2 = '
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format_from_name ("RaGaBaA float");
+  Babl *format = babl_format ("RaGaBaA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);

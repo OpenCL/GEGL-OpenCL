@@ -93,7 +93,7 @@ demosaic (GeglChantO *op,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src));
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("Y float"), src_buf,
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf,
            GEGL_AUTO_ROWSTRIDE);
 
   offset = ROW + COL;
@@ -167,7 +167,7 @@ demosaic (GeglChantO *op,
       offset+=2;
     }
 
-  gegl_buffer_set (dst, NULL, babl_format_from_name ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }

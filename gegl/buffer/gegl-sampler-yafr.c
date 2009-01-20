@@ -132,7 +132,7 @@ gegl_sampler_yafr_init (GeglSamplerYafr *self)
    */
   GEGL_SAMPLER (self)->context_rect = (GeglRectangle){-1,-1,4,4};
 
-  GEGL_SAMPLER (self)->interpolate_format = babl_format_from_name ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 static inline gfloat

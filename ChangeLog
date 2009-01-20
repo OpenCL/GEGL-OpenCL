@@ -1,3 +1,10 @@
+2009-01-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Adjust to babl API adjustment by doing
+	s/babl_foo_from_name/babl_foo/
+
+	* lots of files
+
 2009-01-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile-handler-cache.c:

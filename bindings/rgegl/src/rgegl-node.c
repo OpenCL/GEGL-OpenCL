@@ -166,7 +166,7 @@ cnode_render (self, r_rectangle, r_scale, r_format, r_flags)
     Babl          *format;
     GeglBlitFlags  flags;
 
-    format = babl_format_from_name (RVAL2CSTR (r_format));
+    format = babl_format (RVAL2CSTR (r_format));
     if (!format)
       {
         return Qnil;

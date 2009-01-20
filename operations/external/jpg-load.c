@@ -120,7 +120,7 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
       GeglRectangle rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
-      gegl_buffer_set (gegl_buffer, &rect, babl_format_from_name ("R'G'B' u8"), buffer[0],
+      gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B' u8"), buffer[0],
                        GEGL_AUTO_ROWSTRIDE);
     }
   jpeg_destroy_decompress (&cinfo);
@@ -135,7 +135,7 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle result = {0,0,0,0};
   gint width, height;
   gint status;
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("R'G'B' u8"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
   status = query_jpg (o->path, &width, &height);
 
   if (status)

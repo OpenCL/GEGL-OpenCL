@@ -593,7 +593,7 @@ query_exr (const gchar *path,
     }
 
   *ff_ptr = format_flags;
-  *format = babl_format_from_name (format_string);
+  *format = babl_format (format_string);
   return TRUE;
 }
 

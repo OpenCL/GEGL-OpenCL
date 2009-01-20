@@ -37,7 +37,7 @@ gegl_chant_double (saturation,   _("Saturation"),   -3.0, 3.0, 1.0, _(""))
 
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format_from_name ("Y'CbCrA float");
+  Babl *format = babl_format ("Y'CbCrA float");
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 }

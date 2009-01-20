@@ -1832,7 +1832,7 @@ gegl_node_get_cache (GeglNode *node)
       format = gegl_pad_get_format (pad);
       if (!format)
         {
-          format = babl_format_from_name ("RGBA float");
+          format = babl_format ("RGBA float");
         }
 
       node->cache = g_object_new (GEGL_TYPE_CACHE,

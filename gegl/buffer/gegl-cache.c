@@ -191,7 +191,7 @@ gegl_cache_init (GeglCache *self)
 
   /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
-  GEGL_BUFFER (self)->format = (gpointer) babl_format_from_name ("R'G'B'A u8");
+  GEGL_BUFFER (self)->format = (gpointer) babl_format ("R'G'B'A u8");
 }
 
 static void
@@ -351,7 +351,7 @@ gegl_buffer_clear (GeglBuffer    *buffer,
       buf[i*4+2]=25;
       buf[i*4+3]=40;
     }
-  gegl_buffer_set (buffer, rectangle, babl_format_from_name ("RGBA u8"), buf);
+  gegl_buffer_set (buffer, rectangle, babl_format ("RGBA u8"), buf);
   g_free (buf);
 }
 #endif

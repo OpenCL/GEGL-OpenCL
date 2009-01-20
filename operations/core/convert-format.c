@@ -42,7 +42,7 @@ static void prepare (GeglOperation *operation)
 
   g_assert (o->format);
 
-  format = babl_format_from_name (o->format);
+  format = babl_format (o->format);
   /* check format ? */
 
   gegl_operation_set_format (operation, "input", format);

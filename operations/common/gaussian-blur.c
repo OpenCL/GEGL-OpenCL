@@ -185,7 +185,7 @@ iir_young_hor_blur (GeglBuffer *src,
   buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   w   = g_new0 (gfloat, gegl_buffer_get_width (src));
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
                    buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = gegl_buffer_get_width (src);
@@ -203,7 +203,7 @@ iir_young_hor_blur (GeglBuffer *src,
         }
     }
 
-  gegl_buffer_set (dst, gegl_buffer_get_extent(src), babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_set (dst, gegl_buffer_get_extent(src), babl_format ("RaGaBaA float"),
                    buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
   g_free (w);
@@ -225,7 +225,7 @@ iir_young_ver_blur (GeglBuffer *src,
   buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   w   = g_new0 (gfloat, gegl_buffer_get_height (src));
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = gegl_buffer_get_height (src);
   for (u=0; u<gegl_buffer_get_width (dst); u++)
@@ -243,7 +243,7 @@ iir_young_ver_blur (GeglBuffer *src,
     }
 
   gegl_buffer_set (dst, gegl_buffer_get_extent (src),
-                   babl_format_from_name ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+                   babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
   g_free (w);
 }
@@ -342,7 +342,7 @@ fir_hor_blur (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
@@ -359,7 +359,7 @@ fir_hor_blur (GeglBuffer *src,
                                                           matrix_length);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
@@ -385,7 +385,7 @@ fir_ver_blur (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_get (src, 1.0, NULL, babl_format ("RaGaBaA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
@@ -402,7 +402,7 @@ fir_ver_blur (GeglBuffer *src,
                                                           matrix_length);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format_from_name ("RaGaBaA float"),
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
@@ -425,7 +425,7 @@ static void prepare (GeglOperation *operation)
   area->top = area->bottom = ceil ( max (fir_radius_y, iir_radius_y));
 
   gegl_operation_set_format (operation, "output",
-                             babl_format_from_name ("RaGaBaA float"));
+                             babl_format ("RaGaBaA float"));
 #undef max
 }
 
@@ -451,7 +451,7 @@ process (GeglOperation       *operation,
   temp_extend.width  = gegl_buffer_get_width  (output);
   temp_extend.y      = gegl_buffer_get_y      (input);
   temp_extend.height = gegl_buffer_get_height (input);
-  temp = gegl_buffer_new (&temp_extend, babl_format_from_name ("RaGaBaA float"));
+  temp = gegl_buffer_new (&temp_extend, babl_format ("RaGaBaA float"));
 
   force_iir = o->filter && !strcmp (o->filter, "iir");
   force_fir = o->filter && !strcmp (o->filter, "fir");

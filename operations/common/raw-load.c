@@ -75,11 +75,11 @@ load_buffer (GeglChantO *op_raw_load)
           GeglRectangle extent = { 0, 0, width, height };
           op_raw_load->chant_data = (gpointer) gegl_buffer_new (&extent,
                                                    babl_format_new (
-                                                     babl_model_from_name ("RGB"),
-                                                     babl_type_from_name ("u16"),
-                                                     babl_component_from_name ("G"),
-                                                     babl_component_from_name ("B"),
-                                                     babl_component_from_name ("R"),
+                                                     babl_model ("RGB"),
+                                                     babl_type ("u16"),
+                                                     babl_component ("G"),
+                                                     babl_component ("B"),
+                                                     babl_component ("R"),
                                                      NULL));
         }
          {
@@ -89,11 +89,11 @@ load_buffer (GeglChantO *op_raw_load)
            gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
                             NULL,
                             babl_format_new (
-                                        babl_model_from_name ("RGB"),
-                                        babl_type_from_name ("u16"),
-                                        babl_component_from_name ("G"),
-                                        babl_component_from_name ("B"),
-                                        babl_component_from_name ("R"),
+                                        babl_model ("RGB"),
+                                        babl_type ("u16"),
+                                        babl_component ("G"),
+                                        babl_component ("B"),
+                                        babl_component ("R"),
                                         NULL),
                             buf,
                             GEGL_AUTO_ROWSTRIDE

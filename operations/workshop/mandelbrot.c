@@ -69,7 +69,7 @@ mandel_calc(GeglChantO *o, gfloat x, gfloat y)
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("Y float"));
+  gegl_operation_set_format (operation, "output", babl_format ("Y float"));
 }
 
 static GeglRectangle
@@ -116,7 +116,7 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, NULL, babl_format_from_name ("Y float"), buf,
+  gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 

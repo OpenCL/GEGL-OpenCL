@@ -154,7 +154,7 @@ drawable_lua_process (GeglChantO    *self,
 
     register_functions (L, gluas_functions);
 
-    p.rgba_float = babl_format_from_name ("RGBA float");
+    p.rgba_float = babl_format ("RGBA float");
     p.L = L;
     p.width = in_rect->width;/*gimp_drawable_width (drawable->drawable_id);*/
     p.height = in_rect->height;/*gimp_drawable_height (drawable->drawable_id);*/
@@ -980,9 +980,9 @@ static int l_get_hsv (lua_State * lua)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGBA float"));
-  gegl_operation_set_format (operation, "aux", babl_format_from_name ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "aux", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle

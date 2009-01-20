@@ -103,7 +103,7 @@ enum {
 
 guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
-static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format_from_name,
+static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
                                                  gint        x,
                                                  gint        y,
                                                  gint        width,
@@ -485,7 +485,7 @@ gegl_buffer_constructor (GType                  type,
             {
               storage = GEGL_TILE_SOURCE (g_object_new (GEGL_TYPE_TILE_STORAGE,
                                                        "path", buffer->path,
-                                                       "format", babl_format_from_name ("RGBA float"),
+                                                       "format", babl_format ("RGBA float"),
                                                        NULL));
             }
 
@@ -873,7 +873,7 @@ gegl_buffer_new_ram (const GeglRectangle *extent,
     extent = &empty;
 
   if (format==NULL)
-    format = babl_format_from_name ("RGBA float");
+    format = babl_format ("RGBA float");
 
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
@@ -895,7 +895,7 @@ gegl_buffer_new (const GeglRectangle *extent,
     extent = &empty;
 
   if (format==NULL)
-    format = babl_format_from_name ("RGBA float");
+    format = babl_format ("RGBA float");
 
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
@@ -963,7 +963,7 @@ gegl_buffer_destroy (GeglBuffer *buffer)
 
 
 static GeglBuffer *
-gegl_buffer_new_from_format (const void *babl_format_from_name,
+gegl_buffer_new_from_format (const void *babl_format,
                              gint        x,
                              gint        y,
                              gint        width,
@@ -981,7 +981,7 @@ gegl_buffer_new_from_format (const void *babl_format_from_name,
       g_str_equal (gegl_config()->swap, "ram"))
     {
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                                   "format",      babl_format_from_name,
+                                   "format",      babl_format,
                                    "tile-width",  tile_width,
                                    "tile-height", tile_height,
                                    NULL);
@@ -996,7 +996,7 @@ gegl_buffer_new_from_format (const void *babl_format_from_name,
 #if 0
       filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
                                   getpid (),
-                                  babl_name ((Babl *) babl_format_from_name),
+                                  babl_name ((Babl *) babl_format),
                                   no++);
 #endif
 
@@ -1005,7 +1005,7 @@ gegl_buffer_new_from_format (const void *babl_format_from_name,
       g_free (filename);
 
       tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE,
-                                   "format",      babl_format_from_name,
+                                   "format",      babl_format,
                                    "tile-width",  tile_width,
                                    "tile-height", tile_height,
                                    "path",        path,

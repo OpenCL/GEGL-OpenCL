@@ -5,7 +5,7 @@ TEST ()
 
   test_start ();
 
-  buffer = gegl_buffer_new (&rect, babl_format_from_name ("Y float"));
+  buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
   print_buffer (buffer);
   gegl_buffer_destroy (buffer);
 

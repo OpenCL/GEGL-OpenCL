@@ -253,7 +253,7 @@ prepare (GeglOperation *operation)
 
   g_assert (o->chant_data != NULL);
 
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("R'G'B'A u8"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
 
 
   if (!p->loadedfilename ||

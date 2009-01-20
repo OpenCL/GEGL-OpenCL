@@ -37,8 +37,8 @@ gegl_chant_double (blue,  _("Blue"),  -10.0, 10.0, 0.25, _("Amount of blue"))
 static void prepare (GeglOperation *operation)
 {
   /* set the babl format this operation prefers to work on */
-  gegl_operation_set_format (operation, "input", babl_format_from_name ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format_from_name ("YA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
 }
 
 static gboolean
@@ -63,7 +63,7 @@ process (GeglOperation       *operation,
      in_buf = g_new (gfloat, 4 * num_pixels);
      out_buf = g_new (gfloat, 2 * num_pixels);
 
-     gegl_buffer_get (input, 1.0, result, babl_format_from_name ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
+     gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
 
      in_pixel = in_buf;
      out_pixel = out_buf;
@@ -76,7 +76,7 @@ process (GeglOperation       *operation,
          out_pixel += 2;
      }
 
-     gegl_buffer_set (output, result, babl_format_from_name ("YA float"), out_buf,
+     gegl_buffer_set (output, result, babl_format ("YA float"), out_buf,
                       GEGL_AUTO_ROWSTRIDE);
 
      g_free (in_buf);

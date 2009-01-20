@@ -5,7 +5,7 @@ TEST ()
   GeglRectangle  dest  = {15, 15, 1, 1};
   GeglRectangle  rect = {0, 0, 20, 20};
   test_start ();
-  buffer = gegl_buffer_new (&rect, babl_format_from_name ("Y float"));
+  buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
 
   vgrad (buffer);
   gegl_buffer_copy (buffer, &source, buffer, &dest); /* copying to self */

@@ -258,7 +258,7 @@ gegl_sampler_sharp_init (GeglSamplerSharp *self)
    * "non-centered" stencil (one based at the corner) instead.
    */
   GEGL_SAMPLER (self)->context_rect = (GeglRectangle){-2,-2,5,5};
-  GEGL_SAMPLER (self)->interpolate_format = babl_format_from_name ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 static inline gfloat

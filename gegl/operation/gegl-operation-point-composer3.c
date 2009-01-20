@@ -46,7 +46,7 @@ G_DEFINE_TYPE (GeglOperationPointComposer3, gegl_operation_point_composer3, GEGL
 
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format_from_name ("RGBA float");
+  Babl *format = babl_format ("RGBA float");
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
   gegl_operation_set_format (operation, "aux2", format);

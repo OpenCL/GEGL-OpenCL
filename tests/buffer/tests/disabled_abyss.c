@@ -9,7 +9,7 @@ TEST ()
   GeglRectangle  subsubrect = {3, 3, 4, 4};
   GeglRectangle  rect =       {0, 0, 20, 20};
   test_start ();
-  buffer = gegl_buffer_new (&rect, babl_format_from_name ("Y float"));
+  buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
 
   sub = g_object_new (GEGL_TYPE_BUFFER,
                          "source", buffer,

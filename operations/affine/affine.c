@@ -145,7 +145,7 @@ op_affine_sampler_init (OpAffine *self)
   GType                 desired_type;
   GeglInterpolation     interpolation;
 
-  format = babl_format_from_name ("RaGaBaA float");
+  format = babl_format ("RaGaBaA float");
 
   interpolation = gegl_buffer_interpolation_from_string (self->filter);
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
@@ -181,7 +181,7 @@ static void
 prepare (GeglOperation *operation)
 {
   OpAffine  *affine = (OpAffine *) operation;
-  Babl      *format = babl_format_from_name ("RaGaBaA float");
+  Babl      *format = babl_format ("RaGaBaA float");
   op_affine_sampler_init (affine);
   /*gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
@@ -672,7 +672,7 @@ affine_generic (GeglBuffer        *dest,
 
   gint                  dest_pixels;
 
-  format = babl_format_from_name ("RaGaBaA float");
+  format = babl_format ("RaGaBaA float");
 
   /* XXX: fast paths as existing in files in the same dir as affine.c
    *      should probably be hooked in here, and bailing out before using
