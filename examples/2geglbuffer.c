@@ -9,8 +9,6 @@ main (gint    argc,
   GeglBuffer *buffer;
   GeglNode   *gegl, *load_file, *save_file;
 
-  gtk_init (&argc, &argv);
-
   gegl_init (&argc, &argv);
 
 

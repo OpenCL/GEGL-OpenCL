@@ -1,3 +1,7 @@
+2009-01-21  Sven Neumann  <sven@gimp.org>
+
+	* examples/2geglbuffer.c (main): no need to call gtk_init() here.
+
 2009-01-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/workshop/external/ff-save.c: #include <stdlib.h>
