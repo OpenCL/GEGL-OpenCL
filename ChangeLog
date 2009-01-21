@@ -1,3 +1,7 @@
+2009-01-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/workshop/external/ff-save.c: #include <stdlib.h>
+
 2009-01-20  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Adjust to babl API adjustment by doing
