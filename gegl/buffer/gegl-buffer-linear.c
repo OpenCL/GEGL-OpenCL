@@ -77,7 +77,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
                        */
     rowstride = extent->width;
   else
-    rowstride = rowstride / format->format.bytes_per_pixel;
+    rowstride = rowstride / babl_format_get_bytes_per_pixel (format);
     buffer = gegl_buffer_linear_new2 (extent, format, rowstride);
 
   {
@@ -90,7 +90,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     tile->y = 0;
     tile->z = 0;
     tile->data       = (gpointer)data;
-    tile->size       = format->format.bytes_per_pixel * rowstride * extent->height;
+    tile->size       = babl_format_get_bytes_per_pixel (format) * rowstride * extent->height;
     tile->next_shared = tile;
     tile->prev_shared = tile;
 
@@ -155,7 +155,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
 
       g_object_set_data (G_OBJECT (buffer), "linear-tile", tile);
 
-      if(rowstride)*rowstride = buffer->tile_storage->tile_width * format->format.bytes_per_pixel;
+      if(rowstride)*rowstride = buffer->tile_storage->tile_width * babl_format_get_bytes_per_pixel (format);
       return (gpointer)gegl_tile_get_data (tile);
     }
   /* first check if there is a linear buffer, share the existing buffer if one
@@ -194,7 +194,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     info->extent = buffer->extent;
     info->format = format;
 
-    rs = info->extent.width * format->format.bytes_per_pixel;
+    rs = info->extent.width * babl_format_get_bytes_per_pixel (format);
     if(rowstride)*rowstride = rs;
 
     info->buf = gegl_malloc (rs * info->extent.height);

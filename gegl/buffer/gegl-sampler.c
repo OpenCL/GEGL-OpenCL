@@ -215,7 +215,7 @@ gegl_sampler_get_ptr (GeglSampler *sampler,
    gint    bpp;
    gint    sof;
 
-   bpp = sampler->interpolate_format->format.bytes_per_pixel;
+   bpp = babl_format_get_bytes_per_pixel (sampler->interpolate_format);
 
    if (sampler->sampler_buffer == NULL
        ||
@@ -284,7 +284,7 @@ gegl_sampler_get_from_buffer (GeglSampler *sampler,
    gint    bpp;
    gint    sof;
 
-   bpp = sampler->interpolate_format->format.bytes_per_pixel;
+   bpp = babl_format_get_bytes_per_pixel (sampler->interpolate_format);
 
    if (sampler->sampler_buffer == NULL
        ||

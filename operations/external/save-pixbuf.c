@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+
+#include <babl/babl.h>
+
 #include <glib/gi18n-lib.h>
 
 
@@ -44,21 +47,16 @@ process (GeglOperation       *operation,
     {
       GdkPixbuf       **pixbuf = o->pixbuf;
       const Babl       *babl;
-      const BablFormat *format;
+      const Babl       *format;
       guchar           *temp;
       GeglRectangle *rect = gegl_operation_source_get_bounding_box (operation, "input");
       gchar *name;
       gboolean has_alpha;
       gint bps;
-      guint i;
 
-      g_object_get (input, "format", &babl, NULL);
-      format = (BablFormat*) babl;
+      g_object_get (input, "format", &format, NULL);
 
-      has_alpha = FALSE;
-      for (i = 0; i < format->components; i++) {
-    has_alpha = has_alpha || format->component[i]->alpha != 0;
-      }
+      has_alpha = babl_format_has_alpha (format);
 
       /* pixbuf from data only support 8bit bps */
       bps = 8;

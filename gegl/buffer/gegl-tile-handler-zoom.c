@@ -50,7 +50,7 @@ static inline void set_blank (GeglTile *dst_tile,
                               gint      j)
 {
   guchar *dst_data  = gegl_tile_get_data (dst_tile);
-  gint    bpp       = format->format.bytes_per_pixel;
+  gint    bpp       = babl_format_get_bytes_per_pixel (format);
   gint    rowstride = width * bpp;
   gint    scanline;
 
@@ -76,7 +76,7 @@ static inline void set_half_nearest (GeglTile *dst_tile,
 {
   guchar *dst_data = gegl_tile_get_data (dst_tile);
   guchar *src_data = gegl_tile_get_data (src_tile);
-  gint    bpp      = format->format.bytes_per_pixel;
+  gint    bpp      = babl_format_get_bytes_per_pixel (format);
   gint    x, y;
 
   for (y = 0; y < height / 2; y++)
@@ -177,17 +177,17 @@ static void inline set_half (GeglTile * dst_tile,
 {
   guchar *dst_data   = gegl_tile_get_data (dst_tile);
   guchar *src_data   = gegl_tile_get_data (src_tile);
-  gint    components = format->format.components;
-  gint    bpp        = format->format.bytes_per_pixel;
+  gint    components = babl_format_get_num_of_components (format);
+  gint    bpp        = babl_format_get_bytes_per_pixel (format);
 
   if (i) dst_data += bpp * width / 2;
   if (j) dst_data += bpp * width * height / 2;
 
-  if (format->format.type[0] == (BablType *) babl_type ("float"))
+  if (babl_format_get_type (format, 0) == babl_type ("float"))
     {
       downscale_float (components, width, height, width * bpp, src_data, dst_data);
     }
-  else if (format->format.type[0] == (BablType *) babl_type ("u8"))
+  else if (babl_format_get_type (format, 0) == babl_type ("u8"))
     {
       downscale_u8 (components, width, height, width * bpp, src_data, dst_data);
     }

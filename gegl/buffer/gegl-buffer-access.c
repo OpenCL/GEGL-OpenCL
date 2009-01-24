@@ -46,16 +46,6 @@
 GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 #endif
 
-#ifdef BABL
-#undef BABL
-#endif
-
-#define BABL(o)     ((Babl *) (o))
-
-#ifdef FMTPXS
-#undef FMTPXS
-#endif
-#define FMTPXS(fmt)    (BABL (fmt)->format.bytes_per_pixel)
 
 #if 0
 static inline void
@@ -68,7 +58,7 @@ pset (GeglBuffer *buffer,
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height  = buffer->tile_storage->tile_width;
   gint  px_size     = gegl_buffer_px_size (buffer);
-  gint  bpx_size    = FMTPXS (format);
+  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
   Babl *fish        = NULL;
 
   gint  abyss_x_total  = buffer->abyss.x + buffer->abyss.width;
@@ -134,7 +124,7 @@ pset (GeglBuffer *buffer,
   guchar *buf         = data;
   gint    tile_width  = buffer->tile_storage->tile_width;
   gint    tile_height = buffer->tile_storage->tile_height;
-  gint    bpx_size    = FMTPXS (format);
+  gint    bpx_size    = babl_format_get_bytes_per_pixel (format);
   Babl   *fish        = NULL;
 
   gint  buffer_shift_x = buffer->shift_x;
@@ -143,7 +133,7 @@ pset (GeglBuffer *buffer,
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
-  gint  px_size        = FMTPXS (buffer->format);
+  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
 
   if (format != buffer->format)
     {
@@ -218,7 +208,7 @@ pget (GeglBuffer *buffer,
   guchar *buf         = data;
   gint    tile_width  = buffer->tile_storage->tile_width;
   gint    tile_height = buffer->tile_storage->tile_height;
-  gint    bpx_size    = FMTPXS (format);
+  gint    bpx_size    = babl_format_get_bytes_per_pixel (format);
   Babl   *fish        = NULL;
 
   gint  buffer_shift_x = buffer->shift_x;
@@ -227,7 +217,7 @@ pget (GeglBuffer *buffer,
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
-  gint  px_size        = FMTPXS (buffer->format);
+  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
 
   if (format != buffer->format)
     {
@@ -330,8 +320,8 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
 
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = FMTPXS (buffer->format);
-  gint  bpx_size    = FMTPXS (format);
+  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->format);
+  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
   gint  tile_stride = px_size * tile_width;
   gint  buf_stride;
   gint  bufy = 0;
@@ -994,7 +984,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
       gint          level       = 0;
       gint          buf_width   = rect->width / scale;
       gint          buf_height  = rect->height / scale;
-      gint          bpp         = BABL (format)->format.bytes_per_pixel;
+      gint          bpp         = babl_format_get_bytes_per_pixel (format);
       GeglRectangle sample_rect = { floor(rect->x/scale),
                                     floor(rect->y/scale),
                                     buf_width,
@@ -1030,7 +1020,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
    * no time to make a fast implementation
    */
 
-      if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")
+      if (babl_format_get_type (format, 0) == babl_type ("u8")
           && !(level == 0 && scale > 1.99))
         { /* do box-filter resampling if we're 8bit (which projections are) */
 
@@ -1201,7 +1191,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
       dst_rect->height == 0)
     return;
 
-  pxsize = dst->format->format.bytes_per_pixel;
+  pxsize = babl_format_get_bytes_per_pixel (dst->format);
 
   /* FIXME: this can be even further optimized by special casing it so
    * that fully voided tiles are dropped.

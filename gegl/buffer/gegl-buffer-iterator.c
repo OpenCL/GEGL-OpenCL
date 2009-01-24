@@ -191,7 +191,7 @@ gulp:
          i->data = gegl_tile_get_data (i->tile);
 
          {
-         gint bpp = i->buffer->format->format.bytes_per_pixel;
+         gint bpp = babl_format_get_bytes_per_pixel (i->buffer->format);
          i->rowstride = bpp * tile_width;
          i->sub_data = (guchar*)(i->data) + bpp * (i->subrect.y * tile_width + i->subrect.x);
          }
@@ -356,7 +356,7 @@ static void ensure_buf (GeglBufferIterators *i, gint no)
    * would probably improve performance
    */
   if (i->buf[no]==NULL)
-    i->buf[no] = iterator_buf_pool_get (i->format[no]->format.bytes_per_pixel *
+    i->buf[no] = iterator_buf_pool_get (babl_format_get_bytes_per_pixel (i->format[no]) *
                                         i->i[0].max_size);
 }
 

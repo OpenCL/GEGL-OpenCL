@@ -204,7 +204,7 @@ gegl_buffer_header_init (GeglBufferHeader *header,
   {
     gchar buf[64];
     g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n%ix%i\n\n\n\n\n\n\n\n\n", 
-          format->instance.name, 0,
+          babl_get_name (format), 0,
           header->tile_width,
           header->tile_height,
           header->bytes_per_pixel,

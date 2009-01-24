@@ -89,14 +89,11 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
   {
     const Babl *babl; /*= gegl_buffer->format;*/
-    BablType   **type;
 
     g_object_get (gegl_buffer, "format", &babl, NULL);
-    type = babl->format.type;
 
-    for (i=0; i<babl->format.components; i++)
-      if ((*type)->bits > 8)
-        bit_depth = 16;
+    if (babl_format_get_type (babl, 0) != babl_type ("u8"))
+      bit_depth = 16;
 
     if (bd == 16)
       bit_depth = 16;

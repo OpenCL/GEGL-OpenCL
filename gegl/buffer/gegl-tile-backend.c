@@ -114,7 +114,7 @@ constructor (GType                  type,
   g_assert (backend->tile_width > 0 && backend->tile_height > 0);
   g_assert (backend->format);
 
-  backend->px_size = backend->format->format.bytes_per_pixel;
+  backend->px_size = babl_format_get_bytes_per_pixel (backend->format);
   backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
 
   return object;

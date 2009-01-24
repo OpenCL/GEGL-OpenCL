@@ -1,3 +1,22 @@
+2009-01-24  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Adapt to the new babl API, use babl_format_get_bytes_per_pixel(),
+	babl_get_name(), babl_format_get_num_of_components() and
+	babl_format_get_type().
+
+	* gegl/buffer/gegl-buffer-access.c
+	* gegl/buffer/gegl-buffer-iterator.c
+	* gegl/buffer/gegl-buffer-linear.c
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-buffer-save.c
+	* gegl/buffer/gegl-sampler.c
+	* gegl/buffer/gegl-tile-backend-file.c
+	* gegl/buffer/gegl-tile-backend.c
+	* gegl/buffer/gegl-tile-handler-zoom.c
+	* operations/core/convert-format.c
+	* operations/external/png-save.c
+	* operations/external/save-pixbuf.c
+
 2009-01-21  Sven Neumann  <sven@gimp.org>
 
 	* examples/2geglbuffer.c (main): no need to call gtk_init() here.

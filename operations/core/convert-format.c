@@ -56,7 +56,7 @@ process (GeglOperation       *op,
          glong                samples,
          const GeglRectangle *roi)
 {
-	int bpp = gegl_operation_get_format(op, "output")->format.bytes_per_pixel;
+	int bpp = babl_format_get_bytes_per_pixel (gegl_operation_get_format (op, "output"));
 	memcpy(out_buf, in_buf, samples * bpp);
   return TRUE;
 }

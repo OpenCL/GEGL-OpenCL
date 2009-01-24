@@ -372,7 +372,7 @@ gegl_buffer_load (const gchar *path)
 
   /* sanity check, should probably report error condition and return safely instead
   */
-  g_assert (info->format->format.bytes_per_pixel == info->header.bytes_per_pixel);
+  g_assert (babl_format_get_bytes_per_pixel (info->format) == info->header.bytes_per_pixel);
 
   info->tiles = gegl_buffer_read_index (info->i, &info->offset);
 
