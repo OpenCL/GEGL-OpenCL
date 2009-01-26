@@ -1,3 +1,7 @@
+2009-01-26  Sven Neumann  <sven@gimp.org>
+
+	* gegl/buffer/gegl-tile-handler-zoom.c: follow API change in babl.
+
 2009-01-24  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Adapt to the new babl API, use babl_format_get_bytes_per_pixel(),

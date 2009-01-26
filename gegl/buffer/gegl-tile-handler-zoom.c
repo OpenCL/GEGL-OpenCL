@@ -177,7 +177,7 @@ static void inline set_half (GeglTile * dst_tile,
 {
   guchar *dst_data   = gegl_tile_get_data (dst_tile);
   guchar *src_data   = gegl_tile_get_data (src_tile);
-  gint    components = babl_format_get_num_of_components (format);
+  gint    components = babl_format_get_n_components (format);
   gint    bpp        = babl_format_get_bytes_per_pixel (format);
 
   if (i) dst_data += bpp * width / 2;
