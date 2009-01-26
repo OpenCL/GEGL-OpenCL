@@ -1,3 +1,9 @@
+2009-01-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/operation/gegl-operation-context.c:
+	(gegl_operation_context_set_object): improved handling of paramspec
+	not found and made warning clearer.
+
 2009-01-26  Sven Neumann  <sven@gimp.org>
 
 	* gegl/buffer/gegl-tile-handler-zoom.c: follow API change in babl.

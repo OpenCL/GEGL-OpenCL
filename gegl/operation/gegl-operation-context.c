@@ -262,9 +262,10 @@ gegl_operation_context_set_object (GeglOperationContext *context,
   }
   else
     {
-      g_warning ("eeek! %s\n", padname);
+      g_warning ("%s: No paramspec found for pad we %s'%s'\n", G_STRFUNC, data?"we have data":"", padname);
       if (data)
         g_object_unref (data); /* are we stealing the initial reference? */
+      return;
     }
   g_value_unset (&value);
   g_object_unref (data); /* are we stealing the initial reference? */
