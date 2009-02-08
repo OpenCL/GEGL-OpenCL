@@ -52,6 +52,10 @@ add_operations (GHashTable *hash,
         {
           g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer) types[no]);
         }
+      if (operation_class->compat_name)
+        {
+          g_hash_table_insert (hash, g_strdup (operation_class->compat_name), (gpointer) types[no]);
+        }
       add_operations (hash, types[no]);
     }
   g_free (types);

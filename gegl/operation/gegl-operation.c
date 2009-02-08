@@ -55,6 +55,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
                                              * operation lookup by
                                              * name
                                              */
+  klass->compat_name               = NULL;
   klass->description               = NULL;
   klass->categories                = NULL;
   klass->attach                    = attach;

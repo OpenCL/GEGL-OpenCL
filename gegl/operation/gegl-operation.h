@@ -74,6 +74,8 @@ struct _GeglOperationClass
 
   const gchar    *name;        /* name(string) used to create/indetify
                                     this type of operation in GEGL*/
+  const gchar    *compat_name; /* name used for backwards compatibility
+                                    reasons*/
   const gchar    *description; /* textual description of the operation */
   const gchar    *categories;  /* a colon seperated list of categories */
 
