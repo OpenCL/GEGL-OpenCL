@@ -25,7 +25,7 @@ main (gint    argc,
                               "path", argv[1],
                               NULL);
   save_file = gegl_node_new_child (gegl,
-                                     "operation", "gegl:save-buffer",
+                                     "operation", "gegl:buffer-sink",
                                      "buffer", &buffer,
                                      NULL);
 

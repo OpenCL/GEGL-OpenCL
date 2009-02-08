@@ -28,7 +28,7 @@ gegl_chant_pointer (buffer, _("Buffer location"),
 #else
 
 #define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "save-buffer.c"
+#define GEGL_CHANT_C_FILE       "buffer-sink.c"
 
 #include "gegl-chant.h"
 
@@ -62,7 +62,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:save-buffer";
+  operation_class->name        = "gegl:buffer-sink";
   operation_class->categories  = "programming:output";
   operation_class->description = _("A GEGL buffer destination surface.");
 }

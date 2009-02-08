@@ -146,7 +146,7 @@ process (GeglOperation       *operation,
 
       /* FIXME
       GeglNode *buffer_save;
-      buffer_save = gegl_node_new_child (gegl, "operation", "gegl:save-buffer", "buffer", o->buf, NULL);
+      buffer_save = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", o->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 
       gegl_node_process (buffer_save);
