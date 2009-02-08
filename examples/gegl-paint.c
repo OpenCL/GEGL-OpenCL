@@ -153,7 +153,7 @@ main (gint    argc,
 
   gegl = gegl_node_new ();
   {
-    GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "gegl:load-buffer", "buffer", buffer, NULL);
+    GeglNode *loadbuf = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
     out  = gegl_node_new_child (gegl, "operation", "gegl:nop", NULL);
 
     gegl_node_link_many (loadbuf, out, NULL);
