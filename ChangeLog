@@ -1,3 +1,39 @@
+2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/buffer-sink.c: Add gegl:save-buffer as a
+	compatibility name for gegl:buffer-sink.
+
+2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Rename gegl:save-buffer to gegl:buffer-sink
+
+	* examples/2geglbuffer.c
+	* operations/common/buffer-sink.c
+	* operations/common/introspect.c
+	* operations/common/save-buffer.c
+
+2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/buffer-source.c: Add gegl:load-buffer as a
+	compatibility name for gegl:buffer-source.
+
+2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Rename gegl:load-buffer to gegl:buffer-source
+
+	* examples/gegl-paint.c
+	* operations/common/buffer-source.c
+	* operations/common/load-buffer.c
+
+2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Add a new class field GeglOperation::compat_name that can be used to
+	specify alternative names for ops, meant to be used for backwards
+	compatibility.
+
+	* gegl/operation/gegl-operation.[ch]
+	* gegl/operation/gegl-operations.c
+
 2009-01-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/operation/gegl-operation-context.c:
