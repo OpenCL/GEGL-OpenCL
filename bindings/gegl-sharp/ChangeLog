@@ -1,5 +1,12 @@
 2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
 
+	Remove and ignore some build related files that shouldn't be in the tree.
+
+	* .gitignore: Added.
+	* aclocal.m4: Removed.
+
+2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
+
 	* gegl/metadata: Change ParamSpecPath to ParamSpecFilePath in order to get
 	it building again.
 
