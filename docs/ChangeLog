@@ -1,3 +1,8 @@
+2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
+
+	* gegl-sharp/index.html: Add a note about having to build GEGL first, add
+	myself as a contributor.
+
 2009-01-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.txt.in: removed stray http://
