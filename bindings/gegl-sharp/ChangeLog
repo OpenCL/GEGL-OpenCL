@@ -1,3 +1,8 @@
+2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
+
+	* gegl/metadata: Change ParamSpecPath to ParamSpecFilePath in order to get
+	it building again.
+
 2008-08-12  Ruben Vermeersch  <ruben@savanne.be>
 
 	* gegl/gegl-sharp.pc.in: Removed gegl from the requirements, as it caused

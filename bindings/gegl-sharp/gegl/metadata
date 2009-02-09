@@ -11,7 +11,7 @@
     <attr path="/api/namespace/object[@name='ParamSpecInt32']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='ParamSpecInt8']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='ParamSpecMultiline']" name="hidden">1</attr>
-    <attr path="/api/namespace/object[@name='ParamSpecPath']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecFilePath']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='ParamSpecString']" name="hidden">1</attr>
 
     <attr path="/api/namespace/class[@name='List']" name="hidden">1</attr>
