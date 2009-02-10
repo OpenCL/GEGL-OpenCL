@@ -1,3 +1,39 @@
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/buffer/gegl-buffer.c: Namespace static functions in
+	gegl-buffer.c
+
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Namespace GeglVisitor::visit_node() vfuncs
+
+	* gegl/process/gegl-cr-visitor.c
+	* gegl/process/gegl-debug-rect-visitor.c
+	* gegl/process/gegl-eval-visitor.c
+	* gegl/process/gegl-finish-visitor.c
+	* gegl/process/gegl-have-visitor.c
+	* gegl/process/gegl-prepare-visitor.c
+
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: Namespace static functions in
+	gegl-node.c
+
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-eval-mgr.c: change_notification ->
+	gegl_eval_mgr_change_notification
+
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/generated/svg-12-porter-duff.rb: Remove unused
+	variable 'result'
+
+2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/buffer/gegl-sampler-linear.c: Fix compiler warning about
+	set_property() type
+
 2009-02-08  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/common/buffer-sink.c: Add gegl:save-buffer as a
