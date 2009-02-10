@@ -76,10 +76,10 @@ static void gegl_sampler_linear_get (      GeglSampler* restrict self,
                                      const gdouble               y,
                                            void*        restrict output);
 
-static void set_property (GObject*    gobject,
-                          guint       property_id,
-                          GValue*     value,
-                          GParamSpec* pspec);
+static void set_property (GObject*      gobject,
+                          guint         property_id,
+                          const GValue* value,
+                          GParamSpec*   pspec);
 
 static void get_property (GObject*    gobject,
                           guint       property_id,
@@ -231,10 +231,10 @@ gegl_sampler_linear_get (      GeglSampler* restrict self,
 }
 
 static void
-set_property (GObject*    gobject,
-              guint       property_id,
-              GValue*     value,
-              GParamSpec* pspec)
+set_property (GObject*      gobject,
+              guint         property_id,
+              const GValue* value,
+              GParamSpec*   pspec)
 {
   G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
 }
