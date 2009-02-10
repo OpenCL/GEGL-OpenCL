@@ -96,9 +96,9 @@ gegl_eval_mgr_finalize (GObject *self_object)
 }
 
 static gboolean
-change_notification (GObject    *gobject,
-         gpointer    foo,
-         gpointer    user_data)
+gegl_eval_mgr_change_notification (GObject    *gobject,
+                                   gpointer    foo,
+                                   gpointer    user_data)
 {
   GeglEvalMgr *mgr = GEGL_EVAL_MGR (user_data);
   if (mgr->state)
@@ -235,8 +235,8 @@ GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
     self->pad_name = g_strdup (pad_name);
   else
     self->pad_name = g_strdup ("output");
-  /*g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (change_notification), self);*/
-  g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (change_notification), self);
-  g_signal_connect (G_OBJECT (self->node), "notify", G_CALLBACK (change_notification), self);
+  /*g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (gegl_eval_mgr_change_notification), self);*/
+  g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (gegl_eval_mgr_change_notification), self);
+  g_signal_connect (G_OBJECT (self->node), "notify", G_CALLBACK (gegl_eval_mgr_change_notification), self);
   return self;
 }
