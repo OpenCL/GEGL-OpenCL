@@ -317,8 +317,7 @@ process_simd (GeglOperation       *op,
 
 static GeglRectangle get_bounding_box (GeglOperation *self)
 {
-  GeglRectangle  result   = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect  = gegl_operation_source_get_bounding_box (self, \"input\");
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (self, \"input\");
   return *in_rect;
 }
 
