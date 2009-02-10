@@ -33,7 +33,7 @@
 
 
 static void gegl_cr_visitor_class_init (GeglCRVisitorClass *klass);
-static void visit_node                 (GeglVisitor        *self,
+static void gegl_cr_visitor_visit_node (GeglVisitor        *self,
                                         GeglNode           *node);
 
 
@@ -45,7 +45,7 @@ gegl_cr_visitor_class_init (GeglCRVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_node = visit_node;
+  visitor_class->visit_node = gegl_cr_visitor_visit_node;
 }
 
 static void
@@ -54,8 +54,8 @@ gegl_cr_visitor_init (GeglCRVisitor *self)
 }
 
 static void
-visit_node (GeglVisitor *self,
-            GeglNode    *node)
+gegl_cr_visitor_visit_node (GeglVisitor *self,
+                            GeglNode    *node)
 {
   GeglOperationContext *context = gegl_node_get_context (node, self->context_id);
 

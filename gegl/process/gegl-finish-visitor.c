@@ -30,8 +30,8 @@
 
 
 static void gegl_finish_visitor_class_init (GeglFinishVisitorClass *klass);
-static void visit_node (GeglVisitor *self,
-                        GeglNode    *node);
+static void gegl_finish_visitor_visit_node (GeglVisitor            *self,
+                                            GeglNode               *node);
 
 
 G_DEFINE_TYPE (GeglFinishVisitor, gegl_finish_visitor, GEGL_TYPE_VISITOR)
@@ -42,7 +42,7 @@ gegl_finish_visitor_class_init (GeglFinishVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_node = visit_node;
+  visitor_class->visit_node = gegl_finish_visitor_visit_node;
 }
 
 static void
@@ -51,8 +51,8 @@ gegl_finish_visitor_init (GeglFinishVisitor *self)
 }
 
 static void
-visit_node (GeglVisitor *self,
-            GeglNode    *node)
+gegl_finish_visitor_visit_node (GeglVisitor *self,
+                                GeglNode    *node)
 {
   GEGL_VISITOR_CLASS (gegl_finish_visitor_parent_class)->visit_node (self, node);
 

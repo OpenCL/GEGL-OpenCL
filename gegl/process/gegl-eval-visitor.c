@@ -35,8 +35,8 @@
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
-static void visit_pad (GeglVisitor *self,
-                       GeglPad     *pad);
+static void gegl_eval_visitor_visit_pad  (GeglVisitor *self,
+                                          GeglPad     *pad);
 
 
 G_DEFINE_TYPE (GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
@@ -47,7 +47,7 @@ gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_pad = visit_pad;
+  visitor_class->visit_pad = gegl_eval_visitor_visit_pad;
 }
 
 static void
@@ -59,8 +59,8 @@ extern long babl_total_usecs;
 
 /* this is the visitor that does the real computations for GEGL */
 static void
-visit_pad (GeglVisitor *self,
-           GeglPad     *pad)
+gegl_eval_visitor_visit_pad (GeglVisitor *self,
+                             GeglPad     *pad)
 {
   GeglNode        *node       = gegl_pad_get_node (pad);
   gpointer         context_id = self->context_id;

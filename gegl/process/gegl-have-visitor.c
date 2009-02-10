@@ -31,8 +31,8 @@
 #include "operation/gegl-operation.h"
 
 static void gegl_have_visitor_class_init (GeglHaveVisitorClass *klass);
-static void visit_node (GeglVisitor *self,
-                        GeglNode    *node);
+static void gegl_have_visitor_visit_node (GeglVisitor          *self,
+                                          GeglNode             *node);
 
 
 G_DEFINE_TYPE (GeglHaveVisitor, gegl_have_visitor, GEGL_TYPE_VISITOR)
@@ -43,7 +43,7 @@ gegl_have_visitor_class_init (GeglHaveVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_node = visit_node;
+  visitor_class->visit_node = gegl_have_visitor_visit_node;
 }
 
 static void
@@ -52,8 +52,8 @@ gegl_have_visitor_init (GeglHaveVisitor *self)
 }
 
 static void
-visit_node (GeglVisitor *self,
-            GeglNode    *node)
+gegl_have_visitor_visit_node (GeglVisitor *self,
+                              GeglNode    *node)
 {
   GeglRectangle  rect;
   GeglOperation *operation;

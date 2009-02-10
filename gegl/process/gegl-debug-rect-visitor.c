@@ -34,8 +34,8 @@
 
 
 static void gegl_debug_rect_visitor_class_init (GeglDebugRectVisitorClass *klass);
-static void visit_node (GeglVisitor *self,
-                        GeglNode    *node);
+static void gegl_debug_rect_visitor_visit_node (GeglVisitor               *self,
+                                                GeglNode                  *node);
 
 
 G_DEFINE_TYPE (GeglDebugRectVisitor, gegl_debug_rect_visitor, GEGL_TYPE_VISITOR)
@@ -46,7 +46,7 @@ gegl_debug_rect_visitor_class_init (GeglDebugRectVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_node = visit_node;
+  visitor_class->visit_node = gegl_debug_rect_visitor_visit_node;
 }
 
 static void
@@ -55,8 +55,8 @@ gegl_debug_rect_visitor_init (GeglDebugRectVisitor *self)
 }
 
 static void
-visit_node (GeglVisitor *self,
-            GeglNode    *node)
+gegl_debug_rect_visitor_visit_node (GeglVisitor *self,
+                                    GeglNode    *node)
 {
   GeglOperationContext *context = gegl_node_get_context (node, self->context_id);
 
