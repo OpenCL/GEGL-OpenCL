@@ -101,35 +101,37 @@ enum {
   LAST_SIGNAL
 };
 
+static GeglBuffer *gegl_buffer_new_from_format     (const void *babl_format,
+                                                    gint        x,
+                                                    gint        y,
+                                                    gint        width,
+                                                    gint        height,
+                                                    gint        tile_width,
+                                                    gint        tile_height,
+                                                    gboolean    use_ram);
+static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer);
+
+
 guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
-static GeglBuffer * gegl_buffer_new_from_format (const void *babl_format,
-                                                 gint        x,
-                                                 gint        y,
-                                                 gint        width,
-                                                 gint        height,
-                                                 gint        tile_width,
-                                                 gint        tile_height,
-                                                 gboolean    use_ram);
 
-static inline gint needed_tiles (gint w,
-                                 gint stride)
+static inline gint gegl_buffer_needed_tiles (gint w,
+                                             gint stride)
 {
   return ((w - 1) / stride) + 1;
 }
 
-static inline gint needed_width (gint w,
-                                 gint stride)
+static inline gint gegl_buffer_needed_width (gint w,
+                                             gint stride)
 {
-  return needed_tiles (w, stride) * stride;
+  return gegl_buffer_needed_tiles (w, stride) * stride;
 }
 
-static const void *int_gegl_buffer_get_format (GeglBuffer *buffer);
 static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_buffer_get_property (GObject    *gobject,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
 {
   GeglBuffer *buffer = GEGL_BUFFER (gobject);
 
@@ -178,7 +180,7 @@ get_property (GObject    *gobject,
          */
 
         if (buffer->format == NULL)
-          buffer->format = int_gegl_buffer_get_format (buffer);
+          buffer->format = gegl_buffer_internal_get_format (buffer);
 
         g_value_set_pointer (value, (void*)buffer->format); /* Eeeek? */
         break;
@@ -206,10 +208,10 @@ get_property (GObject    *gobject,
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_buffer_set_property (GObject      *gobject,
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
 {
   GeglBuffer *buffer = GEGL_BUFFER (gobject);
 
@@ -396,9 +398,9 @@ gegl_buffer_tile_storage (GeglBuffer *buffer)
 
 void babl_backtrack (void);
 
-static void storage_changed (GeglTileStorage     *storage,
-                             const GeglRectangle *rect,
-                             gpointer             userdata)
+static void gegl_buffer_storage_changed (GeglTileStorage     *storage,
+                                         const GeglRectangle *rect,
+                                         gpointer             userdata)
 {
   g_signal_emit_by_name (GEGL_BUFFER (userdata), "changed", rect, NULL);
 }
@@ -500,7 +502,7 @@ gegl_buffer_constructor (GType                  type,
           g_object_unref (source);
 
           g_signal_connect (storage, "changed",
-                            G_CALLBACK(storage_changed), buffer);
+                            G_CALLBACK(gegl_buffer_storage_changed), buffer);
 
           g_assert (source);
           backend = gegl_buffer_backend (GEGL_BUFFER (source));
@@ -653,10 +655,10 @@ gegl_buffer_constructor (GType                  type,
 }
 
 static GeglTile *
-get_tile (GeglTileSource *source,
-          gint        x,
-          gint        y,
-          gint        z)
+gegl_buffer_get_tile (GeglTileSource *source,
+                      gint        x,
+                      gint        y,
+                      gint        z)
 {
   GeglTileHandler *handler = GEGL_HANDLER (source);
   GeglTile    *tile   = NULL;
@@ -710,7 +712,7 @@ gegl_buffer_command (GeglTileSource *source,
   switch (command)
     {
       case GEGL_TILE_GET:
-        return get_tile (source, x, y, z);
+        return gegl_buffer_get_tile (source, x, y, z);
       default:
         return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
     }
@@ -726,8 +728,8 @@ gegl_buffer_class_init (GeglBufferClass *class)
   gobject_class->dispose      = gegl_buffer_dispose;
   gobject_class->finalize     = gegl_buffer_finalize;
   gobject_class->constructor  = gegl_buffer_constructor;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
+  gobject_class->set_property = gegl_buffer_set_property;
+  gobject_class->get_property = gegl_buffer_get_property;
   tile_source_class->command = gegl_buffer_command;
 
   g_object_class_install_property (gobject_class, PROP_PX_SIZE,
@@ -1029,7 +1031,7 @@ gegl_buffer_new_from_format (const void *babl_format,
 }
 
 
-static const void *int_gegl_buffer_get_format (GeglBuffer *buffer)
+static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
   if (buffer->format != NULL)
