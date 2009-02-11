@@ -1629,11 +1629,7 @@ gegl_node_get_context (GeglNode *self,
   priv = GEGL_NODE_GET_PRIVATE (self);
 
   context = g_hash_table_lookup (priv->contexts, context_id);
-  if (!context)
-    {
-      g_warning ("didn't find %p", context_id);
-      babl_backtrack ();
-    }
+
   return context;
 }
 
