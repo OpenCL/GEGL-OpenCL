@@ -1,3 +1,15 @@
+2009-02-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-eval-mgr.c: In the
+	gegl_eval_mgr_change_notification() callback, set
+	GeglOperationContext::cached to FALSE since the buffers needs to
+	be refreshed.
+
+2009-02-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: Don't panic if gegl_node_get_context()
+	returns NULL
+
 2009-02-10  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/buffer/gegl-buffer.c: Namespace static functions in
