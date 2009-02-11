@@ -101,10 +101,24 @@ gegl_eval_mgr_change_notification (GObject    *gobject,
                                    gpointer    user_data)
 {
   GeglEvalMgr *mgr = GEGL_EVAL_MGR (user_data);
+
+  if (mgr->node != NULL)
+    {
+      gpointer              context_id = mgr;
+      GeglOperationContext *context    = gegl_node_get_context (mgr->node,
+                                                                context_id);
+      if (context != NULL)
+        {
+          /* If the node is changed we can't use the cache any longer */
+          context->cached = FALSE;
+        }
+    }
+
   if (mgr->state)
     {
       mgr->state = 1;
     }
+
   return FALSE;
 }
 
