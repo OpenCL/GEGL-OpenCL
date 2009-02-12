@@ -24,6 +24,8 @@
 
 gegl_chant_pointer (buffer, _("Buffer location"),
                     _("The location where to store the output GeglBuffer"))
+gegl_chant_pointer (format, _("babl format"),
+                    _("The babl format of the output GeglBuffer, NULL to use input buffer format"))
 
 #else
 
@@ -39,11 +41,23 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->buffer)
+  if (o->buffer != NULL &&
+      (o->format == NULL || o->format == gegl_buffer_get_format (input)))
     {
       GeglBuffer **output = o->buffer;
 
       *output = gegl_buffer_create_sub_buffer (input, result);
+    }
+  else if (o->buffer != NULL &&
+           o->format != NULL)
+    {
+      GeglBuffer **output = o->buffer;
+
+      *output = gegl_buffer_new (gegl_buffer_get_extent (input),
+                                 o->format);
+
+      gegl_buffer_copy (input, NULL,
+                        *output, NULL);
     }
 
   return TRUE;
