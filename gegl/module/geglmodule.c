@@ -295,7 +295,7 @@ gegl_module_query_module (GeglModule *module)
     {
       gegl_module_set_last_error (module,
                                   info ?
-                                  "module ABI version does not match" :
+                                  "module ABI version does not match op not loaded, to get rid of this warning remove (clean/uninstall) .so files in GEGLs search path." :
                                   "gegl_module_query() returned NULL");
 
       g_message (_("Module '%s' load error: %s"),
