@@ -1,5 +1,29 @@
 2009-02-14  Ruben Vermeersch  <ruben@savanne.be>
 
+	Update monodocs.
+
+	* docs/en/Gegl.xml: Removed.
+	* docs/en/Gegl/AddFlattenerFunc.xml: Added.
+	* docs/en/Gegl/BlitFlags.xml:
+	* docs/en/Gegl/ChangedArgs.xml: Added.
+	* docs/en/Gegl/ChangedHandler.xml: Added.
+	* docs/en/Gegl/Color.xml:
+	* docs/en/Gegl/Curve.xml:
+	* docs/en/Gegl/Global.xml:
+	* docs/en/Gegl/Node.xml:
+	* docs/en/Gegl/PadType.xml: Added.
+	* docs/en/Gegl/Param.xml: Added.
+	* docs/en/Gegl/Path.xml: Added.
+	* docs/en/Gegl/PathItem.xml: Added.
+	* docs/en/Gegl/PathList.xml: Added.
+	* docs/en/Gegl/Point.xml: Added.
+	* docs/en/Gegl/Processor.xml:
+	* docs/en/Gegl/Rectangle.xml:
+	* docs/en/index.xml:
+	* docs/en/ns-Gegl.xml: Added.
+
+2009-02-14  Ruben Vermeersch  <ruben@savanne.be>
+
 	* gegl/custom/Global.custom: Add a private constructor to the Gegl.Global
 	class, shouldn't be instantiated.
 
