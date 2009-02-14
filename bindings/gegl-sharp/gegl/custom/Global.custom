@@ -1,3 +1,7 @@
+        private Global() {
+
+        }
+
         [DllImport("libgegl-1.0.dll")]
         static extern void gegl_init(int argc, IntPtr argv);
 

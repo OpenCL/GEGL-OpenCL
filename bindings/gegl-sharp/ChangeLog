@@ -1,3 +1,8 @@
+2009-02-14  Ruben Vermeersch  <ruben@savanne.be>
+
+	* gegl/custom/Global.custom: Add a private constructor to the Gegl.Global
+	class, shouldn't be instantiated.
+
 2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
 
 	Remove and ignore some build related files that shouldn't be in the tree.
