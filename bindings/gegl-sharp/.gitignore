@@ -35,3 +35,6 @@ Makefile.in
 /stamp-h
 /stamp-h1
 /stamp-h.in
+
+/docs/gegl-sharp-docs.tree
+/docs/gegl-sharp-docs.zip

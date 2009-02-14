@@ -1,5 +1,9 @@
 2009-02-14  Ruben Vermeersch  <ruben@savanne.be>
 
+	* .gitignore: Ignore generated documentation files.
+
+2009-02-14  Ruben Vermeersch  <ruben@savanne.be>
+
 	Update monodocs.
 
 	* docs/en/Gegl.xml: Removed.
