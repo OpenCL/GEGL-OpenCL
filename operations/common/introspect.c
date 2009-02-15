@@ -36,31 +36,6 @@ gegl_chant_pointer(buf, _("Buffer"), _("Buffer"))
 #include <stdio.h>
 #include <string.h>
 
-
-enum
-{
-  PROP_INPUT = PROP_LAST + 1,
-  PROP_AUX,
-  PROP_OUTPUT,
-};
-
-
-static void
-introspect_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
-                         GParamSpec *pspec)
-{
-}
-
-static void
-introspect_set_property (GObject      *object,
-                         guint         prop_id,
-                         const GValue *value,
-                         GParamSpec   *pspec)
-{
-}
-
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
@@ -75,35 +50,6 @@ get_bounding_box (GeglOperation *operation)
       result = *gegl_buffer_get_extent (buffer);
     }
   return result;
-}
-
-static void
-attach (GeglOperation *operation)
-{
-  GObjectClass *object_class = G_OBJECT_GET_CLASS (operation);
-
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "aux"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-}
-
-static void
-prepare (GeglOperation *operation)
-{
-  GeglNode   *node = gegl_operation_get_source_node (operation, "input");
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
-
-  if (o->node)
-    g_object_unref (o->node);
-
-  g_object_ref (node);
-  o->node = G_OBJECT (node);
 }
 
 static gboolean
@@ -136,6 +82,7 @@ process (GeglOperation       *operation,
     /* FIXME: copy behavior from magick-load to fix this op */
 
     {
+      GeglNode *buffer_save;
       GeglNode *gegl = gegl_node_new ();
       GeglNode *png_load = gegl_node_new_child (gegl, "operation", "gegl:load", "path", "/tmp/gegl-temp.png", NULL);
       GeglRectangle defined;
@@ -144,15 +91,11 @@ process (GeglOperation       *operation,
 
       o->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
 
-      /* FIXME
-      GeglNode *buffer_save;
       buffer_save = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", o->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 
       gegl_node_process (buffer_save);
       g_object_unref (gegl);
-      */
-
       system ("rm /tmp/gegl-temp.*");
     }
 
@@ -170,49 +113,18 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  object_class->set_property = introspect_set_property;
-  object_class->get_property = introspect_get_property;
-
-  operation_class->attach  = attach;
-  operation_class->prepare = prepare;
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "gegl:introspect";
   operation_class->categories  = "render";
   operation_class->description = _("GEGL graph visualizer.");
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, graph of input becomes rendered.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("aux",
-                                                        "Aux",
-                                                        "Dummy.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Rendered result of intropection.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
 }
 
 #endif
