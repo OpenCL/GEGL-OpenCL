@@ -1,5 +1,10 @@
 2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* operations/common/introspect.c: Fix compilation warnings in
+	operation introspect.c
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* operations/common/introspect.c: Rewrite gegl:introspect to work
 	like gegl:magick-load so that gegl:introspect can be used again.
 

@@ -47,7 +47,6 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   gchar        *escaped_png_filename = NULL;
   gchar        *dot_filename         = NULL;
   gchar        *xml                  = NULL;
-  gchar        *cmd                  = NULL;
   gchar        *dot_cmd              = NULL;
 
   if (op_introspect->chant_data)
@@ -58,7 +57,7 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   png_filename = g_build_filename (g_get_tmp_dir (), "gegl-introspect.png", NULL);
 
   /* Construct the .dot source */
-  dot_string = gegl_to_dot (op_introspect->node);
+  dot_string = gegl_to_dot (GEGL_NODE (op_introspect->node));
   g_file_set_contents (dot_filename, dot_string, -1, NULL);
 
   /* Process the .dot to a .png */
