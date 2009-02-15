@@ -556,9 +556,9 @@ gegl_node_invalidated (GeglNode            *node,
 }
 
 static void
-source_invalidated (GeglNode            *source,
-                    const GeglRectangle *rect,
-                    gpointer             data)
+gegl_node_source_invalidated (GeglNode            *source,
+                              const GeglRectangle *rect,
+                              gpointer             data)
 {
   GeglPad       *destination_pad = GEGL_PAD (data);
   GeglNode      *destination     = gegl_pad_get_node (destination_pad);
@@ -629,7 +629,7 @@ gegl_node_connect_from (GeglNode    *sink,
       source->sinks = g_slist_prepend (source->sinks, connection);
 
       g_signal_connect (G_OBJECT (source), "invalidated",
-                        G_CALLBACK (source_invalidated), sink_pad);
+                        G_CALLBACK (gegl_node_source_invalidated), sink_pad);
 
       gegl_node_property_changed (G_OBJECT (source->operation), NULL, source);
 
@@ -795,8 +795,8 @@ gegl_node_link_many (GeglNode *source,
   va_end (var_args);
 }
 
-static void ensure_eval_mgr (GeglNode *node,
-                             const gchar *pad)
+static void gegl_node_ensure_eval_mgr (GeglNode    *node,
+                                       const gchar *pad)
 {
   GeglNodePrivate *priv;
   priv = GEGL_NODE_GET_PRIVATE (node);
@@ -813,7 +813,7 @@ gegl_node_apply_roi (GeglNode            *self,
   GeglBuffer  *buffer;
 
   priv = GEGL_NODE_GET_PRIVATE (self);
-  ensure_eval_mgr (self, output_pad_name);
+  gegl_node_ensure_eval_mgr (self, output_pad_name);
 
   if (roi)
     {
@@ -1006,9 +1006,9 @@ gegl_node_set_op_class (GeglNode    *node,
 }
 
 static gboolean
-invalidate_have_rect (GObject    *gobject,
-                      gpointer    foo,
-                      gpointer    user_data)
+gegl_node_invalidate_have_rect (GObject    *gobject,
+                                gpointer    foo,
+                                gpointer    user_data)
 {
   GEGL_NODE (user_data)->valid_have_rect = FALSE;
   return TRUE;
@@ -1139,7 +1139,7 @@ gegl_node_set_operation_object (GeglNode      *self,
       g_free (output_dest_pad);
   }
 
-  g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (invalidate_have_rect), self);
+  g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_invalidate_have_rect), self);
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_property_changed), self);
   gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) self, self);
 }
@@ -1723,7 +1723,7 @@ gegl_node_insert_before (GeglNode *self,
   other     = gegl_node_get_producer (self, "input", NULL);/*XXX: handle pad name */
   rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
-  g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);
+  g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, gegl_node_source_invalidated, NULL);
   /* the blocked handler disappears during the relinking */
   gegl_node_link_many (other, to_be_inserted, self, NULL);
 
@@ -1805,9 +1805,9 @@ gegl_node_get_consumers (GeglNode      *node,
 }
 
 static void
-computed_event (GeglCache *self,
-                void      *foo,
-                void      *user_data)
+gegl_node_computed_event (GeglCache *self,
+                          void      *foo,
+                          void      *user_data)
 {
   GeglNode *node = GEGL_NODE (user_data);
 
@@ -1837,7 +1837,7 @@ gegl_node_get_cache (GeglNode *node)
                                   "format", format,
                                   NULL);
       g_signal_connect (G_OBJECT (node->cache), "computed",
-                        (GCallback) computed_event,
+                        (GCallback) gegl_node_computed_event,
                         node);
     }
   return node->cache;
