@@ -1,5 +1,26 @@
 2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* operations/common/introspect.c: Rewrite gegl:introspect to work
+	like gegl:magick-load so that gegl:introspect can be used again.
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/introspect.c: Namespace static functions in
+	operation introspect.c
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/introspect.c: Revert commit leading up to
+	r2652 as that was an incomplete attempt at using the wrong
+	approach to get gegl:introspect to work again.
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-eval-mgr.c: Have accurate arguments for
+	gegl_eval_mgr_change_notification()
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-dot.c: Include gegl-dot.h in gegl-dot.c
 
 2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
