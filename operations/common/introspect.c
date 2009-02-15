@@ -37,7 +37,7 @@ gegl_chant_pointer(buf, _("Buffer"), _("Buffer"))
 #include <string.h>
 
 static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+gegl_introspect_get_bounding_box (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -53,10 +53,10 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_pad,
-         const GeglRectangle *result)
+gegl_introspect_process (GeglOperation        *operation,
+                         GeglOperationContext *context,
+                         const gchar          *output_pad,
+                         const GeglRectangle  *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -119,8 +119,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  operation_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->process          = gegl_introspect_process;
+  operation_class->get_bounding_box = gegl_introspect_get_bounding_box;
 
   operation_class->name        = "gegl:introspect";
   operation_class->categories  = "render";
