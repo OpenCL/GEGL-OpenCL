@@ -1,5 +1,9 @@
 2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/gegl-dot.c: Include gegl-dot.h in gegl-dot.c
+
+2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/graph/gegl-node.c: Namespace static functions in
 	gegl-node.c
 
