@@ -24,7 +24,6 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_object(node, _("Node"), _("GeglNode to introspect"))
-gegl_chant_pointer(buf, _("Buffer"), _("Buffer"))
 
 #else
 
@@ -34,21 +33,87 @@ gegl_chant_pointer(buf, _("Buffer"), _("Buffer"))
 #include "gegl-chant.h"
 #include "gegl-dot.h" /* XXX: internal header file */
 #include <stdio.h>
-#include <string.h>
+
+/* FIXME: this should not be neccesary to implement this operation */
+GeglBuffer *gegl_node_get_cache           (GeglNode      *node);
+
+static void
+gegl_introspect_load_cache (GeglChantO *op_introspect)
+{
+  GeglRectangle rect = { 0, };
+  GeglNode     *temp_gegl            = NULL;
+  gchar        *dot_string           = NULL;
+  gchar        *png_filename         = NULL;
+  gchar        *escaped_png_filename = NULL;
+  gchar        *dot_filename         = NULL;
+  gchar        *xml                  = NULL;
+  gchar        *cmd                  = NULL;
+  gchar        *dot_cmd              = NULL;
+
+  if (op_introspect->chant_data)
+    return;
+
+  /* Construct temp filenames */
+  dot_filename = g_build_filename (g_get_tmp_dir (), "gegl-introspect.dot", NULL);
+  png_filename = g_build_filename (g_get_tmp_dir (), "gegl-introspect.png", NULL);
+
+  /* Construct the .dot source */
+  dot_string = gegl_to_dot (op_introspect->node);
+  g_file_set_contents (dot_filename, dot_string, -1, NULL);
+
+  /* Process the .dot to a .png */
+  dot_cmd = g_strdup_printf ("dot -o %s -Tpng %s", png_filename, dot_filename);
+  system (dot_cmd);
+
+  /* Create an XML string that loads the PNG */
+  escaped_png_filename = g_markup_escape_text (png_filename, -1);
+  xml = g_strdup_printf ("<gegl>"
+                         "  <node operation='gegl:png-load' path='%s' />"
+                         "</gegl>",
+                         escaped_png_filename);
+
+  /* Create a GEGL graph from the XML */
+  temp_gegl = gegl_node_new_from_xml (xml, "/");
+  rect = gegl_node_get_bounding_box (temp_gegl);
+
+  /* Force a render of the cache, passing in a NULL buffer indicating
+   * that we do not actually desire the rendered data.
+   */
+  gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE);
+
+  /* Get hold of a GeglBuffer with the data */
+  {
+    GeglBuffer *cache  = GEGL_BUFFER (gegl_node_get_cache (temp_gegl));
+    GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
+    op_introspect->chant_data = (gpointer) newbuf;
+    g_object_unref (cache);
+  }
+
+  /* Cleanup */
+  g_object_unref (temp_gegl);
+  g_free (dot_string);
+  g_free (dot_cmd);
+  g_free (dot_filename);
+  g_free (png_filename);
+  g_free (escaped_png_filename);
+  g_free (xml);
+}
 
 static GeglRectangle
 gegl_introspect_get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {0,0,0,0};
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  gint width, height;
 
-  GeglRectangle result = {0, 0, 4096, 4096};
-//  process (operation, NULL, NULL, NULL);
+  gegl_introspect_load_cache (o);
 
-  if (o->buf)
-    {
-      GeglBuffer *buffer = GEGL_BUFFER (o->buf);
-      result = *gegl_buffer_get_extent (buffer);
-    }
+  g_object_get (o->chant_data, "width", &width,
+                               "height", &height, NULL);
+
+  result.width  = width;
+  result.height = height;
+
   return result;
 }
 
@@ -60,55 +125,16 @@ gegl_introspect_process (GeglOperation        *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->buf)
-    {
-      if (context)
-        {
-          g_object_ref (o->buf); /* add an extra reference, since gegl_operation_set_data
-                                      is stealing one */
-          gegl_operation_context_set_object (context, "output", G_OBJECT (o->buf));
-        }
-      return TRUE;
-    }
+  if (!o->chant_data)
+    return FALSE;
 
-  {
-    {
-      gchar *dot = gegl_to_dot ((gpointer)o->node);
-      g_file_set_contents ("/tmp/gegl-temp.dot", dot, -1, NULL);
-      system ("dot -o/tmp/gegl-temp.png -Tpng /tmp/gegl-temp.dot");
-      g_free (dot);
-    }
-
-    /* FIXME: copy behavior from magick-load to fix this op */
-
-    {
-      GeglNode *buffer_save;
-      GeglNode *gegl = gegl_node_new ();
-      GeglNode *png_load = gegl_node_new_child (gegl, "operation", "gegl:load", "path", "/tmp/gegl-temp.png", NULL);
-      GeglRectangle defined;
-
-      defined = gegl_node_get_bounding_box (png_load);
-
-      o->buf = gegl_buffer_new (&defined, babl_format ("R'G'B' u8"));
-
-      buffer_save = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", o->buf, NULL);
-      gegl_node_link_many (png_load, buffer_save, NULL);
-
-      gegl_node_process (buffer_save);
-      g_object_unref (gegl);
-      system ("rm /tmp/gegl-temp.*");
-    }
-
-  if (context)
-    {
-      g_object_ref (o->buf);
-      gegl_operation_context_set_object (context, "output", G_OBJECT (o->buf));
-    }
-  }
+  /* overriding the predefined behavior */
+  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  g_object_unref (o->chant_data);
+  o->chant_data = NULL;
 
   return  TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -128,4 +154,3 @@ gegl_chant_class_init (GeglChantClass *klass)
 }
 
 #endif
-
