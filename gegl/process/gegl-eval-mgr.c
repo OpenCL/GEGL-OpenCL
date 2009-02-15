@@ -96,9 +96,9 @@ gegl_eval_mgr_finalize (GObject *self_object)
 }
 
 static gboolean
-gegl_eval_mgr_change_notification (GObject    *gobject,
-                                   gpointer    foo,
-                                   gpointer    user_data)
+gegl_eval_mgr_change_notification (GObject             *gobject,
+                                   const GeglRectangle *rect,
+                                   gpointer             user_data)
 {
   GeglEvalMgr *mgr = GEGL_EVAL_MGR (user_data);
 
