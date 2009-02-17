@@ -1,3 +1,9 @@
+2009-02-17  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operation-context.c: Remove the 'operation'
+	local variable in gegl_operation_context_set_object(), it was
+	unused.
+
 2009-02-15  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/common/introspect.c: Fix compilation warnings in

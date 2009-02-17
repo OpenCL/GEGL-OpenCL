@@ -244,15 +244,13 @@ gegl_operation_context_set_object (GeglOperationContext *context,
                                    const gchar          *padname,
                                    GObject              *data)
 {
-  GeglOperation *operation;
-  GParamSpec    *pspec;
-  GValue         value = {0,};
+  GParamSpec *pspec;
+  GValue      value = {0, };
 
   /* FIXME: check that there isn't already an existing 
    *        output object/value set?
    */
 
-  operation = context->operation;
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
   if (pspec)
   {
