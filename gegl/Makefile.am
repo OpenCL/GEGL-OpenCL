@@ -70,6 +70,7 @@ libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl-chant.h			\
     gegl-simd.h				\
     gegl-plugin.h			\
+    gegl-version.h			\
     buffer/gegl-buffer.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\

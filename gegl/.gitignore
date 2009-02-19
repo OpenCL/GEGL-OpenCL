@@ -3,6 +3,6 @@
 /.deps
 /.libs
 /gegl
-/gegl.h
+/gegl-version.h
 /Makefile
 /Makefile.in

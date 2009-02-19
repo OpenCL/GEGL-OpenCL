@@ -1,3 +1,15 @@
+2009-02-19  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Break out the version related parts of the GEGL API into a
+	separate installed header gegl-version.h so that not the entire
+	gegl.h header needs to be processed by configure.
+
+	* configure.ac
+	* gegl/.gitignore
+	* gegl/Makefile.am
+	* gegl/gegl-version.h.in
+	* gegl/gegl.h (renamed from gegl.h.in)
+
 2009-02-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/operation/gegl-operation-context.c: Remove the 'operation'

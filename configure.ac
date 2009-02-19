@@ -53,7 +53,7 @@ m4_define([openraw_required_version], [0.0.5])
 m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
-AC_CONFIG_SRCDIR([gegl/gegl.h.in])
+AC_CONFIG_SRCDIR([gegl/gegl.h])
 
 dnl ==========================================================================
 dnl                              Versioning              
@@ -963,7 +963,7 @@ AC_OUTPUT([
 Makefile
 bin/Makefile
 gegl/Makefile
-gegl/gegl.h
+gegl/gegl-version.h
 gegl/buffer/Makefile
 gegl/graph/Makefile
 gegl/module/Makefile
