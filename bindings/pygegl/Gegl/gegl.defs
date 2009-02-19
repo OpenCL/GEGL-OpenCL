@@ -397,10 +397,19 @@
   (c-name "gegl_color_get_rgba")
   (return-type "none")
   (parameters
-    '("gfloat*" "r")
-    '("gfloat*" "g")
-    '("gfloat*" "b")
-    '("gfloat*" "a")
+    '("gdouble*" "r")
+    '("gdouble*" "g")
+    '("gdouble*" "b")
+    '("gdouble*" "a")
+  )
+)
+
+(define-method get_rgba4f
+  (of-object "GeglColor")
+  (c-name "gegl_color_get_rgba4f")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "buf")
   )
 )
 
@@ -409,10 +418,10 @@
   (c-name "gegl_color_set_rgba")
   (return-type "none")
   (parameters
-    '("gfloat" "r")
-    '("gfloat" "g")
-    '("gfloat" "b")
-    '("gfloat" "a")
+    '("gdouble" "r")
+    '("gdouble" "g")
+    '("gdouble" "b")
+    '("gdouble" "a")
   )
 )
 

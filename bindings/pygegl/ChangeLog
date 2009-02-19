@@ -1,3 +1,14 @@
+2009-02-19  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Fixes for compile problems due to changes in BABL 390 and GEGL 2851.
+
+	* Gegl/gegl.defs: The gegl_color_(get|set)_rgba functions now use
+	gdouble and not gfloat. Added support for gegl_color_get_rgba4f().
+
+	* Gegl/gegl.override: The gegl_color_get_rgba function takes
+	gdouble* and not gfloat*. Call babl_format_get_bytes_per_pixel() in
+	gegl_node_render() instead of directly accessing member of struct.
+
 2008-11-17  Manish Singh  <yosh@gimp.org>
 
 	* samples/render-test.py
