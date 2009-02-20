@@ -5,7 +5,6 @@
 	gegl.h header needs to be processed by configure.
 
 	* configure.ac
-	* gegl/.gitignore
 	* gegl/Makefile.am
 	* gegl/gegl-version.h.in
 	* gegl/gegl.h (renamed from gegl.h.in)
