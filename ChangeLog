@@ -1,3 +1,7 @@
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-version.h.in: Adapt for inclusion in docs/api.html
+
 2009-02-19  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Break out the version related parts of the GEGL API into a

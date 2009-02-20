@@ -131,6 +131,7 @@ if HAVE_ENSCRIPT
 endif
 
 api.html: $(top_srcdir)/gegl/gegl.h\
+          $(top_srcdir)/gegl/gegl-version.h\
           $(top_srcdir)/gegl/buffer/gegl-buffer.h\
           $(top_srcdir)/gegl/gegl-utils.h\
           $(top_srcdir)/gegl/property-types/gegl-color.h\
@@ -141,6 +142,7 @@ api.html: $(top_srcdir)/gegl/gegl.h\
 if HAVE_RUBY
 	$(top_srcdir)/tools/create-reference.rb 	\
 	    $(top_srcdir)/gegl/gegl.h			\
+	    $(top_srcdir)/gegl/gegl-version.h		\
 	    $(top_srcdir)/gegl/buffer/gegl-buffer.h	\
             $(top_srcdir)/gegl/gegl-utils.h \
             $(top_srcdir)/gegl/property-types/gegl-color.h\

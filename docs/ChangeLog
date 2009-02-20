@@ -1,3 +1,7 @@
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* Makefile.am: Add gegl-version.h
+
 2009-02-09  Ruben Vermeersch  <ruben@savanne.be>
 
 	* gegl-sharp/index.html: Add a note about having to build GEGL first, add
