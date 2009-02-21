@@ -17,8 +17,8 @@
  *           2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_TYPES_H__
-#define __GEGL_TYPES_H__
+#ifndef __GEGL_TYPES_INTERNAL_H__
+#define __GEGL_TYPES_INTERNAL_H__
 
 G_BEGIN_DECLS
 
@@ -83,4 +83,4 @@ struct _GeglDimension
 
 G_END_DECLS
 
-#endif /* __GEGL_TYPES_H__ */
+#endif /* __GEGL_TYPES_INTERNAL_H__ */
