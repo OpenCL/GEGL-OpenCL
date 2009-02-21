@@ -1,5 +1,13 @@
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Move types in gegl.h to a new installed header file gegl-types.h
+
+	* gegl/Makefile.am
+	* gegl/gegl-types.h
+	* gegl/gegl.h
+
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add GeglConfig to the API as an opaque struct so that we don't need to
 	have different interfaces publicly and internally for gegl_config()
 

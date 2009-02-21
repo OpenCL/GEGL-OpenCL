@@ -22,6 +22,7 @@
 #include <glib-object.h>
 #include <babl/babl.h>
 
+#include <gegl-types.h>
 #include <gegl-version.h>
 
 /***
@@ -178,20 +179,6 @@ GParamSpec** gegl_list_properties           (const gchar   *operation_type,
  *                                  "contrast",   1.5,
  *                                  NULL);
  */
-#ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
-
-#ifndef GEGL_TYPE_NODE
-typedef struct _GeglNode  GeglNode;
-GType gegl_node_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_NODE    (gegl_node_get_type())
-#define GEGL_NODE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
-#define GEGL_IS_NODE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
-#endif
-
-typedef struct _GeglRectangle GeglRectangle;
-GType gegl_rectangle_get_type (void) G_GNUC_CONST;
-#define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
-#endif
 
 /**
  * gegl_node_new:
@@ -374,20 +361,6 @@ void          gegl_node_get              (GeglNode      *node,
  * you need to use a #GeglProcessor. See #gegl_processor_work for a code
  * sample.
  */
-
-#ifndef GEGL_BLIT_FLAGS
-#define  GEGL_BLIT_FLAGS
-typedef enum
-{
-  GEGL_BLIT_DEFAULT  = 0,
-  GEGL_BLIT_CACHE    = 1 << 0,
-  GEGL_BLIT_DIRTY    = 1 << 1
-} GeglBlitFlags;
-#endif
-
-#ifndef GEGL_AUTO_ROWSTRIDE
-#define GEGL_AUTO_ROWSTRIDE 0
-#endif
 
 /**
  * gegl_node_blit:
@@ -767,13 +740,6 @@ gchar       * gegl_node_to_xml           (GeglNode      *node,
  * should be sufficient. See #gegl_processor_work for a code sample.
  *
  */
-#ifndef GEGL_INTERNAL
-typedef struct _GeglProcessor  GeglProcessor;
-GType gegl_processor_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
-#define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
-#define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
-#endif
 
 /**
  * gegl_node_new_processor:
@@ -833,9 +799,6 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  *
  * GEGL uses a singleton configuration object
  */
-#ifndef GEGL_INTERNAL
-typedef struct _GeglConfig GeglConfig;
-#endif
 
 /**
  * gegl_config:
@@ -848,30 +811,6 @@ typedef struct _GeglConfig GeglConfig;
  * the path of the directory to swap to (or "ram" to not use diskbased swap)
  */
 GeglConfig      * gegl_config (void);
-
-
-#ifndef GEGL_INTERNAL
-
-struct _GeglRectangle
-{
-  gint x;
-  gint y;
-  gint width;
-  gint height;
-};
-
-#define GEGL_PAD_TYPE
-
-typedef enum
-{
-  GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
-  GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
-} GeglPadType;
-
-typedef struct _GeglCurve  GeglCurve;
-typedef struct _GeglPath   GeglPath;
-typedef struct _GeglColor  GeglColor;
-#endif
 
 
 /*** foo

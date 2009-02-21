@@ -65,6 +65,7 @@ libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 
 libgegl_@GEGL_API_VERSION@include_HEADERS =	\
     gegl.h				\
+    gegl-types.h			\
     gegl-utils.h			\
     gegl-matrix.h			\
     gegl-chant.h			\
