@@ -31,7 +31,7 @@
 #endif
 #include <glib-object.h>
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-tile-storage.h"
@@ -41,7 +41,7 @@
 #include "gegl-tile-handler-cache.h"
 #include "gegl-tile-handler-log.h"
 #include "gegl-tile-handler-empty.h"
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-utils.h"
 #include "gegl-buffer-save.h"
 #include "gegl-cache.h"

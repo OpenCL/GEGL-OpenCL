@@ -19,7 +19,7 @@
 #ifndef __GEGL_PROCESSOR_H__
 #define __GEGL_PROCESSOR_H__
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 G_BEGIN_DECLS
 

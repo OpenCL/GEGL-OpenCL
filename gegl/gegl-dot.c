@@ -22,7 +22,7 @@
 #include <string.h>
 #include <glib-object.h>
 #define  GEGL_INTERNAL
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-connection.h"

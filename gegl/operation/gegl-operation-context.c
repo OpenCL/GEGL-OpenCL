@@ -25,7 +25,7 @@
 
 #include <glib-object.h>
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 #include "gegl-operation-context.h"
 #include "gegl/graph/gegl-node.h"

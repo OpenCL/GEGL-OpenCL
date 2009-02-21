@@ -1,5 +1,13 @@
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Rename gegl-types.h to gegl-types-internal.h so that we can have a
+	gegl-types.h that is public without any distracting preprocessor
+	directives.
+
+	* lots_of_files.[ch]
+
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-version.h.in: Adapt for inclusion in docs/api.html
 
 2009-02-19  Martin Nordholts  <martinn@svn.gnome.org>

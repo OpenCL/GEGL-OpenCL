@@ -36,7 +36,7 @@
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
 #include "gegl-debug.h"
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 struct _GeglTileBackendFile
 {

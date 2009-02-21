@@ -70,7 +70,7 @@ guint gegl_debug_flags = 0;
 #include "gegl-init.h"
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "buffer/gegl-buffer.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"

@@ -61,7 +61,7 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-linear.h"
 

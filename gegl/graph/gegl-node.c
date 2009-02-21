@@ -26,7 +26,7 @@
 #include <glib-object.h>
 #include <gobject/gvaluecollector.h>
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 #include "gegl-node.h"
 #include "gegl-connection.h"

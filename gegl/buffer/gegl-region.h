@@ -25,7 +25,7 @@
 #ifndef __GEGL_REGION_H__
 #define __GEGL_REGION_H__
 
-#include <gegl/gegl-types.h>
+#include <gegl/gegl-types-internal.h>
 #include "gegl-buffer-types.h"
 
 G_BEGIN_DECLS

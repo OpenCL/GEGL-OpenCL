@@ -19,7 +19,7 @@
 #ifndef __GEGL_EVAL_MGR_H__
 #define __GEGL_EVAL_MGR_H__
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "buffer/gegl-buffer-types.h"
 
 G_BEGIN_DECLS

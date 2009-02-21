@@ -24,7 +24,7 @@
 
 #include <babl/babl.h>
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-utils.h"
 
 #include "graph/gegl-node.h"

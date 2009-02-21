@@ -31,7 +31,7 @@
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
 #include "gegl-tile-handler-log.h"
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-utils.h"
 #include "gegl-config.h"
 

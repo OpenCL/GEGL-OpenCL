@@ -33,7 +33,7 @@ GEGL_sources = \
 	gegl-module.h			\
 	gegl-matrix.h			\
 	gegl-plugin.h			\
-	gegl-types.h			\
+	gegl-types-internal.h		\
 	gegl-xml.h
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)

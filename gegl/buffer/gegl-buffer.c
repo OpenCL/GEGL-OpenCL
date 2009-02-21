@@ -45,7 +45,7 @@
 #include <gio/gio.h>
 #endif
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
@@ -64,7 +64,7 @@
 #include "gegl-sampler-lanczos.h"
 #include "gegl-sampler-sharp.h"
 #include "gegl-sampler-yafr.h"
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-utils.h"
 #include "gegl-id-pool.h"
 #include "gegl-buffer-index.h"

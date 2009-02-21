@@ -23,7 +23,7 @@
 
 #include <glib-object.h>
 
-#include "gegl-types.h"
+#include "gegl-types-internal.h"
 
 #include "gegl-debug-rect-visitor.h"
 #include "operation/gegl-operation.h"
