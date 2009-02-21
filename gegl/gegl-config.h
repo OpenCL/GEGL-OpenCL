@@ -31,7 +31,6 @@ G_BEGIN_DECLS
 #define GEGL_IS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CONFIG))
 #define GEGL_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CONFIG, GeglConfigClass))
 
-typedef struct _GeglConfig GeglConfig;
 typedef struct _GeglConfigClass GeglConfigClass;
 
 struct _GeglConfig
@@ -53,9 +52,9 @@ struct _GeglConfigClass
 };
 
 GType gegl_config_get_type (void) G_GNUC_CONST;
-#ifndef __GEGL_INIT_H__
+
 GeglConfig   * gegl_config            (void);
-#endif
+
 G_END_DECLS
 
 #endif

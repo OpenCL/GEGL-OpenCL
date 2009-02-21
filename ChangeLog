@@ -1,5 +1,17 @@
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add GeglConfig to the API as an opaque struct so that we don't need to
+	have different interfaces publicly and internally for gegl_config()
+
+	* gegl/buffer/gegl-tile-handler-cache.c
+	* gegl/gegl-config.c
+	* gegl/gegl-config.h
+	* gegl/gegl-init.c
+	* gegl/gegl-types-internal.h
+	* gegl/gegl.h
+
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Rename gegl-types.h to gegl-types-internal.h so that we can have a
 	gegl-types.h that is public without any distracting preprocessor
 	directives.

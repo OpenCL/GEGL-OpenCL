@@ -249,8 +249,7 @@ gegl_get_option_group (void)
   return group;
 }
 
-GObject *gegl_config (void);
-GObject *gegl_config (void)
+GeglConfig *gegl_config (void)
 {
   if (!config)
     {
@@ -272,7 +271,7 @@ GObject *gegl_config (void)
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
     }
-  return G_OBJECT (config);
+  return GEGL_CONFIG (config);
 }
 
 void gegl_tile_backend_ram_stats (void);

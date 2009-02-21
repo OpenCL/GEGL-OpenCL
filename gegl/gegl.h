@@ -827,17 +827,27 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
  */
 void           gegl_processor_destroy       (GeglProcessor *processor);
 
+
+/***
+ * GeglConfig:
+ *
+ * GEGL uses a singleton configuration object
+ */
+#ifndef GEGL_INTERNAL
+typedef struct _GeglConfig GeglConfig;
+#endif
+
 /**
  * gegl_config:
  *
- * Returns a GObject with properties that can be manipulated to control
+ * Returns a GeglConfig object with properties that can be manipulated to control
  * GEGLs behavior. Properties available on the object are:
  *
  * "cache-size" "quality" and "swap", the two first is an integer denoting
  * number of bytes, the secons a double value between 0 and 1 and the last
  * the path of the directory to swap to (or "ram" to not use diskbased swap)
  */
-GObject      * gegl_config (void);
+GeglConfig      * gegl_config (void);
 
 
 #ifndef GEGL_INTERNAL

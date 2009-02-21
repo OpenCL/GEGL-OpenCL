@@ -17,9 +17,11 @@
  */
 #include <glib.h>
 #include <glib-object.h>
-#include "gegl-config.h"
 #include <string.h>
 #include <glib/gprintf.h>
+
+#include "gegl-types-internal.h"
+#include "gegl-config.h"
 
 G_DEFINE_TYPE (GeglConfig, gegl_config, G_TYPE_OBJECT);
 

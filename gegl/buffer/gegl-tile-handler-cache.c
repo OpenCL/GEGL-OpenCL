@@ -21,8 +21,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "gegl-config.h"
 #include "../gegl-types-internal.h"
+#include "gegl-config.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"

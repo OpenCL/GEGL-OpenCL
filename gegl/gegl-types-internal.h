@@ -24,6 +24,7 @@ G_BEGIN_DECLS
 
 #ifndef __GEGL_H__
 typedef struct _GeglColor            GeglColor;
+typedef struct _GeglConfig           GeglConfig;
 typedef struct _GeglCurve            GeglCurve;
 typedef struct _GeglNode             GeglNode;
 typedef struct _GeglPath             GeglPath;
