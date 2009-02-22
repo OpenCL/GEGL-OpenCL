@@ -249,19 +249,23 @@ gegl_operation_context_set_object (GeglOperationContext *context,
    */
 
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
+
   if (pspec)
-  {
-    GValue value = {0, };
-    g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+    {
+      GValue value = {0, };
+      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
 
-    g_value_set_object (&value, data);
-    gegl_operation_context_set_property (context, padname, &value);
+      g_value_set_object (&value, data);
+      gegl_operation_context_set_property (context, padname, &value);
 
-    g_value_unset (&value);
-  }
+      g_value_unset (&value);
+    }
   else
     {
-      g_warning ("%s: No paramspec found for pad we %s'%s'\n", G_STRFUNC, data?"we have data":"", padname);
+      g_warning ("%s: No paramspec found for pad we %s'%s'\n",
+                 G_STRFUNC,
+                 data ? "we have data" : "",
+                 padname);
       if (data)
         g_object_unref (data); /* are we stealing the initial reference? */
       return;
