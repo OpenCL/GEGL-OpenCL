@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Øyvind Kolås     <oeyvindk@hig.no>
- *                Ivar Farup       <ivarf@hig.no>
- *                Allesandro Rizzi <rizzi@dti.unimi.it>
+ * Copyright 2007,2009 Øyvind Kolås     <pippin@gimp.org>
+ *                     Ivar Farup       <ivarf@hig.no>
+ *                     Allesandro Rizzi <rizzi@dti.unimi.it>
  */
 
 #include "config.h"
@@ -24,21 +24,23 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, _("Radius"), 2, 5000.0, 384,
-                _("Neighbourhood taken into account"))
-gegl_chant_int (samples, _("Samples"), 0, 1000, 3,
-                _("Number of samples to do"))
-gegl_chant_int (iterations, _("Iterations"), 0, 1000, 23,
-                _("Number of iterations (length of exposure)"))
+gegl_chant_int (radius, _("Radius"), 2, 3000.0, 300,
+                _("Neighbourhood taken into account, this is the radius in pixels taken into account when deciding which colors map to which gray values."))
+gegl_chant_int (samples, _("Samples"), 0, 1000, 4,
+                _("Number of samples to do per iteration looking for the range of colors."))
+gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
+                _("Number of iterations, a higher number of iterations provides a less noisy results at computational cost."))
+
 gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
                 _("Use the same spray for all pixels"))
-gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 1.8,
-                _("Gamma applied to radial distribution"))
-gegl_chant_double (strength, _("Strength"), -10.0, 10.0, 1.0,
+gegl_chant_double (strength, _("Strength"), 0.0, 1.0, 1.0,
                 _("Amount of correction 0=none 1.0=full"))
+/*
+gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
+                _("Gamma applied to radial distribution"))
 gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
                 _("Post correction gamma."))
-
+*/
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -48,6 +50,9 @@ gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
 #include <math.h>
 #include <stdlib.h>
 #include "envelopes.h"
+
+#define RGAMMA 2.0
+#define GAMMA  1.0
 
 static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
@@ -65,7 +70,7 @@ static void stress (GeglBuffer *src,
   gfloat *dst_buf;
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
+  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 2);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -100,7 +105,7 @@ static void stress (GeglBuffer *src,
                 {
                   gfloat delta = max_envelope[c]-min_envelope[c];
                   nominator += (pixel[c] - min_envelope[c]) * delta;
-                  denominator += delta*delta;
+                  denominator += delta * delta;
                 }
 
               if (denominator>0.000) /* if we found a range, modify the result */
@@ -118,16 +123,15 @@ static void stress (GeglBuffer *src,
 
                 }
             }
-              for (c=0; c<3;c++)
-                dst_buf[dst_offset+c] = gray;
-              dst_buf[dst_offset+3] = src_buf[src_offset+3];
+              dst_buf[dst_offset+0] = gray;
+              dst_buf[dst_offset+1] = src_buf[src_offset+3];
           }
 
           src_offset+=4;
-          dst_offset+=4;
+          dst_offset+=2;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("YA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -137,6 +141,7 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
       ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
 }
 
 static GeglRectangle
@@ -163,9 +168,9 @@ process (GeglOperation       *operation,
           o->samples,
           o->iterations,
           o->same_spray,
-          o->rgamma,
+          /*o->rgamma*/RGAMMA,
           o->strength,
-          o->gamma);
+          /*o->gamma*/GAMMA);
 
   return  TRUE;
 }
@@ -192,8 +197,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:c2g";
   operation_class->categories  = "enhance";
   operation_class->description =
-        _("Color to grayscale conversion, uses spatial color differences "
-          "to perform local grayscale contrast enhancement.");
+        _("Color to grayscale conversion, uses envelopes formed from spatial "
+         " color differences to perform color-feature preserving grayscale "
+         " spatial contrast enhancement.");
 }
 
 #endif

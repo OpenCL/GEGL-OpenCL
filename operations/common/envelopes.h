@@ -11,12 +11,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Øyvind Kolås     <pippin@gimp.org>
+ * Copyright 2007, 2009 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#define ANGLE_PRIME  95273
-#define RADIUS_PRIME 29537
-#define SCALE_PRIME 85643
+#define ANGLE_PRIME  95273  /* the lookuptables are sized as primes to avoid  */
+#define RADIUS_PRIME 29537  /* repetitions when they are used cyclcly simulatnously */
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
@@ -122,7 +121,7 @@ retry:                      /* if we've sampled outside the valid image
 
         sample (buf, width, height, u, v, pixel);
 
-        if (pixel[3]>0.0)
+        if (pixel[3]>0.0) /* ignore fully transparent pixels */
           {
             for (c=0;c<3;c++)
               {
@@ -146,26 +145,27 @@ retry:                      /* if we've sampled outside the valid image
     }
 }
 
-static void compute_envelopes (gfloat  *buf,
-                               gint     width,
-                               gint     height,
-                               gint     x,
-                               gint     y,
-                               gint     radius,
-                               gint     samples,
-                               gint     iterations,
-                               gboolean same_spray,
-                               gdouble  rgamma,
-                               gfloat  *min_envelope,
-                               gfloat  *max_envelope)
+static inline void compute_envelopes (gfloat  *buf,
+                                      gint     width,
+                                      gint     height,
+                                      gint     x,
+                                      gint     y,
+                                      gint     radius,
+                                      gint     samples,
+                                      gint     iterations,
+                                      gboolean same_spray,
+                                      gdouble  rgamma,
+                                      gfloat  *min_envelope,
+                                      gfloat  *max_envelope)
 {
   gint    i;
   gint    c;
-  /*gfloat  range_avg[4]  = {0,0,0,0};*/
-  gfloat  dark_avg[4]   = {0,0,0,0};
-  gfloat  bright_avg[4] = {0,0,0,0};
-  /*gfloat *pixel = buf + (width*y+x)*4;*/
+  gfloat  range_sum[4]               = {0,0,0,0};
+  gfloat  relative_brightness_sum[4] = {0,0,0,0};
+  gfloat *pixel = buf + (width*y+x)*4;
 
+  /* compute lookuptables for the gamma, currently not used/exposed
+   * as a tweakable property */
   compute_luts(rgamma);
 
   if (same_spray)
@@ -176,7 +176,7 @@ static void compute_envelopes (gfloat  *buf,
 
   for (i=0;i<iterations;i++)
     {
-      gfloat min[3], max[3];      /* sampled min/max */
+      gfloat min[3], max[3];
 
       sample_min_max (buf,
                       width,
@@ -187,37 +187,32 @@ static void compute_envelopes (gfloat  *buf,
 
       for (c=0;c<3;c++)
         {
-          /*gfloat range, bright, dark;
+          gfloat range, relative_brightness;
 
           range = max[c] - min[c];
 
           if (range>0.0)
             {
-              bright = (max[c] - pixel[c]) / range;
-              dark = (pixel[c] - min[c]) / range;
+              relative_brightness = (pixel[c] - min[c]) / range;
             }
           else
             {
-              bright = 0.5;
-              dark = 0.5;
-            }*/
+              relative_brightness = 0.5;
+            }
 
-          dark_avg[c] += min[c];
-          bright_avg[c] += max[c];
+          relative_brightness_sum[c] += relative_brightness;
+          range_sum[c] += range;
         }
     }
 
     for (c=0;c<3;c++)
       {
-        dark_avg[c]   /= iterations;
-        bright_avg[c] /= iterations;
+        gfloat relative_brightness = relative_brightness_sum[c] / iterations;
+        gfloat range               = range_sum[c] / iterations;
+        
+        if (max_envelope)
+          max_envelope[c] = pixel[c] + (1.0 - relative_brightness) * range;
+        if (min_envelope)
+          min_envelope[c] = pixel[c] - relative_brightness * range;
       }
-
-    if (max_envelope)
-      for (c=0;c<3;c++)
-        max_envelope[c] = bright_avg[c];/*pixel[c] + bright_avg[c] * range_avg[c];*/
-
-    if (min_envelope)
-      for (c=0;c<3;c++)
-        min_envelope[c] = dark_avg[c];/*pixel[c] - dark_avg[c] * range_avg[c];*/
 }

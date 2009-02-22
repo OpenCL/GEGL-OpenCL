@@ -1,3 +1,9 @@
+2009-02-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/envelopes.h: modified to deal correctly with HDR.
+	* operations/common/c2g.c: trim and document parameters.
+	* operations/common/stress.c: trim and document parameters.
+
 2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
 
         * gegl/operation/gegl-operation-context.c: Improve formating of

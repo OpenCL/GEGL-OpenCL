@@ -24,20 +24,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, _("Radius"), 2, 5000.0, 300,
-                _("Neighbourhood taken into account"))
-gegl_chant_int (samples, _("Samples"), 0, 1000, 10,
-                _("Number of samples to do"))
+gegl_chant_int (radius, _("Radius"), 2, 3000.0, 300,
+                _("Neighbourhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime."))
+gegl_chant_int (samples, _("Samples"), 0, 1000, 4,
+                _("Number of samples to do per iteration looking for the range of colors."))
 gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
-                _("Number of iterations (length of exposure)"))
-gegl_chant_boolean (same_spray, _("Same spray"), TRUE,
-                    _("Use the same spray for all pixels"))
+                _("Number of iterations, a higher number of iterations provides a less noisy rendering at computational cost."))
+
+
+gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
+                _("Use the same neighbourhood for all pixels, this can speed up computation but also introduces halos with clones of the image unless the number of iterations is high."))
+/*
+
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
-                   _("Gamma applied to radial distribution"))
-gegl_chant_double (strength, _("Strength"), -10.0, 10.0, 1.0,
-                   _("Amount of correction 0=none 1.0=full"))
+                _("Gamma applied to radial distribution"))
 gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
-                   _("Post correction gamma"))
+                _("Post correction gamma"))
+
+*/
+
+
 
 #else
 
@@ -45,6 +51,10 @@ gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
 #define GEGL_CHANT_C_FILE       "stress.c"
 
 #include "gegl-chant.h"
+
+#define RGAMMA   2.0
+#define GAMMA    1.0
+
 #include <math.h>
 #include <stdlib.h>
 #include "envelopes.h"
@@ -56,13 +66,16 @@ static void stress (GeglBuffer *src,
                     gint        iterations,
                     gboolean    same_spray,
                     gdouble     rgamma,
-                    gdouble     strength,
                     gdouble     gamma)
 {
   gint x,y;
   gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
+
+  /* this use of huge linear buffers should be avoided and
+   * most probably would lead to great speed ups
+   */
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
@@ -87,31 +100,30 @@ static void stress (GeglBuffer *src,
                              same_spray,
                              rgamma,
                              min_envelope, max_envelope);
-         {
-          gint c;
-          gfloat pixel[3];
-          for (c=0;c<3;c++)
-            {
-              pixel[c] = center_pix[c];
-              if (min_envelope[c]!=max_envelope[c])
+           {
+              gint c;
+              gfloat pixel[3];
+              for (c=0;c<3;c++)
                 {
-                  gfloat scaled = (pixel[c]-min_envelope[c])/(max_envelope[c]-min_envelope[c]);
-                  pixel[c] *= (1.0-strength);
-                  pixel[c] = strength * scaled;
+                  pixel[c] = center_pix[c];
+                  if (min_envelope[c]!=max_envelope[c])
+                    {
+                      gfloat scaled = (pixel[c]-min_envelope[c])/(max_envelope[c]-min_envelope[c]);
+                      pixel[c] = scaled;
+                    }
                 }
-            }
-          if (gamma==1.0)
-            {
-              for (c=0; c<3;c++)
-                dst_buf[dst_offset+c] = pixel[c];
-            }
-          else
-            {
-              for (c=0; c<3;c++)
-                dst_buf[dst_offset+c] = pow(pixel[c],gamma);
-            }
-          dst_buf[dst_offset+c] = center_pix[c];
-         }
+              if (gamma==1.0)
+                {
+                  for (c=0; c<3;c++)
+                    dst_buf[dst_offset+c] = pixel[c];
+                }
+              else
+                {
+                  for (c=0; c<3;c++)
+                    dst_buf[dst_offset+c] = pow(pixel[c],gamma);
+                }
+              dst_buf[dst_offset+c] = center_pix[c];
+           }
           src_offset+=4;
           dst_offset+=4;
         }
@@ -155,9 +167,8 @@ process (GeglOperation       *operation,
           o->samples,
           o->iterations,
           o->same_spray,
-          o->rgamma,
-          o->strength,
-          o->gamma);
+          RGAMMA, /*o->rgamma,*/
+          GAMMA/*o->gamma*/);
 
   return  TRUE;
 }
@@ -174,7 +185,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process = process;
   operation_class->prepare  = prepare;
-  /* we override defined region to avoid growing the size of what is defined
+  /* we override get_bounding_box to avoid growing the size of what is defined
    * by the filter. This also allows the tricks used to treat alpha==0 pixels
    * in the image as source data not to be skipped by the stochastic sampling
    * yielding correct edge behavior.
