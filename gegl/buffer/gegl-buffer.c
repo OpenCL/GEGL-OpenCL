@@ -21,6 +21,7 @@
 #include <math.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include <sys/types.h>
 #ifdef HAVE_UNISTD_H
@@ -883,6 +884,8 @@ gegl_buffer_get_alloc_stack (void)
       strcat (result, function_names[i]);
       strcat (result, "\n");
     }
+
+  free (function_names);
 
   return result;
 }
