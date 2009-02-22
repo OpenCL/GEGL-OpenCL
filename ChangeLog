@@ -1,5 +1,27 @@
 2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+        * gegl/operation/gegl-operation-context.c: Improve formating of
+	gegl_operation_context_set_object()
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
+        * gegl/operation/gegl-operation-context.c: Decrease scope of
+	'value' in gegl_operation_context_set_object()
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
+        * operations/common/introspect.c: Always set "output" in
+	gegl:introspect process() so that multi-pass processing doesn't
+	b0rk.
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
+        * operations/common/introspect.c: Pass output_pad to
+	gegl_operation_context_set_object() in gegl:introspect process()
+	instead of hardcoding to "output".
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add a GEGL_BUFFER_DEBUG_ALLOCATIONS define to GeglBuffer that when
 	activated stores allocation stack traces for GeglBuffers and in
 	gegl_buffer_leaks() prints those stack traces for buffers still
