@@ -1,6 +1,7 @@
 2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
 
-	
+	Clean up gegl-types.h and remove protected internal duplicate
+	defines
 
 	* gegl/gegl-types.h
 	* gegl/gegl-utils.h
