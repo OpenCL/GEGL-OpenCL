@@ -341,9 +341,9 @@ gint gegl_buffer_leaks (void)
       {
         GeglBuffer *buffer = GEGL_BUFFER (leaked_buffer->data);
 
-        g_warning ("\n"
+        g_printerr ("\n"
                    "Leaked buffer allocation stack trace:\n");
-        g_warning ("%s\n", buffer->alloc_stack_trace);
+        g_printerr ("%s\n", buffer->alloc_stack_trace);
       }
   }
 #endif
