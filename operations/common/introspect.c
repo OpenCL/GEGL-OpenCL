@@ -128,7 +128,7 @@ gegl_introspect_process (GeglOperation        *operation,
     return FALSE;
 
   /* overriding the predefined behavior */
-  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  gegl_operation_context_set_object (context, output_pad, G_OBJECT (o->chant_data));
   g_object_unref (o->chant_data);
   o->chant_data = NULL;
 
