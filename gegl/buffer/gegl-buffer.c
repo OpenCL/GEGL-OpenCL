@@ -71,10 +71,9 @@
 #include "gegl-buffer-index.h"
 #include "gegl-config.h"
 
-/* Set to 1 to print allocation stack traces for leaked GeglBuffers
- * using GNU C libs backtrace_symbols()
+/* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
+ * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()
  */
-#define GEGL_BUFFER_DEBUG_ALLOCATIONS 0
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
 #include <execinfo.h>
 #endif
@@ -295,7 +294,9 @@ gegl_buffer_set_property (GObject      *gobject,
     }
 }
 
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
 static GList *allocated_buffers_list = NULL;
+#endif
 static gint   allocated_buffers      = 0;
 static gint   de_allocated_buffers   = 0;
 
