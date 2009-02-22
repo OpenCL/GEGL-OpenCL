@@ -243,7 +243,6 @@ gegl_operation_context_set_object (GeglOperationContext *context,
                                    GObject              *data)
 {
   GParamSpec *pspec;
-  GValue      value = {0, };
 
   /* FIXME: check that there isn't already an existing 
    *        output object/value set?
@@ -252,9 +251,13 @@ gegl_operation_context_set_object (GeglOperationContext *context,
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
   if (pspec)
   {
+    GValue value = {0, };
     g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+
     g_value_set_object (&value, data);
     gegl_operation_context_set_property (context, padname, &value);
+
+    g_value_unset (&value);
   }
   else
     {
@@ -263,7 +266,6 @@ gegl_operation_context_set_object (GeglOperationContext *context,
         g_object_unref (data); /* are we stealing the initial reference? */
       return;
     }
-  g_value_unset (&value);
   g_object_unref (data); /* are we stealing the initial reference? */
 }
 
