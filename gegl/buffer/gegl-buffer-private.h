@@ -67,6 +67,9 @@ struct _GeglBuffer
   gchar            *path;
 
   gint              lock_count;
+
+  gchar            *alloc_stack_trace; /* Stack trace for allocation,
+                                          useful for debugging */
 };
 
 struct _GeglBufferClass

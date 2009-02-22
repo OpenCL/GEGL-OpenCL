@@ -70,6 +70,14 @@
 #include "gegl-buffer-index.h"
 #include "gegl-config.h"
 
+/* Set to 1 to print allocation stack traces for leaked GeglBuffers
+ * using GNU C libs backtrace_symbols()
+ */
+#define GEGL_BUFFER_DEBUG_ALLOCATIONS 0
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+#include <execinfo.h>
+#endif
+
 
 G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_HANDLER)
 
@@ -286,8 +294,9 @@ gegl_buffer_set_property (GObject      *gobject,
     }
 }
 
-static gint allocated_buffers    = 0;
-static gint de_allocated_buffers = 0;
+static GList *allocated_buffers_list = NULL;
+static gint   allocated_buffers      = 0;
+static gint   de_allocated_buffers   = 0;
 
 /* this should only be possible if this buffer matches all the buffers down to
  * storage, all of those parent buffers would change size as well, no tiles
@@ -320,6 +329,23 @@ void gegl_buffer_stats (void)
 
 gint gegl_buffer_leaks (void)
 {
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+  {
+    GList *leaked_buffer = NULL;
+
+    for (leaked_buffer = allocated_buffers_list;
+         leaked_buffer != NULL;
+         leaked_buffer = leaked_buffer->next)
+      {
+        GeglBuffer *buffer = GEGL_BUFFER (leaked_buffer->data);
+
+        g_warning ("\n"
+                   "Leaked buffer allocation stack trace:\n");
+        g_warning ("%s\n", buffer->alloc_stack_trace);
+      }
+  }
+#endif
+
   return allocated_buffers - de_allocated_buffers;
 }
 
@@ -356,6 +382,10 @@ gegl_buffer_dispose (GObject *object)
 static void
 gegl_buffer_finalize (GObject *object)
 {
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+  allocated_buffers_list = g_list_remove (allocated_buffers_list, object);
+#endif
+
   de_allocated_buffers++;
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -824,6 +854,40 @@ gegl_buffer_class_init (GeglBufferClass *class)
 
 }
 
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+#define MAX_N_FUNCTIONS 100
+static gchar *
+gegl_buffer_get_alloc_stack (void)
+{
+  void  *functions[MAX_N_FUNCTIONS];
+  int    n_functions    = 0;
+  char **function_names = NULL;
+  int    i              = 0;
+  int    result_size    = 0;
+  char  *result         = NULL;
+  
+  n_functions = backtrace (functions, MAX_N_FUNCTIONS);
+  function_names = backtrace_symbols (functions, n_functions);
+
+  for (i = 0; i < n_functions; i++)
+    {
+      result_size += strlen (function_names[i]);
+      result_size += 1; /* for '\n' */
+    }
+
+  result = g_new (gchar, result_size + 1);
+  result[0] = '\0';
+
+  for (i = 0; i < n_functions; i++)
+    {
+      strcat (result, function_names[i]);
+      strcat (result, "\n");
+    }
+
+  return result;
+}
+#endif
+
 static void
 gegl_buffer_init (GeglBuffer *buffer)
 {
@@ -852,6 +916,11 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->tile_height = 64;
 
   allocated_buffers++;
+
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+  buffer->alloc_stack_trace = gegl_buffer_get_alloc_stack ();
+  allocated_buffers_list = g_list_prepend (allocated_buffers_list, buffer);
+#endif
 }
 
 

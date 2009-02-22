@@ -1,5 +1,15 @@
 2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add a GEGL_BUFFER_DEBUG_ALLOCATIONS define to GeglBuffer that when
+	activated stores allocation stack traces for GeglBuffers and in
+	gegl_buffer_leaks() prints those stack traces for buffers still
+	left.
+
+	* gegl/buffer/gegl-buffer.c
+	* gegl/buffer/gegl-buffer-private.h
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Clean up gegl-types.h and remove protected internal duplicate
 	defines
 
