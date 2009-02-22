@@ -32,6 +32,7 @@
 #include <glib-object.h>
 #include <glib/gprintf.h>
 
+#include "gegl.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"

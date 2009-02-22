@@ -21,8 +21,8 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
-
 #include "gegl-cr-visitor.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operation-context.h"

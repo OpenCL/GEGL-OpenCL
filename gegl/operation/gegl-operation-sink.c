@@ -16,15 +16,17 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#define GEGL_INTERNAL
 #include "config.h"
 
+#include <string.h>
+
 #include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-sink.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
-#include <string.h>
 
 
 enum

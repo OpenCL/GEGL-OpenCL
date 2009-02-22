@@ -58,8 +58,9 @@ liboperationinclude_HEADERS = $(public_headers)
 liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/operation
 
 INCLUDES = \
-	   -I$(top_srcdir)		\
-	   -I$(top_srcdir)/gegl		\
-	   -I$(top_srcdir)/gegl/buffer	\
-	   @DEP_CFLAGS@ @BABL_CFLAGS@
+	-I$(top_srcdir)			\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/buffer		\
+	@DEP_CFLAGS@ @BABL_CFLAGS@
 

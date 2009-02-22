@@ -17,17 +17,18 @@
  */
 
 
-#define GEGL_INTERNAL
 #include "config.h"
 
+#include <string.h>
+
 #include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-render.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-node.h"
 #include "gegl-utils.h"
-#include <string.h>
-
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 

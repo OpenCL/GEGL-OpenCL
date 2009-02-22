@@ -23,11 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gegl-types-internal.h"
-
-#include "gegl-buffer-private.h"
-
-
 #define GEGL_PATH_INTERNAL
 typedef struct Point
 {
@@ -41,7 +36,9 @@ typedef struct GeglPathItem
   Point  point[]; /* variable length internally */
 } GeglPathItem;
 
-
+#include "gegl.h"
+#include "gegl-types-internal.h"
+#include "gegl-buffer-private.h"
 #include "gegl-path.h"
 #include "gegl-color.h"
 #include "gegl-utils.h"

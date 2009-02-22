@@ -23,6 +23,8 @@
  */
 
 #include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-yafr.h"

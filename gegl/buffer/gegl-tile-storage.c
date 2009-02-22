@@ -20,6 +20,7 @@
 
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile.h"
 #include "gegl-tile-backend-file.h"

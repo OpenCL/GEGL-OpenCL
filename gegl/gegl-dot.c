@@ -21,7 +21,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib-object.h>
-#define  GEGL_INTERNAL
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"

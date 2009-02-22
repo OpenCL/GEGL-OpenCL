@@ -24,8 +24,8 @@
 
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
-
 #include "gegl-curve.h"
 
 

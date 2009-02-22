@@ -19,14 +19,17 @@
  * currently not used by the rest of GeglBuffer */
 
 
+#include <string.h>
+#include <math.h>
+
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-lanczos.h"
-#include <string.h>
-#include <math.h>
 
 
 enum

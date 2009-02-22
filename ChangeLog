@@ -1,5 +1,14 @@
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Remove the GEGL_INTERNAL define and instead of having incompatible
+	public and internal APIs kept under control through preprocessing,
+	make the internals depend on the public API and use the strategy
+	of having a public API that is a subset of the internal API.
+
+	* lots_of_files.[ch]
+
+2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Move types in gegl.h to a new installed header file gegl-types.h
 
 	* gegl/Makefile.am

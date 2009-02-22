@@ -20,6 +20,7 @@
 #include <string.h>
 #include <glib/gprintf.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-config.h"
 

@@ -22,8 +22,6 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
-
 #ifndef GEGL_TYPE_NODE
 typedef struct _GeglNode  GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
@@ -35,7 +33,6 @@ GType gegl_node_get_type  (void) G_GNUC_CONST;
 typedef struct _GeglRectangle GeglRectangle;
 GType gegl_rectangle_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
-#endif
 
 #ifndef GEGL_BLIT_FLAGS
 #define  GEGL_BLIT_FLAGS
@@ -51,19 +48,14 @@ typedef enum
 #define GEGL_AUTO_ROWSTRIDE 0
 #endif
 
-#ifndef GEGL_INTERNAL
 typedef struct _GeglProcessor  GeglProcessor;
 GType gegl_processor_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
 #define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
 #define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
-#endif
 
-#ifndef GEGL_INTERNAL
 typedef struct _GeglConfig GeglConfig;
-#endif
 
-#ifndef GEGL_INTERNAL
 
 struct _GeglRectangle
 {
@@ -84,7 +76,6 @@ typedef enum
 typedef struct _GeglCurve  GeglCurve;
 typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;
-#endif
 
 G_END_DECLS
 

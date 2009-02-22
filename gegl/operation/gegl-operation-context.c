@@ -19,14 +19,12 @@
 
 #include "config.h"
 
-#define GEGL_INTERNAL
-
 #include <string.h>
 
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
-
 #include "gegl-operation-context.h"
 #include "gegl/graph/gegl-node.h"
 #include "gegl-config.h"

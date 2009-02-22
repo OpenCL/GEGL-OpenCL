@@ -16,10 +16,11 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#define GEGL_INTERNAL
 #include "config.h"
 
 #include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-meta.h"
 #include "graph/gegl-node.h"

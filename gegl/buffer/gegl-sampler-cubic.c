@@ -14,14 +14,17 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+#include <math.h>
+
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-cubic.h"
-#include <string.h>
-#include <math.h>
 
 enum
 {

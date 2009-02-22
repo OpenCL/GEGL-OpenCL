@@ -20,6 +20,7 @@
 #include <string.h>
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-prepare-visitor.h"
 #include "graph/gegl-node.h"

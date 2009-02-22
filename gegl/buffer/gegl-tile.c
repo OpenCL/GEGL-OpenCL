@@ -28,6 +28,7 @@
 
 #include "gegl-types-internal.h"
 
+#include "gegl.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"

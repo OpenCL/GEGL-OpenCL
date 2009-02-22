@@ -21,8 +21,9 @@ libgraph_la_SOURCES = $(GRAPH_sources) $(GRAPH_headers)
 #libgraphincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/graph
 
 INCLUDES = \
-	   -I$(top_srcdir)		\
-	   -I$(top_srcdir)/gegl		\
-	   -I$(top_srcdir)/gegl/buffer	\
-	   @DEP_CFLAGS@ @BABL_CFLAGS@
+	-I$(top_srcdir)				\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/buffer		\
+	@DEP_CFLAGS@ @BABL_CFLAGS@
 

@@ -21,8 +21,8 @@
 
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
-
 #include "gegl-eval-mgr.h"
 #include "gegl-eval-visitor.h"
 #include "gegl-debug-rect-visitor.h"

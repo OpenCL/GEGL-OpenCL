@@ -16,15 +16,15 @@
  * Copyright 2007 Øyvind Kolås
  */
 
-#define GEGL_INTERNAL
-
 #include "config.h"
 
-#include <glib-object.h>
+#include <math.h>
 #include <string.h>
+#include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-area-filter.h"
-#include <math.h>
 #include "gegl-utils.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-connection.h"

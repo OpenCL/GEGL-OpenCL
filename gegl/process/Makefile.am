@@ -28,7 +28,8 @@ libprocess_la_SOURCES = $(PROCESS_sources) $(PROCESS_headers)
 #libprocessincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
 
 INCLUDES = \
-	   -I$(top_srcdir)		\
-	   -I$(top_srcdir)/gegl		\
-	   -I$(top_srcdir)/gegl/buffer	\
-	   @DEP_CFLAGS@ @BABL_CFLAGS@
+	-I$(top_srcdir)				\
+	-I$(top_srcdir)/gegl			\
+	-I$(top_srcdir)/gegl/property-types	\
+	-I$(top_srcdir)/gegl/buffer		\
+	@DEP_CFLAGS@ @BABL_CFLAGS@

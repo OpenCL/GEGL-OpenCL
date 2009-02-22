@@ -21,8 +21,8 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include "gegl.h"
 #include "gegl-types-internal.h"
-
 #include "gegl-eval-visitor.h"
 #include "graph/gegl-node.h"
 #include "operation/gegl-operation.h"

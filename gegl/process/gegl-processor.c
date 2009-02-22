@@ -20,8 +20,8 @@
 
 #include <glib-object.h>
 
+#include "gegl.h"
 #include "buffer/gegl-region.h"
-
 #include "graph/gegl-node.h"
 
 #include "operation/gegl-operation-sink.h"

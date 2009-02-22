@@ -74,7 +74,9 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gegl-region.h>
+
+#include "gegl.h"
+#include "gegl-region.h"
 #include "gegl-region-generic.h"
 
 typedef void (* overlapFunc)    (GeglRegion    *pReg,

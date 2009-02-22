@@ -17,10 +17,11 @@
  */
 
 
-#define GEGL_INTERNAL
 #include "config.h"
 
 #include <glib-object.h>
+
+#include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-composer3.h"
 #include "gegl-utils.h"

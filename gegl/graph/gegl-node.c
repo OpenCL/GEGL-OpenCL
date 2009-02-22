@@ -17,8 +17,6 @@
  *           2006 Øyvind Kolås
  */
 
-#define GEGL_INTERNAL
-
 #include "config.h"
 
 #include <string.h>
@@ -28,6 +26,7 @@
 
 #include "gegl-types-internal.h"
 
+#include "gegl.h"
 #include "gegl-node.h"
 #include "gegl-connection.h"
 #include "gegl-pad.h"

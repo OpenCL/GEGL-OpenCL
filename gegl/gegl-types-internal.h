@@ -22,30 +22,6 @@
 
 G_BEGIN_DECLS
 
-#ifndef __GEGL_H__
-typedef struct _GeglColor            GeglColor;
-typedef struct _GeglConfig           GeglConfig;
-typedef struct _GeglCurve            GeglCurve;
-typedef struct _GeglNode             GeglNode;
-typedef struct _GeglPath             GeglPath;
-typedef struct _GeglProcessor        GeglProcessor;
-typedef struct _GeglRectangle        GeglRectangle;
-
-struct _GeglRectangle
-{
-  gint x;
-  gint y;
-  gint width;
-  gint height;
-};
-
-typedef enum
-{
-  GEGL_PARAM_PAD_OUTPUT = 1 << G_PARAM_USER_SHIFT,
-  GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
-} GeglPadType;
-
-#endif
 typedef struct _GeglCRVisitor        GeglCRVisitor;
 typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
 typedef struct _GeglEvalMgr          GeglEvalMgr;
