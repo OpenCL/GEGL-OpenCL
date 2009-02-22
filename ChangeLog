@@ -1,5 +1,14 @@
 2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	
+
+	* gegl/gegl-types.h
+	* gegl/gegl-utils.h
+	* gegl/graph/gegl-node.h
+	* gegl/process/gegl-processor.h
+
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl.h: Move includes to the top.
 
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>

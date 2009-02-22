@@ -167,15 +167,6 @@ gpointer gegl_malloc                  (gsize    n_bytes);
 void     gegl_free                    (gpointer mem);
 
 
-/***
- */
-
-GType       gegl_rectangle_get_type      (void) G_GNUC_CONST;
-
-#ifndef __GEGL_H__
-#define     GEGL_TYPE_RECTANGLE            (gegl_rectangle_get_type ())
-#endif
-
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
 #define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))

@@ -22,50 +22,7 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_TYPE_NODE
-typedef struct _GeglNode  GeglNode;
-GType gegl_node_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_NODE    (gegl_node_get_type())
-#define GEGL_NODE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
-#define GEGL_IS_NODE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
-#endif
-
-typedef struct _GeglRectangle GeglRectangle;
-GType gegl_rectangle_get_type (void) G_GNUC_CONST;
-#define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
-
-#ifndef GEGL_BLIT_FLAGS
-#define  GEGL_BLIT_FLAGS
-typedef enum
-{
-  GEGL_BLIT_DEFAULT  = 0,
-  GEGL_BLIT_CACHE    = 1 << 0,
-  GEGL_BLIT_DIRTY    = 1 << 1
-} GeglBlitFlags;
-#endif
-
-#ifndef GEGL_AUTO_ROWSTRIDE
 #define GEGL_AUTO_ROWSTRIDE 0
-#endif
-
-typedef struct _GeglProcessor  GeglProcessor;
-GType gegl_processor_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
-#define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
-#define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
-
-typedef struct _GeglConfig GeglConfig;
-
-
-struct _GeglRectangle
-{
-  gint x;
-  gint y;
-  gint width;
-  gint height;
-};
-
-#define GEGL_PAD_TYPE
 
 typedef enum
 {
@@ -73,9 +30,40 @@ typedef enum
   GEGL_PARAM_PAD_INPUT  = 1 << (G_PARAM_USER_SHIFT + 1)
 } GeglPadType;
 
+typedef enum
+{
+  GEGL_BLIT_DEFAULT  = 0,
+  GEGL_BLIT_CACHE    = 1 << 0,
+  GEGL_BLIT_DIRTY    = 1 << 1
+} GeglBlitFlags;
+
+typedef struct _GeglConfig GeglConfig;
 typedef struct _GeglCurve  GeglCurve;
 typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;
+
+typedef struct _GeglRectangle
+{
+  gint x;
+  gint y;
+  gint width;
+  gint height;
+} GeglRectangle;
+GType gegl_rectangle_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
+
+typedef struct _GeglNode  GeglNode;
+GType gegl_node_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_NODE    (gegl_node_get_type())
+#define GEGL_NODE(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+#define GEGL_IS_NODE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
+
+typedef struct _GeglProcessor  GeglProcessor;
+GType gegl_processor_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
+#define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
+#define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
+
 
 G_END_DECLS
 

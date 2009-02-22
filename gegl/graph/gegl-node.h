@@ -26,14 +26,10 @@
 
 G_BEGIN_DECLS
 
-#ifndef GEGL_TYPE_NODE
-#define GEGL_TYPE_NODE            (gegl_node_get_type ())
-#define GEGL_NODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
 #define GEGL_NODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE, GeglNodeClass))
-#define GEGL_IS_NODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
 #define GEGL_IS_NODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE))
 #define GEGL_NODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
-#endif
+/* The rest is in gegl-types.h */
 
 
 typedef struct _GeglNodeClass   GeglNodeClass;
@@ -71,16 +67,6 @@ struct _GeglNode
   /*< private >*/
   GeglNodePrivate *priv;
 };
-
-#ifndef GEGL_BLIT_FLAGS
-#define GEGL_BLIT_FLAGS
-typedef enum
-{
-  GEGL_BLIT_DEFAULT  = 0,
-  GEGL_BLIT_CACHE    = 1 << 0,
-  GEGL_BLIT_DIRTY    = 1 << 1,
-} GeglBlitFlags;
-#endif
 
 struct _GeglNodeClass
 {
