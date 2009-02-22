@@ -98,6 +98,20 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   g_free (xml);
 }
 
+static void
+gegl_introspect_dispose (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data != NULL)
+    {
+      g_object_unref (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+}
+
 static GeglRectangle
 gegl_introspect_get_bounding_box (GeglOperation *operation)
 {
@@ -124,13 +138,14 @@ gegl_introspect_process (GeglOperation        *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (!o->chant_data)
-    return FALSE;
+  gegl_introspect_load_cache (o);
 
-  /* overriding the predefined behavior */
+  /* gegl_operation_context_set_object() takes the reference we have,
+   * so we must increase it since we want to keep the object
+   */
+  g_object_ref (o->chant_data);
+
   gegl_operation_context_set_object (context, output_pad, G_OBJECT (o->chant_data));
-  g_object_unref (o->chant_data);
-  o->chant_data = NULL;
 
   return  TRUE;
 }
@@ -138,11 +153,15 @@ gegl_introspect_process (GeglOperation        *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  object_class->dispose             = gegl_introspect_dispose;
 
   operation_class->process          = gegl_introspect_process;
   operation_class->get_bounding_box = gegl_introspect_get_bounding_box;
