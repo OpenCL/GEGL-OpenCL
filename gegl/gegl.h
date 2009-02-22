@@ -23,7 +23,13 @@
 #include <babl/babl.h>
 
 #include <gegl-types.h>
+
+#include <gegl-buffer.h>
+#include <gegl-color.h>
+#include <gegl-curve.h>
+#include <gegl-path.h>
 #include <gegl-version.h>
+
 
 /***
  * The GEGL API:
@@ -812,13 +818,6 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  */
 GeglConfig      * gegl_config (void);
 
-
-/*** foo
- */
-#include <gegl-buffer.h>
-#include <gegl-color.h>
-#include <gegl-curve.h>
-#include <gegl-path.h>
 
 G_END_DECLS
 #endif  /* __GEGL_H__ */

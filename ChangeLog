@@ -1,3 +1,7 @@
+2009-02-22  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl.h: Move includes to the top.
+
 2009-02-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Remove the GEGL_INTERNAL define and instead of having incompatible
