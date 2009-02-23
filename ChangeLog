@@ -1,5 +1,12 @@
 2009-02-23  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/buffer/gegl-cache.c: Check for the GeglNode reference to be
+	valid in GeglCache::dispose() before using it as in some cases we
+	get to dispose() when the GeglNode parent is already destroyed and
+	invalid.
+
+2009-02-23  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* operations/common/introspect.c: Instead of using a GeglCache
 	based hack in gegl:introspect. rewrite it to use a simple graph to
 	load the .png into a buffer. This fixes problems with buffer

@@ -202,7 +202,10 @@ dispose (GObject *gobject)
 
   while (g_idle_remove_by_data (gobject)) ;
 
-  if (self->node)
+  /* Check with GEGL_IS_NODE since sometimes the node is destroyed
+   * before we get here
+   */
+  if (GEGL_IS_NODE (self->node))
     {
       gint handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
                                             g_signal_lookup ("invalidated",
