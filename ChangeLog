@@ -1,3 +1,10 @@
+2009-02-23  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/common/introspect.c: Instead of using a GeglCache
+	based hack in gegl:introspect. rewrite it to use a simple graph to
+	load the .png into a buffer. This fixes problems with buffer
+	leaks.
+
 2009-02-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/envelopes.h: modified to deal correctly with HDR.

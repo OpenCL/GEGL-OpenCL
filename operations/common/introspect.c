@@ -34,20 +34,17 @@ gegl_chant_object(node, _("Node"), _("GeglNode to introspect"))
 #include "gegl-dot.h" /* XXX: internal header file */
 #include <stdio.h>
 
-/* FIXME: this should not be neccesary to implement this operation */
-GeglBuffer *gegl_node_get_cache           (GeglNode      *node);
 
 static void
 gegl_introspect_load_cache (GeglChantO *op_introspect)
 {
-  GeglRectangle rect = { 0, };
-  GeglNode     *temp_gegl            = NULL;
-  gchar        *dot_string           = NULL;
-  gchar        *png_filename         = NULL;
-  gchar        *escaped_png_filename = NULL;
-  gchar        *dot_filename         = NULL;
-  gchar        *xml                  = NULL;
-  gchar        *dot_cmd              = NULL;
+  GeglBuffer *new_buffer   = NULL;
+  GeglNode   *png_load     = NULL;
+  GeglNode   *buffer_sink  = NULL;
+  gchar      *dot_string   = NULL;
+  gchar      *png_filename = NULL;
+  gchar      *dot_filename = NULL;
+  gchar      *dot_cmd      = NULL;
 
   if (op_introspect->chant_data)
     return;
@@ -64,38 +61,29 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   dot_cmd = g_strdup_printf ("dot -o %s -Tpng %s", png_filename, dot_filename);
   system (dot_cmd);
 
-  /* Create an XML string that loads the PNG */
-  escaped_png_filename = g_markup_escape_text (png_filename, -1);
-  xml = g_strdup_printf ("<gegl>"
-                         "  <node operation='gegl:png-load' path='%s' />"
-                         "</gegl>",
-                         escaped_png_filename);
-
-  /* Create a GEGL graph from the XML */
-  temp_gegl = gegl_node_new_from_xml (xml, "/");
-  rect = gegl_node_get_bounding_box (temp_gegl);
-
-  /* Force a render of the cache, passing in a NULL buffer indicating
-   * that we do not actually desire the rendered data.
+  /* Create a graph that loads the png into a GeglBuffer and process
+   * it
    */
-  gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE);
+  png_load = gegl_node_new_child (NULL,
+                                  "operation", "gegl:png-load",
+                                  "path",      png_filename,
+                                  NULL);
+  buffer_sink = gegl_node_new_child (NULL,
+                                     "operation", "gegl:buffer-sink",
+                                     "buffer",    &new_buffer,
+                                     NULL);
+  gegl_node_link_many (png_load, buffer_sink, NULL);
+  gegl_node_process (buffer_sink);
 
-  /* Get hold of a GeglBuffer with the data */
-  {
-    GeglBuffer *cache  = GEGL_BUFFER (gegl_node_get_cache (temp_gegl));
-    GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
-    op_introspect->chant_data = (gpointer) newbuf;
-    g_object_unref (cache);
-  }
+  op_introspect->chant_data= new_buffer;
 
   /* Cleanup */
-  g_object_unref (temp_gegl);
+  g_object_unref (buffer_sink);
+  g_object_unref (png_load);
   g_free (dot_string);
   g_free (dot_cmd);
   g_free (dot_filename);
   g_free (png_filename);
-  g_free (escaped_png_filename);
-  g_free (xml);
 }
 
 static void
