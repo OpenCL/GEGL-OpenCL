@@ -1,5 +1,11 @@
 2009-02-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/common/c2g.c: (stress), (process):
+	* operations/common/stress.c: (stress), (process): moved some
+	function calls out of the innerloops.
+
+2009-02-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/common/c2g.c: (stress), (process): removed strength
 	parameter since this is equivalent to combining the resulting image
 	with a desaturated one.

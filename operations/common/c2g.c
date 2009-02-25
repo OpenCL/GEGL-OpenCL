@@ -31,13 +31,9 @@ gegl_chant_int (samples, _("Samples"), 0, 1000, 4,
 gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
                 _("Number of iterations, a higher number of iterations provides a less noisy results at computational cost."))
 
-gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
-                _("Use the same spray for all pixels"))
 /*
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
-gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
-                _("Post correction gamma."))
 */
 #else
 
@@ -50,21 +46,21 @@ gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
 #include "envelopes.h"
 
 #define RGAMMA 2.0
-#define GAMMA  1.0
 
 static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
                     gint        radius,
                     gint        samples,
                     gint        iterations,
-                    gboolean    same_spray,
-                    gdouble     rgamma,
-                    gdouble     gamma)
+                    gdouble     rgamma)
 {
   gint x,y;
   gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
+  gint    inw = gegl_buffer_get_width (src);
+  gint    outw = gegl_buffer_get_width (dst);
+  gint    inh = gegl_buffer_get_height (src);
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 2);
@@ -73,50 +69,55 @@ static void stress (GeglBuffer *src,
 
   for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
     {
-      gint src_offset = ((gegl_buffer_get_width (src)*y)+radius)*4;
-      for (x=radius; x<gegl_buffer_get_width (dst)+radius; x++)
+      gint src_offset = (inw*y+radius)*4;
+      for (x=radius; x<outw+radius; x++)
         {
           gfloat *pixel= src_buf + src_offset;
           gfloat  min[4];
           gfloat  max[4];
 
           compute_envelopes (src_buf,
-                             gegl_buffer_get_width (src),
-                             gegl_buffer_get_height (src),
+                             inw, inh,
                              x, y,
                              radius, samples,
                              iterations,
-                             same_spray,
+                             FALSE, /* same spray */
                              rgamma,
                              min, max);
           { 
-            gint   c;
-            gfloat  u[3];
-            gfloat  v[3];
+            /* this should be replaced with a better/faster projection of
+             * pixel onto the vector spanned by min -> max, currently
+             * computed by comparing the distance to min with the sum
+             * of the distance to min/max.
+             */
 
-            for (c=0;c<3;c++)
-              u[c]=min[c]-max[c];
-            for (c=0;c<3;c++)
-              v[c]=min[c]-pixel[c];
+            gfloat nominator = 0;
+ 	    gfloat denominator = 0;
+            gint c;
+ 	    for (c=0; c<3; c++)
+ 	      {
+                nominator   += (pixel[c] - min[c]) * (pixel[c] - min[c]);
+                denominator += (pixel[c] - max[c]) * (pixel[c] - max[c]);
+ 	      }
 
-            {
-              gdouble len = sqrt(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]);
-              if (len <0.01)
-                {
-                  dst_buf[dst_offset+0] = 0;
-                }
-              else
-                {
-                  for (c=0;c<3;c++)
-                    u[c] /= len;
-                dst_buf[dst_offset+0] = (u[0])*(v[0])+(u[1])*(v[1])+(u[2])*(v[2]);
-                }
-            }
+            nominator = sqrt (nominator);
+            denominator = sqrt (denominator);
+            denominator = nominator + denominator;
+ 	
+            if (denominator>0.000) 
+              {
+                dst_buf[dst_offset+0] = nominator/denominator;
+              }
+            else
+              {
+                /* shouldn't happen */
+                dst_buf[dst_offset+0] = 0.5;
+              }
+            dst_buf[dst_offset+1] = src_buf[src_offset+3];
+
+            src_offset+=4;
+            dst_offset+=2;
           }
-          dst_buf[dst_offset+1] = src_buf[src_offset+3];
-
-          src_offset+=4;
-          dst_offset+=2;
         }
     }
   gegl_buffer_set (dst, NULL, babl_format ("YA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
@@ -155,9 +156,7 @@ process (GeglOperation       *operation,
           o->radius,
           o->samples,
           o->iterations,
-          o->same_spray,
-          /*o->rgamma*/RGAMMA,
-          /*o->gamma*/GAMMA);
+          /*o->rgamma*/RGAMMA);
 
   return  TRUE;
 }

@@ -32,14 +32,10 @@ gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
                 _("Number of iterations, a higher number of iterations provides a less noisy rendering at computational cost."))
 
 
-gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
-                _("Use the same neighbourhood for all pixels, this can speed up computation but also introduces halos with clones of the image unless the number of iterations is high."))
 /*
 
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
-gegl_chant_double (gamma, _("Gamma"), 0.0, 10.0, 1.0,
-                _("Post correction gamma"))
 
 */
 
@@ -64,14 +60,15 @@ static void stress (GeglBuffer *src,
                     gint        radius,
                     gint        samples,
                     gint        iterations,
-                    gboolean    same_spray,
-                    gdouble     rgamma,
-                    gdouble     gamma)
+                    gdouble     rgamma)
 {
   gint x,y;
   gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
+  gint    inw = gegl_buffer_get_width (src);
+  gint    inh = gegl_buffer_get_height (src);
+  gint   outw = gegl_buffer_get_width (dst);
 
   /* this use of huge linear buffers should be avoided and
    * most probably would lead to great speed ups
@@ -84,46 +81,38 @@ static void stress (GeglBuffer *src,
 
   for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
     {
-      gint src_offset = ((gegl_buffer_get_width (src)*y)+radius)*4;
-      for (x=radius; x<gegl_buffer_get_width (dst)+radius; x++)
+      gint src_offset = (inw*y+radius)*4;
+      for (x=radius; x<outw+radius; x++)
         {
           gfloat *center_pix= src_buf + src_offset;
           gfloat  min_envelope[4];
           gfloat  max_envelope[4];
 
           compute_envelopes (src_buf,
-                             gegl_buffer_get_width (src),
-                             gegl_buffer_get_height (src),
+                             inw, inh,
                              x, y,
                              radius, samples,
                              iterations,
-                             same_spray,
+                             FALSE, /* same-spray */
                              rgamma,
                              min_envelope, max_envelope);
            {
               gint c;
-              gfloat pixel[3];
               for (c=0;c<3;c++)
                 {
-                  pixel[c] = center_pix[c];
-                  if (min_envelope[c]!=max_envelope[c])
+                  gfloat delta = max_envelope[c]-min_envelope[c];
+                  if (delta != 0)
                     {
-                      gfloat scaled = (pixel[c]-min_envelope[c])/(max_envelope[c]-min_envelope[c]);
-                      pixel[c] = scaled;
+                      dst_buf[dst_offset+c] =
+                         (center_pix[c]-min_envelope[c])/delta;
+                    }
+                  else
+                    {
+                      dst_buf[dst_offset+c] = 0.5;
                     }
                 }
-              if (gamma==1.0)
-                {
-                  for (c=0; c<3;c++)
-                    dst_buf[dst_offset+c] = pixel[c];
-                }
-              else
-                {
-                  for (c=0; c<3;c++)
-                    dst_buf[dst_offset+c] = pow(pixel[c],gamma);
-                }
-              dst_buf[dst_offset+c] = center_pix[c];
            }
+          dst_buf[dst_offset+3] = src_buf[src_offset+3];
           src_offset+=4;
           dst_offset+=4;
         }
@@ -166,9 +155,7 @@ process (GeglOperation       *operation,
           o->radius,
           o->samples,
           o->iterations,
-          o->same_spray,
-          RGAMMA, /*o->rgamma,*/
-          GAMMA/*o->gamma*/);
+          RGAMMA /*o->rgamma,*/);
 
   return  TRUE;
 }
