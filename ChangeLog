@@ -1,3 +1,9 @@
+2009-02-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/common/c2g.c: (stress), (process): removed strength
+	parameter since this is equivalent to combining the resulting image
+	with a desaturated one.
+
 2009-02-23  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/buffer/gegl-cache.c: Check for the GeglNode reference to be

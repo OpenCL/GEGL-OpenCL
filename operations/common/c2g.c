@@ -33,8 +33,6 @@ gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
 
 gegl_chant_boolean (same_spray, _("Same spray"), FALSE,
                 _("Use the same spray for all pixels"))
-gegl_chant_double (strength, _("Strength"), 0.0, 1.0, 1.0,
-                _("Amount of correction 0=none 1.0=full"))
 /*
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
@@ -61,7 +59,6 @@ static void stress (GeglBuffer *src,
                     gint        iterations,
                     gboolean    same_spray,
                     gdouble     rgamma,
-                    gdouble     strength,
                     gdouble     gamma)
 {
   gint x,y;
@@ -80,8 +77,8 @@ static void stress (GeglBuffer *src,
       for (x=radius; x<gegl_buffer_get_width (dst)+radius; x++)
         {
           gfloat *pixel= src_buf + src_offset;
-          gfloat  min_envelope[4];
-          gfloat  max_envelope[4];
+          gfloat  min[4];
+          gfloat  max[4];
 
           compute_envelopes (src_buf,
                              gegl_buffer_get_width (src),
@@ -91,41 +88,32 @@ static void stress (GeglBuffer *src,
                              iterations,
                              same_spray,
                              rgamma,
-                             min_envelope, max_envelope);
-          { /* now having a local blackpoint and a local white point
-               we just wonder whether we are more black than white */
-            gfloat gray;
+                             min, max);
+          { 
             gint   c;
+            gfloat  u[3];
+            gfloat  v[3];
 
-            gray = pixel[0]*0.212671 + pixel[1] * 0.715160 + pixel[2] * 0.072169;
+            for (c=0;c<3;c++)
+              u[c]=min[c]-max[c];
+            for (c=0;c<3;c++)
+              v[c]=min[c]-pixel[c];
+
             {
-              gfloat nominator = 0;
-              gfloat denominator = 0;
-              for (c=0; c<3; c++)
+              gdouble len = sqrt(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]);
+              if (len <0.01)
                 {
-                  gfloat delta = max_envelope[c]-min_envelope[c];
-                  nominator += (pixel[c] - min_envelope[c]) * delta;
-                  denominator += delta * delta;
+                  dst_buf[dst_offset+0] = 0;
                 }
-
-              if (denominator>0.000) /* if we found a range, modify the result */
+              else
                 {
-                  gray *= (1.0-strength);
-
-                  if (gamma==1.0)
-                    {
-                     gray += strength * (nominator/denominator);
-                    }
-                  else
-                    {
-                     gray += pow (strength * (nominator/denominator), gamma);
-                    }
-
+                  for (c=0;c<3;c++)
+                    u[c] /= len;
+                dst_buf[dst_offset+0] = (u[0])*(v[0])+(u[1])*(v[1])+(u[2])*(v[2]);
                 }
             }
-              dst_buf[dst_offset+0] = gray;
-              dst_buf[dst_offset+1] = src_buf[src_offset+3];
           }
+          dst_buf[dst_offset+1] = src_buf[src_offset+3];
 
           src_offset+=4;
           dst_offset+=2;
@@ -169,7 +157,6 @@ process (GeglOperation       *operation,
           o->iterations,
           o->same_spray,
           /*o->rgamma*/RGAMMA,
-          o->strength,
           /*o->gamma*/GAMMA);
 
   return  TRUE;
