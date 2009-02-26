@@ -30,6 +30,130 @@
 #include "gegl-dot.h"
 #include "gegl.h"
 
+static void
+gegl_dot_util_add_node (GString  *string,
+                        GeglNode *node)
+{
+  g_string_append_printf (string, "op_%p [label=\"", node);
+
+  g_string_append_printf (string, "{{");
+
+  {
+    GSList  *pads       = gegl_node_get_pads (node);
+    GSList  *entry      = pads;
+    gboolean got_output = FALSE;
+    while (entry)
+      {
+        GeglPad *pad = entry->data;
+        if (gegl_pad_is_output (pad))
+          {
+            if (got_output)
+              {
+                g_string_append (string, "|");
+              }
+            got_output = TRUE;
+            g_string_append_printf (string, "<%s>%s",
+                                    gegl_pad_get_name (pad),
+                                    gegl_pad_get_name (pad));
+          }
+        entry = g_slist_next (entry);
+      }
+  }
+
+  g_string_append_printf (string, "}|{%s|{", gegl_node_get_debug_name (node));
+
+  if (1)
+    {
+      guint        n_properties;
+      GParamSpec **properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
+      gint         i;
+      for (i = 0; i < n_properties; i++)
+        {
+          const gchar *name   = properties[i]->name;
+          GValue       tvalue = { 0, };
+          GValue       svalue = { 0, };
+
+          if (properties[i]->value_type == GEGL_TYPE_BUFFER)
+            continue;
+
+          g_value_init (&svalue, G_TYPE_STRING);
+          g_value_init (&tvalue, properties[i]->value_type);
+
+          gegl_node_get_property (node, name, &tvalue);
+
+          if (g_value_transform (&tvalue, &svalue))
+            {
+              gchar *sval = g_value_dup_string (&svalue);
+              if (sval && strlen (sval) > 30)
+                {
+                  sval[28] = '.';
+                  sval[29] = '.';
+                  sval[30] = '\0';
+                }
+              if (sval)
+                {
+                  g_string_append_printf (string, "%s=%s\\n", name, sval);
+                  g_free (sval);
+                }
+              g_value_unset (&svalue);
+            }
+          g_value_unset (&tvalue);
+        }
+      g_free (properties);
+    }
+
+  g_string_append_printf (string, "}}|{");
+
+  {
+    GSList  *pads      = gegl_node_get_pads (node);
+    GSList  *entry     = pads;
+    gboolean got_input = FALSE;
+    while (entry)
+      {
+        GeglPad *pad = entry->data;
+        if (gegl_pad_is_input (pad))
+          {
+            if (got_input)
+              {
+                g_string_append (string, "|");
+              }
+            got_input = TRUE;
+            g_string_append_printf (string, "<%s>%s",
+                                    gegl_pad_get_name (pad),
+                                    gegl_pad_get_name (pad));
+          }
+        entry = g_slist_next (entry);
+      }
+  }
+
+  g_string_append_printf (string, "}}\"\n shape=\"record\"];\n");
+}
+
+static void
+gegl_dot_util_add_node_sink_edges (GString  *string,
+                                   GeglNode *node)
+{
+  GSList *connections = gegl_node_get_sinks (node);
+  GSList *iter;
+
+  for (iter = connections; iter; iter = g_slist_next (iter))
+    {
+      GeglConnection *connection = iter->data;
+      GeglNode       *source;
+      GeglNode       *sink;
+      GeglPad        *source_pad;
+      GeglPad        *sink_pad;
+
+      source     = gegl_connection_get_source_node (connection);
+      sink       = gegl_connection_get_sink_node (connection);
+      source_pad = gegl_connection_get_source_pad (connection);
+      sink_pad   = gegl_connection_get_sink_pad (connection);
+
+      g_string_append_printf (string, "op_%p:%s -> op_%p:%s;\n",
+                              source, gegl_pad_get_name (source_pad),
+                              sink,   gegl_pad_get_name (sink_pad));
+    }
+}
 
 static void
 gegl_dot_add_graph (GString     *string,
@@ -63,101 +187,7 @@ gegl_dot_add_graph (GString     *string,
             g_free (name);
           }
 
-        g_string_append_printf (string, "op_%p [label=\"", node);
-
-
-        g_string_append_printf (string, "{{");
-
-
-        {
-          GSList  *pads       = gegl_node_get_pads (node);
-          GSList  *entry      = pads;
-          gboolean got_output = FALSE;
-          while (entry)
-            {
-              GeglPad *pad = entry->data;
-              if (gegl_pad_is_output (pad))
-                {
-                  if (got_output)
-                    {
-                      g_string_append (string, "|");
-                    }
-                  got_output = TRUE;
-                  g_string_append_printf (string, "<%s>%s",
-                                          gegl_pad_get_name (pad),
-                                          gegl_pad_get_name (pad));
-                }
-              entry = g_slist_next (entry);
-            }
-        }
-        g_string_append_printf (string, "}|{%s|{", gegl_node_get_debug_name (node));
-
-        if (1)
-          {
-            guint        n_properties;
-            GParamSpec **properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
-            gint         i;
-            for (i = 0; i < n_properties; i++)
-              {
-                const gchar *name   = properties[i]->name;
-                GValue       tvalue = { 0, };
-                GValue       svalue = { 0, };
-
-                if (properties[i]->value_type == GEGL_TYPE_BUFFER)
-                  continue;
-
-                g_value_init (&svalue, G_TYPE_STRING);
-                g_value_init (&tvalue, properties[i]->value_type);
-
-                gegl_node_get_property (node, name, &tvalue);
-
-                if (g_value_transform (&tvalue, &svalue))
-                  {
-                    gchar *sval = g_value_dup_string (&svalue);
-                    if (sval && strlen (sval) > 30)
-                      {
-                        sval[28] = '.';
-                        sval[29] = '.';
-                        sval[30] = '\0';
-                      }
-                    if (sval)
-                      {
-                        g_string_append_printf (string, "%s=%s\\n", name, sval);
-                        g_free (sval);
-                      }
-                    g_value_unset (&svalue);
-                  }
-                g_value_unset (&tvalue);
-              }
-            g_free (properties);
-          }
-
-        g_string_append_printf (string, "}}|{");
-
-        {
-          GSList  *pads      = gegl_node_get_pads (node);
-          GSList  *entry     = pads;
-          gboolean got_input = FALSE;
-          while (entry)
-            {
-              GeglPad *pad = entry->data;
-              if (gegl_pad_is_input (pad))
-                {
-                  if (got_input)
-                    {
-                      g_string_append (string, "|");
-                    }
-                  got_input = TRUE;
-                  g_string_append_printf (string, "<%s>%s",
-                                          gegl_pad_get_name (pad),
-                                          gegl_pad_get_name (pad));
-                }
-              entry = g_slist_next (entry);
-            }
-        }
-
-        g_string_append_printf (string, "}}\"\n shape=\"record\"];\n");
-
+        gegl_dot_util_add_node (string, node);
 
         entry = g_slist_next (entry);
       }
@@ -172,28 +202,9 @@ gegl_dot_add_graph (GString     *string,
     while (entry)
       {
         GeglNode *node = entry->data;
-        {
-          GSList *connections = gegl_node_get_sinks (node);
-          GSList *iter;
 
-          for (iter = connections; iter; iter = g_slist_next (iter))
-            {
-              GeglConnection *connection = iter->data;
-              GeglNode       *source;
-              GeglNode       *sink;
-              GeglPad        *source_pad;
-              GeglPad        *sink_pad;
+        gegl_dot_util_add_node_sink_edges (string, node);
 
-              source     = gegl_connection_get_source_node (connection);
-              sink       = gegl_connection_get_sink_node (connection);
-              source_pad = gegl_connection_get_source_pad (connection);
-              sink_pad   = gegl_connection_get_sink_pad (connection);
-
-              g_string_append_printf (string, "op_%p:%s -> op_%p:%s;\n",
-                                      source, gegl_pad_get_name (source_pad),
-                                      sink,   gegl_pad_get_name (sink_pad));
-            }
-        }
         entry = g_slist_next (entry);
       }
     g_slist_free (nodes);
