@@ -32,9 +32,9 @@
 
 
 static void
-gegl_add_graph (GString     *string,
-                GeglNode    *node,
-                const gchar *label)
+gegl_dot_add_graph (GString     *string,
+                    GeglNode    *node,
+                    const gchar *label)
 {
   GeglNode *graph = node;
 
@@ -59,7 +59,7 @@ gegl_add_graph (GString     *string,
                   *p = '_';
                 p++;
               }
-            gegl_add_graph (string, node, name);
+            gegl_dot_add_graph (string, node, name);
             g_free (name);
           }
 
@@ -207,7 +207,7 @@ gegl_to_dot (GeglNode *node)
   GString *string;
 
   string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
-  gegl_add_graph (string, node, "GEGL");
+  gegl_dot_add_graph (string, node, "GEGL");
   g_string_append (string, "}");
 
   return g_string_free (string, FALSE);

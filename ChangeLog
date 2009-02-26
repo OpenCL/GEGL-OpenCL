@@ -1,3 +1,7 @@
+2009-02-26  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.c: Rename gegl_add_graph() to gegl_dot_add_graph()
+
 2009-02-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/common/c2g.c: (stress), (process):
