@@ -1,3 +1,7 @@
+2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.c: Improve formating of graphviz nodes
+
 2009-02-26  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/gegl-dot.c: Refactor gegl_dot_add_graph() to use two new

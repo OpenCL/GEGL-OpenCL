@@ -36,12 +36,17 @@ gegl_dot_util_add_node (GString  *string,
 {
   g_string_append_printf (string, "op_%p [label=\"", node);
 
-  g_string_append_printf (string, "{{");
+  /* We build the record from top to bottom */
+  g_string_append_printf (string, "{");
 
+  /* The first row is a list of output pads */
   {
     GSList  *pads       = gegl_node_get_pads (node);
     GSList  *entry      = pads;
     gboolean got_output = FALSE;
+
+    g_string_append_printf (string, "{");
+
     while (entry)
       {
         GeglPad *pad = entry->data;
@@ -58,10 +63,14 @@ gegl_dot_util_add_node (GString  *string,
           }
         entry = g_slist_next (entry);
       }
+
+    g_string_append_printf (string, "}|");
   }
 
-  g_string_append_printf (string, "}|{%s|{", gegl_node_get_debug_name (node));
+  /* The second row is the operation name such as gegl:translate */
+  g_string_append_printf (string, "%s|", gegl_node_get_debug_name (node));
 
+  /* The next rows are property names and their values */
   if (1)
     {
       guint        n_properties;
@@ -92,7 +101,7 @@ gegl_dot_util_add_node (GString  *string,
                 }
               if (sval)
                 {
-                  g_string_append_printf (string, "%s=%s\\n", name, sval);
+                  g_string_append_printf (string, "%s=%s | ", name, sval);
                   g_free (sval);
                 }
               g_value_unset (&svalue);
@@ -102,12 +111,14 @@ gegl_dot_util_add_node (GString  *string,
       g_free (properties);
     }
 
-  g_string_append_printf (string, "}}|{");
-
+  /* The last row is input pads */
   {
     GSList  *pads      = gegl_node_get_pads (node);
     GSList  *entry     = pads;
     gboolean got_input = FALSE;
+
+    g_string_append_printf (string, "{");
+
     while (entry)
       {
         GeglPad *pad = entry->data;
@@ -124,9 +135,12 @@ gegl_dot_util_add_node (GString  *string,
           }
         entry = g_slist_next (entry);
       }
+
+    g_string_append_printf (string, "}");
   }
 
-  g_string_append_printf (string, "}}\"\n shape=\"record\"];\n");
+  g_string_append_printf (string, "}\"");
+  g_string_append_printf (string, "shape=\"record\"];\n");
 }
 
 static void
