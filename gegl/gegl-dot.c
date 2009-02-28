@@ -68,7 +68,7 @@ gegl_dot_util_add_node (GString  *string,
   }
 
   /* The second row is the operation name such as gegl:translate */
-  g_string_append_printf (string, "%s|", gegl_node_get_debug_name (node));
+  g_string_append_printf (string, "%s %p |", gegl_node_get_debug_name (node), node);
 
   /* The next rows are property names and their values */
   if (1)
