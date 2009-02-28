@@ -1,5 +1,11 @@
 2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-node.c: Improve gegl_node_get_debug_name()
+	formating slightly by making "gegl:nop named proxynop-output" come
+	out as "gegl:nop 'proxynop-output'".
+
+2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-dot.c: Improve formating of graphviz nodes
 
 2009-02-26  Martin Nordholts  <martinn@svn.gnome.org>

@@ -1467,7 +1467,7 @@ gegl_node_get_debug_name (GeglNode *node)
   if (name && *name)
     {
       g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s named %s", operation ? operation : "(none)", name);
+                  "%s '%s'", operation ? operation : "(none)", name);
     }
   else
     {
