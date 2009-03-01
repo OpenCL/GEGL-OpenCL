@@ -1,5 +1,18 @@
 2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add a simple tests case to ensure processing and caching
+	sanity. The test case constructs a simple graph, processes it,
+	checks the result, changes input, processes again and finally
+	checks the result a second time. This test will immediately catch
+	severe regressions.
+
+	* Makefile.am
+	* configure.ac
+	* tests/Makefile.am (new file)
+	* tests/test-proxynop-processing.c (new file)
+
+2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-dot.c: Print the GeglNode pointer at the end of the op
 	in graphviz nodes
 

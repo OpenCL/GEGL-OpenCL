@@ -5,7 +5,8 @@ SUBDIRS=\
 	operations \
 	bin \
 	tools \
-	examples
+	examples \
+	tests
 
 if ENABLE_DOCS
 SUBDIRS+= docs
