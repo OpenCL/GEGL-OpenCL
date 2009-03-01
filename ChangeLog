@@ -1,5 +1,10 @@
 2009-03-01  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/test-proxynop-processing.c: Memset result buffer before
+	each processing in the test case
+
+2009-03-01  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/test-proxynop-processing.c: Simplify test case result
 	checking
 

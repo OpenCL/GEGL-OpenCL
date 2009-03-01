@@ -15,6 +15,8 @@
  * Copyright (C) 2009 Martin Nordholts
  */
 
+#include <string.h>
+
 #include "gegl.h"
 
 #define RED      0
@@ -63,6 +65,7 @@ int main(int argc, char *argv[])
                        NULL);
 
   /* Process the graph and make sure we get the expected result */
+  memset (result_buffer, 0, sizeof (result_buffer));
   gegl_node_blit (graph_output_proxy,
                   1.0,
                   &roi,
@@ -85,6 +88,7 @@ int main(int argc, char *argv[])
   gegl_node_set (color_in_graph,
                  "value", color2,
                  NULL);
+  memset (result_buffer, 0, sizeof (result_buffer));
   gegl_node_blit (graph_output_proxy,
                   1.0,
                   &roi,
