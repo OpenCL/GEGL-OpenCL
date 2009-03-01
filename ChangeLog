@@ -1,4 +1,10 @@
-2009-02-28  Martin Nordholts  <martinn@svn.gnome.org>
+2009-03-01  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* tests/test-proxynop-processing.c: Perform a third test
+	processing without any changes at all since this is a better way
+	to stress test caching mechanisms.
+
+2009-03-01  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Add a simple tests case to ensure processing and caching
 	sanity. The test case constructs a simple graph, processes it,

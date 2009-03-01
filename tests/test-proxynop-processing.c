@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
       goto abort;
     }
 
-  /* Process the graph AGAIN and make sure we get the expected result
-   * as this puts some stress on the caching mechanisms
+  /* Process the graph again with a different color and make sure we
+   * get the expected result
    */
   gegl_node_set (color_in_graph,
                  "value", color2,
@@ -105,7 +105,31 @@ int main(int argc, char *argv[])
   else
     {
       result = FAILURE;
-      g_printerr ("Second processing failed, looks like you messed up caching. Fix!");
+      g_printerr ("Second processing failed, i.e. changing color didn't work properly");
+      goto abort;
+    }
+
+  /* Process the graph again but without changing anything since this
+   * puts some stress on the caching mechanisms
+   */
+  memset (result_buffer, 0, sizeof (result_buffer));
+  gegl_node_blit (graph_output_proxy,
+                  1.0,
+                  &roi,
+                  babl_format ("RGB u8"),
+                  result_buffer,
+                  GEGL_AUTO_ROWSTRIDE,
+                  GEGL_BLIT_DEFAULT);
+  if (result_buffer[RED]   == 0   &&
+      result_buffer[GREEN] == 0   &&
+      result_buffer[BLUE]  == 255)
+    {
+      result = SUCCESS;
+    }
+  else
+    {
+      result = FAILURE;
+      g_printerr ("Third processing failed, looks like you messed up caching");
       goto abort;
     }
 
