@@ -70,13 +70,9 @@ int main(int argc, char *argv[])
                   result_buffer,
                   GEGL_AUTO_ROWSTRIDE,
                   GEGL_BLIT_DEFAULT);
-  if (result_buffer[RED]   == 255 &&
-      result_buffer[GREEN] == 0   &&
-      result_buffer[BLUE]  == 255)
-    {
-      result = SUCCESS;
-    }
-  else
+  if (!(result_buffer[RED]   == 255 &&
+        result_buffer[GREEN] == 0   &&
+        result_buffer[BLUE]  == 255))
     {
       result = FAILURE;
       g_printerr ("Initial processing failed, you messed up GEGL pretty badly :(");
@@ -96,13 +92,9 @@ int main(int argc, char *argv[])
                   result_buffer,
                   GEGL_AUTO_ROWSTRIDE,
                   GEGL_BLIT_DEFAULT);
-  if (result_buffer[RED]   == 0   &&
-      result_buffer[GREEN] == 0   &&
-      result_buffer[BLUE]  == 255)
-    {
-      result = SUCCESS;
-    }
-  else
+  if (!(result_buffer[RED]   == 0   &&
+        result_buffer[GREEN] == 0   &&
+        result_buffer[BLUE]  == 255))
     {
       result = FAILURE;
       g_printerr ("Second processing failed, i.e. changing color didn't work properly");
@@ -120,13 +112,9 @@ int main(int argc, char *argv[])
                   result_buffer,
                   GEGL_AUTO_ROWSTRIDE,
                   GEGL_BLIT_DEFAULT);
-  if (result_buffer[RED]   == 0   &&
-      result_buffer[GREEN] == 0   &&
-      result_buffer[BLUE]  == 255)
-    {
-      result = SUCCESS;
-    }
-  else
+  if (!(result_buffer[RED]   == 0   &&
+        result_buffer[GREEN] == 0   &&
+        result_buffer[BLUE]  == 255))
     {
       result = FAILURE;
       g_printerr ("Third processing failed, looks like you messed up caching");
