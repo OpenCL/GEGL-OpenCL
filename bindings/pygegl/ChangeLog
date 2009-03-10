@@ -1,3 +1,8 @@
+2009-03-09  Manish Singh  Myosh@gimp.org>
+
+	* Gegl/gegl.override: Remove gegl_color_get_rgba4f binding, it doesn't
+	make any sense to wrap (and the implementation was broken anyways).
+
 2009-02-19  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Fixes for compile problems due to changes in BABL 390 and GEGL 2851.

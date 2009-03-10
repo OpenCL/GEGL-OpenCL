@@ -55,6 +55,7 @@ ignore
   gegl_node_new_from_file
   gegl_processor_destroy
   gegl_node_new_from_file
+  gegl_color_get_rgba4f
 %%
 ignore-glob
   gegl_log_*
@@ -131,15 +132,6 @@ _wrap_gegl_color_get_rgba(PyGObject *self)
     gdouble r, g, b, a;
     gegl_color_get_rgba(GEGL_COLOR(self->obj), &r, &g, &b, &a);
     return Py_BuildValue("ffff", r, g, b, a);
-}
-%%
-override gegl_color_get_rgba4f noargs
-static PyObject *
-_wrap_gegl_color_get_rgba4f(PyGObject *self)
-{
-    gfloat *buf;
-    gegl_color_get_rgba4f(GEGL_COLOR(self->obj), &buf);
-    return Py_BuildValue("O", buf);
 }
 %%
 override gegl_list_operations noargs
