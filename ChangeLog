@@ -1,3 +1,8 @@
+2009-03-12  Sven Neumann  <sven@gimp.org>
+
+	* gegl/process/gegl-processor.c: applied patch from Henrik Akesson.
+	Cleans up the code and comments it.
+
 2009-03-01  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* tests/test-proxynop-processing.c: Memset result buffer before

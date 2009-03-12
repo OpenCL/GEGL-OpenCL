@@ -57,6 +57,7 @@ static GObject * gegl_processor_constructor  (GType                  type,
                                               guint                  n_params,
                                               GObjectConstructParam *params);
 static gdouble   gegl_processor_progress     (GeglProcessor         *processor);
+static gint      gegl_processor_get_band_size(gint                   size) G_GNUC_CONST;
 
 
 struct _GeglProcessor
@@ -132,6 +133,9 @@ gegl_processor_init (GeglProcessor *processor)
   processor->chunk_size       = 128 * 128;
 }
 
+/* Initialises the fields processor->input, processor->valid_region
+ * and processor->queued_region.
+ */
 static GObject *
 gegl_processor_constructor (GType                  type,
                             guint                  n_params,
@@ -143,6 +147,8 @@ gegl_processor_constructor (GType                  type,
   object    = G_OBJECT_CLASS (gegl_processor_parent_class)->constructor (type, n_params, params);
   processor = GEGL_PROCESSOR (object);
 
+  /* if the processor's node is a sink operation then get the producer node
+   * and set up the region (unless all is going to be needed) */
   if (processor->node->operation &&
       g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
                    GEGL_TYPE_OPERATION_SINK))
@@ -157,6 +163,8 @@ gegl_processor_constructor (GType                  type,
           processor->valid_region = NULL;
         }
     }
+  /* If the processor's node is not a sink operation, then just use it as
+   * an input, and set the region to NULL */
   else
     {
       processor->input = processor->node;
@@ -261,6 +269,8 @@ gegl_processor_get_property (GObject    *gobject,
     }
 }
 
+/* Sets the processor->rectangle to the given rectangle (or the node bounding
+ * box if rectangle is NULL) and removes any dirty_rectangles */
 void
 gegl_processor_set_rectangle (GeglProcessor       *processor,
                               const GeglRectangle *rectangle)
@@ -274,6 +284,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       rectangle          = &input_bounding_box;
     }
 
+  /* if the processor's rectangle isn't already set to the node's bounding box,
+   * then set it and remove processor->dirty_rectangles (set to NULL)  */
   if (! gegl_rectangle_equal (&processor->rectangle, rectangle))
     {
 
@@ -299,6 +311,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
     }
 }
 
+/* creates a new processor and sets up it's context (if the node is
+ * a operation sink wich needs the full content */
 GeglProcessor *
 gegl_node_new_processor (GeglNode            *node,
                          const GeglRectangle *rectangle)
@@ -315,6 +329,10 @@ gegl_node_new_processor (GeglNode            *node,
   /* FIXME: Look for what pads that are available rather than looking
    * at what type of operation we are dealing with
    */
+
+  /* if the node's operation is a sink and it needs the full content then
+   * a context will be set up together with a cache and
+   * needed and result rectangles */
   if (node->operation                          &&
       GEGL_IS_OPERATION_SINK (node->operation) &&
       gegl_operation_sink_needs_full (node->operation))
@@ -341,7 +359,37 @@ gegl_node_new_processor (GeglNode            *node,
   return processor;
 }
 
-/* returns TRUE if there is more work */
+/* Will generate band_sizes that are adapted to the size of the tiles */
+static gint
+gegl_processor_get_band_size (gint size)
+{
+  gint band_size;
+
+  band_size = size / 2;
+
+  /* try to make the rects generated match better with potential 2^n sized
+   * tiles, XXX: should be improved to make the next slice fit as well. */
+  if (band_size <= 256)
+    {
+      band_size = MIN(band_size, 128); /* prefer a band_size of 128,
+                                          hoping to hit tiles */
+    }
+  else if (band_size <= 512)
+    {
+      band_size = MIN(band_size, 256); /* prefer a band_size of 128,
+                                          hoping to hit tiles */
+    }
+
+  if (band_size < 1)
+    band_size = 1;
+
+  return band_size;
+}
+
+/* If the processor's dirty rectangle is too big then it will be cut, added
+ * to the processor's list of dirty rectangles and TRUE will be returned.
+ * If the rectangle is small enough it will be processed, using a buffer or
+ * not as appropriate, and will return TRUE if there is more work */
 static gboolean
 render_rectangle (GeglProcessor *processor)
 {
@@ -350,6 +398,8 @@ render_rectangle (GeglProcessor *processor)
   GeglCache *cache    = NULL;
   gint       pxsize;
 
+  /* Retreive the cache if the processor's node is not buffered if it's
+   * operation is a sink and it doesn't use the full area  */
   buffered = !(GEGL_IS_OPERATION_SINK(processor->node->operation) &&
                !gegl_operation_sink_needs_full (processor->node->operation));
   if (buffered)
@@ -362,76 +412,46 @@ render_rectangle (GeglProcessor *processor)
     {
       GeglRectangle *dr = processor->dirty_rectangles->data;
 
+      /* If a dirty rectangle is bigger than the max area, then cut it
+       * to smaller pieces */
       if (dr->height * dr->width > max_area && 1)
         {
           gint band_size;
 
-          if (dr->width > dr->height)
-            {
-              GeglRectangle *fragment;
+          g_debug( "{%s:%u} rectangle (%ux%u) too big (> %u)",
+                  __FILE__, __LINE__, dr->height, dr->width, max_area );
 
-/* try to make the rects generated match better with potential 2^n sized
- * tiles, XXX: should be improved to make the next slice fit as well.
- */
-              band_size = dr->width / 2;
-#if 1
-              if (band_size <= 256)
-                {
-                  band_size = MIN(band_size, 128); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-              else if (band_size <= 512)
-                {
-                  band_size = MIN(band_size, 256); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-#endif
+          {
+            GeglRectangle *fragment;
 
-              if (band_size < 1)
-                band_size = 1;
+            fragment = g_slice_dup (GeglRectangle, dr);
 
-              fragment = g_slice_dup (GeglRectangle, dr);
+            /* When splitting a rectangle, we'll do it on the biggest side */
+            if (dr->width > dr->height)
+              {
+                band_size = gegl_processor_get_band_size ( dr->width );
+              
+                fragment->width = band_size;
+                dr->width      -= band_size;
+                dr->x          += band_size;
+              }
+            else
+              {
+                band_size = gegl_processor_get_band_size (dr->height);
 
-              fragment->width = band_size;
-              dr->width      -= band_size;
-              dr->x          += band_size;
+                fragment->height = band_size;
+                dr->height      -= band_size;
+                dr->y           += band_size;
+              }
+            processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
 
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-
-              return TRUE;
-            }
-          else
-            {
-              GeglRectangle *fragment;
-
-              band_size = dr->height / 2;
-
-
-              if (band_size <= 256)
-                {
-                  band_size = MIN(band_size, 128); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-              else if (band_size <= 512)
-                {
-                  band_size = MIN(band_size, 256); /* prefer a band_size of 128,
-                                                      hoping to hit tiles */
-                }
-
-              if (band_size < 1)
-                band_size = 1;
-
-              fragment = g_slice_dup (GeglRectangle, dr);
-
-              fragment->height = band_size;
-              dr->height      -= band_size;
-              dr->y           += band_size;
-
-              processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-
-              return TRUE;
-            }
+            g_debug ("{%s:%u} rectangle split to (%ux%u) and (%ux%u)\n",
+                    __FILE__, __LINE__, dr->height, dr->width,
+                    fragment->height, fragment->width);
+          }
+          return TRUE;
         }
+      /* remove the rectangle that will be processed from the list of dirty ones */
       processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
 
       if (!dr->width || !dr->height)
@@ -444,27 +464,30 @@ render_rectangle (GeglProcessor *processor)
       if (buffered)
         {
           /* only do work if the rectangle is not completely inside the valid
-           * region of the cache
-           */
+           * region of the cache */
           if (gegl_region_rect_in (cache->valid_region, dr) !=
               GEGL_OVERLAP_RECTANGLE_IN)
             {
+              /* create a buffer and initialise it */
               guchar *buf;
 
               gegl_region_union_with_rect (cache->valid_region, dr);
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
 
+              /* do the image calculations using the buffer */
               gegl_node_blit (cache->node, 1.0, dr, cache->format, buf,
                               GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
 
-              /* check that we haven't been recently */
+              /* copy the buffer data into the cache */
               gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf,
                                GEGL_AUTO_ROWSTRIDE);
 
+              /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr);
 
+              /* release the buffer */
               g_free (buf);
             }
         }
@@ -487,6 +510,7 @@ rect_area (GeglRectangle *rectangle)
   return rectangle->width * rectangle->height;
 }
 
+/* returns the total area covered by a region */
 static gint
 region_area (GeglRegion *region)
 {
@@ -506,6 +530,7 @@ region_area (GeglRegion *region)
   return sum;
 }
 
+/* returns the area not covered by the rectangle */
 static gint
 area_left (GeglRegion    *area,
            GeglRectangle *rectangle)
@@ -520,6 +545,7 @@ area_left (GeglRegion    *area,
   return sum;
 }
 
+/* returns true if everything is rendered */
 static gboolean
 gegl_processor_is_rendered (GeglProcessor *processor)
 {
@@ -567,6 +593,8 @@ gegl_processor_progress (GeglProcessor *processor)
   return ret;
 }
 
+/* Processes the rectangle (might be only splitting it to smaller ones) and
+ * updates the progress indicator */
 static gboolean
 gegl_processor_render (GeglProcessor *processor,
                        GeglRectangle *rectangle,
@@ -686,6 +714,8 @@ gegl_processor_render (GeglProcessor *processor,
   return !gegl_processor_is_rendered (processor);
 }
 
+/* Will call gegl_processor_render and when there is no more work to be done,
+ * it will write the result to the destination */
 gboolean
 gegl_processor_work (GeglProcessor *processor,
                      gdouble       *progress)
