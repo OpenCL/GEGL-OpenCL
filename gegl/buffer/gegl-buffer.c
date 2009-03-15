@@ -784,12 +784,12 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_ABYSS_WIDTH,
@@ -804,22 +804,22 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_X,
                                    g_param_spec_int ("abyss-x", "abyss-x", "",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_Y,
                                    g_param_spec_int ("abyss-y", "abyss-y", "",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_SHIFT_X,
                                    g_param_spec_int ("shift-x", "shift-x", "",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_SHIFT_Y,
                                    g_param_spec_int ("shift-y", "shift-y", "",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_FORMAT,

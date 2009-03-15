@@ -162,12 +162,12 @@ gegl_tile_class_init (GeglTileClass *class)
 
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "Horizontal index",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y", "Vertical index",
-                                                     G_MININT, G_MAXINT, 0,
+                                                     G_MININT / 2, G_MAXINT / 2, 0,
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_Z,

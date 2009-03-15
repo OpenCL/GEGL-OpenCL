@@ -138,14 +138,14 @@ gegl_cache_class_init (GeglCacheClass *klass)
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x",
                                                      "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, -4096,
+                                                     G_MININT / 2, G_MAXINT / 2, -4096,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y",
                                                      "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, -4096,
+                                                     G_MININT / 2, G_MAXINT / 2, -4096,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 

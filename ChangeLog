@@ -1,3 +1,26 @@
+2009-03-15  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Consciously consider a well specified subset of the 2d euclidian space
+	as valid for processing, namely the space within the rectangle
+
+	  {x=G_MININT/2, y=G_MININT/2, width=G_MAXINT, height=G_MAXINT},
+
+	which typically means
+
+	  {x=-1073741824, y=-1073741824, width=2147483647, height=2147483647}.
+
+	Processing outside of this area results in undefined behaviour. The
+	approach taken by the core is to not impose this limitation
+	artificially in too many places as this would just complicate the code
+	base and risk too early truncation of data during processing.
+
+	The reason for this new policy is be more specific on the behaviour
+	and limitations of GEGL as a system.
+
+	* gegl/buffer/gegl-tile.c
+	* gegl/buffer/gegl-cache.c
+	* gegl/buffer/gegl-buffer.c
+
 2009-03-15  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Elrond <elrond+gegl.org@samba.tng.org> that
