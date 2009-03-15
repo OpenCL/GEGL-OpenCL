@@ -96,8 +96,8 @@ gegl_swap_dir (void)
         }
       else
         {
-          swapdir = g_build_filename (g_get_home_dir(),
-                                      "." GEGL_LIBRARY,
+          swapdir = g_build_filename (g_get_user_cache_dir(),
+                                      GEGL_LIBRARY,
                                       "swap",
                                       NULL);
         }
@@ -513,9 +513,9 @@ gegl_post_parse_hook (GOptionContext *context,
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
 
-          /* also load plug-ins from ~/.gegl-0.0/plug-ins */
-          module_path = g_build_filename (g_get_home_dir (),
-                                          "." GEGL_LIBRARY,
+          /* also load plug-ins from ~/.local/share/gegl-0.0/plugins */
+          module_path = g_build_filename (g_get_user_data_dir (),
+                                          GEGL_LIBRARY,
                                           "plug-ins",
                                           NULL);
 

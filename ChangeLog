@@ -1,3 +1,10 @@
+2009-03-15  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Elrond <elrond+gegl.org@samba.tng.org> that
+	makes GEGL use XDG base directory specification for swap and user
+	plug-in directories.
+	* gegl/gegl-init.c: (gegl_swap_dir), (gegl_post_parse_hook):
+
 2009-03-12  Sven Neumann  <sven@gimp.org>
 
 	* gegl/process/gegl-processor.c: applied patch from Henrik Akesson.
