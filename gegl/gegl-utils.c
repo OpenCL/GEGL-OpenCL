@@ -175,6 +175,22 @@ gegl_rectangle_dup (const GeglRectangle *rectangle)
   return result;
 }
 
+GeglRectangle
+gegl_rectangle_infinite_plane (void)
+{
+  GeglRectangle infinite_plane_rect = {G_MININT / 2, G_MININT / 2, G_MAXINT, G_MAXINT};
+  return infinite_plane_rect;
+}
+
+gboolean
+gegl_rectangle_is_infinite_plane (const GeglRectangle *rectangle)
+{
+  return (rectangle->x      == G_MININT / 2 &&
+          rectangle->y      == G_MININT / 2 &&
+          rectangle->width  == G_MAXINT     &&
+          rectangle->height == G_MAXINT);
+}
+
 GType
 gegl_rectangle_get_type (void)
 {

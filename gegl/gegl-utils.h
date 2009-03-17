@@ -139,6 +139,22 @@ gboolean    gegl_rectangle_intersect     (GeglRectangle       *dest,
 gboolean    gegl_rectangle_contains      (const GeglRectangle *parent,
                                           const GeglRectangle *child);
 
+/**
+ * gegl_rectangle_infinite_plane:
+ *
+ * Returns a GeglRectangle that represents an infininte plane.
+ */
+GeglRectangle gegl_rectangle_infinite_plane (void);
+
+/**
+ * gegl_rectangle_is_infinite_plane:
+ * @rectangle: A GeglRectangle.
+ *
+ * Returns TRUE if the GeglRectangle represents an infininte plane,
+ * FALSE otherwise.
+ */
+gboolean gegl_rectangle_is_infinite_plane (const GeglRectangle *rectangle);
+
 
 
 /***
