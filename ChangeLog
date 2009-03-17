@@ -1,3 +1,7 @@
+2009-03-17  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: bumped GLib version for deprecated symbols.
+
 2009-03-15  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Consider only a well specified subset of the 2d euclidian space as
