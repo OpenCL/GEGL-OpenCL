@@ -1,3 +1,8 @@
+2009-03-17  Sven Neumann  <sven@gimp.org>
+
+	* tests/Makefile.am: some cleanups. Always build the tests; this
+	helps to catch compile problems early.
+
 2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Add a few test cases for GeglRectangle and the functions
