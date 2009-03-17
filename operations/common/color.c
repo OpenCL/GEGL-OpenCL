@@ -31,23 +31,23 @@ gegl_chant_color (value, _("Color"), "black",
 #include "gegl-chant.h"
 
 static void
-prepare (GeglOperation *operation)
+gegl_color_op_prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+gegl_color_op_get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000,-10000000,20000000,20000000};
   return result;
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         void                *out_buf,
-         glong                n_pixels,
-         const GeglRectangle *roi)
+gegl_color_op_process (GeglOperation       *operation,
+                       void                *out_buf,
+                       glong                n_pixels,
+                       const GeglRectangle *roi)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *out_pixel = out_buf;
@@ -74,12 +74,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class    = GEGL_OPERATION_CLASS (klass);
   point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
 
-  point_render_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->prepare = prepare;
+  point_render_class->process       = gegl_color_op_process;
+  operation_class->get_bounding_box = gegl_color_op_get_bounding_box;
+  operation_class->prepare          = gegl_color_op_prepare;
 
   operation_class->name        = "gegl:color";
   operation_class->categories  = "render";
