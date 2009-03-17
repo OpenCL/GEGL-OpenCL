@@ -1,5 +1,14 @@
 2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add a few test cases for GeglRectangle and the functions
+	gegl_rectangle_bounding_box(), gegl_rectangle_intersect() and
+	gegl_rectangle_contains().
+
+	* tests/test-gegl-rectangle.c: 
+	* tests/Makefile.am: 
+
+2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add utility functions for GeglRectangles representing infinite
 	planes, namely gegl_rectangle_infinite_plane() and
 	gegl_rectangle_is_infinite_plane().

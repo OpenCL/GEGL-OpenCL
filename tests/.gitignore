@@ -1,7 +1,8 @@
-/Makefile
-/Makefile.in
+/*.la
+/*.lo
 /.deps
 /.libs
-/*.lo
-/*.la
+/Makefile
+/Makefile.in
+/test-gegl-rectangle
 /test-proxynop-processing*
