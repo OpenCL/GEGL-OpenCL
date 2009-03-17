@@ -1,3 +1,7 @@
+2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* tests/Makefile.am: Make formating consistent
+
 2009-03-17  Sven Neumann  <sven@gimp.org>
 
 	* tests/Makefile.am: some cleanups. Always build the tests; this

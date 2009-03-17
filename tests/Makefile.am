@@ -1,6 +1,6 @@
 # The tests
 TESTS = \
-	test-proxynop-processing$(EXEEXT)   \
+	test-proxynop-processing$(EXEEXT)	\
 	test-gegl-rectangle$(EXEEXT)
 
 noinst_PROGRAMS = $(TESTS)
@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 
 # Common libs
 testlibs = \
-	$(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la \
+	$(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la	\
 	@DEP_LIBS@ @BABL_LIBS@
 
 # Proxynop Processing
