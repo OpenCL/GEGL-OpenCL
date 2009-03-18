@@ -4,8 +4,7 @@
 	an enum instead of using pure ints since that increases
 	readability.
 
-	* gegl/process/gegl-eval-mgr.c
-	* gegl/process/gegl-eval-mgr.h
+	* gegl/process/gegl-eval-mgr.[ch]
 
 2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
 
@@ -16,8 +15,7 @@
 	* gegl/graph/gegl-visitor.c
 	* gegl/operation/gegl-operation.c
 	* gegl/process/gegl-cr-visitor.c
-	* gegl/process/gegl-eval-mgr.c
-	* gegl/process/gegl-eval-mgr.h
+	* gegl/process/gegl-eval-mgr.[ch]
 	* gegl/process/gegl-have-visitor.c
 	* gegl/process/gegl-prepare-visitor.c
 
@@ -30,8 +28,7 @@
 
 	* gegl/graph/gegl-node.c
 	* gegl/graph/gegl-pad.c
-	* gegl/graph/gegl-visitable.c
-	* gegl/graph/gegl-visitable.h
+	* gegl/graph/gegl-visitable.[ch]
 	* gegl/graph/gegl-visitor.c
 
 2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
