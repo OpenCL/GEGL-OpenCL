@@ -801,6 +801,10 @@ static void gegl_node_ensure_eval_mgr (GeglNode    *node,
     priv->eval_mgr = gegl_eval_mgr_new (node, pad);
 }
 
+/* Will set the eval_mgr's roi to the supplied roi if defined, otherwise
+ * it will use the node's bounding box. Then the gegl_eval_mgr_apply will
+ * be called.
+ */
 static GeglBuffer *
 gegl_node_apply_roi (GeglNode            *self,
                      const gchar         *output_pad_name,
@@ -1646,6 +1650,9 @@ gegl_node_remove_context (GeglNode *self,
   gegl_operation_context_destroy (context);
 }
 
+/* Creates, sets up and returns a new context for the node, or just returns it
+ * if it is already set up. Also adds it to an internal hash table.
+ */
 GeglOperationContext *
 gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)

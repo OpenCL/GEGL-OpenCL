@@ -51,7 +51,7 @@ struct _GeglEvalMgr
                               up the contexts on the nodes.
                          */
 
-  /* we keep these objects around, they are to expensive to throw away */
+  /* we keep these objects around, they are too expensive to throw away */
   GeglVisitor *prepare_visitor;
   GeglVisitor *cr_visitor;
   GeglVisitor *eval_visitor;

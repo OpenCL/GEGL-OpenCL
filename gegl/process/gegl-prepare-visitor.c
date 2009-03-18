@@ -51,6 +51,9 @@ gegl_prepare_visitor_init (GeglPrepareVisitor *self)
 {
 }
 
+/* adds a context to the node, calls the operation's prepare method and
+ * sets the node's "needed rectangle" to an empty one
+ */
 static void
 gegl_prepare_visitor_visit_node (GeglVisitor *self,
                                  GeglNode    *node)
@@ -59,6 +62,7 @@ gegl_prepare_visitor_visit_node (GeglVisitor *self,
 
   glong          time = gegl_ticks ();
 
+  /* call the parent's class (gegl-visitor.c) visit_node function */
   GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
 
   if (self->context_id == NULL)
@@ -86,6 +90,7 @@ gegl_prepare_visitor_visit_node (GeglVisitor *self,
 
   gegl_operation_prepare (operation);
   {
+    /* initialise the "needed rectangle" to an empty one */
     GeglRectangle empty ={0,};
     gegl_node_set_need_rect (node, self->context_id, &empty);
   }

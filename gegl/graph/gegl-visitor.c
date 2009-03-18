@@ -182,6 +182,7 @@ lookup (GeglVisitor   *self,
   return g_hash_table_lookup (self->hash, visitable);
 }
 
+/* resets the object's data (list of visits and visitable statuses) */
 void gegl_visitor_reset (GeglVisitor   *self)
 {
   if (self->visits_list)
@@ -192,6 +193,9 @@ void gegl_visitor_reset (GeglVisitor   *self)
   g_hash_table_remove_all (self->hash);
 }
 
+/* Inserts the visitable into the object's hash table of visitables with the
+ * object as a key and a new GeglVisitInfo (zero initialised) as object
+ */
 static void
 insert (GeglVisitor   *self,
         GeglVisitable *visitable)
@@ -206,6 +210,7 @@ insert (GeglVisitor   *self,
     }
 }
 
+/* Returns TRUE if a GeglVisitable has already been visited */
 static gboolean
 get_visited (GeglVisitor   *self,
              GeglVisitable *visitable)
@@ -311,10 +316,14 @@ gegl_visitor_dfs_traverse (GeglVisitor   *self,
   g_return_if_fail (GEGL_IS_VISITOR (self));
   g_return_if_fail (GEGL_IS_VISITABLE (visitable));
 
+  /* sets up the structures that keeps track of the */
   init_dfs_traversal (self, visitable);
   dfs_traverse (self, visitable);
 }
 
+/* Recursively (depth first) sets up the structure (hash) that keeps track of
+ * if a visitable's status
+ */
 static void
 init_dfs_traversal (GeglVisitor   *self,
                     GeglVisitable *visitable)
@@ -322,6 +331,7 @@ init_dfs_traversal (GeglVisitor   *self,
   GSList *depends_on_list;
   GSList *llink;
 
+  /* add the visitable to the list */
   insert (self, visitable);
   depends_on_list = gegl_visitable_depends_on (visitable);
   llink           = depends_on_list;
@@ -331,6 +341,9 @@ init_dfs_traversal (GeglVisitor   *self,
       GeglVisitable *visitable  = llink->data;
       GeglVisitInfo *visit_info = lookup (self, visitable);
 
+      /* if the visitable doesn't have a visit_info,
+       * then it needs to be initialised
+       */
       if (!visit_info)
         init_dfs_traversal (self, visitable);
 
@@ -340,6 +353,9 @@ init_dfs_traversal (GeglVisitor   *self,
   g_slist_free (depends_on_list);
 }
 
+/* Recursively (depth first) traverses the visitables and call's their
+ * accept methods
+ */
 static void
 dfs_traverse (GeglVisitor   *self,
               GeglVisitable *visitable)
@@ -354,6 +370,7 @@ dfs_traverse (GeglVisitor   *self,
     {
       GeglVisitable *visitable = llink->data;
 
+      /* if the visitable has not yet been visitied then visit it */
       if (!get_visited (self, visitable))
         dfs_traverse (self, visitable);
 
@@ -362,7 +379,11 @@ dfs_traverse (GeglVisitor   *self,
 
   g_slist_free (depends_on_list);
 
+  /* trigger the actual visit (call the visitable's accept method that will
+   * call the visitable's visit method (c.f. the visitor pattern)
+   */
   gegl_visitable_accept (visitable, self);
+  /* mark the visitable as already visited*/
   set_visited (self, visitable, TRUE);
 }
 
@@ -468,6 +489,9 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
     }
 }
 
+/* should be called by extending classes when their visit_pad function
+ * is called
+ */
 void
 gegl_visitor_visit_pad (GeglVisitor *self,
                         GeglPad     *pad)
@@ -490,6 +514,9 @@ visit_pad (GeglVisitor *self,
   self->visits_list = g_slist_prepend (self->visits_list, pad);
 }
 
+/* should be called by extending classes when their visit_node function
+ * is called
+ */
 void
 gegl_visitor_visit_node (GeglVisitor *self,
                          GeglNode    *node)
@@ -505,6 +532,7 @@ gegl_visitor_visit_node (GeglVisitor *self,
     klass->visit_node (self, node);
 }
 
+/* adds the visiting node to the list of visits */
 static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)

@@ -51,6 +51,7 @@ gegl_have_visitor_init (GeglHaveVisitor *self)
 {
 }
 
+/* sets up the node's bounding box */
 static void
 gegl_have_visitor_visit_node (GeglVisitor *self,
                               GeglNode    *node)

@@ -53,6 +53,7 @@ gegl_cr_visitor_init (GeglCRVisitor *self)
 {
 }
 
+/* sets the context's result_rect and refs */
 static void
 gegl_cr_visitor_visit_node (GeglVisitor *self,
                             GeglNode    *node)

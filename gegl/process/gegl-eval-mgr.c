@@ -123,14 +123,6 @@ gegl_eval_mgr_change_notification (GObject             *gobject,
 }
 
 
-/**
- * gegl_eval_mgr_apply:
- * @self: a #GeglEvalMgr.
- * @root:
- * @property_name:
- *
- * Update this property.
- **/
 GeglBuffer *
 gegl_eval_mgr_apply (GeglEvalMgr *self)
 {
@@ -156,14 +148,18 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
 
   g_object_ref (root);
 
+  /* do the necessary set-up work (all using depth first traversal) */
   switch (self->state)
     {
       case 0:
+        /* Set up the node's context and "needed rectangle"*/
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
+        /* No idea why there is a second call */
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
       case 1:
+        /* sets up the node's rect (bounding box) */
         gegl_visitor_reset (self->have_visitor);
         gegl_visitor_dfs_traverse (self->have_visitor, GEGL_VISITABLE (root));
       case 2:
@@ -172,6 +168,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
         self->state = 2;
      }
 
+  /* set up the root node */
   if (self->roi.width == -1 &&
       self->roi.height == -1)
     {
@@ -181,6 +178,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   gegl_node_set_need_rect (root, context_id, &self->roi);
   root->is_root = TRUE;
 
+  /* set up the context's rectangle (breadth first traversal) */
   gegl_visitor_reset (self->cr_visitor);
   gegl_visitor_bfs_traverse (self->cr_visitor, GEGL_VISITABLE (root));
 
@@ -196,6 +194,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
     }
 #endif
 
+  /* now let's do the real work */
   gegl_visitor_reset (self->eval_visitor);
   if (pad)
     {
@@ -225,6 +224,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
       g_value_unset (&value);
     }
 
+  /* do the clean up */
   gegl_visitor_reset (self->finish_visitor);
   gegl_visitor_dfs_traverse (self->finish_visitor, GEGL_VISITABLE (root));
 

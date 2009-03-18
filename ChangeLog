@@ -1,5 +1,19 @@
 2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Apply patch from Henrik Akesson that adds documentation to the
+	graph parts of the GEGL core in form of comments.
+
+	* gegl/graph/gegl-node.c
+	* gegl/graph/gegl-visitor.c
+	* gegl/operation/gegl-operation.c
+	* gegl/process/gegl-cr-visitor.c
+	* gegl/process/gegl-eval-mgr.c
+	* gegl/process/gegl-eval-mgr.h
+	* gegl/process/gegl-have-visitor.c
+	* gegl/process/gegl-prepare-visitor.c
+
+2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Henrik Akesson that removes the superfluous
 	GeglVisitableClass::needs_visiting() and all code that depends on
 	it such as the GeglNode and GeglPad implementations (both of which

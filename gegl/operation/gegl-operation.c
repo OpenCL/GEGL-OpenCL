@@ -123,6 +123,9 @@ gegl_operation_process (GeglOperation       *operation,
   return klass->process (operation, context, output_pad, result);
 }
 
+/* Calls an extending class' get_bound_box method if defined otherwise
+ * just returns a zero-initiliased bouding box
+ */
 GeglRectangle
 gegl_operation_get_bounding_box (GeglOperation *self)
 {
@@ -228,6 +231,7 @@ gegl_operation_attach (GeglOperation *self,
   klass->attach (self);
 }
 
+/* Calls the prepare function on the operation that extends this base class */
 void
 gegl_operation_prepare (GeglOperation *self)
 {
