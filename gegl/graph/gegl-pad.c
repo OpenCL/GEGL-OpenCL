@@ -40,7 +40,6 @@ static void       visitable_init           (gpointer       ginterface,
 static void       visitable_accept         (GeglVisitable *visitable,
                                             GeglVisitor   *visitor);
 static GSList   * visitable_depends_on     (GeglVisitable *visitable);
-static gboolean   visitable_needs_visiting (GeglVisitable *visitable);
 
 
 G_DEFINE_TYPE_WITH_CODE (GeglPad, gegl_pad, G_TYPE_OBJECT,
@@ -73,7 +72,6 @@ visitable_init (gpointer ginterface,
 
   visitable_class->accept         = visitable_accept;
   visitable_class->depends_on     = visitable_depends_on;
-  visitable_class->needs_visiting = visitable_needs_visiting;
 }
 
 static void
@@ -313,12 +311,6 @@ visitable_depends_on (GeglVisitable *visitable)
   GeglPad *self = GEGL_PAD (visitable);
 
   return gegl_pad_get_depends_on (self);
-}
-
-static gboolean
-visitable_needs_visiting (GeglVisitable *visitable)
-{
-  return TRUE;
 }
 
 void

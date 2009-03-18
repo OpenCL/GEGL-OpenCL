@@ -311,11 +311,8 @@ gegl_visitor_dfs_traverse (GeglVisitor   *self,
   g_return_if_fail (GEGL_IS_VISITOR (self));
   g_return_if_fail (GEGL_IS_VISITABLE (visitable));
 
-  if (gegl_visitable_needs_visiting (visitable))
-    {
-      init_dfs_traversal (self, visitable);
-      dfs_traverse (self, visitable);
-    }
+  init_dfs_traversal (self, visitable);
+  dfs_traverse (self, visitable);
 }
 
 static void
@@ -331,15 +328,11 @@ init_dfs_traversal (GeglVisitor   *self,
 
   while (llink)
     {
-      GeglVisitable *visitable = llink->data;
+      GeglVisitable *visitable  = llink->data;
+      GeglVisitInfo *visit_info = lookup (self, visitable);
 
-      if (gegl_visitable_needs_visiting (visitable))
-        {
-          GeglVisitInfo *visit_info = lookup (self, visitable);
-
-          if (!visit_info)
-            init_dfs_traversal (self, visitable);
-        }
+      if (!visit_info)
+        init_dfs_traversal (self, visitable);
 
       llink = g_slist_next (llink);
     }
@@ -361,11 +354,8 @@ dfs_traverse (GeglVisitor   *self,
     {
       GeglVisitable *visitable = llink->data;
 
-      if (gegl_visitable_needs_visiting (visitable))
-        {
-          if (!get_visited (self, visitable))
-            dfs_traverse (self, visitable);
-        }
+      if (!get_visited (self, visitable))
+        dfs_traverse (self, visitable);
 
       llink = g_slist_next (llink);
     }

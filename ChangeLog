@@ -1,3 +1,16 @@
+2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Apply patch from Henrik Akesson that removes the superfluous
+	GeglVisitableClass::needs_visiting() and all code that depends on
+	it such as the GeglNode and GeglPad implementations (both of which
+	just returned TRUE) and the calls to the method.
+
+	* gegl/graph/gegl-node.c
+	* gegl/graph/gegl-pad.c
+	* gegl/graph/gegl-visitable.c
+	* gegl/graph/gegl-visitable.h
+	* gegl/graph/gegl-visitor.c
+
 2009-03-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* tests/Makefile.am: Make formating consistent

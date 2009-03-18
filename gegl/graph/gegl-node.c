@@ -101,7 +101,6 @@ static void            gegl_node_visitable_iface_init     (gpointer       ginter
 static void            gegl_node_visitable_accept         (GeglVisitable *visitable,
                                                            GeglVisitor   *visitor);
 static GSList*         gegl_node_visitable_depends_on     (GeglVisitable *visitable);
-static gboolean        gegl_node_visitable_needs_visiting (GeglVisitable *visitable);
 static void            gegl_node_set_operation_object     (GeglNode      *self,
                                                            GeglOperation *operation);
 static void            gegl_node_set_op_class             (GeglNode      *self,
@@ -221,7 +220,6 @@ gegl_node_visitable_iface_init (gpointer ginterface,
 
   visitable_class->accept         = gegl_node_visitable_accept;
   visitable_class->depends_on     = gegl_node_visitable_depends_on;
-  visitable_class->needs_visiting = gegl_node_visitable_needs_visiting;
 }
 
 static void
@@ -948,12 +946,6 @@ gegl_node_visitable_depends_on (GeglVisitable *visitable)
   GeglNode *self = GEGL_NODE (visitable);
 
   return gegl_node_get_depends_on (self);
-}
-
-static gboolean
-gegl_node_visitable_needs_visiting (GeglVisitable *visitable)
-{
-  return TRUE;
 }
 
 static void

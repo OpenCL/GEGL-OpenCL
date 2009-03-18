@@ -88,20 +88,3 @@ gegl_visitable_depends_on (GeglVisitable *interface)
 
   return depends_on;
 }
-
-gboolean
-gegl_visitable_needs_visiting (GeglVisitable *interface)
-{
-  GeglVisitableClass *interface_class;
-  gboolean            needs_visiting;
-
-  g_return_val_if_fail (GEGL_IS_VISITABLE (interface), FALSE);
-
-  interface_class = GEGL_VISITABLE_GET_CLASS (interface);
-
-  g_object_ref (interface);
-  needs_visiting = interface_class->needs_visiting (interface);
-  g_object_unref (interface);
-
-  return needs_visiting;
-}
