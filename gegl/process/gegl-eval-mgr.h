@@ -25,6 +25,22 @@
 G_BEGIN_DECLS
 
 
+typedef enum
+{
+  UNINITIALIZED,
+
+  /* means we need to redo an extra prepare and have_rect
+   * traversal
+   */
+  NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL,
+
+  /* means we need a prepare traversal to set up the contexts on the
+   * nodes
+   */
+  NEED_CONTEXT_SETUP_TRAVERSAL
+} GeglEvalMgrStates;
+
+
 #define GEGL_TYPE_EVAL_MGR            (gegl_eval_mgr_get_type ())
 #define GEGL_EVAL_MGR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_EVAL_MGR, GeglEvalMgr))
 #define GEGL_EVAL_MGR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
@@ -42,14 +58,10 @@ struct _GeglEvalMgr
   gchar     *pad_name;
   GeglRectangle roi;
 
-  gint       state; /* whether we can fire off rendering requests straight
-                           away or we have to re-prepare etc the graph
-                           0: mean uninitialized.
-                           1: means we need to redo an extra prepare and
-                              have_rect traversal.
-                           2: means we need a prepare traversal to set
-                              up the contexts on the nodes.
-                         */
+  /* whether we can fire off rendering requests straight
+   * away or we have to re-prepare etc of the graph
+   */
+  GeglEvalMgrStates state;
 
   /* we keep these objects around, they are too expensive to throw away */
   GeglVisitor *prepare_visitor;

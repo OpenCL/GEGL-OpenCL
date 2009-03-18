@@ -1,5 +1,14 @@
 2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Apply patch from Henrik Akesson that turns GeglEvalMgr::state into
+	an enum instead of using pure ints since that increases
+	readability.
+
+	* gegl/process/gegl-eval-mgr.c
+	* gegl/process/gegl-eval-mgr.h
+
+2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Henrik Akesson that adds documentation to the
 	graph parts of the GEGL core in form of comments.
 

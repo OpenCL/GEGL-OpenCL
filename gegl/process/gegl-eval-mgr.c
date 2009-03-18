@@ -64,7 +64,7 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
   self->eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", context_id, NULL);
   self->cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", context_id, NULL);
   self->finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", context_id, NULL);
-  self->state = 0;
+  self->state = UNINITIALIZED;
 }
 
 static void
@@ -114,9 +114,9 @@ gegl_eval_mgr_change_notification (GObject             *gobject,
         }
     }
 
-  if (mgr->state)
+  if (mgr->state != UNINITIALIZED)
     {
-      mgr->state = 1;
+      mgr->state = NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL;
     }
 
   return FALSE;
@@ -151,21 +151,21 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   /* do the necessary set-up work (all using depth first traversal) */
   switch (self->state)
     {
-      case 0:
+      case UNINITIALIZED:
         /* Set up the node's context and "needed rectangle"*/
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
         /* No idea why there is a second call */
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
-      case 1:
+      case NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL:
         /* sets up the node's rect (bounding box) */
         gegl_visitor_reset (self->have_visitor);
         gegl_visitor_dfs_traverse (self->have_visitor, GEGL_VISITABLE (root));
-      case 2:
+      case NEED_CONTEXT_SETUP_TRAVERSAL:
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));      
-        self->state = 2;
+        self->state = NEED_CONTEXT_SETUP_TRAVERSAL;
      }
 
   /* set up the root node */
