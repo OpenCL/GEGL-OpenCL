@@ -1,3 +1,7 @@
+# Make the tests run against the build and not the installation
+TESTS_ENVIRONMENT = \
+	GEGL_PATH=$(top_builddir)/operations/common:$(top_builddir)/operations/core
+
 # The tests
 TESTS = \
 	test-proxynop-processing$(EXEEXT)	\

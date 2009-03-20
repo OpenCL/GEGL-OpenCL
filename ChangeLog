@@ -1,3 +1,8 @@
+2009-03-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* tests/Makefile.am: Make the tests run against the build and not
+	the installation
+
 2009-03-18  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Apply patch from Henrik Akesson that turns GeglEvalMgr::state into
