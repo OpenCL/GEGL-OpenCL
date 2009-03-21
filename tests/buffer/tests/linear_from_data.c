@@ -3,10 +3,10 @@ TEST ()
   GeglBuffer   *buffer;
   GeglRectangle extent = {0,0, 10, 10};
   gfloat       *buf;
+  gint          i;
   test_start();
 
   buf = g_malloc (sizeof (float) * 10 * 10);
-  gint i;
   for (i=0;i<100;i++)
     buf[i]=i/100.0;
 

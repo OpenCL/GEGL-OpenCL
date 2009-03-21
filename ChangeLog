@@ -1,5 +1,12 @@
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Don't mix declarations and code in buffer tests
+
+	* tests/buffer/tests/linear_from_data_rows.c
+	* tests/buffer/tests/linear_from_data.c
+
+2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/buffer/gegl-tile-backend-file.c: Clean up members and
 	comments in the GeglTileBackendFile struct
 
