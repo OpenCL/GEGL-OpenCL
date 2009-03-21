@@ -1,5 +1,15 @@
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Remove the 'sub buffer inherits parent size on -1,-1 size' test
+	case since the scenario is not valid any longer, it was
+	invalidated on commit
+	r2739 (d9ccfa92ea733bde2214ff46652ff955f4c827d9).
+
+	* tests/buffer/tests/buffer_inherit_parent_extent.c (removed)
+	* tests/buffer/reference/buffer_inherit_parent_extent (removed)
+
+2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Port buffer tests to automake which has a couple of
 	benefits. First of all they are run and results reported during a
 	normal make check, and second of all the tests are run against the
