@@ -1,5 +1,9 @@
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/buffer/buffer-test.c: #include <stdlib.h> for system()
+
+2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Don't mix declarations and code in buffer tests
 
 	* tests/buffer/tests/linear_from_data_rows.c

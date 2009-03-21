@@ -2,6 +2,7 @@
 #include <gegl-buffer.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* This file consists of a testing suite for the GeglBuffer API. For every
  * function matching the regexp ^static.*(' in the file a test is performed and
