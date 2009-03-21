@@ -1,3 +1,8 @@
+2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/buffer/gegl-tile-backend-file.c: Clean up members and
+	comments in the GeglTileBackendFile struct
+
 2009-03-20  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* tests/Makefile.am: Make the tests run against the build and not

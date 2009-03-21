@@ -43,61 +43,75 @@ struct _GeglTileBackendFile
 {
   GeglTileBackend  parent_instance;
 
-  gchar           *path;    /* the path to our buffer */
-#if HAVE_GIO
-  GFile           *file;    /* gfile refering to our buffer */
-  GOutputStream   *o;       /* for writing */
-  GInputStream    *i;       /* for reading */
-#else
-  int             o;
-  int             i;
-#endif
-  gboolean         exist;   /* the file exist (and we've thus been able
-                             * to initialize i and o, the utility_call ensure_exist
-                             * should be called before any code using i and o)
-                             */
+  /* the path to our buffer */
+  gchar           *path;
 
-  GHashTable      *index;   /* hashtable containing all entries
-                             * of buffer, the index is
-                             * written to the swapfile conforming
-                             * to the structures laid out in
-                             * gegl-buffer-index.h
-                             */
+  /* the file exist (and we've thus been able to initialize i and o,
+   * the utility call ensure_exist() should be called before any code
+   * using i and o)
+   */
+  gboolean         exist;
 
-  GSList          *free_list; /* list of offsets to tiles that are free */
+  /* total size of file */
+  guint            total;
 
-  guint            next_pre_alloc; /* offset to next pre allocated tile slot */
-  guint            total;          /* total size of file */
+  /* hashtable containing all entries of buffer, the index is written
+   * to the swapfile conforming to the structures laid out in
+   * gegl-buffer-index.h
+   */
+  GHashTable      *index;
 
-  /* duplicated from gegl-buffer-save */
+  /* list of offsets to tiles that are free */
+  GSList          *free_list;
 
-  GeglBufferHeader header;     /* a local copy of the header that will be
-                                * written to the file, in a multiple user
-                                * per buffer scenario, the flags in the
-                                * header might be used for locking/signalling
-                                */
+  /* offset to next pre allocated tile slot */
+  guint            next_pre_alloc;
 
-  gint             offset;     /* current offset, used when writing the
-                                * index,
-                                */
-  GeglBufferBlock *in_holding; /* when writing buffer blocks the writer
-                                * keeps one block unwritten at all times
-                                * to be able to keep track of the ->next
-                                * offsets in the blocks.
-                                */
+  /* revision of last index sync, for cooperated sharing of a buffer
+   * file
+   */
+  guint32          rev;
+
+  /* a local copy of the header that will be written to the file, in a
+   * multiple user per buffer scenario, the flags in the header might
+   * be used for locking/signalling
+   */
+  GeglBufferHeader header;
+
+  /* current offset, used when writing the index */
+  gint             offset;
+
+  /* when writing buffer blocks the writer keeps one block unwritten
+   * at all times to be able to keep track of the ->next offsets in
+   * the blocks.
+   */
+  GeglBufferBlock *in_holding; 
 
   /* loading buffer */
+  GList           *tiles;
 
-  GList *tiles;
-
-  /* cooperative sharing of file */
 #if HAVE_GIO
-  GFileMonitor    *monitor; /* Before using mmap we'll use GIO's infrastructure
-                             * for monitoring the file for changes, this should
-                             * also be more portable.
-                             */
+  /* GFile refering to our buffer */
+  GFile           *file;
+
+  /* for writing */
+  GOutputStream   *o;
+
+  /* for reading */
+  GInputStream    *i;
+
+  /* Before using mmap we'll use GIO's infrastructure for monitoring
+   * the file for changes, this should also be more portable. This is
+   * used for for cooperated sharing of a buffer file
+   */
+  GFileMonitor    *monitor;
+#else
+  /* for writing */
+  int o;
+
+  /* for reading */
+  int i;
 #endif
-  guint32          rev;     /* revision of last index sync */
 };
 
 static void ensure_exist (GeglTileBackendFile *self);
