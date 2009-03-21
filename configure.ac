@@ -988,6 +988,7 @@ docs/gallery/data/Makefile
 examples/Makefile
 examples/data/Makefile
 tests/Makefile
+tests/buffer/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])

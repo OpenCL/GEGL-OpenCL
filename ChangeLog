@@ -1,5 +1,18 @@
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Port buffer tests to automake which has a couple of
+	benefits. First of all they are run and results reported during a
+	normal make check, and second of all the tests are run against the
+	build and not against a possibly non-existant installation based
+	on hardcoded prefixes.
+
+	* configure.ac
+	* tests/Makefile.am
+	* tests/buffer/Makefile.am
+	* tests/buffer/buffer-tests-results.sh
+
+2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/buffer-test.c: #include <stdlib.h> for system()
 
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
