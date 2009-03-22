@@ -37,9 +37,9 @@ gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height
 #include <math.h>
 
 static GeglNode *
-detect (GeglOperation *operation,
-        gint           x,
-        gint           y)
+gegl_crop_detect (GeglOperation *operation,
+                  gint           x,
+                  gint           y)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglNode   *input_node;
@@ -56,7 +56,7 @@ detect (GeglOperation *operation,
 
 
 static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+gegl_crop_get_bounding_box (GeglOperation *operation)
 {
   GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -74,9 +74,9 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *input_region)
+gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
+                                     const gchar         *input_pad,
+                                     const GeglRectangle *input_region)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {o->x, o->y, o->width, o->height};
@@ -87,9 +87,9 @@ get_invalidated_by_change (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *roi)
+gegl_crop_get_required_for_output (GeglOperation       *operation,
+                                   const gchar         *input_pad,
+                                   const GeglRectangle *roi)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {o->x, o->y, o->width, o->height};
@@ -98,10 +98,10 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+gegl_crop_process (GeglOperation        *operation,
+                   GeglOperationContext *context,
+                   const gchar          *output_prop,
+                   const GeglRectangle  *result)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *input;
@@ -143,12 +143,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass *operation_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  operation_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->detect = detect;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_required_for_output = get_required_for_output;
+
+  operation_class->process                   = gegl_crop_process;
+  operation_class->get_bounding_box          = gegl_crop_get_bounding_box;
+  operation_class->detect                    = gegl_crop_detect;
+  operation_class->get_invalidated_by_change = gegl_crop_get_invalidated_by_change;
+  operation_class->get_required_for_output   = gegl_crop_get_required_for_output;
 
   operation_class->name        = "gegl:crop";
   operation_class->categories  = "core";
