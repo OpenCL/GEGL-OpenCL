@@ -1,5 +1,15 @@
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add a .buf extension to buffer output files since that makes it
+	easier to use wildcard rules for them in make files.
+
+	* tests/buffer/Makefile.am
+	* tests/buffer/buffer-test.c
+	* tests/buffer/reference/* renamed to
+	* tests/buffer/reference/*.buf
+
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Correct iterator[124]sub buffer test references. It doesn't make sense
 	for a sub buffer to have a greater extent than its parent. All buffer
 	tests pass now.

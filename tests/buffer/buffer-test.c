@@ -314,7 +314,7 @@ gint main (gint argc, gchar **argv)
           gchar output_file[1024];
           printf ("%s ", test_names[i]);
           ret=tests[i]();
-          sprintf (output_file, "output/%s", test_names[i]);
+          sprintf (output_file, "output/%s.buf", test_names[i]);
           g_file_set_contents (output_file, ret, -1, NULL);
         }
     }
