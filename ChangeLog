@@ -1,5 +1,15 @@
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Correct iterator[124]sub buffer test references. It doesn't make sense
+	for a sub buffer to have a greater extent than its parent. All buffer
+	tests pass now.
+
+	* tests/buffer/reference/test_gegl_buffer_iterator1sub
+	* tests/buffer/reference/test_gegl_buffer_iterator2sub
+	* tests/buffer/reference/test_gegl_buffer_iterator4sub
+
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/buffer-tests-results.sh: Refer to the file
 	"buffer-tests-report" when buffer tests fail.
 
