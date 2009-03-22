@@ -41,7 +41,7 @@ buffer-tests.inc: $(buffer_test_SOURCES) Makefile.am tests/*.c
 	done;
 	echo '};' >> $@
 
-buffer-tests-report: buffer-test$(EXEEXT)
+buffer-tests-report: buffer-test$(EXEEXT) reference/*
 	-./buffer-test$(EXEEXT)
 	diff -s -r -U 50 reference/ output/ > buffer-tests-report; true
 

@@ -1,3 +1,8 @@
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* tests/buffer/Makefile.am: Make buffer test report depend on
+	references
+
 2009-03-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Remove the 'sub buffer inherits parent size on -1,-1 size' test
