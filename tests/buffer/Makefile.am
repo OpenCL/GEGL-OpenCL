@@ -2,6 +2,7 @@
 TESTS = buffer-tests-results.sh
 buffer-tests-results.sh: buffer-tests-report
 
+EXTRA_DIST = $(wildcard reference/*.buf) $(wildcard tests/*.c) buffer-tests-results.sh
 
 # Always build buffer-test to catch compilation problems early
 BUILT_SOURCES = buffer-tests.inc
