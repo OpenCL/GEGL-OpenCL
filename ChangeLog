@@ -1,5 +1,10 @@
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/buffer/buffer-tests-results.sh: Refer to the file
+	"buffer-tests-report" when buffer tests fail.
+
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/Makefile.am: Make buffer test report depend on
 	references
 
