@@ -1,5 +1,9 @@
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c: Format and reindent
+
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/Makefile.am: Handle builddir != srcdir for buffer
 	tests. This makes make distcheck pass.
 
