@@ -1,5 +1,9 @@
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/buffer/gegl-tile-backend-file.c: Namespace functions
+
+2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* operations/core/crop.c: Namespace functions
 
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
