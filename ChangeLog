@@ -1,5 +1,11 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Bug 576885 – Compilation of operations/external/path.c fails
+
+	* operations/external/path.c: Include cairo.h, not cairo/cairo.h
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Some vendor compilers choke on
 	compound declaration casts.
 

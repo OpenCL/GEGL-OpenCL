@@ -64,7 +64,7 @@ static void path_changed (GeglPath *path,
                           gpointer userdata);
 
 #include "gegl-chant.h"
-#include <cairo/cairo.h>
+#include <cairo.h>
 
 /* the stroke code should move into this op, or a specific stroke op */
 
