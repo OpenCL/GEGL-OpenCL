@@ -1,0 +1,178 @@
+Development
+===========
+
+image::images/GEGL.png[GEGL]
+*#Development#*
+
+This document describes some handy things to know when developing the gegl internals.
+Parts of it is copy-paste of emails on the gegl developer list.
+
+== Setting up
+
+=== Ubuntu 8.10
+Setup instructions for Ubuntu 8.10 Intrepid Ibex
+
+To install the mandatory dependencies:
+
+ $ sudo apt-get install libtool automake glib libglib2.0-dev libpng12-dev libgtk2.0-dev subversion
+
+Some of the other dependencies:
+
+ $ sudo apt-get install asciidoc enscript libjpeg62 libopenraw graphviz-dev
+
+For running gegl the GEGL_PATH, which is used for dynamically loading the 
+operations, has to be set:
+
+ $ export GEGL_PATH=~/Dev/gegl-dev/operations/
+
+=== BABL
+
+When using a development version of babl, gegl has to know from where to get it.
+This is done by setting the BABL_LIBS environment variable before (or during
+as shown below) running gegl's autogen.sh:
+
+ $ ./autogen.sh BABL_LIBS=~/Dev/babl/babl/.libs/libbabl-0.0.so.0.23.0 CFLAGS="-O0"
+
+Then when running the program, the babl library automatically loads extensions
+that are either located in the BABL_HOME directory or in the default installation
+directory, in mentioned order of preference.
+
+ $ export BABL_HOME=~/Dev/babl/extensions
+
+=== Netbeans 6.5
+
+There are some key points to consider when setting up GEGL in an IDE
+(tested on Netbeans):
+
+- have to configure the IDE to use the autogen.sh as configure script
+- normally have to use gegl/bin/.libs/gegl as the executable,
+ not gegl/bin/gegl which is a script.
+- in some (?) case has to use bin/.libs/lt-gegl as the executable, which is some
+ kind of relinked gegl binary
+
+== Debugging
+
+By default gegl and babl uses the flag -g for debug instrumentation, but however
+it doesn't use the -O0 flag for turning off optimisations. This leads to unexpected
+jumps in the code when stepping in a debugger. You have to feed this flag to
+autogen:
+
+ $ ./autogen.sh CFLAGS="-O0"
+ $ make
+
+=== Debug output
+
+GEGL has built in mechanisms for logging debug information.
+
+ GEGL_NOTE (CACHE, "foo %s", bar);
+ GEGL_TIMESTAMP(PROCESSOR);
+ GEGL_MARK()
+
+Where CACHE and PROCESSOR is used the following logging domains are available:
+
+ PROCESS, CACHE, BUFFER_LOAD, BUFFER_SAVE, TILE_BACKEND and PROCESSOR
+
+Actual printing of these can be enabled by setting the GEGL_DEBUG
+environment variable like:
+
+ GEGL_DEBUG=processor,cache
+
+or even
+
+ GEGL_DEBUG=all
+
+=== Graphviz export
+The gegl library has a utility that permits to export the DAG into a graphviz
+format. Graphviz is a library that converts graph descriptions in textual format
+into an image. See http://www.graphviz.org/[graphviz website]
+
+It is done using:
+
+ #include "../gegl/gegl-dot.h"
+ /* for printing the dot output, note that gegl_node is a GeglNode pointer */
+ gchar *dot_output = gegl_to_dot( gegl_node );
+ printf( "%s\n", dot_output );
+ g_free( dot_output );
+
+For creating the graph image:
+
+ $ gegl --file gaussian-blur.xml --output out.png | dot -Tpng > gb.png
+
+This is the gaussian-blur.xml file:
+
+ <?xml version='1.0' encoding='UTF-8'?>
+ <gegl>
+ 	<node operation='gegl:gaussian-blur'>
+ 		<params>
+ 			<param name='std-dev-x'>0.999</param>
+ 			<param name='std-dev-y'>0.999</param>
+ 		</params>
+ 	</node>
+ 	<node operation='gegl:load'>
+ 		<params>
+ 			<param name='path'>in.png</param>
+ 		</params>
+ 	</node>
+ </gegl>
+
+link:images/gaussian-blur-graph.png[Resulting graph].
+
+
+== Tests
+
+There are regression tests in the subfolder "tests". These are run using:
+ make check
+
+== Documentation
+
+This document describes how to document GEGL using it's build system.
+
+There are three utilities used:
+
+. http://www.methods.co.nz/asciidoc/[asciidoc] - used for generating html from text files
+. http://www.codento.com/people/mtr/genscript/[enscript] - used for converting source files (.c/.h) to html
+. a home-made ruby script - used for generating api documentation (not yet documented here)
+
+All documentation resources are placed in /doc and the generation is controlled by the file Makefile.am
+
+=== asciidoc
+
+This example will show how this howto was added.
+
+- Add in `Makefile.am` a new target named `documentation-howto.html` in
+the existing list of html files to generate:
+
+  if HAVE_ASCIIDOC
+  	HTML_FILES += index.html documentation-howto.html
+  endif
+
+- Add in `Makefile.am` the target:
+
+ documentation-howto.html: documentation-howto.txt
+ if HAVE_ASCIIDOC
+ 	@echo "HTML: $@"
+ 	cp $< $@
+ 	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
+ else
+ 	@echo "*** asciidoc must be available in order to make dist"
+ 	@false
+ endif
+
+- Create a new `documentation-howto.txt` file with this content:
+
+ == Documentation howto
+
+ This document describes how to document GEGL using it's build system.
+
+- Type `make` and the `documentation-howto.txt` will be converted into `documentation-howto.html`
+
+=== enscript
+
+TODO
+This example will show how a new c/h file is converted into html using enscript
+
+== Inheritance tree
+
+Here is an automatically generated inheritance tree of the gobjects used by gegl:
+link:images/inheritance.png[GEGL inheritance tree]
+Note that the operations are also gobjects, but they are not included in the inheritance tree.

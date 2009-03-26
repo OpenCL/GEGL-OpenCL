@@ -162,7 +162,7 @@ other systems where glib and gtk+ work.
       * asciidoc
 
 Compiling
-~~~~~~~~
+~~~~~~~~~
 To build GEGL type the following in the toplevel source directory:
 
  $ ./configure  # or: ./autogen.sh if building from svn
@@ -181,6 +181,9 @@ expresses a processing chain of operations. A DAG, or any node in it, expresses
 a composited and processed image. It is possible to request rectangular regions
 in a wide range of pixel formats from any node.
 
+Development
+-----------
+This link:development.html[howto] describes good-to-know things for developing gegl
 
 Public API
 ~~~~~~~~~~

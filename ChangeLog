@@ -1,5 +1,18 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Apply patch from Henrik Akesson that adds initial
+	how-to-hack-on-GEGL documentation, including a ruby script to
+	generate a graphviz graph of the class inheritance trees in the
+	core.
+
+	* docs/Makefile.am
+	* docs/development.txt
+	* docs/images/gaussian-blur-graph.png
+	* docs/index-static.txt.in
+	* tools/gobj2dot.rb
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Bug 576885 – Compilation of operations/external/path.c fails
 
 	* operations/external/path.c: Include cairo.h, not cairo/cairo.h

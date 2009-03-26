@@ -12,7 +12,7 @@ HTML_FILES = \
 	class-hierarchy.html
 
 if HAVE_RUBY
-HTML_FILES += api.html
+HTML_FILES += api.html images/inheritance.png
 endif
 
 # dummy target to force the operations be available for scanning when
@@ -40,7 +40,7 @@ HTML_FILES += $(ENSCRIPT_FILES)
 endif
 
 if HAVE_ASCIIDOC
-HTML_FILES += index.html
+HTML_FILES += index.html development.html
 endif
 
 EXTRA_DIST= 			\
@@ -152,6 +152,11 @@ if HAVE_RUBY
 	    $@
 endif
 
+images/inheritance.png: $(top_srcdir)/docs/Makefile
+if HAVE_RUBY
+	$(top_srcdir)/tools/gobj2dot.rb $(top_srcdir) | dot -Tpng > $(top_srcdir)/docs/images/inheritance.png
+endif
+
 index.html: index-static.txt		\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
@@ -159,6 +164,16 @@ index.html: index-static.txt		\
 	$(top_srcdir)/examples/hello-world.c \
 	$(top_builddir)/bin/gegl	\
 	Makefile.am
+if HAVE_ASCIIDOC
+	@echo "HTML: $@"
+	cp $< $@ 
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
+else
+	@echo "*** asciidoc must be available in order to make dist"
+	@false
+endif
+
+development.html: $(top_srcdir)/docs/development.txt
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	cp $< $@ 
