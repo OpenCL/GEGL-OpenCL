@@ -986,14 +986,16 @@ gegl_buffer_get (GeglBuffer          *buffer,
       gint          buf_width   = rect->width / scale;
       gint          buf_height  = rect->height / scale;
       gint          bpp         = babl_format_get_bytes_per_pixel (format);
-      GeglRectangle sample_rect = { floor(rect->x/scale),
-                                    floor(rect->y/scale),
-                                    buf_width,
-                                    buf_height };
+      GeglRectangle sample_rect;
       void         *sample_buf;
       gint          factor = 1;
       gdouble       offset_x;
       gdouble       offset_y;
+
+      sample_rect.x = floor(rect->x/scale);
+      sample_rect.y = floor(rect->y/scale);
+      sample_rect.width = buf_width;
+      sample_rect.height = buf_height;
 
       while (scale <= 0.5)
         {

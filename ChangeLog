@@ -1,5 +1,29 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Some vendor compilers can't compile
+	non-constant elements of compound struct initializers
+
+	* examples/gegl-paint.c
+	* examples/util/gegl-view.c
+	* gegl/buffer/gegl-buffer-access.c
+	* gegl/buffer/gegl-buffer-iterator.c
+	* gegl/buffer/gegl-buffer.c
+	* gegl/buffer/gegl-sampler-lanczos.c
+	* gegl/buffer/gegl-tile-backend-ram.c
+	* gegl/buffer/gegl-tile-backend-tiledir.c
+	* gegl/property-types/gegl-curve.c
+	* gegl/property-types/gegl-path.c
+	* operations/common/raw-load.c
+	* operations/common/snn-mean.c
+	* operations/common/stretch-contrast.c
+	* operations/core/crop.c
+	* operations/external/jpg-load.c
+	* operations/external/pixbuf.c
+	* operations/external/png-save.c
+	* operations/external/svg-load.c
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Some vendor C compilers choke on C++
 	comments.
 

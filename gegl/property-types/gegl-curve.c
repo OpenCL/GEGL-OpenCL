@@ -185,7 +185,10 @@ gegl_curve_add_point (GeglCurve    *self,
                       gdouble       y)
 {
   GeglCurvePrivate *priv  = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  GeglCurvePoint    point = { x, y };
+  GeglCurvePoint    point;
+
+  point.x = x;
+  point.y = y;
 
   g_array_append_val (priv->points, point);
 
@@ -217,7 +220,10 @@ gegl_curve_set_point (GeglCurve      *self,
                       gdouble         y)
 {
   GeglCurvePrivate *priv  = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
-  GeglCurvePoint    point = { x, y };
+  GeglCurvePoint    point;
+
+  point.x = x;
+  point.y = y;
 
   g_assert (index < priv->points->len);
   g_array_index (priv->points, GeglCurvePoint, index) = point;

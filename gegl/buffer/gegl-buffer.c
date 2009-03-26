@@ -645,19 +645,20 @@ gegl_buffer_constructor (GType                  type,
    */
   if (GEGL_IS_BUFFER (source))
     {
-      GeglRectangle parent = {
-        GEGL_BUFFER (source)->abyss.x - buffer->shift_x,
-        GEGL_BUFFER (source)->abyss.y - buffer->shift_y,
-        GEGL_BUFFER (source)->abyss.width,
-        GEGL_BUFFER (source)->abyss.height
-      };
-      GeglRectangle request = {
-        buffer->abyss.x,
-        buffer->abyss.y,
-        buffer->abyss.width,
-        buffer->abyss.height
-      };
+      GeglRectangle parent;
+      GeglRectangle request;
       GeglRectangle self;
+
+      parent.x = GEGL_BUFFER (source)->abyss.x - buffer->shift_x;
+      parent.y = GEGL_BUFFER (source)->abyss.y - buffer->shift_y;
+      parent.width = GEGL_BUFFER (source)->abyss.width;
+      parent.height = GEGL_BUFFER (source)->abyss.height;
+      
+      request.x = buffer->abyss.x;
+      request.y = buffer->abyss.y;
+      request.width = buffer->abyss.width;
+      request.height = buffer->abyss.height;
+
       gegl_rectangle_intersect (&self, &parent, &request);
 
       buffer->abyss.x      = self.x;

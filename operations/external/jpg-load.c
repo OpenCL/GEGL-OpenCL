@@ -117,7 +117,12 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      GeglRectangle rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
+      GeglRectangle rect;
+
+      rect.x = dest_x;
+      rect.y = dest_y + row++;
+      rect.width = cinfo.output_width;
+      rect.height = 1;
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
       gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B' u8"), buffer[0],

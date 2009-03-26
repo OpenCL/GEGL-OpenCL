@@ -146,7 +146,11 @@ get_tile (GeglTileSource *tile_store,
 
  if (exist_tile (tile_store, NULL, x, y, z))
   {
-    GioEntry entry = {x,y,z};
+    GioEntry       entry;
+
+    entry.x = x;
+    entry.y = y;
+    entry.z = z;
 
     tile             = gegl_tile_new (backend->tile_size);
     tile->stored_rev = 1;
@@ -167,8 +171,11 @@ set_tile (GeglTileSource *store,
 {
   GeglTileBackend         *backend   = GEGL_TILE_BACKEND (store);
   GeglTileBackendTileDir *tile_backend_tiledir = GEGL_TILE_BACKEND_TILE_DIR (backend);
+  GioEntry       entry;
 
-  GioEntry       entry = {x,y,z};
+  entry.x = x;
+  entry.y = y;
+  entry.z = z;
 
   gio_entry_write (tile_backend_tiledir, &entry, tile->data);
   tile->stored_rev = tile->rev;

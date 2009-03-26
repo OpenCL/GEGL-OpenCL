@@ -67,9 +67,13 @@ process (GeglOperation       *operation,
 
   if (o->pixbuf)
     {
-      GeglRectangle extent = {0,0,
-                              gdk_pixbuf_get_width (o->pixbuf),
-                              gdk_pixbuf_get_height (o->pixbuf)};
+      GeglRectangle extent;
+
+      extent.x = 0;
+      extent.y = 0;
+      extent.width = gdk_pixbuf_get_width (o->pixbuf);
+      extent.height = gdk_pixbuf_get_height (o->pixbuf);
+
       gegl_buffer_set (output, &extent, NULL, gdk_pixbuf_get_pixels (o->pixbuf),
                        GEGL_AUTO_ROWSTRIDE);
     }

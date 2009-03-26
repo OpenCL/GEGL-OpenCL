@@ -97,8 +97,10 @@ static gboolean paint_release (GtkWidget      *widget,
 
       gegl_path_get_bounds (vector, &x0, &x1, &y0, &y1);
 
-      roi      = (GeglRectangle){x0 - LINEWIDTH, y0 - LINEWIDTH,
-                                 x1 - x0 + LINEWIDTH * 2, y1 - y0 + LINEWIDTH * 2};
+      roi.x = x0 - LINEWIDTH;
+      roi.y = y0 - LINEWIDTH;
+      roi.width = x1 - x0 + LINEWIDTH * 2;
+      roi.height = y1 - y0 + LINEWIDTH * 2;
 
       writebuf = gegl_node_new_child (gegl,
                                       "operation", "gegl:write-buffer",

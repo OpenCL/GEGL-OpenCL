@@ -153,7 +153,13 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
   for (i=0; i< height; i++)
     {
-      GeglRectangle rect = {src_x, src_y+i, width, 1};
+      GeglRectangle rect;
+
+      rect.x = src_x;
+      rect.y = src_y+i;
+      rect.width = width;
+      rect.height = 1;
+
       gegl_buffer_get (gegl_buffer, 1.0, &rect, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE);
 
       png_write_rows (png, &pixels, 1);

@@ -88,7 +88,12 @@ instead.
     if (pixbuf)
     {
       guchar        *pixeldata;
-      GeglRectangle  rect = {dest_x, dest_y, width, height};
+      GeglRectangle  rect;
+
+      rect.x = dest_x;
+      rect.y = dest_y;
+      rect.width = width;
+      rect.height = height;
 
       pixeldata = gdk_pixbuf_get_pixels (pixbuf);
       gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B'A u8"), pixeldata, GEGL_AUTO_ROWSTRIDE);

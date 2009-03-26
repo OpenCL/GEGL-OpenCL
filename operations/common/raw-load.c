@@ -72,7 +72,9 @@ load_buffer (GeglChantO *op_raw_load)
         }
 
         {
-          GeglRectangle extent = { 0, 0, width, height };
+          GeglRectangle extent = { 0, 0, 0, 0 };
+          extent.width = width;
+          extent.height = height;
           op_raw_load->chant_data = (gpointer) gegl_buffer_new (&extent,
                                                    babl_format_new (
                                                      babl_model ("RGB"),

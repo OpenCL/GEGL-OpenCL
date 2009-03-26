@@ -79,7 +79,12 @@ gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
                                      const GeglRectangle *input_region)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = {o->x, o->y, o->width, o->height};
+  GeglRectangle result;
+
+  result.x = o->x;
+  result.y = o->y;
+  result.width = o->width;
+  result.height = o->height;
 
   gegl_rectangle_intersect (&result, &result, input_region);
 
@@ -92,7 +97,13 @@ gegl_crop_get_required_for_output (GeglOperation       *operation,
                                    const GeglRectangle *roi)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = {o->x, o->y, o->width, o->height};
+  GeglRectangle result;
+
+  result.x = o->x;
+  result.y = o->y;
+  result.width = o->width;
+  result.height = o->height;
+
   gegl_rectangle_intersect (&result, &result, roi);
   return result;
 }
@@ -106,7 +117,12 @@ gegl_crop_process (GeglOperation        *operation,
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *input;
   gboolean      success = FALSE;
-  GeglRectangle extent = {o->x, o->y, o->width, o->height};
+  GeglRectangle extent;
+
+  extent.x = o->x;
+  extent.y = o->y;
+  extent.width = o->width;
+  extent.height = o->height;
 
   if (strcmp (output_prop, "output"))
     {

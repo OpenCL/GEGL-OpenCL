@@ -162,8 +162,11 @@ gegl_sampler_lanczos_get (GeglSampler *self,
   /* FIXME: move the initialization of these arrays into the _prepare function
    * to speed up actual resampling
    */
-  gfloat                   x_kernel[width2], /* 1-D kernels of Lanczos window coeffs */
-                           y_kernel[width2];
+  gfloat                  *x_kernel, /* 1-D kernels of Lanczos window coeffs */
+                          *y_kernel;
+
+  x_kernel = g_newa (gfloat, width2);
+  y_kernel = g_newa (gfloat, width2);
 
   self->interpolate_format = babl_format ("RaGaBaA float");
 

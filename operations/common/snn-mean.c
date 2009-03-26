@@ -152,8 +152,16 @@ snn_mean (GeglBuffer *src,
                     /* compute the coordinates of the symmetric pairs for
                      * this locaiton in the quadrant
                      */
-                    gint xs[4] = {x+u+radius, x-u+radius, x-u+radius, x+u+radius};
-                    gint ys[4] = {y+v+radius, y-v+radius, y+v+radius, y-v+radius};
+                    gint xs[4], ys[4];
+
+                    xs[0] = x+u+radius;
+                    xs[1] = x-u+radius;
+                    xs[2] = x-u+radius;
+                    xs[3] = x+u+radius;
+                    ys[0] = y+v+radius;
+                    ys[1] = y-v+radius;
+                    ys[2] = y+v+radius;
+                    ys[3] = y-v+radius;
 
                     /* check which member of the symmetric quadruple to use */
                     for (i=0;i<pairs*2;i++)

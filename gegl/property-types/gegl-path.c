@@ -1798,10 +1798,9 @@ void gegl_path_fill (GeglBuffer *buffer,
   extent.height = ceil (ymax) - extent.y;
 
   {
-    GSList *scanlines[extent.height * versubi];
-
-    gdouble xs[samples];
-    gdouble ys[samples];
+    GSList **scanlines;
+    gdouble *xs;
+    gdouble *ys;
 
     gint i;
     gdouble prev_x;
@@ -1811,9 +1810,12 @@ void gegl_path_fill (GeglBuffer *buffer,
     gint    lastline=-1;
     gint    lastdir=-2;
 
+    xs = g_newa (gdouble, samples);
+    ys = g_newa (gdouble, samples);
     path_calc_values (priv->flat_path, samples, xs, ys);
 
     /* clear scanline intersection lists */
+    scanlines = g_newa (GSList*, extent.height * versubi);
     for (i=0; i < extent.height * versub; i++)
       scanlines[i]=NULL;
 
@@ -1907,7 +1909,12 @@ fill_close:  /* label used for goto to close last segment */
 
             for (j=0;j<horsub;j++)
             {
-              GeglRectangle roi={(startx+j)/horsub, extent.y + i/versub, (endx - startx-j + horsub) / horsub, 1};
+              GeglRectangle roi;
+
+              roi.x = (startx+j)/horsub;
+              roi.y = extent.y + i/versub;
+              roi.width = (endx - startx-j + horsub) / horsub;
+              roi.height = 1;
               gegl_buffer_accumulate (buffer, &roi, col);
             }
 
@@ -1954,12 +1961,13 @@ static void gegl_path_stamp (GeglBuffer *buffer,
                                       we will ultimately leak the last valid
                                       cached brush. */
 
-  GeglRectangle roi = {floor(x-radius),
-                       floor(y-radius),
-                       ceil (x+radius) - floor (x-radius),
-                       ceil (y+radius) - floor (y-radius)};
-
   GeglRectangle temp;
+  GeglRectangle roi;
+
+  roi.x = floor(x-radius);
+  roi.y = floor(y-radius);
+  roi.width = ceil (x+radius) - floor (x-radius);
+  roi.height = ceil (y+radius) - floor (y-radius);
 
   gegl_color_get_rgba4f (color, col);
 

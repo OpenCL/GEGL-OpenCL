@@ -501,9 +501,12 @@ gegl_view_repaint (GeglView *view)
 {
   GtkWidget       *widget = GTK_WIDGET (view);
   GeglViewPrivate *priv   = GEGL_VIEW_GET_PRIVATE (view);
-  GeglRectangle    roi    = { priv->x / priv->scale, priv->y / priv->scale,
-                              ceil(widget->allocation.width / priv->scale+1),
-                              ceil(widget->allocation.height / priv->scale+1) };
+  GeglRectangle    roi;
+
+  roi.x = priv->x / priv->scale;
+  roi.y = priv->y / priv->scale;
+  roi.width = ceil(widget->allocation.width / priv->scale+1);
+  roi.height = ceil(widget->allocation.height / priv->scale+1);
 
 #if 0
   /* forget all already queued repaints */

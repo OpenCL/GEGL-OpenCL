@@ -116,10 +116,12 @@ process (GeglOperation       *operation,
     for (row = 0; row < result->height; row = consumed)
       {
         gint chunk = consumed+chunk_size<result->height?chunk_size:result->height-consumed;
-        GeglRectangle line = { result->x,
-                               result->y + row,
-                               result->width,
-                               chunk};
+        GeglRectangle line;
+
+        line.x = result->x;
+        line.y = result->y + row;
+        line.width = result->width;
+        line.height = chunk;
 
         gegl_buffer_get (input, 1.0, &line, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
         inner_process (min, max, buf, result->width  * chunk);

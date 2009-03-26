@@ -329,7 +329,8 @@ static gpointer iterator_buf_pool_get (gint size)
         }
     }
   {
-    BufInfo info = {size, 1, NULL};
+    BufInfo info = {0, 1, NULL};
+    info.size = size;
     info.buf = gegl_malloc (size);
     g_array_append_val (buf_pool, info);
     return info.buf;

@@ -124,7 +124,12 @@ lookup_entry (GeglTileBackendRam *self,
               gint         y,
               gint         z)
 {
-  RamEntry key = { x, y, z, 0 };
+  RamEntry key;
+
+  key.x = x;
+  key.y = y;
+  key.z = z;
+  key.offset = 0;
 
   return g_hash_table_lookup (self->entries, &key);
 }
