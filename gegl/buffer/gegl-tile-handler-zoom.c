@@ -31,7 +31,7 @@ enum
 {
   PROP_0,
   PROP_TILE_STORAGE,
-  PROP_BACKEND,
+  PROP_BACKEND
 };
 
 #include <babl/babl.h>

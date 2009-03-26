@@ -220,7 +220,7 @@ gboolean exist_tile (GeglTileSource *store,
 
 enum
 {
-  PROP_0,
+  PROP_0
 };
 
 static gpointer

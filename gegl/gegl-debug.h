@@ -12,7 +12,7 @@ typedef enum {
   GEGL_DEBUG_BUFFER_SAVE     = 1 << 2,
   GEGL_DEBUG_TILE_BACKEND    = 1 << 3,
   GEGL_DEBUG_PROCESSOR       = 1 << 4,
-  GEGL_DEBUG_CACHE           = 1 << 5,
+  GEGL_DEBUG_CACHE           = 1 << 5
 } GeglDebugFlag;
 
 /* only compiled in from gegl-init.c but kept here to

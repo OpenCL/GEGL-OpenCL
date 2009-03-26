@@ -41,7 +41,7 @@ enum
   PROP_Y,
   PROP_WIDTH,
   PROP_HEIGHT,
-  PROP_NODE,
+  PROP_NODE
 };
 
 enum

@@ -36,7 +36,7 @@ enum
   PROP_0,
   PROP_OUTPUT,
   PROP_INPUT,
-  PROP_AUX,
+  PROP_AUX
 };
 
 static void     get_property (GObject             *gobject,

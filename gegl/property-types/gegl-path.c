@@ -696,7 +696,7 @@ static GeglPathList *ensure_tail (GeglPathPrivate *priv)
 
 enum
 {
-  PROP_0,
+  PROP_0
 };
 
 
