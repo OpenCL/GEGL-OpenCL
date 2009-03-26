@@ -1,5 +1,10 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/gegl-cpuaccel.h: Patch from Gary V. Vaughan. Enum values
+	must be less than INT_MAX (sign bit is illegal).
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Older aix and irix compilers choke on
 	trailing commas in enum decls.
 
