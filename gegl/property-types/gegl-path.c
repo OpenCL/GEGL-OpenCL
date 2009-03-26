@@ -403,7 +403,7 @@ path_calc (GeglPathList *path,
 
   while (iter)
     {
-      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
       switch (iter->d.type)
         {
           case 'M':
@@ -493,7 +493,7 @@ static void path_calc_values (GeglPathList *path,
   iter = path;
   while (iter)
     {
-      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
       switch (iter->d.type)
         {
           case 'M':
@@ -2082,7 +2082,7 @@ void gegl_path_stroke (GeglBuffer *buffer,
 
   while (iter)
     {
-      //fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);
+      /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
       switch (iter->d.type)
         {
           case 'M':

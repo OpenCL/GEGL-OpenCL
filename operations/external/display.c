@@ -102,7 +102,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *source;
-  SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
+  SDL_Surface **sdl_outwin = NULL;      /*op_sym (op, "sdl_outwin");*/
 
   init_sdl ();
   if (!handle)

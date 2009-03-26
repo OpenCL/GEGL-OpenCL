@@ -422,7 +422,7 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
     {
       p->audio_input_frame_size = c->frame_size;
     }
-  //audio_input_frame_size = 44100/25;
+  /*audio_input_frame_size = 44100/25;*/
   p->samples = malloc (p->audio_input_frame_size * 2 * c->channels);
 }
 
@@ -437,7 +437,7 @@ write_audio_frame (GeglChantO *op, AVFormatContext * oc, AVStream * st)
 
   c = st->codec;
 
-  //fprintf (stderr, "going to grab %i\n", p->fragment_size);
+  /*fprintf (stderr, "going to grab %i\n", p->fragment_size);*/
   if (p->oxide_audio_get_fragment (p->oxide_audio_instance,
                                    p->fragment) == (signed) p->fragment_size)
     {
@@ -465,7 +465,7 @@ write_audio_frame (GeglChantO *op, AVFormatContext * oc, AVStream * st)
     }
 }
 
-//p->audio_get_frame (samples, audio_input_frame_size, c->channels);
+/*p->audio_get_frame (samples, audio_input_frame_size, c->channels);*/
 
 void
 close_audio (Priv * p, AVFormatContext * oc, AVStream * st)
@@ -747,7 +747,7 @@ tfile (GeglChantO *self)
     }
   if (p->oxide_audio_query && p->fmt->audio_codec != CODEC_ID_NONE)
     {
-     //XXX: FOO p->audio_st = add_audio_stream (op, p->oc, p->fmt->audio_codec);
+     /*XXX: FOO p->audio_st = add_audio_stream (op, p->oc, p->fmt->audio_codec);*/
     }
 
   if (av_set_parameters (p->oc, NULL) < 0)

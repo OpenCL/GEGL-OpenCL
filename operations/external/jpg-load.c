@@ -209,13 +209,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "hidden";
   operation_class->description = _("JPG image loader");
 
-//  static gboolean done=FALSE;
-//  if (done)
-//    return;
+/*  static gboolean done=FALSE;
+    if (done)
+      return; */
   gegl_extension_handler_register (".jpg", "gegl:jpg-load");
   gegl_extension_handler_register (".JPG", "gegl:jpg-load");
   gegl_extension_handler_register (".jpeg", "gegl:jpg-load");
   gegl_extension_handler_register (".JPEG", "gegl:jpg-load");
-//  done = TRUE;
+/*  done = TRUE; */
 }
 #endif

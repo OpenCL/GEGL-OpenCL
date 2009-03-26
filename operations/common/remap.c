@@ -24,8 +24,8 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 #if 0
-//gegl_chant_string ("xlow",  "hm", _("low description"))
-//gegl_chant_string ("xhigh", "hm", _("high description"))
+gegl_chant_string ("xlow",  "hm", _("low description"))
+gegl_chant_string ("xhigh", "hm", _("high description"))
 #endif
 
 #else

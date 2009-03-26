@@ -55,7 +55,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   png_infop      load_info_ptr;
   unsigned char  header[8];
   guchar        *pixels;
-  //png_bytep     *rows;
+  /*png_bytep     *rows;*/
 
 
   unsigned   int i;
@@ -431,12 +431,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "hidden";
   operation_class->description = _("PNG image loader.");
 
-//  static gboolean done=FALSE;
-//  if (done)
-//    return;
+/*  static gboolean done=FALSE;
+    if (done)
+      return; */
   gegl_extension_handler_register (".png", "gegl:png-load");
   gegl_extension_handler_register (".PNG", "gegl:png-load");
-//  done = TRUE;
+/*  done = TRUE; */
 }
 
 #endif

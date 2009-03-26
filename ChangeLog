@@ -1,5 +1,18 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Some vendor C compilers choke on C++
+	comments.
+
+	* gegl/property-types/gegl-path.c
+	* operations/common/remap.c
+	* operations/external/display.c
+	* operations/external/jpg-load.c
+	* operations/external/png-load.c
+	* operations/external/svg-load.c
+	* operations/workshop/external/ff-save.c
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-cpuaccel.h: Patch from Gary V. Vaughan. Enum values
 	must be less than INT_MAX (sign bit is illegal).
 
