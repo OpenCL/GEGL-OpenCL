@@ -47,8 +47,8 @@ struct _GeglBuffer
 
   GeglRectangle     abyss;
 
-  GeglTile         *hot_tile; /* cached tile for speeding up pget/pset (1x1
-                                 sized gets/sets)*/
+  GeglTile         *hot_tile; /* cached tile for speeding up gegl_buffer_get_pixel
+                                 and gegl_buffer_set_pixel (1x1 sized gets/sets)*/
 
   GeglSampler      *sampler; /* cached sampler for speeding up random
                                 access interpolated fetches from the

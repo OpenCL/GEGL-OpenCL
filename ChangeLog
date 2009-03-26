@@ -1,5 +1,15 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Henrik Akesson that renames pset()/pget() to
+	gegl_buffer_pixel_set() and gegl_buffer_pixel_get() in order to
+	improve readability of code and to conform to gegl coding
+	standards.
+
+	* gegl/buffer/gegl-buffer-access.c
+	* gegl/buffer/gegl-buffer-private.h
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Henrik Akesson that adds initial
 	how-to-hack-on-GEGL documentation, including a ruby script to
 	generate a graphviz graph of the class inheritance trees in the

@@ -50,11 +50,11 @@ GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 
 #if 0
 static inline void
-pset (GeglBuffer *buffer,
-      gint        x,
-      gint        y,
-      const Babl *format,
-      guchar     *buf)
+gegl_buffer_pixel_set (GeglBuffer *buffer,
+                       gint        x,
+                       gint        y,
+                       const Babl *format,
+                       guchar     *buf)
 {
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height  = buffer->tile_storage->tile_width;
@@ -116,11 +116,11 @@ pset (GeglBuffer *buffer,
 #endif
 
 static inline void
-pset (GeglBuffer *buffer,
-      gint        x,
-      gint        y,
-      const Babl *format,
-      gpointer    data)
+gegl_buffer_set_pixel (GeglBuffer *buffer,
+                       gint        x,
+                       gint        y,
+                       const Babl *format,
+                       gpointer    data)
 {
   guchar *buf         = data;
   gint    tile_width  = buffer->tile_storage->tile_width;
@@ -200,11 +200,11 @@ pset (GeglBuffer *buffer,
 }
 
 static inline void
-pget (GeglBuffer *buffer,
-      gint        x,
-      gint        y,
-      const Babl *format,
-      gpointer    data)
+gegl_buffer_get_pixel (GeglBuffer *buffer,
+                       gint        x,
+                       gint        y,
+                       const Babl *format,
+                       gpointer    data)
 {
   guchar *buf         = data;
   gint    tile_width  = buffer->tile_storage->tile_width;
@@ -595,7 +595,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
 
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
-      pset (buffer, rect->x, rect->y, format, src);
+      gegl_buffer_set_pixel (buffer, rect->x, rect->y, format, src);
     }
   else
     {
@@ -949,7 +949,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
       rect->width == 1 &&
       rect->height == 1)  /* fast path */
     {
-      pget (buffer, rect->x, rect->y, format, dest_buf);
+      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf);
 #if ENABLE_MP
       g_static_rec_mutex_unlock (&mutex);
 #endif
@@ -1086,7 +1086,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
 /*#define USE_WORKING_SHORTCUT*/
 #ifdef USE_WORKING_SHORTCUT
-  pget (buffer, x, y, format, dest);
+  gegl_buffer_get_pixel (buffer, x, y, format, dest);
   return;
 #endif
 
