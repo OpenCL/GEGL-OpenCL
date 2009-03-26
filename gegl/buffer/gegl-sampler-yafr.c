@@ -133,7 +133,10 @@ gegl_sampler_yafr_init (GeglSamplerYafr *self)
    * The computation stencil is 4x4, and sticks out one column to the
    * left and one row above the requested integer position:
    */
-  GEGL_SAMPLER (self)->context_rect = (GeglRectangle){-1,-1,4,4};
+  GEGL_SAMPLER (self)->context_rect.x = -1;
+  GEGL_SAMPLER (self)->context_rect.y = -1;
+  GEGL_SAMPLER (self)->context_rect.width = 4;
+  GEGL_SAMPLER (self)->context_rect.height = 4;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }

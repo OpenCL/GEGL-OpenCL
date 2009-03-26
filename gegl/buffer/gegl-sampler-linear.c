@@ -106,7 +106,10 @@ gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
 static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
-  GEGL_SAMPLER (self)->context_rect = (GeglRectangle){ 0, 0, 2, 2 };
+  GEGL_SAMPLER (self)->context_rect.x = 0;
+  GEGL_SAMPLER (self)->context_rect.y = 0;
+  GEGL_SAMPLER (self)->context_rect.width = 2;
+  GEGL_SAMPLER (self)->context_rect.height = 2;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 

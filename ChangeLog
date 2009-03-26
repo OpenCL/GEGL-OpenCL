@@ -1,5 +1,18 @@
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Some vendor compilers choke on
+	compound declaration casts.
+
+	* examples/gegl-paint.c
+	* gegl/buffer/gegl-sampler-cubic.c
+	* gegl/buffer/gegl-sampler-linear.c
+	* gegl/buffer/gegl-sampler-nearest.c
+	* gegl/buffer/gegl-sampler-sharp.c
+	* gegl/buffer/gegl-sampler-yafr.c
+	* gegl/operation/gegl-operation-temporal.c
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Some vendor compilers can't compile
 	non-constant elements of compound struct initializers
 

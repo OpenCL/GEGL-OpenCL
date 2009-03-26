@@ -138,6 +138,8 @@ static void
 gegl_operation_temporal_init (GeglOperationTemporal *self)
 {
   GeglOperationTemporalPrivate *priv;
+  GeglRectangle rect = { 0, 0, 4096, 4096*600 };
+
   self->priv = GEGL_OPERATION_TEMPORAL_GET_PRIVATE(self);
   priv=self->priv;
   priv->count          = 0;
@@ -150,7 +152,7 @@ gegl_operation_temporal_init (GeglOperationTemporal *self)
    * input
    */
   priv->frame_store    =
-      gegl_buffer_new (&((GeglRectangle){0,0,4096,4096*600}), babl_format ("RGB u8"));
+      gegl_buffer_new (&rect, babl_format ("RGB u8"));
 ;
 }
 

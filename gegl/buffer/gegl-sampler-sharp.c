@@ -260,7 +260,10 @@ gegl_sampler_sharp_init (GeglSamplerSharp *self)
    * nearest input pixel center. See comment below about using a
    * "non-centered" stencil (one based at the corner) instead.
    */
-  GEGL_SAMPLER (self)->context_rect = (GeglRectangle){-2,-2,5,5};
+  GEGL_SAMPLER (self)->context_rect.x = -2;
+  GEGL_SAMPLER (self)->context_rect.y = -2;
+  GEGL_SAMPLER (self)->context_rect.width = 5;
+  GEGL_SAMPLER (self)->context_rect.height = 5;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
