@@ -16,6 +16,7 @@
  * Copyright (C) 2003, 2004, 2006, 2007, 2008 Øyvind Kolås
  */
 
+#include "config.h"
 #include "gegl-path-spiro.h"
 #include <gegl.h>
 #include <math.h>

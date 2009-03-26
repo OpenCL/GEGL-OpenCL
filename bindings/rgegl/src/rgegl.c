@@ -17,6 +17,7 @@
  *
  * 2007 © Øyvind Kolås.
  */
+#include "config.h"
 #include "rgegl.h"
 
 void

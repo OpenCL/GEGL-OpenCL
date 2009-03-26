@@ -15,6 +15,7 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
 #include <glib.h>
 #include <glib-object.h>
 #include <string.h>

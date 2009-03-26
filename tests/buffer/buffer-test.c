@@ -1,3 +1,4 @@
+#include "config.h"
 #include <gegl.h>
 #include <gegl-buffer.h>
 #include <math.h>

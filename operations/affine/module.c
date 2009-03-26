@@ -16,6 +16,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
 #include <gegl-plugin.h>
 #include "module.h"
 #include "affine.h"

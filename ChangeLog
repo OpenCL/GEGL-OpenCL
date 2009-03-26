@@ -1,3 +1,12 @@
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Apply patch from Gary V. Vaughan. config.h needs to be included at
+	the top of every .c file. But don't do it for .c files that are
+	not treated as separate compilation units, i.e. the buffer test .c
+	files.
+
+	* many_c_files.c
+
 2009-03-22  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/buffer/gegl-tile-backend-file.c: Namespace functions

@@ -1,3 +1,4 @@
+#include "config.h"
 #include <gegl.h> /* needed instead of gegl.h to be able to do full
                      introspection*/
 #include <stdio.h>

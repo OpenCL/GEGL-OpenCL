@@ -16,6 +16,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+#include "config.h"
 #include <glib.h>
 #include <string.h>
 #include "gegl-instrument.h"

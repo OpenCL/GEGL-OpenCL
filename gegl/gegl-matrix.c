@@ -16,6 +16,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
+#include "config.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

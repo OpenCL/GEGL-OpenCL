@@ -27,6 +27,7 @@ gegl_chant_file_path (path, "File", "", "Path of file to load.")
 #define GEGL_CHANT_TYPE_SOURCE
 #define GEGL_CHANT_C_FILE       "openraw.c"
 
+#include "config.h"
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <libopenraw/libopenraw.h>

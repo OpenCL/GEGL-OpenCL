@@ -16,6 +16,7 @@
  * Copyright (C) 2005, 2008 Øyvind Kolås
  */
 
+#include "config.h"
 #include "gegl-path-smooth.h"
 #include <gegl.h>
 #include "gegl-path.h"

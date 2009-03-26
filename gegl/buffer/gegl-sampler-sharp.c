@@ -173,6 +173,7 @@
  * of Canada) Discovery Grant.
  */
 
+#include "config.h"
 #include <glib-object.h>
 
 #include "gegl.h"

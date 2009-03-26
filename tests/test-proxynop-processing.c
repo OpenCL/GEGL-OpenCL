@@ -15,6 +15,7 @@
  * Copyright (C) 2009 Martin Nordholts
  */
 
+#include "config.h"
 #include <string.h>
 
 #include "gegl.h"

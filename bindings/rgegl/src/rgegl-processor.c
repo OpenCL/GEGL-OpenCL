@@ -18,6 +18,7 @@
  * 2007 © Øyvind Kolås.
  */
 
+#include "config.h"
 #include "rgegl.h"
 
 #define _SELF(self) GEGL_PROCESSOR(RVAL2GOBJ(self))

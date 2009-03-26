@@ -18,6 +18,7 @@
  * 2007 © Øyvind Kolås, Kevin Cozens.
  */
 
+#include "config.h"
 #include "rgegl.h"
 #include "babl/babl.h"
 

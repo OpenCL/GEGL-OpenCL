@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include <string.h>
 
 #include <glib-object.h>

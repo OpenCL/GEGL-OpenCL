@@ -19,6 +19,7 @@
  * currently not used by the rest of GeglBuffer */
 
 
+#include "config.h"
 #include <string.h>
 #include <math.h>
 

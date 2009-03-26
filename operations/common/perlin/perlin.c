@@ -1,6 +1,7 @@
 /* Coherent noise function over 1, 2 or 3 dimensions */
 /* (copyright Ken Perlin) */
 
+#include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
