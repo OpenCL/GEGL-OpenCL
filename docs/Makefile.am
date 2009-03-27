@@ -154,7 +154,9 @@ endif
 
 images/inheritance.png: $(top_srcdir)/docs/Makefile
 if HAVE_RUBY
-	$(top_srcdir)/tools/gobj2dot.rb $(top_srcdir) | dot -Tpng > $(top_srcdir)/docs/images/inheritance.png
+if HAVE_DOT
+	$(top_srcdir)/tools/gobj2dot.rb $(top_srcdir) | $(DOT) -Tpng > $(top_srcdir)/docs/images/inheritance.png
+endif
 endif
 
 index.html: index-static.txt		\

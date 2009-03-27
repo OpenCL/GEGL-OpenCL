@@ -595,6 +595,20 @@ fi
 AM_CONDITIONAL(HAVE_ASCIIDOC, test "x$have_asciidoc" = "xyes")
 
 
+###############
+# Check for dot
+###############
+ 
+AC_PATH_PROG(DOT, dot, no)
+if test "$DOT" = "no"; then
+  have_dot="no  (dot not found)"
+  AC_MSG_RESULT([*** Check for dot command failed.])
+else
+  have_dot="yes"
+fi
+AM_CONDITIONAL(HAVE_DOT, test "x$have_dot" = "xyes")
+
+
 #################
 # Check for Cairo
 #################
