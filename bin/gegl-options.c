@@ -133,9 +133,9 @@ print_opts (GeglOptions *o)
 "\tdelay:  %f\n"
 "\t\n",
     o->mode,
-    o->file,
-    o->xml,
-    o->output,
+    o->file==NULL?"(null)":o->file,
+    o->xml==NULL?"(null)":o->xml,
+    o->output==NULL?"(null)":o->output,
     o->rest==NULL?"":"yes",
     o->delay
 );

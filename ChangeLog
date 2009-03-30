@@ -1,3 +1,9 @@
+2009-03-30  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/gegl-options.c: Applied patch from Chris Wang that fixes
+	possible portability issue when passing NULL pointer to fprintf.
+	Fixes bug #568389.
+
 2009-03-27  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: added a check for 'dot'.
