@@ -1,5 +1,13 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Unsized arrays are not supported by
+	many vendor compilers
+
+	* gegl/property-types/gegl-path.c
+	* operations/common/color-temperature.c
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* configure.ac: Don't try to pass gcc flags to vendor
 	compilers. Patch from Gary V. Vaughan. Some vendor compilers warn
 	about unknown flags but otherwise compile (noisily, with a warning

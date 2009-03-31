@@ -34,7 +34,7 @@ gegl_chant_double (intended_temperature, "Intended temperature", LOWEST_TEMPERAT
 
 #include "gegl-chant.h"
 
-static const gfloat rgb_r55[][12];
+static const gfloat rgb_r55[3][12];
 
 static void
 convert_k_to_rgb (gfloat  temperature,
@@ -203,7 +203,7 @@ gegl_chant_class_init (GeglChantClass *klass)
  *
  * converted to the linear RGB space assuming the ITU-R BT.709-5/sRGB primaries
  */
-static const gfloat rgb_r55[][12] =
+static const gfloat rgb_r55[3][12] =
 {
   {
      6.9389923563552169e-01,  2.7719388100974670e+03,

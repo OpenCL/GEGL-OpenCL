@@ -33,7 +33,7 @@ typedef struct Point
 typedef struct GeglPathItem
 {
   gchar  type; /* should perhaps be padded out? */
-  Point  point[]; /* variable length internally */
+  Point  point[1]; /* variable length internally */
 } GeglPathItem;
 
 #include "gegl.h"
