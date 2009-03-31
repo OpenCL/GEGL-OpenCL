@@ -1,5 +1,14 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/buffer/Makefile.am: Don't use GNU specific options in
+	buffer test commands. `ls -1' and `diff -U 50' are GNUisms.  The
+	-1 isn't necessary in any case, and I changed -U to -C just to get
+	it working... if we need unified diffs, then a configure time
+	check for GNU diff (possibly called gdiff) in PATH will be needed
+	instead of this easy fix. Patch from Gary V. Vaughan.
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/buffer-test.c: Patch from Gary V. Vaughan. Use
 	G_STRFUNC everywhere.
 
