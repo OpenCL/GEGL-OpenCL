@@ -73,7 +73,7 @@ typedef struct
 static void seekto(LoadInfo *info, gint offset)
 {
   info->offset = offset;
-  GEGL_NOTE (BUFFER_LOAD, "seek to %i", offset);
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "seek to %i", offset);
 #if HAVE_GIO
   if(!g_seekable_seek (G_SEEKABLE (info->i), info->offset, G_SEEK_SET, NULL, NULL))
 #else
@@ -150,7 +150,7 @@ gegl_buffer_read_header (int i,
   }
 #endif
 
-  GEGL_NOTE (BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i  %ix%i\n",
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i  %ix%i\n",
                    ret->header.tile_width,
                    ret->header.tile_height,
                    (guint)ret->block.next,
@@ -206,7 +206,7 @@ static GeglBufferItem *read_block (int           i,
       byte_read += sz_read;
   }
 #endif
-  GEGL_NOTE (BUFFER_LOAD, "read block: length:%i next:%i",
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "read block: length:%i next:%i",
                           block.length, (guint)block.next);
 
   switch (block.flags)
@@ -222,7 +222,7 @@ static GeglBufferItem *read_block (int           i,
 
   if (block.length != own_size)
     {
-      GEGL_NOTE(BUFFER_LOAD, "read block of size %i which is different from expected %i only using available expected",
+      GEGL_NOTE(GEGL_DEBUG_BUFFER_LOAD, "read block of size %i which is different from expected %i only using available expected",
         block.length, own_size);
     }
 
@@ -293,7 +293,7 @@ gegl_buffer_read_index (int           i,
   for (item = read_block (i, offset); item; item = read_block (i, offset))
     {
       g_assert (item);
-      GEGL_NOTE (BUFFER_LOAD,"loaded item: %i, %i, %i offset:%i next:%i", item->tile.x,
+      GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD,"loaded item: %i, %i, %i offset:%i next:%i", item->tile.x,
                  item->tile.y,
                  item->tile.z,
                  (guint)item->tile.offset,
@@ -332,14 +332,14 @@ gegl_buffer_load (const gchar *path)
 #else
   info->i = open (info->path, O_RDONLY);
 #endif
-  GEGL_NOTE (BUFFER_LOAD, "starting to load buffer %s", path);
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "starting to load buffer %s", path);
 #if HAVE_GIO
   if (!info->i)
 #else
   if (info->i == -1)
 #endif
     {
-      GEGL_NOTE (BUFFER_LOAD, "failed top open %s for reading", path);
+      GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "failed top open %s for reading", path);
 #if HAVE_GIO
       g_object_unref (info->file);
 #endif
@@ -422,9 +422,9 @@ gegl_buffer_load (const gchar *path)
         g_object_unref (G_OBJECT (tile));
         i++;
       }
-    GEGL_NOTE (BUFFER_LOAD, "%i tiles loaded",i);
+    GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "%i tiles loaded",i);
   }
-  GEGL_NOTE (BUFFER_LOAD, "buffer loaded %s", info->path);
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "buffer loaded %s", info->path);
 
   load_info_destroy (info);
   return ret;

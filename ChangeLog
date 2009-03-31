@@ -13,6 +13,26 @@
 
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Apply patch from Gary V. Vaughan that adds configure time checks
+	for variadic macros and adapts the definitions of such macros
+	in-code accordingly so that babl can be compiled on more
+	platforms.
+
+	Also do some other changes in the way the variadic macros are
+	invoked.
+
+	* acinclude.m4
+	* configure.ac
+	* gegl/buffer/gegl-buffer-load.c
+	* gegl/buffer/gegl-tile-backend-file.c
+	* gegl/buffer/gegl-tile-handler-cache.c
+	* gegl/gegl-debug.h
+	* gegl/operation/gegl-operation-processors.c
+	* tests/buffer/buffer-test.c
+	* tests/buffer/tests/sub_rect_fills_and_gets.c
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Henrik Akesson that renames pset()/pget() to
 	gegl_buffer_pixel_set() and gegl_buffer_pixel_get() in order to
 	improve readability of code and to conform to gegl coding

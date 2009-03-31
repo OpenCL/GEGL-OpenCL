@@ -134,7 +134,7 @@ dispatch (GObject *object,
   if (gegl_config()->quality <= 0.75 && good) choice = good;
   if (gegl_config()->quality <= 0.25 && fast) choice = fast;
 
-  GEGL_NOTE(PROCESSOR, "Using %s implementation for %s", data->string[choice], g_type_name (G_OBJECT_TYPE(object)));
+  GEGL_NOTE(GEGL_DEBUG_PROCESSOR, "Using %s implementation for %s", data->string[choice], g_type_name (G_OBJECT_TYPE(object)));
 
   data->cached = choice;
   data->cached_quality = gegl_config()->quality;

@@ -12,17 +12,17 @@ TEST ()
   sub3 = gegl_buffer_create_sub_buffer (buffer, &subrect3);
 
   fill (sub1, 0.5);
-  print ("root with sub1 filled in:\n");
+  print (("root with sub1 filled in:\n"));
   print_buffer (buffer);
 
-  print ("sub2 before fill:\n");
+  print (("sub2 before fill:\n"));
   print_buffer (sub2);
   fill (sub2, 1.0);
-  print ("final root:\n");
+  print (("final root:\n"));
   print_buffer (buffer);
-  print ("final sub1:\n");
+  print (("final sub1:\n"));
   print_buffer (sub1);
-  print ("final sub3:\n");
+  print (("final sub3:\n"));
   print_buffer (sub3);
 
   gegl_buffer_destroy (sub1);

@@ -25,8 +25,11 @@
  */
 
 #define test_start()              GString *gstring=g_string_new("");\
-                                  print ("Test: %s\n", __FUNCTION__)
-#define print(arg...)             g_string_append_printf (gstring, arg)
+                                  print (("Test: %s\n", __FUNCTION__))
+#define print(args)		  G_STMT_START {		\
+	gchar *_fmt = g_strdup_printf args;			\
+	g_string_append (gstring, _fmt);			\
+				  } G_STMT_END
 #define print_buffer(buffer)      print_buffer_internal (gstring, buffer)
 #define print_linear_buffer_u8(w,h,b)  print_linear_buffer_internal_u8 (gstring,w,h,b)
 #define print_linear_buffer_float(w,h,b)  print_linear_buffer_internal_float (gstring,w,h,b)
@@ -81,13 +84,13 @@ print_linear_buffer_internal_float (GString    *gstring,
 {
   gchar *scale[]={" ", "░", "▒", "▓", "█", "█"};
   gint x,y;
-  print ("▛");
+  print (("▛"));
   for (x=0;x<width;x++)
-    print ("▀");
-  print ("▜\n");
+    print (("▀"));
+  print (("▜\n"));
   for (y=0;y<height;y++)
     {
-      print ("▌");
+      print (("▌"));
       for (x=0;x<width;x++)
         {
           gint val = floor ( buf[y*width+x] * 4 + 0.5);
@@ -95,14 +98,14 @@ print_linear_buffer_internal_float (GString    *gstring,
             val=4;
           if (val<0)
             val=0;
-          print ("%s", scale[val]);
+          print (("%s", scale[val]));
         }
-      print ("▐\n");
+      print (("▐\n"));
     }
-  print ("▙");
+  print (("▙"));
   for (x=0;x<width;x++)
-    print ("▄");
-  print ("▟\n");
+    print (("▄"));
+  print (("▟\n"));
 }
 
 static void
@@ -113,21 +116,21 @@ print_linear_buffer_internal_u8 (GString    *gstring,
 {
   gchar *scale[]={" ", "░", "▒", "▓", "█"};
   gint x,y;
-  print ("▛");
+  print (("▛"));
   for (x=0;x<width;x++)
-    print ("▀");
-  print ("▜\n");
+    print (("▀"));
+  print (("▜\n"));
   for (y=0;y<height;y++)
     {
-      print ("▌");
+      print (("▌"));
       for (x=0;x<width;x++)
-        print ("%s", scale[ (gint)floor ( buf[y*width+x]/256.0 * 4 + 0.5)]);
-      print ("▐\n");
+        print (("%s", scale[ (gint)floor ( buf[y*width+x]/256.0 * 4 + 0.5)]));
+      print (("▐\n"));
     }
-  print ("▙");
+  print (("▙"));
   for (x=0;x<width;x++)
-    print ("▄");
-  print ("▟\n");
+    print (("▄"));
+  print (("▟\n"));
 }
 
 

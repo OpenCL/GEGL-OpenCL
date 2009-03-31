@@ -441,8 +441,8 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
   while (cache_total > gegl_config()->cache_size)
     {
-      /*GEGL_NOTE(CACHE, "cache_total:%i > cache_size:%i", cache_total, gegl_config()->cache_size);
-      GEGL_NOTE(CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));*/
+      /*GEGL_NOTE(GEGL_DEBUG_CACHE, "cache_total:%i > cache_size:%i", cache_total, gegl_config()->cache_size);
+      GEGL_NOTE(GEGL_DEBUG_CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));*/
       gegl_tile_handler_cache_trim (cache);
     }
 }

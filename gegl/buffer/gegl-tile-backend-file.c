@@ -171,7 +171,7 @@ gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
     }
 
 
-  GEGL_NOTE (TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static void inline
@@ -221,7 +221,7 @@ gegl_tile_backend_file_file_entry_write (GeglTileBackendFile *self,
         }
       to_be_written -= wrote;
     }
-  GEGL_NOTE (TILE_BACKEND, "wrote entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "wrote entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
 static inline GeglBufferTile *
@@ -229,7 +229,7 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
 {
   GeglBufferTile *entry = gegl_tile_entry_new (0,0,0);
 
-  GEGL_NOTE (TILE_BACKEND, "Creating new entry");
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Creating new entry");
 
   gegl_tile_backend_file_ensure_exist (self);
 
@@ -240,21 +240,21 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
       entry->offset = offset;
       self->free_list = g_slist_remove (self->free_list, self->free_list->data);
 
-      GEGL_NOTE (TILE_BACKEND, "  set offset %i from free list", ((gint)entry->offset));
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i from free list", ((gint)entry->offset));
     }
   else
     {
       gint tile_size = GEGL_TILE_BACKEND (self)->tile_size;
 
       entry->offset = self->next_pre_alloc;
-      GEGL_NOTE (TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->offset);
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->offset);
       self->next_pre_alloc += tile_size;
 
       if (self->next_pre_alloc >= self->total)
         {
           self->total = self->total + 32 * tile_size;
 
-          GEGL_NOTE (TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
+          GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
 
 #if HAVE_GIO
           g_assert (g_seekable_truncate (G_SEEKABLE (self->o),
@@ -305,7 +305,7 @@ gegl_tile_backend_file_write_header (GeglTileBackendFile *self)
 #else
   write (self->o, &(self->header), 256);
 #endif
-  GEGL_NOTE (TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
 }
 
@@ -335,7 +335,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
 #endif
         goto fail;
 
-      GEGL_NOTE (TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
                  self->in_holding->length,
                  self->in_holding->flags,
                  (gint)self->in_holding->next,
@@ -554,7 +554,7 @@ gegl_tile_backend_file_flush (GeglTileSource *source,
 
   gegl_tile_backend_file_ensure_exist (self);
 
-  GEGL_NOTE (TILE_BACKEND, "flushing %s", self->path);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "flushing %s", self->path);
 
 
   self->header.rev ++;
@@ -585,7 +585,7 @@ gegl_tile_backend_file_flush (GeglTileSource *source,
   fsync (self->o);
 #endif
 
-  GEGL_NOTE (TILE_BACKEND, "flushed %s", self->path);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "flushed %s", self->path);
 
   return (gpointer)0xf0f;
 }
@@ -684,7 +684,7 @@ gegl_tile_backend_file_finalize (GObject *object)
 
   if (self->exist)
     {
-      GEGL_NOTE (TILE_BACKEND, "finalizing buffer %s", self->path);
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "finalizing buffer %s", self->path);
 
 #if HAVE_GIO
       if (self->i)
@@ -788,13 +788,13 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
 
   if (new_header.rev == self->header.rev)
     {
-      GEGL_NOTE(TILE_BACKEND, "header not changed: %s", self->path);
+      GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "header not changed: %s", self->path);
       return;
     }
   else
     {
       self->header=new_header;
-      GEGL_NOTE(TILE_BACKEND, "loading index: %s", self->path);
+      GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "loading index: %s", self->path);
     }
 
 
@@ -878,7 +878,7 @@ gegl_tile_backend_file_constructor (GType                  type,
   self    = GEGL_TILE_BACKEND_FILE (object);
   backend = GEGL_TILE_BACKEND (object);
 
-  GEGL_NOTE (TILE_BACKEND, "constructing file backend: %s", self->path);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing file backend: %s", self->path);
 #if HAVE_GIO
   self->file = g_file_new_for_commandline_arg (self->path);
 #else
@@ -971,7 +971,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       self->exist = TRUE;
       backend = GEGL_TILE_BACKEND (self);
 
-      GEGL_NOTE (TILE_BACKEND, "creating swapfile  %s", self->path);
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "creating swapfile  %s", self->path);
 #ifdef HACKED_GIO_WITH_READWRITE
 
       self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,

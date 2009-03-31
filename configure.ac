@@ -151,6 +151,7 @@ AC_PROG_MAKE_SET
 dnl Large file support.
 AC_SYS_LARGEFILE
 
+GEGL_VARIADIC_MACROS
 
 AC_MSG_CHECKING([whether to turn on debugging])
 AC_ARG_ENABLE(debug,
