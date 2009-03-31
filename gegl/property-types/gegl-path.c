@@ -1023,7 +1023,7 @@ gegl_path_calc (GeglPath   *self,
   if (!self)
     return;
   ensure_flattened (self);
-  return path_calc (priv->flat_path, pos, xd, yd);
+  path_calc (priv->flat_path, pos, xd, yd);
 }
 
 
@@ -1037,7 +1037,7 @@ gegl_path_calc_values (GeglPath *self,
   if (!self)
     return;
   ensure_flattened (self);
-  return path_calc_values (priv->flat_path, num_samples, xs, ys);
+  path_calc_values (priv->flat_path, num_samples, xs, ys);
 }
 
 
