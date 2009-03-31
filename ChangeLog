@@ -1,3 +1,8 @@
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* configure.ac: Patch from Gary V. Vaughan. Support hpux use of
+	shl load/unload and dsos with .sl suffixes
+
 2009-03-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/gegl-options.c: Applied patch from Chris Wang that fixes

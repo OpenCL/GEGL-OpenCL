@@ -266,31 +266,27 @@ esac
 # Check how to generate plug-ins (with gcc at least)
 ####################################################
 
-AC_MSG_CHECKING([for how to make dynamic libraries])
+AC_MSG_CHECKING([for dynamic library filename suffix])
 case "$target_or_host" in 
   *-*-darwin*)                 # darwin
     shrext=.dylib
-    dynamiclib=-dynamiclib
+    ;;
+  hppa*-hpux*)                 # HP/UX
+    shrext=.sl
     ;;
   *-*-mingw* | *-*-cygwin*)    # windows
     shrext=.dll
-    dynamiclib=-shared
     ;;
   *)                           # linux (and BSD?)
-    dynamiclib=-shared
     shrext=.so
     ;;
 esac
 
-AC_MSG_RESULT([flag=${dynamiclib}, extension=${shrext}])
+AC_MSG_RESULT([${shrext}])
 
 SHREXT=$shrext
 AC_SUBST(SHREXT)
 AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
-
-DYNAMICLIB=$dynamiclib
-AC_SUBST(DYNAMICLIB)
-AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
 
 dnl ===========================================================================
 
