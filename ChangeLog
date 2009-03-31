@@ -1,5 +1,14 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* configure.ac: Don't try to pass gcc flags to vendor
+	compilers. Patch from Gary V. Vaughan. Some vendor compilers warn
+	about unknown flags but otherwise compile (noisily, with a warning
+	for every unknown flag on every compilation unit). Since we know
+	these are gcc flags, only see whether they work when we're
+	compiling with gcc.
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tools/xml_insert.sh: Patch from Gary V. Vaughan. Rewrite
 	xml-insert.sh in portable bourne-shell.
 

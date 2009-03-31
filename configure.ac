@@ -187,7 +187,6 @@ if eval "test x$GCC = xyes"; then
   *[\ \	]-Wall[\ \	]*) ;;
   *) CFLAGS="$CFLAGS -Wall" ;;
   esac
-fi
 changequote([,])dnl
 
 GEGL_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
@@ -208,6 +207,7 @@ CFLAGS="$CFLAGS $extra_warnings"
 GEGL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
 CFLAGS="$CFLAGS $extra_warnings"
 
+fi
 
 dnl disable docs generation.
 AC_ARG_ENABLE([docs],
