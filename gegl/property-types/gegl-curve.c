@@ -64,7 +64,7 @@ static void get_property (GObject      *gobject,
                           GValue       *value,
                           GParamSpec   *pspec);
 
-G_DEFINE_TYPE (GeglCurve, gegl_curve, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglCurve, gegl_curve, G_TYPE_OBJECT)
 
 #define GEGL_CURVE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
                                    GEGL_TYPE_CURVE, GeglCurvePrivate))

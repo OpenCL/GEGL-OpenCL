@@ -24,7 +24,7 @@
 #include "gegl-types-internal.h"
 #include "gegl-config.h"
 
-G_DEFINE_TYPE (GeglConfig, gegl_config, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglConfig, gegl_config, G_TYPE_OBJECT)
 
 static GObjectClass * parent_class = NULL;
 

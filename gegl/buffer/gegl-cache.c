@@ -62,7 +62,7 @@ static void            get_property (GObject      *object,
                                      GValue       *value,
                                      GParamSpec   *pspec);
 
-G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER);
+G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER)
 
 guint gegl_cache_signals[LAST_SIGNAL] = { 0 };
 

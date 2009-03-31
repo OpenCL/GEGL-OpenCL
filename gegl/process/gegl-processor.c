@@ -79,7 +79,7 @@ struct _GeglProcessor
 };
 
 
-G_DEFINE_TYPE (GeglProcessor, gegl_processor, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglProcessor, gegl_processor, G_TYPE_OBJECT)
 
 
 static void

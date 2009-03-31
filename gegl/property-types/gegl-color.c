@@ -93,7 +93,7 @@ static const gfloat parsing_error_color[4] = { 0.f, 1.f, 1.f, 0.67f };
 /* Copied into all GeglColor:s at their instantiation. */
 static const gfloat init_color[4] = { 1.f, 1.f, 1.f, 1.f };
 
-G_DEFINE_TYPE (GeglColor, gegl_color, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglColor, gegl_color, G_TYPE_OBJECT)
 
 #define GEGL_COLOR_GET_PRIVATE(o)    (G_TYPE_INSTANCE_GET_PRIVATE ((o), GEGL_TYPE_COLOR, GeglColorPrivate))
 

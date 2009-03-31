@@ -13,6 +13,23 @@
 
 2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. NULL-statements caused by trailing
+	commas are non-portable
+
+	* gegl/buffer/gegl-cache.c
+	* gegl/gegl-chant.h
+	* gegl/gegl-config.c
+	* gegl/process/gegl-processor.c
+	* gegl/property-types/gegl-color.c
+	* gegl/property-types/gegl-curve.c
+	* gegl/property-types/gegl-path.c
+	* operations/common/layer.c
+	* operations/common/load.c
+	* operations/common/rectangle.c
+	* operations/external/text.c
+
+2009-03-26  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Gary V. Vaughan that adds configure time checks
 	for variadic macros and adapts the definitions of such macros
 	in-code accordingly so that babl can be compiled on more

@@ -719,7 +719,7 @@ static void get_property (GObject      *gobject,
                           GValue       *value,
                           GParamSpec   *pspec);
 
-G_DEFINE_TYPE (GeglPath, gegl_path, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglPath, gegl_path, G_TYPE_OBJECT)
 
 #define GEGL_PATH_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
                                    GEGL_TYPE_PATH, GeglPathPrivate))

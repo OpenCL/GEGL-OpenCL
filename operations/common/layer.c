@@ -75,7 +75,7 @@ typedef struct
 
 #define GEGL_CHANT_C_FILE "layer.c"
 #include "gegl-chant.h"
-GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META);
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <glib/gprintf.h>
 
