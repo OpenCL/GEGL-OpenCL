@@ -1,3 +1,14 @@
+AM_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer
+
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
+
 noinst_LTLIBRARIES = libbuffer.la
 
 if HAVE_GIO
@@ -6,7 +17,7 @@ GIO_SUPPORT_SOURCES=\
     $(null__)
 endif
 
-BUFFER_sources = \
+libbuffer_la_SOURCES = \
     $(GIO_SUPPORT_SOURCES)      \
     gegl-buffer.c		\
     gegl-buffer-access.c	\
@@ -37,9 +48,8 @@ BUFFER_sources = \
     gegl-tile-handler-empty.c	\
     gegl-tile-handler-log.c	\
     gegl-tile-handler-zoom.c	\
-    gegl-id-pool.c
-
-BUFFER_headers = \
+    gegl-id-pool.c		\
+    \
     gegl-buffer.h		\
     gegl-buffer-private.h	\
     gegl-buffer-iterator.h	\
@@ -70,13 +80,4 @@ BUFFER_headers = \
     gegl-tile-handler-log.h		\
     gegl-tile-handler-zoom.h		\
     gegl-id-pool.h
-
-libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
-
-INCLUDES = \
-	-I$(top_srcdir)				\
-	-I$(top_srcdir)/gegl			\
-	-I$(top_srcdir)/gegl/property-types	\
-	-I$(top_srcdir)/gegl/buffer		\
-	@DEP_CFLAGS@ @BABL_CFLAGS@
 

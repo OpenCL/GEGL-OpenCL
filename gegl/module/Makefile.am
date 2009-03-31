@@ -1,22 +1,25 @@
+AM_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types
+
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
+
 noinst_LTLIBRARIES = libmodule.la
 
-MODULE_sources = 	\
-    gegldatafiles.c	\
-    geglmodule.c	\
-    geglmoduledb.c	
+#libmodule_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/module
+#libmodule_public_HEADERS = #$(MODULE_headers)
 
-MODULE_headers = 	\
-    gegldatafiles.h	\
-    geglmoduledb.h	\
-    geglmodule.h
+libmodule_la_SOURCES = \
+	gegldatafiles.c	\
+	geglmodule.c	\
+	geglmoduledb.c	\
+	gegldatafiles.h	\
+	geglmoduledb.h	\
+	geglmodule.h
 
-libmodule_la_SOURCES = $(MODULE_sources) $(MODULE_headers)
-#libmoduleinclude_HEADERS = #$(MODULE_headers)
-#libmoduleincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/module
-
-INCLUDES = \
-	   -I$(top_srcdir)			\
-	   -I$(top_srcdir)/gegl			\
-	   -I$(top_srcdir)/gegl/buffer		\
-	   -I$(top_srcdir)/gegl/property-types	\
-	   @DEP_CFLAGS@ @BABL_CFLAGS@
+#libmodule_la_SOURCES = $(libmodule_sources) $(libmodule_public_HEADERS)

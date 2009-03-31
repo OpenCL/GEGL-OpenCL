@@ -1,6 +1,20 @@
+AM_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_builddir)/gegl/buffer
+	-I$(top_srcdir)/gegl/buffer
+
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
+
 noinst_LTLIBRARIES = libprocess.la
 
-PROCESS_sources = 			\
+#libprocess_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
+#libprocess_public_HEADERS = #
+
+libprocess_la_SOURCES = \
 	gegl-cr-visitor.c		\
 	gegl-debug-rect-visitor.c	\
 	gegl-eval-mgr.c			\
@@ -8,11 +22,8 @@ PROCESS_sources = 			\
 	gegl-finish-visitor.c		\
 	gegl-have-visitor.c		\
 	gegl-prepare-visitor.c		\
-	gegl-processor.c
-
-
-
-PROCESS_headers = 			\
+	gegl-processor.c		\
+	\
 	gegl-cr-visitor.h		\
 	gegl-debug-rect-visitor.h	\
 	gegl-eval-mgr.h			\
@@ -22,14 +33,5 @@ PROCESS_headers = 			\
 	gegl-prepare-visitor.h		\
 	gegl-processor.h
 
+#libprocess_la_SOURCES = $(lib_process_sources) $(libprocess_public_HEADERS)
 
-libprocess_la_SOURCES = $(PROCESS_sources) $(PROCESS_headers)
-#libprocessinclude_HEADERS = #
-#libprocessincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
-
-INCLUDES = \
-	-I$(top_srcdir)				\
-	-I$(top_srcdir)/gegl			\
-	-I$(top_srcdir)/gegl/property-types	\
-	-I$(top_srcdir)/gegl/buffer		\
-	@DEP_CFLAGS@ @BABL_CFLAGS@

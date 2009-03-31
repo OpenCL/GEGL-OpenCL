@@ -1,24 +1,21 @@
+AM_CPPFLAGS = \
+	-I$(top_srcdir)	\
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer
+
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
+
 noinst_LTLIBRARIES = libpropertytypes.la
 
-PROPERTYTYPES_sources = \
-	gegl-color.c		\
-	gegl-curve.c		\
-	gegl-path.c		\
-	gegl-paramspecs.c
-
-
-PROPERTYTYPES_headers = \
+libpropertytypes_la_SOURCES = \
+	gegl-color.c \
+	gegl-curve.c \
+	gegl-path.c \
+	gegl-paramspecs.c \
+	\
 	gegl-color.h		\
 	gegl-curve.h		\
 	gegl-path.h		\
 	gegl-paramspecs.h
-
-
-libpropertytypes_la_SOURCES = $(PROPERTYTYPES_sources) $(PROPERTYTYPES_headers)
-
-INCLUDES = \
-	   -I$(top_srcdir)	\
-	   -I$(top_srcdir)/gegl	\
-	   -I$(top_srcdir)/gegl/buffer \
-	   @DEP_CFLAGS@ @BABL_CFLAGS@
-

@@ -41,3 +41,4 @@ dist-hook: dist-check-w3m
 
 website: all
 	$(MAKE) -C docs website
+

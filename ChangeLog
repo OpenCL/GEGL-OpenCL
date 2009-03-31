@@ -1,5 +1,31 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Don't use depecrated features or
+	reduntant declarations in Makefile.am
+
+	* Makefile.am
+	* bin/Makefile.am
+	* bindings/gegl-sharp/docs/Makefile.am
+	* bindings/pygegl/Gegl/Makefile.am
+	* examples/Makefile.am
+	* gegl/Makefile.am
+	* gegl/buffer/Makefile.am
+	* gegl/graph/Makefile.am
+	* gegl/module/Makefile.am
+	* gegl/operation/Makefile.am
+	* gegl/process/Makefile.am
+	* gegl/property-types/Makefile.am
+	* operations/Makefile-common.am
+	* operations/Makefile-operations.am
+	* operations/affine/Makefile.am
+	* operations/external/Makefile.am
+	* operations/workshop/external/Makefile.am
+	* tests/Makefile.am
+	* tests/buffer/Makefile.am
+	* tools/Makefile.am
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* configure.ac: Patch from Gary V. Vaughan. Support hpux use of
 	shl load/unload and dsos with .sl suffixes
 

@@ -1,6 +1,32 @@
-noinst_LTLIBRARIES = liboperation.la
+AM_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer
 
-OPERATION_sources = \
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
+
+liboperation_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/operation
+
+liboperation_public_HEADERS = \
+	gegl-operation.h        	 \
+	gegl-operation-area-filter.h     \
+	gegl-operation-composer.h     	 \
+	gegl-operation-composer3.h     	 \
+	gegl-operation-filter.h       	 \
+	gegl-operation-meta.h       	 \
+	gegl-operation-point-composer.h  \
+	gegl-operation-point-composer3.h \
+	gegl-operation-point-filter.h    \
+	gegl-operation-point-render.h    \
+	gegl-operation-sink.h       	 \
+	gegl-operation-source.h          \
+	gegl-operation-temporal.h
+
+liboperation_sources = \
 	gegl-extension-handler.c	  \
 	gegl-operation.c        	  \
 	gegl-operation-area-filter.c      \
@@ -18,49 +44,12 @@ OPERATION_sources = \
 	gegl-operation-processors.c       \
 	gegl-operation-context.c          \
 	gegl-operations.c
-
-OPERATION_headers = \
+	\
 	gegl-extension-handler.h	 \
-	gegl-operation.h        	 \
-	gegl-operation-area-filter.h     \
-	gegl-operation-composer.h     	 \
-	gegl-operation-composer3.h     	 \
-	gegl-operation-filter.h       	 \
-	gegl-operation-meta.h       	 \
-	gegl-operation-point-composer.h  \
-	gegl-operation-point-composer3.h \
-	gegl-operation-point-filter.h    \
-	gegl-operation-point-render.h    \
-	gegl-operation-sink.h       	 \
-	gegl-operation-source.h		 \
-	gegl-operation-temporal.h	 \
 	gegl-operation-context.h          \
 	gegl-operations.h
 
-public_headers = \
-	gegl-operation.h        	 \
-	gegl-operation-area-filter.h     \
-	gegl-operation-composer.h     	 \
-	gegl-operation-composer3.h     	 \
-	gegl-operation-filter.h       	 \
-	gegl-operation-meta.h       	 \
-	gegl-operation-point-composer.h  \
-	gegl-operation-point-composer3.h \
-	gegl-operation-point-filter.h    \
-	gegl-operation-point-render.h    \
-	gegl-operation-sink.h       	 \
-	gegl-operation-source.h          \
-	gegl-operation-temporal.h
+noinst_LTLIBRARIES = liboperation.la
 
-
-liboperation_la_SOURCES = $(OPERATION_sources) $(OPERATION_headers)
-liboperationinclude_HEADERS = $(public_headers)
-liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/operation
-
-INCLUDES = \
-	-I$(top_srcdir)			\
-	-I$(top_srcdir)/gegl			\
-	-I$(top_srcdir)/gegl/property-types	\
-	-I$(top_srcdir)/gegl/buffer		\
-	@DEP_CFLAGS@ @BABL_CFLAGS@
+liboperation_la_SOURCES = $(liboperation_public_HEADERS) $(liboperation_sources)
 

@@ -1,8 +1,10 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
-affine_ladir = $(libdir)/gegl-@GEGL_API_VERSION@
+LIBS = $(op_libs)
 
-affine_la_LTLIBRARIES = affine.la
+affinelibdir = $(libdir)/gegl-$(GEGL_API_VERSION)
+
+affinelib_LTLIBRARIES = affine.la
 
 affine_la_SOURCES = \
 	affine.c	\
@@ -16,5 +18,3 @@ affine_la_SOURCES = \
 	transform.c	\
 	translate.c	\
 	chant.h
-
-affine_la_LIBADD = $(op_libs)

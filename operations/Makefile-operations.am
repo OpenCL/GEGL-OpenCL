@@ -1,9 +1,9 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
-LDADD           = $(op_libs)
+LIBS            = $(op_libs)
 
 CFILES          = $(wildcard $(srcdir)/*.c)
-plugins           = $(subst $(srcdir)/,,$(CFILES:.c=.la))
+plugins         = $(subst $(srcdir)/,,$(CFILES:.c=.la))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
@@ -11,12 +11,12 @@ EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 all-local: $(plugins)
 
 %.la: %.c $(GEGLHEADERS)
-	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
-	$(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) $(LDADD) -o $@ -rpath $(ext_dir) $@.lo
+	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LIBS) $(MATH_LIB)
 
 
 clean-local:
-	rm -f *.la $(OFILES)
+	rm -f *.la
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)

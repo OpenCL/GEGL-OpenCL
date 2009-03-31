@@ -1,5 +1,5 @@
-DOC_UPDATER = @MONODOCER@ -delete
-DOC_ASSEMBLER = @MDASSEMBLER@ --out gegl-sharp-docs --ecma
+DOC_UPDATER = $(MONODOCER) -delete
+DOC_ASSEMBLER = $(MDASSEMBLER) --out gegl-sharp-docs --ecma
 
 ASSEMBLIES = ../gegl/gegl-sharp.dll
 

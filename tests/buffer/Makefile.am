@@ -6,21 +6,22 @@ EXTRA_DIST = $(wildcard reference/*.buf) $(wildcard tests/*.c) buffer-tests-resu
 
 # Always build buffer-test to catch compilation problems early
 BUILT_SOURCES = buffer-tests.inc
-noinst_PROGRAMS = buffer-test$(EXEEXT)
-AM_CPPFLAGS =							\
-	-I$(top_srcdir)						\
-	-I$(top_srcdir)/gegl					\
-	-I$(top_srcdir)/gegl/buffer				\
-	-I$(top_srcdir)/gegl/property-types			\
-	-I$(top_srcdir)/gegl/operation				\
-	@DEP_CFLAGS@ @BABL_CFLAGS@
-
-buffer_test_SOURCES =						\
-	buffer-test.c
+check_PROGRAMS = buffer-test
+AM_CPPFLAGS = \
+	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_builddir)/gegl/operation \
+	-I$(top_srcdir)/gegl/operation
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 buffer_test_LDADD = 						\
-	$(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la	\
-	@DEP_LIBS@ @BABL_LIBS@
+	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
+	$(DEP_LIBS) $(BABL_LIBS)
 
 
 # Our custom target rules

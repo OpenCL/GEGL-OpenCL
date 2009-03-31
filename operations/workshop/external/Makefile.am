@@ -5,7 +5,6 @@ include $(top_srcdir)/operations/Makefile-common.am
 ops =
 
 if HAVE_CAIRO
-line_profile_la_SOURCES = line-profile.c
 line_profile_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(PANGO_LIBS)
 line_profile_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS)
 ops += line_profile.la
@@ -13,7 +12,6 @@ endif
 
 if HAVE_GTK
 ops += gtk_display.la
-gtk_display_la_SOURCES = gtk-display.c
 gtk_display_la_LIBADD  = $(op_libs) $(GTK_LIBS)
 gtk_display_la_CFLAGS  = $(GTK_CFLAGS)
 endif
@@ -27,7 +25,6 @@ endif
 
 if HAVE_LUA
 ops += gluas.la
-gluas_la_SOURCES = gluas.c
 gluas_la_LIBADD  = $(op_libs) $(LUA_LIBS)
 gluas_la_CFLAGS  = $(LUA_CFLAGS)
 endif

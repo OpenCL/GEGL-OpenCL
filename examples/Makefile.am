@@ -7,22 +7,30 @@ EXTRA_DIST = $(wildcard *.c) $(wildcard util/*.[ch])
 
 all-local: $(bins)
 
+%: %.c $(GEGLHEADERS)
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(LIBTOOL) --mode=link    $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ $@.lo $(LIBS)
+
 clean-local:
 	rm -f *.lo $(bins)
 
-INCLUDES = \
-	-I$(top_builddir) \
-	-I$(top_srcdir)	-I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer \
-	-I$(top_srcdir)/gegl/property-types \
+AM_CPPFLAGS = \
+	-I$(top_srcdir)	\
+	-I$(top_builddir)/gegl \
+	-I$(top_srcdir)/gegl \
+	-I$(top_builddir)/gegl/buffer \
 	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_builddir)/gegl/property-types \
+	-I$(top_srcdir)/gegl/property-types \
+	-I$(top_builddir)/gegl/buffer \
+	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_builddir)/gegl/operation \
 	-I$(top_srcdir)/gegl/operation \
-	-I$(top_srcdir)/gegl/module \
-	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@ @PNG_CFLAGS@
+	-I$(top_builddir)/gegl/module \
+	-I$(top_srcdir)/gegl/module
+
+AM_CFLAGS = $(DEP_CFLAGS) $(GTK_CFLAGS) $(BABL_CFLAGS) $(PNG_CFLAGS)
 
 AM_LDFLAGS =  \
-	../gegl/libgegl-@GEGL_API_VERSION@.la \
-	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@ @PNG_LIBS@
-
-%: %.c $(GEGLHEADERS)
-	$(LIBTOOL) --mode=compile $(CC) $< -c -o $@.lo $(INCLUDES) -DHAVE_CONFIG_H
-	$(LIBTOOL) --mode=link    $(CC) $@.lo -o $@ $(AM_LDFLAGS)
+	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
+	$(DEP_LIBS) $(GTK_LIBS) $(BABL_LIBS) $(PNG_LIBS)
