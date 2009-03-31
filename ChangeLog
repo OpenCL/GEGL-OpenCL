@@ -1,5 +1,14 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Henrik Akesson that extracts duplicated code from
+	gegl_buffer_pixel_get and gegl_buffer_pixel_set into the function
+	gegl_buffer_in_abyss to improve readability of code and
+	maintainability.
+
+	* gegl/buffer/gegl-buffer-access.c
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/buffer/Makefile.am: Don't use GNU specific options in
 	buffer test commands. `ls -1' and `diff -U 50' are GNUisms.  The
 	-1 isn't necessary in any case, and I changed -U to -C just to get

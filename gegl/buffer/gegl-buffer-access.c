@@ -115,6 +115,28 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
 }
 #endif
 
+static gboolean
+gegl_buffer_in_abyss( GeglBuffer *buffer,
+                      gint        x,
+                      gint        y )
+{
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
+  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
+
+
+  gint tiledy = y + buffer_shift_y;
+  gint tiledx = x + buffer_shift_x;
+
+  return !(tiledy >= buffer_abyss_y &&
+           tiledy <  abyss_y_total  &&
+           tiledx >= buffer_abyss_x &&
+           tiledx <  abyss_x_total);
+}
+
 static inline void
 gegl_buffer_set_pixel (GeglBuffer *buffer,
                        gint        x,
@@ -130,10 +152,6 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
 
   if (format != buffer->format)
@@ -146,10 +164,7 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
     gint tiledy   = y + buffer_shift_y;
     gint tiledx   = x + buffer_shift_x;
 
-    if (!(tiledy >= buffer_abyss_y &&
-          tiledy  < abyss_y_total &&
-          tiledx >= buffer_abyss_x &&
-          tiledx  < abyss_x_total))
+    if (gegl_buffer_in_abyss( buffer, x, y))
       { /* in abyss */
         return;
       }
@@ -214,10 +229,6 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
 
   if (format != buffer->format)
@@ -230,10 +241,7 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
     gint tiledy = y + buffer_shift_y;
     gint tiledx = x + buffer_shift_x;
 
-    if (!(tiledy >= buffer_abyss_y &&
-          tiledy <  abyss_y_total  &&
-          tiledx >= buffer_abyss_x &&
-          tiledx <  abyss_x_total))
+    if (gegl_buffer_in_abyss (buffer, x, y))
       { /* in abyss */
         memset (buf, 0x00, bpx_size);
         return;
@@ -316,9 +324,6 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
                      const Babl          *format,
                      gint                 level)
 {
-  gint  width       = buffer->extent.width;
-  gint  height      = buffer->extent.height;
-
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height = buffer->tile_storage->tile_height;
   gint  px_size     = babl_format_get_bytes_per_pixel (buffer->format);
@@ -331,6 +336,8 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
 
+  gint  width          = buffer->extent.width;
+  gint  height         = buffer->extent.height;
   gint  buffer_x       = buffer->extent.x + buffer_shift_x;
   gint  buffer_y       = buffer->extent.y + buffer_shift_y;
 
