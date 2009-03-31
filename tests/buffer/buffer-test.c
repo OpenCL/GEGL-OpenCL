@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib/gmacros.h>
 
 /* This file consists of a testing suite for the GeglBuffer API. For every
  * function matching the regexp ^static.*(' in the file a test is performed and
@@ -25,7 +26,7 @@
  */
 
 #define test_start()              GString *gstring=g_string_new("");\
-                                  print (("Test: %s\n", __FUNCTION__))
+                                  print (("Test: %s\n", G_STRFUNC))
 #define print(args)		  G_STMT_START {		\
 	gchar *_fmt = g_strdup_printf args;			\
 	g_string_append (gstring, _fmt);			\

@@ -1,5 +1,10 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/buffer/buffer-test.c: Patch from Gary V. Vaughan. Use
+	G_STRFUNC everywhere.
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/property-types/gegl-path.c (gegl_path_calc_values): Patch
 	from Gary V. Vaughan. Don't try to return a value from a void
 	function.
