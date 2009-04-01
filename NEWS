@@ -2,11 +2,50 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
-GEGL only has released development snapshots thus far. Odd micro versions are
-from SVN whilst even micro numbers indicate released snapshots.
+Changes in GEGL 0.1.0
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Renamed gegl:load-buffer to gegl:buffer-source and gegl:save-buffer
+   to gegl:buffer-sink (but the old names still work)
+ • Adapt for building on a wide range of platforms, including
+   • SuSE SLES 10 (x86_64 and i686);
+   • Redhat RHEL3, RHEL4 and RHEL5 (x86_64 and i686);
+   • Redhat 9 and RHEL 2.1 (i686);
+   • Solaris 10 (x86 and sparc);
+   • Solaris 2.6, 7, 8 and 9 (sparc);
+   • AIX 4.3.3, 5.1, 5.2, 5.3 and 6.1 (powerpc);
+   • HPUX 11.31 (ia64);
+   • HPUX 11.23 (pa-risc and ia64);
+   • HPUX 10.20, 11.0 and 11.11 (pa-risc);
+   • IRIX 6.5 (mips)
+ • Represent colors using doubles instead of floats (this change is
+   indepentent from internal processing)
+ • Removed the GTK+ UI parts of the gegl binary and made into a pure
+   command line tool (which can still visualize stuff with help from
+   the SDL based display operation)
+ • Consider {x=G_MININT/2, y=G_MININT/2, width=G_MAXINT, height=G_MAXINT}
+   as the only valid region wichin processing may occur. Processing
+   outside of this region is undefined behaviour.
+ • Added support for storing allocation stack traces for GeglBuffers
+   so that debuging buffer leaks becomes much easier
+ • Made small changes and cleanups of the public API, e.g.
+   • Removed gegl_node_adapt_child()
+   • Made GeglConfig an explicit object
+   • Removed most of the ifdeffed stuff to mask away internal
+     structures
+   • Added gegl_rectangle_infinite_plane() and
+     gegl_rectangle_is_infinite_plane()
+ • Added new sampler GeglSamplerSharp
+ • Added format property go gegl:buffer-sink
+ • Cleaned up and made gegl:introspect work again
+ • Add a bunch of test cases using the automake test sytem (make
+   check) and also port buffer tests to automake
+ • General cleanups, bug fixes, increased robustness and improved
+   documentation
 
-This is a release introduces a feature freeze, no feature additions but perhaps
-some feature removals will occure before the 0.1.0 release. 
+Contributions from:
+  Øyvind Kolås, Sven Neumann, Étienne Bersac, Hubert Figuiere, Martin
+  Nordholts, Nicolas Robidoux, Ruben Vermeersch, Kevin Cozens, Manish
+  Singh, Gary V. Vaughan and Henrik Akesson.
 
 Changes in GEGL 0.0.22
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
