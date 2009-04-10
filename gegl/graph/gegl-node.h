@@ -50,7 +50,6 @@ struct _GeglNode
   GSList         *sources;
   GSList         *sinks;
 
-  gboolean        is_root;
   gboolean        enabled;
 
   gboolean        is_graph;

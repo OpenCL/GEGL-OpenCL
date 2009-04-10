@@ -1,5 +1,12 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Remove unused GeglNode::is_root member
+
+	* gegl/graph/gegl-node.h
+	* gegl/process/gegl-eval-mgr.c
+
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Bug 534288 – GEGL need to export the _valist version of the
 	variadic arg functions
 

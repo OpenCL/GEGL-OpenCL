@@ -176,7 +176,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
     }
 
   gegl_node_set_need_rect (root, context_id, &self->roi);
-  root->is_root = TRUE;
 
   /* set up the context's rectangle (breadth first traversal) */
   gegl_visitor_reset (self->cr_visitor);
@@ -209,8 +208,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
       GeglPad *pad = gegl_node_get_pad (root, "input");
       gegl_visitor_dfs_traverse (self->eval_visitor, GEGL_VISITABLE (pad));
     }
-
-  root->is_root = FALSE;
 
   if (pad)
     {
