@@ -39,7 +39,10 @@ struct _GeglNode
 {
   GObject         parent_instance;
 
+  /* The current operation associated with this node */
   GeglOperation  *operation;
+
+  /* The region for which this node provides pixel data */
   GeglRectangle   have_rect;
 
   /* If TRUE the above have_rect is correct and can be returned
@@ -47,12 +50,26 @@ struct _GeglNode
    */
   gboolean        valid_have_rect;
 
+  /* All the pads on this node, depends on operation */
   GSList         *pads;
+
+  /* The input pads */
   GSList         *input_pads;
+
+  /* The output pads */
   GSList         *output_pads;
+
+  /* The nodes this node depends on */
   GSList         *sources;
+
+  /* The nodes that depends on this node */
   GSList         *sinks;
 
+  /* If a node is a graph it means it has children. Typically the
+   * children connect to the input/output proxies of their graph
+   * node. This results in that the graph node can more or less be
+   * transparently treated as a normal node in most contexts
+   */
   gboolean        is_graph;
 
   /* For a node, the cache should be created at first demand if
