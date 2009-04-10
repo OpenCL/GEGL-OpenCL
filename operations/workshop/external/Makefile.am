@@ -5,15 +5,17 @@ include $(top_srcdir)/operations/Makefile-common.am
 ops =
 
 if HAVE_CAIRO
+line_profile_la_SOURCES = line-profile.c
 line_profile_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(PANGO_LIBS)
-line_profile_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS)
+line_profile_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS) $(BABL_CFLAGS)
 ops += line_profile.la
 endif
 
 if HAVE_GTK
 ops += gtk_display.la
+gtk_display_la_SOURCES = gtk-display.c
 gtk_display_la_LIBADD  = $(op_libs) $(GTK_LIBS)
-gtk_display_la_CFLAGS  = $(GTK_CFLAGS)
+gtk_display_la_CFLAGS  = $(GTK_CFLAGS) $(BABL_CFLAGS)
 endif
 
 if HAVE_AVFORMAT

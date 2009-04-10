@@ -1,3 +1,8 @@
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/workshop/external/Makefile.am: Fix
+	compilation. Include BABL_CFLAGS and specify _SOURCES explicitly.
+
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Patch from Henrik Akesson that extracts duplicated code from
