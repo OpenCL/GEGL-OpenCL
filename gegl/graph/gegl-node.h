@@ -224,8 +224,6 @@ const gchar * gegl_node_get_name            (GeglNode      *self);
 void          gegl_node_set_name            (GeglNode      *self,
                                              const gchar   *name);
 
-void          gegl_node_lock                (GeglNode *node);
-void          gegl_node_unlock              (GeglNode *node);
 
 G_END_DECLS
 

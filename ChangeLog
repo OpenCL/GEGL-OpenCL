@@ -1,6 +1,7 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
-	* gegl/graph/gegl-node.h: Remove unused GeglNode::mutex member
+	* gegl/graph/gegl-node.h: Remove unused GeglNode::mutex member and
+	gegl_node_lock() and gegl_node_unlock() prototypes
 
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
