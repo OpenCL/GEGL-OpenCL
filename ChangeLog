@@ -1,5 +1,9 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-node.h: Remove unused GeglNode::mutex member
+
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/graph/gegl-node.h: Document GeglNode members
 
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
