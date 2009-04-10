@@ -41,9 +41,12 @@ struct _GeglNode
 
   GeglOperation  *operation;
   GeglRectangle   have_rect;
-  gboolean        valid_have_rect; /* <- if TRUE the above have_rect is correct
-                                         and can be returned directly instead of
-                                         computed */
+
+  /* If TRUE the above have_rect is correct and can be returned
+   * directly instead of computed
+   */
+  gboolean        valid_have_rect;
+
   GSList         *pads;
   GSList         *input_pads;
   GSList         *output_pads;
@@ -52,13 +55,15 @@ struct _GeglNode
 
   gboolean        is_graph;
 
-  GeglCache      *cache;  /* For a node, the cache should be created at
-                             first demand if applicable, and the cache object
-                             reused for all subsequent requests for the cache
-                             object.*/
+  /* For a node, the cache should be created at first demand if
+   * applicable, and the cache object reused for all subsequent
+   * requests for the cache object.
+   */
+  GeglCache      *cache;
 
-  gboolean        dont_cache; /* whether result is cached or not, inherited
-                                 by children */
+  /* Whether result is cached or not, inherited by children */
+  gboolean        dont_cache;
+
   GMutex          *mutex;
 
   /*< private >*/
