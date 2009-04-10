@@ -1,5 +1,9 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* tests/Makefile.am: Make all tests run during make check
+
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/graph/gegl-node.h: Remove unused GeglNode::mutex member and
 	gegl_node_lock() and gegl_node_unlock() prototypes
 

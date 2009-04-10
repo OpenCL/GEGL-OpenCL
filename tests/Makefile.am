@@ -5,9 +5,10 @@ TESTS_ENVIRONMENT = \
 	GEGL_PATH=$(top_builddir)/operations/common:$(top_builddir)/operations/core
 
 # The tests
-check_PROGRAMS = \
+TESTS = \
 	test-proxynop-processing \
 	test-gegl-rectangle
+noinst_PROGRAMS = $(TESTS)
 
 # Common CPPFLAGS
 AM_CPPFLAGS = \
