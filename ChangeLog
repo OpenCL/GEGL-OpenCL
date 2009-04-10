@@ -1,5 +1,10 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-node.[ch]: Remove unused GeglNode::enabled
+	member
+
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Remove unused GeglNode::is_root member
 
 	* gegl/graph/gegl-node.h

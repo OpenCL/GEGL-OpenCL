@@ -201,7 +201,6 @@ gegl_node_init (GeglNode *self)
   self->sinks       = NULL;
   self->sources     = NULL;
   self->operation   = NULL;
-  self->enabled     = TRUE;
   self->is_graph    = FALSE;
   self->cache       = NULL;
 

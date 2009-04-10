@@ -50,8 +50,6 @@ struct _GeglNode
   GSList         *sources;
   GSList         *sinks;
 
-  gboolean        enabled;
-
   gboolean        is_graph;
 
   GeglCache      *cache;  /* For a node, the cache should be created at
