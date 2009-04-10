@@ -338,6 +338,19 @@ void          gegl_node_set              (GeglNode      *node,
                                           ...) G_GNUC_NULL_TERMINATED;
 
 /**
+ * gegl_node_set_valist:
+ * @node: a #GeglNode
+ * @first_property_name: name of the first property to set
+ * @...: value for the first property, followed optionally by more name/value
+ * pairs, followed by NULL.
+ *
+ * valist version of #gegl_node_set
+ */
+void          gegl_node_set_valist       (GeglNode      *node,
+                                          const gchar   *first_property_name,
+                                          va_list        args);
+
+/**
  * gegl_node_get:
  * @node: a #GeglNode
  * @first_property_name: name of the first property to get.
@@ -355,6 +368,19 @@ void          gegl_node_set              (GeglNode      *node,
 void          gegl_node_get              (GeglNode      *node,
                                           const gchar   *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
+
+/**
+ * gegl_node_get_valist:
+ * @node: a #GeglNode
+ * @first_property_name: name of the first property to get.
+ * @...: return location for the first property, followed optionally by more
+ * name/value pairs, followed by NULL.
+ *
+ * valist version of #gegl_node_get
+ */
+void          gegl_node_get_valist       (GeglNode      *node,
+                                          const gchar   *first_property_name,
+                                          va_list        args);
 
 
 /***
