@@ -1,3 +1,10 @@
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/Makefile.am: Move the libgegl build libs from LIBS to
+	_LIBADD because dependency tracking doesn't seem to work
+	otherwize. That is, changes in gegl/operation/liboperation.la
+	doesn't cause a rebuild of libgegl-@GEGL_API_VERSION@.la.
+
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Rename gegl_operation_context_set_object() to

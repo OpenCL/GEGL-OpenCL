@@ -21,12 +21,6 @@ AM_LDFLAGS = \
 	$(no_undefined) -export-dynamic -version-info $(GEGL_LIBRARY_VERSION)
 
 LIBS = \
-	$(top_builddir)/gegl/buffer/libbuffer.la \
-	$(top_builddir)/gegl/module/libmodule.la \
-	$(top_builddir)/gegl/operation/liboperation.la \
-	$(top_builddir)/gegl/graph/libgraph.la \
-	$(top_builddir)/gegl/process/libprocess.la \
-	$(top_builddir)/gegl/property-types/libpropertytypes.la \
 	$(DEP_LIBS) $(BABL_LIBS)
 
 GEGL_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)
@@ -72,4 +66,11 @@ GEGL_sources = \
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_HEADERS)
+libgegl_@GEGL_API_VERSION@_la_LIBADD = \
+	$(top_builddir)/gegl/buffer/libbuffer.la		\
+	$(top_builddir)/gegl/module/libmodule.la		\
+	$(top_builddir)/gegl/operation/liboperation.la		\
+	$(top_builddir)/gegl/graph/libgraph.la			\
+	$(top_builddir)/gegl/process/libprocess.la		\
+	$(top_builddir)/gegl/property-types/libpropertytypes.la
 
