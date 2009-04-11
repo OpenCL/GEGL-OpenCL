@@ -178,15 +178,8 @@ gegl_pad_get_depends_on (GeglPad *self)
       for (iter = self->connections; iter; iter = g_slist_next (iter))
         {
           GeglConnection *connection = iter->data;
-          if (connection)
-            {
-              depends_on = g_slist_prepend (depends_on,
-                                            gegl_connection_get_source_pad (connection));
-            }
-          else
-            {
-              g_warning ("hmm,. or perhaps just a non connected pad");
-            }
+          depends_on = g_slist_prepend (depends_on,
+                                        gegl_connection_get_source_pad (connection));
         }
 
       /* FIXME: this add depends for all inputs of the graph, this is probably
