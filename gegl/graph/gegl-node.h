@@ -59,12 +59,6 @@ struct _GeglNode
   /* The output pads */
   GSList         *output_pads;
 
-  /* The nodes this node depends on */
-  GSList         *sources;
-
-  /* The nodes that depends on this node */
-  GSList         *sinks;
-
   /* If a node is a graph it means it has children. Typically the
    * children connect to the input/output proxies of their graph
    * node. This results in that the graph node can more or less be

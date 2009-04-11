@@ -62,6 +62,8 @@ enum
 
 struct _GeglNodePrivate
 {
+  GSList         *sources;
+  GSList         *sinks;
   GSList         *children;  /*  used for children */
   GeglNode       *parent;
   gchar          *name;
@@ -198,12 +200,12 @@ gegl_node_init (GeglNode *self)
   self->pads        = NULL;
   self->input_pads  = NULL;
   self->output_pads = NULL;
-  self->sinks       = NULL;
-  self->sources     = NULL;
   self->operation   = NULL;
   self->is_graph    = FALSE;
   self->cache       = NULL;
 
+  priv->sinks       = NULL;
+  priv->sources     = NULL;
   priv->parent      = NULL;
   priv->children    = NULL;
   priv->name        = NULL;
@@ -506,7 +508,7 @@ gegl_node_find_connection (GeglNode *sink,
 
   g_return_val_if_fail (GEGL_IS_NODE (sink), NULL);
 
-  for (list = sink->sources; list; list = g_slist_next (list))
+  for (list = sink->priv->sources; list; list = g_slist_next (list))
     {
       GeglConnection *connection = list->data;
 
@@ -621,8 +623,8 @@ gegl_node_connect_from (GeglNode    *sink,
       gegl_connection_set_sink_node (connection, sink);
       gegl_connection_set_source_node (connection, source);
 
-      sink->sources = g_slist_prepend (sink->sources, connection);
-      source->sinks = g_slist_prepend (source->sinks, connection);
+      sink->priv->sources = g_slist_prepend (sink->priv->sources, connection);
+      source->priv->sinks = g_slist_prepend (source->priv->sinks, connection);
 
       g_signal_connect (G_OBJECT (source), "invalidated",
                         G_CALLBACK (gegl_node_source_invalidated), sink_pad);
@@ -670,8 +672,8 @@ gegl_node_disconnect (GeglNode    *sink,
 
       gegl_pad_disconnect (sink_pad, source_pad, connection);
 
-      sink->sources = g_slist_remove (sink->sources, connection);
-      source->sinks = g_slist_remove (source->sinks, connection);
+      sink->priv->sources = g_slist_remove (sink->priv->sources, connection);
+      source->priv->sinks = g_slist_remove (source->priv->sinks, connection);
 
       gegl_connection_destroy (connection);
 
@@ -686,7 +688,7 @@ gegl_node_disconnect_sources (GeglNode *self)
 {
   while (TRUE)
     {
-      GeglConnection *connection = g_slist_nth_data (self->sources, 0);
+      GeglConnection *connection = g_slist_nth_data (self->priv->sources, 0);
 
       if (connection)
         {
@@ -708,7 +710,7 @@ gegl_node_disconnect_sinks (GeglNode *self)
 {
   while (TRUE)
     {
-      GeglConnection *connection = g_slist_nth_data (self->sinks, 0);
+      GeglConnection *connection = g_slist_nth_data (self->priv->sinks, 0);
 
       if (connection)
         {
@@ -739,7 +741,7 @@ gegl_node_get_num_sinks (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_slist_length (self->sinks);
+  return g_slist_length (self->priv->sinks);
 }
 
 /**
@@ -755,7 +757,7 @@ gegl_node_get_sinks (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), FALSE);
 
-  return self->sinks;
+  return self->priv->sinks;
 }
 
 void
@@ -903,7 +905,7 @@ gegl_node_get_depends_on (GeglNode *self)
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  for (llink = self->sources; llink; llink = g_slist_next (llink))
+  for (llink = self->priv->sources; llink; llink = g_slist_next (llink))
     {
       GeglConnection *connection = llink->data;
       GeglNode       *source_node;
