@@ -111,8 +111,12 @@ gegl_pad_connect (GeglPad *sink,
 {
   GeglConnection *connection;
 
+  /* Both pads must be valid and the sink pad must not have any
+   * connections as input pads only can have one connection
+   */
   g_return_val_if_fail (GEGL_IS_PAD (sink), NULL);
   g_return_val_if_fail (GEGL_IS_PAD (source), NULL);
+  g_return_val_if_fail (sink->connections == NULL, NULL);
 
   connection = gegl_connection_new (NULL, sink, NULL, source);
 
