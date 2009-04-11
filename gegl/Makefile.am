@@ -44,6 +44,7 @@ GEGL_sources = \
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
 	gegl-dot.c			\
+	gegl-dot-visitor.c		\
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-utils.c			\
@@ -55,6 +56,7 @@ GEGL_sources = \
 	gegl-cpuaccel.h			\
 	gegl-debug.h			\
 	gegl-dot.h			\
+	gegl-dot-visitor.h		\
 	gegl-init.h			\
 	gegl-instrument.h		\
 	gegl-module.h			\

@@ -30,6 +30,7 @@ typedef struct _GeglFinishVisitor    GeglFinishVisitor;
 typedef struct _GeglGraph            GeglGraph;
 typedef struct _GeglHaveVisitor      GeglHaveVisitor;
 typedef struct _GeglNeedVisitor      GeglNeedVisitor;
+typedef struct _GeglDotVisitor       GeglDotVisitor;
 #ifndef __GEGL_PLUGIN_H__
 typedef struct _GeglPad              GeglPad;
 typedef struct _GeglOperation        GeglOperation;
