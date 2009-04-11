@@ -519,11 +519,6 @@ gegl_node_connect_to (GeglNode    *source,
                       GeglNode    *sink,
                       const gchar *sink_pad_name)
 {
-  g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
-  g_return_val_if_fail (source_pad_name != NULL, FALSE);
-  g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
-  g_return_val_if_fail (sink_pad_name != NULL, FALSE);
-
   return gegl_node_connect_from (sink, sink_pad_name, source, source_pad_name);
 }
 
