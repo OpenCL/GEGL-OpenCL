@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gegl.h"
+#include "gegl/gegl-utils.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-context.h"
 #include "gegl/graph/gegl-node.h"
@@ -368,7 +369,19 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     {
       GeglBuffer    *cache;
       cache = GEGL_BUFFER (gegl_node_get_cache (node));
-      output = gegl_buffer_create_sub_buffer (cache, result);
+
+      /* Only use the cache if the result is within the cache
+       * extent. This is certainly not optimal. My gut feeling is that
+       * the current caching mechanism needs to be redesigned
+       */
+      if (gegl_rectangle_contains (gegl_buffer_get_extent (cache), result))
+        {
+          output = gegl_buffer_create_sub_buffer (cache, result);
+        }
+      else
+        {
+          output = gegl_buffer_new_ram (result, format);
+        }
     }
   else
     {
