@@ -584,46 +584,55 @@ gegl_node_connect_from (GeglNode    *sink,
                         GeglNode    *source,
                         const gchar *source_pad_name)
 {
+  GeglNode *real_sink   = sink;
+  GeglNode *real_source = source;
+
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (sink_pad_name != NULL, FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
   g_return_val_if_fail (source_pad_name != NULL, FALSE);
 
+  /* For graph nodes we implicitly use the proxy nodes */
+  if (sink->is_graph)
+    real_sink = gegl_node_get_input_proxy (sink, "input");
+  if (source->is_graph)
+    real_source = gegl_node_get_output_proxy (source, "output");
+
   {
     GeglPad *pad;
     GeglPad *other_pad = NULL;
 
-    pad = gegl_node_get_pad (sink, sink_pad_name);
+    pad = gegl_node_get_pad (real_sink, sink_pad_name);
     if (pad)
       other_pad = gegl_pad_get_connected_to (pad);
     else
       {
         g_warning ("%s: Didn't find pad '%s' of '%s'",
-                   G_STRFUNC, sink_pad_name, gegl_node_get_debug_name (sink));
+                   G_STRFUNC, sink_pad_name, gegl_node_get_debug_name (real_sink));
       }
 
     if (other_pad)
       {
-        gegl_node_disconnect (sink, sink_pad_name);
+        gegl_node_disconnect (real_sink, sink_pad_name);
       }
   }
-  if (gegl_node_pads_exist (sink, sink_pad_name, source, source_pad_name))
+  if (gegl_node_pads_exist (real_sink, sink_pad_name, real_source, source_pad_name))
     {
-      GeglPad        *sink_pad   = gegl_node_get_pad (sink, sink_pad_name);
-      GeglPad        *source_pad = gegl_node_get_pad (source, source_pad_name);
+      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, sink_pad_name);
+      GeglPad        *source_pad = gegl_node_get_pad (real_source, source_pad_name);
       GeglConnection *connection = gegl_pad_connect (sink_pad,
                                                      source_pad);
 
-      gegl_connection_set_sink_node (connection, sink);
-      gegl_connection_set_source_node (connection, source);
+      gegl_connection_set_sink_node (connection, real_sink);
+      gegl_connection_set_source_node (connection, real_source);
 
-      sink->priv->source_connections = g_slist_prepend (sink->priv->source_connections, connection);
-      source->priv->sink_connections = g_slist_prepend (source->priv->sink_connections, connection);
+      real_sink->priv->source_connections = g_slist_prepend (real_sink->priv->source_connections, connection);
+      real_source->priv->sink_connections = g_slist_prepend (real_source->priv->sink_connections, connection);
 
-      g_signal_connect (G_OBJECT (source), "invalidated",
+      g_signal_connect (G_OBJECT (real_source), "invalidated",
                         G_CALLBACK (gegl_node_source_invalidated), sink_pad);
 
-      gegl_node_property_changed (G_OBJECT (source->operation), NULL, source);
+      gegl_node_property_changed (G_OBJECT (real_source->operation), NULL, real_source);
 
       return TRUE;
     }
