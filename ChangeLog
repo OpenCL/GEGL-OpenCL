@@ -1,5 +1,26 @@
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Rename gegl_operation_context_set_object() to
+	gegl_operation_context_take_object() so its semantics are
+	reflected in the name.
+
+	* gegl/gegl-plugin.h
+	* gegl/operation/gegl-operation-context.c
+	* gegl/operation/gegl-operation-context.h
+	* gegl/operation/gegl-operation.c
+	* operations/affine/affine.c
+	* operations/common/buffer-source.c
+	* operations/common/introspect.c
+	* operations/common/magick-load.c
+	* operations/common/open-buffer.c
+	* operations/common/raw-load.c
+	* operations/core/clone.c
+	* operations/core/crop.c
+	* operations/core/nop.c
+	* operations/workshop/rawbayer-load.c
+
+2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* tests/Makefile.am: Make all tests run during make check
 
 2009-04-10  Martin Nordholts  <martinn@svn.gnome.org>

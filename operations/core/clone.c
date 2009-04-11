@@ -88,7 +88,7 @@ process (GeglOperation       *operation,
       g_warning ("clone received NULL input");
       return FALSE;
     }
-  gegl_operation_context_set_object (context, "output", G_OBJECT (input));
+  gegl_operation_context_take_object (context, "output", G_OBJECT (input));
   return TRUE;
 }
 

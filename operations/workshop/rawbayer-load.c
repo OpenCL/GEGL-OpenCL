@@ -118,7 +118,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 #if 1
   g_assert (o->chant_data);
-  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
 
   o->chant_data = NULL;
 #else
@@ -129,7 +129,7 @@ process (GeglOperation       *operation,
                                     */
 
       /* override core behaviour, by resetting the buffer in the operation_context */
-      gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
+      gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
     }
 #endif
   return TRUE;

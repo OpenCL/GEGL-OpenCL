@@ -88,7 +88,7 @@ process (GeglOperation       *operation,
 		              */
 
       /* override core behaviour, by resetting the buffer in the operation_context */
-      gegl_operation_context_set_object (context, "output", G_OBJECT (buffer));
+      gegl_operation_context_take_object (context, "output", G_OBJECT (buffer));
       return TRUE;
     }
   return FALSE;

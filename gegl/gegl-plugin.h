@@ -75,7 +75,7 @@ GeglBuffer     *gegl_operation_context_get_source (GeglOperationContext *self,
                                                    const gchar          *padname);
 GeglBuffer     *gegl_operation_context_get_target (GeglOperationContext *self,
                                                    const gchar          *padname);
-void            gegl_operation_context_set_object (GeglOperationContext *context,
+void            gegl_operation_context_take_object(GeglOperationContext *context,
                                                    const gchar          *padname,
                                                    GObject              *data);
 

@@ -238,9 +238,9 @@ void gegl_operation_context_destroy (GeglOperationContext *self)
 
 
 void
-gegl_operation_context_set_object (GeglOperationContext *context,
-                                   const gchar          *padname,
-                                   GObject              *data)
+gegl_operation_context_take_object (GeglOperationContext *context,
+                                    const gchar          *padname,
+                                    GObject              *data)
 {
   GParamSpec *pspec;
 
@@ -379,7 +379,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
       output = gegl_buffer_new_ram (result, format);
     }
 
-  gegl_operation_context_set_object (context, padname, G_OBJECT (output));
+  gegl_operation_context_take_object (context, padname, G_OBJECT (output));
   return output;
 }
 

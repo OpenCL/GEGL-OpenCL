@@ -128,12 +128,12 @@ gegl_introspect_process (GeglOperation        *operation,
 
   gegl_introspect_load_cache (o);
 
-  /* gegl_operation_context_set_object() takes the reference we have,
+  /* gegl_operation_context_take_object() takes the reference we have,
    * so we must increase it since we want to keep the object
    */
   g_object_ref (o->chant_data);
 
-  gegl_operation_context_set_object (context, output_pad, G_OBJECT (o->chant_data));
+  gegl_operation_context_take_object (context, output_pad, G_OBJECT (o->chant_data));
 
   return  TRUE;
 }

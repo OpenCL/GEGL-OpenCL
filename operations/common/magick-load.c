@@ -122,7 +122,7 @@ process (GeglOperation       *operation,
     return FALSE;
 
   /* overriding the predefined behavior */
-  gegl_operation_context_set_object (context, "output", G_OBJECT (o->chant_data));
+  gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
   o->chant_data = NULL;
 
   return  TRUE;

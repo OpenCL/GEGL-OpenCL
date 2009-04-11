@@ -742,7 +742,7 @@ process (GeglOperation       *operation,
           return FALSE;
         }
 
-      gegl_operation_context_set_object (context, "output", G_OBJECT (input));
+      gegl_operation_context_take_object (context, "output", G_OBJECT (input));
     }
   else if (gegl_matrix3_is_translate (affine->matrix) &&
            (! strcmp (affine->filter, "nearest") ||
@@ -761,7 +761,7 @@ process (GeglOperation       *operation,
                                                     of source) */
                          NULL);
 
-      gegl_operation_context_set_object (context, "output", G_OBJECT (output));
+      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
 
       if (input != NULL)
         g_object_unref (input);

@@ -136,7 +136,7 @@ process (GeglOperation       *operation,
   g_assert (g_str_equal (output_pad, "output"));
 
   output = GEGL_BUFFER (o->chant_data);
-  gegl_operation_context_set_object (context, "output", G_OBJECT (output));
+  gegl_operation_context_take_object (context, "output", G_OBJECT (output));
 
   o->chant_data = NULL;
   return TRUE;

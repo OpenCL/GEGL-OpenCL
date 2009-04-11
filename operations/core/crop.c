@@ -137,7 +137,7 @@ gegl_crop_process (GeglOperation        *operation,
       GeglBuffer *output;
 
       output = gegl_buffer_create_sub_buffer (input, &extent);
-      gegl_operation_context_set_object (context, "output", G_OBJECT (output));
+      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
       g_object_unref (input);
       success = TRUE;
     }
