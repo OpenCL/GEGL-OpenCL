@@ -1,5 +1,82 @@
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-pad.c: Input pads can only depend on one pad,
+	simplify code in gegl_pad_get_depends_on().
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/operation/gegl-operations.c: We must not only say that an
+	operation context is cached, we must also actually make the
+	operation context point to the cache.
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-eval-visitor.c: Remove ugly cache-refresh code
+	in gegl_eval_visitor_visit_pad()
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: Remove param checks in
+	gegl_node_connect_to() since they are checked in
+	gegl_node_connect_from() anyway.
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: Implicitly connect to input and output
+	proxies of graph nodes in gegl_node_connect_from(). Allowing
+	connections to actual graph nodes creates too much special-case
+	code elsewhere.
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: GeglNode sinks -> sink_connections and
+	sources -> source_connections
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.c: No need to init GeglNodePrivate pointers
+	to NULL, they are malloc0ed
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-node.[ch]: Make GeglNode `sources' and `sinks'
+	private
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Remove gegl_pad_get_internal_connected_to(), it only hosts ugly
+	graph proxynop special-case code.
+
+	* gegl/graph/gegl-pad.c
+	* gegl/graph/gegl-pad.h
+	* gegl/operation/gegl-operation.c
+	* gegl/operation/gegl-operations.c
+	* gegl/process/gegl-eval-visitor.c
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Remove most of the special treatment of input/output graph
+	proxies. It is better to have core logic as clean and possible and
+	move special treatment higher up in the architectural layers.
+
+	* gegl/graph/gegl-node.c
+	* gegl/graph/gegl-pad.c
+	* gegl/process/gegl-cr-visitor.c
+	* gegl/process/gegl-finish-visitor.c
+	* gegl/process/gegl-prepare-visitor.c
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-pad.c: Only accept pad connections when the sink
+	pad is unconnected
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/graph/gegl-pad.c: Do not dodge corrupt pad connections, it
+	makes more sense to crash due to segmentation fault.
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Fix make distcheck by making gegl-chant.h find the .c files in the
 	srcdirs and fixing typos in Makefile.ams.
 
