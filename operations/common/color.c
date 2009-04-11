@@ -39,8 +39,7 @@ gegl_color_op_prepare (GeglOperation *operation)
 static GeglRectangle
 gegl_color_op_get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {-10000000,-10000000,20000000,20000000};
-  return result;
+  return gegl_rectangle_infinite_plane ();
 }
 
 static gboolean
