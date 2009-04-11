@@ -4,5 +4,6 @@
 /.libs
 /Makefile
 /Makefile.in
-/test-gegl-rectangle
+/test-gegl-rectangle*
 /test-proxynop-processing*
+/test-color-op*

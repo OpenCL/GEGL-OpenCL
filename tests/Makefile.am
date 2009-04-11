@@ -6,7 +6,8 @@ TESTS_ENVIRONMENT = \
 
 # The tests
 TESTS = \
-	test-proxynop-processing \
+	test-proxynop-processing	\
+	test-color-op			\
 	test-gegl-rectangle
 noinst_PROGRAMS = $(TESTS)
 
@@ -27,4 +28,3 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 # Common libs
 LIBS = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
 	$(DEP_LIBS) $(BABL_LIBS)
-
