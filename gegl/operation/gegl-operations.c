@@ -137,19 +137,20 @@ gegl_operation_set_source_region (GeglOperation        *operation,
 {
   GeglNode     *child;         /* the node which need rect we are affecting */
   GeglRectangle child_need;    /* the need rect of the child */
+  GeglPad      *output_pad;
 
   g_return_if_fail (GEGL_IS_OPERATION (operation));
   g_return_if_fail (GEGL_IS_NODE (operation->node));
   g_return_if_fail (input_pad_name != NULL);
 
   {
-    GeglPad *pad = gegl_node_get_pad (operation->node, input_pad_name);
-    if (!pad)
+    GeglPad *input_pad = gegl_node_get_pad (operation->node, input_pad_name);
+    if (!input_pad)
       return;
-    pad = gegl_pad_get_connected_to (pad);
-    if (!pad)
+    output_pad = gegl_pad_get_connected_to (input_pad);
+    if (!output_pad)
       return;
-    child = gegl_pad_get_node (pad);
+    child = gegl_pad_get_node (output_pad);
     if (!child)
       return;
   }
@@ -172,6 +173,10 @@ gegl_operation_set_source_region (GeglOperation        *operation,
             {
               child_context->result_rect = child_need;
               child_context->cached = TRUE;
+              g_object_ref (cache);
+              gegl_operation_context_take_object (child_context,
+                                                  gegl_pad_get_name (output_pad),
+                                                  G_OBJECT (cache));
               child_need.width = 0;
               child_need.height = 0;
             }
