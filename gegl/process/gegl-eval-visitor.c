@@ -105,7 +105,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
     }
   else if (gegl_pad_is_input (pad))
     {
-      GeglPad *source_pad = gegl_pad_get_internal_connected_to (pad);
+      GeglPad *source_pad = gegl_pad_get_connected_to (pad);
 
       /* the work needed to be done on input pads is to set the
        * data from the corresponding output pad it is connected to

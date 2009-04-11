@@ -259,7 +259,7 @@ gegl_operation_get_source_node (GeglOperation *operation,
   if (!pad)
     return NULL;
 
-  pad = gegl_pad_get_internal_connected_to (pad);
+  pad = gegl_pad_get_connected_to (pad);
 
   if (!pad)
     return NULL;

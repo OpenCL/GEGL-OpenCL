@@ -69,7 +69,6 @@ void             gegl_pad_set_node                  (GeglPad        *self,
 gboolean         gegl_pad_is_output                 (GeglPad        *self);
 gboolean         gegl_pad_is_input                  (GeglPad        *self);
 GeglPad        * gegl_pad_get_connected_to          (GeglPad        *self);
-GeglPad        * gegl_pad_get_internal_connected_to (GeglPad        *self);
 GeglConnection * gegl_pad_connect                   (GeglPad        *sink,
                                                      GeglPad        *source);
 void             gegl_pad_disconnect                (GeglPad        *sink,

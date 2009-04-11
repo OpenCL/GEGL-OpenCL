@@ -227,37 +227,6 @@ gegl_pad_get_connected_to (GeglPad *self)
   return pad;
 }
 
-GeglPad *
-gegl_pad_get_internal_connected_to (GeglPad *self)
-{
-  GeglPad *pad = gegl_pad_get_connected_to (self);
-
-  g_assert (GEGL_IS_PAD (self));
-
-  if (!pad && gegl_node_get_name (self->node) &&
-      !strcmp (gegl_node_get_name (self->node), "proxynop-input"))
-    {
-      GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
-      g_assert (graph);
-
-      /* FIXME: is this check still needed when gegl_pad_get_name is used in the else
-       * clause? (removed once and reintroduced, the hello-world demo using
-       * aux input of a layer apparently fails without it.)
-       */
-      if (g_object_get_data (G_OBJECT (self->node), "is-aux"))
-        {
-          pad = gegl_node_get_pad (graph, "aux");
-        }
-      else
-        {
-          pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
-        }
-      if (pad)
-        pad = gegl_pad_get_connected_to (pad);
-    }
-  return pad;
-}
-
 void
 gegl_pad_set_node (GeglPad  *self,
                    GeglNode *node)
