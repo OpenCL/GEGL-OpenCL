@@ -255,7 +255,7 @@ gegl_operation_context_take_object (GeglOperationContext *context,
       GValue value = {0, };
       g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
 
-      g_value_set_object (&value, data);
+      g_value_take_object (&value, data);
       gegl_operation_context_set_property (context, padname, &value);
 
       g_value_unset (&value);
@@ -266,11 +266,7 @@ gegl_operation_context_take_object (GeglOperationContext *context,
                  G_STRFUNC,
                  data ? "we have data" : "",
                  padname);
-      if (data)
-        g_object_unref (data); /* are we stealing the initial reference? */
-      return;
     }
-  g_object_unref (data); /* are we stealing the initial reference? */
 }
 
 GObject *
