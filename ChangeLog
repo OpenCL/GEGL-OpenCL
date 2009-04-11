@@ -1,5 +1,39 @@
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Include headers properly, remove unused variables, and generate
+	proper code with blend.rb
+
+	* examples/geglbuffer-add-image.c
+	* examples/geglbuffer-clock.c
+	* examples/hello-world-video.c
+	* examples/hello-world.c
+	* operations/workshop/generated/blend.rb
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.c: Allow node + dependencies when constructing the
+	graphviz dot-file
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Add a GeglVisitor for constructing graphviz dot files
+
+	* gegl/Makefile.am
+	* gegl/gegl-dot-visitor.[ch]
+	* gegl/gegl-types-internal.h
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.[ch]: Refactor a bit and add
+	gegl_dot_util_add_connection()
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.[ch]: Make gegl-dot.c utility functions part of
+	the internal interface
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/graph/gegl-pad.c: Input pads can only depend on one pad,
 	simplify code in gegl_pad_get_depends_on().
 
