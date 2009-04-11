@@ -1,5 +1,11 @@
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/graph/gegl-node.c: Remove the GEGL_NODE_GET_PRIVATE() and
+	dereference private GeglNode members directly instead of
+	indirectly through local variables.
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Include headers properly, remove unused variables, and generate
 	proper code with blend.rb
 

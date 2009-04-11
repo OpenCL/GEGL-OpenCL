@@ -73,10 +73,6 @@ struct _GeglNodePrivate
 };
 
 
-#define GEGL_NODE_GET_PRIVATE(obj) \
-  ((GeglNodePrivate *)(((GeglNode *) obj)->priv))
-
-
 static guint gegl_node_signals[LAST_SIGNAL] = {0};
 
 
@@ -189,22 +185,19 @@ gegl_node_class_init (GeglNodeClass *klass)
 static void
 gegl_node_init (GeglNode *self)
 {
-  GeglNodePrivate *priv;
-
   self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
                                             GEGL_TYPE_NODE,
                                             GeglNodePrivate);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
+  self->priv->contexts = g_hash_table_new (NULL, NULL);
 
-  self->pads        = NULL;
-  self->input_pads  = NULL;
-  self->output_pads = NULL;
-  self->operation   = NULL;
-  self->is_graph    = FALSE;
-  self->cache       = NULL;
+  self->pads           = NULL;
+  self->input_pads     = NULL;
+  self->output_pads    = NULL;
+  self->operation      = NULL;
+  self->is_graph       = FALSE;
+  self->cache          = NULL;
 
-  priv->contexts    = g_hash_table_new (NULL, NULL);
 }
 
 static void
@@ -220,13 +213,12 @@ gegl_node_visitable_iface_init (gpointer ginterface,
 static void
 gegl_node_dispose (GObject *gobject)
 {
-  GeglNode        *self = GEGL_NODE (gobject);
-  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNode *self = GEGL_NODE (gobject);
 
-  if (priv->parent != NULL)
+  if (self->priv->parent != NULL)
     {
-      GeglNode *parent = priv->parent;
-      priv->parent = NULL;
+      GeglNode *parent = self->priv->parent;
+      self->priv->parent = NULL;
       gegl_node_remove_child (parent, self);
     }
 
@@ -237,16 +229,16 @@ gegl_node_dispose (GObject *gobject)
       self->cache = NULL;
     }
 
-  if (priv->eval_mgr)
+  if (self->priv->eval_mgr)
     {
-      g_object_unref (priv->eval_mgr);
-      priv->eval_mgr = NULL;
+      g_object_unref (self->priv->eval_mgr);
+      self->priv->eval_mgr = NULL;
     }
 
-  if (priv->processor)
+  if (self->priv->processor)
     {
-      gegl_processor_destroy (priv->processor);
-      priv->processor = NULL;
+      gegl_processor_destroy (self->priv->processor);
+      self->priv->processor = NULL;
     }
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
 }
@@ -254,8 +246,7 @@ gegl_node_dispose (GObject *gobject)
 static void
 gegl_node_finalize (GObject *gobject)
 {
-  GeglNode        *self = GEGL_NODE (gobject);
-  GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (self);
+  GeglNode *self = GEGL_NODE (gobject);
 
   gegl_node_disconnect_sources (self);
   gegl_node_disconnect_sinks (self);
@@ -276,11 +267,11 @@ gegl_node_finalize (GObject *gobject)
       self->operation = NULL;
     }
 
-  if (priv->name)
+  if (self->priv->name)
     {
-      g_free (priv->name);
+      g_free (self->priv->name);
     }
-  g_hash_table_destroy (priv->contexts);
+  g_hash_table_destroy (self->priv->contexts);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
@@ -791,13 +782,11 @@ gegl_node_link_many (GeglNode *source,
   va_end (var_args);
 }
 
-static void gegl_node_ensure_eval_mgr (GeglNode    *node,
+static void gegl_node_ensure_eval_mgr (GeglNode    *self,
                                        const gchar *pad)
 {
-  GeglNodePrivate *priv;
-  priv = GEGL_NODE_GET_PRIVATE (node);
-  if (!priv->eval_mgr)
-    priv->eval_mgr = gegl_eval_mgr_new (node, pad);
+  if (!self->priv->eval_mgr)
+    self->priv->eval_mgr = gegl_eval_mgr_new (self, pad);
 }
 
 /* Will set the eval_mgr's roi to the supplied roi if defined, otherwise
@@ -809,26 +798,24 @@ gegl_node_apply_roi (GeglNode            *self,
                      const gchar         *output_pad_name,
                      const GeglRectangle *roi)
 {
-  GeglNodePrivate *priv;
-  GeglBuffer  *buffer;
+  GeglBuffer *buffer;
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
   gegl_node_ensure_eval_mgr (self, output_pad_name);
 
   if (roi)
     {
-      priv->eval_mgr->roi = *roi;
+      self->priv->eval_mgr->roi = *roi;
     }
   else
     {
-      priv->eval_mgr->roi = gegl_node_get_bounding_box (self);
+      self->priv->eval_mgr->roi = gegl_node_get_bounding_box (self);
     }
-  buffer = gegl_eval_mgr_apply (priv->eval_mgr);
+  buffer = gegl_eval_mgr_apply (self->priv->eval_mgr);
   return buffer;
 }
 
 void
-gegl_node_blit (GeglNode            *node,
+gegl_node_blit (GeglNode            *self,
                 gdouble              scale,
                 const GeglRectangle *roi,
                 const Babl          *format,
@@ -836,7 +823,7 @@ gegl_node_blit (GeglNode            *node,
                 gint                 rowstride,
                 GeglBlitFlags        flags)
 {
-  g_return_if_fail (GEGL_IS_NODE (node));
+  g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
 #if 0
@@ -853,7 +840,7 @@ gegl_node_blit (GeglNode            *node,
     {
       GeglBuffer *buffer;
 
-      buffer = gegl_node_apply_roi (node, "output", roi);
+      buffer = gegl_node_apply_roi (self, "output", roi);
       if (buffer && destination_buf)
         {
           if (destination_buf)
@@ -877,14 +864,13 @@ gegl_node_blit (GeglNode            *node,
     if ((flags & GEGL_BLIT_CACHE) ||
            (flags & GEGL_BLIT_DIRTY))
     {
-      GeglCache *cache = gegl_node_get_cache (node);
+      GeglCache *cache = gegl_node_get_cache (self);
       if (!(flags & GEGL_BLIT_DIRTY))
         { 
-          GeglNodePrivate *priv = GEGL_NODE_GET_PRIVATE (node);
-          if (!priv->processor) 
-           priv->processor = gegl_node_new_processor (node, roi);
-          gegl_processor_set_rectangle (priv->processor, roi);
-          while (gegl_processor_work (priv->processor, NULL)) ;
+          if (!self->priv->processor)
+           self->priv->processor = gegl_node_new_processor (self, roi);
+          gegl_processor_set_rectangle (self->priv->processor, roi);
+          while (gegl_processor_work (self->priv->processor, NULL)) ;
         }
       if (destination_buf)
         {
@@ -1595,14 +1581,11 @@ gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  context = g_hash_table_lookup (priv->contexts, context_id);
+  context = g_hash_table_lookup (self->priv->contexts, context_id);
 
   return context;
 }
@@ -1612,7 +1595,6 @@ gegl_node_remove_context (GeglNode *self,
                           gpointer  context_id)
 {
   GeglOperationContext *context;
-  GeglNodePrivate *priv;
 
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (context_id != NULL);
@@ -1624,8 +1606,7 @@ gegl_node_remove_context (GeglNode *self,
                  context_id, gegl_node_get_debug_name (self));
       return;
     }
-  priv = GEGL_NODE_GET_PRIVATE (self);
-  g_hash_table_remove (priv->contexts, context_id);
+  g_hash_table_remove (self->priv->contexts, context_id);
   gegl_operation_context_destroy (context);
 }
 
@@ -1637,13 +1618,11 @@ gegl_node_add_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-  GeglNodePrivate *priv;
 
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-  context = g_hash_table_lookup (priv->contexts, context_id);
+  context = g_hash_table_lookup (self->priv->contexts, context_id);
 
   if (context)
     {
@@ -1654,7 +1633,7 @@ gegl_node_add_context (GeglNode *self,
 
   context             = gegl_operation_context_new ();
   context->operation  = self->operation;
-  g_hash_table_insert (priv->contexts, context_id, context);
+  g_hash_table_insert (self->priv->contexts, context_id, context);
   return context;
 }
 
@@ -1823,28 +1802,20 @@ gegl_node_get_cache (GeglNode *node)
 const gchar *
 gegl_node_get_name (GeglNode *self)
 {
-  GeglNodePrivate *priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  return priv->name;
+  return self->priv->name;
 }
 
 void
 gegl_node_set_name (GeglNode    *self,
                     const gchar *name)
 {
-  GeglNodePrivate *priv;
-
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  if (priv->name)
-    g_free (priv->name);
-  priv->name = g_strdup (name);
+  if (self->priv->name)
+    g_free (self->priv->name);
+  self->priv->name = g_strdup (name);
 }
 
 void
@@ -1867,19 +1838,13 @@ GeglNode *
 gegl_node_add_child (GeglNode *self,
                      GeglNode *child)
 {
-  GeglNodePrivate *self_priv;
-  GeglNodePrivate *child_priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self_priv  = GEGL_NODE_GET_PRIVATE (self);
-  child_priv = GEGL_NODE_GET_PRIVATE (child);
-
-  self_priv->children = g_slist_prepend (self_priv->children,
-                                         g_object_ref (child));
-  self->is_graph = TRUE;
-  child_priv->parent  = self;
+  self->priv->children = g_slist_prepend (self->priv->children,
+                                          g_object_ref (child));
+  self->is_graph      = TRUE;
+  child->priv->parent = self;
 
   child->dont_cache = self->dont_cache;
 
@@ -1890,31 +1855,25 @@ GeglNode *
 gegl_node_remove_child (GeglNode *self,
                         GeglNode *child)
 {
-  GeglNodePrivate *self_priv;
-  GeglNodePrivate *child_priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self_priv  = GEGL_NODE_GET_PRIVATE (self);
-  child_priv = GEGL_NODE_GET_PRIVATE (child);
-
-  g_assert (child_priv->parent == self ||
-            child_priv->parent == NULL);
+  g_assert (child->priv->parent == self ||
+            child->priv->parent == NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self_priv->children = g_slist_remove (self_priv->children, child);
+  self->priv->children = g_slist_remove (self->priv->children, child);
 
-  if (child_priv->parent != NULL)
+  if (child->priv->parent != NULL)
     {
       /* if parent isn't set then the node is already in dispose
        */
-      child_priv->parent = NULL;
+      child->priv->parent = NULL;
       g_object_unref (child);
     }
 
 
-  if (self_priv->children == NULL)
+  if (self->priv->children == NULL)
     self->is_graph = FALSE;
 
   return child;
@@ -1923,37 +1882,26 @@ gegl_node_remove_child (GeglNode *self,
 GeglNode *
 gegl_node_get_parent (GeglNode *self)
 {
-  GeglNodePrivate *self_priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  self_priv  = GEGL_NODE_GET_PRIVATE (self);
-  return self_priv->parent;
+  return self->priv->parent;
 }
 
 gint
 gegl_node_get_num_children (GeglNode *self)
 {
-  GeglNodePrivate *priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  return g_slist_length (priv->children);
+  return g_slist_length (self->priv->children);
 }
 
 GeglNode *
 gegl_node_get_nth_child (GeglNode *self,
                          gint      n)
 {
-  GeglNodePrivate *priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  return g_slist_nth_data (priv->children, n);
+  return g_slist_nth_data (self->priv->children, n);
 }
 
 /*
@@ -1962,13 +1910,9 @@ gegl_node_get_nth_child (GeglNode *self,
 GSList *
 gegl_node_get_children (GeglNode *self)
 {
-  GeglNodePrivate *priv;
-
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  priv = GEGL_NODE_GET_PRIVATE (self);
-
-  return g_slist_copy (priv->children);
+  return g_slist_copy (self->priv->children);
 }
 
 /*
