@@ -204,12 +204,6 @@ gegl_node_init (GeglNode *self)
   self->is_graph    = FALSE;
   self->cache       = NULL;
 
-  priv->sinks       = NULL;
-  priv->sources     = NULL;
-  priv->parent      = NULL;
-  priv->children    = NULL;
-  priv->name        = NULL;
-  priv->processor   = NULL;
   priv->contexts    = g_hash_table_new (NULL, NULL);
 }
 
