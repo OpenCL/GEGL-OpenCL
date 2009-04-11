@@ -1,5 +1,7 @@
 #include "config.h"
 #include <gegl.h>
+#include <glib/gprintf.h>
+
 
 gint
 main (gint    argc,

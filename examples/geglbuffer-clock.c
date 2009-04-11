@@ -73,11 +73,9 @@ main (gint    argc,
   {
     gint frame;
     gint frames = 1024;
-    GTimeVal val;
 
     for (frame=0; frame<frames; frame++)
       {
-        gchar string[512];
         struct timeval tv;
 
         gettimeofday(&tv, NULL);
