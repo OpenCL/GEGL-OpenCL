@@ -72,15 +72,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
   if (gegl_pad_is_output (pad))
     {
       /* processing only really happens for output pads */
-      if (context->cached)
-        { /* unless we've got a cache valid for the requested region 
-           * that has not been invalidated, (the validity of the cache
-           * is determined by other visitors)
-           */
-          gegl_operation_context_get_target (context, pad->name);
-          /* XXX: why is the _get_target call needed anyways? */
-        }
-      else
+      if (!context->cached)
         {
           glong time      = gegl_ticks ();
           glong babl_time = babl_total_usecs;
