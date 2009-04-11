@@ -27,26 +27,25 @@ liboperation_public_HEADERS = \
 	gegl-operation-temporal.h
 
 liboperation_sources = \
-	gegl-extension-handler.c	  \
-	gegl-operation.c        	  \
-	gegl-operation-area-filter.c      \
-	gegl-operation-composer.c     	  \
-	gegl-operation-composer3.c    	  \
-	gegl-operation-filter.c       	  \
-	gegl-operation-meta.c       	  \
-	gegl-operation-point-composer.c   \
-	gegl-operation-point-composer3.c  \
-	gegl-operation-point-filter.c     \
-	gegl-operation-point-render.c     \
-	gegl-operation-sink.c       	  \
-	gegl-operation-source.c		  \
-	gegl-operation-temporal.c 	  \
-	gegl-operation-processors.c       \
-	gegl-operation-context.c          \
-	gegl-operations.c
-	\
-	gegl-extension-handler.h	 \
-	gegl-operation-context.h          \
+	gegl-extension-handler.c		\
+	gegl-operation.c			\
+	gegl-operation-area-filter.c		\
+	gegl-operation-composer.c		\
+	gegl-operation-composer3.c		\
+	gegl-operation-filter.c			\
+	gegl-operation-meta.c			\
+	gegl-operation-point-composer.c		\
+	gegl-operation-point-composer3.c	\
+	gegl-operation-point-filter.c		\
+	gegl-operation-point-render.c		\
+	gegl-operation-sink.c			\
+	gegl-operation-source.c			\
+	gegl-operation-temporal.c		\
+	gegl-operation-processors.c		\
+	gegl-operation-context.c		\
+	gegl-operations.c			\
+	gegl-extension-handler.h		\
+	gegl-operation-context.h		\
 	gegl-operations.h
 
 noinst_LTLIBRARIES = liboperation.la

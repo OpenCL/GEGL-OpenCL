@@ -1,5 +1,16 @@
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Fix make distcheck by making gegl-chant.h find the .c files in the
+	srcdirs and fixing typos in Makefile.ams.
+
+	* gegl/operation/Makefile.am
+	* gegl/process/Makefile.am
+	* operations/common/Makefile.am
+	* operations/core/Makefile.am
+	* operations/generated/Makefile.am
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/buffer/gegl-cache.c: Handle infinite planes in
 	gegl_rectangle_expand()
 
