@@ -28,7 +28,10 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-connection.h"
+#include "graph/gegl-visitable.h"
+#include "graph/gegl-visitor.h"
 #include "gegl-dot.h"
+#include "gegl-dot-visitor.h"
 #include "gegl.h"
 
 void
@@ -234,14 +237,48 @@ gegl_dot_add_graph (GString     *string,
   g_string_append_printf (string, "}\n");
 }
 
+
+/**
+ * gegl_dot_add_node_and_dependencies:
+ * @string:
+ * @node:
+ *
+ * Adds @node to the graph, and all nodes that @node depends on both
+ * directly and indirectly. There is no grouping of subgraphs.
+ **/
+static void
+gegl_dot_add_node_and_dependencies (GString  *string,
+                                    GeglNode *node)
+{
+  GeglDotVisitor *dot_visitor;
+  gpointer        context_id = string;
+
+  dot_visitor = g_object_new (GEGL_TYPE_DOT_VISITOR,
+                              "id", context_id,
+                              NULL);
+
+  gegl_dot_visitor_set_string_to_append (dot_visitor,
+                                         string);
+
+  gegl_visitor_dfs_traverse (GEGL_VISITOR (dot_visitor),
+                             GEGL_VISITABLE (node));
+
+  g_object_unref (dot_visitor);
+}
+
 gchar *
 gegl_to_dot (GeglNode *node)
 {
   GString *string;
 
   string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
-  gegl_dot_add_graph (string, node, "GEGL");
-  g_string_append (string, "}");
+
+  if (node->is_graph)
+    gegl_dot_add_graph (string, node, "GEGL");
+  else
+    gegl_dot_add_node_and_dependencies (string, node);
+
+  g_string_append (string, "}\n");
 
   return g_string_free (string, FALSE);
 }
