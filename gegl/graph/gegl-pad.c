@@ -178,13 +178,11 @@ gegl_pad_get_depends_on (GeglPad *self)
 
   if (gegl_pad_is_input (self))
     {
-      GSList *iter;
-      for (iter = self->connections; iter; iter = g_slist_next (iter))
-        {
-          GeglConnection *connection = iter->data;
-          depends_on = g_slist_prepend (depends_on,
-                                        gegl_connection_get_source_pad (connection));
-        }
+      GeglPad *source_pad = gegl_pad_get_connected_to (self);
+
+      if (source_pad)
+        depends_on = g_slist_prepend (depends_on,
+                                      source_pad);
     }
   else if (gegl_pad_is_output (self))
     {
