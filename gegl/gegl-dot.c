@@ -154,20 +154,27 @@ gegl_dot_util_add_node_sink_edges (GString  *string,
   for (iter = connections; iter; iter = g_slist_next (iter))
     {
       GeglConnection *connection = iter->data;
-      GeglNode       *source;
-      GeglNode       *sink;
-      GeglPad        *source_pad;
-      GeglPad        *sink_pad;
-
-      source     = gegl_connection_get_source_node (connection);
-      sink       = gegl_connection_get_sink_node (connection);
-      source_pad = gegl_connection_get_source_pad (connection);
-      sink_pad   = gegl_connection_get_sink_pad (connection);
-
-      g_string_append_printf (string, "op_%p:%s -> op_%p:%s;\n",
-                              source, gegl_pad_get_name (source_pad),
-                              sink,   gegl_pad_get_name (sink_pad));
+      gegl_dot_util_add_connection (string, connection);
     }
+}
+
+void
+gegl_dot_util_add_connection (GString        *string,
+                              GeglConnection *connection)
+{
+  GeglNode *source;
+  GeglNode *sink;
+  GeglPad  *source_pad;
+  GeglPad  *sink_pad;
+
+  source     = gegl_connection_get_source_node (connection);
+  sink       = gegl_connection_get_sink_node (connection);
+  source_pad = gegl_connection_get_source_pad (connection);
+  sink_pad   = gegl_connection_get_sink_pad (connection);
+
+  g_string_append_printf (string, "op_%p:%s -> op_%p:%s;\n",
+                          source, gegl_pad_get_name (source_pad),
+                          sink,   gegl_pad_get_name (sink_pad));
 }
 
 static void
