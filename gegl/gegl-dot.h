@@ -21,6 +21,12 @@
 
 #include "gegl.h"
 
-gchar *gegl_to_dot (GeglNode *node);
+
+gchar *gegl_to_dot                       (GeglNode *node);
+void   gegl_dot_util_add_node            (GString  *string,
+                                          GeglNode *node);
+void   gegl_dot_util_add_node_sink_edges (GString  *string,
+                                          GeglNode *node);
+
 
 #endif

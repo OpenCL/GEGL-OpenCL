@@ -31,7 +31,7 @@
 #include "gegl-dot.h"
 #include "gegl.h"
 
-static void
+void
 gegl_dot_util_add_node (GString  *string,
                         GeglNode *node)
 {
@@ -144,7 +144,7 @@ gegl_dot_util_add_node (GString  *string,
   g_string_append_printf (string, "shape=\"record\"];\n");
 }
 
-static void
+void
 gegl_dot_util_add_node_sink_edges (GString  *string,
                                    GeglNode *node)
 {
