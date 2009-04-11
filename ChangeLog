@@ -1,5 +1,10 @@
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* gegl/buffer/gegl-cache.c: Handle infinite planes in
+	gegl_rectangle_expand()
+
+2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/operation/gegl-operation-context.c: Use
 	g_value_take_object() instead of g_value_set_object() so we can
 	remove explicit unrefs in gegl_operation_context_take_object().

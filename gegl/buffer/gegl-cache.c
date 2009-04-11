@@ -96,6 +96,9 @@ static GeglRectangle gegl_rectangle_expand (const GeglRectangle *rectangle)
   gint xdiff;
   gint ydiff;
 
+  if (gegl_rectangle_is_infinite_plane (rectangle))
+    return *rectangle;
+
   xdiff = expanded.x % align;
   if (xdiff < 0)
     xdiff = align + xdiff;
