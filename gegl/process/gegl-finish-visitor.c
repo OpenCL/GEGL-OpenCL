@@ -57,23 +57,5 @@ gegl_finish_visitor_visit_node (GeglVisitor *self,
 {
   GEGL_VISITOR_CLASS (gegl_finish_visitor_parent_class)->visit_node (self, node);
 
-  {
-    const gchar *name = gegl_node_get_name (node);
-    if (name && !strcmp (name, "proxynop-output"))
-      {
-        GeglGraph *graph = g_object_get_data (G_OBJECT (node), "graph");
-        g_assert (graph);
-        if (GEGL_NODE (graph)->operation)
-          {
-            /* issuing a finish on the graph, FIXME: we might need to do
-             * a cycle of finishs as deep as the nesting of graphs,.
-             * (or find a better way to do this) */
-
-            /* we probably do not need to recurse, prepare should have done that
-             * for us..*/
-          }
-      }
-  }
-
   gegl_node_remove_context (node, self->context_id);
 }

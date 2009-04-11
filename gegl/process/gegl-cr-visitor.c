@@ -70,11 +70,4 @@ gegl_cr_visitor_visit_node (GeglVisitor *self,
       context->result_rect = gegl_operation_get_cached_region (node->operation, &context->result_rect);
     }
   context->refs = gegl_node_get_num_sinks (node);
-
-  if (!strcmp (gegl_node_get_name (node), "proxynop-output"))
-    {
-      GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
-      if (graph)
-        context->refs += gegl_node_get_num_sinks (graph);
-    }
 }

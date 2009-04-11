@@ -910,27 +910,7 @@ gegl_node_get_depends_on (GeglNode *self)
 
       source_node = gegl_connection_get_source_node (connection);
 
-      if (source_node->is_graph)
-        {
-          GeglNode *proxy = gegl_node_get_output_proxy (source_node, "output");
-
-          if (!g_slist_find (depends_on, proxy))
-            depends_on = g_slist_prepend (depends_on, proxy);
-        }
-      else if (!g_slist_find (depends_on, source_node))
-        {
-          depends_on = g_slist_prepend (depends_on, source_node);
-        }
-    }
-
-  if (gegl_node_get_name (self) &&
-      !strcmp (gegl_node_get_name (self), "proxynop-input"))
-    {
-      GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
-
-      if (graph)
-        depends_on = g_slist_concat (depends_on,
-                                     gegl_node_get_depends_on (GEGL_NODE (graph)));
+      depends_on = g_slist_prepend (depends_on, source_node);
     }
 
   return depends_on;

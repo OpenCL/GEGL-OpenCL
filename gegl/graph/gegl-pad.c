@@ -185,21 +185,6 @@ gegl_pad_get_depends_on (GeglPad *self)
           depends_on = g_slist_prepend (depends_on,
                                         gegl_connection_get_source_pad (connection));
         }
-
-      /* FIXME: this add depends for all inputs of the graph, this is probably
-       * too much in some cases
-       */
-      if (!strcmp (gegl_node_get_name (self->node), "proxynop-input"))
-        {
-          GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
-
-          for (iter = graph->sources; iter; iter = g_slist_next (iter))
-            {
-              GeglConnection *connection = iter->data;
-              depends_on = g_slist_prepend (depends_on,
-                                            gegl_connection_get_source_pad (connection));
-            }
-        }
     }
   else if (gegl_pad_is_output (self))
     {
