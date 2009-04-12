@@ -1,5 +1,19 @@
 2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add gegl_dot_node_to_png() which is a debug function supposed to be
+	called directly from a debugger. E.g. in gdb it is used like this:
+
+	  p gegl_dot_node_to_png (node, "/tmp/foo.png")
+
+	where 'node' is a node of interest. That will show the graphviz graph
+	of 'node' and its dependencies.
+
+	* docs/development.txt
+	* gegl/gegl-dot.c
+	* gegl/gegl-dot.h
+
+2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* gegl/gegl-dot.c: Also add edges to dependency based graphviz dot
 	output
 

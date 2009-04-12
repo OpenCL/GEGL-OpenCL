@@ -29,6 +29,8 @@ void   gegl_dot_util_add_node_sink_edges (GString        *string,
                                           GeglNode       *node);
 void   gegl_dot_util_add_connection      (GString        *string,
                                           GeglConnection *connection);
+void   gegl_dot_node_to_png              (GeglNode       *node,
+                                          const gchar    *png_path);
 
 
 #endif

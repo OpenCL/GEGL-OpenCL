@@ -287,3 +287,31 @@ gegl_to_dot (GeglNode *node)
 
   return g_string_free (string, FALSE);
 }
+
+/**
+ * gegl_dot_node_to_png:
+ * @node: Node to depict graph for.
+ * @png_path: Path of the png to write.
+ *
+ * This is for debug purposes, meant to be invoked directly from a
+ * debugger.
+ **/
+void
+gegl_dot_node_to_png (GeglNode    *node,
+                      const gchar *png_path)
+{
+  gchar      *dot_string   = NULL;
+  gchar      *dot_filename = NULL;
+  gchar      *dot_cmd      = NULL;
+
+  /* Get dot string */
+  dot_string = gegl_to_dot (node);
+
+  /* Write it to a file */
+  dot_filename = g_build_filename (g_get_tmp_dir (), "gegl-dot.dot", NULL);
+  g_file_set_contents (dot_filename, dot_string, -1, NULL);
+
+  /* Create a png from it */
+  dot_cmd = g_strdup_printf ("dot -o %s -Tpng %s", png_path, dot_filename);
+  system (dot_cmd);
+}

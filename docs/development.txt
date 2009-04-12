@@ -117,6 +117,9 @@ This is the gaussian-blur.xml file:
 
 link:images/gaussian-blur-graph.png[Resulting graph].
 
+You can also just call the function gegl_dot_node_to_png() directly
+from within gdb to show the graphviz graph of a node and its
+dependencies.
 
 == Tests
 
