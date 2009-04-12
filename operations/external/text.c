@@ -28,7 +28,7 @@ gegl_chant_string (font, _("Font family"), "Sans",
                    _("Font family (utf8)"))
 gegl_chant_double (size, _("Size"), 1.0, 2048.0, 10.0,
                    _("Approximate height of text in pixels."))
-gegl_chant_color  (color, _("Color"), "white",
+gegl_chant_color  (color, _("Color"), "black",
                    _("Color for the text (defaults to 'white')"))
 gegl_chant_int    (wrap, _("Wrap width"), -1, 1000000, -1,
                    _("Sets the width in pixels at which long lines will wrap. "

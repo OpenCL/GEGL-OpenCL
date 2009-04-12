@@ -1,5 +1,10 @@
 2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* operations/external/text.c: Default gegl:text color to black
+	since white is more common background color than black.
+
+2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add gegl_dot_node_to_png() which is a debug function supposed to be
 	called directly from a debugger. E.g. in gdb it is used like this:
 
