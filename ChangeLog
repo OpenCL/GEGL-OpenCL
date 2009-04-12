@@ -1,5 +1,9 @@
 2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* operations/common/layer.c: Use a better load op placeholder text
+
+2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* operations/external/text.c: Default gegl:text color to black
 	since white is more common background color than black.
 

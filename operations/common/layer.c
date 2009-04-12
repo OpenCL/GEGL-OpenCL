@@ -203,7 +203,7 @@ static void attach (GeglOperation *operation)
 
   self->load = gegl_node_new_child (gegl,
                                     "operation", "gegl:text",
-                                    "string", "foo",
+                                    "string", "Load operation placeholder",
                                     NULL);
 
   gegl_node_link_many (self->load, self->scale, self->opacity, self->translate,
