@@ -260,8 +260,13 @@ gegl_dot_add_node_and_dependencies (GString  *string,
   gegl_dot_visitor_set_string_to_append (dot_visitor,
                                          string);
 
+  /* Add the nodes */
   gegl_visitor_dfs_traverse (GEGL_VISITOR (dot_visitor),
                              GEGL_VISITABLE (node));
+
+  /* Add the edges */
+  gegl_visitor_dfs_traverse (GEGL_VISITOR (dot_visitor),
+                             GEGL_VISITABLE (gegl_node_get_pad (node, "output")));
 
   g_object_unref (dot_visitor);
 }

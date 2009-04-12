@@ -1,3 +1,8 @@
+2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/gegl-dot.c: Also add edges to dependency based graphviz dot
+	output
+
 2009-04-11  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* gegl/graph/gegl-node.c: Remove the GEGL_NODE_GET_PRIVATE() and
