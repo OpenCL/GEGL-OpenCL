@@ -1,3 +1,9 @@
+2009-04-13  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* gegl/process/gegl-prepare-visitor.c: Temporarily restore the
+	removed code in gegl-prepare-visitor.c by the commit r3032 to make
+	meta op processing work again.
+
 2009-04-12  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* operations/common/layer.c: Use a better load op placeholder text

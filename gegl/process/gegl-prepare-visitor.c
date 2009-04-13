@@ -69,6 +69,25 @@ gegl_prepare_visitor_visit_node (GeglVisitor *self,
     g_warning ("hmm");
   gegl_node_add_context (node, self->context_id);
 
+  /* prepare the operation for the coming evaluation (all properties
+   * should be set now).
+   */
+  {
+    const gchar *name = gegl_node_get_name (node);
+    if (name && !strcmp (name, "proxynop-output"))
+      {
+        GeglGraph *graph = g_object_get_data (G_OBJECT (node), "graph");
+        g_assert (graph);
+        if (GEGL_NODE (graph)->operation)
+          {
+            /* issuing a prepare on the graph, FIXME: we might need to do
+             * a cycle of prepares as deep as the nesting of graphs,.
+             * (or find a better way to do this) */
+            gegl_operation_prepare (GEGL_NODE (graph)->operation);
+          }
+      }
+  }
+
   gegl_operation_prepare (operation);
   {
     /* initialise the "needed rectangle" to an empty one */
