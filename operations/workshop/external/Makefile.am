@@ -22,7 +22,7 @@ if HAVE_AVFORMAT
 ops += ff_save.la
 ff_save_la_SOURCES = ff-save.c
 ff_save_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
-ff_save_la_CFLAGS = $(AVFORMAT_CFLAGS)
+ff_save_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS)
 endif
 
 if HAVE_LUA
