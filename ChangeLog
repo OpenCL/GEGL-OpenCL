@@ -1,3 +1,14 @@
+2009-04-17  Martin Nordholts  <martinn@src.gnome.org>
+
+	Bug 578932 – Alpha weighted blend composting operation
+
+	Add new gegl:weighted-blend operation that blends two RGBA buffers
+	together, using their alpha values as weights.
+
+	Patch from James Legg.
+
+	* operations/common/weighted_blend.c
+
 2009-04-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/external/Makefile.am: Added AM_CFLAGS to list
