@@ -1,3 +1,9 @@
+2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* operations/affine/affine.c: Make sure the sampler is initialized
+	before executing logic in get_bounding_box(). This feels like a
+	hack but should work fine for now.
+
 2009-04-17  Martin Nordholts  <martinn@src.gnome.org>
 
 	Bug 578932 – Alpha weighted blend composting operation

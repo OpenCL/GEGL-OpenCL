@@ -447,6 +447,7 @@ get_bounding_box (GeglOperation *op)
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
 
+  op_affine_sampler_init (affine);
   sampler = affine->sampler;
   context_rect = sampler->context_rect;
 
