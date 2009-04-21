@@ -1,5 +1,17 @@
 2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add ppm output file format on the command-line application. It is done
+	by parsing the filename extension of the --output parameter, which is
+	used to choose the output node type created (png-save or ppm-save).
+
+	Patch from Henrik Akesson.
+
+	* bin/gegl.c
+	* bin/gegl-options.c
+	* bin/gegl-options.h
+
+2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add a portable pixmap loader and saver that can read/write both
 	the ascii and the binary formats.
 
