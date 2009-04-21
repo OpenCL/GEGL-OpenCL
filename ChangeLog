@@ -1,5 +1,16 @@
 2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add a portable pixmap loader and saver that can read/write both
+	the ascii and the binary formats.
+
+	Patch from Henrik Akesson.
+
+	* operations/external/Makefile.am
+	* operations/external/ppm-load.c
+	* operations/external/ppm-save.c
+
+2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* operations/affine/affine.c: Make sure the sampler is initialized
 	before executing logic in get_bounding_box(). This feels like a
 	hack but should work fine for now.

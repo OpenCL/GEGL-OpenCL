@@ -79,5 +79,8 @@ ff_load_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
 ff_load_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS)
 endif
 
+# No dependencies
+ops += ppm-load.la ppm-save.la
+
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)
