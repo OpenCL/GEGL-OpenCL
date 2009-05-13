@@ -37,7 +37,7 @@ static VALUE
 ccolor_get_rgba(self)
     VALUE self;
 {
-    float r, g, b, a;
+    double r, g, b, a;
     gegl_color_get_rgba (_SELF(self),
                          &r,
                          &g,

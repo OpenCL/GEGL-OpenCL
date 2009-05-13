@@ -177,7 +177,7 @@ cnode_render (self, r_rectangle, r_scale, r_format, r_flags)
     flags = NUM2INT (r_flags);
 
     buflen = rectangle->width * rectangle->height *
-             ((Babl*)format)->format.bytes_per_pixel;
+             babl_format_get_bytes_per_pixel (format);
 
     rbuf = rb_str_new (NULL, buflen);
     buf = RSTRING(rbuf)->ptr;
