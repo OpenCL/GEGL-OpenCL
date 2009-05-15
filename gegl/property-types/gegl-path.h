@@ -428,12 +428,16 @@ GeglPathList       * gegl_path_list_append    (GeglPathList *head, ...);
 /* frees up a path list */
 GeglPathList       * gegl_path_list_destroy   (GeglPathList *path);
 
+
+/* prototype of function passed to gegl_path_add_flattener() */
+typedef GeglPathList *(*GeglFlattenerFunc) (GeglPathList *original);
+
 /* Add a new flattener, the flattener should produce a type of path that
  * GeglPath already understands, if the flattener is unable to flatten
  * the incoming path (doesn't understand the instructions), the original
  * path should be returned.
  */
-void gegl_path_add_flattener (GeglPathList *(*func) (GeglPathList *original));
+void gegl_path_add_flattener (GeglFlattenerFunc func);
 
 
 G_END_DECLS

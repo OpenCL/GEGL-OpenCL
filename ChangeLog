@@ -1,5 +1,10 @@
 2009-05-15  Hubert Figuiere  <hub@figuiere.net>
 
+	Use a typedef for the prototype of the function passed to 
+	gegl_path_add_flattener(). Fix bug #582805.
+	
+	* gegl/property-types/gegl-path.h:
+
 	Add G_BEGIN_DECLS and G_END_DECLS to gegl-buffer.h
 
 	* gegl/buffer/gegl-buffer.h
