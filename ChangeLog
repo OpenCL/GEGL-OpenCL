@@ -1,3 +1,9 @@
+2009-05-15  Hubert Figuiere  <hub@figuiere.net>
+
+	Add G_BEGIN_DECLS and G_END_DECLS to gegl-buffer.h
+
+	* gegl/buffer/gegl-buffer.h
+
 2009-04-21  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Add ppm output file format on the command-line application. It is done
