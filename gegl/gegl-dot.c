@@ -19,6 +19,7 @@
 /* FIXME: this file should be implemented using public API only */
 
 #include "config.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <glib-object.h>
