@@ -263,7 +263,7 @@ gegl_dot_add_node_and_dependencies (GString  *string,
                                          string);
 
   /* Add the nodes */
-  gegl_visitor_dfs_traverse (GEGL_VISITOR (dot_visitor),
+  gegl_visitor_bfs_traverse (GEGL_VISITOR (dot_visitor),
                              GEGL_VISITABLE (node));
 
   /* Add the edges */
@@ -286,7 +286,7 @@ gegl_dot_add_node_and_dependencies (GString  *string,
     }
 
 
-  gegl_visitor_dfs_traverse (GEGL_VISITOR (dot_visitor),
+  gegl_visitor_bfs_traverse (GEGL_VISITOR (dot_visitor),
                              GEGL_VISITABLE (pad));
 
   g_object_unref (dot_visitor);
