@@ -73,8 +73,6 @@ process (GeglOperation       *op,
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
-          gfloat c;
-          gfloat value;
           gfloat total_alpha;
           /* find the proportion between alpha values */
           total_alpha = in[3] + aux[3];
