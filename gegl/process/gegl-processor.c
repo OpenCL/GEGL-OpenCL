@@ -418,9 +418,6 @@ render_rectangle (GeglProcessor *processor)
         {
           gint band_size;
 
-          g_debug( "{%s:%u} rectangle (%ux%u) too big (> %u)",
-                  __FILE__, __LINE__, dr->height, dr->width, max_area );
-
           {
             GeglRectangle *fragment;
 
@@ -444,10 +441,6 @@ render_rectangle (GeglProcessor *processor)
                 dr->y           += band_size;
               }
             processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
-
-            g_debug ("{%s:%u} rectangle split to (%ux%u) and (%ux%u)\n",
-                    __FILE__, __LINE__, dr->height, dr->width,
-                    fragment->height, fragment->width);
           }
           return TRUE;
         }
