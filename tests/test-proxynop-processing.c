@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
   GeglNode     *color_in_graph     = NULL;
   GeglNode     *crop_in_graph      = NULL;
   GeglNode     *graph_output_proxy = NULL;
+  GeglNode     *crop_outside_graph = NULL;
   GeglRectangle roi                = { 0, 0, 1, 1 };
   guchar        result_buffer[3]   = { 0, 0, 0 };
   GeglColor    *color1             = NULL;
@@ -60,14 +61,28 @@ int main(int argc, char *argv[])
                                         NULL);
   graph_output_proxy = gegl_node_get_output_proxy (graph,
                                                    "output");
+
   gegl_node_link_many (color_in_graph,
                        crop_in_graph,
                        graph_output_proxy,
                        NULL);
 
+  /* Make sure the implicit connection to the graph output proxy works
+   * by connecting an additional crop directly to the graph node
+   */
+  crop_outside_graph  = gegl_node_new_child (graph,
+                                             "operation", "gegl:crop",
+                                             "x",         0.0,
+                                             "y",         0.0,
+                                             "width",     1.0,
+                                             "height",    1.0,
+                                             NULL);
+  gegl_node_connect_to (graph,              "output",
+                        crop_outside_graph, "input");
+
   /* Process the graph and make sure we get the expected result */
   memset (result_buffer, 0, sizeof (result_buffer));
-  gegl_node_blit (graph_output_proxy,
+  gegl_node_blit (crop_outside_graph,
                   1.0,
                   &roi,
                   babl_format ("RGB u8"),
@@ -90,7 +105,7 @@ int main(int argc, char *argv[])
                  "value", color2,
                  NULL);
   memset (result_buffer, 0, sizeof (result_buffer));
-  gegl_node_blit (graph_output_proxy,
+  gegl_node_blit (crop_outside_graph,
                   1.0,
                   &roi,
                   babl_format ("RGB u8"),
@@ -110,7 +125,7 @@ int main(int argc, char *argv[])
    * puts some stress on the caching mechanisms
    */
   memset (result_buffer, 0, sizeof (result_buffer));
-  gegl_node_blit (graph_output_proxy,
+  gegl_node_blit (crop_outside_graph,
                   1.0,
                   &roi,
                   babl_format ("RGB u8"),
