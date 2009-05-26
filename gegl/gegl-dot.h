@@ -31,6 +31,7 @@ void   gegl_dot_util_add_connection      (GString        *string,
                                           GeglConnection *connection);
 void   gegl_dot_node_to_png              (GeglNode       *node,
                                           const gchar    *png_path);
+void   gegl_dot_node_to_png_default      (GeglNode       *node);
 
 
 #endif

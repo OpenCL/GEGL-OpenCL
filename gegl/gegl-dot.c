@@ -310,6 +310,18 @@ gegl_to_dot (GeglNode *node)
 }
 
 /**
+ * gegl_dot_node_to_png_default:
+ * @node:
+ *
+ * Calls gegl_dot_node_to_png() with `png_path' set to "/tmp/node.png".
+ **/
+void
+gegl_dot_node_to_png_default (GeglNode *node)
+{
+  gegl_dot_node_to_png (node, "/tmp/node.png");
+}
+
+/**
  * gegl_dot_node_to_png:
  * @node: Node to depict graph for.
  * @png_path: Path of the png to write.
