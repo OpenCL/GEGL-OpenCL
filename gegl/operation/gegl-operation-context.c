@@ -263,10 +263,10 @@ gegl_operation_context_take_object (GeglOperationContext *context,
     }
   else
     {
-      g_warning ("%s: No paramspec found for pad we %s'%s'\n",
+      g_warning ("%s: No paramspec found for pad '%s' on \"%s\"\n",
                  G_STRFUNC,
-                 data ? "we have data" : "",
-                 padname);
+                 padname,
+                 gegl_operation_get_name (context->operation));
     }
 }
 
