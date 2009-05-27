@@ -1,3 +1,11 @@
+
+	
+	TODO: Before the 0.1.0 release, update the ChangeLog with the
+	commits from 82d99a7078ee2d59c5c4 and onwards. Until then there is
+	no need to keep this file up to date, just continue to have good
+	git commit messages.
+	
+
 2009-05-15  Hubert Figuiere  <hub@figuiere.net>
 
 	Use a typedef for the prototype of the function passed to 
