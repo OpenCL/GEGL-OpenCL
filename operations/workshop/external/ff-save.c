@@ -22,6 +22,8 @@
 
 #include <glib/gi18n-lib.h>
 
+#include <libswscale/swscale.h>
+
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -648,14 +650,31 @@ write_video_frame (GeglChantO *op,
 
   if (c->pix_fmt != PIX_FMT_RGB24)
     {
+      struct SwsContext *img_convert_ctx;
+
       /* as we only generate a RGB24 picture, we must convert it
          to the codec pixel format if needed */
       fill_yuv_image (op, p->tmp_picture, p->frame_count, c->width,
                       c->height);
-      /* FIXME: img_convert is deprecated. Update code to use sws_scale(). */
-      img_convert ((AVPicture *) p->picture, c->pix_fmt,
-                   (AVPicture *) p->tmp_picture, PIX_FMT_RGB24,
-                   c->width, c->height);
+
+      img_convert_ctx = sws_getContext(c->width, c->height, c->pix_fmt,
+                                       c->width, c->height, PIX_FMT_RGB24,
+                                       SWS_BICUBIC, NULL, NULL, NULL);
+
+      if (img_convert_ctx == NULL)
+        {
+          fprintf(stderr, "ff_save: Cannot initialize conversion context.");
+        }
+      else
+        {
+          sws_scale(img_convert_ctx,
+                    p->tmp_picture->data,
+                    p->tmp_picture->linesize,
+                    0,
+                    c->height,
+                    p->picture->data,
+                    p->picture->linesize);
+        }
     }
   else
     {
