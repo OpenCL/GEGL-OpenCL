@@ -206,6 +206,8 @@ void            gegl_operation_set_format    (GeglOperation *operation,
 const Babl *    gegl_operation_get_format    (GeglOperation *operation,
                                               const gchar   *pad_name);
 
+const gchar *   gegl_operation_get_name      (GeglOperation *operation);
+
 
 /* retrieves the node providing data to a named input pad */
 GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,

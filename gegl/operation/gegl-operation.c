@@ -418,6 +418,17 @@ gegl_operation_get_format (GeglOperation *self,
   return pad->format;
 }
 
+const gchar *
+gegl_operation_get_name (GeglOperation *operation)
+{
+  GeglOperationClass *klass;
+
+  g_return_val_if_fail (GEGL_IS_OPERATION (operation), NULL);
+
+  klass = GEGL_OPERATION_GET_CLASS (operation);
+
+  return klass->name;
+}
 
 void
 gegl_operation_invalidate (GeglOperation       *operation,
