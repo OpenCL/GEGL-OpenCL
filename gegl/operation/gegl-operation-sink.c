@@ -36,25 +36,23 @@ enum
 };
 
 
-static void          get_property          (GObject             *gobject,
-                                            guint                prop_id,
-                                            GValue              *value,
-                                            GParamSpec          *pspec);
-static void          set_property          (GObject             *gobject,
-                                            guint                prop_id,
-                                            const GValue        *value,
-                                            GParamSpec          *pspec);
-
-static gboolean      gegl_operation_sink_process 
-                                            (GeglOperation       *operation,
-                                             GeglOperationContext     *context,
-                                             const gchar         *output_prop,
-                                             const GeglRectangle *result);
-static void          attach                 (GeglOperation       *operation);
-static GeglRectangle get_bounding_box        (GeglOperation       *self);
-static GeglRectangle get_required_for_output (GeglOperation       *operation,
-                                               const gchar         *input_pad,
-                                               const GeglRectangle *roi);
+static void          gegl_operation_sink_get_property            (GObject              *gobject,
+                                                                  guint                 prop_id,
+                                                                  GValue               *value,
+                                                                  GParamSpec           *pspec);
+static void          gegl_operation_sink_set_property            (GObject              *gobject,
+                                                                  guint                 prop_id,
+                                                                  const GValue         *value,
+                                                                  GParamSpec           *pspec);
+static gboolean      gegl_operation_sink_process                 (GeglOperation        *operation,
+                                                                  GeglOperationContext *context,
+                                                                  const gchar          *output_prop,
+                                                                  const GeglRectangle  *result);
+static void          gegl_operation_sink_attach                  (GeglOperation        *operation);
+static GeglRectangle gegl_operation_sink_get_bounding_box        (GeglOperation        *self);
+static GeglRectangle gegl_operation_sink_get_required_for_output (GeglOperation        *operation,
+                                                                  const gchar          *input_pad,
+                                                                  const GeglRectangle  *roi);
 
 
 G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
@@ -68,13 +66,13 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
 
   klass->needs_full = FALSE;
 
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
+  object_class->set_property = gegl_operation_sink_set_property;
+  object_class->get_property = gegl_operation_sink_get_property;
 
   operation_class->process                 = gegl_operation_sink_process;
-  operation_class->attach                  = attach;
-  operation_class->get_bounding_box        = get_bounding_box;
-  operation_class->get_required_for_output = get_required_for_output;
+  operation_class->attach                  = gegl_operation_sink_attach;
+  operation_class->get_bounding_box        = gegl_operation_sink_get_bounding_box;
+  operation_class->get_required_for_output = gegl_operation_sink_get_required_for_output;
 
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
@@ -91,7 +89,7 @@ gegl_operation_sink_init (GeglOperationSink *self)
 }
 
 static void
-attach (GeglOperation *self)
+gegl_operation_sink_attach (GeglOperation *self)
 {
   GeglOperation *operation    = GEGL_OPERATION (self);
   GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
@@ -102,26 +100,26 @@ attach (GeglOperation *self)
 }
 
 static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_operation_sink_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
 {
 }
 
 static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_operation_sink_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
 {
 }
 
 static gboolean
-gegl_operation_sink_process (GeglOperation *operation,
+gegl_operation_sink_process (GeglOperation        *operation,
                              GeglOperationContext *context,
-                             const gchar   *output_prop,
-                             const GeglRectangle *result)
+                             const gchar          *output_prop,
+                             const GeglRectangle  *result)
 {
   GeglOperationSink      *gegl_operation_sink;
   GeglOperationSinkClass *klass;
@@ -144,7 +142,7 @@ gegl_operation_sink_process (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_bounding_box (GeglOperation *self)
+gegl_operation_sink_get_bounding_box (GeglOperation *self)
 {
   GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
@@ -159,9 +157,9 @@ get_bounding_box (GeglOperation *self)
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation        *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *roi)
+gegl_operation_sink_get_required_for_output (GeglOperation       *operation,
+                                             const gchar         *input_pad,
+                                             const GeglRectangle *roi)
 {
   GeglRectangle rect=*roi;
   return rect;
