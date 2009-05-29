@@ -47,48 +47,43 @@ enum
   PROP_LANCZOS_WIDTH
 };
 
-/* *** static prototypes *** */
 
-static void          get_property            (GObject             *object,
-                                              guint                prop_id,
-                                              GValue              *value,
-                                              GParamSpec          *pspec);
-static void          set_property            (GObject             *object,
-                                              guint                prop_id,
-                                              const GValue        *value,
-                                              GParamSpec          *pspec);
-static void          bounding_box            (gdouble             *points,
-                                              gint                 num_points,
-                                              GeglRectangle       *output);
-static gboolean      is_intermediate_node    (OpAffine            *affine);
-static gboolean      is_composite_node       (OpAffine            *affine);
-static void          get_source_matrix       (OpAffine            *affine,
-                                              GeglMatrix3          output);
-static GeglRectangle get_bounding_box       (GeglOperation       *op);
-static GeglRectangle get_invalidated_by_change (GeglOperation       *operation,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *input_region);
-static GeglRectangle get_required_for_output(GeglOperation       *self,
-                                              const gchar         *input_pad,
-                                              const GeglRectangle *region);
-
+static void          gegl_affine_get_property              (GObject              *object,
+                                                            guint                 prop_id,
+                                                            GValue               *value,
+                                                            GParamSpec           *pspec);
+static void          gegl_affine_set_property              (GObject              *object,
+                                                            guint                 prop_id,
+                                                            const GValue         *value,
+                                                            GParamSpec           *pspec);
+static void          gegl_affine_bounding_box              (gdouble              *points,
+                                                            gint                  num_points,
+                                                            GeglRectangle        *output);
+static gboolean      gegl_affine_is_intermediate_node      (OpAffine             *affine);
+static gboolean      gegl_affine_is_composite_node         (OpAffine             *affine);
+static void          gegl_affine_get_source_matrix         (OpAffine             *affine,
+                                                            GeglMatrix3           output);
+static GeglRectangle gegl_affine_get_bounding_box          (GeglOperation        *op);
+static GeglRectangle gegl_affine_get_invalidated_by_change (GeglOperation        *operation,
+                                                            const gchar          *input_pad,
+                                                            const GeglRectangle  *input_region);
+static GeglRectangle gegl_affine_get_required_for_output   (GeglOperation        *self,
+                                                            const gchar          *input_pad,
+                                                            const GeglRectangle  *region);
 #if 0
-static gboolean      process                 (GeglOperation       *op,
-                                              GeglBuffer          *input,
-                                              GeglBuffer          *output,
-                                              const GeglRectangle *result);
+static gboolean      gegl_affine_process                   (GeglOperation       *op,
+                                                            GeglBuffer          *input,
+                                                            GeglBuffer          *output,
+                                                            const GeglRectangle *result);
 #endif
+static gboolean      gegl_affine_process                   (GeglOperation        *operation,
+                                                            GeglOperationContext *context,
+                                                            const gchar          *output_prop,
+                                                            const GeglRectangle  *result);
+static GeglNode    * gegl_affine_detect                    (GeglOperation        *operation,
+                                                            gint                  x,
+                                                            gint                  y);
 
-
-static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result);
-
-static GeglNode    * detect                  (GeglOperation       *operation,
-                                              gint                 x,
-                                              gint                 y);
 
 /* ************************* */
 
@@ -178,7 +173,7 @@ op_affine_sampler_init (OpAffine *self)
 }
 
 static void
-prepare (GeglOperation *operation)
+gegl_affine_prepare (GeglOperation *operation)
 {
   OpAffine  *affine = (OpAffine *) operation;
   Babl      *format = babl_format ("RaGaBaA float");
@@ -189,7 +184,7 @@ prepare (GeglOperation *operation)
 }
 
 static void
-finalize (GObject *object)
+gegl_affine_finalize (GObject *object)
 {
   OpAffine  *affine = (OpAffine *) object;
   if (affine->sampler != NULL)
@@ -206,21 +201,20 @@ op_affine_class_init (OpAffineClass *klass)
   /*GeglOperationFilterClass *filter_class  = GEGL_OPERATION_FILTER_CLASS (klass);*/
   GeglOperationClass       *op_class      = GEGL_OPERATION_CLASS (klass);
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-  gobject_class->finalize = finalize;
+  gobject_class->set_property         = gegl_affine_set_property;
+  gobject_class->get_property         = gegl_affine_get_property;
+  gobject_class->finalize             = gegl_affine_finalize;
 
-  op_class->get_invalidated_by_change = get_invalidated_by_change;
-  op_class->get_bounding_box = get_bounding_box;
-  op_class->get_required_for_output = get_required_for_output;
-  op_class->detect = detect;
-  op_class->categories = "transform";
-  op_class->prepare = prepare;
-  op_class->no_cache = TRUE;
+  op_class->get_invalidated_by_change = gegl_affine_get_invalidated_by_change;
+  op_class->get_bounding_box          = gegl_affine_get_bounding_box;
+  op_class->get_required_for_output   = gegl_affine_get_required_for_output;
+  op_class->detect                    = gegl_affine_detect;
+  op_class->process                   = gegl_affine_process;
+  op_class->categories                = "transform";
+  op_class->prepare                   = gegl_affine_prepare;
+  op_class->no_cache                  = TRUE;
 
-
-  /*filter_class->process = process;*/
-  op_class->process = process;
+  /*filter_class->process               = gegl_affine_process;*/
 
   klass->create_matrix = NULL;
 
@@ -271,10 +265,10 @@ op_affine_init (OpAffine *self)
 }
 
 static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_affine_get_property (GObject    *object,
+                          guint       prop_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
 {
   OpAffine *self = OP_AFFINE (object);
 
@@ -302,10 +296,10 @@ get_property (GObject    *object,
 }
 
 static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_affine_set_property (GObject      *object,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
 {
   OpAffine *self = OP_AFFINE (object);
 
@@ -334,9 +328,9 @@ set_property (GObject      *object,
 }
 
 static void
-bounding_box (gdouble       *points,
-              gint           num_points,
-              GeglRectangle *output)
+gegl_affine_bounding_box (gdouble       *points,
+                          gint           num_points,
+                          GeglRectangle *output)
 {
   gint    i;
   gdouble min_x,
@@ -373,7 +367,7 @@ bounding_box (gdouble       *points,
 }
 
 static gboolean
-is_intermediate_node (OpAffine *affine)
+gegl_affine_is_intermediate_node (OpAffine *affine)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -399,7 +393,7 @@ is_intermediate_node (OpAffine *affine)
 }
 
 static gboolean
-is_composite_node (OpAffine *affine)
+gegl_affine_is_composite_node (OpAffine *affine)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -417,8 +411,8 @@ is_composite_node (OpAffine *affine)
 }
 
 static void
-get_source_matrix (OpAffine     *affine,
-                   GeglMatrix3   output)
+gegl_affine_get_source_matrix (OpAffine    *affine,
+                               GeglMatrix3  output)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -435,7 +429,7 @@ get_source_matrix (OpAffine     *affine,
 }
 
 static GeglRectangle
-get_bounding_box (GeglOperation *op)
+gegl_affine_get_bounding_box (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
@@ -463,14 +457,14 @@ get_bounding_box (GeglOperation *op)
   if (affine->origin_x || affine->origin_y)
     gegl_matrix3_originate (affine->matrix, affine->origin_x, affine->origin_y);
 
-  if (is_composite_node (affine))
+  if (gegl_affine_is_composite_node (affine))
     {
       GeglMatrix3 source;
 
-      get_source_matrix (affine, source);
+      gegl_affine_get_source_matrix (affine, source);
       gegl_matrix3_multiply (source, affine->matrix, affine->matrix);
     }
-  if (is_intermediate_node (affine) ||
+  if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (affine->matrix))
     {
       return in_rect;
@@ -497,14 +491,14 @@ get_bounding_box (GeglOperation *op)
     gegl_matrix3_transform_point (affine->matrix,
                              have_points + i, have_points + i + 1);
 
-  bounding_box (have_points, 4, &have_rect);
+  gegl_affine_bounding_box (have_points, 4, &have_rect);
   return have_rect;
 }
 
 static GeglNode *
-detect (GeglOperation *operation,
-        gint           x,
-        gint           y)
+gegl_affine_detect (GeglOperation *operation,
+                    gint           x,
+                    gint           y)
 {
   GeglNode *source_node = gegl_operation_get_source_node (operation, "input");
 
@@ -513,7 +507,7 @@ detect (GeglOperation *operation,
   gdouble   need_points [2];
   gint      i;
 
-  if (is_intermediate_node (affine) ||
+  if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (inverse))
     {
       return gegl_operation_detect (source_node->operation, x, y);
@@ -534,9 +528,9 @@ detect (GeglOperation *operation,
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation       *op,
-                         const gchar         *input_pad,
-                         const GeglRectangle *region)
+gegl_affine_get_required_for_output (GeglOperation       *op,
+                                     const gchar         *input_pad,
+                                     const GeglRectangle *region)
 {
   OpAffine      *affine = (OpAffine *) op;
   GeglMatrix3    inverse;
@@ -554,7 +548,7 @@ get_required_for_output (GeglOperation       *op,
   gegl_matrix3_copy (inverse, affine->matrix);
   gegl_matrix3_invert (inverse);
 
-  if (is_intermediate_node (affine) ||
+  if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (inverse))
     {
       return requested_rect;
@@ -578,7 +572,7 @@ get_required_for_output (GeglOperation       *op,
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (inverse,
                              need_points + i, need_points + i + 1);
-  bounding_box (need_points, 4, &need_rect);
+  gegl_affine_bounding_box (need_points, 4, &need_rect);
 
   need_rect.x      += context_rect.x;
   need_rect.y      += context_rect.y;
@@ -588,9 +582,9 @@ get_required_for_output (GeglOperation       *op,
 }
 
 static GeglRectangle
-get_invalidated_by_change (GeglOperation       *op,
-                           const gchar         *input_pad,
-                           const GeglRectangle *input_region)
+gegl_affine_get_invalidated_by_change (GeglOperation       *op,
+                                       const gchar         *input_pad,
+                                       const GeglRectangle *input_region)
 {
   OpAffine          *affine  = (OpAffine *) op;
   OpAffineClass     *klass   = OP_AFFINE_GET_CLASS (affine);
@@ -612,14 +606,14 @@ get_invalidated_by_change (GeglOperation       *op,
   if (affine->origin_x || affine->origin_y)
     gegl_matrix3_originate (affine->matrix, affine->origin_x, affine->origin_y);
 
-  if (is_composite_node (affine))
+  if (gegl_affine_is_composite_node (affine))
     {
       GeglMatrix3 source;
 
-      get_source_matrix (affine, source);
+      gegl_affine_get_source_matrix (affine, source);
       gegl_matrix3_multiply (source, affine->matrix, affine->matrix);
     }
-  if (is_intermediate_node (affine) ||
+  if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (affine->matrix))
     {
       return region;
@@ -646,17 +640,17 @@ get_invalidated_by_change (GeglOperation       *op,
     gegl_matrix3_transform_point (affine->matrix,
                              affected_points + i, affected_points + i + 1);
 
-  bounding_box (affected_points, 4, &affected_rect);
+  gegl_affine_bounding_box (affected_points, 4, &affected_rect);
   return affected_rect;
 
 }
 
 
 static void
-affine_generic (GeglBuffer        *dest,
-                GeglBuffer        *src,
-                GeglMatrix3        matrix,
-                GeglSampler       *sampler)
+affine_generic (GeglBuffer  *dest,
+                GeglBuffer  *src,
+                GeglMatrix3  matrix,
+                GeglSampler *sampler)
 {
   GeglBufferIterator *i;
   const GeglRectangle *dest_extent;
@@ -723,16 +717,16 @@ void  gegl_sampler_prepare     (GeglSampler *self);
    */
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+gegl_affine_process (GeglOperation        *operation,
+                     GeglOperationContext *context,
+                     const gchar          *output_prop,
+                     const GeglRectangle  *result)
 {
   GeglBuffer          *input;
   GeglBuffer          *output;
   OpAffine            *affine = (OpAffine *) operation;
 
-  if (is_intermediate_node (affine) ||
+  if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (affine->matrix))
     {
       /* passing straight through (like gegl:nop) */
