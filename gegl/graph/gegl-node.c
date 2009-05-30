@@ -1428,12 +1428,12 @@ gegl_node_get_debug_name (GeglNode *node)
   if (name && *name)
     {
       g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s '%s'", operation ? operation : "(none)", name);
+                  "%s '%s' %p", operation ? operation : "(none)", name, node);
     }
   else
     {
       g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s", operation ? operation : "(none)");
+                  "%s %p", operation ? operation : "(none)", node);
     }
 
   return ret_buf;
