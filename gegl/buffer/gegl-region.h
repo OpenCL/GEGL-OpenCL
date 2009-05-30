@@ -114,6 +114,7 @@ void            gegl_region_subtract        (GeglRegion          *source1,
                                              const GeglRegion    *source2);
 void            gegl_region_xor             (GeglRegion          *source1,
                                              const GeglRegion    *source2);
+void            gegl_region_dump            (GeglRegion          *region);
 
 void    gegl_region_spans_intersect_foreach (GeglRegion          *region,
                                              GeglSpan            *spans,

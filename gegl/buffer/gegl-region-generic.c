@@ -1843,4 +1843,24 @@ gegl_region_spans_intersect_foreach (GeglRegion  *region,
     }
 }
 
+void
+gegl_region_dump (GeglRegion *region)
+{
+  GeglRectangle *rectangles   = NULL;
+  gint           n_rectangles = 0;
+  gint           i;
+
+  gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
+
+  g_print ("GeglRegion %p:\n", region);
+  for (i = 0; i < n_rectangles; i++)
+    g_print ("  { %d, %d, %dx%d },\n",
+             rectangles[i].x,
+             rectangles[i].y,
+             rectangles[i].width,
+             rectangles[i].height);
+
+  g_free (rectangles);
+}
+
 #define __GEGL_REGION_GENERIC_C__
