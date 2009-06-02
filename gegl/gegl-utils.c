@@ -191,6 +191,16 @@ gegl_rectangle_is_infinite_plane (const GeglRectangle *rectangle)
           rectangle->height == G_MAXINT);
 }
 
+void
+gegl_rectangle_dump (const GeglRectangle *rectangle)
+{
+  g_print ("%d, %d, %d×%d\n",
+           rectangle->x,
+           rectangle->y,
+           rectangle->width,
+           rectangle->height);
+}
+
 GType
 gegl_rectangle_get_type (void)
 {

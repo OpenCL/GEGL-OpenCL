@@ -155,6 +155,13 @@ GeglRectangle gegl_rectangle_infinite_plane (void);
  */
 gboolean gegl_rectangle_is_infinite_plane (const GeglRectangle *rectangle);
 
+/**
+ * gegl_rectangle_dump:
+ * @rectangle: A GeglRectangle.
+ *
+ * For debugging purposes, not stable API.
+ */
+void     gegl_rectangle_dump              (const GeglRectangle *rectangle);
 
 
 /***
