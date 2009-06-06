@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "gegl.h"
+#include "gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-eval-visitor.h"
 #include "graph/gegl-node.h"
@@ -78,6 +79,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           glong babl_time = babl_total_usecs;
 
           /* Make the operation do it's actual processing */
+          GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
           gegl_operation_process (operation, context, gegl_pad_get_name (pad),
                                   &context->result_rect);
           babl_time = babl_total_usecs - babl_time;
@@ -145,6 +147,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           if (GEGL_IS_OPERATION_SINK (operation) &&
               !gegl_operation_sink_needs_full (operation))
             {
+              GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
               gegl_operation_process (operation, context, "output",
                 &context->result_rect);
             }
