@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "gegl.h"
+#include "gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-cr-visitor.h"
 #include "operation/gegl-operation.h"
@@ -69,5 +70,13 @@ gegl_cr_visitor_visit_node (GeglVisitor *self,
       /* here we expand to the size requested by the operation to be cached */
       context->result_rect = gegl_operation_get_cached_region (node->operation, &context->result_rect);
     }
+
+  GEGL_NOTE (GEGL_DEBUG_PROCESS,
+             "For \"%s\" have_rect = %d, %d %d×%d need_rect = %d, %d %d×%d result_rect = %d, %d %d×%d\n",
+             gegl_node_get_debug_name (node),
+             node->have_rect.x, node->have_rect.y, node->have_rect.width, node->have_rect.height,
+             context->need_rect.x, context->need_rect.y, context->need_rect.width, context->need_rect.height,
+             context->result_rect.x, context->result_rect.y, context->result_rect.width, context->result_rect.height);
+
   context->refs = gegl_node_get_num_sinks (node);
 }

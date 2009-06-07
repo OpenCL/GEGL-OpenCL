@@ -21,6 +21,7 @@
 #include <glib-object.h>
 
 #include "gegl.h"
+#include "gegl-debug.h"
 #include "buffer/gegl-region.h"
 #include "graph/gegl-node.h"
 
@@ -325,6 +326,10 @@ gegl_node_new_processor (GeglNode            *node,
                             "node",      node,
                             "rectangle", rectangle,
                             NULL);
+
+  GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_node_new_processor() node = %s rectangle = %d, %d %d×%d\n",
+             gegl_node_get_debug_name (node),
+             rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
   /* FIXME: Look for what pads that are available rather than looking
    * at what type of operation we are dealing with
