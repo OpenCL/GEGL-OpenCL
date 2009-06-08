@@ -103,8 +103,8 @@ finalize (GObject *object)
 }
 
 static void
-queue_each (gpointer itm,
-            gpointer userdata)
+gegl_tile_handler_cache_dispose_buffer_tiles (gpointer itm,
+                                              gpointer userdata)
 {
   CacheItem *item = itm;
   if (item->handler == userdata)
@@ -127,7 +127,7 @@ dispose (GObject *object)
   /* only throw out items belonging to this cache instance */
 
   cache->free_list = NULL;
-  g_queue_foreach (cache_queue, queue_each, cache);
+  g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
   for (iter = cache->free_list; iter; iter = g_slist_next (iter))
     {
         item = iter->data;
