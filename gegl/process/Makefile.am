@@ -15,7 +15,7 @@ noinst_LTLIBRARIES = libprocess.la
 #libprocess_public_HEADERS = #
 
 libprocess_la_SOURCES = \
-	gegl-cr-visitor.c		\
+	gegl-need-visitor.c		\
 	gegl-debug-rect-visitor.c	\
 	gegl-eval-mgr.c			\
 	gegl-eval-visitor.c		\
@@ -24,7 +24,7 @@ libprocess_la_SOURCES = \
 	gegl-prepare-visitor.c		\
 	gegl-processor.c		\
 	\
-	gegl-cr-visitor.h		\
+	gegl-need-visitor.h		\
 	gegl-debug-rect-visitor.h	\
 	gegl-eval-mgr.h			\
 	gegl-eval-visitor.h		\

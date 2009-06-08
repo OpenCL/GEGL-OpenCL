@@ -26,7 +26,7 @@
 #include "gegl-eval-mgr.h"
 #include "gegl-eval-visitor.h"
 #include "gegl-debug-rect-visitor.h"
-#include "gegl-cr-visitor.h"
+#include "gegl-need-visitor.h"
 #include "gegl-have-visitor.h"
 #include "gegl-instrument.h"
 #include "graph/gegl-node.h"

@@ -24,7 +24,7 @@
 #include "gegl.h"
 #include "gegl-debug.h"
 #include "gegl-types-internal.h"
-#include "gegl-cr-visitor.h"
+#include "gegl-need-visitor.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operation-context.h"
 #include "graph/gegl-node.h"
