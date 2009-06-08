@@ -62,7 +62,7 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
   self->prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", context_id, NULL);
   self->have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", context_id, NULL);
   self->eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", context_id, NULL);
-  self->cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", context_id, NULL);
+  self->need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, "id", context_id, NULL);
   self->finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", context_id, NULL);
   self->state = UNINITIALIZED;
 }
@@ -89,7 +89,7 @@ gegl_eval_mgr_finalize (GObject *self_object)
 
   g_object_unref (self->prepare_visitor);
   g_object_unref (self->eval_visitor);
-  g_object_unref (self->cr_visitor);
+  g_object_unref (self->need_visitor);
   g_object_unref (self->finish_visitor);
 
   G_OBJECT_CLASS (gegl_eval_mgr_parent_class)->finalize (self_object);
@@ -178,8 +178,8 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   gegl_node_set_need_rect (root, context_id, &self->roi);
 
   /* set up the context's rectangle (breadth first traversal) */
-  gegl_visitor_reset (self->cr_visitor);
-  gegl_visitor_bfs_traverse (self->cr_visitor, GEGL_VISITABLE (root));
+  gegl_visitor_reset (self->need_visitor);
+  gegl_visitor_bfs_traverse (self->need_visitor, GEGL_VISITABLE (root));
 
 #if 0
   if (g_getenv ("GEGL_DEBUG_RECTS") != NULL)

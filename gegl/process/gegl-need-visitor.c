@@ -33,35 +33,35 @@
 #include "gegl-utils.h"
 
 
-static void gegl_cr_visitor_class_init (GeglCRVisitorClass *klass);
-static void gegl_cr_visitor_visit_node (GeglVisitor        *self,
-                                        GeglNode           *node);
+static void gegl_need_visitor_class_init (GeglNeedVisitorClass *klass);
+static void gegl_need_visitor_visit_node (GeglVisitor          *self,
+                                          GeglNode             *node);
 
 
-G_DEFINE_TYPE (GeglCRVisitor, gegl_cr_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglNeedVisitor, gegl_need_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
-gegl_cr_visitor_class_init (GeglCRVisitorClass *klass)
+gegl_need_visitor_class_init (GeglNeedVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_node = gegl_cr_visitor_visit_node;
+  visitor_class->visit_node = gegl_need_visitor_visit_node;
 }
 
 static void
-gegl_cr_visitor_init (GeglCRVisitor *self)
+gegl_need_visitor_init (GeglNeedVisitor *self)
 {
 }
 
 /* sets the context's result_rect and refs */
 static void
-gegl_cr_visitor_visit_node (GeglVisitor *self,
-                            GeglNode    *node)
+gegl_need_visitor_visit_node (GeglVisitor *self,
+                              GeglNode    *node)
 {
   GeglOperationContext *context = gegl_node_get_context (node, self->context_id);
 
-  GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
+  GEGL_VISITOR_CLASS (gegl_need_visitor_parent_class)->visit_node (self, node);
 
   gegl_operation_calc_need_rects (node->operation, self->context_id);
   if (!context->cached)

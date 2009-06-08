@@ -65,7 +65,7 @@ struct _GeglEvalMgr
 
   /* we keep these objects around, they are too expensive to throw away */
   GeglVisitor *prepare_visitor;
-  GeglVisitor *cr_visitor;
+  GeglVisitor *need_visitor;
   GeglVisitor *eval_visitor;
   GeglVisitor *have_visitor;
   GeglVisitor *finish_visitor;

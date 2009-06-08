@@ -16,38 +16,38 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_CR_VISITOR_H__
-#define __GEGL_CR_VISITOR_H__
+#ifndef __GEGL_NEED_VISITOR_H__
+#define __GEGL_NEED_VISITOR_H__
 
 #include "graph/gegl-visitor.h"
 
 G_BEGIN_DECLS
 
 
-#define GEGL_TYPE_CR_VISITOR            (gegl_cr_visitor_get_type ())
-#define GEGL_CR_VISITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CR_VISITOR, GeglCRVisitor))
-#define GEGL_CR_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CR_VISITOR, GeglCRVisitorClass))
-#define GEGL_IS_CR_VISITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CR_VISITOR))
-#define GEGL_IS_CR_VISITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CR_VISITOR))
-#define GEGL_CR_VISITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CR_VISITOR, GeglCRVisitorClass))
+#define GEGL_TYPE_NEED_VISITOR            (gegl_need_visitor_get_type ())
+#define GEGL_NEED_VISITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NEED_VISITOR, GeglNeedVisitor))
+#define GEGL_NEED_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NEED_VISITOR, GeglNeedVisitorClass))
+#define GEGL_IS_NEED_VISITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NEED_VISITOR))
+#define GEGL_IS_NEED_VISITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NEED_VISITOR))
+#define GEGL_NEED_VISITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NEED_VISITOR, GeglNeedVisitorClass))
 
 
-typedef struct _GeglCRVisitorClass GeglCRVisitorClass;
+typedef struct _GeglNeedVisitorClass GeglNeedVisitorClass;
 
-struct _GeglCRVisitor
+struct _GeglNeedVisitor
 {
   GeglVisitor  parent_instance;
 };
 
-struct _GeglCRVisitorClass
+struct _GeglNeedVisitorClass
 {
   GeglVisitorClass  parent_class;
 };
 
 
-GType   gegl_cr_visitor_get_type (void) G_GNUC_CONST;
+GType   gegl_need_visitor_get_type (void) G_GNUC_CONST;
 
 
 G_END_DECLS
 
-#endif /* __GEGL_CR_VISITOR_H__ */
+#endif /* __GEGL_NEED_VISITOR_H__ */
