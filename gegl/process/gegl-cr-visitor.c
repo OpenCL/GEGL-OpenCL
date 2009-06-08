@@ -63,7 +63,7 @@ gegl_cr_visitor_visit_node (GeglVisitor *self,
 
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
-  gegl_operation_calc_source_regions (node->operation, self->context_id);
+  gegl_operation_calc_need_rects (node->operation, self->context_id);
   if (!context->cached)
     {
       gegl_rectangle_intersect (&context->result_rect, &node->have_rect, &context->need_rect);

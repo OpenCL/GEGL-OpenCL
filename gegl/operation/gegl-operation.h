@@ -219,7 +219,7 @@ GParamSpec ** gegl_list_properties (const gchar *operation_type,
 
 /* internal utility functions used by gegl, these should not be used
  * externally */
-gboolean gegl_operation_calc_source_regions  (GeglOperation       *operation,
+gboolean gegl_operation_calc_need_rects      (GeglOperation       *operation,
                                               gpointer             context_id);
 void     gegl_operation_path_prop_changed    (GeglPath            *path,
                                               GeglOperation       *operation);

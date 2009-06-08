@@ -129,11 +129,24 @@ gegl_operation_gtype_cleanup (void)
     }
 }
 
+/**
+ * gegl_operation_set_need_rect:
+ * @operation:
+ * @context_id:
+ * @input_pad_name:
+ * @region:
+ *
+ * Calculates the need rect for the node feeding into @input_pad_name
+ * for the given graph evaluation that is identified by
+ * @context_id. The need rect of a node mathematically depends on the
+ * ROI that is being evaluated and is the area that evaluation of the
+ * ROI depends on for the node in question.
+ **/
 static void
-gegl_operation_set_source_region (GeglOperation        *operation,
-                                  gpointer              context_id,
-                                  const gchar         *input_pad_name,
-                                  const GeglRectangle *region)
+gegl_operation_set_need_rect (GeglOperation       *operation,
+                              gpointer             context_id,
+                              const gchar         *input_pad_name,
+                              const GeglRectangle *region)
 {
   GeglNode     *child;         /* the node which need rect we are affecting */
   GeglRectangle child_need;    /* the need rect of the child */
@@ -185,9 +198,10 @@ gegl_operation_set_source_region (GeglOperation        *operation,
     gegl_node_set_need_rect (child, context_id, &child_need);
   }
 }
+
 gboolean
-gegl_operation_calc_source_regions (GeglOperation *operation,
-                                    gpointer       context_id)
+gegl_operation_calc_need_rects (GeglOperation *operation,
+                                gpointer       context_id)
 {
   GSList          *input_pads;
   GeglOperationContext *context;
@@ -196,14 +210,16 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
   context = gegl_node_get_context (operation->node, context_id);
   request = context->need_rect;
 
-  /* for each input, get_required_for_output use gegl_operation_set_source_region() */
+  /* For each input, do get_required_for_output() then use
+   * gegl_operation_set_need_rect()
+   */
   for (input_pads = operation->node->input_pads;input_pads;input_pads=input_pads->next)
     {
       const gchar *pad_name = gegl_pad_get_name (input_pads->data);
       GeglRectangle rect;
       rect = gegl_operation_get_required_for_output (operation, pad_name, &request); 
 
-      gegl_operation_set_source_region (operation, context_id, pad_name, &rect);
+      gegl_operation_set_need_rect (operation, context_id, pad_name, &rect);
     }
   return TRUE;
 }
