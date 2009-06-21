@@ -26,7 +26,7 @@ install-exec-local: all-local
 
 uninstall-local:
 	for i in $(plugins); do \
-	  $(LIBTOOL) --mode=uninstall $(RM) $(ext_dir)/$$i ; \
+	  $(LIBTOOL) --mode=uninstall $(RM) $(DESTDIR)$(ext_dir)/$$i ; \
 	done
 
 check-local: all-local
