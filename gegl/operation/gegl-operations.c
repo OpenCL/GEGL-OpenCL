@@ -186,10 +186,6 @@ gegl_operation_set_need_rect (GeglOperation       *operation,
             {
               child_context->result_rect = child_need;
               child_context->cached = TRUE;
-              g_object_ref (cache);
-              gegl_operation_context_take_object (child_context,
-                                                  gegl_pad_get_name (output_pad),
-                                                  G_OBJECT (cache));
               child_need.width = 0;
               child_need.height = 0;
             }

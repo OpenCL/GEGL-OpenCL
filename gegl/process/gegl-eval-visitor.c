@@ -73,7 +73,14 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
   if (gegl_pad_is_output (pad))
     {
       /* processing only really happens for output pads */
-      if (!context->cached)
+      if (context->cached)
+        {
+          GEGL_NOTE (GEGL_DEBUG_PROCESS, "Using cache for pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
+          gegl_operation_context_set_object (context,
+                                             gegl_pad_get_name (pad),
+                                             G_OBJECT (node->cache));
+        }
+      else
         {
           glong time      = gegl_ticks ();
           glong babl_time = babl_total_usecs;
@@ -95,10 +102,6 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
                */
               gegl_cache_computed (node->cache, &context->result_rect);
             }
-        }
-      else
-        {
-          GEGL_NOTE (GEGL_DEBUG_PROCESS, "Using cache for pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
         }
     }
   else if (gegl_pad_is_input (pad))
