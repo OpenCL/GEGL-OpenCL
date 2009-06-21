@@ -151,6 +151,7 @@ GeglNode    * gegl_node_get_producer        (GeglNode      *self,
                                              gchar         *pad_name,
                                              gchar        **output_pad);
 GSList      * gegl_node_get_depends_on      (GeglNode      *self);
+void          gegl_node_dump_depends_on     (GeglNode      *self);
 void          gegl_node_set_valist          (GeglNode      *object,
                                              const gchar   *first_property_name,
                                              va_list        var_args);

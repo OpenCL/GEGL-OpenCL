@@ -932,6 +932,23 @@ gegl_node_get_depends_on (GeglNode *self)
   return depends_on;
 }
 
+void
+gegl_node_dump_depends_on (GeglNode *self)
+{
+  GSList *depends_on = gegl_node_get_depends_on (self);
+  GSList *iter       = NULL;
+
+  g_print ("GeglNode %p depends on:\n", self);
+
+  for (iter = depends_on; iter; iter = iter->next)
+    {
+      GeglNode *source_node = depends_on->data;
+      g_print ("  %s\n", gegl_node_get_debug_name (source_node));
+    }
+
+  g_slist_free (depends_on);
+}
+
 static void
 gegl_node_visitable_accept (GeglVisitable *visitable,
                             GeglVisitor   *visitor)
