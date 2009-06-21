@@ -120,6 +120,9 @@ gegl_operation_composer3_process2 (GeglOperation        *operation,
       if (!done)
         {
           success = klass->process (operation, input, aux, aux2, output, result);
+
+          if (output == GEGL_BUFFER (operation->node->cache))
+            gegl_cache_computed (operation->node->cache, result);
         }
       if (input)
          g_object_unref (input);

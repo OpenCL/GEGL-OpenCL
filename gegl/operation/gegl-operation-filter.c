@@ -206,6 +206,10 @@ gegl_operation_filter_process (GeglOperation   *operation,
   output = gegl_operation_context_get_target (context, "output");
     {
       success = klass->process (operation, input, output, result);
+
+      if (output == GEGL_BUFFER (operation->node->cache))
+        gegl_cache_computed (operation->node->cache, result);
+
       if (input != NULL)
         g_object_unref (input);
     }

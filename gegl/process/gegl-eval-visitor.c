@@ -94,14 +94,6 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
 
           gegl_instrument ("process", gegl_node_get_operation (node), time);
           gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
-
-          if (node->cache)
-            {
-              /* if we've got a cache, notify the cache that parts
-               * of it has been computed
-               */
-              gegl_cache_computed (node->cache, &context->result_rect);
-            }
         }
     }
   else if (gegl_pad_is_input (pad))
