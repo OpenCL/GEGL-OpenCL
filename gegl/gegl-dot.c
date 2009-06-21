@@ -39,7 +39,7 @@ void
 gegl_dot_util_add_node (GString  *string,
                         GeglNode *node)
 {
-  g_string_append_printf (string, "op_%p [label=\"", node);
+  g_string_append_printf (string, "op_%p [fontsize=\"10\" label=\"", node);
 
   /* We build the record from top to bottom */
   g_string_append_printf (string, "{");
@@ -297,7 +297,7 @@ gegl_to_dot (GeglNode *node)
 {
   GString *string;
 
-  string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
+  string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\" fontsize = \"10\" ];\n");
 
   if (node->is_graph)
     gegl_dot_add_graph (string, node, "GEGL");
