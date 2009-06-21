@@ -630,13 +630,19 @@ gboolean
 gegl_node_disconnect (GeglNode    *sink,
                       const gchar *sink_pad_name)
 {
+  GeglNode *real_sink = sink;
+
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (sink_pad_name != NULL, FALSE);
 
-  if (gegl_node_pads_exist (sink, sink_pad_name, NULL, NULL))
+  /* For graph nodes we implicitly use the proxy nodes */
+  if (sink->is_graph)
+    real_sink = gegl_node_get_input_proxy (sink, sink_pad_name);
+
+  if (gegl_node_pads_exist (real_sink, sink_pad_name, NULL, NULL))
     {
-      GeglPad        *sink_pad   = gegl_node_get_pad (sink, sink_pad_name);
-      GeglConnection *connection = gegl_node_find_connection (sink, sink_pad);
+      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, sink_pad_name);
+      GeglConnection *connection = gegl_node_find_connection (real_sink, sink_pad);
       GeglNode       *source;
       GeglPad        *source_pad;
 
@@ -661,7 +667,7 @@ gegl_node_disconnect (GeglNode    *sink,
 
       gegl_pad_disconnect (sink_pad, source_pad, connection);
 
-      sink->priv->source_connections = g_slist_remove (sink->priv->source_connections, connection);
+      real_sink->priv->source_connections = g_slist_remove (real_sink->priv->source_connections, connection);
       source->priv->sink_connections = g_slist_remove (source->priv->sink_connections, connection);
 
       gegl_connection_destroy (connection);
