@@ -1994,8 +1994,15 @@ gegl_node_get_pad_proxy (GeglNode    *graph,
   pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-      GeglNode *nop     = g_object_new (GEGL_TYPE_NODE, "operation", "gegl:nop", "name", is_graph_input ? "proxynop-input" : "proxynop-output", NULL);
-      GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input ? "input" : "output");
+      GeglNode *nop      = NULL;
+      GeglPad  *nop_pad  = NULL;
+      gchar    *nop_name = NULL;
+
+      nop_name = g_strconcat ("proxynop-", name, NULL);
+      nop      = g_object_new (GEGL_TYPE_NODE, "operation", "gegl:nop", "name", nop_name, NULL);
+      nop_pad  = gegl_node_get_pad (nop, is_graph_input ? "input" : "output");
+      g_free (nop_name);
+
       gegl_node_add_child (graph, nop);
       g_object_unref (nop); /* our reference is made by the
                                gegl_node_add_child call */
