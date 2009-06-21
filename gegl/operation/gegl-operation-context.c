@@ -237,6 +237,16 @@ void gegl_operation_context_destroy (GeglOperationContext *self)
   g_slice_free (GeglOperationContext, self);
 }
 
+void
+gegl_operation_context_set_object (GeglOperationContext *context,
+                                   const gchar          *padname,
+                                   GObject              *data)
+{
+  /* Make it simple, just add an extra ref and then take the object */
+  if (data)
+    g_object_ref (data);
+  gegl_operation_context_take_object (context, padname, data);
+}
 
 void
 gegl_operation_context_take_object (GeglOperationContext *context,
