@@ -570,8 +570,10 @@ gegl_node_connect_from (GeglNode    *sink,
                         GeglNode    *source,
                         const gchar *source_pad_name)
 {
-  GeglNode *real_sink   = sink;
-  GeglNode *real_source = source;
+  GeglNode    *real_sink            = sink;
+  GeglNode    *real_source          = source;
+  const gchar *real_sink_pad_name   = sink_pad_name;
+  const gchar *real_source_pad_name = source_pad_name;
 
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (sink_pad_name != NULL, FALSE);
@@ -580,32 +582,46 @@ gegl_node_connect_from (GeglNode    *sink,
 
   /* For graph nodes we implicitly use the proxy nodes */
   if (sink->is_graph)
-    real_sink = gegl_node_get_input_proxy (sink, "input");
+    {
+      real_sink = gegl_node_get_input_proxy (sink, sink_pad_name);
+
+      /* The name of the input pad of proxynop input nodes is always
+       * "input"
+       */
+      real_sink_pad_name = "input";
+    }
   if (source->is_graph)
-    real_source = gegl_node_get_output_proxy (source, "output");
+    {
+      real_source = gegl_node_get_output_proxy (source, source_pad_name);
+
+      /* The name of the output pad of proxynop output nodes is always
+       * "ouput"
+       */
+      real_source_pad_name = "output";
+    }
 
   {
     GeglPad *pad;
     GeglPad *other_pad = NULL;
 
-    pad = gegl_node_get_pad (real_sink, sink_pad_name);
+    pad = gegl_node_get_pad (real_sink, real_sink_pad_name);
     if (pad)
       other_pad = gegl_pad_get_connected_to (pad);
     else
       {
         g_warning ("%s: Didn't find pad '%s' of '%s'",
-                   G_STRFUNC, sink_pad_name, gegl_node_get_debug_name (real_sink));
+                   G_STRFUNC, real_sink_pad_name, gegl_node_get_debug_name (real_sink));
       }
 
     if (other_pad)
       {
-        gegl_node_disconnect (real_sink, sink_pad_name);
+        gegl_node_disconnect (real_sink, real_sink_pad_name);
       }
   }
-  if (gegl_node_pads_exist (real_sink, sink_pad_name, real_source, source_pad_name))
+  if (gegl_node_pads_exist (real_sink, real_sink_pad_name, real_source, real_source_pad_name))
     {
-      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, sink_pad_name);
-      GeglPad        *source_pad = gegl_node_get_pad (real_source, source_pad_name);
+      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, real_sink_pad_name);
+      GeglPad        *source_pad = gegl_node_get_pad (real_source, real_source_pad_name);
       GeglConnection *connection = gegl_pad_connect (sink_pad,
                                                      source_pad);
 
@@ -630,18 +646,26 @@ gboolean
 gegl_node_disconnect (GeglNode    *sink,
                       const gchar *sink_pad_name)
 {
-  GeglNode *real_sink = sink;
+  GeglNode    *real_sink          = sink;
+  const gchar *real_sink_pad_name = sink_pad_name;
 
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (sink_pad_name != NULL, FALSE);
 
   /* For graph nodes we implicitly use the proxy nodes */
   if (sink->is_graph)
-    real_sink = gegl_node_get_input_proxy (sink, sink_pad_name);
-
-  if (gegl_node_pads_exist (real_sink, sink_pad_name, NULL, NULL))
     {
-      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, sink_pad_name);
+      real_sink = gegl_node_get_input_proxy (sink, sink_pad_name);
+
+      /* The name of the input pad of proxynop input nodes is always
+       * "input"
+       */
+      real_sink_pad_name = "input";
+    }
+
+  if (gegl_node_pads_exist (real_sink, real_sink_pad_name, NULL, NULL))
+    {
+      GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, real_sink_pad_name);
       GeglConnection *connection = gegl_node_find_connection (real_sink, sink_pad);
       GeglNode       *source;
       GeglPad        *source_pad;
