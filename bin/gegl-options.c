@@ -37,7 +37,6 @@ static GeglOptions *opts_new (void)
   o->output   = NULL;
   o->files    = NULL;
   o->file     = NULL;
-  o->delay    = 0.0;
   o->rest     = NULL;
   return o;
 }
@@ -72,12 +71,6 @@ usage (char *application_name)
 "     --verbose   print diagnostics while running\n"
 "      -v\n"
 "\n"
-#if 0
-"     --delay     wait for specified number of seconds before exit\n"
-"                 or number of seconds to wait before iterating the image list\n"
-"     -d\n"
-"\n"
-#endif
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
 "easy testing of filters. Be aware that the default value will be used\n"
@@ -131,14 +124,12 @@ print_opts (GeglOptions *o)
 "\txml:    %s\n"
 "\toutput: %s\n"
 "\trest:   %s\n"
-"\tdelay:  %f\n"
 "\t\n",
     o->mode,
     o->file==NULL?"(null)":o->file,
     o->xml==NULL?"(null)":o->xml,
     o->output==NULL?"(null)":o->output,
-    o->rest==NULL?"":"yes",
-    o->delay
+    o->rest==NULL?"":"yes"
 );
     {
       GList *files = o->files;
@@ -212,11 +203,6 @@ parse_args (int    argc,
             match ("--help")) {
             o->mode = GEGL_RUN_MODE_HELP;
             usage (argv[0]);
-        }
-
-        else if (match ("--delay") ||
-                 match ("-d")) {
-            get_float (o->delay);
         }
 
         else if (match ("--verbose") ||

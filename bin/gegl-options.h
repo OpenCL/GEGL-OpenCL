@@ -48,7 +48,6 @@ struct _GeglOptions
   gboolean     verbose;
   gboolean     fatal_warnings;
 
-  gfloat       delay;
   gboolean     play;
 };
 
