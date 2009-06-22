@@ -418,10 +418,8 @@ gegl_node_add_pad (GeglNode *self,
   g_return_if_fail (GEGL_IS_PAD (pad));
 
   if (gegl_node_get_pad (self, gegl_pad_get_name (pad)))
-    {
-      return;
-    }
-  if (0) g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
+    return;
+
   self->pads = g_slist_prepend (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
