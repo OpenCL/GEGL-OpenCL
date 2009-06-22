@@ -13,7 +13,8 @@ typedef enum {
   GEGL_DEBUG_TILE_BACKEND    = 1 << 3,
   GEGL_DEBUG_PROCESSOR       = 1 << 4,
   GEGL_DEBUG_CACHE           = 1 << 5,
-  GEGL_DEBUG_MISC            = 1 << 6
+  GEGL_DEBUG_MISC            = 1 << 6,
+  GEGL_DEBUG_INVALIDATION    = 1 << 7
 } GeglDebugFlag;
 
 /* only compiled in from gegl-init.c but kept here to
@@ -28,6 +29,7 @@ static const GDebugKey gegl_debug_keys[] = {
   { "buffer-save",   GEGL_DEBUG_BUFFER_SAVE},
   { "tile-backend",  GEGL_DEBUG_TILE_BACKEND},
   { "processor",     GEGL_DEBUG_PROCESSOR},
+  { "invalidation",  GEGL_DEBUG_INVALIDATION},
   { "all",           GEGL_DEBUG_PROCESS|
                      GEGL_DEBUG_BUFFER_LOAD|
                      GEGL_DEBUG_BUFFER_SAVE|

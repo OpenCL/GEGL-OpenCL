@@ -27,6 +27,7 @@
 #include "gegl-types-internal.h"
 
 #include "gegl.h"
+#include "gegl-debug.h"
 #include "gegl-node.h"
 #include "gegl-connection.h"
 #include "gegl-pad.h"
@@ -542,12 +543,11 @@ gegl_node_source_invalidated (GeglNode            *source,
   GeglNode      *destination     = gegl_pad_get_node (destination_pad);
   GeglRectangle  dirty_rect;
 
-  if (0) g_warning ("%s.%s is dirtied from %s (%i,%i %ix%i)",
-                    gegl_node_get_debug_name (destination),
-                    gegl_pad_get_name (destination_pad),
-                    gegl_node_get_debug_name (source),
-                    rect->x, rect->y,
-                    rect->width, rect->height);
+  GEGL_NOTE (GEGL_DEBUG_INVALIDATION, "%s.%s is dirtied from %s (%i,%i %i×%i)",
+             gegl_node_get_debug_name (destination), gegl_pad_get_name (destination_pad),
+             gegl_node_get_debug_name (source),
+             rect->x, rect->y,
+             rect->width, rect->height);
 
   if (destination->operation)
     {
@@ -2013,11 +2013,11 @@ graph_source_invalidated (GeglNode            *source,
   GeglNode      *destination = GEGL_NODE (data);
   GeglRectangle  dirty_rect  = *rect;
 
-  if (0) g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
-                    gegl_node_get_debug_name (destination),
-                    gegl_node_get_debug_name (source),
-                    rect->x, rect->y,
-                    rect->width, rect->height);
+  GEGL_NOTE (GEGL_DEBUG_INVALIDATION, "graph:%s is dirtied from %s (%i,%i %ix%i)",
+             gegl_node_get_debug_name (destination),
+             gegl_node_get_debug_name (source),
+             rect->x, rect->y,
+             rect->width, rect->height);
 
   g_signal_emit (destination, gegl_node_signals[INVALIDATED], 0,
                  &dirty_rect, NULL);
