@@ -212,17 +212,6 @@ static gchar *html_top = "<html>\n<head>\n<title>GEGL operations</title>\n<link 
 "</style>\n</head>\n\n<body>\n<div class='paper'>\n<div class='content'>\n";
 static gchar *html_bottom = "</div>\n</div>\n</body>\n</html>\n";
 
-#if 0
-static void category_menu_item (gpointer key,
-                                gpointer value,
-                                gpointer user_data)
-{
-  gchar    *category = key;
-  if (!strcmp (category, "hidden"))
-    return;
-  g_print ("<li><a href='#cat_%s'>&nbsp;&nbsp;%s</a></li>\n", category, category);
-}
-#endif
 
 static void category_index (gpointer key,
                             gpointer value,

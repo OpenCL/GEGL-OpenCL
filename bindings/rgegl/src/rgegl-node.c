@@ -70,28 +70,6 @@ cnode_get_producer (self, pad_name)
     return Qnil;
 }
 
-#if 0
-static VALUE
-cnode_get_consumer (self, pad_name)
-  VALUE self, pad_name;
-{
-    GeglNode *node;
-    gchar    *pad;
-
-    node = gegl_node_get_consumer (_SELF (self), RVAL2CSTR(pad_name), &pad);
-    if (node)
-      {
-        VALUE     ary;
-        ary = rb_ary_new();
-        rb_ary_push (ary, GOBJ2RVAL(G_OBJECT(node)));
-        rb_ary_push (ary, rb_str_new2(pad));
-        g_free(pad);
-        return ary;
-      }
-    return Qnil;
-}
-#endif
-
 static VALUE
 cnode_get_consumers (self, pad_name)
   VALUE self, pad_name;
@@ -357,37 +335,6 @@ cnode_to_xml (self,
     gchar *xml = gegl_node_to_xml (_SELF (self), RVAL2CSTR(path_root));
     return CSTR2RVAL (xml);
 }
-
-#if 0
-gpointer gegl_node_get_cache (GeglNode *node);
-void gegl_buffer_save (gpointer buffer,
-       const gchar *path,
-       GeglRectangle *roi);
-void gegl_buffer_load (gpointer buffer,
-       const gchar *path);
-
-
-static VALUE
-cnode_save_cache (self,
-                  path)
-  VALUE self, path;
-{
-    /*gpointer cache = gegl_node_get_cache (_SELF (self));
-    gegl_buffer_save (cache, RVAL2CSTR(path), NULL);*/
-    return Qnil;
-}
-
-static VALUE
-cnode_load_cache (self,
-                  path)
-  VALUE self, path;
-{
-    /*gpointer cache = gegl_node_get_cache (_SELF (self));
-    gegl_buffer_load (cache, RVAL2CSTR(path));*/
-    /* FIXME: fix what is legal data for cache (or do it in load?)*/
-    return Qnil;
-}
-#endif
 
 gchar *gegl_to_dot (GeglNode *self);
 

@@ -51,25 +51,6 @@ geglrect_initialize(self, x, y, width, height)
     G_INITIALIZE(self, &new);
     return Qnil;
 }
-#if 0
-static VALUE
-geglrect_intersect(self, other)
-    VALUE self, other;
-{
-    GeglRectangle dest;
-    gboolean ret = gegl_rect_intersect(&dest, _SELF(self), _SELF(other));
-    return ret ? BOXED2RVAL(&dest, GEGL_TYPE_RECTANGLE) : Qnil;
-}
-
-static VALUE
-geglrect_union(self, other)
-    VALUE self, other;
-{
-    GeglRectangle dest;
-    gegl_rect_bounding_box (&dest, _SELF(self), _SELF(other));
-    return BOXED2RVAL(&dest, GEGL_TYPE_RECTANGLE);
-}
-#endif
 
 /* Struct accessors */
 static VALUE
@@ -147,12 +128,6 @@ Init_gegl_rectangle(VALUE module)
     VALUE geglRectangle = G_DEF_CLASS(GEGL_TYPE_RECTANGLE, "Rectangle", module);
 
     rb_define_method(geglRectangle, "initialize", geglrect_initialize, 4);
-#if 0
-    rb_define_method(geglRectangle, "intersect", geglrect_intersect, 1);
-    rb_define_alias(geglRectangle, "&", "intersect");
-    rb_define_method(geglRectangle, "union", geglrect_union, 1);
-    rb_define_alias(geglRectangle, "|", "union");
-#endif
     rb_define_method(geglRectangle, "x", geglrect_x, 0);
     rb_define_method(geglRectangle, "y", geglrect_y, 0);
     rb_define_method(geglRectangle, "width", geglrect_w, 0);

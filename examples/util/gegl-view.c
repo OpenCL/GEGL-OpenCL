@@ -235,9 +235,6 @@ set_property (GObject      *gobject,
     case PROP_NODE:
       if (priv->node)
         {
-#if 0
-          gegl_node_disable_cache (priv->node); /* FIXME: should we really? */
-#endif
           g_object_unref (priv->node);
         }
 
@@ -507,13 +504,6 @@ gegl_view_repaint (GeglView *view)
   roi.y = priv->y / priv->scale;
   roi.width = ceil(widget->allocation.width / priv->scale+1);
   roi.height = ceil(widget->allocation.height / priv->scale+1);
-
-#if 0
-  /* forget all already queued repaints */
-  gegl_cache_dequeue (gegl_node_get_cache (priv->node), NULL);
-  /* then enqueue our selves */
-  gegl_cache_enqueue (gegl_node_get_cache (priv->node), roi);
-#endif
 
   if (priv->monitor_id == 0)
     {
