@@ -70,7 +70,6 @@ struct _GeglProcessor
   GeglOperationContext *context;
 
   GeglRegion      *valid_region;     /* used when doing unbuffered rendering */
-  GeglRegion      *queued_region;
   GSList          *dirty_rectangles;
   gint             chunk_size;
 
@@ -129,13 +128,11 @@ gegl_processor_init (GeglProcessor *processor)
   processor->node             = NULL;
   processor->input            = NULL;
   processor->context          = NULL;
-  processor->queued_region    = NULL;
   processor->dirty_rectangles = NULL;
   processor->chunk_size       = 128 * 128;
 }
 
-/* Initialises the fields processor->input, processor->valid_region
- * and processor->queued_region.
+/* Initialises the fields processor->input and processor->valid_region
  */
 static GObject *
 gegl_processor_constructor (GType                  type,
@@ -174,8 +171,6 @@ gegl_processor_constructor (GType                  type,
 
   g_object_ref (processor->input);
 
-  processor->queued_region = gegl_region_new ();
-
   return object;
 }
 
@@ -192,11 +187,6 @@ gegl_processor_finalize (GObject *self_object)
   if (processor->input)
     {
       g_object_unref (processor->input);
-    }
-
-  if (processor->queued_region)
-    {
-      gegl_region_destroy (processor->queued_region);
     }
 
   if (processor->valid_region)
@@ -548,10 +538,7 @@ area_left (GeglRegion    *area,
 static gboolean
 gegl_processor_is_rendered (GeglProcessor *processor)
 {
-  if (gegl_region_empty (processor->queued_region) &&
-      processor->dirty_rectangles == NULL)
-    return TRUE;
-  return FALSE;
+  return processor->dirty_rectangles == NULL;
 }
 
 static gdouble
@@ -619,6 +606,7 @@ gegl_processor_render (GeglProcessor *processor,
           {
             gint valid;
             gint wanted;
+
             if (rectangle)
               {
                 wanted = rect_area (rectangle);
@@ -627,8 +615,9 @@ gegl_processor_render (GeglProcessor *processor,
             else
               {
                 valid  = region_area (valid_region);
-                wanted = region_area (processor->queued_region);
+                wanted = 0;
               }
+
             if (wanted == 0)
               {
                 *progress = 1.0;
@@ -637,7 +626,6 @@ gegl_processor_render (GeglProcessor *processor,
               {
                 *progress = (double) valid / wanted;
               }
-            wanted = 1;
           }
 
         return more_work;
@@ -659,10 +647,6 @@ gegl_processor_render (GeglProcessor *processor,
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
           GeglRectangle  roi = rectangles[i];
-          GeglRegion    *tr = gegl_region_rectangle (&roi);
-          gegl_region_subtract (processor->queued_region, tr);
-          gegl_region_destroy (tr);
-
           processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
                                                          g_slice_dup (GeglRectangle, &roi));
         }
@@ -678,31 +662,6 @@ gegl_processor_render (GeglProcessor *processor,
         }
 
       return FALSE;
-    }
-  else if (!gegl_region_empty (processor->queued_region) &&
-           !processor->dirty_rectangles)
-    { /* XXX: this branch of the else can probably be removed if gegl-processors
-         should only work with rectangular queued regions
-       */
-      GeglRectangle *rectangles;
-      gint           n_rectangles;
-      gint           i;
-
-      gegl_region_get_rectangles (processor->queued_region, &rectangles,
-                                  &n_rectangles);
-
-      for (i = 0; i < n_rectangles && i < 1; i++)
-        {
-          GeglRectangle  roi = rectangles[i];
-          GeglRegion    *tr = gegl_region_rectangle (&roi);
-          gegl_region_subtract (processor->queued_region, tr);
-          gegl_region_destroy (tr);
-
-          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
-                                                         g_slice_dup (GeglRectangle, &roi));
-        }
-
-      g_free (rectangles);
     }
 
   if (progress)
