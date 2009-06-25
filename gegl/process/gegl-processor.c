@@ -54,9 +54,8 @@ static void      gegl_processor_get_property (GObject               *gobject,
                                               guint                  prop_id,
                                               GValue                *value,
                                               GParamSpec            *pspec);
-static GObject * gegl_processor_constructor  (GType                  type,
-                                              guint                  n_params,
-                                              GObjectConstructParam *params);
+static void      gegl_processor_set_node     (GeglProcessor         *processor,
+                                              GeglNode              *node);
 static gdouble   gegl_processor_progress     (GeglProcessor         *processor);
 static gint      gegl_processor_get_band_size(gint                   size) G_GNUC_CONST;
 
@@ -88,7 +87,6 @@ gegl_processor_class_init (GeglProcessorClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->finalize     = gegl_processor_finalize;
-  gobject_class->constructor  = gegl_processor_constructor;
   gobject_class->set_property = gegl_processor_set_property;
   gobject_class->get_property = gegl_processor_get_property;
 
@@ -132,48 +130,6 @@ gegl_processor_init (GeglProcessor *processor)
   processor->chunk_size       = 128 * 128;
 }
 
-/* Initialises the fields processor->input and processor->valid_region
- */
-static GObject *
-gegl_processor_constructor (GType                  type,
-                            guint                  n_params,
-                            GObjectConstructParam *params)
-{
-  GObject       *object;
-  GeglProcessor *processor;
-
-  object    = G_OBJECT_CLASS (gegl_processor_parent_class)->constructor (type, n_params, params);
-  processor = GEGL_PROCESSOR (object);
-
-  /* if the processor's node is a sink operation then get the producer node
-   * and set up the region (unless all is going to be needed) */
-  if (processor->node->operation &&
-      g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
-                   GEGL_TYPE_OPERATION_SINK))
-    {
-      processor->input = gegl_node_get_producer (processor->node, "input", NULL);
-      if (!gegl_operation_sink_needs_full (processor->node->operation))
-        {
-          processor->valid_region = gegl_region_new ();
-        }
-      else
-        {
-          processor->valid_region = NULL;
-        }
-    }
-  /* If the processor's node is not a sink operation, then just use it as
-   * an input, and set the region to NULL */
-  else
-    {
-      processor->input = processor->node;
-      processor->valid_region = NULL;
-    }
-
-  g_object_ref (processor->input);
-
-  return object;
-}
-
 static void
 gegl_processor_finalize (GObject *self_object)
 {
@@ -208,11 +164,7 @@ gegl_processor_set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_NODE:
-        if (self->node)
-          {
-            g_object_unref (self->node);
-          }
-        self->node = GEGL_NODE (g_value_dup_object (value));
+        gegl_processor_set_node (self, g_value_get_object (value));
         break;
 
       case PROP_CHUNK_SIZE:
@@ -258,6 +210,43 @@ gegl_processor_get_property (GObject    *gobject,
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
     }
+}
+
+static void
+gegl_processor_set_node (GeglProcessor *processor,
+                         GeglNode      *node)
+{
+  g_return_if_fail (GEGL_IS_NODE (node));
+
+  if (processor->node)
+    g_object_unref (processor->node);
+  processor->node = g_object_ref (node);
+
+  /* if the processor's node is a sink operation then get the producer node
+   * and set up the region (unless all is going to be needed) */
+  if (processor->node->operation &&
+      g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
+                   GEGL_TYPE_OPERATION_SINK))
+    {
+      processor->input = gegl_node_get_producer (processor->node, "input", NULL);
+      if (!gegl_operation_sink_needs_full (processor->node->operation))
+        {
+          processor->valid_region = gegl_region_new ();
+        }
+      else
+        {
+          processor->valid_region = NULL;
+        }
+    }
+  /* If the processor's node is not a sink operation, then just use it as
+   * an input, and set the region to NULL */
+  else
+    {
+      processor->input = processor->node;
+      processor->valid_region = NULL;
+    }
+
+  g_object_ref (processor->input);
 }
 
 /* Sets the processor->rectangle to the given rectangle (or the node bounding
