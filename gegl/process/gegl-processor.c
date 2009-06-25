@@ -222,31 +222,21 @@ gegl_processor_set_node (GeglProcessor *processor,
     g_object_unref (processor->node);
   processor->node = g_object_ref (node);
 
-  /* if the processor's node is a sink operation then get the producer node
-   * and set up the region (unless all is going to be needed) */
-  if (processor->node->operation &&
-      g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
-                   GEGL_TYPE_OPERATION_SINK))
+  if (processor->valid_region)
+    gegl_region_destroy (processor->valid_region);
+  processor->valid_region = gegl_region_new ();
+
+  /* Sinks doesn't produce any data, so we need to use the source
+   * node as input in that case
+   */
+  if (GEGL_IS_OPERATION_SINK (node->operation))
     {
-      processor->input = gegl_node_get_producer (processor->node, "input", NULL);
-      if (!gegl_operation_sink_needs_full (processor->node->operation))
-        {
-          processor->valid_region = gegl_region_new ();
-        }
-      else
-        {
-          processor->valid_region = NULL;
-        }
+      processor->input = g_object_ref (gegl_node_get_producer (processor->node, "input", NULL));
     }
-  /* If the processor's node is not a sink operation, then just use it as
-   * an input, and set the region to NULL */
   else
     {
-      processor->input = processor->node;
-      processor->valid_region = NULL;
+      processor->input = g_object_ref (processor->node);
     }
-
-  g_object_ref (processor->input);
 }
 
 /* Sets the processor->rectangle to the given rectangle (or the node bounding
@@ -443,13 +433,13 @@ render_rectangle (GeglProcessor *processor)
         {
           /* only do work if the rectangle is not completely inside the valid
            * region of the cache */
-          if (gegl_region_rect_in (cache->valid_region, dr) !=
+          if (gegl_region_rect_in (processor->valid_region, dr) !=
               GEGL_OVERLAP_RECTANGLE_IN)
             {
               /* create a buffer and initialise it */
               guchar *buf;
 
-              gegl_region_union_with_rect (cache->valid_region, dr);
+              gegl_region_union_with_rect (processor->valid_region, dr);
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
 
@@ -533,22 +523,12 @@ gegl_processor_is_rendered (GeglProcessor *processor)
 static gdouble
 gegl_processor_progress (GeglProcessor *processor)
 {
-  GeglRegion *valid_region;
-  gint        valid;
-  gint        wanted;
-  gdouble     ret;
-
-  if (processor->valid_region)
-    {
-      valid_region = processor->valid_region;
-    }
-  else
-    {
-      valid_region = gegl_node_get_cache (processor->input)->valid_region;
-    }
+  gint    valid;
+  gint    wanted;
+  gdouble ret;
 
   wanted = rect_area (&(processor->rectangle));
-  valid  = wanted - area_left (valid_region, &(processor->rectangle));
+  valid  = wanted - area_left (processor->valid_region, &(processor->rectangle));
   if (wanted == 0)
     {
       if (gegl_processor_is_rendered (processor))
@@ -575,17 +555,6 @@ gegl_processor_render (GeglProcessor *processor,
                        GeglRectangle *rectangle,
                        gdouble       *progress)
 {
-  GeglRegion *valid_region;
-
-  if (processor->valid_region)
-    {
-      valid_region = processor->valid_region;
-    }
-  else
-    {
-      valid_region = gegl_node_get_cache (processor->input)->valid_region;
-    }
-
   {
     gboolean more_work = render_rectangle (processor);
 
@@ -599,11 +568,11 @@ gegl_processor_render (GeglProcessor *processor,
             if (rectangle)
               {
                 wanted = rect_area (rectangle);
-                valid  = wanted - area_left (valid_region, rectangle);
+                valid  = wanted - area_left (processor->valid_region, rectangle);
               }
             else
               {
-                valid  = region_area (valid_region);
+                valid  = region_area (processor->valid_region);
                 wanted = 0;
               }
 
@@ -629,7 +598,7 @@ gegl_processor_render (GeglProcessor *processor,
       gint           n_rectangles;
       gint           i;
 
-      gegl_region_subtract (region, valid_region);
+      gegl_region_subtract (region, processor->valid_region);
       gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
       gegl_region_destroy (region);
 
@@ -645,7 +614,7 @@ gegl_processor_render (GeglProcessor *processor,
       if (n_rectangles != 0)
         {
           if (progress)
-            *progress = 1.0 - ((double) area_left (valid_region, rectangle) /
+            *progress = 1.0 - ((double) area_left (processor->valid_region, rectangle) /
                                rect_area (rectangle));
           return TRUE;
         }
