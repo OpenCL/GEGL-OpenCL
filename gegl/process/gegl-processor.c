@@ -285,6 +285,14 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
         }
       g_slist_free (processor->dirty_rectangles);
       processor->dirty_rectangles = NULL;
+
+      /* We assume that the GeglProcessor client keeps track of dirty
+       * regions for us, so just clear the valid_region when the rect
+       * changes
+       */
+      if (processor->valid_region)
+        gegl_region_destroy (processor->valid_region);
+      processor->valid_region = gegl_region_new ();
     }
 
   /* if the node's operation is a sink and it needs the full content then
