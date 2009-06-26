@@ -217,6 +217,7 @@ gegl_processor_set_node (GeglProcessor *processor,
                          GeglNode      *node)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
+  g_return_if_fail (GEGL_IS_OPERATION (node->operation));
 
   if (processor->node)
     g_object_unref (processor->node);
