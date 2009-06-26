@@ -239,8 +239,11 @@ gegl_processor_set_node (GeglProcessor *processor,
     }
 }
 
-/* Sets the processor->rectangle to the given rectangle (or the node bounding
- * box if rectangle is NULL) and removes any dirty_rectangles */
+/* Sets the processor->rectangle to the given rectangle (or the node
+ * bounding box if rectangle is NULL) and removes any
+ * dirty_rectangles, then updates node context_id with result rect and
+ * need rect
+ */
 void
 gegl_processor_set_rectangle (GeglProcessor       *processor,
                               const GeglRectangle *rectangle)
@@ -253,6 +256,10 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       input_bounding_box = gegl_node_get_bounding_box (processor->input);
       rectangle          = &input_bounding_box;
     }
+
+  GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_processor_set_rectangle() node = %s rectangle = %d, %d %d×%d\n",
+             gegl_node_get_debug_name (processor->node),
+             rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
   /* if the processor's rectangle isn't already set to the node's bounding box,
    * then set it and remove processor->dirty_rectangles (set to NULL)  */
@@ -276,58 +283,45 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
           g_slice_free (GeglRectangle, iter->data);
         }
       g_slist_free (processor->dirty_rectangles);
-
       processor->dirty_rectangles = NULL;
     }
-}
-
-/* creates a new processor and sets up it's context (if the node is
- * a operation sink wich needs the full content */
-GeglProcessor *
-gegl_node_new_processor (GeglNode            *node,
-                         const GeglRectangle *rectangle)
-{
-  GeglProcessor *processor;
-
-  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
-
-  processor = g_object_new (GEGL_TYPE_PROCESSOR,
-                            "node",      node,
-                            "rectangle", rectangle,
-                            NULL);
-
-  if (rectangle)
-    GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_node_new_processor() node = %s rectangle = %d, %d %d×%d\n",
-               gegl_node_get_debug_name (node),
-               rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
   /* if the node's operation is a sink and it needs the full content then
    * a context will be set up together with a cache and
    * needed and result rectangles */
-  if (node->operation                          &&
-      GEGL_IS_OPERATION_SINK (node->operation) &&
-      gegl_operation_sink_needs_full (node->operation))
+  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
+      gegl_operation_sink_needs_full (processor->node->operation))
     {
       GeglCache *cache;
+      GValue     value = { 0, };
 
       cache = gegl_node_get_cache (processor->input);
 
-      processor->context = gegl_node_add_context (node, cache);
-      {
-        GValue value = { 0, };
-        g_value_init (&value, GEGL_TYPE_BUFFER);
-        g_value_set_object (&value, cache);
-        gegl_operation_context_set_property (processor->context, "input", &value);
-        g_value_unset (&value);
-      }
+      if (!gegl_node_get_context (processor->node, cache))
+        processor->context = gegl_node_add_context (processor->node, cache);
+
+      g_value_init (&value, GEGL_TYPE_BUFFER);
+      g_value_set_object (&value, cache);
+      gegl_operation_context_set_property (processor->context, "input", &value);
+      g_value_unset (&value);
 
       gegl_operation_context_set_result_rect (processor->context,
                                               &processor->rectangle);
       gegl_operation_context_set_need_rect   (processor->context,
                                               &processor->rectangle);
     }
+}
 
-  return processor;
+GeglProcessor *
+gegl_node_new_processor (GeglNode            *node,
+                         const GeglRectangle *rectangle)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
+  return g_object_new (GEGL_TYPE_PROCESSOR,
+                       "node",      node,
+                       "rectangle", rectangle,
+                       NULL);
 }
 
 /* Will generate band_sizes that are adapted to the size of the tiles */
