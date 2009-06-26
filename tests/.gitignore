@@ -4,6 +4,7 @@
 /.libs
 /Makefile
 /Makefile.in
+/test-change-processor-rect*
+/test-color-op*
 /test-gegl-rectangle*
 /test-proxynop-processing*
-/test-color-op*
