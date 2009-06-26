@@ -301,10 +301,6 @@ gegl_node_new_processor (GeglNode            *node,
                gegl_node_get_debug_name (node),
                rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
-  /* FIXME: Look for what pads that are available rather than looking
-   * at what type of operation we are dealing with
-   */
-
   /* if the node's operation is a sink and it needs the full content then
    * a context will be set up together with a cache and
    * needed and result rectangles */
