@@ -32,9 +32,12 @@ Changes in GEGL 0.1.0
    documentation
 
 Contributions from:
-  Øyvind Kolås, Sven Neumann, Étienne Bersac, Hubert Figuiere,
-  Martin Nordholts, Nicolas Robidoux, Ruben Vermeersch, Kevin Cozens,
-  Manish Singh, Gary V. Vaughan and Henrik Akesson.
+  Øyvind Kolås, Sven Neumann, Étienne Bersac, Hubert Figuiere, Martin
+  Nordholts, Nicolas Robidoux, Michael Natterer, Ruben Vermeersch,
+  Kevin Cozens, Manish Singh, Gary V. Vaughan, James Legg,
+  Henrik Åkesson, Fryderyk Dziarmagowski, Ozan Caglayan and
+  Tobias Mueller.
+
 
 Changes in GEGL 0.0.22
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
