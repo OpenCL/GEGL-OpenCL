@@ -27,6 +27,7 @@ endif
 
 if HAVE_LUA
 ops += gluas.la
+gluas_la_SOURCES = gluas.c
 gluas_la_LIBADD  = $(op_libs) $(LUA_LIBS)
 gluas_la_CFLAGS  = $(LUA_CFLAGS)
 endif
