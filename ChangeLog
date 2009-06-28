@@ -1,4 +1,50 @@
 Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 21:16:59 2009 +0200
+
+    Update ChangeLog
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 21:08:24 2009 +0200
+
+    Bump version to 0.1.0
+    
+    Bump version to 0.1.0 and make sure the link name remains `gegl-0.0'.
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Thu May 21 09:45:47 2009 +0200
+
+    Bump required babl version to 0.1.0
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue Jun 30 21:35:14 2009 +0200
+
+    docs: Add missing files to EXTRA_DIST
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue Jun 30 21:32:09 2009 +0200
+
+    docs: Delete unused images
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 19:18:41 2009 +0200
+
+    operations: Explicitly specify op sources (cont.)
+    
+    Explicitly specify op sources as it appears as if automake 1.11 does
+    not work the same as previous versions with regards to figuring out
+    the source files.
+
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 14:13:43 2009 +0200
+
+    Update ChangeLog with all git commits up until now
+    
+    Update ChangeLog with all git commits up until now. We will keep this
+    file up to date until the 0.1.0 release, after which the file will not
+    be version controlled any longer and instead generated for each
+    subsequentlly released tarball.
+
+Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 28 09:41:24 2009 +0200
 
     Update AUTHORS and 'Contributions from' for 0.1.0
@@ -7,7 +53,6 @@ Date:   Sun Jun 28 09:41:24 2009 +0200
  NEWS    |    9 ++++++---
  2 files changed, 9 insertions(+), 4 deletions(-)
 
-commit 19d847a5ad0d07ab182d39c36090d7ae11a5f8f2
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 28 09:13:47 2009 +0200
 
@@ -20,7 +65,6 @@ Date:   Sun Jun 28 09:13:47 2009 +0200
  NEWS |   11 -----------
  1 files changed, 0 insertions(+), 11 deletions(-)
 
-commit 5ac18049dfd53861293627f5291d08e541302041
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 28 08:57:03 2009 +0200
 
@@ -33,7 +77,6 @@ Date:   Sun Jun 28 08:57:03 2009 +0200
  operations/external/Makefile.am |   13 +++++++++++++
  1 files changed, 13 insertions(+), 0 deletions(-)
 
-commit c2c78ec8891c0574d95aedf75625402a899b860d
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 28 08:37:14 2009 +0200
 
@@ -52,7 +95,6 @@ Date:   Sun Jun 28 08:37:14 2009 +0200
  tools/gobj2dot.rb          |    2 +-
  11 files changed, 43 insertions(+), 50 deletions(-)
 
-commit 70c1187737149b2876f518aa1aab87bf8d416ad9
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 19:38:00 2009 +0200
 
@@ -61,7 +103,6 @@ Date:   Fri Jun 26 19:38:00 2009 +0200
  gegl.doap |   18 ++++++++++++++++++
  1 files changed, 18 insertions(+), 0 deletions(-)
 
-commit 0ed57a05daa8b2008dc3e08e6e3b20d5e619b717
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 08:15:10 2009 +0200
 
@@ -74,7 +115,6 @@ Date:   Fri Jun 26 08:15:10 2009 +0200
  gegl/process/gegl-processor.c |    8 ++++++++
  1 files changed, 8 insertions(+), 0 deletions(-)
 
-commit 5811d4f55ea45c90bc27d05908a86b6cd17b0a54
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 07:32:29 2009 +0200
 
@@ -88,7 +128,6 @@ Date:   Fri Jun 26 07:32:29 2009 +0200
  tests/test-change-processor-rect.c |  148 ++++++++++++++++++++++++++++++++++++
  3 files changed, 152 insertions(+), 2 deletions(-)
 
-commit 31db54104697e5b7a35a7a23430911dc705de6d1
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 07:11:49 2009 +0200
 
@@ -97,7 +136,6 @@ Date:   Fri Jun 26 07:11:49 2009 +0200
  gegl/process/gegl-processor.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-commit 711d44c3e6170ed70d25d44dbf1de293e084ac9a
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 07:11:06 2009 +0200
 
@@ -109,7 +147,6 @@ Date:   Fri Jun 26 07:11:06 2009 +0200
  gegl/process/gegl-processor.c |   66 ++++++++++++++++++----------------------
  1 files changed, 30 insertions(+), 36 deletions(-)
 
-commit 22e210cb6b1c699a4a721261be73bbc215c78777
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri Jun 26 06:49:48 2009 +0200
 
@@ -118,7 +155,6 @@ Date:   Fri Jun 26 06:49:48 2009 +0200
  gegl/process/gegl-processor.c |    4 ----
  1 files changed, 0 insertions(+), 4 deletions(-)
 
-commit 527013b16bfcd707cfd8935e0bd432258b0203aa
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Thu Jun 25 22:47:39 2009 +0200
 
@@ -131,7 +167,6 @@ Date:   Thu Jun 25 22:47:39 2009 +0200
  gegl/process/gegl-processor.c |   71 +++++++++++-----------------------------
  1 files changed, 20 insertions(+), 51 deletions(-)
 
-commit 29c4ce79a67cfe91cd37ccf76a9b43cdef9f6931
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Thu Jun 25 19:05:28 2009 +0200
 
@@ -145,7 +180,6 @@ Date:   Thu Jun 25 19:05:28 2009 +0200
  gegl/process/gegl-processor.c |   91 ++++++++++++++++++-----------------------
  1 files changed, 40 insertions(+), 51 deletions(-)
 
-commit aed1f5bcfbc6fc7b94cc73d95e292f1ff81e8bd9
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Thu Jun 25 08:05:36 2009 +0200
 
@@ -157,7 +191,6 @@ Date:   Thu Jun 25 08:05:36 2009 +0200
  gegl/process/gegl-processor.c |   51 ++++-------------------------------------
  1 files changed, 5 insertions(+), 46 deletions(-)
 
-commit 1fe1708715f09506ffc1a80606f4311963ba9382
 Author: Tobias Mueller <tobiasmue@gnome.org>
 Date:   Tue Jun 23 15:01:21 2009 +0200
 
@@ -174,7 +207,6 @@ Date:   Tue Jun 23 15:01:21 2009 +0200
  operations/external/v4lutils/v4lutils.h |    4 ++--
  7 files changed, 15 insertions(+), 15 deletions(-)
 
-commit 35ab56189a8b80f8871c40c83fdf1b9a848a9011
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 22 21:01:54 2009 +0200
 
@@ -187,7 +219,6 @@ Date:   Mon Jun 22 21:01:54 2009 +0200
  tools/operation_reference.c          |   11 --
  5 files changed, 0 insertions(+), 398 deletions(-)
 
-commit 0448fc96a10703f7f6e50f8e5c996df631fbdec3
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 22 20:17:10 2009 +0200
 
@@ -197,7 +228,6 @@ Date:   Mon Jun 22 20:17:10 2009 +0200
  bin/gegl-options.h |    1 -
  2 files changed, 1 insertions(+), 16 deletions(-)
 
-commit 8aa78e18183ecab71ad87d0c0806878f02a804da
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 22 20:04:51 2009 +0200
 
@@ -206,7 +236,6 @@ Date:   Mon Jun 22 20:04:51 2009 +0200
  gegl/graph/gegl-node.c |    6 ++----
  1 files changed, 2 insertions(+), 4 deletions(-)
 
-commit 269a7b2013ccbe602ab49a1da1418f8fa62159ab
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 22 07:13:20 2009 +0200
 
@@ -219,7 +248,6 @@ Date:   Mon Jun 22 07:13:20 2009 +0200
  gegl/graph/gegl-node.c |   22 +++++++++++-----------
  2 files changed, 14 insertions(+), 12 deletions(-)
 
-commit 5c7509e48a7c55f8b2d3d875b427bf67b5efcaa7
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 22:34:00 2009 +0200
 
@@ -231,7 +259,6 @@ Date:   Sun Jun 21 22:34:00 2009 +0200
  operations/Makefile-operations.am |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-commit 3d2013e4d348088546d4ed2900367677ef1bb578
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 22:04:45 2009 +0200
 
@@ -243,7 +270,6 @@ Date:   Sun Jun 21 22:04:45 2009 +0200
  gegl/graph/gegl-node.h |    1 +
  2 files changed, 18 insertions(+), 0 deletions(-)
 
-commit 39cf015ffecdca37f9d60855cd6c3b8068bc0cc6
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 21:29:57 2009 +0200
 
@@ -255,7 +281,6 @@ Date:   Sun Jun 21 21:29:57 2009 +0200
  gegl/graph/gegl-node.c |   52 +++++++++++++++++++++++++++++++++++------------
  1 files changed, 38 insertions(+), 14 deletions(-)
 
-commit 5a1f7de27f8cd2c8e315e1e975534a19d9c86a12
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 21:28:48 2009 +0200
 
@@ -264,7 +289,6 @@ Date:   Sun Jun 21 21:28:48 2009 +0200
  gegl/process/gegl-processor.c |    7 ++++---
  1 files changed, 4 insertions(+), 3 deletions(-)
 
-commit c80eaf3662394c2e401947758c8ab9f704e37eb4
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 21:28:17 2009 +0200
 
@@ -273,7 +297,6 @@ Date:   Sun Jun 21 21:28:17 2009 +0200
  gegl/gegl-dot.c |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-commit 563c539f2ac537360f90377fbbee8590f3e11bdc
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 20:49:05 2009 +0200
 
@@ -285,7 +308,6 @@ Date:   Sun Jun 21 20:49:05 2009 +0200
  gegl/graph/gegl-node.c |   11 +++++++++--
  1 files changed, 9 insertions(+), 2 deletions(-)
 
-commit 3767716df85d5751a312773aff8c757b02bea519
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 19:54:32 2009 +0200
 
@@ -297,7 +319,6 @@ Date:   Sun Jun 21 19:54:32 2009 +0200
  gegl/graph/gegl-node.c |   14 ++++++++++----
  1 files changed, 10 insertions(+), 4 deletions(-)
 
-commit a3907b441b1f4bd167be85c2ffa90bb3018e9ad6
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 18:40:21 2009 +0200
 
@@ -322,7 +343,6 @@ Date:   Sun Jun 21 18:40:21 2009 +0200
  gegl/process/gegl-eval-visitor.c                |    8 --------
  7 files changed, 21 insertions(+), 8 deletions(-)
 
-commit 4c02060d3007378a4097f5439a32affcf58e2d71
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 18:25:48 2009 +0200
 
@@ -336,7 +356,6 @@ Date:   Sun Jun 21 18:25:48 2009 +0200
  gegl/process/gegl-eval-visitor.c |   13 ++++++++-----
  2 files changed, 8 insertions(+), 9 deletions(-)
 
-commit 77bcd97fd2d2773a26de81ea584a8b0c7f9956b6
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 21 17:57:53 2009 +0200
 
@@ -346,7 +365,6 @@ Date:   Sun Jun 21 17:57:53 2009 +0200
  gegl/operation/gegl-operation-context.h |    3 +++
  2 files changed, 13 insertions(+), 0 deletions(-)
 
-commit da11889c92ab438c7c95b9034f1a56ad24fb2826
 Author: Michael Schumacher <schumaml@gmx.de>
 Date:   Sat Jun 13 17:47:43 2009 +0200
 
@@ -357,7 +375,6 @@ Date:   Sat Jun 13 17:47:43 2009 +0200
  operations/external/Makefile.am |   12 +++++++-----
  1 files changed, 7 insertions(+), 5 deletions(-)
 
-commit d11701ef733fbb68fb2111517795ce719aba534b
 Author: Øyvind Kolås <pippin@gimp.org>
 Date:   Mon Jun 8 21:54:24 2009 +0100
 
@@ -366,7 +383,6 @@ Date:   Mon Jun 8 21:54:24 2009 +0100
  gegl/buffer/gegl-tile-handler-cache.c |    6 +++---
  1 files changed, 3 insertions(+), 3 deletions(-)
 
-commit 2975ba4a09ca23920338507241c55c3d0535268c
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 8 19:31:50 2009 +0200
 
@@ -381,7 +397,6 @@ Date:   Mon Jun 8 19:31:50 2009 +0200
  gegl/process/gegl-need-visitor.h |   26 +++++++++++++-------------
  4 files changed, 28 insertions(+), 28 deletions(-)
 
-commit de9b4b3eb9e58888fcba19866b4e7245901a87cf
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 8 19:26:52 2009 +0200
 
@@ -399,7 +414,6 @@ Date:   Mon Jun 8 19:26:52 2009 +0200
  gegl/process/gegl-need-visitor.h |   53 ++++++++++++++++++++++++
  6 files changed, 138 insertions(+), 138 deletions(-)
 
-commit b345c0bff7a3a8683ab4525072fba3a025a5eb87
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Mon Jun 8 19:16:22 2009 +0200
 
@@ -424,7 +438,6 @@ Date:   Mon Jun 8 19:16:22 2009 +0200
  gegl/process/gegl-cr-visitor.c   |    2 +-
  3 files changed, 26 insertions(+), 10 deletions(-)
 
-commit adf2a8e6f6684ea18b9e6e9e53d6e4ad646100a5
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sun Jun 7 22:09:29 2009 +0200
 
@@ -434,7 +447,6 @@ Date:   Sun Jun 7 22:09:29 2009 +0200
  gegl/process/gegl-processor.c  |    5 +++++
  2 files changed, 14 insertions(+), 0 deletions(-)
 
-commit 0083d500536c304f22d56b7cf452d24b8fd16563
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sat Jun 6 17:01:32 2009 +0200
 
@@ -446,7 +458,6 @@ Date:   Sat Jun 6 17:01:32 2009 +0200
  gegl/process/gegl-eval-visitor.c |    4 ++++
  1 files changed, 4 insertions(+), 0 deletions(-)
 
-commit 6da2855f87ceafc78228fb556e6698837b890c5d
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sat Jun 6 16:14:30 2009 +0200
 
@@ -459,7 +470,6 @@ Date:   Sat Jun 6 16:14:30 2009 +0200
  gegl/process/gegl-eval-visitor.c |    3 +++
  1 files changed, 3 insertions(+), 0 deletions(-)
 
-commit ec67736766fb81fbe06855d261358514714faa73
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue Jun 2 22:25:38 2009 +0200
 
@@ -469,7 +479,6 @@ Date:   Tue Jun 2 22:25:38 2009 +0200
  gegl/gegl-utils.h |    7 +++++++
  2 files changed, 17 insertions(+), 0 deletions(-)
 
-commit 2d17c99589c83f2bcb7de592fc4865a345075204
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sat May 30 10:35:44 2009 +0200
 
@@ -479,7 +488,6 @@ Date:   Sat May 30 10:35:44 2009 +0200
  gegl/buffer/gegl-region.h         |    1 +
  2 files changed, 21 insertions(+), 0 deletions(-)
 
-commit 8fc26319d30a4db39686e2ec6e5cbfc32a6cd98d
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Sat May 30 07:49:15 2009 +0200
 
@@ -489,7 +497,6 @@ Date:   Sat May 30 07:49:15 2009 +0200
  gegl/graph/gegl-node.c |    4 ++--
  2 files changed, 3 insertions(+), 3 deletions(-)
 
-commit 37a9900bffbb8cf5cb9874b3b35da40b22462611
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Fri May 29 20:24:07 2009 +0200
 
@@ -498,7 +505,6 @@ Date:   Fri May 29 20:24:07 2009 +0200
  operations/affine/affine.c |  190 +++++++++++++++++++++-----------------------
  1 files changed, 92 insertions(+), 98 deletions(-)
 
-commit 3b33219088a61634051ab61e61f4afa3990e3a78
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Wed May 27 19:07:56 2009 +0200
 
@@ -507,7 +513,6 @@ Date:   Wed May 27 19:07:56 2009 +0200
  gegl/operation/gegl-operation-sink.c |   78 ++++++++++++++++-----------------
  1 files changed, 38 insertions(+), 40 deletions(-)
 
-commit 0d614cfdd850cdd809a2d368c7588e713cd20e40
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Wed May 27 18:43:58 2009 +0200
 
@@ -519,7 +524,6 @@ Date:   Wed May 27 18:43:58 2009 +0200
  gegl/operation/gegl-operation-context.c |    6 +++---
  1 files changed, 3 insertions(+), 3 deletions(-)
 
-commit 20ead2e59176c781f73cb95c35d025d1340ae9b7
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Wed May 27 18:43:21 2009 +0200
 
@@ -529,7 +533,6 @@ Date:   Wed May 27 18:43:21 2009 +0200
  gegl/operation/gegl-operation.h |    2 ++
  2 files changed, 13 insertions(+), 0 deletions(-)
 
-commit d937ae00ffed0729ab823bf9fe591592d6762fb1
 Author: Ozan Caglayan <ozan@pardus.org.tr>
 Date:   Wed May 27 17:51:00 2009 +0200
 
@@ -539,7 +542,6 @@ Date:   Wed May 27 17:51:00 2009 +0200
  operations/workshop/external/ff-save.c   |   27 +++++++++++++++++++++++----
  2 files changed, 24 insertions(+), 5 deletions(-)
 
-commit a876ae70dde2791674633f2942d6004c6272a697
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Wed May 27 07:06:57 2009 +0200
 
@@ -548,7 +550,6 @@ Date:   Wed May 27 07:06:57 2009 +0200
  ChangeLog |    8 ++++++++
  1 files changed, 8 insertions(+), 0 deletions(-)
 
-commit 0ec20c8d4ebf7bba5cd2c56e6256b53161f7129c
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 22:20:18 2009 +0200
 
@@ -560,7 +561,6 @@ Date:   Tue May 26 22:20:18 2009 +0200
  tests/test-proxynop-processing.c |   21 ++++++++++++++++++---
  1 files changed, 18 insertions(+), 3 deletions(-)
 
-commit 05e3f565085c5908aa89b438ad7bdc0014d0bd05
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 22:09:09 2009 +0200
 
@@ -572,7 +572,6 @@ Date:   Tue May 26 22:09:09 2009 +0200
  gegl/gegl-dot.c |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-commit 8734a137f91f0be92910f295b4c104e4ba799bf2
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 22:06:58 2009 +0200
 
@@ -586,7 +585,6 @@ Date:   Tue May 26 22:06:58 2009 +0200
  gegl/gegl-dot.h |    1 +
  2 files changed, 13 insertions(+), 0 deletions(-)
 
-commit 515cb486af8800d911d5ec30c06af178008377ab
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 21:56:21 2009 +0200
 
@@ -595,7 +593,6 @@ Date:   Tue May 26 21:56:21 2009 +0200
  operations/common/weighted_blend.c |    2 --
  1 files changed, 0 insertions(+), 2 deletions(-)
 
-commit 71938fab17d1ab5881d4f8da97dd8e0b6e79e587
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 22:22:40 2009 +0200
 
@@ -604,7 +601,6 @@ Date:   Tue May 26 22:22:40 2009 +0200
  gegl/gegl-dot.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-commit 074469e62cc35bec4327115a2f51f932394bbf6a
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 21:25:32 2009 +0200
 
@@ -613,7 +609,6 @@ Date:   Tue May 26 21:25:32 2009 +0200
  gegl/gegl-dot.c |   22 +++++++++++++++++++++-
  1 files changed, 21 insertions(+), 1 deletions(-)
 
-commit 4e0cdb918014e589c816d04d701c861df56e0442
 Author: Martin Nordholts <martinn@src.gnome.org>
 Date:   Tue May 26 19:24:56 2009 +0200
 
@@ -622,7 +617,6 @@ Date:   Tue May 26 19:24:56 2009 +0200
  gegl/process/gegl-processor.c |    7 -------
  1 files changed, 0 insertions(+), 7 deletions(-)
 
-commit f3a9c43c95776cd19a96effdc783445041356d3b
 Author: Fryderyk Dziarmagowski <freetz@gmx.net>
 Date:   Sat May 23 19:12:59 2009 +0200
 
@@ -631,7 +625,6 @@ Date:   Sat May 23 19:12:59 2009 +0200
  operations/Makefile-operations.am |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-commit 82d99a7078ee2d59c5c404c615fbc28a47ef636f
 Author: Sven Neumann <s.neumann@raumfeld.com>
 Date:   Tue May 12 08:36:17 2009 +0200
 
