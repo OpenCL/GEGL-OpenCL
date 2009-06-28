@@ -6,17 +6,6 @@ Changes in GEGL 0.1.0
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Renamed gegl:load-buffer to gegl:buffer-source and gegl:save-buffer
    to gegl:buffer-sink (but the old names still work)
- • Adapt for building on a wide range of platforms, including
-   • SuSE SLES 10 (x86_64 and i686);
-   • Redhat RHEL3, RHEL4 and RHEL5 (x86_64 and i686);
-   • Redhat 9 and RHEL 2.1 (i686);
-   • Solaris 10 (x86 and sparc);
-   • Solaris 2.6, 7, 8 and 9 (sparc);
-   • AIX 4.3.3, 5.1, 5.2, 5.3 and 6.1 (powerpc);
-   • HPUX 11.31 (ia64);
-   • HPUX 11.23 (pa-risc and ia64);
-   • HPUX 10.20, 11.0 and 11.11 (pa-risc);
-   • IRIX 6.5 (mips)
  • Represent colors using doubles instead of floats (this change is
    independent from internal processing)
  • Removed the GTK+ UI parts of the gegl binary and turned gegl into a
