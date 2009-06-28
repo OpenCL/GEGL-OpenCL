@@ -1,10 +1,645 @@
+commit 21fe966084301edaaa25c597e2297f01f9353bc9
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 09:41:24 2009 +0200
 
-	
-	TODO: Before the 0.1.0 release, update the ChangeLog with the
-	commits from 82d99a7078ee2d59c5c4 and onwards. Until then there is
-	no need to keep this file up to date, just continue to have good
-	git commit messages.
-	
+    Update AUTHORS and 'Contributions from' for 0.1.0
+
+ AUTHORS |    4 +++-
+ NEWS    |    9 ++++++---
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+commit 19d847a5ad0d07ab182d39c36090d7ae11a5f8f2
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 09:13:47 2009 +0200
+
+    Remove the 'portability' item in NEWS
+    
+    Remove the 'portability' item in NEWS since "Bug 576615 – [GEGL] These
+    patches are required for successful vendor compiles on non-linux
+    machines" won't make it into 0.1.0.
+
+ NEWS |   11 -----------
+ 1 files changed, 0 insertions(+), 11 deletions(-)
+
+commit 5ac18049dfd53861293627f5291d08e541302041
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 08:57:03 2009 +0200
+
+    operations: Explicitly specify op sources
+    
+    Explicitly specify op sources as it appears as if automake 1.11 does
+    not work the same as previous versions with regards to figuring out
+    the source files.
+
+ operations/external/Makefile.am |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
+
+commit c2c78ec8891c0574d95aedf75625402a899b860d
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 28 08:37:14 2009 +0200
+
+    Update Subversion references to git
+
+ HACKING                    |    4 ++--
+ autogen.sh                 |    4 ++--
+ bindings/pygegl/autogen.sh |    3 ++-
+ bindings/vala/autogen.sh   |    2 +-
+ docs/development.txt       |    2 +-
+ docs/gegl-sharp/index.html |   12 +++++-------
+ docs/gegl-vala/index.html  |   12 +++++-------
+ docs/index-static.txt.in   |   28 ++++++++++++++--------------
+ docs/pygegl/index.html     |   12 +++++-------
+ docs/rgegl/index.html      |   12 +++++-------
+ tools/gobj2dot.rb          |    2 +-
+ 11 files changed, 43 insertions(+), 50 deletions(-)
+
+commit 70c1187737149b2876f518aa1aab87bf8d416ad9
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 19:38:00 2009 +0200
+
+    Add gegl.doap
+
+ gegl.doap |   18 ++++++++++++++++++
+ 1 files changed, 18 insertions(+), 0 deletions(-)
+
+commit 0ed57a05daa8b2008dc3e08e6e3b20d5e619b717
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 08:15:10 2009 +0200
+
+    gegl: Assume GeglProcessor clients keep track of dirty regions
+    
+    Assume GeglProcessor clients that use gegl_processor_set_rectangle()
+    keeps track of dirty regions, and reset valid_region whenever the
+    rectangle changes.
+
+ gegl/process/gegl-processor.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
+
+commit 5811d4f55ea45c90bc27d05908a86b6cd17b0a54
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 07:32:29 2009 +0200
+
+    tests: Add test case for changing GeglProcessor rect
+    
+    Add test case for changing GeglProcessor processing rect that fails
+    without the recent GeglProcessor commits.
+
+ tests/.gitignore                   |    3 +-
+ tests/Makefile.am                  |    3 +-
+ tests/test-change-processor-rect.c |  148 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 152 insertions(+), 2 deletions(-)
+
+commit 31db54104697e5b7a35a7a23430911dc705de6d1
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 07:11:49 2009 +0200
+
+    gegl: Require an operation to be set on in gegl_processor_set_node()
+
+ gegl/process/gegl-processor.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+commit 711d44c3e6170ed70d25d44dbf1de293e084ac9a
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 07:11:06 2009 +0200
+
+    gegl: Do not have logic in gegl_node_new_processor()
+    
+    Do not have logic in gegl_node_new_processor(), move that to
+    gegl_processor_set_rectangle() instead.
+
+ gegl/process/gegl-processor.c |   66 ++++++++++++++++++----------------------
+ 1 files changed, 30 insertions(+), 36 deletions(-)
+
+commit 22e210cb6b1c699a4a721261be73bbc215c78777
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri Jun 26 06:49:48 2009 +0200
+
+    gegl: Remove unimportant FIXME in GeglProcessor
+
+ gegl/process/gegl-processor.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+commit 527013b16bfcd707cfd8935e0bd432258b0203aa
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Thu Jun 25 22:47:39 2009 +0200
+
+    gegl: Always use valid_region of GeglProcessor
+    
+    To have less special cases, always use valid_region of GeglProcessor
+    instead of sometimes the GeglProcessor valid_region and sometimes the
+    GeglCache valid_region.
+
+ gegl/process/gegl-processor.c |   71 +++++++++++-----------------------------
+ 1 files changed, 20 insertions(+), 51 deletions(-)
+
+commit 29c4ce79a67cfe91cd37ccf76a9b43cdef9f6931
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Thu Jun 25 19:05:28 2009 +0200
+
+    gegl: Processor input depends on node, not object construction
+    
+    The GeglProcessor input node depends on the node to process, not
+    object construction by itself. So introduce gegl_processor_set_node()
+    and move contruction logic there. This also allows us to remove the
+    constructor completely.
+
+ gegl/process/gegl-processor.c |   91 ++++++++++++++++++-----------------------
+ 1 files changed, 40 insertions(+), 51 deletions(-)
+
+commit aed1f5bcfbc6fc7b94cc73d95e292f1ff81e8bd9
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Thu Jun 25 08:05:36 2009 +0200
+
+    gegl: Remove GeglProcessor queued_region member
+    
+    Remove GeglProcessor queued_region member, it is never read from, only
+    written to.
+
+ gegl/process/gegl-processor.c |   51 ++++-------------------------------------
+ 1 files changed, 5 insertions(+), 46 deletions(-)
+
+commit 1fe1708715f09506ffc1a80606f4311963ba9382
+Author: Tobias Mueller <tobiasmue@gnome.org>
+Date:   Tue Jun 23 15:01:21 2009 +0200
+
+    Update FSF's address
+    
+    Fixes bug 577951.
+
+ bindings/gegl-sharp/COPYING             |    6 +++---
+ gegl/buffer/gegl-id-pool.c              |    4 ++--
+ gegl/buffer/gegl-id-pool.h              |    4 ++--
+ gegl/gegl-cpuaccel.c                    |    4 ++--
+ gegl/gegl-cpuaccel.h                    |    4 ++--
+ operations/external/v4lutils/v4lutils.c |    4 ++--
+ operations/external/v4lutils/v4lutils.h |    4 ++--
+ 7 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 35ab56189a8b80f8871c40c83fdf1b9a848a9011
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 22 21:01:54 2009 +0200
+
+    Remove ifdeffed away code that has been dead for years
+
+ bindings/rgegl/src/rgegl-node.c      |   53 ------
+ bindings/rgegl/src/rgegl-rectangle.c |   25 ---
+ examples/util/gegl-view.c            |   10 -
+ gegl/gegl-xml.c                      |  299 ----------------------------------
+ tools/operation_reference.c          |   11 --
+ 5 files changed, 0 insertions(+), 398 deletions(-)
+
+commit 0448fc96a10703f7f6e50f8e5c996df631fbdec3
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 22 20:17:10 2009 +0200
+
+    bin: Remove unused gegl option --delay
+
+ bin/gegl-options.c |   16 +---------------
+ bin/gegl-options.h |    1 -
+ 2 files changed, 1 insertions(+), 16 deletions(-)
+
+commit 8aa78e18183ecab71ad87d0c0806878f02a804da
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 22 20:04:51 2009 +0200
+
+    gegl: Remove dead code
+
+ gegl/graph/gegl-node.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
+
+commit 269a7b2013ccbe602ab49a1da1418f8fa62159ab
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 22 07:13:20 2009 +0200
+
+    gegl: Add GEGL_DEBUG_INVALIDATION to GeglDebugFlag
+    
+    Add GEGL_DEBUG_INVALIDATION to GeglDebugFlag and convert the
+    "if (0)"-ed away output to GEGL_NODE (GEGL_DEBUG_INVALIDATION, ...).
+
+ gegl/gegl-debug.h      |    4 +++-
+ gegl/graph/gegl-node.c |   22 +++++++++++-----------
+ 2 files changed, 14 insertions(+), 12 deletions(-)
+
+commit 5c7509e48a7c55f8b2d3d875b427bf67b5efcaa7
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 22:34:00 2009 +0200
+
+    operations: Add DESTDIR to Makefile-operations.am uninstall-local
+    
+    Add DESTDIR to Makefile-operations.am uninstall-local. This makes
+    'make distcheck' pass.
+
+ operations/Makefile-operations.am |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 3d2013e4d348088546d4ed2900367677ef1bb578
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 22:04:45 2009 +0200
+
+    gegl: Add gegl_node_dump_depends_on()
+    
+    Add gegl_node_dump_depends_on() for interactive debugging.
+
+ gegl/graph/gegl-node.c |   17 +++++++++++++++++
+ gegl/graph/gegl-node.h |    1 +
+ 2 files changed, 18 insertions(+), 0 deletions(-)
+
+commit 39cf015ffecdca37f9d60855cd6c3b8068bc0cc6
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 21:29:57 2009 +0200
+
+    gegl: Properly handle pad names on proxynops
+    
+    We need to special case the pad names when implicitly using proxynop
+    nodes when connecting to/disconnecting from graph nodes.
+
+ gegl/graph/gegl-node.c |   52 +++++++++++++++++++++++++++++++++++------------
+ 1 files changed, 38 insertions(+), 14 deletions(-)
+
+commit 5a1f7de27f8cd2c8e315e1e975534a19d9c86a12
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 21:28:48 2009 +0200
+
+    gegl: Handle NULL in gegl_node_new_processor() debug output
+
+ gegl/process/gegl-processor.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+commit c80eaf3662394c2e401947758c8ab9f704e37eb4
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 21:28:17 2009 +0200
+
+    gegl: Use 10 point font size on nodes in graphviz
+
+ gegl/gegl-dot.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 563c539f2ac537360f90377fbbee8590f3e11bdc
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 20:49:05 2009 +0200
+
+    gegl: Use more generic proxynop node naming
+    
+    Use more generic proxynop node naming so that we get the name
+    "proxynop-aux" for such proxynop nodes.
+
+ gegl/graph/gegl-node.c |   11 +++++++++--
+ 1 files changed, 9 insertions(+), 2 deletions(-)
+
+commit 3767716df85d5751a312773aff8c757b02bea519
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 19:54:32 2009 +0200
+
+    gegl: Implicitly use graph proxy nodes in gegl_node_disconnect()
+    
+    Implicitly use graph proxy nodes in gegl_node_disconnect() so that we
+    are symmetric with gegl_node_connect_from() which does the same.
+
+ gegl/graph/gegl-node.c |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
+
+commit a3907b441b1f4bd167be85c2ffa90bb3018e9ad6
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 18:40:21 2009 +0200
+
+    gegl: Don't assume cache is always used
+    
+    In gegl_eval_visitor_visit_pad() we can not always assume that the
+    cache has been used as the output buffer, so move this logic to all
+    users of gegl_operation_context_get_target() instead, and only call
+    gegl_cache_computed() if it actually was the cache that _was_ the
+    output buffer.
+    
+    This is admittely not a good looking way of doing this, but it is
+    another sign that the current caching strategy and maybe even graph
+    evaluation strategy might need to be redesigned.
+
+ gegl/operation/gegl-operation-composer.c        |    4 ++++
+ gegl/operation/gegl-operation-composer3.c       |    4 ++++
+ gegl/operation/gegl-operation-filter.c          |    4 ++++
+ gegl/operation/gegl-operation-point-composer.c  |    3 +++
+ gegl/operation/gegl-operation-point-composer3.c |    3 +++
+ gegl/operation/gegl-operation-source.c          |    3 +++
+ gegl/process/gegl-eval-visitor.c                |    8 --------
+ 7 files changed, 21 insertions(+), 8 deletions(-)
+
+commit 4c02060d3007378a4097f5439a32affcf58e2d71
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 18:25:48 2009 +0200
+
+    gegl: Set the cache on the operation context during evaluation
+    
+    Set the cache on the operation context during pad evaluation instead
+    of during the need rect calculation phase. It simply feels more clean
+    this way.
+
+ gegl/operation/gegl-operations.c |    4 ----
+ gegl/process/gegl-eval-visitor.c |   13 ++++++++-----
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+commit 77bcd97fd2d2773a26de81ea584a8b0c7f9956b6
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 21 17:57:53 2009 +0200
+
+    gegl: Add gegl_operation_context_set_object()
+
+ gegl/operation/gegl-operation-context.c |   10 ++++++++++
+ gegl/operation/gegl-operation-context.h |    3 +++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
+
+commit da11889c92ab438c7c95b9034f1a56ad24fb2826
+Author: Michael Schumacher <schumaml@gmx.de>
+Date:   Sat Jun 13 17:47:43 2009 +0200
+
+    Add LIBADD to ppm_load and ppm_save
+    
+    All ops do need the $(op_libs) on Microsoft Windows.
+
+ operations/external/Makefile.am |   12 +++++++-----
+ 1 files changed, 7 insertions(+), 5 deletions(-)
+
+commit d11701ef733fbb68fb2111517795ce719aba534b
+Author: Øyvind Kolås <pippin@gimp.org>
+Date:   Mon Jun 8 21:54:24 2009 +0100
+
+    %/chunks_each/gegl_tile_handler_cache_dispose_buffer_tiles/g
+
+ gegl/buffer/gegl-tile-handler-cache.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 2975ba4a09ca23920338507241c55c3d0535268c
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 8 19:31:50 2009 +0200
+
+    gegl: Rename GeglCRVisitor to GeglNeedVisitor
+    
+    Rename GeglCRVisitor to GeglNeedVisitor since that is a better name
+    given what it does.
+
+ gegl/process/gegl-eval-mgr.c     |    8 ++++----
+ gegl/process/gegl-eval-mgr.h     |    2 +-
+ gegl/process/gegl-need-visitor.c |   20 ++++++++++----------
+ gegl/process/gegl-need-visitor.h |   26 +++++++++++++-------------
+ 4 files changed, 28 insertions(+), 28 deletions(-)
+
+commit de9b4b3eb9e58888fcba19866b4e7245901a87cf
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 8 19:26:52 2009 +0200
+
+    gegl: Rename gegl-cr-visitor.[ch] to gegl-need-visitor.[ch]
+    
+    Rename gegl-cr-visitor.[ch] to gegl-need-visitor.[ch]. We do this as a
+    separate step from the next refactoring commit because git becomes confused
+    about the rename otherwise.
+
+ gegl/process/Makefile.am         |    4 +-
+ gegl/process/gegl-cr-visitor.c   |   82 --------------------------------------
+ gegl/process/gegl-cr-visitor.h   |   53 ------------------------
+ gegl/process/gegl-eval-mgr.c     |    2 +-
+ gegl/process/gegl-need-visitor.c |   82 ++++++++++++++++++++++++++++++++++++++
+ gegl/process/gegl-need-visitor.h |   53 ++++++++++++++++++++++++
+ 6 files changed, 138 insertions(+), 138 deletions(-)
+
+commit b345c0bff7a3a8683ab4525072fba3a025a5eb87
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Mon Jun 8 19:16:22 2009 +0200
+
+    gegl: Rename source_region to need_rect
+    
+    Do the renames
+    
+      gegl_operation_calc_source_regions() ->
+      gegl_operation_calc_need_rects()
+    
+    and
+    
+      gegl_operation_set_source_region() ->
+      gegl_operation_set_need_rect()
+    
+    since that is in line with the conventions in the rest of GEGL, in
+    particular name of GeglNode struct members. Also add a comment
+    explaning what the need rect is.
+
+ gegl/operation/gegl-operation.h  |    2 +-
+ gegl/operation/gegl-operations.c |   32 ++++++++++++++++++++++++--------
+ gegl/process/gegl-cr-visitor.c   |    2 +-
+ 3 files changed, 26 insertions(+), 10 deletions(-)
+
+commit adf2a8e6f6684ea18b9e6e9e53d6e4ad646100a5
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sun Jun 7 22:09:29 2009 +0200
+
+    gegl: Add more GEGL_DEBUG_PROCESS output
+
+ gegl/process/gegl-cr-visitor.c |    9 +++++++++
+ gegl/process/gegl-processor.c  |    5 +++++
+ 2 files changed, 14 insertions(+), 0 deletions(-)
+
+commit 0083d500536c304f22d56b7cf452d24b8fd16563
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sat Jun 6 17:01:32 2009 +0200
+
+    gegl: Also debug gegl_eval_visitor_visit_pad() cache usage
+    
+    Also debug gegl_eval_visitor_visit_pad() cache usage so we report the
+    complete picture.
+
+ gegl/process/gegl-eval-visitor.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+commit 6da2855f87ceafc78228fb556e6698837b890c5d
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sat Jun 6 16:14:30 2009 +0200
+
+    gegl: Add gegl_eval_visitor_visit_pad() debug output
+    
+    Add gegl_eval_visitor_visit_pad() debug output that is enabled with
+    the env var GEGL_DEBUG=process. A typical use case is making sure that
+    the expected chain of nodes are processed.
+
+ gegl/process/gegl-eval-visitor.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+commit ec67736766fb81fbe06855d261358514714faa73
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue Jun 2 22:25:38 2009 +0200
+
+    gegl: Add gegl_rectangle_dump() for debugging purposes
+
+ gegl/gegl-utils.c |   10 ++++++++++
+ gegl/gegl-utils.h |    7 +++++++
+ 2 files changed, 17 insertions(+), 0 deletions(-)
+
+commit 2d17c99589c83f2bcb7de592fc4865a345075204
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sat May 30 10:35:44 2009 +0200
+
+    gegl: Add gegl_region_dump() for debugging purposes
+
+ gegl/buffer/gegl-region-generic.c |   20 ++++++++++++++++++++
+ gegl/buffer/gegl-region.h         |    1 +
+ 2 files changed, 21 insertions(+), 0 deletions(-)
+
+commit 8fc26319d30a4db39686e2ec6e5cbfc32a6cd98d
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Sat May 30 07:49:15 2009 +0200
+
+    gegl: Add GeglNode pointer address to gegl_node_get_debug_name()
+
+ gegl/gegl-dot.c        |    2 +-
+ gegl/graph/gegl-node.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 37a9900bffbb8cf5cb9874b3b35da40b22462611
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Fri May 29 20:24:07 2009 +0200
+
+    operations: Namespace most static functions in affine.c
+
+ operations/affine/affine.c |  190 +++++++++++++++++++++-----------------------
+ 1 files changed, 92 insertions(+), 98 deletions(-)
+
+commit 3b33219088a61634051ab61e61f4afa3990e3a78
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Wed May 27 19:07:56 2009 +0200
+
+    gegl: Namespace functions in gegl-operation-sink.c
+
+ gegl/operation/gegl-operation-sink.c |   78 ++++++++++++++++-----------------
+ 1 files changed, 38 insertions(+), 40 deletions(-)
+
+commit 0d614cfdd850cdd809a2d368c7588e713cd20e40
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Wed May 27 18:43:58 2009 +0200
+
+    gegl: Improve gegl_operation_context_take_object() warning message
+    
+    Improve gegl_operation_context_take_object() warning message by also
+    saying on what operation the pad was not found.
+
+ gegl/operation/gegl-operation-context.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 20ead2e59176c781f73cb95c35d025d1340ae9b7
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Wed May 27 18:43:21 2009 +0200
+
+    gegl: Add gegl_operation_get_name()
+
+ gegl/operation/gegl-operation.c |   11 +++++++++++
+ gegl/operation/gegl-operation.h |    2 ++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
+
+commit d937ae00ffed0729ab823bf9fe591592d6762fb1
+Author: Ozan Caglayan <ozan@pardus.org.tr>
+Date:   Wed May 27 17:51:00 2009 +0200
+
+    Bug 583951 – Patch to replace deprecated img_convert function
+
+ operations/workshop/external/Makefile.am |    2 +-
+ operations/workshop/external/ff-save.c   |   27 +++++++++++++++++++++++----
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+
+commit a876ae70dde2791674633f2942d6004c6272a697
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Wed May 27 07:06:57 2009 +0200
+
+    Obsolete ChangeLog
+
+ ChangeLog |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
+
+commit 0ec20c8d4ebf7bba5cd2c56e6256b53161f7129c
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 22:20:18 2009 +0200
+
+    tests: Add test for implicit connection to graph output proxy
+    
+    Add test for implicit connection to graph output proxy to the existing
+    test-proxynop-processing test. Doesn't hurt.
+
+ tests/test-proxynop-processing.c |   21 ++++++++++++++++++---
+ 1 files changed, 18 insertions(+), 3 deletions(-)
+
+commit 05e3f565085c5908aa89b438ad7bdc0014d0bd05
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 22:09:09 2009 +0200
+
+    gegl: Do breadth first traversal in gegl-dot.c
+    
+    Do breadth first traversal in gegl-dot.c since that is slightly easier
+    to interactively debug.
+
+ gegl/gegl-dot.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 8734a137f91f0be92910f295b4c104e4ba799bf2
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 22:06:58 2009 +0200
+
+    gegl: Add gegl_dot_node_to_png_default()
+    
+    Add gegl_dot_node_to_png_default() which simply calls
+    gegl_dot_node_to_png() with `png_path' set to "/tmp/node.png". A nice
+    convenience when debugging using a command line interface.
+
+ gegl/gegl-dot.c |   12 ++++++++++++
+ gegl/gegl-dot.h |    1 +
+ 2 files changed, 13 insertions(+), 0 deletions(-)
+
+commit 515cb486af8800d911d5ec30c06af178008377ab
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 21:56:21 2009 +0200
+
+    operations: Remove unused variables in gegl:weighted-blend
+
+ operations/common/weighted_blend.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+commit 71938fab17d1ab5881d4f8da97dd8e0b6e79e587
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 22:22:40 2009 +0200
+
+    gegl: Include stdlib.h for system() in gegl-dot.c
+
+ gegl/gegl-dot.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+commit 074469e62cc35bec4327115a2f51f932394bbf6a
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 21:25:32 2009 +0200
+
+    gegl: Handle sinks in gegl_dot_add_node_and_dependencies()
+
+ gegl/gegl-dot.c |   22 +++++++++++++++++++++-
+ 1 files changed, 21 insertions(+), 1 deletions(-)
+
+commit 4e0cdb918014e589c816d04d701c861df56e0442
+Author: Martin Nordholts <martinn@src.gnome.org>
+Date:   Tue May 26 19:24:56 2009 +0200
+
+    gegl: Remove seemingly accidentally commited debug output
+
+ gegl/process/gegl-processor.c |    7 -------
+ 1 files changed, 0 insertions(+), 7 deletions(-)
+
+commit f3a9c43c95776cd19a96effdc783445041356d3b
+Author: Fryderyk Dziarmagowski <freetz@gmx.net>
+Date:   Sat May 23 19:12:59 2009 +0200
+
+    Add DESTDIR expansion to operations install-exec-local target
+
+ operations/Makefile-operations.am |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 82d99a7078ee2d59c5c404c615fbc28a47ef636f
+Author: Sven Neumann <s.neumann@raumfeld.com>
+Date:   Tue May 12 08:36:17 2009 +0200
+
+    spelling fixes
+
+ NEWS |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
 2009-05-15  Hubert Figuiere  <hub@figuiere.net>
 
