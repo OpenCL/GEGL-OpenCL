@@ -1,4 +1,4 @@
-The cvs version of gegl is known to work with the following autotools:
+The git version of GEGL is known to work with the following autotools:
 
 - GNU autoconf 2.53
 - GNU automake 1.7.5
@@ -7,7 +7,7 @@ The cvs version of gegl is known to work with the following autotools:
 Other versions of these tools probably work. Probably the tools that
 work for current versions of glib will work for gegl as well. 
 
-To compile a SVN version of gegl on your system, you will need to take several
+To compile a git version of GEGL on your system, you will need to take several
 steps to setup the tree for compilation.  You can do all these steps at once by
 running:
 

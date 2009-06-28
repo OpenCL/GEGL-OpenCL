@@ -75,9 +75,10 @@ check_version ()
 
 echo
 echo "I am testing that you have the tools required to build the"
-echo "$PROJECT project from SVN. This test is not foolproof,"
+echo "$PROJECT project from git. This test is not foolproof,"
 echo "so if anything goes wrong, see the file HACKING for more information..."
 echo
+
 
 DIE=0
 

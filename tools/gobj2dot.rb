@@ -68,7 +68,7 @@ end
 
 puts header
 Find.find( dir ) do |path| 
-  Find.prune if File.basename(path) == '.svn' 
+  Find.prune if File.basename(path) == '.git' 
   if ( ( File.extname(path) == '.c' or File.extname(path) == '.h' ) and File.file? path )
     open( path ) do |file| 
       content = file.read

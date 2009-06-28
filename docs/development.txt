@@ -14,7 +14,7 @@ Setup instructions for Ubuntu 8.10 Intrepid Ibex
 
 To install the mandatory dependencies:
 
- $ sudo apt-get install libtool automake glib libglib2.0-dev libpng12-dev libgtk2.0-dev subversion
+ $ sudo apt-get install libtool automake glib libglib2.0-dev libpng12-dev libgtk2.0-dev git
 
 Some of the other dependencies:
 

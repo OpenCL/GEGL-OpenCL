@@ -75,7 +75,7 @@ check_version ()
 
 echo
 echo "I am testing that you have the tools required to build the"
-echo "$PROJECT project from SVN. This test is not foolproof,"
+echo "$PROJECT project from git. This test is not foolproof,"
 echo "so if anything goes wrong, see the file HACKING for more information..."
 echo
 
@@ -193,7 +193,7 @@ if which ruby > /dev/null; then
     echo "yes"
 else
     echo
-    echo "no You need ruby installed to run autogen.sh (only needed when building from SVN)"
+    echo "no You need ruby installed to run autogen.sh (only needed when building from git)"
     echo
     DIE=1
 fi
