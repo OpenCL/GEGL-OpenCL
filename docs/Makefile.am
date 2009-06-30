@@ -43,12 +43,17 @@ if HAVE_ASCIIDOC
 HTML_FILES += index.html development.html
 endif
 
-EXTRA_DIST= 			\
-	ChangeLog		\
-	gegl.css  		\
-	gegl.devhelp		\
-	devhelp.css		\
-	index-static.txt.in	\
+EXTRA_DIST = \
+	ChangeLog			\
+	development.txt			\
+	devhelp.css			\
+	gegl.css  			\
+	gegl.devhelp			\
+	images/GEGL.png			\
+	images/GEGL.svg			\
+	images/gaussian-blur-graph.png	\
+	images/gegl.ico			\
+	index-static.txt.in		\
 	$(HTML_FILES)
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
