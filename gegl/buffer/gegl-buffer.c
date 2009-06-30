@@ -315,7 +315,7 @@ gegl_buffer_set_extent (GeglBuffer          *buffer,
     {
       GeglBufferHeader *header = ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header));
       header->x = buffer->extent.x;
-      header->y = buffer->extent.x;
+      header->y = buffer->extent.y;
       header->width = buffer->extent.width;
       header->height = buffer->extent.height;
     }
@@ -576,8 +576,7 @@ gegl_buffer_constructor (GType                  type,
          * disk buffer creation, nasty but it seems to do the job.
          */
 
-        if (buffer->extent.width == 0 &&
-            buffer->extent.width == 0)
+        if (buffer->extent.width == 0)
           {
             buffer->extent.width = width;
             buffer->extent.height = height;
