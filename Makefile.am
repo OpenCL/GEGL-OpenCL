@@ -18,6 +18,7 @@ pkgconfig_DATA = gegl.pc
 built_dist_files = README
 
 EXTRA_DIST = 			\
+	ChangeLog.pre-0-1	\
 	$(built_dist_files)     \
 	autogen.sh		\
 	gegl-uninstalled.pc.in	\
