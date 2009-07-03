@@ -1,20 +1,19 @@
 The git version of GEGL is known to work with the following autotools:
 
-- GNU autoconf 2.53
-- GNU automake 1.7.5
-- GNU libtool 1.4.3
+- GNU autoconf 2.54
+- GNU automake 1.9.6
+- GNU libtool 1.5
 
-Other versions of these tools probably work. Probably the tools that
-work for current versions of glib will work for gegl as well. 
+Newer versions of these tools will probably work.
 
-To compile a git version of GEGL on your system, you will need to take several
-steps to setup the tree for compilation.  You can do all these steps at once by
-running:
+To compile a git version of GEGL on your system, you will need to take
+several steps to setup the tree for compilation.  You can do all these
+steps at once by running:
 
 gegl> ./autogen.sh
    
-Basically this does the following for you (but see autogen.sh for exactly what
-is happening):
+Basically this does the following for you (but see autogen.sh for
+exactly what is happening):
 
 gegl> aclocal 
 gegl> automake 
