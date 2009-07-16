@@ -17,18 +17,23 @@
 
 #include "config.h"
 #include <string.h>
+#include <math.h>
 
 #include "gegl.h"
 
 #define SUCCESS  0
 #define FAILURE -1
 
+#define FLOATS_EQUAL(x,y) (fabs((x) - (y)) < 0.00001f)
+
+
 static gboolean
 test_change_processor_rect_do_test (GeglProcessor       *processor,
                                     const GeglRectangle *rect,
                                     GeglNode            *sink)
 {
-  gboolean    result                    = FALSE;
+  gint        i                         = 0;
+  gboolean    result                    = TRUE;
   float       expected_result_buffer[4] = { 1.0, 1.0, 1.0, 1.0 };
   float       result_buffer[4]          = { 0, };
   GeglBuffer *buffer                    = NULL;
@@ -48,7 +53,9 @@ test_change_processor_rect_do_test (GeglProcessor       *processor,
                    result_buffer,
                    GEGL_AUTO_ROWSTRIDE);
 
-  result = memcmp (result_buffer, expected_result_buffer, sizeof (expected_result_buffer)) == 0;
+  /* Compare with a small epsilon to account for accumulated error */
+  for(i = 0; i < G_N_ELEMENTS (expected_result_buffer); i++)
+    result = result && FLOATS_EQUAL (expected_result_buffer[i], result_buffer[i]);
 
   gegl_node_set (sink,
                  "buffer", NULL,
