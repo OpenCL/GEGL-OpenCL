@@ -62,11 +62,11 @@ exr_load_la_LIBADD = $(op_libs) $(OPENEXR_LIBS)
 exr_load_la_CXXFLAGS = $(AM_CFLAGS) $(OPENEXR_CFLAGS)
 endif
 
-# if HAVE_SDL
-# ops += display.la
-# display_la_LIBADD = $(op_libs) $(SDL_LIBS)
-# display_la_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
-# endif
+if HAVE_SDL
+ops += display.la
+display_la_LIBADD = $(op_libs) $(SDL_LIBS)
+display_la_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
+endif
 
 if HAVE_OPENRAW
 ops += openraw.la
