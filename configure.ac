@@ -24,7 +24,6 @@ m4_define([gegl_interface_age], [1])
 m4_define([gegl_binary_age],
           [m4_eval(100 * gegl_minor_version + gegl_micro_version)])
 
-dnl The X.Y in -lgegl-X.Y line. This is expected to stay 0.0 until Gegl 1.
 m4_define([gegl_api_version], [gegl_major_version.gegl_minor_version])
 
 m4_define([stability_version_number],
