@@ -1,6 +1,9 @@
 #SUBDIRS = testsuite
 
-EXTRA_DIST = xml_insert.sh create-reference.rb
+EXTRA_DIST = \
+	xml_insert.sh \
+	create-reference.rb \
+	gobj2dot.rb
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
