@@ -19,9 +19,10 @@
     <attr path="/api/namespace/object[@name='Node']/method[@name='SetProperty']" name="new_flag">true</attr>
     <attr path="/api/namespace/object[@name='Node']/method[@name='Blit']" name="hidden">1</attr>
 
-    <attr path="/api/namespace/object[@name='Node']" name="parent">GObject</attr>
+    <attr path="/api/namespace/object[@name='Buffer']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Color']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Curve']" name="parent">GObject</attr>
+    <attr path="/api/namespace/object[@name='Node']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Processor']" name="parent">GObject</attr>
 
     <remove-node path="/api/namespace/object[@name='Curve']/method[@name='CalcValues']" />
