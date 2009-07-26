@@ -1,5 +1,5 @@
 AC_INIT(README)
-AM_INIT_AUTOMAKE(gegl-sharp, 0.0.19)
+AM_INIT_AUTOMAKE(gegl-sharp, 0.1.0)
 AM_MAINTAINER_MODE
 
 case "$host" in
