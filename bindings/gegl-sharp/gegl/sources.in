@@ -4,6 +4,7 @@
       <namespace name="Gegl">
         <file>@GEGL_HEADERS@/gegl.h</file>
         <file>@GEGL_HEADERS@/gegl-utils.h</file>
+        <file>@GEGL_HEADERS@/gegl-types.h</file>
         <dir>@GEGL_HEADERS@/property-types/</dir>
       </namespace>
     </library>
