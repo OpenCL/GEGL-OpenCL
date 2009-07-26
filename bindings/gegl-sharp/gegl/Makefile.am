@@ -11,7 +11,7 @@ assemblydir = $(libdir)/gegl-sharp
 assembly_DATA = $(TARGET)
 CLEANFILES = $(ASSEMBLY) $(ASSEMBLY).mdb generated-stamp generated/*.cs $(API) $(RAW_API)
 DISTCLEANFILES = $(ASSEMBLY).config
-EXTRA_DIST = $(RAW_API) $(METADATA) $(CUSTOM_SOURCES) gegl-sharp.pc.in gegl-sharp.dll.config.in
+EXTRA_DIST = $(RAW_API) $(METADATA) $(CUSTOM_SOURCES) gegl-sharp.pc.in gegl-sharp.dll.config.in babl-api.xml
 
 references = $(GLIB_SHARP_LIBS)
 
@@ -28,9 +28,9 @@ $(API): $(METADATA) $(RAW_API)
 
 api_includes = $(GLIB_SHARP_CFLAGS)
 
-generated-stamp: $(API) $(CUSTOM_SOURCES)
+generated-stamp: $(API) $(CUSTOM_SOURCES) babl-api.xml
 	rm -f generated/* &&	\
-	$(GAPI_CODEGEN) --generate $(API) $(api_includes)				\
+	$(GAPI_CODEGEN) --generate $(API) babl-api.xml $(api_includes)				\
 	--outdir=generated --customdir=custom --assembly-name=$(ASSEMBLY_NAME)	\
 	&& touch generated-stamp
 
