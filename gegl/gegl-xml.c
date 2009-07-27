@@ -135,20 +135,30 @@ set_clone_prop_as_well:
             {
               gegl_node_set (new, param_name, param_value, NULL);
             }
-          else if (pd->path_root)
-            {
-              gchar absolute_path[PATH_MAX];
-              g_snprintf (buf, sizeof (buf),
-                          "%s/%s", pd->path_root, param_value);
-              realpath (buf, absolute_path);
-              gegl_node_set (new, param_name, absolute_path, NULL);
-            }
           else
             {
-              gchar absolute_path[PATH_MAX];
-              g_snprintf (buf, sizeof (buf), "./%s", param_value);
-              realpath (buf, absolute_path);
-              gegl_node_set (new, param_name, absolute_path, NULL);
+              gchar * absolute_path;
+              if (pd->path_root)
+                {
+                  g_snprintf (buf, sizeof (buf),
+                              "%s/%s", pd->path_root, param_value);
+                }
+              else
+                {
+                  g_snprintf (buf, sizeof (buf), "./%s", param_value);
+                }
+
+              absolute_path = realpath (buf, NULL);
+              if (absolute_path)
+                {
+                  gegl_node_set (new, param_name, absolute_path, NULL);
+                  free (absolute_path);
+                }
+              else
+                {
+                  g_warning ("Unable to obtain absolute path for paramater %s\n",
+                             param_name);
+                }
             }
         }
       else if (paramspec->value_type == G_TYPE_INT)
@@ -558,32 +568,32 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
 GeglNode *
 gegl_node_new_from_file (const gchar   *path)
 {
-  GeglNode *node;
-  GError   *err = NULL;
+  GeglNode *node = NULL;
+  GError   *err  = NULL;
   gchar    *script;
-  gchar    *temp1;
-  gchar    *temp2;
-  gchar    *path_root;
+  gchar     path_root[PATH_MAX];
+  gchar    *dirname;
 
   g_assert (path);
 
-  temp1 = g_strdup (path);
-  temp2 = g_strdup (g_path_get_dirname (temp1));
-  path_root = g_strdup (realpath (temp2, NULL));
+  dirname = g_path_get_dirname (path);
+  if (!realpath (dirname, path_root))
+    {
+      goto cleanup;
+    }
 
   g_file_get_contents (path, &script, NULL, &err);
   if (err != NULL)
     {
       g_warning ("Unable to read file: %s", err->message);
       g_error_free (err);
-      return NULL;
+      goto cleanup;
     }
 
   node = gegl_node_new_from_xml (script, path_root);
 
-  g_free (temp1);
-  g_free (temp2);
-  g_free (path_root);
+cleanup:
+  g_free (dirname);
   return node;
 }
 
