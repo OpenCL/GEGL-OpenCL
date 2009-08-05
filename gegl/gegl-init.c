@@ -502,11 +502,10 @@ gegl_post_parse_hook (GOptionContext *context,
           gchar *module_path;
 
 #ifdef G_OS_WIN32
-          {
-            gchar *prefix = g_win32_get_package_installation_directory_of_module (NULL);
-            module_path = g_build_filename (prefix, "lib", GEGL_LIBRARY, NULL);
-            g_free (prefix);
-          }
+          module_path =
+            g_win32_get_package_installation_subdirectory (NULL,
+                                                           "lib" GEGL_LIBRARY "-0.dll",
+                                                           "lib/" GEGL_LIBRARY);
 #else
           module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
