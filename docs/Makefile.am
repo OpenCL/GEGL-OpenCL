@@ -64,13 +64,13 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all-local: $(HTML_FILES)
 
-operations.html: $(top_builddir)/tools/operation_reference $(top_srcdir)/operations/*/*.c
+operations.html: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/operation_reference --ops-html > $@
+	$(top_builddir)/tools/operation_reference$(EXEEXT) --ops-html > $@
 
-class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
+class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/introspect > $@
+	$(top_builddir)/tools/introspect$(EXEEXT) > $@
 
 gegl.h.html: $(top_srcdir)/gegl/gegl.h
 if HAVE_ENSCRIPT
@@ -169,7 +169,7 @@ index.html: index-static.txt		\
 	gegl.css			\
 	$(top_srcdir)/NEWS		\
 	$(top_srcdir)/examples/hello-world.c \
-	$(top_builddir)/bin/gegl	\
+	$(top_builddir)/bin/gegl$(EXEEXT)	\
 	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"

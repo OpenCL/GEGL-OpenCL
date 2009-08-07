@@ -29,7 +29,7 @@ index.html: Makefile.am images.stamp
 
 images.stamp: $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
 	      $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	      $(top_builddir)/bin/gegl
+	      $(top_builddir)/bin/gegl$(EXEEXT)
 	@echo "--[Updating sample compositions]--"; \
 	for XML in $(srcdir)/*.xml; do \
 	   echo $${XML}; \
@@ -39,7 +39,7 @@ images.stamp: $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
 
 %.png: %.xml
 	@GEGL_DEBUG_TIME=yes GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
+	$(top_builddir)/bin/gegl$(EXEEXT) $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 
 all-local: images.stamp index.html
 
