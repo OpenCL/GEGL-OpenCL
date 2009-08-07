@@ -1,6 +1,6 @@
-/Makefile
-/Makefile.in
-/introspect
-/operation_reference
 /.deps
 /.libs
+/Makefile
+/Makefile.in
+/introspect*
+/operation_reference*

@@ -1,5 +1,5 @@
-/gegl
-/Makefile.in
-/Makefile
 /.deps
 /.libs
+/Makefile
+/Makefile.in
+/gegl*
