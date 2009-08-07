@@ -42,6 +42,12 @@ gegl_chant_int(height, "", 0, 1000, 0, "private")
 #include <SDL.h>
 #include <signal.h>
 
+#ifdef G_OS_WIN32
+#ifndef SIGQUIT
+#define SIGQUIT 3
+#endif
+#endif
+
 static void
 sighandler (int signal)
 {
