@@ -39,6 +39,22 @@
 
 #include <windows.h>
 
+static HMODULE hLibGeglModule = NULL;
+
+/* DllMain prototype */
+BOOL WINAPI DllMain (HINSTANCE hinstDLL, 
+                     DWORD     fdwReason, 
+                     LPVOID    lpvReserved);
+
+BOOL WINAPI
+DllMain (HINSTANCE hinstDLL, 
+         DWORD     fdwReason, 
+         LPVOID    lpvReserved)
+{
+  hLibGeglModule = hinstDLL;
+  return TRUE;
+}
+
 static inline gboolean
 pid_is_running (gint pid)
 {
@@ -502,10 +518,12 @@ gegl_post_parse_hook (GOptionContext *context,
           gchar *module_path;
 
 #ifdef G_OS_WIN32
-          module_path =
-            g_win32_get_package_installation_subdirectory (NULL,
-                                                           "lib" GEGL_LIBRARY "-0.dll",
-                                                           "lib/" GEGL_LIBRARY);
+          {
+            gchar *prefix;
+            prefix = g_win32_get_package_installation_directory_of_module ( hLibGeglModule );
+            module_path = g_build_filename (prefix, "lib", GEGL_LIBRARY, NULL);
+            g_free(prefix);
+          }
 #else
           module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
