@@ -31,6 +31,9 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 #include "gegl-sampler-lanczos.h"
+#include "gegl-sampler-downsharp.h"
+#include "gegl-sampler-downsize.h"
+#include "gegl-sampler-downsmooth.h"
 #include "gegl-sampler-sharp.h"
 #include "gegl-sampler-yafr.h"
 
@@ -40,6 +43,7 @@ enum
   PROP_BUFFER,
   PROP_FORMAT,
   PROP_CONTEXT_RECT,
+  PROP_INVERSE_JACOBIAN,
   PROP_LAST
 };
 
@@ -97,6 +101,14 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
                                         "Input pad, for image buffer input.",
                                         GEGL_TYPE_BUFFER,
                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (
+                 object_class,
+                 PROP_INVERSE_JACOBIAN,
+                 g_param_spec_pointer ("inverse_jacobian",
+                                       "Inverse Jacobian",
+                                       "Inverse Jacobian matrix, for certain samplers.",
+                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -202,141 +214,168 @@ dispose (GObject *gobject)
  * rowstride of 64px * 16bpp:
  */
 gfloat *
-gegl_sampler_get_ptr (GeglSampler *sampler,
-                      gint         x,
-                      gint         y)
+gegl_sampler_get_ptr (      GeglSampler *const sampler,
+                      const gint               x,
+                      const gint               y)
 {
-   guchar *buffer_ptr;
-   gint    dx;
-   gint    dy;
-   gint    bpp;
-   gint    sof;
+  guchar *buffer_ptr;
+  gint    dx;
+  gint    dy;
+  gint    sof;
 
-   bpp = babl_format_get_bytes_per_pixel (sampler->interpolate_format);
+  const gint bpp =
+    babl_format_get_bytes_per_pixel (sampler->interpolate_format);
 
-   if (sampler->sampler_buffer == NULL
-       ||
-       x + sampler->context_rect.x < sampler->sampler_rectangle.x
-       ||
-       y + sampler->context_rect.y < sampler->sampler_rectangle.y
-       ||
-       x + sampler->context_rect.x + sampler->context_rect.width
-       >= sampler->sampler_rectangle.x + sampler->sampler_rectangle.width
-       ||
-       y + sampler->context_rect.y + sampler->context_rect.height
-       >= sampler->sampler_rectangle.y + sampler->sampler_rectangle.height)
-     {
-       GeglRectangle fetch_rectangle /* = sampler->context_rect */;
+  /*
+   * maximum_width_and_height is the largest number of pixels which
+   * can be be requested in the horizontal or vertical directions (64
+   * in GEGL).
+   */
+  const gint maximum_width_and_height = 64;
+  g_assert (sampler->context_rect.width  <= maximum_width_and_height);
+  g_assert (sampler->context_rect.height <= maximum_width_and_height);
 
-       fetch_rectangle.x = x + sampler->context_rect.x;
-       fetch_rectangle.y = y + sampler->context_rect.y;
+  if (( sampler->sampler_buffer == NULL )
+      ||
+      ( x + sampler->context_rect.x < sampler->sampler_rectangle.x )
+      ||
+      ( y + sampler->context_rect.y < sampler->sampler_rectangle.y )
+      ||
+      ( x + sampler->context_rect.x + sampler->context_rect.width
+        >= sampler->sampler_rectangle.x + sampler->sampler_rectangle.width )
+      ||
+      ( y + sampler->context_rect.y + sampler->context_rect.height
+        >= sampler->sampler_rectangle.y + sampler->sampler_rectangle.height ))
+    {
+      /*
+       * fetch_rectangle will become the value of
+       * sampler->sampler_rectangle:
+       */
+      GeglRectangle fetch_rectangle;
 
-       /*
-        * Override the fetch rectangle needed by the sampler, hoping
-        * that the extra pixels we fetch comes in useful in subsequent
-        * requests, we assume that it is more likely that further
-        * access is to the right or down of our currently requested
-        * position:
-        */
-       fetch_rectangle.x -= 8;
-       fetch_rectangle.y -= 8;
-       fetch_rectangle.width = 64;
-       fetch_rectangle.height = 64;
+      /*
+       * Override the fetch rectangle needed by the sampler, hoping
+       * that the extra pixels are useful for subsequent requests,
+       * assuming that it is more likely that further access is to the
+       * right or down of our currently requested
+       * position. Consequently, we move the top left corner of the
+       * context_rect by about one fourth of the maximal distance we
+       * can (one fourth of one half = one eight). Given that the
+       * maximum width and height of the fetch_rectangle is 64, so
+       * that half of it is 32, one fourth of the elbow room is at
+       * most 8. If context_rect is large, the corner is not moved
+       * much if at all, as should be.
+       */
+      fetch_rectangle.x =
+        x + sampler->context_rect.x
+        - ( maximum_width_and_height - sampler->context_rect.width  ) / 8;
+      fetch_rectangle.y =
+        y + sampler->context_rect.y
+        - ( maximum_width_and_height - sampler->context_rect.height ) / 8;
 
-       if (sampler->sampler_buffer == NULL )
-         {
-           /*
-            * We always request the same amount of pixels (64kb worth):
-            */
-           sampler->sampler_buffer =
-             g_malloc0 (fetch_rectangle.width * fetch_rectangle.height * bpp);
-         }
+      fetch_rectangle.width  = maximum_width_and_height;
+      fetch_rectangle.height = maximum_width_and_height;
 
-       gegl_buffer_get (sampler->buffer,
-                        1.0,
-                        &fetch_rectangle,
-                        sampler->interpolate_format,
-                        sampler->sampler_buffer,
-                        GEGL_AUTO_ROWSTRIDE);
+      if (sampler->sampler_buffer == NULL)
+        {
+          /*
+           * Always request the same amount of pixels:
+           */
+          sampler->sampler_buffer =
+            g_malloc0 (( maximum_width_and_height * maximum_width_and_height )
+                       * bpp);
+        }
 
-       sampler->sampler_rectangle = fetch_rectangle;
-     }
+      gegl_buffer_get (sampler->buffer,
+                       1.0,
+                       &fetch_rectangle,
+                       sampler->interpolate_format,
+                       sampler->sampler_buffer,
+                       GEGL_AUTO_ROWSTRIDE);
 
-   dx = x - sampler->sampler_rectangle.x;
-   dy = y - sampler->sampler_rectangle.y;
-   buffer_ptr = (guchar *)sampler->sampler_buffer;
-   sof = ( dy * sampler->sampler_rectangle.width + dx ) * bpp;
+      sampler->sampler_rectangle = fetch_rectangle;
+    }
 
-   return (gfloat*)(buffer_ptr+sof);
+  dx = x - sampler->sampler_rectangle.x;
+  dy = y - sampler->sampler_rectangle.y;
+  buffer_ptr = (guchar *)sampler->sampler_buffer;
+  sof = ( dx + dy * sampler->sampler_rectangle.width ) * bpp;
+
+  return (gfloat*)(buffer_ptr+sof);
 }
 
 gfloat *
-gegl_sampler_get_from_buffer (GeglSampler *sampler,
-                              gint         x,
-                              gint         y)
+gegl_sampler_get_from_buffer (      GeglSampler *const sampler,
+                              const gint               x,
+                              const gint               y)
 {
-   guchar *buffer_ptr;
-   gint    dx;
-   gint    dy;
-   gint    bpp;
-   gint    sof;
+  guchar *buffer_ptr;
+  gint    dx;
+  gint    dy;
+  gint    sof;
 
-   bpp = babl_format_get_bytes_per_pixel (sampler->interpolate_format);
+  const gint bpp =
+    babl_format_get_bytes_per_pixel (sampler->interpolate_format);
 
-   if (sampler->sampler_buffer == NULL
-       ||
-       x < sampler->sampler_rectangle.x
-       ||
-       y < sampler->sampler_rectangle.y
-       ||
-       x >= sampler->sampler_rectangle.x + sampler->sampler_rectangle.width
-       ||
-       y >= sampler->sampler_rectangle.y + sampler->sampler_rectangle.height)
-     {
-       GeglRectangle  fetch_rectangle /* = sampler->context_rect */;
+  /*
+   * maximum_width_and_height is the largest number of pixels which
+   * can be be requested in the horizontal or vertical directions (64
+   * in GEGL).
+   */
+  const gint maximum_width_and_height = 64;
+  g_assert (sampler->context_rect.width  <= maximum_width_and_height);
+  g_assert (sampler->context_rect.height <= maximum_width_and_height);
 
-       fetch_rectangle.x = x;
-       fetch_rectangle.y = y;
+  if (( sampler->sampler_buffer == NULL )
+      ||
+      ( x < sampler->sampler_rectangle.x )
+      ||
+      ( y < sampler->sampler_rectangle.y )
+      ||
+      ( x >= sampler->sampler_rectangle.x + sampler->sampler_rectangle.width )
+      ||
+      ( y >= sampler->sampler_rectangle.y + sampler->sampler_rectangle.height ))
+    {
+      /*
+       * fetch_rectangle will become the value of
+       * sampler->sampler_rectangle:
+       */
+      GeglRectangle fetch_rectangle;
 
-       /*
-        * We override the fetch rectangle needed by the sampler,
-        * hoping that the extra pixels we fetch comes in useful in
-        * subsequent requests, we assume that it is more likely that
-        * further access is to the right or down of our currently
-        * requested position:
-        */
-       fetch_rectangle.x -= 8;
-       fetch_rectangle.y -= 8;
-       fetch_rectangle.width = 64;
-       fetch_rectangle.height = 64;
+      fetch_rectangle.x =
+        x - ( maximum_width_and_height - sampler->context_rect.width  ) / 8;
+      fetch_rectangle.y =
+        y - ( maximum_width_and_height - sampler->context_rect.height ) / 8;
 
-       if (sampler->sampler_buffer == NULL )
-         {
-           /*
-            * We always request the same amount of pixels (64kb worth):
-            */
-           sampler->sampler_buffer =
-             g_malloc0 (fetch_rectangle.width * fetch_rectangle.height * bpp);
-         }
+      fetch_rectangle.width  = maximum_width_and_height;
+      fetch_rectangle.height = maximum_width_and_height;
 
-       gegl_buffer_get (sampler->buffer,
-                        1.0,
-                        &fetch_rectangle,
-                        sampler->interpolate_format,
-                        sampler->sampler_buffer,
-                        GEGL_AUTO_ROWSTRIDE);
+      if (sampler->sampler_buffer == NULL)
+        {
+          /*
+           * Always request the same amount of pixels:
+           */
+          sampler->sampler_buffer =
+            g_malloc0 (( maximum_width_and_height * maximum_width_and_height )
+                       * bpp);
+        }
 
-       sampler->sampler_rectangle = fetch_rectangle;
-     }
+      gegl_buffer_get (sampler->buffer,
+                       1.0,
+                       &fetch_rectangle,
+                       sampler->interpolate_format,
+                       sampler->sampler_buffer,
+                       GEGL_AUTO_ROWSTRIDE);
 
-   dx = x - sampler->sampler_rectangle.x;
-   dy = y - sampler->sampler_rectangle.y;
+      sampler->sampler_rectangle = fetch_rectangle;
+    }
 
-   buffer_ptr = (guchar *)sampler->sampler_buffer;
+  dx = x - sampler->sampler_rectangle.x;
+  dy = y - sampler->sampler_rectangle.y;
+  buffer_ptr = (guchar *)sampler->sampler_buffer;
+  sof = ( dx + dy * sampler->sampler_rectangle.width ) * bpp;
 
-   sof = ( dy * sampler->sampler_rectangle.width + dx ) * bpp;
-
-   return (gfloat*)(buffer_ptr+sof);
+  return (gfloat*)(buffer_ptr+sof);
 }
 
 static void
@@ -355,6 +394,10 @@ get_property (GObject    *object,
 
       case PROP_FORMAT:
         g_value_set_pointer (value, self->format);
+        break;
+
+      case PROP_INVERSE_JACOBIAN:
+        g_value_set_pointer (value, self->inverse_jacobian);
         break;
 
       default:
@@ -378,6 +421,10 @@ set_property (GObject      *object,
 
       case PROP_FORMAT:
         self->format = g_value_get_pointer (value);
+        break;
+
+      case PROP_INVERSE_JACOBIAN:
+        self->inverse_jacobian = g_value_get_pointer (value);
         break;
 
       default:
@@ -420,6 +467,15 @@ gegl_buffer_interpolation_from_string (const gchar *string)
   if (g_str_equal (string, "lanczos"))
     return GEGL_INTERPOLATION_LANCZOS;
 
+  if (g_str_equal (string, "downsharp"))
+    return GEGL_INTERPOLATION_DOWNSHARP;
+
+  if (g_str_equal (string, "downsize"))
+    return GEGL_INTERPOLATION_DOWNSIZE;
+
+  if (g_str_equal (string, "downsmooth"))
+    return GEGL_INTERPOLATION_DOWNSMOOTH;
+
   return GEGL_INTERPOLATION_NEAREST;
 }
 
@@ -440,6 +496,12 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_YAFR;
       case GEGL_INTERPOLATION_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
+      case GEGL_INTERPOLATION_DOWNSHARP:
+        return GEGL_TYPE_SAMPLER_DOWNSHARP;
+      case GEGL_INTERPOLATION_DOWNSIZE:
+        return GEGL_TYPE_SAMPLER_DOWNSIZE;
+      case GEGL_INTERPOLATION_DOWNSMOOTH:
+        return GEGL_TYPE_SAMPLER_DOWNSMOOTH;
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
     }

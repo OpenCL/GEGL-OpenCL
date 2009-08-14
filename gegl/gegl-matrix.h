@@ -17,6 +17,7 @@ G_BEGIN_DECLS
  */
 
 typedef gdouble GeglMatrix3 [3][3];
+typedef gdouble GeglMatrix2 [2][2];
 
 /**
  * gegl_matrix3_identity:

@@ -33,6 +33,9 @@ libbuffer_la_SOURCES = \
     gegl-sampler-lanczos.c	\
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
+    gegl-sampler-downsharp.c	\
+    gegl-sampler-downsize.c \
+    gegl-sampler-downsmooth.c	\
     gegl-sampler-sharp.c	\
     gegl-sampler-yafr.c		\
     gegl-region-generic.c	\
@@ -62,6 +65,9 @@ libbuffer_la_SOURCES = \
     gegl-sampler-lanczos.h	\
     gegl-sampler-linear.h	\
     gegl-sampler-nearest.h	\
+    gegl-sampler-downsharp.h	\
+    gegl-sampler-downsize.h \
+    gegl-sampler-downsmooth.h	\
     gegl-sampler-sharp.h	\
     gegl-sampler-yafr.h		\
     gegl-region.h		\
