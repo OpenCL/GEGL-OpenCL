@@ -164,12 +164,12 @@ main (gint    argc,
     top  = loadbuf;
   }
 
-  gtk_signal_connect (GTK_OBJECT (view), "motion-notify-event",
-                      (GtkSignalFunc) paint_motion, NULL);
-  gtk_signal_connect (GTK_OBJECT (view), "button-press-event",
-                      (GtkSignalFunc) paint_press, NULL);
-  gtk_signal_connect (GTK_OBJECT (view), "button-release-event",
-                      (GtkSignalFunc) paint_release, NULL);
+  g_signal_connect (GTK_OBJECT (view), "motion-notify-event",
+                    (GCallback) paint_motion, NULL);
+  g_signal_connect (GTK_OBJECT (view), "button-press-event",
+                    (GCallback) paint_press, NULL);
+  g_signal_connect (GTK_OBJECT (view), "button-release-event",
+                    (GCallback) paint_release, NULL);
 
   gtk_widget_add_events (view, GDK_BUTTON_RELEASE_MASK);
 
