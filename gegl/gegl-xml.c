@@ -223,7 +223,7 @@ static void start_element (GMarkupParseContext *context,
   if (!strcmp (element_name, "gegl") ||
       !strcmp (element_name, "image"))
     {
-      GeglNode *new = g_object_new (GEGL_TYPE_NODE, NULL);
+      GeglNode *new = g_object_new (GEGL_TYPE_NODE, "operation", "gegl:nop", NULL);
       if (pd->gegl == NULL)
         {
           pd->gegl = new;
