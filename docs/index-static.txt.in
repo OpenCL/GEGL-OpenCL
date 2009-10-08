@@ -112,7 +112,7 @@ http://www.ohloh.net/projects/4349/analyses/latest[over time] the following
 lists are are ordered chronologically according to when they are mentioned in
 the ChangeLog.
 
-include::../AUTHORS[]
+include::@top_srcdir@/AUTHORS[]
 
 
 
@@ -218,7 +218,7 @@ mandelbrot fractal. compile it with:
 This example and others can be found in the examples subdir of the GEGL distribution.
 
 ---------------------------
-sys::[cat ../examples/hello-world.c]
+sys::[cat @top_srcdir@/examples/hello-world.c]
 ---------------------------
 
 
