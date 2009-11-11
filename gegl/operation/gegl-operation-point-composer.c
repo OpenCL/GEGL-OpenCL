@@ -85,6 +85,7 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
   GeglBuffer                 *aux;
   GeglBuffer                 *output;
   gboolean                    success = FALSE;
+  const gchar                *op_name;
 
   if (strcmp (output_prop, "output"))
     {
@@ -94,11 +95,33 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
 
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
+  op_name = gegl_node_get_operation (operation->node);
 
-  /* we could be even faster by not alway writing to this buffer, that
-   * would potentially break other assumptions we want to make from the
-   * GEGL core so we avoid doing that
+  /* special caasing of opacity op (this could perhaps be
+   * done special cased by overriding the vfunc in the correct
+   * supertclass, avoiding a constant overhead the rest of the
+   * time)
    */
+  if (input &&
+      !strcmp (op_name, "gegl:opacity"))
+    {
+      if (!aux)
+        {
+          gdouble opacity;
+          gegl_node_get (operation->node, "value", &opacity, NULL);
+
+          if (opacity == 1.0)
+            {
+              /* with no mask and opacity of 1.0, pass the buffer
+               * object directly on in the graph
+               */
+              gegl_operation_context_take_object (context, "output",
+                                                  G_OBJECT (input));
+              return TRUE;
+            }
+        }
+    }
+
   output = gegl_operation_context_get_target (context, "output");
 
 
@@ -113,9 +136,10 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
 
 #if 1  /* this can be set to 0, and everything should work normally,
           but some fast paths would not be taken */
-      if (!strcmp (gegl_node_get_operation (operation->node), "gegl:over"))
+      if (!strcmp (op_name, "gegl:over") ||
+          !strcmp (op_name, "gegl:normal"))
         {
-          /* these optimizations probably apply to more than over */
+          /* these optimizations probably apply to more than over and normal*/
 
           if ((result->width > 0) && (result->height > 0))
 
