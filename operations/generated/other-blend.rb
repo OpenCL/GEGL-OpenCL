@@ -33,9 +33,9 @@ copyright = '
 
 a = [
 #       Alias for porter-duff src-over
-      ['normal',  'cA + cB * (1 - aA)',
-                  'aA + aB - aA * aB',
-                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
+#     ['normal',  'cA + cB * (1 - aA)',
+#                  'aA + aB - aA * aB',
+#                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
 #       Alias for porter-duff src-over
 #      ['over',    'cA + cB * (1 - aA)',
 #                  'aA + aB - aA * aB',
