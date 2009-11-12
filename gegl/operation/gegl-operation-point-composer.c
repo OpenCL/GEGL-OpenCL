@@ -85,7 +85,6 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
   GeglBuffer                 *aux;
   GeglBuffer                 *output;
   gboolean                    success = FALSE;
-  const gchar                *op_name;
 
   if (strcmp (output_prop, "output"))
     {
@@ -95,103 +94,23 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
 
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
-  op_name = gegl_node_get_operation (operation->node);
-
-  /* special caasing of opacity op (this could perhaps be
-   * done special cased by overriding the vfunc in the correct
-   * supertclass, avoiding a constant overhead the rest of the
-   * time)
-   */
-  if (input &&
-      !strcmp (op_name, "gegl:opacity"))
+#if 0
+  if (aux == NULL && input)
     {
-      if (!aux)
-        {
-          gdouble opacity;
-          gegl_node_get (operation->node, "value", &opacity, NULL);
-
-          if (opacity == 1.0)
-            {
-              /* with no mask and opacity of 1.0, pass the buffer
-               * object directly on in the graph
-               */
-              gegl_operation_context_take_object (context, "output",
-                                                  G_OBJECT (input));
-              return TRUE;
-            }
-        }
+       gegl_operation_context_take_object (context, "output", G_OBJECT (input));
+       g_print ("aa\n");
+       return TRUE;
     }
+#endif
 
   output = gegl_operation_context_get_target (context, "output");
-
-
-  if (input != NULL ||
-      aux != NULL)
+    
     {
       gboolean done = FALSE;
 
       if (result->width == 0 ||
           result->height == 0)
         done = TRUE;
-
-#if 1  /* this can be set to 0, and everything should work normally,
-          but some fast paths would not be taken */
-      if (!strcmp (op_name, "gegl:over") ||
-          !strcmp (op_name, "gegl:normal"))
-        {
-          /* these optimizations probably apply to more than over and normal*/
-
-          if ((result->width > 0) && (result->height > 0))
-
-          if (input && aux==NULL)
-            {
-              gegl_buffer_copy (input, result, output, result);
-              done = TRUE;
-            }
-
-          /* SKIP_EMPTY_IN */
-          if(!done)
-            {
-              const GeglRectangle *in_abyss = NULL;
-
-              if (input)
-                in_abyss = gegl_buffer_get_abyss (input);
-
-              if ((!input ||
-                   !gegl_rectangle_intersect (NULL, in_abyss, result)) &&
-                  aux)
-                {
-                  const GeglRectangle *aux_abyss;
-                  aux_abyss = gegl_buffer_get_abyss (aux);
-
-                  if (!gegl_rectangle_intersect (NULL, aux_abyss, result))
-                    {
-                      done = TRUE;
-                    }
-                  else
-                    {
-                      gegl_buffer_copy (aux, result, output, result);
-                      done = TRUE;
-                    }
-                }
-            }
-/* SKIP_EMPTY_AUX */
-            if(!done)
-              {
-              const GeglRectangle *aux_abyss = NULL;
-
-              if (aux)
-                aux_abyss = gegl_buffer_get_abyss (aux);
-
-              if (!aux ||
-                  (aux && !gegl_rectangle_intersect (NULL, aux_abyss, result)))
-                {
-                  gegl_buffer_copy (input, result, output, result);
-                  done = TRUE;
-                }
-            }
-      }
-#endif
 
       success = done;
       if (!done)
@@ -205,11 +124,6 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
          g_object_unref (input);
       if (aux)
          g_object_unref (aux);
-    }
-  else
-    {
-      g_warning ("%s received NULL input and aux",
-                 gegl_node_get_debug_name (operation->node));
     }
 
   return success;
