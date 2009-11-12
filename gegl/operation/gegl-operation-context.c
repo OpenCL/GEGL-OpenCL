@@ -385,7 +385,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
        */
       if (gegl_rectangle_contains (gegl_buffer_get_extent (cache), result))
         {
-          output = gegl_buffer_create_sub_buffer (cache, result);
+          output = g_object_ref (cache);
         }
       else
         {
