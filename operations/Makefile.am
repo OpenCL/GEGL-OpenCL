@@ -2,8 +2,8 @@ SUBDIRS = \
 	affine		\
 	core		\
 	common		\
-	external	\
-	generated
+	generated	\
+	external
 
 if ENABLE_WORKSHOP
 SUBDIRS+= workshop
