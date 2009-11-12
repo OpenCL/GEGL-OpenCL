@@ -78,7 +78,6 @@ struct _GeglBufferClass
 };
 
 
-const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
 
 gint                 gegl_buffer_leaks       (void);
 

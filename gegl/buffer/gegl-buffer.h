@@ -422,6 +422,15 @@ void            gegl_buffer_linear_close     (GeglBuffer    *buffer,
 
 
 /**
+ * gegl_buffer_get_abyss:
+ * @buffer: a #GeglBuffer.
+ *
+ * Return the abyss extent of a buffer, this expands out to the parents extent in
+ * subbuffers.
+ */
+const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
+
+/**
  */
 G_END_DECLS
 #endif
