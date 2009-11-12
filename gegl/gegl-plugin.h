@@ -78,6 +78,8 @@ GeglBuffer     *gegl_operation_context_get_target (GeglOperationContext *self,
 void            gegl_operation_context_take_object(GeglOperationContext *context,
                                                    const gchar          *padname,
                                                    GObject              *data);
+GObject        *gegl_operation_context_get_object (GeglOperationContext *context,
+                                                   const gchar          *padname);
 
 void            gegl_extension_handler_register    (const gchar         *extension,
                                                     const gchar         *handler);
