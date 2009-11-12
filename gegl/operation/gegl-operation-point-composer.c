@@ -94,14 +94,6 @@ gegl_operation_composer_process2 (GeglOperation       *operation,
 
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
-#if 0
-  if (aux == NULL && input)
-    {
-       gegl_operation_context_take_object (context, "output", G_OBJECT (input));
-       g_print ("aa\n");
-       return TRUE;
-    }
-#endif
 
   output = gegl_operation_context_get_target (context, "output");
     
