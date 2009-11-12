@@ -99,7 +99,7 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
 
-  if (can_passthrough (operation, input, result))
+  if (gegl_can_passthrough (operation, input, result))
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
