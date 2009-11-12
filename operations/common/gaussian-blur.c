@@ -384,7 +384,7 @@ fir_ver_blur (GeglBuffer          *src,
                                                           matrix_length);
       }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"),
+  gegl_buffer_set (dst, dst_rect, babl_format ("RaGaBaA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
