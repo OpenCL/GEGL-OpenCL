@@ -67,9 +67,7 @@ gegl_visitable_accept (GeglVisitable *interface,
 
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
 
-  g_object_ref (interface);
   interface_class->accept (interface, visitor);
-  g_object_unref (interface);
 }
 
 GSList *
@@ -82,9 +80,7 @@ gegl_visitable_depends_on (GeglVisitable *interface)
 
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
 
-  g_object_ref (interface);
   depends_on = interface_class->depends_on (interface);
-  g_object_unref (interface);
 
   return depends_on;
 }
