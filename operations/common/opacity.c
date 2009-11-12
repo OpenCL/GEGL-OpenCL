@@ -19,7 +19,6 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
@@ -110,6 +109,33 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+/* Fast path when opacity is a no-op
+ */
+static gboolean operation_process (GeglOperation        *operation,
+                                   GeglOperationContext *context,
+                                   const gchar          *output_prop,
+                                   const GeglRectangle  *result)
+{
+  GeglOperationClass  *operation_class;
+  gpointer in, aux;
+  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+
+  /* get the raw values this does not increase the reference count */
+  in = gegl_operation_context_get_object (context, "input");
+  aux = gegl_operation_context_get_object (context, "aux");
+
+  if (in && !aux && GEGL_CHANT_PROPERTIES (operation)->value == 1.0)
+    {
+      gegl_operation_context_take_object (context, "output",
+                                          g_object_ref (G_OBJECT (in)));
+      return TRUE;
+    }
+  /* chain up, which will create the needed buffers for our actual
+   * process function
+   */
+  return operation_class->process (operation, context, output_prop, result);
+}
+
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -120,14 +146,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class      = GEGL_OPERATION_CLASS (klass);
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
+  operation_class->process = operation_process;
   point_composer_class->process = process;
   operation_class->prepare = prepare;
-
-  /* overriding the caching behavior that point-composers do
-   * not have caches, this means that an opacity op can be
-   * inserted where you want a cache to be in the graph
-   */
-  operation_class->no_cache = FALSE;
 
   operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";
