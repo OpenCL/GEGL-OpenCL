@@ -192,7 +192,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     linear_buffers = g_list_append (linear_buffers, info);
     g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
 
-    info->extent = buffer->extent;
+    info->extent = *extent;
     info->format = format;
 
     rs = info->extent.width * babl_format_get_bytes_per_pixel (format);
