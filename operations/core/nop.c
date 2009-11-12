@@ -33,10 +33,10 @@
 
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+process (GeglOperation        *operation,
+         GeglOperationContext *context,
+         const gchar          *output_prop,
+         const GeglRectangle  *result)
 {
   GeglBuffer *input;
 
@@ -46,14 +46,14 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  input  = gegl_operation_context_get_source (context, "input");
+  input = gegl_operation_context_get_object (context, "input");
   if (!input)
     {
       g_warning ("nop received NULL input");
       return FALSE;
     }
 
-  gegl_operation_context_take_object (context, "output", G_OBJECT (input));
+  gegl_operation_context_take_object (context, "output", g_object_ref (G_OBJECT (input)));
   return TRUE;
 }
 
