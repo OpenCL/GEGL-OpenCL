@@ -37,10 +37,11 @@ gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
 #include <math.h>
 
 static void
-snn_mean (GeglBuffer *src,
-          GeglBuffer *dst,
-          gdouble     radius,
-          gint        pairs);
+snn_mean (GeglBuffer          *src,
+          GeglBuffer          *dst,
+          const GeglRectangle *dst_rect,
+          gdouble              radius,
+          gint                 pairs);
 
 
 static void prepare (GeglOperation *operation)
@@ -74,7 +75,7 @@ process (GeglOperation       *operation,
     {
       temp_in = gegl_buffer_create_sub_buffer (input, &compute);
 
-      snn_mean (temp_in, output, o->radius, o->pairs);
+      snn_mean (temp_in, output, result, o->radius, o->pairs);
       g_object_unref (temp_in);
     }
 
@@ -104,10 +105,11 @@ static inline gfloat colordiff (gfloat *pixA,
 
 
 static void
-snn_mean (GeglBuffer *src,
-          GeglBuffer *dst,
-          gdouble     dradius,
-          gint        pairs)
+snn_mean (GeglBuffer          *src,
+          GeglBuffer          *dst,
+          const GeglRectangle *dst_rect,
+          gdouble              dradius,
+          gint                 pairs)
 {
   gint x,y;
   gint offset;
@@ -118,19 +120,19 @@ snn_mean (GeglBuffer *src,
   gint src_height = gegl_buffer_get_height (src);
 
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
+  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
   gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
 
-  for (y=0; y<gegl_buffer_get_height (dst); y++)
+  for (y=0; y<dst_rect->height; y++)
     {
       gfloat *center_pix;
      
       center_pix = src_buf + ((radius) + (y+radius)* src_width)*4;
 
-      for (x=0; x<gegl_buffer_get_width (dst); x++)
+      for (x=0; x<dst_rect->width; x++)
         {
           gint u,v;
 
@@ -199,7 +201,7 @@ snn_mean (GeglBuffer *src,
           center_pix += 4;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);

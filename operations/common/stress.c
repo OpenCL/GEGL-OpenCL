@@ -55,31 +55,33 @@ gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #include <stdlib.h>
 #include "envelopes.h"
 
-static void stress (GeglBuffer *src,
-                    GeglBuffer *dst,
-                    gint        radius,
-                    gint        samples,
-                    gint        iterations,
-                    gdouble     rgamma)
+static void stress (GeglBuffer          *src,
+                    const GeglRectangle *src_rect,
+                    GeglBuffer          *dst,
+                    const GeglRectangle *dst_rect,
+                    gint                 radius,
+                    gint                 samples,
+                    gint                 iterations,
+                    gdouble              rgamma)
 {
   gint x,y;
   gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
-  gint    inw = gegl_buffer_get_width (src);
-  gint    inh = gegl_buffer_get_height (src);
-  gint   outw = gegl_buffer_get_width (dst);
+  gint    inw = src_rect->width;
+  gint    inh = src_rect->height;
+  gint   outw = dst_rect->width;
 
   /* this use of huge linear buffers should be avoided and
    * most probably would lead to great speed ups
    */
 
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
+  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
-  for (y=radius; y<gegl_buffer_get_height (dst)+radius; y++)
+  for (y=radius; y<dst_rect->height+radius; y++)
     {
       gint src_offset = (inw*y+radius)*4;
       for (x=radius; x<outw+radius; x++)
@@ -117,7 +119,7 @@ static void stress (GeglBuffer *src,
           dst_offset+=4;
         }
     }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -150,8 +152,10 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle compute;
+  compute = gegl_operation_get_required_for_output (operation, "input",result);
 
-  stress (input, output,
+  stress (input, &compute, output, result,
           o->radius,
           o->samples,
           o->iterations,

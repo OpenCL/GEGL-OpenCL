@@ -38,10 +38,12 @@ gegl_chant_double (edge_preservation, _("Edge preservation"), 0.0, 70.0, 8.0,
 #include <math.h>
 
 static void
-bilateral_filter (GeglBuffer *src,
-                  GeglBuffer *dst,
-                  gdouble     radius,
-                  gdouble     preserve);
+bilateral_filter (GeglBuffer          *src,
+                  const GeglRectangle *src_rect,
+                  GeglBuffer          *dst,
+                  const GeglRectangle *dst_rect,
+                  gdouble              radius,
+                  gdouble              preserve);
 
 #include <stdio.h>
 
@@ -62,7 +64,6 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *temp_in;
   GeglRectangle compute;
 
   compute = gegl_operation_get_required_for_output (operation, "input",result);
@@ -73,19 +74,19 @@ process (GeglOperation       *operation,
     }
   else
     {
-      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-      bilateral_filter (temp_in, output, o->blur_radius, o->edge_preservation);
-      g_object_unref (temp_in);
+      bilateral_filter (input, &compute, output, result, o->blur_radius, o->edge_preservation);
     }
 
   return  TRUE;
 }
 
 static void
-bilateral_filter (GeglBuffer *src,
-                  GeglBuffer *dst,
-                  gdouble     radius,
-                  gdouble     preserve)
+bilateral_filter (GeglBuffer          *src,
+                  const GeglRectangle *src_rect,
+                  GeglBuffer          *dst,
+                  const GeglRectangle *dst_rect,
+                  gdouble              radius,
+                  gdouble              preserve)
 {
   gfloat *gauss;
   gint x,y;
@@ -94,14 +95,14 @@ bilateral_filter (GeglBuffer *src,
   gfloat *dst_buf;
   gint width = (gint) radius * 2 + 1;
   gint iradius = radius;
-  gint src_width = gegl_buffer_get_width (src);
-  gint src_height = gegl_buffer_get_height (src);
+  gint src_width = src_rect->width;
+  gint src_height = src_rect->height;
 
   gauss = g_newa (gfloat, width * width);
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count(src) * 4);
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count(dst) * 4);
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
+  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
 
@@ -112,8 +113,8 @@ bilateral_filter (GeglBuffer *src,
         gauss[x+(int)radius + (y+(int)radius)*width] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
       }
 
-  for (y=0; y<gegl_buffer_get_height (dst); y++)
-    for (x=0; x<gegl_buffer_get_width (dst); x++)
+  for (y=0; y<dst_rect->height; y++)
+    for (x=0; x<dst_rect->width; x++)
       {
         gint u,v;
         gfloat *center_pix = src_buf + ((x+iradius)+((y+iradius) * src_width)) * 4;
@@ -156,7 +157,7 @@ bilateral_filter (GeglBuffer *src,
           dst_buf[offset*4+u] = accumulated[u]/count;
         offset++;
       }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf,
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
