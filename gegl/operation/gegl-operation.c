@@ -100,6 +100,8 @@ gegl_operation_create_pad (GeglOperation *self,
   gegl_node_add_pad (self->node, pad);
 }
 
+GeglBuffer *gegl_buffer_emptybuf (void);
+
 gboolean
 gegl_operation_process (GeglOperation       *operation,
                         GeglOperationContext     *context,
@@ -115,7 +117,7 @@ gegl_operation_process (GeglOperation       *operation,
   if (!strcmp (output_pad, "output") &&
       (result->width == 0 || result->height == 0))
     {
-      GeglBuffer *output = gegl_buffer_new (NULL, NULL);
+      GeglBuffer *output = g_object_ref (gegl_buffer_emptybuf ());
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
       return TRUE;
     }
