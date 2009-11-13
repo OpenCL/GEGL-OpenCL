@@ -327,8 +327,6 @@ button_press_event (GtkWidget      *widget,
   gint      x    = event->x;
   gint      y    = event->y;
 
-  return FALSE;
-
   priv->screen_x = x;
   priv->screen_y = y;
 
@@ -385,7 +383,7 @@ motion_notify_event (GtkWidget      *widget,
       priv->x -= diff_x;
       priv->y -= diff_y;
 
-      gdk_window_scroll (widget->window, diff_x, diff_y);
+      gdk_window_scroll (gtk_widget_get_window (widget), diff_x, diff_y);
 
       g_object_notify (G_OBJECT (view), "x");
       g_object_notify (G_OBJECT (view), "y");
@@ -463,8 +461,8 @@ expose_event (GtkWidget      *widget,
                       GEGL_AUTO_ROWSTRIDE,
                       GEGL_BLIT_CACHE|(priv->block?0:GEGL_BLIT_DIRTY));
 
-      gdk_draw_rgb_image (widget->window,
-                          widget->style->black_gc,
+      gdk_draw_rgb_image (gtk_widget_get_window (widget),
+                          gtk_widget_get_style (widget)->black_gc,
                           rectangles[i].x, rectangles[i].y,
                           rectangles[i].width, rectangles[i].height,
                           GDK_RGB_DITHER_NONE,
@@ -499,11 +497,13 @@ gegl_view_repaint (GeglView *view)
   GtkWidget       *widget = GTK_WIDGET (view);
   GeglViewPrivate *priv   = GEGL_VIEW_GET_PRIVATE (view);
   GeglRectangle    roi;
+  GtkAllocation    allocation;
 
   roi.x = priv->x / priv->scale;
   roi.y = priv->y / priv->scale;
-  roi.width = ceil(widget->allocation.width / priv->scale+1);
-  roi.height = ceil(widget->allocation.height / priv->scale+1);
+  gtk_widget_get_allocation (widget, &allocation);
+  roi.width = ceil(allocation.width / priv->scale+1);
+  roi.height = ceil(allocation.height / priv->scale+1);
 
   if (priv->monitor_id == 0)
     {

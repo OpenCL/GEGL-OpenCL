@@ -51,10 +51,10 @@ static gboolean paint_press (GtkWidget      *widget,
       over       = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
       stroke     = gegl_node_new_child (gegl, "operation", "gegl:path",
                                         "d", vector,
+                                        "fill-opacity", 0.0,
                                         "stroke", gegl_color_new (COLOR),
-                                        "fill", gegl_color_new ("none"),
                                         "stroke-width", LINEWIDTH,
-                                        "hardness", HARDNESS,
+                                        "stroke-hardness", HARDNESS,
                                         NULL);
       gegl_node_link_many (top, over, out, NULL);
       gegl_node_connect_to (stroke, "output", over, "aux");
@@ -143,9 +143,14 @@ main (gint    argc,
       GeglRectangle rect = {0, 0, 512, 512};
       gpointer buf;
 
-      buffer = gegl_buffer_new (&rect, babl_format("RaGaBaA float"));
+      /* XXX: the format should be RaGaBaA float, it is nonpremultiplied
+       * right now, slowing things down a bit, but it circumvents overeager
+       * in place processing code.
+       */
+      buffer = gegl_buffer_new (&rect, babl_format("RGBA float"));
       buf    = gegl_buffer_linear_open (buffer, NULL, NULL, babl_format ("Y' u8"));
-      memset (buf, 255, 512 * 512); /* FIXME: we need a babl_buffer_paint () */
+      /* it would be useful to have a programmatic way of doing this */
+      memset (buf, 255, 512 * 512);
       gegl_buffer_linear_close (buffer, buf);
     }
   else
@@ -170,9 +175,7 @@ main (gint    argc,
                     (GCallback) paint_press, NULL);
   g_signal_connect (GTK_OBJECT (view), "button-release-event",
                     (GCallback) paint_release, NULL);
-
   gtk_widget_add_events (view, GDK_BUTTON_RELEASE_MASK);
-
 
   gtk_container_add (GTK_CONTAINER (window), view);
   gtk_widget_set_size_request (view, 512, 512);
@@ -180,7 +183,6 @@ main (gint    argc,
   g_signal_connect (G_OBJECT (window), "delete-event",
                     G_CALLBACK (gtk_main_quit), window);
   gtk_widget_show_all (window);
-
 
   gtk_main ();
   g_object_unref (gegl);
