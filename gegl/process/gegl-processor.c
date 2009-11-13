@@ -56,6 +56,9 @@ static void      gegl_processor_get_property (GObject               *gobject,
                                               GParamSpec            *pspec);
 static void      gegl_processor_set_node     (GeglProcessor         *processor,
                                               GeglNode              *node);
+static GObject * gegl_processor_constructor  (GType                  type,
+                                              guint                  n_params,
+                                              GObjectConstructParam *params);
 static gdouble   gegl_processor_progress     (GeglProcessor         *processor);
 static gint      gegl_processor_get_band_size(gint                   size) G_GNUC_CONST;
 
@@ -69,6 +72,7 @@ struct _GeglProcessor
   GeglOperationContext *context;
 
   GeglRegion      *valid_region;     /* used when doing unbuffered rendering */
+  GeglRegion      *queued_region;
   GSList          *dirty_rectangles;
   gint             chunk_size;
 
@@ -87,6 +91,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->finalize     = gegl_processor_finalize;
+  gobject_class->constructor  = gegl_processor_constructor;
   gobject_class->set_property = gegl_processor_set_property;
   gobject_class->get_property = gegl_processor_get_property;
 
@@ -126,8 +131,28 @@ gegl_processor_init (GeglProcessor *processor)
   processor->node             = NULL;
   processor->input            = NULL;
   processor->context          = NULL;
+  processor->queued_region    = NULL;
   processor->dirty_rectangles = NULL;
   processor->chunk_size       = 128 * 128;
+}
+
+/* Initialises the fields processor->input, processor->valid_region
+ * and processor->queued_region.
+ */
+static GObject *
+gegl_processor_constructor (GType                  type,
+                            guint                  n_params,
+                            GObjectConstructParam *params)
+{
+  GObject       *object;
+  GeglProcessor *processor;
+
+  object    = G_OBJECT_CLASS (gegl_processor_parent_class)->constructor (type, n_params, params);
+  processor = GEGL_PROCESSOR (object);
+
+  processor->queued_region = gegl_region_new ();
+
+  return object;
 }
 
 static void
@@ -143,6 +168,11 @@ gegl_processor_finalize (GObject *self_object)
   if (processor->input)
     {
       g_object_unref (processor->input);
+    }
+
+  if (processor->queued_region)
+    {
+      gegl_region_destroy (processor->queued_region);
     }
 
   if (processor->valid_region)
@@ -164,7 +194,7 @@ gegl_processor_set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_NODE:
-        gegl_processor_set_node (self, g_value_get_object (value));
+        gegl_processor_set_node (self, g_value_dup_object (value));
         break;
 
       case PROP_CHUNK_SIZE:
@@ -223,22 +253,35 @@ gegl_processor_set_node (GeglProcessor *processor,
     g_object_unref (processor->node);
   processor->node = g_object_ref (node);
 
-  if (processor->valid_region)
-    gegl_region_destroy (processor->valid_region);
-  processor->valid_region = gegl_region_new ();
-
-  /* Sinks doesn't produce any data, so we need to use the source
-   * node as input in that case
-   */
-  if (GEGL_IS_OPERATION_SINK (node->operation))
+  /* if the processor's node is a sink operation then get the producer node
+   * and set up the region (unless all is going to be needed) */
+  if (processor->node->operation &&
+      g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
+                   GEGL_TYPE_OPERATION_SINK))
     {
-      processor->input = g_object_ref (gegl_node_get_producer (processor->node, "input", NULL));
+      processor->input = gegl_node_get_producer (processor->node, "input", NULL);
+      if (!gegl_operation_sink_needs_full (processor->node->operation))
+        {
+          processor->valid_region = gegl_region_new ();
+        }
+      else
+        {
+          processor->valid_region = NULL;
+        }
     }
+  /* If the processor's node is not a sink operation, then just use it as
+   * an input, and set the region to NULL */
   else
     {
-      processor->input = g_object_ref (processor->node);
+      processor->input = processor->node;
+      processor->valid_region = NULL;
     }
+
+  g_object_ref (processor->input);
 }
+
+
+
 
 /* Sets the processor->rectangle to the given rectangle (or the node
  * bounding box if rectangle is NULL) and removes any
@@ -266,7 +309,6 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
    * then set it and remove processor->dirty_rectangles (set to NULL)  */
   if (! gegl_rectangle_equal (&processor->rectangle, rectangle))
     {
-
 #if 0
     /* XXX: this is a large penalty hit, so we assume the rectangle
      * we're getting is part of the bounding box we're hitting */
@@ -285,14 +327,6 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
         }
       g_slist_free (processor->dirty_rectangles);
       processor->dirty_rectangles = NULL;
-
-      /* We assume that the GeglProcessor client keeps track of dirty
-       * regions for us, so just clear the valid_region when the rect
-       * changes
-       */
-      if (processor->valid_region)
-        gegl_region_destroy (processor->valid_region);
-      processor->valid_region = gegl_region_new ();
     }
 
   /* if the node's operation is a sink and it needs the full content then
@@ -314,23 +348,12 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       gegl_operation_context_set_property (processor->context, "input", &value);
       g_value_unset (&value);
 
+
       gegl_operation_context_set_result_rect (processor->context,
                                               &processor->rectangle);
       gegl_operation_context_set_need_rect   (processor->context,
                                               &processor->rectangle);
     }
-}
-
-GeglProcessor *
-gegl_node_new_processor (GeglNode            *node,
-                         const GeglRectangle *rectangle)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
-
-  return g_object_new (GEGL_TYPE_PROCESSOR,
-                       "node",      node,
-                       "rectangle", rectangle,
-                       NULL);
 }
 
 /* Will generate band_sizes that are adapted to the size of the tiles */
@@ -432,13 +455,13 @@ render_rectangle (GeglProcessor *processor)
         {
           /* only do work if the rectangle is not completely inside the valid
            * region of the cache */
-          if (gegl_region_rect_in (processor->valid_region, dr) !=
+          if (gegl_region_rect_in (cache->valid_region, dr) !=
               GEGL_OVERLAP_RECTANGLE_IN)
             {
               /* create a buffer and initialise it */
               guchar *buf;
 
-              gegl_region_union_with_rect (processor->valid_region, dr);
+              gegl_region_union_with_rect (cache->valid_region, dr);
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
 
@@ -516,18 +539,31 @@ area_left (GeglRegion    *area,
 static gboolean
 gegl_processor_is_rendered (GeglProcessor *processor)
 {
-  return processor->dirty_rectangles == NULL;
+  if (gegl_region_empty (processor->queued_region) &&
+      processor->dirty_rectangles == NULL)
+    return TRUE;
+  return FALSE;
 }
 
 static gdouble
 gegl_processor_progress (GeglProcessor *processor)
 {
-  gint    valid;
-  gint    wanted;
-  gdouble ret;
+  GeglRegion *valid_region;
+  gint        valid;
+  gint        wanted;
+  gdouble     ret;
+
+  if (processor->valid_region)
+    {
+      valid_region = processor->valid_region;
+    }
+  else
+    {
+      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    }
 
   wanted = rect_area (&(processor->rectangle));
-  valid  = wanted - area_left (processor->valid_region, &(processor->rectangle));
+  valid  = wanted - area_left (valid_region, &(processor->rectangle));
   if (wanted == 0)
     {
       if (gegl_processor_is_rendered (processor))
@@ -554,6 +590,17 @@ gegl_processor_render (GeglProcessor *processor,
                        GeglRectangle *rectangle,
                        gdouble       *progress)
 {
+  GeglRegion *valid_region;
+
+  if (processor->valid_region)
+    {
+      valid_region = processor->valid_region;
+    }
+  else
+    {
+      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+    }
+
   {
     gboolean more_work = render_rectangle (processor);
 
@@ -563,18 +610,16 @@ gegl_processor_render (GeglProcessor *processor,
           {
             gint valid;
             gint wanted;
-
             if (rectangle)
               {
                 wanted = rect_area (rectangle);
-                valid  = wanted - area_left (processor->valid_region, rectangle);
+                valid  = wanted - area_left (valid_region, rectangle);
               }
             else
               {
-                valid  = region_area (processor->valid_region);
-                wanted = 0;
+                valid  = region_area (valid_region);
+                wanted = region_area (processor->queued_region);
               }
-
             if (wanted == 0)
               {
                 *progress = 1.0;
@@ -583,6 +628,7 @@ gegl_processor_render (GeglProcessor *processor,
               {
                 *progress = (double) valid / wanted;
               }
+            wanted = 1;
           }
 
         return more_work;
@@ -597,13 +643,17 @@ gegl_processor_render (GeglProcessor *processor,
       gint           n_rectangles;
       gint           i;
 
-      gegl_region_subtract (region, processor->valid_region);
+      gegl_region_subtract (region, valid_region);
       gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
       gegl_region_destroy (region);
 
       for (i = 0; i < n_rectangles && i < 1; i++)
         {
           GeglRectangle  roi = rectangles[i];
+          GeglRegion    *tr = gegl_region_rectangle (&roi);
+          gegl_region_subtract (processor->queued_region, tr);
+          gegl_region_destroy (tr);
+
           processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
                                                          g_slice_dup (GeglRectangle, &roi));
         }
@@ -613,12 +663,37 @@ gegl_processor_render (GeglProcessor *processor,
       if (n_rectangles != 0)
         {
           if (progress)
-            *progress = 1.0 - ((double) area_left (processor->valid_region, rectangle) /
+            *progress = 1.0 - ((double) area_left (valid_region, rectangle) /
                                rect_area (rectangle));
           return TRUE;
         }
 
       return FALSE;
+    }
+  else if (!gegl_region_empty (processor->queued_region) &&
+           !processor->dirty_rectangles)
+    { /* XXX: this branch of the else can probably be removed if gegl-processors
+         should only work with rectangular queued regions
+       */
+      GeglRectangle *rectangles;
+      gint           n_rectangles;
+      gint           i;
+
+      gegl_region_get_rectangles (processor->queued_region, &rectangles,
+                                  &n_rectangles);
+
+      for (i = 0; i < n_rectangles && i < 1; i++)
+        {
+          GeglRectangle  roi = rectangles[i];
+          GeglRegion    *tr = gegl_region_rectangle (&roi);
+          gegl_region_subtract (processor->queued_region, tr);
+          gegl_region_destroy (tr);
+
+          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles,
+                                                         g_slice_dup (GeglRectangle, &roi));
+        }
+
+      g_free (rectangles);
     }
 
   if (progress)
@@ -670,4 +745,16 @@ void
 gegl_processor_destroy (GeglProcessor *processor)
 {
   g_object_unref (processor);
+}
+
+GeglProcessor *
+gegl_node_new_processor (GeglNode            *node,
+                         const GeglRectangle *rectangle)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
+  return g_object_new (GEGL_TYPE_PROCESSOR,
+                       "node",      node,
+                       "rectangle", rectangle,
+                       NULL);
 }
