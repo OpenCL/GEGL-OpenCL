@@ -324,8 +324,7 @@ gegl_operation_context_get_source (GeglOperationContext *context,
   return input;
 }
 
-GeglBuffer *gegl_buffer_emptybuf (void);
-GeglBuffer *gegl_buffer_emptybuf (void)
+static GeglBuffer *emptybuf (void)
 {
   static GeglBuffer *empty = NULL; /* we leak this single empty buffer,
                                       avoiding having to create it weighs
@@ -371,7 +370,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   if (result->width == 0 ||
       result->height == 0)
     {
-      output = g_object_ref (gegl_buffer_emptybuf());
+      output = g_object_ref (emptybuf());
     }
   else if (node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
