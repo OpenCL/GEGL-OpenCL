@@ -146,7 +146,11 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
   if ((result->width > 0) && (result->height > 0))
     {
       GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
-      gint read  = gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
+      gint read;
+      if (input != output)
+        read  = gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
+      else
+        read = 0;
 
       if (aux)
         {

@@ -187,6 +187,7 @@ gboolean gegl_can_passthrough (GeglOperation       *operation,
                                GeglBuffer          *input,
                                const GeglRectangle *result)
 {
+  return FALSE;
   if (!input || 
       GEGL_IS_CACHE (input))
     return FALSE;
