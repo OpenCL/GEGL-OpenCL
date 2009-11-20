@@ -198,7 +198,7 @@ gegl_node_init (GeglNode *self)
   self->operation      = NULL;
   self->is_graph       = FALSE;
   self->cache          = NULL;
-#if ENABLE_MP
+#if ENABLE_MT
   self->mutex          = g_mutex_new ();
 #endif
 
@@ -280,7 +280,7 @@ gegl_node_finalize (GObject *gobject)
       g_free (self->priv->name);
     }
   g_hash_table_destroy (self->priv->contexts);
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_free (self->mutex);
 #endif
 
@@ -860,7 +860,7 @@ gegl_node_apply_roi (GeglNode            *self,
 }
 
 
-#if ENABLE_MP
+#if ENABLE_MT
 typedef struct ThreadData
 {
   GeglNode      *node;
@@ -921,7 +921,7 @@ gegl_node_blit (GeglNode            *self,
   g_return_if_fail (roi != NULL);
 
   threads = 2; /* tunable here for now, should be picked up through GeglConfig */
-#if ENABLE_MP
+#if ENABLE_MT
   if (pool == NULL)
     {
       pool = g_thread_pool_new (spawnrender, NULL, threads, TRUE, NULL);
@@ -1777,7 +1777,7 @@ gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_lock (self->mutex);
 #endif
 
@@ -1785,7 +1785,7 @@ gegl_node_get_context (GeglNode *self,
   g_return_val_if_fail (context_id != NULL, NULL);
 
   context = g_hash_table_lookup (self->priv->contexts, context_id);
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_unlock (self->mutex);
 #endif
   return context;
@@ -1801,21 +1801,21 @@ gegl_node_remove_context (GeglNode *self,
   g_return_if_fail (context_id != NULL);
 
   context = gegl_node_get_context (self, context_id);
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_lock (self->mutex);
 #endif
   if (!context)
     {
       g_warning ("didn't find context %p for %s",
                  context_id, gegl_node_get_debug_name (self));
-#if ENABLE_MP
+#if ENABLE_MT
       g_mutex_unlock (self->mutex);
 #endif
       return;
     }
   g_hash_table_remove (self->priv->contexts, context_id);
   gegl_operation_context_destroy (context);
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_unlock (self->mutex);
 #endif
 }
@@ -1832,7 +1832,7 @@ gegl_node_add_context (GeglNode *self,
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_lock (self->mutex);
 #endif
   context = g_hash_table_lookup (self->priv->contexts, context_id);
@@ -1841,7 +1841,7 @@ gegl_node_add_context (GeglNode *self,
     {
       /* silently ignore, since multiple traversals of prepare are done
        * to saturate the graph */
-#if ENABLE_MP
+#if ENABLE_MT
       g_mutex_unlock (self->mutex);
 #endif
       return context;
@@ -1850,7 +1850,7 @@ gegl_node_add_context (GeglNode *self,
   context             = gegl_operation_context_new ();
   context->operation  = self->operation;
   g_hash_table_insert (self->priv->contexts, context_id, context);
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_unlock (self->mutex);
 #endif
   return context;

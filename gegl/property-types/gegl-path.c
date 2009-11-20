@@ -1892,8 +1892,10 @@ fill_close:  /* label used for goto to close last segment */
     col[2] *= factor;
     col[3] *= factor;
 
+#if 0
     if (gegl_buffer_is_shared (buffer))
     while (!gegl_buffer_try_lock (buffer));
+#endif
 
     for (i=0; i < extent.height * versub; i++)
       {

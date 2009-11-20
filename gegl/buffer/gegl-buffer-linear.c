@@ -133,7 +133,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     extent=&buffer->extent;
 
   /*gegl_buffer_lock (buffer);*/
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_lock (buffer->tile_storage->mutex);
 #endif
   if (extent->x     == buffer->extent.x &&
@@ -262,7 +262,7 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
       g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
     }
   /*gegl_buffer_unlock (buffer);*/
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_unlock (buffer->tile_storage->mutex);
 #endif
   return;

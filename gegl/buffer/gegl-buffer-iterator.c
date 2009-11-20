@@ -312,14 +312,14 @@ typedef struct BufInfo {
 
 static GArray *buf_pool = NULL;
 
-#if ENABLE_MP
+#if ENABLE_MT
 static GStaticMutex pool_mutex = G_STATIC_MUTEX_INIT;
 #endif
 
 static gpointer iterator_buf_pool_get (gint size)
 {
   gint i;
-#if ENABLE_MP
+#if ENABLE_MT
   g_static_mutex_lock (&pool_mutex);
 #endif
 
@@ -333,7 +333,7 @@ static gpointer iterator_buf_pool_get (gint size)
       if (info->size >= size && info->used == 0)
         {
           info->used ++;
-#if ENABLE_MP
+#if ENABLE_MT
           g_static_mutex_unlock (&pool_mutex);
           return info->buf;
 #endif
@@ -344,7 +344,7 @@ static gpointer iterator_buf_pool_get (gint size)
     info.size = size;
     info.buf = gegl_malloc (size);
     g_array_append_val (buf_pool, info);
-#if ENABLE_MP
+#if ENABLE_MT
     g_static_mutex_unlock (&pool_mutex);
 #endif
     return info.buf;
@@ -354,7 +354,7 @@ static gpointer iterator_buf_pool_get (gint size)
 static void iterator_buf_pool_release (gpointer buf)
 {
   gint i;
-#if ENABLE_MP
+#if ENABLE_MT
   g_static_mutex_lock (&pool_mutex);
 #endif
   for (i=0; i<buf_pool->len; i++)
@@ -363,14 +363,14 @@ static void iterator_buf_pool_release (gpointer buf)
       if (info->buf == buf)
         {
           info->used --;
-#if ENABLE_MP
+#if ENABLE_MT
           g_static_mutex_unlock (&pool_mutex);
 #endif
           return;
         }
     }
   g_assert (0);
-#if ENABLE_MP
+#if ENABLE_MT
   g_static_mutex_unlock (&pool_mutex);
 #endif
 }
@@ -392,7 +392,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
     g_error ("%s called on finished buffer iterator", G_STRFUNC);
   if (i->iteration_no == 0)
     {
-#if ENABLE_MP
+#if ENABLE_MT
       for (no=0; no<i->iterators;no++)
         {
           gint j;
@@ -513,7 +513,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
   if (result == FALSE)
     {
 
-#if ENABLE_MP
+#if ENABLE_MT
       for (no=0; no<i->iterators;no++)
         {
           gint j;

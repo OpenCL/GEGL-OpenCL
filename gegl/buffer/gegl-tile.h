@@ -56,7 +56,7 @@ struct _GeglTile
   gchar            lock;        /* number of times the tile is write locked
                                  * should in theory just have the values 0/1
                                  */
-#if ENABLE_MP
+#if ENABLE_MT
   GMutex          *mutex;
 #endif
 

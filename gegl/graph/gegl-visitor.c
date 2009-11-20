@@ -537,11 +537,15 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-#if ENABLE_MP
+#if 0
+#if ENABLE_MT
   g_mutex_lock (node->mutex);
 #endif
+#endif
   self->visits_list = g_slist_prepend (self->visits_list, node);
-#if ENABLE_MP
+#if 0
+#if ENABLE_MT
   g_mutex_unlock (node->mutex);
+#endif
 #endif
 }

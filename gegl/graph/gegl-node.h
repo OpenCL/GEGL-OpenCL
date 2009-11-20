@@ -75,7 +75,7 @@ struct _GeglNode
   /* Whether result is cached or not, inherited by children */
   gboolean        dont_cache;
 
-#if ENABLE_MP
+#if ENABLE_MT
   GMutex         *mutex;
 #endif
 
