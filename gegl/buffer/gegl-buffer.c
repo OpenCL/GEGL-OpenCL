@@ -1210,20 +1210,25 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
     buffer->lock_count++;
   return TRUE;
 #else
-  return g_mutex_trylock (buffer->tile_storage->mutex);
+  //return g_mutex_trylock (buffer->tile_storage->mutex);
+  return FALSE;
 #endif
 }
 
 #if 1
 gboolean gegl_buffer_lock (GeglBuffer *buffer)
 {
+#if ENABLE_MT
   if(0)g_mutex_lock (buffer->tile_storage->mutex);
+#endif
   return TRUE;
 }
 
 gboolean gegl_buffer_unlock (GeglBuffer *buffer)
 {
+#if ENABLE_MT
   if(0)g_mutex_unlock (buffer->tile_storage->mutex);
+#endif
   return TRUE;
 }
 #endif
