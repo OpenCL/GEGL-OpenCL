@@ -92,6 +92,7 @@ main (gint    argc,
       gegl_enable_fatal_warnings ();
     }
 
+  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();

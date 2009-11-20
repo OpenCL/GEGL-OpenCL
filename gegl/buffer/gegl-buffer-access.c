@@ -43,11 +43,6 @@
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
 
-#if ENABLE_MP
-GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
-#endif
-
-
 #if 0
 static inline void
 gegl_buffer_pixel_set (GeglBuffer *buffer,
@@ -584,19 +579,12 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
 }
 
 void
-gegl_buffer_set (GeglBuffer          *buffer,
-                 const GeglRectangle *rect,
-                 const Babl          *format,
-                 void                *src,
-                 gint                 rowstride)
+gegl_buffer_set_unlocked (GeglBuffer          *buffer,
+                          const GeglRectangle *rect,
+                          const Babl          *format,
+                          void                *src,
+                          gint                 rowstride)
 {
-  g_return_if_fail (GEGL_IS_BUFFER (buffer));
-
-#if ENABLE_MP
-  g_static_rec_mutex_lock (&mutex);
-#endif
-  gegl_buffer_lock (buffer);
-
   if (format == NULL)
     format = buffer->format;
 
@@ -613,11 +601,22 @@ gegl_buffer_set (GeglBuffer          *buffer,
     {
       gegl_buffer_flush (buffer);
     }
-  gegl_buffer_unlock (buffer); /* XXX: should this happen before flush? */
-#if ENABLE_MP
-  g_static_rec_mutex_unlock (&mutex);
-#endif
 }
+
+void
+gegl_buffer_set (GeglBuffer          *buffer,
+                 const GeglRectangle *rect,
+                 const Babl          *format,
+                 void                *src,
+                 gint                 rowstride)
+{
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+
+  gegl_buffer_lock (buffer);
+  gegl_buffer_set_unlocked (buffer, rect, format, src, rowstride);
+  gegl_buffer_unlock (buffer);
+}
+
 
 
 
@@ -935,18 +934,15 @@ resample_boxfilter_u8 (void   *dest_buf,
     }
 }
 
+
 void
-gegl_buffer_get (GeglBuffer          *buffer,
-                 gdouble              scale,
-                 const GeglRectangle *rect,
-                 const Babl          *format,
-                 gpointer             dest_buf,
-                 gint                 rowstride)
+gegl_buffer_get_unlocked (GeglBuffer          *buffer,
+                          gdouble              scale,
+                          const GeglRectangle *rect,
+                          const Babl          *format,
+                          gpointer             dest_buf,
+                          gint                 rowstride)
 {
-  g_return_if_fail (GEGL_IS_BUFFER (buffer));
-#if ENABLE_MP
-  g_static_rec_mutex_lock (&mutex);
-#endif
 
   if (format == NULL)
     format = buffer->format;
@@ -957,34 +953,22 @@ gegl_buffer_get (GeglBuffer          *buffer,
       rect->height == 1)  /* fast path */
     {
       gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf);
-#if ENABLE_MP
-      g_static_rec_mutex_unlock (&mutex);
-#endif
       return;
     }
 
   if (!rect && scale == 1.0)
     {
       gegl_buffer_iterate (buffer, NULL, dest_buf, rowstride, FALSE, format, 0);
-#if ENABLE_MP
-      g_static_rec_mutex_unlock (&mutex);
-#endif
       return;
     }
   if (rect->width == 0 ||
       rect->height == 0)
     {
-#if ENABLE_MP
-      g_static_rec_mutex_unlock (&mutex);
-#endif
       return;
     }
   if (GEGL_FLOAT_EQUAL (scale, 1.0))
     {
       gegl_buffer_iterate (buffer, rect, dest_buf, rowstride, FALSE, format, 0);
-#if ENABLE_MP
-      g_static_rec_mutex_unlock (&mutex);
-#endif
       return;
     }
   else
@@ -1066,9 +1050,20 @@ gegl_buffer_get (GeglBuffer          *buffer,
         }
       g_free (sample_buf);
     }
-#if ENABLE_MP
-  g_static_rec_mutex_unlock (&mutex);
-#endif
+}
+
+void
+gegl_buffer_get (GeglBuffer          *buffer,
+                 gdouble              scale,
+                 const GeglRectangle *rect,
+                 const Babl          *format,
+                 gpointer             dest_buf,
+                 gint                 rowstride)
+{
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  gegl_buffer_lock (buffer);
+  gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride);
+  gegl_buffer_unlock (buffer);
 }
 
 const GeglRectangle *
@@ -1097,9 +1092,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   return;
 #endif
 
-#if ENABLE_MP
-  g_static_rec_mutex_lock (&mutex);
-#endif
+  gegl_buffer_lock (buffer);
 
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
 
@@ -1121,16 +1114,9 @@ gegl_buffer_sample (GeglBuffer       *buffer,
     }
   gegl_sampler_get (buffer->sampler, x, y, dest);
 
-#if ENABLE_MP
-  g_static_rec_mutex_unlock (&mutex);
-#endif
-
-  /* if none found, create a singleton sampler for this buffer,
-   * a function to clean up the samplers set for a buffer should
-   * also be provided */
+  gegl_buffer_unlock (buffer);
 
   /* if (scale < 1.0) do decimation, possibly using pyramid instead */
-
 }
 
 void
@@ -1239,13 +1225,5 @@ gegl_buffer_sampler (GeglBuffer       *buffer,
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   g_return_if_fail (GEGL_IS_SAMPLER (sampler));
 
-#if ENABLE_MP
-  g_static_rec_mutex_lock (&mutex);
-#endif
-
   gegl_sampler_get (sampler, x, y, dest);
-
-#if ENABLE_MP
-  g_static_rec_mutex_unlock (&mutex);
-#endif
 }

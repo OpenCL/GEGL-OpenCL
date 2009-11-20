@@ -139,6 +139,7 @@ dispose (GObject *object)
         }
     }
 
+//#define ENABLE_MP 1
 #if ENABLE_MP
   if (tile->mutex)
     {
@@ -213,7 +214,19 @@ gegl_tile_dup (GeglTile *src)
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
   tile->prev_shared              = src;
+#if ENABLE_MP
+  if (tile->next_shared != src)
+    {
+      g_mutex_lock (tile->next_shared->mutex);
+    }
+#endif
   tile->next_shared->prev_shared = tile;
+#if ENABLE_MP
+  if (tile->next_shared != src)
+    {
+      g_mutex_unlock (tile->next_shared->mutex);
+    }
+#endif
 
   return tile;
 }
@@ -254,22 +267,27 @@ gegl_tile_unclone (GeglTile *tile)
       tile->next_shared              = tile;
     }
 }
-
+#if 0
 static gint total_locks   = 0;
 static gint total_unlocks = 0;
+#endif
+
+void gegl_bt (void);
 
 void
 gegl_tile_lock (GeglTile *tile)
 {
-  if (tile->lock != 0)
-    {
-      g_print ("hm\n");
-      g_warning ("strange tile lock count: %i", tile->lock);
-    }
-  total_locks++;
-
 #if ENABLE_MP
   g_mutex_lock (tile->mutex);
+#endif
+
+  if (tile->lock != 0)
+    {
+      g_warning ("strange tile lock count: %i", tile->lock);
+      gegl_bt ();
+    }
+#if 0
+  total_locks++;
 #endif
 
   tile->lock++;
@@ -309,7 +327,9 @@ gegl_tile_void_pyramid (GeglTile *tile)
 void
 gegl_tile_unlock (GeglTile *tile)
 {
+#if 0
   total_unlocks++;
+#endif
   if (tile->lock == 0)
     {
       g_warning ("unlocked a tile with lock count == 0");

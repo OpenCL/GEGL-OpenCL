@@ -185,15 +185,17 @@ gegl_path_list_append_item  (GeglPathList  *head,
 
   if (iter)
     {
+      /* the +3 is padding, +1 was excpected to be sufficient */
       iter->next = 
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
       iter->next->d.type = type;
       iter = iter->next;
     }
   else /* creating new path */
     {
+      /* the +3 is padding, +1 was excpected to be sufficient */
       head = 
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
       head->d.type = type;
       iter=head;
     }
@@ -1993,7 +1995,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
     }
   g_assert (s.buf);
 
-  gegl_buffer_get (buffer, 1.0, &roi, s.format, s.buf, 0);
+  gegl_buffer_get_unlocked (buffer, 1.0, &roi, s.format, s.buf, 0);
 
   {
     gint u, v;
@@ -2031,7 +2033,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
         }
     }
   }
-  gegl_buffer_set (buffer, &roi, s.format, s.buf, 0);
+  gegl_buffer_set_unlocked (buffer, &roi, s.format, s.buf, 0);
 }
 
 
@@ -2083,8 +2085,7 @@ void gegl_path_stroke (GeglBuffer *buffer,
    {
      return;
    }
-  if (gegl_buffer_is_shared (buffer))
-    while (!gegl_buffer_try_lock (buffer));
+  gegl_buffer_lock (buffer);
 
   /*gegl_buffer_clear (buffer, &extent);*/
 
@@ -2163,7 +2164,6 @@ void gegl_path_stroke (GeglBuffer *buffer,
       iter=iter->next;
     }
 
-  if (gegl_buffer_is_shared (buffer))
   gegl_buffer_unlock (buffer);
 }
 

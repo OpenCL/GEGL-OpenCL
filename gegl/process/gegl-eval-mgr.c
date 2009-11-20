@@ -179,6 +179,12 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
 
   /* set up the context's rectangle (breadth first traversal) */
   gegl_visitor_reset (self->need_visitor);
+
+  /* should the need rect be moved into the context, making this
+   * part of gegl re-entrable without locking?.. or does that
+   * hamper other useful API that depends on the need_rect to be
+   * in the nodes?
+   */
   gegl_visitor_bfs_traverse (self->need_visitor, GEGL_VISITABLE (root));
 
 #if 0

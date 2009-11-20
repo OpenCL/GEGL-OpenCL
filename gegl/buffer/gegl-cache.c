@@ -33,6 +33,9 @@
 #include "gegl-cache.h"
 #include "gegl-region.h"
 
+#if ENABLE_MP
+static GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
+#endif
 
 enum
 {
@@ -367,6 +370,9 @@ void
 gegl_cache_invalidate (GeglCache           *self,
                        const GeglRectangle *roi)
 {
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
+#endif
 #if 0
   if (roi)
     {
@@ -399,6 +405,9 @@ gegl_cache_invalidate (GeglCache           *self,
       g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
                      &rect, NULL);
     }
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 }
 
 void
@@ -408,6 +417,12 @@ gegl_cache_computed (GeglCache           *self,
   g_return_if_fail (GEGL_IS_CACHE (self));
   g_return_if_fail (rect != NULL);
 
+#if ENABLE_MP
+  g_static_rec_mutex_lock (&mutex);
+#endif
   gegl_region_union_with_rect (self->valid_region, rect);
   g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
+#if ENABLE_MP
+  g_static_rec_mutex_unlock (&mutex);
+#endif
 }

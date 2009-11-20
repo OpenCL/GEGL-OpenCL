@@ -79,35 +79,40 @@ struct _GeglBufferClass
 
 
 
-gint                 gegl_buffer_leaks       (void);
+gint              gegl_buffer_leaks       (void);
 
-void                 gegl_buffer_stats       (void);
+void              gegl_buffer_stats       (void);
 
-void                 gegl_buffer_save        (GeglBuffer          *buffer,
-                                              const gchar         *path,
-                                              const GeglRectangle *roi);
-
-
-const gchar         *gegl_swap_dir           (void);
+void              gegl_buffer_save        (GeglBuffer          *buffer,
+                                           const gchar         *path,
+                                           const GeglRectangle *roi);
 
 
-void                 gegl_tile_cache_init    (void);
+const gchar      *gegl_swap_dir           (void);
 
-void                 gegl_tile_cache_destroy (void);
 
-GeglTileBackend    * gegl_buffer_backend     (GeglBuffer *buffer);
+void              gegl_tile_cache_init    (void);
 
-gboolean             gegl_buffer_is_shared   (GeglBuffer *buffer);
+void              gegl_tile_cache_destroy (void);
 
-gboolean             gegl_buffer_try_lock    (GeglBuffer *buffer);
-#if 0
-gboolean             gegl_buffer_lock        (GeglBuffer *buffer);
-gboolean             gegl_buffer_unlock      (GeglBuffer *buffer);
-#else
-#define gegl_buffer_lock(o)  {}
-#define gegl_buffer_unlock(o)  {}
-#endif
+GeglTileBackend * gegl_buffer_backend     (GeglBuffer *buffer);
 
+gboolean          gegl_buffer_is_shared   (GeglBuffer *buffer);
+
+gboolean          gegl_buffer_try_lock    (GeglBuffer *buffer);
+gboolean          gegl_buffer_lock        (GeglBuffer *buffer);
+gboolean          gegl_buffer_unlock      (GeglBuffer *buffer);
+void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
+                                            const GeglRectangle *rect,
+                                            const Babl          *format,
+                                            void                *src,
+                                            gint                 rowstride);
+void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
+                                            gdouble              scale,
+                                            const GeglRectangle *rect,
+                                            const Babl          *format,
+                                            gpointer             dest_buf,
+                                            gint                 rowstride);
 
 GeglBuffer *
 gegl_buffer_new_ram (const GeglRectangle *extent,

@@ -34,10 +34,6 @@
 #include "gegl-sampler-sharp.h"
 #include "gegl-sampler-yafr.h"
 
-#if ENABLE_MP
-GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
-#endif
-
 enum
 {
   PROP_0,

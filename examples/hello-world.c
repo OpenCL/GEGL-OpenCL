@@ -7,6 +7,7 @@ gint
 main (gint    argc,
       gchar **argv)
 {
+  g_thread_init (NULL);
   gegl_init (&argc, &argv);  /* initialize the GEGL library */
 
   {

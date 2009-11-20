@@ -26,7 +26,6 @@ struct _OpAffine
   gchar       *filter;
   gboolean     hard_edges;
   gint         lanczos_width;
-  GeglSampler *sampler;
 };
 
 typedef struct _OpAffineClass OpAffineClass;

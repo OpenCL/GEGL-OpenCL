@@ -195,6 +195,9 @@ finalize (GObject *gobject)
   if (priv->node)
     g_object_unref (priv->node);
 
+  if (priv->processor)
+    g_object_unref (priv->processor);
+
   G_OBJECT_CLASS (gegl_view_parent_class)->finalize (gobject);
 }
 

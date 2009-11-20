@@ -32,6 +32,7 @@ struct _GeglTileStorage
 {
   GeglTileHandlerChain parent_instance;
 
+  GMutex      *mutex;
   Babl        *format;
   gint         tile_width;
   gint         tile_height;

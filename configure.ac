@@ -185,6 +185,20 @@ else
   AC_MSG_RESULT([no])
 fi
 
+AC_MSG_CHECKING([whether to enable multi threading])
+AC_ARG_ENABLE(mt,
+              [  --enable-mt             turn on multi-threading (default=no)],
+)
+if eval "test x$enable_mt = xyes"; then
+    AC_DEFINE(ENABLE_MT, 1, [Defined to 1 if multi-threading is enabled.])
+    AC_MSG_RESULT([yes])
+    enable_mt="yes"
+else
+    enable_mt="no"
+    AC_MSG_RESULT([no])
+fi
+
+
 changequote(,)dnl
 if eval "test x$GCC = xyes"; then
   case " $CFLAGS " in
@@ -1013,30 +1027,31 @@ AC_MSG_RESULT([
 Building GEGL with prefix=$prefix
 
 Optional features:
-  GEGL docs:      $enable_docs
-  Build workshop: $enable_workshop
-  Build website:  $have_asciidoc
-  SIMD:           sse:$enable_sse mmx:$enable_mmx
+  GEGL docs:       $enable_docs
+  Build workshop:  $enable_workshop
+  Build website:   $have_asciidoc
+  SIMD:            sse:$enable_sse mmx:$enable_mmx
+  Multi threading: $enable_mt
 
 Optional dependencies:
-  asciidoc:       $have_asciidoc
-  enscript:       $have_enscript
-  GIO:            $have_gio
-  GTK+:           $have_gtk
-  Ruby:           $have_ruby
-  Lua:            $have_lua
-  Cairo:          $have_cairo
-  Pango:          $have_pango
-  pangocairo:     $have_pangocairo
-  GDKPixbuf:      $have_gdk_pixbuf
-  JPEG:           $jpeg_ok
-  PNG:            $have_libpng
-  OpenEXR:        $have_openexr
-  rsvg:           $have_librsvg
-  SDL:            $have_sdl
-  openraw:        $have_libopenraw
-  graphviz:       $have_graphviz
-  avformat:       $have_libavformat
-  V4L:            $have_v4l
-  spiro:          $spiro_ok
+  asciidoc:        $have_asciidoc
+  enscript:        $have_enscript
+  GIO:             $have_gio
+  GTK+:            $have_gtk
+  Ruby:            $have_ruby
+  Lua:             $have_lua
+  Cairo:           $have_cairo
+  Pango:           $have_pango
+  pangocairo:      $have_pangocairo
+  GDKPixbuf:       $have_gdk_pixbuf
+  JPEG:            $jpeg_ok
+  PNG:             $have_libpng
+  OpenEXR:         $have_openexr
+  rsvg:            $have_librsvg
+  SDL:             $have_sdl
+  openraw:         $have_libopenraw
+  graphviz:        $have_graphviz
+  avformat:        $have_libavformat
+  V4L:             $have_v4l
+  spiro:           $spiro_ok
 ]);

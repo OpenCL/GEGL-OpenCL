@@ -75,6 +75,10 @@ struct _GeglNode
   /* Whether result is cached or not, inherited by children */
   gboolean        dont_cache;
 
+#if ENABLE_MP
+  GMutex         *mutex;
+#endif
+
   /*< private >*/
   GeglNodePrivate *priv;
 };

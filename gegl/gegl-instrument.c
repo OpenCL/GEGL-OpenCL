@@ -104,6 +104,8 @@ gegl_instrument (const gchar *parent_name,
   Timing *iter;
   Timing *parent;
 
+  return;
+
   if (root == NULL)
     {
       root       = g_slice_new0 (Timing);

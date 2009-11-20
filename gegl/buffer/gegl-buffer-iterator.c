@@ -32,7 +32,6 @@
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
 
-
 typedef struct GeglBufferTileIterator
 {
   GeglBuffer    *buffer;
@@ -265,6 +264,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
     roi = self==0?&(buffer->extent):&(i->rect[0]);
   i->rect[self]=*roi;
 
+  /* XXX: if this buffer creation could be avoided, it would be a speedup */
   i->buffer[self]=gegl_buffer_create_sub_buffer (buffer, roi);
   if (format)
     i->format[self]=format;
@@ -312,9 +312,17 @@ typedef struct BufInfo {
 
 static GArray *buf_pool = NULL;
 
+#if ENABLE_MP
+static GStaticMutex pool_mutex = G_STATIC_MUTEX_INIT;
+#endif
+
 static gpointer iterator_buf_pool_get (gint size)
 {
   gint i;
+#if ENABLE_MP
+  g_static_mutex_lock (&pool_mutex);
+#endif
+
   if (G_UNLIKELY (!buf_pool))
     {
       buf_pool = g_array_new (TRUE, TRUE, sizeof (BufInfo));
@@ -325,7 +333,10 @@ static gpointer iterator_buf_pool_get (gint size)
       if (info->size >= size && info->used == 0)
         {
           info->used ++;
+#if ENABLE_MP
+          g_static_mutex_unlock (&pool_mutex);
           return info->buf;
+#endif
         }
     }
   {
@@ -333,6 +344,9 @@ static gpointer iterator_buf_pool_get (gint size)
     info.size = size;
     info.buf = gegl_malloc (size);
     g_array_append_val (buf_pool, info);
+#if ENABLE_MP
+    g_static_mutex_unlock (&pool_mutex);
+#endif
     return info.buf;
   }
 }
@@ -340,23 +354,29 @@ static gpointer iterator_buf_pool_get (gint size)
 static void iterator_buf_pool_release (gpointer buf)
 {
   gint i;
+#if ENABLE_MP
+  g_static_mutex_lock (&pool_mutex);
+#endif
   for (i=0; i<buf_pool->len; i++)
     {
       BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
       if (info->buf == buf)
         {
           info->used --;
+#if ENABLE_MP
+          g_static_mutex_unlock (&pool_mutex);
+#endif
           return;
         }
     }
   g_assert (0);
+#if ENABLE_MP
+  g_static_mutex_unlock (&pool_mutex);
+#endif
 }
 
 static void ensure_buf (GeglBufferIterators *i, gint no)
 {
-  /* XXX: keeping a small pool of such buffres around for the used formats
-   * would probably improve performance
-   */
   if (i->buf[no]==NULL)
     i->buf[no] = iterator_buf_pool_get (babl_format_get_bytes_per_pixel (i->format[no]) *
                                         i->i[0].max_size);
@@ -367,12 +387,30 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
   GeglBufferIterators *i = (gpointer)iterator;
   gboolean result = FALSE;
   gint no;
-  /* first we need to finish off any pending write work */
 
   if (i->buf[0] == (void*)0xdeadbeef)
     g_error ("%s called on finished buffer iterator", G_STRFUNC);
-  if (i->iteration_no > 0)
+  if (i->iteration_no == 0)
     {
+#if ENABLE_MP
+      for (no=0; no<i->iterators;no++)
+        {
+          gint j;
+          gboolean found = FALSE;
+          for (j=0; j<no; j++)
+            if (i->buffer[no]==i->buffer[j])
+              {
+                found = TRUE;
+                break;
+              }
+          if (!found)
+            gegl_buffer_lock (i->buffer[no]);
+        }
+#endif
+    }
+  else
+    {
+      /* complete pending write work */
       for (no=0; no<i->iterators;no++)
         {
           if (i->flags[no] & GEGL_BUFFER_WRITE)
@@ -395,7 +433,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
                   ensure_buf (i, no);
 
-                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_set_unlocked (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
         }
@@ -439,7 +477,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
               if (i->flags[no] & GEGL_BUFFER_READ)
                 {
-                  gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
 
               i->data[no]=i->buf[no];
@@ -459,7 +497,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
           if (i->flags[no] & GEGL_BUFFER_READ)
             {
-              gegl_buffer_get (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
             }
           i->data[no]=i->buf[no];
 
@@ -474,6 +512,23 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
   if (result == FALSE)
     {
+
+#if ENABLE_MP
+      for (no=0; no<i->iterators;no++)
+        {
+          gint j;
+          gboolean found = FALSE;
+          for (j=0; j<no; j++)
+            if (i->buffer[no]==i->buffer[j])
+              {
+                found = TRUE;
+                break;
+              }
+          if (!found)
+            gegl_buffer_unlock (i->buffer[no]);
+        }
+#endif
+
       for (no=0; no<i->iterators;no++)
         {
           if (i->buf[no])
@@ -488,6 +543,8 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
       i->buf[0]=(void*)0xdeadbeef;
       g_free (i);
     }
+
+
   return result;
 }
 

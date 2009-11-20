@@ -132,8 +132,8 @@ GType
 gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
 
 /* ************************* */
-static void
-op_affine_sampler_init (OpAffine *self)
+static GeglSampler *
+op_affine_sampler (OpAffine *self)
 {
   Babl                 *format;
   GeglSampler          *sampler;
@@ -141,6 +141,33 @@ op_affine_sampler_init (OpAffine *self)
   GeglInterpolation     interpolation;
 
   format = babl_format ("RaGaBaA float");
+
+  interpolation = gegl_buffer_interpolation_from_string (self->filter);
+  desired_type = gegl_sampler_type_from_interpolation (interpolation);
+
+  if (interpolation == GEGL_INTERPOLATION_LANCZOS)
+    {
+      sampler = g_object_new (desired_type,
+                              "format", format,
+                              "lanczos_width",  self->lanczos_width,
+                              NULL);
+    }
+  else
+    {
+      sampler = g_object_new (desired_type,
+                              "format", format,
+                              NULL);
+    }
+  return sampler;
+}
+/* XXX: keep a pool of samplers */
+
+#if 0
+static void
+op_affine_sampler_init (OpAffine *self)
+{
+  GType                 desired_type;
+  GeglInterpolation     interpolation;
 
   interpolation = gegl_buffer_interpolation_from_string (self->filter);
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
@@ -153,45 +180,18 @@ op_affine_sampler_init (OpAffine *self)
       self->sampler = NULL;
     }
 
-  if (self->sampler == NULL)
-    {
-      if (interpolation == GEGL_INTERPOLATION_LANCZOS)
-        {
-          sampler = g_object_new (desired_type,
-                                  "format", format,
-                                  "lanczos_width",  self->lanczos_width,
-                                  NULL);
-        }
-      else
-        {
-          sampler = g_object_new (desired_type,
-                                  "format", format,
-                                  NULL);
-        }
-      self->sampler = g_object_ref(sampler);
-    }
+  self->sampler = op_affine_sampler (self);
 }
+#endif
 
 static void
 gegl_affine_prepare (GeglOperation *operation)
 {
-  OpAffine  *affine = (OpAffine *) operation;
   Babl      *format = babl_format ("RaGaBaA float");
-  op_affine_sampler_init (affine);
+  /*op_affine_sampler_init (affine);*/
   /*gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
   gegl_operation_set_format (operation, "output", format);
-}
-
-static void
-gegl_affine_finalize (GObject *object)
-{
-  OpAffine  *affine = (OpAffine *) object;
-  if (affine->sampler != NULL)
-    {
-      g_object_unref(affine->sampler);
-      affine->sampler = NULL;
-    }
 }
 
 static void
@@ -203,7 +203,6 @@ op_affine_class_init (OpAffineClass *klass)
 
   gobject_class->set_property         = gegl_affine_set_property;
   gobject_class->get_property         = gegl_affine_get_property;
-  gobject_class->finalize             = gegl_affine_finalize;
 
   op_class->get_invalidated_by_change = gegl_affine_get_invalidated_by_change;
   op_class->get_bounding_box          = gegl_affine_get_bounding_box;
@@ -441,9 +440,9 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
 
-  op_affine_sampler_init (affine);
-  sampler = affine->sampler;
+  sampler = op_affine_sampler (OP_AFFINE (op));
   context_rect = sampler->context_rect;
+  g_object_unref (sampler);
 
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
@@ -542,8 +541,9 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
   gint           i;
 
   requested_rect = *region;
-  sampler = affine->sampler;
+  sampler = op_affine_sampler (OP_AFFINE (op));
   context_rect = sampler->context_rect;
+  g_object_unref (sampler);
 
   gegl_matrix3_copy (inverse, affine->matrix);
   gegl_matrix3_invert (inverse);
@@ -595,9 +595,9 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   gint               i;
   GeglRectangle      region = *input_region;
 
-  op_affine_sampler_init (affine);
-  sampler = affine->sampler;
+  sampler = op_affine_sampler (OP_AFFINE (op));
   context_rect = sampler->context_rect;
+  g_object_unref (sampler);
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
   gegl_matrix3_identity (affine->matrix);
@@ -764,15 +764,18 @@ gegl_affine_process (GeglOperation        *operation,
   else
     {
       /* for all other cases, do a proper resampling */
+      GeglSampler *sampler;
 
       input  = gegl_operation_context_get_source (context, "input");
       output = gegl_operation_context_get_target (context, "output");
 
-      g_object_set(affine->sampler, "buffer", input, NULL);
-      gegl_sampler_prepare (affine->sampler);
-      affine_generic (output, input, affine->matrix, affine->sampler);
-      g_object_unref(affine->sampler->buffer);
-      affine->sampler->buffer = NULL;
+      sampler = op_affine_sampler (affine);
+      g_object_set(sampler, "buffer", input, NULL);
+      gegl_sampler_prepare (sampler);
+      affine_generic (output, input, affine->matrix, sampler);
+      g_object_unref(sampler->buffer);
+      sampler->buffer = NULL;
+      g_object_unref (sampler);
 
       if (input != NULL)
         g_object_unref (input);

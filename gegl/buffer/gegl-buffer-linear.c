@@ -132,6 +132,10 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
   if (extent == NULL)
     extent=&buffer->extent;
 
+  /*gegl_buffer_lock (buffer);*/
+#if ENABLE_MP
+  g_mutex_lock (buffer->tile_storage->mutex);
+#endif
   if (extent->x     == buffer->extent.x &&
       extent->y     == buffer->extent.y &&
       extent->width == buffer->tile_width &&
@@ -151,7 +155,6 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
       tile = gegl_tile_source_get_tile ((GeglTileSource*) (buffer),
                                         0,0,0);
       g_assert (tile);
-      gegl_buffer_lock (buffer);
       gegl_tile_lock (tile);
 
       g_object_set_data (G_OBJECT (buffer), "linear-tile", tile);
@@ -179,6 +182,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
               )
             {
               info->refs++;
+              g_print ("!!!!!! sharing a linear buffer!!!!!\n");
               return info->buf;
             }
         }
@@ -199,7 +203,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     if(rowstride)*rowstride = rs;
 
     info->buf = gegl_malloc (rs * info->extent.height);
-    gegl_buffer_get (buffer, 1.0, &info->extent, format, info->buf, rs);
+    gegl_buffer_get_unlocked (buffer, 1.0, &info->extent, format, info->buf, rs);
     return info->buf;
   }
   return NULL;
@@ -214,7 +218,6 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
   if (tile)
     {
       gegl_tile_unlock (tile);
-      gegl_buffer_unlock (buffer);
       g_object_set_data (G_OBJECT (buffer), "linear-tile", NULL);
       tile = NULL;
     }
@@ -233,11 +236,14 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
               info->refs--;
 
               if (info->refs>0)
+                {
+                  g_print ("EEeeek! %s\n", G_STRLOC);
                 return; /* there are still others holding a reference to
                          * this linear buffer
                          */
+                }
 
-              gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
+              gegl_buffer_set_unlocked (buffer, &info->extent, info->format, info->buf, 0);
               break;
             }
           else
@@ -255,5 +261,9 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
 
       g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
     }
+  /*gegl_buffer_unlock (buffer);*/
+#if ENABLE_MP
+  g_mutex_unlock (buffer->tile_storage->mutex);
+#endif
   return;
 }
