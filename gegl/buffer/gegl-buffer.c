@@ -1083,7 +1083,6 @@ gegl_buffer_new_from_format (const void *babl_format,
   else
     {
       static gint no = 1;
-      static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 
       gchar *filename;
       gchar *path;
@@ -1095,9 +1094,8 @@ gegl_buffer_new_from_format (const void *babl_format,
                                   no++);
 #endif
 
-      g_static_mutex_lock (&mutex);
-      filename = g_strdup_printf ("%i-%i", getpid(), no++);
-      g_static_mutex_unlock (&mutex);
+      filename = g_strdup_printf ("%i-%i", getpid(), no);
+      g_atomic_int_inc (&no);
       path = g_build_filename (gegl_config()->swap, filename, NULL);
       g_free (filename);
 
@@ -1143,7 +1141,7 @@ gegl_buffer_void (GeglBuffer *buffer)
   gint tile_height = buffer->tile_storage->tile_height;
   gint bufy        = 0;
 
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_lock (buffer->tile_storage->mutex);
 #endif
   {
@@ -1189,7 +1187,7 @@ done_with_row:
         factor *= 2;
       }
   }
-#if ENABLE_MP
+#if ENABLE_MT
   g_mutex_unlock (buffer->tile_storage->mutex);
 #endif
 }
