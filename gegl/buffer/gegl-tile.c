@@ -45,14 +45,13 @@ static void default_free (gpointer data,
 
 GeglTile *gegl_tile_ref (GeglTile *tile)
 {
-  tile->ref_count++;
+  g_atomic_int_inc (&tile->ref_count);
   return tile;
 }
 
 void gegl_tile_unref (GeglTile *tile)
 {
-  tile->ref_count --;
-  if (tile->ref_count > 0)
+  if (!g_atomic_int_dec_and_test (&tile->ref_count))
     return;
 
   if (!gegl_tile_is_stored (tile))
