@@ -432,6 +432,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
+  GeglMatrix3    matrix;
   GeglRectangle  in_rect = {0,0,0,0},
                  have_rect;
   gdouble        have_points [8];
@@ -444,27 +445,26 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   context_rect = sampler->context_rect;
   g_object_unref (sampler);
 
-
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
-  gegl_matrix3_identity (affine->matrix);
-  klass->create_matrix (op, affine->matrix);
+  gegl_matrix3_identity (matrix);
+  klass->create_matrix (op, matrix);
 
   if (affine->origin_x || affine->origin_y)
-    gegl_matrix3_originate (affine->matrix, affine->origin_x, affine->origin_y);
+    gegl_matrix3_originate (matrix, affine->origin_x, affine->origin_y);
 
   if (gegl_affine_is_composite_node (affine))
     {
       GeglMatrix3 source;
 
       gegl_affine_get_source_matrix (affine, source);
-      gegl_matrix3_multiply (source, affine->matrix, affine->matrix);
+      gegl_matrix3_multiply (source, matrix, matrix);
     }
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (affine->matrix))
+      gegl_matrix3_is_identity (matrix))
     {
       return in_rect;
     }
