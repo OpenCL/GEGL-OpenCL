@@ -76,8 +76,8 @@
 /* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
  * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()
  */
+#ifndef G_OS_WIN_32
 #include <execinfo.h>
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
 #endif
 
 
@@ -708,6 +708,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
       GeglBuffer *buffer = GEGL_BUFFER (handler);
 
       /* XXX: lock buffer? */
+
       if (x < buffer->min_x)
         buffer->min_x = x;
       if (y < buffer->min_y)
@@ -870,12 +871,15 @@ gegl_buffer_class_init (GeglBufferClass *class)
 static gchar *
 gegl_buffer_get_alloc_stack (void)
 {
+  char  *result         = NULL;
+#ifdef G_OS_WIN32
+  result = g_strdup ("backtrack not available on win32\n");
+#else
   void  *functions[MAX_N_FUNCTIONS];
   int    n_functions    = 0;
   char **function_names = NULL;
   int    i              = 0;
   int    result_size    = 0;
-  char  *result         = NULL;
   
   n_functions = backtrace (functions, MAX_N_FUNCTIONS);
   function_names = backtrace_symbols (functions, n_functions);
@@ -896,6 +900,7 @@ gegl_buffer_get_alloc_stack (void)
     }
 
   free (function_names);
+#endif
 
   return result;
 }
@@ -1138,6 +1143,7 @@ gegl_buffer_void (GeglBuffer *buffer)
   gint tile_height = buffer->tile_storage->tile_height;
   gint bufy        = 0;
 
+  g_mutex_lock (buffer->tile_storage->mutex);
   {
     gint z;
     gint factor = 1;
@@ -1181,6 +1187,7 @@ done_with_row:
         factor *= 2;
       }
   }
+  g_mutex_unlock (buffer->tile_storage->mutex);
 }
 
 
