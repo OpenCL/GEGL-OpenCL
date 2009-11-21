@@ -38,7 +38,7 @@ finalize (GObject *object)
   GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (object);
 
   if (empty->tile)
-    g_object_unref (empty->tile);
+    gegl_tile_unref (empty->tile);
 
   G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->finalize (object);
 }

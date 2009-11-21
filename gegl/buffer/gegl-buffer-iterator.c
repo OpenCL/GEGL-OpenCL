@@ -156,7 +156,7 @@ gulp:
         {
           gegl_tile_unlock (i->tile);
         }
-      g_object_unref (i->tile);
+      gegl_tile_unref (i->tile);
       i->tile = NULL;
     }
 

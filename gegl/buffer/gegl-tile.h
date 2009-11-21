@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006-2009 Øyvind Kolås <pippin@gimp.org>
  */
 
 #ifndef __GEGL_TILE_H__
@@ -23,20 +23,13 @@
 
 #include "gegl-buffer-types.h"
 
-#define GEGL_TYPE_TILE            (gegl_tile_get_type ())
-#define GEGL_TILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE, GeglTile))
-#define GEGL_TILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE, GeglTileClass))
-#define GEGL_IS_TILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE))
-#define GEGL_IS_TILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE))
-#define GEGL_TILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE, GeglTileClass))
-
-
 /* the instance size of a GeglTile is a bit large, and should if possible be
  * trimmed down
  */
 struct _GeglTile
 {
-  GObject          parent_instance;
+ /* GObject          parent_instance;*/
+  gint             ref_count;
 
   guchar          *data;        /* actual pixel data for tile, a linear buffer*/
   gint             size;        /* The size of the linear buffer */
@@ -66,17 +59,13 @@ struct _GeglTile
 
   void (*destroy_notify) (gpointer pixels,
                           gpointer data);
-  gpointer destroy_notify_data;
+  gpointer         destroy_notify_data;
 };
-
-struct _GeglTileClass
-{
-  GObjectClass parent_class;
-};
-
-GType        gegl_tile_get_type   (void) G_GNUC_CONST;
 
 GeglTile   * gegl_tile_new        (gint     size);
+GeglTile   * gegl_tile_new_bare   (void); /* special hack for linear bufs */
+GeglTile   * gegl_tile_ref        (GeglTile *tile);
+void         gegl_tile_unref      (GeglTile *tile);
 void       * gegl_tile_get_format (GeglTile *tile);
 
 
@@ -117,7 +106,10 @@ GeglTile    *gegl_tile_dup        (GeglTile *tile);
       (coordinate) / (stride):\
       ((((coordinate) + 1) /(stride)) - 1))
 
-/* utility low-level functions used by undo system */
+/* utility low-level functions used by an undo system in horizon
+ * where the geglbufer originated, kept around in case they
+ * become useful again
+ */
 void         gegl_tile_swp        (GeglTile *a,
                                    GeglTile *b);
 void         gegl_tile_cpy        (GeglTile *src,

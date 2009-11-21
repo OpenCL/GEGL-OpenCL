@@ -570,7 +570,7 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
                         bp += buf_stride;
                       }
                   }
-                g_object_unref (tile);
+                gegl_tile_unref (tile);
               }
             bufx += (tile_width - offsetx);
           }

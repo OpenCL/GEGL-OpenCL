@@ -196,7 +196,7 @@ dispose (GObject *object)
         if (item->tile)
           {
             cache_total -= item->tile->size;
-            g_object_unref (item->tile);
+            gegl_tile_unref (item->tile);
           }
         g_queue_remove (cache_queue, item);
         g_hash_table_remove (cache_ht, item);
@@ -384,7 +384,7 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
 #ifdef ENABLE_MT
       g_static_mutex_unlock (&mutex);
 #endif
-      return g_object_ref (result->tile);
+      return gegl_tile_ref (result->tile);
     }
 #ifdef ENABLE_MT
   g_static_mutex_unlock (&mutex);
@@ -505,7 +505,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
         {
           gegl_tile_void (tile);
           cache_total -= item->tile->size;
-          g_object_unref (tile);
+          gegl_tile_unref (tile);
           g_hash_table_remove (cache_ht, item);
           g_slice_free (CacheItem, item);
           g_queue_delete_link (cache_queue, link);
@@ -531,7 +531,7 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   guint      count;
 
   item->handler = cache;
-  item->tile    = g_object_ref (tile);
+  item->tile    = gegl_tile_ref (tile);
   item->x       = x;
   item->y       = y;
   item->z       = z;

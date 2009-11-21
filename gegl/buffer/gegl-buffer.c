@@ -375,7 +375,7 @@ gegl_buffer_dispose (GObject *object)
 
   if (buffer->hot_tile)
     {
-      g_object_unref (buffer->hot_tile);
+      gegl_tile_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
 
@@ -1078,6 +1078,7 @@ gegl_buffer_new_from_format (const void *babl_format,
   else
     {
       static gint no = 1;
+      static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 
       gchar *filename;
       gchar *path;
@@ -1089,7 +1090,9 @@ gegl_buffer_new_from_format (const void *babl_format,
                                   no++);
 #endif
 
+      g_static_mutex_lock (&mutex);
       filename = g_strdup_printf ("%i-%i", getpid(), no++);
+      g_static_mutex_unlock (&mutex);
       path = g_build_filename (gegl_config()->swap, filename, NULL);
       g_free (filename);
 

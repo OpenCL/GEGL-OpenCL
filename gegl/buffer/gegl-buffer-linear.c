@@ -82,7 +82,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     buffer = gegl_buffer_linear_new2 (extent, format, rowstride);
 
   {
-    GeglTile *tile = g_object_new (GEGL_TYPE_TILE, NULL);
+    GeglTile *tile = gegl_tile_new_bare (); 
 
     tile->rev        = 1;
     tile->stored_rev = 1;
