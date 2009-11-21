@@ -76,7 +76,7 @@
 /* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
  * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()
  */
-#ifndef G_OS_WIN_32
+#ifndef G_OS_WIN32
 #include <execinfo.h>
 #endif
 
