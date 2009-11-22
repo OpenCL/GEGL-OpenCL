@@ -2235,14 +2235,6 @@ gegl_node_get_pad_proxy (GeglNode    *graph,
         gegl_pad_set_node (new_pad, nop);
         gegl_pad_set_name (new_pad, name);
         gegl_node_add_pad (node, new_pad);
-
-        /* hack, decoreating the pad to make it recognized in later
-         * processing
-         */
-        if (!strcmp (name, "aux"))
-          {
-            g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
-          }
       }
 
       g_object_set_data (G_OBJECT (nop), "graph", graph);
