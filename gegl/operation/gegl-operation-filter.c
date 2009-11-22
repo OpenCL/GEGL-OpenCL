@@ -187,12 +187,6 @@ gboolean gegl_can_passthrough (GeglOperation       *operation,
                                GeglBuffer          *input,
                                const GeglRectangle *result)
 {
-#if ENABLE_MT
-  /* pass through processing currently conflicts
-   * with in place processing.
-   */
-  return FALSE;
-#endif
   if (!input || 
       GEGL_IS_CACHE (input))
     return FALSE;
