@@ -845,6 +845,42 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
 GeglConfig      * gegl_config (void);
 
 
+/**
+ * gegl_node:
+ * @op_type:  the type of operation to create
+ * @first_property_name: 
+ * @...:
+ *
+ * Construct a GEGL node, connecting it to needed input nodes. The
+ * returned node does not have a parent but a single reference it
+ * is meant to be passed to gegl_graph () for gegl_graph () to assume
+ * its ownership. This is syntactic sugar for use from C, similar
+ * conveniences can easily be built externally in other languages.
+ *
+ * gegl_node(op_type, [key, value, [...]], NULL, [input, [aux]])
+ *
+ * Returns a new Gegl node.
+ */
+GeglNode *gegl_node (const gchar *op_type,
+                     const gchar *first_property_name,
+                     ...);
+
+
+/**
+ * gegl_graph:
+ * @node: the end result of a composition created with gegl_node()
+ *
+ * Creates a GeglNode containing a free floating graph constructed
+ * using gegl_node(). The GeglGraph adopts all the passed in nodes
+ * making it sufficient to unref the resulting graph.
+ *
+ * gegl_graph (gegl_node ("gegl:over", NULL,
+ *                        gegl_node (..), gegl_node (..)));
+ *
+ * Returns a GeglNode graph.
+ */
+GeglNode *gegl_graph (GeglNode *node);
+
 
 G_END_DECLS
 #endif  /* __GEGL_H__ */

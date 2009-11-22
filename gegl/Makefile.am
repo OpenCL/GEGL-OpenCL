@@ -41,6 +41,7 @@ GEGL_public_HEADERS =	\
     property-types/gegl-curve.h
 
 GEGL_sources = \
+	gegl-c.c			\
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
 	gegl-dot.c			\
