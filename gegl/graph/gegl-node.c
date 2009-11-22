@@ -1644,27 +1644,45 @@ gegl_node_get_producer (GeglNode *node,
                         gchar    *pad_name,
                         gchar   **output_pad_name)
 {
-  GeglPad *pad;
+  GeglNode *ret;
+  gpointer pad;
 
-  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
-  g_return_val_if_fail (pad_name != NULL, NULL);
+  /* XXX: there should be public API to test if a node is
+   * really a graph. So that the user of the API knows
+   * the internals can be reached through the proxy nops
+   */
+  if (node->is_graph)
+    node = gegl_node_get_input_proxy (node, "input");
 
   pad = gegl_node_get_pad (node, pad_name);
 
-  if (pad &&
-      gegl_pad_is_input (pad) &&
-      gegl_pad_get_num_connections (pad) == 1)
-    {
-      GeglConnection *connection = g_slist_nth_data (pad->connections, 0);
+  if (!pad)
+    return NULL;
+  pad = gegl_pad_get_connected_to (pad);
+  if (!pad)
+    return NULL;
+  ret = gegl_pad_get_node (pad);
 
-      if (output_pad_name)
-        {
-          GeglPad *pad = gegl_connection_get_source_pad (connection);
-          *output_pad_name = g_strdup (gegl_pad_get_name (pad));
-        }
-      return gegl_connection_get_source_node (connection);
-    }
-  return NULL;
+    if(ret)
+      {
+        const gchar *name;
+        name = gegl_node_get_name (ret);
+        if (name && !strcmp (name, "proxynop-output"))
+          {
+            ret = g_object_get_data (G_OBJECT (ret), "graph");
+            /* XXX: needs testing whether this returns the correct value
+             * for non "output" output pads.
+             */
+            if (output_pad_name)
+              *output_pad_name = g_strdup (gegl_pad_get_name (pad));
+          }
+        else
+          {
+            if (output_pad_name)
+              *output_pad_name = g_strdup (gegl_pad_get_name (pad));
+          }
+      }
+  return ret;
 }
 
 GeglRectangle
