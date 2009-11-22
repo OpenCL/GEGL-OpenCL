@@ -196,13 +196,12 @@ void     gegl_free                    (gpointer mem);
 
 #define INT_MULT(a,b,t)  ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
 
+/***
+ */
 inline gint _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
-
-/***
- */
 
 G_END_DECLS
 

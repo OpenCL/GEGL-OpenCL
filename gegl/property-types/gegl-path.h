@@ -423,6 +423,10 @@ typedef struct GeglPathList
   GeglPathItem         d;
 } GeglPathList;
 
+
+/***
+ */
+
 /* appends to path list, if head is NULL a new list is created */
 GeglPathList       * gegl_path_list_append    (GeglPathList *head, ...);
 /* frees up a path list */

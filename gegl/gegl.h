@@ -341,7 +341,7 @@ void          gegl_node_set              (GeglNode      *node,
  * gegl_node_set_valist:
  * @node: a #GeglNode
  * @first_property_name: name of the first property to set
- * @...: value for the first property, followed optionally by more name/value
+ * @args: value for the first property, followed optionally by more name/value
  * pairs, followed by NULL.
  *
  * valist version of #gegl_node_set
@@ -373,7 +373,7 @@ void          gegl_node_get              (GeglNode      *node,
  * gegl_node_get_valist:
  * @node: a #GeglNode
  * @first_property_name: name of the first property to get.
- * @...: return location for the first property, followed optionally by more
+ * @args: return location for the first property, followed optionally by more
  * name/value pairs, followed by NULL.
  *
  * valist version of #gegl_node_get
@@ -843,6 +843,7 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  * the path of the directory to swap to (or "ram" to not use diskbased swap)
  */
 GeglConfig      * gegl_config (void);
+
 
 
 G_END_DECLS
