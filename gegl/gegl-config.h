@@ -44,6 +44,9 @@ struct _GeglConfig
   gdouble  babl_tolerance;
   gint     tile_width;
   gint     tile_height;
+#if ENABLE_MT
+  gint     threads;
+#endif
 };
 
 struct _GeglConfigClass

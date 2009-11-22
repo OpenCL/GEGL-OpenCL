@@ -33,6 +33,7 @@
 #include "gegl-pad.h"
 #include "gegl-utils.h"
 #include "gegl-visitable.h"
+#include "gegl-config.h"
 
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
@@ -916,12 +917,15 @@ gegl_node_blit (GeglNode            *self,
                 gint                 rowstride,
                 GeglBlitFlags        flags)
 {
+#if ENABLE_MT
   gint threads;
+#endif
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
-  threads = 2; /* tunable here for now, should be picked up through GeglConfig */
 #if ENABLE_MT
+  threads = gegl_config ()->threads;
+  
   if (pool == NULL)
     {
       pool = g_thread_pool_new (spawnrender, NULL, threads, TRUE, NULL);

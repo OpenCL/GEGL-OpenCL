@@ -187,10 +187,11 @@ process (GeglOperation       *operation,
       a *= o->fill_opacity;
       if (a>0.001)
         {
+          GStaticMutex mutex = G_STATIC_MUTEX_INIT;
           cairo_t *cr;
           cairo_surface_t *surface;
+          g_static_mutex_lock (&mutex);
           guchar *data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
-
           surface = cairo_image_surface_create_for_data (data,
                                                          CAIRO_FORMAT_ARGB32,
                                                          result->width,
@@ -220,6 +221,7 @@ process (GeglOperation       *operation,
       }
 #endif
 
+          g_static_mutex_unlock (&mutex);
           gegl_buffer_linear_close (output, data);
         }
     }

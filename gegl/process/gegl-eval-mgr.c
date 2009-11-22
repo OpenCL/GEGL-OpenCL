@@ -163,6 +163,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
         gegl_visitor_reset (self->have_visitor);
         gegl_visitor_dfs_traverse (self->have_visitor, GEGL_VISITABLE (root));
       case NEED_CONTEXT_SETUP_TRAVERSAL:
+
         gegl_visitor_reset (self->prepare_visitor);
         gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));      
         self->state = NEED_CONTEXT_SETUP_TRAVERSAL;
@@ -209,7 +210,8 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
     { /* pull on the input of our sink if no pad of the given pad-name
          was available, we take this as an indication that we're in fact
          doing processing on a sink (and the ROI inidcates the data to
-         be written.
+         be written, note that GEGL might subdivide this roi
+         in its processing.
        */
       GeglPad *pad = gegl_node_get_pad (root, "input");
       gegl_visitor_dfs_traverse (self->eval_visitor, GEGL_VISITABLE (pad));

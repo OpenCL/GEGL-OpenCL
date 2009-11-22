@@ -64,9 +64,15 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
   if (!node)
     return;
   operation = node->operation;
+#if ENABLE_MT
+  g_mutex_lock (node->mutex);
+#endif
   rect = gegl_operation_get_bounding_box (operation);
 
   node->have_rect = rect;
+#if ENABLE_MT
+  g_mutex_unlock (node->mutex);
+#endif
 
   time = gegl_ticks () - time;
   gegl_instrument ("process", gegl_node_get_operation (node), time);

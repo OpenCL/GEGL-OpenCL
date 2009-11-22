@@ -80,15 +80,27 @@ gegl_prepare_visitor_visit_node (GeglVisitor *self,
         g_assert (graph);
         if (GEGL_NODE (graph)->operation)
           {
+#if ENABLE_MT
+            g_mutex_lock (GEGL_NODE (graph)->mutex);
+#endif
             /* issuing a prepare on the graph, FIXME: we might need to do
              * a cycle of prepares as deep as the nesting of graphs,.
              * (or find a better way to do this) */
             gegl_operation_prepare (GEGL_NODE (graph)->operation);
+#if ENABLE_MT
+            g_mutex_unlock (GEGL_NODE (graph)->mutex);
+#endif
           }
       }
   }
 
+#if ENABLE_MT
+  g_mutex_lock (node->mutex);
+#endif
   gegl_operation_prepare (operation);
+#if ENABLE_MT
+  g_mutex_unlock (node->mutex);
+#endif
   {
     /* initialise the "needed rectangle" to an empty one */
     GeglRectangle empty ={0,};

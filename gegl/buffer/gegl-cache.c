@@ -33,6 +33,7 @@
 #include "gegl-cache.h"
 #include "gegl-region.h"
 
+#undef ENABLE_MT
 #if ENABLE_MT
 static GStaticRecMutex mutex = G_STATIC_REC_MUTEX_INIT;
 #endif

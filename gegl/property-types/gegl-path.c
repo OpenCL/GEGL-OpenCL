@@ -1961,7 +1961,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
                              gdouble     opacity)
 {
   gfloat col[4];
-  static StampStatic s = {FALSE,}; /* XXX: 
+  StampStatic s = {FALSE,}; /* XXX: 
                                       we will ultimately leak the last valid
                                       cached brush. */
 
