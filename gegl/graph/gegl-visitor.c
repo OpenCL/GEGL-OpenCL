@@ -313,9 +313,6 @@ void
 gegl_visitor_dfs_traverse (GeglVisitor   *self,
                            GeglVisitable *visitable)
 {
-  g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (GEGL_IS_VISITABLE (visitable));
-
   /* sets up the structures that keeps track of the */
   init_dfs_traversal (self, visitable);
   dfs_traverse (self, visitable);
@@ -394,8 +391,6 @@ init_bfs_traversal (GeglVisitor   *self,
   GSList *depends_on_list;
   GSList *llink;
 
-  g_return_if_fail (GEGL_IS_VISITOR (self));
-
   insert (self, visitable);
 
   depends_on_list = gegl_visitable_depends_on (visitable);
@@ -431,8 +426,6 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
                            GeglVisitable *visitable)
 {
   GQueue  queue = G_QUEUE_INIT;
-
-  g_return_if_fail (GEGL_IS_VISITOR (self));
 
   /* Init all visitables */
   init_bfs_traversal (self, visitable);
@@ -498,9 +491,6 @@ gegl_visitor_visit_pad (GeglVisitor *self,
 {
   GeglVisitorClass *klass;
 
-  g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (GEGL_IS_PAD (pad));
-
   klass = GEGL_VISITOR_GET_CLASS (self);
 
   if (klass->visit_pad)
@@ -522,9 +512,6 @@ gegl_visitor_visit_node (GeglVisitor *self,
                          GeglNode    *node)
 {
   GeglVisitorClass *klass;
-
-  g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (GEGL_IS_NODE (node));
 
   klass = GEGL_VISITOR_GET_CLASS (self);
 

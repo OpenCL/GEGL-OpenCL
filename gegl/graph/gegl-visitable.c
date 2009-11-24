@@ -76,8 +76,6 @@ gegl_visitable_depends_on (GeglVisitable *interface)
   GeglVisitableClass *interface_class;
   GSList             *depends_on = NULL;
 
-  g_return_val_if_fail (GEGL_IS_VISITABLE (interface), NULL);
-
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
 
   depends_on = interface_class->depends_on (interface);
