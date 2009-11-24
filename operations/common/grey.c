@@ -39,6 +39,8 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
+/* XXX: could be sped up by special casing op-filter behavior */
+
 static gboolean
 process (GeglOperation       *op,
          void                *in_buf,
@@ -46,6 +48,14 @@ process (GeglOperation       *op,
          glong                samples,
          const GeglRectangle *roi)
 {
+  float *in = in_buf;
+  float *out = out_buf;
+  while (samples--)
+    {
+      *out++ = *in++;
+      *out++ = *in++;
+    }
+
   return TRUE;
 }
 
