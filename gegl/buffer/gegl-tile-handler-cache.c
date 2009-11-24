@@ -402,7 +402,7 @@ gegl_tile_handler_cache_has_tile (GeglTileHandlerCache *cache,
 
   if (tile)
     {
-      g_object_unref (G_OBJECT (tile));
+      gegl_tile_unref (tile);
       return TRUE;
     }
 
@@ -423,7 +423,7 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
     {
       g_hash_table_remove (cache_ht, last_writable);
       cache_total  -= last_writable->tile->size;
-      g_object_unref (last_writable->tile);
+      gegl_tile_unref (last_writable->tile);
       g_slice_free (CacheItem, last_writable);
 #ifdef ENABLE_MT
       g_static_mutex_unlock (&mutex);
@@ -462,7 +462,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
           cache_total  -= item->tile->size;
           tile->tile_storage = NULL;
           tile->stored_rev = tile->rev; /* to cheat it out of being stored */
-          g_object_unref (tile);
+          gegl_tile_unref (tile);
           g_hash_table_remove (cache_ht, item);
           g_slice_free (CacheItem, item);
           g_queue_delete_link (cache_queue, link);

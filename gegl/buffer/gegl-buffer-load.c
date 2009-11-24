@@ -419,7 +419,7 @@ gegl_buffer_load (const gchar *path)
         /*g_assert (info->offset == entry->offset + info->tile_size);*/
 
         gegl_tile_unlock (tile);
-        g_object_unref (G_OBJECT (tile));
+        gegl_tile_unref (tile);
         i++;
       }
     GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "%i tiles loaded",i);

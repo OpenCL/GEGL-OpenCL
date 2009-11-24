@@ -102,7 +102,7 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
               memcpy (tp, buf, bpx_size);
 
             gegl_tile_unlock (tile);
-            g_object_unref (tile);
+            gegl_tile_unref (tile);
           }
       }
   }
@@ -179,7 +179,7 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
           {
             if (buffer->hot_tile)
               {
-                g_object_unref (buffer->hot_tile);
+                gegl_tile_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
             tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
@@ -257,7 +257,7 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
           {
             if (buffer->hot_tile)
               {
-                g_object_unref (buffer->hot_tile);
+                gegl_tile_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
             tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
@@ -276,7 +276,7 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
             else
               memcpy (buf, tp, px_size);
 
-            /*g_object_unref (tile);*/
+            /*gegl_tile_unref (tile);*/
             buffer->hot_tile = tile;
           }
       }
@@ -293,7 +293,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
 
   if (buffer->hot_tile)
     {
-      g_object_unref (buffer->hot_tile);
+      gegl_tile_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
   if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))

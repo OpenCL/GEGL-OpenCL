@@ -288,7 +288,7 @@ get_tile (GeglTileSource *gegl_tile_source,
           if (source_tile[i][j])
             {
               set_half (tile, source_tile[i][j], tile_width, tile_height, format, i, j);
-              g_object_unref (source_tile[i][j]);
+              gegl_tile_unref (source_tile[i][j]);
             }
           else 
             {

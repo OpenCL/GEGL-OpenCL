@@ -395,7 +395,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
             info->offset += ret;
         }
 #endif
-        g_object_unref (G_OBJECT (tile));
+        gegl_tile_unref (tile);
         i++;
       }
   }

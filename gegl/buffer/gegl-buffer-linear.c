@@ -100,7 +100,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
       if (cache)
         gegl_tile_handler_cache_insert (cache, tile, 0, 0, 0);
     }
-    g_object_unref (tile);
+    gegl_tile_unref (tile);
   }
 
   return buffer;
