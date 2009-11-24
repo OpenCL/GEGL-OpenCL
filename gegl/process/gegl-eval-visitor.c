@@ -56,7 +56,6 @@ gegl_eval_visitor_init (GeglEvalVisitor *self)
 {
 }
 
-extern long babl_total_usecs;
 
 /* this is the visitor that does the real computations for GEGL */
 static void
@@ -83,17 +82,14 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
       else
         {
           glong time      = gegl_ticks ();
-          glong babl_time = babl_total_usecs;
 
           /* Make the operation do it's actual processing */
           GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
           gegl_operation_process (operation, context, gegl_pad_get_name (pad),
                                   &context->result_rect);
-          babl_time = babl_total_usecs - babl_time;
           time      = gegl_ticks () - time;
 
           gegl_instrument ("process", gegl_node_get_operation (node), time);
-          gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
         }
     }
   else if (gegl_pad_is_input (pad))
