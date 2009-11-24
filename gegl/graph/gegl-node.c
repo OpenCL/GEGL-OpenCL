@@ -1064,13 +1064,11 @@ gegl_node_blit (GeglNode            *self,
     }
 }
 
-GSList *
+static GSList *
 gegl_node_get_depends_on (GeglNode *self)
 {
   GSList *depends_on = NULL;
   GSList *llink;
-
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
   for (llink = self->priv->source_connections; llink; llink = g_slist_next (llink))
     {
@@ -1802,9 +1800,6 @@ gegl_node_get_context (GeglNode *self,
 #if ENABLE_MT
   g_mutex_lock (self->mutex);
 #endif
-
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-  g_return_val_if_fail (context_id != NULL, NULL);
 
   context = g_hash_table_lookup (self->priv->contexts, context_id);
 #if ENABLE_MT
