@@ -38,6 +38,12 @@ static gboolean gegl_operation_point_filter_process
                                GeglBuffer          *output,
                                const GeglRectangle *result);
 
+static gboolean gegl_operation_point_filter_op_process
+                              (GeglOperation       *operation,
+                               GeglOperationContext *context,
+                               const gchar          *output_pad,
+                               const GeglRectangle  *roi);
+
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
 static void prepare (GeglOperation *operation)
@@ -52,6 +58,7 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
   GeglOperationFilterClass *filter_class = GEGL_OPERATION_FILTER_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
+  operation_class->process = gegl_operation_point_filter_op_process;
   filter_class->process = gegl_operation_point_filter_process;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
@@ -77,11 +84,76 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
-      gint read  = gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
-      while (gegl_buffer_iterator_next (i))
-           point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi[0]);
 
+      {
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
+        gint read  = gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
+          while (gegl_buffer_iterator_next (i))
+            point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi[0]);
+      }
     }
   return TRUE;
 }
+
+gboolean gegl_can_passthrough (GeglOperation       *operation,
+                               GeglBuffer          *input,
+                               const GeglRectangle *result);
+
+gboolean gegl_can_passthrough (GeglOperation       *operation,
+                               GeglBuffer          *input,
+                               const GeglRectangle *result)
+{
+  if (!input || 
+      GEGL_IS_CACHE (input))
+    return FALSE;
+  if (input->format == gegl_operation_get_format (operation, "output") &&
+      gegl_rectangle_contains (gegl_buffer_get_extent (input), result))
+    {
+      GeglPad *pad;
+      gchar *outpad;
+      gint connections;
+      GeglNode *producer = gegl_node_get_producer (operation->node, "input", &outpad);
+      g_assert (producer);
+      pad = gegl_node_get_pad (producer, outpad);
+      connections = gegl_pad_get_num_connections (pad);
+      if (connections == 1)
+        return TRUE;
+    }
+  return FALSE;
+}
+
+
+
+static gboolean gegl_operation_point_filter_op_process
+                              (GeglOperation       *operation,
+                               GeglOperationContext *context,
+                               const gchar          *output_pad,
+                               const GeglRectangle  *roi)
+{
+  GeglOperationFilterClass *klass;
+  GeglBuffer               *input;
+  GeglBuffer               *output;
+  gboolean                  success = FALSE;
+
+  klass                 = GEGL_OPERATION_FILTER_GET_CLASS (operation);
+
+  input = gegl_operation_context_get_source (context, "input");
+
+  if (gegl_can_passthrough (operation, input, roi))
+    {
+      output = g_object_ref (input);
+      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
+
+    }
+
+  output = gegl_operation_context_get_target (context, "output");
+
+  success = gegl_operation_point_filter_process (operation, input, output, roi);
+  if (output == GEGL_BUFFER (operation->node->cache))
+    gegl_cache_computed (operation->node->cache, roi);
+
+  if (input != NULL)
+    g_object_unref (input);
+  return success;
+}
+
