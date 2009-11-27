@@ -198,7 +198,6 @@ gegl_tile_lock (GeglTile *tile)
   /*fprintf (stderr, "global tile locking: %i %i\n", locks, unlocks);*/
 
   gegl_tile_unclone (tile);
-  /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/
 }
 
 static void
@@ -294,9 +293,6 @@ gegl_tile_swp (GeglTile *a,
 
   gegl_tile_unclone (a);
   gegl_tile_unclone (b);
-
-/* gegl_buffer_add_dirty (a->buffer, a->x, a->y);
-   gegl_buffer_add_dirty (b->buffer, b->x, b->y);*/
 
   g_assert (a->size == b->size);
 

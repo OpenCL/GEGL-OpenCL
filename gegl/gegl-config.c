@@ -220,8 +220,8 @@ gegl_config_init (GeglConfig *self)
   self->quality     = 1.0;
   self->cache_size  = 256 * 1024 * 1024;
   self->chunk_size  = 512 * 512;
-  self->tile_width  = 64;
-  self->tile_height = 128;
+  self->tile_width  = 128;
+  self->tile_height = 64;
 #if ENABLE_MT
   self->threads = 2;
 #endif

@@ -11,6 +11,7 @@ main (gint    argc,
       gchar **argv)
 {
   GeglNode   *gegl;   /* the gegl graph we're using as a node factor */
+  GeglBuffer *buffer;
   GeglNode   *display,
              *text,
              *layer,
@@ -30,6 +31,8 @@ main (gint    argc,
 
   gegl = gegl_node_new ();
 
+
+  buffer = gegl_buffer_open (argv[1]);
 
   blank      = gegl_node_new_child (gegl,
                                     "operation", "gegl:color",
@@ -57,11 +60,11 @@ main (gint    argc,
   text       = gegl_node_new_child (gegl,
                                    "operation", "gegl:text",
                                    "size", 20.0,
-                             /*      "color", gegl_color_new ("rgb(0.0,0.0,0.0)"),*/
+                                   "color", gegl_color_new ("rgb(1.0,1.0,1.0)"),
                                    NULL);
   display    = gegl_node_new_child (gegl,
-                                    "operation", "gegl:composite-buffer",
-                                    "path", argv[1],
+                                    "operation", "gegl:write-buffer",
+                                    "buffer", buffer,
                                     NULL);
 
   gegl_node_link_many (blank, crop, layer, shift, display, NULL);

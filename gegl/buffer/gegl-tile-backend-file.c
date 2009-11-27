@@ -95,11 +95,15 @@ struct _GeglTileBackendFile
   /* GFile refering to our buffer */
   GFile           *file;
 
-  /* for writing */
-  GOutputStream   *o;
+  /* for reading/writing */
+  GIOStream       *io;
 
   /* for reading */
   GInputStream    *i;
+
+  /* for writing */
+  GOutputStream   *o;
+
 
   /* Before using mmap we'll use GIO's infrastructure for monitoring
    * the file for changes, this should also be more portable. This is
@@ -687,10 +691,12 @@ gegl_tile_backend_file_finalize (GObject *object)
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "finalizing buffer %s", self->path);
 
 #if HAVE_GIO
-      if (self->i)
-        g_object_unref (self->i);
-      if (self->o)
-        g_object_unref (self->o);
+      if (self->io)
+        {
+          g_io_stream_close (self->io, NULL, NULL);
+          g_object_unref (self->io);
+          self->io = NULL;
+        }
 
       if (self->file)
         g_file_delete  (self->file, NULL, NULL);
@@ -886,6 +892,7 @@ gegl_tile_backend_file_constructor (GType                  type,
 #endif
   self->index = g_hash_table_new (gegl_tile_backend_file_hashfunc, gegl_tile_backend_file_equalfunc);
 
+
   /* If the file already exists open it, assuming it is a GeglBuffer. */
 #if HAVE_GIO
   if (g_file_query_exists (self->file, NULL))
@@ -905,19 +912,19 @@ gegl_tile_backend_file_constructor (GType                  type,
                         G_CALLBACK (gegl_tile_backend_file_file_changed),
                         self);
 
-#ifndef HACKED_GIO_WITH_READWRITE
-      g_error ("not able to open a file readwrite properly with GIO");
-#else
-      /* this construct uses a hacked up version of GIO that detects the
-       * createflag to be passed as G_FILE_CREATE_READWRITE for the append
-       * call on local files, and provides a suitable inputstream as istream
-       * data on the object.
-       */
-      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,
-                                                   G_FILE_CREATE_READWRITE,
-                                                   NULL, NULL));
-      self->i = g_object_get_data (G_OBJECT (self->o), "istream");
-#endif
+      {
+        GError *error = NULL;
+        self->io = G_IO_STREAM (g_file_open_readwrite (self->file, NULL, &error));
+        if (error)
+          {
+            g_warning ("%s: %s", G_STRLOC, error->message);
+            g_error_free (error);
+            error = NULL;
+          }
+        self->o = g_io_stream_get_output_stream (self->io);
+        self->i = g_io_stream_get_input_stream (self->io);
+      }
+
 #else
       self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
       self->i = dup (self->o);
@@ -967,30 +974,35 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
   if (!self->exist)
     {
       GeglTileBackend *backend;
+      GError *error = NULL;
 
       self->exist = TRUE;
+
+      if (self->io)
+        {
+          g_print ("we already existed\n");
+          return;
+        }
+
       backend = GEGL_TILE_BACKEND (self);
 
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "creating swapfile  %s", self->path);
-#ifdef HACKED_GIO_WITH_READWRITE
-
-      self->o = G_OUTPUT_STREAM (g_file_append_to (self->file,
-                                                   G_FILE_CREATE_READWRITE,
-                                                   NULL, NULL));
-      gegl_buffer_header_init (&self->header,
-                               backend->tile_width,
-                               backend->tile_height,
-                               backend->px_size,
-                               backend->format
-                               );
-      gegl_tile_backend_file_write_header (self);
-      g_output_stream_flush (self->o, NULL, NULL);
-      self->i = g_object_get_data (G_OBJECT (self->o), "istream");
-#else
 
 #if HAVE_GIO
       self->o = G_OUTPUT_STREAM (g_file_replace (self->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
       g_output_stream_flush (self->o, NULL, NULL);
+      g_output_stream_close (self->o, NULL, NULL);
+
+      self->io = G_IO_STREAM (g_file_open_readwrite (self->file, NULL, &error));
+      if (error)
+        {
+          g_warning ("%s: %s", G_STRLOC, error->message);
+          g_error_free (error);
+          error = NULL;
+        }
+      self->o = g_io_stream_get_output_stream (self->io);
+      self->i = g_io_stream_get_input_stream (self->io);
+
 #else
       self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 #endif
@@ -1015,11 +1027,11 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       self->i = dup (self->o);
 #endif
 
-#endif
       /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
 #if HAVE_GIO
+      g_assert (self->io);
       g_assert (self->i);
       g_assert (self->o);
 #else
@@ -1061,6 +1073,7 @@ gegl_tile_backend_file_init (GeglTileBackendFile *self)
   self->path           = NULL;
 #if HAVE_GIO
   self->file           = NULL;
+  self->io             = NULL;
   self->i              = NULL;
   self->o              = NULL;
 #else

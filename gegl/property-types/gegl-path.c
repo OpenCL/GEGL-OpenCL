@@ -1355,7 +1355,7 @@ gegl_path_get_node (GeglPath     *vector,
 static void gegl_path_item_free (GeglPathList *p)
 {
   InstructionInfo *info = lookup_instruction_info(p->d.type);
-  g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 * (info->n_items+1)/2, p);
+  g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 * (info->n_items+3)/2, p);
 }
 
 void  gegl_path_remove_node  (GeglPath *vector,
@@ -1406,7 +1406,7 @@ void  gegl_path_insert_node     (GeglPath           *vector,
     {
       if (count == pos)
         {
-          GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
+          GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
           new->d.type=knot->type;
           copy_data (knot, &new->d);
           new->next = iter->next;
@@ -1423,7 +1423,7 @@ void  gegl_path_insert_node     (GeglPath           *vector,
     }
   if (pos==-1)
     {
-      GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+1)/2);
+      GeglPathList *new = g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
       new->d.type = knot->type;
       copy_data (knot, &new->d);
       new->next = NULL;
@@ -2087,7 +2087,8 @@ void gegl_path_stroke (GeglBuffer *buffer,
    {
      return;
    }
-  gegl_buffer_lock (buffer);
+  if (gegl_buffer_is_shared (buffer))
+    while (!gegl_buffer_try_lock (buffer));
 
   /*gegl_buffer_clear (buffer, &extent);*/
 
@@ -2166,7 +2167,8 @@ void gegl_path_stroke (GeglBuffer *buffer,
       iter=iter->next;
     }
 
-  gegl_buffer_unlock (buffer);
+  if (gegl_buffer_is_shared (buffer))
+    gegl_buffer_unlock (buffer);
 }
 
 gint gegl_path_type_get_n_items (gchar type)

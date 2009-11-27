@@ -433,7 +433,10 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 
                   ensure_buf (i, no);
 
-                  gegl_buffer_set_unlocked (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+  /* XXX: should perhaps use _set_unlocked, and keep the lock in the
+   * iterator.
+   */
+                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
                 }
             }
         }

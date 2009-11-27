@@ -243,7 +243,7 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
                          */
                 }
 
-              gegl_buffer_set_unlocked (buffer, &info->extent, info->format, info->buf, 0);
+              gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
               break;
             }
           else

@@ -32,6 +32,14 @@ gegl_chant_object(buffer, _("Input buffer"),
 
 #include "gegl-chant.h"
 
+static void buffer_changed (GeglBuffer          *buffer,
+                            const GeglRectangle *rect,
+                            gpointer             userdata)
+{
+  gegl_operation_invalidate (GEGL_OPERATION (userdata), rect, FALSE);
+}
+
+
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
@@ -56,6 +64,12 @@ process (GeglOperation       *operation,
 
   if (o->buffer)
     {
+      if (!o->chant_data)
+        {
+          o->chant_data = (void*)0xf00;
+          g_signal_connect (o->buffer, "changed",
+                            G_CALLBACK(buffer_changed), operation);
+        }
       g_object_ref (o->buffer); /* Add an extra reference, since
 				     * gegl_operation_set_data is
 				     * stealing one.

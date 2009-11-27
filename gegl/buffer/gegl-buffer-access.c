@@ -1061,9 +1061,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  gint                 rowstride)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
-  gegl_buffer_lock (buffer);
   gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride);
-  gegl_buffer_unlock (buffer);
 }
 
 const GeglRectangle *
