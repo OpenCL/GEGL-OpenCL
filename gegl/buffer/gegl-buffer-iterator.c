@@ -541,7 +541,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
                            100.0*direct_write/(in_direct_write+direct_write));
 #endif
       i->buf[0]=(void*)0xdeadbeef;
-      g_free (i);
+      g_slice_free (GeglBufferIterators, i);
     }
 
 
@@ -553,7 +553,7 @@ GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
                                               const Babl          *format,
                                               guint                flags)
 {
-  GeglBufferIterator *i = (gpointer)g_new0 (GeglBufferIterators, 1);
+  GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
   gegl_buffer_iterator_add (i, buffer, roi, format, flags);
   return i;
 }
