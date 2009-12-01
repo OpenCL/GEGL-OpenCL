@@ -41,7 +41,6 @@ libbuffer_la_SOURCES = \
     gegl-tile-storage.c		\
     gegl-tile-backend.c		\
     gegl-tile-backend-file.c	\
-    gegl-tile-backend-gio.c	\
     gegl-tile-backend-ram.c	\
     gegl-tile-handler.c		\
     gegl-tile-handler-cache.c	\
