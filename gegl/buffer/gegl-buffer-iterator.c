@@ -335,8 +335,8 @@ static gpointer iterator_buf_pool_get (gint size)
           info->used ++;
 #if ENABLE_MT
           g_static_mutex_unlock (&pool_mutex);
-          return info->buf;
 #endif
+          return info->buf;
         }
     }
   {
