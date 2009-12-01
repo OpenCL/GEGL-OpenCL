@@ -114,10 +114,16 @@ process_simd (GeglOperation       *op,
     }
   else if (o->value == 1.0)
     while (samples--)
-      *(out++) = *(in++) * g4float_all (*(aux++));
+      {
+        *(out++) = *(in++) * g4float_all (*(aux));
+        aux++;
+      }
   else
     while (samples--)
-      *(out++) = *(in++) * g4float_all ((*(aux++))) * value;
+      {
+        *(out++) = *(in++) * g4float_all ((*(aux))) * value;
+        aux++;
+      }
   return TRUE;
 }
 
