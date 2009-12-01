@@ -44,7 +44,7 @@ process (GeglOperation       *op,
          void                *in_buf,
          void                *aux_buf,
          void                *out_buf,
-         const glong          n_pixels,
+         glong                samples,
          const GeglRectangle *roi)
 {
   gfloat *in = in_buf;
@@ -54,58 +54,70 @@ process (GeglOperation       *op,
 
   if (aux == NULL)
     {
-      if (value == 1.0)
+      g_assert (value != 1.0); /* buffer should have been passed through */
+      while (samples--)
         {
-          gint i;
-          for (i=0; i<n_pixels; i++)
-            {
-              gint j;
-              for (j=0; j<4; j++)
-                out[j] = in[j];
-              in  += 4;
-              out += 4;
-            }
-        }
-      else
-        {
-          gint i;
-          for (i=0; i<n_pixels; i++)
-            {
-              gint j;
-              for (j=0; j<4; j++)
-                out[j] = in[j] * value;
-              in  += 4;
-              out += 4;
-            }
+          gint j;
+          for (j=0; j<4; j++)
+            out[j] = in[j] * value;
+          in  += 4;
+          out += 4;
         }
     }
   else if (value == 1.0)
-    {
-      gint i;
-      for (i=0; i<n_pixels; i++)
-        {
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * (*aux);
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
-    }
+    while (samples--)
+      {
+        gint j;
+        for (j=0; j<4; j++)
+          out[j] = in[j] * (*aux);
+        in  += 4;
+        out += 4;
+        aux += 1;
+      }
   else
+    while (samples--)
+      {
+        gfloat v = (*aux) * value;
+        gint j;
+        for (j=0; j<4; j++)
+          out[j] = in[j] * v;
+        in  += 4;
+        out += 4;
+        aux += 1;
+      }
+  return TRUE;
+}
+
+
+static gboolean
+process_simd (GeglOperation       *op,
+              void                *in_buf,
+              void                *aux_buf,
+              void                *out_buf,
+              glong                samples,
+              const GeglRectangle *roi)
+{
+  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
+  g4float    *in  = in_buf;
+  gfloat     *aux = aux_buf;
+  g4float    *out = out_buf;
+
+  /* add 0.5 to brightness here to make the logic in the innerloop tighter
+   */
+  g4float  value      = g4float_all(o->value);
+
+  if (aux == NULL)
     {
-      gint i;
-      for (i=0; i<n_pixels; i++)
-        {
-          gfloat v = (*aux) * value;
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * v;
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
+      g_assert (o->value != 1.0); /* should haven been passed through */
+      while (samples--)
+        *(out ++) = *(in ++) * value;
     }
+  else if (o->value == 1.0)
+    while (samples--)
+      *(out++) = *(in++) * g4float_all (*(aux++));
+  else
+    while (samples--)
+      *(out++) = *(in++) * g4float_all ((*(aux++))) * value;
   return TRUE;
 }
 
@@ -146,9 +158,19 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class      = GEGL_OPERATION_CLASS (klass);
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
+  operation_class->prepare = prepare;
   operation_class->process = operation_process;
   point_composer_class->process = process;
-  operation_class->prepare = prepare;
+
+#ifdef HAS_G4FLOAT
+  /* add conditionally compiled variation of process(), gegl should be able
+   * to determine which is fastest and hopefully if any implementation is
+   * broken and not conforming to the reference implementation.
+   */
+  gegl_operation_class_add_processor (operation_class,
+                                      G_CALLBACK (process_simd), "simd");
+#endif
+
 
   operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";
