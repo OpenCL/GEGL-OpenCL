@@ -59,7 +59,6 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->process = gegl_operation_point_filter_op_process;
-  filter_class->process = gegl_operation_point_filter_process;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 }
@@ -103,7 +102,6 @@ gboolean gegl_can_passthrough (GeglOperation       *operation,
                                GeglBuffer          *input,
                                const GeglRectangle *result)
 {
-  return FALSE;
   if (!input || 
       GEGL_IS_CACHE (input))
     return FALSE;
@@ -144,10 +142,11 @@ static gboolean gegl_operation_point_filter_op_process
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-
     }
-
-  output = gegl_operation_context_get_target (context, "output");
+  else
+    {
+      output = gegl_operation_context_get_target (context, "output");
+    }
 
   success = gegl_operation_point_filter_process (operation, input, output, roi);
   if (output == GEGL_BUFFER (operation->node->cache))
