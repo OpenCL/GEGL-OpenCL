@@ -89,6 +89,7 @@ process (GeglOperation       *op,
 }
 
 
+#ifdef HAS_G4FLOAT
 static gboolean
 process_simd (GeglOperation       *op,
               void                *in_buf,
@@ -126,6 +127,7 @@ process_simd (GeglOperation       *op,
       }
   return TRUE;
 }
+#endif
 
 /* Fast path when opacity is a no-op
  */
