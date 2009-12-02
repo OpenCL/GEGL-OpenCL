@@ -974,15 +974,16 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
   if (!self->exist)
     {
       GeglTileBackend *backend;
+#if HAVE_GIO
       GError *error = NULL;
-
-      self->exist = TRUE;
 
       if (self->io)
         {
           g_print ("we already existed\n");
           return;
         }
+#endif
+      self->exist = TRUE;
 
       backend = GEGL_TILE_BACKEND (self);
 
@@ -1021,7 +1022,6 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       gegl_tile_backend_file_write_header (self);
 #if HAVE_GIO
       g_output_stream_flush (self->o, NULL, NULL);
-      self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));
 #else
       fsync (self->o);
       self->i = dup (self->o);
