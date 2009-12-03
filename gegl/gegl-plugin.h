@@ -103,4 +103,6 @@ const gchar   * gegl_extension_handler_get         (const gchar         *extensi
 #include <operation/gegl-operation-meta.h>
 #include <gegl-simd.h>
 
+#include <gegl-lookup.h>
+
 #endif  /* __GEGL_PLUGIN_H__ */

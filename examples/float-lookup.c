@@ -1,5 +1,5 @@
 #include <gegl.h>
-#include <gegl/gegl-utils.h>
+#include <gegl-plugin.h>
 #include <math.h>
 
 static gfloat wrapped_sqrt (gfloat   in,

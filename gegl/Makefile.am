@@ -31,6 +31,7 @@ GEGL_public_HEADERS =	\
     gegl-utils.h			\
     gegl-matrix.h			\
     gegl-chant.h			\
+    gegl-lookup.h			\
     gegl-simd.h				\
     gegl-plugin.h			\
     gegl-version.h			\
@@ -49,10 +50,12 @@ GEGL_sources = \
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-utils.c			\
+	gegl-lookup.c			\
 	gegl-matrix.c			\
 	gegl-xml.c			\
 	\
 	gegl-chant.h			\
+	gegl-lookup.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
 	gegl-debug.h			\
