@@ -23,10 +23,11 @@
 #include "gegl.h"
 #include "gegl-lookup.h"
 
-GeglLookup *gegl_lookup_new  (GeglLookupFunction *function,
-                              gpointer            data)
+GeglLookup *
+gegl_lookup_new (GeglLookupFunction *function,
+                 gpointer            data)
 {
-  GeglLookup *lookup = g_slice_new (GeglLookup);
+  GeglLookup *lookup = g_slice_new0 (GeglLookup);
   lookup->function = function;
   lookup->data = data;
   return lookup;
