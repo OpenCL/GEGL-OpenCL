@@ -203,6 +203,85 @@ gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
 
+typedef     gfloat (GeglLookupFunction) (float, gpointer data);
+
+GeglLookup *gegl_lookup_new  (GeglLookupFunction   *function,
+                              gpointer              data);
+void        gegl_lookup_free (GeglLookup           *lookup);
+
+#define INDEX_SHIFT  14 /* 
+                        Valid values here are:
+                        value  tablesize          average error 
+                          16    5108              0.001298
+                          15   10316              0.000649
+                          14   20432              0.000324
+                         */
+
+#if INDEX_SHIFT == 16
+
+#define INDEX_START_POSITIVE   13702
+#define INDEX_END_POSITIVE     16256
+#define INDEX_START_NEGATIVE   46470
+#define INDEX_END_NEGATIVE     49024
+
+#elif INDEX_SHIFT == 15
+
+#define INDEX_START_POSITIVE   27404
+#define INDEX_END_POSITIVE     32512
+#define INDEX_START_NEGATIVE   92940
+#define INDEX_END_NEGATIVE     98048
+
+#elif INDEX_SHIFT == 14
+
+#define INDEX_START_POSITIVE   54808
+#define INDEX_END_POSITIVE     65024
+#define INDEX_START_NEGATIVE   185880
+#define INDEX_END_NEGATIVE     196096
+
+#endif
+
+#define INDEX_SUM_POSITIVE    (INDEX_END_POSITIVE-INDEX_START_POSITIVE)
+#define INDEX_SUM_NEGATIVE    (INDEX_END_NEGATIVE-INDEX_START_NEGATIVE)
+#define INDEX_SUM             (INDEX_SUM_POSITIVE+INDEX_SUM_NEGATIVE)
+
+typedef struct _GeglLookup
+{
+  GeglLookupFunction *function;     /* the lookup function to execute */
+  gpointer            data;
+  guint32             bitmask[(INDEX_SUM+31)/32];
+  gfloat              table[INDEX_SUM];
+} _GeglLookup;
+
+static inline gfloat
+gegl_lookup (GeglLookup *lookup,
+             gfloat      number)
+{
+  union
+  {
+    float   f;
+    guint32 i;
+  } u;
+  guint index;
+
+  u.f = number;
+  index = u.i >> INDEX_SHIFT;
+  if (index > INDEX_START_POSITIVE && index < INDEX_END_POSITIVE)
+    index = index-INDEX_START_POSITIVE;
+  else if (index > INDEX_START_NEGATIVE && index < INDEX_END_NEGATIVE)
+    index = index-INDEX_START_NEGATIVE+INDEX_SUM_POSITIVE;
+  else
+    return lookup->function (number, lookup->data);
+
+  g_assert (index >= 0 && index < INDEX_SUM);
+
+  if (!(lookup->bitmask[index/32] & (1<<(index & 31))))
+    {
+      lookup->table[index]= lookup->function (number, lookup->data);
+      lookup->bitmask[index/32] |= (1<<(index & 31));
+    } 
+  return lookup->table[index];
+}
+
 G_END_DECLS
 
 #endif /* __GEGL_UTILS_H__ */
