@@ -55,7 +55,6 @@ static void prepare (GeglOperation *operation)
 static void
 gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
 {
-  GeglOperationFilterClass *filter_class = GEGL_OPERATION_FILTER_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->process = gegl_operation_point_filter_op_process;
