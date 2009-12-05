@@ -102,7 +102,7 @@ prepare (GeglOperation *operation)
 
   if (o->src[0]==0 && self->cached_path == NULL)
     {
-      gegl_node_connect_from (self->opacity, "input", self->aux, "output");
+      gegl_node_link (self->input, self->output);
     }
   else
     { /* FIXME:
@@ -147,6 +147,7 @@ prepare (GeglOperation *operation)
       else
         {
         }
+      gegl_node_link (self->composite_op, self->output);
     }
 
   if (o->scale != self->p_scale)
