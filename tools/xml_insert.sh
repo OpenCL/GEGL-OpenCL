@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Utility script to merge an xml snippet from one file into a document.
 #
