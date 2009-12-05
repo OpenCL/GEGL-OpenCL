@@ -18,7 +18,6 @@ typedef float g4float __attribute__ ((vector_size (4*sizeof(float))));
 #define g4float_zero      g4float_all(0.0)
 #define g4float_one       g4float_all(1.0)
 #define g4float_half      g4float_all(0.5)
-#define g4float_half      g4float_all(0.5)
 #define g4float_mul(a,val)  g4float_all(val)*(a)
 
 #ifdef USE_SSE
