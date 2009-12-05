@@ -203,7 +203,8 @@ iir_young_ver_blur (GeglBuffer          *src,
   buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
   w   = g_new0 (gfloat, src_rect->height);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"),
+                   buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = src_rect->height;
   for (u=0; u<dst_rect->width; u++)
@@ -401,8 +402,8 @@ static void prepare (GeglOperation *operation)
   gfloat iir_radius_x = o->std_dev_x * RADIUS_SCALE;  
   gfloat iir_radius_y = o->std_dev_y * RADIUS_SCALE;  
 
-  /* these could be calculated exactly considering o->filter,
-   * but we just make shure there is enough space */
+  /* XXX: these should be calculated exactly considering o->filter, but we just
+   * make sure there is enough space */
   area->left = area->right = ceil ( max (fir_radius_x, iir_radius_x));
   area->top = area->bottom = ceil ( max (fir_radius_y, iir_radius_y));
 
@@ -443,8 +444,6 @@ process (GeglOperation       *operation,
   force_iir = o->filter && !strcmp (o->filter, "iir");
   force_fir = o->filter && !strcmp (o->filter, "fir");
 
-  force_fir = TRUE;
-
   if ((force_iir || o->std_dev_x > 1.0) && !force_fir)
     {
       iir_young_find_constants (o->std_dev_x, &B, b);
@@ -453,7 +452,8 @@ process (GeglOperation       *operation,
   else
     {
       cmatrix_len = fir_gen_convolve_matrix (o->std_dev_x, &cmatrix);
-      fir_hor_blur (input, &rect, temp, &temp_extend, cmatrix, cmatrix_len, op_area->left);
+      fir_hor_blur (input, &rect, temp, &temp_extend,
+                    cmatrix, cmatrix_len, op_area->left);
       g_free (cmatrix);
     }
 
@@ -466,7 +466,8 @@ process (GeglOperation       *operation,
   else
     { 
       cmatrix_len = fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
-      fir_ver_blur (temp, &temp_extend, output, result, cmatrix, cmatrix_len, op_area->top);
+      fir_ver_blur (temp, &temp_extend, output, result, cmatrix, cmatrix_len,
+                    op_area->top);
       g_free (cmatrix);
     }
 
