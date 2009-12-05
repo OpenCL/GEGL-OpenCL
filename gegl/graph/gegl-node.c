@@ -61,6 +61,7 @@ enum
   LAST_SIGNAL
 };
 
+#define MAX_THREADS 8
 
 struct _GeglNodePrivate
 {
@@ -70,8 +71,8 @@ struct _GeglNodePrivate
   GeglNode       *parent;
   gchar          *name;
   GeglProcessor  *processor;
-  GeglEvalMgr    *eval_mgr[16];
   GHashTable     *contexts;
+  GeglEvalMgr    *eval_mgr[MAX_THREADS];
 };
 
 
@@ -925,6 +926,8 @@ gegl_node_blit (GeglNode            *self,
 
 #if ENABLE_MT
   threads = gegl_config ()->threads;
+  if (threads > MAX_THREADS)
+    threads = 0;
   
   if (pool == NULL)
     {
@@ -944,7 +947,7 @@ gegl_node_blit (GeglNode            *self,
                               */
   if (flags == GEGL_BLIT_DEFAULT)
     {
-      ThreadData data[16];
+      ThreadData data[MAX_THREADS];
       gint i;
 
       /* Subdivide along the largest of width/height, this should be further
