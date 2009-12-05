@@ -183,7 +183,7 @@ tab_to (GString *string, gint position)
 
   if (curcount > position && position != 0)
     {
-      g_warning ("tab overflow %i>%i", curcount, position);
+      g_warning ("%s tab overflow %i>%i", G_STRLOC, curcount, position);
     }
   else
     {
@@ -234,8 +234,8 @@ bar (GString *string, gint width, gfloat value)
 }
 
 #define INDENT_SPACES    2
-#define SECONDS_COL      25
-#define BAR_COL          33
+#define SECONDS_COL      29
+#define BAR_COL          36
 #define BAR_WIDTH        (78 - BAR_COL)
 
 static void
