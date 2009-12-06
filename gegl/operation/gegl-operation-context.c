@@ -32,8 +32,6 @@
 
 #include "operation/gegl-operation.h"
 
-static GValue * gegl_operation_context_get_value    (GeglOperationContext *self,
-                                                const gchar     *property_name);
 static GValue *
 gegl_operation_context_add_value (GeglOperationContext *self,
                                   const gchar          *property_name,
@@ -149,7 +147,7 @@ lookup_property (gconstpointer a,
   return strcmp (property->name, property_name);
 }
 
-static GValue *
+GValue *
 gegl_operation_context_get_value (GeglOperationContext *self,
                                   const gchar          *property_name)
 {

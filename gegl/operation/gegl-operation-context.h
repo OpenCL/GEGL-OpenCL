@@ -66,6 +66,8 @@ void            gegl_operation_context_take_object     (GeglOperationContext *co
 void            gegl_operation_context_set_property    (GeglOperationContext *self,
                                                         const gchar          *name,
                                                         const GValue         *value);
+GValue        * gegl_operation_context_get_value       (GeglOperationContext *self,
+                                                        const gchar          *property_name);
 void            gegl_operation_context_get_property    (GeglOperationContext *self,
                                                         const gchar          *name,
                                                         GValue               *value);

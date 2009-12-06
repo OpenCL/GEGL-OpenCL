@@ -90,6 +90,22 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           time      = gegl_ticks () - time;
 
           gegl_instrument ("process", gegl_node_get_operation (node), time);
+
+          if (gegl_pad_get_num_connections (pad) > 1)
+            {
+              /* Mark buffers that have been consumed by different parts of the
+               * graph so that in-place processing can be avoided on them.
+               */
+              GValue *value;
+              GeglBuffer *buffer;
+              value = gegl_operation_context_get_value (context, gegl_pad_get_name (pad));
+              if (value)
+                {
+                  buffer = g_value_get_object (value);
+                  if (buffer)
+                    g_object_set_data (G_OBJECT (buffer), "no in-place", (void*)0xf);
+                }
+            }
         }
     }
   else if (gegl_pad_is_input (pad))

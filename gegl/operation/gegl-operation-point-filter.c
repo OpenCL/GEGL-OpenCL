@@ -104,19 +104,13 @@ gboolean gegl_can_passthrough (GeglOperation       *operation,
   if (!input || 
       GEGL_IS_CACHE (input))
     return FALSE;
+  if (g_object_get_data (G_OBJECT (input), "no in-place"))
+    return FALSE;
+      
+
   if (input->format == gegl_operation_get_format (operation, "output") &&
       gegl_rectangle_contains (gegl_buffer_get_extent (input), result))
-    {
-      GeglPad *pad;
-      gchar *outpad;
-      gint connections;
-      GeglNode *producer = gegl_node_get_producer (operation->node, "input", &outpad);
-      g_assert (producer);
-      pad = gegl_node_get_pad (producer, outpad);
-      connections = gegl_pad_get_num_connections (pad);
-      if (connections == 1)
-        return TRUE;
-    }
+    return TRUE;
   return FALSE;
 }
 
@@ -155,4 +149,3 @@ static gboolean gegl_operation_point_filter_op_process
     g_object_unref (input);
   return success;
 }
-

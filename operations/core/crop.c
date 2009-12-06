@@ -137,7 +137,11 @@ gegl_crop_process (GeglOperation        *operation,
       GeglBuffer *output;
 
       output = gegl_buffer_create_sub_buffer (input, &extent);
+
+      if (g_object_get_data (G_OBJECT (input), "no in-place"))
+        g_object_set_data (G_OBJECT (output), "no in-place", (void*)0xf);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
+
       g_object_unref (input);
       success = TRUE;
     }
