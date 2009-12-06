@@ -246,6 +246,8 @@ get_bounding_box (GeglOperation *operation)
       /* store the measured size for later use */
       o->width = width;
       o->height = height;
+
+      gegl_operation_invalidate (operation, NULL, TRUE);
     }
 
   if (status)
