@@ -78,10 +78,10 @@ static void attach (GeglOperation *operation)
 
       gegl_node_link_many (priv->input, priv->subtract, priv->multiply, NULL);
       gegl_node_link (priv->input, priv->blur);
-      gegl_node_link_many (priv->input, priv->add, priv->output, NULL);
+      gegl_node_link_many (priv->multiply, priv->add, priv->output, NULL);
 
       gegl_node_connect_from (priv->subtract, "aux",   priv->blur,     "output");
-      gegl_node_connect_from (priv->add,      "aux",   priv->multiply, "output");
+      gegl_node_connect_from (priv->add,      "aux",   priv->input, "output");
 
       gegl_operation_meta_redirect (operation, "scale", priv->multiply, "value");
       gegl_operation_meta_redirect (operation, "std-dev", priv->blur, "std-dev-x");
