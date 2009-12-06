@@ -530,7 +530,9 @@ gegl_node_invalidated (GeglNode            *node,
                        gboolean             clear_cache)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
-  g_return_if_fail (rect != NULL);
+
+  if (!rect)
+    rect = &node->have_rect;
 
   if (node->cache)
     {

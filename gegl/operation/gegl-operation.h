@@ -217,15 +217,22 @@ GParamSpec ** gegl_list_properties (const gchar *operation_type,
                                     guint       *n_properties_p);
 
 
+/* invalidate a specific rectangle, indicating the any computation depending
+ * on this roi is now invalid.
+ *
+ * @roi : the region to blank or NULL for the nodes current have_rect
+ * @clear_cache: whether any present caches should be zeroed out
+ */
+void     gegl_operation_invalidate            (GeglOperation       *operation,
+                                               const GeglRectangle *roi,
+                                               gboolean             clear_cache);
+
 /* internal utility functions used by gegl, these should not be used
  * externally */
 gboolean gegl_operation_calc_need_rects      (GeglOperation       *operation,
                                               gpointer             context_id);
 void     gegl_operation_path_prop_changed    (GeglPath            *path,
                                               GeglOperation       *operation);
-void     gegl_operation_invalidate            (GeglOperation       *operation,
-                                               const GeglRectangle *roi,
-                                               gboolean             clear_cache);
 
 G_END_DECLS
 
