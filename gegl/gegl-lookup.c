@@ -23,11 +23,12 @@
 #include "gegl.h"
 #include "gegl-lookup.h"
 
-GeglLookup *gegl_lookup_new_full  (GeglLookupFunction   *function,
-                                   gpointer              data,
-                                   gfloat                start,
-                                   gfloat                end,
-                                   gfloat                precision)
+GeglLookup *
+gegl_lookup_new_full (GeglLookupFunction function,
+                      gpointer           data,
+                      gfloat             start,
+                      gfloat             end,
+                      gfloat             precision)
 {
   GeglLookup *lookup;
   union
@@ -106,13 +107,13 @@ GeglLookup *gegl_lookup_new_full  (GeglLookupFunction   *function,
       positive_min = positive_max = negative_min = negative_max = 0;
     }
 
-  if ((positive_max-positive_min)+ (negative_max-negative_min) > GEGL_LOOKUP_MAX_ENTRIES)
+  if ((positive_max-positive_min) + (negative_max-negative_min) > GEGL_LOOKUP_MAX_ENTRIES)
     {
       /* Reduce the size of the cache tables to fit within the bittable
        * budget (the maximum allocation is around 2.18mb of memory
        */
 
-      gint diff = (positive_max-positive_min)+ (negative_max-negative_min) - GEGL_LOOKUP_MAX_ENTRIES;
+      gint diff = (positive_max-positive_min) + (negative_max-negative_min) - GEGL_LOOKUP_MAX_ENTRIES;
 
       if (negative_max - negative_min > 0)
         {
@@ -131,10 +132,10 @@ GeglLookup *gegl_lookup_new_full  (GeglLookupFunction   *function,
         positive_max-=diff;
     }
 
-  lookup = g_malloc0 (sizeof (GeglLookup) + sizeof (gfloat) * 
+  lookup = g_malloc0 (sizeof (GeglLookup) + sizeof (gfloat) *
                                                   ((positive_max-positive_min)+
-                                                  (negative_max-negative_min)));
-   
+                                                   (negative_max-negative_min)));
+
   lookup->positive_min = positive_min;
   lookup->positive_max = positive_max;
   lookup->negative_min = negative_min;
@@ -142,11 +143,13 @@ GeglLookup *gegl_lookup_new_full  (GeglLookupFunction   *function,
   lookup->shift = shift;
   lookup->function = function;
   lookup->data = data;
+
   return lookup;
 }
 
-GeglLookup *gegl_lookup_new  (GeglLookupFunction *function,
-                              gpointer            data)
+GeglLookup *
+gegl_lookup_new (GeglLookupFunction function,
+                 gpointer           data)
 {
   return gegl_lookup_new_full (function, data, 0, 1.0, 0.000010);
 }

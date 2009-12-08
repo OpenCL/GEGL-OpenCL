@@ -21,29 +21,30 @@
 
 G_BEGIN_DECLS
 
-typedef     gfloat (GeglLookupFunction) (float, gpointer data);
+typedef     gfloat (* GeglLookupFunction) (gfloat   value,
+                                           gpointer data);
 
 #define GEGL_LOOKUP_MAX_ENTRIES   (819200)
 
 typedef struct GeglLookup
 {
-  GeglLookupFunction *function; 
-  gpointer            data;
-  gint                shift;
-  guint32             positive_min, positive_max, negative_min, negative_max;
-  guint32             bitmask[GEGL_LOOKUP_MAX_ENTRIES/32];
-  gfloat              table[];
+  GeglLookupFunction function;
+  gpointer           data;
+  gint               shift;
+  guint32            positive_min, positive_max, negative_min, negative_max;
+  guint32            bitmask[GEGL_LOOKUP_MAX_ENTRIES/32];
+  gfloat             table[];
 } GeglLookup;
 
 
-GeglLookup *gegl_lookup_new_full  (GeglLookupFunction   *function,
-                                   gpointer              data,
-                                   gfloat                start,
-                                   gfloat                end,
-                                   gfloat                precision);
-GeglLookup *gegl_lookup_new  (GeglLookupFunction   *function,
-                              gpointer              data);
-void        gegl_lookup_free (GeglLookup           *lookup);
+GeglLookup *gegl_lookup_new_full  (GeglLookupFunction  function,
+                                   gpointer            data,
+                                   gfloat              start,
+                                   gfloat              end,
+                                   gfloat              precision);
+GeglLookup *gegl_lookup_new       (GeglLookupFunction  function,
+                                   gpointer            data);
+void        gegl_lookup_free      (GeglLookup         *lookup);
 
 
 static inline gfloat
@@ -73,7 +74,8 @@ gegl_lookup (GeglLookup *lookup,
     {
       lookup->table[index]= lookup->function (number, lookup->data);
       lookup->bitmask[index/32] |= (1<<(index & 31));
-    } 
+    }
+
   return lookup->table[index];
 }
 
