@@ -96,18 +96,18 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
   return TRUE;
 }
 
-gboolean gegl_can_passthrough (GeglOperation       *operation,
-                               GeglBuffer          *input,
-                               const GeglRectangle *result);
+gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
+                                         GeglBuffer          *input,
+                                         const GeglRectangle *result);
 
-gboolean gegl_can_passthrough (GeglOperation       *operation,
-                               GeglBuffer          *input,
-                               const GeglRectangle *result)
+gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
+                                         GeglBuffer          *input,
+                                         const GeglRectangle *result)
 {
   if (!input || 
       GEGL_IS_CACHE (input))
     return FALSE;
-  if (g_object_get_data (G_OBJECT (input), "no in-place"))
+  if (gegl_object_get_has_forked (input))
     return FALSE;
       
 
@@ -133,7 +133,7 @@ static gboolean gegl_operation_point_filter_op_process
 
   input = gegl_operation_context_get_source (context, "input");
 
-  if (gegl_can_passthrough (operation, input, roi))
+  if (gegl_can_do_inplace_processing (operation, input, roi))
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));

@@ -71,9 +71,9 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 }
 
-gboolean gegl_can_passthrough (GeglOperation       *operation,
-                               GeglBuffer          *input,
-                               const GeglRectangle *result);
+gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
+                                         GeglBuffer          *input,
+                                         const GeglRectangle *result);
 
 /* we replicate the process function from GeglOperationComposer to be
  * able to bail out earlier for some common processing time pitfalls
@@ -99,7 +99,7 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
 
-  if (gegl_can_passthrough (operation, input, result))
+  if (gegl_can_do_inplace_processing (operation, input, result))
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));

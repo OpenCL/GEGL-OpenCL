@@ -127,7 +127,7 @@ GeglBuffer *
 gegl_eval_mgr_apply (GeglEvalMgr *self)
 {
   GeglNode    *root;
-  GeglBuffer  *buffer;
+  GeglBuffer  *object;
   GeglPad     *pad;
   glong        time       = gegl_ticks ();
   gpointer     context_id = self;
@@ -219,13 +219,13 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
 
   if (pad)
     {
-      /* extract return buffer before running finish visitor */
+      /* extract returned object before running finish visitor */
       GValue value = { 0, };
       g_value_init (&value, G_TYPE_OBJECT);
       gegl_operation_context_get_property (gegl_node_get_context (root, context_id),
                                       "output", &value);
-      buffer = g_value_get_object (&value);
-      g_object_ref (buffer);/* salvage buffer from finalization */
+      object = g_value_get_object (&value);
+      g_object_ref (object);/* salvage buffer from finalization */
       g_value_unset (&value);
     }
 
@@ -237,11 +237,11 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "process", time);
 
-  if (!pad || !G_IS_OBJECT (buffer))
+  if (!pad || !G_IS_OBJECT (object))
     {
       return NULL;
     }
-  return buffer;
+  return object;
 }
 
 GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,

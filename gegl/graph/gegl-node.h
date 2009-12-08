@@ -222,6 +222,13 @@ const gchar * gegl_node_get_name            (GeglNode      *self);
 void          gegl_node_set_name            (GeglNode      *self,
                                              const gchar   *name);
 
+/* macros used to set flags on objects passed in the graph */
+
+#define gegl_object_set_has_forked(object) \
+      g_object_set_data(G_OBJECT(object), "gegl has-forked", (void*)0xf)
+#define gegl_object_get_has_forked(object) \
+      (g_object_get_data(G_OBJECT(object), "gegl has-forked")!=NULL)
+
 
 G_END_DECLS
 

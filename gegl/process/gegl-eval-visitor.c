@@ -103,7 +103,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
                 {
                   buffer = g_value_get_object (value);
                   if (buffer)
-                    g_object_set_data (G_OBJECT (buffer), "no in-place", (void*)0xf);
+                    gegl_object_set_has_forked (buffer);
                 }
             }
         }
