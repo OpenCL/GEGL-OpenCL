@@ -865,7 +865,7 @@ PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED_VERSION,
      have_lua="no  (usable lua not found)")])
 fi
 
-AM_CONDITIONAL(HAVE_LUA, test "$with_lua" = "yes")
+AM_CONDITIONAL(HAVE_LUA, test "$have_lua" = "yes")
 
 AC_SUBST(LUA_CFLAGS) 
 AC_SUBST(LUA_LIBS) 

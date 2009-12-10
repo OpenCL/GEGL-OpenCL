@@ -27,6 +27,7 @@
 "for y=bound_y0, bound_y1 do\n"\
 "  for x=bound_x0, bound_x1 do\n"\
 "    v = get_value (x,y)\n"\
+"    v = v + get_value (1, x,y)\n"\
 "    if v>level then\n"\
 "      v=1.0\n"\
 "    else\n"\
@@ -57,6 +58,7 @@ typedef struct Priv
 {
   gint        bpp;
   GeglBuffer *in_drawable;
+  GeglBuffer *aux_drawable;
   GeglBuffer *out_drawable;
   Babl       *rgba_float;
 
@@ -127,27 +129,22 @@ register_functions (lua_State      *L,
 }
 
 static void
-drawable_lua_process (GeglChantO    *self,
-                      GeglBuffer    *drawable,
-                      GeglBuffer    *result,
+drawable_lua_process (GeglOperation       *op,
+                      GeglBuffer          *drawable,
+                      GeglBuffer          *aux,
+                      GeglBuffer          *result,
                       const GeglRectangle *roi,
-                      const gchar   *file,
-                      const gchar   *buffer,
-                      gdouble        user_value)
+                      const gchar         *file,
+                      const gchar         *buffer,
+                      gdouble              user_value)
 {
     /*GimpRGB    background;*/
 
-    GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (GEGL_OPERATION (self),
+    GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (GEGL_OPERATION (op),
                                                                        "input");
 
     lua_State *L;
     Priv p;
-
-    /*cpercep_init_conversions ();*/
-    /*gimp_progress_init ("gluas");*/
-
-    /*  set the tile cache size  */
-    /*gimp_tile_cache_ntiles (TILE_CACHE_SIZE);*/
 
     L = lua_open ();
     luaL_openlibs (L);
@@ -156,8 +153,8 @@ drawable_lua_process (GeglChantO    *self,
 
     p.rgba_float = babl_format ("RGBA float");
     p.L = L;
-    p.width = in_rect->width;/*gimp_drawable_width (drawable->drawable_id);*/
-    p.height = in_rect->height;/*gimp_drawable_height (drawable->drawable_id);*/
+    p.width = in_rect->width;
+    p.height = in_rect->height;
 
     p.bx1 = roi->x;
     p.by1 = roi->y;
@@ -176,34 +173,9 @@ drawable_lua_process (GeglChantO    *self,
     lua_settable (L, LUA_REGISTRYINDEX);
 
     p.in_drawable = drawable;
+    p.aux_drawable = aux;
     p.out_drawable = result;
 
-#if 0
-    p.bpp = gimp_drawable_bpp (drawable->drawable_id);
-    p.pft = gimp_pixel_fetcher_new (drawable, FALSE);
-
-    gimp_pixel_fetcher_set_edge_mode (p.pft, GIMP_PIXEL_FETCHER_EDGE_SMEAR);
-    gimp_pixel_fetcher_set_bg_color (p.pft, &background); /* can be removed
-                                                             as long as the
-                                                             mode is smear.. */
-    gimp_pixel_rgn_init (&(p.dpr), drawable, 0, 0, p.width, p.height, TRUE, TRUE);
-    gimp_pixel_rgn_init (&(p.pr), drawable, 0, 0, p.width, p.height, FALSE, FALSE);
-
-    gimp_drawable_mask_bounds (drawable->drawable_id, &(p.bx1), &(p.by1),
-                               &(p.bx2), &(p.by2));
-
-
-    {
-      gpointer pr;
-      for (pr=gimp_pixel_rgns_register (2, &(p.pr), &(p.dpr));
-           pr !=NULL;
-           pr = gimp_pixel_rgns_process (pr)
-          )
-        {
-          memcpy (p.dpr.data, p.pr.data, p.dpr.rowstride *p.dpr.h);
-        }
-    }
-#endif
     lua_pushnumber (L, (double) p.bx1);
     lua_setglobal (L, "bound_x0");
     lua_pushnumber (L, (double) p.bx2);
@@ -226,25 +198,9 @@ drawable_lua_process (GeglChantO    *self,
       if (status == 0)
         status = lua_pcall (L, 0, LUA_MULTRET, 0);
 
-#if 0   /* ~~~~~ */
-      gegl_buffer_flush (p.out_drawable);
-#if 0
-      gimp_drawable_flush (drawable);
-      gimp_drawable_merge_shadow (drawable->drawable_id, TRUE);
-      gimp_drawable_update (drawable->drawable_id, p.bx1, p.by1,
-                            p.bx2 - p.bx1, p.by2 - p.by1);
-#endif
-#endif
-
       if (status != 0)
         g_warning ("lua error: %s", lua_tostring (L, -1));
-      /*else
-        g_warning ("gluas error");*/
     }
-
-#if 0
-  gimp_pixel_fetcher_destroy (p.pft);
-#endif
 }
 
 #if 0
@@ -280,43 +236,29 @@ get_rgba_pixel (void       *data,
   gfloat buf[4];
 
   p = data;
-#if 0
-  if (0 || x < 0 || y < 0 || (int) x >= p->width || (int) y >= p->height)
+
+  if (img_no == 0)
     {
-      int edge_duplicate = 0;
-      lua_getglobal(p->L, "edge_duplicate");
-      edge_duplicate = lua_toboolean(p->L, -1);
-      lua_pop(p->L, 1);
-
-      if (edge_duplicate)
-        {
-          if (x < 0)
-              x = 0;
-          if (y < 0)
-              y = 0;
-          if (x >= p->width)
-              x = p->width - 1;
-          if (y >= p->height)
-              y = p->height - 1;
-        }
-      else
-        {
-          int i;
-          for (i = 0; i < 4; i++)
-            pixel[i] = 0.0;
-          return;
-        }
+      gint i;
+      if (!p->in_drawable)
+        return;
+      gegl_buffer_sample (p->in_drawable, x, y, 1.0, buf,
+                          p->rgba_float,
+                          GEGL_INTERPOLATION_NEAREST);
+      for (i = 0; i < 4; i++)
+        pixel[i] = buf[i];
     }
-#endif
-
-  gegl_buffer_sample (p->in_drawable, x, y, 1.0, buf,
-                      p->rgba_float,
-                      GEGL_INTERPOLATION_NEAREST);
-  {
-    int i;
-    for (i = 0; i < 4; i++)
-      pixel[i] = buf[i];
-  }
+  else if (img_no == 1)
+    {
+      gint i;
+      if (!p->aux_drawable)
+        return;
+      gegl_buffer_sample (p->aux_drawable, x, y, 1.0, buf,
+                          p->rgba_float,
+                          GEGL_INTERPOLATION_NEAREST);
+      for (i = 0; i < 4; i++)
+        pixel[i] = buf[i];
+    }
 }
 
 static void inline
@@ -333,9 +275,9 @@ set_rgba_pixel (void       *data,
   p = data;
 
   /*FIXME: */
-#if 0
   if (x < p->bx1 || y < p->by1 || x > p->bx2 || y > p->by2)
       return;     /* outside selection, ignore */
+#if 0
   if (x < 0 || y < 0 || x >= p->width || y >= p->height)
       return;    /* out of drawable bounds */
 #endif
@@ -384,14 +326,6 @@ l_flush (lua_State * lua)
   lua_pushstring(lua, "priv");
   lua_gettable(lua, LUA_REGISTRYINDEX);
   p = lua_touserdata(lua, -1);
-
-#if 0   /* ~~~~~ */
-  gegl_buffer_flush (p->out_drawable);
-#if 0
-  gimp_drawable_flush (p->drawable);
-  gimp_drawable_merge_shadow (p->drawable->drawable_id, FALSE);
-#endif
-#endif
 
   return 0;
 }
@@ -1009,17 +943,24 @@ process (GeglOperation       *operation,
 
   if (o->file && g_file_test (o->file, G_FILE_TEST_IS_REGULAR))
     {
-      drawable_lua_process (o, input, output, result, o->file, NULL, o->user_value);
+      drawable_lua_process (operation, input, aux, output, result, o->file, NULL, o->user_value);
     }
   else
     {
-      drawable_lua_process (o, input, output, result, NULL, o->script, o->user_value);
+      drawable_lua_process (operation, input, aux, output, result, NULL, o->script, o->user_value);
     }
 
   return TRUE;
 }
 
-
+static GeglRectangle
+get_required_for_output (GeglOperation        *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
+{
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+  return result;
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -1033,9 +974,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   composer_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_required_for_output = get_required_for_output;
 
   operation_class->name        = "gegl:gluas";
-  operation_class->categories  = "script";
+  operation_class->categories  = "script:misc";
   operation_class->description =
         _("A general purpose filter/composer implementation proxy for the"
           " lua programming language.");
