@@ -3,6 +3,8 @@
 /2geglbuffer*
 /Makefile
 /Makefile.in
+/csugar*
+/float-lookup*
 /gegl-paint*
 /gegl-slicer*
 /geglbuffer-add-image*
