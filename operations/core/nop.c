@@ -46,7 +46,7 @@ process (GeglOperation        *operation,
       return FALSE;
     }
 
-  input = gegl_operation_context_get_object (context, "input");
+  input = GEGL_BUFFER (gegl_operation_context_get_object (context, "input"));
   if (!input)
     {
       g_warning ("nop received NULL input");
