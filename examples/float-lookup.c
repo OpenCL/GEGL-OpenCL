@@ -1,3 +1,4 @@
+#include <glib/gstdio.h>
 #include <gegl.h>
 #include <gegl-plugin.h>
 #include <math.h>
