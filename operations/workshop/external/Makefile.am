@@ -8,18 +8,18 @@ if HAVE_CAIRO
 line_profile_la_SOURCES = line-profile.c
 line_profile_la_LIBADD = $(op_libs) $(CAIRO_LIBS) $(PANGO_LIBS)
 line_profile_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
-ops += line_profile.la
+ops += line-profile.la
 endif
 
 if HAVE_GTK
-ops += gtk_display.la
+ops += gtk-display.la
 gtk_display_la_SOURCES = gtk-display.c
 gtk_display_la_LIBADD  = $(op_libs) $(GTK_LIBS)
 gtk_display_la_CFLAGS  = $(GTK_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
 endif
 
 if HAVE_AVFORMAT
-ops += ff_save.la
+ops += ff-save.la
 ff_save_la_SOURCES = ff-save.c
 ff_save_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS) -lswscale
 ff_save_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS) $(GLIB_CFLAGS)

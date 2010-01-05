@@ -27,7 +27,7 @@ gegl_chant_double (value, _("Value"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _("global 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       "weighted_blend.c"
+#define GEGL_CHANT_C_FILE       "weighted-blend.c"
 
 #include "gegl-chant.h"
 
