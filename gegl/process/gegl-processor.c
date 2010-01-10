@@ -744,6 +744,11 @@ gegl_processor_work (GeglProcessor *processor,
 void
 gegl_processor_destroy (GeglProcessor *processor)
 {
+  /* The only thing this function is doing is shielding users of the
+   * library from GLib. If you are writing a language wrapper you can
+   * use the normal GObject unreffing mechanisms. This function will
+   * never do more than unreffing the processor.
+   */
   g_object_unref (processor);
 }
 
