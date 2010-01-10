@@ -34,9 +34,9 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 #include <jpeglib.h>
 
 static gint
-query_jpg (const gchar *path,
-           gint        *width,
-           gint        *height)
+gegl_jpg_load_query_jpg (const gchar *path,
+                         gint        *width,
+                         gint        *height)
 {
   struct jpeg_decompress_struct  cinfo;
   struct jpeg_error_mgr          jerr;
@@ -74,10 +74,10 @@ query_jpg (const gchar *path,
 }
 
 static gint
-gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         dest_x,
-                        gint         dest_y)
+gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
+                                 const gchar *path,
+                                 gint         dest_x,
+                                 gint         dest_y)
 {
   gint row_stride;
   struct jpeg_decompress_struct  cinfo;
@@ -134,14 +134,14 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 }
 
 static GeglRectangle
-get_bounding_box (GeglOperation *operation)
+gegl_jpg_load_get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
   gint width, height;
   gint status;
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
-  status = query_jpg (o->path, &width, &height);
+  status = gegl_jpg_load_query_jpg (o->path, &width, &height);
 
   if (status)
     {
@@ -159,15 +159,15 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
+gegl_jpg_load_process (GeglOperation       *operation,
+                       GeglBuffer          *output,
+                       const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle        rect={0,0};
   gint                 problem;
 
-  problem = query_jpg (o->path, &rect.width, &rect.height);
+  problem = gegl_jpg_load_query_jpg (o->path, &rect.width, &rect.height);
 
   if (problem)
     {
@@ -177,7 +177,7 @@ process (GeglOperation       *operation,
     }
 
 
-  problem = gegl_buffer_import_jpg (output, o->path, 0, 0);
+  problem = gegl_jpg_load_buffer_import_jpg (output, o->path, 0, 0);
 
   if (problem)
     {
@@ -191,10 +191,10 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_cached_region (GeglOperation       *operation,
-                   const GeglRectangle *roi)
+gegl_jpg_load_get_cached_region (GeglOperation       *operation,
+                                 const GeglRectangle *roi)
 {
-  return get_bounding_box (operation);
+  return gegl_jpg_load_get_bounding_box (operation);
 }
 
 static void
@@ -206,9 +206,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  source_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_cached_region = get_cached_region;
+  source_class->process = gegl_jpg_load_process;
+  operation_class->get_bounding_box = gegl_jpg_load_get_bounding_box;
+  operation_class->get_cached_region = gegl_jpg_load_get_cached_region;
 
   operation_class->name        = "gegl:jpg-load";
   operation_class->categories  = "hidden";
