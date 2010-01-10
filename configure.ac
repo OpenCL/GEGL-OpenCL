@@ -187,12 +187,12 @@ fi
 
 AC_MSG_CHECKING([whether to enable multi threading])
 AC_ARG_ENABLE(mt,
-              [  --enable-mt             turn on multi-threading (default=no)],
+              [  --enable-mt             turn on multi-threading (unstable, default=no)],
 )
 if eval "test x$enable_mt = xyes"; then
     AC_DEFINE(ENABLE_MT, 1, [Defined to 1 if multi-threading is enabled.])
     AC_MSG_RESULT([yes])
-    enable_mt="yes"
+    enable_mt="yes (WARNING: unstable)"
 else
     enable_mt="no"
     AC_MSG_RESULT([no])
