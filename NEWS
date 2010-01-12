@@ -2,6 +2,25 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
+Changes in GEGL 0.1.2
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • GeglLookup, configurable floating point lookup tables for lazy computation.
+ • Use GFileIOStream in GeglTileBackendFile.
+ • Optimizations: in-place processing for point filters/composers,
+     SIMD version of gegl:opacity, avoid making unneccesary sub-buffers,
+     removed some  manual instrumentation from critical paths.
+ • Syntactic sugar using varargs for constructing gegl graphs from C.
+ • Build fixes on cygwin, 
+ • Gegl# fixes.
+ • Initial unstable code towards multithreading.
+ • Improvements to lua op in workshop.
+ • Removed gegl:tonemap and gegl:normal ops.
+
+Contributions from:
+  Martin Nordholts, Sven Neumann, Nils Philippsen, Adam Turcotte,
+  Danny Robson, Michael Schumacher, Ruben Vermeersch, Øyvind Kolås,
+  Javier Jardón, Yaakov Selkowitz and Michael Natterer.
+
 Changes in GEGL 0.1.0
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Renamed gegl:load-buffer to gegl:buffer-source and gegl:save-buffer
