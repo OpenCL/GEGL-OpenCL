@@ -28,7 +28,9 @@
 
 
 #include <math.h>
+#include <gegl.h>
 #include <gegl-plugin.h>
+#include <gegl-utils.h>
 #include "buffer/gegl-sampler.h"
 #include <graph/gegl-pad.h>
 #include <graph/gegl-node.h>
@@ -83,6 +85,19 @@ static gboolean      gegl_affine_process                   (GeglOperation       
 static GeglNode    * gegl_affine_detect                    (GeglOperation        *operation,
                                                             gint                  x,
                                                             gint                  y);
+
+static gboolean      gegl_affine_matrix3_allow_fast_translate      (GeglMatrix3 matrix);
+static gboolean      gegl_affine_matrix3_allow_fast_reflect_x      (GeglMatrix3 matrix);
+static gboolean      gegl_affine_matrix3_allow_fast_reflect_y      (GeglMatrix3 matrix);
+
+static void          gegl_affine_fast_reflect_x            (GeglBuffer           *dest,
+                                                            GeglBuffer           *src,
+                                                            const GeglRectangle  *dest_rect,
+                                                            const GeglRectangle  *src_rect);
+static void          gegl_affine_fast_reflect_y            (GeglBuffer           *dest,
+                                                            GeglBuffer           *src,
+                                                            const GeglRectangle  *dest_rect,
+                                                            const GeglRectangle  *src_rect);
 
 
 /* ************************* */
@@ -719,6 +734,120 @@ affine_generic (GeglBuffer  *dest,
     }
 }
 
+static gboolean
+gegl_affine_matrix3_allow_fast_translate (GeglMatrix3 matrix)
+{
+  if (! GEGL_FLOAT_EQUAL (matrix[0][2], (gint) matrix[0][2]) ||
+      ! GEGL_FLOAT_EQUAL (matrix[1][2], (gint) matrix[1][2]))
+    return FALSE;
+  return gegl_matrix3_is_translate (matrix);
+}
+
+static gboolean
+gegl_affine_matrix3_allow_fast_reflect_x (GeglMatrix3 matrix)
+{
+  GeglMatrix3 copy;
+
+  if (! GEGL_FLOAT_EQUAL (matrix[1][1], -1.0))
+    return FALSE;
+  gegl_matrix3_copy (copy, matrix);
+  copy[1][1] = 1.;
+  return gegl_affine_matrix3_allow_fast_translate (copy);
+}
+
+static gboolean
+gegl_affine_matrix3_allow_fast_reflect_y (GeglMatrix3 matrix)
+{
+  GeglMatrix3 copy;
+
+  if (! GEGL_FLOAT_EQUAL (matrix[0][0], -1.0))
+    return FALSE;
+  gegl_matrix3_copy (copy, matrix);
+  copy[0][0] = 1.;
+  return gegl_affine_matrix3_allow_fast_translate (copy);
+}
+
+static void
+gegl_affine_fast_reflect_x (GeglBuffer              *dest,
+                            GeglBuffer              *src,
+                            const GeglRectangle     *dest_rect,
+                            const GeglRectangle     *src_rect)
+{
+  const Babl              *format = gegl_buffer_get_format (src);
+  const gint               px_size = babl_format_get_bytes_per_pixel (format),
+                           rowstride = src_rect->width * px_size;
+  gint                     i;
+  guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
+
+  gegl_buffer_get (src, 1.0, src_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+
+  for (i = 0; i < src_rect->height / 2; i++)
+    {
+      gint      dest_offset = (src_rect->height - i - 1) * rowstride,
+                src_offset = i * rowstride,
+                j;
+
+      for (j = 0; j < rowstride; j++)
+        {
+          const guchar      tmp = buf[src_offset];
+
+          buf[src_offset] = buf[dest_offset];
+          buf[dest_offset] = tmp;
+
+          dest_offset++;
+          src_offset++;
+        }
+    }
+
+  gegl_buffer_set (dest, dest_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
+}
+
+static void
+gegl_affine_fast_reflect_y (GeglBuffer              *dest,
+                            GeglBuffer              *src,
+                            const GeglRectangle     *dest_rect,
+                            const GeglRectangle     *src_rect)
+{
+  const Babl              *format = gegl_buffer_get_format (src);
+  const gint               px_size = babl_format_get_bytes_per_pixel (format),
+                           rowstride = src_rect->width * px_size;
+  gint                     i;
+  guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
+
+  gegl_buffer_get (src, 1.0, src_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+
+  for (i = 0; i < src_rect->height; i++)
+    {
+      gint      src_offset = i * rowstride,
+                dest_offset = src_offset + rowstride,
+                j;
+
+      for (j = 0; j < src_rect->width / 2; j++)
+        {
+          gint k;
+
+          dest_offset -= px_size;
+
+          for (k = 0; k < px_size; k++)
+            {
+              const guchar      tmp = buf[src_offset];
+
+              buf[src_offset] = buf[dest_offset];
+              buf[dest_offset] = tmp;
+
+              dest_offset++;
+              src_offset++;
+            }
+
+          dest_offset -= px_size;
+        }
+    }
+
+  gegl_buffer_set (dest, dest_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
+}
+
 void  gegl_sampler_prepare     (GeglSampler *self);
   /*XXX: Eeeek, obsessive avoidance of public headers, the API needed to
    *     satisfy this use case should probably be provided.
@@ -747,10 +876,9 @@ gegl_affine_process (GeglOperation        *operation,
 
       gegl_operation_context_take_object (context, "output", G_OBJECT (input));
     }
-  else if (gegl_matrix3_is_translate (affine->matrix) &&
-           (! strcmp (affine->filter, "nearest") ||
-            (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
-             affine->matrix [1][2] == (gint) affine->matrix [1][2])))
+  else if (gegl_affine_matrix3_allow_fast_translate (affine->matrix) ||
+           (gegl_matrix3_is_translate (affine->matrix) &&
+            ! strcmp (affine->filter, "nearest")))
     {
       /* doing a buffer shifting trick, (enhanced nop) */
       input  = gegl_operation_context_get_source (context, "input");
@@ -768,6 +896,58 @@ gegl_affine_process (GeglOperation        *operation,
         gegl_object_set_has_forked (output);
 
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
+
+      if (input != NULL)
+        g_object_unref (input);
+    }
+  else if (gegl_affine_matrix3_allow_fast_reflect_x (affine->matrix))
+    {
+      GeglRectangle      src_rect;
+      GeglSampler       *sampler;
+
+      input  = gegl_operation_context_get_source (context, "input");
+      if (!input)
+        {
+          g_warning ("transform received NULL input");
+          return FALSE;
+        }
+
+      output = gegl_operation_context_get_target (context, "output");
+
+      src_rect = gegl_operation_get_required_for_output (operation, "output", result);
+      src_rect.y += 1;
+
+      sampler = op_affine_sampler (OP_AFFINE (operation));
+      src_rect.width -= sampler->context_rect.width;
+      src_rect.height -= sampler->context_rect.height;
+
+      gegl_affine_fast_reflect_x (output, input, result, &src_rect);
+
+      if (input != NULL)
+        g_object_unref (input);
+    }
+  else if (gegl_affine_matrix3_allow_fast_reflect_y (affine->matrix))
+    {
+      GeglRectangle      src_rect;
+      GeglSampler       *sampler;
+
+      input  = gegl_operation_context_get_source (context, "input");
+      if (!input)
+        {
+          g_warning ("transform received NULL input");
+          return FALSE;
+        }
+
+      output = gegl_operation_context_get_target (context, "output");
+
+      src_rect = gegl_operation_get_required_for_output (operation, "output", result);
+      src_rect.x += 1;
+
+      sampler = op_affine_sampler (OP_AFFINE (operation));
+      src_rect.width -= sampler->context_rect.width;
+      src_rect.height -= sampler->context_rect.height;
+
+      gegl_affine_fast_reflect_y (output, input, result, &src_rect);
 
       if (input != NULL)
         g_object_unref (input);
