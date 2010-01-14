@@ -160,7 +160,8 @@ endif
 images/inheritance.png: Makefile
 if HAVE_RUBY
 if HAVE_DOT
-	$(top_srcdir)/tools/gobj2dot.rb $(top_srcdir) | $(DOT) -Tpng > $(top_srcdir)/docs/images/inheritance.png
+	mkdir -p images
+	$(top_srcdir)/tools/gobj2dot.rb $(top_srcdir) | $(DOT) -Tpng > $@
 endif
 endif
 
