@@ -34,8 +34,9 @@
 #include "gegl-sampler-downsharp.h"
 #include "gegl-sampler-downsize.h"
 #include "gegl-sampler-downsmooth.h"
-#include "gegl-sampler-sharp.h"
-#include "gegl-sampler-yafr.h"
+#include "gegl-sampler-upsharp.h"
+#include "gegl-sampler-upsize.h"
+#include "gegl-sampler-upsmooth.h"
 
 enum
 {
@@ -464,15 +465,6 @@ gegl_buffer_interpolation_from_string (const gchar *string)
       g_str_equal (string, "bicubic"))
     return GEGL_INTERPOLATION_CUBIC;
 
-  if (g_str_equal (string, "sharp"))
-    return GEGL_INTERPOLATION_SHARP;
-
-  if (g_str_equal (string, "yafr"))
-    return GEGL_INTERPOLATION_YAFR;
-
-  if (g_str_equal (string, "lanczos"))
-    return GEGL_INTERPOLATION_LANCZOS;
-
   if (g_str_equal (string, "downsharp"))
     return GEGL_INTERPOLATION_DOWNSHARP;
 
@@ -481,6 +473,15 @@ gegl_buffer_interpolation_from_string (const gchar *string)
 
   if (g_str_equal (string, "downsmooth"))
     return GEGL_INTERPOLATION_DOWNSMOOTH;
+
+  if (g_str_equal (string, "upsharp"))
+    return GEGL_INTERPOLATION_UPSHARP;
+
+  if (g_str_equal (string, "upsize"))
+    return GEGL_INTERPOLATION_UPSIZE;
+
+  if (g_str_equal (string, "upsmooth"))
+    return GEGL_INTERPOLATION_UPSMOOTH;
 
   return GEGL_INTERPOLATION_NEAREST;
 }
@@ -496,10 +497,6 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_LINEAR;
       case GEGL_INTERPOLATION_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
-      case GEGL_INTERPOLATION_SHARP:
-        return GEGL_TYPE_SAMPLER_SHARP;
-      case GEGL_INTERPOLATION_YAFR:
-        return GEGL_TYPE_SAMPLER_YAFR;
       case GEGL_INTERPOLATION_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
       case GEGL_INTERPOLATION_DOWNSHARP:
@@ -508,6 +505,12 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_DOWNSIZE;
       case GEGL_INTERPOLATION_DOWNSMOOTH:
         return GEGL_TYPE_SAMPLER_DOWNSMOOTH;
+      case GEGL_INTERPOLATION_UPSHARP:
+        return GEGL_TYPE_SAMPLER_UPSHARP;
+      case GEGL_INTERPOLATION_UPSIZE:
+        return GEGL_TYPE_SAMPLER_UPSIZE;
+      case GEGL_INTERPOLATION_UPSMOOTH:
+        return GEGL_TYPE_SAMPLER_UPSMOOTH;
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
     }
