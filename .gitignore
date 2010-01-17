@@ -35,3 +35,7 @@
 /stamp-h
 /stamp-h.in
 /stamp-h1
+*~
+*.sw?
+*.orig
+*.rej
