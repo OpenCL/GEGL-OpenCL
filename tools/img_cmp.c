@@ -90,7 +90,7 @@ main (gint    argc,
                   "  avg diff (wrong) : %f\n"
                   "  avg diff (total) : %f\n",
                   argv[1], argv[2],
-                  wrong_pixels, (wrong_pixels*1.0/pixels), 
+                  wrong_pixels, (wrong_pixels*100.0/pixels), 
                   diffsum/wrong_pixels,
                   diffsum/pixels);
          return 1;
