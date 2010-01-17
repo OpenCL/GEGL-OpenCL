@@ -12,7 +12,7 @@ images.stamp: $(wildcard $(builddir)/*.xml) \
 	      $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	      $(top_builddir)/bin/gegl$(EXEEXT)
 	@echo "--[updating test renders]--"; \
-	mkdir output;
+	mkdir output || true ;
 	ln -s $(srcdir)/reference $(builddir)/reference;
 	for XML in $(srcdir)/*.xml; do \
 	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
