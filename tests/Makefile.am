@@ -1,4 +1,4 @@
-SUBDIRS = buffer
+SUBDIRS = buffer compositions
 
 # Make the tests run against the build and not the installation
 TESTS_ENVIRONMENT = \

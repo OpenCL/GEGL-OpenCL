@@ -22,4 +22,4 @@ AM_LDFLAGS = \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	$(DEP_LIBS) $(BABL_LIBS)
 
-noinst_PROGRAMS = introspect operation_reference
+noinst_PROGRAMS = introspect operation_reference img_cmp

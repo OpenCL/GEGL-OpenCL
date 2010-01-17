@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>280.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
+      <node operation='gegl:box-blur'>
+          <params>
+            <param name='radius'>5.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:load' id='clone0'>
+          <params>
+            <param name='path'>data/car-stack.jpg</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>190.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:gamma'>
+          <params>
+            <param name='value'>2.500000</param>
+          </params>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
+      <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>100.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:invert'>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
+      <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>10.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:threshold'>
+          <params>
+            <param name='value'>0.500000</param>
+          </params>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
+      <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>335.000000</param>
+            <param name='y'>210.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:over'>
+          <node operation='gegl:translate'>
+              <params>
+                <param name='x'>-10.000000</param>
+                <param name='y'>120.000000</param>
+              </params>
+          </node>
+          <node operation='gegl:opacity'>
+              <params>
+                <param name='value'>0.600000</param>
+              </params>
+          </node>
+          <node operation='gegl:dst-over'>
+              <node operation='gegl:opacity'>
+                  <params>
+                    <param name='value'>2.000000</param>
+                  </params>
+              </node>
+              <node operation='gegl:translate'>
+                  <params>
+                    <param name='x'>0.000000</param>
+                    <param name='y'>0.000000</param>
+                  </params>
+              </node>
+              <node operation='gegl:box-blur'>
+                  <params>
+                    <param name='radius'>4.000000</param>
+                  </params>
+              </node>
+              <node operation='gegl:brightness-contrast'>
+                  <params>
+                    <param name='contrast'>1.000000</param>
+                    <param name='brightness'>-1.000000</param>
+                  </params>
+              </node>
+              <node operation='gegl:text' id='clone1'>
+                  <params>
+                    <param name='string'>warming up</param>
+                    <param name='font'>Sans</param>
+                    <param name='size'>30.000000</param>
+                    <param name='color'>rgb(1.0000, 1.0000, 1.0000)</param>
+                    <param name='wrap'>-1</param>
+                    <param name='alignment'>0</param>
+                    <param name='width'>177</param>
+                    <param name='height'>36</param>
+                  </params>
+              </node>
+          </node>
+          <clone ref='clone1'/>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.500000</param>
+            <param name='y'>0.500000</param>
+          </params>
+      </node>
+      <node operation='gegl:dst-over' id='clone2'>
+          <node operation='gegl:opacity'>
+              <params>
+                <param name='value'>0.800000</param>
+              </params>
+          </node>
+          <node operation='gegl:translate'>
+              <params>
+                <param name='x'>5.000000</param>
+                <param name='y'>-2.000000</param>
+              </params>
+          </node>
+          <node operation='gegl:add'>
+              <params>
+                <param name='value'>0.500000</param>
+              </params>
+          </node>
+          <node operation='gegl:gaussian-blur'>
+              <params>
+                <param name='std-dev-x'>5.000000</param>
+                <param name='std-dev-y'>5.000000</param>
+              </params>
+          </node>
+          <node operation='gegl:load' id='clone3'>
+              <params>
+                <param name='path'>data/gegl.png</param>
+              </params>
+          </node>
+      </node>
+      <clone ref='clone3'/>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>90.000000</param>
+            <param name='y'>90.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:opacity'>
+          <params>
+            <param name='value'>-0.500000</param>
+          </params>
+      </node>
+      <node operation='gegl:box-blur'>
+          <params>
+            <param name='radius'>15.000000</param>
+          </params>
+      </node>
+      <clone ref='clone2'/>
+  </node>
+  <clone ref='clone0'/>
+</gegl>

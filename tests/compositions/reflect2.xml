@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+    <node operation='gegl:reflect' x='1.0' y='0.0'> </node>
+    <node operation='gegl:translate' x='0.0' y='0.5'> </node>
+      <node operation='gegl:load' id='clone0'>
+          <params>
+            <param name='path'>data/grid.png</param>
+          </params>
+      </node>
+</gegl>
