@@ -25,7 +25,7 @@
       </node>
       <node operation='gegl:load' id='clone0'>
           <params>
-            <param name='path'>data/car-stack.jpg</param>
+            <param name='path'>data/car-stack.png</param>
           </params>
       </node>
   </node>
