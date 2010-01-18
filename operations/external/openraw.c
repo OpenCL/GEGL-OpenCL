@@ -17,6 +17,7 @@
  * Copyright 2008 Hubert Figuière <hub@figuiere.net>
  */
 
+#include "config.h"
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -24,162 +25,221 @@ gegl_chant_file_path (path, "File", "", "Path of file to load.")
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "openraw.c"
+#include "gegl-plugin.h"
+struct _GeglChant
+{
+  GeglOperationSource parent_instance;
+  gpointer            properties;
+  
+  gchar *cached_path;  /* Path we have cached. Detects need for recache. */
+};
 
-#include "config.h"
+typedef struct
+{
+  GeglOperationSourceClass parent_class;
+} GeglChantClass;
+
+#define GEGL_CHANT_C_FILE       "openraw.c"
 #include "gegl-chant.h"
+GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
+
 #include <stdio.h>
 #include <libopenraw/libopenraw.h>
 
-static gint
-query_raw (const gchar *path,
-           gint        *width,
-           gint        *height)
+
+/* We can't release the pixel data itself, so we ignore the first argument
+ * and release the libopenraw structure instead.
+ */
+static void
+destroy_rawdata (void * pixels, void * rawdata)
 {
-  or_error err;
-  uint32_t x, y;
-  ORRawDataRef rawdata;
-  or_data_type raw_format = OR_DATA_TYPE_NONE;
-  ORRawFileRef rawfile = or_rawfile_new(path, OR_RAWFILE_TYPE_UNKNOWN);
-
-  if (!rawfile) {
-    return 1;
-  }
-
-  rawdata = or_rawdata_new();
-  err = or_rawfile_get_rawdata(rawfile, rawdata, OR_OPTIONS_NONE);
-  if(err == OR_ERROR_NONE) {
-    raw_format = or_rawdata_format(rawdata);
-    if(raw_format == OR_DATA_TYPE_CFA) {
-      or_rawdata_dimensions(rawdata, &x, &y);
-      *width = x;
-      *height = y;
-    }
-  }
-
-  or_rawdata_release(rawdata);
-  or_rawfile_release(rawfile);
-  return ((err != OR_ERROR_NONE) || (raw_format != OR_DATA_TYPE_CFA));
+  or_rawdata_release (rawdata);
 }
 
 
-static gint
-gegl_buffer_import_raw (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         dest_x,
-                        gint         dest_y)
+static void
+free_buffer (GeglOperation * operation)
 {
-  ORRawDataRef rawdata;
-  or_data_type raw_format = OR_DATA_TYPE_NONE;
-  ORRawFileRef rawfile = or_rawfile_new(path, OR_RAWFILE_TYPE_UNKNOWN);
-  or_error err;
+  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChant  *self = GEGL_CHANT(operation);
 
-  if (!rawfile) {
-    return 1;
+  if (o->chant_data)
+    {
+      g_assert (self->cached_path);
+      g_object_unref (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  if (self->cached_path)
+  {
+    g_free (self->cached_path);
+    self->cached_path = NULL;
   }
+}  
+
+
+/* Loads the RAW pixel data from the specified path in chant parameters into
+ * a GeglBuffer for caching. Maintains copy of the path that has been cached
+ * so we can check for modifications and recache.
+ */
+static GeglBuffer *
+load_buffer (GeglOperation *operation)
+{
+  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChant  *self = GEGL_CHANT(operation);
+
+  ORRawDataRef rawdata;
+  ORRawFileRef rawfile;
+  
+  /* If the path has changed since last time, destroy our cache */
+  if (!self->cached_path || strcmp (self->cached_path, o->path))
+    {
+      free_buffer(operation);
+    }
+
+  if (o->chant_data) 
+    {
+      return o->chant_data;
+    }
+  g_assert (self->cached_path == NULL);
+
+  /* Gather the file and data resources needed for our cache */
+  rawfile = or_rawfile_new(o->path, OR_RAWFILE_TYPE_UNKNOWN);
+  if (!rawfile)
+    {
+      return NULL;
+    }
 
   rawdata = or_rawdata_new();
-  err = or_rawfile_get_rawdata(rawfile, rawdata, OR_OPTIONS_NONE);
-
-  if(err != OR_ERROR_NONE) {
-    uint32_t x, y;
-    void *data;
-
-    raw_format = or_rawdata_format(rawdata);
-    if(raw_format == OR_DATA_TYPE_CFA) {
-      /* TODO take the dest_x and dest_y into account */
-      GeglRectangle rect = {0, 0, 0, 0};
-      or_rawdata_dimensions(rawdata, &x, &y);
-      rect.width = x;
-      rect.height = y;
-
-      data = or_rawdata_data(rawdata);
-      gegl_buffer_set(gegl_buffer, &rect, babl_format ("Y u16"),
-                      data, GEGL_AUTO_ROWSTRIDE);
+  if(or_rawfile_get_rawdata(rawfile, rawdata, OR_OPTIONS_NONE) != OR_ERROR_NONE)
+    {
+      goto clean_file;
     }
-  }
-  or_rawdata_release(rawdata);
+
+  if(or_rawdata_format (rawdata) != OR_DATA_TYPE_CFA)
+    {
+      goto clean_file;
+    }
+
+  /* Build a gegl_buffer, backed with the libopenraw supplied data. */
+    {
+      GeglRectangle extent = { 0, 0, 0, 0 };
+      guint32 width, height;
+      void * data = or_rawdata_data(rawdata);
+
+      or_rawdata_dimensions(rawdata, &width, &height);
+      g_assert (height > 0 && width > 0);
+      extent.width  = width;
+      extent.height = height;
+
+      g_assert (o->chant_data == NULL);
+      o->chant_data = gegl_buffer_linear_new_from_data(data,
+                                                       babl_format ("Y u16"),
+                                                       &extent,
+                                                       GEGL_AUTO_ROWSTRIDE,
+                                                       G_CALLBACK (destroy_rawdata),
+                                                       rawdata);
+    }
+
+  self->cached_path = g_strdup (o->path);
+
+clean_file:
   or_rawfile_release(rawfile);
-  return ((err != OR_ERROR_NONE) || (raw_format != OR_DATA_TYPE_CFA));
+
+  return o->chant_data;
 }
 
+
+static void
+prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("Y u16"));
+}
+  
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = {0,0,0,0};
-  gint width, height;
-  gint status;
-  gegl_operation_set_format (operation, "output", babl_format ("Y u16"));
-  status = query_raw (o->path, &width, &height);
-
-  if (status)
+  if (!load_buffer (operation))
     {
-      /*g_warning ("calc have rect of %s failed", o->path);*/
-      result.width  = 10;
-      result.height  = 10;
-    }
-  else
-    {
-      result.width  = width;
-      result.height  = height;
+      GeglRectangle nullrect = { 0, 0, 0, 0 };
+      return nullrect;
     }
 
-  return result;
+  return *gegl_buffer_get_extent (o->chant_data);
+}
+
+
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
 }
 
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *output,
-         const GeglRectangle *result)
+process (GeglOperation          *operation,
+         GeglOperationContext   *context,
+         const gchar            *output_pad,
+         const GeglRectangle    *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle        rect={0,0};
-  gint                 problem;
+  g_assert (g_str_equal (output_pad, "output"));
 
-  problem = query_raw (o->path, &rect.width, &rect.height);
-
-  if (problem)
+  if (!load_buffer (operation))
     {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
       return FALSE;
     }
 
+  /* Give the operation a reference to the object, and keep a reference
+   * ourselves. We desperately do not want to delete our cached object, as
+   * we continue to service metadata calls after giving the object to the
+   * context.
+   */
+  g_assert(o->chant_data);
+  gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
+  g_object_ref (G_OBJECT (o->chant_data));
 
-  problem = gegl_buffer_import_raw (output, o->path, 0, 0);
-
-  if (problem)
-    {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
-
-      return FALSE;
-    }
-
-  return  TRUE;
+  return TRUE;
 }
+
+
+#include <glib-object.h>
+
+static void
+finalize (GObject *object)
+{
+  free_buffer (GEGL_OPERATION (object));
+  
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+}
+  
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   static gboolean done = FALSE;
 
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  source_class->process = process;
+  object_class->finalize = finalize;
+
+  operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;
 
   operation_class->name        = "gegl:openraw-load";
   operation_class->categories  = "hidden";
   operation_class->description = "Camera RAW image loader";
+  operation_class->prepare     = prepare;
 
   if (done)
     return;
