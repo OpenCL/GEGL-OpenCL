@@ -53,18 +53,19 @@ main (gint    argc,
     }
 
   {
-     guchar *bufA, *bufB;
-     guchar *a, *b;
+     gfloat *bufA, *bufB;
+     gfloat *a, *b;
      gint   rowstrideA, rowstrideB;
      gint   pixels;
      gint   wrong_pixels=0;
      gint   i;
      gdouble diffsum = 0.0;
+     gdouble max_diff = 0.0;
 
      pixels = gegl_buffer_get_pixel_count (bufferA);
 
-     bufA = (void*)gegl_buffer_linear_open (bufferA, NULL, &rowstrideA, babl_format ("R'G'B'A u8"));
-     bufB = (void*)gegl_buffer_linear_open (bufferB, NULL, &rowstrideB, babl_format ("R'G'B'A u8"));
+     bufA = (void*)gegl_buffer_linear_open (bufferA, NULL, &rowstrideA, babl_format ("CIE Lab float"));
+     bufB = (void*)gegl_buffer_linear_open (bufferB, NULL, &rowstrideB, babl_format ("CIE Lab float"));
 
      a = bufA;
      b = bufB;
@@ -72,28 +73,33 @@ main (gint    argc,
      for (i=0;i<pixels;i++)
        {
 #define P2(o) (((o))*((o)))
-         gdouble diff = sqrt ( P2(a[0]-b[0])+P2(a[1]-b[1])+P2(a[2]-b[2])+P2(a[3]-b[3]));
+         gdouble diff = sqrt ( P2(a[0]-b[0])+P2(a[1]-b[1])+P2(a[2]-b[2])/*+P2(a[3]-b[3])*/);
 #undef P2
-         a+=4;
-         b+=4;
-         if (diff>=0.0001)
+         a+=3;
+         b+=3;
+         if (diff>=0.01)
            {
              wrong_pixels++;
              diffsum += diff;
+             if (diff > max_diff)
+               max_diff = diff;
            }
        }
 
-     if (diffsum >= 0.001)
+     if (max_diff >= 0.1)
        {
          g_print ("%s and %s differ\n"
-                  "  wrong pixels     : %i (%f%%)\n"
-                  "  avg diff (wrong) : %f\n"
-                  "  avg diff (total) : %f\n",
+                  "  wrong pixels   : %i/%i (%2.2f%%)\n"
+                  "  max Δe         : %2.3f\n"
+                  "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
                   argv[1], argv[2],
-                  wrong_pixels, (wrong_pixels*100.0/pixels), 
+                  wrong_pixels, pixels, (wrong_pixels*100.0/pixels),
+                  max_diff,
                   diffsum/wrong_pixels,
                   diffsum/pixels);
-         return 1;
+         if (max_diff > 1.5)
+           return 1;
+         g_print ("we'll say ");
        }
 
      gegl_buffer_linear_close (bufferA, bufA);
