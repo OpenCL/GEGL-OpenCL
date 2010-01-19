@@ -108,6 +108,7 @@
             <param name='y'>210.000000</param>
           </params>
       </node>
+      <!--
       <node operation='gegl:over'>
           <node operation='gegl:translate'>
               <params>
@@ -158,6 +159,7 @@
           </node>
           <clone ref='clone1'/>
       </node>
+      -->
       <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
