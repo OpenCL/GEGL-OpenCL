@@ -17,13 +17,13 @@
 
 require 'find'
 
-if ARGV[0] == nil or ARGV.count != 1 or ARGV[0] == "-h"
+if ARGV[0] == nil or ARGV.length != 1 or ARGV[0] == "-h"
   puts "Utility for generating inheritance diagrams from c-code using "
   puts "the gobject library"
-	puts "Usage: gobjviz.rb path"
+  puts "Usage: gobjviz.rb path"
   puts "       or"
   puts "       gobjviz.rb path | dot -Tpng > output.png"
-	exit;
+  exit;
 end
 
 dir = ARGV[0]
