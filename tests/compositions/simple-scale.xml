@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:scale'>
+    <params>
+      <param name='filter'>cubic</param>
+      <param name='x'>0.5</param>
+      <param name='y'>0.5</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name="path">data/grid.png</param>
+    </params>
+  </node>
+</gegl>
