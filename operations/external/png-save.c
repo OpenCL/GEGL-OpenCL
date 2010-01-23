@@ -177,9 +177,9 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         const GeglRectangle *result)
+gegl_png_save_process (GeglOperation       *operation,
+                       GeglBuffer          *input,
+                       const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -199,7 +199,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
-  sink_class->process = process;
+  sink_class->process    = gegl_png_save_process;
   sink_class->needs_full = TRUE;
 
   operation_class->name        = "gegl:png-save";
