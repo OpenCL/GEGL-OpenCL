@@ -56,7 +56,6 @@ static void
 gegl_have_visitor_visit_node (GeglVisitor *self,
                               GeglNode    *node)
 {
-  GeglRectangle  rect;
   GeglOperation *operation;
   glong          time = gegl_ticks ();
 
@@ -67,9 +66,7 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
 #if ENABLE_MT
   g_mutex_lock (node->mutex);
 #endif
-  rect = gegl_operation_get_bounding_box (operation);
-
-  node->have_rect = rect;
+  node->have_rect = gegl_operation_get_bounding_box (operation);
 #if ENABLE_MT
   g_mutex_unlock (node->mutex);
 #endif
