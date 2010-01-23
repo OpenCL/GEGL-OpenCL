@@ -449,13 +449,16 @@ set_buffer (GeglSampler *self, GeglBuffer *buffer)
 GeglInterpolation
 gegl_buffer_interpolation_from_string (const gchar *string)
 {
-  if (g_str_equal (string, "nearest") || g_str_equal (string, "none"))
+  if (g_str_equal (string, "nearest") ||
+      g_str_equal (string, "none"))
     return GEGL_INTERPOLATION_NEAREST;
 
-  if (g_str_equal (string, "linear") || g_str_equal (string, "bilinear"))
+  if (g_str_equal (string, "linear") ||
+      g_str_equal (string, "bilinear"))
     return GEGL_INTERPOLATION_LINEAR;
 
-  if (g_str_equal (string, "cubic") || g_str_equal (string, "bicubic"))
+  if (g_str_equal (string, "cubic") ||
+      g_str_equal (string, "bicubic"))
     return GEGL_INTERPOLATION_CUBIC;
 
   if (g_str_equal (string, "sharp"))
