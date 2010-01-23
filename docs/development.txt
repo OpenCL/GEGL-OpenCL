@@ -81,6 +81,23 @@ or even
 
  GEGL_DEBUG=all
 
+There are also a few functions that are useful as you debug from
+within a debugger such as GDB. In GDB for example, you call a function
+interactively in the prompt, while a breakpoint is hit for example, by
+typing
+
+  print function_name(args)
+
+Some useful functions are:
+
+* *gegl_dot_node_to_png_default()* Writes a PNG to /tmp/node.png with
+  the dependency graph for the passed node
+* *gegl_node_dump_depends_on()* Dumps to stdout the nodes that the
+  passed node depends on. With this you can work yourself backwards in
+  a dependency graph.
+* *gegl_node_get_debug_name()* Prints a debug string representation of
+   a node.
+
 === Graphviz export
 The gegl library has a utility that permits to export the DAG into a graphviz
 format. Graphviz is a library that converts graph descriptions in textual format
