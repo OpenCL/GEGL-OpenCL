@@ -1093,8 +1093,6 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   return;
 #endif
 
-  gegl_buffer_lock (buffer);
-
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
 
   if (buffer->sampler != NULL &&
@@ -1114,8 +1112,6 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       gegl_sampler_prepare (buffer->sampler);
     }
   gegl_sampler_get (buffer->sampler, x, y, dest);
-
-  gegl_buffer_unlock (buffer);
 
   /* if (scale < 1.0) do decimation, possibly using pyramid instead */
 }
