@@ -221,8 +221,8 @@ decode_frame (GeglOperation *operation,
               p->coded_buf = p->pkt.data;
             }
           decoded_bytes =
-            avcodec_decode_video (p->video_st->codec, p->lavc_frame,
-                                  &got_picture, p->coded_buf, p->coded_bytes);
+            avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
+                                  &got_picture, &p->pkt);
           if (decoded_bytes < 0)
             {
               fprintf (stderr, "avcodec_decode_video failed for %s\n",
