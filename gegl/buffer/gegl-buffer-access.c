@@ -1112,6 +1112,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                                       "buffer", buffer,
                                       "format", format,
                                       NULL);
+      buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
     }
   gegl_sampler_get (buffer->sampler, x, y, dest);
