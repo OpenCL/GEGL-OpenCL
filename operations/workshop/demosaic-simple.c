@@ -33,34 +33,34 @@ gegl_chant_int (pattern, _("Bayer pattern"), 0, 3, 0,
 #include "gegl-chant.h"
 
 static void
-demosaic (GeglChantO *op,
-          GeglBuffer *src,
-          GeglBuffer *dst)
+demosaic (GeglChantO          *op,
+          GeglBuffer          *src,
+          const GeglRectangle *src_rect,
+          GeglBuffer          *dst,
+          const GeglRectangle *dst_rect)
 {
-  const GeglRectangle *src_extent = gegl_buffer_get_extent (src);
-  const GeglRectangle *dst_extent = gegl_buffer_get_extent (dst);
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src));
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 1);
+  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 3);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, src_rect, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
-  for (y=src_extent->y; y < dst_extent->height + src_extent->y; y++)
+  for (y=src_rect->y; y < dst_rect->height + src_rect->y; y++)
     {
-      gint src_offset = (y-src_extent->y) * src_extent->width;
-      for (x=src_extent->x; x < dst_extent->width + src_extent->x; x++)
+      gint src_offset = (y-src_rect->y) * src_rect->width;
+      for (x=src_rect->x; x < dst_rect->width + src_rect->x; x++)
         {
           gfloat red=0.0;
           gfloat green=0.0;
           gfloat blue=0.0;
 
-          if (y<dst_extent->height+dst_extent->y &&
-              x<dst_extent->width+dst_extent->x)
+          if (y<dst_rect->height+dst_rect->y &&
+              x<dst_rect->width+dst_rect->x)
             {
           if ((y + op->pattern%2)%2==0)
             {
@@ -68,26 +68,26 @@ demosaic (GeglChantO *op,
                 {
                   blue=src_buf[src_offset+1];
                   green=src_buf[src_offset];
-                  red=src_buf[src_offset + src_extent->width];
+                  red=src_buf[src_offset + src_rect->width];
                 }
               else
                 {
                   blue=src_buf[src_offset];
                   green=src_buf[src_offset+1];
-                  red=src_buf[src_offset+1+src_extent->width];
+                  red=src_buf[src_offset+1+src_rect->width];
                 }
             }
           else
             {
               if ((x+op->pattern/2)%2==1)
                 {
-                  blue=src_buf[src_offset + src_extent->width + 1];
+                  blue=src_buf[src_offset + src_rect->width + 1];
                   green=src_buf[src_offset + 1];
                   red=src_buf[src_offset];
                 }
               else
                 {
-                  blue=src_buf[src_offset + src_extent->width];
+                  blue=src_buf[src_offset + src_rect->width];
                   green=src_buf[src_offset];
                   red=src_buf[src_offset + 1];
                 }
@@ -103,7 +103,7 @@ demosaic (GeglChantO *op,
         }
     }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -112,7 +112,8 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->right = area->bottom = 1;
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+
+  gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
 }
 
 static gboolean
@@ -125,11 +126,7 @@ process (GeglOperation       *operation,
   GeglBuffer   *temp_in;
   GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);
 
-  temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-  demosaic (o, temp_in, output);
-
-  g_object_unref (temp_in);
+  demosaic (o, input, &compute, output, result);
 
   return  TRUE;
 }

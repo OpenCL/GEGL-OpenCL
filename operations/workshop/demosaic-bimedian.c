@@ -72,35 +72,35 @@ m4 (gfloat a, gfloat b, gfloat c, gfloat d)
 }
 
 /* Defines to make the row/col offsets below obvious. */
-#define ROW src_extent->width
+#define ROW src_rect->width
 #define COL 1
 
 /* We expect src_extent to have a one pixel border around all four sides
  * of dst_extent.
  */
 static void
-demosaic (GeglChantO *op,
-          GeglBuffer *src,
-          GeglBuffer *dst)
+demosaic (GeglChantO          *op,
+          GeglBuffer          *src,
+          const GeglRectangle *src_rect,
+          GeglBuffer          *dst,
+          const GeglRectangle *dst_rect)
 {
-  const GeglRectangle *src_extent = gegl_buffer_get_extent (src);
-  const GeglRectangle *dst_extent = gegl_buffer_get_extent (dst);
   gint x,y;
   gint offset, doffset;
   gfloat *src_buf;
   gfloat *dst_buf;
 
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src));
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 1);
+  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 3);
 
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("Y float"), src_buf,
+  gegl_buffer_get (src, 1.0, src_rect, babl_format ("Y float"), src_buf,
            GEGL_AUTO_ROWSTRIDE);
 
   offset = ROW + COL;
   doffset = 0;
-  for (y=dst_extent->y; y<dst_extent->height + dst_extent->y; y++)
+  for (y=dst_rect->y; y<dst_rect->height + dst_rect->y; y++)
     {
-      for (x=dst_extent->x; x<dst_extent->width + dst_extent->x; x++)
+      for (x=dst_rect->x; x<dst_rect->width + dst_rect->x; x++)
         {
           gfloat red=0.0;
           gfloat green=0.0;
@@ -167,10 +167,11 @@ demosaic (GeglChantO *op,
       offset+=2;
     }
 
-  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }
+
 
 /* Specify required extra pixels around dst_extent: one pixel on every side.
  */
@@ -178,8 +179,11 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->right = area->bottom = 1;
-  area->left = area->top = 1;
+  area->left  = area->top    = 1;
+
+  gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
 }
+
 
 static gboolean
 process (GeglOperation       *operation,
@@ -188,8 +192,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle src_rect = gegl_operation_get_required_for_output (operation, "input", result);
 
-  demosaic (o, input, output);
+  demosaic (o, input, &src_rect, output, result);
 
   return  TRUE;
 }
@@ -204,7 +209,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process = process;
+  filter_class->process    = process;
   operation_class->prepare = prepare;
 
   operation_class->name        = "gegl:demosaic-bimedian";
