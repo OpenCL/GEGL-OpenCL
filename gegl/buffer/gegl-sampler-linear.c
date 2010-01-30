@@ -74,10 +74,10 @@ enum
   PROP_LAST
 };
 
-static void gegl_sampler_linear_get (      GeglSampler* restrict self,
-                                     const gdouble               x,
-                                     const gdouble               y,
-                                           void*        restrict output);
+static void gegl_sampler_linear_get (GeglSampler* restrict self,
+                                     const gdouble         x,
+                                     const gdouble         y,
+                                     void*        restrict output);
 
 static void set_property (GObject*      gobject,
                           guint         property_id,
@@ -114,10 +114,10 @@ gegl_sampler_linear_init (GeglSamplerLinear *self)
 }
 
 static void
-gegl_sampler_linear_get (      GeglSampler* restrict self,
-                         const gdouble               absolute_x,
-                         const gdouble               absolute_y,
-                               void*        restrict output)
+gegl_sampler_linear_get (GeglSampler* restrict self,
+                         const gdouble         absolute_x,
+                         const gdouble         absolute_y,
+                         void*        restrict output)
 {
   const gint pixels_per_buffer_row = 64;
   const gint channels = 4;
@@ -229,10 +229,7 @@ gegl_sampler_linear_get (      GeglSampler* restrict self,
     +
     w_times_z * top_left_3;
 
-  babl_process (babl_fish (self->interpolate_format, self->format),
-                newval,
-                output,
-                1);
+    babl_process (self->fish, newval, output, 1);
   }
 }
 

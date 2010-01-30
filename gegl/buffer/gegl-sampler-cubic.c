@@ -184,9 +184,7 @@ gegl_sampler_cubic_get (GeglSampler *self,
            }
      }
 
-  babl_process (babl_fish (self->interpolate_format, self->format),
-                newval, output, 1);
-
+  babl_process (self->fish, newval, output, 1);
 }
 
 static void

@@ -43,6 +43,7 @@ struct _GeglSampler
   GeglBuffer    *buffer;
   Babl          *format;
   Babl          *interpolate_format;
+  Babl          *fish;
   GeglRectangle  context_rect;
   void          *sampler_buffer;
   GeglRectangle  sampler_rectangle;

@@ -154,6 +154,9 @@ gegl_sampler_prepare (GeglSampler *self)
   if (klass->prepare)
     klass->prepare (self);
 
+
+  self->fish = babl_fish (self->interpolate_format, self->format);
+
   /*
    * This makes the cache rect invalid, in case the data in the buffer
    * has changed:
@@ -214,9 +217,9 @@ dispose (GObject *gobject)
  * rowstride of 64px * 16bpp:
  */
 gfloat *
-gegl_sampler_get_ptr (      GeglSampler *const sampler,
-                      const gint               x,
-                      const gint               y)
+gegl_sampler_get_ptr (GeglSampler *const sampler,
+                      const gint         x,
+                      const gint         y)
 {
   guchar *buffer_ptr;
   gint    dx;
@@ -305,9 +308,9 @@ gegl_sampler_get_ptr (      GeglSampler *const sampler,
 }
 
 gfloat *
-gegl_sampler_get_from_buffer (      GeglSampler *const sampler,
-                              const gint               x,
-                              const gint               y)
+gegl_sampler_get_from_buffer (GeglSampler *const sampler,
+                              const gint         x,
+                              const gint         y)
 {
   guchar *buffer_ptr;
   gint    dx;

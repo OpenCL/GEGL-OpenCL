@@ -199,8 +199,7 @@ gegl_sampler_lanczos_get (GeglSampler *self,
          newval[3] += y_kernel[j] * x_kernel[i] * sampler_bptr[3];
       }
 
-  babl_process (babl_fish (self->interpolate_format, self->format),
-                newval, output, 1);
+  babl_process (self->fish, newval, output, 1);
 }
 
 static void
