@@ -239,6 +239,27 @@ apply_mirror (double mirror_angle,
 
 /*****************************************************************************/
 
+static GeglRectangle
+get_effective_area (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gdouble xt = o->trim_x * in_rect->width;
+  gdouble yt = o->trim_y * in_rect->height;
+
+  gegl_rectangle_copy(&result, in_rect);
+
+  /*Applying trims*/
+
+  result.x = result.x + xt;
+  result.y = result.y + yt;
+  result.width = result.width + xt;
+  result.height = result.height + yt;
+
+  return result;
+}
+
 /* Compute the region for which this operation is defined.
  */
 static GeglRectangle
@@ -277,17 +298,8 @@ get_required_for_output (GeglOperation       *operation,
 
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gdouble xt = o->trim_x * in_rect->width;
-  gdouble yt = o->trim_y * in_rect->height;
-  GeglRectangle  result;
-  gegl_rectangle_copy(&result, in_rect);
 
-  /*Applying trims*/
-
-  result.x = result.x + xt;
-  result.y = result.y + yt;
-  result.width = result.width + xt;
-  result.height = result.height + yt;
+  GeglRectangle  result = get_effective_area (operation);
 
   #ifdef TRACE
     g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
@@ -317,21 +329,10 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  GeglRectangle eff_boundary;
+  GeglRectangle  eff_boundary = get_effective_area (operation);
   GeglRectangle *in_boundary = gegl_operation_source_get_bounding_box (operation, "input");
   Babl *format = babl_format ("RaGaBaA float");
 
-  gdouble xt = o->trim_x * in_boundary->width;
-  gdouble yt = o->trim_y * in_boundary->height;
-
-  gegl_rectangle_copy(&eff_boundary, in_boundary);
-
-  /*Applying trims*/
-
-  eff_boundary.x = eff_boundary.x + xt;
-  eff_boundary.y = eff_boundary.y + yt;
-  eff_boundary.width = eff_boundary.width - xt;
-  eff_boundary.height = eff_boundary.height - yt;
 
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
  g_warning ("NOT USING BUFFER SAMPLE!");
@@ -341,8 +342,8 @@ process (GeglOperation       *operation,
                 o->n_segs,
                 o->c_x * boundary.width,
                 o->c_y * boundary.height,
-                o->o_x * boundary.width,
-                o->o_y * boundary.height,
+                o->o_x * (eff_boundary.width - eff_boundary.x) + eff_boundary.x,
+                o->o_y * (eff_boundary.height - eff_boundary.y) + eff_boundary.y,
                 o->clip,
                 o->warp,
 		format,
