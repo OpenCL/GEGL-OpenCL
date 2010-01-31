@@ -15,6 +15,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2010 Alexia Death
+ *
+ * Based on "Kaleidoscope" GIMP plugin
+ * Copyright (C) 1999, 2002 Kelly Martin, updated 2005 by Matthew Plough
+ * kelly@gimp.org
  */
 
 #include "config.h"
@@ -37,6 +41,10 @@ gegl_chant_double (o_x, _("Center X"), -1.0, 1.0, 0.0, _("X axis ratio for the c
 
 gegl_chant_double (o_y, _("Center Y"), -1.0, 1.0, 0.0, _("Y axis ratio for the center of mirroring"))
 
+gegl_chant_double (trim_x, _("Trim X"), 0.0, 0.5, 0.0, _("X axis ratio for trimming mirror expanse"))
+
+gegl_chant_double (trim_y, _("Trim Y"), 0.0, 0.5, 0.0, _("Y axis ratio for trimming mirror expanse"))
+
 gegl_chant_boolean (clip, _("Clip result"), TRUE, _("Clip result to input size"))
 
 gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
@@ -51,7 +59,7 @@ gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
 #include <math.h>
 #include "lens-correct.h"
 
-#if 1
+#if 0
 #define TRACE       /* Define this to see basic tracing info. */
 #endif
 
@@ -83,7 +91,7 @@ calc_undistorted_coords(double wx, double wy,
   }
 
   ang = atan2(dy,dx) - angle1 - angle2;
-  while (ang<0.0) ang = ang + 2*G_PI;
+  if (ang<0.0) ang = 2*G_PI - fmod (fabs (ang), 2*G_PI);
 
   mult = ceil(ang/awidth) - 1;
   ang = ang - mult*awidth;
@@ -108,7 +116,9 @@ apply_mirror (double mirror_angle,
               double off_y,
               gboolean clip,
               gboolean warp,
+	      Babl    *format,
               GeglBuffer *src,
+              GeglRectangle *in_boundary,
               GeglBuffer *dst,
               GeglRectangle *boundary,
               GeglRectangle *roi)
@@ -120,7 +130,6 @@ apply_mirror (double mirror_angle,
   gint row, col, spx_pos, dpx_pos, ix, iy;
   gdouble cx, cy;
 
-
   /* Get src pixels. */
   //
 
@@ -130,7 +139,7 @@ apply_mirror (double mirror_angle,
 
   #ifdef DO_NOT_USE_BUFFER_SAMPLE
     src_buf = g_new0 (gfloat, boundary->width * boundary->height * 4);
-    gegl_buffer_get (src, 1.0, boundary, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (src, 1.0, boundary, format, src_buf, GEGL_AUTO_ROWSTRIDE);
   #endif
   /* Get buffer in which to place dst pixels. */
   dst_buf = g_new0 (gfloat, roi->width * roi->height * 4);
@@ -140,38 +149,44 @@ apply_mirror (double mirror_angle,
 
   for (row = 0; row < roi->height; row++) {
     for (col = 0; col < roi->width; col++) {
-        calc_undistorted_coords(roi->x + col, roi->y + row, mirror_angle, result_angle,
+        calc_undistorted_coords(roi->x + col + 0.01, roi->y + row - 0.01, mirror_angle, result_angle,
                                   nsegs,
                                   cen_x, cen_y,
                                   off_x, off_y,
                                   &cx, &cy);
-
-        Babl *format = babl_format ("RGBA float");
-        gfloat pixel[4];
-
         /*Warping*/
         if (warp) {
-                while (cx < 0)
-                        cx = cx + boundary->width;
-                while (cy < 0)
-                        cy = cy + boundary->height;
+                if (cx < (in_boundary->x))
+                        cx = in_boundary->x + fmod (in_boundary->width, fabs(cx));
+                if (cy < (in_boundary->y))
+                        cy = in_boundary->y + fmod (in_boundary->height, fabs(cy));
 
-                while (cx >= boundary->width)
-                        cx = cx - boundary->width;
-                while (cy >= boundary->height)
-                        cy = cy - boundary->height;
+                if (cx >= in_boundary->width)
+                        cx = in_boundary->width - fmod (cx, in_boundary->width);
+                if (cy >= in_boundary->height)
+                        cy = in_boundary->height - fmod (cy, in_boundary->height);
         }
         else {
-                while (cx < 0)
+                if (cx < boundary->x)
                         cx = 0;
-                while (cy < 0)
+                if (cy < boundary->x)
                         cy = 0;
 
-                while (cx >= boundary->width)
+                if (cx >= boundary->width)
                         cx = boundary->width - 1;
-                while (cy >= boundary->height)
+                if (cy >= boundary->height)
                         cy = boundary->height -1;
         }
+
+        if (cx < (in_boundary->x + 1))
+            cx = in_boundary->x + 1;
+        if (cy < (in_boundary->y + 1))
+            cy = in_boundary->y + 1;
+
+        if (cx >= (in_boundary->width - 1))
+            cx = in_boundary->width - 1;
+        if (cy >= (in_boundary->height - 1))
+            cy = in_boundary->height - 1;
 
         /* Top */
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
@@ -189,6 +204,8 @@ apply_mirror (double mirror_angle,
         spx_pos = (iy * boundary->width + ix) * 4;
 #endif
 
+
+
         /* g_warning ("> mirror marker 3: src: (%d,%d):%d-> (%d,%d):%d", ix, iy, spx_pos, col,row, dpx_pos); */
 
 #ifndef DO_NOT_USE_BUFFER_SAMPLE
@@ -203,13 +220,12 @@ apply_mirror (double mirror_angle,
 #endif
 
     } /* for */
-
   } /* for */
 
     gegl_buffer_sample_cleanup(src);
 
   /* Store dst pixels. */
-  gegl_buffer_set (dst, roi, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, roi, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   gegl_buffer_flush(dst);
 
@@ -260,8 +276,19 @@ get_required_for_output (GeglOperation       *operation,
 {
 
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gdouble xt = o->trim_x * in_rect->width;
+  gdouble yt = o->trim_y * in_rect->height;
   GeglRectangle  result;
   gegl_rectangle_copy(&result, in_rect);
+
+  /*Applying trims*/
+
+  result.x = result.x + xt;
+  result.y = result.y + yt;
+  result.width = result.width + xt;
+  result.height = result.height + yt;
+
   #ifdef TRACE
     g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
     if (roi)
@@ -276,14 +303,8 @@ get_required_for_output (GeglOperation       *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  #ifdef TRACE
-    g_warning ("> prepare");
-  #endif
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-  #ifdef TRACE
-    g_warning ("< prepare");
-  #endif
+  gegl_operation_set_format (operation, "input", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
 /* Perform the specified operation.
@@ -296,6 +317,22 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
+  GeglRectangle eff_boundary;
+  GeglRectangle *in_boundary = gegl_operation_source_get_bounding_box (operation, "input");
+  Babl *format = babl_format ("RaGaBaA float");
+
+  gdouble xt = o->trim_x * in_boundary->width;
+  gdouble yt = o->trim_y * in_boundary->height;
+
+  gegl_rectangle_copy(&eff_boundary, in_boundary);
+
+  /*Applying trims*/
+
+  eff_boundary.x = eff_boundary.x + xt;
+  eff_boundary.y = eff_boundary.y + yt;
+  eff_boundary.width = eff_boundary.width - xt;
+  eff_boundary.height = eff_boundary.height - yt;
+
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
  g_warning ("NOT USING BUFFER SAMPLE!");
 #endif
@@ -308,7 +345,9 @@ process (GeglOperation       *operation,
                 o->o_y * boundary.height,
                 o->clip,
                 o->warp,
+		format,
                 input,
+		&eff_boundary,
                 output,
                 &boundary,
                 result);
