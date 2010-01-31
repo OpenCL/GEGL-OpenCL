@@ -45,6 +45,8 @@ gegl_chant_double (trim_x, _("Trim X"), 0.0, 0.5, 0.0, _("X axis ratio for trimm
 
 gegl_chant_double (trim_y, _("Trim Y"), 0.0, 0.5, 0.0, _("Y axis ratio for trimming mirror expanse"))
 
+gegl_chant_double (output_scale, _("Output scale"), 0.0, 100.0, 1.0, _("Scale factor to make rendering size bigger"))
+
 gegl_chant_boolean (clip, _("Clip result"), TRUE, _("Clip result to input size"))
 
 gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
@@ -157,14 +159,21 @@ apply_mirror (double mirror_angle,
         /*Warping*/
         if (warp) {
                 if (cx < (in_boundary->x))
-                        cx = in_boundary->x + fmod (in_boundary->width, fabs(cx));
+                        cx = in_boundary->x + fmod (fabs(cx), in_boundary->width);
                 if (cy < (in_boundary->y))
-                        cy = in_boundary->y + fmod (in_boundary->height, fabs(cy));
+                        cy = in_boundary->y + fmod (fabs(cy), in_boundary->height);
 
-                if (cx >= in_boundary->width)
+                if (cx >= in_boundary->width) {
+		      if ( fmod(ceil (cx / in_boundary->width), 2) < 1.0)
                         cx = in_boundary->width - fmod (cx, in_boundary->width);
-                if (cy >= in_boundary->height)
+		      else
+			cx = fmod (cx, in_boundary->width);
+		}
+                if (cy >= in_boundary->height) {
+		  if ( fmod(ceil (cy / in_boundary->height), 2) < 1.0)
                         cy = in_boundary->height - fmod (cy, in_boundary->height);
+		  else cy = fmod (cy, in_boundary->height);
+		}
         }
         else {
                 if (cx < boundary->x)
@@ -281,6 +290,9 @@ get_bounding_box (GeglOperation *operation)
     result.y = in_rect->y;
     result.width = result.height = sqrt (in_rect->width * in_rect->width + in_rect->height * in_rect->height) * MAX ((o->o_x + 1),  (o->o_y + 1)) * 2;
   }
+
+  result.width = result.width * o->output_scale;
+  result.height = result.height * o->output_scale;
 
   #ifdef TRACE
     g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
