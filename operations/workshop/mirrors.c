@@ -45,7 +45,9 @@ gegl_chant_double (trim_x, _("Trim X"), 0.0, 0.5, 0.0, _("X axis ratio for trimm
 
 gegl_chant_double (trim_y, _("Trim Y"), 0.0, 0.5, 0.0, _("Y axis ratio for trimming mirror expanse"))
 
-gegl_chant_double (output_scale, _("Output scale"), 0.0, 100.0, 1.0, _("Scale factor to make rendering size bigger"))
+gegl_chant_double (input_scale, _("Zoom"), 0.1, 100.0, 100.0, _("Scale factor to make rendering size bigger"))
+
+gegl_chant_double (output_scale, _("Expand"), 0.0, 100.0, 1.0, _("Scale factor to make rendering size bigger"))
 
 gegl_chant_boolean (clip, _("Clip result"), TRUE, _("Clip result to input size"))
 
@@ -116,6 +118,7 @@ apply_mirror (double mirror_angle,
               double cen_y,
               double off_x,
               double off_y,
+	      double input_scale,
               gboolean clip,
               gboolean warp,
 	      Babl    *format,
@@ -131,7 +134,8 @@ apply_mirror (double mirror_angle,
   gfloat *dst_buf;
   gint row, col, spx_pos, dpx_pos, ix, iy;
   gdouble cx, cy;
-
+//   double eff_width = (in_boundary->width - in_boundary->x);
+//   double eff_height = (in_boundary->height - in_boundary->y);
   /* Get src pixels. */
   //
 
@@ -156,23 +160,45 @@ apply_mirror (double mirror_angle,
                                   cen_x, cen_y,
                                   off_x, off_y,
                                   &cx, &cy);
+
+
+	/* apply scale*/
+	cx = in_boundary->x + (cx - in_boundary->x) / input_scale;
+	cy = in_boundary->y + (cy - in_boundary->y) / input_scale;
+
         /*Warping*/
         if (warp) {
-                if (cx < (in_boundary->x))
-                        cx = in_boundary->x + fmod (fabs(cx), in_boundary->width);
-                if (cy < (in_boundary->y))
-                        cy = in_boundary->y + fmod (fabs(cy), in_boundary->height);
 
-                if (cx >= in_boundary->width) {
-		      if ( fmod(ceil (cx / in_boundary->width), 2) < 1.0)
-                        cx = in_boundary->width - fmod (cx, in_boundary->width);
-		      else
-			cx = fmod (cx, in_boundary->width);
+		double dx = cx - in_boundary->x;
+		double dy = cy - in_boundary->y;
+
+		double width_overrun = ceil ((dx) / (in_boundary->width)) ;
+		double height_overrun = ceil ((dy) / (in_boundary->height));
+
+                if (cx <= (in_boundary->x)) {
+		  if ( fabs (fmod (width_overrun, 2)) < 1.0)
+                        cx = in_boundary->x - fmod (dx, in_boundary->width);
+		  else
+		        cx = in_boundary->x + in_boundary->width + fmod (dx, in_boundary->width);
 		}
-                if (cy >= in_boundary->height) {
-		  if ( fmod(ceil (cy / in_boundary->height), 2) < 1.0)
-                        cy = in_boundary->height - fmod (cy, in_boundary->height);
-		  else cy = fmod (cy, in_boundary->height);
+                if (cy <= (in_boundary->y)) {
+                     if ( fabs (fmod (height_overrun, 2)) < 1.0)
+                        cy = in_boundary->y + fmod (dy, in_boundary->height);
+		     else
+			cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
+		}
+
+                if (cx >= (in_boundary->x + in_boundary->width)) {
+		      if ( fabs (fmod (width_overrun, 2)) < 1.0)
+                        cx = in_boundary->x + in_boundary->width - fmod (dx, in_boundary->width);
+		      else
+			cx = in_boundary->x + fmod (dx, in_boundary->width);
+		}
+                if (cy >= (in_boundary->y + in_boundary->height)) {
+		  if ( fabs (fmod (height_overrun, 2)) < 1.0)
+                        cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
+		  else
+			cy = in_boundary->y + fmod (dy, in_boundary->height);
 		}
         }
         else {
@@ -187,15 +213,6 @@ apply_mirror (double mirror_angle,
                         cy = boundary->height -1;
         }
 
-        if (cx < (in_boundary->x + 1))
-            cx = in_boundary->x + 1;
-        if (cy < (in_boundary->y + 1))
-            cy = in_boundary->y + 1;
-
-        if (cx >= (in_boundary->width - 1))
-            cx = in_boundary->width - 1;
-        if (cy >= (in_boundary->height - 1))
-            cy = in_boundary->height - 1;
 
         /* Top */
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
@@ -215,7 +232,7 @@ apply_mirror (double mirror_angle,
 
 
 
-        /* g_warning ("> mirror marker 3: src: (%d,%d):%d-> (%d,%d):%d", ix, iy, spx_pos, col,row, dpx_pos); */
+        printf ("> mirror marker 3: src: (%f,%f)-> (%d,%d)\n", cx, cy, col,row);
 
 #ifndef DO_NOT_USE_BUFFER_SAMPLE
         gegl_buffer_sample (src, cx, cy, 1.0, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
@@ -263,8 +280,8 @@ get_effective_area (GeglOperation *operation)
 
   result.x = result.x + xt;
   result.y = result.y + yt;
-  result.width = result.width + xt;
-  result.height = result.height + yt;
+  result.width = result.width - xt;
+  result.height = result.height - yt;
 
   return result;
 }
@@ -354,8 +371,9 @@ process (GeglOperation       *operation,
                 o->n_segs,
                 o->c_x * boundary.width,
                 o->c_y * boundary.height,
-                o->o_x * (eff_boundary.width - eff_boundary.x) + eff_boundary.x,
+                o->o_x * (eff_boundary.width  - eff_boundary.x) + eff_boundary.x,
                 o->o_y * (eff_boundary.height - eff_boundary.y) + eff_boundary.y,
+		o->input_scale / 100,
                 o->clip,
                 o->warp,
 		format,
