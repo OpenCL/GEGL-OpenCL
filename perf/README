@@ -1,0 +1,9 @@
+Performance tracking framework
+------------------------------
+
+This directory contains a simple framework to track performance development of
+a set of GEGL tests over time. It requires ruby and ruby cairo bindings to
+work.
+
+Hopefully just typing make would trigger generation of a graph for the last
+20 commits, edit the Makefile to change this behavior.
