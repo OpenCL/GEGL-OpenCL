@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>35.000000</param>
+            <param name='y'>10.000000</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>upsize</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.236328125</param>
+            <param name='y'>0.231770833</param>
+          </params>
+      </node>
+      <node operation='gegl:rotate'>
+          <params>
+            <param name='degrees'>7.000000</param>
+            <param name='filter'>upsize</param>
+          </params>
+      </node>
+      <node operation='gegl:load'>
+          <params>
+            <param name="path">data/car-stack.png</param>
+          </params>
+      </node>
+  </node>
+</gegl>
