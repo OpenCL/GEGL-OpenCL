@@ -194,7 +194,7 @@ gegl_processor_set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_NODE:
-        gegl_processor_set_node (self, g_value_dup_object (value));
+        gegl_processor_set_node (self, g_value_get_object (value));
         break;
 
       case PROP_CHUNK_SIZE:
@@ -278,6 +278,8 @@ gegl_processor_set_node (GeglProcessor *processor,
     }
 
   g_object_ref (processor->input);
+
+  g_object_notify (G_OBJECT (processor), "node");
 }
 
 
@@ -354,6 +356,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       gegl_operation_context_set_need_rect   (processor->context,
                                               &processor->rectangle);
     }
+
+  g_object_notify (G_OBJECT (processor), "rectangle");
 }
 
 /* Will generate band_sizes that are adapted to the size of the tiles */
