@@ -280,7 +280,7 @@ get_tile (GeglTileSource *gegl_tile_source,
         }
       }
     gegl_tile_lock (tile);
-    data = gegl_tile_get_data (tile);
+    data = gegl_tile_get_data (tile); /* XXX: is this needed? */
 
     for (i = 0; i < 2; i++)
       for (j = 0; j < 2; j++)
@@ -377,11 +377,8 @@ constructor (GType                  type,
              GObjectConstructParam *params)
 {
   GObject      *object;
-  GeglTileHandlerZoom *zoom;
 
   object = G_OBJECT_CLASS (gegl_tile_handler_zoom_parent_class)->constructor (type, n_params, params);
-
-  zoom   = GEGL_TILE_HANDLER_ZOOM (object);
 
   return object;
 }

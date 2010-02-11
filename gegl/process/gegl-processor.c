@@ -632,7 +632,6 @@ gegl_processor_render (GeglProcessor *processor,
               {
                 *progress = (double) valid / wanted;
               }
-            wanted = 1;
           }
 
         return more_work;

@@ -128,17 +128,12 @@ static void copy_data (const GeglPathItem *src,
                        GeglPathItem       *dst)
 {
   InstructionInfo *src_info;
-  InstructionInfo *dst_info;
   gint i;
 
   if (!src)
     return;
 
   src_info = lookup_instruction_info(src->type);
-  dst_info = lookup_instruction_info(dst->type);
-
-/*
-  g_assert (src_info->pairs <= dst_info->pairs);*/
 
   dst->type = src->type;  
   for (i=0;i<(src_info->n_items+1)/2;i++)
@@ -202,7 +197,6 @@ gegl_path_list_append_item  (GeglPathList  *head,
   g_assert (res);
     *res = iter;
 
-  tail = iter;
   return head;
 }
 
@@ -323,7 +317,6 @@ gegl_path_list_flatten (GeglMatrix3   matrix,
                         GeglPathList *original)
 {
   GeglPathList *iter;
-  GeglPathList *prev = NULL;
   GeglPathList *self = NULL;
 
   GeglPathList *endp = NULL;
@@ -340,7 +333,6 @@ gegl_path_list_flatten (GeglMatrix3   matrix,
         endp = self;
       while (endp && endp->next)
         endp=endp->next;
-      prev = iter;
     }
   return self;
 }
@@ -401,8 +393,6 @@ path_calc (GeglPathList *path,
   gfloat need_to_travel = 0;
   gfloat x = 0, y = 0;
 
-  gboolean had_move_to = FALSE;
-
   while (iter)
     {
       /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
@@ -413,7 +403,6 @@ path_calc (GeglPathList *path,
             y = iter->d.point[0].y;
             need_to_travel = 0;
             traveled_length = 0;
-            had_move_to = TRUE;
             break;
 
           case 'L':
@@ -488,7 +477,6 @@ static void path_calc_values (GeglPathList *path,
   gfloat traveled_length = 0;
   gfloat need_to_travel = 0;
   gfloat x = 0,y = 0;
-  gboolean had_move_to = FALSE;
   GeglPathList *iter;
   gfloat spacing = length / num_samples;
 
@@ -503,7 +491,6 @@ static void path_calc_values (GeglPathList *path,
             y = iter->d.point[0].y;
             need_to_travel = 0;
             traveled_length = 0;
-            had_move_to = TRUE;
             break;
           case 'L':
             {
@@ -1668,8 +1655,6 @@ gegl_path_closest_point (GeglPath *path,
       GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
       GeglPathList *iter;
       /* what node was the one before us ? */
-      iter = priv->path;
-      i=0;
 
       for (iter=priv->path,i=0; iter;i++,iter=iter->next)
         {
@@ -2060,7 +2045,6 @@ void gegl_path_stroke (GeglBuffer *buffer,
   gfloat traveled_length = 0;
   gfloat need_to_travel = 0;
   gfloat x = 0,y = 0;
-  gboolean had_move_to = FALSE;
   GeglPathList *iter;
   gdouble       xmin, xmax, ymin, ymax;
   GeglRectangle extent;
@@ -2102,7 +2086,6 @@ void gegl_path_stroke (GeglBuffer *buffer,
             y = iter->d.point[0].y;
             need_to_travel = 0;
             traveled_length = 0;
-            had_move_to = TRUE;
             break;
           case 'L':
             {

@@ -121,12 +121,10 @@ gegl_operation_sink_process (GeglOperation        *operation,
                              const gchar          *output_prop,
                              const GeglRectangle  *result)
 {
-  GeglOperationSink      *gegl_operation_sink;
   GeglOperationSinkClass *klass;
   GeglBuffer             *input;
   gboolean                success = FALSE;
 
-  gegl_operation_sink = GEGL_OPERATION_SINK (operation);
   klass               = GEGL_OPERATION_SINK_GET_CLASS (operation);
 
   g_assert (klass->process);

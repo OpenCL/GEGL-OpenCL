@@ -124,12 +124,9 @@ static gboolean gegl_operation_point_filter_op_process
                                const gchar          *output_pad,
                                const GeglRectangle  *roi)
 {
-  GeglOperationFilterClass *klass;
   GeglBuffer               *input;
   GeglBuffer               *output;
   gboolean                  success = FALSE;
-
-  klass                 = GEGL_OPERATION_FILTER_GET_CLASS (operation);
 
   input = gegl_operation_context_get_source (context, "input");
 

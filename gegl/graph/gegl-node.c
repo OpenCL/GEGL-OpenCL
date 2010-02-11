@@ -2181,7 +2181,7 @@ gegl_node_new_child (GeglNode    *parent,
 
   name = first_property_name;
   va_start (var_args, first_property_name);
-  gegl_node_set_valist (node, first_property_name, var_args);
+  gegl_node_set_valist (node, name, var_args);
   va_end (var_args);
 
   if (parent)

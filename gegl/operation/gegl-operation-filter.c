@@ -184,14 +184,12 @@ gegl_operation_filter_process (GeglOperation   *operation,
                                const gchar     *output_prop,
                                const GeglRectangle *result)
 {
-  GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;
   GeglBuffer               *input;
   GeglBuffer               *output;
   gboolean                  success = FALSE;
 
-  gegl_operation_filter = GEGL_OPERATION_FILTER (operation);
-  klass                 = GEGL_OPERATION_FILTER_GET_CLASS (operation);
+  klass = GEGL_OPERATION_FILTER_GET_CLASS (operation);
 
   g_assert (klass->process);
 

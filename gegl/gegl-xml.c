@@ -778,9 +778,7 @@ serialize_properties (SerializeState *ss,
 	  else if (properties[i]->value_type == GEGL_TYPE_CURVE)
 	    {
 	      GeglCurve *curve;
-	      guint num_points;
 	      gegl_node_get (node, properties[i]->name, &curve, NULL);
-	      num_points = gegl_curve_num_points (curve);
 	      xml_param_start (ss, indent + 2, properties[i]->name);
 	      g_string_append (ss->buf, "\n");
 	      xml_curve (ss, indent + 4, curve);

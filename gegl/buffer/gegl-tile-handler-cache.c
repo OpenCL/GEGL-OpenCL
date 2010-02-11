@@ -154,9 +154,6 @@ static void        gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cac
 static void
 finalize (GObject *object)
 {
-  GeglTileHandlerCache *cache;
-  cache = (GeglTileHandlerCache *) object;
-
   G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->finalize (object);
 }
 
@@ -528,7 +525,6 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
                                 gint                  z)
 {
   CacheItem *item = g_slice_new (CacheItem);
-  guint      count;
 
   item->handler = cache;
   item->tile    = gegl_tile_ref (tile);
@@ -542,7 +538,6 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   cache_total  += item->tile->size;
   g_queue_push_head (cache_queue, item);
 
-  count = g_queue_get_length (cache_queue);
   g_hash_table_insert (cache_ht, item, item);
 
   while (cache_total > gegl_config()->cache_size)

@@ -282,12 +282,9 @@ GObject *
 gegl_operation_context_get_object (GeglOperationContext *context,
                                    const gchar          *padname)
 {
-  GeglOperation *operation;
   GObject       *ret;
   GParamSpec    *pspec;
   GValue         value = { 0, };
-
-  operation = context->operation;
 
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
@@ -309,12 +306,9 @@ GeglBuffer *
 gegl_operation_context_get_source (GeglOperationContext *context,
                                    const gchar          *padname)
 {
-  GeglOperation  *operation;
   GeglBuffer     *real_input;
   GeglBuffer     *input;
  
-  operation = context->operation;
-
   real_input = GEGL_BUFFER (gegl_operation_context_get_object (context, padname));
   if (!real_input)
     return NULL;
