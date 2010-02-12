@@ -158,7 +158,7 @@ apply_mirror (double mirror_angle,
         calc_undistorted_coords(roi->x + col + 0.01, roi->y + row - 0.01, mirror_angle, result_angle,
                                   nsegs,
                                   cen_x, cen_y,
-                                  off_x, off_y,
+                                  off_x * input_scale, off_y * input_scale,
                                   &cx, &cy);
 
 
