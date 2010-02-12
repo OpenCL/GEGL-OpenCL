@@ -232,8 +232,6 @@ apply_mirror (double mirror_angle,
 
 
 
-        printf ("> mirror marker 3: src: (%f,%f)-> (%d,%d)\n", cx, cy, col,row);
-
 #ifndef DO_NOT_USE_BUFFER_SAMPLE
         gegl_buffer_sample (src, cx, cy, 1.0, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
 #endif
