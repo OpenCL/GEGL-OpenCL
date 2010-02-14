@@ -35,11 +35,13 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor.")
 #include <math.h>
 
 static void
-create_matrix (GeglChantOperation *op,
-               GeglMatrix3         matrix)
+create_matrix (OpAffine    *op,
+               GeglMatrix3  matrix)
 {
-  matrix [0][0] = op->x;
-  matrix [1][1] = op->y;
+  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+
+  matrix [0][0] = chant->x;
+  matrix [1][1] = chant->y;
 }
 
 #endif

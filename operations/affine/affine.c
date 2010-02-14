@@ -342,6 +342,16 @@ gegl_affine_set_property (GObject      *object,
 }
 
 static void
+gegl_affine_create_matrix (OpAffine    *affine,
+                           GeglMatrix3  matrix)
+{
+  gegl_matrix3_identity (matrix);
+
+  if (OP_AFFINE_GET_CLASS (affine))
+    OP_AFFINE_GET_CLASS (affine)->create_matrix (affine, matrix);
+}
+
+static void
 gegl_affine_bounding_box (gdouble       *points,
                           gint           num_points,
                           GeglRectangle *output)
@@ -445,8 +455,7 @@ gegl_affine_get_source_matrix (OpAffine    *affine,
 static GeglRectangle
 gegl_affine_get_bounding_box (GeglOperation *op)
 {
-  OpAffine      *affine  = (OpAffine *) op;
-  OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
+  OpAffine      *affine  = OP_AFFINE (op);
   GeglMatrix3    matrix;
   GeglRectangle  in_rect = {0,0,0,0},
                  have_rect;
@@ -463,10 +472,9 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
-  /* invoke child's matrix creation function */
-  g_assert (klass->create_matrix);
-  gegl_matrix3_identity (matrix);
-  klass->create_matrix (op, matrix);
+  gegl_affine_create_matrix (affine, affine->matrix);
+
+  gegl_matrix3_copy (matrix, affine->matrix);
 
   if (affine->origin_x || affine->origin_y)
     gegl_matrix3_originate (matrix, affine->origin_x, affine->origin_y);
@@ -514,12 +522,11 @@ gegl_affine_detect (GeglOperation *operation,
                     gint           x,
                     gint           y)
 {
-  GeglNode *source_node = gegl_operation_get_source_node (operation, "input");
-
-  OpAffine *affine = (OpAffine *) operation;
-  GeglMatrix3   inverse;
-  gdouble   need_points [2];
-  gint      i;
+  OpAffine    *affine      = OP_AFFINE (operation);
+  GeglNode    *source_node = gegl_operation_get_source_node (operation, "input");
+  GeglMatrix3  inverse;
+  gdouble      need_points [2];
+  gint         i;
 
   if (gegl_affine_is_intermediate_node (affine) ||
       gegl_matrix3_is_identity (inverse))
@@ -546,7 +553,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
                                      const gchar         *input_pad,
                                      const GeglRectangle *region)
 {
-  OpAffine      *affine = (OpAffine *) op;
+  OpAffine      *affine = OP_AFFINE (op);
   GeglMatrix3    inverse;
   GeglRectangle  requested_rect,
                  need_rect;
@@ -601,8 +608,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
                                        const gchar         *input_pad,
                                        const GeglRectangle *input_region)
 {
-  OpAffine          *affine  = (OpAffine *) op;
-  OpAffineClass     *klass   = OP_AFFINE_GET_CLASS (affine);
+  OpAffine          *affine = OP_AFFINE (op);
   GeglRectangle      affected_rect;
   GeglRectangle      context_rect;
   GeglSampler       *sampler;
@@ -613,10 +619,8 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   sampler = op_affine_sampler (OP_AFFINE (op));
   context_rect = sampler->context_rect;
   g_object_unref (sampler);
-  /* invoke child's matrix creation function */
-  g_assert (klass->create_matrix);
-  gegl_matrix3_identity (affine->matrix);
-  klass->create_matrix (op, affine->matrix);
+
+  gegl_affine_create_matrix (affine, affine->matrix);
 
   if (affine->origin_x || affine->origin_y)
     gegl_matrix3_originate (affine->matrix, affine->origin_x, affine->origin_y);

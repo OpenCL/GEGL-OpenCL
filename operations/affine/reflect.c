@@ -39,14 +39,15 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 #include <math.h>
 
 static void
-create_matrix (GeglChantOperation *op,
-               GeglMatrix3        matrix)
+create_matrix (OpAffine    *op,
+               GeglMatrix3  matrix)
 {
+  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
   gdouble ux=0, uy=0;
   gdouble l;
 
-  ux = op->x;
-  uy = op->y;
+  ux = chant->x;
+  uy = chant->y;
 
   l = sqrt(uy*uy + ux*ux);
   ux /= l;

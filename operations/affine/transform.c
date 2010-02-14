@@ -34,10 +34,12 @@ gegl_chant_string (transform, "", _("Transformation string"))
 #include <math.h>
 
 static void
-create_matrix (GeglChantOperation *op,
-               GeglMatrix3         matrix)
+create_matrix (OpAffine    *op,
+               GeglMatrix3  matrix)
 {
-  gegl_matrix3_parse_string (matrix, op->transform);
+  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+
+  gegl_matrix3_parse_string (matrix, chant->transform);
 }
 
 #endif

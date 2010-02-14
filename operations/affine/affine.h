@@ -13,27 +13,28 @@ G_BEGIN_DECLS
 #define IS_OP_AFFINE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  TYPE_OP_AFFINE))
 #define OP_AFFINE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  TYPE_OP_AFFINE, OpAffineClass))
 
-typedef void (*OpAffineCreateMatrixFunc) (GeglOperation *op,
-                                          GeglMatrix3        matrix);
 typedef struct _OpAffine OpAffine;
+
 struct _OpAffine
 {
-  GeglOperationFilter parent;
+  GeglOperationFilter parent_instance;
 
   GeglMatrix3  matrix;
-  gdouble      origin_x,
-               origin_y;
+  gdouble      origin_x;
+  gdouble      origin_y;
   gchar       *filter;
   gboolean     hard_edges;
   gint         lanczos_width;
 };
 
 typedef struct _OpAffineClass OpAffineClass;
+
 struct _OpAffineClass
 {
   GeglOperationFilterClass parent_class;
 
-  OpAffineCreateMatrixFunc create_matrix;
+  void (* create_matrix) (OpAffine    *affine,
+                          GeglMatrix3  matrix);
 };
 
 GType op_affine_get_type (void) G_GNUC_CONST;

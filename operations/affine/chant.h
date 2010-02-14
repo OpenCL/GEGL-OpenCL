@@ -252,8 +252,8 @@ gegl_chant_constructor (GType                  type,
 static void class_init (GeglOperationClass *operation_class);
 #endif
 
-static void create_matrix (GeglChantOperation *operation,
-                           GeglMatrix3         matrix);
+static void create_matrix (OpAffine    *affine,
+                           GeglMatrix3  matrix);
 
 static void
 gegl_chant_class_init (ChantClass * klass)
@@ -267,7 +267,7 @@ gegl_chant_class_init (ChantClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  parent_class->create_matrix = (OpAffineCreateMatrixFunc) create_matrix;
+  parent_class->create_matrix = create_matrix;
 
 #ifdef GEGL_CHANT_INIT
   object_class->constructor  = gegl_chant_constructor;
