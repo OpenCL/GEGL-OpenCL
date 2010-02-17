@@ -196,7 +196,7 @@ gegl_buffer_header_init (GeglBufferHeader *header,
                          gint              bpp,
                          Babl*             format)
 {
-  strcpy (header->magic, "GEGL");
+  memcpy (header->magic, "GEGL", 4);
 
   header->flags = GEGL_FLAG_HEADER;
   header->tile_width  = tile_width;
