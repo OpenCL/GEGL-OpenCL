@@ -1,4 +1,4 @@
-/* This file is part of GEGL
+/* This file is an image processing operation for GEGL
  *
  * GEGL is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Øyvind Kolås
+ * Copyright 2006-2010 Øyvind Kolås <pippin@gimp.org>
  */
-
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
@@ -23,178 +22,77 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-#if 0
-gegl_chant_string ("xlow",  "hm", _("low description"))
-gegl_chant_string ("xhigh", "hm", _("high description"))
-#endif
+/* no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_OPERATION
-#define GEGL_CHANT_C_FILE       "remap.c"
+#define GEGL_CHANT_TYPE_POINT_COMPOSER3
+#define GEGL_CHANT_C_FILE        "remap.c"
 
 #include "gegl-chant.h"
-#include <math.h>
-#include <string.h>
 
-
-static void
-attach (GeglOperation *operation)
+static void prepare (GeglOperation *operation)
 {
-  GObjectClass *object_class = G_OBJECT_GET_CLASS (operation);
+  Babl *format = babl_format ("RGBA float");
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "low"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "high"));
-}
-
-static void
-prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static GeglNode *
-detect (GeglOperation *operation,
-        gint           x,
-        gint           y)
-{
-  GeglNode      *input_node;
-  GeglOperation *input_operation;
-
-  input_node = gegl_operation_get_source_node (operation, "input");
-
-  if (input_node)
-    {
-      g_object_get (input_node, "gegl-operation", &input_operation, NULL);
-      return gegl_operation_detect (input_operation, x, y);
-    }
-
-  return operation->node;
-}
-
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle  result = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect;
-
-  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  if (in_rect)
-    {
-      result = *in_rect;
-    }
-
-  return result;
-}
-
-static GeglRectangle
-get_invalidated_by_change (GeglOperation       *operation,
-                           const gchar         *input_pad,
-                           const GeglRectangle *input_region)
-{
-  return *input_region;
-}
-
-static GeglRectangle
-get_required_for_output (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *roi)
-{
-  return *roi;
+  gegl_operation_set_format (operation, "input",  format);
+  gegl_operation_set_format (operation, "aux",    format);
+  gegl_operation_set_format (operation, "aux2",   format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+process (GeglOperation        *op,
+          void                *in_buf,
+          void                *min_buf,
+          void                *max_buf,
+          void                *out_buf,
+          glong                n_pixels,
+          const GeglRectangle *roi)
 {
-  GeglBuffer *input;
-  GeglBuffer *low;
-  GeglBuffer *high;
-  GeglBuffer *output;
-  gfloat     *buf;
-  gfloat     *min;
-  gfloat     *max;
-  gint        pixels = result->width * result->height;
-  gint        i;
+  gint i;
+  gfloat *in = in_buf;
+  gfloat *min = min_buf;
+  gfloat *max = max_buf;
+  gfloat *out = out_buf;
 
-  input = gegl_operation_context_get_source (context, "input");
-  low = gegl_operation_context_get_source (context, "low");
-  high = gegl_operation_context_get_source (context, "high");
-
-  buf = g_new (gfloat, pixels * 4);
-  min = g_new (gfloat, pixels * 3);
-  max = g_new (gfloat, pixels * 3);
-
-  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (low,   1.0, result, babl_format ("RGB float"), min, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (high,  1.0, result, babl_format ("RGB float"), max, GEGL_AUTO_ROWSTRIDE);
-
-  output = gegl_operation_context_get_target (context, "output");
-
-  for (i = 0; i < pixels; i++)
+  for (i = 0; i < n_pixels; i++)
     {
-      gint c;
+       gint c;
+       for (c = 0; c < 3; c++)
+         {
+           gfloat delta = max[c]-min[c];
 
-      for (c = 0; c < 3; c++)
-        {
-          gfloat delta = max[i*3+c]-min[i*3+c];
-
-          if (delta > 0.0001 || delta < -0.0001)
-            {
-              buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
-            }
-          /*else
-            buf[i*4+c] = buf[i*4+c];*/
-        }
+           if (delta > 0.0001 || delta < -0.0001)
+             out[c] = (in[c]-min[c]) / delta;
+           else
+             out[c] = in[c];
+           out[3] = in[3];
+         }
+      in  += 4;
+      out += 4;
+      min += 4;
+      max += 4;
     }
-
-  gegl_buffer_set (output, result, babl_format ("RGBA float"), buf,
-                   GEGL_AUTO_ROWSTRIDE);
-
-  g_free (buf);
-  g_free (min);
-  g_free (max);
-
-  g_object_unref (input);
-  g_object_unref (high);
-  g_object_unref (low);
-
   return TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass *operation_class;
+  GeglOperationClass               *operation_class;
+  GeglOperationPointComposer3Class *point_composer3_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
-
-  operation_class->process = process;
-  operation_class->attach  = attach;
+  operation_class       = GEGL_OPERATION_CLASS (klass);
+  point_composer3_class = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
   operation_class->prepare = prepare;
-  operation_class->detect  = detect;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_invalidated_by_change = get_invalidated_by_change;
-  operation_class->get_required_for_output = get_required_for_output;
+
+  point_composer3_class->process = process;
 
   operation_class->name        = "gegl:remap";
-  operation_class->categories  = "color";
   operation_class->description =
-        _("Linearly remap the R,G,B based on per pixel minimum and maximum"
-          " values from the high/low input pads");
+        _("stretch components of pixels individually based on luminance envelopes");
+  operation_class->categories  = "compositors:porter-duff";
 }
 
 #endif
