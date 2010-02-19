@@ -126,7 +126,7 @@ apply_mirror (double mirror_angle,
               GeglRectangle *in_boundary,
               GeglBuffer *dst,
               GeglRectangle *boundary,
-              GeglRectangle *roi)
+              const GeglRectangle *roi)
 {
   const GeglRectangle *src_extent;
   const GeglRectangle *dst_extent;
