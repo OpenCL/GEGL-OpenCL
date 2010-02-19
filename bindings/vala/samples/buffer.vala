@@ -13,6 +13,8 @@ public class TestBuffer {
 
 		Gegl.init(ref args);
 
+		rect = Rectangle();
+		sub_rect = Rectangle();
 		rect.set(0, 0, 512, 128);
 		sub_rect.set(128, 32, 256, 64);
 

@@ -6,9 +6,10 @@ BUILT_SOURCES = \
 
 # BABL
 format_VALASOURCES = format.vala
-format_VALAPKGS = --vapidir=$(top_srcdir) --pkg=babl
+format_VALAPKGS = --vapidir=$(top_srcdir) --pkg=babl-0.0
 
 format_SOURCES = \
+	format.vala.stamp	\
 	$(format_VALASOURCES:.vala=.c) \
 	$(format_VALASOURCES:.vala=.h)
 
@@ -19,16 +20,17 @@ format_LDFLAGS = \
 	-lbabl-0.0
 
 format.vala.stamp: $(format_VALASOURCES)
-	$(VALAC) -C $(format_VALAPKGS) $^
+	valac -C $(format_VALAPKGS) $^
 	touch $@
 
 # PIPELINE
 pipeline_VALASOURCES = pipeline.vala
 pipeline_VALAPKGS = \
 	--pkg=glib-2.0	\
-	--vapidir=$(top_srcdir) --pkg=babl --pkg=gegl
+	--vapidir=$(top_srcdir) --pkg=babl-0.0 --pkg=gegl-0.0
 
 pipeline_SOURCES = \
+	pipeline.vala.stamp\
 	$(pipeline_VALASOURCES:.vala=.c)	\
 	$(pipeline_VALASOURCES:.vala=.h)
 
@@ -39,16 +41,17 @@ pipeline_LDFLAGS = \
 	-lbabl-0.0 -lgegl-0.0
 
 pipeline.vala.stamp: $(pipeline_VALASOURCES)
-	$(VALAC) -C $(pipeline_VALAPKGS) $^
+	valac -C $(pipeline_VALAPKGS) $^
 	touch $@
 
 # BUFFER
 buffer_VALASOURCES = buffer.vala
 buffer_VALAPKGS = \
 	--pkg=glib-2.0	\
-	--vapidir=$(top_srcdir) --pkg=babl --pkg=gegl
+	--vapidir=$(top_srcdir) --pkg=babl-0.0 --pkg=gegl-0.0
 
 buffer_SOURCES = \
+	buffer.vala.stamp \
 	$(buffer_VALASOURCES:.vala=.c)	\
 	$(buffer_VALASOURCES:.vala=.h)
 
@@ -59,7 +62,7 @@ buffer_LDFLAGS = \
 	-lbabl-0.0 -lgegl-0.0
 
 buffer.vala.stamp: $(buffer_VALASOURCES)
-	$(VALAC) -C $(buffer_VALAPKGS) $^
+	valac -C $(buffer_VALAPKGS) $^
 	touch $@
 
 
