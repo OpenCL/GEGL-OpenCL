@@ -38,14 +38,6 @@ gegl_chant_int (levels, _("Levels"), 1, 64, 8,
 #endif
 
 
-static void prepare (GeglOperation *operation)
-{
-  /* We posterize sRGB data since it is more perceptually spaced than linear data
-   */
-  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A float"));
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
-}
-
 static gboolean process (GeglOperation       *operation,
                          void                *in_buf,
                          void                *out_buf,

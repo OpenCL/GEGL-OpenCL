@@ -128,11 +128,12 @@ apply_mirror (double mirror_angle,
               GeglRectangle *boundary,
               const GeglRectangle *roi)
 {
-  const GeglRectangle *src_extent;
-  const GeglRectangle *dst_extent;
+#ifdef DO_NOT_USE_BUFFER_SAMPLE
   gfloat *src_buf;
+  gint spx_pos, dpx_pos, ix, iy;
+#endif
   gfloat *dst_buf;
-  gint row, col, spx_pos, dpx_pos, ix, iy;
+  gint row, col;
   gdouble cx, cy;
 //   double eff_width = (in_boundary->width - in_boundary->x);
 //   double eff_height = (in_boundary->height - in_boundary->y);
@@ -322,10 +323,6 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
   GeglRectangle  result = get_effective_area (operation);
 
   #ifdef TRACE
@@ -357,7 +354,6 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
   GeglRectangle  eff_boundary = get_effective_area (operation);
-  GeglRectangle *in_boundary = gegl_operation_source_get_bounding_box (operation, "input");
   Babl *format = babl_format ("RaGaBaA float");
 
 
