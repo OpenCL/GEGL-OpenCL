@@ -296,6 +296,7 @@ static GeglPathList *flatten_curve (GeglMatrix3   matrix,
   gfloat f;
   Point res;
   gchar buf[64]="C";
+  GeglPathItem *item=(void*)buf;
 
   copy_data (&self->d, (void*)buf);
   transform_data (matrix, (void*)buf);
@@ -306,7 +307,7 @@ static GeglPathList *flatten_curve (GeglMatrix3   matrix,
       head = gegl_path_list_append (head, 'L', res.x, res.y);
     }
 
-  res = ((GeglPathItem*)buf)->point[2];
+  res = item->point[2];
   head = gegl_path_list_append (head, 'L', res.x, res.y);
 
   return head;

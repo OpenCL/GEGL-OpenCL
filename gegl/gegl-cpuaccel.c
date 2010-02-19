@@ -144,6 +144,7 @@ arch_get_vendor (void)
 {
   guint32 eax, ebx, ecx, edx;
   gchar   id[16];
+  guint32 *id32 = (void*) id;
 
 #ifndef ARCH_X86_64
   /* Only need to check this on ia32 */
@@ -171,9 +172,9 @@ arch_get_vendor (void)
   if (eax == 0)
     return ARCH_X86_VENDOR_NONE;
 
-  *(int *)&id[0] = ebx;
-  *(int *)&id[4] = edx;
-  *(int *)&id[8] = ecx;
+  id32[0] = ebx;
+  id32[1] = edx;
+  id32[2] = ecx;
 
   id[12] = '\0';
 
