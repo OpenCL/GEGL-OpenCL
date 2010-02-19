@@ -2,7 +2,7 @@
 
 AC_PREREQ(2.52)
 
-AC_INIT([gegl-vala], [0.0.2],
+AC_INIT([gegl-vala], [0.0.3],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=gegl])
 
 AM_INIT_AUTOMAKE(no-define dist-bzip2)
