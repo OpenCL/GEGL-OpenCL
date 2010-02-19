@@ -10,8 +10,7 @@ format_VALAPKGS = --vapidir=$(top_srcdir) --pkg=babl-0.0
 
 format_SOURCES = \
 	format.vala.stamp	\
-	$(format_VALASOURCES:.vala=.c) \
-	$(format_VALASOURCES:.vala=.h)
+	$(format_VALASOURCES:.vala=.c)
 
 format_CFLAGS = \
 	$(VALA_TEST_CFLAGS)
@@ -31,8 +30,7 @@ pipeline_VALAPKGS = \
 
 pipeline_SOURCES = \
 	pipeline.vala.stamp\
-	$(pipeline_VALASOURCES:.vala=.c)	\
-	$(pipeline_VALASOURCES:.vala=.h)
+	$(pipeline_VALASOURCES:.vala=.c)
 
 pipeline_CFLAGS = \
 	$(VALA_TEST_CFLAGS)
@@ -52,8 +50,7 @@ buffer_VALAPKGS = \
 
 buffer_SOURCES = \
 	buffer.vala.stamp \
-	$(buffer_VALASOURCES:.vala=.c)	\
-	$(buffer_VALASOURCES:.vala=.h)
+	$(buffer_VALASOURCES:.vala=.c)
 
 buffer_CFLAGS = \
 	$(VALA_TEST_CFLAGS)
