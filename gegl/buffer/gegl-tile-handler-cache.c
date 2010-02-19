@@ -270,7 +270,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
          */
         return get_tile (tile_store, x, y, z);
       case GEGL_TILE_IS_CACHED:
-        return (gpointer)gegl_tile_handler_cache_has_tile (cache, x, y, z);
+        return GINT_TO_POINTER(gegl_tile_handler_cache_has_tile (cache, x, y, z));
       case GEGL_TILE_EXIST:
         {
           gboolean exist = gegl_tile_handler_cache_has_tile (cache, x, y, z);
@@ -282,7 +282,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
         {
           gboolean action = gegl_tile_handler_cache_wash (cache);
           if (action)
-            return (gpointer)action;
+            return GINT_TO_POINTER(action);
           break;
         }
       case GEGL_TILE_REFETCH:

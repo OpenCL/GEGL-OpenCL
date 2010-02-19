@@ -62,11 +62,11 @@ gegl_tile_handler_log_command (GeglTileSource  *gegl_tile_source,
       default:
         if (result)
         g_print ("(%s %p %p %i·%i·%i ⇒%p)", 
-          commands[command], (void *) ((gint)gegl_tile_source&0xffff), (void*)((gint)data&0xffff), x, y, z,
+          commands[command], GINT_TO_POINTER(GPOINTER_TO_INT(gegl_tile_source)&0xffff), GINT_TO_POINTER(GPOINTER_TO_INT(data)&0xffff), x, y, z,
           result);
         else
         g_print ("(%s %p %p %i·%i·%i ☹)", 
-          commands[command], (void *) ((gint)gegl_tile_source&0xffff), data, x, y, z);
+          commands[command], GINT_TO_POINTER(GPOINTER_TO_INT(gegl_tile_source)&0xffff), data, x, y, z);
     }
   return result;
 }

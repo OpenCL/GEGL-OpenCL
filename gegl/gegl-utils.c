@@ -228,7 +228,7 @@
     gint   offset;
 
     mem    = g_malloc (size + GEGL_ALIGN + sizeof(gpointer));
-    offset = GEGL_ALIGN - (((guint)mem) + sizeof(gpointer)) % GEGL_ALIGN;
+    offset = GEGL_ALIGN - (GPOINTER_TO_UINT(mem) + sizeof(gpointer)) % GEGL_ALIGN;
     ret    = (gpointer)(mem + sizeof(gpointer) + offset);
 
     /* store the real malloc one pointer in front of this malloc */

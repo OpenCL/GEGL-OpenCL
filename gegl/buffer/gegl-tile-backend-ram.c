@@ -253,7 +253,7 @@ gegl_tile_backend_ram_command (GeglTileSource     *tile_store,
         return NULL;
 
       case GEGL_TILE_EXIST:
-        return (gpointer)exist_tile (tile_store, data, x, y, z);
+        return GINT_TO_POINTER(exist_tile (tile_store, data, x, y, z));
 
       default:
         g_assert (command < GEGL_TILE_LAST_COMMAND &&

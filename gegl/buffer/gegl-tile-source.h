@@ -183,19 +183,19 @@ gboolean  gegl_tile_source_idle      (GegTileSource *source);
 
 
 #define gegl_tile_source_set_tile(source,x,y,z,tile) \
-   (gboolean)gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile)
+   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile))
 #define gegl_tile_source_get_tile(source,x,y,z) \
    (GeglTile*)gegl_tile_source_command(source,GEGL_TILE_GET,x,y,z,NULL)
 #define gegl_tile_source_is_cached(source,x,y,z) \
-   (gboolean)gegl_tile_source_command(source,GEGL_TILE_IS_CACHED,x,y,z,NULL)
+   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_IS_CACHED,x,y,z,NULL))
 #define gegl_tile_source_exist(source,x,y,z) \
-   (gboolean)gegl_tile_source_command(source,GEGL_TILE_EXIST,x,y,z,NULL)
+   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_EXIST,x,y,z,NULL))
 #define gegl_tile_source_void(source,x,y,z) \
    gegl_tile_source_command(source,GEGL_TILE_VOID,x,y,z,NULL)
 #define gegl_tile_source_refetch(source,x,y,z) \
    gegl_tile_source_command(source,GEGL_TILE_REFETCH,x,y,z,NULL)
 #define gegl_tile_source_idle(source) \
-   (gboolean)gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL)
+   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL))
 
 G_END_DECLS
 
