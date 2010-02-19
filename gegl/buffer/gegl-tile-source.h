@@ -87,10 +87,10 @@ enum _GeglTileCommand
  *
  * Returns: the tile at x,y,z or NULL if the tile could not be provided.
  */
-GeglTile *gegl_tile_source_get_tile  (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+GeglTile *gegl_tile_source_get_tile  (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z);
 
 /**
  * gegl_tile_source_set_tile:
@@ -104,11 +104,11 @@ GeglTile *gegl_tile_source_get_tile  (GegTileSource *source,
  *
  * Returns: the TRUE if the set was successful.
  */
-gboolean  gegl_tile_source_set_tile  (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z,
-                                      GeglTile      *tile);
+gboolean  gegl_tile_source_set_tile  (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z,
+                                      GeglTile       *tile);
 /**
  * gegl_tile_source_is_cached:
  * @source: a GeglTileSource *
@@ -118,10 +118,10 @@ gboolean  gegl_tile_source_set_tile  (GegTileSource *source,
  *
  * Checks if a tile is in cache and easily retrieved.
  */
-gboolean  gegl_tile_source_is_cached (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+gboolean  gegl_tile_source_is_cached (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z);
 /**
  * gegl_tile_source_exist:
  * @source: a GeglTileSource *
@@ -132,10 +132,10 @@ gboolean  gegl_tile_source_is_cached (GegTileSource *source,
  * Checks if a tile exists, this check would not cause the tile to be swapped
  * in.
  */
-gboolean  gegl_tile_source_exist     (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+gboolean  gegl_tile_source_exist     (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z);
 /**
  * gegl_tile_source_void:
  * @source: a GeglTileSource *
@@ -145,10 +145,10 @@ gboolean  gegl_tile_source_exist     (GegTileSource *source,
  *
  * Causes all references to a tile to be removed.
  */
-void      gegl_tile_source_void      (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+void      gegl_tile_source_void      (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z);
 /*    INTERNAL API
  * gegl_tile_source_refetch:
  * @source: a GeglTileSource *
@@ -160,10 +160,10 @@ void      gegl_tile_source_void      (GegTileSource *source,
  * a refresh of all data relating to the coordinates needs to be refetched.
  * Subsequent get calls should get new and valid data for the tile coordinates.
  */
-void      gegl_tile_source_refetch   (GegTileSource *source,
-                                      gint           x,
-                                      gint           y,
-                                      gint           z);
+void      gegl_tile_source_refetch   (GeglTileSource *source,
+                                      gint            x,
+                                      gint            y,
+                                      gint            z);
 /*   INTERNAL API
  * gegl_tile_source_idle:
  * @source: a GeglTileSource *
@@ -174,7 +174,7 @@ void      gegl_tile_source_refetch   (GegTileSource *source,
  *
  * Returns: the TRUE if some work was done.
  */
-gboolean  gegl_tile_source_idle      (GegTileSource *source);
+gboolean  gegl_tile_source_idle      (GeglTileSource *source);
 
 #endif
 
