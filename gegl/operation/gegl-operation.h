@@ -74,71 +74,68 @@ struct _GeglOperationClass
 
   const gchar    *name;        /* name(string) used to create/indetify
                                     this type of operation in GEGL*/
-  const gchar    *compat_name; /* name used for backwards compatibility
-                                    reasons*/
+  const gchar    *compat_name; /* allows specifying an alias that the op is
+                                  also known as */
   const gchar    *description; /* textual description of the operation */
   const gchar    *categories;  /* a colon seperated list of categories */
 
   gboolean        no_cache;    /* do not create a cache for this operation */
 
-  /*
-   * attach this operation with a GeglNode, override this if you are creating a
+  /* attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
    */
   void          (*attach)                    (GeglOperation *operation);
 
-  /* prepare() is called on each operation providing data to a node that
-   * is requested to provide a rendered result. When prepare is called all
-   * properties are known. This is the time to set desired pixel formats
-   * for input and output pads.
+  /* Initialize the operation, prepare is called when all properties are
+   * known but before processing will begin. Prepare will be invoked one
+   * or multiple times prior to processing.
    */
   void          (*prepare)                   (GeglOperation *operation);
 
-  /* Returns the bounding rectangle for the data that is defined by this op.
-   * (is already implemented in GeglOperationPointFilter and
-   * GeglOperationPointComposer, GeglOperationAreaFilter base classes.
+  /* The bounding rectangle for the data that is defined by this op.
    */
   GeglRectangle (*get_bounding_box)          (GeglOperation *operation);
 
-  /* Computes the region in output (same affected rect assumed for all outputs)
-   * when a given region has changed on an input. Used to aggregate dirt in the
-   * graph. A default implementation of this, if not provided should probably
-   * be to report that the entire defined region is dirtied.
+  /* The output region that is made invalid by a change in the input_roi
+   * rectangle of the buffer passed in on the pad input_pad. Defaults to
+   * returning the input_roi.
    */
   GeglRectangle (*get_invalidated_by_change) (GeglOperation       *operation,
                                               const gchar         *input_pad,
-                                              const GeglRectangle *roi);
+                                              const GeglRectangle *input_roi);
 
-  /* Computes the rectangle needed to be correctly computed in a buffer
-   * on the named input_pad, for a given region of interest.
+  /* The rectangle needed to be correctly computed in a buffer on the named
+   * input_pad, for a given region of interest. Defaults to return the
+   * output_roi.
    */
   GeglRectangle (*get_required_for_output)   (GeglOperation       *operation,
                                               const gchar         *input_pad,
-                                              const GeglRectangle *roi);
+                                              const GeglRectangle *output_roi);
 
-  /* Adjust result rect, adapts the rectangle used for computing results.
-   * (useful for global operations like contrast stretching, as well as
-   * file loaders to force caching of the full raster).
+  /* The rectangular area that should be processed in one go, by default if not
+   * defined the output roi would be returned. This is useful for file loaders
+   * and operations like contrast stretching which is a point operation but we
+   * need the parameters as the minimum/maximum values in the entire input buffer.
    */
   GeglRectangle (*get_cached_region)         (GeglOperation       *operation,
-                                              const GeglRectangle *roi);
+                                              const GeglRectangle *output_roi);
 
-  /* Perform processing and provide @output_pad with data for the
-   * region of interest @roi.
-   *
-   * For a GeglOperation _without_ output pads, for example a PNG save
-   * operation, @output_pad shall be ignored and @roi then instead
-   * specifies the data available for consumption.
+  /* Compute the rectangular region output roi for the specified output_pad.
+   * For operations that are sinks (have no output pads), roi is the rectangle
+   * to consume and the output_pad argument is to be ignored.
    */
   gboolean      (*process)                   (GeglOperation        *operation,
                                               GeglOperationContext *context,
                                               const gchar          *output_pad,
                                               const GeglRectangle  *roi);
 
-  /* XXX: What is GeglNode doing in this part of the API?
-   * Returns the node providing data for a specific location within the
-   * operations output. Does this recurse?, perhaps it should only point out
-   * which pad the data is coming from?
+  /* The node providing data for a specific location within the operations
+   * output. The node is responsible for delegating blame to one of it's
+   * inputs taking into account opacity and similar issues.
+   *
+   * XXX: What is GeglNode doing in this part of the API?
+   * Does this recurse?, perhaps we should only point out which pad the
+   * data is coming from?
    */
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
