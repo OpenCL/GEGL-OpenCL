@@ -32,6 +32,11 @@
 #include "gegl-operation-context.h"
 #include "buffer/gegl-region.h"
 
+
+static GHashTable *gtype_hash = NULL;
+G_LOCK_DEFINE_STATIC (gtype_hash);
+
+
 static void
 add_operations (GHashTable *hash,
                 GType       parent)
@@ -60,17 +65,25 @@ add_operations (GHashTable *hash,
   g_free (types);
 }
 
-static GHashTable *gtype_hash = NULL;
 GType
 gegl_operation_gtype_from_name (const gchar *name)
 {
+  GType ret = 0;
+
+  /* FIXME: We only need mutual exclusion when we initialize. Maybe
+   * move initialization to gegl_init()?
+   */
+  G_LOCK (gtype_hash);
   if (!gtype_hash)
     {
       gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
       add_operations (gtype_hash, GEGL_TYPE_OPERATION);
     }
-  return (GType) g_hash_table_lookup (gtype_hash, name);
+  ret = (GType) g_hash_table_lookup (gtype_hash, name);
+  G_UNLOCK (gtype_hash);
+
+  return ret;
 }
 
 static GSList *operations_list = NULL;
@@ -93,7 +106,11 @@ gchar **gegl_list_operations (guint *n_operations_p)
   if (!operations_list)
     {
       gegl_operation_gtype_from_name ("");
+
+      G_LOCK (gtype_hash);
       g_hash_table_foreach (gtype_hash, addop, NULL);
+      G_UNLOCK (gtype_hash);
+
       operations_list = g_slist_sort (operations_list, (GCompareFunc) strcmp);
     }
 
@@ -122,11 +139,13 @@ gchar **gegl_list_operations (guint *n_operations_p)
 void
 gegl_operation_gtype_cleanup (void)
 {
+  G_LOCK (gtype_hash);
   if (gtype_hash)
     {
       g_hash_table_destroy (gtype_hash);
       gtype_hash = NULL;
     }
+  G_UNLOCK (gtype_hash);
 }
 
 /**
