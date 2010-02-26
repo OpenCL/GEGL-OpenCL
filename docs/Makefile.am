@@ -6,12 +6,20 @@ SUBDIRS= gallery
 # is very small, and should probably be documented in a tutorial.
 #
 
+gtkdochtmldir = $(DESTDIR)$(datadir)/gtk-doc/html/gegl
+
 HTML_FILES = \
 	operations.html		\
 	class-hierarchy.html
 
+GTKDOC_FILES = \
+	operations.html		\
+	gegl.css			\
+	gegl.devhelp
+
 if HAVE_RUBY
 HTML_FILES += api.html images/inheritance.png
+GTKDOC_FILES += api.html
 endif
 
 # dummy target to force the operations be available for scanning when
@@ -36,6 +44,7 @@ ENSCRIPT_FILES = \
 	gegl-plugin.h.html
 
 HTML_FILES += $(ENSCRIPT_FILES)
+GTKDOC_FILES += $(ENSCRIPT_FILES)
 endif
 
 if HAVE_ASCIIDOC
@@ -52,8 +61,9 @@ EXTRA_DIST = \
 	images/GEGL.svg			\
 	images/gaussian-blur-graph.png	\
 	images/gegl.ico			\
-	index-static.txt.in		\
-	$(HTML_FILES)
+	index-static.txt.in
+
+dist_gtkdochtml_DATA = $(GTKDOC_FILES)
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
@@ -201,53 +211,6 @@ distclean-local:
 	if test $(srcdir) = .; then :; else 	\
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
-help_dir = $(DESTDIR)$(prefix)/share/gtk-doc/html/gegl
-
-install-exec-local: all-local
-	$(INSTALL) -d $(help_dir)
-if HAVE_ENSCRIPT
-	$(INSTALL) $(srcdir)/brightness-contrast.c.html \
-	    $(srcdir)/gegl.h.html 			\
-	    $(srcdir)/gegl-operation.h.html 		\
-	    $(srcdir)/gegl-operation-filter.h.html 	\
-	    $(srcdir)/gegl-operation-composer.h.html 	\
-	    $(srcdir)/gegl-operation-area-filter.h.html     \
-	    $(srcdir)/gegl-operation-meta.h.html            \
-	    $(srcdir)/gegl-operation-point-composer.h.html  \
-	    $(srcdir)/gegl-operation-point-filter.h.html    \
-	    $(srcdir)/gegl-operation-point-render.h.html    \
-	    $(srcdir)/gegl-operation-sink.h.html            \
-	    $(srcdir)/gegl-operation-temporal.h.html            \
-	    $(srcdir)/gegl-operation-source.h.html          \
-	    $(srcdir)/gegl-plugin.h.html $(help_dir)
-endif
-	$(INSTALL) $(srcdir)/operations.html $(help_dir)
-if HAVE_RUBY
-	$(INSTALL) $(srcdir)/api.html $(help_dir)
-endif
-	$(INSTALL) $(srcdir)/gegl.devhelp $(help_dir)
-	$(INSTALL) $(srcdir)/devhelp.css $(help_dir)/gegl.css
-
-uninstall-local:
-if HAVE_ENSCRIPT
-	rm -f $(help_dir)/brightness-contrast.c.html $(help_dir)/gegl.h.html
-	rm -f $(help_dir)/gegl-operation.h.html $(help_dir)/gegl-plugin.h.html \
-	    $(help_dir)/operations.html 	\
-	    $(help_dir)/gegl-operation-filter.h.html 	\
-	    $(help_dir)/gegl-operation-composer.h.html 	\
-	    $(help_dir)/gegl-operation-area-filter.h.html     \
-	    $(help_dir)/gegl-operation-meta.h.html            \
-	    $(help_dir)/gegl-operation-temporal.h.html            \
-	    $(help_dir)/gegl-operation-point-composer.h.html  \
-	    $(help_dir)/gegl-operation-point-filter.h.html    \
-	    $(help_dir)/gegl-operation-point-render.h.html    \
-	    $(help_dir)/gegl-operation-sink.h.html            \
-	    $(help_dir)/gegl-operation-source.h.html
-endif
-if HAVE_RUBY
-	rm -f $(help_dir)/api.html
-endif
-	rm -f $(help_dir)/gegl.devhelp $(help_dir)/gegl.css
 
 # require asciidoc when making dist
 #
