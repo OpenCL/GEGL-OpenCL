@@ -1,10 +1,9 @@
 SUBDIRS= gallery
 #DIST_SUBDIRS= graphics gallery
 
-# The patterns used for html creation in the babl build system
-# is very small, and should probably be documented in a tutorial.
 #	
-#
+# The patterns used for html creation in the gegl build system
+# is very small, and should probably be documented in a tutorial.
 #
 
 HTML_FILES = \
