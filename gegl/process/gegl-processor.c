@@ -160,6 +160,12 @@ gegl_processor_finalize (GObject *self_object)
 {
   GeglProcessor *processor = GEGL_PROCESSOR (self_object);
 
+  if (processor->context)
+    {
+      GeglCache *cache = gegl_node_get_cache (processor->input);
+      gegl_node_remove_context (processor->node, cache);
+    }
+
   if (processor->node)
     {
       g_object_unref (processor->node);
