@@ -8,8 +8,15 @@ EXTRA_DIST = $(wildcard *.c) $(wildcard util/*.[ch])
 all-local: $(bins)
 
 %: %.c $(GEGLHEADERS)
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $< 
 	$(LIBTOOL) --mode=link    $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ $@.lo $(LIBS)
+
+gegl-paint: gegl-paint.c $(GEGLHEADERS)
+	touch gegl-paint
+if HAVE_GTK
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $< 
+	$(LIBTOOL) --mode=link    $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ $@.lo $(LIBS)
+endif
 
 clean-local:
 	rm -f *.lo $(bins)

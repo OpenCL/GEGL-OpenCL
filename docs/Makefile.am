@@ -22,6 +22,9 @@ HTML_FILES += api.html images/inheritance.png
 GTKDOC_FILES += api.html
 endif
 
+gegl.devhelp: api.html
+	echo
+
 # dummy target to force the operations be available for scanning when
 # creating the docbook index when doing parallel builds.
 api.html: operations.html
@@ -183,8 +186,7 @@ index.html: index-static.txt		\
 	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	cp $< $@ 
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd`/$(srcdir) -a toc -a theme=gegl -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
@@ -193,8 +195,7 @@ endif
 development.html: $(top_srcdir)/docs/development.txt
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	cp $< $@ 
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd`/$(srcdir) -a toc -a theme=gegl -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
