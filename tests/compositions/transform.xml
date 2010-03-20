@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+      <node operation='gegl:scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.500000</param>
+            <param name='y'>0.500000</param>
+        </params>
+     </node>
+        <node operation='gegl:load'>
+           <params>
+              <param name='path'>data/gegl.png</param>
+           </params>
+       </node>
+   </node>
+   
+  <node operation='gegl:crop'>
+     <params>
+         <param name='width'>400</param>
+         <param name='height'>400</param>
+    </params>
+  </node>
+  <node operation='gegl:checkerboard'>
+  </node>
+</gegl>
