@@ -7,8 +7,8 @@
             <param name='y'>100.000000</param>
           </params>
       </node>
-      <!-- Used to break the composition, to render initial reference -->
-      <node operation='gegl:nop'/> 
+      <!-- Used to break the composition, to render initial reference 
+      <node operation='gegl:nop'/>  -->
       <node operation='gegl:scale'>
           <params>
             <param name='origin-x'>0.000000</param>
