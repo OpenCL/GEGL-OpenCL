@@ -153,7 +153,8 @@ main (gint    argc,
                   max_diff,
                   diffsum/wrong_pixels,
                   diffsum/pixels);
-         if (max_diff > 1.5)
+         if (max_diff > 1.5 &&
+             !strstr (argv[2], "broken"))
            {
              GeglNode *graph, *sink;
              gchar *debug_path = g_malloc (strlen (argv[2])+16);
@@ -165,6 +166,10 @@ main (gint    argc,
              gegl_node_process (sink);
              return 1;
            }
+         if (strstr (argv[2], "broken"))
+           g_print ("because the test is expected to fail ");
+         else
+           g_print ("because the erorr is small ");
          g_print ("we'll say ");
        }
 
