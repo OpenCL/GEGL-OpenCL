@@ -117,9 +117,7 @@ retry:                      /* if we've sampled outside the valid image
         goto retry;
 
       {
-        gfloat pixel[4];
-
-        sample (buf, width, height, u, v, pixel);
+        gfloat *pixel = (buf + ((width * v) + u) * 4);
 
         if (pixel[3]>0.0) /* ignore fully transparent pixels */
           {
