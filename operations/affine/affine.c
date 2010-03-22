@@ -472,9 +472,8 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
-  gegl_affine_create_matrix (affine, affine->matrix);
-
-  gegl_matrix3_copy (matrix, affine->matrix);
+  gegl_matrix3_identity (matrix);
+  gegl_affine_create_matrix (affine, matrix);
 
   if (affine->origin_x || affine->origin_y)
     gegl_matrix3_originate (matrix, affine->origin_x, affine->origin_y);
@@ -510,7 +509,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   have_points [7] = in_rect.y + in_rect.height ;
 
   for (i = 0; i < 8; i += 2)
-    gegl_matrix3_transform_point (affine->matrix,
+    gegl_matrix3_transform_point (matrix,
                              have_points + i, have_points + i + 1);
 
   gegl_affine_bounding_box (have_points, 4, &have_rect);
