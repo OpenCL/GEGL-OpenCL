@@ -26,7 +26,10 @@ images.stamp: $(wildcard $(srcdir)/*.xml) \
 TESTS = verify-results.sh
 verify-results.sh: tests-report
 
-tests-report: images.stamp $(top_srcdir)/tools/img_cmp
+tests-report: images.stamp \
+              $(top_srcdir)/tools/img_cmp \
+              $(srcdir)/output/*.png \
+              $(srcdir)/reference/*.png
 	@echo "" > tests-report ;
 	@for XML in $(srcdir)/*.xml; do\
 	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
