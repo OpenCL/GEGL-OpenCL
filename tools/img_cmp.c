@@ -10,6 +10,7 @@ main (gint    argc,
   GeglBuffer *bufferB = NULL;
   GeglBuffer *debug_buf = NULL;
 
+  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   if (argc != 3)
