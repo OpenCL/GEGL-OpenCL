@@ -18,13 +18,11 @@ typedef struct _OpAffine OpAffine;
 struct _OpAffine
 {
   GeglOperationFilter parent_instance;
-
-  GeglMatrix3  matrix;
-  gdouble      origin_x;
-  gdouble      origin_y;
-  gchar       *filter;
-  gboolean     hard_edges;
-  gint         lanczos_width;
+  gdouble             origin_x;
+  gdouble             origin_y;
+  gchar              *filter;
+  gboolean            hard_edges;
+  gint                lanczos_width;
 };
 
 typedef struct _OpAffineClass OpAffineClass;
