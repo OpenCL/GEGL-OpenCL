@@ -206,9 +206,9 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      G_PARAM_READWRITE));
 
 #if ENABLE_MT
-  g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
+  g_object_class_install_property (gobject_class, PROP_THREADS,
                                    g_param_spec_int ("threads", "Number of concurrent evaluation threads", "default tile height for created buffers.",
-                                                     0, 16, 2,
+                                                     0, 16, 1,
                                                      G_PARAM_READWRITE));
 #endif
 }
@@ -223,6 +223,6 @@ gegl_config_init (GeglConfig *self)
   self->tile_width  = 128;
   self->tile_height = 64;
 #if ENABLE_MT
-  self->threads = 2;
+  self->threads = 1;
 #endif
 }
