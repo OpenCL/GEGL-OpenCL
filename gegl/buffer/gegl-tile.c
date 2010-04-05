@@ -72,13 +72,11 @@ void gegl_tile_unref (GeglTile *tile)
         }
     }
 
-#if ENABLE_MT
   if (tile->mutex)
     {
       g_mutex_free (tile->mutex);
       tile->mutex = NULL;
     }
-#endif
   g_slice_free (GeglTile, tile);
 }
 
@@ -96,9 +94,7 @@ gegl_tile_new_bare (void)
   tile->next_shared = tile;
   tile->prev_shared = tile;
 
-#if ENABLE_MT
   tile->mutex = g_mutex_new ();
-#endif
   tile->destroy_notify = default_free;
 
   return tile;
@@ -118,19 +114,15 @@ gegl_tile_dup (GeglTile *src)
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
   tile->prev_shared              = src;
-#if ENABLE_MT
   if (tile->next_shared != src)
     {
       g_mutex_lock (tile->next_shared->mutex);
     }
-#endif
   tile->next_shared->prev_shared = tile;
-#if ENABLE_MT
   if (tile->next_shared != src)
     {
       g_mutex_unlock (tile->next_shared->mutex);
     }
-#endif
 
   return tile;
 }
@@ -181,9 +173,7 @@ void gegl_bt (void);
 void
 gegl_tile_lock (GeglTile *tile)
 {
-#if ENABLE_MT
   g_mutex_lock (tile->mutex);
-#endif
 
   if (tile->lock != 0)
     {
@@ -245,9 +235,7 @@ gegl_tile_unlock (GeglTile *tile)
     }
   if (tile->lock==0)
     tile->rev++;
-#if ENABLE_MT
   g_mutex_unlock (tile->mutex);
-#endif
 }
 
 

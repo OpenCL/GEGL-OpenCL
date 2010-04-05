@@ -273,9 +273,7 @@ gegl_tile_storage_constructor (GType                  type,
                                               tile_storage,
                                               NULL);
   tile_storage->seen_zoom = FALSE;
-#if ENABLE_MT
   tile_storage->mutex = g_mutex_new ();
-#endif
 
   return object;
 }
@@ -290,9 +288,7 @@ gegl_tile_storage_finalize (GObject *object)
 
   if (self->path)
     g_free (self->path);
-#if ENABLE_MT
   g_mutex_free (self->mutex);
-#endif
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }

@@ -205,9 +205,7 @@ static gchar   *cmd_gegl_chunk_size=NULL;
 static gchar   *cmd_gegl_quality=NULL;
 static gchar   *cmd_gegl_tile_size=NULL;
 static gchar   *cmd_babl_tolerance =NULL;
-#if ENABLE_MT
 static gchar   *cmd_gegl_threads=NULL;
-#endif
 
 static const GOptionEntry cmd_entries[]=
 {
@@ -241,13 +239,11 @@ static const GOptionEntry cmd_entries[]=
      G_OPTION_ARG_STRING, &cmd_gegl_quality,
      N_("The quality of rendering a value between 0.0(fast) and 1.0(reference)"), "<quality>"
     },
-#if ENABLE_MT
     {
      "gegl-threads", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_threads,
      N_("The number of concurrent processing threads to use."), "<threads>"
     },
-#endif
     { NULL }
 };
 
@@ -294,10 +290,8 @@ GeglConfig *gegl_config (void)
           if (str)
             config->tile_height = atoi(str+1);
         }
-#if ENABLE_MT
       if (g_getenv ("GEGL_THREADS"))
         config->threads = atoi(g_getenv("GEGL_THREADS"));
-#endif
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
     }
@@ -488,10 +482,8 @@ gegl_post_parse_hook (GOptionContext *context,
       if (str)
         config->tile_height = atoi(str+1);
     }
-#if ENABLE_MT
   if (cmd_gegl_threads)
     config->threads = atoi (cmd_gegl_threads);
-#endif
   if (cmd_babl_tolerance)
     g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
 

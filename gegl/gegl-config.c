@@ -37,10 +37,8 @@ enum
   PROP_SWAP,
   PROP_BABL_TOLERANCE,
   PROP_TILE_WIDTH,
-  PROP_TILE_HEIGHT
-#if ENABLE_MT
-  ,PROP_THREADS
-#endif
+  PROP_TILE_HEIGHT,
+  PROP_THREADS
 };
 
 static void
@@ -81,11 +79,9 @@ get_property (GObject    *gobject,
         g_value_set_string (value, config->swap);
         break;
 
-#if ENABLE_MT
       case PROP_THREADS:
         g_value_set_int (value, config->threads);
         break;
-#endif
 
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -135,11 +131,9 @@ set_property (GObject      *gobject,
          g_free (config->swap);
         config->swap = g_value_dup_string (value);
         break;
-#if ENABLE_MT
       case PROP_THREADS:
         config->threads = g_value_get_int (value);
         return;
-#endif
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -205,12 +199,10 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_string ("swap", "Swap", "where gegl stores it's swap files", NULL,
                                                      G_PARAM_READWRITE));
 
-#if ENABLE_MT
   g_object_class_install_property (gobject_class, PROP_THREADS,
                                    g_param_spec_int ("threads", "Number of concurrent evaluation threads", "default tile height for created buffers.",
                                                      0, 16, 1,
                                                      G_PARAM_READWRITE));
-#endif
 }
 
 static void
@@ -222,7 +214,5 @@ gegl_config_init (GeglConfig *self)
   self->chunk_size  = 512 * 512;
   self->tile_width  = 128;
   self->tile_height = 64;
-#if ENABLE_MT
   self->threads = 1;
-#endif
 }

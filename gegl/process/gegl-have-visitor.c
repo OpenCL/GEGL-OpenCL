@@ -64,18 +64,14 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
   if (!node)
     return;
   operation = node->operation;
-#if ENABLE_MT
   g_mutex_lock (node->mutex);
-#endif
   node->have_rect = gegl_operation_get_bounding_box (operation);
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS,
              "For \"%s\" have_rect = %d,%d %d×%d\n",
              gegl_node_get_debug_name (node),
              node->have_rect.x, node->have_rect.y, node->have_rect.width, node->have_rect.height);
-#if ENABLE_MT
   g_mutex_unlock (node->mutex);
-#endif
 
   time = gegl_ticks () - time;
   gegl_instrument ("process", gegl_node_get_operation (node), time);

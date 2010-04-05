@@ -1145,9 +1145,7 @@ gegl_buffer_void (GeglBuffer *buffer)
   gint tile_height = buffer->tile_storage->tile_height;
   gint bufy        = 0;
 
-#if ENABLE_MT
   g_mutex_lock (buffer->tile_storage->mutex);
-#endif
   {
     gint z;
     gint factor = 1;
@@ -1191,9 +1189,7 @@ done_with_row:
         factor *= 2;
       }
   }
-#if ENABLE_MT
   g_mutex_unlock (buffer->tile_storage->mutex);
-#endif
 }
 
 

@@ -278,13 +278,9 @@ gegl_operation_source_get_bounding_box (GeglOperation  *operation,
   if (node)
     {
       GeglRectangle *ret;
-#if ENABLE_MT
       g_mutex_lock (node->mutex);
-#endif
       ret = &node->have_rect;
-#if ENABLE_MT
       g_mutex_unlock (node->mutex);
-#endif
       return ret;
     }
 
