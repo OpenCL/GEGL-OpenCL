@@ -399,7 +399,6 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
 {
   CacheItem *last_writable;
  
-  g_static_mutex_lock (&mutex);
   last_writable = g_queue_pop_tail (cache_queue);
 
   if (last_writable != NULL)
@@ -408,10 +407,8 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
       cache_total  -= last_writable->tile->size;
       gegl_tile_unref (last_writable->tile);
       g_slice_free (CacheItem, last_writable);
-      g_static_mutex_unlock (&mutex);
       return TRUE;
     }
-  g_static_mutex_unlock (&mutex);
 
   return FALSE;
 }
