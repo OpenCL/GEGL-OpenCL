@@ -1,4 +1,3 @@
-#include "config.h"
 #include <stdlib.h>
 #include <gegl.h>
 #include <string.h>
