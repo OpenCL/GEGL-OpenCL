@@ -186,17 +186,11 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   /* query libopenraw instead. need a new API */
   gegl_extension_handler_register (".cr2", "gegl:openraw-load");
-  gegl_extension_handler_register (".CR2", "gegl:openraw-load");
   gegl_extension_handler_register (".crw", "gegl:openraw-load");
-  gegl_extension_handler_register (".CRW", "gegl:openraw-load");
   gegl_extension_handler_register (".erf", "gegl:openraw-load");
-  gegl_extension_handler_register (".ERF", "gegl:openraw-load");
   gegl_extension_handler_register (".mrw", "gegl:openraw-load");
-  gegl_extension_handler_register (".MRW", "gegl:openraw-load");
   gegl_extension_handler_register (".nef", "gegl:openraw-load");
-  gegl_extension_handler_register (".NEF", "gegl:openraw-load");
   gegl_extension_handler_register (".dng", "gegl:openraw-load");
-  gegl_extension_handler_register (".DNG", "gegl:openraw-load");
 
   done = TRUE;
 }

@@ -247,9 +247,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     if (done)
       return; */
   gegl_extension_handler_register (".svg", "gegl:svg-load");
-  gegl_extension_handler_register (".SVG", "gegl:svg-load");
   gegl_extension_handler_register (".svgz", "gegl:svg-load");
-  gegl_extension_handler_register (".SVGZ", "gegl:svg-load");
 /*  done = TRUE; */
 }
 

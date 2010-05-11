@@ -161,11 +161,8 @@ gegl_chant_class_init (GeglChantClass *klass)
         _("Raw image loader, wrapping dcraw with pipes.");
 
   gegl_extension_handler_register (".raw", "gegl:raw-load");
-  gegl_extension_handler_register (".RAW", "gegl:raw-load");
   gegl_extension_handler_register (".raf", "gegl:raw-load");
-  gegl_extension_handler_register (".RAF", "gegl:raw-load");
   gegl_extension_handler_register (".nef", "gegl:raw-load");
-  gegl_extension_handler_register (".NEF", "gegl:raw-load");
 }
 
 #endif

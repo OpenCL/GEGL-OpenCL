@@ -218,9 +218,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     if (done)
       return; */
   gegl_extension_handler_register (".jpg", "gegl:jpg-load");
-  gegl_extension_handler_register (".JPG", "gegl:jpg-load");
   gegl_extension_handler_register (".jpeg", "gegl:jpg-load");
-  gegl_extension_handler_register (".JPEG", "gegl:jpg-load");
 /*  done = TRUE; */
 }
 #endif

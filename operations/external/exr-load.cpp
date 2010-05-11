@@ -664,7 +664,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description = "EXR image loader.";
 
   gegl_extension_handler_register (".exr", "gegl:exr-load");
-  gegl_extension_handler_register (".EXR", "gegl:exr-load");
 }
 
 #endif

@@ -213,7 +213,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description = _("PPM image loader.");
 
   gegl_extension_handler_register (".ppm", "gegl:ppm-load");
-  gegl_extension_handler_register (".PPM", "gegl:ppm-load");
 }
 
 #endif
