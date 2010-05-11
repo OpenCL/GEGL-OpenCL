@@ -26,21 +26,29 @@ void
 gegl_extension_handler_register (const gchar *extension,
                                  const gchar *handler)
 {
+  /* Case fold so we get case insensitive extension comparisions */
+  gchar *ext = g_utf8_casefold (extension, -1);
+
   if (!handlers)
     handlers = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 
-  g_hash_table_insert (handlers, g_strdup (extension), g_strdup (handler));
+  g_hash_table_insert (handlers, ext, g_strdup (handler));
 }
 
 const gchar *
 gegl_extension_handler_get (const gchar *extension)
 {
-  const gchar *handler;
+  const gchar *handler = NULL;
+  gchar *ext = NULL;
 
   if (!handlers)
     return NULL;
 
-  handler = g_hash_table_lookup (handlers, extension);
+  /* Case fold so we get case insensitive extension comparisions */
+  ext = g_utf8_casefold (extension, -1);
+  handler = g_hash_table_lookup (handlers, ext);
+  g_free (ext);
+
   if (handler)
     return handler;
 

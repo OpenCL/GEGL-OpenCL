@@ -7,9 +7,10 @@ TESTS_ENVIRONMENT = \
 # The tests
 TESTS = \
 	test-change-processor-rect	\
-	test-proxynop-processing	\
 	test-color-op			\
-	test-gegl-rectangle
+	test-gegl-rectangle		\
+	test-misc			\
+	test-proxynop-processing
 noinst_PROGRAMS = $(TESTS)
 
 # Common CPPFLAGS
