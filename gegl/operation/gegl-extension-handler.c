@@ -44,7 +44,7 @@ gegl_extension_handler_get (const gchar *extension)
   if (handler)
     return handler;
 
-  return "magick-load";
+  return "gegl:magick-load";
 }
 
 void
