@@ -37,6 +37,7 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
+#include "gegl-debug.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-handler.h"
@@ -227,6 +228,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   GEGL_BUFFER_SANITY;
 
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
+             "starting to save buffer %s, roi: %d,%d %dx%d",
+             path, roi->x, roi->y, roi->width, roi->height);
+
   /* a header should follow the same structure as a blockdef with
    * respect to the flags and next offsets, thus this is a valid
    * cast shortcut.
@@ -259,7 +264,8 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   g_assert (info->tile_size % 16 == 0);
 
-  /* collect list of tiles to be written */
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
+             "collecting list of tiles to be written");
   {
     gint width       = buffer->extent.width;
     gint height      = buffer->extent.height;
@@ -302,6 +308,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
                     {
                       GeglBufferTile *entry;
 
+                      GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
+                                 "Found tile to save, tx, ty, z = %d, %d, %d",
+                                 tx, ty, z);
+
                       entry = gegl_tile_entry_new (tx, ty, z);
                       info->tiles = g_list_prepend (info->tiles, entry);
                       info->entry_count++;
@@ -313,7 +323,9 @@ gegl_buffer_save (GeglBuffer          *buffer,
           factor *= 2;
         }
     }
-
+  GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
+             "size of list of tiles to be written: %d",
+             g_list_length (info->tiles));
 
   /* XXX:why was the list reversed here when it is just about to be sorted?
    */
