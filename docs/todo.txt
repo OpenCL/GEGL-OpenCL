@@ -1,0 +1,6 @@
+TODO
+====
+
+* Rename gegl_extension_handler_register() to
+  gegl_extension_handler_register_loader() when looking over
+  gegl-plugin.h

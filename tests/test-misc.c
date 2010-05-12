@@ -42,6 +42,22 @@ test_misc_case_insensitive_extension_handler (void)
   return result;
 }
 
+static int
+test_misc_save_handler (void)
+{
+  gint result = SUCCESS;
+  const gchar *handler = "gegl:bar-handler";
+  const gchar *ext = "barext";
+  const gchar *received_handler = NULL;
+
+  gegl_extension_handler_register_saver (ext, handler);
+  received_handler = gegl_extension_handler_get_saver (ext);
+  if (! strcmp (received_handler, handler) == 0)
+    result = FAILURE;
+  
+  return result;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +65,9 @@ int main(int argc, char *argv[])
 
   if (result == SUCCESS)
     result = test_misc_case_insensitive_extension_handler ();
+
+  if (result == SUCCESS)
+    result = test_misc_save_handler ();
 
   return result;
 }

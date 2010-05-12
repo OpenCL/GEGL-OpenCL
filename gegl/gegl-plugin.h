@@ -83,7 +83,11 @@ GObject        *gegl_operation_context_get_object (GeglOperationContext *context
 
 void            gegl_extension_handler_register    (const gchar         *extension,
                                                     const gchar         *handler);
+void            gegl_extension_handler_register_saver
+                                                   (const gchar         *extension,
+                                                    const gchar         *handler);
 const gchar   * gegl_extension_handler_get         (const gchar         *extension);
+const gchar   * gegl_extension_handler_get_saver   (const gchar         *extension);
 
 
 #include <glib-object.h>
