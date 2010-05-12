@@ -136,6 +136,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description =
         _("PPM image saver (Portable pixmap saver.)");
 
+  gegl_extension_handler_register_saver (".ppm", "gegl:ppm-save");
 }
 
 #endif

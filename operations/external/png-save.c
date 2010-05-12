@@ -207,6 +207,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description =
         _("PNG image saver (passes the buffer through, saves as a side-effect.)");
 
+  gegl_extension_handler_register_saver (".png", "gegl:png-save");
 }
 
 #endif
