@@ -470,6 +470,8 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
   ParseData            pd   = { 0, };
   GMarkupParseContext *context;
 
+  g_return_val_if_fail (xmldata != NULL, NULL);
+
   pd.ids       = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   pd.refs      = NULL;
   pd.path_root = path_root;

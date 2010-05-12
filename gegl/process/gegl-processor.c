@@ -340,7 +340,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
   /* if the node's operation is a sink and it needs the full content then
    * a context will be set up together with a cache and
    * needed and result rectangles */
-  if (GEGL_IS_OPERATION_SINK (processor->node->operation) &&
+  if (processor->node &&
+      GEGL_IS_OPERATION_SINK (processor->node->operation) &&
       gegl_operation_sink_needs_full (processor->node->operation))
     {
       GeglCache *cache;
@@ -608,6 +609,7 @@ gegl_processor_render (GeglProcessor *processor,
     }
   else
     {
+      g_return_val_if_fail (processor->input != NULL, FALSE);
       valid_region = gegl_node_get_cache (processor->input)->valid_region;
     }
 

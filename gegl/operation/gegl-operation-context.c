@@ -74,6 +74,8 @@ gegl_operation_context_set_property (GeglOperationContext *context,
   GParamSpec *pspec;
   GValue     *storage;
 
+  g_return_if_fail (context != NULL);
+
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), property_name);
 
   if (!pspec)
