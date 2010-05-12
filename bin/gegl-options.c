@@ -59,9 +59,8 @@ usage (char *application_name)
 "\n"
 "     --dot       output a graphviz graph description\n"
 ""
-"     --output    output generated image to named file\n"
-"     -o          (file is saved in PNG or PPM format\n"
-"                  depending on the file ending.)\n"
+"     --output    output generated image to named file, type based on\n"
+"     -o          extension.\n"
 "\n"
 "     -p          (increment frame counters of various elements when\n"
 "                  processing is done.)\n"
@@ -233,33 +232,8 @@ parse_args (int    argc,
 
         else if (match ("--output") ||
                  match ("-o")) {
-            const char *trigramstart;
-            int   length;
-
             get_string_forced (o->output);
-
-            length       = strlen (o->output);
-            trigramstart = o->output;
-
-            /* position the pointer at the start of the trigram or
-             * if the string is not long enough, at the end of the string
-             */
-            trigramstart += (length > 3 ? length - 3 : length);
-
-            if (strcmp (trigramstart, "png") == 0 ||
-                strcmp (trigramstart, "PNG") == 0 ) {
-
-                o->mode = GEGL_RUN_MODE_PNG;
-            } else if (strcmp (trigramstart, "ppm") == 0 ||
-                       strcmp (trigramstart, "PPM") == 0) {
-
-                o->mode = GEGL_RUN_MODE_PPM;
-            } else {
-                fprintf (stderr,
-                         "Output file extension not found (%s), using png\n",
-                         o->output);
-                o->mode = GEGL_RUN_MODE_PNG;
-            }
+            o->mode = GEGL_RUN_MODE_OUTPUT;
         }
 
         else if (match ("-X")) {

@@ -33,6 +33,7 @@
 #include "gegl-path-spiro.h"
 #endif
 #include "gegl-path-smooth.h"
+#include "operation/gegl-extension-handler.h"
 
 #ifdef G_OS_WIN32
 #include <direct.h>
@@ -73,6 +74,38 @@ static gboolean file_is_gegl_xml (const gchar *path)
       )
     return TRUE;
   return FALSE;
+}
+
+/**
+ * file_utils_get_ext_start:
+ * @uri:
+ *
+ * Returns the position of the extension (including .) for an URI. If
+ * there is no extension the returned position is right after the
+ * string, at the terminating NULL character.
+ *
+ * Returns:
+ **/
+static const gchar *
+file_utils_get_ext_start (const gchar *uri)
+{
+  const gchar *ext = NULL;
+  int uri_len = strlen (uri);
+  int search_len = 0;
+
+  if (g_strrstr (uri, ".gz"))
+    search_len = uri_len - 3;
+  else if (g_strrstr (uri, ".bz2"))
+    search_len = uri_len - 4;
+  else
+    search_len = uri_len;
+
+  ext = g_strrstr_len (uri, search_len, ".");
+
+  if (! ext)
+    ext = uri + uri_len;
+
+  return ext;
 }
 
 gint
@@ -241,28 +274,19 @@ main (gint    argc,
 	return 0;
         break;
 #endif
-      case GEGL_RUN_MODE_PNG:
+      case GEGL_RUN_MODE_OUTPUT:
         {
+          const gchar *ext = file_utils_get_ext_start (o->output);
+          const gchar *handler = gegl_extension_handler_get_saver (ext);
           GeglNode *output = gegl_node_new_child (gegl,
-						  "operation", "gegl:png-save",
+						  "operation", handler,
 						  "path", o->output,
 						  NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
           g_object_unref (output);
         }
-        break;
-      case GEGL_RUN_MODE_PPM:
-        {
-          GeglNode *output = gegl_node_new_child (gegl,
-						  "operation", "gegl:ppm-save",
-						  "path", o->output,
-						  NULL);
-          gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
-          gegl_node_process (output);
-          g_object_unref (output);
-        }
-        break;
+        break;  
       case GEGL_RUN_MODE_HELP:
         break;
       default:
