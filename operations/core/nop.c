@@ -33,10 +33,10 @@
 
 
 static gboolean
-process (GeglOperation        *operation,
-         GeglOperationContext *context,
-         const gchar          *output_prop,
-         const GeglRectangle  *result)
+gegl_nop_process (GeglOperation        *operation,
+                  GeglOperationContext *context,
+                  const gchar          *output_prop,
+                  const GeglRectangle  *result)
 {
   GeglBuffer *input;
 
@@ -63,7 +63,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass *operation_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  operation_class->process = process;
+  operation_class->process = gegl_nop_process;
 
   operation_class->name       = "gegl:nop";
   operation_class->categories = "core";
