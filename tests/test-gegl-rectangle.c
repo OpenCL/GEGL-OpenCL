@@ -26,8 +26,6 @@
 
 #define INFINITE_PLANE G_MININT / 2, G_MININT / 2, G_MAXINT, G_MAXINT
 
-#define ARRAY_SIZE(array) (sizeof (array) / sizeof (array[0]))
-
 typedef struct
 {
   GeglRectangle rect1;
@@ -180,7 +178,7 @@ int main(int argc, char *argv[])
       goto abort;
     }
 
-  for (i = 0; i < ARRAY_SIZE (tests); i++)
+  for (i = 0; i < G_N_ELEMENTS (tests); i++)
     {
       GeglRectangle result_rect;
       gboolean      return_value;

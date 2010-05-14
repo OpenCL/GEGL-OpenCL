@@ -180,11 +180,9 @@ parse_color_name (GeglColor   *color,
                   const gchar *color_string)
 {
   GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (color);
-
-  gint              num_color_names = sizeof (color_names) / sizeof (color_names[0]);
   gint              i;
 
-  for (i = 0; i < num_color_names; ++i)
+  for (i = 0; i < G_N_ELEMENTS (color_names); ++i)
     {
       if (g_ascii_strcasecmp (color_names[i].color_name, color_string) == 0)
         {

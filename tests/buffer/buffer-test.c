@@ -296,7 +296,7 @@ gint main (gint argc, gchar **argv)
   system ("mkdir output > /dev/null 2>&1");
 
 
-  for (i=0; i<sizeof(tests)/sizeof(tests[0]);i++)
+  for (i=0; i < G_N_ELEMENTS (tests); i++)
     {
       gchar *ret;
 
