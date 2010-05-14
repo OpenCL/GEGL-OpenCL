@@ -309,7 +309,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       rectangle          = &input_bounding_box;
     }
 
-  GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_processor_set_rectangle() node = %s rectangle = %d, %d %d×%d\n",
+  GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_processor_set_rectangle() node = %s rectangle = %d, %d %d×%d",
              gegl_node_get_debug_name (processor->node),
              rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 

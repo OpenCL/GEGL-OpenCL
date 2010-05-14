@@ -68,7 +68,7 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
   node->have_rect = gegl_operation_get_bounding_box (operation);
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS,
-             "For \"%s\" have_rect = %d,%d %d×%d\n",
+             "For \"%s\" have_rect = %d,%d %d×%d",
              gegl_node_get_debug_name (node),
              node->have_rect.x, node->have_rect.y, node->have_rect.width, node->have_rect.height);
   g_mutex_unlock (node->mutex);
