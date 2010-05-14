@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='width'>10.000000</param>
+      <param name='height'>10.000000</param>
+    </params>
+  </node>
+  <node operation='gegl:color'>
+    <params>
+      <param name='value'>rgb(100.0, 100.0, 100.0)</param>
+    </params>
+  </node>
+</gegl>
