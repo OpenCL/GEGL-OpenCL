@@ -225,8 +225,13 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   glong prediction = 0; 
   gint bpp;
+  gint tile_width;
+  gint tile_height;
 
   GEGL_BUFFER_SANITY;
+
+  if (! roi)
+    roi = &buffer->extent;
 
   GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
              "starting to save buffer %s, roi: %d,%d %dx%d",
@@ -244,92 +249,70 @@ gegl_buffer_save (GeglBuffer          *buffer,
 #else
   info->o    = open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 #endif
+  tile_width  = buffer->tile_storage->tile_width;
+  tile_height = buffer->tile_storage->tile_height;
   g_object_get (buffer, "px-size", &bpp, NULL);
-  info->header.x           = buffer->extent.x;
-  info->header.y           = buffer->extent.y;
-  info->header.width       = buffer->extent.width;
-  info->header.height      = buffer->extent.height;
+
+  info->header.x           = roi->x;
+  info->header.y           = roi->y;
+  info->header.width       = roi->width;
+  info->header.height      = roi->height;
   gegl_buffer_header_init (&info->header,
-                           buffer->tile_storage->tile_width,
-                           buffer->tile_storage->tile_height,
+                           tile_width,
+                           tile_height,
                            bpp,
                            buffer->tile_storage->format
                            );
   info->header.next = (prediction += sizeof (GeglBufferHeader));
-
-
-  info->tile_size = info->header.tile_width  *
-                    info->header.tile_height *
-                    info->header.bytes_per_pixel;
+  info->tile_size = tile_width * tile_height * bpp;
 
   g_assert (info->tile_size % 16 == 0);
 
   GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
              "collecting list of tiles to be written");
   {
-    gint width       = buffer->extent.width;
-    gint height      = buffer->extent.height;
-    gint tile_width  = info->header.tile_width;
-    gint tile_height = info->header.tile_height;
-    gint x           = 0;
-    gint y           = 0;
+    gint z;
+    gint factor = 1;
+    int  bufy = roi->y;
 
-    int  bufy;
-
-    if (roi)
+    for (z = 0; z < 1; z++)
       {
-        x      = roi->x;
-        y      = roi->y;
-        width  = roi->width;
-        height = roi->height;
+        bufy = roi->y;
+        while (bufy < roi->y + roi->height)
+          {
+            gint tiledy  = roi->y + bufy;
+            gint offsety = gegl_tile_offset (tiledy, tile_height);
+            gint bufx    = roi->x;
+
+            while (bufx < roi->x + roi->width)
+              {
+                gint tiledx  = roi->x + bufx;
+                gint offsetx = gegl_tile_offset (tiledx, tile_width);
+
+                gint tx = gegl_tile_indice (tiledx / factor, tile_width);
+                gint ty = gegl_tile_indice (tiledy / factor, tile_height);
+
+                if (gegl_tile_source_exist (GEGL_TILE_SOURCE (buffer), tx, ty, z))
+                  {
+                    GeglBufferTile *entry;
+
+                    GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
+                               "Found tile to save, tx, ty, z = %d, %d, %d",
+                               tx, ty, z);
+
+                    entry = gegl_tile_entry_new (tx, ty, z);
+                    info->tiles = g_list_prepend (info->tiles, entry);
+                    info->entry_count++;
+                  }
+                bufx += (tile_width - offsetx) * factor;
+              }
+            bufy += (tile_height - offsety) * factor;
+          }
+        factor *= 2;
       }
-
-    {
-      gint z;
-      gint factor = 1;
-      for (z = 0; z < 1; z++)
-        {
-          bufy = y;
-          while (bufy < buffer->extent.y + height)
-            {
-              gint tiledy  = buffer->extent.y + bufy;
-              gint offsety = gegl_tile_offset (tiledy, tile_height);
-              gint bufx    = x;
-
-              while (bufx < buffer->extent.x + width)
-                {
-                  gint tiledx  = buffer->extent.x + bufx;
-                  gint offsetx = gegl_tile_offset (tiledx, tile_width);
-
-                  gint tx = gegl_tile_indice (tiledx / factor, tile_width);
-                  gint ty = gegl_tile_indice (tiledy / factor, tile_height);
-
-                  if (gegl_tile_source_exist (GEGL_TILE_SOURCE (buffer), tx, ty, z))
-                    {
-                      GeglBufferTile *entry;
-
-                      GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
-                                 "Found tile to save, tx, ty, z = %d, %d, %d",
-                                 tx, ty, z);
-
-                      entry = gegl_tile_entry_new (tx, ty, z);
-                      info->tiles = g_list_prepend (info->tiles, entry);
-                      info->entry_count++;
-                    }
-                  bufx += (tile_width - offsetx) * factor;
-                }
-              bufy += (tile_height - offsety) * factor;
-            }
-          factor *= 2;
-        }
-    }
   GEGL_NOTE (GEGL_DEBUG_BUFFER_SAVE,
              "size of list of tiles to be written: %d",
              g_list_length (info->tiles));
-
-  /* XXX:why was the list reversed here when it is just about to be sorted?
-   */
-/*    info->tiles = g_list_reverse (info->tiles);*/
   }
 
   /* sort the list of tiles into zorder */
