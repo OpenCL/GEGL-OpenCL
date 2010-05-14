@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS
 
+/**
+ * When a node in a GEGL graph does processing, it needs context such
+ * as inputs. This structure holds this stuff and is passed to the
+ * node during processing.
+ */
 struct _GeglOperationContext
 {
   GeglOperation *operation;
