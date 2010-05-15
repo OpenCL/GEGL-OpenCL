@@ -467,7 +467,7 @@ gegl_affine_get_source_matrix (OpAffine    *affine,
   g_assert (IS_OP_AFFINE (source));
 
   gegl_affine_create_composite_matrix (OP_AFFINE (source), output);
-  //gegl_matrix3_copy (output, OP_AFFINE (source)->matrix);
+  /*gegl_matrix3_copy (output, OP_AFFINE (source)->matrix);*/
 }
 
 static GeglRectangle

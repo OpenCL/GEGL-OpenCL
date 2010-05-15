@@ -75,7 +75,7 @@
 #include "gegl-buffer-index.h"
 #include "gegl-config.h"
 
-//#define GEGL_BUFFER_DEBUG_ALLOCATIONS
+/* #define GEGL_BUFFER_DEBUG_ALLOCATIONS */
 
 /* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
  * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()

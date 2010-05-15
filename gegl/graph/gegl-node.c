@@ -845,7 +845,7 @@ gegl_node_apply_roi (GeglNode            *self,
    */
   GeglBuffer *buffer;
 
-  //g_print ("%i %i %i %i %i\n", tid, roi->x, roi->y, roi->width, roi->height);
+  /*g_print ("%i %i %i %i %i\n", tid, roi->x, roi->y, roi->width, roi->height);*/
 
   if (roi)
     {
