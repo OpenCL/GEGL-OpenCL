@@ -17,6 +17,9 @@
  */
 #include "config.h"
 
+/* For clang, remove when getting rid of using PATH_MAX */
+#define _XOPEN_SOURCE 500
+
 #include <glib.h>
 #include <glib-object.h>
 #include <stdlib.h>
