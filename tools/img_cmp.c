@@ -30,7 +30,7 @@ main (gint    argc,
     g_object_unref (graph);
     if (!bufferA)
       {
-        g_print ("Failed top open %s\n", argv[1]);
+        g_print ("Failed to open %s\n", argv[1]);
         return 1;
       }
 
@@ -40,7 +40,7 @@ main (gint    argc,
     g_object_unref (graph);
     if (!bufferB)
       {
-        g_print ("Failed top open %s\n", argv[2]);
+        g_print ("Failed to open %s\n", argv[2]);
         return 1;
       }
   }
