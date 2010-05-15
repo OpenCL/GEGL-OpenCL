@@ -917,12 +917,27 @@ gegl_tile_backend_file_constructor (GType                  type,
         self->io = G_IO_STREAM (g_file_open_readwrite (self->file, NULL, &error));
         if (error)
           {
-            g_warning ("%s: %s", G_STRLOC, error->message);
+            /* Try again but this time with only read access. This is
+             * a quick-fix for make distcheck, where img_cmp fails
+             * when it opens a GeglBuffer file in the source tree
+             * (which is read-only).
+             */
             g_error_free (error);
             error = NULL;
+            self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, &error));
+
+            if (error)
+              {
+                g_warning ("%s: %s", G_STRLOC, error->message);
+                g_error_free (error);
+                error = NULL;
+              }
           }
-        self->o = g_io_stream_get_output_stream (self->io);
-        self->i = g_io_stream_get_input_stream (self->io);
+        else
+          {
+            self->o = g_io_stream_get_output_stream (self->io);
+            self->i = g_io_stream_get_input_stream (self->io);
+          }
       }
 
 #else
@@ -944,8 +959,10 @@ gegl_tile_backend_file_constructor (GType                  type,
       gegl_tile_backend_file_load_index (self, TRUE);
       self->exist = TRUE;
 #if HAVE_GIO
+      /* We can only assert input stream, we won't have an output
+       * stream on read-only files
+       */
       g_assert (self->i);
-      g_assert (self->o);
 #else
       g_assert (self->i != -1);
       g_assert (self->o != -1);
