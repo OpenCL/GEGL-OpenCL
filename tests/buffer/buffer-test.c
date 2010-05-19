@@ -290,6 +290,7 @@ void rectangle (GeglBuffer *buffer,
 gint main (gint argc, gchar **argv)
 {
   gint i;
+  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   /* make tests dir */
