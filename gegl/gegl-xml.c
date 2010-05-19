@@ -71,6 +71,10 @@ struct _ParseData
   GList       *refs;
 };
 
+
+/* Search a paired attribute name/value arrays for an entry with a specific
+ * name, return the value or null if not found.
+ */
 static const gchar *name2val (const gchar **attribute_names,
                               const gchar **attribute_values,
                               const gchar  *name)
@@ -212,6 +216,30 @@ set_clone_prop_as_well:
     }
 }
 
+
+/* Check that the attributes for ELEMENT include an attribute of name NAME,
+ * and store it in the variable of the same name. Else report an error.
+ *
+ * eg:  { collect_attribute (value, 'key'); }
+ */
+#define collect_attribute(NAME, ELEMENT)                                \
+{                                                                       \
+  const gchar *__value = name2val (a, v, (G_STRINGIFY (NAME)));         \
+  if (!__value)                                                         \
+    {                                                                   \
+      *error = g_error_new (G_MARKUP_ERROR,                             \
+                            G_MARKUP_ERROR_MISSING_ATTRIBUTE,           \
+                            "Expected attribute '%s' in element '%s'",  \
+                            (G_STRINGIFY (NAME)),                       \
+                            (ELEMENT));                                 \
+      return;                                                           \
+    }                                                                   \
+  else                                                                  \
+    {                                                                   \
+      (NAME) = __value;                                                 \
+    }                                                                   \
+}
+
 static void start_element (GMarkupParseContext *context,
                            const gchar         *element_name,
                            const gchar        **attribute_names,
@@ -252,19 +280,24 @@ static void start_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "param"))
     {
+      const gchar *name;
       if (pd->param != NULL)
         g_warning ("eek, haven't cleared previous param");
-      g_assert (name2val (a, v, "name"));
-      pd->param = g_strdup (name2val (a, v, "name"));
+
+      collect_attribute (name, "param");
+      pd->param = g_strdup (name);
     }
   else if (!strcmp (element_name, "curve"))
     {
+      const gchar *ymin, *ymax;
       if (pd->curve != NULL)
 	g_warning ("we haven't cleared previous curve");
-      g_assert (name2val (a, v, "ymin"));
-      g_assert (name2val (a, v, "ymax"));
-      pd->curve = gegl_curve_new (g_ascii_strtod (name2val (a, v, "ymin"), NULL),
-				  g_ascii_strtod (name2val (a, v, "ymax"), NULL));
+
+      collect_attribute (ymin, "curve");
+      collect_attribute (ymax, "curve");
+
+      pd->curve = gegl_curve_new (g_ascii_strtod (ymin, NULL),
+				  g_ascii_strtod (ymax, NULL));
     }
   else if (!strcmp (element_name, "curve-point"))
     {
@@ -272,12 +305,13 @@ static void start_element (GMarkupParseContext *context,
 	g_warning ("curve not instantiated");
       else
         {
-	  g_assert (name2val (a, v, "x"));
-	  g_assert (name2val (a, v, "y"));
+          const gchar *x, *y;
+          collect_attribute (x, "curve-point");
+          collect_attribute (y, "curve-point");
 
 	  gegl_curve_add_point (pd->curve,
-				g_ascii_strtod (name2val (a, v, "x"), NULL),
-				g_ascii_strtod (name2val (a, v, "y"), NULL));
+				g_ascii_strtod (x, NULL),
+				g_ascii_strtod (y, NULL));
 	}
     }
   else if (!strcmp (element_name, "link") ||
@@ -308,15 +342,15 @@ static void start_element (GMarkupParseContext *context,
         }
       else if (!strcmp (element_name, "node"))
         {
-          new = gegl_node_new_child (pd->gegl,
-                                     "operation", name2val (a, v, "operation"),
-                                     NULL);
+          const gchar *operation;
+          collect_attribute (operation, "node");
+          new = gegl_node_new_child (pd->gegl, "operation", operation, NULL);
         }
       else if (!strcmp (element_name, "filter"))
         {
-          new = gegl_node_new_child (pd->gegl,
-                                     "operation", name2val (a, v, "type"),
-                                     NULL);
+          const gchar *type;
+          collect_attribute (type, "filter");
+          new = gegl_node_new_child (pd->gegl, "operation", type, NULL);
         }
       else
         {
@@ -324,7 +358,16 @@ static void start_element (GMarkupParseContext *context,
                                      "operation", element_name,
                                      NULL);
         }
-      g_assert (new);
+
+      /* Could not instance an appropriate node */
+      if (!new)
+        {
+          *error = g_error_new (G_MARKUP_ERROR,
+                                G_MARKUP_ERROR_UNKNOWN_ELEMENT,
+                                "Could not instantiate operation '%s'",
+                                element_name);
+          return;
+        }
 
       while (*a)
         {
