@@ -26,7 +26,7 @@
  */
 
 #define test_start()              GString *gstring=g_string_new("");\
-                                  print (("Test: %s\n", G_STRFUNC))
+                                  print (("Test: %s\n", G_STRINGIFY (TESTNAME)))
 #define print(args)		  G_STMT_START {		\
 	gchar *_fmt = g_strdup_printf args;			\
 	g_string_append (gstring, _fmt);			\
