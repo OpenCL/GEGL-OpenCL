@@ -1,4 +1,5 @@
 /.deps
+/.libs
 /Makefile.in
 /Makefile
 /buffer-test
