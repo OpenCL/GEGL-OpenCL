@@ -1,5 +1,5 @@
 
-noinst_PROGRAMS = format pipeline buffer
+noinst_PROGRAMS = format pipeline buffer paint
 
 BUILT_SOURCES = \
 	$(noinst_PROGRAMS:=.vala.stamp)
@@ -63,7 +63,29 @@ buffer.vala.stamp: $(buffer_VALASOURCES)
 	touch $@
 
 
+# PAINT
+paint_VALASOURCES = paint.vala view.vala
+paint_VALAPKGS = \
+	--pkg=gtk+-2.0	\
+	--vapidir=$(top_srcdir) --pkg=babl-0.0 --pkg=gegl-0.0
+
+paint_SOURCES = \
+	paint.vala.stamp \
+	$(paint_VALASOURCES:.vala=.c)
+
+paint_CFLAGS = \
+	$(VALA_TEST_CFLAGS)
+paint_LDFLAGS = \
+	$(VALA_TEST_LIBS) \
+	-lbabl-0.0 -lgegl-0.0
+
+paint.vala.stamp: $(paint_VALASOURCES)
+	valac -C $(paint_VALAPKGS) $^
+	touch $@
+
+
 EXTRA_DIST = \
 	$(format_VALASOURCES)	\
 	$(pipeline_VALASOURCES)	\
-	$(buffer_VALASOURCES)
+	$(buffer_VALASOURCES) \
+	$(paint_VALASOURCES)
