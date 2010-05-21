@@ -15,5 +15,5 @@ namespace Babl {
 	[CCode (cheader_filename = "babl/babl.h")]
 	public static void destroy ();
 	[CCode (cheader_filename = "babl/babl.h")]
-	public static weak Babl.Format format (string name);
+	public static unowned Babl.Format format (string name);
 }
