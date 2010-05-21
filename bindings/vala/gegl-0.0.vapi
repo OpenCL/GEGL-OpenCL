@@ -72,6 +72,44 @@ namespace Gegl {
 		public signal void invalidated (Gegl.Rectangle p0);
 	}
 	[CCode (cheader_filename = "gegl.h")]
+	public struct Point {
+	    public float x;
+	    public float y;
+	}
+	[CCode (cheader_filename = "gegl.h")]
+	public struct PathItem {
+	    public char type;
+	    public Point point[4];
+	}
+	
+	[CCode (cheader_filename = "gegl.h")]
+	public class Path : GLib.Object {
+	    public Path ();
+	    public Path.from_string (string instructions);
+	    public bool is_empty ();
+	    public int get_n_nodes ();
+	    public double get_length ();
+	    public bool get_node (int index, out unowned Gegl.PathItem node);
+	    public unowned string to_string ();
+	    public double closest_point (double x, double y, 
+	                                 double on_path_x, double on_path_y,
+	                                 int node_pos_before);
+	    public void calc (double pos, double x, double y);
+	    public void calc_values (double num_samples, double xs, double ys);
+	    public void get_bounds (out double min_x, out double max_x,
+	    						out double min_y, out double max_y);
+	    public void clear ();
+	    public void insert_node (int pos, Gegl.PathItem node);
+	    public void replace_node (int pos, Gegl.PathItem node);
+	    public void remove_node (int pos);
+	    public void parse_string (string instructions);
+	    public void append (...);
+	    public void freeze ();
+	    public void thaw ();
+	    public void add_type (int items, string description);
+	    
+	}
+	[CCode (cheader_filename = "gegl.h")]
 	public class Buffer : GLib.Object {
 		public void copy (Gegl.Rectangle src_rect, Gegl.Buffer dst, Gegl.Rectangle dst_rect);
 		public Gegl.Buffer create_sub_buffer (Gegl.Rectangle extent);
@@ -88,6 +126,8 @@ namespace Gegl {
 		public void sample_cleanup ();
 		public void save (string path, Gegl.Rectangle roi);
 		public void set (Gegl.Rectangle rect, void* format, void* src, int rowstride);
+		public void* linear_open(Gegl.Rectangle? extent, int? rowstride, Babl.Format format);
+		public void linear_close(void* linear);
 		public bool set_extent (Gegl.Rectangle extent);
 		[NoAccessorMethod]
 		public unowned int abyss_height { get; construct; }
@@ -122,6 +162,7 @@ namespace Gegl {
 		[NoAccessorMethod]
 		public unowned int y { get; set construct; }
 		public signal void changed (Gegl.Rectangle p0);
+		
 	}
 	[CCode (cheader_filename = "gegl.h")]
 	public class Color : GLib.Object {
