@@ -55,6 +55,7 @@ enum
   STATE_TREE_FIRST_CHILD
 };
 
+
 struct _ParseData
 {
   gint         state;
@@ -515,6 +516,7 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
   glong                time = gegl_ticks ();
   ParseData            pd   = { 0, };
   GMarkupParseContext *context;
+  gboolean             success = FALSE;
 
   g_return_val_if_fail (xmldata != NULL, NULL);
 
@@ -522,19 +524,34 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
   pd.refs      = NULL;
   pd.path_root = path_root;
 
-  context = g_markup_parse_context_new (&parser, 0, &pd, NULL);
-  g_markup_parse_context_parse (context, xmldata, strlen (xmldata), NULL);
+  g_list_free (pd.refs);
+  context = g_markup_parse_context_new   (&parser, 0, &pd, NULL);
+  success = g_markup_parse_context_parse (context,
+                                          xmldata,
+                                          strlen (xmldata),
+                                          NULL);
+  if (success)
+    {
+      /* connect clones */
+      g_list_foreach (pd.refs, each_ref, &pd);
+    }
+  else
+    {
+      if (pd.gegl)
+        {
+          g_object_unref (pd.gegl);
+          pd.gegl = NULL;
+        }
+    }
 
-  /* connect clones */
-  g_list_foreach (pd.refs, each_ref, &pd);
-
+  g_list_free (pd.refs);
   g_markup_parse_context_free (context);
   g_hash_table_destroy (pd.ids);
 
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "gegl_parse_xml", time);
 
-  return GEGL_NODE (pd.gegl);
+  return success ? GEGL_NODE (pd.gegl) : NULL;
 }
 
 GeglNode *
