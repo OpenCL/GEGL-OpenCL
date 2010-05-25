@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Ensure that rgb parameters can be specified using floating point and
+     integer values. Integer values are primarily useful for specifying
+     0, 1, or working with HDR.
+
+     Visually, this should appear as cyan square of one tone: right is
+     integer, left is floating point.
+-->
+<gegl>
+  <node operation='gegl:over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='x'>5.000000</param>
+            <param name='y'>0.000000</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+        <params>
+          <param name='width'>5.000000</param>
+          <param name='height'>10.000000</param>
+        </params>
+      </node>
+      <node operation='gegl:color'>
+        <params>
+          <param name='value'>rgb(0, 5, 1)</param>
+        </params>
+      </node>
+  </node>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='width'>10.000000</param>
+      <param name='height'>10.000000</param>
+    </params>
+  </node>
+  <node operation='gegl:color'>
+    <params>
+      <param name='value'>rgb(0.0, 5.0, 1.0)</param>
+    </params>
+  </node>
+</gegl>
+

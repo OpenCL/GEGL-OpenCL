@@ -141,13 +141,21 @@ parse_float_argument_list (GeglColor *color,
    */
   for (i = 0; i < num_arguments; ++i)
     {
-      if (g_scanner_get_next_token (scanner) != G_TOKEN_FLOAT)
+      switch (g_scanner_get_next_token (scanner))
         {
-          return FALSE;
-        }
+          case G_TOKEN_FLOAT:
+            token_value = g_scanner_cur_value (scanner);
+            color->priv->rgba_color[i] = token_value.v_float;
+            break;
 
-      token_value         = g_scanner_cur_value (scanner);
-      color->priv->rgba_color[i] = token_value.v_float;
+          case G_TOKEN_INT:
+            token_value = g_scanner_cur_value (scanner);
+            color->priv->rgba_color[i] = token_value.v_int64;
+            break;
+
+          default:
+            return FALSE;
+        }
 
       /* Verify that there is a ',' after each float, except the last one */
       if (i < (num_arguments - 1))
