@@ -276,10 +276,8 @@ main (gint    argc,
 #endif
       case GEGL_RUN_MODE_OUTPUT:
         {
-          const gchar *ext = file_utils_get_ext_start (o->output);
-          const gchar *handler = gegl_extension_handler_get_saver (ext);
           GeglNode *output = gegl_node_new_child (gegl,
-						  "operation", handler,
+						  "operation", "gegl:save",
 						  "path", o->output,
 						  NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
