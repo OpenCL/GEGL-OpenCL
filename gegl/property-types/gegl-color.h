@@ -30,11 +30,13 @@ G_BEGIN_DECLS
 #define GEGL_IS_COLOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR))
 #define GEGL_COLOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR, GeglColorClass))
 
-typedef struct _GeglColorClass  GeglColorClass;
+typedef struct _GeglColorClass   GeglColorClass;
+typedef struct _GeglColorPrivate GeglColorPrivate;
 
 struct _GeglColor
 {
-  GObject parent_instance;
+  GObject           parent_instance;
+  GeglColorPrivate *priv;
 };
 
 struct _GeglColorClass

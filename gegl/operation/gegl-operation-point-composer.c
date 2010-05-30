@@ -61,7 +61,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
 
   composer_class->process = gegl_operation_point_composer_process;
   operation_class->prepare = prepare;
-  operation_class->no_cache =TRUE;
+  operation_class->no_cache = FALSE;
   operation_class->process = gegl_operation_composer_process2;
 }
 

@@ -33,7 +33,6 @@ enum
   PROP_STRING
 };
 
-typedef struct _GeglColorPrivate GeglColorPrivate;
 typedef struct _ColorNameEntity ColorNameEntity;
 
 struct _GeglColorPrivate
@@ -95,14 +94,13 @@ static const gfloat init_color[4] = { 1.f, 1.f, 1.f, 1.f };
 
 G_DEFINE_TYPE (GeglColor, gegl_color, G_TYPE_OBJECT)
 
-#define GEGL_COLOR_GET_PRIVATE(o)    (G_TYPE_INSTANCE_GET_PRIVATE ((o), GEGL_TYPE_COLOR, GeglColorPrivate))
 
 static void
 gegl_color_init (GeglColor *self)
 {
-  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE ((self), GEGL_TYPE_COLOR, GeglColorPrivate);
 
-  memcpy (priv->rgba_color, init_color, sizeof (init_color));
+  memcpy (self->priv->rgba_color, init_color, sizeof (init_color));
 }
 
 static void
@@ -130,10 +128,7 @@ parse_float_argument_list (GeglColor *color,
 {
   GTokenType        token_type;
   GTokenValue       token_value;
-  GeglColorPrivate *priv;
   gint              i;
-
-  priv = GEGL_COLOR_GET_PRIVATE (color);
 
   /* Make sure there is a leading '(' */
   if (g_scanner_get_next_token (scanner) != G_TOKEN_LEFT_PAREN)
@@ -152,7 +147,7 @@ parse_float_argument_list (GeglColor *color,
         }
 
       token_value         = g_scanner_cur_value (scanner);
-      priv->rgba_color[i] = token_value.v_float;
+      color->priv->rgba_color[i] = token_value.v_float;
 
       /* Verify that there is a ',' after each float, except the last one */
       if (i < (num_arguments - 1))
@@ -179,14 +174,13 @@ static gboolean
 parse_color_name (GeglColor   *color,
                   const gchar *color_string)
 {
-  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (color);
   gint              i;
 
   for (i = 0; i < G_N_ELEMENTS (color_names); ++i)
     {
       if (g_ascii_strcasecmp (color_names[i].color_name, color_string) == 0)
         {
-          memcpy (priv->rgba_color, color_names[i].rgba_color, sizeof (color_names[i].rgba_color));
+          memcpy (color->priv->rgba_color, color_names[i].rgba_color, sizeof (color_names[i].rgba_color));
           return TRUE;
         }
     }
@@ -200,7 +194,6 @@ parse_hex (GeglColor   *color,
 {
   gint              i;
   gsize             string_length = strlen (color_string);
-  GeglColorPrivate *priv          = GEGL_COLOR_GET_PRIVATE (color);
 
   if (string_length == 7 ||  /* #rrggbb   */
       string_length == 9)    /* #rrggbbaa */
@@ -211,7 +204,7 @@ parse_hex (GeglColor   *color,
           if (g_ascii_isxdigit (color_string[2 * i + 1]) &&
               g_ascii_isxdigit (color_string[2 * i + 2]))
             {
-              priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[2 * i + 1]) << 4 |
+              color->priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[2 * i + 1]) << 4 |
                                      g_ascii_xdigit_value (color_string[2 * i + 2])) / 255.f;
             }
           else
@@ -231,7 +224,7 @@ parse_hex (GeglColor   *color,
         {
           if (g_ascii_isxdigit (color_string[i + 1]))
             {
-              priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[i + 1]) << 4 |
+              color->priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[i + 1]) << 4 |
                                      g_ascii_xdigit_value (color_string[i + 1])) / 255.f;
             }
           else
@@ -252,10 +245,8 @@ parse_hex (GeglColor   *color,
 const gfloat *
 gegl_color_float4 (GeglColor *self)
 {
-  GeglColorPrivate *priv;
   g_return_val_if_fail (GEGL_IS_COLOR (self), NULL);
-  priv = GEGL_COLOR_GET_PRIVATE (self);
-  return &priv->rgba_color[0];
+  return &self->rgba_color[0];
 }
 #endif
 
@@ -263,15 +254,12 @@ void
 gegl_color_get_rgba4f (GeglColor   *color,
                        gfloat      *rgba)
 {
-  GeglColorPrivate *priv;
   gint i;
 
   g_return_if_fail (GEGL_IS_COLOR (color));
 
-  priv = GEGL_COLOR_GET_PRIVATE (color);
-
   for (i=0; i< 4; i++)
-    rgba[i] = priv->rgba_color[i];
+    rgba[i] = color->priv->rgba_color[i];
 }
 
 void
@@ -281,16 +269,12 @@ gegl_color_set_rgba (GeglColor *self,
                      gdouble    b,
                      gdouble    a)
 {
-  GeglColorPrivate *priv;
-
   g_return_if_fail (GEGL_IS_COLOR (self));
 
-  priv = GEGL_COLOR_GET_PRIVATE (self);
-
-  priv->rgba_color[0] = r;
-  priv->rgba_color[1] = g;
-  priv->rgba_color[2] = b;
-  priv->rgba_color[3] = a;
+  self->priv->rgba_color[0] = r;
+  self->priv->rgba_color[1] = g;
+  self->priv->rgba_color[2] = b;
+  self->priv->rgba_color[3] = a;
 }
 
 void
@@ -300,16 +284,12 @@ gegl_color_get_rgba (GeglColor *self,
                      gdouble   *b,
                      gdouble   *a)
 {
-  GeglColorPrivate *priv;
-
   g_return_if_fail (GEGL_IS_COLOR (self));
 
-  priv = GEGL_COLOR_GET_PRIVATE (self);
-
-  *r = priv->rgba_color[0];
-  *g = priv->rgba_color[1];
-  *b = priv->rgba_color[2];
-  *a = priv->rgba_color[3];
+  *r = self->priv->rgba_color[0];
+  *g = self->priv->rgba_color[1];
+  *b = self->priv->rgba_color[2];
+  *a = self->priv->rgba_color[3];
 }
 
 static void
@@ -320,13 +300,10 @@ gegl_color_set_from_string (GeglColor   *self,
   GTokenType        token_type;
   GTokenValue       token_value;
   gboolean          color_parsing_successfull;
-  GeglColorPrivate *priv;
 
   scanner                               = g_scanner_new (NULL);
   scanner->config->cpair_comment_single = "";
   g_scanner_input_text (scanner, color_string, strlen (color_string));
-
-  priv = GEGL_COLOR_GET_PRIVATE (self);
 
   token_type  = g_scanner_get_next_token (scanner);
   token_value = g_scanner_cur_value (scanner);
@@ -335,7 +312,7 @@ gegl_color_set_from_string (GeglColor   *self,
       g_ascii_strcasecmp (token_value.v_identifier, "rgb") == 0)
     {
       color_parsing_successfull = parse_float_argument_list (self, scanner, 3);
-      priv->rgba_color[3]       = 1.f;
+      self->priv->rgba_color[3]       = 1.f;
     }
   else if (token_type == G_TOKEN_IDENTIFIER &&
            g_ascii_strcasecmp (token_value.v_identifier, "rgba") == 0)
@@ -357,7 +334,7 @@ gegl_color_set_from_string (GeglColor   *self,
 
   if (!color_parsing_successfull)
     {
-      memcpy (priv->rgba_color,
+      memcpy (self->priv->rgba_color,
               parsing_error_color,
               sizeof (parsing_error_color));
       g_warning ("Parsing of color string \"%s\" into GeglColor failed! "
@@ -371,23 +348,21 @@ gegl_color_set_from_string (GeglColor   *self,
 static gchar *
 gegl_color_get_string (GeglColor *color)
 {
-  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (color);
-
-  if (priv->rgba_color[3] == 1.0)
+  if (color->priv->rgba_color[3] == 1.0)
     {
       gchar buf [3][G_ASCII_DTOSTR_BUF_SIZE];
-      g_ascii_formatd (buf[0], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[0]);
-      g_ascii_formatd (buf[1], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[1]);
-      g_ascii_formatd (buf[2], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[2]);
+      g_ascii_formatd (buf[0], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[0]);
+      g_ascii_formatd (buf[1], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[1]);
+      g_ascii_formatd (buf[2], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[2]);
       return g_strdup_printf ("rgb(%s, %s, %s)", buf[0], buf[1], buf[2]);
     }
   else
     {
       gchar buf [4][G_ASCII_DTOSTR_BUF_SIZE];
-      g_ascii_formatd (buf[0], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[0]);
-      g_ascii_formatd (buf[1], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[1]);
-      g_ascii_formatd (buf[2], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[2]);
-      g_ascii_formatd (buf[3], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", priv->rgba_color[3]);
+      g_ascii_formatd (buf[0], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[0]);
+      g_ascii_formatd (buf[1], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[1]);
+      g_ascii_formatd (buf[2], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[2]);
+      g_ascii_formatd (buf[3], G_ASCII_DTOSTR_BUF_SIZE, "%1.4f", color->priv->rgba_color[3]);
       return g_strdup_printf ("rgba(%s, %s, %s, %s)", buf[0], buf[1], buf[2], buf[3]);
     }
 }
