@@ -390,8 +390,7 @@ path_calc (GeglPathList *path,
            gdouble      *yd)
 {
   GeglPathList *iter = path;
-  gfloat traveled_length = 0;
-  gfloat need_to_travel = 0;
+  gfloat traveled = 0, next_pos = 0;
   gfloat x = 0, y = 0;
 
   while (iter)
@@ -402,20 +401,12 @@ path_calc (GeglPathList *path,
           case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
-            need_to_travel = 0;
-            traveled_length = 0;
             break;
 
           case 'L':
             {
               Point a,b;
-
-              gfloat spacing;
-              gfloat local_pos;
               gfloat distance;
-              gfloat offset;
-              gfloat leftover;
-
 
               a.x = x;
               a.y = y;
@@ -423,35 +414,22 @@ path_calc (GeglPathList *path,
               b.x = iter->d.point[0].x;
               b.y = iter->d.point[0].y;
 
-              spacing = 0.2;
-
               distance = point_dist (&a, &b);
+              next_pos += distance;
 
-              leftover = need_to_travel - traveled_length;
-              offset = spacing - leftover;
+              if (pos <= next_pos)
+                {
+                  Point spot;
+                  gfloat ratio = (pos - traveled) / (next_pos - traveled);
 
-              local_pos = offset;
+                  lerp (&spot, &a, &b, ratio);
 
-              if (distance > 0)
-                for (;
-                     local_pos <= distance;
-                     local_pos += spacing)
-                  {
-                    Point spot;
-                    gfloat ratio = local_pos / distance;
+                  *xd = spot.x;
+                  *yd = spot.y;
+                  return;
+                }
 
-                    lerp (&spot, &a, &b, ratio);
-
-                    traveled_length += spacing;
-                    if (traveled_length > pos)
-                      {
-                        *xd = spot.x;
-                        *yd = spot.y;
-                        return;
-                      }
-                  }
-
-              need_to_travel += distance;
+              traveled = next_pos;
 
               x = b.x;
               y = b.y;
@@ -473,15 +451,15 @@ static void path_calc_values (GeglPathList *path,
                               gdouble      *xs,
                               gdouble      *ys)
 {
+  GeglPathList *iter = path;
   gdouble length = path_get_length (path);
+  gfloat spacing = length / (num_samples-1);
+  
+  gfloat traveled = 0, next_pos = 0, next_sample = 0;
+  gfloat x = 0, y = 0;
+  
   gint i=0;
-  gfloat traveled_length = 0;
-  gfloat need_to_travel = 0;
-  gfloat x = 0,y = 0;
-  GeglPathList *iter;
-  gfloat spacing = length / num_samples;
 
-  iter = path;
   while (iter)
     {
       /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
@@ -490,18 +468,11 @@ static void path_calc_values (GeglPathList *path,
           case 'M':
             x = iter->d.point[0].x;
             y = iter->d.point[0].y;
-            need_to_travel = 0;
-            traveled_length = 0;
             break;
           case 'L':
             {
               Point a,b;
-
-              gfloat local_pos;
               gfloat distance;
-              gfloat offset;
-              gfloat leftover;
-
 
               a.x = x;
               a.y = y;
@@ -510,40 +481,31 @@ static void path_calc_values (GeglPathList *path,
               b.y = iter->d.point[0].y;
 
               distance = point_dist (&a, &b);
+              next_pos += distance;
 
-              leftover = need_to_travel - traveled_length;
-              offset = spacing - leftover;
+              while (next_sample <= next_pos)
+                {
+                  Point spot;
+                  gfloat ratio = (next_sample - traveled) / (next_pos - traveled);
 
-              local_pos = offset;
+                  lerp (&spot, &a, &b, ratio);
+                  
+                  xs[i]=spot.x;
+                  ys[i]=spot.y;
 
-              if (distance > 0)
-                for (;
-                     local_pos <= distance;
-                     local_pos += spacing)
-                  {
-                    Point spot;
-                    gfloat ratio = local_pos / distance;
-
-                    lerp (&spot, &a, &b, ratio);
-
-                    /*gegl_path_stamp (buffer, clip_rect,
-                      spot.x, spot.y, radius, hardness, color, gopacity);*/
-                    xs[i]=spot.x;
-                    ys[i]=spot.y;
-
-                    traveled_length += spacing;
-                    i++;
-                  }
+                  next_sample += spacing;
+                  i++;
+                }
               if (!iter->next)
                 {
                   xs[num_samples-1]=b.x;
                   ys[num_samples-1]=b.y;
                 }
 
-              need_to_travel += distance;
-
               x = b.x;
               y = b.y;
+
+              traveled = next_pos;
             }
 
             break;
