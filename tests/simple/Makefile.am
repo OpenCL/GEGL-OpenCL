@@ -8,6 +8,7 @@ TESTS = \
 	test-color-op			\
 	test-gegl-rectangle		\
 	test-misc			\
+	test-path			\
 	test-proxynop-processing
 noinst_PROGRAMS = $(TESTS)
 
