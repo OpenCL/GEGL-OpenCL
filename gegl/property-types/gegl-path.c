@@ -446,6 +446,90 @@ path_calc (GeglPathList *path,
     }
 }
 
+static void
+path_calc2 (GeglPathList *path,
+           gdouble       pos,
+           gdouble      *xd,
+           gdouble      *yd,
+           GeglPathList **stop,
+           gdouble      *leftover)
+{
+  GeglPathList *iter = path, *prev = NULL;
+  gfloat traveled = 0.0, next_pos = 0.0;
+
+    
+
+  while (iter && !prev)
+  /* fetch the start point of the path */
+    {
+      /* fprintf (stderr, "%c, %f %f\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
+      switch (iter->d.type)
+        {
+          case 'M':
+          case 'L':
+            prev = iter;
+            break;
+          default :
+            break;
+        }
+      iter = iter->next;          
+    }
+
+  while (iter)
+  /* travel along the path */
+    {
+      /* fprintf (stderr, "%c, %f %f\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
+      switch (iter->d.type)
+        {
+          case 'M':
+            prev = iter;
+            break;
+
+          case 'L':
+            {
+              Point a,b;
+              gfloat distance;
+
+              a.x = prev->d.point[0].x;
+              a.y = prev->d.point[0].y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              distance = point_dist (&a, &b);
+              next_pos += distance;
+
+              if (pos <= next_pos)
+                {
+                  Point spot;
+                  gfloat ratio = (pos - traveled) / (next_pos - traveled);
+
+                  lerp (&spot, &a, &b, ratio);
+
+                  *xd = spot.x;
+                  *yd = spot.y;
+
+                  *stop = prev;
+                  *leftover += traveled;
+                  return;
+                }
+
+              traveled = next_pos;
+
+              prev = iter;
+            }
+            break;
+          case 's':
+            break;
+          default:
+            g_warning ("can't compute length for instruction: %c\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+  fprintf (stderr, "outside iterator bounds");
+}
+
 static void path_calc_values (GeglPathList *path,
                               guint         num_samples,
                               gdouble      *xs,
@@ -615,6 +699,10 @@ struct _GeglPathPrivate
   gdouble       length;
   gboolean      length_clean;
 
+  GeglPathList *calc_stop;
+  gdouble       calc_leftover;
+  gboolean      calc_clean;
+
   GeglRectangle dirtied;
   GeglRectangle cached_extent;
   GeglMatrix3   matrix;
@@ -755,6 +843,7 @@ static void ensure_flattened (GeglPath *vector)
     gegl_path_list_destroy (path);
   priv->flat_path_clean = TRUE;
   priv->length_clean = FALSE;
+  priv->calc_clean = FALSE;
 }
 
 static void
@@ -883,6 +972,7 @@ gegl_path_new (void)
   gegl_path_init (self);
   priv->flat_path_clean = FALSE;
   priv->length_clean = FALSE;
+  priv->calc_clean = FALSE;
 
   return self;
 }
@@ -972,10 +1062,33 @@ gegl_path_calc (GeglPath   *self,
                 gdouble    *yd)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
+  GeglPathList *entry = priv->flat_path;
+  GeglPathList *stop  = NULL;
+  gdouble rel_pos  = 0.0;
+  gdouble leftover = 0.0;
+
   if (!self)
     return;
   ensure_flattened (self);
+#if 0
   path_calc (priv->flat_path, pos, xd, yd);
+#endif
+  if (priv->calc_clean && (pos > priv->calc_leftover))
+    {
+      entry    = priv->calc_stop;
+      leftover = priv->calc_leftover;
+      rel_pos  = pos - leftover;
+    }
+  else
+    {
+      rel_pos = pos;
+    }
+    
+  path_calc2 (entry,rel_pos,xd,yd,&stop,&leftover);
+  
+  priv->calc_stop = stop;
+  priv->calc_leftover = leftover;
+  priv->calc_clean = TRUE;
 }
 
 
