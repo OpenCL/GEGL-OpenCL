@@ -1242,6 +1242,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     GSList   *output_c        = NULL;
     GeglNode *output          = NULL;
     gchar    *output_dest_pad = NULL;
+    GSList   *old_pads        = NULL;
     GeglNode *input           = NULL;
     GeglNode *aux             = NULL;
 
@@ -1270,19 +1271,17 @@ gegl_node_set_operation_object (GeglNode      *self,
     gegl_node_disconnect_sources (self);
     gegl_node_disconnect_sinks (self);
 
-    /* FIXME: handle this in a more generic way, but it is needed to allow
-     * the attach to work properly.
-     */
-
-    if (gegl_node_get_pad (self, "output"))
-      gegl_node_remove_pad (self, gegl_node_get_pad (self, "output"));
-    if (gegl_node_get_pad (self, "input"))
-      gegl_node_remove_pad (self, gegl_node_get_pad (self, "input"));
-    if (gegl_node_get_pad (self, "aux"))
-      gegl_node_remove_pad (self, gegl_node_get_pad (self, "aux"));
+    /* Delete all the pads from the previous operation */
+    while ((old_pads = gegl_node_get_pads (self)) != NULL) 
+      {
+        gegl_node_remove_pad (self, old_pads->data);
+      }
 
     gegl_operation_attach (operation, self);
 
+    /* FIXME: handle this in a more generic way, but it is needed to allow
+     * the attach to work properly.
+     */
     if (input)
       gegl_node_connect_from (self, "input", input, "output");
     if (aux)
