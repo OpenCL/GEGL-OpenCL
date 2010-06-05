@@ -88,6 +88,16 @@ gboolean    gegl_rectangle_equal_coords  (const GeglRectangle *rectangle,
                                           gint                 height);
 
 /**
+ * gegl_rectangle_is_empty:
+ * @rectangle: a #GeglRectangle
+ *
+ * Check if a rectangle has zero area.
+ *
+ * Returns TRUE if @rectangle height and width are both zero.
+ */
+gboolean    gegl_rectangle_is_empty     (const GeglRectangle *rectangle);
+
+/**
  * gegl_rectangle_copy:
  * @destination: a #GeglRectangle
  * @source: a #GeglRectangle

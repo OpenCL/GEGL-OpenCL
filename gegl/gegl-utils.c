@@ -127,6 +127,8 @@
   gegl_rectangle_contains (const GeglRectangle *r,
                            const GeglRectangle *s)
   {
+    g_return_val_if_fail (r && s, FALSE);
+
     if (s->x >= r->x &&
         s->y >= r->y &&
         (s->x + s->width) <= (r->x + r->width) &&
@@ -140,6 +142,8 @@
   gegl_rectangle_equal (const GeglRectangle *r,
                         const GeglRectangle *s)
   {
+    g_return_val_if_fail (r && s, FALSE);
+
     if (r->x == s->x &&
         r->y == s->y &&
         r->width == s->width &&
@@ -156,6 +160,8 @@
                                gint                 w,
                                gint                 h)
   {
+    g_return_val_if_fail (r, FALSE);
+
     if (r->x == x &&
         r->y == y &&
         r->width == w &&
@@ -163,6 +169,13 @@
       return TRUE;
     else
       return FALSE;
+  }
+
+  gboolean
+  gegl_rectangle_is_empty (const GeglRectangle *r)
+  {
+    g_return_val_if_fail (r != NULL, FALSE);
+    return r->width == 0 && r->height == 0;
   }
 
   static GeglRectangle *
