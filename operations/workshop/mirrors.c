@@ -68,7 +68,7 @@ gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
 #endif
 
 #if 0
-#define DO_NOT_USE_BUFFER_SAMPLE       /* Define this to see basic tracing info. */
+#define DO_NOT_USE_BUFFER_SAMPLE       /* Define this to disable buffer sample.*/
 #endif
 
 static int
@@ -111,34 +111,31 @@ calc_undistorted_coords(double wx, double wy,
 /* Apply the actual transform */
 
 static void
-apply_mirror (double mirror_angle,
-              double result_angle,
-              int nsegs,
-              double cen_x,
-              double cen_y,
-              double off_x,
-              double off_y,
-	      double input_scale,
-              gboolean clip,
-              gboolean warp,
-	      Babl    *format,
-              GeglBuffer *src,
+apply_mirror (double         mirror_angle,
+              double         result_angle,
+              int            nsegs,
+              double         cen_x,
+              double         cen_y,
+              double         off_x,
+              double         off_y,
+              double         input_scale,
+              gboolean       clip,
+              gboolean       warp,
+              Babl          *format,
+              GeglBuffer    *src,
               GeglRectangle *in_boundary,
-              GeglBuffer *dst,
+              GeglBuffer    *dst,
               GeglRectangle *boundary,
-              const GeglRectangle *roi)
+              GeglRectangle *roi)
 {
-#ifdef DO_NOT_USE_BUFFER_SAMPLE
+  const GeglRectangle *src_extent;
+  const GeglRectangle *dst_extent;
   gfloat *src_buf;
-  gint spx_pos, dpx_pos, ix, iy;
-#endif
   gfloat *dst_buf;
-  gint row, col;
+  gint    row, col, spx_pos, dpx_pos, ix, iy;
   gdouble cx, cy;
-//   double eff_width = (in_boundary->width - in_boundary->x);
-//   double eff_height = (in_boundary->height - in_boundary->y);
+
   /* Get src pixels. */
-  //
 
   #ifdef TRACE
     g_warning ("> mirror marker1, boundary x:%d, y:%d, w:%d, h:%d, center: (%f, %f) offset: (%f, %f)", boundary->x, boundary->y, boundary->width, boundary->height, cen_x, cen_y, off_x,off_y );
@@ -163,55 +160,62 @@ apply_mirror (double mirror_angle,
                                   &cx, &cy);
 
 
-	/* apply scale*/
-	cx = in_boundary->x + (cx - in_boundary->x) / input_scale;
-	cy = in_boundary->y + (cy - in_boundary->y) / input_scale;
+  /* apply scale*/
+  cx = in_boundary->x + (cx - in_boundary->x) / input_scale;
+  cy = in_boundary->y + (cy - in_boundary->y) / input_scale;
 
         /*Warping*/
-        if (warp) {
+        if (warp)
+          {
+            double dx = cx - in_boundary->x;
+            double dy = cy - in_boundary->y;
 
-		double dx = cx - in_boundary->x;
-		double dy = cy - in_boundary->y;
+            double width_overrun = ceil ((dx) / (in_boundary->width)) ;
+            double height_overrun = ceil ((dy) / (in_boundary->height));
 
-		double width_overrun = ceil ((dx) / (in_boundary->width)) ;
-		double height_overrun = ceil ((dy) / (in_boundary->height));
+            if (cx <= (in_boundary->x))
+              {
+                if ( fabs (fmod (width_overrun, 2)) < 1.0)
+                  cx = in_boundary->x - fmod (dx, in_boundary->width);
+                else
+                  cx = in_boundary->x + in_boundary->width + fmod (dx, in_boundary->width);
+              }
 
-                if (cx <= (in_boundary->x)) {
-		  if ( fabs (fmod (width_overrun, 2)) < 1.0)
-                        cx = in_boundary->x - fmod (dx, in_boundary->width);
-		  else
-		        cx = in_boundary->x + in_boundary->width + fmod (dx, in_boundary->width);
-		}
-                if (cy <= (in_boundary->y)) {
-                     if ( fabs (fmod (height_overrun, 2)) < 1.0)
-                        cy = in_boundary->y + fmod (dy, in_boundary->height);
-		     else
-			cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
-		}
+            if (cy <= (in_boundary->y))
+              {
+                if ( fabs (fmod (height_overrun, 2)) < 1.0)
+                  cy = in_boundary->y + fmod (dy, in_boundary->height);
+                else
+                  cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
+              }
 
-                if (cx >= (in_boundary->x + in_boundary->width)) {
-		      if ( fabs (fmod (width_overrun, 2)) < 1.0)
-                        cx = in_boundary->x + in_boundary->width - fmod (dx, in_boundary->width);
-		      else
-			cx = in_boundary->x + fmod (dx, in_boundary->width);
-		}
-                if (cy >= (in_boundary->y + in_boundary->height)) {
-		  if ( fabs (fmod (height_overrun, 2)) < 1.0)
-                        cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
-		  else
-			cy = in_boundary->y + fmod (dy, in_boundary->height);
-		}
-        }
-        else {
-                if (cx < boundary->x)
-                        cx = 0;
-                if (cy < boundary->x)
-                        cy = 0;
+            if (cx >= (in_boundary->x + in_boundary->width))
+              {
+                if ( fabs (fmod (width_overrun, 2)) < 1.0)
+                  cx = in_boundary->x + in_boundary->width - fmod (dx, in_boundary->width);
+                else
+                  cx = in_boundary->x + fmod (dx, in_boundary->width);
+              }
 
-                if (cx >= boundary->width)
-                        cx = boundary->width - 1;
-                if (cy >= boundary->height)
-                        cy = boundary->height -1;
+            if (cy >= (in_boundary->y + in_boundary->height))
+              {
+                if ( fabs (fmod (height_overrun, 2)) < 1.0)
+                  cy = in_boundary->y + in_boundary->height - fmod (dy, in_boundary->height);
+                else
+                  cy = in_boundary->y + fmod (dy, in_boundary->height);
+              }
+          }
+        else /* cliping */
+          {
+            if (cx < boundary->x)
+              cx = 0;
+            if (cy < boundary->x)
+              cy = 0;
+
+            if (cx >= boundary->width)
+              cx = boundary->width - 1;
+            if (cy >= boundary->height)
+              cy = boundary->height -1;
         }
 
 
@@ -323,6 +327,10 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
+
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
   GeglRectangle  result = get_effective_area (operation);
 
   #ifdef TRACE
@@ -354,6 +362,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
   GeglRectangle  eff_boundary = get_effective_area (operation);
+  GeglRectangle *in_boundary = gegl_operation_source_get_bounding_box (operation, "input");
   Babl *format = babl_format ("RaGaBaA float");
 
 
@@ -367,12 +376,12 @@ process (GeglOperation       *operation,
                 o->c_y * boundary.height,
                 o->o_x * (eff_boundary.width  - eff_boundary.x) + eff_boundary.x,
                 o->o_y * (eff_boundary.height - eff_boundary.y) + eff_boundary.y,
-		o->input_scale / 100,
+                o->input_scale / 100,
                 o->clip,
                 o->warp,
-		format,
+                format,
                 input,
-		&eff_boundary,
+                &eff_boundary,
                 output,
                 &boundary,
                 result);
