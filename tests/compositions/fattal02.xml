@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:fattal02'>
+    <params>
+      <param name='alpha'>0.8</param>
+      <param name='beta'>0.6</param>
+      <param name='saturation'>0.8</param>
+      <param name='noise'>0.0</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/parliament.hdr</param>
+    </params>
+  </node>
+</gegl>
+
