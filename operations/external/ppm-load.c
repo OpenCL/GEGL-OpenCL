@@ -51,10 +51,10 @@ typedef struct {
 	guchar    *data;
 } pnm_struct;
 
-static void
+static gboolean
 ppm_load_read_header(FILE       *fp,
                      pnm_struct *img)
-  {
+{
     /* PPM Headers Variable Declaration */
     gchar *ptr;
     gchar *retval;
@@ -65,10 +65,11 @@ ppm_load_read_header(FILE       *fp,
 
     if (header[0] != ASCII_P ||
         (header[1] != PIXMAP_ASCII &&
-         header[1] != PIXMAP_RAW
-        )
-       )
-      printf ("Image is not a portable pixmap\n");
+         header[1] != PIXMAP_RAW))
+      {
+        g_warning ("Image is not a portable pixmap\n");
+        return FALSE;
+      }
 
     img->type = header[1];
 
@@ -88,7 +89,9 @@ ppm_load_read_header(FILE       *fp,
     retval = fgets (header,100,fp);
     /* Maxval is not used */
     img->maxval = (int) strtol (header,&ptr,0);
-  }
+
+    return TRUE;
+}
 
 static void
 ppm_load_read_image(FILE       *fp,
@@ -126,7 +129,11 @@ get_bounding_box (GeglOperation *operation)
     {
       return result;
     }
-  ppm_load_read_header (fp, &img);
+
+  if (!ppm_load_read_header (fp, &img))
+    {
+      return result;
+    }
 
   if (stdin != fp)
     {
@@ -158,7 +165,11 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  ppm_load_read_header (fp, &img);
+  if (!ppm_load_read_header (fp, &img))
+    {
+      return FALSE;
+    }
+
   rect.height = img.height;
   rect.width = img.width;
 
