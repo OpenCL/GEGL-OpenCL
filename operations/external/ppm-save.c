@@ -24,7 +24,7 @@
 
 gegl_chant_string  (path, _("File"), "",
                     _("Target path and filename, use '-' for stdout."))
-gegl_chant_boolean (rawformat, _("Raw format"), FALSE, _("Raw format"))
+gegl_chant_boolean (rawformat, _("Raw format"), TRUE, _("Raw format"))
 gegl_chant_int     (bitdepth, _("Bitdepth"),
                     8, 16, 16,
                     _("8 and 16 are amongst the currently accepted values."))
