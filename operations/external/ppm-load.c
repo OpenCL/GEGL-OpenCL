@@ -28,11 +28,11 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 
 #define GEGL_CHANT_TYPE_SOURCE
 #define GEGL_CHANT_C_FILE       "ppm-load.c"
-        
+
 #define MAX_CHARS_IN_ROW        500
 #define CHANNEL_COUNT           3
 #define ASCII_P                 80
-        
+
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,7 +71,7 @@ ppm_load_read_header(FILE       *fp,
     retval = fgets (header,MAX_CHARS_IN_ROW,fp);
 
     if (header[0] != ASCII_P ||
-        (header[1] != PIXMAP_ASCII && 
+        (header[1] != PIXMAP_ASCII &&
          header[1] != PIXMAP_RAW
         )
        )
