@@ -53,13 +53,6 @@ typedef struct {
 
 static void
 ppm_load_read_header(FILE       *fp,
-                     pnm_struct *img);
-static void
-ppm_load_read_image(FILE       *fp,
-                    pnm_struct *img);
-
-static void
-ppm_load_read_header(FILE       *fp,
                      pnm_struct *img)
   {
     /* PPM Headers Variable Declaration */
