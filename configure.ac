@@ -49,6 +49,7 @@ m4_define([librsvg_required_version], [2.14.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
 m4_define([openraw_required_version], [0.0.5])
+m4_define([jasper_required_version], [1.900.1])
 m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
@@ -816,6 +817,25 @@ AC_SUBST(OPENRAW_CFLAGS)
 AC_SUBST(OPENRAW_LIBS) 
 
 
+##################
+# Check for Jasper
+##################
+
+AC_ARG_WITH(jasper, [  --without-jasper    build without Jasper support])
+
+have_jasper="no"
+if test "x$with_jasper" != "xno"; then
+  PKG_CHECK_MODULES(JASPER, jasper >= jasper_required_version,
+    have_jasper="yes",
+    have_jasper="no  (jasper library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_JASPER, test "$have_jasper" = "yes")
+
+AC_SUBST(JASPER_CFLAGS)
+AC_SUBST(JASPER_LIBS)
+
+
 ####################
 # Check for graphviz
 ####################
@@ -1039,6 +1059,7 @@ Optional dependencies:
   rsvg:            $have_librsvg
   SDL:             $have_sdl
   openraw:         $have_libopenraw
+  Jasper:          $have_jasper
   graphviz:        $have_graphviz
   avformat:        $have_libavformat
   V4L:             $have_v4l

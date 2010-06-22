@@ -32,5 +32,12 @@ gluas_la_LIBADD  = $(op_libs) $(LUA_LIBS)
 gluas_la_CFLAGS  = $(LUA_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
 endif
 
+if HAVE_JASPER
+ops += jp2-load.la
+jp2_load_la_SOURCES = jp2-load.c
+jp2_load_la_LIBADD  = $(op_libs) $(JASPER_LIBS)
+jp2_load_la_CFLAGS  = $(AM_CFLAGS) $(JASPER_CFLAGS)
+endif
+
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)
