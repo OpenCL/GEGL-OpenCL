@@ -25,6 +25,9 @@
 gegl_chant_string  (path, _("File"), "",
                     _("Target path and filename, use '-' for stdout."))
 gegl_chant_boolean (rawformat, _("Raw format"), FALSE, _("Raw format"))
+gegl_chant_int     (bitdepth, _("Bitdepth"),
+                    8, 16, 16,
+                    _("8 and 16 are amongst the currently accepted values."))
 
 #else
 
@@ -41,45 +44,68 @@ typedef enum {
   PIXMAP_RAW    = 54,
 } map_type;
 
-void
-ppm_save_write(FILE     *fp,
-               gint      width,
-               gint      height,
-               guchar   *pixels,
-               map_type  type);
-
-void
+static void
 ppm_save_write(FILE    *fp,
                gint     width,
                gint     height,
-               guchar  *pixels,
+               gsize    numsamples,
+               gsize    bpc,
+               guchar  *data,
                map_type type)
 {
-  gint i, size, written;
-  guchar * ptr;
+  gint i;
+  gint retval;
 
   /* Write the header */
   fprintf (fp, "P%c\n%d %d\n", type, width, height );
-  /* For the moment only 8 bit channels are supported */
-  fprintf (fp, "%d\n", 255);
-
-  size = width * height * sizeof (guchar) * CHANNEL_COUNT;
+  fprintf (fp, "%d\n", (bpc == sizeof (guchar)) ? 255 : 65535);
 
   /* Raw images writes the data in binary form */
   if (type == PIXMAP_RAW)
     {
-      written = fwrite (pixels, 1, size, fp);
+      /* Fix endianness if necessary */
+      if (bpc > 1)
+        {
+          gushort *ptr = (gushort *) data;
+
+          for (i = 0; i < numsamples; i++)
+            {
+              *ptr = GUINT16_TO_BE (*ptr);
+              ptr++;
+            }
+        }
+
+      retval = fwrite (data, bpc, numsamples, fp);
     }
-  /* Otherwise a plain ascii format is used */
   else
     {
-      ptr = pixels;
+      /* Plain PPM format */
 
-      for (i=0; i<size; i++)
+      if (bpc == sizeof (guchar))
         {
-          fprintf (fp, "%3d ", (int) *ptr++);
-          if ((i + 1) % (width * CHANNEL_COUNT) == 0)
-            fprintf (fp, "\n");
+          guchar *ptr = data;
+
+          for (i = 0; i < numsamples; i++)
+            {
+              fprintf (fp, "%3d ", (int) *ptr++);
+              if ((i + 1) % (width * CHANNEL_COUNT) == 0)
+                fprintf (fp, "\n");
+            }
+        }
+      else if (bpc == sizeof (gushort))
+        {
+          gushort *ptr = (gushort *) data;
+
+          for (i = 0; i < numsamples; i++)
+            {
+              fprintf (fp, "%3d ", (int) *ptr++);
+              if ((i + 1) % (width * CHANNEL_COUNT) == 0)
+                fprintf (fp, "\n");
+            }
+        }
+      else
+        {
+          g_warning ("%s: Programmer stupidity error", G_STRLOC);
         }
     }
 }
@@ -92,8 +118,10 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   FILE     *fp;
-  guchar   *pixels;
+  guchar   *data;
   map_type  type;
+  gsize     bpc;
+  gsize     numsamples;
 
   fp = (!strcmp (o->path, "-") ? stdout : fopen(o->path, "wb") );
   if (!fp)
@@ -101,21 +129,44 @@ process (GeglOperation       *operation,
       return FALSE;
     }
 
-  pixels = g_malloc0 (rect->width * rect->height * 3);
-  gegl_buffer_get (input, 1.0, rect, babl_format ("R'G'B' u8"), pixels,
-          GEGL_AUTO_ROWSTRIDE);
+  if ((o->bitdepth != 8) && (o->bitdepth != 16))
+    {
+      g_warning ("Bitdepths of 8 and 16 are only accepted currently.");
+      return FALSE;
+    }
 
   type = (o->rawformat ? PIXMAP_RAW : PIXMAP_ASCII);
+  bpc = (o->bitdepth == 8) ? (sizeof (guchar)) : (sizeof (gushort));
+  numsamples = rect->width * rect->height * CHANNEL_COUNT;
 
-  ppm_save_write (fp, rect->width, rect->height, pixels, type);
+  data = g_malloc0 (numsamples * bpc);
 
-  g_free (pixels);
+  switch (bpc)
+    {
+    case 1:
+      gegl_buffer_get (input, 1.0, rect, babl_format ("R'G'B' u8"), data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    case 2:
+      gegl_buffer_get (input, 1.0, rect, babl_format ("R'G'B' u16"), data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    default:
+      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+    }
+
+  ppm_save_write (fp, rect->width, rect->height, numsamples, bpc, data, type);
+
+  g_free (data);
+
   if (fp != stdout)
     {
       fclose( fp );
     }
 
-  return  TRUE;
+  return TRUE;
 }
 
 
