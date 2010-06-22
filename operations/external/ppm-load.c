@@ -241,7 +241,7 @@ process (GeglOperation       *operation,
   rect.width = img.width;
 
   /* Allocating Array Size */
-  img.data = (guchar*) g_malloc0 (img.numsamples * img.bpc);
+  img.data = (guchar*) g_malloc (img.numsamples * img.bpc);
 
   switch (img.bpc)
     {
