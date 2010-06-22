@@ -30,7 +30,7 @@ gegl_chant_boolean (rawformat, _("Raw format"), FALSE, _("Raw format"))
 
 #define GEGL_CHANT_TYPE_SINK
 #define GEGL_CHANT_C_FILE       "ppm-save.c"
-        
+
 #define CHANNEL_COUNT           3
 
 #include "gegl-chant.h"
