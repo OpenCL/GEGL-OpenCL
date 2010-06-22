@@ -87,7 +87,7 @@ ppm_save_write(FILE    *fp,
 
           for (i = 0; i < numsamples; i++)
             {
-              fprintf (fp, "%3d ", (int) *ptr++);
+              fprintf (fp, "%u ", (unsigned int) *ptr++);
               if ((i + 1) % (width * CHANNEL_COUNT) == 0)
                 fprintf (fp, "\n");
             }
@@ -98,7 +98,7 @@ ppm_save_write(FILE    *fp,
 
           for (i = 0; i < numsamples; i++)
             {
-              fprintf (fp, "%3d ", (int) *ptr++);
+              fprintf (fp, "%u ", (unsigned int) *ptr++);
               if ((i + 1) % (width * CHANNEL_COUNT) == 0)
                 fprintf (fp, "\n");
             }
