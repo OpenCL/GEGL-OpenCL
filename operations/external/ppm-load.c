@@ -51,14 +51,14 @@ typedef struct {
 	guchar    *data;
 } pnm_struct;
 
-void
+static void
 ppm_load_read_header(FILE       *fp,
                      pnm_struct *img);
-void
+static void
 ppm_load_read_image(FILE       *fp,
                     pnm_struct *img);
 
-void
+static void
 ppm_load_read_header(FILE       *fp,
                      pnm_struct *img)
   {
@@ -97,7 +97,7 @@ ppm_load_read_header(FILE       *fp,
     img->maxval = (int) strtol (header,&ptr,0);
   }
 
-void
+static void
 ppm_load_read_image(FILE       *fp,
                     pnm_struct *img)
  {
