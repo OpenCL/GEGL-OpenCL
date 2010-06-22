@@ -145,8 +145,8 @@ ppm_load_read_image(FILE       *fp,
 
             for (i = 0; i < img->numsamples; i++)
               {
-                int sample;
-                retval = fscanf (fp, " %d", &sample);
+                guint sample;
+                retval = fscanf (fp, " %u", &sample);
                 *ptr++ = sample;
               }
           }
@@ -156,8 +156,8 @@ ppm_load_read_image(FILE       *fp,
 
             for (i = 0; i < img->numsamples; i++)
               {
-                int sample;
-                retval = fscanf (fp, " %d", &sample);
+                guint sample;
+                retval = fscanf (fp, " %u", &sample);
                 *ptr++ = sample;
               }
           }
