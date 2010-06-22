@@ -47,7 +47,7 @@ typedef struct {
 	gint       width;
 	gint       height;
         gsize      numsamples; /* width * height * channels */
-        gint       bpc;        /* bytes per channel */
+        gsize      bpc;        /* bytes per channel */
 	guchar    *data;
 } pnm_struct;
 
