@@ -139,7 +139,7 @@ process (GeglOperation       *operation,
   bpc = (o->bitdepth == 8) ? (sizeof (guchar)) : (sizeof (gushort));
   numsamples = rect->width * rect->height * CHANNEL_COUNT;
 
-  data = g_malloc0 (numsamples * bpc);
+  data = g_malloc (numsamples * bpc);
 
   switch (bpc)
     {
