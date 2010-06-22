@@ -46,7 +46,7 @@ typedef struct {
 	map_type   type;
 	gint       width;
 	gint       height;
-        gint       size;
+        gsize      size;
 	gint       maxval;
 	guchar    *data;
 } pnm_struct;
@@ -67,7 +67,7 @@ ppm_load_read_header(FILE       *fp,
         (header[1] != PIXMAP_ASCII &&
          header[1] != PIXMAP_RAW))
       {
-        g_warning ("Image is not a portable pixmap\n");
+        g_warning ("Image is not a portable pixmap");
         return FALSE;
       }
 
@@ -84,11 +84,28 @@ ppm_load_read_header(FILE       *fp,
     img->width  = strtol (header,&ptr,0);
     img->height = atoi (ptr);
 
-    img->size = img->width * img->height * sizeof (guchar) * CHANNEL_COUNT;
+    retval = fgets (header,MAX_CHARS_IN_ROW,fp);
+    img->maxval = strtol (header,&ptr,0);
 
-    retval = fgets (header,100,fp);
-    /* Maxval is not used */
-    img->maxval = (int) strtol (header,&ptr,0);
+    if ((img->maxval != 255) && (img->maxval != 65535))
+      {
+        g_warning ("Image is not an 8-bit or 16-bit portable pixmap");
+        return FALSE;
+      }
+
+  switch (img->maxval)
+    {
+    case 255:
+      img->size = img->width * img->height * sizeof (guchar) * CHANNEL_COUNT;
+      break;
+
+    case 65535:
+      img->size = img->width * img->height * sizeof (gushort) * CHANNEL_COUNT;
+      break;
+
+    default:
+      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+    }
 
     return TRUE;
 }
@@ -96,24 +113,54 @@ ppm_load_read_header(FILE       *fp,
 static void
 ppm_load_read_image(FILE       *fp,
                     pnm_struct *img)
- {
+{
     gint    i;
     gint    retval;
-    guchar *ptr;
 
     if (img->type == PIXMAP_RAW)
       {
-        /* Pixel Extraction */
         retval = fread (img->data, 1, img->size, fp);
+
+        /* Fix endianness if necessary */
+        if (img->maxval > 255)
+          {
+            gushort *ptr = (gushort *) img->data;
+
+            for (i=0; i < (img->width * img->height * CHANNEL_COUNT); i++)
+              {
+                *ptr = GUINT16_FROM_BE (*ptr);
+                ptr++;
+              }
+          }
       }
     else
       {
-        ptr = img->data;
+        /* Plain PPM format */
 
-        for (i=0; i<img->size; i++)
-          retval = fscanf (fp, " %d", (int *) ptr++);
+        if (img->maxval < 256)
+          {
+            guchar *ptr = img->data;
+
+            for (i=0; i<img->size; i++)
+              {
+                int sample;
+                retval = fscanf (fp, " %d", &sample);
+                *ptr++ = sample;
+              }
+          }
+        else
+          {
+            gushort *ptr = (gushort *) img->data;
+
+            for (i=0; i < (img->width * img->height * CHANNEL_COUNT); i++)
+              {
+                int sample;
+                retval = fscanf (fp, " %d", &sample);
+                *ptr++ = sample;
+              }
+          }
       }
-  }
+}
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
@@ -140,10 +187,24 @@ get_bounding_box (GeglOperation *operation)
       fclose (fp);
     }
 
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
+  switch (img.maxval)
+    {
+    case 255:
+      gegl_operation_set_format (operation, "output",
+                                 babl_format ("R'G'B' u8"));
+      break;
 
-  result.width  = img.width;
-  result.height  = img.height;
+    case 65535:
+      gegl_operation_set_format (operation, "output",
+                                 babl_format ("R'G'B' u16"));
+      break;
+
+    default:
+      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+    }
+
+  result.width = img.width;
+  result.height = img.height;
 
   return result;
 }
@@ -176,13 +237,39 @@ process (GeglOperation       *operation,
   /* Allocating Array Size */
   img.data = (guchar*) g_malloc0 (img.size);
 
-  gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u8"), img.data,
-          GEGL_AUTO_ROWSTRIDE);
+  switch (img.maxval)
+    {
+    case 255:
+      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u8"), img.data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    case 65535:
+      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u16"), img.data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    default:
+      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+    }
 
   ppm_load_read_image (fp, &img);
 
-  gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"), img.data,
-          GEGL_AUTO_ROWSTRIDE);
+  switch (img.maxval)
+    {
+    case 255:
+      gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"), img.data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    case 65535:
+      gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"), img.data,
+                       GEGL_AUTO_ROWSTRIDE);
+      break;
+
+    default:
+      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+    }
 
   g_free (img.data);
   if (stdin != fp)
