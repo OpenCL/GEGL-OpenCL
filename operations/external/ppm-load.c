@@ -46,8 +46,8 @@ typedef struct {
 	map_type   type;
 	gint       width;
 	gint       height;
-        gsize      size;
-	gint       maxval;
+        gsize      numsamples; /* width * height * channels */
+        gint       bpc;        /* bytes per channel */
 	guchar    *data;
 } pnm_struct;
 
@@ -59,6 +59,7 @@ ppm_load_read_header(FILE       *fp,
     gchar *ptr;
     gchar *retval;
     gchar  header[MAX_CHARS_IN_ROW];
+    gint   maxval;
 
     /* Check the PPM file Type P2 or P5 */
     retval = fgets (header,MAX_CHARS_IN_ROW,fp);
@@ -83,24 +84,25 @@ ppm_load_read_header(FILE       *fp,
     /* Get Width and Height */
     img->width  = strtol (header,&ptr,0);
     img->height = atoi (ptr);
+    img->numsamples = img->width * img->height * CHANNEL_COUNT;
 
     retval = fgets (header,MAX_CHARS_IN_ROW,fp);
-    img->maxval = strtol (header,&ptr,0);
+    maxval = strtol (header,&ptr,0);
 
-    if ((img->maxval != 255) && (img->maxval != 65535))
+    if ((maxval != 255) && (maxval != 65535))
       {
         g_warning ("Image is not an 8-bit or 16-bit portable pixmap");
         return FALSE;
       }
 
-  switch (img->maxval)
+  switch (maxval)
     {
     case 255:
-      img->size = img->width * img->height * sizeof (guchar) * CHANNEL_COUNT;
+      img->bpc = sizeof (guchar);
       break;
 
     case 65535:
-      img->size = img->width * img->height * sizeof (gushort) * CHANNEL_COUNT;
+      img->bpc = sizeof (gushort);
       break;
 
     default:
@@ -119,14 +121,14 @@ ppm_load_read_image(FILE       *fp,
 
     if (img->type == PIXMAP_RAW)
       {
-        retval = fread (img->data, 1, img->size, fp);
+        retval = fread (img->data, img->bpc, img->numsamples, fp);
 
         /* Fix endianness if necessary */
-        if (img->maxval > 255)
+        if (img->bpc > 1)
           {
             gushort *ptr = (gushort *) img->data;
 
-            for (i=0; i < (img->width * img->height * CHANNEL_COUNT); i++)
+            for (i=0; i < img->numsamples; i++)
               {
                 *ptr = GUINT16_FROM_BE (*ptr);
                 ptr++;
@@ -137,11 +139,22 @@ ppm_load_read_image(FILE       *fp,
       {
         /* Plain PPM format */
 
-        if (img->maxval < 256)
+        if (img->bpc == sizeof (guchar))
           {
             guchar *ptr = img->data;
 
-            for (i=0; i<img->size; i++)
+            for (i = 0; i < img->numsamples; i++)
+              {
+                int sample;
+                retval = fscanf (fp, " %d", &sample);
+                *ptr++ = sample;
+              }
+          }
+        else if (img->bpc == sizeof (gushort))
+          {
+            gushort *ptr = (gushort *) img->data;
+
+            for (i = 0; i < img->numsamples; i++)
               {
                 int sample;
                 retval = fscanf (fp, " %d", &sample);
@@ -150,14 +163,7 @@ ppm_load_read_image(FILE       *fp,
           }
         else
           {
-            gushort *ptr = (gushort *) img->data;
-
-            for (i=0; i < (img->width * img->height * CHANNEL_COUNT); i++)
-              {
-                int sample;
-                retval = fscanf (fp, " %d", &sample);
-                *ptr++ = sample;
-              }
+            g_warning ("%s: Programmer stupidity error", G_STRLOC);
           }
       }
 }
@@ -187,14 +193,14 @@ get_bounding_box (GeglOperation *operation)
       fclose (fp);
     }
 
-  switch (img.maxval)
+  switch (img.bpc)
     {
-    case 255:
+    case 1:
       gegl_operation_set_format (operation, "output",
                                  babl_format ("R'G'B' u8"));
       break;
 
-    case 65535:
+    case 2:
       gegl_operation_set_format (operation, "output",
                                  babl_format ("R'G'B' u16"));
       break;
@@ -235,16 +241,16 @@ process (GeglOperation       *operation,
   rect.width = img.width;
 
   /* Allocating Array Size */
-  img.data = (guchar*) g_malloc0 (img.size);
+  img.data = (guchar*) g_malloc0 (img.numsamples * img.bpc);
 
-  switch (img.maxval)
+  switch (img.bpc)
     {
-    case 255:
+    case 1:
       gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u8"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
-    case 65535:
+    case 2:
       gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u16"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
@@ -255,14 +261,14 @@ process (GeglOperation       *operation,
 
   ppm_load_read_image (fp, &img);
 
-  switch (img.maxval)
+  switch (img.bpc)
     {
-    case 255:
+    case 1:
       gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
-    case 65535:
+    case 2:
       gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
