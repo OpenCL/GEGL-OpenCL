@@ -44,18 +44,21 @@ query_jp2 (const gchar   *path,
   jas_stream_t *in;
   int image_fmt;
   jas_image_t *image;
+  jas_cmprof_t *output_profile;
+  jas_image_t *cimage;
   int numcmpts;
   int i;
   gboolean b;
 
   in = NULL;
-  image = NULL;
+  cimage = image = NULL;
+  output_profile = NULL;
   ret = FALSE;
 
   do
     {
       in = jas_stream_fopen (path, "rb");
-      if (in == NULL)
+      if (!in)
 	{
 	  g_warning ("Unable to open image file '%s'", path);
 	  break;
@@ -69,13 +72,29 @@ query_jp2 (const gchar   *path,
 	}
 
       image = jas_image_decode (in, image_fmt, NULL);
-      if (image == NULL)
+      if (!image)
 	{
 	  g_warning (_("Unable to open JPEG-2000 image in '%s'"), path);
 	  break;
 	}
 
-      numcmpts = jas_image_numcmpts (image);
+      output_profile = jas_cmprof_createfromclrspc (JAS_CLRSPC_SRGB);
+      if (!output_profile)
+        {
+	  g_warning (_("Unable to create output color profile for '%s'"), path);
+	  break;
+        }
+
+      cimage = jas_image_chclrspc (image, output_profile,
+                                   JAS_CMXFORM_INTENT_PER);
+      if (!cimage)
+        {
+	  g_warning (_("Unable to convert image to SRGB color space "
+                       "when processing '%s'"), path);
+	  break;
+        }
+
+      numcmpts = jas_image_numcmpts (cimage);
       if (numcmpts != 3)
 	{
 	  g_warning (_("Unsupported non-RGB JPEG-2000 file with "
@@ -83,9 +102,9 @@ query_jp2 (const gchar   *path,
 	  break;
 	}
 
-      *width = jas_image_cmptwidth (image, 0);
-      *height = jas_image_cmptheight (image, 0);
-      *depth = jas_image_cmptprec (image, 0);
+      *width = jas_image_cmptwidth (cimage, 0);
+      *height = jas_image_cmptheight (cimage, 0);
+      *depth = jas_image_cmptprec (cimage, 0);
 
       if ((*depth != 8) && (*depth != 16))
 	{
@@ -98,9 +117,9 @@ query_jp2 (const gchar   *path,
 
       for (i = 1; i < 3; i++)
         {
-          if ((jas_image_cmptprec (image, i) != *depth) ||
-              (jas_image_cmptwidth (image, i) != *width) ||
-              (jas_image_cmptheight (image, i) != *height))
+          if ((jas_image_cmptprec (cimage, i) != *depth) ||
+              (jas_image_cmptwidth (cimage, i) != *width) ||
+              (jas_image_cmptheight (cimage, i) != *height))
             {
               g_warning (_("Components of input image '%s' don't match"),
                          path);
@@ -117,9 +136,15 @@ query_jp2 (const gchar   *path,
   while (FALSE); /* structured goto */
 
   if (jas_image)
-    *jas_image = image;
-  else if (image)
+    *jas_image = cimage;
+  else if (cimage)
+    jas_image_destroy (cimage);
+
+  if (image)
     jas_image_destroy (image);
+
+  if (output_profile)
+    jas_cmprof_destroy (output_profile);
 
   if (in)
     jas_stream_close (in);
