@@ -163,6 +163,8 @@ process (GeglOperation       *operation,
   gushort *ptr_s;
   guchar *ptr_b;
 
+  in = NULL;
+  image = NULL;
   width = height = depth = 0;
 
   if (!query_jp2 (o->path, &width, &height, &depth, &in, &image))
