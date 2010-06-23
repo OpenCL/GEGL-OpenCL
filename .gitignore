@@ -39,3 +39,5 @@
 *.sw?
 *.orig
 *.rej
+cscope.out
+cscope.files
