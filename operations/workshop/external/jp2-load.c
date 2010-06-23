@@ -89,7 +89,7 @@ query_jp2 (const gchar   *path,
                                    JAS_CMXFORM_INTENT_PER);
       if (!cimage)
         {
-	  g_warning (_("Unable to convert image to SRGB color space "
+	  g_warning (_("Unable to convert image to sRGB color space "
                        "when processing '%s'"), path);
 	  break;
         }
@@ -392,6 +392,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description = _("JPEG-2000 image loader.");
 
   gegl_extension_handler_register (".jp2", "gegl:jp2-load");
+  gegl_extension_handler_register (".jpx", "gegl:jp2-load");
 }
 
 #endif
