@@ -38,7 +38,6 @@ query_jp2 (const gchar   *path,
            gint          *width,
            gint          *height,
            gint          *depth,
-           jas_stream_t **jas_stream,
            jas_image_t  **jas_image)
 {
   gboolean ret;
@@ -122,9 +121,7 @@ query_jp2 (const gchar   *path,
   else if (image)
     jas_image_destroy (image);
 
-  if (jas_stream)
-    *jas_stream = in;
-  else if (in)
+  if (in)
     jas_stream_close (in);
 
   return ret;
@@ -149,7 +146,6 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle rect = {0,0,0,0};
-  jas_stream_t *in;
   jas_image_t *image;
   gint width, height, depth;
   gsize bpc;
@@ -163,11 +159,10 @@ process (GeglOperation       *operation,
   gushort *ptr_s;
   guchar *ptr_b;
 
-  in = NULL;
   image = NULL;
   width = height = depth = 0;
 
-  if (!query_jp2 (o->path, &width, &height, &depth, &in, &image))
+  if (!query_jp2 (o->path, &width, &height, &depth, &image))
     return FALSE;
 
   rect.height = height;
@@ -309,9 +304,6 @@ process (GeglOperation       *operation,
   if (image)
     jas_image_destroy (image);
 
-  if (in)
-    jas_stream_close (in);
-
   return ret;
 }
 
@@ -324,7 +316,7 @@ get_bounding_box (GeglOperation * operation)
 
   width = height = depth = 0;
 
-  if (!query_jp2 (o->path, &width, &height, &depth, NULL, NULL))
+  if (!query_jp2 (o->path, &width, &height, &depth, NULL))
     return result;
 
   result.width = width;
