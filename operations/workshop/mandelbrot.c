@@ -139,7 +139,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "gegl:mandelbrot";
   operation_class->categories  = "render";
-  operation_class->description = _("Mandelbrot renderer.");
+  operation_class->description = _("Mandelbrot set renderer.");
 }
 
 #endif
