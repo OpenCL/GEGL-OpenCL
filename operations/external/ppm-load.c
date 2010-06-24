@@ -179,19 +179,10 @@ get_bounding_box (GeglOperation *operation)
   fp = (!strcmp (o->path, "-") ? stdin : fopen (o->path,"rb") );
 
   if (!fp)
-    {
-      return result;
-    }
+    return result;
 
   if (!ppm_load_read_header (fp, &img))
-    {
-      return result;
-    }
-
-  if (stdin != fp)
-    {
-      fclose (fp);
-    }
+    goto out;
 
   switch (img.bpc)
     {
@@ -212,6 +203,10 @@ get_bounding_box (GeglOperation *operation)
   result.width = img.width;
   result.height = img.height;
 
+ out:
+  if (stdin != fp)
+    fclose (fp);
+
   return result;
 }
 
@@ -224,18 +219,15 @@ process (GeglOperation       *operation,
   FILE         *fp;
   pnm_struct    img;
   GeglRectangle rect = {0,0,0,0};
+  gboolean      ret = FALSE;
 
   fp = (!strcmp (o->path, "-") ? stdin : fopen (o->path,"rb"));
 
   if (!fp)
-    {
-      return FALSE;
-    }
+    return FALSE;
 
   if (!ppm_load_read_header (fp, &img))
-    {
-      return FALSE;
-    }
+    goto out;
 
   rect.height = img.height;
   rect.width = img.width;
@@ -278,11 +270,14 @@ process (GeglOperation       *operation,
     }
 
   g_free (img.data);
+
+  ret = TRUE;
+
+ out:
   if (stdin != fp)
-    {
-      fclose (fp);
-    }
-  return  TRUE;
+    fclose (fp);
+
+  return ret;
 }
 
 static GeglRectangle
