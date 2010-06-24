@@ -545,6 +545,7 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
     }
 
   g_list_free (pd.refs);
+  g_list_free (pd.parent);
   g_markup_parse_context_free (context);
   g_hash_table_destroy (pd.ids);
 
