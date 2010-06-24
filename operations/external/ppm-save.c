@@ -122,17 +122,17 @@ process (GeglOperation       *operation,
   map_type  type;
   gsize     bpc;
   gsize     numsamples;
+  gboolean  ret = FALSE;
 
   fp = (!strcmp (o->path, "-") ? stdout : fopen(o->path, "wb") );
+
   if (!fp)
-    {
-      return FALSE;
-    }
+    return FALSE;
 
   if ((o->bitdepth != 8) && (o->bitdepth != 16))
     {
       g_warning ("Bitdepths of 8 and 16 are only accepted currently.");
-      return FALSE;
+      goto out;
     }
 
   type = (o->rawformat ? PIXMAP_RAW : PIXMAP_ASCII);
@@ -161,12 +161,13 @@ process (GeglOperation       *operation,
 
   g_free (data);
 
-  if (fp != stdout)
-    {
-      fclose( fp );
-    }
+  ret = TRUE;
 
-  return TRUE;
+ out:
+  if (fp != stdout)
+    fclose( fp );
+
+  return ret;
 }
 
 
