@@ -1247,7 +1247,7 @@ void gegl_path_parse_string (GeglPath *vector,
               switch (info->n_items)
                 {
                   case 0:
-                    priv->path = gegl_path_list_append (priv->path, type, x0, y0);
+                    priv->path = gegl_path_list_append (priv->path, type, 0., 0.);
                     /* coordinates are ignored, all of these could have used add3)*/
                     break;
                   case 2:
