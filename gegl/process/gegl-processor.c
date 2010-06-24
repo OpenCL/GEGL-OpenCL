@@ -491,6 +491,7 @@ render_rectangle (GeglProcessor *processor)
               /* release the buffer */
               g_free (buf);
             }
+          g_slice_free (GeglRectangle, dr);
         }
       else
         {
