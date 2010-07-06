@@ -240,10 +240,6 @@ parse_args (int    argc,
             o->mode = GEGL_RUN_MODE_XML;
         }
 
-        else if (match ("--dot")) {
-            o->mode = GEGL_RUN_MODE_DOT;
-        }
-
         else if (match ("--")) {
             o->rest = curr+1;
             break;

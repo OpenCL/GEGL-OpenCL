@@ -47,6 +47,8 @@
 #define DEFAULT_COMPOSITION \
 "<?xml version='1.0' encoding='UTF-8'?> <gegl> <node operation='gegl:crop'> <params> <param name='x'>0</param> <param name='y'>0</param> <param name='width'>690</param> <param name='height'>670</param> </params> </node> <node operation='gegl:over'> <node operation='gegl:translate'> <params> <param name='x'>14</param> <param name='y'>613</param> </params> </node> <node operation='gegl:opacity'> <params> <param name='value'>0.59999999999999998</param> </params> </node> <node name='text' operation='gegl:text'> <params> <param name='string'>2000-2010 © Calvin Williamson, Caroline Dahloff, Manish Singh, Jay Cox Daniel Rogers, Sven Neumann, Michael Natterer, Øyvind Kolås, Philip Lafleur, Dominik Ernst, Richard Kralovic, Kevin Cozens, Victor Bogado, Martin Nordholts, Geert Jordaens, Michael Schumacher, John Marshall, Étienne Bersac, Mark Probst, Håkon Hitland, Tor Lillqvist, Hans Breuer, Deji Akingunola and Bradley Broom, Hans Petter Jansson, Jan Heller, dmacks@netscpace.org, Sven Anders, Hubert Figuière, Sam Hocevar, yahvuu at gmail.com, Nicolas Robidoux, Ruben Vermeersch, Gary V. Vaughan, James Legg, Henrik Åkesson, Fryderyk Dziarmagowski, Ozan Caglayan, Tobias Mueller, Nils Philippsen, Adam Turcotte, Danny Robson, Javier Jardón and Yakkov Selkowitz, Kaja Liiv, Eric Doust, Garry R. Osgood, Øyvind Kolås, Kevin Cozens and Shlomi Fish, Jakub Steiner, and Tonda Tavalec </param> <param name='font'>Sans</param> <param name='size'>8</param> <param name='color'>rgb(0.0000, 0.0000, 0.0000)</param> <param name='wrap'>628</param> <param name='alignment'>0</param> <param name='width'>622</param> <param name='height'>40</param> </params> </node> </node> <node operation='gegl:over'> <node operation='gegl:translate'> <params> <param name='x'>300</param> <param name='y'>500</param> </params> </node> <node operation='gegl:over'> <node operation='gegl:translate'> <params> <param name='x'>0</param> <param name='y'>0</param> </params> </node> <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <gegl:path d='M0,50 C0,78 24,100 50,100 C77,100 100,78 100,50 C100,45 99,40 98,35 C82,35 66,35 50,35 C42,35 35,42 35,50 C35,58 42,65 50,65 C56,65 61,61 64,56 C67,51 75,55 73,60 C69,69 60,75 50,75 C36,75 25,64 25,50 C25,36 36,25 50,25 L93,25 C83,9 67,0 49,0 C25,0 0,20 0,50 z' fill='white'/> </node> <node operation='gegl:over'> <node operation='gegl:translate'> <params> <param name='x'>88</param> <param name='y'>0</param> </params> </node> <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <node operation='gegl:path'> <params> <param name='d'>M50,0 C23,0 0,22 0,50 C0,77 22,100 50,100 C68,100 85,90 93,75 L40,75 C35,75 35,65 40,65 L98,65 C100,55 100,45 98,35 L40,35 C35,35 35,25 40,25 L93,25 C84,10 68,0 50,0 z</param> <param name='fill'>rgb(1.0000, 1.0000, 1.0000)</param> </params> </node> </node> <node operation='gegl:over'> <node operation='gegl:translate'> <params> <param name='x'>176</param> <param name='y'>0</param> </params> </node> <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <node operation='gegl:path'> <params> <param name='d'>M0,50 C0,78 24,100 50,100 C77,100 100,78 100,50 C100,45 99,40 98,35 C82,35 66,35 50,35 C42,35 35,42 35,50 C35,58 42,65 50,65 C56,65 61,61 64,56 C67,51 75,55 73,60 C69,69 60,75 50,75 C36,75 25,64 25,50 C25,36 36,25 50,25 L93,25 C83,9 67,0 49,0 C25,0 0,20 0,50 z</param> <param name='fill'>rgb(1.0000, 1.0000, 1.0000)</param> </params> </node> </node> <node operation='gegl:translate'> <params> <param name='x'>264</param> <param name='y'>0</param> </params> </node> <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <node operation='gegl:path'> <params> <param name='d'>M30,4 C12,13 0,30 0,50 C0,78 23,100 50,100 C71,100 88,88 96,71 L56,71 C42,71 30,59 30,45 L30,4 z</param> <param name='fill'>rgb(1.0000, 1.0000, 1.0000)</param> </params> </node> </node> <node operation='gegl:rotate'> <params> <param name='origin-x'>0</param> <param name='origin-y'>0</param> <param name='filter'>linear</param> <param name='hard-edges'>false</param> <param name='lanczos-width'>3</param> <param name='degrees'>42</param> </params> </node> <node operation='gegl:checkerboard'> <params> <param name='x'>43</param> <param name='y'>44</param> <param name='x-offset'>0</param> <param name='y-offset'>0</param> <param name='color1'>rgb(0.7097, 0.7097, 0.7097)</param> <param name='color2'>rgb(0.7661, 0.7661, 0.7661)</param> </params> </node> </gegl>"
 
+#define STDIN_BUF_SIZE 128
+
 static void
 gegl_enable_fatal_warnings (void)
 {
@@ -112,10 +114,10 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-  GeglOptions *o        = NULL;
-  GeglNode    *gegl     = NULL;
-  gchar       *script   = NULL;
-  GError      *err      = NULL;
+  GeglOptions *o         = NULL;
+  GeglNode    *gegl      = NULL;
+  gchar       *script    = NULL;
+  GError      *err       = NULL;
   gchar       *path_root = NULL;
 
   o = gegl_options_parse (argc, argv);
@@ -165,11 +167,10 @@ main (gint    argc,
     {
       if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
-#         define  buf_size 128
-          gchar buf[buf_size];
+          gchar buf[STDIN_BUF_SIZE];
           GString *acc = g_string_new ("");
 
-          while (fgets (buf, buf_size, stdin))
+          while (fgets (buf, STDIN_BUF_SIZE, stdin))
             {
               g_string_append (acc, buf);
             }
@@ -188,25 +189,24 @@ main (gint    argc,
           gchar *leaked_string = g_malloc (strlen (o->file) + 5);
           GString *acc = g_string_new ("");
 
-	  {
-	    gchar *file_basename;
-	    gchar *tmp;
-	    tmp = g_strdup (o->file);
-	    file_basename = g_path_get_basename (tmp);
+          {
+            gchar *file_basename;
+            gchar *tmp;
+            tmp = g_strdup (o->file);
+            file_basename = g_path_get_basename (tmp);
 
-	    g_string_append (acc, "<gegl><gegl:load path='");
-	    g_string_append (acc, file_basename);
-	    g_string_append (acc, "'/></gegl>");
+            g_string_append (acc, "<gegl><gegl:load path='");
+            g_string_append (acc, file_basename);
+            g_string_append (acc, "'/></gegl>");
 
-	    g_free (tmp);
-	  }
+            g_free (tmp);
+          }
 
           script = g_string_free (acc, FALSE);
 
           leaked_string[0]='\0';
           strcat (leaked_string, o->file);
           strcat (leaked_string, ".xml");
-          /*o->file = leaked_string;*/
         }
     }
   else
@@ -236,7 +236,7 @@ main (gint    argc,
         {
           GeglNode *new;
 
-	  new = gegl_node_new_child (gegl, "operation", *operation, NULL);
+          new = gegl_node_new_child (gegl, "operation", *operation, NULL);
           if (iter)
             {
               gegl_node_link_many (iter, new, proxy, NULL);
@@ -255,9 +255,9 @@ main (gint    argc,
       case GEGL_RUN_MODE_EDITOR:
         {
           GeglNode *output = gegl_node_new_child (gegl,
-						  "operation", "gegl:display",
-						  "window-title", o->file,
-						  NULL);
+                                                  "operation", "gegl:display",
+                                                  "window-title", o->file,
+                                                  NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
           g_object_unref (output);
@@ -265,29 +265,27 @@ main (gint    argc,
         }
         break;
       case GEGL_RUN_MODE_XML:
-	g_printf ("%s\n", gegl_node_to_xml (gegl, path_root));
-	return 0;
+        g_printf ("%s\n", gegl_node_to_xml (gegl, path_root));
+        return 0;
         break;
-#if 0
-      case GEGL_RUN_MODE_DOT:
-	g_print ("%s\n", gegl_to_dot (gegl));
-	return 0;
-        break;
-#endif
+
       case GEGL_RUN_MODE_OUTPUT:
         {
           GeglNode *output = gegl_node_new_child (gegl,
-						  "operation", "gegl:save",
-						  "path", o->output,
-						  NULL);
+                                                  "operation", "gegl:save",
+                                                  "path", o->output,
+                                                  NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
           g_object_unref (output);
         }
         break;  
+
       case GEGL_RUN_MODE_HELP:
         break;
+
       default:
+        g_warning ("Unknown GeglOption mode: %d", o->mode);
         break;
     }
 
