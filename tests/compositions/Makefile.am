@@ -27,7 +27,9 @@ builddir_img_cmp = $(builddir_gegl_env) $(img_cmp_bin)
 # For simplicity, use the same time stamp for output of all
 # compositions. Use the same output file as in the reference dir
 images.stamp: $(wildcard $(srcdir)/*.xml) \
-              $(wildcard $(top_builddir)/operations/*/*$(SHREXT)) \
+              $(wildcard $(top_builddir)/operations/.libs/*$(SHREXT)) \
+              $(wildcard $(top_builddir)/operations/*/.libs/*$(SHREXT)) \
+              $(wildcard $(top_builddir)/operations/*/*/.libs/*$(SHREXT)) \
 	      $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	      $(gegl_bin)
 	@echo "--[doing XML composition test renderings]--"
