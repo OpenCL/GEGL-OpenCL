@@ -13,12 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2010 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -33,62 +32,30 @@ gegl_chant_double(scale,  _("Scale"), 0.0, 100.0, 1.0, _("Scale, strength of eff
 
 #include "gegl-chant.h"
 
-typedef struct _Priv Priv;
-struct _Priv
-{
-  GeglNode *self;
-  GeglNode *input;
-  GeglNode *output;
-
-  GeglNode *add;
-  GeglNode *multiply;
-  GeglNode *subtract;
-  GeglNode *blur;
-};
-
 static void attach (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *priv = g_malloc0 (sizeof (Priv));
+  GeglNode *gegl, *input, *output, *add, *multiply, *subtract, *blur;
 
-  o->chant_data = (void*) priv;
+  gegl = operation->node;
 
-  if (!priv->add)
-    {
-      GeglNode *gegl;
-      gegl = operation->node;
+  input    = gegl_node_get_input_proxy (gegl, "input");
+  output   = gegl_node_get_output_proxy (gegl, "output");
+  add      = gegl_node_new_child (gegl, "operation", "gegl:add", NULL);
+  multiply = gegl_node_new_child (gegl, "operation", "gegl:multiply", NULL);
+  subtract = gegl_node_new_child (gegl, "operation", "gegl:subtract", NULL);
+  blur     = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur",NULL);
 
-      priv->input    = gegl_node_get_input_proxy (gegl, "input");
-      priv->output   = gegl_node_get_output_proxy (gegl, "output");
-      priv->add      = gegl_node_new_child (gegl,
-                                            "operation", "gegl:add",
-                                            NULL);
+  gegl_node_link_many (input, subtract, multiply, NULL);
+  gegl_node_link (input, blur);
+  gegl_node_link_many (multiply, add, output, NULL);
 
-      priv->multiply = gegl_node_new_child (gegl,
-                                            "operation", "gegl:multiply",
-                                            NULL);
+  gegl_node_connect_from (subtract, "aux",   blur,     "output");
+  gegl_node_connect_from (add,      "aux",   input, "output");
 
-      priv->subtract = gegl_node_new_child (gegl,
-                                            "operation", "gegl:subtract",
-                                            NULL);
-
-      priv->blur     = gegl_node_new_child (gegl,
-                                            "operation", "gegl:gaussian-blur",
-                                            NULL);
-
-      gegl_node_link_many (priv->input, priv->subtract, priv->multiply, NULL);
-      gegl_node_link (priv->input, priv->blur);
-      gegl_node_link_many (priv->multiply, priv->add, priv->output, NULL);
-
-      gegl_node_connect_from (priv->subtract, "aux",   priv->blur,     "output");
-      gegl_node_connect_from (priv->add,      "aux",   priv->input, "output");
-
-      gegl_operation_meta_redirect (operation, "scale", priv->multiply, "value");
-      gegl_operation_meta_redirect (operation, "std-dev", priv->blur, "std-dev-x");
-      gegl_operation_meta_redirect (operation, "std-dev", priv->blur, "std-dev-y");
-    }
+  gegl_operation_meta_redirect (operation, "scale", multiply, "value");
+  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
+  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-y");
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)

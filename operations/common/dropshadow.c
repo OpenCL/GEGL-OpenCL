@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006, 2010 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -37,59 +37,33 @@ gegl_chant_double (radius, _("Radius"), -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
 
 #include "gegl-chant.h"
 
-typedef struct _Priv Priv;
-struct _Priv
-{
-  GeglNode *self;
-  GeglNode *input;
-  GeglNode *output;
-
-  GeglNode *over;
-  GeglNode *translate;
-  GeglNode *opacity;
-  GeglNode *blur;
-  GeglNode *darken;
-  GeglNode *black;
-};
-
 /* in attach we hook into graph adding the needed nodes */
 static void attach (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv *priv = (Priv*)o->chant_data;
-  g_assert (priv == NULL);
+  GeglNode *gegl  = operation->node;
+  GeglNode *input, *output, *over, *translate, *opacity, *blur, *darken, *black;
 
-  priv = g_malloc0 (sizeof (Priv));
-  o->chant_data = (void*) priv;
+  input     = gegl_node_get_input_proxy (gegl, "input");
+  output    = gegl_node_get_output_proxy (gegl, "output");
+  over      = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
+  translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
+  opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
+  blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
+  darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
+  black     = gegl_node_new_child (gegl, "operation", "gegl:color",
+                                     "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
+                                     NULL);
 
-  priv->self = operation->node;
+  gegl_node_link_many (input, darken, blur, opacity, translate, over, output, NULL);
+  gegl_node_connect_from (over, "aux", input, "output");
+  gegl_node_connect_from (darken, "aux", black, "output");
 
-  if (!priv->over)
-    {
-      GeglNode *gegl  = priv->self;
-      priv->input     = gegl_node_get_input_proxy (gegl, "input");
-      priv->output    = gegl_node_get_output_proxy (gegl, "output");
-      priv->over      = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
-      priv->translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
-      priv->opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
-      priv->blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
-      priv->darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
-      priv->black     = gegl_node_new_child (gegl, "operation", "gegl:color",
-                                         "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
-                                         NULL);
-
-      gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
-      gegl_node_connect_from (priv->over, "aux", priv->input, "output");
-      gegl_node_connect_from (priv->darken, "aux", priv->black, "output");
-
-      gegl_operation_meta_redirect (operation, "opacity", priv->opacity, "value");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "std-dev-x");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "std-dev-y");
-      gegl_operation_meta_redirect (operation, "x", priv->translate, "x");
-      gegl_operation_meta_redirect (operation, "y", priv->translate, "y");
-    }
+  gegl_operation_meta_redirect (operation, "opacity", opacity, "value");
+  gegl_operation_meta_redirect (operation, "radius", blur, "std-dev-x");
+  gegl_operation_meta_redirect (operation, "radius", blur, "std-dev-y");
+  gegl_operation_meta_redirect (operation, "x", translate, "x");
+  gegl_operation_meta_redirect (operation, "y", translate, "y");
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
