@@ -83,6 +83,13 @@ endif
 
 EXTRA_DIST=v4lutils/v4lutils.c v4lutils/v4lutils.h
 
+if HAVE_JASPER
+ops += jp2-load.la
+jp2_load_la_SOURCES = jp2-load.c
+jp2_load_la_LIBADD  = $(op_libs) $(JASPER_LIBS)
+jp2_load_la_CFLAGS  = $(AM_CFLAGS) $(JASPER_CFLAGS)
+endif
+
 if HAVE_AVFORMAT
 ops += ff-load.la
 ff_load_la_SOURCES = ff-load.c
