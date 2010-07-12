@@ -528,7 +528,6 @@ AC_SUBST(RUBY_BIN)
 AC_PATH_PROG(ENSCRIPT, enscript, no)
 if test "$ENSCRIPT" = "no"; then
   have_enscript="no  (enscript not found)"
-  AC_MSG_RESULT([*** Check for enscript command failed.])
 else
   have_enscript="yes"
 fi
@@ -672,7 +671,6 @@ AC_SUBST(LIBJPEG)
 
 AC_ARG_WITH(libpng, [  --without-libpng        build without PNG support])
 
-echo "with_png '$with_png', with_libpng '$with_libpng'"
 have_libpng="no"
 if test "x$with_libpng" != "xno"; then
   PKG_CHECK_MODULES(PNG, libpng,
