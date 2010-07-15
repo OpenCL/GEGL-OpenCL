@@ -775,9 +775,21 @@ AC_ARG_WITH(jasper, [  --without-jasper    build without Jasper support])
 
 have_jasper="no"
 if test "x$with_jasper" != "xno"; then
+  ## Some systems have pkg-config patches in their packages (Eg, Fedora but
+  ## not Gentoo). Try this first though.
   PKG_CHECK_MODULES(JASPER, jasper >= jasper_required_version,
-    have_jasper="yes",
-    have_jasper="no  (jasper library not found)")
+    have_jasper="yes", [
+      ## For systems without pkg-config data, check for the existence of a
+      ## function introduced into the latest version (1.900.1).
+      AC_CHECK_LIB([jasper], [jas_stream_freopen], [
+          have_jasper="yes"
+          JASPER_LIBS="-ljasper"
+          JASPER_CFLAGS=""
+      ], [
+        have_jasper="no  (jasper library not found)"
+      ])
+    ]
+  )
 fi
 
 AM_CONDITIONAL(HAVE_JASPER, test "$have_jasper" = "yes")
