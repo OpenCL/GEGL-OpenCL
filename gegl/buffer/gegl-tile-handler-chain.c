@@ -26,8 +26,6 @@
 
 G_DEFINE_TYPE (GeglTileHandlerChain, gegl_tile_handler_chain, GEGL_TYPE_TILE_HANDLER)
 
-static void   gegl_tile_handler_chain_rebind (GeglTileHandlerChain *tile_handler_chain);
-
 static void
 gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
 {
@@ -42,7 +40,6 @@ gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
             {
               g_object_unref (iter->data);
               tile_handler_chain->chain = g_slist_remove (tile_handler_chain->chain, iter->data);
-              gegl_tile_handler_chain_rebind (tile_handler_chain);
               break;
             }
           iter = iter->next;
@@ -128,11 +125,10 @@ gegl_tile_handler_chain_init (GeglTileHandlerChain *self)
 }
 
 
-static void
-gegl_tile_handler_chain_rebind (GeglTileHandlerChain *tile_handler_chain)
+void
+gegl_tile_handler_chain_bind (GeglTileHandlerChain *tile_handler_chain)
 {
   GSList *iter;
-
 
   iter = tile_handler_chain->chain;
   while (iter)
@@ -159,7 +155,7 @@ gegl_tile_handler_chain_add (GeglTileHandlerChain *tile_handler_chain,
                              GeglTileHandler      *handler)
 {
   tile_handler_chain->chain = g_slist_prepend (tile_handler_chain->chain, handler);
-  gegl_tile_handler_chain_rebind (tile_handler_chain);
+  /*gegl_tile_handler_chain_bind (tile_handler_chain);*/
   return handler;
 }
 

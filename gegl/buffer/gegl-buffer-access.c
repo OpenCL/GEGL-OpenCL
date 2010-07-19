@@ -293,19 +293,22 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
 void
 gegl_buffer_flush (GeglBuffer *buffer)
 {
+  GeglTileBackend *backend;
+
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  backend = gegl_buffer_backend (buffer);
 
   if (buffer->hot_tile)
     {
       gegl_tile_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
-  if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))
+  if ((GeglBufferHeader*)(backend->header))
     {
-      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->x =buffer->extent.x;
-      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->y =buffer->extent.y;
-      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->width =buffer->extent.width;
-      ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->header))->height =buffer->extent.height;
+      ((GeglBufferHeader*)(backend->header))->x =buffer->extent.x;
+      ((GeglBufferHeader*)(backend->header))->y =buffer->extent.y;
+      ((GeglBufferHeader*)(backend->header))->width =buffer->extent.width;
+      ((GeglBufferHeader*)(backend->header))->height =buffer->extent.height;
     }
 
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),

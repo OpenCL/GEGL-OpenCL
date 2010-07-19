@@ -58,6 +58,10 @@ GeglTileHandler * gegl_tile_handler_chain_add
                                       (GeglTileHandlerChain *tile_handler_chain,
                                        GeglTileHandler      *handler);
 
+/* Binds the tile-handlers in the chain together.
+ */
+void gegl_tile_handler_chain_bind (GeglTileHandlerChain *tile_handler_chain);
+
 /* returns the first matching handler of a specified type (or NULL) */
 GeglTileHandler * gegl_tile_handler_chain_get_first
                                       (GeglTileHandlerChain *tile_handler_chain,
