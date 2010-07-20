@@ -500,9 +500,7 @@ gegl_buffer_constructor (GType                  type,
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
-          g_object_set (buffer,
-                        "source", source,
-                        NULL);
+          gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
           g_object_unref (source);
 
           g_assert (source);
@@ -534,9 +532,7 @@ gegl_buffer_constructor (GType                  type,
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
-          g_object_set (buffer,
-                        "source", source,
-                        NULL);
+          gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
           g_object_unref (source);
 
           g_signal_connect (storage, "changed",
@@ -564,9 +560,7 @@ gegl_buffer_constructor (GType                  type,
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
            */
-          g_object_set (buffer,
-                        "source", source,
-                        NULL);
+          gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
           g_object_unref (source);
 
           g_assert (source);
