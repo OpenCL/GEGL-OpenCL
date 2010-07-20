@@ -446,7 +446,7 @@ path_calc (GeglPathList *path,
     }
 }
 
-static void
+static gboolean
 path_calc2 (GeglPathList *path,
            gdouble       pos,
            gdouble      *xd,
@@ -511,7 +511,7 @@ path_calc2 (GeglPathList *path,
 
                   *stop = prev;
                   *leftover += traveled;
-                  return;
+                  return TRUE;
                 }
 
               traveled = next_pos;
@@ -527,7 +527,8 @@ path_calc2 (GeglPathList *path,
         }
       iter=iter->next;
     }
-  fprintf (stderr, "outside iterator bounds");
+  /*fprintf (stderr, "outside iterator bounds");*/
+  return FALSE;
 }
 
 static void path_calc_values (GeglPathList *path,
@@ -1055,7 +1056,7 @@ void gegl_path_get_bounds (GeglPath *self,
 
 
 
-void
+gboolean
 gegl_path_calc (GeglPath   *self,
                 gdouble     pos,
                 gdouble    *xd,
@@ -1066,6 +1067,7 @@ gegl_path_calc (GeglPath   *self,
   GeglPathList *stop  = NULL;
   gdouble rel_pos  = 0.0;
   gdouble leftover = 0.0;
+  gboolean result = FALSE;
 
   if (!self)
     return;
@@ -1084,11 +1086,20 @@ gegl_path_calc (GeglPath   *self,
       rel_pos = pos;
     }
     
-  path_calc2 (entry,rel_pos,xd,yd,&stop,&leftover);
-  
-  priv->calc_stop = stop;
-  priv->calc_leftover = leftover;
-  priv->calc_clean = TRUE;
+  if (path_calc2 (entry,rel_pos,xd,yd,&stop,&leftover))
+    {
+      priv->calc_stop = stop;
+      priv->calc_leftover = leftover;
+      priv->calc_clean = TRUE;
+
+      result = TRUE;
+    }
+  else
+    {
+      priv->calc_clean = FALSE;
+      result = FALSE;
+    }
+  return result;
 }
 
 

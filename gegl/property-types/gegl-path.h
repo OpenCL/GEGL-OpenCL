@@ -231,7 +231,7 @@ gdouble              gegl_path_closest_point  (GeglPath     *path,
  * Compute the coordinates of the path at the @position (length measured from
  * start of path, not including discontinuities).
  */
-void                 gegl_path_calc           (GeglPath     *path,
+gboolean             gegl_path_calc           (GeglPath     *path,
                                                gdouble       pos,
                                                gdouble      *x,
                                                gdouble      *y);
