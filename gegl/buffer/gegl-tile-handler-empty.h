@@ -20,6 +20,7 @@
 #define __GEGL_TILE_HANDLER_EMPTY_H__
 
 #include "gegl-tile-handler.h"
+#include "gegl-tile-handler-cache.h"
 
 G_BEGIN_DECLS
 
@@ -36,10 +37,11 @@ typedef struct _GeglTileHandlerEmptyClass GeglTileHandlerEmptyClass;
 
 struct _GeglTileHandlerEmpty
 {
-  GeglTileHandler      parent_instance;
+  GeglTileHandler         parent_instance;
 
-  GeglTile        *tile;
-  GeglTileBackend *backend;
+  GeglTile               *tile;
+  GeglTileBackend        *backend;
+  GeglTileHandlerCache   *cache;
 };
 
 struct _GeglTileHandlerEmptyClass
@@ -48,6 +50,8 @@ struct _GeglTileHandlerEmptyClass
 };
 
 GType gegl_tile_handler_empty_get_type (void) G_GNUC_CONST;
+GeglTileHandler *gegl_tile_handler_empty_new (GeglTileBackend      *backend,
+                                              GeglTileHandlerCache *cache);
 
 G_END_DECLS
 

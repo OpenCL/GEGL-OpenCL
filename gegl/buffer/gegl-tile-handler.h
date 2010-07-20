@@ -23,18 +23,16 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_HANDLER            (gegl_tile_handler_get_type ())
+#define GEGL_TYPE_TILE_HANDLER       (gegl_tile_handler_get_type ())
 #define GEGL_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_HANDLER, GeglTileHandler))
 #define GEGL_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_HANDLER, GeglTileHandlerClass))
 #define GEGL_IS_HANDLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_HANDLER))
 #define GEGL_IS_HANDLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_HANDLER))
 #define GEGL_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_HANDLER, GeglTileHandlerClass))
 
-
 struct _GeglTileHandler
 {
   GeglTileSource  parent_instance;
-
   GeglTileSource *source; /* The source of the data, which we can rely on if
                              our command handler doesn't handle a command, this
                              is typically done with gegl_tile_handler_chain_up

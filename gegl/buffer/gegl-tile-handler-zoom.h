@@ -20,6 +20,7 @@
 #define __GEGL_TILE_HANDLER_ZOOM_H__
 
 #include "gegl-tile-handler.h"
+#include "gegl-tile-handler-cache.h"
 
 G_BEGIN_DECLS
 
@@ -36,10 +37,10 @@ typedef struct _GeglTileHandlerZoomClass GeglTileHandlerZoomClass;
 
 struct _GeglTileHandlerZoom
 {
-  GeglTileHandler  parent_instance;
-
-  GeglTileBackend *backend;
-  GeglTileStorage *tile_storage;
+  GeglTileHandler       parent_instance;
+  GeglTileHandlerCache *cache;
+  GeglTileBackend      *backend;
+  GeglTileStorage      *tile_storage;
 };
 
 struct _GeglTileHandlerZoomClass
@@ -48,6 +49,9 @@ struct _GeglTileHandlerZoomClass
 };
 
 GType gegl_tile_handler_zoom_get_type (void) G_GNUC_CONST;
+GeglTileHandler *gegl_tile_handler_zoom_new (GeglTileBackend *backend,
+                                             GeglTileStorage *tile_storage,
+                                             GeglTileHandlerCache *cache);
 
 G_END_DECLS
 

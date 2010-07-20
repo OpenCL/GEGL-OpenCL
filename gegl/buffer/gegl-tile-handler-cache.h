@@ -40,4 +40,11 @@ struct _GeglTileHandlerCacheClass
 
 GType gegl_tile_handler_cache_get_type (void) G_GNUC_CONST;
 
+GeglTileHandlerCache *gegl_tile_handler_cache_new (void);
+void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
+                                     GeglTile             *tile,
+                                     gint                  x,
+                                     gint                  y,
+                                     gint                  z);
+
 #endif

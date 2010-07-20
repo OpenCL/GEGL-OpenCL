@@ -95,11 +95,8 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     tile->next_shared = tile;
     tile->prev_shared = tile;
 
-    {
-      GeglTileHandlerCache *cache = g_object_get_data (G_OBJECT (buffer->tile_storage), "cache");
-      if (cache)
-        gegl_tile_handler_cache_insert (cache, tile, 0, 0, 0);
-    }
+    if (buffer->tile_storage->cache)
+      gegl_tile_handler_cache_insert (buffer->tile_storage->cache, tile, 0, 0, 0);
     gegl_tile_unref (tile);
   }
 

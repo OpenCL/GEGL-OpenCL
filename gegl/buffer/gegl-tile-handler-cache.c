@@ -513,3 +513,9 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
     }
   g_static_mutex_unlock (&mutex);
 }
+
+GeglTileHandlerCache *
+gegl_tile_handler_cache_new (void)
+{
+  return g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE, NULL);
+}

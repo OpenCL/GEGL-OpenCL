@@ -185,9 +185,10 @@ gegl_tile_storage_constructor (GType                  type,
   GeglTileStorage       *tile_storage;
   GeglTileHandlerChain  *tile_handler_chain;
   GeglTileHandler       *handler;
+  GeglTileBackend       *backend;
   GeglTileHandler       *empty = NULL;
   GeglTileHandler       *zoom = NULL;
-  GeglTileHandler       *cache = NULL;
+  GeglTileHandlerCache  *cache = NULL;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
@@ -232,32 +233,25 @@ gegl_tile_storage_constructor (GType                  type,
                 NULL);
 
   g_object_unref (handler->source); /* eeek */
+  backend = GEGL_TILE_BACKEND (handler->source);
 
   if (g_getenv("GEGL_LOG_TILE_BACKEND")||
       g_getenv("GEGL_TILE_LOG"))
     gegl_tile_handler_chain_add (tile_handler_chain,
                       g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 
-  cache = g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE,
-                        NULL);
-  empty = g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY,
-                        "backend", handler->source,
-                        NULL);
-  zoom = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
-                       "backend", handler->source,
-                       "tile_storage", tile_storage,
-                       NULL);
+  cache = gegl_tile_handler_cache_new ();
+  empty = gegl_tile_handler_empty_new (backend, cache);
+  zoom = gegl_tile_handler_zoom_new (backend, tile_storage, cache);
 
-  gegl_tile_handler_chain_add (tile_handler_chain, cache);
+  gegl_tile_handler_chain_add (tile_handler_chain, (void*)cache);
   gegl_tile_handler_chain_add (tile_handler_chain, zoom);
   gegl_tile_handler_chain_add (tile_handler_chain, empty);
 
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_tile_handler_chain_add (tile_handler_chain,
                               g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
-  g_object_set_data (G_OBJECT (tile_storage), "cache", cache);
-  g_object_set_data (G_OBJECT (empty), "cache", cache);
-  g_object_set_data (G_OBJECT (zoom), "cache", cache);
+  tile_storage->cache = cache;
 
   gegl_tile_handler_chain_bind (tile_handler_chain);
 

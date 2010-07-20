@@ -63,7 +63,12 @@ dispose (GObject *object)
   while (iter)
     {
       if (iter->data)
-        g_object_unref (iter->data);
+        {
+          if (G_IS_OBJECT (iter->data))
+            g_object_unref (iter->data);
+          else
+            g_free (iter->data);
+        }
       iter = iter->next;
     }
 

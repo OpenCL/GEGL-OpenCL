@@ -20,6 +20,7 @@
 #define __GEGL_TILE_STORAGE_H__
 
 #include "gegl-tile-handler-chain.h"
+#include "gegl-tile-handler-cache.h"
 
 #define GEGL_TYPE_TILE_STORAGE            (gegl_tile_storage_get_type ())
 #define GEGL_TILE_STORAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORAGE, GeglTileStorage))
@@ -31,18 +32,19 @@
 struct _GeglTileStorage
 {
   GeglTileHandlerChain parent_instance;
-  GMutex      *mutex;
-  Babl        *format;
-  gint         tile_width;
-  gint         tile_height;
-  gint         tile_size;
-  gint         px_size;
-  gint         width;
-  gint         height;
-  gchar       *path;
-  gint         seen_zoom; /* the maximum zoom level we've seen tiles for */
+  GeglTileHandlerCache *cache;
+  GMutex        *mutex;
+  Babl          *format;
+  gint           tile_width;
+  gint           tile_height;
+  gint           tile_size;
+  gint           px_size;
+  gint           width;
+  gint           height;
+  gchar         *path;
+  gint           seen_zoom; /* the maximum zoom level we've seen tiles for */
 
-  guint        idle_swapper;
+  guint          idle_swapper;
 };
 
 struct _GeglTileStorageClass

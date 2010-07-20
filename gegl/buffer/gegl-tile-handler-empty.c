@@ -26,12 +26,6 @@
 
 G_DEFINE_TYPE (GeglTileHandlerEmpty, gegl_tile_handler_empty, GEGL_TYPE_TILE_HANDLER)
 
-enum
-{
-  PROP_0,
-  PROP_BACKEND
-};
-
 static void
 finalize (GObject *object)
 {
@@ -43,11 +37,6 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->finalize (object);
 }
 
-void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
-                                     GeglTile             *tile,
-                                     gint                  x,
-                                     gint                  y,
-                                     gint                  z);
 
 static GeglTile *
 get_tile (GeglTileSource *gegl_tile_source,
@@ -68,83 +57,12 @@ get_tile (GeglTileSource *gegl_tile_source,
   tile->x = x;
   tile->y = y;
   tile->z = z;
-  {
-    GeglTileHandlerCache *cache = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
-    if (cache)
-      gegl_tile_handler_cache_insert (cache, tile, x, y, z);
-  }
+
+  if (empty->cache)
+    gegl_tile_handler_cache_insert (empty->cache, tile, x, y, z);
 
   return tile;
 }
-
-
-static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (gobject);
-
-  switch (property_id)
-    {
-      case PROP_BACKEND:
-        g_value_set_object (value, empty->backend);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglTileHandlerEmpty *empty = GEGL_TILE_HANDLER_EMPTY (gobject);
-
-  switch (property_id)
-    {
-      case PROP_BACKEND:
-        empty->backend = g_value_get_object (value);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static GObject *
-constructor (GType                  type,
-             guint                  n_params,
-             GObjectConstructParam *params)
-{
-  GObject       *object;
-  GeglTileHandlerEmpty *empty;
-  gint           tile_width;
-  gint           tile_height;
-  gint           tile_size;
-
-  object = G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->constructor (type, n_params, params);
-
-  empty  = GEGL_TILE_HANDLER_EMPTY (object);
-
-  g_assert (empty->backend);
-  g_object_get (empty->backend, "tile-width", &tile_width,
-                "tile-height", &tile_height,
-                "tile-size", &tile_size,
-                NULL);
-  /* FIXME: need babl format here */
-  empty->tile = gegl_tile_new (tile_size);
-  memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
-
-  return object;
-}
-
 
 static gpointer
 gegl_tile_handler_empty_command (GeglTileSource  *buffer,
@@ -159,29 +77,37 @@ gegl_tile_handler_empty_command (GeglTileSource  *buffer,
   return gegl_tile_handler_chain_up (buffer, command, x, y, z, data);
 }
 
-
 static void
 gegl_tile_handler_empty_class_init (GeglTileHandlerEmptyClass *klass)
 {
   GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
   GeglTileSourceClass *source_class  = GEGL_TILE_SOURCE_CLASS (klass);
 
-  gobject_class->constructor  = constructor;
   gobject_class->finalize     = finalize;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
   source_class->command = gegl_tile_handler_empty_command;
-
-  g_object_class_install_property (gobject_class, PROP_BACKEND,
-                                   g_param_spec_object ("backend",
-                                                        "backend",
-                                                        "backend for this tilestore (needed for tile size data)",
-                                                        G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
 gegl_tile_handler_empty_init (GeglTileHandlerEmpty *self)
 {
+}
+
+GeglTileHandler *
+gegl_tile_handler_empty_new (GeglTileBackend      *backend,
+                             GeglTileHandlerCache *cache)
+{
+  GeglTileHandlerEmpty *empty = g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY, NULL);
+  gint tile_width, tile_height, tile_size;
+  empty->backend = backend;
+  empty->cache = cache;
+
+  g_object_get (empty->backend, "tile-width", &tile_width,
+                "tile-height", &tile_height,
+                "tile-size", &tile_size,
+                NULL);
+  /* FIXME: need babl format here */
+  empty->tile = gegl_tile_new (tile_size);
+  memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
+
+  return (void*)empty;
 }

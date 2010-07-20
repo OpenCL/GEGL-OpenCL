@@ -27,13 +27,6 @@
 
 G_DEFINE_TYPE (GeglTileHandlerZoom, gegl_tile_handler_zoom, GEGL_TYPE_TILE_HANDLER)
 
-enum
-{
-  PROP_0,
-  PROP_TILE_STORAGE,
-  PROP_BACKEND
-};
-
 #include <babl/babl.h>
 #include "gegl-tile-backend.h"
 #include "gegl-tile-storage.h"
@@ -270,14 +263,8 @@ get_tile (GeglTileSource *gegl_tile_source,
         tile->stored_rev = 1;
         tile->rev        = 1;
 
-        {
-          GeglTileHandlerCache *cache;
-          cache = g_object_get_data (G_OBJECT (gegl_tile_source), "cache");
-          if (cache)
-            {
-              gegl_tile_handler_cache_insert (cache, tile, x, y, z);
-            }
-        }
+        if (zoom->cache)
+          gegl_tile_handler_cache_insert (zoom->cache, tile, x, y, z);
       }
     gegl_tile_lock (tile);
     data = gegl_tile_get_data (tile); /* XXX: is this needed? */
@@ -322,96 +309,11 @@ gegl_tile_handler_zoom_command (GeglTileSource  *tile_store,
     }
 }
 
-
-static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  GeglTileHandlerZoom *zoom = GEGL_TILE_HANDLER_ZOOM (gobject);
-
-  switch (property_id)
-    {
-      case PROP_TILE_STORAGE:
-        g_value_set_object (value, zoom->tile_storage);
-        break;
-
-      case PROP_BACKEND:
-        g_value_set_object (value, zoom->backend);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglTileHandlerZoom *zoom = GEGL_TILE_HANDLER_ZOOM (gobject);
-
-  switch (property_id)
-    {
-      case PROP_TILE_STORAGE:
-        zoom->tile_storage = g_value_get_object (value);
-        break;
-
-      case PROP_BACKEND:
-        zoom->backend = g_value_get_object (value);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static GObject *
-constructor (GType                  type,
-             guint                  n_params,
-             GObjectConstructParam *params)
-{
-  GObject      *object;
-
-  object = G_OBJECT_CLASS (gegl_tile_handler_zoom_parent_class)->constructor (type, n_params, params);
-
-  return object;
-}
-
-
 static void
 gegl_tile_handler_zoom_class_init (GeglTileHandlerZoomClass *klass)
 {
-  GObjectClass      *gobject_class  = G_OBJECT_CLASS (klass);
   GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
-
-  gobject_class->constructor  = constructor;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
   source_class->command = gegl_tile_handler_zoom_command;
-
-  g_object_class_install_property (gobject_class, PROP_TILE_STORAGE,
-                                   g_param_spec_object ("tile_storage",
-                                                        "tile_storage",
-                                                        "tile_storage for this tilestore (needed for tile size data)",
-                                                        G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
-
-
-  g_object_class_install_property (gobject_class, PROP_BACKEND,
-                                   g_param_spec_object ("backend",
-                                                        "backend",
-                                                        "backend for this tilestore (needed for tile size data)",
-                                                        G_TYPE_OBJECT,
-                                                        G_PARAM_WRITABLE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
@@ -419,4 +321,17 @@ gegl_tile_handler_zoom_init (GeglTileHandlerZoom *self)
 {
   self->backend = NULL;
   self->tile_storage = NULL;
+}
+
+GeglTileHandler *
+gegl_tile_handler_zoom_new (GeglTileBackend      *backend,
+                            GeglTileStorage      *tile_storage,
+                            GeglTileHandlerCache *cache)
+{
+  GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
+                                           NULL);
+  ret->backend = backend;
+  ret->tile_storage = tile_storage;
+  ret->cache = cache;
+  return (void*)ret;
 }
