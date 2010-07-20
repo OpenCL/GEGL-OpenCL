@@ -34,7 +34,7 @@ struct _GeglTileStorage
   GeglTileHandlerChain parent_instance;
   GeglTileHandlerCache *cache;
   GMutex        *mutex;
-  Babl          *format;
+  const Babl    *format;
   gint           tile_width;
   gint           tile_height;
   gint           tile_size;
@@ -53,5 +53,10 @@ struct _GeglTileStorageClass
 };
 
 GType gegl_tile_storage_get_type (void) G_GNUC_CONST;
+GeglTileStorage *
+gegl_tile_storage_new (gint tile_width,
+                       gint tile_height,
+                       const Babl *format,
+                       const gchar *path);
 
 #endif

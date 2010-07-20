@@ -118,7 +118,7 @@ void gegl_buffer_header_init (GeglBufferHeader *header,
                               gint              tile_width,
                               gint              tile_height,
                               gint              bpp,
-                              Babl*             format);
+                              const Babl*       format);
 
 void gegl_tile_entry_destroy (GeglBufferTile *entry);
 
