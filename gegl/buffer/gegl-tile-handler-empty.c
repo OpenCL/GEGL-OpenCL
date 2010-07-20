@@ -75,13 +75,13 @@ gegl_tile_handler_empty_command (GeglTileSource  *buffer,
 {
   if (command == GEGL_TILE_GET)
     return get_tile (buffer, x, y, z);
-  return gegl_tile_handler_chain_up (buffer, command, x, y, z, data);
+  return gegl_tile_handler_source_command (buffer, command, x, y, z, data);
 }
 
 static void
 gegl_tile_handler_empty_class_init (GeglTileHandlerEmptyClass *klass)
 {
-  GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize     = finalize;
 }
 

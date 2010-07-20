@@ -35,7 +35,7 @@ struct _GeglTileHandler
   GeglTileSource  parent_instance;
   GeglTileSource *source; /* The source of the data, which we can rely on if
                              our command handler doesn't handle a command, this
-                             is typically done with gegl_tile_handler_chain_up
+                             is typically done with gegl_tile_handler_source_command
                              passing ourself as the first parameter. */
 };
 
@@ -53,7 +53,7 @@ gegl_tile_handler_set_source (GeglTileHandler *handler,
 
 #define gegl_tile_handler_get_source(handler)  (((GeglTileHandler*)handler)->source)
 
-#define gegl_tile_handler_chain_up(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)
+#define gegl_tile_handler_source_command(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)
 
 
 G_END_DECLS

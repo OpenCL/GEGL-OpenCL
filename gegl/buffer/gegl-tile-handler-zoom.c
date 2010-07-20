@@ -295,18 +295,13 @@ gegl_tile_handler_zoom_command (GeglTileSource  *tile_store,
                                 gint             y,
                                 gint             z,
                                 gpointer         data)
-  {
-  GeglTileHandler *handler  = GEGL_HANDLER (tile_store);
-  /*GeglTileSource *source = handler->source;*/
+{
+  GeglTileHandler *handler  = (void*)tile_store;
 
-  switch (command)
-    {
-      case GEGL_TILE_GET:
-        return get_tile (tile_store, x, y, z);
-      default:
-        /* pass the command on */
-        return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
-    }
+  if (command == GEGL_TILE_GET)
+    return get_tile (tile_store, x, y, z);
+  else
+    return gegl_tile_handler_source_command (handler, command, x, y, z, data);
 }
 
 static void
@@ -327,7 +322,9 @@ gegl_tile_handler_zoom_new (GeglTileBackend      *backend,
                             GeglTileStorage      *tile_storage,
                             GeglTileHandlerCache *cache)
 {
-  GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM, NULL);
+  GeglTileHandlerZoom *ret;
+  ret = g_malloc0 (sizeof (GeglTileHandlerZoom));
+  ((GeglTileSource*)ret)->command = gegl_tile_handler_zoom_command;
   ret->backend = backend;
   ret->tile_storage = tile_storage;
   ret->cache = cache;

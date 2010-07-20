@@ -743,7 +743,7 @@ gegl_buffer_command (GeglTileSource *source,
       case GEGL_TILE_GET:
         return gegl_buffer_get_tile (source, x, y, z);
       default:
-        return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
+        return gegl_tile_handler_source_command (handler, command, x, y, z, data);
     }
 }
 

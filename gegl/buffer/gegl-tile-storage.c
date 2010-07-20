@@ -149,7 +149,7 @@ gegl_tile_storage_new (gint tile_width,
                       g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 #endif
 
-  cache = gegl_tile_handler_cache_new ();
+  cache = g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE, NULL);
   empty = gegl_tile_handler_empty_new (backend, cache);
   zoom = gegl_tile_handler_zoom_new (backend, tile_storage, cache);
 

@@ -148,13 +148,6 @@ static void        gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cac
                                                      gint              y,
                                                      gint              z);
 
-
-static void
-finalize (GObject *object)
-{
-  G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->finalize (object);
-}
-
 static void
 gegl_tile_handler_cache_dispose_buffer_tiles (gpointer itm,
                                               gpointer userdata)
@@ -283,6 +276,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
           gboolean action = gegl_tile_handler_cache_wash (cache);
           if (action)
             return GINT_TO_POINTER(action);
+          /* with no action, we chain up to lower levels */
           break;
         }
       case GEGL_TILE_REFETCH:
@@ -295,14 +289,13 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
         break;
     }
 
-  return gegl_tile_handler_chain_up (handler, command, x, y, z, data);
+  return gegl_tile_handler_source_command (handler, command, x, y, z, data);
 }
 
 static void
 gegl_tile_handler_cache_class_init (GeglTileHandlerCacheClass *class)
 {
   GObjectClass        *gobject_class = G_OBJECT_CLASS (class);
-  gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;
 }
 
