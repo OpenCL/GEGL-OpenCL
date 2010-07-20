@@ -23,6 +23,7 @@
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-empty.h"
 #include "gegl-tile-handler-cache.h"
+#include "gegl-tile-backend.h"
 
 G_DEFINE_TYPE (GeglTileHandlerEmpty, gegl_tile_handler_empty, GEGL_TYPE_TILE_HANDLER)
 
@@ -95,17 +96,9 @@ gegl_tile_handler_empty_new (GeglTileBackend      *backend,
                              GeglTileHandlerCache *cache)
 {
   GeglTileHandlerEmpty *empty = g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY, NULL);
-  gint tile_width, tile_height, tile_size;
   empty->backend = backend;
   empty->cache = cache;
-
-  g_object_get (empty->backend, "tile-width", &tile_width,
-                "tile-height", &tile_height,
-                "tile-size", &tile_size,
-                NULL);
-  /* FIXME: need babl format here */
-  empty->tile = gegl_tile_new (tile_size);
-  memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
-
+  empty->tile = gegl_tile_new (backend->tile_size);
+  memset (gegl_tile_get_data (empty->tile), 0x00, backend->tile_size);
   return (void*)empty;
 }

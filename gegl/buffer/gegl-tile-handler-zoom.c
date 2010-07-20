@@ -197,8 +197,8 @@ get_tile (GeglTileSource *gegl_tile_source,
           gint            y,
           gint            z)
 {
-  GeglTileSource      *source = GEGL_HANDLER (gegl_tile_source)->source;
-  GeglTileHandlerZoom *zoom   = GEGL_TILE_HANDLER_ZOOM (gegl_tile_source);
+  GeglTileSource      *source = ((GeglTileHandler*)(gegl_tile_source))->source;
+  GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom*)(gegl_tile_source);
   GeglTile            *tile   = NULL;
   Babl                *format = (Babl *) (zoom->backend->format);
   gint                 tile_width;
@@ -327,8 +327,7 @@ gegl_tile_handler_zoom_new (GeglTileBackend      *backend,
                             GeglTileStorage      *tile_storage,
                             GeglTileHandlerCache *cache)
 {
-  GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM,
-                                           NULL);
+  GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM, NULL);
   ret->backend = backend;
   ret->tile_storage = tile_storage;
   ret->cache = cache;

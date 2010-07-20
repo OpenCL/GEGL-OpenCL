@@ -96,20 +96,6 @@ gegl_tile_handler_set_source (GeglTileHandler *handler,
     }
   handler->source = g_object_ref (source);
 
-  /* special case if we are the Traits subclass of Trait
-   * also set the source at the end of the chain.
-   */
-  if (GEGL_IS_TILE_HANDLER_CHAIN (handler))
-    {
-      GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (handler);
-      GSList         *iter   = (void *) tile_handler_chain->chain;
-      while (iter && iter->next)
-             iter = iter->next;
-            if (iter)
-              {
-                gegl_tile_handler_set_source (GEGL_HANDLER (iter->data), handler->source);
-              }
-          }
 }
 
 static void
