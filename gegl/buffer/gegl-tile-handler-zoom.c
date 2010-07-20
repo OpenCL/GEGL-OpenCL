@@ -312,13 +312,12 @@ gegl_tile_handler_zoom_command (GeglTileSource  *tile_store,
 static void
 gegl_tile_handler_zoom_class_init (GeglTileHandlerZoomClass *klass)
 {
-  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
-  source_class->command = gegl_tile_handler_zoom_command;
 }
 
 static void
 gegl_tile_handler_zoom_init (GeglTileHandlerZoom *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_handler_zoom_command;
   self->backend = NULL;
   self->tile_storage = NULL;
 }

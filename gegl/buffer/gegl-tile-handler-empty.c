@@ -81,15 +81,13 @@ static void
 gegl_tile_handler_empty_class_init (GeglTileHandlerEmptyClass *klass)
 {
   GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
-  GeglTileSourceClass *source_class  = GEGL_TILE_SOURCE_CLASS (klass);
-
   gobject_class->finalize     = finalize;
-  source_class->command = gegl_tile_handler_empty_command;
 }
 
 static void
 gegl_tile_handler_empty_init (GeglTileHandlerEmpty *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_handler_empty_command;
 }
 
 GeglTileHandler *

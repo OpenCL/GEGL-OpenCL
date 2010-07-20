@@ -302,16 +302,14 @@ static void
 gegl_tile_handler_cache_class_init (GeglTileHandlerCacheClass *class)
 {
   GObjectClass        *gobject_class = G_OBJECT_CLASS (class);
-  GeglTileSourceClass *source_class  = GEGL_TILE_SOURCE_CLASS (class);
-
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;
-  source_class->command   = gegl_tile_handler_cache_command;
 }
 
 static void
 gegl_tile_handler_cache_init (GeglTileHandlerCache *cache)
 {
+  ((GeglTileSource*)cache)->command = gegl_tile_handler_cache_command;
   gegl_tile_cache_init ();
 }
 

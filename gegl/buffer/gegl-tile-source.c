@@ -37,10 +37,10 @@ gegl_tile_source_command_eek (GeglTileSource  *gegl_tile_source,
 static void
 gegl_tile_source_class_init (GeglTileSourceClass *klass)
 {  
-  klass->command = gegl_tile_source_command_eek;
 }
 
 static void
 gegl_tile_source_init (GeglTileSource *self)
 {
+  self->command = gegl_tile_source_command_eek;
 }

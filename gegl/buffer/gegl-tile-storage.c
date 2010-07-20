@@ -185,7 +185,7 @@ gegl_tile_storage_constructor (GType                  type,
   GeglTileStorage       *tile_storage;
   GeglTileHandlerChain  *tile_handler_chain;
   GeglTileHandler       *handler;
-  GeglTileBackend       *backend;
+  GeglTileBackend       *backend = NULL;
   GeglTileHandler       *empty = NULL;
   GeglTileHandler       *zoom = NULL;
   GeglTileHandlerCache  *cache = NULL;
@@ -200,37 +200,33 @@ gegl_tile_storage_constructor (GType                  type,
   if (tile_storage->path != NULL)
     {
 #if 1
-      gegl_tile_handler_set_source (handler,
-                              g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                                            "tile-width", tile_storage->tile_width,
-                                            "tile-height", tile_storage->tile_height,
-                                            "format", tile_storage->format,
-                                            "path", tile_storage->path,
-                                            NULL));
+      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+                              "tile-width", tile_storage->tile_width,
+                              "tile-height", tile_storage->tile_height,
+                              "format", tile_storage->format,
+                              "path", tile_storage->path,
+                              NULL);
 #else
-      gegl_tile_handler_set_source (handler,
-                    g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
-                                            "tile-width", tile_storage->tile_width,
-                                            "tile-height", tile_storage->tile_height,
-                                            "format", tile_storage->format,
-                                            "path", tile_storage->path,
-                                            NULL));
+      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
+                              "tile-width", tile_storage->tile_width,
+                              "tile-height", tile_storage->tile_height,
+                              "format", tile_storage->format,
+                              "path", tile_storage->path,
+                              NULL);
 #endif
     }
   else
     {
-      gegl_tile_handler_set_source (handler,
-                              g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
-                                            "tile-width", tile_storage->tile_width,
-                                            "tile-height", tile_storage->tile_height,
-                                            "format", tile_storage->format,
-                                            NULL));
+      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
+                              "tile-width", tile_storage->tile_width,
+                              "tile-height", tile_storage->tile_height,
+                              "format", tile_storage->format,
+                              NULL);
     }
 
-  g_object_get (handler->source,
-                "tile-size", &tile_storage->tile_size,
-                "px-size",   &tile_storage->px_size,
-                NULL);
+  tile_storage->tile_size = backend->tile_size;
+  tile_storage->px_size = backend->px_size;
+  gegl_tile_handler_set_source (handler, (void*)backend);
 
   g_object_unref (handler->source); /* eeek */
   backend = GEGL_TILE_BACKEND (handler->source);
@@ -250,7 +246,7 @@ gegl_tile_storage_constructor (GType                  type,
 
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_tile_handler_chain_add (tile_handler_chain,
-                              g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
+                                 g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
   tile_storage->cache = cache;
 
   gegl_tile_handler_chain_bind (tile_handler_chain);
@@ -266,7 +262,7 @@ gegl_tile_storage_constructor (GType                  type,
                                               tile_storage_idle,
                                               tile_storage,
                                               NULL);
-  tile_storage->seen_zoom = FALSE;
+  tile_storage->seen_zoom = 0;
   tile_storage->mutex = g_mutex_new ();
 
   return object;

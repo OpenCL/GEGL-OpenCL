@@ -136,13 +136,10 @@ static void
 gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
 {
   GObjectClass    *gobject_class  = G_OBJECT_CLASS (klass);
-  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->dispose      = dispose;
-
-  source_class->command = gegl_tile_handler_command;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("source",
@@ -155,6 +152,7 @@ gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
 static void
 gegl_tile_handler_init (GeglTileHandler *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_handler_command;
   self->source = NULL;
 }
 

@@ -358,7 +358,6 @@ static void
 gegl_tile_backend_ram_class_init (GeglTileBackendRamClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
-  GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -366,12 +365,11 @@ gegl_tile_backend_ram_class_init (GeglTileBackendRamClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->constructor  = gegl_tile_backend_ram_constructor;
   gobject_class->finalize     = finalize;
-
-  gegl_tile_source_class->command  = gegl_tile_backend_ram_command;
 }
 
 static void
 gegl_tile_backend_ram_init (GeglTileBackendRam *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_backend_ram_command;
   self->entries = NULL;
 }

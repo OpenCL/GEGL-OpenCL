@@ -1062,7 +1062,6 @@ static void
 gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
-  GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -1071,7 +1070,6 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
   gobject_class->constructor  = gegl_tile_backend_file_constructor;
   gobject_class->finalize     = gegl_tile_backend_file_finalize;
 
-  gegl_tile_source_class->command = gegl_tile_backend_file_command;
 
   GEGL_BUFFER_STRUCT_CHECK_PADDING;
 
@@ -1087,6 +1085,7 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
 static void
 gegl_tile_backend_file_init (GeglTileBackendFile *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_backend_file_command;
   self->path           = NULL;
 #if HAVE_GIO
   self->file           = NULL;

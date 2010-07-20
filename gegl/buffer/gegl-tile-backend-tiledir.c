@@ -355,6 +355,7 @@ gegl_tile_backend_tiledir_constructor (GType                  type,
 
   gio->buffer_dir = g_file_new_for_commandline_arg (gio->path);
   g_file_make_directory (gio->buffer_dir, NULL, NULL);
+  ((GeglTileSource*)(object))->command = gegl_tile_backend_tiledir_command;
   return object;
 }
 
@@ -362,7 +363,6 @@ static void
 gegl_tile_backend_tiledir_class_init (GeglTileBackendTileDirClass *klass)
 {
   GObjectClass    *gobject_class     = G_OBJECT_CLASS (klass);
-  GeglTileSourceClass *gegl_tile_source_class = GEGL_TILE_SOURCE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -370,9 +370,6 @@ gegl_tile_backend_tiledir_class_init (GeglTileBackendTileDirClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->constructor  = gegl_tile_backend_tiledir_constructor;
   gobject_class->finalize     = finalize;
-
-  gegl_tile_source_class->command = gegl_tile_backend_tiledir_command;
-
 
   g_object_class_install_property (gobject_class, PROP_PATH,
                                    g_param_spec_string ("path",

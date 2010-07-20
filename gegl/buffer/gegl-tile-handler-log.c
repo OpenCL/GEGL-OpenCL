@@ -74,12 +74,10 @@ gegl_tile_handler_log_command (GeglTileSource  *gegl_tile_source,
 static void
 gegl_tile_handler_log_class_init (GeglTileHandlerLogClass *klass)
 {
-  GeglTileSourceClass *source_class = GEGL_TILE_SOURCE_CLASS (klass);
-
-  source_class->command = gegl_tile_handler_log_command;
 }
 
 static void
 gegl_tile_handler_log_init (GeglTileHandlerLog *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_handler_log_command;
 }

@@ -767,15 +767,12 @@ static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
   GObjectClass      *gobject_class       = G_OBJECT_CLASS (class);
-  GeglTileSourceClass *tile_source_class = GEGL_TILE_SOURCE_CLASS (class);
-
   parent_class                = g_type_class_peek_parent (class);
   gobject_class->dispose      = gegl_buffer_dispose;
   gobject_class->finalize     = gegl_buffer_finalize;
   gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = gegl_buffer_set_property;
   gobject_class->get_property = gegl_buffer_get_property;
-  tile_source_class->command = gegl_buffer_command;
 
   g_object_class_install_property (gobject_class, PROP_PX_SIZE,
                                    g_param_spec_int ("px-size", "pixel-size", "size of a single pixel in bytes.",
@@ -941,6 +938,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->path = NULL;
   buffer->tile_width = 128;
   buffer->tile_height = 64;
+  ((GeglTileSource*)buffer)->command = gegl_buffer_command;
 
   allocated_buffers++;
 

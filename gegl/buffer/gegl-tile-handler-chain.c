@@ -112,12 +112,7 @@ static void
 gegl_tile_handler_chain_class_init (GeglTileHandlerChainClass *class)
 {
   GObjectClass      *gobject_class;
-  GeglTileSourceClass *tile_store_class;
-
   gobject_class    = (GObjectClass *) class;
-  tile_store_class = (GeglTileSourceClass *) class;
-
-  tile_store_class->command = gegl_tile_handler_chain_command;
 
   gobject_class->finalize = finalize;
   gobject_class->dispose  = dispose;
@@ -126,9 +121,9 @@ gegl_tile_handler_chain_class_init (GeglTileHandlerChainClass *class)
 static void
 gegl_tile_handler_chain_init (GeglTileHandlerChain *self)
 {
+  ((GeglTileSource*)self)->command = gegl_tile_handler_chain_command;
   self->chain = NULL;
 }
-
 
 void
 gegl_tile_handler_chain_bind (GeglTileHandlerChain *tile_handler_chain)
