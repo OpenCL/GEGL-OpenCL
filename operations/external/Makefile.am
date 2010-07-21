@@ -104,5 +104,14 @@ ppm_load_la_LIBADD = $(op_libs)
 ppm_save_la_SOURCES = ppm-save.c
 ppm_save_la_LIBADD = $(op_libs)
 
+# Dependencies are in our source tree
+ops += rgbe-load.la rgbe-save.la
+rgbe_load_la_SOURCES = rgbe-load.c
+rgbe_load_la_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libs
+rgbe_load_la_LIBADD = $(op_libs) $(top_builddir)/libs/rgbe/librgbe.la
+rgbe_save_la_SOURCES = rgbe-save.c
+rgbe_save_la_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libs
+rgbe_save_la_LIBADD = $(op_libs) $(top_builddir)/libs/rgbe/librgbe.la
+
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)

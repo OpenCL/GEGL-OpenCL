@@ -1006,6 +1006,8 @@ gegl/module/Makefile
 gegl/operation/Makefile
 gegl/process/Makefile
 gegl/property-types/Makefile
+libs/Makefile
+libs/rgbe/Makefile
 operations/Makefile
 operations/affine/Makefile
 operations/core/Makefile

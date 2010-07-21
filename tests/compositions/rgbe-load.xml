@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:rgbe-load'>
+    <params>
+      <param name='path'>data/car-stack-eighth.hdr</param>
+    </params>
+  </node>
+</gegl>
+
