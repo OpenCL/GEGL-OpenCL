@@ -1,0 +1,5 @@
+# Doesn't seem like important warnings, we typically get them during
+# make distcheck when the test install is performed
+
+all_files : ^libtool: install: warning: relinking `.*'$
+all_files : ^libtool: install: warning: remember to run `libtool --finish .*_inst.*'$
