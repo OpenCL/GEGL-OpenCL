@@ -49,7 +49,7 @@ gegl_tile_handler_log_command (GeglTileSource  *gegl_tile_source,
                                gint             z,
                                gpointer         data)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (gegl_tile_source);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (gegl_tile_source);
   gpointer         result = NULL;
 
   result = gegl_tile_handler_source_command (handler, command, x, y, z, data);

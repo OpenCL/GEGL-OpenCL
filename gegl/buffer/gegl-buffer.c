@@ -363,7 +363,7 @@ static void
 gegl_buffer_dispose (GObject *object)
 {
   GeglBuffer  *buffer  = GEGL_BUFFER (object);
-  GeglTileHandler *handler = GEGL_HANDLER (object);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
 
@@ -408,7 +408,7 @@ gegl_buffer_backend (GeglBuffer *buffer)
 
   do
     {
-      tmp = GEGL_HANDLER (tmp)->source;
+      tmp = GEGL_TILE_HANDLER (tmp)->source;
     } while (tmp &&
              /*GEGL_IS_TILE_TRAIT (tmp) &&*/
              !GEGL_IS_TILE_BACKEND (tmp));
@@ -464,7 +464,7 @@ gegl_buffer_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
 
   buffer    = GEGL_BUFFER (object);
-  handler   = GEGL_HANDLER (object);
+  handler   = GEGL_TILE_HANDLER (object);
   source  = handler->source;
   backend   = gegl_buffer_backend (buffer);
 
@@ -682,7 +682,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
                       gint        y,
                       gint        z)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (source);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (source);
   GeglTile    *tile   = NULL;
   source = handler->source;
 
@@ -737,7 +737,7 @@ gegl_buffer_command (GeglTileSource *source,
                      gint            z,
                      gpointer        data)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (source);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (source);
   switch (command)
     {
       case GEGL_TILE_GET:

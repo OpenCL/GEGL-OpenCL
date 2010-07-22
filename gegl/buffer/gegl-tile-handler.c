@@ -38,7 +38,7 @@ enum
 static void
 dispose (GObject *object)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (object);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
   if (handler->source != NULL)
     {
@@ -68,7 +68,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (gobject);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (gobject);
 
   switch (property_id)
     {
@@ -104,7 +104,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTileHandler *handler = GEGL_HANDLER (gobject);
+  GeglTileHandler *handler = GEGL_TILE_HANDLER (gobject);
 
   switch (property_id)
     {

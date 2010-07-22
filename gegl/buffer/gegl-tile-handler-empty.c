@@ -45,7 +45,7 @@ get_tile (GeglTileSource *gegl_tile_source,
           gint            y,
           gint            z)
 {
-  GeglTileSource       *source = GEGL_HANDLER (gegl_tile_source)->source;
+  GeglTileSource       *source = GEGL_TILE_HANDLER (gegl_tile_source)->source;
   GeglTileHandlerEmpty *empty  = GEGL_TILE_HANDLER_EMPTY (gegl_tile_source);
   GeglTile             *tile   = NULL;
 

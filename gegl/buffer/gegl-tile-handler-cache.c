@@ -202,7 +202,7 @@ get_tile (GeglTileSource *tile_store,
           gint        z)
 {
   GeglTileHandlerCache *cache    = GEGL_TILE_HANDLER_CACHE (tile_store);
-  GeglTileSource       *source = GEGL_HANDLER (tile_store)->source;
+  GeglTileSource       *source = GEGL_TILE_HANDLER (tile_store)->source;
   GeglTile             *tile     = NULL;
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
@@ -234,7 +234,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
                                  gint             z,
                                  gpointer         data)
 {
-  GeglTileHandler      *handler = GEGL_HANDLER (tile_store);
+  GeglTileHandler      *handler = GEGL_TILE_HANDLER (tile_store);
   GeglTileHandlerCache *cache   = GEGL_TILE_HANDLER_CACHE (handler);
 
   switch (command)

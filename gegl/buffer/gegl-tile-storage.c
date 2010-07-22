@@ -95,7 +95,7 @@ gegl_tile_storage_new (gint tile_width,
     tile_storage->path = g_strdup (path);
 
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
-  handler  = GEGL_HANDLER (tile_storage);
+  handler  = GEGL_TILE_HANDLER (tile_storage);
 
   if (tile_storage->path != NULL)
     {
@@ -135,7 +135,7 @@ gegl_tile_storage_new (gint tile_width,
       iter = iter->next;
     if (iter)
       {
-        gegl_tile_handler_set_source (GEGL_HANDLER (iter->data), handler->source);
+        gegl_tile_handler_set_source (GEGL_TILE_HANDLER (iter->data), handler->source);
       }
   }
 
