@@ -322,8 +322,7 @@ gegl_tile_handler_zoom_new (GeglTileBackend      *backend,
                             GeglTileStorage      *tile_storage,
                             GeglTileHandlerCache *cache)
 {
-  GeglTileHandlerZoom *ret;
-  ret = g_malloc0 (sizeof (GeglTileHandlerZoom));
+  GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM, NULL);
   ((GeglTileSource*)ret)->command = gegl_tile_handler_zoom_command;
   ret->backend = backend;
   ret->tile_storage = tile_storage;
