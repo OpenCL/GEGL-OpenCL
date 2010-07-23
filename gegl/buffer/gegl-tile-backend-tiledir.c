@@ -152,9 +152,7 @@ get_tile (GeglTileSource *tile_store,
     entry.y = y;
     entry.z = z;
 
-    tile             = gegl_tile_new (backend->tile_size);
-    tile->stored_rev = 1;
-    tile->rev        = 1;
+    tile = gegl_tile_new (backend->tile_size);
 
     gio_entry_read (tile_backend_tiledir, &entry, tile->data);
     return tile;

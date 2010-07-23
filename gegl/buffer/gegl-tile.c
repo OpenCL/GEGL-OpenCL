@@ -138,6 +138,7 @@ gegl_tile_new (gint size)
 
   tile->data       = gegl_malloc (size);
   tile->size       = size;
+  tile->rev        = 1;
   tile->stored_rev = 1;
 
   return tile;

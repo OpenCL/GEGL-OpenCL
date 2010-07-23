@@ -260,8 +260,6 @@ get_tile (GeglTileSource *gegl_tile_source,
         tile->y          = y;
         tile->z          = z;
         tile->tile_storage = zoom->tile_storage;
-        tile->stored_rev = 1;
-        tile->rev        = 1;
 
         if (zoom->cache)
           gegl_tile_handler_cache_insert (zoom->cache, tile, x, y, z);

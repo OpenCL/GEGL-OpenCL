@@ -155,9 +155,7 @@ get_tile (GeglTileSource *tile_store,
     if (!entry)
       return NULL;
 
-    tile             = gegl_tile_new (backend->tile_size);
-    tile->stored_rev = 1;
-    tile->rev        = 1;
+    tile = gegl_tile_new (backend->tile_size);
 
     ram_entry_read (tile_backend_ram, entry, tile->data);
   }
