@@ -90,8 +90,8 @@ gegl_tile_new_bare (void)
   GeglTile *tile = g_slice_new0 (GeglTile);
   tile->ref_count = 1;
   tile->tile_storage = NULL;
-  tile->stored_rev = 0;
-  tile->rev        = 0;
+  tile->stored_rev = 1;
+  tile->rev        = 1;
   tile->lock       = 0;
   tile->data       = NULL;
 
@@ -109,8 +109,6 @@ gegl_tile_dup (GeglTile *src)
 {
   GeglTile *tile = gegl_tile_new_bare ();
 
-  tile->rev        = 1;
-  tile->stored_rev = 1;
   tile->tile_storage    = src->tile_storage;
   tile->data       = src->data;
   tile->size       = src->size;
@@ -136,10 +134,8 @@ gegl_tile_new (gint size)
 {
   GeglTile *tile = gegl_tile_new_bare ();
 
-  tile->data       = gegl_malloc (size);
-  tile->size       = size;
-  tile->rev        = 1;
-  tile->stored_rev = 1;
+  tile->data = gegl_malloc (size);
+  tile->size = size;
 
   return tile;
 }

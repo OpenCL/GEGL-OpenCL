@@ -84,8 +84,6 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
   {
     GeglTile *tile = gegl_tile_new_bare (); 
 
-    tile->rev        = 1;
-    tile->stored_rev = 1;
     tile->tile_storage = buffer->tile_storage;
     tile->x = 0;
     tile->y = 0;
