@@ -466,7 +466,7 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
   tile->rev = entry->rev;
   gegl_tile_mark_as_stored (tile);
 
-  gegl_tile_backend_file_file_entry_read (tile_backend_file, entry, tile->data);
+  gegl_tile_backend_file_file_entry_read (tile_backend_file, entry, gegl_tile_get_data (tile));
   return tile;
 }
 
@@ -495,7 +495,7 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
     }
   entry->rev = tile->rev;
 
-  gegl_tile_backend_file_file_entry_write (tile_backend_file, entry, tile->data);
+  gegl_tile_backend_file_file_entry_write (tile_backend_file, entry, gegl_tile_get_data (tile));
   gegl_tile_mark_as_stored (tile);
   return NULL;
 }

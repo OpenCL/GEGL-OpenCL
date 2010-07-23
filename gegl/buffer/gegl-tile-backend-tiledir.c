@@ -154,7 +154,7 @@ get_tile (GeglTileSource *tile_store,
 
     tile = gegl_tile_new (backend->tile_size);
 
-    gio_entry_read (tile_backend_tiledir, &entry, tile->data);
+    gio_entry_read (tile_backend_tiledir, &entry, gegl_tile_get_data (tile));
     return tile;
   }
  return NULL;
@@ -175,7 +175,7 @@ set_tile (GeglTileSource *store,
   entry.y = y;
   entry.z = z;
 
-  gio_entry_write (tile_backend_tiledir, &entry, tile->data);
+  gio_entry_write (tile_backend_tiledir, &entry, gegl_tile_get_data (tile));
   gegl_tile_mark_as_stored (tile);
   return NULL;
 }

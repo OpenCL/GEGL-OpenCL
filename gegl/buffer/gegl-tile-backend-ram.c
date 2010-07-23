@@ -157,7 +157,7 @@ get_tile (GeglTileSource *tile_store,
 
     tile = gegl_tile_new (backend->tile_size);
 
-    ram_entry_read (tile_backend_ram, entry, tile->data);
+    ram_entry_read (tile_backend_ram, entry, gegl_tile_get_data (tile));
   }
   return tile;
 }
@@ -182,7 +182,7 @@ gboolean set_tile (GeglTileSource *store,
       entry->z = z;
       g_hash_table_insert (tile_backend_ram->entries, entry, entry);
     }
-  ram_entry_write (tile_backend_ram, entry, tile->data);
+  ram_entry_write (tile_backend_ram, entry, gegl_tile_get_data (tile));
   gegl_tile_mark_as_stored (tile);
   return TRUE;
 }
