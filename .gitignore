@@ -1,6 +1,11 @@
+*.orig
+*.rej
+*.sw?
+*~
 /.cdtproject
 /.project
 /.tm_project.cache
+/ChangeLog
 /INSTALL
 /Makefile
 /Makefile.in
@@ -35,9 +40,5 @@
 /stamp-h
 /stamp-h.in
 /stamp-h1
-*~
-*.sw?
-*.orig
-*.rej
-cscope.out
 cscope.files
+cscope.out
