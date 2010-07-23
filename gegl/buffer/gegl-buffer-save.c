@@ -65,7 +65,6 @@ typedef struct
   gint             tile_size;
   gint             offset;
   gint             entry_count;
-  GeglBufferBlock *last_added;
   GeglBufferBlock *in_holding; /* we need to write one block added behind
                                 * to be able to recompute the forward pointing
                                 * link from one entry to the next.
