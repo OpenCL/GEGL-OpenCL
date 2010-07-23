@@ -1,5 +1,5 @@
 #!/bin/sh
-total_tests=`ls -1 reference | wc -l`
+total_tests=`ls -1 reference/*.buf | wc -l`
 successful_tests=`cat buffer-tests-report | grep identical | wc -l`
 
 echo $successful_tests of $total_tests tests succesful.

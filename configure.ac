@@ -1027,6 +1027,8 @@ examples/Makefile
 examples/data/Makefile
 tests/Makefile
 tests/buffer/Makefile
+tests/buffer/reference/Makefile
+tests/buffer/tests/Makefile
 tests/compositions/Makefile
 tests/compositions/data/Makefile
 tests/simple/Makefile

@@ -1,8 +1,12 @@
+SUBDIRS = \
+	reference \
+	tests
+
 # The test program returns 'success' if all buffer tests passed
 TESTS = buffer-tests-results.sh
 buffer-tests-results.sh: buffer-tests-report
 
-EXTRA_DIST = $(wildcard reference/*.buf) $(wildcard tests/*.c) buffer-tests-results.sh
+EXTRA_DIST = buffer-tests-results.sh
 
 # Always build buffer-test to catch compilation problems early
 BUILT_SOURCES = buffer-tests.inc
@@ -49,7 +53,7 @@ buffer-tests.inc: $(buffer_test_SOURCES) Makefile.am $(top_srcdir)/tests/buffer/
 buffer-tests-report: buffer-test$(EXEEXT) $(top_srcdir)/tests/buffer/reference/*.buf
 	mkdir -p output > /dev/null 2>&1
 	./buffer-test$(EXEEXT)
-	diff -s -r -C 50 $(top_srcdir)/tests/buffer/reference/ output/ > buffer-tests-report; true
+	for f in $(top_srcdir)/tests/buffer/reference/*.buf; do diff --report-identical-files --context=50 $$f output/`basename $$f`; done > buffer-tests-report; true
 
 
 # Don't forget to clean
