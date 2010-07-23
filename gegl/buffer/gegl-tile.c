@@ -54,6 +54,10 @@ void gegl_tile_unref (GeglTile *tile)
   if (!g_atomic_int_dec_and_test (&tile->ref_count))
     return;
 
+  /* In the case of a file store for example, we must make sure that
+   * the in-memory tile is written to disk before we free the memory,
+   * otherwise this data will be lost.
+   */
   if (!gegl_tile_is_stored (tile))
     gegl_tile_store (tile);
 
