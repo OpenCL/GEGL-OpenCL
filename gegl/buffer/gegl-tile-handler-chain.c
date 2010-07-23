@@ -48,7 +48,7 @@ gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
 }
 
 static void
-dispose (GObject *object)
+gegl_tile_handler_chain_dispose (GObject *object)
 {
   GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (object);
   GSList       *iter;
@@ -81,7 +81,7 @@ dispose (GObject *object)
 
 
 static void
-finalize (GObject *object)
+gegl_tile_handler_chain_finalize (GObject *object)
 {
   G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->finalize (object);
 }
@@ -114,8 +114,8 @@ gegl_tile_handler_chain_class_init (GeglTileHandlerChainClass *class)
   GObjectClass      *gobject_class;
   gobject_class    = (GObjectClass *) class;
 
-  gobject_class->finalize = finalize;
-  gobject_class->dispose  = dispose;
+  gobject_class->finalize = gegl_tile_handler_chain_finalize;
+  gobject_class->dispose  = gegl_tile_handler_chain_dispose;
 }
 
 static void

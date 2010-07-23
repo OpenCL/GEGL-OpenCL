@@ -36,7 +36,7 @@ enum
 };
 
 static void
-dispose (GObject *object)
+gegl_tile_handler_dispose (GObject *object)
 {
   GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
@@ -63,10 +63,10 @@ gegl_tile_handler_command (GeglTileSource *gegl_tile_source,
 }
 
 static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_tile_handler_get_property (GObject    *gobject,
+                                guint       property_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
 {
   GeglTileHandler *handler = GEGL_TILE_HANDLER (gobject);
 
@@ -99,10 +99,10 @@ gegl_tile_handler_set_source (GeglTileHandler *handler,
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_tile_handler_set_property (GObject      *gobject,
+                                guint         property_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
 {
   GeglTileHandler *handler = GEGL_TILE_HANDLER (gobject);
 
@@ -123,9 +123,9 @@ gegl_tile_handler_class_init (GeglTileHandlerClass *klass)
 {
   GObjectClass    *gobject_class  = G_OBJECT_CLASS (klass);
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-  gobject_class->dispose      = dispose;
+  gobject_class->set_property = gegl_tile_handler_set_property;
+  gobject_class->get_property = gegl_tile_handler_get_property;
+  gobject_class->dispose      = gegl_tile_handler_dispose;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("source",
