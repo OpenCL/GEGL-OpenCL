@@ -52,17 +52,18 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK)
 #include <stdio.h>
 
 
-static gboolean
+static void 
 gegl_save_set_saver (GeglOperation *operation)
 {
   GeglChantO  *o    = GEGL_CHANT_PROPERTIES (operation);
   GeglChant   *self = GEGL_CHANT (operation);
   const gchar *extension, *handler;
-  gboolean     success = FALSE;
 
   /* If prepare has already been invoked, bail out early */
   if (self->cached_path && !strcmp (o->path, self->cached_path))
-      return TRUE;
+      return;
+  if (*o->path == '\0')
+    return;
   g_free (self->cached_path);
 
   /* Find an extension handler and put it into the graph. The path can be
@@ -80,7 +81,6 @@ gegl_save_set_saver (GeglOperation *operation)
                      "operation", handler,
                      "path",      o->path,
                      NULL);
-      success = TRUE;
     }
   else
     {
@@ -91,7 +91,7 @@ gegl_save_set_saver (GeglOperation *operation)
     }
 
   self->cached_path = g_strdup (o->path);
-  return success;
+  return;
 }
 
 
@@ -149,6 +149,7 @@ gegl_save_process (GeglOperation        *operation,
                    const GeglRectangle  *roi)
 {
   GeglChant *self = GEGL_CHANT (operation);
+  gegl_save_set_saver (operation);
 
   return gegl_operation_process (self->save->operation,
                                  context,
