@@ -462,9 +462,9 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
   if (!entry)
     return NULL;
 
-  tile             = gegl_tile_new (backend->tile_size);
-  tile->rev        = entry->rev;
-  tile->stored_rev = entry->rev;
+  tile      = gegl_tile_new (backend->tile_size);
+  tile->rev = entry->rev;
+  gegl_tile_mark_as_stored (tile);
 
   gegl_tile_backend_file_file_entry_read (tile_backend_file, entry, tile->data);
   return tile;
@@ -496,7 +496,7 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
   entry->rev = tile->rev;
 
   gegl_tile_backend_file_file_entry_write (tile_backend_file, entry, tile->data);
-  tile->stored_rev = tile->rev;
+  gegl_tile_mark_as_stored (tile);
   return NULL;
 }
 

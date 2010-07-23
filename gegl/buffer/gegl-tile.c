@@ -243,6 +243,12 @@ gegl_tile_unlock (GeglTile *tile)
 }
 
 
+void
+gegl_tile_mark_as_stored (GeglTile *tile)
+{
+  tile->stored_rev = tile->rev;
+}
+
 gboolean
 gegl_tile_is_stored (GeglTile *tile)
 {

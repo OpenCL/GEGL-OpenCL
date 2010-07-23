@@ -185,7 +185,7 @@ gboolean set_tile (GeglTileSource *store,
       g_hash_table_insert (tile_backend_ram->entries, entry, entry);
     }
   ram_entry_write (tile_backend_ram, entry, tile->data);
-  tile->stored_rev = tile->rev;
+  gegl_tile_mark_as_stored (tile);
   return TRUE;
 }
 

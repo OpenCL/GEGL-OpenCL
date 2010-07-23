@@ -375,7 +375,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
         {
           cache_total  -= item->tile->size;
           tile->tile_storage = NULL;
-          tile->stored_rev = tile->rev; /* to cheat it out of being stored */
+          gegl_tile_mark_as_stored (tile); /* to cheat it out of being stored */
           gegl_tile_unref (tile);
           g_hash_table_remove (cache_ht, item);
           g_slice_free (CacheItem, item);

@@ -60,38 +60,39 @@ struct _GeglTile
   gpointer         destroy_notify_data;
 };
 
-GeglTile   * gegl_tile_new        (gint     size);
-GeglTile   * gegl_tile_new_bare   (void); /* special hack for linear bufs */
-GeglTile   * gegl_tile_ref        (GeglTile *tile);
-void         gegl_tile_unref      (GeglTile *tile);
-void       * gegl_tile_get_format (GeglTile *tile);
+GeglTile   * gegl_tile_new            (gint     size);
+GeglTile   * gegl_tile_new_bare       (void); /* special hack for linear bufs */
+GeglTile   * gegl_tile_ref            (GeglTile *tile);
+void         gegl_tile_unref          (GeglTile *tile);
+void       * gegl_tile_get_format     (GeglTile *tile);
 
 
 /* lock a tile for writing, this would allow writing to buffers
  * later gotten with get_data()
  */
-void         gegl_tile_lock       (GeglTile *tile);
+void         gegl_tile_lock           (GeglTile *tile);
 
 /* unlock the tile notifying the tile that we're done manipulating
  * the data.
  */
-void         gegl_tile_unlock     (GeglTile *tile);
+void         gegl_tile_unlock         (GeglTile *tile);
 
 
 
-gboolean     gegl_tile_is_stored  (GeglTile *tile);
-gboolean     gegl_tile_store      (GeglTile *tile);
-void         gegl_tile_void       (GeglTile *tile);
-GeglTile    *gegl_tile_dup        (GeglTile *tile);
+void         gegl_tile_mark_as_stored (GeglTile *tile);
+gboolean     gegl_tile_is_stored      (GeglTile *tile);
+gboolean     gegl_tile_store          (GeglTile *tile);
+void         gegl_tile_void           (GeglTile *tile);
+GeglTile    *gegl_tile_dup            (GeglTile *tile);
 
 /* utility low-level functions used by an undo system in horizon
  * where the geglbufer originated, kept around in case they
  * become useful again
  */
-void         gegl_tile_swp        (GeglTile *a,
-                                   GeglTile *b);
-void         gegl_tile_cpy        (GeglTile *src,
-                                   GeglTile *dst);
+void         gegl_tile_swp            (GeglTile *a,
+                                       GeglTile *b);
+void         gegl_tile_cpy            (GeglTile *src,
+                                       GeglTile *dst);
 
 
 /* computes the positive integer remainder (also for negative dividends)

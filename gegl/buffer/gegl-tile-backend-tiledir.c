@@ -178,7 +178,7 @@ set_tile (GeglTileSource *store,
   entry.z = z;
 
   gio_entry_write (tile_backend_tiledir, &entry, tile->data);
-  tile->stored_rev = tile->rev;
+  gegl_tile_mark_as_stored (tile);
   return NULL;
 }
 
