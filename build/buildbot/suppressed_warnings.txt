@@ -1,5 +1,8 @@
-# Doesn't seem like important warnings, we typically get them during
-# make distcheck when the test install is performed
+# This is a 'suppressionFile' for the 'Test' buildbot build step
 
-all_files : ^libtool: install: warning: relinking `.*'$
-all_files : ^libtool: install: warning: remember to run `libtool --finish .*_inst.*'$
+# These doesn't seem like important warnings, we typically get them
+# during make distcheck when the test install is performed
+
+:    ^libtool: install: warning: relinking `.*'$
+:    ^libtool: install: warning: remember to run `libtool --finish .*_inst.*'$
+:    ^libtool: install: warning: `.*' has not been installed in `.*_inst.*'$
