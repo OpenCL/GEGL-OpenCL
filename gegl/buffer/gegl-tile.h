@@ -71,9 +71,6 @@ void       * gegl_tile_get_format (GeglTile *tile);
  * later gotten with get_data()
  */
 void         gegl_tile_lock       (GeglTile *tile);
-/* get a pointer to the linear buffer of the tile.
- */
-#define gegl_tile_get_data(tile)  ((guchar*)((tile)->data))
 
 /* unlock the tile notifying the tile that we're done manipulating
  * the data.
@@ -87,12 +84,26 @@ gboolean     gegl_tile_store      (GeglTile *tile);
 void         gegl_tile_void       (GeglTile *tile);
 GeglTile    *gegl_tile_dup        (GeglTile *tile);
 
+/* utility low-level functions used by an undo system in horizon
+ * where the geglbufer originated, kept around in case they
+ * become useful again
+ */
+void         gegl_tile_swp        (GeglTile *a,
+                                   GeglTile *b);
+void         gegl_tile_cpy        (GeglTile *src,
+                                   GeglTile *dst);
+
+
 /* computes the positive integer remainder (also for negative dividends)
  */
 #define GEGL_REMAINDER(dividend, divisor) \
                    (((dividend) < 0) ? \
                     (divisor) - 1 - ((-((dividend) + 1)) % (divisor)) : \
                     (dividend) % (divisor))
+
+/* get a pointer to the linear buffer of the tile.
+ */
+#define gegl_tile_get_data(tile)  ((guchar*)((tile)->data))
 
 #define gegl_tile_offset(coordinate, stride) GEGL_REMAINDER((coordinate), (stride))
 
@@ -104,13 +115,5 @@ GeglTile    *gegl_tile_dup        (GeglTile *tile);
       (coordinate) / (stride):\
       ((((coordinate) + 1) /(stride)) - 1))
 
-/* utility low-level functions used by an undo system in horizon
- * where the geglbufer originated, kept around in case they
- * become useful again
- */
-void         gegl_tile_swp        (GeglTile *a,
-                                   GeglTile *b);
-void         gegl_tile_cpy        (GeglTile *src,
-                                   GeglTile *dst);
 
 #endif
