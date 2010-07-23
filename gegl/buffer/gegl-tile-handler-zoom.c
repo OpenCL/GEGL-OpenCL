@@ -230,7 +230,6 @@ get_tile (GeglTileSource *gegl_tile_source,
 
   {
     gint      i, j;
-    guchar   *data;
     GeglTile *source_tile[2][2] = { { NULL, NULL }, { NULL, NULL } };
 
     for (i = 0; i < 2; i++)
@@ -265,7 +264,6 @@ get_tile (GeglTileSource *gegl_tile_source,
           gegl_tile_handler_cache_insert (zoom->cache, tile, x, y, z);
       }
     gegl_tile_lock (tile);
-    data = gegl_tile_get_data (tile); /* XXX: is this needed? */
 
     for (i = 0; i < 2; i++)
       for (j = 0; j < 2; j++)
