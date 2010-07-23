@@ -47,6 +47,7 @@ buffer-tests.inc: $(buffer_test_SOURCES) Makefile.am $(top_srcdir)/tests/buffer/
 	@echo '};' >> $@
 
 buffer-tests-report: buffer-test$(EXEEXT) $(top_srcdir)/tests/buffer/reference/*.buf
+	mkdir -p output > /dev/null 2>&1
 	./buffer-test$(EXEEXT)
 	diff -s -r -C 50 $(top_srcdir)/tests/buffer/reference/ output/ > buffer-tests-report; true
 

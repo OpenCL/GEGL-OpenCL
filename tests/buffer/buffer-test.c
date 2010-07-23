@@ -293,10 +293,6 @@ gint main (gint argc, gchar **argv)
   g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
-  /* make tests dir */
-  system ("mkdir output > /dev/null 2>&1");
-
-
   for (i=0; i < G_N_ELEMENTS (tests); i++)
     {
       gchar *ret;
