@@ -1029,6 +1029,7 @@ tests/Makefile
 tests/buffer/Makefile
 tests/compositions/Makefile
 tests/compositions/data/Makefile
+tests/simple/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
