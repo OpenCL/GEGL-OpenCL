@@ -52,6 +52,7 @@ gegl_tile_handler_chain_dispose (GObject *object)
 {
   GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (object);
   GSList       *iter;
+  GSList       *chain;
 
   /* Get rid of the cache before any further parts of the deconstruction of the
    * TileStore chain, unwritten tiles need a living TileStore for their
@@ -59,7 +60,14 @@ gegl_tile_handler_chain_dispose (GObject *object)
    */
   gegl_tile_handler_chain_nuke_cache (tile_handler_chain);
 
-  iter = tile_handler_chain->chain;
+  /* While we destroy tile_handler_chain->chain, don't have
+   * tile_handler_chain->chain set, because it might otherwise be used
+   * by other objects in the dispose phase
+   */
+  chain = tile_handler_chain->chain;
+  tile_handler_chain->chain = NULL;
+  
+  iter = chain;
   while (iter)
     {
       if (iter->data)
@@ -72,9 +80,9 @@ gegl_tile_handler_chain_dispose (GObject *object)
       iter = iter->next;
     }
 
-  if (tile_handler_chain->chain)
-    g_slist_free (tile_handler_chain->chain);
-  tile_handler_chain->chain = NULL;
+  if (chain)
+    g_slist_free (chain);
+  chain = NULL;
 
   G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->dispose (object);
 }
