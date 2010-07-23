@@ -1,5 +1,9 @@
 #!/bin/sh
-total_tests=`ls -1 reference/*.buf | wc -l`
+
+# Set by TESTS_ENVIRONMENT in Makefile.am
+reference_dir=$REFERENCE_DIR
+
+total_tests=`ls -1 $reference_dir/*.buf | wc -l`
 successful_tests=`cat buffer-tests-report | grep identical | wc -l`
 
 echo $successful_tests of $total_tests tests succesful.
