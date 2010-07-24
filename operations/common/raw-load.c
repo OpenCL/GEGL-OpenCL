@@ -132,28 +132,49 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer *output;
 
+  load_buffer (o);
   g_assert (o->chant_data);
   g_assert (g_str_equal (output_pad, "output"));
 
   output = GEGL_BUFFER (o->chant_data);
+  g_object_ref (output);
   gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-
-  o->chant_data = NULL;
   return TRUE;
 }
 
+static GeglRectangle 
+get_cached_region (GeglOperation *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
+
+static void finalize (GObject *object)
+{
+  GeglOperation *op = (void*) object;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  if (o->chant_data)
+    g_object_unref (o->chant_data);
+  o->chant_data = NULL;
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
+  GObjectClass             *object_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  object_class    = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = finalize;
 
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;;
 
   operation_class->name        = "gegl:raw-load";
   operation_class->categories  = "hidden";
