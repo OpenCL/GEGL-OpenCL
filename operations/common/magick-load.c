@@ -33,62 +33,32 @@ gegl_chant_file_path (path, _("File"), "/tmp/gegl-logo.svg", _("Path of file to 
 #include "gegl-chant.h"
 #include <stdio.h>
 
-/* FIXME: this should not be neccesary to implement this operation */
-GeglBuffer *gegl_node_get_cache           (GeglNode      *node);
-
 static void
 load_cache (GeglChantO *op_magick_load)
 {
   if (!op_magick_load->chant_data)
     {
-      GeglRectangle rect;
-      GeglNode *temp_gegl;
       gchar    *filename;
-      gchar    *escaped;
-      gchar    *xml;
       gchar    *cmd;
+      GeglNode *graph, *sink;
+      GeglBuffer *newbuf = NULL;
 
       /* ImageMagick backed fallback FIXME: make this robust.
-       * maybe use pipes in a manner similar to the raw loader */
+       * maybe use pipes in a manner similar to the raw loader,
+       * or at least use a properly unique filename  */
 
       filename = g_build_filename (g_get_tmp_dir (), "gegl-magick.png", NULL);
       cmd = g_strdup_printf ("convert \"%s\"'[0]' \"%s\"",
                              op_magick_load->path, filename);
       system (cmd);
+
+      graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &newbuf, NULL,
+                                          gegl_node ("gegl:png-load", "path", filename, NULL)));
+      gegl_node_process (sink);
+      op_magick_load->chant_data = (gpointer) newbuf;
+      g_object_unref (graph);
       g_free (cmd);
-
-      escaped = g_markup_escape_text (filename, -1);
       g_free (filename);
-
-      xml = g_strdup_printf ("<gegl>"
-                             "<node operation='gegl:png-load' path='%s' />"
-                             "</gegl>",
-                             escaped);
-      g_free (escaped);
-
-      temp_gegl = gegl_node_new_from_xml (xml, "/");
-      g_free (xml);
-
-      rect = gegl_node_get_bounding_box (temp_gegl);
-
-      /* Force a render of the cache, passing in a NULL buffer indicating
-       * that we do not actually desire the rendered data.
-       */
-      gegl_node_blit (temp_gegl, 1.0, &rect, NULL, NULL, 0, GEGL_BLIT_CACHE);
-
-      {
-        GeglBuffer *cache  = GEGL_BUFFER (gegl_node_get_cache (temp_gegl));
-        GeglBuffer *newbuf = gegl_buffer_create_sub_buffer (cache, &rect);
-        op_magick_load->chant_data = (gpointer) newbuf;
-        g_object_unref (cache);
-      }
-      /*g_object_ref (op_magick_load->chant_data);*/
-
-      /*FIXME: this should be unneccesary, using the graph
-       * directly as a node is more elegant.
-       */
-      /*gegl_node_get (temp_gegl, "output", &(op_magick_load->chant_data), NULL);*/
-      g_object_unref (temp_gegl);
     }
 }
 
@@ -103,11 +73,16 @@ get_bounding_box (GeglOperation *operation)
 
   g_object_get (o->chant_data, "width", &width,
                                "height", &height, NULL);
-
   result.width  = width;
   result.height = height;
-
   return result;
+}
+
+static GeglRectangle 
+get_cached_region (GeglOperation *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
 }
 
 static gboolean
@@ -120,26 +95,39 @@ process (GeglOperation       *operation,
 
   if (!o->chant_data)
     return FALSE;
-
   /* overriding the predefined behavior */
+  g_object_ref (o->chant_data);
   gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
-  o->chant_data = NULL;
-
   return  TRUE;
 }
 
+static void finalize (GObject *object)
+{
+  GeglOperation *op = (void*) object;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  if (o->chant_data)
+    g_object_unref (o->chant_data);
+  o->chant_data = NULL;
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
+  GObjectClass             *object_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
+  object_class    = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = finalize;
 
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;;
+  operation_class->no_cache = FALSE;
 
   operation_class->name        = "gegl:magick-load";
   operation_class->categories  = "hidden";
