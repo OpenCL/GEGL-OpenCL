@@ -7,12 +7,18 @@ plugins         = $(subst $(srcdir)/,,$(CFILES:.c=.la))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
+gegl_lt_cc_v = $(gegl_lt_cc_v_$(V))
+gegl_lt_cc_v = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))
+gegl_lt_cc_v_0 = @echo "  CC     " $<;
+gegl_lt_ccld_v = $(gegl_lt_ccld_v_$(V))
+gegl_lt_ccld_v = $(gegl_lt_ccld_v_$(AM_DEFAULT_VERBOSITY))
+gegl_lt_ccld_v_0 = @echo "  CCLD   " $@;
 
 all-local: $(plugins)
 
 %.la: %.c $(GEGLHEADERS)
-	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
-	$(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LIBS) $(MATH_LIB)
+	$(gegl_lt_cc_v) $(LIBTOOL) --quiet --tag=CC --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(gegl_lt_ccld_v) $(LIBTOOL) --quiet --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LIBS) $(MATH_LIB)
 
 
 clean-local:
