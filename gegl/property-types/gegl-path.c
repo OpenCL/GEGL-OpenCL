@@ -1070,7 +1070,7 @@ gegl_path_calc (GeglPath   *self,
   gboolean result = FALSE;
 
   if (!self)
-    return;
+    return FALSE;
   ensure_flattened (self);
 #if 0
   path_calc (priv->flat_path, pos, xd, yd);
@@ -1085,7 +1085,7 @@ gegl_path_calc (GeglPath   *self,
     {
       rel_pos = pos;
     }
-    
+
   if (path_calc2 (entry,rel_pos,xd,yd,&stop,&leftover))
     {
       priv->calc_stop = stop;
