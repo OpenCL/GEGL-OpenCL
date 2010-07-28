@@ -116,7 +116,7 @@ static void
 ppm_load_read_image(FILE       *fp,
                     pnm_struct *img)
 {
-    gint    i;
+    guint   i;
     gint    retval;
 
     if (img->type == PIXMAP_RAW)
