@@ -8,10 +8,10 @@ INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
 EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
 
 gegl_lt_cc_v = $(gegl_lt_cc_v_$(V))
-gegl_lt_cc_v = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))
+gegl_lt_cc_v_ = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))
 gegl_lt_cc_v_0 = @echo "  CC     " $<;
 gegl_lt_ccld_v = $(gegl_lt_ccld_v_$(V))
-gegl_lt_ccld_v = $(gegl_lt_ccld_v_$(AM_DEFAULT_VERBOSITY))
+gegl_lt_ccld_v_ = $(gegl_lt_ccld_v_$(AM_DEFAULT_VERBOSITY))
 gegl_lt_ccld_v_0 = @echo "  CCLD   " $@;
 
 all-local: $(plugins)
