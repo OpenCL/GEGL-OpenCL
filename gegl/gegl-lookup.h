@@ -56,27 +56,27 @@ gegl_lookup (GeglLookup *lookup,
     float   f;
     guint32 i;
   } u;
-  guint index;
+  guint i;
 
   u.f = number;
-  index = u.i >> lookup->shift;
+  i = u.i >> lookup->shift;
 
-  if (index > lookup->positive_min &&
-      index < lookup->positive_max)
-    index = index - lookup->positive_min;
-  else if (index > lookup->negative_min &&
-           index < lookup->negative_max)
-    index = index - lookup->negative_min + (lookup->positive_max - lookup->positive_min);
+  if (i > lookup->positive_min &&
+      i < lookup->positive_max)
+    i = i - lookup->positive_min;
+  else if (i > lookup->negative_min &&
+           i < lookup->negative_max)
+    i = i - lookup->negative_min + (lookup->positive_max - lookup->positive_min);
   else
     return lookup->function (number, lookup->data);
 
-  if (!(lookup->bitmask[index/32] & (1<<(index & 31))))
+  if (!(lookup->bitmask[i/32] & (1<<(i & 31))))
     {
-      lookup->table[index]= lookup->function (number, lookup->data);
-      lookup->bitmask[index/32] |= (1<<(index & 31));
+      lookup->table[i]= lookup->function (number, lookup->data);
+      lookup->bitmask[i/32] |= (1<<(i & 31));
     }
 
-  return lookup->table[index];
+  return lookup->table[i];
 }
 
 G_END_DECLS
