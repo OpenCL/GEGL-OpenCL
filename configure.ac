@@ -54,6 +54,7 @@ m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
 AC_CONFIG_SRCDIR([gegl/gegl.h])
+AC_CONFIG_MACRO_DIR([m4macros])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
@@ -186,34 +187,6 @@ else
   AC_MSG_RESULT([no])
 fi
 
-
-changequote(,)dnl
-if eval "test x$GCC = xyes"; then
-  case " $CFLAGS " in
-  *[\ \	]-Wall[\ \	]*) ;;
-  *) CFLAGS="$CFLAGS -Wall" ;;
-  esac
-changequote([,])dnl
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
-CFLAGS="$CFLAGS $extra_warnings"
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Wmissing-prototypes')
-CFLAGS="$CFLAGS $extra_warnings"
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Wmissing-declarations')
-CFLAGS="$CFLAGS $extra_warnings"
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Winit-self')
-CFLAGS="$CFLAGS $extra_warnings"
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Wpointer-arith')
-CFLAGS="$CFLAGS $extra_warnings"
-
-GEGL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
-CFLAGS="$CFLAGS $extra_warnings"
-
-fi
 
 dnl disable docs generation.
 AC_ARG_ENABLE([docs],
@@ -358,27 +331,6 @@ dnl Checks for programs.
 # Check for MMX assembly
 ########################
 
-dnl GEGL_DETECT_CFLAGS(RESULT, FLAGSET)
-dnl Detect if the compiler supports a set of flags
-
-AC_DEFUN([GEGL_DETECT_CFLAGS],
-[
-  $1=
-  for flag in $2; do
-    if test -z "[$]$1"; then
-      $1_save_CFLAGS="$CFLAGS"
-      CFLAGS="$CFLAGS $flag"
-      AC_MSG_CHECKING([whether [$]CC understands [$]flag])
-      AC_TRY_COMPILE([], [], [$1_works=yes], [$1_works=no])
-      AC_MSG_RESULT([$]$1_works)
-      CFLAGS="[$]$1_save_CFLAGS"
-      if test "x[$]$1_works" = "xyes"; then
-        $1="$flag"
-      fi
-    fi
-  done
-])
-
 AC_ARG_ENABLE(mmx,
                 [  --enable-mmx            enable MMX support (default=auto)],,
                   enable_mmx=$have_x86)
@@ -388,7 +340,7 @@ AC_ARG_ENABLE(sse,
   enable_sse=$enable_mmx)
 
 if test "x$enable_mmx" = "xyes"; then
-  GEGL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
+  AS_COMPILER_FLAG([-mmmx], [MMX_EXTRA_CFLAGS="-mmmx"])
   SSE_EXTRA_CFLAGS=
 
   AC_MSG_CHECKING(whether we can compile MMX code)
@@ -402,12 +354,12 @@ if test "x$enable_mmx" = "xyes"; then
     AC_MSG_RESULT(yes)
 
     if test "x$enable_sse" = "xyes"; then
-      GEGL_DETECT_CFLAGS(sse_flag, '-msse')
-      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
+      AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS_X="-msse"])
+      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS_X"
 
       AC_MSG_CHECKING(whether we can compile SSE code)
 
-      CFLAGS="$CFLAGS $sse_flag"
+      CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS_X"
 
       AC_COMPILE_IFELSE([asm ("movntps %xmm0, 0");],
         AC_DEFINE(USE_SSE, 1, [Define to 1 if SSE assembly is available.])
@@ -531,10 +483,6 @@ else
   have_glib_2_21=no
 fi
 AC_MSG_RESULT($have_glib_2_21)
-
-if test "x$have_glib_2_21" != "xyes"; then
-  CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
-fi
 
 
 ######################################
@@ -993,6 +941,33 @@ AC_ARG_ENABLE([workshop],
 
 AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" = "xyes")
 
+
+#######################
+# Enable extra warnings
+#######################
+
+
+DESIRED_CFLAGS="-fdiagnostics-show-option -Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations -Wundef -Wformat=2 -Wlogical-op -Wmissing-include-dirs -Wformat-nonliteral -Wold-style-definition -Wpointer-arith -Wnested-externs -Winit-self -Wpacked -Wno-long-long -Wno-overlength-strings -Wdeclaration-after-statement -Wmissing-noreturn -Wshadow -Wendif-labels -Wcast-align -Wwrite-strings -Wp,-D_FORTIFY_SOURCE=2 -fno-common"
+
+# Also desirable:
+#   DESIRED_CFLAGS="-Wfloat-equal -Waggregate-return -Wredundant-decls $DESIRED_CFLAGS"
+
+#if test -z "${MAINTAINER_MODE_TRUE}"; then
+#   DESIRED_CFLAGS="-Werror $DESIRED_CFLAGS"
+#fi
+
+for flag in $DESIRED_CFLAGS; do
+  AS_COMPILER_FLAG([$flag], [CFLAGS="$CFLAGS $flag"])
+done
+
+# We should support this at some point if possible
+#LDFLAGS="-Wl,-z,defs"
+
+dnl Disable deprecated features in maintainer mode
+if test -z "${MAINTAINER_MODE_TRUE}"; then
+   GLIB_CFLAGS="-DG_DISABLE_DEPRECATED $GLIB_CFLAGS"
+   GTK_CFLAGS="-DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED $GTK_CFLAGS"
+fi
 
 dnl bin/node-editors/Makefile
 AC_OUTPUT([
