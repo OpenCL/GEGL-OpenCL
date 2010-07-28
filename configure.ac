@@ -354,12 +354,12 @@ if test "x$enable_mmx" = "xyes"; then
     AC_MSG_RESULT(yes)
 
     if test "x$enable_sse" = "xyes"; then
-      AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS_X="-msse"])
-      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS_X"
+      AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS="-msse"])
 
       AC_MSG_CHECKING(whether we can compile SSE code)
 
-      CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS_X"
+      sse_save_CFLAGS="$CFLAGS"
+      CFLAGS="$sse_save_CFLAGS $SSE_EXTRA_CFLAGS"
 
       AC_COMPILE_IFELSE([asm ("movntps %xmm0, 0");],
         AC_DEFINE(USE_SSE, 1, [Define to 1 if SSE assembly is available.])
@@ -370,6 +370,7 @@ if test "x$enable_mmx" = "xyes"; then
         AC_MSG_WARN([The assembler does not support the SSE command set.])
       )
 
+      CFLAGS="$sse_save_CFLAGS"
     fi
   ,
     enable_mmx=no
@@ -383,7 +384,7 @@ if test "x$enable_mmx" = "xyes"; then
   AC_SUBST(SSE_EXTRA_CFLAGS)
 fi
 
-CFLAGS="$CFLAGS $SSE_EXTRA_CFLAGS"
+CFLAGS="$CFLAGS $MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS"
 
 
 ###############################
