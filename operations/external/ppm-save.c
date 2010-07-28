@@ -53,7 +53,7 @@ ppm_save_write(FILE    *fp,
                guchar  *data,
                map_type type)
 {
-  gint i;
+  guint i;
   gint retval;
 
   /* Write the header */
