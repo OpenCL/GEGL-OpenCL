@@ -377,7 +377,9 @@ int v4lmmap(v4ldevice *vd)
 {
 	if(v4lgetmbuf(vd)<0)
 		return -1;
-	if((vd->map = mmap(0, vd->mbuf.size, PROT_READ|PROT_WRITE, MAP_SHARED, vd->fd, 0)) < 0) {
+
+        vd->map = mmap(0, vd->mbuf.size, PROT_READ|PROT_WRITE, MAP_SHARED, vd->fd, 0);
+	if(vd->map == MAP_FAILED) {
 		v4lperror("v4lmmap:mmap");
 		return -1;
 	}
