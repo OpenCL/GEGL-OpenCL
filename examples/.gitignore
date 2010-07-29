@@ -5,6 +5,7 @@
 /Makefile.in
 /csugar*
 /float-lookup*
+/gegl-convert*
 /gegl-paint*
 /gegl-slicer*
 /geglbuffer-add-image*
