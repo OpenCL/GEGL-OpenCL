@@ -50,7 +50,8 @@ load_cache (GeglChantO *op_magick_load)
       filename = g_build_filename (g_get_tmp_dir (), "gegl-magick.png", NULL);
       cmd = g_strdup_printf ("convert \"%s\"'[0]' \"%s\"",
                              op_magick_load->path, filename);
-      system (cmd);
+      if (system (cmd) == -1)
+        g_warning ("Error executing ImageMagick convert program");
 
       graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &newbuf, NULL,
                                           gegl_node ("gegl:png-load", "path", filename, NULL)));

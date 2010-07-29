@@ -59,7 +59,8 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
 
   /* Process the .dot to a .png */
   dot_cmd = g_strdup_printf ("dot -o %s -Tpng %s", png_filename, dot_filename);
-  system (dot_cmd);
+  if (system (dot_cmd) == -1)
+    g_warning ("Error executing GraphViz dot program");
 
   /* Create a graph that loads the png into a GeglBuffer and process
    * it
