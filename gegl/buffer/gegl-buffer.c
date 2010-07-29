@@ -115,7 +115,7 @@ enum {
   LAST_SIGNAL
 };
 
-static GeglBuffer *gegl_buffer_new_from_format     (const void *babl_format,
+static GeglBuffer *gegl_buffer_new_from_format     (const void *babl_fmt,
                                                     gint        x,
                                                     gint        y,
                                                     gint        width,
@@ -1039,7 +1039,7 @@ gegl_buffer_destroy (GeglBuffer *buffer)
 
 
 static GeglBuffer *
-gegl_buffer_new_from_format (const void *babl_format,
+gegl_buffer_new_from_format (const void *babl_fmt,
                              gint        x,
                              gint        y,
                              gint        width,
@@ -1056,7 +1056,7 @@ gegl_buffer_new_from_format (const void *babl_format,
       g_str_equal (gegl_config()->swap, "RAM") ||
       g_str_equal (gegl_config()->swap, "ram"))
     { 
-      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_format, NULL);
+      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, NULL);
     }
   else
     {
@@ -1068,7 +1068,7 @@ gegl_buffer_new_from_format (const void *babl_format,
 #if 0
       filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
                                   getpid (),
-                                  babl_name ((Babl *) babl_format),
+                                  babl_name ((Babl *) babl_fmt),
                                   no++);
 #endif
 
@@ -1077,7 +1077,7 @@ gegl_buffer_new_from_format (const void *babl_format,
       path = g_build_filename (gegl_config()->swap, filename, NULL);
       g_free (filename);
 
-      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_format, path);
+      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, path);
       g_free (path);
     }
 
