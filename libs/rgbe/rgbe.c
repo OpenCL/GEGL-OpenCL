@@ -816,7 +816,7 @@ static void
 rgbe_float_to_rgbe (const gfloat *f,
                     guint8       *rgbe)
 {
-  gint   exp;
+  gint   e;
   gfloat frac, max;
 
   g_return_if_fail (f);
@@ -832,13 +832,13 @@ rgbe_float_to_rgbe (const gfloat *f,
       goto cleanup;
     }
 
-  frac  = frexp (max, &exp) * 256.0 / max;
+  frac  = frexp (max, &e) * 256.0 / max;
 
   rgbe[OFFSET_R] = f[OFFSET_R] * frac;
   rgbe[OFFSET_G] = f[OFFSET_G] * frac;
   rgbe[OFFSET_B] = f[OFFSET_B] * frac;
 
-  rgbe[OFFSET_E] = exp + 128;
+  rgbe[OFFSET_E] = e + 128;
 
 cleanup:
   return;
