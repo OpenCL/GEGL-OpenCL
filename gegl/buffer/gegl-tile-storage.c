@@ -127,10 +127,11 @@ gegl_tile_storage_new (gint tile_width,
   tile_storage->tile_size = backend->tile_size;
   tile_storage->px_size = backend->px_size;
   gegl_tile_handler_set_source (handler, (void*)backend);
+
   { /* should perhaps be a.. method on gegl_tile_handler_chain_set_source
        wrapping handler_set_source() and this*/
-    GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (handler);
-    GSList         *iter   = (void *) tile_handler_chain->chain;
+    GeglTileHandlerChain *tile_handler_chain2 = GEGL_TILE_HANDLER_CHAIN (handler);
+    GSList         *iter   = (void *) tile_handler_chain2->chain;
     while (iter && iter->next)
       iter = iter->next;
     if (iter)
