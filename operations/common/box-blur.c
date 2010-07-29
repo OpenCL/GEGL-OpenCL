@@ -70,7 +70,7 @@ get_mean_component (gfloat *buf,
 }
 #endif
 
-static void inline
+static inline void
 get_mean_components (gfloat *buf,
                      gint    buf_width,
                      gint    buf_height,

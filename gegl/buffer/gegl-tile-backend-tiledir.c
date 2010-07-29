@@ -67,7 +67,7 @@ static GFile *make_tile_file (GeglTileBackendTileDir *gio,
   return g_file_get_child (gio->buffer_dir, buf);
 }
 
-static void inline
+static inline void
 gio_entry_read (GeglTileBackendTileDir *gio,
                 GioEntry                *entry,
                 guchar                  *dest)
@@ -89,7 +89,7 @@ gio_entry_read (GeglTileBackendTileDir *gio,
   g_object_unref (G_OBJECT (file));
 }
 
-static void inline
+static inline void
 gio_entry_write (GeglTileBackendTileDir *gio,
                  GioEntry                *entry,
                  guchar                  *source)

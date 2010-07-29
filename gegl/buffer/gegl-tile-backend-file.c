@@ -127,7 +127,7 @@ static void     gegl_tile_backend_file_dbg_alloc    (int                  size);
 static void     gegl_tile_backend_file_dbg_dealloc  (int                  size);
 
 
-static void inline
+static inline void
 gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
                                         GeglBufferTile      *entry,
                                         guchar              *dest)
@@ -178,7 +178,7 @@ gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
-static void inline
+static inline void
 gegl_tile_backend_file_file_entry_write (GeglTileBackendFile *self,
                                          GeglBufferTile      *entry,
                                          guchar              *source)

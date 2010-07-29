@@ -283,7 +283,7 @@ gegl_sampler_upsharp_init (GeglSamplerUpsharp *self)
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
-static void inline
+static inline void
 nohalo_step1 (const gfloat           uno_thr,
               const gfloat           uno_fou,
               const gfloat           dos_two,

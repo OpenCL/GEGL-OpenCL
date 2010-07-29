@@ -45,7 +45,7 @@ struct _RamEntry
   guchar *offset;
 };
 
-static void inline
+static inline void
 ram_entry_read (GeglTileBackendRam *ram,
                 RamEntry           *entry,
                 guchar             *dest)
@@ -55,7 +55,7 @@ ram_entry_read (GeglTileBackendRam *ram,
   memcpy (dest, entry->offset, tile_size);
 }
 
-static void inline
+static inline void
 ram_entry_write (GeglTileBackendRam *ram,
                  RamEntry           *entry,
                  guchar             *source)

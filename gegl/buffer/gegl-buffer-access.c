@@ -317,7 +317,7 @@ gegl_buffer_flush (GeglBuffer *buffer)
 
 
 
-static void inline
+static inline void
 gegl_buffer_iterate (GeglBuffer          *buffer,
                      const GeglRectangle *roi, /* or NULL for extent */
                      guchar              *buf,

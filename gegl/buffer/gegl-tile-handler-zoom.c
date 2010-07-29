@@ -161,7 +161,7 @@ downscale_u8 (gint    components,
     }
 }
 
-static void inline set_half (GeglTile * dst_tile,
+static inline void set_half (GeglTile * dst_tile,
                              GeglTile * src_tile,
                              gint       width,
                              gint       height,

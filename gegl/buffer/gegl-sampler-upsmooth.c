@@ -173,7 +173,7 @@ gegl_sampler_upsmooth_init (GeglSamplerUpsmooth *self)
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
-static void inline
+static inline void
 snohalo_step1 (const gfloat           cer_thr_in,
                const gfloat           cer_fou_in,
                const gfloat           uno_two_in,
