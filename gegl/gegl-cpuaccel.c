@@ -143,8 +143,8 @@ static X86Vendor
 arch_get_vendor (void)
 {
   guint32 eax, ebx, ecx, edx;
-  gchar   id[16];
-  guint32 *id32 = (void*) id;
+  guint32 id32[4];
+  char *id = (char *) id32;
 
 #ifndef ARCH_X86_64
   /* Only need to check this on ia32 */
