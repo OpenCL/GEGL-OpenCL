@@ -20,7 +20,7 @@
 #include <glib/gi18n-lib.h>
 
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Horizontal scale factor."))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor."))

@@ -87,7 +87,7 @@ static GQueue      *cache_queue           = NULL;
 static GHashTable  *cache_ht              = NULL;
 static gint         cache_wash_percentage = 20;
 static gint         cache_total           = 0; /* approximate amount of bytes stored */
-#if GEGL_DEBUG_CACHE_HITS
+#ifdef GEGL_DEBUG_CACHE_HITS
 static gint         cache_hits            = 0;
 static gint         cache_misses          = 0;
 #endif
@@ -171,12 +171,12 @@ gegl_tile_handler_cache_get_tile_command (GeglTileSource *tile_store,
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
     {
-#if GEGL_DEBUG_CACHE_HITS
+#ifdef GEGL_DEBUG_CACHE_HITS
       cache_hits++;
 #endif
       return tile;
     }
-#if GEGL_DEBUG_CACHE_HITS
+#ifdef GEGL_DEBUG_CACHE_HITS
   cache_misses++;
 #endif
 
@@ -447,7 +447,7 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
   while (cache_total > gegl_config()->cache_size)
     {
-#if GEGL_DEBUG_CACHE_HITS
+#ifdef GEGL_DEBUG_CACHE_HITS
       GEGL_NOTE(GEGL_DEBUG_CACHE, "cache_total:%i > cache_size:%i", cache_total, gegl_config()->cache_size);
       GEGL_NOTE(GEGL_DEBUG_CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
 #endif

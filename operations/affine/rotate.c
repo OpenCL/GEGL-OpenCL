@@ -20,7 +20,7 @@
 #include <glib/gi18n-lib.h>
 
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
                    _("Angle to rotate (clockwize)"))

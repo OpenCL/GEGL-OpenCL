@@ -20,7 +20,7 @@
 #include <glib/gi18n-lib.h>
 
 
-#if GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_string (transform, "", _("Transformation string"))
 
