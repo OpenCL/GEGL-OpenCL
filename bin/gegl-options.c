@@ -41,7 +41,7 @@ static GeglOptions *opts_new (void)
   return o;
 }
 
-static void
+static G_GNUC_NORETURN void
 usage (char *application_name)
 {
     fprintf (stderr,
