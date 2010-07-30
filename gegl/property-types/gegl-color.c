@@ -182,7 +182,7 @@ static gboolean
 parse_color_name (GeglColor   *color,
                   const gchar *color_string)
 {
-  gint              i;
+  gsize i;
 
   for (i = 0; i < G_N_ELEMENTS (color_names); ++i)
     {

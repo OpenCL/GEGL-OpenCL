@@ -43,7 +43,7 @@ add_operations (GHashTable *hash,
 {
   GType *types;
   guint  count;
-  gint   no;
+  guint  no;
 
   types = g_type_children (parent, &count);
   if (!types)

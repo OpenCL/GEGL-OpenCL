@@ -80,7 +80,7 @@ gegl_dot_util_add_node (GString  *string,
     {
       guint        n_properties;
       GParamSpec **properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
-      gint         i;
+      guint        i;
       for (i = 0; i < n_properties; i++)
         {
           const gchar *name   = properties[i]->name;
