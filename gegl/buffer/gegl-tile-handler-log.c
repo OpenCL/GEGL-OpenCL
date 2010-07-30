@@ -26,7 +26,7 @@
 G_DEFINE_TYPE (GeglTileHandlerLog, gegl_tile_handler_log, GEGL_TYPE_TILE_HANDLER)
 
 
-static char *commands[] =
+static const char *commands[] =
 {
   "idle",
   "set",
