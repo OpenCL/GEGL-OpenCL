@@ -54,7 +54,7 @@ m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
 AC_CONFIG_SRCDIR([gegl/gegl.h])
-AC_CONFIG_MACRO_DIR([m4macros])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
