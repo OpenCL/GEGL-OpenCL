@@ -129,22 +129,6 @@ fast_minmod( const gfloat first, const gfloat second, const gfloat third )
  */
 #define FAST_PSEUDO_FLOOR(x) ( (int)(x) - ( (x) < 0. ) )
 
-/*
- * Hack to get the restrict C99 keyword going at least some of the
- * time:
- */
-#ifndef restrict
-#ifdef __restrict
-#define restrict __restrict
-#else
-#ifdef __restrict__
-#define restrict __restrict__
-#else
-#define restrict
-#endif
-#endif
-#endif
-
 enum
 {
   PROP_0,

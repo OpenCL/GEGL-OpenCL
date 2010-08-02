@@ -46,18 +46,6 @@
  * #define FAST_PSEUDO_FLOOR(x) ( (x)>=0 ? (int)(x) : (int)(x)-1 )
  */
 
-#ifndef restrict
-#ifdef __restrict
-#define restrict __restrict
-#else
-#ifdef __restrict__
-#define restrict __restrict__
-#else
-#define restrict
-#endif
-#endif
-#endif
-
 #include "config.h"
 #include <glib-object.h>
 #include <glib/gstdio.h>

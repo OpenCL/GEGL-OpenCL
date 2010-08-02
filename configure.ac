@@ -189,6 +189,7 @@ else
   AC_MSG_RESULT([no])
 fi
 
+AC_C_RESTRICT
 
 dnl disable docs generation.
 AC_ARG_ENABLE([docs],
