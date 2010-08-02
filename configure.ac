@@ -59,7 +59,9 @@ AC_CONFIG_MACRO_DIR([m4macros])
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
 # configure or passing V=1 to make
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+m4_ifdef([AM_SILENT_RULES],
+         [AM_SILENT_RULES([yes])],
+         [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
 
 dnl ==========================================================================
 dnl                              Versioning              
