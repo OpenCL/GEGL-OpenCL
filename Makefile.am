@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-ACLOCAL_AMFLAGS = -I m4macros
+ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
 
 # The libs directory needs to be before anything which can depend on its
 # libraries, otherwise any potentially rebuilt libs won't be picked up until
