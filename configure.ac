@@ -959,9 +959,9 @@ DESIRED_CFLAGS="-fdiagnostics-show-option -Wall -Wextra -Wno-unused-parameter -W
 #   DESIRED_CFLAGS="-Werror $DESIRED_CFLAGS"
 #fi
 
-for flag in $DESIRED_CFLAGS; do
-  AS_COMPILER_FLAG([$flag], [CFLAGS="$CFLAGS $flag"])
-done
+dnl for flag in $DESIRED_CFLAGS; do
+dnl   AS_COMPILER_FLAG([$flag], [CFLAGS="$CFLAGS $flag"])
+dnl done
 
 # We should support this at some point if possible
 #LDFLAGS="-Wl,-z,defs"
