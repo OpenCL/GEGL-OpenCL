@@ -950,18 +950,21 @@ AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" = "xyes")
 #######################
 
 
-DESIRED_CFLAGS="-fdiagnostics-show-option -Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations -Wundef -Wformat=2 -Wlogical-op -Wmissing-include-dirs -Wformat-nonliteral -Wold-style-definition -Wpointer-arith -Wnested-externs -Winit-self -Wpacked -Wno-long-long -Wno-overlength-strings -Wdeclaration-after-statement -Wmissing-noreturn -Wshadow -Wendif-labels -Wcast-align -Wwrite-strings -Wp,-D_FORTIFY_SOURCE=2 -fno-common"
+DESIRED_CFLAGS="-Wall -Wdeclaration-after-statement -Wmissing-prototypes -Wmissing-declarations -Winit-self -Wpointer-arith -Wold-style-definition"
+
+# muks would like:
+#   DESIRED_CFLAGS+="-fdiagnostics-show-option -Wextra -Wno-unused-parameter -Wstrict-prototypes -Wundef -Wformat=2 -Wlogical-op -Wmissing-include-dirs -Wformat-nonliteral -Wnested-externs -Wpacked -Wno-long-long -Wno-overlength-strings -Wmissing-noreturn -Wshadow -Wendif-labels -Wcast-align -Wwrite-strings -Wp,-D_FORTIFY_SOURCE=2 -fno-common"
 
 # Also desirable:
-#   DESIRED_CFLAGS="-Wfloat-equal -Waggregate-return -Wredundant-decls $DESIRED_CFLAGS"
+#   DESIRED_CFLAGS+="-Wfloat-equal -Waggregate-return -Wredundant-decls $DESIRED_CFLAGS"
 
 #if test -z "${MAINTAINER_MODE_TRUE}"; then
 #   DESIRED_CFLAGS="-Werror $DESIRED_CFLAGS"
 #fi
 
-dnl for flag in $DESIRED_CFLAGS; do
-dnl   AS_COMPILER_FLAG([$flag], [CFLAGS="$CFLAGS $flag"])
-dnl done
+for flag in $DESIRED_CFLAGS; do
+   AS_COMPILER_FLAG([$flag], [CFLAGS="$CFLAGS $flag"])
+done
 
 # We should support this at some point if possible
 #LDFLAGS="-Wl,-z,defs"
