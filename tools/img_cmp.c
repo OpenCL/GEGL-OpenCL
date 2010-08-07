@@ -30,7 +30,7 @@ main (gint    argc,
     g_object_unref (graph);
     if (!bufferA)
       {
-        g_print ("Failed to open %s\n", argv[1]);
+        g_printerr ("Failed to open %s\n", argv[1]);
         return 1;
       }
 
@@ -40,7 +40,7 @@ main (gint    argc,
     g_object_unref (graph);
     if (!bufferB)
       {
-        g_print ("Failed to open %s\n", argv[2]);
+        g_printerr ("Failed to open %s\n", argv[2]);
         return 1;
       }
   }
@@ -48,15 +48,15 @@ main (gint    argc,
   if (gegl_buffer_get_width (bufferA) != gegl_buffer_get_width (bufferB) ||
       gegl_buffer_get_height (bufferA) != gegl_buffer_get_height (bufferB))
     {
-      g_print ("%s and %s differ in size\n", argv[1], argv[2]);
-      g_print ("  %ix%i vs %ix%i\n",
-        gegl_buffer_get_width (bufferA), gegl_buffer_get_height (bufferA),
-        gegl_buffer_get_width (bufferB), gegl_buffer_get_height (bufferB));
+      g_printerr ("%s and %s differ in size\n", argv[1], argv[2]);
+      g_printerr ("  %ix%i vs %ix%i\n",
+                  gegl_buffer_get_width (bufferA), gegl_buffer_get_height (bufferA),
+                  gegl_buffer_get_width (bufferB), gegl_buffer_get_height (bufferB));
       return 1;
     }
 
   debug_buf = gegl_buffer_new (gegl_buffer_get_extent (bufferA), babl_format ("R'G'B' u8"));
-
+  
    
 
   {
@@ -145,15 +145,15 @@ main (gint    argc,
 
      if (max_diff >= 0.1)
        {
-         g_print ("%s and %s differ\n"
-                  "  wrong pixels   : %i/%i (%2.2f%%)\n"
-                  "  max Δe         : %2.3f\n"
-                  "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
-                  argv[1], argv[2],
-                  wrong_pixels, pixels, (wrong_pixels*100.0/pixels),
-                  max_diff,
-                  diffsum/wrong_pixels,
-                  diffsum/pixels);
+         g_printerr ("%s and %s differ\n"
+                     "  wrong pixels   : %i/%i (%2.2f%%)\n"
+                     "  max Δe         : %2.3f\n"
+                     "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
+                     argv[1], argv[2],
+                     wrong_pixels, pixels, (wrong_pixels*100.0/pixels),
+                     max_diff,
+                     diffsum/wrong_pixels,
+                     diffsum/pixels);
          if (max_diff > 1.5 &&
              !strstr (argv[2], "broken"))
            {
