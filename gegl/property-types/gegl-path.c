@@ -383,6 +383,7 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   return head;
 }
 
+#if 0
 static void
 path_calc (GeglPathList *path,
            gdouble       pos,
@@ -445,6 +446,7 @@ path_calc (GeglPathList *path,
       iter=iter->next;
     }
 }
+#endif
 
 static gboolean
 path_calc2 (GeglPathList *path,
