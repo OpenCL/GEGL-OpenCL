@@ -245,9 +245,10 @@ rgbe_header_read_variables (rgbe_file *file,
         {
           gdouble exposure;
 
-          data    += strlen ("EXPOSURE=");
-          exposure = g_ascii_strtod (data, NULL);
+          data += strlen ("EXPOSURE=");
 
+          errno    = 0;
+          exposure = g_ascii_strtod (data, NULL);
           if (errno)
             {
               g_warning ("Invalid value for exposure in radiance image file");
@@ -267,7 +268,10 @@ rgbe_header_read_variables (rgbe_file *file,
 
           for (i = 0; i < RGBE_NUM_RGB; ++i)
             {
-              gdouble multiplier = g_ascii_strtod (data, (gchar**)&data);
+              gdouble multiplier;
+
+              errno = 0;
+              multiplier = g_ascii_strtod (data, (gchar**)&data);
               if (errno)
                 {
                   g_warning ("Invalid value for COLORCORR");
@@ -308,8 +312,9 @@ rgbe_header_read_variables (rgbe_file *file,
           gdouble aspect;
 
           data  += strlen ("PIXASPECT=");
-          aspect = g_ascii_strtod (data, (gchar **)&data);
 
+          errno = 0;
+          aspect = g_ascii_strtod (data, (gchar **)&data);
           if (errno)
             {
               g_warning ("Invalid pixel aspect ratio");
@@ -429,6 +434,7 @@ rgbe_header_read_orientation (rgbe_file *file,
       if (*data++ != ' ')
           goto cleanup;
 
+      errno = 0;
       axis->size = g_ascii_strtoull (data, (gchar **)&data, 0);
       if (errno)
           goto cleanup;
