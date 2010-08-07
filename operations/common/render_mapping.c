@@ -31,7 +31,7 @@
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
+#define GEGL_CHANT_TYPE_COMPOSER
 #define GEGL_CHANT_C_FILE       "render_mapping.c"
 
 #include "gegl-chant.h"
@@ -44,6 +44,12 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", babl_format_n (babl_type ("float"), 2));
   gegl_operation_set_format (operation, "output", format);
+}
+
+static void
+get_required_for_output (GeglOperation *operation)
+{
+  //TODO
 }
 
 static gboolean
@@ -90,12 +96,23 @@ process (GeglOperation       *operation,
       
       for (i=0; i<n_pixels; i++)
       {
-        sample = gegl_sampler_get_from_buffer (sampler, coords[0], coords[1]);
-        
-        out[0] = sample[0];
-        out[1] = sample[1];
-        out[2] = sample[2];
-        out[3] = sample[3];
+        /* FIXME coords[0] > 0 for test, need to be coords[0] >= 0 */
+        if (coords[0] > 0 && coords[1] > 0)
+        {
+          sample = gegl_sampler_get_from_buffer (sampler, coords[0], coords[1]);
+          
+          out[0] = sample[0];
+          out[1] = sample[1];
+          out[2] = sample[2];
+          out[3] = sample[3];
+        }
+        else
+        {
+          out[0] = 0.0;
+          out[1] = 0.0;
+          out[2] = 0.0;
+          out[3] = 0.0;
+        }
         
         coords += 2;
         out += 4;
