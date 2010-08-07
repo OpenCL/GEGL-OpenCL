@@ -40,26 +40,6 @@ gegl_chant_int(height, "", 0, 1000, 0, "private")
 
 #include "gegl-chant.h"
 #include <SDL.h>
-#include <signal.h>
-
-#ifdef G_OS_WIN32
-#ifndef SIGQUIT
-#define SIGQUIT 3
-#endif
-#endif
-
-static void
-sighandler (int signal)
-{
-  switch (signal)
-    {                           /* I want my ctrl+C back! :) */
-    case SIGINT:
-    case SIGTERM:
-    case SIGQUIT:
-      exit (0);
-      break;
-    }
-}
 
 static void
 init_sdl (void)
@@ -69,9 +49,6 @@ init_sdl (void)
   if (!inited)
     {
       inited = 1;
-
-      /*signal (SIGINT, sighandler);
-      signal (SIGQUIT, sighandler);*/ 
 
       if (SDL_Init (SDL_INIT_VIDEO) < 0)
         {
@@ -93,7 +70,7 @@ static gboolean idle (gpointer data)
       switch (event.type)
         {
           case SDL_QUIT:
-            sighandler (SIGQUIT);
+            exit (0);
         }
     }
   return TRUE;
