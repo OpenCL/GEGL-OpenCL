@@ -55,7 +55,7 @@ tests-report: images.stamp \
 	@for XML in $(srcdir)/*.xml; do\
 	    echo $$XML; \
 	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
-	    $(builddir_img_cmp) $(srcdir)/reference/$$BASE.* output/$$BASE.* >> tests-report; true ;\
+	    $(builddir_img_cmp) $(srcdir)/reference/$$BASE.* output/$$BASE.* >> tests-report 2>&1; true ;\
 	   done;
 
 clean-local:
