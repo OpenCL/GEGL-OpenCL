@@ -26,6 +26,7 @@
 #include "buffer/gegl-sampler.h"
 #include "buffer/gegl-buffer-iterator.h"
 
+#include <stdio.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -37,7 +38,8 @@
 #include "gegl-chant.h"
 
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("RGBA float");
 
@@ -46,10 +48,13 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
-static void
-get_required_for_output (GeglOperation *operation)
+static GeglRectangle
+get_required_for_output (GeglOperation       *operation,
+                        const gchar         *input_pad,
+                        const GeglRectangle *region)
 {
-  //TODO
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+  return result;
 }
 
 static gboolean
@@ -92,19 +97,12 @@ process (GeglOperation       *operation,
       gint        n_pixels = it->length;
       gfloat     *out = it->data[index_out];
       gfloat     *coords = it->data[index_coords];
-      gfloat     *sample;
       
       for (i=0; i<n_pixels; i++)
       {
-        /* FIXME coords[0] > 0 for test, need to be coords[0] >= 0 */
         if (coords[0] > 0 && coords[1] > 0)
         {
-          sample = gegl_sampler_get_from_buffer (sampler, coords[0], coords[1]);
-          
-          out[0] = sample[0];
-          out[1] = sample[1];
-          out[2] = sample[2];
-          out[3] = sample[3];
+          gegl_sampler_get (sampler, coords[0], coords[1], out);
         }
         else
         {
@@ -141,6 +139,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   composer_class->process = process;
   operation_class->prepare = prepare;
+  operation_class->get_required_for_output = get_required_for_output;
   
   operation_class->name        = "gegl:render_mapping";
   
