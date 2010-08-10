@@ -2,6 +2,8 @@
 #include <math.h>
 #include <string.h>
 
+#define SQR(x) ((x) * (x))
+
 gint
 main (gint    argc,
       gchar **argv)
@@ -84,11 +86,10 @@ main (gint    argc,
 
      for (i=0;i<pixels;i++)
        {
-#define P2(o) (((o))*((o)))
-         gdouble diff = sqrt ( P2(a[0]-b[0])+
-                               P2(a[1]-b[1])+
-                               P2(a[2]-b[2])
-                               /*+P2(a[3]-b[3])*/);
+         gdouble diff = sqrt ( SQR(a[0]-b[0])+
+                               SQR(a[1]-b[1])+
+                               SQR(a[2]-b[2])
+                               /*+SQR(a[3]-b[3])*/);
          if (diff>=0.01)
            {
              wrong_pixels++;
@@ -117,11 +118,10 @@ main (gint    argc,
      if (wrong_pixels)
        for (i=0;i<pixels;i++)
          {
-           gdouble diff = sqrt ( P2(a[0]-b[0])+
-                                 P2(a[1]-b[1])+
-                                 P2(a[2]-b[2])
-                                 /*+P2(a[3]-b[3])*/);
-#undef P2
+           gdouble diff = sqrt ( SQR(a[0]-b[0])+
+                                 SQR(a[1]-b[1])+
+                                 SQR(a[2]-b[2])
+                                 /*+SQR(a[3]-b[3])*/);
            if (diff>=0.01)
              {
                d[0]=(100-a[0])/100.0*64+32;
