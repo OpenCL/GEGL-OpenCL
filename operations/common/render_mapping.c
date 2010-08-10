@@ -54,6 +54,7 @@ get_required_for_output (GeglOperation       *operation,
                         const GeglRectangle *region)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+
   return result;
 }
 
@@ -69,7 +70,7 @@ process (GeglOperation       *operation,
   GType                 desired_type;
   GeglInterpolation     interpolation;
   GeglBufferIterator   *it;
-  gint                  index_out, index_coords;
+  gint                  index_in, index_out, index_coords;
   
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
@@ -90,11 +91,15 @@ process (GeglOperation       *operation,
     index_out = 0;
     
     index_coords = gegl_buffer_iterator_add (it, aux, result, format_coords, GEGL_BUFFER_READ);
+    index_in = gegl_buffer_iterator_add (it, input, result, format_io, GEGL_BUFFER_READ);
     
     while (gegl_buffer_iterator_next (it))
     {
       gint        i;
       gint        n_pixels = it->length;
+      gint        x = it->roi->x; /* initial x                   */
+      gint        y = it->roi->y; /*           and y coordinates */
+      gfloat     *in = it->data[index_in];
       gfloat     *out = it->data[index_out];
       gfloat     *coords = it->data[index_coords];
       
@@ -102,7 +107,18 @@ process (GeglOperation       *operation,
       {
         if (coords[0] > 0 && coords[1] > 0)
         {
-          gegl_sampler_get (sampler, coords[0], coords[1], out);
+          /* if the coordinate asked is an exact pixel, we fetch it directly, to avoid the blur of sampling */
+          if (coords[0] == x && coords[1] == y)
+          {
+            out[0] = in[0];
+            out[1] = in[1];
+            out[2] = in[2];
+            out[3] = in[3];
+          }
+          else
+          {
+            gegl_sampler_get (sampler, coords[0], coords[1], out);
+          }
         }
         else
         {
@@ -113,7 +129,17 @@ process (GeglOperation       *operation,
         }
         
         coords += 2;
+        in += 4;
         out += 4;
+        
+        /* update x and y coordinates */
+        x++;
+        if (x >= (it->roi->x + it->roi->width))
+        {
+          x = it->roi->x;
+          y++;
+        }
+
       }
     }
     
