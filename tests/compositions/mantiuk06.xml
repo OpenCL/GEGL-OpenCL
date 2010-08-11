@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:mantiuk06'>
+    <params>
+      <param name='contrast'>0.3</param>
+      <param name='saturation'>0.9</param>
+      <param name='detail'>2.0</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/parliament.hdr</param>
+    </params>
+  </node>
+</gegl>
