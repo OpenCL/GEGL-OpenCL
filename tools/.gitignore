@@ -2,6 +2,7 @@
 /.libs
 /Makefile
 /Makefile.in
+/exp_combine*
 /img_cmp*
 /introspect*
 /operation_reference*

@@ -1,16 +1,21 @@
 # Make the tests run against the build and not the installation
 TESTS_ENVIRONMENT = \
-	GEGL_PATH=$(top_builddir)/operations/common:$(top_builddir)/operations/core:$(top_builddir)/operations/external:$(top_builddir)/operations/affine:$(top_builddir)/operations/generated
+	GEGL_PATH=$(top_builddir)/operations/common:$(top_builddir)/operations/core:$(top_builddir)/operations/external:$(top_builddir)/operations/affine:$(top_builddir)/operations/generated \
+	ABS_TOP_BUILDDIR=$(top_builddir) \
+	ABS_TOP_SRCDIR=$(top_srcdir)
 
 # The tests
-TESTS = \
+noinst_PROGRAMS = \
 	test-change-processor-rect	\
 	test-color-op			\
 	test-gegl-rectangle		\
 	test-misc			\
 	test-path			\
 	test-proxynop-processing
-noinst_PROGRAMS = $(TESTS)
+
+EXTRA_DIST = test-exp-combine.sh
+
+TESTS = $(noinst_PROGRAMS) test-exp-combine.sh
 
 # Common CPPFLAGS
 AM_CPPFLAGS = \

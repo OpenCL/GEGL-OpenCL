@@ -936,7 +936,24 @@ AM_CONDITIONAL(HAVE_SPIRO, test "$spiro_ok" = "yes")
 
 AC_SUBST(LIBSPIRO)
 
+###################
+# Check for exiv2
+###################
 
+AC_ARG_WITH(exiv2, [  --without-exiv2         build without libexiv2 support])
+
+have_libexiv2="no"
+if test "x$with_libexiv2" != "xno"; then
+  PKG_CHECK_MODULES(EXIV2, exiv2,
+    have_exiv2="yes",
+    have_exiv2="no  (exiv2 library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_EXIV2, test "$have_exiv2" = "yes")
+
+AC_SUBST(EXIV2_CFLAGS)
+AC_SUBST(EXIV2_CXXFLAGS)
+AC_SUBST(EXIV2_LIBS)
 
 
 #######################
@@ -954,7 +971,6 @@ AC_ARG_ENABLE([workshop],
               enable_workshop="no")
 
 AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" = "xyes")
-
 
 #######################
 # Enable extra warnings
@@ -1061,4 +1077,5 @@ Optional dependencies:
   avformat:        $have_libavformat
   V4L:             $have_v4l
   spiro:           $spiro_ok
+  EXIV:            $have_exiv2
 ]);
