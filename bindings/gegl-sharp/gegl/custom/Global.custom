@@ -2,7 +2,7 @@
 
         }
 
-        [DllImport("libgegl-1.0.dll")]
+        [DllImport("libgegl-1.1.dll")]
         static extern void gegl_init(int argc, IntPtr argv);
 
         public static void Init()
@@ -10,7 +10,7 @@
             gegl_init(0, IntPtr.Zero);
         }
 
-		[DllImport("libgegl-1.0.dll")]
+		[DllImport("libgegl-1.1.dll")]
         static extern void gegl_exit();
 
         public static void Exit()
