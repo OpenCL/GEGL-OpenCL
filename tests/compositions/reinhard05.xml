@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:reinhard05'>
+    <params>
+      <param name='brightness'>0</param>
+      <param name='chromatic'>0.8</param>
+      <param name='light'>0.3</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/parliament.hdr</param>
+    </params>
+  </node>
+</gegl>
