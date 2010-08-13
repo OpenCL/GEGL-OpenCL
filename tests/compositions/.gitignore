@@ -1,6 +1,7 @@
 *~
 /output
+/run-*.xml
 Makefile
 Makefile.in
-images.stamp
-tests-report
+
+

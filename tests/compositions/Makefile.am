@@ -3,14 +3,14 @@
 #  * Each test comes with one <name>.xml GEGL XML and one reference
 #    output file in 'reference' called <name>.<ext>, where <ext> is a
 #    supported output file type.
-#  * The test is run by putting the XML into a file in 'output', named
-#    <name>.<ext> and then compared with the file in 'reference'. If
-#    these files are equal, the test is a 'pass'.
+#  * The test is run by processing the GEGL XML into an output file in
+#    'output', named <name>.<ext>, and then compared with the file in
+#    'reference'. If these files are equal, the test is a 'pass'.
 
 
 SUBDIRS=data
 
-EXTRA_DIST=$(wildcard *.xml) $(wildcard reference/*) verify-results.sh
+EXTRA_DIST=$(wildcard *.xml) $(wildcard reference/*)
 
 # Env vars to make binaries use builddir stuff
 builddir_gegl_env = GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations
@@ -23,40 +23,48 @@ img_cmp_bin = $(top_builddir)/tools/img_cmp$(EXEEXT)
 builddir_gegl = $(builddir_gegl_env) $(gegl_bin)
 builddir_img_cmp = $(builddir_gegl_env) $(img_cmp_bin)
 
+# These strings must not be inside XML file names; we use $(subst ...)
+testprefix = run-
+testsuffix = .sh
 
-# For simplicity, use the same time stamp for output of all
-# compositions. Use the same output file as in the reference dir
-images.stamp: $(wildcard $(srcdir)/*.xml) \
-              $(wildcard $(top_builddir)/operations/.libs/*$(SHREXT)) \
-              $(wildcard $(top_builddir)/operations/*/.libs/*$(SHREXT)) \
-              $(wildcard $(top_builddir)/operations/*/*/.libs/*$(SHREXT)) \
-	      $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	      $(gegl_bin)
-	@echo "--[doing XML composition test renderings]--"
-	@mkdir -p ./output
-	@for XML in $(srcdir)/*.xml; do \
-	    echo $$XML; \
-	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
-	    $(builddir_gegl) $$XML -o output/`basename $(srcdir)/reference/$$BASE.*`; \
-	done
-	@touch images.stamp
+# List of tests. The .sh suffix allows us to use $(wildcard *.xml) in
+# EXTRA_DISTS
+TESTS = \
+  run-clones.xml.sh                    \
+  run-composite-transform.xml.sh       \
+  run-downsharptest-broken.xml.sh      \
+  run-downsizetest-broken.xml.sh       \
+  run-downsmoothtest-broken.xml.sh     \
+  run-fattal02.xml.sh                  \
+  run-hdr-color.xml.sh                 \
+  run-jp2-load.xml.sh                  \
+  run-mantiuk06.xml.sh                 \
+  run-reflect.xml.sh                   \
+  run-reflect2.xml.sh                  \
+  run-reinhard05.xml.sh                \
+  run-rgb-params.xml.sh                \
+  run-rgbe-load.xml.sh                 \
+  run-rgbe-save.xml.sh                 \
+  run-rotate.xml.sh                    \
+  run-simple-scale.xml.sh              \
+  run-transform.xml.sh                 \
+  run-upsharptest.xml.sh               \
+  run-upsizetest.xml.sh                \
+  run-upsmoothtest.xml.sh
 
-# Read by verify-results.sh
-TESTS_ENVIRONMENT = VERIFY_RESULTS_REFERENCE=$(srcdir)/reference
-
-TESTS = verify-results.sh
-verify-results.sh: tests-report
-
-tests-report: images.stamp \
-              $(top_srcdir)/tools/img_cmp \
-              $(srcdir)/reference/*
-	@echo "--[Verifying test renderings against references]--"
-	@echo "" > tests-report ;
-	@for XML in $(srcdir)/*.xml; do\
-	    echo $$XML; \
-	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
-	    $(builddir_img_cmp) $(srcdir)/reference/$$BASE.* output/$$BASE.* >> tests-report 2>&1; true ;\
-	   done;
+# Create a separate executable script for each composition test to run
+test_to_xml = $(abs_srcdir)/$(subst $(testsuffix),,$(subst $(testprefix),,$(1)))
+test_to_ref = $(wildcard $(abs_srcdir)/reference/$(basename $(notdir $(call test_to_xml,$(1)))).*)
+test_to_out = $(abs_builddir)/output/$(notdir $(call test_to_ref,$(1)))
+$(testprefix)%.xml.sh: Makefile.am
+	@xml_file=$(call test_to_xml,$@)                                   ;\
+	ref_img=$(call test_to_ref,$@)                                     ;\
+	out_img=$(call test_to_out,$@)                                     ;\
+	echo "#!/bin/sh" > $@                                              ;\
+	echo "mkdir -p $(abs_builddir)/output" >> $@                       ;\
+	echo "$(builddir_gegl) $$xml_file -o $$out_img" >> $@              ;\
+	echo "$(builddir_img_cmp) $$ref_img $$out_img &> /dev/null" >> $@  ;\
+	chmod +x $@
 
 clean-local:
-	rm -f images.stamp output/* *.txt tests-report
+	rm -f $(testprefix)*.xml$(testsuffix) output/*
