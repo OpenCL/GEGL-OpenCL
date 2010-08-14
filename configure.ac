@@ -955,6 +955,36 @@ AC_SUBST(EXIV2_CFLAGS)
 AC_SUBST(EXIV2_CXXFLAGS)
 AC_SUBST(EXIV2_LIBS)
 
+###################
+# Check for UMFPACK
+###################
+
+AC_ARG_WITH(umfpack, [  --without-umfpack       build without UMFPACK support])
+
+# AC_CHECK_HEADERS checks the expected locations for the umfpack header. We
+# would really like to set UMFPACK_CFLAGS appropriately, however there's no
+# readily apparent way of reliably obtaining the appropriate header directory
+# to add to the include list. So we rely on the automatic HAVE_<PATH> defines
+# and do it within the code.
+have_umfpack="no"
+if test "x$with_umfpack" != "xno"; then
+  AC_CHECK_LIB(umfpack, umfpack_dl_solve, [
+    AC_CHECK_HEADERS([umfpack.h suitesparse/umfpack.h] , [
+      have_umfpack="yes"
+      UMFPACK_LIBS="-lumfpack"
+      break
+    ])
+  ])
+
+  if test "x$have_umfpack" != "xyes"; then
+    umfpack_ok="no  (usable umfpack library not found)"
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
+AC_SUBST(UMFPACK_CFLAGS)
+AC_SUBST(UMFPACK_LIBS)
+
 
 #######################
 # Check for other items
@@ -1078,4 +1108,5 @@ Optional dependencies:
   V4L:             $have_v4l
   spiro:           $spiro_ok
   EXIV:            $have_exiv2
+  umfpack:         $have_umfpack
 ]);

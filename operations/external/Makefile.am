@@ -103,6 +103,13 @@ ff_load_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
 ff_load_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS)
 endif
 
+if HAVE_UMFPACK
+ops += matting-levin.la
+matting_levin_la_SOURCES = matting-levin.c matting-levin-cblas.c matting-levin-cblas.h
+matting_levin_la_LIBADD  = $(op_libs) $(UMFPACK_LIBS)
+matting_levin_la_CFLAGS  = $(AM_CFLAGS)
+endif
+
 # No dependencies
 ops += ppm-load.la ppm-save.la
 ppm_load_la_SOURCES = ppm-load.c

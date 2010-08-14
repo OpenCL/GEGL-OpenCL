@@ -55,6 +55,9 @@ TESTS = \
 if HAVE_JASPER
 TESTS += run-jp2-load.xml.sh
 endif
+if HAVE_UMFPACK
+TESTS += run-matting-levin.xml.sh
+endif
 
 # Create a separate executable script for each composition test to run
 test_to_xml = $(abs_srcdir)/$(subst $(testsuffix),,$(subst $(testprefix),,$(1)))

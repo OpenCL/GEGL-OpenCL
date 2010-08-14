@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:matting-levin'>
+    <params>
+      <param name='levels'>1</param>
+      <param name='active_levels'>1</param>
+    </params>
+
+    <node operation='gegl:load'>
+      <params>
+        <param name='path'>data/duck_scribble.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/duck.png</param>
+    </params>
+  </node>
+</gegl>
