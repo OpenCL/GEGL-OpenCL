@@ -1,7 +1,5 @@
 *~
 /output
-/run-*.xml
+/run-*.xml.sh
 Makefile
 Makefile.in
-
-
