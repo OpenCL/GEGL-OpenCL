@@ -37,7 +37,6 @@ TESTS = \
   run-downsmoothtest-broken.xml.sh     \
   run-fattal02.xml.sh                  \
   run-hdr-color.xml.sh                 \
-  run-jp2-load.xml.sh                  \
   run-mantiuk06.xml.sh                 \
   run-reflect.xml.sh                   \
   run-reflect2.xml.sh                  \
@@ -51,6 +50,11 @@ TESTS = \
   run-upsharptest.xml.sh               \
   run-upsizetest.xml.sh                \
   run-upsmoothtest.xml.sh
+
+# Conditional tests
+if HAVE_JASPER
+TESTS += run-jp2-load.xml.sh
+endif
 
 # Create a separate executable script for each composition test to run
 test_to_xml = $(abs_srcdir)/$(subst $(testsuffix),,$(subst $(testprefix),,$(1)))
