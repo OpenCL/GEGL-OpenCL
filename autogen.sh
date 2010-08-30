@@ -9,10 +9,10 @@
 # tools and you shouldn't use this script.  Just call ./configure
 # directly.
 
-ACLOCAL=${ACLOCAL-aclocal-1.10}
+ACLOCAL=${ACLOCAL-aclocal}
 AUTOCONF=${AUTOCONF-autoconf}
 AUTOHEADER=${AUTOHEADER-autoheader}
-AUTOMAKE=${AUTOMAKE-automake-1.10}
+AUTOMAKE=${AUTOMAKE-automake}
 LIBTOOLIZE=${LIBTOOLIZE-libtoolize}
 
 AUTOCONF_REQUIRED_VERSION=2.54
@@ -38,6 +38,7 @@ check_version ()
 {
     VERSION_A=$1
     VERSION_B=$2
+    PRINT_RESULT=$3
 
     save_ifs="$IFS"
     IFS=.
@@ -55,27 +56,37 @@ check_version ()
 
     if expr "$MAJOR_A" = "$MAJOR_B" > /dev/null; then
         if expr "$MINOR_A" \> "$MINOR_B" > /dev/null; then
-           echo "yes (version $VERSION_A)"
+           $PRINT_RESULT && echo "yes (version $VERSION_A)"
         elif expr "$MINOR_A" = "$MINOR_B" > /dev/null; then
             if expr "$MICRO_A" \>= "$MICRO_B" > /dev/null; then
-               echo "yes (version $VERSION_A)"
+               $PRINT_RESULT && echo "yes (version $VERSION_A)"
             else
-                echo "Too old (version $VERSION_A)"
+                $PRINT_RESULT && echo "Too old (version $VERSION_A)"
                 version_check_failed=1
             fi
         else
-            echo "Too old (version $VERSION_A)"
+            $PRINT_RESULT && echo "Too old (version $VERSION_A)"
             version_check_failed=1
         fi
     elif expr "$MAJOR_A" \> "$MAJOR_B" > /dev/null; then
-	echo "Major version might be too new ($VERSION_A)"
+	$PRINT_RESULT && echo "Major version might be too new ($VERSION_A)"
     else
-	echo "Too old (version $VERSION_A)"
+	$PRINT_RESULT && echo "Too old (version $VERSION_A)"
 	version_check_failed=1
     fi
 
     test $version_check_failed -eq 0
 }
+
+check_automake_version ()
+{
+    PROGRAM=$1
+    PRINT_RESULT=$2
+    VER=`$PROGRAM --version \
+         | grep automake | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
+    check_version $VER $AUTOMAKE_REQUIRED_VERSION $PRINT_RESULT
+}
+
 
 echo
 echo "I am testing that you have the tools required to build the"
@@ -103,7 +114,7 @@ fi
 if test x$LIBTOOLIZE != x; then
     VER=`$LIBTOOLIZE --version \
          | grep libtool | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
-    check_version $VER $LIBTOOL_REQUIRED_VERSION || DIE=1
+    check_version $VER $LIBTOOL_REQUIRED_VERSION true || DIE=1
 fi
 
 # check if gtk-doc is explicitely disabled
@@ -139,7 +150,7 @@ echo -n "checking for autoconf >= $AUTOCONF_REQUIRED_VERSION ... "
 if ($AUTOCONF --version) < /dev/null > /dev/null 2>&1; then
     VER=`$AUTOCONF --version | head -n 1 \
          | grep -iw autoconf | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
-    check_version $VER $AUTOCONF_REQUIRED_VERSION || DIE=1
+    check_version $VER $AUTOCONF_REQUIRED_VERSION true || DIE=1
 else
     echo
     echo "  You must have autoconf installed to compile $PROJECT."
@@ -151,13 +162,16 @@ fi
 
 
 echo -n "checking for automake >= $AUTOMAKE_REQUIRED_VERSION ... "
-if ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1; then
+if ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 && \
+    check_automake_version $AUTOMAKE false; then
    AUTOMAKE=$AUTOMAKE
    ACLOCAL=$ACLOCAL
-elif (automake-1.11 --version) < /dev/null > /dev/null 2>&1; then
+elif (automake-1.11 --version) < /dev/null > /dev/null 2>&1 && \
+    check_automake_version automake-1.11 false; then
    AUTOMAKE=automake-1.11
    ACLOCAL=aclocal-1.11
-elif (automake-1.10 --version) < /dev/null > /dev/null 2>&1; then
+elif (automake-1.10 --version) < /dev/null > /dev/null 2>&1 && \
+    check_automake_version automake-1.10 false; then
    AUTOMAKE=automake-1.10
    ACLOCAL=aclocal-1.10
 else
@@ -170,9 +184,7 @@ else
 fi
 
 if test x$AUTOMAKE != x; then
-    VER=`$AUTOMAKE --version \
-         | grep automake | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
-    check_version $VER $AUTOMAKE_REQUIRED_VERSION || DIE=1
+    check_automake_version $AUTOMAKE true || DIE=1
 fi
 
 echo -n "checking for ruby ... "
@@ -190,7 +202,7 @@ echo -n "checking for glib-gettextize ... "
 if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
     VER=`glib-gettextize --version \
          | grep glib-gettextize | sed "s/.* \([0-9.]*\)/\1/"`
-    check_version $VER $GLIB_REQUIRED_VERSION || DIE=1
+    check_version $VER $GLIB_REQUIRED_VERSION true || DIE=1
 else
     echo
     echo "  You must have glib-gettextize installed to compile $PROJECT."
@@ -205,7 +217,7 @@ fi
 #if (intltoolize --version) < /dev/null > /dev/null 2>&1; then
 #    VER=`intltoolize --version \
 #         | grep intltoolize | sed "s/.* \([0-9.]*\)/\1/"`
-#    check_version $VER $INTLTOOL_REQUIRED_VERSION || DIE=1
+#    check_version $VER $INTLTOOL_REQUIRED_VERSION true || DIE=1
 #else
 #    echo
 #    echo "  You must have intltool installed to compile $PROJECT."
