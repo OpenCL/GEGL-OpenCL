@@ -590,6 +590,9 @@ linbcg (guint   rows,
   gfloat ak,akden,bk,bkden,bknum,bnrm,dxnrm,xnrm,zm1nrm,znrm;
   gfloat *p,*pp,*r,*rr,*z,*zz;
 
+  /* To remove warning about potetial uninitialized use */
+  bkden = 1;
+
   p  = g_new (gfloat, n);
   pp = g_new (gfloat, n);
   r  = g_new (gfloat, n);
