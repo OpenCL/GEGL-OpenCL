@@ -349,7 +349,6 @@ struct _GeglChantO
 #define gegl_chant_string(name, nick, def, blurb)            gchar      *name;
 #define gegl_chant_file_path(name, nick, def, blurb)         gchar      *name;
 #define gegl_chant_multiline(name, nick, def, blurb)         gchar      *name;
-#define gegl_chant_multiline(name, nick, def, blurb)         gchar      *name;
 #define gegl_chant_object(name,nick,  blurb)                 GObject    *name;
 #define gegl_chant_pointer(name, nick, blurb)                gpointer    name;
 #define gegl_chant_color(name, nick, def, blurb)             GeglColor  *name;
@@ -364,7 +363,6 @@ struct _GeglChantO
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_file_path
-#undef gegl_chant_multiline
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
