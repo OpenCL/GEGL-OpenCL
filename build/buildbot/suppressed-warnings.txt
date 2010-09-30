@@ -6,3 +6,6 @@
 :    ^libtool: install: warning: relinking `.*'$
 :    ^libtool: install: warning: remember to run `libtool --finish .*_inst.*'$
 :    ^libtool: install: warning: `.*' has not been installed in `.*_inst.*'$
+
+# Comes from AM_PROG_LIBTOOL, not much we can do
+:    ^configure.ac:143: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body$
