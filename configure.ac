@@ -978,7 +978,7 @@ if test "x$with_umfpack" != "xno"; then
   ])
 
   if test "x$have_umfpack" != "xyes"; then
-    umfpack_ok="no  (usable umfpack library not found)"
+    have_umfpack="no  (usable umfpack library not found)"
   fi
 fi
 
