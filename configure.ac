@@ -922,12 +922,13 @@ if test "x$with_libspiro" != "xno" && test -z "$LIBSPIRO"; then
     spiro_ok="no  (usable SPIRO library not found)")
   if test "$spiro_ok" = "yes"; then
     AC_MSG_CHECKING([for spirolib.h])
-    AC_TRY_CPP([#include <spiro.h>],
+    AC_CHECK_HEADER([spiro.h],
       spiro_ok="yes"
       AC_DEFINE(HAVE_SPIRO, 1,
                 [Define to 1 if the spiro library is available])
       LIBSPIRO='-lspiro',
-      spiro_ok="no  (Can't include spiro.h)")
+      spiro_ok="no  (Can't include spiro.h)",
+      [#include <bezctx_intf.h>])
       AC_MSG_RESULT($spiro_ok)
   fi
 fi
