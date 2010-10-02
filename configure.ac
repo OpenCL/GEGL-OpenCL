@@ -986,12 +986,13 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
-AC_CHECK_HEADERS([execinfo.h])
 
 #######################
 # Check for other items
 #######################
 
+# For backtrace()
+AC_CHECK_HEADERS([execinfo.h])
 
 # w3m is used to autogenerate README
 AC_PATH_PROG(W3M, w3m, no)

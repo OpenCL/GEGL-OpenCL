@@ -858,7 +858,7 @@ gegl_buffer_get_alloc_stack (void)
 {
   char  *result         = NULL;
 #ifndef HAVE_EXECINFO_H
-  result = g_strdup ("backtrack not available for this platform\n");
+  result = g_strdup ("backtrace() not available for this platform\n");
 #else
   void  *functions[MAX_N_FUNCTIONS];
   int    n_functions    = 0;
