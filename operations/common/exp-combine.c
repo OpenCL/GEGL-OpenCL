@@ -36,6 +36,8 @@ gegl_chant_double (sigma, _("Weight Sigma"),
 /*#define DEBUG_LINEARIZE*/
 /*#define DEBUG_SAVE_CURVES*/
 
+static float GEGL_NAN;
+
 #include <gegl-plugin.h>
 struct _GeglChant
 {
@@ -146,7 +148,7 @@ gegl_expcombine_new_exposure (void)
   e->hi = e->lo = e;
 
   memset (e->pixels, 0, sizeof (e->pixels));
-  e->ti = NAN;
+  e->ti = GEGL_NAN;
 
   return e;
 }
@@ -259,8 +261,8 @@ gegl_expcombine_normalize (gfloat *response,
   guint  i;
   gfloat val_mid;
 
-  g_return_val_if_fail (response, NAN);
-  g_return_val_if_fail (steps > 0, NAN);
+  g_return_val_if_fail (response, GEGL_NAN);
+  g_return_val_if_fail (steps > 0, GEGL_NAN);
 
   /* Find the first and last non-zero values in response curve */
   for (step_min = 0;
@@ -272,7 +274,7 @@ gegl_expcombine_normalize (gfloat *response,
        --step_max)
     ;
 
-  g_return_val_if_fail (step_max >= step_min, NAN);
+  g_return_val_if_fail (step_max >= step_min, GEGL_NAN);
   step_mid = step_min + (step_max - step_min) / 2;
 
   /* Find the non-zero mid-value of the response curve */
@@ -412,7 +414,7 @@ gegl_expcombine_apply_debevec  (gfloat              *hdr,
               white_step[1] = step[1];
               white_step[2] = step[2];
               /* TODO: This is not an fminf in luminance. Should it be? */
-              /* ti_min        = fminf (exp_i->ti, ti_min); */
+              /* ti_min        = MIN (exp_i->ti, ti_min); */
               continue;
             }
 
@@ -424,7 +426,7 @@ gegl_expcombine_apply_debevec  (gfloat              *hdr,
               black_step[1] = step[1];
               black_step[2] = step[2];
               /* TODO: This is not an fminf in luminance. Should it be? */
-              /* ti_max        = fmaxf (exp_i->ti, ti_max); */
+              /* ti_max        = MAX (exp_i->ti, ti_max); */
               continue;
             }
 
@@ -567,9 +569,9 @@ gegl_expcombine_apply_response (gfloat              *hdr,
            * present
            */
           if (step > step_max)
-              ti_min = fminf (ti_min, exp_i->ti);
+              ti_min = MIN (ti_min, exp_i->ti);
           if (step < step_min)
-              ti_max = fmaxf (ti_max, exp_i->ti);
+              ti_max = MAX (ti_max, exp_i->ti);
 
           /* anti ghosting: monotonous increase in time should result in
            * monotonous increase in intensity; make forward and backward check,
@@ -1273,6 +1275,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
+
+  GEGL_NAN = sqrt(-1);
 
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
