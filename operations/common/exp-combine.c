@@ -53,11 +53,14 @@ typedef struct
 #include "gegl-chant.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+
+#include "gegl-debug.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
-#include "gegl-debug.h"
-#include <stdio.h>
-#include <errno.h>
+
 
 static const gchar *PAD_FORMAT = "R'G'B' float";
 static const gchar *EXP_PREFIX = "exposure-";
