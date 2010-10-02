@@ -986,6 +986,7 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
+AC_CHECK_HEADERS([execinfo.h])
 
 #######################
 # Check for other items

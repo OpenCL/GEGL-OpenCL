@@ -80,7 +80,7 @@
 /* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
  * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()
  */
-#ifndef G_OS_WIN32
+#ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
 
@@ -857,8 +857,8 @@ static gchar *
 gegl_buffer_get_alloc_stack (void)
 {
   char  *result         = NULL;
-#ifdef G_OS_WIN32
-  result = g_strdup ("backtrack not available on win32\n");
+#ifndef HAVE_EXECINFO_H
+  result = g_strdup ("backtrack not available for this platform\n");
 #else
   void  *functions[MAX_N_FUNCTIONS];
   int    n_functions    = 0;
