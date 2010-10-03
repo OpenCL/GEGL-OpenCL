@@ -12,3 +12,4 @@
 
 # jas_config.h redefines PACKAGE_NAME etc
 :    .*jas_config.h:.*:1: warning: .* redefined$
+:    .*config.h:.*:1: warning: this is the location of the previous definition$
