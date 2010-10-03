@@ -181,7 +181,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
     if (interlace_type == PNG_INTERLACE_ADAM7)
       number_of_passes = png_set_interlace_handling (load_png_ptr);
 
-    if (load_info_ptr->valid & PNG_INFO_gAMA)
+    if (png_get_valid (load_png_ptr, load_info_ptr, PNG_INFO_gAMA))
       {
         gdouble gamma;
         png_get_gAMA (load_png_ptr, load_info_ptr, &gamma);
@@ -298,7 +298,7 @@ static gint query_png (const gchar *path,
     *width = w;
     *height = h;
 
-    if (load_info_ptr->valid & PNG_INFO_tRNS)
+    if (png_get_valid (load_png_ptr, load_info_ptr, PNG_INFO_tRNS))
       color_type |= PNG_COLOR_MASK_ALPHA;
 
     if (color_type & PNG_COLOR_TYPE_RGB)
