@@ -9,3 +9,6 @@
 
 # Comes from AM_PROG_LIBTOOL, not much we can do
 :    ^configure.ac:143: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body$
+
+# jas_config.h redefines PACKAGE_NAME etc
+:    .*jas_config.h:.*:1: warning: .* redefined$
