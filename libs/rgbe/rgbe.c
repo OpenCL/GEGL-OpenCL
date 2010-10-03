@@ -722,6 +722,7 @@ rgbe_header_write (const rgbe_header *header,
 {
   gchar    *line    = NULL;
   gboolean  success = FALSE;
+  gint      len;
 
   g_return_val_if_fail (header, FALSE);
   g_return_val_if_fail (f,      FALSE);
@@ -734,9 +735,8 @@ rgbe_header_write (const rgbe_header *header,
   /* Insert the package name as the software name if not present (zero len)
    * or we don't have a null terminated name length.
    */
-  if ( strnlen (header->software, RGBE_MAX_SOFTWARE_LEN) ==                0 ||
-      (strnlen (header->software, RGBE_MAX_SOFTWARE_LEN) == RGBE_MAX_SOFTWARE_LEN &&
-       header->software[RGBE_MAX_SOFTWARE_LEN - 1] != '\0'))
+  len = strlen (header->software);
+  if (len  == 0 || len > RGBE_MAX_SOFTWARE_LEN - 1)
     {
       line = g_strconcat ("SOFTWARE=", PACKAGE_STRING, "\n", NULL);
     }
