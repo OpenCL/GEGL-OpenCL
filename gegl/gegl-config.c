@@ -42,10 +42,10 @@ enum
 };
 
 static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
+gegl_config_get_property (GObject    *gobject,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
 {
   GeglConfig *config = GEGL_CONFIG (gobject);
 
@@ -90,10 +90,10 @@ get_property (GObject    *gobject,
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+gegl_config_set_property (GObject      *gobject,
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
 {
   GeglConfig *config = GEGL_CONFIG (gobject);
 
@@ -141,7 +141,7 @@ set_property (GObject      *gobject,
 }
 
 static void
-finalize (GObject *gobject)
+gegl_config_finalize (GObject *gobject)
 {
   GeglConfig *config = GEGL_CONFIG (gobject);
 
@@ -158,9 +158,9 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   parent_class  = g_type_class_peek_parent (klass);
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-  gobject_class->finalize = finalize;
+  gobject_class->set_property = gegl_config_set_property;
+  gobject_class->get_property = gegl_config_get_property;
+  gobject_class->finalize     = gegl_config_finalize;
 
 
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
