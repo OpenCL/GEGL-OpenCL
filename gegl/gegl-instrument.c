@@ -38,7 +38,7 @@ struct _Timing
   Timing *next;
 };
 
-Timing *root = NULL;
+static Timing *root = NULL;
 
 static Timing *iter_next (Timing *iter)
 {
