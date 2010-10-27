@@ -434,6 +434,8 @@ void            gegl_buffer_linear_close     (GeglBuffer    *buffer,
  */
 const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
 
+#include <gegl-buffer-iterator.h>
+
 /**
  */
 G_END_DECLS
