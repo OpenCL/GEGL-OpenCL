@@ -33,7 +33,7 @@
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "render_mapping.c"
+#define GEGL_CHANT_C_FILE       "map_absolute.c"
 
 #include "gegl-chant.h"
 
@@ -167,9 +167,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_required_for_output = get_required_for_output;
   
-  operation_class->name        = "gegl:render_mapping";
+  operation_class->name        = "gegl:map-absolute";
   
   operation_class->categories  = "transform";
-  operation_class->description = _("sample input with an auxiliar buffer that contain source coordinates");
+  operation_class->description = _("sample input with an auxiliary buffer that contain source coordinates");
 }
 #endif
