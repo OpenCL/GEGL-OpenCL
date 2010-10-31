@@ -11,7 +11,8 @@ Changes in GEGL 0.1.4
      map-absolute (GIMP cage tool gsoc helper op)
      fixed imagemagick fallback load op
      fixed pipe based dcraw wrapper
-     GEGL HDR gsoc ops: exp-combine, reinhard05, fattal02, mantiuk06
+     GSoC 2010 ops: exp-combine, reinhard05, fattal02, mantiuk06, matting-levin
+     
  • Various source and build improvements.
  • Buffer:
      refactored away some constant overhead
@@ -19,9 +20,10 @@ Changes in GEGL 0.1.4
 
 Contributions from:
 
-Michael Natterer, Øyvind Kolås, Vincent Untz, Kaja Liiv,  Nils Philippsen,
-Étienne Bersac, Debarshi Ray, Danny Robson, Stuart Axon, Kao, Mukund Sivaraman,
-Ruben Vermeersch, Barak Itkin and Michael Muré.
+Michael Natterer, Øyvind Kolås, Vincent Untz, Kaja Liiv, Nils
+Philippsen, Étienne Bersac, Martin Nordholts, Debarshi Ray, Danny
+Robson, Stuart Axon, Kao, Mukund Sivaraman, Ruben Vermeersch, Barak
+Itkin and Michael Muré.
 
 Changes in GEGL 0.1.2
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
