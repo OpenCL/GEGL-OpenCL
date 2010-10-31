@@ -390,6 +390,13 @@ gegl_node_get_pad (GeglNode    *self,
   return NULL;
 }
 
+gboolean
+gegl_node_has_pad (GeglNode      *self,
+                   const gchar   *name)
+{
+  return gegl_node_get_pad (self, name) != NULL;
+}
+
 /**
  * gegl_node_get_pads:
  * @self: a #GeglNode.

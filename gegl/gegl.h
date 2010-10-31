@@ -658,6 +658,16 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
                                           gchar         *input_pad_name,
                                           gchar        **output_pad_name);
 
+/**
+ * gegl_node_has_pad:
+ * @node: the node we are querying
+ * @pad_name: the pad name we are looking for
+ *
+ * Returns TRUE if the node has a pad with the specified name
+ */
+gboolean      gegl_node_has_pad          (GeglNode      *node,
+                                          const gchar   *pad_name);
+
 
 /***
  * Binding conveniences:

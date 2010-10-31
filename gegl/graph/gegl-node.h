@@ -143,6 +143,8 @@ void          gegl_node_add_pad             (GeglNode      *self,
                                              GeglPad       *pad);
 void          gegl_node_remove_pad          (GeglNode      *self,
                                              GeglPad       *pad);
+gboolean      gegl_node_has_pad             (GeglNode      *self,
+                                             const gchar   *name);
 GeglPad     * gegl_node_get_pad             (GeglNode      *self,
                                              const gchar   *name);
 GSList      * gegl_node_get_pads            (GeglNode      *self);
