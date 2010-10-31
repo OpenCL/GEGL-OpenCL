@@ -1,6 +1,27 @@
                  ⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+Changes in GEGL 0.1.4
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Operations:
+     save (chooses delegate save op automatically)
+     rgbe load/save
+     jpeg200 load/save
+     ppm load/save
+     map-absolute (GIMP cage tool gsoc helper op)
+     fixed imagemagick fallback load op
+     fixed pipe based dcraw wrapper
+     GEGL HDR gsoc ops: exp-combine, reinhard05, fattal02, mantiuk06
+ • Various source and build improvements.
+ • Buffer:
+     refactored away some constant overhead
+     mad GeglBufferIterator API public
+
+Contributions from:
+
+Michael Natterer, Øyvind Kolås, Vincent Untz, Kaja Liiv,  Nils Philippsen,
+Étienne Bersac, Debarshi Ray, Danny Robson, Stuart Axon, Kao, Mukund Sivaraman,
+Ruben Vermeersch, Barak Itkin and Michael Muré.
 
 Changes in GEGL 0.1.2
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
