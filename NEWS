@@ -16,7 +16,7 @@ Changes in GEGL 0.1.4
  • Various source and build improvements.
  • Buffer:
      refactored away some constant overhead
-     mad GeglBufferIterator API public
+     made GeglBufferIterator API public
 
 Contributions from:
 
