@@ -34,6 +34,43 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 #include "gegl-chant.h"
 #include <png.h>
 
+static FILE * open_png(const gchar *path)
+{
+  FILE *infile;
+  const size_t hdr_size=8;
+  size_t hdr_read_size;
+  unsigned char header[hdr_size];
+
+  if (!strcmp (path, "-"))
+    {
+      infile = stdin;
+    }
+  else
+    {
+      infile = fopen (path, "rb");
+    }
+  if (!infile)
+    {
+      return infile;
+    }
+
+  if((hdr_read_size=fread(header, 1, hdr_size, infile))!=hdr_size)
+    {
+      fclose(infile);
+      g_warning ("%s is too short for a png file, only %d bytes.",
+						  path, hdr_read_size);
+      return NULL;
+    }
+
+  if (png_sig_cmp (header, 0, hdr_size))
+    {
+      fclose (infile);
+      g_warning ("%s is not a png file", path);
+      return NULL;
+    }
+  return infile;
+}
+
 static gint
 gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
@@ -53,7 +90,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   FILE          *infile;
   png_structp    load_png_ptr;
   png_infop      load_info_ptr;
-  unsigned char  header[8];
   guchar        *pixels;
   /*png_bytep     *rows;*/
 
@@ -61,24 +97,10 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   unsigned   int i;
   png_bytep  *row_p = NULL;
 
-  if (!strcmp (path, "-"))
-    {
-      infile = stdin;
-    }
-  else
-    {
-      infile = fopen (path, "rb");
-    }
+  infile = open_png (path);
+
   if (!infile)
     {
-      return -1;
-    }
-
-  fread (header, 1, 8, infile);
-  if (png_sig_cmp (header, 0, 8))
-    {
-      fclose (infile);
-      g_warning ("%s is not a png file", path);
       return -1;
     }
 
@@ -239,21 +261,13 @@ static gint query_png (const gchar *path,
   FILE         *infile;
   png_structp   load_png_ptr;
   png_infop     load_info_ptr;
-  unsigned char header[8];
 
   png_bytep  *row_p = NULL;
 
-  infile = fopen (path, "rb");
+  infile = open_png (path);
+
   if (!infile)
     {
-      return -1;
-    }
-
-  fread (header, 1, 8, infile);
-  if (png_sig_cmp (header, 0, 8))
-    {
-      fclose (infile);
-      g_warning ("%s is not a png file", path);
       return -1;
     }
 
