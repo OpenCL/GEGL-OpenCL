@@ -62,14 +62,15 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         gint         width,
                         gint         height)
 {
-  gint           row_stride = width * 4;
   FILE          *fp;
   gint           i;
   png_struct    *png;
   png_info      *info;
   guchar        *pixels;
   png_color_16   white;
+  int            png_color_type;
   gchar          format_string[16];
+  Babl          *format;
   gint           bit_depth = 8;
 
   if (!strcmp (path, "-"))
@@ -85,8 +86,6 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       return -1;
     }
 
-  strcpy (format_string, "R'G'B'A ");
-
   {
     const Babl *babl; /*= gegl_buffer->format;*/
 
@@ -99,17 +98,35 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       bit_depth = 16;
     else
       bit_depth = 8;
+
+    if (babl_format_has_alpha (babl))
+      if (babl_format_get_n_components (babl) != 2)
+        {
+          png_color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+          strcpy (format_string, "R'G'B'A ");
+        }
+      else
+        {
+          png_color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
+          strcpy (format_string, "Y'A ");
+        }
+    else
+      if (babl_format_get_n_components (babl) != 1)
+        {
+          png_color_type = PNG_COLOR_TYPE_RGB;
+          strcpy (format_string, "RGB ");
+        }
+      else
+        {
+          png_color_type = PNG_COLOR_TYPE_GRAY;
+          strcpy (format_string, "Y ");
+        }
   }
 
   if (bit_depth == 16)
-    {
-      strcat (format_string, "u16");
-      row_stride *= 2;
-    }
+    strcat (format_string, "u16");
   else
-    {
-      strcat (format_string, "u8");
-    }
+    strcat (format_string, "u8");
 
   png = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (png == NULL)
@@ -134,12 +151,17 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
   png_init_io (png, fp);
 
   png_set_IHDR (png, info,
-     width, height, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
+     width, height, bit_depth, png_color_type,
      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
 
-  white.red = 0xff;
-  white.blue = 0xff;
-  white.green = 0xff;
+  if (png_color_type == PNG_COLOR_TYPE_RGB || png_color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+    {
+      white.red = 0xff;
+      white.blue = 0xff;
+      white.green = 0xff;
+    }
+  else
+    white.gray = 0xff;
   png_set_bKGD (png, info, &white);
 
   png_write_info (png, info);
@@ -149,7 +171,8 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
     png_set_swap (png);
 #endif
 
-  pixels = g_malloc (row_stride);
+  format = babl_format (format_string);
+  pixels = g_malloc0 (width * babl_format_get_bytes_per_pixel (format));
 
   for (i=0; i< height; i++)
     {
@@ -160,7 +183,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       rect.width = width;
       rect.height = 1;
 
-      gegl_buffer_get (gegl_buffer, 1.0, &rect, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (gegl_buffer, 1.0, &rect, format, pixels, GEGL_AUTO_ROWSTRIDE);
 
       png_write_rows (png, &pixels, 1);
     }
