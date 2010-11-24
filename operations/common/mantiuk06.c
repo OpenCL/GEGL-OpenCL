@@ -23,6 +23,7 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
+#include <math.h>
 
 
 #ifdef GEGL_CHANT_PROPERTIES
@@ -453,7 +454,7 @@ static inline void
 mantiuk06_matrix_zero (guint   n,
                        gfloat *m)
 {
-  bzero (m, n * sizeof (gfloat));
+  memset(m, 0, n * sizeof (gfloat));
 }
 
 /* calculate divergence of two gradient maps (Gx and Gy)

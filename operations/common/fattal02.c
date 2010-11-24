@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
+#include <math.h>
 
 
 #ifdef GEGL_CHANT_PROPERTIES
@@ -130,7 +131,7 @@ fattal02_copy_array (const gfloat *input,
                      gsize         size,
                      gfloat       *output)
 {
-  bcopy (input, output, size * sizeof (input[0]));
+  memcpy (output, input, size * sizeof (input[0]));
 }
 
 
