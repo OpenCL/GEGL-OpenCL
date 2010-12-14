@@ -32,7 +32,6 @@ GEGL_public_HEADERS =	\
     gegl-matrix.h			\
     gegl-chant.h			\
     gegl-lookup.h			\
-    gegl-simd.h				\
     gegl-plugin.h			\
     gegl-version.h			\
     buffer/gegl-buffer.h		\

@@ -88,47 +88,6 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-
-#ifdef HAS_G4FLOAT
-static gboolean
-process_simd (GeglOperation       *op,
-              void                *in_buf,
-              void                *aux_buf,
-              void                *out_buf,
-              glong                samples,
-              const GeglRectangle *roi)
-{
-  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
-  g4float    *in  = in_buf;
-  gfloat     *aux = aux_buf;
-  g4float    *out = out_buf;
-
-  /* add 0.5 to brightness here to make the logic in the innerloop tighter
-   */
-  g4float  value      = g4float_all(o->value);
-
-  if (aux == NULL)
-    {
-      g_assert (o->value != 1.0); /* should haven been passed through */
-      while (samples--)
-        *(out ++) = *(in ++) * value;
-    }
-  else if (o->value == 1.0)
-    while (samples--)
-      {
-        *(out++) = *(in++) * g4float_all (*(aux));
-        aux++;
-      }
-  else
-    while (samples--)
-      {
-        *(out++) = *(in++) * g4float_all ((*(aux))) * value;
-        aux++;
-      }
-  return TRUE;
-}
-#endif
-
 /* Fast path when opacity is a no-op
  */
 static gboolean operation_process (GeglOperation        *operation,
@@ -169,16 +128,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->process = operation_process;
   point_composer_class->process = process;
-
-#ifdef HAS_G4FLOAT
-  /* add conditionally compiled variation of process(), gegl should be able
-   * to determine which is fastest and hopefully if any implementation is
-   * broken and not conforming to the reference implementation.
-   */
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_simd), "simd");
-#endif
-
 
   operation_class->name        = "gegl:opacity";
   operation_class->categories  = "transparency";

@@ -82,8 +82,8 @@ process (GeglOperation       *op,
    * chanted properties
    */
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *in_pixel;
-  gfloat     *out_pixel;
+  gfloat     * GEGL_ALIGNED in_pixel;
+  gfloat     * GEGL_ALIGNED out_pixel;
   gfloat      brightness, contrast;
   glong       i;
 
@@ -95,12 +95,9 @@ process (GeglOperation       *op,
 
   for (i=0; i<n_pixels; i++)
     {
-      gint component;
-      for (component=0; component <3 ; component++)
-        {
-          out_pixel[component] =
-                (in_pixel[component] - 0.5) * contrast + brightness + 0.5;
-        }
+      out_pixel[0] = (in_pixel[0] - 0.5f) * contrast + brightness + 0.5;
+      out_pixel[1] = (in_pixel[1] - 0.5f) * contrast + brightness + 0.5;
+      out_pixel[2] = (in_pixel[2] - 0.5f) * contrast + brightness + 0.5;
       out_pixel[3] = in_pixel[3]; /* copy the alpha */
       in_pixel  += 4;
       out_pixel += 4;

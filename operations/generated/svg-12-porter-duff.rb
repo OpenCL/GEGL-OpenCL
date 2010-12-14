@@ -32,45 +32,33 @@ copyright = '
  */'
 
 a = [
-      ['clear',         '0.0',
-                        '0.0',
-                        '*D = g4float_zero'],
+      ['clear',         '0.0f',
+                        '0.0f'],
       ['src',           'cA',
-                        'aA',
-                        '*D = *A'],
+                        'aA'],
       ['dst',           'cB',
-                        'aB',
-                        '*D = *B'],
-      ['src_over',      'cA + cB * (1 - aA)',
-                        'aA + aB - aA * aB',
-                        '*D = *A + g4float_mul (*B, 1.0 - g4floatA(*A))'],
-      ['dst_over',      'cB + cA * (1 - aB)',
-                        'aA + aB - aA * aB',
-                        '*D = *B + g4float_mul (*A, 1.0 - g4floatA(*B))'],
+                        'aB'],
+      ['src_over',      'cA + cB * (1.0f - aA)',
+                        'aA + aB - aA * aB'],
+      ['dst_over',      'cB + cA * (1.0f - aB)',
+                        'aA + aB - aA * aB'],
       ['dst_in',        'cB * aA', # <- XXX: typo?
-                        'aA * aB', 
-                        '*D = g4float_mul (*B, g4floatA(*A))'],
-      ['src_out',       'cA * (1 - aB)',
-                        'aA * (1 - aB)',
-                        '*D = g4float_mul (*A, 1.0 - g4floatA(*B))'],
-      ['dst_out',       'cB * (1 - aA)',
-                        'aB * (1 - aA)',
-                        '*D = g4float_mul (*B, 1.0 - g4floatA(*A))'],
-      ['src_atop',      'cA * aB + cB * (1 - aA)',
-                        'aB',
-                         '*D = g4float_mul (*A, g4floatA(*B)) + g4float_mul (*B, 1.0 - g4floatA(*A));g4floatA(*D)=g4floatA(*B)'],
+                        'aA * aB'],
+      ['src_out',       'cA * (1.0f - aB)',
+                        'aA * (1.0f - aB)'],
+      ['dst_out',       'cB * (1.0f - aA)',
+                        'aB * (1.0f - aA)'],
+      ['src_atop',      'cA * aB + cB * (1.0f - aA)',
+                        'aB'],
 
-      ['dst_atop',      'cB * aA + cA * (1 - aB)',
-                        'aA',
-                         '*D = g4float_mul (*B, g4floatA(*A)) + g4float_mul (*A, 1.0 - g4floatA(*B));g4floatA(*D)=g4floatA(*A)'],
-      ['xor',           'cA * (1 - aB)+ cB * (1 - aA)',
-                        'aA + aB - 2 * aA * aB',
-                        '*D = *A * *B'] # FIXME this is wrong
+      ['dst_atop',      'cB * aA + cA * (1.0f - aB)',
+                        'aA'],
+      ['xor',           'cA * (1.0f - aB)+ cB * (1.0f - aA)',
+                        'aA + aB - 2.0f * aA * aB'],
     ]
 
 b = [ ['src_in',        'cA * aB',  # the bounding box of this mode is the
-                        'aA * aB',  # bounding box of the input only.
-                        '*D = g4float_mul(*A,  g4floatA(*B))']]
+                        'aA * aB']]  # bounding box of the input only.
 
 file_head1 = '
 #include "config.h"
@@ -103,9 +91,9 @@ process (GeglOperation        *op,
           const GeglRectangle *roi)
 {
   gint i;
-  gfloat *in = in_buf;
-  gfloat *aux = aux_buf;
-  gfloat *out = out_buf;
+  gfloat * GEGL_ALIGNED in = in_buf;
+  gfloat * GEGL_ALIGNED aux = aux_buf;
+  gfloat * GEGL_ALIGNED out = out_buf;
 
   if (aux==NULL)
     return TRUE;
@@ -124,11 +112,6 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
-
-#ifdef HAS_G4FLOAT
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_simd), "simd");
-#endif
 
 '
 
@@ -152,7 +135,6 @@ a.each do
     swapcased   = name.swapcase
     c_formula   = item[1]
     a_formula   = item[2]
-    sse_formula = item[3]
 
     file.write copyright
     file.write file_head1
@@ -188,37 +170,6 @@ a.each do
     }
   return TRUE;
 }
-
-#ifdef HAS_G4FLOAT
-
-static gboolean
-process_simd (GeglOperation       *op,
-              void                *in_buf,
-              void                *aux_buf,
-              void                *out_buf,
-              glong                n_pixels,
-              const GeglRectangle *roi)
-{
-  g4float *A = aux_buf;
-  g4float *B = in_buf;
-  g4float *D = out_buf;
-
-  if (B==NULL || n_pixels == 0)
-    return TRUE;
-    
-  while (n_pixels--)
-    {
-      #{sse_formula};
-
-      A++; B++; D++;
-    }
-
-  return TRUE;
-}
-
-#endif
-
-
 "
   file.write file_tail1
   file.write "
@@ -248,7 +199,6 @@ b.each do
     swapcased   = name.swapcase
     c_formula   = item[1]
     a_formula   = item[2]
-    sse_formula = item[3]
 
     file.write copyright
     file.write file_head1
@@ -284,36 +234,6 @@ b.each do
     }
   return TRUE;
 }
-
-#ifdef HAS_G4FLOAT
-
-static gboolean
-process_simd (GeglOperation       *op,
-              void                *in_buf,
-              void                *aux_buf,
-              void                *out_buf,
-              glong                n_pixels,
-              const GeglRectangle *roi)
-{
-  g4float *A = aux_buf;
-  g4float *B = in_buf;
-  g4float *D = out_buf;
-
-  if (B==NULL || n_pixels == 0)
-    return TRUE;
-    
-  while (n_pixels--)
-    {
-      #{sse_formula};
-
-      A++; B++; D++;
-    }
-
-  return TRUE;
-}
-
-#endif
-
 
 static GeglRectangle get_bounding_box (GeglOperation *self)
 {

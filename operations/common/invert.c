@@ -60,30 +60,6 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-#ifdef HAS_G4FLOAT
-static gboolean
-process_simd (GeglOperation       *op,
-              void                *in_buf,
-              void                *out_buf,
-              glong                samples,
-              const GeglRectangle *roi)
-{
-  g4float *in  = in_buf;
-  g4float *out = out_buf;
-  g4float  one = g4float_one;
-
-  while (samples--)
-    {
-      gfloat a= g4float_a(*in)[3];
-      *out = one - *in;
-      g4float_a(*out)[3]=a;
-      in  ++;
-      out ++;
-    }
-  return TRUE;
-}
-#endif
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -100,11 +76,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->description =
      _("Inverts the components (except alpha), the result is the "
        "corresponding \"negative\" image.");
-
-#ifdef HAS_G4FLOAT
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_simd), "simd");
-#endif
 }
 
 #endif

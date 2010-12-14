@@ -357,7 +357,7 @@ if test "x$enable_mmx" = "xyes"; then
     AC_MSG_RESULT(yes)
 
     if test "x$enable_sse" = "xyes"; then
-      AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS="-msse"])
+      AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS="-msse -msse2 -ftree-vectorize -ffast-math -ftree-vectorizer-verbose=3"])
 
       AC_MSG_CHECKING(whether we can compile SSE code)
 

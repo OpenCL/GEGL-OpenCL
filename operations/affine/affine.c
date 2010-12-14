@@ -678,7 +678,7 @@ affine_generic (GeglBuffer  *dest,
   GeglBufferIterator *i;
   const GeglRectangle *dest_extent;
   gint                  x, y;
-  gfloat               *dest_buf,
+  gfloat * restrict     dest_buf,
                        *dest_ptr;
   GeglMatrix3           inverse;
   GeglMatrix2           inverse_jacobian;

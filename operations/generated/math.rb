@@ -27,9 +27,9 @@ a = [
       ['add',       'c = c + value', 0.0],
       ['subtract',  'c = c - value', 0.0],
       ['multiply',  'c = c * value', 1.0],
-      ['divide',    'c = value==0.0?0.0:c/value', 1.0],
+      ['divide',    'c = value==0.0f?0.0f:c/value', 1.0],
       ['gamma',     'c = powf (c, value)', 1.0],
-#     ['threshold', 'c = c>=value?1.0:0.0', 0.5],
+#     ['threshold', 'c = c>=value?1.0f:0.0f', 0.5],
 #     ['invert',    'c = 1.0-c']
     ]
     
@@ -87,9 +87,9 @@ process (GeglOperation        *op,
           glong                n_pixels,
           const GeglRectangle *roi)
 {
-  gfloat *in = in_buf;
-  gfloat *out = out_buf;
-  gfloat *aux = aux_buf;
+  gfloat * GEGL_ALIGNED in = in_buf;
+  gfloat * GEGL_ALIGNED out = out_buf;
+  gfloat * GEGL_ALIGNED aux = aux_buf;
   gint    i;
 
   if (aux == NULL)

@@ -33,13 +33,11 @@ copyright = '
 
 a = [
 #       Alias for porter-duff src-over
-#     ['normal',  'cA + cB * (1 - aA)',
-#                  'aA + aB - aA * aB',
-#                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
+#      ['normal',  'cA + cB * (1.0f - aA)',
+#                  'aA + aB - aA * aB'],
 #       Alias for porter-duff src-over
-#      ['over',    'cA + cB * (1 - aA)',
-#                  'aA + aB - aA * aB',
-#                  '*D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]))'],
+#      ['over',    'cA + cB * (1.0f - aA)',
+#                  'aA + aB - aA * aB'],
     ]
 
 file_head1 = '
@@ -73,9 +71,9 @@ process (GeglOperation        *op,
           const GeglRectangle *roi)
 {
   gint i;
-  gfloat *in = in_buf;
-  gfloat *aux = aux_buf;
-  gfloat *out = out_buf;
+  gfloat * GEGL_ALIGNED in = in_buf;
+  gfloat * GEGL_ALIGNED aux = aux_buf;
+  gfloat * GEGL_ALIGNED out = out_buf;
 
   if (aux==NULL)
     return TRUE;
@@ -94,12 +92,6 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
   operation_class->prepare = prepare;
-
-#ifdef HAS_G4FLOAT
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gegl4float), "simd");
-#endif
-
 '
 
 file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
@@ -122,7 +114,6 @@ a.each do
     swapcased   = name.swapcase
     c_formula   = item[1]
     a_formula   = item[2]
-    sse_formula = item[3]
 
     file.write copyright
     file.write file_head1
@@ -158,36 +149,6 @@ a.each do
     }
   return TRUE;
 }
-
-#ifdef HAS_G4FLOAT
-
-static gboolean
-process_gegl4float (GeglOperation      *op,
-                    void               *in_buf,
-                    void                *aux_buf,
-                    void                *out_buf,
-                    glong                n_pixels,
-                    const GeglRectangle *roi)
-{
-  g4float *A = aux_buf;
-  g4float *B = in_buf;
-  g4float *D = out_buf;
-
-  if (B==NULL || n_pixels == 0)
-    return TRUE;
-
-  while (n_pixels--)
-    {
-      #{sse_formula};
-
-      A++; B++; D++;
-    }
-
-  return TRUE;
-}
-
-#endif
-
 
 "
   file.write file_tail1

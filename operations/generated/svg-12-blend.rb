@@ -99,9 +99,9 @@ process (GeglOperation       *op,
          glong                n_pixels,
          const GeglRectangle *roi)
 {
-  gfloat *in = in_buf;
-  gfloat *aux = aux_buf;
-  gfloat *out = out_buf;
+  gfloat * GEGL_ALIGNED in = in_buf;
+  gfloat * GEGL_ALIGNED aux = aux_buf;
+  gfloat * GEGL_ALIGNED out = out_buf;
   gint    i;
 
   if (aux==NULL)

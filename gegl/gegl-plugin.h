@@ -105,7 +105,6 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
-#include <gegl-simd.h>
 
 #include <gegl-lookup.h>
 

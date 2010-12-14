@@ -49,66 +49,26 @@ process (GeglOperation        *op,
           const GeglRectangle *roi)
 {
   gint i;
-  gfloat *in = in_buf;
-  gfloat *aux = aux_buf;
-  gfloat *out = out_buf;
+  gfloat * GEGL_ALIGNED in = in_buf;
+  gfloat * GEGL_ALIGNED aux = aux_buf;
+  gfloat * GEGL_ALIGNED out = out_buf;
 
   if (aux==NULL)
     return TRUE;
 
   for (i = 0; i < n_pixels; i++)
     {
-      gint   j;
-      gfloat aA, aB, aD;
+      out[0] = aux[0] + in[0] * (1.0f - aux[3]);
+      out[1] = aux[1] + in[1] * (1.0f - aux[3]);
+      out[2] = aux[2] + in[2] * (1.0f - aux[3]);
+      out[3] = aux[3] + in[3] - aux[3] * in[3];
 
-      aB = in[3];
-      aA = aux[3];
-      aD = aA + aB - aA * aB;
-
-      for (j = 0; j < 3; j++)
-        {
-          gfloat cA, cB;
-
-          cB = in[j];
-          cA = aux[j];
-          out[j] = cA + cB * (1 - aA);
-        }
-      out[3] = aD;
       in  += 4;
       aux += 4;
       out += 4;
     }
   return TRUE;
 }
-
-#ifdef HAS_G4FLOAT
-
-static gboolean
-process_gegl4float (GeglOperation      *op,
-                    void               *in_buf,
-                    void                *aux_buf,
-                    void                *out_buf,
-                    glong                n_pixels,
-                    const GeglRectangle *roi)
-{
-  g4float *A = aux_buf;
-  g4float *B = in_buf;
-  g4float *D = out_buf;
-
-  if (B==NULL || n_pixels == 0)
-    return TRUE;
-
-  while (n_pixels--)
-    {
-      *D = *A + *B * (g4float_one - g4float_all(g4float_a(*A)[3]));
-
-      A++; B++; D++;
-    }
-
-  return TRUE;
-}
-
-#endif
 
 /* Fast paths */
 static gboolean operation_process (GeglOperation        *operation,
@@ -168,12 +128,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
 
   point_composer_class->process = process;
-
-#ifdef HAS_G4FLOAT
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_gegl4float), "simd");
-#endif
-
 
   operation_class->name        = "gegl:over";
   operation_class->description =

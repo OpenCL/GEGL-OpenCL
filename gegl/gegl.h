@@ -891,6 +891,7 @@ GeglNode *gegl_node (const gchar *op_type,
  */
 GeglNode *gegl_graph (GeglNode *node);
 
+#define GEGL_ALIGNED __restrict__ __attribute__((__aligned__ (16)))
 
 G_END_DECLS
 #endif  /* __GEGL_H__ */
