@@ -121,7 +121,6 @@ gegl_tile_handler_cache_dispose_buffer_tiles (gpointer itm,
     {
       GeglTileHandlerCache *cache = userdata;
       cache->free_list = g_slist_prepend (cache->free_list, item);
-      
     }
 }
 
@@ -138,6 +137,10 @@ gegl_tile_handler_cache_dispose (GObject *object)
   /* only throw out items belonging to this cache instance */
 
   cache->free_list = NULL;
+  /* XXX: for optimization this could be delayed,. or collected among multiple
+   * buffer destructions, to avoid the overhead of walking the full queue for
+   * every tiny buffer being destroyed.
+   */
   g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
   for (iter = cache->free_list; iter; iter = g_slist_next (iter))
     {
