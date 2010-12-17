@@ -23,7 +23,7 @@
 #include "util/gegl-view.c"
 #include "property-types/gegl-path.h"
 
-#define HARDNESS     0.2
+#define HARDNESS     0.6
 #define LINEWIDTH   60.0
 #define COLOR       "rgba(0.0,0.0,0.0,0.4)"
 
@@ -130,7 +130,6 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-
   g_thread_init (NULL);
   gtk_init (&argc, &argv);
   gegl_init (&argc, &argv);
@@ -143,13 +142,14 @@ main (gint    argc,
       GeglRectangle rect = {0, 0, 512, 512};
       gpointer buf;
 
-      /* XXX: the format should be RaGaBaA float, it is nonpremultiplied
-       * right now, slowing things down a bit, but it circumvents overeager
-       * in place processing code.
+      /* XXX: for best overall performance, this format should probably
+       * be RaGaBaA float, overeager in-place processing code makes that fail though.
        */
-      buffer = gegl_buffer_new (&rect, babl_format("RGBA float"));
+      buffer = gegl_buffer_new (&rect, babl_format("R'G'B' u8"));
+      /* it would be useful to have a programmatic way of doing this, filling
+       * with a given pixel value
+       */
       buf    = gegl_buffer_linear_open (buffer, NULL, NULL, babl_format ("Y' u8"));
-      /* it would be useful to have a programmatic way of doing this */
       memset (buf, 255, 512 * 512);
       gegl_buffer_linear_close (buffer, buf);
     }
