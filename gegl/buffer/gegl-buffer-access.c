@@ -595,11 +595,13 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->format;
 
+#if 0 /* XXX: not thread safe */
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
       gegl_buffer_set_pixel (buffer, rect->x, rect->y, format, src);
     }
   else
+#endif
     {
       gegl_buffer_iterate (buffer, rect, src, rowstride, TRUE, format, 0);
     }
@@ -954,6 +956,8 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->format;
 
+#if 0
+  /* not thread-safe */
   if (scale == 1.0 &&
       rect &&
       rect->width == 1 &&
@@ -962,6 +966,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf);
       return;
     }
+#endif
 
   if (!rect && scale == 1.0)
     {
