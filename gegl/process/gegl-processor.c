@@ -76,8 +76,6 @@ struct _GeglProcessor
   GSList          *dirty_rectangles;
   gint             chunk_size;
 
-  GThread         *thread;
-  gboolean         thread_done;
   gdouble          progress;
 };
 
