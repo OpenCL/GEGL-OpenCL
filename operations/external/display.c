@@ -89,7 +89,7 @@ process (GeglOperation       *operation,
 
   init_sdl ();
   if (!handle)
-    handle = g_idle_add (idle, NULL);
+    handle = g_timeout_add (500, idle, NULL);
 
   if (!o->screen ||
        o->width  != result->width ||
@@ -138,11 +138,11 @@ process (GeglOperation       *operation,
   gegl_buffer_get (source,
        1.0,
        NULL,
-       babl_format_new (babl_model ("R'G'B'A"),
+       babl_format_new (babl_model ("RGBA"),
                         babl_type ("u8"),
-                        babl_component ("B'"),
-                        babl_component ("G'"),
-                        babl_component ("R'"),
+                        babl_component ("B"),
+                        babl_component ("G"),
+                        babl_component ("R"),
                         babl_component ("A"),
                         NULL),
        ((SDL_Surface*)o->screen)->pixels, GEGL_AUTO_ROWSTRIDE);
