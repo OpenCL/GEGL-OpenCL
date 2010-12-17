@@ -1037,6 +1037,110 @@ gegl_buffer_destroy (GeglBuffer *buffer)
   g_object_unref (buffer);
 }
 
+typedef struct TileStorageCacheItem {
+  GeglTileStorage *storage;
+  gboolean         ram;
+  gint             tile_width;
+  gint             tile_height;
+  const void      *babl_fmt;
+} TileStorageCacheItem;
+
+static GStaticMutex storage_cache_mutex = G_STATIC_MUTEX_INIT;
+static GSList *storage_cache = NULL;
+
+/* returns TRUE if it could be done */
+gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage);
+gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage)
+{
+  TileStorageCacheItem *item = g_object_get_data (G_OBJECT (storage), "storage-cache-item");
+
+  if (!item)
+    return FALSE;
+  g_static_mutex_lock (&storage_cache_mutex);
+  storage_cache = g_slist_prepend (storage_cache, item);
+  g_static_mutex_unlock (&storage_cache_mutex);
+  return TRUE;
+}
+
+void gegl_tile_storage_cache_cleanup (void);
+void gegl_tile_storage_cache_cleanup (void)
+{
+  g_static_mutex_lock (&storage_cache_mutex);
+  for (;storage_cache; storage_cache = g_slist_remove (storage_cache, storage_cache->data))
+    {
+      TileStorageCacheItem *item = storage_cache->data;
+      g_object_unref (item->storage);
+    }
+  g_static_mutex_unlock (&storage_cache_mutex);
+}
+
+static GeglTileStorage *
+gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
+                              const void *babl_fmt, gboolean use_ram)
+{
+  GeglTileStorage *storage = NULL;
+  GSList *iter;
+  g_static_mutex_lock (&storage_cache_mutex);
+  for (iter = storage_cache; iter; iter = iter->next)
+    {
+      TileStorageCacheItem *item = iter->data;
+      if (item->babl_fmt == babl_fmt &&
+          item->tile_width == tile_width &&
+          item->tile_height == tile_height &&
+          item->ram == item->ram)
+       {
+         storage = item->storage;
+         storage_cache = g_slist_remove (storage_cache, item);
+         break;
+       }
+    }
+
+  if (!storage)
+    {
+      TileStorageCacheItem *item = g_new0 (TileStorageCacheItem, 1);
+
+      item->tile_width = tile_width;
+      item->tile_height = tile_height;
+      item->babl_fmt = babl_fmt;
+
+      if (use_ram || 
+          !gegl_config()->swap ||
+          g_str_equal (gegl_config()->swap, "RAM") ||
+          g_str_equal (gegl_config()->swap, "ram"))
+        {
+          item->ram = TRUE;
+          storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, NULL);
+        }
+      else
+        {
+          static gint no = 1;
+
+          gchar *filename;
+          gchar *path;
+          item->ram = FALSE;
+
+#if 0
+          filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
+                                      getpid (),
+                                      babl_name ((Babl *) babl_fmt),
+                                      no++);
+#endif
+
+          filename = g_strdup_printf ("%i-%i", getpid(), no);
+          g_atomic_int_inc (&no);
+          path = g_build_filename (gegl_config()->swap, filename, NULL);
+          g_free (filename);
+
+          storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, path);
+          g_free (path);
+        }
+      item->storage = storage;
+      g_object_set_data_full (G_OBJECT (storage), "storage-cache-item", item, g_free);
+    }
+
+  g_static_mutex_unlock (&storage_cache_mutex);
+  return storage;
+}
 
 static GeglBuffer *
 gegl_buffer_new_from_format (const void *babl_fmt,
@@ -1051,35 +1155,7 @@ gegl_buffer_new_from_format (const void *babl_fmt,
   GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
 
-  if (use_ram || 
-      !gegl_config()->swap ||
-      g_str_equal (gegl_config()->swap, "RAM") ||
-      g_str_equal (gegl_config()->swap, "ram"))
-    { 
-      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, NULL);
-    }
-  else
-    {
-      static gint no = 1;
-
-      gchar *filename;
-      gchar *path;
-
-#if 0
-      filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
-                                  getpid (),
-                                  babl_name ((Babl *) babl_fmt),
-                                  no++);
-#endif
-
-      filename = g_strdup_printf ("%i-%i", getpid(), no);
-      g_atomic_int_inc (&no);
-      path = g_build_filename (gegl_config()->swap, filename, NULL);
-      g_free (filename);
-
-      tile_storage = gegl_tile_storage_new (tile_width, tile_height, babl_fmt, path);
-      g_free (path);
-    }
+  tile_storage = gegl_tile_storage_new_cached (tile_width, tile_height, babl_fmt, use_ram);
 
   buffer = g_object_new (GEGL_TYPE_BUFFER,
                          "source",      tile_storage,

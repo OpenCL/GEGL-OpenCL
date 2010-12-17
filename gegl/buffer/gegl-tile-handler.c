@@ -25,7 +25,7 @@
 #include "gegl-tile-source.h"
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-chain.h"
-
+#include "gegl-tile-storage.h"
 
 G_DEFINE_TYPE (GeglTileHandler, gegl_tile_handler, GEGL_TYPE_TILE_SOURCE)
 
@@ -35,6 +35,8 @@ enum
   PROP_SOURCE
 };
 
+gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage);
+
 static void
 gegl_tile_handler_dispose (GObject *object)
 {
@@ -42,7 +44,9 @@ gegl_tile_handler_dispose (GObject *object)
 
   if (handler->source != NULL)
     {
-      g_object_unref (handler->source);
+      if (!(GEGL_IS_TILE_STORAGE (handler->source) &&
+	    gegl_tile_storage_cached_release ((void*)handler->source)))
+        g_object_unref (handler->source);
       handler->source = NULL;
     }
 
