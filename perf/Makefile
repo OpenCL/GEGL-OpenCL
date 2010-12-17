@@ -2,7 +2,7 @@ PROJECT_PATH = ../
 
 # number of revisions to create
 START_REV    = master
-REVISIONS    = 4
+REVISIONS    = 40
 
 #comment the following line out to see what the makefile is doing
 .SILENT:

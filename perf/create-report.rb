@@ -56,6 +56,7 @@ class Database
          end
        }
        min
+       0
     end
     def add_run(run)
         @runs = @runs + [run]

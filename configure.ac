@@ -1088,7 +1088,6 @@ Optional features:
   Build workshop:  $enable_workshop
   Build website:   $have_asciidoc
   SIMD:            sse:$enable_sse mmx:$enable_mmx
-  Multi threading: $enable_mt
 
 Optional dependencies:
   asciidoc:        $have_asciidoc
