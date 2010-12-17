@@ -49,6 +49,7 @@ gegl_chant_int    (active_levels, _("Active Levels"),
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 /* XXX: We have two options for the two common installation locations of
  * UMFPACK. Ideally this would be sorted out purely in autoconf; see

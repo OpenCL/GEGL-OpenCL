@@ -37,6 +37,8 @@ gegl_chant_color (color2,   _("Other color"), "white",
 
 #include "gegl-chant.h"
 
+#include <math.h>
+
 static void
 prepare (GeglOperation *operation)
 {
