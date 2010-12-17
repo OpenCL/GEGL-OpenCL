@@ -2035,9 +2035,9 @@ static void gegl_path_stamp (GeglBuffer *buffer,
                              gdouble     opacity)
 {
   gfloat col[4];
-  static StampStatic s = {FALSE,}; /* XXX: 
-                                      we will ultimately leak the last valid
-                                      cached brush. */
+  StampStatic s = {FALSE,}; /* there should be a cache of stamps,
+                               note that stamps are accessed in multiple threads
+                             */
 
   GeglRectangle temp;
   GeglRectangle roi;
@@ -2110,6 +2110,7 @@ static void gegl_path_stamp (GeglBuffer *buffer,
     }
   }
   gegl_buffer_set_unlocked (buffer, &roi, s.format, s.buf, 0);
+  g_free (s.buf);
 }
 
 
