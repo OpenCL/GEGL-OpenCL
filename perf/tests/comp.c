@@ -15,7 +15,7 @@ main (gint    argc,
   bufferB = test_buffer (2048, 2048, babl_format ("RGBA float"));
   buffer = test_buffer (2048, 2048, babl_format ("RGBA float"));
 
-#define ITERATIONS 6
+#define ITERATIONS 4
   test_start ();
   for (i=0;i< ITERATIONS;i++)
     {

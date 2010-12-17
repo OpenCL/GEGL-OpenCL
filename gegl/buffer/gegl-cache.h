@@ -38,6 +38,7 @@ struct _GeglCache
   GeglNode     *node;
   const void   *format;
   GeglRegion   *valid_region;
+  GMutex       *mutex;
 };
 
 struct _GeglCacheClass

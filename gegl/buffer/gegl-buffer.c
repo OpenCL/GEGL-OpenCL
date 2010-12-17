@@ -1177,9 +1177,11 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
 {
   gboolean ret;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  g_mutex_lock (buffer->tile_storage->mutex);
   if (buffer->lock_count>0)
     {
       buffer->lock_count++;
+      g_mutex_unlock (buffer->tile_storage->mutex);
       return TRUE;
     }
   if (gegl_buffer_is_shared(buffer))
@@ -1188,6 +1190,7 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
     ret = TRUE;
   if (ret)
     buffer->lock_count++;
+  g_mutex_unlock (buffer->tile_storage->mutex);
   return TRUE;
 }
 
@@ -1204,11 +1207,16 @@ gboolean gegl_buffer_lock (GeglBuffer *buffer)
 
 gboolean gegl_buffer_unlock (GeglBuffer *buffer)
 {
+  gboolean ret = TRUE;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+  g_mutex_lock (buffer->tile_storage->mutex);
   g_assert (buffer->lock_count >=0);
   buffer->lock_count--;
   g_assert (buffer->lock_count >=0);
   if (buffer->lock_count == 0 && gegl_buffer_is_shared (buffer))
-    return gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
-  return TRUE;
+    {
+      ret = gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
+    }
+  g_mutex_unlock (buffer->tile_storage->mutex);
+  return ret;
 }

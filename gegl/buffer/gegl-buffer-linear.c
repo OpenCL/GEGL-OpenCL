@@ -236,7 +236,10 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
                          */
                 }
 
+              g_mutex_unlock (buffer->tile_storage->mutex);
+              /* XXX: potential race */
               gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
+              g_mutex_lock (buffer->tile_storage->mutex);
               break;
             }
           else

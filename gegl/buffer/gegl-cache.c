@@ -191,6 +191,7 @@ static void
 gegl_cache_init (GeglCache *self)
 {
   self->node = NULL;
+  self->mutex = g_mutex_new ();
 
   /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
@@ -228,6 +229,7 @@ finalize (GObject *gobject)
 {
   GeglCache *self = GEGL_CACHE (gobject);
 
+  g_mutex_free (self->mutex);
   if (self->valid_region)
     gegl_region_destroy (self->valid_region);
   G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
@@ -248,7 +250,9 @@ node_invalidated (GeglNode            *source,
     gegl_region_destroy (region);
   }
 
+  g_mutex_lock (cache->mutex);
   g_signal_emit_by_name (cache, "invalidated", &expanded, NULL);
+  g_mutex_unlock (cache->mutex);
 }
 
 static void
@@ -262,6 +266,7 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_NODE:
+        g_mutex_lock (self->mutex);
         if (self->node)
           {
             gulong handler;
@@ -280,6 +285,7 @@ set_property (GObject      *gobject,
         self->node = GEGL_NODE (g_value_get_object (value));
         g_signal_connect (G_OBJECT (self->node), "invalidated",
                           G_CALLBACK (node_invalidated), self);
+        g_mutex_unlock (self->mutex);
         break;
 
       case PROP_X:
@@ -377,6 +383,7 @@ gegl_cache_invalidate (GeglCache           *self,
     }
 #endif
 
+  g_mutex_lock (self->mutex);
 
   if (roi)
     {
@@ -398,6 +405,7 @@ gegl_cache_invalidate (GeglCache           *self,
       g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
                      &rect, NULL);
     }
+  g_mutex_unlock (self->mutex);
 }
 
 void
@@ -407,6 +415,8 @@ gegl_cache_computed (GeglCache           *self,
   g_return_if_fail (GEGL_IS_CACHE (self));
   g_return_if_fail (rect != NULL);
 
+  g_mutex_lock (self->mutex);
   gegl_region_union_with_rect (self->valid_region, rect);
   g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
+  g_mutex_unlock (self->mutex);
 }
