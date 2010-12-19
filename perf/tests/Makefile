@@ -1,4 +1,6 @@
 CFILES = $(wildcard *.c)
+#CFILES = comp.c  # to just run individual test..
+
 bins   = $(subst ,,$(CFILES:.c=))
 
 all: $(bins)

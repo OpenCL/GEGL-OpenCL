@@ -4,21 +4,24 @@
 
 static long ticks_start;
 
-glong gegl_ticks (void);
+long babl_ticks (void); /* using babl_ticks instead of gegl_ticks
+                           to be able to go further back in time */
 
 void test_start (void)
 {
-  ticks_start = gegl_ticks ();
+  ticks_start = babl_ticks ();
 }
 
 void test_end (const gchar *id,
                glong        bytes)
 {
-  long ticks = gegl_ticks ()-ticks_start;
+  long ticks = babl_ticks ()-ticks_start;
   g_print ("@ %s: %.2f megabytes/second\n",
        id, (bytes / 1024.0 / 1024.0)  / (ticks / 1000000.0));
 }
 
+/* create a test buffer of random data in -0.5 to 2.0 range 
+ */
 GeglBuffer *test_buffer (gint width,
                          gint height,
                          Babl *format)
@@ -34,4 +37,3 @@ GeglBuffer *test_buffer (gint width,
   g_free (buf);
   return buffer;
 }
-

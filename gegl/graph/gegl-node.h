@@ -229,6 +229,7 @@ void          gegl_node_set_name            (GeglNode      *self,
 #define gegl_object_get_has_forked(object) \
       (g_object_get_data(G_OBJECT(object), "gegl has-forked")!=NULL)
 
+#define GEGL_MAX_THREADS 16
 
 G_END_DECLS
 

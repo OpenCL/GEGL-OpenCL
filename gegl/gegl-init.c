@@ -93,6 +93,7 @@ guint gegl_debug_flags = 0;
 #include "operation/gegl-extension-handler.h"
 #include "buffer/gegl-buffer-private.h"
 #include "gegl-config.h"
+#include "graph/gegl-node.h"
 
 
 /* if this function is made to return NULL swapping is disabled */
@@ -291,7 +292,15 @@ GeglConfig *gegl_config (void)
             config->tile_height = atoi(str+1);
         }
       if (g_getenv ("GEGL_THREADS"))
-        config->threads = atoi(g_getenv("GEGL_THREADS"));
+        {
+          config->threads = atoi(g_getenv("GEGL_THREADS"));
+          if (config->threads > GEGL_MAX_THREADS)
+            {
+              g_warning ("Tried to use %i threads max is %i",
+                         config->threads, GEGL_MAX_THREADS);
+              config->threads = GEGL_MAX_THREADS;
+            }
+        }
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
     }

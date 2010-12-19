@@ -1,51 +1,58 @@
+
+# revision to start at
+START_REV = master
+# number of revisions to create
+REVISIONS = 40
+
+MAKE_FLAGS = -j3 -k
+CC = ccache gcc   # if you do not have ccache replace with just gcc
+
 PROJECT_PATH = ../
 
-# number of revisions to create
-START_REV    = master
-REVISIONS    = 40
-
-#comment the following line out to see what the makefile is doing
+# mute makes echoing of commands
 .SILENT:
 
-REFS    = $(wildcard jobs/*)
-REPORTS = $(subst jobs/,reports/,$(REFS))
+all: reset sequential
 
-# use random mode for a bit first to get better ranges for plots and less noise
-all: sequential reset 
-#all: $(REPORTS) reset
+retry:
+	rm -rf reports/`cat jobs | tail -n1`*
+	make
 
-
-sequential: 
-	for a in `cat joblist`;do echo $$a;make reports/$$a;done
+prepare:
+	# uncomment these to make sure cpu is in high performance mode
+	#sudo sh -c 'echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor || true'
+	#sudo sh -c 'echo performance > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor || true'
 
 reset:
-	test -d jobs || ( make jobs ; make )
+	rm -rf jobs jobs
+	# remove build dir for each iteration
 	rm -rf build
-	#echo "Have 0 jobs, edit Makefile to inspect run options, then type make jobs"  && false )
-reports/%: 
-	if [ ! -d build ]; then git clone -s $(PROJECT_PATH) build ; fi
-	( cd build; git checkout `echo $@|sed s:reports/::` )
+	# create clone
+	git clone -s $(PROJECT_PATH) build
+	mkdir reports > /dev/null 2>&1 || true
+	make jobs
+	make prepare
+
+jobs:
+	( cd build; git checkout $(START_REV) )
+	( cd build; git log |grep -r "^commit " | head -n $(REVISIONS) | tac | sed "s/commit //" > ../jobs )
+
+sequential:
+	for a in `cat jobs`;do make reports/$$a;done
+
+reports/%:
+	# check out revision
+	(cd build; git checkout `echo $@|sed s:reports/::`)
+	# write header for report
 	git log -1 > $@ || true
-	(cd build; if [ ! -f Makefile ]; then ./autogen.sh ; fi ; \
-	 CC="ccache gcc" make -j3 && sudo make -j3 install ) > $@.log 2>&1 && \
-	 ( echo -n 'built and installed, testing...' ; \
-	   make -C tests clean ; make -C tests ; \
-	   make -C tests check >> $@ )\
-	 || true
-	echo
+	# build revision
+	(cd build; if [ ! -f Makefile ]; then CC=$(CC) ./autogen.sh ; fi ; \
+	 make $(MAKE_FLAGS) ; sudo make -k install ) > $@.log 2>&1 || true
+	# testing
+	make -C tests clean; make -C tests; make -C tests check >> $@ || true
+	# update report.pdf / report.png
 	./create-report.rb
 	echo
-jobs: 
-	if [ ! -d build ]; then git clone -s $(PROJECT_PATH) build ; fi
-	( cd build; git checkout $(START_REV) )
-	mkdir reports > /dev/null 2>&1 || true 
-	mkdir jobs > /dev/null 2>&1 || true
-	rm -f jobs/*
-	( cd build; git log |grep -r "^commit " | head -n $(REVISIONS) | tac | sed "s/commit //" > ../joblist )
-	for a in `cat joblist`;do touch jobs/$$a;done 
-	echo Made `ls -1 jobs|wc -w` jobs
 
 clean:
-	rm -rf reports
-	rm -rf jobs
-	rm -f joblist
+	rm -rf reports jobs report.pdf report.png build
