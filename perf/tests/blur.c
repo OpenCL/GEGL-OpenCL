@@ -10,7 +10,7 @@ main (gint    argc,
   g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
-  buffer = test_buffer (2048, 2048, babl_format ("RGBA float"));
+  buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
 
   gegl = gegl_graph (sink = gegl_node ("gegl:buffer-sink", "buffer", &buffer2, NULL,
                             gegl_node ("gegl:gaussian-blur",

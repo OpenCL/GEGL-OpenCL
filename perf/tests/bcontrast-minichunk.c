@@ -13,9 +13,9 @@ main (gint    argc,
 
   g_object_set (gegl_config (), "chunk-size", 128 * 128, NULL);
 
-  buffer = test_buffer (2048, 2048, babl_format ("RGBA float"));
+  buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
 
-#define ITERATIONS 2
+#define ITERATIONS 6
   test_start ();
   for (i=0;i< ITERATIONS;i++)
     {

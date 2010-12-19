@@ -5,7 +5,7 @@ main (gint    argc,
       gchar **argv)
 {
   GeglBuffer    *buffer;
-  GeglRectangle  bound = {0, 0, 4096, 4096};
+  GeglRectangle  bound = {0, 0, 1024, 1024};
   gchar *buf;
   gint i;
 
@@ -14,7 +14,7 @@ main (gint    argc,
   buffer = gegl_buffer_new (&bound, babl_format ("RGBA float"));
   buf = g_malloc0 (bound.width * bound.height * 16);
 
-#define ITERATIONS 5
+#define ITERATIONS 8
 
   test_start ();
   for (i=0;i<ITERATIONS;i++)

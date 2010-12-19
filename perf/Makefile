@@ -56,3 +56,4 @@ reports/%:
 
 clean:
 	rm -rf reports jobs report.pdf report.png build
+	make -C tests clean

@@ -2,22 +2,21 @@ GEGL Performance tracking framework
 ===================================
 
 This directory contains a framework to track performance development of a set
-of tests over time. It requires make, ruby and ruby cairo bindings to work. The
-framework is designed to be possible to drop in to existing software projects
-and operate outside the projects own build system, it creates an internal clone
-of the git repo - CAVEAT: it installs the tested project system wide.
+of tests over time. It requires make, ruby and ruby cairo bindings to work.
 
-Take a look at the top of Makefile for configuration of number of revisions to
-test. And just type make to build, later invokations of make when the
-repository has changed will generate tests for the new revisions. To re-run the
-last revision type 'make retry'.
+Type "make" to update a report of the performance over the last N revisions,
+where N is defined in the top of Makefile along with some other configuration
+options.
+
+An internal shallow clone of the master git repo is created for testing, when
+testing revisions. When walking this git repo partial rebuilds are possible
+like with git bisect.
 
 tests/ contains the tests being run for every revision and a makefile for
-building the tests against an installed GEGL and testing all of them. Rename a
-test to not end in .c to temporarily not test it.
+building the tests against an installed GEGL and testing all of them. Adjust
+the makefile to only build a few tests.
 
 make       # build tests
 make clean # remove all temporary files
 make check # run all tests with output values in std-out of the
            # form "\n@ test-name: 244.4".
-

@@ -1,0 +1,10 @@
+report.png
+report.pdf
+build
+tests/bblur
+tests/bcontrast-minichunk
+tests/blur
+tests/comp
+tests/passthrough
+tests/rotate
+tests/unsharpmask

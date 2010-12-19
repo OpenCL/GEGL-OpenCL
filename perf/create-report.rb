@@ -160,7 +160,7 @@ end
 
 generator = Database.new
 
-items = File.open('joblist').each { |rev|
+items = File.open('jobs').each { |rev|
   rev.strip!
   generator.add_run(rev)
   filename = "reports/" + rev;

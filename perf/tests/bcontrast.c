@@ -11,9 +11,9 @@ main (gint    argc,
   g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
-  buffer = test_buffer (2048, 2048, babl_format ("RGBA float"));
+  buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
 
-#define ITERATIONS 4
+#define ITERATIONS 8
   test_start ();
   for (i=0;i< ITERATIONS;i++)
     {
