@@ -2,10 +2,10 @@
 # revision to start at
 START_REV = master
 # number of revisions to create
-REVISIONS = 40
+REVISIONS = 100
 
 MAKE_FLAGS = -j3 -k
-CC = ccache gcc   # if you do not have ccache replace with just gcc
+CC = "ccache gcc"   # if you do not have ccache replace with just gcc
 
 PROJECT_PATH = ../
 
@@ -25,7 +25,7 @@ prepare:
 
 reset:
 	rm -rf jobs jobs
-	# remove build dir for each iteration
+	# remove build dir to have a full reset on each invokation
 	rm -rf build
 	# create clone
 	git clone -s $(PROJECT_PATH) build
@@ -44,7 +44,7 @@ reports/%:
 	# check out revision
 	(cd build; git checkout `echo $@|sed s:reports/::`)
 	# write header for report
-	git log -1 > $@ || true
+	git log -1 `echo $@|sed s:reports/::` > $@  || true 
 	# build revision
 	(cd build; if [ ! -f Makefile ]; then CC=$(CC) ./autogen.sh ; fi ; \
 	 make $(MAKE_FLAGS) ; sudo make -k install ) > $@.log 2>&1 || true
