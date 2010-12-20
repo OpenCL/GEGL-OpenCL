@@ -851,7 +851,6 @@ gegl_buffer_class_init (GeglBufferClass *class)
 }
 
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-#endif
 #define MAX_N_FUNCTIONS 100
 static gchar *
 gegl_buffer_get_alloc_stack (void)
@@ -889,11 +888,14 @@ gegl_buffer_get_alloc_stack (void)
 
   return result;
 }
+#endif
 
 void gegl_bt (void);
 void gegl_bt (void)
 {
+#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
   g_print ("%s\n", gegl_buffer_get_alloc_stack ());
+#endif
 }
 
 static void
