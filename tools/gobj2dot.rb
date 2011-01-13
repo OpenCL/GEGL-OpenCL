@@ -70,15 +70,19 @@ puts header
 Find.find( dir ) do |path| 
   Find.prune if File.basename(path) == '.git' 
   if ( ( File.extname(path) == '.c' or File.extname(path) == '.h' ) and File.file? path )
-    open( path ) do |file| 
-      content = file.read
-      if( content =~ /G_DEFINE_TYPE\s*\(\s*\w+,\s*(\w+),\s*(\w+)\s*\)/m )
-        inheritance( tocamelcase( $1 ), gegltocamelcase( $2 ) )
-      elsif( content =~ /G_DEFINE_TYPE_WITH_CODE\s*\(\s*(\w+).*G_IMPLEMENT_INTERFACE\s*\s*\(\s*(\w+)/m )
-        implementation( $1, gegltocamelcase( $2 ) )
-      elsif( content =~ /G_TYPE_INTERFACE\s*,\s*\"([^\"]+)\"/m )
-        interfacedecl( $1 )
+    begin
+      open( path ) do |file| 
+        content = file.read
+        if( content =~ /G_DEFINE_TYPE\s*\(\s*\w+,\s*(\w+),\s*(\w+)\s*\)/m )
+          inheritance( tocamelcase( $1 ), gegltocamelcase( $2 ) )
+        elsif( content =~ /G_DEFINE_TYPE_WITH_CODE\s*\(\s*(\w+).*G_IMPLEMENT_INTERFACE\s*\s*\(\s*(\w+)/m )
+          implementation( $1, gegltocamelcase( $2 ) )
+        elsif( content =~ /G_TYPE_INTERFACE\s*,\s*\"([^\"]+)\"/m )
+          interfacedecl( $1 )
+        end
       end
+    rescue
+      warn "Failed to parse #{path}, probably invalid utf8"
     end
   end
 end
