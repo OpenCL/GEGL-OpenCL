@@ -58,7 +58,7 @@ static FILE * open_png(const gchar *path)
     {
       fclose(infile);
       g_warning ("%s is too short for a png file, only %lu bytes.",
-						  path, hdr_read_size);
+                 path, (unsigned long)hdr_read_size);
       return NULL;
     }
 
