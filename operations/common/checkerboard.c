@@ -50,8 +50,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
-  return result;
+  return gegl_rectangle_infinite_plane ();
 }
 
 static gboolean
@@ -74,8 +73,11 @@ process (GeglOperation       *operation,
     {
       gint nx,ny;
 
-      nx = ((x + o->x_offset + 100000 * o->x)/o->x) ;
-      ny = ((y + o->y_offset + 100000 * o->y)/o->y) ;
+      nx = (x - o->x_offset)/o->x;
+      ny = (y - o->y_offset)/o->y;
+      /* shift negative cell indices, because / rounds towards zero. */
+      nx -= (x - o->x_offset) < 0 ? 1 : 0;
+      ny -= (y - o->y_offset) < 0 ? 1 : 0;
 
       if ( (nx+ny) % 2 == 0)
         {
