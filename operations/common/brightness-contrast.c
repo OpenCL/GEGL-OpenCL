@@ -105,41 +105,6 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-
-#ifdef HAS_G4FLOAT
-/* The compiler supports vector extensions allowing an version of
- * the process code that produces more optimal instructions on the
- * target platform.
- */
-
-static gboolean
-process_simd (GeglOperation       *op,
-              void                *in_buf,
-              void                *out_buf,
-              glong                samples,
-              const GeglRectangle *roi)
-{
-  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
-  g4float    *in  = in_buf;
-  g4float    *out = out_buf;
-
-  /* add 0.5 to brightness here to make the logic in the innerloop tighter
-   */
-  g4float  brightness = g4float_all(o->brightness + 0.5);
-  g4float  contrast   = g4float_all(o->contrast);
-  g4float  half       = g4float_half;
-
-  while (samples--)
-    {
-      *out = (*in - half) * contrast + brightness;
-      g4floatA(*out)=g4floatA(*in);
-      in  ++;
-      out ++;
-    }
-  return TRUE;
-}
-#endif
-
 /*
  * The class init function sets up information needed for this operations class
  * (template) in the GObject OO framework.
@@ -170,16 +135,6 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   /* a description of what this operations does */
   operation_class->description = _("Changes the light level and contrast.");
-
-
-#ifdef HAS_G4FLOAT
-  /* add conditionally compiled variation of process(), gegl should be able
-   * to determine which is fastest and hopefully if any implementation is
-   * broken and not conforming to the reference implementation.
-   */
-  gegl_operation_class_add_processor (operation_class,
-                                      G_CALLBACK (process_simd), "simd");
-#endif
 }
 
 #endif /* closing #ifdef GEGL_CHANT_PROPERTIES ... else ... */
