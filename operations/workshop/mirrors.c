@@ -61,7 +61,6 @@ gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
 
 #include "gegl-chant.h"
 #include <math.h>
-#include "lens-correct.h"
 
 #if 0
 #define TRACE       /* Define this to see basic tracing info. */
@@ -111,28 +110,25 @@ calc_undistorted_coords(double wx, double wy,
 /* Apply the actual transform */
 
 static void
-apply_mirror (double         mirror_angle,
-              double         result_angle,
-              int            nsegs,
-              double         cen_x,
-              double         cen_y,
-              double         off_x,
-              double         off_y,
-              double         input_scale,
-              gboolean       clip,
-              gboolean       warp,
-              Babl          *format,
-              GeglBuffer    *src,
-              GeglRectangle *in_boundary,
-              GeglBuffer    *dst,
-              GeglRectangle *boundary,
-              GeglRectangle *roi)
+apply_mirror (double               mirror_angle,
+              double               result_angle,
+              int                  nsegs,
+              double               cen_x,
+              double               cen_y,
+              double               off_x,
+              double               off_y,
+              double               input_scale,
+              gboolean             clip,
+              gboolean             warp,
+              Babl                *format,
+              GeglBuffer          *src,
+              GeglRectangle       *in_boundary,
+              GeglBuffer          *dst,
+              GeglRectangle       *boundary,
+              const GeglRectangle *roi)
 {
-  const GeglRectangle *src_extent;
-  const GeglRectangle *dst_extent;
-  gfloat *src_buf;
   gfloat *dst_buf;
-  gint    row, col, spx_pos, dpx_pos, ix, iy;
+  gint    row, col;
   gdouble cx, cy;
 
   /* Get src pixels. */
@@ -327,10 +323,6 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
   GeglRectangle  result = get_effective_area (operation);
 
   #ifdef TRACE
@@ -362,9 +354,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
   GeglRectangle  eff_boundary = get_effective_area (operation);
-  GeglRectangle *in_boundary = gegl_operation_source_get_bounding_box (operation, "input");
   Babl *format = babl_format ("RaGaBaA float");
-
 
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
  g_warning ("NOT USING BUFFER SAMPLE!");
