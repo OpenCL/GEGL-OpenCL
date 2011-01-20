@@ -9,11 +9,14 @@ Changes in GEGL 0.1.4
      jpeg200 load/save
      ppm load/save
      map-absolute (GIMP cage tool gsoc helper op)
+     whirl and pinch
+     mirrors
+     grid render
      fixed imagemagick fallback load op
      fixed pipe based dcraw wrapper
      GSoC 2010 ops: exp-combine, reinhard05, fattal02, mantiuk06, matting-levin
-     
  • Various source and build improvements.
+ • improvements towards threaded rendering
  • Buffer:
      refactored away some constant overhead
      made GeglBufferIterator API public
@@ -23,7 +26,7 @@ Contributions from:
 Michael Natterer, Øyvind Kolås, Vincent Untz, Kaja Liiv, Nils
 Philippsen, Étienne Bersac, Martin Nordholts, Debarshi Ray, Danny
 Robson, Stuart Axon, Kao, Mukund Sivaraman, Ruben Vermeersch, Barak
-Itkin and Michael Muré.
+Itkin, Michael Muré, Mikael Magnusson, Patrick Horgan and Andy Gill.
 
 Changes in GEGL 0.1.2
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
