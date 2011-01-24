@@ -927,7 +927,7 @@ gegl_node_blit (GeglNode            *self,
 #if 1
   threads = gegl_config ()->threads;
   if (threads > GEGL_MAX_THREADS)
-    threads = 0;
+    threads = 1;
   
   if (pool == NULL)
     {
