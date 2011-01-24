@@ -1310,10 +1310,10 @@ void gegl_path_parse_string (GeglPath *vector,
           InstructionInfo *info = lookup_instruction_info(type);
           if (!info && ((type>= '0' && type <= '9') || type == '-'))
             {
-              if (!previnfo)
+              if (!previnfo)   /* XXX: suspicious code !!! */
                 {
                   info = previnfo;
-                  type = previnfo->type;
+                  type = previnfo->type;  /* XXX: previnfo _is_ NULL */
                 }
               else
                 {
