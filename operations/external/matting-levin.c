@@ -1410,32 +1410,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;
 
-  /* Double types aren't typical. We generate them ahead of time (in the
-   * case that Babl doesn't know about them) so that Babl has them cached
-   * when needed.
-   */
-  char id_string[] = "id";
-  babl_format_new (id_string, FORMAT_INPUT,
-                   babl_model ("R'G'B'"),
-                   babl_type ("double"),
-                   babl_component ("R'"),
-                   babl_component ("G'"),
-                   babl_component ("B'"),
-                   NULL);
-
-  babl_format_new (id_string, FORMAT_AUX,
-                   babl_model ("Y'A"),
-                   babl_type ("double"),
-                   babl_component ("Y'"),
-                   babl_component ("A"),
-                   NULL);
-
-  babl_format_new (id_string, FORMAT_OUTPUT,
-                   babl_model ("Y'"),
-                   babl_type ("double"),
-                   babl_component ("Y'"),
-                   NULL);
-
   operation_class = GEGL_OPERATION_CLASS (klass);
   composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
