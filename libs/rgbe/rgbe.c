@@ -146,7 +146,7 @@ rgbe_header_init (rgbe_header *header)
   header->pixel_aspect        = 1.0;
 
   header->x_axis.orient = header->y_axis.orient = ORIENT_UNKNOWN;
-  header->x_axis.size   = header->x_axis.size   = 0;
+  header->x_axis.size   = header->y_axis.size   = 0;
 }
 
 static gboolean
