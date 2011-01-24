@@ -208,9 +208,8 @@ process (GeglOperation       *operation,
     if (result == FALSE)
       {
         g_warning ("%s failed to open file %s for reading.",
-          G_OBJECT_TYPE_NAME (operation), o->path);
-          output = gegl_buffer_new (NULL, NULL);
-            return TRUE;
+        G_OBJECT_TYPE_NAME (operation), o->path);
+        return FALSE;
       }
 
   result = gegl_buffer_import_svg (output, o->path,
