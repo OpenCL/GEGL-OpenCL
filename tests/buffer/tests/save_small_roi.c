@@ -26,6 +26,7 @@ TEST ()
   gegl_buffer_destroy (buffer);
   buffer = NULL;
 
+  g_unlink (path);
   g_free (path);
   test_end ();
 }

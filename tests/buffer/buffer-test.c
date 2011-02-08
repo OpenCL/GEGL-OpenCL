@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib/gmacros.h>
+#include <glib/gstdio.h>
 
 /* This file consists of a testing suite for the GeglBuffer API. For every
  * function matching the regexp ^static.*(' in the file a test is performed and
