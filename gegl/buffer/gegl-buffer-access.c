@@ -303,12 +303,14 @@ gegl_buffer_flush (GeglBuffer *buffer)
       gegl_tile_unref (buffer->hot_tile);
       buffer->hot_tile = NULL;
     }
-  if ((GeglBufferHeader*)(backend->header))
+
+  if ((GeglBufferHeader*)(backend->priv->header))
     {
-      ((GeglBufferHeader*)(backend->header))->x =buffer->extent.x;
-      ((GeglBufferHeader*)(backend->header))->y =buffer->extent.y;
-      ((GeglBufferHeader*)(backend->header))->width =buffer->extent.width;
-      ((GeglBufferHeader*)(backend->header))->height =buffer->extent.height;
+      GeglBufferHeader* header = backend->priv->header;
+      header->x = buffer->extent.x;
+      header->y = buffer->extent.y;
+      header->width =buffer->extent.width;
+      header->height =buffer->extent.height;
     }
 
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),

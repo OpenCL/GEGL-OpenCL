@@ -20,6 +20,10 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include "gegl-types.h"
+#include "gegl-matrix.h"
+#include "gegl-buffer-types.h"
+#include "gegl-buffer-private.h"
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
@@ -200,7 +204,7 @@ get_tile (GeglTileSource *gegl_tile_source,
   GeglTileSource      *source = ((GeglTileHandler*)(gegl_tile_source))->source;
   GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom*)(gegl_tile_source);
   GeglTile            *tile   = NULL;
-  Babl                *format = (Babl *) (zoom->backend->format);
+  Babl                *format = gegl_tile_backend_get_format (zoom->backend);
   gint                 tile_width;
   gint                 tile_height;
   gint                 tile_size;
@@ -255,9 +259,9 @@ get_tile (GeglTileSource *gegl_tile_source,
       {
         tile = gegl_tile_new (tile_size);
 
-        tile->x          = x;
-        tile->y          = y;
-        tile->z          = z;
+        tile->x = x;
+        tile->y = y;
+        tile->z = z;
         tile->tile_storage = zoom->tile_storage;
 
         if (zoom->cache)

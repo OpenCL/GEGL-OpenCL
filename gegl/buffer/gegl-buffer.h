@@ -58,6 +58,21 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
 
 
+
+/**
+ * gegl_buffer_new_for_backend:
+ * @extent: the geometry of the buffer (origin, width and height) a
+ * GeglRectangle.
+ *
+ * Create a new GeglBuffer from a backend, if NULL is passed in the extent of
+ * the buffer will be inherited from the extent of the backend.
+ *
+ * returns a GeglBuffer, that holds a reference to the provided backend.
+ */
+GeglBuffer *
+gegl_buffer_new_for_backend (const GeglRectangle *extent,
+                             void                *backend);
+
 /**
  * gegl_buffer_open:
  * @path: the path to a gegl buffer on disk.

@@ -20,6 +20,10 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include "gegl-types.h"
+#include "gegl-matrix.h"
+#include "gegl-buffer-types.h"
+#include "gegl-buffer-private.h"
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-empty.h"
 #include "gegl-tile-handler-cache.h"
@@ -96,9 +100,10 @@ gegl_tile_handler_empty_new (GeglTileBackend      *backend,
                              GeglTileHandlerCache *cache)
 {
   GeglTileHandlerEmpty *empty = g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY, NULL);
+  gint tile_size = gegl_tile_backend_get_tile_size (backend);
   empty->backend = backend;
   empty->cache = cache;
-  empty->tile = gegl_tile_new (backend->tile_size);
-  memset (gegl_tile_get_data (empty->tile), 0x00, backend->tile_size);
+  empty->tile = gegl_tile_new (tile_size);
+  memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
   return (void*)empty;
 }

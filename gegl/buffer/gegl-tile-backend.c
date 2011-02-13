@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <babl/babl.h>
+#include "gegl-buffer-types.h"
 #include "gegl-tile-source.h"
 #include "gegl-tile-backend.h"
 
@@ -48,23 +49,23 @@ get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_TILE_WIDTH:
-        g_value_set_int (value, backend->tile_width);
+        g_value_set_int (value, backend->priv->tile_width);
         break;
 
       case PROP_TILE_HEIGHT:
-        g_value_set_int (value, backend->tile_height);
+        g_value_set_int (value, backend->priv->tile_height);
         break;
 
       case PROP_TILE_SIZE:
-        g_value_set_int (value, backend->tile_size);
+        g_value_set_int (value, backend->priv->tile_size);
         break;
 
       case PROP_PX_SIZE:
-        g_value_set_int (value, backend->px_size);
+        g_value_set_int (value, backend->priv->px_size);
         break;
 
       case PROP_FORMAT:
-        g_value_set_pointer (value, backend->format);
+        g_value_set_pointer (value, backend->priv->format);
         break;
 
       default:
@@ -84,15 +85,15 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_TILE_WIDTH:
-        backend->tile_width = g_value_get_int (value);
+        backend->priv->tile_width = g_value_get_int (value);
         return;
 
       case PROP_TILE_HEIGHT:
-        backend->tile_height = g_value_get_int (value);
+        backend->priv->tile_height = g_value_get_int (value);
         return;
 
       case PROP_FORMAT:
-        backend->format = g_value_get_pointer (value);
+        backend->priv->format = g_value_get_pointer (value);
         break;
 
       default:
@@ -112,12 +113,12 @@ constructor (GType                  type,
   object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   backend = GEGL_TILE_BACKEND (object);
 
-  g_assert (backend->tile_width > 0 && backend->tile_height > 0);
-  g_assert (backend->format);
+  g_assert (backend->priv->tile_width > 0 && backend->priv->tile_height > 0);
+  g_assert (backend->priv->format);
 
 
-  backend->px_size = babl_format_get_bytes_per_pixel (backend->format);
-  backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
+  backend->priv->px_size = babl_format_get_bytes_per_pixel (backend->priv->format);
+  backend->priv->tile_size = backend->priv->tile_width * backend->priv->tile_height * backend->priv->px_size;
 
   return object;
 }
@@ -155,10 +156,40 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
                                    g_param_spec_pointer ("format", "format", "babl format",
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT_ONLY));
+  g_type_class_add_private (gobject_class, sizeof (GeglTileBackendPrivate));
 }
+
+#define GEGL_TILE_BACKEND_GET_PRIVATE(obj) \
+    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GEGL_TYPE_TILE_BACKEND, GeglTileBackendPrivate))
+
 
 static void
 gegl_tile_backend_init (GeglTileBackend *self)
 {
-  self->shared = FALSE;
+  self->priv = GEGL_TILE_BACKEND_GET_PRIVATE (self);
+  self->priv->shared = FALSE;
+}
+
+
+gint gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->tile_size;
+}
+
+
+Babl *gegl_tile_backend_get_format (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->format;
+}
+
+
+void  gegl_tile_backend_set_extent    (GeglTileBackend *tile_backend,
+                                       GeglRectangle   *rectangle)
+{
+  tile_backend->priv->extent = *rectangle;
+}
+
+GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->extent;
 }

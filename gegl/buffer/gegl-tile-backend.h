@@ -32,27 +32,30 @@ G_BEGIN_DECLS
 
 struct _GeglTileBackend
 {
-  GeglTileSource  parent_instance;
-
-  gint            tile_width;
-  gint            tile_height;
-  Babl           *format;        /* defaults to the babl format "R'G'B'A u8" */
-  gint            px_size;       /* size of a single pixel in bytes */
-  gint            tile_size;     /* size of an entire tile in bytes */
-
-  /* private */
-  gpointer        header;
-  gpointer        storage;
-  gboolean        shared;
+  GeglTileSource          parent_instance;
+  GeglTileBackendPrivate *priv;
 };
 
 struct _GeglTileBackendClass
 {
   GeglTileSourceClass parent_class;
 
-  void (* create)  (GeglTileBackend *backend); 
-  void (* destroy) (GeglTileBackend *backend);
+  gpointer  padding1;
+  gpointer  padding2;
+  gpointer  padding3;
+  gpointer  padding4;
 };
+
+gint  gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
+Babl *gegl_tile_backend_get_format    (GeglTileBackend *tile_backend);
+
+/* specify the extent of the backend, can be used to
+ * pre-prime the backend with the width/height information when
+ * constructing proxy GeglBuffers to interact with other systems
+ */
+void  gegl_tile_backend_set_extent    (GeglTileBackend *tile_backend,
+                                       GeglRectangle   *rectangle);
+GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend);
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;
 

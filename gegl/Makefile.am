@@ -36,6 +36,10 @@ GEGL_public_HEADERS =	\
     gegl-version.h			\
     buffer/gegl-buffer.h		\
     buffer/gegl-buffer-iterator.h	\
+    buffer/gegl-buffer-backend.h	\
+    buffer/gegl-tile.h			\
+    buffer/gegl-tile-backend.h		\
+    buffer/gegl-tile-source.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\
     property-types/gegl-path.h		\

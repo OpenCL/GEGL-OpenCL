@@ -53,10 +53,8 @@ struct _GeglTileStorageClass
 };
 
 GType gegl_tile_storage_get_type (void) G_GNUC_CONST;
+
 GeglTileStorage *
-gegl_tile_storage_new (gint tile_width,
-                       gint tile_height,
-                       const Babl *format,
-                       const gchar *path);
+gegl_tile_storage_new (GeglTileBackend *backend);
 
 #endif

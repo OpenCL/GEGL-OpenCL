@@ -21,6 +21,7 @@
 #include <glib-object.h>
 
 #include "gegl.h"
+#include "gegl-buffer-types.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile.h"
 #include "gegl-tile-backend-file.h"
@@ -66,66 +67,34 @@ tile_storage_idle (gpointer data)
 GeglTileBackend *gegl_buffer_backend (GObject *buffer);
 
 GeglTileStorage *
-gegl_tile_storage_new (gint tile_width,
-                       gint tile_height,
-                       const Babl *format,
-                       const gchar *path)
+gegl_tile_storage_new (GeglTileBackend *backend)
 {
   GeglTileStorage *tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE, NULL);
   GeglTileHandlerChain  *tile_handler_chain;
   GeglTileHandler       *handler;
-  GeglTileBackend       *backend = NULL;
   GeglTileHandler       *empty = NULL;
   GeglTileHandler       *zoom = NULL;
   GeglTileHandlerCache  *cache = NULL;
-
-  if (tile_width <= 0)
-    tile_width = 128;
-  if (tile_height <= 0)
-    tile_height = 64;
 
   tile_storage->seen_zoom = 0;
   tile_storage->mutex = g_mutex_new ();
   tile_storage->width = G_MAXINT;
   tile_storage->height = G_MAXINT;
-  tile_storage->tile_width = tile_width;
-  tile_storage->tile_height = tile_height;
-  tile_storage->format = format;
-  if (path)
-    tile_storage->path = g_strdup (path);
+
+  if (g_object_class_find_property (G_OBJECT_GET_CLASS (backend), "path"))
+    {
+      g_object_get (backend, "path", &tile_storage->path, NULL);
+    }
 
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
   handler  = GEGL_TILE_HANDLER (tile_storage);
 
-  if (tile_storage->path != NULL)
-    {
-#if 1
-      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                              "tile-width", tile_storage->tile_width,
-                              "tile-height", tile_storage->tile_height,
-                              "format", tile_storage->format,
-                              "path", tile_storage->path,
-                              NULL);
-#else
-      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_TILEDIR,
-                              "tile-width", tile_storage->tile_width,
-                              "tile-height", tile_storage->tile_height,
-                              "format", tile_storage->format,
-                              "path", tile_storage->path,
-                              NULL);
-#endif
-    }
-  else
-    {
-      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
-                              "tile-width", tile_storage->tile_width,
-                              "tile-height", tile_storage->tile_height,
-                              "format", tile_storage->format,
-                              NULL);
-    }
+  tile_storage->tile_width  = backend->priv->tile_width;
+  tile_storage->tile_height = backend->priv->tile_height;
+  tile_storage->px_size     = backend->priv->px_size;
+  tile_storage->format      = gegl_tile_backend_get_format (backend);
+  tile_storage->tile_size   = gegl_tile_backend_get_tile_size (backend);
 
-  tile_storage->tile_size = backend->tile_size;
-  tile_storage->px_size = backend->px_size;
   gegl_tile_handler_set_source (handler, (void*)backend);
 
   { /* should perhaps be a.. method on gegl_tile_handler_chain_set_source
@@ -166,8 +135,8 @@ gegl_tile_storage_new (gint tile_width,
   tile_storage->cache = cache;
   gegl_tile_handler_chain_bind (tile_handler_chain);
 
-  ((GeglTileBackend *)gegl_buffer_backend ((void*)tile_storage))->storage = (gpointer)
-                                                                          tile_storage;
+  ((GeglTileBackend *)gegl_buffer_backend ((void*)tile_storage))->priv->storage = (gpointer)
+                                             tile_storage;
 
   tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
                                               250,

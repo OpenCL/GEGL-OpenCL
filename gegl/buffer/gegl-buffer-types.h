@@ -19,16 +19,33 @@
 #ifndef __GEGL_BUFFER_TYPES_H__
 #define __GEGL_BUFFER_TYPES_H__
 
-
-
-typedef struct _GeglTile                  GeglTile;
 typedef struct _GeglTileClass             GeglTileClass;
 
-typedef struct _GeglTileSource            GeglTileSource;
-typedef struct _GeglTileSourceClass       GeglTileSourceClass;
+#include "gegl-types.h"
+#include "gegl-buffer-backend.h"
 
-typedef struct _GeglTileBackend           GeglTileBackend;
-typedef struct _GeglTileBackendClass      GeglTileBackendClass;
+
+/* gegl-buffer-types.h is not installed, thus all of this is private to
+ * GeglBuffer even though some of it leaks among the components of GeglBuffer
+ * here... better than installing it in an installed header at least.
+ */
+
+struct _GeglTileBackendPrivate
+{
+  gint       tile_width;
+  gint       tile_height;
+  Babl      *format;    /* defaults to the babl format "R'G'B'A u8" */
+  gint       px_size;   /* size of a single pixel in bytes */
+  gint       tile_size; /* size of an entire tile in bytes */
+
+  GeglRectangle extent;
+
+  gpointer   header;
+  gpointer   storage;
+  gboolean   shared;
+};
+
+
 
 typedef struct _GeglTileHandler           GeglTileHandler;
 typedef struct _GeglTileHandlerClass      GeglTileHandlerClass;

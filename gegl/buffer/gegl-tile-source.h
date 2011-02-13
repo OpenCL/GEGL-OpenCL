@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006-2011 Øyvind Kolås <pippin@gimp.org>
  */
 
 #ifndef __GEGL_TILE_SOURCE_H__
@@ -21,7 +21,6 @@
 
 #include <glib-object.h>
 #include <babl/babl.h>
-#include "gegl-buffer-types.h"
 #include "gegl-tile.h"
 
 G_BEGIN_DECLS
@@ -39,16 +38,24 @@ struct _GeglTileSource
 {
   GObject   parent_instance;
   gpointer  (*command)  (GeglTileSource  *gegl_tile_source,
-                         GeglTileCommand command,
-                         gint            x,
-                         gint            y,
-                         gint            z,
-                         gpointer        data);
+                         GeglTileCommand  command,
+                         gint             x,
+                         gint             y,
+                         gint             z,
+                         gpointer         data);
+  gpointer  padding1;
+  gpointer  padding2;
+  gpointer  padding3;
+  gpointer  padding4;
 };
 
 struct _GeglTileSourceClass
 {
   GObjectClass  parent_class;
+  gpointer  padding1;
+  gpointer  padding2;
+  gpointer  padding3;
+  gpointer  padding4;
 };
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
@@ -61,7 +68,7 @@ GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
 enum _GeglTileCommand
 {
   GEGL_TILE_IDLE = 0,
-  GEGL_TILE_SET, 
+  GEGL_TILE_SET,
   GEGL_TILE_GET,
   GEGL_TILE_IS_CACHED,
   GEGL_TILE_EXIST,
@@ -72,6 +79,7 @@ enum _GeglTileCommand
 };
 
 #ifdef NOT_REALLY_COS_THIS_IS_MACROS
+/* The functions documented below are actually macros, all using the command vfunc */
 
 /**
  * gegl_tile_source_get_tile:
@@ -99,7 +107,7 @@ GeglTile *gegl_tile_source_get_tile  (GeglTileSource *source,
  * @z: tile zoom level
  * @tile: a #GeglTile
  *
- * Get a GeglTile *from the buffer.
+ * Set a GeglTile in *from the buffer.
  *
  * Returns: the TRUE if the set was successful.
  */

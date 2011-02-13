@@ -24,6 +24,8 @@
 #include <unistd.h>
 #endif
 
+#define __GEGL_TILE_C
+
 #include <glib-object.h>
 
 #include "gegl-types-internal.h"
@@ -261,41 +263,6 @@ gegl_tile_void (GeglTile *tile)
     gegl_tile_void_pyramid (tile);
 }
 
-void
-gegl_tile_cpy (GeglTile *src,
-               GeglTile *dst)
-{
-  gegl_tile_lock (dst);
-
-  gegl_free (dst->data);
-  dst->data = NULL;
-
-  dst->next_shared              = src->next_shared;
-  src->next_shared              = dst;
-  dst->prev_shared              = src;
-  dst->next_shared->prev_shared = dst;
-
-  dst->data = src->data;
-
-  gegl_tile_unlock (dst);
-}
-
-void
-gegl_tile_swp (GeglTile *a,
-               GeglTile *b)
-{
-  guchar *tmp;
-
-  gegl_tile_unclone (a);
-  gegl_tile_unclone (b);
-
-  g_assert (a->size == b->size);
-
-  tmp     = a->data;
-  a->data = b->data;
-  b->data = tmp;
-}
-
 gboolean gegl_tile_store (GeglTile *tile)
 {
   if (gegl_tile_is_stored (tile))
@@ -307,4 +274,23 @@ gboolean gegl_tile_store (GeglTile *tile)
                                     tile->y,
                                     tile->z,
                                     tile);
+}
+
+/* for internal use, a macro poking directly at the data will be faster 
+ */
+guchar *gegl_tile_get_data (GeglTile *tile)
+{
+  return tile->data;
+}
+
+
+void         gegl_tile_set_rev        (GeglTile *tile,
+                                       guint     rev)
+{
+  tile->rev = rev;
+}
+
+guint        gegl_tile_get_rev        (GeglTile *tile)
+{
+  return tile->rev;
 }

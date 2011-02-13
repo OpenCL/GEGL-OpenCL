@@ -36,8 +36,9 @@
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
+#include "gegl-buffer-types.h"
 #include "gegl-debug.h"
-#include "gegl-types-internal.h"
+//#include "gegl-types-internal.h"
 
 
 struct _GeglTileBackendFile
@@ -134,7 +135,7 @@ gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
 {
   gint     to_be_read;
   gboolean success;
-  gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
+  gint     tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
   goffset  offset = entry->offset;
 
   gegl_tile_backend_file_ensure_exist (self);
@@ -185,7 +186,7 @@ gegl_tile_backend_file_file_entry_write (GeglTileBackendFile *self,
 {
   gint     to_be_written;
   gboolean success;
-  gint     tile_size = GEGL_TILE_BACKEND (self)->tile_size;
+  gint     tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
   goffset  offset = entry->offset;
 
   gegl_tile_backend_file_ensure_exist (self);
@@ -248,7 +249,7 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
     }
   else
     {
-      gint tile_size = GEGL_TILE_BACKEND (self)->tile_size;
+      gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
 
       entry->offset = self->next_pre_alloc;
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->offset);
@@ -268,7 +269,7 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
 #endif
         }
     }
-  gegl_tile_backend_file_dbg_alloc (GEGL_TILE_BACKEND (self)->tile_size);
+  gegl_tile_backend_file_dbg_alloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
   return entry;
 }
 
@@ -282,7 +283,7 @@ gegl_tile_backend_file_file_entry_destroy (GeglBufferTile      *entry,
                                      GUINT_TO_POINTER (offset));
   g_hash_table_remove (self->index, entry);
 
-  gegl_tile_backend_file_dbg_dealloc (GEGL_TILE_BACKEND (self)->tile_size);
+  gegl_tile_backend_file_dbg_dealloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
   g_free (entry);
 }
 
@@ -449,11 +450,11 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
           gint            y,
           gint            z)
 {
-
   GeglTileBackend     *backend;
   GeglTileBackendFile *tile_backend_file;
   GeglBufferTile      *entry;
   GeglTile            *tile = NULL;
+  gint                 tile_size;
 
   backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
@@ -462,8 +463,9 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
   if (!entry)
     return NULL;
 
-  tile      = gegl_tile_new (backend->tile_size);
-  tile->rev = entry->rev;
+  tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
+  tile      = gegl_tile_new (tile_size);
+  gegl_tile_set_rev (tile, entry->rev);
   gegl_tile_mark_as_stored (tile);
 
   gegl_tile_backend_file_file_entry_read (tile_backend_file, entry, gegl_tile_get_data (tile));
@@ -493,7 +495,7 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
       entry->z = z;
       g_hash_table_insert (tile_backend_file->index, entry, entry);
     }
-  entry->rev = tile->rev;
+  entry->rev = gegl_tile_get_rev (tile);
 
   gegl_tile_backend_file_file_entry_write (tile_backend_file, entry, gegl_tile_get_data (tile));
   gegl_tile_mark_as_stored (tile);
@@ -779,6 +781,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
   GeglTileBackend *backend;
   goffset offset = 0;
   goffset max=0;
+  gint tile_size;
 
   /* compute total from and next pre alloc by monitoring tiles as they
    * are added here
@@ -804,6 +807,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
     }
 
 
+  tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
   offset      = self->header.next;
   self->tiles = gegl_buffer_read_index (self->i, &offset);
   backend     = GEGL_TILE_BACKEND (self);
@@ -815,7 +819,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
       GeglBufferItem *existing = g_hash_table_lookup (self->index, item);
 
       if (item->tile.offset > max)
-        max = item->tile.offset + backend->tile_size;
+        max = item->tile.offset + tile_size;
 
       if (existing)
         {
@@ -830,7 +834,12 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
             {
               GeglRectangle rect;
               g_hash_table_remove (self->index, existing);
-              gegl_tile_source_refetch (GEGL_TILE_SOURCE (backend->storage),
+
+              /* XXX: this refetch, depends on knowing the storage, the
+               * storage should not be public information/API to maintain
+               * proper encapsulation
+               */
+              gegl_tile_source_refetch (GEGL_TILE_SOURCE (backend->priv->storage),
                                         existing->tile.x,
                                         existing->tile.y,
                                         existing->tile.z);
@@ -843,7 +852,11 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
                   rect.y = existing->tile.y * self->header.tile_height;
                 }
               g_free (existing);
-              g_signal_emit_by_name (backend->storage, "changed", &rect, NULL);
+
+              /* XXX: this emitting of changed depends on knowing the storage,
+               * which is icky..
+               */
+              g_signal_emit_by_name (backend->priv->storage, "changed", &rect, NULL);
             }
         }
       g_hash_table_insert (self->index, iter->data, iter->data);
@@ -948,12 +961,16 @@ gegl_tile_backend_file_constructor (GType                  type,
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
       self->header.rev = self->header.rev -1;
 
-      /* we are overriding all of the work of the actual constructor here */
-      backend->tile_width = self->header.tile_width;
-      backend->tile_height = self->header.tile_height;
-      backend->format = babl_format (self->header.description);
-      backend->px_size = babl_format_get_bytes_per_pixel (backend->format);
-      backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
+      /* we are overriding all of the work of the actual constructor here,
+       * a really evil hack :d
+       */
+      backend->priv->tile_width = self->header.tile_width;
+      backend->priv->tile_height = self->header.tile_height;
+      backend->priv->format = babl_format (self->header.description);
+      backend->priv->px_size = babl_format_get_bytes_per_pixel (backend->priv->format);
+      backend->priv->tile_size = backend->priv->tile_width *
+                                    backend->priv->tile_height *
+                                    backend->priv->px_size;
 
       /* insert each of the entries into the hash table */
       gegl_tile_backend_file_load_index (self, TRUE);
@@ -969,7 +986,9 @@ gegl_tile_backend_file_constructor (GType                  type,
 #endif
 
       /* to autoflush gegl_buffer_set */
-      backend->shared = TRUE;
+
+      /* XXX: poking at internals, icky */
+      backend->priv->shared = TRUE;
     }
   else
     {
@@ -980,7 +999,7 @@ gegl_tile_backend_file_constructor (GType                  type,
   g_assert (self->file);
 #endif
 
-  backend->header = &self->header;
+  backend->priv->header = &self->header;
 
   return object;
 }
@@ -1031,10 +1050,10 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       g_assert(g_seekable_seek (G_SEEKABLE (self->o), 256, G_SEEK_SET, NULL, NULL));
 #endif
       gegl_buffer_header_init (&self->header,
-                               backend->tile_width,
-                               backend->tile_height,
-                               backend->px_size,
-                               backend->format
+                               backend->priv->tile_width,
+                               backend->priv->tile_height,
+                               backend->priv->px_size,
+                               backend->priv->format
                                );
       gegl_tile_backend_file_write_header (self);
 #if HAVE_GIO

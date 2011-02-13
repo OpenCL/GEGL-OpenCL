@@ -22,19 +22,13 @@
 
 #include <glib-object.h>
 
+#include "gegl-buffer-backend.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-ram.h"
-
 
 static void dbg_alloc (int size);
 static void dbg_dealloc (int size);
 
-/* These entries are kept in RAM for now, they should be written as an index to the
- * swap file, at a position specified by a header block, making the header grow up
- * to a multiple of the size used in this swap file is probably a good idea
- *
- * Serializing the bablformat is probably also a good idea.
- */
 typedef struct _RamEntry RamEntry;
 
 struct _RamEntry
@@ -50,7 +44,7 @@ ram_entry_read (GeglTileBackendRam *ram,
                 RamEntry           *entry,
                 guchar             *dest)
 {
-  gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
+  gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (ram));
 
   memcpy (dest, entry->offset, tile_size);
 }
@@ -60,7 +54,7 @@ ram_entry_write (GeglTileBackendRam *ram,
                  RamEntry           *entry,
                  guchar             *source)
 {
-  gint tile_size = GEGL_TILE_BACKEND (ram)->tile_size;
+  gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (ram));
 
   memcpy (entry->offset, source, tile_size);
 }
@@ -69,9 +63,10 @@ static inline RamEntry *
 ram_entry_new (GeglTileBackendRam *ram)
 {
   RamEntry *self = g_slice_new (RamEntry);
+  gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (ram));
 
-  self->offset = g_malloc (GEGL_TILE_BACKEND (ram)->tile_size);
-  dbg_alloc (GEGL_TILE_BACKEND (ram)->tile_size);
+  self->offset = g_malloc (tile_size);
+  dbg_alloc (tile_size);
   return self;
 }
 
@@ -79,10 +74,11 @@ static inline void
 ram_entry_destroy (RamEntry           *entry,
                    GeglTileBackendRam *ram)
 {
+  gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (ram));
   g_free (entry->offset);
   g_hash_table_remove (ram->entries, entry);
 
-  dbg_dealloc (GEGL_TILE_BACKEND (ram)->tile_size);
+  dbg_dealloc (tile_size);
   g_slice_free (RamEntry, entry);
 }
 
@@ -148,6 +144,7 @@ get_tile (GeglTileSource *tile_store,
   GeglTileBackendRam     *tile_backend_ram = GEGL_TILE_BACKEND_RAM (tile_store);
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (tile_store);
   GeglTile        *tile     = NULL;
+  gint tile_size = gegl_tile_backend_get_tile_size (backend);
 
   {
     RamEntry *entry = lookup_entry (tile_backend_ram, x, y, z);
@@ -155,7 +152,7 @@ get_tile (GeglTileSource *tile_store,
     if (!entry)
       return NULL;
 
-    tile = gegl_tile_new (backend->tile_size);
+    tile = gegl_tile_new (tile_size);
 
     ram_entry_read (tile_backend_ram, entry, gegl_tile_get_data (tile));
   }

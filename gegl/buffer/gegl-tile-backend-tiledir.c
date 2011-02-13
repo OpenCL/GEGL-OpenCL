@@ -23,6 +23,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "gegl-types.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-tiledir.h"
 
@@ -73,7 +74,7 @@ gio_entry_read (GeglTileBackendTileDir *gio,
                 guchar                  *dest)
 {
   GFile            *file;
-  gint              tile_size = GEGL_TILE_BACKEND (gio)->tile_size;
+  gint   tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (gio));
   GFileInputStream *i;
   gsize             bytes_read;
 
@@ -94,7 +95,7 @@ gio_entry_write (GeglTileBackendTileDir *gio,
                  GioEntry                *entry,
                  guchar                  *source)
 {
-  gint               tile_size = GEGL_TILE_BACKEND (gio)->tile_size;
+  gint   tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (gio));
   GFile             *file;
   GFileOutputStream *o;
   gsize              bytes_written;
@@ -147,12 +148,13 @@ get_tile (GeglTileSource *tile_store,
  if (exist_tile (tile_store, NULL, x, y, z))
   {
     GioEntry       entry;
+    gint   tile_size = gegl_tile_backend_get_tile_size (backend);
 
     entry.x = x;
     entry.y = y;
     entry.z = z;
 
-    tile = gegl_tile_new (backend->tile_size);
+    tile = gegl_tile_new (tile_size);
 
     gio_entry_read (tile_backend_tiledir, &entry, gegl_tile_get_data (tile));
     return tile;

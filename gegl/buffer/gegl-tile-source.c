@@ -18,6 +18,7 @@
 #include "config.h"
 #include <glib.h>
 #include <glib-object.h>
+#include "gegl-buffer-types.h"
 #include "gegl-tile-source.h"
 
 G_DEFINE_TYPE (GeglTileSource, gegl_tile_source, G_TYPE_OBJECT)
