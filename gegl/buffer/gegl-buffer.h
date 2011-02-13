@@ -63,6 +63,7 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
  * gegl_buffer_new_for_backend:
  * @extent: the geometry of the buffer (origin, width and height) a
  * GeglRectangle.
+ * @backend: an instance of a GeglTileBackend subclass.
  *
  * Create a new GeglBuffer from a backend, if NULL is passed in the extent of
  * the buffer will be inherited from the extent of the backend.
