@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>Where to contribute to the future of GEGL</title>
+<link rel='shortcut icon' href='images/gegl.ico'/>
+<style type='text/css'>
+@import url(gegl.css);
+div#toc ul { font-size:70%; }
+.category { margin-bottom: 2em; }
+.category a {
+  display: block;
+  width: 10em;
+  height: 1.2em;
+  float: left;
+  text-align: left;
+  font-size: 90%;
+}
+</style>
+</head>
+
+<body>
+<div class='paper'>
+<div class='content'>
+<div id='toc'>
+<ul>
+<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>
+<li><a href='#1'>Improve GIMP/GEGL integration</a></li>
+<li><a href='#2'>Improve GEGL</a></li>
+<li><a href='#3'>Port GIMP plug-ins to GEGL ops</a></li>
+<li><a href='#4'>Improve GEGL documentation</a></li>
+<li><a href='#5'>Use GEGL in other place than GIMP</a></li>
+</ul>
+</div>
+
+<p>
+This isn't really a roadmap, it is more of a list of signs pointing in the
+right direction.
+</p>
+
+<p>
+There are various tracks that can be followed to improve the future of GEGL in
+GIMP, many of these things, at least on the GEGL side are covered by bugs in
+bugzilla, properly git formatted patches adressing these issues are most
+welcome contributions. Doing things on this list would help speed up the
+arrival of the next and more powerful generation of GIMP.
+</p>
+
+<ol>
+<li>
+<a name='1'>Improve GIMP/GEGL integration</a>
+  <ul>
+  <li>GIMP already can use GEGL for compositing its layers using GEGL and
+    do its color manipulation using GEGL ops, it however still stores buffers
+    in TileManagers and the integration with GEGL is done through proxy GEGL
+    ops that fetch data from a TileManager or store data back in a
+    TileManager.
+  </li><li>The migration to GEGL should be done in such a way that GIMP does not
+    lose any features during the migration, this to ensure that GIMP remains
+    usable throuhout the development as well as permitting comparison between
+    using GEGL and legacy code to compare performance and rendering.
+    </li><li>Implement a GeglBuffer tile backend that support GIMP legacy
+    TileManager for transition period</li>
+
+<pre>
+    GeglBuffer *gimp_drawable_get_gegl_buffer (GimpDrawable *drawable);
+</pre>
+
+    Having such a utility function would allow porting more bits of GIMP
+    to optionally use GEGL for processing with code that resembles GIMP
+    code.
+  </li><li>At a later stage of the migration when the actual storage is switched 
+    it might be desirable to allow a temporary hack in the other direction
+    with gimp_gegl_buffer_get_tile_manager (GeglBuffer *buffer); this might
+    require some private API of GEGL to be temporarily exposed.
+  </li><li>Paint tools migration, work is already on the way to improve the performance
+    of non destructive paths for GEGL.
+  </li><li>Allow loading UI plug-ins for GIMP that provide custom UIs for GEGL ops.
+    Such custom UI-s could first act like modal dialogs similar to the current
+    GIMP plug-ins and later be the property panes of non destructive
+    layer/effects or otherwise modifiable actions.
+  </li><li>Integrate the GEGL tool with pdb.
+  </li><li>Make the GEGL tool register menu entries in filters.
+  </li><li>Create a GIMP legacy plug-in proxy op, that allows running at least a
+    subset of GIMP plug-ins in non-interactive mode as GEGL ops, providing
+    a fallback for legacy plug-ins in the future.</li>
+   <li>Make single image raster import/export in GIMP use GEGL, perhaps also create a new improved templated with preview "export for web" workflow in GIMP based on GEGL</li>
+  </ul>
+</li>
+<li>
+<a name='2'>Improve GEGL</a>
+  <ul>
+  <li>performance, the code to allow GEGL splitting the evaluation work that
+    is given to it among multiple threads is already mostly functional, but
+    there are some rendering glitches due to some racy access of intermediate
+    buffers, most likely caches. The behavior of such glitches can be seen
+    by running 
+      $ GEGL_THREADS=16 gegl
+    This results in some <a href='threadbug.png'>serious rendering glitches</a>.
+    Once this is stable, optimizing how the spatial division of the tasks is
+    done would be good.
+    The existing GPU backend branch and its auto-migrating hybrid
+    tile management needs further work and testing, as
+    well as maybe adaptation to use OpenCL instead of OpenGL GLSL.
+  </li><li>GEGL already provides a lot of GIMPs core functionality; as well as many
+    plug-ins. Some of this functionality is currently implemented as ops inside
+    gimp. Porting more plug-ins and implementing infrastructure to be able to
+    do more core functionality will benefit GIMP as the migration to GEGL goes
+    forward.
+  </li><li>Allow GEGL to run untrusted ops out-of process - ensuring that badly behaved
+    ops will not bring GIMP/GEGL down.
+   </li><li>rewrite RAW loader to use <a href="http://www.libraw.org/">LibRaw</a> or <a 
+                    href="http://sh0dan.blogspot.com/2009/02/introducing-rawspeed.html">Rawspeed</a> 
+                    library instead of the abandoned libopenraw</li>
+   <li>Implement previews working on mipmap levels, allowing GEGL to do a preview at 12.5%, 25% or 50% of actual size - rendering the full size view in the background or on demand.</li>
+   <li>Finish GEGL side of GIMP/GEGL integration for rendering only the viewed part when zoomed in - allowing realtime tweaking and preview with on-canvas preview at 1:1 scale. (this involves accepting two regions to be rendered with priority or similar integration, the regions are already available in the GIMP code.)</li>
+    <li>Allow GEGL to connect any property of ops as inputs/outputs in the graph, the infrastructure to do so
+        is mostly already in place, but not properly exposed. For some uses, in particular for exposing more
+        powerful meta-ops this would be very nice.</li>
+  </ul>
+</li>
+<li>
+<a name='3'>Port GIMP plug-ins to GEGL ops</a>
+  <ul>
+   <li> Writing GEGL ops is simpler than writing GIMP plug-ins, plug-ins can support
+    higher bit depth in the future. Floating point code is easier to write, less
+    code is needed. You can get auto generated UI.
+    Writing more GIMP legacy plug-ins only increases the future porting
+    work-load/leaves the new plug-in outdated, so please write new code as GEGL
+    plug-ins.
+</li>
+<li>GIMP currently has many file loaders/savers that would be good to have in GEGL.</li>
+</ul>
+</li>
+<li>
+<a name='4'>Improve GEGL documentation,<a>
+  <p> the GEGL website is generated as part of the
+   GEGL build, patches to the documentation that fully integrates the changes
+   also with the website are welcome. Documentation for the structure of
+   GEGL and its internal architecture is also welcome.</p>
+</li>
+<li>
+   <a name='5'>Use GEGL in other places than GIMP</a>
+   <ul>
+   <li>Commandline tools for doing batch processing, UIs for compositing or
+   image manipulation, video effects rendering and more are all things that are
+   possible to implement with GEGL, that would end up sharing their available
+   ops among each other.</li>
+   <li>to provide incentive for yourself and others to work on the above
+   points. GEGL is designed to be a generically usable API and does not cater
+   especially for GIMP.</li>
+   <li>The pluggable GeglBuffers of GEGL permit other tiled buffer systems
+   (krita, mypaint?, a future blender?, a plug-in for GIMP 1.x, OpenStreetMap
+   ?) to efficiently reuse GEGL operations as plug-ins without unneccesary
+   buffer copying.</li>
+   </ul>
+</li>
+</ol>
+
+<p>last updated 2011-02-13</p>
+
+</div>
+</body>
+</html>

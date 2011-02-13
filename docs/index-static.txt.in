@@ -33,19 +33,22 @@ Features
      * linear buffers (allocated internally or from external allocation.)
      * On demand tiled mipmapping.
      * inter process shared storage
+     * External tile-backends (allow wrapping other tiled buffer systems
+       to use them through the GeglBuffer API).
   - Operations
       * PNG, JPEG, SVG, EXR, RAW, ffmpeg, v4l and other image sources.
       * link:operations.html#cat_render[Pattern renderers]
       * link:operations.html#math[Arithmetic operations]
       * link_operations.html#porter_duff[porter duff compositing]
       * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
-      * Gaussian blur, bilateral-filter, symmetric nearest neighbour, unsharp
-        mask.
+      * Gaussian blur, bilateral-filter, symmetric nearest neighbour, linear
+      * blur, unsharp mask, pixelize and more.
       * link:operations.html#cat_color[Color correction].
       * Text rendering using cairo and http://pango.org/[pango].
+      * HDR exposure merging and tone mapping operations.
       * Most operations operate in
         http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
-        linear light RGBA)
+        floating point/HDR linear light RGBA)
   - Bounding box based hit detection.
   - XML serialization format (not-finalized)
 
@@ -497,10 +500,12 @@ dropped into the directory in the build.
 <div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>-->
 <div class="toclevel2"><a href="#_copyright">Copyright</a></div>
 <div class="toclevel2"><a href="#_code">Contributors</a></div>
+<div class="toclevel2"><a href="contribute.html">Todo</a></div>
 <div class="toclevel1"><a href="#_building_from_source">Building from source</a></div>
 <div class="toclevel2"><a href="#_download">Download</a></div>
 <div class="toclevel2"><a href="#_dependencies">Dependencies</a></div>
 <div class="toclevel2"><a href="#_compiling">Compiling</a></div>
+<div class="toclevel2"><a href="development.html">Developer notes</a></div>
 <div class="toclevel1"><a href="#_documentation_2">Documentation</a></div>
 <div class="toclevel2"><a href="operations.html">Operations</a></div>
 <div class="toclevel2"><a href="api.html">Public API</a></div>

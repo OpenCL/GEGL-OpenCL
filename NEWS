@@ -3,8 +3,8 @@
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 Changes in GEGL 0.1.6
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
- • Operations:
-     max-rgb
+ • New operations: max-rgb, pixelise, motion blur.
+
  • Fixed a bugs in matting-levin that made GEGL halt due to errors
    detected by babl sanity code, this made 0.1.4 be unusable if you had
    all dependendency when building.
