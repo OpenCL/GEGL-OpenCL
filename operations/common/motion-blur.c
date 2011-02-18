@@ -17,16 +17,17 @@
  */
 
 #include "config.h"
+
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_double   (length, _("Length"), 0.0, 200.0, 10.0,
-                  _("Length of blur in pixels"))
-gegl_chant_double   (angle,  _("Angle"),  -360, 360, 0,
-                  _("Angle of blur in degrees"))
+gegl_chant_double (length, _("Length"), 0.0, 200.0, 10.0,
+                   _("Length of blur in pixels"))
+gegl_chant_double (angle,  _("Angle"),  -360, 360, 0,
+                   _("Angle of blur in degrees"))
 
 #else
 
@@ -41,7 +42,7 @@ prepare (GeglOperation *operation)
   GeglOperationAreaFilter* op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO* o = GEGL_CHANT_PROPERTIES (operation);
 
-  gdouble theta = o->angle * M_PI / 180.0;
+  gdouble theta = o->angle * G_PI / 180.0;
   gdouble offset_x = fabs(o->length * cos(theta));
   gdouble offset_y = fabs(o->length * sin(theta));
 
@@ -54,8 +55,8 @@ prepare (GeglOperation *operation)
 }
 
 static inline gfloat*
-get_pixel_color(gfloat* in_buf, 
-                const GeglRectangle* rect, 
+get_pixel_color(gfloat* in_buf,
+                const GeglRectangle* rect,
                 gint x,
                 gint y)
 {
@@ -63,7 +64,7 @@ get_pixel_color(gfloat* in_buf,
   gint iy = y - rect->y;
   ix = CLAMP(ix, 0, rect->width-1);
   iy = CLAMP(iy, 0, rect->height-1);
-  
+
   return &in_buf[(iy*rect->width + ix) * 4];
 }
 
@@ -80,8 +81,8 @@ process (GeglOperation       *operation,
   gfloat* out_buf;
   gfloat* out_pixel;
   gint x,y;
-  
-  gdouble theta = o->angle * M_PI / 180.0;
+
+  gdouble theta = o->angle * G_PI / 180.0;
   gdouble offset_x = o->length * cos(theta);
   gdouble offset_y = o->length * sin(theta);
   gint num_steps = (gint)ceil(o->length) + 1;
@@ -100,7 +101,7 @@ process (GeglOperation       *operation,
   out_pixel = out_buf;
 
   gegl_buffer_get (input, 1.0, &src_rect, babl_format ("RaGaBaA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
-    
+
   for (y=0; y<roi->height; ++y)
     {
       for (x=0; x<roi->width; ++x)
@@ -113,7 +114,7 @@ process (GeglOperation       *operation,
           for (step=0; step<num_steps; ++step)
             {
               gdouble t = num_steps == 1 ? 0.0 : step / (gdouble)(num_steps-1) - 0.5;
-              
+
               /* get the interpolated pixel position for this step */
               gdouble xx = px + t*offset_x;
               gdouble yy = py + t*offset_y;
@@ -126,7 +127,7 @@ process (GeglOperation       *operation,
               gfloat *pix0, *pix1, *pix2, *pix3;
               gfloat mixy0[4];
               gfloat mixy1[4];
-              
+
               pix0 = get_pixel_color(in_buf, &src_rect, ix, iy);
               pix1 = get_pixel_color(in_buf, &src_rect, ix+1, iy);
               pix2 = get_pixel_color(in_buf, &src_rect, ix, iy+1);
@@ -138,18 +139,18 @@ process (GeglOperation       *operation,
                   sum[c] += dx*(mixy1[c] - mixy0[c]) + mixy0[c];
                 }
             }
-            
+
           for (c=0; c<4; ++c)
             *out_pixel++ = sum[c] * inv_num_steps;
         }
     }
-  
+
   gegl_buffer_set (output, roi, babl_format ("RaGaBaA float"), out_buf, GEGL_AUTO_ROWSTRIDE);
-  
+
   g_free (in_buf);
   g_free (out_buf);
 
-   
+
   return  TRUE;
 }
 
