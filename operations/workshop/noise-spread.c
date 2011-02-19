@@ -18,8 +18,8 @@
  * Based on "Spread" (Noise) GIMP plugin
  * Copyright (C) 1997 Brian Degenhardt and Federico Mena Quintero
  *
- * The workshop/whirl-pinch.c and common/pixelise.c were used as a
- * template for this op file.
+ * The workshop/whirl-pinch.c and common/pixelise.c were used as
+ * templates for this op file.
  */
 #include "config.h"
 #include <glib/gi18n-lib.h>
@@ -143,7 +143,7 @@ process (GeglOperation       *operation,
                 (o->y_amount + 1) / 2,
                 boundary.width - 2 * o->x_amount,
                 boundary.height - 2 * o->y_amount,
-		format,
+                format,
                 input,
                 output,
                 result);
