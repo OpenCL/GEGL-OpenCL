@@ -38,9 +38,6 @@
 #ifdef G_OS_WIN32
 #include <direct.h>
 #define getcwd(b,n) _getcwd(b,n)
-#ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
-#endif
 #define realpath(a,b) _fullpath(b,a,_MAX_PATH)
 #endif
 
@@ -104,24 +101,21 @@ main (gint    argc,
 
   if (o->xml)
     {
-      gchar *tmp = g_malloc(PATH_MAX);
-      tmp = getcwd (tmp, PATH_MAX);
-      path_root = tmp;
+      path_root = g_get_current_dir ();
     }
   else if (o->file)
     {
       if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
-          gchar *tmp = g_malloc(PATH_MAX);
-          tmp = getcwd (tmp, PATH_MAX);
-          path_root = tmp;
+          path_root = g_get_current_dir ();
         }
       else
         {
-          gchar real_path[PATH_MAX];
+          gchar *tmp;
           gchar *temp1 = g_strdup (o->file);
           gchar *temp2 = g_path_get_dirname (temp1);
-          path_root = g_strdup (realpath (temp2, real_path));
+          path_root = g_strdup (tmp = realpath (temp2, NULL));
+          g_free (tmp);
           g_free (temp1);
           g_free (temp2);
         }

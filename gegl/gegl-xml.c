@@ -17,9 +17,6 @@
  */
 #include "config.h"
 
-/* For clang, remove when getting rid of using PATH_MAX */
-#define _XOPEN_SOURCE 500
-
 #include <glib.h>
 #include <glib-object.h>
 #include <stdlib.h>
@@ -40,9 +37,6 @@
 #include "gegl-xml.h"
 
 #ifdef G_OS_WIN32
-#ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
-#endif
 #define realpath(a, b)    _fullpath (b, a, _MAX_PATH)
 #endif
 
@@ -129,7 +123,7 @@ set_clone_prop_as_well:
       else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec),
                             GEGL_TYPE_PARAM_FILE_PATH))
         {
-          gchar buf[PATH_MAX];
+          gchar *buf;
 
           if (g_path_is_absolute (param_value))
             {
@@ -140,15 +134,15 @@ set_clone_prop_as_well:
               gchar * absolute_path;
               if (pd->path_root)
                 {
-                  g_snprintf (buf, sizeof (buf),
-                              "%s/%s", pd->path_root, param_value);
+                  buf = g_strdup_printf ("%s/%s", pd->path_root, param_value);
                 }
               else
                 {
-                  g_snprintf (buf, sizeof (buf), "./%s", param_value);
+                  buf = g_strdup_printf ("./%s", param_value);
                 }
 
               absolute_path = realpath (buf, NULL);
+              g_free (buf);
               if (absolute_path)
                 {
                   gegl_node_set (new, param_name, absolute_path, NULL);
@@ -571,13 +565,14 @@ gegl_node_new_from_file (const gchar   *path)
   GeglNode *node = NULL;
   GError   *err  = NULL;
   gchar    *script;
-  gchar     path_root[PATH_MAX];
+  gchar    *path_root;
   gchar    *dirname;
 
   g_assert (path);
 
   dirname = g_path_get_dirname (path);
-  if (!realpath (dirname, path_root))
+  path_root = realpath (dirname, NULL);
+  if (!path_root)
     {
       goto cleanup;
     }
@@ -593,6 +588,7 @@ gegl_node_new_from_file (const gchar   *path)
   node = gegl_node_new_from_xml (script, path_root);
 
 cleanup:
+  g_free (path_root);
   g_free (dirname);
   return node;
 }
