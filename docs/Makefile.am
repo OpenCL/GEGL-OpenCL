@@ -6,7 +6,7 @@ SUBDIRS= gallery
 # is very small, and should probably be documented in a tutorial.
 #
 
-gtkdochtmldir = $(DESTDIR)$(datadir)/gtk-doc/html/gegl
+gtkdochtmldir = $(datadir)/gtk-doc/html/gegl
 
 HTML_FILES = \
 	operations.html		\

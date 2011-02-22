@@ -11,7 +11,7 @@ all: MonodocNodeConfig.exe
 MonodocNodeConfig.exe: MonodocNodeConfig.cs
 	mcs -out:$@ -r:System.Xml $<
 
-monodocdir = $(DESTDIR)$(DOCDIR)
+monodocdir = $(DOCDIR)
 monodoc_DATA = \
 	gegl-sharp-docs.zip \
 	gegl-sharp-docs.tree \
