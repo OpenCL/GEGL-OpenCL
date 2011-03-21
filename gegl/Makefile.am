@@ -1,8 +1,17 @@
+
+### GObject introspection
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
 if PLATFORM_WIN32
 no_undefined = -no-undefined
 endif
 
 SUBDIRS = buffer graph module operation process property-types
+
+CLEANFILES =
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
@@ -25,12 +34,10 @@ LIBS = \
 
 GEGL_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)
 
-GEGL_public_HEADERS =	\
+GEGL_introspectable_headers =	\
     gegl.h				\
     gegl-types.h			\
     gegl-utils.h			\
-    gegl-matrix.h			\
-    gegl-chant.h			\
     gegl-lookup.h			\
     gegl-plugin.h			\
     gegl-version.h			\
@@ -45,7 +52,12 @@ GEGL_public_HEADERS =	\
     property-types/gegl-path.h		\
     property-types/gegl-curve.h
 
-GEGL_sources = \
+GEGL_public_HEADERS = \
+	$(GEGL_introspectable_headers) \
+    gegl-matrix.h			\
+    gegl-chant.h
+
+GEGL_introspectable_sources = \
 	gegl-c.c			\
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
@@ -55,10 +67,8 @@ GEGL_sources = \
 	gegl-instrument.c		\
 	gegl-utils.c			\
 	gegl-lookup.c			\
-	gegl-matrix.c			\
 	gegl-xml.c			\
 	\
-	gegl-chant.h			\
 	gegl-lookup.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
@@ -68,10 +78,16 @@ GEGL_sources = \
 	gegl-init.h			\
 	gegl-instrument.h		\
 	gegl-module.h			\
-	gegl-matrix.h			\
 	gegl-plugin.h			\
 	gegl-types-internal.h		\
 	gegl-xml.h
+
+GEGL_sources = \
+	$(GEGL_introspectable_sources) \
+	gegl-matrix.c \
+	\
+	gegl-chant.h \
+	gegl-matrix.h
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
@@ -83,4 +99,28 @@ libgegl_@GEGL_API_VERSION@_la_LIBADD = \
 	$(top_builddir)/gegl/graph/libgraph.la			\
 	$(top_builddir)/gegl/process/libprocess.la		\
 	$(top_builddir)/gegl/property-types/libpropertytypes.la
+
+
+if HAVE_INTROSPECTION
+introspection_sources = \
+	$(GEGL_instrospectable_sources) \
+	$(GEGL_introspectable_headers)
+
+INCLUDES = $(AM_CFLAGS) $(AM_CPPFLAGS)
+
+Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
+Gegl_0_1_gir_INCLUDES = GObject-2.0
+Gegl_0_1_gir_CFLAGS = $(INCLUDES)
+Gegl_0_1_gir_LIBS = libgegl-@GEGL_API_VERSION@.la
+Gegl_0_1_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Gegl-@GEGL_API_VERSION@.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
 

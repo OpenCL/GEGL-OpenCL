@@ -394,6 +394,10 @@ fi
 
 CFLAGS="$CFLAGS $MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS"
 
+########################
+# Check GObject Introspection
+########################
+GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 ###############################
 # Checks for required libraries

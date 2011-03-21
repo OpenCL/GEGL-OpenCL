@@ -6,3 +6,5 @@
 /gegl-version.h
 /Makefile
 /Makefile.in
+/*.gir
+/*.typelib

@@ -16,6 +16,11 @@ G_BEGIN_DECLS
  * typedef gdouble GeglMatrix3 [3][3];
  */
 
+/* FIXME: Multi-dimensional arrays are not introspectable, so this
+ * header has to be excluded from the GI scan, and therefore not available to
+ * GI-based bindings.
+ * See https://bugzilla.gnome.org/show_bug.cgi?id=645817 */
+
 typedef gdouble GeglMatrix3 [3][3];
 typedef gdouble GeglMatrix2 [2][2];
 

@@ -28,7 +28,10 @@ EXTRA_DIST = 			\
 	$(built_dist_files)     \
 	autogen.sh		\
 	gegl-uninstalled.pc.in	\
-	gegl.pc.in
+	gegl.pc.in \
+	m4/introspection.m4
+
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
 
 DISTCLEANFILES = \
 	$(built_dist_files)
