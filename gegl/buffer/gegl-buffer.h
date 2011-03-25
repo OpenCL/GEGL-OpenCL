@@ -332,7 +332,7 @@ typedef enum {
  * @interpolation: the interpolation behavior to use, currently only nearest
  * neighbour is implemented for this API, bilinear, bicubic and lanczos needs
  * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST and
- * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATON_CUBIC and
+ * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC and
  * GEGL_INTERPOLATION_LANCZOS.
  *
  * Query interpolate pixel values at a given coordinate using a specified form
