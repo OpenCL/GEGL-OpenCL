@@ -24,7 +24,6 @@
 /*#include <gegl/gegl-types-internal.h>*/
 
 #include <gegl/buffer/gegl-buffer.h>
-#include <gegl/module/geglmoduletypes.h>
 #include <gegl/module/geglmodule.h>
 #include <gegl/operation/gegl-operation.h>
 
