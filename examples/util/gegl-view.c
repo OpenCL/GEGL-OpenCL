@@ -93,8 +93,14 @@ static gboolean  button_press_event   (GtkWidget      *widget,
                                        GdkEventButton *event);
 static gboolean  button_release_event (GtkWidget      *widget,
                                        GdkEventButton *event);
+#ifdef HAVE_GTK2
 static gboolean  expose_event         (GtkWidget      *widget,
                                        GdkEventExpose *event);
+#endif
+#ifdef HAVE_GTK3
+static gboolean  draw                 (GtkWidget * widget,
+                                       cairo_t *cr);
+#endif
 
 
 static void
@@ -110,7 +116,14 @@ gegl_view_class_init (GeglViewClass * klass)
   widget_class->motion_notify_event = motion_notify_event;
   widget_class->button_press_event  = button_press_event;
   widget_class->button_release_event = button_release_event;
+
+#ifdef HAVE_GTK2
   widget_class->expose_event        = expose_event;
+#endif
+
+#ifdef HAVE_GTK3
+  widget_class->draw                = draw;
+#endif
 
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x",
@@ -388,6 +401,8 @@ motion_notify_event (GtkWidget      *widget,
 
       gdk_window_scroll (gtk_widget_get_window (widget), diff_x, diff_y);
 
+
+
       g_object_notify (G_OBJECT (view), "x");
       g_object_notify (G_OBJECT (view), "y");
     }
@@ -429,56 +444,94 @@ motion_notify_event (GtkWidget      *widget,
   return FALSE;
 }
 
+static void
+draw_implementation (GeglViewPrivate *priv, cairo_t *cr, GdkRectangle *rect)
+{
+  cairo_surface_t *surface = NULL;
+  guchar          *buf = NULL;
+  Babl            *format = NULL;
+  GeglRectangle   roi;
+
+  roi.x = priv->x + rect->x;
+  roi.y = priv->y + rect->y;
+  roi.width  = rect->width;
+  roi.height = rect->height;
+
+  buf = g_malloc ((roi.width) * (roi.height) * 4);
+
+  format = babl_format_new (babl_model ("RGBA"), babl_type ("u8"),
+                            babl_component ("B"),
+                            babl_component ("G"),
+                            babl_component ("R"),
+                            babl_component ("A"),
+                            NULL);
+  gegl_node_blit (priv->node,
+                  priv->scale,
+                  &roi,
+                  format,
+                  (gpointer)buf,
+                  GEGL_AUTO_ROWSTRIDE,
+                  GEGL_BLIT_CACHE | (priv->block ? 0 : GEGL_BLIT_DIRTY));
+
+  surface = cairo_image_surface_create_for_data (buf, 
+                                                 CAIRO_FORMAT_ARGB32, 
+                                                 roi.width, roi.height, 
+                                                 roi.width*4);
+  cairo_set_source_surface (cr, surface, rect->x, rect->y);
+  cairo_paint (cr);
+
+  cairo_surface_finish (surface);
+  g_free (buf);
+
+}
+
+#ifdef HAVE_GTK3
+static gboolean
+draw (GtkWidget * widget, cairo_t *cr)
+{
+  GeglView      *view = GEGL_VIEW (widget);
+  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
+  GdkRectangle rect;
+
+  if (!priv->node)
+    return FALSE;
+
+  gdk_cairo_get_clip_rectangle (cr, &rect);
+
+  draw_implementation (priv, cr, &rect);
+
+  gegl_view_repaint (view);
+
+  return FALSE;
+}
+#endif
+
+#ifdef HAVE_GTK2
 static gboolean
 expose_event (GtkWidget      *widget,
               GdkEventExpose *event)
 {
   GeglView      *view = GEGL_VIEW (widget);
   GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
-  GdkRectangle  *rectangles;
-  gint           count;
-  gint           i;
+  cairo_t      *cr;
+  GdkRectangle rect;
 
-  if (! priv->node)
+  if (!priv->node)
     return FALSE;
 
-  gdk_region_get_rectangles (event->region, &rectangles, &count);
+  cr = gdk_cairo_create (widget->window);
+  gdk_cairo_region (cr, event->region);
+  cairo_clip (cr);
+  gdk_region_get_clipbox (event->region, &rect);
 
-  for (i=0; i<count; i++)
-    {
-      GeglRectangle  roi;
-      guchar        *buf;
-
-      roi.x = priv->x + rectangles[i].x;
-      roi.y = priv->y + rectangles[i].y;
-      roi.width  = rectangles[i].width;
-      roi.height = rectangles[i].height;
-
-      buf = g_malloc ((roi.width) * (roi.height) * 3);
-
-      gegl_node_blit (priv->node,
-                      priv->scale,
-                      &roi,
-                      babl_format ("R'G'B' u8"),
-                      (gpointer)buf,
-                      GEGL_AUTO_ROWSTRIDE,
-                      GEGL_BLIT_CACHE|(priv->block?0:GEGL_BLIT_DIRTY));
-
-      gdk_draw_rgb_image (gtk_widget_get_window (widget),
-                          gtk_widget_get_style (widget)->black_gc,
-                          rectangles[i].x, rectangles[i].y,
-                          rectangles[i].width, rectangles[i].height,
-                          GDK_RGB_DITHER_NONE,
-                          buf, roi.width  * 3);
-      g_free (buf);
-    }
-
-  g_free (rectangles);
+  draw_implementation (priv, cr, &rect);
+  cairo_destroy (cr);
 
   gegl_view_repaint (view);
 
   return FALSE;
 }
+#endif
 
 static gboolean
 task_monitor (GeglView *view)
