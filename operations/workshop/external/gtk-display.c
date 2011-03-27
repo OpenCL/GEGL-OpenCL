@@ -27,7 +27,7 @@ gegl_chant_string  (window_title, _("Window Title"), "",
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_TYPE_SINK
 #define GEGL_CHANT_C_FILE       "gtk-display.c"
 
 #include "gegl-chant.h"
@@ -44,29 +44,62 @@ typedef struct
   guchar    *buf;
 } Priv;
 
+
+static void
+draw_implementation (Priv *priv, cairo_t *cr)
+{
+  cairo_surface_t *surface = NULL;
+
+  if (!priv->buf)
+    return;
+  
+  surface = cairo_image_surface_create_for_data (priv->buf,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 priv->width, priv->height,
+                                                 priv->width*4);
+
+  cairo_set_source_surface (cr, surface, 0.0, 0.0);
+  cairo_paint (cr);
+
+  cairo_surface_finish (surface);
+}
+
+#ifdef HAVE_GTK2
 static gboolean
-expose_event (GtkWidget *widget, GdkEventExpose * event)
+expose_event (GtkWidget *widget, GdkEventExpose * event, gpointer user_data)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (g_object_get_data (G_OBJECT (widget), "op"));
+  Priv       *priv = (Priv*)o->chant_data;
+  cairo_t *cr = gdk_cairo_create (widget->window);
+
+  if (event->area.x + event->area.width > priv->width)
+    event->area.width = priv->width - event->area.x;
+  if (event->area.y + event->area.height > priv->height)
+    event->area.height = priv->height - event->area.y;
+
+  cairo_rectangle (cr, event->area.x, event->area.y,
+                   event->area.width, event->area.height);
+  cairo_clip (cr);
+
+  draw_implementation (priv, cr);
+  cairo_destroy (cr);
+
+  return TRUE;
+}
+#endif
+
+#ifdef HAVE_GTK3
+static gboolean
+draw (GtkWidget * widget, cairo_t *cr, gpointer user_data)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (g_object_get_data (G_OBJECT (widget), "op"));
   Priv       *priv = (Priv*)o->chant_data;
 
-  if (priv->buf)
-    {
-      if (event->area.x + event->area.width > priv->width)
-        event->area.width = priv->width - event->area.x;
-      if (event->area.y + event->area.height > priv->height)
-        event->area.height = priv->height - event->area.y;
+  draw_implementation (priv, cr);
 
-      gdk_draw_rgb_32_image (widget->window,
-                             widget->style->black_gc,
-                             event->area.x, event->area.y,
-                             event->area.width, event->area.height,
-                             GDK_RGB_DITHER_NONE,
-        priv->buf + (event->area.y * priv->width + event->area.x) * 4,
-        (unsigned)(priv->width * 4));
-    }
   return TRUE;
 }
+#endif
 
 static Priv *init_priv (GeglOperation *operation)
 {
@@ -77,6 +110,8 @@ static Priv *init_priv (GeglOperation *operation)
       Priv *priv = g_new0 (Priv, 1);
       o->chant_data = (void*) priv;
 
+      gtk_init (0, 0);
+
       priv->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       priv->drawing_area = gtk_drawing_area_new ();
       gtk_container_add (GTK_CONTAINER (priv->window), priv->drawing_area);
@@ -85,10 +120,17 @@ static Priv *init_priv (GeglOperation *operation)
       gtk_widget_set_size_request (priv->drawing_area, priv->width, priv->height);
       gtk_window_set_title (GTK_WINDOW (priv->window), o->window_title);
 
+#ifdef HAVE_GTK2
       g_signal_connect (G_OBJECT (priv->drawing_area), "expose_event",
                         G_CALLBACK (expose_event), priv);
-      g_object_set_data (G_OBJECT (priv->drawing_area), "op", operation);
+#endif
 
+#ifdef HAVE_GTK3
+      g_signal_connect (G_OBJECT (priv->drawing_area), "draw",
+                        G_CALLBACK (draw), priv);
+#endif
+
+      g_object_set_data (G_OBJECT (priv->drawing_area), "op", operation);
 
       gtk_widget_show_all (priv->window);
 
@@ -100,11 +142,12 @@ static Priv *init_priv (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         GeglBuffer          *source,
          const GeglRectangle *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   Priv       *priv = init_priv (operation);
+  GeglBuffer *source = NULL;
+  Babl       *format = NULL;
 
   g_assert (input);
 
@@ -122,7 +165,14 @@ process (GeglOperation       *operation,
 
   source = gegl_buffer_create_sub_buffer (input, result);
 
-  gegl_buffer_get (source, 1.0, NULL, babl_format ("R'G'B'A u8"), priv->buf, GEGL_AUTO_ROWSTRIDE);
+  format = babl_format_new (babl_model ("RGBA"), babl_type ("u8"),
+                            babl_component ("B"),
+                            babl_component ("G"),
+                            babl_component ("R"),
+                            babl_component ("A"),
+                            NULL);
+  gegl_buffer_get (source, 1.0, NULL, format, 
+                   priv->buf, GEGL_AUTO_ROWSTRIDE);
   gtk_widget_queue_draw (priv->drawing_area);
 
   if (priv->window)
@@ -139,7 +189,7 @@ process (GeglOperation       *operation,
            );
         }
 
-      if (0)while (gtk_events_pending ())
+      while (gtk_events_pending ())
         {
           gtk_main_iteration ();
         }
@@ -171,13 +221,13 @@ dispose (GObject *object)
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationClass     *operation_class;
+  GeglOperationSinkClass *sink_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
-  filter_class->process = process;
+  sink_class->process = process;
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
   operation_class->name        = "gegl:gtk-display";
