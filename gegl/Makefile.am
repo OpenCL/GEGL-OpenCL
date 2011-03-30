@@ -15,6 +15,7 @@ CLEANFILES =
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
+	-I$(top_srcdir)/gegl \
 	-I$(top_builddir)/gegl/buffer \
 	-I$(top_srcdir)/gegl/buffer \
 	-I$(top_builddir)/gegl/property-types \
@@ -109,7 +110,7 @@ introspection_sources = \
 INCLUDES = $(AM_CFLAGS) $(AM_CPPFLAGS)
 
 Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
-Gegl_0_1_gir_INCLUDES = GObject-2.0
+Gegl_0_1_gir_INCLUDES = GObject-2.0 GLib-2.0 Babl-0.1
 Gegl_0_1_gir_CFLAGS = $(INCLUDES)
 Gegl_0_1_gir_LIBS = libgegl-@GEGL_API_VERSION@.la
 Gegl_0_1_gir_FILES = $(introspection_sources)
