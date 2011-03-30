@@ -50,11 +50,11 @@ GEGL_introspectable_headers =	\
     buffer/gegl-tile-source.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\
-    property-types/gegl-path.h		\
     property-types/gegl-curve.h
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers) \
+    property-types/gegl-path.h		\
     gegl-matrix.h			\
     gegl-chant.h
 
