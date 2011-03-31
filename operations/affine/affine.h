@@ -32,7 +32,7 @@ struct _OpAffineClass
   GeglOperationFilterClass parent_class;
 
   void (* create_matrix) (OpAffine    *affine,
-                          GeglMatrix3  matrix);
+                          GeglMatrix3  *matrix);
 };
 
 GType op_affine_get_type (void) G_GNUC_CONST;

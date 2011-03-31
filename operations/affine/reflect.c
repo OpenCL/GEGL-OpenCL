@@ -40,7 +40,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 
 static void
 create_matrix (OpAffine    *op,
-               GeglMatrix3  matrix)
+               GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
   gdouble ux=0, uy=0;
@@ -53,9 +53,9 @@ create_matrix (OpAffine    *op,
   ux /= l;
   uy /= l;
 
-  matrix [0][0] = 2*ux*ux - 1;
-  matrix [1][1] = 2*uy*uy - 1;
-  matrix [0][1] = matrix [1][0] = 2*ux*uy;
+  matrix->coeff [0][0] = 2*ux*ux - 1;
+  matrix->coeff [1][1] = 2*uy*uy - 1;
+  matrix->coeff [0][1] = matrix->coeff [1][0] = 2*ux*uy;
 }
 
 

@@ -235,10 +235,10 @@ gegl_sampler_downsizefast_get   (      GeglSampler* self,
    */
   GeglMatrix2* const inverse_jacobian = self->inverse_jacobian;
 
-  const gdouble Jinv_11 = *inverse_jacobian[0][0];
-  const gdouble Jinv_12 = *inverse_jacobian[0][1];
-  const gdouble Jinv_21 = *inverse_jacobian[1][0];
-  const gdouble Jinv_22 = *inverse_jacobian[1][1];
+  const gdouble Jinv_11 = inverse_jacobian->coeff[0][0];
+  const gdouble Jinv_12 = inverse_jacobian->coeff[0][1];
+  const gdouble Jinv_21 = inverse_jacobian->coeff[1][0];
+  const gdouble Jinv_22 = inverse_jacobian->coeff[1][1];
 
   /*
    * Preimages of (1,1) (top right corner) and (1,-1) (bottom right

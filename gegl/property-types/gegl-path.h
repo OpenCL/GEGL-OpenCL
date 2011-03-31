@@ -185,7 +185,7 @@ gchar              * gegl_path_to_string      (GeglPath    *path);
  * length to be changed by the transform.
  */
 void                 gegl_path_set_matrix     (GeglPath    *path,
-                                               GeglMatrix3  matrix);
+                                               GeglMatrix3 *matrix);
 
 /**
  * gegl_path_get_matrix:
@@ -198,7 +198,7 @@ void                 gegl_path_set_matrix     (GeglPath    *path,
  * such node.
  */
 void                 gegl_path_get_matrix     (GeglPath    *path,
-                                               GeglMatrix3  matrix);
+                                               GeglMatrix3 *matrix);
 
 /**
  * gegl_path_closest_point:

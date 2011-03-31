@@ -253,7 +253,7 @@ static void class_init (GeglOperationClass *operation_class);
 #endif
 
 static void create_matrix (OpAffine    *affine,
-                           GeglMatrix3  matrix);
+                           GeglMatrix3 *matrix);
 
 static void
 gegl_chant_class_init (ChantClass * klass)

@@ -36,14 +36,14 @@ gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
 
 static void
 create_matrix (OpAffine    *op,
-               GeglMatrix3  matrix)
+               GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
   gdouble radians = chant->degrees * (2 * G_PI / 360.);
 
-  matrix [0][0] = matrix [1][1] = cos (radians);
-  matrix [0][1] = sin (radians);
-  matrix [1][0] = - matrix [0][1];
+  matrix->coeff [0][0] = matrix->coeff [1][1] = cos (radians);
+  matrix->coeff [0][1] = sin (radians);
+  matrix->coeff [1][0] = - matrix->coeff [0][1];
 }
 
 #endif

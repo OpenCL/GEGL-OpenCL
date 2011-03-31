@@ -79,7 +79,7 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
   if (o->transform && o->transform[0] != '\0')
     {
-      GeglMatrix3 matrix;
+      GeglMatrix3 *matrix = gegl_matrix3_new ();
       gegl_matrix3_parse_string (matrix, o->transform);
       gegl_path_set_matrix (o->d, matrix);
     }

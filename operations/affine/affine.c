@@ -64,7 +64,7 @@ static void          gegl_affine_bounding_box              (gdouble             
 static gboolean      gegl_affine_is_intermediate_node      (OpAffine             *affine);
 static gboolean      gegl_affine_is_composite_node         (OpAffine             *affine);
 static void          gegl_affine_get_source_matrix         (OpAffine             *affine,
-                                                            GeglMatrix3           output);
+                                                            GeglMatrix3          *output);
 static GeglRectangle gegl_affine_get_bounding_box          (GeglOperation        *op);
 static GeglRectangle gegl_affine_get_invalidated_by_change (GeglOperation        *operation,
                                                             const gchar          *input_pad,
@@ -86,9 +86,9 @@ static GeglNode    * gegl_affine_detect                    (GeglOperation       
                                                             gint                  x,
                                                             gint                  y);
 
-static gboolean      gegl_affine_matrix3_allow_fast_translate      (GeglMatrix3 matrix);
-static gboolean      gegl_affine_matrix3_allow_fast_reflect_x      (GeglMatrix3 matrix);
-static gboolean      gegl_affine_matrix3_allow_fast_reflect_y      (GeglMatrix3 matrix);
+static gboolean      gegl_affine_matrix3_allow_fast_translate      (GeglMatrix3 *matrix);
+static gboolean      gegl_affine_matrix3_allow_fast_reflect_x      (GeglMatrix3 *matrix);
+static gboolean      gegl_affine_matrix3_allow_fast_reflect_y      (GeglMatrix3 *matrix);
 
 static void          gegl_affine_fast_reflect_x            (GeglBuffer           *dest,
                                                             GeglBuffer           *src,
@@ -342,7 +342,7 @@ gegl_affine_set_property (GObject      *object,
 
 static void
 gegl_affine_create_matrix (OpAffine    *affine,
-                           GeglMatrix3  matrix)
+                           GeglMatrix3 *matrix)
 {
   gegl_matrix3_identity (matrix);
 
@@ -352,7 +352,7 @@ gegl_affine_create_matrix (OpAffine    *affine,
 
 static void
 gegl_affine_create_composite_matrix (OpAffine    *affine,
-                                     GeglMatrix3  matrix)
+                                     GeglMatrix3 *matrix)
 {
   gegl_affine_create_matrix (affine, matrix);
 
@@ -363,8 +363,8 @@ gegl_affine_create_composite_matrix (OpAffine    *affine,
     {
       GeglMatrix3 source;
 
-      gegl_affine_get_source_matrix (affine, source);
-      gegl_matrix3_multiply (source, matrix, matrix);
+      gegl_affine_get_source_matrix (affine, &source);
+      gegl_matrix3_multiply (&source, matrix, matrix);
     }
 }
 
@@ -453,7 +453,7 @@ gegl_affine_is_composite_node (OpAffine *affine)
 
 static void
 gegl_affine_get_source_matrix (OpAffine    *affine,
-                               GeglMatrix3  output)
+                               GeglMatrix3 *output)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -490,10 +490,10 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
-  gegl_affine_create_composite_matrix (affine, matrix);
+  gegl_affine_create_composite_matrix (affine, &matrix);
 
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (matrix))
+      gegl_matrix3_is_identity (&matrix))
     {
       return in_rect;
     }
@@ -516,7 +516,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   have_points [7] = in_rect.y + in_rect.height ;
 
   for (i = 0; i < 8; i += 2)
-    gegl_matrix3_transform_point (matrix,
+    gegl_matrix3_transform_point (&matrix,
                              have_points + i, have_points + i + 1);
 
   gegl_affine_bounding_box (have_points, 4, &have_rect);
@@ -535,7 +535,7 @@ gegl_affine_detect (GeglOperation *operation,
   gint         i;
 
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (inverse))
+      gegl_matrix3_is_identity (&inverse))
     {
       return gegl_operation_detect (source_node->operation, x, y);
     }
@@ -543,11 +543,11 @@ gegl_affine_detect (GeglOperation *operation,
   need_points [0] = x;
   need_points [1] = y;
 
-  gegl_affine_create_matrix (affine, inverse);
-  gegl_matrix3_invert (inverse);
+  gegl_affine_create_matrix (affine, &inverse);
+  gegl_matrix3_invert (&inverse);
 
   for (i = 0; i < 2; i += 2)
-    gegl_matrix3_transform_point (inverse,
+    gegl_matrix3_transform_point (&inverse,
                              need_points + i, need_points + i + 1);
 
   return gegl_operation_detect (source_node->operation,
@@ -573,11 +573,11 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
   context_rect = sampler->context_rect;
   g_object_unref (sampler);
 
-  gegl_affine_create_composite_matrix (affine, inverse);
-  gegl_matrix3_invert (inverse);
+  gegl_affine_create_composite_matrix (affine, &inverse);
+  gegl_matrix3_invert (&inverse);
 
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (inverse))
+      gegl_matrix3_is_identity (&inverse))
     {
       return requested_rect;
     }
@@ -595,7 +595,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
   need_points [7] = requested_rect.y + requested_rect.height ;
 
   for (i = 0; i < 8; i += 2)
-    gegl_matrix3_transform_point (inverse,
+    gegl_matrix3_transform_point (&inverse,
                              need_points + i, need_points + i + 1);
   gegl_affine_bounding_box (need_points, 4, &need_rect);
 
@@ -624,21 +624,21 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   context_rect = sampler->context_rect;
   g_object_unref (sampler);
 
-  gegl_affine_create_matrix (affine, matrix);
+  gegl_affine_create_matrix (affine, &matrix);
 
   if (affine->origin_x || affine->origin_y)
-    gegl_matrix3_originate (matrix, affine->origin_x, affine->origin_y);
+    gegl_matrix3_originate (&matrix, affine->origin_x, affine->origin_y);
 
   if (gegl_affine_is_composite_node (affine))
     {
       GeglMatrix3 source;
 
-      gegl_affine_get_source_matrix (affine, source);
-      gegl_matrix3_multiply (source, matrix, matrix);
+      gegl_affine_get_source_matrix (affine, &source);
+      gegl_matrix3_multiply (&source, &matrix, &matrix);
     }
 
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (matrix))
+      gegl_matrix3_is_identity (&matrix))
     {
       return region;
     }
@@ -661,7 +661,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   affected_points [7] = region.y + region.height ;
 
   for (i = 0; i < 8; i += 2)
-    gegl_matrix3_transform_point (matrix,
+    gegl_matrix3_transform_point (&matrix,
                              affected_points + i, affected_points + i + 1);
 
   gegl_affine_bounding_box (affected_points, 4, &affected_rect);
@@ -672,7 +672,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
 static void
 affine_generic (GeglBuffer  *dest,
                 GeglBuffer  *src,
-                GeglMatrix3  matrix,
+                GeglMatrix3 *matrix,
                 GeglSampler *sampler)
 {
   GeglBufferIterator *i;
@@ -681,7 +681,7 @@ affine_generic (GeglBuffer  *dest,
   gfloat * restrict     dest_buf,
                        *dest_ptr;
   GeglMatrix3           inverse;
-  GeglMatrix2           inverse_jacobian;
+  GeglMatrix2          *inverse_jacobian;
   gdouble               u_start,
                         v_start,
                         u_float,
@@ -692,6 +692,7 @@ affine_generic (GeglBuffer  *dest,
   gint                  dest_pixels;
 
   format = babl_format ("RaGaBaA float");
+  inverse_jacobian = g_new(GeglMatrix2, 1);  
 
   /* XXX: fast paths as existing in files in the same dir as affine.c
    *      should probably be hooked in here, and bailing out before using
@@ -707,22 +708,24 @@ affine_generic (GeglBuffer  *dest,
       GeglRectangle *roi = &i->roi[0];
       dest_buf           = (gfloat *)i->data[0];
 
-      gegl_matrix3_copy (inverse, matrix);
-      gegl_matrix3_invert (inverse);
-      inverse_jacobian[0][0] = inverse[0][0];
-      inverse_jacobian[0][1] = inverse[0][1];
-      inverse_jacobian[1][0] = inverse[1][0];
-      inverse_jacobian[1][1] = inverse[1][1];
+      gegl_matrix3_copy_into (&inverse, matrix);
+      gegl_matrix3_invert (&inverse);
+      inverse_jacobian->coeff[0][0] = inverse.coeff[0][0];
+      inverse_jacobian->coeff[0][1] = inverse.coeff[0][1];
+      inverse_jacobian->coeff[1][0] = inverse.coeff[1][0];
+      inverse_jacobian->coeff[1][1] = inverse.coeff[1][1];
 
      /* set inverse_jacobian for samplers that support it */
-      sampler->inverse_jacobian = &inverse_jacobian;
+      sampler->inverse_jacobian = inverse_jacobian;
 
-      u_start = inverse[0][0] * roi->x + inverse[0][1] * roi->y + inverse[0][2];
-      v_start = inverse[1][0] * roi->x + inverse[1][1] * roi->y + inverse[1][2];
+      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1]
+                    * roi->y + inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1]
+                    * roi->y + inverse.coeff[1][2];
 
       /* correct rounding on e.g. negative scaling (is this sound?) */
-      if (inverse [0][0] < 0.)  u_start -= .001;
-      if (inverse [1][1] < 0.)  v_start -= .001;
+      if (inverse.coeff [0][0] < 0.)  u_start -= .001;
+      if (inverse.coeff [1][1] < 0.)  v_start -= .001;
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
@@ -733,46 +736,46 @@ affine_generic (GeglBuffer  *dest,
              {
                gegl_sampler_get (sampler, u_float, v_float, dest_ptr);
                dest_ptr+=4;
-               u_float += inverse [0][0];
-               v_float += inverse [1][0];
+               u_float += inverse.coeff [0][0];
+               v_float += inverse.coeff [1][0];
              }
-           u_start += inverse [0][1];
-           v_start += inverse [1][1];
+           u_start += inverse.coeff [0][1];
+           v_start += inverse.coeff [1][1];
         }
     }
 }
 
 static gboolean
-gegl_affine_matrix3_allow_fast_translate (GeglMatrix3 matrix)
+gegl_affine_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
 {
-  if (! GEGL_FLOAT_EQUAL (matrix[0][2], (gint) matrix[0][2]) ||
-      ! GEGL_FLOAT_EQUAL (matrix[1][2], (gint) matrix[1][2]))
+  if (! GEGL_FLOAT_EQUAL (matrix->coeff[0][2], (gint) matrix->coeff[0][2]) ||
+      ! GEGL_FLOAT_EQUAL (matrix->coeff[1][2], (gint) matrix->coeff[1][2]))
     return FALSE;
   return gegl_matrix3_is_translate (matrix);
 }
 
 static gboolean
-gegl_affine_matrix3_allow_fast_reflect_x (GeglMatrix3 matrix)
+gegl_affine_matrix3_allow_fast_reflect_x (GeglMatrix3 *matrix)
 {
   GeglMatrix3 copy;
 
-  if (! GEGL_FLOAT_EQUAL (matrix[1][1], -1.0))
+  if (! GEGL_FLOAT_EQUAL (matrix->coeff[1][1], -1.0))
     return FALSE;
-  gegl_matrix3_copy (copy, matrix);
-  copy[1][1] = 1.;
-  return gegl_affine_matrix3_allow_fast_translate (copy);
+  gegl_matrix3_copy_into (&copy, matrix);
+  copy.coeff[1][1] = 1.;
+  return gegl_affine_matrix3_allow_fast_translate (&copy);
 }
 
 static gboolean
-gegl_affine_matrix3_allow_fast_reflect_y (GeglMatrix3 matrix)
+gegl_affine_matrix3_allow_fast_reflect_y (GeglMatrix3 *matrix)
 {
   GeglMatrix3 copy;
 
-  if (! GEGL_FLOAT_EQUAL (matrix[0][0], -1.0))
+  if (! GEGL_FLOAT_EQUAL (matrix->coeff[0][0], -1.0))
     return FALSE;
-  gegl_matrix3_copy (copy, matrix);
-  copy[0][0] = 1.;
-  return gegl_affine_matrix3_allow_fast_translate (copy);
+  gegl_matrix3_copy_into (&copy, matrix);
+  copy.coeff[0][0] = 1.;
+  return gegl_affine_matrix3_allow_fast_translate (&copy);
 }
 
 static void
@@ -872,10 +875,10 @@ gegl_affine_process (GeglOperation        *operation,
   GeglMatrix3          matrix;
   OpAffine            *affine = (OpAffine *) operation;
 
-  gegl_affine_create_composite_matrix (affine, matrix);
+  gegl_affine_create_composite_matrix (affine, &matrix);
 
   if (gegl_affine_is_intermediate_node (affine) ||
-      gegl_matrix3_is_identity (matrix))
+      gegl_matrix3_is_identity (&matrix))
     {
       /* passing straight through (like gegl:nop) */
       input  = gegl_operation_context_get_source (context, "input");
@@ -887,8 +890,8 @@ gegl_affine_process (GeglOperation        *operation,
 
       gegl_operation_context_take_object (context, "output", G_OBJECT (input));
     }
-  else if (gegl_affine_matrix3_allow_fast_translate (matrix) ||
-           (gegl_matrix3_is_translate (matrix) &&
+  else if (gegl_affine_matrix3_allow_fast_translate (&matrix) ||
+           (gegl_matrix3_is_translate (&matrix) &&
             ! strcmp (affine->filter, "nearest")))
     {
       /* doing a buffer shifting trick, (enhanced nop) */
@@ -896,8 +899,8 @@ gegl_affine_process (GeglOperation        *operation,
 
       output = g_object_new (GEGL_TYPE_BUFFER,
                              "source",    input,
-                             "shift-x",   (int)-matrix[0][2],
-                             "shift-y",   (int)-matrix[1][2],
+                             "shift-x",   (int)-matrix.coeff[0][2],
+                             "shift-y",   (int)-matrix.coeff[1][2],
                              "abyss-width", -1,  /* turn of abyss
                                                     (relying on abyss
                                                     of source) */
@@ -911,7 +914,7 @@ gegl_affine_process (GeglOperation        *operation,
       if (input != NULL)
         g_object_unref (input);
     }
-  else if (gegl_affine_matrix3_allow_fast_reflect_x (matrix))
+  else if (gegl_affine_matrix3_allow_fast_reflect_x (&matrix))
     {
       GeglRectangle      src_rect;
       GeglSampler       *sampler;
@@ -937,7 +940,7 @@ gegl_affine_process (GeglOperation        *operation,
       if (input != NULL)
         g_object_unref (input);
     }
-  else if (gegl_affine_matrix3_allow_fast_reflect_y (matrix))
+  else if (gegl_affine_matrix3_allow_fast_reflect_y (&matrix))
     {
       GeglRectangle      src_rect;
       GeglSampler       *sampler;
@@ -974,7 +977,7 @@ gegl_affine_process (GeglOperation        *operation,
       sampler = op_affine_sampler (affine);
       g_object_set(sampler, "buffer", input, NULL);
       gegl_sampler_prepare (sampler);
-      affine_generic (output, input, matrix, sampler);
+      affine_generic (output, input, &matrix, sampler);
       g_object_unref(sampler->buffer);
       sampler->buffer = NULL;
       g_object_unref (sampler);
