@@ -16,3 +16,5 @@ if __name__ == '__main__':
     # Right now just a sanity check
     node = Gegl.Node.new()
     print dir(node)
+
+    print dir(Gegl.Matrix3)

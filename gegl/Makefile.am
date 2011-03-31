@@ -39,6 +39,7 @@ GEGL_introspectable_headers =	\
     gegl.h				\
     gegl-types.h			\
     gegl-utils.h			\
+    gegl-matrix.h			\
     gegl-lookup.h			\
     gegl-plugin.h			\
     gegl-version.h			\
@@ -50,12 +51,11 @@ GEGL_introspectable_headers =	\
     buffer/gegl-tile-source.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\
+    property-types/gegl-path.h		\
     property-types/gegl-curve.h
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers) \
-    property-types/gegl-path.h		\
-    gegl-matrix.h			\
     gegl-chant.h
 
 GEGL_introspectable_sources = \
@@ -69,6 +69,7 @@ GEGL_introspectable_sources = \
 	gegl-utils.c			\
 	gegl-lookup.c			\
 	gegl-xml.c			\
+	gegl-matrix.c \
 	\
 	gegl-lookup.h			\
 	gegl-config.h			\
@@ -81,14 +82,12 @@ GEGL_introspectable_sources = \
 	gegl-module.h			\
 	gegl-plugin.h			\
 	gegl-types-internal.h		\
-	gegl-xml.h
+	gegl-xml.h \
+	gegl-matrix.h
 
 GEGL_sources = \
 	$(GEGL_introspectable_sources) \
-	gegl-matrix.c \
-	\
-	gegl-chant.h \
-	gegl-matrix.h
+	gegl-chant.h
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
