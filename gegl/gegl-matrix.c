@@ -41,9 +41,23 @@ static void gegl_matrix3_debug (GeglMatrix3 *matrix)
 #endif
 
 GeglMatrix3 *
-gegl_matrix3_new ()
+gegl_matrix3_new (void)
 {
   return g_new0(GeglMatrix3, 1);
+}
+
+GType
+gegl_matrix3_get_type (void)
+{
+  static GType matrix_type = 0;
+
+  if (!matrix_type) {
+    matrix_type = g_boxed_type_register_static ("GeglMatrix3",
+                                               (GBoxedCopyFunc) gegl_matrix3_copy,
+                                               (GBoxedFreeFunc) g_free);
+  }
+
+  return matrix_type;
 }
 
 void
@@ -103,6 +117,12 @@ gegl_matrix3_copy_into (GeglMatrix3 *dst,
   memcpy (dst->coeff [0], src->coeff [0], 3 * sizeof (gdouble));
   memcpy (dst->coeff [1], src->coeff [1], 3 * sizeof (gdouble));
   memcpy (dst->coeff [2], src->coeff [2], 3 * sizeof (gdouble));
+}
+
+GeglMatrix3 *
+gegl_matrix3_copy (GeglMatrix3 *matrix)
+{
+  return (GeglMatrix3 *) g_memdup (matrix, sizeof (GeglMatrix3));
 }
 
 gdouble

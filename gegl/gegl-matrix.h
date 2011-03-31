@@ -3,24 +3,39 @@
 
 
 #include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
+/* Currenly only used internally.
+ * Note: If making use of this in public API, add a boxed type for introspection
+ */
+typedef struct {
+    gdouble coeff [2][2];
+} GeglMatrix2;
+
 /***
- * GeglMatrix:
+ * GeglMatrix3:
  *
- * #GeglMatrix a 3x3 matrix for GEGL represented by the structure:
+ * #GeglMatrix3 is a 3x3 matrix for GEGL.
  * Matrixes are currently used by #GeglPath and the affine operations,
  * they might be used more centrally in the core of GEGL later.
  *
  */
-
 typedef struct {
     gdouble coeff[3][3];
 } GeglMatrix3;
-typedef struct {
-    gdouble coeff [2][2];
-} GeglMatrix2;
+
+#define GEGL_TYPE_MATRIX3               (gegl_matrix3_get_type ())
+#define GEGL_VALUE_HOLDS_MATRIX3(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GEGL_TYPE_MATRIX3))
+
+/**
+ * gegl_matrix3_get_type:
+ *
+ * Returns: the #GType for GeglMatrix3 objects
+ *
+ **/
+GType         gegl_matrix3_get_type     (void) G_GNUC_CONST;
 
 /**
  * gegl_matrix3_new:
@@ -88,6 +103,14 @@ gboolean   gegl_matrix3_is_translate    (GeglMatrix3 *matrix);
  */
 void  gegl_matrix3_copy_into (GeglMatrix3 *dst, 
                               GeglMatrix3 *src);
+
+/**
+ * gegl_matrix3_copy:
+ * @src: a #GeglMatrix
+ *
+ * Returns a copy of @src.
+ */
+GeglMatrix3 *   gegl_matrix3_copy (GeglMatrix3 *matrix);
 
 /**
  * gegl_matrix3_determinant:
