@@ -38,6 +38,7 @@ TESTS = \
   run-fattal02.xml.sh                  \
   run-hdr-color.xml.sh                 \
   run-mantiuk06.xml.sh                 \
+  run-pixelise.xml.sh                  \
   run-reflect.xml.sh                   \
   run-reflect2.xml.sh                  \
   run-reinhard05.xml.sh                \
