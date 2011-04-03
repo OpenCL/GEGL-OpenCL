@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE(no-define dist-bzip2)
 ###############
 # Generic stuff
 ###############
-  
+
 dnl Checks for programs.
 AC_ISC_POSIX
 AM_PROG_CC_STDC
@@ -21,7 +21,7 @@ dnl VALA
 vapidir=$(pkg-config --variable vapidir vala-1.0)
 AC_SUBST(vapidir)
 
-PKG_CHECK_MODULES(VALA_TEST, [glib-2.0 gobject-2.0 gegl])
+PKG_CHECK_MODULES(VALA_TEST, [glib-2.0 gobject-2.0 gegl gtk+-2.0])
 
 
 AC_CONFIG_FILES([
