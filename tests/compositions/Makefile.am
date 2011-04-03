@@ -36,6 +36,7 @@ TESTS = \
   run-downsizetest-broken.xml.sh       \
   run-downsmoothtest-broken.xml.sh     \
   run-fattal02.xml.sh                  \
+  run-gamma.xml.sh                     \
   run-hdr-color.xml.sh                 \
   run-mantiuk06.xml.sh                 \
   run-pixelise.xml.sh                  \
