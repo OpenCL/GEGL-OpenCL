@@ -140,8 +140,50 @@ dependencies.
 
 == Tests
 
-There are regression tests in the subfolder "tests". These are run using:
- make check
+There are regression tests in the subfolder `tests`. These are run
+with `make check`
+
+=== Composition tests
+
+The tests under `tests/compositions` are easy-to-write high-level
+system tests for GEGL and its operations. Together with our
+http://gimptest.flamingtext.com:8080/job/gegl-distcheck/[Jenkins
+server] that runs all our tests each night, the composition tests make
+a powerful framework for detecting regressions.
+
+==== Adding a composition test
+
+To add a composition test for a operation called `gegl:new-operation`,
+do the following:
+
+. Create a GEGL XML file `tests/compositions/new-operation.xml` (will
+  typically look approximately like `tests/compositions/pixelise.xml`)
+. Produce a reference image: `cd tests/compositions; gegl -o
+  /tmp/new-operation.png new-operation.xml` (make sure your operation
+  is installed so `gegl` finds it)
+. Manually inspect the reference image `/tmp/new-operation.png` and
+  move it to `tests/compositions/reference` if it looks like you expect
+. Add `run-new-operation.xml.sh` to the `TESTS` variable in
+  `tests/compositions/Makefile.am`
+. Run `make check` in `tests/compositions` to verify that your test
+  works (note that you must have configured GEGL with `autogen.sh` in
+  order for your change to the `TESTS` variable to be taken into
+  account)
+
+And you're done. Do not manually create `run-new-operation.xml.sh`, it
+will be created automatically for you during build time. It will run
+`gegl` with `tests/compositions/new-operation.xml` and compare the
+result with `tests/compositions/reference/new-operation.png`. If the
+result differs, the test will fail, and mails will be sent to the GEGL
+maintainers. As stated above, this test will run each night, so if
+someone breaks your contributed GEGL operation, it will be discovered
+at most 24 hours later, making it easy to fix, either by reverting the
+bogus commit or by adjusting it.
+
+An example of a commit that adds a composition test for a GEGL
+operation is
+http://git.gnome.org/browse/gegl/commit/?id=13e17712529fb714edcfd67e559bf46b622ff31d[Add
+composition test for gegl:gamma].
 
 == Documentation
 
