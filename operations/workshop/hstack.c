@@ -46,12 +46,12 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle *aux_rect = gegl_operation_source_get_bounding_box (operation,
                                                                       "aux");
 
-  if (!in_rect)
+  if (!in_rect || !aux_rect)
     return result;
 
   result = *in_rect;
   if (result.width  != 0 &&
-      result.height  != 0)
+      result.height != 0)
     {
       result.width += aux_rect->width;
       if (aux_rect->height > result.height)
