@@ -42,7 +42,7 @@ GType         gegl_matrix3_get_type     (void) G_GNUC_CONST;
  *
  * Return: A newly allocated #GeglMatrix3
  */
-GeglMatrix3 * gegl_matrix3_new ();
+GeglMatrix3 * gegl_matrix3_new (void);
 
 /**
  * gegl_matrix3_identity:
