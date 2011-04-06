@@ -29,6 +29,7 @@
 
 GtkWidget         *window;
 GtkWidget         *view;
+GtkWidget         *eventbox;
 static GeglBuffer *buffer   = NULL;
 static GeglNode   *gegl     = NULL;
 static GeglNode   *out      = NULL;
@@ -169,15 +170,18 @@ main (gint    argc,
     top  = loadbuf;
   }
 
-  g_signal_connect (G_OBJECT (view), "motion-notify-event",
-                    (GCallback) paint_motion, NULL);
-  g_signal_connect (G_OBJECT (view), "button-press-event",
-                    (GCallback) paint_press, NULL);
-  g_signal_connect (G_OBJECT (view), "button-release-event",
-                    (GCallback) paint_release, NULL);
-  gtk_widget_add_events (view, GDK_BUTTON_RELEASE_MASK);
+  eventbox = gtk_event_box_new ();
 
-  gtk_container_add (GTK_CONTAINER (window), view);
+  g_signal_connect (G_OBJECT (eventbox), "motion-notify-event",
+                    (GCallback) paint_motion, NULL);
+  g_signal_connect (G_OBJECT (eventbox), "button-press-event",
+                    (GCallback) paint_press, NULL);
+  g_signal_connect (G_OBJECT (eventbox), "button-release-event",
+                    (GCallback) paint_release, NULL);
+  gtk_widget_add_events (eventbox, GDK_BUTTON_RELEASE_MASK);
+
+  gtk_container_add (GTK_CONTAINER (eventbox), view);
+  gtk_container_add (GTK_CONTAINER (window), eventbox);
   gtk_widget_set_size_request (view, 512, 512);
 
   g_signal_connect (G_OBJECT (window), "delete-event",

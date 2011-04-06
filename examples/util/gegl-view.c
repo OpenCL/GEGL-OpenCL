@@ -45,31 +45,9 @@ typedef struct _GeglViewPrivate
   gdouble        scale;
   gboolean       block;    /* blocking render */
 
-  gint           screen_x;    /* coordinates of drag start */
-  gint           screen_y;
-
-  gint           orig_x;      /* coordinates of drag start */
-  gint           orig_y;
-
-  gint           start_buf_x; /* coordinates of drag start */
-  gint           start_buf_y;
-
-  gint           prev_x;
-  gint           prev_y;
-  gdouble        prev_scale;
-
   guint          monitor_id;
   GeglProcessor *processor;
 } GeglViewPrivate;
-
-enum
-{
-  DETECTED,
-  LAST_SIGNAL
-};
-
-
-static gint gegl_view_signals[LAST_SIGNAL] = {0, };
 
 
 G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
@@ -87,12 +65,6 @@ static void      get_property         (GObject        *gobject,
                                        guint           prop_id,
                                        GValue         *value,
                                        GParamSpec     *pspec);
-static gboolean  motion_notify_event  (GtkWidget      *widget,
-                                       GdkEventMotion *event);
-static gboolean  button_press_event   (GtkWidget      *widget,
-                                       GdkEventButton *event);
-static gboolean  button_release_event (GtkWidget      *widget,
-                                       GdkEventButton *event);
 #ifdef HAVE_GTK2
 static gboolean  expose_event         (GtkWidget      *widget,
                                        GdkEventExpose *event);
@@ -102,6 +74,7 @@ static gboolean  draw                 (GtkWidget * widget,
                                        cairo_t *cr);
 #endif
 
+static void      gegl_view_repaint       (GeglView *view);
 
 static void
 gegl_view_class_init (GeglViewClass * klass)
@@ -112,10 +85,6 @@ gegl_view_class_init (GeglViewClass * klass)
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-
-  widget_class->motion_notify_event = motion_notify_event;
-  widget_class->button_press_event  = button_press_event;
-  widget_class->button_release_event = button_release_event;
 
 #ifdef HAVE_GTK2
   widget_class->expose_event        = expose_event;
@@ -160,16 +129,6 @@ gegl_view_class_init (GeglViewClass * klass)
                                                         FALSE,
                                                         G_PARAM_READWRITE));
 
- gegl_view_signals[DETECTED] =
-   g_signal_new ("detected",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0,
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__OBJECT,
-                  G_TYPE_NONE, 1,
-                  GEGL_TYPE_NODE);
-
 
    g_type_class_add_private (klass, sizeof (GeglViewPrivate));
 }
@@ -181,16 +140,9 @@ gegl_view_init (GeglView *self)
   priv->node        = NULL;
   priv->x           = 0;
   priv->y           = 0;
-  priv->prev_x      = -1;
-  priv->prev_y      = -1;
   priv->scale       = 1.0;
   priv->monitor_id  = 0;
   priv->processor   = NULL;
-
-  gtk_widget_add_events (GTK_WIDGET (self), (GDK_EXPOSURE_MASK     |
-                                             GDK_BUTTON_PRESS_MASK |
-                                             GDK_BUTTON_RELEASE_MASK |
-                                             GDK_POINTER_MOTION_MASK));
 }
 
 static void
@@ -326,125 +278,6 @@ get_property (GObject      *gobject,
 }
 
 static void
-detected_event (GeglView *self,
-                GeglNode *node)
-{
-  g_signal_emit (self, gegl_view_signals[DETECTED], 0, node, NULL, NULL);
-}
-
-static gboolean drag_started = FALSE;
-
-static gboolean
-button_press_event (GtkWidget      *widget,
-                    GdkEventButton *event)
-{
-  GeglView *view = GEGL_VIEW (widget);
-  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
-  gint      x    = event->x;
-  gint      y    = event->y;
-
-  priv->screen_x = x;
-  priv->screen_y = y;
-
-  priv->orig_x = priv->x;
-  priv->orig_y = priv->y;
-
-  priv->start_buf_x = (priv->x + x)/priv->scale;
-  priv->start_buf_y = (priv->y + y)/priv->scale;
-
-  priv->prev_x = x;
-  priv->prev_y = y;
-
-  x = x / priv->scale + priv->x;
-  y = y / priv->scale + priv->y;
-
-  {
-    GeglNode *detected = gegl_node_detect (priv->node,
-                                           (priv->x + event->x) / priv->scale,
-                                           (priv->y + event->y) / priv->scale);
-    if (detected)
-      {
-        detected_event (view, detected);
-      }
-  }
-
-  drag_started = TRUE;
-  return TRUE;
-}
-
-static gboolean
-button_release_event (GtkWidget      *widget,
-                      GdkEventButton *event)
-{
-  drag_started = FALSE;
-  return FALSE;
-}
-
-static gboolean
-motion_notify_event (GtkWidget      *widget,
-                     GdkEventMotion *event)
-{
-  GeglView *view = GEGL_VIEW (widget);
-  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (view);
-  gint      x    = event->x;
-  gint      y    = event->y;
-
-  if (drag_started)
-    {
-  if (event->state & GDK_BUTTON1_MASK)
-    {
-      gint diff_x = x - priv->prev_x;
-      gint diff_y = y - priv->prev_y;
-
-      priv->x -= diff_x;
-      priv->y -= diff_y;
-
-      gdk_window_scroll (gtk_widget_get_window (widget), diff_x, diff_y);
-
-
-
-      g_object_notify (G_OBJECT (view), "x");
-      g_object_notify (G_OBJECT (view), "y");
-    }
-  else if (event->state & GDK_BUTTON2_MASK)
-    {
-        gint diff = priv->prev_y - y;
-        gint i;
-
-        if (diff < 0)
-          {
-            for (i=0;i>diff;i--)
-              {
-                priv->scale /= 1.006;
-              }
-          }
-        else
-          {
-            for (i=0;i<diff;i++)
-              {
-                priv->scale *= 1.006;
-              }
-          }
-
-        priv->x = (priv->start_buf_x - priv->screen_x / priv->scale) * priv->scale;
-        priv->y = (priv->start_buf_y - priv->screen_y / priv->scale) * priv->scale;
-
-        gtk_widget_queue_draw (GTK_WIDGET (view));
-
-        g_object_notify (G_OBJECT (view), "x");
-        g_object_notify (G_OBJECT (view), "y");
-        g_object_notify (G_OBJECT (view), "scale");
-      }
-
-      priv->prev_x = x;
-      priv->prev_y = y;
-
-      return TRUE;
-    }
-  return FALSE;
-}
-
-static void
 draw_implementation (GeglViewPrivate *priv, cairo_t *cr, GdkRectangle *rect)
 {
   cairo_surface_t *surface = NULL;
@@ -576,11 +409,4 @@ gegl_view_repaint (GeglView *view)
 
   if (priv->processor)
     gegl_processor_set_rectangle (priv->processor, &roi);
-}
-
-GeglProcessor *
-gegl_view_get_processor (GeglView *self)
-{
-  GeglViewPrivate *priv = GEGL_VIEW_GET_PRIVATE (self);
-  return priv->processor;
 }

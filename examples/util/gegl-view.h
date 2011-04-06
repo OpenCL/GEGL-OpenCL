@@ -43,8 +43,6 @@ struct _GeglViewClass
 };
 
 GType           gegl_view_get_type      (void) G_GNUC_CONST;
-void            gegl_view_repaint       (GeglView *view);
-GeglProcessor * gegl_view_get_processor (GeglView *view);
 
 G_END_DECLS
 
