@@ -681,7 +681,7 @@ affine_generic (GeglBuffer  *dest,
   gfloat * restrict     dest_buf,
                        *dest_ptr;
   GeglMatrix3           inverse;
-  GeglMatrix2          *inverse_jacobian;
+  GeglMatrix2           inverse_jacobian;
   gdouble               u_start,
                         v_start,
                         u_float,
@@ -692,7 +692,6 @@ affine_generic (GeglBuffer  *dest,
   gint                  dest_pixels;
 
   format = babl_format ("RaGaBaA float");
-  inverse_jacobian = g_new(GeglMatrix2, 1);  
 
   /* XXX: fast paths as existing in files in the same dir as affine.c
    *      should probably be hooked in here, and bailing out before using
@@ -710,13 +709,13 @@ affine_generic (GeglBuffer  *dest,
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
-      inverse_jacobian->coeff[0][0] = inverse.coeff[0][0];
-      inverse_jacobian->coeff[0][1] = inverse.coeff[0][1];
-      inverse_jacobian->coeff[1][0] = inverse.coeff[1][0];
-      inverse_jacobian->coeff[1][1] = inverse.coeff[1][1];
+      inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
+      inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
+      inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
+      inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
 
      /* set inverse_jacobian for samplers that support it */
-      sampler->inverse_jacobian = inverse_jacobian;
+      sampler->inverse_jacobian = &inverse_jacobian;
 
       u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1]
                     * roi->y + inverse.coeff[0][2];
