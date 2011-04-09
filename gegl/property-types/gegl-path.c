@@ -796,10 +796,6 @@ void gegl_path_thaw (GeglPath *path)
   gegl_path_emit_changed (path, NULL); /* expose a full changed */
 }
 
-/**
- * gegl_path_get_matrix: (skip)
- */
-void
 gegl_path_get_matrix (GeglPath    *path,
                       GeglMatrix3  *matrix)
 {
@@ -807,9 +803,6 @@ gegl_path_get_matrix (GeglPath    *path,
   gegl_matrix3_copy_into (matrix, &priv->matrix);
 }
 
-/**
- * gegl_path_set_matrix: (skip)
- */
 void
 gegl_path_set_matrix (GeglPath    *path,
                       GeglMatrix3  *matrix)

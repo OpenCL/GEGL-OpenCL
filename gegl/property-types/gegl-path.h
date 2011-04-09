@@ -178,11 +178,12 @@ gchar              * gegl_path_to_string      (GeglPath    *path);
 /**
  * gegl_path_set_matrix:
  * @path: a #GeglPath
- * @matrix: a GeglMatrix3
+ * @matrix: a #GeglMatrix3 to copy the matrix from
  *
- * Set the matrix of the path, the path is thransformed through this
- * matrix when being evaluated. Causing the calcuated positions and
- * length to be changed by the transform.
+ * Set the transformation matrix of the path.
+ *
+ * The path is transformed through this matrix when being evaluated,
+ * causing the calcuated positions and length to be changed by the transform.
  */
 void                 gegl_path_set_matrix     (GeglPath    *path,
                                                GeglMatrix3 *matrix);
@@ -190,12 +191,9 @@ void                 gegl_path_set_matrix     (GeglPath    *path,
 /**
  * gegl_path_get_matrix:
  * @path: a #GeglPath
- * @matrix: a GeglMatrix3
+ * @matrix: a #GeglMatrix3 to copy the matrix into
  *
- * Retrieve the node of the path at positiong @pos.
- *
- * Return value: pointer to the node of the path at position @pos or NULL if no
- * such node.
+ * Get the transformation matrix of the path.
  */
 void                 gegl_path_get_matrix     (GeglPath    *path,
                                                GeglMatrix3 *matrix);
