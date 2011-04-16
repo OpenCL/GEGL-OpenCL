@@ -160,7 +160,7 @@ prepare (GeglOperation *operation)
             "path",  o->src,
             NULL);
       }
-  
+
       /* Currently not using the composite op, reinsert it */
       if (!self->cached_path)
         gegl_node_link_many (self->input, self->composite_op, self->output, NULL);

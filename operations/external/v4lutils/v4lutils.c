@@ -336,7 +336,7 @@ int v4lsetpicture(v4ldevice *vd, int br, int hue, int col, int cont, int white)
 	}
 	return 0;
 }
- 
+
 /*
  * v4lsetpalette - set the palette for the images
  *

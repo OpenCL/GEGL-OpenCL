@@ -66,7 +66,7 @@ calc_block_colors (gfloat* block_colors,
   gint cy0 = CELL_Y(roi->y, ysize);
   gint cx1 = CELL_X(roi->x + roi->width - 1, xsize);
   gint cy1 = CELL_Y(roi->y + roi->height - 1, ysize);
-  
+
   gint cx;
   gint cy;
   gfloat weight = 1.0f / (xsize * ysize);
@@ -78,7 +78,7 @@ calc_block_colors (gfloat* block_colors,
         {
           gint px = (cx * xsize) - roi->x + xsize;
           gint py = (cy * ysize) - roi->y + ysize;
-          
+
           /* calculate the average color for this block */
           gint j,i,c;
           gfloat col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -92,15 +92,15 @@ calc_block_colors (gfloat* block_colors,
             }
           for (c=0; c<4; ++c)
             block_colors[c] = weight * col[c];
-          block_colors += 4; 
+          block_colors += 4;
         }
     }
 }
 
-static void 
-pixelise (gfloat* buf, 
+static void
+pixelise (gfloat* buf,
           const GeglRectangle* roi,
-          gint xsize, 
+          gint xsize,
           gint ysize)
 {
   gint cx0 = CELL_X(roi->x, xsize);
@@ -147,7 +147,7 @@ process (GeglOperation       *operation,
   src_rect.y -= op_area->top;
   src_rect.width += op_area->left + op_area->right;
   src_rect.height += op_area->top + op_area->bottom;
-  
+
   buf = g_new0 (gfloat, src_rect.width * src_rect.height * 4);
 
   gegl_buffer_get (input, 1.0, &src_rect, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
@@ -155,7 +155,7 @@ process (GeglOperation       *operation,
   pixelise(buf, roi, o->xsize, o->ysize);
 
   gegl_buffer_set (output, roi, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
-  
+
   g_free (buf);
 
   return  TRUE;

@@ -52,7 +52,7 @@ draw_implementation (Priv *priv, cairo_t *cr)
 
   if (!priv->buf)
     return;
-  
+
   surface = cairo_image_surface_create_for_data (priv->buf,
                                                  CAIRO_FORMAT_ARGB32,
                                                  priv->width, priv->height,
@@ -171,7 +171,7 @@ process (GeglOperation       *operation,
                             babl_component ("R"),
                             babl_component ("A"),
                             NULL);
-  gegl_buffer_get (source, 1.0, NULL, format, 
+  gegl_buffer_get (source, 1.0, NULL, format,
                    priv->buf, GEGL_AUTO_ROWSTRIDE);
   gtk_widget_queue_draw (priv->drawing_area);
 

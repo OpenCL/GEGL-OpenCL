@@ -62,13 +62,13 @@ static void path_changed (GeglPath *path,
   GeglChantO    *o   = GEGL_CHANT_PROPERTIES (userdata);
   GeglRectangle rect;
   gdouble        x0, x1, y0, y1;
-  
+
   gegl_path_get_bounds(o->d, &x0, &x1, &y0, &y1);
   rect.x = x0;
   rect.y = y0;
   rect.width = x1 - x0;
-  rect.height = y1 - y0;  
-  
+  rect.height = y1 - y0;
+
   gegl_operation_invalidate (userdata, roi, TRUE);
 };
 
@@ -140,22 +140,22 @@ process (GeglOperation       *operation,
           need_fill=TRUE;
     }
 
-  if (need_fill)   
+  if (need_fill)
     {
       GStaticMutex mutex = G_STATIC_MUTEX_INIT;
       cairo_t *cr;
       cairo_surface_t *surface;
       guchar *data;
 
-      
-      g_static_mutex_lock (&mutex);      
+
+      g_static_mutex_lock (&mutex);
       data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
       surface = cairo_image_surface_create_for_data (data,
                                                      CAIRO_FORMAT_ARGB32,
                                                      result->width,
                                                      result->height,
                                                      result->width * 4);
-      
+
       cr = cairo_create (surface);
       cairo_translate (cr, -result->x, -result->y);
       if (g_str_equal (o->fill_rule, "evenodd"))
@@ -165,7 +165,7 @@ process (GeglOperation       *operation,
       cairo_set_source_rgba (cr, r,g,b,a);
       cairo_fill (cr);
       cairo_destroy (cr);
-      
+
       gegl_buffer_linear_close (output, data);
       g_static_mutex_unlock (&mutex);
     }

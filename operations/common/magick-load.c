@@ -79,7 +79,7 @@ get_bounding_box (GeglOperation *operation)
   return result;
 }
 
-static GeglRectangle 
+static GeglRectangle
 get_cached_region (GeglOperation *operation,
                    const GeglRectangle *roi)
 {

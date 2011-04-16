@@ -294,7 +294,7 @@ fattal02_calculate_defect (gfloat              *D,
                 n = (y     ==  0 ? 0 : y - 1),
                 s = (y + 1 == sy ? y : y + 1),
                 e = (x + 1 == sx ? x : x + 1);
-  
+
           _P (D, extent_d, x, y) = _P (F, extent_f, x, y) - (
                                       _P (U, extent_u, e, y) +
                                       _P (U, extent_u, w, y) +

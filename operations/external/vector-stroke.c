@@ -166,13 +166,13 @@ process (GeglOperation       *operation,
           need_stroke=TRUE;
     }
 
-  if (need_stroke)   
+  if (need_stroke)
     {
       GStaticMutex mutex = G_STATIC_MUTEX_INIT;
       cairo_t *cr;
       cairo_surface_t *surface;
       guchar *data;
-      
+
       g_static_mutex_lock (&mutex);
       data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
       surface = cairo_image_surface_create_for_data (data,
@@ -180,25 +180,25 @@ process (GeglOperation       *operation,
                                                      result->width,
                                                      result->height,
                                                      result->width * 4);
-      
+
       cr = cairo_create (surface);
-      
+
       cairo_translate (cr, -result->x, -result->y);
-      
+
       cairo_set_line_width  (cr, o->width);
       cairo_set_line_cap    (cr, CAIRO_LINE_CAP_ROUND);
       cairo_set_line_join   (cr, CAIRO_LINE_JOIN_ROUND);
-      
+
       gegl_path_cairo_play (o->d, cr);
       cairo_set_source_rgba (cr, r,g,b,a);
-      cairo_stroke (cr);      
+      cairo_stroke (cr);
       cairo_destroy (cr);
-      
+
       gegl_buffer_linear_close (output, data);
       g_static_mutex_unlock (&mutex);
     }
   return  TRUE;
-} 
+}
 static void foreach_cairo (const GeglPathItem *knot,
                            gpointer              cr)
 {

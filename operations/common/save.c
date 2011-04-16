@@ -52,7 +52,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK)
 #include <stdio.h>
 
 
-static void 
+static void
 gegl_save_set_saver (GeglOperation *operation)
 {
   GeglChantO  *o    = GEGL_CHANT_PROPERTIES (operation);

@@ -78,7 +78,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "color";
   operation_class->description =
      _("Reduces the number of levels in each color component of the image.");
-       
+
 }
 
 #endif

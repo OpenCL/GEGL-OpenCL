@@ -142,7 +142,7 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
-static GeglRectangle 
+static GeglRectangle
 get_cached_region (GeglOperation *operation,
                    const GeglRectangle *roi)
 {

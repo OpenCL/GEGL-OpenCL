@@ -26,9 +26,9 @@
 gegl_chant_file_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
 gegl_chant_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
 gegl_chant_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
-gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0, 
+gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0,
         _("current frame number, can be changed to trigger a reload of the image."))
-gegl_chant_int  (fps,    _("FPS"),  0, G_MAXINT, 0, 
+gegl_chant_int  (fps,    _("FPS"),  0, G_MAXINT, 0,
         _("autotrigger reload this many times a second."))
 
 #else
@@ -317,7 +317,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "gegl:v4l";
   operation_class->categories  = "input:video";
-  operation_class->description = 
+  operation_class->description =
     _("Video4Linux input, webcams framegrabbers and similar devices.");
 }
 

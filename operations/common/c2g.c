@@ -86,7 +86,7 @@ static void c2g (GeglBuffer          *src,
                              FALSE, /* same spray */
                              rgamma,
                              min, max);
-          { 
+          {
             /* this should be replaced with a better/faster projection of
              * pixel onto the vector spanned by min -> max, currently
              * computed by comparing the distance to min with the sum
@@ -106,7 +106,7 @@ static void c2g (GeglBuffer          *src,
             denominator = sqrt (denominator);
             denominator = nominator + denominator;
  	
-            if (denominator>0.000) 
+            if (denominator>0.000)
               {
                 dst_buf[dst_offset+0] = nominator/denominator;
               }

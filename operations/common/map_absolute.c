@@ -71,28 +71,28 @@ process (GeglOperation       *operation,
   GeglInterpolation     interpolation;
   GeglBufferIterator   *it;
   gint                  index_in, index_out, index_coords;
-  
+
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
-  
+
   interpolation = gegl_buffer_interpolation_from_string ("cubic");
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
-  
+
   sampler = g_object_new (desired_type,
                           "format", format_io,
                           "buffer", input,
                           NULL);
-  
-  gegl_sampler_prepare (sampler);  
-  
+
+  gegl_sampler_prepare (sampler);
+
   if (aux != NULL)
   {
     it = gegl_buffer_iterator_new (output, result, format_io, GEGL_BUFFER_WRITE);
     index_out = 0;
-    
+
     index_coords = gegl_buffer_iterator_add (it, aux, result, format_coords, GEGL_BUFFER_READ);
     index_in = gegl_buffer_iterator_add (it, input, result, format_io, GEGL_BUFFER_READ);
-    
+
     while (gegl_buffer_iterator_next (it))
     {
       gint        i;
@@ -102,7 +102,7 @@ process (GeglOperation       *operation,
       gfloat     *in = it->data[index_in];
       gfloat     *out = it->data[index_out];
       gfloat     *coords = it->data[index_coords];
-      
+
       for (i=0; i<n_pixels; i++)
       {
         if (coords[0] > 0 && coords[1] > 0)
@@ -127,11 +127,11 @@ process (GeglOperation       *operation,
           out[2] = 0.0;
           out[3] = 0.0;
         }
-        
+
         coords += 2;
         in += 4;
         out += 4;
-        
+
         /* update x and y coordinates */
         x++;
         if (x >= (it->roi->x + it->roi->width))
@@ -142,15 +142,15 @@ process (GeglOperation       *operation,
 
       }
     }
-    
+
   }
   else
   {
     gegl_buffer_copy (input, result, output, result);
   }
-  
+
   g_object_unref (sampler);
-  
+
   return TRUE;
 }
 
@@ -166,9 +166,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   composer_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_required_for_output = get_required_for_output;
-  
+
   operation_class->name        = "gegl:map-absolute";
-  
+
   operation_class->categories  = "transform";
   operation_class->description = _("sample input with an auxiliary buffer that contain source coordinates");
 }

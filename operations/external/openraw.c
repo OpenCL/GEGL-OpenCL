@@ -30,7 +30,7 @@ struct _GeglChant
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
-  
+
   gchar *cached_path;  /* Path we have cached. Detects need for recache. */
 };
 
@@ -75,7 +75,7 @@ free_buffer (GeglOperation * operation)
     g_free (self->cached_path);
     self->cached_path = NULL;
   }
-}  
+}
 
 
 /* Loads the RAW pixel data from the specified path in chant parameters into
@@ -90,14 +90,14 @@ load_buffer (GeglOperation *operation)
 
   ORRawDataRef rawdata;
   ORRawFileRef rawfile;
-  
+
   /* If the path has changed since last time, destroy our cache */
   if (!self->cached_path || strcmp (self->cached_path, o->path))
     {
       free_buffer(operation);
     }
 
-  if (o->chant_data) 
+  if (o->chant_data)
     {
       return o->chant_data;
     }
@@ -155,7 +155,7 @@ prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "output", babl_format ("Y u16"));
 }
-  
+
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
@@ -212,10 +212,10 @@ static void
 finalize (GObject *object)
 {
   free_buffer (GEGL_OPERATION (object));
-  
+
   G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
-  
+
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)

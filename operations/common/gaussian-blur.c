@@ -399,8 +399,8 @@ static void prepare (GeglOperation *operation)
 
   gfloat fir_radius_x = fir_calc_convolve_matrix_length (o->std_dev_x) / 2;
   gfloat fir_radius_y = fir_calc_convolve_matrix_length (o->std_dev_y) / 2;
-  gfloat iir_radius_x = o->std_dev_x * RADIUS_SCALE;  
-  gfloat iir_radius_y = o->std_dev_y * RADIUS_SCALE;  
+  gfloat iir_radius_x = o->std_dev_x * RADIUS_SCALE;
+  gfloat iir_radius_y = o->std_dev_y * RADIUS_SCALE;
 
   /* XXX: these should be calculated exactly considering o->filter, but we just
    * make sure there is enough space */
@@ -464,7 +464,7 @@ process (GeglOperation       *operation,
       iir_young_ver_blur (temp, &temp_extend, output, result, B, b);
     }
   else
-    { 
+    {
       cmatrix_len = fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
       fir_ver_blur (temp, &temp_extend, output, result, cmatrix, cmatrix_len,
                     op_area->top);

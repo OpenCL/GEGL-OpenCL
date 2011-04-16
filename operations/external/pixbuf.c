@@ -54,7 +54,7 @@ get_bounding_box (GeglOperation *operation)
 static void prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output", 
+  gegl_operation_set_format (operation, "output",
       babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
 }
 

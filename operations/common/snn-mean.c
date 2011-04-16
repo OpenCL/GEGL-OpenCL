@@ -129,7 +129,7 @@ snn_mean (GeglBuffer          *src,
   for (y=0; y<dst_rect->height; y++)
     {
       gfloat *center_pix;
-     
+
       center_pix = src_buf + ((radius) + (y+radius)* src_width)*4;
 
       for (x=0; x<dst_rect->width; x++)

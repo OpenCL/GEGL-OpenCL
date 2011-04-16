@@ -458,7 +458,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->name        = "gegl:color-reduction";
   operation_class->categories  = "misc";
-  operation_class->description = 
+  operation_class->description =
           _("Reduces the number of bits per channel (colors and alpha), with optional dithering.");
 }
 

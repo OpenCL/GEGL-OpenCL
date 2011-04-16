@@ -41,7 +41,7 @@ static void buffer_changed (GeglBuffer          *buffer,
 static GeglBuffer *ensure_buffer (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *buffer = o->chant_data; 
+  GeglBuffer   *buffer = o->chant_data;
   if (buffer)
     return buffer;
   if (!buffer)

@@ -15,7 +15,7 @@
  *
  * Copyright 2006 Dominik Ernst
  *
- * Reflect an image about a line, whose direction is specified by the 
+ * Reflect an image about a line, whose direction is specified by the
  * vector that is defined by the x and y properties.
  */
 
@@ -25,9 +25,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
   _("Direction vector's x component"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
   _("Direction vector's y component"))
 
 #else
