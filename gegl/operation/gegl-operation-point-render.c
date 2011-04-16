@@ -32,7 +32,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 
-static gboolean gegl_operation_point_render_process 
+static gboolean gegl_operation_point_render_process
                               (GeglOperation       *operation,
                                GeglBuffer          *output,
                                const GeglRectangle *result);
@@ -95,7 +95,7 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);      
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
 
       while (gegl_buffer_iterator_next (i))
           point_render_class->process (operation, i->data[0], i->length, &i->roi[0]);

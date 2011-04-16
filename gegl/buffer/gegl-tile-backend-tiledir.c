@@ -101,10 +101,10 @@ gio_entry_write (GeglTileBackendTileDir *gio,
   gsize              bytes_written;
 
   file = make_tile_file (gio, entry->x, entry->y, entry->z);
-  o = g_file_replace (file, NULL, FALSE, 
+  o = g_file_replace (file, NULL, FALSE,
                       G_FILE_CREATE_NONE, NULL, NULL);
 
-  g_output_stream_write_all (G_OUTPUT_STREAM (o), source, tile_size, 
+  g_output_stream_write_all (G_OUTPUT_STREAM (o), source, tile_size,
                              &bytes_written, NULL, NULL);
   g_assert (bytes_written == tile_size);
   g_output_stream_close (G_OUTPUT_STREAM (o), NULL, NULL);
@@ -213,7 +213,7 @@ exist_tile (GeglTileSource *store,
   gboolean found = FALSE;
 
   file = make_tile_file (gio, x, y, z);
-  file_info = g_file_query_info (file, "standard::*", G_FILE_QUERY_INFO_NONE, 
+  file_info = g_file_query_info (file, "standard::*", G_FILE_QUERY_INFO_NONE,
    NULL, NULL);
 
   if (file_info)

@@ -1,6 +1,6 @@
 #ifndef __GEGL_BUFFER_INDEX_H
 #define __GEGL_BUFFER_INDEX_H
-/* File format building blocks 
+/* File format building blocks
 
 GeglBuffer on disk representation
 =================================
@@ -38,11 +38,11 @@ GeglBuffer on disk representation
  */
 typedef struct {
   gchar   magic[4];    /* - a 4 byte identifier */
-  guint32 flags;       /* the header flags is used to encode state and revision 
+  guint32 flags;       /* the header flags is used to encode state and revision
                           */
   guint64 next;        /* offset to first GeglBufferBlock */
 
-  guint32 tile_width;       
+  guint32 tile_width;
   guint32 tile_height;
   guint16 bytes_per_pixel;
 
@@ -87,7 +87,7 @@ typedef struct {
   GeglBufferBlock block; /* The block definition for this tile entry   */
   guint64 offset;        /* offset into file for this tile             */
   gint32  x;             /* upperleft of tile % tile_width coordinates */
-  gint32  y;           
+  gint32  y;
 
   gint32  z;             /* mipmap subdivision level of tile (0=100%)  */
 

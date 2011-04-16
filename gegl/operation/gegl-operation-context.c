@@ -196,7 +196,7 @@ gegl_operation_context_add_value (GeglOperationContext *self,
 {
   Property *property = NULL;
   GSList   *found;
-  
+
   found = g_slist_find_custom (self->property, property_name, lookup_property);
 
   if (found)
@@ -255,7 +255,7 @@ gegl_operation_context_take_object (GeglOperationContext *context,
 {
   GParamSpec *pspec;
 
-  /* FIXME: check that there isn't already an existing 
+  /* FIXME: check that there isn't already an existing
    *        output object/value set?
    */
 
@@ -310,7 +310,7 @@ gegl_operation_context_get_source (GeglOperationContext *context,
 {
   GeglBuffer     *real_input;
   GeglBuffer     *input;
- 
+
   real_input = GEGL_BUFFER (gegl_operation_context_get_object (context, padname));
   if (!real_input)
     return NULL;

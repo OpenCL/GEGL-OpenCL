@@ -180,7 +180,7 @@ gegl_class_register_alternate_vfunc (GObjectClass *cclass,
                                  * dispatching of arguments, not sure if
                                  * this is portable C or not.
                                  */
-  
+
   /* Find a free slot for this one */
   for (i=1; i<MAX_PROCESSOR; i++)
     {

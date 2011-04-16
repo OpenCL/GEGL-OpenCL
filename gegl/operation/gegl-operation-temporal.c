@@ -83,7 +83,7 @@ gegl_operation_temporal_get_frame (GeglOperation *op,
                          "x", 0,
                          "y", 0,
                          NULL);
-  return buffer; 
+  return buffer;
 }
 
 static gboolean gegl_operation_temporal_process (GeglOperation       *self,

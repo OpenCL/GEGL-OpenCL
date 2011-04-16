@@ -48,7 +48,7 @@ static void     set_property          (GObject       *gobject,
                                        const GValue  *value,
                                        GParamSpec    *pspec);
 
-static gboolean gegl_operation_filter_process 
+static gboolean gegl_operation_filter_process
                                       (GeglOperation       *operation,
                                        GeglOperationContext     *context,
                                        const gchar         *output_prop,

@@ -35,7 +35,7 @@
 */
 
 typedef struct CacheItem
-{ 
+{
   GeglTileHandlerCache *handler; /* The specific handler that cached this item*/
   GeglTile *tile;                /* The tile */
 
@@ -341,7 +341,7 @@ static gboolean
 gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
 {
   CacheItem *last_writable;
- 
+
   last_writable = g_queue_pop_tail (cache_queue);
 
   if (last_writable != NULL)

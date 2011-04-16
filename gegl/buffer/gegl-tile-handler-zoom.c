@@ -277,7 +277,7 @@ get_tile (GeglTileSource *gegl_tile_source,
               set_half (tile, source_tile[i][j], tile_width, tile_height, format, i, j);
               gegl_tile_unref (source_tile[i][j]);
             }
-          else 
+          else
             {
               set_blank (tile, tile_width, tile_height, format, i, j);
             }

@@ -863,7 +863,7 @@ serialize_properties (SerializeState *ss,
           GeglPath *path;
 	      gegl_node_get (node, properties[i]->name, &path, NULL);
 	      xml_param_start (ss, indent + 2, properties[i]->name);
-          svg_path = gegl_path_to_string (path);	      
+          svg_path = gegl_path_to_string (path);
 	      g_string_append (ss->buf, svg_path);
 	      xml_param_end (ss);
 

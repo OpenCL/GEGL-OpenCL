@@ -902,7 +902,7 @@ gegl_buffer_get_alloc_stack (void)
   char **function_names = NULL;
   int    i              = 0;
   int    result_size    = 0;
-  
+
   n_functions = backtrace (functions, MAX_N_FUNCTIONS);
   function_names = backtrace_symbols (functions, n_functions);
 
@@ -1173,7 +1173,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
       item->tile_height = tile_height;
       item->babl_fmt = babl_fmt;
 
-      if (use_ram || 
+      if (use_ram ||
           !gegl_config()->swap ||
           g_str_equal (gegl_config()->swap, "RAM") ||
           g_str_equal (gegl_config()->swap, "ram"))

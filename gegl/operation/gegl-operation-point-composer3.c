@@ -29,7 +29,7 @@
 #include "graph/gegl-pad.h"
 #include <string.h>
 
-static gboolean gegl_operation_point_composer3_process 
+static gboolean gegl_operation_point_composer3_process
                               (GeglOperation       *operation,
                                GeglBuffer          *input,
                                GeglBuffer          *aux,
@@ -165,7 +165,7 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
           if (aux2)
             {
               gint bar = gegl_buffer_iterator_add (i, aux2,  result, aux2_format, GEGL_BUFFER_READ);
-    
+
               while (gegl_buffer_iterator_next (i))
                 {
                    point_composer3_class->process (operation, i->data[read], i->data[foo], i->data[bar], i->data[0], i->length, &(i->roi[0]));

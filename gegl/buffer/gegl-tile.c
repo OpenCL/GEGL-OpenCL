@@ -208,11 +208,11 @@ _gegl_tile_void_pyramid (GeglTileSource *source,
 static void
 gegl_tile_void_pyramid (GeglTile *tile)
 {
-  if (tile->tile_storage && 
+  if (tile->tile_storage &&
       tile->tile_storage->seen_zoom &&
       tile->z == 0) /* we only accepting voiding the base level */
     {
-      _gegl_tile_void_pyramid (GEGL_TILE_SOURCE (tile->tile_storage), 
+      _gegl_tile_void_pyramid (GEGL_TILE_SOURCE (tile->tile_storage),
                                tile->x/2,
                                tile->y/2,
                                tile->z+1);
@@ -276,7 +276,7 @@ gboolean gegl_tile_store (GeglTile *tile)
                                     tile);
 }
 
-/* for internal use, a macro poking directly at the data will be faster 
+/* for internal use, a macro poking directly at the data will be faste
  */
 guchar *gegl_tile_get_data (GeglTile *tile)
 {

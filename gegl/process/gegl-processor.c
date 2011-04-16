@@ -118,7 +118,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
                                    g_param_spec_int ("chunksize",
                                                      "chunksize",
                                                      "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     1, 1024 * 1024, gegl_config()->chunk_size, 
+                                                     1, 1024 * 1024, gegl_config()->chunk_size,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -433,7 +433,7 @@ render_rectangle (GeglProcessor *processor)
             if (dr->width > dr->height)
               {
                 band_size = gegl_processor_get_band_size ( dr->width );
-              
+
                 fragment->width = band_size;
                 dr->width      -= band_size;
                 dr->x          += band_size;

@@ -29,7 +29,7 @@
 #include "graph/gegl-pad.h"
 #include <string.h>
 
-static gboolean gegl_operation_point_composer_process 
+static gboolean gegl_operation_point_composer_process
                               (GeglOperation       *operation,
                                GeglBuffer          *input,
                                GeglBuffer          *aux,
@@ -106,7 +106,7 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
     }
   else
     output = gegl_operation_context_get_target (context, "output");
-    
+
     {
       gboolean done = FALSE;
 

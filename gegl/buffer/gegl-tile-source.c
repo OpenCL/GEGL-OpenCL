@@ -37,7 +37,7 @@ gegl_tile_source_command_eek (GeglTileSource  *gegl_tile_source,
 
 static void
 gegl_tile_source_class_init (GeglTileSourceClass *klass)
-{  
+{
 }
 
 static void

@@ -199,7 +199,7 @@ static GeglBufferItem *read_block (int           i,
 
 #if HAVE_GIO
   byte_read += g_input_stream_read (i, &block, sizeof (GeglBufferBlock), NULL, NULL);
-#else 
+#else
   {
 	ssize_t sz_read = read (i, &block,  sizeof (GeglBufferBlock));
     if(sz_read != -1)
@@ -213,7 +213,7 @@ static GeglBufferItem *read_block (int           i,
      {
         case GEGL_FLAG_TILE:
         case GEGL_FLAG_FREE_TILE:
-          own_size = sizeof (GeglBufferTile); 
+          own_size = sizeof (GeglBufferTile);
           break;
         default:
           g_warning ("skipping unknown type of entry flags=%i", block.flags);
@@ -323,7 +323,6 @@ gegl_buffer_load (const gchar *path)
   GeglBuffer *ret;
 
   LoadInfo *info = g_slice_new0 (LoadInfo);
-  
 
   info->path = g_strdup (path);
 #if HAVE_GIO

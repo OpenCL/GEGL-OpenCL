@@ -101,7 +101,7 @@ gboolean   gegl_matrix3_is_translate    (GeglMatrix3 *matrix);
  *
  * Copies the matrix in @src into @dst.
  */
-void  gegl_matrix3_copy_into (GeglMatrix3 *dst, 
+void  gegl_matrix3_copy_into (GeglMatrix3 *dst,
                               GeglMatrix3 *src);
 
 /**
@@ -145,7 +145,7 @@ void       gegl_matrix3_multiply        (GeglMatrix3 *left,
  * @matrix: a #GeglMatrix
  * @x: x coordinate of new origin
  * @y: y coordinate of new origin.
- * 
+ *
  * Hmm not quite sure what this does.
  *
  */
@@ -159,7 +159,7 @@ void       gegl_matrix3_originate       (GeglMatrix3 *matrix,
  * @matrix: a #GeglMatrix
  * @x: pointer to an x coordinate
  * @y: pointer to an y coordinate
- * 
+ *
  * transforms the coordinates provided in @x and @y and changes to the
  * coordinates gotten when the transformed with the matrix.
  *

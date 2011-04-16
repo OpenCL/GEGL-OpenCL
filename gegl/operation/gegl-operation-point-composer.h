@@ -49,7 +49,7 @@ struct _GeglOperationPointComposerClass
                         void                *out,
                         glong                samples, /* number of samples   */
                         const GeglRectangle *roi      /* rectangular region in output buffer */
-                        ); 
+                        );
 
 };
 

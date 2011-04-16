@@ -83,7 +83,7 @@ GeglRegion    * gegl_region_copy            (const GeglRegion    *region);
 GeglRegion    * gegl_region_rectangle       (const GeglRectangle *rectangle);
 void            gegl_region_destroy         (GeglRegion          *region);
 
-void	        gegl_region_get_clipbox     (GeglRegion          *region,
+void	          gegl_region_get_clipbox     (GeglRegion          *region,
                                              GeglRectangle       *rectangle);
 void            gegl_region_get_rectangles  (GeglRegion          *region,
                                              GeglRectangle      **rectangles,

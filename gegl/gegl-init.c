@@ -42,13 +42,13 @@
 static HMODULE hLibGeglModule = NULL;
 
 /* DllMain prototype */
-BOOL WINAPI DllMain (HINSTANCE hinstDLL, 
-                     DWORD     fdwReason, 
+BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+                     DWORD     fdwReason,
                      LPVOID    lpvReserved);
 
 BOOL WINAPI
-DllMain (HINSTANCE hinstDLL, 
-         DWORD     fdwReason, 
+DllMain (HINSTANCE hinstDLL,
+         DWORD     fdwReason,
          LPVOID    lpvReserved)
 {
   hLibGeglModule = hinstDLL;

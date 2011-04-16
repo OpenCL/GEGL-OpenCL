@@ -50,7 +50,7 @@ gegl_graph (GeglNode *node)
   if (gegl_node_get_pad (node, "output"))
     {
       GeglNode *outproxynop = gegl_node_get_output_proxy (graph, "output");
-      gegl_node_connect_to (node, "output", outproxynop, "input"); 
+      gegl_node_connect_to (node, "output", outproxynop, "input");
     }
   gegl_graph_adopt (graph, node);
   return graph;

@@ -233,7 +233,7 @@
 
   /* utility call that makes sure allocations are 16 byte aligned.
    * making RGBA float buffers have aligned access for pixels.
-   */ 
+   */
   gpointer gegl_malloc (gsize size)
   {
     gchar *mem;

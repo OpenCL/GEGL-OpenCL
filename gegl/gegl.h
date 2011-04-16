@@ -858,7 +858,7 @@ GeglConfig      * gegl_config (void);
 /**
  * gegl_node:
  * @op_type:  the type of operation to create
- * @first_property_name: 
+ * @first_property_name:
  * @...:
  *
  * Construct a GEGL node, connecting it to needed input nodes. The

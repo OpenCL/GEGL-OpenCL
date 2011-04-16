@@ -43,7 +43,7 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean gegl_operation_source_process 
+static gboolean gegl_operation_source_process
                              (GeglOperation *operation,
                               GeglOperationContext *context,
                               const gchar   *output_prop,

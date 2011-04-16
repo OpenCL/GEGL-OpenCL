@@ -664,14 +664,14 @@ gegl_chant_constructor (GType                  type,
   /* create dummy colors and vectors */
   properties = GEGL_CHANT_PROPERTIES (obj);
 
-#define gegl_chant_int(name, nick, min, max, def, blurb)              
-#define gegl_chant_double(name, nick, min, max, def, blurb)           
-#define gegl_chant_boolean(name, nick, def, blurb)                    
-#define gegl_chant_string(name, nick, def, blurb)                     
-#define gegl_chant_file_path(name, nick, def, blurb)                  
-#define gegl_chant_multiline(name, nick, def, blurb)                  
-#define gegl_chant_object(name, nick, blurb)                          
-#define gegl_chant_pointer(name, nick, blurb)                         
+#define gegl_chant_int(name, nick, min, max, def, blurb)
+#define gegl_chant_double(name, nick, min, max, def, blurb)
+#define gegl_chant_boolean(name, nick, def, blurb)
+#define gegl_chant_string(name, nick, def, blurb)
+#define gegl_chant_file_path(name, nick, def, blurb)
+#define gegl_chant_multiline(name, nick, def, blurb)
+#define gegl_chant_object(name, nick, blurb)
+#define gegl_chant_pointer(name, nick, blurb)
 #define gegl_chant_color(name, nick, def, blurb)              \
     if (properties->name == NULL) \
     {properties->name = gegl_color_new(def?def:"black");}

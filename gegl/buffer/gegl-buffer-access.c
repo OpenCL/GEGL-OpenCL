@@ -1108,7 +1108,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&
-     (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) || 
+     (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) ||
        buffer->sampler_format != format
       ))
     {

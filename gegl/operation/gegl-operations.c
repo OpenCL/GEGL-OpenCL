@@ -232,7 +232,7 @@ gegl_operation_calc_need_rects (GeglOperation *operation,
     {
       const gchar *pad_name = gegl_pad_get_name (input_pads->data);
       GeglRectangle rect;
-      rect = gegl_operation_get_required_for_output (operation, pad_name, &request); 
+      rect = gegl_operation_get_required_for_output (operation, pad_name, &request);
 
       gegl_operation_set_need_rect (operation, context_id, pad_name, &rect);
     }

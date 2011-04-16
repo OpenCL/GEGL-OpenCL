@@ -36,7 +36,6 @@ gegl_extension_handler_register_util (GHashTable  **handlers,
 
   g_hash_table_insert (*handlers, ext, g_strdup (handler));
 }
-                                      
 
 void
 gegl_extension_handler_register (const gchar *extension,

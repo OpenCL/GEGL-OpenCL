@@ -75,7 +75,7 @@ GType                gegl_path_get_type       (void) G_GNUC_CONST;
  * </p><pre>typedef struct GeglPathItem
  * {
  *   gchar  type;
- *   Point  point[4]; 
+ *   Point  point[4];
  * } GeglPathItem;</pre></p>
  *
  */
@@ -252,7 +252,7 @@ void                 gegl_path_calc_values    (GeglPath    *path,
 /**
  * gegl_path_get_bounds:
  * @self: a #GeglPath.
- * @min_x: return location for minimum x coordinate 
+ * @min_x: return location for minimum x coordinate
  * @max_x: return location for maximum x coordinate
  * @min_y: return location for minimum y coordinate
  * @max_y: return location for maximum y coordinate

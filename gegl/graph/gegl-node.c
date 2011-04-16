@@ -928,7 +928,7 @@ gegl_node_blit (GeglNode            *self,
   threads = gegl_config ()->threads;
   if (threads > GEGL_MAX_THREADS)
     threads = 1;
-  
+
   if (pool == NULL)
     {
       pool = g_thread_pool_new (spawnrender, NULL, threads, TRUE, NULL);
@@ -1053,7 +1053,7 @@ gegl_node_blit (GeglNode            *self,
     {
       GeglCache *cache = gegl_node_get_cache (self);
       if (!(flags & GEGL_BLIT_DIRTY))
-        { 
+        {
           if (!self->priv->processor)
            self->priv->processor = gegl_node_new_processor (self, roi);
           gegl_processor_set_rectangle (self->priv->processor, roi);
@@ -1278,7 +1278,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     gegl_node_disconnect_sinks (self);
 
     /* Delete all the pads from the previous operation */
-    while ((old_pads = gegl_node_get_pads (self)) != NULL) 
+    while ((old_pads = gegl_node_get_pads (self)) != NULL)
       {
         gegl_node_remove_pad (self, old_pads->data);
       }

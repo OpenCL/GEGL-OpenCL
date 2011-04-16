@@ -111,7 +111,7 @@ gegl_matrix3_is_translate (GeglMatrix3 *matrix)
 }
 
 void
-gegl_matrix3_copy_into (GeglMatrix3 *dst, 
+gegl_matrix3_copy_into (GeglMatrix3 *dst,
                         GeglMatrix3 *src)
 {
   memcpy (dst->coeff [0], src->coeff [0], 3 * sizeof (gdouble));

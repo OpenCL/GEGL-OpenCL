@@ -87,7 +87,7 @@ struct _GeglTileBackendFile
    * at all times to be able to keep track of the ->next offsets in
    * the blocks.
    */
-  GeglBufferBlock *in_holding; 
+  GeglBufferBlock *in_holding;
 
   /* loading buffer */
   GList           *tiles;

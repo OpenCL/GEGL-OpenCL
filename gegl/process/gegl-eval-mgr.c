@@ -165,7 +165,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
       case NEED_CONTEXT_SETUP_TRAVERSAL:
 
         gegl_visitor_reset (self->prepare_visitor);
-        gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));      
+        gegl_visitor_dfs_traverse (self->prepare_visitor, GEGL_VISITABLE (root));
         self->state = NEED_CONTEXT_SETUP_TRAVERSAL;
      }
 

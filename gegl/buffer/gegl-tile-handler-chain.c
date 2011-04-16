@@ -68,7 +68,7 @@ gegl_tile_handler_chain_dispose (GObject *object)
    */
   chain = tile_handler_chain->chain;
   tile_handler_chain->chain = NULL;
-  
+
   iter = chain;
   while (iter)
     {

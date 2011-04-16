@@ -64,8 +64,8 @@ typedef struct GeglBufferIterators
 {
   /* current region of interest */
   gint          length;             /* length of current data in pixels */
-  gpointer      data[GEGL_BUFFER_MAX_ITERATORS]; 
-  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];                 
+  gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
+  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
 
   /* the following is private: */
   gint           iterators;
@@ -74,8 +74,8 @@ typedef struct GeglBufferIterators
   const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS];
   GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS];
   guint          flags      [GEGL_BUFFER_MAX_ITERATORS];
-  gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS]; 
-  GeglBufferTileIterator   i[GEGL_BUFFER_MAX_ITERATORS]; 
+  gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS];
+  GeglBufferTileIterator   i[GEGL_BUFFER_MAX_ITERATORS];
 } GeglBufferIterators;
 
 
@@ -95,7 +95,7 @@ static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
                                              GeglBuffer *bufferB,
                                              gint        xB,
                                              gint        yB)
-{ 
+{
   if (bufferA->tile_storage->tile_width !=
       bufferB->tile_storage->tile_width)
     return FALSE;
@@ -292,7 +292,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
     }
 
   i->buf[self] = NULL;
-  
+
   if (i->format[self] == i->buffer[self]->format)
     {
       i->flags[self] |= GEGL_BUFFER_FORMAT_COMPATIBLE;
@@ -445,11 +445,11 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
           if (res != result)
             {
               g_print ("%i==%i != 0==%i\n", no, res, result);
-             } 
+            }
           g_assert (res == result);
 
-          if ((i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE) && 
-              i->roi[no].width == i->i[no].buffer->tile_storage->tile_width 
+          if ((i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE) &&
+              i->roi[no].width == i->i[no].buffer->tile_storage->tile_width
            )
             {
               /* direct access */
@@ -474,7 +474,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
             }
         }
       else
-        { 
+        {
           /* we copy the roi from iterator 0  */
           i->roi[no] = i->roi[0];
           i->roi[no].x += (i->rect[no].x-i->rect[0].x);
@@ -533,7 +533,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
 }
 
 GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
-                                              const GeglRectangle *roi, 
+                                              const GeglRectangle *roi,
                                               const Babl          *format,
                                               guint                flags)
 {

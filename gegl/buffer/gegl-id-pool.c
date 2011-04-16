@@ -44,7 +44,7 @@ gegl_id_pool_new  (guint initial_size)
 
   self = g_slice_new (GeglIDPool);
 
-  self->array = g_array_sized_new (FALSE, FALSE, 
+  self->array = g_array_sized_new (FALSE, FALSE,
                                    sizeof (gpointer), initial_size);
   self->free_ids = NULL;
   return self;

@@ -110,7 +110,7 @@ static gsize write_block (SaveInfo        *info,
        ret = g_output_stream_write (info->o, info->in_holding, info->in_holding->length, NULL, NULL);
 #else
        ret = write (info->o, info->in_holding, info->in_holding->length);
-	   if (ret == -1) 
+	   if (ret == -1)
          ret = 0;
 #endif
        info->offset += ret;
@@ -205,7 +205,7 @@ gegl_buffer_header_init (GeglBufferHeader *header,
   {
     gchar buf[64] = { 0, };
 
-    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n%ix%i\n\n\n\n\n\n\n\n\n", 
+    g_snprintf (buf, 64, "%s%c\n%i×%i %ibpp\n%ix%i\n\n\n\n\n\n\n\n\n",
           babl_get_name (format), 0,
           header->tile_width,
           header->tile_height,
@@ -223,7 +223,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
 {
   SaveInfo *info = g_slice_new0 (SaveInfo);
 
-  glong prediction = 0; 
+  glong prediction = 0;
   gint bpp;
   gint tile_width;
   gint tile_height;
@@ -384,7 +384,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
 #if HAVE_GIO
         info->offset += g_output_stream_write (info->o, data, info->tile_size, NULL, NULL);
 #else
-        { 
+        {
           ssize_t ret = write (info->o, data, info->tile_size);
 	      if (ret != -1)
             info->offset += ret;

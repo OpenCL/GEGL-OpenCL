@@ -262,7 +262,7 @@ void            gegl_buffer_set               (GeglBuffer          *buffer,
  * Get the native babl format of the buffer.
  *
  * Returns: the babl format used for storing pixels in the buffer.
- * 
+ *
  */
 const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer);
 
@@ -398,7 +398,7 @@ GeglBuffer *gegl_buffer_linear_new           (const GeglRectangle *extent,
  *
  * Creates a GeglBuffer backed by a linear memory buffer that already exists,
  * of the given @extent in the specified @format. babl_format ("R'G'B'A u8")
- * for instance to make a normal 8bit buffer. 
+ * for instance to make a normal 8bit buffer.
  *
  * Returns: a GeglBuffer that can be used as any other GeglBuffer.
  */

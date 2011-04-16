@@ -49,7 +49,7 @@ struct _GeglOperation
 
 /***
  * GeglOperation:
- * 
+ *
  * All the image processing code in GEGL is implemented as GeglOperations,
  * GEGL operations are implemented as GObject with a convenience API called
  * chanting that abstracts away the boiler plater needed to generate introspectable
