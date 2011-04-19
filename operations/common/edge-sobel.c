@@ -30,10 +30,10 @@ gegl_chant_boolean (horizontal,  _("Horizontal"),  TRUE,
 
 gegl_chant_boolean (vertical,  _("Vertical"),  TRUE,
                     _("Vertical"))
-  
+
 gegl_chant_boolean (keep_signal,  _("Keep Signal"),  TRUE,
                     _("Keep Signal"))
-                  
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -118,61 +118,63 @@ edge_sobel (GeglBuffer          *src,
         gfloat hor_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat ver_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        
+
         gfloat *center_pix = src_buf + ((x+SOBEL_RADIUS)+((y+SOBEL_RADIUS) * src_width)) * 4;
-        
+
         gint c;
 
         if (horizontal)
-        {
-          gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
-          gfloat *src_pix = src_buf + (i + j * src_width) * 4;
-                  
-          for (c=0;c<3;c++)
-              hor_grad[c] += -1.0f*src_pix[c-4-src_width*4]+     src_pix[c+4-src_width*4] + \
-                             -2.0f*src_pix[c-4]            +2.0f*src_pix[c+4]             + \
-                             -1.0f*src_pix[c-4+src_width*4]+     src_pix[c+4+src_width*4];
-        }
-        
+          {
+            gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
+            gfloat *src_pix = src_buf + (i + j * src_width) * 4;
+
+            for (c=0;c<3;c++)
+                hor_grad[c] +=
+                    -1.0f*src_pix[c-4-src_width*4]+ src_pix[c+4-src_width*4] +
+                    -2.0f*src_pix[c-4] + 2.0f*src_pix[c+4] +
+                    -1.0f*src_pix[c-4+src_width*4]+ src_pix[c+4+src_width*4];
+          }
+
         if (vertical)
-        {
-          gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
-          gfloat *src_pix = src_buf + (i + j * src_width) * 4;
-                  
-          for (c=0;c<3;c++)
-              ver_grad[c] += -1.0f*src_pix[c-4-src_width*4]-2.0f*src_pix[c-src_width*4]-1.0f*src_pix[c+4-src_width*4] + \
-                                   src_pix[c-4+src_width*4]+2.0f*src_pix[c+src_width*4]+     src_pix[c+4+src_width*4];
+          {
+            gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
+            gfloat *src_pix = src_buf + (i + j * src_width) * 4;
+
+            for (c=0;c<3;c++)
+                ver_grad[c] +=
+                  -1.0f*src_pix[c-4-src_width*4]-2.0f*src_pix[c-src_width*4]-1.0f*src_pix[c+4-src_width*4] +
+                  src_pix[c-4+src_width*4]+2.0f*src_pix[c+src_width*4]+     src_pix[c+4+src_width*4];
         }
 
         if (horizontal && vertical)
-        {
-          for (c=0;c<3;c++)
-            // normalization to [0, 1]
-            gradient[c] = RMS(hor_grad[c],ver_grad[c])/1.41f; 
-        }
+          {
+            for (c=0;c<3;c++)
+              // normalization to [0, 1]
+              gradient[c] = RMS(hor_grad[c],ver_grad[c])/1.41f;
+          }
         else
-        {
-          if (keep_signal)
           {
-            for (c=0;c<3;c++)
-              gradient[c] = hor_grad[c]+ver_grad[c]; 
+            if (keep_signal)
+              {
+                for (c=0;c<3;c++)
+                  gradient[c] = hor_grad[c]+ver_grad[c];
+              }
+            else
+              {
+                for (c=0;c<3;c++)
+                  gradient[c] = fabsf(hor_grad[c]+ver_grad[c]);
+              }
           }
-          else
-          {
-            for (c=0;c<3;c++)
-                gradient[c] = fabsf(hor_grad[c]+ver_grad[c]); 
-          }
-        }
 
         //alpha
         gradient[3] = center_pix[3];
-        
+
         for (c=0; c<4;c++)
           dst_buf[offset*4+c] = gradient[c];
-          
+
         offset++;
       }
-      
+
   gegl_buffer_set (dst, dst_rect, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);

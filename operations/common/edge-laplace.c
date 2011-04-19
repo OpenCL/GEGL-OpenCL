@@ -14,11 +14,11 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 /*
  * Copyright 2011 Victor Oliveira <victormatheus@gmail.com>
  */
- 
+
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
@@ -40,7 +40,7 @@ edge_laplace (GeglBuffer          *src,
               const GeglRectangle *src_rect,
               GeglBuffer          *dst,
               const GeglRectangle *dst_rect);
-              
+
 #include <stdio.h>
 
 static void prepare (GeglOperation *operation)
@@ -70,12 +70,12 @@ process (GeglOperation       *operation,
 
 static void
 minmax  (gfloat  x1,
-	 gfloat  x2,
-	 gfloat  x3,
-	 gfloat  x4,
-	 gfloat  x5,
-	 gfloat *min_result,
-	 gfloat *max_result)
+         gfloat  x2,
+         gfloat  x3,
+         gfloat  x4,
+         gfloat  x5,
+         gfloat *min_result,
+         gfloat *max_result)
 {
   gfloat min1, min2, max1, max2;
 
@@ -132,47 +132,51 @@ edge_laplace (GeglBuffer          *src,
   temp_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf  = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, 1.0, src_rect,
+                   babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y=0; y<dst_rect->height; y++)
     for (x=0; x<dst_rect->width; x++)
       {
         gfloat *src_pix;
-        
+
         gfloat gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-                
+
         gint c;
 
         gfloat minval, maxval;
-        
+
         gint i=x+LAPLACE_RADIUS, j=y+LAPLACE_RADIUS;
         offset = i + j * src_width;
         src_pix = src_buf + offset * 4;
-        
+
         for (c=0;c<3;c++)
-        {
-          minmax (src_pix[c-src_width*4], src_pix[c+src_width*4],
-                  src_pix[c-4], src_pix[c+4], src_pix[c],
-                  &minval, &maxval); /* four-neighbourhood */
-          
-          gradient[c] = 0.5f * fmaxf((maxval-src_pix[c]), (src_pix[c]-minval));
-          
-          gradient[c] = (src_pix[c-4-src_width*4]+     src_pix[c-src_width*4]+src_pix[c+4-src_width*4] + \
-                         src_pix[c-4]            -8.0f*src_pix[c]            +src_pix[c+4]             + \
-                         src_pix[c-4+src_width*4]+     src_pix[c+src_width*4]+src_pix[c+4+src_width*4]) > 0.0f?
-                        gradient[c] : -1.0f*gradient[c];
+          {
+            minmax (src_pix[c-src_width*4], src_pix[c+src_width*4],
+                    src_pix[c-4], src_pix[c+4], src_pix[c],
+                    &minval, &maxval); /* four-neighbourhood */
+
+            gradient[c] = 0.5f * fmaxf((maxval-src_pix[c]), (src_pix[c]-minval));
+
+            gradient[c] = (src_pix[c-4-src_width*4] +
+                           src_pix[c-src_width*4] +
+                           src_pix[c+4-src_width*4] +
+
+                           src_pix[c-4] -8.0f* src_pix[c] +src_pix[c+4] +
+
+                           src_pix[c-4+src_width*4] + src_pix[c+src_width*4] +
+                           src_pix[c+4+src_width*4]) > 0.0f?
+                          gradient[c] : -1.0f*gradient[c];
         }
-        
+
         //alpha
         gradient[3] = src_pix[3];
-        
+
         for (c=0; c<4;c++)
           temp_buf[offset*4+c] = gradient[c];
-          
       }
-  
-  //1-pixel edges
 
+  //1-pixel edges
   offset = 0;
 
   for (y=0; y<dst_rect->height; y++)
@@ -180,12 +184,12 @@ edge_laplace (GeglBuffer          *src,
       {
 
         gfloat value[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        
+
         gint c;
 
         gint i=x+LAPLACE_RADIUS, j=y+LAPLACE_RADIUS;
         gfloat *src_pix = temp_buf + (i + j * src_width) * 4;
-        
+
         for (c=0;c<3;c++)
         {
           gfloat current = src_pix[c];
@@ -199,16 +203,16 @@ edge_laplace (GeglBuffer          *src,
                       src_pix[c-4            ] < 0.0f ||
                       src_pix[c+4            ] < 0.0f))?
                     current : 0.0f;
-                    
+
           value[c] = current;
         }
-        
+
         //alpha
         value[3] = src_pix[3];
-        
+
         for (c=0; c<4;c++)
           dst_buf[offset*4+c] = value[c];
-          
+
         offset++;
       }
 
