@@ -106,7 +106,7 @@ void  gegl_matrix3_copy_into (GeglMatrix3 *dst,
 
 /**
  * gegl_matrix3_copy:
- * @src: a #GeglMatrix
+ * @matrix: a #GeglMatrix
  *
  * Returns a copy of @src.
  */

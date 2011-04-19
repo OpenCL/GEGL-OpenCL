@@ -54,7 +54,7 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
  * possible to pass in NULL for both extent and format, a NULL extent creates
  * an empty buffer and a NULL format makes the buffer default to "RGBA float".
  */
-GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
+GeglBuffer *    gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
 
 
@@ -70,9 +70,8 @@ GeglBuffer*     gegl_buffer_new               (const GeglRectangle *extent,
  *
  * returns a GeglBuffer, that holds a reference to the provided backend.
  */
-GeglBuffer *
-gegl_buffer_new_for_backend (const GeglRectangle *extent,
-                             void                *backend);
+GeglBuffer * gegl_buffer_new_for_backend (const GeglRectangle *extent,
+                                          void                *backend);
 
 /**
  * gegl_buffer_open:
