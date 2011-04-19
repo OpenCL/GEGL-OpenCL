@@ -51,7 +51,9 @@ TESTS = \
   run-transform.xml.sh                 \
   run-upsharptest.xml.sh               \
   run-upsizetest.xml.sh                \
-  run-upsmoothtest.xml.sh
+  run-upsmoothtest.xml.sh              \
+  run-edge-sobel.xml.sh                \
+  run-edge-laplace.xml.sh
 
 # Conditional tests
 if HAVE_JASPER
