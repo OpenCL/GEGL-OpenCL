@@ -464,8 +464,6 @@ gegl_buffer_constructor (GType                  type,
   GeglTileBackend *backend;
   GeglTileHandler *handler;
   GeglTileSource  *source;
-  gint             tile_width;
-  gint             tile_height;
 
   gint width;
   gint height;
@@ -610,9 +608,6 @@ gegl_buffer_constructor (GType                  type,
     }
 
   g_assert (backend);
-
-  tile_width  = backend->priv->tile_width;
-  tile_height = backend->priv->tile_height;
 
   if (buffer->extent.width == -1 &&
       buffer->extent.height == -1) /* no specified extents,
