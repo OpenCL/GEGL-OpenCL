@@ -67,7 +67,7 @@ endif
 test_to_xml = $(abs_srcdir)/$(subst $(testsuffix),,$(subst $(testprefix),,$(1)))
 test_to_ref = $(wildcard $(abs_srcdir)/reference/$(basename $(notdir $(call test_to_xml,$(1)))).*)
 test_to_out = $(abs_builddir)/output/$(notdir $(call test_to_ref,$(1)))
-$(testprefix)%.xml.sh: Makefile.am
+$(testprefix)%.xml.sh: Makefile.am $(call test_to_xml,$@) $(call test_to_ref,$@)
 	@xml_file=$(call test_to_xml,$@)                                   ;\
 	ref_img=$(call test_to_ref,$@)                                     ;\
 	out_img=$(call test_to_out,$@)                                     ;\
