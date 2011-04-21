@@ -35,6 +35,8 @@ TESTS = \
   run-downsharptest-broken.xml.sh      \
   run-downsizetest-broken.xml.sh       \
   run-downsmoothtest-broken.xml.sh     \
+  run-edge-laplace-broken.xml.sh       \
+  run-edge-sobel.xml.sh                \
   run-fattal02.xml.sh                  \
   run-gamma.xml.sh                     \
   run-hdr-color.xml.sh                 \
@@ -51,9 +53,7 @@ TESTS = \
   run-transform.xml.sh                 \
   run-upsharptest.xml.sh               \
   run-upsizetest.xml.sh                \
-  run-upsmoothtest.xml.sh              \
-  run-edge-sobel.xml.sh                \
-  run-edge-laplace.xml.sh
+  run-upsmoothtest.xml.sh
 
 # Conditional tests
 if HAVE_JASPER
