@@ -170,7 +170,7 @@ main (gint    argc,
          if (strstr (argv[2], "broken"))
            g_print ("because the test is expected to fail ");
          else
-           g_print ("because the erorr is small ");
+           g_print ("because the error is small ");
          g_print ("we'll say ");
        }
 
