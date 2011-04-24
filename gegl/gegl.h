@@ -468,26 +468,7 @@ void          gegl_node_process          (GeglNode      *sink_node);
  * Sometimes it is useful to be able to move nodes between graphs or even
  * handle orphaned nods that are not part of a graph. gegl_node_adopt_child
  * and gegl_node_get_parent are provided to handle such cases.
- *
- * (gegl_node_adopt_child is deprecated, and will be removed in a future
- * release)
  */
-
-/**
- * gegl_node_adopt_child:
- * @parent: a #GeglNode or NULL.
- * @child: a #GeglNode
- *
- * Adds @child to the responsibilities of @node, this makes the parent node
- * take a reference on the child that is kept as long as the parent itself is
- * being referenced. The node is stolen from an existing parent if there is one,
- * or a presumed existing reference is used. If @parent is NULL the child will
- * be orphaned and the developer is given a reference to be responsible of.
- *
- * Returns the child, or NULL if there was a problem with the arguments.
- */
-GeglNode    * gegl_node_adopt_child        (GeglNode      *parent,
-                                            GeglNode      *child);
 
 /**
  * gegl_node_add_child:
@@ -582,8 +563,9 @@ GeglRectangle gegl_node_get_bounding_box (GeglNode      *node);
  * gegl_node_get_children:
  * @node: the node to retrieve the children of.
  *
- * Returns a list of nodes with children/internal nodes. The list must be
- * freed by the caller.
+ * Return value: (element-type Gegl.Node) (transfer container): a list
+ * of the nodes contained within a GeglNode that is a subgraph.
+ * Use g_list_free () on the list when done.
  */
 GSList      * gegl_node_get_children     (GeglNode      *node);
 
