@@ -48,13 +48,6 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
-  return result;
-}
-
 /* conversion function mapping between scale and aspect
  *
  * -1.0 = 0.0
@@ -213,7 +206,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 
