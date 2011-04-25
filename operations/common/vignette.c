@@ -28,8 +28,8 @@ gegl_chant_double (gamma,    _("gamma"),  1.0, 20.0, 1.4545, _("falloff linearit
 gegl_chant_double (proportion, _("proportion"), 0.0, 1.0, 1.0,  _("how close we are to image proportions"))
 gegl_chant_double (squeeze,   _("squeeze"), -1.0, 1.0, 0.0,  _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."))
 
-gegl_chant_double (x,        _("x"),  0.0, 1.0, 0.5, _("Horizontal center of vignetting"))
-gegl_chant_double (y,        _("y"),  0.0, 1.0, 0.5, _("Vertical center of vignetting"))
+gegl_chant_double (x,        _("x"),  -1.0, 2.0, 0.5, _("Horizontal center of vignetting"))
+gegl_chant_double (y,        _("y"),  -1.0, 2.0, 0.5, _("Vertical center of vignetting"))
 gegl_chant_double (rotation, _("rotation"),  0.0, 360.0, 0.0, _("Rotation angle"))
 
 #else
