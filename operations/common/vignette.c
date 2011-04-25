@@ -24,7 +24,7 @@ gegl_chant_int    (shape,    _("shape"),  0, 2, 0, _("shape to use 0=circle 1=di
 gegl_chant_color (color,     _("Color"), "black", _("defaults to 'black', you can use transparency here to erase portions of an image"))
 gegl_chant_double (radius,   _("radius"),  0.0, 3.0, 1.5, _("how far out vignetting goes as portion of half image diagonal"))
 gegl_chant_double (softness,  _("softness"),  0.0, 1.0, 0.8, _("softness"))
-gegl_chant_double (gamma,    _("gamma"),  1.0, 20.0, 1.4545, _("falloff linearity"))
+gegl_chant_double (gamma,    _("gamma"),  1.0, 20.0, 2.0, _("falloff linearity"))
 gegl_chant_double (proportion, _("proportion"), 0.0, 1.0, 1.0,  _("how close we are to image proportions"))
 gegl_chant_double (squeeze,   _("squeeze"), -1.0, 1.0, 0.0,  _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."))
 
@@ -98,7 +98,7 @@ process (GeglOperation       *operation,
   gfloat length = hypot (bounds->width, bounds->height)/2;
   gfloat rdiff;
   gfloat cost, sint;
-
+  gfloat costy, sinty;
 
   gfloat      color[4];
 
@@ -126,69 +126,73 @@ process (GeglOperation       *operation,
   midx = bounds->x + bounds->width * o->x;
   midy = bounds->y + bounds->height * o->y;
 
-  /* rotate coordinates around midx/midy,.
-   */
-
-  cost = cos(-o->rotation * (G_PI*2/360.0));/* caching constants outside loop */
-  sint = sin(-o->rotation * (G_PI*2/360.0));/* caching constants outside loop */
-
   x = roi->x;
   y = roi->y;
 
+  /* constant for all pixels */
+  cost = cos(-o->rotation * (G_PI*2/360.0));
+  sint = sin(-o->rotation * (G_PI*2/360.0));
+
+  /* constant per scanline */
+  sinty = sint * (y-midy) - midx;
+  costy = cost * (y-midy) + midy;
+
   while (n_pixels--)
     {
-      gfloat strength;
+      gfloat strength = 0.0;
       gfloat u, v;
-      gint c;
-
-      /* this can be partially optimized out of the loop, ending up being
-         additions..
-       */
+#if 0
       u = cost * (x-midx) - sint * (y-midy) + midx;
       v = sint * (x-midx) + cost * (y-midy) + midy;
+      /* optimized out of innerscanline loop */
+#endif
+      u = cost * (x-midx) - sinty;
+      v = sint * (x-midx) + costy;
 
       if (length == 0.0)
-        strength = 0.5;
+        strength = 0.0;
       else
         {
           switch (o->shape)
           {
             case 0:  /* circle */
-#define POW2(a) ((a)*(a))
-              strength = sqrt( POW2((u-midx) / scale) +
-                               POW2(v-midy)) /length;
-#undef POW2
-              break;
-             case 1: /* square */
-              strength =
-                  MAX(ABS(u-midx) / scale, ABS(v-midy) )/length;
-              break;
-             case 2: /* diamond */
-              strength = (ABS(u-midx) / scale + ABS(v-midy) )/length;
-              break;
-             default:
-              strength = 1.0;
+              strength = hypot ((u-midx) / scale, v-midy);      break;
+            case 1: /* square */
+              strength = MAX(ABS(u-midx) / scale, ABS(v-midy)); break;
+            case 2: /* diamond */
+              strength = ABS(u-midx) / scale + ABS(v-midy);     break;
           }
-          strength = (strength-radius0) /rdiff;
+          strength /= length;
+          strength = (strength-radius0) / rdiff;
         }
 
-      if (strength<0.0) strength = 0.0;
-      if (strength>1.0) strength = 1.0;
+      if (strength<0.0)
+        strength = 0.0;
+      if (strength>1.0)
+        strength = 1.0;
 
-      if (o->gamma != 1.0)
-        strength = powf(strength, o->gamma);
+      if (o->gamma > 0.9999 && o->gamma < 2.0001)
+        strength *= strength;  /* fast path for default gamma */
+      else if (o->gamma != 1.0)
+        strength = powf(strength, o->gamma); /* this gamma factor is
+                                              * very expensive..
+                                              */
 
-      for (c=0;c<4;c++)
-        out_pixel[c]=in_pixel[c] * (1.0-strength) + color[c] * strength;
+      out_pixel[0]=in_pixel[0] * (1.0-strength) + color[0] * strength;
+      out_pixel[1]=in_pixel[1] * (1.0-strength) + color[1] * strength;
+      out_pixel[2]=in_pixel[2] * (1.0-strength) + color[2] * strength;
+      out_pixel[3]=in_pixel[3] * (1.0-strength) + color[3] * strength;
 
       out_pixel += 4;
-      in_pixel += 4;
+      in_pixel  += 4;
 
       /* update x and y coordinates */
       if (++x>=roi->x + roi->width)
         {
           x=roi->x;
           y++;
+          sinty = sint * (y-midy) - midx;
+          costy = cost * (y-midy) + midy;
         }
     }
 
