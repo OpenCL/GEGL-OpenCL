@@ -114,7 +114,10 @@ process (GeglOperation       *operation,
 
   scale *= aspect_to_scale (o->squeeze);
 
-  length = (bounds->width/2.0) / scale;
+  length = (bounds->width/2.0);
+
+  if (scale > 1.0)
+    length /= scale;
 
   gegl_color_get_rgba4f (o->color, color);
 
