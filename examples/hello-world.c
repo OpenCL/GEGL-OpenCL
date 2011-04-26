@@ -15,13 +15,13 @@ main (gint    argc,
 
 /*
 This is the graph we're going to construct:
- 
+
 .-----------.
 | display   |
 `-----------'
    |
 .-------.
-| layer |
+| over  |
 `-------'
    |   \
    |    \
@@ -38,10 +38,8 @@ This is the graph we're going to construct:
 
     /*< The image nodes representing operations we want to perform */
     GeglNode *display    = gegl_node_create_child (gegl, "gegl:display");
-    GeglNode *layer      = gegl_node_new_child (gegl,
-                                 "operation", "gegl:layer",
-                                 "x", 2.0,
-                                 "y", 4.0,
+    GeglNode *over       = gegl_node_new_child (gegl,
+                                 "operation", "gegl:over",
                                  NULL);
     GeglNode *text       = gegl_node_new_child (gegl,
                                  "operation", "gegl:text",
@@ -54,9 +52,9 @@ This is the graph we're going to construct:
                                 "height", 384,
                                 NULL);
 
-    gegl_node_link_many (mandelbrot, layer, display, NULL);
-    gegl_node_connect_to (text, "output",  layer, "aux");
-   
+    gegl_node_link_many (mandelbrot, over, display, NULL);
+    gegl_node_connect_to (text, "output",  over, "aux");
+
     /* request that the save node is processed, all dependencies will
      * be processed as well
      */
