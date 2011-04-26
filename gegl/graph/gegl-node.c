@@ -924,7 +924,6 @@ gegl_node_blit (GeglNode            *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
-#if 1
   threads = gegl_config ()->threads;
   if (threads > GEGL_MAX_THREADS)
     threads = 1;
@@ -936,16 +935,8 @@ gegl_node_blit (GeglNode            *self,
       cond = g_cond_new ();
     }
 
-#if 0
   if (flags == GEGL_BLIT_DEFAULT)
-    flags = GEGL_BLIT_CACHE;
-#endif
-
-  flags = GEGL_BLIT_DEFAULT; /* force all rendering through this path,
-                              * to have less code to worry about making
-                              * multi thread safe
-                              */
-  if (flags == GEGL_BLIT_DEFAULT)
+#if 1  /* multi threaded version */
     {
       ThreadData data[GEGL_MAX_THREADS];
       gint i;
@@ -1022,8 +1013,9 @@ gegl_node_blit (GeglNode            *self,
           g_mutex_unlock (mutex);
         }
     }
-#else  /* thread free version, can be removed */
-    if (flags == GEGL_BLIT_DEFAULT)
+#else /* thread free version, could be removed, left behind in case it 
+         is needed for debugging
+       */
     {
       GeglBuffer *buffer;
 
@@ -1047,19 +1039,19 @@ gegl_node_blit (GeglNode            *self,
         g_object_unref (buffer);
     }
 #endif
-  else  /* these code paths currently not used */
-    if ((flags & GEGL_BLIT_CACHE) ||
-           (flags & GEGL_BLIT_DIRTY))
+  else
+    if ((flags & GEGL_BLIT_CACHE))
     {
       GeglCache *cache = gegl_node_get_cache (self);
       if (!(flags & GEGL_BLIT_DIRTY))
         {
           if (!self->priv->processor)
            self->priv->processor = gegl_node_new_processor (self, roi);
+
           gegl_processor_set_rectangle (self->priv->processor, roi);
-          while (gegl_processor_work (self->priv->processor, NULL)) ;
+          while (gegl_processor_work (self->priv->processor, NULL));
         }
-      if (destination_buf)
+      if (destination_buf && cache)
         {
           gegl_buffer_get (GEGL_BUFFER (cache), scale, roi,
                            format, destination_buf, rowstride);
@@ -2006,7 +1998,8 @@ gegl_node_get_cache (GeglNode *node)
        * only "output" pads
        */
       pad = gegl_node_get_pad (node, "output");
-      g_assert (pad);
+      if (!pad)
+        return NULL;
       format = gegl_pad_get_format (pad);
       if (!format)
         {
