@@ -405,7 +405,7 @@ GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 PKG_CHECK_MODULES(BABL, babl >= babl_required_version)
 
-GLIB_PACKAGES="gobject-2.0 gmodule-2.0 "
+GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0"
 AC_SUBST(GLIB_PACKAGES)
 
 dnl This PATH_GLIB is somewhat redundant, but does a sanity compile and 
