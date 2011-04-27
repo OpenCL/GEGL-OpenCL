@@ -20,14 +20,10 @@
 
 #include <string.h>
 
-#if HAVE_GIO
-#include <gio/gio.h>
-#else
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#endif
 
 #include <glib-object.h>
 
@@ -55,12 +51,7 @@ typedef struct
   GeglBufferHeader header;
   GList           *tiles;
   gchar           *path;
-#if HAVE_GIO
-  GFile           *file;
-  GOutputStream   *o;
-#else
   int             o;
-#endif
 
   gint             tile_size;
   gint             offset;
@@ -106,13 +97,9 @@ static gsize write_block (SaveInfo        *info,
        if (block == NULL)
          info->in_holding->next = 0;
 
-#if HAVE_GIO
-       ret = g_output_stream_write (info->o, info->in_holding, info->in_holding->length, NULL, NULL);
-#else
        ret = write (info->o, info->in_holding, info->in_holding->length);
 	   if (ret == -1)
          ret = 0;
-#endif
        info->offset += ret;
        g_assert (allocated_pos == info->offset);
      }
@@ -130,15 +117,8 @@ save_info_destroy (SaveInfo *info)
     return;
   if (info->path)
     g_free (info->path);
-#if HAVE_GIO
-  if (info->o)
-    g_object_unref (info->o);
-  if (info->file)
-    g_object_unref (info->file);
-#else
   if (info->o != -1)
     close (info->o);
-#endif
   if (info->tiles != NULL)
     {
       GList *iter;
@@ -243,12 +223,7 @@ gegl_buffer_save (GeglBuffer          *buffer,
    */
 
   info->path = g_strdup (path);
-#if HAVE_GIO
-  info->file = g_file_new_for_commandline_arg (info->path);
-  info->o    = G_OUTPUT_STREAM (g_file_replace (info->file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL));
-#else
   info->o    = open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-#endif
   tile_width  = buffer->tile_storage->tile_width;
   tile_height = buffer->tile_storage->tile_height;
   g_object_get (buffer, "px-size", &bpp, NULL);
@@ -334,15 +309,11 @@ gegl_buffer_save (GeglBuffer          *buffer,
   }
 
   /* save the header */
-#if HAVE_GIO
-  info->offset += g_output_stream_write (info->o, &info->header, sizeof (GeglBufferHeader), NULL, NULL);
-#else
   {
     ssize_t ret = write (info->o, &info->header, sizeof (GeglBufferHeader));
 	if (ret != -1)
       info->offset += ret;
   }
-#endif
   g_assert (info->offset == info->header.next);
 
   /* save the index */
@@ -381,15 +352,11 @@ gegl_buffer_save (GeglBuffer          *buffer,
         g_assert (data);
 
         g_assert (info->offset == entry->offset);
-#if HAVE_GIO
-        info->offset += g_output_stream_write (info->o, data, info->tile_size, NULL, NULL);
-#else
         {
           ssize_t ret = write (info->o, data, info->tile_size);
 	      if (ret != -1)
             info->offset += ret;
         }
-#endif
         gegl_tile_unref (tile);
         i++;
       }

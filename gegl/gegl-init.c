@@ -308,9 +308,7 @@ GeglConfig *gegl_config (void)
 }
 
 void gegl_tile_backend_ram_stats (void);
-#if HAVE_GIO
 void gegl_tile_backend_tiledir_stats (void);
-#endif
 void gegl_tile_backend_file_stats (void);
 
 
@@ -380,9 +378,7 @@ gegl_exit (void)
       gegl_buffer_stats ();
       gegl_tile_backend_ram_stats ();
       gegl_tile_backend_file_stats ();
-#if HAVE_GIO
       gegl_tile_backend_tiledir_stats ();
-#endif
     }
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);

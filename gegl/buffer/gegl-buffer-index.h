@@ -78,7 +78,9 @@ typedef struct {
   guint32  flags;  /* flags (can be used to handle different block types
                     * differently
                     */
-  guint64  next;   /*next block element in file */
+  guint64  next;   /*next block element in file, this is the offset in the
+                    *file that the next block in the chain resides at
+                    */
 } GeglBufferBlock;
 
 /* The header is followed by entries describing tiles stored in the swap,
@@ -122,17 +124,10 @@ void gegl_buffer_header_init (GeglBufferHeader *header,
 
 void gegl_tile_entry_destroy (GeglBufferTile *entry);
 
-#if HAVE_GIO
-GeglBufferItem *gegl_buffer_read_header(GInputStream *i,
-                                        goffset      *offset);
-GList          *gegl_buffer_read_index (GInputStream *i,
-                                        goffset      *offset);
-#else
 GeglBufferItem *gegl_buffer_read_header(int i,
                                         goffset      *offset);
 GList          *gegl_buffer_read_index (int i,
                                         goffset      *offset);
-#endif
 
 #define struct_check_padding(type, size) \
   if (sizeof (type) != size) \

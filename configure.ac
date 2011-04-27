@@ -424,19 +424,6 @@ PKG_CHECK_MODULES(DEP,
         *** Errors follow:
             $DEP_PKG_ERRORS]))
 
-AC_ARG_WITH(gio, [  --without-gio           build without gio support])
-
-have_gio="no"
-if test "x$with_gio" != "xno"; then
-PKG_CHECK_MODULES(GIO, gio-2.0, 
-	have_gio="yes"
-	AC_DEFINE(HAVE_GIO, 1, [Define to 1 to compile with gio support.])
-	GLIB_PACKAGES="$GLIB_PACKAGES gio-2.0",
-	have_gio="no (gio not found)")
-fi
-
-AM_CONDITIONAL(HAVE_GIO, test "x$have_gio" = "xyes")
-
 # Rerun PKG_CONFIG to add gthread-2.0 cflags and libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
@@ -1138,7 +1125,6 @@ Optional features:
 Optional dependencies:
   asciidoc:        $have_asciidoc
   enscript:        $have_enscript
-  GIO:             $have_gio
   GTK+:            $have_gtk
   Ruby:            $have_ruby
   Lua:             $have_lua

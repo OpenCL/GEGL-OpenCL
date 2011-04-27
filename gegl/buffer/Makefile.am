@@ -11,14 +11,8 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 noinst_LTLIBRARIES = libbuffer.la
 
-if HAVE_GIO
-GIO_SUPPORT_SOURCES=\
-    gegl-tile-backend-tiledir.c	\
-    $(null__)
-endif
-
 libbuffer_la_SOURCES = \
-    $(GIO_SUPPORT_SOURCES)      \
+    gegl-tile-backend-tiledir.c	\
     gegl-buffer.c		\
     gegl-buffer-access.c	\
     gegl-buffer-share.c		\

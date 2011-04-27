@@ -26,9 +26,7 @@
 #include "gegl-tile.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-tile-backend-ram.h"
-#if HAVE_GIO
 #include "gegl-tile-backend-tiledir.h"
-#endif
 #include "gegl-tile-handler-empty.h"
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
