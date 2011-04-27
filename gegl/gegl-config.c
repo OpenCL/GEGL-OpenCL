@@ -116,14 +116,27 @@ gegl_config_set_property (GObject      *gobject,
         return;
       case PROP_BABL_TOLERANCE:
           {
+            static gboolean first = TRUE;
+            static gboolean overridden = FALSE;
+
             gchar buf[256];
-            config->babl_tolerance = g_value_get_double (value);
-            g_sprintf (buf, "%f", config->babl_tolerance);
-            g_setenv ("BABL_TOLERANCE", buf, 0);
-            /* babl picks up the babl error through the environment, babl
-             * caches valid conversions though so this needs to be set
-             * before any processing is done
-             */
+
+            if (first)
+              {
+                if (g_getenv ("BABL_TOLERANCE") != NULL)
+                  overridden = TRUE;
+                first = FALSE;
+              }
+            if (!overridden)
+              {
+                config->babl_tolerance = g_value_get_double (value);
+                g_sprintf (buf, "%f", config->babl_tolerance);
+                g_setenv ("BABL_TOLERANCE", buf, 0);
+                /* babl picks up the babl error through the environment, babl
+                 * caches valid conversions though so this needs to be set
+                 * before any processing is done
+                 */
+              }
           }
         return;
       case PROP_SWAP:
@@ -175,7 +188,7 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
                                    g_param_spec_int ("cache-size", "Cache size", "size of cache in bytes",
-                                                     0, G_MAXINT, 256*1024*1024,
+                                                     0, G_MAXINT, 512*1024*1024,
                                                      G_PARAM_READWRITE));
 
 
@@ -192,8 +205,9 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_BABL_TOLERANCE,
                                    g_param_spec_double ("babl-tolerance", "babl error", "the error tolerance babl operates with",
-                                                     0.0, 0.2, 0.0001,
-                                                     G_PARAM_READWRITE));
+                                                     0.0, 0.2, 0.002,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_SWAP,
                                    g_param_spec_string ("swap", "Swap", "where gegl stores it's swap files", NULL,
