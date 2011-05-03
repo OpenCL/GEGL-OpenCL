@@ -868,6 +868,8 @@ gegl_tile_backend_file_constructor (GType                  type,
                         self);
 
       self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+      if (self->o == -1)
+        g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
       self->i = dup (self->o);
 
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
@@ -920,6 +922,8 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "creating swapfile  %s", self->path);
 
       self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+      if (self->o == -1)
+        g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
 
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */

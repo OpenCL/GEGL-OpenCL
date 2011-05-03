@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <glib-object.h>
 
@@ -224,6 +225,8 @@ gegl_buffer_save (GeglBuffer          *buffer,
 
   info->path = g_strdup (path);
   info->o    = open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+  if (info->o == -1)
+    g_warning ("%s: Could not open '%s': %s", G_STRFUNC, info->path, g_strerror(errno));
   tile_width  = buffer->tile_storage->tile_width;
   tile_height = buffer->tile_storage->tile_height;
   g_object_get (buffer, "px-size", &bpp, NULL);
