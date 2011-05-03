@@ -869,7 +869,17 @@ gegl_tile_backend_file_constructor (GType                  type,
 
       self->o = open (self->path, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
       if (self->o == -1)
-        g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
+        {
+          /* Try again but this time with only read access. This is
+           * a quick-fix for make distcheck, where img_cmp fails
+           * when it opens a GeglBuffer file in the source tree
+           * (which is read-only).
+           */
+          self->o = open (self->path, O_RDONLY, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+
+          if (self->o == -1)
+            g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
+        }
       self->i = dup (self->o);
 
       self->header = gegl_buffer_read_header (self->i, &offset)->header;
