@@ -153,10 +153,10 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect.x = -1;
-  GEGL_SAMPLER (self)->context_rect.y = -1;
-  GEGL_SAMPLER (self)->context_rect.width = 4;
-  GEGL_SAMPLER (self)->context_rect.height = 4;
+  GEGL_SAMPLER (self)->context_rect.x = 0;
+  GEGL_SAMPLER (self)->context_rect.y = 0;
+  GEGL_SAMPLER (self)->context_rect.width = 5;
+  GEGL_SAMPLER (self)->context_rect.height = 5;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
