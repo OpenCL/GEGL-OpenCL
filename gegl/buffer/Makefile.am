@@ -27,12 +27,10 @@ libbuffer_la_SOURCES = \
     gegl-sampler-lanczos.c	\
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
-    gegl-sampler-downsharp.c	\
-    gegl-sampler-downsize.c 	\
-    gegl-sampler-downsmooth.c	\
     gegl-sampler-upsharp.c	\
     gegl-sampler-upsize.c 	\
     gegl-sampler-upsmooth.c	\
+    gegl-sampler-lohalo.c       \
     gegl-region-generic.c	\
     gegl-tile.c			\
     gegl-tile-source.c		\
@@ -60,12 +58,10 @@ libbuffer_la_SOURCES = \
     gegl-sampler-lanczos.h	\
     gegl-sampler-linear.h	\
     gegl-sampler-nearest.h	\
-    gegl-sampler-downsharp.h	\
-    gegl-sampler-downsize.h 	\
-    gegl-sampler-downsmooth.h	\
     gegl-sampler-upsharp.h	\
     gegl-sampler-upsize.h 	\
     gegl-sampler-upsmooth.h	\
+    gegl-sampler-lohalo.h       \
     gegl-region.h		\
     gegl-region-generic.h	\
     gegl-tile.h			\

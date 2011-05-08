@@ -31,12 +31,10 @@
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
 #include "gegl-sampler-lanczos.h"
-#include "gegl-sampler-downsharp.h"
-#include "gegl-sampler-downsize.h"
-#include "gegl-sampler-downsmooth.h"
 #include "gegl-sampler-upsharp.h"
 #include "gegl-sampler-upsize.h"
 #include "gegl-sampler-upsmooth.h"
+#include "gegl-sampler-lohalo.h"
 
 enum
 {
@@ -465,15 +463,6 @@ gegl_buffer_interpolation_from_string (const gchar *string)
       g_str_equal (string, "bicubic"))
     return GEGL_INTERPOLATION_CUBIC;
 
-  if (g_str_equal (string, "downsharp"))
-    return GEGL_INTERPOLATION_DOWNSHARP;
-
-  if (g_str_equal (string, "downsize"))
-    return GEGL_INTERPOLATION_DOWNSIZE;
-
-  if (g_str_equal (string, "downsmooth"))
-    return GEGL_INTERPOLATION_DOWNSMOOTH;
-
   if (g_str_equal (string, "upsharp"))
     return GEGL_INTERPOLATION_UPSHARP;
 
@@ -482,6 +471,9 @@ gegl_buffer_interpolation_from_string (const gchar *string)
 
   if (g_str_equal (string, "upsmooth"))
     return GEGL_INTERPOLATION_UPSMOOTH;
+
+  if (g_str_equal (string, "lohalo"))
+    return GEGL_INTERPOLATION_LOHALO;
 
   return GEGL_INTERPOLATION_NEAREST;
 }
@@ -499,18 +491,14 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_CUBIC;
       case GEGL_INTERPOLATION_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
-      case GEGL_INTERPOLATION_DOWNSHARP:
-        return GEGL_TYPE_SAMPLER_DOWNSHARP;
-      case GEGL_INTERPOLATION_DOWNSIZE:
-        return GEGL_TYPE_SAMPLER_DOWNSIZE;
-      case GEGL_INTERPOLATION_DOWNSMOOTH:
-        return GEGL_TYPE_SAMPLER_DOWNSMOOTH;
       case GEGL_INTERPOLATION_UPSHARP:
         return GEGL_TYPE_SAMPLER_UPSHARP;
       case GEGL_INTERPOLATION_UPSIZE:
         return GEGL_TYPE_SAMPLER_UPSIZE;
       case GEGL_INTERPOLATION_UPSMOOTH:
         return GEGL_TYPE_SAMPLER_UPSMOOTH;
+      case GEGL_INTERPOLATION_LOHALO:
+        return GEGL_TYPE_SAMPLER_LOHALO;
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
     }

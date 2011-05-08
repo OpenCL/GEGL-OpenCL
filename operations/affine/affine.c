@@ -252,7 +252,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_string (
                                      "filter",
                                      _("Filter"),
-                                     _("Filter type (nearest, linear, lanczos, cubic, downsharp, downsize, downsmooth, upsharp, upsize, upsmooth)"),
+                                     _("Filter type (nearest, linear, lanczos, cubic, upsharp, upsize, upsmooth, lohalo)"),
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
@@ -681,7 +681,7 @@ affine_generic (GeglBuffer  *dest,
   gfloat * restrict     dest_buf,
                        *dest_ptr;
   GeglMatrix3           inverse;
-  GeglMatrix2           inverse_jacobian;
+  gdouble               inverse_jacobian[4];
   gdouble               u_start,
                         v_start,
                         u_float,
@@ -709,13 +709,13 @@ affine_generic (GeglBuffer  *dest,
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
-      inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
-      inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
-      inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
-      inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
+      inverse_jacobian.coeff[0] = inverse.coeff[0][0];
+      inverse_jacobian.coeff[1] = inverse.coeff[0][1];
+      inverse_jacobian.coeff[2] = inverse.coeff[1][0];
+      inverse_jacobian.coeff[3] = inverse.coeff[1][1];
 
      /* set inverse_jacobian for samplers that support it */
-      sampler->inverse_jacobian = &inverse_jacobian;
+      sampler->inverse_jacobian = inverse_jacobian;
 
       u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1]
                     * roi->y + inverse.coeff[0][2];
