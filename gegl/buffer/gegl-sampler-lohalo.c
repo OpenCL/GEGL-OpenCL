@@ -17,23 +17,6 @@
  * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
  * Øyvind Kolås and John Cupitt.
  *
- * Nicolas Robidoux thanks Geert Jordaens, Ralf Meyer, Minglun Gong,
- * Eric Daoust and Sven Neumann for useful comments and code.
- *
- * N. Robidoux's early research on Nohalo funded in part by an NSERC
- * (National Science and Engineering Research Council of Canada)
- * Discovery Grant awarded to him (298424--2004).
- *
- * Chantal Racette's image resampling research and programming funded
- * in part by a NSERC Discovery Grant awarded to Julien Dompierre
- * (20-61098).
- *
- * A. Turcotte's image resampling research on reduced halo funded in
- * part by Ontario Graduate Studies (OGS) Masters scholarship and an
- * NSERC Alexander Graham Bell Canada Graduate Scholarhip awarded to
- * him and by a Google Summer of Code 2010 award awarded to GIMP (Gnu
- * Image Manipulation Program).
- *
  * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
  * and Chantal Racette of the Department of Mathematics and Computer
  * Science of Laurentian University in the course of C. Racette's
@@ -41,8 +24,27 @@
  * Nohalo and monotone interpolation was performed by C. Racette and
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
  * A. Turcotte and E. Daoust during Google Summer of Code 2009
- * (through two awards made to GIMP to improve GEGL), and, earlier, by
- * N. Robidoux, A. Turcotte, J. Cupitt, M. Gong and K. Martinez.
+ * (through two awards made to GIMP to improve GEGL), and was
+ * initiated in 2008--2009 by N. Robidoux, A. Turcotte, J. Cupitt,
+ * M. Gong and K. Martinez.
+ *
+ * N. Robidoux's early research on Nohalo funded in part by an NSERC
+ * (National Science and Engineering Research Council of Canada)
+ * Discovery Grant awarded to him (298424--2004).
+ *
+ * Chantal Racette's image resampling research and programming funded
+ * in part by a NSERC Discovery Grant awarded to Julien Dompierre
+ * (20-61098) and by a NSERC Graduate Scholarship awarded to her.
+ *
+ * A. Turcotte's image resampling research on reduced halo methods and
+ * jacobian adaptive methods funded in part by Ontario Graduate
+ * Studies (OGS) Masters scholarship and an NSERC Alexander Graham
+ * Bell Canada Graduate Scholarhip awarded to him and by a Google
+ * Summer of Code 2010 award awarded to GIMP (Gnu Image Manipulation
+ * Program).
+ *
+ * Nicolas Robidoux thanks Geert Jordaens, Ralf Meyer, Minglun Gong,
+ * Eric Daoust and Sven Neumann for useful comments and code.
  */
 
 /*
