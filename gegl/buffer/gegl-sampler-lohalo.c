@@ -15,7 +15,7 @@
  * <http://www.gnu.org/licenses/>.
  *
  * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
- * Øyvind Kolås and John Cupitt.
+ * Anthony Thyssen, John Cupitt and Øyvind Kolås.
  *
  * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
  * and Chantal Racette of the Department of Mathematics and Computer
@@ -23,28 +23,33 @@
  * Masters thesis in Computational Sciences. Preliminary work on
  * Nohalo and monotone interpolation was performed by C. Racette and
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
- * A. Turcotte and E. Daoust during Google Summer of Code 2009
+ * A. Turcotte and Eric Daoust during Google Summer of Code 2009
  * (through two awards made to GIMP to improve GEGL), and was
  * initiated in 2008--2009 by N. Robidoux, A. Turcotte, J. Cupitt,
- * M. Gong and K. Martinez.
+ * Minglun Gong and Kirk Martinez.
+ *
+ * Clamped EWA with the triangle ("hat" function) filter was developed
+ * by N. Robidoux and A. Thyssen with assistance from C. Racette and
+ * Frederick Weinhaus. It is based on methods of Paul Heckbert and
+ * Andreas Gustaffson.
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
  * Discovery Grant awarded to him (298424--2004).
  *
- * Chantal Racette's image resampling research and programming funded
- * in part by a NSERC Discovery Grant awarded to Julien Dompierre
- * (20-61098) and by a NSERC Graduate Scholarship awarded to her.
+ * C. Racette's image resampling research and programming funded in
+ * part by a NSERC Discovery Grant awarded to Julien Dompierre
+ * (20-61098) and by a NSERC Alexander Graham Bell Canada Graduate
+ * Scholarship awarded to her.
  *
  * A. Turcotte's image resampling research on reduced halo methods and
- * jacobian adaptive methods funded in part by Ontario Graduate
- * Studies (OGS) Masters scholarship and an NSERC Alexander Graham
- * Bell Canada Graduate Scholarhip awarded to him and by a Google
- * Summer of Code 2010 award awarded to GIMP (Gnu Image Manipulation
- * Program).
+ * jacobian adaptive methods funded in part by an Ontario Graduate
+ * Scholarship (OGS) and an NSERC Alexander Graham Bell Canada
+ * Graduate Scholarhip awarded to him and by a Google Summer of Code
+ * 2010 award awarded to GIMP (Gnu Image Manipulation Program).
  *
- * Nicolas Robidoux thanks Geert Jordaens, Ralf Meyer, Minglun Gong,
- * Eric Daoust and Sven Neumann for useful comments and code.
+ * N. Robidoux thanks Geert Jordaens, Ralf Meyer and Sven Neumann for
+ * useful comments and code.
  */
 
 /*
@@ -55,6 +60,7 @@
 
 #include "config.h"
 #include <glib-object.h>
+#include <math.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
@@ -152,13 +158,19 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   sampler_class->get = gegl_sampler_lohalo_get;
 }
 
+/*
+ * Use an odd integer between 5 and 63 inclusive:
+ */
+#define LOHALO_CONTEXT_RECT_WIDTH 5
+#define LOHALO_CONTEXT_RECT_HEIGHT 5
+
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
   GEGL_SAMPLER (self)->context_rect.x = 0;
   GEGL_SAMPLER (self)->context_rect.y = 0;
-  GEGL_SAMPLER (self)->context_rect.width = 5;
-  GEGL_SAMPLER (self)->context_rect.height = 5;
+  GEGL_SAMPLER (self)->context_rect.width = LOHALO_CONTEXT_RECT_WIDTH;
+  GEGL_SAMPLER (self)->context_rect.height = LOHALO_CONTEXT_RECT_HEIGHT;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -997,6 +1009,22 @@ lbbicubic( const gfloat c00,
   return newval;
 }
 
+static inline gfloat
+triangle( const gdouble c_major_x,
+          const gdouble c_major_y,
+          const gdouble c_minor_x,
+          const gdouble c_minor_y,
+          const gdouble s,
+          const gdouble t )
+{
+  const gdouble q1 = s * c_major_x + t * c_major_y;
+  const gdouble q2 = s * c_minor_x + t * c_minor_y;
+  const gdouble r2 = q1 * q1 + q2 * q2;
+  const gfloat weight =
+    ( ( r2 < 1. ) ? (gfloat) ( 1. - sqrt( r2 ) ) : 0.f );
+  return weight;
+}
+
 static void
 gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                          const gdouble               absolute_x,
@@ -1469,17 +1497,394 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  qua_thr_3,
                  qua_fou_3 );
 
-    // ADAM: Here we compute the blending factor recycling code from
-    // ImageMagick. I need the inverse jacobian matrix here.
-    // If the blending factor of LBB-Nohalo is 1, we ship out:
-    /*
-     * Ship out the array of new pixel values:
-     */
-    babl_process (self->fish, newval, output, 1);
-    // ADAM: If not, we compute the additional needed quantities, compute
-    // the newval blended with ewa triangle, and then ship out. We want an
-    // if here because it's an easy branch to predict and we don't
-    // want the memory access if it can be avoided.
+    {
+      /*
+       * Determine whether LBB-Nohalo needs to be blended with the
+       * downsampling method (Clamped EWA with the tent filter).
+       *
+       * This is done by taking the 2x2 matrix Jinv (the exact or
+       * approximate inverse Jacobian of the transformation at the
+       * location under consideration:
+       *
+       * Jinv = [ a b ] = [ dx/dX dx/dY ]
+       *        [ c d ] = [ dy/dX dy/dY ]
+       *
+       * and computes from it the major and minor axis vectors
+       * [major_x, major_y] and [minor_x,minor_y] of the smallest
+       * ellipse containing both the unit disk and the ellipse which
+       * is the image of the unit disk by the linear transformation
+       *
+       * [ a b ] [S] = [s]
+       * [ c d ] [T] = [t]
+       *
+       * The vector [S,T] is the difference between a position in
+       * output space and [X,Y], the output location under
+       * consideration; the vector [s,t] is the difference between a
+       * position in input space and [x,y], the corresponding input
+       * location.
+       *
+       */
+      /*
+       * GOAL:
+       * Fix things so that the pullback, in input space, of a disk of
+       * radius r in output space is an ellipse which contains, at
+       * least, a disc of radius r. (Make this hold for any r>0.)
+       *
+       * ESSENCE OF THE METHOD:
+       * Compute the product of the first two factors of an SVD of the
+       * linear transformation defining the ellipse and make sure that
+       * both its columns have norm at least 1.  Because rotations and
+       * reflexions map disks to themselves, it is not necessary to
+       * compute the third (rightmost) factor of the SVD.
+       *
+       * DETAILS:
+       * Find the singular values and (unit) left singular vectors of
+       * Jinv, clampling up the singular values to 1, and multiply the
+       * unit left singular vectors by the new singular values in
+       * order to get the minor and major ellipse axis vectors.
+       *
+       * Image resampling context:
+       *
+       * The Jacobian matrix of the transformation at the output point
+       * under consideration is defined as follows:
+       *
+       * Consider the transformation (x,y) -> (X,Y) from input
+       * locations to output locations.
+       *
+       * The Jacobian matrix of the transformation at (x,y) is equal
+       * to
+       *
+       *   J = [ A, B ] = [ dX/dx, dX/dy ]
+       *       [ C, D ]   [ dY/dx, dY/dy ]
+       *
+       * that is, the vector [A,C] is the tangent vector corresponding
+       * to input changes in the horizontal direction, and the vector
+       * [B,D] is the tangent vector corresponding to input changes in
+       * the vertical direction.
+       *
+       * In the context of resampling, it is natural to use the
+       * inverse Jacobian matrix Jinv because resampling is generally
+       * performed by pulling pixel locations in the output image back
+       * to locations in the input image. Jinv is
+       *
+       *   Jinv = [ a, b ] = [ dx/dX, dx/dY ]
+       *          [ c, d ]   [ dy/dX, dy/dY ]
+       *
+       * Note: Jinv can be computed from J with the following matrix
+       * formula:
+       *
+       *   Jinv = 1/(A*D-B*C) [  D, -B ]
+       *                      [ -C,  A ]
+       *
+       * What we do is modify Jinv so that it generates an ellipse
+       * which is as close as possible to the original but which
+       * contains the unit disk. This can be accomplished as follows:
+       *
+       * Let
+       *
+       *   Jinv = U Sigma V^T
+       *
+       * be an SVD decomposition of Jinv. (The SVD is not unique, but
+       * the final ellipse does not depend on the particular SVD.)
+       *
+       * We could clamp up the entries of the diagonal matrix Sigma so
+       * that they are at least 1, and then set
+       *
+       *   Jinv = U newSigma V^T.
+       *
+       * However, we do not need to compute V for the following
+       * reason: V^T is an orthogonal matrix (that is, it represents a
+       * combination of rotations and reflexions) so that it maps the
+       * unit circle to itself. For this reason, the exact value of V
+       * does not affect the final ellipse, and we can choose V to be
+       * the identity matrix. This gives
+       *
+       *   Jinv = U newSigma.
+       *
+       * In the end, we return the two diagonal entries of newSigma
+       * together with the two columns of U.
+       *
+       */
+      /*
+       * We compute:
+       *
+       * major_mag: half-length of the major axis of the "new"
+       *            (post-clamping) ellipse.
+       *
+       * minor_mag: half-length of the minor axis of the "new"
+       *            ellipse.
+       *
+       * major_unit_x: x-coordinate of the major axis direction vector
+       *               of both the "old" and "new" ellipses.
+       *
+       * major_unit_y: y-coordinate of the major axis direction
+       *               vector.
+       *
+       * minor_unit_x: x-coordinate of the minor axis direction
+       *               vector.
+       *
+       * minor_unit_y: y-coordinate of the minor axis direction
+       *               vector.
+       *
+       * Unit vectors are useful for computing projections, in
+       * particular, to compute the distance between a point in output
+       * space and the center of a unit disk in output space, using
+       * the position of the corresponding point [s,t] in input space.
+       * Following the clamping, the square of this distance is
+       *
+       * ( ( s * major_unit_x + t * major_unit_y ) / major_mag )^2
+       * +
+       * ( ( s * minor_unit_x + t * minor_unit_y ) / minor_mag )^2
+       *
+       * If such distances will be computed for many [s,t]'s, it makes
+       * sense to actually compute the reciprocal of major_mag and
+       * minor_mag and multiply them by the above unit lengths.
+       */
+      /*
+       * History:
+       *
+       * ClampUpAxes, the ImageMagick function (found in resample.c)
+       * on which this is based, was written by Nicolas Robidoux and
+       * Chantal Racette of Laurentian University with insightful
+       * suggestions from Anthony Thyssen and funding from the
+       * National Science and Engineering Research Council of
+       * Canada. It is distinguished from its predecessors by its
+       * efficient handling of degenerate cases.
+       *
+       * The idea of clamping up the EWA ellipse's major and minor
+       * axes so that the result contains the reconstruction kernel
+       * filter support is taken from Andreas Gustaffson's Masters
+       * thesis "Interactive Image Warping", Helsinki University of
+       * Technology, Faculty of Information Technology, 59 pages, 1993
+       * (see Section 3.6).
+       *
+       * The use of the SVD to clamp up the singular values of the
+       * Jacobian matrix of the pullback transformation for EWA
+       * resampling is taken from the astrophysicist Craig DeForest.
+       * It is implemented in his PDL::Transform code (PDL = Perl Data
+       * Language).
+       *
+       * SVD reference:
+       * "We Recommend Singular Value Decomposition" by David Austin
+       * http://www.ams.org/samplings/feature-column/fcarc-svd
+       *
+       * Ellipse reference:
+       * http://en.wikipedia.org/wiki/Ellipse#Canonical_form
+       */
+      const gdouble a = self->inverse_jacobian[0];
+      const gdouble b = self->inverse_jacobian[1];
+      const gdouble c = self->inverse_jacobian[2];
+      const gdouble d = self->inverse_jacobian[3];
+
+      /*
+       * n is the matrix Jinv * transpose(Jinv). Eigenvalues of n are
+       * the squares of the singular values of Jinv.
+       */
+      const gdouble aa = a*a;
+      const gdouble bb = b*b;
+      const gdouble cc = c*c;
+      const gdouble dd = d*d;
+      /*
+       * Eigenvectors of n are left singular vectors of Jinv.
+       */
+      const gdouble n11 = aa+bb;
+      const gdouble n12 = a*c+b*d;
+      const gdouble n21 = n12;
+      const gdouble n22 = cc+dd;
+      const gdouble det = a*d-b*c;
+      const gdouble twice_det = det+det;
+      const gdouble frobenius_squared = n11+n22;
+      const gdouble discriminant =
+        (frobenius_squared+twice_det)*(frobenius_squared-twice_det);
+      const gdouble sqrt_discriminant = sqrt(discriminant);
+      /*
+       * Initially, we only compute the squares of the singular values.
+       */
+      /*
+       * s1 is the largest singular value of the inverse Jacobian
+       * matrix. In other words, its reciprocal is the smallest
+       * singular value of the Jacobian matrix itself.  If s1 = 0,
+       * both singular values are 0, and any orthogonal pair of left
+       * and right factors produces a singular decomposition of Jinv.
+       */
+      const gdouble s1s1 = 0.5*(frobenius_squared+sqrt_discriminant);
+      /*
+       * If s1 <= 1, the forward transformation is enlarging in all
+       * directions, and consequently we do not need the downsampling
+       * scheme at all and we can ship out the result now:
+       */
+      if ( s1s1 > 1. )
+        {
+          /*
+           * s2 the smallest singular value of the inverse Jacobian
+           * matrix. Its reciprocal is the largest singular value of
+           * the Jacobian matrix itself.
+           */
+          const gdouble s2s2 = 0.5*(frobenius_squared-sqrt_discriminant);
+
+          const gdouble s1s1minusn11 = s1s1-n11;
+          const gdouble s1s1minusn22 = s1s1-n22;
+          /*
+           * u1, the first column of the U factor of a singular
+           * decomposition of Jinv, is a (non-normalized) left
+           * singular vector corresponding to s1. It has entries u11
+           * and u21. We compute u1 from the fact that it is an
+           * eigenvector of n corresponding to the eigenvalue s1^2.
+           */
+          const gdouble s1s1minusn11_squared = s1s1minusn11*s1s1minusn11;
+          const gdouble s1s1minusn22_squared = s1s1minusn22*s1s1minusn22;
+          /*
+           * The following selects the largest row of n-s1^2 I as the
+           * one which is used to find the eigenvector. If both
+           * s1^2-n11 and s1^2-n22 are zero, n-s1^2 I is the zero
+           * matrix.  In that case, any vector is an eigenvector; in
+           * addition, norm below is equal to zero, and, in exact
+           * arithmetic, this is the only case in which norm = 0. So,
+           * setting u1 to the simple but arbitrary vector [1,0] if
+           * norm = 0 safely takes care of all cases.
+           */
+          const gdouble temp_u11 =
+            (
+              (s1s1minusn11_squared>=s1s1minusn22_squared)
+              ? n12
+              : s1s1minusn22
+            );
+          const gdouble temp_u21 =
+            (
+              (s1s1minusn11_squared>=s1s1minusn22_squared)
+              ? s1s1minusn11
+              : n21
+            );
+          const gdouble norm = sqrt(temp_u11*temp_u11+temp_u21*temp_u21);
+          /*
+           * Finalize the entries of first left singular vector
+           * (associated with the largest singular value).
+           */
+          const gdouble u11 = ( (norm>0.0) ? temp_u11/norm : 1.0 );
+          const gdouble u21 = ( (norm>0.0) ? temp_u21/norm : 0.0 );
+          /*
+           * Clamp the singular values up to 1:
+           */
+          const gdouble major_mag = ( (s1s1<=1.0) ? 1.0 : sqrt(s1s1) );
+          const gdouble minor_mag = ( (s2s2<=1.0) ? 1.0 : sqrt(s2s2) );
+          /*
+           * Unit major and minor axis direction vectors:
+           */
+          const gdouble major_unit_x =  u11;
+          const gdouble major_unit_y =  u21;
+          const gdouble minor_unit_x = -u21;
+          const gdouble minor_unit_y =  u11;
+          /*
+           * Major and minor axis direction vectors:
+           */
+          const gdouble major_x =  major_mag * major_unit_x;
+          const gdouble major_y =  major_mag * major_unit_y;
+          const gdouble minor_x =  minor_mag * minor_unit_x;
+          const gdouble minor_y =  minor_mag * minor_unit_y;
+
+          /*
+           * The square of the distance to the key location in output
+           * place of a point [s,t] in input space is the square root
+           * of
+           * ( s * c_major_x + t * c_major_y )^2
+           * +
+           * ( s * c_minor_x + t * c_minor_y )^2.
+           */
+          const gdouble c_major_x = major_unit_x / major_mag;
+          const gdouble c_major_y = major_unit_y / major_mag;
+          const gdouble c_minor_x = minor_unit_x / minor_mag;
+          const gdouble c_minor_y = minor_unit_y / minor_mag;
+
+          /*
+           * Ellipse coefficients:
+           */
+          const gdouble ellipse_a =
+            major_y * major_y + minor_y * minor_y;
+          const gdouble ellipse_b =
+            -2.0 * ( major_x * major_y + minor_x * minor_y );
+          const gdouble ellipse_c =
+            major_x * major_x + minor_x * minor_x;
+          const gdouble ellipse_f =
+            major_mag * minor_mag;
+          /*
+           * Bounding box of the ellipse:
+           */
+          const gdouble bounding_box_denominator =
+            ellipse_f * ellipse_f
+            /
+            ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
+          const gdouble bounding_box_half_width =
+            sqrt( ellipse_c * bounding_box_denominator );
+          const gdouble bounding_box_half_height =
+            sqrt( ellipse_a * bounding_box_denominator );
+
+          const gdouble clamped_half_width =
+            LOHALO_MIN
+              (
+                bounding_box_half_width
+                ,
+                .5*(LOHALO_CONTEXT_RECT_WIDTH  + -1.)
+               );
+
+          const gdouble clamped_half_height =
+            LOHALO_MIN
+              (
+                bounding_box_half_height
+                ,
+                .5*(LOHALO_CONTEXT_RECT_HEIGHT + -1.)
+              );
+
+          const gint left = ceil ( x_0 - clamped_half_width  );
+          const gint rite = floor( x_0 + clamped_half_width  );
+          const gint top  = ceil ( y_0 - clamped_half_height );
+          const gint bot  = floor( y_0 + clamped_half_height );
+
+          gint i_y = top;
+          
+          gfloat total_weight = 0.f;
+
+          gfloat ewa_newval[channels];          
+          ewa_newval[0] = 0.f;
+          ewa_newval[1] = 0.f;
+          ewa_newval[2] = 0.f;
+          ewa_newval[3] = 0.f;
+
+          do 
+            {
+              const gint y_shift = i_y * row_skip;
+              gint i_x = left;
+              do
+                {
+                  const gint pos = i_x * channels + y_shift;
+                  const gfloat weight = triangle(c_major_x,
+                                                 c_major_y,
+                                                 c_minor_x,
+                                                 c_minor_y,
+                                                 i_x-x_0,
+                                                 i_y-y_0);
+                  total_weight += weight;
+                  ewa_newval[0] += input_bptr[pos  ] * weight;
+                  ewa_newval[1] += input_bptr[pos+1] * weight;
+                  ewa_newval[2] += input_bptr[pos+2] * weight;
+                  ewa_newval[3] += input_bptr[pos+3] * weight;
+                } while (i_x++<=rite); 
+            } while (i_y++<=bot);
+
+          {
+            const gfloat theta = 1./ellipse_f;
+            const gfloat ewa_factor = ( 1.f - theta ) / total_weight;
+
+            newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+            newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+            newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+            newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
+          }
+        }
+      /*
+       * Ship out the array of new pixel values:
+       */
+      babl_process (self->fish, newval, output, 1);
+    }
   }
 }
 
