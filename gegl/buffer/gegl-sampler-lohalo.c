@@ -14,25 +14,41 @@
  * License along with GEGL; if not, see
  * <http://www.gnu.org/licenses/>.
  *
- * 2011 (c) Adam Turcotte, Nicolas Robidoux, Øyvind Kolås and Geert
- * Jordaens.
+ * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
+ * Øyvind Kolås and John Cupitt.
+ *
+ * Nicolas Robidoux thanks Geert Jordaens, Ralf Meyer, Minglun Gong,
+ * Eric Daoust and Sven Neumann for useful comments and code.
+ *
+ * N. Robidoux's early research on Nohalo funded in part by an NSERC
+ * (National Science and Engineering Research Council of Canada)
+ * Discovery Grant awarded to him (298424--2004).
+ *
+ * Chantal Racette's image resampling research and programming funded
+ * in part by a NSERC Discovery Grant awarded to Julien Dompierre
+ * (20-61098).
+ *
+ * A. Turcotte's image resampling research on reduced halo funded in
+ * part by Ontario Graduate Studies (OGS) Masters scholarship and an
+ * NSERC Alexander Graham Bell Canada Graduate Scholarhip awarded to
+ * him and by a Google Summer of Code 2010 award awarded to GIMP (Gnu
+ * Image Manipulation Program).
+ *
+ * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
+ * and Chantal Racette of the Department of Mathematics and Computer
+ * Science of Laurentian University in the course of C. Racette's
+ * Masters thesis in Computational Sciences. Preliminary work on
+ * Nohalo and monotone interpolation was performed by C. Racette and
+ * N. Robidoux in the course of her honours thesis, by N. Robidoux,
+ * A. Turcotte and E. Daoust during Google Summer of Code 2009
+ * (through two awards made to GIMP to improve GEGL), and, earlier, by
+ * N. Robidoux, A. Turcotte, J. Cupitt, M. Gong and K. Martinez.
  */
 
 /*
- * ===============
+ * ==============
  * LOHALO SAMPLER
- * ===============
- *
- *
- */
-
-/*
- 
- nohalo gets a bit better without it, though not lbb
-
-#ifndef __NOHALO_CHEAP_H__
-#define __NOHALO_CHEAP_H__
-#endif
+ * ==============
  */
 
 #include "config.h"
@@ -99,23 +115,7 @@
  * The discontinuities of FAST_PSEUDO_FLOOR are on the right of
  * negative numbers instead of on the left as is the case for floor.
  */
-#define FAST_PSEUDO_FLOOR(x) ( (gint)(x) - ( (x) < 0. ) )
-
-/*
- * Hack to get the restrict C99 keyword going at least some of the
- * time:
- */
-#ifndef restrict
-#ifdef __restrict
-#define restrict __restrict
-#else
-#ifdef __restrict__
-#define restrict __restrict__
-#else
-#define restrict
-#endif
-#endif
-#endif
+#define LOHALO_FAST_PSEUDO_FLOOR(x) ( (gint)(x) - ( (x) < 0. ) )
 
 enum
 {
@@ -654,67 +654,6 @@ lbbicubic( const gfloat c00,
    * location.
    */
 
-#if defined (__NOHALO_CHEAP_H__)
-  /*
-   * Computation of the four min and four max over 3x3 input data
-   * sub-crosses of the 4x4 input stencil.
-   *
-   * We exploit the fact that the data comes from the (co-monotone)
-   * method Nohalo so that it is known ahead of time that
-   *
-   *  dos_thr is between dos_two and dos_fou
-   *
-   *  tre_two is between dos_two and qua_two
-   *
-   *  tre_fou is between dos_fou and qua_fou
-   *
-   *  qua_thr is between qua_two and qua_fou
-   *
-   *  tre_thr is in the convex hull of dos_two, dos_fou, qua_two and qua_fou
-   *
-   *  to minimize the number of flags and conditional moves.
-   *
-   * (The "between" are not strict: "a between b and c" means
-   *
-   * "min(b,c) <= a <= max(b,c)".)
-   *
-   * We have, however, succeeded in eliminating one flag computation
-   * (one comparison) and one use of an intermediate result. See the
-   * two commented out lines below.
-   *
-   * Overall, only 20 comparisons and 28 "? :" are needed (to compute
-   * 4 mins and 4 maxes). If you can figure how to do this more
-   * efficiently, let us know.
-   */
-  const gfloat m1    = (uno_two <= tre_two) ? uno_two : tre_two  ;
-  const gfloat M1    = (uno_two <= tre_two) ? tre_two : uno_two  ;
-  const gfloat m2    = (dos_thr <= qua_thr) ? dos_thr : qua_thr  ;
-  const gfloat M2    = (dos_thr <= qua_thr) ? qua_thr : dos_thr  ;
-  const gfloat m3    = (dos_two <= dos_fou) ? dos_two : dos_fou  ;
-  const gfloat M3    = (dos_two <= dos_fou) ? dos_fou : dos_two  ;
-  const gfloat m4    = (uno_thr <= tre_thr) ? uno_thr : tre_thr  ;
-  const gfloat M4    = (uno_thr <= tre_thr) ? tre_thr : uno_thr  ;
-  const gfloat m5    = (dos_two <= qua_two) ? dos_two : qua_two  ;
-  const gfloat M5    = (dos_two <= qua_two) ? qua_two : dos_two  ;
-  const gfloat m6    = (tre_one <= tre_thr) ? tre_one : tre_thr  ;
-  const gfloat M6    = (tre_one <= tre_thr) ? tre_thr : tre_one  ;
-  const gfloat m7    = (dos_one <= dos_thr) ? dos_one : dos_thr  ;
-  const gfloat M7    = (dos_one <= dos_thr) ? dos_thr : dos_one  ;
-  const gfloat m8    = (tre_two <= tre_fou) ? tre_two : tre_fou  ;
-  const gfloat M8    = (tre_two <= tre_fou) ? tre_fou : tre_two  ;
-  const gfloat m9    = LOHALO_MIN(            m1,       dos_two );
-  const gfloat M9    = LOHALO_MAX(            M1,       dos_two );
-  const gfloat m10   = LOHALO_MIN(            m2,       tre_thr );
-  const gfloat M10   = LOHALO_MAX(            M2,       tre_thr );
-  const gfloat min10 = LOHALO_MIN(            m3,       m4      );
-  const gfloat max10 = LOHALO_MAX(            M3,       M4      );
-  const gfloat min01 = LOHALO_MIN(            m5,       m6      );
-  const gfloat max01 = LOHALO_MAX(            M5,       M6      );
-  const gfloat min00 = LOHALO_MIN(            m9,       m7      );
-  const gfloat max00 = LOHALO_MAX(            M9,       M7      );
-  const gfloat min11 = LOHALO_MIN(           m10,       m8      );
-  const gfloat max11 = LOHALO_MAX(           M10,       M8      );
-#else
   /*
    * Computation of the four min and four max over 3x3 input data
    * sub-blocks of the 4x4 input stencil.
@@ -794,7 +733,6 @@ lbbicubic( const gfloat c00,
   const gfloat max00 = LOHALO_MAX(            M8,       M10     );
   const gfloat min10 = LOHALO_MIN(            m8,       m12     );
   const gfloat max10 = LOHALO_MAX(            M8,       M12     );
-#endif
 
   /*
    * The remainder of the "per channel" computation involves the
@@ -1072,11 +1010,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   const gint pixels_per_row = 64;
   const gint row_skip = channels * pixels_per_row;
 
-  const gint ix_0 = FAST_PSEUDO_FLOOR (absolute_x + .5);
-  const gint iy_0 = FAST_PSEUDO_FLOOR (absolute_y + .5);
+  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + .5);
+  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + .5);
 
   const gfloat* restrict input_bptr =
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0);
+
+  // ADAM: MAKE A COPY OF input_bptr to be used for "tent" filtering.
 
   const gfloat x_0 = absolute_x - ix_0;
   const gfloat y_0 = absolute_y - iy_0;
@@ -1240,25 +1180,41 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
     const gfloat twice_1mx_times_yp1over2 = twice1mx * yp1over2;
     const gfloat twice_1px_times_yp1over2 = twice1px * yp1over2;
 
-    const gfloat c00     = four_times_1px_times_1py * xm1over2sq_times_ym1over2sq;
-    const gfloat c00dx   = twice_xp1over2_times_1py * xm1over2sq_times_ym1over2sq;
-    const gfloat c00dy   = twice_1px_times_yp1over2 * xm1over2sq_times_ym1over2sq;
-    const gfloat c00dxdy =  xp1over2_times_yp1over2 * xm1over2sq_times_ym1over2sq;
+    const gfloat c00     =
+      four_times_1px_times_1py * xm1over2sq_times_ym1over2sq;
+    const gfloat c00dx   =
+      twice_xp1over2_times_1py * xm1over2sq_times_ym1over2sq;
+    const gfloat c00dy   =
+      twice_1px_times_yp1over2 * xm1over2sq_times_ym1over2sq;
+    const gfloat c00dxdy =
+       xp1over2_times_yp1over2 * xm1over2sq_times_ym1over2sq;
 
-    const gfloat c10     = four_times_1mx_times_1py * xp1over2sq_times_ym1over2sq;
-    const gfloat c10dx   = twice_xm1over2_times_1py * xp1over2sq_times_ym1over2sq;
-    const gfloat c10dy   = twice_1mx_times_yp1over2 * xp1over2sq_times_ym1over2sq;
-    const gfloat c10dxdy =  xm1over2_times_yp1over2 * xp1over2sq_times_ym1over2sq;
+    const gfloat c10     =
+      four_times_1mx_times_1py * xp1over2sq_times_ym1over2sq;
+    const gfloat c10dx   =
+      twice_xm1over2_times_1py * xp1over2sq_times_ym1over2sq;
+    const gfloat c10dy   =
+      twice_1mx_times_yp1over2 * xp1over2sq_times_ym1over2sq;
+    const gfloat c10dxdy =
+       xm1over2_times_yp1over2 * xp1over2sq_times_ym1over2sq;
 
-    const gfloat c01     = four_times_1px_times_1my * xm1over2sq_times_yp1over2sq;
-    const gfloat c01dx   = twice_xp1over2_times_1my * xm1over2sq_times_yp1over2sq;
-    const gfloat c01dy   = twice_1px_times_ym1over2 * xm1over2sq_times_yp1over2sq;
-    const gfloat c01dxdy =  xp1over2_times_ym1over2 * xm1over2sq_times_yp1over2sq;
+    const gfloat c01     =
+      four_times_1px_times_1my * xm1over2sq_times_yp1over2sq;
+    const gfloat c01dx   =
+      twice_xp1over2_times_1my * xm1over2sq_times_yp1over2sq;
+    const gfloat c01dy   =
+      twice_1px_times_ym1over2 * xm1over2sq_times_yp1over2sq;
+    const gfloat c01dxdy =
+      xp1over2_times_ym1over2 * xm1over2sq_times_yp1over2sq;
 
-    const gfloat c11     = four_times_1mx_times_1my * xp1over2sq_times_yp1over2sq;
-    const gfloat c11dx   = twice_xm1over2_times_1my * xp1over2sq_times_yp1over2sq;
-    const gfloat c11dy   = twice_1mx_times_ym1over2 * xp1over2sq_times_yp1over2sq;
-    const gfloat c11dxdy =  xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
+    const gfloat c11     =
+      four_times_1mx_times_1my * xp1over2sq_times_yp1over2sq;
+    const gfloat c11dx   =
+      twice_xm1over2_times_1my * xp1over2sq_times_yp1over2sq;
+    const gfloat c11dy   =
+      twice_1mx_times_ym1over2 * xp1over2sq_times_yp1over2sq;
+    const gfloat c11dxdy =
+      xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
 
     newval[0] =
       lbbicubic( c00,
@@ -1521,10 +1477,17 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  qua_thr_3,
                  qua_fou_3 );
 
+    // ADAM: Here we compute the blending factor recycling code from
+    // ImageMagick. I need the inverse jacobian matrix here.
+    // If the blending factor of LBB-Nohalo is 1, we ship out:
     /*
      * Ship out the array of new pixel values:
      */
     babl_process (self->fish, newval, output, 1);
+    // ADAM: If not, we compute the additional needed quantities, compute
+    // the newval blended with ewa triangle, and then ship out. We want an
+    // if here because it's an easy branch to predict and we don't
+    // want the memory access if it can be avoided.
   }
 }
 
