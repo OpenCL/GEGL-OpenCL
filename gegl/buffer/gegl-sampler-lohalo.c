@@ -16,6 +16,9 @@
  *
  * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
  * Anthony Thyssen, John Cupitt and Øyvind Kolås.
+ */
+/*
+ * Credits and thanks:
  *
  * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
  * and Chantal Racette of the Department of Mathematics and Computer
@@ -25,8 +28,8 @@
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
  * A. Turcotte and Eric Daoust during Google Summer of Code 2009
  * (through two awards made to GIMP to improve GEGL), and was
- * initiated in 2008--2009 by N. Robidoux, A. Turcotte, J. Cupitt,
- * Minglun Gong and Kirk Martinez.
+ * initiated in 2009 by N. Robidoux, A. Turcotte, J. Cupitt, Minglun
+ * Gong and Kirk Martinez.
  *
  * Clamped EWA with the triangle ("hat" function) filter was developed
  * by N. Robidoux and A. Thyssen with assistance from C. Racette and
@@ -92,17 +95,18 @@
  * bilinearly).
  */
 #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
- ( (a_times_b)>=0.f ? 1.f : 0.f ) * ( (a_times_a)<=(a_times_b) ? (a) : (b) )
-
-#define LOHALO_ABS(x)  ( ((x)>=0.) ? (x) : -(x) )
-#define LOHALO_SIGN(x) ( ((x)>=0.) ? 1.  : -1.  )
+  ( ( (a_times_b) >= (gfloat) 0. ) ? (gfloat) 1. : (gfloat) 0. ) \
+  * \
+  ( ( (a_times_a) <= (a_times_b) ) ? (a) : (b) )
 
 /*
- * MIN and MAX macros set up so that I can put the likely winner in
- * the first argument (forward branch likely blah blah blah):
+ * Macros set up so that I can put the likely winner in the first
+ * argument (forward branch likely etc):
  */
-#define LOHALO_MIN(x,y) ( ((x)<=(y)) ? (x) : (y) )
-#define LOHALO_MAX(x,y) ( ((x)>=(y)) ? (x) : (y) )
+#define LOHALO_MIN(x,y) ( ( (x) <= (y) ) ? (x) : (y) )
+#define LOHALO_MAX(x,y) ( ( (x) >= (y) ) ? (x) : (y) )
+#define LOHALO_ABS(x)   ( ( (x) >= (gfloat) 0. ) ? (x) : -(x) )
+#define LOHALO_SIGN(x)  ( ( (x) >= (gfloat) 0. ) ? (gfloat) 1. : (gfloat) -1. )
 
 /*
  * FAST_PSEUDO_FLOOR is a floor replacement which has been found to be
@@ -161,16 +165,15 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * Use an odd integer between 5 and 63 inclusive:
  */
-#define LOHALO_CONTEXT_RECT_WIDTH 5
-#define LOHALO_CONTEXT_RECT_HEIGHT 5
+#define LOHALO_CONTEXT_RECT_SIZE 15
 
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
   GEGL_SAMPLER (self)->context_rect.x = 0;
   GEGL_SAMPLER (self)->context_rect.y = 0;
-  GEGL_SAMPLER (self)->context_rect.width = LOHALO_CONTEXT_RECT_WIDTH;
-  GEGL_SAMPLER (self)->context_rect.height = LOHALO_CONTEXT_RECT_HEIGHT;
+  GEGL_SAMPLER (self)->context_rect.width  = LOHALO_CONTEXT_RECT_SIZE;
+  GEGL_SAMPLER (self)->context_rect.height = LOHALO_CONTEXT_RECT_SIZE;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -384,18 +387,18 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_dostre_times_trequa_thr );
 
   const gfloat newval_uno_two =
-    .5 * ( dos_thr + tre_thr )
+    (gfloat) .5 * ( dos_thr + tre_thr )
     +
-    .25 * ( dos_thr_y - tre_thr_y );
+    (gfloat) .25 * ( dos_thr_y - tre_thr_y );
 
   const gfloat qua_thr_y = LOHALO_MINMOD( d_quacin_thr, d_trequa_thr,
                                           d_quacin_thr_sq,
                                           d_trequa_times_quacin_thr );
 
   const gfloat newval_tre_two =
-    .5 * ( tre_thr + qua_thr )
+    (gfloat) .5 * ( tre_thr + qua_thr )
     +
-    .25 * ( tre_thr_y - qua_thr_y );
+    (gfloat) .25 * ( tre_thr_y - qua_thr_y );
 
   const gfloat tre_fou_y = LOHALO_MINMOD( d_dostre_fou, d_trequa_fou,
                                           d_dostre_fou_sq,
@@ -405,18 +408,18 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_trequa_times_quacin_fou );
 
   const gfloat newval_tre_fou =
-    .5 * ( tre_fou + qua_fou )
+    (gfloat) .5 * ( tre_fou + qua_fou )
     +
-    .25 * ( tre_fou_y - qua_fou_y );
+    (gfloat) .25 * ( tre_fou_y - qua_fou_y );
 
   const gfloat dos_fou_y = LOHALO_MINMOD( d_dostre_fou, d_unodos_fou,
                                           d_dostre_fou_sq,
                                           d_unodos_times_dostre_fou );
 
   const gfloat newval_uno_fou =
-     .5 * ( dos_fou + tre_fou )
+     (gfloat) .5 * ( dos_fou + tre_fou )
      +
-     .25 * (dos_fou_y - tre_fou_y );
+     (gfloat) .25 * (dos_fou_y - tre_fou_y );
 
   const gfloat tre_two_x = LOHALO_MINMOD( d_tre_twothr, d_tre_onetwo,
                                           d_tre_twothr_sq,
@@ -426,9 +429,9 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_tre_twothr_times_thrfou );
 
   const gfloat newval_dos_one =
-    .5 * ( tre_two + tre_thr )
+    (gfloat) .5 * ( tre_two + tre_thr )
     +
-    .25 * ( tre_two_x - tre_thr_x );
+    (gfloat) .25 * ( tre_two_x - tre_thr_x );
 
   const gfloat tre_fou_x = LOHALO_MINMOD( d_tre_foufiv, d_tre_thrfou,
                                           d_tre_foufiv_sq,
@@ -438,9 +441,9 @@ nohalo_subdivision (const gfloat           uno_two,
     tre_thr_x - tre_fou_x;
 
   const gfloat newval_dos_thr =
-    .5 * ( tre_thr + tre_fou )
+    (gfloat) .5 * ( tre_thr + tre_fou )
     +
-    .25 * tre_thr_x_minus_tre_fou_x;
+    (gfloat) .25 * tre_thr_x_minus_tre_fou_x;
 
   const gfloat qua_thr_x = LOHALO_MINMOD( d_qua_twothr, d_qua_thrfou,
                                           d_qua_twothr_sq,
@@ -453,23 +456,23 @@ nohalo_subdivision (const gfloat           uno_two,
     qua_thr_x - qua_fou_x;
 
   const gfloat newval_qua_thr =
-    .5 * ( qua_thr + qua_fou )
+    (gfloat) .5 * ( qua_thr + qua_fou )
     +
-    .25 * qua_thr_x_minus_qua_fou_x;
+    (gfloat) .25 * qua_thr_x_minus_qua_fou_x;
 
   const gfloat qua_two_x = LOHALO_MINMOD( d_qua_twothr, d_qua_onetwo,
                                           d_qua_twothr_sq,
                                           d_qua_onetwo_times_twothr );
 
   const gfloat newval_qua_one =
-    .5 * ( qua_two + qua_thr )
+    (gfloat) .5 * ( qua_two + qua_thr )
     +
-    .25 * ( qua_two_x - qua_thr_x );
+    (gfloat) .25 * ( qua_two_x - qua_thr_x );
 
   const gfloat newval_tre_thr =
-    .125 * ( tre_thr_x_minus_tre_fou_x + qua_thr_x_minus_qua_fou_x )
+    (gfloat) .125 * ( tre_thr_x_minus_tre_fou_x + qua_thr_x_minus_qua_fou_x )
     +
-    .5 * ( newval_tre_two + newval_tre_fou );
+    (gfloat) .5 * ( newval_tre_two + newval_tre_fou );
 
   const gfloat dos_thr_x = LOHALO_MINMOD( d_dos_twothr, d_dos_thrfou,
                                           d_dos_twothr_sq,
@@ -479,11 +482,11 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_dos_thrfou_times_foufiv );
 
   const gfloat newval_uno_thr =
-    .25 * ( dos_fou - tre_thr )
+    (gfloat) .25 * ( dos_fou - tre_thr )
     +
-    .125 * ( dos_fou_y - tre_fou_y + dos_thr_x - dos_fou_x )
+    (gfloat) .125 * ( dos_fou_y - tre_fou_y + dos_thr_x - dos_fou_x )
     +
-    .5 * ( newval_uno_two + newval_dos_thr );
+    (gfloat) .5 * ( newval_uno_two + newval_dos_thr );
 
   const gfloat tre_two_y = LOHALO_MINMOD( d_dostre_two, d_trequa_two,
                                           d_dostre_two_sq,
@@ -493,11 +496,11 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_trequa_times_quacin_two );
 
   const gfloat newval_tre_one =
-    .25 * ( qua_two - tre_thr )
+    (gfloat) .25 * ( qua_two - tre_thr )
     +
-    .125 * ( qua_two_x - qua_thr_x + tre_two_y - qua_two_y )
+    (gfloat) .125 * ( qua_two_x - qua_thr_x + tre_two_y - qua_two_y )
     +
-    .5 * ( newval_dos_one + newval_tre_two );
+    (gfloat) .5 * ( newval_dos_one + newval_tre_two );
 
   const gfloat dos_two_x = LOHALO_MINMOD( d_dos_twothr, d_dos_onetwo,
                                           d_dos_twothr_sq,
@@ -508,11 +511,11 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_unodos_times_dostre_two );
 
   const gfloat newval_uno_one =
-    .25 * ( dos_two + dos_thr + tre_two + tre_thr )
+    (gfloat) .25 * ( dos_two + dos_thr + tre_two + tre_thr )
     +
-    .125 * ( dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
-             +
-             dos_two_y + dos_thr_y - tre_two_y - tre_thr_y );
+    (gfloat) .125 * ( dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
+                      +
+                      dos_two_y + dos_thr_y - tre_two_y - tre_thr_y );
 
   /*
    * Return the sixteen LBB stencil values:
@@ -607,43 +610,43 @@ nohalo_subdivision (const gfloat           uno_two,
  * necessarily above the minimum of the four minima, which happens to
  * be the minimum over the 4x4. Similarly with the maxima.)
  *
- * The above paragraph described the "soft" version of LBB. The
- * "sharp" version is similar.
+ * The above paragraph described the "soft" version of LBB, which is
+ * the only one used by lohalo.
  */
 
 static inline gfloat
-lbbicubic( const gfloat c00,
-           const gfloat c10,
-           const gfloat c01,
-           const gfloat c11,
-           const gfloat c00dx,
-           const gfloat c10dx,
-           const gfloat c01dx,
-           const gfloat c11dx,
-           const gfloat c00dy,
-           const gfloat c10dy,
-           const gfloat c01dy,
-           const gfloat c11dy,
-           const gfloat c00dxdy,
-           const gfloat c10dxdy,
-           const gfloat c01dxdy,
-           const gfloat c11dxdy,
-           const gfloat uno_one,
-           const gfloat uno_two,
-           const gfloat uno_thr,
-           const gfloat uno_fou,
-           const gfloat dos_one,
-           const gfloat dos_two,
-           const gfloat dos_thr,
-           const gfloat dos_fou,
-           const gfloat tre_one,
-           const gfloat tre_two,
-           const gfloat tre_thr,
-           const gfloat tre_fou,
-           const gfloat qua_one,
-           const gfloat qua_two,
-           const gfloat qua_thr,
-           const gfloat qua_fou )
+lbb( const gfloat c00,
+     const gfloat c10,
+     const gfloat c01,
+     const gfloat c11,
+     const gfloat c00dx,
+     const gfloat c10dx,
+     const gfloat c01dx,
+     const gfloat c11dx,
+     const gfloat c00dy,
+     const gfloat c10dy,
+     const gfloat c01dy,
+     const gfloat c11dy,
+     const gfloat c00dxdy,
+     const gfloat c10dxdy,
+     const gfloat c01dxdy,
+     const gfloat c11dxdy,
+     const gfloat uno_one,
+     const gfloat uno_two,
+     const gfloat uno_thr,
+     const gfloat uno_fou,
+     const gfloat dos_one,
+     const gfloat dos_two,
+     const gfloat dos_thr,
+     const gfloat dos_fou,
+     const gfloat tre_one,
+     const gfloat tre_two,
+     const gfloat tre_thr,
+     const gfloat tre_fou,
+     const gfloat qua_one,
+     const gfloat qua_two,
+     const gfloat qua_thr,
+     const gfloat qua_fou )
 {
   /*
    * STENCIL (FOOTPRINT) OF INPUT VALUES:
@@ -825,10 +828,10 @@ lbbicubic( const gfloat c00,
    * Slope limiters. The key multiplier is 3 but we fold a factor of
    * 2, hence 6:
    */
-  const gfloat dble_slopelimit_00 = 6.0 * LOHALO_MIN( u00, v00 );
-  const gfloat dble_slopelimit_10 = 6.0 * LOHALO_MIN( u10, v10 );
-  const gfloat dble_slopelimit_01 = 6.0 * LOHALO_MIN( u01, v01 );
-  const gfloat dble_slopelimit_11 = 6.0 * LOHALO_MIN( u11, v11 );
+  const gfloat dble_slopelimit_00 = (gfloat) 6.0 * LOHALO_MIN( u00, v00 );
+  const gfloat dble_slopelimit_10 = (gfloat) 6.0 * LOHALO_MIN( u10, v10 );
+  const gfloat dble_slopelimit_01 = (gfloat) 6.0 * LOHALO_MIN( u01, v01 );
+  const gfloat dble_slopelimit_11 = (gfloat) 6.0 * LOHALO_MIN( u11, v11 );
 
   /*
    * Clamped first derivatives:
@@ -861,14 +864,14 @@ lbbicubic( const gfloat c00,
   /*
    * Sums and differences of first derivatives:
    */
-  const gfloat twelve_sum00 = 6.0 * ( dble_dzdx00 + dble_dzdy00 );
-  const gfloat twelve_dif00 = 6.0 * ( dble_dzdx00 - dble_dzdy00 );
-  const gfloat twelve_sum10 = 6.0 * ( dble_dzdx10 + dble_dzdy10 );
-  const gfloat twelve_dif10 = 6.0 * ( dble_dzdx10 - dble_dzdy10 );
-  const gfloat twelve_sum01 = 6.0 * ( dble_dzdx01 + dble_dzdy01 );
-  const gfloat twelve_dif01 = 6.0 * ( dble_dzdx01 - dble_dzdy01 );
-  const gfloat twelve_sum11 = 6.0 * ( dble_dzdx11 + dble_dzdy11 );
-  const gfloat twelve_dif11 = 6.0 * ( dble_dzdx11 - dble_dzdy11 );
+  const gfloat twelve_sum00 = (gfloat) 6.0 * ( dble_dzdx00 + dble_dzdy00 );
+  const gfloat twelve_dif00 = (gfloat) 6.0 * ( dble_dzdx00 - dble_dzdy00 );
+  const gfloat twelve_sum10 = (gfloat) 6.0 * ( dble_dzdx10 + dble_dzdy10 );
+  const gfloat twelve_dif10 = (gfloat) 6.0 * ( dble_dzdx10 - dble_dzdy10 );
+  const gfloat twelve_sum01 = (gfloat) 6.0 * ( dble_dzdx01 + dble_dzdy01 );
+  const gfloat twelve_dif01 = (gfloat) 6.0 * ( dble_dzdx01 - dble_dzdy01 );
+  const gfloat twelve_sum11 = (gfloat) 6.0 * ( dble_dzdx11 + dble_dzdy11 );
+  const gfloat twelve_dif11 = (gfloat) 6.0 * ( dble_dzdx11 - dble_dzdy11 );
 
   /*
    * Absolute values of the sums:
@@ -881,10 +884,10 @@ lbbicubic( const gfloat c00,
   /*
    * Scaled distances to the min:
    */
-  const gfloat u00_times_36 = 36.0 * u00;
-  const gfloat u10_times_36 = 36.0 * u10;
-  const gfloat u01_times_36 = 36.0 * u01;
-  const gfloat u11_times_36 = 36.0 * u11;
+  const gfloat u00_times_36 = (gfloat) 36.0 * u00;
+  const gfloat u10_times_36 = (gfloat) 36.0 * u10;
+  const gfloat u01_times_36 = (gfloat) 36.0 * u01;
+  const gfloat u11_times_36 = (gfloat) 36.0 * u11;
 
   /*
    * First cross-derivative limiter:
@@ -902,10 +905,10 @@ lbbicubic( const gfloat c00,
   /*
    * Scaled distances to the max:
    */
-  const gfloat v00_times_36 = 36.0 * v00;
-  const gfloat v10_times_36 = 36.0 * v10;
-  const gfloat v01_times_36 = 36.0 * v01;
-  const gfloat v11_times_36 = 36.0 * v11;
+  const gfloat v00_times_36 = (gfloat) 36.0 * v00;
+  const gfloat v10_times_36 = (gfloat) 36.0 * v10;
+  const gfloat v01_times_36 = (gfloat) 36.0 * v01;
+  const gfloat v11_times_36 = (gfloat) 36.0 * v11;
 
   /*
    * Second cross-derivative limiter:
@@ -1004,7 +1007,8 @@ lbbicubic( const gfloat c00,
                          +
                          c11dxdy * quad_d2zdxdy11;
 
-  const gfloat newval = newval1 + .5 * newval2 + .25 * newval3;
+  const gfloat newval =
+    newval1 + (gfloat) .5 * newval2 + (gfloat) .25 * newval3;
 
   return newval;
 }
@@ -1021,7 +1025,7 @@ triangle( const gdouble c_major_x,
   const gdouble q2 = s * c_minor_x + t * c_minor_y;
   const gdouble r2 = q1 * q1 + q2 * q2;
   const gfloat weight =
-    ( ( r2 < 1. ) ? (gfloat) ( 1. - sqrt( r2 ) ) : 0.f );
+    ( ( r2 < 1. ) ? (gfloat) ( 1. - sqrt( r2 ) ) : (gfloat) 0. );
   return weight;
 }
 
@@ -1164,15 +1168,15 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
      * Computation of the needed weights (coefficients).
      */
     const gfloat xp1over2   = ( 2 * sign_of_x_0 ) * x_0;
-    const gfloat xm1over2   = xp1over2 - 1.0;
-    const gfloat onepx      = 0.5 + xp1over2;
-    const gfloat onemx      = 1.5 - xp1over2;
+    const gfloat xm1over2   = xp1over2 + (gfloat) (-1.0);
+    const gfloat onepx      = (gfloat) 0.5 + xp1over2;
+    const gfloat onemx      = (gfloat) 1.5 - xp1over2;
     const gfloat xp1over2sq = xp1over2 * xp1over2;
 
     const gfloat yp1over2   = ( 2 * sign_of_y_0 ) * y_0;
-    const gfloat ym1over2   = yp1over2 - 1.0;
-    const gfloat onepy      = 0.5 + yp1over2;
-    const gfloat onemy      = 1.5 - yp1over2;
+    const gfloat ym1over2   = yp1over2 + (gfloat) (-1.0);
+    const gfloat onepy      = (gfloat) 0.5 + yp1over2;
+    const gfloat onemy      = (gfloat) 1.5 - yp1over2;
     const gfloat yp1over2sq = yp1over2 * yp1over2;
 
     const gfloat xm1over2sq = xm1over2 * xm1over2;
@@ -1244,39 +1248,38 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
     const gfloat c11dxdy =
       xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
 
-    newval[0] =
-      lbbicubic( c00,
-                 c10,
-                 c01,
-                 c11,
-                 c00dx,
-                 c10dx,
-                 c01dx,
-                 c11dx,
-                 c00dy,
-                 c10dy,
-                 c01dy,
-                 c11dy,
-                 c00dxdy,
-                 c10dxdy,
-                 c01dxdy,
-                 c11dxdy,
-                 uno_one_0,
-                 uno_two_0,
-                 uno_thr_0,
-                 uno_fou_0,
-                 dos_one_0,
-                 dos_two_0,
-                 dos_thr_0,
-                 dos_fou_0,
-                 tre_one_0,
-                 tre_two_0,
-                 tre_thr_0,
-                 tre_fou_0,
-                 qua_one_0,
-                 qua_two_0,
-                 qua_thr_0,
-                 qua_fou_0 );
+    newval[0] = lbb( c00,
+		     c10,
+		     c01,
+		     c11,
+		     c00dx,
+		     c10dx,
+		     c01dx,
+		     c11dx,
+		     c00dy,
+		     c10dy,
+		     c01dy,
+		     c11dy,
+		     c00dxdy,
+		     c10dxdy,
+		     c01dxdy,
+		     c11dxdy,
+		     uno_one_0,
+		     uno_two_0,
+		     uno_thr_0,
+		     uno_fou_0,
+		     dos_one_0,
+		     dos_two_0,
+		     dos_thr_0,
+		     dos_fou_0,
+		     tre_one_0,
+		     tre_two_0,
+		     tre_thr_0,
+		     tre_fou_0,
+		     qua_one_0,
+		     qua_two_0,
+		     qua_thr_0,
+		     qua_fou_0 );
 
     /*
      * Second channel:
@@ -1319,39 +1322,38 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_thr_1,
                         &qua_fou_1);
 
-    newval[1] =
-      lbbicubic( c00,
-                 c10,
-                 c01,
-                 c11,
-                 c00dx,
-                 c10dx,
-                 c01dx,
-                 c11dx,
-                 c00dy,
-                 c10dy,
-                 c01dy,
-                 c11dy,
-                 c00dxdy,
-                 c10dxdy,
-                 c01dxdy,
-                 c11dxdy,
-                 uno_one_1,
-                 uno_two_1,
-                 uno_thr_1,
-                 uno_fou_1,
-                 dos_one_1,
-                 dos_two_1,
-                 dos_thr_1,
-                 dos_fou_1,
-                 tre_one_1,
-                 tre_two_1,
-                 tre_thr_1,
-                 tre_fou_1,
-                 qua_one_1,
-                 qua_two_1,
-                 qua_thr_1,
-                 qua_fou_1 );
+    newval[1] = lbb( c00,
+		     c10,
+		     c01,
+		     c11,
+		     c00dx,
+		     c10dx,
+		     c01dx,
+		     c11dx,
+		     c00dy,
+		     c10dy,
+		     c01dy,
+		     c11dy,
+		     c00dxdy,
+		     c10dxdy,
+		     c01dxdy,
+		     c11dxdy,
+		     uno_one_1,
+		     uno_two_1,
+		     uno_thr_1,
+		     uno_fou_1,
+		     dos_one_1,
+		     dos_two_1,
+		     dos_thr_1,
+		     dos_fou_1,
+		     tre_one_1,
+		     tre_two_1,
+		     tre_thr_1,
+		     tre_fou_1,
+		     qua_one_1,
+		     qua_two_1,
+		     qua_thr_1,
+		     qua_fou_1 );
 
     nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
                         input_bptr[ uno_thr_shift + 2 ],
@@ -1391,39 +1393,38 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_thr_2,
                         &qua_fou_2);
 
-    newval[2] =
-      lbbicubic( c00,
-                 c10,
-                 c01,
-                 c11,
-                 c00dx,
-                 c10dx,
-                 c01dx,
-                 c11dx,
-                 c00dy,
-                 c10dy,
-                 c01dy,
-                 c11dy,
-                 c00dxdy,
-                 c10dxdy,
-                 c01dxdy,
-                 c11dxdy,
-                 uno_one_2,
-                 uno_two_2,
-                 uno_thr_2,
-                 uno_fou_2,
-                 dos_one_2,
-                 dos_two_2,
-                 dos_thr_2,
-                 dos_fou_2,
-                 tre_one_2,
-                 tre_two_2,
-                 tre_thr_2,
-                 tre_fou_2,
-                 qua_one_2,
-                 qua_two_2,
-                 qua_thr_2,
-                 qua_fou_2 );
+    newval[2] = lbb( c00,
+		     c10,
+		     c01,
+		     c11,
+		     c00dx,
+		     c10dx,
+		     c01dx,
+		     c11dx,
+		     c00dy,
+		     c10dy,
+		     c01dy,
+		     c11dy,
+		     c00dxdy,
+		     c10dxdy,
+		     c01dxdy,
+		     c11dxdy,
+		     uno_one_2,
+		     uno_two_2,
+		     uno_thr_2,
+		     uno_fou_2,
+		     dos_one_2,
+		     dos_two_2,
+		     dos_thr_2,
+		     dos_fou_2,
+		     tre_one_2,
+		     tre_two_2,
+		     tre_thr_2,
+		     tre_fou_2,
+		     qua_one_2,
+		     qua_two_2,
+		     qua_thr_2,
+		     qua_fou_2 );
 
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
@@ -1463,39 +1464,38 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_thr_3,
                         &qua_fou_3);
 
-    newval[3] =
-      lbbicubic( c00,
-                 c10,
-                 c01,
-                 c11,
-                 c00dx,
-                 c10dx,
-                 c01dx,
-                 c11dx,
-                 c00dy,
-                 c10dy,
-                 c01dy,
-                 c11dy,
-                 c00dxdy,
-                 c10dxdy,
-                 c01dxdy,
-                 c11dxdy,
-                 uno_one_3,
-                 uno_two_3,
-                 uno_thr_3,
-                 uno_fou_3,
-                 dos_one_3,
-                 dos_two_3,
-                 dos_thr_3,
-                 dos_fou_3,
-                 tre_one_3,
-                 tre_two_3,
-                 tre_thr_3,
-                 tre_fou_3,
-                 qua_one_3,
-                 qua_two_3,
-                 qua_thr_3,
-                 qua_fou_3 );
+    newval[3] = lbb( c00,
+		     c10,
+		     c01,
+		     c11,
+		     c00dx,
+		     c10dx,
+		     c01dx,
+		     c11dx,
+		     c00dy,
+		     c10dy,
+		     c01dy,
+		     c11dy,
+		     c00dxdy,
+		     c10dxdy,
+		     c01dxdy,
+		     c11dxdy,
+		     uno_one_3,
+		     uno_two_3,
+		     uno_thr_3,
+		     uno_fou_3,
+		     dos_one_3,
+		     dos_two_3,
+		     dos_thr_3,
+		     dos_fou_3,
+		     tre_one_3,
+		     tre_two_3,
+		     tre_thr_3,
+		     tre_fou_3,
+		     qua_one_3,
+		     qua_two_3,
+		     qua_thr_3,
+		     qua_fou_3 );
 
     {
       /*
@@ -1680,23 +1680,24 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * n is the matrix Jinv * transpose(Jinv). Eigenvalues of n are
        * the squares of the singular values of Jinv.
        */
-      const gdouble aa = a*a;
-      const gdouble bb = b*b;
-      const gdouble cc = c*c;
-      const gdouble dd = d*d;
+      const gdouble aa = a * a;
+      const gdouble bb = b * b;
+      const gdouble cc = c * c;
+      const gdouble dd = d * d;
       /*
        * Eigenvectors of n are left singular vectors of Jinv.
        */
-      const gdouble n11 = aa+bb;
-      const gdouble n12 = a*c+b*d;
+      const gdouble n11 = aa + bb;
+      const gdouble n12 = a * c + b * d;
       const gdouble n21 = n12;
-      const gdouble n22 = cc+dd;
-      const gdouble det = a*d-b*c;
-      const gdouble twice_det = det+det;
-      const gdouble frobenius_squared = n11+n22;
+      const gdouble n22 = cc + dd;
+      const gdouble det = a * d - b * c;
+      const gdouble twice_det = det + det;
+      const gdouble frobenius_squared = n11 + n22;
       const gdouble discriminant =
-        (frobenius_squared+twice_det)*(frobenius_squared-twice_det);
-      const gdouble sqrt_discriminant = sqrt(discriminant);
+        ( frobenius_squared + twice_det ) * ( frobenius_squared - twice_det );
+      const gdouble sqrt_discriminant = sqrt( discriminant );
+
       /*
        * Initially, we only compute the squares of the singular values.
        */
@@ -1707,23 +1708,24 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * both singular values are 0, and any orthogonal pair of left
        * and right factors produces a singular decomposition of Jinv.
        */
-      const gdouble s1s1 = 0.5*(frobenius_squared+sqrt_discriminant);
+      const gdouble twice_s1s1 = frobenius_squared + sqrt_discriminant;
       /*
-       * If s1 <= 1, the forward transformation is enlarging in all
-       * directions, and consequently we do not need the downsampling
-       * scheme at all and we can ship out the result now:
+       * If s1 <= 1, the forward transformation is not downsampling in
+       * any direction, and consequently we do not need the
+       * downsampling scheme at all.
        */
-      if ( s1s1 > 1. )
+      if ( twice_s1s1 > 2. )
         {
+	  const gdouble s1s1 = 0.5 * twice_s1s1;
           /*
            * s2 the smallest singular value of the inverse Jacobian
            * matrix. Its reciprocal is the largest singular value of
            * the Jacobian matrix itself.
            */
-          const gdouble s2s2 = 0.5*(frobenius_squared-sqrt_discriminant);
+          const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
 
-          const gdouble s1s1minusn11 = s1s1-n11;
-          const gdouble s1s1minusn22 = s1s1-n22;
+          const gdouble s1s1minusn11 = s1s1 - n11;
+          const gdouble s1s1minusn22 = s1s1 - n22;
           /*
            * u1, the first column of the U factor of a singular
            * decomposition of Jinv, is a (non-normalized) left
@@ -1731,8 +1733,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            * and u21. We compute u1 from the fact that it is an
            * eigenvector of n corresponding to the eigenvalue s1^2.
            */
-          const gdouble s1s1minusn11_squared = s1s1minusn11*s1s1minusn11;
-          const gdouble s1s1minusn22_squared = s1s1minusn22*s1s1minusn22;
+          const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
+          const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
           /*
            * The following selects the largest row of n-s1^2 I as the
            * one which is used to find the eigenvector. If both
@@ -1745,28 +1747,29 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            */
           const gdouble temp_u11 =
             (
-              (s1s1minusn11_squared>=s1s1minusn22_squared)
+              ( s1s1minusn11_squared >= s1s1minusn22_squared )
               ? n12
               : s1s1minusn22
             );
           const gdouble temp_u21 =
             (
-              (s1s1minusn11_squared>=s1s1minusn22_squared)
+              ( s1s1minusn11_squared >= s1s1minusn22_squared )
               ? s1s1minusn11
               : n21
             );
-          const gdouble norm = sqrt(temp_u11*temp_u11+temp_u21*temp_u21);
+          const gdouble norm =
+	    sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
           /*
            * Finalize the entries of first left singular vector
            * (associated with the largest singular value).
            */
-          const gdouble u11 = ( (norm>0.0) ? temp_u11/norm : 1.0 );
-          const gdouble u21 = ( (norm>0.0) ? temp_u21/norm : 0.0 );
+          const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
+          const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
           /*
            * Clamp the singular values up to 1:
            */
-          const gdouble major_mag = ( (s1s1<=1.0) ? 1.0 : sqrt(s1s1) );
-          const gdouble minor_mag = ( (s2s2<=1.0) ? 1.0 : sqrt(s2s2) );
+          const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
+          const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
           /*
            * Unit major and minor axis direction vectors:
            */
@@ -1777,10 +1780,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           /*
            * Major and minor axis direction vectors:
            */
-          const gdouble major_x =  major_mag * major_unit_x;
-          const gdouble major_y =  major_mag * major_unit_y;
-          const gdouble minor_x =  minor_mag * minor_unit_x;
-          const gdouble minor_y =  minor_mag * minor_unit_y;
+          const gdouble major_x = major_mag * major_unit_x;
+          const gdouble major_y = major_mag * major_unit_y;
+          const gdouble minor_x = minor_mag * minor_unit_x;
+          const gdouble minor_y = minor_mag * minor_unit_y;
 
           /*
            * The square of the distance to the key location in output
@@ -1809,30 +1812,23 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           /*
            * Bounding box of the ellipse:
            */
-          const gdouble bounding_box_denominator =
+          const gdouble bounding_box_factor =
             ellipse_f * ellipse_f
             /
             ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
           const gdouble bounding_box_half_width =
-            sqrt( ellipse_c * bounding_box_denominator );
+            sqrt( ellipse_c * bounding_box_factor );
           const gdouble bounding_box_half_height =
-            sqrt( ellipse_a * bounding_box_denominator );
+            sqrt( ellipse_a * bounding_box_factor );
+
+	  const gdouble context_rect_limit =
+	    -.5 + .5 * ( LOHALO_CONTEXT_RECT_SIZE - 1 );
 
           const gdouble clamped_half_width =
-            LOHALO_MIN
-              (
-                bounding_box_half_width
-                ,
-                .5*(LOHALO_CONTEXT_RECT_WIDTH  + -1.)
-               );
+            LOHALO_MIN( bounding_box_half_width,  context_rect_limit);
 
           const gdouble clamped_half_height =
-            LOHALO_MIN
-              (
-                bounding_box_half_height
-                ,
-                .5*(LOHALO_CONTEXT_RECT_HEIGHT + -1.)
-              );
+            LOHALO_MIN( bounding_box_half_height, context_rect_limit);
 
           const gint left = ceil ( x_0 - clamped_half_width  );
           const gint rite = floor( x_0 + clamped_half_width  );
@@ -1840,16 +1836,16 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           const gint bot  = floor( y_0 + clamped_half_height );
 
           gint i_y = top;
-          
-          gfloat total_weight = 0.f;
 
-          gfloat ewa_newval[channels];          
-          ewa_newval[0] = 0.f;
-          ewa_newval[1] = 0.f;
-          ewa_newval[2] = 0.f;
-          ewa_newval[3] = 0.f;
+          gfloat total_weight = (gfloat) 0.;
 
-          do 
+          gfloat ewa_newval[channels];
+          ewa_newval[0] = (gfloat) 0.;
+          ewa_newval[1] = (gfloat) 0.;
+          ewa_newval[2] = (gfloat) 0.;
+          ewa_newval[3] = (gfloat) 0.;
+
+          do
             {
               const gint y_shift = i_y * row_skip;
               gint i_x = left;
@@ -1860,20 +1856,19 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                                  c_major_y,
                                                  c_minor_x,
                                                  c_minor_y,
-                                                 i_x-x_0,
-                                                 i_y-y_0);
+                                                 i_x - x_0,
+                                                 i_y - y_0);
                   total_weight += weight;
                   ewa_newval[0] += input_bptr[pos  ] * weight;
                   ewa_newval[1] += input_bptr[pos+1] * weight;
                   ewa_newval[2] += input_bptr[pos+2] * weight;
                   ewa_newval[3] += input_bptr[pos+3] * weight;
-                } while (i_x++<=rite); 
-            } while (i_y++<=bot);
+                } while (++i_x<=rite);
+            } while (++i_y<=bot);
 
           {
-            const gfloat theta = 1./ellipse_f;
-            const gfloat ewa_factor = ( 1.f - theta ) / total_weight;
-
+            const gfloat theta = (gfloat) ( 1. / ellipse_f );
+            const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
             newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
             newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
             newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
