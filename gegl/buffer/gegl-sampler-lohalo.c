@@ -165,13 +165,14 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * Use an odd integer between 5 and 63 inclusive:
  */
-#define LOHALO_CONTEXT_RECT_SIZE 15
+#define LOHALO_CONTEXT_RECT_SIZE 17
+#define LOHALO_CONTEXT_RECT_SHIFT ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE) ) / 2 )
 
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect.x = 0;
-  GEGL_SAMPLER (self)->context_rect.y = 0;
+  GEGL_SAMPLER (self)->context_rect.x = LOHALO_CONTEXT_RECT_SHIFT;
+  GEGL_SAMPLER (self)->context_rect.y = LOHALO_CONTEXT_RECT_SHIFT;
   GEGL_SAMPLER (self)->context_rect.width  = LOHALO_CONTEXT_RECT_SIZE;
   GEGL_SAMPLER (self)->context_rect.height = LOHALO_CONTEXT_RECT_SIZE;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
