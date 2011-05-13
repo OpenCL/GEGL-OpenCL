@@ -129,7 +129,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer_class->process = process;
 
-  operation_class->name        = "gegl:over";
+  operation_class->compat_name = "gegl:over";
+  operation_class->name        = "svg:src-over";
   operation_class->description =
         _("Porter Duff operation over (d = cA + cB * (1 - aA))");
   operation_class->categories  = "compositors:porter-duff";

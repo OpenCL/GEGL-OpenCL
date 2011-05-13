@@ -32,7 +32,7 @@ copyright = '
  */'
 
 a = [
-      ['svg_multiply',  'cA * cB +  cA * (1 - aB) + cB * (1 - aA)'],
+      ['multiply',      'cA * cB +  cA * (1 - aB) + cB * (1 - aA)'],
       ['screen',        'cA + cB - cA * cB'],
       ['darken',        'MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)'],
       ['lighten',       'MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)'],
@@ -180,7 +180,8 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
+  operation_class->compat_name = \"gegl:#{name}\";
+  operation_class->name        = \"svg:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "
@@ -242,7 +243,8 @@ b.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
+  operation_class->compat_name = \"gegl:#{name}\";
+  operation_class->name        = \"svg:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\");
 "
@@ -367,7 +369,8 @@ d.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
+  operation_class->name        = \"svg:#{name}\";
+  operation_class->compat_name = \"gegl:#{name}\";
   operation_class->description =
         _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
 "

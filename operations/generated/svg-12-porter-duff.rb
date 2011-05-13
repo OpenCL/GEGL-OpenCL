@@ -173,7 +173,8 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
+  operation_class->compat_name = \"gegl:#{name}\";
+  operation_class->name        = \"svg:#{name}\";
   operation_class->description =
         _(\"Porter Duff operation #{name} (d = #{c_formula})\");
 "
@@ -245,7 +246,8 @@ static GeglRectangle get_bounding_box (GeglOperation *self)
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
+  operation_class->compat_name = \"gegl:#{name}\";
+  operation_class->name        = \"svg:#{name}\";
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->description =
         _(\"Porter Duff operation #{name} (d = #{c_formula})\");
