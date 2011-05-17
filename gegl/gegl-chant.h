@@ -60,7 +60,6 @@ type_name##_register_type (GTypeModule *type_module)                    \
   {                                                                     \
     gchar  tempname[256];                                               \
     gchar *p;                                                           \
-    GType  g_define_type_id;                                            \
     const GTypeInfo g_define_type_info =                                \
     {                                                                   \
       sizeof (TypeName##Class),                                         \
@@ -84,7 +83,6 @@ type_name##_register_type (GTypeModule *type_module)                    \
                                                        tempname,        \
                                                        &g_define_type_info, \
                                                        (GTypeFlags) flags); \
-    g_define_type_id = type_name##_type_id;                             \
     { CODE ; }                                                          \
   }
 
@@ -479,6 +477,7 @@ get_property (GObject      *gobject,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
   }
+  properties ++; /* evil hack to silence gcc */
 }
 
 static void
@@ -580,6 +579,8 @@ set_property (GObject      *gobject,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
   }
+
+  properties ++; /* evil hack to silence gcc */
 }
 
 static void gegl_chant_destroy_notify (gpointer data)
@@ -692,8 +693,8 @@ gegl_chant_constructor (GType                  type,
 #undef gegl_chant_curve
 #undef gegl_chant_path
 
-
   g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);
+  properties ++; /* evil hack to silence gcc */
   return obj;
 }
 
