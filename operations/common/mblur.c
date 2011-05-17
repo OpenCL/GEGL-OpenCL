@@ -63,11 +63,9 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglOperationFilter *filter;
   GeglChantO          *o;
   Priv *p;
 
-  filter = GEGL_OPERATION_FILTER (operation);
   o   = GEGL_CHANT_PROPERTIES (operation);
   p = (Priv*)o->chant_data;
   if (p == NULL)

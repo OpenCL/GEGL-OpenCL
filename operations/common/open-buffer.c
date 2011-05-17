@@ -114,10 +114,8 @@ static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   G_OBJECT_CLASS (klass)->dispose = dispose;
 

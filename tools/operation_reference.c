@@ -245,17 +245,15 @@ static void category_menu_index (gpointer key,
   gchar    *category = key;
   GList    *operations = value;
   GList    *iter;
-  gboolean  comma;
 
   if (!strcmp (category, "hidden"))
     return;
-  for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
+  for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
       g_print ("<li><a href='#op_%s'>%s</a></li>\n", klass->name, klass->name);
-      comma = TRUE;
     }
 }
 
@@ -266,7 +264,6 @@ main (gint    argc,
   GList      *operations;
   GList      *iter;
   GHashTable *categories = NULL;
-  gboolean    comma;
 
   gegl_init (&argc, &argv);
 
@@ -274,7 +271,7 @@ main (gint    argc,
 
   /* Collect categories */
   categories = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-  for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
+  for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
       const gchar *ptr = klass->categories;

@@ -60,5 +60,8 @@ gegl_module_register (GTypeModule *module)
   dummy = reflect_get_type ();
   dummy = transform_get_type ();
 
+  dummy ++; /* silence gcc, having it is required to avoid optimizing
+               away the _get_type calls themselves */
+
   return TRUE;
 }

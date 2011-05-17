@@ -157,11 +157,11 @@ main (gint    argc,
          if (max_diff > 1.5 &&
              !strstr (argv[2], "broken"))
            {
-             GeglNode *graph, *sink;
+             GeglNode *sink;
              gchar *debug_path = g_malloc (strlen (argv[2])+16);
              memcpy (debug_path, argv[2], strlen (argv[2])+1);
              memcpy (debug_path + strlen(argv[2])-4, "-diff.png", 11);
-             graph = gegl_graph (sink=gegl_node ("gegl:png-save",
+             gegl_graph (sink=gegl_node ("gegl:png-save",
                                  "path", debug_path, NULL,
                                  gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));
              gegl_node_process (sink);

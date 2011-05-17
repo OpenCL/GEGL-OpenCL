@@ -120,10 +120,8 @@ prepare (GeglOperation *operation)
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass       *object_class;
   GeglOperationClass *operation_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->name        = "gegl:rectangle";

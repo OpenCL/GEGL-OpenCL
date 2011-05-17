@@ -81,7 +81,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
                         gpointer     format)
 {
   gint           width;
-  gint           height;
   gint           bit_depth;
   gint           bpp;
   gint           number_of_passes=1;
@@ -144,7 +143,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
                   &interlace_type,
                   NULL, NULL);
     width = w;
-    height = h;
     if (ret_width)
       *ret_width = w;
     if (ret_height)
