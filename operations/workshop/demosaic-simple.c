@@ -123,7 +123,6 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *temp_in;
   GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);
 
   demosaic (o, input, &compute, output, result);
