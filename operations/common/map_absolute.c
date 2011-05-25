@@ -50,8 +50,8 @@ prepare (GeglOperation *operation)
 
 static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
-                        const gchar         *input_pad,
-                        const GeglRectangle *region)
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
 
@@ -86,68 +86,57 @@ process (GeglOperation       *operation,
   gegl_sampler_prepare (sampler);
 
   if (aux != NULL)
-  {
-    it = gegl_buffer_iterator_new (output, result, format_io, GEGL_BUFFER_WRITE);
-    index_out = 0;
-
-    index_coords = gegl_buffer_iterator_add (it, aux, result, format_coords, GEGL_BUFFER_READ);
-    index_in = gegl_buffer_iterator_add (it, input, result, format_io, GEGL_BUFFER_READ);
-
-    while (gegl_buffer_iterator_next (it))
     {
-      gint        i;
-      gint        n_pixels = it->length;
-      gint        x = it->roi->x; /* initial x                   */
-      gint        y = it->roi->y; /*           and y coordinates */
-      gfloat     *in = it->data[index_in];
-      gfloat     *out = it->data[index_out];
-      gfloat     *coords = it->data[index_coords];
+      it = gegl_buffer_iterator_new (output, result, format_io, GEGL_BUFFER_WRITE);
+      index_out = 0;
 
-      for (i=0; i<n_pixels; i++)
-      {
-        if (coords[0] > 0 && coords[1] > 0)
+      index_coords = gegl_buffer_iterator_add (it, aux, result, format_coords, GEGL_BUFFER_READ);
+      index_in = gegl_buffer_iterator_add (it, input, result, format_io, GEGL_BUFFER_READ);
+
+      while (gegl_buffer_iterator_next (it))
         {
-          /* if the coordinate asked is an exact pixel, we fetch it directly, to avoid the blur of sampling */
-          if (coords[0] == x && coords[1] == y)
-          {
-            out[0] = in[0];
-            out[1] = in[1];
-            out[2] = in[2];
-            out[3] = in[3];
-          }
-          else
-          {
-            gegl_sampler_get (sampler, coords[0], coords[1], out);
-          }
-        }
-        else
-        {
-          out[0] = 0.0;
-          out[1] = 0.0;
-          out[2] = 0.0;
-          out[3] = 0.0;
-        }
+          gint        i;
+          gint        n_pixels = it->length;
+          gint        x = it->roi->x; /* initial x                   */
+          gint        y = it->roi->y; /*           and y coordinates */
+          gfloat     *in = it->data[index_in];
+          gfloat     *out = it->data[index_out];
+          gfloat     *coords = it->data[index_coords];
 
-        coords += 2;
-        in += 4;
-        out += 4;
+          for (i=0; i<n_pixels; i++)
+            {
+              /* if the coordinate asked is an exact pixel, we fetch it directly, to avoid the blur of sampling */
+              if (coords[0] == x && coords[1] == y)
+                {
+                  out[0] = in[0];
+                  out[1] = in[1];
+                  out[2] = in[2];
+                  out[3] = in[3];
+                }
+              else
+                {
+                  gegl_sampler_get (sampler, coords[0], coords[1], out);
+                }
 
-        /* update x and y coordinates */
-        x++;
-        if (x >= (it->roi->x + it->roi->width))
-        {
-          x = it->roi->x;
-          y++;
+              coords += 2;
+              in += 4;
+              out += 4;
+
+              /* update x and y coordinates */
+              x++;
+              if (x >= (it->roi->x + it->roi->width))
+                {
+                  x = it->roi->x;
+                  y++;
+                }
+
+            }
         }
-
-      }
     }
-
-  }
   else
-  {
-    gegl_buffer_copy (input, result, output, result);
-  }
+    {
+      gegl_buffer_copy (input, result, output, result);
+    }
 
   g_object_unref (sampler);
 
@@ -170,6 +159,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:map-absolute";
 
   operation_class->categories  = "transform";
-  operation_class->description = _("sample input with an auxiliary buffer that contain source coordinates");
+  operation_class->description = _("sample input with an auxiliary buffer that contain absolute source coordinates");
 }
 #endif
