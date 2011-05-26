@@ -30,6 +30,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
+gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
+       _("scaling factor of displacement, indicates how large spatial"
+         " displacement a relative mapping value of 1.0 corresponds to."))
+
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
@@ -99,13 +103,15 @@ process (GeglOperation       *operation,
           gint        n_pixels = it->length;
           gint        x = it->roi->x; /* initial x                   */
           gint        y = it->roi->y; /*           and y coordinates */
+          gdouble     scaling = GEGL_CHANT_PROPERTIES (operation)->scaling;
           gfloat     *in = it->data[index_in];
           gfloat     *out = it->data[index_out];
           gfloat     *coords = it->data[index_coords];
 
           for (i=0; i<n_pixels; i++)
             {
-              /* if the coordinate asked is an exact pixel, we fetch it directly, to avoid the blur of sampling */
+              /* if the coordinate asked is an exact pixel, we fetch it
+               * directly, to avoid the blur of sampling */
               if (coords[0] == 0 && coords[1] == 0)
                 {
                   out[0] = in[0];
@@ -115,7 +121,8 @@ process (GeglOperation       *operation,
                 }
               else
                 {
-                  gegl_sampler_get (sampler, x+coords[0], y+coords[1], out);
+                  gegl_sampler_get (sampler, x+coords[0] * scaling,
+                                             y+coords[1] * scaling, out);
                 }
 
               coords += 2;
