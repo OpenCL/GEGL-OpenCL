@@ -33,7 +33,7 @@
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "map_absolute.c"
+#define GEGL_CHANT_C_FILE       "map-absolute.c"
 
 #include "gegl-chant.h"
 

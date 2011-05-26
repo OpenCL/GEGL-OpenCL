@@ -37,7 +37,7 @@ gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "map_relative.c"
+#define GEGL_CHANT_C_FILE       "map-relative.c"
 
 #include "gegl-chant.h"
 
