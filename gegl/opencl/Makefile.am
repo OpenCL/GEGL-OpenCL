@@ -19,8 +19,10 @@ noinst_LTLIBRARIES = libcl.la
 #libcl_public_HEADERS = gegl-cl-init.h
 
 libcl_la_SOURCES = \
+	gegl-cl-types.h \
 	gegl-cl-init.c \
 	gegl-cl-init.h \
-	gegl-cl-types.h
+	gegl-cl-texture.c \
+	gegl-cl-texture.h
 
 #libcl_la_SOURCES = $(libcl_sources) $(libcl_public_HEADERS)
