@@ -107,9 +107,11 @@ arrival of the next and more powerful generation of GIMP.
     forward.
   </li><li>Allow GEGL to run untrusted ops out-of process - ensuring that badly behaved
     ops will not bring GIMP/GEGL down.
-   </li><li>rewrite RAW loader to use <a href="http://www.libraw.org/">LibRaw</a> or <a 
+   </li>
+<!--<li>rewrite RAW loader to use <a href="http://www.libraw.org/">LibRaw</a> or <a 
                     href="http://sh0dan.blogspot.com/2009/02/introducing-rawspeed.html">Rawspeed</a> 
-                    library instead of the abandoned libopenraw</li>
+                    library instead of the abandoned libopenraw</li>-->
+   <li>Implement COW of tiles for gegl_buffer_dup</li>
    <li>Implement previews working on mipmap levels, allowing GEGL to do a preview at 12.5%, 25% or 50% of actual size - rendering the full size view in the background or on demand.</li>
    <li>Finish GEGL side of GIMP/GEGL integration for rendering only the viewed part when zoomed in - allowing realtime tweaking and preview with on-canvas preview at 1:1 scale. (this involves accepting two regions to be rendered with priority or similar integration, the regions are already available in the GIMP code.)</li>
     <li>Allow GEGL to connect any property of ops as inputs/outputs in the graph, the infrastructure to do so
