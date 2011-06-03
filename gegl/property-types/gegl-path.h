@@ -155,9 +155,9 @@ gdouble              gegl_path_get_length     (GeglPath     *path);
  * @index: the node number to retrieve
  * @node: a pointer to a #GeglPathItem record to be written.
  *
- * Retrieve the node of the path at positiong @pos.
+ * Retrieve the node of the path at position @pos.
  *
- * Returns TRUE if the node was succesfully retrieved.
+ * Returns TRUE if the node was successfully retrieved.
  */
 gboolean             gegl_path_get_node       (GeglPath     *path,
                                                gint          index,
@@ -183,7 +183,7 @@ gchar              * gegl_path_to_string      (GeglPath    *path);
  * Set the transformation matrix of the path.
  *
  * The path is transformed through this matrix when being evaluated,
- * causing the calcuated positions and length to be changed by the transform.
+ * causing the calculated positions and length to be changed by the transform.
  */
 void                 gegl_path_set_matrix     (GeglPath    *path,
                                                GeglMatrix3 *matrix);
@@ -224,7 +224,7 @@ gdouble              gegl_path_closest_point  (GeglPath     *path,
  * @path: a #GeglPath
  * @pos: how far along the path.
  * @x: return location for x coordinate.
- * @y: return locateion for y coordinate
+ * @y: return location for y coordinate
  *
  * Compute the coordinates of the path at the @position (length measured from
  * start of path, not including discontinuities).
@@ -241,7 +241,7 @@ gboolean             gegl_path_calc           (GeglPath     *path,
  * @xs: return location for x coordinates
  * @ys: return location for y coordinates
  *
- * Copmute @num_samples for a path into the provided arrays @xs and @ys
+ * Compute @num_samples for a path into the provided arrays @xs and @ys
  * the returned values include the start and end positions of the path.
  */
 void                 gegl_path_calc_values    (GeglPath    *path,
