@@ -173,7 +173,7 @@ median (GeglBuffer *src,
           dst_buf[offset*4+u] = median_pix[u];
         offset++;
       }
-  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE, 0);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -190,7 +190,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *temp_in;

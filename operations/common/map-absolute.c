@@ -57,7 +57,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
   const Babl           *format_io, *format_coords;
@@ -72,7 +73,7 @@ process (GeglOperation       *operation,
 
   if (aux != NULL)
     {
-      it = gegl_buffer_iterator_new (output, result, format_io, GEGL_BUFFER_WRITE);
+      it = gegl_buffer_iterator_new (output, result, format_io, GEGL_BUFFER_WRITE, level);
       index_out = 0;
 
       index_coords = gegl_buffer_iterator_add (it, aux, result, format_coords, GEGL_BUFFER_READ);

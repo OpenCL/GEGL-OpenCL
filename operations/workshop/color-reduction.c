@@ -165,7 +165,7 @@ process_floyd_steinberg (GeglBuffer *input,
 
     /* Push output row */
 
-    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE, 0);
     line_rect.y++;
   }
 
@@ -231,7 +231,7 @@ process_bayer (GeglBuffer *input,
       }
     }
 
-    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE, 0);
     line_rect.y++;
   }
 
@@ -284,7 +284,7 @@ process_random_covariant (GeglBuffer *input,
       }
     }
 
-    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE, 0);
     line_rect.y++;
   }
 
@@ -336,7 +336,7 @@ process_random (GeglBuffer *input,
       }
     }
 
-    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE, 0);
     line_rect.y++;
   }
 
@@ -380,7 +380,7 @@ process_no_dither (GeglBuffer *input,
       }
     }
 
-    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE, 0);
     line_rect.y++;
   }
 
@@ -406,7 +406,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   guint       channel_bits [4];

@@ -45,7 +45,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat      red   = o->red;
@@ -63,7 +64,7 @@ process (GeglOperation       *operation,
      in_buf = g_new (gfloat, 4 * num_pixels);
      out_buf = g_new (gfloat, 2 * num_pixels);
 
-     gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
+     gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
 
      in_pixel = in_buf;
      out_pixel = out_buf;
@@ -76,7 +77,7 @@ process (GeglOperation       *operation,
          out_pixel += 2;
      }
 
-     gegl_buffer_set (output, result, babl_format ("YA float"), out_buf,
+     gegl_buffer_set (output, result, 0, babl_format ("YA float"), out_buf,
                       GEGL_AUTO_ROWSTRIDE);
 
      g_free (in_buf);

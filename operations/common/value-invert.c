@@ -51,7 +51,8 @@ process (GeglOperation       *op,
          void                *in_buf,
          void                *out_buf,
          glong                samples,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   glong   j;
   gfloat *src  = in_buf;
@@ -164,10 +165,11 @@ static gegl_cl_run_data *cl_data = NULL;
 /* OpenCL processing function */
 static cl_int
 cl_process (GeglOperation       *op,
-            cl_mem              in_tex,
-            cl_mem              out_tex,
-            size_t              global_worksize,
-            const GeglRectangle *roi)
+            cl_mem               in_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            int                  level)
 {
 
   cl_int cl_err = 0;

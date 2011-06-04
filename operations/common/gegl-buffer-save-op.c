@@ -34,7 +34,8 @@ gegl_chant_file_path (path, _("File"), "/tmp/gegl-buffer.gegl", _("Target file p
 static gboolean
 gegl_buffer_save_op_process (GeglOperation       *operation,
                              GeglBuffer          *input,
-                             const GeglRectangle *result)
+                             const GeglRectangle *result,
+                             gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 

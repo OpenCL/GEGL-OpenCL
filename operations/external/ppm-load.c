@@ -57,12 +57,12 @@ ppm_load_read_header(FILE       *fp,
 {
     /* PPM Headers Variable Declaration */
     gchar *ptr;
-    gchar *retval;
+    //gchar *retval;
     gchar  header[MAX_CHARS_IN_ROW];
     gint   maxval;
 
     /* Check the PPM file Type P2 or P5 */
-    retval = fgets (header,MAX_CHARS_IN_ROW,fp);
+    fgets (header,MAX_CHARS_IN_ROW,fp);
 
     if (header[0] != ASCII_P ||
         (header[1] != PIXMAP_ASCII &&
@@ -75,10 +75,10 @@ ppm_load_read_header(FILE       *fp,
     img->type = header[1];
 
     /* Check the Comments */
-    retval = fgets (header,MAX_CHARS_IN_ROW,fp);
+    fgets (header,MAX_CHARS_IN_ROW,fp);
     while(header[0] == '#')
       {
-        retval = fgets (header,MAX_CHARS_IN_ROW,fp);
+        fgets (header,MAX_CHARS_IN_ROW,fp);
       }
 
     /* Get Width and Height */
@@ -86,7 +86,7 @@ ppm_load_read_header(FILE       *fp,
     img->height = atoi (ptr);
     img->numsamples = img->width * img->height * CHANNEL_COUNT;
 
-    retval = fgets (header,MAX_CHARS_IN_ROW,fp);
+    fgets (header,MAX_CHARS_IN_ROW,fp);
     maxval = strtol (header,&ptr,0);
 
     if ((maxval != 255) && (maxval != 65535))
@@ -110,8 +110,6 @@ ppm_load_read_header(FILE       *fp,
     }
 
     return TRUE;
-    if (retval)
-      return TRUE;
 }
 
 static void
@@ -119,11 +117,10 @@ ppm_load_read_image(FILE       *fp,
                     pnm_struct *img)
 {
     guint   i;
-    gint    retval;
 
     if (img->type == PIXMAP_RAW)
       {
-        retval = fread (img->data, img->bpc, img->numsamples, fp);
+        fread (img->data, img->bpc, img->numsamples, fp);
 
         /* Fix endianness if necessary */
         if (img->bpc > 1)
@@ -148,7 +145,7 @@ ppm_load_read_image(FILE       *fp,
             for (i = 0; i < img->numsamples; i++)
               {
                 guint sample;
-                retval = fscanf (fp, " %u", &sample);
+                fscanf (fp, " %u", &sample);
                 *ptr++ = sample;
               }
           }
@@ -159,7 +156,7 @@ ppm_load_read_image(FILE       *fp,
             for (i = 0; i < img->numsamples; i++)
               {
                 guint sample;
-                retval = fscanf (fp, " %u", &sample);
+                fscanf (fp, " %u", &sample);
                 *ptr++ = sample;
               }
           }
@@ -168,8 +165,6 @@ ppm_load_read_image(FILE       *fp,
             g_warning ("%s: Programmer stupidity error", G_STRLOC);
           }
       }
-    if (retval)
-      return;
 }
 
 static GeglRectangle
@@ -217,7 +212,8 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   FILE         *fp;
@@ -242,12 +238,12 @@ process (GeglOperation       *operation,
   switch (img.bpc)
     {
     case 1:
-      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u8"), img.data,
+      gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u8"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
     case 2:
-      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u16"), img.data,
+      gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u16"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
@@ -260,12 +256,12 @@ process (GeglOperation       *operation,
   switch (img.bpc)
     {
     case 1:
-      gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"), img.data,
+      gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u8"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
     case 2:
-      gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"), img.data,
+      gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u16"), img.data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 

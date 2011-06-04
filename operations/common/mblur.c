@@ -61,7 +61,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO          *o;
   Priv *p;
@@ -83,8 +84,8 @@ process (GeglOperation       *operation,
         gfloat *acc = g_new (gfloat, pixels * 4);
         gfloat dampness;
         gint i;
-        gegl_buffer_get (p->acc, 1.0, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
-        gegl_buffer_get (temp_in, 1.0, result, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_get (p->acc, result, 1.0, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_get (temp_in, result, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
         dampness = o->dampness;
         for (i=0;i<pixels;i++)
           {
@@ -92,8 +93,8 @@ process (GeglOperation       *operation,
             for (c=0;c<4;c++)
               acc[i*4+c]=acc[i*4+c]*dampness + buf[i*4+c]*(1.0-dampness);
           }
-        gegl_buffer_set (p->acc, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
-        gegl_buffer_set (output, result, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_set (p->acc, result, 0, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), acc, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
         g_free (acc);
       }

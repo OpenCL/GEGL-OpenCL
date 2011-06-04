@@ -1364,7 +1364,8 @@ matting_process (GeglOperation       *operation,
                  GeglBuffer          *input_buf,
                  GeglBuffer          *aux_buf,
                  GeglBuffer          *output_buf,
-                 const GeglRectangle *result)
+                 const GeglRectangle *result,
+                 gint                 level)
 {
   const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gdouble          *input   = NULL,

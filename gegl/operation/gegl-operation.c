@@ -105,10 +105,11 @@ void gegl_node_emit_computed (GeglNode *node, const GeglRectangle *rect);
 
 
 gboolean
-gegl_operation_process (GeglOperation       *operation,
-                        GeglOperationContext     *context,
-                        const gchar         *output_pad,
-                        const GeglRectangle *result)
+gegl_operation_process (GeglOperation        *operation,
+                        GeglOperationContext *context,
+                        const gchar          *output_pad,
+                        const GeglRectangle  *result,
+                        gint                  level)
 {
   GeglOperationClass  *klass;
 
@@ -126,7 +127,7 @@ gegl_operation_process (GeglOperation       *operation,
       return TRUE;
     }
 
-  return klass->process (operation, context, output_pad, result);
+  return klass->process (operation, context, output_pad, result, level);
 }
 
 /* Calls an extending class' get_bound_box method if defined otherwise

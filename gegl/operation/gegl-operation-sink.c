@@ -27,6 +27,7 @@
 #include "gegl-operation-sink.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
+#include "buffer/gegl-buffer-cl-cache.h"
 
 
 enum
@@ -47,7 +48,8 @@ static void          gegl_operation_sink_set_property            (GObject       
 static gboolean      gegl_operation_sink_process                 (GeglOperation        *operation,
                                                                   GeglOperationContext *context,
                                                                   const gchar          *output_prop,
-                                                                  const GeglRectangle  *result);
+                                                                  const GeglRectangle  *result,
+                                                                  gint                  level);
 static void          gegl_operation_sink_attach                  (GeglOperation        *operation);
 static GeglRectangle gegl_operation_sink_get_bounding_box        (GeglOperation        *self);
 static GeglRectangle gegl_operation_sink_get_required_for_output (GeglOperation        *operation,
@@ -119,7 +121,8 @@ static gboolean
 gegl_operation_sink_process (GeglOperation        *operation,
                              GeglOperationContext *context,
                              const gchar          *output_prop,
-                             const GeglRectangle  *result)
+                             const GeglRectangle  *result,
+                             gint                  level)
 {
   GeglOperationSinkClass *klass;
   GeglBuffer             *input;
@@ -135,7 +138,7 @@ gegl_operation_sink_process (GeglOperation        *operation,
       if (gegl_cl_is_accelerated ())
         gegl_buffer_cl_cache_invalidate (input, NULL);
 
-      success = klass->process (operation, input, result);
+      success = klass->process (operation, input, result, context->level);
       g_object_unref (input);
     }
 

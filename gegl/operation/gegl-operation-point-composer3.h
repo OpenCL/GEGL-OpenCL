@@ -49,8 +49,8 @@ struct _GeglOperationPointComposer3Class
                         void                *aux2,
                         void                *out,
                         glong                samples, /* number of samples   */
-                        const GeglRectangle *roi      /* rectangular region in output buffer */
-                        );
+                        const GeglRectangle *roi,     /* rectangular region in output buffer */
+                        gint                 level);
 
   gpointer           pad[4];
 };

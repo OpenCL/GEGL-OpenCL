@@ -46,7 +46,8 @@ static gboolean
 gegl_color_op_process (GeglOperation       *operation,
                        void                *out_buf,
                        glong                n_pixels,
-                       const GeglRectangle *roi)
+                       const GeglRectangle *roi,
+                       gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *out_pixel = out_buf;

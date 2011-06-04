@@ -139,7 +139,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
     rect.width = width;
     rect.height = 1;
 
-    gegl_buffer_get (gegl_buffer, 1.0, &rect, format,
+    gegl_buffer_get (gegl_buffer, &rect, 1.0, format,
                      row_pointer[0], GEGL_AUTO_ROWSTRIDE);
 
     jpeg_write_scanlines (&cinfo, row_pointer, 1);
@@ -159,7 +159,8 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
 static gboolean
 gegl_jpg_save_process (GeglOperation       *operation,
                        GeglBuffer          *input,
-                       const GeglRectangle *result)
+                       const GeglRectangle *result,
+                       int                  level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 

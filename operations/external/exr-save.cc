@@ -174,7 +174,8 @@ exr_save_process (const float       *pixels,
 static gboolean
 gegl_exr_save_process (GeglOperation       *operation,
                        GeglBuffer          *input,
-                       const GeglRectangle *rect)
+                       const GeglRectangle *rect,
+                       gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   std::string filename (o->path);
@@ -211,7 +212,7 @@ gegl_exr_save_process (GeglOperation       *operation,
         rect->width, rect->height, depth);
       return FALSE;
     }
-  gegl_buffer_get (input, 1.0, rect, babl_format (output_format.c_str ()),
+  gegl_buffer_get (input, rect, 1.0, babl_format (output_format.c_str ()),
                    pixels, GEGL_AUTO_ROWSTRIDE);
   bool status;
   try

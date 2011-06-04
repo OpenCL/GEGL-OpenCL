@@ -141,7 +141,8 @@ process (GeglOperation       *op,
          void                *in_buf,
          void                *out_buf,
          glong                n_pixels,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   GeglChantO   *o         = GEGL_CHANT_PROPERTIES (op);
   gfloat       *in_pixel  = in_buf;
@@ -192,10 +193,11 @@ static gegl_cl_run_data *cl_data = NULL;
 /* OpenCL processing function */
 static cl_int
 cl_process (GeglOperation       *op,
-            cl_mem              in_tex,
-            cl_mem              out_tex,
-            size_t              global_worksize,
-            const GeglRectangle *roi)
+            cl_mem               in_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            int                  level)
 {
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties

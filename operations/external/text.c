@@ -170,7 +170,8 @@ static void text_layout_text (GeglChant *self,
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChant *self = GEGL_CHANT (operation);
 
@@ -188,7 +189,7 @@ process (GeglOperation       *operation,
   cairo_translate (cr, -result->x, -result->y);
   text_layout_text (self, cr, 0, NULL, NULL);
 
-  gegl_buffer_set (output, result, babl_format ("B'aG'aR'aA u8"), data,
+  gegl_buffer_set (output, result, 0, babl_format ("B'aG'aR'aA u8"), data,
                    GEGL_AUTO_ROWSTRIDE);
 
   cairo_destroy (cr);

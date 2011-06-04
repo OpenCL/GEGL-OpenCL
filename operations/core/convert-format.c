@@ -54,7 +54,8 @@ process (GeglOperation       *op,
          void                *in_buf,
          void                *out_buf,
          glong                samples,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
 	int bpp = babl_format_get_bytes_per_pixel (gegl_operation_get_format (op, "output"));
 	memcpy(out_buf, in_buf, samples * bpp);

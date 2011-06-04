@@ -54,7 +54,6 @@ ppm_save_write(FILE    *fp,
                map_type type)
 {
   guint i;
-  gint retval;
 
   /* Write the header */
   fprintf (fp, "P%c\n%d %d\n", type, width, height );
@@ -75,7 +74,7 @@ ppm_save_write(FILE    *fp,
             }
         }
 
-      retval = fwrite (data, bpc, numsamples, fp);
+      fwrite (data, bpc, numsamples, fp);
     }
   else
     {
@@ -108,14 +107,13 @@ ppm_save_write(FILE    *fp,
           g_warning ("%s: Programmer stupidity error", G_STRLOC);
         }
     }
-  if (retval) /* make gcc shut up*/
-    return;
 }
 
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *rect)
+         const GeglRectangle *rect,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -146,12 +144,12 @@ process (GeglOperation       *operation,
   switch (bpc)
     {
     case 1:
-      gegl_buffer_get (input, 1.0, rect, babl_format ("R'G'B' u8"), data,
+      gegl_buffer_get (input, rect, 1.0, babl_format ("R'G'B' u8"), data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 
     case 2:
-      gegl_buffer_get (input, 1.0, rect, babl_format ("R'G'B' u16"), data,
+      gegl_buffer_get (input, rect, 1.0, babl_format ("R'G'B' u16"), data,
                        GEGL_AUTO_ROWSTRIDE);
       break;
 

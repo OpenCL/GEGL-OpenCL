@@ -805,7 +805,8 @@ filechanged (GeglChantOperation *op, const char *att)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   static gint inited = 0;
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);

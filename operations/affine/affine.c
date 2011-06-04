@@ -71,16 +71,11 @@ static GeglRectangle gegl_affine_get_invalidated_by_change (GeglOperation       
 static GeglRectangle gegl_affine_get_required_for_output   (GeglOperation        *self,
                                                             const gchar          *input_pad,
                                                             const GeglRectangle  *region);
-#if 0
-static gboolean      gegl_affine_process                   (GeglOperation       *op,
-                                                            GeglBuffer          *input,
-                                                            GeglBuffer          *output,
-                                                            const GeglRectangle *result);
-#endif
 static gboolean      gegl_affine_process                   (GeglOperation        *operation,
                                                             GeglOperationContext *context,
                                                             const gchar          *output_prop,
-                                                            const GeglRectangle  *result);
+                                                            const GeglRectangle  *result,
+                                                            gint                  level);
 static GeglNode    * gegl_affine_detect                    (GeglOperation        *operation,
                                                             gint                  x,
                                                             gint                  y);
@@ -92,11 +87,13 @@ static gboolean      gegl_affine_matrix3_allow_fast_reflect_y      (GeglMatrix3 
 static void          gegl_affine_fast_reflect_x            (GeglBuffer           *dest,
                                                             GeglBuffer           *src,
                                                             const GeglRectangle  *dest_rect,
-                                                            const GeglRectangle  *src_rect);
+                                                            const GeglRectangle  *src_rect,
+                                                            gint                  level);
 static void          gegl_affine_fast_reflect_y            (GeglBuffer           *dest,
                                                             GeglBuffer           *src,
                                                             const GeglRectangle  *dest_rect,
-                                                            const GeglRectangle  *src_rect);
+                                                            const GeglRectangle  *src_rect,
+                                                            gint                  level);
 
 
 /* ************************* */
@@ -192,8 +189,6 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->categories                = "transform";
   op_class->prepare                   = gegl_affine_prepare;
   op_class->no_cache                  = TRUE;
-
-  /*filter_class->process             = gegl_affine_process;*/
 
   klass->create_matrix = NULL;
 
@@ -647,7 +642,8 @@ static void
 affine_generic (GeglBuffer  *dest,
                 GeglBuffer  *src,
                 GeglMatrix3 *matrix,
-                GeglSampler *sampler)
+                GeglSampler *sampler,
+                gint         level)
 {
   GeglBufferIterator *i;
   const GeglRectangle *dest_extent;
@@ -677,7 +673,7 @@ affine_generic (GeglBuffer  *dest,
   dest_extent = gegl_buffer_get_extent (dest);
 
 
-  i = gegl_buffer_iterator_new (dest, dest_extent, format, GEGL_BUFFER_WRITE);
+  i = gegl_buffer_iterator_new (dest, dest_extent, format, GEGL_BUFFER_WRITE, level);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -762,7 +758,8 @@ static void
 gegl_affine_fast_reflect_x (GeglBuffer              *dest,
                             GeglBuffer              *src,
                             const GeglRectangle     *dest_rect,
-                            const GeglRectangle     *src_rect)
+                            const GeglRectangle     *src_rect,
+                            gint                     level)
 {
   const Babl              *format = gegl_buffer_get_format (src);
   const gint               px_size = babl_format_get_bytes_per_pixel (format),
@@ -770,7 +767,7 @@ gegl_affine_fast_reflect_x (GeglBuffer              *dest,
   gint                     i;
   guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src, 1.0, src_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src,  src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE);
 
   for (i = 0; i < src_rect->height / 2; i++)
     {
@@ -790,7 +787,7 @@ gegl_affine_fast_reflect_x (GeglBuffer              *dest,
         }
     }
 
-  gegl_buffer_set (dest, dest_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dest, dest_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 }
 
@@ -798,7 +795,8 @@ static void
 gegl_affine_fast_reflect_y (GeglBuffer              *dest,
                             GeglBuffer              *src,
                             const GeglRectangle     *dest_rect,
-                            const GeglRectangle     *src_rect)
+                            const GeglRectangle     *src_rect,
+                            gint                     level)
 {
   const Babl              *format = gegl_buffer_get_format (src);
   const gint               px_size = babl_format_get_bytes_per_pixel (format),
@@ -806,7 +804,7 @@ gegl_affine_fast_reflect_y (GeglBuffer              *dest,
   gint                     i;
   guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src, 1.0, src_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE);
 
   for (i = 0; i < src_rect->height; i++)
     {
@@ -835,7 +833,7 @@ gegl_affine_fast_reflect_y (GeglBuffer              *dest,
         }
     }
 
-  gegl_buffer_set (dest, dest_rect, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dest, dest_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 }
 
@@ -843,7 +841,8 @@ static gboolean
 gegl_affine_process (GeglOperation        *operation,
                      GeglOperationContext *context,
                      const gchar          *output_prop,
-                     const GeglRectangle  *result)
+                     const GeglRectangle  *result,
+                     gint                  level)
 {
   GeglBuffer          *input;
   GeglBuffer          *output;
@@ -922,7 +921,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.width -= context_rect.width;
       src_rect.height -= context_rect.height;
 
-      gegl_affine_fast_reflect_x (output, input, result, &src_rect);
+      gegl_affine_fast_reflect_x (output, input, result, &src_rect, context->level);
       g_object_unref (sampler);
 
       if (input != NULL)
@@ -953,7 +952,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.width -= context_rect.width;
       src_rect.height -= context_rect.height;
 
-      gegl_affine_fast_reflect_y (output, input, result, &src_rect);
+      gegl_affine_fast_reflect_y (output, input, result, &src_rect, context->level);
       g_object_unref (sampler);
 
       if (input != NULL)
@@ -969,7 +968,8 @@ gegl_affine_process (GeglOperation        *operation,
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
           gegl_sampler_type_from_string (affine->filter));
-      affine_generic (output, input, &matrix, sampler);
+      affine_generic (output, input, &matrix, sampler, context->level);
+
       g_object_unref (sampler);
 
       if (input != NULL)

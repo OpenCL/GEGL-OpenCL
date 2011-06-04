@@ -48,7 +48,8 @@ process (GeglOperation        *op,
           void                *max_buf,
           void                *out_buf,
           glong                n_pixels,
-          const GeglRectangle *roi)
+          const GeglRectangle *roi,
+          gint                 level)
 {
   gint i;
   gfloat *in = in_buf;

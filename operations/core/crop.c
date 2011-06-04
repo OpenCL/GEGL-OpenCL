@@ -113,7 +113,8 @@ static gboolean
 gegl_crop_process (GeglOperation        *operation,
                    GeglOperationContext *context,
                    const gchar          *output_prop,
-                   const GeglRectangle  *result)
+                   const GeglRectangle  *result,
+                   gint                  level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *input;

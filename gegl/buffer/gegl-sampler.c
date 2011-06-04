@@ -277,8 +277,8 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
         }
 
       gegl_buffer_get (sampler->buffer,
-                       1.0,
                        &fetch_rectangle,
+                       1.0,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE);
@@ -351,8 +351,8 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
         }
 
       gegl_buffer_get (sampler->buffer,
-                       1.0,
                        &fetch_rectangle,
+                       1.0,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE);
@@ -446,8 +446,8 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
         }
 
       gegl_buffer_get (sampler->buffer,
-                       scale,
                        &fetch_rectangle,
+                       scale,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[level],
                        GEGL_AUTO_ROWSTRIDE);

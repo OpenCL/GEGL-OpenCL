@@ -95,7 +95,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
                          gegl_pad_get_name (pad), gegl_node_get_debug_name (node),
                          context->result_rect.x, context->result_rect.y, context->result_rect.width, context->result_rect.height);
               gegl_operation_process (operation, context, gegl_pad_get_name (pad),
-                                      &context->result_rect);
+                                      &context->result_rect, context->level);
               time      = gegl_ticks () - time;
 
               gegl_instrument ("process", gegl_node_get_operation (node), time);
@@ -171,7 +171,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
             {
               GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
               gegl_operation_process (operation, context, "output",
-                &context->result_rect);
+                &context->result_rect, context->level);
             }
         }
     }

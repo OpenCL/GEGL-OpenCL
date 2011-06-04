@@ -84,7 +84,8 @@ process (GeglOperation       *operation,
          void                *in_buf,
          void                *out_buf,
          glong                n_pixels,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *in_pixel =  in_buf;

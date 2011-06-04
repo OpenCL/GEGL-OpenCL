@@ -73,10 +73,10 @@ get_cached_region (GeglOperation       *self,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_pad,
-         const GeglRectangle *result)
+process (GeglOperation           *operation,
+         GeglOperationContext  *context,
+         const gchar           *output_pad,
+         const GeglRectangle   *result)
 {
   GeglBuffer *buffer = ensure_buffer (operation);
 

@@ -61,7 +61,8 @@ static void prepare (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -74,7 +75,7 @@ process (GeglOperation       *operation,
       extent.width = gdk_pixbuf_get_width (o->pixbuf);
       extent.height = gdk_pixbuf_get_height (o->pixbuf);
 
-      gegl_buffer_set (output, &extent, NULL, gdk_pixbuf_get_pixels (o->pixbuf),
+      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_get_pixels (o->pixbuf),
                        GEGL_AUTO_ROWSTRIDE);
     }
   return TRUE;

@@ -1243,7 +1243,8 @@ static gboolean
 fattal02_process (GeglOperation       *operation,
                   GeglBuffer          *input,
                   GeglBuffer          *output,
-                  const GeglRectangle *result)
+                  const GeglRectangle *result,
+                  gint                 level)
 {
   const GeglChantO *o     = GEGL_CHANT_PROPERTIES (operation);
   gfloat            noise;
@@ -1275,11 +1276,11 @@ fattal02_process (GeglOperation       *operation,
   lum_in  = g_new (gfloat, result->width * result->height);
   lum_out = g_new (gfloat, result->width * result->height);
 
-  gegl_buffer_get (input, 1.0, result, babl_format ("Y float"),
+  gegl_buffer_get (input, result, 1.0, babl_format ("Y float"),
                    lum_in, GEGL_AUTO_ROWSTRIDE);
 
   pix = g_new (gfloat, result->width * result->height * pix_stride);
-  gegl_buffer_get (input, 1.0, result, babl_format (OUTPUT_FORMAT),
+  gegl_buffer_get (input, result, 1.0, babl_format (OUTPUT_FORMAT),
                    pix, GEGL_AUTO_ROWSTRIDE);
 
   fattal02_tonemap (lum_in, result, lum_out, o->alpha, o->beta, noise);
@@ -1291,7 +1292,7 @@ fattal02_process (GeglOperation       *operation,
                 lum_out[i / pix_stride]);
     }
 
-  gegl_buffer_set (output, result, babl_format (OUTPUT_FORMAT), pix,
+  gegl_buffer_set (output, result, 0, babl_format (OUTPUT_FORMAT), pix,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (pix);
   g_free (lum_out);

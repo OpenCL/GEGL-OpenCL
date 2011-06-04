@@ -372,7 +372,9 @@ matting_process (GeglOperation       *operation,
                  GeglBuffer          *input_buf,
                  GeglBuffer          *aux_buf,
                  GeglBuffer          *output_buf,
-                 const GeglRectangle *result) {
+                 const GeglRectangle *result,
+                 int                  level)
+{
 
   //const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat           *input   = NULL;
@@ -402,8 +404,8 @@ matting_process (GeglOperation       *operation,
   trimap = g_new (guchar, w * h * COMPONENTS_AUX);
   output = g_new0 (gfloat, w * h * COMPONENTS_OUTPUT);
 
-  gegl_buffer_get (input_buf, 1.0, result, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (  aux_buf, 1.0, result, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE);
 
   foreground_samples = g_array_new(FALSE, FALSE, sizeof(ColorSample));
   background_samples = g_array_new(FALSE, FALSE, sizeof(ColorSample));
@@ -521,7 +523,7 @@ matting_process (GeglOperation       *operation,
     }
   }
 
-  gegl_buffer_set (output_buf, result, babl_format (FORMAT_OUTPUT), output,
+  gegl_buffer_set (output_buf, result, 0, babl_format (FORMAT_OUTPUT), output,
                    GEGL_AUTO_ROWSTRIDE);
   success = TRUE;
   g_free (input);

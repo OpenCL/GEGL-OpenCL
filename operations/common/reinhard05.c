@@ -120,7 +120,8 @@ static gboolean
 reinhard05_process (GeglOperation       *operation,
                     GeglBuffer          *input,
                     GeglBuffer          *output,
-                    const GeglRectangle *result)
+                    const GeglRectangle *result,
+                    gint                 level)
 {
   const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -157,11 +158,11 @@ reinhard05_process (GeglOperation       *operation,
 
   /* Obtain the pixel data */
   lum = g_new (gfloat, result->width * result->height),
-  gegl_buffer_get (input, 1.0, result, babl_format ("Y float"),
+  gegl_buffer_get (input, result, 1.0, babl_format ("Y float"),
                    lum, GEGL_AUTO_ROWSTRIDE);
 
   pix = g_new (gfloat, result->width * result->height * pix_stride);
-  gegl_buffer_get (input, 1.0, result, babl_format (OUTPUT_FORMAT),
+  gegl_buffer_get (input, result, 1.0, babl_format (OUTPUT_FORMAT),
                    pix, GEGL_AUTO_ROWSTRIDE);
 
   /* Collect the image stats, averages, etc */
@@ -240,7 +241,7 @@ reinhard05_process (GeglOperation       *operation,
     }
 
   /* Cleanup and set the output */
-  gegl_buffer_set (output, result, babl_format (OUTPUT_FORMAT), pix,
+  gegl_buffer_set (output, result, 0, babl_format (OUTPUT_FORMAT), pix,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (pix);
   g_free (lum);

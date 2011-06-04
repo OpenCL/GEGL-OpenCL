@@ -35,7 +35,8 @@
 static gboolean gegl_operation_point_render_process
                               (GeglOperation       *operation,
                                GeglBuffer          *output,
-                               const GeglRectangle *result);
+                               const GeglRectangle *result,
+                               gint                 level);
 
 G_DEFINE_TYPE (GeglOperationPointRender, gegl_operation_point_render, GEGL_TYPE_OPERATION_SOURCE)
 
@@ -77,7 +78,8 @@ gegl_operation_point_render_init (GeglOperationPointRender *self)
 static gboolean
 gegl_operation_point_render_process (GeglOperation       *operation,
                                      GeglBuffer          *output,
-                                     const GeglRectangle *result)
+                                     const GeglRectangle *result,
+                                     gint                 level)
 {
   GeglPad    *pad;
   const Babl *out_format;
@@ -95,10 +97,10 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE, level);
 
       while (gegl_buffer_iterator_next (i))
-          point_render_class->process (operation, i->data[0], i->length, &i->roi[0]);
+          point_render_class->process (operation, i->data[0], i->length, &i->roi[0], level);
     }
   return TRUE;
 }

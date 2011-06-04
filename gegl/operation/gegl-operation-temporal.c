@@ -89,7 +89,8 @@ gegl_operation_temporal_get_frame (GeglOperation *op,
 static gboolean gegl_operation_temporal_process (GeglOperation       *self,
                                                  GeglBuffer          *input,
                                                  GeglBuffer          *output,
-                                                 const GeglRectangle *result)
+                                                 const GeglRectangle *result,
+                                                 gint                 level)
 {
   GeglOperationTemporal *temporal = GEGL_OPERATION_TEMPORAL (self);
   GeglOperationTemporalPrivate *priv = temporal->priv;
@@ -112,7 +113,7 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
   }
 
  if (temporal_class->process)
-   return temporal_class->process (self, input, output, result);
+   return temporal_class->process (self, input, output, result, level);
  return FALSE;
 }
 

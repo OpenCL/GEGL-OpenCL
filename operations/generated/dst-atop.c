@@ -58,7 +58,8 @@ process (GeglOperation        *op,
           void                *aux_buf,
           void                *out_buf,
           glong                n_pixels,
-          const GeglRectangle *roi)
+          const GeglRectangle *roi,
+          gint                 level)
 {
   gint i;
   gfloat * GEGL_ALIGNED in = in_buf;

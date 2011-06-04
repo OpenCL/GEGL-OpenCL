@@ -46,7 +46,8 @@ process (GeglOperation       *op,
          void                *in_buf,
          void                *out_buf,
          glong                samples,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   float *in = in_buf;
   float *out = out_buf;

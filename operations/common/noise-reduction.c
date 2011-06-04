@@ -150,7 +150,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   int iteration;
@@ -176,7 +177,7 @@ process (GeglOperation       *operation,
     rect.y      -= o->iterations;
     rect.width  += o->iterations*2;
     rect.height += o->iterations*2;
-    gegl_buffer_get (input, 1.0, &rect, babl_format ("R'G'B'A float"),
+    gegl_buffer_get (input, &rect, 1.0, babl_format ("R'G'B'A float"),
                      src_buf, stride * 4 * 4);
   }
 
@@ -200,7 +201,7 @@ process (GeglOperation       *operation,
 #endif
     }
 
-  gegl_buffer_set (output , result, babl_format ("R'G'B'A float"),
+  gegl_buffer_set (output, result, 0, babl_format ("R'G'B'A float"),
 #ifndef INPLACE
                    src_buf,
 #else

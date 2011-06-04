@@ -146,7 +146,8 @@ static gboolean
 gegl_save_process (GeglOperation        *operation,
                    GeglOperationContext *context,
                    const gchar          *output_pad,
-                   const GeglRectangle  *roi)
+                   const GeglRectangle  *roi,
+                   gint                  level)
 {
   GeglChant *self = GEGL_CHANT (operation);
   gegl_save_set_saver (operation);

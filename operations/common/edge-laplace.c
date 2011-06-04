@@ -57,7 +57,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglRectangle compute;
 
@@ -132,7 +133,7 @@ edge_laplace (GeglBuffer          *src,
   temp_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf  = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, 1.0, src_rect,
+  gegl_buffer_get (src, src_rect, 1.0,
                    babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y=0; y<dst_rect->height; y++)
@@ -216,7 +217,7 @@ edge_laplace (GeglBuffer          *src,
         offset++;
       }
 
-  gegl_buffer_set (dst, dst_rect, babl_format ("RGBA float"), dst_buf,
+  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (temp_buf);

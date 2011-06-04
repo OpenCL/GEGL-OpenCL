@@ -49,10 +49,11 @@ static void     set_property          (GObject       *gobject,
                                        GParamSpec    *pspec);
 
 static gboolean gegl_operation_filter_process
-                                      (GeglOperation       *operation,
-                                       GeglOperationContext     *context,
-                                       const gchar         *output_prop,
-                                       const GeglRectangle *result);
+                                      (GeglOperation        *operation,
+                                       GeglOperationContext *context,
+                                       const gchar          *output_prop,
+                                       const GeglRectangle  *result,
+                                       gint                  level);
 
 static void     attach                 (GeglOperation *operation);
 static GeglNode *detect                (GeglOperation *operation,
@@ -179,10 +180,11 @@ set_property (GObject      *object,
 }
 
 static gboolean
-gegl_operation_filter_process (GeglOperation   *operation,
+gegl_operation_filter_process (GeglOperation        *operation,
                                GeglOperationContext *context,
-                               const gchar     *output_prop,
-                               const GeglRectangle *result)
+                               const gchar          *output_prop,
+                               const GeglRectangle  *result,
+                               gint                  level)
 {
   GeglOperationFilterClass *klass;
   GeglBuffer               *input;
@@ -202,7 +204,7 @@ gegl_operation_filter_process (GeglOperation   *operation,
   input  = gegl_operation_context_get_source (context, "input");
   output = gegl_operation_context_get_target (context, "output");
 
-  success = klass->process (operation, input, output, result);
+  success = klass->process (operation, input, output, result, context->level);
 
   if (output == GEGL_BUFFER (operation->node->cache))
     gegl_cache_computed (operation->node->cache, result);

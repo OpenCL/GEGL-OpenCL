@@ -44,10 +44,11 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 static gboolean gegl_operation_source_process
-                             (GeglOperation *operation,
+                             (GeglOperation        *operation,
                               GeglOperationContext *context,
-                              const gchar   *output_prop,
-                              const GeglRectangle *result);
+                              const gchar          *output_prop,
+                              const GeglRectangle  *result,
+                              gint                  level);
 static void     attach       (GeglOperation *operation);
 
 
@@ -120,10 +121,11 @@ set_property (GObject      *object,
 }
 
 static gboolean
-gegl_operation_source_process (GeglOperation       *operation,
-                               GeglOperationContext     *context,
-                               const gchar         *output_prop,
-                               const GeglRectangle *result)
+gegl_operation_source_process (GeglOperation        *operation,
+                               GeglOperationContext *context,
+                               const gchar          *output_prop,
+                               const GeglRectangle  *result,
+                               gint                  level)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   GeglBuffer               *output;
@@ -137,7 +139,7 @@ gegl_operation_source_process (GeglOperation       *operation,
 
   g_assert (klass->process);
   output = gegl_operation_context_get_target (context, "output");
-  success = klass->process (operation, output, result);
+  success = klass->process (operation, output, result, context->level);
 
   if (output == GEGL_BUFFER (operation->node->cache))
     gegl_cache_computed (operation->node->cache, result);

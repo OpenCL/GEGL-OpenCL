@@ -39,13 +39,15 @@ static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,
                                GeglBuffer          *input,
                                GeglBuffer          *output,
-                               const GeglRectangle *result);
+                               const GeglRectangle *result,
+                               gint                 level);
 
 static gboolean gegl_operation_point_filter_op_process
                               (GeglOperation       *operation,
                                GeglOperationContext *context,
                                const gchar          *output_pad,
-                               const GeglRectangle  *roi);
+                               const GeglRectangle  *roi,
+                               gint                  level);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
@@ -77,7 +79,8 @@ static gboolean
 gegl_operation_point_filter_cl_process (GeglOperation       *operation,
                                         GeglBuffer          *input,
                                         GeglBuffer          *output,
-                                        const GeglRectangle *result)
+                                        const GeglRectangle *result,
+                                        gint                 level)
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
@@ -114,7 +117,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
         for (j=0; j < i->n; j++)
           {
             cl_err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
-                                                    i->size[0][j], &i->roi[0][j]);
+                                                    i->size[0][j], &i->roi[0][j], level);
             if (cl_err != CL_SUCCESS)
               {
                 GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointFilter] Kernel",
@@ -131,7 +134,8 @@ static gboolean
 gegl_operation_point_filter_process (GeglOperation       *operation,
                                      GeglBuffer          *input,
                                      GeglBuffer          *output,
-                                     const GeglRectangle *result)
+                                     const GeglRectangle *result,
+                                     gint                 level)
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
@@ -143,18 +147,18 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
     {
       if (gegl_cl_is_accelerated () && point_filter_class->cl_process)
         {
-          if (gegl_operation_point_filter_cl_process (operation, input, output, result))
+          if (gegl_operation_point_filter_cl_process (operation, input, output, result, level))
             return TRUE;
         }
 
       {
-        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE, level);
         gint read = /*output == input ? 0 :*/ gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
         /* using separate read and write iterators for in-place ideally a single
          * readwrite indice would be sufficient
          */
           while (gegl_buffer_iterator_next (i))
-            point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi[0]);
+            point_filter_class->process (operation, i->data[read], i->data[0], i->length, &i->roi[0], level);
       }
     }
   return TRUE;
@@ -185,7 +189,8 @@ static gboolean gegl_operation_point_filter_op_process
                               (GeglOperation       *operation,
                                GeglOperationContext *context,
                                const gchar          *output_pad,
-                               const GeglRectangle  *roi)
+                               const GeglRectangle  *roi,
+                               gint                  level)
 {
   GeglBuffer               *input;
   GeglBuffer               *output;
@@ -203,7 +208,7 @@ static gboolean gegl_operation_point_filter_op_process
       output = gegl_operation_context_get_target (context, "output");
     }
 
-  success = gegl_operation_point_filter_process (operation, input, output, roi);
+  success = gegl_operation_point_filter_process (operation, input, output, roi, context->level);
   if (output == GEGL_BUFFER (operation->node->cache))
     gegl_cache_computed (operation->node->cache, roi);
 

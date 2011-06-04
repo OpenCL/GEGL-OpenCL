@@ -33,6 +33,7 @@ typedef struct GeglBufferIterator
   gint          length;
   gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
   GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
+  gint          level;
 } GeglBufferIterator;
 
 
@@ -42,6 +43,8 @@ typedef struct GeglBufferIterator
  * @roi: the rectangle to iterate over
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
  * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
+ * @level: the level at which we are iterating, the roi will indicate the
+ * extent at 1:1, x,y,width and height are/(2^level)
  *
  * Create a new buffer iterator, this buffer will be iterated through
  * in linear chunks, some chunks might be full tiles the coordinates, see
@@ -54,7 +57,10 @@ typedef struct GeglBufferIterator
 GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
                                                 const GeglRectangle *roi,
                                                 const Babl          *format,
-                                                guint                flags);
+                                                guint                flags,
+                                                gint                 level);   /* XXX: or encode it in flags? */
+/* should maybe be reporting the roi in process, as base image roi when level != 0 */
+
 
 /**
  * gegl_buffer_iterator_add:

@@ -396,4 +396,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   return output;
 }
 
-
+gint            gegl_operation_context_get_level (GeglOperationContext *ctxt)
+{
+  return ctxt->level;
+}

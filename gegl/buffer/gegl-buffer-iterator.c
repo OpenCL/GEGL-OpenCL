@@ -54,7 +54,7 @@ typedef struct GeglBufferTileIterator
   GeglRectangle  roi2;     /* the rectangular subregion of data
                             * in the buffer represented by this scan.
                             */
-
+  gint           level;
 } GeglBufferTileIterator;
 
 #define GEGL_BUFFER_SCAN_COMPATIBLE   128   /* should be integrated into enum */
@@ -86,7 +86,8 @@ typedef struct GeglBufferIterators
 static void      gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                                  GeglBuffer             *buffer,
                                                  GeglRectangle           roi,
-                                                 gboolean                write);
+                                                 gboolean                write,
+                                                 gint                    level);
 static gboolean  gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
 
 /*
@@ -118,13 +119,15 @@ static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
 static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                             GeglBuffer             *buffer,
                                             GeglRectangle           roi,
-                                            gboolean                write)
+                                            gboolean                write,
+                                            gint                    level)
 {
   g_assert (i);
   memset (i, 0, sizeof (GeglBufferTileIterator));
 
   i->buffer = buffer;
   i->roi = roi;
+  i->level = level;
   i->next_row    = 0;
   i->next_col = 0;
   i->tile = NULL;
@@ -282,7 +285,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   if (self==0) /* The first buffer which is always scan aligned */
     {
       i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0) );
+      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), iterator->level);
     }
   else
     {
@@ -294,7 +297,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
           i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0));
+          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), iterator->level);
         }
     }
 
@@ -308,7 +311,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
 }
 
 /* FIXME: we are currently leaking this buf pool, it should be
- * freeing it when gegl is uninitialized
+ * freed when gegl is uninitialized
  */
 
 typedef struct BufInfo {
@@ -448,8 +451,7 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
               if (i->flags[no] & GEGL_BUFFER_SCAN_COMPATIBLE &&
                   i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE &&
                   i->roi[no].width == i->i[no].buffer->tile_storage->tile_width && (i->flags[no] & GEGL_BUFFER_FORMAT_COMPATIBLE))
-                {
-                   /* direct access */
+                { /* direct access, don't need to do anything */
 #if DEBUG_DIRECT
                    direct_write += i->roi[no].width * i->roi[no].height;
 #endif
@@ -465,7 +467,7 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
   /* XXX: should perhaps use _set_unlocked, and keep the lock in the
    * iterator.
    */
-                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), 0, i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE); /* XXX: use correct level */
                 }
             }
         }
@@ -551,11 +553,13 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
                                               const GeglRectangle *roi,
                                               const Babl          *format,
-                                              guint                flags)
+                                              guint                flags,
+                                              gint                 level)
 {
   GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
+  i->level = level;
   gegl_buffer_iterator_add (i, buffer, roi, format, flags);
   return i;
 }

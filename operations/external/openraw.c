@@ -183,7 +183,8 @@ static gboolean
 process (GeglOperation          *operation,
          GeglOperationContext   *context,
          const gchar            *output_pad,
-         const GeglRectangle    *result)
+         const GeglRectangle    *result,
+         gint                    level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   g_assert (g_str_equal (output_pad, "output"));

@@ -161,7 +161,7 @@ iir_young_hor_blur (GeglBuffer          *src,
   buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
   w   = g_new0 (gfloat, src_rect->width);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
                    buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = src_rect->width;
@@ -179,7 +179,7 @@ iir_young_hor_blur (GeglBuffer          *src,
         }
     }
 
-  gegl_buffer_set (dst, src_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_set (dst, src_rect, 0.0, babl_format ("RaGaBaA float"),
                    buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
   g_free (w);
@@ -203,7 +203,7 @@ iir_young_ver_blur (GeglBuffer          *src,
   buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
   w   = g_new0 (gfloat, src_rect->height);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
                    buf, GEGL_AUTO_ROWSTRIDE);
 
   w_len = src_rect->height;
@@ -221,7 +221,7 @@ iir_young_ver_blur (GeglBuffer          *src,
         }
     }
 
-  gegl_buffer_set (dst, src_rect,
+  gegl_buffer_set (dst, src_rect, 0,
                    babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
   g_free (w);
@@ -323,7 +323,7 @@ fir_hor_blur (GeglBuffer          *src,
   src_buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
   dst_buf = g_new0 (gfloat, dst_rect->height * dst_rect->width * 4);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset = 0;
@@ -340,7 +340,7 @@ fir_hor_blur (GeglBuffer          *src,
                                                           matrix_length);
       }
 
-  gegl_buffer_set (dst, dst_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_set (dst, dst_rect, 0.0, babl_format ("RaGaBaA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
@@ -368,7 +368,7 @@ fir_ver_blur (GeglBuffer          *src,
   src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
@@ -385,7 +385,7 @@ fir_ver_blur (GeglBuffer          *src,
                                                           matrix_length);
       }
 
-  gegl_buffer_set (dst, dst_rect, babl_format ("RaGaBaA float"),
+  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RaGaBaA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
@@ -417,7 +417,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglRectangle rect;
   GeglBuffer *temp;

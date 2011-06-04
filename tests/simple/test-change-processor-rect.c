@@ -47,8 +47,8 @@ test_change_processor_rect_do_test (GeglProcessor       *processor,
   while (gegl_processor_work (processor, NULL));
 
   gegl_buffer_get (buffer,
-                   1.0,
                    rect,
+                   1.0,
                    babl_format ("RGBA float"),
                    result_buffer,
                    GEGL_AUTO_ROWSTRIDE);

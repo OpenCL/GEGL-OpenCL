@@ -73,6 +73,7 @@ GType gegl_module_register_type (GTypeModule     *module,
                                  const GTypeInfo *type_info,
                                  GTypeFlags       flags);
 
+gint            gegl_operation_context_get_level  (GeglOperationContext *self);
 GeglBuffer     *gegl_operation_context_get_source (GeglOperationContext *self,
                                                    const gchar          *padname);
 GeglBuffer     *gegl_operation_context_get_target (GeglOperationContext *self,

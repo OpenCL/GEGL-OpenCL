@@ -70,10 +70,11 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_prop,
-         const GeglRectangle *result)
+process (GeglOperation        *operation,
+         GeglOperationContext *context,
+         const gchar          *output_prop,
+         const GeglRectangle  *result,
+         gint                  level)
 {
   GeglBuffer *input;
 

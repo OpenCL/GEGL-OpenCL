@@ -48,7 +48,8 @@ struct _GeglOperationFilterClass
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *input,
                         GeglBuffer          *output,
-                        const GeglRectangle *roi);
+                        const GeglRectangle *roi,
+                        gint                 level);
   gpointer              pad[4];
 };
 

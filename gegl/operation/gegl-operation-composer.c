@@ -50,7 +50,8 @@ static void     set_property (GObject             *gobject,
 static gboolean gegl_operation_composer_process (GeglOperation       *operation,
                               GeglOperationContext     *context,
                               const gchar         *output_prop,
-                              const GeglRectangle *result);
+                              const GeglRectangle *result,
+                              gint                 level);
 static void     attach       (GeglOperation       *operation);
 static GeglNode*detect       (GeglOperation       *operation,
                               gint                 x,
@@ -144,10 +145,11 @@ set_property (GObject      *object,
 }
 
 static gboolean
-gegl_operation_composer_process (GeglOperation       *operation,
-                        GeglOperationContext     *context,
-                        const gchar         *output_prop,
-                        const GeglRectangle *result)
+gegl_operation_composer_process (GeglOperation        *operation,
+                                 GeglOperationContext *context,
+                                 const gchar          *output_prop,
+                                 const GeglRectangle  *result,
+                                 gint                  level)
 {
   GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
   GeglBuffer                 *input;
@@ -171,7 +173,7 @@ gegl_operation_composer_process (GeglOperation       *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, input, aux, output, result);
+      success = klass->process (operation, input, aux, output, result, context->level);
 
       if (output == GEGL_BUFFER (operation->node->cache))
         gegl_cache_computed (operation->node->cache, result);

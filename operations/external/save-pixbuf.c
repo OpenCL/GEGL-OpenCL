@@ -39,7 +39,8 @@ gegl_chant_pointer (pixbuf, _("Pixbuf location"),
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -66,7 +67,7 @@ process (GeglOperation       *operation,
       babl = babl_format (name);
 
       temp = g_malloc (rect->width * rect->height * bps);
-      gegl_buffer_get (input, 1.0, rect, babl, temp, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (input, rect, 1.0, babl, temp, GEGL_AUTO_ROWSTRIDE);
       if (temp) {
     *pixbuf = gdk_pixbuf_new_from_data (temp,
                         GDK_COLORSPACE_RGB,

@@ -504,8 +504,8 @@ render_rectangle (GeglProcessor *processor)
 
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf,
-                               GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, 0, cache->format, buf,
+                               GEGL_AUTO_ROWSTRIDE); /* XXX: deal with the level */
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr);
@@ -784,8 +784,7 @@ gegl_processor_work (GeglProcessor *processor,
       gegl_operation_process (processor->node->operation,
                               processor->context,
                               "output"  /* ignored output_pad */,
-                              &processor->context->result_rect
-                              );
+                              &processor->context->result_rect, processor->context->level);
       gegl_node_remove_context (processor->node, cache);
       processor->context = NULL;
 

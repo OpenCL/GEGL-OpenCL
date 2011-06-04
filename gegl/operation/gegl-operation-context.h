@@ -55,6 +55,11 @@ struct _GeglOperationContext
                                   incorporated into the refcount of
                                   GeglOperationContext?
                                 */
+  gint           level;         /* subdivision level to render at, 0 = 1:1,
+                                                                   1 = 1:2,
+                                                                   2 = 1:4,
+                                                                   4 = 1:8,
+                                                                   6 = 1:16 .. */
 };
 
 GeglBuffer     *gegl_operation_context_get_target      (GeglOperationContext *self,
@@ -88,6 +93,8 @@ void            gegl_operation_context_set_need_rect   (GeglOperationContext *se
 GeglRectangle * gegl_operation_context_get_result_rect (GeglOperationContext *node);
 void            gegl_operation_context_set_result_rect (GeglOperationContext *node,
                                                         const GeglRectangle  *rect);
+
+gint            gegl_operation_context_get_level (GeglOperationContext *ctxt);
 
 GeglOperationContext *gegl_operation_context_new (void);
 void gegl_operation_context_destroy (GeglOperationContext *opcontext);

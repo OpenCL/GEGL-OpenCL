@@ -228,10 +228,10 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
             gegl_rectangle_set (&rect, 0, i, width, 1);
 
             if (pass != 0)
-              gegl_buffer_get (gegl_buffer, 1.0, &rect, format, pixels, GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_get (gegl_buffer, &rect, 1.0, format, pixels, GEGL_AUTO_ROWSTRIDE);
 
             png_read_rows (load_png_ptr, &pixels, NULL, 1);
-            gegl_buffer_set (gegl_buffer, &rect, format, pixels,
+            gegl_buffer_set (gegl_buffer, &rect, 0, format, pixels,
                              GEGL_AUTO_ROWSTRIDE);
           }
       }
@@ -391,7 +391,8 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gint        problem;

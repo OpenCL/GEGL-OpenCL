@@ -36,7 +36,8 @@ static gboolean
 gegl_nop_process (GeglOperation        *operation,
                   GeglOperationContext *context,
                   const gchar          *output_prop,
-                  const GeglRectangle  *result)
+                  const GeglRectangle  *result,
+                  gint                  level)
 {
   GeglBuffer *input;
 

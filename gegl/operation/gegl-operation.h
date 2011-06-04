@@ -64,6 +64,9 @@ struct _GeglOperation
 
 #define MAX_PROCESSOR 4
 
+/* the level at which is being operated is stored in the context,
+*/
+
 void gegl_operation_class_add_processor (GeglOperationClass *cclass,
                                          GCallback           process,
                                          const gchar        *string);
@@ -129,7 +132,8 @@ struct _GeglOperationClass
   gboolean      (*process)                   (GeglOperation        *operation,
                                               GeglOperationContext *context,
                                               const gchar          *output_pad,
-                                              const GeglRectangle  *roi);
+                                              const GeglRectangle  *roi,
+                                              gint                  level);
 
   /* The node providing data for a specific location within the operations
    * output. The node is responsible for delegating blame to one of it's
@@ -183,8 +187,9 @@ void            gegl_operation_attach        (GeglOperation *operation,
 void            gegl_operation_prepare       (GeglOperation *operation);
 gboolean        gegl_operation_process       (GeglOperation *operation,
                                               GeglOperationContext *context,
-                                              const gchar   *output_pad,
-                                              const GeglRectangle *roi);
+                                              const gchar          *output_pad,
+                                              const GeglRectangle  *roi,
+                                              gint                  level);
 
 /* create a pad for a specified property for this operation, this method is
  * to be called from the attach method of operations, most operations do not

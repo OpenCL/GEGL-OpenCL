@@ -217,10 +217,10 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
 /**
  * gegl_buffer_get:
  * @buffer: the buffer to retrieve data from.
- * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
  * @rect: the coordinates we want to retrieve data from, and width/height of
  * destination buffer, if NULL equal to the extent of the buffer. The
  * coordinates and dimensions are after scale has been applied.
+ * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
  * @format: the BablFormat to store in the linear buffer @dest.
  * @dest: the memory destination for a linear buffer for the pixels, the size needed
  * depends on the requested BablFormat.
@@ -233,8 +233,8 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * the tile structure into a linear buffer.
  */
 void            gegl_buffer_get               (GeglBuffer          *buffer,
-                                               gdouble              scale,
                                                const GeglRectangle *rect,
+                                               gdouble              scale,
                                                const Babl          *format,
                                                gpointer             dest,
                                                gint                 rowstride);
@@ -242,7 +242,11 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
 /**
  * gegl_buffer_set:
  * @buffer: the buffer to modify.
- * @rect: the coordinates we want to change the data of and the width/height extent, if NULL equal to the extent of the buffer.
+ * @rect: the coordinates we want to change the data of and the width/height of
+ * the linear buffer being set, scale specifies the scaling factor applied to
+ * the data when setting.
+ * @scale_level: the scale level being set, 0 = 1:1 = default = base mipmap level,
+ * 1 = 1:2, 2=1:4, 3=1:8 ..
  * @format: the babl_format the linear buffer @src.
  * @src: linear buffer of image data to be stored in @buffer.
  * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
@@ -252,6 +256,7 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
  */
 void            gegl_buffer_set               (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
+                                               gint                 scale_level,
                                                const Babl          *format,
                                                void                *src,
                                                gint                 rowstride);

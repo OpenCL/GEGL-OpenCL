@@ -53,7 +53,8 @@ struct _GeglOperationSinkClass
 
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *input,
-                        const GeglRectangle *roi);
+                        const GeglRectangle *roi,
+                        gint                 level);
   gpointer              pad[4];
 };
 

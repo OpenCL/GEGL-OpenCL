@@ -163,7 +163,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
   } /* for */
 
   /* Store dst pixels. */
-  gegl_buffer_set (dst, roi, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, roi, format, dst_buf, GEGL_AUTO_ROWSTRIDE, 0);
 
   gegl_buffer_flush(dst);
 
@@ -215,7 +215,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);

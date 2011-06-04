@@ -955,7 +955,7 @@ gegl_expcombine_get_exposures (GeglOperation        *operation,
       e->pixels[PIXELS_FULL]   = g_new (gfloat, full_roi->width  *
                                                 full_roi->height *
                                                 components);
-      gegl_buffer_get (buffer, 1.0, full_roi, babl_format (PAD_FORMAT),
+      gegl_buffer_get (buffer, full_roi, 1.0, babl_format (PAD_FORMAT),
                        e->pixels[PIXELS_FULL], GEGL_AUTO_ROWSTRIDE);
 
       g_return_val_if_fail (scale <= 1.0f, NULL);
@@ -967,7 +967,7 @@ gegl_expcombine_get_exposures (GeglOperation        *operation,
                                             (scaled_roi->width  *
                                              scaled_roi->height *
                                              components));
-          gegl_buffer_get (buffer, scale, scaled_roi, babl_format (PAD_FORMAT),
+          gegl_buffer_get (buffer, scaled_roi, scale, babl_format (PAD_FORMAT),
                            e->pixels[PIXELS_SCALED], GEGL_AUTO_ROWSTRIDE);
         }
 
@@ -1058,7 +1058,8 @@ static gboolean
 gegl_expcombine_process (GeglOperation        *operation,
                          GeglOperationContext *context,
                          const gchar          *output_pad,
-                         const GeglRectangle  *full_roi)
+                         const GeglRectangle  *full_roi,
+                         gint                  level)
 {
   GeglChantO *o           = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer *output      = gegl_operation_context_get_target (context,
@@ -1199,7 +1200,7 @@ gegl_expcombine_process (GeglOperation        *operation,
 #endif
 
   /* Save the HDR components to the output buffer. */
-  gegl_buffer_set (output, full_roi, babl_format (PAD_FORMAT), hdr,
+  gegl_buffer_set (output, full_roi, 0, babl_format (PAD_FORMAT), hdr,
                    GEGL_AUTO_ROWSTRIDE);
   gegl_cache_computed (gegl_node_get_cache (operation->node), full_roi);
 

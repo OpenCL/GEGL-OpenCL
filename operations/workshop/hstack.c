@@ -106,13 +106,11 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
-  GeglOperationComposer *composer;
   GeglBuffer            *temp_in;
   GeglBuffer            *temp_aux;
-
-  composer = GEGL_OPERATION_COMPOSER (operation);
 
   /* FIXME: just pass the originals buffers if the result rectangle does not
    * include both input buffers
@@ -144,7 +142,7 @@ process (GeglOperation       *operation,
               }
         }
       gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf,
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE, 0);
 
       g_free (buf);
       g_free (bufB);

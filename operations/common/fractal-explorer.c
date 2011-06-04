@@ -418,7 +418,8 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   clrmap  colormap;
@@ -444,7 +445,7 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf,
+  gegl_buffer_set (output, NULL, 0, babl_format ("R'G'B' u8"), buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 

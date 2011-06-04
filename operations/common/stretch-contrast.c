@@ -33,7 +33,8 @@ static gboolean
 inner_process (gdouble  min,
                gdouble  max,
                gfloat  *buf,
-               gint     n_pixels)
+               gint     n_pixels,
+               gint     level)
 {
   gint o;
 
@@ -60,7 +61,7 @@ buffer_get_min_max (GeglBuffer *buffer,
 
   gfloat *buf = g_new0 (gfloat, 4 * gegl_buffer_get_pixel_count (buffer));
   gint i;
-  gegl_buffer_get (buffer, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
   for (i=0;i< gegl_buffer_get_pixel_count (buffer);i++)
     {
       gint component;
@@ -100,7 +101,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   gdouble  min, max;
 
@@ -123,9 +125,9 @@ process (GeglOperation       *operation,
         line.width = result->width;
         line.height = chunk;
 
-        gegl_buffer_get (input, 1.0, &line, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-        inner_process (min, max, buf, result->width  * chunk);
-        gegl_buffer_set (output, &line, babl_format ("RGBA float"), buf,
+        gegl_buffer_get (input, &line, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+        inner_process (min, max, buf, result->width  * chunk, level);
+        gegl_buffer_set (output, &line, 0, babl_format ("RGBA float"), buf,
                          GEGL_AUTO_ROWSTRIDE);
         consumed+=chunk;
       }

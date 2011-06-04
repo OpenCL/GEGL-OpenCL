@@ -45,7 +45,8 @@ process (GeglOperation       *op,
          void                *aux_buf,
          void                *out_buf,
          glong                samples,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   gfloat *in = in_buf;
   gfloat *out = out_buf;
@@ -121,11 +122,12 @@ static gegl_cl_run_data *cl_data = NULL;
 /* OpenCL processing function */
 static cl_int
 cl_process (GeglOperation       *op,
-            cl_mem              in_tex,
-            cl_mem              aux_tex,
-            cl_mem              out_tex,
-            size_t              global_worksize,
-            const GeglRectangle *roi)
+            cl_mem               in_tex,
+            cl_mem               aux_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
 {
   gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
 
@@ -175,7 +177,8 @@ cl_process (GeglOperation       *op,
 static gboolean operation_process (GeglOperation        *operation,
                                    GeglOperationContext *context,
                                    const gchar          *output_prop,
-                                   const GeglRectangle  *result)
+                                   const GeglRectangle  *result,
+                                   gint                  level)
 {
   GeglOperationClass  *operation_class;
   gpointer in, aux;
@@ -194,7 +197,8 @@ static gboolean operation_process (GeglOperation        *operation,
   /* chain up, which will create the needed buffers for our actual
    * process function
    */
-  return operation_class->process (operation, context, output_prop, result);
+  return operation_class->process (operation, context, output_prop, result, 
+                                  gegl_operation_context_get_level (context));
 }
 
 

@@ -52,7 +52,8 @@ static gboolean gegl_operation_composer3_process
                              (GeglOperation        *operation,
                               GeglOperationContext *context,
                               const gchar          *output_prop,
-                              const GeglRectangle  *result);
+                              const GeglRectangle  *result,
+                              gint                  level);
 static void     attach       (GeglOperation        *operation);
 static GeglNode*detect       (GeglOperation        *operation,
                               gint                  x,
@@ -161,7 +162,8 @@ static gboolean
 gegl_operation_composer3_process (GeglOperation        *operation,
                                   GeglOperationContext *context,
                                   const gchar          *output_prop,
-                                  const GeglRectangle  *result)
+                                  const GeglRectangle  *result,
+                                  gint                  level)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
   GeglBuffer                  *input;
@@ -188,7 +190,7 @@ gegl_operation_composer3_process (GeglOperation        *operation,
       aux != NULL ||
       aux2 != NULL)
     {
-      success = klass->process (operation, input, aux, aux2, output, result);
+      success = klass->process (operation, input, aux, aux2, output, result, context->level);
 
       if (output == GEGL_BUFFER (operation->node->cache))
         gegl_cache_computed (operation->node->cache, result);

@@ -81,7 +81,8 @@ static guint handle = 0;
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglBuffer   *source;
@@ -136,8 +137,8 @@ process (GeglOperation       *operation,
    */
   source = gegl_buffer_create_sub_buffer (input, result);
   gegl_buffer_get (source,
-       1.0,
        NULL,
+       1.0,
        babl_format_new (babl_model ("RGBA"),
                         babl_type ("u8"),
                         babl_component ("B"),

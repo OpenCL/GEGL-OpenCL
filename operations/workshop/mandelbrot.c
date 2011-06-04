@@ -82,7 +82,8 @@ get_bounding_box (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *buf;
@@ -117,7 +118,7 @@ process (GeglOperation       *operation,
     }
 
   gegl_buffer_set (output, NULL, babl_format ("Y float"), buf,
-                   GEGL_AUTO_ROWSTRIDE);
+                   GEGL_AUTO_ROWSTRIDE, 0);
   g_free (buf);
 
   return  TRUE;

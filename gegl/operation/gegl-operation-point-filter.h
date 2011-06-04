@@ -54,16 +54,17 @@ struct _GeglOperationPointFilterClass
                         void               *in_buf,  /* input buffer      */
                         void               *out_buf, /* output buffer     */
                         glong               samples, /* number of samples */
-                        const GeglRectangle *roi);   /* rectangle out_buf spans
+                        const GeglRectangle *roi,    /* rectangle out_buf spans
                                                         in in buffer, see the
                                                         checkerboard op for
                                                         semantics */
-
-  cl_int   (* cl_process) (GeglOperation      *self,
-                           cl_mem             in_tex,
-                           cl_mem             out_tex,
-                           size_t             global_worksize,
-                           const GeglRectangle *roi);
+                        gint                 level);
+  cl_int   (* cl_process) (GeglOperation       *self,
+                           cl_mem               in_tex,
+                           cl_mem               out_tex,
+                           size_t               global_worksize,
+                           const GeglRectangle *roi,
+                           gint                 level);
   gpointer                 pad[4];
 };
 

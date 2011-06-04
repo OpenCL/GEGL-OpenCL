@@ -59,7 +59,8 @@ static gboolean
 gegl_buffer_load_op_process (GeglOperation        *operation,
                              GeglOperationContext *context,
                              const gchar          *output_pad,
-                             const GeglRectangle  *result)
+                             const GeglRectangle  *result,
+                             gint                  level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 

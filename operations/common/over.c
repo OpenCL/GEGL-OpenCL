@@ -41,12 +41,13 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation        *op,
-          void                *in_buf,
-          void                *aux_buf,
-          void                *out_buf,
-          glong                n_pixels,
-          const GeglRectangle *roi)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *aux_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
+         gint                 level)
 {
   gfloat * GEGL_ALIGNED in = in_buf;
   gfloat * GEGL_ALIGNED aux = aux_buf;
@@ -89,11 +90,12 @@ static gegl_cl_run_data *cl_data = NULL;
 
 static cl_int
 cl_process (GeglOperation       *op,
-            cl_mem              in_tex,
-            cl_mem              aux_tex,
-            cl_mem              out_tex,
-            size_t              global_worksize,
-            const GeglRectangle *roi)
+            cl_mem               in_tex,
+            cl_mem               aux_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
 {
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties
@@ -130,7 +132,8 @@ cl_process (GeglOperation       *op,
 static gboolean operation_process (GeglOperation        *operation,
                                    GeglOperationContext *context,
                                    const gchar          *output_prop,
-                                   const GeglRectangle  *result)
+                                   const GeglRectangle  *result,
+                                   gint                  level)
 {
   GeglOperationClass  *operation_class;
   gpointer input, aux;
@@ -169,7 +172,7 @@ static gboolean operation_process (GeglOperation        *operation,
   /* chain up, which will create the needed buffers for our actual
    * process function
    */
-  return operation_class->process (operation, context, output_prop, result);
+  return operation_class->process (operation, context, output_prop, result, level);
 }
 
 static void

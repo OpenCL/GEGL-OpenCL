@@ -41,7 +41,8 @@ static const gchar *FORMAT = "RGB float";
 static gboolean
 gegl_rgbe_save_process (GeglOperation       *operation,
                         GeglBuffer          *input,
-                        const GeglRectangle *rect)
+                        const GeglRectangle *rect,
+                        gint                 level)
 {
   GeglChantO *o       = GEGL_CHANT_PROPERTIES (operation);
   gfloat     *pixels  = NULL;
@@ -53,7 +54,7 @@ gegl_rgbe_save_process (GeglOperation       *operation,
                      sizeof (pixels[0]) *
                      babl_format_get_n_components (babl_format (FORMAT)));
 
-  gegl_buffer_get (input, 1.0, rect, babl_format (FORMAT), pixels,
+  gegl_buffer_get (input, rect, 1.0, babl_format (FORMAT), pixels,
                    GEGL_AUTO_ROWSTRIDE);
 
   if (!rgbe_save_path (o->path, rect->width, rect->height, pixels))

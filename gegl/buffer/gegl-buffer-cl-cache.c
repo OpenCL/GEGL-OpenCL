@@ -102,7 +102,7 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
           if (cl_err != CL_SUCCESS) CL_ERROR;
 
           /* tile-ize */
-          gegl_buffer_set (entry->buffer, &entry->roi, entry->buffer->format, data, GEGL_AUTO_ROWSTRIDE);
+          gegl_buffer_set (entry->buffer, &entry->roi, 0, entry->buffer->format, data, GEGL_AUTO_ROWSTRIDE);
 
           cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), entry->tex, data,
                                                  0, NULL, NULL);
@@ -271,8 +271,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                       gegl_rectangle_contains (&cb->roi, roi))
                     {
                       gegl_buffer_get (cb->buffer,
-                                       1.0,
                                        roi,
+                                       1.0,
                                        format,
                                        dest_buf,
                                        rowstride);
@@ -310,7 +310,7 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                                                  0, NULL, NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                  gegl_buffer_set (cb->buffer, &entry->roi, format, data, GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_set (cb->buffer, &entry->roi, 0, format, data, GEGL_AUTO_ROWSTRIDE);
 
                   cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), tex_dest, data,
                                                          0, NULL, NULL);
@@ -320,8 +320,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   gegl_buffer_get (cb->buffer,
-                                   1.0,
                                    roi,
+                                   1.0,
                                    format,
                                    dest_buf,
                                    rowstride);

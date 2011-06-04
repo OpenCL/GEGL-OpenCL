@@ -88,7 +88,7 @@ load_buffer (GeglChantO *op_raw_load)
                                  babl_component ("B"),
                                  NULL),
                             buf,
-                            GEGL_AUTO_ROWSTRIDE);
+                            GEGL_AUTO_ROWSTRIDE, 0);
            g_free (buf);
          }
        fclose (pfp);
@@ -109,11 +109,10 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglOperationContext     *context,
-         const gchar         *output_pad,
-         const GeglRectangle *result)
-
+process (GeglOperation        *operation,
+         GeglOperationContext *context,
+         const gchar          *output_pad,
+         const GeglRectangle  *result)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 #if 1
@@ -140,10 +139,8 @@ static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;

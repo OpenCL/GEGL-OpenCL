@@ -183,7 +183,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       rect.width = width;
       rect.height = 1;
 
-      gegl_buffer_get (gegl_buffer, 1.0, &rect, format, pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (gegl_buffer, &rect, 1.0, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE);
 
       png_write_rows (png, &pixels, 1);
     }
@@ -202,7 +202,8 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 static gboolean
 gegl_png_save_process (GeglOperation       *operation,
                        GeglBuffer          *input,
-                       const GeglRectangle *result)
+                       const GeglRectangle *result,
+                       gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 

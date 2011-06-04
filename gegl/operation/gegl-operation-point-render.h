@@ -50,7 +50,8 @@ struct _GeglOperationPointRenderClass
   gboolean (* process) (GeglOperation       *self,      /* for parameters    */
                         void                *out_buf,   /* output buffer     */
                         glong                samples,   /* number of samples */
-                        const GeglRectangle *roi);      /* can be used if position is of importance*/
+                        const GeglRectangle *roi,       /* can be used if position is of importance*/
+                        gint                 level);
   gpointer              pad[4];
 };
 

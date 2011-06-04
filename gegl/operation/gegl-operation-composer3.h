@@ -46,7 +46,8 @@ struct _GeglOperationComposer3Class
                         GeglBuffer          *aux,
                         GeglBuffer          *aux2,
                         GeglBuffer          *output,
-                        const GeglRectangle *result);
+                        const GeglRectangle *result,
+                        gint                 level);
   gpointer              pad[4];
 };
 

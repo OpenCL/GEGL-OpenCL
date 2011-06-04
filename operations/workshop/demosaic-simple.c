@@ -103,7 +103,7 @@ demosaic (GeglChantO          *op,
         }
     }
 
-  gegl_buffer_set (dst, dst_rect, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dst, dst_rect, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE, 0);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -120,7 +120,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);

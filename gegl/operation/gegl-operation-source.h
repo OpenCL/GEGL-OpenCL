@@ -48,7 +48,8 @@ struct _GeglOperationSourceClass
 
   gboolean (* process) (GeglOperation       *self,
                         GeglBuffer          *output,
-                        const GeglRectangle *roi);
+                        const GeglRectangle *roi,
+                        gint                 level);
   gpointer              pad[4];
 };
 

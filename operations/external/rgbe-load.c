@@ -72,7 +72,8 @@ cleanup:
 static gboolean
 gegl_rgbe_load_process (GeglOperation       *operation,
                         GeglBuffer          *output,
-                        const GeglRectangle *result)
+                        const GeglRectangle *result,
+                        gint                 level)
 {
   GeglChantO       *o       = GEGL_CHANT_PROPERTIES (operation);
   gboolean          success = FALSE;
@@ -95,7 +96,7 @@ gegl_rgbe_load_process (GeglOperation       *operation,
   if (!pixels)
     goto cleanup;
 
-  gegl_buffer_set (output, result, babl_format (FORMAT), pixels,
+  gegl_buffer_set (output, result, 0, babl_format (FORMAT), pixels,
                    GEGL_AUTO_ROWSTRIDE);
   success = TRUE;
 

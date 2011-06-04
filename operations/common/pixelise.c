@@ -134,7 +134,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   GeglRectangle src_rect;
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -150,11 +151,11 @@ process (GeglOperation       *operation,
 
   buf = g_new0 (gfloat, src_rect.width * src_rect.height * 4);
 
-  gegl_buffer_get (input, 1.0, &src_rect, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
   pixelise(buf, roi, o->xsize, o->ysize);
 
-  gegl_buffer_set (output, roi, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (buf);
 
