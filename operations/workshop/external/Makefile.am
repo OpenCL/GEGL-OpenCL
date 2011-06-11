@@ -32,5 +32,11 @@ gluas_la_LIBADD  = $(op_libs) $(LUA_LIBS)
 gluas_la_CFLAGS  = $(LUA_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
 endif
 
+if HAVE_JPEG
+ops += jpg-save.la
+jpg_save_la_SOURCES = jpg-save.c
+jpg_save_la_LIBADD = $(op_libs) $(LIBJPEG)
+endif
+
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)
