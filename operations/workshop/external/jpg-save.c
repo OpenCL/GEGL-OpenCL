@@ -30,7 +30,9 @@ gegl_chant_int    (quality, _("Quality"),
 gegl_chant_int    (smoothing, _("Smoothing"),
                    0, 100, 0, _("Smoothing factor from 1 to 100; 0 disables smoothing"))
 gegl_chant_boolean (progressive, _("Progressive"), TRUE,
-                    _("Whether to create progressive JPEGs"))
+                    _("Whether to create progressive JPEG images"))
+gegl_chant_boolean (optimize, _("Optimize"), TRUE,
+                    _("Whether to create optimized JPEG images"))
 
 #else
 
@@ -49,6 +51,7 @@ gegl_buffer_export_jpeg (GeglBuffer  *gegl_buffer,
                          gint         quality,
                          gint         smoothing,
                          gboolean     progressive,
+                         gboolean     optimize,
                          gint         src_x,
                          gint         src_y,
                          gint         width,
@@ -81,7 +84,7 @@ gegl_buffer_export_jpeg (GeglBuffer  *gegl_buffer,
   jpeg_set_quality (&cinfo, quality, TRUE);
 
   cinfo.smoothing_factor = smoothing;
-  cinfo.optimize_coding = TRUE;
+  cinfo.optimize_coding = optimize;
 
   if (progressive)
     jpeg_simple_progression (&cinfo);
@@ -137,7 +140,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gegl_buffer_export_jpeg (input, o->path, o->quality,
-                           o->smoothing, o->progressive,
+                           o->smoothing, o->progressive, o->optimize,
                            result->x, result->y,
                            result->width, result->height);
   return  TRUE;
