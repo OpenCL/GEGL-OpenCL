@@ -162,10 +162,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   sampler_class->get = gegl_sampler_lohalo_get;
 }
 
-/*
- * Use an odd integer between 5 and 63 inclusive:
- */
-#define LOHALO_CONTEXT_RECT_SIZE 17
+#define LOHALO_CONTEXT_RECT_SIZE 5
 #define LOHALO_CONTEXT_RECT_SHIFT ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE) ) / 2 )
 
 static void
@@ -1045,9 +1042,18 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   const gint pixels_per_row = 64;
   const gint row_skip = channels * pixels_per_row;
 
+  /*
+   * The consequence of the following choice of anchor pixel location
+   * is that the sampling location is at most at a box distance of .5
+   * from the anchor pixel location.
+   */
   const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + .5);
   const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + .5);
 
+  /*
+   * This is the pointer we use to pull pixel from "base" mipmap level
+   * (level "0"), the one with scale=1.0.
+   */
   const gfloat* restrict input_bptr =
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0);
 
@@ -1700,7 +1706,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       const gdouble sqrt_discriminant = sqrt( discriminant );
 
       /*
-       * Initially, we only compute the squares of the singular values.
+       * Initially, we only compute the squares of the singular
+       * values.
        */
       /*
        * s1 is the largest singular value of the inverse Jacobian
@@ -1810,8 +1817,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             major_x * major_x + minor_x * minor_x;
           const gdouble ellipse_f =
             major_mag * minor_mag;
+
           /*
-           * Bounding box of the ellipse:
+           * Bounding box of the ellipse.
            */
           const gdouble bounding_box_factor =
             ellipse_f * ellipse_f
@@ -1822,19 +1830,18 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           const gdouble bounding_box_half_height =
             sqrt( ellipse_a * bounding_box_factor );
 
-	  const gdouble context_rect_limit =
-	    -.5 + .5 * ( LOHALO_CONTEXT_RECT_SIZE - 1 );
-
-          const gdouble clamped_half_width =
-            LOHALO_MIN( bounding_box_half_width,  context_rect_limit);
-
-          const gdouble clamped_half_height =
-            LOHALO_MIN( bounding_box_half_height, context_rect_limit);
-
-          const gint left = ceil ( x_0 - clamped_half_width  );
-          const gint rite = floor( x_0 + clamped_half_width  );
-          const gint top  = ceil ( y_0 - clamped_half_height );
-          const gint bot  = floor( y_0 + clamped_half_height );
+	  /*
+	   * Grab the pixel values located strictly within a distance
+	   * of 2.5 from the location of interest. These fit within
+	   * the context_rect reachable for LBB-Nohalo. In addition,
+	   * some locations within the context_rect are known right
+	   * away to be outside.
+	   */
+	  const gfloat radius = (gfloat) 2.5;
+          const gint left = ceil ( x_0 - radius );
+          const gint rite = floor( x_0 + radius );
+          const gint top  = ceil ( y_0 - radius );
+          const gint bot  = floor( y_0 + radius );
 
           gint i_y = top;
 
