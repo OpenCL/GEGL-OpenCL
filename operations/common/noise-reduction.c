@@ -127,6 +127,8 @@ noise_reduction (GeglBuffer          *src,
   gegl_buffer_get (src, 1.0, src_rect, babl_format ("R'G'B'A float"), src_buf,
                    GEGL_AUTO_ROWSTRIDE);
 
+#define POW2(a) ((a)*(a))
+#define SYMMETRY_PIXEL(a)  ((a+4)%8)
 
   offset = 0;
   for (y=0; y<dst_rect->height; y++)
@@ -143,11 +145,10 @@ noise_reduction (GeglBuffer          *src,
 
               for (dir = 0; dir < 4; dir++)
                 {  /* initialize original gradients */
-                  float *pix = center_pix + offsets[dir];
-                  float *pix_opposite = center_pix + offsets[(dir+4)%8];
-#define POW2(a) ((a)*(a))
-                  original_gradient[dir] = POW2(center_pix[c] - pix[c]) +
-                                           POW2(center_pix[c] - pix_opposite[c]);
+                  float *cpix  = center_pix + offsets[dir];
+                  float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(dir)];
+                  original_gradient[dir] = POW2(center_pix[c] - cpix[c]) +
+                                           POW2(center_pix[c] - cpixb[c]);
                 }
 
               /* try smearing in data from each of the 8 neighbours */
@@ -156,27 +157,62 @@ noise_reduction (GeglBuffer          *src,
                   float *pix    = center_pix + offsets[dir];
                   float  result = (pix[c] + center_pix[c]) * 0.5;
                   int    comparison_dir;
-                  gboolean invalid = FALSE;
+                  gboolean valid = TRUE;
 
                   for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
                     if (G_LIKELY (comparison_dir != dir))
                       {
-                        float *pix2  = center_pix + offsets[comparison_dir];
-                        float *pix2b = center_pix + offsets[(comparison_dir+4)%8];
-                        float  new_gradient = POW2(result - pix2[c]) + POW2(result - pix2b[c]);
+                        float *cpix  = center_pix + offsets[comparison_dir];
+                        float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
+                        float  new_gradient = POW2(result - cpix[c]) + POW2(result - cpixb[c]);
 
                         if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
                           { /* The 2nd order derivative increased, use original value instead */
-                            invalid = TRUE;
+                            valid = FALSE;
                             break;
                           }
                       }
-                  if (!invalid)
+                  if (valid)
                     {
                       count ++;
                       result_sum += result;
                     }
                 }
+
+              /* Do a run with smearing across the pixel, ignoring center pixel,
+                 XXX: mostly repeating the code block above, apart from the criterium
+                 for how to blur
+               */
+              for (dir = 0; dir < 4; dir++)
+                {
+                  float *pix     = center_pix + offsets[dir];
+                  float *pixb    = center_pix + offsets[SYMMETRY_PIXEL(dir)];
+                  float  result = (pix[c] + pixb[c]) /2;
+                  int    comparison_dir;
+                  gboolean valid = TRUE;
+
+                  for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
+                    if (G_LIKELY (comparison_dir != dir))
+                      {
+                        float *cpix  = center_pix + offsets[comparison_dir];
+                        float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
+                        float  new_gradient = POW2(result - cpix[c]) + POW2(result - cpixb[c]);
+
+                        if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
+                          { /* The 2nd order derivative increased, use original value instead */
+                            valid = FALSE;
+                            break;
+                          }
+                      }
+                  if (valid)
+                    {
+                      count += 2;  /* give such an average a high weight, since it seemingly
+                                      would be a smoothing that cancels out an original center pixel
+                                    */
+                      result_sum += result * 2;
+                    }
+                }
+
               dst_buf[offset*4+c] = result_sum / count;
             }
           dst_buf[offset*4+3] = center_pix[3]; /* copy alpha */
