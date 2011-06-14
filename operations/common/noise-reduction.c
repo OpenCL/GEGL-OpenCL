@@ -136,7 +136,8 @@ noise_reduction (GeglBuffer          *src,
         {
           for (c=0; c<3; c++)
             {
-              float  result_sum = 0.0;
+              float  result_sum = center_pix[c];
+              int    count = 1;
               float  original_gradient[4];
               int    dir;
 
@@ -149,26 +150,34 @@ noise_reduction (GeglBuffer          *src,
                                            POW2(center_pix[c] - pix_opposite[c]);
                 }
 
+              /* try smearing in data from each of the 8 neighbours */
               for (dir = 0; dir < 8; dir++)
                 {
                   float *pix    = center_pix + offsets[dir];
-                  float  result = (pix[c] + center_pix[c]) /2;
+                  float  result = (pix[c] + center_pix[c]) * 0.5;
                   int    comparison_dir;
+                  gboolean invalid = FALSE;
+
                   for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
                     if (G_LIKELY (comparison_dir != dir))
                       {
                         float *pix2  = center_pix + offsets[comparison_dir];
                         float *pix2b = center_pix + offsets[(comparison_dir+4)%8];
                         float  new_gradient = POW2(result - pix2[c]) + POW2(result - pix2b[c]);
+
                         if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
-                          {
-                            result = center_pix[c];
+                          { /* The 2nd order derivative increased, use original value instead */
+                            invalid = TRUE;
                             break;
                           }
                       }
-                   result_sum += result;
+                  if (!invalid)
+                    {
+                      count ++;
+                      result_sum += result;
+                    }
                 }
-              dst_buf[offset*4+c] = result_sum / 8;
+              dst_buf[offset*4+c] = result_sum / count;
             }
           dst_buf[offset*4+3] = center_pix[3]; /* copy alpha */
           offset++;
