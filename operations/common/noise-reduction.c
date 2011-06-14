@@ -18,9 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (edge_preservation, "Smoothing", 0.0, 0.075, 0.005, "Amount of smoothing to do")
-gegl_chant_double (diffusion,  "Diffusion",  0.0, 1.0, 0.5, "Amount of diffusion to do per iteration, 1.0 is max")
-gegl_chant_int    (iterations, "Iterations", 1,   50, 10, "Number of iterations")
+gegl_chant_int    (iterations,        "Iterations", 1,   50, 5,     "Number of iterations, more iterations takes longer time but might also make the image less noisy.")
 
 #else
 
@@ -34,9 +32,7 @@ static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect,
-                 gdouble              edge_preservation,
-                 gdouble              diffusion);
+                 const GeglRectangle *dst_rect);
 
 static void prepare (GeglOperation *operation)
 {
@@ -92,7 +88,7 @@ process (GeglOperation       *operation,
         source = input;
       if (iteration == o->iterations-1)
         target = output;
-      noise_reduction (source, &source_rect, target, &target_rect, o->edge_preservation, o->diffusion);
+      noise_reduction (source, &source_rect, target, &target_rect);
     }
 
   if (temp[0])
@@ -107,9 +103,7 @@ static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect,
-                 gdouble              edge_preservation,
-                 gdouble              diffusion)
+                 const GeglRectangle *dst_rect)
 {
   int c;
   int x,y;
@@ -118,11 +112,14 @@ noise_reduction (GeglBuffer          *src,
   float *dst_buf;
 
   int src_width = src_rect->width;
-#define DIRECTIONS 8
-  int   offsets2[DIRECTIONS][2] = {{ -1, -1}, {0, -1},{1, -1},
-                                   { -1,  0},         {1,  0},
-                                   { -1,  1}, {0, 1}, {1,  1}};
-  int   offsets[DIRECTIONS]; /* sizeof(float) offsets for neighbours */
+  int   rel_offsets[8][2] = {{ -1, -1}, {0, -1},{1, -1},
+                             { -1,  0},         {1,  0},
+                             { -1,  1}, {0, 1}, {1,  1}};
+  int   offsets[8]; /* sizeof(float) offsets for neighbours */
+
+  /* initialize offsets, dependent on source buffer width */
+  for (c = 0; c < 8; c++)
+    offsets[c] = ((rel_offsets[c][0])+((rel_offsets[c][1]) * src_width)) * 4;
 
   src_buf = g_new0 (float, src_rect->width * src_rect->height * 4);
   dst_buf = g_new0 (float, dst_rect->width * dst_rect->height * 4);
@@ -130,8 +127,6 @@ noise_reduction (GeglBuffer          *src,
   gegl_buffer_get (src, 1.0, src_rect, babl_format ("R'G'B'A float"), src_buf,
                    GEGL_AUTO_ROWSTRIDE);
 
-  for (c = 0; c < DIRECTIONS; c++)
-    offsets[c] = ((offsets2[c][0])+((offsets2[c][1]) * src_width)) * 4;
 
   offset = 0;
   for (y=0; y<dst_rect->height; y++)
@@ -142,50 +137,38 @@ noise_reduction (GeglBuffer          *src,
           for (c=0; c<3; c++)
             {
               float  result_sum = 0.0;
-              float  original_gradient[DIRECTIONS];
+              float  original_gradient[4];
               int    dir;
-              float  max = -100.0;
-              float  min = 100.0;
-              float  lambda;
 
-              for (dir = 0; dir < DIRECTIONS; dir++)
+              for (dir = 0; dir < 4; dir++)
                 {  /* initialize original gradients */
-                  float *neighbour_pix = center_pix + offsets[dir];
-                  original_gradient[dir] = center_pix[c] - neighbour_pix[c];
-                  original_gradient[dir] *= original_gradient[dir];
-
-                  if (neighbour_pix[c] > max)
-                    max = neighbour_pix[c];
-                  if (neighbour_pix[c] < min)
-                    min = neighbour_pix[c];
+                  float *pix = center_pix + offsets[dir];
+                  float *pix_opposite = center_pix + offsets[(dir+4)%8];
+#define POW2(a) ((a)*(a))
+                  original_gradient[dir] = POW2(center_pix[c] - pix[c]) +
+                                           POW2(center_pix[c] - pix_opposite[c]);
                 }
 
-              lambda = edge_preservation * (max-min); /* scale lambda based on
-                                                         neighbourhood range */
-
-              for (dir = 0; dir < DIRECTIONS; dir++)
+              for (dir = 0; dir < 8; dir++)
                 {
-                  float *neighbour_pix = center_pix + offsets[dir];
-                  float  result        = (center_pix[c] * (1.0-diffusion) + neighbour_pix[c] * diffusion);
-                  int    comparing_dir;
-                  for (comparing_dir = 0; comparing_dir < DIRECTIONS; comparing_dir++)
-                    if (G_LIKELY (comparing_dir != dir))
+                  float *pix    = center_pix + offsets[dir];
+                  float  result = (pix[c] + center_pix[c]) /2;
+                  int    comparison_dir;
+                  for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
+                    if (G_LIKELY (comparison_dir != dir))
                       {
-                        float *pix2 = center_pix + offsets[comparing_dir];
-                        float  new_gradient = (result - pix2[c]);
-                        new_gradient *= new_gradient;
-                        if (G_UNLIKELY (new_gradient > original_gradient[comparing_dir] + lambda))
+                        float *pix2  = center_pix + offsets[comparison_dir];
+                        float *pix2b = center_pix + offsets[(comparison_dir+4)%8];
+                        float  new_gradient = POW2(result - pix2[c]) + POW2(result - pix2b[c]);
+                        if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
                           {
-                            /* if influencing the center pixel by a smooth
-                               in this direction, skip it in the summed average
-                               of smoothing directions */
                             result = center_pix[c];
                             break;
                           }
                       }
                    result_sum += result;
                 }
-              dst_buf[offset*4+c] = result_sum / DIRECTIONS;
+              dst_buf[offset*4+c] = result_sum / 8;
             }
           dst_buf[offset*4+3] = center_pix[3]; /* copy alpha */
           offset++;
