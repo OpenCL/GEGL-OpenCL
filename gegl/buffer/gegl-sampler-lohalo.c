@@ -1014,18 +1014,22 @@ lbb( const gfloat c00,
 }
 
 static inline gfloat
-triangle( const gdouble c_major_x,
-          const gdouble c_major_y,
-          const gdouble c_minor_x,
-          const gdouble c_minor_y,
-          const gdouble s,
-          const gdouble t )
+triangle( const gfloat c_major_x,
+          const gfloat c_major_y,
+          const gfloat c_minor_x,
+          const gfloat c_minor_y,
+          const gfloat s,
+          const gfloat t )
 {
-  const gdouble q1 = s * c_major_x + t * c_major_y;
-  const gdouble q2 = s * c_minor_x + t * c_minor_y;
-  const gdouble r2 = q1 * q1 + q2 * q2;
+  const gfloat q1 = s * c_major_x + t * c_major_y;
+  const gfloat q2 = s * c_minor_x + t * c_minor_y;
+  const gfloat r2 = q1 * q1 + q2 * q2;
   const gfloat weight =
-    ( ( r2 < 1. ) ? (gfloat) ( 1. - sqrt( r2 ) ) : (gfloat) 0. );
+    (
+      ( r2 < (gfloat) 1. )
+      ? (gfloat) ( (gfloat) 1. - sqrtf( r2 ) )
+      : (gfloat) 0.
+    );
   return weight;
 }
 
@@ -1807,14 +1811,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            * +
            * ( s * c_minor_x + t * c_minor_y )^2.
            */
-          const gdouble c_major_x = major_unit_x / major_mag;
-          const gdouble c_major_y = major_unit_y / major_mag;
-          const gdouble c_minor_x = minor_unit_x / minor_mag;
-          const gdouble c_minor_y = minor_unit_y / minor_mag;
+          const gfloat c_major_x = major_unit_x / major_mag;
+          const gfloat c_major_y = major_unit_y / major_mag;
+          const gfloat c_minor_x = minor_unit_x / minor_mag;
+          const gfloat c_minor_y = minor_unit_y / minor_mag;
 
           /*
-           * Ellipse coefficients. Most of them are not needed.
-           *
+           * Ellipse coefficients:
 	   *
 	   * const gdouble ellipse_a =
            *   major_y * major_y + minor_y * minor_y;
@@ -1822,6 +1825,19 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            *   -2.0 * ( major_x * major_y + minor_x * minor_y );
            * const gdouble ellipse_c =
            *   major_x * major_x + minor_x * minor_x;
+	   *
+	   * Bounding box of the ellipse:
+	   *
+	   * const gdouble bounding_box_factor =
+	   *   ellipse_f * ellipse_f
+	   *   /
+	   *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
+	   * const gdouble bounding_box_half_width =
+	   *   sqrt( ellipse_c * bounding_box_factor );
+	   * const gdouble bounding_box_half_height =
+	   *   sqrt( ellipse_a * bounding_box_factor );
+	   *
+	   * They are not needed here.
 	   */
           const gdouble ellipse_f = major_mag * minor_mag;
 
@@ -1833,6 +1849,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  if (ellipse_f<(gdouble) 1. + epsilon_for_ellipse_f)
 	    {
 	      /*
+	       * The result will (almost) be pure LBB-Nohal.
+	       *
 	       * Ship out the array of new pixel values and return:
 	       */
 	      babl_process (self->fish, newval, output, 1);
@@ -1840,62 +1858,189 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    }
 
 	  {
-	    /*
-	     * For reference, here is the bounding box of the ellipse:
-	     *
-	     * const gdouble bounding_box_factor =
-             *   ellipse_f * ellipse_f
-	     *   /
-	     *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
-	     * const gdouble bounding_box_half_width =
-	     *   sqrt( ellipse_c * bounding_box_factor );
-	     * const gdouble bounding_box_half_height =
-	     *   sqrt( ellipse_a * bounding_box_factor );
-	     *
-	     * We don't need these values.
-	     */
-
-	    gfloat total_weight = (gfloat) 0.;
-
-	    gfloat ewa_newval[channels];
-	    ewa_newval[0] = (gfloat) 0.;
-	    ewa_newval[1] = (gfloat) 0.;
-	    ewa_newval[2] = (gfloat) 0.;
-	    ewa_newval[3] = (gfloat) 0.;
-
 	    const gfloat radius = (gfloat) 2.5;
 	    /*
 	     * Grab the pixel values located strictly within a
 	     * distance of 2.5 from the location of interest. These
-	     * fit within the context_rect of "pure" LBB-Nohalo. Which
-	     * ones, exactly, depends on the signs of x_0 and y_0.
-	     *
-	     * The central 3x3 block of the 5x5 are always close
-	     * enough to be within a radius of 2.5.
+	     * fit within the context_rect of "pure" LBB-Nohalo; which
+	     * ones exactly fit depends on the signs of x_0 and y_0.
 	     */
 
-          do
-            {
-              const gint y_shift = i_y * row_skip;
-              gint i_x = left;
-              do
-                {
-                  const gint pos = i_x * channels + y_shift;
-                  const gfloat weight = triangle(c_major_x,
-                                                 c_major_y,
-                                                 c_minor_x,
-                                                 c_minor_y,
-                                                 i_x - x_0,
-                                                 i_y - y_0);
-                  total_weight += weight;
-                  ewa_newval[0] += input_bptr[pos  ] * weight;
-                  ewa_newval[1] += input_bptr[pos+1] * weight;
-                  ewa_newval[2] += input_bptr[pos+2] * weight;
-                  ewa_newval[3] += input_bptr[pos+3] * weight;
-                } while (++i_x<=rite);
-            } while (++i_y<=bot);
+	    gfloat ewa_newval[channels];
 
-	  
+	    gfloat total_weight = (gfloat) 0.;
+	     
+	    /*
+	     * The central 3x3 block of the 5x5 are always close
+	     * enough to be within radius 2.5:
+	     */
+	    {
+	      const gint skip = -row_skip - channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat) -1. - x_0,
+					     (gfloat) -1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] = weight * input_bptr[ skip     ];
+	      ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] = weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip = -row_skip;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					                  - x_0,
+					     (gfloat) -1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip = -row_skip + channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat)  1. - x_0,
+					     (gfloat) -1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip =           - channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat) -1. - x_0,
+					                  - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] = weight * input_bptr[ skip     ];
+	      ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] = weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip = 0;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					                  - x_0,
+					                  - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip =             channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat)  1. - x_0,
+					                  - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip =  row_skip - channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat) -1. - x_0,
+					     (gfloat)  1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip =  row_skip;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					                  - x_0,
+					     (gfloat)  1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+	    {
+	      const gint skip = row_skip + channels;
+	      const gfloat weight = triangle(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     (gfloat)  1. - x_0,
+					     (gfloat)  1. - y_0);
+	      total_weight += weight;
+	      ewa_newval[0] += weight * input_bptr[ skip     ];
+	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	    }
+
+	    const gfloat theta = (gfloat) ( 1. / ellipse_f );
+
+	    if (major_mag <= (gdouble) 2.5)
+	      {
+		const gfloat ewa_factor =
+		  ( (gfloat) 1. - theta ) / total_weight;
+		newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+		newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+		newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+		newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
+
+		babl_process (self->fish, newval, output, 1);
+		return;
+	      }
+	    
+	    /*
+	     * If major_mag > 2.5, we pull data from higher level
+	     * mipmap.
+	     */
+
+          /* do */
+          /*   { */
+          /*     const gint y_shift = i_y * row_skip; */
+          /*     gint i_x = left; */
+          /*     do */
+          /*       { */
+          /*         const gint pos = i_x * channels + y_shift; */
+          /*         const gfloat weight = triangle(c_major_x, */
+          /*                                        c_major_y, */
+          /*                                        c_minor_x, */
+          /*                                        c_minor_y, */
+          /*                                        i_x - x_0, */
+          /*                                        i_y - y_0); */
+          /*         total_weight += weight; */
+          /*         ewa_newval[0] += input_bptr[pos  ] * weight; */
+          /*         ewa_newval[1] += input_bptr[pos+1] * weight; */
+          /*         ewa_newval[2] += input_bptr[pos+2] * weight; */
+          /*         ewa_newval[3] += input_bptr[pos+3] * weight; */
+          /*       } while (++i_x<=rite); */
+          /*   } while (++i_y<=bot); */
 
 	  /* if (y_0<(gfloat) 0.) */
 	  /*   { */
