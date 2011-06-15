@@ -18,7 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int    (iterations,        "Iterations", 1,   50, 5,     "Number of iterations, more iterations takes longer time but might also make the image less noisy.")
+gegl_chant_int (iterations, "Iterations", 1, 50, 5, "Number of iterations, more iterations takes longer time but might also make the image less noisy.")
 
 #else
 
@@ -147,8 +147,7 @@ noise_reduction (GeglBuffer          *src,
                 {  /* initialize original gradients */
                   float *cpix  = center_pix + offsets[dir];
                   float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(dir)];
-                  original_gradient[dir] = POW2(center_pix[c] - cpix[c]) +
-                                           POW2(center_pix[c] - cpixb[c]);
+                  original_gradient[dir] = POW2((center_pix[c] - cpix[c]) + (center_pix[c] - cpixb[c]));
                 }
 
               /* try smearing in data from each of the 8 neighbours */
@@ -164,7 +163,7 @@ noise_reduction (GeglBuffer          *src,
                       {
                         float *cpix  = center_pix + offsets[comparison_dir];
                         float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
-                        float  new_gradient = POW2(result - cpix[c]) + POW2(result - cpixb[c]);
+                        float  new_gradient = POW2((result - cpix[c]) + (result - cpixb[c]));
 
                         if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
                           { /* The 2nd order derivative increased, use original value instead */
@@ -196,7 +195,7 @@ noise_reduction (GeglBuffer          *src,
                       {
                         float *cpix  = center_pix + offsets[comparison_dir];
                         float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
-                        float  new_gradient = POW2(result - cpix[c]) + POW2(result - cpixb[c]);
+                        float  new_gradient = POW2((result - cpix[c]) + (result - cpixb[c]));
 
                         if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
                           { /* The 2nd order derivative increased, use original value instead */
