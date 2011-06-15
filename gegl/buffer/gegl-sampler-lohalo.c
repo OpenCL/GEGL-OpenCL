@@ -2001,6 +2001,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	    }
 
+	    /*
+	     * NICOLAS: I'm missing the pixel values which are in
+             * the 5x5 but out of the 3x3.
+	     */
+
 	    const gfloat theta = (gfloat) ( 1. / ellipse_f );
 
 	    if (major_mag <= (gdouble) 2.5)
