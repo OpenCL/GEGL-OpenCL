@@ -26,10 +26,9 @@
  * Masters thesis in Computational Sciences. Preliminary work on
  * Nohalo and monotone interpolation was performed by C. Racette and
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
- * A. Turcotte and Eric Daoust during Google Summer of Code 2009
- * (through two awards made to GIMP to improve GEGL), and was
- * initiated in 2009 by N. Robidoux, A. Turcotte, J. Cupitt, Minglun
- * Gong and Kirk Martinez.
+ * A. Turcotte and Eric Daoust during Google Summer of Code 2009, and
+ * was initiated in 2009 by N. Robidoux, A. Turcotte, J. Cupitt,
+ * Minglun Gong and Kirk Martinez.
  *
  * Clamped EWA with the triangle ("hat" function) filter was developed
  * by N. Robidoux and A. Thyssen with assistance from C. Racette and
@@ -51,8 +50,11 @@
  * Graduate Scholarhip awarded to him and by a Google Summer of Code
  * 2010 award awarded to GIMP (Gnu Image Manipulation Program).
  *
- * N. Robidoux thanks Geert Jordaens, Ralf Meyer and Sven Neumann for
- * useful comments and code.
+ * E. Daoust's image resampling programming was funded by a Google
+ * Summer of Code 2010 award awarded to GIMP.
+ *
+ * N. Robidoux thanks his students and co-authors as well as Geert
+ * Jordaens, Ralf Meyer and Sven Neumann for useful comments and code.
  */
 
 /*
@@ -1057,6 +1059,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   const gfloat* restrict input_bptr =
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0);
 
+  /*
+   * (x_0,y_0) is the relative position of the sampling location
+   * w.r.t. the anchor pixel.
+   */
   const gfloat x_0 = absolute_x - ix_0;
   const gfloat y_0 = absolute_y - iy_0;
 
@@ -1807,51 +1813,66 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           const gdouble c_minor_y = minor_unit_y / minor_mag;
 
           /*
-           * Ellipse coefficients:
-           */
-          const gdouble ellipse_a =
-            major_y * major_y + minor_y * minor_y;
-          const gdouble ellipse_b =
-            -2.0 * ( major_x * major_y + minor_x * minor_y );
-          const gdouble ellipse_c =
-            major_x * major_x + minor_x * minor_x;
-          const gdouble ellipse_f =
-            major_mag * minor_mag;
-
-          /*
-           * Bounding box of the ellipse.
-           */
-          const gdouble bounding_box_factor =
-            ellipse_f * ellipse_f
-            /
-            ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
-          const gdouble bounding_box_half_width =
-            sqrt( ellipse_c * bounding_box_factor );
-          const gdouble bounding_box_half_height =
-            sqrt( ellipse_a * bounding_box_factor );
+           * Ellipse coefficients. Most of them are not needed.
+           *
+	   *
+	   * const gdouble ellipse_a =
+           *   major_y * major_y + minor_y * minor_y;
+           * const gdouble ellipse_b =
+           *   -2.0 * ( major_x * major_y + minor_x * minor_y );
+           * const gdouble ellipse_c =
+           *   major_x * major_x + minor_x * minor_x;
+	   */
+          const gdouble ellipse_f = major_mag * minor_mag;
 
 	  /*
-	   * Grab the pixel values located strictly within a distance
-	   * of 2.5 from the location of interest. These fit within
-	   * the context_rect reachable for LBB-Nohalo. In addition,
-	   * some locations within the context_rect are known right
-	   * away to be outside.
+	   * Fudge factor RE: whether the ellipse is the unit disk.
 	   */
-	  const gfloat radius = (gfloat) 2.5;
-          const gint left = ceil ( x_0 - radius );
-          const gint rite = floor( x_0 + radius );
-          const gint top  = ceil ( y_0 - radius );
-          const gint bot  = floor( y_0 + radius );
+	  const gdouble epsilon_for_ellipse_f = 1.e-6;
 
-          gint i_y = top;
+	  if (ellipse_f<(gdouble) 1. + epsilon_for_ellipse_f)
+	    {
+	      /*
+	       * Ship out the array of new pixel values and return:
+	       */
+	      babl_process (self->fish, newval, output, 1);
+	      return;
+	    }
 
-          gfloat total_weight = (gfloat) 0.;
+	  {
+	    /*
+	     * For reference, here is the bounding box of the ellipse:
+	     *
+	     * const gdouble bounding_box_factor =
+             *   ellipse_f * ellipse_f
+	     *   /
+	     *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
+	     * const gdouble bounding_box_half_width =
+	     *   sqrt( ellipse_c * bounding_box_factor );
+	     * const gdouble bounding_box_half_height =
+	     *   sqrt( ellipse_a * bounding_box_factor );
+	     *
+	     * We don't need these values.
+	     */
 
-          gfloat ewa_newval[channels];
-          ewa_newval[0] = (gfloat) 0.;
-          ewa_newval[1] = (gfloat) 0.;
-          ewa_newval[2] = (gfloat) 0.;
-          ewa_newval[3] = (gfloat) 0.;
+	    gfloat total_weight = (gfloat) 0.;
+
+	    gfloat ewa_newval[channels];
+	    ewa_newval[0] = (gfloat) 0.;
+	    ewa_newval[1] = (gfloat) 0.;
+	    ewa_newval[2] = (gfloat) 0.;
+	    ewa_newval[3] = (gfloat) 0.;
+
+	    const gfloat radius = (gfloat) 2.5;
+	    /*
+	     * Grab the pixel values located strictly within a
+	     * distance of 2.5 from the location of interest. These
+	     * fit within the context_rect of "pure" LBB-Nohalo. Which
+	     * ones, exactly, depends on the signs of x_0 and y_0.
+	     *
+	     * The central 3x3 block of the 5x5 are always close
+	     * enough to be within a radius of 2.5.
+	     */
 
           do
             {
@@ -1873,6 +1894,30 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                   ewa_newval[3] += input_bptr[pos+3] * weight;
                 } while (++i_x<=rite);
             } while (++i_y<=bot);
+
+	  
+
+	  /* if (y_0<(gfloat) 0.) */
+	  /*   { */
+	  /*     /\* */
+	  /*      * Sampling point is located above the anchor pixel. */
+	  /*      *\/ */
+	  /*     if (x_0<(gfloat) 0.) */
+	  /* 	{ */
+	  /* 	  /\* */
+	  /* 	   * Sampling point is located to the left of the */
+	  /* 	   * anchor pixel. */
+	  /* 	   *\/ */
+		  
+	  /* 	} */
+	  /*   } */
+
+          /* const gint left = ceil ( x_0 - radius ); */
+          /* const gint rite = floor( x_0 + radius ); */
+          /* const gint top  = ceil ( y_0 - radius ); */
+          /* const gint bot  = floor( y_0 + radius ); */
+
+          /* gint i_y = top;2 */
 
           {
             const gfloat theta = (gfloat) ( 1. / ellipse_f );
