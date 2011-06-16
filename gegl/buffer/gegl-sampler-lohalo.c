@@ -45,16 +45,16 @@
  * Scholarship awarded to her.
  *
  * A. Turcotte's image resampling research on reduced halo methods and
- * jacobian adaptive methods funded in part by an Ontario Graduate
- * Scholarship (OGS) and an NSERC Alexander Graham Bell Canada
+ * jacobian adaptive methods funded in part by an OGS (Ontario
+ * Graduate Scholarship) and an NSERC Alexander Graham Bell Canada
  * Graduate Scholarhip awarded to him and by a Google Summer of Code
  * 2010 award awarded to GIMP (Gnu Image Manipulation Program).
  *
  * E. Daoust's image resampling programming was funded by a Google
  * Summer of Code 2010 award awarded to GIMP.
  *
- * N. Robidoux thanks his students and co-authors as well as Geert
- * Jordaens, Ralf Meyer and Sven Neumann for useful comments and code.
+ * N. Robidoux thanks Geert Jordaens, Ralf Meyer and Sven Neumann for
+ * useful comments and code, and his co-authors and students.
  */
 
 /*
@@ -1027,7 +1027,28 @@ triangle( const gfloat c_major_x,
   const gfloat weight =
     (
       ( r2 < (gfloat) 1. )
-      ? (gfloat) ( (gfloat) 1. - sqrtf( r2 ) )
+      ? (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
+      : (gfloat) 0.
+    );
+  return weight;
+}
+
+static inline gfloat
+triangle_radius(const gfloat radius,
+		const gfloat c_major_x,
+		const gfloat c_major_y,
+		const gfloat c_minor_x,
+		const gfloat c_minor_y,
+		const gfloat s,
+		const gfloat t )
+{
+  const gfloat q1 = s * c_major_x + t * c_major_y;
+  const gfloat q2 = s * c_minor_x + t * c_minor_y;
+  const gfloat r2 = q1 * q1 + q2 * q2;
+  const gfloat weight =
+    (
+      ( ( s*s+t*t >= radius*radius ) && ( r2 < (gfloat) 1. ) )
+      ? (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
       : (gfloat) 0.
     );
   return weight;
@@ -1732,294 +1753,552 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * any direction, and consequently we do not need the
        * downsampling scheme at all.
        */
-      if ( twice_s1s1 > 2. )
-        {
-	  const gdouble s1s1 = 0.5 * twice_s1s1;
-          /*
-           * s2 the smallest singular value of the inverse Jacobian
-           * matrix. Its reciprocal is the largest singular value of
-           * the Jacobian matrix itself.
-           */
-          const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
+      /*
+       * Fudge factor RE: whether the ellipse is the unit disk.
+       */
+      const gdouble epsilon_for_twice_s1s1 = 1.e-6;
 
-          const gdouble s1s1minusn11 = s1s1 - n11;
-          const gdouble s1s1minusn22 = s1s1 - n22;
-          /*
-           * u1, the first column of the U factor of a singular
-           * decomposition of Jinv, is a (non-normalized) left
-           * singular vector corresponding to s1. It has entries u11
-           * and u21. We compute u1 from the fact that it is an
-           * eigenvector of n corresponding to the eigenvalue s1^2.
-           */
-          const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
-          const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
-          /*
-           * The following selects the largest row of n-s1^2 I as the
-           * one which is used to find the eigenvector. If both
-           * s1^2-n11 and s1^2-n22 are zero, n-s1^2 I is the zero
-           * matrix.  In that case, any vector is an eigenvector; in
-           * addition, norm below is equal to zero, and, in exact
-           * arithmetic, this is the only case in which norm = 0. So,
-           * setting u1 to the simple but arbitrary vector [1,0] if
-           * norm = 0 safely takes care of all cases.
-           */
-          const gdouble temp_u11 =
-            (
-              ( s1s1minusn11_squared >= s1s1minusn22_squared )
-              ? n12
-              : s1s1minusn22
-            );
-          const gdouble temp_u21 =
-            (
-              ( s1s1minusn11_squared >= s1s1minusn22_squared )
-              ? s1s1minusn11
-              : n21
-            );
-          const gdouble norm =
-	    sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
-          /*
-           * Finalize the entries of first left singular vector
-           * (associated with the largest singular value).
-           */
-          const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
-          const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
-          /*
-           * Clamp the singular values up to 1:
-           */
-          const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
-          const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
-          /*
-           * Unit major and minor axis direction vectors:
-           */
-          const gdouble major_unit_x =  u11;
-          const gdouble major_unit_y =  u21;
-          const gdouble minor_unit_x = -u21;
-          const gdouble minor_unit_y =  u11;
-          /*
-           * Major and minor axis direction vectors:
-           */
-          const gdouble major_x = major_mag * major_unit_x;
-          const gdouble major_y = major_mag * major_unit_y;
-          const gdouble minor_x = minor_mag * minor_unit_x;
-          const gdouble minor_y = minor_mag * minor_unit_y;
-
-          /*
-           * The square of the distance to the key location in output
-           * place of a point [s,t] in input space is the square root
-           * of
-           * ( s * c_major_x + t * c_major_y )^2
-           * +
-           * ( s * c_minor_x + t * c_minor_y )^2.
-           */
-          const gfloat c_major_x = major_unit_x / major_mag;
-          const gfloat c_major_y = major_unit_y / major_mag;
-          const gfloat c_minor_x = minor_unit_x / minor_mag;
-          const gfloat c_minor_y = minor_unit_y / minor_mag;
-
-          /*
-           * Ellipse coefficients:
+      if ( twice_s1s1 < (gdouble) ( 2. + epsilon_for_twice_s1s1 ) )
+	{
+	  /*
+	   * The result is (almost) pure LBB-Nohalo.
 	   *
-	   * const gdouble ellipse_a =
-           *   major_y * major_y + minor_y * minor_y;
-           * const gdouble ellipse_b =
-           *   -2.0 * ( major_x * major_y + minor_x * minor_y );
-           * const gdouble ellipse_c =
-           *   major_x * major_x + minor_x * minor_x;
-	   *
-	   * Bounding box of the ellipse:
-	   *
-	   * const gdouble bounding_box_factor =
-	   *   ellipse_f * ellipse_f
-	   *   /
-	   *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
-	   * const gdouble bounding_box_half_width =
-	   *   sqrt( ellipse_c * bounding_box_factor );
-	   * const gdouble bounding_box_half_height =
-	   *   sqrt( ellipse_a * bounding_box_factor );
-	   *
-	   * They are not needed here.
+	   * Ship out the array of new pixel values and return:
 	   */
-          const gdouble ellipse_f = major_mag * minor_mag;
+	  babl_process (self->fish, newval, output, 1);
+	  return;
+	}
+
+      {
+	const gdouble s1s1 = 0.5 * twice_s1s1;
+	/*
+	 * s2 the smallest singular value of the inverse Jacobian
+	 * matrix. Its reciprocal is the largest singular value of the
+	 * Jacobian matrix itself.
+	 */
+	const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
+	
+	const gdouble s1s1minusn11 = s1s1 - n11;
+	const gdouble s1s1minusn22 = s1s1 - n22;
+	/*
+	 * u1, the first column of the U factor of a singular
+	 * decomposition of Jinv, is a (non-normalized) left singular
+	 * vector corresponding to s1. It has entries u11 and u21. We
+	 * compute u1 from the fact that it is an eigenvector of n
+	 * corresponding to the eigenvalue s1^2.
+	 */
+	const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
+	const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
+	/*
+	 * The following selects the largest row of n-s1^2 I as the
+	 * one which is used to find the eigenvector. If both s1^2-n11
+	 * and s1^2-n22 are zero, n-s1^2 I is the zero matrix.  In
+	 * that case, any vector is an eigenvector; in addition, norm
+	 * below is equal to zero, and, in exact arithmetic, this is
+	 * the only case in which norm = 0. So, setting u1 to the
+	 * simple but arbitrary vector [1,0] if norm = 0 safely takes
+	 * care of all cases.
+	 */
+	const gdouble temp_u11 =
+	  (
+	   ( s1s1minusn11_squared >= s1s1minusn22_squared )
+	   ? n12
+	   : s1s1minusn22
+	   );
+	const gdouble temp_u21 =
+	  (
+	   ( s1s1minusn11_squared >= s1s1minusn22_squared )
+	   ? s1s1minusn11
+	   : n21
+	   );
+	const gdouble norm =
+	  sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
+	/*
+	 * Finalize the entries of first left singular vector
+	 * (associated with the largest singular value).
+	 */
+	const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
+	const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
+	/*
+	 * Clamp the singular values up to 1:
+	 */
+	const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
+	const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
+	/*
+	 * Unit major and minor axis direction vectors:
+	 */
+	const gdouble major_unit_x =  u11;
+	const gdouble major_unit_y =  u21;
+	const gdouble minor_unit_x = -u21;
+	const gdouble minor_unit_y =  u11;
+	/*
+	 * Major and minor axis direction vectors:
+	 */
+	const gdouble major_x = major_mag * major_unit_x;
+	const gdouble major_y = major_mag * major_unit_y;
+	const gdouble minor_x = minor_mag * minor_unit_x;
+	const gdouble minor_y = minor_mag * minor_unit_y;
+
+	/*
+	 * The square of the distance to the key location in output
+ 	 * place of a point [s,t] in input space is the square root of
+	 * ( s * c_major_x + t * c_major_y )^2
+	 * +
+	 * ( s * c_minor_x + t * c_minor_y )^2.
+	 */
+	const gfloat c_major_x = major_unit_x / major_mag;
+	const gfloat c_major_y = major_unit_y / major_mag;
+	const gfloat c_minor_x = minor_unit_x / minor_mag;
+	const gfloat c_minor_y = minor_unit_y / minor_mag;
+	
+	/*
+	 * Ellipse coefficients:
+	 *
+	 * const gdouble ellipse_a =
+	 *   major_y * major_y + minor_y * minor_y;
+	 * const gdouble ellipse_b =
+	 *   -2.0 * ( major_x * major_y + minor_x * minor_y );
+	 * const gdouble ellipse_c =
+	 *   major_x * major_x + minor_x * minor_x;
+	 *
+	 * Bounding box of the ellipse:
+	 *
+	 * const gdouble bounding_box_factor =
+	 *   ellipse_f * ellipse_f
+	 *   /
+	 *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
+	 * const gdouble bounding_box_half_width =
+	 *   sqrt( ellipse_c * bounding_box_factor );
+	 * const gdouble bounding_box_half_height =
+	 *   sqrt( ellipse_a * bounding_box_factor );
+	 *
+	 * They are not needed here.
+	 */
+	const gdouble ellipse_f = major_mag * minor_mag;
+
+	{
+	  const gfloat radius = (gfloat) 2.5;
+	  /*
+	   * Grab the pixel values located strictly within a distance
+	   * of 2.5 from the location of interest. These fit within
+	   * the context_rect of "pure" LBB-Nohalo; which ones exactly
+	   * fit depends on the signs of x_0 and y_0.
+	   */
+
+	  gfloat ewa_newval[channels];
+	  
+	  gfloat total_weight;
+	     
+	  /*
+	   * Top row of the 5x5 context_rect:
+	   */
+	  {
+	    const gint skip = -2 * row_skip + -2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -2. - x_0,
+						  (gfloat) -2. - y_0);
+	    total_weight  = weight;
+	    ewa_newval[0] = weight * input_bptr[ skip     ];
+	    ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] = weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -2 * row_skip + -1 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -1. - x_0,
+						  (gfloat) -2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -2 * row_skip +  0 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						               - x_0,
+						  (gfloat) -2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -2 * row_skip +  1 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  1. - x_0,
+						  (gfloat) -2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -2 * row_skip +  2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  2. - x_0,
+						  (gfloat) -2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
 
 	  /*
-	   * Fudge factor RE: whether the ellipse is the unit disk.
+	   * Second row of the 5x5:
 	   */
-	  const gdouble epsilon_for_ellipse_f = 1.e-6;
+	  {
+	    const gint skip = -1 * row_skip + -2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -2. - x_0,
+						  (gfloat) -1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  /*
+	   * The central 3x3 block of the 5x5 are always close enough
+	   * to be within radius 2.5:
+	   */
+	  {
+	    const gint skip = -1 * row_skip + -1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat) -1. - x_0,
+					   (gfloat) -1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -1 * row_skip +  0 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					                - x_0,
+					   (gfloat) -1. - y_0);
+	    total_weight += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -1 * row_skip +  1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat)  1. - x_0,
+					   (gfloat) -1. - y_0);
+	    total_weight += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = -1 * row_skip +  2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  2. - x_0,
+						  (gfloat) -1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
 
-	  if (ellipse_f<(gdouble) 1. + epsilon_for_ellipse_f)
+	  /*
+	   * Third row:
+	   */
+	  {
+	    const gint skip =  0 * row_skip + -2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -2. - x_0,
+						               - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  0 * row_skip + -1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat) -1. - x_0,
+					   - y_0);
+	    total_weight += weight;
+	    ewa_newval[0] = weight * input_bptr[ skip     ];
+	    ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] = weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = 0 * row_skip +  0 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   - x_0,
+					   - y_0);
+	    total_weight += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip = 0 * row_skip +  1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat)  1. - x_0,
+					                - y_0);
+	    total_weight += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  0 * row_skip +  2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  2. - x_0,
+						               - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+
+	  /*
+	   * Fourth row:
+	   */
+	  {
+	    const gint skip =  1 * row_skip + -2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -2. - x_0,
+						  (gfloat)  1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  1 * row_skip + -1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat) -1. - x_0,
+					   (gfloat)  1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  1 * row_skip +  0 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+			                                - x_0,
+					   (gfloat)  1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  1 * row_skip +  1 * channels;
+	    const gfloat weight = triangle(c_major_x,
+					   c_major_y,
+					   c_minor_x,
+					   c_minor_y,
+					   (gfloat)  1. - x_0,
+					   (gfloat)  1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  1 * row_skip +  2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  2. - x_0,
+						  (gfloat)  1. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+
+	  /*
+	   * Fifth row of the 5x5 context_rect:
+	   */
+	  {
+	    const gint skip =  2 * row_skip + -2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -2. - x_0,
+						  (gfloat)  2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  2 * row_skip + -1 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat) -1. - x_0,
+						  (gfloat)  2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  2 * row_skip +  0 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						               - x_0,
+						  (gfloat)  2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  2 * row_skip +  1 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  1. - x_0,
+						  (gfloat)  2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+	  {
+	    const gint skip =  2 * row_skip +  2 * channels;
+	    const gfloat weight = triangle_radius(radius,
+						  c_major_x,
+						  c_major_y,
+						  c_minor_x,
+						  c_minor_y,
+						  (gfloat)  2. - x_0,
+						  (gfloat)  2. - y_0);
+	    total_weight  += weight;
+	    ewa_newval[0] += weight * input_bptr[ skip     ];
+	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	  }
+
+	  const gfloat theta = (gfloat) ( 1. / ellipse_f );
+
+	  if (major_mag <= (gdouble) 2.5)
 	    {
-	      /*
-	       * The result will (almost) be pure LBB-Nohal.
-	       *
-	       * Ship out the array of new pixel values and return:
-	       */
+	      const gfloat ewa_factor =
+		( (gfloat) 1. - theta ) / total_weight;
+	      newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+	      newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+	      newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+	      newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
+
 	      babl_process (self->fish, newval, output, 1);
 	      return;
 	    }
-
-	  {
-	    const gfloat radius = (gfloat) 2.5;
-	    /*
-	     * Grab the pixel values located strictly within a
-	     * distance of 2.5 from the location of interest. These
-	     * fit within the context_rect of "pure" LBB-Nohalo; which
-	     * ones exactly fit depends on the signs of x_0 and y_0.
-	     */
-
-	    gfloat ewa_newval[channels];
-
-	    gfloat total_weight = (gfloat) 0.;
-	     
-	    /*
-	     * The central 3x3 block of the 5x5 are always close
-	     * enough to be within radius 2.5:
-	     */
-	    {
-	      const gint skip = -row_skip - channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat) -1. - x_0,
-					     (gfloat) -1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] = weight * input_bptr[ skip     ];
-	      ewa_newval[1] = weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] = weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] = weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip = -row_skip;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					                  - x_0,
-					     (gfloat) -1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip = -row_skip + channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat)  1. - x_0,
-					     (gfloat) -1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip =           - channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat) -1. - x_0,
-					                  - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] = weight * input_bptr[ skip     ];
-	      ewa_newval[1] = weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] = weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] = weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip = 0;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					                  - x_0,
-					                  - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip =             channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat)  1. - x_0,
-					                  - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip =  row_skip - channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat) -1. - x_0,
-					     (gfloat)  1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip =  row_skip;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					                  - x_0,
-					     (gfloat)  1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-	    {
-	      const gint skip = row_skip + channels;
-	      const gfloat weight = triangle(c_major_x,
-					     c_major_y,
-					     c_minor_x,
-					     c_minor_y,
-					     (gfloat)  1. - x_0,
-					     (gfloat)  1. - y_0);
-	      total_weight += weight;
-	      ewa_newval[0] += weight * input_bptr[ skip     ];
-	      ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	      ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	      ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	    }
-
-	    /*
-	     * NICOLAS: I'm missing the pixel values which are in
-             * the 5x5 but out of the 3x3.
-	     */
-
-	    const gfloat theta = (gfloat) ( 1. / ellipse_f );
-
-	    if (major_mag <= (gdouble) 2.5)
-	      {
-		const gfloat ewa_factor =
-		  ( (gfloat) 1. - theta ) / total_weight;
-		newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-		newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-		newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-		newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
-
-		babl_process (self->fish, newval, output, 1);
-		return;
-	      }
+	  /*
+	   * At this point, the code does not handle what happens if
+	   * we need mipmap values.
+	   */
+	}
+      }
 	    
 	    /*
 	     * If major_mag > 2.5, we pull data from higher level
@@ -2069,22 +2348,20 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
           /* gint i_y = top;2 */
 
-          {
-            const gfloat theta = (gfloat) ( 1. / ellipse_f );
-            const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
-            newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-            newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-            newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-            newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
-          }
-        }
-      /*
-       * Ship out the array of new pixel values:
-       */
-      babl_process (self->fish, newval, output, 1);
-    }
-  }
-}
+      /*     { */
+      /*       const gfloat theta = (gfloat) ( 1. / ellipse_f ); */
+      /*       const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight; */
+      /*       newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0]; */
+      /*       newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1]; */
+      /*       newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2]; */
+      /*       newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3]; */
+      /*     } */
+      /*   } */
+      /* /\* */
+      /*  * Ship out the array of new pixel values: */
+      /*  *\/ */
+      /* babl_process (self->fish, newval, output, 1); */
+
 
 static void
 set_property (      GObject*    gobject,
