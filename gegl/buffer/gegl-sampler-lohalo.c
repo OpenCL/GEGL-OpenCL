@@ -1979,9 +1979,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	pixel_update_radius ( 0,
 			     -2,
 			     radius,
@@ -1993,9 +1993,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	pixel_update_radius ( 1,
 			     -2,
 			     radius,
@@ -2007,9 +2007,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	pixel_update_radius ( 2,
 			     -2,
 			     radius,
@@ -2021,9 +2021,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	/*
 	 * Second row of the 5x5:
 	 */
@@ -2038,9 +2038,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	/*
 	 * The central 3x3 block of the 5x5 are always close enough to
 	 * be within radius 2.5, so we don't need triangle_radius to
@@ -2056,9 +2056,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 0,
 		      -1,
 		      c_major_x,
@@ -2069,9 +2069,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 1,
 		      -1,
 		      c_major_x,
@@ -2082,9 +2082,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update_radius ( 2,
 			     -1,
 			     radius,
@@ -2096,9 +2096,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	/*
 	 * Third row:
 	 */
@@ -2113,9 +2113,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	pixel_update (-1,
 		       0,
 		      c_major_x,
@@ -2126,9 +2126,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 0,
 		       0,
 		      c_major_x,
@@ -2139,9 +2139,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 1,
 		       0,
 		      c_major_x,
@@ -2152,9 +2152,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update_radius ( 2,
 			      0,
 			     radius,
@@ -2166,9 +2166,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	/*
          * Fourth row:
          */
@@ -2183,9 +2183,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
 	pixel_update (-1,
 		       1,
 		      c_major_x,
@@ -2196,9 +2196,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 0,
 		       1,
 		      c_major_x,
@@ -2209,9 +2209,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update ( 1,
 		       1,
 		      c_major_x,
@@ -2222,9 +2222,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 		      y_0,
 		      channels,
 		      row_skip,
-		      &input_bptr,
+		      input_bptr,
 		      &total_weight,
-		      &ewa_newval);
+		      ewa_newval);
 	pixel_update_radius ( 2,
 			      1,
 			     radius,
@@ -2236,9 +2236,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
         /*
          * Fifth row of the 5x5 context_rect:
          */
@@ -2253,9 +2253,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
  	pixel_update_radius (-1,
 			      2,
 			     radius,
@@ -2267,9 +2267,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
  	pixel_update_radius ( 0,
 			      2,
 			     radius,
@@ -2281,9 +2281,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
  	pixel_update_radius ( 1,
 			      2,
 			     radius,
@@ -2295,9 +2295,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
  	pixel_update_radius ( 2,
 			      2,
 			     radius,
@@ -2309,9 +2309,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 			     y_0,
 			     channels,
 			     row_skip,
-			     &input_bptr,
+			     input_bptr,
 			     &total_weight,
-			     &ewa_newval);
+			     ewa_newval);
  
         const gfloat theta = (gfloat) ( 1. / ellipse_f );
  
