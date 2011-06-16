@@ -1876,445 +1876,443 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 */
 	const gdouble ellipse_f = major_mag * minor_mag;
 
-	{
-	  const gfloat radius = (gfloat) 2.5;
-	  /*
-	   * Grab the pixel values located strictly within a distance
-	   * of 2.5 from the location of interest. These fit within
-	   * the context_rect of "pure" LBB-Nohalo; which ones exactly
-	   * fit depends on the signs of x_0 and y_0.
-	   */
+	const gfloat radius = (gfloat) 2.5;
+	/*
+	 * Grab the pixel values located strictly within a distance of
+	 * 2.5 from the location of interest. These fit within the
+	 * context_rect of "pure" LBB-Nohalo; which ones exactly fit
+	 * depends on the signs of x_0 and y_0.
+	 */
 
-	  gfloat ewa_newval[channels];
-	  
-	  gfloat total_weight;
+	gfloat ewa_newval[channels];
+	
+	gfloat total_weight;
 	     
-	  /*
-	   * Top row of the 5x5 context_rect:
-	   */
-	  {
-	    const gint skip = -2 * row_skip + -2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -2. - x_0,
-						  (gfloat) -2. - y_0);
-	    total_weight  = weight;
-	    ewa_newval[0] = weight * input_bptr[ skip     ];
-	    ewa_newval[1] = weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] = weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] = weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -2 * row_skip + -1 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -1. - x_0,
-						  (gfloat) -2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -2 * row_skip +  0 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						               - x_0,
-						  (gfloat) -2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -2 * row_skip +  1 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  1. - x_0,
-						  (gfloat) -2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -2 * row_skip +  2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  2. - x_0,
-						  (gfloat) -2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-
-	  /*
-	   * Second row of the 5x5:
-	   */
-	  {
-	    const gint skip = -1 * row_skip + -2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -2. - x_0,
-						  (gfloat) -1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  /*
-	   * The central 3x3 block of the 5x5 are always close enough
-	   * to be within radius 2.5:
-	   */
-	  {
-	    const gint skip = -1 * row_skip + -1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat) -1. - x_0,
-					   (gfloat) -1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -1 * row_skip +  0 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					                - x_0,
-					   (gfloat) -1. - y_0);
-	    total_weight += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -1 * row_skip +  1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat)  1. - x_0,
-					   (gfloat) -1. - y_0);
-	    total_weight += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = -1 * row_skip +  2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  2. - x_0,
-						  (gfloat) -1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-
-	  /*
-	   * Third row:
-	   */
-	  {
-	    const gint skip =  0 * row_skip + -2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -2. - x_0,
-						               - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  0 * row_skip + -1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat) -1. - x_0,
-					   - y_0);
-	    total_weight += weight;
-	    ewa_newval[0] = weight * input_bptr[ skip     ];
-	    ewa_newval[1] = weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] = weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] = weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = 0 * row_skip +  0 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   - x_0,
-					   - y_0);
-	    total_weight += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip = 0 * row_skip +  1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat)  1. - x_0,
-					                - y_0);
-	    total_weight += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  0 * row_skip +  2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  2. - x_0,
-						               - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-
-	  /*
-	   * Fourth row:
-	   */
-	  {
-	    const gint skip =  1 * row_skip + -2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -2. - x_0,
-						  (gfloat)  1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  1 * row_skip + -1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat) -1. - x_0,
-					   (gfloat)  1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  1 * row_skip +  0 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-			                                - x_0,
-					   (gfloat)  1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  1 * row_skip +  1 * channels;
-	    const gfloat weight = triangle(c_major_x,
-					   c_major_y,
-					   c_minor_x,
-					   c_minor_y,
-					   (gfloat)  1. - x_0,
-					   (gfloat)  1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  1 * row_skip +  2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  2. - x_0,
-						  (gfloat)  1. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-
-	  /*
-	   * Fifth row of the 5x5 context_rect:
-	   */
-	  {
-	    const gint skip =  2 * row_skip + -2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -2. - x_0,
-						  (gfloat)  2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  2 * row_skip + -1 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat) -1. - x_0,
-						  (gfloat)  2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  2 * row_skip +  0 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						               - x_0,
-						  (gfloat)  2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  2 * row_skip +  1 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  1. - x_0,
-						  (gfloat)  2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-	  {
-	    const gint skip =  2 * row_skip +  2 * channels;
-	    const gfloat weight = triangle_radius(radius,
-						  c_major_x,
-						  c_major_y,
-						  c_minor_x,
-						  c_minor_y,
-						  (gfloat)  2. - x_0,
-						  (gfloat)  2. - y_0);
-	    total_weight  += weight;
-	    ewa_newval[0] += weight * input_bptr[ skip     ];
-	    ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-	    ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-	    ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-	  }
-
-	  const gfloat theta = (gfloat) ( 1. / ellipse_f );
-
-	  if (major_mag <= (gdouble) 2.5)
-	    {
-	      const gfloat ewa_factor =
-		( (gfloat) 1. - theta ) / total_weight;
-	      newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-	      newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-	      newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-	      newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
-
-	      babl_process (self->fish, newval, output, 1);
-	      return;
-	    }
-	  /*
-	   * At this point, the code does not handle what happens if
-	   * we need mipmap values.
-	   */
+	/*
+	 * Top row of the 5x5 context_rect:
+	 */
+	{
+	  const gint skip = -2 * row_skip + -2 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -2. - x_0,
+						(gfloat) -2. - y_0);
+	  total_weight  = weight;
+	  ewa_newval[0] = weight * input_bptr[ skip     ];
+	  ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] = weight * input_bptr[ skip + 3 ];
 	}
-      }
-	    
-	    /*
-	     * If major_mag > 2.5, we pull data from higher level
-	     * mipmap.
-	     */
+	{
+	  const gint skip = -2 * row_skip + -1 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -1. - x_0,
+						(gfloat) -2. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -2 * row_skip +  0 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						             - x_0,
+						(gfloat) -2. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -2 * row_skip +  1 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  1. - x_0,
+						(gfloat) -2. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -2 * row_skip +  2 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  2. - x_0,
+						(gfloat) -2. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
 
-          /* do */
-          /*   { */
-          /*     const gint y_shift = i_y * row_skip; */
-          /*     gint i_x = left; */
-          /*     do */
-          /*       { */
-          /*         const gint pos = i_x * channels + y_shift; */
-          /*         const gfloat weight = triangle(c_major_x, */
-          /*                                        c_major_y, */
-          /*                                        c_minor_x, */
+	/*
+	 * Second row of the 5x5:
+	 */
+	{
+	  const gint skip = -1 * row_skip + -2 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -2. - x_0,
+						(gfloat) -1. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	/*
+	 * The central 3x3 block of the 5x5 are always close enough to
+	 * be within radius 2.5:
+	 */
+	{
+	  const gint skip = -1 * row_skip + -1 * channels;
+	  const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat) -1. - x_0,
+					 (gfloat) -1. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -1 * row_skip +  0 * channels;
+	  const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					              - x_0,
+					 (gfloat) -1. - y_0);
+	  total_weight += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -1 * row_skip +  1 * channels;
+	  const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat)  1. - x_0,
+					 (gfloat) -1. - y_0);
+	  total_weight += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip = -1 * row_skip +  2 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  2. - x_0,
+						(gfloat) -1. - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+
+	/*
+	 * Third row:
+	 */
+	{
+	  const gint skip =  0 * row_skip + -2 * channels;
+	  const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -2. - x_0,
+						             - y_0);
+	  total_weight  += weight;
+	  ewa_newval[0] += weight * input_bptr[ skip     ];
+	  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+	  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+	}
+	{
+	  const gint skip =  0 * row_skip + -1 * channels;
+	  const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat) -1. - x_0,
+					              - y_0);
+	  total_weight += weight;
+	  ewa_newval[0] = weight * input_bptr[ skip     ];
+          ewa_newval[1] = weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] = weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] = weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip = 0 * row_skip +  0 * channels;
+          const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					              - x_0,
+					              - y_0);
+          total_weight += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip = 0 * row_skip +  1 * channels;
+          const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat)  1. - x_0,
+					              - y_0);
+          total_weight += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  0 * row_skip +  2 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  2. - x_0,
+						             - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+ 
+        /*
+         * Fourth row:
+         */
+        {
+          const gint skip =  1 * row_skip + -2 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -2. - x_0,
+						(gfloat)  1. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  1 * row_skip + -1 * channels;
+          const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat) -1. - x_0,
+					 (gfloat)  1. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  1 * row_skip +  0 * channels;
+          const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					              - x_0,
+					 (gfloat)  1. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  1 * row_skip +  1 * channels;
+          const gfloat weight = triangle(c_major_x,
+					 c_major_y,
+					 c_minor_x,
+					 c_minor_y,
+					 (gfloat)  1. - x_0,
+					 (gfloat)  1. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  1 * row_skip +  2 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  2. - x_0,
+						(gfloat)  1. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+ 
+        /*
+         * Fifth row of the 5x5 context_rect:
+         */
+        {
+          const gint skip =  2 * row_skip + -2 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -2. - x_0,
+						(gfloat)  2. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  2 * row_skip + -1 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat) -1. - x_0,
+						(gfloat)  2. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  2 * row_skip +  0 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+      					                     - x_0,
+						(gfloat)  2. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  2 * row_skip +  1 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  1. - x_0,
+						(gfloat)  2. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+        {
+          const gint skip =  2 * row_skip +  2 * channels;
+          const gfloat weight = triangle_radius(radius,
+						c_major_x,
+						c_major_y,
+						c_minor_x,
+						c_minor_y,
+						(gfloat)  2. - x_0,
+						(gfloat)  2. - y_0);
+          total_weight  += weight;
+          ewa_newval[0] += weight * input_bptr[ skip     ];
+          ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+          ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+          ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+        }
+ 
+        const gfloat theta = (gfloat) ( 1. / ellipse_f );
+ 
+        if (major_mag <= (gdouble) 2.5)
+          {
+            const gfloat ewa_factor =
+	      ( (gfloat) 1. - theta ) / total_weight;
+            newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+            newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+            newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+            newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
+ 
+            babl_process (self->fish, newval, output, 1);
+            return;
+          }
+        /*
+         * At this point, the code does not handle what happens if
+         * we need mipmap values.
+         */
+      }
+          
+ 	    /*
+ 	     * If major_mag > 2.5, we pull data from higher level
+ 	     * mipmap.
+ 	     */
+ 
+           /* do */
+           /*   { */
+           /*     const gint y_shift = i_y * row_skip; */
+           /*     gint i_x = left; */
+           /*     do */
+           /*       { */
+           /*         const gint pos = i_x * channels + y_shift; */
+           /*         const gfloat weight = triangle(c_major_x, */
+           /*                                        c_major_y, */
+           /*                                        c_minor_x, */
           /*                                        c_minor_y, */
           /*                                        i_x - x_0, */
           /*                                        i_y - y_0); */
