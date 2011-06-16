@@ -1035,12 +1035,12 @@ triangle(const gfloat c_major_x,
 
 static inline gfloat
 triangle_radius(const gfloat radius,
-		const gfloat c_major_x,
-		const gfloat c_major_y,
-		const gfloat c_minor_x,
-		const gfloat c_minor_y,
-		const gfloat s,
-		const gfloat t )
+                const gfloat c_major_x,
+                const gfloat c_major_y,
+                const gfloat c_minor_x,
+                const gfloat c_minor_y,
+                const gfloat s,
+                const gfloat t )
 {
   const gfloat q1 = s * c_major_x + t * c_major_y;
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
@@ -1056,26 +1056,26 @@ triangle_radius(const gfloat radius,
 
 static inline void 
 pixel_update (const gint             j,
-	      const gint             i,
-	      const gfloat           c_major_x,
-	      const gfloat           c_major_y,
-	      const gfloat           c_minor_x,
-	      const gfloat           c_minor_y,
-	      const gfloat           x_0,
-	      const gfloat           y_0,
-	      const gint             channels,
-	      const gint             row_skip,
-	      const gfloat* restrict input_bptr,
-	            gfloat* restrict total_weight,
-	            gfloat* restrict ewa_newval)
+              const gint             i,
+              const gfloat           c_major_x,
+              const gfloat           c_major_y,
+              const gfloat           c_minor_x,
+              const gfloat           c_minor_y,
+              const gfloat           x_0,
+              const gfloat           y_0,
+              const gint             channels,
+              const gint             row_skip,
+              const gfloat* restrict input_bptr,
+                    gfloat* restrict total_weight,
+                    gfloat* restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
   const gfloat weight = triangle(c_major_x,
-				 c_major_y,
-				 c_minor_x,
-				 c_minor_y,
-				 (gfloat) j - x_0,
-				 (gfloat) i - y_0);
+                                 c_major_y,
+                                 c_minor_x,
+                                 c_minor_y,
+                                 (gfloat) j - x_0,
+                                 (gfloat) i - y_0);
   *total_weight  += weight;
   ewa_newval[0]  += weight * input_bptr[ skip     ];
   ewa_newval[1]  += weight * input_bptr[ skip + 1 ];
@@ -1086,13 +1086,13 @@ pixel_update (const gint             j,
 static inline void 
 pixel_update_radius (const gint             j,
                      const gint             i,
-		     const gfloat           radius,
-		     const gfloat           c_major_x,
-		     const gfloat           c_major_y,
-		     const gfloat           c_minor_x,
-		     const gfloat           c_minor_y,
-		     const gfloat           x_0,
-		     const gfloat           y_0,
+                     const gfloat           radius,
+                     const gfloat           c_major_x,
+                     const gfloat           c_major_y,
+                     const gfloat           c_minor_x,
+                     const gfloat           c_minor_y,
+                     const gfloat           x_0,
+                     const gfloat           y_0,
                      const gint             channels,
                      const gint             row_skip,
                      const gfloat* restrict input_bptr,
@@ -1347,37 +1347,37 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
 
     newval[0] = lbb( c00,
-		     c10,
-		     c01,
-		     c11,
-		     c00dx,
-		     c10dx,
-		     c01dx,
-		     c11dx,
-		     c00dy,
-		     c10dy,
-		     c01dy,
-		     c11dy,
-		     c00dxdy,
-		     c10dxdy,
-		     c01dxdy,
-		     c11dxdy,
-		     uno_one_0,
-		     uno_two_0,
-		     uno_thr_0,
-		     uno_fou_0,
-		     dos_one_0,
-		     dos_two_0,
-		     dos_thr_0,
-		     dos_fou_0,
-		     tre_one_0,
-		     tre_two_0,
-		     tre_thr_0,
-		     tre_fou_0,
-		     qua_one_0,
-		     qua_two_0,
-		     qua_thr_0,
-		     qua_fou_0 );
+                     c10,
+                     c01,
+                     c11,
+                     c00dx,
+                     c10dx,
+                     c01dx,
+                     c11dx,
+                     c00dy,
+                     c10dy,
+                     c01dy,
+                     c11dy,
+                     c00dxdy,
+                     c10dxdy,
+                     c01dxdy,
+                     c11dxdy,
+                     uno_one_0,
+                     uno_two_0,
+                     uno_thr_0,
+                     uno_fou_0,
+                     dos_one_0,
+                     dos_two_0,
+                     dos_thr_0,
+                     dos_fou_0,
+                     tre_one_0,
+                     tre_two_0,
+                     tre_thr_0,
+                     tre_fou_0,
+                     qua_one_0,
+                     qua_two_0,
+                     qua_thr_0,
+                     qua_fou_0 );
 
     /*
      * Second channel:
@@ -1421,37 +1421,37 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_fou_1);
 
     newval[1] = lbb( c00,
-		     c10,
-		     c01,
-		     c11,
-		     c00dx,
-		     c10dx,
-		     c01dx,
-		     c11dx,
-		     c00dy,
-		     c10dy,
-		     c01dy,
-		     c11dy,
-		     c00dxdy,
-		     c10dxdy,
-		     c01dxdy,
-		     c11dxdy,
-		     uno_one_1,
-		     uno_two_1,
-		     uno_thr_1,
-		     uno_fou_1,
-		     dos_one_1,
-		     dos_two_1,
-		     dos_thr_1,
-		     dos_fou_1,
-		     tre_one_1,
-		     tre_two_1,
-		     tre_thr_1,
-		     tre_fou_1,
-		     qua_one_1,
-		     qua_two_1,
-		     qua_thr_1,
-		     qua_fou_1 );
+                     c10,
+                     c01,
+                     c11,
+                     c00dx,
+                     c10dx,
+                     c01dx,
+                     c11dx,
+                     c00dy,
+                     c10dy,
+                     c01dy,
+                     c11dy,
+                     c00dxdy,
+                     c10dxdy,
+                     c01dxdy,
+                     c11dxdy,
+                     uno_one_1,
+                     uno_two_1,
+                     uno_thr_1,
+                     uno_fou_1,
+                     dos_one_1,
+                     dos_two_1,
+                     dos_thr_1,
+                     dos_fou_1,
+                     tre_one_1,
+                     tre_two_1,
+                     tre_thr_1,
+                     tre_fou_1,
+                     qua_one_1,
+                     qua_two_1,
+                     qua_thr_1,
+                     qua_fou_1 );
 
     nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
                         input_bptr[ uno_thr_shift + 2 ],
@@ -1492,37 +1492,37 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_fou_2);
 
     newval[2] = lbb( c00,
-		     c10,
-		     c01,
-		     c11,
-		     c00dx,
-		     c10dx,
-		     c01dx,
-		     c11dx,
-		     c00dy,
-		     c10dy,
-		     c01dy,
-		     c11dy,
-		     c00dxdy,
-		     c10dxdy,
-		     c01dxdy,
-		     c11dxdy,
-		     uno_one_2,
-		     uno_two_2,
-		     uno_thr_2,
-		     uno_fou_2,
-		     dos_one_2,
-		     dos_two_2,
-		     dos_thr_2,
-		     dos_fou_2,
-		     tre_one_2,
-		     tre_two_2,
-		     tre_thr_2,
-		     tre_fou_2,
-		     qua_one_2,
-		     qua_two_2,
-		     qua_thr_2,
-		     qua_fou_2 );
+                     c10,
+                     c01,
+                     c11,
+                     c00dx,
+                     c10dx,
+                     c01dx,
+                     c11dx,
+                     c00dy,
+                     c10dy,
+                     c01dy,
+                     c11dy,
+                     c00dxdy,
+                     c10dxdy,
+                     c01dxdy,
+                     c11dxdy,
+                     uno_one_2,
+                     uno_two_2,
+                     uno_thr_2,
+                     uno_fou_2,
+                     dos_one_2,
+                     dos_two_2,
+                     dos_thr_2,
+                     dos_fou_2,
+                     tre_one_2,
+                     tre_two_2,
+                     tre_thr_2,
+                     tre_fou_2,
+                     qua_one_2,
+                     qua_two_2,
+                     qua_thr_2,
+                     qua_fou_2 );
 
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
@@ -1563,37 +1563,37 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_fou_3);
 
     newval[3] = lbb( c00,
-		     c10,
-		     c01,
-		     c11,
-		     c00dx,
-		     c10dx,
-		     c01dx,
-		     c11dx,
-		     c00dy,
-		     c10dy,
-		     c01dy,
-		     c11dy,
-		     c00dxdy,
-		     c10dxdy,
-		     c01dxdy,
-		     c11dxdy,
-		     uno_one_3,
-		     uno_two_3,
-		     uno_thr_3,
-		     uno_fou_3,
-		     dos_one_3,
-		     dos_two_3,
-		     dos_thr_3,
-		     dos_fou_3,
-		     tre_one_3,
-		     tre_two_3,
-		     tre_thr_3,
-		     tre_fou_3,
-		     qua_one_3,
-		     qua_two_3,
-		     qua_thr_3,
-		     qua_fou_3 );
+                     c10,
+                     c01,
+                     c11,
+                     c00dx,
+                     c10dx,
+                     c01dx,
+                     c11dx,
+                     c00dy,
+                     c10dy,
+                     c01dy,
+                     c11dy,
+                     c00dxdy,
+                     c10dxdy,
+                     c01dxdy,
+                     c11dxdy,
+                     uno_one_3,
+                     uno_two_3,
+                     uno_thr_3,
+                     uno_fou_3,
+                     dos_one_3,
+                     dos_two_3,
+                     dos_thr_3,
+                     dos_fou_3,
+                     tre_one_3,
+                     tre_two_3,
+                     tre_thr_3,
+                     tre_fou_3,
+                     qua_one_3,
+                     qua_two_3,
+                     qua_thr_3,
+                     qua_fou_3 );
 
     {
       /*
@@ -1819,524 +1819,527 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       const gdouble epsilon_for_twice_s1s1 = 1.e-6;
 
       if ( twice_s1s1 < (gdouble) ( 2. + epsilon_for_twice_s1s1 ) )
-	{
-	  /*
-	   * The result is (almost) pure LBB-Nohalo.
-	   *
-	   * Ship out the array of new pixel values and return:
-	   */
-	  babl_process (self->fish, newval, output, 1);
-	  return;
-	}
+        {
+          /*
+           * The result is (almost) pure LBB-Nohalo.
+           *
+           * Ship out the array of new pixel values and return:
+           */
+          babl_process (self->fish, newval, output, 1);
+          return;
+        }
 
       {
-	const gdouble s1s1 = 0.5 * twice_s1s1;
-	/*
-	 * s2 the smallest singular value of the inverse Jacobian
-	 * matrix. Its reciprocal is the largest singular value of the
-	 * Jacobian matrix itself.
-	 */
-	const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
-	
-	const gdouble s1s1minusn11 = s1s1 - n11;
-	const gdouble s1s1minusn22 = s1s1 - n22;
-	/*
-	 * u1, the first column of the U factor of a singular
-	 * decomposition of Jinv, is a (non-normalized) left singular
-	 * vector corresponding to s1. It has entries u11 and u21. We
-	 * compute u1 from the fact that it is an eigenvector of n
-	 * corresponding to the eigenvalue s1^2.
-	 */
-	const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
-	const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
-	/*
-	 * The following selects the largest row of n-s1^2 I as the
-	 * one which is used to find the eigenvector. If both s1^2-n11
-	 * and s1^2-n22 are zero, n-s1^2 I is the zero matrix.  In
-	 * that case, any vector is an eigenvector; in addition, norm
-	 * below is equal to zero, and, in exact arithmetic, this is
-	 * the only case in which norm = 0. So, setting u1 to the
-	 * simple but arbitrary vector [1,0] if norm = 0 safely takes
-	 * care of all cases.
-	 */
-	const gdouble temp_u11 =
-	  (
-	   ( s1s1minusn11_squared >= s1s1minusn22_squared )
-	   ? n12
-	   : s1s1minusn22
-	   );
-	const gdouble temp_u21 =
-	  (
-	   ( s1s1minusn11_squared >= s1s1minusn22_squared )
-	   ? s1s1minusn11
-	   : n21
-	   );
-	const gdouble norm =
-	  sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
-	/*
-	 * Finalize the entries of first left singular vector
-	 * (associated with the largest singular value).
-	 */
-	const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
-	const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
-	/*
-	 * Clamp the singular values up to 1:
-	 */
-	const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
-	const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
-	/*
-	 * Unit major and minor axis direction vectors:
-	 */
-	const gdouble major_unit_x =  u11;
-	const gdouble major_unit_y =  u21;
-	const gdouble minor_unit_x = -u21;
-	const gdouble minor_unit_y =  u11;
-	/*
-	 * Major and minor axis direction vectors:
-	 */
-	const gdouble major_x = major_mag * major_unit_x;
-	const gdouble major_y = major_mag * major_unit_y;
-	const gdouble minor_x = minor_mag * minor_unit_x;
-	const gdouble minor_y = minor_mag * minor_unit_y;
+        const gdouble s1s1 = 0.5 * twice_s1s1;
+        /*
+         * s2 the smallest singular value of the inverse Jacobian
+         * matrix. Its reciprocal is the largest singular value of the
+         * Jacobian matrix itself.
+         */
+        const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
+        
+        const gdouble s1s1minusn11 = s1s1 - n11;
+        const gdouble s1s1minusn22 = s1s1 - n22;
+        /*
+         * u1, the first column of the U factor of a singular
+         * decomposition of Jinv, is a (non-normalized) left singular
+         * vector corresponding to s1. It has entries u11 and u21. We
+         * compute u1 from the fact that it is an eigenvector of n
+         * corresponding to the eigenvalue s1^2.
+         */
+        const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
+        const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
+        /*
+         * The following selects the largest row of n-s1^2 I as the
+         * one which is used to find the eigenvector. If both s1^2-n11
+         * and s1^2-n22 are zero, n-s1^2 I is the zero matrix.  In
+         * that case, any vector is an eigenvector; in addition, norm
+         * below is equal to zero, and, in exact arithmetic, this is
+         * the only case in which norm = 0. So, setting u1 to the
+         * simple but arbitrary vector [1,0] if norm = 0 safely takes
+         * care of all cases.
+         */
+        const gdouble temp_u11 =
+          (
+           ( s1s1minusn11_squared >= s1s1minusn22_squared )
+           ? n12
+           : s1s1minusn22
+           );
+        const gdouble temp_u21 =
+          (
+           ( s1s1minusn11_squared >= s1s1minusn22_squared )
+           ? s1s1minusn11
+           : n21
+           );
+        const gdouble norm =
+          sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
+        /*
+         * Finalize the entries of first left singular vector
+         * (associated with the largest singular value).
+         */
+        const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
+        const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
+        /*
+         * Clamp the singular values up to 1:
+         */
+        const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
+        const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
+        /*
+         * Unit major and minor axis direction vectors:
+         */
+        const gdouble major_unit_x =  u11;
+        const gdouble major_unit_y =  u21;
+        const gdouble minor_unit_x = -u21;
+        const gdouble minor_unit_y =  u11;
+        /*
+         * Major and minor axis direction vectors:
+        const gdouble major_x = major_mag * major_unit_x;
+        const gdouble major_y = major_mag * major_unit_y;
+        const gdouble minor_x = minor_mag * minor_unit_x;
+        const gdouble minor_y = minor_mag * minor_unit_y;
+         */
+        /*
+         * The square of the distance to the key location in output
+          * place of a point [s,t] in input space is the square root of
+         * ( s * c_major_x + t * c_major_y )^2
+         * +
+         * ( s * c_minor_x + t * c_minor_y )^2.
+         */
+        const gfloat c_major_x = major_unit_x / major_mag;
+        const gfloat c_major_y = major_unit_y / major_mag;
+        const gfloat c_minor_x = minor_unit_x / minor_mag;
+        const gfloat c_minor_y = minor_unit_y / minor_mag;
+        
+        /*
+         * Ellipse coefficients that are not needed here:
+         *
+         * const gdouble ellipse_a =
+         *   major_y * major_y + minor_y * minor_y;
+         * const gdouble ellipse_b =
+         *   -2.0 * ( major_x * major_y + minor_x * minor_y );
+         * const gdouble ellipse_c =
+         *   major_x * major_x + minor_x * minor_x;
+         *
+         */
+        const gdouble ellipse_f = major_mag * minor_mag;
+        /*
+         * Bounding box of the ellipse (not needed here):
+         *
+         * const gdouble bounding_box_factor =
+         *   ellipse_f * ellipse_f
+         *   /
+         *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
+         * const gdouble bounding_box_half_width =
+         *   sqrt( ellipse_c * bounding_box_factor );
+         * const gdouble bounding_box_half_height =
+         *   sqrt( ellipse_a * bounding_box_factor );
+         */
 
-	/*
-	 * The square of the distance to the key location in output
- 	 * place of a point [s,t] in input space is the square root of
-	 * ( s * c_major_x + t * c_major_y )^2
-	 * +
-	 * ( s * c_minor_x + t * c_minor_y )^2.
-	 */
-	const gfloat c_major_x = major_unit_x / major_mag;
-	const gfloat c_major_y = major_unit_y / major_mag;
-	const gfloat c_minor_x = minor_unit_x / minor_mag;
-	const gfloat c_minor_y = minor_unit_y / minor_mag;
-	
-	/*
-	 * Ellipse coefficients that are not needed here:
-	 *
-	 * const gdouble ellipse_a =
-	 *   major_y * major_y + minor_y * minor_y;
-	 * const gdouble ellipse_b =
-	 *   -2.0 * ( major_x * major_y + minor_x * minor_y );
-	 * const gdouble ellipse_c =
-	 *   major_x * major_x + minor_x * minor_x;
-	 *
-	 */
-	const gdouble ellipse_f = major_mag * minor_mag;
-	/*
-	 * Bounding box of the ellipse (not needed here):
-	 *
-	 * const gdouble bounding_box_factor =
-	 *   ellipse_f * ellipse_f
-	 *   /
-	 *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
-	 * const gdouble bounding_box_half_width =
-	 *   sqrt( ellipse_c * bounding_box_factor );
-	 * const gdouble bounding_box_half_height =
-	 *   sqrt( ellipse_a * bounding_box_factor );
-	 */
-
-	const gfloat radius = (gfloat) 2.5;
-	/*
-	 * Grab the pixel values located strictly within a distance of
-	 * 2.5 from the location of interest. These fit within the
-	 * context_rect of "pure" LBB-Nohalo; which ones exactly fit
-	 * depends on the signs of x_0 and y_0.
-	 *
-	 * Farther ones will be accessed through higher mipmap levels.
-	 */
-
-	gfloat ewa_newval[channels];
-	
-	gfloat total_weight;
-	     
-	/*
-	 * First (top) row of the 5x5 context_rect, from left to
-	 * right:
-	 */
-        {
-          const gint skip = -2 * channels + -2 * row_skip;
-          const gfloat total_weight = triangle_radius(radius,
-						      c_major_x,
-						      c_major_y,
-						      c_minor_x,
-						      c_minor_y,
-						      (gfloat) -2. - x_0,
-						      (gfloat) -2. - y_0);
-          ewa_newval[0] = total_weight * input_bptr[ skip     ];
-          ewa_newval[1] = total_weight * input_bptr[ skip + 1 ];
-          ewa_newval[2] = total_weight * input_bptr[ skip + 2 ];
-          ewa_newval[3] = total_weight * input_bptr[ skip + 3 ];
-        }
-	pixel_update_radius (-1,
-			     -2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	pixel_update_radius ( 0,
-			     -2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	pixel_update_radius ( 1,
-			     -2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	pixel_update_radius ( 2,
-			     -2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	/*
-	 * Second row of the 5x5:
-	 */
-	pixel_update_radius (-2,
-			     -1,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	/*
-	 * The central 3x3 block of the 5x5 are always close enough to
-	 * be within radius 2.5, so we don't need triangle_radius to
-	 * check:
-	 */
-	pixel_update (-1,
-		      -1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 0,
-		      -1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 1,
-		      -1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update_radius ( 2,
-			     -1,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	/*
-	 * Third row:
-	 */
-	pixel_update_radius (-2,
-			      0,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	pixel_update (-1,
-		       0,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 0,
-		       0,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 1,
-		       0,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update_radius ( 2,
-			      0,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	/*
+        const gfloat radius = (gfloat) 2.5;
+        /*
+         * Grab the pixel values located strictly within a distance of
+         * 2.5 from the location of interest. These fit within the
+         * context_rect of "pure" LBB-Nohalo; which ones exactly fit
+         * depends on the signs of x_0 and y_0.
+         *
+         * Farther ones will be accessed through higher mipmap levels.
+         */
+        
+        gfloat total_weight = 0.0;
+        gfloat ewa_newval[channels];
+        ewa_newval[0] = 0.0;
+        ewa_newval[1] = 0.0;
+        ewa_newval[2] = 0.0;
+        ewa_newval[3] = 0.0;
+        /*
+         * First (top) row of the 5x5 context_rect, from left to
+         * right:
+         */
+        pixel_update_radius (-2,
+                             -2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius (-1,
+                             -2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 0,
+                             -2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 1,
+                             -2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 2,
+                             -2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        /*
+         * Second row of the 5x5:
+         */
+        pixel_update_radius (-2,
+                             -1,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        /*
+         * The central 3x3 block of the 5x5 are always close enough to
+         * be within radius 2.5, so we don't need triangle_radius to
+         * check:
+         */
+        pixel_update (-1,
+                      -1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 0,
+                      -1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 1,
+                      -1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update_radius ( 2,
+                             -1,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        /*
+         * Third row:
+         */
+        pixel_update_radius (-2,
+                              0,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update (-1,
+                       0,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 0,
+                       0,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 1,
+                       0,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update_radius ( 2,
+                              0,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        /*
          * Fourth row:
          */
- 	pixel_update_radius (-2,
-			      1,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
-	pixel_update (-1,
-		       1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 0,
-		       1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update ( 1,
-		       1,
-		      c_major_x,
-		      c_major_y,
-		      c_minor_x,
-		      c_minor_y,
-		      x_0,
-		      y_0,
-		      channels,
-		      row_skip,
-		      input_bptr,
-		      &total_weight,
-		      ewa_newval);
-	pixel_update_radius ( 2,
-			      1,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
+         pixel_update_radius (-2,
+                              1,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update (-1,
+                       1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 0,
+                       1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update ( 1,
+                       1,
+                      c_major_x,
+                      c_major_y,
+                      c_minor_x,
+                      c_minor_y,
+                      x_0,
+                      y_0,
+                      channels,
+                      row_skip,
+                      input_bptr,
+                      &total_weight,
+                      ewa_newval);
+        pixel_update_radius ( 2,
+                              1,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
         /*
          * Fifth row of the 5x5 context_rect:
          */
- 	pixel_update_radius (-2,
-			      2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
- 	pixel_update_radius (-1,
-			      2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
- 	pixel_update_radius ( 0,
-			      2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
- 	pixel_update_radius ( 1,
-			      2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
- 	pixel_update_radius ( 2,
-			      2,
-			     radius,
-			     c_major_x,
-			     c_major_y,
-			     c_minor_x,
-			     c_minor_y,
-			     x_0,
-			     y_0,
-			     channels,
-			     row_skip,
-			     input_bptr,
-			     &total_weight,
-			     ewa_newval);
+        pixel_update_radius (-2,
+                              2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius (-1,
+                              2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 0,
+                              2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 1,
+                              2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+        pixel_update_radius ( 2,
+                              2,
+                             radius,
+                             c_major_x,
+                             c_major_y,
+                             c_minor_x,
+                             c_minor_y,
+                             x_0,
+                             y_0,
+                             channels,
+                             row_skip,
+                             input_bptr,
+                             &total_weight,
+                             ewa_newval);
+
+        {
+          const gfloat theta = (gfloat) ( 1. / ellipse_f );
  
-        const gfloat theta = (gfloat) ( 1. / ellipse_f );
+          // if (major_mag <= (gdouble) 2.5)
+          //  {
+              const gfloat ewa_factor =
+                ( (gfloat) 1. - theta ) / total_weight;
+              newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+              newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+              newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+              newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
  
-	// if (major_mag <= (gdouble) 2.5)
-        //  {
-            const gfloat ewa_factor =
-	      ( (gfloat) 1. - theta ) / total_weight;
-            newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-            newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-            newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-            newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
- 
-            babl_process (self->fish, newval, output, 1);
-            return;
-        //  }
+              babl_process (self->fish, newval, output, 1);
+              return;
+          //  }
+        }
         /*
          * At this point, the code does not handle what happens if
          * we need mipmap values to get accuracy.
          */
       }
           
- 	    /*
- 	     * If major_mag > 2.5, we pull data from higher level
- 	     * mipmap.
- 	     */
+             /*
+              * If major_mag > 2.5, we pull data from higher level
+              * mipmap.
+              */
  
            /* do */
            /*   { */
@@ -2359,20 +2362,20 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           /*       } while (++i_x<=rite); */
           /*   } while (++i_y<=bot); */
 
-	  /* if (y_0<(gfloat) 0.) */
-	  /*   { */
-	  /*     /\* */
-	  /*      * Sampling point is located above the anchor pixel. */
-	  /*      *\/ */
-	  /*     if (x_0<(gfloat) 0.) */
-	  /* 	{ */
-	  /* 	  /\* */
-	  /* 	   * Sampling point is located to the left of the */
-	  /* 	   * anchor pixel. */
-	  /* 	   *\/ */
-		  
-	  /* 	} */
-	  /*   } */
+          /* if (y_0<(gfloat) 0.) */
+          /*   { */
+          /*     /\* */
+          /*      * Sampling point is located above the anchor pixel. */
+          /*      *\/ */
+          /*     if (x_0<(gfloat) 0.) */
+          /*         { */
+          /*           /\* */
+          /*            * Sampling point is located to the left of the */
+          /*            * anchor pixel. */
+          /*            *\/ */
+                  
+          /*         } */
+          /*   } */
 
           /* const gint left = ceil ( x_0 - radius ); */
           /* const gint rite = floor( x_0 + radius ); */
