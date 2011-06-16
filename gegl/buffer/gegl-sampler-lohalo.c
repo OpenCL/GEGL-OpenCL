@@ -2359,6 +2359,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       /*  * Ship out the array of new pixel values: */
       /*  *\/ */
       /* babl_process (self->fish, newval, output, 1); */
+    }
+  }
+}
 
 
 static void
