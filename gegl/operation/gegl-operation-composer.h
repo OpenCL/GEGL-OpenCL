@@ -16,6 +16,11 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationComposer
+ * Composer operations are operations that take two inputs named input and aux and write
+ * their output to the output pad output
+ */
+
 #ifndef __GEGL_OPERATION_COMPOSER_H__
 #define __GEGL_OPERATION_COMPOSER_H__
 

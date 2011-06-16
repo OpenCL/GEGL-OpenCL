@@ -16,6 +16,11 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationPointComposer
+ * A baseclass for composer functions where the output pixels' values depends only on
+ * the values of the single corresponding input and aux pixels.
+ */
+
 #ifndef __GEGL_OPERATION_POINT_COMPOSER_H__
 #define __GEGL_OPERATION_POINT_COMPOSER_H__
 

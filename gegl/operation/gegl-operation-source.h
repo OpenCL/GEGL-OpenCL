@@ -16,6 +16,11 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationSource
+ * Operations used as render sources or file loaders, the process method receives a
+ * GeglBuffer to write it’s output into
+ */
+
 #ifndef __GEGL_OPERATION_SOURCE_H__
 #define __GEGL_OPERATION_SOURCE_H__
 

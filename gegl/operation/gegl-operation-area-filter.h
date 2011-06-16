@@ -16,6 +16,12 @@
  * Copyright 2007 Øyvind Kolås
  */
 
+/* GeglOperationAreaFilter
+ * The AreaFilter base class allows defining operations where the output data depends on a neighbourhood
+ * with an input window that extends beyond the output window, the information about needed extra pixels
+ * in different directions should be set up in the prepare callback for the operation.
+*/
+
 #ifndef __GEGL_OPERATION_AREA_FILTER_H__
 #define __GEGL_OPERATION_AREA_FILTER_H__
 

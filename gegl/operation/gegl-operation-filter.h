@@ -16,6 +16,10 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationFilter:
+ * The filter base class sets up GeglBuffers for input and output pads
+ */
+
 #ifndef __GEGL_OPERATION_FILTER_H__
 #define __GEGL_OPERATION_FILTER_H__
 

@@ -16,6 +16,12 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationMeta
+ * Used for GEGL operations that are implemented as a sub-graph, at the moment
+ * these are defined as C files but should in the future be possible to declare
+ * as XML instead.
+ */
+
 #ifndef __GEGL_OPERATION_META_H__
 #define __GEGL_OPERATION_META_H__
 

@@ -16,6 +16,12 @@
  * Copyright 2008 Øyvind Kolås
  */
 
+/* GeglOperationTemporal
+ * Base class for operations that want access to previous frames in a video sequence,
+ * it contains API to configure the amounts of frames to store as well as getting a
+ * GeglBuffer pointing to any of the previously stored frames.
+ */
+
 #ifndef __GEGL_OPERATION_TEMPORAL_H__
 #define __GEGL_OPERATION_TEMPORAL_H__
 

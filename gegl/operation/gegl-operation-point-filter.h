@@ -16,6 +16,13 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationPointFilter
+ * The point-filter base class is for filters where an output pixel only depends on the color and alpha values
+ * of the corresponding input pixel. This allows you to do the processing on linear buffers, in the future 
+ * versions of GEGL operations implemented using the point-filter will get speed increases due to more 
+ * intelligent processing possible in the point filter class
+ */
+
 #ifndef __GEGL_OPERATION_POINT_FILTER_H__
 #define __GEGL_OPERATION_POINT_FILTER_H__
 

@@ -16,6 +16,11 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationSink
+ * An operation that consumes a GeglBuffer, used for filewriters, display 
+ * (for the sdl display node)
+ */
+
 #ifndef __GEGL_OPERATION_SINK_H__
 #define __GEGL_OPERATION_SINK_H__
 
