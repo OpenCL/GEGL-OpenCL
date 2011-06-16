@@ -1852,7 +1852,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	const gfloat c_minor_y = minor_unit_y / minor_mag;
 	
 	/*
-	 * Ellipse coefficients:
+	 * Ellipse coefficients that are not needed here:
 	 *
 	 * const gdouble ellipse_a =
 	 *   major_y * major_y + minor_y * minor_y;
@@ -1861,7 +1861,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 * const gdouble ellipse_c =
 	 *   major_x * major_x + minor_x * minor_x;
 	 *
-	 * Bounding box of the ellipse:
+	 */
+	const gdouble ellipse_f = major_mag * minor_mag;
+	/*
+	 * Bounding box of the ellipse (not needed here):
 	 *
 	 * const gdouble bounding_box_factor =
 	 *   ellipse_f * ellipse_f
@@ -1871,10 +1874,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 *   sqrt( ellipse_c * bounding_box_factor );
 	 * const gdouble bounding_box_half_height =
 	 *   sqrt( ellipse_a * bounding_box_factor );
-	 *
-	 * They are not needed here.
 	 */
-	const gdouble ellipse_f = major_mag * minor_mag;
 
 	const gfloat radius = (gfloat) 2.5;
 	/*
@@ -1882,6 +1882,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 * 2.5 from the location of interest. These fit within the
 	 * context_rect of "pure" LBB-Nohalo; which ones exactly fit
 	 * depends on the signs of x_0 and y_0.
+	 *
+	 * Farther ones will be accessed through higher mipmap levels.
 	 */
 
 	gfloat ewa_newval[channels];
@@ -1889,10 +1891,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	gfloat total_weight;
 	     
 	/*
-	 * Top row of the 5x5 context_rect:
+	 * Top row of the 5x5 context_rect, from left to right:
 	 */
 	{
-	  const gint skip = -2 * row_skip + -2 * channels;
+	  const gint skip = -2 * channels + -2 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1907,7 +1909,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] = weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -2 * row_skip + -1 * channels;
+	  const gint skip = -1 * channels + -2 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1922,7 +1924,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -2 * row_skip +  0 * channels;
+	  const gint skip =  0 * channels + -2 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1937,7 +1939,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -2 * row_skip +  1 * channels;
+	  const gint skip =  1 * channels + -2 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1952,7 +1954,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -2 * row_skip +  2 * channels;
+	  const gint skip =  2 * channels + -2 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1971,7 +1973,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 * Second row of the 5x5:
 	 */
 	{
-	  const gint skip = -1 * row_skip + -2 * channels;
+	  const gint skip = -2 * channels + -1 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -1987,10 +1989,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	}
 	/*
 	 * The central 3x3 block of the 5x5 are always close enough to
-	 * be within radius 2.5:
+	 * be within radius 2.5, so we don't need triangle_radius to
+	 * check:
 	 */
 	{
-	  const gint skip = -1 * row_skip + -1 * channels;
+	  const gint skip = -1 * channels + -1 * row_skip;
 	  const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2004,7 +2007,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -1 * row_skip +  0 * channels;
+	  const gint skip =  0 * channels + -1 * row_skip;
 	  const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2018,7 +2021,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -1 * row_skip +  1 * channels;
+	  const gint skip =  1 * channels + -1 * row_skip;
 	  const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2032,7 +2035,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip = -1 * row_skip +  2 * channels;
+	  const gint skip =  2 * channels + -1 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2051,7 +2054,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	 * Third row:
 	 */
 	{
-	  const gint skip =  0 * row_skip + -2 * channels;
+	  const gint skip = -2 * channels +  0 * row_skip;
 	  const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2066,7 +2069,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 	}
 	{
-	  const gint skip =  0 * row_skip + -1 * channels;
+	  const gint skip = -1 * channels +  0 * row_skip;
 	  const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2080,7 +2083,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] = weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip = 0 * row_skip +  0 * channels;
+          const gint skip =  0 * channels +  0 * row_skip;
           const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2094,7 +2097,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip = 0 * row_skip +  1 * channels;
+          const gint skip =  1 * channels + 0 * row_skip;
           const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2108,7 +2111,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  0 * row_skip +  2 * channels;
+          const gint skip =  2 * channels +  0 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2127,7 +2130,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          * Fourth row:
          */
         {
-          const gint skip =  1 * row_skip + -2 * channels;
+          const gint skip = -2 * channels +  1 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2142,7 +2145,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  1 * row_skip + -1 * channels;
+          const gint skip = -1 * channels +  1 * row_skip;
           const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2156,7 +2159,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  1 * row_skip +  0 * channels;
+          const gint skip =  0 * channels +  1 * row_skip;
           const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2170,7 +2173,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  1 * row_skip +  1 * channels;
+          const gint skip =  1 * channels +  1 * row_skip;
           const gfloat weight = triangle(c_major_x,
 					 c_major_y,
 					 c_minor_x,
@@ -2184,7 +2187,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  1 * row_skip +  2 * channels;
+          const gint skip =  2 * channels +  1 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2203,7 +2206,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          * Fifth row of the 5x5 context_rect:
          */
         {
-          const gint skip =  2 * row_skip + -2 * channels;
+          const gint skip = -2 * channels +  2 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2218,7 +2221,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  2 * row_skip + -1 * channels;
+          const gint skip = -1 * channels +  2 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2233,7 +2236,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  2 * row_skip +  0 * channels;
+          const gint skip =  0 * channels +  2 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2248,7 +2251,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  2 * row_skip +  1 * channels;
+          const gint skip =  1 * channels +  2 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
@@ -2263,7 +2266,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[3] += weight * input_bptr[ skip + 3 ];
         }
         {
-          const gint skip =  2 * row_skip +  2 * channels;
+          const gint skip =  2 * channels +  2 * row_skip;
           const gfloat weight = triangle_radius(radius,
 						c_major_x,
 						c_major_y,
