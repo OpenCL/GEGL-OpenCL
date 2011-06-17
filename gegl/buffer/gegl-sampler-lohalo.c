@@ -1051,7 +1051,7 @@ triangle_radius(const gfloat radius,
   const gfloat r2 = q1 * q1 + q2 * q2;
   const gfloat weight =
     (
-      ( ( s*s+t*t >= radius*radius ) && ( r2 < (gfloat) 1. ) )
+      ( ( s*s+t*t < radius*radius ) && ( r2 < (gfloat) 1. ) )
       ? (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
       : (gfloat) 0.
     );
