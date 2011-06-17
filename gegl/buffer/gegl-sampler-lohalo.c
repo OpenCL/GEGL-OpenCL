@@ -1907,9 +1907,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
         /*
          * Grab the pixel values located within the context_rect of
-         * "pure" LBB-Nohalo.
-         *
-         * Farther ones will be accessed through higher mipmap levels.
+         * "pure" LBB-Nohalo.  Farther ones will be accessed through
+         * higher mipmap levels.
          */
         /*
          * First (top) row of the 5x5 context_rect, from left to
@@ -1958,8 +1957,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
  
           // if (major_mag <= (gdouble) 2.5)
           //  {
-              const gfloat ewa_factor =
-                ( (gfloat) 1. - theta ) / total_weight;
+              const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
               newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
               newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
               newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
