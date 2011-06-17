@@ -47,7 +47,7 @@ struct _GeglSampler
   GeglRectangle  context_rect;
   void          *sampler_buffer;
   GeglRectangle  sampler_rectangle;
-  gdouble       *inverse_jacobian;
+  GeglMatrix2   *inverse_jacobian;
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */
 };

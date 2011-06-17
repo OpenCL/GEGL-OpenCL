@@ -1740,10 +1740,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * Ellipse reference:
        * http://en.wikipedia.org/wiki/Ellipse#Canonical_form
        */
-      const gdouble a = self->inverse_jacobian[0];
-      const gdouble b = self->inverse_jacobian[1];
-      const gdouble c = self->inverse_jacobian[2];
-      const gdouble d = self->inverse_jacobian[3];
+      const gdouble a = self->inverse_jacobian->coeff[0][0];
+      const gdouble b = self->inverse_jacobian->coeff[0][1];
+      const gdouble c = self->inverse_jacobian->coeff[1][0];
+      const gdouble d = self->inverse_jacobian->coeff[1][1];
 
       /*
        * n is the matrix Jinv * transpose(Jinv). Eigenvalues of n are

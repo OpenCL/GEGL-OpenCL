@@ -11,7 +11,7 @@ G_BEGIN_DECLS
  * Note: If making use of this in public API, add a boxed type for introspection
  */
 typedef struct {
-    gdouble coeff [2][2];
+    gdouble coeff[2][2];
 } GeglMatrix2;
 
 /***
