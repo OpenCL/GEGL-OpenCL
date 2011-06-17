@@ -1967,30 +1967,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
               return;
           //  }
         }
-        /*
-         * At this point, the code does not handle what happens if
-         * we need mipmap values to get accuracy.
-         */
+	/*
+	 * TO DO: Use higher mipmap levels to handle larger ellipses.
+	 */
       }
-          
-             /*
-              * If major_mag > 2.5, we pull data from higher level
-              * mipmap.
-              */
-
-      /*     { */
-      /*       const gfloat theta = (gfloat) ( 1. / ellipse_f ); */
-      /*       const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight; */
-      /*       newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0]; */
-      /*       newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1]; */
-      /*       newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2]; */
-      /*       newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3]; */
-      /*     } */
-      /*   } */
-      /* /\* */
-      /*  * Ship out the array of new pixel values: */
-      /*  *\/ */
-      /* babl_process (self->fish, newval, output, 1); */
     }
   }
 }
