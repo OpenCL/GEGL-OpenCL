@@ -1080,11 +1080,11 @@ pixel_update (const gint             j,
                                  c_minor_y,
                                  (gfloat) j - x_0,
                                  (gfloat) i - y_0);
-  *total_weight  += weight;
-  ewa_newval[0]  += weight * input_bptr[ skip     ];
-  ewa_newval[1]  += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2]  += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3]  += weight * input_bptr[ skip + 3 ];
+  *total_weight += weight;
+  ewa_newval[0] += weight * input_bptr[ skip     ];
+  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 }
 
 static inline void 
@@ -1111,11 +1111,11 @@ pixel_update_radius (const gint             j,
                                         c_minor_y,
                                         (gfloat) j - x_0,
                                         (gfloat) i - y_0);
-  *total_weight  += weight;
-  ewa_newval[0]  += weight * input_bptr[ skip     ];
-  ewa_newval[1]  += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2]  += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3]  += weight * input_bptr[ skip + 3 ];
+  *total_weight += weight;
+  ewa_newval[0] += weight * input_bptr[ skip     ];
+  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 }
 
 static void
@@ -1382,7 +1382,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_0,
                      qua_thr_0,
                      qua_fou_0 );
-
     /*
      * Second channel:
      */
@@ -1423,7 +1422,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_1,
                         &qua_thr_1,
                         &qua_fou_1);
-
     newval[1] = lbb( c00,
                      c10,
                      c01,
@@ -1456,7 +1454,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_1,
                      qua_thr_1,
                      qua_fou_1 );
-
     nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
                         input_bptr[ uno_thr_shift + 2 ],
                         input_bptr[ uno_fou_shift + 2 ],
@@ -1494,7 +1491,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_2,
                         &qua_thr_2,
                         &qua_fou_2);
-
     newval[2] = lbb( c00,
                      c10,
                      c01,
@@ -1527,7 +1523,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_2,
                      qua_thr_2,
                      qua_fou_2 );
-
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
                         input_bptr[ uno_fou_shift + 3 ],
@@ -1565,7 +1560,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_3,
                         &qua_thr_3,
                         &qua_fou_3);
-
     newval[3] = lbb( c00,
                      c10,
                      c01,
