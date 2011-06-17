@@ -1898,16 +1898,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          *   sqrt( ellipse_a * bounding_box_factor );
          */
 
-        const gfloat radius = (gfloat) 2.5;
-        /*
-         * Grab the pixel values located strictly within a distance of
-         * 2.5 from the location of interest. These fit within the
-         * context_rect of "pure" LBB-Nohalo; which ones exactly fit
-         * depends on the signs of x_0 and y_0.
-         *
-         * Farther ones will be accessed through higher mipmap levels.
-         */
-        
         gfloat total_weight = 0.0;
         gfloat restrict ewa_newval[channels];
         ewa_newval[0] = 0.0;
@@ -1915,6 +1905,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         ewa_newval[2] = 0.0;
         ewa_newval[3] = 0.0;
 
+        /*
+         * Grab the pixel values located within the context_rect of
+         * "pure" LBB-Nohalo.
+         *
+         * Farther ones will be accessed through higher mipmap levels.
+         */
         /*
          * First (top) row of the 5x5 context_rect, from left to
          * right:
