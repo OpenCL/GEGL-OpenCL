@@ -1863,15 +1863,16 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gdouble minor_unit_x = -u21;
         const gdouble minor_unit_y =  u11;
         /*
-         * Major and minor axis direction vectors:
-        const gdouble major_x = major_mag * major_unit_x;
-        const gdouble major_y = major_mag * major_unit_y;
-        const gdouble minor_x = minor_mag * minor_unit_x;
-        const gdouble minor_y = minor_mag * minor_unit_y;
+         * Major and minor axis direction vectors (not needed):
+	 *
+         * const gdouble major_x = major_mag * major_unit_x;
+         * const gdouble major_y = major_mag * major_unit_y;
+         * const gdouble minor_x = minor_mag * minor_unit_x;
+         * const gdouble minor_y = minor_mag * minor_unit_y;
          */
         /*
          * The square of the distance to the key location in output
-          * place of a point [s,t] in input space is the square root of
+         * place of a point [s,t] in input space is the square root of
          * ( s * c_major_x + t * c_major_y )^2
          * +
          * ( s * c_minor_x + t * c_minor_y )^2.
