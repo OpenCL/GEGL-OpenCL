@@ -1037,27 +1037,6 @@ triangle(const gfloat c_major_x,
   return weight;
 }
 
-static inline gfloat
-triangle_radius(const gfloat radius,
-                const gfloat c_major_x,
-                const gfloat c_major_y,
-                const gfloat c_minor_x,
-                const gfloat c_minor_y,
-                const gfloat s,
-                const gfloat t )
-{
-  const gfloat q1 = s * c_major_x + t * c_major_y;
-  const gfloat q2 = s * c_minor_x + t * c_minor_y;
-  const gfloat r2 = q1 * q1 + q2 * q2;
-  const gfloat weight =
-    (
-      ( ( s*s+t*t < radius*radius ) && ( r2 < (gfloat) 1. ) )
-      ? (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
-      : (gfloat) 0.
-    );
-  return weight;
-}
-
 static inline void 
 pixel_update (const gint             j,
               const gint             i,
@@ -1078,39 +1057,8 @@ pixel_update (const gint             j,
                                  c_major_y,
                                  c_minor_x,
                                  c_minor_y,
-                                 (gfloat) j - x_0,
-                                 (gfloat) i - y_0);
-  *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr[ skip     ];
-  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
-}
-
-static inline void 
-pixel_update_radius (const gint             j,
-                     const gint             i,
-                     const gfloat           radius,
-                     const gfloat           c_major_x,
-                     const gfloat           c_major_y,
-                     const gfloat           c_minor_x,
-                     const gfloat           c_minor_y,
-                     const gfloat           x_0,
-                     const gfloat           y_0,
-                     const gint             channels,
-                     const gint             row_skip,
-                     const gfloat* restrict input_bptr,
-                           gfloat* restrict total_weight,
-                           gfloat* restrict ewa_newval)
-{
-  const gint skip = j * channels + i * row_skip;
-  const gfloat weight = triangle_radius(radius,
-                                        c_major_x,
-                                        c_major_y,
-                                        c_minor_x,
-                                        c_minor_y,
-                                        (gfloat) j - x_0,
-                                        (gfloat) i - y_0);
+                                 x_0 - (gfloat) j,
+                                 y_0 - (gfloat) i);
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
   ewa_newval[1] += weight * input_bptr[ skip + 1 ];
@@ -1222,7 +1170,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
    * The newval array will contain one computed resampled value per
    * channel:
    */
-  gfloat newval[channels];
+  gfloat restrict newval[channels];
 
   /*
    * First channel:
@@ -1944,7 +1892,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          */
         
         gfloat total_weight = 0.0;
-        gfloat ewa_newval[channels];
+        gfloat restrict ewa_newval[channels];
         ewa_newval[0] = 0.0;
         ewa_newval[1] = 0.0;
         ewa_newval[2] = 0.0;
