@@ -1066,8 +1066,8 @@ ewa_update (const gint             j,
 	    const gint             channels,
 	    const gint             row_skip,
 	    const gfloat* restrict input_bptr,
-	    gfloat* restrict total_weight,
-	    gfloat* restrict ewa_newval)
+                  gfloat* restrict total_weight,
+	          gfloat* restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
   const gfloat weight = teepee(c_major_x,
