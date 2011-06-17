@@ -32,12 +32,12 @@
  * project was started by M. Gong, N. Robidoux and A. Turcotte in
  * 2007.
  *
- * Clamped EWA with the triangle ("hat" or "teepee") filter was
- * developed by N. Robidoux and A. Thyssen with assistance from
- * C. Racette and Frederick Weinhaus. It is based on methods of Paul
- * Heckbert and Andreas Gustaffson. The GEGL version, which uses
- * multiple mipmap levels for speed, was developed by N. Robidoux and
- * A. Turcotte.
+ * Clamped EWA with the teepee (radial version of the (mexican) "hat"
+ * or "triangle") filter kernel was developed by N. Robidoux and
+ * A. Thyssen with assistance from C. Racette and Frederick
+ * Weinhaus. It is based on methods of Paul Heckbert and Andreas
+ * Gustaffson. The GEGL version, which uses multiple mipmap levels for
+ * speed, was developed by N. Robidoux and A. Turcotte.
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
@@ -134,6 +134,23 @@
  * negative numbers instead of on the left as is the case for floor.
  */
 #define LOHALO_FAST_PSEUDO_FLOOR(x) ( (gint)(x) - ( (x) < 0. ) )
+
+/*
+ * Convenience:
+ */
+#define LOHALO_CALL_EWA_UPDATE(j,i) ewa_update ((j),            \
+						(i),            \
+						c_major_x,	\
+						c_major_y,	\
+						c_minor_x,	\
+						c_minor_y,	\
+						x_0,		\
+						y_0,		\
+						channels,	\
+						row_skip,	\
+						input_bptr,	\
+						&total_weight,	\
+						ewa_newval)
 
 enum
 {
@@ -1018,12 +1035,12 @@ lbb( const gfloat c00,
 }
 
 static inline gfloat
-triangle(const gfloat c_major_x,
-         const gfloat c_major_y,
-         const gfloat c_minor_x,
-         const gfloat c_minor_y,
-         const gfloat s,
-         const gfloat t )
+teepee(const gfloat c_major_x,
+       const gfloat c_major_y,
+       const gfloat c_minor_x,
+       const gfloat c_minor_y,
+       const gfloat s,
+       const gfloat t )
 {
   const gfloat q1 = s * c_major_x + t * c_major_y;
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
@@ -1038,27 +1055,27 @@ triangle(const gfloat c_major_x,
 }
 
 static inline void 
-pixel_update (const gint             j,
-              const gint             i,
-              const gfloat           c_major_x,
-              const gfloat           c_major_y,
-              const gfloat           c_minor_x,
-              const gfloat           c_minor_y,
-              const gfloat           x_0,
-              const gfloat           y_0,
-              const gint             channels,
-              const gint             row_skip,
-              const gfloat* restrict input_bptr,
-                    gfloat* restrict total_weight,
-                    gfloat* restrict ewa_newval)
+ewa_update (const gint             j,
+	    const gint             i,
+	    const gfloat           c_major_x,
+	    const gfloat           c_major_y,
+	    const gfloat           c_minor_x,
+	    const gfloat           c_minor_y,
+	    const gfloat           x_0,
+	    const gfloat           y_0,
+	    const gint             channels,
+	    const gint             row_skip,
+	    const gfloat* restrict input_bptr,
+	    gfloat* restrict total_weight,
+	    gfloat* restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
-  const gfloat weight = triangle(c_major_x,
-                                 c_major_y,
-                                 c_minor_x,
-                                 c_minor_y,
-                                 x_0 - (gfloat) j,
-                                 y_0 - (gfloat) i);
+  const gfloat weight = teepee(c_major_x,
+                   c_major_y,
+                   c_minor_x,
+                   c_minor_y,
+                   x_0 - (gfloat) j,
+                   y_0 - (gfloat) i);
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
   ewa_newval[1] += weight * input_bptr[ skip + 1 ];
@@ -1897,368 +1914,48 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         ewa_newval[1] = 0.0;
         ewa_newval[2] = 0.0;
         ewa_newval[3] = 0.0;
+
         /*
          * First (top) row of the 5x5 context_rect, from left to
          * right:
          */
-        pixel_update_radius (-2,
-                             -2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius (-1,
-                             -2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 0,
-                             -2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 1,
-                             -2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 2,
-                             -2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
+	LOHALO_CALL_EWA_UPDATE(-2,-2);
+	LOHALO_CALL_EWA_UPDATE(-1,-2);
+	LOHALO_CALL_EWA_UPDATE( 0,-2);
+	LOHALO_CALL_EWA_UPDATE( 1,-2);
+	LOHALO_CALL_EWA_UPDATE( 2,-2);
         /*
          * Second row of the 5x5:
          */
-        pixel_update_radius (-2,
-                             -1,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        /*
-         * The central 3x3 block of the 5x5 are always close enough to
-         * be within radius 2.5, so we don't need triangle_radius to
-         * check:
-         */
-        pixel_update (-1,
-                      -1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 0,
-                      -1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 1,
-                      -1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update_radius ( 2,
-                             -1,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
+	LOHALO_CALL_EWA_UPDATE(-2,-1);
+	LOHALO_CALL_EWA_UPDATE(-1,-1);
+	LOHALO_CALL_EWA_UPDATE( 0,-1);
+	LOHALO_CALL_EWA_UPDATE( 1,-1);
+	LOHALO_CALL_EWA_UPDATE( 2,-1);
         /*
          * Third row:
          */
-        pixel_update_radius (-2,
-                              0,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update (-1,
-                       0,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 0,
-                       0,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 1,
-                       0,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update_radius ( 2,
-                              0,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
+	LOHALO_CALL_EWA_UPDATE(-2, 0);
+	LOHALO_CALL_EWA_UPDATE(-1, 0);
+	LOHALO_CALL_EWA_UPDATE( 0, 0);
+	LOHALO_CALL_EWA_UPDATE( 1, 0);
+	LOHALO_CALL_EWA_UPDATE( 2, 0);
         /*
          * Fourth row:
          */
-         pixel_update_radius (-2,
-                              1,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update (-1,
-                       1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 0,
-                       1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update ( 1,
-                       1,
-                      c_major_x,
-                      c_major_y,
-                      c_minor_x,
-                      c_minor_y,
-                      x_0,
-                      y_0,
-                      channels,
-                      row_skip,
-                      input_bptr,
-                      &total_weight,
-                      ewa_newval);
-        pixel_update_radius ( 2,
-                              1,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
+	LOHALO_CALL_EWA_UPDATE(-2, 1);
+	LOHALO_CALL_EWA_UPDATE(-1, 1);
+	LOHALO_CALL_EWA_UPDATE( 0, 1);
+	LOHALO_CALL_EWA_UPDATE( 1, 1);
+	LOHALO_CALL_EWA_UPDATE( 2, 1);
         /*
          * Fifth row of the 5x5 context_rect:
          */
-        pixel_update_radius (-2,
-                              2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius (-1,
-                              2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 0,
-                              2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 1,
-                              2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
-        pixel_update_radius ( 2,
-                              2,
-                             radius,
-                             c_major_x,
-                             c_major_y,
-                             c_minor_x,
-                             c_minor_y,
-                             x_0,
-                             y_0,
-                             channels,
-                             row_skip,
-                             input_bptr,
-                             &total_weight,
-                             ewa_newval);
+	LOHALO_CALL_EWA_UPDATE(-2, 2);
+	LOHALO_CALL_EWA_UPDATE(-1, 2);
+	LOHALO_CALL_EWA_UPDATE( 0, 2);
+	LOHALO_CALL_EWA_UPDATE( 1, 2);
+	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
           const gfloat theta = (gfloat) ( 1. / ellipse_f );
@@ -2286,49 +1983,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
               * If major_mag > 2.5, we pull data from higher level
               * mipmap.
               */
- 
-           /* do */
-           /*   { */
-           /*     const gint y_shift = i_y * row_skip; */
-           /*     gint i_x = left; */
-           /*     do */
-           /*       { */
-           /*         const gint pos = i_x * channels + y_shift; */
-           /*         const gfloat weight = triangle(c_major_x, */
-           /*                                        c_major_y, */
-           /*                                        c_minor_x, */
-          /*                                        c_minor_y, */
-          /*                                        i_x - x_0, */
-          /*                                        i_y - y_0); */
-          /*         total_weight += weight; */
-          /*         ewa_newval[0] += input_bptr[pos  ] * weight; */
-          /*         ewa_newval[1] += input_bptr[pos+1] * weight; */
-          /*         ewa_newval[2] += input_bptr[pos+2] * weight; */
-          /*         ewa_newval[3] += input_bptr[pos+3] * weight; */
-          /*       } while (++i_x<=rite); */
-          /*   } while (++i_y<=bot); */
-
-          /* if (y_0<(gfloat) 0.) */
-          /*   { */
-          /*     /\* */
-          /*      * Sampling point is located above the anchor pixel. */
-          /*      *\/ */
-          /*     if (x_0<(gfloat) 0.) */
-          /*         { */
-          /*           /\* */
-          /*            * Sampling point is located to the left of the */
-          /*            * anchor pixel. */
-          /*            *\/ */
-                  
-          /*         } */
-          /*   } */
-
-          /* const gint left = ceil ( x_0 - radius ); */
-          /* const gint rite = floor( x_0 + radius ); */
-          /* const gint top  = ceil ( y_0 - radius ); */
-          /* const gint bot  = floor( y_0 + radius ); */
-
-          /* gint i_y = top;2 */
 
       /*     { */
       /*       const gfloat theta = (gfloat) ( 1. / ellipse_f ); */
