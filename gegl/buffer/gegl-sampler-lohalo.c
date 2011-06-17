@@ -198,6 +198,7 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
+
 static void inline
 nohalo_subdivision (const gfloat           uno_two,
                     const gfloat           uno_thr,
@@ -635,6 +636,7 @@ nohalo_subdivision (const gfloat           uno_two,
  * the only one used by lohalo.
  */
 
+
 static inline gfloat
 lbb( const gfloat c00,
      const gfloat c10,
@@ -1034,6 +1036,7 @@ lbb( const gfloat c00,
   return newval;
 }
 
+
 static inline gfloat
 teepee(const gfloat c_major_x,
        const gfloat c_major_y,
@@ -1053,6 +1056,7 @@ teepee(const gfloat c_major_x,
     );
   return weight;
 }
+
 
 static inline void 
 ewa_update (const gint             j,
@@ -1082,6 +1086,7 @@ ewa_update (const gint             j,
   ewa_newval[2] += weight * input_bptr[ skip + 2 ];
   ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 }
+
 
 static void
 gegl_sampler_lohalo_get (      GeglSampler* restrict self,
