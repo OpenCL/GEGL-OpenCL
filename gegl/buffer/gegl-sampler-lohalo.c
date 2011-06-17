@@ -1187,7 +1187,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
    * The newval array will contain one computed resampled value per
    * channel:
    */
-  gfloat restrict newval[channels];
+  gfloat newval[channels];
 
   /*
    * First channel:
@@ -1899,7 +1899,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          */
 
         gfloat total_weight = 0.0;
-        gfloat restrict ewa_newval[channels];
+        gfloat ewa_newval[channels];
         ewa_newval[0] = 0.0;
         ewa_newval[1] = 0.0;
         ewa_newval[2] = 0.0;
