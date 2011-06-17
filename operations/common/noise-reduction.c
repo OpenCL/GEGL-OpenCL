@@ -18,8 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (iterations, "Iterations", 1, 200, 5, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
-gegl_chant_double (edge_preservation, "Edge preservation", 0.0, 1.0, 1.00, "Amount of smoothing to do")
+gegl_chant_int (iterations, "Iterations", 1, 200, 6, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
 
 #else
 
@@ -33,25 +32,18 @@ gegl_chant_double (edge_preservation, "Edge preservation", 0.0, 1.0, 1.00, "Amou
 
 /* core code/formulas to be tweaked for the tuning the implementation */
 #define GEN_METRIC(before, center, after) \
-                   POW2((center) * 2 - (before) - (after))
-                   //POW2((center - before) + (center - after))
+                   POW2((center - before) + (center - after))
+                   //POW2((center) * 2 - (before) - (after))
 
 /* Condition used to bail diffusion from a direction */
-#define BAIL_CONDITION(new,original) \
-                        ((new) > (original) + edge_preservation)
+#define BAIL_CONDITION(new,original) ((new) > (original))
 
-/* ~0.00106 .. the range of edge-preservation */
-#define MAX_EDGE_BLEED   (700/65536.0)
-
-/* fetch symmetric entry */
-#define SYMMETRY(a)  (a+4)
 
 static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect,
-                 double               edge_preservation);
+                 const GeglRectangle *dst_rect);
 
 static void prepare (GeglOperation *operation)
 {
@@ -110,8 +102,7 @@ process (GeglOperation       *operation,
       if (iteration == o->iterations-1)
         target = output;
 
-      /* do one iteration of edge preservation */
-      noise_reduction (source, &source_rect, target, &target_rect, o->edge_preservation);
+      noise_reduction (source, &source_rect, target, &target_rect);
     }
 
   if (temp[0])
@@ -126,8 +117,7 @@ static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect,
-                 double               edge_preservation)
+                 const GeglRectangle *dst_rect)
 {
   int c;
   int x,y;
@@ -136,17 +126,20 @@ noise_reduction (GeglBuffer          *src,
   float *dst_buf;
 
   int src_width = src_rect->width;
-  int   rel_offsets[8][2] = {{ -1, -1}, {0, -1},{1, -1},
-                             { -1,  0},         {1,  0},
-                             { -1,  1}, {0, 1}, {1,  1}};
-  int   offsets[8]; /* sizeof(float) offsets for neighbours */
+#define OFFSETS 8
 
-  edge_preservation  *= edge_preservation;
-  edge_preservation  = 1.0-edge_preservation;
-  edge_preservation *= MAX_EDGE_BLEED;
+/* fetch symmetric entry */
+#define SYMMETRY(a)  (a+(OFFSETS/2))
+
+  int   rel_offsets[OFFSETS][2] = {
+                                   { -1, -1}, {0, -1},{1, -1},
+                                   { -1,  0},         {1,  0},
+                                   { -1,  1}, {0, 1}, {1,  1}
+                                  };
+  int   offsets[OFFSETS]; /* sizeof(float) offsets for neighbours */
 
   /* initialize offsets, dependent on source buffer width */
-  for (c = 0; c < 8; c++)
+  for (c = 0; c < OFFSETS; c++)
     offsets[c] = ((rel_offsets[c][0])+((rel_offsets[c][1]) * src_width)) * 4;
 
   src_buf = g_new0 (float, src_rect->width * src_rect->height * 4);
@@ -154,7 +147,6 @@ noise_reduction (GeglBuffer          *src,
 
   gegl_buffer_get (src, 1.0, src_rect, babl_format ("R'G'B'A float"), src_buf,
                    GEGL_AUTO_ROWSTRIDE);
-
 
   offset = 0;
   for (y=0; y<dst_rect->height; y++)
@@ -164,12 +156,12 @@ noise_reduction (GeglBuffer          *src,
         {
           for (c=0; c<3; c++)
             {
-              float  original_metric[4];
+              float  original_metric[OFFSETS];
               int    dir;
               float  sum;
               int    count;
 
-              for (dir = 0; dir < 4; dir++)
+              for (dir = 0; dir < OFFSETS/2; dir++)
                 {  /* initialize original metrics for the horizontal, vertical and 2 diagonal
                     * metrics
                     */
@@ -184,15 +176,18 @@ noise_reduction (GeglBuffer          *src,
               count = 1;
 
               /* try smearing in data from each of the 8 neighbours */
-              for (dir = 0; dir < 8; dir++)
+              for (dir = 0; dir < OFFSETS; dir++)
                 {
-                  float *pix    = center_pix + offsets[dir];
-                  float  value = pix[c];
+                  float *pix   = center_pix + offsets[dir];
+                  float  value = pix[c] * 0.5 + center_pix[c] * 0.5;
+                  /* ... assumption for magic number 0.2, assume that each
+                   * direction contributes on average 0.2
+                     thus that seems like a reasonable value to check with.. */
                   int    comparison_dir;
                   gboolean valid = TRUE; /* if diffusion from this direction
                                           * should be made
                                           */
-                  for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
+                  for (comparison_dir = 0; comparison_dir < OFFSETS/2; comparison_dir++)
                     if (G_LIKELY (comparison_dir != dir))
                       {
                         float *before_pix = center_pix + offsets[comparison_dir];
@@ -210,8 +205,8 @@ noise_reduction (GeglBuffer          *src,
                       }
                   if (valid)
                     {
-                      sum += value;  /* accumulate value */
-                      count ++;      /* increase denominator */
+                      sum += value;   /* accumulate value */
+                      count ++;       /* increase denominator */
                     }
                 }
               dst_buf[offset*4+c] = sum / count; /* write back the average of center pixel
@@ -232,6 +227,17 @@ noise_reduction (GeglBuffer          *src,
   g_free (dst_buf);
 }
 
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
+                                                                     "input");
+  if (!in_rect)
+    return result;
+  return *in_rect;
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -243,6 +249,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process   = process;
   operation_class->prepare = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
 
   operation_class->name        = "gegl:noise-reduction";
   operation_class->categories  = "enhance";
