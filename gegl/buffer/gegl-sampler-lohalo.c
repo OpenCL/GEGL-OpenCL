@@ -27,13 +27,17 @@
  * Nohalo and monotone interpolation was performed by C. Racette and
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
  * A. Turcotte and Eric Daoust during Google Summer of Code 2009, and
- * was initiated in 2009 by N. Robidoux, A. Turcotte, J. Cupitt,
- * Minglun Gong and Kirk Martinez.
+ * is based on 2009 work by N. Robidoux, A. Turcotte, J. Cupitt,
+ * Minglun Gong and Kirk Martinez. The "better image resampling"
+ * project was started by M. Gong, N. Robidoux and A. Turcotte in
+ * 2007.
  *
- * Clamped EWA with the triangle ("hat" function) filter was developed
- * by N. Robidoux and A. Thyssen with assistance from C. Racette and
- * Frederick Weinhaus. It is based on methods of Paul Heckbert and
- * Andreas Gustaffson.
+ * Clamped EWA with the triangle ("hat" or "teepee") filter was
+ * developed by N. Robidoux and A. Thyssen with assistance from
+ * C. Racette and Frederick Weinhaus. It is based on methods of Paul
+ * Heckbert and Andreas Gustaffson. The GEGL version, which uses
+ * multiple mipmap levels for speed, was developed by N. Robidoux and
+ * A. Turcotte.
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
