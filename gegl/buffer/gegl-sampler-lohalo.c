@@ -41,7 +41,10 @@
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
- * Discovery Grant awarded to him (298424--2004).
+ * Discovery Grant awarded to him (298424--2004). This, together with
+ * M. Gong's own Discovery grant and A. Turcotte's NSERC USRA
+ * (Undergraduate Summer Research Assistantchip) funded the very
+ * earliest stages of this project.
  *
  * C. Racette's image resampling research and programming funded in
  * part by a NSERC Discovery Grant awarded to Julien Dompierre
