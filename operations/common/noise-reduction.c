@@ -18,7 +18,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (iterations, "Iterations", 1, 50, 5, "Number of iterations, more iterations takes longer time but might also make the image less noisy.")
+gegl_chant_int (iterations, "Iterations", 1, 200, 5, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
+gegl_chant_double (edge_preservation, "Edge preservation", 0.0, 1.0, 1.00, "Amount of smoothing to do")
 
 #else
 
@@ -28,11 +29,29 @@ gegl_chant_int (iterations, "Iterations", 1, 50, 5, "Number of iterations, more 
 #include "gegl-chant.h"
 #include <math.h>
 
+#define POW2(a) ((a)*(a))
+
+/* core code/formulas to be tweaked for the tuning the implementation */
+#define GEN_METRIC(before, center, after) \
+                   POW2((center) * 2 - (before) - (after))
+                   //POW2((center - before) + (center - after))
+
+/* Condition used to bail diffusion from a direction */
+#define BAIL_CONDITION(new,original) \
+                        ((new) > (original) + edge_preservation)
+
+/* ~0.00106 .. the range of edge-preservation */
+#define MAX_EDGE_BLEED   (700/65536.0)
+
+/* fetch symmetric entry */
+#define SYMMETRY(a)  (a+4)
+
 static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect);
+                 const GeglRectangle *dst_rect,
+                 double               edge_preservation);
 
 static void prepare (GeglOperation *operation)
 {
@@ -69,8 +88,10 @@ process (GeglOperation       *operation,
       GeglRectangle source_rect;
       GeglRectangle target_rect;
 
+      /* compute extent of rectangles needed for this iteration,
+       * minimizing the work neccesary to do
+       */
       target_rect = *result;
-
       target_rect.x      -= (o->iterations-iteration-1);
       target_rect.y      -= (o->iterations-iteration-1);
       target_rect.width  += (o->iterations-iteration-1)*2;
@@ -88,7 +109,9 @@ process (GeglOperation       *operation,
         source = input;
       if (iteration == o->iterations-1)
         target = output;
-      noise_reduction (source, &source_rect, target, &target_rect);
+
+      /* do one iteration of edge preservation */
+      noise_reduction (source, &source_rect, target, &target_rect, o->edge_preservation);
     }
 
   if (temp[0])
@@ -103,7 +126,8 @@ static void
 noise_reduction (GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect)
+                 const GeglRectangle *dst_rect,
+                 double               edge_preservation)
 {
   int c;
   int x,y;
@@ -117,6 +141,10 @@ noise_reduction (GeglBuffer          *src,
                              { -1,  1}, {0, 1}, {1,  1}};
   int   offsets[8]; /* sizeof(float) offsets for neighbours */
 
+  edge_preservation  *= edge_preservation;
+  edge_preservation  = 1.0-edge_preservation;
+  edge_preservation *= MAX_EDGE_BLEED;
+
   /* initialize offsets, dependent on source buffer width */
   for (c = 0; c < 8; c++)
     offsets[c] = ((rel_offsets[c][0])+((rel_offsets[c][1]) * src_width)) * 4;
@@ -127,8 +155,6 @@ noise_reduction (GeglBuffer          *src,
   gegl_buffer_get (src, 1.0, src_rect, babl_format ("R'G'B'A float"), src_buf,
                    GEGL_AUTO_ROWSTRIDE);
 
-#define POW2(a) ((a)*(a))
-#define SYMMETRY_PIXEL(a)  ((a+4)%8)
 
   offset = 0;
   for (y=0; y<dst_rect->height; y++)
@@ -138,83 +164,63 @@ noise_reduction (GeglBuffer          *src,
         {
           for (c=0; c<3; c++)
             {
-              float  result_sum = center_pix[c];
-              int    count = 1;
-              float  original_gradient[4];
+              float  original_metric[4];
               int    dir;
+              float  sum;
+              int    count;
 
               for (dir = 0; dir < 4; dir++)
-                {  /* initialize original gradients */
-                  float *cpix  = center_pix + offsets[dir];
-                  float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(dir)];
-                  original_gradient[dir] = POW2((center_pix[c] - cpix[c]) + (center_pix[c] - cpixb[c]));
+                {  /* initialize original metrics for the horizontal, vertical and 2 diagonal
+                    * metrics
+                    */
+                  float *before_pix  = center_pix + offsets[dir];
+                  float *after_pix   = center_pix + offsets[SYMMETRY(dir)];
+
+                  original_metric[dir] =
+                    GEN_METRIC (before_pix[c], center_pix[c], after_pix[c]);
                 }
+
+              sum = center_pix[c];
+              count = 1;
 
               /* try smearing in data from each of the 8 neighbours */
               for (dir = 0; dir < 8; dir++)
                 {
                   float *pix    = center_pix + offsets[dir];
-                  float  result = (pix[c] + center_pix[c]) * 0.5;
+                  float  value = pix[c];
                   int    comparison_dir;
-                  gboolean valid = TRUE;
-
+                  gboolean valid = TRUE; /* if diffusion from this direction
+                                          * should be made
+                                          */
                   for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
                     if (G_LIKELY (comparison_dir != dir))
                       {
-                        float *cpix  = center_pix + offsets[comparison_dir];
-                        float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
-                        float  new_gradient = POW2((result - cpix[c]) + (result - cpixb[c]));
+                        float *before_pix = center_pix + offsets[comparison_dir];
+                        float *after_pix = center_pix + offsets[SYMMETRY(comparison_dir)];
+                        float  new_metric =
+                          GEN_METRIC (before_pix[c], value, after_pix[c]);
 
-                        if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
-                          { /* The 2nd order derivative increased, use original value instead */
+
+                        if (G_UNLIKELY (BAIL_CONDITION(new_metric,
+                                                       original_metric[comparison_dir])))
+                          { /* bail condition */
                             valid = FALSE;
                             break;
                           }
                       }
                   if (valid)
                     {
-                      count ++;
-                      result_sum += result;
+                      sum += value;  /* accumulate value */
+                      count ++;      /* increase denominator */
                     }
                 }
-
-              /* Do a run with smearing across the pixel, ignoring center pixel,
-                 XXX: mostly repeating the code block above, apart from the criterium
-                 for how to blur
-               */
-              for (dir = 0; dir < 4; dir++)
-                {
-                  float *pix     = center_pix + offsets[dir];
-                  float *pixb    = center_pix + offsets[SYMMETRY_PIXEL(dir)];
-                  float  result = (pix[c] + pixb[c]) /2;
-                  int    comparison_dir;
-                  gboolean valid = TRUE;
-
-                  for (comparison_dir = 0; comparison_dir < 4; comparison_dir++)
-                    if (G_LIKELY (comparison_dir != dir))
-                      {
-                        float *cpix  = center_pix + offsets[comparison_dir];
-                        float *cpixb = center_pix + offsets[SYMMETRY_PIXEL(comparison_dir)];
-                        float  new_gradient = POW2((result - cpix[c]) + (result - cpixb[c]));
-
-                        if (G_UNLIKELY (new_gradient > original_gradient[comparison_dir]))
-                          { /* The 2nd order derivative increased, use original value instead */
-                            valid = FALSE;
-                            break;
-                          }
-                      }
-                  if (valid)
-                    {
-                      count += 2;  /* give such an average a high weight, since it seemingly
-                                      would be a smoothing that cancels out an original center pixel
-                                    */
-                      result_sum += result * 2;
-                    }
-                }
-
-              dst_buf[offset*4+c] = result_sum / count;
+              dst_buf[offset*4+c] = sum / count; /* write back the average of center pixel
+                                                    and all pixels that would be valid to
+                                                    replace the center pixel with while
+                                                    continuing to fulfil our criteria.
+                                                  */
             }
-          dst_buf[offset*4+3] = center_pix[3]; /* copy alpha */
+          dst_buf[offset*4+3] = center_pix[3]; /* copy alpha unmodified */
           offset++;
           center_pix += 4;
         }
