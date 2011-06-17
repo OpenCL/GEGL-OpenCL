@@ -1873,6 +1873,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         /*
          * The square of the distance to the key location in output
          * place of a point [s,t] in input space is the square root of
+	 *
          * ( s * c_major_x + t * c_major_y )^2
          * +
          * ( s * c_minor_x + t * c_minor_y )^2.
