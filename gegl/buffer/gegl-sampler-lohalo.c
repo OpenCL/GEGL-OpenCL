@@ -18,6 +18,14 @@
  * Anthony Thyssen, John Cupitt and Øyvind Kolås.
  */
 /*
+ * IMPORTANT NOTE: This version gives quality downsampling results
+ * only down to about 1/5. (It works, but it becomes increasingly like
+ * nearest neighbour.)
+ *
+ * TO DO: Use multiple mipmap levels when downsampling by more than
+ * about 60%.
+ */
+/*
  * Credits and thanks:
  *
  * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
