@@ -1071,11 +1071,11 @@ ewa_update (const gint             j,
 {
   const gint skip = j * channels + i * row_skip;
   const gfloat weight = teepee(c_major_x,
-                   c_major_y,
-                   c_minor_x,
-                   c_minor_y,
-                   x_0 - (gfloat) j,
-                   y_0 - (gfloat) i);
+			       c_major_y,
+			       c_minor_x,
+			       c_minor_y,
+			       x_0 - (gfloat) j,
+			       y_0 - (gfloat) i);
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
   ewa_newval[1] += weight * input_bptr[ skip + 1 ];
