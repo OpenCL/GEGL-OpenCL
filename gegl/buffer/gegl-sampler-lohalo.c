@@ -1955,7 +1955,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         {
           const gfloat theta = (gfloat) ( 1. / ellipse_f );
  
-          // if (major_mag <= (gdouble) 2.5)
+          // if THE DATA WE NEED FITS WITHIN THE ONE WE ACCESSED
           //  {
               const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
               newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
