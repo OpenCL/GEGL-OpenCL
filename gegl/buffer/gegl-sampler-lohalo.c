@@ -28,23 +28,27 @@
 /*
  * Credits and thanks:
  *
- * Nohalo with LBB finishing scheme was developed by Nicolas Robidoux
- * and Chantal Racette of the Department of Mathematics and Computer
- * Science of Laurentian University in the course of C. Racette's
- * Masters thesis in Computational Sciences. Preliminary work on
- * Nohalo and monotone interpolation was performed by C. Racette and
- * N. Robidoux in the course of her honours thesis, by N. Robidoux,
- * A. Turcotte and Eric Daoust during Google Summer of Code 2009, and
- * is based on 2009 work by N. Robidoux, A. Turcotte, J. Cupitt,
- * Minglun Gong and Kirk Martinez. The Better Image Resampling Project
- * was started by Minglun Gong, N. Robidoux and A. Turcotte in 2007.
+ * Jacobian adaptive resampling was developed by N. Robidoux and
+ * A. Turcotte of the Department of Mathematics and Computer Science
+ * of Laurentian University in the course of A. Turcotte's masters
+ * thesis in Computational Sciences.
+ *
+ * Nohalo with LBB finishing scheme was developed by N. Robidoux and
+ * C. Racette of the Department of Mathematics and Computer Science of
+ * Laurentian University in the course of C. Racette's masters thesis
+ * in Computational Sciences. Preliminary work on Nohalo and monotone
+ * interpolation was performed by C. Racette and N. Robidoux in the
+ * course of her honours thesis, by N. Robidoux, A. Turcotte and Eric
+ * Daoust during Google Summer of Code 2009, and is based on 2009 work
+ * by N. Robidoux, A. Turcotte, J. Cupitt, Minglun Gong and Kirk
+ * Martinez. The Better Image Resampling Project was started by
+ * Minglun Gong, A. Turcotte and N. Robidoux in 2007.
  *
  * Clamped EWA with the teepee (radial version of the (mexican) "hat"
  * or "triangle") filter kernel was developed by N. Robidoux and
  * A. Thyssen with assistance from C. Racette and Frederick
- * Weinhaus. It is based on methods of Paul Heckbert and Andreas
- * Gustaffson. The GEGL version, which uses multiple mipmap levels for
- * speed, was developed by N. Robidoux and A. Turcotte.
+ * Weinhaus. It is based on methods of Paul Heckbert, Andreas
+ * Gustaffson and others.
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
@@ -61,14 +65,14 @@
  * A. Turcotte's image resampling research on reduced halo methods and
  * jacobian adaptive methods funded in part by an OGS (Ontario
  * Graduate Scholarship) and an NSERC Alexander Graham Bell Canada
- * Graduate Scholarhip awarded to him and by a Google Summer of Code
- * 2010 award awarded to GIMP (Gnu Image Manipulation Program).
+ * Graduate Scholarhip awarded to him and by GSoC (Google Summer of
+ * Code) 2010 funding awarded to GIMP (Gnu Image Manipulation
+ * Program).
  *
- * E. Daoust's image resampling programming was funded by a Google
- * Summer of Code 2010 award awarded to GIMP.
+ * E. Daoust's image resampling programming was funded by GSoC 2010
+ * funding awarded to GIMP.
  *
- * N. Robidoux thanks Geert Jordaens, Ralf Meyer and Sven Neumann for
- * useful comments and code, and his co-authors and students.
+ * N. Robidoux thanks Ralf Meyer and Sven Neumann for useful comments.
  */
 
 /*
@@ -630,7 +634,7 @@ nohalo_subdivision (const gfloat           uno_two,
  *
  * LBB was developed by Nicolas Robidoux and Chantal Racette of the
  * Department of Mathematics and Computer Science of Laurentian
- * University in the course of Chantal's Masters Thesis in
+ * University in the course of Chantal's masters Thesis in
  * Computational Sciences.
  */
 
