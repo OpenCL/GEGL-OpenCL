@@ -32,9 +32,6 @@ testsuffix = .sh
 TESTS = \
   run-clones.xml.sh                    \
   run-composite-transform.xml.sh       \
-  run-downsharptest-broken.xml.sh      \
-  run-downsizetest-broken.xml.sh       \
-  run-downsmoothtest-broken.xml.sh     \
   run-edge-laplace-broken.xml.sh       \
   run-edge-sobel.xml.sh                \
   run-fattal02.xml.sh                  \
@@ -50,10 +47,7 @@ TESTS = \
   run-rgbe-save.xml.sh                 \
   run-rotate.xml.sh                    \
   run-simple-scale.xml.sh              \
-  run-transform.xml.sh                 \
-  run-upsharptest.xml.sh               \
-  run-upsizetest.xml.sh                \
-  run-upsmoothtest.xml.sh
+  run-transform.xml.sh
 
 # Conditional tests
 if HAVE_JASPER
