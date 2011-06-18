@@ -171,8 +171,8 @@
 /*   )                                              */
 
 /*
- * Macros set up so that I can put the likely winner in the first
- * argument (forward branch likely etc):
+ * Macros set up so the likely winner in in the first argument
+ * (forward branch likely etc):
  */
 #define LOHALO_MIN(x,y) ( ( (x) <= (y) ) ? (x) : (y) )
 #define LOHALO_MAX(x,y) ( ( (x) >= (y) ) ? (x) : (y) )
@@ -1883,14 +1883,14 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
         const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
         /*
-         * The following selects the largest row of n-s1^2 I as the
-         * one which is used to find the eigenvector. If both s1^2-n11
-         * and s1^2-n22 are zero, n-s1^2 I is the zero matrix.  In
-         * that case, any vector is an eigenvector; in addition, norm
-         * below is equal to zero, and, in exact arithmetic, this is
-         * the only case in which norm = 0. So, setting u1 to the
-         * simple but arbitrary vector [1,0] if norm = 0 safely takes
-         * care of all cases.
+         * The following selects the largest row of n-s1^2 I ("I"
+         * being the 2x2 identity matrix) as the one which is used to
+         * find the eigenvector. If both s1^2-n11 and s1^2-n22 are
+         * zero, n-s1^2 I is the zero matrix.  In that case, any
+         * vector is an eigenvector; in addition, norm below is equal
+         * to zero, and, in exact arithmetic, this is the only case in
+         * which norm = 0. So, setting u1 to the simple but arbitrary
+         * vector [1,0] if norm = 0 safely takes care of all cases.
          */
         const gdouble temp_u11 =
           (
@@ -2027,7 +2027,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         {
           const gfloat theta = (gfloat) ( 1. / ellipse_f );
  
-          // if THE DATA WE NEED FITS WITHIN THE DATA WE ACCESSED (BOUNDING BOX)
+          // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
           //  {
               const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
               newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
