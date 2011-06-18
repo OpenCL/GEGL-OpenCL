@@ -36,9 +36,8 @@
  * N. Robidoux in the course of her honours thesis, by N. Robidoux,
  * A. Turcotte and Eric Daoust during Google Summer of Code 2009, and
  * is based on 2009 work by N. Robidoux, A. Turcotte, J. Cupitt,
- * Minglun Gong and Kirk Martinez. The "better image resampling"
- * project was started by M. Gong, N. Robidoux and A. Turcotte in
- * 2007.
+ * Minglun Gong and Kirk Martinez. The Better Image Resampling Project
+ * was started by Minglun Gong, N. Robidoux and A. Turcotte in 2007.
  *
  * Clamped EWA with the teepee (radial version of the (mexican) "hat"
  * or "triangle") filter kernel was developed by N. Robidoux and
@@ -89,32 +88,76 @@
 #include "gegl-sampler-lohalo.h"
 
 /*
- * LOHALO_MINMOD is an implementation of the minmod function which only
- * needs two conditional moves. LOHALO_MINMOD(a,b,a_times_a,a_times_b)
- * "returns" minmod(a,b). The parameter ("input") a_times_a is assumed
- * to contain the square of a; a_times_b, the product of a and b.
- *
- * This version is most suitable for images with flat (constant)
- * colour areas, since a, which is a pixel difference, will often be
- * 0, in which case both forward branches are likely.
+ * LOHALO_MINMOD is an implementation of the minmod function which
+ * only needs two "conditional moves."
+ * LOHALO_MINMOD(a,b,a_times_a,a_times_b) "returns"
+ * minmod(a,b). The macro parameter ("input") a_times_a is assumed to
+ * contain the square of a; a_times_b, the product of a and b.
  *
  * For uncompressed natural images in high bit depth (images for which
  * the slopes a and b are unlikely to be equal to zero or be equal to
- * each other), we recommend using
+ * each other), or chips with good branch prediction, we recommend
+ * using
  *
  * ( (a_times_b)>=0. ? 1. : 0. ) * ( (a_times_b)<(a_times_a) ? (b) : (a) )
  *
- * instead. With this second version, the forward branch of the second
- * conditional move is taken when |b|>|a| and when a*b<0. However, the
- * "else" branch is taken when a=0 (or when a=b), which is why the
- * above version is not recommended for images with regions with
- * constant pixel values (or regions with pixel values which vary
+ * or
+ *
+ * ( (a_times_b)>=0. ? ( (a_times_b)<(a_times_a) ? (b) : (a) ) : 0. )
+ *
+ * In the above versions, the forward branch of the second conditional
+ * move is taken when |b|>|a| and when a*b<0. However, the "else"
+ * branch is taken when a=0 (or when a=b), which is why the above
+ * versions are not as effective for images with regions with constant
+ * pixel values (or regions with pixel values which vary linearly or
  * bilinearly).
+ *
+ * The following versions are more suitable for images with flat
+ * (constant) colour areas, since a, which is a pixel difference, will
+ * often be 0, in which case both forward branches are likely. They
+ * may be preferable for chips with bad branch prediction.
+ *
+ * ( ( (a_times_b)>=0. ) ? 1. : 0. )
+ * *
+ * ( ( (a_times_a)<=(a_times_b) ) ? (a) : (b) )
+ *
+ * or
+ *
+ * ( (a_times_b)>=0. ? ( (a_times_a)<=(a_times_b) ? (a) : (b) ) : 0. )
+ *
+ * The first variants of both versions, which add one multiplication,
+ * may be faster for compilers which replace nested "conditional
+ * moves" by branches.
  */
 #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
-  ( ( (a_times_b) >= (gfloat) 0. ) ? (gfloat) 1. : (gfloat) 0. ) \
-  * \
-  ( ( (a_times_a) <= (a_times_b) ) ? (a) : (b) )
+  (                                            \
+    (a_times_b)>=(gfloat) 0.                   \
+    ?                                          \
+    ( (a_times_b)<(a_times_a) ? (b) : (a) )    \
+    :                                          \
+    (gfloat) 0.                                \
+  )
+
+/* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b)      \ */
+/*   (                                                 \ */
+/*     ( (a_times_b)>=0. ? (gfloat) 1. : (gfloat) 0. ) \ */
+/*     *                                               \ */
+/*     ( (a_times_b)<(a_times_a) ? (b) : (a) )         \ */
+/*   )                                                   */
+
+/* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b)	      \ */
+/*   ( (a_times_b)>=(gfloat) 0. ? (gfloat) 1. : (gfloat) 0. ) \ */
+/*   *							      \ */
+/*   ( (a_times_a)<=(a_times_b) ? (a) : (b) )                   */
+
+/* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \ */
+/*   (                                            \ */
+/*     ( (a_times_b)>=(gfloat) 0. )               \ */
+/*     ?                                          \ */
+/*     ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \ */
+/*     :                                          \ */
+/*     (gfloat) 0.                                \ */
+/*   )                                              */
 
 /*
  * Macros set up so that I can put the likely winner in the first
