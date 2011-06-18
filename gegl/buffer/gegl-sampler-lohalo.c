@@ -17,26 +17,39 @@
  * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
  * Anthony Thyssen, John Cupitt and Øyvind Kolås.
  */
+
 /*
- * WARNING: This version gives quality downsampling results only down
- * to about 1/5. Beyond that, it works, but it does not average over
- * enough pixels to sufficiently antialias.
+ * ==============
+ * LOHALO SAMPLER
+ * ==============
+ */
+
+/*
+ * The Lohalo ("Low Halo") sampler is a Jacobian-adaptive blend of
+ * LBB-Nohalo (Nohalo subdivision with Locally Bounded Bicubic final
+ * interpolation) and Clamped EWA (Elliptical Weighted Averaging)
+ * filtering with the "teepee" (radial tent, that is, conical) kernel.
+ *
+ * WARNING: This version of Lohalo gives quality downsampling results
+ * only down to about 1/5. Beyond that, it works, but it does not
+ * average over enough pixels to perform sufficient antialiasing.
  *
  * TO DO: Use multiple mipmap levels when downsampling by more than
  * about 60%.
  */
+
 /*
  * Credits and thanks:
  *
  * Jacobian adaptive resampling was developed by N. Robidoux and
  * A. Turcotte of the Department of Mathematics and Computer Science
- * of Laurentian University in the course of A. Turcotte's masters
- * thesis in Computational Sciences.
+ * of Laurentian University in the course of A. Turcotte's Masters in
+ * Computational Sciences.
  *
  * Nohalo with LBB finishing scheme was developed by N. Robidoux and
  * C. Racette of the Department of Mathematics and Computer Science of
- * Laurentian University in the course of C. Racette's masters thesis
- * in Computational Sciences. Preliminary work on Nohalo and monotone
+ * Laurentian University in the course of C. Racette's Masters in
+ * Computational Sciences. Preliminary work on Nohalo and monotone
  * interpolation was performed by C. Racette and N. Robidoux in the
  * course of her honours thesis, by N. Robidoux, A. Turcotte and Eric
  * Daoust during Google Summer of Code 2009, and is based on 2009 work
@@ -73,12 +86,6 @@
  * funding awarded to GIMP.
  *
  * N. Robidoux thanks Ralf Meyer and Sven Neumann for useful comments.
- */
-
-/*
- * ==============
- * LOHALO SAMPLER
- * ==============
  */
 
 #include "config.h"
@@ -634,8 +641,8 @@ nohalo_subdivision (const gfloat           uno_two,
  *
  * LBB was developed by Nicolas Robidoux and Chantal Racette of the
  * Department of Mathematics and Computer Science of Laurentian
- * University in the course of Chantal's masters Thesis in
- * Computational Sciences.
+ * University in the course of Chantal's Masters in Computational
+ * Sciences.
  */
 
 /*
