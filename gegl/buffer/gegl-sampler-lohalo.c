@@ -110,7 +110,7 @@
  * branch is taken when a=0 (or when a=b), which is why the above
  * versions are not as effective for images with regions with constant
  * pixel values (or regions with pixel values which vary linearly or
- * bilinearly, since we apply minmod to pairs of slopes).
+ * bilinearly) since we apply minmod to pairs of slopes.
  *
  * The following versions are more suitable for images with flat
  * (constant) colour areas, since a, which is a pixel difference, will
