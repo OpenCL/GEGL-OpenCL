@@ -85,8 +85,8 @@
  * E. Daoust's image resampling programming was funded by GSoC 2010
  * funding awarded to GIMP.
  *
- * N. Robidoux thanks Ralf Meyer, Craig DeForest and Sven Neumann for
- * useful comments.
+ * N. Robidoux thanks Ralf Meyer, Geert Jordaens, Craig DeForest and
+ * Sven Neumann for useful comments.
  */
 
 #include "config.h"
