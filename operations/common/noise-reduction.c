@@ -18,7 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (iterations, "Iterations", 1, 200, 6, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
+gegl_chant_int (iterations, "Iterations", 1, 32, 5, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
 
 #else
 
@@ -129,7 +129,7 @@ noise_reduction (GeglBuffer          *src,
 #define OFFSETS 8
 
 /* fetch symmetric entry */
-#define SYMMETRY(a)  (a+(OFFSETS/2))
+#define SYMMETRY(a)  (OFFSETS - a - 1)
 
   int   rel_offsets[OFFSETS][2] = {
                                    { -1, -1}, {0, -1},{1, -1},
