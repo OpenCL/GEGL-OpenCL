@@ -70,17 +70,17 @@
  * (Undergraduate Summer Research Assistantchip) funded the very
  * earliest stages of this project.
  *
- * C. Racette's image resampling research and programming funded in
- * part by a NSERC Discovery Grant awarded to Julien Dompierre
- * (20-61098) and by a NSERC Alexander Graham Bell Canada Graduate
- * Scholarship awarded to her.
- *
  * A. Turcotte's image resampling research on reduced halo methods and
  * jacobian adaptive methods funded in part by an OGS (Ontario
  * Graduate Scholarship) and an NSERC Alexander Graham Bell Canada
  * Graduate Scholarhip awarded to him and by GSoC (Google Summer of
  * Code) 2010 funding awarded to GIMP (Gnu Image Manipulation
  * Program).
+ *
+ * C. Racette's image resampling research and programming funded in
+ * part by a NSERC Discovery Grant awarded to Julien Dompierre
+ * (20-61098) and by a NSERC Alexander Graham Bell Canada Graduate
+ * Scholarship awarded to her.
  *
  * E. Daoust's image resampling programming was funded by GSoC 2010
  * funding awarded to GIMP.
