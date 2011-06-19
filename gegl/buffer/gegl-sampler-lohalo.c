@@ -1203,8 +1203,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   const gfloat x_0 = absolute_x - ix_0;
   const gfloat y_0 = absolute_y - iy_0;
 
-  const gint sign_of_x_0 = 2 * ( x_0 >= (gdouble) 0. ) - 1;
-  const gint sign_of_y_0 = 2 * ( y_0 >= (gdouble) 0. ) - 1;
+  const gint sign_of_x_0 = 2 * ( x_0 >= (gfloat) 0. ) - 1;
+  const gint sign_of_y_0 = 2 * ( y_0 >= (gfloat) 0. ) - 1;
 
   const gint shift_forw_1_pix = sign_of_x_0 * channels;
   const gint shift_forw_1_row = sign_of_y_0 * row_skip;
@@ -2045,11 +2045,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
-          const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
+	  const gfloat theta_gdouble = (gdouble) 1. / ellipse_f;
  
           // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
           //  {
-              const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
+              const gfloat ewa_factor = ( 1. - theta_gdouble ) / total_weight;
+	      const gfloat theta = (gfloat) theta_double;
               newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
               newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
               newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
