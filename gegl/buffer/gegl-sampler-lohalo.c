@@ -26,7 +26,7 @@
 
 /*
  * The Lohalo ("Low Halo") sampler is a Jacobian-adaptive blend of
- * LBB-Nohalo (Nohalo subdivision with Locally Bounded Bicubic final
+ * LBB-Nohalo (Nohalo subdivision with Locally Bounded Bicubic
  * interpolation) and Clamped EWA (Elliptical Weighted Averaging)
  * filtering with the "teepee" (radial tent, that is, conical) kernel.
  *
@@ -59,9 +59,9 @@
  *
  * Clamped EWA with the teepee (radial version of the (mexican) "hat"
  * or "triangle") filter kernel was developed by N. Robidoux and
- * A. Thyssen with assistance from C. Racette and Frederick
- * Weinhaus. It is based on methods of Paul Heckbert, Andreas
- * Gustaffson and others.
+ * A. Thyssen the assistance of C. Racette and Frederick Weinhaus. It
+ * is based on methods of Paul Heckbert, Andreas Gustaffson and
+ * others.
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
@@ -85,7 +85,8 @@
  * E. Daoust's image resampling programming was funded by GSoC 2010
  * funding awarded to GIMP.
  *
- * N. Robidoux thanks Ralf Meyer and Sven Neumann for useful comments.
+ * N. Robidoux thanks Ralf Meyer, Craig DeForest and Sven Neumann for
+ * useful comments.
  */
 
 #include "config.h"
@@ -97,6 +98,7 @@
 #include "gegl-buffer-private.h"
 
 #include "gegl-sampler-lohalo.h"
+
 
 /*
  * LOHALO_MINMOD is an implementation of the minmod function which
@@ -170,6 +172,7 @@
 /*     (gfloat) 0.                                \ */
 /*   )                                              */
 
+
 /*
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
@@ -200,8 +203,9 @@
  */
 #define LOHALO_FAST_PSEUDO_FLOOR(x) ( (gint)(x) - ( (x) < 0. ) )
 
+
 /*
- * Convenience:
+ * Convenience macro:
  */
 #define LOHALO_CALL_EWA_UPDATE(j,i) ewa_update ((j),            \
 						(i),            \
@@ -217,26 +221,31 @@
 						&total_weight,	\
 						ewa_newval)
 
+
 enum
 {
   PROP_0,
   PROP_LAST
 };
 
+
 static void gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                      const gdouble               absolute_x,
                                      const gdouble               absolute_y,
                                            void*        restrict output);
+
 
 static void set_property (      GObject*    gobject,
                                 guint       property_id,
                           const GValue*     value,
                                 GParamSpec* pspec);
 
+
 static void get_property (GObject*    gobject,
                           guint       property_id,
                           GValue*     value,
                           GParamSpec* pspec);
+
 
 G_DEFINE_TYPE (GeglSamplerLohalo, gegl_sampler_lohalo, GEGL_TYPE_SAMPLER)
 
@@ -249,6 +258,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   object_class->get_property = get_property;
   sampler_class->get = gegl_sampler_lohalo_get;
 }
+
 
 #define LOHALO_CONTEXT_RECT_SIZE 5
 #define LOHALO_CONTEXT_RECT_SHIFT ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE) ) / 2 )
@@ -625,82 +635,6 @@ nohalo_subdivision (const gfloat           uno_two,
   *qua_fou_1 =        qua_fou;
 }
 
-/*
- * LBB (Locally Bounded Bicubic) is a high quality nonlinear variant
- * of Catmull-Rom. Images resampled with LBB have much smaller halos
- * than images resampled with windowed sincs or other interpolatory
- * cubic spline filters. Specifically, LBB halos are narrower and the
- * over/undershoot amplitude is smaller. This is accomplished without
- * a significant reduction in the smoothness of the result (compared
- * to Catmull-Rom).
- *
- * Another important property is that the resampled values are
- * contained within the range of nearby input values. Consequently, no
- * final clamping is needed to stay "in range" (e.g., 0-255 for
- * standard 8-bit images).
- *
- * LBB was developed by Nicolas Robidoux and Chantal Racette of the
- * Department of Mathematics and Computer Science of Laurentian
- * University in the course of Chantal's Masters in Computational
- * Sciences.
- */
-
-/*
- * LBB is a novel method with the following properties:
- *
- * --LBB is a Hermite bicubic method: The bicubic surface is defined,
- *   one convex hull of four nearby input points at a time, using four
- *   point values, four x-derivatives, four y-derivatives, and four
- *   cross-derivatives.
- *
- * --The stencil for values in a square patch is the usual 4x4.
- *
- * --LBB is interpolatory.
- *
- * --It is C^1 with continuous cross derivatives.
- *
- * --When the limiters are inactive, LBB gives the same results as
- *   Catmull-Rom.
- *
- * --When used on binary images, LBB gives results similar to bicubic
- *   Hermite with all first derivatives---but not necessarily the
- *   cross derivatives--at the input pixel locations set to zero.
- *
- * --The LBB reconstruction is locally bounded: Over each square
- *   patch, the surface is contained between the minimum and the
- *   maximum values among the 16 nearest input pixel values (those in
- *   the stencil).
- *
- * --Consequently, the LBB reconstruction is globally bounded between
- *   the very smallest input pixel value and the very largest input
- *   pixel value. (It is not necessary to clamp results.)
- *
- * The LBB method is based on the method of Ken Brodlie, Petros
- * Mashwama and Sohail Butt for constraining Hermite interpolants
- * between globally defined planes:
- *
- *   Visualization of surface data to preserve positivity and other
- *   simple constraints. Computer & Graphics, Vol. 19, Number 4, pages
- *   585-594, 1995. DOI: 10.1016/0097-8493(95)00036-C.
- *
- * Instead of forcing the reconstructed surface to lie between two
- * GLOBALLY defined planes, LBB constrains one patch at a time to lie
- * between LOCALLY defined planes. This is accomplished by
- * constraining the derivatives (x, y and cross) at each input pixel
- * location so that if the constraint was applied everywhere the
- * surface would fit between the min and max of the values at the 9
- * closest pixel locations. Because this is done with each of the four
- * pixel locations which define the bicubic patch, this forces the
- * reconstructed surface to lie between the min and max of the values
- * at the 16 closest values pixel locations. (Each corner defines its
- * own 3x3 subgroup of the 4x4 stencil. Consequently, the surface is
- * necessarily above the minimum of the four minima, which happens to
- * be the minimum over the 4x4. Similarly with the maxima.)
- *
- * The above paragraph described the "soft" version of LBB, which is
- * the only one used by lohalo.
- */
-
 
 static inline gfloat
 lbb( const gfloat c00,
@@ -736,6 +670,85 @@ lbb( const gfloat c00,
      const gfloat qua_thr,
      const gfloat qua_fou )
 {
+  /*
+   * LBB (Locally Bounded Bicubic) is a high quality nonlinear variant
+   * of Catmull-Rom. Images resampled with LBB have much smaller halos
+   * than images resampled with windowed sincs or other interpolatory
+   * cubic spline filters. Specifically, LBB halos are narrower and
+   * the over/undershoot amplitude is smaller. This is accomplished
+   * without a significant reduction in the smoothness of the result
+   * (compared to Catmull-Rom).
+   *
+   * Another important property is that the resampled values are
+   * contained within the range of nearby input values. Consequently,
+   * no final clamping is needed to stay "in range" (e.g., 0-255 for
+   * standard 8-bit images).
+   *
+   * LBB was developed by Nicolas Robidoux and Chantal Racette of the
+   * Department of Mathematics and Computer Science of Laurentian
+   * University in the course of Chantal's Masters in Computational
+   * Sciences.
+   */
+
+  /*
+   * LBB is a novel method with the following properties:
+   *
+   * --LBB is a Hermite bicubic method: The bicubic surface is
+   *   defined, one convex hull of four nearby input points at a time,
+   *   using four point values, four x-derivatives, four
+   *   y-derivatives, and four cross-derivatives.
+   *
+   * --The stencil for values in a square patch is the usual 4x4.
+   *
+   * --LBB is interpolatory.
+   *
+   * --It is C^1 with continuous cross derivatives.
+   *
+   * --When the limiters are inactive, LBB gives the same results as
+   *   Catmull-Rom.
+   *
+   * --When used on binary images, LBB gives results similar to
+   *   bicubic Hermite with all first derivatives---but not
+   *   necessarily the cross derivatives--at the input pixel locations
+   *   set to zero.
+   *
+   * --The LBB reconstruction is locally bounded: Over each square
+   *   patch, the surface is contained between the minimum and the
+   *   maximum values among the 16 nearest input pixel values (those
+   *   in the stencil).
+   *
+   * --Consequently, the LBB reconstruction is globally bounded
+   *   between the very smallest input pixel value and the very
+   *   largest input pixel value. (It is not necessary to clamp
+   *   results.)
+   *
+   * The LBB method is based on the method of Ken Brodlie, Petros
+   * Mashwama and Sohail Butt for constraining Hermite interpolants
+   * between globally defined planes:
+   *
+   *   Visualization of surface data to preserve positivity and other
+   *   simple constraints. Computer & Graphics, Vol. 19, Number 4,
+   *   pages 585-594, 1995. DOI: 10.1016/0097-8493(95)00036-C.
+   *
+   * Instead of forcing the reconstructed surface to lie between two
+   * GLOBALLY defined planes, LBB constrains one patch at a time to
+   * lie between LOCALLY defined planes. This is accomplished by
+   * constraining the derivatives (x, y and cross) at each input pixel
+   * location so that if the constraint was applied everywhere the
+   * surface would fit between the min and max of the values at the 9
+   * closest pixel locations. Because this is done with each of the
+   * four pixel locations which define the bicubic patch, this forces
+   * the reconstructed surface to lie between the min and max of the
+   * values at the 16 closest values pixel locations. (Each corner
+   * defines its own 3x3 subgroup of the 4x4 stencil. Consequently,
+   * the surface is necessarily above the minimum of the four minima,
+   * which happens to be the minimum over the 4x4. Similarly with the
+   * maxima.)
+   *
+   * The above paragraph described the "soft" version of LBB, which is
+   * the only one used by lohalo.
+   */
+
   /*
    * STENCIL (FOOTPRINT) OF INPUT VALUES:
    *
@@ -1173,8 +1186,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
    * is that the sampling location is at most at a box distance of .5
    * from the anchor pixel location.
    */
-  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + .5);
-  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + .5);
+  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + (gdouble) .5);
+  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + (gdouble) .5);
 
   /*
    * This is the pointer we use to pull pixel from "base" mipmap level
@@ -1190,8 +1203,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   const gfloat x_0 = absolute_x - ix_0;
   const gfloat y_0 = absolute_y - iy_0;
 
-  const gint sign_of_x_0 = 2 * ( x_0 >= 0. ) - 1;
-  const gint sign_of_y_0 = 2 * ( y_0 >= 0. ) - 1;
+  const gint sign_of_x_0 = 2 * ( x_0 >= (gdouble) 0. ) - 1;
+  const gint sign_of_y_0 = 2 * ( y_0 >= (gdouble) 0. ) - 1;
 
   const gint shift_forw_1_pix = sign_of_x_0 * channels;
   const gint shift_forw_1_row = sign_of_y_0 * row_skip;
@@ -1489,6 +1502,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_1,
                      qua_thr_1,
                      qua_fou_1 );
+
     nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
                         input_bptr[ uno_thr_shift + 2 ],
                         input_bptr[ uno_fou_shift + 2 ],
@@ -1558,6 +1572,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_2,
                      qua_thr_2,
                      qua_fou_2 );
+
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
                         input_bptr[ uno_fou_shift + 3 ],
@@ -1849,9 +1864,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       /*
        * Fudge factor RE: whether the ellipse is the unit disk.
        */
-      const gdouble epsilon_for_twice_s1s1 = 1.e-6;
+      const gdouble epsilon_for_twice_s1s1 = (gdouble) 1.e-6;
 
-      if ( twice_s1s1 < (gdouble) ( 2. + epsilon_for_twice_s1s1 ) )
+      if ( twice_s1s1 < (gdouble) 2. + epsilon_for_twice_s1s1 )
         {
           /*
            * The result is (almost) pure LBB-Nohalo.
@@ -1863,13 +1878,14 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         }
 
       {
-        const gdouble s1s1 = 0.5 * twice_s1s1;
+        const gdouble s1s1 = (gdouble) 0.5 * twice_s1s1;
         /*
          * s2 the smallest singular value of the inverse Jacobian
          * matrix. Its reciprocal is the largest singular value of the
          * Jacobian matrix itself.
          */
-        const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
+        const gdouble s2s2 =
+	  (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
         
         const gdouble s1s1minusn11 = s1s1 - n11;
         const gdouble s1s1minusn22 = s1s1 - n22;
@@ -1910,13 +1926,17 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          * Finalize the entries of first left singular vector
          * (associated with the largest singular value).
          */
-        const gdouble u11 = ( ( norm > 0.0 ) ? ( temp_u11 / norm ) : 1.0 );
-        const gdouble u21 = ( ( norm > 0.0 ) ? ( temp_u21 / norm ) : 0.0 );
+        const gdouble u11 =
+	  ( ( norm > (gdouble) 0.0 ) ? ( temp_u11 / norm ) : (gdouble) 1.0 );
+        const gdouble u21 =
+	  ( ( norm > (gdouble) 0.0 ) ? ( temp_u21 / norm ) : (gdouble) 0.0 );
         /*
          * Clamp the singular values up to 1:
          */
-        const gdouble major_mag = ( ( s1s1 <= 1.0 ) ? 1.0 : sqrt( s1s1 ) );
-        const gdouble minor_mag = ( ( s2s2 <= 1.0 ) ? 1.0 : sqrt( s2s2 ) );
+        const gdouble major_mag =
+	  ( ( s1s1 <= (gdouble) 1.0 ) ? (gdouble) 1.0 : sqrt( s1s1 ) );
+        const gdouble minor_mag =
+	  ( ( s2s2 <= (gdouble) 1.0 ) ? (gdouble) 1.0 : sqrt( s2s2 ) );
         /*
          * Unit major and minor axis direction vectors:
          */
@@ -1970,12 +1990,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          *   sqrt( ellipse_a * bounding_box_factor );
          */
 
-        gfloat total_weight = 0.0;
+        gfloat total_weight = (gfloat) 0.0;
         gfloat ewa_newval[channels];
-        ewa_newval[0] = 0.0;
-        ewa_newval[1] = 0.0;
-        ewa_newval[2] = 0.0;
-        ewa_newval[3] = 0.0;
+        ewa_newval[0] = (gfloat) 0.0;
+        ewa_newval[1] = (gfloat) 0.0;
+        ewa_newval[2] = (gfloat) 0.0;
+        ewa_newval[3] = (gfloat) 0.0;
 
         /*
          * Grab the pixel values located within the context_rect of
@@ -2025,7 +2045,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
-          const gfloat theta = (gfloat) ( 1. / ellipse_f );
+          const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
  
           // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
           //  {
@@ -2056,6 +2076,7 @@ set_property (      GObject*    gobject,
 {
   /* G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec); */
 }
+
 
 static void
 get_property (GObject*    gobject,
