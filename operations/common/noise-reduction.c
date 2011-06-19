@@ -18,7 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (iterations, "Iterations", 1, 32, 5, "Number of iterations, more iterations takes longer time but might also make the image less noise, the number of iterations is the longest distance pixel content from one pixel can be diffusd out in the image.")
+gegl_chant_int (iterations, "Strength", 1, 32, 4, "How many iteratarion to run the algorithm.")
 
 #else
 
@@ -28,27 +28,116 @@ gegl_chant_int (iterations, "Iterations", 1, 32, 5, "Number of iterations, more 
 #include "gegl-chant.h"
 #include <math.h>
 
-#define POW2(a) ((a)*(a))
+/* The core noise_reduction function, which is implemented as
+ * portable C - this is the function where most cpu time goes
+ */
+static void
+noise_reduction (float *src_buf,     /* source buffer, one pixel to the left
+                                        and up from the starting pixel */
+                 int    src_stride,  /* stridewidth of buffer in pixels */
+                 float *dst_buf,     /* destination buffer */
+                 int    dst_width,   /* width to render */
+                 int    dst_height,  /* height to render */
+                 int    dst_stride)  /* stride of target buffer */
+{
+  int c;
+  int x,y;
+  int dst_offset;
 
+#define NEIGHBOURS 8
+#define AXES       (NEIGHBOURS/2)
+
+#define POW2(a) ((a)*(a))
 /* core code/formulas to be tweaked for the tuning the implementation */
 #define GEN_METRIC(before, center, after) \
-                   POW2((center - before) + (center - after))
-                   //POW2((center) * 2 - (before) - (after))
+                   POW2((center) * 2 - (before) - (after))
 
 /* Condition used to bail diffusion from a direction */
 #define BAIL_CONDITION(new,original) ((new) > (original))
 
+#define SYMMETRY(a)  (NEIGHBOURS - (a) - 1) /* point-symmetric neighbour pixel */
 
-static void
-noise_reduction (GeglBuffer          *src,
-                 const GeglRectangle *src_rect,
-                 GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect);
+#define O(u,v) (((u)+((v) * src_stride)) * 4)
+  int   offsets[NEIGHBOURS] = {  /* array of the relative distance i float
+                                  * pointers to each of neighbours
+                                  * in source buffer, allows quick referencing.
+                                  */
+              O( -1, -1), O(0, -1), O(1, -1),
+              O( -1,  0),           O(1,  0),
+              O( -1,  1), O(0, 1),  O(1,  1)};
+#undef O
+
+  dst_offset = 0;
+  for (y=0; y<dst_height; y++)
+    {
+      float *center_pix = src_buf + ((y+1) * src_stride + 1) * 4;
+      dst_offset = dst_stride * y;
+      for (x=0; x<dst_width; x++)
+        {
+          for (c=0; c<3; c++) /* do each color component individually */
+            {
+              float  metric_reference[AXES];
+              int    axis;
+              int    direction;
+              float  sum;
+              int    count;
+
+              for (axis = 0; axis < AXES; axis++)
+                { /* initialize original metrics for the horizontal, vertical
+                     and 2 diagonal metrics */
+                  float *before_pix  = center_pix + offsets[axis];
+                  float *after_pix   = center_pix + offsets[SYMMETRY(axis)];
+
+                  metric_reference[axis] =
+                    GEN_METRIC (before_pix[c], center_pix[c], after_pix[c]);
+                }
+
+              sum   = center_pix[c];
+              count = 1;
+
+              /* try smearing in data from all neighbours */
+              for (direction = 0; direction < NEIGHBOURS; direction++)
+                {
+                  float *pix   = center_pix + offsets[direction];
+                  float  value = pix[c] * 0.5 + center_pix[c] * 0.5;
+                  int    axis;
+                  int    valid;
+
+                  /* check if the non-smoothing operating check is true if
+                   * smearing from this direction for any of the axes */
+                  valid = 1; /* assume it will be valid */
+                  for (axis = 0; axis < AXES; axis++)
+                    {
+                      float *before_pix = center_pix + offsets[axis];
+                      float *after_pix  = center_pix + offsets[SYMMETRY(axis)];
+                      float  metric_new =
+                             GEN_METRIC (before_pix[c], value, after_pix[c]);
+
+                      if (BAIL_CONDITION(metric_new, metric_reference[axis]))
+                        {
+                          valid = 0; /* mark as not a valid smoothing, and .. */
+                          break;     /* .. break out of loop */
+                        }
+                    }
+                  if (valid) /* we were still smooth in all axes */
+                    {        /* add up contribution to final result  */
+                      sum += value;
+                      count ++;
+                    }
+                }
+              dst_buf[dst_offset*4+c] = sum / count;
+            }
+          dst_buf[dst_offset*4+3] = center_pix[3]; /* copy alpha unmodified */
+          dst_offset++;
+          center_pix += 4;
+        }
+    }
+}
 
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO            *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = o->iterations;
   gegl_operation_set_format (operation, "input",  babl_format ("R'G'B'A float"));
@@ -62,170 +151,53 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle compute;
-  GeglBuffer   *temp[2] = {NULL, NULL};
   int iteration;
+  int stride;
+  float *src_buf;
+  float *dst_buf;
+  GeglRectangle rect;
+  rect = *result;
 
-  compute = gegl_operation_get_required_for_output (operation, "input",result);
+  stride = result->width + o->iterations * 2;
 
-  if (o->iterations > 1)
-    {
-      temp[0] = gegl_buffer_new (&compute, babl_format ("R'G'B'A float"));
-      temp[1] = gegl_buffer_new (&compute, babl_format ("R'G'B'A float"));
-    }
+  src_buf = g_new0 (float,
+         (stride) * (result->height + o->iterations * 2) * 4);
+  dst_buf = g_new0 (float,
+         (stride) * (result->height + o->iterations * 2) * 4);
+
+  {
+    rect.x      -= o->iterations;
+    rect.y      -= o->iterations;
+    rect.width  += o->iterations*2;
+    rect.height += o->iterations*2;
+    gegl_buffer_get (input, 1.0, &rect, babl_format ("R'G'B'A float"),
+                     src_buf, stride * 4 * 4);
+  }
 
   for (iteration = 0; iteration < o->iterations; iteration++)
     {
-      GeglBuffer *source, *target;
-      GeglRectangle source_rect;
-      GeglRectangle target_rect;
-
-      /* compute extent of rectangles needed for this iteration,
-       * minimizing the work neccesary to do
-       */
-      target_rect = *result;
-      target_rect.x      -= (o->iterations-iteration-1);
-      target_rect.y      -= (o->iterations-iteration-1);
-      target_rect.width  += (o->iterations-iteration-1)*2;
-      target_rect.height += (o->iterations-iteration-1)*2;
-
-      source_rect = target_rect;
-      source_rect.x -= 1;
-      source_rect.y -= 1;
-      source_rect.width += 2;
-      source_rect.height += 2;
-
-      source = temp[iteration%2];
-      target = temp[(iteration+1)%2];
-      if (iteration == 0)
-        source = input;
-      if (iteration == o->iterations-1)
-        target = output;
-
-      noise_reduction (source, &source_rect, target, &target_rect);
+      noise_reduction (src_buf, stride,
+                       dst_buf,
+                       result->width  + (o->iterations - 1 - iteration) * 2,
+                       result->height + (o->iterations - 1 - iteration) * 2,
+                       stride);
+      { /* swap buffers */
+        float *tmp = src_buf;
+        src_buf = dst_buf;
+        dst_buf = tmp;
+      }
     }
 
-  if (temp[0])
-    g_object_unref (temp[0]);
-  if (temp[1])
-    g_object_unref (temp[1]);
+  gegl_buffer_set (output , result, babl_format ("R'G'B'A float"),
+                   src_buf,
+                   stride * 4 * 4);
+
+  g_free (src_buf);
+  g_free (dst_buf);
 
   return  TRUE;
 }
 
-static void
-noise_reduction (GeglBuffer          *src,
-                 const GeglRectangle *src_rect,
-                 GeglBuffer          *dst,
-                 const GeglRectangle *dst_rect)
-{
-  int c;
-  int x,y;
-  int offset;
-  float *src_buf;
-  float *dst_buf;
-
-  int src_width = src_rect->width;
-#define OFFSETS 8
-
-/* fetch symmetric entry */
-#define SYMMETRY(a)  (OFFSETS - a - 1)
-
-  int   rel_offsets[OFFSETS][2] = {
-                                   { -1, -1}, {0, -1},{1, -1},
-                                   { -1,  0},         {1,  0},
-                                   { -1,  1}, {0, 1}, {1,  1}
-                                  };
-  int   offsets[OFFSETS]; /* sizeof(float) offsets for neighbours */
-
-  /* initialize offsets, dependent on source buffer width */
-  for (c = 0; c < OFFSETS; c++)
-    offsets[c] = ((rel_offsets[c][0])+((rel_offsets[c][1]) * src_width)) * 4;
-
-  src_buf = g_new0 (float, src_rect->width * src_rect->height * 4);
-  dst_buf = g_new0 (float, dst_rect->width * dst_rect->height * 4);
-
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("R'G'B'A float"), src_buf,
-                   GEGL_AUTO_ROWSTRIDE);
-
-  offset = 0;
-  for (y=0; y<dst_rect->height; y++)
-    {
-      float *center_pix = src_buf + (1+((y+1) * src_width)) * 4;
-      for (x=0; x<dst_rect->width; x++)
-        {
-          for (c=0; c<3; c++)
-            {
-              float  original_metric[OFFSETS];
-              int    dir;
-              float  sum;
-              int    count;
-
-              for (dir = 0; dir < OFFSETS/2; dir++)
-                {  /* initialize original metrics for the horizontal, vertical and 2 diagonal
-                    * metrics
-                    */
-                  float *before_pix  = center_pix + offsets[dir];
-                  float *after_pix   = center_pix + offsets[SYMMETRY(dir)];
-
-                  original_metric[dir] =
-                    GEN_METRIC (before_pix[c], center_pix[c], after_pix[c]);
-                }
-
-              sum = center_pix[c];
-              count = 1;
-
-              /* try smearing in data from each of the 8 neighbours */
-              for (dir = 0; dir < OFFSETS; dir++)
-                {
-                  float *pix   = center_pix + offsets[dir];
-                  float  value = pix[c] * 0.5 + center_pix[c] * 0.5;
-                  /* ... assumption for magic number 0.2, assume that each
-                   * direction contributes on average 0.2
-                     thus that seems like a reasonable value to check with.. */
-                  int    comparison_dir;
-                  gboolean valid = TRUE; /* if diffusion from this direction
-                                          * should be made
-                                          */
-                  for (comparison_dir = 0; comparison_dir < OFFSETS/2; comparison_dir++)
-                    if (G_LIKELY (comparison_dir != dir))
-                      {
-                        float *before_pix = center_pix + offsets[comparison_dir];
-                        float *after_pix = center_pix + offsets[SYMMETRY(comparison_dir)];
-                        float  new_metric =
-                          GEN_METRIC (before_pix[c], value, after_pix[c]);
-
-
-                        if (G_UNLIKELY (BAIL_CONDITION(new_metric,
-                                                       original_metric[comparison_dir])))
-                          { /* bail condition */
-                            valid = FALSE;
-                            break;
-                          }
-                      }
-                  if (valid)
-                    {
-                      sum += value;   /* accumulate value */
-                      count ++;       /* increase denominator */
-                    }
-                }
-              dst_buf[offset*4+c] = sum / count; /* write back the average of center pixel
-                                                    and all pixels that would be valid to
-                                                    replace the center pixel with while
-                                                    continuing to fulfil our criteria.
-                                                  */
-            }
-          dst_buf[offset*4+3] = center_pix[3]; /* copy alpha unmodified */
-          offset++;
-          center_pix += 4;
-        }
-    }
-
-  gegl_buffer_set (dst, dst_rect, babl_format ("R'G'B'A float"), dst_buf,
-                   GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (dst_buf);
-}
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
