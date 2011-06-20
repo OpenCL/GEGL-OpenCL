@@ -112,35 +112,21 @@
  * each other), or chips with good branch prediction, we recommend
  * using
  *
- * ( (a_times_b)>=0. ? 1. : 0. ) * ( (a_times_b)<(a_times_a) ? (b) : (a) )
- *
- * or
- *
  * ( (a_times_b)>=0. ? ( (a_times_b)<(a_times_a) ? (b) : (a) ) : 0. )
  *
- * In the above versions, the forward branch of the second conditional
+ * In the above version, the forward branch of the second conditional
  * move is taken when |b|>|a| and when a*b<0. However, the "else"
  * branch is taken when a=0 (or when a=b), which is why the above
- * versions are not as effective for images with regions with constant
+ * version is not as effective for images with regions with constant
  * pixel values (or regions with pixel values which vary linearly or
  * bilinearly) since we apply minmod to pairs of differences.
  *
- * The following versions are more suitable for images with flat
+ * The following version is more suitable for images with flat
  * (constant) colour areas, since a, which is a pixel difference, will
- * often be 0, in which case both forward branches are likely. They
+ * often be 0, in which case both forward branches are likely. This
  * may be preferable for chips with bad branch prediction.
  *
- * ( ( (a_times_b)>=0. ) ? 1. : 0. )
- * *
- * ( ( (a_times_a)<=(a_times_b) ) ? (a) : (b) )
- *
- * or
- *
  * ( (a_times_b)>=0. ? ( (a_times_a)<=(a_times_b) ? (a) : (b) ) : 0. )
- *
- * The first variants of both versions, which add one multiplication,
- * may be faster with a compiler that replaces nested "conditional
- * moves" by branches.
  */
 #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
   (                                            \
@@ -150,18 +136,6 @@
     :                                          \
     (gfloat) 0.                                \
   )
-
-/* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b)      \ */
-/*   (                                                 \ */
-/*     ( (a_times_b)>=0. ? (gfloat) 1. : (gfloat) 0. ) \ */
-/*     *                                               \ */
-/*     ( (a_times_b)<(a_times_a) ? (b) : (a) )         \ */
-/*   )                                                   */
-
-/* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b)	      \ */
-/*   ( (a_times_b)>=(gfloat) 0. ? (gfloat) 1. : (gfloat) 0. ) \ */
-/*   *							      \ */
-/*   ( (a_times_a)<=(a_times_b) ? (a) : (b) )                   */
 
 /* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \ */
 /*   (                                            \ */
@@ -2045,19 +2019,18 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
-	  const gfloat theta_double = (gdouble) 1. / ellipse_f;
+	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
  
           // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
           //  {
-              const gfloat ewa_factor = ( 1. - theta_double ) / total_weight;
-	      const gfloat theta = (gfloat) theta_double;
-              newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-              newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-              newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-              newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
- 
-              babl_process (self->fish, newval, output, 1);
-              return;
+	  const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
+	  newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
+	  newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
+	  newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
+	  newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
+	  
+	  babl_process (self->fish, newval, output, 1);
+	  return;
           //  }
         }
 	/*
