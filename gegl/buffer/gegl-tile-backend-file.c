@@ -38,6 +38,14 @@
 //#include "gegl-types-internal.h"
 
 
+#ifndef HAVE_FSYNC
+
+#ifdef G_OS_WIN32
+#define fsync _commit
+#endif
+
+#endif
+
 struct _GeglTileBackendFile
 {
   GeglTileBackend  parent_instance;

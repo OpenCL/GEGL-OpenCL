@@ -399,6 +399,11 @@ CFLAGS="$CFLAGS $MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS"
 ########################
 GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
+########################
+# Check for fsync
+########################
+AC_CHECK_FUNCS(fsync)
+
 ###############################
 # Checks for required libraries
 ###############################
