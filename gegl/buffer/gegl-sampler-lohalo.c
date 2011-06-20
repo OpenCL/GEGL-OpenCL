@@ -2045,11 +2045,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
-	  const gfloat theta_gdouble = (gdouble) 1. / ellipse_f;
+	  const gfloat theta_double = (gdouble) 1. / ellipse_f;
  
           // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
           //  {
-              const gfloat ewa_factor = ( 1. - theta_gdouble ) / total_weight;
+              const gfloat ewa_factor = ( 1. - theta_double ) / total_weight;
 	      const gfloat theta = (gfloat) theta_double;
               newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
               newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
