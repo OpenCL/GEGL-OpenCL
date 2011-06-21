@@ -147,7 +147,7 @@
 /*     ( (a_times_b)<(a_times_a) ? (b) : (a) )    \ */
 /*     :                                          \ */
 /*     (gfloat) 0.                                \ */
-/*   ) */
+/*   )                                              */
 
 /*
  * Macros set up so the likely winner in in the first argument
