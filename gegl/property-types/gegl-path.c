@@ -20,6 +20,8 @@
 #include "config.h"
 
 #include <string.h>
+#include <glib.h>
+#include <math.h>
 
 #include <glib-object.h>
 
@@ -33,12 +35,47 @@
 
 #include <stdarg.h>
 
-/* ###################################################################### */
-
 #define BEZIER_SEGMENTS 64
 
-#include <glib.h>
-#include <math.h>
+struct _GeglPathClass
+{
+  GObjectClass parent_class;
+  GeglPathList *(*flattener[8]) (GeglPathList *original);
+};
+
+struct _GeglPathPrivate
+{
+  GeglPathList *path;
+  GeglPathList *tail; /*< for fast appending */
+  GeglPathList *flat_path; /*< cache of flat path */
+  gboolean      flat_path_clean;
+
+  gdouble       length;
+  gboolean      length_clean;
+
+  GeglPathList *calc_stop;
+  gdouble       calc_leftover;
+  gboolean      calc_clean;
+
+  GeglRectangle dirtied;
+  GeglRectangle cached_extent;
+  GeglMatrix3   matrix;
+  gint frozen;
+};
+
+typedef struct _GeglPathPrivate  GeglPathPrivate;
+
+G_DEFINE_TYPE (GeglPath, gegl_path, G_TYPE_OBJECT)
+#define GEGL_PATH_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
+                                   GEGL_TYPE_PATH, GeglPathPrivate))
+
+enum
+{
+  GEGL_PATH_CHANGED,
+  GEGL_PATH_LAST_SIGNAL
+};
+
+guint gegl_path_signals[GEGL_PATH_LAST_SIGNAL] = { 0 };
 
 typedef struct InstructionInfo
 {
@@ -55,6 +92,92 @@ typedef struct InstructionInfo
                             GeglPathList *self);
 } InstructionInfo;
 
+static void finalize     (GObject      *self);
+static void set_property (GObject      *gobject,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec);
+static void get_property (GObject      *gobject,
+                          guint         prop_id,
+                          GValue       *value,
+                          GParamSpec   *pspec);
+
+static void
+gegl_path_init (GeglPath *self)
+{
+  GeglPathPrivate *priv;
+  priv = GEGL_PATH_GET_PRIVATE (self);
+  gegl_matrix3_identity (&priv->matrix);
+}
+
+static void
+gegl_path_class_init (GeglPathClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  gobject_class->finalize     = finalize;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  g_type_class_add_private (klass, sizeof (GeglPathPrivate));
+
+  gegl_path_signals[GEGL_PATH_CHANGED] =
+    g_signal_new ("changed", G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0    /* class offset */,
+                  NULL /* accumulator */,
+                  NULL /* accu_data */,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, /*return type */
+                  1, G_TYPE_POINTER);
+
+  /* FIXME: should this just be 2 ? (and is this even currently in use?) */
+  gegl_path_add_type ('_', 2, "linear curve position associated value");
+}
+
+static void
+finalize (GObject *gobject)
+{
+  GeglPath        *self = GEGL_PATH (gobject);
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
+
+  self = NULL;
+  if (priv->path)
+    gegl_path_list_destroy (priv->path);
+  if (priv->flat_path)
+    gegl_path_list_destroy (priv->flat_path);
+  priv = NULL;
+
+  G_OBJECT_CLASS (gegl_path_parent_class)->finalize (gobject);
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  switch (property_id)
+    {
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
+    }
+}
+
+static void
+get_property (GObject    *gobject,
+              guint       property_id,
+              GValue     *value,
+              GParamSpec *pspec)
+{
+  switch (property_id)
+    {
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
+    }
+}
 
 static GeglPathList *flatten_copy      (GeglMatrix3 *matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
 static GeglPathList *flatten_rel_copy  (GeglMatrix3 *matrix, GeglPathList *head, GeglPathList *prev, GeglPathList *self);
@@ -583,35 +706,10 @@ path_get_length (GeglPathList *path)
 
 /******************/
 
-struct _GeglPathClass
-{
-  GObjectClass parent_class;
-  GeglPathList *(*flattener[8]) (GeglPathList *original);
-};
-
-typedef struct _GeglPathPrivate GeglPathPrivate;
 typedef struct _PathNameEntity  PathNameEntity;
 
 
-struct _GeglPathPrivate
-{
-  GeglPathList *path;
-  GeglPathList *tail; /*< for fast appending */
-  GeglPathList *flat_path; /*< cache of flat path */
-  gboolean      flat_path_clean;
 
-  gdouble       length;
-  gboolean      length_clean;
-
-  GeglPathList *calc_stop;
-  gdouble       calc_leftover;
-  gboolean      calc_clean;
-
-  GeglRectangle dirtied;
-  GeglRectangle cached_extent;
-  GeglMatrix3   matrix;
-  gint frozen;
-};
 
 static GeglPathList *ensure_tail (GeglPathPrivate *priv)
 {
@@ -637,36 +735,6 @@ static GeglPathList *ensure_tail (GeglPathPrivate *priv)
   priv->tail = tail;
   return tail;
 }
-
-enum
-{
-  PROP_0
-};
-
-
-enum
-{
-  GEGL_PATH_CHANGED,
-  GEGL_PATH_LAST_SIGNAL
-};
-
-guint gegl_path_signals[GEGL_PATH_LAST_SIGNAL] = { 0 };
-
-
-static void finalize     (GObject      *self);
-static void set_property (GObject      *gobject,
-                          guint         prop_id,
-                          const GValue *value,
-                          GParamSpec   *pspec);
-static void get_property (GObject      *gobject,
-                          guint         prop_id,
-                          GValue       *value,
-                          GParamSpec   *pspec);
-
-G_DEFINE_TYPE (GeglPath, gegl_path, G_TYPE_OBJECT)
-
-#define GEGL_PATH_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o),\
-                                   GEGL_TYPE_PATH, GeglPathPrivate))
 
 
 
@@ -755,38 +823,7 @@ path_calc_values (GeglPathList *path,
                   gdouble      *xs,
                   gdouble      *ys);
 
-static void
-gegl_path_init (GeglPath *self)
-{
-  GeglPathPrivate *priv;
-  priv = GEGL_PATH_GET_PRIVATE (self);
-  gegl_matrix3_identity (&priv->matrix);
-}
 
-static void
-gegl_path_class_init (GeglPathClass *klass)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  gobject_class->finalize     = finalize;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  g_type_class_add_private (klass, sizeof (GeglPathPrivate));
-
-  gegl_path_signals[GEGL_PATH_CHANGED] =
-    g_signal_new ("changed", G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                  0    /* class offset */,
-                  NULL /* accumulator */,
-                  NULL /* accu_data */,
-                  g_cclosure_marshal_VOID__POINTER,
-                  G_TYPE_NONE, /*return type */
-                  1, G_TYPE_POINTER);
-
-  /* FIXME: should this just be 2 ? (and is this even currently in use?) */
-  gegl_path_add_type ('_', 2, "linear curve position associated value");
-}
 
 static void
 gegl_path_emit_changed (GeglPath            *self,
@@ -822,49 +859,7 @@ gegl_path_emit_changed (GeglPath            *self,
                  bounds, NULL);
 }
 
-static void
-finalize (GObject *gobject)
-{
-  GeglPath        *self = GEGL_PATH (gobject);
-  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
 
-  self = NULL;
-  if (priv->path)
-    gegl_path_list_destroy (priv->path);
-  if (priv->flat_path)
-    gegl_path_list_destroy (priv->flat_path);
-  priv = NULL;
-
-  G_OBJECT_CLASS (gegl_path_parent_class)->finalize (gobject);
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (property_id)
-    {
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  switch (property_id)
-    {
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
 
 GeglPath *
 gegl_path_new (void)
