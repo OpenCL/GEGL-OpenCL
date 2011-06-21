@@ -124,7 +124,8 @@
  * The following version is more suitable for images with flat
  * (constant) colour areas, since a, which is a pixel difference, will
  * often be 0, in which case both forward branches are likely. This
- * may be preferable if "branch flag look ahead" 
+ * may be preferable if "branch flag look ahead" does not work so
+ * well.
  *
  * ( (a_times_b)>=0. ? ( (a_times_a)<=(a_times_b) ? (a) : (b) ) : 0. )
  *
