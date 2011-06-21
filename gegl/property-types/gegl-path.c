@@ -386,71 +386,6 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   return head;
 }
 
-#if 0
-static void
-path_calc (GeglPathList *path,
-           gdouble       pos,
-           gdouble      *xd,
-           gdouble      *yd)
-{
-  GeglPathList *iter = path;
-  gfloat traveled = 0, next_pos = 0;
-  gfloat x = 0, y = 0;
-
-  while (iter)
-    {
-      /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
-      switch (iter->d.type)
-        {
-          case 'M':
-            x = iter->d.point[0].x;
-            y = iter->d.point[0].y;
-            break;
-
-          case 'L':
-            {
-              Point a,b;
-              gfloat distance;
-
-              a.x = x;
-              a.y = y;
-
-              b.x = iter->d.point[0].x;
-              b.y = iter->d.point[0].y;
-
-              distance = point_dist (&a, &b);
-              next_pos += distance;
-
-              if (pos <= next_pos)
-                {
-                  Point spot;
-                  gfloat ratio = (pos - traveled) / (next_pos - traveled);
-
-                  lerp (&spot, &a, &b, ratio);
-
-                  *xd = spot.x;
-                  *yd = spot.y;
-                  return;
-                }
-
-              traveled = next_pos;
-
-              x = b.x;
-              y = b.y;
-            }
-
-            break;
-          case 's':
-            break;
-          default:
-            g_warning ("can't compute length for instruction: %c\n", iter->d.type);
-            break;
-        }
-      iter=iter->next;
-    }
-}
-#endif
-
 static gboolean
 path_calc2 (GeglPathList *path,
            gdouble       pos,
@@ -609,28 +544,6 @@ static void path_calc_values (GeglPathList *path,
       iter=iter->next;
     }
 }
-
-#if 0
-/* FIXME: this is terribly inefficient */
-static void
-path_calc_values (
-   GeglPathList *path,
-                  guint         num_samples,
-                  gdouble      *xs,
-                  gdouble      *ys)
-{
-  gdouble length = path_get_length (path);
-  gint i;
-  for (i=0; i<num_samples; i++)
-    {
-      gdouble x, y;
-      path_calc (path, (i*1.0)/num_samples * length, &x, &y);
-
-      xs[i] = x;
-      ys[i] = y;
-    }
-}
-#endif
 
 static gdouble
 path_get_length (GeglPathList *path)
@@ -1074,9 +987,7 @@ gegl_path_calc (GeglPath   *self,
   if (!self)
     return FALSE;
   ensure_flattened (self);
-#if 0
-  path_calc (priv->flat_path, pos, xd, yd);
-#endif
+
   if (priv->calc_clean && (pos > priv->calc_leftover))
     {
       entry    = priv->calc_stop;
@@ -1777,35 +1688,6 @@ gegl_path_closest_point (GeglPath *path,
 
 /**************************************/
 
-#if 0
-static void gen_rect (GeglRectangle *r,
-                      gdouble x1, gdouble y1, gdouble x2, gdouble y2)
-{
-  if (x1>x2)
-    {
-      gint t;
-      t=x1;
-      x1=x2;
-      x2=x1;
-    }
-  if (y1>y2)
-    {
-      gint t;
-      t=y1;
-      y1=y2;
-      y2=y1;
-    }
-  x1=floor (x1);
-  y1=floor (y1);
-  x2=ceil (x2);
-  y2=ceil (y2);
-  r->x=x1;
-  r->y=y1;
-  r->width=x2-x1;
-  r->height=y2-y1;
-}
-#endif
-
 #define AA 3
 
 static void gegl_buffer_accumulate (GeglBuffer    *buffer,
@@ -1966,11 +1848,6 @@ fill_close:  /* label used for goto to close last segment */
     col[2] *= factor;
     col[3] *= factor;
 
-#if 0
-    if (gegl_buffer_is_shared (buffer))
-    while (!gegl_buffer_try_lock (buffer));
-#endif
-
     for (i=0; i < extent.height * versub; i++)
       {
         GSList *iter = scanlines[i];
@@ -2015,15 +1892,6 @@ typedef struct StampStatic {
   gdouble   radius;
 }StampStatic;
 
-#if 0
-void gegl_path_stamp (GeglBuffer *buffer,
-                      gdouble     x,
-                      gdouble     y,
-                      gdouble     radius,
-                      gdouble     hardness,
-                      GeglColor  *color,
-                      gdouble     opacity);
-#endif
 
 static void gegl_path_stamp (GeglBuffer *buffer,
                              const GeglRectangle *clip_rect,

@@ -383,9 +383,6 @@ void gegl_path_freeze (GeglPath *path);
  */
 void gegl_path_thaw (GeglPath *path);
 
-/***
- * :
- */
 
 GParamSpec         * gegl_param_spec_path     (const gchar *name,
                                                const gchar *nick,
