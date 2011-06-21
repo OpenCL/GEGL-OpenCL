@@ -144,6 +144,8 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
 }
 
+#define INPLACE 1
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -154,7 +156,9 @@ process (GeglOperation       *operation,
   int iteration;
   int stride;
   float *src_buf;
+#ifndef INPLACE
   float *dst_buf;
+#endif
   GeglRectangle rect;
   rect = *result;
 
@@ -162,8 +166,10 @@ process (GeglOperation       *operation,
 
   src_buf = g_new0 (float,
          (stride) * (result->height + o->iterations * 2) * 4);
+#ifndef INPLACE
   dst_buf = g_new0 (float,
          (stride) * (result->height + o->iterations * 2) * 4);
+#endif
 
   {
     rect.x      -= o->iterations;
@@ -177,23 +183,35 @@ process (GeglOperation       *operation,
   for (iteration = 0; iteration < o->iterations; iteration++)
     {
       noise_reduction (src_buf, stride,
+#ifdef INPLACE
+                       src_buf + (stride + 1) * 4,
+#else
                        dst_buf,
+#endif
                        result->width  + (o->iterations - 1 - iteration) * 2,
                        result->height + (o->iterations - 1 - iteration) * 2,
                        stride);
+#ifndef INPLACE
       { /* swap buffers */
         float *tmp = src_buf;
         src_buf = dst_buf;
         dst_buf = tmp;
       }
+#endif
     }
 
   gegl_buffer_set (output , result, babl_format ("R'G'B'A float"),
+#ifndef INPLACE
                    src_buf,
+#else
+                   src_buf + ((stride +1) * 4) * o->iterations,
+#endif
                    stride * 4 * 4);
 
   g_free (src_buf);
+#ifndef INPLACE
   g_free (dst_buf);
+#endif
 
   return  TRUE;
 }
