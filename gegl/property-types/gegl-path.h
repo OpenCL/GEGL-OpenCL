@@ -55,10 +55,6 @@ GType                gegl_path_get_type       (void) G_GNUC_CONST;
  * with new knot interpretations.
  */
 
-#ifndef GEGL_PATH_INTERNAL
-
-
-
 /**
  * GeglPathItem:
  *
@@ -94,8 +90,6 @@ typedef struct GeglPathItem
                     * have the exact number of pairs allocated.
                     */
 } GeglPathItem;
-#endif
-
 
 
 /**

@@ -23,19 +23,6 @@
 
 #include <glib-object.h>
 
-#define GEGL_PATH_INTERNAL
-typedef struct Point
-{
-  gfloat x;
-  gfloat y;
-} Point;
-
-typedef struct GeglPathItem
-{
-  gchar  type; /* should perhaps be padded out? */
-  Point  point[1]; /* variable length internally */
-} GeglPathItem;
-
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-private.h"
