@@ -109,43 +109,45 @@
  *
  * For uncompressed natural images in high bit depth (images for which
  * the slopes a and b are unlikely to be equal to zero or be equal to
- * each other), or chips with good branch prediction, we recommend
- * using
+ * each other), or chips with good branch prediction, the following
+ * version of the minmod function may work well.
  *
  * ( (a_times_b)>=0. ? ( (a_times_b)<(a_times_a) ? (b) : (a) ) : 0. )
  *
- * In the above version, the forward branch of the second conditional
- * move is taken when |b|>|a| and when a*b<0. However, the "else"
- * branch is taken when a=0 (or when a=b), which is why the above
- * version is not as effective for images with regions with constant
- * pixel values (or regions with pixel values which vary linearly or
- * bilinearly) since we apply minmod to pairs of differences.
+ * In this version, the forward branch of the second conditional move
+ * is taken when |b|>|a| and when a*b<0. However, the "else" branch is
+ * taken when a=0 (or when a=b), which is why the above version is not
+ * as effective for images with regions with constant pixel values (or
+ * regions with pixel values which vary linearly or bilinearly) since
+ * we apply minmod to pairs of differences.
  *
  * The following version is more suitable for images with flat
  * (constant) colour areas, since a, which is a pixel difference, will
  * often be 0, in which case both forward branches are likely. This
- * may be preferable for chips with bad branch prediction.
+ * may be preferable if "branch flag look ahead" 
  *
  * ( (a_times_b)>=0. ? ( (a_times_a)<=(a_times_b) ? (a) : (b) ) : 0. )
+ *
+ * This last version appears to be slightly better than the former in
+ * speed tests performed on a recent multicore Intel chip. 
  */
 #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
   (                                            \
-    (a_times_b)>=(gfloat) 0.                   \
+    ( (a_times_b)>=(gfloat) 0. )               \
     ?                                          \
-    ( (a_times_b)<(a_times_a) ? (b) : (a) )    \
+    ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \
     :                                          \
     (gfloat) 0.                                \
   )
 
 /* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \ */
 /*   (                                            \ */
-/*     ( (a_times_b)>=(gfloat) 0. )               \ */
+/*     (a_times_b)>=(gfloat) 0.                   \ */
 /*     ?                                          \ */
-/*     ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \ */
+/*     ( (a_times_b)<(a_times_a) ? (b) : (a) )    \ */
 /*     :                                          \ */
 /*     (gfloat) 0.                                \ */
-/*   )                                              */
-
+/*   ) */
 
 /*
  * Macros set up so the likely winner in in the first argument
