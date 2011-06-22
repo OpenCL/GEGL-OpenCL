@@ -202,7 +202,7 @@
 
 
 /*
- * Give a bit of wiggle room to checks having to do with whether all
+ * Give a bit of elbow room to checks having to do with whether all
  * the needed data has been reached:
  */
 #define LOHALO_FUDGE ( (gdouble) 1.e-6 )
