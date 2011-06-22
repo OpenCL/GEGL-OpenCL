@@ -39,8 +39,7 @@ m4_define([gimp_full_name], [Generic Graphical Library])
 # required versions of external libraries
 m4_define([babl_required_version], [0.1.4])
 m4_define([glib_required_version], [2.22.0])
-m4_define([gtk2_required_version], [2.18.0])
-m4_define([gtk3_required_version], [3.0.0])
+m4_define([gdk_pixbuf_required_version], [2.24])
 m4_define([lua_required_version], [5.1.0])
 m4_define([cairo_required_version], [0.0.0])
 m4_define([pango_required_version], [0.0.0])
@@ -119,11 +118,7 @@ gegltargetlib=libgegl-$GEGL_API_VERSION.la
 AC_SUBST(gegltargetlib)
 
 GLIB_REQUIRED_VERSION=glib_required_version
-GTK2_REQUIRED_VERSION=gtk2_required_version
-GTK3_REQUIRED_VERSION=gtk3_required_version
 AC_SUBST(GLIB_REQUIRED_VERSION)
-AC_SUBST(GTK2_REQUIRED_VERSION)
-AC_SUBST(GTK3_REQUIRED_VERSION)
 
 LUA_REQUIRED_VERSION=lua_required_version
 AC_SUBST(LUA_REQUIRED_VERSION)
@@ -433,63 +428,6 @@ PKG_CHECK_MODULES(DEP,
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
 
-
-AC_MSG_CHECKING([which gtk+ version to compile against])
-AC_ARG_WITH([gtk],
-  [AS_HELP_STRING([--with-gtk=2.0|3.0|no],[which gtk+ version to compile against (default: 2.0)])],
-  [case "$with_gtk" in
-     2.0|3.0|no) ;;
-     *) AC_MSG_ERROR([invalid gtk version specified]) ;;
-   esac],
-  [with_gtk=2.0])
-AC_MSG_RESULT([$with_gtk])
-
-case "$with_gtk" in
-  2.0) GTK_API_VERSION=2.0
-       GTK_REQUIRED=$GTK2_REQUIRED_VERSION
-       ;;
-  3.0) GTK_API_VERSION=3.0
-       GTK_REQUIRED=GTK3_REQUIRED_VERSION
-       ;;
-esac
-
-have_gtk2="no"
-if test "x$with_gtk" = "x2.0"; then
-  PKG_CHECK_MODULES(GTK2, gtk+-2.0 >= $GTK2_REQUIRED_VERSION,
-    have_gtk2="yes"
-    AC_DEFINE(HAVE_GTK2, 1, [Define to 1 to compile with gtk2 support.])
-    GTK_CFLAGS="$GTK2_CFLAGS"
-    GTK_LIBS="$GTK2_LIBS",
-    have_gtk2="no  (gtk+ 2.0 not found)")
-fi
-
-have_gtk3="no"
-if test "x$with_gtk" = "x3.0"; then
-  PKG_CHECK_MODULES(GTK3, gtk+-3.0 >= $GTK2_REQUIRED_VERSION,
-    have_gtk3="yes"
-    AC_DEFINE(HAVE_GTK3, 1, [Define to 1 to compile with gtk3 support.])
-    GTK_CFLAGS="$GTK3_CFLAGS"
-    GTK_LIBS="$GTK3_LIBS",
-    have_gtk3="no  (gtk+ 3.0 not found)")
-fi
-
-have_gtk="no"
-if test "$have_gtk2" = "yes"; then
-	have_gtk="2.0"
-    AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
-elif test "$have_gtk3" = "yes"; then
-	have_gtk="3.0"
-    AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
-fi
-
-AM_CONDITIONAL(HAVE_GTK, test "$have_gtk" != "no")
-AM_CONDITIONAL(HAVE_GTK2, test "$have_gtk2" = "yes")
-AM_CONDITIONAL(HAVE_GTK3, test "$have_gtk3" = "yes")
-
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
-
-
 ######################
 # gettext i18n support
 ######################
@@ -660,7 +598,7 @@ AC_ARG_WITH(gdk_pixbuf, [  --without-gdk-pixbuf    build without gdk-pixbuf supp
 
 have_gdk_pixbuf="no"
 if test "x$with_gdk_pixbuf" != "xno"; then
-  PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gtk_required_version,
+  PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gdk_pixbuf_required_version,
     have_gdk_pixbuf="yes",
     have_gdk_pixbuf="no  (gdk-pixbuf not found)")
 fi
@@ -1072,7 +1010,6 @@ done
 dnl Disable deprecated features in maintainer mode
 if test -z "${MAINTAINER_MODE_TRUE}"; then
    GLIB_CFLAGS="-DG_DISABLE_DEPRECATED $GLIB_CFLAGS"
-   GTK_CFLAGS="-DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED $GTK_CFLAGS"
 fi
 
 dnl bin/node-editors/Makefile
@@ -1130,7 +1067,6 @@ Optional features:
 Optional dependencies:
   asciidoc:        $have_asciidoc
   enscript:        $have_enscript
-  GTK+:            $have_gtk
   Ruby:            $have_ruby
   Lua:             $have_lua
   Cairo:           $have_cairo
