@@ -54,7 +54,7 @@
  * course of her honours thesis, by N. Robidoux, A. Turcotte and Eric
  * Daoust during Google Summer of Code 2009, and is based on 2009 work
  * by N. Robidoux, A. Turcotte, J. Cupitt, Minglun Gong and Kirk
- * Martinez. The Better Image Resampling Project was started by
+ * Martinez. The Better Image Resampling project was started by
  * Minglun Gong, A. Turcotte and N. Robidoux in 2007.
  *
  * Clamped EWA with the teepee (radial version of the (mexican) "hat"
