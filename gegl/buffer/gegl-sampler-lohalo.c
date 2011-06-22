@@ -150,6 +150,7 @@
 /*     (gfloat) 0.                                \ */
 /*   )                                              */
 
+
 /*
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
@@ -158,6 +159,7 @@
 #define LOHALO_MAX(x,y) ( ( (x) >= (y) ) ? (x) : (y) )
 #define LOHALO_ABS(x)   ( ( (x) >= (gfloat) 0. ) ? (x) : -(x) )
 #define LOHALO_SIGN(x)  ( ( (x) >= (gfloat) 0. ) ? (gfloat) 1. : (gfloat) -1. )
+
 
 /*
  * FAST_PSEUDO_FLOOR is a floor replacement which has been found to be
@@ -666,7 +668,6 @@ lbb( const gfloat c00,
    * University in the course of Chantal's Masters in Computational
    * Sciences.
    */
-
   /*
    * LBB is a novel method with the following properties:
    *
@@ -725,7 +726,6 @@ lbb( const gfloat c00,
    * The above paragraph described the "soft" version of LBB, which is
    * the only one used by lohalo.
    */
-
   /*
    * STENCIL (FOOTPRINT) OF INPUT VALUES:
    *
@@ -1479,7 +1479,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_1,
                      qua_thr_1,
                      qua_fou_1 );
-
+    /*
+     * Third channel:
+     */
     nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
                         input_bptr[ uno_thr_shift + 2 ],
                         input_bptr[ uno_fou_shift + 2 ],
@@ -1549,7 +1551,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_two_2,
                      qua_thr_2,
                      qua_fou_2 );
-
+    /*
+     * Fourth (alpha) channel:
+     */
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
                         input_bptr[ uno_fou_shift + 3 ],
