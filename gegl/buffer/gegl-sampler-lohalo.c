@@ -642,11 +642,13 @@ nohalo_subdivision (const gfloat           uno_two,
   const gfloat newval_uno_one =
     (gfloat) 0.25
     *
-    ( dos_two + dos_thr + tre_two + tre_thr
+    (
+      dos_two + dos_thr + tre_two + tre_thr
       +
       (gfloat) 0.5
       *
-      ( dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
+      (
+        dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
 	+
 	dos_two_y + dos_thr_y - tre_two_y - tre_thr_y
       )
@@ -1234,7 +1236,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
   /*
    * (x_0,y_0) is the relative position of the sampling location
-   * w.r.t. the anchor pixel.
+   * w.r.t. the anchor pixel:
    */
   const gfloat x_0 = absolute_x - ix_0;
   const gfloat y_0 = absolute_y - iy_0;
