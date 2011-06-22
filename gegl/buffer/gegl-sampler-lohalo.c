@@ -495,18 +495,18 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_dostre_times_trequa_thr );
 
   const gfloat newval_uno_two =
-    (gfloat) .5 * ( dos_thr + tre_thr )
-    +
-    (gfloat) .25 * ( dos_thr_y - tre_thr_y );
+    (gfloat) 0.5
+    *
+    ( dos_thr + tre_thr + (gfloat) 0.5 * ( dos_thr_y - tre_thr_y ) );
 
   const gfloat qua_thr_y = LOHALO_MINMOD( d_quacin_thr, d_trequa_thr,
                                           d_quacin_thr_sq,
                                           d_trequa_times_quacin_thr );
 
   const gfloat newval_tre_two =
-    (gfloat) .5 * ( tre_thr + qua_thr )
-    +
-    (gfloat) .25 * ( tre_thr_y - qua_thr_y );
+    (gfloat) 0.5
+    *
+    ( tre_thr + qua_thr + (gfloat) 0.5 * ( tre_thr_y - qua_thr_y ) );
 
   const gfloat tre_fou_y = LOHALO_MINMOD( d_dostre_fou, d_trequa_fou,
                                           d_dostre_fou_sq,
@@ -516,18 +516,18 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_trequa_times_quacin_fou );
 
   const gfloat newval_tre_fou =
-    (gfloat) .5 * ( tre_fou + qua_fou )
-    +
-    (gfloat) .25 * ( tre_fou_y - qua_fou_y );
+    (gfloat) 0.5
+    *
+    ( tre_fou + qua_fou + (gfloat) 0.5 * ( tre_fou_y - qua_fou_y ) );
 
   const gfloat dos_fou_y = LOHALO_MINMOD( d_dostre_fou, d_unodos_fou,
                                           d_dostre_fou_sq,
                                           d_unodos_times_dostre_fou );
 
   const gfloat newval_uno_fou =
-     (gfloat) .5 * ( dos_fou + tre_fou )
-     +
-     (gfloat) .25 * (dos_fou_y - tre_fou_y );
+    (gfloat) 0.5
+    *
+    ( dos_fou + tre_fou + (gfloat) 0.5 * (dos_fou_y - tre_fou_y ) );
 
   const gfloat tre_two_x = LOHALO_MINMOD( d_tre_twothr, d_tre_onetwo,
                                           d_tre_twothr_sq,
@@ -537,9 +537,9 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_tre_twothr_times_thrfou );
 
   const gfloat newval_dos_one =
-    (gfloat) .5 * ( tre_two + tre_thr )
-    +
-    (gfloat) .25 * ( tre_two_x - tre_thr_x );
+    (gfloat) 0.5
+    *
+    ( tre_two + tre_thr + (gfloat) 0.5 * ( tre_two_x - tre_thr_x ) );
 
   const gfloat tre_fou_x = LOHALO_MINMOD( d_tre_foufiv, d_tre_thrfou,
                                           d_tre_foufiv_sq,
@@ -549,9 +549,9 @@ nohalo_subdivision (const gfloat           uno_two,
     tre_thr_x - tre_fou_x;
 
   const gfloat newval_dos_thr =
-    (gfloat) .5 * ( tre_thr + tre_fou )
-    +
-    (gfloat) .25 * tre_thr_x_minus_tre_fou_x;
+    (gfloat) 0.5
+    *
+    ( tre_thr + tre_fou + (gfloat) 0.5 * tre_thr_x_minus_tre_fou_x );
 
   const gfloat qua_thr_x = LOHALO_MINMOD( d_qua_twothr, d_qua_thrfou,
                                           d_qua_twothr_sq,
@@ -564,23 +564,27 @@ nohalo_subdivision (const gfloat           uno_two,
     qua_thr_x - qua_fou_x;
 
   const gfloat newval_qua_thr =
-    (gfloat) .5 * ( qua_thr + qua_fou )
-    +
-    (gfloat) .25 * qua_thr_x_minus_qua_fou_x;
+    (gfloat) 0.5
+    *
+    ( qua_thr + qua_fou + (gfloat) 0.5 * qua_thr_x_minus_qua_fou_x );
 
   const gfloat qua_two_x = LOHALO_MINMOD( d_qua_twothr, d_qua_onetwo,
                                           d_qua_twothr_sq,
                                           d_qua_onetwo_times_twothr );
 
   const gfloat newval_qua_one =
-    (gfloat) .5 * ( qua_two + qua_thr )
-    +
-    (gfloat) .25 * ( qua_two_x - qua_thr_x );
+    (gfloat) 0.5
+    *
+    ( qua_two + qua_thr + (gfloat) 0.5 * ( qua_two_x - qua_thr_x ) );
 
   const gfloat newval_tre_thr =
-    (gfloat) .125 * ( tre_thr_x_minus_tre_fou_x + qua_thr_x_minus_qua_fou_x )
-    +
-    (gfloat) .5 * ( newval_tre_two + newval_tre_fou );
+    (gfloat) 0.5
+    *
+    (
+      newval_tre_two + newval_tre_fou
+      +
+      (gfloat) 0.25 * ( tre_thr_x_minus_tre_fou_x + qua_thr_x_minus_qua_fou_x )
+    );
 
   const gfloat dos_thr_x = LOHALO_MINMOD( d_dos_twothr, d_dos_thrfou,
                                           d_dos_twothr_sq,
@@ -590,11 +594,19 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_dos_thrfou_times_foufiv );
 
   const gfloat newval_uno_thr =
-    (gfloat) .25 * ( dos_fou - tre_thr )
-    +
-    (gfloat) .125 * ( dos_fou_y - tre_fou_y + dos_thr_x - dos_fou_x )
-    +
-    (gfloat) .5 * ( newval_uno_two + newval_dos_thr );
+    (gfloat) 0.5
+    *
+    (
+      newval_uno_two + newval_dos_thr
+      +
+      (gfloat) 0.5
+      *
+      (
+        dos_fou - tre_thr
+	+
+	(gfloat) 0.5 * ( dos_fou_y - tre_fou_y + dos_thr_x - dos_fou_x )
+      )
+    );
 
   const gfloat tre_two_y = LOHALO_MINMOD( d_dostre_two, d_trequa_two,
                                           d_dostre_two_sq,
@@ -604,11 +616,20 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_trequa_times_quacin_two );
 
   const gfloat newval_tre_one =
-    (gfloat) .25 * ( qua_two - tre_thr )
-    +
-    (gfloat) .125 * ( qua_two_x - qua_thr_x + tre_two_y - qua_two_y )
-    +
-    (gfloat) .5 * ( newval_dos_one + newval_tre_two );
+    (gfloat) 0.5
+    *
+    ( 
+      newval_dos_one + newval_tre_two
+      +
+      (gfloat) 0.5
+      *
+      (
+        qua_two - tre_thr
+	+
+	(gfloat) 0.5 * ( qua_two_x - qua_thr_x + tre_two_y - qua_two_y )
+      )
+    );
+
 
   const gfloat dos_two_x = LOHALO_MINMOD( d_dos_twothr, d_dos_onetwo,
                                           d_dos_twothr_sq,
@@ -619,11 +640,17 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_unodos_times_dostre_two );
 
   const gfloat newval_uno_one =
-    (gfloat) .25 * ( dos_two + dos_thr + tre_two + tre_thr )
-    +
-    (gfloat) .125 * ( dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
-                      +
-                      dos_two_y + dos_thr_y - tre_two_y - tre_thr_y );
+    (gfloat) .25
+    *
+    ( dos_two + dos_thr + tre_two + tre_thr
+      +
+      (gfloat) 0.5
+      *
+      ( dos_two_x - dos_thr_x + tre_two_x - tre_thr_x
+	+
+	dos_two_y + dos_thr_y - tre_two_y - tre_thr_y
+      )
+    );
 
   /*
    * Return the sixteen LBB stencil values:
@@ -1118,7 +1145,7 @@ lbb( const gfloat c00,
                          c11dxdy * quad_d2zdxdy11;
 
   const gfloat newval =
-    newval1 + (gfloat) .5 * newval2 + (gfloat) .25 * newval3;
+    newval1 + (gfloat) .5 * ( newval2 + (gfloat) .5 * newval3 );
 
   return newval;
 }
