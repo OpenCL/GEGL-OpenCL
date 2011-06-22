@@ -186,6 +186,12 @@
 
 
 /*
+ * A macro for Knuth's floored division:
+ */
+/* #define LOHALO_FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b)) */
+#define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
+
+/*
  * Convenience macro:
  */
 #define LOHALO_CALL_EWA_UPDATE(j,i) ewa_update ((j),            \
@@ -2072,7 +2078,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     )
 	     {
 	       /*
-		* We don't need data outside of the level 0
+		* We don't need data outside of the mipmap level 0
 		* context_rect. Blend and ship out:
 		*/
 	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
@@ -2085,10 +2091,25 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	       return;
 	     }
 
-	  /*
-	   * We need higher mipmap level(s) because the ellipse is too
-	   * big.
-	   */
+	  {
+	    /*
+	     * We need higher mipmap level(s) because the ellipse is
+	     * too big.
+	     */
+
+	    /*
+	     * Find the nearest mipmap anchor pixel location:
+	     */
+	    gint const ix_1 = ix_0 % 2;
+
+	    /* gint I =  */
+	    
+	    /* do */
+	    /*   { */
+		
+	    /*   } while */
+          }
+
         }
       }
     }
