@@ -244,9 +244,27 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   sampler_class->get = gegl_sampler_lohalo_get;
 }
 
+/*
+ * 5x5 is the smallest "level 0" context_rect that works with the
+ * LBB-Nohalo component of the sampler. If you use something else for
+ * level 0, you need to change the code.
+ */
+#define LOHALO_CONTEXT_RECT_SIZE  (5)
+#define LOHALO_CONTEXT_RECT_SHIFT (5)
 
-#define LOHALO_CONTEXT_RECT_SIZE 5
-#define LOHALO_CONTEXT_RECT_SHIFT ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE) ) / 2 )
+/*
+ * Use odd sizes for the higher mipmap context_rects. Generally, a
+ * higher mipmap context_rects should be larger than half the lower
+ * one. (Nicolas has not figured out the exact relationship that makes
+ * things work.)
+ *
+ * Every time one "jumps" a mipmap level, "switching" artifacts
+ * appear. It is probably a good thing to minimize the total number of
+ * mipmap levels used. On the other hand, large context_rects slow
+ * things down, since they prevent "buffer reuse."
+ */
+#define LOHALO_CONTEXT_RECT_SIZE_1  (7)
+#define LOHALO_CONTEXT_RECT_SHIFT_1 ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE_1) ) / 2 )
 
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
