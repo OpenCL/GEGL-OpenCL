@@ -28,11 +28,7 @@ static GeglOptions *opts_new (void)
 {
   GeglOptions *o = g_malloc0 (sizeof (GeglOptions));
 
-#ifdef HAVE_GTK
-  o->mode     = GEGL_RUN_MODE_EDITOR;
-#else
   o->mode     = GEGL_RUN_MODE_HELP;
-#endif
   o->xml      = NULL;
   o->output   = NULL;
   o->files    = NULL;
@@ -188,11 +184,9 @@ parse_args (int    argc,
     GeglOptions *o;
     char **curr;
 
-#ifndef HAVE_GTK
     if (argc==1) {
         usage (argv[0]);
     }
-#endif
 
     o = opts_new ();
     curr = argv+1;
