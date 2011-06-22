@@ -186,7 +186,7 @@
 
 
 /*
- * A macro for Knuth's floored division:
+ * Macros for Knuth's floored division:
  */
 /* #define LOHALO_FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b)) */
 #define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
@@ -2100,7 +2100,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    /*
 	     * Find the nearest mipmap anchor pixel location:
 	     */
-	    gint const ix_1 = ix_0 % 2;
+	    gint const ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
+	    gint const iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
 
 	    /* gint I =  */
 	    
