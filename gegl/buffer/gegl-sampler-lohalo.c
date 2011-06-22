@@ -110,7 +110,7 @@
  * For uncompressed natural images in high bit depth (images for which
  * the slopes a and b are unlikely to be equal to zero or be equal to
  * each other), or chips with good branch prediction, the following
- * version of the minmod function may work well.
+ * version of the minmod function may work well:
  *
  * ( (a_times_b)>=0. ? ( (a_times_b)<(a_times_a) ? (b) : (a) ) : 0. )
  *
@@ -130,16 +130,9 @@
  * ( (a_times_b)>=0. ? ( (a_times_a)<=(a_times_b) ? (a) : (b) ) : 0. )
  *
  * This last version appears to be slightly better than the former in
- * speed tests performed on a recent multicore Intel chip. 
+ * speed tests performed on a recent multicore Intel chip, especially
+ * when enlarging a sharp image by a large factor, hence the choice.
  */
-#define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
-  (                                            \
-    ( (a_times_b)>=(gfloat) 0. )               \
-    ?                                          \
-    ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \
-    :                                          \
-    (gfloat) 0.                                \
-  )
 
 /* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \ */
 /*   (                                            \ */
@@ -149,6 +142,15 @@
 /*     :                                          \ */
 /*     (gfloat) 0.                                \ */
 /*   )                                              */
+
+#define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
+  (                                            \
+    ( (a_times_b)>=(gfloat) 0. )               \
+    ?                                          \
+    ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \
+    :                                          \
+    (gfloat) 0.                                \
+  )
 
 
 /*
