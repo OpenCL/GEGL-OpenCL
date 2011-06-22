@@ -2041,7 +2041,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   */
 	  const gfloat critical_distance = (gfloat) 3. + (gfloat) LOHALO_FUDGE;
 
-          if ( (
+          if (
+               (
 		 LOHALO_ABS(x_0) + bounding_box_half_width  < critical_distance
 	       ) 
                &&
