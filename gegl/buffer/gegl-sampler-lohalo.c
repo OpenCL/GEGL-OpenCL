@@ -2032,6 +2032,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   */
 	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
  
+	  /*
+	   * We use a 5x5 context_rect at level 0; consequently, we
+	   * can access pixels which are 2 away from the anchor pixel
+	   * location in box distance. This means that the closest
+	   * mipmap locations which involve pixel locations outside of
+	   * the 5x5 are 3 away from the anchor pixel location:
+	   */
 	  const gfloat critical_distance = (gfloat) 3. + (gfloat) LOHALO_FUDGE;
 
           if ( (
@@ -2044,7 +2051,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     )
 	     {
 	       /*
-		* 
+		* We don't need data outside of the level 0
+		* context_rect. Blend and ship out:
 		*/
 	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
 	       newval[0] = theta * newval[0] + beta * ewa_newval[0];
@@ -2055,8 +2063,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	       babl_process (self->fish, newval, output, 1);
 	       return;
 	     }
+
 	  /*
-	   * TO DO: Use higher mipmap levels to handle larger ellipses.
+	   * We need higher mipmap level(s) because the ellipse is too
+	   * big.
 	   */
         }
       }
