@@ -640,7 +640,7 @@ nohalo_subdivision (const gfloat           uno_two,
                                           d_unodos_times_dostre_two );
 
   const gfloat newval_uno_one =
-    (gfloat) .25
+    (gfloat) 0.25
     *
     ( dos_two + dos_thr + tre_two + tre_thr
       +
@@ -1145,7 +1145,7 @@ lbb( const gfloat c00,
                          c11dxdy * quad_d2zdxdy11;
 
   const gfloat newval =
-    newval1 + (gfloat) .5 * ( newval2 + (gfloat) .5 * newval3 );
+    newval1 + (gfloat) 0.5 * ( newval2 + (gfloat) 0.5 * newval3 );
 
   return newval;
 }
@@ -1222,8 +1222,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
    * is that the sampling location is at most at a box distance of .5
    * from the anchor pixel location.
    */
-  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + (gdouble) .5);
-  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + (gdouble) .5);
+  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + (gdouble) 0.5);
+  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + (gdouble) 0.5);
 
   /*
    * This is the pointer we use to pull pixel from "base" mipmap level
