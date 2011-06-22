@@ -2098,11 +2098,25 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     */
 
 	    /*
-	     * Find the nearest mipmap anchor pixel location:
+	     * Nearest mipmap anchor pixel location:
 	     */
-	    gint const ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
-	    gint const iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
+	    const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
+	    const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
 
+	    /*
+	     * ADAM: THE POINTER GET NEEDS TO BE HERE.
+	     */
+
+	    /*
+	     * Position of the sampling location in the coordinate
+	     * system defined by the mipmap "pixel locations" relative
+	     * to the level 1 anchor pixel location:
+	     */
+	    const gfloat x_1 =
+	      (gfloat) ( ix_0 - 2 * ix_1 ) + (gfloat) 0.5 + x_0;
+	    const gfloat y_1 =
+	      (gfloat) ( iy_0 - 2 * iy_1 ) + (gfloat) 0.5 + y_0;
+	      
 	    /* gint I =  */
 	    
 	    /* do */
