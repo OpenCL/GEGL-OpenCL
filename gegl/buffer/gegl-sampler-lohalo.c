@@ -60,8 +60,8 @@
  * Clamped EWA with the teepee (radial version of the (mexican) "hat"
  * or "triangle") filter kernel was developed by N. Robidoux and
  * A. Thyssen the assistance of C. Racette and Frederick Weinhaus. It
- * is based on methods of Paul Heckbert, Andreas Gustaffson and
- * others.
+ * is based on methods of Paul Heckbert and Andreas Gustaffson (and
+ * possibly others).
  *
  * N. Robidoux's early research on Nohalo funded in part by an NSERC
  * (National Science and Engineering Research Council of Canada)
