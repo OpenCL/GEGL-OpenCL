@@ -201,6 +201,12 @@
 						ewa_newval)
 
 
+/*
+ * Give a bit of wiggle room to checks having to do with whether all
+ * the needed data has been reached:
+ */
+#define LOHALO_FUDGE ( (gdouble) 1.e-6 )
+
 enum
 {
   PROP_0,
@@ -1552,7 +1558,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_thr_2,
                      qua_fou_2 );
     /*
-     * Fourth (alpha) channel:
+     * Fourth channel:
      */
     nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
                         input_bptr[ uno_thr_shift + 3 ],
@@ -1842,17 +1848,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * any direction, and consequently we do not need the
        * downsampling scheme at all.
        */
-      /*
-       * Fudge factor RE: whether the ellipse is the unit disk.
-       */
-      const gdouble epsilon_for_twice_s1s1 = (gdouble) 1.e-6;
 
-      if ( twice_s1s1 < (gdouble) 2. + epsilon_for_twice_s1s1 )
+      if (twice_s1s1 < (gdouble) 2. + LOHALO_FUDGE)
         {
           /*
-           * The result is (almost) pure LBB-Nohalo.
-           *
-           * Ship out the array of new pixel values and return:
+           * The result is (almost) pure LBB-Nohalo. Pretend it is and
+           * ship out the array of new pixel values and return:
            */
           babl_process (self->fish, newval, output, 1);
           return;
@@ -1958,18 +1959,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          *
          */
         const gdouble ellipse_f = major_mag * minor_mag;
-        /*
-         * Bounding box of the ellipse (not needed here):
-         *
-         * const gdouble bounding_box_factor =
-         *   ellipse_f * ellipse_f
-         *   /
-         *   ( ellipse_a * ellipse_c + -.25 * ellipse_b * ellipse_b );
-         * const gdouble bounding_box_half_width =
-         *   sqrt( ellipse_c * bounding_box_factor );
-         * const gdouble bounding_box_half_height =
-         *   sqrt( ellipse_a * bounding_box_factor );
-         */
 
         gfloat total_weight = (gfloat) 0.0;
         gfloat ewa_newval[channels];
@@ -2026,23 +2015,50 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	LOHALO_CALL_EWA_UPDATE( 2, 2);
 
         {
+	  /*
+	   * Bounding box of the ellipse:
+	   */
+	  const gdouble bounding_box_factor =
+            ellipse_f * ellipse_f
+            /
+	    ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
+	  const gfloat bounding_box_half_width =
+	    sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
+	  const gfloat bounding_box_half_height =
+	    sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+
+	  /*
+	   * Relative weight of the contribution of LBB-Nohalo:
+	   */
 	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
  
-          // if THE DATA WE NEED (BOUNDING BOX) FITS WITHIN THE DATA WE ACCESSED
-          //  {
-	  const gfloat ewa_factor = ( (gfloat) 1. - theta ) / total_weight;
-	  newval[0] = theta * newval[0] + ewa_factor * ewa_newval[0];
-	  newval[1] = theta * newval[1] + ewa_factor * ewa_newval[1];
-	  newval[2] = theta * newval[2] + ewa_factor * ewa_newval[2];
-	  newval[3] = theta * newval[3] + ewa_factor * ewa_newval[3];
-	  
-	  babl_process (self->fish, newval, output, 1);
-	  return;
-          //  }
+	  const gfloat critical_distance = (gfloat) 3. + (gfloat) LOHALO_FUDGE;
+
+          if ( (
+		 LOHALO_ABS(x_0) + bounding_box_half_width  < critical_distance
+	       ) 
+               &&
+               (
+                 LOHALO_ABS(y_0) + bounding_box_half_height < critical_distance
+	       )
+	     )
+	     {
+	       /*
+		* 
+		*/
+	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
+	       newval[0] = theta * newval[0] + beta * ewa_newval[0];
+	       newval[1] = theta * newval[1] + beta * ewa_newval[1];
+	       newval[2] = theta * newval[2] + beta * ewa_newval[2];
+	       newval[3] = theta * newval[3] + beta * ewa_newval[3];
+	      
+	       babl_process (self->fish, newval, output, 1);
+	       return;
+	     }
+	  /*
+	   * TO DO: Use higher mipmap levels to handle larger ellipses.
+	   */
         }
-	/*
-	 * TO DO: Use higher mipmap levels to handle larger ellipses.
-	 */
       }
     }
   }
