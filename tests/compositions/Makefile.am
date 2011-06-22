@@ -31,7 +31,6 @@ testsuffix = .sh
 # EXTRA_DISTS
 TESTS = \
   run-clones.xml.sh                    \
-  run-denoise.xml.sh                   \
   run-composite-transform.xml.sh       \
   run-edge-laplace-broken.xml.sh       \
   run-edge-sobel.xml.sh                \
