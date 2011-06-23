@@ -214,7 +214,7 @@
  * the needed data has been reached:
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
-#define LOHALO_FUDGE_F ( (gfloat) 1.e-6 )
+#define LOHALO_FUDGEF ( (gfloat) 1.e-6 )
 
 enum
 {
@@ -272,7 +272,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap levels used. On the other hand, large context_rects slow
  * things down, since they prevent "buffer reuse."
  */
-#define LOHALO_CONTEXT_RECT_SIZE_1  (5)
+#define LOHALO_CONTEXT_RECT_SIZE_1  (7)
 #define LOHALO_CONTEXT_RECT_SHIFT_1 ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE_1) ) / 2 )
 
 static void
@@ -2091,9 +2091,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   * Versions which give a bit of wiggle room:
 	   */
 	  const gfloat fudged_bounding_box_half_width =
-	    bounding_box_half_width  - LOHALO_FUDGE_F;
+	    bounding_box_half_width  - LOHALO_FUDGEF;
 	  const gfloat fudged_bounding_box_half_height =
-	    bounding_box_half_height - LOHALO_FUDGE_F;
+	    bounding_box_half_height - LOHALO_FUDGEF;
 
 	  /*
 	   * In order to know whether we use higher mipmap level
@@ -2101,40 +2101,41 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   * mipmap location within the ellipse. So, we need to
 	   * determine the alignment of the level 1 mipmap level
 	   * w.r.t. the current level 0.
-	   */
- 
-	  /*
+	   *
 	   * We use a 5x5 context_rect at level 0; consequently, we
 	   * can access pixels which are 2 away from the anchor pixel
 	   * location in box distance.
-	   *
-	   * Find the closest locations, on all four sides, of level 1
-	   * pixels which average data not found in the level 0 5x5:
 	   */
+	  /*
+	   * Find the closest locations, on all four sides, of level 1
+	   * pixels which average data not found in the level 0 5x5.
+	   */
+	  const gint odd_ix_0 = ix_0 % 2;
+	  const gint odd_iy_0 = iy_0 % 2;
 	  const gfloat closest_left_1 =
-	    (ix_0 % 2) ? (gfloat) -3.5 : (gfloat) -2.5;
+	    odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
 	  const gfloat closest_rite_1 =
-	    (ix_0 % 2) ? (gfloat)  2.5 : (gfloat)  3.5;
+	    odd_ix_0 ? (gfloat)  2.5 : (gfloat)  3.5;
 	  const gfloat closest_top_1  =
-	    (iy_0 % 2) ? (gfloat) -3.5 : (gfloat) -2.5;
+	    odd_iy_0 ? (gfloat) -3.5 : (gfloat) -2.5;
 	  const gfloat closest_bot_1  =
-	    (iy_0 % 2) ? (gfloat)  2.5 : (gfloat)  3.5;
-
-	  const gfloat critical_distance = (gfloat) 2.5 + ;
+	    odd_iy_0 ? (gfloat)  2.5 : (gfloat)  3.5;
 
           if (
                ( x_0 - fudged_bounding_box_half_width  > closest_left_1 ) 
                &&
                ( x_0 + fudged_bounding_box_half_width  < closest_rite_1 )
 	       &&
-               ( y_0 - fudged_bounding_box_half_height > closest_top_1  )
+               ( y_0 - fudged_bounding_box_half_height >  closest_top_1 )
                &&
-               ( y_0 + fudged_bounding_box_half_height < closest_bot_1  )
+               ( y_0 + fudged_bounding_box_half_height <  closest_bot_1 )
 	     )
 	     {
 	       /*
-		* We definitely don't need data outside of the mipmap
-		* level 0 context_rect. Blend and ship out:
+		* We don't need data outside of the level 0
+		* context_rect.
+		*
+		* Blend and ship out:
 		*/
 	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
 	       newval[0] = theta * newval[0] + beta * ewa_newval[0];
@@ -2148,8 +2149,14 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
 	  {
 	    /*
-	     * We need higher mipmap level(s) because the ellipse is
-	     * too big.
+	     * We most likely need higher mipmap level(s) because the
+	     * bounding box of the ellipse covers mipmap pixel
+	     * locations which involve data not "covered" by the 5x5
+	     * level 0 context_rect. (The ellipse may still fail to
+	     * involve mipmap level 1 values--in which case all mipmap
+	     * pixel values will get 0 coefficients--but we used a
+	     * quick and dirty bounding box test which lets through
+	     * false positives.)
 	     */
 
 	    /*
@@ -2157,36 +2164,49 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     */
 	    const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
 	    const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
+
 	    /*
-	     * ADAM: THE POINTER GET NEEDS TO BE HERE.
+	     * ADAM: THE POINTER get NEEDS TO BE HERE.
 	     */
 
 	    /*
 	     * Position of the sampling location in the coordinate
 	     * system defined by the mipmap "pixel locations" relative
-	     * to the level 1 anchor pixel location, in "level 1
-	     * units":
+	     * to the level 1 anchor pixel location:
 	     */
 	    const gfloat x_1 =
-	      (gfloat) 0.5
-	      *
-	      ( (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5 + x_0 );
+	      x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
 	    const gfloat y_1 =
-	      (gfloat) 0.5
-	      *
-	      ( (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5 + y_0 );
-	      
+	      y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
+
 	    /*
-	     * The nearest included indices are those at "level 0
-	     * distance" 2.5 of the level 1 anchor pixel. These
-	     * correspond to ix_1 - 2
+	     * Key index ranges:
 	     */
-	    gint i_1 = 
-	    
-	    /* do */
-	    /*   { */
-		
-	    /*   } while */
+	    const gint in_left_ix_1 = -2 + odd_ix_0;
+	    const gint in_rite_ix_1 =  2 - odd_ix_0;
+	    const gint in_top_iy_1  = -2 + odd_iy_0;
+	    const gint in_bot_iy_1  =  2 - odd_iy_0;
+	      
+	    const gint out_left_ix_1 =
+              ceilf(  ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 );
+	    const gint out_rite_ix_1 =
+              floorf( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 );
+	    const gint out_top_iy_1 =
+              ceilf(  ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 );
+	    const gint out_bot_iy_1 =
+              floorf( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 );
+
+	    /*
+	     * This is where we update using mipmap level 1 values.
+	     */
+	    gint i;
+	    for ( i = out_top_iy_1; i < in_top_iy_1; i++ )
+	      {
+		gint j;
+		for ( j = out_left_1; j <= out_rite_1; j++ )
+		  {
+		  }
+	      }
           }
         }
       }
