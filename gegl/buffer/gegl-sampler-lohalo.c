@@ -2143,11 +2143,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     * units":
 	     */
 	    const gfloat x_1 =
-	      ( (gfloat) ( ix_0 - 2 * ix_1 ) + (gfloat) 0.5 + x_0 )
+	      ( (gfloat) ( ix_0 - 2 * ix_1 ) + x_0 + (gfloat) -0.5 )
 	      /
 	      (gfloat) 2.0;
 	    const gfloat y_1 =
-	      ( (gfloat) ( iy_0 - 2 * iy_1 ) + (gfloat) 0.5 + y_0 )
+	      ( (gfloat) ( iy_0 - 2 * iy_1 ) + y_0 + (gfloat) -0.5 )
 	      /
 	      (gfloat) 2.0;
 	      
