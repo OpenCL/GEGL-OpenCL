@@ -136,18 +136,18 @@
 
 /* #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \ */
 /*   (                                            \ */
-/*     (a_times_b)>=(gfloat) 0.                   \ */
+/*     (a_times_b) >= (gfloat) 0.                 \ */
 /*     ?                                          \ */
-/*     ( (a_times_b)<(a_times_a) ? (b) : (a) )    \ */
+/*     ( (a_times_b) < (a_times_a) ? (b) : (a) )  \ */
 /*     :                                          \ */
 /*     (gfloat) 0.                                \ */
 /*   )                                              */
 
 #define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
   (                                            \
-    ( (a_times_b)>=(gfloat) 0. )               \
+    (a_times_b) >= (gfloat) 0.                 \
     ?                                          \
-    ( (a_times_a)<=(a_times_b) ? (a) : (b) )   \
+    ( (a_times_a) <= (a_times_b) ? (a) : (b) ) \
     :                                          \
     (gfloat) 0.                                \
   )
@@ -157,10 +157,10 @@
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
  */
-#define LOHALO_MIN(x,y) ( ( (x) <= (y) ) ? (x) : (y) )
-#define LOHALO_MAX(x,y) ( ( (x) >= (y) ) ? (x) : (y) )
-#define LOHALO_ABS(x)   ( ( (x) >= (gfloat) 0. ) ? (x) : -(x) )
-#define LOHALO_SIGN(x)  ( ( (x) >= (gfloat) 0. ) ? (gfloat) 1. : (gfloat) -1. )
+#define LOHALO_MIN(x,y) ( (x) <= (y) ? (x) : (y) )
+#define LOHALO_MAX(x,y) ( (x) >= (y) ? (x) : (y) )
+#define LOHALO_ABS(x)   ( (x) >= (gfloat) 0. ? (x) : -(x) )
+#define LOHALO_SIGN(x)  ( (x) >= (gfloat) 0. ? (gfloat) 1. : (gfloat) -1. )
 
 
 /*
@@ -1165,11 +1165,11 @@ teepee(const gfloat c_major_x,
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
   const gfloat r2 = q1 * q1 + q2 * q2;
   const gfloat weight =
-    (
-      ( r2 < (gfloat) 1. )
-      ? (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
-      : (gfloat) 0.
-    );
+    r2 < (gfloat) 1.
+    ?
+    (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
+    :
+    (gfloat) 0.;
   return weight;
 }
 
@@ -1946,17 +1946,17 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          * vector [1,0] if norm = 0 safely takes care of all cases.
          */
         const gdouble temp_u11 =
-          (
-           ( s1s1minusn11_squared >= s1s1minusn22_squared )
-           ? n12
-           : s1s1minusn22
-           );
+	  s1s1minusn11_squared >= s1s1minusn22_squared
+	  ?
+	  n12
+	  :
+	  s1s1minusn22;
         const gdouble temp_u21 =
-          (
-           ( s1s1minusn11_squared >= s1s1minusn22_squared )
-           ? s1s1minusn11
-           : n21
-           );
+	  s1s1minusn11_squared >= s1s1minusn22_squared
+	  ?
+	  s1s1minusn11
+	  :
+	  n21;
         const gdouble norm =
           sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
         /*
@@ -1964,16 +1964,16 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          * (associated with the largest singular value).
          */
         const gdouble u11 =
-	  ( ( norm > (gdouble) 0.0 ) ? ( temp_u11 / norm ) : (gdouble) 1.0 );
+	  norm > (gdouble) 0.0 ? temp_u11 / norm : (gdouble) 1.0;
         const gdouble u21 =
-	  ( ( norm > (gdouble) 0.0 ) ? ( temp_u21 / norm ) : (gdouble) 0.0 );
+	  norm > (gdouble) 0.0 ? temp_u21 / norm : (gdouble) 0.0;
         /*
          * Clamp the singular values up to 1:
          */
         const gdouble major_mag =
-	  ( ( s1s1 <= (gdouble) 1.0 ) ? (gdouble) 1.0 : sqrt( s1s1 ) );
+	  s1s1 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s1s1 );
         const gdouble minor_mag =
-	  ( ( s2s2 <= (gdouble) 1.0 ) ? (gdouble) 1.0 : sqrt( s2s2 ) );
+	  s2s2 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s2s2 );
         /*
          * Unit major and minor axis direction vectors:
          */
@@ -2139,12 +2139,17 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    /*
 	     * Position of the sampling location in the coordinate
 	     * system defined by the mipmap "pixel locations" relative
-	     * to the level 1 anchor pixel location:
+	     * to the level 1 anchor pixel location, in "level 1
+	     * units":
 	     */
 	    const gfloat x_1 =
-	      (gfloat) ( ix_0 - 2 * ix_1 ) + (gfloat) 0.5 + x_0;
+	      ( (gfloat) ( ix_0 - 2 * ix_1 ) + (gfloat) 0.5 + x_0 )
+	      /
+	      (gfloat) 2.0;
 	    const gfloat y_1 =
-	      (gfloat) ( iy_0 - 2 * iy_1 ) + (gfloat) 0.5 + y_0;
+	      ( (gfloat) ( iy_0 - 2 * iy_1 ) + (gfloat) 0.5 + y_0 )
+	      /
+	      (gfloat) 2.0;
 	      
 	    /* gint I =  */
 	    
