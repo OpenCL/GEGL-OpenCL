@@ -2143,15 +2143,14 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     * units":
 	     */
 	    const gfloat x_1 =
-	      ( (gfloat) ( ix_0 - 2 * ix_1 ) + x_0 + (gfloat) -0.5 )
-	      /
-	      (gfloat) 2.0;
+	      (gfloat) 0.5 * ( (gfloat) ( ix_0 - 2 * ix_1 ) + x_0 - (gfloat) 0.5 );
 	    const gfloat y_1 =
-	      ( (gfloat) ( iy_0 - 2 * iy_1 ) + y_0 + (gfloat) -0.5 )
-	      /
-	      (gfloat) 2.0;
+	      (gfloat) 0.5 * ( (gfloat) ( iy_0 - 2 * iy_1 ) + y_0 - (gfloat) 0.5 );
 	      
-	    /* gint I =  */
+	    /*
+	     * We want to know what 
+	     */
+	    gint i_1 =
 	    
 	    /* do */
 	    /*   { */
