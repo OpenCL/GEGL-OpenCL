@@ -213,7 +213,8 @@
  * Give a bit of elbow room to checks having to do with whether all
  * the needed data has been reached:
  */
-#define LOHALO_FUDGE ( (gdouble) 1.e-6 )
+#define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
+#define LOHALO_FUDGE_F ( (gfloat) 1.e-6 )
 
 enum
 {
@@ -2071,6 +2072,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
         {
 	  /*
+	   * Relative weight of the contribution of LBB-Nohalo:
+	   */
+	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
+
+	  /*
 	   * Bounding box of the ellipse:
 	   */
 	  const gdouble bounding_box_factor =
@@ -2081,34 +2087,54 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
 	  const gfloat bounding_box_half_height =
 	    sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+	  /*
+	   * Versions which give a bit of wiggle room:
+	   */
+	  const gfloat fudged_bounding_box_half_width =
+	    bounding_box_half_width  - LOHALO_FUDGE_F;
+	  const gfloat fudged_bounding_box_half_height =
+	    bounding_box_half_height - LOHALO_FUDGE_F;
 
 	  /*
-	   * Relative weight of the contribution of LBB-Nohalo:
+	   * In order to know whether we use higher mipmap level
+	   * values, we need to check whether there is a level 1
+	   * mipmap location within the ellipse. So, we need to
+	   * determine the alignment of the level 1 mipmap level
+	   * w.r.t. the current level 0.
 	   */
-	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
  
 	  /*
 	   * We use a 5x5 context_rect at level 0; consequently, we
 	   * can access pixels which are 2 away from the anchor pixel
-	   * location in box distance. This means that the closest
-	   * mipmap locations which involve pixel locations outside of
-	   * the 5x5 are 3 away from the anchor pixel location:
+	   * location in box distance.
+	   *
+	   * Find the closest locations, on all four sides, of level 1
+	   * pixels which average data not found in the level 0 5x5:
 	   */
-	  const gfloat critical_distance = (gfloat) 3. + (gfloat) LOHALO_FUDGE;
+	  const gfloat closest_left_1 =
+	    (ix_0 % 2) ? (gfloat) -3.5 : (gfloat) -2.5;
+	  const gfloat closest_rite_1 =
+	    (ix_0 % 2) ? (gfloat)  2.5 : (gfloat)  3.5;
+	  const gfloat closest_top_1  =
+	    (iy_0 % 2) ? (gfloat) -3.5 : (gfloat) -2.5;
+	  const gfloat closest_bot_1  =
+	    (iy_0 % 2) ? (gfloat)  2.5 : (gfloat)  3.5;
+
+	  const gfloat critical_distance = (gfloat) 2.5 + ;
 
           if (
-               (
-		 LOHALO_ABS(x_0) + bounding_box_half_width  < critical_distance
-	       ) 
+               ( x_0 - fudged_bounding_box_half_width  > closest_left_1 ) 
                &&
-               (
-                 LOHALO_ABS(y_0) + bounding_box_half_height < critical_distance
-	       )
+               ( x_0 + fudged_bounding_box_half_width  < closest_rite_1 )
+	       &&
+               ( y_0 - fudged_bounding_box_half_height > closest_top_1  )
+               &&
+               ( y_0 + fudged_bounding_box_half_height < closest_bot_1  )
 	     )
 	     {
 	       /*
-		* We don't need data outside of the mipmap level 0
-		* context_rect. Blend and ship out:
+		* We definitely don't need data outside of the mipmap
+		* level 0 context_rect. Blend and ship out:
 		*/
 	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
 	       newval[0] = theta * newval[0] + beta * ewa_newval[0];
@@ -2131,7 +2157,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     */
 	    const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
 	    const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
-
 	    /*
 	     * ADAM: THE POINTER GET NEEDS TO BE HERE.
 	     */
