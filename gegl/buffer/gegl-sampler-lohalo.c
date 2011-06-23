@@ -252,6 +252,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   sampler_class->get = gegl_sampler_lohalo_get;
 }
 
+
 /*
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. If you use something else for
@@ -263,15 +264,14 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * Use odd sizes for the higher mipmap context_rects. Generally, a
  * higher mipmap context_rects should be larger than half the lower
- * one. (Nicolas has not figured out the exact relationship that makes
- * things work.)
+ * one. (Nicolas has not figured out the exact relationship.)
  *
  * Every time one "jumps" a mipmap level, "switching" artifacts
  * appear. It is probably a good thing to minimize the total number of
  * mipmap levels used. On the other hand, large context_rects slow
  * things down, since they prevent "buffer reuse."
  */
-#define LOHALO_CONTEXT_RECT_SIZE_1  (7)
+#define LOHALO_CONTEXT_RECT_SIZE_1  (5)
 #define LOHALO_CONTEXT_RECT_SHIFT_1 ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE_1) ) / 2 )
 
 static void
@@ -2143,21 +2143,26 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	     * units":
 	     */
 	    const gfloat x_1 =
-	      (gfloat) 0.5 * ( (gfloat) ( ix_0 - 2 * ix_1 ) + x_0 - (gfloat) 0.5 );
+	      (gfloat) 0.5
+	      *
+	      ( (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5 + x_0 );
 	    const gfloat y_1 =
-	      (gfloat) 0.5 * ( (gfloat) ( iy_0 - 2 * iy_1 ) + y_0 - (gfloat) 0.5 );
+	      (gfloat) 0.5
+	      *
+	      ( (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5 + y_0 );
 	      
 	    /*
-	     * We want to know what 
+	     * The nearest included indices are those at "level 0
+	     * distance" 2.5 of the level 1 anchor pixel. These
+	     * correspond to ix_1 - 2
 	     */
-	    gint i_1 =
+	    gint i_1 = 
 	    
 	    /* do */
 	    /*   { */
 		
 	    /*   } while */
           }
-
         }
       }
     }
