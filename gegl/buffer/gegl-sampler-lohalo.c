@@ -1983,13 +1983,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gdouble minor_unit_x = -u21;
         const gdouble minor_unit_y =  u11;
         /*
-         * Major and minor axis direction vectors (not needed):
-	 *
-         * const gdouble major_x = major_mag * major_unit_x;
-         * const gdouble major_y = major_mag * major_unit_y;
-         * const gdouble minor_x = minor_mag * minor_unit_x;
-         * const gdouble minor_y = minor_mag * minor_unit_y;
-         */
+         * Major and minor axis direction vectors:
+	 */
+        const gdouble major_x = major_mag * major_unit_x;
+        const gdouble major_y = major_mag * major_unit_y;
+        const gdouble minor_x = minor_mag * minor_unit_x;
+        const gdouble minor_y = minor_mag * minor_unit_y;
+
         /*
          * The square of the distance to the key location in output
          * place of a point [s,t] in input space is the square root of
@@ -2004,16 +2004,15 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gfloat c_minor_y = minor_unit_y / minor_mag;
         
         /*
-         * Ellipse coefficients that are not needed here:
-         *
-         * const gdouble ellipse_a =
-         *   major_y * major_y + minor_y * minor_y;
-         * const gdouble ellipse_b =
-         *   -2.0 * ( major_x * major_y + minor_x * minor_y );
-         * const gdouble ellipse_c =
-         *   major_x * major_x + minor_x * minor_x;
-         *
+         * Ellipse coefficients:
          */
+        const gdouble ellipse_a =
+          major_y * major_y + minor_y * minor_y;
+        const gdouble ellipse_b =
+          -2.0 * ( major_x * major_y + minor_x * minor_y );
+        const gdouble ellipse_c =
+          major_x * major_x + minor_x * minor_x;
+
         const gdouble ellipse_f = major_mag * minor_mag;
 
         gfloat total_weight = (gfloat) 0.0;
@@ -2203,7 +2202,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    for ( i = out_top_iy_1; i < in_top_iy_1; i++ )
 	      {
 		gint j;
-		for ( j = out_left_1; j <= out_rite_1; j++ )
+		for ( j = out_left_ix_1; j <= out_rite_ix_1; j++ )
 		  {
 		  }
 	      }
