@@ -30,12 +30,11 @@
  * interpolation) and Clamped EWA (Elliptical Weighted Averaging)
  * filtering with the "teepee" (radial tent, that is, conical) kernel.
  *
- * WARNING: This version of Lohalo gives quality downsampling results
- * only down to about 1/5. Beyond that, it works, but it does not
- * average over enough pixels to perform sufficient antialiasing.
- *
- * TO DO: Use multiple mipmap levels when downsampling by more than
- * about 60%.
+ * WARNING: This version of Lohalo only gives top quality downsampling
+ * results only down to about 1/2.5 = 40% of the size. Beyond that,
+ * the quality is somewhat lower (due to the use of mipmap data),
+ * especially beyond 1/LOHALO_CONTEXT_RECT_SIZE_1 because then it does
+ * not average over enough pixels to perform sufficient antialiasing.
  */
 
 /*
@@ -2340,7 +2339,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           }
         }
       /*
-       * Ship out:
+       * Ship:
        */
       babl_process (self->fish, newval, output, 1);
       return;
