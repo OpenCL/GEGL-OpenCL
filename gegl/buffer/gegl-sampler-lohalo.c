@@ -192,7 +192,7 @@
 #define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
 
 /*
- * Convenience macro:
+ * Convenience macros:
  */
 #define LOHALO_CALL_EWA_UPDATE(j,i) ewa_update ((j),            \
 						(i),            \
@@ -207,6 +207,20 @@
 						input_bptr,	\
 						&total_weight,	\
 						ewa_newval)
+
+#define LOHALO_CALL_LEVEL_1_EWA_UPDATE(j,i) level_1_ewa_update ((j),           \
+								(i),	       \
+								c_major_x,     \
+								c_major_y,     \
+								c_minor_x,     \
+								c_minor_y,     \
+								x_1,	       \
+								y_1,	       \
+								channels,      \
+								row_skip,      \
+								input_bptr_1,  \
+								&total_weight, \
+								ewa_newval)
 
 
 /*
@@ -1205,6 +1219,40 @@ ewa_update (const gint             j,
 }
 
 
+static inline void 
+level_1_ewa_update (const gint             j,
+		    const gint             i,
+		    const gfloat           c_major_x,
+		    const gfloat           c_major_y,
+		    const gfloat           c_minor_x,
+		    const gfloat           c_minor_y,
+		    const gfloat           x_1,
+		    const gfloat           y_1,
+		    const gint             channels,
+		    const gint             row_skip,
+		    const gfloat* restrict input_bptr_1,
+		          gfloat* restrict total_weight,
+		          gfloat* restrict ewa_newval)
+{
+  const gint skip = j * channels + i * row_skip;
+  /*
+   * The factor of four is because the level 1 mipmap values are
+   * averages of four level 0 pixel values.
+   */
+  const gfloat weight = (gfloat) 4. * teepee(c_major_x,
+					     c_major_y,
+					     c_minor_x,
+					     c_minor_y,
+					     x_1 - (gfloat) (2*j),
+					     y_1 - (gfloat) (2*i));
+  *total_weight += weight;
+  ewa_newval[0] += weight * input_bptr_1[ skip     ];
+  ewa_newval[1] += weight * input_bptr_1[ skip + 1 ];
+  ewa_newval[2] += weight * input_bptr_1[ skip + 2 ];
+  ewa_newval[3] += weight * input_bptr_1[ skip + 3 ];
+}
+
+
 static void
 gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                          const gdouble               absolute_x,
@@ -1982,13 +2030,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gdouble major_unit_y =  u21;
         const gdouble minor_unit_x = -u21;
         const gdouble minor_unit_y =  u11;
-        /*
-         * Major and minor axis direction vectors:
-	 */
-        const gdouble major_x = major_mag * major_unit_x;
-        const gdouble major_y = major_mag * major_unit_y;
-        const gdouble minor_x = minor_mag * minor_unit_x;
-        const gdouble minor_y = minor_mag * minor_unit_y;
 
         /*
          * The square of the distance to the key location in output
@@ -2002,20 +2043,52 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
         const gfloat c_major_y = major_unit_y / major_mag;
         const gfloat c_minor_x = minor_unit_x / minor_mag;
         const gfloat c_minor_y = minor_unit_y / minor_mag;
+
+        /*
+         * Major and minor axis direction vectors:
+	 */
+         const gdouble major_x = major_mag * major_unit_x;
+         const gdouble major_y = major_mag * major_unit_y;
+         const gdouble minor_x = minor_mag * minor_unit_x;
+         const gdouble minor_y = minor_mag * minor_unit_y;
         
         /*
          * Ellipse coefficients:
          */
-        const gdouble ellipse_a =
-          major_y * major_y + minor_y * minor_y;
-        const gdouble ellipse_b =
-          -2.0 * ( major_x * major_y + minor_x * minor_y );
-        const gdouble ellipse_c =
-          major_x * major_x + minor_x * minor_x;
-
+         const gdouble ellipse_a =
+           major_y * major_y + minor_y * minor_y;
+         const gdouble ellipse_b =
+           (gdouble) -2.0 * ( major_x * major_y + minor_x * minor_y );
+         const gdouble ellipse_c =
+           major_x * major_x + minor_x * minor_x;
         const gdouble ellipse_f = major_mag * minor_mag;
 
+	/*
+	 * Bounding box of the ellipse:
+	 */
+	const gdouble bounding_box_factor =
+	  ellipse_f * ellipse_f
+	  /
+	  ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
+	const gfloat bounding_box_half_width =
+	  sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
+	const gfloat bounding_box_half_height =
+	  sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+	/*
+	 * Versions which give a bit of wiggle room:
+	 */
+	const gfloat fudged_bounding_box_half_width =
+	  bounding_box_half_width  - LOHALO_FUDGEF;
+	const gfloat fudged_bounding_box_half_height =
+	  bounding_box_half_height - LOHALO_FUDGEF;
+
+	/*
+	 * Accumulator for the EWA weights:
+	 */
         gfloat total_weight = (gfloat) 0.0;
+	/*
+	 * Storage for the EWA contribution:
+	 */
         gfloat ewa_newval[channels];
         ewa_newval[0] = (gfloat) 0.0;
         ewa_newval[1] = (gfloat) 0.0;
@@ -2074,25 +2147,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   * Relative weight of the contribution of LBB-Nohalo:
 	   */
 	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
-
-	  /*
-	   * Bounding box of the ellipse:
-	   */
-	  const gdouble bounding_box_factor =
-            ellipse_f * ellipse_f
-            /
-	    ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
-	  const gfloat bounding_box_half_width =
-	    sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
-	  const gfloat bounding_box_half_height =
-	    sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
-	  /*
-	   * Versions which give a bit of wiggle room:
-	   */
-	  const gfloat fudged_bounding_box_half_width =
-	    bounding_box_half_width  - LOHALO_FUDGEF;
-	  const gfloat fudged_bounding_box_half_height =
-	    bounding_box_half_height - LOHALO_FUDGEF;
 
 	  /*
 	   * In order to know whether we use higher mipmap level
@@ -2181,31 +2235,61 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    /*
 	     * Key index ranges:
 	     */
-	    const gint in_left_ix_1 = -2 + odd_ix_0;
-	    const gint in_rite_ix_1 =  2 - odd_ix_0;
-	    const gint in_top_iy_1  = -2 + odd_iy_0;
-	    const gint in_bot_iy_1  =  2 - odd_iy_0;
+	    const gint in_left_ix = -2 + odd_ix_0;
+	    const gint in_rite_ix =  2 - odd_ix_0;
+	    const gint in_top_iy  = -2 + odd_iy_0;
+	    const gint in_bot_iy  =  2 - odd_iy_0;
 	      
-	    const gint out_left_ix_1 =
+	    const gint out_left =
               ceilf(  ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 );
-	    const gint out_rite_ix_1 =
+	    const gint out_rite =
               floorf( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 );
-	    const gint out_top_iy_1 =
+	    const gint out_top =
               ceilf(  ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 );
-	    const gint out_bot_iy_1 =
+	    const gint out_bot =
               floorf( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 );
 
 	    /*
-	     * This is where we update using mipmap level 1 values.
+	     * Update using mipmap level 1 values.
+	     * 
+	     * Possible future improvement: When the ellipse is
+	     * slanted, one could avoid many operations using Anthony
+	     * Thyssen's formulas for the bounding parallelogram with
+	     * horizontal top and bottom. When both the magnification
+	     * factors are the same, or when there is no rotation,
+	     * using these formulas makes no difference.
 	     */
-	    gint i;
-	    for ( i = out_top_iy_1; i < in_top_iy_1; i++ )
-	      {
-		gint j;
-		for ( j = out_left_ix_1; j <= out_rite_ix_1; j++ )
-		  {
-		  }
-	      }
+	    {
+	      gint i;
+	      for ( i = out_top ; i < in_top; i++ )
+		{
+		  gint j;
+		  for ( j = out_left; j <= out_rite; j++ )
+		    {
+		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		    }
+		}
+	      do
+		{
+		  gint j;
+		  for ( j = out_left; j < in_left; j++ )
+		    {
+		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		    }
+		  for ( j = in_rite + 1; j <= out_rite; j++ )
+		    {
+		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		    }
+		} while ( ++i <= in_bot );
+	      for ( i = in_bot + 1; i <= out_bot; i++ )
+		{
+		  gint j;
+		  for ( j = out_left; j <= out_rite; j++ )
+		    {
+		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		    }
+		}
+	    }
           }
         }
       }
