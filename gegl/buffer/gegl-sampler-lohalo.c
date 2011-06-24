@@ -285,7 +285,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap levels used. On the other hand, large context_rects slow
  * things down, since they prevent "buffer reuse."
  */
-#define LOHALO_CONTEXT_RECT_SIZE_1  (7)
+#define LOHALO_CONTEXT_RECT_SIZE_1  (29)
 #define LOHALO_CONTEXT_RECT_SHIFT_1 ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE_1) ) / 2 )
 
 static void
@@ -2217,11 +2217,19 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 /*
                  * Key index ranges:
                  */
+                /*
+                 * The "in" indices are the closest relative mipmap 1
+                 * indices of needed mipmap values:
+                 */
                 const gint in_left = -2 + odd_ix_0;
                 const gint in_rite =  2 - odd_ix_0;
                 const gint in_top  = -2 + odd_iy_0;
                 const gint in_bot  =  2 - odd_iy_0;
                 
+                /*
+                 * The "out" indices are the farthest relative mipmap
+                 * 1 indices we use at this level:
+                 */
                 const gint out_left =
                   LOHALO_MAX
                     (
@@ -2296,7 +2304,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  */
                 {
                   gint i;
-                  for ( i = out_top ; i < in_top; i++ )
+                  for ( i = out_top ; i <= in_top; i++ )
                     {
                       gint j;
                       for ( j = out_left; j <= out_rite; j++ )
@@ -2307,23 +2315,23 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                   do
                     {
                       gint j;
-                      for ( j = out_left; j < in_left; j++ )
+                      for ( j = out_left; j <= in_left; j++ )
                         {
                           LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                         }
-                      for ( j = in_rite + 1; j <= out_rite; j++ )
+                      for ( j = in_rite; j <= out_rite; j++ )
                         {
                           LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                         }
-                    } while ( ++i <= in_bot );
-                  for ( i = in_bot + 1; i <= out_bot; i++ )
+                    } while ( ++i < in_bot );
+                  do
                     {
                       gint j;
                       for ( j = out_left; j <= out_rite; j++ )
                       {
                         LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                       }
-                    }
+                    } while ( ++i <= out_bot);
                 }
               }
             {
