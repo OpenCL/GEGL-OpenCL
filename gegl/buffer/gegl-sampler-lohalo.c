@@ -2165,185 +2165,182 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	   */
 	  const gint odd_ix_0 = ix_0 % 2;
 	  const gint odd_iy_0 = iy_0 % 2;
-	  const gfloat closest_left_1 =
+	  const gfloat closest_left =
 	    odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
-	  const gfloat closest_rite_1 =
+	  const gfloat closest_rite =
 	    odd_ix_0 ? (gfloat)  2.5 : (gfloat)  3.5;
-	  const gfloat closest_top_1  =
+	  const gfloat closest_top  =
 	    odd_iy_0 ? (gfloat) -3.5 : (gfloat) -2.5;
-	  const gfloat closest_bot_1  =
+	  const gfloat closest_bot  =
 	    odd_iy_0 ? (gfloat)  2.5 : (gfloat)  3.5;
 
           if (
-               ( x_0 - fudged_bounding_box_half_width  > closest_left_1 ) 
-               &&
-               ( x_0 + fudged_bounding_box_half_width  < closest_rite_1 )
-	       &&
-               ( y_0 - fudged_bounding_box_half_height >  closest_top_1 )
-               &&
-               ( y_0 + fudged_bounding_box_half_height <  closest_bot_1 )
+               ( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
+               ||
+               ( x_0 + fudged_bounding_box_half_width  >= closest_rite )
+	       ||
+               ( y_0 - fudged_bounding_box_half_height <=  closest_top )
+               ||&
+               ( y_0 + fudged_bounding_box_half_height >=  closest_bot )
 	     )
-	     {
-	       /*
-		* We don't need data outside of the level 0
-		* context_rect.
-		*
-		* Blend and ship out:
-		*/
-	       const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
-	       newval[0] = theta * newval[0] + beta * ewa_newval[0];
-	       newval[1] = theta * newval[1] + beta * ewa_newval[1];
-	       newval[2] = theta * newval[2] + beta * ewa_newval[2];
-	       newval[3] = theta * newval[3] + beta * ewa_newval[3];
-	      
-	       babl_process (self->fish, newval, output, 1);
-	       return;
-	     }
+	    {
+	      /*
+	       * We most likely need higher mipmap level(s) because
+	       * the bounding box of the ellipse covers mipmap pixel
+	       * locations which involve data not "covered" by the 5x5
+	       * level 0 context_rect. (The ellipse may still fail to
+	       * involve mipmap level 1 values--in which case all
+	       * mipmap pixel values will get 0 coefficients--but we
+	       * used a quick and dirty bounding box test which lets
+	       * through false positives.)
+	       */
 
+	      /*
+	       * Nearest mipmap anchor pixel location:
+	       */
+	      const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
+	      const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
+
+	      /*
+	       * ADAM: THE POINTER get NEEDS TO BE HERE.
+	       */
+
+	      /*
+	       * Position of the sampling location in the coordinate
+	       * system defined by the mipmap "pixel locations"
+	       * relative to the level 1 anchor pixel location:
+	       */
+	      const gfloat x_1 =
+		x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
+	      const gfloat y_1 =
+		y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
+
+	      /*
+	       * Key index ranges:
+	       */
+	      const gint in_left_ix = -2 + odd_ix_0;
+	      const gint in_rite_ix =  2 - odd_ix_0;
+	      const gint in_top_iy  = -2 + odd_iy_0;
+	      const gint in_bot_iy  =  2 - odd_iy_0;
+	      
+	      const gint out_left =
+		LOHALO_MAX
+	          (
+		    (gint)
+		      (
+		        ceilf
+		          (
+			    ( x_1 - bounding_box_half_width )
+			    *
+			    (gfloat) 0.5
+  			  )
+		      )
+		    ,
+		    LOHALO_CONTEXT_RECT_SHIFT_1
+                  );
+	      const gint out_rite =
+	        LOHALO_MIN
+	          (
+		    -LOHALO_CONTEXT_RECT_SHIFT_1
+		    ,
+		    (gint)
+		      (
+		        floorf
+		          (
+			    ( x_1 + bounding_box_half_width )
+			    *
+			    (gfloat) 0.5
+			  )
+		      )
+                  );
+	      const gint out_top =
+	        LOHALO_MAX
+	          (
+		    (gint)
+		      (
+		        ceilf
+		          (
+			    ( y_1 - bounding_box_half_height )
+			    *
+			    (gfloat) 0.5
+			  )
+		      )
+		    ,
+		    LOHALO_CONTEXT_RECT_SHIFT_1
+                  );
+	      const gint out_bot =
+	        LOHALO_MIN
+	          (
+		    -LOHALO_CONTEXT_RECT_SHIFT_1
+		    ,
+		    (gint)
+		      (
+		        floorf
+		          (
+			    ( y_1 + bounding_box_half_height )
+			    *
+			    (gfloat) 0.5
+			  )
+		      )
+                  );
+
+	      /*
+	       * Update using mipmap level 1 values.
+	       * 
+	       * Possible future improvement: When the ellipse is
+	       * slanted, one could avoid many operations using
+	       * Anthony Thyssen's formulas for the bounding
+	       * parallelogram with horizontal top and bottom. When
+	       * both the magnification factors are the same, or when
+	       * there is no rotation, using these formulas makes no
+	       * difference.
+	       */
+	      {
+		gint i;
+		for ( i = out_top ; i < in_top; i++ )
+		  {
+		    gint j;
+		    for ( j = out_left; j <= out_rite; j++ )
+		      {
+			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		      }
+		  }
+		do
+		  {
+		    gint j;
+		    for ( j = out_left; j < in_left; j++ )
+		      {
+			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		      }
+		    for ( j = in_rite + 1; j <= out_rite; j++ )
+		      {
+			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		      }
+		  } while ( ++i <= in_bot );
+		for ( i = in_bot + 1; i <= out_bot; i++ )
+		  {
+		    gint j;
+		    for ( j = out_left; j <= out_rite; j++ )
+		      {
+		        LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+		      }
+		  }
+	      }
+	    }
 	  {
 	    /*
-	     * We most likely need higher mipmap level(s) because the
-	     * bounding box of the ellipse covers mipmap pixel
-	     * locations which involve data not "covered" by the 5x5
-	     * level 0 context_rect. (The ellipse may still fail to
-	     * involve mipmap level 1 values--in which case all mipmap
-	     * pixel values will get 0 coefficients--but we used a
-	     * quick and dirty bounding box test which lets through
-	     * false positives.)
+	     * Blend and ship out:
 	     */
-
-	    /*
-	     * Nearest mipmap anchor pixel location:
-	     */
-	    const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
-	    const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
-
-	    /*
-	     * ADAM: THE POINTER get NEEDS TO BE HERE.
-	     */
-
-	    /*
-	     * Position of the sampling location in the coordinate
-	     * system defined by the mipmap "pixel locations" relative
-	     * to the level 1 anchor pixel location:
-	     */
-	    const gfloat x_1 =
-	      x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
-	    const gfloat y_1 =
-	      y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
-
-	    /*
-	     * Key index ranges:
-	     */
-	    const gint in_left_ix = -2 + odd_ix_0;
-	    const gint in_rite_ix =  2 - odd_ix_0;
-	    const gint in_top_iy  = -2 + odd_iy_0;
-	    const gint in_bot_iy  =  2 - odd_iy_0;
+	    const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
+	    newval[0] = theta * newval[0] + beta * ewa_newval[0];
+	    newval[1] = theta * newval[1] + beta * ewa_newval[1];
+	    newval[2] = theta * newval[2] + beta * ewa_newval[2];
+	    newval[3] = theta * newval[3] + beta * ewa_newval[3];
 	      
-	    const gint out_left =
-	      LOHALO_MAX
-	        (
-		  (gint)
-		    (
-		      ceilf
-		        (
-			  ( x_1 - bounding_box_half_width )
-			  *
-			  (gfloat) 0.5
-			)
-		    )
-		  ,
-		  LOHALO_CONTEXT_RECT_SHIFT_1
-                );
-	    const gint out_rite =
-	      LOHALO_MIN
-	        (
-		  -LOHALO_CONTEXT_RECT_SHIFT_1
-		  ,
-		  (gint)
-		    (
-		      floorf
-		        (
-			  ( x_1 + bounding_box_half_width )
-			  *
-			  (gfloat) 0.5
-			)
-		    )
-                );
-	    const gint out_top =
-	      LOHALO_MAX
-	        (
-		  (gint)
-		    (
-		      ceilf
-		        (
-			  ( y_1 - bounding_box_half_height )
-			  *
-			  (gfloat) 0.5
-			)
-		    )
-		  ,
-		  LOHALO_CONTEXT_RECT_SHIFT_1
-                );
-	    const gint out_bot =
-	      LOHALO_MIN
-	        (
-		  -LOHALO_CONTEXT_RECT_SHIFT_1
-		  ,
-		  (gint)
-		    (
-		      floorf
-		        (
-			  ( y_1 + bounding_box_half_height )
-			  *
-			  (gfloat) 0.5
-			)
-		    )
-                );
-
-	    /*
-	     * Update using mipmap level 1 values.
-	     * 
-	     * Possible future improvement: When the ellipse is
-	     * slanted, one could avoid many operations using Anthony
-	     * Thyssen's formulas for the bounding parallelogram with
-	     * horizontal top and bottom. When both the magnification
-	     * factors are the same, or when there is no rotation,
-	     * using these formulas makes no difference.
-	     */
-	    {
-	      gint i;
-	      for ( i = out_top ; i < in_top; i++ )
-		{
-		  gint j;
-		  for ( j = out_left; j <= out_rite; j++ )
-		    {
-		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		    }
-		}
-	      do
-		{
-		  gint j;
-		  for ( j = out_left; j < in_left; j++ )
-		    {
-		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		    }
-		  for ( j = in_rite + 1; j <= out_rite; j++ )
-		    {
-		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		    }
-		} while ( ++i <= in_bot );
-	      for ( i = in_bot + 1; i <= out_bot; i++ )
-		{
-		  gint j;
-		  for ( j = out_left; j <= out_rite; j++ )
-		    {
-		      LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		    }
-		}
-	    }
-          }
-        }
+	    babl_process (self->fish, newval, output, 1);
+	    return;
+	  }
+	}
       }
     }
   }
