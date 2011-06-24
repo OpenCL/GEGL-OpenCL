@@ -2241,13 +2241,65 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 	    const gint in_bot_iy  =  2 - odd_iy_0;
 	      
 	    const gint out_left =
-              ceilf(  ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 );
+	      LOHALO_MAX
+	        (
+		  (gint)
+		    (
+		      ceilf
+		        (
+			  ( x_1 - bounding_box_half_width )
+			  *
+			  (gfloat) 0.5
+			)
+		    )
+		  ,
+		  LOHALO_CONTEXT_RECT_SHIFT_1
+                );
 	    const gint out_rite =
-              floorf( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 );
+	      LOHALO_MIN
+	        (
+		  -LOHALO_CONTEXT_RECT_SHIFT_1
+		  ,
+		  (gint)
+		    (
+		      floorf
+		        (
+			  ( x_1 + bounding_box_half_width )
+			  *
+			  (gfloat) 0.5
+			)
+		    )
+                );
 	    const gint out_top =
-              ceilf(  ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 );
+	      LOHALO_MAX
+	        (
+		  (gint)
+		    (
+		      ceilf
+		        (
+			  ( y_1 - bounding_box_half_height )
+			  *
+			  (gfloat) 0.5
+			)
+		    )
+		  ,
+		  LOHALO_CONTEXT_RECT_SHIFT_1
+                );
 	    const gint out_bot =
-              floorf( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 );
+	      LOHALO_MIN
+	        (
+		  -LOHALO_CONTEXT_RECT_SHIFT_1
+		  ,
+		  (gint)
+		    (
+		      floorf
+		        (
+			  ( y_1 + bounding_box_half_height )
+			  *
+			  (gfloat) 0.5
+			)
+		    )
+                );
 
 	    /*
 	     * Update using mipmap level 1 values.
