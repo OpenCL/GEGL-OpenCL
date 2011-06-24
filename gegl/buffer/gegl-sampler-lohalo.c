@@ -2217,10 +2217,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 /*
                  * Key index ranges:
                  */
-                const gint in_left_ix = -2 + odd_ix_0;
-                const gint in_rite_ix =  2 - odd_ix_0;
-                const gint in_top_iy  = -2 + odd_iy_0;
-                const gint in_bot_iy  =  2 - odd_iy_0;
+                const gint in_left = -2 + odd_ix_0;
+                const gint in_rite =  2 - odd_ix_0;
+                const gint in_top  = -2 + odd_iy_0;
+                const gint in_bot  =  2 - odd_iy_0;
                 
                 const gint out_left =
                   LOHALO_MAX
@@ -2296,7 +2296,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  */
                 {
                   gint i;
-                  for ( i = out_top ; i < in_top_iy; i++ )
+                  for ( i = out_top ; i < in_top; i++ )
                     {
                       gint j;
                       for ( j = out_left; j <= out_rite; j++ )
@@ -2307,16 +2307,16 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                   do
                     {
                       gint j;
-                      for ( j = out_left; j < in_left_ix; j++ )
+                      for ( j = out_left; j < in_left; j++ )
                         {
                           LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                         }
-                      for ( j = in_rite_ix + 1; j <= out_rite; j++ )
+                      for ( j = in_rite + 1; j <= out_rite; j++ )
                         {
                           LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                         }
-                    } while ( ++i <= in_bot_iy );
-                  for ( i = in_bot_iy + 1; i <= out_bot; i++ )
+                    } while ( ++i <= in_bot );
+                  for ( i = in_bot + 1; i <= out_bot; i++ )
                     {
                       gint j;
                       for ( j = out_left; j <= out_rite; j++ )
