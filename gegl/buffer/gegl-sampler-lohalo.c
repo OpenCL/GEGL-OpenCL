@@ -1953,395 +1953,394 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * downsampling scheme at all.
        */
 
-      if (twice_s1s1 < (gdouble) 2. + LOHALO_FUDGE)
+      if (twice_s1s1 >= (gdouble) 2. + LOHALO_FUDGE)
         {
           /*
-           * The result is (almost) pure LBB-Nohalo. Pretend it is and
-           * ship out the array of new pixel values and return:
+           * The result is not (almost) pure LBB-Nohalo. Compute the
+           * teepee component.
            */
-          babl_process (self->fish, newval, output, 1);
-          return;
-        }
-
-      {
-        const gdouble s1s1 = (gdouble) 0.5 * twice_s1s1;
-        /*
-         * s2 the smallest singular value of the inverse Jacobian
-         * matrix. Its reciprocal is the largest singular value of the
-         * Jacobian matrix itself.
+          const gdouble s1s1 = (gdouble) 0.5 * twice_s1s1;
+          /*
+           * s2 the smallest singular value of the inverse Jacobian
+           * matrix. Its reciprocal is the largest singular value of
+           * the Jacobian matrix itself.
          */
-        const gdouble s2s2 =
-	  (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
+          const gdouble s2s2 =
+	    (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
         
-        const gdouble s1s1minusn11 = s1s1 - n11;
-        const gdouble s1s1minusn22 = s1s1 - n22;
-        /*
-         * u1, the first column of the U factor of a singular
-         * decomposition of Jinv, is a (non-normalized) left singular
-         * vector corresponding to s1. It has entries u11 and u21. We
-         * compute u1 from the fact that it is an eigenvector of n
-         * corresponding to the eigenvalue s1^2.
-         */
-        const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
-        const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
-        /*
-         * The following selects the largest row of n-s1^2 I ("I"
-         * being the 2x2 identity matrix) as the one which is used to
-         * find the eigenvector. If both s1^2-n11 and s1^2-n22 are
-         * zero, n-s1^2 I is the zero matrix.  In that case, any
-         * vector is an eigenvector; in addition, norm below is equal
-         * to zero, and, in exact arithmetic, this is the only case in
-         * which norm = 0. So, setting u1 to the simple but arbitrary
-         * vector [1,0] if norm = 0 safely takes care of all cases.
-         */
-        const gdouble temp_u11 =
-	  s1s1minusn11_squared >= s1s1minusn22_squared
-	  ?
-	  n12
-	  :
-	  s1s1minusn22;
-        const gdouble temp_u21 =
-	  s1s1minusn11_squared >= s1s1minusn22_squared
-	  ?
-	  s1s1minusn11
-	  :
-	  n21;
-        const gdouble norm =
-          sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
-        /*
-         * Finalize the entries of first left singular vector
-         * (associated with the largest singular value).
-         */
-        const gdouble u11 =
-	  norm > (gdouble) 0.0 ? temp_u11 / norm : (gdouble) 1.0;
-        const gdouble u21 =
-	  norm > (gdouble) 0.0 ? temp_u21 / norm : (gdouble) 0.0;
-        /*
-         * Clamp the singular values up to 1:
-         */
-        const gdouble major_mag =
-	  s1s1 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s1s1 );
-        const gdouble minor_mag =
-	  s2s2 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s2s2 );
-        /*
-         * Unit major and minor axis direction vectors:
-         */
-        const gdouble major_unit_x =  u11;
-        const gdouble major_unit_y =  u21;
-        const gdouble minor_unit_x = -u21;
-        const gdouble minor_unit_y =  u11;
-
-        /*
-         * The square of the distance to the key location in output
-         * place of a point [s,t] in input space is the square root of
-	 *
-         * ( s * c_major_x + t * c_major_y )^2
-         * +
-         * ( s * c_minor_x + t * c_minor_y )^2.
-         */
-        const gfloat c_major_x = major_unit_x / major_mag;
-        const gfloat c_major_y = major_unit_y / major_mag;
-        const gfloat c_minor_x = minor_unit_x / minor_mag;
-        const gfloat c_minor_y = minor_unit_y / minor_mag;
-
-        /*
-         * Major and minor axis direction vectors:
-	 */
-         const gdouble major_x = major_mag * major_unit_x;
-         const gdouble major_y = major_mag * major_unit_y;
-         const gdouble minor_x = minor_mag * minor_unit_x;
-         const gdouble minor_y = minor_mag * minor_unit_y;
-        
-        /*
-         * Ellipse coefficients:
-         */
-         const gdouble ellipse_a =
-           major_y * major_y + minor_y * minor_y;
-         const gdouble ellipse_b =
-           (gdouble) -2.0 * ( major_x * major_y + minor_x * minor_y );
-         const gdouble ellipse_c =
-           major_x * major_x + minor_x * minor_x;
-        const gdouble ellipse_f = major_mag * minor_mag;
-
-	/*
-	 * Bounding box of the ellipse:
-	 */
-	const gdouble bounding_box_factor =
-	  ellipse_f * ellipse_f
-	  /
-	  ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
-	const gfloat bounding_box_half_width =
-	  sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
-	const gfloat bounding_box_half_height =
-	  sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
-	/*
-	 * Versions which give a bit of wiggle room:
-	 */
-	const gfloat fudged_bounding_box_half_width =
-	  bounding_box_half_width  - LOHALO_FUDGEF;
-	const gfloat fudged_bounding_box_half_height =
-	  bounding_box_half_height - LOHALO_FUDGEF;
-
-	/*
-	 * Accumulator for the EWA weights:
-	 */
-        gfloat total_weight = (gfloat) 0.0;
-	/*
-	 * Storage for the EWA contribution:
-	 */
-        gfloat ewa_newval[channels];
-        ewa_newval[0] = (gfloat) 0.0;
-        ewa_newval[1] = (gfloat) 0.0;
-        ewa_newval[2] = (gfloat) 0.0;
-        ewa_newval[3] = (gfloat) 0.0;
-
-        /*
-         * Grab the pixel values located within the context_rect of
-         * "pure" LBB-Nohalo.  Farther ones will be accessed through
-         * higher mipmap levels.
-         */
-        /*
-         * First (top) row of the 5x5 context_rect, from left to
-         * right:
-         */
-	LOHALO_CALL_EWA_UPDATE(-2,-2);
-	LOHALO_CALL_EWA_UPDATE(-1,-2);
-	LOHALO_CALL_EWA_UPDATE( 0,-2);
-	LOHALO_CALL_EWA_UPDATE( 1,-2);
-	LOHALO_CALL_EWA_UPDATE( 2,-2);
-        /*
-         * Second row of the 5x5:
-         */
-	LOHALO_CALL_EWA_UPDATE(-2,-1);
-	LOHALO_CALL_EWA_UPDATE(-1,-1);
-	LOHALO_CALL_EWA_UPDATE( 0,-1);
-	LOHALO_CALL_EWA_UPDATE( 1,-1);
-	LOHALO_CALL_EWA_UPDATE( 2,-1);
-        /*
-         * Third row:
-         */
-	LOHALO_CALL_EWA_UPDATE(-2, 0);
-	LOHALO_CALL_EWA_UPDATE(-1, 0);
-	LOHALO_CALL_EWA_UPDATE( 0, 0);
-	LOHALO_CALL_EWA_UPDATE( 1, 0);
-	LOHALO_CALL_EWA_UPDATE( 2, 0);
-        /*
-         * Fourth row:
-         */
-	LOHALO_CALL_EWA_UPDATE(-2, 1);
-	LOHALO_CALL_EWA_UPDATE(-1, 1);
-	LOHALO_CALL_EWA_UPDATE( 0, 1);
-	LOHALO_CALL_EWA_UPDATE( 1, 1);
-	LOHALO_CALL_EWA_UPDATE( 2, 1);
-        /*
-         * Fifth row of the 5x5 context_rect:
-         */
-	LOHALO_CALL_EWA_UPDATE(-2, 2);
-	LOHALO_CALL_EWA_UPDATE(-1, 2);
-	LOHALO_CALL_EWA_UPDATE( 0, 2);
-	LOHALO_CALL_EWA_UPDATE( 1, 2);
-	LOHALO_CALL_EWA_UPDATE( 2, 2);
-
-        {
-	  /*
-	   * Relative weight of the contribution of LBB-Nohalo:
+          const gdouble s1s1minusn11 = s1s1 - n11;
+          const gdouble s1s1minusn22 = s1s1 - n22;
+          /*
+           * u1, the first column of the U factor of a singular
+           * decomposition of Jinv, is a (non-normalized) left
+           * singular vector corresponding to s1. It has entries u11
+           * and u21. We compute u1 from the fact that it is an
+           * eigenvector of n corresponding to the eigenvalue s1^2.
 	   */
-	  const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
+	  const gdouble s1s1minusn11_squared = s1s1minusn11 * s1s1minusn11;
+	  const gdouble s1s1minusn22_squared = s1s1minusn22 * s1s1minusn22;
+          /*
+	   * The following selects the largest row of n-s1^2 I ("I"
+	   * being the 2x2 identity matrix) as the one which is used
+	   * to find the eigenvector. If both s1^2-n11 and s1^2-n22
+	   * are zero, n-s1^2 I is the zero matrix.  In that case, any
+	   * vector is an eigenvector; in addition, norm below is
+	   * equal to zero, and, in exact arithmetic, this is the only
+	   * case in which norm = 0. So, setting u1 to the simple but
+	   * arbitrary vector [1,0] if norm = 0 safely takes care of
+	   * all cases.
+	   */
+	  const gdouble temp_u11 =
+	    s1s1minusn11_squared >= s1s1minusn22_squared
+	    ?
+	    n12
+	    :
+	    s1s1minusn22;
+	  const gdouble temp_u21 =
+	    s1s1minusn11_squared >= s1s1minusn22_squared
+	    ?
+	    s1s1minusn11
+	    :
+	    n21;
+	  const gdouble norm =
+	    sqrt( temp_u11 * temp_u11 + temp_u21 * temp_u21 );
+	  /*
+	   * Finalize the entries of first left singular vector
+	   * (associated with the largest singular value).
+	   */
+	  const gdouble u11 =
+	    norm > (gdouble) 0.0 ? temp_u11 / norm : (gdouble) 1.0;
+	  const gdouble u21 =
+	    norm > (gdouble) 0.0 ? temp_u21 / norm : (gdouble) 0.0;
+	  /*
+	   * Clamp the singular values up to 1:
+	   */
+	  const gdouble major_mag =
+	    s1s1 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s1s1 );
+	  const gdouble minor_mag =
+	    s2s2 <= (gdouble) 1.0 ? (gdouble) 1.0 : sqrt( s2s2 );
+	  /*
+	   * Unit major and minor axis direction vectors:
+	   */
+	  const gdouble major_unit_x =  u11;
+	  const gdouble major_unit_y =  u21;
+	  const gdouble minor_unit_x = -u21;
+	  const gdouble minor_unit_y =  u11;
 
 	  /*
-	   * In order to know whether we use higher mipmap level
-	   * values, we need to check whether there is a level 1
-	   * mipmap location within the ellipse. So, we need to
-	   * determine the alignment of the level 1 mipmap level
-	   * w.r.t. the current level 0.
+	   * The square of the distance to the key location in output
+	   * place of a point [s,t] in input space is the square root of
 	   *
-	   * We use a 5x5 context_rect at level 0; consequently, we
-	   * can access pixels which are 2 away from the anchor pixel
-	   * location in box distance.
+           * ( s * c_major_x + t * c_major_y )^2
+           * +
+           * ( s * c_minor_x + t * c_minor_y )^2.
+           */
+	  const gfloat c_major_x = major_unit_x / major_mag;
+	  const gfloat c_major_y = major_unit_y / major_mag;
+	  const gfloat c_minor_x = minor_unit_x / minor_mag;
+	  const gfloat c_minor_y = minor_unit_y / minor_mag;
+
+	  /*
+	   * Major and minor axis direction vectors:
+	   */
+	  const gdouble major_x = major_mag * major_unit_x;
+	  const gdouble major_y = major_mag * major_unit_y;
+	  const gdouble minor_x = minor_mag * minor_unit_x;
+	  const gdouble minor_y = minor_mag * minor_unit_y;
+	  
+	  /*
+	   * Ellipse coefficients:
+	   */
+	  const gdouble ellipse_a =
+	    major_y * major_y + minor_y * minor_y;
+	  const gdouble ellipse_b =
+	    (gdouble) -2.0 * ( major_x * major_y + minor_x * minor_y );
+	  const gdouble ellipse_c =
+	    major_x * major_x + minor_x * minor_x;
+	  const gdouble ellipse_f = major_mag * minor_mag;
+
+	  /*
+	   * Bounding box of the ellipse:
+	   */
+	  const gdouble bounding_box_factor =
+	    ellipse_f * ellipse_f
+	    /
+	    ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
+	  const gfloat bounding_box_half_width =
+	    sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
+	  const gfloat bounding_box_half_height =
+	    sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+	  /*
+	   * Versions which give a bit of wiggle room:
+	   */
+	  const gfloat fudged_bounding_box_half_width =
+	    bounding_box_half_width  - LOHALO_FUDGEF;
+	  const gfloat fudged_bounding_box_half_height =
+	    bounding_box_half_height - LOHALO_FUDGEF;
+
+	  /*
+	   * Accumulator for the EWA weights:
+	   */
+	  gfloat total_weight = (gfloat) 0.0;
+	  /*
+	   * Storage for the EWA contribution:
+	   */
+	  gfloat ewa_newval[channels];
+	  ewa_newval[0] = (gfloat) 0.0;
+	  ewa_newval[1] = (gfloat) 0.0;
+	  ewa_newval[2] = (gfloat) 0.0;
+	  ewa_newval[3] = (gfloat) 0.0;
+	  
+	  /*
+	   * Grab the pixel values located within the context_rect of
+	   * "pure" LBB-Nohalo.  Farther ones will be accessed through
+	   * higher mipmap levels.
 	   */
 	  /*
-	   * Find the closest locations, on all four sides, of level 1
-	   * pixels which average data not found in the level 0 5x5.
+	   * First (top) row of the 5x5 context_rect, from left to
+	   * right:
 	   */
-	  const gint odd_ix_0 = ix_0 % 2;
-	  const gint odd_iy_0 = iy_0 % 2;
-	  const gfloat closest_left =
-	    odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
-	  const gfloat closest_rite =
-	    odd_ix_0 ? (gfloat)  2.5 : (gfloat)  3.5;
-	  const gfloat closest_top  =
-	    odd_iy_0 ? (gfloat) -3.5 : (gfloat) -2.5;
-	  const gfloat closest_bot  =
-	    odd_iy_0 ? (gfloat)  2.5 : (gfloat)  3.5;
+	  LOHALO_CALL_EWA_UPDATE(-2,-2);
+	  LOHALO_CALL_EWA_UPDATE(-1,-2);
+	  LOHALO_CALL_EWA_UPDATE( 0,-2);
+	  LOHALO_CALL_EWA_UPDATE( 1,-2);
+	  LOHALO_CALL_EWA_UPDATE( 2,-2);
+	  /*
+	   * Second row of the 5x5:
+	   */
+	  LOHALO_CALL_EWA_UPDATE(-2,-1);
+	  LOHALO_CALL_EWA_UPDATE(-1,-1);
+	  LOHALO_CALL_EWA_UPDATE( 0,-1);
+	  LOHALO_CALL_EWA_UPDATE( 1,-1);
+	  LOHALO_CALL_EWA_UPDATE( 2,-1);
+	  /*
+	   * Third row:
+	   */
+	  LOHALO_CALL_EWA_UPDATE(-2, 0);
+	  LOHALO_CALL_EWA_UPDATE(-1, 0);
+	  LOHALO_CALL_EWA_UPDATE( 0, 0);
+	  LOHALO_CALL_EWA_UPDATE( 1, 0);
+	  LOHALO_CALL_EWA_UPDATE( 2, 0);
+	  /*
+	   * Fourth row:
+	   */
+	  LOHALO_CALL_EWA_UPDATE(-2, 1);
+	  LOHALO_CALL_EWA_UPDATE(-1, 1);
+	  LOHALO_CALL_EWA_UPDATE( 0, 1);
+	  LOHALO_CALL_EWA_UPDATE( 1, 1);
+	  LOHALO_CALL_EWA_UPDATE( 2, 1);
+	  /*
+	   * Fifth row of the 5x5 context_rect:
+	   */
+	  LOHALO_CALL_EWA_UPDATE(-2, 2);
+	  LOHALO_CALL_EWA_UPDATE(-1, 2);
+	  LOHALO_CALL_EWA_UPDATE( 0, 2);
+	  LOHALO_CALL_EWA_UPDATE( 1, 2);
+	  LOHALO_CALL_EWA_UPDATE( 2, 2);
 
-          if (
-               ( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
-               ||
-               ( x_0 + fudged_bounding_box_half_width  >= closest_rite )
-	       ||
-               ( y_0 - fudged_bounding_box_half_height <=  closest_top )
-               ||&
-               ( y_0 + fudged_bounding_box_half_height >=  closest_bot )
-	     )
-	    {
-	      /*
-	       * We most likely need higher mipmap level(s) because
-	       * the bounding box of the ellipse covers mipmap pixel
-	       * locations which involve data not "covered" by the 5x5
-	       * level 0 context_rect. (The ellipse may still fail to
-	       * involve mipmap level 1 values--in which case all
-	       * mipmap pixel values will get 0 coefficients--but we
-	       * used a quick and dirty bounding box test which lets
-	       * through false positives.)
-	       */
+	  {
+	    /*
+	     * Relative weight of the contribution of LBB-Nohalo:
+	     */
+	    const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
-	      /*
-	       * Nearest mipmap anchor pixel location:
-	       */
-	      const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
-	      const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
+	    /*
+	     * In order to know whether we use higher mipmap level
+	     * values, we need to check whether there is a level 1
+	     * mipmap location within the ellipse. So, we need to
+	     * determine the alignment of the level 1 mipmap level
+	     * w.r.t. the current level 0.
+	     *
+	     * We use a 5x5 context_rect at level 0; consequently, we
+	     * can access pixels which are 2 away from the anchor
+	     * pixel location in box distance.
+	     */
+	    /*
+	     * Find the closest locations, on all four sides, of level 1
+	     * pixels which average data not found in the level 0 5x5.
+	     */
+	    const gint odd_ix_0 = ix_0 % 2;
+	    const gint odd_iy_0 = iy_0 % 2;
+	    const gfloat closest_left =
+	      odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
+	    const gfloat closest_rite =
+	      odd_ix_0 ? (gfloat)  2.5 : (gfloat)  3.5;
+	    const gfloat closest_top  =
+	      odd_iy_0 ? (gfloat) -3.5 : (gfloat) -2.5;
+	    const gfloat closest_bot  =
+	      odd_iy_0 ? (gfloat)  2.5 : (gfloat)  3.5;
 
-	      /*
-	       * ADAM: THE POINTER get NEEDS TO BE HERE.
-	       */
-
-	      /*
-	       * Position of the sampling location in the coordinate
-	       * system defined by the mipmap "pixel locations"
-	       * relative to the level 1 anchor pixel location:
-	       */
-	      const gfloat x_1 =
-		x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
-	      const gfloat y_1 =
-		y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
-
-	      /*
-	       * Key index ranges:
-	       */
-	      const gint in_left_ix = -2 + odd_ix_0;
-	      const gint in_rite_ix =  2 - odd_ix_0;
-	      const gint in_top_iy  = -2 + odd_iy_0;
-	      const gint in_bot_iy  =  2 - odd_iy_0;
-	      
-	      const gint out_left =
-		LOHALO_MAX
-	          (
-		    (gint)
-		      (
-		        ceilf
-		          (
-			    ( x_1 - bounding_box_half_width )
-			    *
-			    (gfloat) 0.5
-  			  )
-		      )
-		    ,
-		    LOHALO_CONTEXT_RECT_SHIFT_1
-                  );
-	      const gint out_rite =
-	        LOHALO_MIN
-	          (
-		    -LOHALO_CONTEXT_RECT_SHIFT_1
-		    ,
-		    (gint)
-		      (
-		        floorf
-		          (
-			    ( x_1 + bounding_box_half_width )
-			    *
-			    (gfloat) 0.5
-			  )
-		      )
-                  );
-	      const gint out_top =
-	        LOHALO_MAX
-	          (
-		    (gint)
-		      (
-		        ceilf
-		          (
-			    ( y_1 - bounding_box_half_height )
-			    *
-			    (gfloat) 0.5
-			  )
-		      )
-		    ,
-		    LOHALO_CONTEXT_RECT_SHIFT_1
-                  );
-	      const gint out_bot =
-	        LOHALO_MIN
-	          (
-		    -LOHALO_CONTEXT_RECT_SHIFT_1
-		    ,
-		    (gint)
-		      (
-		        floorf
-		          (
-			    ( y_1 + bounding_box_half_height )
-			    *
-			    (gfloat) 0.5
-			  )
-		      )
-                  );
-
-	      /*
-	       * Update using mipmap level 1 values.
-	       * 
-	       * Possible future improvement: When the ellipse is
-	       * slanted, one could avoid many operations using
-	       * Anthony Thyssen's formulas for the bounding
-	       * parallelogram with horizontal top and bottom. When
-	       * both the magnification factors are the same, or when
-	       * there is no rotation, using these formulas makes no
-	       * difference.
-	       */
+	    if (
+		( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
+		||
+		( x_0 + fudged_bounding_box_half_width  >= closest_rite )
+		||
+		( y_0 - fudged_bounding_box_half_height <=  closest_top )
+		||&
+		( y_0 + fudged_bounding_box_half_height >=  closest_bot )
+		)
 	      {
-		gint i;
-		for ( i = out_top ; i < in_top; i++ )
-		  {
-		    gint j;
-		    for ( j = out_left; j <= out_rite; j++ )
-		      {
-			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		      }
-		  }
-		do
-		  {
-		    gint j;
-		    for ( j = out_left; j < in_left; j++ )
-		      {
-			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		      }
-		    for ( j = in_rite + 1; j <= out_rite; j++ )
-		      {
-			LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-		      }
-		  } while ( ++i <= in_bot );
-		for ( i = in_bot + 1; i <= out_bot; i++ )
-		  {
-		    gint j;
-		    for ( j = out_left; j <= out_rite; j++ )
+		/*
+		 * We most likely need higher mipmap level(s) because
+		 * the bounding box of the ellipse covers mipmap pixel
+		 * locations which involve data not "covered" by the
+		 * 5x5 level 0 context_rect. (The ellipse may still
+		 * fail to involve mipmap level 1 values--in which
+		 * case all mipmap pixel values will get 0
+		 * coefficients--but we used a quick and dirty
+		 * bounding box test which lets through false
+		 * positives.)
+		 */
+
+		/*
+		 * Nearest mipmap anchor pixel location:
+		 */
+		const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
+		const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
+		
+		/*
+		 * ADAM: THE POINTER get NEEDS TO BE HERE.
+		 */
+
+		/*
+		 * Position of the sampling location in the coordinate
+		 * system defined by the mipmap "pixel locations"
+		 * relative to the level 1 anchor pixel location:
+		 */
+		const gfloat x_1 =
+		  x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
+		const gfloat y_1 =
+		  y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
+		
+		/*
+		 * Key index ranges:
+		 */
+		const gint in_left_ix = -2 + odd_ix_0;
+		const gint in_rite_ix =  2 - odd_ix_0;
+		const gint in_top_iy  = -2 + odd_iy_0;
+		const gint in_bot_iy  =  2 - odd_iy_0;
+		
+		const gint out_left =
+		  LOHALO_MAX
+	            (
+		      (gint)
+		        (
+		          ceilf
+		            (
+			      ( x_1 - bounding_box_half_width )
+			      *
+			      (gfloat) 0.5
+  			    )
+		        )
+		      ,
+		      LOHALO_CONTEXT_RECT_SHIFT_1
+                    );
+		const gint out_rite =
+		  LOHALO_MIN
+	            (
+		      -LOHALO_CONTEXT_RECT_SHIFT_1
+		      ,
+		      (gint)
+		        (
+		          floorf
+		            (
+			      ( x_1 + bounding_box_half_width )
+			      *
+			      (gfloat) 0.5
+			    )
+		        )
+                    );
+		const gint out_top =
+		  LOHALO_MAX
+	            (
+		      (gint)
+		        (
+		          ceilf
+		            (
+			      ( y_1 - bounding_box_half_height )
+			      *
+			      (gfloat) 0.5
+			    )
+		        )
+		      ,
+		      LOHALO_CONTEXT_RECT_SHIFT_1
+		     );
+		const gint out_bot =
+		  LOHALO_MIN
+	            (
+		      -LOHALO_CONTEXT_RECT_SHIFT_1
+		      ,
+		      (gint)
+		        (
+			  floorf
+		            (
+			      ( y_1 + bounding_box_half_height )
+			      *
+			      (gfloat) 0.5
+			    )
+			)
+		     );
+
+		/*
+		 * Update using mipmap level 1 values.
+		 * 
+		 * Possible future improvement: When the ellipse is
+		 * slanted, one could avoid many operations using
+		 * Anthony Thyssen's formulas for the bounding
+		 * parallelogram with horizontal top and bottom. When
+		 * both the magnification factors are the same, or
+		 * when there is no rotation, using these formulas
+		 * makes no difference.
+		 */
+		{
+		  gint i;
+		  for ( i = out_top ; i < in_top; i++ )
+		    {
+		      gint j;
+		      for ( j = out_left; j <= out_rite; j++ )
+			{
+			  LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+			}
+		    }
+		  do
+		    {
+		      gint j;
+		      for ( j = out_left; j < in_left; j++ )
+			{
+			  LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+			}
+		      for ( j = in_rite + 1; j <= out_rite; j++ )
+			{
+			  LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+			}
+		    } while ( ++i <= in_bot );
+		  for ( i = in_bot + 1; i <= out_bot; i++ )
+		    {
+		      gint j;
+		      for ( j = out_left; j <= out_rite; j++ )
 		      {
 		        LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
 		      }
-		  }
+		    }
+		}
 	      }
+	    {
+	      /*
+	       * Blend:
+	       */
+	      const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
+	      newval[0] = theta * newval[0] + beta * ewa_newval[0];
+	      newval[1] = theta * newval[1] + beta * ewa_newval[1];
+	      newval[2] = theta * newval[2] + beta * ewa_newval[2];
+	      newval[3] = theta * newval[3] + beta * ewa_newval[3];
 	    }
-	  {
-	    /*
-	     * Blend and ship out:
-	     */
-	    const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
-	    newval[0] = theta * newval[0] + beta * ewa_newval[0];
-	    newval[1] = theta * newval[1] + beta * ewa_newval[1];
-	    newval[2] = theta * newval[2] + beta * ewa_newval[2];
-	    newval[3] = theta * newval[3] + beta * ewa_newval[3];
-	      
-	    babl_process (self->fish, newval, output, 1);
-	    return;
 	  }
 	}
-      }
+      /*
+       * Ship out:
+       */
+      babl_process (self->fish, newval, output, 1);
+      return;
     }
   }
 }
