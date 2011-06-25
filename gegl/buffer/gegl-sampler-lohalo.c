@@ -192,22 +192,8 @@
 #define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
 
 /*
- * Convenience macros:
+ * Convenience macro:
  */
-#define LOHALO_CALL_EWA_UPDATE(j,i) ewa_update ((j),           \
-                                                (i),           \
-                                                c_major_x,     \
-                                                c_major_y,     \
-                                                c_minor_x,     \
-                                                c_minor_y,     \
-                                                x_0,           \
-                                                y_0,           \
-                                                channels,      \
-                                                row_skip,      \
-                                                input_bptr,    \
-                                                &total_weight, \
-                                                ewa_newval)
-
 #define LOHALO_CALL_LEVEL_1_EWA_UPDATE(j,i) level_1_ewa_update ((j),           \
                                                                 (i),           \
                                                                 c_major_x,     \
@@ -228,7 +214,7 @@
  * the needed data has been reached:
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
-#define LOHALO_FUDGEF ( (gfloat) 1.e-6 )
+#define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
 
 enum
 {
@@ -269,12 +255,24 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 
 
 /*
+ * Because things are kept centered, the stencil width/height is 1 +
+ * the offset.
+ * 
  * 5x5 is the smallest "level 0" context_rect that works with the
- * LBB-Nohalo component of the sampler. If you use something else for
- * level 0, you need to change the code.
+ * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
+ * LOHALO_OFFSET should be an integer >= 2.
+ *
+ * Speed VS quality trade-off: Downsampling quality will decrease
+ * around ratio 1/(LOHALO_OFFSET + .5). So, to maintain maximum
+ * quality for the widest downsampling range possible, LOHALO_OFFSET
+ * should be larger. However, the larger the offset, the slower LOHALO
+ * will run, because context_rect will be larger, and consequently
+ * there will be less "tile" reuse.
  */
-#define LOHALO_CONTEXT_RECT_SIZE       (5)
-#define LOHALO_CONTEXT_RECT_SHIFT (5)
+#define LOHALO_OFFSET (2)
+#define LOHALO_SIZE   ( 1 + 2 * LOHALO_OFFSET )
+#define LOHALO_SHIFT  ( - (LOHALO_OFFSET) )
+
 
 /*
  * Use odd sizes for the higher mipmap context_rects. Generally, a
@@ -292,10 +290,10 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect.x = LOHALO_CONTEXT_RECT_SHIFT;
-  GEGL_SAMPLER (self)->context_rect.y = LOHALO_CONTEXT_RECT_SHIFT;
-  GEGL_SAMPLER (self)->context_rect.width  = LOHALO_CONTEXT_RECT_SIZE;
-  GEGL_SAMPLER (self)->context_rect.height = LOHALO_CONTEXT_RECT_SIZE;
+  GEGL_SAMPLER (self)->context_rect.x      = LOHALO_SHIFT;
+  GEGL_SAMPLER (self)->context_rect.y      = LOHALO_SHIFT;
+  GEGL_SAMPLER (self)->context_rect.width  = LOHALO_SIZE;
+  GEGL_SAMPLER (self)->context_rect.height = LOHALO_SIZE;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -692,7 +690,7 @@ nohalo_subdivision (const gfloat           uno_two,
 
 
 static inline gfloat
-lbb( const gfloat c00,
+lbb ( const gfloat c00,
      const gfloat c10,
      const gfloat c01,
      const gfloat c11,
@@ -1169,12 +1167,12 @@ lbb( const gfloat c00,
 
 
 static inline gfloat
-teepee(const gfloat c_major_x,
-       const gfloat c_major_y,
-       const gfloat c_minor_x,
-       const gfloat c_minor_y,
-       const gfloat s,
-       const gfloat t )
+teepee (const gfloat c_major_x,
+        const gfloat c_major_y,
+        const gfloat c_minor_x,
+        const gfloat c_minor_y,
+        const gfloat s,
+        const gfloat t)
 {
   const gfloat q1 = s * c_major_x + t * c_major_y;
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
@@ -1485,7 +1483,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
     const gfloat c11dxdy =
       xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
 
-    newval[0] = lbb( c00,
+    newval[0] = lbb ( c00,
                      c10,
                      c01,
                      c11,
@@ -1516,7 +1514,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_one_0,
                      qua_two_0,
                      qua_thr_0,
-                     qua_fou_0 );
+                     qua_fou_0);
     /*
      * Second channel:
      */
@@ -1557,7 +1555,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_1,
                         &qua_thr_1,
                         &qua_fou_1);
-    newval[1] = lbb( c00,
+    newval[1] = lbb ( c00,
                      c10,
                      c01,
                      c11,
@@ -1588,7 +1586,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_one_1,
                      qua_two_1,
                      qua_thr_1,
-                     qua_fou_1 );
+                     qua_fou_1);
     /*
      * Third channel:
      */
@@ -1629,7 +1627,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_2,
                         &qua_thr_2,
                         &qua_fou_2);
-    newval[2] = lbb( c00,
+    newval[2] = lbb ( c00,
                      c10,
                      c01,
                      c11,
@@ -1660,7 +1658,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_one_2,
                      qua_two_2,
                      qua_thr_2,
-                     qua_fou_2 );
+                     qua_fou_2);
     /*
      * Fourth channel:
      */
@@ -1701,7 +1699,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                         &qua_two_3,
                         &qua_thr_3,
                         &qua_fou_3);
-    newval[3] = lbb( c00,
+    newval[3] = lbb ( c00,
                      c10,
                      c01,
                      c11,
@@ -1732,7 +1730,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                      qua_one_3,
                      qua_two_3,
                      qua_thr_3,
-                     qua_fou_3 );
+                     qua_fou_3);
 
     {
       /*
@@ -1956,8 +1954,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       if (twice_s1s1 >= (gdouble) 2. + LOHALO_FUDGE)
         {
           /*
-           * The result is not (almost) pure LBB-Nohalo. Compute the
-           * teepee component.
+           * The result (most likely) has a nonzero teepee component.
            */
           const gdouble s1s1 = (gdouble) 0.5 * twice_s1s1;
           /*
@@ -2053,8 +2050,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            */
           const gdouble ellipse_a =
             major_y * major_y + minor_y * minor_y;
-          const gdouble ellipse_b =
-            (gdouble) -2.0 * ( major_x * major_y + minor_x * minor_y );
+          const gdouble folded_ellipse_b =
+            major_x * major_y + minor_x * minor_y;
           const gdouble ellipse_c =
             major_x * major_x + minor_x * minor_x;
           const gdouble ellipse_f = major_mag * minor_mag;
@@ -2065,7 +2062,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           const gdouble bounding_box_factor =
             ellipse_f * ellipse_f
             /
-            ( ellipse_a * ellipse_c + (gdouble) -.25 * ellipse_b * ellipse_b );
+            (
+              ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b
+            );
           const gfloat bounding_box_half_width =
             sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
           const gfloat bounding_box_half_height =
@@ -2096,47 +2095,29 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            * "pure" LBB-Nohalo.  Farther ones will be accessed through
            * higher mipmap levels.
            */
-          /*
-           * First (top) row of the 5x5 context_rect, from left to
-           * right:
-           */
-          LOHALO_CALL_EWA_UPDATE(-2,-2);
-          LOHALO_CALL_EWA_UPDATE(-1,-2);
-          LOHALO_CALL_EWA_UPDATE( 0,-2);
-          LOHALO_CALL_EWA_UPDATE( 1,-2);
-          LOHALO_CALL_EWA_UPDATE( 2,-2);
-          /*
-           * Second row of the 5x5:
-           */
-          LOHALO_CALL_EWA_UPDATE(-2,-1);
-          LOHALO_CALL_EWA_UPDATE(-1,-1);
-          LOHALO_CALL_EWA_UPDATE( 0,-1);
-          LOHALO_CALL_EWA_UPDATE( 1,-1);
-          LOHALO_CALL_EWA_UPDATE( 2,-1);
-          /*
-           * Third row:
-           */
-          LOHALO_CALL_EWA_UPDATE(-2, 0);
-          LOHALO_CALL_EWA_UPDATE(-1, 0);
-          LOHALO_CALL_EWA_UPDATE( 0, 0);
-          LOHALO_CALL_EWA_UPDATE( 1, 0);
-          LOHALO_CALL_EWA_UPDATE( 2, 0);
-          /*
-           * Fourth row:
-           */
-          LOHALO_CALL_EWA_UPDATE(-2, 1);
-          LOHALO_CALL_EWA_UPDATE(-1, 1);
-          LOHALO_CALL_EWA_UPDATE( 0, 1);
-          LOHALO_CALL_EWA_UPDATE( 1, 1);
-          LOHALO_CALL_EWA_UPDATE( 2, 1);
-          /*
-           * Fifth row of the 5x5 context_rect:
-           */
-          LOHALO_CALL_EWA_UPDATE(-2, 2);
-          LOHALO_CALL_EWA_UPDATE(-1, 2);
-          LOHALO_CALL_EWA_UPDATE( 0, 2);
-          LOHALO_CALL_EWA_UPDATE( 1, 2);
-          LOHALO_CALL_EWA_UPDATE( 2, 2);
+          {
+            gint i = LOHALO_SHIFT;
+            do
+              (
+                gint j = LOHALO_SHIFT;
+                do
+                  (
+                    ewa_update ((j),                            
+                                (i),                            
+                                c_major_x,     
+                                c_major_y,     
+                                c_minor_x,     
+                                c_minor_y,     
+                                x_0,           
+                                y_0,           
+                                channels,      
+                                row_skip,      
+                                input_bptr,    
+                                &total_weight, 
+                                ewa_newval);
+                  ) while ( ++j <= LOHALO_OFFSET );
+              ) while ( ++i <= LOHALO_OFFSET );
+          }
 
           {
             /*
