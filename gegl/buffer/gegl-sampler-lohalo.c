@@ -185,9 +185,10 @@
 
 
 /*
- * Macros for Knuth's floored division:
+ * Special case of of Knuth's floored division, that is:
+ *
+ * FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b))
  */
-/* #define LOHALO_FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b)) */
 #define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
 
 /*
@@ -272,7 +273,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * LBB-Nohalo component of the sampler. If you use something else for
  * level 0, you need to change the code.
  */
-#define LOHALO_CONTEXT_RECT_SIZE  (5)
+#define LOHALO_CONTEXT_RECT_SIZE       (5)
 #define LOHALO_CONTEXT_RECT_SHIFT (5)
 
 /*
