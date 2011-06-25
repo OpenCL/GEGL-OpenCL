@@ -273,19 +273,26 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 #define LOHALO_SIZE   ( 1 + 2 * LOHALO_OFFSET )
 #define LOHALO_SHIFT  ( - (LOHALO_OFFSET) )
 
-
 /*
- * Use odd sizes for the higher mipmap context_rects. Generally, a
- * higher mipmap context_rects should be larger than half the lower
- * one. (Nicolas has not figured out the exact relationship.)
+ * The higher mipmap context_rects must be set so that there is at
+ * least one higher mipmap pixel location within the higher
+ * context_rect but outside the lower context_rect, irregardless of
+ * the alignment at the sampling location. We have not found the exact
+ * relationship; basically, the higher mipmap level's offset should be
+ * larger than the lower mipmap level's offset (assuming the usual
+ * factor of two relationship).
  *
  * Every time one "jumps" a mipmap level, "switching" artifacts
  * appear. It is probably a good thing to minimize the total number of
  * mipmap levels used. On the other hand, large context_rects slow
  * things down, since they prevent "buffer reuse."
+ *
+ * ADAM: FOR NOW, I KEEP IT SMALLISH. WE CAN MAKE IT LARGER WHEN WE
+ * KNOW WHAT WORKS.
  */
-#define LOHALO_CONTEXT_RECT_SIZE_1  (29)
-#define LOHALO_CONTEXT_RECT_SHIFT_1 ( ( 1 - (LOHALO_CONTEXT_RECT_SIZE_1) ) / 2 )
+#define LOHALO_LEVEL_1_OFFSET (4)
+#define LOHALO_LEVEL_1_SIZE   ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
+#define LOHALO_LEVEL_1_SHIFT  ( - (LOHALO_LEVEL_1_OFFSET) )
 
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
@@ -2142,6 +2149,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
              */
             const gint odd_ix_0 = ix_0 % 2;
             const gint odd_iy_0 = iy_0 % 2;
+            /*
+             * NICOLAS: FIX the following taking offset into account.
+             */
             const gfloat closest_left =
               odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
             const gfloat closest_rite =
