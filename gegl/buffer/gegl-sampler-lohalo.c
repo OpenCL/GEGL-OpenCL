@@ -1206,19 +1206,19 @@ teepee (const gfloat c_major_x,
 
 
 static inline void 
-ewa_update (const gint             j,
-            const gint             i,
-            const gfloat           c_major_x,
-            const gfloat           c_major_y,
-            const gfloat           c_minor_x,
-            const gfloat           c_minor_y,
-            const gfloat           x_0,
-            const gfloat           y_0,
-            const gint             channels,
-            const gint             row_skip,
-            const gfloat* restrict input_bptr,
-                  gfloat* restrict total_weight,
-                  gfloat* restrict ewa_newval)
+ewa_update (const gint              j,
+            const gint              i,
+            const gfloat            c_major_x,
+            const gfloat            c_major_y,
+            const gfloat            c_minor_x,
+            const gfloat            c_minor_y,
+            const gfloat            x_0,
+            const gfloat            y_0,
+            const gint              channels,
+            const gint              row_skip,
+            const gfloat*  restrict input_bptr,
+                  gdouble* restrict total_weight,
+                  gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
   const gfloat weight = teepee(c_major_x,
@@ -1236,19 +1236,19 @@ ewa_update (const gint             j,
 
 
 static inline void 
-level_1_ewa_update (const gint             j,
-                    const gint             i,
-                    const gfloat           c_major_x,
-                    const gfloat           c_major_y,
-                    const gfloat           c_minor_x,
-                    const gfloat           c_minor_y,
-                    const gfloat           x_1,
-                    const gfloat           y_1,
-                    const gint             channels,
-                    const gint             row_skip,
-                    const gfloat* restrict input_bptr_1,
-                          gfloat* restrict total_weight,
-                          gfloat* restrict ewa_newval)
+level_1_ewa_update (const gint              j,
+                    const gint              i,
+                    const gfloat            c_major_x,
+                    const gfloat            c_major_y,
+                    const gfloat            c_minor_x,
+                    const gfloat            c_minor_y,
+                    const gfloat            x_1,
+                    const gfloat            y_1,
+                    const gint              channels,
+                    const gint              row_skip,
+                    const gfloat*  restrict input_bptr_1,
+                          gdouble* restrict total_weight,
+                          gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
   /*
@@ -2058,7 +2058,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           /*
            * Accumulator for the EWA weights:
            */
-          gfloat total_weight = (gfloat) 0.0;
+          gdouble total_weight = (gdouble) 0.0;
           /*
            * Storage for the EWA contribution:
            */
@@ -2341,7 +2341,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
               /*
                * Blend the LBB-Nohalo and EWA results:
                */
-              const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
+              const gfloat beta = (gfloat) ( ( (gdouble) 1.0 - theta ) / total_weight );
               newval[0] = theta * newval[0] + beta * ewa_newval[0];
               newval[1] = theta * newval[1] + beta * ewa_newval[1];
               newval[2] = theta * newval[2] + beta * ewa_newval[2];
