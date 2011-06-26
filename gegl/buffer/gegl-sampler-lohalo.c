@@ -218,8 +218,8 @@
 
 
 /*
- * Give a bit of elbow room to checks having to do with whether all
- * the needed data has been reached:
+ * Give a bit of floating point elbow room added to "Are we done yet?"
+ * checks.
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
 #define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
