@@ -2349,6 +2349,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             }
           }
         }
+
       /*
        * Ship out the result:
        */
