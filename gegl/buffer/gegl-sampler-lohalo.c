@@ -2058,46 +2058,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           const gfloat c_minor_y = minor_unit_y / minor_mag;
 
           /*
-           * Major and minor axis direction vectors:
-           */
-          const gdouble major_x = major_mag * major_unit_x;
-          const gdouble major_y = major_mag * major_unit_y;
-          const gdouble minor_x = minor_mag * minor_unit_x;
-          const gdouble minor_y = minor_mag * minor_unit_y;
-          
-          /*
-           * Ellipse coefficients:
-           */
-          const gdouble ellipse_a =
-            major_y * major_y + minor_y * minor_y;
-          const gdouble folded_ellipse_b =
-            major_x * major_y + minor_x * minor_y;
-          const gdouble ellipse_c =
-            major_x * major_x + minor_x * minor_x;
-          const gdouble ellipse_f = major_mag * minor_mag;
-
-          /*
-           * Bounding box of the ellipse:
-           */
-          const gdouble bounding_box_factor =
-            ellipse_f * ellipse_f
-            /
-            (
-              ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b
-            );
-          const gfloat bounding_box_half_width =
-            sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
-          const gfloat bounding_box_half_height =
-            sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
-          /*
-           * Versions which give a bit of wiggle room:
-           */
-          const gfloat fudged_bounding_box_half_width =
-            bounding_box_half_width  - LOHALO_FUDGEF;
-          const gfloat fudged_bounding_box_half_height =
-            bounding_box_half_height - LOHALO_FUDGEF;
-
-          /*
            * Accumulator for the EWA weights:
            */
           gfloat total_weight = (gfloat) 0.0;
@@ -2141,11 +2101,6 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
           {
             /*
-             * Relative weight of the contribution of LBB-Nohalo:
-             */
-            const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
-
-            /*
              * In order to know whether we use higher mipmap level
              * values, we need to check whether there is a level 1
              * mipmap location within the ellipse. So, we need to
@@ -2158,7 +2113,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
              */
             /*
              * Determine whether the anchor level_0 pixel locations
-             * are odd or even:
+             * are odd (VS even):
              */
             const gint odd_ix_0 = ix_0 % 2;
             const gint odd_iy_0 = iy_0 % 2;
@@ -2190,6 +2145,54 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
               (gfloat) (  ( LOHALO_OFFSET + 0.5 ) )
               :
               (gfloat) (  ( LOHALO_OFFSET + 1.5 ) );
+
+            /*
+             * Remainder of the ellipse geometry computation:
+             */
+            /*
+             * Major and minor axis direction vectors:
+             */
+            const gdouble major_x = major_mag * major_unit_x;
+            const gdouble major_y = major_mag * major_unit_y;
+            const gdouble minor_x = minor_mag * minor_unit_x;
+            const gdouble minor_y = minor_mag * minor_unit_y;
+          
+            /*
+             * Ellipse coefficients:
+             */
+            const gdouble ellipse_a =
+              major_y * major_y + minor_y * minor_y;
+            const gdouble folded_ellipse_b =
+              major_x * major_y + minor_x * minor_y;
+            const gdouble ellipse_c =
+              major_x * major_x + minor_x * minor_x;
+            const gdouble ellipse_f = major_mag * minor_mag;
+
+            /*
+             * Bounding box of the ellipse:
+             */
+            const gdouble bounding_box_factor =
+              ellipse_f * ellipse_f
+              /
+              (
+               ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b
+               );
+            const gfloat bounding_box_half_width =
+              sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
+            const gfloat bounding_box_half_height =
+              sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+            /*
+             * Versions which give a bit of wiggle room:
+             */
+            const gfloat fudged_bounding_box_half_width =
+              bounding_box_half_width  - LOHALO_FUDGEF;
+            const gfloat fudged_bounding_box_half_height =
+              bounding_box_half_height - LOHALO_FUDGEF;
+
+            /*
+             * Relative weight of the contribution of LBB-Nohalo:
+             */
+            const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
             if (
                 ( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
