@@ -2116,8 +2116,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gint odd_ix_0 = ix_0 % 2;
             const gint odd_iy_0 = iy_0 % 2;
             /*
-             * Find the closest locations, on all four sides, of level 1
-             * pixels which average data not found in the level 0 5x5.
+             * Find the closest locations, on all four sides, of level
+             * 1 pixels which involve data not found in the level 0
+             * 5x5.
              */
             const gfloat closest_left =
               odd_ix_0
@@ -2244,75 +2245,43 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  * The "in" indices are the closest relative mipmap 1
                  * indices of needed mipmap values:
                  */
-                const gint in_left = -2 + odd_ix_0;
-                const gint in_rite =  2 - odd_ix_0;
-                const gint in_top  = -2 + odd_iy_0;
-                const gint in_bot  =  2 - odd_iy_0;
+                const gint in_left =  -LOHALO_OFFSET       + odd_ix_0;
+                const gint in_rite = ( LOHALO_OFFSET - 1 ) + odd_ix_0;
+                const gint in_top  =  -LOHALO_OFFSET       + odd_iy_0;
+                const gint in_bot  = ( LOHALO_OFFSET - 1 ) + odd_iy_0;
                 
                 /*
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
                  */
                 const gint out_left =
-                  LOHALO_MAX
-                    (
-                      (gint)
-                        (
-                          ceilf
-                            (
-                              ( x_1 - bounding_box_half_width )
-                              *
-                              (gfloat) 0.5
-                              )
-                        )
-                      ,
-                      -LOHALO_OFFSET_1
-                    );
+                  LOHALO_MAX(
+                              (gint)
+                              ( ceilf  ( ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 ) )
+                              ,
+                              -LOHALO_OFFSET_1
+                            );
                 const gint out_rite =
-                  LOHALO_MIN
-                    (
-                      LOHALO_OFFSET_1
-                      ,
-                      (gint)
-                        (
-                          floorf
-                            (
-                              ( x_1 + bounding_box_half_width )
-                              *
-                              (gfloat) 0.5
-                            )
-                        )
-                    );
+                  LOHALO_MIN(
+                              (gint)
+                              ( floorf ( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 ) )
+                              ,
+                               LOHALO_OFFSET_1
+                            );
                 const gint out_top =
-                  LOHALO_MAX
-                    (
-                      (gint)
-                        (
-                          ceilf
-                            (
-                              ( y_1 - bounding_box_half_height )
-                              *
-                              (gfloat) 0.5
-                            )
-                        )
-                      ,
-                      LOHALO_OFFSET_1
-                     );
+                  LOHALO_MAX(
+                              (gint)
+                              ( ceilf  ( ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 ) )
+                              ,
+                              -LOHALO_OFFSET_1
+                            );
                 const gint out_bot =
-                  LOHALO_MIN
-                    (
-                      -LOHALO_OFFSET_1
-                      ,
-                      (gint)
-                        (
-                          floorf
-                            (
-                              ( y_1 + bounding_box_half_height )
-                              *
-                              (gfloat) 0.5
-                            )
-                        )
-                     );
+                  LOHALO_MIN(
+                              (gint)
+                              ( floorf ( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 ) )
+                              ,
+                               LOHALO_OFFSET_1
+                            );
 
                 /*
                  * Update using mipmap level 1 values.
@@ -2327,39 +2296,50 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  */
                 {
                   gint i;
-                  for ( i = out_top ; i <= in_top; i++ )
+                  for ( i = out_top; i <= in_top; i++ )
                     {
-                      gint j;
-                      for ( j = out_left; j <= out_rite; j++ )
+                      gint j = out_left;
+                      do
                         {
                           LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                        }
+                        } while ( ++j <= out_rite );
                     }
+                }
+                {
+                  gint i = in_top + 1;
                   do
                     {
-                      gint j;
-                      for ( j = out_left; j <= in_left; j++ )
-                        {
-                          LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                        }
-                      for ( j = in_rite; j <= out_rite; j++ )
-                        {
-                          LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                        }
+                      {
+                        gint j;
+                        for ( j = out_left; j <= in_left; j++ )
+                          {
+                            LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+                          }
+                      }
+                      {
+                        gint j;
+                        for ( j = in_rite; j <= out_rite; j++ )
+                          {
+                            LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+                          }
+                      }
                     } while ( ++i < in_bot );
-                  do
+                }
+                {
+                  for ( i = in_bot; i <= out_bot; i++ )
                     {
-                      gint j;
-                      for ( j = out_left; j <= out_rite; j++ )
+                      gint j = out_left;
+                      do 
                       {
                         LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                      }
-                    } while ( ++i <= out_bot);
+                      } while ( ++j <= out_rite );
+                    }
                 }
               }
+
             {
               /*
-               * Blend:
+               * Blend the LBB-Nohalo and EWA results:
                */
               const gfloat beta = ( (gfloat) 1. - theta ) / total_weight;
               newval[0] = theta * newval[0] + beta * ewa_newval[0];
@@ -2370,7 +2350,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           }
         }
       /*
-       * Ship:
+       * Ship out the result:
        */
       babl_process (self->fish, newval, output, 1);
       return;
