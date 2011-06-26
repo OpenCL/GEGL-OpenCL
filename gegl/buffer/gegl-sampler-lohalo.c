@@ -192,6 +192,14 @@
 #define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
 
 /*
+ * General convention: Looking at the image as a (linear algebra)
+ * matrix, the index j has to do with the x-coordinate, that is,
+ * horizontal position, and the index i has to do with the
+ * y-coordinate (which runs from top to bottom), that is, the vertical
+ * position.
+ */
+
+/*
  * Convenience macro:
  */
 #define LOHALO_CALL_LEVEL_1_EWA_UPDATE(j,i) level_1_ewa_update ((j),           \
