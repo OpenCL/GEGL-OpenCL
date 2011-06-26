@@ -33,8 +33,8 @@
  * WARNING: This version of Lohalo only gives top quality downsampling
  * results only down to about 1/2.5 = 40% of the size. Beyond that,
  * the quality is somewhat lower (due to the use of mipmap data),
- * especially beyond 1/LOHALO_CONTEXT_RECT_SIZE_1 because then it does
- * not average over enough pixels to perform sufficient antialiasing.
+ * especially beyond 1/LOHALO_OFFSET because then it does not average
+ * over enough pixels to perform sufficient antialiasing.
  */
 
 /*
@@ -279,7 +279,6 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  */
 #define LOHALO_OFFSET (2)
 #define LOHALO_SIZE   ( 1 + 2 * LOHALO_OFFSET )
-#define LOHALO_SHIFT  ( - (LOHALO_OFFSET) )
 
 /*
  * The higher mipmap context_rects must be set so that there is at
@@ -301,7 +300,6 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  */
 #define LOHALO_LEVEL_1_OFFSET (4)
 #define LOHALO_LEVEL_1_SIZE   ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
-#define LOHALO_LEVEL_1_SHIFT  ( - (LOHALO_LEVEL_1_OFFSET) )
 
 /*
  * ADAM: THE WAY I (NICOLAS) SET UP JACOBIAN-ADAPTIVITY, LEVEL 0
@@ -310,8 +308,8 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect.x      = LOHALO_SHIFT;
-  GEGL_SAMPLER (self)->context_rect.y      = LOHALO_SHIFT;
+  GEGL_SAMPLER (self)->context_rect.x = -LOHALO_OFFSET;
+  GEGL_SAMPLER (self)->context_rect.y = -LOHALO_OFFSET;
   GEGL_SAMPLER (self)->context_rect.width  = LOHALO_SIZE;
   GEGL_SAMPLER (self)->context_rect.height = LOHALO_SIZE;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
@@ -2076,10 +2074,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            * higher mipmap levels.
            */
           {
-            gint i = LOHALO_SHIFT;
+            gint i = -LOHALO_OFFSET;
             do
               (
-                gint j = LOHALO_SHIFT;
+                gint j = -LOHALO_OFFSET;
                 do
                   (
                     ewa_update ((j),                            
@@ -2268,12 +2266,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                               )
                         )
                       ,
-                      LOHALO_CONTEXT_RECT_SHIFT_1
+                      -LOHALO_OFFSET_1
                     );
                 const gint out_rite =
                   LOHALO_MIN
                     (
-                      -LOHALO_CONTEXT_RECT_SHIFT_1
+                      LOHALO_OFFSET_1
                       ,
                       (gint)
                         (
@@ -2298,12 +2296,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                             )
                         )
                       ,
-                      LOHALO_CONTEXT_RECT_SHIFT_1
+                      LOHALO_OFFSET_1
                      );
                 const gint out_bot =
                   LOHALO_MIN
                     (
-                      -LOHALO_CONTEXT_RECT_SHIFT_1
+                      -LOHALO_OFFSET_1
                       ,
                       (gint)
                         (
