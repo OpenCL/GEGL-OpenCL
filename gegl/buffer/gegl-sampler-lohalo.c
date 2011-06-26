@@ -250,6 +250,7 @@ static void get_property (GObject*    gobject,
 
 G_DEFINE_TYPE (GeglSamplerLohalo, gegl_sampler_lohalo, GEGL_TYPE_SAMPLER)
 
+
 static void
 gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 {
@@ -302,6 +303,10 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 #define LOHALO_LEVEL_1_SIZE   ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
 #define LOHALO_LEVEL_1_SHIFT  ( - (LOHALO_LEVEL_1_OFFSET) )
 
+/*
+ * ADAM: THE WAY I (NICOLAS) SET UP JACOBIAN-ADAPTIVITY, LEVEL 0
+ * SHOULD ALWAYS BE "ON." NOT THE HIGHER LEVELS.
+ */
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
@@ -2152,22 +2157,39 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
              * pixel location in box distance.
              */
             /*
-             * Find the closest locations, on all four sides, of level 1
-             * pixels which average data not found in the level 0 5x5.
+             * Determine whether the anchor level_0 pixel locations
+             * are odd or even:
              */
             const gint odd_ix_0 = ix_0 % 2;
             const gint odd_iy_0 = iy_0 % 2;
             /*
-             * NICOLAS: FIX the following taking offset into account.
+             * Find the closest locations, on all four sides, of level 1
+             * pixels which average data not found in the level 0 5x5.
              */
             const gfloat closest_left =
-              odd_ix_0 ? (gfloat) -3.5 : (gfloat) -2.5;
+              odd_ix_0
+              ?
+              (gfloat) ( -( LOHALO_OFFSET + 1.5 ) )
+              :
+              (gfloat) ( -( LOHALO_OFFSET + 0.5 ) );
             const gfloat closest_rite =
-              odd_ix_0 ? (gfloat)  2.5 : (gfloat)  3.5;
+              odd_ix_0
+              ?
+              (gfloat) (  ( LOHALO_OFFSET + 0.5 ) )
+              :
+              (gfloat) (  ( LOHALO_OFFSET + 1.5 ) );
             const gfloat closest_top  =
-              odd_iy_0 ? (gfloat) -3.5 : (gfloat) -2.5;
+              odd_iy_0
+              ?
+              (gfloat) ( -( LOHALO_OFFSET + 1.5 ) )
+              :
+              (gfloat) ( -( LOHALO_OFFSET + 0.5 ) );
             const gfloat closest_bot  =
-              odd_iy_0 ? (gfloat)  2.5 : (gfloat)  3.5;
+              odd_iy_0
+              ?
+              (gfloat) (  ( LOHALO_OFFSET + 0.5 ) )
+              :
+              (gfloat) (  ( LOHALO_OFFSET + 1.5 ) );
 
             if (
                 ( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
