@@ -2194,13 +2194,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
             if (
-                ( x_0 - fudged_bounding_box_half_width  <= closest_left ) 
+                ( x_0 - fudged_bounding_box_half_width  < closest_left ) 
                 ||
-                ( x_0 + fudged_bounding_box_half_width  >= closest_rite )
+                ( x_0 + fudged_bounding_box_half_width  > closest_rite )
                 ||
-                ( y_0 - fudged_bounding_box_half_height <=  closest_top )
+                ( y_0 - fudged_bounding_box_half_height <  closest_top )
                 ||
-                ( y_0 + fudged_bounding_box_half_height >=  closest_bot )
+                ( y_0 + fudged_bounding_box_half_height >  closest_bot )
                 )
               {
                 /*
