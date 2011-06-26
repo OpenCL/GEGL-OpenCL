@@ -218,8 +218,7 @@
 
 
 /*
- * Give a bit of floating point elbow room added to "Are we done yet?"
- * checks.
+ * Elbow room added to "Are we done yet?" checks.
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
 #define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
@@ -268,7 +267,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * 
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
- * LOHALO_OFFSET should be an integer >= 2.
+ * LOHALO_OFFSET should consequently be an integer >= 2.
  *
  * Speed VS quality trade-off: Downsampling quality will decrease
  * around ratio 1/(LOHALO_OFFSET + .5). So, to maintain maximum
@@ -285,18 +284,19 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * The higher mipmap context_rects must be set so that there is at
  * least one higher mipmap pixel location within the higher
  * context_rect but outside the lower context_rect, irregardless of
- * the alignment at the sampling location. We have not found the exact
- * relationship; basically, the higher mipmap level's offset should be
- * larger than the lower mipmap level's offset (assuming the usual
- * factor of two relationship).
+ * the alignment at the sampling location. I (Nicolas) have not taken
+ * the time to find the exact inequality that must be respected so
+ * that the do whiles word properly.  Essentially, the higher mipmap
+ * level's offset should be larger than the lower mipmap level's
+ * offset (assuming the usual factor of two relationship).
  *
  * Every time one "jumps" a mipmap level, "switching" artifacts
  * appear. It is probably a good thing to minimize the total number of
  * mipmap levels used. On the other hand, large context_rects slow
  * things down, since they prevent "buffer reuse."
  *
- * ADAM: FOR NOW, I KEEP IT SMALLISH. WE CAN MAKE IT LARGER WHEN WE
- * KNOW WHAT WORKS.
+ * ADAM: FOR NOW, KEEP IT SMALLISH. WE CAN MAKE IT LARGER WHEN WE KNOW
+ * WHAT WORKS.
  */
 #define LOHALO_LEVEL_1_OFFSET (4)
 #define LOHALO_LEVEL_1_SIZE   ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
