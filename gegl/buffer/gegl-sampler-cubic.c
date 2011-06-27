@@ -96,10 +96,10 @@ gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
 static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
- GEGL_SAMPLER (self)->context_rect.x = -1;
- GEGL_SAMPLER (self)->context_rect.y = -1;
- GEGL_SAMPLER (self)->context_rect.width = 4;
- GEGL_SAMPLER (self)->context_rect.height = 4;
+ GEGL_SAMPLER (self)->context_rect[0].x = -1;
+ GEGL_SAMPLER (self)->context_rect[0].y = -1;
+ GEGL_SAMPLER (self)->context_rect[0].width = 4;
+ GEGL_SAMPLER (self)->context_rect[0].height = 4;
  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
  self->b=1.0;
  self->c=0.0;
@@ -148,7 +148,7 @@ gegl_sampler_cubic_get (GeglSampler *self,
   gint              dx,dy;
   gint              i;
 
-  context_rect = self->context_rect;
+  context_rect = self->context_rect[0];
   dx = (gint) x;
   dy = (gint) y;
   sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);

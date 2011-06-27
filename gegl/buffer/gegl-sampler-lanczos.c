@@ -148,7 +148,7 @@ gegl_sampler_lanczos_get (GeglSampler *self,
                           void        *output)
 {
   GeglSamplerLanczos      *lanczos      = GEGL_SAMPLER_LANCZOS (self);
-  GeglRectangle            context_rect = self->context_rect;
+  GeglRectangle            context_rect = self->context_rect[0];
   gfloat                  *sampler_bptr;
   gdouble                  x_sum, y_sum;
   gfloat                   newval[4] = {0.0, 0.0, 0.0, 0.0};
@@ -238,10 +238,10 @@ set_property (GObject      *object,
       case PROP_LANCZOS_WIDTH:
         {
         self->lanczos_width = g_value_get_int (value);
-        GEGL_SAMPLER (self)->context_rect.x = - self->lanczos_width;
-        GEGL_SAMPLER (self)->context_rect.y = - self->lanczos_width;
-        GEGL_SAMPLER (self)->context_rect.width = self->lanczos_width*2+1;
-        GEGL_SAMPLER (self)->context_rect.height = self->lanczos_width*2+1;
+        GEGL_SAMPLER (self)->context_rect[0].x = - self->lanczos_width;
+        GEGL_SAMPLER (self)->context_rect[0].y = - self->lanczos_width;
+        GEGL_SAMPLER (self)->context_rect[0].width = self->lanczos_width*2+1;
+        GEGL_SAMPLER (self)->context_rect[0].height = self->lanczos_width*2+1;
         }
         break;
 

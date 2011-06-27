@@ -44,9 +44,9 @@ struct _GeglSampler
   Babl          *format;
   Babl          *interpolate_format;
   Babl          *fish;
-  GeglRectangle  context_rect;
-  void          *sampler_buffer;
-  GeglRectangle  sampler_rectangle;
+  GeglRectangle  context_rect[3];
+  gpointer       sampler_buffer[3];
+  GeglRectangle  sampler_rectangle[3];
   GeglMatrix2   *inverse_jacobian;
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */
@@ -79,7 +79,10 @@ void  gegl_sampler_get         (GeglSampler *self,
 gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,
                                        gint         y);
-
+gfloat * gegl_sampler_get_from_mipmap (GeglSampler *sampler,
+                                       gint         x,
+                                       gint         y,
+                                       gint         level);
 gfloat *
 gegl_sampler_get_ptr (GeglSampler         *sampler,
                       gint                 x,

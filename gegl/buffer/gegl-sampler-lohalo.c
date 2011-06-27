@@ -311,10 +311,10 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect.x = -LOHALO_OFFSET;
-  GEGL_SAMPLER (self)->context_rect.y = -LOHALO_OFFSET;
-  GEGL_SAMPLER (self)->context_rect.width  = LOHALO_SIZE;
-  GEGL_SAMPLER (self)->context_rect.height = LOHALO_SIZE;
+  GEGL_SAMPLER (self)->context_rect[0].x = -LOHALO_OFFSET;
+  GEGL_SAMPLER (self)->context_rect[0].y = -LOHALO_OFFSET;
+  GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE;
+  GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -2079,10 +2079,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           {
             gint i = -LOHALO_OFFSET;
             do
-              (
+              {
                 gint j = -LOHALO_OFFSET;
                 do
-                  (
+                  {
                     ewa_update ((j),                            
                                 (i),                            
                                 c_major_x,     
@@ -2096,8 +2096,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                 input_bptr,    
                                 &total_weight, 
                                 ewa_newval);
-                  ) while ( ++j <= LOHALO_OFFSET );
-              ) while ( ++i <= LOHALO_OFFSET );
+                  } while ( ++j <= LOHALO_OFFSET );
+              } while ( ++i <= LOHALO_OFFSET );
           }
 
           {
@@ -2225,11 +2225,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
                 
                 /*
-                 * ADAM: THE POINTER get NEEDS TO BE HERE.
+                 * Get pointer to mipmap level 1 data:
                  */
-                /* FIXME: need to call ewa_get_ptr () instead */
                 const gfloat* restrict input_bptr_1 =
-                 (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0);
+                 (gfloat*) gegl_sampler_get_from_mipmap (self, ix_0, iy_0, 1);
 
                 /*
                  * Position of the sampling location in the coordinate
@@ -2345,6 +2344,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                     } while ( ++i < in_bot );
                 }
                 {
+                  gint i;
                   for ( i = in_bot; i <= out_bot; i++ )
                     {
                       gint j = out_left;

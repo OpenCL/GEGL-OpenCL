@@ -484,7 +484,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   GeglSampler   *sampler;
 
   sampler = op_affine_sampler (OP_AFFINE (op));
-  context_rect = sampler->context_rect;
+  context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
@@ -570,7 +570,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
 
   requested_rect = *region;
   sampler = op_affine_sampler (OP_AFFINE (op));
-  context_rect = sampler->context_rect;
+  context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
   gegl_affine_create_composite_matrix (affine, &inverse);
@@ -621,7 +621,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   GeglRectangle      region = *input_region;
 
   sampler = op_affine_sampler (OP_AFFINE (op));
-  context_rect = sampler->context_rect;
+  context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
   gegl_affine_create_matrix (affine, &matrix);
@@ -931,8 +931,8 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.y += 1;
 
       sampler = op_affine_sampler (OP_AFFINE (operation));
-      src_rect.width -= sampler->context_rect.width;
-      src_rect.height -= sampler->context_rect.height;
+      src_rect.width -= sampler->context_rect[0].width;
+      src_rect.height -= sampler->context_rect[0].height;
 
       gegl_affine_fast_reflect_x (output, input, result, &src_rect);
 
@@ -957,8 +957,8 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.x += 1;
 
       sampler = op_affine_sampler (OP_AFFINE (operation));
-      src_rect.width -= sampler->context_rect.width;
-      src_rect.height -= sampler->context_rect.height;
+      src_rect.width -= sampler->context_rect[0].width;
+      src_rect.height -= sampler->context_rect[0].height;
 
       gegl_affine_fast_reflect_y (output, input, result, &src_rect);
 
