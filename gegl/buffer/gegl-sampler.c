@@ -392,7 +392,7 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
   gint    dy;
   gint    sof;
 
-  const gdouble scale = 1. / (pow(2., (gdouble)level));
+  const gdouble scale = 1. / ( (gdouble) (1<<level) );
 
   const gint bpp =
     babl_format_get_bytes_per_pixel (sampler->interpolate_format);
