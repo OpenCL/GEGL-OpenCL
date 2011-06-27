@@ -2255,33 +2255,49 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  * 1 indices we use at this level:
                  */
                 const gint out_left =
-                  LOHALO_MAX(
-                              (gint)
-                              ( ceilf  ( ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 ) )
-                              ,
-                              -LOHALO_OFFSET_1
-                            );
+                  LOHALO_MAX
+                    (
+                      (gint)
+                      (
+                        ceilf
+                          ( ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 )
+                      )
+                      ,
+                      -LOHALO_OFFSET_1
+                    );
                 const gint out_rite =
-                  LOHALO_MIN(
-                              (gint)
-                              ( floorf ( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 ) )
-                              ,
-                               LOHALO_OFFSET_1
-                            );
+                  LOHALO_MIN
+                    (
+                      (gint)
+                      (
+                        floorf
+                          ( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 )
+                      )
+                      ,
+                      LOHALO_OFFSET_1
+                    );
                 const gint out_top =
-                  LOHALO_MAX(
-                              (gint)
-                              ( ceilf  ( ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 ) )
-                              ,
-                              -LOHALO_OFFSET_1
-                            );
+                  LOHALO_MAX
+                    (
+                      (gint)
+                      (
+                        ceilf
+                          ( ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 )
+                      )
+                      ,
+                      -LOHALO_OFFSET_1
+                    );
                 const gint out_bot =
-                  LOHALO_MIN(
-                              (gint)
-                              ( floorf ( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 ) )
-                              ,
-                               LOHALO_OFFSET_1
-                            );
+                  LOHALO_MIN
+                    (
+                      (gint)
+                      (
+                        floorf
+                          ( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 )
+                      )
+                      ,
+                      LOHALO_OFFSET_1
+                    );
 
                 /*
                  * Update using mipmap level 1 values.
@@ -2341,7 +2357,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
               /*
                * Blend the LBB-Nohalo and EWA results:
                */
-              const gfloat beta = (gfloat) ( ( (gdouble) 1.0 - theta ) / total_weight );
+              const gfloat beta =
+                (gfloat) ( ( (gdouble) 1.0 - theta ) / total_weight );
               newval[0] = theta * newval[0] + beta * ewa_newval[0];
               newval[1] = theta * newval[1] + beta * ewa_newval[1];
               newval[2] = theta * newval[2] + beta * ewa_newval[2];
