@@ -268,17 +268,23 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * 
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
- * LOHALO_OFFSET should consequently be an integer >= 2.
- *
- * Speed VS quality trade-off: Downsampling quality will decrease
- * around ratio 1/(LOHALO_OFFSET + .5). So, to maintain maximum
- * quality for the widest downsampling range possible, LOHALO_OFFSET
- * should be larger. However, the larger the offset, the slower LOHALO
- * will run, because context_rect will be larger, and consequently
- * there will be less "tile" reuse.
+ * LOHALO_OFFSET should consequently be >= 2.
+ */
+/*
+ * Speed VS quality trade-off:
+ * 
+ * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET +
+ * .5). So, to maintain maximum quality for the widest downsampling
+ * range possible, a somewhat large LOHALO_OFFSET should
+ * used. However, the larger the offset, the slower LOHALO will run,
+ * because context_rect will be larger, and consequently there will be
+ * less data "tile" reuse.
+ */
+/*
+ * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.
  */
 #define LOHALO_OFFSET (2)
-#define LOHALO_SIZE   ( 1 + 2 * LOHALO_OFFSET )
+#define LOHALO_SIZE ( 1 + 2 * LOHALO_OFFSET )
 
 /*
  * The higher mipmap context_rects must be set so that there is at
@@ -299,7 +305,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * WHAT WORKS.
  */
 #define LOHALO_LEVEL_1_OFFSET (4)
-#define LOHALO_LEVEL_1_SIZE   ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
+#define LOHALO_LEVEL_1_SIZE ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
 
 /*
  * ADAM: THE WAY I (NICOLAS) SET UP JACOBIAN-ADAPTIVITY, LEVEL 0
@@ -1201,6 +1207,7 @@ teepee (const gfloat c_major_x,
     (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
     :
     (gfloat) 0.;
+
   return weight;
 }
 
