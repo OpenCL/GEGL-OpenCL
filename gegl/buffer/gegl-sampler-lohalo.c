@@ -302,7 +302,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * WHAT WORKS.
  */
 #define LOHALO_OFFSET_1 (4)
-#define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_LEVEL_1_OFFSET )
+#define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 /*
  * ADAM: THE WAY I (NICOLAS) SET UP JACOBIAN-ADAPTIVITY, LEVEL 0
