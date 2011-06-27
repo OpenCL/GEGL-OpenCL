@@ -264,14 +264,14 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * Because things are kept centered, the stencil width/height is 1 +
  * the offset.
- * 
+ *
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
  * LOHALO_OFFSET should consequently be >= 2.
  */
 /*
  * Speed VS quality trade-off:
- * 
+ *
  * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET +
  * .5); in addition, the smaller LOHALO_OFFSET, the more noticeable
  * the artifacts. To maintain maximum quality for the widest
@@ -652,7 +652,7 @@ nohalo_subdivision (const gfloat           uno_two,
   const gfloat newval_tre_one =
     (gfloat) 0.5
     *
-    ( 
+    (
       newval_dos_one + newval_tre_two
       +
       (gfloat) 0.5
@@ -1208,7 +1208,7 @@ teepee (const gfloat c_major_x,
 }
 
 
-static inline void 
+static inline void
 ewa_update (const gint              j,
             const gint              i,
             const gfloat            c_major_x,
@@ -1238,7 +1238,7 @@ ewa_update (const gint              j,
 }
 
 
-static inline void 
+static inline void
 level_1_ewa_update (const gint              j,
                     const gint              i,
                     const gfloat            c_major_x,
@@ -1985,7 +1985,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
          */
           const gdouble s2s2 =
             (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
-        
+
           const gdouble s1s1minusn11 = s1s1 - n11;
           const gdouble s1s1minusn22 = s1s1 - n22;
           /*
@@ -2070,7 +2070,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[1] = (gfloat) 0.0;
           ewa_newval[2] = (gfloat) 0.0;
           ewa_newval[3] = (gfloat) 0.0;
-          
+
           /*
            * Grab the pixel values located within the context_rect of
            * "pure" LBB-Nohalo.  Farther ones will be accessed through
@@ -2083,18 +2083,18 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 gint j = -LOHALO_OFFSET;
                 do
                   {
-                    ewa_update ((j),                            
-                                (i),                            
-                                c_major_x,     
-                                c_major_y,     
-                                c_minor_x,     
-                                c_minor_y,     
-                                x_0,           
-                                y_0,           
-                                channels,      
-                                row_skip,      
-                                input_bptr,    
-                                &total_weight, 
+                    ewa_update ((j),
+                                (i),
+                                c_major_x,
+                                c_major_y,
+                                c_minor_x,
+                                c_minor_y,
+                                x_0,
+                                y_0,
+                                channels,
+                                row_skip,
+                                input_bptr,
+                                &total_weight,
                                 ewa_newval);
                   } while ( ++j <= LOHALO_OFFSET );
               } while ( ++i <= LOHALO_OFFSET );
@@ -2158,7 +2158,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gdouble major_y = major_mag * major_unit_y;
             const gdouble minor_x = minor_mag * minor_unit_x;
             const gdouble minor_y = minor_mag * minor_unit_y;
-          
+
             /*
              * Ellipse coefficients:
              */
@@ -2180,7 +2180,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b
                );
             const gfloat bounding_box_half_width =
-              sqrtf( (gfloat) (ellipse_c * bounding_box_factor) ); 
+              sqrtf( (gfloat) (ellipse_c * bounding_box_factor) );
             const gfloat bounding_box_half_height =
               sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
             /*
@@ -2197,7 +2197,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
             if (
-                ( x_0 - fudged_bounding_box_half_width  < closest_left ) 
+                ( x_0 - fudged_bounding_box_half_width  < closest_left )
                 ||
                 ( x_0 + fudged_bounding_box_half_width  > closest_rite )
                 ||
@@ -2223,7 +2223,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  */
                 const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
                 const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
-                
+
                 /*
                  * Get pointer to mipmap level 1 data:
                  */
@@ -2239,7 +2239,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                   x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
                 const gfloat y_1 =
                   y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
-                
+
                 /*
                  * Key index ranges:
                  */
@@ -2251,7 +2251,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 const gint in_rite = ( LOHALO_OFFSET - 1 ) + odd_ix_0;
                 const gint in_top  =  -LOHALO_OFFSET       + odd_iy_0;
                 const gint in_bot  = ( LOHALO_OFFSET - 1 ) + odd_iy_0;
-                
+
                 /*
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
@@ -2303,7 +2303,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
                 /*
                  * Update using mipmap level 1 values.
-                 * 
+                 *
                  * Possible future improvement: When the ellipse is
                  * slanted, one could avoid many operations using
                  * Anthony Thyssen's formulas for the bounding
@@ -2348,7 +2348,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                   for ( i = in_bot; i <= out_bot; i++ )
                     {
                       gint j = out_left;
-                      do 
+                      do
                       {
                         LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
                       } while ( ++j <= out_rite );
