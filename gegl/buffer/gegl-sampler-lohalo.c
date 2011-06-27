@@ -849,9 +849,8 @@ lbb ( const gfloat c00,
    * sub-blocks of the 4x4 input stencil.
    *
    * Surprisingly, we have not succeeded in reducing the number of "?
-   * :" needed by using the fact that the data comes from the
-   * (co-monotone) method Nohalo so that it is known ahead of time
-   * that
+   * :" even though the data comes from the (co-monotone) method
+   * Nohalo so that it is known ahead of time that
    *
    *  dos_thr is between dos_two and dos_fou
    *
@@ -1225,12 +1224,12 @@ ewa_update (const gint              j,
                   gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
-  const gfloat weight = teepee(c_major_x,
-                               c_major_y,
-                               c_minor_x,
-                               c_minor_y,
-                               x_0 - (gfloat) j,
-                               y_0 - (gfloat) i);
+  const gfloat weight = teepee (c_major_x,
+                                c_major_y,
+                                c_minor_x,
+                                c_minor_y,
+                                x_0 - (gfloat) j,
+                                y_0 - (gfloat) i);
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
   ewa_newval[1] += weight * input_bptr[ skip + 1 ];
@@ -1259,12 +1258,12 @@ level_1_ewa_update (const gint              j,
    * The factor of four is because the level 1 mipmap values are
    * averages of four level 0 pixel values.
    */
-  const gfloat weight = (gfloat) 4. * teepee(c_major_x,
-                                             c_major_y,
-                                             c_minor_x,
-                                             c_minor_y,
-                                             x_1 - (gfloat) (2*j),
-                                             y_1 - (gfloat) (2*i));
+  const gfloat weight = (gfloat) 4. * teepee (c_major_x,
+                                              c_major_y,
+                                              c_minor_x,
+                                              c_minor_y,
+                                              x_1 - (gfloat) (2*j),
+                                              y_1 - (gfloat) (2*i));
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr_1[ skip     ];
   ewa_newval[1] += weight * input_bptr_1[ skip + 1 ];
