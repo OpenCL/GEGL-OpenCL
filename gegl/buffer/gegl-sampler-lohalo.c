@@ -30,11 +30,10 @@
  * interpolation) and Clamped EWA (Elliptical Weighted Averaging)
  * filtering with the "teepee" (radial tent, that is, conical) kernel.
  *
- * WARNING: This version of Lohalo only gives top quality downsampling
- * results only down to about 1/2.5 = 40% of the size. Beyond that,
- * the quality is somewhat lower (due to the use of mipmap data),
- * especially beyond 1/LOHALO_OFFSET because then it does not average
- * over enough pixels to perform sufficient antialiasing.
+ * WARNING: This version of Lohalo only gives top quality results down
+ * to about a downsampling of about ratio 1/(LOHALO_OFFSET+0.5).
+ * Beyond that, the quality is somewhat lower (due to the use of
+ * higher level mipmap data).
  */
 
 /*
@@ -274,11 +273,14 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * Speed VS quality trade-off:
  * 
  * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET +
- * .5). So, to maintain maximum quality for the widest downsampling
- * range possible, a somewhat large LOHALO_OFFSET should
- * used. However, the larger the offset, the slower LOHALO will run,
- * because context_rect will be larger, and consequently there will be
- * less data "tile" reuse.
+ * .5); in addition, the smaller LOHALO_OFFSET, the more noticeable
+ * the artifacts. To maintain maximum quality for the widest
+ * downsampling range possible, a somewhat large LOHALO_OFFSET should
+ * ideally be used. However, the larger the offset, the slower Lohalo
+ * will run when no significant downsampling is done, because the
+ * width and height of context_rect is (2*LOHALO_OFFSET+1), and
+ * consequently there will be less data "tile" reuse when
+ * LOHALO_OFFSET is large.
  */
 /*
  * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.
@@ -295,11 +297,6 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * that the do whiles word properly.  Essentially, the higher mipmap
  * level's offset should be larger than the lower mipmap level's
  * offset (assuming the usual factor of two relationship).
- *
- * Every time one "jumps" a mipmap level, "switching" artifacts
- * appear. It is probably a good thing to minimize the total number of
- * mipmap levels used. On the other hand, large context_rects slow
- * things down, since they prevent "buffer reuse."
  *
  * ADAM: FOR NOW, KEEP IT SMALLISH. WE CAN MAKE IT LARGER WHEN WE KNOW
  * WHAT WORKS.
