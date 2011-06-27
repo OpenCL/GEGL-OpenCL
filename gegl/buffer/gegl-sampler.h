@@ -31,6 +31,7 @@ G_BEGIN_DECLS
 #define GEGL_IS_SAMPLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLER))
 #define GEGL_IS_SAMPLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SAMPLER))
 #define GEGL_SAMPLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER, GeglSamplerClass))
+#define GEGL_SAMPLER_MIPMAP_LEVELS   3
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 typedef struct _GeglSampler    GeglSampler;
@@ -44,9 +45,9 @@ struct _GeglSampler
   Babl          *format;
   Babl          *interpolate_format;
   Babl          *fish;
-  GeglRectangle  context_rect[3];
-  gpointer       sampler_buffer[3];
-  GeglRectangle  sampler_rectangle[3];
+  GeglRectangle  context_rect[GEGL_SAMPLER_MIPMAP_LEVELS];
+  gpointer       sampler_buffer[GEGL_SAMPLER_MIPMAP_LEVELS];
+  GeglRectangle  sampler_rectangle[GEGL_SAMPLER_MIPMAP_LEVELS];
   GeglMatrix2   *inverse_jacobian;
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */

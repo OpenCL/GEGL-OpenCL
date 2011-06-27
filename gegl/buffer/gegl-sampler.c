@@ -113,7 +113,7 @@ gegl_sampler_init (GeglSampler *self)
 {
   int i;
   self->buffer = NULL;
-  for (i=0; i<3; ++i) {
+  for (i=0; i<GEGL_SAMPLER_MIPMAP_LEVELS; ++i) {
     GeglRectangle context_rect = {0,0,1,1};
     GeglRectangle sampler_rectangle = {0,0,0,0};
     self->sampler_buffer[i] = NULL;
