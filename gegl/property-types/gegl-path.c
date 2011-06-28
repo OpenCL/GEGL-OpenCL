@@ -21,16 +21,10 @@
 #include "config.h"
 
 #include <string.h>
-#include <glib.h>
 #include <math.h>
 
-#include <glib-object.h>
-
 #include "gegl.h"
-#include "gegl-types-internal.h"
-#include "gegl-buffer-private.h"
 #include "gegl-path.h"
-#include "gegl-color.h"
 #include "gegl-utils.h"
 #include <glib/gprintf.h>
 
@@ -216,6 +210,7 @@ gegl_path_class_init (GeglPathClass *klass)
 
   /* FIXME: should this just be 2 ? (and is this even currently in use?) */
   gegl_path_add_type ('_', 2, "linear curve position associated value");
+
 }
 
 static void
