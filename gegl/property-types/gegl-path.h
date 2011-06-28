@@ -276,7 +276,7 @@ typedef void LP *GeglNodeFunction RP LP const GeglPathItem *node,
  * @user_data: user data to pass to the function (in addition to the GeglPathItem).
  *
  * Execute a provided function for every node in the path (useful for
- * drawing and otherwise traversing  a path.)
+ * drawing and otherwise traversing a path.)
  */
 void                 gegl_path_foreach        (GeglPath        *path,
                                                GeglNodeFunction each_item,
@@ -311,9 +311,10 @@ void                 gegl_path_clear          (GeglPath    *path);
  * @node: pointer to a structure describing the GeglPathItem we want to store
  *
  * Insert the new node @node at position @pos in @path.
+ * if @pos = -1, the node is added in the last position.
  */
-void                 gegl_path_insert_node    (GeglPath    *path,
-                                               gint         pos,
+void                 gegl_path_insert_node    (GeglPath           *path,
+                                               gint                pos,
                                                const GeglPathItem *node);
 /**
  * gegl_path_replace_node:
@@ -323,8 +324,8 @@ void                 gegl_path_insert_node    (GeglPath    *path,
  *
  * Replaces the exiting node at position @pos in @path.
  */
-void                 gegl_path_replace_node   (GeglPath    *path,
-                                               gint         pos,
+void                 gegl_path_replace_node   (GeglPath           *path,
+                                               gint                pos,
                                                const GeglPathItem *node);
 /**
  * gegl_path_remove_node:

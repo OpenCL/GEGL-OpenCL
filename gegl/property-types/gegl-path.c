@@ -175,6 +175,7 @@ static InstructionInfo knot_types[64]= /* reserve space for a total of up to 64 
   {'L',  2, "line to",              flatten_copy},
   {'C',  6, "curve to",             flatten_curve},
 
+  /* each point is relative to the previous */
   {'m',  2, "rel move to",          flatten_rel_copy},
   {'l',  2, "rel line to",          flatten_rel_copy},
   {'c',  6, "rel curve to",         flatten_rel_copy},
@@ -671,11 +672,6 @@ gegl_path_clear (GeglPath *vector)
   priv->tail = NULL;
 }
 
-/* -1 means last */
-
-/* pos = 0, pushes the existing 0 if any to 1,
- * passing -1 means add at end
- */
 void
 gegl_path_insert_node (GeglPath           *vector,
                        gint                pos,
@@ -1332,6 +1328,16 @@ gegl_path_list_append (GeglPathList *head,
   return head;
 }
 
+/**
+ * gegl_path_list_append_item:
+ * @head: the list to append item on
+ * @type: the type of the new item
+ * @res:  return a pointer to the new item
+ * @tail: the tail of the list
+ *
+ * Append a new item in the list.
+ * @tail can be NULL. Providing it will accelerate the operation.
+ */
 static GeglPathList *
 gegl_path_list_append_item  (GeglPathList  *head,
                              gchar          type,
@@ -1347,7 +1353,7 @@ gegl_path_list_append_item  (GeglPathList  *head,
 
   if (iter)
     {
-      /* the +3 is padding, +1 was excpected to be sufficient */
+      /* the +3 is padding, +1 was expected to be sufficient */
       iter->next =
         g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
       iter->next->d.type = type;
@@ -1355,7 +1361,7 @@ gegl_path_list_append_item  (GeglPathList  *head,
     }
   else /* creating new path */
     {
-      /* the +3 is padding, +1 was excpected to be sufficient */
+      /* the +3 is padding, +1 was expected to be sufficient */
       head =
         g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
       head->d.type = type;
@@ -1367,6 +1373,13 @@ gegl_path_list_append_item  (GeglPathList  *head,
   return head;
 }
 
+/**
+ * gegl_path_list_flatten:
+ * @matrix: a #GeglMatrix3 transformation matrix
+ * @original: the #GeglPathList to flatten
+ *
+ * Flatten the provided GeglPathList
+ */
 static GeglPathList *
 gegl_path_list_flatten (GeglMatrix3  *matrix,
                         GeglPathList *original)
