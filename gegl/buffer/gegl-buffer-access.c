@@ -49,7 +49,7 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
                        guchar     *buf)
 {
   gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height  = buffer->tile_storage->tile_width;
+  gint  tile_height = buffer->tile_storage->tile_width;
   gint  px_size     = gegl_buffer_px_size (buffer);
   gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
   Babl *fish        = NULL;
@@ -66,43 +66,41 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
       fish = babl_fish (buffer->format, format);
     }
 
-  {
-    if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y < abyss_y_total &&
-          buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x < abyss_x_total))
-      { /* in abyss */
-        return;
-      }
-    else
-      {
-        gint      tiledy = buffer_y + buffer->shift_y + y;
-        gint      tiledx = buffer_x + buffer->shift_x + x;
+  if (!(buffer_y + y >= buffer_abyss_y &&
+        buffer_y + y < abyss_y_total &&
+        buffer_x + x >= buffer_abyss_x &&
+        buffer_x + x < abyss_x_total))
+    { /* in abyss */
+      return;
+    }
+  else
+    {
+      gint      tiledy = buffer_y + buffer->shift_y + y;
+      gint      tiledx = buffer_x + buffer->shift_x + x;
 
-        GeglTile *tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                                gegl_tile_indice (tiledx, tile_width),
-                                                gegl_tile_indice (tiledy, tile_height),
-                                                0);
+      GeglTile *tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                                  gegl_tile_indice (tiledx, tile_width),
+                                                  gegl_tile_indice (tiledy, tile_height),
+                                                  0);
 
-        if (tile)
-          {
-            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
-            gint    offsety = gegl_tile_offset (tiledy, tile_height);
-            guchar *tp;
+      if (tile)
+        {
+          gint    offsetx = gegl_tile_offset (tiledx, tile_width);
+          gint    offsety = gegl_tile_offset (tiledy, tile_height);
+          guchar *tp;
 
-            gegl_tile_lock (tile);
-            tp = gegl_tile_get_data (tile) +
-                 (offsety * tile_width + offsetx) * px_size;
-            if (fish)
-              babl_process (fish, buf, tp, 1);
-            else
-              memcpy (tp, buf, bpx_size);
+          gegl_tile_lock (tile);
+          tp = gegl_tile_get_data (tile) +
+            (offsety * tile_width + offsetx) * px_size;
+          if (fish)
+            babl_process (fish, buf, tp, 1);
+          else
+            memcpy (tp, buf, bpx_size);
 
-            gegl_tile_unlock (tile);
-            gegl_tile_unref (tile);
-          }
-      }
-  }
+          gegl_tile_unlock (tile);
+          gegl_tile_unref (tile);
+        }
+    }
   return;
 }
 #endif
@@ -118,7 +116,6 @@ gegl_buffer_in_abyss( GeglBuffer *buffer,
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
-
 
   gint tiledy = y + buffer_shift_y;
   gint tiledx = x + buffer_shift_x;
@@ -390,8 +387,6 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
       gint tiledy  = buffer_y + bufy;
       gint offsety = gegl_tile_offset (tiledy, tile_height);
 
-
-
       gint bufx    = 0;
 
       if (!(buffer_y + bufy + (tile_height) >= buffer_abyss_y &&
@@ -592,9 +587,7 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
     }
   else
 #endif
-    {
-      gegl_buffer_iterate (buffer, rect, src, rowstride, TRUE, format, 0);
-    }
+  gegl_buffer_iterate (buffer, rect, src, rowstride, TRUE, format, 0);
 
   if (gegl_buffer_is_shared(buffer))
     {
@@ -615,8 +608,6 @@ gegl_buffer_set (GeglBuffer          *buffer,
   gegl_buffer_set_unlocked (buffer, rect, format, src, rowstride);
   gegl_buffer_unlock (buffer);
 }
-
-
 
 
 #if 0
@@ -1012,7 +1003,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_iterate (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE, FALSE, format, level);
 #if 1
-  /* slows testing of rendering code speed to much for now and
+  /* slows testing of rendering code speed too much for now and
    * no time to make a fast implementation
    */
 
