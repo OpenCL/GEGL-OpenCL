@@ -1019,6 +1019,15 @@ gegl_path_add_flattener (GeglPathList *(*flattener) (GeglPathList *original))
     }
 }
 
+GeglPathList *
+gegl_path_get_flat_path (GeglPath *path)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+
+  ensure_flattened (path);
+  return priv->flat_path;
+}
+
 static const gchar *
 parse_float_pair (const gchar *p,
                   gdouble     *x,

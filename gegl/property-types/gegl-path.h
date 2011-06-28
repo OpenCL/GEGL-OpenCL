@@ -434,6 +434,13 @@ typedef GeglPathList *(*GeglFlattenerFunc) (GeglPathList *original);
  */
 void                  gegl_path_add_flattener (GeglFlattenerFunc func);
 
+/**
+ * gegl_path_get_flat_path:
+ * @path: a @GeglPath
+ *
+ * Return a polyline version of @path
+ */
+GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
 
 G_END_DECLS
 
