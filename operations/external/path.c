@@ -56,9 +56,7 @@ gegl_chant_path   (d,        _("Vector"),
 #define GEGL_CHANT_C_FILE "path.c"
 
 #include "gegl-plugin.h"
-
-/* the path api isn't public yet */
-#include "property-types/gegl-path.h"
+#include "gegl-path.h"
 static void path_changed (GeglPath *path,
                           const GeglRectangle *roi,
                           gpointer userdata);
@@ -130,34 +128,6 @@ get_bounding_box (GeglOperation *operation)
   return defined;
 }
 
-
-
-#if 0
-static gboolean gegl_path_is_closed (GeglPath *path)
-{
-  const GeglPathItem *knot;
-
-  if (!path)
-    return FALSE;
-  knot = gegl_path_get_node (path, -1);
-  if (!knot)
-    return FALSE;
-  if (knot->type == 'z')
-    {
-      return TRUE;
-    }
-  return FALSE;
-}
-#endif
-
-
-#if 0
-static GeglRectangle
-get_cached_region (GeglOperation *operation)
-{
-  return get_bounding_box (operation);
-}
-#endif
 static void gegl_path_cairo_play (GeglPath *path,
                                     cairo_t *cr);
 
@@ -210,18 +180,6 @@ process (GeglOperation       *operation,
           gegl_path_cairo_play (o->d, cr);
           cairo_set_source_rgba (cr, r,g,b,a);
           cairo_fill (cr);
-
-#if 0
-    if (o->stroke_width > 0.1 && o->stroke_opacity > 0.0001)
-      {
-        gfloat r,g,b,a;
-        gegl_color_get_rgba (o->stroke, &r,&g,&b,&a);
-        a *= o->stroke_opacity;
-
-        cairo_set_line_width (cr, o->stroke_width);
-        cairo_stroke (cr);
-      }
-#endif
 
           g_static_mutex_unlock (&mutex);
           gegl_buffer_linear_close (output, data);
@@ -333,9 +291,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:path";
   operation_class->categories  = "render";
   operation_class->description = _("Renders a brush stroke");
-#if 0
-  operation_class->get_cached_region = (void*)get_cached_region;
-#endif
 }
 
 
