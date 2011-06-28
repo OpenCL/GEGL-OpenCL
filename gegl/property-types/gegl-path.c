@@ -108,7 +108,7 @@ static const gchar *    parse_float_pair              (const gchar      *p,
                                                        gdouble          *y);
 static void             gegl_path_emit_changed        (GeglPath         *self,
                                                        const GeglRectangle *bounds);
-static void             ensure_flattened              (GeglPath         *vector);
+static void             ensure_flattened              (GeglPath         *path);
 static GeglPathList *   ensure_tail                   (GeglPathPrivate  *priv);
 
 static GeglPathList *   flatten_copy                  (GeglMatrix3      *matrix,
@@ -1074,8 +1074,16 @@ gegl_path_emit_changed (GeglPath            *self,
                  bounds, NULL);
 }
 
+
+/**
+ * ensure_flattened:
+ * @path: a #GeglPath
+ *
+ * Check if the polyline version of the curse is computed and up to date,
+ * and compute it if needed.
+ */
 static void
-ensure_flattened (GeglPath *vector)
+ensure_flattened (GeglPath *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   gint i;
@@ -1107,6 +1115,12 @@ ensure_flattened (GeglPath *vector)
   priv->calc_clean = FALSE;
 }
 
+/**
+ * ensure_tail:
+ * @priv: the private struct of a GeglPath
+ *
+ * Ensure that priv->tail point to the last element of the path list
+ */
 static GeglPathList *
 ensure_tail (GeglPathPrivate *priv)
 {
@@ -1132,6 +1146,7 @@ ensure_tail (GeglPathPrivate *priv)
   priv->tail = tail;
   return tail;
 }
+
 /***** Flattener *****/
 static GeglPathList *
 flatten_nop (GeglMatrix3  *matrix,
