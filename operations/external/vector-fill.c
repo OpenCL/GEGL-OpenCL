@@ -64,12 +64,12 @@ static void path_changed (GeglPath *path,
   gdouble        x0, x1, y0, y1;
 
   gegl_path_get_bounds(o->d, &x0, &x1, &y0, &y1);
-  rect.x = x0;
-  rect.y = y0;
-  rect.width = x1 - x0;
-  rect.height = y1 - y0;
+  rect.x = x0 - 1;
+  rect.y = y0 - 1;
+  rect.width = x1 - x0 + 2;
+  rect.height = y1 - y0 + 2;
 
-  gegl_operation_invalidate (userdata, roi, TRUE);
+  gegl_operation_invalidate (userdata, &rect, TRUE);
 };
 
 static void
