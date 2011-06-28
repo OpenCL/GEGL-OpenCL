@@ -1302,41 +1302,6 @@ gegl_path_item_free (GeglPathList *p)
 }
 
 /***** GeglPathList *****/
-static GeglPathList *
-gegl_path_list_append_item  (GeglPathList  *head,
-                             gchar          type,
-                             GeglPathList **res,
-                             GeglPathList  *tail)
-{
-  GeglPathList *iter = tail?tail:head;
-  InstructionInfo *info = lookup_instruction_info (type);
-  g_assert (info);
-
-  while (iter && iter->next)
-    iter=iter->next;
-
-  if (iter)
-    {
-      /* the +3 is padding, +1 was excpected to be sufficient */
-      iter->next =
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
-      iter->next->d.type = type;
-      iter = iter->next;
-    }
-  else /* creating new path */
-    {
-      /* the +3 is padding, +1 was excpected to be sufficient */
-      head =
-        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
-      head->d.type = type;
-      iter=head;
-    }
-  g_assert (res);
-  *res = iter;
-
-  return head;
-}
-
 GeglPathList *
 gegl_path_list_destroy (GeglPathList *path)
 {
@@ -1376,6 +1341,41 @@ gegl_path_list_append (GeglPathList *head,
       iter->d.point[pair_no].y = va_arg (var_args, gdouble);
     }
   va_end (var_args);
+  return head;
+}
+
+static GeglPathList *
+gegl_path_list_append_item  (GeglPathList  *head,
+                             gchar          type,
+                             GeglPathList **res,
+                             GeglPathList  *tail)
+{
+  GeglPathList *iter = tail?tail:head;
+  InstructionInfo *info = lookup_instruction_info (type);
+  g_assert (info);
+
+  while (iter && iter->next)
+    iter=iter->next;
+
+  if (iter)
+    {
+      /* the +3 is padding, +1 was excpected to be sufficient */
+      iter->next =
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
+      iter->next->d.type = type;
+      iter = iter->next;
+    }
+  else /* creating new path */
+    {
+      /* the +3 is padding, +1 was excpected to be sufficient */
+      head =
+        g_slice_alloc0 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 *(info->n_items+3)/2);
+      head->d.type = type;
+      iter=head;
+    }
+  g_assert (res);
+  *res = iter;
+
   return head;
 }
 
