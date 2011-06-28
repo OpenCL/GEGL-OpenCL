@@ -1982,7 +1982,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
            * s2 the smallest singular value of the inverse Jacobian
            * matrix. Its reciprocal is the largest singular value of
            * the Jacobian matrix itself.
-         */
+           */
           const gdouble s2s2 =
             (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
 
