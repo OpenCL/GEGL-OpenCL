@@ -108,7 +108,7 @@ static const gchar *    parse_float_pair              (const gchar      *p,
                                                        gdouble          *y);
 static void             gegl_path_emit_changed        (GeglPath         *self,
                                                        const GeglRectangle *bounds);
-static void             ensure_flattened              (GeglPath         *path);
+static void             ensure_flattened              (GeglPath         *vector);
 static GeglPathList *   ensure_tail                   (GeglPathPrivate  *priv);
 
 static GeglPathList *   flatten_copy                  (GeglMatrix3      *matrix,
@@ -1077,13 +1077,13 @@ gegl_path_emit_changed (GeglPath            *self,
 
 /**
  * ensure_flattened:
- * @path: a #GeglPath
+ * @vector: a #GeglPath
  *
  * Check if the polyline version of the curse is computed and up to date,
  * and compute it if needed.
  */
 static void
-ensure_flattened (GeglPath *path)
+ensure_flattened (GeglPath *vector)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   gint i;
@@ -1124,25 +1124,13 @@ ensure_flattened (GeglPath *path)
 static GeglPathList *
 ensure_tail (GeglPathPrivate *priv)
 {
-  GeglPathList *tail_attempt = NULL;
   GeglPathList *tail;
 
-  if (priv->tail)
-    {
-      for (tail_attempt=priv->tail;
-           tail_attempt && tail_attempt->next;
-           tail_attempt=tail_attempt->next);
-      return tail_attempt; /* comment his out, and
-                           let failures be shown by
-                           the assert below,.. */
-    }
-  for (tail=priv->tail;
-       tail && tail->next;
-       tail=tail->next);
-  if (tail_attempt)
-    {
-      g_assert (tail_attempt == tail);
-    }
+  tail = priv->tail ? priv->tail : priv->path;
+
+  while (tail && tail->next)
+    tail=tail->next;
+
   priv->tail = tail;
   return tail;
 }
