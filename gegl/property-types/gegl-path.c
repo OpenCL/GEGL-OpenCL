@@ -207,10 +207,6 @@ gegl_path_class_init (GeglPathClass *klass)
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, /*return type */
                   1, G_TYPE_POINTER);
-
-  /* FIXME: should this just be 2 ? (and is this even currently in use?) */
-  gegl_path_add_type ('_', 2, "linear curve position associated value");
-
 }
 
 static void
