@@ -343,7 +343,7 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  i;
-  gint  factor = 1<<level;
+  gint  factor         = 1<<level;
 
   /* roi specified, override buffers extent */
   if (roi)
