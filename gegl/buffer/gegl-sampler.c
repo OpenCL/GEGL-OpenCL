@@ -337,9 +337,9 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       ||
       ( y < sampler->sampler_rectangle[0].y )
       ||
-      ( x > sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
+      ( x >= sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
       ||
-      ( y > sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
+      ( y >= sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
     {
       /*
        * fetch_rectangle will become the value of
