@@ -184,8 +184,6 @@ static InstructionInfo knot_types[64]= /* reserve space for a total of up to 64 
   {'\0', 0, "end of instructions",  flatten_copy},
 };
 
-
-
 static void
 gegl_path_init (GeglPath *self)
 {
@@ -285,7 +283,8 @@ gegl_path_new_from_string (const gchar *path_string)
   return self;
 }
 
-gboolean gegl_path_is_empty (GeglPath *path)
+gboolean
+gegl_path_is_empty (GeglPath *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
   return priv->path != NULL;
@@ -306,7 +305,6 @@ gegl_path_get_n_nodes  (GeglPath *vector)
       count ++;
     }
   return count;
-
 }
 
 gdouble
@@ -408,7 +406,7 @@ gegl_path_to_string (GeglPath  *vector)
 
 void
 gegl_path_set_matrix (GeglPath    *path,
-                      GeglMatrix3  *matrix)
+                      GeglMatrix3 *matrix)
 {
   GeglPathPrivate *priv;
   if (!path)
@@ -423,7 +421,7 @@ gegl_path_set_matrix (GeglPath    *path,
 }
 
 void gegl_path_get_matrix (GeglPath    *path,
-                           GeglMatrix3  *matrix)
+                           GeglMatrix3 *matrix)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
   gegl_matrix3_copy_into (matrix, &priv->matrix);
@@ -512,10 +510,8 @@ gegl_path_closest_point (GeglPath *path,
         }
     }
 
-
   g_free (samples_x);
   g_free (samples_y);
-
 
   return closest_val * 1.0;
 }
@@ -566,9 +562,9 @@ gegl_path_calc (GeglPath   *self,
 
 void
 gegl_path_calc_values (GeglPath *self,
-                         guint      num_samples,
-                         gdouble   *xs,
-                         gdouble   *ys)
+                       guint      num_samples,
+                       gdouble   *xs,
+                       gdouble   *ys)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (self);
   if (!self)
@@ -577,11 +573,12 @@ gegl_path_calc_values (GeglPath *self,
   gegl_path_list_calc_values (priv->flat_path, num_samples, xs, ys);
 }
 
-void gegl_path_get_bounds (GeglPath *self,
-                           gdouble  *min_x,
-                           gdouble  *max_x,
-                           gdouble  *min_y,
-                           gdouble  *max_y)
+void
+gegl_path_get_bounds (GeglPath *self,
+                      gdouble  *min_x,
+                      gdouble  *max_x,
+                      gdouble  *min_y,
+                      gdouble  *max_y)
 {
   GeglPathPrivate *priv;
   GeglPathList *iter;
@@ -629,10 +626,11 @@ void gegl_path_get_bounds (GeglPath *self,
     }
 }
 
-void  gegl_path_foreach (GeglPath *vector,
-                                void (*func) (const GeglPathItem *knot,
-                                              gpointer              data),
-                                gpointer    data)
+void
+gegl_path_foreach (GeglPath     *vector,
+                   void (*func) (const GeglPathItem *knot,
+                                 gpointer            data),
+                   gpointer      data)
 {
   GeglPathPrivate *priv;
   GeglPathList *iter;
@@ -645,11 +643,11 @@ void  gegl_path_foreach (GeglPath *vector,
     }
 }
 
-
-void  gegl_path_foreach_flat (GeglPath *vector,
-                                     void (*func) (const GeglPathItem *knot,
-                                                   gpointer              data),
-                                     gpointer    data)
+void
+gegl_path_foreach_flat (GeglPath     *vector,
+                        void (*func) (const GeglPathItem *knot,
+                                      gpointer            data),
+                        gpointer      data)
 {
   GeglPathPrivate *priv;
   GeglPathList *iter;
@@ -663,7 +661,8 @@ void  gegl_path_foreach_flat (GeglPath *vector,
     }
 }
 
-void gegl_path_clear (GeglPath *vector)
+void
+gegl_path_clear (GeglPath *vector)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   if (priv->path)
@@ -677,9 +676,10 @@ void gegl_path_clear (GeglPath *vector)
 /* pos = 0, pushes the existing 0 if any to 1,
  * passing -1 means add at end
  */
-void  gegl_path_insert_node     (GeglPath           *vector,
-                            gint                pos,
-                            const GeglPathItem *knot)
+void
+gegl_path_insert_node (GeglPath           *vector,
+                       gint                pos,
+                       const GeglPathItem *knot)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -722,9 +722,10 @@ void  gegl_path_insert_node     (GeglPath           *vector,
   gegl_path_emit_changed (vector, NULL);
 }
 
-void  gegl_path_replace_node (GeglPath           *vector,
-                         gint                pos,
-                         const GeglPathItem *knot)
+void
+gegl_path_replace_node (GeglPath           *vector,
+                        gint                pos,
+                        const GeglPathItem *knot)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -756,8 +757,9 @@ void  gegl_path_replace_node (GeglPath           *vector,
   gegl_path_emit_changed (vector, NULL);
 }
 
-void  gegl_path_remove_node  (GeglPath *vector,
-                              gint      pos)
+void
+gegl_path_remove_node (GeglPath *vector,
+                       gint      pos)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   GeglPathList *iter;
@@ -789,8 +791,9 @@ void  gegl_path_remove_node  (GeglPath *vector,
   gegl_path_emit_changed (vector, NULL);
 }
 
-void gegl_path_parse_string (GeglPath *vector,
-                             const gchar *path)
+void
+gegl_path_parse_string (GeglPath    *vector,
+                        const gchar *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   const gchar *p = path;
@@ -963,13 +966,15 @@ gegl_path_append (GeglPath *self,
     }
 }
 
-void gegl_path_freeze (GeglPath *path)
+void
+gegl_path_freeze (GeglPath *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
   priv->frozen ++;
 }
 
-void gegl_path_thaw (GeglPath *path)
+void
+gegl_path_thaw (GeglPath *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
   priv->frozen --;
@@ -996,7 +1001,8 @@ gegl_path_add_type (gchar        type,
   return;
 }
 
-void  gegl_path_add_flattener (GeglPathList *(*flattener) (GeglPathList *original))
+void
+gegl_path_add_flattener (GeglPathList *(*flattener) (GeglPathList *original))
 {
   GeglPath *vector = g_object_new (GEGL_TYPE_PATH, NULL);
   GeglPathClass *klass= GEGL_PATH_GET_CLASS (vector);
@@ -1017,9 +1023,10 @@ void  gegl_path_add_flattener (GeglPathList *(*flattener) (GeglPathList *origina
     }
 }
 
-static const gchar *parse_float_pair (const gchar *p,
-                                      gdouble *x,
-                                      gdouble *y)
+static const gchar *
+parse_float_pair (const gchar *p,
+                  gdouble     *x,
+                  gdouble     *y)
 {
   gchar *t = (void*) p;
   while (*t && ((*t<'0' || *t > '9') && *t!='-')) t++;
@@ -1032,7 +1039,6 @@ static const gchar *parse_float_pair (const gchar *p,
   *y = g_ascii_strtod (t, &t);
   return t;
 }
-
 
 static void
 gegl_path_emit_changed (GeglPath            *self,
@@ -1068,7 +1074,8 @@ gegl_path_emit_changed (GeglPath            *self,
                  bounds, NULL);
 }
 
-static void ensure_flattened (GeglPath *vector)
+static void
+ensure_flattened (GeglPath *vector)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (vector);
   gint i;
@@ -1100,7 +1107,8 @@ static void ensure_flattened (GeglPath *vector)
   priv->calc_clean = FALSE;
 }
 
-static GeglPathList *ensure_tail (GeglPathPrivate *priv)
+static GeglPathList *
+ensure_tail (GeglPathPrivate *priv)
 {
   GeglPathList *tail_attempt = NULL;
   GeglPathList *tail;
@@ -1125,18 +1133,20 @@ static GeglPathList *ensure_tail (GeglPathPrivate *priv)
   return tail;
 }
 /***** Flattener *****/
-static GeglPathList *flatten_nop (GeglMatrix3   *matrix,
-                                  GeglPathList *head,
-                                  GeglPathList *prev,
-                                  GeglPathList *self)
+static GeglPathList *
+flatten_nop (GeglMatrix3  *matrix,
+             GeglPathList *head,
+             GeglPathList *prev,
+             GeglPathList *self)
 {
   return head;
 }
 
-static GeglPathList *flatten_copy (GeglMatrix3   *matrix,
-                                   GeglPathList *head,
-                                   GeglPathList *prev,
-                                   GeglPathList *self)
+static GeglPathList *
+flatten_copy (GeglMatrix3  *matrix,
+              GeglPathList *head,
+              GeglPathList *prev,
+              GeglPathList *self)
 {
   GeglPathList *newp;
   head = gegl_path_list_append_item (head, self->d.type, &newp, NULL);
@@ -1146,7 +1156,7 @@ static GeglPathList *flatten_copy (GeglMatrix3   *matrix,
 }
 
 static GeglPathList *
-flatten_rel_copy (GeglMatrix3   *matrix,
+flatten_rel_copy (GeglMatrix3  *matrix,
                   GeglPathList *head,
                   GeglPathList *prev,
                   GeglPathList *self)
@@ -1173,11 +1183,13 @@ flatten_rel_copy (GeglMatrix3   *matrix,
   return head;
 }
 
-static GeglPathList *flatten_curve (GeglMatrix3  *matrix,
-                                    GeglPathList *head,
-                                    GeglPathList *prev,
-                                    GeglPathList *self)
-{ /* create piecevise linear approximation of bezier curve */
+/* create piecevise linear approximation of bezier curve */
+static GeglPathList *
+flatten_curve (GeglMatrix3  *matrix,
+               GeglPathList *head,
+               GeglPathList *prev,
+               GeglPathList *self)
+{
   gfloat f;
   Point res;
   gchar buf[64]="C";
@@ -1199,7 +1211,8 @@ static GeglPathList *flatten_curve (GeglMatrix3  *matrix,
 }
 
 /***** InstructInfo *****/
-static InstructionInfo *lookup_instruction_info (gchar type)
+static InstructionInfo *
+lookup_instruction_info (gchar type)
 {
   gint i;
   for (i=0; knot_types[i].type != '\0'; i++)
@@ -1209,8 +1222,9 @@ static InstructionInfo *lookup_instruction_info (gchar type)
 }
 
 /***** GeglPathItem *****/
-static void transform_data (GeglMatrix3  *matrix,
-                            GeglPathItem *dst)
+static void
+transform_data (GeglMatrix3  *matrix,
+                GeglPathItem *dst)
 {
   InstructionInfo *dst_info = lookup_instruction_info(dst->type);
   gint i;
@@ -1226,9 +1240,9 @@ static void transform_data (GeglMatrix3  *matrix,
 }
 
 /* XXX: copy_data should exit for internal to external conversions */
-
-static void copy_data (const GeglPathItem *src,
-                       GeglPathItem       *dst)
+static void
+copy_data (const GeglPathItem *src,
+           GeglPathItem       *dst)
 {
   InstructionInfo *src_info;
   gint i;
@@ -1264,7 +1278,9 @@ bezier2 (GeglPathItem  *prev,
   lerp (&bccd, &bc, &cd,t);
   lerp (dest, &abbc, &bccd, t);
 }
-static void gegl_path_item_free (GeglPathList *p)
+
+static void
+gegl_path_item_free (GeglPathList *p)
 {
   InstructionInfo *info = lookup_instruction_info(p->d.type);
   g_slice_free1 (sizeof (gpointer) + sizeof (gchar) + sizeof (gfloat)*2 * (info->n_items+3)/2, p);
@@ -1301,7 +1317,7 @@ gegl_path_list_append_item  (GeglPathList  *head,
       iter=head;
     }
   g_assert (res);
-    *res = iter;
+  *res = iter;
 
   return head;
 }
@@ -1319,8 +1335,9 @@ gegl_path_list_destroy (GeglPathList *path)
   return NULL;
 }
 
-GeglPathList * gegl_path_list_append (GeglPathList *head,
-                                       ...)
+GeglPathList *
+gegl_path_list_append (GeglPathList *head,
+                       ...)
 {
   InstructionInfo *info;
   GeglPathList *iter;
@@ -1347,9 +1364,6 @@ GeglPathList * gegl_path_list_append (GeglPathList *head,
   return head;
 }
 
-/**
- * gegl_path_list_flatten: (skip)
- */
 static GeglPathList *
 gegl_path_list_flatten (GeglMatrix3  *matrix,
                         GeglPathList *original)
@@ -1374,8 +1388,6 @@ gegl_path_list_flatten (GeglMatrix3  *matrix,
     }
   return self;
 }
-
-
 
 static gboolean
 gegl_path_list_calc (GeglPathList *path,
@@ -1583,6 +1595,7 @@ gegl_path_list_get_length (GeglPathList *path)
     }
   return traveled_length;
 }
+
 /***** Point *****/
 /* linear interpolation between two points */
 static void
@@ -1648,8 +1661,7 @@ gegl_param_path_get_type (void)
         gegl_param_vector_finalize,
         NULL,
         NULL,
-        NULL
-      };
+        NULL};
       param_vector_type_info.value_type = GEGL_TYPE_PATH;
 
       param_vector_type = g_param_type_register_static ("GeglParamPath",
