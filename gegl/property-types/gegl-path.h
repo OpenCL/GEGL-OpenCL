@@ -367,7 +367,7 @@ void                 gegl_path_append         (GeglPath    *path,
  * Make the @GeglPath stop firing signals as it changes must be paired with a
  * gegl_path_thaw() for the signals to start again.
  */
-void gegl_path_freeze (GeglPath *path);
+void                  gegl_path_freeze        (GeglPath *path);
 
 /**
  * gegl_path_thaw:
@@ -375,10 +375,11 @@ void gegl_path_freeze (GeglPath *path);
  *
  * Restart firing signals (unless the path has been frozen multiple times).
  */
-void gegl_path_thaw (GeglPath *path);
+void                  gegl_path_thaw          (GeglPath *path);
 
-
-GParamSpec         * gegl_param_spec_path     (const gchar *name,
+/***
+ */
+GParamSpec         *  gegl_param_spec_path    (const gchar *name,
                                                const gchar *nick,
                                                const gchar *blurb,
                                                GeglPath    *default_path,
@@ -386,8 +387,8 @@ GParamSpec         * gegl_param_spec_path     (const gchar *name,
 
 #define GEGL_TYPE_PARAM_PATH    (gegl_param_path_get_type ())
 #define GEGL_IS_PARAM_PATH(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_PATH))
-GType                gegl_param_path_get_type (void) G_GNUC_CONST;
-gint                 gegl_path_type_get_n_items (gchar type);
+GType                 gegl_param_path_get_type (void) G_GNUC_CONST;
+gint                  gegl_path_type_get_n_items (gchar type);
 
 /**
  * gegl_path_add_type:
@@ -399,9 +400,9 @@ gint                 gegl_path_type_get_n_items (gchar type);
  * return something on registration conflicts, for now it expects
  * all registered paths to be aware of each other.
  */
-void gegl_path_add_type (gchar        type,
-                         gint         items,
-                         const gchar *description);
+void                  gegl_path_add_type      (gchar        type,
+                                               gint         items,
+                                               const gchar *description);
 
 /* Linked list used internally, and for the plug-in API for new path
  * interpolators.
@@ -417,9 +418,9 @@ typedef struct GeglPathList
  */
 
 /* appends to path list, if head is NULL a new list is created */
-GeglPathList       * gegl_path_list_append    (GeglPathList *head, ...);
+GeglPathList *        gegl_path_list_append   (GeglPathList *head, ...);
 /* frees up a path list */
-GeglPathList       * gegl_path_list_destroy   (GeglPathList *path);
+GeglPathList *        gegl_path_list_destroy  (GeglPathList *path);
 
 
 /* prototype of function passed to gegl_path_add_flattener() */
@@ -430,7 +431,7 @@ typedef GeglPathList *(*GeglFlattenerFunc) (GeglPathList *original);
  * the incoming path (doesn't understand the instructions), the original
  * path should be returned.
  */
-void gegl_path_add_flattener (GeglFlattenerFunc func);
+void                  gegl_path_add_flattener (GeglFlattenerFunc func);
 
 
 G_END_DECLS
