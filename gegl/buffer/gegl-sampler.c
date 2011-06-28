@@ -15,6 +15,8 @@
  * <http://www.gnu.org/licenses/>.
  *
  * 2007 © Øyvind Kolås
+ * 2009 © Nicolas Robidoux
+ * 2011 © Adam Turcotte
  */
 #include "config.h"
 
@@ -245,10 +247,10 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
       ( y + sampler->context_rect[0].y < sampler->sampler_rectangle[0].y )
       ||
       ( x + sampler->context_rect[0].x + sampler->context_rect[0].width
-        >= sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
+        > sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
       ||
       ( y + sampler->context_rect[0].y + sampler->context_rect[0].height
-        >= sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
+        > sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
     {
       /*
        * fetch_rectangle will become the value of
@@ -335,9 +337,9 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       ||
       ( y < sampler->sampler_rectangle[0].y )
       ||
-      ( x >= sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
+      ( x > sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
       ||
-      ( y >= sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
+      ( y > sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
     {
       /*
        * fetch_rectangle will become the value of
@@ -413,10 +415,10 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
       ( y + sampler->context_rect[level].y < sampler->sampler_rectangle[level].y )
       ||
       ( x + sampler->context_rect[level].x + sampler->context_rect[level].width
-        >= sampler->sampler_rectangle[level].x + sampler->sampler_rectangle[level].width )
+        > sampler->sampler_rectangle[level].x + sampler->sampler_rectangle[level].width )
       ||
       ( y + sampler->context_rect[level].y + sampler->context_rect[level].height
-        >= sampler->sampler_rectangle[level].y + sampler->sampler_rectangle[level].height ))
+        > sampler->sampler_rectangle[level].y + sampler->sampler_rectangle[level].height ))
     {
       /*
        * fetch_rectangle will become the value of
