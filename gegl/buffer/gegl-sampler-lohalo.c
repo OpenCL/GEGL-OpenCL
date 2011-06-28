@@ -187,8 +187,16 @@
  * Special case of of Knuth's floored division, that is:
  *
  * FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b))
+ *
+ * When b is 2, this gives, for example,
+ *
+ * FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
+ *
+ * On a two's complement machine, this is even simpler:
+ *
+ * FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
  */
-#define LOHALO_FLOORED_DIVISION_BY_2(a) (((a) - ((a)>=0 ? 0 : 1)) / 2)
+#define LOHALO_FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
 
 /*
  * General convention: Looking at the image as a (linear algebra)
