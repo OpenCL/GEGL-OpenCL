@@ -23,7 +23,6 @@
  * LOHALO SAMPLER
  * ==============
  */
-
 /*
  * The Lohalo ("Low Halo") sampler is a Jacobian-adaptive blend of
  * LBB-Nohalo (Nohalo subdivision with Locally Bounded Bicubic
@@ -198,13 +197,15 @@
  */
 #define LOHALO_FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
 
+
 /*
- * General convention: Looking at the image as a (linear algebra)
- * matrix, the index j has to do with the x-coordinate, that is,
- * horizontal position, and the index i has to do with the
- * y-coordinate (which runs from top to bottom), that is, the vertical
- * position.
+ * General convention:
+ * Looking at the image as a (linear algebra) matrix, the index j has
+ * to do with the x-coordinate, that is, horizontal position, and the
+ * index i has to do with the y-coordinate (which runs from top to
+ * bottom), that is, the vertical position.
  */
+
 
 /*
  * Convenience macro:
@@ -229,6 +230,7 @@
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
 #define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
+
 
 enum
 {
