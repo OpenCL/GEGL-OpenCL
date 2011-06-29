@@ -28,7 +28,7 @@ static void compute_luts(gdouble rgamma)
 {
   gint i;
   GRand *rand;
-  gfloat magic_angle = atan(sqrt(2.0)); /* http://en.wikipedia.org/wiki/Magic_angle */
+  gfloat golden_angle = G_PI * (3-sqrt(5.0)); /* http://en.wikipedia.org/wiki/Golden_angle */
   gfloat angle = 0.0;
 
   if (luts_computed==rgamma)
@@ -38,7 +38,7 @@ static void compute_luts(gdouble rgamma)
 
   for (i=0;i<ANGLE_PRIME;i++)
     {
-      angle += magic_angle;
+      angle += golden_angle;
       lut_cos[i] = cos(angle);
       lut_sin[i] = sin(angle);
     }
