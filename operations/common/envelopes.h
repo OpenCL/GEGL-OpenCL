@@ -14,13 +14,13 @@
  * Copyright 2007, 2009 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#define ANGLE_PRIME  95273  /* the lookuptables are sized as primes to avoid  */
-#define RADIUS_PRIME 29537  /* repetitions when they are used cyclcly simulatnously */
+#define ANGLE_PRIME  95273 /* the lookuptables are sized as primes to ensure */
+#define RADIUS_PRIME 29537 /* as good as possible variation when using both */
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
 static gfloat   radiuses[RADIUS_PRIME];
-static gdouble  luts_computed = 0.0; 
+static gdouble  luts_computed = 0.0;
 static gint     angle_no=0;
 static gint     radius_no=0;
 
@@ -28,6 +28,8 @@ static void compute_luts(gdouble rgamma)
 {
   gint i;
   GRand *rand;
+  gfloat magic_angle = atan(sqrt(2.0)); /* http://en.wikipedia.org/wiki/Magic_angle */
+  gfloat angle = 0.0;
 
   if (luts_computed==rgamma)
     return;
@@ -36,7 +38,7 @@ static void compute_luts(gdouble rgamma)
 
   for (i=0;i<ANGLE_PRIME;i++)
     {
-      gfloat angle = g_rand_double_range (rand, 0.0, G_PI*2);
+      angle += magic_angle;
       lut_cos[i] = cos(angle);
       lut_sin[i] = sin(angle);
     }
