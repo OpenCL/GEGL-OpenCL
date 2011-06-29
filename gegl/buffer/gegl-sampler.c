@@ -193,11 +193,15 @@ gegl_sampler_set_buffer (GeglSampler *self, GeglBuffer *buffer)
 static void
 finalize (GObject *gobject)
 {
+  int i;
   GeglSampler *sampler = GEGL_SAMPLER (gobject);
-  if (sampler->sampler_buffer)
+  for (i=0; i<GEGL_SAMPLER_MIPMAP_LEVELS; ++i)
     {
-      g_free (sampler->sampler_buffer);
-      sampler->sampler_buffer[0] = NULL;
+      if (sampler->sampler_buffer[i])
+        {
+          g_free (sampler->sampler_buffer[i]);
+          sampler->sampler_buffer[i] = NULL;
+        }
     }
   G_OBJECT_CLASS (gegl_sampler_parent_class)->finalize (gobject);
 }
@@ -240,7 +244,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
-  if (( sampler->sampler_buffer == NULL )
+  if (( sampler->sampler_buffer[0] == NULL )
       ||
       ( x + sampler->context_rect[0].x < sampler->sampler_rectangle[0].x )
       ||
@@ -281,7 +285,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
 
-      if (sampler->sampler_buffer == NULL)
+      if (sampler->sampler_buffer[0] == NULL)
         {
           /*
            * Always request the same amount of pixels:
@@ -295,7 +299,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
                        1.0,
                        &fetch_rectangle,
                        sampler->interpolate_format,
-                       sampler->sampler_buffer,
+                       sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
@@ -303,7 +307,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
 
   dx = x - sampler->sampler_rectangle[0].x;
   dy = y - sampler->sampler_rectangle[0].y;
-  buffer_ptr = (guchar *)sampler->sampler_buffer;
+  buffer_ptr = (guchar *)sampler->sampler_buffer[0];
   sof = ( dx + dy * sampler->sampler_rectangle[0].width ) * bpp;
 
   return (gfloat*)(buffer_ptr+sof);
@@ -331,7 +335,7 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
-  if (( sampler->sampler_buffer == NULL )
+  if (( sampler->sampler_buffer[0] == NULL )
       ||
       ( x < sampler->sampler_rectangle[0].x )
       ||
@@ -355,7 +359,7 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
 
-      if (sampler->sampler_buffer == NULL)
+      if (sampler->sampler_buffer[0] == NULL)
         {
           /*
            * Always request the same amount of pixels:
@@ -369,7 +373,7 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
                        1.0,
                        &fetch_rectangle,
                        sampler->interpolate_format,
-                       sampler->sampler_buffer,
+                       sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
@@ -377,7 +381,7 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
 
   dx = x - sampler->sampler_rectangle[0].x;
   dy = y - sampler->sampler_rectangle[0].y;
-  buffer_ptr = (guchar *)sampler->sampler_buffer;
+  buffer_ptr = (guchar *)sampler->sampler_buffer[0];
   sof = ( dx + dy * sampler->sampler_rectangle[0].width ) * bpp;
 
   return (gfloat*)(buffer_ptr+sof);
@@ -407,8 +411,9 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
   const gint maximum_width_and_height = 64;
   g_assert (sampler->context_rect[level].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[level].height <= maximum_width_and_height);
+  g_assert (level >= 0 && level < GEGL_SAMPLER_MIPMAP_LEVELS);
 
-  if (( sampler->sampler_buffer == NULL )
+  if (( sampler->sampler_buffer[level] == NULL )
       ||
       ( x + sampler->context_rect[level].x < sampler->sampler_rectangle[level].x )
       ||
@@ -449,7 +454,7 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
 
-      if (sampler->sampler_buffer == NULL)
+      if (sampler->sampler_buffer[level] == NULL)
         {
           /*
            * Always request the same amount of pixels:
@@ -471,7 +476,7 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
 
   dx = x - sampler->sampler_rectangle[level].x;
   dy = y - sampler->sampler_rectangle[level].y;
-  buffer_ptr = (guchar *)sampler->sampler_buffer;
+  buffer_ptr = (guchar *)sampler->sampler_buffer[level];
   sof = ( dx + dy * sampler->sampler_rectangle[level].width ) * bpp;
 
   return (gfloat*)(buffer_ptr+sof);
