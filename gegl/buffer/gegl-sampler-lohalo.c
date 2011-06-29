@@ -262,7 +262,7 @@ static void
 gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 {
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
-  GObjectClass *object_class  = G_OBJECT_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   object_class->set_property = set_property;
   object_class->get_property = get_property;
   sampler_class->get = gegl_sampler_lohalo_get;
@@ -719,7 +719,7 @@ nohalo_subdivision (const gfloat           uno_two,
 
 
 static inline gfloat
-lbb ( const gfloat c00,
+lbb (const gfloat c00,
      const gfloat c10,
      const gfloat c01,
      const gfloat c11,
@@ -1263,15 +1263,15 @@ level_1_ewa_update (const gint              j,
 {
   const gint skip = j * channels + i * row_skip;
   /*
-   * The factor of four is because the level 1 mipmap values are
-   * averages of four level 0 pixel values.
+   * The factor of 4.0 is because level 1 mipmap values are averages
+   * of four level 0 pixel values.
    */
-  const gfloat weight = (gfloat) 4. * teepee (c_major_x,
-                                              c_major_y,
-                                              c_minor_x,
-                                              c_minor_y,
-                                              x_1 - (gfloat) (2*j),
-                                              y_1 - (gfloat) (2*i));
+  const gfloat weight = (gfloat) 4.0 * teepee (c_major_x,
+                                               c_major_y,
+                                               c_minor_x,
+                                               c_minor_y,
+                                               x_1 - (gfloat) (2*j),
+                                               y_1 - (gfloat) (2*i));
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr_1[ skip     ];
   ewa_newval[1] += weight * input_bptr_1[ skip + 1 ];
@@ -2091,8 +2091,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                 gint j = -LOHALO_OFFSET;
                 do
                   {
-                    ewa_update ((j),
-                                (i),
+                    ewa_update (j,
+                                i,
                                 c_major_x,
                                 c_major_y,
                                 c_minor_x,
@@ -2192,7 +2192,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gfloat bounding_box_half_height =
               sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
             /*
-             * Versions which give a bit of wiggle room:
+             * Bounding box with wiggle room:
              */
             const gfloat fudged_bounding_box_half_width =
               bounding_box_half_width  - LOHALO_FUDGEF;
