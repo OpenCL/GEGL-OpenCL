@@ -122,7 +122,7 @@ downscale_float (gint    components,
 
       do
         {
-          int i = 0;
+          gint i = 0;
           do
             {
               dst[i] = (src[i] +
@@ -165,7 +165,7 @@ downscale_u8 (gint    components,
 
       do
         {
-          int i = 0;
+          gint i = 0;
           do
             {
               /*
