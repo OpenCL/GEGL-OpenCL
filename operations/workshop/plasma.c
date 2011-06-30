@@ -345,6 +345,7 @@ process (GeglOperation       *operation,
   while (!do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
     depth++;
 
+  gegl_buffer_sample_cleanup (context->output);
   g_free (context->buffer);
   g_free (context);
 
