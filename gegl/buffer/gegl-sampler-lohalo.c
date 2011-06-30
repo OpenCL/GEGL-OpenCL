@@ -33,6 +33,10 @@
  * to about a downsampling of about ratio 1/(LOHALO_OFFSET+0.5).
  * Beyond that, the quality is somewhat lower (due to the use of
  * higher level mipmap data).
+ *
+ * Using mipmap data is not an intrinsic feature of the resampling
+ * method: It is done to accomodate GEGL's preferred pixel data
+ * management system.
  */
 
 /*
@@ -1238,12 +1242,14 @@ ewa_update (const gint              j,
                   gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
+
   const gfloat weight = teepee (c_major_x,
                                 c_major_y,
                                 c_minor_x,
                                 c_minor_y,
                                 x_0 - (gfloat) j,
                                 y_0 - (gfloat) i);
+
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
   ewa_newval[1] += weight * input_bptr[ skip + 1 ];
@@ -1268,6 +1274,7 @@ level_1_ewa_update (const gint              j,
                           gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
+
   /*
    * The factor of 4.0 is because level 1 mipmap values are averages
    * of four level 0 pixel values.
@@ -1278,6 +1285,7 @@ level_1_ewa_update (const gint              j,
                                                c_minor_y,
                                                x_1 - (gfloat) (2*j),
                                                y_1 - (gfloat) (2*i));
+
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr_1[ skip     ];
   ewa_newval[1] += weight * input_bptr_1[ skip + 1 ];
