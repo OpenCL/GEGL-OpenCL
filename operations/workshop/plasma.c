@@ -17,6 +17,13 @@
  * Copyright (C) 2011 Robert Sasu (sasu.robert@gmail.com)
  */
 
+/*
+ * This plug-in produces plasma fractal images. The algorithm is losely
+ * based on a description of the fractint algorithm, but completely
+ * re-implemented because the fractint code was too ugly to read :). It
+ * was written by Stephen Norris for GIMP, and was ported to GEGL in
+ * 2011 by Robert Sasu.
+ */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
@@ -152,7 +159,7 @@ do_plasma_big (PlasmaContext *context,
 
       random_rgba (context->gr, mb);
       put_pixel_to_buffer (context->output, mb, xm, y2);
-      /*ugly but working*/
+
       return FALSE;
     }
 
@@ -174,12 +181,12 @@ do_plasma_big (PlasmaContext *context,
 
       if (xm != x1 || xm != x2)
 	{
-	  /*left*/
+	  /* Left. */
 	  average_pixel (ml, tl, bl);
 	  add_random (context->gr, ml, ran);
 	  put_pixel_to_buffer (context->output, ml, x1, ym);
 
-	  /*right*/
+	  /* Right. */
 	  if (x1 != x2)
 	    {
 	      average_pixel (mr, tr, br);
@@ -191,7 +198,7 @@ do_plasma_big (PlasmaContext *context,
 
       if (ym != y1 || ym != x2)
 	{
-	  /*bottom*/
+	  /* Bottom. */
 	  if (x1 != xm || ym != y2)
 	    {
 	      average_pixel (mb, bl, br);
@@ -201,7 +208,7 @@ do_plasma_big (PlasmaContext *context,
 
 	  if (y1 != y2)
 	    {
-	      /*top*/
+	      /* Top. */
 	      average_pixel (mt, tl, tr);
 	      add_random (context->gr, mt, ran);
 	      put_pixel_to_buffer (context->output, mt, xm, y1);
@@ -210,6 +217,7 @@ do_plasma_big (PlasmaContext *context,
 
       if (y1 != y2 || x1 != x2)
 	{
+          /* Middle pixel. */
 	  average_pixel (mm, tl, br);
 	  average_pixel (tmp, bl, tr);
 	  average_pixel (mm, mm, tmp);
@@ -223,13 +231,13 @@ do_plasma_big (PlasmaContext *context,
 
   if (x1 < x2 || y1 < y2)
     {
-      /*top-left*/
+      /* Top left. */
       do_plasma_big (context, x1, y1, xm, ym, depth - 1, scale_depth + 1);
-      /*bottom-left*/
+      /* Bottom left. */
       do_plasma_big (context, x1, ym, xm, y2, depth - 1, scale_depth + 1);
-      /*top-right*/
+      /* Top right. */
       do_plasma_big (context, xm, y1, x2, ym, depth - 1, scale_depth + 1);
-      /*bottom-right*/
+      /* Bottom right. */
       return do_plasma_big (context, xm, ym, x2, y2, depth - 1, scale_depth + 1);
     }
 
