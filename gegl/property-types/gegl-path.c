@@ -78,8 +78,20 @@ typedef struct InstructionInfo
   gint   n_items;
   gchar *name;
 
-  /* a flatten function pointer is kept for all stored InstructionInfo's but are only
+  /**
+   * flatten:
+   * @matrix: a #GeglMatrix3 transformation matrix
+   * @head: head of the new path
+   * @prev: current tail of the new path
+   * @self: the original node to convert
+   *
+   * a flatten function pointer is kept for all stored InstructionInfo's but are only
    * used for the internal ones
+   * This function is called for each node of the path to be flattened.
+   * This function should build a new flattened path on the fly.
+   * The first call to this function is made with @head and @prev = NULL
+   *
+   * Return a pointer to the head of the flattened path.
    */
   GeglPathList *(*flatten) (GeglMatrix3   *matrix,
                             GeglPathList *head,
