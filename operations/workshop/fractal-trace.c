@@ -277,9 +277,6 @@ get_bounding_box (GeglOperation *operation)
 
   gegl_rectangle_copy(&result, in_rect);
 
-#ifdef TRACE
-  g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
-#endif
   return result;
 }
 
@@ -291,13 +288,7 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle  result = get_effective_area (operation);
-
-#ifdef TRACE
-  g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
-  if (roi)
-    g_warning ("  ROI == %dx%d+%d+%d", roi->width, roi->height, roi->x, roi->y);
-#endif
+  GeglRectangle result = get_effective_area (operation);
 
   return result;
 }
