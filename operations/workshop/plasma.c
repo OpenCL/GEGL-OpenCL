@@ -63,10 +63,8 @@ random_rgba (GRand  *gr,
              gfloat *dest)
 {
   gint i;
-  for (i = 0; i < floats_per_pixel - 1; i++)
+  for (i = 0; i < floats_per_pixel; i++)
       dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
-
-  dest[i] = 1;
 }
 
 static void
