@@ -22,8 +22,7 @@
  * ==============
  * LOHALO SAMPLER
  * ==============
- */
-/*
+ *
  * The Lohalo ("Low Halo") sampler is a Jacobian-adaptive blend of
  * LBB-Nohalo (Nohalo subdivision with Locally Bounded Bicubic
  * interpolation) and Clamped EWA (Elliptical Weighted Averaging)
