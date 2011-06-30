@@ -40,6 +40,16 @@
  */
 
 /*
+ * Reference:
+ *
+ * Nohalo subdivision (with bilinear instead of LBB "finish") is
+ * documented in Robidoux, N., Gong, M., Cupitt, J., Turcotte, A., and
+ * Martinez, K.  CPU, SMP and GPU implementations of Nohalo level 1, a
+ * fast co-convex antialiasing image resampler.  In Proceedings of
+ * C3S2E. 2009, 185-195.
+ */
+
+/*
  * Credits and thanks:
  *
  * Jacobian adaptive resampling was developed by N. Robidoux and
@@ -2333,12 +2343,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  * Update using mipmap level 1 values.
                  *
                  * Possible future improvement: When the ellipse is
-                 * slanted, one could avoid many operations using
-                 * Anthony Thyssen's formulas for the bounding
-                 * parallelogram with horizontal top and bottom. When
-                 * both the magnification factors are the same, or
-                 * when there is no rotation, using these formulas
-                 * makes no difference.
+                 * slanted, one could avoid many pixel value loads and
+                 * operations with Anthony Thyssen's formulas for the
+                 * ellipse bounding parallelogram with horizontal top
+                 * and bottom. When both the magnification factors are
+                 * the same, or when there is no rotation, using these
+                 * formulas makes no difference. Reference:
+                 * ImageMagick resample.c.
                  */
                 {
                   gint i;
