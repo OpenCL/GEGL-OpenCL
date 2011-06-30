@@ -32,7 +32,7 @@
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
 		_("Random seed. Passing -1 implies that the seed is randomly chosen."))
-gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 2,
+gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 1.0,
 		   _("The value of the turbulence"))
 
 #else
