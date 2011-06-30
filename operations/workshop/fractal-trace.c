@@ -198,7 +198,6 @@ fractaltrace (GeglBuffer          *input,
             }
         }
 
-      /*upload pixel value is destination buffer*/
       for (i = 0; i < 4; i++)
         dst_buf[offset++] = dest[i];
     }
@@ -255,8 +254,9 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglRectangle *in_rect;
 
+  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   if (!in_rect)
     return result;
 
