@@ -53,11 +53,11 @@ gegl_chant_string (background, _("Background"), "wrap",
 
 typedef enum
 {
-  OUTSIDE_TYPE_WRAP,
-  OUTSIDE_TYPE_TRANSPARENT,
-  OUTSIDE_TYPE_BLACK,
-  OUTSIDE_TYPE_WHITE
-} OutsideType;
+  BACKGROUND_TYPE_WRAP,
+  BACKGROUND_TYPE_TRANSPARENT,
+  BACKGROUND_TYPE_BLACK,
+  BACKGROUND_TYPE_WHITE
+} BackgroundType;
 
 typedef enum
 {
@@ -109,8 +109,8 @@ fractaltrace (GeglBuffer          *input,
               const GeglRectangle *roi,
               GeglChantO          *o,
               gint                 y,
-              FractalType          fractal,
-              OutsideType          id,
+              FractalType          fractal_type,
+              BackgroundType       background_type,
               Babl                *format
               )
 {
@@ -132,7 +132,7 @@ fractaltrace (GeglBuffer          *input,
       dest[1] = dest[2] = dest[3] = dest[0] = 0.0;
       cx = o->X1 + (x - picture->x) * scale_x;
 
-      switch (fractal)
+      switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
           julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, escape_radius);
@@ -154,9 +154,9 @@ fractaltrace (GeglBuffer          *input,
         }
       else
         {
-          switch (id)
+          switch (background_type)
             {
-            case OUTSIDE_TYPE_WRAP:
+            case BACKGROUND_TYPE_WRAP:
               px = fmod (px, picture->width);
               py = fmod (py, picture->height);
               if (px < 0.0) px += picture->width;
@@ -190,14 +190,14 @@ fractaltrace (GeglBuffer          *input,
               gegl_buffer_sample (input, px, py, 1.0, dest, format,
                                   GEGL_INTERPOLATION_LINEAR);
               break;
-            case OUTSIDE_TYPE_TRANSPARENT:
+            case BACKGROUND_TYPE_TRANSPARENT:
               dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
               break;
-            case OUTSIDE_TYPE_BLACK:
+            case BACKGROUND_TYPE_BLACK:
               dest[0] = dest[1] = dest[2] = 0.0;
               dest[3] = 1.0;
               break;
-            case OUTSIDE_TYPE_WHITE:
+            case BACKGROUND_TYPE_WHITE:
               dest[0] = dest[1] = dest[2] = dest[3] = 1.0;
               break;
             }
@@ -216,35 +216,39 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO    *o            = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle  boundary     = gegl_operation_get_bounding_box (operation);
-  Babl          *format       = babl_format ("RGBA float");
+  GeglChantO	*o;
+  GeglRectangle  boundary;
+  Babl          *format;
+  FractalType    fractal_type;
+  BackgroundType background_type;
+  gfloat        *dst_buf;
+  gint           y;
 
-  FractalType       frT;
-  OutsideType       id;
-  gfloat           *dst_buf;
-  gint              y;
+  o = GEGL_CHANT_PROPERTIES (operation);
+  boundary = gegl_operation_get_bounding_box (operation);
 
-  frT = FRACTAL_TYPE_MANDELBROT;
+  fractal_type = FRACTAL_TYPE_MANDELBROT;
   if (!strcmp (o->fractal, "mandelbrot"))
-    frT = FRACTAL_TYPE_MANDELBROT;
+    fractal_type = FRACTAL_TYPE_MANDELBROT;
   else if (!strcmp(o->fractal, "julia"))
-    frT = FRACTAL_TYPE_JULIA;
+    fractal_type = FRACTAL_TYPE_JULIA;
 
-  id = OUTSIDE_TYPE_WRAP; /*wrap is default*/
-  if (!strcmp(o->background,"wrap"))
-    id = OUTSIDE_TYPE_WRAP;
-  else if (!strcmp(o->background,"transparent"))
-    id = OUTSIDE_TYPE_TRANSPARENT;
-  else if (!strcmp(o->background,"black"))
-    id = OUTSIDE_TYPE_BLACK;
-  else if (!strcmp(o->background,"white"))
-    id = OUTSIDE_TYPE_WHITE;
+  background_type = BACKGROUND_TYPE_WRAP;
+  if (!strcmp (o->background, "wrap"))
+    background_type = BACKGROUND_TYPE_WRAP;
+  else if (!strcmp (o->background, "transparent"))
+    background_type = BACKGROUND_TYPE_TRANSPARENT;
+  else if (!strcmp (o->background, "black"))
+    background_type = BACKGROUND_TYPE_BLACK;
+  else if (!strcmp (o->background, "white"))
+    background_type = BACKGROUND_TYPE_WHITE;
 
+  format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
   for (y = result->y; y < result->y + result->height; y++)
-    fractaltrace (input, &boundary, dst_buf, result, o, y, frT, id, format);
+    fractaltrace (input, &boundary, dst_buf, result, o, y,
+                  fractal_type, background_type, format);
 
   gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
