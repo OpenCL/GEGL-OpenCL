@@ -13,13 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2011 Robert Sasu <sasu.robert@gmail.com>
- *
- * Based on "Fractal-trace" GIMP plugin
- * Copyright (C) 1997  Hirotsuna Mizuno
- *                     s1041150@u-aizu.ac.jp
+ * Copyright (C) 1997 Hirotsuna Mizuno <s1041150@u-aizu.ac.jp>
+ * Copyright (C) 2011 Robert Sasu <sasu.robert@gmail.com>
  */
-
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
