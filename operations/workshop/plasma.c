@@ -120,7 +120,6 @@ do_plasma_big (PlasmaContext *context,
   gfloat tmp[4];
   gint    xm, ym;
   gfloat  ran;
-  static gint count = 0;
 
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
@@ -218,7 +217,6 @@ do_plasma_big (PlasmaContext *context,
 	  add_random (context->gr, mm, ran);
 	  put_pixel_to_buffer (context->output, mm, xm, ym);
 	}
-      count++;
 
       return x2 - x1 < 3 && y2 - y1 < 3;
     }
