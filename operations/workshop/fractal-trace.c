@@ -229,8 +229,8 @@ process (GeglOperation       *operation,
   gint              y;
 
   frT = FRACTAL_TYPE_MANDEL;
-  if (!strcmp (o->fractal, "mandel"))
     frT = FRACTAL_TYPE_MANDEL;
+  if (!strcmp (o->fractal, "mandelbrot"))
   else if (!strcmp(o->fractal, "julia"))
     frT = FRACTAL_TYPE_JULIA;
 
