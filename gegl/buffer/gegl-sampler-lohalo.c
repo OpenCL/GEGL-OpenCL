@@ -1992,6 +1992,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * If s1 <= 1, the forward transformation is not downsampling in
        * any direction, and consequently we do not need the
        * downsampling scheme at all.
+       *
+       * A fudge factor is added to checking whether s1 > 1 to account
+       * for round off error and the fact that if s1 is just above 1
+       * the teepee weight is going to be negligible.
        */
 
       if (twice_s1s1 >= (gdouble) 2. + LOHALO_FUDGE)
@@ -2206,7 +2210,9 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
             const gfloat bounding_box_half_height =
               sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
             /*
-             * Bounding box with wiggle room:
+             * Bounding box shrunk a smidgen given that a location
+             * very close to the edge of the bounding box will get a
+             * negligible weight:
              */
             const gfloat fudged_bounding_box_half_width =
               bounding_box_half_width  - LOHALO_FUDGEF;
