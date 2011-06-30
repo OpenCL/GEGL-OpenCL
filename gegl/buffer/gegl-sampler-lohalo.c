@@ -315,8 +315,8 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 /*
- * ADAM: THE WAY I (NICOLAS) SET UP JACOBIAN-ADAPTIVITY, LEVEL 0
- * SHOULD ALWAYS BE "ON." NOT THE HIGHER LEVELS.
+ * Lohalo always uses some mipmap level 0 values, but not always
+ * higher mipmap values.
  */
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
@@ -325,6 +325,10 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[0].y = -LOHALO_OFFSET;
   GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE;
   GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE;
+  GEGL_SAMPLER (self)->context_rect[1].x = -LOHALO_OFFSET_1;
+  GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_1;
+  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
+  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
