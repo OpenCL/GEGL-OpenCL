@@ -254,18 +254,6 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
-get_effective_area (GeglOperation *operation)
-{
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-
-  gegl_rectangle_copy(&result, in_rect);
-
-  return result;
-}
-
-
-static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
@@ -277,15 +265,12 @@ get_bounding_box (GeglOperation *operation)
   return *in_rect;
 }
 
-
-/* Compute the input rectangle required to compute the specified region of interest (roi).
- */
 static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  return get_effective_area (operation);
+  return get_bounding_box (operation);
 }
 
 
