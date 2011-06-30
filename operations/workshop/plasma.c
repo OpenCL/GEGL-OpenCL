@@ -40,7 +40,6 @@ gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 2,
 #define GEGL_CHANT_TYPE_FILTER
 
 #define GEGL_CHANT_C_FILE        "plasma.c"
-#define floats_per_pixel 4
 #define MANUAL_ROI_VAL 500
 
 
@@ -68,7 +67,7 @@ average_pixel (gfloat *dst_buf,
 {
   gint i;
 
-  for (i = 0; i < floats_per_pixel; i++)
+  for (i = 0; i < 4; i++)
     *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2;
 }
 
@@ -78,7 +77,7 @@ random_rgba (GRand  *gr,
 {
   gint i;
 
-  for (i = 0; i < floats_per_pixel; i++)
+  for (i = 0; i < 4; i++)
     dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
 }
 
@@ -93,7 +92,7 @@ add_random (GRand  *gr,
   amount /= 2;
 
   if (amount > 0)
-    for (i = 0; i < floats_per_pixel; i++)
+    for (i = 0; i < 4; i++)
       {
 	tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
 	dest[i] = CLAMP (tmp, 0, 1);
