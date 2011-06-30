@@ -256,6 +256,8 @@ process (GeglOperation       *operation,
 
   g_free (dst_buf);
 
+  gegl_buffer_sample_cleanup (output);
+
   return TRUE;
 }
 
