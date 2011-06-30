@@ -62,18 +62,241 @@ static void path_changed (GeglPath *path,
                           gpointer userdata);
 
 #include "gegl-chant.h"
+#include "gegl-buffer-private.h"
 #include <cairo.h>
+#include <math.h>
 
-/* the stroke code should move into this op, or a specific stroke op */
+typedef struct StampStatic {
+  gboolean  valid;
+  Babl     *format;
+  gfloat   *buf;
+  gdouble   radius;
+}StampStatic;
 
-void gegl_path_stroke (GeglBuffer          *buffer,
-                       const GeglRectangle *clip_rect,
-                       GeglPath            *vector,
-                       GeglColor           *color,
-                       gdouble              linewidth,
-                       gdouble              hardness,
-                       gdouble              opacity);
+static void gegl_path_stroke  (GeglBuffer *buffer,
+                               const GeglRectangle *clip_rect,
+                               GeglPath *vector,
+                               GeglColor  *color,
+                               gdouble     linewidth,
+                               gdouble     hardness,
+                               gdouble     opacity);
 
+static void gegl_path_stamp   (GeglBuffer *buffer,
+                               const GeglRectangle *clip_rect,
+                               gdouble     x,
+                               gdouble     y,
+                               gdouble     radius,
+                               gdouble     hardness,
+                               GeglColor  *color,
+                               gdouble     opacity);
+
+static void
+gegl_path_stroke (GeglBuffer *buffer,
+                  const GeglRectangle *clip_rect,
+                  GeglPath *vector,
+                  GeglColor  *color,
+                  gdouble     linewidth,
+                  gdouble     hardness,
+                  gdouble     opacity)
+{
+  gfloat traveled_length = 0;
+  gfloat need_to_travel = 0;
+  gfloat x = 0,y = 0;
+  GeglPathList *iter;
+  gdouble       xmin, xmax, ymin, ymax;
+  GeglRectangle extent;
+
+  if (!vector)
+    return;
+
+  if (!clip_rect)
+    {
+      g_print ("using buffer extent\n");
+      clip_rect = gegl_buffer_get_extent (buffer);
+    }
+
+  iter = gegl_path_get_flat_path (vector);
+  gegl_path_get_bounds (vector, &xmin, &xmax, &ymin, &ymax);
+  extent.x = floor (xmin);
+  extent.y = floor (ymin);
+  extent.width = ceil (xmax) - extent.x;
+  extent.height = ceil (ymax) - extent.y;
+
+  if (!gegl_rectangle_intersect (&extent, &extent, clip_rect))
+   {
+     return;
+   }
+  if (gegl_buffer_is_shared (buffer))
+    while (!gegl_buffer_try_lock (buffer));
+
+  /*gegl_buffer_clear (buffer, &extent);*/
+
+  while (iter)
+    {
+      /*fprintf (stderr, "%c, %i %i\n", iter->d.type, iter->d.point[0].x, iter->d.point[0].y);*/
+      switch (iter->d.type)
+        {
+          case 'M':
+            x = iter->d.point[0].x;
+            y = iter->d.point[0].y;
+            need_to_travel = 0;
+            traveled_length = 0;
+            break;
+          case 'L':
+            {
+              Point a,b;
+
+              gfloat spacing;
+              gfloat local_pos;
+              gfloat distance;
+              gfloat offset;
+              gfloat leftover;
+              gfloat radius = linewidth / 2.0;
+
+
+              a.x = x;
+              a.y = y;
+
+              b.x = iter->d.point[0].x;
+              b.y = iter->d.point[0].y;
+
+              spacing = 0.2 * radius;
+
+              distance = point_dist (&a, &b);
+
+              leftover = need_to_travel - traveled_length;
+              offset = spacing - leftover;
+
+              local_pos = offset;
+
+              if (distance > 0)
+                for (;
+                     local_pos <= distance;
+                     local_pos += spacing)
+                  {
+                    Point spot;
+                    gfloat ratio = local_pos / distance;
+                    gfloat radius = linewidth/2;
+
+                    point_lerp (&spot, &a, &b, ratio);
+
+                    gegl_path_stamp (buffer, clip_rect,
+                      spot.x, spot.y, radius, hardness, color, opacity);
+
+                    traveled_length += spacing;
+                  }
+
+              need_to_travel += distance;
+
+              x = b.x;
+              y = b.y;
+            }
+
+            break;
+          case 'u':
+            g_error ("stroking uninitialized path\n");
+            break;
+          case 's':
+            break;
+          default:
+            g_error ("can't stroke for instruction: %i\n", iter->d.type);
+            break;
+        }
+      iter=iter->next;
+    }
+
+  if (gegl_buffer_is_shared (buffer))
+    gegl_buffer_unlock (buffer);
+}
+
+static void
+gegl_path_stamp (GeglBuffer *buffer,
+                 const GeglRectangle *clip_rect,
+                 gdouble     x,
+                 gdouble     y,
+                 gdouble     radius,
+                 gdouble     hardness,
+                 GeglColor  *color,
+                 gdouble     opacity)
+{
+  gfloat col[4];
+  StampStatic s = {FALSE,}; /* there should be a cache of stamps,
+                               note that stamps are accessed in multiple threads
+                             */
+
+  GeglRectangle temp;
+  GeglRectangle roi;
+
+  roi.x = floor(x-radius);
+  roi.y = floor(y-radius);
+  roi.width = ceil (x+radius) - floor (x-radius);
+  roi.height = ceil (y+radius) - floor (y-radius);
+
+  gegl_color_get_rgba4f (color, col);
+
+  /* bail out if we wouldn't leave a mark on the buffer */
+  if (!gegl_rectangle_intersect (&temp, &roi, clip_rect))
+    {
+      return;
+    }
+
+  if (s.format == NULL)
+    s.format = babl_format ("RaGaBaA float");
+
+  if (s.buf == NULL ||
+      s.radius != radius)
+    {
+      if (s.buf != NULL)
+        g_free (s.buf);
+      /* allocate a little bit more, just in case due to rounding errors and
+       * such */
+      s.buf = g_malloc (4*4* (roi.width + 2 ) * (roi.height + 2));
+      s.radius = radius;
+      s.valid = TRUE;
+    }
+  g_assert (s.buf);
+
+  gegl_buffer_get_unlocked (buffer, 1.0, &roi, s.format, s.buf, 0);
+
+  {
+    gint u, v;
+    gint i=0;
+
+    gfloat radius_squared = radius * radius;
+    gfloat inner_radius_squared = (radius * hardness)*(radius * hardness);
+    gfloat soft_range = radius_squared - inner_radius_squared;
+
+    for (v= roi.y; v < roi.y + roi.height ; v++)
+    {
+      gfloat vy2 = (v-y)*(v-y);
+      for (u= roi.x; u < roi.x + roi.width; u++)
+        {
+          gfloat o = (u-x) * (u-x) + vy2;
+
+          if (o < inner_radius_squared)
+             o = col[3];
+          else if (o < radius_squared)
+            {
+              o = (1.0 - (o-inner_radius_squared) / (soft_range)) * col[3];
+            }
+          else
+            {
+              o=0.0;
+            }
+         if (o!=0.0)
+           {
+             gint c;
+             o = o*opacity;
+             for (c=0;c<4;c++)
+               s.buf[i*4+c] = (s.buf[i*4+c] * (1.0-o) + col[c] * o);
+           }
+         i++;
+        }
+    }
+  }
+  gegl_buffer_set_unlocked (buffer, &roi, s.format, s.buf, 0);
+  g_free (s.buf);
+}
 
 static void path_changed (GeglPath *path,
                           const GeglRectangle *roi,
