@@ -50,7 +50,6 @@ gegl_chant_string (background, _("Background"), "wrap",
 
 #include "gegl-chant.h"
 #include <math.h>
-#include <stdio.h>
 
 typedef enum
 {
