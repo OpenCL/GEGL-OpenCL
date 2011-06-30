@@ -38,10 +38,7 @@ gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 2,
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-
 #define GEGL_CHANT_C_FILE        "plasma.c"
-#define MANUAL_ROI_VAL 500
-
 
 #include "gegl-chant.h"
 #include <math.h>
