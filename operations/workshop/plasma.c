@@ -167,13 +167,13 @@ do_plasma_big (GeglBuffer *output,
     if (x1 == x2 && y1 == y2) return FALSE;
 
     gegl_buffer_sample (output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_LINEAR);
+                       GEGL_INTERPOLATION_NEAREST);
     gegl_buffer_sample (output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_LINEAR);
+                       GEGL_INTERPOLATION_NEAREST);
     gegl_buffer_sample (output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_LINEAR);
+                       GEGL_INTERPOLATION_NEAREST);
     gegl_buffer_sample (output, x2, y2, 1.0, br, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_LINEAR);
+                       GEGL_INTERPOLATION_NEAREST);
 
     ran =  ((gfloat) op->turbulance / (2.0 * scale_depth));
 
