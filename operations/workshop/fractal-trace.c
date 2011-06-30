@@ -111,8 +111,7 @@ fractaltrace (GeglBuffer          *input,
               gint                 y,
               FractalType          fractal_type,
               BackgroundType       background_type,
-              Babl                *format
-              )
+              Babl                *format)
 {
   gint           x, i, offset;
   gdouble        scale_x, scale_y;
@@ -121,10 +120,10 @@ fractaltrace (GeglBuffer          *input,
   gfloat         dest[4];
   gdouble        escape_radius = sqrt(pow(o->X2 - o->X1,2) + pow(o->Y2 - o->Y1,2));
 
-  scale_x = (gdouble) (o->X2 - o->X1) / (gdouble) picture->width;
-  scale_y = (gdouble) (o->Y2 - o->Y1) / (gdouble) picture->height;
+  scale_x = (o->X2 - o->X1) / picture->width;
+  scale_y = (o->Y2 - o->Y1) / picture->height;
 
-  cy = (gdouble) o->Y1 + ((gdouble) (y - picture->y)) * scale_y;
+  cy = o->Y1 + (y - picture->y) * scale_y;
   offset = (y - roi->y) * roi->width * 4;
 
   for (x = roi->x; x < roi->x + roi->width; x++)
@@ -137,9 +136,11 @@ fractaltrace (GeglBuffer          *input,
         case FRACTAL_TYPE_JULIA:
           julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, escape_radius);
           break;
+
         case FRACTAL_TYPE_MANDELBROT:
           julia (cx, cy, cx, cy, &px, &py, o->depth, escape_radius);
           break;
+
         default:
           g_error (_("Unsupported fractal type"));
         }
@@ -159,44 +160,42 @@ fractaltrace (GeglBuffer          *input,
             case BACKGROUND_TYPE_WRAP:
               px = fmod (px, picture->width);
               py = fmod (py, picture->height);
-              if (px < 0.0) px += picture->width;
-              if (py < 0.0) py += picture->height;
-              /*associating to NaN and -NaN values, if there is the case*/
 
-              if (isnan(px))
+              if (px < 0.0)
+                px += picture->width;
+              if (py < 0.0)
+                py += picture->height;
+
+              /* Check for NaN */
+              if (isnan (px))
                 {
-                  if (signbit(px))
-                    {
-                      px = 0.0;
-                    }
+                  if (signbit (px))
+                    px = 0.0;
                   else
-                    {
-                      px = (gdouble) picture->width - 1.0;
-                    }
+                    px = picture->width - 1.0;
                 }
 
-              if (isnan(py))
+              if (isnan (py))
                 {
-                  if (signbit(py))
-                    {
-                      py = 0.0;
-                    }
+                  if (signbit (py))
+                    py = 0.0;
                   else
-                    {
-                      py = (gdouble) picture->height -1.0;
-                    }
+                    py = picture->height - 1.0;
                 }
 
               gegl_buffer_sample (input, px, py, 1.0, dest, format,
                                   GEGL_INTERPOLATION_LINEAR);
               break;
+
             case BACKGROUND_TYPE_TRANSPARENT:
               dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
               break;
+
             case BACKGROUND_TYPE_BLACK:
               dest[0] = dest[1] = dest[2] = 0.0;
               dest[3] = 1.0;
               break;
+
             case BACKGROUND_TYPE_WHITE:
               dest[0] = dest[1] = dest[2] = dest[3] = 1.0;
               break;
@@ -208,7 +207,6 @@ fractaltrace (GeglBuffer          *input,
         dst_buf[offset++] = dest[i];
     }
 }
-
 
 static gboolean
 process (GeglOperation       *operation,
@@ -276,7 +274,6 @@ get_required_for_output (GeglOperation       *operation,
 {
   return get_bounding_box (operation);
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
