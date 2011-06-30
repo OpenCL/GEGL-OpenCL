@@ -78,8 +78,7 @@ julia (gdouble  x,
        gdouble  jy,
        gdouble *u,
        gdouble *v,
-       gint     depth,
-       gdouble  escape_radius)
+       gint     depth)
 {
   gint    i;
   gdouble xx = x;
@@ -94,8 +93,6 @@ julia (gdouble  x,
       tmp = x2 - y2 + jx;
       yy  = 2 * xx * yy + jy;
       xx  = tmp;
-      /*commented this line because it is bugy */
-      /*if (x2 + y2 > (pow(escape_radius,2))) break;*/
     }
 
   *u = xx;
@@ -118,7 +115,6 @@ fractaltrace (GeglBuffer          *input,
   gdouble        cx, cy;
   gdouble        px, py;
   gfloat         dest[4];
-  gdouble        escape_radius = sqrt(pow(o->X2 - o->X1,2) + pow(o->Y2 - o->Y1,2));
 
   scale_x = (o->X2 - o->X1) / picture->width;
   scale_y = (o->Y2 - o->Y1) / picture->height;
@@ -134,11 +130,11 @@ fractaltrace (GeglBuffer          *input,
       switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
-          julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, escape_radius);
+          julia (cx, cy, o->JX, o->JY, &px, &py, o->depth);
           break;
 
         case FRACTAL_TYPE_MANDELBROT:
-          julia (cx, cy, cx, cy, &px, &py, o->depth, escape_radius);
+          julia (cx, cy, cx, cy, &px, &py, o->depth);
           break;
 
         default:
