@@ -33,8 +33,8 @@
  * Beyond that, the quality is somewhat lower (due to the use of
  * higher level mipmap data).
  *
- * Using mipmap data is not an intrinsic feature of the resampling
- * method: It is done to accomodate GEGL's preferred pixel data
+ * The use of mipmap data is not a feature of the resampling methods
+ * themselves: It is done to accommodate GEGL's preferred pixel data
  * management system.
  */
 
