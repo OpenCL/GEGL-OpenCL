@@ -25,9 +25,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
-   _("Random seed. Passing -1 implies that the seed is randomly chosen."))
+		_("Random seed. Passing -1 implies that the seed is randomly chosen."))
 gegl_chant_double (turbulance, _("Turbulance"), 0.1, 7.0, 2,
-   _("The value of the turbulance"))
+		   _("The value of the turbulance"))
 
 #else
 
@@ -35,7 +35,7 @@ gegl_chant_double (turbulance, _("Turbulance"), 0.1, 7.0, 2,
 
 #define GEGL_CHANT_C_FILE        "plasma.c"
 #define floats_per_pixel 4
-#define MANUAL_ROI_VAL 500 
+#define MANUAL_ROI_VAL 500
 
 
 #include "gegl-chant.h"
@@ -53,9 +53,9 @@ average_pixel (gfloat *dst_buf,
                gfloat *src_buf1,
                gfloat *src_buf2)
 {
-   gint i;
-   for (i = 0; i < floats_per_pixel; i++)
-      *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2;
+  gint i;
+  for (i = 0; i < floats_per_pixel; i++)
+    *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2;
 }
 
 static void
@@ -64,7 +64,7 @@ random_rgba (GRand  *gr,
 {
   gint i;
   for (i = 0; i < floats_per_pixel; i++)
-      dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
+    dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
 }
 
 static void
@@ -79,10 +79,10 @@ add_random (GRand  *gr,
 
   if (amount > 0)
     for (i = 0; i < floats_per_pixel; i++)
-       {
-          tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
-          dest[i] = CLAMP (tmp, 0, 1);
-       }
+      {
+	tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
+	dest[i] = CLAMP (tmp, 0, 1);
+      }
 }
 
 static void
@@ -98,7 +98,7 @@ put_pixel_to_buffer (GeglBuffer *output,
                    GEGL_AUTO_ROWSTRIDE);
 }
 
-static gboolean 
+static gboolean
 do_plasma_big (GeglBuffer *output,
                gint        x1,
                gint        y1,
@@ -114,10 +114,10 @@ do_plasma_big (GeglBuffer *output,
   gint    xm, ym;
   gfloat  ran;
   static gint count = 0;
- /*
-  GeglRectangle  roi = {0, 0, 0, 0};
-  gfloat        *src_buf;
-  gboolean       toreturn;
+  /*
+    GeglRectangle  roi = {0, 0, 0, 0};
+    gfloat        *src_buf;
+    gboolean       toreturn;
   */
 
   xm = (x1 + x2) / 2;
@@ -125,115 +125,115 @@ do_plasma_big (GeglBuffer *output,
 
   if (depth == -1)
     {
-    random_rgba (gr, tl);
-    put_pixel_to_buffer (output, tl, x1, y1);
+      random_rgba (gr, tl);
+      put_pixel_to_buffer (output, tl, x1, y1);
 
-    random_rgba (gr, tr);
-    put_pixel_to_buffer (output, tr, x2, y1);
+      random_rgba (gr, tr);
+      put_pixel_to_buffer (output, tr, x2, y1);
 
-    random_rgba (gr, bl);
-    put_pixel_to_buffer (output, bl, x1, y2);
+      random_rgba (gr, bl);
+      put_pixel_to_buffer (output, bl, x1, y2);
 
-    random_rgba (gr, br);
-    put_pixel_to_buffer (output, br, x2, y2);
+      random_rgba (gr, br);
+      put_pixel_to_buffer (output, br, x2, y2);
 
-    random_rgba (gr, mm);
-    put_pixel_to_buffer (output, mm, xm, ym);
+      random_rgba (gr, mm);
+      put_pixel_to_buffer (output, mm, xm, ym);
 
-    random_rgba (gr, ml);
-    put_pixel_to_buffer (output, ml, x1, ym);
+      random_rgba (gr, ml);
+      put_pixel_to_buffer (output, ml, x1, ym);
 
-    random_rgba (gr, mr);
-    put_pixel_to_buffer (output, mr, x2, ym);
+      random_rgba (gr, mr);
+      put_pixel_to_buffer (output, mr, x2, ym);
 
-    random_rgba (gr, mt);
-    put_pixel_to_buffer (output, mt, xm, y1);
+      random_rgba (gr, mt);
+      put_pixel_to_buffer (output, mt, xm, y1);
 
-    random_rgba (gr, mb);
-    put_pixel_to_buffer (output, mb, xm, y2);
-   /*ugly but working*/
-    return FALSE;
+      random_rgba (gr, mb);
+      put_pixel_to_buffer (output, mb, xm, y2);
+      /*ugly but working*/
+      return FALSE;
     }
 
   if (!depth)
     {
-    if (x1 == x2 && y1 == y2) return FALSE;
+      if (x1 == x2 && y1 == y2) return FALSE;
 
-    gegl_buffer_sample (output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_NEAREST);
-    gegl_buffer_sample (output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_NEAREST);
-    gegl_buffer_sample (output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_NEAREST);
-    gegl_buffer_sample (output, x2, y2, 1.0, br, babl_format ("RGBA float"),
-                       GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
+			  GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
+			  GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
+			  GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (output, x2, y2, 1.0, br, babl_format ("RGBA float"),
+			  GEGL_INTERPOLATION_NEAREST);
 
-    ran =  ((gfloat) op->turbulance / (2.0 * scale_depth));
+      ran =  ((gfloat) op->turbulance / (2.0 * scale_depth));
 
-    if (xm != x1 || xm != x2)
-      {
-      /*left*/
-      average_pixel (ml, tl, bl);
-      add_random (gr, ml, ran);
-      put_pixel_to_buffer (output, ml, x1, ym);
+      if (xm != x1 || xm != x2)
+	{
+	  /*left*/
+	  average_pixel (ml, tl, bl);
+	  add_random (gr, ml, ran);
+	  put_pixel_to_buffer (output, ml, x1, ym);
 
-      /*right*/      
-      if (x1 != x2)
-        {
-        average_pixel (mr, tr, br);
-        add_random (gr, mr, ran);
-        put_pixel_to_buffer (output, mr, x2, ym);
-        }
-      }
+	  /*right*/
+	  if (x1 != x2)
+	    {
+	      average_pixel (mr, tr, br);
+	      add_random (gr, mr, ran);
+	      put_pixel_to_buffer (output, mr, x2, ym);
+	    }
+	}
 
 
-    if (ym != y1 || ym != x2)
-      {
-      /*bottom*/
-      if (x1 != xm || ym != y2)
-        {
-         average_pixel (mb, bl, br);
-         add_random (gr, mb, ran);
-         put_pixel_to_buffer (output, mb, xm, y2);
-        }
+      if (ym != y1 || ym != x2)
+	{
+	  /*bottom*/
+	  if (x1 != xm || ym != y2)
+	    {
+	      average_pixel (mb, bl, br);
+	      add_random (gr, mb, ran);
+	      put_pixel_to_buffer (output, mb, xm, y2);
+	    }
 
-      if (y1 != y2)
-        {
-         /*top*/
-         average_pixel (mt, tl, tr);
-         add_random (gr, mt, ran);
-         put_pixel_to_buffer (output, mt, xm, y1);
-        }
-      }
+	  if (y1 != y2)
+	    {
+	      /*top*/
+	      average_pixel (mt, tl, tr);
+	      add_random (gr, mt, ran);
+	      put_pixel_to_buffer (output, mt, xm, y1);
+	    }
+	}
 
-    if (y1 != y2 || x1 != x2)
-      {
-       average_pixel (mm, tl, br);
-       average_pixel (tmp, bl, tr);
-       average_pixel (mm, mm, tmp);
-     
-       add_random (gr, mm, ran);
-       put_pixel_to_buffer (output, mm, xm, ym);
-      }
-    count++;
+      if (y1 != y2 || x1 != x2)
+	{
+	  average_pixel (mm, tl, br);
+	  average_pixel (tmp, bl, tr);
+	  average_pixel (mm, mm, tmp);
 
-    return x2 - x1 < 3 && y2 - y1 < 3;
+	  add_random (gr, mm, ran);
+	  put_pixel_to_buffer (output, mm, xm, ym);
+	}
+      count++;
+
+      return x2 - x1 < 3 && y2 - y1 < 3;
     }
 
   if (x1 < x2 || y1 < y2)
     {
-        /*top-left*/
-        do_plasma_big (output, x1, y1, xm, ym, depth - 1,
-                  scale_depth + 1, gr, op);
-        /*bottom-left*/
-        do_plasma_big (output, x1, ym, xm, y2, depth - 1,
-                  scale_depth + 1, gr, op);
-        /*top-right*/
-        do_plasma_big (output, xm, y1, x2, ym, depth - 1,
-                  scale_depth + 1, gr, op);
-        /*bottom-right*/
-        return do_plasma_big (output, xm, ym, x2, y2, depth - 1,
-                         scale_depth + 1, gr, op); 
+      /*top-left*/
+      do_plasma_big (output, x1, y1, xm, ym, depth - 1,
+		     scale_depth + 1, gr, op);
+      /*bottom-left*/
+      do_plasma_big (output, x1, ym, xm, y2, depth - 1,
+		     scale_depth + 1, gr, op);
+      /*top-right*/
+      do_plasma_big (output, xm, y1, x2, ym, depth - 1,
+		     scale_depth + 1, gr, op);
+      /*bottom-right*/
+      return do_plasma_big (output, xm, ym, x2, y2, depth - 1,
+			    scale_depth + 1, gr, op);
     }
 
   return TRUE;
@@ -262,7 +262,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO    *o            = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglRectangle boundary=plasma_get_bounding_box(operation);  
+  GeglRectangle boundary=plasma_get_bounding_box(operation);
 
   GRand *gr;
   gint   depth;
@@ -282,14 +282,14 @@ process (GeglOperation       *operation,
 
   do_plasma_big (output, boundary.x, boundary.y, x-1, y-1, -1,
                  0, gr, o);
-   /*
-    * Now we recurse through the images, going deeper each time
-    */
+  /*
+   * Now we recurse through the images, going deeper each time
+   */
   depth = 1;
-  while (!do_plasma_big (output, boundary.x, boundary.y, x-1, 
-                       y-1, depth, 0, gr, o))
-   
-          depth++;
+  while (!do_plasma_big (output, boundary.x, boundary.y, x-1,
+			 y-1, depth, 0, gr, o))
+
+    depth++;
 
   return TRUE;
 }
@@ -329,7 +329,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories  = "render";
   operation_class->name        = "gegl:plasma";
   operation_class->description =
-        _("Performs plasma on the image.");
+    _("Performs plasma on the image.");
 }
 
 #endif
