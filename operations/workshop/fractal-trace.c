@@ -53,19 +53,19 @@ gegl_chant_string (background, _("Background"), "wrap",
 #include <math.h>
 #include <stdio.h>
 
-enum OutsideType
+typedef enum
 {
   OUTSIDE_TYPE_WRAP,
   OUTSIDE_TYPE_TRANSPARENT,
   OUTSIDE_TYPE_BLACK,
   OUTSIDE_TYPE_WHITE 
-};
+} OutsideType;
 
-enum FractalType
+typedef enum
 {
   FRACTAL_TYPE_MANDELBROT,
   FRACTAL_TYPE_JULIA
-};
+} FractalType;
 
 
 static void prepare (GeglOperation *operation)
@@ -113,8 +113,8 @@ fractaltrace (GeglBuffer          *input,
               const GeglRectangle *roi,
               GeglChantO          *o,
               gint                 y,
-              enum FractalType     fractal,
-              enum OutsideType     id,
+              FractalType          fractal,
+              OutsideType          id,
               Babl                *format
               )
 {
@@ -223,8 +223,8 @@ process (GeglOperation       *operation,
   GeglRectangle  boundary     = gegl_operation_get_bounding_box (operation); 
   Babl          *format       = babl_format ("RGBA float");
 
-  enum FractalType  frT;
-  enum OutsideType  id;
+  FractalType       frT;
+  OutsideType       id;
   gfloat           *dst_buf;
   gint              y;
 
