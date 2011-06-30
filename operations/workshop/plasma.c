@@ -31,9 +31,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
-		_("Random seed. Passing -1 implies that the seed is randomly chosen."))
+                _("Random seed. Passing -1 implies that the seed is randomly chosen."))
 gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 1.0,
-		   _("The value of the turbulence"))
+                   _("The value of the turbulence"))
 
 #else
 
@@ -42,13 +42,19 @@ gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 1.0,
 
 #include "gegl-chant.h"
 #include <math.h>
-#include <stdio.h>
+
+#define TILE_SIZE 128
 
 typedef struct
 {
   GeglBuffer *output;
   GRand      *gr;
   GeglChantO *o;
+  float      *buffer;
+  gboolean    using_buffer;
+  gint        buffer_x;
+  gint        buffer_y;
+  gint        buffer_width;
 } PlasmaContext;
 
 static void prepare (GeglOperation *operation)
@@ -91,23 +97,41 @@ add_random (GRand  *gr,
   if (amount > 0)
     for (i = 0; i < 4; i++)
       {
-	tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
-	dest[i] = CLAMP (tmp, 0, 1);
+        tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
+        dest[i] = CLAMP (tmp, 0, 1);
       }
 }
 
 static void
-put_pixel_to_buffer (GeglBuffer *output,
-                     gfloat     *pixel,
-                     gint        x,
-                     gint        y)
+put_pixel (PlasmaContext *context,
+           gfloat        *pixel,
+           gint           x,
+           gint           y)
 {
-  GeglRectangle rect = {1, 1, 1, 1};
+  if (G_UNLIKELY (!context->using_buffer))
+    {
+      GeglRectangle rect;
 
-  rect.x = x;
-  rect.y = y;
-  gegl_buffer_set (output, &rect, babl_format ("RGBA float"), pixel,
-                   GEGL_AUTO_ROWSTRIDE);
+      rect.x = x;
+      rect.y = y;
+      rect.width = 1;
+      rect.height = 1;
+
+      gegl_buffer_set (context->output, &rect, babl_format ("RGBA float"), pixel,
+                       GEGL_AUTO_ROWSTRIDE);
+      return;
+    }
+  else
+    {
+      float *ptr;
+
+      ptr = context->buffer + ((y - context->buffer_y) * 4 * context->buffer_width) + ((x - context->buffer_x) * 4);
+
+      *ptr++ = *pixel++;
+      *ptr++ = *pixel++;
+      *ptr++ = *pixel++;
+      *ptr++ = *pixel++;
+    }
 }
 
 static gboolean
@@ -124,37 +148,67 @@ do_plasma_big (PlasmaContext *context,
   gint    xm, ym;
   gfloat  ran;
 
+  if (G_UNLIKELY ((!context->using_buffer) &&
+                  ((x2 - x1 + 1) <= TILE_SIZE) &&
+                  ((y2 - y1 + 1) <= TILE_SIZE)))
+    {
+      gboolean ret;
+      GeglRectangle rect;
+
+      rect.x = x1;
+      rect.y = y1;
+      rect.width = x2 - x1 + 1;
+      rect.height = y2 - y1 + 1;
+
+      gegl_buffer_get (context->output, 1.0, &rect, babl_format ("RGBA float"),
+                       context->buffer, GEGL_AUTO_ROWSTRIDE);
+
+      context->using_buffer = TRUE;
+      context->buffer_x = x1;
+      context->buffer_y = y1;
+      context->buffer_width = x2 - x1 + 1;
+
+      ret = do_plasma_big (context, x1, y1, x2, y2, depth, scale_depth);
+
+      context->using_buffer = FALSE;
+
+      gegl_buffer_set (context->output, &rect, babl_format ("RGBA float"),
+                       context->buffer, GEGL_AUTO_ROWSTRIDE);
+
+      return ret;
+    }
+
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
 
   if (depth == -1)
     {
       random_rgba (context->gr, tl);
-      put_pixel_to_buffer (context->output, tl, x1, y1);
+      put_pixel (context, tl, x1, y1);
 
       random_rgba (context->gr, tr);
-      put_pixel_to_buffer (context->output, tr, x2, y1);
+      put_pixel (context, tr, x2, y1);
 
       random_rgba (context->gr, bl);
-      put_pixel_to_buffer (context->output, bl, x1, y2);
+      put_pixel (context, bl, x1, y2);
 
       random_rgba (context->gr, br);
-      put_pixel_to_buffer (context->output, br, x2, y2);
+      put_pixel (context, br, x2, y2);
 
       random_rgba (context->gr, mm);
-      put_pixel_to_buffer (context->output, mm, xm, ym);
+      put_pixel (context, mm, xm, ym);
 
       random_rgba (context->gr, ml);
-      put_pixel_to_buffer (context->output, ml, x1, ym);
+      put_pixel (context, ml, x1, ym);
 
       random_rgba (context->gr, mr);
-      put_pixel_to_buffer (context->output, mr, x2, ym);
+      put_pixel (context, mr, x2, ym);
 
       random_rgba (context->gr, mt);
-      put_pixel_to_buffer (context->output, mt, xm, y1);
+      put_pixel (context, mt, xm, y1);
 
       random_rgba (context->gr, mb);
-      put_pixel_to_buffer (context->output, mb, xm, y2);
+      put_pixel (context, mb, xm, y2);
 
       return FALSE;
     }
@@ -165,62 +219,62 @@ do_plasma_big (PlasmaContext *context,
         return FALSE;
 
       gegl_buffer_sample (context->output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
-			  GEGL_INTERPOLATION_NEAREST);
+                          GEGL_INTERPOLATION_NEAREST);
       gegl_buffer_sample (context->output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
-			  GEGL_INTERPOLATION_NEAREST);
+                          GEGL_INTERPOLATION_NEAREST);
       gegl_buffer_sample (context->output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
-			  GEGL_INTERPOLATION_NEAREST);
+                          GEGL_INTERPOLATION_NEAREST);
       gegl_buffer_sample (context->output, x2, y2, 1.0, br, babl_format ("RGBA float"),
-			  GEGL_INTERPOLATION_NEAREST);
+                          GEGL_INTERPOLATION_NEAREST);
 
       ran = context->o->turbulence / (2.0 * scale_depth);
 
       if (xm != x1 || xm != x2)
-	{
-	  /* Left. */
-	  average_pixel (ml, tl, bl);
-	  add_random (context->gr, ml, ran);
-	  put_pixel_to_buffer (context->output, ml, x1, ym);
+        {
+          /* Left. */
+          average_pixel (ml, tl, bl);
+          add_random (context->gr, ml, ran);
+          put_pixel (context, ml, x1, ym);
 
-	  /* Right. */
-	  if (x1 != x2)
-	    {
-	      average_pixel (mr, tr, br);
-	      add_random (context->gr, mr, ran);
-	      put_pixel_to_buffer (context->output, mr, x2, ym);
-	    }
-	}
+          /* Right. */
+          if (x1 != x2)
+            {
+              average_pixel (mr, tr, br);
+              add_random (context->gr, mr, ran);
+              put_pixel (context, mr, x2, ym);
+            }
+        }
 
 
       if (ym != y1 || ym != x2)
-	{
-	  /* Bottom. */
-	  if (x1 != xm || ym != y2)
-	    {
-	      average_pixel (mb, bl, br);
-	      add_random (context->gr, mb, ran);
-	      put_pixel_to_buffer (context->output, mb, xm, y2);
-	    }
+        {
+          /* Bottom. */
+          if (x1 != xm || ym != y2)
+            {
+              average_pixel (mb, bl, br);
+              add_random (context->gr, mb, ran);
+              put_pixel (context, mb, xm, y2);
+            }
 
-	  if (y1 != y2)
-	    {
-	      /* Top. */
-	      average_pixel (mt, tl, tr);
-	      add_random (context->gr, mt, ran);
-	      put_pixel_to_buffer (context->output, mt, xm, y1);
-	    }
-	}
+          if (y1 != y2)
+            {
+              /* Top. */
+              average_pixel (mt, tl, tr);
+              add_random (context->gr, mt, ran);
+              put_pixel (context, mt, xm, y1);
+            }
+        }
 
       if (y1 != y2 || x1 != x2)
-	{
+        {
           /* Middle pixel. */
-	  average_pixel (mm, tl, br);
-	  average_pixel (tmp, bl, tr);
-	  average_pixel (mm, mm, tmp);
+          average_pixel (mm, tl, br);
+          average_pixel (tmp, bl, tr);
+          average_pixel (mm, mm, tmp);
 
-	  add_random (context->gr, mm, ran);
-	  put_pixel_to_buffer (context->output, mm, xm, ym);
-	}
+          add_random (context->gr, mm, ran);
+          put_pixel (context, mm, xm, ym);
+        }
 
       return x2 - x1 < 3 && y2 - y1 < 3;
     }
@@ -265,6 +319,8 @@ process (GeglOperation       *operation,
   context = g_new (PlasmaContext, 1);
   context->o = GEGL_CHANT_PROPERTIES (operation);
   context->output = output;
+  context->buffer = g_malloc (TILE_SIZE * TILE_SIZE * 4 * sizeof (float));
+  context->using_buffer = FALSE;
 
   boundary = plasma_get_bounding_box (operation);
 
@@ -289,6 +345,7 @@ process (GeglOperation       *operation,
   while (!do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
     depth++;
 
+  g_free (context->buffer);
   g_free (context);
 
   return TRUE;
