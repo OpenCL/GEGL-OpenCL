@@ -63,7 +63,7 @@ enum OutsideType
 
 enum FractalType
 {
-  FRACTAL_TYPE_MANDEL,
+  FRACTAL_TYPE_MANDELBROT,
   FRACTAL_TYPE_JULIA
 };
 
@@ -141,7 +141,7 @@ fractaltrace (GeglBuffer          *input,
         case FRACTAL_TYPE_JULIA:
           julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, escape_radius);
           break;
-        case FRACTAL_TYPE_MANDEL:
+        case FRACTAL_TYPE_MANDELBROT:
           julia (cx, cy, cx, cy, &px, &py, o->depth, escape_radius);
           break;
         default:
@@ -228,12 +228,11 @@ process (GeglOperation       *operation,
   gfloat           *dst_buf;
   gint              y;
 
-  frT = FRACTAL_TYPE_MANDEL;
-    frT = FRACTAL_TYPE_MANDEL;
+  frT = FRACTAL_TYPE_MANDELBROT;
   if (!strcmp (o->fractal, "mandelbrot"))
+    frT = FRACTAL_TYPE_MANDELBROT;
   else if (!strcmp(o->fractal, "julia"))
     frT = FRACTAL_TYPE_JULIA;
-
 
   id = OUTSIDE_TYPE_WRAP; /*wrap is default*/
   if (!strcmp(o->background,"wrap"))
