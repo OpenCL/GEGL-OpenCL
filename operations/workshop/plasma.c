@@ -25,8 +25,8 @@
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
 		_("Random seed. Passing -1 implies that the seed is randomly chosen."))
-gegl_chant_double (turbulance, _("Turbulance"), 0.1, 7.0, 2,
-		   _("The value of the turbulance"))
+gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 2,
+		   _("The value of the turbulence"))
 
 #else
 
@@ -171,7 +171,7 @@ do_plasma_big (PlasmaContext *context,
       gegl_buffer_sample (context->output, x2, y2, 1.0, br, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
 
-      ran = context->o->turbulance / (2.0 * scale_depth);
+      ran = context->o->turbulence / (2.0 * scale_depth);
 
       if (xm != x1 || xm != x2)
 	{
