@@ -42,6 +42,13 @@ gegl_chant_double (turbulance, _("Turbulance"), 0.1, 7.0, 2,
 #include <math.h>
 #include <stdio.h>
 
+typedef struct
+{
+  GeglBuffer *output;
+  GRand      *gr;
+  GeglChantO *o;
+} PlasmaContext;
+
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
@@ -99,15 +106,13 @@ put_pixel_to_buffer (GeglBuffer *output,
 }
 
 static gboolean
-do_plasma_big (GeglBuffer *output,
-               gint        x1,
-               gint        y1,
-               gint        x2,
-               gint        y2,
-               gint        depth,
-               gint        scale_depth,
-               GRand      *gr,
-               GeglChantO *op)
+do_plasma_big (PlasmaContext *context,
+               gint           x1,
+               gint           y1,
+               gint           x2,
+               gint           y2,
+               gint           depth,
+               gint           scale_depth)
 {
   gfloat tl[4], ml[4], bl[4], mt[4], mm[4], mb[4], tr[4], mr[4], br[4];
   gfloat tmp[4];
@@ -125,32 +130,32 @@ do_plasma_big (GeglBuffer *output,
 
   if (depth == -1)
     {
-      random_rgba (gr, tl);
-      put_pixel_to_buffer (output, tl, x1, y1);
+      random_rgba (context->gr, tl);
+      put_pixel_to_buffer (context->output, tl, x1, y1);
 
-      random_rgba (gr, tr);
-      put_pixel_to_buffer (output, tr, x2, y1);
+      random_rgba (context->gr, tr);
+      put_pixel_to_buffer (context->output, tr, x2, y1);
 
-      random_rgba (gr, bl);
-      put_pixel_to_buffer (output, bl, x1, y2);
+      random_rgba (context->gr, bl);
+      put_pixel_to_buffer (context->output, bl, x1, y2);
 
-      random_rgba (gr, br);
-      put_pixel_to_buffer (output, br, x2, y2);
+      random_rgba (context->gr, br);
+      put_pixel_to_buffer (context->output, br, x2, y2);
 
-      random_rgba (gr, mm);
-      put_pixel_to_buffer (output, mm, xm, ym);
+      random_rgba (context->gr, mm);
+      put_pixel_to_buffer (context->output, mm, xm, ym);
 
-      random_rgba (gr, ml);
-      put_pixel_to_buffer (output, ml, x1, ym);
+      random_rgba (context->gr, ml);
+      put_pixel_to_buffer (context->output, ml, x1, ym);
 
-      random_rgba (gr, mr);
-      put_pixel_to_buffer (output, mr, x2, ym);
+      random_rgba (context->gr, mr);
+      put_pixel_to_buffer (context->output, mr, x2, ym);
 
-      random_rgba (gr, mt);
-      put_pixel_to_buffer (output, mt, xm, y1);
+      random_rgba (context->gr, mt);
+      put_pixel_to_buffer (context->output, mt, xm, y1);
 
-      random_rgba (gr, mb);
-      put_pixel_to_buffer (output, mb, xm, y2);
+      random_rgba (context->gr, mb);
+      put_pixel_to_buffer (context->output, mb, xm, y2);
       /*ugly but working*/
       return FALSE;
     }
@@ -159,30 +164,30 @@ do_plasma_big (GeglBuffer *output,
     {
       if (x1 == x2 && y1 == y2) return FALSE;
 
-      gegl_buffer_sample (output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (output, x2, y2, 1.0, br, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y2, 1.0, br, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
 
-      ran =  ((gfloat) op->turbulance / (2.0 * scale_depth));
+      ran = context->o->turbulance / (2.0 * scale_depth);
 
       if (xm != x1 || xm != x2)
 	{
 	  /*left*/
 	  average_pixel (ml, tl, bl);
-	  add_random (gr, ml, ran);
-	  put_pixel_to_buffer (output, ml, x1, ym);
+	  add_random (context->gr, ml, ran);
+	  put_pixel_to_buffer (context->output, ml, x1, ym);
 
 	  /*right*/
 	  if (x1 != x2)
 	    {
 	      average_pixel (mr, tr, br);
-	      add_random (gr, mr, ran);
-	      put_pixel_to_buffer (output, mr, x2, ym);
+	      add_random (context->gr, mr, ran);
+	      put_pixel_to_buffer (context->output, mr, x2, ym);
 	    }
 	}
 
@@ -193,16 +198,16 @@ do_plasma_big (GeglBuffer *output,
 	  if (x1 != xm || ym != y2)
 	    {
 	      average_pixel (mb, bl, br);
-	      add_random (gr, mb, ran);
-	      put_pixel_to_buffer (output, mb, xm, y2);
+	      add_random (context->gr, mb, ran);
+	      put_pixel_to_buffer (context->output, mb, xm, y2);
 	    }
 
 	  if (y1 != y2)
 	    {
 	      /*top*/
 	      average_pixel (mt, tl, tr);
-	      add_random (gr, mt, ran);
-	      put_pixel_to_buffer (output, mt, xm, y1);
+	      add_random (context->gr, mt, ran);
+	      put_pixel_to_buffer (context->output, mt, xm, y1);
 	    }
 	}
 
@@ -212,8 +217,8 @@ do_plasma_big (GeglBuffer *output,
 	  average_pixel (tmp, bl, tr);
 	  average_pixel (mm, mm, tmp);
 
-	  add_random (gr, mm, ran);
-	  put_pixel_to_buffer (output, mm, xm, ym);
+	  add_random (context->gr, mm, ran);
+	  put_pixel_to_buffer (context->output, mm, xm, ym);
 	}
       count++;
 
@@ -223,17 +228,13 @@ do_plasma_big (GeglBuffer *output,
   if (x1 < x2 || y1 < y2)
     {
       /*top-left*/
-      do_plasma_big (output, x1, y1, xm, ym, depth - 1,
-		     scale_depth + 1, gr, op);
+      do_plasma_big (context, x1, y1, xm, ym, depth - 1, scale_depth + 1);
       /*bottom-left*/
-      do_plasma_big (output, x1, ym, xm, y2, depth - 1,
-		     scale_depth + 1, gr, op);
+      do_plasma_big (context, x1, ym, xm, y2, depth - 1, scale_depth + 1);
       /*top-right*/
-      do_plasma_big (output, xm, y1, x2, ym, depth - 1,
-		     scale_depth + 1, gr, op);
+      do_plasma_big (context, xm, y1, x2, ym, depth - 1, scale_depth + 1);
       /*bottom-right*/
-      return do_plasma_big (output, xm, ym, x2, y2, depth - 1,
-			    scale_depth + 1, gr, op);
+      return do_plasma_big (context, xm, ym, x2, y2, depth - 1, scale_depth + 1);
     }
 
   return TRUE;
@@ -260,13 +261,16 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO    *o            = GEGL_CHANT_PROPERTIES (operation);
-
-  GeglRectangle boundary=plasma_get_bounding_box(operation);
-
-  GRand *gr;
+  PlasmaContext *context;
+  GeglRectangle boundary;
   gint   depth;
   gint   x, y;
+
+  context = g_new (PlasmaContext, 1);
+  context->o = GEGL_CHANT_PROPERTIES (operation);
+  context->output = output;
+
+  boundary = plasma_get_bounding_box (operation);
 
   /*
    * The first time only puts seed pixels (corners, center of edges,
@@ -275,21 +279,21 @@ process (GeglOperation       *operation,
   x = boundary.x + boundary.width;
   y = boundary.y + boundary.height;
 
-  if (o->seed == -1)
-    gr = g_rand_new ();
+  if (context->o->seed == -1)
+    context->gr = g_rand_new ();
   else
-    gr = g_rand_new_with_seed (o->seed);
+    context->gr = g_rand_new_with_seed (context->o->seed);
 
-  do_plasma_big (output, boundary.x, boundary.y, x-1, y-1, -1,
-                 0, gr, o);
+  do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, -1, 0);
+
   /*
    * Now we recurse through the images, going deeper each time
    */
   depth = 1;
-  while (!do_plasma_big (output, boundary.x, boundary.y, x-1,
-			 y-1, depth, 0, gr, o))
-
+  while (!do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
     depth++;
+
+  g_free (context);
 
   return TRUE;
 }
