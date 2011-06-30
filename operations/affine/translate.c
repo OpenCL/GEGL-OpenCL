@@ -30,7 +30,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
 #else
 
 #define GEGL_CHANT_NAME translate
-#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision).")
+#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used.")
 #define GEGL_CHANT_SELF "translate.c"
 #include "chant.h"
 
