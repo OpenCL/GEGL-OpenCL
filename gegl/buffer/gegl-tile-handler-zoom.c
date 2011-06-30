@@ -98,109 +98,72 @@ static inline void set_half_nearest (GeglTile *dst_tile,
 }
 
 static inline void
-downscale_float (const          gint    components,
-                 const          gint    width,
-                 const          gint    height,
-                 const          gint    rowstride,
-                 const restrict guchar *src_data,
-                       restrict guchar *dst_data)
+downscale_float (gint    components,
+                 gint    width,
+                 gint    height,
+                 gint    rowstride,
+                 guchar *src_data,
+                 guchar *dst_data)
 {
-  /*
-   * Do nothing if src and dst are not valid.
-   */
-  if (src_data && dst_data)
-    {
-      /*
-       * The code assumes that the loop body is executed at least once
-       * for all three of y, x and i.
-       */
-      gint y = 0;
-      do
-        {
-          gfloat *dst = (gfloat *) (dst_data + y * rowstride);
-          gfloat *src = (gfloat *) (src_data + y * (rowstride << 1));
+  gint y;
 
-          gint x = 0;
-          do
-            {
-              gint i = 0;
-              do
-                {
-                  dst[i] = 
-                    (gfloat) 0.25
-                    *
-                    (
-                      src[i] +
+  if (!src_data || !dst_data)
+    return;
+  for (y = 0; y < height / 2; y++)
+    {
+      gint    x;
+      gfloat *dst = (gfloat *) (dst_data + y * rowstride);
+      gfloat *src = (gfloat *) (src_data + y * 2 * rowstride);
+
+      for (x = 0; x < width / 2; x++)
+        {
+          int i;
+          for (i = 0; i < components; i++)
+            dst[i] = (src[i] +
                       src[i + components] +
-                      src[i + width * components] +
-                      src[i + (width * components + components)]
-                    );
-                  
-                  dst += components;
-                  src += components << 1;
-                } while (++i < components);
-              
-            } while (++x < (width >> 1));
-          
-        } while (++y < (height >> 1));
+                      src[i + (width * components)] +
+                      src[i + (width + 1) * components]) /
+                     4.0;
+
+          dst += components;
+          src += components * 2;
+        }
     }
 }
-
 
 static inline void
-downscale_u8 (const          gint    components,
-              const          gint    width,
-              const          gint    height,
-              const          gint    rowstride,
-              const restrict guchar *src_data,
-                    restrict guchar *dst_data)
+downscale_u8 (gint    components,
+              gint    width,
+              gint    height,
+              gint    rowstride,
+              guchar *src_data,
+              guchar *dst_data)
 {
-  /*
-   * Do nothing if src and dst are not valid.
-   */
-  if (src_data && dst_data)
-    {
-      /*
-       * The code assumes that the loop body is executed at least once
-       * for all three of y, x and i.
-       */
-      gint y = 0;
-      do
-        {
-          guchar *dst = dst_data + y * rowstride;
-          guchar *src = src_data + y * ( rowstride << 1 );
+  gint y;
 
-          gint x = 0;
-          do
-            {
-              gint i = 0;
-              do
-                {
-                  /*
-                   * The "+ 2" is there to round, with halfway values
-                   * rounded up, which appears to be the preferred
-                   * choice since it makes things slightly brighter
-                   * (esp. if there is transparency).
-                   *
-                   * If speed is paramount, remove the "+ 2" and get
-                   * clamped down instead of rounded values.
-                   */
-                  dst[i] = (src[i]
-                            + src[i + components]
-                            + src[i + rowstride]
-                            + src[i + ( rowstride + components )]
-                            + 2) >> 2;
-                } while (++i < components);
-              
-              dst += components;
-              src += components >> 1;
-              
-            } while (++x < (width >> 1));
-          
-        } while (++y < (height >> 1));
+  if (!src_data || !dst_data)
+    return;
+  for (y = 0; y < height / 2; y++)
+    {
+      gint    x;
+      guchar *dst = dst_data + y * rowstride;
+      guchar *src = src_data + y * 2 * rowstride;
+
+      for (x = 0; x < width / 2; x++)
+        {
+          int i;
+          for (i = 0; i < components; i++)
+            dst[i] = (src[i] +
+                      src[i + components] +
+                      src[i + rowstride] +
+                      src[i + rowstride + components]) /
+                     4;
+
+          dst += components;
+          src += components * 2;
+        }
     }
 }
-
 
 static inline void set_half (GeglTile * dst_tile,
                              GeglTile * src_tile,
