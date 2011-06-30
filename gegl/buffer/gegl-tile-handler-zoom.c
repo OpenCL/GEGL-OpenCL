@@ -105,30 +105,39 @@ downscale_float (gint    components,
                  guchar *src_data,
                  guchar *dst_data)
 {
-  gint y;
+  /*
+   * The code assumes that the loop body is executed at least one for
+   * all three of y, x and i.
+   */
+  gint y = 0;
 
   if (!src_data || !dst_data)
     return;
-  for (y = 0; y < height / 2; y++)
+
+  do
     {
-      gint    x;
+      gint x = 0;
       gfloat *dst = (gfloat *) (dst_data + y * rowstride);
-      gfloat *src = (gfloat *) (src_data + y * 2 * rowstride);
+      gfloat *src = (gfloat *) (src_data + y * (rowstride << 1));
 
-      for (x = 0; x < width / 2; x++)
+      do
         {
-          int i;
-          for (i = 0; i < components; i++)
-            dst[i] = (src[i] +
-                      src[i + components] +
-                      src[i + (width * components)] +
-                      src[i + (width + 1) * components]) /
-                     4.0;
+          int i = 0;
+          do
+            {
+              dst[i] = (src[i] +
+                        src[i + components] +
+                        src[i + width * components] +
+                        src[i + (width * components + components)])
+                        * (gfloat) 0.25;
 
-          dst += components;
-          src += components * 2;
-        }
-    }
+              dst += components;
+              src += components << 1;
+            } while (++i < components);
+
+        } while (++x < (width >> 1));
+
+    } while (++y < (height >> 1));
 }
 
 static inline void
@@ -139,30 +148,48 @@ downscale_u8 (gint    components,
               guchar *src_data,
               guchar *dst_data)
 {
-  gint y;
+  /*
+   * The code assumes that the loop body is executed at least one for
+   * all three of y, x and i.
+   */
+  gint y = 0;
 
   if (!src_data || !dst_data)
     return;
-  for (y = 0; y < height / 2; y++)
-    {
-      gint    x;
-      guchar *dst = dst_data + y * rowstride;
-      guchar *src = src_data + y * 2 * rowstride;
 
-      for (x = 0; x < width / 2; x++)
+  do
+    {
+      gint x = 0;
+      guchar *dst = dst_data + y * rowstride;
+      guchar *src = src_data + y * ( rowstride << 1 );
+
+      do
         {
-          int i;
-          for (i = 0; i < components; i++)
-            dst[i] = (src[i] +
-                      src[i + components] +
-                      src[i + rowstride] +
-                      src[i + rowstride + components]) /
-                     4;
+          int i = 0;
+          do
+            {
+              /*
+               * The "+ 2" is there to round, with halfway values
+               * rounded up, which appears to be the preferred choice
+               * since it makes things slightly brighter (esp. if
+               * there is transparency).
+               *
+               * If speed is paramount, remove the "+ 2" and get
+               * clamped down instead of rounded values.
+               */
+              dst[i] = (src[i]
+                        + src[i + components]
+                        + src[i + rowstride]
+                        + src[i + ( rowstride + components )]
+                        + 2) >> 2;
+            } while (++i < components);
 
           dst += components;
-          src += components * 2;
-        }
-    }
+          src += components >> 1;
+
+        } while (++x < (width >> 1));
+
+    } while (++y < (height >> 1));
 }
 
 static inline void set_half (GeglTile * dst_tile,
