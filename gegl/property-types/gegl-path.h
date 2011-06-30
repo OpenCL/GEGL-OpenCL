@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
+ * Copyright 2011 Michael Muré <batolettre@gmail.com>
  * Copyright 2007 Øyvind Kolås <pippin@gimp.org>
  */
 
