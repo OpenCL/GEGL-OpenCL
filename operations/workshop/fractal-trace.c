@@ -271,13 +271,10 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
-  if (!in_rect){
+  if (!in_rect)
     return result;
-  }
 
-  gegl_rectangle_copy(&result, in_rect);
-
-  return result;
+  return *in_rect;
 }
 
 
@@ -288,9 +285,7 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle result = get_effective_area (operation);
-
-  return result;
+  return get_effective_area (operation);
 }
 
 
