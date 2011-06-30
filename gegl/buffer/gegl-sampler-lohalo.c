@@ -67,7 +67,7 @@
  * Martinez. The Better Image Resampling project was started by
  * Minglun Gong, A. Turcotte and N. Robidoux in 2007.
  *
- * Clamped EWA with the teepee (radial version of the (mexican) "hat"
+ * Clamped EWA with the teepee (radial version of the (Mexican) "hat"
  * or "triangle") filter kernel was developed by N. Robidoux and
  * A. Thyssen the assistance of C. Racette and Frederick Weinhaus. It
  * is based on methods of Paul Heckbert and Andreas Gustaffson (and
