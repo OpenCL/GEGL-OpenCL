@@ -42,10 +42,12 @@
  * Reference:
  *
  * Nohalo subdivision (with bilinear instead of LBB "finish") is
- * documented in Robidoux, N., Gong, M., Cupitt, J., Turcotte, A., and
- * Martinez, K.  CPU, SMP and GPU implementations of Nohalo level 1, a
- * fast co-convex antialiasing image resampler.  In Proceedings of
- * C3S2E. 2009, 185-195.
+ * documented in
+ *
+ *   Robidoux, N., Gong, M., Cupitt, J., Turcotte, A., and Martinez,
+ *   K.  CPU, SMP and GPU implementations of Nohalo level 1, a fast
+ *   co-convex antialiasing image resampler.  In Proceedings of
+ *   C3S2E. 2009, 185-195.
  */
 
 /*
@@ -77,7 +79,7 @@
  * (National Science and Engineering Research Council of Canada)
  * Discovery Grant awarded to him (298424--2004). This, together with
  * M. Gong's own Discovery grant and A. Turcotte's NSERC USRA
- * (Undergraduate Summer Research Assistantchip) funded the very
+ * (Undergraduate Summer Research Assistantship) funded the very
  * earliest stages of this project.
  *
  * A. Turcotte's image resampling research on reduced halo methods and
@@ -386,7 +388,7 @@ nohalo_subdivision (const gfloat           uno_two,
                           gfloat* restrict qua_fou_1)
 {
   /*
-   * nohalo_subdivision calculates the missing twelve gfloat density
+   * nohalo_subdivision calculates the missing twelve float density
    * pixel values, and also returns the "already known" four, so that
    * the sixteen values which make up the stencil of LBB are
    * available.
@@ -802,14 +804,14 @@ lbb (const gfloat c00,
    *
    * --LBB is interpolatory.
    *
-   * --It is C^1 with continuous cross derivatives.
+   * --It is C^1 with continuous cross-derivatives.
    *
    * --When the limiters are inactive, LBB gives the same results as
    *   Catmull-Rom.
    *
    * --When used on binary images, LBB gives results similar to
    *   bicubic Hermite with all first derivatives---but not
-   *   necessarily the cross derivatives--at the input pixel locations
+   *   necessarily the cross-derivatives--at the input pixel locations
    *   set to zero.
    *
    * --The LBB reconstruction is locally bounded: Over each square
@@ -922,14 +924,14 @@ lbb (const gfloat c00,
   const gfloat M13   = (dos_fou <= qua_fou) ? qua_fou : dos_fou  ;
   /*
    * Because the data comes from Nohalo subdivision, the following two
-   * lines can be replaced by the above, simpler, two lines without
+   * lines can be replaced by the above, "simpler," two lines without
    * changing the results.
    *
    * const gfloat m13   = LOHALO_MIN(            m7,       qua_fou );
    * const gfloat M13   = LOHALO_MAX(            M7,       qua_fou );
    *
-   * This also allows reodering the comparisons to put breathing room
-   * between the computation of a result and its use.
+   * This allows for the comparisons to be reordered to put breathing
+   * room between the computation of a result and its use.
    */
   const gfloat m9    = LOHALO_MIN(            m5,       m4      );
   const gfloat M9    = LOHALO_MAX(            M5,       M4      );
@@ -1165,7 +1167,7 @@ lbb (const gfloat c00,
   const gfloat quad_d2zdxdy11 = LOHALO_MIN( quad_d2zdxdy11iiii, fourth_limit11);
 
   /*
-   * Part of the result which does not need derivatives:
+   * Part of the result that does not need derivatives:
    */
   const gfloat newval1 = c00 * dos_two
                          +
@@ -1176,7 +1178,7 @@ lbb (const gfloat c00,
                          c11 * tre_thr;
 
   /*
-   * Twice the part of the result which only needs first derivatives.
+   * Twice the part of the result that only needs first derivatives.
    */
   const gfloat newval2 = c00dx * dble_dzdx00
                          +
@@ -1195,8 +1197,8 @@ lbb (const gfloat c00,
                          c11dy * dble_dzdy11;
 
   /*
-   * Four times the part of the result which only uses cross
-   * derivatives:
+   * Four times the part of the result that only uses
+   * cross-derivatives:
    */
   const gfloat newval3 = c00dxdy * quad_d2zdxdy00
                          +
@@ -1826,7 +1828,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        *
        * DETAILS:
        * Find the singular values and (unit) left singular vectors of
-       * Jinv, clampling up the singular values to 1, and multiply the
+       * Jinv, clamping up the singular values to 1, and multiply the
        * unit left singular vectors by the new singular values in
        * order to get the minor and major ellipse axis vectors.
        *
