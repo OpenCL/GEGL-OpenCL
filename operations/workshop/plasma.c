@@ -114,8 +114,8 @@ do_plasma_big (GeglBuffer *output,
                GRand      *gr,
                GeglChantO *op)
 {
-  gfloat *tl, *ml, *bl, *mt, *mm, *mb, *tr, *mr, *br;
-  gfloat *tmp;
+  gfloat tl[4], ml[4], bl[4], mt[4], mm[4], mb[4], tr[4], mr[4], br[4];
+  gfloat tmp[4];
   gint    xm, ym;
   gfloat  ran;
   static gint count = 0;
@@ -124,8 +124,6 @@ do_plasma_big (GeglBuffer *output,
   gfloat        *src_buf;
   gboolean       toreturn;
   */
-  tl = ml = bl = mt = mm = mb = tr = mr = br = tmp
-     = g_new0 (gfloat, floats_per_pixel);  
 
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
