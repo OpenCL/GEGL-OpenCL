@@ -13,8 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Algorithm 1996 Stephen Norris
- * Copyright 2011 Robert Sasu (sasu.robert@gmail.com)
+ * Copyright (C) 1996 Stephen Norris
+ * Copyright (C) 2011 Robert Sasu (sasu.robert@gmail.com)
  */
 
 
