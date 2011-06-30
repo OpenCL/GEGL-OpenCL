@@ -98,15 +98,15 @@ static inline void set_half_nearest (GeglTile *dst_tile,
 }
 
 static inline void
-downscale_float (gint    components,
-                 gint    width,
-                 gint    height,
-                 gint    rowstride,
-                 guchar *src_data,
-                 guchar *dst_data)
+downscale_float (const gint    components,
+                 const gint    width,
+                 const gint    height,
+                 const gint    rowstride,
+                       guchar *src_data,
+                       guchar *dst_data)
 {
   /*
-   * The code assumes that the loop body is executed at least one for
+   * The code assumes that the loop body is executed at least once for
    * all three of y, x and i.
    */
   gint y = 0;
@@ -141,15 +141,15 @@ downscale_float (gint    components,
 }
 
 static inline void
-downscale_u8 (gint    components,
-              gint    width,
-              gint    height,
-              gint    rowstride,
-              guchar *src_data,
-              guchar *dst_data)
+downscale_u8 (const gint    components,
+              const gint    width,
+              const gint    height,
+              const gint    rowstride,
+                    guchar *src_data,
+                    guchar *dst_data)
 {
   /*
-   * The code assumes that the loop body is executed at least one for
+   * The code assumes that the loop body is executed at least once for
    * all three of y, x and i.
    */
   gint y = 0;
