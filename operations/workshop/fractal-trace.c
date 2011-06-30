@@ -37,8 +37,10 @@ gegl_chant_double (JX, _("JX"), -50.0, 50.0, 0.5,
                    _("Julia seed X value, position"))
 gegl_chant_double (JY, _("JY"), -50.0, 50.0, 0.5,
                    _("Julia seed Y value, position"))
-gegl_chant_int    (depth, _("Depth"), 1, 50, 3,
+gegl_chant_int    (depth, _("Depth"), 1, 65536, 3,
                    _("Depth value"))
+gegl_chant_double (bailout, _("Bailout"), 0.0, G_MAXDOUBLE, G_MAXDOUBLE,
+                   _("Bailout length"))
 gegl_chant_string (background, _("Background"), "wrap",
                    _("Optional parameter to override automatic selection of wrap background. "
                      "Choices are wrap, black, white and transparent."))
@@ -78,7 +80,8 @@ julia (gdouble  x,
        gdouble  jy,
        gdouble *u,
        gdouble *v,
-       gint     depth)
+       gint     depth,
+       gdouble  bailout2)
 {
   gint    i;
   gdouble xx = x;
@@ -93,6 +96,9 @@ julia (gdouble  x,
       tmp = x2 - y2 + jx;
       yy  = 2 * xx * yy + jy;
       xx  = tmp;
+
+      if ((x2 + y2) > bailout2)
+	break;
     }
 
   *u = xx;
@@ -113,11 +119,14 @@ fractaltrace (GeglBuffer          *input,
   gint           x, i, offset;
   gdouble        scale_x, scale_y;
   gdouble        cx, cy;
+  gdouble        bailout2;
   gdouble        px, py;
   gfloat         dest[4];
 
   scale_x = (o->X2 - o->X1) / picture->width;
   scale_y = (o->Y2 - o->Y1) / picture->height;
+
+  bailout2 = o->bailout * o->bailout;
 
   cy = o->Y1 + (y - picture->y) * scale_y;
   offset = (y - roi->y) * roi->width * 4;
@@ -130,11 +139,11 @@ fractaltrace (GeglBuffer          *input,
       switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
-          julia (cx, cy, o->JX, o->JY, &px, &py, o->depth);
+          julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, bailout2);
           break;
 
         case FRACTAL_TYPE_MANDELBROT:
-          julia (cx, cy, cx, cy, &px, &py, o->depth);
+          julia (cx, cy, cx, cy, &px, &py, o->depth, bailout2);
           break;
 
         default:
