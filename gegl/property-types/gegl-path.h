@@ -442,6 +442,31 @@ void                  gegl_path_add_flattener (GeglFlattenerFunc func);
  */
 GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
 
+
+/**
+ * point_lerp:
+ * @dest: return location for the result
+ * @a: origin Point
+ * @b: destination Point
+ * @t: ratio between @a and @b
+ *
+ * linear interpolation between two Points
+ */
+void                  point_lerp              (Point            *dest,
+                                               Point            *a,
+                                               Point            *b,
+                                               gfloat            t);
+
+/**
+ * point_dist:
+ * @a: an arbitrary Point
+ * @b: an arbitrary Point
+ *
+ * Compute the distance between Point @a and @b
+ */
+gdouble               point_dist              (Point            *a,
+                                               Point            *b);
+
 G_END_DECLS
 
 #endif /* __GEGL_PATH_H__ */
