@@ -242,7 +242,6 @@ do_plasma_big (GeglBuffer *output,
         return do_plasma_big (output, xm, ym, x2, y2, depth - 1,
                          scale_depth + 1, gr, op); 
     }
-  else return TRUE;
 
   return TRUE;
 }
