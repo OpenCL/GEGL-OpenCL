@@ -24,8 +24,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (seed, _("Seed"), 0 , G_MAXINT, 1,
-   _("Random seed"))
+gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
+   _("Random seed. Passing -1 implies that the seed is randomly chosen."))
 gegl_chant_double (turbulance, _("Turbulance"), 0.1, 7.0, 2,
    _("The value of the turbulance"))
 
@@ -269,7 +269,7 @@ process (GeglOperation       *operation,
 
   GeglRectangle boundary=plasma_get_bounding_box(operation);  
 
-  GRand *gr = g_rand_new_with_seed (o->seed);
+  GRand *gr;
   gint   depth;
   gint   x, y;
 
@@ -279,6 +279,11 @@ process (GeglOperation       *operation,
    */
   x = boundary.x + boundary.width;
   y = boundary.y + boundary.height;
+
+  if (o->seed == -1)
+    gr = g_rand_new ();
+  else
+    gr = g_rand_new_with_seed (o->seed);
 
   do_plasma_big (output, boundary.x, boundary.y, x-1, y-1, -1,
                  0, gr, o);
