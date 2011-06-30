@@ -74,16 +74,13 @@ add_random (GRand  *gr,
 {
   gint    i;
   gfloat  tmp;
-  gdouble rnd;
-
 
   amount /= 2;
-  rnd = fabs(fmod(amount, 1));
 
   if (amount > 0)
     for (i = 0; i < floats_per_pixel-1; i++)
        {
-          tmp = dest[i] + (gfloat) g_rand_double_range(gr, -rnd, rnd);
+          tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
           dest[i] = CLAMP (tmp, 0, 1);
        }
 }
