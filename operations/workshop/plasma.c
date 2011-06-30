@@ -21,7 +21,6 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
@@ -61,6 +60,7 @@ average_pixel (gfloat *dst_buf,
                gfloat *src_buf2)
 {
   gint i;
+
   for (i = 0; i < floats_per_pixel; i++)
     *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2;
 }
@@ -70,6 +70,7 @@ random_rgba (GRand  *gr,
              gfloat *dest)
 {
   gint i;
+
   for (i = 0; i < floats_per_pixel; i++)
     dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
 }
@@ -99,6 +100,7 @@ put_pixel_to_buffer (GeglBuffer *output,
                      gint        y)
 {
   GeglRectangle rect = {1, 1, 1, 1};
+
   rect.x = x;
   rect.y = y;
   gegl_buffer_set (output, &rect, babl_format ("RGBA float"), pixel,
@@ -119,11 +121,6 @@ do_plasma_big (PlasmaContext *context,
   gint    xm, ym;
   gfloat  ran;
   static gint count = 0;
-  /*
-    GeglRectangle  roi = {0, 0, 0, 0};
-    gfloat        *src_buf;
-    gboolean       toreturn;
-  */
 
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
@@ -162,7 +159,8 @@ do_plasma_big (PlasmaContext *context,
 
   if (!depth)
     {
-      if (x1 == x2 && y1 == y2) return FALSE;
+      if (x1 == x2 && y1 == y2)
+        return FALSE;
 
       gegl_buffer_sample (context->output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
 			  GEGL_INTERPOLATION_NEAREST);
@@ -240,10 +238,8 @@ do_plasma_big (PlasmaContext *context,
   return TRUE;
 }
 
-
-
 static GeglRectangle
-plasma_get_bounding_box (GeglOperation       *operation)
+plasma_get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -252,8 +248,6 @@ plasma_get_bounding_box (GeglOperation       *operation)
 
   return result;
 }
-
-
 
 static gboolean
 process (GeglOperation       *operation,
@@ -315,7 +309,6 @@ get_cached_region (GeglOperation       *operation,
   return *gegl_operation_source_get_bounding_box (operation, "input");
 }
 
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -332,8 +325,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->categories  = "render";
   operation_class->name        = "gegl:plasma";
-  operation_class->description =
-    _("Performs plasma on the image.");
+  operation_class->description = _("Performs plasma on the image.");
 }
 
 #endif
