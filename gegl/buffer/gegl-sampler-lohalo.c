@@ -241,7 +241,7 @@
 
 
 /*
- * Elbow room added to "Are we done yet?" checks.
+ * Wiggle room added to "Are we done yet?" checks.
  */
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
 #define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
@@ -310,7 +310,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.
  */
-#define LOHALO_OFFSET (2)
+#define LOHALO_OFFSET (13)
 #define LOHALO_SIZE ( 1 + 2 * LOHALO_OFFSET )
 
 /*
@@ -319,14 +319,11 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * context_rect but outside the lower context_rect, irregardless of
  * the alignment at the sampling location. I (Nicolas) have not taken
  * the time to find the exact inequality that must be respected so
- * that the do whiles word properly.  Essentially, the higher mipmap
- * level's offset should be larger than the lower mipmap level's
- * offset (assuming the usual factor of two relationship).
- *
- * ADAM: FOR NOW, KEEP IT SMALLISH. WE CAN MAKE IT LARGER WHEN WE KNOW
- * WHAT WORKS.
+ * that the do whiles word properly. Almost certainly, the higher
+ * mipmap level's offset should almost never smaller than half the
+ * previous level's offset.
  */
-#define LOHALO_OFFSET_1 (4)
+#define LOHALO_OFFSET_1 (13)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 /*
@@ -1966,6 +1963,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       const gdouble d = self->inverse_jacobian->coeff[1][1];
 
       /*
+       * Computations are done in double precision because "direct"
+       * SVD computations are prone to round off error. (Computing in
+       * single precision most likely would be fine.)
+       */
+      /*
        * n is the matrix Jinv * transpose(Jinv). Eigenvalues of n are
        * the squares of the singular values of Jinv.
        */
@@ -2009,7 +2011,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * the teepee weight is going to be negligible.
        */
 
-      if (twice_s1s1 >= (gdouble) 2. + LOHALO_FUDGE)
+      if (twice_s1s1 > (gdouble) 2. + LOHALO_FUDGE)
         {
           /*
            * The result (most likely) has a nonzero teepee component.
@@ -2107,6 +2109,13 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
           ewa_newval[1] = (gfloat) 0.0;
           ewa_newval[2] = (gfloat) 0.0;
           ewa_newval[3] = (gfloat) 0.0;
+
+          /*
+           * NICOLAS: Given that we now use larger level 1
+           * context_rect, it makes sense to restrict the EWA
+           * computation to the bounding box even at level 1. With
+           * small context_rect, this is a waste.
+           */
 
           /*
            * Grab the pixel values located within the context_rect of
