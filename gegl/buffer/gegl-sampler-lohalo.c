@@ -288,7 +288,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 
 /*
  * Because things are kept centered, the stencil width/height is 1 +
- * the offset.
+ * twice the (size of) the offset.
  *
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
