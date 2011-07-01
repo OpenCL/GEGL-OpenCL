@@ -181,7 +181,7 @@ do_plasma_big (PlasmaContext *context,
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
 
-  if (depth == -1)
+//  if (depth == -1)
     {
       random_rgba (context->gr, tl);
       put_pixel (context, tl, x1, y1);
@@ -213,7 +213,7 @@ do_plasma_big (PlasmaContext *context,
       return FALSE;
     }
 
-  if (!depth)
+  //if (!depth)
     {
       if (x1 == x2 && y1 == y2)
         return FALSE;

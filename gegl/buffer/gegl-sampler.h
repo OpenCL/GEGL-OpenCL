@@ -77,6 +77,10 @@ void  gegl_sampler_get         (GeglSampler *self,
                                 gdouble      x,
                                 gdouble      y,
                                 void        *output);
+
+void  gegl_sampler_set_inverse_jacobian (GeglSampler *self,
+                                         GeglMatrix2 *inverse_jacobian);
+
 gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,
                                        gint         y);

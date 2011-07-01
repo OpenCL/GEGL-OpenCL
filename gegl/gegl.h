@@ -28,6 +28,7 @@
 #include <gegl-color.h>
 #include <gegl-curve.h>
 #include <gegl-path.h>
+#include <gegl-matrix.h>
 #include <gegl-version.h>
 
 

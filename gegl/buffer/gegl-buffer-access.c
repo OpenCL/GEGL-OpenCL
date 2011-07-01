@@ -1066,13 +1066,13 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
 }
 
 void
-gegl_buffer_sample (GeglBuffer       *buffer,
-                    gdouble           x,
-                    gdouble           y,
-                    gdouble           scale,
-                    gpointer          dest,
-                    const Babl       *format,
-                    GeglInterpolation interpolation)
+gegl_buffer_sample2 (GeglBuffer       *buffer,
+                     gdouble           x,
+                     gdouble           y,
+                     GeglMatrix2      *inverse_jacobian,
+                     gpointer          dest,
+                     const Babl       *format,
+                     GeglInterpolation interpolation)
 {
   GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -1105,9 +1105,22 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
     }
-  gegl_sampler_get (buffer->sampler, x, y, dest);
+  if (inverse_jacobian)
+    gegl_sampler_set_inverse_jacobian (buffer->sampler, inverse_jacobian);
 
-  /* if (scale < 1.0) do decimation, possibly using pyramid instead */
+  gegl_sampler_get (buffer->sampler, x, y, dest);
+}
+
+void
+gegl_buffer_sample (GeglBuffer       *buffer,
+                    gdouble           x,
+                    gdouble           y,
+                    gdouble           scale,
+                    gpointer          dest,
+                    const Babl       *format,
+                    GeglInterpolation interpolation)
+{
+  gegl_buffer_sample2 (buffer, x, y, NULL, dest, format, interpolation);
 }
 
 void
@@ -1121,7 +1134,6 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
       buffer->sampler = NULL;
     }
 }
-
 
 void
 gegl_buffer_copy (GeglBuffer          *src,

@@ -590,3 +590,9 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
         return GEGL_TYPE_SAMPLER_LINEAR;
     }
 }
+
+void  gegl_sampler_set_inverse_jacobian (GeglSampler *self,
+                                         GeglMatrix2 *inverse_jacobian)
+{
+  self->inverse_jacobian = inverse_jacobian;
+}

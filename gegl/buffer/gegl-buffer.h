@@ -21,6 +21,7 @@
 
 #include <glib-object.h>
 #include <babl/babl.h>
+#include <gegl/gegl-matrix.h>
 
 G_BEGIN_DECLS
 
@@ -315,6 +316,7 @@ typedef enum {
   GEGL_INTERPOLATION_LOHALO
 } GeglInterpolation;
 
+
 /**
  * gegl_buffer_sample:
  * @buffer: the GeglBuffer to sample from
@@ -323,11 +325,10 @@ typedef enum {
  * @scale: the scale we're fetching at (<1.0 can lead to decimation)
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
- * @interpolation: the interpolation behavior to use, currently only nearest
- * neighbour is implemented for this API, bilinear, bicubic and lanczos needs
+ * @interpolation: the interpolation behavior to use,
  * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST and
- * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC and
- * GEGL_INTERPOLATION_LANCZOS.
+ * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
+ * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
  *
  * Query interpolate pixel values at a given coordinate using a specified form
  * of interpolation. The samplers used cache for a small neighbourhood of the
@@ -340,6 +341,14 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                gpointer          dest,
                                                const Babl       *format,
                                                GeglInterpolation interpolation);
+void
+gegl_buffer_sample2 (GeglBuffer       *buffer,
+                     gdouble           x,
+                     gdouble           y,
+                     GeglMatrix2      *inverse_jacobian,
+                     gpointer          dest,
+                     const Babl       *format,
+                     GeglInterpolation interpolation);
 
 
 /**
