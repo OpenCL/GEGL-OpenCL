@@ -90,6 +90,32 @@ const gchar   * gegl_extension_handler_get         (const gchar         *extensi
 const gchar   * gegl_extension_handler_get_saver   (const gchar         *extension);
 
 
+/* code template utility, updates the jacobian matrix using
+ * a user defined mapping function for displacement, example
+ * with an identity transform (note that for the identity
+ * transform this is massive computational overhead that can
+ * be skipped by passing NULL to the sampler.
+ *
+ * #define inverse_map(x,y,dx,dy) { dx=x; dy=y; }
+ *
+ * gegl_compute_jacobian(matrix, x, y);
+ * inverse_map(x,y,sample_x,sample_y);
+ *
+ * #undef inverse_map      // IMPORTANT undefine map macro
+ */
+#define gegl_compute_inverse_jacobian(matrix, x, y) \
+  { \
+    float ax, ay, bx, by;            \
+    inverse_map(x + 0.5, y, ax, ay); \
+    inverse_map(x - 0.5, y, bx, by); \
+    matrix.coeff[0][0] = ax - bx;    \
+    matrix.coeff[1][0] = ay - by;    \
+    inverse_map(x, y + 0.5, ax, ay); \
+    inverse_map(x, y - 0.5, bx, by); \
+    matrix.coeff[0][1] = ax - bx;    \
+    matrix.coeff[1][1] = ay - by;    \
+  }
+
 #include <glib-object.h>
 #include <babl/babl.h>
 #include <operation/gegl-operation.h>
