@@ -1016,6 +1016,14 @@ gegl_path_add_flattener (GeglPathList *(*flattener) (GeglPathList *original))
 }
 
 GeglPathList *
+gegl_path_get_path (GeglPath *path)
+{
+  GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
+
+  return priv->path;
+}
+
+GeglPathList *
 gegl_path_get_flat_path (GeglPath *path)
 {
   GeglPathPrivate *priv = GEGL_PATH_GET_PRIVATE (path);
