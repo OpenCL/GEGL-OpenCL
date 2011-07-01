@@ -116,11 +116,10 @@ fractaltrace (GeglBuffer          *input,
               BackgroundType       background_type,
               Babl                *format)
 {
+  GeglMatrix2    inverse_jacobian;
   gint           x, i, offset;
   gdouble        scale_x, scale_y;
-  gdouble        cx, cy;
   gdouble        bailout2;
-  gdouble        px, py;
   gfloat         dest[4];
 
   scale_x = (o->X2 - o->X1) / picture->width;
@@ -128,35 +127,52 @@ fractaltrace (GeglBuffer          *input,
 
   bailout2 = o->bailout * o->bailout;
 
-  cy = o->Y1 + (y - picture->y) * scale_y;
   offset = (y - roi->y) * roi->width * 4;
 
   for (x = roi->x; x < roi->x + roi->width; x++)
     {
+      gdouble cx, cy;
+      gdouble px, py;
       dest[1] = dest[2] = dest[3] = dest[0] = 0.0;
-      cx = o->X1 + (x - picture->x) * scale_x;
 
       switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
-          julia (cx, cy, o->JX, o->JY, &px, &py, o->depth, bailout2);
+#define inverse_map(u,v,ud,vd) {\
+       gdouble rx, ry;\
+       cx = o->X1 + ((u) - picture->x) * scale_x; \
+       cy = o->Y1 + ((v) - picture->y) * scale_y; \
+       julia (cx, cy, o->JX, o->JY, &rx, &ry, o->depth, bailout2);\
+       ud = (rx - o->X1) / scale_x + picture->x;\
+       vd = (ry - o->Y1) / scale_y + picture->y;\
+      }
+      gegl_compute_inverse_jacobian (inverse_jacobian, x, y);
+      inverse_map(x,y,px,py);
+#undef inverse_map
           break;
 
         case FRACTAL_TYPE_MANDELBROT:
-          julia (cx, cy, cx, cy, &px, &py, o->depth, bailout2);
+#define inverse_map(u,v,ud,vd) {\
+           gdouble rx, ry;\
+           cx = o->X1 + ((u) - picture->x) * scale_x; \
+           cy = o->Y1 + ((v) - picture->y) * scale_y; \
+           julia (cx, cy, cx, cy, &rx, &ry, o->depth, bailout2);\
+           ud = (rx - o->X1) / scale_x + picture->x;\
+           vd = (ry - o->Y1) / scale_y + picture->y;\
+         }
+      gegl_compute_inverse_jacobian (inverse_jacobian, x, y);
+      inverse_map(x,y,px,py);
+#undef inverse_map
           break;
 
         default:
           g_error (_("Unsupported fractal type"));
         }
 
-      px = (px - o->X1) / scale_x + picture->x;
-      py = (py - o->Y1) / scale_y + picture->y;
-
       if (0 <= px && px < picture->width && 0 <= py && py < picture->height)
         {
-          gegl_buffer_sample (input, px, py, 1.0, dest, format,
-                              GEGL_INTERPOLATION_LINEAR);
+          gegl_buffer_sample2 (input, px, py, &inverse_jacobian, dest, format,
+                               GEGL_INTERPOLATION_LOHALO);
         }
       else
         {
@@ -188,8 +204,8 @@ fractaltrace (GeglBuffer          *input,
                     py = picture->height - 1.0;
                 }
 
-              gegl_buffer_sample (input, px, py, 1.0, dest, format,
-                                  GEGL_INTERPOLATION_LINEAR);
+              gegl_buffer_sample2 (input, px, py, &inverse_jacobian, dest, format,
+                                   GEGL_INTERPOLATION_LOHALO);
               break;
 
             case BACKGROUND_TYPE_TRANSPARENT:
