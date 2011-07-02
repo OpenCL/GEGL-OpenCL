@@ -4,11 +4,29 @@
 #include "gegl-cl-types.h"
 #include <gmodule.h>
 
+#define CL_SAFE_CALL(func)                                          \
+func;                                                               \
+if (errcode != CL_SUCCESS)                                          \
+{                                                                   \
+  g_warning("OpenCL error in %s, Line %u in file %s\nError:%s",     \
+            #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
+}
+
+guint gegl_cl_count_lines(const char* kernel_source[]);
+
 char *gegl_cl_errstring(cl_int err);
 
 gboolean gegl_cl_init (GError **error);
 
 gboolean gegl_cl_is_accelerated (void);
+
+cl_platform_id gegl_cl_get_platform (void);
+
+cl_device_id gegl_cl_get_device (void);
+
+cl_context gegl_cl_get_context (void);
+
+cl_command_queue gegl_cl_get_command_queue (void);
 
 #ifdef __GEGL_CL_INIT_MAIN__
 t_clGetPlatformIDs  gegl_clGetPlatformIDs  = NULL;

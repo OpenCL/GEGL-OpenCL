@@ -6,6 +6,14 @@
 #include <string.h>
 #include <stdio.h>
 
+guint
+gegl_cl_count_lines(const char* kernel_source[])
+{
+  guint count = 0;
+  while (kernel_source[count++] != NULL);
+  return count-1;
+}
+
 /* http://forums.amd.com/forum/messageview.cfm?catid=390&threadid=128536 */
 char *gegl_cl_errstring(cl_int err) {
   switch (err) {
@@ -61,10 +69,39 @@ char *gegl_cl_errstring(cl_int err) {
 
 static gboolean cl_is_accelerated  = FALSE;
 
+static cl_platform_id   platform = NULL;
+static cl_device_id     device   = NULL;
+static cl_context       ctx      = NULL;
+static cl_command_queue cq       = NULL;
+
 gboolean
 gegl_cl_is_accelerated (void)
 {
   return cl_is_accelerated;
+}
+
+cl_platform_id
+gegl_cl_get_platform (void)
+{
+  return platform;
+}
+
+cl_device_id
+gegl_cl_get_device (void)
+{
+  return device;
+}
+
+cl_context
+gegl_cl_get_context (void)
+{
+  return ctx;
+}
+
+cl_command_queue
+gegl_cl_get_command_queue (void)
+{
+  return cq;
 }
 
 #define CL_LOAD_FUNCTION(func)                                                    \
@@ -142,6 +179,21 @@ gegl_cl_init (GError **error)
       CL_LOAD_FUNCTION (clReleaseMemObject)
 
       cl_is_accelerated = TRUE;
+
+      gegl_clGetPlatformIDs (1, &platform, NULL);
+      gegl_clGetPlatformInfo (platform, CL_PLATFORM_NAME, sizeof(buffer), buffer, NULL);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Platform Name:%s", buffer);
+      gegl_clGetPlatformInfo (platform, CL_PLATFORM_VERSION, sizeof(buffer), buffer, NULL);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Version:%s", buffer);
+      gegl_clGetPlatformInfo (platform, CL_PLATFORM_EXTENSIONS, sizeof(buffer), buffer, NULL);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Extensions:%s", buffer);
+
+      gegl_clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
+      gegl_clGetDeviceInfo(device, CL_DEVICE_NAME, sizeof(buffer), buffer, NULL);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Default Device Name:%s", buffer);
+
+      ctx = gegl_clCreateContext(0, 1, &device, NULL, NULL, NULL);
+      cq  = gegl_clCreateCommandQueue(ctx, device, 0, NULL);
     }
 
   return TRUE;
