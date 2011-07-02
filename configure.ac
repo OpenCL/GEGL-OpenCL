@@ -1016,7 +1016,6 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
-
 #######################
 # Check for other items
 #######################
@@ -1071,6 +1070,7 @@ gegl/module/Makefile
 gegl/operation/Makefile
 gegl/process/Makefile
 gegl/property-types/Makefile
+gegl/opencl/Makefile
 libs/Makefile
 libs/rgbe/Makefile
 operations/Makefile
@@ -1100,6 +1100,7 @@ tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
+tests/opencl/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])

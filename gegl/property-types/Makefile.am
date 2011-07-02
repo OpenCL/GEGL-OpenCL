@@ -3,7 +3,9 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/gegl \
 	-I$(top_srcdir)/gegl \
 	-I$(top_builddir)/gegl/buffer \
-	-I$(top_srcdir)/gegl/buffer
+	-I$(top_srcdir)/gegl/buffer \
+	-I$(top_builddir)/gegl/opencl \
+	-I$(top_srcdir)/gegl/opencl
 
 AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 

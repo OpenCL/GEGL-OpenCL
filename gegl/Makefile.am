@@ -9,7 +9,7 @@ if PLATFORM_WIN32
 no_undefined = -no-undefined
 endif
 
-SUBDIRS = buffer graph module operation process property-types
+SUBDIRS = buffer graph module operation process property-types opencl
 
 CLEANFILES =
 
@@ -22,6 +22,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/gegl/property-types \
 	-I$(top_builddir)/gegl/operation \
 	-I$(top_srcdir)/gegl/operation \
+	-I$(top_builddir)/gegl/opencl \
+	-I$(top_srcdir)/gegl/opencl \
 	-DLIBDIR=\""$(libdir)"\" \
 	-DGEGL_LOCALEDIR=\""$(GEGL_LOCALEDIR)"\"
 
@@ -103,7 +105,8 @@ libgegl_@GEGL_API_VERSION@_la_LIBADD = \
 	$(top_builddir)/gegl/operation/liboperation.la		\
 	$(top_builddir)/gegl/graph/libgraph.la			\
 	$(top_builddir)/gegl/process/libprocess.la		\
-	$(top_builddir)/gegl/property-types/libpropertytypes.la
+	$(top_builddir)/gegl/property-types/libpropertytypes.la \
+	$(top_builddir)/gegl/opencl/libcl.la
 
 
 if HAVE_INTROSPECTION
