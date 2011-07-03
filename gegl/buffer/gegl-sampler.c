@@ -122,18 +122,7 @@ gegl_sampler_get (GeglSampler *self,
                   GeglMatrix2 *scale,
                   void        *output)
 {
-  GeglSamplerClass *klass;
-
-#if 0  /* avoiding expensive typecheck here */
-  g_return_if_fail (GEGL_IS_SAMPLER (self));
-#endif
-
-  self->x = x;
-  self->y = y;
-
-  klass = GEGL_SAMPLER_GET_CLASS (self); /*XXX: bottleneck, store the vfunc cached
-                                                in the instance instead  */
-  klass->get (self, x, y, scale, output);
+  self->get (self, x, y, scale, output);
 }
 
 void
@@ -166,7 +155,7 @@ gegl_sampler_prepare (GeglSampler *self)
       self->cache_buffer = NULL;
     }
 #endif
-
+  self->get = klass->get; /* cache the sampler in the instance */
 }
 
 void

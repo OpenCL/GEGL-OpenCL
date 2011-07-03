@@ -49,6 +49,16 @@ struct _GeglSampler
   GeglRectangle  sampler_rectangle[GEGL_SAMPLER_MIPMAP_LEVELS];
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */
+
+  /* we cache the getter in the instance, (being able to return the
+     function pointer itself and cache it outside the calling loop
+     would be even quicker.
+   */
+  void (* get)       (GeglSampler *self,
+                      gdouble      x,
+                      gdouble      y,
+                      GeglMatrix2 *scale,
+                      void        *output);
 };
 
 struct _GeglSamplerClass

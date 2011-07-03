@@ -382,6 +382,7 @@ GeglSampler *
 gegl_buffer_sampler_new (GeglBuffer       *buffer,
                          Babl             *format,
                          GeglInterpolation interpolation);
+
 void  gegl_sampler_set_scale   (GeglSampler *self,
                                 GeglMatrix2 *scale);
 void  gegl_sampler_get         (GeglSampler *self,
