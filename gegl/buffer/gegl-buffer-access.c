@@ -339,7 +339,6 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
-  gint  i;
   gint  factor         = 1<<level;
 
   /* roi specified, override buffers extent */
@@ -1069,7 +1068,7 @@ void
 gegl_buffer_sample2 (GeglBuffer       *buffer,
                      gdouble           x,
                      gdouble           y,
-                     GeglMatrix2      *inverse_jacobian,
+                     GeglMatrix2      *scale,
                      gpointer          dest,
                      const Babl       *format,
                      GeglInterpolation interpolation)
@@ -1105,8 +1104,8 @@ gegl_buffer_sample2 (GeglBuffer       *buffer,
       buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
     }
-  if (inverse_jacobian)
-    gegl_sampler_set_inverse_jacobian (buffer->sampler, inverse_jacobian);
+  if (scale)
+    gegl_sampler_set_scale (buffer->sampler, scale);
 
   gegl_sampler_get (buffer->sampler, x, y, dest);
 }

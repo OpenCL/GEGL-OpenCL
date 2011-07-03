@@ -22,9 +22,6 @@
 
 G_BEGIN_DECLS
 
-
-
-
 /***
  * GeglRectangle:
  *

@@ -96,25 +96,27 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
  * transform this is massive computational overhead that can
  * be skipped by passing NULL to the sampler.
  *
- * #define inverse_map(x,y,dx,dy) { dx=x; dy=y; }
+ * #define gegl_unmap(x,y,dx,dy) { dx=x; dy=y; }
  *
- * gegl_compute_jacobian(matrix, x, y);
- * inverse_map(x,y,sample_x,sample_y);
+ * gegl_sampler_compute_scale (scale, x, y);
+ * gegl_unmap(x,y,sample_x,sample_y);
+ * gegl_buffer_sample (buffer, sample_x, sample_y, scale, dest, format,
+ *                     GEGL_INTERPOLATION_LOHALO);
  *
- * #undef inverse_map      // IMPORTANT undefine map macro
+ * #undef gegl_unmap      // IMPORTANT undefine map macro
  */
-#define gegl_compute_inverse_jacobian(matrix, x, y) \
-  { \
-    float ax, ay, bx, by;            \
-    inverse_map(x + 0.5, y, ax, ay); \
-    inverse_map(x - 0.5, y, bx, by); \
-    matrix.coeff[0][0] = ax - bx;    \
-    matrix.coeff[1][0] = ay - by;    \
-    inverse_map(x, y + 0.5, ax, ay); \
-    inverse_map(x, y - 0.5, bx, by); \
-    matrix.coeff[0][1] = ax - bx;    \
-    matrix.coeff[1][1] = ay - by;    \
-  }
+#define gegl_sampler_compute_scale (matrix, x, y) \
+{                                       \
+  float ax, ay, bx, by;                 \
+  gegl_inverse_map(x + 0.5, y, ax, ay); \
+  gegl_inverse_map(x - 0.5, y, bx, by); \
+  matrix.coeff[0][0] = ax - bx;         \
+  matrix.coeff[1][0] = ay - by;         \
+  gegl_inverse_map(x, y + 0.5, ax, ay); \
+  gegl_inverse_map(x, y - 0.5, bx, by); \
+  matrix.coeff[0][1] = ax - bx;         \
+  matrix.coeff[1][1] = ay - by;         \
+}
 
 #include <glib-object.h>
 #include <babl/babl.h>

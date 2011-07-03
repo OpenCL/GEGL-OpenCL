@@ -48,7 +48,10 @@ struct _GeglSampler
   GeglRectangle  context_rect[GEGL_SAMPLER_MIPMAP_LEVELS];
   gpointer       sampler_buffer[GEGL_SAMPLER_MIPMAP_LEVELS];
   GeglRectangle  sampler_rectangle[GEGL_SAMPLER_MIPMAP_LEVELS];
-  GeglMatrix2   *inverse_jacobian;
+  GeglMatrix2   *inverse_jacobian; /* scale - which could be the inverse
+                                      inverse jacobian matrix or some other
+                                      approximation of the extent of the region
+                                      being sampled.  */
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */
 };
@@ -73,13 +76,12 @@ void  gegl_sampler_prepare     (GeglSampler *self);
 void  gegl_sampler_set_buffer  (GeglSampler *self,
                                 GeglBuffer  *buffer);
 
+void  gegl_sampler_set_scale   (GeglSampler *self,
+                                GeglMatrix2 *scale);
 void  gegl_sampler_get         (GeglSampler *self,
                                 gdouble      x,
                                 gdouble      y,
                                 void        *output);
-
-void  gegl_sampler_set_inverse_jacobian (GeglSampler *self,
-                                         GeglMatrix2 *inverse_jacobian);
 
 gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,
