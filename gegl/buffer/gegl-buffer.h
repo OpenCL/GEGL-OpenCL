@@ -375,16 +375,23 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * @format: format we want data back in
  * @interpolation: resampling method to create a sampler for.
  *
- * Create a new sampler.
+ * Create a new sampler, when you are done with the sampler, g_object_unref
+ * it.
  */
 GeglSampler *
 gegl_buffer_sampler_new (GeglBuffer       *buffer,
                          Babl             *format,
                          GeglSamplerType   sampler_type);
 
-void  gegl_sampler_set_scale   (GeglSampler *self,
-                                GeglMatrix2 *scale);
-void  gegl_sampler_get         (GeglSampler *self,
+/**
+ * gegl_sampler_get:
+ * @sampler: a GeglSampler gotten from gegl_buffer_sampler_new
+ * @x: x coordinate to sample
+ * @y: y coordinate to sample
+ * @scale: matrix representing extent of sampling area in source buffer.
+ * @output: memory location for output data.
+ */
+void  gegl_sampler_get         (GeglSampler *sampler,
                                 gdouble      x,
                                 gdouble      y,
                                 GeglMatrix2 *scale,
