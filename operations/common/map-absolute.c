@@ -26,11 +26,9 @@
 #include "buffer/gegl-sampler.h"
 #include "buffer/gegl-buffer-iterator.h"
 
+#include <stdio.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
-
-gegl_chant_interpolation (interp, _("Interpolation"),
-                          GEGL_INTERPOLATION_CUBIC, _("Interpolation used internaly"))
 
 #else
 
