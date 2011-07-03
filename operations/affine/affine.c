@@ -446,7 +446,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
   GeglSampler   *sampler;
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_interpolation_from_string (affine->filter));
+      gegl_sampler_type_from_string (affine->filter));
   context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
@@ -533,7 +533,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
 
   requested_rect = *region;
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_interpolation_from_string (affine->filter));
+      gegl_sampler_type_from_string (affine->filter));
   context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
@@ -585,7 +585,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   GeglRectangle      region = *input_region;
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_interpolation_from_string (affine->filter));
+      gegl_sampler_type_from_string (affine->filter));
   context_rect = sampler->context_rect[0];
   g_object_unref (sampler);
 
@@ -889,7 +889,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.y += 1;
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_interpolation_from_string (affine->filter));
+          gegl_sampler_type_from_string (affine->filter));
 
       src_rect.width -= sampler->context_rect[0].width;
       src_rect.height -= sampler->context_rect[0].height;
@@ -917,7 +917,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.x += 1;
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_interpolation_from_string (affine->filter));
+          gegl_sampler_type_from_string (affine->filter));
 
       src_rect.width -= sampler->context_rect[0].width;
       src_rect.height -= sampler->context_rect[0].height;
@@ -936,7 +936,7 @@ gegl_affine_process (GeglOperation        *operation,
       output = gegl_operation_context_get_target (context, "output");
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_interpolation_from_string (affine->filter));
+          gegl_sampler_type_from_string (affine->filter));
       affine_generic (output, input, &matrix, sampler);
       g_object_unref(sampler->buffer);
       sampler->buffer = NULL;

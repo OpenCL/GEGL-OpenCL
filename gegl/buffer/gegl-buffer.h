@@ -390,7 +390,6 @@ void  gegl_sampler_get         (GeglSampler *self,
                                 GeglMatrix2 *scale,
                                 void        *output);
 
-
 /**
  * gegl_buffer_linear_new:
  * @extent: dimensions of buffer.
