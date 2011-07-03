@@ -17,16 +17,6 @@
  *
  */
 
-#include "config.h"
-#include <glib/gi18n-lib.h>
-
-#include <gegl.h>
-#include <gegl-plugin.h>
-#include <gegl-utils.h>
-#include "buffer/gegl-sampler.h"
-#include "buffer/gegl-buffer-iterator.h"
-
-#include <stdio.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -39,6 +29,8 @@ gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
 #define GEGL_CHANT_TYPE_COMPOSER
 #define GEGL_CHANT_C_FILE       "map-relative.c"
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
 
 
@@ -71,7 +63,6 @@ process (GeglOperation       *operation,
 {
   Babl                 *format_io, *format_coords;
   GeglSampler          *sampler;
-  GType                 desired_type;
   GeglInterpolation     interpolation;
   GeglBufferIterator   *it;
   gint                  index_in, index_out, index_coords;
@@ -79,15 +70,8 @@ process (GeglOperation       *operation,
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
 
-  interpolation = gegl_buffer_interpolation_from_string ("cubic");
-  desired_type = gegl_sampler_type_from_interpolation (interpolation);
-
-  sampler = g_object_new (desired_type,
-                          "format", format_io,
-                          "buffer", input,
-                          NULL);
-
-  gegl_sampler_prepare (sampler);
+  interpolation = gegl_interpolation_from_string ("cubic");
+  sampler = gegl_buffer_sampler_new (input, format_io, interpolation);
 
   if (aux != NULL)
     {
