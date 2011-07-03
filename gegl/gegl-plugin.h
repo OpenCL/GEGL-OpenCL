@@ -118,6 +118,20 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
   matrix.coeff[1][1] = ay - by;         \
 }
 
+typedef struct
+{
+  GObject       parent_instance;
+  void (* get) (GeglSampler *self,
+                gdouble      x,
+                gdouble      y,
+                GeglMatrix2 *scale,
+                void        *output);
+} SamplerMock;
+
+
+#define gegl_sampler_get(sampler,x,y,scale,dest) \
+  ((SamplerMock*)(sampler))->get((sampler),(x),(y),(scale),(dest))
+
 #include <glib-object.h>
 #include <babl/babl.h>
 #include <operation/gegl-operation.h>

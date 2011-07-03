@@ -19,6 +19,7 @@
 #include "config.h"
 #include <gegl.h>
 #include <gegl-plugin.h>
+#undef gegl_sampler_get
 #include <glib/gprintf.h>
 #include <gobject/gvaluecollector.h>
 #include <stdarg.h>

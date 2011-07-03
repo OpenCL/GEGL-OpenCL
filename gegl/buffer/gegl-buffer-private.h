@@ -22,7 +22,6 @@
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
-#include "gegl-sampler.h"
 #include "gegl-tile-handler.h"
 #include "gegl-buffer-iterator.h"
 

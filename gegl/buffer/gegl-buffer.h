@@ -397,6 +397,9 @@ void  gegl_sampler_get         (GeglSampler *sampler,
                                 GeglMatrix2 *scale,
                                 void        *output);
 
+const GeglRectangle*
+gegl_sampler_get_context_rect (GeglSampler *sampler);
+
 /**
  * gegl_buffer_linear_new:
  * @extent: dimensions of buffer.

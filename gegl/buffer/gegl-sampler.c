@@ -590,3 +590,9 @@ gegl_buffer_sampler_new (GeglBuffer       *buffer,
   gegl_sampler_prepare (sampler);
   return sampler;
 }
+
+const GeglRectangle*
+gegl_sampler_get_context_rect (GeglSampler *sampler)
+{
+  return &(sampler->context_rect);
+}

@@ -447,7 +447,7 @@ gegl_affine_get_bounding_box (GeglOperation *op)
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (affine->filter));
-  context_rect = sampler->context_rect[0];
+  context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
@@ -534,7 +534,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
   requested_rect = *region;
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (affine->filter));
-  context_rect = sampler->context_rect[0];
+  context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
   gegl_affine_create_composite_matrix (affine, &inverse);
@@ -586,7 +586,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (affine->filter));
-  context_rect = sampler->context_rect[0];
+  context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
   gegl_affine_create_matrix (affine, &matrix);
@@ -875,6 +875,7 @@ gegl_affine_process (GeglOperation        *operation,
     {
       GeglRectangle      src_rect;
       GeglSampler       *sampler;
+      GeglRectangle      context_rect;
 
       input  = gegl_operation_context_get_source (context, "input");
       if (!input)
@@ -890,9 +891,10 @@ gegl_affine_process (GeglOperation        *operation,
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
           gegl_sampler_type_from_string (affine->filter));
+      context_rect = *gegl_sampler_get_context_rect (sampler);
 
-      src_rect.width -= sampler->context_rect[0].width;
-      src_rect.height -= sampler->context_rect[0].height;
+      src_rect.width -= context_rect.width;
+      src_rect.height -= context_rect.height;
 
       gegl_affine_fast_reflect_x (output, input, result, &src_rect);
 
@@ -903,6 +905,7 @@ gegl_affine_process (GeglOperation        *operation,
     {
       GeglRectangle      src_rect;
       GeglSampler       *sampler;
+      GeglRectangle      context_rect;
 
       input  = gegl_operation_context_get_source (context, "input");
       if (!input)
@@ -918,9 +921,10 @@ gegl_affine_process (GeglOperation        *operation,
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
           gegl_sampler_type_from_string (affine->filter));
+      context_rect = *gegl_sampler_get_context_rect (sampler);
 
-      src_rect.width -= sampler->context_rect[0].width;
-      src_rect.height -= sampler->context_rect[0].height;
+      src_rect.width -= context_rect.width;
+      src_rect.height -= context_rect.height;
 
       gegl_affine_fast_reflect_y (output, input, result, &src_rect);
 
@@ -938,8 +942,6 @@ gegl_affine_process (GeglOperation        *operation,
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
           gegl_sampler_type_from_string (affine->filter));
       affine_generic (output, input, &matrix, sampler);
-      g_object_unref(sampler->buffer);
-      sampler->buffer = NULL;
       g_object_unref (sampler);
 
       if (input != NULL)
