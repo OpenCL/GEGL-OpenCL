@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 #define GEGL_SAMPLER_MIPMAP_LEVELS   3
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
-typedef struct _GeglSampler    GeglSampler;
 
 struct _GeglSampler
 {

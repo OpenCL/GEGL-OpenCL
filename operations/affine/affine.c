@@ -139,38 +139,11 @@ op_affine_get_type (void)
   return g_define_type_id;
 }
 
-
-GType
-gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
-
 /* ************************* */
 static GeglSampler *
 op_affine_sampler (OpAffine *self)
 {
-  Babl                 *format;
-  GeglSampler          *sampler;
-  GType                 desired_type;
-  GeglInterpolation     interpolation;
-
-  format = babl_format ("RaGaBaA float");
-
-  interpolation = gegl_buffer_interpolation_from_string (self->filter);
-  desired_type = gegl_sampler_type_from_interpolation (interpolation);
-
-  if (interpolation == GEGL_INTERPOLATION_LANCZOS)
-    {
-      sampler = g_object_new (desired_type,
-                              "format", format,
-                              "lanczos_width",  self->lanczos_width,
-                              NULL);
-    }
-  else
-    {
-      sampler = g_object_new (desired_type,
-                              "format", format,
-                              NULL);
-    }
-  return sampler;
+  return gegl_sampler_from_interpolation (gegl_interpolation_from_string (self->filter));
 }
 /* XXX: keep a pool of samplers */
 

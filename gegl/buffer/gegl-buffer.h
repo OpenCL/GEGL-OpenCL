@@ -28,7 +28,8 @@ G_BEGIN_DECLS
 #define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
 #define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
 #ifndef __GEGL_BUFFER_TYPES_H__
-typedef struct _GeglBuffer     GeglBuffer;
+typedef struct _GeglBuffer   GeglBuffer;
+typedef struct _GeglSampler  GeglSampler;
 #endif
 
 /***
@@ -344,6 +345,8 @@ void gegl_buffer_sample (GeglBuffer       *buffer,
                          GeglInterpolation interpolation);
 
 
+
+
 /**
  * gegl_buffer_sample_cleanup:
  * @buffer: the GeglBuffer to sample from
@@ -356,15 +359,22 @@ void gegl_buffer_sample (GeglBuffer       *buffer,
 void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
 /**
- * gegl_buffer_interpolation_from_string:
+ * gegl_interpolation_from_string:
  * @string: the string to look up
  *
  * Looks up the GeglInterpolation corresponding to a string, if no matching
  * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
  */
-GeglInterpolation gegl_buffer_interpolation_from_string (const gchar *string);
+GeglInterpolation gegl_interpolation_from_string (const gchar *string);
 
-
+/**
+ * gegl_sampler_from_interpolation:
+ * @string: the string to look up
+ *
+ * Looks up the GeglInterpolation corresponding to a string, if no matching
+ * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
+ */
+GeglSampler *gegl_sampler_from_interpolation (GeglInterpolation interpolation);
 
 /**
  * gegl_buffer_linear_new:

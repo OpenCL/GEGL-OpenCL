@@ -556,7 +556,7 @@ set_buffer (GeglSampler *self, GeglBuffer *buffer)
 }
 
 GeglInterpolation
-gegl_buffer_interpolation_from_string (const gchar *string)
+gegl_interpolation_from_string (const gchar *string)
 {
   if (g_str_equal (string, "nearest") ||
       g_str_equal (string, "none"))
@@ -594,6 +594,25 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
     }
+}
+
+GeglSampler *
+gegl_sampler_from_interpolation (GeglInterpolation interpolation)
+{
+  Babl                 *format = babl_format ("RaGaBaA float");
+  GeglSampler          *sampler;
+  GType                 desired_type;
+  desired_type = gegl_sampler_type_from_interpolation (interpolation);
+  if (interpolation == GEGL_INTERPOLATION_LANCZOS)
+      sampler = g_object_new (desired_type,
+                              "format", format,
+                              "lanczos_width",  4,
+                              NULL);
+  else
+      sampler = g_object_new (desired_type,
+                              "format", format,
+                              NULL);
+  return sampler;
 }
 
 void  gegl_sampler_set_scale (GeglSampler *self,

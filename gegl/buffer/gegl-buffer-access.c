@@ -1202,18 +1202,3 @@ gegl_buffer_dup (GeglBuffer *buffer)
   return new_buffer;
 }
 
-void
-gegl_buffer_sampler (GeglBuffer       *buffer,
-                    gdouble           x,
-                    gdouble           y,
-                    gdouble           scale,
-                    gpointer          dest,
-                    const Babl       *format,
-                    gpointer          sampler2)
-{
-  GeglSampler *sampler = sampler2;
-  g_return_if_fail (GEGL_IS_BUFFER (buffer));
-  g_return_if_fail (GEGL_IS_SAMPLER (sampler));
-
-  gegl_sampler_get (sampler, x, y, dest);
-}

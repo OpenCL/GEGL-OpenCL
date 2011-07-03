@@ -65,5 +65,6 @@ typedef struct _GeglCache                 GeglCache;
 typedef struct _GeglCacheClass            GeglCacheClass;
 
 typedef struct _GeglRegion                GeglRegion;
+typedef struct _GeglSampler               GeglSampler;
 
 #endif
