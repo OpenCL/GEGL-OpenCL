@@ -341,18 +341,19 @@ struct _GeglChantO
                         * in finalize). Also serves as a filler making sure that we
                         * do not create an empty struct if there are no chanted properties.
                         */
-#define gegl_chant_int(name, nick, min, max, def, blurb)     gint        name;
-#define gegl_chant_double(name, nick, min, max, def, blurb)  gdouble     name;
-#define gegl_chant_boolean(name, nick, def, blurb)           gboolean    name;
-#define gegl_chant_string(name, nick, def, blurb)            gchar      *name;
-#define gegl_chant_file_path(name, nick, def, blurb)         gchar      *name;
-#define gegl_chant_multiline(name, nick, def, blurb)         gchar      *name;
-#define gegl_chant_object(name,nick,  blurb)                 GObject    *name;
-#define gegl_chant_pointer(name, nick, blurb)                gpointer    name;
-#define gegl_chant_color(name, nick, def, blurb)             GeglColor  *name;
-#define gegl_chant_curve(name, nick, blurb)                  GeglCurve  *name;
-#define gegl_chant_path(name, nick, blurb)                   GeglPath   *name;\
-                                                   guint path_changed_handler;
+#define gegl_chant_int(name, nick, min, max, def, blurb)     gint               name;
+#define gegl_chant_double(name, nick, min, max, def, blurb)  gdouble            name;
+#define gegl_chant_boolean(name, nick, def, blurb)           gboolean           name;
+#define gegl_chant_string(name, nick, def, blurb)            gchar             *name;
+#define gegl_chant_file_path(name, nick, def, blurb)         gchar             *name;
+#define gegl_chant_multiline(name, nick, def, blurb)         gchar             *name;
+#define gegl_chant_object(name,nick,  blurb)                 GObject           *name;
+#define gegl_chant_pointer(name, nick, blurb)                gpointer           name;
+#define gegl_chant_color(name, nick, def, blurb)             GeglColor         *name;
+#define gegl_chant_curve(name, nick, blurb)                  GeglCurve         *name;
+#define gegl_chant_path(name, nick, blurb)                   GeglPath          *name;\
+                                                          guint path_changed_handler;
+#define gegl_chant_interpolation(name, nick, def, blurb)     GeglInterpolation  name;
 
 #include GEGL_CHANT_C_FILE
 
@@ -367,6 +368,7 @@ struct _GeglChantO
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
 };
 
 #define GEGL_CHANT_OPERATION(obj) ((Operation*)(obj))
@@ -385,6 +387,7 @@ enum
 #define gegl_chant_color(name, nick, def, blurb)             PROP_##name,
 #define gegl_chant_curve(name, nick, blurb)                  PROP_##name,
 #define gegl_chant_path(name, nick, blurb)                   PROP_##name,
+#define gegl_chant_interpolation(name, nick, def, blurb)     PROP_##name,
 
 #include GEGL_CHANT_C_FILE
 
@@ -399,6 +402,7 @@ enum
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
   PROP_LAST
 };
 
@@ -459,6 +463,10 @@ get_property (GObject      *gobject,
       if (!properties->name)properties->name = gegl_path_new (); /* this feels ugly */\
       g_value_set_object (value, properties->name);           \
       break;/*XXX*/
+#define gegl_chant_interpolation(name, nick, def, blurb)      \
+    case PROP_##name:                                         \
+      g_value_set_enum (value, properties->name);             \
+      break;
 
 #include GEGL_CHANT_C_FILE
 
@@ -473,6 +481,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -560,6 +569,10 @@ set_property (GObject      *gobject,
           G_CALLBACK(path_changed), gobject);     \
          }\
       break; /*XXX*/
+#define gegl_chant_interpolation(name, nick, def, blurb)              \
+    case PROP_##name:                                                 \
+      properties->name = g_value_get_enum (value);                    \
+      break;
 
 #include GEGL_CHANT_C_FILE
 
@@ -574,6 +587,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -633,6 +647,7 @@ static void gegl_chant_destroy_notify (gpointer data)
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
+#define gegl_chant_interpolation(name, nick, def, blurb)
 
 #include GEGL_CHANT_C_FILE
 
@@ -647,6 +662,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
 
   g_slice_free (GeglChantO, properties);
 }
@@ -678,6 +694,7 @@ gegl_chant_constructor (GType                  type,
     {properties->name = gegl_color_new(def?def:"black");}
 #define gegl_chant_path(name, nick, blurb)
 #define gegl_chant_curve(name, nick, blurb)
+#define gegl_chant_interpolation(name, nick, def, blurb)
 
 #include GEGL_CHANT_C_FILE
 
@@ -692,6 +709,7 @@ gegl_chant_constructor (GType                  type,
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
 
   g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);
   properties ++; /* evil hack to silence gcc */
@@ -777,7 +795,7 @@ gegl_chant_class_intern_init (gpointer klass)
                                                           def,               \
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
-														  G_PARAM_CONSTRUCT | \
+                                                          G_PARAM_CONSTRUCT | \
                                                           GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_path(name, nick, blurb)                                 \
   g_object_class_install_property (object_class, PROP_##name,                \
@@ -795,7 +813,15 @@ gegl_chant_class_intern_init (gpointer klass)
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PARAM_PAD_INPUT)));
-
+#define gegl_chant_interpolation(name, nick, def, blurb)                     \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   g_param_spec_enum (#name, nick, blurb,    \
+                                                      GEGL_TYPE_INTERPOLATION,\
+                                                      def,                   \
+                                                      (GParamFlags) (        \
+                                                      G_PARAM_READWRITE |    \
+                                                      G_PARAM_CONSTRUCT |    \
+                                                      GEGL_PARAM_PAD_INPUT)));
 
 #include GEGL_CHANT_C_FILE
 
@@ -810,6 +836,7 @@ gegl_chant_class_intern_init (gpointer klass)
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_path
+#undef gegl_chant_interpolation
 }
 
 

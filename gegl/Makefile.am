@@ -68,6 +68,7 @@ GEGL_introspectable_sources = \
 	gegl-instrument.c		\
 	gegl-utils.c			\
 	gegl-lookup.c			\
+	gegl-types.c			\
 	gegl-xml.c			\
 	gegl-matrix.c \
 	\

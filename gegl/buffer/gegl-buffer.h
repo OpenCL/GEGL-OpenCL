@@ -309,14 +309,6 @@ void            gegl_buffer_copy              (GeglBuffer          *src,
  */
 GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
 
-typedef enum {
-  GEGL_INTERPOLATION_NEAREST = 0,
-  GEGL_INTERPOLATION_LINEAR,
-  GEGL_INTERPOLATION_CUBIC,
-  GEGL_INTERPOLATION_LANCZOS,
-  GEGL_INTERPOLATION_LOHALO
-} GeglSamplerType;
-
 
 /**
  * gegl_buffer_sample:
