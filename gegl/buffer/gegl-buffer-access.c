@@ -1064,6 +1064,9 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
   return &buffer->abyss;
 }
 
+GType
+gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
+
 void
 gegl_buffer_sample (GeglBuffer       *buffer,
                     gdouble           x,
@@ -1071,7 +1074,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     GeglMatrix2      *scale,
                     gpointer          dest,
                     const Babl       *format,
-                    GeglInterpolation interpolation)
+                    GeglSamplerType   sampler_type)
 {
   GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -1082,7 +1085,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   return;
 #endif
 
-  desired_type = gegl_sampler_type_from_interpolation (interpolation);
+  desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&

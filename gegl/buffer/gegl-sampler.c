@@ -523,8 +523,8 @@ set_buffer (GeglSampler *self, GeglBuffer *buffer)
      }
 }
 
-GeglInterpolation
-gegl_interpolation_from_string (const gchar *string)
+GeglSamplerType
+gegl_sampler_type_from_string (const gchar *string)
 {
   if (g_str_equal (string, "nearest") ||
       g_str_equal (string, "none"))
@@ -545,9 +545,11 @@ gegl_interpolation_from_string (const gchar *string)
 }
 
 GType
-gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
+gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
+GType
+gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 {
-  switch (interpolation)
+  switch (sampler_type)
     {
       case GEGL_INTERPOLATION_NEAREST:
         return GEGL_TYPE_SAMPLER_NEAREST;
@@ -567,14 +569,14 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
 GeglSampler *
 gegl_buffer_sampler_new (GeglBuffer       *buffer,
                          Babl             *format,
-                         GeglInterpolation interpolation)
+                         GeglSamplerType   sampler_type)
 {
   GeglSampler          *sampler;
   GType                 desired_type;
   if (format == NULL)
     format = babl_format ("RaGaBaA float");
-  desired_type = gegl_sampler_type_from_interpolation (interpolation);
-  if (interpolation == GEGL_INTERPOLATION_LANCZOS)
+  desired_type = gegl_sampler_gtype_from_enum (sampler_type);
+  if (sampler_type == GEGL_INTERPOLATION_LANCZOS)
       sampler = g_object_new (desired_type,
                               "format", format,
                               "buffer", buffer,

@@ -63,15 +63,15 @@ process (GeglOperation       *operation,
 {
   Babl                 *format_io, *format_coords;
   GeglSampler          *sampler;
-  GeglInterpolation     interpolation;
+  GeglSamplerType       sampler_type;
   GeglBufferIterator   *it;
   gint                  index_in, index_out, index_coords;
 
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
 
-  interpolation = gegl_interpolation_from_string ("cubic");
-  sampler = gegl_buffer_sampler_new (input, format_io, interpolation);
+  sampler_type = gegl_sampler_type_from_string ("cubic");
+  sampler = gegl_buffer_sampler_new (input, format_io, sampler_type);
 
   if (aux != NULL)
     {

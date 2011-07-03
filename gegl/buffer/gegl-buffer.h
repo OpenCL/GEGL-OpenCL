@@ -315,7 +315,7 @@ typedef enum {
   GEGL_INTERPOLATION_CUBIC,
   GEGL_INTERPOLATION_LANCZOS,
   GEGL_INTERPOLATION_LOHALO
-} GeglInterpolation;
+} GeglSamplerType;
 
 
 /**
@@ -342,7 +342,7 @@ void gegl_buffer_sample (GeglBuffer       *buffer,
                          GeglMatrix2      *scale,
                          gpointer          dest,
                          const Babl       *format,
-                         GeglInterpolation interpolation);
+                         GeglSamplerType   sampler_type);
 
 
 
@@ -361,27 +361,26 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
 
 /**
- * gegl_interpolation_from_string:
+ * gegl_sampler_type_from_string:
  * @string: the string to look up
  *
  * Looks up the GeglInterpolation corresponding to a string, if no matching
- * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
+ * interpolation is found GEGL_INTERPOLATION_NEAREST is returned.
  */
-GeglInterpolation gegl_interpolation_from_string (const gchar *string);
+GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
 
 /**
- * gegl_buffer_sample_new:
+ * gegl_buffer_sampler_new:
  * @buffer: buffer to create a new sampler for
  * @format: format we want data back in
  * @interpolation: resampling method to create a sampler for.
  *
- * Looks up the GeglInterpolation corresponding to a string, if no matching
- * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
+ * Create a new sampler.
  */
 GeglSampler *
 gegl_buffer_sampler_new (GeglBuffer       *buffer,
                          Babl             *format,
-                         GeglInterpolation interpolation);
+                         GeglSamplerType   sampler_type);
 
 void  gegl_sampler_set_scale   (GeglSampler *self,
                                 GeglMatrix2 *scale);

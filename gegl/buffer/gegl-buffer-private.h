@@ -122,8 +122,6 @@ GeglBuffer *
 gegl_buffer_new_ram (const GeglRectangle *extent,
                      const Babl          *format);
 
-GType gegl_sampler_type_from_interpolation (GeglInterpolation interpolation);
-
 void            gegl_buffer_sampler           (GeglBuffer     *buffer,
                                                gdouble         x,
                                                gdouble         y,
