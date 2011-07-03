@@ -354,7 +354,7 @@ struct _GeglChantO
 #define gegl_chant_curve(name, nick, blurb)                  GeglCurve         *name;
 #define gegl_chant_path(name, nick, blurb)                   GeglPath          *name;\
                                                           guint path_changed_handler;
-#define gegl_chant_interpolation(name, nick, def, blurb)     GeglInterpolation  name;
+#define gegl_chant_interpolation(name, nick, def, blurb)     GeglSamplerType    name;
 
 #include GEGL_CHANT_C_FILE
 
@@ -817,7 +817,7 @@ gegl_chant_class_intern_init (gpointer klass)
 #define gegl_chant_interpolation(name, nick, def, blurb)                     \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    g_param_spec_enum (#name, nick, blurb,    \
-                                                      GEGL_TYPE_INTERPOLATION,\
+                                                      GEGL_TYPE_SAMPLER_TYPE,\
                                                       def,                   \
                                                       (GParamFlags) (        \
                                                       G_PARAM_READWRITE |    \

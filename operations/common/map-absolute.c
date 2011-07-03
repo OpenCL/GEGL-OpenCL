@@ -18,6 +18,10 @@
  */
 
 #ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_interpolation (interpolation, _("Interpolation"),
+                          GEGL_INTERPOLATION_CUBIC, _("Sampler used internaly"))
+
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
@@ -55,17 +59,16 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
+  GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
   Babl                 *format_io, *format_coords;
   GeglSampler          *sampler;
-  GeglSamplerType       sampler_type;
   GeglBufferIterator   *it;
   gint                  index_in, index_out, index_coords;
 
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
 
-  sampler_type = gegl_sampler_type_from_string ("cubic");
-  sampler = gegl_buffer_sampler_new (input, format_io, sampler_type);
+  sampler = gegl_buffer_sampler_new (input, format_io, o->interpolation);
 
   if (aux != NULL)
     {
