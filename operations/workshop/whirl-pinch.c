@@ -131,6 +131,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
   gint row, col;
   gdouble scale_x, scale_y;
   gdouble cx, cy;
+  GeglSampler *sampler;
 
   /* Get buffer in which to place dst pixels. */
   dst_buf = g_new0 (gfloat, roi->width * roi->height * 4);
@@ -139,20 +140,28 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
 
   scale_x = 1.0;
   scale_y = roi->width / (gdouble) roi->height;
+  sampler = gegl_buffer_sampler_new (src, babl_format ("RaGaBaA float"),
+                                     GEGL_INTERPOLATION_LOHALO);
 
   for (row = 0; row < roi->height; row++) {
     for (col = 0; col < roi->width; col++) {
-        calc_undistorted_coords (roi->x + col, roi->y + row,
-                                 cen_x, cen_y,
-                                 scale_x, scale_y,
-                                 whirl, pinch, radius,
-                                 &cx, &cy);
+        GeglMatrix2 scale;
+#define gegl_unmap(u,v,du,dv) \
+        { \
+          calc_undistorted_coords (u, v,\
+                                   cen_x, cen_y,\
+                                   scale_x, scale_y,\
+                                   whirl, pinch, radius,\
+                                   &cx, &cy);\
+          du=cx;dv=cy;\
+        }
+        gegl_sampler_compute_scale (scale, roi->x + col, roi->y + row);
+        gegl_unmap (roi->x + col, roi->y + row, cx, cy);
 
-        gegl_buffer_sample (src, cx, cy, NULL, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
+        gegl_sampler_set_scale (sampler, &scale);
+        gegl_sampler_get (sampler, cx, cy, &dst_buf[(row * roi->width + col) * 4]);
     } /* for */
   } /* for */
-
-  gegl_buffer_sample_cleanup (src);
 
   /* Store dst pixels. */
   gegl_buffer_set (dst, roi, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
@@ -160,7 +169,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
   gegl_buffer_flush(dst);
 
   g_free (dst_buf);
-
+  g_object_unref (sampler);
 }
 
 /*****************************************************************************/

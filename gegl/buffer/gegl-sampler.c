@@ -597,21 +597,27 @@ gegl_sampler_type_from_interpolation (GeglInterpolation interpolation)
 }
 
 GeglSampler *
-gegl_sampler_from_interpolation (GeglInterpolation interpolation)
+gegl_buffer_sampler_new (GeglBuffer       *buffer,
+                         Babl             *format,
+                         GeglInterpolation interpolation)
 {
-  Babl                 *format = babl_format ("RaGaBaA float");
   GeglSampler          *sampler;
   GType                 desired_type;
+  if (format == NULL)
+    format = babl_format ("RaGaBaA float");
   desired_type = gegl_sampler_type_from_interpolation (interpolation);
   if (interpolation == GEGL_INTERPOLATION_LANCZOS)
       sampler = g_object_new (desired_type,
                               "format", format,
+                              "buffer", buffer,
                               "lanczos_width",  4,
                               NULL);
   else
       sampler = g_object_new (desired_type,
+                              "buffer", buffer,
                               "format", format,
                               NULL);
+  gegl_sampler_prepare (sampler);
   return sampler;
 }
 

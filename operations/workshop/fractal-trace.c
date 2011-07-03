@@ -162,7 +162,7 @@ fractaltrace (GeglBuffer          *input,
            ud = (rx - o->X1) / scale_x + picture->x;\
            vd = (ry - o->Y1) / scale_y + picture->y;\
          }
-      gegl_compute_inverse_jacobian (scale, x, y);
+      gegl_sampler_compute_scale (scale, x, y);
       gegl_unmap(x,y,px,py);
 #undef gegl_unmap
           break;
@@ -173,8 +173,8 @@ fractaltrace (GeglBuffer          *input,
 
       if (0 <= px && px < picture->width && 0 <= py && py < picture->height)
         {
-          gegl_buffer_sample2 (input, px, py, &scale, dest, format,
-                               GEGL_INTERPOLATION_LOHALO);
+          gegl_buffer_sample (input, px, py, &scale, dest, format,
+                              GEGL_INTERPOLATION_LOHALO);
         }
       else
         {
@@ -206,8 +206,8 @@ fractaltrace (GeglBuffer          *input,
                     py = picture->height - 1.0;
                 }
 
-              gegl_buffer_sample2 (input, px, py, &scale, dest, format,
-                                   GEGL_INTERPOLATION_LOHALO);
+              gegl_buffer_sample (input, px, py, &scale, dest, format,
+                                  GEGL_INTERPOLATION_LOHALO);
               break;
 
             case BACKGROUND_TYPE_TRANSPARENT:

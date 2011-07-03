@@ -358,6 +358,8 @@ void gegl_buffer_sample (GeglBuffer       *buffer,
  */
 void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 
+
+
 /**
  * gegl_interpolation_from_string:
  * @string: the string to look up
@@ -368,13 +370,25 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 GeglInterpolation gegl_interpolation_from_string (const gchar *string);
 
 /**
- * gegl_sampler_from_interpolation:
- * @string: the string to look up
+ * gegl_buffer_sample_new:
+ * @buffer: buffer to create a new sampler for
+ * @format: format we want data back in
+ * @interpolation: resampling method to create a sampler for.
  *
  * Looks up the GeglInterpolation corresponding to a string, if no matching
  * interpolation is found returns GEGL_INTERPOLATION_NEAREST.
  */
-GeglSampler *gegl_sampler_from_interpolation (GeglInterpolation interpolation);
+GeglSampler *
+gegl_buffer_sampler_new (GeglBuffer       *buffer,
+                         Babl             *format,
+                         GeglInterpolation interpolation);
+void  gegl_sampler_set_scale   (GeglSampler *self,
+                                GeglMatrix2 *scale);
+void  gegl_sampler_get         (GeglSampler *self,
+                                gdouble      x,
+                                gdouble      y,
+                                void        *output);
+
 
 /**
  * gegl_buffer_linear_new:
