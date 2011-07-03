@@ -142,14 +142,13 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
 
   for (row = 0; row < roi->height; row++) {
     for (col = 0; col < roi->width; col++) {
-
         calc_undistorted_coords (roi->x + col, roi->y + row,
                                  cen_x, cen_y,
                                  scale_x, scale_y,
                                  whirl, pinch, radius,
                                  &cx, &cy);
 
-        gegl_buffer_sample (src, cx, cy, 1.0, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
+        gegl_buffer_sample (src, cx, cy, NULL, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
     } /* for */
   } /* for */
 

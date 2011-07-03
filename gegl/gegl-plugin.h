@@ -105,15 +105,15 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
  *
  * #undef gegl_unmap      // IMPORTANT undefine map macro
  */
-#define gegl_sampler_compute_scale (matrix, x, y) \
+#define gegl_sampler_compute_scale(matrix, x, y) \
 {                                       \
   float ax, ay, bx, by;                 \
-  gegl_inverse_map(x + 0.5, y, ax, ay); \
-  gegl_inverse_map(x - 0.5, y, bx, by); \
+  gegl_unmap(x + 0.5, y, ax, ay);       \
+  gegl_unmap(x - 0.5, y, bx, by);       \
   matrix.coeff[0][0] = ax - bx;         \
   matrix.coeff[1][0] = ay - by;         \
-  gegl_inverse_map(x, y + 0.5, ax, ay); \
-  gegl_inverse_map(x, y - 0.5, bx, by); \
+  gegl_unmap(x, y + 0.5, ax, ay);       \
+  gegl_unmap(x, y - 0.5, bx, by);       \
   matrix.coeff[0][1] = ax - bx;         \
   matrix.coeff[1][1] = ay - by;         \
 }

@@ -218,13 +218,13 @@ do_plasma_big (PlasmaContext *context,
       if (x1 == x2 && y1 == y2)
         return FALSE;
 
-      gegl_buffer_sample (context->output, x1, y1, 1.0, tl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y1, NULL, tl, babl_format ("RGBA float"),
                           GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (context->output, x1, y2, 1.0, bl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y2, NULL, bl, babl_format ("RGBA float"),
                           GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (context->output, x2, y1, 1.0, tr, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y1, NULL, tr, babl_format ("RGBA float"),
                           GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (context->output, x2, y2, 1.0, br, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y2, NULL, br, babl_format ("RGBA float"),
                           GEGL_INTERPOLATION_NEAREST);
 
       ran = context->o->turbulence / (2.0 * scale_depth);

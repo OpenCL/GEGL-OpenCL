@@ -140,7 +140,7 @@ fractaltrace (GeglBuffer          *input,
       switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
-#define gegl_inverse_map(u,v,ud,vd) {\
+#define gegl_unmap(u,v,ud,vd) {\
        gdouble rx, ry;\
        cx = o->X1 + ((u) - picture->x) * scale_x; \
        cy = o->Y1 + ((v) - picture->y) * scale_y; \
@@ -149,12 +149,12 @@ fractaltrace (GeglBuffer          *input,
        vd = (ry - o->Y1) / scale_y + picture->y;\
       }
       gegl_sampler_compute_scale (scale, x, y);
-      gegl_inverse_map(x,y,px,py);
-#undef gegl_inverse_map
+      gegl_unmap(x,y,px,py);
+#undef gegl_unmap
           break;
 
         case FRACTAL_TYPE_MANDELBROT:
-#define gegl_inverse_map(u,v,ud,vd) {\
+#define gegl_unmap(u,v,ud,vd) {\
            gdouble rx, ry;\
            cx = o->X1 + ((u) - picture->x) * scale_x; \
            cy = o->Y1 + ((v) - picture->y) * scale_y; \
@@ -163,8 +163,8 @@ fractaltrace (GeglBuffer          *input,
            vd = (ry - o->Y1) / scale_y + picture->y;\
          }
       gegl_compute_inverse_jacobian (scale, x, y);
-      gegl_inverse_map(x,y,px,py);
-#undef gegl_inverse_map
+      gegl_unmap(x,y,px,py);
+#undef gegl_unmap
           break;
 
         default:

@@ -1065,13 +1065,13 @@ gegl_buffer_get_abyss (GeglBuffer *buffer)
 }
 
 void
-gegl_buffer_sample2 (GeglBuffer       *buffer,
-                     gdouble           x,
-                     gdouble           y,
-                     GeglMatrix2      *scale,
-                     gpointer          dest,
-                     const Babl       *format,
-                     GeglInterpolation interpolation)
+gegl_buffer_sample (GeglBuffer       *buffer,
+                    gdouble           x,
+                    gdouble           y,
+                    GeglMatrix2      *scale,
+                    gpointer          dest,
+                    const Babl       *format,
+                    GeglInterpolation interpolation)
 {
   GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -1108,18 +1108,6 @@ gegl_buffer_sample2 (GeglBuffer       *buffer,
     gegl_sampler_set_scale (buffer->sampler, scale);
 
   gegl_sampler_get (buffer->sampler, x, y, dest);
-}
-
-void
-gegl_buffer_sample (GeglBuffer       *buffer,
-                    gdouble           x,
-                    gdouble           y,
-                    gdouble           scale,
-                    gpointer          dest,
-                    const Babl       *format,
-                    GeglInterpolation interpolation)
-{
-  gegl_buffer_sample2 (buffer, x, y, NULL, dest, format, interpolation);
 }
 
 void

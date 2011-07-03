@@ -234,7 +234,7 @@ apply_mirror (double               mirror_angle,
 
 
 #ifndef DO_NOT_USE_BUFFER_SAMPLE
-        gegl_buffer_sample (src, cx, cy, 1.0, &dst_buf[(row * roi->width + col) * 4], format,  GEGL_INTERPOLATION_LINEAR);
+        gegl_buffer_sample (src, cx, cy, NULL, &dst_buf[(row * roi->width + col) * 4], format, GEGL_INTERPOLATION_LINEAR);
 #endif
 
 #ifdef DO_NOT_USE_BUFFER_SAMPLE

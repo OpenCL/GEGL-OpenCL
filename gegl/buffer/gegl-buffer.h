@@ -21,7 +21,7 @@
 
 #include <glib-object.h>
 #include <babl/babl.h>
-#include <gegl/gegl-matrix.h>
+#include <gegl-matrix.h>
 
 G_BEGIN_DECLS
 
@@ -322,11 +322,12 @@ typedef enum {
  * @buffer: the GeglBuffer to sample from
  * @x: x coordinate to sample in buffer coordinates
  * @y: y coordinate to sample in buffer coordinates
- * @scale: the scale we're fetching at (<1.0 can lead to decimation)
+ * @scale: a matrix that indicates scaling factors, see
+ * gegl_sampler_compute_scale the same.
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
  * @interpolation: the interpolation behavior to use,
- * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST and
+ * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST,
  * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
  * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
  *
@@ -334,21 +335,13 @@ typedef enum {
  * of interpolation. The samplers used cache for a small neighbourhood of the
  * buffer for more efficient access.
  */
-void            gegl_buffer_sample            (GeglBuffer       *buffer,
-                                               gdouble           x,
-                                               gdouble           y,
-                                               gdouble           scale,
-                                               gpointer          dest,
-                                               const Babl       *format,
-                                               GeglInterpolation interpolation);
-void
-gegl_buffer_sample2 (GeglBuffer       *buffer,
-                     gdouble           x,
-                     gdouble           y,
-                     GeglMatrix2      *inverse_jacobian,
-                     gpointer          dest,
-                     const Babl       *format,
-                     GeglInterpolation interpolation);
+void gegl_buffer_sample (GeglBuffer       *buffer,
+                         gdouble           x,
+                         gdouble           y,
+                         GeglMatrix2      *scale,
+                         gpointer          dest,
+                         const Babl       *format,
+                         GeglInterpolation interpolation);
 
 
 /**
