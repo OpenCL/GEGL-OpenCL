@@ -26,16 +26,13 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #include <math.h>
 #include <gegl.h>
 #include <gegl-plugin.h>
 #include <gegl-utils.h>
-#include "buffer/gegl-sampler.h"
 #include <graph/gegl-pad.h>
 #include <graph/gegl-node.h>
 #include <graph/gegl-connection.h>
-
 
 #include "affine.h"
 #include "module.h"
