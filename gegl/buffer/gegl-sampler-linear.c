@@ -65,6 +65,7 @@ enum
 static void gegl_sampler_linear_get (GeglSampler* restrict self,
                                      const gdouble         x,
                                      const gdouble         y,
+                                     GeglMatrix2          *scale,
                                      void*        restrict output);
 
 static void set_property (GObject*      gobject,
@@ -105,6 +106,7 @@ static void
 gegl_sampler_linear_get (GeglSampler* restrict self,
                          const gdouble         absolute_x,
                          const gdouble         absolute_y,
+                         GeglMatrix2          *scale,
                          void*        restrict output)
 {
   const gint pixels_per_buffer_row = 64;

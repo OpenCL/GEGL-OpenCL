@@ -97,7 +97,7 @@ process (GeglOperation       *operation,
                 }
               else
                 {
-                  gegl_sampler_get (sampler, coords[0], coords[1], out);
+                  gegl_sampler_get (sampler, coords[0], coords[1], NULL, out);
                 }
 
               coords += 2;

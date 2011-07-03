@@ -1104,10 +1104,8 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
     }
-  if (scale)
-    gegl_sampler_set_scale (buffer->sampler, scale);
 
-  gegl_sampler_get (buffer->sampler, x, y, dest);
+  gegl_sampler_get (buffer->sampler, x, y, scale, dest);
 }
 
 void

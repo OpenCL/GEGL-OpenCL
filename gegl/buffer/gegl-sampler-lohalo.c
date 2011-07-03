@@ -257,6 +257,7 @@ enum
 static void gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                      const gdouble               absolute_x,
                                      const gdouble               absolute_y,
+                                           GeglMatrix2          *scale,
                                            void*        restrict output);
 
 
@@ -1306,6 +1307,7 @@ static void
 gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                          const gdouble               absolute_x,
                          const gdouble               absolute_y,
+                         GeglMatrix2                *scale,
                                void*        restrict output)
 {
   /*
@@ -1957,10 +1959,10 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
        * Ellipse reference:
        * http://en.wikipedia.org/wiki/Ellipse#Canonical_form
        */
-      const gdouble a = self->inverse_jacobian?self->inverse_jacobian->coeff[0][0]:1;
-      const gdouble b = self->inverse_jacobian?self->inverse_jacobian->coeff[0][1]:0;
-      const gdouble c = self->inverse_jacobian?self->inverse_jacobian->coeff[1][0]:0;
-      const gdouble d = self->inverse_jacobian?self->inverse_jacobian->coeff[1][1]:1;
+      const gdouble a = scale?scale->coeff[0][0]:1;
+      const gdouble b = scale?scale->coeff[0][1]:0;
+      const gdouble c = scale?scale->coeff[1][0]:0;
+      const gdouble d = scale?scale->coeff[1][1]:1;
 
       /*
        * Computations are done in double precision because "direct"

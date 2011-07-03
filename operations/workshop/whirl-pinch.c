@@ -158,8 +158,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
         gegl_sampler_compute_scale (scale, roi->x + col, roi->y + row);
         gegl_unmap (roi->x + col, roi->y + row, cx, cy);
 
-        gegl_sampler_set_scale (sampler, &scale);
-        gegl_sampler_get (sampler, cx, cy, &dst_buf[(row * roi->width + col) * 4]);
+        gegl_sampler_get (sampler, cx, cy, &scale, &dst_buf[(row * roi->width + col) * 4]);
     } /* for */
   } /* for */
 

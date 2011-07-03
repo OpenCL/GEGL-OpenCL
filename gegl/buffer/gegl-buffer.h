@@ -387,6 +387,7 @@ void  gegl_sampler_set_scale   (GeglSampler *self,
 void  gegl_sampler_get         (GeglSampler *self,
                                 gdouble      x,
                                 gdouble      y,
+                                GeglMatrix2 *scale,
                                 void        *output);
 
 

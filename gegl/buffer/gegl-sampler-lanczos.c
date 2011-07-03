@@ -46,6 +46,7 @@ static void           lanczos_lookup (GeglSamplerLanczos *sampler);
 static void           gegl_sampler_lanczos_get (GeglSampler  *sampler,
                                                 gdouble       x,
                                                 gdouble       y,
+                                                GeglMatrix2  *scale,
                                                 void         *output);
 static void           get_property             (GObject      *gobject,
                                                 guint         prop_id,
@@ -145,6 +146,7 @@ void
 gegl_sampler_lanczos_get (GeglSampler *self,
                           gdouble      x,
                           gdouble      y,
+                          GeglMatrix2 *scale,
                           void        *output)
 {
   GeglSamplerLanczos      *lanczos      = GEGL_SAMPLER_LANCZOS (self);

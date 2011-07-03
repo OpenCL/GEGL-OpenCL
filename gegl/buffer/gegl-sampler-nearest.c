@@ -35,6 +35,7 @@ enum
 static void    gegl_sampler_nearest_get (GeglSampler  *self,
                                          gdouble       x,
                                          gdouble       y,
+                                         GeglMatrix2  *scale,
                                          void         *output);
 static void    set_property             (GObject      *gobject,
                                          guint         prop_id,
@@ -74,6 +75,7 @@ void
 gegl_sampler_nearest_get (GeglSampler *self,
                           gdouble      x,
                           gdouble      y,
+                          GeglMatrix2 *scale,
                           void        *output)
 {
   gfloat             *sampler_bptr;

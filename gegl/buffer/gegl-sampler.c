@@ -42,7 +42,6 @@ enum
   PROP_BUFFER,
   PROP_FORMAT,
   PROP_CONTEXT_RECT,
-  PROP_SCALE,
   PROP_LAST
 };
 
@@ -100,19 +99,6 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
                                         "Input pad, for image buffer input.",
                                         GEGL_TYPE_BUFFER,
                                         G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (
-                 object_class,
-                 PROP_SCALE,
-                 g_param_spec_pointer ("scale",
-                                       "Scale",
-"An approximation of the extent of pixels sampled in source for a pixel. "
-"The property can be varied per sampled pixel, avoid setting it if it is "
-"constant for the entire buffer; if setting it for every pixel using the "
-"C function gegl_sampler_set_scale is more efficient. "
-"Mostly the scaling factors for sampling does not need to be set if the "
-"transformation is rotating or only scaling up.",
-                                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -133,6 +119,7 @@ void
 gegl_sampler_get (GeglSampler *self,
                   gdouble      x,
                   gdouble      y,
+                  GeglMatrix2 *scale,
                   void        *output)
 {
   GeglSamplerClass *klass;
@@ -144,9 +131,9 @@ gegl_sampler_get (GeglSampler *self,
   self->x = x;
   self->y = y;
 
-  klass = GEGL_SAMPLER_GET_CLASS (self);
-
-  klass->get (self, x, y, output);
+  klass = GEGL_SAMPLER_GET_CLASS (self); /*XXX: bottleneck, store the vfunc cached
+                                                in the instance instead  */
+  klass->get (self, x, y, scale, output);
 }
 
 void
@@ -505,10 +492,6 @@ get_property (GObject    *object,
         g_value_set_pointer (value, self->format);
         break;
 
-      case PROP_SCALE:
-        g_value_set_pointer (value, self->inverse_jacobian);
-        break;
-
       default:
         break;
     }
@@ -530,10 +513,6 @@ set_property (GObject      *object,
 
       case PROP_FORMAT:
         self->format = g_value_get_pointer (value);
-        break;
-
-      case PROP_SCALE:
-        self->inverse_jacobian = g_value_get_pointer (value);
         break;
 
       default:
@@ -619,10 +598,4 @@ gegl_buffer_sampler_new (GeglBuffer       *buffer,
                               NULL);
   gegl_sampler_prepare (sampler);
   return sampler;
-}
-
-void  gegl_sampler_set_scale (GeglSampler *self,
-                              GeglMatrix2 *scale)
-{
-  self->inverse_jacobian = scale;
 }

@@ -39,6 +39,7 @@ enum
 static void      gegl_sampler_cubic_get (GeglSampler  *sampler,
                                          gdouble       x,
                                          gdouble       y,
+                                         GeglMatrix2  *scale,
                                          void         *output);
 static void      get_property           (GObject      *gobject,
                                          guint         prop_id,
@@ -126,6 +127,7 @@ void
 gegl_sampler_cubic_get (GeglSampler *self,
                         gdouble      x,
                         gdouble      y,
+                        GeglMatrix2 *scale,
                         void        *output)
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
