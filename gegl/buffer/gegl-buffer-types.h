@@ -58,13 +58,14 @@ typedef struct _GeglTileStorageClass      GeglTileStorageClass;
 
 #ifndef __GEGL_BUFFER_H__
 typedef struct _GeglBuffer                GeglBuffer;
+typedef struct _GeglSampler               GeglSampler;
 #endif
+
 typedef struct _GeglBufferClass           GeglBufferClass;
 
 typedef struct _GeglCache                 GeglCache;
 typedef struct _GeglCacheClass            GeglCacheClass;
 
 typedef struct _GeglRegion                GeglRegion;
-typedef struct _GeglSampler               GeglSampler;
 
 #endif
