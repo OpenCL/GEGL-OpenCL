@@ -23,8 +23,8 @@
 gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
        _("scaling factor of displacement, indicates how large spatial"
          " displacement a relative mapping value of 1.0 corresponds to."))
-gegl_chant_interpolation (interpolation, _("Interpolation"),
-                          GEGL_INTERPOLATION_CUBIC, _("Sampler used internaly"))
+gegl_chant_sampler (interpolation, _("Interpolation"),
+                    GEGL_INTERPOLATION_CUBIC, _("Sampler used internaly"))
 
 #else
 
