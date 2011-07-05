@@ -319,7 +319,7 @@ GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
  * gegl_sampler_compute_scale the same.
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
- * @interpolation: the interpolation behavior to use,
+ * @sampler_type: the sampler type to use,
  * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST,
  * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
  * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
@@ -365,7 +365,10 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * gegl_buffer_sampler_new:
  * @buffer: buffer to create a new sampler for
  * @format: format we want data back in
- * @interpolation: resampling method to create a sampler for.
+ * @sampler_type: the sampler type to use,
+ * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST,
+ * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
+ * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
  *
  * Create a new sampler, when you are done with the sampler, g_object_unref
  * it.
@@ -474,7 +477,5 @@ const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
 
 #include <gegl-buffer-iterator.h>
 
-/**
- */
 G_END_DECLS
 #endif
