@@ -242,7 +242,7 @@ get_rgba_pixel (void       *data,
       gint i;
       if (!p->in_drawable)
         return;
-      gegl_buffer_sample (p->in_drawable, x, y, 1.0, buf,
+      gegl_buffer_sample (p->in_drawable, x, y, NULL, buf,
                           p->rgba_float,
                           GEGL_INTERPOLATION_NEAREST);
       for (i = 0; i < 4; i++)
@@ -253,7 +253,7 @@ get_rgba_pixel (void       *data,
       gint i;
       if (!p->aux_drawable)
         return;
-      gegl_buffer_sample (p->aux_drawable, x, y, 1.0, buf,
+      gegl_buffer_sample (p->aux_drawable, x, y, NULL, buf,
                           p->rgba_float,
                           GEGL_INTERPOLATION_NEAREST);
       for (i = 0; i < 4; i++)
