@@ -23,7 +23,7 @@
 gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
        _("scaling factor of displacement, indicates how large spatial"
          " displacement a relative mapping value of 1.0 corresponds to."))
-gegl_chant_sampler (interpolation, _("Interpolation"),
+gegl_chant_sampler (sampler_type, _("Interpolation"),
                     GEGL_INTERPOLATION_CUBIC, _("Sampler used internaly"))
 
 #else
@@ -72,7 +72,7 @@ process (GeglOperation       *operation,
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
 
-  sampler = gegl_buffer_sampler_new (input, format_io, o->interpolation);
+  sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
 
   if (aux != NULL)
     {
