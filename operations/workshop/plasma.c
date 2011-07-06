@@ -357,9 +357,7 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation,
-                                                                  "input");
-  return result;
+  return *gegl_operation_source_get_bounding_box (operation, "input");
 }
 
 static GeglRectangle
