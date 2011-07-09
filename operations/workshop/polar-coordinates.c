@@ -343,7 +343,7 @@ process (GeglOperation       *operation,
 
         if (inside)
           gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_INTERPOLATION_LOHALO);
+                              GEGL_SAMPLER_LOHALO);
         else
           for (i=0; i<4; i++)
             dest[i] = 0.0;

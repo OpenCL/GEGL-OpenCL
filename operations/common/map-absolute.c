@@ -20,7 +20,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
-                 GEGL_INTERPOLATION_CUBIC, _("Sampler used internaly"))
+                 GEGL_SAMPLER_CUBIC, _("Sampler used internaly"))
 
 #else
 

@@ -239,7 +239,7 @@ lens_distort_func (gfloat              *src_buf,
             {
               gegl_buffer_sample (input, x, y, NULL, temp,
                                   babl_format ("RGBA float"),
-                                  GEGL_INTERPOLATION_NEAREST);
+                                  GEGL_SAMPLER_NEAREST);
             }
           else
             {

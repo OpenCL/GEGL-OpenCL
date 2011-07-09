@@ -103,7 +103,7 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
  * gegl_sampler_compute_scale (scale, x, y);
  * gegl_unmap(x,y,sample_x,sample_y);
  * gegl_buffer_sample (buffer, sample_x, sample_y, scale, dest, format,
- *                     GEGL_INTERPOLATION_LOHALO);
+ *                     GEGL_SAMPLER_LOHALO);
  *
  * #undef gegl_unmap      // IMPORTANT undefine map macro
  */

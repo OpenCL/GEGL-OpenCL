@@ -320,9 +320,9 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
  * @sampler_type: the sampler type to use,
- * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST,
- * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
- * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
+ * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
+ * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
  *
  * Query interpolate pixel values at a given coordinate using a specified form
  * of interpolation. The samplers used cache for a small neighbourhood of the
@@ -357,7 +357,7 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
  * @string: the string to look up
  *
  * Looks up the GeglInterpolation corresponding to a string, if no matching
- * interpolation is found GEGL_INTERPOLATION_NEAREST is returned.
+ * interpolation is found GEGL_SAMPLER_NEAREST is returned.
  */
 GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
 
@@ -366,9 +366,9 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * @buffer: buffer to create a new sampler for
  * @format: format we want data back in
  * @sampler_type: the sampler type to use,
- * to be ported from working code. Valid values: GEGL_INTERPOLATION_NEAREST,
- * GEGL_INTERPOLATION_LINEAR, GEGL_INTERPOLATION_CUBIC,
- * GEGL_INTERPOLATION_LANCZOS and GEGL_INTERPOLATION_LOHALO
+ * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
+ * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
  *
  * Create a new sampler, when you are done with the sampler, g_object_unref
  * it.

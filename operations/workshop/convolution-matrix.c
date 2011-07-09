@@ -274,7 +274,7 @@ convolve_pixel(gfloat               *src_buf,
                     gfloat temp_color[4];
                     gegl_buffer_sample (input, s_x, s_y, NULL, temp_color,
                                         babl_format ("RGBA float"),
-                                        GEGL_INTERPOLATION_NEAREST);
+                                        GEGL_SAMPLER_NEAREST);
                     if (i!=3 && o->weight)
                       sum += matrix[x][y] * temp_color[i]
                         * temp_color[3];

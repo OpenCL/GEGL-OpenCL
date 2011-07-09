@@ -26,11 +26,11 @@ gegl_sampler_type_get_type (void)
     static GType etype = 0;
     if (etype == 0) {
         static const GEnumValue values[] = {
-            { GEGL_INTERPOLATION_NEAREST,   "GEGL_INTERPOLATION_NEAREST",   "nearest"   },
-            { GEGL_INTERPOLATION_LINEAR,    "GEGL_INTERPOLATION_LINEAR",    "linear"    },
-            { GEGL_INTERPOLATION_CUBIC,     "GEGL_INTERPOLATION_CUBIC",     "cubic"     },
-            { GEGL_INTERPOLATION_LANCZOS,   "GEGL_INTERPOLATION_LANCZOS",   "lanczos"   },
-            { GEGL_INTERPOLATION_LOHALO,    "GEGL_INTERPOLATION_LOHALO",    "lohalo"    },
+            { GEGL_SAMPLER_NEAREST,   "GEGL_SAMPLER_NEAREST",   "nearest"   },
+            { GEGL_SAMPLER_LINEAR,    "GEGL_SAMPLER_LINEAR",    "linear"    },
+            { GEGL_SAMPLER_CUBIC,     "GEGL_SAMPLER_CUBIC",     "cubic"     },
+            { GEGL_SAMPLER_LANCZOS,   "GEGL_SAMPLER_LANCZOS",   "lanczos"   },
+            { GEGL_SAMPLER_LOHALO,    "GEGL_SAMPLER_LOHALO",    "lohalo"    },
             { 0, NULL, NULL }
         };
         etype = g_enum_register_static ("GeglSamplerTypeType", values);

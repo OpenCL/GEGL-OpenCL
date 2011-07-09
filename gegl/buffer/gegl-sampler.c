@@ -528,20 +528,20 @@ gegl_sampler_type_from_string (const gchar *string)
 {
   if (g_str_equal (string, "nearest") ||
       g_str_equal (string, "none"))
-    return GEGL_INTERPOLATION_NEAREST;
+    return GEGL_SAMPLER_NEAREST;
 
   if (g_str_equal (string, "linear") ||
       g_str_equal (string, "bilinear"))
-    return GEGL_INTERPOLATION_LINEAR;
+    return GEGL_SAMPLER_LINEAR;
 
   if (g_str_equal (string, "cubic") ||
       g_str_equal (string, "bicubic"))
-    return GEGL_INTERPOLATION_CUBIC;
+    return GEGL_SAMPLER_CUBIC;
 
   if (g_str_equal (string, "lohalo"))
-    return GEGL_INTERPOLATION_LOHALO;
+    return GEGL_SAMPLER_LOHALO;
 
-  return GEGL_INTERPOLATION_NEAREST;
+  return GEGL_SAMPLER_NEAREST;
 }
 
 GType
@@ -551,15 +551,15 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 {
   switch (sampler_type)
     {
-      case GEGL_INTERPOLATION_NEAREST:
+      case GEGL_SAMPLER_NEAREST:
         return GEGL_TYPE_SAMPLER_NEAREST;
-      case GEGL_INTERPOLATION_LINEAR:
+      case GEGL_SAMPLER_LINEAR:
         return GEGL_TYPE_SAMPLER_LINEAR;
-      case GEGL_INTERPOLATION_CUBIC:
+      case GEGL_SAMPLER_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
-      case GEGL_INTERPOLATION_LANCZOS:
+      case GEGL_SAMPLER_LANCZOS:
         return GEGL_TYPE_SAMPLER_LANCZOS;
-      case GEGL_INTERPOLATION_LOHALO:
+      case GEGL_SAMPLER_LOHALO:
         return GEGL_TYPE_SAMPLER_LOHALO;
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
@@ -576,7 +576,7 @@ gegl_buffer_sampler_new (GeglBuffer       *buffer,
   if (format == NULL)
     format = babl_format ("RaGaBaA float");
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
-  if (sampler_type == GEGL_INTERPOLATION_LANCZOS)
+  if (sampler_type == GEGL_SAMPLER_LANCZOS)
       sampler = g_object_new (desired_type,
                               "format", format,
                               "buffer", buffer,

@@ -174,7 +174,7 @@ fractaltrace (GeglBuffer          *input,
       if (0 <= px && px < picture->width && 0 <= py && py < picture->height)
         {
           gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_INTERPOLATION_LOHALO);
+                              GEGL_SAMPLER_LOHALO);
         }
       else
         {
@@ -207,7 +207,7 @@ fractaltrace (GeglBuffer          *input,
                 }
 
               gegl_buffer_sample (input, px, py, &scale, dest, format,
-                                  GEGL_INTERPOLATION_LOHALO);
+                                  GEGL_SAMPLER_LOHALO);
               break;
 
             case BACKGROUND_TYPE_TRANSPARENT:

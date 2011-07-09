@@ -393,7 +393,7 @@ lens_distort_newl (gfloat              *src_buf,
                   gfloat color[4];
                   gegl_buffer_sample (input, tmpx+x, tmpy+y, NULL, color,
                                       babl_format ("RGBA float"),
-                                      GEGL_INTERPOLATION_NEAREST);
+                                      GEGL_SAMPLER_NEAREST);
                   val += color[rgb] * wx[x] * wy[y];
                   wt += wx[x] * wy[y];
                 }
