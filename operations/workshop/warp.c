@@ -57,7 +57,7 @@ typedef struct {
   gdouble      last_x;
   gdouble      last_y;
   gboolean     last_point_set;
-} warp_private;
+} WarpPrivate;
 
 static void
 path_changed (GeglPath            *path,
@@ -79,8 +79,8 @@ path_changed (GeglPath            *path,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
-  warp_private  *priv;
+  GeglChantO  *o = GEGL_CHANT_PROPERTIES (operation);
+  WarpPrivate *priv;
 
   Babl *format = babl_format_n (babl_type ("float"), 2);
   gegl_operation_set_format (operation, "input", format);
@@ -88,12 +88,12 @@ prepare (GeglOperation *operation)
 
   if (!o->chant_data)
     {
-      o->chant_data = g_slice_new (warp_private);
+      o->chant_data = g_slice_new (WarpPrivate);
     }
 
-  priv = (warp_private*) o->chant_data;
+  priv = (WarpPrivate*) o->chant_data;
   priv->last_point_set = FALSE;
-  priv->lookup = NULL
+  priv->lookup = NULL;
   priv->buffer = NULL;
 }
 
@@ -104,7 +104,7 @@ finalize (GObject *object)
 
   if (o->chant_data)
     {
-      g_slice_free (warp_private, o->chant_data);
+      g_slice_free (WarpPrivate, o->chant_data);
       o->chant_data = NULL;
     }
 
@@ -133,7 +133,7 @@ gauss (gdouble f)
 static void
 calc_lut (GeglChantO  *o)
 {
-  warp_private *priv = (warp_private*) o->chant_data;
+  WarpPrivate  *priv = (WarpPrivate*) o->chant_data;
   gint          length;
   gint          x;
   gdouble       exponent;
@@ -158,7 +158,7 @@ get_influence (GeglChantO *o,
                gdouble     x,
                gdouble     y)
 {
-  warp_private *priv = (warp_private*) o->chant_data;
+  WarpPrivate  *priv = (WarpPrivate*) o->chant_data;
   gfloat        radius;
 
   if (!priv->lookup)
@@ -179,7 +179,7 @@ stamp (GeglChantO *o,
        gdouble     x,
        gdouble     y)
 {
-  warp_private        *priv = (warp_private*) o->chant_data;
+  WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
   GeglBufferIterator  *it;
   Babl                *format;
   gdouble              influence;
@@ -299,7 +299,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
-  warp_private         *priv = (warp_private*) o->chant_data;
+  WarpPrivate          *priv = (WarpPrivate*) o->chant_data;
   gdouble              dist;
   gdouble              stamps;
   gdouble              spacing = MAX (o->size * 0.01, 0.5); /*1% spacing for starters*/
