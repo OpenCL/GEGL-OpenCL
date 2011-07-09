@@ -52,6 +52,18 @@ typedef enum {
 GType gegl_ripple_wave_type_get_type   (void) G_GNUC_CONST;
 #define GEGL_RIPPLE_WAVE_TYPE (gegl_ripple_wave_type_get_type())
 
+typedef enum
+{
+  GEGL_WARP_BEHAVIOR_MOVE,      /*< desc="Move pixels"              >*/
+  GEGL_WARP_BEHAVIOR_GROW,      /*< desc="Grow area"                >*/
+  GEGL_WARP_BEHAVIOR_SHRINK,    /*< desc="Shrink area"              >*/
+  GEGL_WARP_BEHAVIOR_SWIRL_CW,  /*< desc="Swirl clockwise"          >*/
+  GEGL_WARP_BEHAVIOR_SWIRL_CCW, /*< desc="Swirl counter-clockwise"  >*/
+  GEGL_WARP_BEHAVIOR_ERASE,     /*< desc="Erase warping"            >*/
+  GEGL_WARP_BEHAVIOR_SMOOTH     /*< desc="Smooth warping"           >*/
+} GeglWarpBehavior;
+GType gegl_warp_behavior_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_WARP_BEHAVIOR (gegl_warp_behavior_get_type ())
 
 G_END_DECLS
 
