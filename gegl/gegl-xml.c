@@ -177,8 +177,7 @@ set_clone_prop_as_well:
               !strcmp (param_value, "y") ||
               !strcmp (param_value, "Y") ||
               !strcmp (param_value, "1") ||
-              !strcmp (param_value, "on")
-          )
+              !strcmp (param_value, "on"))
             {
               gegl_node_set (new, param_name, TRUE, NULL);
             }
@@ -199,20 +198,20 @@ set_clone_prop_as_well:
         }
       else if (paramspec->value_type == GEGL_TYPE_CURVE)
         {
-	  if (pd->curve)
-	    {
-	      gegl_node_set (new, param_name, pd->curve, NULL);
+          if (pd->curve)
+            {
+              gegl_node_set (new, param_name, pd->curve, NULL);
 
-	      g_object_unref (pd->curve);
-	      pd->curve = NULL;
-	    }
-	}
+              g_object_unref (pd->curve);
+              pd->curve = NULL;
+            }
+        }
       else if (paramspec->value_type == GEGL_TYPE_PATH)
         {
           GeglPath *path = gegl_path_new ();
           gegl_path_parse_string (path, param_value);
-	  gegl_node_set (new, param_name, path, NULL);
-	}
+          gegl_node_set (new, param_name, path, NULL);
+        }
       else
         {
           g_warning ("operation desired unknown parapspec type for %s",
@@ -296,28 +295,28 @@ static void start_element (GMarkupParseContext *context,
     {
       const gchar *ymin, *ymax;
       if (pd->curve != NULL)
-	g_warning ("we haven't cleared previous curve");
+        g_warning ("we haven't cleared previous curve");
 
       collect_attribute (ymin, "curve");
       collect_attribute (ymax, "curve");
 
       pd->curve = gegl_curve_new (g_ascii_strtod (ymin, NULL),
-				  g_ascii_strtod (ymax, NULL));
+                                  g_ascii_strtod (ymax, NULL));
     }
   else if (!strcmp (element_name, "curve-point"))
     {
       if (!pd->curve)
-	g_warning ("curve not instantiated");
+        g_warning ("curve not instantiated");
       else
         {
           const gchar *x, *y;
           collect_attribute (x, "curve-point");
           collect_attribute (y, "curve-point");
 
-	  gegl_curve_add_point (pd->curve,
-				g_ascii_strtod (x, NULL),
-				g_ascii_strtod (y, NULL));
-	}
+          gegl_curve_add_point (pd->curve,
+                                g_ascii_strtod (x, NULL),
+                                g_ascii_strtod (y, NULL));
+        }
     }
   else if (!strcmp (element_name, "link") ||
            !strcmp (element_name, "links") ||
@@ -463,7 +462,7 @@ static void end_element (GMarkupParseContext *context,
            !strcmp (element_name, "destination") ||
            !strcmp (element_name, "stack") ||
            !strcmp (element_name, "params") ||
-	   !strcmp (element_name, "curve-point"))
+           !strcmp (element_name, "curve-point"))
     {
       /* ignore */
     }
@@ -847,28 +846,28 @@ serialize_properties (SerializeState *ss,
               xml_param (ss, indent + 2, properties[i]->name, value);
               g_free (value);
             }
-	  else if (properties[i]->value_type == GEGL_TYPE_CURVE)
-	    {
-	      GeglCurve *curve;
-	      gegl_node_get (node, properties[i]->name, &curve, NULL);
-	      xml_param_start (ss, indent + 2, properties[i]->name);
-	      g_string_append (ss->buf, "\n");
-	      xml_curve (ss, indent + 4, curve);
-	      indent += 2; ind; indent -= 2; xml_param_end (ss);
-	      g_object_unref (curve);
-	    }
-	  else if (properties[i]->value_type == GEGL_TYPE_PATH)
-	    {
-          gchar *svg_path;
-          GeglPath *path;
-	      gegl_node_get (node, properties[i]->name, &path, NULL);
-	      xml_param_start (ss, indent + 2, properties[i]->name);
-          svg_path = gegl_path_to_string (path);
-	      g_string_append (ss->buf, svg_path);
-	      xml_param_end (ss);
+          else if (properties[i]->value_type == GEGL_TYPE_CURVE)
+            {
+              GeglCurve *curve;
+              gegl_node_get (node, properties[i]->name, &curve, NULL);
+              xml_param_start (ss, indent + 2, properties[i]->name);
+              g_string_append (ss->buf, "\n");
+              xml_curve (ss, indent + 4, curve);
+              indent += 2; ind; indent -= 2; xml_param_end (ss);
+              g_object_unref (curve);
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_PATH)
+            {
+              gchar *svg_path;
+              GeglPath *path;
+              gegl_node_get (node, properties[i]->name, &path, NULL);
+              xml_param_start (ss, indent + 2, properties[i]->name);
+              svg_path = gegl_path_to_string (path);
+              g_string_append (ss->buf, svg_path);
+              xml_param_end (ss);
 
-          g_object_unref (path);
-	    }
+              g_object_unref (path);
+            }
           else
             {
               g_warning ("%s: serialization of %s properties not implemented",
