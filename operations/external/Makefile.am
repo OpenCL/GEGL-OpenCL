@@ -66,6 +66,11 @@ ops += exr-load.la
 exr_load_la_SOURCES = exr-load.cpp
 exr_load_la_LIBADD = $(op_libs) $(OPENEXR_LIBS)
 exr_load_la_CXXFLAGS = $(AM_CFLAGS) $(OPENEXR_CFLAGS)
+
+ops += exr-save.la
+exr_save_la_SOURCES = exr-save.cc
+exr_save_la_LIBADD = $(op_libs) $(OPENEXR_LIBS)
+exr_save_la_CXXFLAGS = $(AM_CFLAGS) $(OPENEXR_CFLAGS)
 endif
 
 if HAVE_SDL
