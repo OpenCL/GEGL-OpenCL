@@ -36,7 +36,7 @@ gegl_chant_int(height, "", 0, 1000, 0, "private")
 #else
 
 #define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "display.c"
+#define GEGL_CHANT_C_FILE       "sdl-display.c"
 
 #include "gegl-chant.h"
 #include <SDL.h>
@@ -172,11 +172,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:display";
-  operation_class->categories  = "output";
+  operation_class->name        = "gegl:sdl-display";
+  operation_class->categories  = "display";
   operation_class->description =
         _("Displays the input buffer in an SDL window (restricted to one"
-          " display op/process, due to SDL implementation issues, a gtk+"
-          " based replacement would be nice.");
+          " display op/process, due to SDL implementation issues).");
 }
 #endif
