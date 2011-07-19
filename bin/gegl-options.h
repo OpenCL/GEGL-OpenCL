@@ -24,6 +24,7 @@
 typedef enum
 {
   GEGL_RUN_MODE_HELP,
+  GEGL_RUN_MODE_DISPLAY,
   GEGL_RUN_MODE_OUTPUT,
   GEGL_RUN_MODE_XML
 } GeglRunMode;

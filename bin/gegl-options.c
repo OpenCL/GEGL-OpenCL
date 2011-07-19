@@ -28,7 +28,7 @@ static GeglOptions *opts_new (void)
 {
   GeglOptions *o = g_malloc0 (sizeof (GeglOptions));
 
-  o->mode     = GEGL_RUN_MODE_HELP;
+  o->mode     = GEGL_RUN_MODE_DISPLAY;
   o->xml      = NULL;
   o->output   = NULL;
   o->files    = NULL;
