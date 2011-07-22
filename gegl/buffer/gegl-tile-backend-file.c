@@ -313,7 +313,6 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
         self->foffset = self->offset;
       }
 
-      printf ("write block: %i\n", block->flags);
       /* XXX: should promiscuosuly try to compress here as well,. if revisions
               are not matching..
        */
