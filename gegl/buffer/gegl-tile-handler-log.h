@@ -21,6 +21,10 @@
 
 #include "gegl-tile-handler.h"
 
+/***
+ * GeglTileHandlerLog is a GeglTileHandler which print commands that are passed through it.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_HANDLER_LOG            (gegl_tile_handler_log_get_type ())

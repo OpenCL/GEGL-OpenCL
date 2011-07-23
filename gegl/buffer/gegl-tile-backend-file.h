@@ -21,6 +21,10 @@
 
 #include "gegl-tile-backend.h"
 
+/***
+ * GeglTileBackendFile is a GeglTileBackend that store tiles in a unique file.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_BACKEND_FILE            (gegl_tile_backend_file_get_type ())

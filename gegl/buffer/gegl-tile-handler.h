@@ -21,9 +21,18 @@
 
 #include "gegl-tile-source.h"
 
+/***
+ * GeglTileHandler define the chain pattern that allow to stack GeglTileSource classes on
+ * top of each others, each doing different task in response to command given (see GeglTileSource).
+ *
+ * A classical GeglBuffer is a stack of subclasses of GeglTileHandler with a GeglTileBackend on
+ * the bottom. This architecture is designed to be modular and flexible on purpose, even allowing
+ * to use a GeglBuffer as a source for another GeglBuffer.
+ */
+
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_TILE_HANDLER       (gegl_tile_handler_get_type ())
+#define GEGL_TYPE_TILE_HANDLER            (gegl_tile_handler_get_type ())
 #define GEGL_TILE_HANDLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_HANDLER, GeglTileHandler))
 #define GEGL_TILE_HANDLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_HANDLER, GeglTileHandlerClass))
 #define GEGL_IS_TILE_HANDLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE_HANDLER))

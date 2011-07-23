@@ -22,6 +22,10 @@
 #include "gegl-tile-backend.h"
 #include <gio/gio.h>
 
+/***
+ * GeglTileBackendTileDir is a GeglTileBackend that store tiles as a set of files in a directory.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_BACKEND_TILE_DIR            (gegl_tile_backend_tiledir_get_type ())

@@ -21,6 +21,10 @@
 
 #include "gegl-tile-backend.h"
 
+/***
+ * GeglTileBackendRam is a GeglTileBackend that store tiles in RAM.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_BACKEND_RAM            (gegl_tile_backend_ram_get_type ())

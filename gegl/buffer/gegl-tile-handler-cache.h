@@ -21,6 +21,10 @@
 
 #include "gegl-tile-handler.h"
 
+/***
+ * GeglTileHandlerCache is a GeglTileHandler that cache recently used tiles in memory.
+ */
+
 #define GEGL_TYPE_TILE_HANDLER_CACHE            (gegl_tile_handler_cache_get_type ())
 #define GEGL_TILE_HANDLER_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_HANDLER_CACHE, GeglTileHandlerCache))
 #define GEGL_TILE_HANDLER_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_HANDLER_CACHE, GeglTileHandlerCacheClass))

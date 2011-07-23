@@ -22,6 +22,11 @@
 #include "gegl-tile-handler-chain.h"
 #include "gegl-tile-handler-cache.h"
 
+/***
+ * GeglTileStorage provide the command API to GeglBuffer, and setup a chain of GeglTileHandler to
+ * treat and store tiles.
+ */
+
 #define GEGL_TYPE_TILE_STORAGE            (gegl_tile_storage_get_type ())
 #define GEGL_TILE_STORAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_STORAGE, GeglTileStorage))
 #define GEGL_TILE_STORAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_TILE_STORAGE, GeglTileStorageClass))

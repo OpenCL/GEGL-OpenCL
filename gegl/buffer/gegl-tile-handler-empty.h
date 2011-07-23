@@ -22,6 +22,12 @@
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-cache.h"
 
+/***
+ * GeglTileHandlerEmpty is a GeglTileHandler that create COW tiles sharing data
+ * with a single empty tile if the tile is not provided by the handlers/sources
+ * lower down.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_HANDLER_EMPTY            (gegl_tile_handler_empty_get_type ())

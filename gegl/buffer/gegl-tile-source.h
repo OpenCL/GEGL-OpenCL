@@ -23,6 +23,12 @@
 #include <babl/babl.h>
 #include "gegl-tile.h"
 
+/***
+ * GeglTileSource is the very top classes of the tile/buffer handling of Gegl. It defines the generic
+ * command mechanism to interact with a set of tiles. This classe is derived in GeglTileBackend and
+ * GeglTileHandler.
+ */
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_TILE_SOURCE            (gegl_tile_source_get_type ())
@@ -186,7 +192,7 @@ gboolean  gegl_tile_source_idle      (GeglTileSource *source);
 #endif
 
 #define gegl_tile_source_command(source,cmd,x,y,z,tile)\
-(((GeglTileSource*)(source))->command(source,cmd,x,y,z,tile))
+   (((GeglTileSource*)(source))->command(source,cmd,x,y,z,tile))
 
 #define gegl_tile_source_set_tile(source,x,y,z,tile) \
    (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile))
