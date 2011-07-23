@@ -212,8 +212,10 @@ gegl_dot_add_graph (GString     *string,
             gegl_dot_add_graph (string, node, name);
             g_free (name);
           }
-
-        gegl_dot_util_add_node (string, node);
+        else
+          {
+            gegl_dot_util_add_node (string, node);
+          }
 
         entry = g_slist_next (entry);
       }
