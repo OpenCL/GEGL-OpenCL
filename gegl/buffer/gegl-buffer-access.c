@@ -1145,22 +1145,9 @@ typedef struct GeglBufferTileIterator
   GeglBuffer    *buffer;
   GeglRectangle  roi;     /* the rectangular region we're iterating over */
   GeglTile      *tile;    /* current tile */
-  gpointer       data;    /* current tile's data */
-
-  gint           col;     /* the column currently provided for */
-  gint           row;     /* the row currently provided for */
-  gboolean       write;
-  GeglRectangle  subrect;    /* the subrect that intersected roi */
-  gpointer       sub_data;   /* pointer to the subdata as indicated by subrect */
-  gint           rowstride;  /* rowstride for tile, in bytes */
 
   gint           next_col; /* used internally */
   gint           next_row; /* used internally */
-  gint           max_size; /* maximum data buffer needed, in bytes */
-  GeglRectangle  roi2;     /* the rectangular subregion of data
-                            * in the buffer represented by this scan.
-                            */
-
 } GeglBufferTileIterator;
 
 static void
@@ -1173,18 +1160,13 @@ gegl_buffer_tile_iterator_init (GeglBufferTileIterator *it,
   memset (it, 0, sizeof (GeglBufferTileIterator));
 
   if (roi.width == 0 || roi.height == 0)
-    g_error ("eeek");
+    g_error ("You are trying to iterate tile over an empty area.");
 
   it->buffer = buffer;
   it->roi = roi;
-  it->next_row    = 0;
+  it->next_row = 0;
   it->next_col = 0;
   it->tile = NULL;
-  it->col = 0;
-  it->row = 0;
-  it->write = write;
-  it->max_size = it->buffer->tile_storage->tile_width *
-                 it->buffer->tile_storage->tile_height;
 }
 
 static gboolean
@@ -1206,10 +1188,6 @@ gulp:
   /* unref previously held tile */
   if (it->tile)
     {
-      if (it->write && it->subrect.width == tile_width)
-        {
-          gegl_tile_unlock (it->tile);
-        }
       gegl_tile_unref (it->tile);
       it->tile = NULL;
     }
@@ -1221,55 +1199,19 @@ gulp:
       gint offsetx = gegl_tile_offset (tiledx, tile_width);
       gint offsety = gegl_tile_offset (tiledy, tile_height);
 
-      {
-        it->subrect.x = offsetx;
-        it->subrect.y = offsety;
-        if (it->roi.width + offsetx - it->next_col < tile_width)
-          it->subrect.width = (it->roi.width + offsetx - it->next_col) - offsetx;
-        else
-          it->subrect.width = tile_width - offsetx;
+      it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                            gegl_tile_indice (tiledx, tile_width),
+                                            gegl_tile_indice (tiledy, tile_height),
+                                            0);
 
-        if (it->roi.height + offsety - it->next_row < tile_height)
-          it->subrect.height = (it->roi.height + offsety - it->next_row) - offsety;
-        else
-          it->subrect.height = tile_height - offsety;
+      it->next_col += tile_width - offsetx;
 
-        it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                              gegl_tile_indice (tiledx, tile_width),
-                                              gegl_tile_indice (tiledy, tile_height),
-                                              0);
-        if (it->write && tile_width==it->subrect.width)
-          {
-            gegl_tile_lock (it->tile);
-          }
-        it->data = gegl_tile_get_data (it->tile);
-
-        {
-          gint bpp = babl_format_get_bytes_per_pixel (it->buffer->format);
-          it->rowstride = bpp * tile_width;
-          it->sub_data = (guchar*)(it->data) + bpp * (it->subrect.y * tile_width + it->subrect.x);
-        }
-
-        it->col = it->next_col;
-        it->row = it->next_row;
-        it->next_col += tile_width - offsetx;
-
-
-        it->roi2.x      = it->roi.x + it->col;
-        it->roi2.y      = it->roi.y + it->row;
-        it->roi2.width  = it->subrect.width;
-        it->roi2.height = it->subrect.height;
-
-        return TRUE;
-      }
+      return TRUE;
     }
   else /* move down to next row */
     {
       gint tiledy;
       gint offsety;
-
-      it->row = it->next_row;
-      it->col = it->next_col;
 
       tiledy = buffer_y + it->next_row;
       offsety = gegl_tile_offset (tiledy, tile_height);
