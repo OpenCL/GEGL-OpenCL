@@ -1139,7 +1139,6 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-
 typedef struct GeglBufferTileIterator
 {
   GeglBuffer    *buffer;
@@ -1175,15 +1174,13 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *it)
   GeglBuffer *buffer   = it->buffer;
   gint  tile_width     = buffer->tile_storage->tile_width;
   gint  tile_height    = buffer->tile_storage->tile_height;
-  gint  buffer_shift_x = buffer->shift_x;
-  gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
-  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint  buffer_x       = buffer->extent.x + buffer->shift_x;
+  gint  buffer_y       = buffer->extent.y + buffer->shift_y;
+  gint  tiledx, tiledy;
+  gint  offsetx, offsety;
 
   if (it->roi.width == 0 || it->roi.height == 0)
     return FALSE;
-
-gulp:
 
   /* unref previously held tile */
   if (it->tile)
@@ -1192,40 +1189,33 @@ gulp:
       it->tile = NULL;
     }
 
-  if (it->next_col < it->roi.width)
-    { /* return tile on this row */
-      gint tiledx = buffer_x + it->next_col;
-      gint tiledy = buffer_y + it->next_row;
-      gint offsetx = gegl_tile_offset (tiledx, tile_width);
-      gint offsety = gegl_tile_offset (tiledy, tile_height);
-
-      it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                            gegl_tile_indice (tiledx, tile_width),
-                                            gegl_tile_indice (tiledy, tile_height),
-                                            0);
-
-      it->next_col += tile_width - offsetx;
-
-      return TRUE;
-    }
-  else /* move down to next row */
+  /* check if moving to next row is needed */
+  if (it->next_col >= it->roi.width)
     {
-      gint tiledy;
-      gint offsety;
-
       tiledy = buffer_y + it->next_row;
       offsety = gegl_tile_offset (tiledy, tile_height);
 
       it->next_row += tile_height - offsety;
-      it->next_col=0;
+      it->next_col  = 0;
 
-      if (it->next_row < it->roi.height)
-        {
-          goto gulp; /* return the first tile in the next row */
+      if (it->next_row > it->roi.height)
+        { /* iteration ended */
+          return FALSE;
         }
-      return FALSE;
     }
-  return FALSE;
+
+    tiledx = buffer_x + it->next_col;
+    tiledy = buffer_y + it->next_row;
+    offsetx = gegl_tile_offset (tiledx, tile_width);
+
+    it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                          gegl_tile_indice (tiledx, tile_width),
+                                          gegl_tile_indice (tiledy, tile_height),
+                                          0);
+
+    it->next_col += tile_width - offsetx;
+
+    return TRUE;
 }
 
 void
