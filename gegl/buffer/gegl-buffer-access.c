@@ -1139,6 +1139,153 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
+
+typedef struct GeglBufferTileIterator
+{
+  GeglBuffer    *buffer;
+  GeglRectangle  roi;     /* the rectangular region we're iterating over */
+  GeglTile      *tile;    /* current tile */
+  gpointer       data;    /* current tile's data */
+
+  gint           col;     /* the column currently provided for */
+  gint           row;     /* the row currently provided for */
+  gboolean       write;
+  GeglRectangle  subrect;    /* the subrect that intersected roi */
+  gpointer       sub_data;   /* pointer to the subdata as indicated by subrect */
+  gint           rowstride;  /* rowstride for tile, in bytes */
+
+  gint           next_col; /* used internally */
+  gint           next_row; /* used internally */
+  gint           max_size; /* maximum data buffer needed, in bytes */
+  GeglRectangle  roi2;     /* the rectangular subregion of data
+                            * in the buffer represented by this scan.
+                            */
+
+} GeglBufferTileIterator;
+
+static void
+gegl_buffer_tile_iterator_init (GeglBufferTileIterator *it,
+                                GeglBuffer             *buffer,
+                                GeglRectangle           roi,
+                                gboolean                write)
+{
+  g_assert (it);
+  memset (it, 0, sizeof (GeglBufferTileIterator));
+
+  if (roi.width == 0 || roi.height == 0)
+    g_error ("eeek");
+
+  it->buffer = buffer;
+  it->roi = roi;
+  it->next_row    = 0;
+  it->next_col = 0;
+  it->tile = NULL;
+  it->col = 0;
+  it->row = 0;
+  it->write = write;
+  it->max_size = it->buffer->tile_storage->tile_width *
+                 it->buffer->tile_storage->tile_height;
+}
+
+static gboolean
+gegl_buffer_tile_iterator_next (GeglBufferTileIterator *it)
+{
+  GeglBuffer *buffer   = it->buffer;
+  gint  tile_width     = buffer->tile_storage->tile_width;
+  gint  tile_height    = buffer->tile_storage->tile_height;
+  gint  buffer_shift_x = buffer->shift_x;
+  gint  buffer_shift_y = buffer->shift_y;
+  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
+  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+
+  if (it->roi.width == 0 || it->roi.height == 0)
+    return FALSE;
+
+gulp:
+
+  /* unref previously held tile */
+  if (it->tile)
+    {
+      if (it->write && it->subrect.width == tile_width)
+        {
+          gegl_tile_unlock (it->tile);
+        }
+      gegl_tile_unref (it->tile);
+      it->tile = NULL;
+    }
+
+  if (it->next_col < it->roi.width)
+    { /* return tile on this row */
+      gint tiledx = buffer_x + it->next_col;
+      gint tiledy = buffer_y + it->next_row;
+      gint offsetx = gegl_tile_offset (tiledx, tile_width);
+      gint offsety = gegl_tile_offset (tiledy, tile_height);
+
+      {
+        it->subrect.x = offsetx;
+        it->subrect.y = offsety;
+        if (it->roi.width + offsetx - it->next_col < tile_width)
+          it->subrect.width = (it->roi.width + offsetx - it->next_col) - offsetx;
+        else
+          it->subrect.width = tile_width - offsetx;
+
+        if (it->roi.height + offsety - it->next_row < tile_height)
+          it->subrect.height = (it->roi.height + offsety - it->next_row) - offsety;
+        else
+          it->subrect.height = tile_height - offsety;
+
+        it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                              gegl_tile_indice (tiledx, tile_width),
+                                              gegl_tile_indice (tiledy, tile_height),
+                                              0);
+        if (it->write && tile_width==it->subrect.width)
+          {
+            gegl_tile_lock (it->tile);
+          }
+        it->data = gegl_tile_get_data (it->tile);
+
+        {
+          gint bpp = babl_format_get_bytes_per_pixel (it->buffer->format);
+          it->rowstride = bpp * tile_width;
+          it->sub_data = (guchar*)(it->data) + bpp * (it->subrect.y * tile_width + it->subrect.x);
+        }
+
+        it->col = it->next_col;
+        it->row = it->next_row;
+        it->next_col += tile_width - offsetx;
+
+
+        it->roi2.x      = it->roi.x + it->col;
+        it->roi2.y      = it->roi.y + it->row;
+        it->roi2.width  = it->subrect.width;
+        it->roi2.height = it->subrect.height;
+
+        return TRUE;
+      }
+    }
+  else /* move down to next row */
+    {
+      gint tiledy;
+      gint offsety;
+
+      it->row = it->next_row;
+      it->col = it->next_col;
+
+      tiledy = buffer_y + it->next_row;
+      offsety = gegl_tile_offset (tiledy, tile_height);
+
+      it->next_row += tile_height - offsety;
+      it->next_col=0;
+
+      if (it->next_row < it->roi.height)
+        {
+          goto gulp; /* return the first tile in the next row */
+        }
+      return FALSE;
+    }
+  return FALSE;
+}
+
 void
 gegl_buffer_copy (GeglBuffer          *src,
                   const GeglRectangle *src_rect,
@@ -1278,13 +1425,33 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  GeglBuffer *new_buffer;
+  GeglBuffer             *new_buffer;
+  GeglBufferTileIterator  it;
+  GeglRectangle           extent;
+  GeglTileSource         *tile_source;
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
   new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
-  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
-                    new_buffer, gegl_buffer_get_extent (buffer));
+  tile_source = GEGL_TILE_SOURCE (new_buffer);
+
+  extent = *gegl_buffer_get_extent (buffer);
+
+  gegl_buffer_tile_iterator_init (&it, buffer, extent, FALSE);
+
+  while (gegl_buffer_tile_iterator_next (&it))
+    {
+      GeglTile *tile;
+      gboolean  success;
+
+      tile = gegl_tile_dup (it.tile);
+
+      success = gegl_tile_source_set_tile (tile_source, tile->x, tile->y, tile->z, tile);
+
+      if (!success)
+        g_print ("Error in inserting the copy on write dupplicated tile.");
+    }
+
   return new_buffer;
 }
 
