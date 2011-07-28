@@ -175,9 +175,10 @@ get_influence (GeglChantO *o,
 }
 
 static void
-stamp (GeglChantO *o,
-       gdouble     x,
-       gdouble     y)
+stamp (GeglChantO          *o,
+       const GeglRectangle *result,
+       gdouble              x,
+       gdouble              y)
 {
   WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
   GeglBufferIterator  *it;
@@ -199,6 +200,10 @@ stamp (GeglChantO *o,
       priv->last_point_set = TRUE;
       return;
     }
+
+  /* don't stamp if outside the roi treated */
+  if (!gegl_rectangle_intersect (NULL, result, &area))
+    return;
 
   format = babl_format_n (babl_type ("float"), 2);
 
@@ -298,8 +303,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
-  WarpPrivate          *priv = (WarpPrivate*) o->chant_data;
+  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
   gdouble              dist;
   gdouble              stamps;
   gdouble              spacing = MAX (o->size * 0.01, 0.5); /*1% spacing for starters*/
@@ -324,19 +329,19 @@ process (GeglOperation       *operation,
       stamps = dist / spacing;
 
       if (stamps < 1)
-       {
-        stamp (o, next.x, next.y);
-        prev = next;
-       }
+        {
+          stamp (o, result, next.x, next.y);
+          prev = next;
+        }
       else
-       {
-        for (i = 0; i < stamps; i++)
-          {
-            point_lerp (&lerp, &prev, &next, (i * spacing) / dist);
-            stamp (o, lerp.x, lerp.y);
-          }
-         prev = lerp;
-       }
+        {
+          for (i = 0; i < stamps; i++)
+            {
+              point_lerp (&lerp, &prev, &next, (i * spacing) / dist);
+              stamp (o, result, lerp.x, lerp.y);
+            }
+          prev = lerp;
+        }
     }
 
   /* Affect the output buffer */
