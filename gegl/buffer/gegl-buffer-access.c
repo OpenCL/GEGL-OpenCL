@@ -38,6 +38,7 @@
 #include "gegl-sampler-lohalo.h"
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
+#include "gegl-tile-handler-chain.h"
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
 
@@ -1360,28 +1361,28 @@ gegl_buffer_dup (GeglBuffer *buffer)
   GeglBuffer             *new_buffer;
   GeglBufferTileIterator  it;
   GeglRectangle           extent;
-  GeglTileSource         *tile_source;
+  GeglTileHandlerChain   *storage;
+  GeglTileHandlerCache   *cache;
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
   new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
-  tile_source = GEGL_TILE_SOURCE (new_buffer);
 
   extent = *gegl_buffer_get_extent (buffer);
 
   gegl_buffer_tile_iterator_init (&it, buffer, extent, FALSE);
 
+  storage = GEGL_TILE_HANDLER_CHAIN (new_buffer->tile_storage);
+  cache = GEGL_TILE_HANDLER_CACHE (gegl_tile_handler_chain_get_first (storage, GEGL_TYPE_TILE_HANDLER_CACHE));
+
+
   while (gegl_buffer_tile_iterator_next (&it))
     {
       GeglTile *tile;
-      gboolean  success;
 
       tile = gegl_tile_dup (it.tile);
 
-      success = gegl_tile_source_set_tile (tile_source, tile->x, tile->y, tile->z, tile);
-
-      if (!success)
-        g_print ("Error in inserting the copy on write dupplicated tile.");
+      gegl_tile_handler_cache_insert (cache, tile, tile->x, tile->y, tile->z);
     }
 
   return new_buffer;
