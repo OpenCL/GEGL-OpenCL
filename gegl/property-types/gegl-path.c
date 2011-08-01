@@ -1284,14 +1284,14 @@ bezier2 (GeglPathItem  *prev,
   Point ab,bc,cd,abbc,bccd;
 
   if (prev->type == 'c')
-    point_lerp (&ab, &prev->point[2], &curve->point[0], t);
+    gegl_path_point_lerp (&ab, &prev->point[2], &curve->point[0], t);
   else
-    point_lerp (&ab, &prev->point[0], &curve->point[0], t);
-  point_lerp (&bc, &curve->point[0], &curve->point[1], t);
-  point_lerp (&cd, &curve->point[1], &curve->point[2], t);
-  point_lerp (&abbc, &ab, &bc,t);
-  point_lerp (&bccd, &bc, &cd,t);
-  point_lerp (dest, &abbc, &bccd, t);
+    gegl_path_point_lerp (&ab, &prev->point[0], &curve->point[0], t);
+  gegl_path_point_lerp (&bc, &curve->point[0], &curve->point[1], t);
+  gegl_path_point_lerp (&cd, &curve->point[1], &curve->point[2], t);
+  gegl_path_point_lerp (&abbc, &ab, &bc,t);
+  gegl_path_point_lerp (&bccd, &bc, &cd,t);
+  gegl_path_point_lerp (dest, &abbc, &bccd, t);
 }
 
 static void
@@ -1469,7 +1469,7 @@ gegl_path_list_calc (GeglPathList *path,
               b.x = iter->d.point[0].x;
               b.y = iter->d.point[0].y;
 
-              distance = point_dist (&a, &b);
+              distance = gegl_path_point_dist (&a, &b);
               next_pos += distance;
 
               if (pos <= next_pos)
@@ -1477,7 +1477,7 @@ gegl_path_list_calc (GeglPathList *path,
                   Point spot;
                   gfloat ratio = (pos - traveled) / (next_pos - traveled);
 
-                  point_lerp (&spot, &a, &b, ratio);
+                  gegl_path_point_lerp (&spot, &a, &b, ratio);
 
                   *xd = spot.x;
                   *yd = spot.y;
@@ -1539,7 +1539,7 @@ gegl_path_list_calc_values (GeglPathList *path,
               b.x = iter->d.point[0].x;
               b.y = iter->d.point[0].y;
 
-              distance = point_dist (&a, &b);
+              distance = gegl_path_point_dist (&a, &b);
               next_pos += distance;
 
               while (next_sample <= next_pos)
@@ -1547,7 +1547,7 @@ gegl_path_list_calc_values (GeglPathList *path,
                   Point spot;
                   gfloat ratio = (next_sample - traveled) / (next_pos - traveled);
 
-                  point_lerp (&spot, &a, &b, ratio);
+                  gegl_path_point_lerp (&spot, &a, &b, ratio);
 
                   xs[i]=spot.x;
                   ys[i]=spot.y;
@@ -1607,7 +1607,7 @@ gegl_path_list_get_length (GeglPathList *path)
               b.x = iter->d.point[0].x;
               b.y = iter->d.point[0].y;
 
-              distance = point_dist (&a, &b);
+              distance = gegl_path_point_dist (&a, &b);
               traveled_length += distance;
 
               x = b.x;
@@ -1630,18 +1630,18 @@ gegl_path_list_get_length (GeglPathList *path)
 
 /***** Point *****/
 void
-point_lerp (Point  *dest,
-      Point  *a,
-      Point  *b,
-      gfloat  t)
+gegl_path_point_lerp (Point  *dest,
+                      Point  *a,
+                      Point  *b,
+                      gfloat  t)
 {
   dest->x = a->x + (b->x-a->x) * t;
   dest->y = a->y + (b->y-a->y) * t;
 }
 
 gdouble
-point_dist (Point *a,
-            Point *b)
+gegl_path_point_dist (Point *a,
+                      Point *b)
 {
   return sqrt ((a->x-b->x)*(a->x-b->x) +
                (a->y-b->y)*(a->y-b->y));

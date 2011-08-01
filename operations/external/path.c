@@ -162,7 +162,7 @@ gegl_path_stroke (GeglBuffer *buffer,
 
               spacing = 0.2 * radius;
 
-              distance = point_dist (&a, &b);
+              distance = gegl_path_point_dist (&a, &b);
 
               leftover = need_to_travel - traveled_length;
               offset = spacing - leftover;
@@ -178,7 +178,7 @@ gegl_path_stroke (GeglBuffer *buffer,
                     gfloat ratio = local_pos / distance;
                     gfloat radius = linewidth/2;
 
-                    point_lerp (&spot, &a, &b, ratio);
+                    gegl_path_point_lerp (&spot, &a, &b, ratio);
 
                     gegl_path_stamp (buffer, clip_rect,
                       spot.x, spot.y, radius, hardness, color, opacity);

@@ -462,7 +462,7 @@ GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
  *
  * linear interpolation between two Points
  */
-void                  point_lerp              (Point            *dest,
+void                  gegl_path_point_lerp    (Point            *dest,
                                                Point            *a,
                                                Point            *b,
                                                gfloat            t);
@@ -474,7 +474,7 @@ void                  point_lerp              (Point            *dest,
  *
  * Compute the distance between Point @a and @b
  */
-gdouble               point_dist              (Point            *a,
+gdouble               gegl_path_point_dist    (Point            *a,
                                                Point            *b);
 
 G_END_DECLS
