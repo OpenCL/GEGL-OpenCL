@@ -161,8 +161,8 @@ outline_walk_cw (GeglRectangle      *rect,
 #define pteq(pt1,pt2) (((pt1)->x == (pt2)->x) && ((pt1)->y == (pt2)->y))
 
 GPtrArray*
-outline_find_ccw (GeglRectangle *rect,
-                  gfloat        *pixels)
+sc_outline_find_ccw (GeglRectangle *rect,
+                    gfloat        *pixels)
 {
   GPtrArray *points = g_ptr_array_new ();
   

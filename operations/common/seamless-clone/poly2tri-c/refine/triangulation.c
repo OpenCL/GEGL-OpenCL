@@ -144,6 +144,31 @@ p2tr_triangulation_add_tr (P2tRTriangulation *self, P2tRTriangle *tr)
   p2tr_triangle_ref (tr);
 }
 
+void
+p2tr_triangulation_get_points (P2tRTriangulation *self, GPtrArray *dest)
+{
+  P2tRHashSetIter  iter;
+  P2tRTriangle    *tr;
+  P2tRHashSet     *pts = p2tr_hash_set_set_new (g_direct_hash, g_direct_equal, NULL);
+  gint             i;
+  
+  p2tr_hash_set_iter_init (&iter, self->tris);
+  while (p2tr_hash_set_iter_next (&iter, (gpointer*)&tr))
+    {
+	  for (i = 0; i < 3; i++)
+	    {
+		  P2tRPoint *pt = p2tr_edge_get_end (tr->edges[i]);
+	      if (! p2tr_hash_set_contains (pts, pt))
+	        {
+			  p2tr_point_ref (pt);
+			  g_ptr_array_add (dest, pt);
+			  p2tr_hash_set_insert (pts, pt);
+		    }
+		}
+    }
+
+  g_hash_table_free (pts);
+}
 /* ########################################################################## */
 /*                               Point struct                                 */
 /* ########################################################################## */

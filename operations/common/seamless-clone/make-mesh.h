@@ -26,12 +26,13 @@ typedef struct {
   gdouble    total_weight;
 } ScSampleList;
 
-void sc_free_sample_list (ScSampleList *self);
+typedef GHashTable ScMeshSampling;
 
-void
-ComputeSampling (P2tRTriangulation  *T,
-                 P2tRHashSet       **edgePts,
-                 GHashTable        **sampling);
+ScSampleList* sc_sample_list_compute (ScOutline *outline, gdouble Px, gdouble Py);
+void          sc_sample_list_free    (ScSampleList *self);
+
+ScMeshSampling* sc_mesh_sampling_compute (ScOutline *outline, P2tRTriangulation *mesh);
+void            sc_mesh_sampling_free    (ScMeshSampling *self);
 
 void
 ComputeInnerSample (P2tRPoint  *X,

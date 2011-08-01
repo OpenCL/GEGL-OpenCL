@@ -27,8 +27,6 @@
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
 
-#include <cairo.h>
-
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 
 #include "poly2tri-c/poly2tri.h"
@@ -65,200 +63,43 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
-/*******************************************************************/
-/******************** Part 2 - Mesh rendering **********************/
-/*******************************************************************/
 
-/*
- * Store the bounds of the mesh inside mesh_bounds
- */
-static cairo_pattern_t*
-gimp_operation_seamless_clone_make_fine_mesh (GPtrArray     *ptList,
-                                              GeglBuffer    *aux,
-                                              GeglBuffer    *input,
-                                              GeglRectangle *mesh_bounds)
+typedef struct {
+  GeglBuffer     *aux_buf;
+  GeglBuffer     *input_buf;
+  ScMeshSampling *sampling;
+} ScColorComputeInfo;
+
+static void
+sc_point_to_color_func (P2tRPoint *point,
+                        gfloat    *dest,
+                        gpointer  *cci_p)
 {
-  Babl *format = babl_format("RGB float");
-  gfloat dest[3], aux_c[3], input_c[3];
-  GList *X = NULL;   /* List of P2tRPoint */
-  GList *XEs = NULL; /* List of P2tREdge */
-  gint i, N = ptList->len;
-
-  gint min_x = G_MAXINT, max_x = -G_MAXINT, min_y = G_MAXINT, max_y = -G_MAXINT;
-
-  GList *tmpPts = NULL, *tris = NULL;
-
-  printf ("Making mesh from %d points!\n", ptList->len);
+  ScColorComputeInfo *cci = (ScColorComputeInfo*) cci_p;
+  gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
+  gint i;
+  const gint N = cci->points->len;
+  
+  /* This function should be very light, so save some effort! */
+  const static Babl *format = babl_format("RGB float");
 
   for (i = 0; i < N; i++)
     {
-      SPoint *pt = (SPoint*) g_ptr_array_index (ptList, i);
-      min_x = MIN (pt->x, min_x);
-      min_y = MIN (pt->y, min_y);
-      max_x = MAX (pt->x, max_x);
-      max_y = MAX (pt->y, max_y);
-      /* No one should care if the points are given in reverse order */
-      X = g_list_prepend (X, p2tr_point_new (pt->x, pt->y));
-    }
+      P2tRPoint *pt = g_ptr_array_index (cci->sampling->points, i);
+      gdouble weight = g_array_index (cci->sampling->weights, gdouble, i);
+      
+      gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
+      
+      dest_c[0] = weight * (input_buf[0] - aux_buf[0]);
+      dest_c[1] = weight * (input_buf[1] - aux_buf[1]);
+      dest_c[2] = weight * (input_buf[2] - aux_buf[2]);
+	}
 
-  mesh_bounds->x = min_x;
-  mesh_bounds->y = min_y;
-  mesh_bounds->width = max_x - min_x;
-  mesh_bounds->height = max_y - min_y;
-
-  GList *liter = X;
-  while (liter != NULL)
-    {
-      P2tREdge *E = p2tr_edge_new ((P2tRPoint*)(liter->data), (P2tRPoint*)(g_list_cyclic_next(X,liter)->data));
-      XEs = g_list_prepend (XEs, E);
-      p2tr_edge_set_constrained (E, TRUE);
-      liter = liter->next;
-    }
-
-  printf ("Edges %p made, now just triangulate!\n", XEs);
-  P2tRTriangulation *T = p2tr_triangulate (X);
-  printf ("Triangulation %p made! %d triangles, %d(/2) edges, %d points\n", T, g_hash_table_size (T->tris),g_hash_table_size (T->edges),g_hash_table_size (T->pts));
-
-  DelaunayTerminator (T,XEs,M_PI/7,p2tr_false_delta);
-  printf ("Terminated!\n");
-
-  P2trHashSetIter iter;
-  P2tRTriangle *t;
-  p2tr_hash_set_iter_init (&iter, T->tris);
-  cairo_pattern_t *mesh = cairo_pattern_create_mesh ();
-
-  P2tRHashSet  *edgePts;
-  GHashTable   *sampling;
-
-  ComputeSampling (T, &edgePts, &sampling);
-
-
-#define GetPtColor(pt,dest)                    \
-do {                                           \
-  if (p2tr_hash_set_contains (edgePts, (pt)))  \
-    {                                          \
-      gegl_buffer_sample (aux, (pt)->x, (pt)->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST); \
-      gegl_buffer_sample (input, (pt)->x, (pt)->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST); \
-      (dest)[0] = TO_CAIRO(input_c[0] - aux_c[0]);         \
-      (dest)[1] = TO_CAIRO(input_c[1] - aux_c[1]);         \
-      (dest)[2] = TO_CAIRO(input_c[2] - aux_c[2]);         \
-    }                                          \
-  else                                         \
-    ComputeInnerSample ((pt), g_hash_table_lookup (sampling, (pt)), input, aux, (dest)); \
-} while (FALSE)
-
-  while (p2tr_hash_set_iter_next (&iter, (gpointer*)&t))
-    {
-      p2tr_assert_and_explain (t != NULL, "NULL triangle found!\n");
-      p2tr_assert_and_explain (t->edges[0] != NULL && t->edges[1] != NULL && t->edges[2] != NULL,
-                               "Removed triangle found!\n");
-
-
-      P2tRPoint* tpt;
-      cairo_mesh_pattern_begin_patch (mesh);
-
-      tpt = p2tr_edge_get_start (t->edges[0]);
-      cairo_mesh_pattern_move_to (mesh, tpt->x, tpt->y);
-
-      tpt = p2tr_edge_get_start (t->edges[1]);
-      cairo_mesh_pattern_line_to (mesh, tpt->x, tpt->y);
-
-      tpt = p2tr_edge_get_start (t->edges[2]);
-      cairo_mesh_pattern_line_to (mesh, tpt->x, tpt->y);
-
-//      tpt = p2t_triangle_get_point (triangle_index(tris,i), 0);
-//      cairo_mesh_pattern_line_to (mesh, tpt->x, tpt->y);
-
-      tpt = p2tr_edge_get_start (t->edges[0]);
-      GetPtColor (tpt,dest);
-      cairo_mesh_pattern_set_corner_color_rgb (mesh, 0, dest[2], dest[1], dest[0]);
-
-      tpt = p2tr_edge_get_start (t->edges[1]);
-      GetPtColor (tpt,dest);
-      cairo_mesh_pattern_set_corner_color_rgb (mesh, 1, dest[2], dest[1], dest[0]);
-
-      tpt = p2tr_edge_get_start (t->edges[2]);
-      GetPtColor (tpt,dest);
-      cairo_mesh_pattern_set_corner_color_rgb (mesh, 2, dest[2], dest[1], dest[0]);
-
-      cairo_mesh_pattern_end_patch (mesh);
-      }
-  return mesh;
-}
-
-static void
-render_outline (GPtrArray       *pts,
-                cairo_t         *cr)
-{
-  SPoint *pt;
-  gint i;
-
-  if (pts->len <= 0)
-    return;
-
-  pt = (SPoint*) g_ptr_array_index (pts, 0);
-
-  cairo_move_to (cr, pt->x, pt->y);
-
-  for (i = 1; i < pts->len; i++)
-    {
-      pt = (SPoint*) g_ptr_array_index (pts, i);
-      cairo_line_to (cr, pt->x, pt->y);
-    }
-
-  cairo_close_path (cr);
-}
-
-/*******************************************************************/
-/********************** Part 3 - Cairo Utils ***********************/
-/*******************************************************************/
-static cairo_surface_t *
-surface_for_rect (const GeglRectangle *roi)
-{
-  guchar *data;
-
-  data = g_new0 (guchar, roi->width * roi->height * 4);
-
-  return cairo_image_surface_create_for_data (data,
-                                              CAIRO_FORMAT_ARGB32,
-                                              roi->width,
-                                              roi->height,
-                                              roi->width * 4);
-}
-
-static void
-commit_and_free_surface (GeglBuffer          *output,
-                         GeglBuffer          *aux,
-                         const GeglRectangle *roi,
-                         cairo_surface_t     *surface)
-{
-  gint i, j;
-  Babl *format = babl_format ("RGBA u8");
-  guchar *data = cairo_image_surface_get_data (surface);
-  guchar bg[3];
-
-  g_assert (cairo_image_surface_get_width (surface) == roi->width);
-  g_assert (cairo_image_surface_get_height (surface) == roi->height);
-  g_assert (cairo_image_surface_get_stride (surface) == roi->width * 4);
-
-  for (i = 0; i < roi->height; i++)
-    for (j = 0; j < roi->width; j++)
-      {
-        gint off = (i * roi->width + j) * 4;
-        gegl_buffer_sample (aux, roi->x + j, roi->y + i, NULL, bg, format, GEGL_INTERPOLATION_NEAREST);
-
-        data[off++] = (gint)CLAMP(bg[0] + FROM_CAIRO(data[off]), 0, 255);
-        data[off++] = (gint)CLAMP(bg[1] + FROM_CAIRO(data[off]), 0, 255);
-        data[off++] = (gint)CLAMP(bg[2] + FROM_CAIRO(data[off]), 0, 255);
-        data[off] = (data[off] >= 255) ? 255 : 0;
-      }
-
-
-  gegl_buffer_set (output, roi, format, data,
-                   GEGL_AUTO_ROWSTRIDE);
-
-  cairo_surface_destroy (surface);
-//  g_free (data);
+  dest[0] = dest_c[0] / cci->sampling->total_weight;
+  dest[1] = dest_c[1] / cci->sampling->total_weight;
+  dest[2] = dest_c[2] / cci->sampling->total_weight;
+  dest[3] = 1;
 }
 
 static gboolean
@@ -269,45 +110,75 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GPtrArray *ptList;
-  gfloat    *aux_raw;
+  gfloat    *aux_raw, *out_raw;
 
-  // GeglRectangle input_rect = *gegl_buffer_get_extent (input);
+  GeglRectangle input_rect = *gegl_buffer_get_extent (input);
   GeglRectangle aux_rect   = *gegl_operation_source_get_bounding_box (operation, "aux");
 
-  cairo_surface_t *out_surf;
-  cairo_t         *cr;
+  ScOutline          *outline;
+  
+  P2tRTriangulation  *mesh;
+  GeglRectangle       mesh_bounds;
+
+  ScMeshSampling     *mesh_sampling;
+
+  ScColorComputeInfo  cci;
+  P2tRImageConfig     imcfg;
 
   printf ("The aux_rect is:\n");
   gegl_rectangle_dump (&aux_rect);
 
+  /********************************************************************/
+  /* Part 1: The preprocessing                                        */
+  /********************************************************************/
+  
+  /* First, find the paste outline */
   aux_raw = g_new (gfloat, 4 * aux_rect.width * aux_rect.height);
-
   gegl_buffer_get (aux, 1.0, &aux_rect, babl_format("RGBA float"), aux_raw, GEGL_AUTO_ROWSTRIDE);
-
-  ptList = outline_find_ccw (&aux_rect, aux_raw);
-
+  
+  outline = outline_find_ccw (&aux_rect, aux_raw);
+  
   g_free (aux_raw);
   aux_raw = NULL;
 
-  printf ("The result is:\n");
-  gegl_rectangle_dump (result);
+  /* Then, Generate the mesh */
+  mesh = sc_make_fine_mesh (outline, &mesh_bounds);
 
-  out_surf = surface_for_rect (result);
-  cr = cairo_create (out_surf);
+  /* Finally, Generate the mesh sample list for each point */
+  mesh_sampling = sc_mesh_sampling_compute (outline, mesh);
 
-  GeglRectangle mesh_bounds;
-  cairo_pattern_t *mesh = gimp_operation_seamless_clone_make_fine_mesh (ptList, aux, input, &mesh_bounds);
-  cairo_set_source (cr, mesh);
-  render_outline (ptList, cr);
-  cairo_fill_preserve (cr);
+  /* If caching of UV is desired, it shold be done here! */
+
+  /********************************************************************/
+  /* Part 2: The rendering                                            */
+  /********************************************************************/
+
+  /* Alocate the output buffer */
+  out_raw = g_new (gfloat, 4 * result.width * result.height);
+
+  /* Render the mesh into it */
+  cci->aux_buf = aux;
+  cci->input_buf = input;
+  cci->sampling = mesh_sampling;
+
+  imcfg->min_x = result->x;
+  imcfg->min_y = result->y;
+  imcfg->step_x = imcfg->step_y = 1;
+  imcfg->x_samples = result->width;
+  imcfg->y_samples = result->height;
+  imcfg->cpp = 4;
   
-  cairo_pattern_destroy (mesh);
-  cairo_destroy (cr);
-  commit_and_free_surface (output, aux, result, out_surf);
+  p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
 
-  g_free (aux_raw);
-  g_ptr_array_free (ptList, TRUE);
+  /* TODO: Add the aux to the mesh rendering! */
+  gegl_buffer_set (output, result, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);
 
+  /* Free memory, by the order things were allocated! */
+  g_free (out_raw);
+  sc_mesh_sampling_free (mesh_sampling);
+  p2tr_triangulation_free (mes);
+  sc_outline_free (outline);
+  
   return  TRUE;
 }
 

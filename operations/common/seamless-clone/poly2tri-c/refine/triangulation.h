@@ -106,6 +106,9 @@ void p2tr_triangulation_add_pt (P2tRTriangulation *self, P2tRPoint *pt);
 void p2tr_triangulation_add_ed (P2tRTriangulation *self, P2tREdge *ed);
 void p2tr_triangulation_add_tr (P2tRTriangulation *self, P2tRTriangle *tr);
 
+void p2tr_triangulation_get_points (P2tRTriangulation *self, GPtrArray *dest);
+
+
 /* ########################################################################## */
 /*                               Point struct                                 */
 /* ########################################################################## */

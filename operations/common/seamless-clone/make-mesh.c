@@ -99,6 +99,8 @@ sc_compute_sample_list_weights (gdouble        Px,
   gdouble weightTotal = 0, weightTemp;
   gint special = -1;
 
+  sl->total_weight = 0;
+
   for (i = 0; i < N; i++)
     {
       ScPoint *pt1 = g_ptr_array_index_cyclic (sl->points, i);
@@ -121,6 +123,7 @@ sc_compute_sample_list_weights (gdouble        Px,
           
           g_ptr_array_add (sl->points, pt1);
           g_array_append_val (sl->weights, temp);
+          sl->total_weight = 1;
           return;
         }
 
@@ -146,12 +149,13 @@ sc_compute_sample_list_weights (gdouble        Px,
   for (i = 1; i < N; i++)
     {
       weightTemp = (tan_as_half[i - 1] + tan_as_half[i % N]) / pow (norms[i % N], 2);
+      sl->total_weight += weightTemp;
       g_array_append_val (sl->weights, weightTemp);
 	}
 }
 
-static ScSampleList*
-sc_compute_sample_list (ScOutline     *outline,
+ScSampleList*
+sc_sample_list_compute (ScOutline     *outline,
                         gdouble        Px,
                         gdouble        Py)
 {
@@ -177,13 +181,66 @@ sc_compute_sample_list (ScOutline     *outline,
   return sl;
 }
 
+void
+sc_sample_list_free (ScSampleList *self)
+{
+  g_ptr_array_free (self->points);
+  g_array_free (self->weights);
+  g_slice_free (ScSampleList, self);
+}
+
+ScMeshSampling*
+sc_mesh_sampling_compute (ScOutline         *outline,
+                          P2tRTriangulation *mesh)
+{
+  GPtrArray  *points = g_ptr_array_new ();
+  GHashTable *pt2sample = g_hash_table_new (g_direct_hash, g_direct_equal);
+  gint i;
+
+  /* Note that the get_points function increases the refcount of the
+   * returned points, so we must unref them when done with them
+   */
+  p2tr_triangulation_get_points (mesh, points)
+
+  for (i = 0; i < points->len; i++)
+    {
+	  P2tRPoint    *pt = (P2tRPoint*) g_ptr_array_index (points, i);
+	  ScSampleList *sl = sc_compute_sample_list (outline, pt->x, pt->y);
+	  g_hash_table_insert (pt2sample, pt, sl);
+	}
+
+  /* We will unref the points when freeing the hash table */
+  g_ptr_array_free (points);
+  	
+  return pt2sample;
+}
+
+static void
+sc_mesh_sampling_entry_free_hfunc (gpointer point,
+                                   gpointer sampling_list,
+                                   gpointer unused)
+{
+  /* Unref the point returned from triangulation_get_points */
+  p2tr_point_unref ((P2tRPoint*)point);
+  /* Free the sampling list */
+  sc_sample_list_free ((ScSampleList*)sampling_list);
+}
+
+void
+sc_mesh_sampling_free (ScMeshSampling *self)
+{
+  GHashTable     *real = (GHashTable*) self;
+  g_hash_table_foreach (real, sc_mesh_sampling_entry_free_hfunc, NULL);
+  g_hash_table_destroy (real);
+}
+
 /**
  * sc_make_fine_mesh:
  * @outline: An ScOutline object describing the PSLG of the mesh
  * @mesh_bounds: A rectangle in which the bounds of the mesh should be
  *               stored
  */
-static P2tRTriangulation*
+P2tRTriangulation*
 sc_make_fine_mesh (ScOutline     *outline,
                    GeglRectangle *mesh_bounds)
 {
