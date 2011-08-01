@@ -325,7 +325,7 @@ process (GeglOperation       *operation,
     {
       event = event->next;
       next = *(event->d.point);
-      dist = point_dist (&next, &prev);
+      dist = gegl_path_point_dist (&next, &prev);
       stamps = dist / spacing;
 
       if (stamps < 1)
@@ -337,7 +337,7 @@ process (GeglOperation       *operation,
         {
           for (i = 0; i < stamps; i++)
             {
-              point_lerp (&lerp, &prev, &next, (i * spacing) / dist);
+              gegl_path_point_lerp (&lerp, &prev, &next, (i * spacing) / dist);
               stamp (o, result, lerp.x, lerp.y);
             }
           prev = lerp;
