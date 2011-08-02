@@ -178,7 +178,7 @@ p2tr_triangulation_get_points (P2tRTriangulation *self, GPtrArray *dest)
 		}
     }
 
-  g_hash_table_free (pts);
+  g_hash_table_destroy (pts);
 }
 /* ########################################################################## */
 /*                               Point struct                                 */

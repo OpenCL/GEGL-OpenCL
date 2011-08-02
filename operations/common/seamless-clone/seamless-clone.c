@@ -39,18 +39,23 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *region)
 {
-  GeglRectangle result;
+  GeglRectangle *temp = NULL;
+  GeglRectangle  result;
 
-  if (g_strcmp0 (input_pad, "input"))
-    result = *gegl_operation_source_get_bounding_box (operation, "input");
-  else if (g_strcmp0 (input_pad, "aux"))
-    result = *gegl_operation_source_get_bounding_box (operation, "aux");
+  g_debug ("seamless-clone.c::get_required_for_output");
+  
+  if (g_strcmp0 (input_pad, "input") || g_strcmp0 (input_pad, "aux"))
+    temp = gegl_operation_source_get_bounding_box (operation, input_pad);
   else
-    g_assert_not_reached ();
+    g_warning ("seamless-clone::Unknown input pad \"%s\"\n", input_pad);
 
-  printf ("Input \"%s\" size is:\n", input_pad);
-  gegl_rectangle_dump (&result);
-
+  if (temp != NULL)
+    result = *temp;
+  else
+    {
+      result.width = result.height = 0;
+    }
+  
   return result;
 }
 
@@ -59,6 +64,8 @@ prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("RGBA float");
 
+  g_debug ("seamless-clone.c::prepare");
+  
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "aux",    format);
   gegl_operation_set_format (operation, "output", format);
@@ -82,14 +89,16 @@ sc_point_to_color_func (P2tRPoint *point,
   gint i;
   guint N = sl->points->len;
   
-  Babl *format = babl_format("RGB float");
+  Babl *format = babl_format ("RGBA float");
 
   for (i = 0; i < N; i++)
     {
       P2tRPoint *pt = g_ptr_array_index (sl->points, i);
       gdouble weight = g_array_index (sl->weights, gdouble, i);
-      
+
+      g_assert (format != NULL);
       gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
+      g_assert (format != NULL);
       gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
       
       dest_c[0] = weight * (input_c[0] - aux_c[0]);
@@ -124,7 +133,8 @@ process (GeglOperation       *operation,
   ScColorComputeInfo  cci;
   P2tRImageConfig     imcfg;
 
-  printf ("The aux_rect is:\n");
+  g_debug ("seamless-clone.c::process");
+  printf ("The aux_rect is: ");
   gegl_rectangle_dump (&aux_rect);
 
   /********************************************************************/
@@ -134,17 +144,23 @@ process (GeglOperation       *operation,
   /* First, find the paste outline */
   aux_raw = g_new (gfloat, 4 * aux_rect.width * aux_rect.height);
   gegl_buffer_get (aux, 1.0, &aux_rect, babl_format("RGBA float"), aux_raw, GEGL_AUTO_ROWSTRIDE);
-  
+
+  g_debug ("Start making outline");
   outline = sc_outline_find_ccw (&aux_rect, aux_raw);
+  g_debug ("Finish making outline");
   
   g_free (aux_raw);
   aux_raw = NULL;
 
   /* Then, Generate the mesh */
+  g_debug ("Start making fine mesh");
   mesh = sc_make_fine_mesh (outline, &mesh_bounds);
+  g_debug ("Finish making fine mesh");
 
   /* Finally, Generate the mesh sample list for each point */
+  g_debug ("Start computing sampling");
   mesh_sampling = sc_mesh_sampling_compute (outline, mesh);
+  g_debug ("Finish computing sampling");
 
   /* If caching of UV is desired, it shold be done here! */
 
@@ -166,8 +182,10 @@ process (GeglOperation       *operation,
   imcfg.x_samples = result->width;
   imcfg.y_samples = result->height;
   imcfg.cpp = 4;
-  
+
+  g_debug ("Start mesh rendering");
   p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
+  g_debug ("Finish mesh rendering");
 
   /* TODO: Add the aux to the mesh rendering! */
   gegl_buffer_set (output, result, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);

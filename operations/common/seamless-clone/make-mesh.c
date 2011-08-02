@@ -116,7 +116,7 @@ sc_compute_sample_list_weights (gdouble        Px,
         {
 		  gdouble temp = 1;
           g_ptr_array_remove_range (sl->points, 0, N);
-          g_array_remove_range (sl->weights, 0, N);
+          /* No weights yet so nothing to remove */
           
           g_ptr_array_add (sl->points, pt1);
           g_array_append_val (sl->weights, temp);
