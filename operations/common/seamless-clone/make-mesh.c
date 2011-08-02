@@ -69,7 +69,7 @@ sc_compute_sample_list_part (ScOutline     *outline,
   /* Check if inserting more would help, and if there are actually
    * points in the middle. */
    
-  if (!needsMore || d >= 1)
+  if (!needsMore || d <= 1)
     {
 	  g_ptr_array_add (sl->points, pt1);
 	  return;
@@ -140,7 +140,7 @@ sc_compute_sample_list_weights (gdouble        Px,
       tan_as_half[i] = ABS (tan_as_half[i]);
     }
 
-  weightTemp = (tan_as_half[0] + tan_as_half[N-1]) / pow (norms[0], 2);
+  weightTemp = (tan_as_half[0] + tan_as_half[N-1]) / norms[0];
   g_array_append_val (sl->weights, weightTemp);
     
   for (i = 1; i < N; i++)

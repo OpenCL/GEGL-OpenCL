@@ -76,6 +76,7 @@ typedef struct {
   GeglBuffer     *aux_buf;
   GeglBuffer     *input_buf;
   ScMeshSampling *sampling;
+  GHashTable     *pt2col;
 } ScColorComputeInfo;
 
 static void
@@ -89,8 +90,23 @@ sc_point_to_color_func (P2tRPoint *point,
   gint i;
   gdouble weightT = 0;
   guint N = sl->points->len;
+  gfloat *col_cpy;
 
   Babl *format = babl_format ("RGBA float");
+
+  if ((col_cpy = g_hash_table_lookup (cci->pt2col, point)) != NULL)
+    {
+      dest[0] = col_cpy[0];
+      dest[1] = col_cpy[1];
+      dest[2] = col_cpy[2];
+      dest[3] = col_cpy[3];
+      return;
+    }
+  else
+    {
+      col_cpy = g_new (gfloat, 4);
+      g_hash_table_insert (cci->pt2col, point, col_cpy);
+    }
 
   for (i = 0; i < N; i++)
     {
@@ -108,10 +124,10 @@ sc_point_to_color_func (P2tRPoint *point,
 	}
 
   // g_print ("=%f\n",weightT);
-  dest[0] = dest_c[0] / weightT;
-  dest[1] = dest_c[1] / weightT;
-  dest[2] = dest_c[2] / weightT;
-  dest[3] = 1;
+  col_cpy[0] = dest[0] = dest_c[0] / weightT;
+  col_cpy[1] = dest[1] = dest_c[1] / weightT;
+  col_cpy[2] = dest[2] = dest_c[2] / weightT;
+  col_cpy[3] = dest[3] = 1;
   //g_print ("(%f,%f,%f)",dest[0],dest[1],dest[2]);
 }
 
@@ -126,6 +142,7 @@ process (GeglOperation       *operation,
   gdouble    x, y;
 
   GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
+  GeglRectangle       to_render;
 
   ScOutline          *outline;
   
@@ -174,19 +191,24 @@ process (GeglOperation       *operation,
   /* Part 2: The rendering                                            */
   /********************************************************************/
 
+  /* We only need to render the intersection of the mesh bounds and the
+   * desired output */
+   gegl_rectangle_intersect (&to_render, result, &mesh_bounds);
+
   /* Alocate the output buffer */
-  out_raw = g_new (gfloat, 4 * result->width * result->height);
+  out_raw = g_new (gfloat, 4 * to_render.width * to_render.height);
 
   /* Render the mesh into it */
   cci.aux_buf = aux;
   cci.input_buf = input;
   cci.sampling = mesh_sampling;
+  cci.pt2col = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
 
-  imcfg.min_x = result->x;
-  imcfg.min_y = result->y;
+  imcfg.min_x = to_render.x;
+  imcfg.min_y = to_render.y;
   imcfg.step_x = imcfg.step_y = 1;
-  imcfg.x_samples = result->width;
-  imcfg.y_samples = result->height;
+  imcfg.x_samples = to_render.width;
+  imcfg.y_samples = to_render.height;
   imcfg.cpp = 4;
 
   g_debug ("Start mesh rendering");
@@ -213,9 +235,10 @@ process (GeglOperation       *operation,
   g_debug ("Finish aux adding");
   
   /* TODO: Add the aux to the mesh rendering! */
-  gegl_buffer_set (output, result, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, &to_render, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);
 
   /* Free memory, by the order things were allocated! */
+  g_hash_table_destroy (cci.pt2col);
   g_free (out_raw);
   sc_mesh_sampling_free (mesh_sampling);
   p2tr_triangulation_free (mesh);
