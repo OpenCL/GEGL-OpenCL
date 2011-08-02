@@ -802,24 +802,16 @@ gegl_path_parse_string (GeglPath    *vector,
 
       if (!info && ((type>= '0' && type <= '9') || type == '-'))
         {
-          if (!previnfo)   /* XXX: suspicious code !!! */
+          if (previnfo->type == 'M')
             {
-              info = previnfo;
-              type = previnfo->type;  /* XXX: previnfo _is_ NULL */
+              info = lookup_instruction_info(type = 'L');
             }
-          else
+          else if (previnfo->type == 'm')
             {
-              if (previnfo->type == 'M')
-                {
-                  info = lookup_instruction_info(type = 'L');
-                }
-              else if (previnfo->type == 'm')
-                {
-                  info = lookup_instruction_info(type = 'l');
-                }
-              else if (previnfo->type == ' ')
-                g_warning ("EEEK");
+              info = lookup_instruction_info(type = 'l');
             }
+          else if (previnfo->type == ' ')
+            g_warning ("EEEK");
         }
 
       if (info)
