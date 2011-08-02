@@ -87,29 +87,32 @@ sc_point_to_color_func (P2tRPoint *point,
   ScSampleList       *sl = g_hash_table_lookup (cci->sampling, point);
   gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
   gint i;
+  gdouble weightT = 0;
   guint N = sl->points->len;
-  
+
   Babl *format = babl_format ("RGBA float");
 
   for (i = 0; i < N; i++)
     {
-      P2tRPoint *pt = g_ptr_array_index (sl->points, i);
+      ScPoint *pt = g_ptr_array_index (sl->points, i);
       gdouble weight = g_array_index (sl->weights, gdouble, i);
+      // g_print ("%f+",weight);
 
-      g_assert (format != NULL);
       gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
-      g_assert (format != NULL);
       gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
       
-      dest_c[0] = weight * (input_c[0] - aux_c[0]);
-      dest_c[1] = weight * (input_c[1] - aux_c[1]);
-      dest_c[2] = weight * (input_c[2] - aux_c[2]);
+      dest_c[0] += weight * (input_c[0] - aux_c[0]);
+      dest_c[1] += weight * (input_c[1] - aux_c[1]);
+      dest_c[2] += weight * (input_c[2] - aux_c[2]);
+      weightT += weight;
 	}
 
-  dest[0] = dest_c[0] / sl->total_weight;
-  dest[1] = dest_c[1] / sl->total_weight;
-  dest[2] = dest_c[2] / sl->total_weight;
+  // g_print ("=%f\n",weightT);
+  dest[0] = dest_c[0] / weightT;
+  dest[1] = dest_c[1] / weightT;
+  dest[2] = dest_c[2] / weightT;
   dest[3] = 1;
+  //g_print ("(%f,%f,%f)",dest[0],dest[1],dest[2]);
 }
 
 static gboolean
@@ -119,7 +122,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  gfloat    *aux_raw, *out_raw;
+  gfloat    *aux_raw, *out_raw, *pixel;
+  gdouble    x, y;
 
   GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
 
@@ -133,6 +137,8 @@ process (GeglOperation       *operation,
   ScColorComputeInfo  cci;
   P2tRImageConfig     imcfg;
 
+  Babl               *format = babl_format("RGBA float");
+
   g_debug ("seamless-clone.c::process");
   printf ("The aux_rect is: ");
   gegl_rectangle_dump (&aux_rect);
@@ -143,7 +149,7 @@ process (GeglOperation       *operation,
   
   /* First, find the paste outline */
   aux_raw = g_new (gfloat, 4 * aux_rect.width * aux_rect.height);
-  gegl_buffer_get (aux, 1.0, &aux_rect, babl_format("RGBA float"), aux_raw, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (aux, 1.0, &aux_rect, format, aux_raw, GEGL_AUTO_ROWSTRIDE);
 
   g_debug ("Start making outline");
   outline = sc_outline_find_ccw (&aux_rect, aux_raw);
@@ -187,6 +193,25 @@ process (GeglOperation       *operation,
   p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
   g_debug ("Finish mesh rendering");
 
+  g_debug ("Start aux adding");
+  pixel = out_raw;
+
+  pixel = out_raw;
+  for (y = 0; y < imcfg.y_samples; y++)
+    for (x = 0; x < imcfg.x_samples; x++)
+      {
+        gfloat aux_c[4];
+        gdouble Px = imcfg.min_x + x * imcfg.step_x;
+        gdouble Py = imcfg.min_y + y * imcfg.step_y;
+        gegl_buffer_sample (aux, Px, Py, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
+        *pixel++ += aux_c[0];
+        *pixel++ += aux_c[1];
+        *pixel++ += aux_c[2];
+        *pixel++;// += 0;//aux_c[3];
+      }
+
+  g_debug ("Finish aux adding");
+  
   /* TODO: Add the aux to the mesh rendering! */
   gegl_buffer_set (output, result, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);
 

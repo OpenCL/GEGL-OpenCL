@@ -119,8 +119,12 @@ p2tr_triangulation_locate_point2 (P2tRTriangulation *T,
       P2trHashSetIter iter;
       p2tr_hash_set_iter_init (&iter, T->tris);
       while (p2tr_hash_set_iter_next (&iter, (gpointer*)&tr))
-        if (p2tr_triangle_compute_barycentric_coords (tr, Px, Py, u, v))
-          return tr;
+        {
+          if (p2tr_triangule_quick_box_test (tr, Px, Py))
+            continue;
+          else if (p2tr_triangle_compute_barycentric_coords (tr, Px, Py, u, v))
+            return tr;
+        }
       return NULL;
     }
   else
@@ -202,8 +206,8 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
 
   tribuf[0] = p2tr_triangulation_locate_point2 (T, config->min_x, config->min_y, NULL, &uvbuf[0], &uvbuf[1]);
 
-  for (x = 0; x < config->x_samples; x++)
-    for (y = 0; y < config->y_samples; y++)
+  for (y = 0; y < config->y_samples; y++)
+    for (x = 0; x < config->x_samples; x++)
     {
       gdouble Px = config->min_x + x * config->step_x;
       gdouble Py = config->min_y + y * config->step_y;
@@ -226,12 +230,12 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
   GTimer *timer = g_timer_new ();
   g_timer_start (timer);
 
-  for (x = 0; x < config->x_samples; x++)
-    for (y = 0; y < config->y_samples; y++)
+  for (y = 0; y < config->y_samples; y++)
+    for (x = 0; x < config->x_samples; x++)
     {
         gdouble u = Puv[0], v = Puv[1];
         tr_now = *Ptri++;
-        uvbuf++;
+        Puv += 2;
         
         if (tr_now == NULL)
           {

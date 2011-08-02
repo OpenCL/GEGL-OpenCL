@@ -126,7 +126,7 @@ sc_compute_sample_list_weights (gdouble        Px,
 
       temp = (dx1 * dx2 + dy1 * dy2) / (norm1 * norm2);
 
-      if (temp > 1)
+      if (temp <= 1 && temp >= -1)
         {
 		  /* Result is in the range of 0 to PI */
           ang = acos (temp);
