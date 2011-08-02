@@ -953,6 +953,8 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gegl_buffer_iterate (buffer, NULL, dest_buf, rowstride, FALSE, format, 0);
       return;
     }
+
+  g_return_if_fail (rect);
   if (rect->width == 0 ||
       rect->height == 0)
     {
