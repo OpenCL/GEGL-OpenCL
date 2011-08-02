@@ -23,7 +23,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (strength, _("Strength"), 0.0, 100.0, 1.0,
+gegl_chant_double (strength, _("Strength"), 0.0, 100.0, 50,
                    _("Effect Strength"))
 gegl_chant_double (size, _("Size"), 1.0, 10000.0, 40.0,
                    _("Effect Size"))
@@ -244,9 +244,9 @@ stamp (GeglChantO          *o,
 
       while (n_pixels--)
         {
-          influence = o->strength * get_stamp_force (o,
-                                                     x_iter - x,
-                                                     y_iter - y);
+          influence = 0.01 * o->strength * get_stamp_force (o,
+                                                            x_iter - x,
+                                                            y_iter - y);
 
           switch (o->behavior)
             {
