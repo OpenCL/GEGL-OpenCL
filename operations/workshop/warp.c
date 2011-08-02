@@ -154,9 +154,9 @@ calc_lut (GeglChantO  *o)
 }
 
 static gdouble
-get_influence (GeglChantO *o,
-               gdouble     x,
-               gdouble     y)
+get_stamp_force (GeglChantO *o,
+                 gdouble     x,
+                 gdouble     y)
 {
   WarpPrivate  *priv = (WarpPrivate*) o->chant_data;
   gfloat        radius;
@@ -169,7 +169,7 @@ get_influence (GeglChantO *o,
   radius = sqrt(x*x+y*y);
 
   if (radius < 0.5 * o->size + 1)
-    return o->strength * priv->lookup[(gint) RINT (radius)];
+    return priv->lookup[(gint) RINT (radius)];
   else
     return 0.0;
 }
@@ -244,9 +244,9 @@ stamp (GeglChantO          *o,
 
       while (n_pixels--)
         {
-          influence = get_influence (o,
-                                     x_iter - x,
-                                     y_iter - y);
+          influence = o->strength * get_stamp_force (o,
+                                                     x_iter - x,
+                                                     y_iter - y);
 
           switch (o->behavior)
             {
