@@ -1,4 +1,5 @@
-SUBDIRS = perlin
+SUBDIRS = perlin seamless-clone
+
 include $(top_srcdir)/operations/Makefile-operations.am
 
 AM_CPPFLAGS += \
