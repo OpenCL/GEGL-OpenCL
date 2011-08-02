@@ -794,83 +794,65 @@ gegl_path_parse_string (GeglPath    *vector,
   const gchar *p = path;
   InstructionInfo *previnfo = NULL;
   gdouble x0, y0, x1, y1, x2, y2;
-  gchar *param_name = NULL;
 
   while (*p)
     {
-      gchar     type = *p;
+      gchar            type = *p;
+      InstructionInfo *info = lookup_instruction_info(type);
 
-      if (type == '!')
+      if (!info && ((type>= '0' && type <= '9') || type == '-'))
         {
-          gint i = 0;
-          if (param_name)
-            g_free (param_name);
-          param_name = g_malloc0 (32); /* XXX: nasty limitation, might have
-                                          security issues */
-          p++;
-          while (*p != ' ')
+          if (!previnfo)   /* XXX: suspicious code !!! */
             {
-              param_name[i++]=*p;
-              p++;
+              info = previnfo;
+              type = previnfo->type;  /* XXX: previnfo _is_ NULL */
+            }
+          else
+            {
+              if (previnfo->type == 'M')
+                {
+                  info = lookup_instruction_info(type = 'L');
+                }
+              else if (previnfo->type == 'm')
+                {
+                  info = lookup_instruction_info(type = 'l');
+                }
+              else if (previnfo->type == ' ')
+                g_warning ("EEEK");
             }
         }
-      else
-        {
-          InstructionInfo *info = lookup_instruction_info(type);
-          if (!info && ((type>= '0' && type <= '9') || type == '-'))
-            {
-              if (!previnfo)   /* XXX: suspicious code !!! */
-                {
-                  info = previnfo;
-                  type = previnfo->type;  /* XXX: previnfo _is_ NULL */
-                }
-              else
-                {
-                  if (previnfo->type == 'M')
-                    {
-                      info = lookup_instruction_info(type = 'L');
-                    }
-                  else if (previnfo->type == 'm')
-                    {
-                      info = lookup_instruction_info(type = 'l');
-                    }
-                  else if (previnfo->type == ' ')
-                    g_warning ("EEEK");
-                }
-            }
 
-          if (info)
+      if (info)
+        {
+          switch (info->n_items)
             {
-              switch (info->n_items)
-                {
-                  case 0:
-                    priv->path = gegl_path_list_append (priv->path, type, 0., 0.);
-                    /* coordinates are ignored, all of these could have used add3)*/
-                    break;
-                  case 2:
-                    p = parse_float_pair (p, &x0, &y0);
-                    priv->path = gegl_path_list_append (priv->path, type, x0, y0);
-                    continue;
-                  case 4:
-                    p = parse_float_pair (p, &x0, &y0);
-                    p = parse_float_pair (p, &x1, &y1);
-                    priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
-                    continue;
-                  case 6:
-                    p = parse_float_pair (p, &x0, &y0);
-                    p = parse_float_pair (p, &x1, &y1);
-                    p = parse_float_pair (p, &x2, &y2);
-                    priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
-                    continue;
-                  default:
-                    g_warning ("parsing of data %i items not implemented\n", info->n_items);
-                    continue;
-                }
-              previnfo = info;
+              case 0:
+                priv->path = gegl_path_list_append (priv->path, type, 0., 0.);
+                /* coordinates are ignored, all of these could have used add3)*/
+                break;
+              case 2:
+                p = parse_float_pair (p, &x0, &y0);
+                priv->path = gegl_path_list_append (priv->path, type, x0, y0);
+                continue;
+              case 4:
+                p = parse_float_pair (p, &x0, &y0);
+                p = parse_float_pair (p, &x1, &y1);
+                priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1);
+                continue;
+              case 6:
+                p = parse_float_pair (p, &x0, &y0);
+                p = parse_float_pair (p, &x1, &y1);
+                p = parse_float_pair (p, &x2, &y2);
+                priv->path = gegl_path_list_append (priv->path, type, x0, y0, x1, y1, x2, y2);
+                continue;
+              default:
+                g_warning ("parsing of data %i items not implemented\n", info->n_items);
+                continue;
             }
-          if (*p)
-            p++;
+          previnfo = info;
         }
+      if (*p)
+        p++;
     }
 
   priv->flat_path_clean = FALSE;
@@ -913,7 +895,7 @@ gegl_path_append (GeglPath *self,
 
   if (type == 'L')
     {
-	  /* special case lineto so that the full path doesn't need
+      /* special case lineto so that the full path doesn't need
          to be re-rendered */
 
       GeglPathList *iter2;
