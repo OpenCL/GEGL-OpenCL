@@ -31,6 +31,7 @@
 
 #include "poly2tri-c/poly2tri.h"
 #include "poly2tri-c/refine/triangulation.h"
+#include "poly2tri-c/render/mesh-render.h"
 #include "seamless-clone.h"
 
 static GeglRectangle
@@ -73,32 +74,32 @@ typedef struct {
 static void
 sc_point_to_color_func (P2tRPoint *point,
                         gfloat    *dest,
-                        gpointer  *cci_p)
+                        gpointer   cci_p)
 {
   ScColorComputeInfo *cci = (ScColorComputeInfo*) cci_p;
+  ScSampleList       *sl = g_hash_table_lookup (cci->sampling, point);
   gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
   gint i;
-  const gint N = cci->points->len;
+  guint N = sl->points->len;
   
-  /* This function should be very light, so save some effort! */
-  const static Babl *format = babl_format("RGB float");
+  Babl *format = babl_format("RGB float");
 
   for (i = 0; i < N; i++)
     {
-      P2tRPoint *pt = g_ptr_array_index (cci->sampling->points, i);
-      gdouble weight = g_array_index (cci->sampling->weights, gdouble, i);
+      P2tRPoint *pt = g_ptr_array_index (sl->points, i);
+      gdouble weight = g_array_index (sl->weights, gdouble, i);
       
       gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
       gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
       
-      dest_c[0] = weight * (input_buf[0] - aux_buf[0]);
-      dest_c[1] = weight * (input_buf[1] - aux_buf[1]);
-      dest_c[2] = weight * (input_buf[2] - aux_buf[2]);
+      dest_c[0] = weight * (input_c[0] - aux_c[0]);
+      dest_c[1] = weight * (input_c[1] - aux_c[1]);
+      dest_c[2] = weight * (input_c[2] - aux_c[2]);
 	}
 
-  dest[0] = dest_c[0] / cci->sampling->total_weight;
-  dest[1] = dest_c[1] / cci->sampling->total_weight;
-  dest[2] = dest_c[2] / cci->sampling->total_weight;
+  dest[0] = dest_c[0] / sl->total_weight;
+  dest[1] = dest_c[1] / sl->total_weight;
+  dest[2] = dest_c[2] / sl->total_weight;
   dest[3] = 1;
 }
 
@@ -109,11 +110,9 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GPtrArray *ptList;
   gfloat    *aux_raw, *out_raw;
 
-  GeglRectangle input_rect = *gegl_buffer_get_extent (input);
-  GeglRectangle aux_rect   = *gegl_operation_source_get_bounding_box (operation, "aux");
+  GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
 
   ScOutline          *outline;
   
@@ -136,7 +135,7 @@ process (GeglOperation       *operation,
   aux_raw = g_new (gfloat, 4 * aux_rect.width * aux_rect.height);
   gegl_buffer_get (aux, 1.0, &aux_rect, babl_format("RGBA float"), aux_raw, GEGL_AUTO_ROWSTRIDE);
   
-  outline = outline_find_ccw (&aux_rect, aux_raw);
+  outline = sc_outline_find_ccw (&aux_rect, aux_raw);
   
   g_free (aux_raw);
   aux_raw = NULL;
@@ -154,19 +153,19 @@ process (GeglOperation       *operation,
   /********************************************************************/
 
   /* Alocate the output buffer */
-  out_raw = g_new (gfloat, 4 * result.width * result.height);
+  out_raw = g_new (gfloat, 4 * result->width * result->height);
 
   /* Render the mesh into it */
-  cci->aux_buf = aux;
-  cci->input_buf = input;
-  cci->sampling = mesh_sampling;
+  cci.aux_buf = aux;
+  cci.input_buf = input;
+  cci.sampling = mesh_sampling;
 
-  imcfg->min_x = result->x;
-  imcfg->min_y = result->y;
-  imcfg->step_x = imcfg->step_y = 1;
-  imcfg->x_samples = result->width;
-  imcfg->y_samples = result->height;
-  imcfg->cpp = 4;
+  imcfg.min_x = result->x;
+  imcfg.min_y = result->y;
+  imcfg.step_x = imcfg.step_y = 1;
+  imcfg.x_samples = result->width;
+  imcfg.y_samples = result->height;
+  imcfg.cpp = 4;
   
   p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
 
@@ -176,7 +175,7 @@ process (GeglOperation       *operation,
   /* Free memory, by the order things were allocated! */
   g_free (out_raw);
   sc_mesh_sampling_free (mesh_sampling);
-  p2tr_triangulation_free (mes);
+  p2tr_triangulation_free (mesh);
   sc_outline_free (outline);
   
   return  TRUE;

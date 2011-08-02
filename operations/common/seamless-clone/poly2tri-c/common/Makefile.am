@@ -7,3 +7,4 @@ libpoly2tri_c_common_la_SOURCES =	\
 	shapes.h						\
 	utils.c							\
 	utils.h
+libpoly2tri_c_common_la_CFLAGS = $(GLIB_CFLAGS)

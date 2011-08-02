@@ -34,4 +34,7 @@ void          sc_sample_list_free    (ScSampleList *self);
 ScMeshSampling* sc_mesh_sampling_compute (ScOutline *outline, P2tRTriangulation *mesh);
 void            sc_mesh_sampling_free    (ScMeshSampling *self);
 
+P2tRTriangulation* sc_make_fine_mesh (ScOutline *outline, GeglRectangle *mesh_bounds);
+
+
 #endif

@@ -6,3 +6,5 @@ libpoly2tri_c_refine_la_SOURCES =	\
 	triangulation.c					\
 	triangulation.h					\
 	utils.h
+
+libpoly2tri_c_refine_la_CFLAGS = $(GLIB_CFLAGS)

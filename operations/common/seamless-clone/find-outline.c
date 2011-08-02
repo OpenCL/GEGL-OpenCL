@@ -27,7 +27,6 @@
  * alpha exists
  */
 
-#include <cairo.h>
 #include <gegl.h>
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 

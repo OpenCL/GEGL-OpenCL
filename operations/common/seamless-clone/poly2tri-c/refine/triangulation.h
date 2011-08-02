@@ -121,11 +121,7 @@ struct P2tRPoint_
   guint     _refcount;
 };
 
-static void p2tr_point_init (P2tRPoint *self, gdouble x, gdouble y);
-
 P2tRPoint* p2tr_point_new (gdouble x, gdouble y);
-
-static void p2tr_point_add_edge (P2tRPoint *self, P2tREdge  *edge);
 
 void p2tr_point_remove_edge (P2tRPoint *self, P2tREdge  *edge);
 
@@ -185,13 +181,7 @@ P2tREdge* p2tr_edge_new (P2tRPoint *start, P2tRPoint *end);
 
 P2tREdge* p2tr_edge_new_private (P2tRPoint *start, P2tRPoint *end, gboolean mirror);
 
-static void p2tr_edge_init (P2tREdge *self, P2tRPoint *start, P2tRPoint *end);
-
-static void p2tr_edge_init_private (P2tREdge *self, P2tRPoint *start, P2tRPoint *end, gboolean mirror);
-
 void p2tr_edge_remove (P2tREdge *self, P2tRTriangulation *T);
-
-static void p2tr_edge_remove_private (P2tREdge *self, P2tRTriangulation *T);
 
 gboolean p2tr_edge_is_encroached_by (P2tREdge *self, P2tRPoint *other);
 

@@ -1,6 +1,6 @@
-include $(top_srcdir)/operations/Makefile-operations.am
+SUBDIRS = poly2tri-c
 
-ops = seamless-clone.la
+include $(top_srcdir)/operations/Makefile-operations.am
 
 seamless_clone_la_SOURCES = \
 	make-mesh.c			\
@@ -10,11 +10,11 @@ seamless_clone_la_SOURCES = \
 	seamless-clone.c	\
 	seamless-clone.h
 
-seamless_clone_la_LIBADD = $(op_libs) poly2tri-c/poly2tri-c.la
-seamless_clone_CFLAGS = $(AM_CFLAGS)
+seamless_clone_la_LIBADD = $(op_libs) poly2tri-c/libpoly2tri-c.la $(GLIB_LIBS)
+seamless_clone_la_CFLAGS = $(AM_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
-op_LTLIBRARIES = $(ops)
+op_LTLIBRARIES = seamless-clone.la
 
 AM_CPPFLAGS += \
 	-I$(top_srcdir)/operations/common

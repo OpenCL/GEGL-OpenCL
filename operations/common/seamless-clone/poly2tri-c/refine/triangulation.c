@@ -4,6 +4,17 @@
 #include "triangulation.h"
 #include "../poly2tri.h"
 
+static void p2tr_edge_init (P2tREdge *self, P2tRPoint *start, P2tRPoint *end);
+
+static void p2tr_edge_init_private (P2tREdge *self, P2tRPoint *start, P2tRPoint *end, gboolean mirror);
+
+static void p2tr_edge_remove_private (P2tREdge *self, P2tRTriangulation *T);
+
+static void p2tr_point_init (P2tRPoint *self, gdouble x, gdouble y);
+
+static void p2tr_point_add_edge (P2tRPoint *self, P2tREdge  *edge);
+
+
 /* ########################################################################## */
 /*                              Common math                                   */
 /* ########################################################################## */
@@ -147,7 +158,7 @@ p2tr_triangulation_add_tr (P2tRTriangulation *self, P2tRTriangle *tr)
 void
 p2tr_triangulation_get_points (P2tRTriangulation *self, GPtrArray *dest)
 {
-  P2tRHashSetIter  iter;
+  P2trHashSetIter  iter;
   P2tRTriangle    *tr;
   P2tRHashSet     *pts = p2tr_hash_set_set_new (g_direct_hash, g_direct_equal, NULL);
   gint             i;

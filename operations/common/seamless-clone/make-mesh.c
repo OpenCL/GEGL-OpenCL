@@ -23,13 +23,13 @@
  * inner point of the mesh will be defined.
  */
 
-#include <cairo.h>
 #include <gegl.h>
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 
-#include "seamless-clone.h"
 #include "poly2tri-c/poly2tri.h"
 #include "poly2tri-c/refine/triangulation.h"
+#include "poly2tri-c/refine/refine.h"
+#include "seamless-clone.h"
 
 #define g_ptr_array_index_cyclic(array,index_) g_ptr_array_index(array,(index_)%((array)->len))
 
@@ -60,7 +60,6 @@ sc_compute_sample_list_part (ScOutline     *outline,
   gdouble norm2 = sqrt (dx2 * dx2 + dy2 * dy2);
   gdouble angle = acos ((dx1 * dx2 + dy1 * dy2) / (norm1 * norm2));
 
-  gdouble div = real->len / (gdouble) basePointCount;
   gint d = index2 - index1;
 
   gdouble edist = real->len / (basePointCount * pow (2.5, k));
@@ -92,12 +91,10 @@ sc_compute_sample_list_weights (gdouble        Px,
   gint N = sl->points->len;
   gdouble *tan_as_half = g_new (gdouble, N);
   gdouble *norms       = g_new (gdouble, N);
-  gdouble *weights     = g_new (gdouble, N);
 
   gint i;
 
-  gdouble weightTotal = 0, weightTemp;
-  gint special = -1;
+  gdouble weightTemp;
 
   sl->total_weight = 0;
 
@@ -118,8 +115,8 @@ sc_compute_sample_list_weights (gdouble        Px,
       if (norm1 == 0)
         {
 		  gdouble temp = 1;
-          g_ptr_array_remove_range (sl->points, 0 N);
-          g_array_remove_range (sl->weights, 0 N);
+          g_ptr_array_remove_range (sl->points, 0, N);
+          g_array_remove_range (sl->weights, 0, N);
           
           g_ptr_array_add (sl->points, pt1);
           g_array_append_val (sl->weights, temp);
@@ -165,15 +162,14 @@ sc_sample_list_compute (ScOutline     *outline,
   gint i, index1, index2;
   
   sl->points = g_ptr_array_new ();
-  sl->weight = g_array_new (FALSE, TRUE, sizeof (gdouble));
+  sl->weights = g_array_new (FALSE, TRUE, sizeof (gdouble));
 
   for (i = 0; i < basePointCount; i++)
     {
-	  k = 0;
       index1 = (gint) (i * div);
       index2 = (gint) ((i + 1) * div);
       
-      sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, k);
+      sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
     }
 
   sc_compute_sample_list_weights (Px, Py, sl);
@@ -184,8 +180,8 @@ sc_sample_list_compute (ScOutline     *outline,
 void
 sc_sample_list_free (ScSampleList *self)
 {
-  g_ptr_array_free (self->points);
-  g_array_free (self->weights);
+  g_ptr_array_free (self->points, TRUE);
+  g_array_free (self->weights, TRUE);
   g_slice_free (ScSampleList, self);
 }
 
@@ -200,17 +196,17 @@ sc_mesh_sampling_compute (ScOutline         *outline,
   /* Note that the get_points function increases the refcount of the
    * returned points, so we must unref them when done with them
    */
-  p2tr_triangulation_get_points (mesh, points)
+  p2tr_triangulation_get_points (mesh, points);
 
   for (i = 0; i < points->len; i++)
     {
 	  P2tRPoint    *pt = (P2tRPoint*) g_ptr_array_index (points, i);
-	  ScSampleList *sl = sc_compute_sample_list (outline, pt->x, pt->y);
+	  ScSampleList *sl = sc_sample_list_compute (outline, pt->x, pt->y);
 	  g_hash_table_insert (pt2sample, pt, sl);
 	}
 
   /* We will unref the points when freeing the hash table */
-  g_ptr_array_free (points);
+  g_ptr_array_free (points, TRUE);
   	
   return pt2sample;
 }
@@ -245,7 +241,7 @@ sc_make_fine_mesh (ScOutline     *outline,
                    GeglRectangle *mesh_bounds)
 {
   GPtrArray *realOutline = (GPtrArray*) outline;
-  gint i, N = ptList->len;
+  gint i, N = realOutline->len;
   gint min_x = G_MAXINT, max_x = -G_MAXINT, min_y = G_MAXINT, max_y = -G_MAXINT;
 
   /* An array of P2tRPoint*, holding the outline points */
@@ -255,7 +251,7 @@ sc_make_fine_mesh (ScOutline     *outline,
 
   for (i = 0; i < N; i++)
     {
-      SPoint *pt = (SPoint*) g_ptr_array_index (realOutline, i);
+      ScPoint *pt = (ScPoint*) g_ptr_array_index (realOutline, i);
 
       min_x = MIN (pt->x, min_x);
       min_y = MIN (pt->y, min_y);
@@ -264,7 +260,7 @@ sc_make_fine_mesh (ScOutline     *outline,
 
       /* No one should care if the points are given in reverse order,
        * and prepending to the GList is more efficient */
-      mesh_points = g_ptr_array_add (mesh_points, p2tr_point_new (pt->x, pt->y));
+      g_ptr_array_add (mesh_points, p2tr_point_new (pt->x, pt->y));
     }
 
   mesh_bounds->x = min_x;
@@ -276,10 +272,10 @@ sc_make_fine_mesh (ScOutline     *outline,
 
   for (i = 0; i < N; i++)
     {
-      p2tr_point_unref (g_ptr_array_index (mesh_points, i));
+      p2tr_point_unref ((P2tRPoint*) g_ptr_array_index (mesh_points, i));
 	}
 
-  g_ptr_array_free (mesh_points);
+  g_ptr_array_free (mesh_points, TRUE);
 
   return T;
 }
