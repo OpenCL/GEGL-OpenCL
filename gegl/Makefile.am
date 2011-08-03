@@ -123,5 +123,15 @@ typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
-endif
+
+if HAVE_VALA
+gegl-@GEGL_API_VERSION@.vapi: Gegl-@GEGL_API_VERSION@.gir
+	$(VAPIGEN) --library=gegl-@GEGL_API_VERSION@ Gegl-@GEGL_API_VERSION@.gir
+
+vapidir=@vapidir@
+vapi_DATA = gegl-@GEGL_API_VERSION@.vapi
+
+endif # HAVE_VALA
+
+endif # HAVE_INTROSPECTION
 
