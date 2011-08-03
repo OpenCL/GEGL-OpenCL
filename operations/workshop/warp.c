@@ -45,14 +45,8 @@ static void path_changed (GeglPath            *path,
                           gpointer             userdata);
 #include "gegl-chant.h"
 
-#ifdef HAVE_RINT
-#define RINT(x) rint(x)
-#else
-#define RINT(x) floor ((x) + 0.5)
-#endif
-
 typedef struct {
-  gfloat      *lookup;
+  gdouble     *lookup;
   GeglBuffer  *buffer;
   gdouble      last_x;
   gdouble      last_y;
@@ -140,7 +134,7 @@ calc_lut (GeglChantO  *o)
 
   length = ceil (0.5 * o->size + 1.0);
 
-  priv->lookup = g_malloc (length * sizeof (gfloat));
+  priv->lookup = g_malloc (length * sizeof (gdouble));
 
   if ((1.0 - o->hardness) < 0.0000004)
     exponent = 1000000.0;
@@ -169,9 +163,21 @@ get_stamp_force (GeglChantO *o,
   radius = sqrt(x*x+y*y);
 
   if (radius < 0.5 * o->size + 1)
-    return priv->lookup[(gint) RINT (radius)];
-  else
-    return 0.0;
+    {
+      /* linear interpolation */
+      gdouble a, ratio;
+      gdouble before, after;
+
+      a = floor (radius);
+      ratio = (radius - a);
+
+      before = priv->lookup[(gint) a];
+      after = priv->lookup[(gint) a + 1];
+
+      return ratio * before + (1.0 - ratio) * after;
+    }
+
+  return 0.0;
 }
 
 static void
