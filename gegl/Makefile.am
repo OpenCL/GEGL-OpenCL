@@ -128,7 +128,7 @@ if HAVE_VALA
 gegl-@GEGL_API_VERSION@.vapi: Gegl-@GEGL_API_VERSION@.gir
 	$(VAPIGEN) --library=gegl-@GEGL_API_VERSION@ Gegl-@GEGL_API_VERSION@.gir
 
-vapidir=@vapidir@
+vapidir=$(datadir)/vala/vapi
 vapi_DATA = gegl-@GEGL_API_VERSION@.vapi
 
 endif # HAVE_VALA

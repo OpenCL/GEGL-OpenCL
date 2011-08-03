@@ -415,9 +415,6 @@ fi
 have_vala=$have_vapigen
 AM_CONDITIONAL(HAVE_VALA, test "$have_vala" = "yes")
 
-vapidir=$(pkg-config --variable vapidir vala-1.0)
-AC_SUBST(vapidir)
-
 ########################
 # Check for fsync
 ########################
