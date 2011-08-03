@@ -75,7 +75,7 @@ typedef enum {
  * Add a COPY of the given point into the array pts. The original point CAN
  * be freed later!
  */
-static void
+static inline void
 add_point (GPtrArray* pts, ScPoint *pt)
 {
   ScPoint *cpy = g_slice_new (ScPoint);
@@ -85,33 +85,39 @@ add_point (GPtrArray* pts, ScPoint *pt)
   g_ptr_array_add (pts, cpy);
 }
 
-static void
+static inline void
 spoint_move (ScPoint *pt, OUTLINE_DIRECTION t, ScPoint *dest)
 {
   dest->x = pt->x + (isEast(t) ? 1 : (isWest(t) ? -1 : 0));
   dest->y = pt->y + (isSouth(t) ? 1 : (isNorth(t) ? -1 : 0));
 }
 
-static gboolean
+static inline gboolean
 in_range(gint val,gint min,gint max)
 {
   return (((min) <= (val)) && ((val) <= (max)));
 }
 
-#define buf_offset(rect,x0,y0)     (((y0) - (rect)->y) * (rect)->width + (x0))
-#define buf_offset_PT(rect,pt)   buf_offset((rect),(pt)->x,(pt)->y)
+static inline gfloat
+sc_sample_alpha (GeglBuffer *buf, gint x, gint y, Babl *format)
+{
+  gfloat col[4] = {0, 0, 0, 0};
+  gegl_buffer_sample (buf, x, y, NULL, col, format, GEGL_INTERPOLATION_NEAREST);
+  return col[3];
+}
 
-static gboolean
+static inline gboolean
 is_opaque (GeglRectangle *rect,
-           gfloat        *pixels,
-           ScPoint        *pt)
+           GeglBuffer    *pixels,
+           Babl          *format,
+           ScPoint       *pt)
 {
   g_assert (pt != NULL);
   g_assert (rect != NULL);
 
   return in_range(pt->x, rect->x, rect->x + rect->width - 1)
          && in_range(pt->y, rect->y, rect->y + rect->height - 1)
-         && (pixels[buf_offset_PT(rect,pt)*4+3] >= 0.5f);
+         && (sc_sample_alpha (pixels, pt->x, pt->y, format) >= 0.5f);
 }
 
 /* This function receives a white pixel (pt) and the direction of the movement
@@ -130,10 +136,11 @@ is_opaque (GeglRectangle *rect,
  */
 static inline OUTLINE_DIRECTION
 outline_walk_cw (GeglRectangle      *rect,
-                 gfloat             *pixels,
+                 GeglBuffer         *pixels,
+                 Babl               *format,
                  OUTLINE_DIRECTION   prevdirection,
-                 ScPoint             *pt,
-                 ScPoint             *dest)
+                 ScPoint            *pt,
+                 ScPoint            *dest)
 {
   OUTLINE_DIRECTION Dprev = oppositedirection(prevdirection);
   OUTLINE_DIRECTION Dnow = cwdirection (Dprev);
@@ -143,7 +150,7 @@ outline_walk_cw (GeglRectangle      *rect,
   spoint_move (pt, Dprev, &ptP);
   spoint_move (pt, Dnow, &ptN);
 
-  while (is_opaque (rect, pixels, &ptN))
+  while (is_opaque (rect, pixels, format, &ptN))
     {
        Dprev = Dnow;
        ptP.x = ptN.x;
@@ -161,8 +168,9 @@ outline_walk_cw (GeglRectangle      *rect,
 
 GPtrArray*
 sc_outline_find_ccw (GeglRectangle *rect,
-                    gfloat        *pixels)
+                     GeglBuffer    *pixels)
 {
+  Babl      *format = babl_format("RGBA float");
   GPtrArray *points = g_ptr_array_new ();
   
   gint x = rect->x, y;
@@ -176,7 +184,7 @@ sc_outline_find_ccw (GeglRectangle *rect,
     {
       for (x = rect->x; x < rect->x + rect->width; x++)
         {
-          if (pixels[buf_offset(rect,x,y)*4+3] >= 0.5f)
+          if (sc_sample_alpha (pixels, x, y, format) >= 0.5f)
             {
                found = TRUE;
                break;
@@ -194,7 +202,7 @@ sc_outline_find_ccw (GeglRectangle *rect,
 
   add_point (points, &START);
 
-  DIRN = outline_walk_cw (rect, pixels, DIR,&pt,&ptN);
+  DIRN = outline_walk_cw (rect, pixels, format, DIR,&pt,&ptN);
 
   while (! pteq(&ptN,&START))
     {
@@ -202,7 +210,7 @@ sc_outline_find_ccw (GeglRectangle *rect,
       pt.x = ptN.x;
       pt.y = ptN.y;
       DIR = DIRN;
-      DIRN = outline_walk_cw (rect, pixels, DIR,&pt,&ptN);
+      DIRN = outline_walk_cw (rect, pixels, format, DIR,&pt,&ptN);
     }
 
   g_debug ("Outline has %d points", points->len);

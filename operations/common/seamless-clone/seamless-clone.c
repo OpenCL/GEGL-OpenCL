@@ -138,7 +138,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  gfloat    *aux_raw, *out_raw, *pixel;
+  gfloat    *out_raw, *pixel;
   gdouble    x, y;
 
   GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
@@ -163,17 +163,11 @@ process (GeglOperation       *operation,
   /********************************************************************/
   /* Part 1: The preprocessing                                        */
   /********************************************************************/
-  
-  /* First, find the paste outline */
-  aux_raw = g_new (gfloat, 4 * aux_rect.width * aux_rect.height);
-  gegl_buffer_get (aux, 1.0, &aux_rect, format, aux_raw, GEGL_AUTO_ROWSTRIDE);
 
+  /* First, find the paste outline */
   g_debug ("Start making outline");
-  outline = sc_outline_find_ccw (&aux_rect, aux_raw);
+  outline = sc_outline_find_ccw (&aux_rect, aux);
   g_debug ("Finish making outline");
-  
-  g_free (aux_raw);
-  aux_raw = NULL;
 
   /* Then, Generate the mesh */
   g_debug ("Start making fine mesh");

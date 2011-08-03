@@ -33,7 +33,7 @@ typedef struct  {
  */
 typedef GPtrArray ScOutline;
 
-ScOutline* sc_outline_find_ccw (GeglRectangle *rect, gfloat *pixels);
+ScOutline* sc_outline_find_ccw (GeglRectangle *rect, GeglBuffer *pixels);
 
 void       sc_outline_free  (ScOutline *self);
 
