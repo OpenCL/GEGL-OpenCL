@@ -261,20 +261,20 @@ stamp (GeglChantO          *o,
                 coords[1] += influence * (priv->last_y - y);
                 break;
               case GEGL_WARP_BEHAVIOR_GROW:
-                coords[0] -= influence * (x_iter - x) / o->size;
-                coords[1] -= influence * (y_iter - y) / o->size;
+                coords[0] -= 2.0 * influence * (x_iter - x) / o->size;
+                coords[1] -= 2.0 * influence * (y_iter - y) / o->size;
                 break;
               case GEGL_WARP_BEHAVIOR_SHRINK:
-                coords[0] += influence * (x_iter - x) / o->size;
-                coords[1] += influence * (y_iter - y) / o->size;
+                coords[0] += 2.0 * influence * (x_iter - x) / o->size;
+                coords[1] += 2.0 * influence * (y_iter - y) / o->size;
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CW:
-                coords[0] += influence * (y_iter - y) / o->size;
-                coords[1] -= influence * (x_iter - x) / o->size;
+                coords[0] += 3.0 * influence * (y_iter - y) / o->size;
+                coords[1] -= 5.0 * influence * (x_iter - x) / o->size;
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CCW:
-                coords[0] -= influence * (y_iter - y) / o->size;
-                coords[1] += influence * (x_iter - x) / o->size;
+                coords[0] -= 3.0 * influence * (y_iter - y) / o->size;
+                coords[1] += 5.0 * influence * (x_iter - x) / o->size;
                 break;
               case GEGL_WARP_BEHAVIOR_ERASE:
                 coords[0] *= 1.0 - MIN (influence, 1.0);
