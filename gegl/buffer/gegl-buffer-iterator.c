@@ -374,7 +374,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
   gboolean result = FALSE;
   gint no;
 
-  if (i->buf[0] == (void*)0xdeadbeef)
+  if (i->is_finished)
     g_error ("%s called on finished buffer iterator", G_STRFUNC);
   if (i->iteration_no == 0)
     {
@@ -524,7 +524,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
       g_print ("%f %f\n", (100.0*direct_read/(in_direct_read+direct_read)),
                            100.0*direct_write/(in_direct_write+direct_write));
 #endif
-      i->buf[0]=(void*)0xdeadbeef;
+      i->is_finished = TRUE;
       g_slice_free (GeglBufferIterators, i);
     }
 
@@ -538,6 +538,8 @@ GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
                                               guint                flags)
 {
   GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
+  /* Because the iterator is nulled above, we can forgo explicitly setting
+   * i->is_finished to FALSE. */
   gegl_buffer_iterator_add (i, buffer, roi, format, flags);
   return i;
 }
