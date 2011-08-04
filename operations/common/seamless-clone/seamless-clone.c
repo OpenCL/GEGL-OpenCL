@@ -62,7 +62,7 @@ get_required_for_output (GeglOperation       *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("RGBA float");
+  Babl *format = babl_format ("R'G'B'A float");
 
   g_debug ("seamless-clone.c::prepare");
   
@@ -92,7 +92,7 @@ sc_point_to_color_func (P2tRPoint *point,
   guint N = sl->points->len;
   gfloat *col_cpy;
 
-  Babl *format = babl_format ("RGBA float");
+  Babl *format = babl_format ("R'G'B'A float");
 
   if ((col_cpy = g_hash_table_lookup (cci->pt2col, point)) != NULL)
     {
@@ -154,7 +154,7 @@ process (GeglOperation       *operation,
   ScColorComputeInfo  cci;
   P2tRImageConfig     imcfg;
 
-  Babl               *format = babl_format("RGBA float");
+  Babl               *format = babl_format("R'G'B'A float");
 
   g_debug ("seamless-clone.c::process");
   printf ("The aux_rect is: ");
@@ -229,7 +229,7 @@ process (GeglOperation       *operation,
   g_debug ("Finish aux adding");
   
   /* TODO: Add the aux to the mesh rendering! */
-  gegl_buffer_set (output, &to_render, babl_format("RGBA float"), out_raw, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, &to_render, babl_format("R'G'B'A float"), out_raw, GEGL_AUTO_ROWSTRIDE);
 
   /* Free memory, by the order things were allocated! */
   g_hash_table_destroy (cci.pt2col);
