@@ -33,7 +33,6 @@ typedef struct GeglBufferIterator
   gint          length;
   gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
   GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
-  gboolean      is_finished;
 } GeglBufferIterator;
 
 

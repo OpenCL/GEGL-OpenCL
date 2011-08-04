@@ -70,6 +70,7 @@ typedef struct GeglBufferIterators
   /* the following is private: */
   gint           iterators;
   gint           iteration_no;
+  gboolean       is_finished;
   GeglRectangle  rect       [GEGL_BUFFER_MAX_ITERATORS];
   const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS];
   GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS];
