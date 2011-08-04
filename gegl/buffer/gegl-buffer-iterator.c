@@ -65,17 +65,18 @@ typedef struct GeglBufferIterators
   /* current region of interest */
   gint          length;             /* length of current data in pixels */
   gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
-  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
+  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS]; /* roi of the current data */
 
   /* the following is private: */
   gint           iterators;
   gint           iteration_no;
   gboolean       is_finished;
-  GeglRectangle  rect       [GEGL_BUFFER_MAX_ITERATORS];
-  const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS];
-  GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS];
+  GeglRectangle  rect       [GEGL_BUFFER_MAX_ITERATORS]; /* the region we iterate on. They can be different from
+                                                            each other, but width and height are the same */
+  const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS]; /* The format required for the data */
+  GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS]; /* currently a subbuffer of the original, need to go away */
   guint          flags      [GEGL_BUFFER_MAX_ITERATORS];
-  gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS];
+  gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS]; /* no idea */
   GeglBufferTileIterator   i[GEGL_BUFFER_MAX_ITERATORS];
 } GeglBufferIterators;
 
@@ -142,8 +143,8 @@ gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i)
   gint  tile_height    = buffer->tile_storage->tile_height;
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
-  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint  buffer_x       = i->roi.x + buffer_shift_x;
+  gint  buffer_y       = i->roi.y + buffer_shift_y;
 
   if (i->roi.width == 0 || i->roi.height == 0)
     return FALSE;
@@ -265,8 +266,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
     roi = self==0?&(buffer->extent):&(i->rect[0]);
   i->rect[self]=*roi;
 
-  /* XXX: if this buffer creation could be avoided, it would be a speedup */
-  i->buffer[self]=gegl_buffer_create_sub_buffer (buffer, roi);
+  i->buffer[self]= g_object_ref (buffer);
+
   if (format)
     i->format[self]=format;
   else
