@@ -86,7 +86,7 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
  * Do an iteration, this causes a new set of iterator->data[] to become
  * available if there is more data to process. Changed data from a previous
  * iteration step will also be saved now. When there is no more data to
- * be processed NULL will be returned (and the iterator handle is no longer
+ * be processed FALSE will be returned (and the iterator handle is no longer
  * valid).
  *
  * Returns: TRUE if there is more work FALSE if iteration is complete.
