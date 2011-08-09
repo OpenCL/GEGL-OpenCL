@@ -259,7 +259,7 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
 
 
       for (i=0;i<3;i++)
-        for (j=0;j<2;j++)
+        for (j=0;j<3;j++)
           {
             a = strtod(p, &p);
             matrix->coeff [j][i] = a;
@@ -279,7 +279,7 @@ gchar *gegl_matrix3_to_string (GeglMatrix3 *matrix)
   gint a=0;
 
   for (i=0;i<3;i++)
-    for (j=0;j<2;j++)
+    for (j=0;j<3;j++)
       {
         if (a!=0)
           g_string_append (str, ",");

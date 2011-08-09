@@ -656,8 +656,10 @@ affine_generic (GeglBuffer  *dest,
   GeglMatrix2           inverse_jacobian;
   gdouble               u_start,
                         v_start,
+                        w_start,
                         u_float,
-                        v_float;
+                        v_float,
+                        w_float;
 
   const Babl           *format;
 
@@ -681,35 +683,42 @@ affine_generic (GeglBuffer  *dest,
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
+      /* set inverse_jacobian for samplers that support it */
       inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
       inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
       inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
       inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
 
-     /* set inverse_jacobian for samplers that support it */
       u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1]
                     * roi->y + inverse.coeff[0][2];
       v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1]
                     * roi->y + inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1]
+                    * roi->y + inverse.coeff[2][2];
 
       /* correct rounding on e.g. negative scaling (is this sound?) */
       if (inverse.coeff [0][0] < 0.)  u_start -= .001;
       if (inverse.coeff [1][1] < 0.)  v_start -= .001;
+      if (inverse.coeff [2][1] < 0.)  w_start -= .001;
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
-           u_float = u_start;
-           v_float = v_start;
+          u_float = u_start;
+          v_float = v_start;
+          w_float = w_start;
 
-           for (x = roi->width; x--;)
-             {
-               gegl_sampler_get (sampler, u_float, v_float, &inverse_jacobian, dest_ptr);
-               dest_ptr+=4;
-               u_float += inverse.coeff [0][0];
-               v_float += inverse.coeff [1][0];
-             }
-           u_start += inverse.coeff [0][1];
-           v_start += inverse.coeff [1][1];
+          for (x = roi->width; x--;)
+            {
+              gegl_sampler_get (sampler, u_float/w_float, v_float/w_float, &inverse_jacobian, dest_ptr);
+              dest_ptr+=4;
+              u_float += inverse.coeff [0][0];
+              v_float += inverse.coeff [1][0];
+              w_float += inverse.coeff [2][0];
+            }
+
+          u_start += inverse.coeff [0][1];
+          v_start += inverse.coeff [1][1];
+          w_start += inverse.coeff [2][1];
         }
     }
 }
