@@ -56,7 +56,7 @@ static GOptionEntry entries[] =
   { "verbose",          'v', 0, G_OPTION_ARG_NONE,     &verbose,          "Print output?",                     NULL },
   { "debug",            'd', 0, G_OPTION_ARG_NONE,     &debug_print,      "Enable debug printing",             NULL },
   { "input",            'i', 0, G_OPTION_ARG_FILENAME, &input_file,       "Use input file at FILE_IN",         "FILE_IN" },
-  { "output",           'o', 0, G_OPTION_ARG_FILENAME, &output_file,      "Use output file at FILE_IN",        "FILE_OUT" },
+  { "output",           'o', 0, G_OPTION_ARG_FILENAME, &output_file,      "Use output file at FILE_OUT",       "FILE_OUT" },
   { NULL }
 };
 
@@ -155,6 +155,16 @@ read_points_file (const gchar  *path,
     g_print ("Read %d points and %d colors\n", countPts, countCls);
 }
 
+/* In order to find the maximal length of a filename path, most
+ * platforms have either the macro MAX_PATH, or PATH_MAX. This is a
+ * guess which tries them both */
+ 
+#ifdef MAX_PATH
+#define P2TC_MAX_PATH MAX_PATH
+#else
+#define P2TC_MAX_PATH PATH_MAX
+#endif
+
 gint main (int argc, char *argv[])
 {
   FILE *out;
@@ -167,7 +177,7 @@ gint main (int argc, char *argv[])
   P2tRTriangulation *T;
 
   gint i;
-  gchar buf[MAX_PATH+1];
+  gchar buf[P2TC_MAX_PATH+1];
   gfloat *im;
 
   context = g_option_context_new ("- Create a fine mesh from a given PSLG");

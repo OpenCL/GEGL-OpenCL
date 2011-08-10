@@ -13,3 +13,8 @@ libpoly2tri_c_la_LIBADD  = \
 	refine/libpoly2tri-c-refine.la	\
 	render/libpoly2tri-c-render.la
 libpoly2tri_c_la_CFLAGS  = $(DEP_CFLAGS) -fPIC
+
+bin_PROGRAMS = p2tc
+p2tc_SOURCES = main.c poly2tri.h
+p2tc_LDADD = libpoly2tri-c.la $(GLIB_LIBS) -lm
+p2tc_CFLAGS = $(DEP_CFLAGS) -fPIC
