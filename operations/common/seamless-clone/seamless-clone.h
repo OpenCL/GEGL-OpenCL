@@ -20,15 +20,29 @@
 #ifndef __SEAMLESS_CLONE_H__
 #define __SEAMLESS_CLONE_H__
 
-#define TO_CAIRO(col) ((col)/2+0.5)
-//#define FROM_CAIRO(col) (((col)-0.5)*2)
-//#define TO_CAIRO(col) (col)
-#define FROM_CAIRO(col) ((col - 128)*2)
-
 #include "poly2tri-c/poly2tri.h"
 #include "poly2tri-c/refine/triangulation.h"
 
 #include "find-outline.h"
 #include "make-mesh.h"
+
+typedef struct {
+  ScOutline         *outline;
+  P2tRTriangulation *mesh;
+  GeglRectangle      mesh_bounds;
+  ScMeshSampling    *sampling;
+} ScPreprocessResult;
+
+#define sc_preprocess_new() (g_new0 (ScPreprocessResult, 1))
+
+//inline void
+//sc_preprocess_result_free (ScPreprocessResult *self)
+//{
+//  sc_mesh_sampling_free (self->sampling);
+//  p2tr_triangulation_free (self->mesh);
+//  sc_outline_free (self->outline);
+//
+//  g_free (self);
+//}
 
 #endif

@@ -2,21 +2,20 @@ SUBDIRS = poly2tri-c
 
 include $(top_srcdir)/operations/Makefile-common.am
 
-LIBS            = $(op_libs)
+AM_LDFLAGS += $(op_libs) poly2tri-c/libpoly2tri-c.la
 
-seamless_clone_la_SOURCES = \
-	make-mesh.c			\
+sc_common_files =		\
+ 	make-mesh.c			\
 	make-mesh.h			\
 	find-outline.c		\
 	find-outline.h		\
-	seamless-clone.c	\
 	seamless-clone.h
 
-seamless_clone_la_LIBADD = $(op_libs) poly2tri-c/libpoly2tri-c.la
-seamless_clone_la_CFLAGS = $(AM_CFLAGS) $(BABL_CFLAGS) $(GLIB_CFLAGS)
+seamless_clone_la_SOURCES = seamless-clone.c $(sc_common_files)
+seamless_clone_render_la_SOURCES = seamless-clone-render.c $(sc_common_files)
+seamless_clone_prepare_la_SOURCES = seamless-clone-prepare.c $(sc_common_files)
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
-op_LTLIBRARIES = seamless-clone.la
 
-AM_CPPFLAGS += \
-	-I$(top_srcdir)/operations/common
+op_LTLIBRARIES = seamless-clone.la seamless-clone-render.la seamless-clone-prepare.la
+Introduce a new WIP two-step seamless-cloning procedure

@@ -167,8 +167,8 @@ outline_walk_cw (GeglRectangle      *rect,
 #define pteq(pt1,pt2) (((pt1)->x == (pt2)->x) && ((pt1)->y == (pt2)->y))
 
 GPtrArray*
-sc_outline_find_ccw (GeglRectangle *rect,
-                     GeglBuffer    *pixels)
+sc_outline_find_ccw (const GeglRectangle *rect,
+                     const GeglBuffer    *pixels)
 {
   Babl      *format = babl_format("RGBA float");
   GPtrArray *points = g_ptr_array_new ();
