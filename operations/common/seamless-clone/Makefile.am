@@ -18,4 +18,3 @@ seamless_clone_prepare_la_SOURCES = seamless-clone-prepare.c $(sc_common_files)
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 
 op_LTLIBRARIES = seamless-clone.la seamless-clone-render.la seamless-clone-prepare.la
-Introduce a new WIP two-step seamless-cloning procedure
