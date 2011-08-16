@@ -264,6 +264,14 @@ gegl_processor_set_node (GeglProcessor *processor,
                    GEGL_TYPE_OPERATION_SINK))
     {
       processor->input = gegl_node_get_producer (processor->node, "input", NULL);
+
+      if (processor->input == NULL)
+        {
+          g_critical ("Prepared to process a sink operation, but it "
+                      "had no \"input\" pad connected!");
+          return;
+        }
+
       if (!gegl_operation_sink_needs_full (processor->node->operation))
         {
           processor->valid_region = gegl_region_new ();
@@ -281,7 +289,7 @@ gegl_processor_set_node (GeglProcessor *processor,
       processor->valid_region = NULL;
     }
 
-  g_return_if_fail (processor->input);
+  g_return_if_fail (processor->input != NULL);
 
   g_object_ref (processor->input);
 
@@ -302,6 +310,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 {
   GSList        *iter;
   GeglRectangle  input_bounding_box;
+
+  g_return_if_fail (processor->input != NULL);
 
   if (! rectangle)
     {
@@ -461,7 +471,7 @@ render_rectangle (GeglProcessor *processor)
 
           return TRUE;
         }
-	
+
       if (buffered)
         {
           /* only do work if the rectangle is not completely inside the valid
@@ -564,6 +574,8 @@ gegl_processor_progress (GeglProcessor *processor)
   gint        valid;
   gint        wanted;
   gdouble     ret;
+
+  g_return_val_if_fail (processor->input != NULL, 1);
 
   if (processor->valid_region)
     {
