@@ -19,10 +19,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (xoff, "xoff", G_MININT, G_MAXINT, 0,
+gegl_chant_int (x, "x", G_MININT, G_MAXINT, 0,
   _("The x offset to apply to the paste"))
 
-gegl_chant_int (yoff, "yoff", G_MININT, G_MAXINT, 0,
+gegl_chant_int (y, "y", G_MININT, G_MAXINT, 0,
   _("The y offset to apply to the paste"))
 
 gegl_chant_pointer (prepare, _("prepare"),
@@ -83,7 +83,7 @@ typedef struct {
   GHashTable     *pt2col;
 
   /* Offset to be applied to the paste */
-  gint xoff, yoff;
+  gint x, y;
 } ScColorComputeInfo;
 
 static void
@@ -122,7 +122,7 @@ sc_point_to_color_func (P2tRPoint *point,
 
       gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
       /* Sample the BG with the offset */
-      gegl_buffer_sample (cci->input_buf, pt->x + cci->xoff, pt->y + cci->yoff, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (cci->input_buf, pt->x + cci->x, pt->y + cci->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
       
       dest_c[0] += weight * (input_c[0] - aux_c[0]);
       dest_c[1] += weight * (input_c[1] - aux_c[1]);
@@ -164,8 +164,8 @@ process (GeglOperation       *operation,
     }
 
   /* The location of the aux will actually be computed with an offset */
-  aux_rect.x += o->xoff;
-  aux_rect.y += o->yoff;
+  aux_rect.x += o->x;
+  aux_rect.y += o->y;
   
   /* We only need to render the intersection of the mesh bounds and the
    * desired output */
@@ -182,12 +182,12 @@ process (GeglOperation       *operation,
 
   /* In order to sample colors correctly, the sampling function will
    * need to know the offset */
-  cci.xoff = o->xoff;
-  cci.yoff = o->yoff;
+  cci.x = o->x;
+  cci.y = o->y;
 
   /* Render as if there is no offset, since the mesh has no offset */
-  imcfg.min_x = to_render.x - o->xoff;
-  imcfg.min_y = to_render.y - o->yoff;
+  imcfg.min_x = to_render.x - o->x;
+  imcfg.min_y = to_render.y - o->y;
   imcfg.step_x = imcfg.step_y = 1;
   imcfg.x_samples = to_render.width;
   imcfg.y_samples = to_render.height;

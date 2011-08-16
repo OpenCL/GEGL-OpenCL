@@ -45,9 +45,15 @@ gegl_chant_pointer (result, _("result"),
 static void
 prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("R'G'B'A float");
+  Babl     *format = babl_format ("R'G'B'A float");
+  gpointer *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
 
   gegl_operation_set_format (operation, "input",  format);
+
+  if (dest == NULL)
+    {
+      g_warning ("sc-prepare: No place to store the preprocessing result given!");
+    }
 }
 
 
@@ -57,7 +63,13 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi)
 {
   ScPreprocessResult *result = sc_preprocess_new ();
-  
+  gpointer           *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
+
+  if (dest == NULL)
+    {
+      return FALSE;
+    }
+    
   /* First, find the paste outline */
   result->outline = sc_outline_find_ccw (roi, input);
 
@@ -71,7 +83,7 @@ process (GeglOperation       *operation,
    * by using a regular operation rather than a sink one, so that we can
    * output UV coords */
 
-  GEGL_CHANT_PROPERTIES (operation) -> result = result;
+  *dest = result;
 
   /*
   sc_mesh_sampling_free (mesh_sampling);
