@@ -281,6 +281,8 @@ gegl_processor_set_node (GeglProcessor *processor,
       processor->valid_region = NULL;
     }
 
+  g_return_if_fail (processor->input);
+
   g_object_ref (processor->input);
 
   g_object_notify (G_OBJECT (processor), "node");
