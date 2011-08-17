@@ -16,6 +16,6 @@ TEST ()
                                              G_CALLBACK(g_free), /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
   print_buffer (buffer);
-  test_end ();
   gegl_buffer_destroy (buffer);
+  test_end ();
 }

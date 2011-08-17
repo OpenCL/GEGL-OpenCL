@@ -92,6 +92,8 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     tile->size       = babl_format_get_bytes_per_pixel (format) * rowstride * extent->height;
     tile->next_shared = tile;
     tile->prev_shared = tile;
+    tile->destroy_notify      = (void (*) (gpointer, gpointer)) destroy_fn;
+    tile->destroy_notify_data = destroy_fn_data;
 
     if (buffer->tile_storage->cache)
       gegl_tile_handler_cache_insert (buffer->tile_storage->cache, tile, 0, 0, 0);

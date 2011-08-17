@@ -31,6 +31,7 @@
 #define print(args)		  G_STMT_START {		\
 	gchar *_fmt = g_strdup_printf args;			\
 	g_string_append (gstring, _fmt);			\
+	g_free (_fmt);						\
 				  } G_STMT_END
 #define print_buffer(buffer)      print_buffer_internal (gstring, buffer)
 #define print_linear_buffer_u8(w,h,b)  print_linear_buffer_internal_u8 (gstring,w,h,b)
@@ -308,7 +309,9 @@ gint main (gint argc, gchar **argv)
             {
               if (g_str_equal (argv[j], test_names[i]))
                 {
-                  printf ("%s", tests[i]());
+                  ret=tests[i]();
+                  printf ("%s", ret);
+                  g_free (ret);
                 }
             }
         }
@@ -319,6 +322,7 @@ gint main (gint argc, gchar **argv)
           ret=tests[i]();
           sprintf (output_file, "output/%s.buf", test_names[i]);
           g_file_set_contents (output_file, ret, -1, NULL);
+          g_free (ret);
         }
     }
 

@@ -7,6 +7,6 @@ TEST ()
   buffer = gegl_buffer_new (&extent, babl_format ("Y float"));
   fill_rect (buffer, &roi, 0.5);
   print_buffer (buffer);
-  test_end ();
   gegl_buffer_destroy (buffer);
+  test_end ();
 }

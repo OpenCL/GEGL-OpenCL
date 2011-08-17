@@ -11,7 +11,7 @@ TEST ()
 
   fill_rect (sub, &roi, 0.5);
   print_buffer (buffer);
-  test_end ();
   gegl_buffer_destroy (sub);
   gegl_buffer_destroy (buffer);
+  test_end ();
 }
