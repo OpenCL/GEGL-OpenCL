@@ -509,7 +509,7 @@ static void each_ref (gpointer value,
 
   gegl_node_get (dest_node, "ref", &ref, NULL);
   source_node = g_hash_table_lookup (pd->ids, ref);
-
+  g_free (ref);
   gegl_node_connect_from (dest_node, "input", source_node, "output");
 }
 

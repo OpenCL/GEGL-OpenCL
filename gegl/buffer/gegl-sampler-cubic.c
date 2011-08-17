@@ -36,6 +36,7 @@ enum
   PROP_LAST
 };
 
+static void      gegl_sampler_cubic_finalize (GObject      *gobject);
 static void      gegl_sampler_cubic_get (GeglSampler  *sampler,
                                          gdouble       x,
                                          gdouble       y,
@@ -64,6 +65,7 @@ gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
+  object_class->finalize     = gegl_sampler_cubic_finalize;
 
   sampler_class->get     = gegl_sampler_cubic_get;
 
@@ -92,6 +94,13 @@ gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
                                                         "cubic",
                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 
+}
+
+static void
+gegl_sampler_cubic_finalize (GObject *object)
+{
+  g_free (GEGL_SAMPLER_CUBIC (object)->type);
+  G_OBJECT_CLASS (gegl_sampler_cubic_parent_class)->finalize (object);
 }
 
 static void

@@ -356,6 +356,8 @@ gint gegl_buffer_leaks (void)
         g_printerr ("%s\n", buffer->alloc_stack_trace);
       }
   }
+  g_list_free (allocated_buffers_list);
+  allocated_buffers_list = NULL;
 #endif
 
   return allocated_buffers - de_allocated_buffers;
@@ -395,9 +397,11 @@ static void
 gegl_buffer_finalize (GObject *object)
 {
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+  g_free (GEGL_BUFFER (object)->alloc_stack_trace);
   allocated_buffers_list = g_list_remove (allocated_buffers_list, object);
 #endif
 
+  g_free (GEGL_BUFFER (object)->path);
   de_allocated_buffers++;
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }

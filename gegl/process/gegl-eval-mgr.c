@@ -88,9 +88,11 @@ gegl_eval_mgr_finalize (GObject *self_object)
 #endif
 
   g_object_unref (self->prepare_visitor);
+  g_object_unref (self->have_visitor);
   g_object_unref (self->eval_visitor);
   g_object_unref (self->need_visitor);
   g_object_unref (self->finish_visitor);
+  g_free (self->pad_name);
 
   G_OBJECT_CLASS (gegl_eval_mgr_parent_class)->finalize (self_object);
 }

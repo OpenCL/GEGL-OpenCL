@@ -251,6 +251,7 @@ main (gint    argc,
         break;
     }
 
+  g_list_free_full (o->files, g_free);
   g_free (o);
   g_object_unref (gegl);
   g_free (script);

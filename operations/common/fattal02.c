@@ -1059,6 +1059,7 @@ fattal02_find_percentiles (const gfloat *array,
 
   *min_value = sorting[(guint)(min_percent * size)];
   *max_value = sorting[(guint)(max_percent * size)];
+  g_free (sorting);
 }
 
 /********************************************************************/
@@ -1292,6 +1293,9 @@ fattal02_process (GeglOperation       *operation,
 
   gegl_buffer_set (output, result, babl_format (OUTPUT_FORMAT), pix,
                    GEGL_AUTO_ROWSTRIDE);
+  g_free (pix);
+  g_free (lum_out);
+  g_free (lum_in);
   return TRUE;
 }
 

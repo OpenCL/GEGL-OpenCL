@@ -1330,6 +1330,7 @@ matting_solve_level (gdouble             *restrict pixels,
           trimap[i * COMPONENTS_AUX + AUX_VALUE] *= roundf (trimap[i * COMPONENTS_AUX + AUX_VALUE]) *
                                                     trimap[i * COMPONENTS_AUX + AUX_ALPHA];
         }
+      g_free (eroded_alpha);
     }
 
   /* Ordinary solution of the matting laplacian */

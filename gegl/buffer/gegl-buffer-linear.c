@@ -213,19 +213,19 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
   if (tile)
     {
       gegl_tile_unlock (tile);
+      gegl_tile_unref (tile);
       g_object_set_data (G_OBJECT (buffer), "linear-tile", NULL);
-      tile = NULL;
     }
   else
     {
       GList *linear_buffers;
       GList *iter;
-      BufferInfo *info = NULL;
       linear_buffers = g_object_get_data (G_OBJECT (buffer), "linear-buffers");
 
       for (iter = linear_buffers; iter; iter=iter->next)
         {
-          info = iter->data;
+          BufferInfo *info = iter->data;
+
           if (info->buf == linear)
             {
               info->refs--;
@@ -238,26 +238,20 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
                          */
                 }
 
+              linear_buffers = g_list_remove (linear_buffers, info);
+              g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
+
               g_mutex_unlock (buffer->tile_storage->mutex);
               /* XXX: potential race */
               gegl_buffer_set (buffer, &info->extent, info->format, info->buf, 0);
+
+              gegl_free (info->buf);
+              g_free (info);
+
               g_mutex_lock (buffer->tile_storage->mutex);
               break;
             }
-          else
-            {
-              info = NULL;
-            }
         }
-
-      if (info)
-        {
-          linear_buffers = g_list_remove (linear_buffers, linear);
-          gegl_free (info->buf);
-          g_free (info);
-        }
-
-      g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
     }
   /*gegl_buffer_unlock (buffer);*/
   g_mutex_unlock (buffer->tile_storage->mutex);

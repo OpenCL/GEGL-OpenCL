@@ -46,7 +46,7 @@ enum
   PROP_LANCZOS_WIDTH
 };
 
-
+static void          gegl_affine_finalize                  (GObject              *object);
 static void          gegl_affine_get_property              (GObject              *object,
                                                             guint                 prop_id,
                                                             GValue               *value,
@@ -180,6 +180,7 @@ op_affine_class_init (OpAffineClass *klass)
 
   gobject_class->set_property         = gegl_affine_set_property;
   gobject_class->get_property         = gegl_affine_get_property;
+  gobject_class->finalize             = gegl_affine_finalize;
 
   op_class->get_invalidated_by_change = gegl_affine_get_invalidated_by_change;
   op_class->get_bounding_box          = gegl_affine_get_bounding_box;
@@ -233,6 +234,12 @@ op_affine_class_init (OpAffineClass *klass)
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
 
+static void
+gegl_affine_finalize (GObject *object)
+{
+  g_free (OP_AFFINE (object)->filter);
+  G_OBJECT_CLASS (op_affine_parent_class)->finalize (object);
+}
 
 static void
 op_affine_init (OpAffine *self)
@@ -288,7 +295,7 @@ gegl_affine_set_property (GObject      *object,
       break;
     case PROP_FILTER:
       g_free (self->filter);
-      self->filter = g_strdup (g_value_get_string (value));
+      self->filter = g_value_dup_string (value);
       break;
     case PROP_HARD_EDGES:
       self->hard_edges = g_value_get_boolean (value);
@@ -897,6 +904,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.height -= context_rect.height;
 
       gegl_affine_fast_reflect_x (output, input, result, &src_rect);
+      g_object_unref (sampler);
 
       if (input != NULL)
         g_object_unref (input);
@@ -927,6 +935,7 @@ gegl_affine_process (GeglOperation        *operation,
       src_rect.height -= context_rect.height;
 
       gegl_affine_fast_reflect_y (output, input, result, &src_rect);
+      g_object_unref (sampler);
 
       if (input != NULL)
         g_object_unref (input);

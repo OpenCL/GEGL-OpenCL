@@ -42,6 +42,7 @@ static void attach (GeglOperation *operation)
 {
   GeglNode *gegl  = operation->node;
   GeglNode *input, *output, *over, *translate, *opacity, *blur, *darken, *black;
+  GeglColor *black_color = gegl_color_new ("rgb(0.0,0.0,0.0)");
 
   input     = gegl_node_get_input_proxy (gegl, "input");
   output    = gegl_node_get_output_proxy (gegl, "output");
@@ -51,8 +52,9 @@ static void attach (GeglOperation *operation)
   blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
   darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
   black     = gegl_node_new_child (gegl, "operation", "gegl:color",
-                                     "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
+                                     "value", black_color,
                                      NULL);
+  g_object_unref (black_color);
 
   gegl_node_link_many (input, darken, blur, opacity, translate, over, output, NULL);
   gegl_node_connect_from (over, "aux", input, "output");

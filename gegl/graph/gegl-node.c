@@ -234,7 +234,7 @@ gegl_node_dispose (GObject *gobject)
 
   {
     gint i;
-    for (i=0; i<4; i++)
+    for (i=0; i<GEGL_MAX_THREADS; i++)
       if (self->priv->eval_mgr[i])
         {
           g_object_unref (self->priv->eval_mgr[i]);
