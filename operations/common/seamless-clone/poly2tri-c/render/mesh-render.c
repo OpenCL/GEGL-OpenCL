@@ -191,6 +191,33 @@ void p2tr_test_point_to_color (P2tRPoint* point, gfloat *dest, gpointer user_dat
   dest[2] = 1;
 }
 
+#define uvt3_u(ptr) (((ptr)+0)->u)
+#define uvt3_v(ptr) (((ptr)+1)->v)
+#define uvt3_t(ptr) (((ptr)+2)->tri)
+
+void
+p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
+                            P2tRuvt              *dest,
+                            P2tRImageConfig      *config)
+{
+  gint x, y;
+  P2tRuvt *uvt = dest;
+  P2tRTriangle *tr_prev = NULL;
+
+  uvt3_t(uvt) = p2tr_triangulation_locate_point2 (T, config->min_x, config->min_y, NULL, &uvt3_u(uvt), &uvt3_v(uvt));
+  tr_prev = uvt3_t(uvt);
+  
+  for (y = 0; y < config->y_samples; y++)
+    for (x = 0; x < config->x_samples; x++)
+    {
+      gdouble Px = config->min_x + x * config->step_x;
+      gdouble Py = config->min_y + y * config->step_y;
+      uvt3_t(uvt) = p2tr_triangulation_locate_point2 (T, Px, Py, tr_prev, &uvt3_u(uvt), &uvt3_v(uvt));
+      tr_prev = uvt3_t(uvt);
+      uvt += 3;
+    }
+}
+
 void
 p2tr_mesh_render_scanline (P2tRTriangulation    *T,
                            gfloat               *dest,
@@ -198,25 +225,38 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
                            P2tRPointToColorFunc  pt2col,
                            gpointer              pt2col_user_data)
 {
-  gdouble *uvbuf = g_new (gdouble, 2 * config->x_samples * config->y_samples), *Puv = uvbuf;
-  P2tRTriangle **tribuf = g_new (P2tRTriangle*, config->x_samples * config->y_samples), **Ptri = tribuf;
+  P2tRuvt *uvt_cache = g_new (P2tRuvt, 3 * config->x_samples * config->y_samples);
+  GTimer *timer = g_timer_new ();
+  
+  g_timer_start (timer);
+  p2tr_mesh_render_cache_uvt (T, uvt_cache, config);
+  g_timer_stop (timer);
+  g_debug ("Mesh preprocessing took %f seconds\n", g_timer_elapsed (timer, NULL));
+
+  g_timer_start (timer);
+  p2tr_mesh_render_scanline2 (uvt_cache, dest, config, pt2col, pt2col_user_data);
+  g_timer_stop (timer);
+  g_debug ("Mesh rendering took %f seconds\n", g_timer_elapsed (timer, NULL));
+
+  g_timer_destroy (timer);
+  g_free (uvt_cache);
+  
+}
+
+
+void
+p2tr_mesh_render_scanline2 (P2tRuvt              *uvt_cache,
+                            gfloat               *dest,
+                            P2tRImageConfig      *config,
+                            P2tRPointToColorFunc  pt2col,
+                            gpointer              pt2col_user_data)
+{
+  P2tRuvt *uvt_p = uvt_cache;
+
+  gdouble u, v;
   P2tRTriangle *tr_prev = NULL, *tr_now;
 
   gint x, y;
-
-  tribuf[0] = p2tr_triangulation_locate_point2 (T, config->min_x, config->min_y, NULL, &uvbuf[0], &uvbuf[1]);
-
-  for (y = 0; y < config->y_samples; y++)
-    for (x = 0; x < config->x_samples; x++)
-    {
-      gdouble Px = config->min_x + x * config->step_x;
-      gdouble Py = config->min_y + y * config->step_y;
-      *Ptri++ = p2tr_triangulation_locate_point2 (T, Px, Py, *Ptri, &Puv[0], &Puv[1]);
-      Puv+=2;
-    }
-
-  Puv = uvbuf;
-  Ptri = tribuf;
 
   P2tRPoint *A = NULL, *B = NULL, *C = NULL;
 
@@ -227,16 +267,17 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
 
   gfloat *pixel = dest;
 
-  GTimer *timer = g_timer_new ();
-  g_timer_start (timer);
-
   for (y = 0; y < config->y_samples; y++)
     for (x = 0; x < config->x_samples; x++)
     {
-        gdouble u = Puv[0], v = Puv[1];
-        tr_now = *Ptri++;
-        Puv += 2;
+        u      = uvt3_u (uvt_p);
+        v      = uvt3_v (uvt_p);
+        tr_now = uvt3_t (uvt_p);
         
+        uvt_p += 3;
+
+        /* If we are outside of the triangulation, set alpha to zero and
+         * continue */
         if (tr_now == NULL)
           {
             pixel[3] = 0;
@@ -244,23 +285,31 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
           }
         else
           {
+            /* If the triangle hasn't changed since the previous pixel,
+             * then don't sample the color at the vertices again, since
+             * that is an expensive process! */
             if (tr_now != tr_prev)
               {
+                /* Get the points of the triangle in some fixed order,
+                 * just to make sure that the computation goes the same
+                 * everywhere */
                 p2tr_triangle_barycentric_get_points (tr_now, &A, &B, &C);
+                /* At each point X sample the color into colX */
                 pt2col (A, colA, pt2col_user_data);
                 pt2col (B, colB, pt2col_user_data);
                 pt2col (C, colC, pt2col_user_data);
+                /* Set the current triangle */
                 tr_now = tr_prev;
               }
 
+            /* Interpolate the color using barycentric coodinates */
             *pixel++ = USE_BARYCENTRIC (u,v,colA[0],colB[0],colC[0]);
             *pixel++ = USE_BARYCENTRIC (u,v,colA[1],colB[1],colC[1]);
             *pixel++ = USE_BARYCENTRIC (u,v,colA[2],colB[2],colC[2]);
+            /* Finally, set as opaque since we are inside the mesh */
             *pixel++ = 1;
           }
     }
-  g_timer_stop (timer);
-  p2tr_debug ("Mesh rendering took %f seconds\n", g_timer_elapsed (timer, NULL));
 }
 
 void

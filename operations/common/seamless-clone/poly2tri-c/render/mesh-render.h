@@ -27,7 +27,18 @@ typedef struct {
 
 typedef void (*P2tRPointToColorFunc) (P2tRPoint* point, gfloat *dest, gpointer user_data);
 
+typedef union {
+  P2tRTriangle *tri;
+  gdouble       u;
+  gdouble       v;
+} P2tRuvt;
+
 void p2tr_test_point_to_color (P2tRPoint* point, gfloat *dest, gpointer user_data);
+
+void
+p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
+                            P2tRuvt              *dest,
+                            P2tRImageConfig      *config);
 
 void
 p2tr_mesh_render_scanline (P2tRTriangulation    *T,
@@ -35,6 +46,13 @@ p2tr_mesh_render_scanline (P2tRTriangulation    *T,
                            P2tRImageConfig      *config,
                            P2tRPointToColorFunc  pt2col,
                            gpointer              pt2col_user_data);
+
+void
+p2tr_mesh_render_scanline2 (P2tRuvt              *uvt_cache,
+                            gfloat               *dest,
+                            P2tRImageConfig      *config,
+                            P2tRPointToColorFunc  pt2col,
+                            gpointer              pt2col_user_data);
 
 
 
