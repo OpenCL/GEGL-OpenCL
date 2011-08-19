@@ -81,7 +81,7 @@ typedef struct {
   GeglBuffer     *input_buf;
   ScMeshSampling *sampling;
   GHashTable     *pt2col;
-
+  GeglRectangle   bg_rect;
   /* Offset to be applied to the paste */
   gint x, y;
 } ScColorComputeInfo;
@@ -119,6 +119,22 @@ sc_point_to_color_func (P2tRPoint *point,
     {
       ScPoint *pt = g_ptr_array_index (sl->points, i);
       gdouble weight = g_array_index (sl->weights, gdouble, i);
+
+      /* The original outline point is on (pt->x,pt->y) in terms of mesh
+       * coordinates. But, since we are translating, it's location in
+       * background coordinates is (pt->x + cci->x, pt->y + cci->y)
+       */
+       
+      /* If the outline point is outside the background, then we can't
+       * compute a propper difference there. So, don't add it to the
+       * sampling */
+#define sc_rect_contains(rect,x0,y0) \
+     (((x0) >= (rect).x) && ((x0) < (rect).x + (rect).width)  \
+   && ((y0) >= (rect).y) && ((y0) < (rect).y + (rect).height))
+
+      if (! sc_rect_contains (cci->bg_rect, pt->x + cci->x, pt->y + cci->y)) { continue;}
+
+#undef sc_rect_contains
 
       gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
       /* Sample the BG with the offset */
@@ -186,6 +202,8 @@ process (GeglOperation       *operation,
    * need to know the offset */
   cci.x = o->x;
   cci.y = o->y;
+
+  cci.bg_rect = *gegl_operation_source_get_bounding_box (operation, "input");
 
   /* Render as if there is no offset, since the mesh has no offset */
   mesh_rect.x = imcfg.min_x = to_render.x - o->x;
