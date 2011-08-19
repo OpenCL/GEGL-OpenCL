@@ -28,6 +28,7 @@
 
 #include <gegl-plugin.h>
 
+G_BEGIN_DECLS
 
 GType gegl_chant_get_type (void);
 typedef struct _GeglChantO  GeglChantO;
@@ -846,4 +847,5 @@ gegl_chant_init_properties (GeglChant *self)
   self->properties = g_slice_new0 (GeglChantO);
 }
 
+G_END_DECLS
 /****************************************************************************/

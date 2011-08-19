@@ -28,6 +28,8 @@
 #include <glib-object.h>
 #include <gegl.h>
 
+G_BEGIN_DECLS
+
 /* Extra types needed when coding operations */
 typedef struct _GeglOperation        GeglOperation;
 typedef struct _GeglOperationContext GeglOperationContext;
@@ -150,4 +152,5 @@ typedef struct
 
 #include <gegl-lookup.h>
 
+G_END_DECLS
 #endif  /* __GEGL_PLUGIN_H__ */
