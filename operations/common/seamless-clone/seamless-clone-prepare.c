@@ -65,6 +65,10 @@ process (GeglOperation       *operation,
   ScPreprocessResult *result = sc_preprocess_new ();
   gpointer           *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
 
+  GeglBuffer         *uvt;
+  GeglBufferIterator *iter;
+  P2tRImageConfig     config;
+
   if (dest == NULL)
     {
       return FALSE;
@@ -82,6 +86,22 @@ process (GeglOperation       *operation,
   /* If caching of UV is desired, it shold be done here, and possibly
    * by using a regular operation rather than a sink one, so that we can
    * output UV coords */
+  result->uvt = gegl_buffer_new (roi, babl_uvt_format);
+
+  iter = gegl_buffer_iterator_new (result->uvt, roi, NULL, GEGL_BUFFER_WRITE);
+
+  config.step_x = config.step_y = 1;
+  config.cpp = 4; /* Not that it will be used, but it won't harm */
+
+  while (gegl_buffer_iterator_next (iter))
+    {
+      config.min_x = iter->roi[0].x;
+      config.min_y = iter->roi[0].y;
+      config.x_samples = iter->roi[0].width;
+      config.y_samples = iter->roi[0].height;
+      p2tr_mesh_render_cache_uvt_exact (result->mesh, (P2tRuvt*) iter->data[0], iter->length, &config);
+    }
+  /* No need to free the iterator */
 
   *dest = result;
 
@@ -89,6 +109,7 @@ process (GeglOperation       *operation,
   sc_mesh_sampling_free (mesh_sampling);
   p2tr_triangulation_free (mesh);
   sc_outline_free (outline);
+  gegl_buffer_destroy (uvt);
   */
   
   return  TRUE;

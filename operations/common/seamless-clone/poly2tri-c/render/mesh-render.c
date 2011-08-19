@@ -200,7 +200,16 @@ p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
                             P2tRuvt              *dest,
                             P2tRImageConfig      *config)
 {
-  gint x, y;
+  p2tr_mesh_render_cache_uvt_exact (T, dest, config->x_samples * config->y_samples, config);
+}
+
+void
+p2tr_mesh_render_cache_uvt_exact (P2tRTriangulation    *T,
+                                  P2tRuvt              *dest,
+                                  gint                  dest_len,
+                                  P2tRImageConfig      *config)
+{
+  gint x, y, n = dest_len;
   P2tRuvt *uvt = dest;
   P2tRTriangle *tr_prev = NULL;
 
@@ -210,6 +219,7 @@ p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
   for (y = 0; y < config->y_samples; y++)
     for (x = 0; x < config->x_samples; x++)
     {
+      if (n-- == 0) return;
       gdouble Px = config->min_x + x * config->step_x;
       gdouble Py = config->min_y + y * config->step_y;
       uvt3_t(uvt) = p2tr_triangulation_locate_point2 (T, Px, Py, tr_prev, &uvt3_u(uvt), &uvt3_v(uvt));
@@ -217,6 +227,7 @@ p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
       uvt += 3;
     }
 }
+
 
 void
 p2tr_mesh_render_scanline (P2tRTriangulation    *T,

@@ -40,6 +40,14 @@ p2tr_mesh_render_cache_uvt (P2tRTriangulation    *T,
                             P2tRuvt              *dest,
                             P2tRImageConfig      *config);
 
+/* Like the regular version, but cache only the specified amount of
+ * pixels */
+void
+p2tr_mesh_render_cache_uvt_exact (P2tRTriangulation    *T,
+                                  P2tRuvt              *dest,
+                                  gint                  dest_len,
+                                  P2tRImageConfig      *config);
+
 void
 p2tr_mesh_render_scanline (P2tRTriangulation    *T,
                            gfloat               *dest,

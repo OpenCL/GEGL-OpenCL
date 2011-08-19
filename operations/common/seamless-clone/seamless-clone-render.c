@@ -147,10 +147,11 @@ process (GeglOperation       *operation,
   ScPreprocessResult *spr = o->prepare;
   
   gfloat    *out_raw, *pixel;
+  P2tRuvt *uvt_raw;
   gdouble    x, y;
 
   GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
-  GeglRectangle to_render;
+  GeglRectangle to_render, mesh_rect;
 
   ScColorComputeInfo  cci;
   P2tRImageConfig     imcfg;
@@ -173,6 +174,7 @@ process (GeglOperation       *operation,
 
   /* Alocate the output buffer */
   out_raw = g_new (gfloat, 4 * to_render.width * to_render.height);
+  uvt_raw = g_new (P2tRuvt, 3 * to_render.width * to_render.height);
 
   /* Render the mesh into it */
   cci.aux_buf = aux;
@@ -186,14 +188,15 @@ process (GeglOperation       *operation,
   cci.y = o->y;
 
   /* Render as if there is no offset, since the mesh has no offset */
-  imcfg.min_x = to_render.x - o->x;
-  imcfg.min_y = to_render.y - o->y;
+  mesh_rect.x = imcfg.min_x = to_render.x - o->x;
+  mesh_rect.y = imcfg.min_y = to_render.y - o->y;
   imcfg.step_x = imcfg.step_y = 1;
-  imcfg.x_samples = to_render.width;
-  imcfg.y_samples = to_render.height;
+  mesh_rect.width = imcfg.x_samples = to_render.width;
+  mesh_rect.height = imcfg.y_samples = to_render.height;
   imcfg.cpp = 4;
 
-  p2tr_mesh_render_scanline (spr->mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
+  gegl_buffer_get (spr->uvt, 1.0, &mesh_rect, babl_uvt_format, uvt_raw, GEGL_AUTO_ROWSTRIDE);
+  p2tr_mesh_render_scanline2 (uvt_raw, out_raw, &imcfg, sc_point_to_color_func, &cci);
 
   pixel = out_raw;
 
@@ -217,6 +220,7 @@ process (GeglOperation       *operation,
   gegl_buffer_set (output, &to_render, babl_format("R'G'B'A float"), out_raw, GEGL_AUTO_ROWSTRIDE);
 
   g_free (out_raw);
+  g_free (uvt_raw);
   g_hash_table_destroy (cci.pt2col);
   
   return TRUE;

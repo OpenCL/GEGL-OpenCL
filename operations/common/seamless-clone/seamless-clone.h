@@ -31,6 +31,7 @@ typedef struct {
   P2tRTriangulation *mesh;
   GeglRectangle      mesh_bounds;
   ScMeshSampling    *sampling;
+  GeglBuffer        *uvt;
 } ScPreprocessResult;
 
 #define sc_preprocess_new() (g_new0 (ScPreprocessResult, 1))
@@ -44,5 +45,8 @@ typedef struct {
 //
 //  g_free (self);
 //}
+
+#define babl_uvt_type   (babl_type_new ("uvt", "bits", sizeof (P2tRuvt) * 8, NULL))
+#define babl_uvt_format (babl_format_n (babl_uvt_type, 3))
 
 #endif
