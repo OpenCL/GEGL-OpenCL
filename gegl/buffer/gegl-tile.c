@@ -115,6 +115,9 @@ gegl_tile_dup (GeglTile *src)
   tile->data       = src->data;
   tile->size       = src->size;
 
+  tile->destroy_notify      = src->destroy_notify;
+  tile->destroy_notify_data = src->destroy_notify_data;
+
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
   tile->prev_shared              = src;
@@ -160,6 +163,8 @@ gegl_tile_unclone (GeglTile *tile)
        * create a local copy
        */
       tile->data                     = gegl_memdup (tile->data, tile->size);
+      tile->destroy_notify           = default_free;
+      tile->destroy_notify_data      = NULL;
       tile->prev_shared->next_shared = tile->next_shared;
       tile->next_shared->prev_shared = tile->prev_shared;
       tile->prev_shared              = tile;
