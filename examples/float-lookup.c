@@ -65,5 +65,6 @@ gint main (int argc, gchar **argv)
   foo = sqrt (val);
   gegl_lookup_free (lookup);
 
+  g_free (rand);
   return 0;
 }
