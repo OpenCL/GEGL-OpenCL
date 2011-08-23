@@ -438,16 +438,19 @@ gegl_path_closest_point (GeglPath *path,
   gint   closest_val = 0;
   gdouble  *samples_x;
   gdouble  *samples_y;
-  n = ceil(length);
-  samples_x = g_malloc (sizeof (gdouble)* n);
-  samples_y = g_malloc (sizeof (gdouble)* n);
 
   if (length == 0)
     {
       if (node_pos_before)
-        *node_pos_before = 0;
+        {
+          *node_pos_before = 0;
+        }
       return 0.0;
     }
+
+  n = ceil(length);
+  samples_x = g_malloc (sizeof (gdouble)* n);
+  samples_y = g_malloc (sizeof (gdouble)* n);
 
   gegl_path_calc_values (path, n, samples_x, samples_y);
 
