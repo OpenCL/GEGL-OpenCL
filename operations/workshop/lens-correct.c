@@ -15,16 +15,71 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
+ * Copyright 2011 Robert Sasu <sasu.robert@gmail.com>
  */
 
 #include "config.h"
+#include "lensfun.h"
 #include <glib/gi18n-lib.h>
 
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_pointer (lens_info_pointer, _("Model"),
-                    _("Pointer to LensCorrectionModel"))
+gegl_chant_string (maker, _("Maker:"),"none",
+                   _("Write lens maker correctly"))
+gegl_chant_string (Camera, _("Camera:"),"none",
+                   _("Write camera name correctly"))
+gegl_chant_string (Lens, _("Lens:"),"none",
+                   _("Write your lens model with majuscules"))
+gegl_chant_double (focal, _("Focal of the camera"), 0.0, 300.0, 20.0,
+                   _("Calculate b value from focal"))
+
+gegl_chant_boolean (center, _("Center"), TRUE, 
+                   _("If you want center"))
+gegl_chant_int (cx, _("Lens center x"), -G_MAXINT, G_MAXINT, 0,
+                _("Coordinates of lens center"))
+gegl_chant_int (cy, _("Lens center y"), -G_MAXINT, G_MAXINT, 0,
+                _("Coordinates of lens center"))
+gegl_chant_double (rscale, _("Scale"), 0.001, 10.0, 0.5,
+                   _("Scale of the image"))
+gegl_chant_boolean (correct, _("Autocorrect d values"), TRUE,
+                   _("Autocorrect D values for lens correction models."))
+
+gegl_chant_double (red_a, _("Model red a:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (red_b, _("Model red b:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (red_c, _("Model red c:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (red_d, _("Model red d:"), 0.0, 2.0, 1.0,
+                   _("Correction parameters for each color channel"))
+
+gegl_chant_double (green_a, _("Model green a:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (green_b, _("Model green b:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (green_c, _("Model green c:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (green_d, _("Model green d:"), 0.0, 2.0, 1.00,
+                   _("Correction parameters for each color channel"))
+
+gegl_chant_double (blue_a, _("Model blue a:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (blue_b, _("Model blue b:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (blue_c, _("Model blue c:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for each color channel"))
+gegl_chant_double (blue_d, _("Model blue d:"), 0.0, 2.0, 1.0,
+                   _("Correction parameters for each color channel"))
+
+gegl_chant_double (alpha_a, _("Model alpha a:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for alpha channel"))
+gegl_chant_double (alpha_b, _("Model alpha b:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for alpha channel"))
+gegl_chant_double (alpha_c, _("Model alpha c:"), -1.0, 1.0, 0.0,
+                   _("Correction parameters for alpha channel"))
+gegl_chant_double (alpha_d, _("Model alpha d:"), 0.0, 2.0, 1.0,
+                   _("Correction parameters for alpha channel"))
 
 #else
 
@@ -35,350 +90,342 @@ gegl_chant_pointer (lens_info_pointer, _("Model"),
 #include <math.h>
 #include "lens-correct.h"
 
-#if 0
-#define TRACE       /* Define this to see basic tracing info. */
-#endif
+#include <stdio.h>
 
-/* Find the src pixel that maps to the destination pixel passed as parameters x and y.
- */
+static void
+make_lens (LensCorrectionModel *lens,
+           GeglChantO          *o,
+           GeglRectangle        boundary)
+{
+  lens->BB.x = boundary.x;
+  lens->BB.y = boundary.y;
+  lens->BB.width = boundary.width;
+  lens->BB.height = boundary.height;
+
+  if (o->center)
+    {
+       o->cx = (boundary.x + boundary.width) / 2;
+       o->cy = (boundary.y + boundary.height) / 2;
+    }
+
+  lens->cx = o->cx;
+  lens->cy = o->cy;
+
+  lens->rscale = o->rscale;
+
+  lens->red.a = o->red_a;
+  lens->red.b = o->red_b;
+  lens->red.c = o->red_c;
+
+  if (o->correct)
+     lens->red.d = 1 - o->red_a - o->red_b - o->red_c;
+  else
+     lens->red.d = o->red_d;
+
+  lens->green.a = o->green_a;
+  lens->green.b = o->green_b;
+  lens->green.c = o->green_c;
+
+  if (o->correct)
+     lens->green.d = 1 - o->green_a - o->green_b - o->green_c;
+  else
+     lens->green.d = o->green_d;
+
+  lens->blue.a = o->blue_a;
+  lens->blue.b = o->blue_b;
+  lens->blue.c = o->blue_c;
+
+  if (o->correct)
+     lens->blue.d = 1 - o->blue_a - o->blue_b - o->blue_c;
+  else
+     lens->blue.d = o->blue_d;
+
+  lens->alpha.a = o->alpha_a;
+  lens->alpha.b = o->alpha_b;
+  lens->alpha.c = o->alpha_c;
+
+  if (o->correct)
+     lens->alpha.d = 1 - o->alpha_a - o->alpha_b - o->alpha_c;
+  else
+     lens->alpha.d = o->red_d;
+
+  if (o->focal!=0.0)
+    {
+       gdouble f = o->focal;
+       lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+          = 0.000005142 * f*f*f - 0.000380839 * f*f + 0.009606325 * f - 0.075316854;
+    }
+}
+
+static gboolean
+find_make_lens(LensCorrectionModel *lens,
+               GeglChantO          *o,
+               GeglRectangle        boundary)
+{
+  struct lfDatabase *ldb;
+  const lfCamera **cameras; 
+  const lfLens   **lenses;
+  const lfCamera  *camera;
+  const lfLens    *onelen;
+
+  struct lfLensCalibDistortion **dist;
+
+  gint             i, j=0;
+  gfloat           aux = G_MAXINT;
+
+  lens->BB.x = boundary.x;
+  lens->BB.y = boundary.y;
+  lens->BB.width = boundary.width;
+  lens->BB.height = boundary.height;
+
+  if (o->center)
+    {
+       o->cx = (boundary.x + boundary.width) / 2;
+       o->cy = (boundary.y + boundary.height) / 2;
+    }
+
+  lens->cx = o->cx;
+  lens->cy = o->cy;
+
+  lens->rscale = o->rscale;
+
+  ldb = lf_db_new ();
+  if (!ldb)
+     return FALSE;
+
+  lf_db_load (ldb);
+
+  cameras =  lf_db_find_cameras (ldb, o->maker, o->Camera);
+  if (!cameras)
+     return FALSE;
+  camera = cameras[0];
+
+  lf_free (cameras);
+
+  lenses = lf_db_find_lenses_hd (ldb, camera, o->maker, o->Lens, 0);
+  if (!lenses)
+     return FALSE;
+  onelen = lenses[0];
+
+  dist = onelen->CalibDistortion;
+
+  for (i=0; lenses[i]; i++)
+     if (lenses[i]->MinFocal < o->focal && o->focal < lenses[i]->MaxFocal)
+        break;
+
+  dist = lenses[i]->CalibDistortion;
+
+  if (!dist)
+     return FALSE;
+
+  for (i=0; dist[i]; i++)
+     {
+        if (dist[i]->Focal == o->focal)
+           {
+              lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
+                          = dist[i]->Terms[0];
+              lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+                          = dist[i]->Terms[1];
+              lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
+                          = dist[i]->Terms[2];
+
+              lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
+              lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
+              lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
+              lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
+
+              aux = -G_MAXINT;
+              break;
+           }
+        else if (i > 0)
+           {
+              if (aux > fabs (dist[i]->Focal - o->focal 
+                              + dist[i-1]->Focal - o->focal))
+                 {
+                    aux = fabs (dist[i]->Focal + dist[i-1]->Focal - 2 * o->focal);
+                    j = i;
+                 }
+           }
+     }
+  lf_free (lenses);
+
+  if (aux != -G_MAXINT)
+     {
+        gfloat aux[3];
+        for (i=0; i<3; i++)
+           aux[i] = (dist[j]->Terms[i] - dist[j-1]->Terms[i]) / 2.0;
+
+        lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
+                    = aux[0];
+        lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+                    = aux[1];
+        lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
+                    = aux[2];
+
+        lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
+        lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
+        lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
+        lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
+
+     }
+
+  return TRUE;
+}
+
+
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect;
+
+  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  if (!in_rect)
+    return result;
+
+  return *in_rect;
+}
+
+static GeglRectangle
+get_required_for_output (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
+
+static void
+prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 static void
 find_src_pixel (LensCorrectionModel *lcip, ChannelCorrectionModel *pp,
                 gfloat x, gfloat y, gfloat *srcx, gfloat *srcy)
 {
-  double r, radj;
+  gdouble r, radj;
 
   r = hypot (x - lcip->cx, y - lcip->cy) / lcip->rscale;
   radj = (((pp->a*r+pp->b)*r+pp->c)*r+pp->d);
   *srcx = (x - lcip->cx) * radj + lcip->cx;
   *srcy = (y - lcip->cy) * radj + lcip->cy;
+
 }
 
-/* Find dst pixel that comes from the source pixel passed as parameters x and y.
- */
 static void
-find_dst_pixel (LensCorrectionModel *lcip, ChannelCorrectionModel *pp,
-        gfloat x, gfloat y, gfloat *dstx, gfloat *dsty)
+lens_distort_newl (gfloat              *src_buf,
+                   gfloat              *dst_buf,
+                   const GeglRectangle *extended,
+                   const GeglRectangle *result,
+                   const GeglRectangle *boundary,
+                   LensCorrectionModel *lens,
+                   gint                 xx,
+                   gint                 yy,
+                   GeglBuffer          *input)
 {
-    /* Compute scaled distance of pixel from image center. */
-    gfloat srcr = hypot (x - lcip->cx, y - lcip->cy) / lcip->rscale;
+  gfloat temp[4];
+  gint   tmpx, tmpy, x, y, rgb;
+  gint   offset;  
 
-    /* Main path doesn't work for srcr == 0, but no need if pixel is close
-     * to image center.
-     */
-    if (srcr < 0.01/lcip->rscale) {
-        *dstx = x;
-    *dsty = y;
-    }
-    else {
-    gfloat dstr = srcr;
-        gfloat r;
-    #ifdef COUNT_IT
-      int it = 0;
-    #endif
-
-    /* Adjust dstr until r is within about one hundred of a pixel of srcr.
-     * Usually, one iteration is enough.
-     */
-    r = (((pp->a*dstr+pp->b)*dstr+pp->c)*dstr+pp->d) * dstr;
-    while (fabs (r - srcr) > 0.01/lcip->rscale) {
-        /* Compute derivative of lens distortion function at dstr. */
-            gfloat dr = ((4.0*pp->a*dstr+3.0*pp->b)*dstr+2.0*pp->c)*dstr+pp->d;
-        if (fabs(dr) < 1.0e-5) {
-        /* In theory, the derivative of a quartic function can have zeros,
-         * but I don't think any valid lens correction model will.
-         * Still, we check to avoid an infinite loop if the ChannelCorrectionModel is broken.
-         */
-            g_warning ("find_dst_pixel: x=%g y=%g found zero slope, bailing out", x, y);
-        break;
-        }
-        /* Adjust dstr based on error distance and current derivative. */
-        dstr += (srcr-r)/dr;
-        #ifdef COUNT_IT
-          it++;
-        #endif
-            r = (((pp->a*dstr+pp->b)*dstr+pp->c)*dstr+pp->d) * dstr;
-    }
-    #ifdef COUNT_IT
-      g_warning ("find_dst_pixel: iterations == %d", it);
-    #endif
-
-    /* Compute dst x,y coords from change in radial distance from image center. */
-    *dstx = (x - lcip->cx) * (dstr/srcr) + lcip->cx;
-    *dsty = (y - lcip->cy) * (dstr/srcr) + lcip->cy;
-    }
-}
-
-/* Define the type of the above two functions.
- */
-typedef void pixel_map_func (LensCorrectionModel *lcip, ChannelCorrectionModel *pp,
-                 gfloat x, gfloat y, gfloat *dstx, gfloat *dsty);
-
-/* Compute the bounding box of the GeglRectangle, *in_rect,
- * when passed through the pixel mapping function given by *mappix,
- * using the LensCorrectionModel *lcip.
- *
- * The implementation assumes that the LensCorrectionModel is monotonic.
- */
-static GeglRectangle
-map_region (const GeglRectangle *in_rect, LensCorrectionModel *lcip, pixel_map_func *mappix)
-{
-  GeglRectangle result = *in_rect;
-
-  #ifdef TRACE
-    g_warning ("> map_region in_rect=%dx%d+%d+%d", in_rect->width, in_rect->height, in_rect->x, in_rect->y);
-  #endif
-
-  if (result.width != 0 && result.height != 0)
-    {
-      gint ii;
-      gfloat x, y;
-      gfloat minx, miny, maxx, maxy;
-
-      /* To find the bounding box of the mapped pixels, we go around the
-       * perimeter of in_rect mapping each pixel.  By keeping track of
-       * the min/max x/y coordinates thus obtained, we compute the bounding box.
-       */
-      (*mappix) (lcip, &lcip->green, in_rect->x, in_rect->y, &minx, &miny);
-      maxx = minx; maxy = miny;
-      for (ii = 0; ii < 2*(in_rect->width+in_rect->height); ii++) {
-    /* Compute srcx,srcy coordinate for this point on the perimeter. */
-    gint srcx = in_rect->x;
-    gint srcy = in_rect->y;
-    if (ii < in_rect->width)
-      {
-        srcx += ii;
-      }
-    else if (ii < in_rect->width + in_rect->height)
-      {
-        srcx += in_rect->width;
-        srcy += (ii - in_rect->width);
-      }
-    else if (ii < 2*in_rect->width + in_rect->height)
-      {
-        srcy += in_rect->height;
-        srcx += 2*in_rect->width + in_rect->height - ii;
-      }
-    else
-      {
-        srcy += 2*(in_rect->width + in_rect->height) - ii;
-      }
-    /* Find dst pixels for each color channel. */
-        (*mappix) (lcip, &lcip->green, srcx, srcy, &x, &y);
-    if (x < minx) minx = x;
-    else if (x > maxx) maxx = x;
-    if (y < miny) miny = y;
-    else if (y > maxy) maxy = y;
-        (*mappix) (lcip, &lcip->red, srcx, srcy, &x, &y);
-    if (x < minx) minx = x;
-    else if (x > maxx) maxx = x;
-    if (y < miny) miny = y;
-    else if (y > maxy) maxy = y;
-        (*mappix) (lcip, &lcip->blue, srcx, srcy, &x, &y);
-    if (x < minx) minx = x;
-    else if (x > maxx) maxx = x;
-    if (y < miny) miny = y;
-    else if (y > maxy) maxy = y;
-      }
-      result.x = minx;
-      result.y = miny;
-      result.width = maxx - minx + 1;
-      result.height = maxy - miny + 1;
-    }
-  #ifdef TRACE
-    g_warning ("< map_region result=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
-  #endif
-  return result;
-}
-
-/* We expect src_extent to include all pixels required to form the
- * pixels of dst_extent.
- */
-#define ROW src_extent->width
-#define COL 1
-static void
-copy_through_lens (LensCorrectionModel *oip,
-                   GeglBuffer *src,
-                   GeglBuffer *dst)
-{
-  const GeglRectangle *src_extent;
-  const GeglRectangle *dst_extent;
-  gfloat *src_buf;
-  gfloat *dst_buf;
-  gint x,y;             /* Coordinate of current dst pixel. */
-  gint rgb;             /* Color channel of dst pixel being processed. */
-  gint doffset;             /* Buffer offset of current dst pixel. */
-  gint tmpx, tmpy, toff;
-  ChannelCorrectionModel *ccm[3];   /* Allow access to red,green,blue models in loop. */
-
-  src_extent = gegl_buffer_get_extent (src);
-  #ifdef TRACE
-    g_warning ("> copy_through_lens src_extent = %dx%d+%d+%d",
-                 src_extent->width, src_extent->height, src_extent->x,src_extent->y);
-  #endif
-  if (dst == NULL)
-    {
-      #ifdef TRACE
-        g_warning ("  dst is NULL");
-        g_warning ("< copy_through_lens");
-      #endif
-      return;
-    }
-  dst_extent = gegl_buffer_get_extent (dst);
-  if (dst_extent == NULL) {
-      #ifdef TRACE
-        g_warning ("  dst_extent is NULL");
-        g_warning ("< copy_through_lens");
-      #endif
-      return;
-  }
-
-  /* Get src pixels. */
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 3);
-  gegl_buffer_get (src, 1.0, NULL, babl_format ("RGB float"), src_buf, GEGL_AUTO_ROWSTRIDE);
-
-  /* Get buffer in which to place dst pixels. */
-  dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 3);
+  ChannelCorrectionModel ccm[3];
 
   /* Compute each dst pixel in turn and store into dst buffer. */
-  ccm[0] = &oip->red;
-  ccm[1] = &oip->green;
-  ccm[2] = &oip->blue;
-  doffset = 0;
-  for (y=dst_extent->y; y<dst_extent->height + dst_extent->y; y++)
-    {
-      for (x=dst_extent->x; x<dst_extent->width + dst_extent->x; x++)
-    {
-      for (rgb = 0; rgb < 3; rgb++)
-        {
-          gfloat gx, gy;
-          gfloat val = 0.0;
-          gint xx, yy;
-          gfloat wx[2], wy[2], wt = 0.0;
+  ccm[0] = lens->red;
+  ccm[1] = lens->green;
+  ccm[2] = lens->blue;
 
-          find_src_pixel (oip, ccm[rgb], (gfloat)x, (gfloat)y, &gx, &gy);
-          tmpx = gx;
-          tmpy = gy;
-          wx[1] = gx - tmpx;
-          wx[0] = 1.0 - wx[1];
-          wy[1] = gy - tmpy;
-          wy[0] = 1.0 - wy[1];
-          tmpx -= src_extent->x;
-          tmpy -= src_extent->y;
-          toff = (tmpy * ROW + tmpx) * 3;
-          for (xx = 0; xx < 2; xx++)
-            {
-          for (yy = 0; yy < 2; yy++)
-            {
-              if (tmpx+xx >= 0 && tmpx+xx < src_extent->width &&
-                  tmpy+yy >= 0 && tmpy+yy < src_extent->height)
-                {
-              val += src_buf[toff+(yy*ROW+xx)*3+rgb] * wx[xx] * wy[yy];
-              wt += wx[xx] * wy[yy];
-            }
-            }
-        }
-          if (wt <= 0)
-        {
-          g_warning ("gegl_lens_correct: mapped pixel %g,%g not in %dx%d+%d+%d", gx, gy,
-                 src_extent->width, src_extent->height, src_extent->x, src_extent->y);
-          g_warning ("                   dst = %dx%d+%d+%d", dst_extent->width, dst_extent->height, dst_extent->x,dst_extent->y);
-          dst_buf [doffset+rgb] = 0.0;
-        }
-          else
-        {
-          dst_buf [doffset+rgb] = val / wt;
-        }
-        }
-      doffset+=3;
-    }
-    }
+  for (rgb = 0; rgb < 4; rgb++)
+     {
+       gfloat gx, gy;
+       gfloat val = 0.0;
+       gfloat wx[2], wy[2], wt = 0.0;
 
-  /* Store dst pixels. */
-  gegl_buffer_set (dst, NULL, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+       find_src_pixel (lens, &ccm[rgb], (gfloat)xx, (gfloat)yy, &gx, &gy);
+       tmpx = (gint) gx;
+       tmpy = (gint) gy;
 
-  /* Free acquired storage. */
-  g_free (src_buf);
-  g_free (dst_buf);
+       wx[1] = gx - tmpx;
+       wx[0] = 1.0 - wx[1];
+       wy[1] = gy - tmpy;
+       wy[0] = 1.0 - wy[1];
 
-  #ifdef TRACE
-    g_warning ("< copy_through_lens");
-  #endif
+       for (x = 0; x < 2; x++)
+         {
+            for (y = 0; y < 2; y++)
+               {
+                  if (tmpx+x >= extended->x && tmpx+x < extended->x + extended->width
+                   && tmpy+y >= extended->y && tmpy+y < extended->y + extended->height)
+                     {
+                        offset = (tmpy + y - extended->y) * extended->width * 4 +
+                                 (tmpx + x - extended->x) * 4 + rgb;
+                        val += src_buf[offset] * wx[x] * wy[y];
+                        wt += wx[x] * wy[y];
+                     }
+                  else if (tmpx+x >= boundary->x && 
+                           tmpx+x < boundary->x + boundary->width &&
+                           tmpy+y >= boundary->y &&
+                           tmpy+y < boundary->y + boundary->height)
+                     {
+                        gfloat color[4];
+                        gegl_buffer_sample (input, tmpx+x, tmpy+y, NULL, color,
+                                            babl_format ("RGBA float"),
+                                            GEGL_INTERPOLATION_NEAREST);
+                        val += color[rgb] * wx[x] * wy[y];
+                        wt += wx[x] * wy[y];                       
+                     }
+               }
+        }
+       if (wt <= 0)
+          {
+             temp [rgb] = 0.0;
+          }
+       else
+          {
+             temp [rgb] =  val / wt;
+          }
+     }
+
+  offset = (yy - result->y) * result->width * 4 + (xx - result->x) * 4;
+  for (x=0; x<4; x++)
+     dst_buf[offset++] = temp[x];
 }
 
-/*****************************************************************************/
-
-/* Compute the region for which this operation is defined.
- */
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglChantO    *area = GEGL_CHANT_PROPERTIES (operation);
-
-  #ifdef TRACE
-    g_warning ("> get_bounding_box pointer == 0x%x in_rect == 0x%x", area->lens_info_pointer, in_rect);
-  #endif
-  if (in_rect && area->lens_info_pointer)
-    result = map_region (in_rect, area->lens_info_pointer, find_dst_pixel);
-
-  #ifdef TRACE
-    g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
-  #endif
-  return result;
-}
-
-/* Compute the input rectangle required to compute the specified region of interest (roi).
- */
-static GeglRectangle
-get_required_for_output (GeglOperation        *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *roi)
-{
-  GeglChantO   *area = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
-  #ifdef TRACE
-    g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
-    if (roi)
-      g_warning ("  ROI == %dx%d+%d+%d", roi->width, roi->height, roi->x, roi->y);
-  #endif
-  if (roi && area->lens_info_pointer) {
-    result = map_region (roi, area->lens_info_pointer, find_src_pixel);
-    result.width++;
-    result.height++;
-  }
-  #ifdef TRACE
-    g_warning ("< get_required_for_output res=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
-  #endif
-  return result;
-}
-
-/* Specify the input and output buffer formats.
- */
-static void
-prepare (GeglOperation *operation)
-{
-  #ifdef TRACE
-    g_warning ("> prepare");
-  #endif
-  gegl_operation_set_format (operation, "input", babl_format ("RGB float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
-  #ifdef TRACE
-    g_warning ("< prepare");
-  #endif
-}
-
-/* Perform the specified operation.
- */
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  LensCorrectionModel  lens;
+  GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
+                                   (operation, "input");
 
-  copy_through_lens (o->lens_info_pointer, input, output);
+  gint     x, y, found = FALSE;
+  gfloat *src_buf, *dst_buf;
+  src_buf    = g_new0 (gfloat, result->width * result->height * 4);
+  dst_buf    = g_new0 (gfloat, result->width * result->height * 4);
+
+  found = find_make_lens (&lens, o, boundary);
+  if (!found) make_lens (&lens, o, boundary);
+
+  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"),
+                   src_buf, GEGL_AUTO_ROWSTRIDE);
+
+  for (y = result->y; y < result->y + result->height; y++)
+     for (x = result->x; x < result->x + result->width; x++)
+        {
+          lens_distort_newl (src_buf, dst_buf, result, 
+                             result, &boundary, &lens, x, y, input);
+        }
+
+  gegl_buffer_set (output, result, babl_format ("RGBA float"),
+                   dst_buf, GEGL_AUTO_ROWSTRIDE);
+
+  g_free (dst_buf);
+  g_free (src_buf);
 
   return TRUE;
 }
