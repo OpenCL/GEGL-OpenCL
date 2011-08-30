@@ -76,20 +76,17 @@ static void prepare (GeglOperation *operation)
 
 
 static void
-gegl_rgb_to_hsv_double (gfloat *red,
-                        gfloat *green,
-                        gfloat *blue)
+gegl_rgb_to_hsv_double (gfloat  r,
+                        gfloat  g,
+                        gfloat  b,
+                        gfloat *h,
+                        gfloat *s,
+                        gfloat *v)
 {
-  gfloat r, g, b;
-  gfloat h, s, v;
   gfloat min, max;
   gfloat delta;
 
-  r = *red;
-  g = *green;
-  b = *blue;
-
-  h = 0.0;
+  *h = 0.0;
 
   if (r > g)
     {
@@ -102,39 +99,35 @@ gegl_rgb_to_hsv_double (gfloat *red,
       min = MIN (r, b);
     }
 
-  v = max;
+  *v = max;
 
   if (max != 0.0)
-    s = (max - min) / max;
+    *s = (max - min) / max;
   else
-    s = 0.0;
+    *s = 0.0;
 
-  if (s == 0.0)
+  if (*s == 0.0)
     {
-      h = 0.0;
+      *h = 0.0;
     }
   else
     {
       delta = max - min;
 
       if (r == max)
-        h = (g - b) / delta;
+        *h = (g - b) / delta;
       else if (g == max)
-        h = 2 + (b - r) / delta;
+        *h = 2 + (b - r) / delta;
       else if (b == max)
-        h = 4 + (r - g) / delta;
+        *h = 4 + (r - g) / delta;
 
-      h /= 6.0;
+      *h /= 6.0;
 
-      if (h < 0.0)
-        h += 1.0;
-      else if (h > 1.0)
-        h -= 1.0;
+      if (*h < 0.0)
+        *h += 1.0;
+      else if (*h > 1.0)
+        *h -= 1.0;
     }
-
-  *red   = h;
-  *green = s;
-  *blue  = v;
 }
 
 static void
@@ -317,12 +310,14 @@ color_rotate (gfloat     *src,
   gfloat   color[4];
   gint     i;
 
-
   H = src[offset];
   S = src[offset + 1];
   V = src[offset + 2];
 
-  gegl_rgb_to_hsv_double (&H, &S, &V);
+  gegl_rgb_to_hsv_double (src[offset],
+                          src[offset + 1],
+                          src[offset + 2],
+                          &H, &S, &V);
 
   if (is_gray (S, o->threshold))
     {
