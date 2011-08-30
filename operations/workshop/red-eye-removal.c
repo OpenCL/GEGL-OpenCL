@@ -48,7 +48,7 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 0.8, 0.4,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", 
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
@@ -72,14 +72,14 @@ red_eye_reduction (gfloat *src,
 
   if (adjusted_red >= adjusted_green - adjusted_threshold &&
       adjusted_red >= adjusted_blue - adjusted_threshold)
-     {
-        dest = CLAMP (((gdouble) (adjusted_green + adjusted_blue)
-                      / (2.0  * RED_FACTOR)), 0.0, 1.0);
-     }
+    {
+      dest = CLAMP (((gdouble) (adjusted_green + adjusted_blue)
+                     / (2.0  * RED_FACTOR)), 0.0, 1.0);
+    }
   else
-     {
-        dest = src[offset + red];
-     }
+    {
+      dest = src[offset + red];
+    }
 
   src[offset] = dest;
 }
@@ -103,7 +103,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, 1.0, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (x = 0; x < result->width * result->height; x++)
-      red_eye_reduction (src_buf, 4 * x, (float) o->threshold);
+    red_eye_reduction (src_buf, 4 * x, (float) o->threshold);
 
   gegl_buffer_set (output, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
