@@ -513,7 +513,7 @@ process (GeglOperation       *operation,
     ix = CLAMP (x, boundary.x, boundary.x + boundary.width - 1);
     iy = CLAMP (y, boundary.y, boundary.y + boundary.height - 1);
 
-    gegl_buffer_sample (input, ix, iy, 1.0, color, format,
+    gegl_buffer_sample (input, ix, iy, NULL, color, format,
                         GEGL_INTERPOLATION_NEAREST);
  
     fill_poly_color (&poly, &extended, &boundary, dst_buf, color);
