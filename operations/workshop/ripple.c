@@ -27,9 +27,9 @@ gegl_chant_boolean (antialias,   _("Antialiasing"), FALSE,
 gegl_chant_boolean (tile, _("Retain tilebility"), FALSE,
                     _("Retain tilability"))
 gegl_chant_string (orientation, _("Orientation"), "horizontal",
-                    _("Type of orientation to choose."
-                      "Choices are horizontal, vertical."
-                      "Default is horizontal"))
+                   _("Type of orientation to choose."
+                     "Choices are horizontal, vertical."
+                     "Default is horizontal"))
 gegl_chant_string (wave, _("Wave type"), "sine",
                    _("Type of wave to choose."
                      "Choices are sine, sawtooth."
@@ -65,16 +65,16 @@ typedef enum
 } BackgroundType;
 
 typedef enum
-{
-  WAVE_TYPE_SINE,
-  WAVE_TYPE_SAWTOOTH,
-} WaveType;
+  {
+    WAVE_TYPE_SINE,
+    WAVE_TYPE_SAWTOOTH,
+  } WaveType;
 
 typedef enum
-{
-  ORIENTATION_TYPE_VERTICAL,
-  ORIENTATION_TYPE_HORIZONTAL
-} OrientationType;
+  {
+    ORIENTATION_TYPE_VERTICAL,
+    ORIENTATION_TYPE_HORIZONTAL
+  } OrientationType;
 
 typedef struct
 {
@@ -93,34 +93,34 @@ static void prepare (GeglOperation *operation)
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
 
-  op_area->left   = op_area->bottom = 
-  op_area->right  = op_area->top = o->amplitude + 2;
+  op_area->left   = op_area->bottom =
+    op_area->right  = op_area->top = o->amplitude + 2;
 
-  gegl_operation_set_format (operation, "input", 
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
 }
 
-static void 
+static void
 average_two_pixels (gfloat  *dest,
                     gfloat  *temp1,
                     gfloat  *temp2,
                     gdouble  rem)
 {
-   gfloat x0, x1;
-   gfloat alpha;
-   gint   i;
+  gfloat x0, x1;
+  gfloat alpha;
+  gint   i;
 
-   x0 = temp1[3] * (1.0 - rem);
-   x1 = temp2[3] * rem;
-   
-   alpha = x0 + x1;
-   
-   for (i=0;i<3;i++)
-      dest[i] = (x0 * temp1[i] + x1 * temp2[i]) / alpha;
+  x0 = temp1[3] * (1.0 - rem);
+  x1 = temp2[3] * rem;
 
-   dest[3] = alpha;
+  alpha = x0 + x1;
+
+  for (i=0;i<3;i++)
+    dest[i] = (x0 * temp1[i] + x1 * temp2[i]) / alpha;
+
+  dest[3] = alpha;
 }
 
 
@@ -152,7 +152,7 @@ static void
 ripple_horizontal (gfloat              *src_buf,
                    gfloat              *dst_buf,
                    const GeglRectangle *result,
-                   const GeglRectangle *extended, 
+                   const GeglRectangle *extended,
                    const GeglRectangle *image,
                    gint                 y,
                    RippleContext        rip,
@@ -161,99 +161,99 @@ ripple_horizontal (gfloat              *src_buf,
 {
   gint  x;
   gint  src_offset, dst_offset;
-  Babl *format = babl_format ("RGBA float");  
+  Babl *format = babl_format ("RGBA float");
 
   dst_offset = (y - result->y) * result->width * 4;
 
   for (x = result->x; x < result->x + result->width; x++)
-     {
-     gdouble shift = x + displace_amount(y, o, rip.wave_t);
-     gint    xi    = floor (shift);
-     gint    xi_a  = xi + 1;
-     gdouble rem   = shift - xi;
-     gint    i;
-     gfloat  dest[4];
+    {
+      gdouble shift = x + displace_amount(y, o, rip.wave_t);
+      gint    xi    = floor (shift);
+      gint    xi_a  = xi + 1;
+      gdouble rem   = shift - xi;
+      gint    i;
+      gfloat  dest[4];
 
-     if (rip.back_t == BACKGROUND_TYPE_WRAP)
-       {
-         shift = fmod (shift, image->width);
-         while (shift < 0.0)
-            shift += image->width;
- 
-         xi = (xi % image->width);
-         while (xi < 0)
-             xi += image->width;
-      
-         xi_a = (xi+1) % image->width;
-       }
-     else if (rip.back_t == BACKGROUND_TYPE_SMEAR)
-       {
-         shift = CLAMP (shift, 0, image->width - 1);
-         xi    = CLAMP (xi, 0 ,image->width - 1);
-         xi_a  = CLAMP (xi_a, 0, image->width - 1);
-       }
-
-     if (o->antialias)
+      if (rip.back_t == BACKGROUND_TYPE_WRAP)
         {
-         gfloat temp1[4], temp2[4]; 
-         if (xi >= 0 && xi < image->width)
-           {
-              if (xi >= extended->x && xi < extended->x + extended->width) 
-                { 
-                 src_offset = (y - extended->y) * extended->width * 4 + 
-                              (xi - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     temp1[i] = src_buf[src_offset++];
+          shift = fmod (shift, image->width);
+          while (shift < 0.0)
+            shift += image->width;
+
+          xi = (xi % image->width);
+          while (xi < 0)
+            xi += image->width;
+
+          xi_a = (xi+1) % image->width;
+        }
+      else if (rip.back_t == BACKGROUND_TYPE_SMEAR)
+        {
+          shift = CLAMP (shift, 0, image->width - 1);
+          xi    = CLAMP (xi, 0 ,image->width - 1);
+          xi_a  = CLAMP (xi_a, 0, image->width - 1);
+        }
+
+      if (o->antialias)
+        {
+          gfloat temp1[4], temp2[4];
+          if (xi >= 0 && xi < image->width)
+            {
+              if (xi >= extended->x && xi < extended->x + extended->width)
+                {
+                  src_offset = (y - extended->y) * extended->width * 4 +
+                    (xi - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    temp1[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, xi, y, NULL, temp1, format,
                                        GEGL_INTERPOLATION_NEAREST);
-           }
-         else temp1[0] = temp1[1] = temp2[2] = temp1[3] = 0.0;
+            }
+          else temp1[0] = temp1[1] = temp2[2] = temp1[3] = 0.0;
 
-         if (xi_a >= 0 && xi_a < image->width)
-           {
-              if (xi_a >= extended->x && xi_a < extended->x + extended->width) 
-                { 
-                 src_offset = (y - extended->y) * extended->width * 4 + 
-                              (xi_a - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     temp2[i] = src_buf[src_offset++];
+          if (xi_a >= 0 && xi_a < image->width)
+            {
+              if (xi_a >= extended->x && xi_a < extended->x + extended->width)
+                {
+                  src_offset = (y - extended->y) * extended->width * 4 +
+                    (xi_a - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    temp2[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, xi_a, y, NULL, temp2, format,
                                        GEGL_INTERPOLATION_NEAREST);
-           }
-         else temp2[0] = temp2[1] = temp2[2] = temp2[3] = 0.0; 
+            }
+          else temp2[0] = temp2[1] = temp2[2] = temp2[3] = 0.0;
 
-         average_two_pixels (dest, temp1, temp2, rem);
+          average_two_pixels (dest, temp1, temp2, rem);
         }
-     else
+      else
         {
-         if (xi >= 0 && xi < image->width)
-           {
-              if (xi >= extended->x && xi < extended->x + extended->width) 
-                { 
-                 src_offset = (y - extended->y) * extended->width * 4 + 
-                              (xi - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     dest[i] = src_buf[src_offset++];
+          if (xi >= 0 && xi < image->width)
+            {
+              if (xi >= extended->x && xi < extended->x + extended->width)
+                {
+                  src_offset = (y - extended->y) * extended->width * 4 +
+                    (xi - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    dest[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, xi, y, NULL, dest, format,
                                        GEGL_INTERPOLATION_NEAREST);
-           }
-         else dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
+            }
+          else dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
         }
 
-     for (i=0;i<4;i++)
+      for (i=0;i<4;i++)
         dst_buf[dst_offset++] = dest[i];
 
-     }
+    }
 }
 
 static void
 ripple_vertical   (gfloat              *src_buf,
                    gfloat              *dst_buf,
                    const GeglRectangle *result,
-                   const GeglRectangle *extended, 
+                   const GeglRectangle *extended,
                    const GeglRectangle *image,
                    gint                 y,
                    RippleContext        rip,
@@ -262,91 +262,91 @@ ripple_vertical   (gfloat              *src_buf,
 {
   gint x;
   gint src_offset, dst_offset;
-  Babl *format = babl_format ("RGBA float"); 
+  Babl *format = babl_format ("RGBA float");
   dst_offset = (y - result->y) * result->width * 4;
 
   for (x = result->x; x < result->x + result->width; x++)
-     {
-     gdouble shift = y + displace_amount(x, o, rip.wave_t);
-     gint    xi    = floor (shift);
-     gint    xi_a  = xi + 1;
-     gdouble rem   = shift - xi;
-     gint    i;
-     gfloat  dest[4];
+    {
+      gdouble shift = y + displace_amount(x, o, rip.wave_t);
+      gint    xi    = floor (shift);
+      gint    xi_a  = xi + 1;
+      gdouble rem   = shift - xi;
+      gint    i;
+      gfloat  dest[4];
 
-     if (rip.back_t == BACKGROUND_TYPE_WRAP)
-       {
-         shift = fmod (shift, image->height);
-         while (shift < 0.0)
-            shift += image->height;
- 
-         xi = (xi % image->height);
-         while (xi < 0)
-             xi += image->height;
-      
-         xi_a = (xi+1) % image->height;
-       }
-     else if (rip.back_t == BACKGROUND_TYPE_SMEAR)
-       {
-         shift = CLAMP (shift, 0, image->height - 1);
-         xi    = CLAMP (xi, 0 ,image->height - 1);
-         xi_a  = CLAMP (xi_a, 0, image->height - 1);
-       }
-
-     if (o->antialias)
+      if (rip.back_t == BACKGROUND_TYPE_WRAP)
         {
-         gfloat temp1[4], temp2[4]; 
-         if (xi >= 0 && xi < image->width)
-           {
-              if (xi >= extended->y && xi < extended->y + extended->height) 
-                { 
-                 src_offset = (xi - extended->y) * extended->width * 4 + 
-                              (x - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     temp1[i] = src_buf[src_offset++];
+          shift = fmod (shift, image->height);
+          while (shift < 0.0)
+            shift += image->height;
+
+          xi = (xi % image->height);
+          while (xi < 0)
+            xi += image->height;
+
+          xi_a = (xi+1) % image->height;
+        }
+      else if (rip.back_t == BACKGROUND_TYPE_SMEAR)
+        {
+          shift = CLAMP (shift, 0, image->height - 1);
+          xi    = CLAMP (xi, 0 ,image->height - 1);
+          xi_a  = CLAMP (xi_a, 0, image->height - 1);
+        }
+
+      if (o->antialias)
+        {
+          gfloat temp1[4], temp2[4];
+          if (xi >= 0 && xi < image->width)
+            {
+              if (xi >= extended->y && xi < extended->y + extended->height)
+                {
+                  src_offset = (xi - extended->y) * extended->width * 4 +
+                    (x - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    temp1[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, x, xi, NULL, temp1, format,
                                        GEGL_INTERPOLATION_NEAREST);
-           }
-         else temp1[0] = temp1[1] = temp2[2] = temp1[3] = 0.0;
-   
-         if (xi_a >= 0 && xi_a < image->width)
-           {
-              if (xi_a >= extended->y && xi_a < extended->y + extended->height) 
-                { 
-                 src_offset = (xi_a - extended->y) * extended->width * 4 + 
-                              (x - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     temp2[i] = src_buf[src_offset++];
+            }
+          else temp1[0] = temp1[1] = temp2[2] = temp1[3] = 0.0;
+
+          if (xi_a >= 0 && xi_a < image->width)
+            {
+              if (xi_a >= extended->y && xi_a < extended->y + extended->height)
+                {
+                  src_offset = (xi_a - extended->y) * extended->width * 4 +
+                    (x - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    temp2[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, x, xi_a, NULL, temp2, format,
                                        GEGL_INTERPOLATION_NEAREST);
             }
-         else temp2[0] = temp2[1] = temp2[2] = temp2[3] = 0.0; 
+          else temp2[0] = temp2[1] = temp2[2] = temp2[3] = 0.0;
 
-         average_two_pixels (dest, temp1, temp2, rem);
+          average_two_pixels (dest, temp1, temp2, rem);
         }
-     else
+      else
         {
-         if (xi >= 0 && xi < image->width)
-           {
-              if (xi >= extended->y && xi < extended->y + extended->height) 
-                { 
-                 src_offset = (xi - extended->y) * extended->width * 4 + 
-                              (x - extended->x) * 4;
-                 for (i=0;i<4;i++)
-                     dest[i] = src_buf[src_offset++];
+          if (xi >= 0 && xi < image->width)
+            {
+              if (xi >= extended->y && xi < extended->y + extended->height)
+                {
+                  src_offset = (xi - extended->y) * extended->width * 4 +
+                    (x - extended->x) * 4;
+                  for (i=0;i<4;i++)
+                    dest[i] = src_buf[src_offset++];
                 }
               else gegl_buffer_sample (input, x, xi, NULL, dest, format,
                                        GEGL_INTERPOLATION_NEAREST);
             }
-         else dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
+          else dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
         }
 
-     for (i=0;i<4;i++)
+      for (i=0;i<4;i++)
         dst_buf[dst_offset++] = dest[i];
 
-     }
+    }
 }
 
 static GeglRectangle
@@ -389,7 +389,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, extended.width * extended.height * 4);
 
   rip.per = o->period;
- 
+
   rip.wave_t = WAVE_TYPE_SINE;
   if (!strcmp (o->wave, "sine"))
     rip.wave_t = WAVE_TYPE_SINE;
@@ -411,25 +411,25 @@ process (GeglOperation       *operation,
     rip.orie_t = ORIENTATION_TYPE_VERTICAL;
 
   if (o->tile)
-     {
-     rip.back_t = BACKGROUND_TYPE_WRAP;
-     rip.per    = (boundary.width / (boundary.width / rip.per) *
-                   (rip.orie_t == ORIENTATION_TYPE_HORIZONTAL) +
-                   boundary.height / (boundary.height / rip.per) *
-                   (rip.orie_t == ORIENTATION_TYPE_VERTICAL));        
-     }
+    {
+      rip.back_t = BACKGROUND_TYPE_WRAP;
+      rip.per    = (boundary.width / (boundary.width / rip.per) *
+                    (rip.orie_t == ORIENTATION_TYPE_HORIZONTAL) +
+                    boundary.height / (boundary.height / rip.per) *
+                    (rip.orie_t == ORIENTATION_TYPE_VERTICAL));
+    }
 
- 
+
   gegl_buffer_get (input, 1.0, &extended, format,
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y = result->y; y < result->y + result->height; y++)
     if (rip.orie_t == ORIENTATION_TYPE_HORIZONTAL)
-        ripple_horizontal (src_buf, dst_buf, result, &extended, &boundary, y,
-                           rip, o, input);
+      ripple_horizontal (src_buf, dst_buf, result, &extended, &boundary, y,
+                         rip, o, input);
     else if (rip.orie_t == ORIENTATION_TYPE_VERTICAL)
-        ripple_vertical   (src_buf, dst_buf, result, &extended, &boundary, y,
-                           rip, o, input);
+      ripple_vertical   (src_buf, dst_buf, result, &extended, &boundary, y,
+                         rip, o, input);
 
   gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
