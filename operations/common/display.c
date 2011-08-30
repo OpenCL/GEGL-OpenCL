@@ -117,7 +117,6 @@ process (GeglOperation        *operation,
          const gchar          *output_pad,
          const GeglRectangle  *roi)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglChant   *self = GEGL_CHANT (operation);
 
   return gegl_operation_process (self->display->operation, 
