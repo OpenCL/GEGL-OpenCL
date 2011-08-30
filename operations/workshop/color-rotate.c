@@ -75,12 +75,12 @@ static void prepare (GeglOperation *operation)
 }
 
 static void
-gegl_rgb_to_hsv (gfloat  r,
-                 gfloat  g,
-                 gfloat  b,
-                 gfloat *h,
-                 gfloat *s,
-                 gfloat *v)
+rgb_to_hsv (gfloat  r,
+            gfloat  g,
+            gfloat  b,
+            gfloat *h,
+            gfloat *s,
+            gfloat *v)
 {
   float min;
   float delta;
@@ -301,10 +301,10 @@ color_rotate (gfloat     *src,
   S = src[offset + 1];
   V = src[offset + 2];
 
-  gegl_rgb_to_hsv (src[offset],
-                   src[offset + 1],
-                   src[offset + 2],
-                   &H, &S, &V);
+  rgb_to_hsv (src[offset],
+              src[offset + 1],
+              src[offset + 2],
+              &H, &S, &V);
 
   if (is_gray (S, o->threshold))
     {
