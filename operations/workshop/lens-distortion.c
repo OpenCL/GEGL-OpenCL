@@ -50,7 +50,6 @@ gegl_chant_double (y_shift, _("Y shift:"), -100.0, 100.0, 0.0,
 
 #include "gegl-chant.h"
 #include <math.h>
-#include "lens-correct.h"
 
 static void
 lens_setup_calc (GeglChantO     *o,
