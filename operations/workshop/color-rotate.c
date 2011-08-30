@@ -82,50 +82,38 @@ gegl_rgb_to_hsv (gfloat  r,
                  gfloat *s,
                  gfloat *v)
 {
-  gfloat min, max;
-  gfloat delta;
+  float min;
+  float delta;
 
-  *h = 0.0;
+  *v = MAX (MAX (r, g), b);
+  min = MIN (MIN (r, g), b);
+  delta = *v - min;
 
-  if (r > g)
+  if (delta == 0.0f)
     {
-      max = MAX (r, b);
-      min = MIN (g, b);
+      *h = 0.0f;
+      *s = 0.0f;
     }
   else
     {
-      max = MAX (g, b);
-      min = MIN (r, b);
-    }
+      *s = delta / *v;
 
-  *v = max;
+      if (r == *v)
+        {
+          *h = (g - b) / delta;
+          if (*h < 0.0f)
+            *h += 6.0f;
+        }
+      else if (g == *v)
+        {
+          *h = 2.0f + (b - r) / delta;
+        }
+      else
+        {
+          *h = 4.0f + (r - g) / delta;
+        }
 
-  if (max != 0.0)
-    *s = (max - min) / max;
-  else
-    *s = 0.0;
-
-  if (*s == 0.0)
-    {
-      *h = 0.0;
-    }
-  else
-    {
-      delta = max - min;
-
-      if (r == max)
-        *h = (g - b) / delta;
-      else if (g == max)
-        *h = 2 + (b - r) / delta;
-      else if (b == max)
-        *h = 4 + (r - g) / delta;
-
-      *h /= 6.0;
-
-      if (*h < 0.0)
-        *h += 1.0;
-      else if (*h > 1.0)
-        *h -= 1.0;
+      *h /= 6.0f;
     }
 }
 
