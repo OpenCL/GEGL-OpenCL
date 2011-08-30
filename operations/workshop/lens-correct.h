@@ -20,7 +20,7 @@ typedef struct {
   GeglRectangle BB;                               /* Bounding box of the imaged area. */
   gfloat cx, cy;                                  /* Coordinates of lens center within the imaged area.  */
   gfloat rscale;                                  /* Scale of the image (1/2 of the shortest side). */
-  ChannelCorrectionModel red, green, blue;        /* Correction parameters for each color channel. */
+  ChannelCorrectionModel red, green, blue, alpha; /* Correction parameters for each color channel. */
 } LensCorrectionModel;
 
 #endif
