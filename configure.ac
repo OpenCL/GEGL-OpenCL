@@ -129,7 +129,7 @@ AC_SUBST(PACKAGE_NAME)
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(no-define no-dist-gzip)
+AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
 AM_CONFIG_HEADER(config.h)
 
 dnl Initialize libtool
