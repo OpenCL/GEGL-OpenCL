@@ -28,9 +28,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (tile_size, _("Tile size"), 0.0, 256.0, 10.0,
-                  _("Tile size"))
+                   _("Tile size"))
 gegl_chant_double (tile_saturation, _("Tile saturation"), 0.0, 10.0, 2.5,
-                  _("Tile saturation"))
+                   _("Tile saturation"))
 gegl_chant_int (seed, _("Seed"), 0 , G_MAXINT, 1,
                 _("Random seed"))
 
@@ -70,13 +70,13 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gint tmp;
-  /* 
+  /*
    * Calculate the needed extension for the ROI
    *      MAX (o->tile_size +
    *           g_rand_double_range (gr, 0, o->tile_size / 4.0) -
    *           o->tile_size / 8.0) * o->tile_saturation)
    */
-  
+
   tmp = ceil ((9 * o->tile_size / 8.0) * o->tile_saturation);
 
   op_area->left = op_area->right = op_area->top = op_area->bottom = tmp;
@@ -273,7 +273,7 @@ fill_poly_color (Polygon             *poly,
   gint          x1, y1, x2, y2;
   gint         *vals, *vals_iter, *vals_end;
   gint          b;
-  
+
   sx = poly->pts[0].x;
   sy = poly->pts[0].y;
   ex = poly->pts[1].x;
@@ -308,7 +308,7 @@ fill_poly_color (Polygon             *poly,
   size_y = (max_y - min_y) * SUPERSAMPLE;
   size_x = (max_x - min_x) * SUPERSAMPLE;
 
-  min_scanlines = min_scanlines_iter = g_new0 (gint, size_y); 
+  min_scanlines = min_scanlines_iter = g_new0 (gint, size_y);
   max_scanlines = max_scanlines_iter = g_new0 (gint, size_y);
 
   for (i = 0; i < size_y; i++)
@@ -351,7 +351,7 @@ fill_poly_color (Polygon             *poly,
           convert_segment (xs, ys, xe, ye, min_y * SUPERSAMPLE,
                            min_scanlines, max_scanlines);
         }
-  }
+    }
 
   vals = g_new0 (gint, size_x);
 
@@ -376,14 +376,14 @@ fill_poly_color (Polygon             *poly,
 
           if (y >= y1 && y < y2)
             {
-               for (j = 0; j < size_x; j += SUPERSAMPLE)
+              for (j = 0; j < size_x; j += SUPERSAMPLE)
                 {
                   x = (j / SUPERSAMPLE) + min_x;
 
                   if (x >= x1 && x < x2)
                     {
                       for (val = 0, vals_iter = &vals[j],
-                           vals_end = &vals_iter[SUPERSAMPLE];
+                             vals_end = &vals_iter[SUPERSAMPLE];
                            vals_iter < vals_end;
                            vals_iter++)
                         val += *vals_iter;
@@ -392,23 +392,23 @@ fill_poly_color (Polygon             *poly,
 
                       if (val > 0)
                         {
-                         xx = (gdouble) j / (gdouble) SUPERSAMPLE + min_x;
-                         alpha = (gfloat) (val * calc_alpha_blend (vec,
-                                                                   one_over_dist,
-                                                                   xx - sx,
-                                                                   yy - sy));
+                          xx = (gdouble) j / (gdouble) SUPERSAMPLE + min_x;
+                          alpha = (gfloat) (val * calc_alpha_blend (vec,
+                                                                    one_over_dist,
+                                                                    xx - sx,
+                                                                    yy - sy));
 
-                        for (b = 0; b < 4; b++)
+                          for (b = 0; b < 4; b++)
                             buf[b] = dst_buf[( (y-extended->y) * extended->width
-                                            + (x-extended->x)) * 4 + b];
-		       
-                        for (b = 0; b < 4; b++)
+                                               + (x-extended->x)) * 4 + b];
+
+                          for (b = 0; b < 4; b++)
                             buf[b] = (color[b] * alpha) + (buf[b] * (1 - alpha));
 
-                        for (b = 0; b < 4; b++)
-                            dst_buf[((y-extended->y) * extended->width + 
+                          for (b = 0; b < 4; b++)
+                            dst_buf[((y-extended->y) * extended->width +
                                      (x - extended->x)) * 4 + b] = buf[b];
-                     
+
                         }
                     }
                 }
@@ -434,7 +434,7 @@ get_effective_area (GeglOperation *operation)
 }
 
 
-static gboolean 
+static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
@@ -474,53 +474,53 @@ process (GeglOperation       *operation,
   random_indices = g_new0 (gint, num_tiles);
 
   for (i = 0; i < num_tiles; i++)
-      random_indices[i] = i;
-  
+    random_indices[i] = i;
+
   randomize_indices (num_tiles, random_indices, gr);
 
   for (count = 0; count < num_tiles; count++)
     {
-    gint i, j, ix, iy;
-    gdouble x, y, width, height, theta; 
+      gint i, j, ix, iy;
+      gdouble x, y, width, height, theta;
 
-    i = random_indices[count] / (cols + 1);
-    j = random_indices[count] % (cols + 1);
+      i = random_indices[count] / (cols + 1);
+      j = random_indices[count] % (cols + 1);
 
-    x = j * o->tile_size + (o->tile_size / 4.0)
-      - g_rand_double_range (gr, 0, (o->tile_size /2.0)) + result->x;
+      x = j * o->tile_size + (o->tile_size / 4.0)
+        - g_rand_double_range (gr, 0, (o->tile_size /2.0)) + result->x;
 
-    y = i * o->tile_size + (o->tile_size / 4.0)
-      - g_rand_double_range (gr, 0, (o->tile_size /2.0)) + result->y;
+      y = i * o->tile_size + (o->tile_size / 4.0)
+        - g_rand_double_range (gr, 0, (o->tile_size /2.0)) + result->y;
 
-    width  = (o->tile_size +
-              g_rand_double_range (gr, -o->tile_size / 8.0, o->tile_size / 8.0)) 
-              * o->tile_saturation;
+      width  = (o->tile_size +
+                g_rand_double_range (gr, -o->tile_size / 8.0, o->tile_size / 8.0))
+        * o->tile_saturation;
 
-    height = (o->tile_size +
-              g_rand_double_range (gr, -o->tile_size / 8.0, o->tile_size / 8.0)) 
-              * o->tile_saturation;
+      height = (o->tile_size +
+                g_rand_double_range (gr, -o->tile_size / 8.0, o->tile_size / 8.0))
+        * o->tile_saturation;
 
-    theta = g_rand_double_range (gr, 0, 2 * G_PI);
+      theta = g_rand_double_range (gr, 0, 2 * G_PI);
 
-    polygon_reset (&poly);
-    polygon_add_point (&poly, -width / 2.0, -height / 2.0);
-    polygon_add_point (&poly,  width / 2.0,  -height / 2.0);
-    polygon_add_point (&poly,  width / 2.0,   height / 2.0);
-    polygon_add_point (&poly, -width / 2.0,  height / 2.0);
-    polygon_rotate (&poly, theta);
-    polygon_translate (&poly, x, y);
+      polygon_reset (&poly);
+      polygon_add_point (&poly, -width / 2.0, -height / 2.0);
+      polygon_add_point (&poly,  width / 2.0,  -height / 2.0);
+      polygon_add_point (&poly,  width / 2.0,   height / 2.0);
+      polygon_add_point (&poly, -width / 2.0,  height / 2.0);
+      polygon_rotate (&poly, theta);
+      polygon_translate (&poly, x, y);
 
-    ix = CLAMP (x, boundary.x, boundary.x + boundary.width - 1);
-    iy = CLAMP (y, boundary.y, boundary.y + boundary.height - 1);
+      ix = CLAMP (x, boundary.x, boundary.x + boundary.width - 1);
+      iy = CLAMP (y, boundary.y, boundary.y + boundary.height - 1);
 
-    gegl_buffer_sample (input, ix, iy, NULL, color, format,
-                        GEGL_INTERPOLATION_NEAREST);
- 
-    fill_poly_color (&poly, &extended, &boundary, dst_buf, color);
+      gegl_buffer_sample (input, ix, iy, NULL, color, format,
+                          GEGL_INTERPOLATION_NEAREST);
+
+      fill_poly_color (&poly, &extended, &boundary, dst_buf, color);
     }
-  
+
   gegl_buffer_set (output, &extended, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
-  
+
   g_free (dst_buf);
   g_free (random_indices);
   g_free (gr);
@@ -535,14 +535,14 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (!in_rect){
-        return result;
+    return result;
   }
 
   gegl_rectangle_copy(&result, in_rect);
 
-  #ifdef TRACE
-    g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
-  #endif
+#ifdef TRACE
+  g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
+#endif
   return result;
 }
 
@@ -556,11 +556,11 @@ get_required_for_output (GeglOperation       *operation,
 {
   GeglRectangle  result = get_effective_area (operation);
 
-  #ifdef TRACE
-    g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
-    if (roi)
-      g_warning ("  ROI == %dx%d+%d+%d", roi->width, roi->height, roi->x, roi->y);
-  #endif
+#ifdef TRACE
+  g_warning ("> get_required_for_output src=%dx%d+%d+%d", result.width, result.height, result.x, result.y);
+  if (roi)
+    g_warning ("  ROI == %dx%d+%d+%d", roi->width, roi->height, roi->x, roi->y);
+#endif
 
   return result;
 }
@@ -573,7 +573,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 
-static void 
+static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
@@ -591,7 +591,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->categories = "artistic";
   operation_class->name       = "gegl:cubism";
   operation_class->description =
-          _("Performs cubism on the image");
+    _("Performs cubism on the image");
 }
 
 #endif
