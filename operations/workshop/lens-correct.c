@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "lensfun.h"
+#include <lensfun.h>
 #include <glib/gi18n-lib.h>
 
 
