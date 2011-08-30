@@ -51,6 +51,17 @@ gegl_chant_double (y_shift, _("Y shift:"), -100.0, 100.0, 0.0,
 #include "gegl-chant.h"
 #include <math.h>
 
+typedef struct
+{
+  gdouble centre_x;
+  gdouble centre_y;
+  gdouble mult_sq;
+  gdouble mult_qd;
+  gdouble rescale;
+  gdouble brighten;
+  gdouble norm;
+} OldLensDistort;
+
 static void
 lens_setup_calc (GeglChantO     *o,
                  GeglRectangle   boundary,
