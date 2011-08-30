@@ -60,12 +60,12 @@ typedef struct
   gdouble rescale;
   gdouble brighten;
   gdouble norm;
-} OldLensDistort;
+} LensDistortion;
 
 static void
 lens_setup_calc (GeglChantO     *o,
                  GeglRectangle   boundary,
-                 OldLensDistort *old)
+                 LensDistortion *old)
 {
   old->norm = 4.0 / (boundary.width * boundary.width +
                      boundary.height * boundary.height);
@@ -112,7 +112,7 @@ lens_get_source_coord (gdouble         i,
                        gdouble        *x,
                        gdouble        *y,
                        gdouble        *mag,
-                       OldLensDistort *o)
+                       LensDistortion *o)
 {
   gdouble radius_sq, off_x, off_y, radius_mult;
 
@@ -195,7 +195,7 @@ lens_distort_func (gfloat              *src_buf,
                    const GeglRectangle *extended,
                    const GeglRectangle *result,
                    const GeglRectangle *boundary,
-                   OldLensDistort       old,
+                   LensDistortion       old,
                    gint                 xx,
                    gint                 yy,
                    GeglBuffer          *input)
@@ -266,7 +266,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
-  OldLensDistort       old_lens;
+  LensDistortion       old_lens;
   GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
     (operation, "input");
 
