@@ -22,6 +22,7 @@
  * Copyright (C) 1999 Sven Anders (anderss@fmi.uni-passau.de)
  *                    Based on code from Pavel Grinfeld (pavel@ml.com)
  * Copyright (C) 2011 Robert Sasu <sasu.robert@gmail.com>
+ * Copyright (C) 2011 Mukund Sivaraman <muks@banu.com>
  */
 
 #include "config.h"
@@ -118,77 +119,70 @@ rgb_to_hsv (gfloat  r,
 }
 
 static void
-gegl_hsv_to_rgb4 (gfloat  *rgb,
-                  gdouble  hue,
-                  gdouble  saturation,
-                  gdouble  value)
+hsv_to_rgb (gfloat  h,
+            gfloat  s,
+            gfloat  v,
+            gfloat *r,
+            gfloat *g,
+            gfloat *b)
 {
-  gdouble h, s, v;
-  gdouble f, p, q, t;
-
-  if (saturation == 0.0)
+  if (s == 0.0)
     {
-      hue        = value;
-      saturation = value;
-      value      = value;
+      *r = v;
+      *g = v;
+      *b = v;
     }
   else
     {
-      h = hue * 6.0;
-      s = saturation;
-      v = value;
+      int hi;
+      float frac;
+      float w, q, t;
 
-      if (h == 6.0)
-        h = 0.0;
+      h *= 6.0;
 
-      f = h - (gint) h;
-      p = v * (1.0 - s);
-      q = v * (1.0 - s * f);
-      t = v * (1.0 - s * (1.0 - f));
+      if (h >= 6.0)
+        h -= 6.0;
 
-      switch ((int) h)
+      hi = (int) h;
+      frac = h - hi;
+      w = v * (1.0 - s);
+      q = v * (1.0 - (s * frac));
+      t = v * (1.0 - (s * (1.0 - frac)));
+
+      switch (hi)
         {
         case 0:
-          hue        = v;
-          saturation = t;
-          value      = p;
+          *r = v;
+          *g = t;
+          *b = w;
           break;
-
         case 1:
-          hue        = q;
-          saturation = v;
-          value      = p;
+          *r = q;
+          *g = v;
+          *b = w;
           break;
-
         case 2:
-          hue        = p;
-          saturation = v;
-          value      = t;
+          *r = w;
+          *g = v;
+          *b = t;
           break;
-
         case 3:
-          hue        = p;
-          saturation = q;
-          value      = v;
+          *r = w;
+          *g = q;
+          *b = v;
           break;
-
         case 4:
-          hue        = t;
-          saturation = p;
-          value      = v;
+          *r = t;
+          *g = w;
+          *b = v;
           break;
-
         case 5:
-          hue        = v;
-          saturation = p;
-          value      = q;
+          *r = v;
+          *g = w;
+          *b = q;
           break;
         }
     }
-
-  rgb[0] = hue;
-  rgb[1] = saturation;
-  rgb[2] = value;
 }
 
 static gfloat
@@ -323,7 +317,8 @@ color_rotate (gfloat     *src,
       else
         {
           skip = TRUE;
-          gegl_hsv_to_rgb4 (color, o->hue / TP, o->saturation, V);
+          hsv_to_rgb (o->hue / TP, o->saturation, V,
+                      color, color + 1, color + 2);
           color[3] = src[offset + 3];
         }
     }
@@ -336,7 +331,8 @@ color_rotate (gfloat     *src,
                   right_end (o->d_fr, o->d_to, o->d_cl),
                   H * TP);
       H = angle_mod_2PI (H) / TP;
-      gegl_hsv_to_rgb4 (color, H, S, V);
+      hsv_to_rgb (H, S, V,
+                  color, color + 1, color + 2);
       color[3] = src[offset + 3];
     }
 
