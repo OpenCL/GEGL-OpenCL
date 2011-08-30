@@ -38,7 +38,7 @@ gegl_chant_double (angle, _("Offset angle"), 0.0, 359.9, 0.0,
 gegl_chant_boolean (bw, _("Map backwards"), FALSE, _("Map backwards."))
 gegl_chant_boolean (top, _("Map from top"), TRUE, _("Map from top"))
 gegl_chant_boolean (polar, _("To polar"), TRUE, _("To polar."))
-gegl_chant_int (pole_x, _("X:"), 0, G_MAXINT, 0, 
+gegl_chant_int (pole_x, _("X:"), 0, G_MAXINT, 0,
                 _("Origin point for the polar coordinates"))
 gegl_chant_int (pole_y, _("Y:"), 0, G_MAXINT, 0,
                 _("Origin point for the polar coordinates"))
@@ -63,7 +63,7 @@ gegl_chant_boolean (middle, _("Choose middle"), TRUE,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", 
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
@@ -107,7 +107,7 @@ calc_undistorted_coords (gdouble        wx,
   angl   = (gdouble) angle / 180.0 * G_PI;
   cen_x  = o->pole_x;
   cen_y  = o->pole_y;
-  
+
 
   if (o->polar)
     {
@@ -314,7 +314,7 @@ process (GeglOperation       *operation,
 
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
                                 current center pixel.
-                              */
+                             */
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
@@ -322,35 +322,35 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, 1.0, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   if (o->middle)
-     {
-        o->pole_x = boundary.width / 2;
-        o->pole_y = boundary.height / 2;
-     }
+    {
+      o->pole_x = boundary.width / 2;
+      o->pole_y = boundary.height / 2;
+    }
 
   for (y = result->y; y < result->y + result->height; y++)
-      for (x = result->x; x < result->x + result->width; x++)
-           {
-#define gegl_unmap(u,v,ud,vd) {\
-              gdouble rx, ry;\
-              inside = calc_undistorted_coords ((gdouble)x, (gdouble)y, \
-                                                 &rx, &ry, o, boundary);\
-              ud = rx;\
-              vd = ry;\
-             }
-              gegl_sampler_compute_scale (scale, x, y);
-              gegl_unmap(x,y,px,py);
+    for (x = result->x; x < result->x + result->width; x++)
+      {
+#define gegl_unmap(u,v,ud,vd) {                                         \
+          gdouble rx, ry;                                               \
+          inside = calc_undistorted_coords ((gdouble)x, (gdouble)y,     \
+                                            &rx, &ry, o, boundary);     \
+          ud = rx;                                                      \
+          vd = ry;                                                      \
+        }
+        gegl_sampler_compute_scale (scale, x, y);
+        gegl_unmap(x,y,px,py);
 #undef gegl_unmap
 
-           if (inside)
-              gegl_buffer_sample (input, px, py, &scale, dest, format,
-                                  GEGL_INTERPOLATION_LOHALO);
-           else
-              for (i=0; i<4; i++)
-                 dest[i] = 0.0;
+        if (inside)
+          gegl_buffer_sample (input, px, py, &scale, dest, format,
+                              GEGL_INTERPOLATION_LOHALO);
+        else
+          for (i=0; i<4; i++)
+            dest[i] = 0.0;
 
-           for (i=0; i<4; i++)
-              dst_buf[offset++] = dest[i];
-           }
+        for (i=0; i<4; i++)
+          dst_buf[offset++] = dest[i];
+      }
 
   gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
