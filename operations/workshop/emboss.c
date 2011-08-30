@@ -166,10 +166,10 @@ prepare (GeglOperation *operation)
 
   if (o->filter && !strcmp(o->filter, "blur-map"))
     gegl_operation_set_format (operation, "output",
-			       babl_format ("RGBA float"));
+                               babl_format ("RGBA float"));
   else
     gegl_operation_set_format (operation, "output",
-			       babl_format ("Y float"));
+                               babl_format ("Y float"));
 }
 
 static gboolean
@@ -218,7 +218,7 @@ process (GeglOperation       *operation,
   /*do for every row*/
   for (x = 0; x < rect.height; x++)
     emboss (src_buf, &rect, dst_buf, &rect, x, type, floats_per_pixel, alpha,
-	    DEG_TO_RAD (o->azimuth), DEG_TO_RAD (o->elevation), o->depth);
+            DEG_TO_RAD (o->azimuth), DEG_TO_RAD (o->elevation), o->depth);
 
   gegl_buffer_set (output, &rect, babl_format (type),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
