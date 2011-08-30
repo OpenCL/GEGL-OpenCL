@@ -23,55 +23,55 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (a1, _("(1,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (1,1)"))
+                   _("Value of the element in position (1,1)"))
 gegl_chant_double (a2, _("(1,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (1,2)"))
+                   _("Value of the element in position (1,2)"))
 gegl_chant_double (a3, _("(1,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (1,3)"))
+                   _("Value of the element in position (1,3)"))
 gegl_chant_double (a4, _("(1,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (1,4)"))
+                   _("Value of the element in position (1,4)"))
 gegl_chant_double (a5, _("(1,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (1,5)"))
+                   _("Value of the element in position (1,5)"))
 gegl_chant_double (b1, _("(2,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (2,1)"))
+                   _("Value of the element in position (2,1)"))
 gegl_chant_double (b2, _("(2,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (2,2)"))
+                   _("Value of the element in position (2,2)"))
 gegl_chant_double (b3, _("(2,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (2,3)"))
+                   _("Value of the element in position (2,3)"))
 gegl_chant_double (b4, _("(2,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (2,4)"))
+                   _("Value of the element in position (2,4)"))
 gegl_chant_double (b5, _("(2,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (2,5)"))
+                   _("Value of the element in position (2,5)"))
 gegl_chant_double (c1, _("(3,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (3,1)"))
+                   _("Value of the element in position (3,1)"))
 gegl_chant_double (c2, _("(3,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (3,2)"))
+                   _("Value of the element in position (3,2)"))
 gegl_chant_double (c3, _("(3,3) "), -G_MAXINT, G_MAXINT, 1.0,
-                _("Value of the element in position (3,3)"))
+                   _("Value of the element in position (3,3)"))
 gegl_chant_double (c4, _("(3,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (3,4)"))
+                   _("Value of the element in position (3,4)"))
 gegl_chant_double (c5, _("(3,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (3,5)"))
+                   _("Value of the element in position (3,5)"))
 gegl_chant_double (d1, _("(4,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (4,1)"))
+                   _("Value of the element in position (4,1)"))
 gegl_chant_double (d2, _("(4,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (4,2)"))
+                   _("Value of the element in position (4,2)"))
 gegl_chant_double (d3, _("(4,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (4,3)"))
+                   _("Value of the element in position (4,3)"))
 gegl_chant_double (d4, _("(4,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (4,4)"))
+                   _("Value of the element in position (4,4)"))
 gegl_chant_double (d5, _("(4,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (4,5)"))
+                   _("Value of the element in position (4,5)"))
 gegl_chant_double (e1, _("(5,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (5,1)"))
+                   _("Value of the element in position (5,1)"))
 gegl_chant_double (e2, _("(5,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (5,2)"))
+                   _("Value of the element in position (5,2)"))
 gegl_chant_double (e3, _("(5,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (5,3)"))
+                   _("Value of the element in position (5,3)"))
 gegl_chant_double (e4, _("(5,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (5,4)"))
+                   _("Value of the element in position (5,4)"))
 gegl_chant_double (e5, _("(5,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                _("Value of the element in position (5,5)"))
+                   _("Value of the element in position (5,5)"))
 
 gegl_chant_double (div, _("Divisor: "), -G_MAXINT, G_MAXINT, 1.0,
                    _("The value of the divisor"))
@@ -183,21 +183,21 @@ normalize_o (GeglChantO  *o,
       }
 
   if (sum > 0)
-     {
-       o->off = 0.0;
-       o->div = sum;
-     }
+    {
+      o->off = 0.0;
+      o->div = sum;
+    }
   else if (sum < 0)
-     {
-       o->off = 1.0;
-       o->div = -sum;
-     }
+    {
+      o->off = 1.0;
+      o->div = -sum;
+    }
   else
-     {
-       o->off = 0.5;
-       o->div = 1;
-     }
- 
+    {
+      o->off = 0.5;
+      o->div = 1;
+    }
+
 }
 
 static void
@@ -213,96 +213,96 @@ convolve_pixel(gfloat               *src_buf,
                gint                  yy,
                gdouble               matrixsum)
 {
-   gint    i, x, y, temp, s_x, s_y;
-   gdouble sum;
-   gfloat  color[4];
-   gint    d_offset, s_offset;
-   gint    half;
+  gint    i, x, y, temp, s_x, s_y;
+  gdouble sum;
+  gfloat  color[4];
+  gint    d_offset, s_offset;
+  gint    half;
 
-   gdouble alphasum  = 0.0;
+  gdouble alphasum  = 0.0;
 
-   s_x = 0;
-   s_y = 0;
+  s_x = 0;
+  s_y = 0;
 
-   half = (MATRIX_SIZE / 2) + (MATRIX_SIZE % 2);
+  half = (MATRIX_SIZE / 2) + (MATRIX_SIZE % 2);
 
-   d_offset = ((yy - result->y)*result->width * 4) + (xx - result->x) * 4;
-   s_offset = (yy - result->y + HALF_WINDOW) * extended->width * 4 + 
-              (xx - result->x + HALF_WINDOW) * 4;
+  d_offset = ((yy - result->y)*result->width * 4) + (xx - result->x) * 4;
+  s_offset = (yy - result->y + HALF_WINDOW) * extended->width * 4 +
+    (xx - result->x + HALF_WINDOW) * 4;
 
-   for (i=0; i < 4; i++)
-      {
-        sum  = 0.0;
-        if ((i==0 && o->red) || (i==1 && o->blue) || (i==2 && o->green)
-             || (i==3 && o->alpha))
-          {
-           for (x=0;x < MATRIX_SIZE; x++)
-              for (y=0; y < MATRIX_SIZE; y++)
-                  {
-                     if (!strcmp(o->border,"wrap"))
-                        {
-                           s_x = fmod (x+xx, boundary->width);
-                           while (s_x < 0) 
-                               s_x +=boundary->width;
- 
-                           s_y = fmod (y+yy, boundary->height);
-                           while (s_y < 0)
-                               s_y +=boundary->width;
-                        }
-                     else if (!strcmp(o->border,"extend"))
-                        {
-                           s_x = CLAMP (x+xx, 0, boundary->width);
-                           s_y = CLAMP (y+yy, 0, boundary->height);
-                        }
-                     temp = (s_y - extended->y) * extended->width * 4 +
-                            (s_x - extended->x) * 4;
-
-                     if ((s_x >= extended->x && (s_x < extended->x + extended->width))
-                         && (s_y >=extended->y && (s_y < extended->y + extended->height)))
-                            {
-                               if (i!=3 && o->weight)
-                                  sum += matrix[x][y] * src_buf[temp + i] 
-                                       * src_buf[temp + 3];
-                               else
-                                  sum += matrix[x][y] * src_buf[temp + i];
-
-                               if (i==3)
-                                  alphasum += fabs (matrix[x][y] * src_buf[temp+i]);
-                            }
-                     else
-                         {
-                            gfloat temp_color[4];
-                            gegl_buffer_sample (input, s_x, s_y, NULL, temp_color, 
-                                                babl_format ("RGBA float"),
-                                                GEGL_INTERPOLATION_NEAREST);
-                            if (i!=3 && o->weight)
-                               sum += matrix[x][y] * temp_color[i]
-                                    * temp_color[3];
-                            else
-                               sum += matrix[x][y] * temp_color[i];
-
-                            if (i==3)
-                               alphasum += fabs (matrix[x][y] * temp_color[i]);
-                         }
-                  }
-           sum = sum / o->div;
-
-           if (i==3 && o->weight)
+  for (i=0; i < 4; i++)
+    {
+      sum  = 0.0;
+      if ((i==0 && o->red) || (i==1 && o->blue) || (i==2 && o->green)
+          || (i==3 && o->alpha))
+        {
+          for (x=0;x < MATRIX_SIZE; x++)
+            for (y=0; y < MATRIX_SIZE; y++)
               {
-                 if (alphasum != 0)
-                    sum = sum * matrixsum / alphasum;
-                 else sum = 0.0;
+                if (!strcmp(o->border,"wrap"))
+                  {
+                    s_x = fmod (x+xx, boundary->width);
+                    while (s_x < 0)
+                      s_x +=boundary->width;
+
+                    s_y = fmod (y+yy, boundary->height);
+                    while (s_y < 0)
+                      s_y +=boundary->width;
+                  }
+                else if (!strcmp(o->border,"extend"))
+                  {
+                    s_x = CLAMP (x+xx, 0, boundary->width);
+                    s_y = CLAMP (y+yy, 0, boundary->height);
+                  }
+                temp = (s_y - extended->y) * extended->width * 4 +
+                  (s_x - extended->x) * 4;
+
+                if ((s_x >= extended->x && (s_x < extended->x + extended->width))
+                    && (s_y >=extended->y && (s_y < extended->y + extended->height)))
+                  {
+                    if (i!=3 && o->weight)
+                      sum += matrix[x][y] * src_buf[temp + i]
+                        * src_buf[temp + 3];
+                    else
+                      sum += matrix[x][y] * src_buf[temp + i];
+
+                    if (i==3)
+                      alphasum += fabs (matrix[x][y] * src_buf[temp+i]);
+                  }
+                else
+                  {
+                    gfloat temp_color[4];
+                    gegl_buffer_sample (input, s_x, s_y, NULL, temp_color,
+                                        babl_format ("RGBA float"),
+                                        GEGL_INTERPOLATION_NEAREST);
+                    if (i!=3 && o->weight)
+                      sum += matrix[x][y] * temp_color[i]
+                        * temp_color[3];
+                    else
+                      sum += matrix[x][y] * temp_color[i];
+
+                    if (i==3)
+                      alphasum += fabs (matrix[x][y] * temp_color[i]);
+                  }
               }
-           sum += o->off;
+          sum = sum / o->div;
 
-           color[i] = sum;
-          }
-        else
-          color[i] = src_buf[s_offset + i];
-      }
+          if (i==3 && o->weight)
+            {
+              if (alphasum != 0)
+                sum = sum * matrixsum / alphasum;
+              else sum = 0.0;
+            }
+          sum += o->off;
 
-   for (i=0; i < 4; i++)
-      dst_buf[d_offset + i] = color[i];
+          color[i] = sum;
+        }
+      else
+        color[i] = src_buf[s_offset + i];
+    }
+
+  for (i=0; i < 4; i++)
+    dst_buf[d_offset + i] = color[i];
 }
 
 
@@ -342,7 +342,7 @@ process (GeglOperation       *operation,
   matrix = g_new0 (gdouble*, MATRIX_SIZE);
 
   for (x=0; x < MATRIX_SIZE ;x++)
-     matrix[x] = g_new0 (gdouble, MATRIX_SIZE);
+    matrix[x] = g_new0 (gdouble, MATRIX_SIZE);
 
   make_matrix (o, matrix);
 
@@ -350,8 +350,8 @@ process (GeglOperation       *operation,
     normalize_o (o, matrix);
 
   for (x=0; x < MATRIX_SIZE; x++)
-     for (y=0; y < MATRIX_SIZE; y++)
-        matrixsum += fabs (matrix[x][y]); 
+    for (y=0; y < MATRIX_SIZE; y++)
+      matrixsum += fabs (matrix[x][y]);
 
   rect.x      = result->x - op_area->left;
   rect.width  = result->width + op_area->left + op_area->right;
@@ -368,19 +368,19 @@ process (GeglOperation       *operation,
 
   if (o->div != 0)
     {
-       for (y=result->y; y < result->height + result->y; y++)
-          for (x=result->x; x < result->width + result->x; x++)
-              convolve_pixel (src_buf, dst_buf, result, &rect, &boundary, 
-                              matrix, o, input, x, y, matrixsum);
+      for (y=result->y; y < result->height + result->y; y++)
+        for (x=result->x; x < result->width + result->x; x++)
+          convolve_pixel (src_buf, dst_buf, result, &rect, &boundary,
+                          matrix, o, input, x, y, matrixsum);
 
-       gegl_buffer_set (output, result, babl_format (type),
-                        dst_buf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (output, result, babl_format (type),
+                       dst_buf, GEGL_AUTO_ROWSTRIDE);
     }
   else
-     gegl_buffer_set (output, &rect, babl_format (type),
-                      src_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set (output, &rect, babl_format (type),
+                     src_buf, GEGL_AUTO_ROWSTRIDE);
 
-  
+
 
   g_free (src_buf);
   g_free (dst_buf);
