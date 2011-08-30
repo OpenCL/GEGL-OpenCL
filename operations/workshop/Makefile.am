@@ -1,8 +1,6 @@
 SUBDIRS = generated external
 include $(top_srcdir)/operations/Makefile-operations.am
 
-AM_CPPFLAGS += -I$(top_srcdir)/operations/workshop
-
 # Add to Makefile.am when you move lens-correct out of the workshop, or
 # figure out how the current system works.
 
