@@ -47,18 +47,18 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
 
-  
+
   if (o->horizontal)
-     {
-        op_area->left = op_area->right = 0; 
-        op_area->top = op_area->bottom = o->size + 1;
-     }
+    {
+      op_area->left = op_area->right = 0;
+      op_area->top = op_area->bottom = o->size + 1;
+    }
   else
-     {
-        op_area->left = op_area->right = o->size + 1; 
-        op_area->top = op_area->bottom = 0;
-     }
-  gegl_operation_set_format (operation, "input", 
+    {
+      op_area->left = op_area->right = o->size + 1;
+      op_area->top = op_area->bottom = 0;
+    }
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
@@ -76,15 +76,15 @@ de_interlace_hor (gfloat              *src_buf,
 {
   gfloat  upper[4], lower[4], temp_buf[4];
   gint    x, up_offset, low_offset, offset = 0, i;
-  
+
   for (x=0; x < result->width; x++)
-     {
-       gfloat ualpha, lalpha, temp;
-       gfloat alpha = 0;
+    {
+      gfloat ualpha, lalpha, temp;
+      gfloat alpha = 0;
 
-       temp_buf[0] = temp_buf[1] = temp_buf[2] = temp_buf[3] = 0;
+      temp_buf[0] = temp_buf[1] = temp_buf[2] = temp_buf[3] = 0;
 
-       for (i = 0; i < size; i++)
+      for (i = 0; i < size; i++)
         {
           gint b;
 
@@ -101,10 +101,10 @@ de_interlace_hor (gfloat              *src_buf,
           offset = (y - result->y) * extended->width * 4;
 
           for (b=0; b<4; b++)
-             {
-                upper[b] = src_buf[up_offset + x * 4 + b];
-                lower[b] = src_buf[low_offset + x * 4 + b];
-             }
+            {
+              upper[b] = src_buf[up_offset + x * 4 + b];
+              lower[b] = src_buf[low_offset + x * 4 + b];
+            }
 
           ualpha = upper[3];
           lalpha = lower[3];
@@ -112,18 +112,18 @@ de_interlace_hor (gfloat              *src_buf,
           alpha += temp;
 
           for (b=0; b < 3; b++)
-               temp_buf[b] += (upper[b] * ualpha +
-                               lower[b] * lalpha);
+            temp_buf[b] += (upper[b] * ualpha +
+                            lower[b] * lalpha);
         }
-       
-       if ((dest[offset + x * 4 + 3] = alpha / (2 * size)))
-          {
-             gint b;
-             for (b=0; b < 3; b++)
-                dest[offset + x * 4 + b] = temp_buf[b] / alpha;
 
-          }
-     }
+      if ((dest[offset + x * 4 + 3] = alpha / (2 * size)))
+        {
+          gint b;
+          for (b=0; b < 3; b++)
+            dest[offset + x * 4 + b] = temp_buf[b] / alpha;
+
+        }
+    }
 }
 
 static void
@@ -138,38 +138,38 @@ de_interlace_ver (gfloat              *src_buf,
 {
   gfloat  upper[4], lower[4], temp_buf[4];
   gint    y, up_offset, low_offset, offset = 0, i;
-  
+
   for (y=result->y; y < result->y + result->height; y++)
-     {
-       gfloat ualpha, lalpha, temp;
-       gfloat alpha = 0;
+    {
+      gfloat ualpha, lalpha, temp;
+      gfloat alpha = 0;
 
-       temp_buf[0] = temp_buf[1] = temp_buf[2] = temp_buf[3] = 0;
+      temp_buf[0] = temp_buf[1] = temp_buf[2] = temp_buf[3] = 0;
 
-       for (i = 0; i < size; i++)
+      for (i = 0; i < size; i++)
         {
           gint b;
 
           if (x  - i > 0)
             up_offset = (y - extended->y) * extended->width * 4
-                      + (x - i - extended->x) * 4;
+              + (x - i - extended->x) * 4;
           else
             up_offset = (y - extended->y) * extended->width * 4 + inter * 4;
 
           if (x + i + 1 < boundary->width)
-            low_offset = (y - extended->y) * extended->width * 4 + 
-                         (x + i + 1 - extended->x) * 4;
+            low_offset = (y - extended->y) * extended->width * 4 +
+              (x + i + 1 - extended->x) * 4;
           else
-            low_offset = (y - extended->y) * extended->width * 4 + 
-                         (x + i - 1 + inter - extended->x) * 4;
+            low_offset = (y - extended->y) * extended->width * 4 +
+              (x + i - 1 + inter - extended->x) * 4;
 
           offset = (y - result->y) * result->width * 4 + (x - result->x) * 4;
 
           for (b=0; b<4; b++)
-             {
-                upper[b] = src_buf[up_offset + b];
-                lower[b] = src_buf[low_offset + b];
-             }
+            {
+              upper[b] = src_buf[up_offset + b];
+              lower[b] = src_buf[low_offset + b];
+            }
 
           ualpha = upper[3];
           lalpha = lower[3];
@@ -177,18 +177,18 @@ de_interlace_ver (gfloat              *src_buf,
           alpha += temp;
 
           for (b=0; b < 3; b++)
-               temp_buf[b] += (upper[b] * ualpha +
-                               lower[b] * lalpha);
+            temp_buf[b] += (upper[b] * ualpha +
+                            lower[b] * lalpha);
         }
-       
-       if ((dest[offset + 3] = alpha / (2 * size)))
-          {
-             gint b;
-             for (b=0; b < 3; b++)
-                dest[offset + b] = temp_buf[b] / alpha;
 
-          }
-     }
+      if ((dest[offset + 3] = alpha / (2 * size)))
+        {
+          gint b;
+          for (b=0; b < 3; b++)
+            dest[offset + b] = temp_buf[b] / alpha;
+
+        }
+    }
 }
 
 
@@ -219,13 +219,13 @@ process (GeglOperation       *operation,
   gfloat        *dst_buf, *src_buf;
 
   rect.x      = CLAMP (result->x - op_area->left, boundary.x, boundary.x +
-                           boundary.width);
+                       boundary.width);
   rect.width  = CLAMP (result->width + op_area->left + op_area->right, 0,
-                           boundary.width);
+                       boundary.width);
   rect.y      = CLAMP (result->y - op_area->top, boundary.y, boundary.y +
-                           boundary.width);
+                       boundary.width);
   rect.height = CLAMP (result->height + op_area->top + op_area->bottom, 0,
-                           boundary.height);
+                       boundary.height);
 
   dst_buf = g_new0 (gfloat, result->height * result->width * 4);
   src_buf = g_new0 (gfloat, rect.height * rect.width * 4);
@@ -235,18 +235,18 @@ process (GeglOperation       *operation,
 
   if (o->horizontal)
     {
-       for (y = result->y; y < result->y + result->height; y++)
-          if ((o->even && y%2==0) || (!o->even && y%2!=0))
-             de_interlace_hor (src_buf, dst_buf, result, &rect, &boundary, 
-                               o->even ? 0 : 1, y, o->size);
+      for (y = result->y; y < result->y + result->height; y++)
+        if ((o->even && y%2==0) || (!o->even && y%2!=0))
+          de_interlace_hor (src_buf, dst_buf, result, &rect, &boundary,
+                            o->even ? 0 : 1, y, o->size);
     }
-  else 
+  else
     {
-       for (x = result->x; x < result->x + result->width; x++)
-          if ((o->even && x%2==0) || (!o->even && x%2!=0))
-             de_interlace_ver (src_buf, dst_buf, result, &rect, &boundary, 
-                               o->even ? 0 : 1, x, o->size);
-             
+      for (x = result->x; x < result->x + result->width; x++)
+        if ((o->even && x%2==0) || (!o->even && x%2!=0))
+          de_interlace_ver (src_buf, dst_buf, result, &rect, &boundary,
+                            o->even ? 0 : 1, x, o->size);
+
     }
 
 
