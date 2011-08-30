@@ -43,6 +43,7 @@ m4_define([gdk_pixbuf_required_version], [2.18.0])
 m4_define([glib_required_version], [2.22.0])
 m4_define([graphviz_required_version], [0.0.0])
 m4_define([jasper_required_version], [1.900.1])
+m4_define([lensfun_required_version], [0.2.5])
 m4_define([librsvg_required_version], [2.14.0])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
@@ -625,6 +626,25 @@ if test "x$with_gdk_pixbuf" != "xno"; then
 fi
 
 AM_CONDITIONAL(HAVE_GDK_PIXBUF, test "$have_gdk_pixbuf" = "yes")
+
+
+###################
+# Check for lensfun
+###################
+
+AC_ARG_WITH(lensfun, [  --without-lensfun        build without lensfun support])
+
+have_lensfun="no"
+if test "x$with_lensfun" != "xno"; then
+  PKG_CHECK_MODULES(LENSFUN, lensfun,
+    have_lensfun="yes",
+    have_lensfun="no  (lensfun not found)")
+fi
+
+AM_CONDITIONAL(HAVE_LENSFUN, test "$have_lensfun" = "yes")
+
+AC_SUBST(LENSFUN_CFLAGS)
+AC_SUBST(LENSFUN_LIBS)
 
 
 ###################
