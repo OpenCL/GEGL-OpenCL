@@ -49,7 +49,7 @@ gegl_chant_double (hue, _("Hue"), 0.0, 2.0, 0.0,
 gegl_chant_double (saturation, _("Saturation"), 0.0, 1.0, 0.0,
                    _("The value of saturation"))
 gegl_chant_boolean (change, _("Change/Treat to this"), FALSE,
-                   _("Change/Treat to this"))
+                    _("Change/Treat to this"))
 gegl_chant_double (threshold, _("Threshold"), 0.0, 1.0, 0.0,
                    _("The value of gray threshold"))
 
@@ -67,9 +67,9 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 1.0, 0.0,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", 
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
-  
+
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
 }
@@ -77,8 +77,8 @@ static void prepare (GeglOperation *operation)
 
 static void
 gegl_rgb_to_hsv_double (gdouble *red,
-			gdouble *green,
-			gdouble *blue)
+                        gdouble *green,
+                        gdouble *blue)
 {
   gdouble r, g, b;
   gdouble h, s, v;
@@ -89,7 +89,7 @@ gegl_rgb_to_hsv_double (gdouble *red,
   g = *green;
   b = *blue;
 
-  h = 0.0; 
+  h = 0.0;
 
   if (r > g)
     {
@@ -118,18 +118,18 @@ gegl_rgb_to_hsv_double (gdouble *red,
       delta = max - min;
 
       if (r == max)
-	h = (g - b) / delta;
+        h = (g - b) / delta;
       else if (g == max)
-	h = 2 + (b - r) / delta;
+        h = 2 + (b - r) / delta;
       else if (b == max)
-	h = 4 + (r - g) / delta;
+        h = 4 + (r - g) / delta;
 
       h /= 6.0;
 
       if (h < 0.0)
-	h += 1.0;
+        h += 1.0;
       else if (h > 1.0)
-	h -= 1.0;
+        h -= 1.0;
     }
 
   *red   = h;
@@ -138,10 +138,10 @@ gegl_rgb_to_hsv_double (gdouble *red,
 }
 
 static void
-gegl_hsv_to_rgb4 (gfloat  *rgb, 
-		  gdouble  hue,
-		  gdouble  saturation,
-		  gdouble  value)
+gegl_hsv_to_rgb4 (gfloat  *rgb,
+                  gdouble  hue,
+                  gdouble  saturation,
+                  gdouble  value)
 {
   gdouble h, s, v;
   gdouble f, p, q, t;
@@ -159,7 +159,7 @@ gegl_hsv_to_rgb4 (gfloat  *rgb,
       v = value;
 
       if (h == 6.0)
-	h = 0.0;
+        h = 0.0;
 
       f = h - (gint) h;
       p = v * (1.0 - s);
@@ -167,43 +167,43 @@ gegl_hsv_to_rgb4 (gfloat  *rgb,
       t = v * (1.0 - s * (1.0 - f));
 
       switch ((int) h)
-	{
-	case 0:
-	  hue        = v;
-	  saturation = t;
-	  value      = p;
-	  break;
+        {
+        case 0:
+          hue        = v;
+          saturation = t;
+          value      = p;
+          break;
 
-	case 1:
-	  hue        = q;
-	  saturation = v;
-	  value      = p;
-	  break;
+        case 1:
+          hue        = q;
+          saturation = v;
+          value      = p;
+          break;
 
-	case 2:
-	  hue        = p;
-	  saturation = v;
-	  value      = t;
-	  break;
+        case 2:
+          hue        = p;
+          saturation = v;
+          value      = t;
+          break;
 
-	case 3:
-	  hue        = p;
-	  saturation = q;
-	  value      = v;
-	  break;
+        case 3:
+          hue        = p;
+          saturation = q;
+          value      = v;
+          break;
 
-	case 4:
-	  hue        = t;
-	  saturation = p;
-	  value      = v;
-	  break;
+        case 4:
+          hue        = t;
+          saturation = p;
+          value      = v;
+          break;
 
-	case 5:
-	  hue        = v;
-	  saturation = p;
-	  value      = q;
-	  break;
-	}
+        case 5:
+          hue        = v;
+          saturation = p;
+          value      = q;
+          break;
+        }
     }
 
   rgb[0] = hue;
@@ -228,26 +228,26 @@ angle_inside_slice (gfloat   hue,
                     gint     to,
                     gboolean cl)
 {
-   gint cw_ccw = 1;
-   if (!cl) cw_ccw = -1;
+  gint cw_ccw = 1;
+  if (!cl) cw_ccw = -1;
 
-   return angle_mod_2PI (cw_ccw * DEG_TO_RAD(to - hue)) /
-          angle_mod_2PI (cw_ccw * DEG_TO_RAD(from - to));
+  return angle_mod_2PI (cw_ccw * DEG_TO_RAD(to - hue)) /
+    angle_mod_2PI (cw_ccw * DEG_TO_RAD(from - to));
 }
 
 static gboolean
 is_gray (gfloat  s,
          gdouble threshold)
 {
-   return (s <= threshold);
+  return (s <= threshold);
 }
 
 static gfloat
 linear (gfloat A,
         gfloat B,
-	gfloat C,
-	gfloat D,
-	gfloat x)
+        gfloat C,
+        gfloat D,
+        gfloat x)
 {
   if (B > A)
     {
@@ -315,7 +315,7 @@ color_rotate (gfloat     *src,
   gdouble  H,S,V;
   gboolean skip = FALSE;
   gfloat   color[4];
-  gint     i; 
+  gint     i;
 
 
   H = src[offset];
@@ -327,39 +327,39 @@ color_rotate (gfloat     *src,
   if (is_gray (S, o->threshold))
     {
       if (o->change == FALSE)
-         {
-            if (angle_inside_slice (o->hue, o->s_fr, o->s_to, o->s_cl) <= 1)
-              {
-                H = o->hue / TP;
-                S = o->saturation;
-              }
-            else
-              {
-                skip = TRUE;
-              }
-         }
+        {
+          if (angle_inside_slice (o->hue, o->s_fr, o->s_to, o->s_cl) <= 1)
+            {
+              H = o->hue / TP;
+              S = o->saturation;
+            }
+          else
+            {
+              skip = TRUE;
+            }
+        }
       else
-         {
-            skip = TRUE;
-            gegl_hsv_to_rgb4 (color, o->hue / TP, o->saturation, V);
-            color[3] = src[offset + 3];
-         }
+        {
+          skip = TRUE;
+          gegl_hsv_to_rgb4 (color, o->hue / TP, o->saturation, V);
+          color[3] = src[offset + 3];
+        }
     }
 
-   if (! skip)
-     {
-     H = linear (left_end (o->s_fr, o->s_to, o->s_cl),
-                 right_end (o->s_fr, o->s_to, o->s_cl),
-                 left_end (o->d_fr, o->d_to, o->d_cl),
-                 right_end (o->d_fr, o->d_to, o->d_cl),
-                 H * TP);
-     H = angle_mod_2PI (H) / TP;
-     gegl_hsv_to_rgb4 (color, H, S, V);
-     color[3] = src[offset + 3];
-     }
+  if (! skip)
+    {
+      H = linear (left_end (o->s_fr, o->s_to, o->s_cl),
+                  right_end (o->s_fr, o->s_to, o->s_cl),
+                  left_end (o->d_fr, o->d_to, o->d_cl),
+                  right_end (o->d_fr, o->d_to, o->d_cl),
+                  H * TP);
+      H = angle_mod_2PI (H) / TP;
+      gegl_hsv_to_rgb4 (color, H, S, V);
+      color[3] = src[offset + 3];
+    }
 
   for (i = 0; i < 4; i++)
-     src[offset + i] = color[i];
+    src[offset + i] = color[i];
 
 }
 
@@ -383,7 +383,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, 1.0, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (x = 0; x < result->width * result->height; x++)
-      color_rotate (src_buf, 4 * x, o);
+    color_rotate (src_buf, 4 * x, o);
 
   gegl_buffer_set (output, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
