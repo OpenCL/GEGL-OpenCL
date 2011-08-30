@@ -41,7 +41,7 @@ gegl_chant_color (value, _("Color"), "black",
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", 
+  gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
@@ -51,76 +51,76 @@ static void prepare (GeglOperation *operation)
  * An excerpt from a discussion on #gimp that sheds some light on the ideas
  * behind the algorithm that is being used here.
  *
-  <clahey>   so if a1 > c1, a2 > c2, and a3 > c2 and a1 - c1 > a2-c2, a3-c3,
-             then a1 = b1 * alpha + c1 * (1-alpha)
-             So, maximizing alpha without taking b1 above 1 gives
-             a1 = alpha + c1(1-alpha) and therefore alpha = (a1-c1) / (1-c1).
-  <sjburges> clahey: btw, the ordering of that a2, a3 in the white->alpha didn't
-             matter
-  <clahey>   sjburges: You mean that it could be either a1, a2, a3 or
-             a1, a3, a2?
-  <sjburges> yeah
-  <sjburges> because neither one uses the other
-  <clahey>   sjburges: That's exactly as it should be.  They are both just
-             getting reduced to the same amount, limited by the the darkest
-             color.
-  <clahey>   Then a2 = b2 * alpha + c2 * (1- alpha).  Solving for b2 gives
-             b2 = (a1-c2)/alpha + c2.
-  <sjburges> yeah
-  <clahey>   That gives us are formula for if the background is darker than the
-             foreground? Yep.
-  <clahey>   Next if a1 < c1, a2 < c2, a3 < c3, and c1-a1 > c2-a2, c3-a3, and
-             by our desired result a1 = b1 * alpha + c1 * (1-alpha),
-             we maximize alpha without taking b1 negative gives
-             alpha = 1 - a1 / c1.
-  <clahey>   And then again, b2 = (a2-c2) / alpha + c2 by the same formula.
-             (Actually, I think we can use that formula for all cases, though
-             it may possibly introduce rounding error.
-  <clahey>   sjburges: I like the idea of using floats to avoid rounding error.
-             Good call.
- */
+ <clahey>   so if a1 > c1, a2 > c2, and a3 > c2 and a1 - c1 > a2-c2, a3-c3,
+ then a1 = b1 * alpha + c1 * (1-alpha)
+ So, maximizing alpha without taking b1 above 1 gives
+ a1 = alpha + c1(1-alpha) and therefore alpha = (a1-c1) / (1-c1).
+ <sjburges> clahey: btw, the ordering of that a2, a3 in the white->alpha didn't
+ matter
+ <clahey>   sjburges: You mean that it could be either a1, a2, a3 or
+ a1, a3, a2?
+ <sjburges> yeah
+ <sjburges> because neither one uses the other
+ <clahey>   sjburges: That's exactly as it should be.  They are both just
+ getting reduced to the same amount, limited by the the darkest
+ color.
+ <clahey>   Then a2 = b2 * alpha + c2 * (1- alpha).  Solving for b2 gives
+ b2 = (a1-c2)/alpha + c2.
+ <sjburges> yeah
+ <clahey>   That gives us are formula for if the background is darker than the
+ foreground? Yep.
+ <clahey>   Next if a1 < c1, a2 < c2, a3 < c3, and c1-a1 > c2-a2, c3-a3, and
+ by our desired result a1 = b1 * alpha + c1 * (1-alpha),
+ we maximize alpha without taking b1 negative gives
+ alpha = 1 - a1 / c1.
+ <clahey>   And then again, b2 = (a2-c2) / alpha + c2 by the same formula.
+ (Actually, I think we can use that formula for all cases, though
+ it may possibly introduce rounding error.
+ <clahey>   sjburges: I like the idea of using floats to avoid rounding error.
+ Good call.
+*/
 
 static void
 color_to_alpha (gfloat     *color,
                 gfloat     *src,
                 gint        offset)
 {
-   gint i;
-   gfloat temp[4];
+  gint i;
+  gfloat temp[4];
 
-   temp[3] = src[offset + 3]; 
-   src[offset+3] = temp[3];
+  temp[3] = src[offset + 3];
+  src[offset+3] = temp[3];
 
 
-   for (i=0; i<3; i++)
-       if (color[i] < 0.0001)
-          temp[i] = src[offset+i];
-       else if (src[offset+i] > color[i])
-          temp[i] = (src[offset+i] - color[i]) / (1.0 - color[i]);
-       else if (src[offset+i] < color[i])
-          temp[i] = (color[i] - src[offset+i]) / color[i];
-       else 
-          temp[i] = 0.0;
+  for (i=0; i<3; i++)
+    if (color[i] < 0.0001)
+      temp[i] = src[offset+i];
+    else if (src[offset+i] > color[i])
+      temp[i] = (src[offset+i] - color[i]) / (1.0 - color[i]);
+    else if (src[offset+i] < color[i])
+      temp[i] = (color[i] - src[offset+i]) / color[i];
+    else
+      temp[i] = 0.0;
 
-   if (temp[0] > temp[1])
-     {
-       if (temp[0] > temp[2])
-          src[offset+3] = temp[0];
-       else
-          src[offset+3] = temp[2];
-     }
-   else if (temp[1] > temp[2])
-          src[offset+3] = temp[1];
-        else
-          src[offset+3] = temp[2];
+  if (temp[0] > temp[1])
+    {
+      if (temp[0] > temp[2])
+        src[offset+3] = temp[0];
+      else
+        src[offset+3] = temp[2];
+    }
+  else if (temp[1] > temp[2])
+    src[offset+3] = temp[1];
+  else
+    src[offset+3] = temp[2];
 
-   if (src[offset+3] < 0.0001)
-      return;
+  if (src[offset+3] < 0.0001)
+    return;
 
-   for (i=0; i<3; i++)
-      src[offset+i] = (src[offset+i] - color[i]) / src[offset+3] + color[i];
+  for (i=0; i<3; i++)
+    src[offset+i] = (src[offset+i] - color[i]) / src[offset+3] + color[i];
 
-   src[offset+3] *=temp[3];
+  src[offset+3] *=temp[3];
 }
 
 
@@ -144,7 +144,7 @@ process (GeglOperation       *operation,
   gegl_color_get_rgba4f (o->value, color);
 
   for (x = 0; x < result->width * result->height; x++)
-      color_to_alpha (color, src_buf, 4 * x);
+    color_to_alpha (color, src_buf, 4 * x);
 
   gegl_buffer_set (output, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
