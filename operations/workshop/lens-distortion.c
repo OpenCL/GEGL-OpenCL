@@ -67,15 +67,15 @@ lens_setup_calc (GeglChantO     *o,
                  GeglRectangle   boundary,
                  OldLensDistort *old)
 {
-   old->norm = 4.0 / (boundary.width * boundary.width + 
-                      boundary.height * boundary.height);
+  old->norm = 4.0 / (boundary.width * boundary.width +
+                     boundary.height * boundary.height);
 
-   old->centre_x = boundary.width * (100.0 + o->x_shift) / 200.0;
-   old->centre_y = boundary.height * (100.0 + o->y_shift) / 200.0;
-   old->mult_sq = o->main / 200.0;
-   old->mult_qd = o->edge / 200.0;
-   old->rescale = pow (2.0, -o->zoo / 100.0);
-   old->brighten = -o->brighten / 10.0;
+  old->centre_x = boundary.width * (100.0 + o->x_shift) / 200.0;
+  old->centre_y = boundary.height * (100.0 + o->y_shift) / 200.0;
+  old->mult_sq = o->main / 200.0;
+  old->mult_qd = o->edge / 200.0;
+  old->rescale = pow (2.0, -o->zoo / 100.0);
+  old->brighten = -o->brighten / 10.0;
 }
 
 static GeglRectangle
@@ -200,63 +200,63 @@ lens_distort_func (gfloat              *src_buf,
                    gint                 yy,
                    GeglBuffer          *input)
 {
-   gdouble sx, sy, mag;
-   gdouble brighten;
-   gfloat  pixel_buffer [16 * 4], temp[4];
-   gdouble dx, dy;
-   gint    x_int, y_int, x = 0, y = 0, offset = 0;
+  gdouble sx, sy, mag;
+  gdouble brighten;
+  gfloat  pixel_buffer [16 * 4], temp[4];
+  gdouble dx, dy;
+  gint    x_int, y_int, x = 0, y = 0, offset = 0;
 
-   temp[0] = temp[1] = temp[2] = temp[3] = 0.0;
+  temp[0] = temp[1] = temp[2] = temp[3] = 0.0;
 
-   lens_get_source_coord ((gdouble)xx, (gdouble)yy, &sx, &sy, &mag, &old);
+  lens_get_source_coord ((gdouble)xx, (gdouble)yy, &sx, &sy, &mag, &old);
 
-   brighten = 1.0 + mag * old.brighten;
+  brighten = 1.0 + mag * old.brighten;
 
-   x_int = floor (sx);
-   dx = sx - x_int;
+  x_int = floor (sx);
+  dx = sx - x_int;
 
-   y_int = floor (sy);
-   dy = sy - y_int;
+  y_int = floor (sy);
+  dy = sy - y_int;
 
-   for (y = y_int - 1; y <= y_int + 2; y++)
-      {
-         for (x = x_int - 1; x <= x_int + 2; x++)
+  for (y = y_int - 1; y <= y_int + 2; y++)
+    {
+      for (x = x_int - 1; x <= x_int + 2; x++)
+        {
+          gint b;
+
+          if (x >= extended->x && x<(extended->x + extended->width)
+              && y >= extended->y && y < (extended->y + extended->height))
             {
-               gint b;
+              gint src_off;
+              src_off = (y - extended->y) * extended->width * 4 +
+                (x - extended->x) * 4;
+              for (b=0; b<4; b++)
+                temp[b] = src_buf[src_off++];
 
-               if (x >= extended->x && x<(extended->x + extended->width)
-                   && y >= extended->y && y < (extended->y + extended->height))
-                  {
-                      gint src_off;
-                      src_off = (y - extended->y) * extended->width * 4 + 
-                                (x - extended->x) * 4;
-                      for (b=0; b<4; b++)
-                         temp[b] = src_buf[src_off++];
-
-                  }
-               else if (x >= boundary->x && x < boundary->x + boundary->width &&
-                        y >= boundary->y && y < boundary->y + boundary->height)
-                  {
-                      gegl_buffer_sample (input, x, y, NULL, temp,
-                                          babl_format ("RGBA float"),
-                                          GEGL_INTERPOLATION_NEAREST);
-                  }
-               else
-                  {
-                      for (b=0; b<4; b++)
-                         temp[b] = 0.0;
-                  }
-               
-                for (b=0; b<4; b++)
-                   pixel_buffer[offset++] = temp[b];
             }
-      }
+          else if (x >= boundary->x && x < boundary->x + boundary->width &&
+                   y >= boundary->y && y < boundary->y + boundary->height)
+            {
+              gegl_buffer_sample (input, x, y, NULL, temp,
+                                  babl_format ("RGBA float"),
+                                  GEGL_INTERPOLATION_NEAREST);
+            }
+          else
+            {
+              for (b=0; b<4; b++)
+                temp[b] = 0.0;
+            }
+
+          for (b=0; b<4; b++)
+            pixel_buffer[offset++] = temp[b];
+        }
+    }
 
   lens_cubic_interpolate (pixel_buffer, temp, dx, dy, brighten);
 
   offset = (yy - result->y) * result->width * 4 + (xx - result->x) * 4;
   for (x=0; x<4; x++)
-     dst_buf[offset++] = temp[x];
+    dst_buf[offset++] = temp[x];
 }
 
 static gboolean
@@ -268,7 +268,7 @@ process (GeglOperation       *operation,
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
   OldLensDistort       old_lens;
   GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
-                                   (operation, "input");
+    (operation, "input");
 
   gint     x, y;
   gfloat  *src_buf, *dst_buf;
@@ -282,11 +282,11 @@ process (GeglOperation       *operation,
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y = result->y; y < result->y + result->height; y++)
-     for (x = result->x; x < result->x + result->width; x++)
-        {
-          lens_distort_func (src_buf, dst_buf, result, result, &boundary,
-                             old_lens, x, y, input);
-        }
+    for (x = result->x; x < result->x + result->width; x++)
+      {
+        lens_distort_func (src_buf, dst_buf, result, result, &boundary,
+                           old_lens, x, y, input);
+      }
 
 
   gegl_buffer_set (output, result, babl_format ("RGBA float"),
@@ -316,7 +316,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:lens-distortion";
   operation_class->categories  = "blur";
   operation_class->description =
-        _("Copies image performing lens distortion correction.");
+    _("Copies image performing lens distortion correction.");
 }
 
 #endif
