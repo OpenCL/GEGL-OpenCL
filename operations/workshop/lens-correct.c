@@ -35,7 +35,7 @@ gegl_chant_double (focal, _("Focal of the camera"), 0.0, 300.0, 20.0,
                    _("Calculate b value from focal"))
 
 gegl_chant_boolean (center, _("Center"), TRUE,
-                   _("If you want center"))
+                    _("If you want center"))
 gegl_chant_int (cx, _("Lens center x"), -G_MAXINT, G_MAXINT, 0,
                 _("Coordinates of lens center"))
 gegl_chant_int (cy, _("Lens center y"), -G_MAXINT, G_MAXINT, 0,
@@ -43,7 +43,7 @@ gegl_chant_int (cy, _("Lens center y"), -G_MAXINT, G_MAXINT, 0,
 gegl_chant_double (rscale, _("Scale"), 0.001, 10.0, 0.5,
                    _("Scale of the image"))
 gegl_chant_boolean (correct, _("Autocorrect d values"), TRUE,
-                   _("Autocorrect D values for lens correction models."))
+                    _("Autocorrect D values for lens correction models."))
 
 gegl_chant_double (red_a, _("Model red a:"), -1.0, 1.0, 0.0,
                    _("Correction parameters for each color channel"))
@@ -104,8 +104,8 @@ make_lens (LensCorrectionModel *lens,
 
   if (o->center)
     {
-       o->cx = (boundary.x + boundary.width) / 2;
-       o->cy = (boundary.y + boundary.height) / 2;
+      o->cx = (boundary.x + boundary.width) / 2;
+      o->cy = (boundary.y + boundary.height) / 2;
     }
 
   lens->cx = o->cx;
@@ -118,42 +118,42 @@ make_lens (LensCorrectionModel *lens,
   lens->red.c = o->red_c;
 
   if (o->correct)
-     lens->red.d = 1 - o->red_a - o->red_b - o->red_c;
+    lens->red.d = 1 - o->red_a - o->red_b - o->red_c;
   else
-     lens->red.d = o->red_d;
+    lens->red.d = o->red_d;
 
   lens->green.a = o->green_a;
   lens->green.b = o->green_b;
   lens->green.c = o->green_c;
 
   if (o->correct)
-     lens->green.d = 1 - o->green_a - o->green_b - o->green_c;
+    lens->green.d = 1 - o->green_a - o->green_b - o->green_c;
   else
-     lens->green.d = o->green_d;
+    lens->green.d = o->green_d;
 
   lens->blue.a = o->blue_a;
   lens->blue.b = o->blue_b;
   lens->blue.c = o->blue_c;
 
   if (o->correct)
-     lens->blue.d = 1 - o->blue_a - o->blue_b - o->blue_c;
+    lens->blue.d = 1 - o->blue_a - o->blue_b - o->blue_c;
   else
-     lens->blue.d = o->blue_d;
+    lens->blue.d = o->blue_d;
 
   lens->alpha.a = o->alpha_a;
   lens->alpha.b = o->alpha_b;
   lens->alpha.c = o->alpha_c;
 
   if (o->correct)
-     lens->alpha.d = 1 - o->alpha_a - o->alpha_b - o->alpha_c;
+    lens->alpha.d = 1 - o->alpha_a - o->alpha_b - o->alpha_c;
   else
-     lens->alpha.d = o->red_d;
+    lens->alpha.d = o->red_d;
 
   if (o->focal!=0.0)
     {
-       gdouble f = o->focal;
-       lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
-          = 0.000005142 * f*f*f - 0.000380839 * f*f + 0.009606325 * f - 0.075316854;
+      gdouble f = o->focal;
+      lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+        = 0.000005142 * f*f*f - 0.000380839 * f*f + 0.009606325 * f - 0.075316854;
     }
 }
 
@@ -180,8 +180,8 @@ find_make_lens(LensCorrectionModel *lens,
 
   if (o->center)
     {
-       o->cx = (boundary.x + boundary.width) / 2;
-       o->cy = (boundary.y + boundary.height) / 2;
+      o->cx = (boundary.x + boundary.width) / 2;
+      o->cy = (boundary.y + boundary.height) / 2;
     }
 
   lens->cx = o->cx;
@@ -191,83 +191,83 @@ find_make_lens(LensCorrectionModel *lens,
 
   ldb = lf_db_new ();
   if (!ldb)
-     return FALSE;
+    return FALSE;
 
   lf_db_load (ldb);
 
   cameras =  lf_db_find_cameras (ldb, o->maker, o->Camera);
   if (!cameras)
-     return FALSE;
+    return FALSE;
   camera = cameras[0];
 
   lf_free (cameras);
 
   lenses = lf_db_find_lenses_hd (ldb, camera, o->maker, o->Lens, 0);
   if (!lenses)
-     return FALSE;
+    return FALSE;
   onelen = lenses[0];
 
   dist = onelen->CalibDistortion;
 
   for (i=0; lenses[i]; i++)
-     if (lenses[i]->MinFocal < o->focal && o->focal < lenses[i]->MaxFocal)
-        break;
+    if (lenses[i]->MinFocal < o->focal && o->focal < lenses[i]->MaxFocal)
+      break;
 
   dist = lenses[i]->CalibDistortion;
 
   if (!dist)
-     return FALSE;
+    return FALSE;
 
   for (i=0; dist[i]; i++)
-     {
-        if (dist[i]->Focal == o->focal)
-           {
-              lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
-                          = dist[i]->Terms[0];
-              lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
-                          = dist[i]->Terms[1];
-              lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
-                          = dist[i]->Terms[2];
+    {
+      if (dist[i]->Focal == o->focal)
+        {
+          lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
+            = dist[i]->Terms[0];
+          lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+            = dist[i]->Terms[1];
+          lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
+            = dist[i]->Terms[2];
 
-              lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
-              lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
-              lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
-              lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
+          lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
+          lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
+          lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
+          lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
 
-              aux = -G_MAXINT;
-              break;
-           }
-        else if (i > 0)
-           {
-              if (aux > fabs (dist[i]->Focal - o->focal
-                              + dist[i-1]->Focal - o->focal))
-                 {
-                    aux = fabs (dist[i]->Focal + dist[i-1]->Focal - 2 * o->focal);
-                    j = i;
-                 }
-           }
-     }
+          aux = -G_MAXINT;
+          break;
+        }
+      else if (i > 0)
+        {
+          if (aux > fabs (dist[i]->Focal - o->focal
+                          + dist[i-1]->Focal - o->focal))
+            {
+              aux = fabs (dist[i]->Focal + dist[i-1]->Focal - 2 * o->focal);
+              j = i;
+            }
+        }
+    }
   lf_free (lenses);
 
   if (aux != -G_MAXINT)
-     {
-        gfloat aux[3];
-        for (i=0; i<3; i++)
-           aux[i] = (dist[j]->Terms[i] - dist[j-1]->Terms[i]) / 2.0;
+    {
+      gfloat aux[3];
+      for (i=0; i<3; i++)
+        aux[i] = (dist[j]->Terms[i] - dist[j-1]->Terms[i]) / 2.0;
 
-        lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
-                    = aux[0];
-        lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
-                    = aux[1];
-        lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
-                    = aux[2];
+      lens->red.a = lens->green.a = lens->blue.a = lens->alpha.a
+        = aux[0];
+      lens->red.b = lens->green.b = lens->blue.b = lens->alpha.b
+        = aux[1];
+      lens->red.c = lens->green.c = lens->blue.c = lens->alpha.c
+        = aux[2];
 
-        lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
-        lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
-        lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
-        lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
+      lens->red.d = 1 - lens->red.a - lens->red.b - lens->red.c;
+      lens->green.d = 1 - lens->green.a - lens->green.b - lens->green.c;
+      lens->blue.d = 1 - lens->blue.a - lens->blue.b - lens->blue.c;
+      lens->alpha.d = 1 - lens->alpha.a - lens->alpha.b - lens->alpha.c;
 
-     }
+    }
 
   return TRUE;
 }
@@ -337,59 +337,59 @@ lens_distort_newl (gfloat              *src_buf,
   ccm[2] = lens->blue;
 
   for (rgb = 0; rgb < 4; rgb++)
-     {
-       gfloat gx, gy;
-       gfloat val = 0.0;
-       gfloat wx[2], wy[2], wt = 0.0;
+    {
+      gfloat gx, gy;
+      gfloat val = 0.0;
+      gfloat wx[2], wy[2], wt = 0.0;
 
-       find_src_pixel (lens, &ccm[rgb], (gfloat)xx, (gfloat)yy, &gx, &gy);
-       tmpx = (gint) gx;
-       tmpy = (gint) gy;
+      find_src_pixel (lens, &ccm[rgb], (gfloat)xx, (gfloat)yy, &gx, &gy);
+      tmpx = (gint) gx;
+      tmpy = (gint) gy;
 
-       wx[1] = gx - tmpx;
-       wx[0] = 1.0 - wx[1];
-       wy[1] = gy - tmpy;
-       wy[0] = 1.0 - wy[1];
+      wx[1] = gx - tmpx;
+      wx[0] = 1.0 - wx[1];
+      wy[1] = gy - tmpy;
+      wy[0] = 1.0 - wy[1];
 
-       for (x = 0; x < 2; x++)
-         {
-            for (y = 0; y < 2; y++)
-               {
-                  if (tmpx+x >= extended->x && tmpx+x < extended->x + extended->width
-                   && tmpy+y >= extended->y && tmpy+y < extended->y + extended->height)
-                     {
-                        offset = (tmpy + y - extended->y) * extended->width * 4 +
-                                 (tmpx + x - extended->x) * 4 + rgb;
-                        val += src_buf[offset] * wx[x] * wy[y];
-                        wt += wx[x] * wy[y];
-                     }
-                  else if (tmpx+x >= boundary->x &&
-                           tmpx+x < boundary->x + boundary->width &&
-                           tmpy+y >= boundary->y &&
-                           tmpy+y < boundary->y + boundary->height)
-                     {
-                        gfloat color[4];
-                        gegl_buffer_sample (input, tmpx+x, tmpy+y, NULL, color,
-                                            babl_format ("RGBA float"),
-                                            GEGL_INTERPOLATION_NEAREST);
-                        val += color[rgb] * wx[x] * wy[y];
-                        wt += wx[x] * wy[y];
-                     }
-               }
+      for (x = 0; x < 2; x++)
+        {
+          for (y = 0; y < 2; y++)
+            {
+              if (tmpx+x >= extended->x && tmpx+x < extended->x + extended->width
+                  && tmpy+y >= extended->y && tmpy+y < extended->y + extended->height)
+                {
+                  offset = (tmpy + y - extended->y) * extended->width * 4 +
+                    (tmpx + x - extended->x) * 4 + rgb;
+                  val += src_buf[offset] * wx[x] * wy[y];
+                  wt += wx[x] * wy[y];
+                }
+              else if (tmpx+x >= boundary->x &&
+                       tmpx+x < boundary->x + boundary->width &&
+                       tmpy+y >= boundary->y &&
+                       tmpy+y < boundary->y + boundary->height)
+                {
+                  gfloat color[4];
+                  gegl_buffer_sample (input, tmpx+x, tmpy+y, NULL, color,
+                                      babl_format ("RGBA float"),
+                                      GEGL_INTERPOLATION_NEAREST);
+                  val += color[rgb] * wx[x] * wy[y];
+                  wt += wx[x] * wy[y];
+                }
+            }
         }
-       if (wt <= 0)
-          {
-             temp [rgb] = 0.0;
-          }
-       else
-          {
-             temp [rgb] =  val / wt;
-          }
-     }
+      if (wt <= 0)
+        {
+          temp [rgb] = 0.0;
+        }
+      else
+        {
+          temp [rgb] =  val / wt;
+        }
+    }
 
   offset = (yy - result->y) * result->width * 4 + (xx - result->x) * 4;
   for (x=0; x<4; x++)
-     dst_buf[offset++] = temp[x];
+    dst_buf[offset++] = temp[x];
 }
 
 static gboolean
@@ -401,7 +401,7 @@ process (GeglOperation       *operation,
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
   LensCorrectionModel  lens;
   GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
-                                   (operation, "input");
+    (operation, "input");
 
   gint     x, y, found = FALSE;
   gfloat *src_buf, *dst_buf;
@@ -415,11 +415,11 @@ process (GeglOperation       *operation,
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y = result->y; y < result->y + result->height; y++)
-     for (x = result->x; x < result->x + result->width; x++)
-        {
-          lens_distort_newl (src_buf, dst_buf, result,
-                             result, &boundary, &lens, x, y, input);
-        }
+    for (x = result->x; x < result->x + result->width; x++)
+      {
+        lens_distort_newl (src_buf, dst_buf, result,
+                           result, &boundary, &lens, x, y, input);
+      }
 
   gegl_buffer_set (output, result, babl_format ("RGBA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
@@ -448,7 +448,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->name        = "gegl:lens-correct";
   operation_class->categories  = "blur";
   operation_class->description =
-        _("Copies image performing lens distortion correction.");
+    _("Copies image performing lens distortion correction.");
 }
 
 #endif
