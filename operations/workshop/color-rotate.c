@@ -76,14 +76,14 @@ static void prepare (GeglOperation *operation)
 
 
 static void
-gegl_rgb_to_hsv_double (gdouble *red,
-                        gdouble *green,
-                        gdouble *blue)
+gegl_rgb_to_hsv_double (gfloat *red,
+                        gfloat *green,
+                        gfloat *blue)
 {
-  gdouble r, g, b;
-  gdouble h, s, v;
-  gdouble min, max;
-  gdouble delta;
+  gfloat r, g, b;
+  gfloat h, s, v;
+  gfloat min, max;
+  gfloat delta;
 
   r = *red;
   g = *green;
@@ -312,7 +312,7 @@ color_rotate (gfloat     *src,
               gint        offset,
               GeglChantO *o)
 {
-  gdouble  H,S,V;
+  gfloat   H,S,V;
   gboolean skip = FALSE;
   gfloat   color[4];
   gint     i;
