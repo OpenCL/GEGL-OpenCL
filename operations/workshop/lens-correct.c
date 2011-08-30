@@ -34,7 +34,7 @@ gegl_chant_string (Lens, _("Lens:"),"none",
 gegl_chant_double (focal, _("Focal of the camera"), 0.0, 300.0, 20.0,
                    _("Calculate b value from focal"))
 
-gegl_chant_boolean (center, _("Center"), TRUE, 
+gegl_chant_boolean (center, _("Center"), TRUE,
                    _("If you want center"))
 gegl_chant_int (cx, _("Lens center x"), -G_MAXINT, G_MAXINT, 0,
                 _("Coordinates of lens center"))
@@ -163,7 +163,7 @@ find_make_lens(LensCorrectionModel *lens,
                GeglRectangle        boundary)
 {
   struct lfDatabase *ldb;
-  const lfCamera **cameras; 
+  const lfCamera **cameras;
   const lfLens   **lenses;
   const lfCamera  *camera;
   const lfLens    *onelen;
@@ -239,7 +239,7 @@ find_make_lens(LensCorrectionModel *lens,
            }
         else if (i > 0)
            {
-              if (aux > fabs (dist[i]->Focal - o->focal 
+              if (aux > fabs (dist[i]->Focal - o->focal
                               + dist[i-1]->Focal - o->focal))
                  {
                     aux = fabs (dist[i]->Focal + dist[i-1]->Focal - 2 * o->focal);
@@ -327,7 +327,7 @@ lens_distort_newl (gfloat              *src_buf,
 {
   gfloat temp[4];
   gint   tmpx, tmpy, x, y, rgb;
-  gint   offset;  
+  gint   offset;
 
   ChannelCorrectionModel ccm[3];
 
@@ -363,7 +363,7 @@ lens_distort_newl (gfloat              *src_buf,
                         val += src_buf[offset] * wx[x] * wy[y];
                         wt += wx[x] * wy[y];
                      }
-                  else if (tmpx+x >= boundary->x && 
+                  else if (tmpx+x >= boundary->x &&
                            tmpx+x < boundary->x + boundary->width &&
                            tmpy+y >= boundary->y &&
                            tmpy+y < boundary->y + boundary->height)
@@ -373,7 +373,7 @@ lens_distort_newl (gfloat              *src_buf,
                                             babl_format ("RGBA float"),
                                             GEGL_INTERPOLATION_NEAREST);
                         val += color[rgb] * wx[x] * wy[y];
-                        wt += wx[x] * wy[y];                       
+                        wt += wx[x] * wy[y];
                      }
                }
         }
@@ -417,7 +417,7 @@ process (GeglOperation       *operation,
   for (y = result->y; y < result->y + result->height; y++)
      for (x = result->x; x < result->x + result->width; x++)
         {
-          lens_distort_newl (src_buf, dst_buf, result, 
+          lens_distort_newl (src_buf, dst_buf, result,
                              result, &boundary, &lens, x, y, input);
         }
 
