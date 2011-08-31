@@ -291,10 +291,6 @@ color_rotate (gfloat     *src,
   gfloat   color[4];
   gint     i;
 
-  H = src[offset];
-  S = src[offset + 1];
-  V = src[offset + 2];
-
   rgb_to_hsv (src[offset],
               src[offset + 1],
               src[offset + 2],
