@@ -286,7 +286,7 @@ color_rotate (gfloat     *src,
               gint        offset,
               GeglChantO *o)
 {
-  gfloat   H,S,V;
+  gfloat   h, s, v;
   gboolean skip = FALSE;
   gfloat   color[4];
   gint     i;
@@ -294,16 +294,16 @@ color_rotate (gfloat     *src,
   rgb_to_hsv (src[offset],
               src[offset + 1],
               src[offset + 2],
-              &H, &S, &V);
+              &h, &s, &v);
 
-  if (is_gray (S, o->threshold))
+  if (is_gray (s, o->threshold))
     {
       if (o->change == FALSE)
         {
           if (angle_inside_slice (o->hue, o->s_fr, o->s_to, o->s_cl) <= 1)
             {
-              H = o->hue / TP;
-              S = o->saturation;
+              h = o->hue / TP;
+              s = o->saturation;
             }
           else
             {
@@ -313,7 +313,7 @@ color_rotate (gfloat     *src,
       else
         {
           skip = TRUE;
-          hsv_to_rgb (o->hue / TP, o->saturation, V,
+          hsv_to_rgb (o->hue / TP, o->saturation, v,
                       color, color + 1, color + 2);
           color[3] = src[offset + 3];
         }
@@ -321,13 +321,13 @@ color_rotate (gfloat     *src,
 
   if (! skip)
     {
-      H = linear (left_end (o->s_fr, o->s_to, o->s_cl),
+      h = linear (left_end (o->s_fr, o->s_to, o->s_cl),
                   right_end (o->s_fr, o->s_to, o->s_cl),
                   left_end (o->d_fr, o->d_to, o->d_cl),
                   right_end (o->d_fr, o->d_to, o->d_cl),
-                  H * TP);
-      H = angle_mod_2PI (H) / TP;
-      hsv_to_rgb (H, S, V,
+                  h * TP);
+      h = angle_mod_2PI (h) / TP;
+      hsv_to_rgb (h, s, v,
                   color, color + 1, color + 2);
       color[3] = src[offset + 3];
     }
