@@ -66,14 +66,14 @@ prepare (GeglOperation *operation)
 }
 
 static void
-de_interlace_hor (gfloat              *src_buf,
-                  gfloat              *dest,
-                  const GeglRectangle *result,
-                  const GeglRectangle *extended,
-                  const GeglRectangle *boundary,
-                  gint                 inter,
-                  gint                 y,
-                  gint                 size)
+deinterlace_horizontal (gfloat              *src_buf,
+                        gfloat              *dest,
+                        const GeglRectangle *result,
+                        const GeglRectangle *extended,
+                        const GeglRectangle *boundary,
+                        gint                 inter,
+                        gint                 y,
+                        gint                 size)
 {
   gfloat upper[4];
   gfloat lower[4];
@@ -134,14 +134,14 @@ de_interlace_hor (gfloat              *src_buf,
 }
 
 static void
-de_interlace_ver (gfloat              *src_buf,
-                  gfloat              *dest,
-                  const GeglRectangle *result,
-                  const GeglRectangle *extended,
-                  const GeglRectangle *boundary,
-                  gint                 inter,
-                  gint                 x,
-                  gint                 size)
+deinterlace_vertical (gfloat              *src_buf,
+                      gfloat              *dest,
+                      const GeglRectangle *result,
+                      const GeglRectangle *extended,
+                      const GeglRectangle *boundary,
+                      gint                 inter,
+                      gint                 x,
+                      gint                 size)
 {
   gfloat  upper[4], lower[4], temp_buf[4];
   gint    y, up_offset, low_offset, offset = 0, i;
@@ -243,17 +243,17 @@ process (GeglOperation       *operation,
     {
       for (y = result->y; y < result->y + result->height; y++)
         if ((o->even && (y % 2 == 0)) || (!o->even && (y % 2 != 0)))
-          de_interlace_hor (src_buf, dst_buf, result, &rect, &boundary,
-                            o->even ? 0 : 1,
-                            y, o->size);
+          deinterlace_horizontal (src_buf, dst_buf, result, &rect, &boundary,
+                                  o->even ? 0 : 1,
+                                  y, o->size);
     }
   else
     {
       for (x = result->x; x < result->x + result->width; x++)
         if ((o->even && (x % 2 == 0)) || (!o->even && (x % 2 != 0)))
-          de_interlace_ver (src_buf, dst_buf, result, &rect, &boundary,
-                            o->even ? 0 : 1,
-                            x, o->size);
+          deinterlace_vertical (src_buf, dst_buf, result, &rect, &boundary,
+                                o->even ? 0 : 1,
+                                x, o->size);
     }
 
   gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
