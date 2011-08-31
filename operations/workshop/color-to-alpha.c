@@ -95,11 +95,11 @@ color_to_alpha (gfloat     *color,
       if (color[i] < 1.e-4f)
         temp[i] = src[offset+i];
       else if (src[offset+i] > color[i])
-        temp[i] = (src[offset+i] - color[i]) / (1.0 - color[i]);
+        temp[i] = (src[offset+i] - color[i]) / (1.0f - color[i]);
       else if (src[offset+i] < color[i])
         temp[i] = (color[i] - src[offset+i]) / color[i];
       else
-        temp[i] = 0.0;
+        temp[i] = 0.0f;
     }
 
   if (temp[0] > temp[1])
