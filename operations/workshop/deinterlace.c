@@ -42,11 +42,11 @@ gegl_chant_int (size, _("Block size"), 0, 100, 1,
 #include <stdio.h>
 #include <math.h>
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
-
 
   if (o->horizontal)
     {
@@ -58,6 +58,7 @@ static void prepare (GeglOperation *operation)
       op_area->left = op_area->right = o->size + 1;
       op_area->top = op_area->bottom = 0;
     }
+
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
@@ -74,8 +75,14 @@ de_interlace_hor (gfloat              *src_buf,
                   gint                 y,
                   gint                 size)
 {
-  gfloat  upper[4], lower[4], temp_buf[4];
-  gint    x, up_offset, low_offset, offset = 0, i;
+  gfloat upper[4];
+  gfloat lower[4];
+  gfloat temp_buf[4];
+  gint   x;
+  gint   up_offset;
+  gint   low_offset;
+  gint   offset = 0;
+  gint   i;
 
   for (x=0; x < result->width; x++)
     {
@@ -209,14 +216,13 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  Babl                    *format       = babl_format ("RGBA float");
-
-  GeglRectangle  rect;
-  GeglRectangle  boundary = get_effective_area (operation);
-  gint           x, y;
-  gfloat        *dst_buf, *src_buf;
+  GeglChantO              *o        = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area  = GEGL_OPERATION_AREA_FILTER (operation);
+  Babl                    *format   = babl_format ("RGBA float");
+  GeglRectangle            rect;
+  GeglRectangle            boundary = get_effective_area (operation);
+  gint                     x, y;
+  gfloat                  *dst_buf, *src_buf;
 
   rect.x      = CLAMP (result->x - op_area->left, boundary.x, boundary.x +
                        boundary.width);
@@ -236,19 +242,19 @@ process (GeglOperation       *operation,
   if (o->horizontal)
     {
       for (y = result->y; y < result->y + result->height; y++)
-        if ((o->even && y%2==0) || (!o->even && y%2!=0))
+        if ((o->even && (y % 2 == 0)) || (!o->even && (y % 2 != 0)))
           de_interlace_hor (src_buf, dst_buf, result, &rect, &boundary,
-                            o->even ? 0 : 1, y, o->size);
+                            o->even ? 0 : 1,
+                            y, o->size);
     }
   else
     {
       for (x = result->x; x < result->x + result->width; x++)
-        if ((o->even && x%2==0) || (!o->even && x%2!=0))
+        if ((o->even && (x % 2 == 0)) || (!o->even && (x % 2 != 0)))
           de_interlace_ver (src_buf, dst_buf, result, &rect, &boundary,
-                            o->even ? 0 : 1, x, o->size);
-
+                            o->even ? 0 : 1,
+                            x, o->size);
     }
-
 
   gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -289,8 +295,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
-  operation_class->prepare = prepare;
+  filter_class->process                    = process;
+  operation_class->prepare                 = prepare;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
