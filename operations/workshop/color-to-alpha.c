@@ -89,7 +89,6 @@ color_to_alpha (gfloat     *color,
   gfloat temp[4];
 
   temp[3] = src[offset + 3];
-  src[offset+3] = temp[3];
 
   for (i=0; i<3; i++)
     {
