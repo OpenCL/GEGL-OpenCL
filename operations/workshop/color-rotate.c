@@ -63,7 +63,7 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 1.0, 0.0,
 #include <stdio.h>
 #include <math.h>
 
-#define TP (2*G_PI)
+#define TWO_PI (2 * G_PI)
 #define DEG_TO_RAD(d) (((d) * G_PI) / 180.0)
 
 static void prepare (GeglOperation *operation)
@@ -189,9 +189,9 @@ static gfloat
 angle_mod_2PI (gfloat angle)
 {
   if (angle < 0)
-    return angle + TP;
-  else if (angle > TP)
-    return angle - TP;
+    return angle + TWO_PI;
+  else if (angle > TWO_PI)
+    return angle - TWO_PI;
   else
     return angle;
 }
@@ -227,8 +227,8 @@ linear (gfloat A,
     {
       if (A<=x && x<=B)
         return C+(D-C)/(B-A)*(x-A);
-      else if (A<=x+TP && x+TP<=B)
-        return C+(D-C)/(B-A)*(x+TP-A);
+      else if (A<=x+TWO_PI && x+TWO_PI<=B)
+        return C+(D-C)/(B-A)*(x+TWO_PI-A);
       else
         return x;
     }
@@ -236,8 +236,8 @@ linear (gfloat A,
     {
       if (B<=x && x<=A)
         return C+(D-C)/(B-A)*(x-A);
-      else if (B<=x+TP && x+TP<=A)
-        return C+(D-C)/(B-A)*(x+TP-A);
+      else if (B<=x+TWO_PI && x+TWO_PI<=A)
+        return C+(D-C)/(B-A)*(x+TWO_PI-A);
       else
         return x;
     }
@@ -255,7 +255,7 @@ left_end (gint     from,
   switch (cw_ccw)
     {
     case (-1):
-      if (alpha < beta) return alpha + TP;
+      if (alpha < beta) return alpha + TWO_PI;
 
     default:
       return alpha; /* 1 */
@@ -274,7 +274,7 @@ right_end (gint     from,
   switch (cw_ccw)
     {
     case 1:
-      if (beta < alpha) return beta + TP;
+      if (beta < alpha) return beta + TWO_PI;
 
     default:
       return beta; /* -1 */
@@ -302,7 +302,7 @@ color_rotate (gfloat     *src,
         {
           if (angle_inside_slice (o->hue, o->s_fr, o->s_to, o->s_cl) <= 1)
             {
-              h = o->hue / TP;
+              h = o->hue / TWO_PI;
               s = o->saturation;
             }
           else
@@ -313,7 +313,7 @@ color_rotate (gfloat     *src,
       else
         {
           skip = TRUE;
-          hsv_to_rgb (o->hue / TP, o->saturation, v,
+          hsv_to_rgb (o->hue / TWO_PI, o->saturation, v,
                       color, color + 1, color + 2);
           color[3] = src[offset + 3];
         }
@@ -325,8 +325,8 @@ color_rotate (gfloat     *src,
                   right_end (o->s_fr, o->s_to, o->s_cl),
                   left_end (o->d_fr, o->d_to, o->d_cl),
                   right_end (o->d_fr, o->d_to, o->d_cl),
-                  h * TP);
-      h = angle_mod_2PI (h) / TP;
+                  h * TWO_PI);
+      h = angle_mod_2PI (h) / TWO_PI;
       hsv_to_rgb (h, s, v,
                   color, color + 1, color + 2);
       color[3] = src[offset + 3];
@@ -334,7 +334,6 @@ color_rotate (gfloat     *src,
 
   for (i = 0; i < 4; i++)
     src[offset + i] = color[i];
-
 }
 
 
