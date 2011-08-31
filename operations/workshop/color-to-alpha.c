@@ -91,16 +91,17 @@ color_to_alpha (gfloat     *color,
   temp[3] = src[offset + 3];
   src[offset+3] = temp[3];
 
-
   for (i=0; i<3; i++)
-    if (color[i] < 0.0001)
-      temp[i] = src[offset+i];
-    else if (src[offset+i] > color[i])
-      temp[i] = (src[offset+i] - color[i]) / (1.0 - color[i]);
-    else if (src[offset+i] < color[i])
-      temp[i] = (color[i] - src[offset+i]) / color[i];
-    else
-      temp[i] = 0.0;
+    {
+      if (color[i] < 1.e-4f)
+        temp[i] = src[offset+i];
+      else if (src[offset+i] > color[i])
+        temp[i] = (src[offset+i] - color[i]) / (1.0 - color[i]);
+      else if (src[offset+i] < color[i])
+        temp[i] = (color[i] - src[offset+i]) / color[i];
+      else
+        temp[i] = 0.0;
+    }
 
   if (temp[0] > temp[1])
     {
@@ -114,13 +115,13 @@ color_to_alpha (gfloat     *color,
   else
     src[offset+3] = temp[2];
 
-  if (src[offset+3] < 0.0001)
+  if (src[offset+3] < 1.e-4f)
     return;
 
   for (i=0; i<3; i++)
     src[offset+i] = (src[offset+i] - color[i]) / src[offset+3] + color[i];
 
-  src[offset+3] *=temp[3];
+  src[offset+3] *= temp[3];
 }
 
 
@@ -131,11 +132,10 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
-  Babl                    *format       = babl_format ("RGBA float");
-
-  gfloat *src_buf, color[4];
-  gint    x;
+  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  Babl       *format = babl_format ("RGBA float");
+  gfloat     *src_buf, color[4];
+  gint        x;
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
@@ -150,7 +150,7 @@ process (GeglOperation       *operation,
 
   g_free (src_buf);
 
-  return  TRUE;
+  return TRUE;
 }
 
 
