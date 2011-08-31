@@ -348,11 +348,10 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
-  Babl                    *format       = babl_format ("RGBA float");
-
-  gfloat *src_buf;
-  gint    x;
+  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  Babl	     *format = babl_format ("RGBA float");
+  gfloat     *src_buf;
+  gint        x;
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
