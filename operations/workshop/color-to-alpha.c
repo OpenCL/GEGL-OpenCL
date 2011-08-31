@@ -36,9 +36,6 @@ gegl_chant_color (value, _("Color"), "black",
 #include <stdio.h>
 #include <math.h>
 
-#define PRV_WIDTH      40
-#define PRV_HEIGHT     20
-
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
