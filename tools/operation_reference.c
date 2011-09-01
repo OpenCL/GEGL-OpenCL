@@ -128,7 +128,7 @@ list_properties (GType    type,
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
             {
-              gdouble default_value = G_PARAM_SPEC_INT (self[prop_no])->default_value;
+              gint default_value = G_PARAM_SPEC_INT (self[prop_no])->default_value;
               gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
               gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
 
@@ -154,9 +154,9 @@ list_properties (GType    type,
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_FLOAT))
             {
-              gdouble default_value = G_PARAM_SPEC_FLOAT (self[prop_no])->default_value;
-              gdouble min = G_PARAM_SPEC_FLOAT (self[prop_no])->minimum;
-              gdouble max = G_PARAM_SPEC_FLOAT (self[prop_no])->maximum;
+              gfloat default_value = G_PARAM_SPEC_FLOAT (self[prop_no])->default_value;
+              gfloat min = G_PARAM_SPEC_FLOAT (self[prop_no])->minimum;
+              gfloat max = G_PARAM_SPEC_FLOAT (self[prop_no])->maximum;
 
               if (default_value<-10000000)
                 g_print ("-inf ");
