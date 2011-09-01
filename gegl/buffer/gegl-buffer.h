@@ -85,7 +85,7 @@ GeglBuffer * gegl_buffer_new_for_backend (const GeglRectangle *extent,
  *
  * Returns: a GeglBuffer object.
  */
-GeglBuffer*     gegl_buffer_open              (const gchar         *path);
+GeglBuffer *    gegl_buffer_open              (const gchar         *path);
 
 /**
  * gegl_buffer_save:
@@ -110,7 +110,7 @@ void            gegl_buffer_save              (GeglBuffer          *buffer,
  *
  * Returns: a #GeglBuffer object.
  */
-GeglBuffer     *gegl_buffer_load              (const gchar         *path);
+GeglBuffer *     gegl_buffer_load              (const gchar         *path);
 
 /**
  * gegl_buffer_flush:
@@ -129,7 +129,7 @@ void            gegl_buffer_flush             (GeglBuffer          *buffer);
  *
  * Create a new sub GeglBuffer, that is a view on a larger buffer.
  */
-GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
+GeglBuffer *    gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                                                const GeglRectangle *extent);
 
 /**
@@ -265,7 +265,7 @@ void            gegl_buffer_set               (GeglBuffer          *buffer,
  * Returns: the babl format used for storing pixels in the buffer.
  *
  */
-const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer);
+const Babl *    gegl_buffer_get_format        (GeglBuffer           *buffer);
 
 /**
  * gegl_buffer_clear:
@@ -307,7 +307,7 @@ void            gegl_buffer_copy              (GeglBuffer          *src,
  * lead to a buffer that shares the raster data with the original on a tile
  * by tile COW basis. This is not yet implemented
  */
-GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
+GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
 
 
 /**
@@ -373,10 +373,9 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * Create a new sampler, when you are done with the sampler, g_object_unref
  * it.
  */
-GeglSampler *
-gegl_buffer_sampler_new (GeglBuffer       *buffer,
-                         Babl             *format,
-                         GeglSamplerType   sampler_type);
+GeglSampler * gegl_buffer_sampler_new (GeglBuffer       *buffer,
+                                       Babl             *format,
+                                       GeglSamplerType   sampler_type);
 
 /**
  * gegl_sampler_get:
@@ -385,6 +384,8 @@ gegl_buffer_sampler_new (GeglBuffer       *buffer,
  * @y: y coordinate to sample
  * @scale: matrix representing extent of sampling area in source buffer.
  * @output: memory location for output data.
+ *
+ * Perform a sampling with the provided @sampler.
  */
 void  gegl_sampler_get         (GeglSampler *sampler,
                                 gdouble      x,
@@ -392,8 +393,13 @@ void  gegl_sampler_get         (GeglSampler *sampler,
                                 GeglMatrix2 *scale,
                                 void        *output);
 
-const GeglRectangle*
-gegl_sampler_get_context_rect (GeglSampler *sampler);
+/**
+ * gegl_sampler_get_context_rect:
+ * @sampler: a GeglSampler gotten from gegl_buffer_sampler_new
+ *
+ * Returns:The context rectangle of the given @sampler.
+ */
+const GeglRectangle * gegl_sampler_get_context_rect (GeglSampler *sampler);
 
 /**
  * gegl_buffer_linear_new:
@@ -406,7 +412,7 @@ gegl_sampler_get_context_rect (GeglSampler *sampler);
  *
  * Returns: a GeglBuffer that can be used as any other GeglBuffer.
  */
-GeglBuffer *gegl_buffer_linear_new           (const GeglRectangle *extent,
+GeglBuffer * gegl_buffer_linear_new          (const GeglRectangle *extent,
                                               const Babl          *format);
 
 /**
@@ -447,7 +453,7 @@ GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer       data,
  * request is compatible with the underlying data storage direct access
  * to the underlying data is provided.
  */
-gpointer       *gegl_buffer_linear_open      (GeglBuffer          *buffer,
+gpointer *      gegl_buffer_linear_open      (GeglBuffer          *buffer,
                                               const GeglRectangle *extent,
                                               gint                *rowstride,
                                               const Babl          *format);
@@ -473,7 +479,7 @@ void            gegl_buffer_linear_close     (GeglBuffer    *buffer,
  * Return the abyss extent of a buffer, this expands out to the parents extent in
  * subbuffers.
  */
-const GeglRectangle* gegl_buffer_get_abyss  (GeglBuffer           *buffer);
+const GeglRectangle * gegl_buffer_get_abyss  (GeglBuffer           *buffer);
 
 #include <gegl-buffer-iterator.h>
 
