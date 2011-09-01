@@ -102,56 +102,81 @@ list_properties (GType    type,
 
           if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
             {
-            gdouble default_value = G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value;
-            gdouble min = G_PARAM_SPEC_DOUBLE (self[prop_no])->minimum;
-            gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
+              gdouble default_value = G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value;
+              gdouble min = G_PARAM_SPEC_DOUBLE (self[prop_no])->minimum;
+              gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
 
-            if (default_value<-10000000)
-              g_print ("-inf ");
-            else if (default_value>10000000)
-              g_print ("+inf");
-            else
-              g_print ("%2.2f", default_value);
+              if (default_value<-10000000)
+                g_print ("-inf ");
+              else if (default_value>10000000)
+                g_print ("+inf");
+              else
+                g_print ("%2.2f", default_value);
 
-            g_print ("<br/>");
-            if (min<-10000000)
-              g_print ("-inf ");
-            else
-              g_print ("%2.2f", min);
-            
-            g_print ("-");
+              g_print ("<br/>");
+              if (min<-10000000)
+                g_print ("-inf ");
+              else
+                g_print ("%2.2f", min);
 
-            if (max>10000000)
-              g_print (" +inf");
-            else
-              g_print ("%2.2f", max);
+              g_print ("-");
 
+              if (max>10000000)
+                g_print (" +inf");
+              else
+                g_print ("%2.2f", max);
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
             {
-              g_print ("%i", G_PARAM_SPEC_INT (self[prop_no])->default_value);
+              gdouble default_value = G_PARAM_SPEC_INT (self[prop_no])->default_value;
+              gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
+              gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
 
-            {
-            gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
-            gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
-            g_print ("<br/>");
-            if (min<-10000000)
-              g_print ("-inf ");
-            else
-              g_print ("%i", min);
-            
-            g_print ("-");
+              if (default_value<-10000000)
+                g_print ("-inf ");
+              else if (default_value>10000000)
+                g_print ("+inf");
+              else
+                g_print ("%i", default_value);
 
-            if (max>10000000)
-              g_print (" +inf");
-            else
-              g_print ("%i", max);
-            }
+              g_print ("<br/>");
+              if (min<-10000000)
+                g_print ("-inf ");
+              else
+                g_print ("%i", min);
 
+              g_print ("-");
+
+              if (max>10000000)
+                g_print (" +inf");
+              else
+                g_print ("%i", max);
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_FLOAT))
             {
-              g_print ("%2.2f", G_PARAM_SPEC_FLOAT (self[prop_no])->default_value);
+              gdouble default_value = G_PARAM_SPEC_FLOAT (self[prop_no])->default_value;
+              gdouble min = G_PARAM_SPEC_FLOAT (self[prop_no])->minimum;
+              gdouble max = G_PARAM_SPEC_FLOAT (self[prop_no])->maximum;
+
+              if (default_value<-10000000)
+                g_print ("-inf ");
+              else if (default_value>10000000)
+                g_print ("+inf");
+              else
+                g_print ("%2.2f", default_value);
+
+              g_print ("<br/>");
+              if (min<-10000000)
+                g_print ("-inf ");
+              else
+                g_print ("%2.2f", min);
+
+              g_print ("-");
+
+              if (max>10000000)
+                g_print (" +inf");
+              else
+                g_print ("%2.2f", max);
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
             {
