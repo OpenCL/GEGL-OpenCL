@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
+#include <stdlib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -73,9 +74,25 @@ process (GeglOperation       *operation,
     {
       gint nx,ny;
 
-      nx = (x - o->x_offset)/o->x;
-      ny = (y - o->y_offset)/o->y;
-      /* shift negative cell indices, because / rounds towards zero. */
+      if ((x - o->x_offset) < 0)
+        {
+          nx = div (x - o->x_offset + 1, o->x).quot;
+        }
+      else
+        {
+          nx = div (x - o->x_offset, o->x).quot;
+        }
+
+      if ((y - o->y_offset) < 0)
+        {
+          ny = div (y - o->y_offset + 1, o->y).quot;
+        }
+      else
+        {
+          ny = div (y - o->y_offset, o->y).quot;
+        }
+
+      /* shift negative cell indices */
       nx -= (x - o->x_offset) < 0 ? 1 : 0;
       ny -= (y - o->y_offset) < 0 ? 1 : 0;
 
