@@ -16,6 +16,12 @@
  * Copyright 2006 Øyvind Kolås
  */
 
+/* GeglOperationPointRender
+ * The point-render base class is a specialized source operation, where the render is done
+ * in small piece to lower the need to do copies. It's dedicated to operation which may be
+ * rendered in pieces, like pattern generation.
+ */
+
 #ifndef __GEGL_OPERATION_POINT_RENDER_H__
 #define __GEGL_OPERATION_POINT_RENDER_H__
 
