@@ -33,7 +33,7 @@ endif
 
 if HAVE_LENSFUN
 ops += lens-correct.la
-lens_correct_la_SOURCES = lens-correct.c lens-correct.h
+lens_correct_la_SOURCES = lens-correct.c
 lens_correct_la_LIBADD = $(op_libs) $(LENSFUN_LIBS)
 lens_correct_la_CFLAGS = $(AM_CFLAGS) $(LENSFUN_CFLAGS)
 endif
