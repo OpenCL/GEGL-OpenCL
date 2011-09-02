@@ -185,6 +185,12 @@ main (gint    argc,
 
   gegl = gegl_node_new_from_xml (script, path_root);
 
+  if (!gegl)
+    {
+      g_print ("Invalid graph, abort.\n");
+      return;
+    }
+
   if (o->rest)
     {
       GeglNode *proxy;
