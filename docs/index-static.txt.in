@@ -207,7 +207,7 @@ The bindings for use of GEGL in other programming languages than C are
 co-hosted with GEGL in GNOME git but are not part of the regular GEGL
 distribution. The following language bindings are currently available:
 
-http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#], http://
+http://gegl.org/gegl-vala[vala], http://gegl.org/gegl-sharp/[C#],
 http://gegl.org/pygegl/[Python] and http://gegl.org/rgegl/[Ruby].
 
 
