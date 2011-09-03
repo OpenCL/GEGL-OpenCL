@@ -87,7 +87,7 @@ calc_block_colors (gfloat* block_colors,
               for (i=px; i<px+xsize; ++i)
                 {
                   for (c=0; c<4; ++c)
-                    col[c] += input[(py*line_width + px)*4 + c];
+                    col[c] += input[(j*line_width + i)*4 + c];
                 }
             }
           for (c=0; c<4; ++c)
