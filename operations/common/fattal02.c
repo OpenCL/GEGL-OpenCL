@@ -823,10 +823,10 @@ fattal02_gaussian_blur (const gfloat        *input,
           output[x + y * width] = p / 4.0f;
         }
 
-      output[x +           0  * width] = (3 * output[x +           0  * width] +
-                                              output[x +           1  * width]) / 4.0f;
-      output[x + (height - 1) * width] = (3 * output[x + (height - 1) * width] +
-                                              output[x + (height - 2) * width]) / 4.0f;
+      output[x +           0  * width] = (3 * temp[x +           0  * width] +
+                                              temp[x +           1  * width]) / 4.0f;
+      output[x + (height - 1) * width] = (3 * temp[x + (height - 1) * width] +
+                                              temp[x + (height - 2) * width]) / 4.0f;
     }
 
   g_free (temp);
