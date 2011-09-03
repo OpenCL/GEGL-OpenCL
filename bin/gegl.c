@@ -218,12 +218,12 @@ main (gint    argc,
         {
           GeglNode *output = gegl_node_new_child (gegl,
                                                   "operation", "gegl:display",
-                                                  "window-title", o->file,
+                                                  o->file ? "window-title" : NULL, o->file,
                                                   NULL);
           gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
-          g_object_unref (output);
           g_main_loop_run (g_main_loop_new (NULL, TRUE));
+          g_object_unref (output);
         }
         break;
       case GEGL_RUN_MODE_XML:
