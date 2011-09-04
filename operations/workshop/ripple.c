@@ -37,7 +37,7 @@ gegl_chant_double (angle, _("Angle"), -180.0, 180.0, 0.0,
                    _("Angle in degree"))
 
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
-                 GEGL_SAMPLER_CUBIC, _("Sampler used internaly"))
+                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
 
 gegl_chant_enum (wave_type, _("Wave type"), GeglRippleWaveType, GEGL_RIPPLE_WAVE_TYPE,
                  GEGl_RIPPLE_WAVE_TYPE_SINE, _("Type of wave"))
