@@ -26,6 +26,21 @@ gegl_sampler_type_get_type (void)
   return etype;
 }
 
+GType
+gegl_ripple_wave_type_get_type (void)
+{
+  static GType etype = 0;
+  if (etype == 0) {
+    static const GEnumValue values[] = {
+      { GEGl_RIPPLE_WAVE_TYPE_SINE, "sine", "sine" },
+      { GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH, "sawtooth", "sawtooth" },
+      { 0, NULL, NULL }
+    };
+    etype = g_enum_register_static ("GeglRippleWaveType", values);
+  }
+  return etype;
+}
+
 
 /* Generated data ends here */
 

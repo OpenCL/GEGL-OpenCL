@@ -41,6 +41,18 @@ typedef enum {
 GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;
 #define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
 
+/*
+ * Operation specific enum
+ */
+
+typedef enum {
+  GEGl_RIPPLE_WAVE_TYPE_SINE,
+  GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH
+} GeglRippleWaveType;
+GType gegl_ripple_wave_type_get_type   (void) G_GNUC_CONST;
+#define GEGL_RIPPLE_WAVE_TYPE (gegl_ripple_wave_type_get_type())
+
+
 G_END_DECLS
 
 #endif /* __GEGL_ENUMS_H__ */

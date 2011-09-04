@@ -39,6 +39,9 @@ gegl_chant_double (angle, _("Angle"), -180.0, 180.0, 0.0,
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internaly"))
 
+gegl_chant_enum (wave_type, _("Wave type"), GeglRippleWaveType, GEGL_RIPPLE_WAVE_TYPE,
+                 GEGl_RIPPLE_WAVE_TYPE_SINE, _("Type of wave"))
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -47,6 +50,7 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 static void prepare (GeglOperation *operation)
 {
@@ -90,14 +94,30 @@ process (GeglOperation       *operation,
 
   while (n_pixels--)
     {
-      gdouble angle_rad = o->angle / 180.0 * G_PI;
+      gdouble shift;
+      gdouble coordsx;
+      gdouble coordsy;
+      gdouble lambda;
 
+      gdouble angle_rad = o->angle / 180.0 * G_PI;
       gdouble nx = x * cos (angle_rad) + y * sin (angle_rad);
 
-      gdouble shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
+      switch (o->wave_type)
+        {
+          case GEGl_RIPPLE_WAVE_TYPE_SINE:
+            shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
+            break;
 
-      gdouble coordsx = x + shift * sin (angle_rad);
-      gdouble coordsy = y + shift * cos (angle_rad);
+          case GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH:
+            lambda = div (nx,o->period).rem - o->phi * o->period;
+            if (lambda < 0)
+              lambda += o->period;
+            shift = o->amplitude * (fabs (((lambda / o->period) * 4) - 2) - 1);
+            break;
+        }
+
+      coordsx = x + shift * sin (angle_rad);
+      coordsy = y + shift * cos (angle_rad);
 
       gegl_sampler_get (sampler,
                         coordsx,
