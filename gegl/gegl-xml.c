@@ -982,53 +982,53 @@ add_stack (SerializeState *ss,
                 }
             }
 
-          if (!strcmp (class, "layer"))
+          if (class)
             {
-              serialize_layer (ss, indent, iter);
-            }
-          else
-            {
-              if (aux &&
-                  gegl_pad_get_connected_to (aux))
+              if (!strcmp (class, "layer"))
                 {
-                  GeglPad  *source_pad;
-                  GeglNode *source_node;
-                  source_pad  = gegl_pad_get_connected_to (aux);
-                  source_node = gegl_pad_get_node (source_pad);
-                  {
-                    GeglNode *graph = g_object_get_data (G_OBJECT (source_node),
-                                                         "graph");
-                    if (graph)
-                      source_node = graph;
-                  }
-                  ind; g_string_append (ss->buf, "<node");
-
-                  {
-                    gchar *class;
-                    gchar *name;
-                    gegl_node_get (iter, "operation", &class,
-                                   "name", &name,
-                                   NULL);
-                    if (name[0])
-                      {
-                        xml_attr (ss->buf, "name", name);
-                      }
-                    xml_attr (ss->buf, "operation", class);
-                    if (id != NULL)
-                      xml_attr (ss->buf, "id", id);
-                    g_free (name);
-                    g_free (class);
-                  }
-
-                  g_string_append (ss->buf, ">\n");
-                  serialize_properties (ss, indent + 4, iter);
-                  add_stack (ss, indent + 4, source_node);
-
-                  ind; g_string_append (ss->buf, "</node>\n");
+                  serialize_layer (ss, indent, iter);
                 }
               else
                 {
-                  if (class)
+                  if (aux &&
+                      gegl_pad_get_connected_to (aux))
+                    {
+                      GeglPad  *source_pad;
+                      GeglNode *source_node;
+                      source_pad  = gegl_pad_get_connected_to (aux);
+                      source_node = gegl_pad_get_node (source_pad);
+                      {
+                        GeglNode *graph = g_object_get_data (G_OBJECT (source_node),
+                                                             "graph");
+                        if (graph)
+                          source_node = graph;
+                      }
+                      ind; g_string_append (ss->buf, "<node");
+
+                      {
+                        gchar *class;
+                        gchar *name;
+                        gegl_node_get (iter, "operation", &class,
+                                       "name", &name,
+                                       NULL);
+                        if (name[0])
+                          {
+                            xml_attr (ss->buf, "name", name);
+                          }
+                        xml_attr (ss->buf, "operation", class);
+                        if (id != NULL)
+                          xml_attr (ss->buf, "id", id);
+                        g_free (name);
+                        g_free (class);
+                      }
+
+                      g_string_append (ss->buf, ">\n");
+                      serialize_properties (ss, indent + 4, iter);
+                      add_stack (ss, indent + 4, source_node);
+
+                      ind; g_string_append (ss->buf, "</node>\n");
+                    }
+                  else
                     {
                       if (strcmp (class, "gegl:nop") &&
                           strcmp (class, "gegl:clone"))
