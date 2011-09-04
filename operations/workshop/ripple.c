@@ -36,6 +36,9 @@ gegl_chant_double (phi, _("Phase shift"), -1.0, 1.0, 0.0,
 gegl_chant_double (angle, _("Angle"), -180.0, 180.0, 0.0,
                    _("Angle in degree"))
 
+gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
+                 GEGL_SAMPLER_CUBIC, _("Sampler used internaly"))
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -79,10 +82,9 @@ process (GeglOperation       *operation,
 
   gfloat *out_pixel = dst_buf;
 
-  GeglSamplerType  sampler_type = gegl_sampler_type_from_string ("cubic");
-  GeglSampler     *sampler = gegl_buffer_sampler_new (input,
-                                                      babl_format ("RGBA float"),
-                                                      sampler_type);
+  GeglSampler *sampler = gegl_buffer_sampler_new (input,
+                                                  babl_format ("RGBA float"),
+                                                  o->sampler_type);
 
   gint n_pixels = result->width * result->height;
 
