@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>5</param>
+            <param name='y'>0</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>5</param>
+            <param name='height'>10</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgb(0.0000, 5.0000, 1.0000)</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:crop'>
+      <params>
+        <param name='x'>0</param>
+        <param name='y'>0</param>
+        <param name='width'>10</param>
+        <param name='height'>10</param>
+      </params>
+  </node>
+  <node operation='gegl:color'>
+      <params>
+        <param name='value'>rgb(0.0000, 5.0000, 1.0000)</param>
+      </params>
+  </node>
+</gegl>

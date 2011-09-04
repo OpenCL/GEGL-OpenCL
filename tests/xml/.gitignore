@@ -1,0 +1,9 @@
+Makefile
+Makefile.in
+*o
+.deps
+.libs
+/test-roundtrip
+/test-save
+/test-save-properties
+
