@@ -186,6 +186,12 @@ set_clone_prop_as_well:
               gegl_node_set (new, param_name, FALSE, NULL);
             }
         }
+      else if (g_type_is_a (paramspec->value_type, G_TYPE_ENUM))
+        {
+          GEnumClass *eclass = g_type_class_peek (paramspec->value_type);
+          GEnumValue *evalue = g_enum_get_value_by_nick (eclass, param_value);
+          gegl_node_set (new, param_name, evalue->value, NULL);
+        }
       else if (paramspec->value_type == GEGL_TYPE_COLOR)
         {
           GeglColor *color = g_object_new (GEGL_TYPE_COLOR,
