@@ -836,6 +836,17 @@ serialize_properties (SerializeState *ss,
               xml_param (ss, indent + 2, properties[i]->name, value);
               g_free (value);
             }
+          else if (g_type_is_a (properties[i]->value_type, G_TYPE_ENUM))
+            {
+              GEnumClass *eclass = g_type_class_peek (properties[i]->value_type);
+              GEnumValue *evalue;
+              gint value;
+
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              evalue = g_enum_get_value (eclass, value);
+
+              xml_param (ss, indent + 2, properties[i]->name, evalue->value_nick);
+            }
           else if (properties[i]->value_type == GEGL_TYPE_COLOR)
             {
               GeglColor *color;
