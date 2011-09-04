@@ -568,6 +568,11 @@ else
 fi
 AM_CONDITIONAL(HAVE_DOT, test "x$have_dot" = "xyes")
 
+#################
+# Check for Python (optional, used for introspection unittests)
+#################
+AM_PATH_PYTHON([2.5.0],, [:])
+AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
 
 #################
 # Check for Cairo
@@ -1096,6 +1101,7 @@ tests/buffer/reference/Makefile
 tests/buffer/tests/Makefile
 tests/compositions/Makefile
 tests/compositions/data/Makefile
+tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
 gegl.pc
