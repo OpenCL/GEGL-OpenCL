@@ -390,6 +390,12 @@ fi
 
 CFLAGS="$CFLAGS $MMX_EXTRA_CFLAGS $SSE_EXTRA_CFLAGS"
 
+################
+# Check for perl
+################
+
+AC_PATH_PROGS(PERL,perl5 perl perl5.005 perl5.004,perl)
+
 ########################
 # Check GObject Introspection
 ########################

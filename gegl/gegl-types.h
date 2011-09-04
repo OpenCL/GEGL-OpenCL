@@ -20,6 +20,8 @@
 #ifndef __GEGL_TYPES_H__
 #define __GEGL_TYPES_H__
 
+#include "gegl-enums.h"
+
 G_BEGIN_DECLS
 
 #define GEGL_AUTO_ROWSTRIDE 0
@@ -63,17 +65,6 @@ GType gegl_processor_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_PROCESSOR    (gegl_processor_get_type())
 #define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
 #define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
-
-typedef enum {
-  GEGL_SAMPLER_NEAREST = 0,
-  GEGL_SAMPLER_LINEAR,
-  GEGL_SAMPLER_CUBIC,
-  GEGL_SAMPLER_LANCZOS,
-  GEGL_SAMPLER_LOHALO
-} GeglSamplerType;
-GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;
-#define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
-
 
 G_END_DECLS
 
