@@ -5,5 +5,5 @@ Makefile.in
 .libs
 /test-roundtrip
 /test-save
-/test-save-properties
+/test-load
 

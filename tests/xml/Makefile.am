@@ -7,6 +7,7 @@ TESTS_ENVIRONMENT = \
 # The tests
 noinst_PROGRAMS = \
 	test-save \
+	test-load \
 	test-roundtrip
 
 TESTS = $(noinst_PROGRAMS)
