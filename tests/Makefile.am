@@ -1,4 +1,5 @@
 SUBDIRS = \
 	buffer \
 	compositions \
-	simple
+	simple \
+	xml
