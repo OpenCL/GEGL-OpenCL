@@ -11,7 +11,7 @@ if HAVE_INTROSPECTION
 # List of tests.
 TESTS = \
 	test-gegl.py \
-	test-gegl-node.p
+	test-gegl-node.py
 
 endif # HAVE_INTROSPECTION
 endif # HAVE_PYTHON
