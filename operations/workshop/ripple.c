@@ -104,15 +104,15 @@ process (GeglOperation       *operation,
 
       switch (o->wave_type)
         {
-          case GEGl_RIPPLE_WAVE_TYPE_SINE:
-            shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
-            break;
-
           case GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH:
             lambda = div (nx,o->period).rem - o->phi * o->period;
             if (lambda < 0)
               lambda += o->period;
             shift = o->amplitude * (fabs (((lambda / o->period) * 4) - 2) - 1);
+            break;
+          case GEGl_RIPPLE_WAVE_TYPE_SINE:
+          default:
+            shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
             break;
         }
 
