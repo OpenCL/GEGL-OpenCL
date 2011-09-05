@@ -7,11 +7,11 @@ TESTS_ENVIRONMENT = \
 
 if HAVE_PYTHON
 if HAVE_INTROSPECTION
-
+if HAVE_PYGOBJECT
 # List of tests.
 TESTS = \
 	test-gegl.py \
 	test-gegl-node.py
-
+endif # HAVE_PYGOBJECT
 endif # HAVE_INTROSPECTION
 endif # HAVE_PYTHON

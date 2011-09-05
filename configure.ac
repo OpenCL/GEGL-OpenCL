@@ -402,6 +402,13 @@ AC_PATH_PROGS(PERL,perl5 perl perl5.005 perl5.004,perl)
 GOBJECT_INTROSPECTION_CHECK([0.6.7])
 
 ########################
+# Check PyGObject
+########################
+have_pygobject="no"
+PKG_CHECK_EXISTS(pygobject-2.0 >= 2.26, have_pygobject="yes")
+AM_CONDITIONAL(HAVE_PYGOBJECT, test "$have_pygobject" = "yes")
+
+########################
 # Check Vala
 ########################
 
