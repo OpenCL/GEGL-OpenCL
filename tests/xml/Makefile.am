@@ -12,6 +12,9 @@ noinst_PROGRAMS = \
 
 TESTS = $(noinst_PROGRAMS)
 
+# Included directly in other c files so it needs to be disted
+EXTRA_DIST = common.c
+
 # Common CPPFLAGS
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
