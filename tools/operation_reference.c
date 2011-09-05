@@ -237,7 +237,7 @@ list_properties (GType    type,
 
 static gchar *html_top = "<html>\n<head>\n<title>GEGL operations</title>\n<link rel='shortcut icon' href='images/gegl.ico'/>\n<style type='text/css'>\n@import url(gegl.css);\ndiv#toc ul { font-size:70%; }\n"
 ".category { margin-bottom: 2em; }\n"
-".category a {\n  display: block;\n  width: 10em;\n  height: 1.2em;\n  float: left;\n  text-align: left;\n  font-size: 90%;\n}\n"
+".category a {\n  display: block;\n  width: 14em;\n  height: 1.2em;\n  float: left;\n  text-align: left;\n  font-size: 90%;\n}\n"
 "</style>\n</head>\n\n<body>\n<div class='paper'>\n<div class='content'>\n";
 static gchar *html_bottom = "</div>\n</div>\n</body>\n</html>\n";
 

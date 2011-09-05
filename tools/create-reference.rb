@@ -262,7 +262,7 @@ CSS="div.function{
         display: block;
         font-style: italic;
         color: #22F;
-        width: 10em;
+        width: 11em;
         float: left;
   }
   div.arg_name{
