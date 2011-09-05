@@ -141,7 +141,7 @@ endif # HAVE_INTROSPECTION
 #
 # setup autogeneration dependencies
 gen_sources = xgen-tec
-CLEANFILES = $(gen_sources)
+CLEANFILES += $(gen_sources)
 
 gegl-enums.c: $(srcdir)/gegl-enums.h
 	glib-mkenums \
