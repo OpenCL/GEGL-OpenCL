@@ -53,7 +53,6 @@ gegl_jpg_load_query_jpg (const gchar *path,
   jpeg_stdio_src (&cinfo, infile);
 
   (void) jpeg_read_header (&cinfo, TRUE);
-  (void) jpeg_start_decompress (&cinfo);
 
   if (cinfo.output_components != 3)
     {
@@ -63,9 +62,9 @@ gegl_jpg_load_query_jpg (const gchar *path,
     }
 
   if (width)
-    *width = cinfo.output_width;
+    *width = cinfo.image_width;
   if (height)
-    *height = cinfo.output_height;
+    *height = cinfo.image_height;
 
   jpeg_destroy_decompress (&cinfo);
 
