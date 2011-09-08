@@ -36,9 +36,12 @@ png_save_la_CFLAGS = $(AM_CFLAGS) $(PNG_CFLAGS)
 endif
 
 if HAVE_JPEG
-ops += jpg-load.la
+ops += jpg-load.la jpg-save.la
 jpg_load_la_SOURCES = jpg-load.c
 jpg_load_la_LIBADD = $(op_libs) $(LIBJPEG)
+
+jpg_save_la_SOURCES = jpg-save.c
+jpg_save_la_LIBADD = $(op_libs) $(LIBJPEG)
 endif
 
 if HAVE_CAIRO
