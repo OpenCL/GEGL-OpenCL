@@ -90,6 +90,18 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   if (progressive)
     jpeg_simple_progression (&cinfo);
 
+  /* Use 1x1,1x1,1x1 MCUs and no subsampling */
+  cinfo.comp_info[0].h_samp_factor = 1;
+  cinfo.comp_info[0].v_samp_factor = 1;
+  cinfo.comp_info[1].h_samp_factor = 1;
+  cinfo.comp_info[1].v_samp_factor = 1;
+  cinfo.comp_info[2].h_samp_factor = 1;
+  cinfo.comp_info[2].v_samp_factor = 1;
+
+  /* No restart markers */
+  cinfo.restart_interval = 0;
+  cinfo.restart_in_rows = 0;
+
   jpeg_start_compress (&cinfo, TRUE);
 
   row_stride = width * 3;
