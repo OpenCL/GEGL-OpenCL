@@ -106,6 +106,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   }
 
   jpeg_finish_compress (&cinfo);
+  jpeg_destroy_compress (&cinfo);
 
   g_free (row_pointer[0]);
 
