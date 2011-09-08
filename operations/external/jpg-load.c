@@ -54,13 +54,6 @@ gegl_jpg_load_query_jpg (const gchar *path,
 
   (void) jpeg_read_header (&cinfo, TRUE);
 
-  if (cinfo.output_components != 3)
-    {
-      g_warning ("attempted to load non RGB JPEG");
-      jpeg_destroy_decompress (&cinfo);
-      return -1;
-    }
-
   if (width)
     *width = cinfo.image_width;
   if (height)
