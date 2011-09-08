@@ -91,9 +91,11 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   (void) jpeg_read_header (&cinfo, TRUE);
   (void) jpeg_start_decompress (&cinfo);
 
-  if (cinfo.output_components != 3)
+  if ((cinfo.output_components != 1) &&
+      (cinfo.output_components != 3))
     {
-      g_warning ("attempted to load non RGB JPEG");
+      g_warning ("attempted to load unsupported JPEG (components=%d)",
+                 cinfo.output_components);
       jpeg_destroy_decompress (&cinfo);
       return -1;
     }
@@ -117,8 +119,20 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
       rect.height = 1;
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
-      gegl_buffer_set (gegl_buffer, &rect, babl_format ("R'G'B' u8"), buffer[0],
-                       GEGL_AUTO_ROWSTRIDE);
+
+      switch (cinfo.output_components)
+        {
+        case 1:
+          gegl_buffer_set (gegl_buffer, &rect,
+                           babl_format ("Y' u8"), buffer[0],
+                           GEGL_AUTO_ROWSTRIDE);
+          break;
+        case 3:
+        default:
+          gegl_buffer_set (gegl_buffer, &rect,
+                           babl_format ("R'G'B' u8"), buffer[0],
+                           GEGL_AUTO_ROWSTRIDE);
+	}
     }
   jpeg_destroy_decompress (&cinfo);
   fclose (infile);
