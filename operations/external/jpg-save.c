@@ -105,7 +105,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   jpeg_start_compress (&cinfo, TRUE);
 
   row_stride = width * 3;
-  row_pointer[0] = g_malloc0 (row_stride);
+  row_pointer[0] = g_malloc (row_stride);
 
   while (cinfo.next_scanline < cinfo.image_height) {
     GeglRectangle rect;
