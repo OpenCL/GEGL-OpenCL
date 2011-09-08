@@ -149,7 +149,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
     png_set_swap (png);
 #endif
 
-  pixels = g_malloc0 (row_stride);
+  pixels = g_malloc (row_stride);
 
   for (i=0; i< height; i++)
     {
