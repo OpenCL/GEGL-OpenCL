@@ -26,6 +26,8 @@ gegl_chant_string (path, _("File"), "",
                    _("Target path and filename, use '-' for stdout."))
 gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
                    _("JPEG compression quality (between 1 and 100)"))
+gegl_chant_int    (smoothing, _("Smoothing"),
+                   0, 100, 0, _("Smoothing factor from 1 to 100; 0 disables smoothing"))
 gegl_chant_boolean (optimize, _("Optimize"), TRUE,
                     _("Use optimized huffman tables"))
 gegl_chant_boolean (progressive, _("Progressive"), TRUE,
@@ -44,6 +46,7 @@ static gint
 gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
                         const gchar *path,
                         gint         quality,
+                        gint         smoothing,
                         gboolean     optimize,
                         gboolean     progressive,
                         gint         src_x,
@@ -82,6 +85,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
 
   jpeg_set_defaults (&cinfo);
   jpeg_set_quality (&cinfo, quality, TRUE);
+  cinfo.smoothing_factor = smoothing;
   cinfo.optimize_coding = optimize;
   if (progressive)
     jpeg_simple_progression (&cinfo);
@@ -123,7 +127,7 @@ gegl_jpg_save_process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  gegl_buffer_export_jpg (input, o->path, o->quality,
+  gegl_buffer_export_jpg (input, o->path, o->quality, o->smoothing,
                           o->optimize, o->progressive,
                           result->x, result->y,
                           result->width, result->height);
