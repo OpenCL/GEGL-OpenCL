@@ -303,9 +303,13 @@ process (GeglOperation       *operation,
               break;
 
             case 8:
-            default:
               gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"),
                                data_b, GEGL_AUTO_ROWSTRIDE);
+	      break;
+
+            default:
+              g_warning ("%s: Programmer stupidity error", G_STRLOC);
+              b = TRUE;
             }
         }
 
