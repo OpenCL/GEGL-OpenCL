@@ -59,59 +59,59 @@ query_jp2 (const gchar   *path,
     {
       in = jas_stream_fopen (path, "rb");
       if (!in)
-	{
-	  g_warning ("Unable to open image file '%s'", path);
-	  break;
-	}
+        {
+          g_warning ("Unable to open image file '%s'", path);
+          break;
+        }
 
       image_fmt = jas_image_getfmt (in);
       if (image_fmt < 0)
-	{
-	  g_warning (_("Unknown JPEG-2000 image format in '%s'"), path);
+        {
+          g_warning (_("Unknown JPEG-2000 image format in '%s'"), path);
           break;
-	}
+        }
 
       image = jas_image_decode (in, image_fmt, NULL);
       if (!image)
-	{
-	  g_warning (_("Unable to open JPEG-2000 image in '%s'"), path);
-	  break;
-	}
+        {
+          g_warning (_("Unable to open JPEG-2000 image in '%s'"), path);
+          break;
+        }
 
       output_profile = jas_cmprof_createfromclrspc (JAS_CLRSPC_SRGB);
       if (!output_profile)
         {
-	  g_warning (_("Unable to create output color profile for '%s'"), path);
-	  break;
+          g_warning (_("Unable to create output color profile for '%s'"), path);
+          break;
         }
 
       cimage = jas_image_chclrspc (image, output_profile,
                                    JAS_CMXFORM_INTENT_PER);
       if (!cimage)
         {
-	  g_warning (_("Unable to convert image to sRGB color space "
+          g_warning (_("Unable to convert image to sRGB color space "
                        "when processing '%s'"), path);
-	  break;
+          break;
         }
 
       numcmpts = jas_image_numcmpts (cimage);
       if (numcmpts != 3)
-	{
-	  g_warning (_("Unsupported non-RGB JPEG-2000 file with "
+        {
+          g_warning (_("Unsupported non-RGB JPEG-2000 file with "
                        "%d components in '%s'"), numcmpts, path);
-	  break;
-	}
+          break;
+        }
 
       *width = jas_image_cmptwidth (cimage, 0);
       *height = jas_image_cmptheight (cimage, 0);
       *depth = jas_image_cmptprec (cimage, 0);
 
       if ((*depth != 8) && (*depth != 16))
-	{
-	  g_warning (_("Unsupported JPEG-2000 file with depth %d in '%s'"),
+        {
+          g_warning (_("Unsupported JPEG-2000 file with depth %d in '%s'"),
                      *depth, path);
-	  break;
-	}
+          break;
+        }
 
       b = FALSE;
 
@@ -350,12 +350,12 @@ get_bounding_box (GeglOperation * operation)
     {
     case 16:
       gegl_operation_set_format (operation, "output",
-				 babl_format ("R'G'B' u16"));
+                                 babl_format ("R'G'B' u16"));
       break;
 
     case 8:
       gegl_operation_set_format (operation, "output",
-				 babl_format ("R'G'B' u8"));
+                                 babl_format ("R'G'B' u8"));
       break;
 
     default:
