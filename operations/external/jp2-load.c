@@ -267,18 +267,18 @@ process (GeglOperation       *operation,
             case 16:
               for (col = 0; col < width; col++)
                 {
-                  data_s[col]     = (gushort) jrow[0][col];
-                  data_s[col + 1] = (gushort) jrow[1][col];
-                  data_s[col + 2] = (gushort) jrow[2][col];
+                  data_s[col * 3]     = (gushort) jrow[0][col];
+                  data_s[col * 3 + 1] = (gushort) jrow[1][col];
+                  data_s[col * 3 + 2] = (gushort) jrow[2][col];
                 }
               break;
 
             case 8:
               for (col = 0; col < width; col++)
                 {
-                  data_b[col]     = (guchar) jrow[0][col];
-                  data_b[col + 1] = (guchar) jrow[1][col];
-                  data_b[col + 2] = (guchar) jrow[2][col];
+                  data_b[col * 3]     = (guchar) jrow[0][col];
+                  data_b[col * 3 + 1] = (guchar) jrow[1][col];
+                  data_b[col * 3 + 2] = (guchar) jrow[2][col];
                 }
               break;
 
