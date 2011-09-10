@@ -188,11 +188,13 @@ process (GeglOperation       *operation,
 
   width = height = depth = 0;
 
-  if (!query_jp2 (o->path, &width, &height, &depth, &image))
-    return FALSE;
+  jas_init ();
 
   ret = FALSE;
   b = FALSE;
+
+  if (!query_jp2 (o->path, &width, &height, &depth, &image))
+    goto ret;
 
   do
     {
@@ -220,7 +222,7 @@ process (GeglOperation       *operation,
         }
 
       for (i = 0; i < 3; i++)
-        matrices[i] = jas_matrix_create(1, width);
+        matrices[i] = jas_matrix_create (1, width);
 
       switch (depth)
         {
@@ -234,7 +236,6 @@ process (GeglOperation       *operation,
 
         default:
           g_warning ("%s: Programmer stupidity error", G_STRLOC);
-          return FALSE;
         }
 
       for (row = 0; row < height; row++)
@@ -328,6 +329,8 @@ process (GeglOperation       *operation,
   if (image)
     jas_image_destroy (image);
 
+ ret:
+  jas_cleanup ();
   return ret;
 }
 
@@ -340,8 +343,10 @@ get_bounding_box (GeglOperation * operation)
 
   width = height = depth = 0;
 
+  jas_init ();
+
   if (!query_jp2 (o->path, &width, &height, &depth, NULL))
-    return result;
+    goto ret;
 
   result.width = width;
   result.height = height;
@@ -362,6 +367,8 @@ get_bounding_box (GeglOperation * operation)
       g_warning ("%s: Programmer stupidity error", G_STRLOC);
     }
 
+ ret:
+  jas_cleanup ();
   return result;
 }
 
