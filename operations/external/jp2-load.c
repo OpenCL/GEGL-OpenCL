@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (c) 2010 Mukund Sivaraman <muks@banu.com>
+ * Copyright (c) 2010, 2011 Mukund Sivaraman <muks@banu.com>
  */
 
 #include "config.h"
@@ -173,57 +173,23 @@ process (GeglOperation       *operation,
   GeglRectangle rect = {0,0,0,0};
   jas_image_t *image;
   gint width, height, depth;
-  gsize bpc;
-  guchar *data = NULL;
+  guchar *data_b;
+  gushort *data_s;
   gboolean ret;
   int components[3];
   jas_matrix_t *matrices[3] = {NULL, NULL, NULL};
   gint i;
   gint row;
   gboolean b;
-  gushort *ptr_s;
-  guchar *ptr_b;
 
   image = NULL;
+  data_b = NULL;
+  data_s = NULL;
+
   width = height = depth = 0;
 
   if (!query_jp2 (o->path, &width, &height, &depth, &image))
     return FALSE;
-
-  rect.height = height;
-  rect.width = width;
-
-  switch (depth)
-    {
-    case 8:
-      bpc = sizeof (guchar);
-      break;
-
-    case 16:
-      bpc = sizeof (gushort);
-      break;
-
-    default:
-      g_warning ("%s: Programmer stupidity error", G_STRLOC);
-      return FALSE;
-    }
-
-  data = (guchar *) g_malloc (width * height * 3 * bpc);
-  ptr_s = (gushort *) data;
-  ptr_b = data;
-
-  switch (depth)
-    {
-    case 16:
-      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u16"), data,
-                       GEGL_AUTO_ROWSTRIDE);
-      break;
-
-    case 8:
-    default:
-      gegl_buffer_get (output, 1.0, &rect, babl_format ("R'G'B' u8"), data,
-                       GEGL_AUTO_ROWSTRIDE);
-    }
 
   ret = FALSE;
   b = FALSE;
@@ -256,6 +222,21 @@ process (GeglOperation       *operation,
       for (i = 0; i < 3; i++)
         matrices[i] = jas_matrix_create(1, width);
 
+      switch (depth)
+        {
+        case 16:
+          data_s = (gushort *) g_malloc (width * 3 * sizeof (gushort));
+          break;
+
+        case 8:
+          data_b = (guchar *) g_malloc (width * 3 * sizeof (guchar));
+          break;
+
+        default:
+          g_warning ("%s: Programmer stupidity error", G_STRLOC);
+          return FALSE;
+        }
+
       for (row = 0; row < height; row++)
         {
           gint plane, col;
@@ -280,40 +261,55 @@ process (GeglOperation       *operation,
           for (plane = 0; plane < 3; plane++)
             jrow[plane] = jas_matrix_getref (matrices[plane], 0, 0);
 
-          for (col = 0; col < width; col++)
+          switch (depth)
             {
-              switch (depth)
+            case 16:
+              for (col = 0; col < width; col++)
                 {
-                case 16:
-                  *ptr_s++ = (gushort) jrow[0][col];
-                  *ptr_s++ = (gushort) jrow[1][col];
-                  *ptr_s++ = (gushort) jrow[2][col];
-                  break;
-
-                case 8:
-                default:
-                  *ptr_b++ = (guchar) jrow[0][col];
-                  *ptr_b++ = (guchar) jrow[1][col];
-                  *ptr_b++ = (guchar) jrow[2][col];
+                  data_s[col]     = (gushort) jrow[0][col];
+                  data_s[col + 1] = (gushort) jrow[1][col];
+                  data_s[col + 2] = (gushort) jrow[2][col];
                 }
+              break;
+
+            case 8:
+              for (col = 0; col < width; col++)
+                {
+                  data_b[col]     = (guchar) jrow[0][col];
+                  data_b[col + 1] = (guchar) jrow[1][col];
+                  data_b[col + 2] = (guchar) jrow[2][col];
+                }
+              break;
+
+            default:
+              g_warning ("%s: Programmer stupidity error", G_STRLOC);
+              b = TRUE;
+            }
+
+          if (b)
+            break;
+
+          rect.x = 0;
+          rect.y = row;
+          rect.width = width;
+          rect.height = 1;
+
+          switch (depth)
+            {
+            case 16:
+              gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"),
+                               data_s, GEGL_AUTO_ROWSTRIDE);
+              break;
+
+            case 8:
+            default:
+              gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"),
+                               data_b, GEGL_AUTO_ROWSTRIDE);
             }
         }
 
       if (b)
         break;
-
-      switch (depth)
-        {
-        case 16:
-          gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"), data,
-                           GEGL_AUTO_ROWSTRIDE);
-          break;
-
-        case 8:
-        default:
-          gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"), data,
-                           GEGL_AUTO_ROWSTRIDE);
-        }
 
       ret = TRUE;
     }
@@ -323,8 +319,11 @@ process (GeglOperation       *operation,
     if (matrices[i])
       jas_matrix_destroy (matrices[i]);
 
-  if (data)
-    g_free (data);
+  if (data_b)
+    g_free (data_b);
+
+  if (data_s)
+    g_free (data_s);
 
   if (image)
     jas_image_destroy (image);
