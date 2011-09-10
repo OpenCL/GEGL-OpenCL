@@ -32,6 +32,8 @@ gegl_chant_boolean (optimize, _("Optimize"), TRUE,
                     _("Use optimized huffman tables"))
 gegl_chant_boolean (progressive, _("Progressive"), TRUE,
                     _("Create progressive JPEG images"))
+gegl_chant_boolean (grayscale, _("Grayscale"), FALSE,
+                    _("Create a grayscale (monochrome) image"))
 
 #else
 
@@ -49,6 +51,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
                         gint         smoothing,
                         gboolean     optimize,
                         gboolean     progressive,
+                        gboolean     grayscale,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
@@ -57,8 +60,8 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   FILE *fp;
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
-  gint row_stride;
   JSAMPROW row_pointer[1];
+  Babl *format;
 
   if (!strcmp (path, "-"))
     {
@@ -80,8 +83,17 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
 
   cinfo.image_width = width;
   cinfo.image_height = height;
-  cinfo.input_components = 3;
-  cinfo.in_color_space = JCS_RGB;
+
+  if (!grayscale)
+    {
+      cinfo.input_components = 3;
+      cinfo.in_color_space = JCS_RGB;
+    }
+  else
+    {
+      cinfo.input_components = 1;
+      cinfo.in_color_space = JCS_GRAYSCALE;
+    }
 
   jpeg_set_defaults (&cinfo);
   jpeg_set_quality (&cinfo, quality, TRUE);
@@ -93,10 +105,14 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   /* Use 1x1,1x1,1x1 MCUs and no subsampling */
   cinfo.comp_info[0].h_samp_factor = 1;
   cinfo.comp_info[0].v_samp_factor = 1;
-  cinfo.comp_info[1].h_samp_factor = 1;
-  cinfo.comp_info[1].v_samp_factor = 1;
-  cinfo.comp_info[2].h_samp_factor = 1;
-  cinfo.comp_info[2].v_samp_factor = 1;
+
+  if (!grayscale)
+    {
+      cinfo.comp_info[1].h_samp_factor = 1;
+      cinfo.comp_info[1].v_samp_factor = 1;
+      cinfo.comp_info[2].h_samp_factor = 1;
+      cinfo.comp_info[2].v_samp_factor = 1;
+    }
 
   /* No restart markers */
   cinfo.restart_interval = 0;
@@ -104,8 +120,16 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
 
   jpeg_start_compress (&cinfo, TRUE);
 
-  row_stride = width * 3;
-  row_pointer[0] = g_malloc (row_stride);
+  if (!grayscale)
+    {
+      format = babl_format ("R'G'B' u8");
+      row_pointer[0] = g_malloc (width * 3);
+    }
+  else
+    {
+      format = babl_format ("Y' u8");
+      row_pointer[0] = g_malloc (width);
+    }
 
   while (cinfo.next_scanline < cinfo.image_height) {
     GeglRectangle rect;
@@ -115,7 +139,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
     rect.width = width;
     rect.height = 1;
 
-    gegl_buffer_get (gegl_buffer, 1.0, &rect, babl_format ("R'G'B' u8"),
+    gegl_buffer_get (gegl_buffer, 1.0, &rect, format,
                      row_pointer[0], GEGL_AUTO_ROWSTRIDE);
 
     jpeg_write_scanlines (&cinfo, row_pointer, 1);
@@ -140,7 +164,7 @@ gegl_jpg_save_process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gegl_buffer_export_jpg (input, o->path, o->quality, o->smoothing,
-                          o->optimize, o->progressive,
+                          o->optimize, o->progressive, o->grayscale,
                           result->x, result->y,
                           result->width, result->height);
   return  TRUE;
