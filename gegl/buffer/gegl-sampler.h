@@ -38,11 +38,12 @@ typedef struct _GeglSamplerClass GeglSamplerClass;
 struct _GeglSampler
 {
   GObject       parent_instance;
-  void (* get) (GeglSampler *self,
-                gdouble      x,
-                gdouble      y,
-                GeglMatrix2 *scale,
-                void        *output);
+  void (* get) (GeglSampler     *self,
+                gdouble          x,
+                gdouble          y,
+                GeglMatrix2     *scale,
+                void            *output,
+                GeglAbyssPolicy  repeat_mode);
   /* we cache the getter in the instance, (being able to return the
      function pointer itself and cache it outside the calling loop
      would be even quicker.
@@ -66,14 +67,15 @@ struct _GeglSamplerClass
 {
   GObjectClass  parent_class;
 
-  void (* prepare)   (GeglSampler *self);
-  void (* get)       (GeglSampler *self,
-                      gdouble      x,
-                      gdouble      y,
-                      GeglMatrix2 *scale,
-                      void        *output);
- void  (*set_buffer) (GeglSampler  *self,
-                      GeglBuffer   *buffer);
+  void (* prepare)   (GeglSampler     *self);
+  void (* get)       (GeglSampler     *self,
+                      gdouble          x,
+                      gdouble          y,
+                      GeglMatrix2     *scale,
+                      void            *output,
+                      GeglAbyssPolicy  repeat_mode);
+ void  (*set_buffer) (GeglSampler     *self,
+                      GeglBuffer      *buffer);
 
  gpointer       padding[8]; /* eat from the padding if adding to the struct */
 };
@@ -99,10 +101,9 @@ gfloat * gegl_sampler_get_from_mipmap (GeglSampler *sampler,
                                        gint         x,
                                        gint         y,
                                        gint         level);
-gfloat *
-gegl_sampler_get_ptr (GeglSampler         *sampler,
-                      gint                 x,
-                      gint                 y);
+gfloat * gegl_sampler_get_ptr         (GeglSampler *sampler,
+                                       gint         x,
+                                       gint         y);
 
 G_END_DECLS
 

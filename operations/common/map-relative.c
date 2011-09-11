@@ -109,7 +109,8 @@ process (GeglOperation       *operation,
                 {
                   gegl_sampler_get (sampler, x+coords[0] * scaling,
                                              y+coords[1] * scaling,
-                                             NULL, out);
+                                             NULL, out,
+                                             GEGL_ABYSS_NONE);
                 }
 
               coords += 2;

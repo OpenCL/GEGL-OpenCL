@@ -71,7 +71,8 @@ process (GeglOperation       *operation,
                         x,
                         y,
                         NULL,
-                        out_pixel);
+                        out_pixel,
+                        GEGL_ABYSS_NONE);
 
       out_pixel += 4;
 

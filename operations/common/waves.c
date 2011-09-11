@@ -124,7 +124,8 @@ process (GeglOperation       *operation,
                         coordsx,
                         coordsy,
                         NULL,
-                        out_pixel);
+                        out_pixel,
+                        GEGL_ABYSS_NONE);
 
       out_pixel += 4;
 

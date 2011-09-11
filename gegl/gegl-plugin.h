@@ -127,16 +127,17 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
 typedef struct
 {
   GObject       parent_instance;
-  void (* get) (GeglSampler *self,
-                gdouble      x,
-                gdouble      y,
-                GeglMatrix2 *scale,
-                void        *output);
+  void (* get) (GeglSampler    *self,
+                gdouble         x,
+                gdouble         y,
+                GeglMatrix2    *scale,
+                void           *output,
+                GeglAbyssPolicy repeat_mode);
 } SamplerMock;
 
 
-#define gegl_sampler_get(sampler,x,y,scale,dest) \
-  ((SamplerMock*)(sampler))->get((sampler),(x),(y),(scale),(dest))
+#define gegl_sampler_get(sampler,x,y,scale,dest,repeat) \
+  ((SamplerMock*)(sampler))->get((sampler),(x),(y),(scale),(dest),(repeat))
 
 #include <glib-object.h>
 #include <babl/babl.h>

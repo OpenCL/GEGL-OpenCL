@@ -66,7 +66,8 @@ static void gegl_sampler_linear_get (GeglSampler* restrict self,
                                      const gdouble         x,
                                      const gdouble         y,
                                      GeglMatrix2          *scale,
-                                     void*        restrict output);
+                                     void*        restrict output,
+                                     GeglAbyssPolicy       repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerLinear, gegl_sampler_linear, GEGL_TYPE_SAMPLER)
 
@@ -93,7 +94,8 @@ gegl_sampler_linear_get (GeglSampler* restrict self,
                          const gdouble         absolute_x,
                          const gdouble         absolute_y,
                          GeglMatrix2          *scale,
-                         void*        restrict output)
+                         void*        restrict output,
+                         GeglAbyssPolicy       repeat_mode)
 {
   const gint pixels_per_buffer_row = 64;
   const gint channels = 4;

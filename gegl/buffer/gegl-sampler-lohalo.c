@@ -258,7 +258,8 @@ static void gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                      const gdouble               absolute_x,
                                      const gdouble               absolute_y,
                                            GeglMatrix2          *scale,
-                                           void*        restrict output);
+                                           void*        restrict output,
+                                           GeglAbyssPolicy       repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerLohalo, gegl_sampler_lohalo, GEGL_TYPE_SAMPLER)
 
@@ -1290,8 +1291,9 @@ static void
 gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                          const gdouble               absolute_x,
                          const gdouble               absolute_y,
-                         GeglMatrix2                *scale,
-                               void*        restrict output)
+                               GeglMatrix2          *scale,
+                               void*        restrict output,
+                               GeglAbyssPolicy       repeat_mode)
 {
   /*
    * Needed constants related to the input pixel value pointer

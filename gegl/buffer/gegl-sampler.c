@@ -57,10 +57,10 @@ static void get_property (GObject    *gobject,
                           GValue     *value,
                           GParamSpec *pspec);
 
-static void set_property (      GObject      *gobject,
-                                guint         property_id,
+static void set_property (GObject      *gobject,
+                          guint         property_id,
                           const GValue *value,
-                                GParamSpec   *pspec);
+                          GParamSpec   *pspec);
 
 static void set_buffer (GeglSampler  *self,
                         GeglBuffer   *buffer);
@@ -122,7 +122,7 @@ gegl_sampler_get (GeglSampler   *self,
                   void          *output,
                   GeglAbyssPolicy repeat_mode)
 {
-  self->get (self, x, y, scale, output);
+  self->get (self, x, y, scale, output, repeat_mode);
 }
 
 void

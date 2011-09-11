@@ -37,22 +37,23 @@ enum
 };
 
 static void      gegl_sampler_cubic_finalize (GObject      *gobject);
-static void      gegl_sampler_cubic_get (GeglSampler  *sampler,
-                                         gdouble       x,
-                                         gdouble       y,
-                                         GeglMatrix2  *scale,
-                                         void         *output);
-static void      get_property           (GObject      *gobject,
-                                         guint         prop_id,
-                                         GValue       *value,
-                                         GParamSpec   *pspec);
-static void      set_property           (GObject      *gobject,
-                                         guint         prop_id,
-                                         const GValue *value,
-                                         GParamSpec   *pspec);
-static inline gfloat cubicKernel       (gfloat        x,
-                                        gfloat        b,
-                                        gfloat        c);
+static void      gegl_sampler_cubic_get (GeglSampler     *sampler,
+                                         gdouble          x,
+                                         gdouble          y,
+                                         GeglMatrix2     *scale,
+                                         void            *output,
+                                         GeglAbyssPolicy  repeat_mode);
+static void      get_property           (GObject         *gobject,
+                                         guint            prop_id,
+                                         GValue          *value,
+                                         GParamSpec      *pspec);
+static void      set_property           (GObject         *gobject,
+                                         guint            prop_id,
+                                         const GValue    *value,
+                                         GParamSpec      *pspec);
+static inline gfloat cubicKernel        (gfloat           x,
+                                         gfloat           b,
+                                         gfloat           c);
 
 
 G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
@@ -133,11 +134,12 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
 }
 
 void
-gegl_sampler_cubic_get (GeglSampler *self,
-                        gdouble      x,
-                        gdouble      y,
-                        GeglMatrix2 *scale,
-                        void        *output)
+gegl_sampler_cubic_get (GeglSampler     *self,
+                        gdouble          x,
+                        gdouble          y,
+                        GeglMatrix2     *scale,
+                        void            *output,
+                        GeglAbyssPolicy  repeat_mode)
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
   GeglRectangle     context_rect;

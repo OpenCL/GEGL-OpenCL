@@ -708,7 +708,7 @@ transform_affine (GeglBuffer  *dest,
 
           for (x = roi->width; x--;)
             {
-              gegl_sampler_get (sampler, u_float/w_float, v_float/w_float, &inverse_jacobian, dest_ptr);
+              gegl_sampler_get (sampler, u_float/w_float, v_float/w_float, &inverse_jacobian, dest_ptr, GEGL_ABYSS_NONE);
               dest_ptr+=4;
               u_float += inverse.coeff [0][0];
               v_float += inverse.coeff [1][0];
@@ -792,7 +792,7 @@ transform_generic (GeglBuffer  *dest,
               inverse_jacobian.coeff[1][0] = (inverse.coeff[1][0] - inverse.coeff[2][0] * v) * w_recip;
               inverse_jacobian.coeff[1][1] = (inverse.coeff[1][1] - inverse.coeff[2][1] * v) * w_recip;
 
-              gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr);
+              gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr, GEGL_ABYSS_NONE);
               dest_ptr+=4;
 
               u_float += inverse.coeff [0][0];
