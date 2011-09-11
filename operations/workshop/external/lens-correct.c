@@ -351,12 +351,13 @@ lens_distort_newl (gfloat              *src_buf,
   gint   tmpx, tmpy, x, y, rgb;
   gint   offset;
 
-  ChannelCorrectionModel ccm[3];
+  ChannelCorrectionModel ccm[4];
 
   /* Compute each dst pixel in turn and store into dst buffer. */
   ccm[0] = lens->red;
   ccm[1] = lens->green;
   ccm[2] = lens->blue;
+  ccm[3] = lens->alpha;
 
   for (rgb = 0; rgb < 4; rgb++)
     {
