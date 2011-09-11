@@ -159,7 +159,7 @@ gegl_sampler_cubic_get (GeglSampler     *self,
   context_rect = self->context_rect[0];
   dx = (gint) x;
   dy = (gint) y;
-  sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
+  sampler_bptr = gegl_sampler_get_ptr (self, dx, dy, repeat_mode);
 
      {
        for (v=dy+context_rect.y, i=0; v < dy+context_rect.y+context_rect.height ; v++)

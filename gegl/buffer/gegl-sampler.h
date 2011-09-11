@@ -94,16 +94,19 @@ void  gegl_sampler_get         (GeglSampler   *self,
                                 void          *output,
                                 GeglAbyssPolicy repeat_mode);
 
-gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
-                                       gint         x,
-                                       gint         y);
-gfloat * gegl_sampler_get_from_mipmap (GeglSampler *sampler,
-                                       gint         x,
-                                       gint         y,
-                                       gint         level);
-gfloat * gegl_sampler_get_ptr         (GeglSampler *sampler,
-                                       gint         x,
-                                       gint         y);
+gfloat * gegl_sampler_get_from_buffer (GeglSampler *const sampler,
+                                       const gint         x,
+                                       const gint         y,
+                                       GeglAbyssPolicy    repeat_mode);
+gfloat * gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
+                                       const gint         x,
+                                       const gint         y,
+                                       const gint         level,
+                                       GeglAbyssPolicy    repeat_mode);
+gfloat * gegl_sampler_get_ptr         (GeglSampler *const sampler,
+                                       const gint         x,
+                                       const gint         y,
+                                       GeglAbyssPolicy    repeat_mode);
 
 G_END_DECLS
 

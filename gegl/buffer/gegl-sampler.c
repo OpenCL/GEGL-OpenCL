@@ -206,7 +206,8 @@ dispose (GObject *gobject)
 gfloat *
 gegl_sampler_get_ptr (GeglSampler *const sampler,
                       const gint         x,
-                      const gint         y)
+                      const gint         y,
+                      GeglAbyssPolicy    repeat_mode)
 {
   guchar *buffer_ptr;
   gint    dx;
@@ -282,7 +283,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE,
-                       GEGL_ABYSS_NONE);
+                       repeat_mode);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
     }
@@ -298,7 +299,8 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
 gfloat *
 gegl_sampler_get_from_buffer (GeglSampler *const sampler,
                               const gint         x,
-                              const gint         y)
+                              const gint         y,
+                              GeglAbyssPolicy    repeat_mode)
 {
   guchar *buffer_ptr;
   gint    dx;
@@ -357,7 +359,7 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
                        GEGL_AUTO_ROWSTRIDE,
-                       GEGL_ABYSS_NONE);
+                       repeat_mode);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
     }
@@ -374,7 +376,8 @@ gfloat *
 gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
                               const gint         x,
                               const gint         y,
-                              const gint         level)
+                              const gint         level,
+                              GeglAbyssPolicy    repeat_mode)
 {
   guchar *buffer_ptr;
   gint    dx;
@@ -453,7 +456,7 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[level],
                        GEGL_AUTO_ROWSTRIDE,
-                       GEGL_ABYSS_NONE);
+                       repeat_mode);
 
       sampler->sampler_rectangle[level] = fetch_rectangle;
     }

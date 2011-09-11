@@ -1059,7 +1059,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  const Babl          *format,
                  gpointer             dest_buf,
                  gint                 rowstride,
-                 GeglAbyssPolicy       repeat_mode)
+                 GeglAbyssPolicy      repeat_mode)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride);

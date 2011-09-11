@@ -69,6 +69,6 @@ gegl_sampler_nearest_get (GeglSampler    *self,
                           GeglAbyssPolicy repeat_mode)
 {
   gfloat             *sampler_bptr;
-  sampler_bptr = gegl_sampler_get_from_buffer (self, (gint)x, (gint)y);
+  sampler_bptr = gegl_sampler_get_from_buffer (self, (gint)x, (gint)y, repeat_mode);
   babl_process (self->fish, sampler_bptr, output, 1);
 }

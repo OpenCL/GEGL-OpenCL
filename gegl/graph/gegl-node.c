@@ -1062,7 +1062,7 @@ gegl_node_blit (GeglNode            *self,
         {
           if (destination_buf)
             {
-              gegl_buffer_get (buffer, 1.0, roi, format, destination_buf, rowstride);
+              gegl_buffer_get (buffer, 1.0, roi, format, destination_buf, rowstride, GEGL_REPEAT_MODE_ZERO);
             }
 
           if (scale != 1.0)

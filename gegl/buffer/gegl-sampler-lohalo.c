@@ -1317,7 +1317,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
    * (level "0"), the one with scale=1.0.
    */
   const gfloat* restrict input_bptr =
-    (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0);
+    (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0, repeat_mode);
 
   /*
    * (x_0,y_0) is the relative position of the sampling location
@@ -2263,7 +2263,7 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  * Get pointer to mipmap level 1 data:
                  */
                 const gfloat* restrict input_bptr_1 =
-                 (gfloat*) gegl_sampler_get_from_mipmap (self, ix_1, iy_1, 1);
+                 (gfloat*) gegl_sampler_get_from_mipmap (self, ix_1, iy_1, 1, repeat_mode);
 
                 /*
                  * Position of the sampling location in the coordinate

@@ -122,7 +122,7 @@ gegl_sampler_linear_get (GeglSampler* restrict self,
    * Point the data tile pointer to the first channel of the top_left
    * pixel value:
    */
-  const gfloat* restrict in_bptr = gegl_sampler_get_ptr (self, ix, iy);
+  const gfloat* restrict in_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
   /*
    * First bilinear weight:
