@@ -179,7 +179,7 @@ void     gegl_rectangle_dump              (const GeglRectangle *rectangle);
  */
 
 /**
- * gegl_malloc:
+ * gegl_malloc: (skip)
  * @n_bytes: the number of bytes to allocte.
  *
  * Allocates @n_bytes of memory. If n_bytes is 0 it returns NULL.

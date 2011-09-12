@@ -128,7 +128,7 @@ void           gegl_exit                 (void);
  * gegl_list_operations:
  * @n_operations_p: return location for number of operations.
  *
- * Returns an alphabetically sorted array of available operation names. The
+ * Return value: (transfer container): An alphabetically sorted array of available operation names. The
  * list should be freed with g_free after use.
  * ---
  * gchar **operations;
@@ -151,7 +151,7 @@ gchar        **gegl_list_operations         (guint *n_operations_p);
  * @operation_type: the name of the operation type we want to query to properties of.
  * @n_properties_p: return location for number of properties.
  *
- * Returns an allocated array of #GParamSpecs describing the properties
+ * Return value: (transfer container): An allocated array of #GParamSpecs describing the properties
  * of the operation available when a node has operation_type set.
  */
 GParamSpec** gegl_list_properties           (const gchar   *operation_type,
@@ -192,7 +192,7 @@ GParamSpec** gegl_list_properties           (const gchar   *operation_type,
  *
  * Create a new graph that can contain further processing nodes.
  *
- * Returns a new top level #GeglNode (which can be used as a graph). When you
+ * Return value: (transfer full): A new top level #GeglNode (which can be used as a graph). When you
  * are done using this graph instance it should be unreferenced with g_object_unref.
  * This will also free any sub nodes created from this node.
  */
@@ -213,7 +213,7 @@ GeglNode     * gegl_node_new             (void);
  * a subgraph with special middle-man routing nodes created with
  * #gegl_node_get_output_proxy and #gegl_node_get_input_proxy.
  *
- * Returns a newly created node. The node will be destroyed by the parent.
+ * Return value: (transfer none): A newly created #GeglNode. The node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
  * parent. (You may also add additional references using
  * g_object_ref/g_object_unref, but in general relying on the parents reference
@@ -479,7 +479,7 @@ void          gegl_node_process          (GeglNode      *sink_node);
  * Make the GeglNode @graph, take a reference on child. This reference
  * will be dropped when the reference count on the graph reaches zero.
  *
- * Returns the child.
+ * Return value: (transfer none): the child.
  */
 GeglNode *    gegl_node_add_child           (GeglNode      *graph,
                                              GeglNode      *child);
@@ -493,7 +493,7 @@ GeglNode *    gegl_node_add_child           (GeglNode      *graph,
  * dropped so increase the reference count before removing when reparenting
  * a child between two graphs.
  *
- * Returns the child.
+ * Return value: (transfer none): the child.
  */
 GeglNode *    gegl_node_remove_child        (GeglNode      *graph,
                                              GeglNode      *child);
@@ -504,7 +504,7 @@ GeglNode *    gegl_node_remove_child        (GeglNode      *graph,
  *
  * Returns a GeglNode that keeps a reference on a child.
  *
- * Returns the parent of a node or NULL.
+ * Return value: (transfer none): the parent of a node or NULL.
  */
 GeglNode    * gegl_node_get_parent         (GeglNode      *node);
 
@@ -531,8 +531,8 @@ GeglNode    * gegl_node_get_parent         (GeglNode      *node);
  * coordinate pair. Currently operates only on bounding boxes and not
  * pixel data.
  *
- * Returns the GeglNode providing the data ending up at @x,@y in the output
- * of @node.
+ * Return value: (transfer none): the GeglNode providing the 
+ * data ending up at @x,@y in the output of @node.
  */
 GeglNode    * gegl_node_detect           (GeglNode      *node,
                                           gint           x,
@@ -574,8 +574,8 @@ GSList      * gegl_node_get_children     (GeglNode      *node);
  * gegl_node_get_consumers:
  * @node: the node we are querying.
  * @output_pad: the output pad we want to know who uses.
- * @nodes: optional return location for array of nodes.
- * @pads: optional return location for array of pad names.
+ * @nodes: (out callee-allocates) (array zero-terminated=1) (allow-none): optional return location for array of nodes.
+ * @pads: (out callee-allocates) (array zero-terminated=1) (allow-none): optional return location for array of pad names.
  *
  * Retrieve which pads on which nodes are connected to a named output_pad,
  * and the number of connections. Both the location for the generated
@@ -631,11 +631,11 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
  * gegl_node_get_producer:
  * @node: the node we are querying
  * @input_pad_name: the input pad we want to get the producer for
- * @output_pad_name: optional pointer to a location where we can store a
+ * @output_pad_name: (allow-none): optional pointer to a location where we can store a
  *                   freshly allocated string with the name of the output pad.
  *
- * Returns the node providing data or NULL if no node is connected to the
- * input_pad.
+ * Return value: (transfer none): the node providing data
+ * or NULL if no node is connected to the input_pad.
  */
 GeglNode    * gegl_node_get_producer     (GeglNode      *node,
                                           gchar         *input_pad_name,
@@ -671,7 +671,7 @@ gboolean      gegl_node_has_pad          (GeglNode      *node,
  * a non varargs entry point for bindings as well as sometimes simpler more
  * readable code.
  *
- * Returns a newly created node. The node will be destroyed by the parent.
+ * Return value: (transfer none):a newly created node. The node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
  * parent. (You may also add additional references using
  * g_object_ref/g_object_unref, but in general relying on the parents reference
@@ -686,7 +686,7 @@ GeglNode     * gegl_node_create_child    (GeglNode      *parent,
  * gegl_node_get_property:
  * @node: the node to get a property from
  * @property_name: the name of the property to get
- * @value: pointer to a GValue where the value of the property should be stored
+ * @value: (out): pointer to a GValue where the value of the property should be stored
  *
  * This is mainly included for language bindings. Using #gegl_node_get is
  * more convenient when programming in C.
@@ -700,7 +700,7 @@ void          gegl_node_get_property     (GeglNode      *node,
  * gegl_node_set_property:
  * @node: a #GeglNode
  * @property_name: the name of the property to set
- * @value: a GValue containing the value to be set in the property.
+ * @value: (in): a GValue containing the value to be set in the property.
  *
  * This is mainly included for language bindings. Using #gegl_node_set is
  * more convenient when programming in C.
@@ -725,7 +725,7 @@ void          gegl_node_set_property     (GeglNode      *node,
  * in the XML document. The tree is connected to the "output" pad of the
  * returned node and thus can be used directly for processing.
  *
- * Returns a GeglNode containing the parsed XML as a subgraph.
+ * Return value: (transfer full): a GeglNode containing the parsed XML as a subgraph.
  */
 GeglNode    * gegl_node_new_from_xml     (const gchar   *xmldata,
                                           const gchar   *path_root);
@@ -738,7 +738,7 @@ GeglNode    * gegl_node_new_from_xml     (const gchar   *xmldata,
  * in the XML document. The tree is connected to the "output" pad of the
  * returned node and thus can be used directly for processing.
  *
- * Returns a GeglNode containing the parsed XML as a subgraph.
+ * Return value: (transfer full): a GeglNode containing the parsed XML as a subgraph.
  */
 GeglNode    * gegl_node_new_from_file    (const gchar   *path);
 
@@ -772,7 +772,7 @@ gchar       * gegl_node_to_xml           (GeglNode      *node,
  * @rectangle: the #GeglRectangle to work on or NULL to work on all available
  * data.
  *
- * Returns a new #GeglProcessor.
+ * Return value: (transfer full): a new #GeglProcessor.
  */
 GeglProcessor *gegl_node_new_processor      (GeglNode            *node,
                                              const GeglRectangle *rectangle);
@@ -839,7 +839,7 @@ GeglConfig      * gegl_config (void);
 
 
 /**
- * gegl_node:
+ * gegl_node: (skip)
  * @op_type:  the type of operation to create
  * @first_property_name:
  * @...:
@@ -852,7 +852,7 @@ GeglConfig      * gegl_config (void);
  *
  * gegl_node(op_type, [key, value, [...]], NULL, [input, [aux]])
  *
- * Returns a new Gegl node.
+ * Return value: (transfer full): a new Gegl node.
  */
 GeglNode *gegl_node (const gchar *op_type,
                      const gchar *first_property_name,
@@ -860,8 +860,8 @@ GeglNode *gegl_node (const gchar *op_type,
 
 
 /**
- * gegl_graph:
- * @node: the end result of a composition created with gegl_node()
+ * gegl_graph: (skip)
+ * @node: (transfer full): the end result of a composition created with gegl_node()
  *
  * Creates a GeglNode containing a free floating graph constructed
  * using gegl_node(). The GeglGraph adopts all the passed in nodes
@@ -870,7 +870,7 @@ GeglNode *gegl_node (const gchar *op_type,
  * gegl_graph (gegl_node ("gegl:over", NULL,
  *                        gegl_node (..), gegl_node (..)));
  *
- * Returns a GeglNode graph.
+ * Return value: (transfer full):a GeglNode graph.
  */
 GeglNode *gegl_graph (GeglNode *node);
 

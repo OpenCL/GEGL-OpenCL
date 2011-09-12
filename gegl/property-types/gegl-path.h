@@ -56,7 +56,7 @@ GType                gegl_path_get_type       (void) G_GNUC_CONST;
  * with new knot interpretations.
  */
 
-/**
+/***
  * GeglPathItem:
  *
  * A #GeglPathItem contains the type of instruction to perform as
@@ -148,7 +148,7 @@ gdouble              gegl_path_get_length     (GeglPath     *path);
  * gegl_path_get_node:
  * @path: a #GeglPath
  * @index: the node number to retrieve
- * @node: a pointer to a #GeglPathItem record to be written.
+ * @node: (out): a pointer to a #GeglPathItem record to be written.
  *
  * Retrieve the node of the path at position @pos.
  *
@@ -173,7 +173,7 @@ gchar              * gegl_path_to_string      (GeglPath    *path);
 /**
  * gegl_path_set_matrix:
  * @path: a #GeglPath
- * @matrix: a #GeglMatrix3 to copy the matrix from
+ * @matrix: (in) (transfer none): a #GeglMatrix3 to copy the matrix from
  *
  * Set the transformation matrix of the path.
  *
@@ -186,7 +186,7 @@ void                 gegl_path_set_matrix     (GeglPath    *path,
 /**
  * gegl_path_get_matrix:
  * @path: a #GeglPath
- * @matrix: a #GeglMatrix3 to copy the matrix into
+ * @matrix: (out caller-allocates): a #GeglMatrix3 to copy the matrix into
  *
  * Get the transformation matrix of the path.
  */
@@ -273,7 +273,7 @@ typedef void LP *GeglNodeFunction RP LP const GeglPathItem *node,
 /**
  * gegl_path_foreach:
  * @path: a #GeglPath
- * @each_item: a function to call for each node in the path.
+ * @each_item: (closure user_data) (scope call): a function to call for each node in the path.
  * @user_data: user data to pass to the function (in addition to the GeglPathItem).
  *
  * Execute a provided function for every node in the path (useful for
@@ -286,7 +286,7 @@ void                 gegl_path_foreach        (GeglPath        *path,
 /**
  * gegl_path_foreach_flat:
  * @path: a #GeglPath
- * @each_item: a function to call for each node in the path.
+ * @each_item: (closure user_data) (scope call): a function to call for each node in the path.
  * @user_data: user data to pass to a node.
  *
  * Execute a provided function for the segments of a poly line approximating
@@ -357,7 +357,6 @@ void                 gegl_path_parse_string   (GeglPath    *path,
  * Use as follows: gegl_path_append (path, 'M', 0.0, 0.0);
  * and gegl_path_append (path, 'C', 10.0, 10.0, 50.0, 10.0, 60.0, 0.0) the
  * number of arguments are determined from the instruction provided.
- *
  */
 void                 gegl_path_append         (GeglPath    *path,
                                                             ...);
@@ -406,7 +405,10 @@ void                  gegl_path_add_type      (gchar        type,
                                                gint         items,
                                                const gchar *description);
 
-/* Linked list used internally, and for the plug-in API for new path
+/***
+ * GeglPathList: (skip)
+ *  
+ * Linked list used internally, and for the plug-in API for new path
  * interpolators.
  */
 typedef struct GeglPathList
@@ -416,19 +418,36 @@ typedef struct GeglPathList
 } GeglPathList;
 
 
-/***
- */
-
-/* appends to path list, if head is NULL a new list is created */
+/**
+ * gegl_path_list_append: (skip)
+ * @head: a #GeglPathList
+ * @...: additional #GeglPathList items to append
+ *
+ * Appends to path list, if head is NULL a new list is created
+ */ 
 GeglPathList *        gegl_path_list_append   (GeglPathList *head, ...);
-/* frees up a path list */
+
+/**
+ * gegl_path_list_destroy: (skip)
+ * @path: A #GeglPathList
+ *
+ * Frees up a path list
+ */
 GeglPathList *        gegl_path_list_destroy  (GeglPathList *path);
 
 
-/* prototype of function passed to gegl_path_add_flattener() */
+/***
+ * GeglFlattenerFunc: (skip)
+ *
+ * prototype of function passed to gegl_path_add_flattener()
+ */
 typedef GeglPathList *(*GeglFlattenerFunc) (GeglPathList *original);
 
-/* Add a new flattener, the flattener should produce a type of path that
+/** 
+ * gegl_path_add_flattener: (skip)
+ * @func: a #GeglFlattenerFunc
+ *
+ * Add a new flattener, the flattener should produce a type of path that
  * GeglPath already understands, if the flattener is unable to flatten
  * the incoming path (doesn't understand the instructions), the original
  * path should be returned.
@@ -437,7 +456,7 @@ void                  gegl_path_add_flattener (GeglFlattenerFunc func);
 
 
 /**
- * gegl_path_get_path:
+ * gegl_path_get_path: (skip)
  * @path: a #GeglPath
  *
  * Return the internal untouched #GeglPathList
@@ -445,16 +464,19 @@ void                  gegl_path_add_flattener (GeglFlattenerFunc func);
 GeglPathList *        gegl_path_get_path (GeglPath *path);
 
 /**
- * gegl_path_get_flat_path:
+ * gegl_path_get_flat_path: (skip)
  * @path: a #GeglPath
  *
  * Return a polyline version of @path
  */
 GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
 
+/***
+ * Point: (skip)
+ */
 
 /**
- * gegl_path_point_lerp:
+ * gegl_path_point_lerp: (skip)
  * @dest: return location for the result
  * @a: origin Point
  * @b: destination Point
@@ -468,7 +490,7 @@ void                  gegl_path_point_lerp    (Point            *dest,
                                                gfloat            t);
 
 /**
- * gegl_path_point_dist:
+ * gegl_path_point_dist: (skip)
  * @a: an arbitrary Point
  * @b: an arbitrary Point
  *
