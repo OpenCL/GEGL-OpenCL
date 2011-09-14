@@ -130,7 +130,9 @@ gegl-@GEGL_API_VERSION@.vapi: Gegl-@GEGL_API_VERSION@.gir
 	$(VAPIGEN) --library=gegl-@GEGL_API_VERSION@ Gegl-@GEGL_API_VERSION@.gir
 
 vapidir=$(datadir)/vala/vapi
-vapi_DATA = gegl-@GEGL_API_VERSION@.vapi
+vapi_DATA = \
+	gegl-@GEGL_API_VERSION@.vapi \
+	gegl-@GEGL_API_VERSION@.deps
 
 endif # HAVE_VALA
 
