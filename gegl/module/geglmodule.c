@@ -479,6 +479,18 @@ gegl_module_info_free (GeglModuleInfo *info)
   g_slice_free (GeglModuleInfo, info);
 }
 
+/**
+ * gegl_module_register_type: (skip)
+ * @module:
+ * @parent_type:
+ * @type_name:
+ * @type_info:
+ * @flags
+ *
+ * Register a type, checking if another plugin has registered it before.
+ *
+ * Return value: The created GType
+ **/
 GType
 gegl_module_register_type (GTypeModule     *module,
                            GType            parent_type,

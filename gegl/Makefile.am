@@ -42,7 +42,6 @@ GEGL_introspectable_headers =	\
     gegl-utils.h			\
     gegl-matrix.h			\
     gegl-lookup.h			\
-    gegl-plugin.h			\
     gegl-version.h			\
     buffer/gegl-buffer.h		\
     buffer/gegl-buffer-iterator.h	\
@@ -57,7 +56,9 @@ GEGL_introspectable_headers =	\
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers) \
+    gegl-plugin.h			\
     gegl-chant.h
+
 
 GEGL_introspectable_sources = \
 	gegl-c.c			\
@@ -81,7 +82,6 @@ GEGL_introspectable_sources = \
 	gegl-dot-visitor.h		\
 	gegl-init.h			\
 	gegl-instrument.h		\
-	gegl-module.h			\
 	gegl-plugin.h			\
 	gegl-types-internal.h		\
 	gegl-xml.h \
@@ -89,7 +89,9 @@ GEGL_introspectable_sources = \
 
 GEGL_sources = \
 	$(GEGL_introspectable_sources) \
+	gegl-module.h			\
 	gegl-chant.h
+
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
