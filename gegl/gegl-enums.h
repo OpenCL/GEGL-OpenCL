@@ -41,7 +41,11 @@ GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;
 #define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
 
 typedef enum {
-  GEGL_ABYSS_NONE
+  GEGL_ABYSS_NONE,
+  GEGL_ABYSS_CLAMP,
+  GEGL_ABYSS_LOOP,
+  GEGL_ABYSS_BLACK,
+  GEGL_ABYSS_WHITE
 } GeglAbyssPolicy;
 GType gegl_abyss_policy_get_type   (void) G_GNUC_CONST;
 #define GEGL_ABYSS_POLICY_TYPE (gegl_abyss_policy_get_type())

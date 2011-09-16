@@ -527,7 +527,8 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 
               if (i->flags[no] & GEGL_BUFFER_READ)
                 {
-                  gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no],
+                                            GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
                 }
 
               i->data[no]=i->buf[no];
@@ -547,7 +548,8 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 
           if (i->flags[no] & GEGL_BUFFER_READ)
             {
-              gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no],
+                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
             }
           i->data[no]=i->buf[no];
 

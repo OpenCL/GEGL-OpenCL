@@ -107,7 +107,7 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
 #endif
 
 static gboolean
-gegl_buffer_in_abyss( GeglBuffer *buffer,
+gegl_buffer_in_abyss (GeglBuffer *buffer,
                       gint        x,
                       gint        y )
 {
@@ -196,11 +196,12 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
 }
 
 static inline void
-gegl_buffer_get_pixel (GeglBuffer *buffer,
-                       gint        x,
-                       gint        y,
-                       const Babl *format,
-                       gpointer    data)
+gegl_buffer_get_pixel (GeglBuffer     *buffer,
+                       gint            x,
+                       gint            y,
+                       const Babl     *format,
+                       gpointer        data,
+                       GeglAbyssPolicy repeat_mode)
 {
   guchar     *buf         = data;
   gint        tile_width  = buffer->tile_storage->tile_width;
@@ -224,8 +225,47 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
 
     if (gegl_buffer_in_abyss (buffer, x, y))
       { /* in abyss */
-        memset (buf, 0x00, bpx_size);
-        return;
+        const GeglRectangle *abyss;
+        switch (repeat_mode)
+        {
+          case GEGL_ABYSS_CLAMP:
+            abyss = gegl_buffer_get_abyss (buffer);
+            x = CLAMP (x, abyss->x, abyss->x+abyss->width);
+            y = CLAMP (y, abyss->y, abyss->x+abyss->height);
+            break;
+
+          case GEGL_ABYSS_LOOP:
+            abyss = gegl_buffer_get_abyss (buffer);
+            x = abyss->x + (x - abyss->x) % abyss->width;
+            y = abyss->y + (y - abyss->y) % abyss->height;
+            break;
+
+          case GEGL_ABYSS_BLACK:
+            {
+              gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
+              babl_process (babl_fish (babl_format ("RGBA float"), format),
+                            color,
+                            buf,
+                            1);
+              return;
+            }
+
+          case GEGL_ABYSS_WHITE:
+            {
+              gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
+              babl_process (babl_fish (babl_format ("RGBA float"),
+                                       format),
+                            color,
+                            buf,
+                            1);
+              return;
+            }
+
+          default:
+          case GEGL_ABYSS_NONE:
+            memset (buf, 0x00, bpx_size);
+            return;
+        }
       }
     else
       {
@@ -931,7 +971,8 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                           const GeglRectangle *rect,
                           const Babl          *format,
                           gpointer             dest_buf,
-                          gint                 rowstride)
+                          gint                 rowstride,
+                          GeglAbyssPolicy      repeat_mode)
 {
 
   if (format == NULL)
@@ -944,7 +985,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       rect->width == 1 &&
       rect->height == 1)  /* fast path */
     {
-      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf);
+      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
       return;
     }
 #endif
@@ -1062,7 +1103,7 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  GeglAbyssPolicy      repeat_mode)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
-  gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride);
+  gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride, repeat_mode);
 }
 
 const GeglRectangle *
@@ -1084,14 +1125,14 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     gpointer          dest,
                     const Babl       *format,
                     GeglSamplerType   sampler_type,
-                    GeglAbyssPolicy    repeat_mode)
+                    GeglAbyssPolicy   repeat_mode)
 {
   GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
 
 /*#define USE_WORKING_SHORTCUT*/
 #ifdef USE_WORKING_SHORTCUT
-  gegl_buffer_get_pixel (buffer, x, y, format, dest);
+  gegl_buffer_get_pixel (buffer, x, y, format, dest, repeat_mode);
   return;
 #endif
 
@@ -1104,7 +1145,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       sampler_type == GEGL_SAMPLER_NEAREST)
     {
       /* XXX: not thread safe */
-      gegl_buffer_get_pixel (buffer, x, y, format, dest);
+      gegl_buffer_get_pixel (buffer, x, y, format, dest, repeat_mode);
       return;
     }
   /* unset the cached sampler if it dosn't match the needs */

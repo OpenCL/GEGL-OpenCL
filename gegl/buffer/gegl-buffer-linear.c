@@ -205,7 +205,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     if(rowstride)*rowstride = rs;
 
     info->buf = gegl_malloc (rs * info->extent.height);
-    gegl_buffer_get_unlocked (buffer, 1.0, &info->extent, format, info->buf, rs);
+    gegl_buffer_get_unlocked (buffer, 1.0, &info->extent, format, info->buf, rs, GEGL_ABYSS_NONE);
     return info->buf;
   }
   return NULL;

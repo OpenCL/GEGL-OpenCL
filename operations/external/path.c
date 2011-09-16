@@ -256,7 +256,7 @@ gegl_path_stamp (GeglBuffer *buffer,
     }
   g_assert (s.buf);
 
-  gegl_buffer_get_unlocked (buffer, 1.0, &roi, s.format, s.buf, 0);
+  gegl_buffer_get_unlocked (buffer, 1.0, &roi, s.format, s.buf, 0, GEGL_ABYSS_NONE);
 
   {
     gint u, v;
