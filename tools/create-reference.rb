@@ -337,14 +337,22 @@ IO.foreach(ARGV[file_no]) {
         function.name=$1.to_s
         state = :section_doc
     when :start
-        line =~ / \* (.*):/
+        line =~ / \* (.*):(.*)/
         elements << function if (function!=nil)
         function=Function.new
         function.name=$1.to_s
+        # $2 is the introspection annotations
         state = :args
         arg_no=-1
     when :args
-        if line =~ /.*@(.*):(.*)/
+        if line =~ /.*@(.*):(.*):(.*)/
+            arg_no=arg_no+1
+            argument=Argument.new
+            argument.name=$1
+            # $2 is introspection annotations
+            argument.doc=""+$3.to_s
+            function.add_arg argument
+        elsif line =~ /.*@(.*):(.*)/
             arg_no=arg_no+1
             argument=Argument.new
             argument.name=$1
