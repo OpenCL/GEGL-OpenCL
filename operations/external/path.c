@@ -144,7 +144,7 @@ gegl_path_stroke (GeglBuffer *buffer,
             break;
           case 'L':
             {
-              Point a,b;
+              GeglPathPoint a,b;
 
               gfloat spacing;
               gfloat local_pos;
@@ -174,7 +174,7 @@ gegl_path_stroke (GeglBuffer *buffer,
                      local_pos <= distance;
                      local_pos += spacing)
                   {
-                    Point spot;
+                    GeglPathPoint spot;
                     gfloat ratio = local_pos / distance;
                     gfloat radius = linewidth/2;
 

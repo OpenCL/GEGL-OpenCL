@@ -64,30 +64,30 @@ GType                gegl_path_get_type       (void) G_GNUC_CONST;
  * 4 points internally only the needed amount of memory is stored
  * for a GeglPathItem.
  *
- *  </p><pre>typedef struct Point
+ *  </p><pre>typedef struct GeglPathPoint
  * {
  *   gfloat x;
  *   gfloat y;
- * } Point;</pre></p>
+ * } GeglPathPoint;</pre></p>
  * </p><pre>typedef struct GeglPathItem
  * {
  *   gchar  type;
- *   Point  point[4];
+ *   GeglPathPoint  point[4];
  * } GeglPathItem;</pre></p>
  *
  */
 
 
-typedef struct Point
+typedef struct GeglPathPoint
 {
   gfloat x;
   gfloat y;
-} Point;
+} GeglPathPoint;
 
 typedef struct GeglPathItem
 {
   gchar  type;     /* should perhaps be padded out? */
-  Point  point[4]; /* Note: internally GeglPath operates with paths that
+  GeglPathPoint  point[4]; /* Note: internally GeglPath operates with paths that
                     * have the exact number of pairs allocated.
                     */
 } GeglPathItem;
@@ -471,32 +471,32 @@ GeglPathList *        gegl_path_get_path (GeglPath *path);
 GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
 
 /***
- * Point: (skip)
+ * GeglPathPoint: (skip)
  */
 
 /**
  * gegl_path_point_lerp: (skip)
  * @dest: return location for the result
- * @a: origin Point
- * @b: destination Point
+ * @a: origin GeglPathPoint
+ * @b: destination GeglPathPoint
  * @t: ratio between @a and @b
  *
- * linear interpolation between two #Point
+ * linear interpolation between two #GeglPathPoint
  */
-void                  gegl_path_point_lerp    (Point            *dest,
-                                               Point            *a,
-                                               Point            *b,
+void                  gegl_path_point_lerp    (GeglPathPoint    *dest,
+                                               GeglPathPoint    *a,
+                                               GeglPathPoint    *b,
                                                gfloat            t);
 
 /**
  * gegl_path_point_dist: (skip)
- * @a: an arbitrary Point
- * @b: an arbitrary Point
+ * @a: an arbitrary GeglPathPoint
+ * @b: an arbitrary GeglPathPoint
  *
- * Compute the distance between #Point @a and @b
+ * Compute the distance between #GeglPathPoint @a and @b
  */
-gdouble               gegl_path_point_dist    (Point            *a,
-                                               Point            *b);
+gdouble               gegl_path_point_dist    (GeglPathPoint       *a,
+                                               GeglPathPoint       *b);
 
 G_END_DECLS
 

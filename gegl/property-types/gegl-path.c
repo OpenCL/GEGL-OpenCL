@@ -141,7 +141,7 @@ static void             copy_data                     (const GeglPathItem *src,
                                                        GeglPathItem     *dst);
 static void             bezier2                       (GeglPathItem     *prev,
                                                        GeglPathItem     *curve,
-                                                       Point            *dest,
+                                                       GeglPathPoint    *dest,
                                                        gfloat            t);
 static void             gegl_path_item_free           (GeglPathList     *p);
 static GeglPathList *   gegl_path_list_append_item    (GeglPathList     *head,
@@ -1180,7 +1180,7 @@ flatten_curve (GeglMatrix3  *matrix,
                GeglPathList *self)
 {
   gfloat f;
-  Point res;
+  GeglPathPoint res;
   gchar buf[64]="C";
   GeglPathItem *item=(void*)buf;
 
@@ -1252,10 +1252,10 @@ copy_data (const GeglPathItem *src,
 static void
 bezier2 (GeglPathItem  *prev,
          GeglPathItem  *curve,
-         Point *dest,
+         GeglPathPoint *dest,
          gfloat t)
 {
-  Point ab,bc,cd,abbc,bccd;
+  GeglPathPoint ab,bc,cd,abbc,bccd;
 
   if (prev->type == 'c')
     gegl_path_point_lerp (&ab, &prev->point[2], &curve->point[0], t);
@@ -1434,7 +1434,7 @@ gegl_path_list_calc (GeglPathList *path,
 
           case 'L':
             {
-              Point a,b;
+              GeglPathPoint a,b;
               gfloat distance;
 
               a.x = prev->d.point[0].x;
@@ -1448,7 +1448,7 @@ gegl_path_list_calc (GeglPathList *path,
 
               if (pos <= next_pos)
                 {
-                  Point spot;
+                  GeglPathPoint spot;
                   gfloat ratio = (pos - traveled) / (next_pos - traveled);
 
                   gegl_path_point_lerp (&spot, &a, &b, ratio);
@@ -1504,7 +1504,7 @@ gegl_path_list_calc_values (GeglPathList *path,
             break;
           case 'L':
             {
-              Point a,b;
+              GeglPathPoint a,b;
               gfloat distance;
 
               a.x = x;
@@ -1518,7 +1518,7 @@ gegl_path_list_calc_values (GeglPathList *path,
 
               while (next_sample <= next_pos)
                 {
-                  Point spot;
+                  GeglPathPoint spot;
                   gfloat ratio = (next_sample - traveled) / (next_pos - traveled);
 
                   gegl_path_point_lerp (&spot, &a, &b, ratio);
@@ -1572,7 +1572,7 @@ gegl_path_list_get_length (GeglPathList *path)
             break;
           case 'L':
             {
-              Point a,b;
+              GeglPathPoint a,b;
               gfloat distance;
 
               a.x = x;
@@ -1602,11 +1602,11 @@ gegl_path_list_get_length (GeglPathList *path)
   return traveled_length;
 }
 
-/***** Point *****/
+/***** GeglPathPoint *****/
 void
-gegl_path_point_lerp (Point  *dest,
-                      Point  *a,
-                      Point  *b,
+gegl_path_point_lerp (GeglPathPoint  *dest,
+                      GeglPathPoint  *a,
+                      GeglPathPoint  *b,
                       gfloat  t)
 {
   dest->x = a->x + (b->x-a->x) * t;
@@ -1614,8 +1614,8 @@ gegl_path_point_lerp (Point  *dest,
 }
 
 gdouble
-gegl_path_point_dist (Point *a,
-                      Point *b)
+gegl_path_point_dist (GeglPathPoint *a,
+                      GeglPathPoint *b)
 {
   return sqrt ((a->x-b->x)*(a->x-b->x) +
                (a->y-b->y)*(a->y-b->y));

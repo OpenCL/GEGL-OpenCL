@@ -315,7 +315,7 @@ process (GeglOperation       *operation,
   gdouble              stamps;
   gdouble              spacing = MAX (o->size * 0.01, 0.5); /*1% spacing for starters*/
 
-  Point                prev, next, lerp;
+  GeglPathPoint        prev, next, lerp;
   gulong               i;
   GeglPathList        *event;
 
