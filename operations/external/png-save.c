@@ -114,12 +114,12 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       if (babl_format_get_n_components (babl) != 1)
         {
           png_color_type = PNG_COLOR_TYPE_RGB;
-          strcpy (format_string, "RGB ");
+          strcpy (format_string, "R'G'B' ");
         }
       else
         {
           png_color_type = PNG_COLOR_TYPE_GRAY;
-          strcpy (format_string, "Y ");
+          strcpy (format_string, "Y' ");
         }
   }
 
