@@ -288,6 +288,26 @@ guchar *gegl_tile_get_data (GeglTile *tile)
   return tile->data;
 }
 
+void gegl_tile_set_data (GeglTile *tile,
+                         gpointer  pixel_data,
+                         gint      pixel_data_size)
+{
+  tile->data = pixel_data;
+  tile->size = pixel_data_size;
+}
+
+void gegl_tile_set_data_full (GeglTile         *tile,
+                              gpointer          pixel_data,
+                              gint              pixel_data_size,
+                              GeglDestroyNotify destroy_notify,
+                              gpointer          destroy_notify_data)
+{
+  tile->data                = pixel_data;
+  tile->size                = pixel_data_size;
+  tile->destroy_notify      = destroy_notify;
+  tile->destroy_notify_data = destroy_notify_data;
+}
+
 
 void         gegl_tile_set_rev        (GeglTile *tile,
                                        guint     rev)

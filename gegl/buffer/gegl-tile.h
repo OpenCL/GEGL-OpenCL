@@ -22,32 +22,41 @@
 #include <glib-object.h>
 #include "gegl-buffer-backend.h"
 
-GeglTile   * gegl_tile_new            (gint     size);
-GeglTile   * gegl_tile_new_bare       (void); /* special hack for linear bufs */
-GeglTile   * gegl_tile_ref            (GeglTile *tile);
-void         gegl_tile_unref          (GeglTile *tile);
+GeglTile   * gegl_tile_new            (gint             size);
+GeglTile   * gegl_tile_new_bare       (void);
+GeglTile   * gegl_tile_ref            (GeglTile         *tile);
+void         gegl_tile_unref          (GeglTile         *tile);
 
 /* lock a tile for writing, this would allow writing to buffers
  * later gotten with get_data()
  */
-void         gegl_tile_lock           (GeglTile *tile);
+void         gegl_tile_lock           (GeglTile         *tile);
 
 /* unlock the tile notifying the tile that we're done manipulating
  * the data.
  */
-void         gegl_tile_unlock         (GeglTile *tile);
+void         gegl_tile_unlock         (GeglTile         *tile);
 
 
-void         gegl_tile_mark_as_stored (GeglTile *tile);
-gboolean     gegl_tile_is_stored      (GeglTile *tile);
-gboolean     gegl_tile_store          (GeglTile *tile);
-void         gegl_tile_void           (GeglTile *tile);
-GeglTile    *gegl_tile_dup            (GeglTile *tile);
+void         gegl_tile_mark_as_stored (GeglTile         *tile);
+gboolean     gegl_tile_is_stored      (GeglTile         *tile);
+gboolean     gegl_tile_store          (GeglTile         *tile);
+void         gegl_tile_void           (GeglTile         *tile);
+GeglTile    *gegl_tile_dup            (GeglTile         *tile);
 
-void         gegl_tile_set_rev        (GeglTile *tile,
-                                       guint     rev);
-guint        gegl_tile_get_rev        (GeglTile *tile);
+void         gegl_tile_set_rev        (GeglTile         *tile,
+                                       guint             rev);
+guint        gegl_tile_get_rev        (GeglTile         *tile);
 
-guchar      *gegl_tile_get_data       (GeglTile *tile);
+guchar      *gegl_tile_get_data       (GeglTile         *tile);
+void         gegl_tile_set_data       (GeglTile         *tile,
+                                       gpointer          pixel_data,
+                                       gint              pixel_data_size);
+void         gegl_tile_set_data_full  (GeglTile         *tile,
+                                       gpointer          pixel_data,
+                                       gint              pixel_data_size,
+                                       GeglDestroyNotify destroy_notify,
+                                       gpointer          destroy_notify_data);
+
 
 #endif

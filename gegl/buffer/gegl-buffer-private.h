@@ -163,9 +163,9 @@ struct _GeglTile
   GeglTile        *next_shared;
   GeglTile        *prev_shared;
 
-  void (*destroy_notify) (gpointer pixels,
-                          gpointer data);
-  gpointer         destroy_notify_data;
+  /* called when the tile is about to be destroyed */
+  GeglDestroyNotify destroy_notify;
+  gpointer          destroy_notify_data;
 };
 
 #ifndef __GEGL_TILE_C
