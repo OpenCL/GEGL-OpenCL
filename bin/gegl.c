@@ -188,7 +188,7 @@ main (gint    argc,
   if (!gegl)
     {
       g_print ("Invalid graph, abort.\n");
-      return;
+      return 1;
     }
 
   if (o->rest)
