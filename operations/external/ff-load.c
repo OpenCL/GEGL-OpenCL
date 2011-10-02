@@ -69,7 +69,11 @@ print_error (const char *filename, int err)
 {
   switch (err)
     {
+#if LIBAVFORMAT_VERSION_MAJOR >= 53
+    case AVERROR(EINVAL):
+#else
     case AVERROR_NUMEXPECTED:
+#endif
       g_warning ("%s: Incorrect image filename syntax.\n"
                  "Use '%%d' to specify the image number:\n"
                  "  for img1.jpg, img2.jpg, ..., use 'img%%d.jpg';\n"
@@ -77,10 +81,14 @@ print_error (const char *filename, int err)
                  filename);
       break;
     case AVERROR_INVALIDDATA:
+#if LIBAVFORMAT_VERSION_MAJOR >= 53
+      g_warning ("%s: Error while parsing header or unknown format\n", filename);
+#else
       g_warning ("%s: Error while parsing header\n", filename);
       break;
     case AVERROR_NOFMT:
       g_warning ("%s: Unknown format\n", filename);
+#endif
       break;
     default:
       g_warning ("%s: Error while opening file\n", filename);
@@ -278,7 +286,11 @@ prepare (GeglOperation *operation)
       for (i = 0; i< p->ic->nb_streams; i++)
         {
           AVCodecContext *c = p->ic->streams[i]->codec;
+#if LIBAVFORMAT_VERSION_MAJOR >= 53
+          if (c->codec_type == AVMEDIA_TYPE_VIDEO)
+#else
           if (c->codec_type == CODEC_TYPE_VIDEO)
+#endif
             {
               p->video_st = p->ic->streams[i];
               p->video_stream = i;
