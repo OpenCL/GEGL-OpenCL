@@ -166,6 +166,12 @@ struct _GeglTile
   /* called when the tile is about to be destroyed */
   GeglDestroyNotify destroy_notify;
   gpointer          destroy_notify_data;
+
+  /* called when the tile has been unlocked which typically means tile
+   * data has changed
+   */
+  GeglTileCallback unlock_notify;
+  gpointer         unlock_notify_data;
 };
 
 #ifndef __GEGL_TILE_C

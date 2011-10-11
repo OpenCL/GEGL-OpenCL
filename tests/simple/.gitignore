@@ -8,6 +8,7 @@
 /test-color-op*
 /test-exp-combine.sh
 /test-gegl-rectangle*
+/test-gegl-tile*
 /test-misc*
 /test-path*
 /test-proxynop-processing*

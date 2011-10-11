@@ -7,6 +7,7 @@ TESTS_ENVIRONMENT = \
 # The tests
 noinst_PROGRAMS = \
 	test-change-processor-rect	\
+	test-gegl-tile			\
 	test-color-op			\
 	test-gegl-rectangle		\
 	test-misc			\

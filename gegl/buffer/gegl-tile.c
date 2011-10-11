@@ -231,6 +231,12 @@ gegl_tile_unlock (GeglTile *tile)
 #if 0
   total_unlocks++;
 #endif
+
+  if (tile->unlock_notify != NULL)
+    {
+      tile->unlock_notify (tile, tile->unlock_notify_data);
+    }
+
   if (tile->lock == 0)
     {
       g_warning ("unlocked a tile with lock count == 0");
@@ -318,4 +324,12 @@ void         gegl_tile_set_rev        (GeglTile *tile,
 guint        gegl_tile_get_rev        (GeglTile *tile)
 {
   return tile->rev;
+}
+
+void gegl_tile_set_unlock_notify (GeglTile         *tile,
+                                  GeglTileCallback  unlock_notify,
+                                  gpointer          unlock_notify_data)
+{
+  tile->unlock_notify      = unlock_notify;
+  tile->unlock_notify_data = unlock_notify_data;
 }

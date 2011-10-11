@@ -58,5 +58,10 @@ void         gegl_tile_set_data_full  (GeglTile         *tile,
                                        GeglDestroyNotify destroy_notify,
                                        gpointer          destroy_notify_data);
 
+void         gegl_tile_set_unlock_notify
+                                      (GeglTile         *tile,
+                                       GeglTileCallback  unlock_notify,
+                                       gpointer          unlock_notify_data);
+
 
 #endif

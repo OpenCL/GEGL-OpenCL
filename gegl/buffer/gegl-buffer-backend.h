@@ -29,6 +29,11 @@ typedef struct _GeglTileBackendPrivate    GeglTileBackendPrivate;
 
 typedef struct _GeglTile                  GeglTile;
 
+
+typedef void   (*GeglTileCallback)       (GeglTile *tile,
+                                          gpointer user_data);
+
+
 #include "gegl-types.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-source.h"
