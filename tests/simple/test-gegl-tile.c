@@ -31,16 +31,20 @@ unlock_callback (GeglTile *tile,
   *callback_called = TRUE;
 }
 
+static void
+free_callback (gpointer pixel_data,
+               gpointer user_data)
+{
+  gboolean *callback_called = user_data;
+  *callback_called = TRUE;
+}
+
 /**
- * gegl_tile_set_unlock_notify_works:
- * @fixture:
- * @data:
- *
- * Tests that gegl_tile_set_unlock_notify_works() can be used to set a
+ * Tests that gegl_tile_set_unlock_notify() can be used to set a
  * callback that is called in gegl_tile_unlock().
  **/
 static void
-gegl_tile_set_unlock_notify_works (void)
+set_unlock_notify (void)
 {
   GeglTile *tile = gegl_tile_new (1);
   gboolean callback_called = FALSE;
@@ -55,6 +59,24 @@ gegl_tile_set_unlock_notify_works (void)
   g_assert (callback_called);
 }
 
+/**
+ * Tests that gegl_tile_set_data_full() results in a callback when the
+ * tile is freed.
+ **/
+static void
+set_data_full (void)
+{
+  GeglTile *tile = gegl_tile_new (1);
+  gboolean callback_called = FALSE;
+  guchar data = 42;
+
+  gegl_tile_set_data_full (tile, &data, 1, free_callback, &callback_called);
+  g_assert (! callback_called);
+
+  gegl_tile_unref (tile);
+  g_assert (callback_called);
+}
+
 int
 main (int    argc,
       char **argv)
@@ -63,7 +85,8 @@ main (int    argc,
   gegl_init (&argc, &argv);
   g_test_init (&argc, &argv, NULL);
 
-  ADD_TEST (gegl_tile_set_unlock_notify_works);
+  ADD_TEST (set_unlock_notify);
+  ADD_TEST (set_data_full);
 
   return g_test_run ();
 }
