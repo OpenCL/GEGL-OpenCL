@@ -67,6 +67,11 @@ arrival of the next and more powerful generation of GIMP.
     Having such a utility function would allow porting more bits of GIMP
     to optionally use GEGL for processing with code that resembles GIMP
     code.
+
+   This work has started, see
+   <a href="http://git.gnome.org/browse/gimp/tree/app/gegl/gimptilebackendtilemanager.c?h=high-bit-depths-REBASED">gimptilebackendtilemanager.c</a>
+   and
+   <a href="http://git.gnome.org/browse/gimp/tree/app/tests/test-gimptilebackendtilemanager.c?h=high-bit-depths-REBASED">test-gimptilebackendtilemanager.c</a>.
   </li><li>At a later stage of the migration when the actual storage is switched 
     it might be desirable to allow a temporary hack in the other direction
     with gimp_gegl_buffer_get_tile_manager (GeglBuffer *buffer); this might
