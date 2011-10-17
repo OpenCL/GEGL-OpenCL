@@ -54,6 +54,8 @@ m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
+
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([gegl/gegl.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -131,7 +133,6 @@ AC_SUBST(PACKAGE_NAME)
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
-AM_CONFIG_HEADER(config.h)
 
 dnl Initialize libtool
 AC_LIBTOOL_DLOPEN
@@ -150,7 +151,6 @@ AM_MAINTAINER_MODE([enable])
 ###############
 
 dnl Checks for programs.
-AC_ISC_POSIX
 #AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
@@ -678,15 +678,16 @@ if test "x$with_libjpeg" != "xno" && test -z "$LIBJPEG"; then
     jpeg_ok="no  (usable JPEG library not found)")
   if test "$jpeg_ok" = "yes"; then
     AC_MSG_CHECKING([for jpeglib.h])
-    AC_TRY_CPP([
+    AC_PREPROC_IFELSE(
+      [AC_LANG_SOURCE([[
 #include <stdio.h>
 #undef HAVE_STDDEF_H
 #undef HAVE_STDLIB_H
 #undef PACKAGE
 #undef VERSION
-#include <jpeglib.h>],
-      jpeg_ok="yes",
-      jpeg_ok="no  (Can't include jpeglib.h)")
+#include <jpeglib.h>]])],
+      [jpeg_ok="yes"],
+      [jpeg_ok="no  (Can't include jpeglib.h)"])
     AC_MSG_RESULT($jpeg_ok)
     if test "$jpeg_ok" = "yes"; then
       AC_CHECK_LIB(jpeg, jpeg_save_markers,
@@ -1072,7 +1073,7 @@ if test -z "${MAINTAINER_MODE_TRUE}"; then
 fi
 
 dnl bin/node-editors/Makefile
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 bin/Makefile
 gegl/Makefile
@@ -1114,6 +1115,7 @@ tests/xml/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
+AC_OUTPUT
 
 dnl Print a summary of features enabled/disabled:
 AC_MSG_RESULT([
