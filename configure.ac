@@ -129,15 +129,6 @@ AC_SUBST(LUA_REQUIRED_VERSION)
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
-
-dnl Initialize libtool
-AC_LIBTOOL_DLOPEN
-AC_PROG_CC
-AC_PROG_CXX
-AM_DISABLE_STATIC
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
-
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
 
@@ -147,12 +138,17 @@ AM_MAINTAINER_MODE([enable])
 ###############
 
 dnl Checks for programs.
-#AM_PROG_CC_STDC
+AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 dnl Large file support.
 AC_SYS_LARGEFILE
+
+dnl Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT([disable-static win32-dll dlopen])
 
 GEGL_VARIADIC_MACROS
 
