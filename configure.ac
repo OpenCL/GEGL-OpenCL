@@ -391,7 +391,7 @@ AC_PATH_PROGS(PERL,perl5 perl perl5.005 perl5.004,perl)
 ########################
 # Check GObject Introspection
 ########################
-GOBJECT_INTROSPECTION_CHECK([0.6.7])
+GOBJECT_INTROSPECTION_CHECK([0.10.0])
 
 ########################
 # Check PyGObject
