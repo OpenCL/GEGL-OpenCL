@@ -126,10 +126,6 @@ AC_SUBST(GLIB_REQUIRED_VERSION)
 LUA_REQUIRED_VERSION=lua_required_version
 AC_SUBST(LUA_REQUIRED_VERSION)
 
-PACKAGE_NAME=gegl
-AC_SUBST(PACKAGE_NAME)
-
-
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
