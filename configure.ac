@@ -1059,11 +1059,6 @@ done
 # We should support this at some point if possible
 #LDFLAGS="-Wl,-z,defs"
 
-dnl Disable deprecated features in maintainer mode
-if test -z "${MAINTAINER_MODE_TRUE}"; then
-   GLIB_CFLAGS="-DG_DISABLE_DEPRECATED $GLIB_CFLAGS"
-fi
-
 dnl bin/node-editors/Makefile
 AC_CONFIG_FILES([
 Makefile
