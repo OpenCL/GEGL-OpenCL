@@ -128,7 +128,7 @@ AC_SUBST(LUA_REQUIRED_VERSION)
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
+AM_INIT_AUTOMAKE([1.10 no-define dist-bzip2 no-dist-gzip -Wno-portability])
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
 
