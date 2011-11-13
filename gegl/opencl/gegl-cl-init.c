@@ -67,41 +67,34 @@ char *gegl_cl_errstring(cl_int err) {
   }
 }
 
-static gboolean cl_is_accelerated  = FALSE;
-
-static cl_platform_id   platform = NULL;
-static cl_device_id     device   = NULL;
-static cl_context       ctx      = NULL;
-static cl_command_queue cq       = NULL;
-
 gboolean
 gegl_cl_is_accelerated (void)
 {
-  return cl_is_accelerated;
+  return cl_state.is_accelerated;
 }
 
 cl_platform_id
 gegl_cl_get_platform (void)
 {
-  return platform;
+  return cl_state.platform;
 }
 
 cl_device_id
 gegl_cl_get_device (void)
 {
-  return device;
+  return cl_state.device;
 }
 
 cl_context
 gegl_cl_get_context (void)
 {
-  return ctx;
+  return cl_state.ctx;
 }
 
 cl_command_queue
 gegl_cl_get_command_queue (void)
 {
-  return cq;
+  return cl_state.cq;
 }
 
 #define CL_LOAD_FUNCTION(func)                                                    \
@@ -125,17 +118,15 @@ gboolean
 gegl_cl_init (GError **error)
 {
   GModule *module;
+  cl_int err;
 
-  char buffer[65536];
-
-  if (!cl_is_accelerated)
+  if (!cl_state.is_accelerated)
     {
       module = g_module_open ("libOpenCL.so", G_MODULE_BIND_LAZY);
 
       if (!module)
         {
-          g_set_error (error, 0, 0,
-                       "%s", g_module_error ());
+          g_set_error (error, 0, 0, "%s", g_module_error ());
           return FALSE;
         }
 
@@ -178,24 +169,53 @@ gegl_cl_init (GError **error)
       CL_LOAD_FUNCTION (clReleaseContext)
       CL_LOAD_FUNCTION (clReleaseMemObject)
 
-      cl_is_accelerated = TRUE;
+      gegl_clGetPlatformIDs (1, &cl_state.platform, NULL);
 
-      gegl_clGetPlatformIDs (1, &platform, NULL);
-      gegl_clGetPlatformInfo (platform, CL_PLATFORM_NAME, sizeof(buffer), buffer, NULL);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Platform Name:%s", buffer);
-      gegl_clGetPlatformInfo (platform, CL_PLATFORM_VERSION, sizeof(buffer), buffer, NULL);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Version:%s", buffer);
-      gegl_clGetPlatformInfo (platform, CL_PLATFORM_EXTENSIONS, sizeof(buffer), buffer, NULL);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Extensions:%s", buffer);
+      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_NAME,       sizeof(cl_state.platform_name),    cl_state.platform_name,    NULL);
+      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_VERSION,    sizeof(cl_state.platform_version), cl_state.platform_version, NULL);
+      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_EXTENSIONS, sizeof(cl_state.platform_ext),     cl_state.platform_ext,     NULL);
 
-      gegl_clGetDeviceIDs(platform, CL_DEVICE_TYPE_DEFAULT, 1, &device, NULL);
-      gegl_clGetDeviceInfo(device, CL_DEVICE_NAME, sizeof(buffer), buffer, NULL);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "OpenCL: Default Device Name:%s", buffer);
+      gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
+      gegl_clGetDeviceInfo(cl_state.device, CL_DEVICE_NAME, sizeof(cl_state.device_name), cl_state.device_name, NULL);
 
-      ctx = gegl_clCreateContext(0, 1, &device, NULL, NULL, NULL);
-      cq  = gegl_clCreateCommandQueue(ctx, device, 0, NULL);
+      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
+      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE2D_MAX_HEIGHT, sizeof(size_t),   &cl_state.max_image_height, NULL);
+      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE2D_MAX_WIDTH,  sizeof(size_t),   &cl_state.max_image_width,  NULL);
+      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
+
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Platform Name:%s",       cl_state.platform_name);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Version:%s",             cl_state.platform_version);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Extensions:%s",          cl_state.platform_ext);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Default Device Name:%s", cl_state.device_name);
+
+      if (cl_state.image_support)
+        {
+          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Image Support OK");
+        }
+      else
+        {
+          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Image Support Error");
+          return FALSE;
+        }
+
+      cl_state.ctx = gegl_clCreateContext(0, 1, &cl_state.device, NULL, NULL, &err);
+      if(err != CL_SUCCESS)
+        {
+          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Could not create context");
+          return FALSE;
+        }
+
+      cl_state.cq  = gegl_clCreateCommandQueue(cl_state.ctx, cl_state.device, 0, &err);
+
+      if(err != CL_SUCCESS)
+        {
+          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Could not create command queue");
+          return FALSE;
+        }
+
     }
 
+  cl_state.is_accelerated = TRUE;
   return TRUE;
 }
 

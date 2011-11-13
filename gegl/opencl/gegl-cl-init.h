@@ -12,6 +12,25 @@ if (errcode != CL_SUCCESS)                                          \
             #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
 }
 
+typedef struct
+  {
+    gboolean is_accelerated;
+    cl_context ctx;
+    cl_platform_id platform;
+    cl_device_id device;
+    cl_command_queue cq;
+    cl_bool image_support;
+    size_t max_image_height;
+    size_t max_image_width;
+    cl_ulong max_mem_alloc;
+
+    char platform_name   [1024];
+    char platform_version[1024];
+    char platform_ext    [1024];
+    char device_name     [1024];
+  }
+gegl_cl_state;
+
 guint gegl_cl_count_lines(const char* kernel_source[]);
 
 char *gegl_cl_errstring(cl_int err);
@@ -29,6 +48,10 @@ cl_context gegl_cl_get_context (void);
 cl_command_queue gegl_cl_get_command_queue (void);
 
 #ifdef __GEGL_CL_INIT_MAIN__
+
+gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, "", "", "", ""};
+GHashTable *cl_program_hash = NULL;
+
 t_clGetPlatformIDs  gegl_clGetPlatformIDs  = NULL;
 t_clGetPlatformInfo gegl_clGetPlatformInfo = NULL;
 t_clGetDeviceIDs    gegl_clGetDeviceIDs    = NULL;
@@ -68,6 +91,8 @@ t_clReleaseContext      gegl_clReleaseContext      = NULL;
 t_clReleaseMemObject    gegl_clReleaseMemObject    = NULL;
 
 #else
+
+extern gegl_cl_state cl_state;
 
 extern t_clGetPlatformIDs  gegl_clGetPlatformIDs;
 extern t_clGetPlatformInfo gegl_clGetPlatformInfo;
