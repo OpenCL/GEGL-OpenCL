@@ -6,14 +6,6 @@
 #include <string.h>
 #include <stdio.h>
 
-guint
-gegl_cl_count_lines(const char* kernel_source[])
-{
-  guint count = 0;
-  while (kernel_source[count++] != NULL);
-  return count-1;
-}
-
 /* http://forums.amd.com/forum/messageview.cfm?catid=390&threadid=128536 */
 char *gegl_cl_errstring(cl_int err) {
   switch (err) {
@@ -220,3 +212,50 @@ gegl_cl_init (GError **error)
 }
 
 #undef CL_LOAD_FUNCTION
+
+/* XXX: same program_source with different kernel_name[], context or device
+ *      will retrieve the same key
+ */
+gegl_cl_run_data *
+gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[])
+{
+  gint errcode;
+  gegl_cl_run_data *cl_data = NULL;
+
+  if ((cl_data = (gegl_cl_run_data *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
+    {
+      size_t length = strlen(program_source);
+
+      gint i;
+      guint kernel_n = 0;
+      while (kernel_name[++kernel_n] != NULL);
+
+      cl_data = (gegl_cl_run_data *) g_malloc(sizeof(gegl_cl_run_data)+sizeof(cl_kernel)*kernel_n);
+
+      CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 1, &program_source,
+                                                                      &length, &errcode) );
+
+      errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, NULL, NULL, NULL);
+      if (errcode != CL_SUCCESS)
+        {
+          char buffer[2000];
+          char *err_msg;
+          CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
+                                                             gegl_cl_get_device(),
+                                                             CL_PROGRAM_BUILD_LOG,
+                                                             sizeof(buffer), buffer, NULL) );
+          g_warning("OpenCL Build Error:%s\n%s",
+                    err_msg = gegl_cl_errstring(errcode), buffer);
+          free(err_msg);
+          return NULL;
+        }
+
+      for (i=0; i<kernel_n; i++)
+        CL_SAFE_CALL( cl_data->kernel[i] =
+                      gegl_clCreateKernel(cl_data->program, kernel_name[i], &errcode) );
+
+      g_hash_table_insert(cl_program_hash, g_strdup (program_source), (void*)cl_data);
+    }
+
+  return cl_data;
+}

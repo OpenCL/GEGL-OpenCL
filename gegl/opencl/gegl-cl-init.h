@@ -31,8 +31,6 @@ typedef struct
   }
 gegl_cl_state;
 
-guint gegl_cl_count_lines(const char* kernel_source[]);
-
 char *gegl_cl_errstring(cl_int err);
 
 gboolean gegl_cl_init (GError **error);
@@ -46,6 +44,15 @@ cl_device_id gegl_cl_get_device (void);
 cl_context gegl_cl_get_context (void);
 
 cl_command_queue gegl_cl_get_command_queue (void);
+
+typedef struct
+{
+  cl_program program;
+  cl_kernel  kernel[];
+} gegl_cl_run_data;
+
+gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
+                                             const char *kernel_name[]);
 
 #ifdef __GEGL_CL_INIT_MAIN__
 
@@ -93,6 +100,7 @@ t_clReleaseMemObject    gegl_clReleaseMemObject    = NULL;
 #else
 
 extern gegl_cl_state cl_state;
+extern GHashTable *cl_program_hash;
 
 extern t_clGetPlatformIDs  gegl_clGetPlatformIDs;
 extern t_clGetPlatformInfo gegl_clGetPlatformInfo;
