@@ -56,7 +56,6 @@ gegl_chant_double (brightness, _("Brightness"), -3.0, 3.0, 0.0,
  */
 #include "gegl-chant.h"
 
-
 /* prepare() is called on each operation providing data to a node that
  * is requested to provide a rendered result. When prepare is called
  * all properties are known. For brightness contrast we use this
@@ -105,6 +104,64 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "gegl-cl.h"
+
+static const char* kernel_source =
+"__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |   \n"
+"                    CLK_ADDRESS_NONE                       |   \n"
+"                    CLK_FILTER_NEAREST;                        \n"
+"__kernel void kernel_bc(__read_only  image2d_t in,             \n"
+"                        __write_only image2d_t out,            \n"
+"                         float brightness,                     \n"
+"                         float contrast)                       \n"
+"{                                                              \n"
+"  int2 gid = (int2)(get_global_id(0), get_global_id(1));       \n"
+"  float4 in_v  = read_imagef(in, sampler, gid);                \n"
+"  float4 out_v;                                                \n"
+"  out_v.xyz = (in_v.xyz - 0.5f) * contrast + brightness + 0.5f;\n"
+"  out_v.w   =  in_v.w;                                         \n"
+"  write_imagef(out, gid, out_v);                               \n"
+"}                                                              \n";
+
+static gegl_cl_run_data *cl_data = NULL;
+
+/* OpenCL processing function */
+static gboolean
+cl_process (GeglOperation       *op,
+            cl_mem              in_tex,
+            cl_mem              out_tex,
+            const size_t global_worksize[2],
+            const GeglRectangle *roi)
+{
+  /* Retrieve a pointer to GeglChantO structure which contains all the
+   * chanted properties
+   */
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+
+  gfloat brightness = o->brightness;
+  gfloat contrast   = o->contrast;
+
+  cl_int errcode;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_bc", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
+
+  CL_SAFE_CALL(errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                                     cl_data->kernel[0], 2,
+                                                     NULL, global_worksize, NULL,
+                                                     0, NULL, NULL) );
+
+  return 0;
+}
+
 /*
  * The class init function sets up information needed for this operations class
  * (template) in the GObject OO framework.
@@ -124,6 +181,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    * of our superclasses deal with the handling on their level of abstraction)
    */
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
 
   /* specify the name this operation is found under in the GUI/when
    * programming/in XML
