@@ -28,6 +28,8 @@
 
 #include "gegl-operation-filter.h"
 
+#include "gegl-cl.h"
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_POINT_FILTER            (gegl_operation_point_filter_get_type ())
@@ -56,6 +58,12 @@ struct _GeglOperationPointFilterClass
                                                         in in buffer, see the
                                                         checkerboard op for
                                                         semantics */
+
+  gboolean (* cl_process) (GeglOperation      *self,
+                           cl_mem             in_tex,
+                           cl_mem             out_tex,
+                           const size_t global_worksize[2],
+                           const GeglRectangle *roi);
 };
 
 GType gegl_operation_point_filter_get_type (void) G_GNUC_CONST;

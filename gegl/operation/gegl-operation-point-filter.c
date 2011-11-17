@@ -32,6 +32,8 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 
+#include "gegl-cl.h"
+
 static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,
                                GeglBuffer          *input,
@@ -60,11 +62,114 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
   operation_class->process = gegl_operation_point_filter_op_process;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
+
+  klass->process = NULL;
+  klass->cl_process = NULL;
 }
 
 static void
 gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
+}
+
+
+static gboolean
+gegl_operation_point_filter_cl_process (GeglOperation       *operation,
+                                        GeglBuffer          *input,
+                                        GeglBuffer          *output,
+                                        const GeglRectangle *result)
+{
+  GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
+
+  const GeglRectangle *ext = gegl_buffer_get_extent (input);
+  const gint bpp = babl_format_get_bytes_per_pixel (babl_format ("RGBA float"));
+
+  int y, x;
+  int errcode;
+  cl_mem in_tex = NULL, out_tex = NULL;
+  cl_image_format format;
+
+  gfloat* in_data  = (gfloat*) gegl_malloc(result->width * result->height * bpp);
+  gfloat* out_data = (gfloat*) gegl_malloc(result->width * result->height * bpp);
+
+  if (in_data == NULL || out_data == NULL) goto error;
+
+  /* un-tile */
+  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"), in_data, GEGL_AUTO_ROWSTRIDE);
+
+  format.image_channel_order = CL_RGBA;
+  format.image_channel_data_type = CL_FLOAT;
+
+  in_tex  = gegl_clCreateImage2D (gegl_cl_get_context(),
+                                  CL_MEM_READ_ONLY,
+                                  &format,
+                                  cl_state.max_image_width,
+                                  cl_state.max_image_height,
+                                  0,  NULL, &errcode);
+
+  if (errcode != CL_SUCCESS) goto error;
+
+  out_tex = gegl_clCreateImage2D (gegl_cl_get_context(),
+                                  CL_MEM_WRITE_ONLY,
+                                  &format,
+                                  cl_state.max_image_width,
+                                  cl_state.max_image_height,
+                                  0,  NULL, &errcode);
+
+  if (errcode != CL_SUCCESS) goto error;
+
+  for (y=0; y < result->height; y += cl_state.max_image_height)
+    for (x=0; x < result->width;  x += cl_state.max_image_width)
+      {
+        const size_t offset = y * (4 * ext->width) + (4 * x);
+        const size_t origin[3] = {0, 0, 0};
+        const size_t region[3] = {MIN(cl_state.max_image_width,  result->width -x),
+                                  MIN(cl_state.max_image_height, result->height-y),
+                                  1};
+        const size_t global_worksize[2] = {region[0], region[1]};
+
+        gegl_clEnqueueWriteImage(gegl_cl_get_command_queue(), in_tex, CL_FALSE,
+                                 origin, region, ext->width, 0, &in_data[offset],
+                                 0, NULL, NULL);
+
+        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
+
+        errcode = point_filter_class->cl_process(operation, in_tex, out_tex, global_worksize, result);
+
+        if (errcode > 0) goto error;
+
+        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
+
+        gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), out_tex, CL_FALSE,
+                                origin, region, ext->width, 0, &out_data[offset],
+                                0, NULL, NULL);
+
+        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
+
+      }
+
+  errcode = gegl_clFinish(gegl_cl_get_command_queue());
+
+  if (errcode != CL_SUCCESS) goto error;
+
+  /* tile-ize */
+  gegl_buffer_set (output, result, babl_format ("RGBA float"), out_data, GEGL_AUTO_ROWSTRIDE);
+
+  gegl_clReleaseMemObject (in_tex);
+  gegl_clReleaseMemObject (out_tex);
+
+  gegl_free(in_data);
+  gegl_free(out_data);
+
+  return TRUE;
+
+error:
+  if (in_tex)   gegl_clReleaseMemObject (in_tex);
+  if (out_tex)  gegl_clReleaseMemObject (out_tex);
+  if (in_data)  free (in_data);
+  if (out_data) free (out_data);
+
+  return FALSE;
 }
 
 
@@ -82,6 +187,11 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
+      if (cl_state.is_accelerated && point_filter_class->cl_process)
+        {
+          if (gegl_operation_point_filter_cl_process (operation, input, output, result))
+            return TRUE;
+        }
 
       {
         GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
