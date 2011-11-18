@@ -197,6 +197,7 @@ gegl_chant_class_init (GeglChantClass *klass)
    * programming/in XML
    */
   operation_class->name        = "gegl:brightness-contrast";
+  operation_class->opencl_support = TRUE;
 
   /* a colon separated list of categories/tags for this operations */
   operation_class->categories  = "color";

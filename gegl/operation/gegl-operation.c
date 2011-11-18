@@ -60,6 +60,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->attach                    = attach;
   klass->prepare                   = NULL;
   klass->no_cache                  = FALSE;
+  klass->opencl_support            = FALSE;
   klass->get_bounding_box          = get_bounding_box;
   klass->get_invalidated_by_change = get_invalidated_by_change;
   klass->get_required_for_output   = get_required_for_output;
