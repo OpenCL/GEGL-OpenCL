@@ -1,6 +1,30 @@
                  ⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+
+Changes in GEGL 0.1.8
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • New operations: spread, vignette, map-relative, noise-reduction, plasma,
+     fractal-trace, exr-save, lens-correct, emboss, cubism, ripple,
+     color-to-alpha, color-rotate, red-eye-removal, convolution-matrix,
+     deinterlace, polar-coordinates, lens-distortion, pixelise.
+
+ • Split GeglView GTK Widget into separate utility library
+
+ • build/test improvements.
+ • Buffer:
+   • Added lohalo resampler, API and infrastructure for doing non
+     affine resamplings.
+
+Contributions from:
+
+Øyvind Kolås, Michael Natterer, Barak Itkin, Nils Philippsen, Mukund Sivaraman,
+Jon Nordby, Emilio Pozuelo Monfort, Étienne Bersac, Victor Oliveira,
+Michael Muré, Michael Schumacher, Adam Turcotte, Nicolas Robidoux,
+Robert Sasu, Massimo Valentini, Joao S. O. Bueno, Hans Lo, Zbigniew Chyla,
+David Evans and Javier Jardón.
+
+
 Changes in GEGL 0.1.6
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • New operations: max-rgb, pixelise, motion blur.
