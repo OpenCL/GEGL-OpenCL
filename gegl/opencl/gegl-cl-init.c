@@ -175,10 +175,14 @@ gegl_cl_init (GError **error)
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE2D_MAX_WIDTH,  sizeof(size_t),   &cl_state.max_image_width,  NULL);
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
 
+      cl_state.max_image_width  = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
+      cl_state.max_image_height = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
+
       g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Platform Name:%s",       cl_state.platform_name);
       g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Version:%s",             cl_state.platform_version);
       g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Extensions:%s",          cl_state.platform_ext);
       g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Default Device Name:%s", cl_state.device_name);
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Tile Dimensions: (%d, %d)", cl_state.max_image_width, cl_state.max_image_height);
 
       if (cl_state.image_support)
         {
@@ -208,6 +212,10 @@ gegl_cl_init (GError **error)
     }
 
   cl_state.is_accelerated = TRUE;
+
+  /* XXX: this dict is being leaked */
+  cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
+
   return TRUE;
 }
 
@@ -248,6 +256,10 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
                     err_msg = gegl_cl_errstring(errcode), buffer);
           free(err_msg);
           return NULL;
+        }
+      else
+        {
+          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Compiling successful\n");
         }
 
       for (i=0; i<kernel_n; i++)
