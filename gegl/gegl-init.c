@@ -198,6 +198,9 @@ gegl_init (gint    *argc,
 
   g_option_context_free (context);
 #endif
+
+  /* Initialize OpenCL if possible */
+  gegl_cl_init (NULL);
 }
 
 static gchar   *cmd_gegl_swap=NULL;
