@@ -49,6 +49,9 @@ TESTS = \
   run-simple-scale.xml.sh              \
   run-transform.xml.sh
 
+  #run-matting-global.xml.sh           
+  #run-matting-global-big.xml.sh     
+
 # Conditional tests
 if HAVE_JASPER
 TESTS += run-jp2-load.xml.sh
