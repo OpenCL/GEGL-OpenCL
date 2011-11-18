@@ -28,7 +28,7 @@
 
 #include "gegl-operation-filter.h"
 
-#include "gegl-cl.h"
+#include "opencl/gegl-cl.h"
 
 G_BEGIN_DECLS
 

@@ -13,16 +13,28 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 LIBS = $(OPENCL_LIBS)
 
-noinst_LTLIBRARIES = libcl.la
+libcl_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/opencl
 
-#libcl_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/cl
-#libcl_public_HEADERS = gegl-cl-init.h
+libcl_public_HEADERS = \
+	gegl-cl.h \
+	gegl-cl-init.h \
+	gegl-cl-texture.h \
+	gegl-cl-types.h \
+	cl_d3d10.h \
+	cl_ext.h \
+	cl_gl_ext.h \
+	cl_gl.h \
+	cl.h \
+	cl_platform.h \
+	opencl.h
 
-libcl_la_SOURCES = \
+libcl_sources = \
 	gegl-cl-types.h \
 	gegl-cl-init.c \
 	gegl-cl-init.h \
 	gegl-cl-texture.c \
 	gegl-cl-texture.h
 
-#libcl_la_SOURCES = $(libcl_sources) $(libcl_public_HEADERS)
+noinst_LTLIBRARIES = libcl.la
+
+libcl_la_SOURCES = $(libcl_sources) $(libcl_public_HEADERS)

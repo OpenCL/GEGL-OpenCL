@@ -32,7 +32,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 
-#include "gegl-cl.h"
+#include "opencl/gegl-cl.h"
 
 static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,
@@ -72,6 +72,7 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
 }
 
+#include <stdio.h>
 
 static gboolean
 gegl_operation_point_filter_cl_process (GeglOperation       *operation,
@@ -81,7 +82,6 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
 {
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
-  const GeglRectangle *ext = gegl_buffer_get_extent (input);
   const gint bpp = babl_format_get_bytes_per_pixel (babl_format ("RGBA float"));
 
   int y, x;
@@ -121,35 +121,45 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   for (y=0; y < result->height; y += cl_state.max_image_height)
     for (x=0; x < result->width;  x += cl_state.max_image_width)
       {
-        const size_t offset = y * (4 * ext->width) + (4 * x);
+        const size_t offset = y * (4 * result->width) + (4 * x);
         const size_t origin[3] = {0, 0, 0};
         const size_t region[3] = {MIN(cl_state.max_image_width,  result->width -x),
                                   MIN(cl_state.max_image_height, result->height-y),
                                   1};
         const size_t global_worksize[2] = {region[0], region[1]};
 
-        gegl_clEnqueueWriteImage(gegl_cl_get_command_queue(), in_tex, CL_FALSE,
-                                 origin, region, ext->width, 0, &in_data[offset],
-                                 0, NULL, NULL);
+        GeglRectangle roi = {x, y, region[0], region[1]};
 
-        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
+        /* CPU -> GPU */
+        errcode = gegl_clEnqueueWriteImage(gegl_cl_get_command_queue(), in_tex, CL_FALSE,
+                                           origin, region, result->width * 4 * sizeof(gfloat), 0, &in_data[offset],
+                                           0, NULL, NULL);
+        if (errcode != CL_SUCCESS) goto error;
 
-        errcode = point_filter_class->cl_process(operation, in_tex, out_tex, global_worksize, result);
+        /* Wait */
+        errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+        if (errcode != CL_SUCCESS) goto error;
 
-        if (errcode > 0) goto error;
+        /* Process */
+        errcode = point_filter_class->cl_process(operation, in_tex, out_tex, global_worksize, &roi);
+        if (errcode != CL_SUCCESS) goto error;
 
-        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
+        /* Wait */
+        errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+        if (errcode != CL_SUCCESS) goto error;
 
-        gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), out_tex, CL_FALSE,
-                                origin, region, ext->width, 0, &out_data[offset],
-                                0, NULL, NULL);
+        /* GPU -> CPU */
+        errcode = gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), out_tex, CL_FALSE,
+                                           origin, region, result->width * 4 * sizeof(gfloat), 0, &out_data[offset],
+                                           0, NULL, NULL);
+        if (errcode != CL_SUCCESS) goto error;
 
-        gegl_clEnqueueBarrier (gegl_cl_get_command_queue());
-
+        /* Wait */
+        errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+        if (errcode != CL_SUCCESS) goto error;
       }
 
   errcode = gegl_clFinish(gegl_cl_get_command_queue());
-
   if (errcode != CL_SUCCESS) goto error;
 
   /* tile-ize */
@@ -164,6 +174,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   return TRUE;
 
 error:
+  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Error: %s", gegl_cl_errstring(errcode));
   if (in_tex)   gegl_clReleaseMemObject (in_tex);
   if (out_tex)  gegl_clReleaseMemObject (out_tex);
   if (in_data)  free (in_data);

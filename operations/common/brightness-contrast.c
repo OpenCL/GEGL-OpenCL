@@ -104,7 +104,7 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-#include "gegl-cl.h"
+#include "opencl/gegl-cl.h"
 
 static const char* kernel_source =
 "__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |   \n"

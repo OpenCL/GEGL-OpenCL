@@ -36,7 +36,7 @@
 #include <OpenCL/cl.h>
 #include <OpenGL/CGLDevice.h>
 #else
-#include <CL/cl.h>
+#include "cl.h"
 #endif
 
 #ifdef __cplusplus
