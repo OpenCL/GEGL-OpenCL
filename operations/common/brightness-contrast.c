@@ -136,12 +136,13 @@ cl_process (GeglOperation       *op,
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties
    */
+
   GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
 
   gfloat brightness = o->brightness;
   gfloat contrast   = o->contrast;
 
-  cl_int errcode;
+  cl_int errcode = 0;
 
   if (!cl_data)
     {
@@ -149,17 +150,26 @@ cl_process (GeglOperation       *op,
       cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
     }
 
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
+  if (!cl_data) return 1;
 
-  CL_SAFE_CALL(errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
+  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
+  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
+  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
+
+  CL_SAFE_CALL(errcode |= gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                                      cl_data->kernel[0], 2,
                                                      NULL, global_worksize, NULL,
                                                      0, NULL, NULL) );
 
-  return 0;
+  if (errcode != CL_SUCCESS)
+    {
+      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Error in Brightness-Constrast Kernel\n");
+      return errcode;
+    }
+
+  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Running Brightness-Constrast Kernel in region (%d %d %d %d)", roi->x, roi->y, roi->width, roi->height);
+  return errcode;
 }
 
 /*
