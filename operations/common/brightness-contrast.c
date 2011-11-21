@@ -164,11 +164,11 @@ cl_process (GeglOperation       *op,
 
   if (errcode != CL_SUCCESS)
     {
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Error in Brightness-Constrast Kernel\n");
+      g_warning("[OpenCL] Error in Brightness-Constrast Kernel\n");
       return errcode;
     }
 
-  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Running Brightness-Constrast Kernel in region (%d %d %d %d)", roi->x, roi->y, roi->width, roi->height);
+  g_printf("[OpenCL] Running Brightness-Constrast Kernel in region (%d %d %d %d)\n", roi->x, roi->y, roi->width, roi->height);
   return errcode;
 }
 

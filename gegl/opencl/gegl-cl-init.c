@@ -178,26 +178,26 @@ gegl_cl_init (GError **error)
       cl_state.max_image_width  = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
       cl_state.max_image_height = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
 
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Platform Name:%s",       cl_state.platform_name);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Version:%s",             cl_state.platform_version);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Extensions:%s",          cl_state.platform_ext);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Default Device Name:%s", cl_state.device_name);
-      g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Tile Dimensions: (%d, %d)", cl_state.max_image_width, cl_state.max_image_height);
+      g_printf("[OpenCL] Platform Name:%s\n",       cl_state.platform_name);
+      g_printf("[OpenCL] Version:%s\n",             cl_state.platform_version);
+      g_printf("[OpenCL] Extensions:%s\n",          cl_state.platform_ext);
+      g_printf("[OpenCL] Default Device Name:%s\n", cl_state.device_name);
+      g_printf("[OpenCL] Tile Dimensions: (%d, %d)\n", cl_state.max_image_width, cl_state.max_image_height);
 
       if (cl_state.image_support)
         {
-          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Image Support OK");
+          g_printf("[OpenCL] Image Support OK\n");
         }
       else
         {
-          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Image Support Error");
+          g_printf("[OpenCL] Image Support Error\n");
           return FALSE;
         }
 
       cl_state.ctx = gegl_clCreateContext(0, 1, &cl_state.device, NULL, NULL, &err);
       if(err != CL_SUCCESS)
         {
-          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Could not create context");
+          g_printf("[OpenCL] Could not create context\n");
           return FALSE;
         }
 
@@ -205,7 +205,7 @@ gegl_cl_init (GError **error)
 
       if(err != CL_SUCCESS)
         {
-          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Could not create command queue");
+          g_printf("[OpenCL] Could not create command queue\n");
           return FALSE;
         }
 
@@ -259,7 +259,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
         }
       else
         {
-          g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Compiling successful\n");
+          g_printf("[OpenCL] Compiling successful\n");
         }
 
       for (i=0; i<kernel_n; i++)

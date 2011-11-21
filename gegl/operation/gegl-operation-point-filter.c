@@ -174,7 +174,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   return TRUE;
 
 error:
-  g_log(G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "[OpenCL] Error: %s", gegl_cl_errstring(errcode));
+  g_warning("[OpenCL] Error: %s", gegl_cl_errstring(errcode));
   if (in_tex)   gegl_clReleaseMemObject (in_tex);
   if (out_tex)  gegl_clReleaseMemObject (out_tex);
   if (in_data)  free (in_data);
