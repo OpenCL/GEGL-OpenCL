@@ -45,6 +45,7 @@ struct _GeglConfig
   gint     tile_width;
   gint     tile_height;
   gint     threads;
+  gboolean use_opencl;
 };
 
 struct _GeglConfigClass

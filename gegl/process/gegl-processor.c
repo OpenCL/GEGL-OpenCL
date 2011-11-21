@@ -35,6 +35,8 @@
 #include "graph/gegl-visitor.h"
 #include "graph/gegl-visitable.h"
 
+#include "opencl/gegl-cl.h"
+
 enum
 {
   PROP_0,
@@ -755,14 +757,15 @@ gegl_processor_work (GeglProcessor *processor,
   gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE (processor->node));
   visits_list = gegl_visitor_get_visits_list (visitor);
 
-  for (iterator = visits_list; iterator; iterator = iterator->next)
-    {
-      GeglNode *node = (GeglNode*) iterator->data;
-      if (GEGL_OPERATION_GET_CLASS(node->operation)->opencl_support)
-        {
-          processor->chunk_size = INT_MAX;
-        }
-    }
+  if (gegl_config()->use_opencl && cl_state.is_accelerated)
+    for (iterator = visits_list; iterator; iterator = iterator->next)
+      {
+        GeglNode *node = (GeglNode*) iterator->data;
+        if (GEGL_OPERATION_GET_CLASS(node->operation)->opencl_support)
+          {
+            processor->chunk_size = INT_MAX;
+          }
+      }
 
   more_work = gegl_processor_render (processor, &processor->rectangle, progress);
   if (more_work)

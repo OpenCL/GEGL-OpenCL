@@ -198,9 +198,6 @@ gegl_init (gint    *argc,
 
   g_option_context_free (context);
 #endif
-
-  /* Initialize OpenCL if possible */
-  gegl_cl_init (NULL);
 }
 
 static gchar   *cmd_gegl_swap=NULL;
@@ -304,6 +301,12 @@ GeglConfig *gegl_config (void)
               config->threads = GEGL_MAX_THREADS;
             }
         }
+
+      if (g_getenv ("GEGL_USE_OPENCL") == NULL || strcmp(g_getenv ("GEGL_USE_OPENCL"), "yes") == 0)
+        config->use_opencl = TRUE;
+      else
+        config->use_opencl = FALSE;
+
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
     }
@@ -590,6 +593,13 @@ gegl_post_parse_hook (GOptionContext *context,
     }
 
   swap_clean ();
+
+  /* Initialize OpenCL if wanted and possible */
+  if (gegl_config()->use_opencl)
+    gegl_cl_init (NULL);
+
+  g_printf("[OpenCL] Using OpenCL: %d\n", gegl_config()->use_opencl && cl_state.is_accelerated);
+
   return TRUE;
 }
 

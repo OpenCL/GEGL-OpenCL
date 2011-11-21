@@ -38,7 +38,8 @@ enum
   PROP_BABL_TOLERANCE,
   PROP_TILE_WIDTH,
   PROP_TILE_HEIGHT,
-  PROP_THREADS
+  PROP_THREADS,
+  PROP_USE_OPENCL
 };
 
 static void
@@ -81,6 +82,10 @@ gegl_config_get_property (GObject    *gobject,
 
       case PROP_THREADS:
         g_value_set_int (value, config->threads);
+        break;
+
+      case PROP_USE_OPENCL:
+        g_value_set_boolean (value, config->use_opencl);
         break;
 
       default:
@@ -147,6 +152,13 @@ gegl_config_set_property (GObject      *gobject,
       case PROP_THREADS:
         config->threads = g_value_get_int (value);
         return;
+      case PROP_USE_OPENCL:
+        config->use_opencl = g_value_get_boolean (value);
+
+        if (config->use_opencl)
+          gegl_cl_init (NULL);
+
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -217,6 +229,12 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_int ("threads", "Number of concurrent evaluation threads", "default tile height for created buffers.",
                                                      0, 16, 1,
                                                      G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_USE_OPENCL,
+                                   g_param_spec_boolean ("use-opencl", "Try to use OpenCL", NULL,
+                                                     TRUE,
+                                                     G_PARAM_READWRITE));
+
 }
 
 static void
@@ -229,4 +247,5 @@ gegl_config_init (GeglConfig *self)
   self->tile_width  = 128;
   self->tile_height = 64;
   self->threads = 1;
+  self->use_opencl = TRUE;
 }
