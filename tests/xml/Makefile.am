@@ -1,3 +1,5 @@
+SUBDIRS = data
+
 # Make the tests run against the build and not the installation
 TESTS_ENVIRONMENT = \
 	GEGL_PATH=$(top_builddir)/operations/common:$(top_builddir)/operations/core:$(top_builddir)/operations/external:$(top_builddir)/operations/affine:$(top_builddir)/operations/generated \

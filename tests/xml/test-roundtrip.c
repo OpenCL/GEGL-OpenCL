@@ -113,11 +113,13 @@ int
 main (int argc, char *argv[])
 {
     int result = -1;
+    gchar *datadir;
 
     gegl_init(&argc, &argv);
     g_test_init(&argc, &argv, NULL);
 
-    if (!add_tests_for_xml_files_in_directory("data")) {
+    datadir = g_build_filename (g_getenv ("ABS_TOP_SRCDIR"), "tests/xml/data", NULL);
+    if (!add_tests_for_xml_files_in_directory(datadir)) {
         result = -1;
     }
     else {

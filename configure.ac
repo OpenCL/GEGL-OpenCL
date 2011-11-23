@@ -1099,6 +1099,7 @@ tests/compositions/data/Makefile
 tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
+tests/xml/data/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
