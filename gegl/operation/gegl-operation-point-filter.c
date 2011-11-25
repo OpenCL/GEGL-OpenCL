@@ -72,13 +72,11 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
 }
 
-#include <stdio.h>
-
 static gboolean
-gegl_operation_point_filter_cl_process (GeglOperation       *operation,
-                                        GeglBuffer          *input,
-                                        GeglBuffer          *output,
-                                        const GeglRectangle *result)
+gegl_operation_point_filter_cl_process_tiled (GeglOperation       *operation,
+                                              GeglBuffer          *input,
+                                              GeglBuffer          *output,
+                                              const GeglRectangle *result)
 {
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
@@ -183,6 +181,181 @@ error:
   return FALSE;
 }
 
+struct buf_tex
+{
+  GeglBuffer *buf;
+  GeglRectangle *region;
+  cl_mem *tex;
+};
+
+static gboolean
+gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
+                                             GeglBuffer          *input,
+                                             GeglBuffer          *output,
+                                             const GeglRectangle *result)
+{
+  GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
+
+  const gint bpp = babl_format_get_bytes_per_pixel (babl_format ("RGBA float"));
+
+  int y, x, i;
+  int errcode;
+
+  gfloat** in_data  = NULL;
+  gfloat** out_data = NULL;
+
+  int ntex = 0;
+  struct buf_tex input_tex;
+  struct buf_tex output_tex;
+
+  cl_image_format format;
+  format.image_channel_order = CL_RGBA;
+  format.image_channel_data_type = CL_FLOAT;
+
+  for (y=0; y < result->height; y += cl_state.max_image_height)
+   for (x=0; x < result->width;  x += cl_state.max_image_width)
+     ntex++;
+
+  input_tex.region  = (GeglRectangle *) gegl_malloc(ntex * sizeof(GeglRectangle));
+  output_tex.region = (GeglRectangle *) gegl_malloc(ntex * sizeof(GeglRectangle));
+  input_tex.tex     = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
+  output_tex.tex    = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
+
+  if (input_tex.region == NULL | output_tex.region == NULL | input_tex.tex == NULL | output_tex.tex == NULL)
+    goto error;
+
+  size_t *pitch = (size_t *) gegl_malloc(ntex * sizeof(size_t *));
+  in_data  = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
+  out_data = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
+
+  if (pitch == NULL | in_data == NULL | out_data == NULL) goto error;
+
+  i = 0;
+  for (y=0; y < result->height; y += cl_state.max_image_height)
+    for (x=0; x < result->width;  x += cl_state.max_image_width)
+      {
+        const size_t region[3] = {MIN(cl_state.max_image_width,  result->width -x),
+                                  MIN(cl_state.max_image_height, result->height-y)};
+
+        GeglRectangle r = {x, y, region[0], region[1]};
+        input_tex.region[i] = output_tex.region[i] = r;
+
+        input_tex.tex[i]  = gegl_clCreateImage2D (gegl_cl_get_context(), CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, &format, region[0], region[1],
+                                                  0,  NULL, &errcode);
+        if (errcode != CL_SUCCESS) goto error;
+
+        output_tex.tex[i] = gegl_clCreateImage2D (gegl_cl_get_context(), CL_MEM_WRITE_ONLY, &format, region[0], region[1],
+                                                  0,  NULL, &errcode);
+        if (errcode != CL_SUCCESS) goto error;
+
+        out_data[i] = (gfloat *) gegl_malloc(region[0] * region[1] * bpp);
+        if (out_data[i] == NULL) goto error;
+
+        i++;
+      }
+
+  for (i=0; i < ntex; i++)
+    {
+      const size_t origin[3] = {0, 0, 0};
+      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
+
+      /* pre-pinned memory */
+      in_data[i]  = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), input_tex.tex[i], CL_TRUE,
+                                           CL_MAP_WRITE,
+                                           origin, region, &pitch[i], NULL,
+                                           0, NULL, NULL, &errcode);
+      if (errcode != CL_SUCCESS) goto error;
+
+      /* un-tile */
+      gegl_buffer_get (input, 1.0, &input_tex.region[i], babl_format ("RGBA float"), in_data[i], GEGL_AUTO_ROWSTRIDE);
+    }
+
+  /* CPU -> GPU */
+  for (i=0; i < ntex; i++)
+    {
+      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), input_tex.tex[i], in_data[i],
+                                              0, NULL, NULL);
+      if (errcode != CL_SUCCESS) goto error;
+    }
+
+  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+  if (errcode != CL_SUCCESS) goto error;
+
+  /* Process */
+  for (i=0; i < ntex; i++)
+    {
+      const size_t origin[3] = {0, 0, 0};
+      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
+      const size_t global_worksize[2] = {region[0], region[1]};
+
+      errcode = point_filter_class->cl_process(operation, input_tex.tex[i], output_tex.tex[i], global_worksize, &input_tex.region[i]);
+      if (errcode != CL_SUCCESS) goto error;
+    }
+
+  /* Wait Processing */
+  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+  if (errcode != CL_SUCCESS) goto error;
+
+  /* GPU -> CPU */
+  for (i=0; i < ntex; i++)
+    {
+      const size_t origin[3] = {0, 0, 0};
+      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
+
+      errcode = gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), output_tex.tex[i], CL_FALSE,
+                                         origin, region, pitch[i], 0, out_data[i],
+                                         0, NULL, NULL);
+      if (errcode != CL_SUCCESS) goto error;
+    }
+
+  /* Wait */
+  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+  if (errcode != CL_SUCCESS) goto error;
+
+  /* Run! */
+  errcode = gegl_clFinish(gegl_cl_get_command_queue());
+  if (errcode != CL_SUCCESS) goto error;
+
+  for (i=0; i < ntex; i++)
+    {
+      /* tile-ize */
+      gegl_buffer_set (output, &output_tex.region[i], babl_format ("RGBA float"), out_data[i], GEGL_AUTO_ROWSTRIDE);
+    }
+
+  for (i=0; i < ntex; i++)
+    {
+      gegl_clReleaseMemObject (input_tex.tex[i]);
+      gegl_clReleaseMemObject (output_tex.tex[i]);
+      gegl_free(out_data[i]);
+    }
+
+  gegl_free(input_tex.tex);
+  gegl_free(output_tex.tex);
+  gegl_free(input_tex.region);
+  gegl_free(output_tex.region);
+  gegl_free(pitch);
+
+  return TRUE;
+
+error:
+  g_warning("[OpenCL] Error: %s", gegl_cl_errstring(errcode));
+
+    for (i=0; i < ntex; i++)
+      {
+        if (input_tex.tex[i])  gegl_clReleaseMemObject (input_tex.tex[i]);
+        if (output_tex.tex[i]) gegl_clReleaseMemObject (output_tex.tex[i]);
+        if (out_data[i])       gegl_free(out_data[i]);
+      }
+
+  if (input_tex.tex)     gegl_free(input_tex.tex);
+  if (output_tex.tex)    gegl_free(output_tex.tex);
+  if (input_tex.region)  gegl_free(input_tex.region);
+  if (output_tex.region) gegl_free(output_tex.region);
+  if (pitch)             gegl_free(pitch);
+
+  return FALSE;
+}
+
 
 static gboolean
 gegl_operation_point_filter_process (GeglOperation       *operation,
@@ -200,7 +373,11 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
     {
       if (cl_state.is_accelerated && point_filter_class->cl_process)
         {
-          if (gegl_operation_point_filter_cl_process (operation, input, output, result))
+          if (gegl_operation_point_filter_cl_process_full (operation, input, output, result))
+            return TRUE;
+
+          /* the function above failed */
+          if (gegl_operation_point_filter_cl_process_tiled (operation, input, output, result))
             return TRUE;
         }
 
