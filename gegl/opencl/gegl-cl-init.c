@@ -89,6 +89,20 @@ gegl_cl_get_command_queue (void)
   return cl_state.cq;
 }
 
+#ifdef G_OS_WIN32
+
+#include <windows.h>
+
+#define CL_LOAD_FUNCTION(func)                                                    \
+if ((gegl_##func = (t_##func) GetProcAddress(module, #func)) == NULL)             \
+  {                                                                               \
+    g_set_error (error, 0, 0, "symbol gegl_##func is NULL");                      \
+    FreeLibrary(module);                                                          \
+    return FALSE;                                                                 \
+  }
+
+#else
+
 #define CL_LOAD_FUNCTION(func)                                                    \
 if (!g_module_symbol (module, #func, (gpointer *)& gegl_##func))                  \
   {                                                                               \
@@ -106,19 +120,26 @@ if (gegl_##func == NULL)                                                        
     return FALSE;                                                                 \
   }
 
+#endif
+
 gboolean
 gegl_cl_init (GError **error)
 {
-  GModule *module;
   cl_int err;
 
   if (!cl_state.is_accelerated)
     {
-      module = g_module_open ("libOpenCL.so", G_MODULE_BIND_LAZY);
+      #ifdef G_OS_WIN32
+        HINSTANCE module;
+        module = LoadLibrary ("OpenCL.dll");
+      #else
+        GModule *module;
+        module = g_module_open ("libOpenCL.so", G_MODULE_BIND_LAZY);
+      #endif
 
       if (!module)
         {
-          g_set_error (error, 0, 0, "%s", g_module_error ());
+          g_warning ("Unable to load OpenCL library");
           return FALSE;
         }
 
@@ -215,6 +236,8 @@ gegl_cl_init (GError **error)
 
   /* XXX: this dict is being leaked */
   cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
+
+  g_printf("[OpenCL] OK\n");
 
   return TRUE;
 }
