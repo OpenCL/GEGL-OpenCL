@@ -6,57 +6,77 @@
 #include <string.h>
 #include <stdio.h>
 
-/* http://forums.amd.com/forum/messageview.cfm?catid=390&threadid=128536 */
-char *gegl_cl_errstring(cl_int err) {
-  switch (err) {
-    case CL_SUCCESS:                          return strdup("Success!");
-    case CL_DEVICE_NOT_FOUND:                 return strdup("Device not found.");
-    case CL_DEVICE_NOT_AVAILABLE:             return strdup("Device not available");
-    case CL_COMPILER_NOT_AVAILABLE:           return strdup("Compiler not available");
-    case CL_MEM_OBJECT_ALLOCATION_FAILURE:    return strdup("Memory object allocation failure");
-    case CL_OUT_OF_RESOURCES:                 return strdup("Out of resources");
-    case CL_OUT_OF_HOST_MEMORY:               return strdup("Out of host memory");
-    case CL_PROFILING_INFO_NOT_AVAILABLE:     return strdup("Profiling information not available");
-    case CL_MEM_COPY_OVERLAP:                 return strdup("Memory copy overlap");
-    case CL_IMAGE_FORMAT_MISMATCH:            return strdup("Image format mismatch");
-    case CL_IMAGE_FORMAT_NOT_SUPPORTED:       return strdup("Image format not supported");
-    case CL_BUILD_PROGRAM_FAILURE:            return strdup("Program build failure");
-    case CL_MAP_FAILURE:                      return strdup("Map failure");
-    case CL_INVALID_VALUE:                    return strdup("Invalid value");
-    case CL_INVALID_DEVICE_TYPE:              return strdup("Invalid device type");
-    case CL_INVALID_PLATFORM:                 return strdup("Invalid platform");
-    case CL_INVALID_DEVICE:                   return strdup("Invalid device");
-    case CL_INVALID_CONTEXT:                  return strdup("Invalid context");
-    case CL_INVALID_QUEUE_PROPERTIES:         return strdup("Invalid queue properties");
-    case CL_INVALID_COMMAND_QUEUE:            return strdup("Invalid command queue");
-    case CL_INVALID_HOST_PTR:                 return strdup("Invalid host pointer");
-    case CL_INVALID_MEM_OBJECT:               return strdup("Invalid memory object");
-    case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:  return strdup("Invalid image format descriptor");
-    case CL_INVALID_IMAGE_SIZE:               return strdup("Invalid image size");
-    case CL_INVALID_SAMPLER:                  return strdup("Invalid sampler");
-    case CL_INVALID_BINARY:                   return strdup("Invalid binary");
-    case CL_INVALID_BUILD_OPTIONS:            return strdup("Invalid build options");
-    case CL_INVALID_PROGRAM:                  return strdup("Invalid program");
-    case CL_INVALID_PROGRAM_EXECUTABLE:       return strdup("Invalid program executable");
-    case CL_INVALID_KERNEL_NAME:              return strdup("Invalid kernel name");
-    case CL_INVALID_KERNEL_DEFINITION:        return strdup("Invalid kernel definition");
-    case CL_INVALID_KERNEL:                   return strdup("Invalid kernel");
-    case CL_INVALID_ARG_INDEX:                return strdup("Invalid argument index");
-    case CL_INVALID_ARG_VALUE:                return strdup("Invalid argument value");
-    case CL_INVALID_ARG_SIZE:                 return strdup("Invalid argument size");
-    case CL_INVALID_KERNEL_ARGS:              return strdup("Invalid kernel arguments");
-    case CL_INVALID_WORK_DIMENSION:           return strdup("Invalid work dimension");
-    case CL_INVALID_WORK_GROUP_SIZE:          return strdup("Invalid work group size");
-    case CL_INVALID_WORK_ITEM_SIZE:           return strdup("Invalid work item size");
-    case CL_INVALID_GLOBAL_OFFSET:            return strdup("Invalid global offset");
-    case CL_INVALID_EVENT_WAIT_LIST:          return strdup("Invalid event wait list");
-    case CL_INVALID_EVENT:                    return strdup("Invalid event");
-    case CL_INVALID_OPERATION:                return strdup("Invalid operation");
-    case CL_INVALID_GL_OBJECT:                return strdup("Invalid OpenGL object");
-    case CL_INVALID_BUFFER_SIZE:              return strdup("Invalid buffer size");
-    case CL_INVALID_MIP_LEVEL:                return strdup("Invalid mip-map level");
-    default:                                  return strdup("Unknown");
-  }
+const char *gegl_cl_errstring(cl_int err) {
+  static const char* strings[] =
+  {
+    /* Error Codes */
+      "success"                         /*  0  */
+    , "device not found"                /* -1  */
+    , "device not available"            /* -2  */
+    , "compiler not available"          /* -3  */
+    , "mem object allocation failure"   /* -4  */
+    , "out of resources"                /* -5  */
+    , "out of host memory"              /* -6  */
+    , "profiling info not available"    /* -7  */
+    , "mem copy overlap"                /* -8  */
+    , "image format mismatch"           /* -9  */
+    , "image format not supported"      /* -10 */
+    , "build program failure"           /* -11 */
+    , "map failure"                     /* -12 */
+    , ""                                /* -13 */
+    , ""                                /* -14 */
+    , ""                                /* -15 */
+    , ""                                /* -16 */
+    , ""                                /* -17 */
+    , ""                                /* -18 */
+    , ""                                /* -19 */
+    , ""                                /* -20 */
+    , ""                                /* -21 */
+    , ""                                /* -22 */
+    , ""                                /* -23 */
+    , ""                                /* -24 */
+    , ""                                /* -25 */
+    , ""                                /* -26 */
+    , ""                                /* -27 */
+    , ""                                /* -28 */
+    , ""                                /* -29 */
+    , "invalid value"                   /* -30 */
+    , "invalid device type"             /* -31 */
+    , "invalid platform"                /* -32 */
+    , "invalid device"                  /* -33 */
+    , "invalid context"                 /* -34 */
+    , "invalid queue properties"        /* -35 */
+    , "invalid command queue"           /* -36 */
+    , "invalid host ptr"                /* -37 */
+    , "invalid mem object"              /* -38 */
+    , "invalid image format descriptor" /* -39 */
+    , "invalid image size"              /* -40 */
+    , "invalid sampler"                 /* -41 */
+    , "invalid binary"                  /* -42 */
+    , "invalid build options"           /* -43 */
+    , "invalid program"                 /* -44 */
+    , "invalid program executable"      /* -45 */
+    , "invalid kernel name"             /* -46 */
+    , "invalid kernel definition"       /* -47 */
+    , "invalid kernel"                  /* -48 */
+    , "invalid arg index"               /* -49 */
+    , "invalid arg value"               /* -50 */
+    , "invalid arg size"                /* -51 */
+    , "invalid kernel args"             /* -52 */
+    , "invalid work dimension"          /* -53 */
+    , "invalid work group size"         /* -54 */
+    , "invalid work item size"          /* -55 */
+    , "invalid global offset"           /* -56 */
+    , "invalid event wait list"         /* -57 */
+    , "invalid event"                   /* -58 */
+    , "invalid operation"               /* -59 */
+    , "invalid gl object"               /* -60 */
+    , "invalid buffer size"             /* -61 */
+    , "invalid mip level"               /* -62 */
+    , "invalid global work size"        /* -63 */
+  };
+
+  return strings[-err];
 }
 
 gboolean
@@ -270,14 +290,11 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
       if (errcode != CL_SUCCESS)
         {
           char buffer[2000];
-          char *err_msg;
           CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
                                                              gegl_cl_get_device(),
                                                              CL_PROGRAM_BUILD_LOG,
                                                              sizeof(buffer), buffer, NULL) );
-          g_warning("OpenCL Build Error:%s\n%s",
-                    err_msg = gegl_cl_errstring(errcode), buffer);
-          free(err_msg);
+          g_warning("OpenCL Build Error:%s\n%s", gegl_cl_errstring(errcode), buffer);
           return NULL;
         }
       else

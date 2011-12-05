@@ -31,7 +31,7 @@ typedef struct
   }
 gegl_cl_state;
 
-char *gegl_cl_errstring(cl_int err);
+const char *gegl_cl_errstring(cl_int err);
 
 gboolean gegl_cl_init (GError **error);
 

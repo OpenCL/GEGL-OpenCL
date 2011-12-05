@@ -221,14 +221,14 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   input_tex.tex     = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
   output_tex.tex    = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
 
-  if (input_tex.region == NULL | output_tex.region == NULL | input_tex.tex == NULL | output_tex.tex == NULL)
+  if (input_tex.region == NULL || output_tex.region == NULL || input_tex.tex == NULL || output_tex.tex == NULL)
     goto error;
 
   size_t *pitch = (size_t *) gegl_malloc(ntex * sizeof(size_t *));
   in_data  = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
   out_data = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
 
-  if (pitch == NULL | in_data == NULL | out_data == NULL) goto error;
+  if (pitch == NULL || in_data == NULL || out_data == NULL) goto error;
 
   i = 0;
   for (y=0; y < result->height; y += cl_state.max_image_height)
