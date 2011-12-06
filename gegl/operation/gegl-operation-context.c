@@ -315,6 +315,7 @@ gegl_operation_context_get_source (GeglOperationContext *context,
   if (!real_input)
     return NULL;
   input = g_object_ref (real_input);
+
   return input;
 }
 
@@ -391,6 +392,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     }
 
   gegl_operation_context_take_object (context, padname, G_OBJECT (output));
+
   return output;
 }
 

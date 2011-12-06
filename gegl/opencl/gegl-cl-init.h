@@ -2,7 +2,6 @@
 #define __GEGL_CL_INIT_H__
 
 #include "gegl-cl-types.h"
-#include <gmodule.h>
 
 #define CL_SAFE_CALL(func)                                          \
 func;                                                               \

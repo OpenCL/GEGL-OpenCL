@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "gegl-cl-color.h"
+
 const char *gegl_cl_errstring(cl_int err) {
   static const char* strings[] =
   {
@@ -256,6 +258,9 @@ gegl_cl_init (GError **error)
 
   /* XXX: this dict is being leaked */
   cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
+
+  if (cl_state.is_accelerated)
+    gegl_cl_color_compile_kernels();
 
   g_printf("[OpenCL] OK\n");
 

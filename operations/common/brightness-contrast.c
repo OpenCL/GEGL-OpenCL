@@ -152,12 +152,12 @@ cl_process (GeglOperation       *op,
 
   if (!cl_data) return 1;
 
-  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
-  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
-  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
-  CL_SAFE_CALL(errcode |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
+  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
 
-  CL_SAFE_CALL(errcode |= gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  CL_SAFE_CALL(errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                                      cl_data->kernel[0], 2,
                                                      NULL, global_worksize, NULL,
                                                      0, NULL, NULL) );
@@ -168,7 +168,6 @@ cl_process (GeglOperation       *op,
       return errcode;
     }
 
-  g_printf("[OpenCL] Running Brightness-Constrast Kernel in region (%d %d %d %d)\n", roi->x, roi->y, roi->width, roi->height);
   return errcode;
 }
 
