@@ -6,7 +6,9 @@
 
 static gegl_cl_run_data *kernels_color = NULL;
 
-static const Babl *format[6];
+#define CL_FORMAT_N 8
+
+static const Babl *format[CL_FORMAT_N];
 
 void
 gegl_cl_color_compile_kernels(void)
@@ -17,6 +19,8 @@ gegl_cl_color_compile_kernels(void)
                                "rgba_gamma_2_22rgba",                /* 3 */
                                "rgba2rgba_gamma_2_2_premultiplied",  /* 4 */
                                "rgba_gamma_2_2_premultiplied2rgba",  /* 5 */
+                               "rgbaf_to_rgbau8",                    /* 6 */
+                               "rgbau8_to_rgbaf",                    /* 7 */
                                NULL};
 
   format[0] = babl_format ("RaGaBaA float"),
@@ -25,24 +29,32 @@ gegl_cl_color_compile_kernels(void)
   format[3] = babl_format ("RGBA float"),
   format[4] = babl_format ("R'aG'aB'aA float"),
   format[5] = babl_format ("RGBA float"),
+  format[6] = babl_format ("RGBA u8"),
+  format[7] = babl_format ("RGBA float"),
 
   kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
 }
 
-gboolean
+gegl_cl_color_op
 gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 {
   int i;
   gboolean supported_format_in  = FALSE;
   gboolean supported_format_out = FALSE;
 
-  for (i = 0; i < 6; i++)
+  if (in_format == out_format)
+    return CL_COLOR_EQUAL;
+
+  for (i = 0; i < CL_FORMAT_N; i++)
     {
       if (format[i] == in_format)  supported_format_in  = TRUE;
       if (format[i] == out_format) supported_format_out = TRUE;
     }
 
-  return (supported_format_in && supported_format_out);
+  if (supported_format_in && supported_format_out)
+    return CL_COLOR_CONVERT;
+  else
+    return CL_COLOR_NOT_SUPPORTED;
 }
 
 #define CONV_1(x)   {conv[0] = x; conv[1] = -1;}
@@ -51,16 +63,20 @@ gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 //#define CL_ERROR {g_assert(0);}
 #define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
 
+/* in_tex and aux_tex may be destroyed to keep intermediate results,
+   converted result will be stored in in_tex */
 gboolean
-gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
+gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
                     const Babl *in_format, const Babl *out_format)
 {
   int i;
   int errcode;
   int conv[2] = {-1, -1};
 
-  if (!gegl_cl_color_supported (in_format, out_format))
-    CL_ERROR
+  cl_mem ping_tex = *in_tex, pong_tex = *aux_tex;
+
+  if (gegl_cl_color_supported (in_format, out_format) == CL_COLOR_NOT_SUPPORTED)
+    return FALSE;
 
   if (in_format == out_format)
     {
@@ -69,7 +85,7 @@ gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
 
       /* just copy in_tex to out_tex */
       errcode = gegl_clEnqueueCopyImage (gegl_cl_get_command_queue(),
-                                         in_tex, out_tex, origin, origin, region,
+                                         *in_tex, *aux_tex, origin, origin, region,
                                          0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR
 
@@ -83,46 +99,73 @@ gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
           if      (out_format == babl_format ("RaGaBaA float"))    CONV_1(0)
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_1(2)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_1(4)
+          else if (out_format == babl_format ("RGBA u8"))          CONV_1(6)
         }
       else if (in_format == babl_format ("RaGaBaA float"))
         {
           if      (out_format == babl_format ("RGBA float"))       CONV_1(1)
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(1, 2)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_2(1, 4)
+          else if (out_format == babl_format ("RGBA u8"))          CONV_2(1, 6)
         }
       else if (in_format == babl_format ("R'G'B'A float"))
         {
           if      (out_format == babl_format ("RGBA float"))       CONV_1(3)
           else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(3, 0)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_2(3, 4)
+          else if (out_format == babl_format ("RGBA u8"))          CONV_2(3, 6)
         }
       else if (in_format == babl_format ("R'aG'aB'aA float"))
         {
           if      (out_format == babl_format ("RGBA float"))       CONV_1(5)
           else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(5, 0)
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(5, 2)
+          else if (out_format == babl_format ("RGBA u8"))          CONV_2(5, 6)
         }
-
-      for (i=0; i<2; i++)
+      else if (in_format == babl_format ("RGBA u8"))
         {
-          if (conv[i] >= 0)
-            {
-              errcode = gegl_clSetKernelArg(kernels_color->kernel[conv[i]], 0, sizeof(cl_mem), (void*)&in_tex);
-              if (errcode != CL_SUCCESS) CL_ERROR
-
-              errcode = gegl_clSetKernelArg(kernels_color->kernel[conv[i]], 1, sizeof(cl_mem), (void*)&out_tex);
-              if (errcode != CL_SUCCESS) CL_ERROR
-
-              errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                                    kernels_color->kernel[conv[i]], 2,
-                                                    NULL, size, NULL,
-                                                    0, NULL, NULL);
-              if (errcode != CL_SUCCESS) CL_ERROR
-
-              errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-              if (errcode != CL_SUCCESS) CL_ERROR
-            }
+          if      (out_format == babl_format ("RGBA float"))       CONV_1(7)
+          else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(7, 0)
+          else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(7, 2)
+          else if (out_format == babl_format ("RGBA u8"))          CONV_2(7, 6)
         }
+
+      /* XXX: maybe there are precision problems if a 8-bit texture is used as intermediate */
+      for (i=0; conv[i] >= 0 && i<2; i++)
+        {
+            cl_mem tmp_tex;
+
+            errcode = gegl_clSetKernelArg(kernels_color->kernel[conv[i]], 0, sizeof(cl_mem), (void*)&ping_tex);
+            if (errcode != CL_SUCCESS) CL_ERROR
+
+            errcode = gegl_clSetKernelArg(kernels_color->kernel[conv[i]], 1, sizeof(cl_mem), (void*)&pong_tex);
+            if (errcode != CL_SUCCESS) CL_ERROR
+
+            errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                                  kernels_color->kernel[conv[i]], 2,
+                                                  NULL, size, NULL,
+                                                  0, NULL, NULL);
+            if (errcode != CL_SUCCESS) CL_ERROR
+
+            errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+            if (errcode != CL_SUCCESS) CL_ERROR
+
+            tmp_tex = ping_tex;
+            ping_tex = pong_tex;
+            pong_tex = tmp_tex;
+        }
+
+      if (i % 2 == 0)
+        {
+          *in_tex  = ping_tex;
+          *aux_tex = pong_tex;
+        }
+      else
+        {
+          *in_tex  = pong_tex;
+          *aux_tex = ping_tex;
+        }
+
     }
 
   return TRUE;

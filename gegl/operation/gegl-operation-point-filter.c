@@ -104,9 +104,20 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   struct buf_tex output_tex;
   size_t *pitch = NULL;
 
-  cl_image_format format;
-  format.image_channel_order = CL_RGBA;
-  format.image_channel_data_type = CL_FLOAT;
+  /* supported babl formats up to now:
+     RGBA u8
+     All formats with four floating-point channels
+     (I suppose others formats would be hard to put on GPU)
+  */
+
+  cl_image_format rgbaf_format;
+  cl_image_format rgbau8_format;
+
+  rgbaf_format.image_channel_order      = CL_RGBA;
+  rgbaf_format.image_channel_data_type  = CL_FLOAT;
+
+  rgbau8_format.image_channel_order     = CL_RGBA;
+  rgbau8_format.image_channel_data_type = CL_UNORM_INT8;
 
   for (y=result->y; y < result->height; y += cl_state.max_image_height)
    for (x=result->x; x < result->width;  x += cl_state.max_image_width)
@@ -148,13 +159,15 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
         input_tex.region[i] = output_tex.region[i] = r;
 
         input_tex.tex[i]  = gegl_clCreateImage2D (gegl_cl_get_context(),
-                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, &format,
+                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
+                                                  (gegl_buffer_get_format(input) == babl_format ("RGBA u8"))? &rgbau8_format : &rgbaf_format,
                                                   region[0], region[1],
                                                   0,  NULL, &errcode);
         if (errcode != CL_SUCCESS) CL_ERROR;
 
         output_tex.tex[i] = gegl_clCreateImage2D (gegl_cl_get_context(),
-                                                  CL_MEM_READ_WRITE, &format,
+                                                  CL_MEM_READ_WRITE,
+                                                  (gegl_buffer_get_format(output) == babl_format ("RGBA u8"))? &rgbau8_format : &rgbaf_format,
                                                   region[0], region[1],
                                                   0,  NULL, &errcode);
         if (errcode != CL_SUCCESS) CL_ERROR;
@@ -178,10 +191,12 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
       if (errcode != CL_SUCCESS) CL_ERROR;
 
       /* un-tile */
-      if (gegl_cl_color_supported (gegl_buffer_get_format(input), in_format)) /* color conversion will be performed in the GPU later */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], gegl_buffer_get_format(input), in_data[i], GEGL_AUTO_ROWSTRIDE);
-      else                                                 /* color conversion using BABL */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], in_format, in_data[i], GEGL_AUTO_ROWSTRIDE);
+      if (gegl_cl_color_supported (gegl_buffer_get_format(input), in_format) == CL_COLOR_NOT_SUPPORTED)
+        /* color conversion using BABL */
+        gegl_buffer_get (input, 1.0, &input_tex.region[i], in_format, in_data[i], pitch[i]);
+      else
+        /* color conversion will be performed in the GPU later */
+        gegl_buffer_get (input, 1.0, &input_tex.region[i], input->format, in_data[i], pitch[i]);
     }
 
   /* CPU -> GPU */
@@ -196,18 +211,12 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   if (errcode != CL_SUCCESS) CL_ERROR;
 
   /* color conversion in the GPU (input) */
-  if (gegl_cl_color_supported (gegl_buffer_get_format(input), in_format))
+  if (gegl_cl_color_supported (input->format, in_format) == CL_COLOR_CONVERT)
     for (i=0; i < ntex; i++)
      {
-       cl_mem swap;
        const size_t size[2] = {input_tex.region[i].width, input_tex.region[i].height};
-       errcode = gegl_cl_color_conv (input_tex.tex[i], output_tex.tex[i], size, gegl_buffer_get_format(input), in_format);
-
+       errcode = gegl_cl_color_conv (&input_tex.tex[i], &output_tex.tex[i], size, input->format, in_format);
        if (errcode == FALSE) CL_ERROR;
-
-       swap = input_tex.tex[i];
-       input_tex.tex[i]  = output_tex.tex[i];
-       output_tex.tex[i] = swap;
      }
 
   /* Process */
@@ -225,18 +234,11 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   if (errcode != CL_SUCCESS) CL_ERROR;
 
   /* color conversion in the GPU (output) */
-  if (gegl_cl_color_supported (out_format, gegl_buffer_get_format(output)))
+  if (gegl_cl_color_supported (out_format, output->format) == CL_COLOR_CONVERT)
     for (i=0; i < ntex; i++)
      {
-       cl_mem swap;
        const size_t size[2] = {output_tex.region[i].width, output_tex.region[i].height};
-       errcode = gegl_cl_color_conv (output_tex.tex[i], input_tex.tex[i], size, out_format, gegl_buffer_get_format(output));
-
-       if (errcode == FALSE) CL_ERROR;
-
-       swap = input_tex.tex[i];
-       input_tex.tex[i]  = output_tex.tex[i];
-       output_tex.tex[i] = swap;
+       errcode = gegl_cl_color_conv (&output_tex.tex[i], &input_tex.tex[i], size, out_format, output->format);
      }
 
   /* GPU -> CPU */
@@ -246,7 +248,7 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
       const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
 
       errcode = gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), output_tex.tex[i], CL_FALSE,
-                                         origin, region, pitch[i], 0, out_data[i],
+                                         origin, region, 0, 0, out_data[i],
                                          0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR;
     }
@@ -262,10 +264,12 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   for (i=0; i < ntex; i++)
     {
       /* tile-ize */
-      if (gegl_cl_color_supported (out_format, gegl_buffer_get_format(output))) /* color conversion has already been be performed in the GPU */
-        gegl_buffer_set (output, &output_tex.region[i], gegl_buffer_get_format(output), out_data[i], GEGL_AUTO_ROWSTRIDE);
-      else                                                 /* color conversion using BABL */
+      if (gegl_cl_color_supported (out_format, output->format) == CL_COLOR_NOT_SUPPORTED)
+        /* color conversion using BABL */
         gegl_buffer_set (output, &output_tex.region[i], out_format, out_data[i], GEGL_AUTO_ROWSTRIDE);
+      else
+        /* color conversion has already been be performed in the GPU */
+        gegl_buffer_set (output, &output_tex.region[i], output->format, out_data[i], GEGL_AUTO_ROWSTRIDE);
     }
 
   for (i=0; i < ntex; i++)
