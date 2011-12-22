@@ -68,20 +68,18 @@ quantize_value (guint value, guint n_bits, guint mask)
 static void
 process_floyd_steinberg (GeglBuffer *input,
                          GeglBuffer *output,
+                         const GeglRectangle *result,
                          guint *channel_bits)
 {
-  const GeglRectangle *input_rect;
   GeglRectangle        line_rect;
   guint16             *line_buf;
   gdouble             *error_buf [2];
   guint                channel_mask [4];
   gint                 y;
 
-  input_rect = gegl_buffer_get_extent (input);
-
-  line_rect.x      = input_rect->x;
-  line_rect.y      = input_rect->y;
-  line_rect.width  = input_rect->width;
+  line_rect.x      = result->x;
+  line_rect.y      = result->y;
+  line_rect.width  = result->width;
   line_rect.height = 1;
 
   line_buf      = g_new  (guint16, line_rect.width * 4);
@@ -90,7 +88,7 @@ process_floyd_steinberg (GeglBuffer *input,
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < input_rect->height; y++)
+  for (y = 0; y < result->height; y++)
   {
     gdouble  *error_buf_swap;
     gint      step;
@@ -102,14 +100,14 @@ process_floyd_steinberg (GeglBuffer *input,
 
     if (y & 1)
     {
-      start_x = input_rect->width - 1;
+      start_x = result->width - 1;
       end_x   = -1;
       step    = -1;
     }
     else
     {
       start_x = 0;
-      end_x   = input_rect->width;
+      end_x   = result->width;
       step    = 1;
     }
 
@@ -142,13 +140,13 @@ process_floyd_steinberg (GeglBuffer *input,
 
         error_buf [1] [x * 4 + ch] += qerror * 5.0 / 16.0;  /* Down */
 
-        if (x + step >= 0 && x + step < input_rect->width)
+        if (x + step >= 0 && x + step < result->width)
         {
           error_buf [0] [(x + step) * 4 + ch] += qerror * 6.0 / 16.0;  /* Ahead */
           error_buf [1] [(x + step) * 4 + ch] += qerror * 1.0 / 16.0;  /* Down, ahead */
         }
 
-        if (x - step >= 0 && x - step < input_rect->width)
+        if (x - step >= 0 && x - step < result->width)
         {
           error_buf [1] [(x - step) * 4 + ch] += qerror * 3.0 / 16.0;  /* Down, behind */
         }
@@ -191,32 +189,30 @@ static const gdouble bayer_matrix_8x8 [] =
 static void
 process_bayer (GeglBuffer *input,
                GeglBuffer *output,
+               const GeglRectangle *result,
                guint *channel_bits)
 {
-  const GeglRectangle *input_rect;
   GeglRectangle        line_rect;
   guint16             *line_buf;
   guint                channel_mask [4];
   guint                y;
 
-  input_rect = gegl_buffer_get_extent (input);
-
-  line_rect.x      = input_rect->x;
-  line_rect.y      = input_rect->y;
-  line_rect.width  = input_rect->width;
+  line_rect.x = result->x;
+  line_rect.y = result->y;
+  line_rect.width = result->width;
   line_rect.height = 1;
 
   line_buf = g_new (guint16, line_rect.width * 4);
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < input_rect->height; y++)
+  for (y = 0; y < result->height; y++)
   {
     guint x;
 
     gegl_buffer_get (input, 1.0, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
 
-    for (x = 0; x < input_rect->width; x++)
+    for (x = 0; x < result->width; x++)
     {
       guint16 *pixel = &line_buf [x * 4];
       guint    ch;
@@ -245,32 +241,30 @@ process_bayer (GeglBuffer *input,
 static void
 process_random_covariant (GeglBuffer *input,
                           GeglBuffer *output,
+                          const GeglRectangle *result,
                           guint *channel_bits)
 {
-  const GeglRectangle *input_rect;
   GeglRectangle        line_rect;
   guint16             *line_buf;
   guint                channel_mask [4];
   guint                y;
 
-  input_rect = gegl_buffer_get_extent (input);
-
-  line_rect.x      = input_rect->x;
-  line_rect.y      = input_rect->y;
-  line_rect.width  = input_rect->width;
+  line_rect.x = result->x;
+  line_rect.y = result->y;
+  line_rect.width = result->width;
   line_rect.height = 1;
 
   line_buf = g_new (guint16, line_rect.width * 4);
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < input_rect->height; y++)
+  for (y = 0; y < result->height; y++)
   {
     guint x;
 
     gegl_buffer_get (input, 1.0, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
 
-    for (x = 0; x < input_rect->width; x++)
+    for (x = 0; x < result->width; x++)
     {
       guint16 *pixel = &line_buf [x * 4];
       guint    ch;
@@ -300,32 +294,30 @@ process_random_covariant (GeglBuffer *input,
 static void
 process_random (GeglBuffer *input,
                 GeglBuffer *output,
+                const GeglRectangle *result,
                 guint *channel_bits)
 {
-  const GeglRectangle *input_rect;
   GeglRectangle        line_rect;
   guint16             *line_buf;
   guint                channel_mask [4];
   guint                y;
 
-  input_rect = gegl_buffer_get_extent (input);
-
-  line_rect.x      = input_rect->x;
-  line_rect.y      = input_rect->y;
-  line_rect.width  = input_rect->width;
+  line_rect.x = result->x;
+  line_rect.y = result->y;
+  line_rect.width = result->width;
   line_rect.height = 1;
 
   line_buf = g_new (guint16, line_rect.width * 4);
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < input_rect->height; y++)
+  for (y = 0; y < result->height; y++)
   {
     guint x;
 
     gegl_buffer_get (input, 1.0, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
 
-    for (x = 0; x < input_rect->width; x++)
+    for (x = 0; x < result->width; x++)
     {
       guint16 *pixel = &line_buf [x * 4];
       guint    ch;
@@ -354,32 +346,30 @@ process_random (GeglBuffer *input,
 static void
 process_no_dither (GeglBuffer *input,
                    GeglBuffer *output,
+                   const GeglRectangle *result,
                    guint *channel_bits)
 {
-  const GeglRectangle *input_rect;
   GeglRectangle        line_rect;
   guint16             *line_buf;
   guint                channel_mask [4];
   guint                y;
 
-  input_rect = gegl_buffer_get_extent (input);
-
-  line_rect.x      = input_rect->x;
-  line_rect.y      = input_rect->y;
-  line_rect.width  = input_rect->width;
+  line_rect.x = result->x;
+  line_rect.y = result->y;
+  line_rect.width = result->width;
   line_rect.height = 1;
 
   line_buf = g_new (guint16, line_rect.width * 4);
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < input_rect->height; y++)
+  for (y = 0; y < result->height; y++)
   {
     guint x;
 
     gegl_buffer_get (input, 1.0, &line_rect, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
 
-    for (x = 0; x < input_rect->width; x++)
+    for (x = 0; x < result->width; x++)
     {
       guint16 *pixel = &line_buf [x * 4];
       guint    ch;
@@ -427,17 +417,17 @@ process (GeglOperation       *operation,
   channel_bits [3] = o->alpha_bits;
 
   if (!o->dither_type)
-    process_no_dither (input, output, channel_bits);
+    process_no_dither (input, output, result, channel_bits);
   else if (!strcasecmp (o->dither_type, "random"))
-    process_random (input, output, channel_bits);
+    process_random (input, output, result, channel_bits);
   else if (!strcasecmp (o->dither_type, "random-covariant"))
-    process_random_covariant (input, output, channel_bits);
+    process_random_covariant (input, output, result, channel_bits);
   else if (!strcasecmp (o->dither_type, "bayer"))
-    process_bayer (input, output, channel_bits);
+    process_bayer (input, output, result, channel_bits);
   else if (!strcasecmp (o->dither_type, "floyd-steinberg"))
-    process_floyd_steinberg (input, output, channel_bits);
+    process_floyd_steinberg (input, output, result, channel_bits);
   else
-    process_no_dither (input, output, channel_bits);
+    process_no_dither (input, output, result, channel_bits);
 
   return TRUE;
 }
