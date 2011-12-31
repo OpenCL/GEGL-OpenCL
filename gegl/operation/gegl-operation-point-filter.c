@@ -94,41 +94,37 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
   int y, x, i;
-  int errcode;
+  int errcode = 0;
 
-  gfloat** in_data  = NULL;
   gfloat** out_data = NULL;
 
   int ntex = 0;
   struct buf_tex input_tex;
   struct buf_tex output_tex;
-  size_t *pitch = NULL;
+
+  const size_t origin_zero[3] = {0, 0, 0};
 
   gegl_cl_color_op conv_in;
   gegl_cl_color_op conv_out;
 
-  cl_image_format rgbaf_format;
-  cl_image_format rgbau8_format;
+  cl_image_format in_image_format;
+  cl_image_format out_image_format;
 
-  rgbaf_format.image_channel_order      = CL_RGBA;
-  rgbaf_format.image_channel_data_type  = CL_FLOAT;
+  size_t bpp;
 
-  rgbau8_format.image_channel_order     = CL_RGBA;
-  rgbau8_format.image_channel_data_type = CL_UNORM_INT8;
+  /* non-texturizable format! */
+  if (!gegl_cl_color_babl (in_format,  NULL, NULL) ||
+      !gegl_cl_color_babl (out_format, NULL, NULL))
+    {
+      g_warning ("[OpenCL] Non-texturizable input of output format!");
+      return FALSE;
+    }
 
-  for (y=result->y; y < result->height; y += cl_state.max_image_height)
-   for (x=result->x; x < result->width;  x += cl_state.max_image_width)
-     ntex++;
+  if (!gegl_cl_color_babl (input->format, &in_image_format, &bpp))
+    gegl_cl_color_babl (in_format, &in_image_format, &bpp);
 
-  input_tex.region  = (GeglRectangle *) gegl_malloc(ntex * sizeof(GeglRectangle));
-  output_tex.region = (GeglRectangle *) gegl_malloc(ntex * sizeof(GeglRectangle));
-  input_tex.tex     = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
-  output_tex.tex    = (cl_mem *)        gegl_malloc(ntex * sizeof(cl_mem));
-
-  cl_image_format *in_image_format  = (input->format  == babl_format ("RGBA u8"))? &rgbau8_format : &rgbaf_format;
-  cl_image_format *out_image_format = (output->format == babl_format ("RGBA u8"))? &rgbau8_format : &rgbaf_format;
-
-  const size_t origin_zero[3] = {0, 0, 0};
+  if (!gegl_cl_color_babl (output->format, &out_image_format, &bpp))
+    gegl_cl_color_babl (out_format, &out_image_format, &bpp);
 
   conv_in  = gegl_cl_color_supported (input->format,   in_format);
   conv_out = gegl_cl_color_supported (out_format, output->format);
@@ -143,24 +139,23 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
            input->tile_storage->tile_width,
            input->tile_storage->tile_height);
 
-  input_tex.tex  = (cl_mem *) gegl_malloc(ntex * sizeof(cl_mem));
-  output_tex.tex = (cl_mem *) gegl_malloc(ntex * sizeof(cl_mem));
+  for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
+   for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
+     ntex++;
 
-  if (input_tex.region == NULL || output_tex.region == NULL || input_tex.tex == NULL || output_tex.tex == NULL)
-    CL_ERROR;
+  input_tex.region  = (GeglRectangle *) g_new0 (GeglRectangle, ntex);
+  output_tex.region = (GeglRectangle *) g_new0 (GeglRectangle, ntex);
+  input_tex.tex     = (cl_mem *)        g_new0 (cl_mem,        ntex);
+  output_tex.tex    = (cl_mem *)        g_new0 (cl_mem,        ntex);
 
-  pitch = (size_t *) gegl_malloc(ntex * sizeof(size_t *));
-  in_data  = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
   out_data = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
 
-  if (pitch == NULL || in_data == NULL || out_data == NULL) CL_ERROR;
-
   i = 0;
-  for (y=result->y; y < result->height; y += cl_state.max_image_height)
-    for (x=result->x; x < result->width;  x += cl_state.max_image_width)
+  for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
+    for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
       {
-        const size_t region[3] = {MIN(cl_state.max_image_width,  result->width -x),
-                                  MIN(cl_state.max_image_height, result->height-y),
+        const size_t region[3] = {MIN(cl_state.max_image_width,  result->x + result->width  - x),
+                                  MIN(cl_state.max_image_height, result->y + result->height - y),
                                   1};
 
         GeglRectangle r = {x, y, region[0], region[1]};
@@ -168,14 +163,14 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
 
         input_tex.tex[i]  = gegl_clCreateImage2D (gegl_cl_get_context(),
                                                   CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                  in_image_format,
+                                                  &in_image_format,
                                                   region[0], region[1],
                                                   0,  NULL, &errcode);
         if (errcode != CL_SUCCESS) CL_ERROR;
 
         output_tex.tex[i] = gegl_clCreateImage2D (gegl_cl_get_context(),
                                                   CL_MEM_READ_WRITE,
-                                                  out_image_format,
+                                                  &out_image_format,
                                                   region[0], region[1],
                                                   0,  NULL, &errcode);
         if (errcode != CL_SUCCESS) CL_ERROR;
@@ -188,28 +183,26 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
 
   for (i=0; i < ntex; i++)
     {
+      gpointer data;
+      size_t pitch;
       const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
 
       /* pre-pinned memory */
-      in_data[i]  = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), input_tex.tex[i], CL_TRUE,
-                                           CL_MAP_WRITE,
-                                           origin_zero, region, &pitch[i], NULL,
-                                           0, NULL, NULL, &errcode);
+      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), input_tex.tex[i], CL_TRUE,
+                                    CL_MAP_WRITE,
+                                    origin_zero, region, &pitch, NULL,
+                                    0, NULL, NULL, &errcode);
       if (errcode != CL_SUCCESS) CL_ERROR;
 
       /* un-tile */
       if (conv_in == CL_COLOR_NOT_SUPPORTED)
         /* color conversion using BABL */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], in_format, in_data[i], pitch[i]);
+        gegl_buffer_get (input, 1.0, &input_tex.region[i], in_format, data, pitch);
       else
         /* color conversion will be performed in the GPU later */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], input->format, in_data[i], pitch[i]);
-    }
+        gegl_buffer_get (input, 1.0, &input_tex.region[i], input->format, data, pitch);
 
-  /* CPU -> GPU */
-  for (i=0; i < ntex; i++)
-    {
-      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), input_tex.tex[i], in_data[i],
+      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), input_tex.tex[i], data,
                                               0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR;
     }
@@ -285,11 +278,10 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
       gegl_free(out_data[i]);
     }
 
-  gegl_free(input_tex.tex);
-  gegl_free(output_tex.tex);
-  gegl_free(input_tex.region);
-  gegl_free(output_tex.region);
-  gegl_free(pitch);
+  g_free(input_tex.tex);
+  g_free(output_tex.tex);
+  g_free(input_tex.region);
+  g_free(output_tex.region);
 
   return TRUE;
 
@@ -302,11 +294,10 @@ error:
         if (out_data[i])       gegl_free(out_data[i]);
       }
 
-  if (input_tex.tex)     gegl_free(input_tex.tex);
-  if (output_tex.tex)    gegl_free(output_tex.tex);
-  if (input_tex.region)  gegl_free(input_tex.region);
-  if (output_tex.region) gegl_free(output_tex.region);
-  if (pitch)             gegl_free(pitch);
+  if (input_tex.tex)     g_free(input_tex.tex);
+  if (output_tex.tex)    g_free(output_tex.tex);
+  if (input_tex.region)  g_free(input_tex.region);
+  if (output_tex.region) g_free(output_tex.region);
 
   return FALSE;
 }

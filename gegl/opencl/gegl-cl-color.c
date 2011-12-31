@@ -35,6 +35,38 @@ gegl_cl_color_compile_kernels(void)
   kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
 }
 
+gboolean
+gegl_cl_color_babl (const Babl *buffer_format, cl_image_format *cl_format, size_t *bytes)
+{
+  int i;
+  gboolean supported_format = FALSE;
+
+  for (i = 0; i < CL_FORMAT_N; i++)
+    if (format[i] == buffer_format) supported_format = TRUE;
+
+  if (!supported_format)
+    return FALSE;
+
+  if (cl_format)
+    {
+      if (buffer_format == babl_format ("RGBA u8"))
+        {
+          cl_format->image_channel_order     = CL_RGBA;
+          cl_format->image_channel_data_type = CL_UNORM_INT8;
+        }
+      else
+        {
+          cl_format->image_channel_order      = CL_RGBA;
+          cl_format->image_channel_data_type  = CL_FLOAT;
+        }
+    }
+
+  if (bytes)
+    *bytes  = (buffer_format == babl_format ("RGBA u8"))? sizeof (cl_uchar4) : sizeof (cl_float4);
+
+  return TRUE;
+}
+
 gegl_cl_color_op
 gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 {
