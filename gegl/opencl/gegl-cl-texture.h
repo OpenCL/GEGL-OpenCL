@@ -9,27 +9,23 @@
 
 G_BEGIN_DECLS
 
-struct _GeglClTexture
-{
-  cl_mem data;
-  cl_image_format format;
-  gint width;
-  gint height;
-};
-
-typedef struct _GeglClTexture GeglClTexture;
-
 GType           gegl_cl_texture_get_type (void) G_GNUC_CONST;
 
-GeglClTexture  *gegl_cl_texture_new      (const gint           width,
-                                          const gint           height);
+GeglClTexture  *gegl_cl_texture_new      (gint            width,
+                                          gint            height,
+                                          cl_image_format format);
+GeglClTexture  *gegl_cl_texture_new_from_mem
+                                         (cl_mem          mem,
+                                          gint            width,
+                                          gint            height,
+                                          cl_image_format format);
 
 void            gegl_cl_texture_free     (GeglClTexture       *texture);
 
-void            gegl_cl_texture_get      (const GeglClTexture *texture,
+void            gegl_cl_texture_read     (const GeglClTexture *texture,
                                           gpointer             dest);
 
-void            gegl_cl_texture_set      (GeglClTexture       *texture,
+void            gegl_cl_texture_write    (GeglClTexture       *texture,
                                           const gpointer       src);
 
 GeglClTexture  *gegl_cl_texture_dup      (const GeglClTexture *texture);

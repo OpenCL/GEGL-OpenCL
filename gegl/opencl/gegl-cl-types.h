@@ -8,6 +8,16 @@
 #include "cl_gl_ext.h"
 #include "cl_ext.h"
 
+struct _GeglClTexture
+{
+  cl_mem data;
+  cl_image_format format;
+  gint width;
+  gint height;
+};
+
+typedef struct _GeglClTexture GeglClTexture;
+
 #if defined(_WIN32)
 #define CL_API_ENTRY
 #define CL_API_CALL __stdcall

@@ -4,15 +4,14 @@
 #include "gegl-cl-texture.h"
 
 GeglClTexture *
-gegl_cl_texture_new (const gint width, const gint height)
+gegl_cl_texture_new (gint width, gint height, cl_image_format format)
 {
   cl_int errcode;
 
   GeglClTexture *texture = g_new (GeglClTexture, 1);
   texture->width = width;
   texture->height = height;
-  texture->format.image_channel_order     = CL_RGBA;
-  texture->format.image_channel_data_type = CL_FLOAT;
+  texture->format = format;
   texture->data  = gegl_clCreateImage2D (gegl_cl_get_context(),
                                          CL_MEM_READ_WRITE,
                                          &texture->format,
@@ -29,36 +28,51 @@ gegl_cl_texture_new (const gint width, const gint height)
   return texture;
 }
 
+GeglClTexture *
+gegl_cl_texture_new_from_mem (cl_mem mem, gint width, gint height, cl_image_format format)
+{
+  cl_int errcode;
+
+  GeglClTexture *texture = g_new (GeglClTexture, 1);
+  texture->width = width;
+  texture->height = height;
+  texture->format = format;
+  texture->data  = mem;
+  return texture;
+}
+
 void
 gegl_cl_texture_free (GeglClTexture *texture)
 {
   gegl_clReleaseMemObject (texture->data);
+  texture->data = NULL;
+
   g_free (texture);
 }
 
 void
-gegl_cl_texture_get (const GeglClTexture *texture,
-                     gpointer             dst)
+gegl_cl_texture_read (const GeglClTexture *texture,
+                      gpointer             dst)
 {
   const size_t origin[3] = {0,0,0};
   const size_t region[3] = {texture->width,
                             texture->height,
                             1};
   gegl_clEnqueueReadImage(gegl_cl_get_command_queue(),
-                          texture->data, CL_TRUE, origin, region, 0, 0, dst,
+                          texture->data, CL_FALSE, origin, region, 0, 0, dst,
                           0, NULL, NULL);
 }
 
 void
-gegl_cl_texture_set (GeglClTexture  *texture,
-                     const gpointer  src)
+gegl_cl_texture_write (GeglClTexture  *texture,
+                       const gpointer  src)
 {
   const size_t origin[3] = {0,0,0};
   const size_t region[3] = {texture->width,
                             texture->height,
                             1};
   gegl_clEnqueueWriteImage(gegl_cl_get_command_queue(),
-                          texture->data, CL_TRUE, origin, region, 0, 0, src,
+                          texture->data, CL_FALSE, origin, region, 0, 0, src,
                           0, NULL, NULL);
 }
 
@@ -71,7 +85,8 @@ gegl_cl_texture_dup (const GeglClTexture *texture)
                             1};
 
   GeglClTexture *new_texture = gegl_cl_texture_new (texture->width,
-                                                    texture->height);
+                                                    texture->height,
+                                                    texture->format);
 
   gegl_clEnqueueCopyImage(gegl_cl_get_command_queue(),
                           texture->data, new_texture->data,
