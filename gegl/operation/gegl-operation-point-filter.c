@@ -148,8 +148,6 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
   input_tex.tex     = (cl_mem *)        g_new0 (cl_mem,        ntex);
   output_tex.tex    = (cl_mem *)        g_new0 (cl_mem,        ntex);
 
-  out_data = (gfloat**) gegl_malloc(ntex * sizeof(gfloat *));
-
   i = 0;
   for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
     for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
@@ -169,14 +167,11 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
         if (errcode != CL_SUCCESS) CL_ERROR;
 
         output_tex.tex[i] = gegl_clCreateImage2D (gegl_cl_get_context(),
-                                                  CL_MEM_READ_WRITE,
+                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
                                                   &out_image_format,
                                                   region[0], region[1],
                                                   0,  NULL, &errcode);
         if (errcode != CL_SUCCESS) CL_ERROR;
-
-        out_data[i] = (gfloat *) gegl_malloc(region[0] * region[1] * babl_format_get_bytes_per_pixel(out_format));
-        if (out_data[i] == NULL) CL_ERROR;
 
         i++;
       }
@@ -241,20 +236,35 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
        errcode = gegl_cl_color_conv (&output_tex.tex[i], &input_tex.tex[i], size, out_format, output->format);
      }
 
+  /* Wait Processing */
+  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+  if (errcode != CL_SUCCESS) CL_ERROR;
+
   /* GPU -> CPU */
   for (i=0; i < ntex; i++)
     {
-      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
+      gpointer data;
+      size_t pitch;
+      const size_t region[3] = {output_tex.region[i].width, output_tex.region[i].height, 1};
 
-      errcode = gegl_clEnqueueReadImage(gegl_cl_get_command_queue(), output_tex.tex[i], CL_FALSE,
-                                         origin_zero, region, 0, 0, out_data[i],
-                                         0, NULL, NULL);
+      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), output_tex.tex[i], CL_TRUE,
+                                    CL_MAP_READ,
+                                    origin_zero, region, &pitch, NULL,
+                                    0, NULL, NULL, &errcode);
+      if (errcode != CL_SUCCESS) CL_ERROR;
+
+      /* tile-ize */
+      if (conv_out == CL_COLOR_NOT_SUPPORTED)
+        /* color conversion using BABL */
+        gegl_buffer_set (output, &output_tex.region[i], out_format, data, pitch);
+      else
+        /* color conversion has already been be performed in the GPU */
+        gegl_buffer_set (output, &output_tex.region[i], output->format, data, pitch);
+
+      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), output_tex.tex[i], data,
+                                              0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR;
     }
-
-  /* Wait */
-  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (errcode != CL_SUCCESS) CL_ERROR;
 
   /* Run! */
   errcode = gegl_clFinish(gegl_cl_get_command_queue());
@@ -262,20 +272,8 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
 
   for (i=0; i < ntex; i++)
     {
-      /* tile-ize */
-      if (conv_out == CL_COLOR_NOT_SUPPORTED)
-        /* color conversion using BABL */
-        gegl_buffer_set (output, &output_tex.region[i], out_format, out_data[i], GEGL_AUTO_ROWSTRIDE);
-      else
-        /* color conversion has already been be performed in the GPU */
-        gegl_buffer_set (output, &output_tex.region[i], output->format, out_data[i], GEGL_AUTO_ROWSTRIDE);
-    }
-
-  for (i=0; i < ntex; i++)
-    {
       gegl_clReleaseMemObject (input_tex.tex[i]);
       gegl_clReleaseMemObject (output_tex.tex[i]);
-      gegl_free(out_data[i]);
     }
 
   g_free(input_tex.tex);
@@ -291,7 +289,6 @@ error:
       {
         if (input_tex.tex[i])  gegl_clReleaseMemObject (input_tex.tex[i]);
         if (output_tex.tex[i]) gegl_clReleaseMemObject (output_tex.tex[i]);
-        if (out_data[i])       gegl_free(out_data[i]);
       }
 
   if (input_tex.tex)     g_free(input_tex.tex);
