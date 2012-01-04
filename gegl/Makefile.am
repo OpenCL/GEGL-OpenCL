@@ -138,6 +138,8 @@ vapi_DATA = \
 
 endif # HAVE_VALA
 
+EXTRA_DIST = gegl-@GEGL_API_VERSION@.deps
+
 endif # HAVE_INTROSPECTION
 
 #
