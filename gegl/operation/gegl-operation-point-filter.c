@@ -33,6 +33,7 @@
 #include "gegl-tile-storage.h"
 
 #include "opencl/gegl-cl.h"
+#include "opencl/gegl-cl-texture-manager.h"
 
 static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,
@@ -159,19 +160,15 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
         GeglRectangle r = {x, y, region[0], region[1]};
         input_tex.region[i] = output_tex.region[i] = r;
 
-        input_tex.tex[i]  = gegl_clCreateImage2D (gegl_cl_get_context(),
-                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                  &in_image_format,
-                                                  region[0], region[1],
-                                                  0,  NULL, &errcode);
-        if (errcode != CL_SUCCESS) CL_ERROR;
+        input_tex.tex[i]  = gegl_cl_texture_manager_request (CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
+                                                             in_image_format,
+                                                             region[0], region[1]);
+        if (input_tex.tex[i]  == NULL) CL_ERROR;
 
-        output_tex.tex[i] = gegl_clCreateImage2D (gegl_cl_get_context(),
-                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                  &out_image_format,
-                                                  region[0], region[1],
-                                                  0,  NULL, &errcode);
-        if (errcode != CL_SUCCESS) CL_ERROR;
+        output_tex.tex[i] = gegl_cl_texture_manager_request (CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
+                                                             out_image_format,
+                                                             region[0], region[1]);
+        if (output_tex.tex[i] == NULL) CL_ERROR;
 
         i++;
       }
@@ -272,8 +269,8 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
 
   for (i=0; i < ntex; i++)
     {
-      gegl_clReleaseMemObject (input_tex.tex[i]);
-      gegl_clReleaseMemObject (output_tex.tex[i]);
+      gegl_cl_texture_manager_give (input_tex.tex[i]);
+      gegl_cl_texture_manager_give (output_tex.tex[i]);
     }
 
   g_free(input_tex.tex);
@@ -287,8 +284,8 @@ error:
 
     for (i=0; i < ntex; i++)
       {
-        if (input_tex.tex[i])  gegl_clReleaseMemObject (input_tex.tex[i]);
-        if (output_tex.tex[i]) gegl_clReleaseMemObject (output_tex.tex[i]);
+        if (input_tex.tex[i])  gegl_cl_texture_manager_give (input_tex.tex[i]);
+        if (output_tex.tex[i]) gegl_cl_texture_manager_give (output_tex.tex[i]);
       }
 
   if (input_tex.tex)     g_free(input_tex.tex);
