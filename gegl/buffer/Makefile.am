@@ -20,6 +20,7 @@ libbuffer_la_SOURCES = \
     gegl-buffer-share.c		\
     gegl-buffer-index.h		\
     gegl-buffer-iterator.c	\
+    gegl-buffer-cl-iterator.c	\
     gegl-buffer-linear.c	\
     gegl-buffer-save.c		\
     gegl-buffer-load.c		\
@@ -48,6 +49,7 @@ libbuffer_la_SOURCES = \
     gegl-buffer.h		\
     gegl-buffer-private.h	\
     gegl-buffer-iterator.h	\
+    gegl-buffer-cl-iterator.h	\
     gegl-buffer-load.h		\
     gegl-buffer-save.h		\
     gegl-buffer-types.h		\

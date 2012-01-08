@@ -33,7 +33,6 @@
 #include "gegl-tile-storage.h"
 
 #include "opencl/gegl-cl.h"
-#include "opencl/gegl-cl-texture-manager.h"
 
 static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,
@@ -73,45 +72,22 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
 }
 
-struct buf_tex
-{
-  GeglBuffer *buf;
-  GeglRectangle *region;
-  cl_mem *tex;
-};
-
 //#define CL_ERROR {g_assert(0);}
 #define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); goto error;}
 
 static gboolean
-gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
-                                             GeglBuffer          *input,
-                                             GeglBuffer          *output,
-                                             const GeglRectangle *result)
+gegl_operation_point_filter_cl_process (GeglOperation       *operation,
+                                        GeglBuffer          *input,
+                                        GeglBuffer          *output,
+                                        const GeglRectangle *result)
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
-  int y, x, i;
-  int errcode = 0;
-
-  gfloat** out_data = NULL;
-
-  int ntex = 0;
-  struct buf_tex input_tex;
-  struct buf_tex output_tex;
-
-  const size_t origin_zero[3] = {0, 0, 0};
-
-  gegl_cl_color_op conv_in;
-  gegl_cl_color_op conv_out;
-
-  cl_image_format in_image_format;
-  cl_image_format out_image_format;
-
-  size_t bpp;
+  gint j;
+  cl_int errcode = 0;
 
   /* non-texturizable format! */
   if (!gegl_cl_color_babl (in_format,  NULL, NULL) ||
@@ -121,177 +97,29 @@ gegl_operation_point_filter_cl_process_full (GeglOperation       *operation,
       return FALSE;
     }
 
-  if (!gegl_cl_color_babl (input->format, &in_image_format, &bpp))
-    gegl_cl_color_babl (in_format, &in_image_format, &bpp);
-
-  if (!gegl_cl_color_babl (output->format, &out_image_format, &bpp))
-    gegl_cl_color_babl (out_format, &out_image_format, &bpp);
-
-  conv_in  = gegl_cl_color_supported (input->format,   in_format);
-  conv_out = gegl_cl_color_supported (out_format, output->format);
-
-  g_printf("[OpenCL] BABL formats: (%s,%s:%d) (%s,%s:%d)\n \t Tile Size:(%d, %d)\n",
+  g_printf("[OpenCL] BABL formats: (%s,%s) (%s,%s)\n \t Tile Size:(%d, %d)\n",
            babl_get_name(input->format),
            babl_get_name(in_format),
-           conv_in,
            babl_get_name(out_format),
            babl_get_name(output->format),
-           conv_out,
            input->tile_storage->tile_width,
            input->tile_storage->tile_height);
 
-  for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
-   for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
-     ntex++;
-
-  input_tex.region  = (GeglRectangle *) g_new0 (GeglRectangle, ntex);
-  output_tex.region = (GeglRectangle *) g_new0 (GeglRectangle, ntex);
-  input_tex.tex     = (cl_mem *)        g_new0 (cl_mem,        ntex);
-  output_tex.tex    = (cl_mem *)        g_new0 (cl_mem,        ntex);
-
-  i = 0;
-  for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
-    for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
-      {
-        const size_t region[3] = {MIN(cl_state.max_image_width,  result->x + result->width  - x),
-                                  MIN(cl_state.max_image_height, result->y + result->height - y),
-                                  1};
-
-        GeglRectangle r = {x, y, region[0], region[1]};
-        input_tex.region[i] = output_tex.region[i] = r;
-
-        input_tex.tex[i]  = gegl_cl_texture_manager_request (CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                             in_image_format,
-                                                             region[0], region[1]);
-        if (input_tex.tex[i]  == NULL) CL_ERROR;
-
-        output_tex.tex[i] = gegl_cl_texture_manager_request (CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                             out_image_format,
-                                                             region[0], region[1]);
-        if (output_tex.tex[i] == NULL) CL_ERROR;
-
-        i++;
-      }
-
-  for (i=0; i < ntex; i++)
-    {
-      gpointer data;
-      size_t pitch;
-      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
-
-      /* pre-pinned memory */
-      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), input_tex.tex[i], CL_TRUE,
-                                    CL_MAP_WRITE,
-                                    origin_zero, region, &pitch, NULL,
-                                    0, NULL, NULL, &errcode);
-      if (errcode != CL_SUCCESS) CL_ERROR;
-
-      /* un-tile */
-      if (conv_in == CL_COLOR_NOT_SUPPORTED)
-        /* color conversion using BABL */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], in_format, data, pitch);
-      else
-        /* color conversion will be performed in the GPU later */
-        gegl_buffer_get (input, 1.0, &input_tex.region[i], input->format, data, pitch);
-
-      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), input_tex.tex[i], data,
-                                              0, NULL, NULL);
-      if (errcode != CL_SUCCESS) CL_ERROR;
-    }
-
-  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (errcode != CL_SUCCESS) CL_ERROR;
-
-  /* color conversion in the GPU (input) */
-  if (conv_in == CL_COLOR_CONVERT)
-    for (i=0; i < ntex; i++)
-     {
-       const size_t size[2] = {input_tex.region[i].width, input_tex.region[i].height};
-       errcode = gegl_cl_color_conv (&input_tex.tex[i], &output_tex.tex[i], size, input->format, in_format);
-       if (errcode == FALSE) CL_ERROR;
-     }
-
   /* Process */
-  for (i=0; i < ntex; i++)
-    {
-      const size_t region[3] = {input_tex.region[i].width, input_tex.region[i].height, 1};
-      const size_t global_worksize[2] = {region[0], region[1]};
-
-      errcode = point_filter_class->cl_process(operation, input_tex.tex[i], output_tex.tex[i], global_worksize, &input_tex.region[i]);
-      if (errcode != CL_SUCCESS) CL_ERROR;
-    }
-
-  /* Wait Processing */
-  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (errcode != CL_SUCCESS) CL_ERROR;
-
-  /* color conversion in the GPU (output) */
-  if (conv_out == CL_COLOR_CONVERT)
-    for (i=0; i < ntex; i++)
-     {
-       const size_t size[2] = {output_tex.region[i].width, output_tex.region[i].height};
-       errcode = gegl_cl_color_conv (&output_tex.tex[i], &input_tex.tex[i], size, out_format, output->format);
-     }
-
-  /* Wait Processing */
-  errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (errcode != CL_SUCCESS) CL_ERROR;
-
-  /* GPU -> CPU */
-  for (i=0; i < ntex; i++)
-    {
-      gpointer data;
-      size_t pitch;
-      const size_t region[3] = {output_tex.region[i].width, output_tex.region[i].height, 1};
-
-      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), output_tex.tex[i], CL_TRUE,
-                                    CL_MAP_READ,
-                                    origin_zero, region, &pitch, NULL,
-                                    0, NULL, NULL, &errcode);
-      if (errcode != CL_SUCCESS) CL_ERROR;
-
-      /* tile-ize */
-      if (conv_out == CL_COLOR_NOT_SUPPORTED)
-        /* color conversion using BABL */
-        gegl_buffer_set (output, &output_tex.region[i], out_format, data, pitch);
-      else
-        /* color conversion has already been be performed in the GPU */
-        gegl_buffer_set (output, &output_tex.region[i], output->format, data, pitch);
-
-      errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), output_tex.tex[i], data,
-                                              0, NULL, NULL);
-      if (errcode != CL_SUCCESS) CL_ERROR;
-    }
-
-  /* Run! */
-  errcode = gegl_clFinish(gegl_cl_get_command_queue());
-  if (errcode != CL_SUCCESS) CL_ERROR;
-
-  for (i=0; i < ntex; i++)
-    {
-      gegl_cl_texture_manager_give (input_tex.tex[i]);
-      gegl_cl_texture_manager_give (output_tex.tex[i]);
-    }
-
-  g_free(input_tex.tex);
-  g_free(output_tex.tex);
-  g_free(input_tex.region);
-  g_free(output_tex.region);
-
+  {
+    GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
+                  gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ);
+    while (gegl_buffer_cl_iterator_next (i))
+      for (j=0; j < i->n; j++)
+        {
+          errcode = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
+                                                   i->size[0][j], &i->roi[0][j]);
+          if (errcode != CL_SUCCESS) CL_ERROR;
+        }
+  }
   return TRUE;
 
 error:
-
-    for (i=0; i < ntex; i++)
-      {
-        if (input_tex.tex[i])  gegl_cl_texture_manager_give (input_tex.tex[i]);
-        if (output_tex.tex[i]) gegl_cl_texture_manager_give (output_tex.tex[i]);
-      }
-
-  if (input_tex.tex)     g_free(input_tex.tex);
-  if (output_tex.tex)    g_free(output_tex.tex);
-  if (input_tex.region)  g_free(input_tex.region);
-  if (output_tex.region) g_free(output_tex.region);
 
   return FALSE;
 }
@@ -314,7 +142,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
     {
       if (cl_state.is_accelerated && point_filter_class->cl_process)
         {
-          if (gegl_operation_point_filter_cl_process_full (operation, input, output, result))
+          if (gegl_operation_point_filter_cl_process (operation, input, output, result))
             return TRUE;
         }
 

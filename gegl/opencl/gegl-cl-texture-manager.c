@@ -30,10 +30,10 @@ gegl_cl_texture_manager_request (cl_mem_flags flags,
   for (i=0; i<tex_pool->len; i++)
     {
       TextureInfo *info = &g_array_index (tex_pool, TextureInfo, i);
-      if (info->flags == flags &&
+      if ((flags & info->flags) &&
           info->format.image_channel_order     == format.image_channel_order     &&
           info->format.image_channel_data_type == format.image_channel_data_type &&
-          info->width >= width && info->height >= height &&
+          info->width == width && info->height == height &&
           info->used == 0)
         {
           info->used ++;
