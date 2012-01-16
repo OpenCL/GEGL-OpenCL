@@ -126,7 +126,7 @@ static const char* kernel_source =
 static gegl_cl_run_data *cl_data = NULL;
 
 /* OpenCL processing function */
-static gboolean
+static cl_int
 cl_process (GeglOperation       *op,
             cl_mem              in_tex,
             cl_mem              out_tex,
@@ -142,7 +142,7 @@ cl_process (GeglOperation       *op,
   gfloat brightness = o->brightness;
   gfloat contrast   = o->contrast;
 
-  cl_int errcode = 0;
+  cl_int cl_err = 0;
 
   if (!cl_data)
     {
@@ -152,23 +152,19 @@ cl_process (GeglOperation       *op,
 
   if (!cl_data) return 1;
 
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness));
-  CL_SAFE_CALL(errcode = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast));
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&brightness);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&contrast);
+  if (cl_err != CL_SUCCESS) return cl_err;
 
-  CL_SAFE_CALL(errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                                     cl_data->kernel[0], 2,
-                                                     NULL, global_worksize, NULL,
-                                                     0, NULL, NULL) );
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_worksize, NULL,
+                                        0, NULL, NULL);
+  if (cl_err != CL_SUCCESS) return cl_err;
 
-  if (errcode != CL_SUCCESS)
-    {
-      g_warning("[OpenCL] Error in Brightness-Constrast Kernel\n");
-      return errcode;
-    }
-
-  return errcode;
+  return cl_err;
 }
 
 /*

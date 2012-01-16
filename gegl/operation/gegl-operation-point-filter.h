@@ -59,7 +59,7 @@ struct _GeglOperationPointFilterClass
                                                         checkerboard op for
                                                         semantics */
 
-  gboolean (* cl_process) (GeglOperation      *self,
+  cl_int   (* cl_process) (GeglOperation      *self,
                            cl_mem             in_tex,
                            cl_mem             out_tex,
                            const size_t global_worksize[2],

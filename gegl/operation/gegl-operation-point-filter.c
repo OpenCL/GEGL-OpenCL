@@ -72,9 +72,6 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
 }
 
-//#define CL_ERROR {g_assert(0);}
-#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); goto error;}
-
 static gboolean
 gegl_operation_point_filter_cl_process (GeglOperation       *operation,
                                         GeglBuffer          *input,
@@ -87,7 +84,8 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
   gint j;
-  cl_int errcode = 0;
+  cl_int cl_err = 0;
+  gboolean err;
 
   /* non-texturizable format! */
   if (!gegl_cl_color_babl (in_format,  NULL, NULL) ||
@@ -109,22 +107,24 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   {
     GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
                   gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ);
-    while (gegl_buffer_cl_iterator_next (i))
-      for (j=0; j < i->n; j++)
-        {
-          errcode = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
-                                                   i->size[0][j], &i->roi[0][j]);
-          if (errcode != CL_SUCCESS) CL_ERROR;
-        }
+    while (gegl_buffer_cl_iterator_next (i, &err))
+      {
+        if (err) return FALSE;
+        for (j=0; j < i->n; j++)
+          {
+            cl_err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
+                                                    i->size[0][j], &i->roi[0][j]);
+            if (cl_err != CL_SUCCESS)
+              {
+                g_warning("[OpenCL] Error in %s [GeglOperationPointFilter] Kernel\n",
+                          GEGL_OPERATION_CLASS (operation)->name);
+                return FALSE;
+              }
+          }
+      }
   }
   return TRUE;
-
-error:
-
-  return FALSE;
 }
-
-#undef CL_ERROR
 
 static gboolean
 gegl_operation_point_filter_process (GeglOperation       *operation,

@@ -14,7 +14,7 @@
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
 
-#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); g_assert(FALSE);}
+#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
 
 typedef struct GeglBufferClIterators
 {
@@ -129,11 +129,12 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
 }
 
 gboolean
-gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
+gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 {
   GeglBufferClIterators *i = (gpointer)iterator;
   gboolean result = FALSE;
-  gint no;
+  gint no, j;
+  cl_int cl_err = 0;
 
   const size_t origin_zero[3] = {0, 0, 0};
 
@@ -157,17 +158,14 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
     }
   else
     {
-      gint j;
-      cl_int errcode = 0;
-
       /* complete pending write work */
       for (no=0; no<i->iterators;no++)
         {
           if (i->flags[no] == GEGL_CL_BUFFER_WRITE)
             {
               /* Wait Processing */
-              errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-              if (errcode != CL_SUCCESS) CL_ERROR;
+              cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+              if (cl_err != CL_SUCCESS) CL_ERROR;
 
               /* color conversion in the GPU (output) */
               if (i->conv[no] == CL_COLOR_CONVERT)
@@ -179,17 +177,17 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                                                               &i->buf_cl_format[no],
                                                               i->roi[no][j].width,
                                                               i->roi[no][j].height,
-                                                              0, NULL, &errcode);
-                    if (errcode != CL_SUCCESS) CL_ERROR;
+                                                              0, NULL, &cl_err);
+                    if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    errcode = gegl_cl_color_conv (&i->tex[no][j], &i->tex_aux[no][j], i->size[no][j],
+                    cl_err = gegl_cl_color_conv (&i->tex[no][j], &i->tex_aux[no][j], i->size[no][j],
                                                   i->format[no], i->buffer[no]->format);
-                    if (errcode != CL_SUCCESS) CL_ERROR;
+                    if (cl_err == FALSE) CL_ERROR;
                   }
 
               /* Wait Processing */
-              errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-              if (errcode != CL_SUCCESS) CL_ERROR;
+              cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+              if (cl_err != CL_SUCCESS) CL_ERROR;
 
               /* GPU -> CPU */
               for (j=0; j < i->n; j++)
@@ -201,8 +199,8 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                   data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex[no][j], CL_TRUE,
                                                 CL_MAP_READ,
                                                 origin_zero, region, &pitch, NULL,
-                                                0, NULL, NULL, &errcode);
-                  if (errcode != CL_SUCCESS) CL_ERROR;
+                                                0, NULL, NULL, &cl_err);
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   /* tile-ize */
                   if (i->conv[no] == CL_COLOR_NOT_SUPPORTED)
@@ -212,16 +210,16 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                     /* color conversion has already been performed in the GPU */
                     gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->buffer[no]->format, data, pitch);
 
-                  errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex[no][j], data,
+                  cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex[no][j], data,
                                                           0, NULL, NULL);
-                  if (errcode != CL_SUCCESS) CL_ERROR;
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
                 }
             }
         }
 
       /* Run! */
-      errcode = gegl_clFinish(gegl_cl_get_command_queue());
-      if (errcode != CL_SUCCESS) CL_ERROR;
+      cl_err = gegl_clFinish(gegl_cl_get_command_queue());
+      if (cl_err != CL_SUCCESS) CL_ERROR;
 
       for (no=0; no < i->iterators; no++)
         for (j=0; j < i->n; j++)
@@ -242,9 +240,6 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
   /* then we iterate all */
   for (no=0; no<i->iterators;no++)
     {
-      int j;
-      int errcode = 0;
-
       for (j = 0; j < i->n; j++)
         {
           GeglRectangle r = {i->rect[no].x + i->roi_all[i->roi_no+j].x,
@@ -273,15 +268,15 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                                                       &i->op_cl_format [no],
                                                     i->roi[no][j].width,
                                                     i->roi[no][j].height,
-                                                    0, NULL, &errcode);
-              if (errcode != CL_SUCCESS) CL_ERROR;
+                                                    0, NULL, &cl_err);
+              if (cl_err != CL_SUCCESS) CL_ERROR;
 
               /* pre-pinned memory */
               data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex[no][j], CL_TRUE,
                                             CL_MAP_WRITE,
                                             origin_zero, region, &pitch, NULL,
-                                            0, NULL, NULL, &errcode);
-              if (errcode != CL_SUCCESS) CL_ERROR;
+                                            0, NULL, NULL, &cl_err);
+              if (cl_err != CL_SUCCESS) CL_ERROR;
 
               /* un-tile */
               if (i->conv[no] == CL_COLOR_NOT_SUPPORTED)
@@ -291,13 +286,13 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                 /* color conversion will be performed in the GPU later */
                 gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, pitch);
 
-              errcode = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex[no][j], data,
+              cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex[no][j], data,
                                                       0, NULL, NULL);
-              if (errcode != CL_SUCCESS) CL_ERROR;
+              if (cl_err != CL_SUCCESS) CL_ERROR;
             }
 
-          errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-          if (errcode != CL_SUCCESS) CL_ERROR;
+          cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+          if (cl_err != CL_SUCCESS) CL_ERROR;
 
           /* color conversion in the GPU (input) */
           if (i->conv[no] == CL_COLOR_CONVERT)
@@ -310,12 +305,12 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                                                           &i->op_cl_format[no],
                                                           i->roi[no][j].width,
                                                           i->roi[no][j].height,
-                                                          0, NULL, &errcode);
-                if (errcode != CL_SUCCESS) CL_ERROR;
+                                                          0, NULL, &cl_err);
+                if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                errcode = gegl_cl_color_conv (&i->tex[no][j], &i->tex_aux[no][j], i->size[no][j],
+                cl_err = gegl_cl_color_conv (&i->tex[no][j], &i->tex_aux[no][j], i->size[no][j],
                                               i->buffer[no]->format, i->format[no]);
-                if (errcode == FALSE) CL_ERROR;
+                if (cl_err == FALSE) CL_ERROR;
               }
         }
       else if (i->flags[no] == GEGL_CL_BUFFER_WRITE)
@@ -329,8 +324,8 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
                                                     &i->op_cl_format [no],
                                                     i->roi[no][j].width,
                                                     i->roi[no][j].height,
-                                                    0, NULL, &errcode);
-              if (errcode != CL_SUCCESS) CL_ERROR;
+                                                    0, NULL, &cl_err);
+              if (cl_err != CL_SUCCESS) CL_ERROR;
             }
         }
       else
@@ -370,7 +365,22 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator)
       g_slice_free (GeglBufferClIterators, i);
     }
 
+  *err = FALSE;
   return result;
+
+error:
+
+  for (no=0; no<i->iterators;no++)
+    for (j=0; j < i->n; j++)
+      {
+        if (i->tex_aux[no][j]) gegl_clReleaseMemObject (i->tex_aux[no][j]);
+        if (i->tex[no][j])     gegl_clReleaseMemObject (i->tex[no][j]);
+        i->tex_aux[no][j] = NULL;
+        i->tex[no][j] = NULL;
+      }
+
+  *err = TRUE;
+  return FALSE;
 }
 
 GeglBufferClIterator *
