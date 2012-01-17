@@ -6,7 +6,7 @@
 
 static gegl_cl_run_data *kernels_color = NULL;
 
-#define CL_FORMAT_N 8
+#define CL_FORMAT_N 10
 
 static const Babl *format[CL_FORMAT_N];
 
@@ -21,6 +21,8 @@ gegl_cl_color_compile_kernels(void)
                                "rgba_gamma_2_2_premultiplied2rgba",  /* 5 */
                                "rgbaf_to_rgbau8",                    /* 6 */
                                "rgbau8_to_rgbaf",                    /* 7 */
+                               "rgba_to_ycbcra",                     /* 8 */
+                               "ycbcra_to_rgba",                     /* 9 */
                                NULL};
 
   format[0] = babl_format ("RaGaBaA float"),
@@ -31,6 +33,8 @@ gegl_cl_color_compile_kernels(void)
   format[5] = babl_format ("RGBA float"),
   format[6] = babl_format ("RGBA u8"),
   format[7] = babl_format ("RGBA float"),
+  format[8] = babl_format ("Y'CbCrA float"),
+  format[9] = babl_format ("RGBA float"),
 
   kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
 }
@@ -126,6 +130,7 @@ gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_1(2)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_1(4)
           else if (out_format == babl_format ("RGBA u8"))          CONV_1(6)
+          else if (out_format == babl_format ("Y'CbCrA float"))    CONV_1(8)
         }
       else if (in_format == babl_format ("RaGaBaA float"))
         {
@@ -133,6 +138,7 @@ gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(1, 2)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_2(1, 4)
           else if (out_format == babl_format ("RGBA u8"))          CONV_2(1, 6)
+          else if (out_format == babl_format ("Y'CbCrA float"))    CONV_2(1, 8)
         }
       else if (in_format == babl_format ("R'G'B'A float"))
         {
@@ -140,6 +146,7 @@ gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
           else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(3, 0)
           else if (out_format == babl_format ("R'aG'aB'aA float")) CONV_2(3, 4)
           else if (out_format == babl_format ("RGBA u8"))          CONV_2(3, 6)
+          else if (out_format == babl_format ("Y'CbCrA float"))    CONV_2(3, 8)
         }
       else if (in_format == babl_format ("R'aG'aB'aA float"))
         {
@@ -147,6 +154,7 @@ gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
           else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(5, 0)
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(5, 2)
           else if (out_format == babl_format ("RGBA u8"))          CONV_2(5, 6)
+          else if (out_format == babl_format ("Y'CbCrA float"))    CONV_2(5, 8)
         }
       else if (in_format == babl_format ("RGBA u8"))
         {
@@ -154,6 +162,7 @@ gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
           else if (out_format == babl_format ("RaGaBaA float"))    CONV_2(7, 0)
           else if (out_format == babl_format ("R'G'B'A float"))    CONV_2(7, 2)
           else if (out_format == babl_format ("RGBA u8"))          CONV_2(7, 6)
+          else if (out_format == babl_format ("Y'CbCrA float"))    CONV_2(7, 8)
         }
 
       /* XXX: maybe there are precision problems if a 8-bit texture is used as intermediate */
