@@ -70,10 +70,6 @@ gegl_cl_color_babl (const Babl *buffer_format, cl_image_format *cl_format, size_
 gegl_cl_color_op
 gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 {
-  int i;
-  gboolean supported_format_in  = FALSE;
-  gboolean supported_format_out = FALSE;
-
   if (in_format == out_format)
     return CL_COLOR_EQUAL;
 
@@ -101,9 +97,7 @@ gboolean
 gegl_cl_color_conv (cl_mem *in_tex, cl_mem *aux_tex, const size_t size[2],
                     const Babl *in_format, const Babl *out_format)
 {
-  int i;
   int errcode;
-  int conv[2] = {-1, -1};
 
   cl_mem ping_tex = *in_tex, pong_tex = *aux_tex;
 

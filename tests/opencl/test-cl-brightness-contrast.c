@@ -24,8 +24,7 @@
 #include "gegl.h"
 #include "gegl-types.h"
 #include "gegl-utils.h"
-#include "gegl-cl-init.h"
-#include "gegl-cl-texture.h"
+#include "gegl-cl.h"
 
 #define SUCCESS 0
 #define FAILURE (-1)

@@ -18,10 +18,8 @@ libcl_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/opencl
 libcl_public_HEADERS = \
 	gegl-cl.h \
 	gegl-cl-init.h \
-	gegl-cl-texture.h \
 	gegl-cl-types.h \
 	gegl-cl-color.h \
-	gegl-cl-texture-manager.h \
 	cl_d3d10.h \
 	cl_ext.h \
 	cl_gl_ext.h \
@@ -34,12 +32,8 @@ libcl_sources = \
 	gegl-cl-types.h \
 	gegl-cl-init.c \
 	gegl-cl-init.h \
-	gegl-cl-texture.c \
-	gegl-cl-texture.h \
 	gegl-cl-color.c \
-	gegl-cl-color.h \
-	gegl-cl-texture-manager.c \
-	gegl-cl-texture-manager.h
+	gegl-cl-color.h
 
 noinst_LTLIBRARIES = libcl.la
 

@@ -3,7 +3,6 @@
 
 #include "gegl-cl-types.h"
 #include "gegl-cl-init.h"
-#include "gegl-cl-texture.h"
 #include "gegl-cl-color.h"
 
 #endif
