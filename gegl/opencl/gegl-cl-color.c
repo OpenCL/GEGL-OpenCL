@@ -167,6 +167,9 @@ gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
                                             NULL, size, NULL,
                                             0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR
+
+      errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+      if (errcode != CL_SUCCESS) CL_ERROR
     }
 
   return TRUE;
