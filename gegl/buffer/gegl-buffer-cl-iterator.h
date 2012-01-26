@@ -17,7 +17,7 @@ typedef struct GeglBufferClIterator
 {
   gint          n;
   size_t        size [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX][2];  /* length of current data in pixels */
-  cl_mem       *tex  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
+  cl_mem        tex  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
   GeglRectangle roi  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
 } GeglBufferClIterator;
 
