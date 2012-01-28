@@ -150,7 +150,7 @@ set_clone_prop_as_well:
                 }
               else
                 {
-                  g_warning ("Unable to obtain absolute path for paramater %s\n",
+                  g_warning ("Unable to obtain absolute path for parameter %s\n",
                              param_name);
                 }
             }

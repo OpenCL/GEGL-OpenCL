@@ -81,7 +81,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
                                                         "Output",
-                                                        "Ouput pad for generated image buffer.",
+                                                        "Output pad for generated image buffer.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
                                                         GEGL_PARAM_PAD_OUTPUT));

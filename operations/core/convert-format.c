@@ -26,7 +26,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(format, _("Output format"), "RGBA float",
-                  _("Babl ouput format string"))
+                  _("Babl output format string"))
 
 #else
 

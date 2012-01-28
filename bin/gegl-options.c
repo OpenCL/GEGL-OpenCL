@@ -240,7 +240,7 @@ parse_args (int    argc,
         }
 
         else if (*curr[0]=='-') {
-            fprintf (stderr, "\n\nunknown paramter '%s' giving you help instead\n\n\n", *curr);
+            fprintf (stderr, "\n\nunknown parameter '%s' giving you help instead\n\n\n", *curr);
             usage (argv[0]);
         }
 

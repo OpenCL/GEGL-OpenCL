@@ -609,7 +609,7 @@ gegl_node_connect_from (GeglNode    *sink,
       real_source = gegl_node_get_output_proxy (source, source_pad_name);
 
       /* The name of the output pad of proxynop output nodes is always
-       * "ouput"
+       * "output"
        */
       real_source_pad_name = "output";
     }

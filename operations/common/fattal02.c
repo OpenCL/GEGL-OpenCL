@@ -773,7 +773,7 @@ fattal02_downsample (const gfloat        *input,
 
 /* Blur the input buffer with a one pixel radius. Output should be
  * preallocated with the same size as the input buffer. This must perform
- * correctly when input and ouput alias.
+ * correctly when input and output alias.
  */
 static void
 fattal02_gaussian_blur (const gfloat        *input,
