@@ -130,7 +130,7 @@ gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 #define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
 
 gboolean
-gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
+gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size,
                     const Babl *in_format, const Babl *out_format)
 {
   int errcode;
@@ -140,13 +140,13 @@ gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
 
   if (in_format == out_format)
     {
-      const size_t origin[3] = {0, 0, 0};
-      const size_t region[3] = {size[0], size[1], 1};
+      size_t s;
+      gegl_cl_color_babl (in_format, NULL, &s);
 
       /* just copy in_tex to out_tex */
-      errcode = gegl_clEnqueueCopyImage (gegl_cl_get_command_queue(),
-                                         in_tex, out_tex, origin, origin, region,
-                                         0, NULL, NULL);
+      errcode = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
+                                          in_tex, out_tex, 0, 0, size * s,
+                                          0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR
 
       errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
@@ -163,8 +163,8 @@ gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size[2],
       if (errcode != CL_SUCCESS) CL_ERROR
 
       errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                            kernels_color->kernel[k], 2,
-                                            NULL, size, NULL,
+                                            kernels_color->kernel[k], 1,
+                                            NULL, &size, NULL,
                                             0, NULL, NULL);
       if (errcode != CL_SUCCESS) CL_ERROR
 

@@ -20,7 +20,7 @@ typedef struct GeglBufferClIterators
 {
   /* current region of interest */
   gint          n;
-  size_t        size [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX][2];  /* length of current data in pixels */
+  size_t        size [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];  /* length of current data in pixels */
   cl_mem        tex  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
   GeglRectangle roi  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
 
@@ -42,9 +42,9 @@ typedef struct GeglBufferClIterators
   GeglBuffer    *buffer         [GEGL_CL_BUFFER_MAX_ITERATORS];
 
   /* buffer->format */
-  cl_image_format buf_cl_format [GEGL_CL_BUFFER_MAX_ITERATORS];
+  size_t buf_cl_format_size     [GEGL_CL_BUFFER_MAX_ITERATORS];
   /* format */
-  cl_image_format op_cl_format  [GEGL_CL_BUFFER_MAX_ITERATORS];
+  size_t op_cl_format_size      [GEGL_CL_BUFFER_MAX_ITERATORS];
 
   gegl_cl_color_op conv         [GEGL_CL_BUFFER_MAX_ITERATORS];
 
@@ -93,8 +93,8 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
   else
     i->conv[self] = gegl_cl_color_supported (buffer->format, format);
 
-  gegl_cl_color_babl (buffer->format, &i->buf_cl_format[self], NULL);
-  gegl_cl_color_babl (format,         &i->op_cl_format [self], NULL);
+  gegl_cl_color_babl (buffer->format, NULL, &i->buf_cl_format_size[self]);
+  gegl_cl_color_babl (format,         NULL, &i->op_cl_format_size [self]);
 
   if (self!=0)
     {
@@ -136,8 +136,6 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
   gboolean result = FALSE;
   gint no, j;
   cl_int cl_err = 0;
-
-  const size_t origin_zero[3] = {0, 0, 0};
 
   if (i->is_finished)
     g_error ("%s called on finished buffer iterator", G_STRFUNC);
@@ -185,38 +183,36 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
               for (j=0; j < i->n; j++)
                 {
                   gpointer data;
-                  size_t pitch;
-                  const size_t region[3] = {i->roi[no][j].width, i->roi[no][j].height, 1};
 
                   /* tile-ize */
                   if (i->conv[no] == GEGL_CL_COLOR_NOT_SUPPORTED)
                     {
-                      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex_op[no][j], CL_TRUE,
-                                                    CL_MAP_READ,
-                                                    origin_zero, region, &pitch, NULL,
-                                                    0, NULL, NULL, &cl_err);
+                      data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_op[no][j], CL_TRUE,
+                                                     CL_MAP_READ,
+                                                     0, i->size[no][j] * i->op_cl_format_size [no],
+                                                     0, NULL, NULL, &cl_err);
                       if (cl_err != CL_SUCCESS) CL_ERROR;
 
                       /* color conversion using BABL */
-                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->format[no], data, pitch);
+                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->format[no], data, GEGL_AUTO_ROWSTRIDE);
 
                       cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_op[no][j], data,
-                                                            0, NULL, NULL);
+                                                             0, NULL, NULL);
                       if (cl_err != CL_SUCCESS) CL_ERROR;
                     }
                   else
                     {
-                      data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                    CL_MAP_READ,
-                                                    origin_zero, region, &pitch, NULL,
-                                                    0, NULL, NULL, &cl_err);
+                      data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                     CL_MAP_READ,
+                                                     0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                     0, NULL, NULL, &cl_err);
                       if (cl_err != CL_SUCCESS) CL_ERROR;
 
                       /* color conversion has already been performed in the GPU */
-                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->buffer[no]->format, data, pitch);
+                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
 
                       cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
-                                                            0, NULL, NULL);
+                                                             0, NULL, NULL);
                       if (cl_err != CL_SUCCESS) CL_ERROR;
                     }
                 }
@@ -254,9 +250,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                              i->roi_all[i->roi_no+j].width,
                              i->roi_all[i->roi_no+j].height};
           i->roi [no][j] = r;
-
-          i->size[no][j][0] = r.width;
-          i->size[no][j][1] = r.height;
+          i->size[no][j] = r.width * r.height;
         }
 
       if (i->flags[no] == GEGL_CL_BUFFER_READ)
@@ -264,8 +258,6 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
           for (j=0; j < i->n; j++)
             {
               gpointer data;
-              size_t pitch;
-              const size_t region[3] = {i->roi[no][j].width, i->roi[no][j].height, 1};
 
               /* un-tile */
               switch (i->conv[no])
@@ -274,23 +266,21 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                     {
                     g_assert (i->tex_op[no][j] == NULL);
-                    i->tex_op[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                          CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                          &i->op_cl_format [no],
-                                                          i->roi[no][j].width,
-                                                          i->roi[no][j].height,
-                                                          0, NULL, &cl_err);
+                    i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                            CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
+                                                            i->size[no][j] * i->op_cl_format_size [no],
+                                                            NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* pre-pinned memory */
-                    data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex_op[no][j], CL_TRUE,
-                                                  CL_MAP_WRITE,
-                                                  origin_zero, region, &pitch, NULL,
-                                                  0, NULL, NULL, &cl_err);
+                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_op[no][j], CL_TRUE,
+                                                   CL_MAP_WRITE,
+                                                   0, i->size[no][j] * i->op_cl_format_size [no],
+                                                   0, NULL, NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* color conversion using BABL */
-                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->format[no], data, pitch);
+                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->format[no], data, GEGL_AUTO_ROWSTRIDE);
 
                     i->tex[no][j] = i->tex_op[no][j];
 
@@ -301,23 +291,21 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                     {
                     g_assert (i->tex_buf[no][j] == NULL);
-                    i->tex_buf[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                              CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                              &i->buf_cl_format [no],
-                                                              i->roi[no][j].width,
-                                                              i->roi[no][j].height,
-                                                              0, NULL, &cl_err);
+                    i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
+                                                             i->size[no][j] * i->buf_cl_format_size [no],
+                                                             NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* pre-pinned memory */
-                    data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                  CL_MAP_WRITE,
-                                                  origin_zero, region, &pitch, NULL,
-                                                  0, NULL, NULL, &cl_err);
+                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                   CL_MAP_WRITE,
+                                                   0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                   0, NULL, NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* color conversion will be performed in the GPU later */
-                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, pitch);
+                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
 
                     cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                            0, NULL, NULL);
@@ -332,32 +320,28 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                     {
                     g_assert (i->tex_buf[no][j] == NULL);
-                    i->tex_buf[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                              CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                              &i->buf_cl_format [no],
-                                                              i->roi[no][j].width,
-                                                              i->roi[no][j].height,
-                                                              0, NULL, &cl_err);
+                    i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
+                                                             i->size[no][j] * i->buf_cl_format_size [no],
+                                                             NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     g_assert (i->tex_op[no][j] == NULL);
-                    i->tex_op[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                             &i->op_cl_format [no],
-                                                             i->roi[no][j].width,
-                                                             i->roi[no][j].height,
-                                                             0, NULL, &cl_err);
+                    i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                            CL_MEM_READ_WRITE,
+                                                            i->size[no][j] * i->op_cl_format_size [no],
+                                                            NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* pre-pinned memory */
-                    data = gegl_clEnqueueMapImage(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                  CL_MAP_WRITE,
-                                                  origin_zero, region, &pitch, NULL,
-                                                  0, NULL, NULL, &cl_err);
+                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                   CL_MAP_WRITE,
+                                                   0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                   0, NULL, NULL, &cl_err);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* color conversion will be performed in the GPU later */
-                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, pitch);
+                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
 
                     cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                            0, NULL, NULL);
@@ -369,7 +353,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                                                  i->buffer[no]->format, i->format[no]);
                     if (cl_err == FALSE) CL_ERROR;
 
-                    i->tex[no][j] = i->tex_buf[no][j];
+                    i->tex[no][j] = i->tex_op[no][j];
 
                     break;
                     }
@@ -390,12 +374,10 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                   {
                   g_assert (i->tex_op[no][j] == NULL);
-                  i->tex_op[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                           &i->op_cl_format [no],
-                                                           i->roi[no][j].width,
-                                                           i->roi[no][j].height,
-                                                           0, NULL, &cl_err);
+                  i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                          CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY,
+                                                          i->size[no][j] * i->op_cl_format_size [no],
+                                                          NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   i->tex[no][j] = i->tex_op[no][j];
@@ -407,12 +389,10 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                   {
                   g_assert (i->tex_buf[no][j] == NULL);
-                  i->tex_buf[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                            CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                            &i->buf_cl_format [no],
-                                                            i->roi[no][j].width,
-                                                            i->roi[no][j].height,
-                                                            0, NULL, &cl_err);
+                  i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY,
+                                                           i->size[no][j] * i->buf_cl_format_size [no],
+                                                           NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   i->tex[no][j] = i->tex_buf[no][j];
@@ -424,21 +404,17 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
                   {
                   g_assert (i->tex_buf[no][j] == NULL);
-                  i->tex_buf[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                            CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                            &i->buf_cl_format [no],
-                                                            i->roi[no][j].width,
-                                                            i->roi[no][j].height,
-                                                            0, NULL, &cl_err);
+                  i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY,
+                                                           i->size[no][j] * i->buf_cl_format_size [no],
+                                                           NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   g_assert (i->tex_op[no][j] == NULL);
-                  i->tex_op[no][j] = gegl_clCreateImage2D (gegl_cl_get_context (),
-                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE,
-                                                           &i->op_cl_format [no],
-                                                           i->roi[no][j].width,
-                                                           i->roi[no][j].height,
-                                                           0, NULL, &cl_err);
+                  i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                          CL_MEM_READ_WRITE,
+                                                          i->size[no][j] * i->op_cl_format_size [no],
+                                                          NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
                   i->tex[no][j] = i->tex_op[no][j];

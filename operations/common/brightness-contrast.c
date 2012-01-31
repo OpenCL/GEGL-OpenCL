@@ -107,20 +107,17 @@ process (GeglOperation       *op,
 #include "opencl/gegl-cl.h"
 
 static const char* kernel_source =
-"__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |   \n"
-"                    CLK_ADDRESS_NONE                       |   \n"
-"                    CLK_FILTER_NEAREST;                        \n"
-"__kernel void kernel_bc(__read_only  image2d_t in,             \n"
-"                        __write_only image2d_t out,            \n"
-"                         float brightness,                     \n"
-"                         float contrast)                       \n"
+"__kernel void kernel_bc(__global const float4     *in,         \n"
+"                        __global       float4     *out,        \n"
+"                        float brightness,                      \n"
+"                        float contrast)                        \n"
 "{                                                              \n"
-"  int2 gid = (int2)(get_global_id(0), get_global_id(1));       \n"
-"  float4 in_v  = read_imagef(in, sampler, gid);                \n"
+"  int gid = get_global_id(0);                                  \n"
+"  float4 in_v  = in[gid];                                      \n"
 "  float4 out_v;                                                \n"
 "  out_v.xyz = (in_v.xyz - 0.5f) * contrast + brightness + 0.5f;\n"
 "  out_v.w   =  in_v.w;                                         \n"
-"  write_imagef(out, gid, out_v);                               \n"
+"  out[gid]  =  out_v;                                          \n"
 "}                                                              \n";
 
 static gegl_cl_run_data *cl_data = NULL;
@@ -130,7 +127,7 @@ static cl_int
 cl_process (GeglOperation       *op,
             cl_mem              in_tex,
             cl_mem              out_tex,
-            const size_t global_worksize[2],
+            size_t              global_worksize,
             const GeglRectangle *roi)
 {
   /* Retrieve a pointer to GeglChantO structure which contains all the
@@ -159,8 +156,8 @@ cl_process (GeglOperation       *op,
   if (cl_err != CL_SUCCESS) return cl_err;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                        cl_data->kernel[0], 2,
-                                        NULL, global_worksize, NULL,
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
                                         0, NULL, NULL);
   if (cl_err != CL_SUCCESS) return cl_err;
 
