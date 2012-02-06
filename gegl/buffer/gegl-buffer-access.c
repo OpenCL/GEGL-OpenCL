@@ -947,6 +947,20 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
     }
 #endif
 
+  if (cl_state.is_accelerated)
+    {
+      if (GEGL_FLOAT_EQUAL (scale, 1.0))
+        {
+          if (gegl_buffer_cl_cache_from (buffer, rect, dest_buf, format, rowstride))
+            return;
+        }
+      else
+        {
+          /* doesn't support scaling in the GPU */
+          gegl_buffer_cl_cache_invalidate (buffer, rect);
+        }
+    }
+
   if (!rect && scale == 1.0)
     {
       gegl_buffer_iterate (buffer, NULL, dest_buf, rowstride, FALSE, format, 0);
@@ -1180,6 +1194,9 @@ gegl_buffer_clear (GeglBuffer          *dst,
     return;
 
   pxsize = babl_format_get_bytes_per_pixel (dst->format);
+
+  if (cl_state.is_accelerated)
+    gegl_buffer_cl_cache_remove (dst, dst_rect);
 
   /* FIXME: this can be even further optimized by special casing it so
    * that fully voided tiles are dropped.

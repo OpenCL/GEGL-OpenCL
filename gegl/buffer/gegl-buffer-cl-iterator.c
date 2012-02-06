@@ -10,6 +10,7 @@
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-cache.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
@@ -202,18 +203,9 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                     }
                   else
                     {
-                      data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                     CL_MAP_READ,
-                                                     0, i->size[no][j] * i->buf_cl_format_size [no],
-                                                     0, NULL, NULL, &cl_err);
-                      if (cl_err != CL_SUCCESS) CL_ERROR;
-
-                      /* color conversion has already been performed in the GPU */
-                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
-
-                      cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
-                                                             0, NULL, NULL);
-                      if (cl_err != CL_SUCCESS) CL_ERROR;
+                      gegl_buffer_cl_cache_new (i->buffer[no], &i->roi[no][j], i->tex_buf[no][j]);
+                      /* don't release this texture */
+                      i->tex_buf[no][j] = NULL;
                     }
                 }
             }
@@ -290,26 +282,31 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   case GEGL_CL_COLOR_EQUAL:
 
                     {
-                    g_assert (i->tex_buf[no][j] == NULL);
-                    i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
-                                                             i->size[no][j] * i->buf_cl_format_size [no],
-                                                             NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);
 
-                    /* pre-pinned memory */
-                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                   CL_MAP_WRITE,
-                                                   0, i->size[no][j] * i->buf_cl_format_size [no],
-                                                   0, NULL, NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                    if (i->tex_buf[no][j] == NULL)
+                      {
+                        g_assert (i->tex_buf[no][j] == NULL);
+                        i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                                 CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
+                                                                 i->size[no][j] * i->buf_cl_format_size [no],
+                                                                 NULL, &cl_err);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    /* color conversion will be performed in the GPU later */
-                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
+                        /* pre-pinned memory */
+                        data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                       CL_MAP_WRITE,
+                                                       0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                       0, NULL, NULL, &cl_err);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
-                                                           0, NULL, NULL);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                        /* color conversion will be performed in the GPU later */
+                        gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
+
+                        cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
+                                                               0, NULL, NULL);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
+                      }
 
                     i->tex[no][j] = i->tex_buf[no][j];
 
@@ -319,32 +316,37 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   case GEGL_CL_COLOR_CONVERT:
 
                     {
-                    g_assert (i->tex_buf[no][j] == NULL);
-                    i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
-                                                             i->size[no][j] * i->buf_cl_format_size [no],
-                                                             NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);
+
+                    if (i->tex_buf[no][j] == NULL)
+                      {
+                        g_assert (i->tex_buf[no][j] == NULL);
+                        i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                                 CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
+                                                                 i->size[no][j] * i->buf_cl_format_size [no],
+                                                                 NULL, &cl_err);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
+
+                        /* pre-pinned memory */
+                        data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                       CL_MAP_WRITE,
+                                                       0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                       0, NULL, NULL, &cl_err);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
+
+                        /* color conversion will be performed in the GPU later */
+                        gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
+
+                        cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
+                                                               0, NULL, NULL);
+                        if (cl_err != CL_SUCCESS) CL_ERROR;
+                      }
 
                     g_assert (i->tex_op[no][j] == NULL);
                     i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
                                                             CL_MEM_READ_WRITE,
                                                             i->size[no][j] * i->op_cl_format_size [no],
                                                             NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
-
-                    /* pre-pinned memory */
-                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
-                                                   CL_MAP_WRITE,
-                                                   0, i->size[no][j] * i->buf_cl_format_size [no],
-                                                   0, NULL, NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
-
-                    /* color conversion will be performed in the GPU later */
-                    gegl_buffer_get (i->buffer[no], 1.0, &i->roi[no][j], i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
-
-                    cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
-                                                           0, NULL, NULL);
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* color conversion in the GPU (input) */
@@ -390,7 +392,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   {
                   g_assert (i->tex_buf[no][j] == NULL);
                   i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY,
+                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, /* cache */
                                                            i->size[no][j] * i->buf_cl_format_size [no],
                                                            NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
@@ -405,7 +407,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   {
                   g_assert (i->tex_buf[no][j] == NULL);
                   i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY,
+                                                           CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, /* cache */
                                                            i->size[no][j] * i->buf_cl_format_size [no],
                                                            NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
