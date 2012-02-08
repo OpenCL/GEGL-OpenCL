@@ -60,6 +60,54 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+
+static const char* kernel_source =
+"__kernel void kernel_inv(__global const float4     *in,        \n"
+"                         __global       float4     *out)       \n"
+"{                                                              \n"
+"  int gid = get_global_id(0);                                  \n"
+"  float4 in_v  = in[gid];                                      \n"
+"  float4 out_v;                                                \n"
+"  out_v.xyz = (1.0f - in_v.xyz);                               \n"
+"  out_v.w   =  in_v.w;                                         \n"
+"  out[gid]  =  out_v;                                          \n"
+"}                                                              \n";
+
+static gegl_cl_run_data *cl_data = NULL;
+
+/* OpenCL processing function */
+static cl_int
+cl_process (GeglOperation       *op,
+            cl_mem              in_tex,
+            cl_mem              out_tex,
+            size_t              global_worksize,
+            const GeglRectangle *roi)
+{
+  cl_int cl_err = 0;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_inv", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+
+  if (!cl_data) return 1;
+
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  return cl_err;
+
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -70,8 +118,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
 
   operation_class->name        = "gegl:invert";
+  operation_class->opencl_support = TRUE;
   operation_class->categories  = "color";
   operation_class->description =
      _("Inverts the components (except alpha), the result is the "

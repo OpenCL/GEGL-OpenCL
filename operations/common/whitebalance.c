@@ -85,6 +85,76 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+
+static const char* kernel_source =
+"__kernel void kernel_wb(__global const float4     *in,                 \n"
+"                        __global       float4     *out,                \n"
+"                        float a_base,                                  \n"
+"                        float a_scale,                                 \n"
+"                        float b_base,                                  \n"
+"                        float b_scale,                                 \n"
+"                        float saturation)                              \n"
+"{                                                                      \n"
+"  int gid = get_global_id(0);                                          \n"
+"  float4 in_v  = in[gid];                                              \n"
+"  float4 out_v;                                                        \n"
+"  out_v = (float4) (in_v.x,                                            \n"
+"                    (in_v.y + in_v.x * a_scale + a_base) * saturation, \n"
+"                    (in_v.z + in_v.x * b_scale + b_base) * saturation, \n"
+"                    in_v.w);                                           \n"
+"  out[gid]  =  out_v;                                                  \n"
+"}                                                                      \n";
+
+static gegl_cl_run_data *cl_data = NULL;
+
+/* OpenCL processing function */
+static cl_int
+cl_process (GeglOperation       *op,
+            cl_mem              in_tex,
+            cl_mem              out_tex,
+            size_t              global_worksize,
+            const GeglRectangle *roi)
+{
+  /* Retrieve a pointer to GeglChantO structure which contains all the
+   * chanted properties
+   */
+
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+
+  gfloat a_scale    = (o->high_a_delta - o->low_a_delta);
+  gfloat a_base     = o->low_a_delta;
+  gfloat b_scale    = (o->high_b_delta - o->low_b_delta);
+  gfloat b_base     = o->low_b_delta;
+  gfloat saturation = o->saturation;
+
+  cl_int cl_err = 0;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_wb", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+
+  if (!cl_data) return 1;
+
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&a_base);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&a_scale);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&b_base);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_float), (void*)&b_scale);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 6, sizeof(cl_float), (void*)&saturation);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  return cl_err;
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -96,9 +166,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
   operation_class->prepare = prepare;
 
   operation_class->name        = "gegl:whitebalance";
+  operation_class->opencl_support = TRUE;
   operation_class->categories  = "color";
   operation_class->description =
         _("Allows changing the whitepoint and blackpoint of an image.");
