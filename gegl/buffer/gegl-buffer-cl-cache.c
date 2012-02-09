@@ -27,7 +27,7 @@ typedef struct
   GeglRectangle roi;
 } CacheBuffer;
 
-static CacheBuffer cache_buffer = {NULL, NULL, {-1, -1, -1, -1}};
+static GArray *cache_buffer = NULL; /* this is used in color conversions from the cache */
 
 cl_mem
 gegl_buffer_cl_cache_get (GeglBuffer          *buffer,
@@ -131,12 +131,29 @@ gegl_buffer_cl_cache_remove (GeglBuffer          *buffer,
   if (!roi)
     roi = &buffer->extent;
 
-  if (cache_buffer.buffer_origin == buffer &&
-      gegl_rectangle_intersect (&tmp, &cache_buffer.roi, roi))
+  if (G_UNLIKELY (!cache_buffer))
     {
-      gegl_buffer_destroy (cache_buffer.buffer);
-      cache_buffer.buffer_origin = NULL;
+      cache_buffer = g_array_new (TRUE, TRUE, sizeof (CacheBuffer));
     }
+
+  do
+    {
+      found = FALSE;
+      for (i=0; i<cache_buffer->len; i++)
+        {
+          CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
+          if (cb->buffer_origin == buffer &&
+              gegl_rectangle_intersect (&tmp, &cb->roi, roi))
+            {
+              gegl_buffer_destroy (cb->buffer);
+              cb->buffer_origin = NULL;
+              g_array_remove_index_fast (cache_buffer, i);
+              found = TRUE;
+              break;
+            }
+        }
+    }
+  while (found);
 
   if (G_UNLIKELY (!cache_entries))
     {
@@ -152,6 +169,7 @@ gegl_buffer_cl_cache_remove (GeglBuffer          *buffer,
           if (e->buffer == buffer &&
               gegl_rectangle_intersect (&tmp, roi, &e->roi))
             {
+              e->buffer = NULL;
               gegl_clReleaseMemObject (e->tex);
               g_array_remove_index_fast (cache_entries, i);
               found = TRUE;
@@ -206,116 +224,112 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
   if (cache_entries->len == 0)
     return FALSE;
 
-  if (roi->width >= 256 && roi->height >= 256) /* no point in using the GPU to get small textures */
-    for (i=0; i<cache_entries->len; i++)
-      {
-        CacheEntry *entry = &g_array_index (cache_entries, CacheEntry, i);
-        if (entry->buffer == buffer && gegl_rectangle_contains (&entry->roi, roi))
-          {
-            cl_int cl_err;
-            const size_t origin_buf[3] = {(entry->roi.x - roi->x) * buf_size,  roi->y - entry->roi.y, 0};
-            const size_t region_buf[3] = {(roi->width) * buf_size,  roi->height, 1};
+  for (i=0; i<cache_entries->len; i++)
+    {
+      CacheEntry *entry = &g_array_index (cache_entries, CacheEntry, i);
+      if (entry->buffer == buffer && gegl_rectangle_contains (&entry->roi, roi))
+        {
+          cl_int cl_err;
+          const size_t origin_buf[3] = {(entry->roi.x - roi->x) * buf_size,  roi->y - entry->roi.y, 0};
+          const size_t region_buf[3] = {(roi->width) * buf_size,  roi->height, 1};
 
-            /* const size_t origin_dest[3] = {(entry->roi.x - roi->x) * dest_size, roi->y - entry->roi.y, 0};
-               const size_t region_dest[3] = {(roi->width) * dest_size, roi->height, 1}; */
+          /* const size_t origin_dest[3] = {(entry->roi.x - roi->x) * dest_size, roi->y - entry->roi.y, 0};
+             const size_t region_dest[3] = {(roi->width) * dest_size, roi->height, 1}; */
 
-            const size_t origin_zero[3] = {0, 0, 0};
+          const size_t origin_zero[3] = {0, 0, 0};
 
-            switch (conv)
+          switch (conv)
+            {
+              case GEGL_CL_COLOR_NOT_SUPPORTED:
+              case GEGL_CL_COLOR_EQUAL:
+
               {
-                case GEGL_CL_COLOR_NOT_SUPPORTED:
+              gegl_buffer_cl_cache_invalidate (buffer, &entry->roi);
 
+              return FALSE;
+              }
+
+              case GEGL_CL_COLOR_CONVERT:
+
+              {
+              gint i;
+
+              if (G_UNLIKELY (!cache_buffer))
                 {
-                gegl_buffer_cl_cache_invalidate (buffer, &entry->roi);
-
-                return FALSE;
+                  cache_buffer = g_array_new (TRUE, TRUE, sizeof (CacheBuffer));
                 }
 
-                case GEGL_CL_COLOR_EQUAL:
-
+              for (i=0; i<cache_buffer->len; i++)
                 {
-                cl_err = gegl_clEnqueueReadBufferRect (gegl_cl_get_command_queue (),
-                                                       entry->tex, TRUE,
-                                                       origin_buf, origin_zero, region_buf,
-                                                       0, 0,
-                                                       (rowstride == GEGL_AUTO_ROWSTRIDE)? 0 : rowstride, 0,
-                                                       dest_buf,
-                                                       0, NULL, NULL);
-                if (cl_err != CL_SUCCESS) CL_ERROR;
-
-                gegl_clFinish (gegl_cl_get_command_queue ());
-
-                return TRUE;
+                  CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
+                  if (cb->buffer &&
+                      cb->buffer_origin == buffer &&
+                      cb->buffer->format == format &&
+                      gegl_rectangle_contains (&cb->roi, roi))
+                    {
+                      gegl_buffer_get (cb->buffer,
+                                       1.0,
+                                       roi,
+                                       format,
+                                       dest_buf,
+                                       rowstride);
+                      return TRUE;
+                    }
                 }
 
-                case GEGL_CL_COLOR_CONVERT:
-
                 {
-                if (cache_buffer.buffer &&
-                    cache_buffer.buffer_origin == buffer &&
-                    cache_buffer.buffer->format == format &&
-                    gegl_rectangle_contains (&cache_buffer.roi, roi))
-                  {
-                    gegl_buffer_get (cache_buffer.buffer,
-                                     1.0,
-                                     roi,
-                                     format,
-                                     dest_buf,
-                                     rowstride);
-                    return TRUE;
-                  }
-                else
-                  {
-                    gpointer data;
+                  gpointer data;
+                  CacheBuffer cb;
 
-                    if (cache_buffer.buffer)
-                      {
-                        gegl_buffer_destroy (cache_buffer.buffer);
-                        cache_buffer.buffer_origin = NULL;
-                      }
+                  if (G_UNLIKELY (!cache_buffer))
+                    {
+                      cache_buffer = g_array_new (TRUE, TRUE, sizeof (CacheBuffer));
+                    }
 
-                    cache_buffer.buffer        = gegl_buffer_new (&entry->roi, format);
-                    cache_buffer.buffer_origin = buffer;
-                    cache_buffer.roi           = entry->roi;
+                  cb.buffer        = gegl_buffer_new (&entry->roi, format);
+                  cb.buffer_origin = buffer;
+                  cb.roi           = entry->roi;
+                  g_array_append_val (cache_buffer, cb);
 
-                    tex_dest = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                                    CL_MEM_WRITE_ONLY,
-                                                    entry->roi.width * entry->roi.height * dest_size,
-                                                    NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                  tex_dest = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                  CL_MEM_WRITE_ONLY,
+                                                  entry->roi.width * entry->roi.height * dest_size,
+                                                  NULL, &cl_err);
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    cl_err = gegl_cl_color_conv (entry->tex, tex_dest, entry->roi.width * entry->roi.height, buffer->format, format);
-                    if (cl_err == FALSE) CL_ERROR;
+                  cl_err = gegl_cl_color_conv (entry->tex, tex_dest, entry->roi.width * entry->roi.height, buffer->format, format);
+                  if (cl_err == FALSE) CL_ERROR;
 
-                    data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), tex_dest, CL_TRUE,
-                                                   CL_MAP_READ,
-                                                   0, entry->roi.width * entry->roi.height * dest_size,
-                                                   0, NULL, NULL, &cl_err);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                  data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), tex_dest, CL_TRUE,
+                                                 CL_MAP_READ,
+                                                 0, entry->roi.width * entry->roi.height * dest_size,
+                                                 0, NULL, NULL, &cl_err);
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    gegl_buffer_set (cache_buffer.buffer, &entry->roi, format, data, GEGL_AUTO_ROWSTRIDE);
+                  gegl_buffer_set (cb.buffer, &entry->roi, format, data, GEGL_AUTO_ROWSTRIDE);
 
-                    cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), tex_dest, data,
-                                                           0, NULL, NULL);
-                    if (cl_err != CL_SUCCESS) CL_ERROR;
+                  cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), tex_dest, data,
+                                                         0, NULL, NULL);
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    gegl_clFinish (gegl_cl_get_command_queue ());
+                  cl_err = gegl_clFinish(gegl_cl_get_command_queue());
+                  if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                    gegl_buffer_get (cache_buffer.buffer,
-                                     1.0,
-                                     roi,
-                                     format,
-                                     dest_buf,
-                                     rowstride);
+                  gegl_buffer_get (cb.buffer,
+                                   1.0,
+                                   roi,
+                                   format,
+                                   dest_buf,
+                                   rowstride);
 
-                    if (tex_dest) gegl_clReleaseMemObject (tex_dest);
+                  if (tex_dest) gegl_clReleaseMemObject (tex_dest);
 
-                    return TRUE;
-                  }
+                  return TRUE;
                 }
               }
-          }
-      }
+            }
+        }
+    }
 
   gegl_buffer_cl_cache_invalidate (buffer, roi);
 
