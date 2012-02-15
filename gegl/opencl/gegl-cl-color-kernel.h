@@ -234,4 +234,28 @@ static const char* kernel_color_source =
 "                   linear_to_gamma_2_2(rgb.z),                                           \n"
 "                   in_v.w);                                                              \n"
 "  out[gid] = convert_uchar4_sat_rte(255.0f * out_v);                                     \n"
+"}                                                                                        \n"
+
+/* -- RGB u8 -- */
+
+/* RGB u8 -> RGBA float */
+"__kernel void rgbu8_to_rgbaf (__global const uchar3 * in,                                \n"
+"                              __global       float4 * out)                               \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float3 in_v  = convert_float3(in[gid]) / 255.0f;                                       \n"
+"  float4 out_v;                                                                          \n"
+"  out_v.xyz = in_v;                                                                      \n"
+"  out_v.w   = 1.0f;                                                                      \n"
+"  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+/* RGBA float -> RGB u8 */
+"__kernel void rgbaf_to_rgbu8 (__global const float4 * in,                                \n"
+"                              __global       uchar3 * out)                               \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = in[gid];                                                                \n"
+"  float4 out_v = in_v;                                                                   \n"
+"  out[gid] = convert_uchar3_sat_rte(255.0f * out_v.w * out_v.xyz);                       \n"
 "}                                                                                        \n";

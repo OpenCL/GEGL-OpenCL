@@ -13,7 +13,7 @@ typedef enum
 
 void gegl_cl_color_compile_kernels(void);
 
-gboolean gegl_cl_color_babl (const Babl *buffer_format, cl_image_format *cl_format, size_t *bytes);
+gboolean gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes);
 
 gegl_cl_color_op gegl_cl_color_supported (const Babl *in_format, const Babl *out_format);
 

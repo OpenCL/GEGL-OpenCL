@@ -88,7 +88,7 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
   if (!roi)
     roi = &buffer->extent;
 
-  gegl_cl_color_babl (buffer->format, NULL, &size);
+  gegl_cl_color_babl (buffer->format, &size);
 
   if (G_UNLIKELY (!cache_entries))
     {
@@ -213,8 +213,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
   gint i;
 
   gegl_cl_color_op conv = gegl_cl_color_supported (buffer->format, format);
-  gegl_cl_color_babl (buffer->format, NULL, &buf_size);
-  gegl_cl_color_babl (format,         NULL, &dest_size);
+  gegl_cl_color_babl (buffer->format, &buf_size);
+  gegl_cl_color_babl (format,         &dest_size);
 
   if (G_UNLIKELY (!cache_entries))
     {

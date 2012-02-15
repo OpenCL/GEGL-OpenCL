@@ -88,8 +88,8 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   gboolean err;
 
   /* non-texturizable format! */
-  if (!gegl_cl_color_babl (in_format,  NULL, NULL) ||
-      !gegl_cl_color_babl (out_format, NULL, NULL))
+  if (!gegl_cl_color_babl (in_format,  NULL) ||
+      !gegl_cl_color_babl (out_format, NULL))
     {
       g_warning ("[OpenCL] Non-texturizable input of output format!");
       return FALSE;

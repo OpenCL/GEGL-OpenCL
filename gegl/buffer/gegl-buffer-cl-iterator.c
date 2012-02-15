@@ -94,8 +94,8 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
   else
     i->conv[self] = gegl_cl_color_supported (buffer->format, format);
 
-  gegl_cl_color_babl (buffer->format, NULL, &i->buf_cl_format_size[self]);
-  gegl_cl_color_babl (format,         NULL, &i->op_cl_format_size [self]);
+  gegl_cl_color_babl (buffer->format, &i->buf_cl_format_size[self]);
+  gegl_cl_color_babl (format,         &i->op_cl_format_size [self]);
 
   if (self!=0)
     {
