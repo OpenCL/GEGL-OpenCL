@@ -26,6 +26,8 @@
 
 #include "gegl-operation-composer.h"
 
+#include "opencl/gegl-cl.h"
+
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_OPERATION_POINT_COMPOSER            (gegl_operation_point_composer_get_type ())
@@ -56,6 +58,12 @@ struct _GeglOperationPointComposerClass
                         const GeglRectangle *roi      /* rectangular region in output buffer */
                         );
 
+  cl_int   (* cl_process) (GeglOperation      *self,
+                           cl_mem             in_tex,
+                           cl_mem             aux_tex,
+                           cl_mem             out_tex,
+                           size_t             global_worksize,
+                           const GeglRectangle *roi);
 };
 
 GType gegl_operation_point_composer_get_type (void) G_GNUC_CONST;

@@ -63,6 +63,9 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
   operation_class->prepare = prepare;
   operation_class->no_cache = FALSE;
   operation_class->process = gegl_operation_composer_process2;
+
+  klass->process = NULL;
+  klass->cl_process = NULL;
 }
 
 static void
@@ -132,6 +135,78 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
 }
 
 static gboolean
+gegl_operation_point_composer_cl_process (GeglOperation       *operation,
+                                          GeglBuffer          *input,
+                                          GeglBuffer          *aux,
+                                          GeglBuffer          *output,
+                                          const GeglRectangle *result)
+{
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *aux_format = gegl_operation_get_format (operation, "aux");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+
+  GeglOperationPointComposerClass *point_composer_class = GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation);
+
+  gint j;
+  cl_int cl_err = 0;
+  gboolean err;
+
+  /* non-texturizable format! */
+  if (!gegl_cl_color_babl (in_format,  NULL) ||
+      !gegl_cl_color_babl (aux_format, NULL) ||
+      !gegl_cl_color_babl (out_format, NULL))
+    {
+      g_warning ("[OpenCL] Non-texturizable format!");
+      return FALSE;
+    }
+
+  /* Process */
+  {
+    GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
+                  gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ);
+    if (aux)
+      {
+        gint foo = gegl_buffer_cl_iterator_add (i, aux, result, aux_format,  GEGL_CL_BUFFER_READ);
+
+        while (gegl_buffer_cl_iterator_next (i, &err))
+          {
+            if (err) return FALSE;
+            for (j=0; j < i->n; j++)
+              {
+                cl_err = point_composer_class->cl_process(operation, i->tex[read][j], i->tex[foo][j], i->tex[0][j],
+                                                          i->size[0][j], &i->roi[0][j]);
+                if (cl_err != CL_SUCCESS)
+                  {
+                    g_warning("[OpenCL] Error in %s [GeglOperationPointComposer] Kernel\n",
+                              GEGL_OPERATION_CLASS (operation)->name);
+                    return FALSE;
+                  }
+              }
+          }
+      }
+    else
+      {
+        while (gegl_buffer_cl_iterator_next (i, &err))
+          {
+            if (err) return FALSE;
+            for (j=0; j < i->n; j++)
+              {
+                cl_err = point_composer_class->cl_process(operation, i->tex[read][j], NULL, i->tex[0][j],
+                                                          i->size[0][j], &i->roi[0][j]);
+                if (cl_err != CL_SUCCESS)
+                  {
+                    g_warning("[OpenCL] Error in %s [GeglOperationPointComposer] Kernel\n",
+                              GEGL_OPERATION_CLASS (operation)->name);
+                    return FALSE;
+                  }
+              }
+          }
+      }
+  }
+  return TRUE;
+}
+
+static gboolean
 gegl_operation_point_composer_process (GeglOperation       *operation,
                                        GeglBuffer          *input,
                                        GeglBuffer          *aux,
@@ -145,28 +220,36 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
-      gint read = /*output == input ? 0 :*/ gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
-      /* using separate read and write iterators for in-place ideally a single
-       * readwrite indice would be sufficient
-       */
-
-      if (aux)
+      if (cl_state.is_accelerated && point_composer_class->cl_process)
         {
-          gint foo = gegl_buffer_iterator_add (i, aux,  result, aux_format, GEGL_BUFFER_READ);
+          if (gegl_operation_point_composer_cl_process (operation, input, aux, output, result))
+            return TRUE;
+        }
 
-          while (gegl_buffer_iterator_next (i))
-            {
-               point_composer_class->process (operation, i->data[read], i->data[foo], i->data[0], i->length, &(i->roi[0]));
-            }
-        }
-      else
-        {
-          while (gegl_buffer_iterator_next (i))
-            {
-               point_composer_class->process (operation, i->data[read], NULL, i->data[0], i->length, &(i->roi[0]));
-            }
-        }
+      {
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE);
+        gint read = /*output == input ? 0 :*/ gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
+        /* using separate read and write iterators for in-place ideally a single
+         * readwrite indice would be sufficient
+         */
+
+        if (aux)
+          {
+            gint foo = gegl_buffer_iterator_add (i, aux,  result, aux_format, GEGL_BUFFER_READ);
+
+            while (gegl_buffer_iterator_next (i))
+              {
+                 point_composer_class->process (operation, i->data[read], i->data[foo], i->data[0], i->length, &(i->roi[0]));
+              }
+          }
+        else
+          {
+            while (gegl_buffer_iterator_next (i))
+              {
+                 point_composer_class->process (operation, i->data[read], NULL, i->data[0], i->length, &(i->roi[0]));
+              }
+          }
+      }
       return TRUE;
     }
   return TRUE;
