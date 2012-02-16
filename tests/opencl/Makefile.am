@@ -6,7 +6,8 @@ TESTS_ENVIRONMENT = \
 
 # The tests
 noinst_PROGRAMS = \
-	test-cl-brightness-contrast
+	test-cl-brightness-contrast \
+	test-cl-over
 
 TESTS = $(noinst_PROGRAMS)
 
