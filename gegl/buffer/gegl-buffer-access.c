@@ -1196,7 +1196,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
   pxsize = babl_format_get_bytes_per_pixel (dst->format);
 
   if (cl_state.is_accelerated)
-    gegl_buffer_cl_cache_remove (dst, dst_rect);
+    gegl_buffer_cl_cache_invalidate (dst, dst_rect);
 
   /* FIXME: this can be even further optimized by special casing it so
    * that fully voided tiles are dropped.

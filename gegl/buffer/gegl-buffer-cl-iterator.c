@@ -154,6 +154,9 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
               }
           if (!found)
             gegl_buffer_lock (i->buffer[no]);
+
+          if (i->flags[no] == GEGL_CL_BUFFER_WRITE)
+            gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
         }
     }
   else

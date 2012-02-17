@@ -184,6 +184,9 @@ void
 gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
                                  const GeglRectangle *roi)
 {
+  if (!roi)
+    roi = &buffer->extent;
+
   if (G_UNLIKELY (!cache_entries))
     {
       cache_entries = g_array_new (TRUE, TRUE, sizeof (CacheEntry));
@@ -227,16 +230,10 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
   for (i=0; i<cache_entries->len; i++)
     {
       CacheEntry *entry = &g_array_index (cache_entries, CacheEntry, i);
+
       if (entry->buffer == buffer && gegl_rectangle_contains (&entry->roi, roi))
         {
           cl_int cl_err;
-          const size_t origin_buf[3] = {(entry->roi.x - roi->x) * buf_size,  roi->y - entry->roi.y, 0};
-          const size_t region_buf[3] = {(roi->width) * buf_size,  roi->height, 1};
-
-          /* const size_t origin_dest[3] = {(entry->roi.x - roi->x) * dest_size, roi->y - entry->roi.y, 0};
-             const size_t region_dest[3] = {(roi->width) * dest_size, roi->height, 1}; */
-
-          const size_t origin_zero[3] = {0, 0, 0};
 
           switch (conv)
             {
