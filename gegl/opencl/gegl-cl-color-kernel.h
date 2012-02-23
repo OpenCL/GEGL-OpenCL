@@ -257,4 +257,16 @@ static const char* kernel_color_source =
 "  float4 in_v  = in[gid];                                                                \n"
 "  float4 out_v = in_v;                                                                   \n"
 "  out[gid] = convert_uchar3_sat_rte(255.0f * out_v.w * out_v.xyz);                       \n"
+"}                                                                                        \n"
+
+/* -- Y u8 -- */
+
+"__kernel void yu8_to_yf (__global const uchar * in,                                      \n"
+"                         __global       float * out)                                     \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float in_v  = convert_float (in[gid]) / 255.0f;                                        \n"
+"  float out_v;                                                                           \n"
+"  out_v = in_v;                                                                          \n"
+"  out[gid] = out_v;                                                                      \n"
 "}                                                                                        \n";

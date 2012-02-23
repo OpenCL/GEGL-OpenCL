@@ -88,6 +88,88 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+
+static const char* kernel_source =
+"__kernel void kernel_op_3 (__global const float4     *in,      \n"
+"                           __global const float      *aux,     \n"
+"                           __global       float4     *out,     \n"
+"                           float value)                        \n"
+"{                                                              \n"
+"  int gid = get_global_id(0);                                  \n"
+"  float4 in_v  = in [gid];                                     \n"
+"  float  aux_v = aux[gid];                                     \n"
+"  float4 out_v;                                                \n"
+"  out_v = in_v * aux_v * value;                                \n"
+"  out[gid]  =  out_v;                                          \n"
+"}                                                              \n"
+
+"__kernel void kernel_op_2 (__global const float4     *in,      \n"
+"                           __global       float4     *out,     \n"
+"                           float value)                        \n"
+"{                                                              \n"
+"  int gid = get_global_id(0);                                  \n"
+"  float4 in_v  = in [gid];                                     \n"
+"  float4 out_v;                                                \n"
+"  out_v = in_v * value;                                        \n"
+"  out[gid]  =  out_v;                                          \n"
+"}                                                              \n";
+
+
+static gegl_cl_run_data *cl_data = NULL;
+
+/* OpenCL processing function */
+static cl_int
+cl_process (GeglOperation       *op,
+            cl_mem              in_tex,
+            cl_mem              aux_tex,
+            cl_mem              out_tex,
+            size_t              global_worksize,
+            const GeglRectangle *roi)
+{
+  gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+
+  cl_int cl_err = 0;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_op_3", "kernel_op_2", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+
+  if (!cl_data) return 1;
+
+  if (aux_tex)
+    {
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem),   (void*)&out_tex);
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&value);
+      if (cl_err != CL_SUCCESS) return cl_err;
+
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                            cl_data->kernel[0], 1,
+                                            NULL, &global_worksize, NULL,
+                                            0, NULL, NULL);
+      if (cl_err != CL_SUCCESS) return cl_err;
+    }
+  else
+    {
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&in_tex);
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
+      cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_float), (void*)&value);
+      if (cl_err != CL_SUCCESS) return cl_err;
+
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                            cl_data->kernel[1], 1,
+                                            NULL, &global_worksize, NULL,
+                                            0, NULL, NULL);
+      if (cl_err != CL_SUCCESS) return cl_err;
+    }
+
+  return cl_err;
+}
+
 /* Fast path when opacity is a no-op
  */
 static gboolean operation_process (GeglOperation        *operation,
@@ -128,8 +210,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->process = operation_process;
   point_composer_class->process = process;
+  point_composer_class->cl_process = cl_process;
 
   operation_class->name        = "gegl:opacity";
+  operation_class->opencl_support = TRUE;
+
   operation_class->categories  = "transparency";
   operation_class->description =
         _("Weights the opacity of the input both the value of the aux"

@@ -6,7 +6,7 @@
 
 static gegl_cl_run_data *kernels_color = NULL;
 
-#define CL_FORMAT_N 6
+#define CL_FORMAT_N 8
 
 static const Babl *format[CL_FORMAT_N];
 
@@ -32,6 +32,8 @@ CL_YCBCRAF_TO_RGBAU8      = 13,
 
 CL_RGBU8_TO_RGBAF         = 14,
 CL_RGBAF_TO_RGBU8         = 15,
+
+CL_YU8_TO_YF              = 16,
 };
 
 void
@@ -58,14 +60,18 @@ gegl_cl_color_compile_kernels(void)
                                "rgbu8_to_rgbaf",          /* 14 */
                                "rgbaf_to_rgbu8",          /* 15 */
 
+                               "yu8_to_yf",               /* 16 */
+
                                NULL};
 
-  format[0] = babl_format ("RGBA u8"),
-  format[1] = babl_format ("RGBA float"),
-  format[2] = babl_format ("RaGaBaA float"),
-  format[3] = babl_format ("R'G'B'A float"),
-  format[4] = babl_format ("Y'CbCrA float"),
-  format[5] = babl_format ("RGB u8"),
+  format[0] = babl_format ("RGBA u8");
+  format[1] = babl_format ("RGBA float");
+  format[2] = babl_format ("RaGaBaA float");
+  format[3] = babl_format ("R'G'B'A float");
+  format[4] = babl_format ("Y'CbCrA float");
+  format[5] = babl_format ("RGB u8");
+  format[6] = babl_format ("Y u8");
+  format[7] = babl_format ("Y float");
 
   kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
 }
@@ -110,6 +116,10 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
     {
       if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGBU8_TO_RGBAF;
     }
+  else if (in_format == babl_format ("Y u8"))
+    {
+      if      (out_format == babl_format ("Y float"))          kernel = CL_YU8_TO_YF;
+    }
 
   return kernel;
 }
@@ -132,6 +142,10 @@ gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
         *bytes = sizeof (cl_uchar4);
       else if (buffer_format == babl_format ("RGB u8"))
         *bytes = sizeof (cl_uchar3);
+      else if (buffer_format == babl_format ("Y u8"))
+        *bytes = sizeof (cl_uchar);
+      else if (buffer_format == babl_format ("Y float"))
+        *bytes = sizeof (cl_float);
       else
         *bytes = sizeof (cl_float4);
     }
