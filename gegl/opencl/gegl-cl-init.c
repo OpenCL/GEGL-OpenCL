@@ -300,12 +300,21 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
       errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, NULL, NULL, NULL);
       if (errcode != CL_SUCCESS)
         {
-          char buffer[2000];
+          char *msg;
+          size_t s;
           CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
                                                              gegl_cl_get_device(),
                                                              CL_PROGRAM_BUILD_LOG,
-                                                             sizeof(buffer), buffer, NULL) );
-          g_warning("OpenCL Build Error:%s\n%s", gegl_cl_errstring(errcode), buffer);
+                                                             0, NULL, &s) );
+
+          msg = g_malloc (s);
+          CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
+                                                             gegl_cl_get_device(),
+                                                             CL_PROGRAM_BUILD_LOG,
+                                                             s, msg, NULL) );
+          g_printf("[OpenCL] Build Error:%s\n%s", gegl_cl_errstring(errcode), msg);
+          g_free (msg);
+
           return NULL;
         }
       else
