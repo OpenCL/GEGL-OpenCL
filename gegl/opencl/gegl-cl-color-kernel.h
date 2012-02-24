@@ -262,6 +262,7 @@ static const char* kernel_color_source =
 
 /* -- Y u8 -- */
 
+/* Y u8 -> Y float */
 "__kernel void yu8_to_yf (__global const uchar * in,                                      \n"
 "                         __global       float * out)                                     \n"
 "{                                                                                        \n"
@@ -270,4 +271,70 @@ static const char* kernel_color_source =
 "  float out_v;                                                                           \n"
 "  out_v = in_v;                                                                          \n"
 "  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+/* -- YA float -- */
+
+"  /* source: http://www.poynton.com/ColorFAQ.html */                                     \n"
+"  #define RGB_LUMINANCE_RED    (0.212671f)                                               \n"
+"  #define RGB_LUMINANCE_GREEN  (0.715160f)                                               \n"
+"  #define RGB_LUMINANCE_BLUE   (0.072169f)                                               \n"
+
+/* RGBA float -> YA float */
+"__kernel void rgbaf_to_yaf (__global const float4 * in,                                  \n"
+"                            __global       float2 * out)                                 \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = in[gid];                                                                \n"
+"  float2 out_v;                                                                          \n"
+"                                                                                         \n"
+"  float luminance = in_v.x * RGB_LUMINANCE_RED +                                         \n"
+"                    in_v.y * RGB_LUMINANCE_GREEN +                                       \n"
+"                    in_v.z * RGB_LUMINANCE_BLUE;                                         \n"
+"                                                                                         \n"
+"  out_v.x = luminance;                                                                   \n"
+"  out_v.y = in_v.w;                                                                      \n"
+"                                                                                         \n"
+"  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+/* YA float -> RGBA float */
+"__kernel void yaf_to_rgbaf (__global const float2 * in,                                  \n"
+"                            __global       float4 * out)                                 \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float2 in_v  = in[gid];                                                                \n"
+"  float4 out_v = (float4) (in_v.x, in_v.x, in_v.x, in_v.y);                              \n"
+"                                                                                         \n"
+"  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+
+/* RGBA u8 -> YA float */
+"__kernel void rgbau8_to_yaf (__global const uchar4 * in,                                 \n"
+"                             __global       float2 * out)                                \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = convert_float4(in[gid]) / 255.0f;                                       \n"
+"  float2 out_v;                                                                          \n"
+"                                                                                         \n"
+"  float luminance = in_v.x * RGB_LUMINANCE_RED +                                         \n"
+"                    in_v.y * RGB_LUMINANCE_GREEN +                                       \n"
+"                    in_v.z * RGB_LUMINANCE_BLUE;                                         \n"
+"                                                                                         \n"
+"  out_v.x = luminance;                                                                   \n"
+"  out_v.y = in_v.w;                                                                      \n"
+"                                                                                         \n"
+"  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+/* YA float -> RGBA u8 */
+"__kernel void yaf_to_rgbau8 (__global const float2 * in,                                 \n"
+"                             __global       uchar4 * out)                                \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float2 in_v  = in[gid];                                                                \n"
+"  float4 out_v = (float4) (in_v.x, in_v.x, in_v.x, in_v.y);                              \n"
+"                                                                                         \n"
+"  out[gid] = convert_uchar4_sat_rte(255.0f * out_v);                                     \n"
 "}                                                                                        \n";

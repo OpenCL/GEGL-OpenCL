@@ -6,7 +6,7 @@
 
 static gegl_cl_run_data *kernels_color = NULL;
 
-#define CL_FORMAT_N 8
+#define CL_FORMAT_N 9
 
 static const Babl *format[CL_FORMAT_N];
 
@@ -34,6 +34,11 @@ CL_RGBU8_TO_RGBAF         = 14,
 CL_RGBAF_TO_RGBU8         = 15,
 
 CL_YU8_TO_YF              = 16,
+
+CL_RGBAF_TO_YAF           = 17,
+CL_YAF_TO_RGBAF           = 18,
+CL_RGBAU8_TO_YAF          = 19,
+CL_YAF_TO_RGBAU8          = 20,
 };
 
 void
@@ -62,6 +67,11 @@ gegl_cl_color_compile_kernels(void)
 
                                "yu8_to_yf",               /* 16 */
 
+                               "rgbaf_to_yaf",            /* 17 */
+                               "yaf_to_rgbaf",            /* 18 */
+                               "rgbau8_to_yaf",           /* 19 */
+                               "yaf_to_rgbau8",           /* 20 */
+
                                NULL};
 
   format[0] = babl_format ("RGBA u8");
@@ -72,6 +82,7 @@ gegl_cl_color_compile_kernels(void)
   format[5] = babl_format ("RGB u8");
   format[6] = babl_format ("Y u8");
   format[7] = babl_format ("Y float");
+  format[8] = babl_format ("YA float");
 
   kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
 }
@@ -89,6 +100,7 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
       else if (out_format == babl_format ("R'G'B'A float"))    kernel = CL_RGBAF_TO_RGBA_GAMMA_F;
       else if (out_format == babl_format ("Y'CbCrA float"))    kernel = CL_RGBAF_TO_YCBCRAF;
       else if (out_format == babl_format ("RGB u8"))           kernel = CL_RGBAF_TO_RGBU8;
+      else if (out_format == babl_format ("YA float"))         kernel = CL_RGBAF_TO_YAF;
     }
   else if (in_format == babl_format ("RGBA u8"))
     {
@@ -96,6 +108,7 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
       else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGBAU8_TO_RAGABAF;
       else if (out_format == babl_format ("R'G'B'A float"))    kernel = CL_RGBAU8_TO_RGBA_GAMMA_F;
       else if (out_format == babl_format ("Y'CbCrA float"))    kernel = CL_RGBAU8_TO_YCBCRAF;
+      else if (out_format == babl_format ("YA float"))         kernel = CL_RGBAU8_TO_YAF;
     }
   else if (in_format == babl_format ("RaGaBaA float"))
     {
@@ -119,6 +132,11 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
   else if (in_format == babl_format ("Y u8"))
     {
       if      (out_format == babl_format ("Y float"))          kernel = CL_YU8_TO_YF;
+    }
+  else if (in_format == babl_format ("YA float"))
+    {
+      if      (out_format == babl_format ("RGBA float"))       kernel = CL_YAF_TO_RGBAF;
+      else if (out_format == babl_format ("RGBA u8"))          kernel = CL_YAF_TO_RGBAU8;
     }
 
   return kernel;
@@ -146,6 +164,8 @@ gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
         *bytes = sizeof (cl_uchar);
       else if (buffer_format == babl_format ("Y float"))
         *bytes = sizeof (cl_float);
+      else if (buffer_format == babl_format ("YA float"))
+        *bytes = sizeof (cl_float2);
       else
         *bytes = sizeof (cl_float4);
     }
