@@ -238,25 +238,26 @@ static const char* kernel_color_source =
 /* -- RGB u8 -- */
 
 /* RGB u8 -> RGBA float */
-"__kernel void rgbu8_to_rgbaf (__global const uchar3 * in,                                \n"
+"__kernel void rgbu8_to_rgbaf (__global const uchar  * in,                                \n"
 "                              __global       float4 * out)                               \n"
 "{                                                                                        \n"
 "  int gid = get_global_id(0);                                                            \n"
-"  float3 in_v  = convert_float3(in[gid]) / 255.0f;                                       \n"
+"  uchar3 in_v;                                                                           \n"
 "  float4 out_v;                                                                          \n"
-"  out_v.xyz = in_v;                                                                      \n"
+"  in_v = vload3 (gid, in);                                                               \n"
+"  out_v.xyz = convert_float3(in_v) / 255.0f;                                             \n"
 "  out_v.w   = 1.0f;                                                                      \n"
-"  out[gid] = out_v;                                                                      \n"
+"  out[gid]  = out_v;                                                                     \n"
 "}                                                                                        \n"
 
 /* RGBA float -> RGB u8 */
 "__kernel void rgbaf_to_rgbu8 (__global const float4 * in,                                \n"
-"                              __global       uchar3 * out)                               \n"
+"                              __global       uchar  * out)                               \n"
 "{                                                                                        \n"
 "  int gid = get_global_id(0);                                                            \n"
 "  float4 in_v  = in[gid];                                                                \n"
-"  float4 out_v = in_v;                                                                   \n"
-"  out[gid] = convert_uchar3_sat_rte(255.0f * out_v.w * out_v.xyz);                       \n"
+"  uchar3 out_v = convert_uchar3_sat_rte(255.0f * in_v.w * in_v.xyz);                     \n"
+"  vstore3 (out_v, gid, out);                                                             \n"
 "}                                                                                        \n"
 
 /* -- Y u8 -- */
