@@ -220,18 +220,26 @@ gegl_cl_init (GError **error)
       gegl_clGetDeviceInfo(cl_state.device, CL_DEVICE_NAME, sizeof(cl_state.device_name), cl_state.device_name, NULL);
 
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
-      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE2D_MAX_HEIGHT, sizeof(size_t),   &cl_state.max_image_height, NULL);
-      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE2D_MAX_WIDTH,  sizeof(size_t),   &cl_state.max_image_width,  NULL);
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
 
-      cl_state.max_image_width  = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
-      cl_state.max_image_height = MIN(4096, MIN(cl_state.max_image_width, cl_state.max_image_height));
+      cl_state.max_image_width  = 4096;
+      cl_state.max_image_height = 4096;
 
       g_printf("[OpenCL] Platform Name:%s\n",       cl_state.platform_name);
       g_printf("[OpenCL] Version:%s\n",             cl_state.platform_version);
       g_printf("[OpenCL] Extensions:%s\n",          cl_state.platform_ext);
       g_printf("[OpenCL] Default Device Name:%s\n", cl_state.device_name);
-      g_printf("[OpenCL] Tile Dimensions: (%d, %d)\n", cl_state.max_image_width, cl_state.max_image_height);
+      g_printf("[OpenCL] Max Alloc: %lu bytes\n",   cl_state.max_mem_alloc);
+
+      while (cl_state.max_image_width * cl_state.max_image_height * 16 > cl_state.max_mem_alloc)
+        {
+          if (cl_state.max_image_height < cl_state.max_image_width)
+            cl_state.max_image_width  /= 2;
+          else
+            cl_state.max_image_height /= 2;
+        }
+
+      g_printf("[OpenCL] Iteration size: (%d, %d)\n", cl_state.max_image_width, cl_state.max_image_height);
 
       if (cl_state.image_support)
         {
