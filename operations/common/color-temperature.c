@@ -175,12 +175,14 @@ process (GeglOperation       *op,
 static const char* kernel_source =
 "__kernel void kernel_temp(__global const float4     *in,       \n"
 "                          __global       float4     *out,      \n"
-"                          float3 coeff)                        \n"
+"                          float coeff1,                        \n"
+"                          float coeff2,                        \n"
+"                          float coeff3)                        \n"
 "{                                                              \n"
 "  int gid = get_global_id(0);                                  \n"
 "  float4 in_v  = in[gid];                                      \n"
 "  float4 out_v;                                                \n"
-"  out_v.xyz = in_v.xyz * coeff.xyz;                            \n"
+"  out_v.xyz = in_v.xyz * (float3) (coeff1, coeff2, coeff3);    \n"
 "  out_v.w   = in_v.w;                                          \n"
 "  out[gid]  =  out_v;                                          \n"
 "}                                                              \n";
@@ -219,7 +221,9 @@ cl_process (GeglOperation       *op,
 
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),    (void*)&in_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),    (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float3), (void*)coeffs);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float),  (void*)&coeffs[0]);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float),  (void*)&coeffs[1]);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float),  (void*)&coeffs[2]);
   if (cl_err != CL_SUCCESS) return cl_err;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
