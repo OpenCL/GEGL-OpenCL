@@ -238,6 +238,7 @@ gegl_cl_init (GError **error)
           else
             cl_state.max_image_height /= 2;
         }
+      cl_state.max_image_width  /= 2;
 
       g_printf("[OpenCL] Iteration size: (%d, %d)\n", cl_state.max_image_width, cl_state.max_image_height);
 

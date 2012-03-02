@@ -218,8 +218,135 @@ static void prepare (GeglOperation *operation)
   op_area->top    =
   op_area->bottom = ceil (o->radius);
 
-  gegl_operation_set_format (operation, "output",
-                             babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+}
+
+#include "opencl/gegl-cl.h"
+#include "buffer/gegl-buffer-cl-iterator.h"
+
+static const char* kernel_source =
+"__kernel void kernel_blur(__global const float4     *in,                                           \n"
+"                          __global       float4     *out,                                          \n"
+"                          __local        float4     *shared_roi,                                   \n"
+"                          int width, int radius)                                                   \n"
+"{                                                                                                  \n"
+"                                                                                                   \n"
+"  const int out_index    = get_global_id(0) * width + get_global_id(1);                            \n"
+"  const int in_top_index = (get_group_id (0) * get_local_size (0)) * (width + 2 * radius)          \n"
+"                            + (get_group_id (1) * get_local_size (1));                             \n"
+"                                                                                                   \n"
+"  const int local_width = (2 * radius + get_local_size (1));                                       \n"
+"  const int local_index = (radius + get_local_id (0)) * local_width + (radius + get_local_id (1)); \n"
+"  int i, x, y;                                                                                     \n"
+"                                                                                                   \n"
+"  float4 mean;                                                                                     \n"
+"                                                                                                   \n"
+"  for (y = get_local_id (0); y < get_local_size (0) + 2 * radius; y += get_local_size (0))         \n"
+"    for (x = get_local_id (1); x < get_local_size (1) + 2 * radius; x += get_local_size (1))       \n"
+"      shared_roi[y*local_width+x] = in[in_top_index + y * (width + 2 * radius) + x];               \n"
+"                                                                                                   \n"
+"  barrier(CLK_LOCAL_MEM_FENCE);                                                                    \n"
+"                                                                                                   \n"
+"  mean = (float4)(0.0f);                                                                           \n"
+"                                                                                                   \n"
+"  for (i=-radius; i <= radius; i++)                                                                \n"
+"   {                                                                                               \n"
+"     mean += shared_roi[local_index + i];                                                          \n"
+"   }                                                                                               \n"
+"                                                                                                   \n"
+"  shared_roi[local_index] = mean / (2 * radius + 1);                                               \n"
+"                                                                                                   \n"
+"  barrier(CLK_LOCAL_MEM_FENCE);                                                                    \n"
+"                                                                                                   \n"
+"  mean = (float4)(0.0f);                                                                           \n"
+"                                                                                                   \n"
+"  for (i=-radius; i <= radius; i++)                                                                \n"
+"   {                                                                                               \n"
+"     mean += shared_roi[local_index + i * local_width];                                            \n"
+"   }                                                                                               \n"
+"                                                                                                   \n"
+"  shared_roi[local_index] = mean / (2 * radius + 1);                                               \n"
+"                                                                                                   \n"
+"  barrier(CLK_LOCAL_MEM_FENCE);                                                                    \n"
+"                                                                                                   \n"
+"  out[out_index] = shared_roi[local_index];                                                        \n"
+"}                                                                                                  \n";
+
+static gegl_cl_run_data *cl_data = NULL;
+
+static cl_int
+cl_box_blur (cl_mem                in_tex,
+             cl_mem                out_tex,
+             size_t                global_worksize,
+             const GeglRectangle  *roi,
+             gint                  radius)
+{
+  cl_int cl_err = 0;
+  size_t local_ws[2], global_ws[2], local_mem_size;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_blur", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+
+  if (!cl_data) return 1;
+
+  local_ws[0] = 16;
+  local_ws[1] = 16;
+  global_ws[0] = roi->height;
+  global_ws[1] = roi->width;
+  local_mem_size = sizeof(cl_float4) * (local_ws[0] + 2 * radius) * (local_ws[1] + 2 * radius);
+
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, local_mem_size,   NULL);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int),   (void*)&roi->width);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int),   (void*)&radius);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, local_ws,
+                                        0, NULL, NULL);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  return cl_err;
+}
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result)
+{
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint err;
+  gint j;
+  cl_int cl_err;
+
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
+                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format,  GEGL_CL_BUFFER_READ, op_area->left, op_area->right, op_area->top, op_area->bottom);
+  while (gegl_buffer_cl_iterator_next (i, &err))
+    {
+      if (err) return FALSE;
+      for (j=0; j < i->n; j++)
+        {
+          cl_err = cl_box_blur(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], o->radius);
+          if (cl_err != CL_SUCCESS)
+            {
+              g_warning("[OpenCL] Error in %s [GeglOperationPointFilter] Kernel\n",
+                        GEGL_OPERATION_CLASS (operation)->name);
+              return FALSE;
+            }
+        }
+    }
+  return TRUE;
 }
 
 static gboolean
@@ -233,6 +360,10 @@ process (GeglOperation       *operation,
   GeglBuffer *temp;
   GeglOperationAreaFilter *op_area;
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
+
+  if (cl_state.is_accelerated)
+    if (cl_process (operation, input, output, result))
+      return TRUE;
 
   rect = *result;
 
@@ -266,6 +397,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->categories  = "blur";
   operation_class->name        = "gegl:box-blur";
+  operation_class->opencl_support = TRUE;
   operation_class->description =
        _("Performs an averaging of a square box of pixels.");
 }

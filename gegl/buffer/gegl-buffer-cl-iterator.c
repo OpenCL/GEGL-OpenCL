@@ -34,6 +34,7 @@ typedef struct GeglBufferClIterators
   gboolean       is_finished;
 
   guint          flags          [GEGL_CL_BUFFER_MAX_ITERATORS];
+  gint           area           [GEGL_CL_BUFFER_MAX_ITERATORS][4];
 
   GeglRectangle  rect           [GEGL_CL_BUFFER_MAX_ITERATORS]; /* the region we iterate on. They can be
                                                                    different from each other, but width
@@ -57,11 +58,15 @@ typedef struct GeglBufferClIterators
 } GeglBufferClIterators;
 
 gint
-gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
-                             GeglBuffer            *buffer,
-                             const GeglRectangle   *result,
-                             const Babl            *format,
-                             guint                  flags)
+gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
+                               GeglBuffer            *buffer,
+                               const GeglRectangle   *result,
+                               const Babl            *format,
+                               guint                  flags,
+                               gint                   left,
+                               gint                   right,
+                               gint                   top,
+                               gint                   bottom)
 {
   GeglBufferClIterators *i = (gpointer)iterator;
   gint self = 0;
@@ -97,6 +102,14 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
   gegl_cl_color_babl (buffer->format, &i->buf_cl_format_size[self]);
   gegl_cl_color_babl (format,         &i->op_cl_format_size [self]);
 
+  i->area[self][0] = left;
+  i->area[self][1] = right;
+  i->area[self][2] = top;
+  i->area[self][3] = bottom;
+  if (flags == GEGL_CL_BUFFER_WRITE
+      && (left > 0 || right > 0 || top > 0 || bottom > 0))
+	g_assert(FALSE);
+
   if (self!=0)
     {
       /* we make all subsequently added iterators share the width and height of the first one */
@@ -130,6 +143,16 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
   return self;
 }
 
+gint
+gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
+                             GeglBuffer            *buffer,
+                             const GeglRectangle   *result,
+                             const Babl            *format,
+                             guint                  flags)
+{
+  return gegl_buffer_cl_iterator_add_2 (iterator, buffer, result, format, flags, 0,0,0,0);
+}
+
 gboolean
 gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 {
@@ -155,8 +178,12 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
           if (!found)
             gegl_buffer_lock (i->buffer[no]);
 
-          if (i->flags[no] == GEGL_CL_BUFFER_WRITE)
-            gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+          if (i->flags[no] == GEGL_CL_BUFFER_WRITE
+              || (i->flags[no] == GEGL_CL_BUFFER_READ
+                  && (i->area[no][0] > 0 || i->area[no][1] > 0 || i->area[no][2] > 0 || i->area[no][3] > 0)))
+            {
+              gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+            }
         }
     }
   else
@@ -240,10 +267,10 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
     {
       for (j = 0; j < i->n; j++)
         {
-          GeglRectangle r = {i->rect[no].x + i->roi_all[i->roi_no+j].x,
-                             i->rect[no].y + i->roi_all[i->roi_no+j].y,
-                             i->roi_all[i->roi_no+j].width,
-                             i->roi_all[i->roi_no+j].height};
+          GeglRectangle r = {i->rect[no].x + i->roi_all[i->roi_no+j].x - i->area[no][0],
+                             i->rect[no].y + i->roi_all[i->roi_no+j].y - i->area[no][2],
+                             i->roi_all[i->roi_no+j].width             + i->area[no][0] + i->area[no][1],
+                             i->roi_all[i->roi_no+j].height            + i->area[no][2] + i->area[no][3]};
           i->roi [no][j] = r;
           i->size[no][j] = r.width * r.height;
         }

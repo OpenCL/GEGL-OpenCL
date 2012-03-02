@@ -27,6 +27,16 @@ gint gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
                                   const Babl            *format,
                                   guint                  flags);
 
+gint gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
+                                    GeglBuffer            *buffer,
+                                    const GeglRectangle   *roi,
+                                    const Babl            *format,
+                                    guint                  flags,
+                                    gint                   left,
+                                    gint                   right,
+                                    gint                   top,
+                                    gint                   bottom);
+
 gboolean gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err);
 
 GeglBufferClIterator *gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
