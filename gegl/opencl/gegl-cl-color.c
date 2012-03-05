@@ -148,6 +148,9 @@ gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
   int i;
   gboolean supported_format = FALSE;
 
+  if (bytes)
+    *bytes = SIZE_MAX;
+
   for (i = 0; i < CL_FORMAT_N; i++)
     if (format[i] == buffer_format) supported_format = TRUE;
 

@@ -10,7 +10,8 @@
 enum
 {
   GEGL_CL_BUFFER_READ   = 1,
-  GEGL_CL_BUFFER_WRITE  = 2
+  GEGL_CL_BUFFER_WRITE  = 2,
+  GEGL_CL_BUFFER_AUX    = 3
 };
 
 typedef struct GeglBufferClIterator

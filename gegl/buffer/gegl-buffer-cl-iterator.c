@@ -86,26 +86,44 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
     result = self==0?&(buffer->extent):&(i->rect[0]);
   i->rect[self]=*result;
 
-  i->buffer[self]= g_object_ref (buffer);
-
-  if (format)
-    i->format[self]=format;
-  else
-    i->format[self]=buffer->format;
   i->flags[self]=flags;
 
-  if (flags == GEGL_CL_BUFFER_WRITE)
-    i->conv[self] = gegl_cl_color_supported (format, buffer->format);
-  else
-    i->conv[self] = gegl_cl_color_supported (buffer->format, format);
+  if (flags == GEGL_CL_BUFFER_WRITE || flags == GEGL_CL_BUFFER_READ)
+    {
+      g_assert (buffer);
 
-  gegl_cl_color_babl (buffer->format, &i->buf_cl_format_size[self]);
-  gegl_cl_color_babl (format,         &i->op_cl_format_size [self]);
+      i->buffer[self]= g_object_ref (buffer);
+
+      if (format)
+        i->format[self]=format;
+      else
+        i->format[self]=buffer->format;
+
+      if (flags == GEGL_CL_BUFFER_WRITE)
+        i->conv[self] = gegl_cl_color_supported (format, buffer->format);
+      else
+        i->conv[self] = gegl_cl_color_supported (buffer->format, format);
+
+      gegl_cl_color_babl (buffer->format, &i->buf_cl_format_size[self]);
+      gegl_cl_color_babl (format,         &i->op_cl_format_size [self]);
+    }
+  else /* GEGL_CL_BUFFER_AUX */
+    {
+      g_assert (buffer == NULL);
+
+      i->buffer[self] = NULL;
+      i->format[self] = NULL;
+      i->conv[self]   = -1;
+      i->buf_cl_format_size[self] = SIZE_MAX;
+
+      gegl_cl_color_babl (format, &i->op_cl_format_size [self]);
+    }
 
   i->area[self][0] = left;
   i->area[self][1] = right;
   i->area[self][2] = top;
   i->area[self][3] = bottom;
+
   if (flags == GEGL_CL_BUFFER_WRITE
       && (left > 0 || right > 0 || top > 0 || bottom > 0))
 	g_assert(FALSE);
@@ -167,22 +185,25 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
     {
       for (no=0; no<i->iterators;no++)
         {
-          gint j;
-          gboolean found = FALSE;
-          for (j=0; j<no; j++)
-            if (i->buffer[no]==i->buffer[j])
-              {
-                found = TRUE;
-                break;
-              }
-          if (!found)
-            gegl_buffer_lock (i->buffer[no]);
-
-          if (i->flags[no] == GEGL_CL_BUFFER_WRITE
-              || (i->flags[no] == GEGL_CL_BUFFER_READ
-                  && (i->area[no][0] > 0 || i->area[no][1] > 0 || i->area[no][2] > 0 || i->area[no][3] > 0)))
+          if (i->buffer[no])
             {
-              gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+              gint j;
+              gboolean found = FALSE;
+              for (j=0; j<no; j++)
+                if (i->buffer[no]==i->buffer[j])
+                  {
+                    found = TRUE;
+                    break;
+                  }
+              if (!found)
+                gegl_buffer_lock (i->buffer[no]);
+
+              if (i->flags[no] == GEGL_CL_BUFFER_WRITE
+                  || (i->flags[no] == GEGL_CL_BUFFER_READ
+                      && (i->area[no][0] > 0 || i->area[no][1] > 0 || i->area[no][2] > 0 || i->area[no][3] > 0)))
+                {
+                  gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+                }
             }
         }
     }
@@ -460,6 +481,20 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                }
             }
         }
+      else if (i->flags[no] == GEGL_CL_BUFFER_AUX)
+        {
+          for (j=0; j < i->n; j++)
+            {
+              g_assert (i->tex_op[no][j] == NULL);
+              i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                                      CL_MEM_READ_WRITE,
+                                                      i->size[no][j] * i->op_cl_format_size [no],
+                                                      NULL, &cl_err);
+              if (cl_err != CL_SUCCESS) CL_ERROR;
+
+              i->tex[no][j] = i->tex_op[no][j];
+            }
+        }
     }
 
   i->roi_no += i->n;
@@ -470,21 +505,21 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
     {
       for (no=0; no<i->iterators;no++)
         {
-          gint j;
-          gboolean found = FALSE;
-          for (j=0; j<no; j++)
-            if (i->buffer[no]==i->buffer[j])
-              {
-                found = TRUE;
-                break;
-              }
-          if (!found)
-            gegl_buffer_unlock (i->buffer[no]);
-        }
+          if (i->buffer[no])
+            {
+              gint j;
+              gboolean found = FALSE;
+              for (j=0; j<no; j++)
+                if (i->buffer[no]==i->buffer[j])
+                  {
+                    found = TRUE;
+                    break;
+                  }
+              if (!found)
+                gegl_buffer_unlock (i->buffer[no]);
 
-      for (no=0; no<i->iterators;no++)
-        {
-          g_object_unref (i->buffer[no]);
+              g_object_unref (i->buffer[no]);
+            }
         }
 
       i->is_finished = TRUE;
