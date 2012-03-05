@@ -22,6 +22,7 @@ typedef struct
     size_t max_image_height;
     size_t max_image_width;
     cl_ulong max_mem_alloc;
+    cl_ulong local_mem_size;
 
     char platform_name   [1024];
     char platform_version[1024];
@@ -44,6 +45,8 @@ cl_context gegl_cl_get_context (void);
 
 cl_command_queue gegl_cl_get_command_queue (void);
 
+cl_ulong gegl_cl_get_local_mem_size (void);
+
 typedef struct
 {
   cl_program program;
@@ -55,7 +58,7 @@ gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
 
 #ifdef __GEGL_CL_INIT_MAIN__
 
-gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, "", "", "", ""};
+gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
 GHashTable *cl_program_hash = NULL;
 
 t_clGetPlatformIDs  gegl_clGetPlatformIDs  = NULL;

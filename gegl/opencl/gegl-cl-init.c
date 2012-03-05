@@ -111,6 +111,12 @@ gegl_cl_get_command_queue (void)
   return cl_state.cq;
 }
 
+cl_ulong
+gegl_cl_get_local_mem_size (void)
+{
+  return cl_state.local_mem_size;
+}
+
 #ifdef G_OS_WIN32
 
 #include <windows.h>
@@ -232,6 +238,7 @@ gegl_cl_init (GError **error)
 
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
+      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_LOCAL_MEM_SIZE,     sizeof(cl_ulong), &cl_state.local_mem_size,   NULL);
 
       cl_state.max_image_width  = 4096;
       cl_state.max_image_height = 4096;
@@ -241,6 +248,7 @@ gegl_cl_init (GError **error)
       g_printf("[OpenCL] Extensions:%s\n",          cl_state.platform_ext);
       g_printf("[OpenCL] Default Device Name:%s\n", cl_state.device_name);
       g_printf("[OpenCL] Max Alloc: %lu bytes\n",   cl_state.max_mem_alloc);
+      g_printf("[OpenCL] Local Mem: %lu bytes\n",   cl_state.local_mem_size);
 
       while (cl_state.max_image_width * cl_state.max_image_height * 16 > cl_state.max_mem_alloc)
         {
