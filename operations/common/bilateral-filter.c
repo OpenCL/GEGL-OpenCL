@@ -57,6 +57,130 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+#include "opencl/gegl-cl.h"
+#include "buffer/gegl-buffer-cl-iterator.h"
+
+static const char* kernel_source =
+"#define POW2(a) ((a) * (a))                                           \n"
+"kernel void bilateral_filter(global float4 *in,                       \n"
+"                             global float4 *out,                      \n"
+"                             const  float radius,                     \n"
+"                             const  float preserve)                   \n"
+"{                                                                     \n"
+"    int gidx       = get_global_id(0);                                \n"
+"    int gidy       = get_global_id(1);                                \n"
+"    int n_radius   = ceil(radius);                                    \n"
+"    int dst_width  = get_global_size(0);                              \n"
+"    int src_width  = dst_width + n_radius * 2;                        \n"
+"                                                                      \n"
+"    int u, v, i, j;                                                   \n"
+"    float4 center_pix =                                               \n"
+"        in[(gidy + n_radius) * src_width + gidx + n_radius];          \n"
+"    float4 accumulated = 0.0f;                                        \n"
+"    float4 tempf       = 0.0f;                                        \n"
+"    float  count       = 0.0f;                                        \n"
+"    float  diff_map, gaussian_weight, weight;                         \n"
+"                                                                      \n"
+"    for (v = -n_radius;v <= n_radius; ++v)                            \n"
+"    {                                                                 \n"
+"        for (u = -n_radius;u <= n_radius; ++u)                        \n"
+"        {                                                             \n"
+"            i = gidx + n_radius + u;                                  \n"
+"            j = gidy + n_radius + v;                                  \n"
+"                                                                      \n"
+"            int gid1d = i + j * src_width;                            \n"
+"            tempf = in[gid1d];                                        \n"
+"                                                                      \n"
+"            diff_map = exp (                                          \n"
+"                - (   POW2(center_pix.x - tempf.x)                    \n"
+"                    + POW2(center_pix.y - tempf.y)                    \n"
+"                    + POW2(center_pix.z - tempf.z))                   \n"
+"                * preserve);                                          \n"
+"                                                                      \n"
+"            gaussian_weight =                                         \n"
+"                exp( - 0.5f * (POW2(u) + POW2(v)) / radius);          \n"
+"                                                                      \n"
+"            weight = diff_map * gaussian_weight;                      \n"
+"                                                                      \n"
+"            accumulated += tempf * weight;                            \n"
+"            count += weight;                                          \n"
+"        }                                                             \n"
+"    }                                                                 \n"
+"    out[gidx + gidy * dst_width] = accumulated / count;               \n"
+"}                                                                     \n";
+
+static gegl_cl_run_data *cl_data = NULL;
+
+static cl_int
+cl_bilateral_filter (cl_mem                in_tex,
+                     cl_mem                out_tex,
+                     size_t                global_worksize,
+                     const GeglRectangle  *roi,
+                     gfloat                radius,
+                     gfloat                preserve)
+{
+  cl_int cl_err = 0;
+  size_t global_ws[2];
+
+  if (!cl_data)
+  {
+    const char *kernel_name[] = {"bilateral_filter", NULL};
+    cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+  }
+
+  if (!cl_data) return 1;
+
+  global_ws[0] = roi->width;
+  global_ws[1] = roi->height;
+
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&radius);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&preserve);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                       cl_data->kernel[0], 2,
+                                       NULL, global_ws, NULL,
+                                       0, NULL, NULL);
+  if (cl_err != CL_SUCCESS) return cl_err;
+
+  return cl_err;
+}
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result)
+{
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint err;
+  gint j;
+  cl_int cl_err;
+
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ, op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  while (gegl_buffer_cl_iterator_next (i, &err))
+  {
+    if (err) return FALSE;
+    for (j=0; j < i->n; j++)
+    {
+      cl_err = cl_bilateral_filter(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], ceil(o->blur_radius), o->edge_preservation);
+      if (cl_err != CL_SUCCESS)
+      {
+        g_warning("[OpenCL] Error in gegl:bilateral-filter: %s", gegl_cl_errstring(cl_err));
+        return FALSE;
+      }
+    }
+  }
+  return TRUE;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -66,6 +190,10 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle compute;
+
+  if (o->blur_radius >= 1.0 && gegl_cl_is_accelerated ())
+    if (cl_process (operation, input, output, result))
+      return TRUE;
 
   compute = gegl_operation_get_required_for_output (operation, "input",result);
 
@@ -177,6 +305,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process   = process;
   operation_class->prepare = prepare;
+
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
            "name", "gegl:bilateral-filter",
