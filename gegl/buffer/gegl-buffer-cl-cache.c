@@ -16,6 +16,7 @@ typedef struct
   GeglBuffer           *buffer;
   GeglRectangle         roi;
   cl_mem                tex;
+  gboolean              valid;
 } CacheEntry;
 
 static GArray *cache_entries = NULL;
@@ -25,6 +26,7 @@ typedef struct
   GeglBuffer   *buffer;
   GeglBuffer   *buffer_origin;
   GeglRectangle roi;
+  gboolean      valid;
 } CacheBuffer;
 
 static GArray *cache_buffer = NULL; /* this is used in color conversions from the cache */
@@ -46,7 +48,8 @@ gegl_buffer_cl_cache_get (GeglBuffer          *buffer,
   for (i=0; i<cache_entries->len; i++)
     {
       CacheEntry *e = &g_array_index (cache_entries, CacheEntry, i);
-      if (e->buffer == buffer && gegl_rectangle_equal (&e->roi, roi))
+      if (e->valid && e->buffer == buffer
+          && gegl_rectangle_equal (&e->roi, roi))
         {
           return e->tex;
         }
@@ -67,6 +70,7 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   e.buffer =  buffer;
   e.roi    = *roi;
   e.tex    =  tex;
+  e.valid  =  TRUE;
 
   if (G_UNLIKELY (!cache_entries))
     {
@@ -98,8 +102,9 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
   for (i=0; i<cache_entries->len; i++)
     {
       CacheEntry *entry = &g_array_index (cache_entries, CacheEntry, i);
-      if (entry->buffer == buffer &&
-          gegl_rectangle_intersect (&tmp, roi, &entry->roi))
+
+      if (entry->valid && entry->buffer == buffer
+          && gegl_rectangle_intersect (&tmp, roi, &entry->roi))
         {
           gpointer data;
 
@@ -120,13 +125,49 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
   return TRUE;
 }
 
+static gboolean
+cache_buffer_find_invalid (int *index)
+{
+  int i;
+  for (i=0; i<cache_buffer->len; i++)
+    {
+      CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
+      if (!cb->valid)
+        {
+          *index = i;
+          return TRUE;
+        }
+    }
+
+  *index = -1;
+  return FALSE;
+}
+
+static gboolean
+cache_entry_find_invalid (int *index)
+{
+  int i;
+  for (i=0; i<cache_entries->len; i++)
+    {
+      CacheEntry *e = &g_array_index (cache_entries, CacheEntry, i);
+      if (!e->valid)
+        {
+          *index = i;
+          return TRUE;
+        }
+    }
+
+  *index = -1;
+  return FALSE;
+}
+
+
 void
 gegl_buffer_cl_cache_remove (GeglBuffer          *buffer,
                              const GeglRectangle *roi)
 {
   GeglRectangle tmp;
   gint i;
-  gboolean found;
 
   if (!roi)
     roi = &buffer->extent;
@@ -136,48 +177,39 @@ gegl_buffer_cl_cache_remove (GeglBuffer          *buffer,
       cache_buffer = g_array_new (TRUE, TRUE, sizeof (CacheBuffer));
     }
 
-  do
-    {
-      found = FALSE;
-      for (i=0; i<cache_buffer->len; i++)
-        {
-          CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
-          if (cb->buffer_origin == buffer &&
-              gegl_rectangle_intersect (&tmp, &cb->roi, roi))
-            {
-              gegl_buffer_destroy (cb->buffer);
-              cb->buffer_origin = NULL;
-              g_array_remove_index_fast (cache_buffer, i);
-              found = TRUE;
-              break;
-            }
-        }
-    }
-  while (found);
-
   if (G_UNLIKELY (!cache_entries))
     {
       cache_entries = g_array_new (TRUE, TRUE, sizeof (CacheEntry));
     }
 
-  do
+  for (i=0; i<cache_buffer->len; i++)
     {
-      found = FALSE;
-      for (i=0; i<cache_entries->len; i++)
+      CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
+      if (cb->valid && cb->buffer_origin == buffer
+          && gegl_rectangle_intersect (&tmp, &cb->roi, roi))
         {
-          CacheEntry *e = &g_array_index (cache_entries, CacheEntry, i);
-          if (e->buffer == buffer &&
-              gegl_rectangle_intersect (&tmp, roi, &e->roi))
-            {
-              e->buffer = NULL;
-              gegl_clReleaseMemObject (e->tex);
-              g_array_remove_index_fast (cache_entries, i);
-              found = TRUE;
-              break;
-            }
+          gegl_buffer_destroy (cb->buffer);
+          cb->valid = FALSE;
         }
     }
-  while (found);
+
+  for (i=0; i<cache_entries->len; i++)
+    {
+      CacheEntry *e = &g_array_index (cache_entries, CacheEntry, i);
+      if (e->valid && e->buffer == buffer
+          && gegl_rectangle_intersect (&tmp, roi, &e->roi))
+        {
+          gegl_clReleaseMemObject (e->tex);
+          e->valid = FALSE;
+        }
+    }
+
+  while (cache_buffer_find_invalid (&i))
+    g_array_remove_index (cache_buffer, i);
+
+  while (cache_entry_find_invalid (&i))
+    g_array_remove_index (cache_entries, i);
+
 }
 
 void
@@ -231,7 +263,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
     {
       CacheEntry *entry = &g_array_index (cache_entries, CacheEntry, i);
 
-      if (entry->buffer == buffer && gegl_rectangle_contains (&entry->roi, roi))
+      if (entry->valid && entry->buffer == buffer
+          && gegl_rectangle_contains (&entry->roi, roi))
         {
           cl_int cl_err;
 
@@ -259,7 +292,7 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
               for (i=0; i<cache_buffer->len; i++)
                 {
                   CacheBuffer *cb = &g_array_index (cache_buffer, CacheBuffer, i);
-                  if (cb->buffer &&
+                  if (cb->valid && cb->buffer &&
                       cb->buffer_origin == buffer &&
                       cb->buffer->format == format &&
                       gegl_rectangle_contains (&cb->roi, roi))
@@ -286,6 +319,7 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                   cb.buffer        = gegl_buffer_new (&entry->roi, format);
                   cb.buffer_origin = buffer;
                   cb.roi           = entry->roi;
+                  cb.valid         = TRUE;
                   g_array_append_val (cache_buffer, cb);
 
                   tex_dest = gegl_clCreateBuffer (gegl_cl_get_context (),
