@@ -60,6 +60,28 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+
+static cl_int
+cl_process (GeglOperation       *op,
+            cl_mem               in_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  cl_int cl_err = 0;
+
+  cl_err = gegl_clEnqueueCopyBuffer(gegl_cl_get_command_queue(),
+                                    in_tex , out_tex , 0 , 0 ,
+                                    global_worksize * sizeof (cl_float2),
+                                    0, NULL, NULL);
+
+  if (CL_SUCCESS != cl_err) return cl_err;
+
+  return cl_err;
+}
+
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -71,7 +93,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
   operation_class->prepare = prepare;
+
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
       "name"       , "gegl:grey",
