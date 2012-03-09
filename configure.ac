@@ -404,7 +404,7 @@ AM_CONDITIONAL(HAVE_PYGOBJECT, test "$have_pygobject" = "yes")
 # Check Vala
 ########################
 
-AC_ARG_WITH(vala, [  --without-vala         build without Vala support])
+AC_ARG_WITH(vala, [  --without-vala          build without Vala support])
 
 have_vapigen="no"
 if test "x$with_vala" != "xno"; then
@@ -642,7 +642,7 @@ AM_CONDITIONAL(HAVE_GDK_PIXBUF, test "$have_gdk_pixbuf" = "yes")
 # Check for lensfun
 ###################
 
-AC_ARG_WITH(lensfun, [  --without-lensfun        build without lensfun support])
+AC_ARG_WITH(lensfun, [  --without-lensfun       build without lensfun support])
 
 have_lensfun="no"
 if test "x$with_lensfun" != "xno"; then
@@ -801,7 +801,7 @@ AC_SUBST(OPENRAW_LIBS)
 # Check for Jasper
 ##################
 
-AC_ARG_WITH(jasper, [  --without-jasper    build without Jasper support])
+AC_ARG_WITH(jasper, [  --without-jasper        build without Jasper support])
 
 have_jasper="no"
 if test "x$with_jasper" != "xno"; then
