@@ -6,7 +6,7 @@ static const char* kernel_color_source =
 " *                                                                                       \n"
 " * 0.01 / (2^16 - 1)                                                                     \n"
 " */                                                                                      \n"
-"#define BABL_ALPHA_THRESHOLD 0.000000152590219                                           \n"
+"#define BABL_ALPHA_THRESHOLD 0.0f                                                        \n"
 "                                                                                         \n"
 "float linear_to_gamma_2_2 (float value)                                                  \n"
 "{                                                                                        \n"

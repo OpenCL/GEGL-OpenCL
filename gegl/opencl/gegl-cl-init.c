@@ -210,13 +210,24 @@ gegl_cl_init (GError **error)
       CL_LOAD_FUNCTION (clReleaseContext)
       CL_LOAD_FUNCTION (clReleaseMemObject)
 
-      gegl_clGetPlatformIDs (1, &cl_state.platform, NULL);
+      err = gegl_clGetPlatformIDs (1, &cl_state.platform, NULL);
+      if(err != CL_SUCCESS)
+        {
+          g_printf("[OpenCL] Could not create platform\n");
+          return FALSE;
+        }
 
       gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_NAME,       sizeof(cl_state.platform_name),    cl_state.platform_name,    NULL);
       gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_VERSION,    sizeof(cl_state.platform_version), cl_state.platform_version, NULL);
       gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_EXTENSIONS, sizeof(cl_state.platform_ext),     cl_state.platform_ext,     NULL);
 
-      gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
+      err = gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
+      if(err != CL_SUCCESS)
+        {
+          g_printf("[OpenCL] Could not create device\n");
+          return FALSE;
+        }
+
       gegl_clGetDeviceInfo(cl_state.device, CL_DEVICE_NAME, sizeof(cl_state.device_name), cl_state.device_name, NULL);
 
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
@@ -311,6 +322,8 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
         {
           char *msg;
           size_t s;
+          cl_int build_errcode = errcode;
+
           CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
                                                              gegl_cl_get_device(),
                                                              CL_PROGRAM_BUILD_LOG,
@@ -321,7 +334,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
                                                              gegl_cl_get_device(),
                                                              CL_PROGRAM_BUILD_LOG,
                                                              s, msg, NULL) );
-          g_printf("[OpenCL] Build Error:%s\n%s", gegl_cl_errstring(errcode), msg);
+          g_printf("[OpenCL] Build Error:%s\n%s", gegl_cl_errstring(build_errcode), msg);
           g_free (msg);
 
           return NULL;
