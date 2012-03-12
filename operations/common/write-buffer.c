@@ -44,11 +44,26 @@ process (GeglOperation       *operation,
       GeglBuffer *output = GEGL_BUFFER (o->buffer);
 
       gegl_buffer_copy (input, result, output, result);
+      gegl_buffer_flush (output);
+      gegl_node_emit_computed (operation->node, result);
     }
 
   return TRUE;
 }
 
+static void
+dispose (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->buffer)
+    {
+      g_object_unref (o->buffer);
+      o->buffer = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+}
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -61,6 +76,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   sink_class->process = process;
   sink_class->needs_full = FALSE;
+
+  G_OBJECT_CLASS (klass)->dispose = dispose;
 
   operation_class->name        = "gegl:write-buffer";
   operation_class->categories  = "programming:output";

@@ -221,6 +221,9 @@ GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 const gchar * gegl_node_get_name            (GeglNode      *self);
 void          gegl_node_set_name            (GeglNode      *self,
                                              const gchar   *name);
+void
+gegl_node_emit_computed (GeglNode *node,
+                         const GeglRectangle *rect);
 
 /* macros used to set flags on objects passed in the graph */
 

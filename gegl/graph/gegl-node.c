@@ -1974,14 +1974,21 @@ gegl_node_get_consumers (GeglNode      *node,
   return n_connections;
 }
 
+
+void
+gegl_node_emit_computed (GeglNode *node,
+                         const GeglRectangle *rect)
+{
+  g_signal_emit (node, gegl_node_signals[COMPUTED], 0, rect, NULL, NULL);
+}
+
 static void
 gegl_node_computed_event (GeglCache *self,
                           void      *foo,
                           void      *user_data)
 {
   GeglNode *node = GEGL_NODE (user_data);
-
-  g_signal_emit (node, gegl_node_signals[COMPUTED], 0, foo, NULL, NULL);
+  gegl_node_emit_computed (node, foo);
 }
 
 GeglCache *
