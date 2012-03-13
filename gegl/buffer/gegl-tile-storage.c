@@ -107,7 +107,6 @@ gegl_tile_storage_new (GeglTileBackend *backend)
       }
   }
 
-  g_object_unref (handler->source); /* eeek */
   backend = GEGL_TILE_BACKEND (handler->source);
 
 #if 0

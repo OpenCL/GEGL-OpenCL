@@ -486,8 +486,7 @@ gegl_buffer_constructor (GType                  type,
       else if (GEGL_IS_BUFFER (source))
         buffer->format = GEGL_BUFFER (source)->format;
     }
-
-  if (!source)
+  else
     {
       /* if no source is specified if a format is specified, we
        * we need to create our own
@@ -495,12 +494,14 @@ gegl_buffer_constructor (GType                  type,
        * all "allocated from format", type buffers.
        */
       if (buffer->backend)
-      {
+        {
           void             *storage;
 
           storage = gegl_tile_storage_new (buffer->backend);
 
           source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
+
+          g_object_unref (storage);
 
           gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
           g_object_unref (source);
@@ -511,8 +512,8 @@ gegl_buffer_constructor (GType                  type,
           g_assert (source);
           backend = gegl_buffer_backend (GEGL_BUFFER (source));
           g_assert (backend);
-	  g_assert (backend == buffer->backend);
-	}
+	        g_assert (backend == buffer->backend);
+	      }
       else if (buffer->path && g_str_equal (buffer->path, "RAM"))
         {
           source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
@@ -537,12 +538,12 @@ gegl_buffer_constructor (GType                  type,
           GeglBufferHeader *header;
           void             *storage;
 
-	   backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                                   "tile-width", 128,
-                                   "tile-height", 64,
-                                   "format", buffer->format?buffer->format:babl_format ("RGBA float"),
-                                   "path", buffer->path,
-                                   NULL);
+          backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+                                  "tile-width", 128,
+                                  "tile-height", 64,
+                                  "format", buffer->format?buffer->format:babl_format ("RGBA float"),
+                                  "path", buffer->path,
+                                  NULL);
           storage = gegl_tile_storage_new (backend);
 
           source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
@@ -589,19 +590,17 @@ gegl_buffer_constructor (GType                  type,
         {
           g_warning ("not enough data to have a tile source for our buffer");
         }
-      {
         /* we reset the size if it seems to have been set to 0 during a on
          * disk buffer creation, nasty but it seems to do the job.
          */
 
-        if (buffer->extent.width == 0)
-          {
-            buffer->extent.width = width;
-            buffer->extent.height = height;
-            buffer->extent.x = x;
-            buffer->extent.y = y;
-          }
-      }
+      if (buffer->extent.width == 0)
+        {
+          buffer->extent.width = width;
+          buffer->extent.height = height;
+          buffer->extent.x = x;
+          buffer->extent.y = y;
+        }
     }
 
   g_assert (backend);
