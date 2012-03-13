@@ -171,6 +171,8 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
   return gegl_buffer_cl_iterator_add_2 (iterator, buffer, result, format, flags, 0,0,0,0);
 }
 
+#define OPENCL_USE_CACHE 1
+
 gboolean
 gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 {
@@ -253,11 +255,28 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                       if (cl_err != CL_SUCCESS) CL_ERROR;
                     }
                   else
+#ifdef OPENCL_USE_CACHE
                     {
                       gegl_buffer_cl_cache_new (i->buffer[no], &i->roi[no][j], i->tex_buf[no][j]);
                       /* don't release this texture */
                       i->tex_buf[no][j] = NULL;
                     }
+#else
+                    {
+                      data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), i->tex_buf[no][j], CL_TRUE,
+                                                     CL_MAP_READ,
+                                                     0, i->size[no][j] * i->buf_cl_format_size [no],
+                                                     0, NULL, NULL, &cl_err);
+                      if (cl_err != CL_SUCCESS) CL_ERROR;
+
+                      /* color conversion using BABL */
+                      gegl_buffer_set (i->buffer[no], &i->roi[no][j], i->format[no], data, GEGL_AUTO_ROWSTRIDE);
+
+                      cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
+                                                             0, NULL, NULL);
+                      if (cl_err != CL_SUCCESS) CL_ERROR;
+                    }
+#endif
                 }
             }
         }
