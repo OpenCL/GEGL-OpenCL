@@ -1979,7 +1979,10 @@ void
 gegl_node_emit_computed (GeglNode *node,
                          const GeglRectangle *rect)
 {
+  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+  g_static_mutex_lock (&mutex);
   g_signal_emit (node, gegl_node_signals[COMPUTED], 0, rect, NULL, NULL);
+  g_static_mutex_unlock (&mutex);
 }
 
 static void
