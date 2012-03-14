@@ -111,6 +111,48 @@ gegl_tile_handler_cache_init (GeglTileHandlerCache *cache)
   gegl_tile_cache_init ();
 }
 
+
+static void
+gegl_tile_handler_cache_reinit_buffer_tiles (gpointer itm,
+                                             gpointer userdata)
+{
+  CacheItem *item;
+  item = itm;
+  if (item->handler == userdata)
+    {
+      GeglTileHandlerCache *cache = userdata;
+      cache->free_list = g_slist_prepend (cache->free_list, item);
+    }
+}
+
+static void
+gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
+{
+  CacheItem            *item;
+  GSList               *iter;
+
+  g_static_mutex_lock (&mutex);
+  /* only throw out items belonging to this cache instance */
+  cache->free_list = NULL;
+  g_queue_foreach (cache_queue, gegl_tile_handler_cache_reinit_buffer_tiles, cache);
+  for (iter = cache->free_list; iter; iter = g_slist_next (iter))
+    {
+      item = iter->data;
+      if (item->tile)
+        {
+          cache_total -= item->tile->size;
+          gegl_tile_mark_as_stored (item->tile); /* to avoid saving */
+          gegl_tile_unref (item->tile);
+        }
+      g_queue_remove (cache_queue, item);
+      g_hash_table_remove (cache_ht, item);
+      g_slice_free (CacheItem, item);
+    }
+  g_slist_free (cache->free_list);
+  cache->free_list = NULL;
+  g_static_mutex_unlock (&mutex);
+}
+
 static void
 gegl_tile_handler_cache_dispose_buffer_tiles (gpointer itm,
                                               gpointer userdata)
@@ -250,6 +292,9 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
         break;
       case GEGL_TILE_VOID:
         gegl_tile_handler_cache_void (cache, x, y, z);
+        break;
+      case GEGL_TILE_REINIT:
+        gegl_tile_handler_cache_reinit (cache);
         break;
       default:
         break;

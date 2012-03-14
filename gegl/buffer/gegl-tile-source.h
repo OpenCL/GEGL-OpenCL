@@ -81,6 +81,7 @@ enum _GeglTileCommand
   GEGL_TILE_VOID,
   GEGL_TILE_FLUSH,
   GEGL_TILE_REFETCH,
+  GEGL_TILE_REINIT,
   GEGL_TILE_LAST_COMMAND
 };
 
@@ -149,6 +150,15 @@ gboolean  gegl_tile_source_exist     (GeglTileSource *source,
                                       gint            x,
                                       gint            y,
                                       gint            z);
+
+/**
+ * gegl_tile_source_reinit:
+ * @source: a GeglTileSource *
+ *
+ * Causes all tiles in cache to be refetched.
+ */
+void      gegl_tile_source_reinit    (GeglTileSource *source);
+
 /**
  * gegl_tile_source_void:
  * @source: a GeglTileSource *
@@ -206,6 +216,8 @@ gboolean  gegl_tile_source_idle      (GeglTileSource *source);
    gegl_tile_source_command(source,GEGL_TILE_VOID,x,y,z,NULL)
 #define gegl_tile_source_refetch(source,x,y,z) \
    gegl_tile_source_command(source,GEGL_TILE_REFETCH,x,y,z,NULL)
+#define gegl_tile_source_reinit(source) \
+   gegl_tile_source_command(source,GEGL_TILE_REINIT,0,0,0,NULL)
 #define gegl_tile_source_idle(source) \
    (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL))
 

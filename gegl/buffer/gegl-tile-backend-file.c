@@ -789,14 +789,12 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
             }
           else
             {
+              GeglTileStorage *storage =
+                (void*)gegl_tile_backend_peek_storage (backend);
               GeglRectangle rect;
               g_hash_table_remove (self->index, existing);
 
-              /* XXX: this refetch, depends on knowing the storage, the
-               * storage should not be public information/API to maintain
-               * proper encapsulation
-               */
-              gegl_tile_source_refetch (GEGL_TILE_SOURCE (backend->priv->storage),
+              gegl_tile_source_refetch (GEGL_TILE_SOURCE (storage),
                                         existing->tile.x,
                                         existing->tile.y,
                                         existing->tile.z);
@@ -810,10 +808,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
                 }
               g_free (existing);
 
-              /* XXX: this emitting of changed depends on knowing the storage,
-               * which is icky..
-               */
-              g_signal_emit_by_name (backend->priv->storage, "changed", &rect, NULL);
+              g_signal_emit_by_name (storage, "changed", &rect, NULL);
             }
         }
       g_hash_table_insert (self->index, iter->data, iter->data);

@@ -22,6 +22,7 @@
 
 #include <babl/babl.h>
 #include "gegl-buffer-types.h"
+#include "gegl-buffer-private.h"
 #include "gegl-tile-source.h"
 #include "gegl-tile-backend.h"
 
@@ -192,4 +193,9 @@ void  gegl_tile_backend_set_extent    (GeglTileBackend *tile_backend,
 GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend)
 {
   return tile_backend->priv->extent;
+}
+
+GeglTileSource *gegl_tile_backend_peek_storage (GeglTileBackend *backend)
+{
+  return backend->priv->storage;
 }

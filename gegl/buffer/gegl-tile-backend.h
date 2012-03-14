@@ -54,6 +54,9 @@ struct _GeglTileBackendClass
 gint  gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
 Babl *gegl_tile_backend_get_format    (GeglTileBackend *tile_backend);
 
+/* gets a pointer to the GeglTileStorage that uses the backend */
+GeglTileSource *gegl_tile_backend_peek_storage  (GeglTileBackend *backend);
+
 /* specify the extent of the backend, can be used to
  * pre-prime the backend with the width/height information when
  * constructing proxy GeglBuffers to interact with other systems
