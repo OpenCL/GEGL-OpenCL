@@ -158,7 +158,8 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
              this very operation.
            */
           if (GEGL_IS_OPERATION_SINK (operation) &&
-              !gegl_operation_sink_needs_full (operation))
+              !gegl_operation_sink_needs_full (operation) &&
+              context->result_rect.width > 0 && context->result_rect.height > 0)
             {
               GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
               gegl_operation_process (operation, context, "output",

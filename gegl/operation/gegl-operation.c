@@ -119,6 +119,8 @@ gegl_operation_process (GeglOperation       *operation,
       (result->width == 0 || result->height == 0))
     {
       GeglBuffer *output = gegl_buffer_new (NULL, NULL);
+      g_warning ("processing 0px rectangle");
+      /* when this case is hit.. we've done something bad.. */
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
       return TRUE;
     }
