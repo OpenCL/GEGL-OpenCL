@@ -337,6 +337,8 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 #if 0
       gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
 #endif
+    }
+    {
 
       /* remove already queued dirty rectangles */
       for (iter = processor->dirty_rectangles; iter; iter = g_slist_next (iter))
@@ -372,6 +374,12 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
                                               &processor->rectangle);
       gegl_operation_context_set_need_rect   (processor->context,
                                               &processor->rectangle);
+    }
+
+  if (processor->valid_region)
+    {
+      gegl_region_destroy (processor->valid_region);
+      processor->valid_region = gegl_region_new ();
     }
 
   g_object_notify (G_OBJECT (processor), "rectangle");
