@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 
 #define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
 #define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
+#define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
 #ifndef __GEGL_BUFFER_TYPES_H__
 typedef struct _GeglBuffer   GeglBuffer;
 typedef struct _GeglSampler  GeglSampler;
