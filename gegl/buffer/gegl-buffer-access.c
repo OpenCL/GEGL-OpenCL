@@ -1226,9 +1226,7 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
   g_return_if_fail (GEGL_IS_BUFFER (dst));
   g_return_if_fail (color);
 
-  gegl_color_get_rgba4f (color, rgbaf);
-  babl_process (babl_fish (babl_format ("RGBA float"), dst->format),
-                rgbaf, buf, 1);
+  gegl_color_get_pixel (color, dst->format, rgbaf);
 
   if (!dst_rect)
     {

@@ -112,25 +112,22 @@ void         gegl_color_set_rgba               (GeglColor   *color,
  * gegl_color_set_pixel:
  * @color: a #GeglColor
  * @format: a babl pixel format
- * @pixelx: pointer to a pixel
+ * @pixel: pointer to a pixel
  *
  * Set a GeglColor from a pointer to a pixel and it's babl format.
  */
 void         gegl_color_set_pixel              (GeglColor   *color,
-                                                Babl        *format,
+                                                const Babl  *format,
                                                 const void  *pixel);
 /**
  * gegl_color_get_pixel:
  * @color: a #GeglColor
- * @red: red value
- * @green: green value
- * @blue: blue value
- * @alpha: alpha value
+ * @pixel: pointer to a pixel
  *
  * Store the color in a pixel in the given format.
  */
 void         gegl_color_get_pixel              (GeglColor   *color,
-                                                Babl        *format,
+                                                const Babl  *format,
                                                 void        *pixel);
 
 /***

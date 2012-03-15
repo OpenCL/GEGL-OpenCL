@@ -259,7 +259,7 @@ gegl_color_float4 (GeglColor *self)
 #endif
 
 void         gegl_color_set_pixel              (GeglColor   *color,
-                                                Babl        *format,
+                                                const Babl  *format,
                                                 const void  *pixel)
 {
   g_return_if_fail (GEGL_IS_COLOR (color));
@@ -272,7 +272,7 @@ void         gegl_color_set_pixel              (GeglColor   *color,
 }
 
 void         gegl_color_get_pixel              (GeglColor   *color,
-                                                Babl        *format,
+                                                const Babl  *format,
                                                 void        *pixel)
 {
   g_return_if_fail (GEGL_IS_COLOR (color));
