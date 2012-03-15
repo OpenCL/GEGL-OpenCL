@@ -1228,14 +1228,13 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
                                                GeglColor           *color)
 {
   GeglBufferIterator *i;
-  gfloat              rgbaf[4];
   gchar               buf[128];
   gint                pxsize;
 
   g_return_if_fail (GEGL_IS_BUFFER (dst));
   g_return_if_fail (color);
 
-  gegl_color_get_pixel (color, dst->format, rgbaf);
+  gegl_color_get_pixel (color, dst->format, buf);
 
   if (!dst_rect)
     {
