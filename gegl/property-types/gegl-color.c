@@ -258,12 +258,37 @@ gegl_color_float4 (GeglColor *self)
 }
 #endif
 
+void         gegl_color_set_pixel              (GeglColor   *color,
+                                                Babl        *format,
+                                                const void  *pixel)
+{
+  g_return_if_fail (GEGL_IS_COLOR (color));
+  g_return_if_fail (format);
+  g_return_if_fail (pixel);
+
+  babl_process (
+      babl_fish (babl_format ("RGBA float"), format),
+      pixel, color->priv->rgba_color, 1);
+}
+
+void         gegl_color_get_pixel              (GeglColor   *color,
+                                                Babl        *format,
+                                                void        *pixel)
+{
+  g_return_if_fail (GEGL_IS_COLOR (color));
+  g_return_if_fail (format);
+  g_return_if_fail (pixel);
+
+  babl_process (
+      babl_fish (format, babl_format ("RGBA float")),
+      color->priv->rgba_color, pixel, 1);
+}
+
 void
 gegl_color_get_rgba4f (GeglColor   *color,
                        gfloat      *rgba)
 {
   gint i;
-
   g_return_if_fail (GEGL_IS_COLOR (color));
 
   for (i=0; i< 4; i++)
