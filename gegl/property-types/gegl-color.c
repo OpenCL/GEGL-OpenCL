@@ -267,7 +267,7 @@ void         gegl_color_set_pixel              (GeglColor   *color,
   g_return_if_fail (pixel);
 
   babl_process (
-      babl_fish (babl_format ("RGBA float"), format),
+      babl_fish (format, babl_format ("RGBA float")),
       pixel, color->priv->rgba_color, 1);
 }
 
@@ -280,7 +280,7 @@ void         gegl_color_get_pixel              (GeglColor   *color,
   g_return_if_fail (pixel);
 
   babl_process (
-      babl_fish (format, babl_format ("RGBA float")),
+      babl_fish (babl_format ("RGBA float"), format),
       color->priv->rgba_color, pixel, 1);
 }
 
