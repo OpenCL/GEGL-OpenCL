@@ -372,6 +372,7 @@ gegl_buffer_dispose (GObject *object)
   GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
+  gegl_buffer_flush (buffer);
 
   if (handler->source &&
       GEGL_IS_TILE_STORAGE (handler->source))
