@@ -258,6 +258,19 @@ void            gegl_buffer_set               (GeglBuffer          *buffer,
 
 
 /**
+ * gegl_buffer_set_color:
+ * @buffer: a #GeglBuffer
+ * @rect: a rectangular region to fill with a color.
+ * @color: the GeglColor to fill with.
+ *
+ * Clears the provided rectangular region by setting all the associated memory
+ * to 0
+ */
+void            gegl_buffer_set_color         (GeglBuffer          *buffer,
+                                               const GeglRectangle *rect,
+                                               GeglColor           *color);
+
+/**
  * gegl_buffer_get_format:
  * @buffer: a #GeglBuffer
  *

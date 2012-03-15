@@ -1192,6 +1192,66 @@ gegl_buffer_clear (GeglBuffer          *dst,
     }
 }
 
+#if 0
+/**
+ * gegl_buffer_pattern:
+ * @buffer: a #GeglBuffer
+ * @roi: a rectangular region
+ * @pattern: a #GeglBuffer to be repeated as a pattern
+ * @x_offset: where the pattern starts horizontally
+ * @y_offset: where the pattern starts vertical
+ *
+ * Clears the provided rectangular region by setting all the associated memory
+ * to 0
+ */
+void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
+                                               const GeglRectangle *rect,
+                                               GeglBuffer          *pattern,
+                                               gdouble              x_offset,
+                                               gdouble              y_offset)
+{
+  /* NYI */
+}
+#endif
+
+void            gegl_buffer_set_color         (GeglBuffer          *dst,
+                                               const GeglRectangle *dst_rect,
+                                               GeglColor           *color)
+{
+  GeglBufferIterator *i;
+  gfloat              rgbaf[4];
+  gchar               buf[128];
+  gint                pxsize;
+
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+  g_return_if_fail (color);
+
+  gegl_color_get_rgba4f (color, rgbaf);
+  babl_process (babl_fish (babl_format ("RGBA float"), dst->format),
+                rgbaf, buf, 1);
+
+  if (!dst_rect)
+    {
+      dst_rect = gegl_buffer_get_extent (dst);
+    }
+  if (dst_rect->width == 0 ||
+      dst_rect->height == 0)
+    return;
+
+  pxsize = babl_format_get_bytes_per_pixel (dst->format);
+
+  /* FIXME: this can be even further optimized by special casing it so
+   * that fully filled tiles are shared.
+   */
+  i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE);
+  while (gegl_buffer_iterator_next (i))
+    {
+      int j;
+      for (j = 0; j < i->length; j++)
+        memcpy (((guchar*)(i->data[j * pxsize])), buf, pxsize);
+    }
+}
+
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
