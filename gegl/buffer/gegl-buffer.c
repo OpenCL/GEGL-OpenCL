@@ -53,6 +53,7 @@
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
+#include "gegl-tile-backend-tiledir.h"
 #include "gegl-tile-backend-ram.h"
 #include "gegl-tile.h"
 #include "gegl-tile-handler-cache.h"
@@ -372,11 +373,18 @@ gegl_buffer_dispose (GObject *object)
   GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
   gegl_buffer_sample_cleanup (buffer);
-  gegl_buffer_flush (buffer);
 
   if (handler->source &&
       GEGL_IS_TILE_STORAGE (handler->source))
     {
+      GeglTileBackend *backend = gegl_buffer_backend (buffer);
+
+      /* only flush non-internal backends,. */
+      if (!(GEGL_IS_TILE_BACKEND_FILE (backend) ||
+            GEGL_IS_TILE_BACKEND_RAM (backend) ||
+            GEGL_IS_TILE_BACKEND_TILE_DIR (backend)))
+        gegl_buffer_flush (buffer);
+
       gegl_buffer_void (buffer);
 #if 0
       g_object_unref (handler->source);
@@ -743,6 +751,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
             gegl_tile_lock (tile);
             tile->tile_storage = buffer->tile_storage;
             gegl_tile_unlock (tile);
+            tile->rev--;
           }
         tile->x = x;
         tile->y = y;
