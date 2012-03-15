@@ -1248,7 +1248,7 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
     {
       int j;
       for (j = 0; j < i->length; j++)
-        memcpy (((guchar*)(i->data[j * pxsize])), buf, pxsize);
+        memcpy (((guchar*)(i->data[0])) + pxsize * j, buf, pxsize);
     }
 }
 
