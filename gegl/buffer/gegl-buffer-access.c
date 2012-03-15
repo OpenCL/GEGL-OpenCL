@@ -610,7 +610,6 @@ gegl_buffer_set (GeglBuffer          *buffer,
 
 
 #if 0
-
 /*
  *  slow nearest neighbour resampler that seems to be
  *  completely correct.
@@ -1192,27 +1191,37 @@ gegl_buffer_clear (GeglBuffer          *dst,
     }
 }
 
-#if 0
-/**
- * gegl_buffer_pattern:
- * @buffer: a #GeglBuffer
- * @roi: a rectangular region
- * @pattern: a #GeglBuffer to be repeated as a pattern
- * @x_offset: where the pattern starts horizontally
- * @y_offset: where the pattern starts vertical
- *
- * Clears the provided rectangular region by setting all the associated memory
- * to 0
- */
 void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
                                                GeglBuffer          *pattern,
                                                gdouble              x_offset,
                                                gdouble              y_offset)
 {
-  /* NYI */
+  GeglRectangle src_rect = {0,}, dst_rect;
+  int pat_width, pat_height;
+  int cols, rows;
+  int col, row;
+  int width, height;
+
+  pat_width  = gegl_buffer_get_width (pattern);
+  pat_height = gegl_buffer_get_height (pattern);
+  width      = gegl_buffer_get_width (buffer);
+  height     = gegl_buffer_get_height (buffer);
+
+  src_rect.width = dst_rect.width = pat_width;
+  src_rect.height = dst_rect.height = pat_height;
+
+  cols = width / pat_width + 1;
+  rows = height / pat_height + 1;
+
+  for (row = 0; row <= rows; row++)
+    for (col = 0; col <= cols; col++)
+      {
+        dst_rect.x = x_offset + (row-1) * pat_width;
+        dst_rect.y = y_offset + (col-1) * pat_height;
+        gegl_buffer_copy (pattern, &src_rect, buffer, &dst_rect);
+      }
 }
-#endif
 
 void            gegl_buffer_set_color         (GeglBuffer          *dst,
                                                const GeglRectangle *dst_rect,
