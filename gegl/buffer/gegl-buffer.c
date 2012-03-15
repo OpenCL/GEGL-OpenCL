@@ -742,6 +742,10 @@ gegl_buffer_get_tile (GeglTileSource *source,
             gegl_tile_lock (tile);
             tile->tile_storage = buffer->tile_storage;
             gegl_tile_unlock (tile);
+            tile->rev --; /* the lock/unlock cycle increases the revision
+                           * making it be out of sync with backing, causing
+                           * a save even of untouched images.
+                           */
           }
         tile->x = x;
         tile->y = y;
