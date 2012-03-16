@@ -26,6 +26,7 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
+#include "gegl-instrument.h"
 #include "operation/gegl-operation.h"
 
 

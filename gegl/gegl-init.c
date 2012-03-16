@@ -82,6 +82,7 @@ pid_is_running (gint pid)
 
 guint gegl_debug_flags = 0;
 
+#include "gegl-instrument.h"
 #include "gegl-init.h"
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
@@ -353,6 +354,8 @@ void gegl_tile_storage_cache_cleanup (void);
 void
 gegl_exit (void)
 {
+  glong timing = gegl_ticks ();
+
   gegl_tile_storage_cache_cleanup ();
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
@@ -366,6 +369,9 @@ gegl_exit (void)
 
   babl_exit ();
 
+  timing = gegl_ticks () - timing;
+  gegl_instrument ("gegl", "gegl_exit", timing);
+
   /* used when tracking buffer and tile leaks */
   if (g_getenv ("GEGL_DEBUG_BUFS") != NULL)
     {
@@ -373,6 +379,13 @@ gegl_exit (void)
       gegl_tile_backend_ram_stats ();
       gegl_tile_backend_file_stats ();
       gegl_tile_backend_tiledir_stats ();
+    }
+  global_time = gegl_ticks () - global_time;
+  gegl_instrument ("gegl", "gegl", global_time);
+
+  if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
+    {
+      g_printf ("\n%s", gegl_instrument_utf8 ());
     }
 
   if (gegl_buffer_leaks ())
@@ -447,12 +460,16 @@ gegl_post_parse_hook (GOptionContext *context,
                       gpointer        data,
                       GError        **error)
 {
+  glong time;
+
   if (config)
     return TRUE;
 
 
   g_assert (global_time == 0);
+  global_time = gegl_ticks ();
   g_type_init ();
+  gegl_instrument ("gegl", "gegl_init", 0);
 
   config = (void*)gegl_config ();
 
@@ -492,10 +509,14 @@ gegl_post_parse_hook (GOptionContext *context,
   }
 #endif /* GEGL_ENABLE_DEBUG */
 
+  time = gegl_ticks ();
+
   babl_init ();
+  gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
 
   gegl_init_i18n ();
 
+  time = gegl_ticks ();
   if (!module_db)
     {
       const gchar *gegl_path = g_getenv ("GEGL_PATH");
@@ -546,7 +567,11 @@ gegl_post_parse_hook (GOptionContext *context,
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
         }
+
+      gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
+
+  gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
 
   if (g_getenv ("GEGL_SWAP"))
     g_object_set (config, "swap", g_getenv ("GEGL_SWAP"), NULL);

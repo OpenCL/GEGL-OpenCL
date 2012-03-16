@@ -28,6 +28,7 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
+#include "gegl-instrument.h"
 #include "operation/gegl-operation.h"
 
 static void gegl_have_visitor_class_init (GeglHaveVisitorClass *klass);
@@ -57,6 +58,7 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
                               GeglNode    *node)
 {
   GeglOperation *operation;
+  glong          time = gegl_ticks ();
 
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
   if (!node)
@@ -70,4 +72,8 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
              gegl_node_get_debug_name (node),
              node->have_rect.x, node->have_rect.y, node->have_rect.width, node->have_rect.height);
   g_mutex_unlock (node->mutex);
+
+  time = gegl_ticks () - time;
+  gegl_instrument ("process", gegl_node_get_operation (node), time);
+  gegl_instrument (gegl_node_get_operation (node), "defined-region", time);
 }

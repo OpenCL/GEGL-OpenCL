@@ -14,7 +14,7 @@ static gfloat passthrough (gfloat in, gpointer data)
   return in;
 }
 
-glong babl_ticks (void);
+glong gegl_ticks (void);
 
 #define ITERATIONS 10
 #define SAMPLES   10000000
@@ -36,27 +36,25 @@ gint main (int argc, gchar **argv)
     }
 
   lookup = gegl_lookup_new (wrapped_sqrt, NULL);
-  ticks = babl_ticks ();
+  ticks = gegl_ticks ();
   for (i=0;i<ITERATIONS;i++)
     for (j=0;j<SAMPLES;j++)
       foo = gegl_lookup (lookup, rand[j]);
-  ticks = babl_ticks ()-ticks;
+  ticks = gegl_ticks ()-ticks;
   g_print ("First run:  %i\n", ticks);
-  if (foo)
-    foo = 0;
 
-  ticks = babl_ticks ();
+  ticks = gegl_ticks ();
   for (i=0;i<ITERATIONS;i++)
     for (j=0;j<SAMPLES;j++)
       foo = gegl_lookup (lookup, rand[j]);
-  ticks = babl_ticks ()-ticks;
+  ticks = gegl_ticks ()-ticks;
   g_print ("Second run: %i\n", ticks);
 
-  ticks = babl_ticks ();
+  ticks = gegl_ticks ();
   for (i=0;i<ITERATIONS;i++)
     for (j=0;j<SAMPLES;j++)
       foo = sqrt (rand[j]);
-  ticks = babl_ticks ()-ticks;
+  ticks = gegl_ticks ()-ticks;
   g_print ("Just sqrt: %i\n", ticks);
   gegl_lookup_free (lookup);
 
