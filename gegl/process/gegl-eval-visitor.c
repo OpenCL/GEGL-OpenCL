@@ -81,17 +81,25 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
         }
       else
         {
-          glong time      = gegl_ticks ();
+          if ((context->result_rect.width == 0 || context->result_rect.height == 0))
+            {
+              /* 0px processing, bail */
+              gegl_operation_context_take_object (context, "output", G_OBJECT (gegl_buffer_new (NULL, NULL)));
+            }
+          else
+            {
+              /* Make the operation do it's actual processing */
+              glong time      = gegl_ticks ();
 
-          /* Make the operation do it's actual processing */
-          GEGL_NOTE (GEGL_DEBUG_PROCESS, "For \"%s\" processing pad '%s' result_rect = %d, %d %d×%d",
-                     gegl_pad_get_name (pad), gegl_node_get_debug_name (node),
-                     context->result_rect.x, context->result_rect.y, context->result_rect.width, context->result_rect.height);
-          gegl_operation_process (operation, context, gegl_pad_get_name (pad),
-                                  &context->result_rect);
-          time      = gegl_ticks () - time;
+              GEGL_NOTE (GEGL_DEBUG_PROCESS, "For \"%s\" processing pad '%s' result_rect = %d, %d %d×%d",
+                         gegl_pad_get_name (pad), gegl_node_get_debug_name (node),
+                         context->result_rect.x, context->result_rect.y, context->result_rect.width, context->result_rect.height);
+              gegl_operation_process (operation, context, gegl_pad_get_name (pad),
+                                      &context->result_rect);
+              time      = gegl_ticks () - time;
 
-          gegl_instrument ("process", gegl_node_get_operation (node), time);
+              gegl_instrument ("process", gegl_node_get_operation (node), time);
+            }
 
           if (gegl_pad_get_num_connections (pad) > 1)
             {
