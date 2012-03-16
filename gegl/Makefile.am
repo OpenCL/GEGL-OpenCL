@@ -68,7 +68,6 @@ GEGL_introspectable_sources = \
 	gegl-dot-visitor.c		\
 	gegl-enums.c		\
 	gegl-init.c			\
-	gegl-instrument.c		\
 	gegl-utils.c			\
 	gegl-lookup.c			\
 	gegl-xml.c			\
@@ -81,7 +80,6 @@ GEGL_introspectable_sources = \
 	gegl-dot.h			\
 	gegl-dot-visitor.h		\
 	gegl-init.h			\
-	gegl-instrument.h		\
 	gegl-plugin.h			\
 	gegl-types-internal.h		\
 	gegl-xml.h \

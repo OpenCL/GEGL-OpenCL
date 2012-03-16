@@ -30,7 +30,6 @@
 #include "operation/gegl-operation-context.h"
 #include "graph/gegl-pad.h"
 #include "graph/gegl-visitable.h"
-#include "gegl-instrument.h"
 #include "operation/gegl-operation-sink.h"
 #include "buffer/gegl-region.h"
 
@@ -89,16 +88,12 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           else
             {
               /* Make the operation do it's actual processing */
-              glong time      = gegl_ticks ();
 
               GEGL_NOTE (GEGL_DEBUG_PROCESS, "For \"%s\" processing pad '%s' result_rect = %d, %d %d×%d",
                          gegl_pad_get_name (pad), gegl_node_get_debug_name (node),
                          context->result_rect.x, context->result_rect.y, context->result_rect.width, context->result_rect.height);
               gegl_operation_process (operation, context, gegl_pad_get_name (pad),
                                       &context->result_rect);
-              time      = gegl_ticks () - time;
-
-              gegl_instrument ("process", gegl_node_get_operation (node), time);
             }
 
           if (gegl_pad_get_num_connections (pad) > 1)

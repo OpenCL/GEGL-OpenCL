@@ -28,7 +28,6 @@
 #include "gegl-debug-rect-visitor.h"
 #include "gegl-need-visitor.h"
 #include "gegl-have-visitor.h"
-#include "gegl-instrument.h"
 #include "graph/gegl-node.h"
 #include "gegl-prepare-visitor.h"
 #include "gegl-finish-visitor.h"
@@ -131,12 +130,9 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   GeglNode    *root;
   GeglBuffer  *object;
   GeglPad     *pad;
-  glong        time       = gegl_ticks ();
   gpointer     context_id = self;
 
   g_assert (GEGL_IS_EVAL_MGR (self));
-
-  gegl_instrument ("gegl", "process", 0);
 
   root=self->node;
   pad = gegl_node_get_pad (root, self->pad_name);
@@ -236,8 +232,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   gegl_visitor_dfs_traverse (self->finish_visitor, GEGL_VISITABLE (root));
 
   g_object_unref (root);
-  time = gegl_ticks () - time;
-  gegl_instrument ("gegl", "process", time);
 
   if (!pad || !G_IS_OBJECT (object))
     {

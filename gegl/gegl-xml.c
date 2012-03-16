@@ -33,7 +33,6 @@
 #include "property-types/gegl-curve.h"
 #include "property-types/gegl-path.h"
 #include "property-types/gegl-paramspecs.h"
-#include "gegl-instrument.h"
 #include "gegl-xml.h"
 
 #ifdef G_OS_WIN32
@@ -522,7 +521,6 @@ static void each_ref (gpointer value,
 GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
                                   const gchar *path_root)
 {
-  glong                time = gegl_ticks ();
   ParseData            pd   = { 0, };
   GMarkupParseContext *context;
   gboolean             success = FALSE;
@@ -557,9 +555,6 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
   g_list_free (pd.parent);
   g_markup_parse_context_free (context);
   g_hash_table_destroy (pd.ids);
-
-  time = gegl_ticks () - time;
-  gegl_instrument ("gegl", "gegl_parse_xml", time);
 
   return success ? GEGL_NODE (pd.gegl) : NULL;
 }
