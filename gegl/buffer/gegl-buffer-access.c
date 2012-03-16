@@ -1214,8 +1214,8 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
   cols = width / pat_width + 1;
   rows = height / pat_height + 1;
 
-  for (row = 0; row <= rows; row++)
-    for (col = 0; col <= cols; col++)
+  for (row = 0; row <= rows + 1; row++)
+    for (col = 0; col <= cols + 1; col++)
       {
         dst_rect.x = x_offset + (row-1) * pat_width;
         dst_rect.y = y_offset + (col-1) * pat_height;
