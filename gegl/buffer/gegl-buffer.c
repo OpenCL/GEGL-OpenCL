@@ -364,8 +364,6 @@ gint gegl_buffer_leaks (void)
   return allocated_buffers - de_allocated_buffers;
 }
 
-static void gegl_buffer_void (GeglBuffer *buffer);
-
 static void
 gegl_buffer_dispose (GObject *object)
 {
@@ -385,7 +383,8 @@ gegl_buffer_dispose (GObject *object)
             GEGL_IS_TILE_BACKEND_TILE_DIR (backend)))
         gegl_buffer_flush (buffer);
 
-      gegl_buffer_void (buffer);
+      gegl_tile_source_reinit (GEGL_TILE_SOURCE (handler->source));
+
 #if 0
       g_object_unref (handler->source);
       handler->source = NULL; /* this might be a dangerous way of marking that we have already voided */
@@ -1264,63 +1263,6 @@ static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
     return buffer->format;
   return gegl_tile_backend_get_format (gegl_buffer_backend (buffer));
 }
-
-static void
-gegl_buffer_void (GeglBuffer *buffer)
-{
-  gint width       = buffer->extent.width;
-  gint height      = buffer->extent.height;
-  gint tile_width  = buffer->tile_storage->tile_width;
-  gint tile_height = buffer->tile_storage->tile_height;
-  gint bufy        = 0;
-
-  g_mutex_lock (buffer->tile_storage->mutex);
-  {
-    gint z;
-    gint factor = 1;
-    for (z = 0; z <= buffer->max_z; z++)
-      {
-        bufy = 0;
-        while (bufy < height)
-          {
-            gint tiledy  = buffer->extent.y + buffer->shift_y + bufy;
-            gint offsety = gegl_tile_offset (tiledy, tile_height);
-            gint bufx    = 0;
-            gint ty = gegl_tile_indice (tiledy / factor, tile_height);
-
-            if (z != 0 ||  /* FIXME: handle z==0 correctly */
-                ty >= buffer->min_y)
-              while (bufx < width)
-                {
-                  gint tiledx  = buffer->extent.x + buffer->shift_x + bufx;
-                  gint offsetx = gegl_tile_offset (tiledx, tile_width);
-
-                  gint tx = gegl_tile_indice (tiledx / factor, tile_width);
-
-                  if (z != 0 ||
-                      tx >= buffer->min_x)
-                  gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
-                                         GEGL_TILE_VOID, tx, ty, z, NULL);
-
-                  if (z != 0 ||
-                      tx > buffer->max_x)
-                    goto done_with_row;
-
-                  bufx += (tile_width - offsetx) * factor;
-                }
-done_with_row:
-            bufy += (tile_height - offsety) * factor;
-
-                  if (z != 0 ||
-                      ty > buffer->max_y)
-                    break;
-          }
-        factor *= 2;
-      }
-  }
-  g_mutex_unlock (buffer->tile_storage->mutex);
-}
-
 
 const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer)
 {
