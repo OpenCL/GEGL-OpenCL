@@ -2,7 +2,7 @@
 # revision to start at
 START_REV = master
 # number of revisions to create
-REVISIONS = 100
+REVISIONS = 20
 
 MAKE_FLAGS = -j3 -k
 CC = "ccache gcc"   # if you do not have ccache replace with just gcc

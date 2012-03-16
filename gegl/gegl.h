@@ -838,6 +838,39 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
 GeglConfig      * gegl_config (void);
 
 
+
+void        gegl_apply_op  (GeglBuffer    *buffer,
+                            const gchar   *operation_name,
+                            ...) G_GNUC_NULL_TERMINATED;
+
+GeglBuffer *gegl_filter_op (GeglBuffer    *source_buffer,
+                            const gchar   *operation_name,
+                            ...) G_GNUC_NULL_TERMINATED;
+
+void        gegl_render_op (GeglBuffer    *source_buffer,
+                            GeglBuffer    *target_buffer,
+                            const gchar   *operation_name,
+                            ...) G_GNUC_NULL_TERMINATED;
+
+/* the following only exist to make gegl_apply nad gegl_filter bindable */
+void        gegl_apply_op_valist (GeglBuffer    *buffer,
+                                  const gchar   *operation_name,
+                                  va_list        var_args);
+
+GeglBuffer *gegl_filter_op_valist (GeglBuffer   *source_buffer,
+                                   const gchar  *operation_name,
+                                   va_list       var_args);
+
+void        gegl_render_op_valist (GeglBuffer   *source_buffer,
+                                   GeglBuffer   *target_buffer,
+                                   const gchar  *operation_name,
+                                   va_list       var_args);
+
+
+
+
+
+
 /**
  * gegl_node: (skip)
  * @op_type:  the type of operation to create

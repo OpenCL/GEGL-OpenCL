@@ -62,6 +62,7 @@ GEGL_public_HEADERS = \
 
 GEGL_introspectable_sources = \
 	gegl-c.c			\
+	gegl-apply.c  \
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
 	gegl-dot.c			\
