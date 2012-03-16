@@ -80,6 +80,15 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
 
 
 /**
+ * gegl_buffer_iterator_stop:
+ * @iterator: a GeglBufferIterator
+ *
+ * Cancels the current iteration, freeing up any temporary resources. You have
+ * to bail out of any loop you are currently.
+ */
+void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
+
+/**
  * gegl_buffer_iterator_next:
  * @iterator: a #GeglBufferIterator
  *

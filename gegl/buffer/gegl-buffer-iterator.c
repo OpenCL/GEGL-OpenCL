@@ -241,6 +241,8 @@ static glong in_direct_read = 0;
 static glong in_direct_write = 0;
 #endif
 
+
+
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
@@ -370,7 +372,42 @@ static void ensure_buf (GeglBufferIterators *i, gint no)
                                         i->i[0].max_size);
 }
 
-gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
+void
+gegl_buffer_iterator_stop (GeglBufferIterator *iterator)
+{
+  GeglBufferIterators *i = (gpointer)iterator;
+  gint no;
+  for (no=0; no<i->iterators;no++)
+    {
+      gint j;
+      gboolean found = FALSE;
+      for (j=0; j<no; j++)
+        if (i->buffer[no]==i->buffer[j])
+          {
+            found = TRUE;
+            break;
+          }
+      if (!found)
+        gegl_buffer_unlock (i->buffer[no]);
+    }
+
+  for (no=0; no<i->iterators; no++)
+    {
+      if (i->buf[no])
+        iterator_buf_pool_release (i->buf[no]);
+      i->buf[no]=NULL;
+      g_object_unref (i->buffer[no]);
+    }
+#if DEBUG_DIRECT
+  g_print ("%f %f\n", (100.0*direct_read/(in_direct_read+direct_read)),
+                           100.0*direct_write/(in_direct_write+direct_write));
+#endif
+  i->is_finished = TRUE;
+  g_slice_free (GeglBufferIterators, i);
+}
+
+gboolean
+gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 {
   GeglBufferIterators *i = (gpointer)iterator;
   gboolean result = FALSE;
@@ -500,36 +537,7 @@ gboolean gegl_buffer_iterator_next     (GeglBufferIterator *iterator)
   i->iteration_no++;
 
   if (result == FALSE)
-    {
-      for (no=0; no<i->iterators;no++)
-        {
-          gint j;
-          gboolean found = FALSE;
-          for (j=0; j<no; j++)
-            if (i->buffer[no]==i->buffer[j])
-              {
-                found = TRUE;
-                break;
-              }
-          if (!found)
-            gegl_buffer_unlock (i->buffer[no]);
-        }
-
-      for (no=0; no<i->iterators;no++)
-        {
-          if (i->buf[no])
-            iterator_buf_pool_release (i->buf[no]);
-          i->buf[no]=NULL;
-          g_object_unref (i->buffer[no]);
-        }
-#if DEBUG_DIRECT
-      g_print ("%f %f\n", (100.0*direct_read/(in_direct_read+direct_read)),
-                           100.0*direct_write/(in_direct_write+direct_write));
-#endif
-      i->is_finished = TRUE;
-      g_slice_free (GeglBufferIterators, i);
-    }
-
+    gegl_buffer_iterator_stop (iterator);
 
   return result;
 }
@@ -545,3 +553,4 @@ GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
   gegl_buffer_iterator_add (i, buffer, roi, format, flags);
   return i;
 }
+
