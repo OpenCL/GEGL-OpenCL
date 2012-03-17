@@ -120,9 +120,7 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
 {
   g_assert (i);
   memset (i, 0, sizeof (GeglBufferTileIterator));
-  if (roi.width == 0 ||
-      roi.height == 0)
-    g_error ("eeek");
+
   i->buffer = buffer;
   i->roi = roi;
   i->next_row    = 0;
@@ -133,6 +131,9 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
   i->write = write;
   i->max_size = i->buffer->tile_storage->tile_width *
                 i->buffer->tile_storage->tile_height;
+
+  /* return at the end,. we still want things initialized a bit .. */
+  g_return_if_fail (roi.width != 0 && roi.height != 0);
 }
 
 static gboolean
