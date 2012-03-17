@@ -114,8 +114,8 @@ sc_point_to_color_func (P2tRPoint *point,
       gdouble weight = g_array_index (sl->weights, gdouble, i);
       // g_print ("%f+",weight);
 
-      gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
-      gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_INTERPOLATION_NEAREST);
+      gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_SAMPLER_NEAREST);
+      gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_SAMPLER_NEAREST);
       
       dest_c[0] += weight * (input_c[0] - aux_c[0]);
       dest_c[1] += weight * (input_c[1] - aux_c[1]);
@@ -219,7 +219,7 @@ process (GeglOperation       *operation,
         gfloat aux_c[4];
         gdouble Px = imcfg.min_x + x * imcfg.step_x;
         gdouble Py = imcfg.min_y + y * imcfg.step_y;
-        gegl_buffer_sample (aux, Px, Py, NULL, aux_c, format, GEGL_INTERPOLATION_NEAREST);
+        gegl_buffer_sample (aux, Px, Py, NULL, aux_c, format, GEGL_SAMPLER_NEAREST);
         *pixel++ += aux_c[0];
         *pixel++ += aux_c[1];
         *pixel++ += aux_c[2];
