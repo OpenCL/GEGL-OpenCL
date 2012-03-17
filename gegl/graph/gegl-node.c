@@ -690,6 +690,8 @@ gegl_node_disconnect (GeglNode    *sink,
       source_pad = gegl_connection_get_source_pad (connection);
       source     = gegl_connection_get_source_node (connection);
 
+      gegl_node_source_invalidated (source, &source->have_rect, sink_pad);
+
       {
         /* disconnecting dirt propagation */
         gulong handler;
@@ -709,6 +711,7 @@ gegl_node_disconnect (GeglNode    *sink,
       source->priv->sink_connections = g_slist_remove (source->priv->sink_connections, connection);
 
       gegl_connection_destroy (connection);
+
 
       return TRUE;
     }
