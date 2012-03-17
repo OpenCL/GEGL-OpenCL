@@ -39,11 +39,6 @@
 
 #include "gegl-utils.h"
 
-static void default_free (gpointer data,
-                          gpointer userdata)
-{
-  gegl_free (data);
-}
 
 GeglTile *gegl_tile_ref (GeglTile *tile)
 {
@@ -67,8 +62,11 @@ void gegl_tile_unref (GeglTile *tile)
     {
       if (tile->next_shared == tile)
         { /* no clones */
+
           if (tile->destroy_notify)
-            tile->destroy_notify (tile->data, tile->destroy_notify_data);
+            tile->destroy_notify (tile->destroy_notify_data);
+          else
+            gegl_free (tile->data);
           tile->data = NULL;
         }
       else
@@ -101,7 +99,6 @@ gegl_tile_new_bare (void)
   tile->prev_shared = tile;
 
   tile->mutex = g_mutex_new ();
-  tile->destroy_notify = default_free;
 
   return tile;
 }
@@ -163,7 +160,7 @@ gegl_tile_unclone (GeglTile *tile)
        * create a local copy
        */
       tile->data                     = gegl_memdup (tile->data, tile->size);
-      tile->destroy_notify           = default_free;
+      tile->destroy_notify           = NULL;
       tile->destroy_notify_data      = NULL;
       tile->prev_shared->next_shared = tile->next_shared;
       tile->next_shared->prev_shared = tile->prev_shared;
@@ -302,11 +299,11 @@ void gegl_tile_set_data (GeglTile *tile,
   tile->size = pixel_data_size;
 }
 
-void gegl_tile_set_data_full (GeglTile         *tile,
-                              gpointer          pixel_data,
-                              gint              pixel_data_size,
-                              GeglDestroyNotify destroy_notify,
-                              gpointer          destroy_notify_data)
+void gegl_tile_set_data_full (GeglTile      *tile,
+                              gpointer       pixel_data,
+                              gint           pixel_data_size,
+                              GDestroyNotify destroy_notify,
+                              gpointer       destroy_notify_data)
 {
   tile->data                = pixel_data;
   tile->size                = pixel_data_size;

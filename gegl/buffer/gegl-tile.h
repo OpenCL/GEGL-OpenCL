@@ -55,7 +55,7 @@ void         gegl_tile_set_data       (GeglTile         *tile,
 void         gegl_tile_set_data_full  (GeglTile         *tile,
                                        gpointer          pixel_data,
                                        gint              pixel_data_size,
-                                       GeglDestroyNotify destroy_notify,
+                                       GDestroyNotify    destroy_notify,
                                        gpointer          destroy_notify_data);
 
 void         gegl_tile_set_unlock_notify

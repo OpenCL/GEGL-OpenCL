@@ -93,7 +93,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     gegl_tile_set_data_full (tile,
                              (gpointer) data,
                              babl_format_get_bytes_per_pixel (format) * rowstride * extent->height,
-                             (GeglDestroyNotify) destroy_fn,
+                             destroy_fn,
                              destroy_fn_data);
 
     if (buffer->tile_storage->cache)
