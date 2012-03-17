@@ -464,11 +464,11 @@ GeglBuffer * gegl_buffer_linear_new          (const GeglRectangle *extent,
  * Returns: a GeglBuffer that can be used as any other GeglBuffer.
  */
 GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer       data,
-                                                const Babl          *format,
-                                                const GeglRectangle *extent,
-                                                gint                 rowstride,
-                                                GCallback            destroy_fn,
-                                                gpointer             destroy_fn_data);
+                                               const Babl          *format,
+                                               const GeglRectangle *extent,
+                                               gint                 rowstride,
+                                               GDestroyNotify       destroy_fn,
+                                               gpointer             destroy_fn_data);
 
 /**
  * gegl_buffer_linear_open:
