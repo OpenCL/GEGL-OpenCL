@@ -55,7 +55,7 @@ typedef struct
   gchar           *path;
   int              i;
   gint             tile_size;
-  Babl            *format;
+  const Babl      *format;
   goffset          offset;
   goffset          next_block;
   gboolean         got_header;

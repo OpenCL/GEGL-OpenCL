@@ -66,7 +66,7 @@ get_property (GObject    *gobject,
         break;
 
       case PROP_FORMAT:
-        g_value_set_pointer (value, backend->priv->format);
+        g_value_set_pointer (value, (void*)backend->priv->format);
         break;
 
       default:
@@ -178,7 +178,7 @@ gint gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend)
 }
 
 
-Babl *gegl_tile_backend_get_format (GeglTileBackend *tile_backend)
+const Babl *gegl_tile_backend_get_format (GeglTileBackend *tile_backend)
 {
   return tile_backend->priv->format;
 }

@@ -404,7 +404,7 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * it.
  */
 GeglSampler * gegl_buffer_sampler_new (GeglBuffer       *buffer,
-                                       Babl             *format,
+                                       const Babl       *format,
                                        GeglSamplerType   sampler_type);
 
 /**

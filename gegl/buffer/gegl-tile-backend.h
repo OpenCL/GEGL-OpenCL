@@ -51,8 +51,8 @@ struct _GeglTileBackendClass
   gpointer  padding4;
 };
 
-gint  gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
-Babl *gegl_tile_backend_get_format    (GeglTileBackend *tile_backend);
+gint        gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
+const Babl *gegl_tile_backend_get_format    (GeglTileBackend *tile_backend);
 
 /* gets a pointer to the GeglTileStorage that uses the backend */
 GeglTileSource *gegl_tile_backend_peek_storage  (GeglTileBackend *backend);

@@ -50,9 +50,9 @@ struct _GeglSampler
 
   /*< private >*/
   GeglBuffer    *buffer;
-  Babl          *format;
-  Babl          *interpolate_format;
-  Babl          *fish;
+  const Babl    *format;
+  const Babl    *interpolate_format;
+  const Babl    *fish;
   GeglRectangle  context_rect[GEGL_SAMPLER_MIPMAP_LEVELS];
   gpointer       sampler_buffer[GEGL_SAMPLER_MIPMAP_LEVELS];
   GeglRectangle  sampler_rectangle[GEGL_SAMPLER_MIPMAP_LEVELS];

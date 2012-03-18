@@ -1031,7 +1031,7 @@ gegl_buffer_new_for_backend (const GeglRectangle *extent,
                              void                *backend)
 {
   GeglRectangle rect={0,0,0,0};
-  Babl *format;
+  const Babl *format;
 
   /* if no extent is passed in inherit from backend */
   if (extent==NULL)

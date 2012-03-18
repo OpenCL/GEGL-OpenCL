@@ -478,7 +478,7 @@ get_property (GObject    *object,
         break;
 
       case PROP_FORMAT:
-        g_value_set_pointer (value, self->format);
+        g_value_set_pointer (value, (void*)self->format);
         break;
 
       default:
@@ -568,7 +568,7 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 
 GeglSampler *
 gegl_buffer_sampler_new (GeglBuffer       *buffer,
-                         Babl             *format,
+                         const Babl       *format,
                          GeglSamplerType   sampler_type)
 {
   GeglSampler          *sampler;

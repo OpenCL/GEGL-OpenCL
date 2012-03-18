@@ -52,7 +52,7 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
   gint  tile_height = buffer->tile_storage->tile_width;
   gint  px_size     = gegl_buffer_px_size (buffer);
   gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  Babl *fish        = NULL;
+  const Babl *fish  = NULL;
 
   gint  abyss_x_total  = buffer->abyss.x + buffer->abyss.width;
   gint  abyss_y_total  = buffer->abyss.y + buffer->abyss.height;
@@ -133,11 +133,11 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
                        const Babl *format,
                        gpointer    data)
 {
-  guchar *buf         = data;
-  gint    tile_width  = buffer->tile_storage->tile_width;
-  gint    tile_height = buffer->tile_storage->tile_height;
-  gint    bpx_size    = babl_format_get_bytes_per_pixel (format);
-  Babl   *fish        = NULL;
+  guchar     *buf         = data;
+  gint        tile_width  = buffer->tile_storage->tile_width;
+  gint        tile_height = buffer->tile_storage->tile_height;
+  gint        bpx_size    = babl_format_get_bytes_per_pixel (format);
+  const Babl *fish        = NULL;
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
@@ -210,11 +210,11 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
                        const Babl *format,
                        gpointer    data)
 {
-  guchar *buf         = data;
-  gint    tile_width  = buffer->tile_storage->tile_width;
-  gint    tile_height = buffer->tile_storage->tile_height;
-  gint    bpx_size    = babl_format_get_bytes_per_pixel (format);
-  Babl   *fish        = NULL;
+  guchar     *buf         = data;
+  gint        tile_width  = buffer->tile_storage->tile_width;
+  gint        tile_height = buffer->tile_storage->tile_height;
+  gint        bpx_size    = babl_format_get_bytes_per_pixel (format);
+  const Babl *fish        = NULL;
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
@@ -325,7 +325,6 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   gint  tile_stride = px_size * tile_width;
   gint  buf_stride;
   gint  bufy = 0;
-  Babl *fish;
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
@@ -340,6 +339,7 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint  factor         = 1<<level;
+  const Babl *fish;
 
   /* roi specified, override buffers extent */
   if (roi)
@@ -1130,7 +1130,7 @@ gegl_buffer_copy (GeglBuffer          *src,
                   GeglBuffer          *dst,
                   const GeglRectangle *dst_rect)
 {
-  Babl         *fish;
+  const Babl *fish;
 
   g_return_if_fail (GEGL_IS_BUFFER (src));
   g_return_if_fail (GEGL_IS_BUFFER (dst));

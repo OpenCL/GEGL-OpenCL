@@ -40,12 +40,12 @@ void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
                                      gint                  x,
                                      gint                  y,
                                      gint                  z);
-static inline void set_blank (GeglTile *dst_tile,
-                              gint      width,
-                              gint      height,
-                              Babl     *format,
-                              gint      i,
-                              gint      j)
+static inline void set_blank (GeglTile   *dst_tile,
+                              gint        width,
+                              gint        height,
+                              const Babl *format,
+                              gint        i,
+                              gint        j)
 {
   guchar *dst_data  = gegl_tile_get_data (dst_tile);
   gint    bpp       = babl_format_get_bytes_per_pixel (format);
@@ -64,13 +64,13 @@ static inline void set_blank (GeglTile *dst_tile,
 
 /* fixme: make the api of this, as well as blank be the
  * same as the downscale functions */
-static inline void set_half_nearest (GeglTile *dst_tile,
-                                     GeglTile *src_tile,
-                                     gint      width,
-                                     gint      height,
-                                     Babl     *format,
-                                     gint      i,
-                                     gint      j)
+static inline void set_half_nearest (GeglTile   *dst_tile,
+                                     GeglTile   *src_tile,
+                                     gint        width,
+                                     gint        height,
+                                     const Babl *format,
+                                     gint        i,
+                                     gint        j)
 {
   guchar *dst_data = gegl_tile_get_data (dst_tile);
   guchar *src_data = gegl_tile_get_data (src_tile);
@@ -165,11 +165,11 @@ downscale_u8 (gint    components,
     }
 }
 
-static inline void set_half (GeglTile * dst_tile,
-                             GeglTile * src_tile,
-                             gint       width,
-                             gint       height,
-                             Babl     * format,
+static inline void set_half (GeglTile   * dst_tile,
+                             GeglTile   * src_tile,
+                             gint         width,
+                             gint         height,
+                             const Babl * format,
                              gint i,
                              gint j)
 {
@@ -204,7 +204,7 @@ get_tile (GeglTileSource *gegl_tile_source,
   GeglTileSource      *source = ((GeglTileHandler*)(gegl_tile_source))->source;
   GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom*)(gegl_tile_source);
   GeglTile            *tile   = NULL;
-  Babl                *format = gegl_tile_backend_get_format (zoom->backend);
+  const Babl          *format = gegl_tile_backend_get_format (zoom->backend);
   gint                 tile_width;
   gint                 tile_height;
   gint                 tile_size;
