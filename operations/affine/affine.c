@@ -164,7 +164,7 @@ op_affine_sampler_init (OpAffine *self)
 static void
 gegl_affine_prepare (GeglOperation *operation)
 {
-  Babl      *format = babl_format ("RaGaBaA float");
+  const Babl *format = babl_format ("RaGaBaA float");
   /*op_affine_sampler_init (affine);*/
   /*gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
@@ -659,7 +659,7 @@ affine_generic (GeglBuffer  *dest,
                         u_float,
                         v_float;
 
-  Babl                 *format;
+  const Babl           *format;
 
   gint                  dest_pixels;
 

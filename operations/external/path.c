@@ -67,10 +67,10 @@ static void path_changed (GeglPath *path,
 #include <math.h>
 
 typedef struct StampStatic {
-  gboolean  valid;
-  Babl     *format;
-  gfloat   *buf;
-  gdouble   radius;
+  gboolean    valid;
+  const Babl *format;
+  gfloat     *buf;
+  gdouble     radius;
 }StampStatic;
 
 static void gegl_path_stroke  (GeglBuffer *buffer,

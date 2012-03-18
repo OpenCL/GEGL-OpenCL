@@ -32,8 +32,7 @@ unlock_callback (GeglTile *tile,
 }
 
 static void
-free_callback (gpointer pixel_data,
-               gpointer user_data)
+free_callback (gpointer user_data)
 {
   gboolean *callback_called = user_data;
   *callback_called = TRUE;

@@ -35,7 +35,7 @@ gegl_chant_curve (curve, _("Curve"), _("The contrast curve."))
 
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("YA float");
+  const Babl *format = babl_format ("YA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);

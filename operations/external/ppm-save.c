@@ -108,6 +108,8 @@ ppm_save_write(FILE    *fp,
           g_warning ("%s: Programmer stupidity error", G_STRLOC);
         }
     }
+  if (retval) /* make gcc shut up*/
+    return;
 }
 
 static gboolean

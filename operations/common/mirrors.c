@@ -120,7 +120,7 @@ apply_mirror (double               mirror_angle,
               double               input_scale,
               gboolean             clip,
               gboolean             warp,
-              Babl                *format,
+              const Babl          *format,
               GeglBuffer          *src,
               GeglRectangle       *in_boundary,
               GeglBuffer          *dst,
@@ -354,7 +354,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
   GeglRectangle  eff_boundary = get_effective_area (operation);
-  Babl *format = babl_format ("RaGaBaA float");
+  const Babl *format = babl_format ("RaGaBaA float");
 
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
  g_warning ("NOT USING BUFFER SAMPLE!");

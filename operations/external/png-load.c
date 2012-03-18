@@ -358,7 +358,7 @@ static gint query_png (const gchar *path,
         return -1;
       }
 
-    *format = babl_format (format_string);
+    *format = (void*)babl_format (format_string);
   }
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
   fclose (infile);

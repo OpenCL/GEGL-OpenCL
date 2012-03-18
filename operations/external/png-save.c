@@ -70,7 +70,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
   png_color_16   white;
   int            png_color_type;
   gchar          format_string[16];
-  Babl          *format;
+  const Babl    *format;
   gint           bit_depth = 8;
 
   if (!strcmp (path, "-"))

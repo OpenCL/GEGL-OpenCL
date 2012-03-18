@@ -72,7 +72,7 @@ gegl_chant_double (value, _(\"Value\"), -G_MAXDOUBLE, G_MAXDOUBLE, #{item[2]}, _
 
 static void prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format (\"RGBA float\");
+  const Babl *format = babl_format (\"RGBA float\");
 
   gegl_operation_set_format (operation, \"input\", format);
   gegl_operation_set_format (operation, \"aux\", babl_format (\"RGB float\"));

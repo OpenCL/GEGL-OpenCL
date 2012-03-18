@@ -66,5 +66,8 @@ gint main (int argc, gchar **argv)
   gegl_lookup_free (lookup);
 
   g_free (rand);
+
+  if (foo)
+    return 0;
   return 0;
 }

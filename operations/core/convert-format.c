@@ -38,7 +38,7 @@ gegl_chant_string(format, _("Output format"), "RGBA float",
 static void prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Babl *format;
+  const Babl *format;
 
   g_assert (o->format);
 

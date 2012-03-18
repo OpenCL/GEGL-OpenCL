@@ -51,12 +51,12 @@ test_path_calc_values (GeglPath *path, int num_samples,
 {
   int i=0;
   gdouble x[num_samples], y[num_samples];
-  gdouble length;
+  //gdouble length;
   /* gegl_path_calc_values:
    * Compute @num_samples for a path into the provided arrays @xs and @ys
    * the returned values include the start and end positions of the path.
    */
-  length = gegl_path_get_length(path);
+  //length = gegl_path_get_length(path);
 
   gegl_path_calc_values(path,num_samples,x,y);
 

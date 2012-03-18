@@ -35,7 +35,7 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_
 static void
 prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("RGBA float");
+  const Babl *format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", babl_format_n (babl_type ("float"), 2));
@@ -60,7 +60,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
-  Babl                 *format_io, *format_coords;
+  const Babl           *format_io, *format_coords;
   GeglSampler          *sampler;
   GeglBufferIterator   *it;
   gint                  index_in, index_out, index_coords;

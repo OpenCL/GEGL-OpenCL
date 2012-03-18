@@ -61,7 +61,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
   JSAMPROW row_pointer[1];
-  Babl *format;
+  const Babl *format;
 
   if (!strcmp (path, "-"))
     {
