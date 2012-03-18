@@ -389,7 +389,7 @@ gegl_exit (void)
     }
 
   if (gegl_buffer_leaks ())
-    g_printf ("  buffer-leaks: %i\n", gegl_buffer_leaks ());
+    g_printf ("EEEEeEeek! %i GeglBuffers leaked\n", gegl_buffer_leaks ());
   gegl_tile_cache_destroy ();
 
   if (gegl_swap_dir ())
