@@ -1217,8 +1217,8 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
   for (row = 0; row <= rows + 1; row++)
     for (col = 0; col <= cols + 1; col++)
       {
-        dst_rect.x = x_offset + (row-1) * pat_width;
-        dst_rect.y = y_offset + (col-1) * pat_height;
+        dst_rect.x = x_offset + (col-1) * pat_width;
+        dst_rect.y = y_offset + (row-1) * pat_height;
         gegl_buffer_copy (pattern, &src_rect, buffer, &dst_rect);
       }
 }
