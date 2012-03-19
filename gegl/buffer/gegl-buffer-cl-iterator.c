@@ -29,6 +29,9 @@ typedef struct GeglBufferClIterators
   cl_mem        tex_buf [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
   cl_mem        tex_op  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
 
+  /* don't free textures loaded from cache */
+  gboolean       tex_buf_from_cache [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
+
   gint           iterators;
   gint           iteration_no;
   gboolean       is_finished;
@@ -288,8 +291,11 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
       for (no=0; no < i->iterators; no++)
         for (j=0; j < i->n; j++)
           {
-            if (i->tex_buf[no][j]) gegl_clReleaseMemObject (i->tex_buf[no][j]);
-            if (i->tex_op [no][j]) gegl_clReleaseMemObject (i->tex_op [no][j]);
+            if (i->tex_buf[no][j] && !i->tex_buf_from_cache [no][j])
+              gegl_clReleaseMemObject (i->tex_buf[no][j]);
+
+            if (i->tex_op [no][j])
+              gegl_clReleaseMemObject (i->tex_op [no][j]);
 
             i->tex    [no][j] = NULL;
             i->tex_buf[no][j] = NULL;
@@ -356,9 +362,11 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   case GEGL_CL_COLOR_EQUAL:
 
                     {
-                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);
+                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);\
 
-                    if (i->tex_buf[no][j] == NULL)
+                    if (i->tex_buf[no][j])
+                      i->tex_buf_from_cache [no][j] = TRUE; /* don't free texture from cache */
+                    else
                       {
                         g_assert (i->tex_buf[no][j] == NULL);
                         i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
@@ -392,7 +400,9 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                     {
                     i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);
 
-                    if (i->tex_buf[no][j] == NULL)
+                    if (i->tex_buf[no][j])
+                      i->tex_buf_from_cache [no][j] = TRUE; /* don't free texture from cache */
+                    else
                       {
                         g_assert (i->tex_buf[no][j] == NULL);
                         i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
