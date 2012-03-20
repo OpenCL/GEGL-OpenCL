@@ -5,6 +5,7 @@
 #include <gmodule.h>
 #include <string.h>
 #include <stdio.h>
+#include <glib/gprintf.h>
 
 #include "gegl-cl-color.h"
 
@@ -247,8 +248,8 @@ gegl_cl_init (GError **error)
       g_printf("[OpenCL] Version:%s\n",             cl_state.platform_version);
       g_printf("[OpenCL] Extensions:%s\n",          cl_state.platform_ext);
       g_printf("[OpenCL] Default Device Name:%s\n", cl_state.device_name);
-      g_printf("[OpenCL] Max Alloc: %lu bytes\n",   cl_state.max_mem_alloc);
-      g_printf("[OpenCL] Local Mem: %lu bytes\n",   cl_state.local_mem_size);
+      g_printf("[OpenCL] Max Alloc: %lu bytes\n",   (unsigned long)cl_state.max_mem_alloc);
+      g_printf("[OpenCL] Local Mem: %lu bytes\n",   (unsigned long)cl_state.local_mem_size);
 
       while (cl_state.max_image_width * cl_state.max_image_height * 16 > cl_state.max_mem_alloc)
         {

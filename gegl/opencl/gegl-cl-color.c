@@ -1,4 +1,5 @@
 #include "gegl.h"
+#include <glib/gprintf.h>
 #include "gegl-cl-color.h"
 #include "gegl-cl-init.h"
 

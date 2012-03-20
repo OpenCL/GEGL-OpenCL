@@ -69,6 +69,7 @@
 #include "gegl-id-pool.h"
 #include "gegl-buffer-index.h"
 #include "gegl-config.h"
+#include "gegl-buffer-cl-cache.h"
 
 /* #define GEGL_BUFFER_DEBUG_ALLOCATIONS */
 

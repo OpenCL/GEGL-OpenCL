@@ -39,6 +39,7 @@
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
+#include "gegl-buffer-cl-cache.h"
 
 #if 0
 static inline void
