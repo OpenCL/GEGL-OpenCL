@@ -22,7 +22,7 @@ m4_define([_GOBJECT_INTROSPECTION_CHECK_INTERNAL],
         AC_ARG_ENABLE(introspection,
                   AS_HELP_STRING([--enable-introspection[=@<:@no/auto/yes@:>@]],
                                  [Enable introspection for this build]),, 
-                                 [enable_introspection=auto])
+                                 [enable_introspection=no])
     ])dnl
 
     AC_MSG_CHECKING([for gobject-introspection])
