@@ -132,6 +132,9 @@ gegl_operation_sink_process (GeglOperation        *operation,
   input = gegl_operation_context_get_source (context, "input");
   if (input)
     {
+      if (cl_state.is_accelerated)
+        gegl_buffer_cl_cache_invalidate (input, NULL);
+
       success = klass->process (operation, input, result);
       g_object_unref (input);
     }

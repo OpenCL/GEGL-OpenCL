@@ -70,6 +70,8 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   g_static_mutex_unlock (&cache_mutex);
 }
 
+#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
+
 gboolean
 gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
                             const GeglRectangle *roi)
@@ -79,6 +81,9 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
   GeglRectangle tmp;
   cl_int cl_err = 0;
 
+  if (!roi)
+    roi = &buffer->extent;
+
   gegl_cl_color_babl (buffer->format, &size);
 
   for (elem=cache_entries; elem; elem=elem->next)
@@ -86,21 +91,21 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
       CacheEntry *entry = elem->data;
 
       if (entry->valid && entry->buffer == buffer
-          && (!roi || gegl_rectangle_intersect (&tmp, roi, &entry->roi)))
+          && (gegl_rectangle_intersect (&tmp, roi, &entry->roi)))
         {
           gpointer data;
 
           data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), entry->tex, CL_TRUE,
-                                         CL_MAP_READ, 0, roi->width * roi->height * size,
+                                         CL_MAP_READ, 0, entry->roi.width * entry->roi.height * size,
                                          0, NULL, NULL, &cl_err);
-          if (cl_err != CL_SUCCESS) goto error;
+          if (cl_err != CL_SUCCESS) CL_ERROR;
 
           /* tile-ize */
           gegl_buffer_set (entry->buffer, &entry->roi, entry->buffer->format, data, GEGL_AUTO_ROWSTRIDE);
 
           cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), entry->tex, data,
                                                  0, NULL, NULL);
-          if (cl_err != CL_SUCCESS) goto error;
+          if (cl_err != CL_SUCCESS) CL_ERROR;
         }
     }
 
@@ -216,8 +221,6 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
   gegl_clFinish (gegl_cl_get_command_queue ());
   gegl_buffer_cl_cache_remove (buffer, roi);
 }
-
-#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
 
 gboolean
 gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
