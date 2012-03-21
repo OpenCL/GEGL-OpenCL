@@ -423,7 +423,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
-  LensCorrectionModel  lens;
+  LensCorrectionModel  lens = { { 0, }, };
   GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
     (operation, "input");
 
