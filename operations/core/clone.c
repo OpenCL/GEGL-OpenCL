@@ -35,6 +35,7 @@ gegl_chant_string (ref, _("Reference"), "ID",
 #include <math.h>
 #include <string.h>
 
+#include "buffer/gegl-buffer-cl-cache.h"
 
 static GeglNode *
 detect (GeglOperation *operation,
@@ -88,6 +89,10 @@ process (GeglOperation       *operation,
       g_warning ("clone received NULL input");
       return FALSE;
     }
+
+  if (gegl_cl_is_accelerated ())
+    gegl_buffer_cl_cache_invalidate (input, NULL);
+
   gegl_operation_context_take_object (context, "output", G_OBJECT (input));
   return TRUE;
 }

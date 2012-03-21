@@ -136,6 +136,9 @@ gegl_crop_process (GeglOperation        *operation,
     {
       GeglBuffer *output;
 
+      if (gegl_cl_is_accelerated ())
+        gegl_buffer_cl_cache_invalidate (input, &extent);
+
       output = gegl_buffer_create_sub_buffer (input, &extent);
 
       if (gegl_object_get_has_forked (input))
