@@ -699,7 +699,7 @@ affine_generic (GeglBuffer  *dest,
       /* correct rounding on e.g. negative scaling (is this sound?) */
       if (inverse.coeff [0][0] < 0.)  u_start -= .001;
       if (inverse.coeff [1][1] < 0.)  v_start -= .001;
-      if (inverse.coeff [2][1] < 0.)  w_start -= .001;
+      if (inverse.coeff [2][2] < 0.)  w_start -= .001;
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
