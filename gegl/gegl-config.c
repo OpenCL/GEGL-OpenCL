@@ -233,7 +233,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_USE_OPENCL,
-                                   g_param_spec_boolean ("use-opencl", "Try to use OpenCL", NULL,
+                                   g_param_spec_boolean ("use-opencl", "Use OpenCL", "Try to use OpenCL",
                                                      TRUE,
                                                      G_PARAM_READWRITE));
 
