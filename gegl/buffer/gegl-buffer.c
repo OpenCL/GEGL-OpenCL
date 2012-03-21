@@ -373,7 +373,7 @@ gegl_buffer_dispose (GObject *object)
 
   gegl_buffer_sample_cleanup (buffer);
 
-  if (cl_state.is_accelerated)
+  if (gegl_cl_is_accelerated ())
     gegl_buffer_cl_cache_remove (GEGL_BUFFER (object), NULL);
 
   if (handler->source &&

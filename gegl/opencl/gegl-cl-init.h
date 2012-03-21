@@ -19,8 +19,8 @@ typedef struct
     cl_device_id device;
     cl_command_queue cq;
     cl_bool image_support;
-    size_t max_image_height;
-    size_t max_image_width;
+    size_t iter_height;
+    size_t iter_width;
     cl_ulong max_mem_alloc;
     cl_ulong local_mem_size;
 
@@ -47,6 +47,10 @@ cl_command_queue gegl_cl_get_command_queue (void);
 
 cl_ulong gegl_cl_get_local_mem_size (void);
 
+size_t gegl_cl_get_iter_width (void);
+
+size_t gegl_cl_get_iter_height (void);
+
 typedef struct
 {
   cl_program program;
@@ -57,9 +61,6 @@ gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
                                              const char *kernel_name[]);
 
 #ifdef __GEGL_CL_INIT_MAIN__
-
-gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
-GHashTable *cl_program_hash = NULL;
 
 t_clGetPlatformIDs  gegl_clGetPlatformIDs  = NULL;
 t_clGetPlatformInfo gegl_clGetPlatformInfo = NULL;
@@ -103,9 +104,6 @@ t_clReleaseContext      gegl_clReleaseContext      = NULL;
 t_clReleaseMemObject    gegl_clReleaseMemObject    = NULL;
 
 #else
-
-extern gegl_cl_state cl_state;
-extern GHashTable *cl_program_hash;
 
 extern t_clGetPlatformIDs  gegl_clGetPlatformIDs;
 extern t_clGetPlatformInfo gegl_clGetPlatformInfo;

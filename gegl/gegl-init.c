@@ -598,7 +598,7 @@ gegl_post_parse_hook (GOptionContext *context,
   if (gegl_config()->use_opencl)
     gegl_cl_init (NULL);
 
-  g_printf("[OpenCL] Using OpenCL: %d\n", gegl_config()->use_opencl && cl_state.is_accelerated);
+  g_printf("[OpenCL] Using OpenCL: %d\n", gegl_config()->use_opencl && gegl_cl_is_accelerated ());
 
   return TRUE;
 }

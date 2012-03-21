@@ -948,7 +948,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
     }
 #endif
 
-  if (cl_state.is_accelerated)
+  if (gegl_cl_is_accelerated ())
     {
       if (GEGL_FLOAT_EQUAL (scale, 1.0))
         {
@@ -1196,7 +1196,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
 
   pxsize = babl_format_get_bytes_per_pixel (dst->format);
 
-  if (cl_state.is_accelerated)
+  if (gegl_cl_is_accelerated ())
     gegl_buffer_cl_cache_invalidate (dst, dst_rect);
 
   /* FIXME: this can be even further optimized by special casing it so

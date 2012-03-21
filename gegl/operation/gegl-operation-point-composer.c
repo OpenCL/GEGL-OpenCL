@@ -220,7 +220,7 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (cl_state.is_accelerated && point_composer_class->cl_process)
+      if (gegl_cl_is_accelerated () && point_composer_class->cl_process)
         {
           if (gegl_operation_point_composer_cl_process (operation, input, aux, output, result))
             return TRUE;

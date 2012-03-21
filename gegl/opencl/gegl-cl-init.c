@@ -82,6 +82,9 @@ const char *gegl_cl_errstring(cl_int err) {
   return strings[-err];
 }
 
+static gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
+static GHashTable *cl_program_hash = NULL;
+
 gboolean
 gegl_cl_is_accelerated (void)
 {
@@ -116,6 +119,18 @@ cl_ulong
 gegl_cl_get_local_mem_size (void)
 {
   return cl_state.local_mem_size;
+}
+
+size_t
+gegl_cl_get_iter_width (void)
+{
+  return cl_state.iter_width;
+}
+
+size_t
+gegl_cl_get_iter_height (void)
+{
+  return cl_state.iter_height;
 }
 
 #ifdef G_OS_WIN32
@@ -241,8 +256,8 @@ gegl_cl_init (GError **error)
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
       gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_LOCAL_MEM_SIZE,     sizeof(cl_ulong), &cl_state.local_mem_size,   NULL);
 
-      cl_state.max_image_width  = 4096;
-      cl_state.max_image_height = 4096;
+      cl_state.iter_width  = 4096;
+      cl_state.iter_height = 4096;
 
       g_printf("[OpenCL] Platform Name:%s\n",       cl_state.platform_name);
       g_printf("[OpenCL] Version:%s\n",             cl_state.platform_version);
@@ -251,16 +266,16 @@ gegl_cl_init (GError **error)
       g_printf("[OpenCL] Max Alloc: %lu bytes\n",   (unsigned long)cl_state.max_mem_alloc);
       g_printf("[OpenCL] Local Mem: %lu bytes\n",   (unsigned long)cl_state.local_mem_size);
 
-      while (cl_state.max_image_width * cl_state.max_image_height * 16 > cl_state.max_mem_alloc)
+      while (cl_state.iter_width * cl_state.iter_height * 16 > cl_state.max_mem_alloc)
         {
-          if (cl_state.max_image_height < cl_state.max_image_width)
-            cl_state.max_image_width  /= 2;
+          if (cl_state.iter_height < cl_state.iter_width)
+            cl_state.iter_width  /= 2;
           else
-            cl_state.max_image_height /= 2;
+            cl_state.iter_height /= 2;
         }
-      cl_state.max_image_width  /= 2;
+      cl_state.iter_width  /= 2;
 
-      g_printf("[OpenCL] Iteration size: (%d, %d)\n", cl_state.max_image_width, cl_state.max_image_height);
+      g_printf("[OpenCL] Iteration size: (%d, %d)\n", cl_state.iter_width, cl_state.iter_height);
 
       if (cl_state.image_support)
         {

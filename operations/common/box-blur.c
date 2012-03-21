@@ -369,7 +369,7 @@ process (GeglOperation       *operation,
   GeglOperationAreaFilter *op_area;
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
-  if (cl_state.is_accelerated)
+  if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, result))
       return TRUE;
 

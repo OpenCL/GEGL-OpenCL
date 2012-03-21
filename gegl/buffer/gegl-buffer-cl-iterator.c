@@ -142,20 +142,20 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
       gint x, y, j;
 
       i->rois = 0;
-      for (y=result->y; y < result->y + result->height; y += cl_state.max_image_height)
-        for (x=result->x; x < result->x + result->width;  x += cl_state.max_image_width)
+      for (y=result->y; y < result->y + result->height; y += gegl_cl_get_iter_height ())
+        for (x=result->x; x < result->x + result->width;  x += gegl_cl_get_iter_width ())
           i->rois++;
 
       i->roi_no = 0;
       i->roi_all = g_new0 (GeglRectangle, i->rois);
 
       j = 0;
-      for (y=0; y < result->height; y += cl_state.max_image_height)
-        for (x=0; x < result->width;  x += cl_state.max_image_width)
+      for (y=0; y < result->height; y += gegl_cl_get_iter_height ())
+        for (x=0; x < result->width;  x += gegl_cl_get_iter_width ())
           {
             GeglRectangle r = {x, y,
-                               MIN(cl_state.max_image_width,  result->width  - x),
-                               MIN(cl_state.max_image_height, result->height - y)};
+                               MIN(gegl_cl_get_iter_width (),  result->width  - x),
+                               MIN(gegl_cl_get_iter_height (), result->height - y)};
             i->roi_all[j] = r;
             j++;
           }

@@ -140,7 +140,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (cl_state.is_accelerated && point_filter_class->cl_process)
+      if (gegl_cl_is_accelerated () && point_filter_class->cl_process)
         {
           if (gegl_operation_point_filter_cl_process (operation, input, output, result))
             return TRUE;

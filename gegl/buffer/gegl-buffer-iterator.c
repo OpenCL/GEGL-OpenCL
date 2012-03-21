@@ -32,6 +32,8 @@
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
 
+#include "gegl-buffer-cl-cache.h"
+
 typedef struct GeglBufferTileIterator
 {
   GeglBuffer    *buffer;
