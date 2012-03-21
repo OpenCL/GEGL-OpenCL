@@ -55,7 +55,7 @@ static gchar *escape (const gchar *string)
   const gchar *p=string;
   gint i=0;
 
-  while (*p)
+  while (p && *p)
     {
       switch (*p)
         {
