@@ -215,12 +215,12 @@ gegl_matrix3_transform_point (GeglMatrix3  *matrix,
                               gdouble     *x,
                               gdouble     *y)
 {
-  gdouble xp,
-          yp;
+  gdouble xp, yp, w;
+  
+  w = (*x * matrix->coeff [2][0] + *y * matrix->coeff [2][1] + matrix->coeff [2][2]);
 
-  /* assumes last row is [0 0 1] (true for affine transforms) */
-  xp = *x * matrix->coeff [0][0] + *y * matrix->coeff [0][1] + matrix->coeff [0][2];
-  yp = *x * matrix->coeff [1][0] + *y * matrix->coeff [1][1] + matrix->coeff [1][2];
+  xp = (*x * matrix->coeff [0][0] + *y * matrix->coeff [0][1] + matrix->coeff [0][2]) /w;
+  yp = (*x * matrix->coeff [1][0] + *y * matrix->coeff [1][1] + matrix->coeff [1][2]) /w;
 
   *x = xp;
   *y = yp;
