@@ -731,19 +731,6 @@ gegl_buffer_get_tile (GeglTileSource *source,
     {
       GeglBuffer *buffer = GEGL_BUFFER (handler);
 
-      /* XXX: lock buffer? */
-
-      if (x < buffer->min_x)
-        buffer->min_x = x;
-      if (y < buffer->min_y)
-        buffer->min_y = y;
-      if (x > buffer->max_x)
-        buffer->max_x = x;
-      if (y > buffer->max_y)
-        buffer->max_y = y;
-      if (z > buffer->max_z)
-        buffer->max_z = z;
-
       /* storing information in tile, to enable the dispose function of the
        * tile instance to "hook" back to the storage with correct
        * coordinates.
@@ -956,12 +943,6 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->abyss.height = 0;
   buffer->format       = NULL;
   buffer->hot_tile     = NULL;
-
-  buffer->min_x = 0;
-  buffer->min_y = 0;
-  buffer->max_x = 0;
-  buffer->max_y = 0;
-  buffer->max_z = 0;
 
   buffer->path = NULL;
   buffer->tile_width = 128;
