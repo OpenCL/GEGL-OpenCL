@@ -93,12 +93,12 @@ static gboolean  gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
  *  check whether iterations on two buffers starting from the given coordinates with
  *  the same width and height would be able to run parallell.
  */
-static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
-                                             gint        xA,
-                                             gint        yA,
-                                             GeglBuffer *bufferB,
-                                             gint        xB,
-                                             gint        yB)
+gboolean _gegl_buffer_scan_compatible (GeglBuffer *bufferA,
+                                       gint        xA,
+                                       gint        yA,
+                                       GeglBuffer *bufferB,
+                                       gint        xB,
+                                       gint        yB)
 {
   if (bufferA->tile_storage->tile_width !=
       bufferB->tile_storage->tile_width)
@@ -244,8 +244,6 @@ static glong in_direct_read = 0;
 static glong in_direct_write = 0;
 #endif
 
-
-
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
@@ -290,8 +288,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
       i->rect[self].width = i->rect[0].width;
       i->rect[self].height = i->rect[0].height;
 
-      if (gegl_buffer_scan_compatible (i->buffer[0], i->rect[0].x, i->rect[0].y,
-                                       i->buffer[self], i->rect[self].x, i->rect[self].y))
+      if (_gegl_buffer_scan_compatible (i->buffer[0], i->rect[0].x, i->rect[0].y,
+                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
           i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
           gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0));

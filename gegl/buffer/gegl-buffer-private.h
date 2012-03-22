@@ -174,6 +174,12 @@ struct _GeglTile
   gpointer         unlock_notify_data;
 };
 
+gboolean _gegl_buffer_scan_compatible (GeglBuffer *bufferA,
+                                       gint        xA,
+                                       gint        yA,
+                                       GeglBuffer *bufferB,
+                                       gint        xB,
+                                       gint        yB);
 
 #ifndef __GEGL_TILE_C
 #define gegl_tile_get_data(tile)  ((guchar*)((tile)->data))

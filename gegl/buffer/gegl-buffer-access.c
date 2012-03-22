@@ -1139,6 +1139,36 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
+static void
+gegl_buffer_copy2 (GeglBuffer          *src,
+                   const GeglRectangle *src_rect,
+                   GeglBuffer          *dst,
+                   const GeglRectangle *dst_rect)
+{
+  const Babl *fish;
+
+  g_return_if_fail (GEGL_IS_BUFFER (src));
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+  g_return_if_fail (src_rect);
+  g_return_if_fail (dst_rect);
+
+  fish = babl_fish (src->format, dst->format);
+
+  {
+    GeglRectangle dest_rect_r = *dst_rect;
+    GeglBufferIterator *i;
+    gint read;
+
+    dest_rect_r.width = src_rect->width;
+    dest_rect_r.height = src_rect->height;
+
+    i = gegl_buffer_iterator_new (dst, &dest_rect_r, dst->format, GEGL_BUFFER_WRITE);
+    read = gegl_buffer_iterator_add (i, src, src_rect, src->format, GEGL_BUFFER_READ);
+    while (gegl_buffer_iterator_next (i))
+      babl_process (fish, i->data[read], i->data[0], i->length);
+  }
+}
+
 void
 gegl_buffer_copy (GeglBuffer          *src,
                   const GeglRectangle *src_rect,
@@ -1160,21 +1190,50 @@ gegl_buffer_copy (GeglBuffer          *src,
       dst_rect = src_rect;
     }
 
-  fish = babl_fish (src->format, dst->format);
-
+  /* for now, only doing the zero copy when we effectively are doing a buffer
+   * dup.
+   */
+  if (src->format == dst->format &&
+      _gegl_buffer_scan_compatible (src,
+                                    src_rect->x,
+                                    src_rect->y,
+                                    dst,
+                                    dst_rect->x,
+                                    dst_rect->y) &&
+      !memcmp (src_rect, dst_rect, sizeof (GeglRectangle)) &&
+      src_rect->x == 0 &&
+      src_rect->y == 0)
     {
-      GeglRectangle dest_rect_r = *dst_rect;
-      GeglBufferIterator *i;
-      gint read;
+      int i;
+      int x, y;
+      int tile_width = dst->tile_storage->tile_width;
+      int tile_height = dst->tile_storage->tile_height;
+      /* determine inner region that can definetly be shared */
 
-      dest_rect_r.width = src_rect->width;
-      dest_rect_r.height = src_rect->height;
-
-      i = gegl_buffer_iterator_new (dst, &dest_rect_r, dst->format, GEGL_BUFFER_WRITE);
-      read = gegl_buffer_iterator_add (i, src, src_rect, src->format, GEGL_BUFFER_READ);
-      while (gegl_buffer_iterator_next (i))
-        babl_process (fish, i->data[read], i->data[0], i->length);
+      /* share this inner region */
+      for (y = dst_rect->y; y < dst_rect->y + dst_rect->height; y += tile_height)
+      for (x = dst_rect->x; x < dst_rect->x + dst_rect->width;  x += tile_width)
+        {
+          GeglTile *src_tile;
+          GeglTile *dst_tile;
+          int res;
+          src_tile = gegl_tile_source_get_tile ((GeglTileSource *)(src),
+                                                gegl_tile_indice (x, tile_width),
+                                                gegl_tile_indice (y, tile_height),
+                                                0);
+          dst_tile = gegl_tile_dup (src_tile);
+          res = gegl_tile_source_set_tile ((GeglTileSource*)(dst),
+                                           gegl_tile_indice (x, tile_width),
+                                           gegl_tile_indice (y, tile_height),
+                                           0,
+                                           dst_tile);
+          if (res) res = 0;
+          gegl_tile_unref (src_tile);
+        }
+      /* copy up to four regions around : NYI */
+      return;
     }
+  gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
 }
 
 void
