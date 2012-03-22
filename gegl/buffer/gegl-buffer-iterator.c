@@ -433,7 +433,8 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
           if (!found)
             gegl_buffer_lock (i->buffer[no]);
 
-          gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+          if (gegl_cl_is_accelerated ())
+            gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
         }
     }
   else
