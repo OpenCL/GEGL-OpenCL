@@ -1175,8 +1175,6 @@ gegl_buffer_copy (GeglBuffer          *src,
                   GeglBuffer          *dst,
                   const GeglRectangle *dst_rect)
 {
-  const Babl *fish;
-
   g_return_if_fail (GEGL_IS_BUFFER (src));
   g_return_if_fail (GEGL_IS_BUFFER (dst));
 
