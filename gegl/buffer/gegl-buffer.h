@@ -273,7 +273,7 @@ void            gegl_buffer_set_color         (GeglBuffer          *buffer,
 /**
  * gegl_buffer_set_pattern:
  * @buffer: a #GeglBuffer
- * @roi: a rectangular region
+ * @rect: a rectangular region
  * @pattern: a #GeglBuffer to be repeated as a pattern
  * @x_offset: where the pattern starts horizontally
  * @y_offset: where the pattern starts vertical

@@ -122,6 +122,7 @@ void         gegl_color_set_pixel              (GeglColor   *color,
 /**
  * gegl_color_get_pixel:
  * @color: a #GeglColor
+ * @format: a babl pixel format
  * @pixel: pointer to a pixel
  *
  * Store the color in a pixel in the given format.
