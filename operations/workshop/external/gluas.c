@@ -60,7 +60,7 @@ typedef struct Priv
   GeglBuffer *in_drawable;
   GeglBuffer *aux_drawable;
   GeglBuffer *out_drawable;
-  Babl       *rgba_float;
+  const Babl *rgba_float;
 
   gint        bx1, by1;
   gint        bx2, by2;    /* mask bounds */
