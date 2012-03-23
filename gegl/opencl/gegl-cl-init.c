@@ -183,7 +183,7 @@ gegl_cl_init (GError **error)
 
       if (!module)
         {
-          g_warning ("Unable to load OpenCL library");
+          g_message ("Unable to load OpenCL library");
           return FALSE;
         }
 
