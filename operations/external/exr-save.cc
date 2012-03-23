@@ -32,9 +32,9 @@ extern "C" {
 
 #include "config.h"
 #include <exception>
-#include <OpenEXR/ImfTiledOutputFile.h>
-#include <OpenEXR/ImfOutputFile.h>
-#include <OpenEXR/ImfChannelList.h>
+#include <ImfTiledOutputFile.h>
+#include <ImfOutputFile.h>
+#include <ImfChannelList.h>
 
 /**
  * create an Imf::Header for writing up to 4 channels (given in d).
