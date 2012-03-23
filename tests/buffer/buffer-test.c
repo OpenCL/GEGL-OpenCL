@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib/gmacros.h>
+#include <glib.h>
 #include <glib/gstdio.h>
 
 /* This file consists of a testing suite for the GeglBuffer API. For every
