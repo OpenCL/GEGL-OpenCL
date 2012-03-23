@@ -129,7 +129,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result)
 {
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
-  Babl       *format = babl_format ("RGBA float");
+  const Babl *format = babl_format ("RGBA float");
   gfloat     *src_buf, color[4];
   gint        x;
 

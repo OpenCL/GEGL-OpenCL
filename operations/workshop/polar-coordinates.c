@@ -303,7 +303,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
-  Babl                    *format       = babl_format ("RGBA float");
+  const Babl              *format       = babl_format ("RGBA float");
 
   gint      x,y;
   gfloat   *src_buf, *dst_buf;

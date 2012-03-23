@@ -218,7 +218,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO              *o        = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area  = GEGL_OPERATION_AREA_FILTER (operation);
-  Babl                    *format   = babl_format ("RGBA float");
+  const Babl              *format   = babl_format ("RGBA float");
   GeglRectangle            rect;
   GeglRectangle            boundary = get_effective_area (operation);
   gint                     x, y;

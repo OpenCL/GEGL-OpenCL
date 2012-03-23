@@ -114,7 +114,7 @@ fractaltrace (GeglBuffer          *input,
               gint                 y,
               FractalType          fractal_type,
               BackgroundType       background_type,
-              Babl                *format)
+              const Babl          *format)
 {
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
                                 current center pixel.
@@ -238,7 +238,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO	*o;
   GeglRectangle  boundary;
-  Babl          *format;
+  const Babl    *format;
   FractalType    fractal_type;
   BackgroundType background_type;
   gfloat        *dst_buf;

@@ -76,7 +76,7 @@ prepare (GeglOperation *operation)
   GeglChantO  *o = GEGL_CHANT_PROPERTIES (operation);
   WarpPrivate *priv;
 
-  Babl *format = babl_format_n (babl_type ("float"), 2);
+  const Babl *format = babl_format_n (babl_type ("float"), 2);
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 
@@ -188,7 +188,7 @@ stamp (GeglChantO          *o,
 {
   WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
   GeglBufferIterator  *it;
-  Babl                *format;
+  const Babl          *format;
   gdouble              influence;
   gdouble              x_mean = 0.0;
   gdouble              y_mean = 0.0;

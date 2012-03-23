@@ -444,7 +444,7 @@ process (GeglOperation       *operation,
   GeglOperationAreaFilter *op_area      = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
   GeglRectangle            extended;
-  Babl                    *format       = babl_format ("RGBA float");
+  const Babl              *format       = babl_format ("RGBA float");
 
   GRand  *gr = g_rand_new_with_seed (o->seed);
   gfloat  color[4];

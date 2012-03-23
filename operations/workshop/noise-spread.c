@@ -70,7 +70,7 @@ apply_spread (gint                 x_amount,
               gint                 y_amount,
               gint                 img_width,
               gint                 img_height,
-              Babl                *format,
+              const Babl          *format,
               GeglBuffer          *src,
               GeglBuffer          *dst,
               const GeglRectangle *roi)
@@ -137,7 +137,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  Babl *format = babl_format ("RaGaBaA float");
+  const Babl *format = babl_format ("RaGaBaA float");
 
   apply_spread ((o->x_amount + 1) / 2,
                 (o->y_amount + 1) / 2,

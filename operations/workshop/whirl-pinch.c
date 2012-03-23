@@ -120,7 +120,7 @@ calc_undistorted_coords (gdouble  wx,      gdouble  wy,
 static void
 apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
                    gdouble cen_x, gdouble cen_y,
-                   Babl    *format,
+                   const Babl    *format,
                    GeglBuffer *src,
                    GeglRectangle *in_boundary,
                    GeglBuffer *dst,
@@ -219,19 +219,19 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  Babl *format = babl_format ("RaGaBaA float");
+  const Babl *format = babl_format ("RaGaBaA float");
 
   apply_whirl_pinch (o->whirl,
-                o->pinch,
-                o->radius,
-                boundary.width / 2.0,
-                boundary.height / 2.0,
-		format,
-                input,
-		&boundary,
-                output,
-                &boundary,
-                result);
+                     o->pinch,
+                     o->radius,
+                     boundary.width / 2.0,
+                     boundary.height / 2.0,
+                     format,
+                     input,
+                    &boundary,
+                     output,
+                    &boundary,
+                     result);
   return TRUE;
 }
 
