@@ -1202,7 +1202,6 @@ gegl_buffer_copy (GeglBuffer          *src,
       src_rect->x == 0 &&
       src_rect->y == 0)
     {
-      int i;
       int x, y;
       int tile_width = dst->tile_storage->tile_width;
       int tile_height = dst->tile_storage->tile_height;
