@@ -79,9 +79,9 @@ struct _GeglOperationClass
   const gchar    *description; /* textual description of the operation */
   const gchar    *categories;  /* a colon seperated list of categories */
 
-  gboolean        no_cache;    /* do not create a cache for this operation */
-
-  gboolean        opencl_support;
+  guint           no_cache      :1;  /* do not create a cache for this operation */
+  guint           opencl_support:1;
+  guint64         bit_pad:62;
 
   /* attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
@@ -135,13 +135,13 @@ struct _GeglOperationClass
    * output. The node is responsible for delegating blame to one of it's
    * inputs taking into account opacity and similar issues.
    *
-   * XXX: What is GeglNode doing in this part of the API?
-   * Does this recurse?, perhaps we should only point out which pad the
-   * data is coming from?
+   * XXX: What is GeglNode doing in this part of the API?,
+   * perhaps we should only point out which pad the data is coming from?
    */
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
+  gpointer      pad1[8];
 };
 
 
