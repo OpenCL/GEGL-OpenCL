@@ -48,6 +48,7 @@ typedef struct _GeglOperationMetaClass GeglOperationMetaClass;
 struct _GeglOperationMetaClass
 {
   GeglOperationClass parent_class;
+  gpointer           pad[4];
 };
 
 

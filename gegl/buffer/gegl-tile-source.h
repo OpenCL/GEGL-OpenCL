@@ -49,19 +49,13 @@ struct _GeglTileSource
                          gint             y,
                          gint             z,
                          gpointer         data);
-  gpointer  padding1;
-  gpointer  padding2;
-  gpointer  padding3;
-  gpointer  padding4;
+  gpointer  padding[4];
 };
 
 struct _GeglTileSourceClass
 {
   GObjectClass  parent_class;
-  gpointer  padding1;
-  gpointer  padding2;
-  gpointer  padding3;
-  gpointer  padding4;
+  gpointer      padding[4];
 };
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;

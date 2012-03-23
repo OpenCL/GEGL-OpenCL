@@ -52,6 +52,7 @@ struct _GeglOperationPointComposer3Class
                         const GeglRectangle *roi      /* rectangular region in output buffer */
                         );
 
+  gpointer           pad[4];
 };
 
 GType gegl_operation_point_composer3_get_type (void) G_GNUC_CONST;

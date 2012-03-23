@@ -51,6 +51,7 @@ typedef struct _GeglOperationAreaFilterClass GeglOperationAreaFilterClass;
 struct _GeglOperationAreaFilterClass
 {
   GeglOperationFilterClass parent_class;
+  gpointer                 pad[4];
 };
 
 GType gegl_operation_area_filter_get_type (void) G_GNUC_CONST;

@@ -51,6 +51,7 @@ struct _GeglOperationPointRenderClass
                         void                *out_buf,   /* output buffer     */
                         glong                samples,   /* number of samples */
                         const GeglRectangle *roi);      /* can be used if position is of importance*/
+  gpointer              pad[4];
 };
 
 GType gegl_operation_point_render_get_type (void) G_GNUC_CONST;

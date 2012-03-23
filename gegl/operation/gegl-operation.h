@@ -141,7 +141,7 @@ struct _GeglOperationClass
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
-  gpointer      pad1[8];
+  gpointer      pad[8];
 };
 
 

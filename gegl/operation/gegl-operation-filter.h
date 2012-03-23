@@ -49,6 +49,7 @@ struct _GeglOperationFilterClass
                         GeglBuffer          *input,
                         GeglBuffer          *output,
                         const GeglRectangle *roi);
+  gpointer              pad[4];
 };
 
 GType gegl_operation_filter_get_type (void) G_GNUC_CONST;

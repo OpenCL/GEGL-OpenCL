@@ -44,11 +44,7 @@ struct _GeglTileBackend
 struct _GeglTileBackendClass
 {
   GeglTileSourceClass parent_class;
-
-  gpointer  padding1;
-  gpointer  padding2;
-  gpointer  padding3;
-  gpointer  padding4;
+  gpointer            padding[4];
 };
 
 gint        gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);

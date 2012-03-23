@@ -64,6 +64,7 @@ struct _GeglOperationPointFilterClass
                            cl_mem             out_tex,
                            size_t             global_worksize,
                            const GeglRectangle *roi);
+  gpointer                 pad[4];
 };
 
 GType gegl_operation_point_filter_get_type (void) G_GNUC_CONST;
