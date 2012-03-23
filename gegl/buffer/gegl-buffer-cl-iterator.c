@@ -7,6 +7,7 @@
 #include <glib/gprintf.h>
 
 #include "gegl.h"
+#include "gegl/gegl-debug.h"
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-cl-iterator.h"
@@ -15,7 +16,7 @@
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
 
-#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
+#define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
 
 typedef struct GeglBufferClIterators
 {

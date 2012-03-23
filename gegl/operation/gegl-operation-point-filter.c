@@ -22,6 +22,7 @@
 #include <glib-object.h>
 
 #include "gegl.h"
+#include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-filter.h"
 #include "graph/gegl-pad.h"
@@ -91,17 +92,17 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   if (!gegl_cl_color_babl (in_format,  NULL) ||
       !gegl_cl_color_babl (out_format, NULL))
     {
-      g_warning ("[OpenCL] Non-texturizable format!");
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Non-texturizable format!");
       return FALSE;
     }
 
-  g_printf("[OpenCL] BABL formats: (%s,%s) (%s,%s)\n \t Tile Size:(%d, %d)\n",
-           babl_get_name(input->format),
-           babl_get_name(in_format),
-           babl_get_name(out_format),
-           babl_get_name(output->format),
-           input->tile_storage->tile_width,
-           input->tile_storage->tile_height);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "BABL formats: (%s,%s) (%s,%s)\n \t Tile Size:(%d, %d)\n",
+             babl_get_name(input->format),
+             babl_get_name(in_format),
+             babl_get_name(out_format),
+             babl_get_name(output->format),
+             input->tile_storage->tile_width,
+             input->tile_storage->tile_height);
 
   /* Process */
   {
@@ -116,8 +117,8 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
                                                     i->size[0][j], &i->roi[0][j]);
             if (cl_err != CL_SUCCESS)
               {
-                g_warning("[OpenCL] Error in %s [GeglOperationPointFilter] Kernel\n",
-                          GEGL_OPERATION_CLASS (operation)->name);
+                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointFilter] Kernel",
+                           GEGL_OPERATION_CLASS (operation)->name);
                 return FALSE;
               }
           }

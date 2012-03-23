@@ -1,5 +1,5 @@
 #include "gegl.h"
-#include <glib/gprintf.h>
+#include "gegl/gegl-debug.h"
 #include "gegl-cl-color.h"
 #include "gegl-cl-init.h"
 
@@ -189,7 +189,7 @@ gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
     return GEGL_CL_COLOR_NOT_SUPPORTED;
 }
 
-#define CL_ERROR {g_printf("[OpenCL] Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
+#define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
 
 gboolean
 gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size,

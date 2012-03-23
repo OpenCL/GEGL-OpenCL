@@ -5,9 +5,10 @@
 #include <gmodule.h>
 #include <string.h>
 #include <stdio.h>
-#include <glib/gprintf.h>
 
 #include "gegl-cl-color.h"
+
+#include "gegl/gegl-debug.h"
 
 const char *gegl_cl_errstring(cl_int err) {
   static const char* strings[] =
@@ -235,7 +236,7 @@ gegl_cl_init (GError **error)
       err = gegl_clGetPlatformIDs (1, &cl_state.platform, NULL);
       if(err != CL_SUCCESS)
         {
-          g_printf("[OpenCL] Could not create platform\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
           return FALSE;
         }
 
@@ -246,7 +247,7 @@ gegl_cl_init (GError **error)
       err = gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
       if(err != CL_SUCCESS)
         {
-          g_printf("[OpenCL] Could not create device\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create device");
           return FALSE;
         }
 
@@ -259,12 +260,12 @@ gegl_cl_init (GError **error)
       cl_state.iter_width  = 4096;
       cl_state.iter_height = 4096;
 
-      g_printf("[OpenCL] Platform Name:%s\n",       cl_state.platform_name);
-      g_printf("[OpenCL] Version:%s\n",             cl_state.platform_version);
-      g_printf("[OpenCL] Extensions:%s\n",          cl_state.platform_ext);
-      g_printf("[OpenCL] Default Device Name:%s\n", cl_state.device_name);
-      g_printf("[OpenCL] Max Alloc: %lu bytes\n",   (unsigned long)cl_state.max_mem_alloc);
-      g_printf("[OpenCL] Local Mem: %lu bytes\n",   (unsigned long)cl_state.local_mem_size);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Platform Name:%s",       cl_state.platform_name);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, " Version:%s",            cl_state.platform_version);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Extensions:%s",          cl_state.platform_ext);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Default Device Name:%s", cl_state.device_name);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Max Alloc: %lu bytes",   (unsigned long)cl_state.max_mem_alloc);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Local Mem: %lu bytes",   (unsigned long)cl_state.local_mem_size);
 
       while (cl_state.iter_width * cl_state.iter_height * 16 > cl_state.max_mem_alloc)
         {
@@ -275,22 +276,22 @@ gegl_cl_init (GError **error)
         }
       cl_state.iter_width  /= 2;
 
-      g_printf("[OpenCL] Iteration size: (%d, %d)\n", cl_state.iter_width, cl_state.iter_height);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Iteration size: (%d, %d)", cl_state.iter_width, cl_state.iter_height);
 
       if (cl_state.image_support)
         {
-          g_printf("[OpenCL] Image Support OK\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Image Support OK");
         }
       else
         {
-          g_printf("[OpenCL] Image Support Error\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Image Support Error");
           return FALSE;
         }
 
       cl_state.ctx = gegl_clCreateContext(0, 1, &cl_state.device, NULL, NULL, &err);
       if(err != CL_SUCCESS)
         {
-          g_printf("[OpenCL] Could not create context\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create context");
           return FALSE;
         }
 
@@ -298,7 +299,7 @@ gegl_cl_init (GError **error)
 
       if(err != CL_SUCCESS)
         {
-          g_printf("[OpenCL] Could not create command queue\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create command queue");
           return FALSE;
         }
 
@@ -312,7 +313,7 @@ gegl_cl_init (GError **error)
   if (cl_state.is_accelerated)
     gegl_cl_color_compile_kernels();
 
-  g_printf("[OpenCL] OK\n");
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "OK");
 
   return TRUE;
 }
@@ -358,14 +359,14 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
                                                              gegl_cl_get_device(),
                                                              CL_PROGRAM_BUILD_LOG,
                                                              s, msg, NULL) );
-          g_printf("[OpenCL] Build Error:%s\n%s", gegl_cl_errstring(build_errcode), msg);
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Build Error:%s\n%s", gegl_cl_errstring(build_errcode), msg);
           g_free (msg);
 
           return NULL;
         }
       else
         {
-          g_printf("[OpenCL] Compiling successful\n");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Compiling successful\n");
         }
 
       for (i=0; i<kernel_n; i++)

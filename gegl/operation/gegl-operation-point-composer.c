@@ -22,6 +22,7 @@
 #include <glib-object.h>
 
 #include "gegl.h"
+#include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-composer.h"
 #include "gegl-utils.h"
@@ -156,7 +157,7 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
       !gegl_cl_color_babl (aux_format, NULL) ||
       !gegl_cl_color_babl (out_format, NULL))
     {
-      g_warning ("[OpenCL] Non-texturizable format!");
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Non-texturizable format!");
       return FALSE;
     }
 
@@ -177,8 +178,8 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
                                                           i->size[0][j], &i->roi[0][j]);
                 if (cl_err != CL_SUCCESS)
                   {
-                    g_warning("[OpenCL] Error in %s [GeglOperationPointComposer] Kernel\n",
-                              GEGL_OPERATION_CLASS (operation)->name);
+                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointComposer] Kernel",
+                               GEGL_OPERATION_CLASS (operation)->name);
                     return FALSE;
                   }
               }
@@ -195,8 +196,8 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
                                                           i->size[0][j], &i->roi[0][j]);
                 if (cl_err != CL_SUCCESS)
                   {
-                    g_warning("[OpenCL] Error in %s [GeglOperationPointComposer] Kernel\n",
-                              GEGL_OPERATION_CLASS (operation)->name);
+                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointComposer] Kernel",
+                               GEGL_OPERATION_CLASS (operation)->name);
                     return FALSE;
                   }
               }

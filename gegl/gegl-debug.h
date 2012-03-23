@@ -14,7 +14,8 @@ typedef enum {
   GEGL_DEBUG_PROCESSOR       = 1 << 4,
   GEGL_DEBUG_CACHE           = 1 << 5,
   GEGL_DEBUG_MISC            = 1 << 6,
-  GEGL_DEBUG_INVALIDATION    = 1 << 7
+  GEGL_DEBUG_INVALIDATION    = 1 << 7,
+  GEGL_DEBUG_OPENCL          = 1 << 8
 } GeglDebugFlag;
 
 /* only compiled in from gegl-init.c but kept here to

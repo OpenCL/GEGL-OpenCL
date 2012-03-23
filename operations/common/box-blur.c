@@ -30,6 +30,7 @@ gegl_chant_double (radius, _("Radius"), 0.0, 200.0, 4.0,
 #define GEGL_CHANT_C_FILE       "box-blur.c"
 
 #include "gegl-chant.h"
+#include "gegl/gegl-debug.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -349,7 +350,7 @@ cl_process (GeglOperation       *operation,
           cl_err = cl_box_blur(i->tex[read][j], i->tex[aux][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], ceil (o->radius));
           if (cl_err != CL_SUCCESS)
             {
-              g_warning("[OpenCL] Error in box-blur: %s\n", gegl_cl_errstring(cl_err));
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in gegl:box-blur: %s", gegl_cl_errstring(cl_err));
               return FALSE;
             }
         }
