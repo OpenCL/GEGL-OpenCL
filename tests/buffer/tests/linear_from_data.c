@@ -13,7 +13,7 @@ TEST ()
   buffer = gegl_buffer_linear_new_from_data (buf, babl_format ("Y float"),
                                              &extent,
                                              10 * 4,
-                                             G_CALLBACK(g_free), /* destroy_notify */
+                                             (GDestroyNotify) g_free, /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
   print_buffer (buffer);
   gegl_buffer_destroy (buffer);
