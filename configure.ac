@@ -1034,6 +1034,12 @@ AC_ARG_ENABLE([workshop],
 
 AM_CONDITIONAL(ENABLE_WORKSHOP, test "x$enable_workshop" = "xyes")
 
+# check for rint
+AC_CHECK_FUNC(rint, AC_DEFINE(HAVE_RINT, 1,
+                              [Define to 1 if you have the rint function.]), [ 
+                  AC_CHECK_LIB(m, rint, [AC_DEFINE(HAVE_RINT)])])
+
+
 #######################
 # Enable extra warnings
 #######################
