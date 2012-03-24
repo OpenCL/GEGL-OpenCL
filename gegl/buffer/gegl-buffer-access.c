@@ -38,7 +38,6 @@
 #include "gegl-sampler-lohalo.h"
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
-#include "gegl-tile-handler-chain.h"
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
 
@@ -1140,85 +1139,6 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-typedef struct GeglBufferTileIterator
-{
-  GeglBuffer    *buffer;
-  GeglRectangle  roi;     /* the rectangular region we're iterating over */
-  GeglTile      *tile;    /* current tile */
-
-  gint           next_col; /* used internally */
-  gint           next_row; /* used internally */
-} GeglBufferTileIterator;
-
-static void
-gegl_buffer_tile_iterator_init (GeglBufferTileIterator *it,
-                                GeglBuffer             *buffer,
-                                GeglRectangle           roi,
-                                gboolean                write)
-{
-  g_assert (it);
-  memset (it, 0, sizeof (GeglBufferTileIterator));
-
-  if (roi.width == 0 || roi.height == 0)
-    g_error ("You are trying to iterate tile over an empty area.");
-
-  it->buffer = buffer;
-  it->roi = roi;
-  it->next_row = 0;
-  it->next_col = 0;
-  it->tile = NULL;
-}
-
-static gboolean
-gegl_buffer_tile_iterator_next (GeglBufferTileIterator *it)
-{
-  GeglBuffer *buffer   = it->buffer;
-  gint  tile_width     = buffer->tile_storage->tile_width;
-  gint  tile_height    = buffer->tile_storage->tile_height;
-  gint  buffer_x       = buffer->extent.x + buffer->shift_x;
-  gint  buffer_y       = buffer->extent.y + buffer->shift_y;
-  gint  tiledx, tiledy;
-  gint  offsetx, offsety;
-
-  if (it->roi.width == 0 || it->roi.height == 0)
-    return FALSE;
-
-  /* unref previously held tile */
-  if (it->tile)
-    {
-      gegl_tile_unref (it->tile);
-      it->tile = NULL;
-    }
-
-  /* check if moving to next row is needed */
-  if (it->next_col >= it->roi.width)
-    {
-      tiledy = buffer_y + it->next_row;
-      offsety = gegl_tile_offset (tiledy, tile_height);
-
-      it->next_row += tile_height - offsety;
-      it->next_col  = 0;
-
-      if (it->next_row > it->roi.height)
-        { /* iteration ended */
-          return FALSE;
-        }
-    }
-
-    tiledx = buffer_x + it->next_col;
-    tiledy = buffer_y + it->next_row;
-    offsetx = gegl_tile_offset (tiledx, tile_width);
-
-    it->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                          gegl_tile_indice (tiledx, tile_width),
-                                          gegl_tile_indice (tiledy, tile_height),
-                                          0);
-
-    it->next_col += tile_width - offsetx;
-
-    return TRUE;
-}
-
 void
 gegl_buffer_copy (GeglBuffer          *src,
                   const GeglRectangle *src_rect,
@@ -1358,33 +1278,13 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  GeglBuffer             *new_buffer;
-  GeglBufferTileIterator  it;
-  GeglRectangle           extent;
-  GeglTileHandlerChain   *storage;
-  GeglTileHandlerCache   *cache;
+  GeglBuffer *new_buffer;
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
   new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
-
-  extent = *gegl_buffer_get_extent (buffer);
-
-  gegl_buffer_tile_iterator_init (&it, buffer, extent, FALSE);
-
-  storage = GEGL_TILE_HANDLER_CHAIN (new_buffer->tile_storage);
-  cache = GEGL_TILE_HANDLER_CACHE (gegl_tile_handler_chain_get_first (storage, GEGL_TYPE_TILE_HANDLER_CACHE));
-
-
-  while (gegl_buffer_tile_iterator_next (&it))
-    {
-      GeglTile *tile;
-
-      tile = gegl_tile_dup (it.tile);
-
-      gegl_tile_handler_cache_insert (cache, tile, tile->x, tile->y, tile->z);
-    }
-
+  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
+                    new_buffer, gegl_buffer_get_extent (buffer));
   return new_buffer;
 }
 
