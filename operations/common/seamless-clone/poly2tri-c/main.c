@@ -217,7 +217,7 @@ gint main (int argc, char *argv[])
 
   read_points_file (input_file, &pts, &colors);
 
-  T = p2tr_triangulate_and_refine (pts);
+  T = p2tr_triangulate_and_refine (pts, refine_max_steps);
 
   p2tr_plot_svg (T,out);
 

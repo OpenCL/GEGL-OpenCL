@@ -238,7 +238,8 @@ sc_mesh_sampling_free (ScMeshSampling *self)
  */
 P2tRTriangulation*
 sc_make_fine_mesh (ScOutline     *outline,
-                   GeglRectangle *mesh_bounds)
+                   GeglRectangle *mesh_bounds,
+                   int            max_refine_steps)
 {
   GPtrArray *realOutline = (GPtrArray*) outline;
   gint i, N = realOutline->len;
@@ -268,7 +269,7 @@ sc_make_fine_mesh (ScOutline     *outline,
   mesh_bounds->width = max_x + 1 - min_x;
   mesh_bounds->height = max_y + 1 - min_y;
 
-  T = p2tr_triangulate_and_refine (mesh_points);
+  T = p2tr_triangulate_and_refine (mesh_points, max_refine_steps);
 
   for (i = 0; i < N; i++)
     {

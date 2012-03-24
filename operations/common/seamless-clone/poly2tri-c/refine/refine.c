@@ -501,24 +501,27 @@ SplitPermitted (P2tREdge *s, gdouble d)
 #define MIN_MAX_EDGE_LEN 0
 
 void
-DelaunayTerminator (P2tRTriangulation *T, GList *XEs, gdouble theta, deltafunc delta)
+DelaunayTerminator (P2tRTriangulation *T,
+                    GList             *XEs,
+                    gdouble            theta,
+                    deltafunc          delta,
+                    int                max_refine_steps)
 {
-  const gint STEPS = atoi (g_getenv ("p2t_refine_steps"));
-
+  const gint STEPS = max_refine_steps;
   GSequence *Qt;
   GQueue Qs;
 
   GList *Liter, Liter2;
   P2trHashSetIter Hiter;
 
+  p2tr_debug("Max refine point count is %d\n", max_refine_steps);
+  
   p2tr_validate_triangulation (T);
 
   P2tRTriangle *t;
 
   g_queue_init (&Qs);
   Qt = g_sequence_new (NULL);
-
-  p2tr_debug ("Now we have %d triangles\n", g_hash_table_size (T->tris));
 
   if (STEPS == 0)
     return;
@@ -674,7 +677,7 @@ DelaunayTerminator (P2tRTriangulation *T, GList *XEs, gdouble theta, deltafunc d
  * Input must be a GPtrArray of P2tRPoint*
  */
 P2tRTriangulation*
-p2tr_triangulate_and_refine (GPtrArray *pts)
+p2tr_triangulate_and_refine (GPtrArray *pts, int max_refine_steps)
 {
   gint i, N = pts->len;
   GList *XEs = NULL, *iter;
@@ -689,7 +692,7 @@ p2tr_triangulate_and_refine (GPtrArray *pts)
     }
 
   T = p2tr_triangulateA ((P2tRPoint**)pts->pdata ,pts->len);
-  DelaunayTerminator (T,XEs,M_PI/6,p2tr_false_delta);
+  DelaunayTerminator (T,XEs,M_PI/6,p2tr_false_delta, max_refine_steps);
 
   foreach (iter, XEs)
   {

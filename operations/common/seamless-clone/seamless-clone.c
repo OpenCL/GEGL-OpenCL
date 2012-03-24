@@ -18,6 +18,9 @@
  */
 
 #ifdef GEGL_CHANT_PROPERTIES
+gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
+                _("Maximal amount of refinement points to be used for the interpolation mesh"))
+
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
@@ -155,6 +158,7 @@ process (GeglOperation       *operation,
   P2tRImageConfig     imcfg;
 
   Babl               *format = babl_format("R'G'B'A float");
+  int                 max_refine_steps = GEGL_CHANT_PROPERTIES (operation)->max_refine_steps;
 
   g_debug ("seamless-clone.c::process");
   printf ("The aux_rect is: ");
@@ -170,8 +174,8 @@ process (GeglOperation       *operation,
   g_debug ("Finish making outline");
 
   /* Then, Generate the mesh */
-  g_debug ("Start making fine mesh");
-  mesh = sc_make_fine_mesh (outline, &mesh_bounds);
+  g_debug ("Start making fine mesh with at most %d points", max_refine_steps);
+  mesh = sc_make_fine_mesh (outline, &mesh_bounds, max_refine_steps);
   g_debug ("Finish making fine mesh");
 
   /* Finally, Generate the mesh sample list for each point */

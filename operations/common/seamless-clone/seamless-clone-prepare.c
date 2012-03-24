@@ -28,6 +28,8 @@
 #ifdef GEGL_CHANT_PROPERTIES
 gegl_chant_pointer (result, _("result"),
   _("A pointer to a pointer (gpointer*) to store the result in"))
+gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
+                _("Maximal amount of refinement points to be used for the interpolation mesh"))
 #else
 
 #define GEGL_CHANT_TYPE_SINK
@@ -78,7 +80,7 @@ process (GeglOperation       *operation,
   result->outline = sc_outline_find_ccw (roi, input);
 
   /* Then, Generate the mesh */
-  result->mesh = sc_make_fine_mesh (result->outline, &result->mesh_bounds);
+  result->mesh = sc_make_fine_mesh (result->outline, &result->mesh_bounds, GEGL_CHANT_PROPERTIES (operation) -> max_refine_steps);
 
   /* Finally, Generate the mesh sample list for each point */
   result->sampling = sc_mesh_sampling_compute (result->outline, result->mesh);

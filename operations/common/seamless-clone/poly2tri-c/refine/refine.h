@@ -17,7 +17,7 @@ extern "C"
 #endif
 
 P2tRTriangulation*
-p2tr_triangulate_and_refine (GPtrArray *pts);
+p2tr_triangulate_and_refine (GPtrArray *pts, int max_refine_steps);
 
 
 
