@@ -1106,7 +1106,6 @@ tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
-tests/opencl/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
