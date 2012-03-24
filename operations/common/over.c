@@ -56,7 +56,7 @@ process (GeglOperation        *op,
   if (aux==NULL)
     return TRUE;
 
-  for (i = 0; i < n_pixels; i++)
+  while (n_pixels--)
     {
       out[0] = aux[0] + in[0] * (1.0f - aux[3]);
       out[1] = aux[1] + in[1] * (1.0f - aux[3]);
