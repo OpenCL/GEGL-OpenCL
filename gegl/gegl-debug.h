@@ -108,6 +108,7 @@ gegl_lookup_debug_string  (guint type)
               key = gegl_debug_keys[i].key;
               break;
             }
+          i++;
         }
     }
 
