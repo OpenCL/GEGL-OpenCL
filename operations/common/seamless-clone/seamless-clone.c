@@ -141,7 +141,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  gfloat    *out_raw, *pixel;
+  gfloat    *out_raw, *aux_raw;
   gdouble    x, y;
 
   GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
@@ -159,6 +159,9 @@ process (GeglOperation       *operation,
 
   Babl               *format = babl_format("R'G'B'A float");
   int                 max_refine_steps = GEGL_CHANT_PROPERTIES (operation)->max_refine_steps;
+
+  GeglBufferIterator *mesh_area_iter;
+  int                 iter_out_index, iter_aux_index;
 
   g_debug ("seamless-clone.c::process");
   printf ("The aux_rect is: ");
@@ -191,10 +194,7 @@ process (GeglOperation       *operation,
 
   /* We only need to render the intersection of the mesh bounds and the
    * desired output */
-   gegl_rectangle_intersect (&to_render, result, &mesh_bounds);
-
-  /* Alocate the output buffer */
-  out_raw = g_new (gfloat, 4 * to_render.width * to_render.height);
+  gegl_rectangle_intersect (&to_render, result, &mesh_bounds);
 
   /* Render the mesh into it */
   cci.aux_buf = aux;
@@ -202,42 +202,46 @@ process (GeglOperation       *operation,
   cci.sampling = mesh_sampling;
   cci.pt2col = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
 
-  imcfg.min_x = to_render.x;
-  imcfg.min_y = to_render.y;
-  imcfg.step_x = imcfg.step_y = 1;
-  imcfg.x_samples = to_render.width;
-  imcfg.y_samples = to_render.height;
-  imcfg.cpp = 4;
+  /* AUX = PASTE
+   * INPUT = BG
+   */
+  mesh_area_iter = gegl_buffer_iterator_new (output, &to_render, format,
+                                             GEGL_BUFFER_WRITE);
+  iter_out_index = 0;
+  iter_aux_index = gegl_buffer_iterator_add (mesh_area_iter, aux,
+                                            &to_render, format,
+                                            GEGL_BUFFER_READ);
 
-  g_debug ("Start mesh rendering");
-  p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
-  g_debug ("Finish mesh rendering");
+  while (gegl_buffer_iterator_next (mesh_area_iter))
+    {
+      imcfg.min_x = mesh_area_iter->roi[iter_out_index].x;
+      imcfg.min_y = mesh_area_iter->roi[iter_out_index].y;
+      imcfg.step_x = imcfg.step_y = 1;
+      imcfg.x_samples = mesh_area_iter->roi[iter_out_index].width;
+      imcfg.y_samples = mesh_area_iter->roi[iter_out_index].height;
+      imcfg.cpp = 4;
 
-  g_debug ("Start aux adding");
-  pixel = out_raw;
+      out_raw = (gfloat*)mesh_area_iter->data[iter_out_index];
+      aux_raw = (gfloat*)mesh_area_iter->data[iter_aux_index];
+      p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
 
-  pixel = out_raw;
-  for (y = 0; y < imcfg.y_samples; y++)
-    for (x = 0; x < imcfg.x_samples; x++)
-      {
-        gfloat aux_c[4];
-        gdouble Px = imcfg.min_x + x * imcfg.step_x;
-        gdouble Py = imcfg.min_y + y * imcfg.step_y;
-        gegl_buffer_sample (aux, Px, Py, NULL, aux_c, format, GEGL_SAMPLER_NEAREST);
-        *pixel++ += aux_c[0];
-        *pixel++ += aux_c[1];
-        *pixel++ += aux_c[2];
-        *pixel++;// += 0;//aux_c[3];
-      }
+      for (y = 0; y < imcfg.y_samples; y++)
+        {
+          for (x = 0; x < imcfg.x_samples; x++)
+            {
+              out_raw[0] += aux_raw[0];
+              out_raw[1] += aux_raw[1];
+              out_raw[2] += aux_raw[2];
+              out_raw += 4;
+              aux_raw += 4;
+            }
+        }
+    }
 
   g_debug ("Finish aux adding");
   
-  /* TODO: Add the aux to the mesh rendering! */
-  gegl_buffer_set (output, &to_render, babl_format("R'G'B'A float"), out_raw, GEGL_AUTO_ROWSTRIDE);
-
   /* Free memory, by the order things were allocated! */
   g_hash_table_destroy (cci.pt2col);
-  g_free (out_raw);
   sc_mesh_sampling_free (mesh_sampling);
   p2tr_triangulation_free (mesh);
   sc_outline_free (outline);
