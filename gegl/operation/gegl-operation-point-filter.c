@@ -208,7 +208,7 @@ static gboolean gegl_operation_point_filter_op_process
       output = gegl_operation_context_get_target (context, "output");
     }
 
-  success = gegl_operation_point_filter_process (operation, input, output, roi, context->level);
+  success = gegl_operation_point_filter_process (operation, input, output, roi, level);
   if (output == GEGL_BUFFER (operation->node->cache))
     gegl_cache_computed (operation->node->cache, roi);
 

@@ -138,7 +138,7 @@ gegl_operation_sink_process (GeglOperation        *operation,
       if (gegl_cl_is_accelerated ())
         gegl_buffer_cl_cache_invalidate (input, NULL);
 
-      success = klass->process (operation, input, result, context->level);
+      success = klass->process (operation, input, result, level);
       g_object_unref (input);
     }
 

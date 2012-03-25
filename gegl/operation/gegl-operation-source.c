@@ -139,7 +139,7 @@ gegl_operation_source_process (GeglOperation        *operation,
 
   g_assert (klass->process);
   output = gegl_operation_context_get_target (context, "output");
-  success = klass->process (operation, output, result, context->level);
+  success = klass->process (operation, output, result, level);
 
   if (output == GEGL_BUFFER (operation->node->cache))
     gegl_cache_computed (operation->node->cache, result);

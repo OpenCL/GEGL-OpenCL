@@ -173,7 +173,7 @@ gegl_operation_composer_process (GeglOperation        *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, input, aux, output, result, context->level);
+      success = klass->process (operation, input, aux, output, result, level);
 
       if (output == GEGL_BUFFER (operation->node->cache))
         gegl_cache_computed (operation->node->cache, result);
