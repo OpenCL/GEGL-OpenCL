@@ -155,7 +155,8 @@ gegl_save_process (GeglOperation        *operation,
   return gegl_operation_process (self->save->operation,
                                  context,
                                  output_pad,
-                                 roi);
+                                 roi,
+                                 level);
 }
 
 static void

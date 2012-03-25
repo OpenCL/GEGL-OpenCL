@@ -121,7 +121,7 @@ process (GeglOperation        *operation,
   GeglChant   *self = GEGL_CHANT (operation);
 
   return gegl_operation_process (self->display->operation, 
-				 context, output_pad, roi);
+				 context, output_pad, roi, level);
 }
 
 static void
