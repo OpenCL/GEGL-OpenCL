@@ -93,6 +93,7 @@ GEGL_introspectable_sources = \
 GEGL_sources = \
 	$(GEGL_introspectable_sources) \
 	gegl-module.h			\
+	gegl-apply.h \
 	gegl-chant.h
 
 
