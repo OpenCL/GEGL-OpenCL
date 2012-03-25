@@ -151,7 +151,7 @@ process (GeglOperation       *operation,
 
   buf = g_new0 (gfloat, src_rect.width * src_rect.height * 4);
 
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   pixelise(buf, roi, o->xsize, o->ysize);
 

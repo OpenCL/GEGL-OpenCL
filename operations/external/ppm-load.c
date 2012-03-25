@@ -239,12 +239,12 @@ process (GeglOperation       *operation,
     {
     case 1:
       gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u8"), img.data,
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
       break;
 
     case 2:
       gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u16"), img.data,
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
       break;
 
     default:

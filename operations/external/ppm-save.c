@@ -145,12 +145,12 @@ process (GeglOperation       *operation,
     {
     case 1:
       gegl_buffer_get (input, rect, 1.0, babl_format ("R'G'B' u8"), data,
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
       break;
 
     case 2:
       gegl_buffer_get (input, rect, 1.0, babl_format ("R'G'B' u16"), data,
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
       break;
 
     default:

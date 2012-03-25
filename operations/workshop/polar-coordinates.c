@@ -320,7 +320,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   if (o->middle)
     {
@@ -344,7 +344,7 @@ process (GeglOperation       *operation,
 
         if (inside)
           gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_SAMPLER_LOHALO);
+                              GEGL_SAMPLER_LOHALO, GEGL_ABYSS_NONE);
         else
           for (i=0; i<4; i++)
             dest[i] = 0.0;

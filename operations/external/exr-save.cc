@@ -213,7 +213,7 @@ gegl_exr_save_process (GeglOperation       *operation,
       return FALSE;
     }
   gegl_buffer_get (input, rect, 1.0, babl_format (output_format.c_str ()),
-                   pixels, GEGL_AUTO_ROWSTRIDE);
+                   pixels, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
   bool status;
   try
     {

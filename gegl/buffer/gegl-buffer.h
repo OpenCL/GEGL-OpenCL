@@ -22,6 +22,7 @@
 #include <glib-object.h>
 #include <babl/babl.h>
 #include <gegl-matrix.h>
+#include <gegl-enums.h>
 
 G_BEGIN_DECLS
 
@@ -226,6 +227,9 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * depends on the requested BablFormat.
  * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
  * rowstride based on the width and bytes per pixel for the specified format.
+ * @repeat_mode: how request outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
+ * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the
  * data is converted to the desired BablFormat, if the BablFormat stored and
@@ -237,7 +241,8 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
                                                gdouble              scale,
                                                const Babl          *format,
                                                gpointer             dest,
-                                               gint                 rowstride);
+                                               gint                 rowstride,
+                                               GeglAbyssPolicy       repeat_mode);
 
 /**
  * gegl_buffer_set:
@@ -358,6 +363,9 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
  * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
  * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
+ * @repeat_mode: how request outside the buffer extent are handled.
+ * valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
+ * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
  *
  * Query interpolate pixel values at a given coordinate using a specified form
  * of interpolation. The samplers used cache for a small neighbourhood of the
@@ -369,7 +377,8 @@ void gegl_buffer_sample (GeglBuffer       *buffer,
                          GeglMatrix2      *scale,
                          gpointer          dest,
                          const Babl       *format,
-                         GeglSamplerType   sampler_type);
+                         GeglSamplerType   sampler_type,
+                         GeglAbyssPolicy    repeat_mode);
 
 
 
@@ -419,14 +428,18 @@ GeglSampler * gegl_buffer_sampler_new (GeglBuffer       *buffer,
  * @y: y coordinate to sample
  * @scale: matrix representing extent of sampling area in source buffer.
  * @output: memory location for output data.
+ * @repeat_mode: how request outside the buffer extent are handled.
+ * valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
+ * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
  *
  * Perform a sampling with the provided @sampler.
  */
-void  gegl_sampler_get         (GeglSampler *sampler,
-                                gdouble      x,
-                                gdouble      y,
-                                GeglMatrix2 *scale,
-                                void        *output);
+void  gegl_sampler_get         (GeglSampler    *sampler,
+                                gdouble         x,
+                                gdouble         y,
+                                GeglMatrix2    *scale,
+                                void           *output,
+                                GeglAbyssPolicy  repeat_mode);
 
 /**
  * gegl_sampler_get_context_rect:

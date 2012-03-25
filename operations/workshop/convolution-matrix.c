@@ -274,7 +274,8 @@ convolve_pixel(gfloat               *src_buf,
                     gfloat temp_color[4];
                     gegl_buffer_sample (input, s_x, s_y, NULL, temp_color,
                                         babl_format ("RGBA float"),
-                                        GEGL_SAMPLER_NEAREST);
+                                        GEGL_SAMPLER_NEAREST,
+                                        GEGL_ABYSS_NONE);
                     if (i!=3 && o->weight)
                       sum += matrix[x][y] * temp_color[i]
                         * temp_color[3];
@@ -362,8 +363,8 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, &rect, 1.0, babl_format (type),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &rect, 1.0, babl_format (type), src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /*fill src_buf with wrap pixels if it is the case*/
 

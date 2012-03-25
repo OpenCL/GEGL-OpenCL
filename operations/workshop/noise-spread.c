@@ -90,9 +90,11 @@ apply_spread (gint                 x_amount,
       calc_sample_coords (x1, y1, x_amount, y_amount, gr, &x, &y);
       /* Only displace the pixel if it's within the bounds of the image. */
       if (x >= 0 && x < img_width && y >= 0 && y < img_height)
-        gegl_buffer_sample (src, x, y, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,  GEGL_SAMPLER_LINEAR);
+        gegl_buffer_sample (src, x, y, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,
+                            GEGL_SAMPLER_LINEAR, GEGL_ABYSS_NONE);
       else /* Else just copy it */
-        gegl_buffer_sample (src, x1, y1, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,  GEGL_SAMPLER_LINEAR);
+        gegl_buffer_sample (src, x1, y1, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,
+                            GEGL_SAMPLER_LINEAR, GEGL_ABYSS_NONE);
     } /* for */
   } /* for */
 

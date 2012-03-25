@@ -767,7 +767,7 @@ gegl_affine_fast_reflect_x (GeglBuffer              *dest,
   gint                     i;
   guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src,  src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src,  src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (i = 0; i < src_rect->height / 2; i++)
     {
@@ -804,7 +804,7 @@ gegl_affine_fast_reflect_y (GeglBuffer              *dest,
   gint                     i;
   guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src, src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (i = 0; i < src_rect->height; i++)
     {

@@ -67,7 +67,8 @@ static void c2g (GeglBuffer          *src,
   src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 2);
 
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   for (y=radius; y<dst_rect->height+radius; y++)
     {

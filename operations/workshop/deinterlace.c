@@ -237,8 +237,10 @@ process (GeglOperation       *operation,
   dst_buf = g_new0 (gfloat, result->height * result->width * 4);
   src_buf = g_new0 (gfloat, rect.height * rect.width * 4);
 
-  gegl_buffer_get (input, result, 1.0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (input, &rect, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, dst_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (input, &rect, 1.0, format, src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   if (o->horizontal)
     {

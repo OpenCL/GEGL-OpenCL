@@ -1277,11 +1277,11 @@ fattal02_process (GeglOperation       *operation,
   lum_out = g_new (gfloat, result->width * result->height);
 
   gegl_buffer_get (input, result, 1.0, babl_format ("Y float"),
-                   lum_in, GEGL_AUTO_ROWSTRIDE);
+                   lum_in, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   pix = g_new (gfloat, result->width * result->height * pix_stride);
   gegl_buffer_get (input, result, 1.0, babl_format (OUTPUT_FORMAT),
-                   pix, GEGL_AUTO_ROWSTRIDE);
+                   pix, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   fattal02_tonemap (lum_in, result, lum_out, o->alpha, o->beta, noise);
 

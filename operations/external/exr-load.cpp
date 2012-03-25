@@ -236,7 +236,8 @@ fix_saturation (GeglBuffer       *buf,
   for (y=0; y<2; y++)
     {
       gegl_rectangle_set (&rect, 0,y, gegl_buffer_get_width (buf), 1);
-      gegl_buffer_get (buf, &rect, 1.0, NULL, row[y+1], GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (buf, &rect, 1.0, NULL, row[y+1], GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
     }
 
   fix_saturation_row (row[1], row[1], row[2], yw, gegl_buffer_get_width (buf), nc);
@@ -250,7 +251,8 @@ fix_saturation (GeglBuffer       *buf,
         }
 
       gegl_rectangle_set (&rect, 0,y+1, gegl_buffer_get_width (buf), 1);
-      gegl_buffer_get (buf, &rect, 1.0, NULL, row[0], GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (buf, &rect, 1.0, NULL, row[0], GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       tmp = row[0];
       row[0] = row[1];
@@ -331,7 +333,8 @@ reconstruct_chroma (GeglBuffer *buf,
   for (i=0; i<gegl_buffer_get_height (buf); i+=2)
     {
       gegl_rectangle_set (&rect, 0, i,  gegl_buffer_get_width (buf), 1);
-      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       reconstruct_chroma_row (pixels, gegl_buffer_get_width (buf), has_alpha, tmp);
       gegl_buffer_set (buf, &rect, 0, NULL, pixels, GEGL_AUTO_ROWSTRIDE);
@@ -340,7 +343,8 @@ reconstruct_chroma (GeglBuffer *buf,
   for (i=0; i<gegl_buffer_get_width (buf); i++)
     {
       gegl_rectangle_set (&rect, i, 0, 1, gegl_buffer_get_height (buf));
-      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       reconstruct_chroma_row (pixels, gegl_buffer_get_height (buf), has_alpha, tmp);
       gegl_buffer_set (buf, &rect, 0, NULL, pixels, GEGL_AUTO_ROWSTRIDE);
@@ -368,7 +372,8 @@ convert_yca_to_rgba (GeglBuffer *buf,
   for (row=0; row<gegl_buffer_get_height (buf); row++)
     {
       gegl_rectangle_set (&rect, 0, row, gegl_buffer_get_width (buf), 1);
-      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (buf, &rect, 1.0, NULL, pixels, GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
       pxl = (gfloat*) pixels;
 
       for (i=0; i<gegl_buffer_get_width (buf); i++)

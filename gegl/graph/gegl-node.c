@@ -896,7 +896,8 @@ static void spawnrender (gpointer data,
 
   if ((buffer ) && td->destination_buf)
     {
-      gegl_buffer_get (buffer, &td->roi, 1.0, td->format, td->destination_buf, td->rowstride);
+      gegl_buffer_get (buffer, &td->roi, 1.0, td->format, td->destination_buf, td->rowstride,
+                       GEGL_ABYSS_NONE);
     }
 
   /* and unrefing to ultimately clean it off from the graph */
@@ -1057,7 +1058,8 @@ gegl_node_blit (GeglNode            *self,
       if (destination_buf && cache)
         {
           gegl_buffer_get (GEGL_BUFFER (cache), roi, scale,
-                           format, destination_buf, rowstride);
+                           format, destination_buf, rowstride,
+                           GEGL_ABYSS_NONE);
         }
     }
 }

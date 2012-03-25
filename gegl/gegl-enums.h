@@ -41,6 +41,12 @@ typedef enum {
 GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;
 #define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
 
+typedef enum {
+  GEGL_ABYSS_NONE
+} GeglAbyssPolicy;
+GType gegl_repeat_mode_get_type   (void) G_GNUC_CONST;
+#define GEGL_ABYSS_NONE_TYPE (gegl_repeat_mode_get_type())
+
 /*
  * Operation specific enum
  */

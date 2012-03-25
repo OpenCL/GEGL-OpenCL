@@ -113,7 +113,8 @@ process_floyd_steinberg (GeglBuffer *input,
 
     /* Pull input row */
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     /* Process the row */
 
@@ -210,7 +211,8 @@ process_bayer (GeglBuffer *input,
   {
     guint x;
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     for (x = 0; x < result->width; x++)
     {
@@ -262,7 +264,8 @@ process_random_covariant (GeglBuffer *input,
   {
     guint x;
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     for (x = 0; x < result->width; x++)
     {
@@ -315,7 +318,8 @@ process_random (GeglBuffer *input,
   {
     guint x;
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     for (x = 0; x < result->width; x++)
     {
@@ -367,7 +371,8 @@ process_no_dither (GeglBuffer *input,
   {
     guint x;
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     for (x = 0; x < result->width; x++)
     {

@@ -101,7 +101,7 @@ process (GeglOperation       *operation,
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (x = 0; x < result->width * result->height; x++)
     red_eye_reduction (src_buf, 4 * x, (float) o->threshold);

@@ -51,7 +51,8 @@ test_change_processor_rect_do_test (GeglProcessor       *processor,
                    1.0,
                    babl_format ("RGBA float"),
                    result_buffer,
-                   GEGL_AUTO_ROWSTRIDE);
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   /* Compare with a small epsilon to account for accumulated error */
   for(i = 0; i < G_N_ELEMENTS (expected_result_buffer); i++)

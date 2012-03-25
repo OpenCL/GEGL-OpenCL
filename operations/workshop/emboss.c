@@ -213,8 +213,8 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
   dst_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
 
-  gegl_buffer_get (input, &rect, 1.0, babl_format (type),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &rect, 1.0, babl_format (type), src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /*do for every row*/
   for (x = 0; x < rect.height; x++)

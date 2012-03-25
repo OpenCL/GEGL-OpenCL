@@ -55,7 +55,7 @@ gegl_rgbe_save_process (GeglOperation       *operation,
                      babl_format_get_n_components (babl_format (FORMAT)));
 
   gegl_buffer_get (input, rect, 1.0, babl_format (FORMAT), pixels,
-                   GEGL_AUTO_ROWSTRIDE);
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   if (!rgbe_save_path (o->path, rect->width, rect->height, pixels))
       goto cleanup;

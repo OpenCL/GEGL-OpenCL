@@ -162,7 +162,7 @@ iir_young_hor_blur (GeglBuffer          *src,
   w   = g_new0 (gfloat, src_rect->width);
 
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   buf, GEGL_AUTO_ROWSTRIDE);
+                   buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   w_len = src_rect->width;
   for (v=0; v<src_rect->height; v++)
@@ -204,7 +204,7 @@ iir_young_ver_blur (GeglBuffer          *src,
   w   = g_new0 (gfloat, src_rect->height);
 
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   buf, GEGL_AUTO_ROWSTRIDE);
+                   buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   w_len = src_rect->height;
   for (u=0; u<dst_rect->width; u++)
@@ -324,7 +324,7 @@ fir_hor_blur (GeglBuffer          *src,
   dst_buf = g_new0 (gfloat, dst_rect->height * dst_rect->width * 4);
 
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset = 0;
   for (v=0; v<dst_rect->height; v++)
@@ -369,7 +369,7 @@ fir_ver_blur (GeglBuffer          *src,
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset=0;
   for (v=0; v< dst_rect->height; v++)

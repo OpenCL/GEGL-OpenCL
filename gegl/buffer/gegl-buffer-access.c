@@ -1067,7 +1067,8 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  gdouble              scale,
                  const Babl          *format,
                  gpointer             dest_buf,
-                 gint                 rowstride)
+                 gint                 rowstride,
+                 GeglAbyssPolicy       repeat_mode)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride);
@@ -1091,7 +1092,8 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     GeglMatrix2      *scale,
                     gpointer          dest,
                     const Babl       *format,
-                    GeglSamplerType   sampler_type)
+                    GeglSamplerType   sampler_type,
+                    GeglAbyssPolicy    repeat_mode)
 {
   GType desired_type;
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -1125,7 +1127,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       gegl_sampler_prepare (buffer->sampler);
     }
 
-  gegl_sampler_get (buffer->sampler, x, y, scale, dest);
+  gegl_sampler_get (buffer->sampler, x, y, scale, dest, GEGL_ABYSS_NONE);
 }
 
 void

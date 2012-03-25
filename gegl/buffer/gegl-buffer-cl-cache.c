@@ -276,7 +276,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                                        1.0,
                                        format,
                                        dest_buf,
-                                       rowstride);
+                                       rowstride,
+                                       GEGL_ABYSS_NONE);
                       return TRUE;
                     }
                 }
@@ -325,7 +326,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                                    1.0,
                                    format,
                                    dest_buf,
-                                   rowstride);
+                                   rowstride,
+                                   GEGL_ABYSS_NONE);
 
                   if (tex_dest) gegl_clReleaseMemObject (tex_dest);
 

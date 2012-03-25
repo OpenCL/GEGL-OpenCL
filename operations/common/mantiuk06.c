@@ -1596,11 +1596,11 @@ mantiuk06_process (GeglOperation       *operation,
   /* Obtain the pixel data */
   lum = g_new (gfloat, result->width * result->height),
   gegl_buffer_get (input, result, 1.0, babl_format ("Y float"),
-                   lum, GEGL_AUTO_ROWSTRIDE);
+                   lum, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   pix = g_new (gfloat, result->width * result->height * pix_stride);
   gegl_buffer_get (input, result, 1.0, babl_format (OUTPUT_FORMAT),
-                   pix, GEGL_AUTO_ROWSTRIDE);
+                   pix, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   mantiuk06_contmap (result->width, result->height, pix, lum,
                      o->contrast, o->saturation, FALSE, 200, 1e-3, NULL);

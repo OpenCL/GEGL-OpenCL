@@ -136,7 +136,8 @@ median (GeglBuffer *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (dst) * 4);
 
-  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset = 0;
   for (y=0; y<gegl_buffer_get_height (dst); y++)

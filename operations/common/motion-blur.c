@@ -101,7 +101,7 @@ process (GeglOperation       *operation,
   out_buf = g_new0 (gfloat, roi->width * roi->height * 4);
   out_pixel = out_buf;
 
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), in_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (y=0; y<roi->height; ++y)
     {

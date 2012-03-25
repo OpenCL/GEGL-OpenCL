@@ -956,7 +956,8 @@ gegl_expcombine_get_exposures (GeglOperation        *operation,
                                                 full_roi->height *
                                                 components);
       gegl_buffer_get (buffer, full_roi, 1.0, babl_format (PAD_FORMAT),
-                       e->pixels[PIXELS_FULL], GEGL_AUTO_ROWSTRIDE);
+                       e->pixels[PIXELS_FULL], GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       g_return_val_if_fail (scale <= 1.0f, NULL);
       if (scale == 1.0f)
@@ -968,7 +969,8 @@ gegl_expcombine_get_exposures (GeglOperation        *operation,
                                              scaled_roi->height *
                                              components));
           gegl_buffer_get (buffer, scaled_roi, scale, babl_format (PAD_FORMAT),
-                           e->pixels[PIXELS_SCALED], GEGL_AUTO_ROWSTRIDE);
+                           e->pixels[PIXELS_SCALED], GEGL_AUTO_ROWSTRIDE,
+                           GEGL_ABYSS_NONE);
         }
 
       e->pixels[PIXELS_ACTIVE] = e->pixels[PIXELS_FULL];

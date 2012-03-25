@@ -239,7 +239,8 @@ lens_distort_func (gfloat              *src_buf,
             {
               gegl_buffer_sample (input, x, y, NULL, temp,
                                   babl_format ("RGBA float"),
-                                  GEGL_SAMPLER_NEAREST);
+                                  GEGL_SAMPLER_NEAREST,
+                                  GEGL_ABYSS_NONE);
             }
           else
             {
@@ -279,8 +280,8 @@ process (GeglOperation       *operation,
 
   lens_setup_calc (o, boundary, &old_lens);
 
-  gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (y = result->y; y < result->y + result->height; y++)
     for (x = result->x; x < result->x + result->width; x++)

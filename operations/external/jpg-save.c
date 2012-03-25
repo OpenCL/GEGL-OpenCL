@@ -140,7 +140,8 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
     rect.height = 1;
 
     gegl_buffer_get (gegl_buffer, &rect, 1.0, format,
-                     row_pointer[0], GEGL_AUTO_ROWSTRIDE);
+                     row_pointer[0], GEGL_AUTO_ROWSTRIDE,
+                     GEGL_ABYSS_NONE);
 
     jpeg_write_scanlines (&cinfo, row_pointer, 1);
   }

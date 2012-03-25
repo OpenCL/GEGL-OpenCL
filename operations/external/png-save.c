@@ -183,7 +183,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       rect.width = width;
       rect.height = 1;
 
-      gegl_buffer_get (gegl_buffer, &rect, 1.0, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (gegl_buffer, &rect, 1.0, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       png_write_rows (png, &pixels, 1);
     }

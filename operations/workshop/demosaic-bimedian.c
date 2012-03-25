@@ -94,7 +94,7 @@ demosaic (GeglChantO          *op,
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 3);
 
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("Y float"), src_buf,
-           GEGL_AUTO_ROWSTRIDE);
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset = ROW + COL;
   doffset = 0;

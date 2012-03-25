@@ -159,11 +159,11 @@ reinhard05_process (GeglOperation       *operation,
   /* Obtain the pixel data */
   lum = g_new (gfloat, result->width * result->height),
   gegl_buffer_get (input, result, 1.0, babl_format ("Y float"),
-                   lum, GEGL_AUTO_ROWSTRIDE);
+                   lum, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   pix = g_new (gfloat, result->width * result->height * pix_stride);
   gegl_buffer_get (input, result, 1.0, babl_format (OUTPUT_FORMAT),
-                   pix, GEGL_AUTO_ROWSTRIDE);
+                   pix, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /* Collect the image stats, averages, etc */
   reinhard05_stats_start (&world_lin);

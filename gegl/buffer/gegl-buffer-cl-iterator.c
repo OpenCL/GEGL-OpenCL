@@ -349,7 +349,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                     if (cl_err != CL_SUCCESS) CL_ERROR;
 
                     /* color conversion using BABL */
-                    gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->format[no], data, GEGL_AUTO_ROWSTRIDE);
+                    gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->format[no], data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
                     cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_op[no][j], data,
                                                                0, NULL, NULL);
@@ -384,7 +384,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         if (cl_err != CL_SUCCESS) CL_ERROR;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);
@@ -420,7 +420,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         if (cl_err != CL_SUCCESS) CL_ERROR;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);

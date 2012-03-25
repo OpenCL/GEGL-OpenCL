@@ -146,7 +146,8 @@ process (GeglOperation       *operation,
                         babl_component ("R"),
                         babl_component ("A"),
                         NULL),
-       ((SDL_Surface*)o->screen)->pixels, GEGL_AUTO_ROWSTRIDE);
+       ((SDL_Surface*)o->screen)->pixels, GEGL_AUTO_ROWSTRIDE,
+       GEGL_ABYSS_NONE);
   g_object_unref (source);
 
   if (!sdl_outwin)

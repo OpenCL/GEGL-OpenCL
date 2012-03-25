@@ -116,11 +116,12 @@ gegl_sampler_init (GeglSampler *self)
 }
 
 void
-gegl_sampler_get (GeglSampler *self,
-                  gdouble      x,
-                  gdouble      y,
-                  GeglMatrix2 *scale,
-                  void        *output)
+gegl_sampler_get (GeglSampler   *self,
+                  gdouble        x,
+                  gdouble        y,
+                  GeglMatrix2   *scale,
+                  void          *output,
+                  GeglAbyssPolicy repeat_mode)
 {
   self->get (self, x, y, scale, output);
 }
@@ -281,7 +282,8 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
                        1.0,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
     }
@@ -355,7 +357,8 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
                        1.0,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[0],
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       sampler->sampler_rectangle[0] = fetch_rectangle;
     }
@@ -450,7 +453,8 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
                        scale,
                        sampler->interpolate_format,
                        sampler->sampler_buffer[level],
-                       GEGL_AUTO_ROWSTRIDE);
+                       GEGL_AUTO_ROWSTRIDE,
+                       GEGL_ABYSS_NONE);
 
       sampler->sampler_rectangle[level] = fetch_rectangle;
     }

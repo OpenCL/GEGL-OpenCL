@@ -404,8 +404,8 @@ matting_process (GeglOperation       *operation,
   trimap = g_new (guchar, w * h * COMPONENTS_AUX);
   output = g_new0 (gfloat, w * h * COMPONENTS_OUTPUT);
 
-  gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   foreground_samples = g_array_new(FALSE, FALSE, sizeof(ColorSample));
   background_samples = g_array_new(FALSE, FALSE, sizeof(ColorSample));

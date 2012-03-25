@@ -178,7 +178,7 @@ process (GeglOperation       *operation,
     rect.width  += o->iterations*2;
     rect.height += o->iterations*2;
     gegl_buffer_get (input, &rect, 1.0, babl_format ("R'G'B'A float"),
-                     src_buf, stride * 4 * 4);
+                     src_buf, stride * 4 * 4, GEGL_ABYSS_NONE);
   }
 
   for (iteration = 0; iteration < o->iterations; iteration++)

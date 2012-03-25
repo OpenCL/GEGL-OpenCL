@@ -82,11 +82,12 @@ void  gegl_sampler_prepare     (GeglSampler *self);
 void  gegl_sampler_set_buffer  (GeglSampler *self,
                                 GeglBuffer  *buffer);
 
-void  gegl_sampler_get         (GeglSampler *self,
-                                gdouble      x,
-                                gdouble      y,
-                                GeglMatrix2 *scale,
-                                void        *output);
+void  gegl_sampler_get         (GeglSampler   *self,
+                                gdouble        x,
+                                gdouble        y,
+                                GeglMatrix2   *scale,
+                                void          *output,
+                                GeglAbyssPolicy repeat_mode);
 
 gfloat * gegl_sampler_get_from_buffer (GeglSampler *sampler,
                                        gint         x,

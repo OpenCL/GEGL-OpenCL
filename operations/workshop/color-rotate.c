@@ -353,7 +353,8 @@ process (GeglOperation       *operation,
 
   format = babl_format ("RGBA float");
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (x = 0; x < result->width * result->height; x++)
     color_rotate (src_buf, 4 * x, o);

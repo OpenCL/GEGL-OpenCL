@@ -134,7 +134,8 @@ edge_laplace (GeglBuffer          *src,
   dst_buf  = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
   gegl_buffer_get (src, src_rect, 1.0,
-                   babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+                   babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   for (y=0; y<dst_rect->height; y++)
     for (x=0; x<dst_rect->width; x++)
