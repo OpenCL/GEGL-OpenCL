@@ -1,3 +1,4 @@
+#include "config.h"
 #include "gegl.h"
 #include "gegl/gegl-debug.h"
 #include "gegl-cl-color.h"

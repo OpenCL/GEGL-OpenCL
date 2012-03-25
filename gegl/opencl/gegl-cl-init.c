@@ -1,3 +1,5 @@
+#include "config.h"
+
 #define __GEGL_CL_INIT_MAIN__
 #include "gegl-cl-init.h"
 #undef __GEGL_CL_INIT_MAIN__
@@ -184,7 +186,7 @@ gegl_cl_init (GError **error)
 
       if (!module)
         {
-          g_message ("Unable to load OpenCL library");
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Unable to load OpenCL library");
           return FALSE;
         }
 
