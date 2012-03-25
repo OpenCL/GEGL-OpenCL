@@ -71,7 +71,7 @@ process (GeglOperation        *op,
   for (i = 0; i < n_pixels; i++)
     {
       gint   j;
-      gfloat aA, aB, aD;
+      gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
 
       aB = in[3];
       aA = aux[3];
@@ -79,7 +79,7 @@ process (GeglOperation        *op,
 
       for (j = 0; j < 3; j++)
         {
-          gfloat cA, cB;
+          gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
 
           cB = in[j];
           cA = aux[j];
