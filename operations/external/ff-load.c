@@ -415,7 +415,7 @@ process (GeglOperation       *operation,
                 }
               }
           }
-        gegl_buffer_set (output, NULL, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_set (output, NULL, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
       }
   }
