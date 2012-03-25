@@ -1226,6 +1226,16 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
   width      = gegl_buffer_get_width (buffer);
   height     = gegl_buffer_get_height (buffer);
 
+  while (x_offset > pat_width)
+    x_offset -= path_width;
+  while (y_offset < pat_height)
+    y_offset += path_height;
+
+  while (x_offset < 0)
+    x_offset += path_width;
+  while (y_offset > pat_height)
+    y_offset -= path_height;
+
   src_rect.width = dst_rect.width = pat_width;
   src_rect.height = dst_rect.height = pat_height;
 
