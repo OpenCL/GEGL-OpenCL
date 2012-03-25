@@ -51,7 +51,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
  * and release the libopenraw structure instead.
  */
 static void
-destroy_rawdata (void * pixels, void * rawdata)
+destroy_rawdata (void * rawdata)
 {
   or_rawdata_release (rawdata);
 }
@@ -137,7 +137,7 @@ load_buffer (GeglOperation *operation)
                                                        babl_format ("Y u16"),
                                                        &extent,
                                                        GEGL_AUTO_ROWSTRIDE,
-                                                       G_CALLBACK (destroy_rawdata),
+                                                       destroy_rawdata,
                                                        rawdata);
     }
 
@@ -225,11 +225,9 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
-  GeglOperationSourceClass *source_class;
 
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
-  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   object_class->finalize = finalize;
 

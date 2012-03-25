@@ -298,12 +298,12 @@ process (GeglOperation       *operation,
           switch (depth)
             {
             case 16:
-              gegl_buffer_set (output, &rect, babl_format ("R'G'B' u16"),
+              gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u16"),
                                data_s, GEGL_AUTO_ROWSTRIDE);
               break;
 
             case 8:
-              gegl_buffer_set (output, &rect, babl_format ("R'G'B' u8"),
+              gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u8"),
                                data_b, GEGL_AUTO_ROWSTRIDE);
 	      break;
 
