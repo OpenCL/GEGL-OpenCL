@@ -284,11 +284,11 @@ process (GeglOperation       *operation,
                 }
             }
         }
-      gegl_buffer_set (output, NULL, NULL, foobuf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (output, NULL, 0, NULL, foobuf, GEGL_AUTO_ROWSTRIDE);
     }
   else
     {
-      gegl_buffer_set (output, NULL, NULL, capbuf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (output, NULL, 0, NULL, capbuf, GEGL_AUTO_ROWSTRIDE);
     }
   return  TRUE;
 }

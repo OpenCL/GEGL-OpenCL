@@ -419,7 +419,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
   LensCorrectionModel  lens;
@@ -434,7 +435,7 @@ process (GeglOperation       *operation,
   found = find_make_lens (&lens, o, boundary);
   if (!found) make_lens (&lens, o, boundary);
 
-  gegl_buffer_get (input, 1.0, result, babl_format ("RGBA float"),
+  gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (y = result->y; y < result->y + result->height; y++)
@@ -444,7 +445,7 @@ process (GeglOperation       *operation,
                            result, &boundary, &lens, x, y, input);
       }
 
-  gegl_buffer_set (output, result, babl_format ("RGBA float"),
+  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (dst_buf);

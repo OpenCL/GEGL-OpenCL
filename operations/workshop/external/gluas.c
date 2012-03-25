@@ -287,7 +287,7 @@ set_rgba_pixel (void       *data,
     }
 
  gegl_buffer_set (p->out_drawable, &roi,
-                  p->rgba_float, buf,
+                  0, p->rgba_float, buf,
                   GEGL_AUTO_ROWSTRIDE);
 }
 
