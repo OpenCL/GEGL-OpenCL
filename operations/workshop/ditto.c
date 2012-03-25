@@ -48,7 +48,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -83,7 +84,7 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, result, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
 
   g_object_unref (sampler);

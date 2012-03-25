@@ -218,7 +218,7 @@ stamp (GeglChantO          *o,
     {
       gint pixel_count = 0;
 
-      it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READ);
+      it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READ, 0);
 
       while (gegl_buffer_iterator_next (it))
         {
@@ -237,7 +237,7 @@ stamp (GeglChantO          *o,
       y_mean /= pixel_count;
     }
 
-  it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READWRITE);
+  it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READWRITE, 0);
 
   while (gegl_buffer_iterator_next (it))
     {
@@ -307,7 +307,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
   WarpPrivate         *priv = (WarpPrivate*) o->chant_data;

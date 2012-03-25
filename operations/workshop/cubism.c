@@ -438,7 +438,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area      = GEGL_OPERATION_AREA_FILTER (operation);
@@ -519,7 +520,7 @@ process (GeglOperation       *operation,
       fill_poly_color (&poly, &extended, &boundary, dst_buf, color);
     }
 
-  gegl_buffer_set (output, &extended, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, &extended, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (dst_buf);
   g_free (random_indices);

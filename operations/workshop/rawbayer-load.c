@@ -80,6 +80,7 @@ load_buffer (GeglChantO *op_raw_load)
            }
            gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
                             NULL,
+                            0,
                             babl_format_new (
                                  babl_model ("RGB"),
                                  babl_type ("u16"),
@@ -88,7 +89,7 @@ load_buffer (GeglChantO *op_raw_load)
                                  babl_component ("B"),
                                  NULL),
                             buf,
-                            GEGL_AUTO_ROWSTRIDE, 0);
+                            GEGL_AUTO_ROWSTRIDE);
            g_free (buf);
          }
        fclose (pfp);
@@ -112,7 +113,8 @@ static gboolean
 process (GeglOperation        *operation,
          GeglOperationContext *context,
          const gchar          *output_pad,
-         const GeglRectangle  *result)
+         const GeglRectangle  *result,
+         gint                  level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 #if 1

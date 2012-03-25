@@ -234,7 +234,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO	*o;
   GeglRectangle  boundary;
@@ -270,7 +271,7 @@ process (GeglOperation       *operation,
     fractaltrace (input, &boundary, dst_buf, result, o, y,
                   fractal_type, background_type, format);
 
-  gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (dst_buf);
 

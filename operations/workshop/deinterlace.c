@@ -214,7 +214,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO              *o        = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area  = GEGL_OPERATION_AREA_FILTER (operation);
@@ -236,8 +237,8 @@ process (GeglOperation       *operation,
   dst_buf = g_new0 (gfloat, result->height * result->width * 4);
   src_buf = g_new0 (gfloat, rect.height * rect.width * 4);
 
-  gegl_buffer_get (input, 1.0, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (input, 1.0, &rect, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, &rect, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   if (o->horizontal)
     {
@@ -256,7 +257,7 @@ process (GeglOperation       *operation,
                                 x, o->size);
     }
 
-  gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);
   g_free (dst_buf);

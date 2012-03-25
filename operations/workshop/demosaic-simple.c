@@ -47,7 +47,7 @@ demosaic (GeglChantO          *op,
   src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 1);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 3);
 
-  gegl_buffer_get (src, 1.0, src_rect, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("Y float"), src_buf, GEGL_AUTO_ROWSTRIDE);
 
   offset=0;
   for (y=src_rect->y; y < dst_rect->height + src_rect->y; y++)
@@ -103,7 +103,7 @@ demosaic (GeglChantO          *op,
         }
     }
 
-  gegl_buffer_set (dst, dst_rect, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE, 0);
+  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RGB float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
 }

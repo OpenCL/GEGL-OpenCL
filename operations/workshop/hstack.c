@@ -123,8 +123,8 @@ process (GeglOperation       *operation,
       gfloat *buf  = g_new0 (gfloat, result->width * result->height * 4);
       gfloat *bufB = g_new0 (gfloat, result->width * result->height * 4);
 
-      gegl_buffer_get (temp_in, 1.0, NULL, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-      gegl_buffer_get (temp_aux, 1.0, NULL, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (temp_in,  NULL, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_get (temp_aux, NULL, 1.0, babl_format ("RGBA float"), bufB, GEGL_AUTO_ROWSTRIDE);
         {
           gint offset=0;
           gint x,y;
@@ -141,8 +141,8 @@ process (GeglOperation       *operation,
                 offset+=4;
               }
         }
-      gegl_buffer_set (output, NULL, babl_format ("RGBA float"), buf,
-                       GEGL_AUTO_ROWSTRIDE, 0);
+      gegl_buffer_set (output, NULL, 0, babl_format ("RGBA float"), buf,
+                       GEGL_AUTO_ROWSTRIDE);
 
       g_free (buf);
       g_free (bufB);

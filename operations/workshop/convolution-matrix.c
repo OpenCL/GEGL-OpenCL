@@ -322,7 +322,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -361,7 +362,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, 1.0, &rect, babl_format (type),
+  gegl_buffer_get (input, &rect, 1.0, babl_format (type),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   /*fill src_buf with wrap pixels if it is the case*/
@@ -373,11 +374,11 @@ process (GeglOperation       *operation,
           convolve_pixel (src_buf, dst_buf, result, &rect, &boundary,
                           matrix, o, input, x, y, matrixsum);
 
-      gegl_buffer_set (output, result, babl_format (type),
+      gegl_buffer_set (output, result, 0, babl_format (type),
                        dst_buf, GEGL_AUTO_ROWSTRIDE);
     }
   else
-    gegl_buffer_set (output, &rect, babl_format (type),
+    gegl_buffer_set (output, &rect, 0, babl_format (type),
                      src_buf, GEGL_AUTO_ROWSTRIDE);
 
 

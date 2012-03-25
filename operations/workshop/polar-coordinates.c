@@ -299,7 +299,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
@@ -319,7 +320,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, 1.0, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   if (o->middle)
     {
@@ -352,7 +353,7 @@ process (GeglOperation       *operation,
           dst_buf[offset++] = dest[i];
       }
 
-  gegl_buffer_set (output, result, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);
   g_free (dst_buf);

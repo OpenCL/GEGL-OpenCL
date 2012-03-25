@@ -341,7 +341,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
   const Babl *format = babl_format ("RGBA float");
@@ -352,12 +353,12 @@ process (GeglOperation       *operation,
 
   format = babl_format ("RGBA float");
 
-  gegl_buffer_get (input, 1.0, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   for (x = 0; x < result->width * result->height; x++)
     color_rotate (src_buf, 4 * x, o);
 
-  gegl_buffer_set (output, result, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);
 

@@ -176,7 +176,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -212,7 +213,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
   dst_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
 
-  gegl_buffer_get (input, 1.0, &rect, babl_format (type),
+  gegl_buffer_get (input, &rect, 1.0, babl_format (type),
                    src_buf, GEGL_AUTO_ROWSTRIDE);
 
   /*do for every row*/
@@ -220,7 +221,7 @@ process (GeglOperation       *operation,
     emboss (src_buf, &rect, dst_buf, &rect, x, type, floats_per_pixel, alpha,
             DEG_TO_RAD (o->azimuth), DEG_TO_RAD (o->elevation), o->depth);
 
-  gegl_buffer_set (output, &rect, babl_format (type),
+  gegl_buffer_set (output, &rect, 0, babl_format (type),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);

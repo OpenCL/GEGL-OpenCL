@@ -117,7 +117,7 @@ put_pixel (PlasmaContext *context,
       rect.width = 1;
       rect.height = 1;
 
-      gegl_buffer_set (context->output, &rect, babl_format ("RGBA float"), pixel,
+      gegl_buffer_set (context->output, &rect, 0, babl_format ("RGBA float"), pixel,
                        GEGL_AUTO_ROWSTRIDE);
       return;
     }
@@ -160,7 +160,7 @@ do_plasma_big (PlasmaContext *context,
       rect.width = x2 - x1 + 1;
       rect.height = y2 - y1 + 1;
 
-      gegl_buffer_get (context->output, 1.0, &rect, babl_format ("RGBA float"),
+      gegl_buffer_get (context->output, &rect, 1.0, babl_format ("RGBA float"),
                        context->buffer, GEGL_AUTO_ROWSTRIDE);
 
       context->using_buffer = TRUE;
@@ -172,7 +172,7 @@ do_plasma_big (PlasmaContext *context,
 
       context->using_buffer = FALSE;
 
-      gegl_buffer_set (context->output, &rect, babl_format ("RGBA float"),
+      gegl_buffer_set (context->output, &rect, 0, babl_format ("RGBA float"),
                        context->buffer, GEGL_AUTO_ROWSTRIDE);
 
       return ret;
@@ -309,7 +309,8 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   PlasmaContext *context;
   GeglRectangle boundary;

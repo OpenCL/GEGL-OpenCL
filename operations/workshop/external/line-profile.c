@@ -48,7 +48,7 @@ buffer_sample (GeglBuffer *buffer,
   gfloat rgba[4];
   GeglRectangle roi = {x,y,1,1};
 
-  gegl_buffer_get (buffer, 1.0, &roi, babl_format ("RGBA float"), &rgba[0], GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (buffer, &roi, 1.0, babl_format ("RGBA float"), &rgba[0], GEGL_AUTO_ROWSTRIDE);
   return rgba[component];
 }
 
@@ -132,7 +132,7 @@ process (GeglOperation       *operation,
    cairo_line_to (cr, o->x1, o->y1);
    cairo_stroke (cr);
 
-    gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf, GEGL_AUTO_ROWSTRIDE, 0);
+    gegl_buffer_set (output, NULL, 0, babl_format ("B'aG'aR'aA u8"), buf, GEGL_AUTO_ROWSTRIDE);
   }
 
   return TRUE;
