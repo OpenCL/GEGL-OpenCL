@@ -738,13 +738,13 @@ tfile (GeglChantO *self)
 {
   Priv *p = (Priv*)self->chant_data;
 
-  p->fmt = guess_format (NULL, self->path, NULL);
+  p->fmt = av_guess_format (NULL, self->path, NULL);
   if (!p->fmt)
     {
       fprintf (stderr,
                "ff_save couldn't deduce outputformat from file extension: using MPEG.\n%s",
                "");
-      p->fmt = guess_format ("mpeg", NULL, NULL);
+      p->fmt = av_guess_format ("mpeg", NULL, NULL);
     }
   p->oc = av_alloc_format_context ();/*g_malloc (sizeof (AVFormatContext));*/
   if (!p->oc)
