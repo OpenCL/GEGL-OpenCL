@@ -218,7 +218,7 @@ stamp (GeglChantO          *o,
     {
       gint pixel_count = 0;
 
-      it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READ, 0);
+      it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format, GEGL_BUFFER_READ);
 
       while (gegl_buffer_iterator_next (it))
         {
@@ -237,7 +237,7 @@ stamp (GeglChantO          *o,
       y_mean /= pixel_count;
     }
 
-  it = gegl_buffer_iterator_new (priv->buffer, &area, format, GEGL_BUFFER_READWRITE, 0);
+  it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format, GEGL_BUFFER_READWRITE);
 
   while (gegl_buffer_iterator_next (it))
     {

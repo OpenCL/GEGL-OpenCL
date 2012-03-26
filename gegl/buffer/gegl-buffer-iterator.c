@@ -253,6 +253,7 @@ gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
                           const GeglRectangle *roi,
+                          gint                 level,
                           const Babl          *format,
                           guint                flags)
 {
@@ -267,6 +268,10 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
     {
       memset (i, 0, sizeof (GeglBufferIterators));
     }
+
+  /* XXX: should assert that the passed in level matches
+   * the level of the base iterator.
+   */
 
   self = i->iterators++;
 
@@ -552,15 +557,15 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 
 GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
                                               const GeglRectangle *roi,
+                                              gint                 level,
                                               const Babl          *format,
-                                              guint                flags,
-                                              gint                 level)
+                                              guint                flags)
 {
   GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
   i->level = level;
-  gegl_buffer_iterator_add (i, buffer, roi, format, flags);
+  gegl_buffer_iterator_add (i, buffer, roi, level, format, flags);
   return i;
 }
 

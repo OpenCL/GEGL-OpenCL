@@ -160,15 +160,15 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, out_format, GEGL_BUFFER_WRITE, level);
-      gint read  = gegl_buffer_iterator_add (i, input,  result, in_format, GEGL_BUFFER_READ);
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE);
+      gint read  = gegl_buffer_iterator_add (i, input, result, level, in_format, GEGL_BUFFER_READ);
 
       if (aux)
         {
-          gint foo = gegl_buffer_iterator_add (i, aux,  result, aux_format, GEGL_BUFFER_READ);
+          gint foo = gegl_buffer_iterator_add (i, aux, result, level, aux_format, GEGL_BUFFER_READ);
           if (aux2)
             {
-              gint bar = gegl_buffer_iterator_add (i, aux2,  result, aux2_format, GEGL_BUFFER_READ);
+              gint bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_format, GEGL_BUFFER_READ);
 
               while (gegl_buffer_iterator_next (i))
                 {
@@ -187,7 +187,7 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
         {
           if (aux2)
             {
-              gint bar = gegl_buffer_iterator_add (i, aux2,  result, aux2_format, GEGL_BUFFER_READ);
+              gint bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_format, GEGL_BUFFER_READ);
               while (gegl_buffer_iterator_next (i))
                 {
                    point_composer3_class->process (operation, i->data[read], NULL, i->data[bar], i->data[0], i->length, &(i->roi[0]), level);

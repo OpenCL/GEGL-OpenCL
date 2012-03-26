@@ -56,10 +56,9 @@ typedef struct GeglBufferIterator
  */
 GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
                                                 const GeglRectangle *roi,
+                                                gint                 level,
                                                 const Babl          *format,
-                                                guint                flags,
-                                                gint                 level);   /* XXX: or encode it in flags? */
-/* should maybe be reporting the roi in process, as base image roi when level != 0 */
+                                                guint                flags);
 
 
 /**
@@ -81,6 +80,7 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
 gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
                                                 GeglBuffer          *buffer,
                                                 const GeglRectangle *roi,
+                                                gint                 level,
                                                 const Babl          *format,
                                                 guint                flags);
 
