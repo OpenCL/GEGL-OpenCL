@@ -673,7 +673,7 @@ affine_generic (GeglBuffer  *dest,
   dest_extent = gegl_buffer_get_extent (dest);
 
 
-  i = gegl_buffer_iterator_new (dest, dest_extent, level, format, GEGL_BUFFER_WRITE);
+  i = gegl_buffer_iterator_new (dest, dest_extent, level, format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];

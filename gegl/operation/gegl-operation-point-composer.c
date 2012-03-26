@@ -233,15 +233,15 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
         }
 
       {
-        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE);
-        gint read = /*output == input ? 0 :*/ gegl_buffer_iterator_add (i, input,  result, level, in_format, GEGL_BUFFER_READ);
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+        gint read = /*output == input ? 0 :*/ gegl_buffer_iterator_add (i, input,  result, level, in_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
         /* using separate read and write iterators for in-place ideally a single
          * readwrite indice would be sufficient
          */
 
         if (aux)
           {
-            gint foo = gegl_buffer_iterator_add (i, aux, result, level, aux_format, GEGL_BUFFER_READ);
+            gint foo = gegl_buffer_iterator_add (i, aux, result, level, aux_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
             while (gegl_buffer_iterator_next (i))
               {

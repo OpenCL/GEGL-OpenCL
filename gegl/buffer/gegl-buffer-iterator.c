@@ -248,14 +248,14 @@ static glong in_direct_write = 0;
 #endif
 
 
-
 gint
 gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                           GeglBuffer          *buffer,
                           const GeglRectangle *roi,
                           gint                 level,
                           const Babl          *format,
-                          guint                flags)
+                          guint                flags,
+                          GeglAbyssPolicy      abyss_policy)
 {
   GeglBufferIterators *i = (gpointer)iterator;
   gint self = 0;
@@ -555,17 +555,19 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
   return result;
 }
 
-GeglBufferIterator *gegl_buffer_iterator_new (GeglBuffer          *buffer,
-                                              const GeglRectangle *roi,
-                                              gint                 level,
-                                              const Babl          *format,
-                                              guint                flags)
+GeglBufferIterator *
+gegl_buffer_iterator_new (GeglBuffer          *buffer,
+                          const GeglRectangle *roi,
+                          gint                 level,
+                          const Babl          *format,
+                          guint                flags,
+                          GeglAbyssPolicy      abyss_policy)
 {
   GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
   i->level = level;
-  gegl_buffer_iterator_add (i, buffer, roi, level, format, flags);
+  gegl_buffer_iterator_add (i, buffer, roi, level, format, flags, abyss_policy);
   return i;
 }
 

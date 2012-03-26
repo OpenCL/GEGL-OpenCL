@@ -58,7 +58,8 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
                                                 const GeglRectangle *roi,
                                                 gint                 level,
                                                 const Babl          *format,
-                                                guint                flags);
+                                                guint                flags,
+                                                GeglAbyssPolicy      abyss_policy);
 
 
 /**
@@ -82,8 +83,8 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
                                                 const GeglRectangle *roi,
                                                 gint                 level,
                                                 const Babl          *format,
-                                                guint                flags);
-
+                                                guint                flags,
+                                                GeglAbyssPolicy      abyss_policy);
 
 /**
  * gegl_buffer_iterator_stop:
