@@ -70,7 +70,8 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
                                gint                   left,
                                gint                   right,
                                gint                   top,
-                               gint                   bottom)
+                               gint                   bottom,
+                               GeglAbyssPolicy        abyss_policy)
 {
   GeglBufferClIterators *i = (gpointer)iterator;
   gint self = 0;
@@ -170,9 +171,10 @@ gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
                              GeglBuffer            *buffer,
                              const GeglRectangle   *result,
                              const Babl            *format,
-                             guint                  flags)
+                             guint                  flags,
+                             GeglAbyssPolicy        abyss_policy)
 {
-  return gegl_buffer_cl_iterator_add_2 (iterator, buffer, result, format, flags, 0,0,0,0);
+  return gegl_buffer_cl_iterator_add_2 (iterator, buffer, result, format, flags, 0,0,0,0, abyss_policy);
 }
 
 #define OPENCL_USE_CACHE 1
@@ -582,12 +584,13 @@ GeglBufferClIterator *
 gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
                              const GeglRectangle *roi,
                              const Babl          *format,
-                             guint                flags)
+                             guint                flags,
+                             GeglAbyssPolicy      abyss_policy)
 {
   GeglBufferClIterator *i = (gpointer)g_slice_new0 (GeglBufferClIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
-  gegl_buffer_cl_iterator_add (i, buffer, roi, format, flags);
+  gegl_buffer_cl_iterator_add (i, buffer, roi, format, flags, abyss_policy);
   return i;
 }
 

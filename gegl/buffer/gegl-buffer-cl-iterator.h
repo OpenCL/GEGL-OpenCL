@@ -26,7 +26,8 @@ gint gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
                                   GeglBuffer            *buffer,
                                   const GeglRectangle   *roi,
                                   const Babl            *format,
-                                  guint                  flags);
+                                  guint                  flags,
+                                  GeglAbyssPolicy        abyss_policy);
 
 gint gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
                                     GeglBuffer            *buffer,
@@ -36,12 +37,14 @@ gint gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
                                     gint                   left,
                                     gint                   right,
                                     gint                   top,
-                                    gint                   bottom);
+                                    gint                   bottom,
+                                    GeglAbyssPolicy        abyss_policy);
 
 gboolean gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err);
 
 GeglBufferClIterator *gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
                                                    const GeglRectangle *roi,
                                                    const Babl          *format,
-                                                   guint                flags);
+                                                   guint                flags,
+                                                   GeglAbyssPolicy      abyss_policy);
 #endif
