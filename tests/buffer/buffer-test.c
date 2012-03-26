@@ -149,7 +149,8 @@ print_buffer_internal (GString    *gstring,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0,
+                   GEGL_ABYSS_NONE);
   print_linear_buffer_internal_float (gstring, width, height, buf);
   g_free (buf);
 }
@@ -168,7 +169,8 @@ fill (GeglBuffer *buffer,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0,
+                   GEGL_ABYSS_NONE);
 
   i=0;
   for (y=0;y<height;y++)
@@ -197,7 +199,8 @@ static void checkerboard          (GeglBuffer *buffer,
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0,
+                   GEGL_ABYSS_NONE);
 
   i=0;
   for (y=0;y<height;y++)
@@ -240,7 +243,8 @@ static void vgrad (GeglBuffer *buffer)
                         "height", &height,
                         NULL);
   buf = g_malloc (width*height*sizeof(gfloat));
-  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0,
+                   GEGL_ABYSS_NONE);
 
   i=0;
   for (y=0;y<height;y++)

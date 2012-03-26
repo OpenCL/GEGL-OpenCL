@@ -18,7 +18,8 @@ TEST ()
         {
           getrect.x=i;
           /*getrect.y=i;*/
-          gegl_buffer_get (buffer, &getrect, 1.2, babl_format ("Y u8"), buf, 0);
+          gegl_buffer_get (buffer, &getrect, 1.2, babl_format ("Y u8"), buf, 0,
+                           GEGL_ABYSS_NONE);
           print_linear_buffer_u8 (getrect.width, getrect.height, buf);
         }
     }
