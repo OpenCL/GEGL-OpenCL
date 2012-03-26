@@ -746,7 +746,7 @@ tfile (GeglChantO *self)
                "");
       p->fmt = av_guess_format ("mpeg", NULL, NULL);
     }
-  p->oc = av_alloc_format_context ();/*g_malloc (sizeof (AVFormatContext));*/
+  p->oc = avformat_alloc_context ();/*g_malloc (sizeof (AVFormatContext));*/
   if (!p->oc)
     {
       fprintf (stderr, "memory error\n%s", "");
