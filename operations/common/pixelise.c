@@ -22,9 +22,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (xsize, _("Block Width"), 1, 256, 8,
+gegl_chant_int (size_x, _("Block Width"), 1, 256, 8,
    _("Width of blocks in pixels"))
-gegl_chant_int (ysize, _("Block Height"), 1, 256, 8,
+gegl_chant_int (size_y, _("Block Height"), 1, 256, 8,
    _("Height of blocks in pixels"))
 
 #else
@@ -47,9 +47,9 @@ static void prepare (GeglOperation *operation)
   o       = GEGL_CHANT_PROPERTIES (operation);
 
   op_area->left   =
-  op_area->right  = o->xsize;
+  op_area->right  = o->size_x;
   op_area->top    =
-  op_area->bottom = o->ysize;
+  op_area->bottom = o->size_y;
 
   gegl_operation_set_format (operation, "output",
                              babl_format ("RaGaBaA float"));
@@ -59,32 +59,32 @@ static void
 calc_block_colors (gfloat* block_colors,
                    const gfloat* input,
                    const GeglRectangle* roi,
-                   gint xsize,
-                   gint ysize)
+                   gint size_x,
+                   gint size_y)
 {
-  gint cx0 = CELL_X(roi->x, xsize);
-  gint cy0 = CELL_Y(roi->y, ysize);
-  gint cx1 = CELL_X(roi->x + roi->width - 1, xsize);
-  gint cy1 = CELL_Y(roi->y + roi->height - 1, ysize);
+  gint cx0 = CELL_X(roi->x, size_x);
+  gint cy0 = CELL_Y(roi->y, size_y);
+  gint cx1 = CELL_X(roi->x + roi->width - 1, size_x);
+  gint cy1 = CELL_Y(roi->y + roi->height - 1, size_y);
 
   gint cx;
   gint cy;
-  gfloat weight = 1.0f / (xsize * ysize);
-  gint line_width = roi->width + 2*xsize;
+  gfloat weight = 1.0f / (size_x * size_y);
+  gint line_width = roi->width + 2*size_x;
   /* loop over the blocks within the region of interest */
   for (cy=cy0; cy<=cy1; ++cy)
     {
       for (cx=cx0; cx<=cx1; ++cx)
         {
-          gint px = (cx * xsize) - roi->x + xsize;
-          gint py = (cy * ysize) - roi->y + ysize;
+          gint px = (cx * size_x) - roi->x + size_x;
+          gint py = (cy * size_y) - roi->y + size_y;
 
           /* calculate the average color for this block */
           gint j,i,c;
           gfloat col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-          for (j=py; j<py+ysize; ++j)
+          for (j=py; j<py+size_y; ++j)
             {
-              for (i=px; i<px+xsize; ++i)
+              for (i=px; i<px+size_x; ++i)
                 {
                   for (c=0; c<4; ++c)
                     col[c] += input[(j*line_width + i)*4 + c];
@@ -100,28 +100,28 @@ calc_block_colors (gfloat* block_colors,
 static void
 pixelise (gfloat* buf,
           const GeglRectangle* roi,
-          gint xsize,
-          gint ysize)
+          gint size_x,
+          gint size_y)
 {
-  gint cx0 = CELL_X(roi->x, xsize);
-  gint cy0 = CELL_Y(roi->y, ysize);
-  gint block_count_x = CELL_X(roi->x + roi->width - 1, xsize) - cx0 + 1;
-  gint block_count_y = CELL_Y(roi->y + roi->height - 1, ysize) - cy0 + 1;
+  gint cx0 = CELL_X(roi->x, size_x);
+  gint cy0 = CELL_Y(roi->y, size_y);
+  gint block_count_x = CELL_X(roi->x + roi->width - 1, size_x) - cx0 + 1;
+  gint block_count_y = CELL_Y(roi->y + roi->height - 1, size_y) - cy0 + 1;
   gfloat* block_colors = g_new0 (gfloat, block_count_x * block_count_y * 4);
   gint x;
   gint y;
   gint c;
 
   /* calculate the average color of all the blocks */
-  calc_block_colors(block_colors, buf, roi, xsize, ysize);
+  calc_block_colors(block_colors, buf, roi, size_x, size_y);
 
   /* set each pixel to the average color of the block it belongs to */
   for (y=0; y<roi->height; ++y)
     {
-      gint cy = CELL_Y(y + roi->y, ysize) - cy0;
+      gint cy = CELL_Y(y + roi->y, size_y) - cy0;
       for (x=0; x<roi->width; ++x)
         {
-          gint cx = CELL_X(x + roi->x, xsize) - cx0;
+          gint cx = CELL_X(x + roi->x, size_x) - cx0;
           for (c=0; c<4; ++c)
             *buf++ = block_colors[(cy*block_count_x + cx)*4 + c];
         }
@@ -153,7 +153,7 @@ process (GeglOperation       *operation,
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  pixelise(buf, roi, o->xsize, o->ysize);
+  pixelise(buf, roi, o->size_x, o->size_y);
 
   gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
