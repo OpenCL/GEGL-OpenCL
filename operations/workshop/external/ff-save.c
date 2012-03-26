@@ -393,7 +393,7 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
     }
 
   /* open it */
-  if (avcodec_open (c, codec) < 0)
+  if (avcodec_open2 (c, codec, NULL) < 0)
     {
       fprintf (stderr, "could not open codec\n");
       exit (1);
@@ -455,7 +455,7 @@ write_audio_frame (GeglChantO *op, AVFormatContext * oc, AVStream * st)
                                        p->audio_outbuf_size, p->samples);
 
       pkt.pts = c->coded_frame->pts;
-      pkt.flags |= PKT_FLAG_KEY;
+      pkt.flags |= AV_PKT_FLAG_KEY;
       pkt.stream_index = st->index;
       pkt.data = p->audio_outbuf;
 
@@ -496,7 +496,7 @@ add_video_stream (GeglChantO *op, AVFormatContext * oc, int codec_id)
 
   c = st->codec;
   c->codec_id = codec_id;
-  c->codec_type = CODEC_TYPE_VIDEO;
+  c->codec_type = AVMEDIA_TYPE_VIDEO;
 
   /* put sample propeters */
   c->bit_rate = op->bitrate;
@@ -689,7 +689,7 @@ write_video_frame (GeglChantO *op,
       AVPacket  pkt;
       av_init_packet (&pkt);
 
-      pkt.flags |= PKT_FLAG_KEY;
+      pkt.flags |= AV_PKT_FLAG_KEY;
       pkt.stream_index = st->index;
       pkt.data = (uint8_t *) picture_ptr;
       pkt.size = sizeof (AVPicture);
@@ -712,7 +712,7 @@ write_video_frame (GeglChantO *op,
 
           pkt.pts = c->coded_frame->pts;
           if (c->coded_frame->key_frame)
-            pkt.flags |= PKT_FLAG_KEY;
+            pkt.flags |= AV_PKT_FLAG_KEY;
           pkt.stream_index = st->index;
           pkt.data = p->video_outbuf;
           pkt.size = out_size;
