@@ -86,7 +86,7 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
   if (!roi)
     roi = &buffer->extent;
 
-  gegl_cl_color_babl (buffer->format, &size);
+  gegl_cl_color_babl (buffer->soft_format, &size);
 
   for (elem=cache_entries; elem; elem=elem->next)
     {
@@ -103,7 +103,7 @@ gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
           if (cl_err != CL_SUCCESS) CL_ERROR;
 
           /* tile-ize */
-          gegl_buffer_set (entry->buffer, &entry->roi, 0, entry->buffer->format, data, GEGL_AUTO_ROWSTRIDE);
+          gegl_buffer_set (entry->buffer, &entry->roi, 0, entry->buffer->soft_format, data, GEGL_AUTO_ROWSTRIDE);
 
           cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), entry->tex, data,
                                                  0, NULL, NULL);
@@ -235,8 +235,8 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
   cl_mem tex_dest = NULL;
   GList *elem_cache, *elem_buffer;
 
-  gegl_cl_color_op conv = gegl_cl_color_supported (buffer->format, format);
-  gegl_cl_color_babl (buffer->format, &buf_size);
+  gegl_cl_color_op conv = gegl_cl_color_supported (buffer->soft_format, format);
+  gegl_cl_color_babl (buffer->soft_format, &buf_size);
   gegl_cl_color_babl (format,         &dest_size);
 
   for (elem_cache=cache_entries; elem_cache; elem_cache=elem_cache->next)
@@ -268,7 +268,7 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                   CacheBuffer *cb = elem_buffer->data;
                   if (cb->valid && cb->buffer &&
                       cb->buffer_origin == buffer &&
-                      cb->buffer->format == format &&
+                      cb->buffer->soft_format == format &&
                       gegl_rectangle_contains (&cb->roi, roi))
                     {
                       gegl_buffer_get (cb->buffer,
@@ -303,7 +303,7 @@ gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
                                                   NULL, &cl_err);
                   if (cl_err != CL_SUCCESS) CL_ERROR;
 
-                  cl_err = gegl_cl_color_conv (entry->tex, tex_dest, entry->roi.width * entry->roi.height, buffer->format, format);
+                  cl_err = gegl_cl_color_conv (entry->tex, tex_dest, entry->roi.width * entry->roi.height, buffer->soft_format, format);
                   if (cl_err == FALSE) CL_ERROR;
 
                   data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), tex_dest, CL_TRUE,

@@ -62,9 +62,9 @@ gegl_buffer_pixel_set (GeglBuffer *buffer,
   gint  buffer_abyss_x = buffer->abyss.x;
   gint  buffer_abyss_y = buffer->abyss.y;
 
-  if (format != buffer->format)
+  if (format != buffer->soft_format)
     {
-      fish = babl_fish (buffer->format, format);
+      fish = babl_fish (buffer->soft_format, format);
     }
 
   if (!(buffer_y + y >= buffer_abyss_y &&
@@ -142,11 +142,11 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
+  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->soft_format);
 
-  if (format != buffer->format)
+  if (format != buffer->soft_format)
     {
-      fish = babl_fish ((gpointer) buffer->format,
+      fish = babl_fish ((gpointer) buffer->soft_format,
                         (gpointer) format);
     }
 
@@ -219,11 +219,11 @@ gegl_buffer_get_pixel (GeglBuffer *buffer,
 
   gint  buffer_shift_x = buffer->shift_x;
   gint  buffer_shift_y = buffer->shift_y;
-  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->format);
+  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->soft_format);
 
-  if (format != buffer->format)
+  if (format != buffer->soft_format)
     {
-      fish = babl_fish ((gpointer) buffer->format,
+      fish = babl_fish ((gpointer) buffer->soft_format,
                         (gpointer) format);
     }
 
@@ -321,7 +321,7 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
 {
   gint  tile_width  = buffer->tile_storage->tile_width;
   gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->format);
+  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
   gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
   gint  tile_stride = px_size * tile_width;
   gint  buf_stride;
@@ -364,7 +364,7 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
   if (rowstride != GEGL_AUTO_ROWSTRIDE)
     buf_stride = rowstride;
 
-  if (format == buffer->format)
+  if (format == buffer->soft_format)
     {
       fish = NULL;
     }
@@ -373,11 +373,11 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
       if (write)
         {
           fish = babl_fish ((gpointer) format,
-                            (gpointer) buffer->format);
+                            (gpointer) buffer->soft_format);
         }
       else
         {
-          fish = babl_fish ((gpointer) buffer->format,
+          fish = babl_fish ((gpointer) buffer->soft_format,
                             (gpointer) format);
         }
     }
@@ -578,7 +578,7 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                           gint                 rowstride)
 {
   if (format == NULL)
-    format = buffer->format;
+    format = buffer->soft_format;
 
 #if 0 /* XXX: not thread safe */
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
@@ -935,7 +935,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 {
 
   if (format == NULL)
-    format = buffer->format;
+    format = buffer->soft_format;
 
 #if 0
   /* not thread-safe */
@@ -1162,7 +1162,7 @@ gegl_buffer_copy (GeglBuffer          *src,
       dst_rect = src_rect;
     }
 
-  fish = babl_fish (src->format, dst->format);
+  fish = babl_fish (src->soft_format, dst->soft_format);
 
     {
       GeglRectangle dest_rect_r = *dst_rect;
@@ -1172,8 +1172,8 @@ gegl_buffer_copy (GeglBuffer          *src,
       dest_rect_r.width = src_rect->width;
       dest_rect_r.height = src_rect->height;
 
-      i = gegl_buffer_iterator_new (dst, &dest_rect_r, dst->format, GEGL_BUFFER_WRITE, 0); /* XXX: is level 0 right? */
-      read = gegl_buffer_iterator_add (i, src, src_rect, src->format, GEGL_BUFFER_READ);
+      i = gegl_buffer_iterator_new (dst, &dest_rect_r, dst->soft_format, GEGL_BUFFER_WRITE, 0); /* XXX: is level 0 right? */
+      read = gegl_buffer_iterator_add (i, src, src_rect, src->soft_format, GEGL_BUFFER_READ);
       while (gegl_buffer_iterator_next (i))
         babl_process (fish, i->data[read], i->data[0], i->length);
     }
@@ -1196,7 +1196,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
       dst_rect->height == 0)
     return;
 
-  pxsize = babl_format_get_bytes_per_pixel (dst->format);
+  pxsize = babl_format_get_bytes_per_pixel (dst->soft_format);
 
   if (gegl_cl_is_accelerated ())
     gegl_buffer_cl_cache_invalidate (dst, dst_rect);
@@ -1204,7 +1204,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
   /* FIXME: this can be even further optimized by special casing it so
    * that fully voided tiles are dropped.
    */
-  i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE, 0); /* XXX: should level be settable */
+  i = gegl_buffer_iterator_new (dst, dst_rect, dst->soft_format, GEGL_BUFFER_WRITE, 0); /* XXX: should level be settable */
   while (gegl_buffer_iterator_next (i))
     {
       memset (((guchar*)(i->data[0])), 0, i->length * pxsize);
@@ -1264,7 +1264,7 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
   g_return_if_fail (GEGL_IS_BUFFER (dst));
   g_return_if_fail (color);
 
-  gegl_color_get_pixel (color, dst->format, buf);
+  gegl_color_get_pixel (color, dst->soft_format, buf);
 
   if (!dst_rect)
     {
@@ -1274,12 +1274,12 @@ void            gegl_buffer_set_color         (GeglBuffer          *dst,
       dst_rect->height == 0)
     return;
 
-  pxsize = babl_format_get_bytes_per_pixel (dst->format);
+  pxsize = babl_format_get_bytes_per_pixel (dst->soft_format);
 
   /* FIXME: this can be even further optimized by special casing it so
    * that fully filled tiles are shared.
    */
-  i = gegl_buffer_iterator_new (dst, dst_rect, dst->format, GEGL_BUFFER_WRITE, 0);
+  i = gegl_buffer_iterator_new (dst, dst_rect, dst->soft_format, GEGL_BUFFER_WRITE, 0);
   while (gegl_buffer_iterator_next (i))
     {
       int j;
@@ -1295,7 +1295,7 @@ gegl_buffer_dup (GeglBuffer *buffer)
 
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-  new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->format);
+  new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->soft_format);
   gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
                     new_buffer, gegl_buffer_get_extent (buffer));
   return new_buffer;

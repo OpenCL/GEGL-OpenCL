@@ -300,12 +300,32 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
  * gegl_buffer_get_format:
  * @buffer: a #GeglBuffer
  *
- * Get the native babl format of the buffer.
+ * Get the babl format of the buffer, this might not be the format the buffer
+ * was originally created with, you need to use gegl_buffer_set_format (buf,
+ * NULL); to retireve the original format (potentially having save away the
+ * original format of the buffer to re-set it.)
  *
  * Returns: the babl format used for storing pixels in the buffer.
  *
  */
 const Babl *    gegl_buffer_get_format        (GeglBuffer           *buffer);
+
+
+/**
+ * gegl_buffer_set_format:
+ * @buffer: a #GeglBuffer
+ * @format: the new babl format, must have same bpp as original format.
+ *
+ * Set the babl format of the buffer, setting the babl format of the buffer
+ * requires the new format to have exactly the same bytes per pixel as the
+ * original format. If NULL is passed in the format of the buffer is reset to
+ * the original format.
+ *
+ * Returns: the new babl format or NULL if it the passed in buffer was
+ * incompatible (then the original format is still used).
+ */
+const Babl *    gegl_buffer_set_format        (GeglBuffer          *buffer,
+                                               const Babl          *format);
 
 /**
  * gegl_buffer_clear:

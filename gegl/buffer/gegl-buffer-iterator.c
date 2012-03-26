@@ -199,7 +199,7 @@ gulp:
          i->data = gegl_tile_get_data (i->tile);
 
          {
-         gint bpp = babl_format_get_bytes_per_pixel (i->buffer->format);
+         gint bpp = babl_format_get_bytes_per_pixel (i->buffer->soft_format);
          i->rowstride = bpp * tile_width;
          i->sub_data = (guchar*)(i->data) + bpp * (i->subrect.y * tile_width + i->subrect.x);
          }
@@ -279,7 +279,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   if (format)
     i->format[self]=format;
   else
-    i->format[self]=buffer->format;
+    i->format[self]=buffer->soft_format;
   i->flags[self]=flags;
 
   if (self==0) /* The first buffer which is always scan aligned */
@@ -303,7 +303,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
 
   i->buf[self] = NULL;
 
-  if (i->format[self] == i->buffer[self]->format)
+  if (i->format[self] == i->buffer[self]->soft_format)
     {
       i->flags[self] |= GEGL_BUFFER_FORMAT_COMPATIBLE;
     }

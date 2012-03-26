@@ -125,7 +125,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
                          const Babl          *format)   /* if NULL, from buf */
 {
   if (!format)
-    format = buffer->format;
+    format = buffer->soft_format;
 
   if (extent == NULL)
     extent=&buffer->extent;
@@ -136,7 +136,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
       extent->y     == buffer->extent.y &&
       extent->width == buffer->tile_width &&
       extent->height <= buffer->tile_height &&
-      buffer->format == format)
+      buffer->soft_format == format)
     {
       GeglTile *tile;
 

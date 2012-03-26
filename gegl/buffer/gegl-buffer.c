@@ -190,10 +190,17 @@ gegl_buffer_get_property (GObject    *gobject,
          * since it will never change.
          */
 
-        if (buffer->format == NULL)
-          buffer->format = gegl_buffer_internal_get_format (buffer);
+        {
+          const Babl *format;
 
-        g_value_set_pointer (value, (void*)buffer->format); /* Eeeek? */
+            format = buffer->soft_format;
+          if (format == NULL)
+            format = buffer->format;
+          if (format == NULL)
+            format = gegl_buffer_internal_get_format (buffer);
+
+          g_value_set_pointer (value, (void*)format);
+        }
         break;
 
       case PROP_BACKEND:
@@ -292,7 +299,21 @@ gegl_buffer_set_property (GObject      *gobject,
          * for a gpointer paramspec
          */
         if (g_value_get_pointer (value))
-          buffer->format = g_value_get_pointer (value);
+          {
+            const Babl *format = g_value_get_pointer (value);
+            /* XXX: need to check if the internal format matches, should
+             * perhaps do different things here depending on whether
+             * we are during construction or not
+             */
+            if (buffer->soft_format)
+              {
+                gegl_buffer_set_format (buffer, format);
+              }
+            else
+              {
+                buffer->format = format;
+              }
+          }
         break;
       case PROP_BACKEND:
         if (g_value_get_pointer (value))
@@ -603,7 +624,7 @@ gegl_buffer_constructor (GType                  type,
           g_warning ("not enough data to have a tile source for our buffer");
         }
         /* we reset the size if it seems to have been set to 0 during a on
-         * disk buffer creation, nasty but it seems to do the job.
+         * disk buffer creation, nasty but it does the job.
          */
 
       if (buffer->extent.width == 0)
@@ -708,6 +729,11 @@ gegl_buffer_constructor (GType                  type,
     }
 
   buffer->tile_storage = gegl_buffer_tile_storage (buffer);
+
+  /* intialize the soft format to be equivalent to the actual
+   * format
+   */
+  buffer->soft_format = buffer->format;
 
   return object;
 }
@@ -942,6 +968,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->abyss.width  = 0;
   buffer->abyss.height = 0;
   buffer->format       = NULL;
+  buffer->soft_format  = NULL;
   buffer->hot_tile     = NULL;
 
   buffer->path = NULL;
@@ -1240,7 +1267,6 @@ gegl_buffer_new_from_format (const void *babl_fmt,
   return buffer;
 }
 
-
 static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
@@ -1249,9 +1275,29 @@ static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
   return gegl_tile_backend_get_format (gegl_buffer_backend (buffer));
 }
 
-const Babl    *gegl_buffer_get_format        (GeglBuffer           *buffer)
+const Babl *
+gegl_buffer_get_format (GeglBuffer *buffer)
 {
-  return buffer?buffer->format:0;
+  return buffer?buffer->format:NULL;
+}
+
+const Babl *
+gegl_buffer_set_format (GeglBuffer *buffer,
+                        const Babl *format)
+{
+  if (format == NULL)
+    {
+      buffer->soft_format = buffer->format;
+      return buffer->soft_format;
+    }
+  if (babl_format_get_bytes_per_pixel (format) ==
+      babl_format_get_bytes_per_pixel (buffer->format))
+    {
+      buffer->soft_format = format;
+      return buffer->soft_format;
+    }
+  g_warning ("tried to set format of different bpp on buffer\n");
+  return NULL;
 }
 
 gboolean gegl_buffer_is_shared (GeglBuffer *buffer)

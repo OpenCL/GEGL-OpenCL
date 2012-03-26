@@ -47,7 +47,7 @@ typedef struct GeglBufferClIterators
   const Babl    *format         [GEGL_CL_BUFFER_MAX_ITERATORS]; /* The format required for the data */
   GeglBuffer    *buffer         [GEGL_CL_BUFFER_MAX_ITERATORS];
 
-  /* buffer->format */
+  /* buffer->soft_format */
   size_t buf_cl_format_size     [GEGL_CL_BUFFER_MAX_ITERATORS];
   /* format */
   size_t op_cl_format_size      [GEGL_CL_BUFFER_MAX_ITERATORS];
@@ -101,15 +101,15 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
       if (format)
         i->format[self]=format;
       else
-        i->format[self]=buffer->format;
+        i->format[self]=buffer->soft_format;
 
       if (flags == GEGL_CL_BUFFER_WRITE)
-        i->conv[self] = gegl_cl_color_supported (format, buffer->format);
+        i->conv[self] = gegl_cl_color_supported (format, buffer->soft_format);
       else
-        i->conv[self] = gegl_cl_color_supported (buffer->format, format);
+        i->conv[self] = gegl_cl_color_supported (buffer->soft_format, format);
 
-      gegl_cl_color_babl (buffer->format, &i->buf_cl_format_size[self]);
-      gegl_cl_color_babl (format,         &i->op_cl_format_size [self]);
+      gegl_cl_color_babl (buffer->soft_format, &i->buf_cl_format_size[self]);
+      gegl_cl_color_babl (format,              &i->op_cl_format_size [self]);
     }
   else /* GEGL_CL_BUFFER_AUX */
     {
@@ -229,7 +229,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                 for (j=0; j < i->n; j++)
                   {
                     cl_err = gegl_cl_color_conv (i->tex_op[no][j], i->tex_buf[no][j], i->size[no][j],
-                                                 i->format[no], i->buffer[no]->format);
+                                                 i->format[no], i->buffer[no]->soft_format);
                     if (cl_err == FALSE) CL_ERROR;
                   }
 
@@ -384,7 +384,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         if (cl_err != CL_SUCCESS) CL_ERROR;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);
@@ -420,7 +420,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         if (cl_err != CL_SUCCESS) CL_ERROR;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);
@@ -437,7 +437,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                     /* color conversion in the GPU (input) */
                     g_assert (i->tex_buf[no][j] && i->tex_op[no][j]);
                     cl_err = gegl_cl_color_conv (i->tex_buf[no][j], i->tex_op[no][j], i->size[no][j],
-                                                 i->buffer[no]->format, i->format[no]);
+                                                 i->buffer[no]->soft_format, i->format[no]);
                     if (cl_err == FALSE) CL_ERROR;
 
                     i->tex[no][j] = i->tex_op[no][j];

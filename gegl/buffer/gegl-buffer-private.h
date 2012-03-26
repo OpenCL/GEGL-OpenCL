@@ -40,6 +40,8 @@ struct _GeglBuffer
 
   const Babl       *format;  /* the pixel format used for pixels in this
                                 buffer */
+  const Babl  *soft_format;  /* the format the buffer pretends to be, might
+                                be different from format */
 
   gint              shift_x; /* The relative offset of origins compared with */
   gint              shift_y; /* anchestral tile_storage buffer, during            */
