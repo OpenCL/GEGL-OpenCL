@@ -14,12 +14,11 @@ HTML_FILES = \
 
 GTKDOC_FILES = \
 	operations.html		\
-	gegl.css			\
-	gegl.devhelp
+	gegl.css
 
 if HAVE_RUBY
 HTML_FILES += api.html images/inheritance.png
-GTKDOC_FILES += api.html
+GTKDOC_FILES += api.html gegl.devhelp
 endif
 
 gegl.devhelp: api.html
