@@ -31,12 +31,14 @@ static const GDebugKey gegl_debug_keys[] = {
   { "tile-backend",  GEGL_DEBUG_TILE_BACKEND},
   { "processor",     GEGL_DEBUG_PROCESSOR},
   { "invalidation",  GEGL_DEBUG_INVALIDATION},
+  { "opencl",        GEGL_DEBUG_OPENCL},
   { "all",           GEGL_DEBUG_PROCESS|
                      GEGL_DEBUG_BUFFER_LOAD|
                      GEGL_DEBUG_BUFFER_SAVE|
                      GEGL_DEBUG_TILE_BACKEND|
                      GEGL_DEBUG_PROCESSOR|
-                     GEGL_DEBUG_CACHE},
+                     GEGL_DEBUG_CACHE|
+                     GEGL_DEBUG_OPENCL},
 };
 #endif /* GEGL_ENABLE_DEBUG */
 
