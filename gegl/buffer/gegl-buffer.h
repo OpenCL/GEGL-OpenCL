@@ -228,8 +228,7 @@ gboolean gegl_buffer_set_extent (GeglBuffer          *buffer,
  * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
  * rowstride based on the width and bytes per pixel for the specified format.
  * @repeat_mode: how request outside the buffer extent are handled.
- * Valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
- * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
+ * Valid values: GEGL_ABYSS_NONE
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the
  * data is converted to the desired BablFormat, if the BablFormat stored and
@@ -384,8 +383,7 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
  * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
  * @repeat_mode: how request outside the buffer extent are handled.
- * valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
- * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
+ * valid values: GEGL_ABYSS_NONE
  *
  * Query interpolate pixel values at a given coordinate using a specified form
  * of interpolation. The samplers used cache for a small neighbourhood of the
@@ -449,8 +447,7 @@ GeglSampler * gegl_buffer_sampler_new (GeglBuffer       *buffer,
  * @scale: matrix representing extent of sampling area in source buffer.
  * @output: memory location for output data.
  * @repeat_mode: how request outside the buffer extent are handled.
- * valid values: GEGL_ABYSS_NONE_CLAMP, GEGL_ABYSS_NONE_LOOP,
- * GEGL_ABYSS_NONE_BLACK, GEGL_ABYSS_NONE_WHITE, GEGL_ABYSS_NONE.
+ * valid values: GEGL_ABYSS_NONE
  *
  * Perform a sampling with the provided @sampler.
  */
