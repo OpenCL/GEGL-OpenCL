@@ -244,7 +244,7 @@ get_rgba_pixel (void       *data,
         return;
       gegl_buffer_sample (p->in_drawable, x, y, NULL, buf,
                           p->rgba_float,
-                          GEGL_SAMPLER_NEAREST);
+                          GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
       for (i = 0; i < 4; i++)
         pixel[i] = buf[i];
     }
@@ -255,7 +255,7 @@ get_rgba_pixel (void       *data,
         return;
       gegl_buffer_sample (p->aux_drawable, x, y, NULL, buf,
                           p->rgba_float,
-                          GEGL_SAMPLER_NEAREST);
+                          GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
       for (i = 0; i < 4; i++)
         pixel[i] = buf[i];
     }

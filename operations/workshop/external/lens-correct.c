@@ -394,7 +394,7 @@ lens_distort_newl (gfloat              *src_buf,
                   gfloat color[4];
                   gegl_buffer_sample (input, tmpx+x, tmpy+y, NULL, color,
                                       babl_format ("RGBA float"),
-                                      GEGL_SAMPLER_NEAREST);
+                                      GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
                   val += color[rgb] * wx[x] * wy[y];
                   wt += wx[x] * wy[y];
                 }
@@ -436,7 +436,7 @@ process (GeglOperation       *operation,
   if (!found) make_lens (&lens, o, boundary);
 
   gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE);
+                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (y = result->y; y < result->y + result->height; y++)
     for (x = result->x; x < result->x + result->width; x++)

@@ -1386,8 +1386,8 @@ matting_process (GeglOperation       *operation,
   input  = g_new (gdouble, result->width * result->height * COMPONENTS_INPUT);
   trimap = g_new (gdouble, result->width * result->height * COMPONENTS_AUX);
 
-  gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   output = matting_solve_level (input, trimap, result,
                                 MIN (o->active_levels, o->levels), o->levels,
