@@ -80,6 +80,7 @@ static GeglNode    * gegl_affine_detect                    (GeglOperation       
                                                             gint                  x,
                                                             gint                  y);
 
+static gboolean      gegl_matrix3_is_affine                        (GeglMatrix3 *matrix);
 static gboolean      gegl_affine_matrix3_allow_fast_translate      (GeglMatrix3 *matrix);
 static gboolean      gegl_affine_matrix3_allow_fast_reflect_x      (GeglMatrix3 *matrix);
 static gboolean      gegl_affine_matrix3_allow_fast_reflect_y      (GeglMatrix3 *matrix);
@@ -637,13 +638,12 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
   return affected_rect;
 }
 
-
 static void
-affine_generic (GeglBuffer  *dest,
-                GeglBuffer  *src,
-                GeglMatrix3 *matrix,
-                GeglSampler *sampler,
-                gint         level)
+affine_affine (GeglBuffer  *dest,
+               GeglBuffer  *src,
+               GeglMatrix3 *matrix,
+               GeglSampler *sampler,
+               gint         level)
 {
   GeglBufferIterator *i;
   const GeglRectangle *dest_extent;
@@ -687,12 +687,9 @@ affine_generic (GeglBuffer  *dest,
       inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
       inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
 
-      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1]
-                    * roi->y + inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1]
-                    * roi->y + inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1]
-                    * roi->y + inverse.coeff[2][2];
+      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1] * roi->y + inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1] * roi->y + inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1] * roi->y + inverse.coeff[2][2];
 
       /* correct rounding on e.g. negative scaling (is this sound?) */
       if (inverse.coeff [0][0] < 0.)  u_start -= .001;
@@ -719,6 +716,106 @@ affine_generic (GeglBuffer  *dest,
           w_start += inverse.coeff [2][1];
         }
     }
+}
+
+static void
+affine_generic (GeglBuffer  *dest,
+                GeglBuffer  *src,
+                GeglMatrix3 *matrix,
+                GeglSampler *sampler,
+                gint         level)
+{
+  GeglBufferIterator *i;
+  const GeglRectangle *dest_extent;
+  gint                  x, y;
+  gfloat * restrict     dest_buf,
+                       *dest_ptr;
+  GeglMatrix3           inverse;
+  gdouble               u_start,
+                        v_start,
+                        w_start,
+                        u_float,
+                        v_float,
+                        w_float;
+
+  const Babl           *format;
+
+  gint                  dest_pixels;
+
+  format = babl_format ("RaGaBaA float");
+
+  /* XXX: fast paths as existing in files in the same dir as affine.c
+   *      should probably be hooked in here, and bailing out before using
+   *      the generic code.
+   */
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+  dest_extent = gegl_buffer_get_extent (dest);
+
+
+  i = gegl_buffer_iterator_new (dest, dest_extent, level, format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  while (gegl_buffer_iterator_next (i))
+    {
+      GeglRectangle *roi = &i->roi[0];
+      dest_buf           = (gfloat *)i->data[0];
+
+      gegl_matrix3_copy_into (&inverse, matrix);
+      gegl_matrix3_invert (&inverse);
+
+      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1] * roi->y + inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1] * roi->y + inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1] * roi->y + inverse.coeff[2][2];
+
+      /* correct rounding on e.g. negative scaling (is this sound?) */
+      if (inverse.coeff [0][0] < 0.)  u_start -= .001;
+      if (inverse.coeff [1][1] < 0.)  v_start -= .001;
+      if (inverse.coeff [2][2] < 0.)  w_start -= .001;
+
+      for (dest_ptr = dest_buf, y = roi->height; y--;)
+        {
+          u_float = u_start;
+          v_float = v_start;
+          w_float = w_start;
+
+          for (x = roi->width; x--;)
+            {
+              GeglMatrix2 inverse_jacobian;
+              float u = u_float / w_float;
+              float v = v_float / w_float;
+
+              inverse_jacobian.coeff[0][0]= (u_float + inverse.coeff[0][0] ) / (w_float + inverse.coeff[2][0]) - u;
+              inverse_jacobian.coeff[0][1]= (u_float + inverse.coeff[0][1] ) / (w_float + inverse.coeff[2][1]) - u;
+              inverse_jacobian.coeff[1][0]= (v_float + inverse.coeff[1][0] ) / (w_float + inverse.coeff[2][0]) - v;
+              inverse_jacobian.coeff[1][1]= (v_float + inverse.coeff[1][1] ) / (w_float + inverse.coeff[2][1]) - v;
+
+              gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr);
+              dest_ptr+=4;
+
+              u_float += inverse.coeff [0][0];
+              v_float += inverse.coeff [1][0];
+              w_float += inverse.coeff [2][0];
+            }
+
+          u_start += inverse.coeff [0][1];
+          v_start += inverse.coeff [1][1];
+          w_start += inverse.coeff [2][1];
+        }
+    }
+}
+
+static inline gboolean is_zero (float f)
+{
+  return f >= -0.0000001 && f <= 0.00000001;
+}
+static inline gboolean is_one (float f)
+{
+  return f >= 1.0-0.0000001 && f <= 1.00000001;
+}
+
+static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
+{
+  return is_zero (matrix->coeff[2][0]) &&
+         is_zero (matrix->coeff[2][1]) &&
+         is_one  (matrix->coeff[2][2]);
 }
 
 static gboolean
@@ -960,7 +1057,17 @@ gegl_affine_process (GeglOperation        *operation,
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
           gegl_sampler_type_from_string (affine->filter));
-      affine_generic (output, input, &matrix, sampler, context->level);
+
+      if (gegl_matrix3_is_affine (&matrix))
+        {
+          printf ("affine!\n");
+          affine_affine  (output, input, &matrix, sampler, context->level);
+        }
+      else
+        {
+          printf ("nonaffine!\n");
+          affine_generic (output, input, &matrix, sampler, context->level);
+        }
 
       g_object_unref (sampler);
 
