@@ -102,7 +102,7 @@ gboolean          gegl_buffer_unlock      (GeglBuffer *buffer);
 void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                                             const GeglRectangle *rect,
                                             const Babl          *format,
-                                            void                *src,
+                                            const void          *src,
                                             gint                 rowstride);
 void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                             gdouble              scale,

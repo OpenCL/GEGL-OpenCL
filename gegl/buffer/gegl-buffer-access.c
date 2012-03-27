@@ -562,7 +562,7 @@ void
 gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                           const GeglRectangle *rect,
                           const Babl          *format,
-                          void                *src,
+                          const void          *src,
                           gint                 rowstride)
 {
   if (format == NULL)
@@ -580,7 +580,7 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
     }
   else
 #endif
-  gegl_buffer_iterate (buffer, rect, src, rowstride, TRUE, format, 0);
+    gegl_buffer_iterate (buffer, rect, (void *) src, rowstride, TRUE, format, 0);
 
   if (gegl_buffer_is_shared(buffer))
     {
@@ -593,7 +593,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
                  const GeglRectangle *rect,
                  gint                 level,
                  const Babl          *format,
-                 void                *src,
+                 const void          *src,
                  gint                 rowstride)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
