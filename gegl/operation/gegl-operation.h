@@ -79,8 +79,23 @@ struct _GeglOperationClass
                                     this type of operation in GEGL*/
   const gchar    *compat_name; /* allows specifying an alias that the op is
                                   also known as */
-  const gchar    *description; /* textual description of the operation */
   const gchar    *categories;  /* a colon seperated list of categories */
+
+  const gchar    *description; /* textual description of the operation */
+  const gchar    *help;        /* documentation for the use of the op and it's properties
+                                  (individual properties are documented in-place with the
+                                   property)
+                                */
+
+  const gchar    *sample_graph;/* sample XML graph using a stock set of images
+                                  for inputs, providing a visual preview of how the op is
+                                  to be used.
+                                */
+
+  const gchar    *authors;     /* credits for having written the op */
+  const gchar    *license;     /* license of the op */
+
+
 
   guint           no_cache      :1;  /* do not create a cache for this operation */
   guint           opencl_support:1;
