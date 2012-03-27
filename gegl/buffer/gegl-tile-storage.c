@@ -130,6 +130,7 @@ gegl_tile_storage_new (GeglTileBackend *backend)
                                  g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 #endif
   tile_storage->cache = cache;
+  cache->tile_storage = tile_storage;
   gegl_tile_handler_chain_bind (tile_handler_chain);
 
   ((GeglTileBackend *)gegl_buffer_backend ((void*)tile_storage))->priv->storage = (gpointer)

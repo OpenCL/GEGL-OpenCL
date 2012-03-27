@@ -28,6 +28,7 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-handler-cache.h"
+#include "gegl-tile-storage.h"
 #include "gegl-debug.h"
 
 #include "gegl-buffer-cl-cache.h"
@@ -45,12 +46,6 @@ typedef struct CacheItem
   gint      y;
   gint      z;
 } CacheItem;
-
-struct _GeglTileHandlerCache
-{
-  GeglTileHandler parent_instance;
-  GSList *free_list;
-};
 
 
 static void       gegl_tile_handler_cache_dispose    (GObject              *object);
@@ -135,6 +130,14 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
 
   g_static_mutex_lock (&mutex);
   /* only throw out items belonging to this cache instance */
+
+  if (cache->tile_storage->hot_tile)
+    {
+      gegl_tile_unref (cache->tile_storage->hot_tile);
+      cache->tile_storage->hot_tile = NULL;
+    }
+
+
   cache->free_list = NULL;
   g_queue_foreach (cache_queue, gegl_tile_handler_cache_reinit_buffer_tiles, cache);
   for (iter = cache->free_list; iter; iter = g_slist_next (iter))

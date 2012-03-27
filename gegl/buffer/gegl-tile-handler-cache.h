@@ -36,6 +36,12 @@
 typedef struct _GeglTileHandlerCache      GeglTileHandlerCache;
 typedef struct _GeglTileHandlerCacheClass GeglTileHandlerCacheClass;
 
+struct _GeglTileHandlerCache
+{
+  GeglTileHandler  parent_instance;
+  GeglTileStorage *tile_storage;
+  GSList          *free_list;
+};
 
 struct _GeglTileHandlerCacheClass
 {

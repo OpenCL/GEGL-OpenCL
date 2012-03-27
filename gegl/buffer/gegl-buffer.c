@@ -386,6 +386,17 @@ gint gegl_buffer_leaks (void)
   return allocated_buffers - de_allocated_buffers;
 }
 
+void
+_gegl_buffer_drop_hot_tile (GeglBuffer *buffer)
+{
+  GeglTileStorage *storage = buffer->tile_storage;
+  if (storage->hot_tile)
+    {
+      gegl_tile_unref (storage->hot_tile);
+      storage->hot_tile = NULL;
+    }
+}
+
 static void
 gegl_buffer_dispose (GObject *object)
 {
@@ -416,12 +427,7 @@ gegl_buffer_dispose (GObject *object)
 #endif
     }
 
-  if (buffer->hot_tile)
-    {
-      gegl_tile_unref (buffer->hot_tile);
-      buffer->hot_tile = NULL;
-    }
-
+  _gegl_buffer_drop_hot_tile (buffer);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
@@ -956,22 +962,6 @@ void gegl_bt (void)
 static void
 gegl_buffer_init (GeglBuffer *buffer)
 {
-  buffer->extent.x      = 0;
-  buffer->extent.y      = 0;
-  buffer->extent.width  = 0;
-  buffer->extent.height = 0;
-
-  buffer->shift_x      = 0;
-  buffer->shift_y      = 0;
-  buffer->abyss.x      = 0;
-  buffer->abyss.y      = 0;
-  buffer->abyss.width  = 0;
-  buffer->abyss.height = 0;
-  buffer->format       = NULL;
-  buffer->soft_format  = NULL;
-  buffer->hot_tile     = NULL;
-
-  buffer->path = NULL;
   buffer->tile_width = 128;
   buffer->tile_height = 64;
   ((GeglTileSource*)buffer)->command = gegl_buffer_command;
