@@ -62,7 +62,6 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
-#include "gegl-sampler-lanczos.h"
 #include "gegl-sampler-lohalo.h"
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"

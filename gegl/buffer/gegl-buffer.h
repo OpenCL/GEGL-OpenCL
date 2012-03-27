@@ -380,8 +380,7 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * @format: the format to store the sampled color in.
  * @sampler_type: the sampler type to use,
  * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
- * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
- * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC and GEGL_SAMPLER_LOHALO
  * @repeat_mode: how request outside the buffer extent are handled.
  * valid values: GEGL_ABYSS_NONE
  *
@@ -429,8 +428,7 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  * @format: format we want data back in
  * @sampler_type: the sampler type to use,
  * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
- * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC,
- * GEGL_SAMPLER_LANCZOS and GEGL_SAMPLER_LOHALO
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC and GEGL_SAMPLER_LOHALO
  *
  * Create a new sampler, when you are done with the sampler, g_object_unref
  * it.

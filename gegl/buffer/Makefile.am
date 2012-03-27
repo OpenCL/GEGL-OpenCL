@@ -28,7 +28,6 @@ libbuffer_la_SOURCES = \
     gegl-cache.c		\
     gegl-sampler.c		\
     gegl-sampler-cubic.c	\
-    gegl-sampler-lanczos.c	\
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
     gegl-sampler-lohalo.c       \
@@ -58,7 +57,6 @@ libbuffer_la_SOURCES = \
     gegl-cache.h		\
     gegl-sampler.h		\
     gegl-sampler-cubic.h	\
-    gegl-sampler-lanczos.h	\
     gegl-sampler-linear.h	\
     gegl-sampler-nearest.h	\
     gegl-sampler-lohalo.h       \

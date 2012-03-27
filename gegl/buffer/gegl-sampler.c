@@ -33,7 +33,6 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
-#include "gegl-sampler-lanczos.h"
 #include "gegl-sampler-lohalo.h"
 
 enum
@@ -561,8 +560,6 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
         return GEGL_TYPE_SAMPLER_LINEAR;
       case GEGL_SAMPLER_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
-      case GEGL_SAMPLER_LANCZOS:
-        return GEGL_TYPE_SAMPLER_LANCZOS;
       case GEGL_SAMPLER_LOHALO:
         return GEGL_TYPE_SAMPLER_LOHALO;
       default:
@@ -580,17 +577,10 @@ gegl_buffer_sampler_new (GeglBuffer       *buffer,
   if (format == NULL)
     format = babl_format ("RaGaBaA float");
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
-  if (sampler_type == GEGL_SAMPLER_LANCZOS)
-      sampler = g_object_new (desired_type,
-                              "format", format,
-                              "buffer", buffer,
-                              "lanczos_width",  4,
-                              NULL);
-  else
-      sampler = g_object_new (desired_type,
-                              "buffer", buffer,
-                              "format", format,
-                              NULL);
+  sampler = g_object_new (desired_type,
+                          "buffer", buffer,
+                          "format", format,
+                          NULL);
   gegl_sampler_prepare (sampler);
   return sampler;
 }
