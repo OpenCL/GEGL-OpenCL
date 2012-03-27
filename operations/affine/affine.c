@@ -1060,12 +1060,10 @@ gegl_affine_process (GeglOperation        *operation,
 
       if (gegl_matrix3_is_affine (&matrix))
         {
-          printf ("affine!\n");
           affine_affine  (output, input, &matrix, sampler, context->level);
         }
       else
         {
-          printf ("nonaffine!\n");
           affine_generic (output, input, &matrix, sampler, context->level);
         }
 
