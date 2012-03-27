@@ -167,9 +167,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->categories  = "noise";
-  operation_class->name        = "gegl:spread";
-  operation_class->description =
-       _("Spread filter");
+  operation_class->name        = "gegl:noise-spread";
+  operation_class->description = _("Spread filter");
 }
 
 
