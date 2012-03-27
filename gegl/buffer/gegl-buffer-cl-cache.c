@@ -109,7 +109,7 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
         {
           entry->valid = FALSE; /* avoid possible infinite recursion */
 
-          gegl_cl_color_babl (buffer->soft_format, &size);
+          gegl_cl_color_babl (entry->buffer->soft_format, &size);
 
           data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), entry->tex, CL_TRUE,
                                          CL_MAP_READ, 0, entry->roi.width * entry->roi.height * size,
