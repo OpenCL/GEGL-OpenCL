@@ -1106,6 +1106,9 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 
+  if (!format)
+    format = buffer->soft_format;
+
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&
      (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) ||
