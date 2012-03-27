@@ -30,6 +30,8 @@
 #include "gegl-tile-handler-cache.h"
 #include "gegl-debug.h"
 
+#include "gegl-buffer-cl-cache.h"
+
 /*
 #define GEGL_DEBUG_CACHE_HITS
 */
