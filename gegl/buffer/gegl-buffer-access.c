@@ -580,6 +580,11 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->soft_format;
 
+  if (gegl_cl_is_accelerated ())
+    {
+      gegl_buffer_cl_cache_flush (buffer, rect);
+    }
+
 #if 0 /* XXX: not thread safe */
   if (rect && rect->width == 1 && rect->height == 1) /* fast path */
     {
@@ -951,16 +956,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 
   if (gegl_cl_is_accelerated ())
     {
-      if (GEGL_FLOAT_EQUAL (scale, 1.0))
-        {
-          if (gegl_buffer_cl_cache_from (buffer, rect, dest_buf, format, rowstride))
-            return;
-        }
-      else
-        {
-          /* doesn't support scaling in the GPU */
-          gegl_buffer_cl_cache_invalidate (buffer, rect);
-        }
+      gegl_buffer_cl_cache_flush (buffer, rect);
     }
 
   if (!rect && scale == 1.0)

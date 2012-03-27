@@ -6,6 +6,9 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
+#include "gegl-tile-handler-cache.h"
+#include "gegl-tile-storage.h"
+
 #include "opencl/gegl-cl.h"
 
 cl_mem
@@ -16,22 +19,17 @@ void
 gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
                           const GeglRectangle   *roi,
                           cl_mem                 tex);
-gboolean
-gegl_buffer_cl_cache_merge (GeglBuffer          *buffer,
-                            const GeglRectangle *roi);
 
-void
-gegl_buffer_cl_cache_remove (GeglBuffer          *buffer,
+gboolean
+gegl_buffer_cl_cache_flush  (GeglBuffer          *buffer,
                              const GeglRectangle *roi);
+
+gboolean
+gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
+                             const GeglRectangle  *roi);
 
 void
 gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
                                  const GeglRectangle *roi);
 
-gboolean
-gegl_buffer_cl_cache_from (GeglBuffer          *buffer,
-                           const GeglRectangle *roi,
-                           gpointer             dest_buf,
-                           const Babl          *format,
-                           gint                 rowstride);
 #endif

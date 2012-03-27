@@ -91,9 +91,6 @@ process (GeglOperation        *operation,
       return FALSE;
     }
 
-  if (gegl_cl_is_accelerated ())
-    gegl_buffer_cl_cache_invalidate (input, NULL);
-
   gegl_operation_context_take_object (context, "output", G_OBJECT (input));
   return TRUE;
 }

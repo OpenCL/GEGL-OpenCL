@@ -213,6 +213,11 @@ gegl_tile_handler_cache_get_tile_command (GeglTileSource *tile_store,
   GeglTileSource       *source = GEGL_TILE_HANDLER (tile_store)->source;
   GeglTile             *tile     = NULL;
 
+  if (gegl_cl_is_accelerated ())
+    {
+      gegl_buffer_cl_cache_flush2 (cache, NULL);
+    }
+
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
     {
