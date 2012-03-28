@@ -349,7 +349,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
         {
           char *msg;
           size_t s;
-          cl_int build_errcode = errcode;
+          G_GNUC_UNUSED cl_int build_errcode = errcode;
 
           CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
                                                              gegl_cl_get_device(),
