@@ -42,7 +42,7 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 #include "poly2tri-c/poly2tri.h"
 #include "poly2tri-c/refine/triangulation.h"
 #include "poly2tri-c/render/mesh-render.h"
-#include "seamless-clone.h"
+#include "seamless-clone-common.h"
 
 static void
 prepare (GeglOperation *operation)
@@ -64,56 +64,15 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          const GeglRectangle *roi)
 {
-  ScPreprocessResult *result = sc_preprocess_new ();
   gpointer           *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
-
-  GeglBuffer         *uvt;
-  GeglBufferIterator *iter;
-  P2tRImageConfig     config;
 
   if (dest == NULL)
     {
       return FALSE;
     }
-    
-  /* First, find the paste outline */
-  result->outline = sc_outline_find_ccw (roi, input);
 
-  /* Then, Generate the mesh */
-  result->mesh = sc_make_fine_mesh (result->outline, &result->mesh_bounds, GEGL_CHANT_PROPERTIES (operation) -> max_refine_steps);
+  *dest = sc_generate_cache (input, roi, GEGL_CHANT_PROPERTIES (operation) -> max_refine_steps);
 
-  /* Finally, Generate the mesh sample list for each point */
-  result->sampling = sc_mesh_sampling_compute (result->outline, result->mesh);
-
-  /* If caching of UV is desired, it shold be done here, and possibly
-   * by using a regular operation rather than a sink one, so that we can
-   * output UV coords */
-  result->uvt = gegl_buffer_new (roi, babl_uvt_format);
-
-  iter = gegl_buffer_iterator_new (result->uvt, roi, NULL, GEGL_BUFFER_WRITE);
-
-  config.step_x = config.step_y = 1;
-  config.cpp = 4; /* Not that it will be used, but it won't harm */
-
-  while (gegl_buffer_iterator_next (iter))
-    {
-      config.min_x = iter->roi[0].x;
-      config.min_y = iter->roi[0].y;
-      config.x_samples = iter->roi[0].width;
-      config.y_samples = iter->roi[0].height;
-      p2tr_mesh_render_cache_uvt_exact (result->mesh, (P2tRuvt*) iter->data[0], iter->length, &config);
-    }
-  /* No need to free the iterator */
-
-  *dest = result;
-
-  /*
-  sc_mesh_sampling_free (mesh_sampling);
-  p2tr_triangulation_free (mesh);
-  sc_outline_free (outline);
-  gegl_buffer_destroy (uvt);
-  */
-  
   return  TRUE;
 }
 

@@ -35,7 +35,7 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 #include "poly2tri-c/poly2tri.h"
 #include "poly2tri-c/refine/triangulation.h"
 #include "poly2tri-c/render/mesh-render.h"
-#include "seamless-clone.h"
+#include "seamless-clone-common.h"
 
 static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
@@ -44,8 +44,6 @@ get_required_for_output (GeglOperation       *operation,
 {
   GeglRectangle *temp = NULL;
   GeglRectangle  result;
-
-  g_debug ("seamless-clone.c::get_required_for_output");
   
   if (g_strcmp0 (input_pad, "input") || g_strcmp0 (input_pad, "aux"))
     temp = gegl_operation_source_get_bounding_box (operation, input_pad);
@@ -67,71 +65,9 @@ prepare (GeglOperation *operation)
 {
   Babl *format = babl_format ("R'G'B'A float");
 
-  g_debug ("seamless-clone.c::prepare");
-  
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "aux",    format);
   gegl_operation_set_format (operation, "output", format);
-}
-
-
-typedef struct {
-  GeglBuffer     *aux_buf;
-  GeglBuffer     *input_buf;
-  ScMeshSampling *sampling;
-  GHashTable     *pt2col;
-} ScColorComputeInfo;
-
-static void
-sc_point_to_color_func (P2tRPoint *point,
-                        gfloat    *dest,
-                        gpointer   cci_p)
-{
-  ScColorComputeInfo *cci = (ScColorComputeInfo*) cci_p;
-  ScSampleList       *sl = g_hash_table_lookup (cci->sampling, point);
-  gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
-  gint i;
-  gdouble weightT = 0;
-  guint N = sl->points->len;
-  gfloat *col_cpy;
-
-  Babl *format = babl_format ("R'G'B'A float");
-
-  if ((col_cpy = g_hash_table_lookup (cci->pt2col, point)) != NULL)
-    {
-      dest[0] = col_cpy[0];
-      dest[1] = col_cpy[1];
-      dest[2] = col_cpy[2];
-      dest[3] = col_cpy[3];
-      return;
-    }
-  else
-    {
-      col_cpy = g_new (gfloat, 4);
-      g_hash_table_insert (cci->pt2col, point, col_cpy);
-    }
-
-  for (i = 0; i < N; i++)
-    {
-      ScPoint *pt = g_ptr_array_index (sl->points, i);
-      gdouble weight = g_array_index (sl->weights, gdouble, i);
-      // g_print ("%f+",weight);
-
-      gegl_buffer_sample (cci->aux_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_SAMPLER_NEAREST);
-      gegl_buffer_sample (cci->input_buf, pt->x, pt->y, NULL, input_c, format, GEGL_SAMPLER_NEAREST);
-      
-      dest_c[0] += weight * (input_c[0] - aux_c[0]);
-      dest_c[1] += weight * (input_c[1] - aux_c[1]);
-      dest_c[2] += weight * (input_c[2] - aux_c[2]);
-      weightT += weight;
-	}
-
-  // g_print ("=%f\n",weightT);
-  col_cpy[0] = dest[0] = dest_c[0] / weightT;
-  col_cpy[1] = dest[1] = dest_c[1] / weightT;
-  col_cpy[2] = dest[2] = dest_c[2] / weightT;
-  col_cpy[3] = dest[3] = 1;
-  //g_print ("(%f,%f,%f)",dest[0],dest[1],dest[2]);
 }
 
 static gboolean
@@ -141,112 +77,14 @@ process (GeglOperation       *operation,
          GeglBuffer          *output,
          const GeglRectangle *result)
 {
-  gfloat    *out_raw, *aux_raw;
-  gdouble    x, y;
+  gboolean  return_val;
+  ScCache  *cache;
 
-  GeglRectangle aux_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
-  GeglRectangle       to_render;
-
-  ScOutline          *outline;
+  cache = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), GEGL_CHANT_PROPERTIES (operation) -> max_refine_steps);
+  return_val = sc_render_seamless (input, aux, 0, 0, output, result, cache);
+  sc_cache_free (cache);
   
-  P2tRTriangulation  *mesh;
-  GeglRectangle       mesh_bounds;
-
-  ScMeshSampling     *mesh_sampling;
-
-  ScColorComputeInfo  cci;
-  P2tRImageConfig     imcfg;
-
-  Babl               *format = babl_format("R'G'B'A float");
-  int                 max_refine_steps = GEGL_CHANT_PROPERTIES (operation)->max_refine_steps;
-
-  GeglBufferIterator *mesh_area_iter;
-  int                 iter_out_index, iter_aux_index;
-
-  g_debug ("seamless-clone.c::process");
-  printf ("The aux_rect is: ");
-  gegl_rectangle_dump (&aux_rect);
-
-  /********************************************************************/
-  /* Part 1: The preprocessing                                        */
-  /********************************************************************/
-
-  /* First, find the paste outline */
-  g_debug ("Start making outline");
-  outline = sc_outline_find_ccw (&aux_rect, aux);
-  g_debug ("Finish making outline");
-
-  /* Then, Generate the mesh */
-  g_debug ("Start making fine mesh with at most %d points", max_refine_steps);
-  mesh = sc_make_fine_mesh (outline, &mesh_bounds, max_refine_steps);
-  g_debug ("Finish making fine mesh");
-
-  /* Finally, Generate the mesh sample list for each point */
-  g_debug ("Start computing sampling");
-  mesh_sampling = sc_mesh_sampling_compute (outline, mesh);
-  g_debug ("Finish computing sampling");
-
-  /* If caching of UV is desired, it shold be done here! */
-
-  /********************************************************************/
-  /* Part 2: The rendering                                            */
-  /********************************************************************/
-
-  /* We only need to render the intersection of the mesh bounds and the
-   * desired output */
-  gegl_rectangle_intersect (&to_render, result, &mesh_bounds);
-
-  /* Render the mesh into it */
-  cci.aux_buf = aux;
-  cci.input_buf = input;
-  cci.sampling = mesh_sampling;
-  cci.pt2col = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
-
-  /* AUX = PASTE
-   * INPUT = BG
-   */
-  mesh_area_iter = gegl_buffer_iterator_new (output, &to_render, format,
-                                             GEGL_BUFFER_WRITE);
-  iter_out_index = 0;
-  iter_aux_index = gegl_buffer_iterator_add (mesh_area_iter, aux,
-                                            &to_render, format,
-                                            GEGL_BUFFER_READ);
-
-  while (gegl_buffer_iterator_next (mesh_area_iter))
-    {
-      imcfg.min_x = mesh_area_iter->roi[iter_out_index].x;
-      imcfg.min_y = mesh_area_iter->roi[iter_out_index].y;
-      imcfg.step_x = imcfg.step_y = 1;
-      imcfg.x_samples = mesh_area_iter->roi[iter_out_index].width;
-      imcfg.y_samples = mesh_area_iter->roi[iter_out_index].height;
-      imcfg.cpp = 4;
-
-      out_raw = (gfloat*)mesh_area_iter->data[iter_out_index];
-      aux_raw = (gfloat*)mesh_area_iter->data[iter_aux_index];
-      p2tr_mesh_render_scanline (mesh, out_raw, &imcfg, sc_point_to_color_func, &cci);
-
-      for (y = 0; y < imcfg.y_samples; y++)
-        {
-          for (x = 0; x < imcfg.x_samples; x++)
-            {
-              out_raw[0] += aux_raw[0];
-              out_raw[1] += aux_raw[1];
-              out_raw[2] += aux_raw[2];
-              out_raw += 4;
-              aux_raw += 4;
-            }
-        }
-    }
-
-  g_debug ("Finish aux adding");
-  
-  /* Free memory, by the order things were allocated! */
-  g_hash_table_destroy (cci.pt2col);
-  sc_mesh_sampling_free (mesh_sampling);
-  p2tr_triangulation_free (mesh);
-  sc_outline_free (outline);
-  
-  return  TRUE;
+  return  return_val;
 }
 
 static void
@@ -263,6 +101,5 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   composer_class->process      = process;
 }
-
 
 #endif

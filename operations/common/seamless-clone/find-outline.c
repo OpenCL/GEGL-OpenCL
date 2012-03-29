@@ -213,8 +213,6 @@ sc_outline_find_ccw (const GeglRectangle *rect,
       DIRN = outline_walk_cw (rect, pixels, format, DIR,&pt,&ptN);
     }
 
-  g_debug ("Outline has %d points", points->len);
-  
   return points;
 }
 

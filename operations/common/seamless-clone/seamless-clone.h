@@ -46,7 +46,7 @@ typedef struct {
 //  g_free (self);
 //}
 
-#define babl_uvt_type   (babl_type_new ("uvt", "bits", sizeof (P2tRuvt) * 8, NULL))
-#define babl_uvt_format (babl_format_n (babl_uvt_type, 3))
+#define SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2tRuvt) * 8, NULL))
+#define SC_BABL_UVT_FORMAT (babl_format_n (SC_BABL_UVT_TYPE, 3))
 
 #endif
