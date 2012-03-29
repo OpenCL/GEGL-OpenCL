@@ -99,7 +99,7 @@ in_range(gint val,gint min,gint max)
 }
 
 static inline gfloat
-sc_sample_alpha (GeglBuffer *buf, gint x, gint y, Babl *format)
+sc_sample_alpha (GeglBuffer *buf, gint x, gint y, const Babl *format)
 {
   gfloat col[4] = {0, 0, 0, 0};
   gegl_buffer_sample (buf, x, y, NULL, col, format, GEGL_SAMPLER_NEAREST);
@@ -107,10 +107,10 @@ sc_sample_alpha (GeglBuffer *buf, gint x, gint y, Babl *format)
 }
 
 static inline gboolean
-is_opaque (GeglRectangle *rect,
-           GeglBuffer    *pixels,
-           Babl          *format,
-           ScPoint       *pt)
+is_opaque (const GeglRectangle *rect,
+           GeglBuffer          *pixels,
+           const Babl          *format,
+           const ScPoint       *pt)
 {
   g_assert (pt != NULL);
   g_assert (rect != NULL);
@@ -135,12 +135,12 @@ is_opaque (GeglRectangle *rect,
  * 5. Return the result - moving by Dprev
  */
 static inline OUTLINE_DIRECTION
-outline_walk_cw (GeglRectangle      *rect,
-                 GeglBuffer         *pixels,
-                 Babl               *format,
-                 OUTLINE_DIRECTION   prevdirection,
-                 ScPoint            *pt,
-                 ScPoint            *dest)
+outline_walk_cw (const GeglRectangle *rect,
+                 GeglBuffer          *pixels,
+                 const Babl          *format,
+                 OUTLINE_DIRECTION    prevdirection,
+                 ScPoint             *pt,
+                 ScPoint             *dest)
 {
   OUTLINE_DIRECTION Dprev = oppositedirection(prevdirection);
   OUTLINE_DIRECTION Dnow = cwdirection (Dprev);
@@ -168,10 +168,10 @@ outline_walk_cw (GeglRectangle      *rect,
 
 GPtrArray*
 sc_outline_find_ccw (const GeglRectangle *rect,
-                     const GeglBuffer    *pixels)
+                     GeglBuffer          *pixels)
 {
-  Babl      *format = babl_format("RGBA float");
-  GPtrArray *points = g_ptr_array_new ();
+  const Babl *format = babl_format("RGBA float");
+  GPtrArray  *points = g_ptr_array_new ();
   
   gint x = rect->x, y;
 

@@ -19,6 +19,7 @@
 
 #include "seamless-clone-common.h"
 #include "make-mesh.h"
+#include <gegl-utils.h>
 
 static GeglBuffer*
 sc_compute_UVT_cache (P2tRTriangulation   *mesh,
@@ -58,13 +59,16 @@ sc_point_to_color_func (P2tRPoint *point,
                         gfloat    *dest,
                         gpointer   cci_p)
 {
-  ScColorComputeInfo *cci = (ScColorComputeInfo*) cci_p;
-  ScSampleList       *sl  = g_hash_table_lookup (cci->sampling, point);
-  gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
-  gint i;
-  gdouble weightT = 0;
-  guint N = sl->points->len;
+  ScColorComputeInfo *cci     = (ScColorComputeInfo*) cci_p;
+  ScSampleList       *sl      = g_hash_table_lookup (cci->sampling, point);
+  gint                i;
+  gdouble             weightT = 0;
+  guint               N       = sl->points->len;
+
+  const Babl         *format  = babl_format ("R'G'B'A float");
+
   gfloat *col_cpy;
+  gfloat aux_c[4], input_c[4], dest_c[3] = {0, 0, 0};
 
   if ((col_cpy = g_hash_table_lookup (cci->pt2col, point)) != NULL)
     {
@@ -77,8 +81,6 @@ sc_point_to_color_func (P2tRPoint *point,
 
   col_cpy = g_new (gfloat, 4);
   g_hash_table_insert (cci->pt2col, point, col_cpy);
-
-  Babl *format = babl_format ("R'G'B'A float");
 
   for (i = 0; i < N; i++)
     {
@@ -132,7 +134,7 @@ sc_render_seamless (GeglBuffer          *bg,
   GeglBufferIterator *iter;
   int out_index, uvt_index, fg_index;
   
-  Babl               *format = babl_format("R'G'B'A float");
+  const Babl         *format = babl_format("R'G'B'A float");
 
   if (cache == NULL)
     {

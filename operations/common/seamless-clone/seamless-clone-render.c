@@ -68,7 +68,7 @@ get_required_for_output (GeglOperation       *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  Babl *format = babl_format ("R'G'B'A float");
+  const Babl *format = babl_format ("R'G'B'A float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "aux",    format);

@@ -47,8 +47,8 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 static void
 prepare (GeglOperation *operation)
 {
-  Babl     *format = babl_format ("R'G'B'A float");
-  gpointer *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
+  const Babl *format = babl_format ("R'G'B'A float");
+  gpointer   *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
 
   gegl_operation_set_format (operation, "input",  format);
 
@@ -64,7 +64,7 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          const GeglRectangle *roi)
 {
-  gpointer           *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
+  gpointer *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
 
   if (dest == NULL)
     {
