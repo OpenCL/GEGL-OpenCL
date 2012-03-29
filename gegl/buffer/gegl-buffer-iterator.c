@@ -54,6 +54,7 @@ typedef struct GeglBufferTileIterator
   GeglRectangle  roi2;     /* the rectangular subregion of data
                             * in the buffer represented by this scan.
                             */
+  gboolean       same_format;
   gint           level;
 } GeglBufferTileIterator;
 
@@ -87,6 +88,7 @@ static void      gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                                  GeglBuffer             *buffer,
                                                  GeglRectangle           roi,
                                                  gboolean                write,
+                                                 const Babl             *format,
                                                  gint                    level);
 static gboolean  gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
 
@@ -120,6 +122,7 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
                                             GeglBuffer             *buffer,
                                             GeglRectangle           roi,
                                             gboolean                write,
+                                            const Babl             *format,
                                             gint                    level)
 {
   g_assert (i);
@@ -134,8 +137,11 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
   i->col = 0;
   i->row = 0;
   i->write = write;
+  
   i->max_size = i->buffer->tile_storage->tile_width *
                 i->buffer->tile_storage->tile_height;
+
+  i->same_format = format == buffer->format;
 
   /* return at the end,. we still want things initialized a bit .. */
   g_return_if_fail (roi.width != 0 && roi.height != 0);
@@ -160,7 +166,7 @@ gulp:
   /* unref previously held tile */
   if (i->tile)
     {
-      if (i->write && i->subrect.width == tile_width)
+      if (i->write && i->subrect.width == tile_width && i->same_format)
         {
           gegl_tile_unlock (i->tile);
         }
@@ -189,10 +195,10 @@ gulp:
            i->subrect.height = tile_height - offsety;
 
          i->tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                               gegl_tile_indice (tiledx, tile_width),
-                                               gegl_tile_indice (tiledy, tile_height),
-                                               0);
-         if (i->write && tile_width==i->subrect.width)
+                                        gegl_tile_indice (tiledx, tile_width),
+                                        gegl_tile_indice (tiledy, tile_height),
+                                        0);
+         if (i->write && i->subrect.width == tile_width && i->same_format)
            {
              gegl_tile_lock (i->tile);
            }
@@ -201,7 +207,8 @@ gulp:
          {
          gint bpp = babl_format_get_bytes_per_pixel (i->buffer->soft_format);
          i->rowstride = bpp * tile_width;
-         i->sub_data = (guchar*)(i->data) + bpp * (i->subrect.y * tile_width + i->subrect.x);
+         i->sub_data = (guchar*)(i->data) + bpp * 
+                        (i->subrect.y * tile_width + i->subrect.x);
          }
 
          i->col = i->next_col;
@@ -290,7 +297,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   if (self==0) /* The first buffer which is always scan aligned */
     {
       i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), iterator->level);
+      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], iterator->level);
     }
   else
     {
@@ -302,7 +309,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
           i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), iterator->level);
+          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], iterator->level);
         }
     }
 
