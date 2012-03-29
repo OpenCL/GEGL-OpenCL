@@ -244,7 +244,7 @@ gegl_node_dispose (GObject *gobject)
 
   if (self->priv->processor)
     {
-      gegl_processor_destroy (self->priv->processor);
+      g_object_unref (self->priv->processor);
       self->priv->processor = NULL;
     }
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
@@ -1747,7 +1747,7 @@ gegl_node_process (GeglNode *self)
   processor = gegl_node_new_processor (self, NULL);
 
   while (gegl_processor_work (processor, NULL)) ;
-  gegl_processor_destroy (processor);
+  g_object_unref (processor);
 }
 
 #else

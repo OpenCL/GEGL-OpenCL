@@ -810,15 +810,6 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
                                              gdouble       *progress);
 
 
-/**
- * gegl_processor_destroy:
- * @processor: a #GeglProcessor
- *
- * Frees up resources used by a processing handle.
- */
-void           gegl_processor_destroy       (GeglProcessor *processor);
-
-
 /***
  * GeglConfig:
  *

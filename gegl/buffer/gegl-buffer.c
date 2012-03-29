@@ -1100,14 +1100,6 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
 }
 
 
-void
-gegl_buffer_destroy (GeglBuffer *buffer)
-{
-  g_return_if_fail (GEGL_IS_BUFFER (buffer));
-
-  g_object_unref (buffer);
-}
-
 typedef struct TileStorageCacheItem {
   GeglTileStorage *storage;
   gboolean         ram;

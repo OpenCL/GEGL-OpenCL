@@ -62,7 +62,7 @@ test_change_processor_rect_do_test (GeglProcessor       *processor,
                  "buffer", NULL,
                  NULL);
 
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
 
   return result;
 }
