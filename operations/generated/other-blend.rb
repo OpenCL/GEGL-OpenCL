@@ -95,7 +95,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 '
 
-file_tail2 = '  operation_class->categories  = "compositors:porter-duff";
+file_tail2 = '  gegl_operation_class_set_key (operation_class, "categories", "compositors:porter-duff");
 }
 
 #endif
@@ -154,9 +154,13 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
-  operation_class->description =
-        _(\"Porter Duff operation #{name} (d = #{c_formula})\");
+
+  gegl_operation_class_set_keys (operation_class,
+    \"name\"       , \"gegl:#{name}\";
+    \"description\",
+        _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
+        NULL);
+
 "
   file.write file_tail2
   file.close

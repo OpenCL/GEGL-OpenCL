@@ -187,11 +187,12 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->get_required_for_output   = gegl_affine_get_required_for_output;
   op_class->detect                    = gegl_affine_detect;
   op_class->process                   = gegl_affine_process;
-  op_class->categories                = "transform";
   op_class->prepare                   = gegl_affine_prepare;
   op_class->no_cache                  = TRUE;
 
   klass->create_matrix = NULL;
+
+  gegl_operation_class_set_key (op_class, "categories", "transform");
 
   g_object_class_install_property (gobject_class, PROP_ORIGIN_X,
                                    g_param_spec_double (

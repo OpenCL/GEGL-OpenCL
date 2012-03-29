@@ -196,10 +196,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process   = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:edge-sobel";
-  operation_class->categories  = "edge-detect";
-  operation_class->description =
-        _("Specialized direction-dependent edge detection");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:edge-sobel",
+    "categories" , "edge-detect",
+    "description",
+          _("Specialized direction-dependent edge detection"),
+          NULL);
 }
 
 #endif

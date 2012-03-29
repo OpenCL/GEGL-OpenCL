@@ -111,10 +111,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:color-dodge";
-  operation_class->name        = "svg:color-dodge";
-  operation_class->description =
-        _("SVG blend operation color-dodge (<tt>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "svg:color-dodge",
+  "description" ,
+        _("SVG blend operation color-dodge (<tt>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</tt>)"),
+        NULL);
+  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif

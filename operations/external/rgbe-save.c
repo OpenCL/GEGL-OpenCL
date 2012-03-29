@@ -79,10 +79,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = gegl_rgbe_save_process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:rgbe-save";
-  operation_class->categories  = "output";
-  operation_class->description =
-      _("RGBE image saver (Radiance HDR format)");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:rgbe-save",
+    "categories"  , "output",
+    "description" ,
+        _("RGBE image saver (Radiance HDR format)"),
+    NULL);
 
   gegl_extension_handler_register_saver (".hdr", "gegl:rgbe-save");
   gegl_extension_handler_register_saver (".pic", "gegl:rgbe-save");

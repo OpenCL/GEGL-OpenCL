@@ -174,10 +174,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:sdl-display";
-  operation_class->categories  = "display";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:sdl-display",
+    "categories"  , "display",
+    "description" ,
         _("Displays the input buffer in an SDL window (restricted to one"
-          " display op/process, due to SDL implementation issues).");
+          " display op/process, due to SDL implementation issues)."),
+        NULL);
 }
 #endif

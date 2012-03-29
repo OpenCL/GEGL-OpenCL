@@ -190,14 +190,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   /* specify the name this operation is found under in the GUI/when
    * programming/in XML
    */
-  operation_class->name        = "gegl:brightness-contrast";
   operation_class->opencl_support = TRUE;
 
-  /* a colon separated list of categories/tags for this operations */
-  operation_class->categories  = "color";
-
-  /* a description of what this operations does */
-  operation_class->description = _("Changes the light level and contrast.");
+  gegl_operation_class_set_keys (operation_class,
+      "name",       "gegl:brightness-contrast",
+      "categories", "color", 
+      "description", _("Changes the light level and contrast."),
+      NULL);
 }
 
 #endif /* closing #ifdef GEGL_CHANT_PROPERTIES ... else ... */

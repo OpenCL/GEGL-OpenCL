@@ -373,8 +373,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   filter_class->process = process;
 
-  operation_class->name        = "gegl:warp";
-  operation_class->categories  = "transform";
-  operation_class->description = _("Compute a relative displacement mapping from a stroke");
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:warp",
+  "categories"  , "transform",
+  "description" , _("Compute a relative displacement mapping from a stroke"),
+  NULL);
 }
 #endif

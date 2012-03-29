@@ -186,12 +186,14 @@ gegl_chant_class_init (GeglChantClass *klass)
    */
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gegl:c2g";
-  operation_class->categories  = "enhance";
-  operation_class->description =
-        _("Color to grayscale conversion, uses envelopes formed from spatial "
-         " color differences to perform color-feature preserving grayscale "
-         " spatial contrast enhancement.");
+  gegl_operation_class_set_keys (operation_class,
+      "name",        "gegl:c2g",
+      "categories",  "enhance",
+      "description", 
+     _("Color to grayscale conversion, uses envelopes formed from spatial "
+       " color differences to perform color-feature preserving grayscale "
+       " spatial contrast enhancement."),
+     NULL);
 }
 
 #endif

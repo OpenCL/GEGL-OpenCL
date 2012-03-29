@@ -176,10 +176,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_cached_region = get_cached_region;;
 
-  operation_class->name        = "gegl:raw-load";
-  operation_class->categories  = "hidden";
-  operation_class->description =
-        _("Raw image loader, wrapping dcraw with pipes.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:raw-load",
+    "categories" , "hidden",
+    "description",
+          _("Raw image loader, wrapping dcraw with pipes."),
+    NULL);
 
   gegl_extension_handler_register (".raw", "gegl:raw-load");
   gegl_extension_handler_register (".raf", "gegl:raw-load");

@@ -109,10 +109,14 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 
   operation_class->compat_name = "gegl:dst";
-  operation_class->name        = "svg:dst";
-  operation_class->description =
-        _("Porter Duff operation dst (d = cB)");
-  operation_class->categories  = "compositors:porter-duff";
+  gegl_operation_class_set_keys (operation_class,
+    "name"      , "svg:dst",
+    "categories", "compositors:porter-duff",
+    "description",
+        _("Porter Duff operation dst (d = cB)"),
+        NULL);
+ 
+
 }
 
 #endif

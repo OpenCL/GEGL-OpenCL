@@ -158,9 +158,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "distort";
-  operation_class->name        = "gegl:waves";
-  operation_class->description = _("Transform the buffer with waves");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:waves",
+    "categories" , "distort",
+    "description", _("Transform the buffer with waves"),
+    NULL);
 }
 
 #endif

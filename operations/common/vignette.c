@@ -214,9 +214,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 
-  operation_class->name        = "gegl:vignette";
-  operation_class->categories  = "render";
-  operation_class->description = _("A vignetting op, applies a vignette to an image. Simulates the luminance fall off at edge of exposed film, and some other fuzzier border effects that can naturally occur with analoge photograpy.");
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:vignette",
+  "categories" , "render",
+  "description", _("A vignetting op, applies a vignette to an image. Simulates the luminance fall off at edge of exposed film, and some other fuzzier border effects that can naturally occur with analoge photograpy."),
+  NULL);
 }
 
 #endif

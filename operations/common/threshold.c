@@ -183,13 +183,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   point_composer_class->cl_process = cl_process;
   operation_class->prepare = prepare;
-
-  operation_class->name        = "gegl:threshold";
   operation_class->opencl_support = TRUE;
-  operation_class->categories  = "color";
-  operation_class->description =
-        _("Thresholds the image to white/black based on either the global value "
-          "set in the value property, or per pixel from the aux input.");
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:threshold",
+    "categories" , "color",
+    "description",
+          _("Thresholds the image to white/black based on either the global value "
+            "set in the value property, or per pixel from the aux input."),
+          NULL);
 }
 
 #endif

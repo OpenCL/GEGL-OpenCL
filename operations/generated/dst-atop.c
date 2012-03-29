@@ -109,10 +109,14 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 
   operation_class->compat_name = "gegl:dst-atop";
-  operation_class->name        = "svg:dst-atop";
-  operation_class->description =
-        _("Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))");
-  operation_class->categories  = "compositors:porter-duff";
+  gegl_operation_class_set_keys (operation_class,
+    "name"      , "svg:dst-atop",
+    "categories", "compositors:porter-duff",
+    "description",
+        _("Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"),
+        NULL);
+ 
+
 }
 
 #endif

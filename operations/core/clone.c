@@ -105,12 +105,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->detect = detect;
-
-  operation_class->name        = "gegl:clone";
-  operation_class->categories  = "core";
-  operation_class->description = _("Clone a buffer");
-
   operation_class->no_cache = TRUE;
+
+  gegl_operation_class_set_keys (operation_class,
+       "name",          "gegl:clone",
+       "description",   _("Clone a buffer"),
+       "categories",    "core",
+       NULL);
 }
 
 #endif

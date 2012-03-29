@@ -158,9 +158,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "distort";
-  operation_class->name        = "gegl:ripple";
-  operation_class->description = _("Transform the buffer with a ripple pattern");
+  gegl_operation_class_set_keys (operation_class,
+    "categories" , "distort",
+    "name"       , "gegl:ripple",
+    "description", _("Transform the buffer with a ripple pattern"),
+    NULL);
 }
 
 #endif

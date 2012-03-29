@@ -90,10 +90,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_composer3_class->process = process;
 
-  operation_class->name        = "gegl:remap";
-  operation_class->description =
-        _("stretch components of pixels individually based on luminance envelopes");
-  operation_class->categories  = "compositors:porter-duff";
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:remap",
+    "description",
+          _("stretch components of pixels individually based on luminance envelopes"),
+    "categories" , "compositors:porter-duff",
+    NULL);
 }
 
 #endif

@@ -1318,13 +1318,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = fattal02_get_required_for_output;
   operation_class->get_cached_region       = fattal02_get_cached_region;
 
-  operation_class->name        = "gegl:fattal02";
-  operation_class->categories  = "tonemapping";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:fattal02",
+  "categories" , "tonemapping",
+  "description",
         _("Adapt an image, which may have a high dynamic range, for "
 	  "presentation using a low dynamic range. This operator attenuates "
           "the magnitudes of local image gradients, producing luminance "
-          "within the range 0.0-1.0");
+          "within the range 0.0-1.0"),
+        NULL);
 }
 
 #endif

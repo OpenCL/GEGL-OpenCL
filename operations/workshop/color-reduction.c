@@ -452,10 +452,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_cached_region = get_cached_region;
   filter_class->process = process;
 
-  operation_class->name        = "gegl:color-reduction";
-  operation_class->categories  = "misc";
-  operation_class->description =
-          _("Reduces the number of bits per channel (colors and alpha), with optional dithering.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:color-reduction",
+    "categories"  , "misc",
+    "description" ,
+            _("Reduces the number of bits per channel (colors and alpha), with optional dithering."),
+            NULL);
 }
 
 #endif

@@ -48,6 +48,8 @@ G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 static void
 gegl_operation_class_init (GeglOperationClass *klass)
 {
+  /* XXX: leaked for now, should replace G_DEFINE_TYPE with the expanded one */
+  klass->keys = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
   klass->name                      = NULL;  /* an operation class with
                                              * name == NULL is not
                                              * included when doing
@@ -55,8 +57,6 @@ gegl_operation_class_init (GeglOperationClass *klass)
                                              * name
                                              */
   klass->compat_name               = NULL;
-  klass->description               = NULL;
-  klass->categories                = NULL;
   klass->attach                    = attach;
   klass->prepare                   = NULL;
   klass->no_cache                  = FALSE;
@@ -457,4 +457,120 @@ gegl_operation_invalidate (GeglOperation       *operation,
   node = operation->node;
 
   gegl_node_invalidated (node, roi, TRUE);
+}
+
+
+gchar **
+gegl_operation_list_keys (const gchar *operation_name,
+                          guint       *n_keys)
+{
+  GType         type;
+  GObjectClass *klass;
+  GList        *list, *l;
+  gchar       **ret;
+  int count;
+  int i;
+  type = gegl_operation_gtype_from_name (operation_name);
+  if (!type)
+    {
+      if (n_keys)
+        *n_keys = 0;
+      return NULL;
+    }
+  klass  = g_type_class_ref (type);
+  count = g_hash_table_size (GEGL_OPERATION_CLASS (klass)->keys);
+  ret = g_malloc0 (sizeof (gpointer) * (count + 1));
+  list = g_hash_table_get_keys (GEGL_OPERATION_CLASS (klass)->keys);
+  for (i = 0, l = list; l; l = l->next)
+    {
+      ret[i] = l->data;
+    }
+  g_list_free (list);
+  if (n_keys)
+    *n_keys = count;
+  g_type_class_unref (klass);
+  return ret;
+}
+
+void
+gegl_operation_class_set_key (GeglOperationClass *klass,
+                              const gchar        *key_name,
+                              const gchar        *key_value)
+{
+  if (!strcmp (key_name, "name"))
+    {
+      if (klass->name)
+        {
+          g_warning ("tried changing name of op %s to %s",
+                     klass->name, key_value);
+          return;
+        }
+      klass->name = g_strdup (key_value);
+    }
+  if (key_value)
+    g_hash_table_remove (klass->keys, key_name);
+  else
+    g_hash_table_insert (klass->keys, g_strdup (key_name),
+                         g_strdup (key_value));
+}
+
+void
+gegl_operation_class_set_keys (GeglOperationClass *klass,
+                               const gchar        *key_name,
+                                ...)
+{
+  va_list var_args;
+
+  va_start (var_args, key_name);
+  while (key_name)
+    {
+      const char *value = va_arg (var_args, char *);
+
+      gegl_operation_class_set_key (klass, key_name, value);
+
+      key_name = va_arg (var_args, char *);
+    }
+  va_end (var_args);
+}
+
+void
+gegl_operation_set_key (const gchar *operation_name,
+                        const gchar *key_name,
+                        const gchar *key_value)
+{
+  GType         type;
+  GObjectClass *klass;
+  type = gegl_operation_gtype_from_name (operation_name);
+  if (!type)
+    return;
+  klass  = g_type_class_ref (type);
+  gegl_operation_class_set_key (GEGL_OPERATION_CLASS (klass), key_name, key_value);
+  g_type_class_unref (klass);
+}
+
+const gchar *
+gegl_operation_class_get_key (GeglOperationClass *operation_class,
+                              const gchar        *key_name)
+{
+  const gchar  *ret = NULL;
+  ret = g_hash_table_lookup (GEGL_OPERATION_CLASS (operation_class)->keys, key_name);
+  return ret;
+}
+
+const gchar *
+gegl_operation_get_key (const gchar *operation_name,
+                        const gchar *key_name)
+{
+  GType         type;
+  GObjectClass *klass;
+  const gchar  *ret = NULL;
+  type = gegl_operation_gtype_from_name (operation_name);
+  if (!type)
+    {
+      return NULL;
+    }
+  klass  = g_type_class_ref (type);
+  ret = gegl_operation_class_get_key (GEGL_OPERATION_CLASS (klass), key_name);
+  g_type_class_unref (klass);
+  return ret;
 }

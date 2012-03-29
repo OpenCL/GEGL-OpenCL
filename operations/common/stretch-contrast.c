@@ -155,12 +155,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "gegl:stretch-contrast";
-  operation_class->categories  = "color:enhance";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:stretch-contrast",
+    "categories" , "color:enhance",
+    "description",
         _("Scales the components of the buffer to be in the 0.0-1.0 range. "
           "This improves images that make poor use of the available contrast "
-          "(little contrast, very dark, or very bright images).");
+          "(little contrast, very dark, or very bright images)."),
+        NULL);
 }
 
 #endif

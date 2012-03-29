@@ -65,11 +65,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->attach = attach;
 
-  operation_class->name        = "gegl:unsharp-mask";
-  operation_class->categories  = "meta:enhance";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:unsharp-mask",
+  "categories" , "meta:enhance",
+  "description",
         _("Performs an unsharp mask on the input buffer (sharpens an image by "
-          "adding false mach-bands around edges).");
+          "adding false mach-bands around edges)."),
+        NULL);
 }
 
 #endif

@@ -242,9 +242,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gegl:noise-reduction";
-  operation_class->categories  = "enhance";
-  operation_class->description = "Anisotropic like smoothing operation";
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:noise-reduction",
+    "categories" , "enhance",
+    "description", "Anisotropic like smoothing operation",
+    NULL);
 }
 
 #endif

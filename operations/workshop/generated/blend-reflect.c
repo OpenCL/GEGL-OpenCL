@@ -102,10 +102,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:blend-reflect";
-  operation_class->categories  = "compositors:blend";
-  operation_class->description =
-        _("Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-cB)</tt>)");
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:blend-reflect",
+  "categories"  , "compositors:blend",
+  "description" ,
+        _("Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-cB)</tt>)"),
+        NULL);
 }
 
 #endif

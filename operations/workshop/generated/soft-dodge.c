@@ -102,10 +102,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:soft-dodge";
-  operation_class->categories  = "compositors:blend";
-  operation_class->description =
-        _("Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)");
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:soft-dodge",
+  "categories"  , "compositors:blend",
+  "description" ,
+        _("Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"),
+        NULL);
 }
 
 #endif

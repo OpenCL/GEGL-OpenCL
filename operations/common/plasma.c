@@ -382,9 +382,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_cached_region       = get_cached_region;
 
-  operation_class->categories  = "render";
-  operation_class->name        = "gegl:plasma";
-  operation_class->description = _("Performs plasma on the image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:plasma",
+    "categories" , "render",
+    "description", _("Performs plasma on the image."),
+    NULL);
 }
 
 #endif

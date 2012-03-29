@@ -126,7 +126,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 '
 
-file_tail2 = '  operation_class->categories  = "compositors:svgfilter";
+file_tail2 = '  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif
@@ -182,9 +182,12 @@ a.each do
   file.write file_tail1
   file.write "
   operation_class->compat_name = \"gegl:#{name}\";
-  operation_class->name        = \"svg:#{name}\";
-  operation_class->description =
-        _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
+  
+  gegl_operation_class_set_keys (operation_class,
+  \"name\"        , \"svg:#{name}\",
+  \"description\" ,
+        _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\"),
+        NULL);
 "
   file.write file_tail2
   file.close
@@ -245,9 +248,11 @@ b.each do
   file.write file_tail1
   file.write "
   operation_class->compat_name = \"gegl:#{name}\";
-  operation_class->name        = \"svg:#{name}\";
-  operation_class->description =
-        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\");
+  gegl_operation_class_set_keys (operation_class,
+  \"name\"        , \"svg:#{name}\",
+  \"description\" ,
+        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</tt>)\"),
+        NULL);
 "
   file.write file_tail2
   file.close
@@ -312,9 +317,11 @@ c.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"gegl:#{name}\";
-  operation_class->description =
-        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\");
+  gegl_operation_class_set_keys (operation_class,
+  \"name\"        , \"gegl:#{name}\",
+  \"description\" ,
+        _(\"SVG blend operation #{name} (<tt>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</tt>)\"),
+        NULL);
 "
   file.write file_tail2
   file.close
@@ -370,10 +377,13 @@ d.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->name        = \"svg:#{name}\";
   operation_class->compat_name = \"gegl:#{name}\";
-  operation_class->description =
-        _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\");
+
+  gegl_operation_class_set_keys (operation_class,
+    \"name\"        , \"svg:#{name}\",
+    \"description\" ,
+    _(\"SVG blend operation #{name} (<tt>d = #{formula1}</tt>)\"),
+    NULL);
 "
   file.write file_tail2
   file.close

@@ -217,9 +217,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = gegl_jpg_load_get_bounding_box;
   operation_class->get_cached_region = gegl_jpg_load_get_cached_region;
 
-  operation_class->name        = "gegl:jpg-load";
-  operation_class->categories  = "hidden";
-  operation_class->description = _("JPG image loader");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:jpg-load",
+    "categories"  , "hidden",
+    "description" , _("JPG image loader"),
+    NULL);
 
 /*  static gboolean done=FALSE;
     if (done)

@@ -175,10 +175,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "blur";
-  operation_class->name        = "gegl:pixelise";
-  operation_class->description =
-       _("Pixelise filter");
+  gegl_operation_class_set_keys (operation_class,
+    "categories" , "blur",
+    "name"       , "gegl:pixelise",
+    "description",
+         _("Pixelise filter"),
+    NULL);
 }
 
 #endif

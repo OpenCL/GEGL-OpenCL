@@ -109,10 +109,14 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 
   operation_class->compat_name = "gegl:clear";
-  operation_class->name        = "svg:clear";
-  operation_class->description =
-        _("Porter Duff operation clear (d = 0.0f)");
-  operation_class->categories  = "compositors:porter-duff";
+  gegl_operation_class_set_keys (operation_class,
+    "name"      , "svg:clear",
+    "categories", "compositors:porter-duff",
+    "description",
+        _("Porter Duff operation clear (d = 0.0f)"),
+        NULL);
+ 
+
 }
 
 #endif

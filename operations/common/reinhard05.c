@@ -267,13 +267,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = reinhard05_get_required_for_output;
   operation_class->get_cached_region       = reinhard05_get_cached_region;
 
-  operation_class->name        = "gegl:reinhard05";
-  operation_class->categories  = "tonemapping";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:reinhard05",
+  "categories" , "tonemapping",
+  "description",
         _("Adapt an image, which may have a high dynamic range, for "
 	  "presentation using a low dynamic range. This is an efficient "
           "global operator derived from simple physiological observations, "
-          "producing luminance within the range 0.0-1.0");
+          "producing luminance within the range 0.0-1.0"),
+        NULL);
 }
 
 #endif

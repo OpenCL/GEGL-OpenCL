@@ -75,10 +75,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->attach = attach;
 
-  operation_class->name        = "gegl:dropshadow";
-  operation_class->categories  = "meta:effects";
-  operation_class->description =
-        _("Creates a dropshadow effect on the input buffer.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:dropshadow",
+    "categories" , "meta:effects",
+    "description",
+    _("Creates a dropshadow effect on the input buffer."),
+    NULL);
 }
 
 #endif

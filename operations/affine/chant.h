@@ -276,13 +276,15 @@ gegl_chant_class_init (ChantClass * klass)
   class_init (operation_class);
 #endif
 
+#if 1
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \
   operation_class->name=g_strdup("gegl:"#nam);
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
+#endif
 
 #ifdef GEGL_CHANT_DESCRIPTION
-  operation_class->description = GEGL_CHANT_DESCRIPTION;
+  gegl_operation_class_set_key (operation_class, "description", GEGL_CHANT_DESCRIPTION);
 #endif
 
 #define gegl_chant_int(name, min, max, def, blurb)  \

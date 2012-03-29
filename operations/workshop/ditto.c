@@ -105,9 +105,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "distort";
-  operation_class->name        = "gegl:ditto";
-  operation_class->description = _("Test op to do a 1:1 map of input to output, while sampling");
+  gegl_operation_class_set_keys (operation_class,
+  "categories"  , "distort",
+  "name"        , "gegl:ditto",
+  "description" , _("Test op to do a 1:1 map of input to output, while sampling"),
+  NULL);
 }
 
 #endif

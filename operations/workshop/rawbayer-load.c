@@ -147,14 +147,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gegl:rawbayer-load";
-  operation_class->categories  = "hidden";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:rawbayer-load",
+  "categories"  , "hidden",
+  "description" ,
         _("Raw image loader, wrapping dcraw with pipes, provides the raw bayer"
           " grid as grayscale, if the fileformat is .rawbayer it will use this"
           " loader instead of the normal dcraw loader, if the fileformat is"
           " .rawbayerS it will swap the returned 16bit numbers (the pnm loader"
-          " is apparently buggy)");
+          " is apparently buggy)"),
+        NULL);
 
   gegl_extension_handler_register (".rawbayer", "gegl:rawbayer-load");
   gegl_extension_handler_register (".rawbayerS", "gegl:rawbayer-load");

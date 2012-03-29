@@ -238,10 +238,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process   = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:edge-laplace";
-  operation_class->categories  = "edge-detect";
-  operation_class->description =
-        _("High-resolution edge detection");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:edge-laplace",
+    "categories"  , "edge-detect",
+    "description" ,
+          _("High-resolution edge detection"),
+    NULL);
 }
 
 #endif

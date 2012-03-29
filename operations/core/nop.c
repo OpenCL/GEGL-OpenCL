@@ -66,9 +66,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->process = gegl_nop_process;
 
-  operation_class->name       = "gegl:nop";
-  operation_class->categories = "core";
-  operation_class->description = _("No operation (can be used as a routing point)");
+  gegl_operation_class_set_keys (operation_class,
+              "name",        "gegl:nop",
+              "categories",  "core",
+              "description", _("No operation (can be used as a routing point)"),
+              NULL);
 }
 
 #endif

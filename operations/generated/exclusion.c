@@ -108,10 +108,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:exclusion";
-  operation_class->name        = "svg:exclusion";
-  operation_class->description =
-        _("SVG blend operation exclusion (<tt>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "svg:exclusion",
+  "description" ,
+        _("SVG blend operation exclusion (<tt>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</tt>)"),
+        NULL);
+  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif

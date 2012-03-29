@@ -589,10 +589,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_cached_region       = get_cached_region;
 
-  operation_class->categories = "artistic";
-  operation_class->name       = "gegl:cubism";
-  operation_class->description =
-    _("Performs cubism on the image");
+  gegl_operation_class_set_keys (operation_class,
+    "categories", "artistic",
+    "name", "gegl:cubism",
+    "description",  _("Filter that somehow resembels a cubist painting style."),
+    NULL);
 }
 
 #endif

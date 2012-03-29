@@ -82,9 +82,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process          = gegl_buffer_load_op_process;
   operation_class->get_bounding_box = gegl_buffer_load_op_get_bounding_box;
 
-  operation_class->name        = "gegl:gegl-buffer-load";
-  operation_class->categories  = "hidden";
-  operation_class->description = _("GeglBuffer file loader.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:gegl-buffer-load",
+    "categories" , "hidden",
+    "description", _("GeglBuffer file loader."),
+    NULL);
 
   gegl_extension_handler_register (".gegl", "gegl:gegl-buffer-load");
 }

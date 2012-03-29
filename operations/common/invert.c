@@ -121,13 +121,15 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
   point_filter_class->cl_process = cl_process;
-
-  operation_class->name        = "gegl:invert";
   operation_class->opencl_support = TRUE;
-  operation_class->categories  = "color";
-  operation_class->description =
-     _("Inverts the components (except alpha), the result is the "
-       "corresponding \"negative\" image.");
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:invert",
+    "categories" , "color",
+    "description",
+       _("Inverts the components (except alpha), the result is the "
+         "corresponding \"negative\" image."),
+       NULL);
 }
 
 #endif

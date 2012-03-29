@@ -69,9 +69,11 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
 
-  operation_class->name        = "gegl:unpremul";
-  operation_class->categories  = "color";
-  operation_class->description = "Unpremultiplies a buffer that contains pre-multiplied colors (but is marked as not having it)";
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:unpremul",
+    "categories"  , "color",
+    "description" , "Unpremultiplies a buffer that contains pre-multiplied colors (but is marked as not having it)",
+    NULL);
 }
 
 #endif

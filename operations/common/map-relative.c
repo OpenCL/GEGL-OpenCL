@@ -150,9 +150,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "gegl:map-relative";
-
-  operation_class->categories  = "transform";
-  operation_class->description = _("sample input with an auxiliary buffer that contain relative source coordinates");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:map-relative",
+    "categories" , "transform",
+    "description", _("sample input with an auxiliary buffer that contain relative source coordinates"),
+    NULL);
 }
 #endif

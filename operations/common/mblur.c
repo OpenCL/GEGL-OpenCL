@@ -138,9 +138,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:mblur";
-  operation_class->categories  = "blur:video";
-  operation_class->description = _("Accumulating motion blur");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:mblur",
+    "categories" , "blur:video",
+    "description", _("Accumulating motion blur"),
+    NULL);
 }
 
 #endif

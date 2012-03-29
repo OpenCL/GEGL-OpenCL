@@ -75,27 +75,11 @@ struct _GeglOperationClass
 {
   GObjectClass    parent_class;
 
-  const gchar    *name;        /* name(string) used to create/indetify
-                                    this type of operation in GEGL*/
+  const gchar    *name;        /* name(string) used to create/identify
+                                  this type of operation in GEGL*/
   const gchar    *compat_name; /* allows specifying an alias that the op is
                                   also known as */
-  const gchar    *categories;  /* a colon seperated list of categories */
-
-  const gchar    *description; /* textual description of the operation */
-  const gchar    *help;        /* documentation for the use of the op and it's properties
-                                  (individual properties are documented in-place with the
-                                   property)
-                                */
-
-  const gchar    *sample_graph;/* sample XML graph using a stock set of images
-                                  for inputs, providing a visual preview of how the op is
-                                  to be used.
-                                */
-
-  const gchar    *authors;     /* credits for having written the op */
-  const gchar    *license;     /* license of the op */
-
-
+  GHashTable     *keys;        /* hashtable used for storing meta-data about an op */
 
   guint           no_cache      :1;  /* do not create a cache for this operation */
   guint           opencl_support:1;
@@ -232,9 +216,31 @@ const gchar *   gegl_operation_get_name      (GeglOperation *operation);
 GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
                                                 const gchar   *pad_name);
 
-GParamSpec ** gegl_list_properties (const gchar *operation_type,
-                                    guint       *n_properties_p);
+/* XXX: should be changed to gegl_op_list_properties */
+GParamSpec ** gegl_list_properties             (const gchar *operation_type,
+                                                guint       *n_properties_p);
 
+/* API to change  */
+void          gegl_operation_class_set_key     (GeglOperationClass *klass,
+                                                const gchar *key_name,
+                                                const gchar *key_value);
+
+const gchar * gegl_operation_class_get_key     (GeglOperationClass *operation_class,
+                                                const gchar        *key_name);
+
+void          gegl_operation_class_set_keys    (GeglOperationClass *klass,
+                                                const gchar        *key_name,
+                                                ...);
+
+gchar      ** gegl_operation_list_keys         (const gchar *operation_type,
+                                                guint       *n_keys);
+
+void          gegl_operation_set_key           (const gchar *operation_type,
+                                                const gchar *key_name,
+                                                const gchar *key_value);
+
+const gchar * gegl_operation_get_key            (const gchar *operation_type,
+                                                 const gchar *key_name);
 
 /* invalidate a specific rectangle, indicating the any computation depending
  * on this roi is now invalid.
@@ -242,9 +248,9 @@ GParamSpec ** gegl_list_properties (const gchar *operation_type,
  * @roi : the region to blank or NULL for the nodes current have_rect
  * @clear_cache: whether any present caches should be zeroed out
  */
-void     gegl_operation_invalidate            (GeglOperation       *operation,
-                                               const GeglRectangle *roi,
-                                               gboolean             clear_cache);
+void     gegl_operation_invalidate       (GeglOperation       *operation,
+                                          const GeglRectangle *roi,
+                                          gboolean             clear_cache);
 
 /* internal utility functions used by gegl, these should not be used
  * externally */

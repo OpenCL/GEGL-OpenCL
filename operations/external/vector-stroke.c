@@ -274,9 +274,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->detect = detect;
   /*operation_class->no_cache = TRUE;*/
 
-  operation_class->name        = "gegl:vector-stroke";
-  operation_class->categories  = "render";
-  operation_class->description = _("Renders a vector stroke");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:vector-stroke",
+    "categories"  , "render",
+    "description" , _("Renders a vector stroke"),
+    NULL);
 }
 
 

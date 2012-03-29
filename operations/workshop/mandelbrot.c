@@ -138,9 +138,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gegl:mandelbrot";
-  operation_class->categories  = "render";
-  operation_class->description = _("Mandelbrot set renderer.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:mandelbrot",
+    "categories"  , "render",
+    "description" , _("Mandelbrot set renderer."),
+    NULL);
 }
 
 #endif

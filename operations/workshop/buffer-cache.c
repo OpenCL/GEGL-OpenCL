@@ -97,9 +97,11 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
-  operation_class->name        = "gegl:buffer-cache";
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:buffer-cache",
+    "categories"  , "core",
+    "description" , _("Cache the input buffer internally, further process take this buffer as input."),
+    NULL);
 
-  operation_class->categories  = "core";
-  operation_class->description = _("Cache the input buffer internally, further process take this buffer as input.");
 }
 #endif

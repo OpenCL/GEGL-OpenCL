@@ -171,14 +171,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->prepare = prepare;
-
-  operation_class->name        = "gegl:load";
-  operation_class->categories  = "meta:input";
-  operation_class->description =
-        _("Multipurpose file loader, that uses other native handlers, and "
-          "fallback conversion using image magick's convert.");
-
   operation_class->no_cache = TRUE;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:load",
+    "categories" , "meta:input",
+    "description",
+          _("Multipurpose file loader, that uses other native handlers, and "
+            "fallback conversion using image magick's convert."),
+    NULL);
+
 }
 
 #endif

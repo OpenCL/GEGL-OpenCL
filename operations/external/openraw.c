@@ -234,11 +234,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_cached_region = get_cached_region;
-
-  operation_class->name        = "gegl:openraw-load";
-  operation_class->categories  = "hidden";
-  operation_class->description = "Camera RAW image loader";
   operation_class->prepare     = prepare;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:openraw-load",
+    "categories"  , "hidden",
+    "description" , "Camera RAW image loader",
+    NULL);
 
   if (done)
     return;

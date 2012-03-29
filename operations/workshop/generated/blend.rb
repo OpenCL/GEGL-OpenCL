@@ -140,10 +140,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = \"gegl:#{name}\";
-  operation_class->categories  = \"compositors:blend\";
-  operation_class->description =
-        _(\"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\");
+  gegl_operation_class_set_keys (operation_class,
+  \"name\"        , \"gegl:#{name}\",
+  \"categories\"  , \"compositors:blend\",
+  \"description\" ,
+        _(\"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\"),
+        NULL);
 }
 
 #endif

@@ -114,9 +114,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   point_filter_class->process = process;
 
-  operation_class->name        = "gegl:max-rgb";
-  operation_class->categories  = "color";
-  operation_class->description = _("Reduce image to pure red, green, and blue");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:max-rgb",
+    "categories"  , "color",
+    "description" , _("Reduce image to pure red, green, and blue"),
+    NULL);
 }
 
 #endif

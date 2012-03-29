@@ -97,13 +97,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_render_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
-
-  operation_class->name        = "gegl:perlin-noise";
-  operation_class->categories  = "render";
-  operation_class->description = _("Perlin noise generator.");
-
   operation_class->no_cache = TRUE;
   operation_class->get_cached_region = NULL;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:perlin-noise",
+    "categories" , "render",
+    "description", _("Perlin noise generator."),
+    NULL);
+
 }
 
 #endif

@@ -252,9 +252,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->detect = detect;
 
-  operation_class->name        = "gegl:fill-path";
-  operation_class->categories  = "render";
-  operation_class->description = _("Renders a filled region");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:fill-path",
+    "categories" , "render",
+    "description", _("Renders a filled region"),
+    NULL);
 }
 
 

@@ -171,11 +171,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->cl_process = cl_process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:whitebalance";
   operation_class->opencl_support = TRUE;
-  operation_class->categories  = "color";
-  operation_class->description =
-        _("Allows changing the whitepoint and blackpoint of an image.");
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:whitebalance",
+    "categories"  , "color",
+    "description" ,
+          _("Allows changing the whitepoint and blackpoint of an image."),
+        NULL);
 }
 
 #endif

@@ -259,7 +259,8 @@ static void category_index (gpointer key,
   for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
-      if (strstr (klass->categories, "hidden"))
+      const char *categories = gegl_operation_class_get_key (klass, "categories");
+      if (strstr (categories, "hidden"))
         continue;
       g_print ("%s<a href='#op_%s'>%s</a>\n", comma?"":"", klass->name, klass->name);
       comma = TRUE;
@@ -280,7 +281,8 @@ static void category_menu_index (gpointer key,
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
-      if (strstr (klass->categories, "hidden"))
+      const char *categories = gegl_operation_class_get_key (klass, "categories");
+      if (!categories || strstr (categories, "hidden"))
         continue;
       g_print ("<li><a href='#op_%s'>%s</a></li>\n", klass->name, klass->name);
     }
@@ -303,8 +305,9 @@ main (gint    argc,
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
-      const gchar *ptr = klass->categories;
-      while (*ptr)
+      const char *categoris = gegl_operation_class_get_key (klass, "categories");
+      const gchar *ptr = categoris;
+      while (ptr && *ptr)
         {
           gchar category[64]="";
           gint i=0;
@@ -358,12 +361,14 @@ main (gint    argc,
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
-      if (strstr (klass->categories, "hidden"))
+      const char *categoris = gegl_operation_class_get_key (klass, "categories");
+      const char *description = gegl_operation_class_get_key (klass, "description");
+      if (categoris && strstr (categoris, "hidden"))
         continue;
 
       g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_name' colspan='4'><a name='op_%s'>%s</a></td>\n</tr>\n", klass->name, klass->name);
-      if (klass->description)
-        g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", klass->description);
+      if (description)
+        g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", description);
       list_properties (G_OBJECT_CLASS_TYPE (klass), 2, TRUE);
     }
   g_print ("</table>\n");

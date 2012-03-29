@@ -108,10 +108,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:difference";
-  operation_class->name        = "svg:difference";
-  operation_class->description =
-        _("SVG blend operation difference (<tt>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "svg:difference",
+  "description" ,
+        _("SVG blend operation difference (<tt>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</tt>)"),
+        NULL);
+  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif

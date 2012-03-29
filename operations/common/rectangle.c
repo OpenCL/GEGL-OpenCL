@@ -124,13 +124,15 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->name        = "gegl:rectangle";
-  operation_class->categories  = "input";
-  operation_class->description =
-        _("A rectangular source of a fixed size with a solid color");
   operation_class->attach = attach;
   operation_class->prepare = prepare;
-}
 
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:rectangle",
+  "categories" , "input",
+  "description",
+        _("A rectangular source of a fixed size with a solid color"),
+        NULL);
+}
 
 #endif

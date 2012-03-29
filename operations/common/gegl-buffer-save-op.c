@@ -56,9 +56,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process    = gegl_buffer_save_op_process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:gegl-buffer-save";
-  operation_class->categories  = "hidden";
-  operation_class->description = _("GeglBuffer file writer.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:gegl-buffer-save",
+    "categories" , "hidden",
+    "description", _("GeglBuffer file writer."),
+    NULL);
 
   gegl_extension_handler_register_saver (".gegl", "gegl:gegl-buffer-save");
 }

@@ -440,9 +440,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_cached_region = get_cached_region;
 
-  operation_class->name        = "gegl:png-load";
-  operation_class->categories  = "hidden";
-  operation_class->description = _("PNG image loader.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:png-load",
+    "categories"  , "hidden",
+    "description" , _("PNG image loader."),
+    NULL);
 
 /*  static gboolean done=FALSE;
     if (done)

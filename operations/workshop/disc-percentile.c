@@ -227,11 +227,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:disc-percentile";
-  operation_class->categories  = "misc";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:disc-percentile",
+  "categories"  , "misc",
+  "description" ,
         _("Sets the target pixel to the color corresponding to a given"
-          " percentile when colors are sorted by luminance.");
+          " percentile when colors are sorted by luminance."),
+        NULL);
 }
 
 #endif

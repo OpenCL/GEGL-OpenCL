@@ -216,13 +216,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   point_composer_class->cl_process = cl_process;
 
-  operation_class->name        = "gegl:opacity";
   operation_class->opencl_support = TRUE;
-
-  operation_class->categories  = "transparency";
-  operation_class->description =
-        _("Weights the opacity of the input both the value of the aux"
-          " input and the global value property.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:opacity",
+    "categories" , "transparency",
+    "description",
+          _("Weights the opacity of the input both the value of the aux"
+            " input and the global value property."),
+    NULL);
 }
 
 #endif

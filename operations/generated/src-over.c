@@ -109,10 +109,14 @@ gegl_chant_class_init (GeglChantClass *klass)
 
 
   operation_class->compat_name = "gegl:src-over";
-  operation_class->name        = "svg:src-over";
-  operation_class->description =
-        _("Porter Duff operation src-over (d = cA + cB * (1.0f - aA))");
-  operation_class->categories  = "compositors:porter-duff";
+  gegl_operation_class_set_keys (operation_class,
+    "name"      , "svg:src-over",
+    "categories", "compositors:porter-duff",
+    "description",
+        _("Porter Duff operation src-over (d = cA + cB * (1.0f - aA))"),
+        NULL);
+ 
+
 }
 
 #endif

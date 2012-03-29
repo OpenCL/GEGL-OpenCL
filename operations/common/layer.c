@@ -258,11 +258,14 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   object_class->finalize = finalize;
 
-  operation_class->name        = "gegl:layer";
-  operation_class->categories  = "meta";
-  operation_class->description = _("A layer in the traditional sense.");
   operation_class->attach = attach;
   operation_class->prepare = prepare;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:layer",
+    "categories" , "meta",
+    "description", _("A layer in the traditional sense."),
+    NULL);
 }
 
 

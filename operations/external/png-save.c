@@ -226,10 +226,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process    = gegl_png_save_process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:png-save";
-  operation_class->categories  = "output";
-  operation_class->description =
-        _("PNG image saver (passes the buffer through, saves as a side-effect.)");
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:png-save",
+  "categories" , "output",
+  "description",
+        _("PNG image saver (passes the buffer through, saves as a side-effect.)"),
+        NULL);
 
   gegl_extension_handler_register_saver (".png", "gegl:png-save");
 }

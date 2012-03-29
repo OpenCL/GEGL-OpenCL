@@ -407,11 +407,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "blur";
-  operation_class->name        = "gegl:box-blur";
-  operation_class->opencl_support = TRUE;
-  operation_class->description =
-       _("Performs an averaging of a square box of pixels.");
+  gegl_operation_class_set_keys (operation_class,
+      "name",        "gegl:box-blur",
+      "categories",  "blur",
+      "description", _("Performs an averaging of a square box of pixels."),
+      NULL);
 }
 
 #endif

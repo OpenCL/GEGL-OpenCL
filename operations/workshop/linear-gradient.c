@@ -131,9 +131,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 
-  operation_class->name        = "gegl:linear-gradient";
-  operation_class->categories  = "render";
-  operation_class->description = _("linear gradient renderer");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:linear-gradient",
+    "categories"  , "render",
+    "description" , _("linear gradient renderer"),
+    NULL);
 }
 
 #endif

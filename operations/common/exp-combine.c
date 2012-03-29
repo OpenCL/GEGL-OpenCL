@@ -1283,13 +1283,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box  = gegl_expcombine_get_bounding_box;
   operation_class->get_cached_region = gegl_expcombine_get_cached_region;
 
+  operation_class->prepare     = gegl_expcombine_prepare;
   operation_class->get_required_for_output = gegl_expcombine_get_required_for_output;
 
-  operation_class->name        = "gegl:exp-combine";
-  operation_class->categories  = "compositors";
-  operation_class->description =
-      _("Combine multiple scene exposures into one high range buffer");
-  operation_class->prepare     = gegl_expcombine_prepare;
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:exp-combine",
+  "categories" , "compositors",
+  "description",
+      _("Combine multiple scene exposures into one high range buffer"),
+      NULL);
 }
 
 

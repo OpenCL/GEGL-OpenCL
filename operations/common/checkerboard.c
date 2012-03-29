@@ -140,9 +140,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:checkerboard";
-  operation_class->categories  = "render";
-  operation_class->description = _("Checkerboard renderer");
+  gegl_operation_class_set_keys (operation_class,
+    "name",  "gegl:checkerboard",
+    "categories", "render",
+    "description", _("Checkerboard renderer"),
+    NULL);
 }
 
 #endif

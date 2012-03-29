@@ -118,10 +118,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:contrast-curve";
-  operation_class->categories  = "color";
-  operation_class->description =
-        _("Adjusts the contrast of the image according to a curve.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:contrast-curve",
+    "categories" , "color",
+    "description",
+        _("Adjusts the contrast of the image according to a curve."),
+        NULL);
 }
 
 #endif

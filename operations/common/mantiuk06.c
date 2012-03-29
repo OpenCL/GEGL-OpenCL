@@ -1632,13 +1632,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = mantiuk06_get_required_for_output;
   operation_class->get_cached_region       = mantiuk06_get_cached_region;
 
-  operation_class->name        = "gegl:mantiuk06";
-  operation_class->categories  = "tonemapping";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+      "name"       , "gegl:mantiuk06",
+      "categories" , "tonemapping",
+      "description",
         _("Adapt an image, which may have a high dynamic range, for "
           "presentation using a low dynamic range. This operator constrains "
           "contrasts across multiple spatial frequencies, producing "
-          "luminance within the range 0.0-1.0");
+          "luminance within the range 0.0-1.0"),
+        NULL);
 }
 
 #endif

@@ -191,10 +191,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:box-min";
-  operation_class->categories  = "misc";
-  operation_class->description =
-        _("Sets the target pixel to the value of the minimum value in a box surrounding the pixel.");
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:box-min",
+  "categories"  , "misc",
+  "description" ,
+        _("Sets the target pixel to the value of the minimum value in a box surrounding the pixel."),
+        NULL);
 }
+
 
 #endif

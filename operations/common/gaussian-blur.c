@@ -489,11 +489,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "blur";
-  operation_class->name        = "gegl:gaussian-blur";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+    "name",       "gegl:gaussian-blur",
+    "categories", "blur",
+    "description",
         _("Performs an averaging of neighbouring pixels with the "
-          "normal distribution as weighting.");
+          "normal distribution as weighting."),
+        NULL);
 }
 
 #endif

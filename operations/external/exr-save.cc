@@ -242,9 +242,11 @@ static void gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process = gegl_exr_save_process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:exr-save";
-  operation_class->categories  = "output";
-  operation_class->description = "OpenEXR image saver";
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:exr-save",
+    "categories"  , "output",
+    "description" , "OpenEXR image saver",
+    NULL);
 
   gegl_extension_handler_register_saver (".exr", "gegl:exr-save");
 }

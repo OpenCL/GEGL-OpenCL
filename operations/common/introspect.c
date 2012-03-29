@@ -154,9 +154,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process          = gegl_introspect_process;
   operation_class->get_bounding_box = gegl_introspect_get_bounding_box;
 
-  operation_class->name        = "gegl:introspect";
-  operation_class->categories  = "render";
-  operation_class->description = _("GEGL graph visualizer.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:introspect",
+    "categories" , "render",
+    "description", _("GEGL graph visualizer."),
+    NULL);
 }
 
 #endif

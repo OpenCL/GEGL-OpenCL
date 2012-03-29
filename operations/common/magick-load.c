@@ -129,10 +129,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_cached_region = get_cached_region;;
   operation_class->no_cache = FALSE;
 
-  operation_class->name        = "gegl:magick-load";
-  operation_class->categories  = "hidden";
-  operation_class->description =
-        _("Image Magick wrapper using the png op.");
+  gegl_operation_class_set_keys (operation_class,
+        "name"       , "gegl:magick-load",
+        "categories" , "hidden",
+        "description",
+        _("Image Magick wrapper using the png op."),
+        NULL);
 }
 
 #endif

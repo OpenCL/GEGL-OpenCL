@@ -291,13 +291,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   object_class->finalize = finalize;
-
-  operation_class->name        = "gegl:text";
-  operation_class->categories  = "render";
-  operation_class->description = _("Display a string of text using pango and cairo.");
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
   operation_source_class->process = process;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:text",
+    "categories"  , "render",
+    "description" , _("Display a string of text using pango and cairo."),
+    NULL);
+
 }
 
 

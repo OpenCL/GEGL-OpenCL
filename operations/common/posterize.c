@@ -75,10 +75,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   point_filter_class->process = process;
 
-  operation_class->name        = "gegl:posterize";
-  operation_class->categories  = "color";
-  operation_class->description =
-     _("Reduces the number of levels in each color component of the image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:posterize",
+    "categories" , "color",
+    "description",
+       _("Reduces the number of levels in each color component of the image."),
+       NULL);
 
 }
 

@@ -111,10 +111,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:hard-light";
-  operation_class->name        = "svg:hard-light";
-  operation_class->description =
-        _("SVG blend operation hard-light (<tt>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "svg:hard-light",
+  "description" ,
+        _("SVG blend operation hard-light (<tt>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</tt>)"),
+        NULL);
+  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif

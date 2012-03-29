@@ -123,9 +123,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 
-  operation_class->name        = "gegl:radial-gradient";
-  operation_class->categories  = "render";
-  operation_class->description = _("radial gradient renderer");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:radial-gradient",
+    "categories"  , "render",
+    "description" , _("radial gradient renderer"),
+    NULL);
 }
 
 #endif

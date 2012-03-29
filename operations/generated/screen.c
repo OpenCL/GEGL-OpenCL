@@ -108,10 +108,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:screen";
-  operation_class->name        = "svg:screen";
-  operation_class->description =
-        _("SVG blend operation screen (<tt>d = cA + cB - cA * cB</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "svg:screen",
+  "description" ,
+        _("SVG blend operation screen (<tt>d = cA + cB - cA * cB</tt>)"),
+        NULL);
+  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
 
 #endif

@@ -107,10 +107,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:svg-multiply";
-  operation_class->description =
-        _("SVG blend operation svg-multiply (<tt>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</tt>)");
-  operation_class->categories  = "compositors:svgfilter";
+  gegl_operation_class_set_keys (operation_class,
+  "name"       , "gegl:svg-multiply",
+  "categories" , "compositors:svgfilter",
+  "description",
+        _("SVG blend operation svg-multiply (<tt>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</tt>)"),
+  NULL);
 }
 
 #endif

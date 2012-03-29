@@ -1421,12 +1421,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = matting_get_required_for_output;
   operation_class->get_cached_region       = matting_get_cached_region;
 
-  operation_class->name        = "gegl:matting-levin";
-  operation_class->categories  = "misc";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:matting-levin",
+  "categories"  , "misc",
+  "description" ,
         _("Given a sparse user supplied tri-map and an input image, create a "
           "foreground alpha mat. Set white as selected, black as unselected, "
-          "for the tri-map.");
+          "for the tri-map."),
+        NULL);
 }
 
 

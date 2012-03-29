@@ -237,9 +237,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:kuwahara";
-  operation_class->categories  = "misc";
-  operation_class->description = _("Edge preserving blur");
+  gegl_operation_class_set_keys (operation_class,
+    "name"    , "gegl:kuwahara",
+    "categories"  , "misc",
+    "description" , _("Edge preserving blur"),
+    NULL);
 }
 
 #endif

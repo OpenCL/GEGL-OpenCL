@@ -394,10 +394,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "gegl:mirrors";
-  operation_class->categories  = "blur";
-  operation_class->description =
-        _("Applies mirroring effect on the image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:mirrors",
+    "categories" , "blur",
+    "description",
+          _("Applies mirroring effect on the image."),
+    NULL);
 }
 
 #endif

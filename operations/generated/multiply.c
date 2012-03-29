@@ -118,9 +118,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   operation_class->prepare = prepare;
 
-  operation_class->name        = "gegl:multiply";
-  operation_class->categories  = "compositors:math";
-  operation_class->description =
-       _("Math operation multiply (c = c * value)");
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:multiply",
+  "categories"  , "compositors:math",
+  "description" ,
+       _("Math operation multiply (c = c * value)"),
+       NULL);
 }
 #endif

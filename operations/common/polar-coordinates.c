@@ -396,10 +396,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
-
-  operation_class->categories  = "enhance";
-  operation_class->name        = "gegl:polar-coordinates";
-  operation_class->description = _("Performs polar-coordinates on the image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:polar-coordinates",
+    "categories" , "enhance",
+    "description", _("Performs polar-coordinates on the image."),
+    NULL);
 }
 
 #endif

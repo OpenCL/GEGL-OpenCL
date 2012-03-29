@@ -239,9 +239,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
 
-  operation_class->name        = "gegl:svg-load";
-  operation_class->categories  = "input";   /* not hidden because it has extra API */
-  operation_class->description = _("Load an SVG file using librsvg");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:svg-load",
+    "categories"  , "input",   /* not hidden because it has extra API */
+    "description" , _("Load an SVG file using librsvg"),
+    NULL);
 
 /*  static gboolean done=FALSE;
     if (done)

@@ -977,11 +977,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
-  operation_class->name        = "gegl:gluas";
-  operation_class->categories  = "script:misc";
-  operation_class->description =
+  gegl_operation_class_set_keys (operation_class,
+  "name"        , "gegl:gluas",
+  "categories"  , "script:misc",
+  "description" ,
         _("A general purpose filter/composer implementation proxy for the"
-          " lua programming language.");
+          " lua programming language."),
+        NULL);
 }
 
 #endif

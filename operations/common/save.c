@@ -188,10 +188,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:save";
-  operation_class->categories  = "meta:output";
-  operation_class->description =
-        _("Multipurpose file saver, that uses other native handlers.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:save",
+    "categories" , "meta:output",
+    "description",
+        _("Multipurpose file saver, that uses other native handlers."),
+        NULL);
 }
 
 #endif

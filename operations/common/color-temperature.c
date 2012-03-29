@@ -254,15 +254,17 @@ gegl_chant_class_init (GeglChantClass *klass)
   object_class->notify   = notify;
 
   operation_class->prepare = prepare;
+  operation_class->opencl_support = TRUE;
 
   point_filter_class->process = process;
   point_filter_class->cl_process = cl_process;
 
-  operation_class->name        = "gegl:color-temperature";
-  operation_class->opencl_support = TRUE;
-  operation_class->categories  = "color";
-  operation_class->description =
-        _("Allows changing the color temperature of an image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:color-temperature",
+    "categories" , "color",
+    "description",
+          _("Allows changing the color temperature of an image."),
+    NULL);
 }
 
 /* Coefficients of rational functions of degree 5 fitted per color channel to

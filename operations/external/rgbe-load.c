@@ -129,9 +129,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box  = gegl_rgbe_load_get_bounding_box;
   operation_class->get_cached_region = gegl_rgbe_load_get_cached_region;
 
-  operation_class->name        = "gegl:rgbe-load";
-  operation_class->categories  = "hidden";
-  operation_class->description = _("RGBE image loader (Radiance HDR format).");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:rgbe-load",
+    "categories"  , "hidden",
+    "description" , _("RGBE image loader (Radiance HDR format)."),
+    NULL);
 
   gegl_extension_handler_register (".hdr", "gegl:rgbe-load");
   gegl_extension_handler_register (".pic", "gegl:rgbe-load");

@@ -81,11 +81,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_bounding_box = gegl_color_op_get_bounding_box;
   operation_class->prepare          = gegl_color_op_prepare;
 
-  operation_class->name        = "gegl:color";
-  operation_class->categories  = "render";
-  operation_class->description =
-        _("Generates a buffer entirely filled with the specified color, "
-          "crop it to get smaller dimensions.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:color",
+    "categories" , "render",
+    "description",
+      _("Generates a buffer entirely filled with the specified color, "
+        "crop it to get smaller dimensions."),
+    NULL);
 }
 
 #endif

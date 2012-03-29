@@ -135,9 +135,11 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:display";
-  operation_class->categories  = "meta:display";
-  operation_class->description =
-        _("Display the input buffer in a window.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:display",
+    "categories"  , "meta:display",
+    "description" ,
+          _("Display the input buffer in a window."),
+    NULL);
 }
 #endif

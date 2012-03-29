@@ -81,9 +81,11 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
-  operation_class->name        = "gegl:write-buffer";
-  operation_class->categories  = "programming:output";
-  operation_class->description = _("A GEGL buffer destination surface.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:write-buffer",
+    "categories" , "programming:output",
+    "description", _("A GEGL buffer destination surface."),
+    NULL);
 }
 
 #endif

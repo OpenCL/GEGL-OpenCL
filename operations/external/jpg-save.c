@@ -185,10 +185,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   sink_class->process    = gegl_jpg_save_process;
   sink_class->needs_full = TRUE;
 
-  operation_class->name        = "gegl:jpg-save";
-  operation_class->categories  = "output";
-  operation_class->description =
-    _("JPEG image saver (passes the buffer through, saves as a side-effect.)");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:jpg-save",
+    "categories"  , "output",
+    "description" ,
+    _("JPEG image saver (passes the buffer through, saves as a side-effect.)"),
+    NULL);
 
   gegl_extension_handler_register_saver (".jpg", "gegl:jpg-save");
 }

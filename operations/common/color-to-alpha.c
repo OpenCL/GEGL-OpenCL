@@ -164,9 +164,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
-  operation_class->categories  = "color";
-  operation_class->name        = "gegl:color-to-alpha";
-  operation_class->description = _("Performs color-to-alpha on the image.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"       , "gegl:color-to-alpha",
+    "categories" , "color",
+    "description", _("Performs color-to-alpha on the image."),
+    NULL);
 }
 
 #endif

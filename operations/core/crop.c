@@ -173,9 +173,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_invalidated_by_change = gegl_crop_get_invalidated_by_change;
   operation_class->get_required_for_output   = gegl_crop_get_required_for_output;
 
-  operation_class->name        = "gegl:crop";
-  operation_class->categories  = "core";
-  operation_class->description = _("Crop a buffer");
+  gegl_operation_class_set_keys (operation_class,
+      "name",        "gegl:crop",
+      "categories",  "core",
+      "description", _("Crop a buffer"),
+      NULL);
 
   operation_class->no_cache = TRUE;
 }
