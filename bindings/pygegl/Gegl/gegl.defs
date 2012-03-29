@@ -84,7 +84,7 @@
 )
 
 (define-function list_properties
-  (c-name "gegl_list_properties")
+  (c-name "gegl_operation_list_properties")
   (return-type "GParamSpec**")
   (parameters
     '("const-gchar*" "operation_type")

@@ -216,8 +216,7 @@ const gchar *   gegl_operation_get_name      (GeglOperation *operation);
 GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
                                                 const gchar   *pad_name);
 
-/* XXX: should be changed to gegl_op_list_properties */
-GParamSpec ** gegl_list_properties             (const gchar *operation_type,
+GParamSpec ** gegl_operation_list_properties   (const gchar *operation_type,
                                                 guint       *n_properties_p);
 
 /* API to change  */

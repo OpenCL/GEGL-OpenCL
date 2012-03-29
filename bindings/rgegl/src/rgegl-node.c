@@ -222,7 +222,7 @@ clist_properties (self, op_type)
   VALUE ary;
   int i;
 
-  props = gegl_list_properties(RVAL2CSTR(op_type), &n_properties);
+  props = gegl_operation_list_properties(RVAL2CSTR(op_type), &n_properties);
   ary = rb_ary_new();
   for (i = 0; i < n_properties; i++){
       rb_ary_push (ary, rbgobj_ruby_object_from_instance(props[i])); /*rb_str_new2(props[i]->name));*/

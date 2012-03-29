@@ -762,7 +762,7 @@ serialize_properties (SerializeState *ss,
   gboolean     got_a_param = FALSE;
   gint         i;
 
-  properties = gegl_list_properties (gegl_node_get_operation (node),
+  properties = gegl_operation_list_properties (gegl_node_get_operation (node),
                                      &n_properties);
 
   for (i = 0; i < n_properties; i++)

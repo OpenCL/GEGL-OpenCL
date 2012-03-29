@@ -343,8 +343,8 @@ get_invalidated_by_change (GeglOperation        *self,
 /* returns a freshly allocated list of the properties of the object, does not list
  * the regular gobject properties of GeglNode ('name' and 'operation') */
 GParamSpec **
-gegl_list_properties (const gchar *operation_type,
-                      guint       *n_properties_p)
+gegl_operation_list_properties (const gchar *operation_type,
+                                guint       *n_properties_p)
 {
   GParamSpec  **pspecs;
   GType         type;

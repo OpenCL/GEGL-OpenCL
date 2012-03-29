@@ -158,9 +158,9 @@ _wrap_gegl_list_operations(PyObject *self)
     return ret;
 }
 %%
-override gegl_list_properties kwargs
+override gegl_operation_list_properties kwargs
 static PyObject *
-_wrap_gegl_list_properties(PyObject *self, PyObject *args, PyObject *kwargs)
+_wrap_gegl_operation_list_properties(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     char *operation;
     guint n_properties, i;
@@ -174,7 +174,7 @@ _wrap_gegl_list_properties(PyObject *self, PyObject *args, PyObject *kwargs)
                                      &operation))
         return NULL;
 
-    properties = gegl_list_properties(operation, &n_properties);
+    properties = gegl_operation_list_properties(operation, &n_properties);
 
     ret = PyTuple_New(n_properties);
     if (!ret) {
