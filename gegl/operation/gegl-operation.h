@@ -76,7 +76,8 @@ struct _GeglOperationClass
   GObjectClass    parent_class;
 
   const gchar    *name;        /* name(string) used to create/identify
-                                  this type of operation in GEGL*/
+                                  this type of operation in GEGL, should be
+                                  set through gegl_operation_class_set_key(s) */
   const gchar    *compat_name; /* allows specifying an alias that the op is
                                   also known as */
   GHashTable     *keys;        /* hashtable used for storing meta-data about an op */
@@ -144,7 +145,7 @@ struct _GeglOperationClass
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
-  gpointer      pad[8];
+  gpointer      pad[10];
 };
 
 

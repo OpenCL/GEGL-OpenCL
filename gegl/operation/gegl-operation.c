@@ -43,13 +43,41 @@ static GeglRectangle get_required_for_output   (GeglOperation       *self,
                                                 const gchar         *input_pad,
                                                 const GeglRectangle *region);
 
-G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
+static void gegl_operation_class_init     (GeglOperationClass *klass);
+static void gegl_operation_base_init      (GeglOperationClass *klass);
+static void gegl_operation_init           (GeglOperation      *self);
+
+GType
+gegl_operation_get_type (void)
+{
+  static GType type = 0;
+
+  if (! type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GeglOperationClass),
+        (GBaseInitFunc)      gegl_operation_base_init,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc)     gegl_operation_class_init,
+        NULL,           /* class_finalize */
+        NULL,           /* class_data */
+        sizeof (GeglOperation),
+        0,              /* n_preallocs */
+        (GInstanceInitFunc) gegl_operation_init,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT,
+                                     "GeglOperation",
+                                     &info, 0);
+    }
+  return type;
+}
+
 
 static void
 gegl_operation_class_init (GeglOperationClass *klass)
 {
-  /* XXX: leaked for now, should replace G_DEFINE_TYPE with the expanded one */
-  klass->keys = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
   klass->name                      = NULL;  /* an operation class with
                                              * name == NULL is not
                                              * included when doing
@@ -64,6 +92,13 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->get_bounding_box          = get_bounding_box;
   klass->get_invalidated_by_change = get_invalidated_by_change;
   klass->get_required_for_output   = get_required_for_output;
+}
+
+static void
+gegl_operation_base_init  (GeglOperationClass *klass)
+{
+  /* XXX: leaked for now, should replace G_DEFINE_TYPE with the expanded one */
+  klass->keys = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
 static void
@@ -497,21 +532,21 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
                               const gchar        *key_name,
                               const gchar        *key_value)
 {
+  if (!key_value)
+    {
+      g_hash_table_remove (klass->keys, key_name);
+      return;
+    }
+  else
+    {
+      key_value = g_strdup (key_value);
+      g_hash_table_insert (klass->keys, g_strdup (key_name),
+                           (void*)key_value);
+    }
   if (!strcmp (key_name, "name"))
     {
-      if (klass->name)
-        {
-          g_warning ("tried changing name of op %s to %s",
-                     klass->name, key_value);
-          return;
-        }
-      klass->name = g_strdup (key_value);
+      klass->name = key_value;
     }
-  if (key_value)
-    g_hash_table_remove (klass->keys, key_name);
-  else
-    g_hash_table_insert (klass->keys, g_strdup (key_name),
-                         g_strdup (key_value));
 }
 
 void
