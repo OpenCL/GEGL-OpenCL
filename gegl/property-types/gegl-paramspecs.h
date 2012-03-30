@@ -89,6 +89,7 @@ struct _GeglParamSpecInt
   GParamSpecInt parent_instance;
   gint          ui_minimum; /* reasonable range to present to user */
   gint          ui_maximum;
+  gdouble       ui_gamma;
 };
 
 GType        gegl_param_int_get_type (void) G_GNUC_CONST;
@@ -101,6 +102,7 @@ GParamSpec * gegl_param_spec_int (const gchar *name,
                                   gint         default_value,
                                   gint         ui_minimum,
                                   gint         ui_maximum,
+                                  gdouble      ui_gamma,
                                   GParamFlags  flags);
 
 

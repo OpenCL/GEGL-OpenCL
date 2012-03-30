@@ -136,6 +136,7 @@ gegl_param_int_init (GParamSpec *pspec)
   GeglParamSpecInt *gdpspec = GEGL_PARAM_SPEC_INT (pspec);
   gdpspec->ui_minimum = dpspec->minimum;
   gdpspec->ui_maximum = dpspec->maximum;
+  gdpspec->ui_gamma = 1.0;
 }
 
 GParamSpec *
@@ -147,6 +148,7 @@ gegl_param_spec_int (const gchar *name,
                      gint         default_value,
                      gint         ui_minimum,
                      gint         ui_maximum,
+                     gdouble      ui_gamma,
                      GParamFlags  flags)
 {
   GeglParamSpecInt *pspec;
@@ -162,6 +164,7 @@ gegl_param_spec_int (const gchar *name,
   ispec->default_value = default_value;
   pspec->ui_minimum = ui_minimum;
   pspec->ui_maximum = ui_maximum;
+  pspec->ui_gamma = ui_gamma;
 
   return G_PARAM_SPEC (pspec);
 }

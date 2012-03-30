@@ -343,7 +343,7 @@ struct _GeglChantO
                         * do not create an empty struct if there are no chanted properties.
                         */
 #define gegl_chant_int(name, nick, min, max, def, blurb)                        gint               name;
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)     gint               name;
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)     gint               name;
 #define gegl_chant_double(name, nick, min, max, def, blurb)                     gdouble            name;
 #define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) gdouble   name;
 #define gegl_chant_boolean(name, nick, def, blurb)                              gboolean           name;
@@ -382,7 +382,7 @@ enum
 {
   PROP_0,
 #define gegl_chant_int(name, nick, min, max, def, blurb)                        PROP_##name,
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)     PROP_##name,
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)     PROP_##name,
 #define gegl_chant_double(name, nick, min, max, def, blurb)                     PROP_##name,
 #define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) PROP_##name,
 #define gegl_chant_boolean(name, nick, def, blurb)                              PROP_##name,
@@ -431,7 +431,7 @@ get_property (GObject      *gobject,
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb) \
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) \
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
@@ -524,7 +524,7 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       break;
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb) \
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) \
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       break;
@@ -631,7 +631,7 @@ static void gegl_chant_destroy_notify (gpointer data)
   GeglChantO *properties = GEGL_CHANT_PROPERTIES (data);
 
 #define gegl_chant_int(name, nick, min, max, def, blurb)
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_double(name, nick, min, max, def, blurb)
 #define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_boolean(name, nick, def, blurb)
@@ -715,7 +715,7 @@ gegl_chant_constructor (GType                  type,
   properties = GEGL_CHANT_PROPERTIES (obj);
 
 #define gegl_chant_int(name, nick, min, max, def, blurb)
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_double(name, nick, min, max, def, blurb)
 #define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_boolean(name, nick, def, blurb)
@@ -770,10 +770,10 @@ gegl_chant_class_intern_init (gpointer klass)
                                                      G_PARAM_READWRITE |     \
                                                      G_PARAM_CONSTRUCT |     \
                                                      GEGL_PARAM_PAD_INPUT)));
-#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)  \
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    gegl_param_spec_int (#name, nick, blurb,     \
-                                                     min, max, def, ui_min, ui_max, \
+                                                     min, max, def, ui_min, ui_max, ui_gamma, \
                                                      (GParamFlags) (         \
                                                      G_PARAM_READWRITE |     \
                                                      G_PARAM_CONSTRUCT |     \
