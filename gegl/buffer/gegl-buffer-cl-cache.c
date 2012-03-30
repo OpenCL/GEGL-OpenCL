@@ -1,4 +1,5 @@
 #include "config.h"
+#include <string.h>
 #include <glib.h>
 
 #include "gegl.h"
@@ -166,7 +167,7 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
                                                                                        entry->roi.x, entry->roi.y, entry->roi.width, entry->roi.height);
 #endif
 
-          memset(entry, 0x0, sizeof (CacheEntry));
+          memset (entry, 0x0, sizeof (CacheEntry));
 
           g_slice_free (CacheEntry, data);
           cache_entries = g_list_remove (cache_entries, data);
