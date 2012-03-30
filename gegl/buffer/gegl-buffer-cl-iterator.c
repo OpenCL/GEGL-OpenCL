@@ -210,7 +210,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   || (i->flags[no] == GEGL_CL_BUFFER_READ
                       && (i->area[no][0] > 0 || i->area[no][1] > 0 || i->area[no][2] > 0 || i->area[no][3] > 0)))
                 {
-                  gegl_buffer_cl_cache_invalidate (i->buffer[no], &i->rect[no]);
+                  gegl_buffer_cl_cache_flush (i->buffer[no], &i->rect[no]);
                 }
             }
         }
@@ -365,12 +365,14 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   case GEGL_CL_COLOR_EQUAL:
 
                     {
-                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);\
+                    i->tex_buf[no][j] = gegl_buffer_cl_cache_get (i->buffer[no], &i->roi[no][j]);
 
                     if (i->tex_buf[no][j])
                       i->tex_buf_from_cache [no][j] = TRUE; /* don't free texture from cache */
                     else
                       {
+                        gegl_buffer_cl_cache_flush (i->buffer[no], &i->roi[no][j]);
+
                         g_assert (i->tex_buf[no][j] == NULL);
                         i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
                                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
@@ -407,6 +409,8 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                       i->tex_buf_from_cache [no][j] = TRUE; /* don't free texture from cache */
                     else
                       {
+                        gegl_buffer_cl_cache_flush (i->buffer[no], &i->roi[no][j]);
+
                         g_assert (i->tex_buf[no][j] == NULL);
                         i->tex_buf[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
                                                                  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,

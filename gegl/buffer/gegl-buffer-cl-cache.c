@@ -131,17 +131,20 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
     {
       cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
       if (cl_err != CL_SUCCESS) CL_ERROR;
+
+      g_static_mutex_lock (&cache_mutex);
+
+      while (cache_entry_find_invalid (&data))
+        {
+          CacheEntry *entry = data;
+          memset(entry, 0x0, sizeof (CacheEntry));
+
+          g_slice_free (CacheEntry, data);
+          cache_entries = g_list_remove (cache_entries, data);
+        }
+
+      g_static_mutex_unlock (&cache_mutex);
     }
-
-  g_static_mutex_lock (&cache_mutex);
-
-  while (cache_entry_find_invalid (&data))
-    {
-      g_slice_free (CacheEntry, data);
-      cache_entries = g_list_remove (cache_entries, data);
-    }
-
-  g_static_mutex_unlock (&cache_mutex);
 
   return TRUE;
 
