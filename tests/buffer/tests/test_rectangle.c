@@ -9,7 +9,7 @@ TEST ()
   fill (buffer, 0.5);
   rectangle (buffer, 5,5, 10, 10, 0.0);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
 
   test_end ();
 }

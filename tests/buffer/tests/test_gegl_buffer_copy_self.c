@@ -10,6 +10,6 @@ TEST ()
   vgrad (buffer);
   gegl_buffer_copy (buffer, &source, buffer, &dest); /* copying to self */
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   test_end ();
 }

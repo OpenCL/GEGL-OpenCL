@@ -24,9 +24,9 @@ TEST ()
   /*fill (subsub, 0.2);*/
   print_buffer (buffer);
   print_buffer (foo);
-  gegl_buffer_destroy (sub);
-  gegl_buffer_destroy (subsub);
-  gegl_buffer_destroy (buffer);
-  gegl_buffer_destroy (foo);
+  g_object_unref (sub);
+  g_object_unref (subsub);
+  g_object_unref (buffer);
+  g_object_unref (foo);
   test_end ();
 }

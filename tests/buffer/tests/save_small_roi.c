@@ -17,13 +17,13 @@ TEST ()
 
   /* Save */
   gegl_buffer_save (buffer, path, &roi);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   buffer = NULL;
 
   /* Load */
   buffer = gegl_buffer_load (path);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   buffer = NULL;
 
   g_unlink (path);

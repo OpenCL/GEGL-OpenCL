@@ -6,8 +6,8 @@ TEST ()
   buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
   vgrad (buffer);
   buffer2 = gegl_buffer_dup (buffer);
-  gegl_buffer_destroy (buffer2);
+  g_object_unref (buffer2);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   test_end ();
 }

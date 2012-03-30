@@ -16,7 +16,7 @@ TEST ()
 
 
   print_linear_buffer_u8 (getrect.width, getrect.height, buf);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
 
   g_free (buf);
   test_end ();

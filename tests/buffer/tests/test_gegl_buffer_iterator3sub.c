@@ -10,7 +10,7 @@ TEST ()
   sub = gegl_buffer_create_sub_buffer (buffer, &sextent);
   fill_rect (sub, &roi, 0.5);
   print_buffer (buffer);
-  gegl_buffer_destroy (sub);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (sub);
+  g_object_unref (buffer);
   test_end ();
 }

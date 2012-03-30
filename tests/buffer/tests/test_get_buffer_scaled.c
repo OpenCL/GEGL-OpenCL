@@ -24,7 +24,7 @@ TEST ()
         }
     }
 
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
 
   g_free (buf);
   test_end ();

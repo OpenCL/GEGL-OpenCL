@@ -11,7 +11,7 @@ TEST ()
   vgrad (buffer);
   gegl_buffer_copy (buffer, &source, buffer2, &dest); 
   print_buffer (buffer2);
-  gegl_buffer_destroy (buffer);
-  gegl_buffer_destroy (buffer2);
+  g_object_unref (buffer);
+  g_object_unref (buffer2);
   test_end ();
 }

@@ -25,9 +25,9 @@ TEST ()
   print (("final sub3:\n"));
   print_buffer (sub3);
 
-  gegl_buffer_destroy (sub1);
-  gegl_buffer_destroy (sub2);
-  gegl_buffer_destroy (sub3);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (sub1);
+  g_object_unref (sub2);
+  g_object_unref (sub3);
+  g_object_unref (buffer);
   test_end ();
 }

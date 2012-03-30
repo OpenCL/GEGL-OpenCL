@@ -11,6 +11,6 @@ TEST ()
   roi.x+=20;
   fill_rect (buffer, &roi, 0.2);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   test_end ();
 }

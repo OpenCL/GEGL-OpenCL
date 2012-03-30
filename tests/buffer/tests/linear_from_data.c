@@ -16,6 +16,6 @@ TEST ()
                                              (GDestroyNotify) g_free, /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
   test_end ();
 }

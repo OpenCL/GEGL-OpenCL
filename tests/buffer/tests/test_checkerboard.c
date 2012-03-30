@@ -8,7 +8,7 @@ TEST ()
   buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
   checkerboard (buffer, 3, 0.0, 1.0);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
+  g_object_unref (buffer);
 
   test_end ();
 }

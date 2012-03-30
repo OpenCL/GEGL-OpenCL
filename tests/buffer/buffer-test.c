@@ -289,7 +289,7 @@ void rectangle (GeglBuffer *buffer,
 
   sub_buf = gegl_buffer_create_sub_buffer (buffer, &rect);
   fill (sub_buf, value);
-  gegl_buffer_destroy (sub_buf);
+  g_object_unref (sub_buf);
 }
 
 #include "buffer-tests.inc"

@@ -16,11 +16,11 @@ TEST ()
                                              (GDestroyNotify) g_free, /* destroy_notify */
                                              NULL   /* destroy_notify_data */);
   buffer2 = gegl_buffer_dup (buffer);
-  gegl_buffer_destroy (buffer2);
+  g_object_unref (buffer2);
   buffer2 = gegl_buffer_dup (buffer);
   vgrad (buffer);
   print_buffer (buffer);
-  gegl_buffer_destroy (buffer);
-  gegl_buffer_destroy (buffer2);
+  g_object_unref (buffer);
+  g_object_unref (buffer2);
   test_end ();
 }

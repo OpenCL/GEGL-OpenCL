@@ -15,7 +15,7 @@ TEST ()
   gegl_buffer_copy (buffer, &rect, buffer2, &rect);
   }
   print_buffer (buffer2);
-  gegl_buffer_destroy (buffer);
-  gegl_buffer_destroy (buffer2);
+  g_object_unref (buffer);
+  g_object_unref (buffer2);
   test_end ();
 }
