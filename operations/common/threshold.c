@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, _("Threshold"), -10.0, 10.0, 0.5,
+gegl_chant_double_ui (value, _("Threshold"), -10.0, 10.0, 0.5, 0.0, 1.0, 1.0, 
    _("Global threshold level (used when there is no auxiliary input buffer)."))
 
 #else

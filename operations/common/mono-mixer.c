@@ -23,9 +23,12 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (red,   _("Red"),   -10.0, 10.0, 0.5,  _("Amount of red"))
-gegl_chant_double (green, _("Green"), -10.0, 10.0, 0.25, _("Amount of green"))
-gegl_chant_double (blue,  _("Blue"),  -10.0, 10.0, 0.25, _("Amount of blue"))
+gegl_chant_double_ui (red,   _("Red"),   -10.0, 10.0, 0.5, -1.0, 1.0, 1.0,
+                      _("Amount of red"))
+gegl_chant_double_ui (green, _("Green"), -10.0, 10.0, 0.25, -1.0, 1.0, 1.0,
+                      _("Amount of green"))
+gegl_chant_double_ui (blue,  _("Blue"),  -10.0, 10.0, 0.25, -1.0, 1.0, 1.0,
+                      _("Amount of blue"))
 
 #else
 

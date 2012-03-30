@@ -18,7 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (iterations, "Strength", 1, 32, 4, "How many iteratarion to run the algorithm.")
+gegl_chant_int_ui (iterations, "Strength", 0, 32, 4, 0, 8, 1, "How many iteratarion to run the algorithm.")
 
 #else
 

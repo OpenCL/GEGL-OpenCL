@@ -23,10 +23,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+gegl_chant_double_ui (x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 1024.0, 1.0,
                    _("X coordinate of the center of the waves"))
 
-gegl_chant_double (y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+gegl_chant_double_ui (y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 1024.0, 1.0,
                    _("Coordinate y of the center of the waves"))
 
 gegl_chant_double (amplitude, _("Amplitude"), 0.0, 1000.0, 25.0,

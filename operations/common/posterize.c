@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (levels, _("Levels"), 1, 64, 8,
+gegl_chant_int_ui (levels, _("Levels"), 1, 64, 8, 1, 64, 2,
                    _("number of levels per component"))
 
 #else

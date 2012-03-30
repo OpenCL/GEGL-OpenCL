@@ -27,8 +27,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (width,  _("Width"),  10, 10000000, 400, _("Width"))
-gegl_chant_int (height, _("Height"), 10, 10000000, 400, _("Height"))
+gegl_chant_int_ui (width,  _("Width"),  1, 10000000, 400, 1, 2000, 1.5,
+                   _("Width"))
+gegl_chant_int_ui (height, _("Height"), 1, 10000000, 400, 1, 2000, 1.5,
+                   _("Height"))
 
 gegl_chant_int (fractaltype, _("Fractal type"), 0, 8, 0, _("Fractal Type"))
 

@@ -26,9 +26,9 @@
  *       property name,   min,   max, default, "description of property"
  */
 
-gegl_chant_double (contrast, _("Contrast"), -5.0, 5.0, 1.0,
+gegl_chant_double_ui (contrast, _("Contrast"), -5.0, 5.0, 1.0, 0.0, 2.0, 1.0,
                    _("Range scale factor"))
-gegl_chant_double (brightness, _("Brightness"), -3.0, 3.0, 0.0,
+gegl_chant_double_ui (brightness, _("Brightness"), -3.0, 3.0, 0.0, -1.0, 1.0, 1.0,
                    _("Amount to increase brightness"))
 
 /* this will create the instance structure for our use, and register the

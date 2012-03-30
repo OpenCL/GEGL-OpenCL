@@ -22,13 +22,13 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int   (x,        _("Width"),  1, G_MAXINT, 16,
+gegl_chant_int_ui   (x,        _("Width"),  1, G_MAXINT, 16, 1, 256, 1.5,
                   _("Horizontal width of cells pixels."))
-gegl_chant_int   (y,        _("Height"), 1, G_MAXINT, 16,
+gegl_chant_int_ui   (y,        _("Height"), 1, G_MAXINT, 16, 1, 256, 1.5,
                   _("Vertical width of cells in pixels."))
-gegl_chant_int   (x_offset, _("X offset"), -G_MAXINT, G_MAXINT, 0,
+gegl_chant_int_ui   (x_offset, _("X offset"), -G_MAXINT, G_MAXINT, 0, -10, 10, 1.0,
                   _("Horizontal offset (from origin) for start of grid."))
-gegl_chant_int   (y_offset, _("Y offset"), -G_MAXINT, G_MAXINT,  0,
+gegl_chant_int_ui   (y_offset, _("Y offset"), -G_MAXINT, G_MAXINT,  0, -10, 10, 1.0,
                   _("Vertical offset (from origin) for start of grid."))
 gegl_chant_color (color1,   _("Color"), "black",
                   _("One of the cell colors (defaults to 'black')"))

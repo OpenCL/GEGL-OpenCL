@@ -23,14 +23,14 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (in_low, _("Low input"), -1.0, 4.0, 0.0,
+gegl_chant_double_ui (in_low, _("Low input"), -1.0, 4.0, 0.0, 0.0, 1.0, 1.0,
                    _("Input luminance level to become lowest output"))
-gegl_chant_double (in_high, _("High input"), -1.0, 4.0, 1.0,
+gegl_chant_double_ui (in_high, _("High input"), -1.0, 4.0, 1.0, 0.0, 1.0, 1.0,
                    _("Input luminance level to become white."))
-gegl_chant_double (out_low, _("Low output"), -1.0, 4.0, 0.0,
+gegl_chant_double_ui (out_low, _("Low output"), -1.0, 4.0, 0.0, 0.0, 1.0, 1.0,
                    _("Lowest luminance level in output"))
-gegl_chant_double (out_high, _("High output"),
-                   -1.0, 4.0, 1.0, _("Highest luminance level in output"))
+gegl_chant_double_ui (out_high, _("High output"), -1.0, 4.0, 1.0, 0.0, 1.0, 1.0,
+                   _("Highest luminance level in output"))
 
 #else
 

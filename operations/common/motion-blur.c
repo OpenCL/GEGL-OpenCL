@@ -24,10 +24,10 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_double (length, _("Length"), 0.0, 200.0, 10.0,
-                   _("Length of blur in pixels"))
-gegl_chant_double (angle,  _("Angle"),  -360, 360, 0,
-                   _("Angle of blur in degrees"))
+gegl_chant_double_ui (length, _("Length"), 0.0, 1000.0, 10.0, 0.0, 300.0, 1.5,
+                     _("Length of blur in pixels"))
+gegl_chant_double_ui (angle,  _("Angle"),  -360, 360, 0, -180.0, 180.0, 1.0,
+                     _("Angle of blur in degrees"))
 
 #else
 

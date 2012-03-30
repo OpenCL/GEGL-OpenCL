@@ -22,8 +22,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius1, _("Radius 1"), 0.0, 10.0, 1.0, _("Radius"))
-gegl_chant_double(radius2, _("Radius 2"), 0.0, 10.0, 2.0, _("Radius"))
+gegl_chant_double_ui (radius1, _("Radius 1"), 0.0, 1000.0, 1.0, 0.0, 10.0, 1.5,
+                     _("Radius"))
+gegl_chant_double_ui (radius2, _("Radius 2"), 0.0, 1000.0, 2.0, 0.0, 10.0, 1.5,
+                     _("Radius"))
 
 #else
 

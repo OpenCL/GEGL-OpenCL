@@ -22,11 +22,16 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (alpha, _("Alpha"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, _(""))
-gegl_chant_double (scale, _("Scale"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, _(""))
-gegl_chant_double (zoff,  _("Z offset"), -G_MAXDOUBLE, G_MAXDOUBLE,  -1, _(""))
-gegl_chant_double (seed,  _("Seed"),     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _(""))
-gegl_chant_int    (n,     _("Iteration"), 0, 20, 3, _(""))
+gegl_chant_double_ui (alpha, _("Alpha"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, 0.0, 4.0, 1.0,
+                      NULL)
+gegl_chant_double_ui (scale, _("Scale"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, 0.0, 20.0, 1.0,
+                      NULL)
+gegl_chant_double_ui (zoff,  _("Z offset"), -G_MAXDOUBLE, G_MAXDOUBLE,  -1, -1.0, 8.0, 1.0,
+                      NULL)
+gegl_chant_double_ui (seed,  _("Seed"),     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 100.0, 1.0,
+                      NULL)
+gegl_chant_int       (n,     _("Iteration"), 0, 20, 3,
+                      NULL)
 
 #else
 

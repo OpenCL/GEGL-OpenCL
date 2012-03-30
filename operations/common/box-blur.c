@@ -21,7 +21,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, _("Radius"), 0.0, 200.0, 4.0,
+gegl_chant_double_ui (radius, _("Radius"), 0.0, 1000.0, 4.0, 0.0, 100.0, 1.5,
    _("Radius of square pixel region, (width and height will be radius*2+1)."))
 
 #else

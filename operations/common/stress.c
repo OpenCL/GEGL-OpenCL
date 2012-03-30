@@ -24,11 +24,11 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, _("Radius"), 2, 3000.0, 300,
+gegl_chant_int_ui (radius, _("Radius"), 2, 5000.0, 300, 2, 2000, 1.0,
                 _("Neighbourhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime."))
-gegl_chant_int (samples, _("Samples"), 0, 1000, 4,
+gegl_chant_int_ui (samples, _("Samples"), 2, 200, 5, 2, 10, 1.0,
                 _("Number of samples to do per iteration looking for the range of colors."))
-gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
+gegl_chant_int_ui (iterations, _("Iterations"), 1, 200, 5, 1, 10, 1.0,
                 _("Number of iterations, a higher number of iterations provides a less noisy rendering at computational cost."))
 
 

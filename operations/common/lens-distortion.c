@@ -32,7 +32,7 @@
 
 gegl_chant_double (main, _("Main:"), -100.0, 100.0, 0.0,
                    _("Main value of distortion"))
-gegl_chant_double (zoo, _("Zoom:"), -100.0, 100.0, 0.0,
+gegl_chant_double (zoom, _("Zoom:"), -100.0, 100.0, 0.0,
                    _("Main value of distortion"))
 gegl_chant_double (edge, _("Edge:"), -100.0, 100.0, 0.0,
                    _("Edge value of distortion"))
@@ -74,7 +74,7 @@ lens_setup_calc (GeglChantO     *o,
   old->centre_y = boundary.height * (100.0 + o->y_shift) / 200.0;
   old->mult_sq = o->main / 200.0;
   old->mult_qd = o->edge / 200.0;
-  old->rescale = pow (2.0, -o->zoo / 100.0);
+  old->rescale = pow (2.0, -o->zoom / 100.0);
   old->brighten = -o->brighten / 10.0;
 }
 

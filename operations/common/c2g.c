@@ -24,11 +24,11 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (radius, _("Radius"), 2, 3000.0, 300,
+gegl_chant_int_ui (radius, _("Radius"), 2, 3000, 300, 2, 3000, 1.6,
                 _("Neighbourhood taken into account, this is the radius in pixels taken into account when deciding which colors map to which gray values."))
-gegl_chant_int (samples, _("Samples"), 0, 1000, 4,
+gegl_chant_int_ui (samples, _("Samples"), 1, 1000, 4, 1, 20, 1.0,
                 _("Number of samples to do per iteration looking for the range of colors."))
-gegl_chant_int (iterations, _("Iterations"), 0, 1000, 10,
+gegl_chant_int_ui (iterations, _("Iterations"), 1, 1000, 10, 1, 20, 1.0,
                 _("Number of iterations, a higher number of iterations provides a less noisy results at computational cost."))
 
 /*

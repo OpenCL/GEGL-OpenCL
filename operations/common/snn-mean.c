@@ -23,7 +23,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 8.0,
+gegl_chant_int_ui (radius, _("Radius"), 0, 100, 8, 0, 40, 1.5,
   _("Radius of square pixel region, (width and height will be radius*2+1)"))
 gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
   _("Number of pairs; higher number preserves more acute features"))

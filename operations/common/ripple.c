@@ -24,10 +24,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (amplitude, _("Amplitude"), 0.0, 1000.0, 25.0,
+gegl_chant_double_ui (amplitude, _("Amplitude"), 0.0, 1000.0, 25.0, 0.0, 1000.0, 2.0,
                    _("Amplitude of the ripple"))
 
-gegl_chant_double (period, _("Period"), 0.0, 1000.0, 200.0,
+gegl_chant_double_ui (period, _("Period"), 0.0, 1000.0, 200.0, 0.0, 1000.0, 1.5,
                    _("Period of the ripple"))
 
 gegl_chant_double (phi, _("Phase shift"), -1.0, 1.0, 0.0,

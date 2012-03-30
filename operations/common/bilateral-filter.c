@@ -24,9 +24,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_double (blur_radius, _("Blur radius"), 0.0, 70.0, 4.0,
+gegl_chant_double_ui (blur_radius, _("Blur radius"), 0.0, 1000.0, 4.0, 0.0, 100.0, 1.5,
   _("Radius of square pixel region, (width and height will be radius*2+1)."))
-gegl_chant_double (edge_preservation, _("Edge preservation"), 0.0, 70.0, 8.0,
+gegl_chant_double (edge_preservation, _("Edge preservation"), 0.0, 100.0, 8.0,
   _("Amount of edge preservation"))
 
 #else
