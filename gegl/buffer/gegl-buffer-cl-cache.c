@@ -21,6 +21,7 @@ typedef struct
   GeglRectangle         roi;
   cl_mem                tex;
   gboolean              valid;
+  gint                  used; /* don't free used entries */
 } CacheEntry;
 
 static GList *cache_entries = NULL;
@@ -35,7 +36,7 @@ cache_entry_find_invalid (gpointer *data)
   for (elem=cache_entries; elem; elem=elem->next)
     {
       CacheEntry *e = elem->data;
-      if (!e->valid)
+      if (!e->valid && e->used == 0)
         {
           *data = e;
           return TRUE;
@@ -58,10 +59,29 @@ gegl_buffer_cl_cache_get (GeglBuffer          *buffer,
       if (e->valid && e->buffer == buffer
           && gegl_rectangle_equal (&e->roi, roi))
         {
+          e->used ++;
           return e->tex;
         }
     }
   return NULL;
+}
+
+gboolean
+gegl_buffer_cl_cache_release (cl_mem tex)
+{
+  GList *elem;
+
+  for (elem=cache_entries; elem; elem=elem->next)
+    {
+      CacheEntry *e = elem->data;
+      if (e->tex == tex)
+        {
+          e->used --;
+          g_assert (e->used >= 0);
+          return TRUE;
+        }
+    }
+  return FALSE;
 }
 
 void
@@ -79,6 +99,7 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   e->roi    = *roi;
   e->tex    =  tex;
   e->valid  =  TRUE;
+  e->used   =  0;
 
   cache_entries = g_list_prepend (cache_entries, e);
   }
@@ -107,7 +128,8 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
       if (entry->valid && entry->tile_storage->cache == cache
           && (!roi || gegl_rectangle_intersect (&tmp, roi, &entry->roi)))
         {
-          entry->valid = FALSE; /* avoid possible infinite recursion */
+          entry->valid = FALSE;
+          entry->used ++;
 
           gegl_cl_color_babl (entry->buffer->soft_format, &size);
 
@@ -123,6 +145,7 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
                                                  0, NULL, NULL);
           if (cl_err != CL_SUCCESS) CL_ERROR;
 
+          entry->used --;
           need_cl = TRUE;
         }
     }
@@ -137,6 +160,12 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
       while (cache_entry_find_invalid (&data))
         {
           CacheEntry *entry = data;
+
+#if 0
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Removing from cl-cache: %p %s {%d %d %d %d}", entry->buffer, babl_get_name(entry->buffer->soft_format),
+                                                                                       entry->roi.x, entry->roi.y, entry->roi.width, entry->roi.height);
+#endif
+
           memset(entry, 0x0, sizeof (CacheEntry));
 
           g_slice_free (CacheEntry, data);
@@ -185,6 +214,7 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
       if (e->valid && e->buffer == buffer
           && (!roi || gegl_rectangle_intersect (&tmp, roi, &e->roi)))
         {
+          g_assert (e->used == 0);
           gegl_clReleaseMemObject (e->tex);
           e->valid = FALSE;
         }
@@ -194,6 +224,9 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
 
   while (cache_entry_find_invalid (&data))
     {
+      CacheEntry *entry = data;
+      memset(entry, 0x0, sizeof (CacheEntry));
+
       g_slice_free (CacheEntry, data);
       cache_entries = g_list_remove (cache_entries, data);
     }

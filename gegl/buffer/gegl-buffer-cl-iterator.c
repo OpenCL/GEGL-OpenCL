@@ -294,6 +294,12 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
       for (no=0; no < i->iterators; no++)
         for (j=0; j < i->n; j++)
           {
+            if (i->tex_buf_from_cache [no][j])
+              {
+                gboolean ok = gegl_buffer_cl_cache_release (i->tex_buf[no][j]);
+                g_assert (ok);
+              }
+
             if (i->tex_buf[no][j] && !i->tex_buf_from_cache [no][j])
               gegl_clReleaseMemObject (i->tex_buf[no][j]);
 

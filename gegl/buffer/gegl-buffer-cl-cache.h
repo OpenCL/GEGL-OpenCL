@@ -15,6 +15,9 @@ cl_mem
 gegl_buffer_cl_cache_get (GeglBuffer          *buffer,
                           const GeglRectangle *roi);
 
+gboolean
+gegl_buffer_cl_cache_release (cl_mem tex);
+
 void
 gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
                           const GeglRectangle   *roi,
