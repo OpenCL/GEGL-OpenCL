@@ -22,9 +22,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (size_x, _("Block Width"), 1, 256, 8,
+gegl_chant_int_ui (size_x, _("Block Width"),  1, 123456, 16, 1, 2048,
    _("Width of blocks in pixels"))
-gegl_chant_int (size_y, _("Block Height"), 1, 256, 8,
+gegl_chant_int_ui (size_y, _("Block Height"), 1, 123456, 16, 1, 2048,
    _("Height of blocks in pixels"))
 
 #else
