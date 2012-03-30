@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GEGL\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-30 14:08+0900\n"
+"PO-Revision-Date: 2012-03-30 14:30+0900\n"
+"Last-Translator: Michael Muré <batolettre@gmail.com>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+
+#: ../operations/common/ripple.c:27
+msgid "Amplitude"
+msgstr "Amplitude"
+
+#: ../operations/common/ripple.c:28
+#, fuzzy
+msgid "Amplitude of the ripple"
+msgstr "Amplitude de l'ondulation"
+
+#: ../operations/common/ripple.c:30
+msgid "Period"
+msgstr "Période"
+
+#: ../operations/common/ripple.c:31
+msgid "Period of the ripple"
+msgstr "Période de l'ondulation"
+
+#: ../operations/common/ripple.c:33
+#: ../operations/common/ripple.c:34
+msgid "Phase shift"
+msgstr "Décalage de phase"
+
+#: ../operations/common/ripple.c:36
+msgid "Angle"
+msgstr "Angle"
+
+#: ../operations/common/ripple.c:37
+msgid "Angle in degree"
+msgstr "Angle en degrée"
+
+#: ../operations/common/ripple.c:39
+msgid "Sampler"
+msgstr "Échantillonneur"
+
+#: ../operations/common/ripple.c:40
+msgid "Sampler used internally"
+msgstr "Échantillonneur utilisé par l'opération"
+
+#: ../operations/common/ripple.c:42
+msgid "Wave type"
+msgstr "Type d'ondulation"
+
+#: ../operations/common/ripple.c:43
+msgid "Type of wave"
+msgstr "Type d'ondulation"
+
+#: ../operations/common/ripple.c:163
+msgid "Transform the buffer with a ripple pattern"
+msgstr "Déforme le buffer avec une ondulation"
+
