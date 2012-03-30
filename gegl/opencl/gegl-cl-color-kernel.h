@@ -337,4 +337,69 @@ static const char* kernel_color_source =
 "  float4 out_v = (float4) (in_v.x, in_v.x, in_v.x, in_v.y);                              \n"
 "                                                                                         \n"
 "  out[gid] = convert_uchar4_sat_rte(255.0f * out_v);                                     \n"
+"}                                                                                        \n"
+
+/* R'G'B'A u8 */
+
+/* rgba float -> r'g'b'a u8 */
+"__kernel void rgbaf_to_rgba_gamma_u8 (__global const float4 * in,                        \n"
+"                                      __global       uchar4 * out)                       \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = in[gid];                                                                \n"
+"  float4 out_v;                                                                          \n"
+"  out_v = (float4)(linear_to_gamma_2_2(in_v.x),                                          \n"
+"                   linear_to_gamma_2_2(in_v.y),                                          \n"
+"                   linear_to_gamma_2_2(in_v.z),                                          \n"
+"                   in_v.w);                                                              \n"
+"  out[gid] = convert_uchar4_sat_rte(255.0f * out_v);                                     \n"
+"}                                                                                        \n"
+
+/* r'g'b'a u8 -> rgba float */
+"__kernel void rgba_gamma_u8_to_rgbaf (__global const uchar4 * in,                        \n"
+"                                      __global       float4 * out)                       \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = convert_float4(in[gid]) / 255.0f;                                       \n"
+"  float4 out_v;                                                                          \n"
+"  out_v = (float4)(gamma_2_2_to_linear(in_v.x),                                          \n"
+"                   gamma_2_2_to_linear(in_v.y),                                          \n"
+"                   gamma_2_2_to_linear(in_v.z),                                          \n"
+"                   in_v.w);                                                              \n"
+"  out[gid] = out_v;                                                                      \n"
+"}                                                                                        \n"
+
+/* R'G'B' u8 */
+
+/* rgba float -> r'g'b' u8 */
+"__kernel void rgbaf_to_rgb_gamma_u8 (__global const float4 * in,                         \n"
+"                                     __global       uchar  * out)                        \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  float4 in_v  = in[gid];                                                                \n"
+"  float4 tmp_v;                                                                          \n"
+"  uchar3 out_v;                                                                          \n"
+"  tmp_v = (float4)(linear_to_gamma_2_2(in_v.x),                                          \n"
+"                   linear_to_gamma_2_2(in_v.y),                                          \n"
+"                   linear_to_gamma_2_2(in_v.z),                                          \n"
+"                   in_v.w);                                                              \n"
+"  out_v = convert_uchar3_sat_rte(255.0f * tmp_v.w * tmp_v.xyz);                          \n"
+"  vstore3 (out_v, gid, out);                                                             \n"
+"}                                                                                        \n"
+
+/* r'g'b' u8 -> rgba float */
+"__kernel void rgb_gamma_u8_to_rgbaf (__global const uchar  * in,                         \n"
+"                                     __global       float4 * out)                        \n"
+"{                                                                                        \n"
+"  int gid = get_global_id(0);                                                            \n"
+"  uchar3 in_v;                                                                           \n"
+"  float3 tmp_v;                                                                          \n"
+"  float4 out_v;                                                                          \n"
+"  in_v = vload3 (gid, in);                                                               \n"
+"  tmp_v = convert_float3(in_v) / 255.0f;                                                 \n"
+"  out_v = (float4)(gamma_2_2_to_linear(tmp_v.x),                                         \n"
+"                   gamma_2_2_to_linear(tmp_v.y),                                         \n"
+"                   gamma_2_2_to_linear(tmp_v.z),                                         \n"
+"                   1.0f);                                                                \n"
+"  out[gid] = out_v;                                                                      \n"
 "}                                                                                        \n";
