@@ -26,6 +26,146 @@
 #include <glib-object.h>
 #include "gegl-paramspecs.h"
 
+static void       gegl_param_double_class_init (GParamSpecClass *klass);
+static void       gegl_param_double_init       (GParamSpec      *pspec);
+
+GType
+gegl_param_double_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL, NULL,
+        (GClassInitFunc) gegl_param_double_class_init,
+        NULL, NULL,
+        sizeof (GeglParamSpecDouble),
+        0,
+        (GInstanceInitFunc) gegl_param_double_init
+      };
+      type = g_type_register_static (G_TYPE_PARAM_DOUBLE,
+                                     "GeglParamDouble", &info, 0);
+    }
+  return type;
+}
+
+static void
+gegl_param_double_class_init (GParamSpecClass *klass)
+{
+  klass->value_type     = G_TYPE_DOUBLE;
+}
+
+static void
+gegl_param_double_init (GParamSpec *pspec)
+{
+  GParamSpecDouble    *dpspec  = G_PARAM_SPEC_DOUBLE (pspec);
+  GeglParamSpecDouble *gdpspec = GEGL_PARAM_SPEC_DOUBLE (pspec);
+  gdpspec->ui_minimum = dpspec->minimum;
+  gdpspec->ui_maximum = dpspec->maximum;
+  gdpspec->ui_gamma   = 1.0;
+}
+
+GParamSpec *
+gegl_param_spec_double (const gchar *name,
+                        const gchar *nick,
+                        const gchar *blurb,
+                        gdouble      minimum,
+                        gdouble      maximum,
+                        gdouble      default_value,
+                        gdouble      ui_minimum,
+                        gdouble      ui_maximum,
+                        gdouble      ui_gamma,
+                        GParamFlags  flags)
+{
+  GeglParamSpecDouble *pspec;
+  GParamSpecDouble *dspec;
+  
+  pspec = g_param_spec_internal (GEGL_TYPE_PARAM_DOUBLE,
+                                 name, nick, blurb, flags);
+  dspec = G_PARAM_SPEC_DOUBLE (pspec);
+
+  dspec->minimum = minimum;
+  dspec->maximum = maximum;
+  dspec->default_value = default_value;
+  pspec->ui_minimum = ui_minimum;
+  pspec->ui_maximum = ui_maximum;
+  pspec->ui_gamma   = ui_gamma;
+
+  return G_PARAM_SPEC (pspec);
+}
+
+static void       gegl_param_int_class_init (GParamSpecClass *klass);
+static void       gegl_param_int_init       (GParamSpec      *pspec);
+
+GType
+gegl_param_int_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL, NULL,
+        (GClassInitFunc) gegl_param_int_class_init,
+        NULL, NULL,
+        sizeof (GeglParamSpecInt),
+        0,
+        (GInstanceInitFunc) gegl_param_int_init
+      };
+      type = g_type_register_static (G_TYPE_PARAM_INT,
+                                     "GeglParamint", &info, 0);
+    }
+  return type;
+}
+
+static void
+gegl_param_int_class_init (GParamSpecClass *klass)
+{
+  klass->value_type     = G_TYPE_INT;
+}
+
+static void
+gegl_param_int_init (GParamSpec *pspec)
+{
+  GParamSpecInt    *dpspec  = G_PARAM_SPEC_INT (pspec);
+  GeglParamSpecInt *gdpspec = GEGL_PARAM_SPEC_INT (pspec);
+  gdpspec->ui_minimum = dpspec->minimum;
+  gdpspec->ui_maximum = dpspec->maximum;
+}
+
+GParamSpec *
+gegl_param_spec_int (const gchar *name,
+                     const gchar *nick,
+                     const gchar *blurb,
+                     gint         minimum,
+                     gint         maximum,
+                     gint         default_value,
+                     gint         ui_minimum,
+                     gint         ui_maximum,
+                     GParamFlags  flags)
+{
+  GeglParamSpecInt *pspec;
+  GParamSpecInt *ispec;
+  
+
+  pspec = g_param_spec_internal (GEGL_TYPE_PARAM_INT,
+                                 name, nick, blurb, flags);
+  ispec = G_PARAM_SPEC_INT (pspec);
+
+  ispec->minimum = minimum;
+  ispec->maximum = maximum;
+  ispec->default_value = default_value;
+  pspec->ui_minimum = ui_minimum;
+  pspec->ui_maximum = ui_maximum;
+
+  return G_PARAM_SPEC (pspec);
+}
+
 /*
  * GEGL_TYPE_PARAM_STRING
  */
@@ -131,6 +271,7 @@ gegl_param_spec_string (const gchar *name,
 
   return G_PARAM_SPEC (sspec);
 }
+
 
 /*
  * GEGL_TYPE_PARAM_FILE_PATH

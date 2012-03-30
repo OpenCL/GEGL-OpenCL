@@ -32,6 +32,77 @@ G_BEGIN_DECLS
  */
 #define GEGL_PARAM_NO_VALIDATE (1 << (6 + G_PARAM_USER_SHIFT))
 
+typedef struct _GeglParamSpecString GeglParamSpecString;
+typedef struct _GeglParamSpecDouble GeglParamSpecDouble;
+typedef struct _GeglParamSpecInt    GeglParamSpecInt;
+
+
+
+
+/*
+ * GEGL_TYPE_PARAM_DOUBLE
+ */
+
+#define GEGL_TYPE_PARAM_DOUBLE             (gegl_param_double_get_type ())
+#define GEGL_PARAM_SPEC_DOUBLE(pspec)      (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_DOUBLE, GeglParamSpecDouble))
+#define GEGL_IS_PARAM_SPEC_DOUBLE          (pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_DOUBLE))
+
+
+struct _GeglParamSpecDouble
+{
+  GParamSpecDouble parent_instance;
+  gdouble          ui_minimum; /* reasonable range to present to user */
+  gdouble          ui_maximum;
+  gdouble          ui_gamma;   /* a desired non-linear mapping or 1.0, useful
+                                  when the control the user needs is not a
+                                  linear mapping, like controlling brush-size
+                                  or gaussian blur radius - where more
+                                  detailed control of small values is needed
+                                  */
+};
+
+GType        gegl_param_double_get_type (void) G_GNUC_CONST;
+
+GParamSpec * gegl_param_spec_double (const gchar *name,
+                                     const gchar *nick,
+                                     const gchar *blurb,
+                                     gdouble      minimum,
+                                     gdouble      maximum,
+                                     gdouble      default_value,
+                                     gdouble      ui_minimum,
+                                     gdouble      ui_maximum,
+                                     gdouble      ui_gamma,
+                                     GParamFlags  flags);
+
+
+/*
+ * GEGL_TYPE_PARAM_INT
+ */
+
+#define GEGL_TYPE_PARAM_INT             (gegl_param_int_get_type ())
+#define GEGL_PARAM_SPEC_INT(pspec)      (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_INT, GeglParamSpecInt))
+#define GEGL_IS_PARAM_SPEC_INT          (pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_INT))
+
+
+struct _GeglParamSpecInt
+{
+  GParamSpecInt parent_instance;
+  gint          ui_minimum; /* reasonable range to present to user */
+  gint          ui_maximum;
+};
+
+GType        gegl_param_int_get_type (void) G_GNUC_CONST;
+
+GParamSpec * gegl_param_spec_int (const gchar *name,
+                                  const gchar *nick,
+                                  const gchar *blurb,
+                                  gint         minimum,
+                                  gint         maximum,
+                                  gint         default_value,
+                                  gint         ui_minimum,
+                                  gint         ui_maximum,
+                                  GParamFlags  flags);
+
 
 /*
  * GEGL_TYPE_PARAM_STRING
