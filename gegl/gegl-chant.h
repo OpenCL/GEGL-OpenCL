@@ -342,24 +342,28 @@ struct _GeglChantO
                         * in finalize). Also serves as a filler making sure that we
                         * do not create an empty struct if there are no chanted properties.
                         */
-#define gegl_chant_int(name, nick, min, max, def, blurb)     gint               name;
-#define gegl_chant_double(name, nick, min, max, def, blurb)  gdouble            name;
-#define gegl_chant_boolean(name, nick, def, blurb)           gboolean           name;
-#define gegl_chant_string(name, nick, def, blurb)            gchar             *name;
-#define gegl_chant_enum(name, nick, enum, type, def, blurb)  enum               name;
-#define gegl_chant_file_path(name, nick, def, blurb)         gchar             *name;
-#define gegl_chant_multiline(name, nick, def, blurb)         gchar             *name;
-#define gegl_chant_object(name,nick,  blurb)                 GObject           *name;
-#define gegl_chant_pointer(name, nick, blurb)                gpointer           name;
-#define gegl_chant_color(name, nick, def, blurb)             GeglColor         *name;
-#define gegl_chant_curve(name, nick, blurb)                  GeglCurve         *name;
-#define gegl_chant_path(name, nick, blurb)                   GeglPath          *name;\
-                                                          guint path_changed_handler;
+#define gegl_chant_int(name, nick, min, max, def, blurb)                        gint               name;
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)     gint               name;
+#define gegl_chant_double(name, nick, min, max, def, blurb)                     gdouble            name;
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) gdouble   name;
+#define gegl_chant_boolean(name, nick, def, blurb)                              gboolean           name;
+#define gegl_chant_string(name, nick, def, blurb)                               gchar             *name;
+#define gegl_chant_enum(name, nick, enum, type, def, blurb)                     enum               name;
+#define gegl_chant_file_path(name, nick, def, blurb)                            gchar             *name;
+#define gegl_chant_multiline(name, nick, def, blurb)                            gchar             *name;
+#define gegl_chant_object(name,nick,  blurb)                                    GObject           *name;
+#define gegl_chant_pointer(name, nick, blurb)                                   gpointer           name;
+#define gegl_chant_color(name, nick, def, blurb)                                GeglColor         *name;
+#define gegl_chant_curve(name, nick, blurb)                                     GeglCurve         *name;
+#define gegl_chant_path(name, nick, blurb)                                      GeglPath          *name;\
+                                                                                guint path_changed_handler;
 
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -377,23 +381,27 @@ struct _GeglChantO
 enum
 {
   PROP_0,
-#define gegl_chant_int(name, nick, min, max, def, blurb)     PROP_##name,
-#define gegl_chant_double(name, nick, min, max, def, blurb)  PROP_##name,
-#define gegl_chant_boolean(name, nick, def, blurb)           PROP_##name,
-#define gegl_chant_string(name, nick, def, blurb)            PROP_##name,
-#define gegl_chant_enum(name, nick, enum, type, def, blurb)  PROP_##name,
-#define gegl_chant_file_path(name, nick, def, blurb)         PROP_##name,
-#define gegl_chant_multiline(name, nick, def, blurb)         PROP_##name,
-#define gegl_chant_object(name, nick, blurb)                 PROP_##name,
-#define gegl_chant_pointer(name, nick, blurb)                PROP_##name,
-#define gegl_chant_color(name, nick, def, blurb)             PROP_##name,
-#define gegl_chant_curve(name, nick, blurb)                  PROP_##name,
-#define gegl_chant_path(name, nick, blurb)                   PROP_##name,
+#define gegl_chant_int(name, nick, min, max, def, blurb)                        PROP_##name,
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)     PROP_##name,
+#define gegl_chant_double(name, nick, min, max, def, blurb)                     PROP_##name,
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) PROP_##name,
+#define gegl_chant_boolean(name, nick, def, blurb)                              PROP_##name,
+#define gegl_chant_string(name, nick, def, blurb)                               PROP_##name,
+#define gegl_chant_enum(name, nick, enum, type, def, blurb)                     PROP_##name,
+#define gegl_chant_file_path(name, nick, def, blurb)                            PROP_##name,
+#define gegl_chant_multiline(name, nick, def, blurb)                            PROP_##name,
+#define gegl_chant_object(name, nick, blurb)                                    PROP_##name,
+#define gegl_chant_pointer(name, nick, blurb)                                   PROP_##name,
+#define gegl_chant_color(name, nick, def, blurb)                                PROP_##name,
+#define gegl_chant_curve(name, nick, blurb)                                     PROP_##name,
+#define gegl_chant_path(name, nick, blurb)                                      PROP_##name,
 
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -423,7 +431,15 @@ get_property (GObject      *gobject,
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb) \
+    case PROP_##name:                                         \
+      g_value_set_int (value, properties->name);              \
+      break;
 #define gegl_chant_double(name,nick,  min, max, def, blurb)   \
+    case PROP_##name:                                         \
+      g_value_set_double (value, properties->name);           \
+      break;
+#define gegl_chant_double_ui(name,nick,  min, max, def, ui_min, ui_max, ui_gamma, blurb)   \
     case PROP_##name:                                         \
       g_value_set_double (value, properties->name);           \
       break;
@@ -472,7 +488,9 @@ get_property (GObject      *gobject,
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -506,7 +524,15 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       break;
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb) \
+    case PROP_##name:                                                 \
+      properties->name = g_value_get_int (value);                     \
+      break;
 #define gegl_chant_double(name, nick, min, max, def, blurb)           \
+    case PROP_##name:                                                 \
+      properties->name = g_value_get_double (value);                  \
+      break;
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb) \
     case PROP_##name:                                                 \
       properties->name = g_value_get_double (value);                  \
       break;
@@ -578,7 +604,9 @@ set_property (GObject      *gobject,
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -603,7 +631,9 @@ static void gegl_chant_destroy_notify (gpointer data)
   GeglChantO *properties = GEGL_CHANT_PROPERTIES (data);
 
 #define gegl_chant_int(name, nick, min, max, def, blurb)
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)
 #define gegl_chant_double(name, nick, min, max, def, blurb)
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_boolean(name, nick, def, blurb)
 #define gegl_chant_string(name, nick, def, blurb)   \
   if (properties->name)                             \
@@ -653,7 +683,9 @@ static void gegl_chant_destroy_notify (gpointer data)
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -683,7 +715,9 @@ gegl_chant_constructor (GType                  type,
   properties = GEGL_CHANT_PROPERTIES (obj);
 
 #define gegl_chant_int(name, nick, min, max, def, blurb)
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)
 #define gegl_chant_double(name, nick, min, max, def, blurb)
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)
 #define gegl_chant_boolean(name, nick, def, blurb)
 #define gegl_chant_string(name, nick, def, blurb)
 #define gegl_chant_enum(name, nick, enum, type, def, blurb)
@@ -700,7 +734,9 @@ gegl_chant_constructor (GType                  type,
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
@@ -734,6 +770,14 @@ gegl_chant_class_intern_init (gpointer klass)
                                                      G_PARAM_READWRITE |     \
                                                      G_PARAM_CONSTRUCT |     \
                                                      GEGL_PARAM_PAD_INPUT)));
+#define gegl_chant_int_ui(name, nick, min, max, def, ui_min, ui_max, blurb)  \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   gegl_param_spec_int (#name, nick, blurb,     \
+                                                     min, max, def, ui_min, ui_max, \
+                                                     (GParamFlags) (         \
+                                                     G_PARAM_READWRITE |     \
+                                                     G_PARAM_CONSTRUCT |     \
+                                                     GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_double(name, nick, min, max, def, blurb)                  \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    g_param_spec_double (#name, nick, blurb,  \
@@ -742,6 +786,14 @@ gegl_chant_class_intern_init (gpointer klass)
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
+#define gegl_chant_double_ui(name, nick, min, max, def, ui_min, ui_max, ui_gamma, blurb)                  \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   gegl_param_spec_double (#name, nick, blurb,  \
+                                                           min, max, def, ui_min, ui_max, ui_gamma, \
+                                                           (GParamFlags) (      \
+                                                           G_PARAM_READWRITE |  \
+                                                           G_PARAM_CONSTRUCT |  \
+                                                           GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_boolean(name, nick, def, blurb)                           \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    g_param_spec_boolean (#name, nick, blurb, \
@@ -827,7 +879,9 @@ gegl_chant_class_intern_init (gpointer klass)
 #include GEGL_CHANT_C_FILE
 
 #undef gegl_chant_int
+#undef gegl_chant_int_ui
 #undef gegl_chant_double
+#undef gegl_chant_double_ui
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_enum
