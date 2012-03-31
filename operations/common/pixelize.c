@@ -30,7 +30,7 @@ gegl_chant_int_ui (size_y, _("Block Height"), 1, 123456, 16, 1, 2048, 1.5,
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "pixelise.c"
+#define GEGL_CHANT_C_FILE       "pixelize.c"
 
 #include "gegl-chant.h"
 
@@ -98,7 +98,7 @@ calc_block_colors (gfloat* block_colors,
 }
 
 static void
-pixelise (gfloat* buf,
+pixelize (gfloat* buf,
           const GeglRectangle* roi,
           gint size_x,
           gint size_y)
@@ -153,7 +153,7 @@ process (GeglOperation       *operation,
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  pixelise(buf, roi, o->size_x, o->size_y);
+  pixelize(buf, roi, o->size_x, o->size_y);
 
   gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -177,9 +177,9 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "categories" , "blur",
-    "name"       , "gegl:pixelise",
+    "name"       , "gegl:pixelize",
     "description",
-         _("Pixelise filter"),
+         _("Simplify image into an array of solid-colored squares"),
     NULL);
 }
 
