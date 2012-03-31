@@ -10,7 +10,8 @@ SUBDIRS=\
 	bin \
 	tools \
 	examples \
-	tests
+	tests \
+	po
 
 if ENABLE_DOCS
 SUBDIRS+= docs

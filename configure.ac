@@ -459,7 +459,9 @@ DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
 # gettext i18n support
 ######################
 
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "gegl-$GEGL_API_VERSION",
+GETTEXT_PACKAGE=gegl-$GEGL_API_VERSION
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",
                    [Our gettext translation domain.])
 
 # GNU format message catalogs go into $datadir/locale,
@@ -480,6 +482,8 @@ AC_CHECK_FUNCS(bind_textdomain_codeset,,
 ]))
 LIBS=$gegl_save_LIBS
 
+IT_PROG_INTLTOOL(0.40.1)
+AM_GLIB_GNU_GETTEXT
 
 #########################
 # Disable deprecated APIs
@@ -1108,6 +1112,7 @@ tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
+po/Makefile.in
 gegl.pc
 gegl-uninstalled.pc
 ])
