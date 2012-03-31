@@ -218,7 +218,8 @@ list_properties (GType    type,
           g_print("<td class='prop_name' valign='top'>%s</td>\n",
             g_param_spec_get_name (self[prop_no]));
 
-          if (g_param_spec_get_blurb (self[prop_no])[0]!='\0')
+          if (g_param_spec_get_blurb (self[prop_no]) &&
+              g_param_spec_get_blurb (self[prop_no])[0]!='\0')
             g_print ("<td colspan='1' valign='top' class='prop_blurb'>%s</td>\n",
             g_param_spec_get_blurb (self[prop_no]));
           else
