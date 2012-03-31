@@ -34,7 +34,9 @@ operations/common/gegl-buffer-save-op.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/introspect.c
+operations/common/invert.c
 operations/common/layer.c
+operations/common/lens-distortion.c
 operations/common/levels.c
 operations/common/load.c
 operations/common/magick-load.c
@@ -51,7 +53,6 @@ operations/common/opacity.c
 operations/common/open-buffer.c
 operations/common/over.c
 operations/common/pixelise.c
-operations/common/plasma.c
 operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/raw-load.c
@@ -61,6 +62,7 @@ operations/common/remap.c
 operations/common/ripple.c
 operations/common/save.c
 operations/common/snn-mean.c
+operations/common/stretch-contrast.c
 operations/common/stress.c
 operations/common/svg-huerotate.c
 operations/common/svg-luminancetoalpha.c
@@ -68,10 +70,10 @@ operations/common/svg-matrix.c
 operations/common/svg-saturate.c
 operations/common/threshold.c
 operations/common/unsharp-mask.c
+operations/common/value-invert.c
 operations/common/vignette.c
 operations/common/waves.c
 operations/common/weighted-blend.c
-operations/common/whitebalance.c
 operations/common/write-buffer.c
 operations/core/clone.c
 operations/core/convert-format.c
@@ -153,11 +155,11 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/hstack.c
 operations/workshop/kuwahara.c
-operations/workshop/lens-distortion.c
 operations/workshop/linear-gradient.c
 operations/workshop/mandelbrot.c
 operations/workshop/max-rgb.c
 operations/workshop/noise-spread.c
+operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c
 operations/workshop/red-eye-removal.c
