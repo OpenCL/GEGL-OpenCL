@@ -25,6 +25,7 @@
 #include <gio/gio.h>
 
 #include "gegl.h"
+#include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"

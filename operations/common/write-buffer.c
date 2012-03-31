@@ -33,6 +33,9 @@ gegl_chant_object (buffer, _("Buffer location"),
 #include "gegl-chant.h"
 #include "graph/gegl-node.h"
 
+#include "gegl/gegl-debug.h"
+#include "opencl/gegl-cl.h"
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -45,7 +48,40 @@ process (GeglOperation       *operation,
     {
       GeglBuffer *output = GEGL_BUFFER (o->buffer);
 
-      gegl_buffer_copy (input, result, output, result);
+      if (gegl_cl_is_accelerated ()
+          && gegl_cl_color_supported (input->soft_format, output->soft_format) == GEGL_CL_COLOR_CONVERT)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "write-buffer: %p %p %s %s {%d %d %d %d}", input, output, babl_get_name(input->soft_format), babl_get_name(output->soft_format),
+                                                                                   result->x, result->y, result->width, result->height);
+
+          size_t size;
+          gboolean err;
+          cl_int cl_err;
+          gint j;
+          gegl_cl_color_babl (output->soft_format, &size);
+
+          GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                        gint read = gegl_buffer_cl_iterator_add (i, input, result, output->soft_format, GEGL_CL_BUFFER_READ,  GEGL_ABYSS_NONE);
+
+          while (gegl_buffer_cl_iterator_next (i, &err))
+            {
+              if (err) break;
+              for (j=0; j < i->n; j++)
+                {
+                  cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue (),
+                                                     i->tex[read][j], i->tex[0][j], 0, 0, i->size[0][j] * size,
+                                                     0, NULL, NULL);
+                  if (cl_err != CL_SUCCESS)
+                    {
+                      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in gegl_buffer_copy: %s", gegl_cl_errstring(cl_err));
+                      break;
+                    }
+                }
+            }
+        }
+      else
+        gegl_buffer_copy (input, result, output, result);
+
       gegl_buffer_flush (output);
       gegl_node_emit_computed (operation->node, result);
     }

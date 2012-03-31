@@ -113,7 +113,7 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
     {
       if      (out_format == babl_format ("RGBA u8"))          kernel = CL_RGBAF_TO_RGBAU8;
       else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGBAF_TO_RAGABAF;
-      else if (out_format == babl_format ("R'G'B'  u8"))       kernel = CL_RGBAF_TO_RGB_GAMMA_U8;
+      else if (out_format == babl_format ("R'G'B' u8"))        kernel = CL_RGBAF_TO_RGB_GAMMA_U8;
       else if (out_format == babl_format ("R'G'B'A u8"))       kernel = CL_RGBAF_TO_RGBA_GAMMA_U8;
       else if (out_format == babl_format ("R'G'B'A float"))    kernel = CL_RGBAF_TO_RGBA_GAMMA_F;
       else if (out_format == babl_format ("Y'CbCrA float"))    kernel = CL_RGBAF_TO_YCBCRAF;

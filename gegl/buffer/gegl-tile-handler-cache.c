@@ -219,9 +219,7 @@ gegl_tile_handler_cache_get_tile_command (GeglTileSource *tile_store,
   GeglTile             *tile     = NULL;
 
   if (gegl_cl_is_accelerated ())
-    {
-      gegl_buffer_cl_cache_flush2 (cache, NULL);
-    }
+    gegl_buffer_cl_cache_flush2 (cache, NULL);
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
   if (tile)
@@ -260,6 +258,9 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
       case GEGL_TILE_FLUSH:
         {
           GList     *link;
+
+          if (gegl_cl_is_accelerated ())
+            gegl_buffer_cl_cache_flush2 (GEGL_TILE_HANDLER_CACHE (tile_store), NULL);
 
           for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
             {

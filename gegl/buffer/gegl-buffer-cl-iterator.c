@@ -342,6 +342,8 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                   case GEGL_CL_COLOR_NOT_SUPPORTED:
 
                     {
+                    gegl_buffer_cl_cache_flush (i->buffer[no], &i->roi[no][j]);
+
                     g_assert (i->tex_op[no][j] == NULL);
                     i->tex_op[no][j] = gegl_clCreateBuffer (gegl_cl_get_context (),
                                                             CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
