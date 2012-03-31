@@ -52,7 +52,7 @@ operations/common/noise.c
 operations/common/opacity.c
 operations/common/open-buffer.c
 operations/common/over.c
-operations/common/pixelise.c
+operations/common/pixelize.c
 operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/raw-load.c
