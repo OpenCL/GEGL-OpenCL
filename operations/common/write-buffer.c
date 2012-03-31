@@ -78,6 +78,9 @@ process (GeglOperation       *operation,
                     }
                 }
             }
+
+          if (cl_err || err)
+            gegl_buffer_copy (input, result, output, result);
         }
       else
         gegl_buffer_copy (input, result, output, result);
