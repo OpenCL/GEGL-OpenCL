@@ -29,7 +29,7 @@ EXTRA_DIST = 			\
 	m4/introspection.m4	\
 	gegl.pc.in
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
+# DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
 
 DISTCLEANFILES = \
 	$(built_dist_files)
