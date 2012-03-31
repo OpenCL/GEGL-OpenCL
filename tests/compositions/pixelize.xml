@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='gegl:pixelise'>
+  <node operation='gegl:pixelize'>
     <params>
       <param name='size-x'>9</param>
       <param name='size-y'>11</param>
