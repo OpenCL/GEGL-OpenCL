@@ -316,10 +316,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_cached_region = get_cached_region;
   operation_class->prepare          = prepare;
 
-  operation_class->name        = "gegl:v4l";
-  operation_class->categories  = "input:video";
-  operation_class->description =
-    _("Video4Linux input, webcams framegrabbers and similar devices.");
+  gegl_operation_class_set_keys (operation_class,
+    "name"        , "gegl:v4l",
+    "categories"  , "input:video",
+    "description" , _("Video4Linux input, webcams framegrabbers and similar devices."),
+    NULL);
 }
 
 
