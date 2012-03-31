@@ -105,7 +105,7 @@ cl_process (GeglOperation       *op,
 
   if (aux_tex == NULL)
     return 0;
-    
+
   if (!cl_data)
     {
       const char *kernel_name[] = {"kernel_over", NULL};
@@ -190,7 +190,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->cl_process = cl_process;
 
   operation_class->opencl_support = TRUE;
-  
+
   operation_class->compat_name = "gegl:over";
 
   gegl_operation_class_set_keys (operation_class,

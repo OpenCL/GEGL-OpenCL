@@ -183,6 +183,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class->process = process;
   point_composer_class->cl_process = cl_process;
   operation_class->prepare = prepare;
+
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
