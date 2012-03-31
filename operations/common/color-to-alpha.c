@@ -24,7 +24,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (value, _("Color"), "black",
+gegl_chant_color (color, _("Color"), "black",
                   _("The color to render (defaults to 'black')"))
 
 #else
@@ -139,7 +139,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, result, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  gegl_color_get_rgba4f (o->value, color);
+  gegl_color_get_rgba4f (o->color, color);
 
   for (x = 0; x < result->width * result->height; x++)
     color_to_alpha (color, src_buf, 4 * x);
