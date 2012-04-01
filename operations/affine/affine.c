@@ -198,7 +198,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_double (
                                      "origin-x",
                                      _("Origin-x"),
-                                     _("X-coordinate of origin"),
+                                     _("X coordinate of origin"),
                                      -G_MAXDOUBLE, G_MAXDOUBLE,
                                      0.,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
@@ -206,7 +206,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_double (
                                      "origin-y",
                                      _("Origin-y"),
-                                     _("Y-coordinate of origin"),
+                                     _("Y coordinate of origin"),
                                      -G_MAXDOUBLE, G_MAXDOUBLE,
                                      0.,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));

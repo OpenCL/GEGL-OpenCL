@@ -21,14 +21,14 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x1,        _("x1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (y1,        _("y1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (x2,        _("x2"),  -1000.0, 1000.0, 150.0, "")
-gegl_chant_double (y2,        _("y2"),  -1000.0, 1000.0, 150.0, "")
+gegl_chant_double (x1,        _("X1"),  -1000.0, 1000.0, 25.0, "")
+gegl_chant_double (y1,        _("Y1"),  -1000.0, 1000.0, 25.0, "")
+gegl_chant_double (x2,        _("X2"),  -1000.0, 1000.0, 150.0, "")
+gegl_chant_double (y2,        _("Y2"),  -1000.0, 1000.0, 150.0, "")
 gegl_chant_color (color1,   _("Color"), "black",
-                  _("One end of gradient"))
+                  _("One end of a agradient"))
 gegl_chant_color (color2,   _("Other color"), "white",
-                  _("One end of gradient"))
+                  _("The other end of a gradient"))
 
 #else
 
