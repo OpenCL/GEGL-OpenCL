@@ -274,15 +274,18 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
           if (gegl_cl_is_accelerated ())
             gegl_buffer_cl_cache_flush2 (GEGL_TILE_HANDLER_CACHE (tile_store), NULL);
 
-          for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
+          if (cache->count)
             {
-              CacheItem *item = link->data;
-              GeglTile  *tile = item->tile;
-
-              if (tile != NULL &&
-                  item->handler == cache)
+              for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
                 {
-                  gegl_tile_store (tile);
+                  CacheItem *item = link->data;
+                  GeglTile  *tile = item->tile;
+
+                  if (tile != NULL &&
+                      item->handler == cache)
+                    {
+                      gegl_tile_store (tile);
+                    }
                 }
             }
         }
