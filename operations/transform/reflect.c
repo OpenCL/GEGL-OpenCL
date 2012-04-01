@@ -26,9 +26,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Direction vector's X component"))
+                   _("Direction vector's X component"))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Direction vector's Y component"))
+                   _("Direction vector's Y component"))
 
 #else
 
@@ -39,11 +39,11 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 #include <math.h>
 
 static void
-create_matrix (OpTransform    *op,
+create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  gdouble ux=0, uy=0;
+  gdouble ux = 0, uy = 0;
   gdouble l;
 
   ux = chant->x;

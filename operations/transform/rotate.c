@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
+gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                    _("Angle to rotate (clockwise)"))
 
 #else
@@ -35,11 +35,11 @@ gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
 #include <math.h>
 
 static void
-create_matrix (OpTransform    *op,
+create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  gdouble radians = chant->degrees * (2 * G_PI / 360.);
+  gdouble radians = chant->degrees * (2 * G_PI / 360.0);
 
   matrix->coeff [0][0] = matrix->coeff [1][1] = cos (radians);
   matrix->coeff [0][1] = sin (radians);

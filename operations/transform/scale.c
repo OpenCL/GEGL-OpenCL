@@ -22,8 +22,10 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Horizontal scale factor"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor"))
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                   _("Horizontal scale factor"))
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+                   _("Vertical scale factor"))
 
 #else
 
@@ -35,7 +37,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor"))
 #include <math.h>
 
 static void
-create_matrix (OpTransform    *op,
+create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);

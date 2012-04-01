@@ -22,9 +22,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                    _("Horizontal shear amount"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                    _("Vertical shear amount"))
 
 #else
@@ -37,7 +37,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
 #include <math.h>
 
 static void
-create_matrix (OpTransform    *op,
+create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);

@@ -34,7 +34,7 @@ gegl_chant_string (transform, "", _("Transformation string"))
 #include <math.h>
 
 static void
-create_matrix (OpTransform    *op,
+create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
