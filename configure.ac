@@ -1113,9 +1113,14 @@ tests/simple/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
 po/Makefile.in
-gegl.pc
 gegl-uninstalled.pc
 ])
+
+# Files with versions in their names
+AC_CONFIG_FILES(
+gegl-gegl_api_version.pc:gegl.pc.in
+)
+
 AC_OUTPUT
 
 dnl Print a summary of features enabled/disabled:
