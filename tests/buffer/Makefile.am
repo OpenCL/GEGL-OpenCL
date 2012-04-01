@@ -55,9 +55,11 @@ buffer-tests.inc: $(buffer_test_SOURCES) Makefile.am $(top_srcdir)/tests/buffer/
 	done;
 	@echo '};' >> $@
 
+builddir_gegl_env = GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations
+
 buffer-tests-report: buffer-test$(EXEEXT) $(top_srcdir)/tests/buffer/reference/*.buf
 	@mkdir -p output > /dev/null 2>&1
-	./buffer-test$(EXEEXT)
+	$(builddir_gegl_env) ./buffer-test$(EXEEXT)
 	for f in $(top_srcdir)/tests/buffer/reference/*.buf; do LC_ALL=C diff --report-identical-files --context=50 $$f output/`basename $$f`; done > buffer-tests-report; true
 
 clean-local:
