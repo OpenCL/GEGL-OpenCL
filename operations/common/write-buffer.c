@@ -51,17 +51,18 @@ process (GeglOperation       *operation,
       if (gegl_cl_is_accelerated ()
           && gegl_cl_color_supported (input->soft_format, output->soft_format) == GEGL_CL_COLOR_CONVERT)
         {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "write-buffer: %p %p %s %s {%d %d %d %d}", input, output, babl_get_name(input->soft_format), babl_get_name(output->soft_format),
-                                                                                   result->x, result->y, result->width, result->height);
-
           size_t size;
           gboolean err;
           cl_int cl_err;
           gint j;
-          gegl_cl_color_babl (output->soft_format, &size);
 
           GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
                         gint read = gegl_buffer_cl_iterator_add (i, input, result, output->soft_format, GEGL_CL_BUFFER_READ,  GEGL_ABYSS_NONE);
+
+          gegl_cl_color_babl (output->soft_format, &size);
+
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "write-buffer: %p %p %s %s {%d %d %d %d}", input, output, babl_get_name(input->soft_format), babl_get_name(output->soft_format),
+                                                                                   result->x, result->y, result->width, result->height);
 
           while (gegl_buffer_cl_iterator_next (i, &err))
             {
