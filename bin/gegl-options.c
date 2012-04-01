@@ -108,15 +108,31 @@ parse_args (gint    argc,
 static void
 print_opts (GeglOptions *o)
 {
+  char *mode_str;
+  switch (o->mode)
+    {
+      case GEGL_RUN_MODE_DISPLAY:
+        mode_str = "Display on screen"; break;
+      case GEGL_RUN_MODE_XML:
+        mode_str = "Print XML"; break;
+      case GEGL_RUN_MODE_OUTPUT:
+        mode_str = "Output in a file"; break;
+      case GEGL_RUN_MODE_HELP:
+        mode_str = "Display help information"; break;
+      default:
+        g_warning ("Unknown GeglOption mode: %d", o->mode);
+        break;
+    }
+
     fprintf (stderr,
 "Parsed commandline:\n"
-"\tmode:   %i\n"
+"\tmode:   %s\n"
 "\tfile:   %s\n"
 "\txml:    %s\n"
 "\toutput: %s\n"
 "\trest:   %s\n"
 "\t\n",
-    o->mode,
+    mode_str,
     o->file==NULL?"(null)":o->file,
     o->xml==NULL?"(null)":o->xml,
     o->output==NULL?"(null)":o->output,
