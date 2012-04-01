@@ -34,7 +34,7 @@
 #include <graph/gegl-node.h>
 #include <graph/gegl-connection.h>
 
-#include "affine.h"
+#include "transform-core.h"
 #include "module.h"
 
 #include "buffer/gegl-buffer-cl-cache.h"
@@ -60,9 +60,9 @@ static void          gegl_affine_set_property              (GObject             
 static void          gegl_affine_bounding_box              (gdouble              *points,
                                                             gint                  num_points,
                                                             GeglRectangle        *output);
-static gboolean      gegl_affine_is_intermediate_node      (OpAffine             *affine);
-static gboolean      gegl_affine_is_composite_node         (OpAffine             *affine);
-static void          gegl_affine_get_source_matrix         (OpAffine             *affine,
+static gboolean      gegl_affine_is_intermediate_node      (OpTransform             *affine);
+static gboolean      gegl_affine_is_composite_node         (OpTransform             *affine);
+static void          gegl_affine_get_source_matrix         (OpTransform             *affine,
                                                             GeglMatrix3          *output);
 static GeglRectangle gegl_affine_get_bounding_box          (GeglOperation        *op);
 static GeglRectangle gegl_affine_get_invalidated_by_change (GeglOperation        *operation,
@@ -99,15 +99,15 @@ static void          gegl_affine_fast_reflect_y            (GeglBuffer          
 
 /* ************************* */
 
-static void     op_affine_init          (OpAffine      *self);
-static void     op_affine_class_init    (OpAffineClass *klass);
+static void     op_affine_init          (OpTransform      *self);
+static void     op_affine_class_init    (OpTransformClass *klass);
 static gpointer op_affine_parent_class = NULL;
 
 static void
 op_affine_class_intern_init (gpointer klass)
 {
   op_affine_parent_class = g_type_class_peek_parent (klass);
-  op_affine_class_init ((OpAffineClass *) klass);
+  op_affine_class_init ((OpTransformClass *) klass);
 }
 
 GType
@@ -118,13 +118,13 @@ op_affine_get_type (void)
     {
       static const GTypeInfo g_define_type_info =
         {
-          sizeof (OpAffineClass),
+          sizeof (OpTransformClass),
           (GBaseInitFunc) NULL,
           (GBaseFinalizeFunc) NULL,
           (GClassInitFunc) op_affine_class_intern_init,
           (GClassFinalizeFunc) NULL,
           NULL,   /* class_data */
-          sizeof (OpAffine),
+          sizeof (OpTransform),
           0,      /* n_preallocs */
           (GInstanceInitFunc) op_affine_init,
           NULL    /* value_table */
@@ -141,7 +141,7 @@ op_affine_get_type (void)
 
 #if 0
 static void
-op_affine_sampler_init (OpAffine *self)
+op_affine_sampler_init (OpTransform *self)
 {
   GType                 desired_type;
   GeglInterpolation     interpolation;
@@ -172,7 +172,7 @@ gegl_affine_prepare (GeglOperation *operation)
 }
 
 static void
-op_affine_class_init (OpAffineClass *klass)
+op_affine_class_init (OpTransformClass *klass)
 {
   GObjectClass             *gobject_class = G_OBJECT_CLASS (klass);
   /*GeglOperationFilterClass *filter_class  = GEGL_OPERATION_FILTER_CLASS (klass);*/
@@ -241,7 +241,7 @@ gegl_affine_finalize (GObject *object)
 }
 
 static void
-op_affine_init (OpAffine *self)
+op_affine_init (OpTransform *self)
 {
 }
 
@@ -251,7 +251,7 @@ gegl_affine_get_property (GObject    *object,
                           GValue     *value,
                           GParamSpec *pspec)
 {
-  OpAffine *self = OP_AFFINE (object);
+  OpTransform *self = OP_AFFINE (object);
 
   switch (prop_id)
     {
@@ -282,7 +282,7 @@ gegl_affine_set_property (GObject      *object,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-  OpAffine *self = OP_AFFINE (object);
+  OpTransform *self = OP_AFFINE (object);
 
   switch (prop_id)
     {
@@ -309,7 +309,7 @@ gegl_affine_set_property (GObject      *object,
 }
 
 static void
-gegl_affine_create_matrix (OpAffine    *affine,
+gegl_affine_create_matrix (OpTransform    *affine,
                            GeglMatrix3 *matrix)
 {
   gegl_matrix3_identity (matrix);
@@ -319,7 +319,7 @@ gegl_affine_create_matrix (OpAffine    *affine,
 }
 
 static void
-gegl_affine_create_composite_matrix (OpAffine    *affine,
+gegl_affine_create_composite_matrix (OpTransform    *affine,
                                      GeglMatrix3 *matrix)
 {
   gegl_affine_create_matrix (affine, matrix);
@@ -376,7 +376,7 @@ gegl_affine_bounding_box (gdouble       *points,
 }
 
 static gboolean
-gegl_affine_is_intermediate_node (OpAffine *affine)
+gegl_affine_is_intermediate_node (OpTransform *affine)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -402,7 +402,7 @@ gegl_affine_is_intermediate_node (OpAffine *affine)
 }
 
 static gboolean
-gegl_affine_is_composite_node (OpAffine *affine)
+gegl_affine_is_composite_node (OpTransform *affine)
 {
   GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine);
@@ -420,7 +420,7 @@ gegl_affine_is_composite_node (OpAffine *affine)
 }
 
 static void
-gegl_affine_get_source_matrix (OpAffine    *affine,
+gegl_affine_get_source_matrix (OpTransform    *affine,
                                GeglMatrix3 *output)
 {
   GSList        *connections;
@@ -441,7 +441,7 @@ gegl_affine_get_source_matrix (OpAffine    *affine,
 static GeglRectangle
 gegl_affine_get_bounding_box (GeglOperation *op)
 {
-  OpAffine      *affine  = OP_AFFINE (op);
+  OpTransform      *affine  = OP_AFFINE (op);
   GeglMatrix3    matrix;
   GeglRectangle  in_rect = {0,0,0,0},
                  have_rect;
@@ -497,7 +497,7 @@ gegl_affine_detect (GeglOperation *operation,
                     gint           x,
                     gint           y)
 {
-  OpAffine    *affine      = OP_AFFINE (operation);
+  OpTransform    *affine      = OP_AFFINE (operation);
   GeglNode    *source_node = gegl_operation_get_source_node (operation, "input");
   GeglMatrix3  inverse;
   gdouble      need_points [2];
@@ -528,7 +528,7 @@ gegl_affine_get_required_for_output (GeglOperation       *op,
                                      const gchar         *input_pad,
                                      const GeglRectangle *region)
 {
-  OpAffine      *affine = OP_AFFINE (op);
+  OpTransform      *affine = OP_AFFINE (op);
   GeglMatrix3    inverse;
   GeglRectangle  requested_rect,
                  need_rect;
@@ -581,7 +581,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
                                        const gchar         *input_pad,
                                        const GeglRectangle *input_region)
 {
-  OpAffine          *affine = OP_AFFINE (op);
+  OpTransform          *affine = OP_AFFINE (op);
   GeglMatrix3        matrix;
   GeglRectangle      affected_rect;
   GeglRectangle      context_rect;
@@ -945,7 +945,7 @@ gegl_affine_process (GeglOperation        *operation,
   GeglBuffer          *input;
   GeglBuffer          *output;
   GeglMatrix3          matrix;
-  OpAffine            *affine = (OpAffine *) operation;
+  OpTransform            *affine = (OpTransform *) operation;
 
   gegl_affine_create_composite_matrix (affine, &matrix);
 

@@ -2,13 +2,13 @@ include $(top_srcdir)/operations/Makefile-common.am
 
 LIBS = $(op_libs)
 
-affinelibdir = $(libdir)/gegl-$(GEGL_API_VERSION)
+transformopslibdir = $(libdir)/gegl-$(GEGL_API_VERSION)
 
-affinelib_LTLIBRARIES = affine.la
+transformopslib_LTLIBRARIES = transformops.la
 
-affine_la_SOURCES = \
-	affine.c	\
-	affine.h	\
+transformops_la_SOURCES = \
+	transform-core.c	\
+	transform-core.h	\
 	module.c	\
 	module.h	\
 	reflect.c	\

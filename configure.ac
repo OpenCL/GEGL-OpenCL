@@ -1086,12 +1086,12 @@ gegl/opencl/Makefile
 libs/Makefile
 libs/rgbe/Makefile
 operations/Makefile
-operations/affine/Makefile
 operations/core/Makefile
 operations/common/Makefile
 operations/common/perlin/Makefile
 operations/external/Makefile
 operations/generated/Makefile
+operations/transform/Makefile
 operations/workshop/Makefile
 operations/workshop/external/Makefile
 operations/workshop/generated/Makefile

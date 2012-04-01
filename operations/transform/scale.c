@@ -22,28 +22,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.,
-                   _("Angle to rotate (clockwise)"))
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Horizontal scale factor"))
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor"))
 
 #else
 
-#define GEGL_CHANT_NAME rotate
-#define GEGL_CHANT_DESCRIPTION  _("Rotate the buffer around the specified origin.")
-#define GEGL_CHANT_SELF "rotate.c"
+#define GEGL_CHANT_NAME scale
+#define GEGL_CHANT_DESCRIPTION _("Scales the buffer.")
+#define GEGL_CHANT_SELF "scale.c"
 #include "chant.h"
 
 #include <math.h>
 
 static void
-create_matrix (OpAffine    *op,
+create_matrix (OpTransform    *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  gdouble radians = chant->degrees * (2 * G_PI / 360.);
 
-  matrix->coeff [0][0] = matrix->coeff [1][1] = cos (radians);
-  matrix->coeff [0][1] = sin (radians);
-  matrix->coeff [1][0] = - matrix->coeff [0][1];
+  matrix->coeff [0][0] = chant->x;
+  matrix->coeff [1][1] = chant->y;
 }
 
 #endif

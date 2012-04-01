@@ -13,7 +13,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Philip Lafleur
+ * Copyright 2006 Dominik Ernst
+ *
+ * Reflect an image about a line, whose direction is specified by the
+ * vector that is defined by the x and y properties.
  */
 
 #include "config.h"
@@ -22,24 +25,38 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (transform, "", _("Transformation string"))
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+  _("Direction vector's X component"))
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
+  _("Direction vector's Y component"))
 
 #else
 
-#define GEGL_CHANT_NAME transform
-#define GEGL_CHANT_DESCRIPTION  _("Transforms the group (used by svg).")
-#define GEGL_CHANT_SELF "transform.c"
+#define GEGL_CHANT_NAME reflect
+#define GEGL_CHANT_SELF "reflect.c"
 #include "chant.h"
 
 #include <math.h>
 
 static void
-create_matrix (OpAffine    *op,
+create_matrix (OpTransform    *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  gdouble ux=0, uy=0;
+  gdouble l;
 
-  gegl_matrix3_parse_string (matrix, chant->transform);
+  ux = chant->x;
+  uy = chant->y;
+
+  l = sqrt(uy*uy + ux*ux);
+  ux /= l;
+  uy /= l;
+
+  matrix->coeff [0][0] = 2*ux*ux - 1;
+  matrix->coeff [1][1] = 2*uy*uy - 1;
+  matrix->coeff [0][1] = matrix->coeff [1][0] = 2*ux*uy;
 }
+
 
 #endif

@@ -19,7 +19,7 @@
 #include "config.h"
 #include <gegl-plugin.h>
 #include "module.h"
-#include "affine.h"
+#include "transform-core.h"
 
 static GTypeModule          *affine_module;
 static const GeglModuleInfo  modinfo =

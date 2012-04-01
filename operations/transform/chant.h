@@ -10,11 +10,11 @@
 #include <glib-object.h>
 #include <gegl-plugin.h>
 
-#include "affine.h"
+#include "transform-core.h"
 #include "module.h"
 
-#define GEGL_CHANT_PARENT_TypeName      OpAffine
-#define GEGL_CHANT_PARENT_TypeNameClass OpAffineClass
+#define GEGL_CHANT_PARENT_TypeName      OpTransform
+#define GEGL_CHANT_PARENT_TypeNameClass OpTransformClass
 #define GEGL_CHANT_PARENT_TYPE          TYPE_OP_AFFINE
 #define GEGL_CHANT_PARENT_CLASS         OP_AFFINE_CLASS
 
@@ -252,7 +252,7 @@ gegl_chant_constructor (GType                  type,
 static void class_init (GeglOperationClass *operation_class);
 #endif
 
-static void create_matrix (OpAffine    *affine,
+static void create_matrix (OpTransform    *affine,
                            GeglMatrix3 *matrix);
 
 static void

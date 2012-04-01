@@ -1,8 +1,8 @@
 SUBDIRS = \
-	affine		\
 	core		\
 	common		\
 	generated	\
+	transform \
 	external
 
 if ENABLE_WORKSHOP

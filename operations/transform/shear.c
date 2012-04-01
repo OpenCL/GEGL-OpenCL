@@ -37,7 +37,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
 #include <math.h>
 
 static void
-create_matrix (OpAffine    *op,
+create_matrix (OpTransform    *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);

@@ -22,26 +22,24 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Horizontal scale factor"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., _("Vertical scale factor"))
+gegl_chant_string (transform, "", _("Transformation string"))
 
 #else
 
-#define GEGL_CHANT_NAME scale
-#define GEGL_CHANT_DESCRIPTION _("Scales the buffer.")
-#define GEGL_CHANT_SELF "scale.c"
+#define GEGL_CHANT_NAME transform
+#define GEGL_CHANT_DESCRIPTION  _("Transforms the group (used by svg).")
+#define GEGL_CHANT_SELF "transform.c"
 #include "chant.h"
 
 #include <math.h>
 
 static void
-create_matrix (OpAffine    *op,
+create_matrix (OpTransform    *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
 
-  matrix->coeff [0][0] = chant->x;
-  matrix->coeff [1][1] = chant->y;
+  gegl_matrix3_parse_string (matrix, chant->transform);
 }
 
 #endif
