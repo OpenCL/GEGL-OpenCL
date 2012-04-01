@@ -16,6 +16,9 @@
  * Ali Alsam, Hans Jakob Rivertz, Øyvind Kolås (c) 2011
  */
 
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int_ui (iterations, _("Strength"), 0, 32, 4, 0, 8, 1, _("How many iteratarions to run the algorithm with"))
