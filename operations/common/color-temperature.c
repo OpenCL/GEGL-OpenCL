@@ -24,8 +24,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (original_temperature, "Original temperature", LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, "Estimated temperature of the light source in Kelvin the image was taken with.")
-gegl_chant_double (intended_temperature, "Intended temperature", LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, "Corrected estimation of the temperature of the light source in Kelvin.")
+gegl_chant_double (original_temperature, _("Original temperature"), LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, _("Estimated temperature of the light source in Kelvin the image was taken with."))
+gegl_chant_double (intended_temperature, _("Intended temperature"), LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, _("Corrected estimation of the temperature of the light source in Kelvin."))
 
 #else
 
