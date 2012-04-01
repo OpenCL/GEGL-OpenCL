@@ -29,7 +29,7 @@ gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 8.0,
 gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
   _("Number of pairs, higher number preserves more acute features"))
 gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50.0,
-  _("The percentile to return, the default value 50 is equal to the median."))
+  _("The percentile to return, the default value 50 is equal to the median"))
 
 #else
 

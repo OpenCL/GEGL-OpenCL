@@ -169,7 +169,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories" , "noise",
     "name"       , "gegl:noise-spread",
-    "description", _("Spread filter"),
+    "description", _("Noise spread filter"),
     NULL);
 }
 

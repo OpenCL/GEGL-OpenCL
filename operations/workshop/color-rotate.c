@@ -382,7 +382,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "color",
     "name"        , "gegl:color-rotate",
-    "description" , _("Rotate colors on the image."),
+    "description" , _("Rotate colors on the image"),
     NULL);
 }
 

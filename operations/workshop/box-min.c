@@ -195,7 +195,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   "name"        , "gegl:box-min",
   "categories"  , "misc",
   "description" ,
-        _("Sets the target pixel to the value of the minimum value in a box surrounding the pixel."),
+        _("Sets the target pixel to the value of the minimum value in a box surrounding the pixel"),
         NULL);
 }
 

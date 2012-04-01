@@ -385,7 +385,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:plasma",
     "categories" , "render",
-    "description", _("Performs plasma on the image."),
+    "description", _("Performs plasma effect on the image"),
     NULL);
 }
 

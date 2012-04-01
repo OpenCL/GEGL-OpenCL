@@ -27,7 +27,7 @@
 gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 4.0,
   _("Radius of square pixel region (width and height will be radius*2+1)"))
 gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50,
-  _("The percentile to compute, defaults to 50, which is a median filter."))
+  _("The percentile to compute, defaults to 50, which is a median filter"))
 
 #else
 
@@ -228,7 +228,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories" , "misc",
     "description",
         _("Sets the target pixel to the color corresponding to a given percentile "
-          "when colors are sorted by luminance."),
+          "when colors are sorted by luminance"),
         NULL);
 }
 

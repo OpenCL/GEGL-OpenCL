@@ -306,7 +306,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "enhance",
     "name"        , "gegl:deinterlace",
-    "description" , _("Performs deinterlace on the image."),
+    "description" , _("Performs deinterlace on the image"),
     NULL);
 }
 

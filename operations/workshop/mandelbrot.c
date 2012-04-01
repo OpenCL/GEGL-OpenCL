@@ -141,7 +141,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:mandelbrot",
     "categories"  , "render",
-    "description" , _("Mandelbrot set renderer."),
+    "description" , _("Mandelbrot set renderer"),
     NULL);
 }
 

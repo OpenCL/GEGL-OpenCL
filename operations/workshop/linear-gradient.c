@@ -26,9 +26,9 @@ gegl_chant_double (y1,        _("y1"),  -1000.0, 1000.0, 25.0, "")
 gegl_chant_double (x2,        _("x2"),  -1000.0, 1000.0, 150.0, "")
 gegl_chant_double (y2,        _("y2"),  -1000.0, 1000.0, 150.0, "")
 gegl_chant_color (color1,   _("Color"), "black",
-                  _("one end of gradient"))
+                  _("One end of gradient"))
 gegl_chant_color (color2,   _("Other color"), "white",
-                  _("one end of gradient"))
+                  _("One end of gradient"))
 
 #else
 
@@ -134,7 +134,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:linear-gradient",
     "categories"  , "render",
-    "description" , _("linear gradient renderer"),
+    "description" , _("Linear gradient renderer"),
     NULL);
 }
 

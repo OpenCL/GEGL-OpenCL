@@ -129,7 +129,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "enhance",
     "name"        , "gegl:red-eye-removal",
-    "description" , _("Performs red-eye-removal on the image."),
+    "description" , _("Performs red-eye-removal on the image"),
     NULL);
 }
 
