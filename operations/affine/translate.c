@@ -23,14 +23,14 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   _("Horizontal translation."))
+                   _("Horizontal translation"))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   _("Vertical translation."))
+                   _("Vertical translation"))
 
 #else
 
 #define GEGL_CHANT_NAME translate
-#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used.")
+#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used")
 #define GEGL_CHANT_SELF "translate.c"
 #include "chant.h"
 

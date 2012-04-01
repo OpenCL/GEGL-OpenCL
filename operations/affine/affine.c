@@ -220,15 +220,15 @@ op_affine_class_init (OpAffineClass *klass)
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
                                    g_param_spec_boolean (
                                      "hard-edges",
-                                     _("Hard-edges"),
+                                     _("Hard edges"),
                                      _("Hard edges"),
                                      FALSE,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_LANCZOS_WIDTH,
                                    g_param_spec_int (
-                                     "lanczos-width",
+                                     "Lanczos width",
                                      _("Lanczos-width"),
-                                     _("Width of lanczos function"),
+                                     _("Width of the Lanczos function"),
                                      3, 6, 3,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }

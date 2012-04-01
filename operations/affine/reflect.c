@@ -26,9 +26,9 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Direction vector's x component"))
+  _("Direction vector's X component"))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Direction vector's y component"))
+  _("Direction vector's Y component"))
 
 #else
 

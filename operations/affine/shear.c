@@ -23,14 +23,14 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   _("Horizontal shear amount."))
+                   _("Horizontal shear amount"))
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
-                   _("Vertical shear amount."))
+                   _("Vertical shear amount"))
 
 #else
 
 #define GEGL_CHANT_NAME shear
-#define GEGL_CHANT_DESCRIPTION    _("Shears the buffer.")
+#define GEGL_CHANT_DESCRIPTION    _("Shears the buffer")
 #define GEGL_CHANT_SELF "shear.c"
 #include "chant.h"
 
