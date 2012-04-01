@@ -98,6 +98,7 @@ iir_young_blur_1D (gfloat  * buf,
 {
   gint wcount, i;
   gdouble tmp;
+  gdouble recip = 1.0 / b[0];
 
   /* forward filter */
   wcount = 0;
@@ -112,7 +113,7 @@ iir_young_blur_1D (gfloat  * buf,
             tmp += b[i]*w[wcount-i];
         }
 
-      tmp /= b[0];
+      tmp *= recip;
       tmp += B*buf[offset];
       w[wcount] = tmp;
 
@@ -134,7 +135,7 @@ iir_young_blur_1D (gfloat  * buf,
             tmp += b[i]*buf[offset+delta_offset*i];
         }
 
-      tmp /= b[0];
+      tmp *= recip;
       tmp += B*w[wcount];
       buf[offset] = tmp;
 
