@@ -27,8 +27,8 @@ gegl_chant_double (strength, _("Strength"), 0.0, 100.0, 50,
                    _("Effect Strength"))
 gegl_chant_double (size, _("Size"), 1.0, 10000.0, 40.0,
                    _("Effect Size"))
-gegl_chant_double (hardness, _("Harness"), 0.0, 1.0, 0.5,
-                   _("Effect Harness"))
+gegl_chant_double (hardness, _("Hardness"), 0.0, 1.0, 0.5,
+                   _("Effect Hardness"))
 gegl_chant_path (stroke, _("Stroke"), _("Effect Strength"))
 gegl_chant_enum (behavior, _("Behavior"), GeglWarpBehavior, GEGL_TYPE_WARP_BEHAVIOR,
                  GEGL_WARP_BEHAVIOR_MOVE, _("Behavior of the op"))
