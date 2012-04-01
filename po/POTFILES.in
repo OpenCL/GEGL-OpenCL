@@ -49,6 +49,7 @@ operations/common/mirrors.c
 operations/common/mono-mixer.c
 operations/common/motion-blur.c
 operations/common/noise.c
+operations/common/noise-reduction.c
 operations/common/opacity.c
 operations/common/open-buffer.c
 operations/common/over.c
