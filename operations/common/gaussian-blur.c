@@ -493,8 +493,8 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name",       "gegl:gaussian-blur",
     "categories", "blur",
     "description",
-        _("Performs an averaging of neighbouring pixels with the "
-          "normal distribution as weighting."),
+        _("Performs an averaging of neighboring pixels with the "
+          "normal distribution as weighting"),
         NULL);
 }
 

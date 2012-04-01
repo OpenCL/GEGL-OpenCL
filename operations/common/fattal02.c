@@ -38,7 +38,7 @@ gegl_chant_double (beta, _("Beta"),
                   _("Strength of local detail enhancement"))
 gegl_chant_double (saturation, _("Saturation"),
                   0.0, 1.0, 0.8,
-                  _("Global colour saturation factor"))
+                  _("Global color saturation factor"))
 gegl_chant_double (noise, _("Noise"),
                   0.0, 1.0, 0.0,
                   _("Gradient threshold for lowering detail enhancement"))

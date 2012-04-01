@@ -233,7 +233,7 @@ static const GOptionEntry cmd_entries[]=
     {
      "gegl-chunk-size", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_chunk_size,
-     N_("The count of pixels to compute simulantous"), "pixel count"
+     N_("The count of pixels to compute simultaneously"), "pixel count"
     },
     {
      "gegl-quality", 0, 0,
@@ -243,7 +243,7 @@ static const GOptionEntry cmd_entries[]=
     {
      "gegl-threads", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_threads,
-     N_("The number of concurrent processing threads to use."), "<threads>"
+     N_("The number of concurrent processing threads to use"), "<threads>"
     },
     { NULL }
 };

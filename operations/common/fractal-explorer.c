@@ -32,7 +32,7 @@ gegl_chant_int_ui (width,  _("Width"),  1, 10000000, 400, 1, 2000, 1.5,
 gegl_chant_int_ui (height, _("Height"), 1, 10000000, 400, 1, 2000, 1.5,
                    _("Height"))
 
-gegl_chant_int (fractaltype, _("Fractal type"), 0, 8, 0, _("Fractal Type"))
+gegl_chant_int (fractaltype, _("Fractal type"), 0, 8, 0, _("Type of a fractal"))
 
 gegl_chant_double (xmin, _("Left"),   -3.0, 3.0, -2.0, _("Left"))
 gegl_chant_double (xmax, _("Right"),  -3.0, 3.0,  2.0, _("Right"))

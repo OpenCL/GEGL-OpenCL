@@ -35,7 +35,7 @@ gegl_chant_double(x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   _("Horizontal position"))
 gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                   _("Vertical position"))
-gegl_chant_double(scale, _("scale"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+gegl_chant_double(scale, _("Scale"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                   _("Scale 1:1 size"))
 gegl_chant_file_path(src, _("Source"), "",
                 _("Source datafile (png, jpg, raw, svg, bmp, tif, ...)"))
@@ -264,7 +264,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:layer",
     "categories" , "meta",
-    "description", _("A layer in the traditional sense."),
+    "description", _("A layer in the traditional sense"),
     NULL);
 }
 

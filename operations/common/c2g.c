@@ -25,11 +25,11 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int_ui (radius, _("Radius"), 2, 3000, 300, 2, 3000, 1.6,
-                _("Neighbourhood taken into account, this is the radius in pixels taken into account when deciding which colors map to which gray values."))
+                _("Neighborhood taken into account, this is the radius in pixels taken into account when deciding which colors map to which gray values"))
 gegl_chant_int_ui (samples, _("Samples"), 1, 1000, 4, 1, 20, 1.0,
-                _("Number of samples to do per iteration looking for the range of colors."))
+                _("Number of samples to do per iteration looking for the range of colors"))
 gegl_chant_int_ui (iterations, _("Iterations"), 1, 1000, 10, 1, 20, 1.0,
-                _("Number of iterations, a higher number of iterations provides a less noisy results at computational cost."))
+                _("Number of iterations, a higher number of iterations provides less noisy results at a computational cost"))
 
 /*
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
@@ -192,7 +192,7 @@ gegl_chant_class_init (GeglChantClass *klass)
       "description", 
      _("Color to grayscale conversion, uses envelopes formed from spatial "
        " color differences to perform color-feature preserving grayscale "
-       " spatial contrast enhancement."),
+       " spatial contrast enhancement"),
      NULL);
 }
 

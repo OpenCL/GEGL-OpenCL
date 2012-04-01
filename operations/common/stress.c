@@ -25,11 +25,11 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int_ui (radius, _("Radius"), 2, 5000.0, 300, 2, 2000, 1.0,
-                _("Neighbourhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime."))
+                _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"))
 gegl_chant_int_ui (samples, _("Samples"), 2, 200, 5, 2, 10, 1.0,
-                _("Number of samples to do per iteration looking for the range of colors."))
+                _("Number of samples to do per iteration looking for the range of colors"))
 gegl_chant_int_ui (iterations, _("Iterations"), 1, 200, 5, 1, 10, 1.0,
-                _("Number of iterations, a higher number of iterations provides a less noisy rendering at computational cost."))
+                _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"))
 
 
 /*
@@ -188,7 +188,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:stress",
     "categories" , "enhance",
     "description",
-        _("Spatio Temporal Retinex-like Envelope with Stochastic Sampling."),
+        _("Spatio Temporal Retinex-like Envelope with Stochastic Sampling"),
         NULL);
 }
 
