@@ -60,6 +60,8 @@ typedef struct
 gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
                                              const char *kernel_name[]);
 
+#define GEGL_CL_CHUNK_SIZE 1024 * 1024
+
 #ifdef __GEGL_CL_INIT_MAIN__
 
 t_clGetPlatformIDs  gegl_clGetPlatformIDs  = NULL;

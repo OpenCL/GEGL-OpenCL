@@ -750,7 +750,7 @@ gegl_processor_work (GeglProcessor *processor,
   GeglCache *cache     = gegl_node_get_cache (processor->input);
 
   if (gegl_cl_is_accelerated () && gegl_config()->use_opencl
-      && processor->chunk_size < INT_MAX)
+      && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
     {
       GeglVisitor *visitor = g_object_new (GEGL_TYPE_VISITOR, NULL);
       GSList *iterator = NULL;
@@ -764,7 +764,7 @@ gegl_processor_work (GeglProcessor *processor,
           GeglNode *node = (GeglNode*) iterator->data;
           if (GEGL_OPERATION_GET_CLASS(node->operation)->opencl_support)
             {
-              processor->chunk_size = INT_MAX;
+              processor->chunk_size = GEGL_CL_CHUNK_SIZE;
               break;
             }
         }
