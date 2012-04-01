@@ -128,18 +128,17 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
   CacheItem            *item;
   GSList               *iter;
 
-  if (!cache->count)
-    return;
-
-  g_static_mutex_lock (&mutex);
-  /* only throw out items belonging to this cache instance */
-
   if (cache->tile_storage->hot_tile)
     {
       gegl_tile_unref (cache->tile_storage->hot_tile);
       cache->tile_storage->hot_tile = NULL;
     }
 
+  if (!cache->count)
+    return;
+
+  g_static_mutex_lock (&mutex);
+  /* only throw out items belonging to this cache instance */
 
   cache->free_list = NULL;
   g_queue_foreach (cache_queue, gegl_tile_handler_cache_reinit_buffer_tiles, cache);
@@ -182,7 +181,6 @@ gegl_tile_handler_cache_dispose (GObject *object)
   CacheItem            *item;
   GSList               *iter;
 
-  g_static_mutex_lock (&mutex);
   cache = GEGL_TILE_HANDLER_CACHE (object);
 
   /* only throw out items belonging to this cache instance */
@@ -192,23 +190,28 @@ gegl_tile_handler_cache_dispose (GObject *object)
    * buffer destructions, to avoid the overhead of walking the full queue for
    * every tiny buffer being destroyed.
    */
-  g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
-  for (iter = cache->free_list; iter; iter = g_slist_next (iter))
+
+  if (cache->count)
     {
-        item = iter->data;
-        if (item->tile)
-          {
-            cache_total -= item->tile->size;
-            gegl_tile_unref (item->tile);
-            cache->count--;
-          }
-        g_queue_remove (cache_queue, item);
-        g_hash_table_remove (cache_ht, item);
-        g_slice_free (CacheItem, item);
+      g_static_mutex_lock (&mutex);
+      g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
+      for (iter = cache->free_list; iter; iter = g_slist_next (iter))
+        {
+            item = iter->data;
+            if (item->tile)
+              {
+                cache_total -= item->tile->size;
+                gegl_tile_unref (item->tile);
+                cache->count--;
+              }
+            g_queue_remove (cache_queue, item);
+            g_hash_table_remove (cache_ht, item);
+            g_slice_free (CacheItem, item);
+        }
+      g_slist_free (cache->free_list);
+      cache->free_list = NULL;
+      g_static_mutex_unlock (&mutex);
     }
-  g_slist_free (cache->free_list);
-  cache->free_list = NULL;
-  g_static_mutex_unlock (&mutex);
 
   if (cache->count != 0)
     {
@@ -366,6 +369,9 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
 {
   CacheItem *result;
   CacheItem pin;
+
+  if (cache->count == 0)
+    return NULL;
 
   pin.x = x;
   pin.y = y;
