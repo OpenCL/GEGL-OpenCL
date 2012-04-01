@@ -22,7 +22,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double_ui (radius, _("Radius"), 0.0, 1000.0, 4.0, 0.0, 100.0, 1.5,
-   _("Radius of square pixel region, (width and height will be radius*2+1)."))
+   _("Radius of square pixel region, (width and height will be radius*2+1)"))
 
 #else
 
@@ -410,7 +410,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:box-blur",
       "categories",  "blur",
-      "description", _("Performs an averaging of a square box of pixels."),
+      "description", _("Performs an averaging of a square box of pixels"),
       NULL);
 }
 
