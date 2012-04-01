@@ -67,14 +67,14 @@ query_jp2 (const gchar   *path,
       image_fmt = jas_image_getfmt (in);
       if (image_fmt < 0)
         {
-          g_warning (_("Unknown JPEG-2000 image format in '%s'"), path);
+          g_warning (_("Unknown JPEG 2000 image format in '%s'"), path);
           break;
         }
 
       image = jas_image_decode (in, image_fmt, NULL);
       if (!image)
         {
-          g_warning (_("Unable to open JPEG-2000 image in '%s'"), path);
+          g_warning (_("Unable to open JPEG 2000 image in '%s'"), path);
           break;
         }
 
@@ -97,7 +97,7 @@ query_jp2 (const gchar   *path,
       numcmpts = jas_image_numcmpts (cimage);
       if (numcmpts != 3)
         {
-          g_warning (_("Unsupported non-RGB JPEG-2000 file with "
+          g_warning (_("Unsupported non-RGB JPEG 2000 file with "
                        "%d components in '%s'"), numcmpts, path);
           break;
         }
@@ -108,7 +108,7 @@ query_jp2 (const gchar   *path,
 
       if ((*depth != 8) && (*depth != 16))
         {
-          g_warning (_("Unsupported JPEG-2000 file with depth %d in '%s'"),
+          g_warning (_("Unsupported JPEG 2000 file with depth %d in '%s'"),
                      *depth, path);
           break;
         }
@@ -394,7 +394,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:jp2-load",
     "categories"  , "hidden",
-    "description" , _("JPEG-2000 image loader"),
+    "description" , _("JPEG 2000 image loader"),
     NULL);
 
   gegl_extension_handler_register (".jp2", "gegl:jp2-load");
