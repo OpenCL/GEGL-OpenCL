@@ -23,7 +23,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_string (path, _("File"), "",
-                   _("Target path and filename, use '-' for stdout."))
+                   _("Target path and filename, use '-' for stdout"))
 gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
                    _("JPEG compression quality (between 1 and 100)"))
 gegl_chant_int    (smoothing, _("Smoothing"),
@@ -189,7 +189,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"        , "gegl:jpg-save",
     "categories"  , "output",
     "description" ,
-    _("JPEG image saver (passes the buffer through, saves as a side-effect.)"),
+    _("JPEG image saver (passes the buffer through, saves as a side-effect)"),
     NULL);
 
   gegl_extension_handler_register_saver (".jpg", "gegl:jpg-save");

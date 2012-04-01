@@ -22,8 +22,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "/home/pippin/input.avi", _("Path of file to load."))
-gegl_chant_int (frame, _("Frame"), 0, 1000000, 0, _("frame number"))
+gegl_chant_file_path (path, _("File"), "/home/pippin/input.avi", _("Path of file to load"))
+gegl_chant_int (frame, _("Frame"), 0, 1000000, 0, _("Frame number"))
 
 #else
 
@@ -468,7 +468,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:ff-load",
     "categories"  , "input:video",
-    "description" , _("FFmpeg video frame importer."),
+    "description" , _("FFmpeg video frame importer"),
     NULL);
 }
 

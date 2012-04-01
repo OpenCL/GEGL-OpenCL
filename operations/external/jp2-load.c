@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
+gegl_chant_file_path (path, _("File"), "", _("Path of file to load"))
 
 #else
 
@@ -394,7 +394,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:jp2-load",
     "categories"  , "hidden",
-    "description" , _("JPEG-2000 image loader."),
+    "description" , _("JPEG-2000 image loader"),
     NULL);
 
   gegl_extension_handler_register (".jp2", "gegl:jp2-load");

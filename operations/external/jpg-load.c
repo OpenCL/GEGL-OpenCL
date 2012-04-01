@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
+gegl_chant_file_path (path, _("File"), "", _("Path of file to load"))
 
 #else
 

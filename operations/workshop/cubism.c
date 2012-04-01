@@ -592,7 +592,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories", "artistic",
     "name", "gegl:cubism",
-    "description",  _("Filter that somehow resembels a cubist painting style."),
+    "description",  _("A filter that somehow resembles a cubist painting style"),
     NULL);
 }
 

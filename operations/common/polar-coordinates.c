@@ -32,12 +32,12 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (depth, _("Circle depth in percent"), 0.0, 100.0, 100.0,
-                   _("Circle depth in percent."))
+                   _("Circle depth in percent"))
 gegl_chant_double (angle, _("Offset angle"), 0.0, 359.9, 0.0,
                    _("Offset angle."))
-gegl_chant_boolean (bw, _("Map backwards"), FALSE, _("Map backwards."))
+gegl_chant_boolean (bw, _("Map backwards"), FALSE, _("Map backwards"))
 gegl_chant_boolean (top, _("Map from top"), TRUE, _("Map from top"))
-gegl_chant_boolean (polar, _("To polar"), TRUE, _("To polar."))
+gegl_chant_boolean (polar, _("To polar"), TRUE, _("To polar"))
 gegl_chant_int (pole_x, _("X:"), 0, G_MAXINT, 0,
                 _("Origin point for the polar coordinates"))
 gegl_chant_int (pole_y, _("Y:"), 0, G_MAXINT, 0,

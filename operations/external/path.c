@@ -25,27 +25,27 @@
 
 
 gegl_chant_color  (fill, _("Fill Color"),  "rgba(0.0,0.0,0.0,0.6)",
-                         _("Color of paint to use for filling, use 0 opacity to disable filling."))
+                         _("Color of paint to use for filling, use 0 opacity to disable filling"))
 gegl_chant_color  (stroke,    _("Stroke Color"),      "rgba(0.0,0.0,0.0,0.0)",
-                             _("Color of paint to use for stroking."))
+                             _("Color of paint to use for stroking"))
 
 gegl_chant_double (stroke_width,_("Stroke width"),  0.0, 200.0, 2.0,
-                             _("The width of the brush used to stroke the path."))
+                             _("The width of the brush used to stroke the path"))
 
 gegl_chant_double (stroke_opacity,  _("Stroke opacity"),  -2.0, 2.0, 1.0,
-                             _("Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool."))
+                             _("Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool"))
 
 gegl_chant_double (stroke_hardness, _("Hardness"),   0.0, 1.0, 0.6,
-                             _("hardness of brush, 0.0 for soft brush 1.0 for hard brush."))
+                             _("Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"))
 
-gegl_chant_string (fill_rule,_("Fill rule."), "nonzero",
-                             _("how to determine what to fill (nonzero|evenodd"))
+gegl_chant_string (fill_rule,_("Fill rule"), "nonzero",
+                             _("How to determine what to fill (nonzero|evenodd"))
 
 gegl_chant_string (transform,_("Transform"), "",
-                             _("svg style description of transform."))
+                             _("SVG style description of transform"))
 
 gegl_chant_double (fill_opacity, _("Fill opacity"),  -2.0, 2.0, 1.0,
-                             _("The fill opacity to use."))
+                             _("The fill opacity to use"))
 
 gegl_chant_path   (d,        _("Vector"),
                              _("A GeglVector representing the path of the stroke"))

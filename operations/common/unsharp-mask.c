@@ -24,7 +24,7 @@
 gegl_chant_double_ui (std_dev, _("Std. Dev."), 0.0, 500.0, 1.0, 0.0, 200.0, 1.5,
                   _("Standard deviation (spatial scale factor)"))
 gegl_chant_double_ui (scale,  _("Scale"), 0.0, 100.0, 1.0, 0.0, 100.0, 1.5,
-                  _("Scale, strength of effect."))
+                  _("Scale, strength of effect"))
 
 #else
 
@@ -71,7 +71,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   "categories" , "meta:enhance",
   "description",
         _("Performs an unsharp mask on the input buffer (sharpens an image by "
-          "adding false mach-bands around edges)."),
+          "adding false mach-bands around edges)"),
         NULL);
 }
 

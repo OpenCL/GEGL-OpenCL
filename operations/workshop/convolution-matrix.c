@@ -430,7 +430,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories"  , "generic",
     "name"        , "gegl:convolution-matrix",
     "description" ,
-    _("Creates image by manually set convolution matrix."),
+    _("Creates image by manually set convolution matrix"),
     NULL);
 }
 
