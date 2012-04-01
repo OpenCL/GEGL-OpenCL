@@ -3,15 +3,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # This file is distributed under the same license as the package.
 #
-# Martin Srebotnjak <miles@filmsi.net>, 2011.
+# Martin Srebotnjak <miles@filmsi.net>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-03-31 20:08+0000\n"
-"PO-Revision-Date: 2012-04-01 00:19+0100\n"
-"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+"POT-Creation-Date: 2012-04-01 07:41+0000\n"
+"PO-Revision-Date: 2012-04-01 12:54+0100\n"
+"Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,9 +46,8 @@ msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 
 #: ../gegl/gegl-init.c:246
-#, fuzzy
 msgid "The number of concurrent processing threads to use."
-msgstr "Število velikosti čopičev za uporabo."
+msgstr "Število uporabljenih vzporednih procesnih niti."
 
 #: ../gegl/module/geglmodule.c:147
 #: ../gegl/module/geglmodule.c:165
@@ -76,24 +75,20 @@ msgid "Not loaded"
 msgstr "Ni naloženo"
 
 #: ../operations/affine/affine.c:200
-#, fuzzy
 msgid "Origin-x"
-msgstr "Izvirnik"
+msgstr "Izvor-X"
 
 #: ../operations/affine/affine.c:201
-#, fuzzy
 msgid "X-coordinate of origin"
-msgstr "Koordinata X izvora mreže"
+msgstr "Koordinata X izvora"
 
 #: ../operations/affine/affine.c:208
-#, fuzzy
 msgid "Origin-y"
-msgstr "Izvirnik"
+msgstr "Izvor-Y"
 
 #: ../operations/affine/affine.c:209
-#, fuzzy
 msgid "Y-coordinate of origin"
-msgstr "Koordinata Y izvora mreže"
+msgstr "Koordinata Y izvora"
 
 #: ../operations/affine/affine.c:216
 #: ../operations/common/gaussian-blur.c:34
@@ -115,9 +110,6 @@ msgid "Filter type (nearest, linear, lanczos, cubic, lohalo)"
 msgstr ""
 
 #: ../operations/affine/affine.c:223
-msgid "Hard-edges"
-msgstr "Ostri robovi"
-
 #: ../operations/affine/affine.c:224
 msgid "Hard edges"
 msgstr "Ostri robovi"
@@ -127,21 +119,23 @@ msgid "Lanczos-width"
 msgstr "Širina lanczos"
 
 #: ../operations/affine/affine.c:231
-msgid "Width of lanczos function"
+#| msgid "Width of lanczos function"
+msgid "Width of the Lanczos function"
 msgstr "Širina funkcije lanczos"
 
 #: ../operations/affine/reflect.c:29
-msgid "Direction vector's x component"
+#| msgid "Direction vector's x component"
+msgid "Direction vector's X component"
 msgstr "Komponenta x vektorja smeri"
 
 #: ../operations/affine/reflect.c:31
-msgid "Direction vector's y component"
-msgstr "Komponenta y vektorja smeri"
+#| msgid "Direction vector's x component"
+msgid "Direction vector's Y component"
+msgstr "Komponenta x vektorja smeri"
 
 #: ../operations/affine/rotate.c:26
-#, fuzzy
-msgid "Angle to rotate (clockwize)"
-msgstr "Kot za sukanje orisa"
+msgid "Angle to rotate (clockwise)"
+msgstr "Kot sukanja (v SUK)"
 
 #: ../operations/affine/rotate.c:31
 #, fuzzy
@@ -149,33 +143,31 @@ msgid "Rotate the buffer around the specified origin."
 msgstr "V navedeni datoteki ni podatkov o ploskvah."
 
 #: ../operations/affine/scale.c:25
-#, fuzzy
-msgid "Horizontal scale factor."
-msgstr "Vodoravno postavljen kondenzator"
+msgid "Horizontal scale factor"
+msgstr "Faktor vodoravne spremembe merila"
 
 #: ../operations/affine/scale.c:26
-#, fuzzy
-msgid "Vertical scale factor."
-msgstr "Navpično postavljen kondenzator"
+msgid "Vertical scale factor"
+msgstr "Faktor navpične spremembe merila"
 
 #: ../operations/affine/scale.c:31
 #, fuzzy
 msgid "Scales the buffer."
-msgstr "Prilepi medpomnilnik"
+msgstr "Spremeni merilo medpomnilnika."
 
 #: ../operations/affine/shear.c:26
 #, fuzzy
-msgid "Horizontal shear amount."
+msgid "Horizontal shear amount"
 msgstr "Vodoravni preliv"
 
 #: ../operations/affine/shear.c:28
 #, fuzzy
-msgid "Vertical shear amount."
+msgid "Vertical shear amount"
 msgstr "Navpična poravnava besedila"
 
 #: ../operations/affine/shear.c:33
 #, fuzzy
-msgid "Shears the buffer."
+msgid "Shears the buffer"
 msgstr "Prilepi medpomnilnik"
 
 #: ../operations/affine/transform.c:25
@@ -188,16 +180,16 @@ msgstr ""
 
 #: ../operations/affine/translate.c:26
 #, fuzzy
-msgid "Horizontal translation."
+msgid "Horizontal translation"
 msgstr "Vodoravni mirovalnik"
 
 #: ../operations/affine/translate.c:28
 #, fuzzy
-msgid "Vertical translation."
+msgid "Vertical translation"
 msgstr "Navpični mirovalnik"
 
 #: ../operations/affine/translate.c:33
-msgid "Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used."
+msgid "Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used"
 msgstr ""
 
 #: ../operations/common/bilateral-filter.c:27
@@ -205,7 +197,6 @@ msgid "Blur radius"
 msgstr "Polmer zabrisa"
 
 #: ../operations/common/bilateral-filter.c:28
-#: ../operations/common/box-blur.c:25
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 
@@ -229,6 +220,7 @@ msgstr ""
 #: ../operations/common/matting-global.c:28
 #: ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27
+#: ../operations/common/vignette.c:25
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25
 #: ../operations/workshop/box-min.c:25
@@ -240,8 +232,13 @@ msgstr ""
 msgid "Radius"
 msgstr "Radij"
 
+#: ../operations/common/box-blur.c:25
+#: ../operations/common/snn-mean.c:27
+msgid "Radius of square pixel region, (width and height will be radius*2+1)"
+msgstr ""
+
 #: ../operations/common/box-blur.c:413
-msgid "Performs an averaging of a square box of pixels."
+msgid "Performs an averaging of a square box of pixels"
 msgstr ""
 
 #. ... are the properties of the filter, these are all scalar values
@@ -264,14 +261,12 @@ msgid "Brightness"
 msgstr "Svetlost"
 
 #: ../operations/common/brightness-contrast.c:32
-#, fuzzy
 msgid "Amount to increase brightness"
-msgstr "Prilagodi svetlost predogleda"
+msgstr "Količina povečanja svetlosti"
 
 #: ../operations/common/brightness-contrast.c:198
-#, fuzzy
 msgid "Changes the light level and contrast."
-msgstr "Spremeni velikost vsebine slike"
+msgstr "Spremeni raven svetlobe in kontrast."
 
 #: ../operations/common/buffer-sink.c:25
 #: ../operations/common/write-buffer.c:25
@@ -284,9 +279,8 @@ msgid "The location where to store the output GeglBuffer"
 msgstr ""
 
 #: ../operations/common/buffer-sink.c:27
-#, fuzzy
 msgid "babl format"
-msgstr "Vrsta datoteke"
+msgstr "Zapis babl"
 
 #: ../operations/common/buffer-sink.c:28
 msgid "The babl format of the output GeglBuffer, NULL to use input buffer format"
@@ -354,7 +348,8 @@ msgstr "Širina"
 
 #: ../operations/common/checkerboard.c:26
 #: ../operations/common/grid.c:25
-msgid "Horizontal width of cells pixels."
+#| msgid "Horizontal width of cells pixels."
+msgid "Horizontal width of cells pixels"
 msgstr "Vodoravni širina celic v slikovnih točkah."
 
 #: ../operations/common/checkerboard.c:27
@@ -372,7 +367,8 @@ msgstr "Višina"
 
 #: ../operations/common/checkerboard.c:28
 #: ../operations/common/grid.c:27
-msgid "Vertical width of cells in pixels."
+#| msgid "Vertical width of cells in pixels."
+msgid "Vertical width of cells in pixels"
 msgstr "Navpična širina celic v slikovnih točkah."
 
 #: ../operations/common/checkerboard.c:29
@@ -383,7 +379,8 @@ msgstr "Odmik X"
 
 #: ../operations/common/checkerboard.c:30
 #: ../operations/common/grid.c:29
-msgid "Horizontal offset (from origin) for start of grid."
+#| msgid "Horizontal offset (from origin) for start of grid."
+msgid "Horizontal offset (from origin) for start of grid"
 msgstr "Vodoravni odmik (od izvora) za začetek mreže."
 
 #: ../operations/common/checkerboard.c:31
@@ -394,7 +391,8 @@ msgstr "Odmik Y"
 
 #: ../operations/common/checkerboard.c:32
 #: ../operations/common/grid.c:31
-msgid "Vertical offset (from origin) for start of grid."
+#| msgid "Vertical offset (from origin) for start of grid."
+msgid "Vertical offset (from origin) for start of grid"
 msgstr "Navpični odmik (od izvora) za začetek mreže."
 
 #: ../operations/common/checkerboard.c:33
@@ -426,9 +424,24 @@ msgid "The other cell color (defaults to 'white')"
 msgstr ""
 
 #: ../operations/common/checkerboard.c:146
-#, fuzzy
 msgid "Checkerboard renderer"
-msgstr "Šahovnica"
+msgstr "Upodobitelj šahovnice"
+
+#: ../operations/common/color-temperature.c:27
+msgid "Original temperature"
+msgstr ""
+
+#: ../operations/common/color-temperature.c:27
+msgid "Estimated temperature of the light source in Kelvin the image was taken with."
+msgstr ""
+
+#: ../operations/common/color-temperature.c:28
+msgid "Intended temperature"
+msgstr ""
+
+#: ../operations/common/color-temperature.c:28
+msgid "Corrected estimation of the temperature of the light source in Kelvin."
+msgstr ""
 
 #: ../operations/common/color-temperature.c:266
 msgid "Allows changing the color temperature of an image."
@@ -440,9 +453,8 @@ msgid "The color to render (defaults to 'black')"
 msgstr ""
 
 #: ../operations/common/color-to-alpha.c:170
-#, fuzzy
 msgid "Performs color-to-alpha on the image."
-msgstr "Nastavite barvni profil slike"
+msgstr "Na sliki izvede postopek barva-v-alfo."
 
 #: ../operations/common/color.c:88
 msgid "Generates a buffer entirely filled with the specified color, crop it to get smaller dimensions."
@@ -465,9 +477,8 @@ msgid "The contrast curve."
 msgstr "Krivulja kontrasta."
 
 #: ../operations/common/contrast-curve.c:125
-#, fuzzy
 msgid "Adjusts the contrast of the image according to a curve."
-msgstr "Pretvorba v vodila"
+msgstr "Prilagodi kontrast slike glede na krivuljo."
 
 #: ../operations/common/difference-of-gaussians.c:25
 msgid "Radius 1"
@@ -483,9 +494,8 @@ msgstr ""
 
 #: ../operations/common/display.c:24
 #: ../operations/external/sdl-display.c:26
-#, fuzzy
 msgid "Title to be given to output window"
-msgstr "Orodjarna in sidrišča so uporabna okna"
+msgstr "Naslov za izhodno okno."
 
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
@@ -503,28 +513,28 @@ msgstr "Prekrivnost"
 #: ../operations/common/dropshadow.c:26
 #: ../operations/common/layer.c:34
 #: ../operations/common/rectangle.c:29
+#: ../operations/common/vignette.c:31
 #: ../operations/common/waves.c:26
 #: ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
 #: ../operations/common/dropshadow.c:27
-#, fuzzy
 msgid "Horizontal shadow offset."
-msgstr "Vodoravni zamik:"
+msgstr "Vodoravni odmik sence."
 
 #: ../operations/common/dropshadow.c:28
 #: ../operations/common/layer.c:36
 #: ../operations/common/rectangle.c:31
+#: ../operations/common/vignette.c:32
 #: ../operations/common/waves.c:29
 #: ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Y"
 
 #: ../operations/common/dropshadow.c:29
-#, fuzzy
 msgid "Vertical shadow offset."
-msgstr "Navpični zamik:"
+msgstr "Navpični odmik sence."
 
 #: ../operations/common/dropshadow.c:31
 msgid "Blur radius."
@@ -566,7 +576,7 @@ msgstr "Vrednosti ekspozicije"
 #: ../operations/common/exp-combine.c:26
 #, fuzzy
 msgid "Relative brightness of each exposure in EV"
-msgstr "Preobrni svetlost vsake slikovne točke"
+msgstr "Relativna svetlost vsake ekspozicije v EV"
 
 #: ../operations/common/exp-combine.c:27
 #, fuzzy
@@ -580,7 +590,7 @@ msgstr ""
 #: ../operations/common/exp-combine.c:30
 #, fuzzy
 msgid "Weight Sigma"
-msgstr "Teža"
+msgstr "Sigma teže"
 
 #: ../operations/common/exp-combine.c:32
 msgid "Weight distrubtion sigma controlling response contributions"
@@ -601,9 +611,8 @@ msgid "Gradient threshold for detail enhancement"
 msgstr ""
 
 #: ../operations/common/fattal02.c:36
-#, fuzzy
 msgid "Beta"
-msgstr "Meta"
+msgstr "Beta"
 
 #: ../operations/common/fattal02.c:38
 msgid "Strength of local detail enhancement"
@@ -641,52 +650,20 @@ msgid "Fractal Type"
 msgstr "Vrsta fraktala"
 
 #: ../operations/common/fractal-explorer.c:37
-#, fuzzy
 msgid "Left"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"Levo\n"
-"#-#-#-#-#  gimp-plug-ins.master.sl.po (GIMP - standardni vtičniki)  #-#-#-#-#\n"
-"leva\n"
-"#-#-#-#-#  gimp-script-fu.master.sl.po (GIMP 2.8 scriptfu)  #-#-#-#-#\n"
-"Levo\n"
-"#-#-#-#-#  gimp-tiny-fu.master.sl.po (GIMP 2.8 scriptfu)  #-#-#-#-#\n"
-"Levo\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"levo"
+msgstr "Levo"
 
 #: ../operations/common/fractal-explorer.c:38
-#, fuzzy
 msgid "Right"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"Desno\n"
-"#-#-#-#-#  gimp-plug-ins.master.sl.po (GIMP - standardni vtičniki)  #-#-#-#-#\n"
-"desna\n"
-"#-#-#-#-#  gimp-script-fu.master.sl.po (GIMP 2.8 scriptfu)  #-#-#-#-#\n"
-"Desno\n"
-"#-#-#-#-#  gimp-tiny-fu.master.sl.po (GIMP 2.8 scriptfu)  #-#-#-#-#\n"
-"Desno\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"desno"
+msgstr "Desno"
 
 #: ../operations/common/fractal-explorer.c:39
-#, fuzzy
 msgid "Top"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"na vrh\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Vrh"
+msgstr "Na vrh"
 
 #: ../operations/common/fractal-explorer.c:40
-#, fuzzy
 msgid "Bottom"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"na dno\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Dno"
+msgstr "Na dno"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "CX"
@@ -705,57 +682,48 @@ msgid "CY (only Julia)"
 msgstr "CY (samo Julia)"
 
 #: ../operations/common/fractal-explorer.c:47
-#, fuzzy
 msgid "Red stretch"
-msgstr "Ponovljeno, raztegnjeno"
+msgstr "Razteg rdeče"
 
 #: ../operations/common/fractal-explorer.c:48
-#, fuzzy
 msgid "Red stretching factor"
-msgstr "Faktor glajenja JPEG:"
+msgstr "Faktor raztegovanja rdeče"
 
 #: ../operations/common/fractal-explorer.c:49
-#, fuzzy
 msgid "Green stretch"
-msgstr "Zamik zelene"
+msgstr "Razteg zelene"
 
 #: ../operations/common/fractal-explorer.c:50
-#, fuzzy
 msgid "Green stretching factor"
-msgstr "Faktor glajenja JPEG:"
+msgstr "Faktor raztegovanja zelene"
 
 #: ../operations/common/fractal-explorer.c:51
-#, fuzzy
 msgid "Blue stretch"
-msgstr "Zamik modre"
+msgstr "Razteg modre"
 
 #: ../operations/common/fractal-explorer.c:52
-#, fuzzy
 msgid "Blue stretching factor"
-msgstr "Samodejna razširitev kontrasta ..."
+msgstr "Faktor raztegovanja modre"
 
 #: ../operations/common/fractal-explorer.c:54
-#, fuzzy
 msgid "Red mode"
-msgstr "Način zlivanja"
+msgstr "Način rdeče"
 
 #: ../operations/common/fractal-explorer.c:55
 msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
 msgstr ""
 
 #: ../operations/common/fractal-explorer.c:56
-#, fuzzy
 msgid "Green mode"
-msgstr "Zrnati način"
+msgstr "Način modre"
 
 #: ../operations/common/fractal-explorer.c:57
 msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
 msgstr ""
 
 #: ../operations/common/fractal-explorer.c:58
-#, fuzzy
 msgid "Blue mode"
-msgstr "Način zabrisovanja"
+msgstr "Način zelene"
 
 #: ../operations/common/fractal-explorer.c:59
 msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
@@ -763,21 +731,18 @@ msgstr ""
 
 #: ../operations/common/fractal-explorer.c:61
 #: ../operations/common/fractal-explorer.c:62
-#, fuzzy
 msgid "Red inversion"
-msgstr "Brez vztrajnosti"
+msgstr "Inverzija rdeče"
 
 #: ../operations/common/fractal-explorer.c:63
 #: ../operations/common/fractal-explorer.c:64
-#, fuzzy
 msgid "Green inversion"
-msgstr "Brez vztrajnosti"
+msgstr "Inverzija zelene"
 
 #: ../operations/common/fractal-explorer.c:65
 #: ../operations/common/fractal-explorer.c:66
-#, fuzzy
 msgid "Blue inversion"
-msgstr "Brez vztrajnosti"
+msgstr "Inverzija modre"
 
 #: ../operations/common/fractal-explorer.c:68
 msgid "Colors"
@@ -873,18 +838,16 @@ msgid "Line Width"
 msgstr "Debelina črte"
 
 #: ../operations/common/grid.c:33
-#, fuzzy
-msgid "Width of grid lines in pixels."
-msgstr "Polmer zaokrožanja v slikovnih točkah"
+msgid "Width of grid lines in pixels"
+msgstr "Širina mrežnih črt v slikovnih točkah"
 
 #: ../operations/common/grid.c:34
 msgid "Line Height"
 msgstr "Višina vrstice"
 
 #: ../operations/common/grid.c:35
-#, fuzzy
-msgid "Height of grid lines in pixels."
-msgstr "Polmer zaokrožanja v slikovnih točkah"
+msgid "Height of grid lines in pixels"
+msgstr "Višina mrežnih črt v slikovnih točkah"
 
 #: ../operations/common/grid.c:37
 msgid "Color of the grid lines"
@@ -893,7 +856,7 @@ msgstr "Barva mrežnih črt"
 #: ../operations/common/grid.c:129
 #, fuzzy
 msgid "Grid renderer"
-msgstr "Zrnati način"
+msgstr "Upodobljevalnik mreže"
 
 #: ../operations/common/introspect.c:26
 msgid "Node"
@@ -934,12 +897,12 @@ msgstr "Navpični položaj"
 #: ../operations/common/layer.c:38
 #, fuzzy
 msgid "scale"
-msgstr "qscale:"
+msgstr "Merilo"
 
 #: ../operations/common/layer.c:39
 #, fuzzy
 msgid "Scale 1:1 size"
-msgstr "Spremem_ba merila 1:"
+msgstr "Sprememba merila 1:1"
 
 #: ../operations/common/layer.c:40
 msgid "Source"
@@ -950,9 +913,8 @@ msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
 msgstr ""
 
 #: ../operations/common/layer.c:267
-#, fuzzy
 msgid "A layer in the traditional sense."
-msgstr "Navpična ločljivost slike."
+msgstr "Plast v klasičnem pomenu."
 
 #: ../operations/common/lens-distortion.c:33
 msgid "Main:"
@@ -988,16 +950,16 @@ msgid "X shift:"
 msgstr "Odmik X:"
 
 #: ../operations/common/lens-distortion.c:42
-msgid "Shift vertical"
-msgstr "Zamakni navpično"
+msgid "Shift horizontal"
+msgstr "Zamakni vodoravno"
 
 #: ../operations/common/lens-distortion.c:43
 msgid "Y shift:"
 msgstr "Odmik Y:"
 
 #: ../operations/common/lens-distortion.c:44
-msgid "Shift horizontal"
-msgstr "Zamakni vodoravno"
+msgid "Shift vertical"
+msgstr "Zamakni navpično"
 
 #: ../operations/common/lens-distortion.c:321
 #: ../operations/workshop/external/lens-correct.c:476
@@ -1046,16 +1008,12 @@ msgstr "Nastavi velikost plasti glede na velikost slike"
 #: ../operations/common/load.c:25
 #: ../operations/common/magick-load.c:26
 #: ../operations/common/raw-load.c:27
-#: ../operations/external/ff-load.c:25
-#: ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:25
 #: ../operations/external/png-load.c:27
 #: ../operations/external/ppm-load.c:25
 #: ../operations/external/rgbe-load.c:26
 #: ../operations/workshop/rawbayer-load.c:25
-#, fuzzy
 msgid "Path of file to load."
-msgstr "Barva orisa poti"
+msgstr "Pot datoteke, ki jo želite naložiti."
 
 #: ../operations/common/load.c:180
 msgid "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
@@ -1066,14 +1024,13 @@ msgid "Image Magick wrapper using the png op."
 msgstr ""
 
 #: ../operations/common/mantiuk06.c:33
-#, fuzzy
 msgid "The amount of contrast compression"
-msgstr "Mera ukrivljenosti konektorja"
+msgstr "Mera stiskanja kontrasta"
 
 #: ../operations/common/mantiuk06.c:37
 #, fuzzy
 msgid "Detail"
-msgstr "Podrobno:"
+msgstr "Podrobno"
 
 #: ../operations/common/mantiuk06.c:39
 msgid "Level of emphasis on image gradient details"
@@ -1088,28 +1045,21 @@ msgstr ""
 #: ../operations/common/ripple.c:39
 #: ../operations/common/waves.c:41
 #: ../operations/workshop/ditto.c:27
-#, fuzzy
 msgid "Sampler"
-msgstr "Vzorec:"
+msgstr "Vzorčevalnik"
 
 #: ../operations/common/map-absolute.c:23
 #: ../operations/common/map-relative.c:27
-#, fuzzy
 msgid "Sampler used internaly"
-msgstr "Meni vzorčne točke"
+msgstr "Notranje uporabljeni vzorčevalnik"
 
 #: ../operations/common/map-absolute.c:148
 msgid "sample input with an auxiliary buffer that contain absolute source coordinates"
 msgstr ""
 
 #: ../operations/common/map-relative.c:23
-#, fuzzy
 msgid "Scaling"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"Prilagajanje velikosti\n"
-"#-#-#-#-#  gimp.master.sl.po (GIMP 2.8)  #-#-#-#-#\n"
-"Spreminjanje merila"
+msgstr "Spreminjanje merila"
 
 #: ../operations/common/map-relative.c:24
 msgid "scaling factor of displacement, indicates how large spatial displacement a relative mapping value of 1.0 corresponds to."
@@ -1121,9 +1071,8 @@ msgstr ""
 
 #: ../operations/common/matting-global.c:25
 #: ../operations/external/matting-levin.c:25
-#, fuzzy
 msgid "Epsilon"
-msgstr "Razširitev:"
+msgstr "Epsilon"
 
 #: ../operations/common/matting-global.c:27
 #: ../operations/external/matting-levin.c:27
@@ -1132,9 +1081,8 @@ msgstr ""
 
 #: ../operations/common/matting-global.c:30
 #: ../operations/external/matting-levin.c:30
-#, fuzzy
 msgid "Radius of the processing window"
-msgstr "Polmer operjanja"
+msgstr "Polmer obdelovalnega okna"
 
 #: ../operations/common/matting-global.c:31
 #: ../operations/common/threshold.c:25
@@ -1173,15 +1121,13 @@ msgstr "Število možnih razveljavljavitev:"
 
 #: ../operations/common/matting-global.c:39
 #: ../operations/external/matting-levin.c:39
-#, fuzzy
 msgid "Active Levels"
-msgstr "Samodejne ravni"
+msgstr "Aktivne ravni"
 
 #: ../operations/common/matting-global.c:41
 #: ../operations/external/matting-levin.c:41
-#, fuzzy
 msgid "Number of levels to perform solving"
-msgstr "Število plasti:"
+msgstr "Število ravni, na katerih se izvaja reševanje"
 
 #: ../operations/common/matting-global.c:554
 #: ../operations/external/matting-levin.c:1428
@@ -1202,34 +1148,28 @@ msgid "Accumulating motion blur"
 msgstr ""
 
 #: ../operations/common/mirrors.c:30
-#, fuzzy
 msgid "Mirror rotation"
-msgstr "Zasuk obarvanosti"
+msgstr "Sukanje zrcal"
 
 #: ../operations/common/mirrors.c:30
-#, fuzzy
 msgid "Rotation applied to the mirrors"
-msgstr "Kot sukanja okoli osi X"
+msgstr "Sukanje, uporabljeno na zrcalih"
 
 #: ../operations/common/mirrors.c:32
-#, fuzzy
 msgid "Result rotation"
-msgstr "Zasuk obarvanosti"
+msgstr "Sukanje rezultata"
 
 #: ../operations/common/mirrors.c:32
-#, fuzzy
 msgid "Rotation applied to the result"
-msgstr "Aktiviranje ukaza <quote>O programu</quote>"
+msgstr "Sukanje, uporabljeno na rezultatu"
 
 #: ../operations/common/mirrors.c:34
-#, fuzzy
 msgid "Mirrors"
-msgstr "Zrcali"
+msgstr "Zrcala"
 
 #: ../operations/common/mirrors.c:34
-#, fuzzy
 msgid "Number of mirrors to use"
-msgstr "Število uporabljenih procesorjev"
+msgstr "Število uporabljenih zrcal"
 
 #: ../operations/common/mirrors.c:36
 msgid "X offset of the result of mirroring"
@@ -1240,18 +1180,16 @@ msgid "Y offset of the result of mirroring"
 msgstr ""
 
 #: ../operations/common/mirrors.c:40
-#, fuzzy
 msgid "Center X"
-msgstr "Središče _X:"
+msgstr "Središče X"
 
 #: ../operations/common/mirrors.c:40
 msgid "X axis ratio for the center of mirroring"
 msgstr ""
 
 #: ../operations/common/mirrors.c:42
-#, fuzzy
 msgid "Center Y"
-msgstr "Središče _X:"
+msgstr "Središče Y"
 
 #: ../operations/common/mirrors.c:42
 msgid "Y axis ratio for the center of mirroring"
@@ -1296,7 +1234,6 @@ msgid "Scale factor to make rendering size bigger"
 msgstr ""
 
 #: ../operations/common/mirrors.c:50
-#, fuzzy
 msgid "Expand"
 msgstr "Razširi"
 
@@ -1352,9 +1289,8 @@ msgid "Amount of blue"
 msgstr "Količina modre"
 
 #: ../operations/common/mono-mixer.c:108
-#, fuzzy
 msgid "Monochrome channel mixer"
-msgstr "Mešalec kanalov"
+msgstr "Monokromatični mešalnik kanalov"
 
 #: ../operations/common/motion-blur.c:27
 msgid "Length"
@@ -1370,14 +1306,13 @@ msgid "Angle"
 msgstr "Kot"
 
 #: ../operations/common/motion-blur.c:30
-#, fuzzy
 msgid "Angle of blur in degrees"
-msgstr "Kot persp. črt v smeri X"
+msgstr "Kot zabrisanosti v stopinjah"
 
 #: ../operations/common/motion-blur.c:174
 #, fuzzy
 msgid "Linear motion blur"
-msgstr "Linearna B"
+msgstr "Linearna zabrisanost gibanja"
 
 #: ../operations/common/noise.c:27
 #: ../operations/common/unsharp-mask.c:26
@@ -1407,12 +1342,20 @@ msgid "Seed"
 msgstr "Zasadi"
 
 #: ../operations/common/noise.c:33
-#, fuzzy
 msgid "Iteration"
 msgstr "Ponovitve"
 
 #: ../operations/common/noise.c:111
-msgid "Perlin noise generator."
+msgid "Perlin noise generator"
+msgstr ""
+
+#: ../operations/common/noise-reduction.c:21
+#: ../operations/workshop/warp.c:26
+msgid "Strength"
+msgstr "Jakost"
+
+#: ../operations/common/noise-reduction.c:21
+msgid "How many iteratarions to run the algorithm with"
 msgstr ""
 
 #: ../operations/common/opacity.c:25
@@ -1435,38 +1378,33 @@ msgstr ""
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr ""
 
-#: ../operations/common/pixelise.c:25
+#: ../operations/common/pixelize.c:25
 #, fuzzy
 msgid "Block Width"
 msgstr "Blok 7"
 
-#: ../operations/common/pixelise.c:26
+#: ../operations/common/pixelize.c:26
 #, fuzzy
 msgid "Width of blocks in pixels"
 msgstr "Širina izhodnega videa (v slikovnih točkah)"
 
-#: ../operations/common/pixelise.c:27
+#: ../operations/common/pixelize.c:27
 #, fuzzy
 msgid "Block Height"
 msgstr "Neonska črna luč"
 
-#: ../operations/common/pixelise.c:28
+#: ../operations/common/pixelize.c:28
 #, fuzzy
 msgid "Height of blocks in pixels"
 msgstr "Višina izhodnega videa (v slikovnih točkah)"
 
-#: ../operations/common/pixelise.c:182
-#, fuzzy
-msgid "Pixelise filter"
-msgstr "Uporabi filter"
+#: ../operations/common/pixelize.c:182
+msgid "Simplify image into an array of solid-colored squares"
+msgstr ""
 
 #: ../operations/common/polar-coordinates.c:34
-msgid "Circle depth in percent"
-msgstr "Globina kroga v odstotkih"
-
 #: ../operations/common/polar-coordinates.c:35
-#, fuzzy
-msgid "Circle depth in percent."
+msgid "Circle depth in percent"
 msgstr "Globina kroga v odstotkih"
 
 #: ../operations/common/polar-coordinates.c:36
@@ -1474,17 +1412,11 @@ msgid "Offset angle"
 msgstr "Kot zamika"
 
 #: ../operations/common/polar-coordinates.c:37
-#, fuzzy
 msgid "Offset angle."
-msgstr "Kot zamika"
+msgstr "Kot odmika."
 
 #: ../operations/common/polar-coordinates.c:38
 msgid "Map backwards"
-msgstr "Poslikaj nazaj"
-
-#: ../operations/common/polar-coordinates.c:38
-#, fuzzy
-msgid "Map backwards."
 msgstr "Poslikaj nazaj"
 
 #: ../operations/common/polar-coordinates.c:39
@@ -1495,11 +1427,6 @@ msgstr "Poslikaj z vrha"
 msgid "To polar"
 msgstr "V polarne"
 
-#: ../operations/common/polar-coordinates.c:40
-#, fuzzy
-msgid "To polar."
-msgstr "V polarne."
-
 #: ../operations/common/polar-coordinates.c:41
 msgid "X:"
 msgstr "X:"
@@ -1508,7 +1435,7 @@ msgstr "X:"
 #: ../operations/common/polar-coordinates.c:44
 #, fuzzy
 msgid "Origin point for the polar coordinates"
-msgstr "Pretvori sliko v ali iz polarnih koordinat"
+msgstr "Izvorna točka za polarne koordinate"
 
 #: ../operations/common/polar-coordinates.c:43
 msgid "Y:"
@@ -1517,7 +1444,7 @@ msgstr "Y:"
 #: ../operations/common/polar-coordinates.c:45
 #, fuzzy
 msgid "Choose middle"
-msgstr "Izberite orodje"
+msgstr "Izberite srednje"
 
 #: ../operations/common/polar-coordinates.c:46
 msgid "Let origin point to be the middle one"
@@ -1529,9 +1456,8 @@ msgid "Performs polar-coordinates on the image."
 msgstr "Nastavite barvni profil slike"
 
 #: ../operations/common/posterize.c:26
-#, fuzzy
 msgid "number of levels per component"
-msgstr "S številom odsekov"
+msgstr "Število ravni na komponento"
 
 #: ../operations/common/posterize.c:82
 msgid "Reduces the number of levels in each color component of the image."
@@ -1552,9 +1478,8 @@ msgid "Vertical extent"
 msgstr "Navpično besedilo"
 
 #: ../operations/common/rectangle.c:38
-#, fuzzy
 msgid "Color to render"
-msgstr "Barva, ki jo želite zamenjati"
+msgstr "Barva, ki jo želite upodobiti"
 
 #: ../operations/common/rectangle.c:134
 #, fuzzy
@@ -1562,9 +1487,8 @@ msgid "A rectangular source of a fixed size with a solid color"
 msgstr "Zapolni izbor z uporabo barve ospredja"
 
 #: ../operations/common/reinhard05.c:29
-#, fuzzy
 msgid "Overall brightness of the image"
-msgstr "Povečaj svetlejša območja slike"
+msgstr "Skupna svetlost slike"
 
 #: ../operations/common/reinhard05.c:30
 #, fuzzy
@@ -1633,14 +1557,12 @@ msgid "Sampler used internally"
 msgstr ""
 
 #: ../operations/common/ripple.c:42
-#, fuzzy
 msgid "Wave type"
 msgstr "Vrsta valovanja"
 
 #: ../operations/common/ripple.c:43
-#, fuzzy
 msgid "Type of wave"
-msgstr "Primer protanopije"
+msgstr "Vrsta valovanja"
 
 #: ../operations/common/ripple.c:164
 #, fuzzy
@@ -1648,23 +1570,17 @@ msgid "Transform the buffer with a ripple pattern"
 msgstr "Ustvari sliko, zapolnjeno z vrtinčastim vzorcem"
 
 #: ../operations/common/save.c:25
-#, fuzzy
 msgid "Path of file to save."
-msgstr "Datoteka \"%s\" je shranjena."
+msgstr "Pot datoteke, ki jo želite shraniti."
 
 #: ../operations/common/save.c:195
 msgid "Multipurpose file saver, that uses other native handlers."
 msgstr ""
 
-#: ../operations/common/snn-mean.c:27
-msgid "Radius of square pixel region, (width and height will be radius*2+1)"
-msgstr ""
-
 #: ../operations/common/snn-mean.c:28
 #: ../operations/workshop/snn-percentile.c:29
-#, fuzzy
 msgid "Pairs"
-msgstr "Slikarski čopič"
+msgstr "Pari"
 
 #: ../operations/common/snn-mean.c:29
 msgid "Number of pairs; higher number preserves more acute features"
@@ -1732,7 +1648,7 @@ msgstr ""
 #: ../operations/common/unsharp-mask.c:24
 #, fuzzy
 msgid "Std. Dev."
-msgstr "Std dev:"
+msgstr "Stan. dev."
 
 #: ../operations/common/unsharp-mask.c:25
 msgid "Standard deviation (spatial scale factor)"
@@ -1740,11 +1656,11 @@ msgstr ""
 
 #: ../operations/common/unsharp-mask.c:27
 #, fuzzy
-msgid "Scale, strength of effect."
+msgid "Scale, strength of effect"
 msgstr "Učinek klika na miško"
 
 #: ../operations/common/unsharp-mask.c:73
-msgid "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)."
+msgid "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)"
 msgstr ""
 
 #: ../operations/common/value-invert.c:218
@@ -1753,7 +1669,7 @@ msgstr ""
 
 #: ../operations/common/vignette.c:23
 #, fuzzy
-msgid "shape"
+msgid "Shape"
 msgstr ""
 "#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
 "Oblikuj\n"
@@ -1767,49 +1683,43 @@ msgstr ""
 "Oblika"
 
 #: ../operations/common/vignette.c:23
-msgid "shape to use 0=circle 1=diamond 2=square"
+msgid "Shape to use: 0=circle 1=diamond 2=square"
 msgstr ""
 
 #: ../operations/common/vignette.c:24
-msgid "defaults to 'black', you can use transparency here to erase portions of an image"
+msgid "Defaults to 'black', you can use transparency here to erase portions of an image"
 msgstr ""
 
 #: ../operations/common/vignette.c:25
-#, fuzzy
-msgid "radius"
-msgstr "Radij"
-
-#: ../operations/common/vignette.c:25
-msgid "how far out vignetting goes as portion of half image diagonal"
+msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr ""
 
 #: ../operations/common/vignette.c:26
 #, fuzzy
-msgid "softness"
-msgstr "Gladkost"
+msgid "Softness"
+msgstr "Mehkoba"
 
 #: ../operations/common/vignette.c:27
-#, fuzzy
-msgid "gamma"
+msgid "Gamma"
 msgstr "Gama"
 
 #: ../operations/common/vignette.c:27
 #, fuzzy
-msgid "falloff linearity"
-msgstr "Brez integritete"
+msgid "Falloff linearity"
+msgstr "Linearnost upada"
 
 #: ../operations/common/vignette.c:28
 #, fuzzy
-msgid "proportion"
-msgstr "Ohrani razmerja"
+msgid "Proportion"
+msgstr "Razmerje"
 
 #: ../operations/common/vignette.c:28
 #, fuzzy
-msgid "how close we are to image proportions"
+msgid "How close we are to image proportions"
 msgstr "Na voljo je pet možnosti:"
 
 #: ../operations/common/vignette.c:29
-msgid "squeeze"
+msgid "Squeeze"
 msgstr ""
 
 #: ../operations/common/vignette.c:29
@@ -1817,17 +1727,9 @@ msgid "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 =
 msgstr ""
 
 #: ../operations/common/vignette.c:31
-msgid "x"
-msgstr "x"
-
-#: ../operations/common/vignette.c:31
 #, fuzzy
 msgid "Horizontal center of vignetting"
 msgstr "Vodoravna koordinata izbora"
-
-#: ../operations/common/vignette.c:32
-msgid "y"
-msgstr "y"
 
 #: ../operations/common/vignette.c:32
 #, fuzzy
@@ -1835,15 +1737,8 @@ msgid "Vertical center of vignetting"
 msgstr "Navpična koordinata izbora"
 
 #: ../operations/common/vignette.c:33
-#, fuzzy
-msgid "rotation"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"Rotacija\n"
-"#-#-#-#-#  gimp-plug-ins.master.sl.po (GIMP - standardni vtičniki)  #-#-#-#-#\n"
-"Sukanje\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Sukanje"
+msgid "Rotation"
+msgstr "Sukanje"
 
 #: ../operations/common/vignette.c:33
 msgid "Rotation angle"
@@ -1887,14 +1782,13 @@ msgid "global value used if aux doesn't contain data"
 msgstr ""
 
 #: ../operations/common/weighted-blend.c:124
-#, fuzzy
 msgid "blend two images using alpha values as weights"
-msgstr "Združi dve sliki z uporabo globinskih zemljevidov (z-medpomnilnikov)"
+msgstr "Združi dve sliki z uporabo alfa-vrednosti kot uteži"
 
 #: ../operations/common/write-buffer.c:26
 #, fuzzy
 msgid "Write to an existing GeglBuffer"
-msgstr "Podvoji obstoječo plast"
+msgstr "Zapiši v obstoječi GeglBuffer"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -1907,12 +1801,11 @@ msgstr ""
 #: ../operations/core/clone.c:112
 #, fuzzy
 msgid "Clone a buffer"
-msgstr "Enostavni izravnalnik"
+msgstr "Kloniraj izravnalnik"
 
 #: ../operations/core/convert-format.c:28
-#, fuzzy
 msgid "Output format"
-msgstr "Vrsta izhoda"
+msgstr "Izhodni zapis"
 
 #: ../operations/core/convert-format.c:29
 #, fuzzy
@@ -1927,11 +1820,17 @@ msgstr "Pretvori sliko v barvni prostor RGB"
 #: ../operations/core/crop.c:179
 #, fuzzy
 msgid "Crop a buffer"
-msgstr "Obreži plast"
+msgstr "Obreži izravnalnik"
 
 #: ../operations/core/nop.c:72
 msgid "No operation (can be used as a routing point)"
 msgstr ""
+
+#: ../operations/external/ff-load.c:25
+#: ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:25
+msgid "Path of file to load"
+msgstr "Pot datoteke, ki jo želite naložiti"
 
 #: ../operations/external/ff-load.c:26
 #: ../operations/external/v4l.c:29
@@ -1939,22 +1838,21 @@ msgid "Frame"
 msgstr "Sličica"
 
 #: ../operations/external/ff-load.c:26
-#, fuzzy
-msgid "frame number"
-msgstr "Preštevilči sličice ..."
+msgid "Frame number"
+msgstr "Številka sličice"
 
 #: ../operations/external/ff-load.c:471
-msgid "FFmpeg video frame importer."
-msgstr ""
+msgid "FFmpeg video frame importer"
+msgstr "Uvoznik video-sličic FFmpeg"
 
 #: ../operations/external/jp2-load.c:70
-#, c-format
-msgid "Unknown JPEG-2000 image format in '%s'"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unknown JPEG 2000 image format in '%s'"
+msgstr "Datoteke %s ni mogoče odpreti"
 
 #: ../operations/external/jp2-load.c:77
 #, fuzzy, c-format
-msgid "Unable to open JPEG-2000 image in '%s'"
+msgid "Unable to open JPEG 2000 image in '%s'"
 msgstr "Datoteke %s ni mogoče odpreti"
 
 #: ../operations/external/jp2-load.c:84
@@ -1968,19 +1866,19 @@ msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr ""
 
 #: ../operations/external/jp2-load.c:100
-#, c-format
-msgid "Unsupported non-RGB JPEG-2000 file with %d components in '%s'"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
+msgstr "Nepodprta bitna globina: %d"
 
 #: ../operations/external/jp2-load.c:111
-#, fuzzy, c-format
-msgid "Unsupported JPEG-2000 file with depth %d in '%s'"
-msgstr "Nepodprta bitna globina: %d"
+#, c-format
+msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
+msgstr "Nepodprta slika JPEG 2000 z bitno globino %d v '%s'"
 
 #: ../operations/external/jp2-load.c:124
 #, c-format
 msgid "Components of input image '%s' don't match"
-msgstr ""
+msgstr "Komponente vhodne slike '%s' se ne ujemajo"
 
 #: ../operations/external/jp2-load.c:209
 #, c-format
@@ -1993,36 +1891,29 @@ msgid "One or more of R, G, B components have signed data in '%s'"
 msgstr ""
 
 #: ../operations/external/jp2-load.c:252
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading row %d component %d from '%s'"
-msgstr "Napaka pri branju glave slikovne datoteke BMP pri '%s'"
+msgstr "Napaka pri branju vrstice %d komponente %d iz '%s'"
 
 #: ../operations/external/jp2-load.c:397
-#, fuzzy
-msgid "JPEG-2000 image loader."
-msgstr "Slika JPEG 2000"
+msgid "JPEG 2000 image loader"
+msgstr "Nalagalnik slik JPEG 2000"
 
 #: ../operations/external/jpg-load.c:223
-#, fuzzy
 msgid "JPG image loader"
-msgstr "Slika JPEG"
+msgstr "Nalagalnik slik JPG"
 
 #: ../operations/external/jpg-save.c:26
-#: ../operations/external/png-save.c:27
-#: ../operations/external/ppm-save.c:26
-#: ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:30
-msgid "Target path and filename, use '-' for stdout."
-msgstr ""
+msgid "Target path and filename, use '-' for stdout"
+msgstr "Pot in ime ciljne datoteke, uporabite '-' za običajni izhod"
 
 #: ../operations/external/jpg-save.c:27
 msgid "Quality"
 msgstr "Kakovost"
 
 #: ../operations/external/jpg-save.c:28
-#, fuzzy
 msgid "JPEG compression quality (between 1 and 100)"
-msgstr "Kvaliteta stiskanja JPEG:"
+msgstr "Kakovost stiskanja JPEG (med 1 in 100)"
 
 #: ../operations/external/jpg-save.c:29
 msgid "Smoothing"
@@ -2030,7 +1921,7 @@ msgstr "Glajenje"
 
 #: ../operations/external/jpg-save.c:30
 msgid "Smoothing factor from 1 to 100; 0 disables smoothing"
-msgstr ""
+msgstr "Faktor glajenja od 1 do 100; 0 onemogoči glajenje"
 
 #: ../operations/external/jpg-save.c:31
 msgid "Optimize"
@@ -2039,7 +1930,7 @@ msgstr "Optimiziraj"
 #: ../operations/external/jpg-save.c:32
 #, fuzzy
 msgid "Use optimized huffman tables"
-msgstr "Uporabi za splet optimizirano paleto"
+msgstr "Uporabi optimizirane huffmanove tabele"
 
 #: ../operations/external/jpg-save.c:33
 msgid "Progressive"
@@ -2048,7 +1939,7 @@ msgstr "Progresivno"
 #: ../operations/external/jpg-save.c:34
 #, fuzzy
 msgid "Create progressive JPEG images"
-msgstr "Ustvari novo sliko"
+msgstr "Ustvari napredne slike JPEG"
 
 #: ../operations/external/jpg-save.c:35
 #: ../operations/workshop/color-rotate.c:46
@@ -2056,12 +1947,11 @@ msgid "Grayscale"
 msgstr "Sivinsko"
 
 #: ../operations/external/jpg-save.c:36
-#, fuzzy
 msgid "Create a grayscale (monochrome) image"
-msgstr "Ustvari vrsto kopij slike"
+msgstr "Ustvari sivinsko (monokromatično) sliko"
 
 #: ../operations/external/jpg-save.c:192
-msgid "JPEG image saver (passes the buffer through, saves as a side-effect.)"
+msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
 msgstr ""
 
 #: ../operations/external/path.c:27
@@ -2069,57 +1959,49 @@ msgid "Fill Color"
 msgstr "Barva polnila"
 
 #: ../operations/external/path.c:28
-msgid "Color of paint to use for filling, use 0 opacity to disable filling."
-msgstr ""
+#, fuzzy
+msgid "Color of paint to use for filling, use 0 opacity to disable filling"
+msgstr "Barva/prekrivnost, uporabljena za barvno prilagajanje"
 
 #: ../operations/external/path.c:29
-#, fuzzy
 msgid "Stroke Color"
 msgstr "Barva poteze"
 
 #: ../operations/external/path.c:30
-#: ../operations/external/vector-stroke.c:28
-#, fuzzy
-msgid "Color of paint to use for stroking."
-msgstr "Barva/prekrivnost, uporabljena za barvno prilagajanje"
+msgid "Color of paint to use for stroking"
+msgstr "Barva, uporabljena za potezo"
 
 #: ../operations/external/path.c:32
 msgid "Stroke width"
 msgstr "Debelina poteze"
 
 #: ../operations/external/path.c:33
-#: ../operations/external/vector-stroke.c:31
-#, fuzzy
-msgid "The width of the brush used to stroke the path."
-msgstr "Spremeni merilo širine poti šiva"
+msgid "The width of the brush used to stroke the path"
+msgstr "Širina čopiča za potezo po poti"
 
 #: ../operations/external/path.c:35
-#, fuzzy
 msgid "Stroke opacity"
-msgstr "Prekrivnost poteze:"
+msgstr "Prekrivnost poteze"
 
 #: ../operations/external/path.c:36
-#: ../operations/external/vector-stroke.c:34
-msgid "Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool."
+msgid "Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool"
 msgstr ""
 
 #: ../operations/external/path.c:38
+#: ../operations/workshop/warp.c:30
 msgid "Hardness"
 msgstr "Trdota"
 
 #: ../operations/external/path.c:39
-msgid "hardness of brush, 0.0 for soft brush 1.0 for hard brush."
+msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
 msgstr ""
 
 #: ../operations/external/path.c:41
-#: ../operations/external/vector-fill.c:33
-#, fuzzy
-msgid "Fill rule."
-msgstr "Filmska zrnatost"
+msgid "Fill rule"
+msgstr "Pravilo polnila"
 
 #: ../operations/external/path.c:42
-#: ../operations/external/vector-fill.c:34
-msgid "how to determine what to fill (nonzero|evenodd"
+msgid "How to determine what to fill (nonzero|evenodd"
 msgstr ""
 
 #: ../operations/external/path.c:44
@@ -2129,22 +2011,17 @@ msgid "Transform"
 msgstr "Preoblikuj"
 
 #: ../operations/external/path.c:45
-#: ../operations/external/vector-fill.c:37
-#: ../operations/external/vector-stroke.c:37
 #, fuzzy
-msgid "svg style description of transform."
+msgid "SVG style description of transform"
 msgstr "Smer transformacije"
 
 #: ../operations/external/path.c:47
-#, fuzzy
 msgid "Fill opacity"
-msgstr "Prekrivnost polnila:"
+msgstr "Prekrivnost polnila"
 
 #: ../operations/external/path.c:48
-#: ../operations/external/vector-fill.c:31
-#, fuzzy
-msgid "The fill opacity to use."
-msgstr "Bela (polna prekrivnost)"
+msgid "The fill opacity to use"
+msgstr "Prekrivnost polnila, ki jo želite uporabiti"
 
 #: ../operations/external/path.c:50
 #: ../operations/external/vector-fill.c:39
@@ -2159,9 +2036,8 @@ msgid "A GeglVector representing the path of the stroke"
 msgstr ""
 
 #: ../operations/external/path.c:518
-#, fuzzy
 msgid "Renders a brush stroke"
-msgstr "Upodobi potezo"
+msgstr "Upodobi potezo čopiča"
 
 #: ../operations/external/pixbuf.c:25
 msgid "Pixbuf"
@@ -2177,39 +2053,41 @@ msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr ""
 
 #: ../operations/external/png-load.c:446
-#, fuzzy
 msgid "PNG image loader."
-msgstr "Slika PNG"
+msgstr "Nalagalnik slik PNG."
+
+#: ../operations/external/png-save.c:27
+#: ../operations/external/ppm-save.c:26
+#: ../operations/external/rgbe-save.c:27
+#: ../operations/workshop/external/ff-save.c:30
+msgid "Target path and filename, use '-' for stdout."
+msgstr ""
 
 #: ../operations/external/png-save.c:28
 msgid "Compression"
 msgstr "Stiskanje"
 
 #: ../operations/external/png-save.c:29
-#, fuzzy
 msgid "PNG compression level from 1 to 9"
-msgstr "Raven stiskanja PNG:"
+msgstr "Raven stiskanja PNG od 1 do 9"
 
 #: ../operations/external/png-save.c:30
 #: ../operations/external/ppm-save.c:28
-#, fuzzy
 msgid "Bitdepth"
-msgstr "Na bit natančno"
+msgstr "Bitna globina"
 
 #: ../operations/external/png-save.c:31
 #: ../operations/external/ppm-save.c:30
-#, fuzzy
 msgid "8 and 16 are amongst the currently accepted values."
-msgstr "Ovij besedilo te plasti vzdolž trenutne poti"
+msgstr "8 in 16 sta med trenutno podprtimi vrednostmi."
 
 #: ../operations/external/png-save.c:233
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
 
 #: ../operations/external/ppm-load.c:306
-#, fuzzy
 msgid "PPM image loader."
-msgstr "Slika PPM"
+msgstr "Nalagalnik slik PPM."
 
 #: ../operations/external/ppm-save.c:27
 #, fuzzy
@@ -2240,7 +2118,7 @@ msgstr ""
 #: ../operations/external/save-pixbuf.c:106
 #, fuzzy
 msgid "Save output into a GdkPixbuf."
-msgstr "Uvozi nastavitve iz datoteke"
+msgstr "Shrani izhod v GdkPixbuf."
 
 #: ../operations/external/sdl-display.c:28
 msgid "Icon to be used for output window"
@@ -2251,21 +2129,18 @@ msgid "Displays the input buffer in an SDL window (restricted to one display op/
 msgstr ""
 
 #: ../operations/external/svg-load.c:26
-#, fuzzy
 msgid "Path to SVG file to load"
-msgstr "Pot v izbor"
+msgstr "Pot datoteke SVG, ki jo želite naložiti"
 
 #: ../operations/external/svg-load.c:28
 #: ../operations/external/v4l.c:27
-#, fuzzy
 msgid "Width for rendered image"
-msgstr "Z odprtimi slikami"
+msgstr "Širina upodobljene slike"
 
 #: ../operations/external/svg-load.c:30
 #: ../operations/external/v4l.c:28
-#, fuzzy
 msgid "Height for rendered image"
-msgstr "Višina pravokotnika"
+msgstr "Višina upodobljene slike"
 
 #. not hidden because it has extra API
 #: ../operations/external/svg-load.c:245
@@ -2278,16 +2153,15 @@ msgstr "Besedilo"
 
 #: ../operations/external/text.c:26
 msgid "String to display (utf8)"
-msgstr ""
+msgstr "Prikazani niz (UTF-8)"
 
 #: ../operations/external/text.c:27
 msgid "Font family"
 msgstr "Družina pisav"
 
 #: ../operations/external/text.c:28
-#, fuzzy
 msgid "Font family (utf8)"
-msgstr "Družina pisav"
+msgstr "Družina pisav (UTF-8)"
 
 #: ../operations/external/text.c:29
 #: ../operations/workshop/warp.c:28
@@ -2295,9 +2169,8 @@ msgid "Size"
 msgstr "Velikost"
 
 #: ../operations/external/text.c:30
-#, fuzzy
 msgid "Approximate height of text in pixels."
-msgstr "Višina slike"
+msgstr "Približna višina besedila v slikovnih točkah."
 
 #: ../operations/external/text.c:32
 msgid "Color for the text (defaults to 'white')"
@@ -2313,9 +2186,8 @@ msgid "Sets the width in pixels at which long lines will wrap. Use -1 for no wra
 msgstr ""
 
 #: ../operations/external/text.c:36
-#, fuzzy
 msgid "Justification"
-msgstr "Klasifikacija"
+msgstr "Poravnava"
 
 #: ../operations/external/text.c:37
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
@@ -2326,9 +2198,8 @@ msgid "Rendered width in pixels. (read only)"
 msgstr "Upodobljena širina v slik. točkah (samo za branje)."
 
 #: ../operations/external/text.c:41
-#, fuzzy
 msgid "Rendered height in pixels. (read only)"
-msgstr "Višina slike"
+msgstr "Upodobljena višina v slikovnih točkah (samo za branje)."
 
 #: ../operations/external/text.c:301
 msgid "Display a string of text using pango and cairo."
@@ -2339,9 +2210,8 @@ msgid "Path"
 msgstr "Pot"
 
 #: ../operations/external/v4l.c:26
-#, fuzzy
 msgid "Path to v4l device"
-msgstr "Pot za shranjevanje slike:"
+msgstr "Pot do naprave v4l"
 
 #: ../operations/external/v4l.c:30
 msgid "current frame number, can be changed to trigger a reload of the image."
@@ -2349,9 +2219,8 @@ msgstr ""
 
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/ff-save.c:32
-#, fuzzy
 msgid "FPS"
-msgstr "Funkcijske strukture"
+msgstr "sl/s"
 
 #: ../operations/external/v4l.c:32
 msgid "autotrigger reload this many times a second."
@@ -2362,19 +2231,48 @@ msgid "Video4Linux input, webcams framegrabbers and similar devices."
 msgstr ""
 
 #: ../operations/external/vector-fill.c:28
-#, fuzzy
 msgid "Color of paint to use for filling."
-msgstr "Barva/prekrivnost, uporabljena za barvno prilagajanje"
+msgstr "Barva, uporabljena za polnilo."
+
+#: ../operations/external/vector-fill.c:31
+msgid "The fill opacity to use."
+msgstr "Prekrivnost, uporabljena za polnilo."
+
+#: ../operations/external/vector-fill.c:33
+msgid "Fill rule."
+msgstr "Pravilo polnila."
+
+#: ../operations/external/vector-fill.c:34
+msgid "how to determine what to fill (nonzero|evenodd"
+msgstr ""
+
+#: ../operations/external/vector-fill.c:37
+#: ../operations/external/vector-stroke.c:37
+#, fuzzy
+msgid "svg style description of transform."
+msgstr "Smer transformacije"
 
 #: ../operations/external/vector-fill.c:258
-#, fuzzy
 msgid "Renders a filled region"
-msgstr "Upodobi odblesk leče"
+msgstr "Upodobi zapolnjeno območje"
+
+#: ../operations/external/vector-stroke.c:28
+#, fuzzy
+msgid "Color of paint to use for stroking."
+msgstr "Barva/prekrivnost, uporabljena za barvno prilagajanje"
+
+#: ../operations/external/vector-stroke.c:31
+#, fuzzy
+msgid "The width of the brush used to stroke the path."
+msgstr "Spremeni merilo širine poti šiva"
+
+#: ../operations/external/vector-stroke.c:34
+msgid "Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool."
+msgstr ""
 
 #: ../operations/external/vector-stroke.c:280
-#, fuzzy
 msgid "Renders a vector stroke"
-msgstr "Upodobi potezo"
+msgstr "Upodobi vektorsko potezo"
 
 #: ../operations/generated/add.c:125
 msgid "Math operation add (c = c + value)"
@@ -2502,28 +2400,25 @@ msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 
 #: ../operations/workshop/box-max.c:198
-msgid "Sets the target pixel to the value of the maximum value in a box surrounding the pixel."
+msgid "Sets the target pixel to the value of the maximum value in a box surrounding the pixel"
 msgstr ""
 
 #: ../operations/workshop/box-min.c:198
-msgid "Sets the target pixel to the value of the minimum value in a box surrounding the pixel."
+msgid "Sets the target pixel to the value of the minimum value in a box surrounding the pixel"
 msgstr ""
 
 #: ../operations/workshop/box-percentile.c:29
 #: ../operations/workshop/disc-percentile.c:28
 #: ../operations/workshop/snn-percentile.c:31
-#, fuzzy
 msgid "Percentile"
-msgstr "Odstotek:"
+msgstr "Odstotek"
 
 #: ../operations/workshop/box-percentile.c:30
-#: ../operations/workshop/disc-percentile.c:29
-msgid "The percentile to compute, defaults to 50, which is a median filter."
+msgid "The percentile to compute, defaults to 50, which is a median filter"
 msgstr ""
 
 #: ../operations/workshop/box-percentile.c:230
-#: ../operations/workshop/disc-percentile.c:234
-msgid "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
+msgid "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance"
 msgstr ""
 
 #: ../operations/workshop/buffer-cache.c:25
@@ -2540,44 +2435,36 @@ msgid "Cache the input buffer internally, further process take this buffer as in
 msgstr ""
 
 #: ../operations/workshop/color-reduction.c:25
-#, fuzzy
 msgid "Red bits"
-msgstr "Koraki ponovitve"
+msgstr "Bitov rdeče"
 
 #: ../operations/workshop/color-reduction.c:25
-#, fuzzy
 msgid "Number of bits for red channel"
-msgstr "Število kanalov:"
+msgstr "Število bitov za rdeči kanal"
 
 #: ../operations/workshop/color-reduction.c:26
-#, fuzzy
 msgid "Green bits"
-msgstr "Zelena"
+msgstr "Bitov zelene"
 
 #: ../operations/workshop/color-reduction.c:26
-#, fuzzy
 msgid "Number of bits for green channel"
-msgstr "Prag za zeleni kanal"
+msgstr "Število bitov za zeleni kanal"
 
 #: ../operations/workshop/color-reduction.c:27
-#, fuzzy
 msgid "Blue bits"
-msgstr "Filtri zabrisovanja"
+msgstr "Bitov modre"
 
 #: ../operations/workshop/color-reduction.c:27
-#, fuzzy
 msgid "Number of bits for blue channel"
-msgstr "Število kanalov:"
+msgstr "Število bitov za modri kanal"
 
 #: ../operations/workshop/color-reduction.c:28
-#, fuzzy
 msgid "Alpha bits"
-msgstr "Alfa"
+msgstr "Bitov alfe"
 
 #: ../operations/workshop/color-reduction.c:28
-#, fuzzy
 msgid "Number of bits for alpha channel"
-msgstr "Primer kanala alfa"
+msgstr "Število bitov za kanal alfa"
 
 #: ../operations/workshop/color-reduction.c:29
 msgid "Dither"
@@ -2588,20 +2475,18 @@ msgid "Dithering strategy (none, random, random-covariant, bayer, floyd-steinber
 msgstr ""
 
 #: ../operations/workshop/color-reduction.c:459
-msgid "Reduces the number of bits per channel (colors and alpha), with optional dithering."
+msgid "Reduces the number of bits per channel (colors and alpha), with optional dithering"
 msgstr ""
 
 #: ../operations/workshop/color-rotate.c:33
 #: ../operations/workshop/color-rotate.c:39
-#, fuzzy
 msgid "Clockwise"
-msgstr "Zapri"
+msgstr "V SUK"
 
 #: ../operations/workshop/color-rotate.c:34
 #: ../operations/workshop/color-rotate.c:40
-#, fuzzy
 msgid "Switch to clockwise"
-msgstr "Preklopi v SUK"
+msgstr "Preklopi v smer urinega kazalca"
 
 #: ../operations/workshop/color-rotate.c:35
 #: ../operations/workshop/color-rotate.c:41
@@ -2610,44 +2495,34 @@ msgstr "Od:"
 
 #: ../operations/workshop/color-rotate.c:36
 #: ../operations/workshop/color-rotate.c:42
-#, fuzzy
 msgid "Starting angle for the color rotation"
-msgstr "Začetni kot prvega ustvarjenega čopiča"
+msgstr "Začetni kot za sukanje barv"
 
 #: ../operations/workshop/color-rotate.c:37
 #: ../operations/workshop/color-rotate.c:43
-#, fuzzy
 msgid "To:"
-msgstr ""
-"#-#-#-#-#  dia.master.sl.po (dia)  #-#-#-#-#\n"
-"Za:\n"
-"#-#-#-#-#  gimp-gap.master.sl.po (Gimp-gap 2.8)  #-#-#-#-#\n"
-"Do:"
+msgstr "Do:"
 
 #: ../operations/workshop/color-rotate.c:38
 #: ../operations/workshop/color-rotate.c:44
-#, fuzzy
 msgid "End angle for the color rotation"
-msgstr "Vnesite ime za nastavitve"
+msgstr "Končni kot za sukanje barv"
 
 #: ../operations/workshop/color-rotate.c:47
-#, fuzzy
 msgid "Choose in case of grayscale images"
-msgstr "Vtičnik %s lahko obdeluje le RGB ali sivinske slike"
+msgstr "Izberite v primeru sivinskih slik"
 
 #: ../operations/workshop/color-rotate.c:48
 msgid "Hue"
 msgstr "Obarvanost"
 
 #: ../operations/workshop/color-rotate.c:49
-#, fuzzy
 msgid "The value of hue"
-msgstr "Ime koraka"
+msgstr "Vrednost obarvanosti"
 
 #: ../operations/workshop/color-rotate.c:51
-#, fuzzy
 msgid "The value of saturation"
-msgstr "Nasičenost tlakovcev"
+msgstr "Vrednost nasičenosti"
 
 #: ../operations/workshop/color-rotate.c:52
 #: ../operations/workshop/color-rotate.c:53
@@ -2656,14 +2531,12 @@ msgid "Change/Treat to this"
 msgstr "Spremeni v to"
 
 #: ../operations/workshop/color-rotate.c:55
-#, fuzzy
 msgid "The value of gray threshold"
-msgstr "Premaknite miško za spremembo praga"
+msgstr "Vrednost sivinskega praga"
 
 #: ../operations/workshop/color-rotate.c:385
-#, fuzzy
-msgid "Rotate colors on the image."
-msgstr "Uporabi barvo slike"
+msgid "Rotate colors on the image"
+msgstr "Zasukaj barve slike"
 
 #: ../operations/workshop/convolution-matrix.c:25
 msgid "(1,1) "
@@ -2671,7 +2544,7 @@ msgstr "(1,1) "
 
 #: ../operations/workshop/convolution-matrix.c:26
 msgid "Value of the element in position (1,1)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (1,1)"
 
 #: ../operations/workshop/convolution-matrix.c:27
 msgid "(1,2) "
@@ -2679,7 +2552,7 @@ msgstr "(1,2) "
 
 #: ../operations/workshop/convolution-matrix.c:28
 msgid "Value of the element in position (1,2)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (1,2)"
 
 #: ../operations/workshop/convolution-matrix.c:29
 msgid "(1,3) "
@@ -2687,7 +2560,7 @@ msgstr "(1,3) "
 
 #: ../operations/workshop/convolution-matrix.c:30
 msgid "Value of the element in position (1,3)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (1,3)"
 
 #: ../operations/workshop/convolution-matrix.c:31
 msgid "(1,4) "
@@ -2695,7 +2568,7 @@ msgstr "(1,4) "
 
 #: ../operations/workshop/convolution-matrix.c:32
 msgid "Value of the element in position (1,4)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (1,4)"
 
 #: ../operations/workshop/convolution-matrix.c:33
 msgid "(1,5) "
@@ -2703,7 +2576,7 @@ msgstr "(1,5) "
 
 #: ../operations/workshop/convolution-matrix.c:34
 msgid "Value of the element in position (1,5)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (1,5)"
 
 #: ../operations/workshop/convolution-matrix.c:35
 msgid "(2,1) "
@@ -2711,7 +2584,7 @@ msgstr "(2,1) "
 
 #: ../operations/workshop/convolution-matrix.c:36
 msgid "Value of the element in position (2,1)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (2,1)"
 
 #: ../operations/workshop/convolution-matrix.c:37
 msgid "(2,2) "
@@ -2719,7 +2592,7 @@ msgstr "(2,2) "
 
 #: ../operations/workshop/convolution-matrix.c:38
 msgid "Value of the element in position (2,2)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (2,2)"
 
 #: ../operations/workshop/convolution-matrix.c:39
 msgid "(2,3) "
@@ -2727,7 +2600,7 @@ msgstr "(2,3) "
 
 #: ../operations/workshop/convolution-matrix.c:40
 msgid "Value of the element in position (2,3)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (2,3)"
 
 #: ../operations/workshop/convolution-matrix.c:41
 msgid "(2,4) "
@@ -2735,7 +2608,7 @@ msgstr "(2,4) "
 
 #: ../operations/workshop/convolution-matrix.c:42
 msgid "Value of the element in position (2,4)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (2,4)"
 
 #: ../operations/workshop/convolution-matrix.c:43
 msgid "(2,5) "
@@ -2743,7 +2616,7 @@ msgstr "(2,5) "
 
 #: ../operations/workshop/convolution-matrix.c:44
 msgid "Value of the element in position (2,5)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (2,5)"
 
 #: ../operations/workshop/convolution-matrix.c:45
 msgid "(3,1) "
@@ -2751,7 +2624,7 @@ msgstr "(3,1) "
 
 #: ../operations/workshop/convolution-matrix.c:46
 msgid "Value of the element in position (3,1)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (3,1)"
 
 #: ../operations/workshop/convolution-matrix.c:47
 msgid "(3,2) "
@@ -2759,7 +2632,7 @@ msgstr "(3,2) "
 
 #: ../operations/workshop/convolution-matrix.c:48
 msgid "Value of the element in position (3,2)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (3,2)"
 
 #: ../operations/workshop/convolution-matrix.c:49
 msgid "(3,3) "
@@ -2767,7 +2640,7 @@ msgstr "(3,3) "
 
 #: ../operations/workshop/convolution-matrix.c:50
 msgid "Value of the element in position (3,3)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (3,3)"
 
 #: ../operations/workshop/convolution-matrix.c:51
 msgid "(3,4) "
@@ -2775,7 +2648,7 @@ msgstr "(3,4) "
 
 #: ../operations/workshop/convolution-matrix.c:52
 msgid "Value of the element in position (3,4)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (3,4)"
 
 #: ../operations/workshop/convolution-matrix.c:53
 msgid "(3,5) "
@@ -2783,7 +2656,7 @@ msgstr "(3,5) "
 
 #: ../operations/workshop/convolution-matrix.c:54
 msgid "Value of the element in position (3,5)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (3,5)"
 
 #: ../operations/workshop/convolution-matrix.c:55
 msgid "(4,1) "
@@ -2791,7 +2664,7 @@ msgstr "(4,1) "
 
 #: ../operations/workshop/convolution-matrix.c:56
 msgid "Value of the element in position (4,1)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (4,1)"
 
 #: ../operations/workshop/convolution-matrix.c:57
 msgid "(4,2) "
@@ -2799,7 +2672,7 @@ msgstr "(4,2) "
 
 #: ../operations/workshop/convolution-matrix.c:58
 msgid "Value of the element in position (4,2)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (4,2)"
 
 #: ../operations/workshop/convolution-matrix.c:59
 msgid "(4,3) "
@@ -2807,7 +2680,7 @@ msgstr "(4,3) "
 
 #: ../operations/workshop/convolution-matrix.c:60
 msgid "Value of the element in position (4,3)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (4,3)"
 
 #: ../operations/workshop/convolution-matrix.c:61
 msgid "(4,4) "
@@ -2815,7 +2688,7 @@ msgstr "(4,4) "
 
 #: ../operations/workshop/convolution-matrix.c:62
 msgid "Value of the element in position (4,4)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (4,4)"
 
 #: ../operations/workshop/convolution-matrix.c:63
 msgid "(4,5) "
@@ -2823,7 +2696,7 @@ msgstr "(4,5) "
 
 #: ../operations/workshop/convolution-matrix.c:64
 msgid "Value of the element in position (4,5)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (4,5)"
 
 #: ../operations/workshop/convolution-matrix.c:65
 msgid "(5,1) "
@@ -2831,7 +2704,7 @@ msgstr "(5,1) "
 
 #: ../operations/workshop/convolution-matrix.c:66
 msgid "Value of the element in position (5,1)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (5,1)"
 
 #: ../operations/workshop/convolution-matrix.c:67
 msgid "(5,2) "
@@ -2839,7 +2712,7 @@ msgstr "(5,2) "
 
 #: ../operations/workshop/convolution-matrix.c:68
 msgid "Value of the element in position (5,2)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (5,2)"
 
 #: ../operations/workshop/convolution-matrix.c:69
 msgid "(5,3) "
@@ -2847,7 +2720,7 @@ msgstr "(5,3) "
 
 #: ../operations/workshop/convolution-matrix.c:70
 msgid "Value of the element in position (5,3)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (5,3)"
 
 #: ../operations/workshop/convolution-matrix.c:71
 msgid "(5,4) "
@@ -2855,7 +2728,7 @@ msgstr "(5,4) "
 
 #: ../operations/workshop/convolution-matrix.c:72
 msgid "Value of the element in position (5,4)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (5,4)"
 
 #: ../operations/workshop/convolution-matrix.c:73
 msgid "(5,5) "
@@ -2863,44 +2736,31 @@ msgstr "(5,5) "
 
 #: ../operations/workshop/convolution-matrix.c:74
 msgid "Value of the element in position (5,5)"
-msgstr ""
+msgstr "Vrednost elementa na položaju (5,5)"
 
 #: ../operations/workshop/convolution-matrix.c:76
-#, fuzzy
 msgid "Divisor: "
 msgstr "Delitelj:"
 
 #: ../operations/workshop/convolution-matrix.c:77
-#, fuzzy
 msgid "The value of the divisor"
-msgstr "Ime koraka"
+msgstr "Vrednost delitelja"
 
 #: ../operations/workshop/convolution-matrix.c:78
-#, fuzzy
 msgid "Offset: "
-msgstr ""
-"#-#-#-#-#  gimp-gap.master.sl.po (Gimp-gap 2.8)  #-#-#-#-#\n"
-"Zamik:\n"
-"#-#-#-#-#  gimp-plug-ins.master.sl.po (GIMP - standardni vtičniki)  #-#-#-#-#\n"
-"Zamik:\n"
-"#-#-#-#-#  gimp.master.sl.po (GIMP 2.8)  #-#-#-#-#\n"
-"Odmik:\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Zamik:"
+msgstr "Odmik:"
 
 #: ../operations/workshop/convolution-matrix.c:79
-#, fuzzy
 msgid "The value of the offset"
-msgstr "Ime koraka"
+msgstr "Vrednost odmika"
 
 #: ../operations/workshop/convolution-matrix.c:81
 msgid "Normalize"
 msgstr "Normaliziraj"
 
 #: ../operations/workshop/convolution-matrix.c:81
-#, fuzzy
 msgid "Normalize or not"
-msgstr "Normaliziraj"
+msgstr "Normaliziraj ali pa ne"
 
 #: ../operations/workshop/convolution-matrix.c:83
 msgid "Red channel"
@@ -2923,9 +2783,8 @@ msgid "Alpha-weighting"
 msgstr "Alfa-uteži"
 
 #: ../operations/workshop/convolution-matrix.c:88
-#, fuzzy
 msgid "Alpha weighting"
-msgstr "Alfa-uteži"
+msgstr "Alfa-uteževanje"
 
 #: ../operations/workshop/convolution-matrix.c:90
 msgid "Border"
@@ -2936,7 +2795,7 @@ msgid "Type of border to choose.Choices are extend, wrap, crop.Default is extend
 msgstr ""
 
 #: ../operations/workshop/convolution-matrix.c:433
-msgid "Creates image by manually set convolution matrix."
+msgid "Creates image by manually set convolution matrix"
 msgstr ""
 
 #: ../operations/workshop/cubism.c:30
@@ -2954,7 +2813,7 @@ msgid "Random seed"
 msgstr "Naključno seme"
 
 #: ../operations/workshop/cubism.c:595
-msgid "Filter that somehow resembels a cubist painting style."
+msgid "A filter that somehow resembles a cubist painting style"
 msgstr ""
 
 #: ../operations/workshop/deinterlace.c:30
@@ -2970,9 +2829,8 @@ msgid "Horizontal/Vertical"
 msgstr "Vodoravno/navpično"
 
 #: ../operations/workshop/deinterlace.c:32
-#, fuzzy
 msgid "Choose horizontal or vertical"
-msgstr "Odstrani vsa vodoravna in navpična vodila"
+msgstr "Izberite vodoravno ali navpično"
 
 #: ../operations/workshop/deinterlace.c:33
 msgid "Block size"
@@ -2984,14 +2842,13 @@ msgstr ""
 
 #: ../operations/workshop/deinterlace.c:309
 #, fuzzy
-msgid "Performs deinterlace on the image."
+msgid "Performs deinterlace on the image"
 msgstr "Povečaj svetlejša območja slike"
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
-#, fuzzy
 msgid "Bayer pattern"
-msgstr "Vzorec plasti:"
+msgstr "Bayerjev vzorec"
 
 #: ../operations/workshop/demosaic-bimedian.c:27
 #: ../operations/workshop/demosaic-simple.c:26
@@ -3006,6 +2863,14 @@ msgstr ""
 msgid "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
 
+#: ../operations/workshop/disc-percentile.c:29
+msgid "The percentile to compute, defaults to 50, which is a median filter."
+msgstr ""
+
+#: ../operations/workshop/disc-percentile.c:234
+msgid "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
+msgstr ""
+
 #: ../operations/workshop/ditto.c:111
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
@@ -3015,9 +2880,8 @@ msgid "Azimuth"
 msgstr "Azimut"
 
 #: ../operations/workshop/emboss.c:26
-#, fuzzy
 msgid "The value of azimuth"
-msgstr "Število zobcev"
+msgstr "Vrednost azimuta"
 
 #: ../operations/workshop/emboss.c:27
 msgid "Elevation"
@@ -3026,7 +2890,7 @@ msgstr "Dvignjenost"
 #: ../operations/workshop/emboss.c:28
 #, fuzzy
 msgid "The value of elevation"
-msgstr "Mape tem"
+msgstr "Vrednost dvignjenosti"
 
 #: ../operations/workshop/emboss.c:29
 #: ../operations/workshop/fractal-trace.c:40
@@ -3034,33 +2898,28 @@ msgid "Depth"
 msgstr "Globina"
 
 #: ../operations/workshop/emboss.c:30
-#, fuzzy
 msgid "Pixel depth"
-msgstr "Širina slikovne točke"
+msgstr "Globina slikovne točke"
 
 #: ../operations/workshop/emboss.c:32
 msgid "Optional parameter to override automatic selection of emboss filter. Choices are emboss, blur-map"
 msgstr ""
 
 #: ../operations/workshop/emboss.c:248
-#, fuzzy
-msgid "Simulates an image created by embossing."
+msgid "Simulates an image created by embossing"
 msgstr "Simulira sliko, ustvarjeno z reliefnim krašenjem"
 
 #: ../operations/workshop/external/ff-save.c:31
-#, fuzzy
 msgid "Bitrate"
-msgstr "Bitna hitrost:"
+msgstr "Bitna hitrost"
 
 #: ../operations/workshop/external/ff-save.c:31
-#, fuzzy
 msgid "target bitrate"
-msgstr "Konstantna bitna hitrost:"
+msgstr "Ciljna bitna hitrost"
 
 #: ../operations/workshop/external/ff-save.c:32
-#, fuzzy
 msgid "frames per second"
-msgstr "Počisti izbor"
+msgstr "sličic na sekundo"
 
 #: ../operations/workshop/external/ff-save.c:889
 msgid "FFmpeg video output sink"
@@ -3079,9 +2938,8 @@ msgid "a stored lua script on disk implementing an operation."
 msgstr ""
 
 #: ../operations/workshop/external/gluas.c:44
-#, fuzzy
 msgid "User value"
-msgstr "Uporabi povprečno vrednost"
+msgstr "Uporabniška vrednost"
 
 #: ../operations/workshop/external/gluas.c:45
 msgid "(appears in the global variable 'user_value' in lua."
@@ -3143,23 +3001,22 @@ msgstr "Zgoraj in na sredi"
 #: ../operations/workshop/external/lens-correct.c:39
 #, fuzzy
 msgid "Lens center x"
-msgstr "Ponastavi središče"
+msgstr "Središče objektiva X"
 
 #: ../operations/workshop/external/lens-correct.c:40
 #: ../operations/workshop/external/lens-correct.c:42
 #, fuzzy
 msgid "Coordinates of lens center"
-msgstr "Koordinata X levega zgornjega kota"
+msgstr "Koordinate središča objektiva"
 
 #: ../operations/workshop/external/lens-correct.c:41
 #, fuzzy
 msgid "Lens center y"
-msgstr "Ponastavi središče"
+msgstr "Središče objektiva Y"
 
 #: ../operations/workshop/external/lens-correct.c:44
-#, fuzzy
 msgid "Scale of the image"
-msgstr "Plasti slike"
+msgstr "Merilo slike"
 
 #: ../operations/workshop/external/lens-correct.c:45
 msgid "Autocorrect d values"
@@ -3186,9 +3043,8 @@ msgstr "Bolj nasičeno:"
 #: ../operations/workshop/external/lens-correct.c:69
 #: ../operations/workshop/external/lens-correct.c:71
 #: ../operations/workshop/external/lens-correct.c:73
-#, fuzzy
 msgid "Correction parameters for each color channel"
-msgstr "Nastavitev parametrov folij za trenutni video"
+msgstr "Parametri korekcije za vsak barvni kanal"
 
 #: ../operations/workshop/external/lens-correct.c:50
 #, fuzzy
@@ -3252,9 +3108,8 @@ msgstr "v alfo"
 #: ../operations/workshop/external/lens-correct.c:78
 #: ../operations/workshop/external/lens-correct.c:80
 #: ../operations/workshop/external/lens-correct.c:82
-#, fuzzy
 msgid "Correction parameters for alpha channel"
-msgstr "Primer kanala alfa"
+msgstr "Parametri korekcije za kanal alfa"
 
 #: ../operations/workshop/external/lens-correct.c:77
 #, fuzzy
@@ -3272,14 +3127,12 @@ msgid "Model alpha d:"
 msgstr "v alfo"
 
 #: ../operations/workshop/external/line-profile.c:25
-#, fuzzy
 msgid "X0"
-msgstr "0"
+msgstr "X0"
 
 #: ../operations/workshop/external/line-profile.c:25
-#, fuzzy
 msgid "Start x coordinate"
-msgstr "Polarne koordinate"
+msgstr "Začetna koordinata X"
 
 #: ../operations/workshop/external/line-profile.c:26
 #: ../operations/workshop/fractal-trace.c:28
@@ -3287,23 +3140,16 @@ msgid "X1"
 msgstr "X1"
 
 #: ../operations/workshop/external/line-profile.c:26
-#, fuzzy
 msgid "End x coordinate"
-msgstr ""
-"#-#-#-#-#  gimp-gap.master.sl.po (Gimp-gap 2.8)  #-#-#-#-#\n"
-"Koordinata X \n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Koordinata X"
+msgstr "Končna koordinata X"
 
 #: ../operations/workshop/external/line-profile.c:27
-#, fuzzy
 msgid "Y0"
-msgstr "0"
+msgstr "Y0"
 
 #: ../operations/workshop/external/line-profile.c:27
-#, fuzzy
 msgid "Start y coordinate"
-msgstr "Polarne koordinate"
+msgstr "Začetna koordinata Y"
 
 #: ../operations/workshop/external/line-profile.c:28
 #: ../operations/workshop/fractal-trace.c:32
@@ -3311,13 +3157,8 @@ msgid "Y1"
 msgstr "Y1"
 
 #: ../operations/workshop/external/line-profile.c:28
-#, fuzzy
 msgid "End y coordinate"
-msgstr ""
-"#-#-#-#-#  gimp-gap.master.sl.po (Gimp-gap 2.8)  #-#-#-#-#\n"
-"Koordinata X \n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.2)  #-#-#-#-#\n"
-"Koordinata X"
+msgstr "Končna koordinata Y"
 
 #: ../operations/workshop/external/line-profile.c:29
 #, fuzzy
@@ -3330,42 +3171,36 @@ msgid "Height of plot"
 msgstr "Višina papirja"
 
 #: ../operations/workshop/external/line-profile.c:31
-#, fuzzy
 msgid "Min"
-msgstr "Moški"
+msgstr "Najm"
 
 #: ../operations/workshop/external/line-profile.c:31
-#, fuzzy
 msgid "Value at bottom"
-msgstr "Plast na dno"
+msgstr "Vrednost na dnu"
 
 #: ../operations/workshop/external/line-profile.c:32
-#, fuzzy
 msgid "Max"
-msgstr "Zmešaj"
+msgstr "Najv"
 
 #: ../operations/workshop/external/line-profile.c:32
-#, fuzzy
 msgid "Value at top"
-msgstr "Vrednost, ki bo nastavljena:"
+msgstr "Vrednost na vrhu"
 
 #: ../operations/workshop/external/line-profile.c:178
 msgid "Renders luminance profiles for red green and blue components along the specified line in the input buffer, plotted in a buffer of the specified size."
 msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:25
-#, fuzzy
 msgid "Fractal"
-msgstr "Fraktali"
+msgstr "Fraktal"
 
 #: ../operations/workshop/fractal-trace.c:26
 msgid "Type of fractal to use. Choices are julia, mandelbrot. Default is mandelbrot."
 msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:29
-#, fuzzy
 msgid "X1 value, position"
-msgstr "Položaj X"
+msgstr "Vrednost, položaj X1"
 
 #: ../operations/workshop/fractal-trace.c:30
 msgid "X2"
@@ -3373,32 +3208,28 @@ msgstr "X2"
 
 #: ../operations/workshop/fractal-trace.c:31
 #: ../operations/workshop/fractal-trace.c:33
-#, fuzzy
 msgid "X2 value, position"
-msgstr "Položaj X"
+msgstr "Vrednost, položaj X2"
 
 #: ../operations/workshop/fractal-trace.c:34
 msgid "Y2"
 msgstr "Y2"
 
 #: ../operations/workshop/fractal-trace.c:35
-#, fuzzy
 msgid "Y2 value, position"
-msgstr "Položaj Y"
+msgstr "Vrednost, položaj Y2"
 
 #: ../operations/workshop/fractal-trace.c:36
-#, fuzzy
 msgid "JX"
-msgstr "X"
+msgstr "JX"
 
 #: ../operations/workshop/fractal-trace.c:37
 msgid "Julia seed X value, position"
 msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:38
-#, fuzzy
 msgid "JY"
-msgstr "Y"
+msgstr "JY"
 
 #: ../operations/workshop/fractal-trace.c:39
 msgid "Julia seed Y value, position"
@@ -3428,9 +3259,8 @@ msgid "Optional parameter to override automatic selection of wrap background. Ch
 msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:171
-#, fuzzy
 msgid "Unsupported fractal type"
-msgstr "Nepodprta vrsta čopiča"
+msgstr "Nepodprta vrsta fraktala"
 
 #: ../operations/workshop/fractal-trace.c:321
 #, fuzzy
@@ -3494,12 +3324,12 @@ msgstr "y2"
 #: ../operations/workshop/radial-gradient.c:29
 #: ../operations/workshop/radial-gradient.c:31
 #, fuzzy
-msgid "one end of gradient"
+msgid "One end of gradient"
 msgstr "Paleta v preliv"
 
 #: ../operations/workshop/linear-gradient.c:137
 #, fuzzy
-msgid "linear gradient renderer"
+msgid "Linear gradient renderer"
 msgstr "Obratni preliv orisa"
 
 #: ../operations/workshop/mandelbrot.c:25
@@ -3535,13 +3365,12 @@ msgid "Water level"
 msgstr "Raven vode"
 
 #: ../operations/workshop/mandelbrot.c:32
-#, fuzzy
 msgid "Maximum number of iterations"
-msgstr "Najmanjše število samodejnih shranjevanj:"
+msgstr "Največje število ponovitev"
 
 #: ../operations/workshop/mandelbrot.c:144
 #, fuzzy
-msgid "Mandelbrot set renderer."
+msgid "Mandelbrot set renderer"
 msgstr "Parametri Mandelbrot"
 
 #: ../operations/workshop/max-rgb.c:30
@@ -3569,7 +3398,7 @@ msgstr "Navpični preliv"
 
 #: ../operations/workshop/noise-spread.c:172
 #, fuzzy
-msgid "Spread filter"
+msgid "Noise spread filter"
 msgstr "Zračni filter"
 
 #: ../operations/workshop/plasma.c:34
@@ -3587,12 +3416,12 @@ msgstr "Ime koraka"
 
 #: ../operations/workshop/plasma.c:388
 #, fuzzy
-msgid "Performs plasma on the image."
+msgid "Performs plasma effect on the image"
 msgstr "Plasti slike"
 
 #: ../operations/workshop/radial-gradient.c:129
 #, fuzzy
-msgid "radial gradient renderer"
+msgid "Radial gradient renderer"
 msgstr "Krožen preliv poteze"
 
 #: ../operations/workshop/rawbayer-load.c:154
@@ -3604,7 +3433,9 @@ msgid "The value of the threshold"
 msgstr "Vrednost praga"
 
 #: ../operations/workshop/red-eye-removal.c:132
-msgid "Performs red-eye-removal on the image."
+#, fuzzy
+#| msgid "Performs red-eye-removal on the image."
+msgid "Performs red-eye-removal on the image"
 msgstr "Izvede odstranitev rdečega v očeh na sliki."
 
 #: ../operations/workshop/snn-percentile.c:30
@@ -3613,39 +3444,25 @@ msgid "Number of pairs, higher number preserves more acute features"
 msgstr "Število parov, višja številka ohranja bolj akutne lastnosti"
 
 #: ../operations/workshop/snn-percentile.c:32
-msgid "The percentile to return, the default value 50 is equal to the median."
+msgid "The percentile to return, the default value 50 is equal to the median"
 msgstr ""
 
 #: ../operations/workshop/snn-percentile.c:272
 msgid "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours"
 msgstr ""
 
-#: ../operations/workshop/warp.c:26
-msgid "Strength"
-msgstr "Jakost"
-
 #: ../operations/workshop/warp.c:27
 #: ../operations/workshop/warp.c:32
-#, fuzzy
 msgid "Effect Strength"
-msgstr ""
-"#-#-#-#-#  gimp-gap.master.sl.po (Gimp-gap 2.8)  #-#-#-#-#\n"
-"Jakost:\n"
-"#-#-#-#-#  inkscape-sl.po (Inkscape 0.48.1)  #-#-#-#-#\n"
-"Moč:"
+msgstr "Jakost učinka"
 
 #: ../operations/workshop/warp.c:29
 msgid "Effect Size"
 msgstr "Velikost učinka"
 
-#: ../operations/workshop/warp.c:30
-#, fuzzy
-msgid "Harness"
-msgstr "Trdota"
-
 #: ../operations/workshop/warp.c:31
 #, fuzzy
-msgid "Effect Harness"
+msgid "Effect Hardness"
 msgstr "Kanal učinkov"
 
 #: ../operations/workshop/warp.c:32
