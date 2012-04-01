@@ -128,6 +128,9 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
   CacheItem            *item;
   GSList               *iter;
 
+  if (!cache->count)
+    return;
+
   g_static_mutex_lock (&mutex);
   /* only throw out items belonging to this cache instance */
 
@@ -148,6 +151,7 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
           cache_total -= item->tile->size;
           gegl_tile_mark_as_stored (item->tile); /* to avoid saving */
           gegl_tile_unref (item->tile);
+          cache->count--;
         }
       g_queue_remove (cache_queue, item);
       g_hash_table_remove (cache_ht, item);
@@ -196,6 +200,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
           {
             cache_total -= item->tile->size;
             gegl_tile_unref (item->tile);
+            cache->count--;
           }
         g_queue_remove (cache_queue, item);
         g_hash_table_remove (cache_ht, item);
@@ -205,6 +210,10 @@ gegl_tile_handler_cache_dispose (GObject *object)
   cache->free_list = NULL;
   g_static_mutex_unlock (&mutex);
 
+  if (cache->count != 0)
+    {
+      g_warning ("cache-handler tile balance not zero: %i\n", cache->count);
+    }
   G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->dispose (object);
 }
 
@@ -501,6 +510,8 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   g_static_mutex_lock (&mutex);
   cache_total  += item->tile->size;
   g_queue_push_head (cache_queue, item);
+
+  cache->count ++;
 
   g_hash_table_insert (cache_ht, item, item);
 
