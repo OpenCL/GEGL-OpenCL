@@ -18,8 +18,10 @@ SUBDIRS+= docs
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gegl.pc
+pkgconfig_DATA = gegl-$(GEGL_MAJOR_VERSION).$(GEGL_MINOR_VERSION).pc
 
+gegl-$(GEGL_MAJOR_VERSION).$(GEGL_MINOR_VERSION).pc: gegl.pc
+	cp $< $@
 built_dist_files = README
 
 EXTRA_DIST = 			\
