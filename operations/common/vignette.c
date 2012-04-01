@@ -20,17 +20,17 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int    (shape,    _("shape"),  0, 2, 0, _("shape to use 0=circle 1=diamond 2=square"))
-gegl_chant_color (color,     _("Color"), "black", _("defaults to 'black', you can use transparency here to erase portions of an image"))
-gegl_chant_double (radius,   _("radius"),  0.0, 3.0, 1.5, _("how far out vignetting goes as portion of half image diagonal"))
-gegl_chant_double (softness,  _("softness"),  0.0, 1.0, 0.8, _("softness"))
-gegl_chant_double (gamma,    _("gamma"),  1.0, 20.0, 2.0, _("falloff linearity"))
-gegl_chant_double (proportion, _("proportion"), 0.0, 1.0, 1.0,  _("how close we are to image proportions"))
-gegl_chant_double (squeeze,   _("squeeze"), -1.0, 1.0, 0.0,  _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."))
+gegl_chant_int    (shape,    _("Shape"),  0, 2, 0, _("Shape to use: 0=circle 1=diamond 2=square"))
+gegl_chant_color (color,     _("Color"), "black", _("Defaults to 'black', you can use transparency here to erase portions of an image"))
+gegl_chant_double (radius,   _("Radius"),  0.0, 3.0, 1.5, _("How far out vignetting goes as portion of half image diagonal"))
+gegl_chant_double (softness,  _("Softness"),  0.0, 1.0, 0.8, _("Softness"))
+gegl_chant_double (gamma,    _("Gamma"),  1.0, 20.0, 2.0, _("Falloff linearity"))
+gegl_chant_double (proportion, _("Proportion"), 0.0, 1.0, 1.0,  _("How close we are to image proportions"))
+gegl_chant_double (squeeze,   _("Squeeze"), -1.0, 1.0, 0.0,  _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."))
 
-gegl_chant_double (x,        _("x"),  -1.0, 2.0, 0.5, _("Horizontal center of vignetting"))
-gegl_chant_double (y,        _("y"),  -1.0, 2.0, 0.5, _("Vertical center of vignetting"))
-gegl_chant_double (rotation, _("rotation"),  0.0, 360.0, 0.0, _("Rotation angle"))
+gegl_chant_double (x,        _("X"),  -1.0, 2.0, 0.5, _("Horizontal center of vignetting"))
+gegl_chant_double (y,        _("Y"),  -1.0, 2.0, 0.5, _("Vertical center of vignetting"))
+gegl_chant_double (rotation, _("Rotation"),  0.0, 360.0, 0.0, _("Rotation angle"))
 
 #else
 
