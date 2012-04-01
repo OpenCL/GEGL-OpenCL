@@ -39,9 +39,9 @@ gegl_chant_double (edge, _("Edge:"), -100.0, 100.0, 0.0,
 gegl_chant_double (brighten, _("Brighten:"), -100.0, 100.0, 0.0,
                    _("Brighten the image"))
 gegl_chant_double (x_shift, _("X shift:"), -100.0, 100.0, 0.0,
-                   _("Shift vertical"))
-gegl_chant_double (y_shift, _("Y shift:"), -100.0, 100.0, 0.0,
                    _("Shift horizontal"))
+gegl_chant_double (y_shift, _("Y shift:"), -100.0, 100.0, 0.0,
+                   _("Shift vertical"))
 
 #else
 
