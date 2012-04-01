@@ -2,13 +2,13 @@
 
 gegl/gegl-init.c
 gegl/module/geglmodule.c
-operations/affine/affine.c
-operations/affine/reflect.c
-operations/affine/rotate.c
-operations/affine/scale.c
-operations/affine/shear.c
-operations/affine/transform.c
-operations/affine/translate.c
+operations/transform/transform-core.c
+operations/transform/reflect.c
+operations/transform/rotate.c
+operations/transform/scale.c
+operations/transform/shear.c
+operations/transform/transform.c
+operations/transform/translate.c
 operations/common/bilateral-filter.c
 operations/common/box-blur.c
 operations/common/brightness-contrast.c
