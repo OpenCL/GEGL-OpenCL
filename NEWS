@@ -14,7 +14,7 @@ Changes in GEGL 0.2.0
    • New operation: global-matting
    • Allow transform core to do perspective transforms.
    • Added string based key/value pairs to operations.
-   • Added arguments to for dealing with scaled down preview rendering.
+   • Added arguments for dealing with scaled down preview rendering.
  • Added human interaction ranges and non-linear mapping to properties.
  • Operations:
 
@@ -22,7 +22,7 @@ Changes in GEGL 0.2.0
    • Added lohalo resampler, API and infrastructure for doing non
      affine resamplings.
    • Removed broken lanczos sampler.
-   • Add gegl_buffer_set_color and gegl_buffer_set_pattern 
+   • Add gegl_buffer_set_color and gegl_buffer_set_pattern
    • Added ability to drop cached tiles.
    • Added API for handling abyss policy (not implemented yet)
    • Avoid iterating global tile cache when flushing/destroying buffers
@@ -111,7 +111,7 @@ Changes in GEGL 0.1.2
  • Added xml composition/reference image based regression tests.
  • Added performance tracking framework.
  • Syntactic sugar using varargs for constructing gegl graphs from C.
- • Build fixes on cygwin, 
+ • Build fixes on cygwin,
  • Gegl# fixes.
  • Initial, but unstable code towards multithreading.
  • Improvements to lua op in workshop.
@@ -169,7 +169,7 @@ Changes in GEGL 0.0.22
    • gegl:opacity - combine value and aux mask input when both are available.
    • gegl:src-in - deal correctly with extens.
    • gegl:path - new op covering the stroke/fill needs of SVG.
-   • deprecated gegl:shift, the affine familiy of operations now 
+   • deprecated gegl:shift, the affine familiy of operations now
      uses the same fast code paths for integer translations.
  • GeglBuffer
    • Profiling motivated speed ups in data reading/writing.
