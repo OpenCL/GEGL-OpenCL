@@ -123,7 +123,7 @@ static void text_layout_text (GeglChant *self,
   attrs = pango_attr_list_new ();
   if (attrs)
   {
-    gegl_color_get_rgba4f (o->color, color);
+    gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
     attr = pango_attr_foreground_new ((guint16) (color[0] * 65535),
                                       (guint16) (color[1] * 65535),
                                       (guint16) (color[2] * 65535));

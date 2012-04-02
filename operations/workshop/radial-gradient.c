@@ -71,8 +71,8 @@ process (GeglOperation       *operation,
   gint        x, y;
   gfloat length = dist (o->x1, o->y1, o->x2, o->y2);
 
-  gegl_color_get_rgba4f (o->color1, color1);
-  gegl_color_get_rgba4f (o->color2, color2);
+  gegl_color_get_pixel (o->color1, babl_format ("RGBA float"), color1);
+  gegl_color_get_pixel (o->color2, babl_format ("RGBA float"), color2);
 
   x= roi->x;
   y= roi->y;

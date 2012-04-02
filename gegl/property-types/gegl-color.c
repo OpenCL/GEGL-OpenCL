@@ -285,17 +285,6 @@ void         gegl_color_get_pixel              (GeglColor   *color,
 }
 
 void
-gegl_color_get_rgba4f (GeglColor   *color,
-                       gfloat      *rgba)
-{
-  gint i;
-  g_return_if_fail (GEGL_IS_COLOR (color));
-
-  for (i=0; i< 4; i++)
-    rgba[i] = color->priv->rgba_color[i];
-}
-
-void
 gegl_color_set_rgba (GeglColor *self,
                      gdouble    r,
                      gdouble    g,

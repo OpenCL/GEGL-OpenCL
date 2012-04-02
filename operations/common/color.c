@@ -53,7 +53,7 @@ gegl_color_op_process (GeglOperation       *operation,
   gfloat     *out_pixel = out_buf;
   gfloat      color[4];
 
-  gegl_color_get_rgba4f (o->value, color);
+  gegl_color_get_pixel (o->value, babl_format ("RGBA float"), color);
 
   while (n_pixels--)
     {

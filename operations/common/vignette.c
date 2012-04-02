@@ -176,7 +176,7 @@ cl_process (GeglOperation       *operation,
   if (scale > 1.0)
     length /= scale;
 
-  gegl_color_get_rgba4f (o->color, color);
+  gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
 
   for (x=0; x<3; x++)   /* premultiply */
     color[x] *= color[3];
@@ -277,7 +277,7 @@ process (GeglOperation       *operation,
   if (scale > 1.0)
     length /= scale;
 
-  gegl_color_get_rgba4f (o->color, color);
+  gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
 
   for (x=0; x<3; x++)   /* premultiply */
     color[x] *= color[3];

@@ -83,17 +83,6 @@ void         gegl_color_get_rgba               (GeglColor   *color,
                                                 gdouble     *alpha);
 
 /**
- * gegl_color_get_rgba4f:
- * @color: a #GeglColor
- * @buf: pointer to a buffer for a single "RGBA float" pixel.
- *
- * Retrieves the current set color as linear light non premultipled RGBA data,
- * and stores it at the memory location in @buf
- */
-void         gegl_color_get_rgba4f             (GeglColor   *color,
-                                                gfloat      *buf);
-
-/**
  * gegl_color_set_rgba:
  * @color: a #GeglColor
  * @red: red value

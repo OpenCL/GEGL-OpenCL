@@ -232,7 +232,7 @@ gegl_path_stamp (GeglBuffer *buffer,
   roi.width = ceil (x+radius) - floor (x-radius);
   roi.height = ceil (y+radius) - floor (y-radius);
 
-  gegl_color_get_rgba4f (color, col);
+  gegl_color_get_pixel (color, babl_format ("RGBA float"), col);
 
   /* bail out if we wouldn't leave a mark on the buffer */
   if (!gegl_rectangle_intersect (&temp, &roi, clip_rect))

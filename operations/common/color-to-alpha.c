@@ -139,7 +139,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, result, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  gegl_color_get_rgba4f (o->color, color);
+  gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
 
   for (x = 0; x < result->width * result->height; x++)
     color_to_alpha (color, src_buf, 4 * x);
