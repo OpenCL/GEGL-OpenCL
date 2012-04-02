@@ -27,6 +27,8 @@ Features
      * Iterative chunk-wise processing.
      * Processes subregions and dependencies.
      * Subgraph caches to aid performance of non-destructive editing.
+     * Experimental OpenCL acceleration, with possibility of hybrid cpu/gpu
+       processing. 
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Tiled sparse buffers (larger than RAM images).
@@ -345,7 +347,8 @@ GEGL_DEBUG_RECTS::
     Show the results of have/need rect negotiations.
 GEGL_DEBUG_TIME::
     Print a performance instrumentation breakdown of GEGL and it's operations.
-
+GEGL_USE_OPENCL:
+    Enable use of OpenCL processing.
 
 gegl
 ~~~~
