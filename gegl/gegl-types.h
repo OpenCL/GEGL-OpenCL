@@ -54,6 +54,9 @@ typedef struct _GeglRectangle
 GType gegl_rectangle_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
 
+#define  GEGL_RECTANGLE(x,y,w,h) (&((GeglRectangle){(x), (y),   (w), (h)}))
+
+
 typedef struct _GeglNode  GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_NODE    (gegl_node_get_type())
