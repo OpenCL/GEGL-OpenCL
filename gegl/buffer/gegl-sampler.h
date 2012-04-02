@@ -59,6 +59,7 @@ struct _GeglSampler
   gdouble        x; /* mirrors the currently requested */
   gdouble        y; /* coordinates in the instance     */
 
+  gpointer       padding[8]; /* eat from the padding if adding to the struct */
 };
 
 struct _GeglSamplerClass
@@ -73,6 +74,8 @@ struct _GeglSamplerClass
                       void        *output);
  void  (*set_buffer) (GeglSampler  *self,
                       GeglBuffer   *buffer);
+
+ gpointer       padding[8]; /* eat from the padding if adding to the struct */
 };
 
 GType gegl_sampler_get_type    (void) G_GNUC_CONST;
