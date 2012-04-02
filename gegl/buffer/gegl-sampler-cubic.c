@@ -148,12 +148,7 @@ gegl_sampler_cubic_get (GeglSampler *self,
   gfloat           *sampler_bptr;
   gfloat            factor;
 
-#ifdef HAS_G4FLOAT
-  g4float            newval4 = g4float_zero;
-  gfloat            *newval = &newval4;
-#else
   gfloat             newval[4] = {0.0, 0.0, 0.0, 0.0};
-#endif
 
   gint              u,v;
   gint              dx,dy;
@@ -164,21 +159,6 @@ gegl_sampler_cubic_get (GeglSampler *self,
   dy = (gint) y;
   sampler_bptr = gegl_sampler_get_ptr (self, dx, dy);
 
-#ifdef HAS_G4FLOAT
-  if (G_LIKELY (gegl_cpu_accel_get_support () & (GEGL_CPU_ACCEL_X86_SSE|
-                                                 GEGL_CPU_ACCEL_X8&_MMX)))
-    {
-      for (v=dy+context_rect.y, i=0; v < dy+context_rect.y+context_rect.height ; v++)
-        for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++, i++)
-          {
-            sampler_bptr += offsets[i];
-            factor = cubicKernel (y - v, cubic->b, cubic->c) *
-                     cubicKernel (x - u, cubic->b, cubic->c);
-            newval4 += g4float_mul(&sampler_bptr[0], factor);
-           }
-     }
-   else
-#endif
      {
        for (v=dy+context_rect.y, i=0; v < dy+context_rect.y+context_rect.height ; v++)
          for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++, i++)
