@@ -29,7 +29,7 @@ Contributions from:
 
 Øyvind Kolås, Martin Nordholts, Hans Petter Jansson, Mikael Magnusson, Victor
 Oliveira, Nils Philippsen, Kevin Kozens, Michael Muré, Jan Rüegg, Michael
-Natterer, Michael Henning, Massimo Valentini,  Alexandre Prokoudine and
+Natterer, Michael Henning, Massimo Valentini, Alexandre Prokoudine and
 Jon Nordby.
 
 Changes in GEGL 0.1.8
@@ -104,7 +104,7 @@ Changes in GEGL 0.1.2
  • Use GFileIOStream in GeglTileBackendFile.
  • Optimizations: in-place processing for point filters/composers,
      SIMD version of gegl:opacity, avoid making unneccesary sub-buffers,
-     removed some  manual instrumentation from critical paths, improved
+     removed some manual instrumentation from critical paths, improved
      speed of samplers.
  • Added xml composition/reference image based regression tests.
  • Added performance tracking framework.
