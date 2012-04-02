@@ -16,11 +16,8 @@ Changes in GEGL 0.2.0
    • Added string based key/value pairs to operations.
    • Added arguments for dealing with scaled down preview rendering.
  • Added human interaction ranges and non-linear mapping to properties.
- • Operations:
 
  • Buffer:
-   • Added lohalo resampler, API and infrastructure for doing non
-     affine resamplings.
    • Removed broken lanczos sampler.
    • Add gegl_buffer_set_color and gegl_buffer_set_pattern
    • Added ability to drop cached tiles.
@@ -45,7 +42,7 @@ Changes in GEGL 0.1.8
 
  • build/test improvements.
  • Buffer:
-   • Added lohalo resampler, API and infrastructure for doing non
+   • Added lohalo resampler, API and infrastructure for doing non-
      affine resamplings.
 
 Contributions from:
@@ -61,9 +58,9 @@ Changes in GEGL 0.1.6
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • New operations: max-rgb, pixelise, motion blur.
 
- • Fixed a bugs in matting-levin that made GEGL halt due to errors
+ • Fixed a bug in matting-levin that made GEGL halt due to errors
    detected by babl sanity code, this made 0.1.4 be unusable if you had
-   all dependendency when building.
+   all dependendencies when building.
  • build/test improvements.
  • Buffer:
      Added API to use external tile backends, allowing to plug-in alien
@@ -135,10 +132,10 @@ Changes in GEGL 0.1.0
    pure command line tool (which can still visualize stuff with help
    help the SDL based display operation)
  • Consider {x=G_MININT/2, y=G_MININT/2, width=G_MAXINT, height=G_MAXINT}
-   as the only valid region wichin processing may occur. Processing
+   as the only valid region in which processing may occur. Processing
    outside of this region is undefined behaviour.
  • Added support for storing allocation stack traces for GeglBuffers
-   so that debuging buffer leaks becomes much easier
+   so that debugging buffer leaks becomes much easier
  • Made small changes and cleanups of the public API, e.g.
    • Removed gegl_node_adapt_child()
    • Made GeglConfig an explicit object
@@ -147,9 +144,9 @@ Changes in GEGL 0.1.0
    • Added gegl_rectangle_infinite_plane() and
      gegl_rectangle_is_infinite_plane()
  • Added new sampler GeglSamplerSharp
- • Added format property go gegl:buffer-sink
+ • Added format property to gegl:buffer-sink
  • Cleaned up and made gegl:introspect work again
- • Add a bunch of test cases using the automake test sytem (make check)
+ • Add a bunch of test cases using the automake test system (make check)
    and also port buffer tests to automake
  • General cleanups, bug fixes, increased robustness and improved
    documentation
@@ -169,7 +166,7 @@ Changes in GEGL 0.0.22
    • gegl:opacity - combine value and aux mask input when both are available.
    • gegl:src-in - deal correctly with extens.
    • gegl:path - new op covering the stroke/fill needs of SVG.
-   • deprecated gegl:shift, the affine familiy of operations now
+   • deprecated gegl:shift, the affine family of operations now
      uses the same fast code paths for integer translations.
  • GeglBuffer
    • Profiling motivated speed ups in data reading/writing.
@@ -250,7 +247,7 @@ Changes in GEGL 0.0.14
  • Relicensed under LGPLv3+.
  • Per node caches (faster recomputation when properties of nodes in
    composition change)
- • Sampler framwork for interpolation.
+ • Sampler framework for interpolation.
  • Modified API for retrieving scaled buffers gegl_node_blit / gegl_buffer_get.
  • Renamed XML serialization and parsing API to be descendants of GeglNode.
  • Progress monitoring for GeglProcessor
@@ -296,11 +293,11 @@ Changes in GEGL 0.0.6
  • handling of relative/absolute path names for XML.
  • merged GeglNode and GeglGraph classes.
  • build fixes for Win32 and FreeBSD
- • temporary disabled custom cairo in test application.
+ • temporarily disabled custom cairo in test application.
  • png and EXR improvements.
 
 Contributions from:
-  Dominik Ernst, Kevin Cozens, Øyvind Kolås, Michael Schumacher and Øyvind Kolås.
+  Dominik Ernst, Kevin Cozens, Øyvind Kolås and Michael Schumacher.
 
 
 Changes in GEGL 0.0.4
@@ -308,7 +305,7 @@ Changes in GEGL 0.0.4
 This was the first public release of GEGL.
 
  • 8bit, 16bit integer and 32bit floating point, RGB, CIE Lab, YCbCr and naive
-  CMYK output.
+   CMYK output.
  • Extendable through plug-ins.
  • XML, C and Python interfaces.
  • Memory efficient evaluation of subregions.
