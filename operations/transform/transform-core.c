@@ -14,10 +14,14 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Philip Lafleur
+ *           2006-2012 Øyvind Kolås
+ *           2009 Martin Nordholts
+ *           2010 Debarshi Ray
+ *           2011 Mikael Magnusson
+ *           2011 Massimo Valentini
+ *           2012 Kevin Cozens
  */
 
-/* TODO: reenable different samplers (through the sampling mechanism
- *       of GeglBuffer intitially) */
 /* TODO: only calculate pixels inside transformed polygon */
 /* TODO: should hard edges always be used when only scaling? */
 /* TODO: make rect calculations depend on the sampling kernel of the
@@ -165,18 +169,15 @@ static void
 gegl_affine_prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format ("RaGaBaA float");
-  /*op_affine_sampler_init (affine);*/
-  /*gegl_operation_set_format (operation, "input", format);
-  gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
+  gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 }
 
 static void
 op_affine_class_init (OpTransformClass *klass)
 {
-  GObjectClass             *gobject_class = G_OBJECT_CLASS (klass);
-  /*GeglOperationFilterClass *filter_class  = GEGL_OPERATION_FILTER_CLASS (klass);*/
-  GeglOperationClass       *op_class      = GEGL_OPERATION_CLASS (klass);
+  GObjectClass         *gobject_class = G_OBJECT_CLASS (klass);
+  GeglOperationClass   *op_class      = GEGL_OPERATION_CLASS (klass);
 
   gobject_class->set_property         = gegl_affine_set_property;
   gobject_class->get_property         = gegl_affine_get_property;
@@ -467,10 +468,13 @@ gegl_affine_get_bounding_box (GeglOperation *op)
       return in_rect;
     }
 
-  in_rect.x      += context_rect.x;
-  in_rect.y      += context_rect.y;
-  in_rect.width  += context_rect.width;
-  in_rect.height += context_rect.height;
+  if (!gegl_affine_matrix3_allow_fast_translate (&matrix))
+    {
+      in_rect.x      += context_rect.x;
+      in_rect.y      += context_rect.y;
+      in_rect.width  += context_rect.width;
+      in_rect.height += context_rect.height;
+    }
 
   have_points [0] = in_rect.x;
   have_points [1] = in_rect.y;
