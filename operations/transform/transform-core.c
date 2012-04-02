@@ -333,7 +333,7 @@ gegl_affine_create_composite_matrix (OpTransform    *affine,
       GeglMatrix3 source;
 
       gegl_affine_get_source_matrix (affine, &source);
-      gegl_matrix3_multiply (&source, matrix, matrix);
+      gegl_matrix3_multiply (matrix, &source, matrix);
     }
 }
 
@@ -609,7 +609,7 @@ gegl_affine_get_invalidated_by_change (GeglOperation       *op,
       GeglMatrix3 source;
 
       gegl_affine_get_source_matrix (affine, &source);
-      gegl_matrix3_multiply (&source, &matrix, &matrix);
+      gegl_matrix3_multiply (&matrix, &source, &matrix);
     }
 
   if (gegl_affine_is_intermediate_node (affine) ||
