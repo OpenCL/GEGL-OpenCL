@@ -43,7 +43,6 @@ liboperation_sources = \
 	gegl-operation-sink.c			\
 	gegl-operation-source.c			\
 	gegl-operation-temporal.c		\
-	gegl-operation-processors.c		\
 	gegl-operation-context.c		\
 	gegl-operations.c			\
 	gegl-extension-handler.h		\

@@ -62,14 +62,8 @@ struct _GeglOperation
  * See <a href='gegl-plugin.h.html'>gegl-plugin.h</a> for details.
  */
 
-#define MAX_PROCESSOR 4
-
 /* the level at which is being operated is stored in the context,
 */
-
-void gegl_operation_class_add_processor (GeglOperationClass *cclass,
-                                         GCallback           process,
-                                         const gchar        *string);
 
 struct _GeglOperationClass
 {
