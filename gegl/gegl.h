@@ -804,7 +804,7 @@ void           gegl_processor_set_rectangle (GeglProcessor       *processor,
  *
  * while (gegl_processor_work (processor, &progress))
  *   g_warning ("%f%% complete", progress);
- * gegl_processor_destroy (processor);
+ * g_object_unref (processor);
  */
 gboolean       gegl_processor_work          (GeglProcessor *processor,
                                              gdouble       *progress);

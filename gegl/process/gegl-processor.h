@@ -45,8 +45,6 @@ void           gegl_processor_set_rectangle (GeglProcessor       *processor,
                                              const GeglRectangle *rectangle);
 gboolean       gegl_processor_work          (GeglProcessor       *processor,
                                              gdouble             *progress);
-void           gegl_processor_destroy       (GeglProcessor       *processor);
-
 G_END_DECLS
 
 #endif /* __GEGL_PROCESSOR_H__ */
