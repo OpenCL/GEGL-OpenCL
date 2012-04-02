@@ -16,6 +16,12 @@
  * Copyright 2007 Mukund Sivaraman <muks@mukund.org>
  */
 
+/* XXX
+ * This plug-in isn't really useful apart for compatibility with GIMP
+ * scripts, operating with HSV as a color model for filters isn't really
+ * useful.
+ */
+
 /*
  * The plug-in only does v = 1.0 - v; for each pixel in the image, or
  * each entry in the colormap depending upon the type of image, where 'v'
@@ -45,6 +51,13 @@
 #define GEGL_CHANT_C_FILE       "value-invert.c"
 
 #include "gegl-chant.h"
+
+static void
+prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
+}
 
 static gboolean
 process (GeglOperation       *op,
@@ -207,6 +220,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+  operation_class->prepare = prepare;
   point_filter_class->cl_process = cl_process;
 
   operation_class->opencl_support = TRUE;
