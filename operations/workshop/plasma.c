@@ -135,13 +135,13 @@ put_pixel (PlasmaContext *context,
 }
 
 static gboolean
-do_plasma_big (PlasmaContext *context,
-               gint           x1,
-               gint           y1,
-               gint           x2,
-               gint           y2,
-               gint           depth,
-               gint           scale_depth)
+do_plasma (PlasmaContext *context,
+           gint           x1,
+           gint           y1,
+           gint           x2,
+           gint           y2,
+           gint           depth,
+           gint           scale_depth)
 {
   gfloat tl[4], ml[4], bl[4], mt[4], mm[4], mb[4], tr[4], mr[4], br[4];
   gfloat tmp[4];
@@ -168,7 +168,7 @@ do_plasma_big (PlasmaContext *context,
       context->buffer_y = y1;
       context->buffer_width = x2 - x1 + 1;
 
-      ret = do_plasma_big (context, x1, y1, x2, y2, depth, scale_depth);
+      ret = do_plasma (context, x1, y1, x2, y2, depth, scale_depth);
 
       context->using_buffer = FALSE;
 
@@ -282,13 +282,13 @@ do_plasma_big (PlasmaContext *context,
   if (x1 < x2 || y1 < y2)
     {
       /* Top left. */
-      do_plasma_big (context, x1, y1, xm, ym, depth - 1, scale_depth + 1);
+      do_plasma (context, x1, y1, xm, ym, depth - 1, scale_depth + 1);
       /* Bottom left. */
-      do_plasma_big (context, x1, ym, xm, y2, depth - 1, scale_depth + 1);
+      do_plasma (context, x1, ym, xm, y2, depth - 1, scale_depth + 1);
       /* Top right. */
-      do_plasma_big (context, xm, y1, x2, ym, depth - 1, scale_depth + 1);
+      do_plasma (context, xm, y1, x2, ym, depth - 1, scale_depth + 1);
       /* Bottom right. */
-      return do_plasma_big (context, xm, ym, x2, y2, depth - 1, scale_depth + 1);
+      return do_plasma (context, xm, ym, x2, y2, depth - 1, scale_depth + 1);
     }
 
   return TRUE;
@@ -337,13 +337,13 @@ process (GeglOperation       *operation,
   else
     context->gr = g_rand_new_with_seed (context->o->seed);
 
-  do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, -1, 0);
+  do_plasma (context, boundary.x, boundary.y, x-1, y-1, -1, 0);
 
   /*
    * Now we recurse through the images, going deeper each time
    */
   depth = 1;
-  while (!do_plasma_big (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
+  while (!do_plasma (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
     depth++;
 
   gegl_buffer_sample_cleanup (context->output);
