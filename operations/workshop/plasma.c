@@ -141,8 +141,8 @@ do_plasma (PlasmaContext *context,
            gint           y1,
            gint           x2,
            gint           y2,
-           gint           depth,
-           gint           scale_depth)
+           gint           plasma_depth,
+           gint           recursion_depth)
 {
   gfloat tl[4], ml[4], bl[4], mt[4], mm[4], mb[4], tr[4], mr[4], br[4];
   gfloat tmp[4];
@@ -169,7 +169,7 @@ do_plasma (PlasmaContext *context,
       context->buffer_y = y1;
       context->buffer_width = x2 - x1 + 1;
 
-      ret = do_plasma (context, x1, y1, x2, y2, depth, scale_depth);
+      ret = do_plasma (context, x1, y1, x2, y2, plasma_depth, recursion_depth);
 
       context->using_buffer = FALSE;
 
@@ -182,7 +182,7 @@ do_plasma (PlasmaContext *context,
   xm = (x1 + x2) / 2;
   ym = (y1 + y2) / 2;
 
-  if (depth == -1)
+  if (plasma_depth == -1)
     {
       random_rgba (context->gr, tl);
       put_pixel (context, tl, x1, y1);
@@ -214,7 +214,7 @@ do_plasma (PlasmaContext *context,
       return FALSE;
     }
 
-  if (!depth)
+  if (!plasma_depth)
     {
       if (x1 == x2 && y1 == y2)
         return FALSE;
@@ -228,7 +228,7 @@ do_plasma (PlasmaContext *context,
       gegl_buffer_sample (context->output, x2, y2, NULL, br, babl_format ("RGBA float"),
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
-      ran = context->o->turbulence / (2.0 * scale_depth);
+      ran = context->o->turbulence / (2.0 * recursion_depth);
 
       if (xm != x1 || xm != x2)
         {
@@ -283,13 +283,13 @@ do_plasma (PlasmaContext *context,
   if (x1 < x2 || y1 < y2)
     {
       /* Top left. */
-      do_plasma (context, x1, y1, xm, ym, depth - 1, scale_depth + 1);
+      do_plasma (context, x1, y1, xm, ym, plasma_depth - 1, recursion_depth + 1);
       /* Bottom left. */
-      do_plasma (context, x1, ym, xm, y2, depth - 1, scale_depth + 1);
+      do_plasma (context, x1, ym, xm, y2, plasma_depth - 1, recursion_depth + 1);
       /* Top right. */
-      do_plasma (context, xm, y1, x2, ym, depth - 1, scale_depth + 1);
+      do_plasma (context, xm, y1, x2, ym, plasma_depth - 1, recursion_depth + 1);
       /* Bottom right. */
-      return do_plasma (context, xm, ym, x2, y2, depth - 1, scale_depth + 1);
+      return do_plasma (context, xm, ym, x2, y2, plasma_depth - 1, recursion_depth + 1);
     }
 
   return TRUE;
