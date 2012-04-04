@@ -59,8 +59,8 @@ set_display_handler (GeglOperation *operation)
   GeglChantO  *o    = GEGL_CHANT_PROPERTIES (operation);
   GeglChant   *self = GEGL_CHANT (operation);
   const gchar *known_handlers[] = {"gegl-gtk3:display", 
-				 "gegl-gtk2:display",
-                                 "gegl:sdl-display"};
+                                   "gegl-gtk2:display",
+                                   "gegl:sdl-display"};
   char *handler = NULL;
   gchar **operations = NULL;
   guint   n_operations;
@@ -102,8 +102,8 @@ attach (GeglOperation *operation)
 
   self->input   = gegl_node_get_input_proxy (operation->node, "input");
   self->display = gegl_node_new_child (operation->node,
-                                      "operation", "gegl:nop",
-                                      NULL);
+                                       "operation", "gegl:nop",
+                                       NULL);
   gegl_node_link (self->input, self->display);
 
   set_display_handler (operation);
@@ -121,7 +121,7 @@ process (GeglOperation        *operation,
   GeglChant   *self = GEGL_CHANT (operation);
 
   return gegl_operation_process (self->display->operation, 
-				 context, output_pad, roi, level);
+                                 context, output_pad, roi, level);
 }
 
 static void
@@ -139,7 +139,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"        , "gegl:display",
     "categories"  , "meta:display",
     "description" ,
-          _("Display the input buffer in a window."),
+    _("Display the input buffer in a window."),
     NULL);
 }
 #endif
