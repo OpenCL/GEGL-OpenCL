@@ -5,6 +5,11 @@
 # Use under a public domain license.
 #
 
+if RUBY_VERSION =~ /^1.9/ or RUBY_VERSION =~ /^[2345]/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
 class Argument
     attr_accessor :name, :data_type, :doc
     def initialize
