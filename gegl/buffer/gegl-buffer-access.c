@@ -1208,11 +1208,12 @@ gegl_buffer_clear (GeglBuffer          *dst,
     }
 }
 
-void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
-                                               const GeglRectangle *rect,
-                                               GeglBuffer          *pattern,
-                                               gdouble              x_offset,
-                                               gdouble              y_offset)
+void
+gegl_buffer_set_pattern (GeglBuffer          *buffer,
+                         const GeglRectangle *rect, /* XXX:should be respected*/
+                         GeglBuffer          *pattern,
+                         gdouble              x_offset,
+                         gdouble              y_offset)
 {
   GeglRectangle src_rect = {0,}, dst_rect;
   int pat_width, pat_height;
@@ -1225,20 +1226,16 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
   width      = gegl_buffer_get_width (buffer);
   height     = gegl_buffer_get_height (buffer);
 
-  while (x_offset > pat_width)
-    x_offset -= pat_width;
-  while (y_offset < pat_height)
-    y_offset += pat_height;
+  while (y_offset < 0) y_offset += pat_height;
+  while (x_offset < 0) x_offset += pat_width;
 
-  while (x_offset < 0)
-    x_offset += pat_width;
-  while (y_offset > pat_height)
-    y_offset -= pat_height;
+  x_offset %= pat_width;
+  y_offset %= pat_height;
 
-  src_rect.width = dst_rect.width = pat_width;
+  src_rect.width  = dst_rect.width  = pat_width;
   src_rect.height = dst_rect.height = pat_height;
 
-  cols = width / pat_width + 1;
+  cols = width  / pat_width  + 1;
   rows = height / pat_height + 1;
 
   for (row = 0; row <= rows + 1; row++)
@@ -1250,9 +1247,10 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
       }
 }
 
-void            gegl_buffer_set_color         (GeglBuffer          *dst,
-                                               const GeglRectangle *dst_rect,
-                                               GeglColor           *color)
+void
+gegl_buffer_set_color (GeglBuffer          *dst,
+                       const GeglRectangle *dst_rect,
+                       GeglColor           *color)
 {
   GeglBufferIterator *i;
   gchar               buf[128];
