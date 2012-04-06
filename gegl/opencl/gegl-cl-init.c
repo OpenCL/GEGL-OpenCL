@@ -339,7 +339,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
       guint kernel_n = 0;
       while (kernel_name[++kernel_n] != NULL);
 
-      cl_data = (gegl_cl_run_data *) g_malloc(sizeof(gegl_cl_run_data)+sizeof(cl_kernel)*kernel_n);
+      cl_data = (gegl_cl_run_data *) g_new(gegl_cl_run_data, 1);
 
       CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 1, &program_source,
                                                                       &length, &errcode) );
@@ -371,9 +371,19 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Compiling successful\n");
         }
 
+      cl_data->kernel = g_new (cl_kernel, kernel_n);
+      cl_data->work_group_size = g_new (size_t, kernel_n);
+
       for (i=0; i<kernel_n; i++)
-        CL_SAFE_CALL( cl_data->kernel[i] =
-                      gegl_clCreateKernel(cl_data->program, kernel_name[i], &errcode) );
+        {
+          CL_SAFE_CALL( cl_data->kernel[i] =
+                        gegl_clCreateKernel(cl_data->program, kernel_name[i], &errcode) );
+
+          CL_SAFE_CALL( errcode = gegl_clGetKernelWorkGroupInfo (cl_data->kernel[i], gegl_cl_get_device(), CL_KERNEL_WORK_GROUP_SIZE,
+                                                                 sizeof(size_t), &cl_data->work_group_size[i], NULL) );
+
+          g_printf ("%s: %lu (%s)\n", kernel_name[i], cl_data->work_group_size[i], gegl_cl_errstring(errcode));
+        }
 
       g_hash_table_insert(cl_program_hash, g_strdup (program_source), (void*)cl_data);
     }

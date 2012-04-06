@@ -53,8 +53,9 @@ size_t gegl_cl_get_iter_height (void);
 
 typedef struct
 {
-  cl_program program;
-  cl_kernel  kernel[];
+  cl_program *program;
+  cl_kernel  *kernel;
+  size_t     *work_group_size;
 } gegl_cl_run_data;
 
 gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
