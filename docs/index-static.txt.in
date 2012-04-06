@@ -28,7 +28,7 @@ Features
      * Processes subregions and dependencies.
      * Subgraph caches to aid performance of non-destructive editing.
      * Experimental OpenCL acceleration, with possibility of hybrid cpu/gpu
-       processing. 
+       processing.
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Tiled sparse buffers (larger than RAM images).
@@ -40,8 +40,8 @@ Features
   - Operations
       * PNG, JPEG, SVG, EXR, RAW, ffmpeg, v4l and other image sources.
       * link:operations.html#cat_render[Pattern renderers]
-      * link:operations.html#math[Arithmetic operations]
-      * link_operations.html#porter_duff[porter duff compositing]
+      * link:operations.html#cat_math[Arithmetic operations]
+      * link:operations.html#cat_porter-duff[porter duff compositing]
       * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
       * Gaussian blur, bilateral-filter, symmetric nearest neighbour, linear
       * blur, unsharp mask, pixelize and more.
@@ -65,7 +65,7 @@ http://git.gnome.org/cgit/gegl/log/[Change log]::
 http://git.gnome.org/cgit/gegl/tree/NEWS[NEWS]::
   The NEWS file for a list of major new features (also contains older NEWS).
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
- for known and tracked issues with GEGL and perhaps see the 
+ for known and tracked issues with GEGL and perhaps see the
 http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]::
   The mailinglist archives for some discussion and announcement.
 
@@ -231,7 +231,7 @@ sys::[cat @top_srcdir@/examples/hello-world.c]
 Operation API
 ~~~~~~~~~~~~~
 An API to extend the functionality of GEGL with new image processing primitive,
-file loaders, export formats or similar. 
+file loaders, export formats or similar.
 
 Each GEGL operation is defined in a .c file that gets turned into a single
 shared object that is loaded. Each operation is a subclass of one of the
@@ -470,8 +470,8 @@ dropped into the directory in the build.
   │   ├──affine        Transforming operations (rotate/scale/translate)
   │   ├──generated ⊙   Operations generated from scripts (currently
   │   ├──external      Operations with external dependencies.
-  │   ├──common ⊙      Other operations. 
-  │   └──workshop ⊙    Works in progress, (you must pass --enable-workshop 
+  │   ├──common ⊙      Other operations.
+  │   └──workshop ⊙    Works in progress, (you must pass --enable-workshop
   │       │            when configurig to build these by default, you can enter
   │       │            the directory manually and type make && sudo make install
   │       │            as well.
