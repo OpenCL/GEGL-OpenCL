@@ -1229,8 +1229,8 @@ gegl_buffer_set_pattern (GeglBuffer          *buffer,
   while (y_offset < 0) y_offset += pat_height;
   while (x_offset < 0) x_offset += pat_width;
 
-  x_offset %= pat_width;
-  y_offset %= pat_height;
+  x_offset = fmod (x_offset, pat_width);
+  y_offset = fmod (y_offset, pat_height);
 
   src_rect.width  = dst_rect.width  = pat_width;
   src_rect.height = dst_rect.height = pat_height;
