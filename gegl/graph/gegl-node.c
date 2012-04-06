@@ -578,6 +578,34 @@ gegl_node_source_invalidated (GeglNode            *source,
   gegl_node_invalidated (destination, &dirty_rect, FALSE);
 }
 
+static GSList *
+gegl_node_get_depends_on (GeglNode *self);
+
+static gboolean
+gegl_node_has_source (GeglNode *self,
+                      GeglNode *potential_source)
+{
+  GSList *producers, *p;
+  gboolean found = FALSE;
+
+  if (self == potential_source)
+    return TRUE;
+
+  producers = gegl_node_get_depends_on (self);
+  for (p = producers; p; p = p->next)
+    {
+      if (p->data == potential_source)
+        found = TRUE;
+      else
+        found = gegl_node_has_source (p->data, potential_source);
+      if (found)
+        break;
+    }
+  g_slist_free (producers);
+
+  return found;
+}
+
 gboolean
 gegl_node_connect_from (GeglNode    *sink,
                         const gchar *sink_pad_name,
@@ -593,6 +621,12 @@ gegl_node_connect_from (GeglNode    *sink,
   g_return_val_if_fail (sink_pad_name != NULL, FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
   g_return_val_if_fail (source_pad_name != NULL, FALSE);
+
+  if (gegl_node_has_source (source, sink))
+    {
+      g_warning ("Construction of loop requested, bailing\n");
+      return FALSE;
+    }
 
   /* For graph nodes we implicitly use the proxy nodes */
   if (sink->is_graph)
