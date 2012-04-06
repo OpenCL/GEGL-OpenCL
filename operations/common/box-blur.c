@@ -242,10 +242,11 @@ static const char* kernel_source =
 "                                                                                                   \n"
 "  mean = (float4)(0.0f);                                                                           \n"
 "                                                                                                   \n"
-"  for (i=-radius; i <= radius; i++)                                                                \n"
-"   {                                                                                               \n"
-"     mean += in[in_index + i];                                                                     \n"
-"   }                                                                                               \n"
+"  if (get_global_id(1) < width)                                                                    \n"
+"    for (i=-radius; i <= radius; i++)                                                              \n"
+"      {                                                                                            \n"
+"        mean += in[in_index + i];                                                                  \n"
+"      }                                                                                            \n"
 "                                                                                                   \n"
 "  aux[aux_index] = mean / (2 * radius + 1);                                                        \n"
 "}                                                                                                  \n"
@@ -254,18 +255,20 @@ static const char* kernel_source =
 "                               __global       float4     *out,                                     \n"
 "                               int width, int radius)                                              \n"
 "{                                                                                                  \n"
-"  const int aux_index = (radius + get_global_id(0)) * width + get_global_id (1);                   \n"
 "                                                                                                   \n"
 "  const int out_index = get_global_id(0) * width + get_global_id (1);                              \n"
 "  int i;                                                                                           \n"
 "  float4 mean;                                                                                     \n"
 "                                                                                                   \n"
 "  mean = (float4)(0.0f);                                                                           \n"
+"  int aux_index = get_global_id(0) * width + get_global_id (1);                                    \n"
 "                                                                                                   \n"
-"  for (i=-radius; i <= radius; i++)                                                                \n"
-"   {                                                                                               \n"
-"     mean += aux[aux_index + i * width];                                                           \n"
-"   }                                                                                               \n"
+"  if(get_global_id(1) < width)                                                                     \n"
+"    for (i=-radius; i <= radius; i++)                                                              \n"
+"      {                                                                                            \n"
+"        mean += aux[aux_index];                                                                    \n"
+"        aux_index += width;                                                                        \n"
+"      }                                                                                            \n"
 "                                                                                                   \n"
 "  out[out_index] = mean / (2 * radius + 1);                                                        \n"
 "}                                                                                                  \n";
@@ -282,6 +285,7 @@ cl_box_blur (cl_mem                in_tex,
 {
   cl_int cl_err = 0;
   size_t global_ws_hor[2], global_ws_ver[2];
+  size_t local_ws_hor[2], local_ws_ver[2];
 
   if (!cl_data)
     {
@@ -291,11 +295,15 @@ cl_box_blur (cl_mem                in_tex,
 
   if (!cl_data) return 1;
 
+  local_ws_hor[0] = 1;
+  local_ws_hor[1] = 256;
   global_ws_hor[0] = roi->height + 2 * radius;
-  global_ws_hor[1] = roi->width;
+  global_ws_hor[1] = ((roi->width + local_ws_hor[1] -1)/local_ws_hor[1]) * local_ws_hor[1];
 
+  local_ws_ver[0] = 1;
+  local_ws_ver[1] = 256;
   global_ws_ver[0] = roi->height;
-  global_ws_ver[1] = roi->width;
+  global_ws_ver[1] = ((roi->width + local_ws_ver[1] -1)/local_ws_ver[1]) * local_ws_ver[1];
 
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
@@ -305,7 +313,7 @@ cl_box_blur (cl_mem                in_tex,
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
-                                        NULL, global_ws_hor, NULL,
+                                        NULL, global_ws_hor, local_ws_hor,
                                         0, NULL, NULL);
   if (cl_err != CL_SUCCESS) return cl_err;
 
@@ -319,7 +327,7 @@ cl_box_blur (cl_mem                in_tex,
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                         cl_data->kernel[1], 2,
-                                        NULL, global_ws_ver, NULL,
+                                        NULL, global_ws_ver, local_ws_ver,
                                         0, NULL, NULL);
   if (cl_err != CL_SUCCESS) return cl_err;
 
