@@ -381,8 +381,6 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
           CL_SAFE_CALL( errcode = gegl_clGetKernelWorkGroupInfo (cl_data->kernel[i], gegl_cl_get_device(), CL_KERNEL_WORK_GROUP_SIZE,
                                                                  sizeof(size_t), &cl_data->work_group_size[i], NULL) );
-
-          g_printf ("%s: %lu (%s)\n", kernel_name[i], cl_data->work_group_size[i], gegl_cl_errstring(errcode));
         }
 
       g_hash_table_insert(cl_program_hash, g_strdup (program_source), (void*)cl_data);
