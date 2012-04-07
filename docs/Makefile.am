@@ -1,7 +1,7 @@
 SUBDIRS= gallery
 #DIST_SUBDIRS= graphics gallery
 
-#	
+#
 # The patterns used for html creation in the gegl build system
 # is very small, and should probably be documented in a tutorial.
 #
@@ -185,7 +185,7 @@ index.html: index-static.txt		\
 	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd`/$(srcdir) -a toc -a theme=gegl -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a toc -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
@@ -194,7 +194,7 @@ endif
 development.html: $(top_srcdir)/docs/development.txt
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd`/$(srcdir) -a toc -a theme=gegl -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a toc -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
