@@ -20,6 +20,7 @@
  *           2011 Mikael Magnusson
  *           2011 Massimo Valentini
  *           2012 Kevin Cozens
+ *           2012 Nicolas Robidoux
  */
 
 /* TODO: only calculate pixels inside transformed polygon */
@@ -787,10 +788,10 @@ affine_generic (GeglBuffer  *dest,
               float u = u_float / w_float;
               float v = v_float / w_float;
 
-              inverse_jacobian.coeff[0][0]= (u_float + inverse.coeff[0][0] ) / (w_float + inverse.coeff[2][0]) - u;
-              inverse_jacobian.coeff[0][1]= (u_float + inverse.coeff[0][1] ) / (w_float + inverse.coeff[2][1]) - u;
-              inverse_jacobian.coeff[1][0]= (v_float + inverse.coeff[1][0] ) / (w_float + inverse.coeff[2][0]) - v;
-              inverse_jacobian.coeff[1][1]= (v_float + inverse.coeff[1][1] ) / (w_float + inverse.coeff[2][1]) - v;
+              inverse_jacobian.coeff[0][0] = (inverse.coeff[0][0] - inverse.coeff[2][0] * u) / w_float;
+              inverse_jacobian.coeff[0][1] = (inverse.coeff[0][1] - inverse.coeff[2][1] * u) / w_float;
+              inverse_jacobian.coeff[1][0] = (inverse.coeff[1][0] - inverse.coeff[2][0] * v) / w_float;
+              inverse_jacobian.coeff[1][1] = (inverse.coeff[1][1] - inverse.coeff[2][1] * v) / w_float;
 
               gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr);
               dest_ptr+=4;
