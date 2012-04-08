@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-04-06 18:48+0000\n"
-"PO-Revision-Date: 2012-04-08 01:10+0100\n"
+"PO-Revision-Date: 2012-04-08 21:55+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -455,7 +455,6 @@ msgid "Discretization Bits"
 msgstr "Diskretizacijski biti"
 
 #: ../operations/common/exp-combine.c:29
-#, fuzzy
 msgid "Log2 of source's discretization steps"
 msgstr "Log2 diskretizacijskih korakov izvora"
 
@@ -623,9 +622,8 @@ msgid "Number of colors"
 msgstr "Število barv"
 
 #: ../operations/common/fractal-explorer.c:71
-#, fuzzy
 msgid "Loglog smoothing"
-msgstr "Prečno (loglog) glajenje"
+msgstr "Prečno glajenje"
 
 #: ../operations/common/fractal-explorer.c:72
 msgid "Use loglog smoothing"
@@ -742,7 +740,6 @@ msgid "GeglNode to introspect"
 msgstr "GeglNode za introspekcijo"
 
 #: ../operations/common/introspect.c:160
-#, fuzzy
 msgid "GEGL graph visualizer."
 msgstr "Vizualizator grafikonov GEGL."
 
@@ -1052,9 +1049,8 @@ msgid "Clip result to input size"
 msgstr "Poreži rezultat na velikost vhoda"
 
 #: ../operations/common/mirrors.c:54
-#, fuzzy
 msgid "Wrap input"
-msgstr "Ročni vnos"
+msgstr "Ovij vnos"
 
 #: ../operations/common/mirrors.c:54
 msgid "Fill full output area"
@@ -1403,7 +1399,6 @@ msgstr "Vrednosti"
 #: ../operations/common/svg-luminancetoalpha.c:27
 #: ../operations/common/svg-matrix.c:27
 #: ../operations/common/svg-saturate.c:26
-#, fuzzy
 msgid "list of <number>s"
 msgstr "seznam <številk>"
 
@@ -1857,7 +1852,6 @@ msgid "GdkPixbuf to use"
 msgstr "Uporabljen GdkPixbuf"
 
 #: ../operations/external/pixbuf.c:103
-#, fuzzy
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr "Uporablja GdkPixbug, ki se nahaja na pomnilniškem mestu v <em>pixbuf</em>."
 
@@ -1899,7 +1893,6 @@ msgid "PPM image loader."
 msgstr "Nalagalnik slik PPM."
 
 #: ../operations/external/ppm-save.c:27
-#, fuzzy
 msgid "Raw format"
 msgstr "Surovi zapis"
 
@@ -1916,7 +1909,6 @@ msgid "RGBE image saver (Radiance HDR format)"
 msgstr "Shranjevalnik slik RGBE (zapis Radiance HDR)"
 
 #: ../operations/external/save-pixbuf.c:28
-#, fuzzy
 msgid "Pixbuf location"
 msgstr "Mesto Pixbuf"
 
@@ -1986,14 +1978,12 @@ msgid "Color for the text (defaults to 'white')"
 msgstr "Barva besedila (privzetod 'white', bela)"
 
 #: ../operations/external/text.c:33
-#, fuzzy
 msgid "Wrap width"
-msgstr "Prelomi širino"
+msgstr "Širina ovijanja"
 
 #: ../operations/external/text.c:34
-#, fuzzy
 msgid "Sets the width in pixels at which long lines will wrap. Use -1 for no wrapping."
-msgstr "Določi širino v slikovnih točkah, pri kateri se dolge črte prelomijo. Uporabite -1 za prepoved preloma."
+msgstr "Določi širino v slikovnih točkah, pri kateri se dolge črte ovijajo. Uporabite -1 za prepoved ovijanja."
 
 #: ../operations/external/text.c:36
 msgid "Justification"
@@ -2288,7 +2278,6 @@ msgid "Vertical translation"
 msgstr "Navpični vodoravni premik"
 
 #: ../operations/transform/translate.c:33
-#, fuzzy
 msgid "Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used"
 msgstr "Prerazmesti izravnalnik (z natančnostjo pod-slikovne točke), če so podane celoštevilske koordinate hitri poti brez uporabe ponovnega vzorčenja."
 
@@ -2428,9 +2417,8 @@ msgstr "Vrednost nasičenosti"
 
 #: ../operations/workshop/color-rotate.c:52
 #: ../operations/workshop/color-rotate.c:53
-#, fuzzy
 msgid "Change/Treat to this"
-msgstr "Spremeni/obdelaj to"
+msgstr "Spremeni/obdelaj"
 
 #: ../operations/workshop/color-rotate.c:55
 msgid "The value of gray threshold"
@@ -2757,14 +2745,12 @@ msgid "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji
 msgstr "Uporabljeni Bayerjev vzorec, 0 se zdi ustrezen za nekatere datoteke Nikon, 2 za nekatere datoteke Fuji."
 
 #: ../operations/workshop/demosaic-bimedian.c:220
-#, fuzzy
 msgid "Performs a grayscale2color demosaicing of an image, using bimedian interpolation."
-msgstr "Izvede demozaičenje slike grayscale2color z uporabo dvomedianske interpolacije."
+msgstr "Izvede razmozaičenje slike grayscale2color z uporabo dvomedianske interpolacije."
 
 #: ../operations/workshop/demosaic-simple.c:152
-#, fuzzy
 msgid "Performs a naive grayscale2color demosaicing of an image, no interpolation."
-msgstr "Izvede naivno demozaičenje slike grayscale2color, brez interpolacije."
+msgstr "Izvede naivno razmozaičenje slike grayscale2color, brez interpolacije."
 
 #: ../operations/workshop/disc-percentile.c:29
 msgid "The percentile to compute, defaults to 50, which is a median filter."
@@ -2920,9 +2906,8 @@ msgid "Autocorrect D values for lens correction models."
 msgstr "Samopopravi vrednosti D za korekcijske modele."
 
 #: ../operations/workshop/external/lens-correct.c:48
-#, fuzzy
 msgid "Model red a:"
-msgstr "a rdeče modela:"
+msgstr "Model rdeče a:"
 
 #: ../operations/workshop/external/lens-correct.c:49
 #: ../operations/workshop/external/lens-correct.c:51
@@ -2940,64 +2925,52 @@ msgid "Correction parameters for each color channel"
 msgstr "Parametri korekcije za vsak barvni kanal"
 
 #: ../operations/workshop/external/lens-correct.c:50
-#, fuzzy
 msgid "Model red b:"
-msgstr "b rdeče modela:"
+msgstr "Model rdeče b:"
 
 #: ../operations/workshop/external/lens-correct.c:52
-#, fuzzy
 msgid "Model red c:"
-msgstr "c rdeče modela:"
+msgstr "Model rdeče c:"
 
 #: ../operations/workshop/external/lens-correct.c:54
-#, fuzzy
 msgid "Model red d:"
-msgstr "d rdeče modela:"
+msgstr "Model rdeče d:"
 
 #: ../operations/workshop/external/lens-correct.c:57
-#, fuzzy
 msgid "Model green a:"
-msgstr "a zelene modela:"
+msgstr "Model zelene a:"
 
 #: ../operations/workshop/external/lens-correct.c:59
-#, fuzzy
 msgid "Model green b:"
-msgstr "b zelene modela:"
+msgstr "Model zelene b:"
 
 #: ../operations/workshop/external/lens-correct.c:61
-#, fuzzy
 msgid "Model green c:"
-msgstr "c zelene modela:"
+msgstr "Model zelene c:"
 
 #: ../operations/workshop/external/lens-correct.c:63
-#, fuzzy
 msgid "Model green d:"
-msgstr "d zelene modela:"
+msgstr "Model zelene d:"
 
 #: ../operations/workshop/external/lens-correct.c:66
-#, fuzzy
 msgid "Model blue a:"
-msgstr "a modre modela:"
+msgstr "Model modre a:"
 
 #: ../operations/workshop/external/lens-correct.c:68
-#, fuzzy
 msgid "Model blue b:"
-msgstr "b modre modela:"
+msgstr "Model modre b:"
 
 #: ../operations/workshop/external/lens-correct.c:70
-#, fuzzy
 msgid "Model blue c:"
-msgstr "c modre modela:"
+msgstr "Model modre c:"
 
 #: ../operations/workshop/external/lens-correct.c:72
-#, fuzzy
 msgid "Model blue d:"
-msgstr "d modre modela:"
+msgstr "Model modre d:"
 
 #: ../operations/workshop/external/lens-correct.c:75
-#, fuzzy
 msgid "Model alpha a:"
-msgstr "a alfe modela:"
+msgstr "Model alfe a:"
 
 #: ../operations/workshop/external/lens-correct.c:76
 #: ../operations/workshop/external/lens-correct.c:78
@@ -3007,19 +2980,16 @@ msgid "Correction parameters for alpha channel"
 msgstr "Parametri korekcije za kanal alfa"
 
 #: ../operations/workshop/external/lens-correct.c:77
-#, fuzzy
 msgid "Model alpha b:"
-msgstr "b alfe modela:"
+msgstr "Model alfe b:"
 
 #: ../operations/workshop/external/lens-correct.c:79
-#, fuzzy
 msgid "Model alpha c:"
-msgstr "c alfe modela:"
+msgstr "Model alfe c:"
 
 #: ../operations/workshop/external/lens-correct.c:81
-#, fuzzy
 msgid "Model alpha d:"
-msgstr "d alfe modela:"
+msgstr "Model alfe d:"
 
 #: ../operations/workshop/external/line-profile.c:25
 msgid "X0"
@@ -3153,7 +3123,7 @@ msgstr "Ozadje"
 #: ../operations/workshop/fractal-trace.c:45
 #, fuzzy
 msgid "Optional parameter to override automatic selection of wrap background. Choices are wrap, black, white and transparent."
-msgstr "Neobvezni parameter, ki preglasi samodejni izbor ozadja ovijanja. Izbrati je mogoče med wrap, black, white in transparent."
+msgstr "Neobvezni parameter, ki preglasi samodejni izbor ozadja ovijanja. Izbrati je mogoče med wrap, black (črna), white (bela) in transparent (prosojna)."
 
 #: ../operations/workshop/fractal-trace.c:171
 msgid "Unsupported fractal type"
@@ -3190,7 +3160,7 @@ msgstr "Operacija zlivanja slik 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 #: ../operations/workshop/hstack.c:178
 #, fuzzy
 msgid "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of \"input\")"
-msgstr "Vodoravno skladaj vhode (v \"output\" je \"aux\" postavljen na desno od \"input\")"
+msgstr "Vodoravno skladaj vhode (v \"output\" je \"aux\" postavljen desno od \"input\")"
 
 #: ../operations/workshop/kuwahara.c:243
 msgid "Edge preserving blur"
@@ -3273,9 +3243,8 @@ msgid "Turbulence"
 msgstr "Turbulenca"
 
 #: ../operations/workshop/plasma.c:36
-#, fuzzy
 msgid "The value of the turbulence"
-msgstr "Vrednost vrtinčenja"
+msgstr "Vrednost turbulence"
 
 #: ../operations/workshop/plasma.c:389
 msgid "Performs plasma effect on the image"
@@ -3352,6 +3321,7 @@ msgid "Behavior"
 msgstr "Vedenje"
 
 #: ../operations/workshop/warp.c:34
+#, fuzzy
 msgid "Behavior of the op"
 msgstr "Vedenje pisala"
 
