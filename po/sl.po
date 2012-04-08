@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-04-06 18:48+0000\n"
-"PO-Revision-Date: 2012-04-07 14:51+0100\n"
+"PO-Revision-Date: 2012-04-08 01:10+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -133,9 +133,8 @@ msgid "Contrast"
 msgstr "Kontrast"
 
 #: ../operations/common/brightness-contrast.c:30
-#, fuzzy
 msgid "Range scale factor"
-msgstr "Faktor spreminjanja velikosti obsega"
+msgstr "Faktor spreminjanja mere obsega"
 
 #: ../operations/common/brightness-contrast.c:31
 #: ../operations/common/reinhard05.c:27
@@ -452,7 +451,6 @@ msgid "Relative brightness of each exposure in EV"
 msgstr "Relativna svetlost vsake ekspozicije v EV"
 
 #: ../operations/common/exp-combine.c:27
-#, fuzzy
 msgid "Discretization Bits"
 msgstr "Diskretizacijski biti"
 
@@ -510,9 +508,8 @@ msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Prag preliva za zniževanje izboljšave podrobnosti"
 
 #: ../operations/common/fattal02.c:1325
-#, fuzzy
 msgid "Adapt an image, which may have a high dynamic range, for presentation using a low dynamic range. This operator attenuates the magnitudes of local image gradients, producing luminance within the range 0.0-1.0"
-msgstr "Prilagodite sliko, ki ima morda visok obseg dinamike, za predstavitev z uporabo nizkega obsega dinamike. Ta operator attenuates magnitude krajevnih prelivov slike, ki izdela svetilnost v območju 0,0-1,0."
+msgstr "Prilagodite sliko, ki ima morda visok obseg dinamike, za predstavitev z uporabo nizkega obsega dinamike. Ta operator slabi magnitude krajevnih prelivov slike in povzroči svetilnost v območju 0,0-1,0."
 
 #: ../operations/common/fractal-explorer.c:35
 msgid "Fractal type"
@@ -741,7 +738,6 @@ msgid "Node"
 msgstr "Vozlišče"
 
 #: ../operations/common/introspect.c:26
-#, fuzzy
 msgid "GeglNode to introspect"
 msgstr "GeglNode za introspekcijo"
 
@@ -917,9 +913,8 @@ msgid "Level of emphasis on image gradient details"
 msgstr "Raven poudarjanja podrobnosti prelivov slike"
 
 #: ../operations/common/mantiuk06.c:1639
-#, fuzzy
 msgid "Adapt an image, which may have a high dynamic range, for presentation using a low dynamic range. This operator constrains contrasts across multiple spatial frequencies, producing luminance within the range 0.0-1.0"
-msgstr "Prilagodite sliko, ki ima morda visok obseg dinamike, za predstavitev z uporabo nizkega obsega dinamike. Ta operator omeji kontraste prek več prostorskih frekvenc in izdela svetilnost v območju 0,0-1,0."
+msgstr "Priredite sliko, ki ima morda visok obseg dinamike, za predstavitev z uporabo nizkega obsega dinamike. Ta operator omeji kontraste prek več prostorskih frekvenc in izdela svetilnost v območju 0,0-1,0."
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26
@@ -936,14 +931,13 @@ msgstr "Notranje uporabljeni vzorčevalnik"
 
 #: ../operations/common/map-absolute.c:148
 msgid "sample input with an auxiliary buffer that contain absolute source coordinates"
-msgstr "Vzorči vhod s pomožnim izravnalnikom, ki vsebuje relativne izvorne koordinate"
+msgstr "Vzorči vhod s pomožnim izravnalnikom, ki vsebuje absolutne izvorne koordinate"
 
 #: ../operations/common/map-relative.c:23
 msgid "Scaling"
 msgstr "Spreminjanje merila"
 
 #: ../operations/common/map-relative.c:24
-#, fuzzy
 msgid "scaling factor of displacement, indicates how large spatial displacement a relative mapping value of 1.0 corresponds to."
 msgstr "Faktor spremembe merila razmestitve, nakaže, v kakšni meri prostorska razmestitev ustreza relativni vrednosti preslikave 1,0."
 
@@ -961,9 +955,8 @@ msgid "Given a sparse user supplied tri-map and an input image, create a foregro
 msgstr "Z uporabniško podano redko posejano tri-map in vhodno sliko ustvari ospredje alfe brez leska. Za tri-map nastavite belo kot izbrano in črno kot neizbrano. Vse drugo bo obravnavano kot neznano in bo posledično zapolnjeno."
 
 #: ../operations/common/mblur.c:25
-#, fuzzy
 msgid "Dampness"
-msgstr "Vlažnost"
+msgstr "Dušenje"
 
 #: ../operations/common/mblur.c:26
 msgid "The value represents the contribution of the past to the new frame."
@@ -1022,22 +1015,18 @@ msgid "Y axis ratio for the center of mirroring"
 msgstr "Razmerje osi Y za središče zrcaljenja"
 
 #: ../operations/common/mirrors.c:44
-#, fuzzy
 msgid "Trim X"
-msgstr "Poreži X"
+msgstr "Pristriži X"
 
 #: ../operations/common/mirrors.c:44
-#, fuzzy
 msgid "X axis ratio for trimming mirror expanse"
 msgstr "Razmerje osi X za porezavo razširjenosti zrcaljenja"
 
 #: ../operations/common/mirrors.c:46
-#, fuzzy
 msgid "Trim Y"
-msgstr "Poreži Y"
+msgstr "Pristriži Y"
 
 #: ../operations/common/mirrors.c:46
-#, fuzzy
 msgid "Y axis ratio for trimming mirror expanse"
 msgstr "Razmerje osi Y za porezavo razširjenosti zrcaljenja"
 
@@ -1270,7 +1259,6 @@ msgid "Reduces the number of levels in each color component of the image."
 msgstr "Zmanjša število ravni v vsaki barvni komponenti slike."
 
 #: ../operations/common/raw-load.c:183
-#, fuzzy
 msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
 
@@ -1381,9 +1369,8 @@ msgid "Pairs"
 msgstr "Pari"
 
 #: ../operations/common/snn-mean.c:29
-#, fuzzy
 msgid "Number of pairs; higher number preserves more acute features"
-msgstr "Število parov; višje število ohrani bolj akutne lastnosti"
+msgstr "Število parov; višje število ohrani bolj kritične lastnosti"
 
 #: ../operations/common/snn-mean.c:436
 msgid "Noise reducing edge enhancing blur filter based  on Symmetric Nearest Neighbours"
@@ -1398,9 +1385,8 @@ msgid "Number of iterations, a higher number of iterations provides a less noisy
 msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih ob višjem strošku izračuna"
 
 #: ../operations/common/stress.c:191
-#, fuzzy
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
-msgstr "Prostorsko časovna ovojnica podobna Retinex s stohastičnim vzorčenjem"
+msgstr "Prostorsko časovna ovojnica, podobna Retinex, s stohastičnim vzorčenjem"
 
 #: ../operations/common/stretch-contrast.c:162
 msgid "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that make poor use of the available contrast (little contrast, very dark, or very bright images)."
@@ -1474,9 +1460,8 @@ msgid "Inverts just the value component, the result is the corresponding `invert
 msgstr "Preobrne le komponento vrednosti, rezultat je ustrezna `reobrnjena' slika."
 
 #: ../operations/common/vignette.c:24
-#, fuzzy
 msgid "Shape"
-msgstr "Oblika"
+msgstr "Lik"
 
 #: ../operations/common/vignette.c:24
 msgid "Shape to use: 0=circle 1=diamond 2=square"
@@ -1722,7 +1707,6 @@ msgid "Progressive"
 msgstr "Progresivno"
 
 #: ../operations/external/jpg-save.c:34
-#, fuzzy
 msgid "Create progressive JPEG images"
 msgstr "Ustvari napredne slike JPEG"
 
@@ -1744,7 +1728,6 @@ msgid "Epsilon"
 msgstr "Epsilon"
 
 #: ../operations/external/matting-levin.c:27
-#, fuzzy
 msgid "Log of the error weighting"
 msgstr "Zapisnik uteževanja napak"
 
@@ -2756,7 +2739,6 @@ msgid "Block size"
 msgstr "Velikost bloka"
 
 #: ../operations/workshop/deinterlace.c:34
-#, fuzzy
 msgid "Block size of deinterlacing rows/columns"
 msgstr "Velikost bloka za razpletanje vrstic/stolpcev"
 
@@ -2853,28 +2835,24 @@ msgid "Script"
 msgstr "Skripta"
 
 #: ../operations/workshop/external/gluas.c:42
-#, fuzzy
 msgid "The lua script containing the implementation of this operation."
-msgstr "Skript lua, ki vsebuje implementacijo te operacije."
+msgstr "Skript lua, ki udejanja to operacijo."
 
 #: ../operations/workshop/external/gluas.c:43
-#, fuzzy
 msgid "a stored lua script on disk implementing an operation."
-msgstr "Na disku shranjeni skript lua, ki implementira operacijo."
+msgstr "Na disku shranjeni skript lua, ki udejanja operacijo."
 
 #: ../operations/workshop/external/gluas.c:44
 msgid "User value"
 msgstr "Uporabniška vrednost"
 
 #: ../operations/workshop/external/gluas.c:45
-#, fuzzy
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(pojavi se v splošni spremenljivki 'user_value' v lua)."
 
 #: ../operations/workshop/external/gluas.c:984
-#, fuzzy
 msgid "A general purpose filter/composer implementation proxy for the lua programming language."
-msgstr "Splošno namensko posredovanje implementacije filtra/sestavljalnika za programski jezik lua."
+msgstr "Splošno-namensko posredovanje implementacije filtra/sestavljalnika za programski jezik lua."
 
 #: ../operations/workshop/external/lens-correct.c:28
 msgid "Maker:"
@@ -3329,9 +3307,8 @@ msgid "Radial gradient renderer"
 msgstr "Upodobljevalnik krožnega preliva"
 
 #: ../operations/workshop/rawbayer-load.c:154
-#, fuzzy
 msgid "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as grayscale, if the fileformat is .rawbayer it will use this loader instead of the normal dcraw loader, if the fileformat is .rawbayerS it will swap the returned 16bit numbers (the pnm loader is apparently buggy)"
-msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi, ponuja surovo bayerjevo mrežo kot sivinsko, če je vrsta datoteke .rawbayer bo uporabil ta nalagalnik namesto običajnega nalagalnik dcraw, če pa je vrsta datoteke .rawbayerS, bo zamenjala vrnjena 16-bitna števila (nalagalnik pnm je očitno poln napak)"
+msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi, ponuja surovo bayerjevo mrežo kot sivinsko, če je vrsta datoteke .rawbayer bo uporabil ta nalagalnik namesto običajnega nalagalnika dcraw, če pa je vrsta datoteke .rawbayerS, bo zamenjala vrnjena 16-bitna števila (nalagalnik pnm je očitno poln napak)"
 
 #: ../operations/workshop/red-eye-removal.c:32
 msgid "The value of the threshold"
@@ -3342,9 +3319,8 @@ msgid "Performs red-eye-removal on the image"
 msgstr "Izvede odstranitev rdečega z oči na sliki."
 
 #: ../operations/workshop/snn-percentile.c:30
-#, fuzzy
 msgid "Number of pairs, higher number preserves more acute features"
-msgstr "Število parov, višja številka ohranja bolj akutne lastnosti"
+msgstr "Število parov, višja številka ohranja bolj kritične lastnosti"
 
 #: ../operations/workshop/snn-percentile.c:32
 msgid "The percentile to return, the default value 50 is equal to the median"
@@ -3364,7 +3340,6 @@ msgid "Effect Size"
 msgstr "Velikost učinka"
 
 #: ../operations/workshop/warp.c:31
-#, fuzzy
 msgid "Effect Hardness"
 msgstr "Trdota učinka"
 
