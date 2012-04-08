@@ -785,13 +785,14 @@ affine_generic (GeglBuffer  *dest,
           for (x = roi->width; x--;)
             {
               GeglMatrix2 inverse_jacobian;
-              float u = u_float / w_float;
-              float v = v_float / w_float;
+              gdouble w_recip = 1.0 / w_float;
+              gdouble u = u_float * w_recip;
+              gdouble v = v_float * w_recip;
 
-              inverse_jacobian.coeff[0][0] = (inverse.coeff[0][0] - inverse.coeff[2][0] * u) / w_float;
-              inverse_jacobian.coeff[0][1] = (inverse.coeff[0][1] - inverse.coeff[2][1] * u) / w_float;
-              inverse_jacobian.coeff[1][0] = (inverse.coeff[1][0] - inverse.coeff[2][0] * v) / w_float;
-              inverse_jacobian.coeff[1][1] = (inverse.coeff[1][1] - inverse.coeff[2][1] * v) / w_float;
+              inverse_jacobian.coeff[0][0] = (inverse.coeff[0][0] - inverse.coeff[2][0] * u) * w_recip;
+              inverse_jacobian.coeff[0][1] = (inverse.coeff[0][1] - inverse.coeff[2][1] * u) * w_recip;
+              inverse_jacobian.coeff[1][0] = (inverse.coeff[1][0] - inverse.coeff[2][0] * v) * w_recip;
+              inverse_jacobian.coeff[1][1] = (inverse.coeff[1][1] - inverse.coeff[2][1] * v) * w_recip;
 
               gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr);
               dest_ptr+=4;
