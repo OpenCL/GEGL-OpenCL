@@ -213,7 +213,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
       g_static_mutex_unlock (&mutex);
     }
 
-  if (cache->count != 0)
+  if (cache->count < 0)
     {
       g_warning ("cache-handler tile balance not zero: %i\n", cache->count);
     }
@@ -495,6 +495,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
           g_slice_free (CacheItem, item);
           g_queue_delete_link (cache_queue, link);
           g_static_mutex_unlock (&mutex);
+          cache->count --;
           return;
         }
     }
@@ -516,11 +517,15 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   item->y       = y;
   item->z       = z;
 
+  // XXX : remove entry if it already exists
+  gegl_tile_handler_cache_void (cache, x, y, z);
+
   g_static_mutex_lock (&mutex);
   cache_total  += item->tile->size;
   g_queue_push_head (cache_queue, item);
 
   cache->count ++;
+
 
   g_hash_table_insert (cache_ht, item, item);
 

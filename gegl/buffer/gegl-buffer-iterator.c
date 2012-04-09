@@ -96,12 +96,12 @@ static gboolean  gegl_buffer_tile_iterator_next (GeglBufferTileIterator *i);
  *  check whether iterations on two buffers starting from the given coordinates with
  *  the same width and height would be able to run parallell.
  */
-static gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
-                                             gint        xA,
-                                             gint        yA,
-                                             GeglBuffer *bufferB,
-                                             gint        xB,
-                                             gint        yB)
+gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
+                                      gint        xA,
+                                      gint        yA,
+                                      GeglBuffer *bufferB,
+                                      gint        xB,
+                                      gint        yB)
 {
   if (bufferA->tile_storage->tile_width !=
       bufferB->tile_storage->tile_width)

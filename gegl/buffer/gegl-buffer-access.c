@@ -1136,6 +1136,48 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
+static void
+gegl_buffer_copy2 (GeglBuffer          *src,
+                   const GeglRectangle *src_rect,
+                   GeglBuffer          *dst,
+                   const GeglRectangle *dst_rect)
+{
+  const Babl *fish;
+  g_return_if_fail (GEGL_IS_BUFFER (src));
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+
+  if (!src_rect)
+    {
+      src_rect = gegl_buffer_get_extent (src);
+    }
+
+  if (!dst_rect)
+    {
+      dst_rect = src_rect;
+    }
+
+  if (src_rect->width == 0 || src_rect->height == 0)
+    return;
+
+  fish = babl_fish (src->soft_format, dst->soft_format);
+
+    {
+      GeglRectangle dest_rect_r = *dst_rect;
+      GeglBufferIterator *i;
+      gint read;
+
+      dest_rect_r.width = src_rect->width;
+      dest_rect_r.height = src_rect->height;
+
+      i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format, 
+                                    GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+      read = gegl_buffer_iterator_add (i, src, src_rect, 0, src->soft_format,
+                                       GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+      while (gegl_buffer_iterator_next (i) && i->length > 0)
+        babl_process (fish, i->data[read], i->data[0], i->length);
+    }
+}
+
 void
 gegl_buffer_copy (GeglBuffer          *src,
                   const GeglRectangle *src_rect,
@@ -1154,6 +1196,155 @@ gegl_buffer_copy (GeglBuffer          *src,
   if (!dst_rect)
     {
       dst_rect = src_rect;
+    }
+
+
+  if (src->soft_format == dst->soft_format &&
+      gegl_buffer_scan_compatible (src, src_rect->x, src_rect->y,
+                                   dst, dst_rect->x, dst_rect->y))
+    {
+      GeglRectangle dest_rect_r = *dst_rect;
+
+      gint tile_width = src->tile_width;
+      gint tile_height = src->tile_height;
+      tile_width = dst->tile_width;
+      tile_height = dst->tile_height;
+
+      dest_rect_r.width = src_rect->width;
+      dest_rect_r.height = src_rect->height;
+      dst_rect = &dest_rect_r;
+
+      {
+        GeglRectangle cow_rect = *dst_rect;
+
+        /* adjust origin until we match the start of tile alignment */
+        while ( (cow_rect.x + dst->shift_x) % tile_width)
+          {
+            cow_rect.x ++;
+            cow_rect.width --;
+          }
+        while ( (cow_rect.y + dst->shift_y) % tile_height)
+          {
+            cow_rect.y ++;
+            cow_rect.height --;
+          }
+        /* adjust size of rect to match multiple of tiles */
+
+        cow_rect.width  = cow_rect.width  - (cow_rect.width  % tile_width);
+        cow_rect.height = cow_rect.height - (cow_rect.height % tile_height);
+        {
+          GeglRectangle top, bottom, left, right;
+          
+          /* iterate over rectangle that can be cow copied, duplicating
+           * one and one tile
+           */
+          {
+            /* first we do a dumb copy,. but with fetched tiles */
+
+            gint dst_x, dst_y;
+            GeglTileHandlerChain   *storage;
+            GeglTileHandlerCache   *cache;
+ 
+            storage = GEGL_TILE_HANDLER_CHAIN (dst->tile_storage);
+            cache = GEGL_TILE_HANDLER_CACHE (gegl_tile_handler_chain_get_first (storage, GEGL_TYPE_TILE_HANDLER_CACHE));
+
+            for (dst_y = cow_rect.y + dst->shift_y; dst_y < cow_rect.y + dst->shift_y + cow_rect.height; dst_y += tile_height)
+            for (dst_x = cow_rect.x + dst->shift_x; dst_x < cow_rect.x + dst->shift_x + cow_rect.width; dst_x += tile_width)
+              {
+                GeglTile *src_tile;
+                GeglTile *dst_tile;
+                gint src_x, src_y;
+                gint stx, sty, dtx, dty;
+
+                src_x = dst_x - (dst_rect->x - src_rect->x) + src->shift_x;
+                src_y = dst_y - (dst_rect->y - src_rect->y) + src->shift_y;
+
+                stx = gegl_tile_indice (src_x, tile_width);
+                sty = gegl_tile_indice (src_y, tile_height);
+                dtx = gegl_tile_indice (dst_x, tile_width);
+                dty = gegl_tile_indice (dst_y, tile_height);
+
+#if 1
+                src_tile = gegl_tile_source_get_tile ((GeglTileSource*)(src),
+                                                      stx, sty, 0);
+
+                dst_tile = gegl_tile_dup (src_tile);
+                dst_tile->tile_storage = (void*)storage;
+
+                /* XXX: this call should only be neccesary as long as GIMP
+                 *      is dropping tile caches behind our back
+                 */
+                if(gegl_tile_source_set_tile ((GeglTileSource*)dst, dtx, dty, 0, 
+                                           dst_tile));
+                gegl_tile_handler_cache_insert (cache, dst_tile, dtx, dty, 0);
+
+                gegl_tile_unref (src_tile);
+                gegl_tile_unref (dst_tile);
+#else
+                src_tile = gegl_tile_source_get_tile (
+                  (GeglTileSource*)(src), stx, sty, 0);
+                dst_tile = gegl_tile_source_get_tile (
+                  (GeglTileSource*)(dst), dtx, dty, 0);
+                gegl_tile_lock (dst_tile);
+                g_assert (src_tile->size == dst_tile->size);
+
+                memcpy (dst_tile->data, src_tile->data, src_tile->size);
+
+                gegl_tile_unlock (dst_tile);
+                gegl_tile_unref (dst_tile);
+                gegl_tile_unref (src_tile);
+#endif
+              }
+          }
+
+          top = *dst_rect;
+          top.height = (cow_rect.y - dst_rect->y);
+
+
+          left = *dst_rect;
+          left.y = cow_rect.y;
+          left.height = cow_rect.height;
+          left.width = (cow_rect.x - dst_rect->x);
+
+          bottom = *dst_rect;
+          bottom.y = (cow_rect.y + cow_rect.height);
+          bottom.height = (dst_rect->y + dst_rect->height) -
+                          (cow_rect.y  + cow_rect.height);
+
+          right  =  *dst_rect;
+          right.x = (cow_rect.x + cow_rect.width);
+          right.width = (dst_rect->x + dst_rect->width) -
+                          (cow_rect.x  + cow_rect.width);
+          right.y = cow_rect.y;
+          right.height = cow_rect.height;
+
+          if (top.height)
+          gegl_buffer_copy2 (src, 
+                             GEGL_RECTANGLE (src_rect->x + (top.x-dst_rect->x),
+                                             src_rect->y + (top.y-dst_rect->y),
+                                 top.width, top.height),
+                             dst, &top);
+          if (bottom.height)
+          gegl_buffer_copy2 (src, 
+                             GEGL_RECTANGLE (src_rect->x + (bottom.x-dst_rect->x),
+                                             src_rect->y + (bottom.y-dst_rect->y),
+                                 bottom.width, bottom.height),
+                             dst, &bottom);
+          if (left.width)
+          gegl_buffer_copy2 (src, 
+                             GEGL_RECTANGLE (src_rect->x + (left.x-dst_rect->x),
+                                             src_rect->y + (left.y-dst_rect->y),
+                                 left.width, left.height),
+                             dst, &left);
+          if (right.width && right.height)
+          gegl_buffer_copy2 (src, 
+                             GEGL_RECTANGLE (src_rect->x + (right.x-dst_rect->x),
+                                             src_rect->y + (right.y-dst_rect->y),
+                                 right.width, right.height),
+                             dst, &right);
+        }
+      }
+      return;
     }
 
   fish = babl_fish (src->soft_format, dst->soft_format);

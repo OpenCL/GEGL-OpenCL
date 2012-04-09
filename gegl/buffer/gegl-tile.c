@@ -298,7 +298,7 @@ gegl_tile_is_stored (GeglTile *tile)
 void
 gegl_tile_void (GeglTile *tile)
 {
-  tile->stored_rev = tile->rev;
+  gegl_tile_mark_as_stored (tile);
   tile->tile_storage = NULL;
   if (tile->z==0)
     gegl_tile_void_pyramid (tile);
