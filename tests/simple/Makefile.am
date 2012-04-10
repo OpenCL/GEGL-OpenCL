@@ -13,6 +13,7 @@ noinst_PROGRAMS = \
 	test-misc			\
 	test-path			\
 	test-buffer-extract \
+	test-buffer-cast  \
 	test-proxynop-processing
 
 EXTRA_DIST = test-exp-combine.sh
