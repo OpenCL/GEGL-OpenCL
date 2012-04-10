@@ -24,7 +24,7 @@
 #define FAILURE -1
 
 static int
-test_buffer_extract (void)
+test_buffer_cast (void)
 {
   gint result = SUCCESS;
   GeglBuffer *buffer = gegl_buffer_new (GEGL_RECTANGLE (0,0,1,1),
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   gegl_init (&argc, &argv);
 
   if (result == SUCCESS)
-    result = test_buffer_extract ();
+    result = test_buffer_cast ();
 
   gegl_exit ();
 
