@@ -18,6 +18,8 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
                          const Babl          *format,
                          gint                 rowstride)
 {
+  GeglBuffer *buffer;
+
   if (extent==NULL)
     {
       g_error ("got a NULL extent");
@@ -33,7 +35,7 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
    * requesting the correct parameters when creating the
    * buffer
    */
-  return g_object_new (GEGL_TYPE_BUFFER,
+  buffer = g_object_new (GEGL_TYPE_BUFFER,
                        "x",          extent->x,
                        "y",          extent->y,
                        "shift-x",    extent->x,
@@ -44,6 +46,10 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
                        "tile-height", extent->height,
                        "format", format,
                        NULL);
+
+  g_object_set_data (buffer, "is-linear", (void*)0xf00);
+
+  return buffer;
 }
 
 GeglBuffer *

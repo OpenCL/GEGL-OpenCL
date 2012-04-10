@@ -1173,7 +1173,9 @@ gegl_buffer_copy2 (GeglBuffer          *src,
                                     GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
       read = gegl_buffer_iterator_add (i, src, src_rect, 0, src->soft_format,
                                        GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
-      while (gegl_buffer_iterator_next (i) && i->length > 0)
+      while (gegl_buffer_iterator_next (i) &&
+             i->length > 0 /* XXX: <- looks suspicious */
+             )
         babl_process (fish, i->data[read], i->data[0], i->length);
     }
 }
@@ -1200,6 +1202,9 @@ gegl_buffer_copy (GeglBuffer          *src,
 
 
   if (src->soft_format == dst->soft_format &&
+      src->tile_width == dst->tile_width  &&
+      src->tile_height == dst->tile_height &&
+      !g_object_get_data (dst, "is-linear") &&
       gegl_buffer_scan_compatible (src, src_rect->x, src_rect->y,
                                    dst, dst_rect->x, dst_rect->y))
     {
@@ -1344,26 +1349,9 @@ gegl_buffer_copy (GeglBuffer          *src,
                              dst, &right);
         }
       }
-      return;
     }
-
-  fish = babl_fish (src->soft_format, dst->soft_format);
-
-    {
-      GeglRectangle dest_rect_r = *dst_rect;
-      GeglBufferIterator *i;
-      gint read;
-
-      dest_rect_r.width = src_rect->width;
-      dest_rect_r.height = src_rect->height;
-
-      i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format, 
-                                    GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
-      read = gegl_buffer_iterator_add (i, src, src_rect, 0, src->soft_format,
-                                       GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
-      while (gegl_buffer_iterator_next (i))
-        babl_process (fish, i->data[read], i->data[0], i->length);
-    }
+  else
+    gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
 }
 
 void
