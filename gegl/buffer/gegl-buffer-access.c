@@ -1186,7 +1186,6 @@ gegl_buffer_copy (GeglBuffer          *src,
                   GeglBuffer          *dst,
                   const GeglRectangle *dst_rect)
 {
-  const Babl *fish;
   g_return_if_fail (GEGL_IS_BUFFER (src));
   g_return_if_fail (GEGL_IS_BUFFER (dst));
 
@@ -1204,16 +1203,14 @@ gegl_buffer_copy (GeglBuffer          *src,
   if (src->soft_format == dst->soft_format &&
       src->tile_width == dst->tile_width  &&
       src->tile_height == dst->tile_height &&
-      !g_object_get_data (dst, "is-linear") &&
+      !g_object_get_data (G_OBJECT (dst), "is-linear") &&
       gegl_buffer_scan_compatible (src, src_rect->x, src_rect->y,
                                    dst, dst_rect->x, dst_rect->y))
     {
       GeglRectangle dest_rect_r = *dst_rect;
 
-      gint tile_width = src->tile_width;
-      gint tile_height = src->tile_height;
-      tile_width = dst->tile_width;
-      tile_height = dst->tile_height;
+      gint tile_width = dst->tile_width;
+      gint tile_height = dst->tile_height;
 
       dest_rect_r.width = src_rect->width;
       dest_rect_r.height = src_rect->height;
@@ -1354,9 +1351,9 @@ gegl_buffer_copy (GeglBuffer          *src,
     gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
 }
 
-void
-gegl_buffer_clear (GeglBuffer          *dst,
-                   const GeglRectangle *dst_rect)
+static void
+gegl_buffer_clear2 (GeglBuffer          *dst,
+                    const GeglRectangle *dst_rect)
 {
   GeglBufferIterator *i;
   gint                pxsize;
@@ -1385,6 +1382,95 @@ gegl_buffer_clear (GeglBuffer          *dst,
     {
       memset (((guchar*)(i->data[0])), 0, i->length * pxsize);
     }
+}
+
+void
+gegl_buffer_clear (GeglBuffer          *dst,
+                   const GeglRectangle *dst_rect)
+{
+  g_return_if_fail (GEGL_IS_BUFFER (dst));
+
+  if (!dst_rect)
+    {
+      dst_rect = gegl_buffer_get_extent (dst);
+    }
+
+  if (!g_object_get_data (G_OBJECT (dst), "is-linear"))
+    {
+      gint tile_width = dst->tile_width;
+      gint tile_height = dst->tile_height;
+
+      {
+        GeglRectangle cow_rect = *dst_rect;
+
+        /* adjust origin until we match the start of tile alignment */
+        while ( (cow_rect.x + dst->shift_x) % tile_width)
+          {
+            cow_rect.x ++;
+            cow_rect.width --;
+          }
+        while ( (cow_rect.y + dst->shift_y) % tile_height)
+          {
+            cow_rect.y ++;
+            cow_rect.height --;
+          }
+        /* adjust size of rect to match multiple of tiles */
+
+        cow_rect.width  = cow_rect.width  - (cow_rect.width  % tile_width);
+        cow_rect.height = cow_rect.height - (cow_rect.height % tile_height);
+        {
+          GeglRectangle top, bottom, left, right;
+          
+          /* iterate over rectangle that can be cow copied, duplicating
+           * one and one tile
+           */
+          {
+            /* first we do a dumb copy,. but with fetched tiles */
+
+            gint dst_x, dst_y;
+
+            for (dst_y = cow_rect.y + dst->shift_y; dst_y < cow_rect.y + dst->shift_y + cow_rect.height; dst_y += tile_height)
+            for (dst_x = cow_rect.x + dst->shift_x; dst_x < cow_rect.x + dst->shift_x + cow_rect.width; dst_x += tile_width)
+              {
+                gint dtx, dty;
+
+                dtx = gegl_tile_indice (dst_x, tile_width);
+                dty = gegl_tile_indice (dst_y, tile_height);
+
+                if(gegl_tile_source_void ((GeglTileSource*)dst, dtx, dty, 0));
+              }
+          }
+
+          top = *dst_rect;
+          top.height = (cow_rect.y - dst_rect->y);
+
+
+          left = *dst_rect;
+          left.y = cow_rect.y;
+          left.height = cow_rect.height;
+          left.width = (cow_rect.x - dst_rect->x);
+
+          bottom = *dst_rect;
+          bottom.y = (cow_rect.y + cow_rect.height);
+          bottom.height = (dst_rect->y + dst_rect->height) -
+                          (cow_rect.y  + cow_rect.height);
+
+          right  =  *dst_rect;
+          right.x = (cow_rect.x + cow_rect.width);
+          right.width = (dst_rect->x + dst_rect->width) -
+                          (cow_rect.x  + cow_rect.width);
+          right.y = cow_rect.y;
+          right.height = cow_rect.height;
+
+          if (top.height)     gegl_buffer_clear2 (dst, &top);
+          if (bottom.height)  gegl_buffer_clear2 (dst, &bottom);
+          if (left.width)     gegl_buffer_clear2 (dst, &left);
+          if (right.width)    gegl_buffer_clear2 (dst, &right);
+        }
+      }
+    }
+  else
+    gegl_buffer_clear2 (dst, dst_rect);
 }
 
 void

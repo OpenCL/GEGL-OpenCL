@@ -47,7 +47,7 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
                        "format", format,
                        NULL);
 
-  g_object_set_data (buffer, "is-linear", (void*)0xf00);
+  g_object_set_data (G_OBJECT (buffer), "is-linear", (void*)0xf00);
 
   return buffer;
 }
