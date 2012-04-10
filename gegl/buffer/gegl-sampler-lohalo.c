@@ -324,7 +324,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap level's offset should almost never smaller than half the
  * previous level's offset.
  */
-#define LOHALO_OFFSET_1 (13)
+#define LOHALO_OFFSET_1 (23)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 /*
