@@ -12,6 +12,7 @@ noinst_PROGRAMS = \
 	test-gegl-rectangle		\
 	test-misc			\
 	test-path			\
+	test-buffer-extract \
 	test-proxynop-processing
 
 EXTRA_DIST = test-exp-combine.sh
