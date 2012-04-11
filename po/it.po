@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-09 12:11+0200\n"
-"PO-Revision-Date: 2012-04-09 16:18+0200\n"
+"PO-Revision-Date: 2012-04-11 01:38+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: italian\n"
@@ -91,7 +91,7 @@ msgid ""
 "An edge preserving blur filter that can be used for noise reduction. It is a "
 "gaussian blur where the contribution of neighbourhood pixels are weighted by "
 "the color difference from the center pixel."
-msgstr ""
+msgstr "Un filtro di sfocamento salva bordi che può essere usato per ridurre i disturbi. È un filtro gaussiano dove il contributo dei pixel adiacenti sono pesati in base alla differenza di colore con il pixel centrale."
 
 #: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -181,7 +181,7 @@ msgstr "Una sorgente che usa un in-memory GeglBuffer, per uso interno di GEGL."
 msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
-msgstr ""
+msgstr "Tenendo conto di ciò che circonda, questo è il raggio in pixel preso in considerazione nel decidere la mappa di colori corrispondente ai valori di grigio"
 
 #: ../operations/common/c2g.c:29 ../operations/common/stress.c:29
 msgid "Samples"
@@ -208,7 +208,7 @@ msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial  color "
 "differences to perform color-feature preserving grayscale  spatial contrast "
 "enhancement"
-msgstr ""
+msgstr "Conversione di colori in scala di grigi, usa dei contenitori formati dalle differenze spaziali di colore per eseguire un aumento di contrasto spaziale in scala di grigi mantenendo le caratteristiche di colore"
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/fractal-explorer.c:30
@@ -338,7 +338,7 @@ msgstr "La curva di contrasto."
 
 #: ../operations/common/contrast-curve.c:125
 msgid "Adjusts the contrast of the image according to a curve."
-msgstr ""
+msgstr "Regola il contrasto dell'immagine secondo una curva."
 
 #: ../operations/common/difference-of-gaussians.c:25
 msgid "Radius 1"
@@ -350,15 +350,15 @@ msgstr "Raggio 2"
 
 #: ../operations/common/difference-of-gaussians.c:101
 msgid "Does an edge detection based on the difference of two gaussian blurs."
-msgstr ""
+msgstr "Esegue un rilievo bordi basandosi sulla differenza di due sfocature gaussiane."
 
 #: ../operations/common/display.c:24 ../operations/external/sdl-display.c:26
 msgid "Title to be given to output window"
-msgstr ""
+msgstr "Tile da dare alla finestra di uscita"
 
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
-msgstr ""
+msgstr "Mostra il buffer di ingresso in una finestra."
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
@@ -375,7 +375,7 @@ msgstr "X"
 
 #: ../operations/common/dropshadow.c:27
 msgid "Horizontal shadow offset"
-msgstr ""
+msgstr "Scostamento orizzontale dell'ombra"
 
 #: ../operations/common/dropshadow.c:28 ../operations/common/layer.c:36
 #: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:33
@@ -385,15 +385,15 @@ msgstr "Y"
 
 #: ../operations/common/dropshadow.c:29
 msgid "Vertical shadow offset"
-msgstr ""
+msgstr "Scostamento verticale dell'ombra"
 
 #: ../operations/common/dropshadow.c:82
 msgid "Creates a dropshadow effect on the input buffer"
-msgstr ""
+msgstr "Crea un effetto di proiezione ombra nel buffer in ingresso"
 
 #: ../operations/common/edge-laplace.c:521
 msgid "High-resolution edge detection"
-msgstr ""
+msgstr "Rilevamento bordi ad alta risoluzione"
 
 #: ../operations/common/edge-sobel.c:28 ../operations/common/edge-sobel.c:29
 #: ../operations/workshop/noise-spread.c:29
@@ -407,11 +407,11 @@ msgstr "Verticale"
 
 #: ../operations/common/edge-sobel.c:34 ../operations/common/edge-sobel.c:35
 msgid "Keep Signal"
-msgstr ""
+msgstr "Mantieni il segnale"
 
 #: ../operations/common/edge-sobel.c:352
 msgid "Specialized direction-dependent edge detection"
-msgstr ""
+msgstr "Speciale rilevamento bordi direzione-dipendente"
 
 #: ../operations/common/exp-combine.c:25
 msgid "Exposure Values"
@@ -419,7 +419,7 @@ msgstr "Valori di esposizione"
 
 #: ../operations/common/exp-combine.c:26
 msgid "Relative brightness of each exposure in EV"
-msgstr ""
+msgstr "Brillantezza relativa per ogni esposizione in EV"
 
 #: ../operations/common/exp-combine.c:27
 msgid "Discretization Bits"
@@ -427,19 +427,19 @@ msgstr "Bit di discretizzazione"
 
 #: ../operations/common/exp-combine.c:29
 msgid "Log2 of source's discretization steps"
-msgstr ""
+msgstr "Log2 dei passi di discretizzazione della sorgente"
 
 #: ../operations/common/exp-combine.c:30
 msgid "Weight Sigma"
-msgstr ""
+msgstr "Peso sigma"
 
 #: ../operations/common/exp-combine.c:32
 msgid "Weight distrubtion sigma controlling response contributions"
-msgstr ""
+msgstr "Peso dei contributi alla risposta della distribuzione sigma controllata"
 
 #: ../operations/common/exp-combine.c:1293
 msgid "Combine multiple scene exposures into one high range buffer"
-msgstr ""
+msgstr "Combina le esposizioni di più scene in un buffer a vasto campo"
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise.c:25
 #: ../operations/workshop/convolution-matrix.c:86
@@ -448,7 +448,7 @@ msgstr "Alfa"
 
 #: ../operations/common/fattal02.c:35
 msgid "Gradient threshold for detail enhancement"
-msgstr ""
+msgstr "Soglia del gradiente per il miglioramento dei dettagli"
 
 #: ../operations/common/fattal02.c:36
 msgid "Beta"
@@ -456,7 +456,7 @@ msgstr "Beta"
 
 #: ../operations/common/fattal02.c:38
 msgid "Strength of local detail enhancement"
-msgstr ""
+msgstr "Forza del miglioramento del dettaglio locale"
 
 #: ../operations/common/fattal02.c:39 ../operations/common/mantiuk06.c:34
 #: ../operations/workshop/color-rotate.c:50
@@ -465,7 +465,7 @@ msgstr "Saturazione"
 
 #: ../operations/common/fattal02.c:41
 msgid "Global color saturation factor"
-msgstr ""
+msgstr "Fattore globale di saturazione del colore"
 
 #: ../operations/common/fattal02.c:42
 msgid "Noise"
@@ -633,13 +633,13 @@ msgstr "Filtro"
 msgid ""
 "Optional parameter to override the automatic selection of blur filter. "
 "Choices are fir, iir, auto"
-msgstr ""
+msgstr "Parametro opzionale per avere la precedenza sulla selezione automatica del filtro di sfocamento. Le scelte possibili sono fir, iir, auto"
 
 #: ../operations/common/gaussian-blur.c:731
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
-msgstr ""
+msgstr "Esegue una media dei pixel adiacenti con la distribuzione normale come peso"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
@@ -717,7 +717,7 @@ msgstr "Visualizzatore grafo GEGL."
 msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
-msgstr ""
+msgstr "Inverte le componenti (eccetto alfa), il risultato è l'immagine corrispondente \"negativa\"."
 
 #: ../operations/common/layer.c:30
 msgid "Operation"
@@ -780,11 +780,11 @@ msgstr "Valore spigolo di distorsione"
 
 #: ../operations/common/lens-distortion.c:39
 msgid "Brighten:"
-msgstr ""
+msgstr "Illumina:"
 
 #: ../operations/common/lens-distortion.c:40
 msgid "Brighten the image"
-msgstr ""
+msgstr "Illumina l'immagine"
 
 #: ../operations/common/lens-distortion.c:41
 msgid "X shift:"
@@ -805,60 +805,60 @@ msgstr "Spostamento verticale"
 #: ../operations/common/lens-distortion.c:321
 #: ../operations/workshop/external/lens-correct.c:476
 msgid "Copies image performing lens distortion correction."
-msgstr ""
+msgstr "Copia le immagini eseguendo una correzione ad una distorsione da lenti."
 
 #: ../operations/common/levels.c:26
 msgid "Low input"
-msgstr ""
+msgstr "Ingresso basso"
 
 #: ../operations/common/levels.c:27
 msgid "Input luminance level to become lowest output"
-msgstr ""
+msgstr "Livello di luminanza in ingresso che diventa il più basso"
 
 #: ../operations/common/levels.c:28
 msgid "High input"
-msgstr ""
+msgstr "Ingresso alto"
 
 #: ../operations/common/levels.c:29
 msgid "Input luminance level to become white."
-msgstr ""
+msgstr "Livello di luminanza di ingresso che diventa il più alto"
 
 #: ../operations/common/levels.c:30
 msgid "Low output"
-msgstr ""
+msgstr "Uscita bassa"
 
 #: ../operations/common/levels.c:31
 msgid "Lowest luminance level in output"
-msgstr ""
+msgstr "Livello di luminanza più bassa in uscita"
 
 #: ../operations/common/levels.c:32
 msgid "High output"
-msgstr ""
+msgstr "Uscita alta"
 
 #: ../operations/common/levels.c:33
 msgid "Highest luminance level in output"
-msgstr ""
+msgstr "Livello di luminanza più alta in uscita"
 
 #: ../operations/common/levels.c:182
 msgid "Remaps the intensity range of the image"
-msgstr ""
+msgstr "Rimappa il campo di intensità dell'immagine"
 
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
 #: ../operations/common/raw-load.c:27 ../operations/external/png-load.c:27
 #: ../operations/external/ppm-load.c:25 ../operations/external/rgbe-load.c:26
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "Path of file to load."
-msgstr ""
+msgstr "Percorso del file da caricare."
 
 #: ../operations/common/load.c:180
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using image magick's convert."
-msgstr ""
+msgstr "Caricatore file multiuso; usa altri gestori nativi o, in mancanza di alternativa, usa il comando convert di ImageMagick."
 
 #: ../operations/common/magick-load.c:136
 msgid "Image Magick wrapper using the png op."
-msgstr ""
+msgstr "Incapsulatore di ImageMagick usando l'op. png"
 
 #: ../operations/common/mantiuk06.c:33
 msgid "The amount of contrast compression"
@@ -881,7 +881,7 @@ msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator constrains contrasts across multiple "
 "spatial frequencies, producing luminance within the range 0.0-1.0"
-msgstr ""
+msgstr "Adatta un'immagine che può avere ad alta dinamica, a presentazioni a bassa dinamica. Quest'operatore limita il contrasto tramite più frequenze spaziali, producendo una luminanza nel campo 0.0-1.0"
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:39
