@@ -19,7 +19,7 @@
  * Copyright (C) 1997 Shuji Narazaki <narazaki@InetQ.or.jp>
  * Copyright (C) 2000 tim copperfield <timecop@japan.co.jp>
  *
- * The common/brightness-contrast.c operation by Øyvind Kolås was used
+ * The common/brightness-contrast.c operation by Ã˜yvind KolÃ¥s was used
  * as a template for this op file.
  */
 
