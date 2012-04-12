@@ -1173,9 +1173,7 @@ gegl_buffer_copy2 (GeglBuffer          *src,
                                     GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
       read = gegl_buffer_iterator_add (i, src, src_rect, 0, src->soft_format,
                                        GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
-      while (gegl_buffer_iterator_next (i) &&
-             i->length > 0 /* XXX: <- looks suspicious */
-             )
+      while (gegl_buffer_iterator_next (i))
         babl_process (fish, i->data[read], i->data[0], i->length);
     }
 }
@@ -1234,6 +1232,7 @@ gegl_buffer_copy (GeglBuffer          *src,
 
         cow_rect.width  = cow_rect.width  - (cow_rect.width  % tile_width);
         cow_rect.height = cow_rect.height - (cow_rect.height % tile_height);
+
         {
           GeglRectangle top, bottom, left, right;
           
@@ -1313,12 +1312,18 @@ gegl_buffer_copy (GeglBuffer          *src,
           bottom.height = (dst_rect->y + dst_rect->height) -
                           (cow_rect.y  + cow_rect.height);
 
+          if (bottom.height < 0)
+            bottom.height = 0;
+
           right  =  *dst_rect;
           right.x = (cow_rect.x + cow_rect.width);
           right.width = (dst_rect->x + dst_rect->width) -
                           (cow_rect.x  + cow_rect.width);
           right.y = cow_rect.y;
           right.height = cow_rect.height;
+
+          if (right.width < 0)
+            right.width = 0;
 
           if (top.height)
           gegl_buffer_copy2 (src, 
@@ -1455,12 +1460,18 @@ gegl_buffer_clear (GeglBuffer          *dst,
           bottom.height = (dst_rect->y + dst_rect->height) -
                           (cow_rect.y  + cow_rect.height);
 
+          if (bottom.height < 0)
+            bottom.height = 0;
+
           right  =  *dst_rect;
           right.x = (cow_rect.x + cow_rect.width);
           right.width = (dst_rect->x + dst_rect->width) -
                           (cow_rect.x  + cow_rect.width);
           right.y = cow_rect.y;
           right.height = cow_rect.height;
+
+          if (right.width < 0)
+            right.width = 0;
 
           if (top.height)     gegl_buffer_clear2 (dst, &top);
           if (bottom.height)  gegl_buffer_clear2 (dst, &bottom);
