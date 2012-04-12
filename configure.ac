@@ -1120,6 +1120,7 @@ gegl-uninstalled.pc
 AC_CONFIG_FILES(
 gegl-gegl_api_version.pc:gegl.pc.in
 gegl/gegl-gegl_api_version.deps:gegl/gegl.deps.in
+gegl/Gegl-gegl_api_version.metadata:gegl/Gegl.metadata.in
 )
 
 AC_OUTPUT

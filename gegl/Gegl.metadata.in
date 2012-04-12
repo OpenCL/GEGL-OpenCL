@@ -1,0 +1,2 @@
+Gegl cheader_filename="gegl.h"
+module_register_type skip
