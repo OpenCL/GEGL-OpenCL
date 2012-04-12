@@ -9,4 +9,5 @@
 /*.gir
 /*.typelib
 /*.vapi
+/*.deps
 /gegl-enums.c

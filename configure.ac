@@ -1119,6 +1119,7 @@ gegl-uninstalled.pc
 # Files with versions in their names
 AC_CONFIG_FILES(
 gegl-gegl_api_version.pc:gegl.pc.in
+gegl/gegl-gegl_api_version.deps:gegl/gegl.deps.in
 )
 
 AC_OUTPUT

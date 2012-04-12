@@ -118,10 +118,10 @@ introspection_sources = \
 INCLUDES = $(AM_CFLAGS) $(AM_CPPFLAGS)
 
 Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
-Gegl_0_1_gir_INCLUDES = GObject-2.0 GLib-2.0 Babl-0.1
-Gegl_0_1_gir_CFLAGS = $(INCLUDES)
-Gegl_0_1_gir_LIBS = libgegl-@GEGL_API_VERSION@.la
-Gegl_0_1_gir_FILES = $(introspection_sources)
+Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0 Babl-0.1
+Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_CFLAGS = $(INCLUDES)
+Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_LIBS = libgegl-@GEGL_API_VERSION@.la
+Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Gegl-@GEGL_API_VERSION@.gir
 
 girdir = $(datadir)/gir-1.0
