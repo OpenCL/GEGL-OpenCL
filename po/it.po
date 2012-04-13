@@ -9,14 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-09 12:11+0200\n"
-"PO-Revision-Date: 2012-04-11 01:38+0200\n"
+"POT-Creation-Date: 2012-04-14 01:38+0200\n"
+"PO-Revision-Date: 2012-04-14 01:50+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
-"Language-Team: it <it@li.org>\n"
+"Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: ../gegl/gegl-init.c:216
 msgid "babls error tolerance, a value beteen 0.2 and 0.000000001"
@@ -76,7 +77,9 @@ msgstr "Raggio di sfocamento"
 
 #: ../operations/common/bilateral-filter.c:28
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
-msgstr "Raggio della regione di pixel quadrata (larghezza e altezza saranno raggio*2+1)."
+msgstr ""
+"Raggio della regione di pixel quadrata (larghezza e altezza saranno "
+"raggio*2+1)."
 
 #: ../operations/common/bilateral-filter.c:29
 msgid "Edge preservation"
@@ -91,7 +94,10 @@ msgid ""
 "An edge preserving blur filter that can be used for noise reduction. It is a "
 "gaussian blur where the contribution of neighbourhood pixels are weighted by "
 "the color difference from the center pixel."
-msgstr "Un filtro di sfocamento salva bordi che può essere usato per ridurre i disturbi. È un filtro gaussiano dove il contributo dei pixel adiacenti sono pesati in base alla differenza di colore con il pixel centrale."
+msgstr ""
+"Un filtro di sfocamento salva bordi che può essere usato per ridurre i "
+"disturbi. È un filtro gaussiano dove il contributo dei pixel adiacenti sono "
+"pesati in base alla differenza di colore con il pixel centrale."
 
 #: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -110,7 +116,9 @@ msgstr "Raggio"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/snn-mean.c:27
 msgid "Radius of square pixel region, (width and height will be radius*2+1)"
-msgstr "Raggio della regione di pixel quadrata (larghezza e altezza saranno raggio*2+1)."
+msgstr ""
+"Raggio della regione di pixel quadrata (larghezza e altezza saranno "
+"raggio*2+1)."
 
 #: ../operations/common/box-blur.c:423
 msgid "Performs an averaging of a square box of pixels"
@@ -158,7 +166,9 @@ msgstr "formato babl"
 #: ../operations/common/buffer-sink.c:28
 msgid ""
 "The babl format of the output GeglBuffer, NULL to use input buffer format"
-msgstr "Il formato babl di GeglBuffer, NULL per usare il formato del buffer in ingresso"
+msgstr ""
+"Il formato babl di GeglBuffer, NULL per usare il formato del buffer in "
+"ingresso"
 
 #: ../operations/common/buffer-sink.c:83
 #: ../operations/common/write-buffer.c:127
@@ -181,7 +191,10 @@ msgstr "Una sorgente che usa un in-memory GeglBuffer, per uso interno di GEGL."
 msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
-msgstr "Tenendo conto di ciò che circonda, questo è il raggio in pixel preso in considerazione nel decidere la mappa di colori corrispondente ai valori di grigio"
+msgstr ""
+"Tenendo conto di ciò che circonda, questo è il raggio in pixel preso in "
+"considerazione nel decidere la mappa di colori corrispondente ai valori di "
+"grigio"
 
 #: ../operations/common/c2g.c:29 ../operations/common/stress.c:29
 msgid "Samples"
@@ -189,7 +202,9 @@ msgstr "Campioni"
 
 #: ../operations/common/c2g.c:30 ../operations/common/stress.c:30
 msgid "Number of samples to do per iteration looking for the range of colors"
-msgstr "Numero di campioni da effettuare per l'iterazione d'aspetto del campo di colori"
+msgstr ""
+"Numero di campioni da effettuare per l'iterazione d'aspetto del campo di "
+"colori"
 
 #: ../operations/common/c2g.c:31 ../operations/common/fractal-explorer.c:42
 #: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
@@ -201,14 +216,19 @@ msgstr "Iterazioni"
 msgid ""
 "Number of iterations, a higher number of iterations provides less noisy "
 "results at a computational cost"
-msgstr "Numero di iterazioni, con un numero elevato si ottengono risultati meno rumorosi ma ad un alto costo computazionale"
+msgstr ""
+"Numero di iterazioni, con un numero elevato si ottengono risultati meno "
+"rumorosi ma ad un alto costo computazionale"
 
 #: ../operations/common/c2g.c:493
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial  color "
 "differences to perform color-feature preserving grayscale  spatial contrast "
 "enhancement"
-msgstr "Conversione di colori in scala di grigi, usa dei contenitori formati dalle differenze spaziali di colore per eseguire un aumento di contrasto spaziale in scala di grigi mantenendo le caratteristiche di colore"
+msgstr ""
+"Conversione di colori in scala di grigi, usa dei contenitori formati dalle "
+"differenze spaziali di colore per eseguire un aumento di contrasto spaziale "
+"in scala di grigi mantenendo le caratteristiche di colore"
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/fractal-explorer.c:30
@@ -292,7 +312,9 @@ msgstr "Temperatura originale"
 #: ../operations/common/color-temperature.c:27
 msgid ""
 "Estimated temperature of the light source in Kelvin the image was taken with."
-msgstr "Temperatura stimata della sorgente di luce in Kelvin con cui l'immagine è stata presa."
+msgstr ""
+"Temperatura stimata della sorgente di luce in Kelvin con cui l'immagine è "
+"stata presa."
 
 #: ../operations/common/color-temperature.c:28
 msgid "Intended temperature"
@@ -318,7 +340,9 @@ msgstr "Esegue un'operazione colore-ad-alfa sull'immagine."
 msgid ""
 "Generates a buffer entirely filled with the specified color, crop it to get "
 "smaller dimensions."
-msgstr "Crea un buffer riempito interamente del colore specificato e lo ritaglia per ridurne le dimensioni."
+msgstr ""
+"Crea un buffer riempito interamente del colore specificato e lo ritaglia per "
+"ridurne le dimensioni."
 
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
@@ -350,7 +374,9 @@ msgstr "Raggio 2"
 
 #: ../operations/common/difference-of-gaussians.c:101
 msgid "Does an edge detection based on the difference of two gaussian blurs."
-msgstr "Esegue un rilievo bordi basandosi sulla differenza di due sfocature gaussiane."
+msgstr ""
+"Esegue un rilievo bordi basandosi sulla differenza di due sfocature "
+"gaussiane."
 
 #: ../operations/common/display.c:24 ../operations/external/sdl-display.c:26
 msgid "Title to be given to output window"
@@ -435,7 +461,8 @@ msgstr "Peso sigma"
 
 #: ../operations/common/exp-combine.c:32
 msgid "Weight distrubtion sigma controlling response contributions"
-msgstr "Peso dei contributi alla risposta della distribuzione sigma controllata"
+msgstr ""
+"Peso dei contributi alla risposta della distribuzione sigma controllata"
 
 #: ../operations/common/exp-combine.c:1293
 msgid "Combine multiple scene exposures into one high range buffer"
@@ -480,7 +507,11 @@ msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
 "gradients, producing luminance within the range 0.0-1.0"
-msgstr "Adattare un'immagine, che potrebbe avere un elevato campo di dinamica, per una presentazione usando un campo di dinamica ridotto. Questo operatore attenua la magnitudo dei gradienti locali dell'immagine, producendo luminanza nel campo 0.0-1.0 "
+msgstr ""
+"Adattare un'immagine, che potrebbe avere un elevato campo di dinamica, per "
+"una presentazione usando un campo di dinamica ridotto. Questo operatore "
+"attenua la magnitudo dei gradienti locali dell'immagine, producendo "
+"luminanza nel campo 0.0-1.0 "
 
 #: ../operations/common/fractal-explorer.c:35
 msgid "Fractal type"
@@ -612,7 +643,9 @@ msgstr "Dimensione X"
 #: ../operations/common/gaussian-blur.c:31
 msgid ""
 "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)"
-msgstr "Deviazione standard dell'asse orizzontale (moltiplica per ~2 per ottenere il raggio)."
+msgstr ""
+"Deviazione standard dell'asse orizzontale (moltiplica per ~2 per ottenere il "
+"raggio)."
 
 #: ../operations/common/gaussian-blur.c:32
 msgid "Size Y"
@@ -621,7 +654,9 @@ msgstr "Dimensione Y"
 #: ../operations/common/gaussian-blur.c:33
 msgid ""
 "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)"
-msgstr "Deviazione standard dell'asse verticale (moltiplica per ~2 per ottenere il raggio)."
+msgstr ""
+"Deviazione standard dell'asse verticale (moltiplica per ~2 per ottenere il "
+"raggio)."
 
 #: ../operations/common/gaussian-blur.c:34
 #: ../operations/transform/transform-core.c:218
@@ -633,13 +668,16 @@ msgstr "Filtro"
 msgid ""
 "Optional parameter to override the automatic selection of blur filter. "
 "Choices are fir, iir, auto"
-msgstr "Parametro opzionale per avere la precedenza sulla selezione automatica del filtro di sfocamento. Le scelte possibili sono fir, iir, auto"
+msgstr ""
+"Parametro opzionale per avere la precedenza sulla selezione automatica del "
+"filtro di sfocamento. Le scelte possibili sono fir, iir, auto"
 
 #: ../operations/common/gaussian-blur.c:731
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
-msgstr "Esegue una media dei pixel adiacenti con la distribuzione normale come peso"
+msgstr ""
+"Esegue una media dei pixel adiacenti con la distribuzione normale come peso"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
@@ -717,7 +755,9 @@ msgstr "Visualizzatore grafo GEGL."
 msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
-msgstr "Inverte le componenti (eccetto alfa), il risultato è l'immagine corrispondente \"negativa\"."
+msgstr ""
+"Inverte le componenti (eccetto alfa), il risultato è l'immagine "
+"corrispondente \"negativa\"."
 
 #: ../operations/common/layer.c:30
 msgid "Operation"
@@ -805,7 +845,8 @@ msgstr "Spostamento verticale"
 #: ../operations/common/lens-distortion.c:321
 #: ../operations/workshop/external/lens-correct.c:476
 msgid "Copies image performing lens distortion correction."
-msgstr "Copia le immagini eseguendo una correzione ad una distorsione da lenti."
+msgstr ""
+"Copia le immagini eseguendo una correzione ad una distorsione da lenti."
 
 #: ../operations/common/levels.c:26
 msgid "Low input"
@@ -854,7 +895,9 @@ msgstr "Percorso del file da caricare."
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using image magick's convert."
-msgstr "Caricatore file multiuso; usa altri gestori nativi o, in mancanza di alternativa, usa il comando convert di ImageMagick."
+msgstr ""
+"Caricatore file multiuso; usa altri gestori nativi o, in mancanza di "
+"alternativa, usa il comando convert di ImageMagick."
 
 #: ../operations/common/magick-load.c:136
 msgid "Image Magick wrapper using the png op."
@@ -881,7 +924,10 @@ msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator constrains contrasts across multiple "
 "spatial frequencies, producing luminance within the range 0.0-1.0"
-msgstr "Adatta un'immagine che può avere ad alta dinamica, a presentazioni a bassa dinamica. Quest'operatore limita il contrasto tramite più frequenze spaziali, producendo una luminanza nel campo 0.0-1.0"
+msgstr ""
+"Adatta un'immagine che può avere ad alta dinamica, a presentazioni a bassa "
+"dinamica. Quest'operatore limita il contrasto tramite più frequenze "
+"spaziali, producendo una luminanza nel campo 0.0-1.0"
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:39
@@ -899,16 +945,18 @@ msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
 msgstr ""
+"campiona l'ingresso con un buffer ausiliario che contiene le coordinate "
+"assolute della sorgente"
 
 #: ../operations/common/map-relative.c:23
 msgid "Scaling"
-msgstr ""
+msgstr "Scalatura"
 
 #: ../operations/common/map-relative.c:24
 msgid ""
 "scaling factor of displacement, indicates how large spatial displacement a "
 "relative mapping value of 1.0 corresponds to."
-msgstr ""
+msgstr "Fattore di scala di piazzamento, indica a quanto dovrà corrispondere il valore di mappatura relativo 1.0 di estensione spaziale del piazzamento."
 
 #: ../operations/common/map-relative.c:156
 msgid ""
@@ -933,11 +981,11 @@ msgstr ""
 
 #: ../operations/common/mblur.c:26
 msgid "The value represents the contribution of the past to the new frame."
-msgstr ""
+msgstr "Il valore rappresenta il contributo al nuovo del quadro passato."
 
 #: ../operations/common/mblur.c:144
 msgid "Accumulating motion blur"
-msgstr ""
+msgstr "Accumulo di sfocatura movimento"
 
 #: ../operations/common/mirrors.c:30
 msgid "Mirror rotation"
@@ -965,31 +1013,31 @@ msgstr "Numero di specchi da usare"
 
 #: ../operations/common/mirrors.c:36
 msgid "X offset of the result of mirroring"
-msgstr ""
+msgstr "Spostamento X del risultato della specchiatura"
 
 #: ../operations/common/mirrors.c:38
 msgid "Y offset of the result of mirroring"
-msgstr ""
+msgstr "Spostamento Y del risultato della specchiatura"
 
 #: ../operations/common/mirrors.c:40
 msgid "Center X"
-msgstr ""
+msgstr "Centro X"
 
 #: ../operations/common/mirrors.c:40
 msgid "X axis ratio for the center of mirroring"
-msgstr ""
+msgstr "Rapporto assi X per il centro della specchiatura"
 
 #: ../operations/common/mirrors.c:42
 msgid "Center Y"
-msgstr ""
+msgstr "Centro Y"
 
 #: ../operations/common/mirrors.c:42
 msgid "Y axis ratio for the center of mirroring"
-msgstr ""
+msgstr "Rapporto assi Y per il centro della specchiatura"
 
 #: ../operations/common/mirrors.c:44
 msgid "Trim X"
-msgstr ""
+msgstr "Regolazione X"
 
 #: ../operations/common/mirrors.c:44
 msgid "X axis ratio for trimming mirror expanse"
@@ -997,7 +1045,7 @@ msgstr ""
 
 #: ../operations/common/mirrors.c:46
 msgid "Trim Y"
-msgstr ""
+msgstr "Regolazione Y"
 
 #: ../operations/common/mirrors.c:46
 msgid "Y axis ratio for trimming mirror expanse"
@@ -1009,7 +1057,7 @@ msgstr "Zoom"
 
 #: ../operations/common/mirrors.c:48 ../operations/common/mirrors.c:50
 msgid "Scale factor to make rendering size bigger"
-msgstr ""
+msgstr "Fattore di scale per rendere la dimensione di rendering più grande"
 
 #: ../operations/common/mirrors.c:50
 msgid "Expand"
@@ -1025,7 +1073,7 @@ msgstr "Ritaglia il risultato alla dimensione in ingresso"
 
 #: ../operations/common/mirrors.c:54
 msgid "Wrap input"
-msgstr ""
+msgstr "A capo l'ingresso"
 
 #: ../operations/common/mirrors.c:54
 msgid "Fill full output area"
