@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-14 01:38+0200\n"
-"PO-Revision-Date: 2012-04-14 01:50+0200\n"
+"POT-Creation-Date: 2012-04-14 23:54+0200\n"
+"PO-Revision-Date: 2012-04-14 23:44+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -146,7 +146,7 @@ msgstr "Luminosità"
 msgid "Amount to increase brightness"
 msgstr "Quantità dell'incremento di luminosità"
 
-#: ../operations/common/brightness-contrast.c:198
+#: ../operations/common/brightness-contrast.c:145
 msgid "Changes the light level and contrast."
 msgstr "Cambia il livello di luce e di contrasto."
 
@@ -956,13 +956,17 @@ msgstr "Scalatura"
 msgid ""
 "scaling factor of displacement, indicates how large spatial displacement a "
 "relative mapping value of 1.0 corresponds to."
-msgstr "Fattore di scala di piazzamento, indica a quanto dovrà corrispondere il valore di mappatura relativo 1.0 di estensione spaziale del piazzamento."
+msgstr ""
+"Fattore di scala di piazzamento, indica a quanto dovrà corrispondere il "
+"valore di mappatura relativo 1.0 di estensione spaziale del piazzamento."
 
 #: ../operations/common/map-relative.c:156
 msgid ""
 "sample input with an auxiliary buffer that contain relative source "
 "coordinates"
 msgstr ""
+"campiona l'ingresso con un buffer ausiliario che contiene le coordinate "
+"relative della sorgente"
 
 #: ../operations/common/matting-global.c:26
 msgid "Number of iterations"
@@ -977,7 +981,7 @@ msgstr ""
 
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
-msgstr ""
+msgstr "Umidità"
 
 #: ../operations/common/mblur.c:26
 msgid "The value represents the contribution of the past to the new frame."
@@ -1077,7 +1081,7 @@ msgstr "A capo l'ingresso"
 
 #: ../operations/common/mirrors.c:54
 msgid "Fill full output area"
-msgstr ""
+msgstr "Riempimento completo area di uscita"
 
 #: ../operations/common/mirrors.c:401
 msgid "Applies mirroring effect on the image."
@@ -1112,7 +1116,7 @@ msgstr "Ammontare del blu"
 
 #: ../operations/common/mono-mixer.c:202
 msgid "Monochrome channel mixer"
-msgstr ""
+msgstr "Mixer canale monocromatico"
 
 #: ../operations/common/motion-blur.c:27
 msgid "Length"
@@ -1164,6 +1168,8 @@ msgid ""
 "Global opacity value that is always used on top of the optional auxiliary "
 "input buffer."
 msgstr ""
+"Il valore di opacità generale viene sempre usato in cima all'opzionale "
+"buffer di ingresso ausiliario."
 
 #: ../operations/common/opacity.c:225
 msgid ""
@@ -1173,11 +1179,11 @@ msgstr ""
 
 #: ../operations/common/open-buffer.c:25
 msgid "a GeglBuffer on disk to open"
-msgstr ""
+msgstr "un file GeglBuffer su disco da aprire"
 
 #: ../operations/common/open-buffer.c:130
 msgid "A source that uses an on-disk GeglBuffer."
-msgstr ""
+msgstr "Una sorgente che usa un GeglBuffer su disco."
 
 #: ../operations/common/over.c:200
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
@@ -1185,23 +1191,23 @@ msgstr ""
 
 #: ../operations/common/pixelize.c:25
 msgid "Block Width"
-msgstr ""
+msgstr "Larghezza blocco"
 
 #: ../operations/common/pixelize.c:26
 msgid "Width of blocks in pixels"
-msgstr ""
+msgstr "Larghezza del blocco in pixel"
 
 #: ../operations/common/pixelize.c:27
 msgid "Block Height"
-msgstr ""
+msgstr "Altezza blocco"
 
 #: ../operations/common/pixelize.c:28
 msgid "Height of blocks in pixels"
-msgstr ""
+msgstr "Altezza del blocco in pixel"
 
 #: ../operations/common/pixelize.c:338
 msgid "Simplify image into an array of solid-colored squares"
-msgstr ""
+msgstr "Semplifica un'immagine in un insieme di riquadri di colore pieno"
 
 #: ../operations/common/polar-coordinates.c:34
 #: ../operations/common/polar-coordinates.c:35
@@ -1210,11 +1216,11 @@ msgstr ""
 
 #: ../operations/common/polar-coordinates.c:36
 msgid "Offset angle"
-msgstr ""
+msgstr "Angolo di spostamento"
 
 #: ../operations/common/polar-coordinates.c:37
 msgid "Offset angle."
-msgstr ""
+msgstr "Angolo di spostamento."
 
 #: ../operations/common/polar-coordinates.c:38
 msgid "Map backwards"
@@ -1234,7 +1240,7 @@ msgstr ""
 
 #: ../operations/common/polar-coordinates.c:40
 msgid "To polar"
-msgstr ""
+msgstr "A polare"
 
 #: ../operations/common/polar-coordinates.c:40
 msgid "Map the image to a circle"
@@ -1242,7 +1248,7 @@ msgstr ""
 
 #: ../operations/common/polar-coordinates.c:41
 msgid "X:"
-msgstr ""
+msgstr "X:"
 
 #: ../operations/common/polar-coordinates.c:42
 #: ../operations/common/polar-coordinates.c:44
@@ -1251,28 +1257,28 @@ msgstr ""
 
 #: ../operations/common/polar-coordinates.c:43
 msgid "Y:"
-msgstr ""
+msgstr "Y:"
 
 #: ../operations/common/polar-coordinates.c:45
 msgid "Choose middle"
-msgstr ""
+msgstr "Prendi il mezzo"
 
 #: ../operations/common/polar-coordinates.c:46
 msgid "Let origin point to be the middle one"
-msgstr ""
+msgstr "Fa in modo che il punto di origine sia il punto di mezzo"
 
 #: ../operations/common/polar-coordinates.c:402
 msgid "Performs polar-coordinates on the image."
-msgstr ""
+msgstr "Usa le coordinate polari sull'immagine."
 
 #: ../operations/common/posterize.c:25
 #: ../operations/external/matting-levin.c:36
 msgid "Levels"
-msgstr ""
+msgstr "Livelli"
 
 #: ../operations/common/posterize.c:26
 msgid "number of levels per component"
-msgstr ""
+msgstr "numero di livelli per componente"
 
 #: ../operations/common/posterize.c:82
 msgid "Reduces the number of levels in each color component of the image."
@@ -1284,39 +1290,39 @@ msgstr ""
 
 #: ../operations/common/rectangle.c:34
 msgid "Horizontal extent"
-msgstr ""
+msgstr "Estensione orizzontale"
 
 #: ../operations/common/rectangle.c:36
 msgid "Vertical extent"
-msgstr ""
+msgstr "Estensione verticale"
 
 #: ../operations/common/rectangle.c:38
 msgid "Color to render"
-msgstr ""
+msgstr "Colore da renderizzare"
 
 #: ../operations/common/rectangle.c:134
 msgid "A rectangular source of a fixed size with a solid color"
-msgstr ""
+msgstr "Una sorgente rettangolare di dimensione fissa di colore pieno"
 
 #: ../operations/common/reinhard05.c:29
 msgid "Overall brightness of the image"
-msgstr ""
+msgstr "Luminosità complessiva dell'immagine"
 
 #: ../operations/common/reinhard05.c:30
 msgid "Chromatic Adaptation"
-msgstr ""
+msgstr "Adattamento cromatico"
 
 #: ../operations/common/reinhard05.c:32
 msgid "Adapation to colour variation across the image"
-msgstr ""
+msgstr "Adattamento alle variazioni di colore attraverso l'immagine"
 
 #: ../operations/common/reinhard05.c:33
 msgid "Light Adaptation"
-msgstr ""
+msgstr "Adattamento di luce"
 
 #: ../operations/common/reinhard05.c:35
 msgid "Adapation to light variation across the image"
-msgstr ""
+msgstr "Adattamento alle variazioni di luce attraverso l'immagine"
 
 #: ../operations/common/reinhard05.c:274
 msgid ""
@@ -1332,74 +1338,80 @@ msgstr ""
 
 #: ../operations/common/ripple.c:27 ../operations/common/waves.c:32
 msgid "Amplitude"
-msgstr ""
+msgstr "Ampiezza"
 
 #: ../operations/common/ripple.c:28 ../operations/common/waves.c:33
 msgid "Amplitude of the ripple"
-msgstr ""
+msgstr "Ampiezza dell'ondulazione"
 
 #: ../operations/common/ripple.c:30 ../operations/common/waves.c:35
 msgid "Period"
-msgstr ""
+msgstr "Periodo"
 
 #: ../operations/common/ripple.c:31 ../operations/common/waves.c:36
 msgid "Period of the ripple"
-msgstr ""
+msgstr "Periodo dell'ondulazione"
 
 #: ../operations/common/ripple.c:33 ../operations/common/ripple.c:34
 #: ../operations/common/waves.c:38 ../operations/common/waves.c:39
 msgid "Phase shift"
-msgstr ""
+msgstr "Spostamento di fase"
 
 #: ../operations/common/ripple.c:37
 msgid "Angle in degree"
-msgstr ""
+msgstr "Angolo in gradi"
 
 #: ../operations/common/ripple.c:40 ../operations/common/waves.c:42
 #: ../operations/workshop/ditto.c:28
 msgid "Sampler used internally"
-msgstr ""
+msgstr "Campionatore usato internamente"
 
 #: ../operations/common/ripple.c:42
 msgid "Wave type"
-msgstr ""
+msgstr "Tipo di onda"
 
 #: ../operations/common/ripple.c:43
 msgid "Type of wave"
-msgstr ""
+msgstr "Tipologia di onda"
 
 #: ../operations/common/ripple.c:164
 msgid "Transform the buffer with a ripple pattern"
-msgstr ""
+msgstr "Trasforma il buffer con un motivo ondulatorio"
 
 #: ../operations/common/save.c:25
 msgid "Path of file to save."
-msgstr ""
+msgstr "Percorso del file da salvare."
 
 #: ../operations/common/save.c:195
 msgid "Multipurpose file saver, that uses other native handlers."
-msgstr ""
+msgstr "Salvatore di file multiuso, che utilizza altri gestori nativi."
 
 #: ../operations/common/snn-mean.c:28
 #: ../operations/workshop/snn-percentile.c:29
 msgid "Pairs"
-msgstr ""
+msgstr "Coppie"
 
 #: ../operations/common/snn-mean.c:29
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr ""
+"Numero di coppie; numeri elevari preservano le caratteristiche più acute"
 
 #: ../operations/common/snn-mean.c:436
 msgid ""
 "Noise reducing edge enhancing blur filter based  on Symmetric Nearest "
 "Neighbours"
 msgstr ""
+"Filtro sfocatura a riduzione del rumore e miglioramento dei bordi basato su "
+"Symmetric Nearest Neighbours"
 
 #: ../operations/common/stress.c:28
 msgid ""
 "Neighborhood taken into account, for enhancement ideal values are close to "
 "the longest side of the image, increasing this increases the runtime"
 msgstr ""
+"Vicinato preso in considerazione, per il miglioramento i valori ideali sono "
+"vicini al lunghezza maggiore dell'immagine; aumentando questo valore si "
+"aumentano i tempi di esecuzione"
 
 #: ../operations/common/stress.c:32
 msgid ""
@@ -1720,36 +1732,37 @@ msgstr ""
 
 #: ../operations/external/jpg-save.c:31
 msgid "Optimize"
-msgstr ""
+msgstr "Ottimizza"
 
 #: ../operations/external/jpg-save.c:32
 msgid "Use optimized huffman tables"
-msgstr ""
+msgstr "Usa tabelle di Huffman ottimizzate"
 
 #: ../operations/external/jpg-save.c:33
 msgid "Progressive"
-msgstr ""
+msgstr "Progressive"
 
 #: ../operations/external/jpg-save.c:34
 msgid "Create progressive JPEG images"
-msgstr ""
+msgstr "Crea immagini JPEG progressive"
 
 #: ../operations/external/jpg-save.c:35
 #: ../operations/workshop/color-rotate.c:46
 msgid "Grayscale"
-msgstr ""
+msgstr "Scala di grigi"
 
 #: ../operations/external/jpg-save.c:36
 msgid "Create a grayscale (monochrome) image"
-msgstr ""
+msgstr "Crea una immagine in scala di grigi (monocromatica)"
 
 #: ../operations/external/jpg-save.c:192
 msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
 msgstr ""
+"Salvatore di immagini JPEG (passa il buffer, salva come effetto collaterale)"
 
 #: ../operations/external/matting-levin.c:25
 msgid "Epsilon"
-msgstr ""
+msgstr "Epsilon"
 
 #: ../operations/external/matting-levin.c:27
 msgid "Log of the error weighting"
@@ -1761,27 +1774,27 @@ msgstr ""
 
 #: ../operations/external/matting-levin.c:33
 msgid "Alpha threshold for multilevel processing"
-msgstr ""
+msgstr "Soglia alfa per l'elaborazione multilivello"
 
 #: ../operations/external/matting-levin.c:34
 msgid "Lambda"
-msgstr ""
+msgstr "Lambda"
 
 #: ../operations/external/matting-levin.c:35
 msgid "Trimap influence factor"
-msgstr ""
+msgstr "Fattore di influenza trimap"
 
 #: ../operations/external/matting-levin.c:38
 msgid "Number of downsampled levels to use"
-msgstr ""
+msgstr "Numero di livelli sottocampionati da usare"
 
 #: ../operations/external/matting-levin.c:39
 msgid "Active Levels"
-msgstr ""
+msgstr "Livelli attivi"
 
 #: ../operations/external/matting-levin.c:41
 msgid "Number of levels to perform solving"
-msgstr ""
+msgstr "Numero di livelli per ottenere la soluzione"
 
 #: ../operations/external/matting-levin.c:1428
 msgid ""
@@ -1791,31 +1804,33 @@ msgstr ""
 
 #: ../operations/external/path.c:27
 msgid "Fill Color"
-msgstr ""
+msgstr "Colore di riempimento"
 
 #: ../operations/external/path.c:28
 msgid "Color of paint to use for filling, use 0 opacity to disable filling"
 msgstr ""
+"Tinta da usare per il riempimento, usare 0 opacità per disabilitare il "
+"riempimento"
 
 #: ../operations/external/path.c:29
 msgid "Stroke Color"
-msgstr ""
+msgstr "Colore delineatura"
 
 #: ../operations/external/path.c:30
 msgid "Color of paint to use for stroking"
-msgstr ""
+msgstr "Tinta da usare per la delineatura"
 
 #: ../operations/external/path.c:32
 msgid "Stroke width"
-msgstr ""
+msgstr "Spessore delineatura"
 
 #: ../operations/external/path.c:33
 msgid "The width of the brush used to stroke the path"
-msgstr ""
+msgstr "Lo spessore del pennello usato per delineare un percorso"
 
 #: ../operations/external/path.c:35
 msgid "Stroke opacity"
-msgstr ""
+msgstr "Opacità delineatura"
 
 #: ../operations/external/path.c:36
 msgid ""
@@ -1825,24 +1840,24 @@ msgstr ""
 
 #: ../operations/external/path.c:38 ../operations/workshop/warp.c:30
 msgid "Hardness"
-msgstr ""
+msgstr "Durezza"
 
 #: ../operations/external/path.c:39
 msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
-msgstr ""
+msgstr "Durezza del pennello, 0.0 per un pennello morbido, 1.0 per uno duro"
 
 #: ../operations/external/path.c:41
 msgid "Fill rule"
-msgstr ""
+msgstr "Regola di riempimento"
 
 #: ../operations/external/path.c:42
 msgid "How to determine what to fill (nonzero|evenodd"
-msgstr ""
+msgstr "Comendeterminare cosa riempire (nonzero|paridispari"
 
 #: ../operations/external/path.c:44 ../operations/external/vector-fill.c:36
 #: ../operations/external/vector-stroke.c:36
 msgid "Transform"
-msgstr ""
+msgstr "Trasforma"
 
 #: ../operations/external/path.c:45
 msgid "SVG style description of transform"
@@ -1850,7 +1865,7 @@ msgstr ""
 
 #: ../operations/external/path.c:47
 msgid "Fill opacity"
-msgstr ""
+msgstr "Riempimento opacità"
 
 #: ../operations/external/path.c:48
 msgid "The fill opacity to use"
@@ -1859,7 +1874,7 @@ msgstr ""
 #: ../operations/external/path.c:50 ../operations/external/vector-fill.c:39
 #: ../operations/external/vector-stroke.c:39
 msgid "Vector"
-msgstr ""
+msgstr "Vettore"
 
 #: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
 #: ../operations/external/vector-stroke.c:40
@@ -1872,11 +1887,11 @@ msgstr ""
 
 #: ../operations/external/pixbuf.c:25
 msgid "Pixbuf"
-msgstr ""
+msgstr "Pixbuf"
 
 #: ../operations/external/pixbuf.c:25
 msgid "GdkPixbuf to use"
-msgstr ""
+msgstr "GdkPixbuf da usare"
 
 #: ../operations/external/pixbuf.c:103
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
@@ -1894,23 +1909,24 @@ msgstr ""
 
 #: ../operations/external/png-save.c:28
 msgid "Compression"
-msgstr ""
+msgstr "Compressione"
 
 #: ../operations/external/png-save.c:29
 msgid "PNG compression level from 1 to 9"
-msgstr ""
+msgstr "Livello di compressione PNG da 1 a 9"
 
 #: ../operations/external/png-save.c:30 ../operations/external/ppm-save.c:28
 msgid "Bitdepth"
-msgstr ""
+msgstr "Profondità di bit"
 
 #: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:30
 msgid "8 and 16 are amongst the currently accepted values."
-msgstr ""
+msgstr "8 e 16 sono tra i valori attualmente accettati."
 
 #: ../operations/external/png-save.c:233
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
+"Salvatore immagini PNG (passa il buffer, salva come effetto collaterale)."
 
 #: ../operations/external/ppm-load.c:306
 msgid "PPM image loader."
