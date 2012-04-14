@@ -302,10 +302,10 @@ GeglConfig *gegl_config (void)
             }
         }
 
-      if (g_getenv ("GEGL_USE_OPENCL") != NULL && strcmp(g_getenv ("GEGL_USE_OPENCL"), "yes") == 0)
-        config->use_opencl = TRUE;
-      else
+      if (g_getenv ("GEGL_USE_OPENCL") != NULL && strcmp(g_getenv ("GEGL_USE_OPENCL"), "yes") == 1)
         config->use_opencl = FALSE;
+      else
+        config->use_opencl = TRUE;
 
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
