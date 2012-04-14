@@ -330,6 +330,8 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 {
   gint errcode;
   gegl_cl_run_data *cl_data = NULL;
+  if (!gegl_cl_is_accelerated ())
+    return NULL;
 
   if ((cl_data = (gegl_cl_run_data *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
     {
