@@ -88,7 +88,6 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->attach                    = attach;
   klass->prepare                   = NULL;
   klass->no_cache                  = FALSE;
-  klass->opencl_support            = FALSE;
   klass->get_bounding_box          = get_bounding_box;
   klass->get_invalidated_by_change = get_invalidated_by_change;
   klass->get_required_for_output   = get_required_for_output;
@@ -285,14 +284,23 @@ gegl_operation_prepare (GeglOperation *self)
   klass = GEGL_OPERATION_GET_CLASS (self);
 
   /* build OpenCL kernel */
+  if (!klass->cl_data)
   {
     const gchar *cl_source = gegl_operation_class_get_key (klass, "cl-source");
-    const gchar *cl_kernel = gegl_operation_class_get_key (klass, "cl-kernel");
-    if (cl_source && cl_kernel)
+    if (cl_source)
       {
-        const char *kernel_name[] = {cl_kernel, NULL};
-        gegl_cl_run_data *cl_data = gegl_cl_compile_and_build (cl_source, kernel_name);
-        klass->cl_data = cl_data;
+        char *name = strdup (klass->name);
+        const char *kernel_name[] = {name, NULL};
+        char *k;
+        for (k=name; *k; k++)
+          switch (*k)
+            {
+              case ' ': case ':': case '-':
+                *k = '_';
+                break;
+            }
+        klass->cl_data = gegl_cl_compile_and_build (cl_source, kernel_name);
+        free (name);
       }
   }
 

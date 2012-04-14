@@ -762,7 +762,7 @@ gegl_processor_work (GeglProcessor *processor,
       for (iterator = visits_list; iterator; iterator = iterator->next)
         {
           GeglNode *node = (GeglNode*) iterator->data;
-          if (GEGL_OPERATION_GET_CLASS(node->operation)->opencl_support)
+          if (GEGL_OPERATION_GET_CLASS(node->operation)->cl_data)
             {
               processor->chunk_size = GEGL_CL_CHUNK_SIZE;
               break;

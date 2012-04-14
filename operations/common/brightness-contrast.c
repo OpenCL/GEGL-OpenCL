@@ -105,21 +105,19 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-#include "opencl/gegl-cl.h"
-
 static const gchar* kernel_source =
-"__kernel void kernel_bc(__global const float4     *in,         \n"
-"                        __global       float4     *out,        \n"
-"                        float contrast,                        \n"
-"                        float brightness)                      \n"
-"{                                                              \n"
-"  int gid = get_global_id(0);                                  \n"
-"  float4 in_v  = in[gid];                                      \n"
-"  float4 out_v;                                                \n"
-"  out_v.xyz = (in_v.xyz - 0.5f) * contrast + brightness + 0.5f;\n"
-"  out_v.w   =  in_v.w;                                         \n"
-"  out[gid]  =  out_v;                                          \n"
-"}                                                              \n";
+"__kernel void gegl_brightness_contrast(__global const float4     *in,  \n"
+"                                       __global       float4     *out, \n"
+"                                       float contrast,                 \n"
+"                                       float brightness)               \n"
+"{                                                                      \n"
+"  int gid = get_global_id(0);                                          \n"
+"  float4 in_v  = in[gid];                                              \n"
+"  float4 out_v;                                                        \n"
+"  out_v.xyz = (in_v.xyz - 0.5f) * contrast + brightness + 0.5f;        \n"
+"  out_v.w   =  in_v.w;                                                 \n"
+"  out[gid]  =  out_v;                                                  \n"
+"}                                                                      \n";
 
 /*
  * The class init function sets up information needed for this operations class
@@ -141,17 +139,11 @@ gegl_chant_class_init (GeglChantClass *klass)
    */
   point_filter_class->process = process;
 
-  /* specify the name this operation is found under in the GUI/when
-   * programming/in XML
-   */
-  operation_class->opencl_support = TRUE;
-
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:brightness-contrast",
       "categories", "color", 
       "description", _("Changes the light level and contrast."),
       "cl-source"  , kernel_source,
-      "cl-kernel"  , "kernel_bc",
       NULL);
 }
 
