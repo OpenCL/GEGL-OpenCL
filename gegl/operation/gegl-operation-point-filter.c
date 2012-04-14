@@ -85,6 +85,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
   gint j;
@@ -116,12 +117,35 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
         if (err) return FALSE;
         for (j=0; j < i->n; j++)
           {
-            cl_err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
-                                                    i->size[0][j], &i->roi[0][j], level);
+            if (point_filter_class->cl_process)
+              {
+                cl_err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
+                                                        i->size[0][j], &i->roi[0][j], level);
+              }
+            else if (operation_class->cl_data)
+              {
+                gint p = 0;
+                gegl_cl_run_data *cl_data = operation_class->cl_data;
+
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read][j]);
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[  0 ][j]);
+
+                gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
+
+                cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                                     cl_data->kernel[0], 1,
+                                                     NULL, &i->size[0][j], NULL,
+                                                     0, NULL, NULL);
+              }
+            else
+              {
+                g_warning ("OpenCL support enabled, but no way to execute");
+                return FALSE;
+              }
+
             if (cl_err != CL_SUCCESS)
               {
-                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointFilter] Kernel",
-                           GEGL_OPERATION_CLASS (operation)->name);
+                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in GeglOperationPointFilter Kernel: %sS", gegl_cl_errstring(cl_err));
                 return FALSE;
               }
           }
@@ -141,11 +165,12 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   GeglOperationPointFilterClass *point_filter_class;
 
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (gegl_cl_is_accelerated () && point_filter_class->cl_process)
+      if (gegl_cl_is_accelerated () && operation_class->opencl_support)
         {
           if (gegl_operation_point_filter_cl_process (operation, input, output, result, level))
             return TRUE;

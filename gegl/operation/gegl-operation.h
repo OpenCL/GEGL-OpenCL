@@ -25,6 +25,7 @@
 
 
 #include "gegl-buffer.h"
+#include "opencl/gegl-cl.h"
 
 G_BEGIN_DECLS
 
@@ -139,7 +140,10 @@ struct _GeglOperationClass
   GeglNode*     (*detect)                    (GeglOperation       *operation,
                                               gint                 x,
                                               gint                 y);
-  gpointer      pad[10];
+
+  gegl_cl_run_data *cl_data;
+
+  gpointer      pad[9];
 };
 
 
@@ -245,6 +249,11 @@ const gchar * gegl_operation_get_key            (const gchar *operation_type,
 void     gegl_operation_invalidate       (GeglOperation       *operation,
                                           const GeglRectangle *roi,
                                           gboolean             clear_cache);
+
+gboolean gegl_operation_cl_set_kernel_args (GeglOperation *operation,
+                                            cl_kernel      kernel,
+                                            gint          *p,
+                                            cl_int        *err);
 
 /* internal utility functions used by gegl, these should not be used
  * externally */

@@ -92,6 +92,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->get_bounding_box          = get_bounding_box;
   klass->get_invalidated_by_change = get_invalidated_by_change;
   klass->get_required_for_output   = get_required_for_output;
+  klass->cl_data                   = NULL;
 }
 
 static void
@@ -282,6 +283,18 @@ gegl_operation_prepare (GeglOperation *self)
   g_return_if_fail (GEGL_IS_OPERATION (self));
 
   klass = GEGL_OPERATION_GET_CLASS (self);
+
+  /* build OpenCL kernel */
+  {
+    const gchar *cl_source = gegl_operation_class_get_key (klass, "cl-source");
+    const gchar *cl_kernel = gegl_operation_class_get_key (klass, "cl-kernel");
+    if (cl_source && cl_kernel)
+      {
+        const char *kernel_name[] = {cl_kernel, NULL};
+        gegl_cl_run_data *cl_data = gegl_cl_compile_and_build (cl_source, kernel_name);
+        klass->cl_data = cl_data;
+      }
+  }
 
   if (klass->prepare)
     klass->prepare (self);
@@ -494,6 +507,100 @@ gegl_operation_invalidate (GeglOperation       *operation,
   gegl_node_invalidated (node, roi, TRUE);
 }
 
+gboolean
+gegl_operation_cl_set_kernel_args (GeglOperation *operation,
+                                   cl_kernel      kernel,
+                                   gint          *p,
+                                   cl_int        *err)
+{
+  GParamSpec **self;
+  GParamSpec **parent;
+  guint n_self;
+  guint n_parent;
+  gint prop_no;
+
+  self = g_object_class_list_properties (
+            G_OBJECT_CLASS (g_type_class_ref (G_OBJECT_CLASS_TYPE (GEGL_OPERATION_GET_CLASS(operation)))),
+            &n_self);
+
+  parent = g_object_class_list_properties (
+            G_OBJECT_CLASS (g_type_class_ref (GEGL_TYPE_OPERATION)),
+            &n_parent);
+
+  for (prop_no=0;prop_no<n_self;prop_no++)
+    {
+      gint parent_no;
+      gboolean found=FALSE;
+      for (parent_no=0;parent_no<n_parent;parent_no++)
+        if (self[prop_no]==parent[parent_no])
+          found=TRUE;
+      /* only print properties if we are an addition compared to
+       * GeglOperation
+       */
+
+      /* Removing pads */
+      if (!strcmp(g_param_spec_get_name (self[prop_no]), "input") ||
+          !strcmp(g_param_spec_get_name (self[prop_no]), "output") ||
+          !strcmp(g_param_spec_get_name (self[prop_no]), "aux"))
+        continue;
+
+      if (!found)
+        {
+          if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
+            {
+              gdouble value;
+              cl_float v;
+
+              g_object_get (G_OBJECT (operation), g_param_spec_get_name (self[prop_no]), &value, NULL);
+
+              v = value;
+              *err = gegl_clSetKernelArg(kernel, (*p)++, sizeof(cl_float), (void*)&v);
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_FLOAT))
+            {
+              gfloat value;
+              cl_float v;
+
+              g_object_get (G_OBJECT (operation), g_param_spec_get_name (self[prop_no]), &value, NULL);
+
+              v = value;
+              *err = gegl_clSetKernelArg(kernel, (*p)++, sizeof(cl_float), (void*)&v);
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
+            {
+              gint value;
+              cl_int v;
+
+              g_object_get (G_OBJECT (operation), g_param_spec_get_name (self[prop_no]), &value, NULL);
+
+              v = value;
+              *err = gegl_clSetKernelArg(kernel, (*p)++, sizeof(cl_int), (void*)&v);
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
+            {
+              gboolean value;
+              cl_bool v;
+
+              g_object_get (G_OBJECT (operation), g_param_spec_get_name (self[prop_no]), &value, NULL);
+
+              v = value;
+              *err = gegl_clSetKernelArg(kernel, (*p)++, sizeof(cl_bool), (void*)&v);
+            }
+          else
+            {
+              g_error ("Unsupported OpenCL kernel argument");
+              return FALSE;
+            }
+        }
+    }
+
+  if (self)
+    g_free (self);
+  if (parent)
+    g_free (parent);
+
+  return TRUE;
+}
 
 gchar **
 gegl_operation_list_keys (const gchar *operation_name,
