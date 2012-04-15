@@ -36,10 +36,15 @@ gegl_chant_double (phi, _("Phase shift"), -1.0, 1.0, 0.0,
 gegl_chant_double (angle, _("Angle"), -180.0, 180.0, 0.0,
                    _("Angle in degree"))
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
+gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
 
-gegl_chant_enum (wave_type, _("Wave type"), GeglRippleWaveType, GEGL_RIPPLE_WAVE_TYPE,
+gegl_chant_register_enum (gegl_ripple_wave_type)
+  enum_value (GEGl_RIPPLE_WAVE_TYPE_SINE,      "Sine")
+  enum_value (GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH,  "Sawtooth")
+gegl_chant_register_enum_end (GeglRippleWaveType)
+
+gegl_chant_enum (wave_type, _("Wave type"), GeglRippleWaveType, gegl_ripple_wave_type,
                  GEGl_RIPPLE_WAVE_TYPE_SINE, _("Type of wave"))
 
 #else

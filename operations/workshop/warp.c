@@ -19,9 +19,18 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 #include <math.h>
-#include <stdio.h> /* for test only */
 
 #ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_register_enum (gegl_warp_behavior)
+  enum_value (GEGL_WARP_BEHAVIOR_MOVE,      "Move pixels")
+  enum_value (GEGL_WARP_BEHAVIOR_GROW,      "Grow area")
+  enum_value (GEGL_WARP_BEHAVIOR_SHRINK,    "Shrink area")
+  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CW,  "Swirl clockwise")
+  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CCW, "Swirl counter-clockwise")
+  enum_value (GEGL_WARP_BEHAVIOR_ERASE,     "Erase warping")
+  enum_value (GEGL_WARP_BEHAVIOR_SMOOTH,    "Smooth warping")
+gegl_chant_register_enum_end (GeglWarpBehavior)
 
 gegl_chant_double (strength, _("Strength"), 0.0, 100.0, 50,
                    _("Effect Strength"))
@@ -30,7 +39,7 @@ gegl_chant_double (size, _("Size"), 1.0, 10000.0, 40.0,
 gegl_chant_double (hardness, _("Hardness"), 0.0, 1.0, 0.5,
                    _("Effect Hardness"))
 gegl_chant_path (stroke, _("Stroke"), _("Effect Strength"))
-gegl_chant_enum (behavior, _("Behavior"), GeglWarpBehavior, GEGL_TYPE_WARP_BEHAVIOR,
+gegl_chant_enum (behavior, _("Behavior"), GeglWarpBehavior, gegl_warp_behavior,
                  GEGL_WARP_BEHAVIOR_MOVE, _("Behavior of the op"))
 
 #else
@@ -319,8 +328,6 @@ process (GeglOperation       *operation,
   GeglPathPoint        prev, next, lerp;
   gulong               i;
   GeglPathList        *event;
-
-  printf("Process %p\n", operation);
 
   priv->buffer = gegl_buffer_dup (input);
 

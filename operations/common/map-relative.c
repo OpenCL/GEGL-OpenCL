@@ -23,7 +23,7 @@
 gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
        _("scaling factor of displacement, indicates how large spatial"
          " displacement a relative mapping value of 1.0 corresponds to."))
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
+gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internaly"))
 
 #else

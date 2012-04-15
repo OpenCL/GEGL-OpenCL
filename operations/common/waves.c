@@ -38,7 +38,7 @@ gegl_chant_double (period, _("Period"), 0.0, 1000.0, 200.0,
 gegl_chant_double (phi, _("Phase shift"), -1.0, 1.0, 0.0,
                    _("Phase shift"))
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, GEGL_TYPE_SAMPLER_TYPE,
+gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
 
 
