@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-14 23:54+0200\n"
-"PO-Revision-Date: 2012-04-16 03:11+0200\n"
+"POT-Creation-Date: 2012-04-18 01:26+0200\n"
+"PO-Revision-Date: 2012-04-18 01:55+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -977,7 +977,11 @@ msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha matte. Set white as foreground, black as background for the tri-map. "
 "Everything else will be treated as unknown and filled in."
-msgstr "Dati una qualsiasi tri-mappa fornita dall'utente ed una immagine in ingresso, crea una superficie alfa in primo piano. Imposta il bianco come primo piano, nero per lo sfondo della trimappa. Ogni altro particolare viene trattato come sconosiuto e riempito."
+msgstr ""
+"Dati una qualsiasi tri-mappa fornita dall'utente ed una immagine in "
+"ingresso, crea una superficie alfa in primo piano. Imposta il bianco come "
+"primo piano, nero per lo sfondo della trimappa. Ogni altro particolare viene "
+"trattato come sconosiuto e riempito."
 
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
@@ -1138,7 +1142,7 @@ msgstr "Angolo della sfocatura in gradi"
 msgid "Linear motion blur"
 msgstr "Sfocatura lineare di movimento"
 
-#: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:26
+#: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:35
 msgid "Strength"
 msgstr "Forza"
 
@@ -1176,6 +1180,8 @@ msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
 msgstr ""
+"Pesa l'opacità dell'ingresso sia nel valore dell'ingresso ausiliario che "
+"nella proprietà di valore globale."
 
 #: ../operations/common/open-buffer.c:25
 msgid "a GeglBuffer on disk to open"
@@ -1282,11 +1288,13 @@ msgstr "numero di livelli per componente"
 
 #: ../operations/common/posterize.c:82
 msgid "Reduces the number of levels in each color component of the image."
-msgstr "Riduce il numero di livelli in ogni componente di colore dell'immagine."
+msgstr ""
+"Riduce il numero di livelli in ogni componente di colore dell'immagine."
 
 #: ../operations/common/raw-load.c:183
 msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Caricatore immagini in formato RAW, si interfaccia a dcraw tramite pipe."
+msgstr ""
+"Caricatore immagini in formato RAW, si interfaccia a dcraw tramite pipe."
 
 #: ../operations/common/rectangle.c:34
 msgid "Horizontal extent"
@@ -1330,11 +1338,17 @@ msgid ""
 "a low dynamic range. This is an efficient global operator derived from "
 "simple physiological observations, producing luminance within the range "
 "0.0-1.0"
-msgstr "Adatta un'immagine, che può essere ad alta dinamica, ad una presentazione a dinamica ridotta. Questo è un efficiente operatore globale derivato da semplici osservazioni fisiologiche, che produce una luminanza nel campo 0.0-1.0"
+msgstr ""
+"Adatta un'immagine, che può essere ad alta dinamica, ad una presentazione a "
+"dinamica ridotta. Questo è un efficiente operatore globale derivato da "
+"semplici osservazioni fisiologiche, che produce una luminanza nel campo "
+"0.0-1.0"
 
 #: ../operations/common/remap.c:96
 msgid "stretch components of pixels individually based on luminance envelopes"
-msgstr "stira i componenti di pixel individualmente basandosi su contenitori di luminanza"
+msgstr ""
+"stira i componenti di pixel individualmente basandosi su contenitori di "
+"luminanza"
 
 #: ../operations/common/ripple.c:27 ../operations/common/waves.c:32
 msgid "Amplitude"
@@ -1366,15 +1380,15 @@ msgstr "Angolo in gradi"
 msgid "Sampler used internally"
 msgstr "Campionatore usato internamente"
 
-#: ../operations/common/ripple.c:42
+#: ../operations/common/ripple.c:47
 msgid "Wave type"
 msgstr "Tipo di onda"
 
-#: ../operations/common/ripple.c:43
+#: ../operations/common/ripple.c:48
 msgid "Type of wave"
 msgstr "Tipologia di onda"
 
-#: ../operations/common/ripple.c:164
+#: ../operations/common/ripple.c:169
 msgid "Transform the buffer with a ripple pattern"
 msgstr "Trasforma il buffer con un motivo ondulatorio"
 
@@ -1417,7 +1431,9 @@ msgstr ""
 msgid ""
 "Number of iterations, a higher number of iterations provides a less noisy "
 "rendering at a computational cost"
-msgstr "Numero di iterazioni, un alto numero di iterazioni produce un'immagine meno disturbata ad un maggiore costo computazionale"
+msgstr ""
+"Numero di iterazioni, un alto numero di iterazioni produce un'immagine meno "
+"disturbata ad un maggiore costo computazionale"
 
 #: ../operations/common/stress.c:191
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
@@ -1467,7 +1483,9 @@ msgstr "Soglia"
 
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
-msgstr "Livello di soglia globale (usato quando non c'è un buffer di ingresso ausiliario)."
+msgstr ""
+"Livello di soglia globale (usato quando non c'è un buffer di ingresso "
+"ausiliario)."
 
 #: ../operations/common/threshold.c:193
 msgid ""
@@ -1621,7 +1639,7 @@ msgstr "Formato di uscita"
 
 #: ../operations/core/convert-format.c:29
 msgid "Babl output format string"
-msgstr ""
+msgstr "Stringa di formato dell'uscita di Babl"
 
 #: ../operations/core/convert-format.c:81
 msgid "Convert the data to the specified format"
@@ -1650,7 +1668,7 @@ msgstr "Numero di quadro"
 
 #: ../operations/external/ff-load.c:471
 msgid "FFmpeg video frame importer"
-msgstr ""
+msgstr "Importatore quadro video FFmpeg"
 
 #: ../operations/external/jp2-load.c:70
 #, c-format
@@ -1838,7 +1856,7 @@ msgid ""
 "stroking is done using an airbrush tool"
 msgstr ""
 
-#: ../operations/external/path.c:38 ../operations/workshop/warp.c:30
+#: ../operations/external/path.c:38 ../operations/workshop/warp.c:39
 msgid "Hardness"
 msgstr "Durezza"
 
@@ -2003,7 +2021,7 @@ msgstr "Famiglia del carattere"
 msgid "Font family (utf8)"
 msgstr "Famiglia del carattere (utf8)"
 
-#: ../operations/external/text.c:29 ../operations/workshop/warp.c:28
+#: ../operations/external/text.c:29 ../operations/workshop/warp.c:37
 msgid "Size"
 msgstr "Dimensione"
 
@@ -2055,7 +2073,9 @@ msgstr "Percorso per il dispositivo v4l"
 
 #: ../operations/external/v4l.c:30
 msgid "current frame number, can be changed to trigger a reload of the image."
-msgstr "attuale numero di quadri, può essere cambiato per innescare la ricarica dell'immagine."
+msgstr ""
+"attuale numero di quadri, può essere cambiato per innescare la ricarica "
+"dell'immagine."
 
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/ff-save.c:32
@@ -2451,12 +2471,12 @@ msgstr ""
 #: ../operations/workshop/color-rotate.c:33
 #: ../operations/workshop/color-rotate.c:39
 msgid "Clockwise"
-msgstr ""
+msgstr "Senso orario"
 
 #: ../operations/workshop/color-rotate.c:34
 #: ../operations/workshop/color-rotate.c:40
 msgid "Switch to clockwise"
-msgstr ""
+msgstr "Passa a senso orario"
 
 #: ../operations/workshop/color-rotate.c:35
 #: ../operations/workshop/color-rotate.c:41
@@ -2466,7 +2486,7 @@ msgstr "Da:"
 #: ../operations/workshop/color-rotate.c:36
 #: ../operations/workshop/color-rotate.c:42
 msgid "Starting angle for the color rotation"
-msgstr ""
+msgstr "Angolo iniziale della rotazione del colore"
 
 #: ../operations/workshop/color-rotate.c:37
 #: ../operations/workshop/color-rotate.c:43
@@ -2476,7 +2496,7 @@ msgstr "A:"
 #: ../operations/workshop/color-rotate.c:38
 #: ../operations/workshop/color-rotate.c:44
 msgid "End angle for the color rotation"
-msgstr "Angolo finale della rotazione di colore"
+msgstr "Angolo finale della rotazione del colore"
 
 #: ../operations/workshop/color-rotate.c:47
 msgid "Choose in case of grayscale images"
@@ -2513,7 +2533,7 @@ msgstr "(1,1) "
 
 #: ../operations/workshop/convolution-matrix.c:26
 msgid "Value of the element in position (1,1)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (1,1)"
 
 #: ../operations/workshop/convolution-matrix.c:27
 msgid "(1,2) "
@@ -2521,7 +2541,7 @@ msgstr "(1,2) "
 
 #: ../operations/workshop/convolution-matrix.c:28
 msgid "Value of the element in position (1,2)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (1,2)"
 
 #: ../operations/workshop/convolution-matrix.c:29
 msgid "(1,3) "
@@ -2529,7 +2549,7 @@ msgstr "(1,3) "
 
 #: ../operations/workshop/convolution-matrix.c:30
 msgid "Value of the element in position (1,3)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (1,3)"
 
 #: ../operations/workshop/convolution-matrix.c:31
 msgid "(1,4) "
@@ -2537,7 +2557,7 @@ msgstr "(1,4) "
 
 #: ../operations/workshop/convolution-matrix.c:32
 msgid "Value of the element in position (1,4)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (1,4)"
 
 #: ../operations/workshop/convolution-matrix.c:33
 msgid "(1,5) "
@@ -2545,7 +2565,7 @@ msgstr "(1,5) "
 
 #: ../operations/workshop/convolution-matrix.c:34
 msgid "Value of the element in position (1,5)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (1,5)"
 
 #: ../operations/workshop/convolution-matrix.c:35
 msgid "(2,1) "
@@ -2553,7 +2573,7 @@ msgstr "(2,1) "
 
 #: ../operations/workshop/convolution-matrix.c:36
 msgid "Value of the element in position (2,1)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (2,1)"
 
 #: ../operations/workshop/convolution-matrix.c:37
 msgid "(2,2) "
@@ -2561,7 +2581,7 @@ msgstr "(2,2) "
 
 #: ../operations/workshop/convolution-matrix.c:38
 msgid "Value of the element in position (2,2)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (2,2)"
 
 #: ../operations/workshop/convolution-matrix.c:39
 msgid "(2,3) "
@@ -2569,7 +2589,7 @@ msgstr ""
 
 #: ../operations/workshop/convolution-matrix.c:40
 msgid "Value of the element in position (2,3)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (2,3)"
 
 #: ../operations/workshop/convolution-matrix.c:41
 msgid "(2,4) "
@@ -2577,7 +2597,7 @@ msgstr "(2,4) "
 
 #: ../operations/workshop/convolution-matrix.c:42
 msgid "Value of the element in position (2,4)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (2,4)"
 
 #: ../operations/workshop/convolution-matrix.c:43
 msgid "(2,5) "
@@ -2585,7 +2605,7 @@ msgstr "(2,5) "
 
 #: ../operations/workshop/convolution-matrix.c:44
 msgid "Value of the element in position (2,5)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (2,5)"
 
 #: ../operations/workshop/convolution-matrix.c:45
 msgid "(3,1) "
@@ -2593,7 +2613,7 @@ msgstr "(3,1) "
 
 #: ../operations/workshop/convolution-matrix.c:46
 msgid "Value of the element in position (3,1)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (3,1)"
 
 #: ../operations/workshop/convolution-matrix.c:47
 msgid "(3,2) "
@@ -2601,7 +2621,7 @@ msgstr "(3,2) "
 
 #: ../operations/workshop/convolution-matrix.c:48
 msgid "Value of the element in position (3,2)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (3,2)"
 
 #: ../operations/workshop/convolution-matrix.c:49
 msgid "(3,3) "
@@ -2609,7 +2629,7 @@ msgstr "(3,3) "
 
 #: ../operations/workshop/convolution-matrix.c:50
 msgid "Value of the element in position (3,3)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (3,3)"
 
 #: ../operations/workshop/convolution-matrix.c:51
 msgid "(3,4) "
@@ -2617,7 +2637,7 @@ msgstr "(3,4) "
 
 #: ../operations/workshop/convolution-matrix.c:52
 msgid "Value of the element in position (3,4)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (3,4)"
 
 #: ../operations/workshop/convolution-matrix.c:53
 msgid "(3,5) "
@@ -2625,7 +2645,7 @@ msgstr "(3,5) "
 
 #: ../operations/workshop/convolution-matrix.c:54
 msgid "Value of the element in position (3,5)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (3,5)"
 
 #: ../operations/workshop/convolution-matrix.c:55
 msgid "(4,1) "
@@ -2633,7 +2653,7 @@ msgstr "(4,1) "
 
 #: ../operations/workshop/convolution-matrix.c:56
 msgid "Value of the element in position (4,1)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (4,1)"
 
 #: ../operations/workshop/convolution-matrix.c:57
 msgid "(4,2) "
@@ -2641,7 +2661,7 @@ msgstr "(4,2) "
 
 #: ../operations/workshop/convolution-matrix.c:58
 msgid "Value of the element in position (4,2)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (4,2)"
 
 #: ../operations/workshop/convolution-matrix.c:59
 msgid "(4,3) "
@@ -2649,7 +2669,7 @@ msgstr "(4,3) "
 
 #: ../operations/workshop/convolution-matrix.c:60
 msgid "Value of the element in position (4,3)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (4,3)"
 
 #: ../operations/workshop/convolution-matrix.c:61
 msgid "(4,4) "
@@ -2657,7 +2677,7 @@ msgstr "(4,4) "
 
 #: ../operations/workshop/convolution-matrix.c:62
 msgid "Value of the element in position (4,4)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (4,4)"
 
 #: ../operations/workshop/convolution-matrix.c:63
 msgid "(4,5) "
@@ -2665,7 +2685,7 @@ msgstr "(4,5) "
 
 #: ../operations/workshop/convolution-matrix.c:64
 msgid "Value of the element in position (4,5)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (4,5)"
 
 #: ../operations/workshop/convolution-matrix.c:65
 msgid "(5,1) "
@@ -2673,7 +2693,7 @@ msgstr "(5,1) "
 
 #: ../operations/workshop/convolution-matrix.c:66
 msgid "Value of the element in position (5,1)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (5,1)"
 
 #: ../operations/workshop/convolution-matrix.c:67
 msgid "(5,2) "
@@ -2681,7 +2701,7 @@ msgstr "(5,2) "
 
 #: ../operations/workshop/convolution-matrix.c:68
 msgid "Value of the element in position (5,2)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (5,2)"
 
 #: ../operations/workshop/convolution-matrix.c:69
 msgid "(5,3) "
@@ -2689,7 +2709,7 @@ msgstr "(5,3) "
 
 #: ../operations/workshop/convolution-matrix.c:70
 msgid "Value of the element in position (5,3)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (5,3)"
 
 #: ../operations/workshop/convolution-matrix.c:71
 msgid "(5,4) "
@@ -2697,7 +2717,7 @@ msgstr "(5,4) "
 
 #: ../operations/workshop/convolution-matrix.c:72
 msgid "Value of the element in position (5,4)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (5,4)"
 
 #: ../operations/workshop/convolution-matrix.c:73
 msgid "(5,5) "
@@ -2705,7 +2725,7 @@ msgstr "(5,5) "
 
 #: ../operations/workshop/convolution-matrix.c:74
 msgid "Value of the element in position (5,5)"
-msgstr ""
+msgstr "Valore dell'elemento alla posizione (5,5)"
 
 #: ../operations/workshop/convolution-matrix.c:76
 msgid "Divisor: "
@@ -2749,32 +2769,33 @@ msgstr "Canale alfa"
 
 #: ../operations/workshop/convolution-matrix.c:88
 msgid "Alpha-weighting"
-msgstr ""
+msgstr "Peso-alfa"
 
 #: ../operations/workshop/convolution-matrix.c:88
 msgid "Alpha weighting"
-msgstr ""
+msgstr "Peso alfa"
 
 #: ../operations/workshop/convolution-matrix.c:90
 msgid "Border"
 msgstr "Bordo"
 
 #: ../operations/workshop/convolution-matrix.c:91
+#, fuzzy
 msgid ""
 "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
-msgstr ""
+msgstr "Tipo di bordo da scegliere. Le possibilità sono extend, wrap, crop. Il valore predefinito è extend"
 
 #: ../operations/workshop/convolution-matrix.c:433
 msgid "Creates image by manually set convolution matrix"
-msgstr ""
+msgstr "Crea l'immagine impostando manualmente la matrice di convoluzione"
 
 #: ../operations/workshop/cubism.c:30 ../operations/workshop/cubism.c:31
 msgid "Tile size"
-msgstr ""
+msgstr "Dimensione della mattonella"
 
 #: ../operations/workshop/cubism.c:32 ../operations/workshop/cubism.c:33
 msgid "Tile saturation"
-msgstr ""
+msgstr "Saturazione della mattonella"
 
 #: ../operations/workshop/cubism.c:35
 msgid "Random seed"
@@ -2782,7 +2803,7 @@ msgstr "Seme casuale"
 
 #: ../operations/workshop/cubism.c:595
 msgid "A filter that somehow resembles a cubist painting style"
-msgstr ""
+msgstr "Un filtro che in qualche modo somiglia allo stile di pittura cubista"
 
 #: ../operations/workshop/deinterlace.c:30
 msgid "Even/Odd"
@@ -2810,25 +2831,25 @@ msgstr "Dimensione del blocco del deinterlacciamento righe/colonne"
 
 #: ../operations/workshop/deinterlace.c:309
 msgid "Performs deinterlace on the image"
-msgstr ""
+msgstr "Deinterlaccia un'immagine"
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
 msgid "Bayer pattern"
-msgstr ""
+msgstr "Motivo Bayer"
 
 #: ../operations/workshop/demosaic-bimedian.c:27
 #: ../operations/workshop/demosaic-simple.c:26
 msgid ""
 "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji "
 "files."
-msgstr ""
+msgstr "Viene usato il motivo Bayer, 0 sembra funzionare bene per i file Nikon, 2 per i file Fuji."
 
 #: ../operations/workshop/demosaic-bimedian.c:220
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
-msgstr ""
+msgstr "Esegue una demosaicizzazione scala di grigi a colore, usando la interpolazione bimediana."
 
 #: ../operations/workshop/demosaic-simple.c:152
 msgid ""
@@ -2851,28 +2872,28 @@ msgstr ""
 
 #: ../operations/workshop/emboss.c:25
 msgid "Azimuth"
-msgstr ""
+msgstr "Azimut"
 
 #: ../operations/workshop/emboss.c:26
 msgid "The value of azimuth"
-msgstr ""
+msgstr "Il valore dell'azimut"
 
 #: ../operations/workshop/emboss.c:27
 msgid "Elevation"
-msgstr ""
+msgstr "Elevazione"
 
 #: ../operations/workshop/emboss.c:28
 msgid "The value of elevation"
-msgstr ""
+msgstr "Il valore dell'elevazione"
 
 #: ../operations/workshop/emboss.c:29
 #: ../operations/workshop/fractal-trace.c:40
 msgid "Depth"
-msgstr ""
+msgstr "Profondità"
 
 #: ../operations/workshop/emboss.c:30
 msgid "Pixel depth"
-msgstr ""
+msgstr "Profondità di pixel"
 
 #: ../operations/workshop/emboss.c:32
 msgid ""
@@ -2882,19 +2903,19 @@ msgstr ""
 
 #: ../operations/workshop/emboss.c:248
 msgid "Simulates an image created by embossing"
-msgstr ""
+msgstr "Simula l'effetto goffratura sull'immagine"
 
 #: ../operations/workshop/external/ff-save.c:31
 msgid "Bitrate"
-msgstr ""
+msgstr "Bitrate"
 
 #: ../operations/workshop/external/ff-save.c:31
 msgid "target bitrate"
-msgstr ""
+msgstr "bitrate dell'obiettivo"
 
 #: ../operations/workshop/external/ff-save.c:32
 msgid "frames per second"
-msgstr ""
+msgstr "quadri al secondo"
 
 #: ../operations/workshop/external/ff-save.c:889
 msgid "FFmpeg video output sink"
@@ -2902,19 +2923,19 @@ msgstr ""
 
 #: ../operations/workshop/external/gluas.c:41
 msgid "Script"
-msgstr ""
+msgstr "Script"
 
 #: ../operations/workshop/external/gluas.c:42
 msgid "The lua script containing the implementation of this operation."
-msgstr ""
+msgstr "Lo script lua contenente l'implementazione di questa operazione."
 
 #: ../operations/workshop/external/gluas.c:43
 msgid "a stored lua script on disk implementing an operation."
-msgstr ""
+msgstr "uno script lua memorizzato su disco che implementa un'operazione."
 
 #: ../operations/workshop/external/gluas.c:44
 msgid "User value"
-msgstr ""
+msgstr "Valore utente"
 
 #: ../operations/workshop/external/gluas.c:45
 msgid "(appears in the global variable 'user_value' in lua."
@@ -2924,11 +2945,11 @@ msgstr ""
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
-msgstr ""
+msgstr "Una implementazione proxy di un filtro/compositore di uso generale per il linguaggio di programmazione lua."
 
 #: ../operations/workshop/external/lens-correct.c:28
 msgid "Maker:"
-msgstr ""
+msgstr "Creatore:"
 
 #: ../operations/workshop/external/lens-correct.c:29
 msgid "Write lens maker correctly"
@@ -2936,64 +2957,64 @@ msgstr ""
 
 #: ../operations/workshop/external/lens-correct.c:30
 msgid "Camera:"
-msgstr ""
+msgstr "Apparecchio:"
 
 #: ../operations/workshop/external/lens-correct.c:31
 msgid "Write camera name correctly"
-msgstr ""
+msgstr "Scrivere il nome dell'apparecchio correttamente "
 
 #: ../operations/workshop/external/lens-correct.c:32
 msgid "Lens:"
-msgstr ""
+msgstr "Obiettivo:"
 
 #: ../operations/workshop/external/lens-correct.c:33
 msgid "Write your lens model with majuscules"
-msgstr ""
+msgstr "Scrivere il modello dell'obiettivo con le maiuscole"
 
 #: ../operations/workshop/external/lens-correct.c:34
 msgid "Focal of the camera"
-msgstr ""
+msgstr "Focale dell'apparecchio"
 
 #: ../operations/workshop/external/lens-correct.c:35
 msgid "Calculate b value from focal"
-msgstr ""
+msgstr "Calcola il valore b dalla focale"
 
 #: ../operations/workshop/external/lens-correct.c:37
 msgid "Center"
-msgstr ""
+msgstr "Centra"
 
 #: ../operations/workshop/external/lens-correct.c:38
 msgid "If you want center"
-msgstr ""
+msgstr "Se si vuole centrare"
 
 #: ../operations/workshop/external/lens-correct.c:39
 msgid "Lens center x"
-msgstr ""
+msgstr "Centro x dell'obiettivo"
 
 #: ../operations/workshop/external/lens-correct.c:40
 #: ../operations/workshop/external/lens-correct.c:42
 msgid "Coordinates of lens center"
-msgstr ""
+msgstr "Coordinate del centro dell'obiettivo"
 
 #: ../operations/workshop/external/lens-correct.c:41
 msgid "Lens center y"
-msgstr ""
+msgstr "Centro y dell'obiettivo"
 
 #: ../operations/workshop/external/lens-correct.c:44
 msgid "Scale of the image"
-msgstr ""
+msgstr "Scala dell'immagine"
 
 #: ../operations/workshop/external/lens-correct.c:45
 msgid "Autocorrect d values"
-msgstr ""
+msgstr "Valori di autocorrezione d"
 
 #: ../operations/workshop/external/lens-correct.c:46
 msgid "Autocorrect D values for lens correction models."
-msgstr ""
+msgstr "Valori di autocorrezione d per i modelli di obiettivo."
 
 #: ../operations/workshop/external/lens-correct.c:48
 msgid "Model red a:"
-msgstr ""
+msgstr "Modello rosso a:"
 
 #: ../operations/workshop/external/lens-correct.c:49
 #: ../operations/workshop/external/lens-correct.c:51
@@ -3008,134 +3029,134 @@ msgstr ""
 #: ../operations/workshop/external/lens-correct.c:71
 #: ../operations/workshop/external/lens-correct.c:73
 msgid "Correction parameters for each color channel"
-msgstr ""
+msgstr "Parametri di correzione per ogni canale di colore"
 
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Model red b:"
-msgstr ""
+msgstr "Modello rosso b:"
 
 #: ../operations/workshop/external/lens-correct.c:52
 msgid "Model red c:"
-msgstr ""
+msgstr "Modello rosso c:"
 
 #: ../operations/workshop/external/lens-correct.c:54
 msgid "Model red d:"
-msgstr ""
+msgstr "Modello rosso d:"
 
 #: ../operations/workshop/external/lens-correct.c:57
 msgid "Model green a:"
-msgstr ""
+msgstr "Modello verde a:"
 
 #: ../operations/workshop/external/lens-correct.c:59
 msgid "Model green b:"
-msgstr ""
+msgstr "Modello verde b:"
 
 #: ../operations/workshop/external/lens-correct.c:61
 msgid "Model green c:"
-msgstr ""
+msgstr "Modello verde c:"
 
 #: ../operations/workshop/external/lens-correct.c:63
 msgid "Model green d:"
-msgstr ""
+msgstr "Modello verde d:"
 
 #: ../operations/workshop/external/lens-correct.c:66
 msgid "Model blue a:"
-msgstr ""
+msgstr "Modello blu a:"
 
 #: ../operations/workshop/external/lens-correct.c:68
 msgid "Model blue b:"
-msgstr ""
+msgstr "Modello blu b:"
 
 #: ../operations/workshop/external/lens-correct.c:70
 msgid "Model blue c:"
-msgstr ""
+msgstr "Modello blu c:"
 
 #: ../operations/workshop/external/lens-correct.c:72
 msgid "Model blue d:"
-msgstr ""
+msgstr "Modello blu d:"
 
 #: ../operations/workshop/external/lens-correct.c:75
 msgid "Model alpha a:"
-msgstr ""
+msgstr "Modello alfa a:"
 
 #: ../operations/workshop/external/lens-correct.c:76
 #: ../operations/workshop/external/lens-correct.c:78
 #: ../operations/workshop/external/lens-correct.c:80
 #: ../operations/workshop/external/lens-correct.c:82
 msgid "Correction parameters for alpha channel"
-msgstr ""
+msgstr "Parametri di correzione per il canale alfa"
 
 #: ../operations/workshop/external/lens-correct.c:77
 msgid "Model alpha b:"
-msgstr ""
+msgstr "Modello alfa b:"
 
 #: ../operations/workshop/external/lens-correct.c:79
 msgid "Model alpha c:"
-msgstr ""
+msgstr "Modello alfa c:"
 
 #: ../operations/workshop/external/lens-correct.c:81
 msgid "Model alpha d:"
-msgstr ""
+msgstr "Modello alfa d:"
 
 #: ../operations/workshop/external/line-profile.c:25
 msgid "X0"
-msgstr ""
+msgstr "X0"
 
 #: ../operations/workshop/external/line-profile.c:25
 msgid "Start x coordinate"
-msgstr ""
+msgstr "Coordinata x di inizio"
 
 #: ../operations/workshop/external/line-profile.c:26
 #: ../operations/workshop/fractal-trace.c:28
 #: ../operations/workshop/linear-gradient.c:24
 msgid "X1"
-msgstr ""
+msgstr "X1"
 
 #: ../operations/workshop/external/line-profile.c:26
 msgid "End x coordinate"
-msgstr ""
+msgstr "Coordinata x di fine"
 
 #: ../operations/workshop/external/line-profile.c:27
 msgid "Y0"
-msgstr ""
+msgstr "Y0"
 
 #: ../operations/workshop/external/line-profile.c:27
 msgid "Start y coordinate"
-msgstr ""
+msgstr "Coordinata y di inizio"
 
 #: ../operations/workshop/external/line-profile.c:28
 #: ../operations/workshop/fractal-trace.c:32
 #: ../operations/workshop/linear-gradient.c:25
 msgid "Y1"
-msgstr ""
+msgstr "Y1"
 
 #: ../operations/workshop/external/line-profile.c:28
 msgid "End y coordinate"
-msgstr ""
+msgstr "Coordinata y di fine"
 
 #: ../operations/workshop/external/line-profile.c:29
 msgid "Width of plot"
-msgstr ""
+msgstr "Larghezza del disegno"
 
 #: ../operations/workshop/external/line-profile.c:30
 msgid "Height of plot"
-msgstr ""
+msgstr "Altezza del disegno"
 
 #: ../operations/workshop/external/line-profile.c:31
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #: ../operations/workshop/external/line-profile.c:31
 msgid "Value at bottom"
-msgstr ""
+msgstr "Valore in fondo"
 
 #: ../operations/workshop/external/line-profile.c:32
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: ../operations/workshop/external/line-profile.c:32
 msgid "Value at top"
-msgstr ""
+msgstr "Valore in cima"
 
 #: ../operations/workshop/external/line-profile.c:178
 msgid ""
@@ -3146,7 +3167,7 @@ msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:25
 msgid "Fractal"
-msgstr ""
+msgstr "Frattale"
 
 #: ../operations/workshop/fractal-trace.c:26
 msgid ""
@@ -3155,46 +3176,46 @@ msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:29
 msgid "X1 value, position"
-msgstr ""
+msgstr "Valore X1, posizione"
 
 #: ../operations/workshop/fractal-trace.c:30
 #: ../operations/workshop/linear-gradient.c:26
 msgid "X2"
-msgstr ""
+msgstr "X2"
 
 #: ../operations/workshop/fractal-trace.c:31
 #: ../operations/workshop/fractal-trace.c:33
 msgid "X2 value, position"
-msgstr ""
+msgstr "Valore X2, posizione"
 
 #: ../operations/workshop/fractal-trace.c:34
 #: ../operations/workshop/linear-gradient.c:27
 msgid "Y2"
-msgstr ""
+msgstr "Y2"
 
 #: ../operations/workshop/fractal-trace.c:35
 msgid "Y2 value, position"
-msgstr ""
+msgstr "Valore Y2, posizione"
 
 #: ../operations/workshop/fractal-trace.c:36
 msgid "JX"
-msgstr ""
+msgstr "JX"
 
 #: ../operations/workshop/fractal-trace.c:37
 msgid "Julia seed X value, position"
-msgstr ""
+msgstr "Valore del seme X di Julia, posizione"
 
 #: ../operations/workshop/fractal-trace.c:38
 msgid "JY"
-msgstr ""
+msgstr "JY"
 
 #: ../operations/workshop/fractal-trace.c:39
 msgid "Julia seed Y value, position"
-msgstr ""
+msgstr "Valore del seme Y di Julia, posizione"
 
 #: ../operations/workshop/fractal-trace.c:41
 msgid "Depth value"
-msgstr ""
+msgstr "Valore di profondità"
 
 #: ../operations/workshop/fractal-trace.c:42
 msgid "Bailout"
@@ -3206,7 +3227,7 @@ msgstr ""
 
 #: ../operations/workshop/fractal-trace.c:44
 msgid "Background"
-msgstr ""
+msgstr "Sfondo"
 
 #: ../operations/workshop/fractal-trace.c:45
 msgid ""
@@ -3402,31 +3423,31 @@ msgid ""
 "Neighbours"
 msgstr ""
 
-#: ../operations/workshop/warp.c:27 ../operations/workshop/warp.c:32
+#: ../operations/workshop/warp.c:36 ../operations/workshop/warp.c:41
 msgid "Effect Strength"
 msgstr ""
 
-#: ../operations/workshop/warp.c:29
+#: ../operations/workshop/warp.c:38
 msgid "Effect Size"
 msgstr ""
 
-#: ../operations/workshop/warp.c:31
+#: ../operations/workshop/warp.c:40
 msgid "Effect Hardness"
 msgstr ""
 
-#: ../operations/workshop/warp.c:32
+#: ../operations/workshop/warp.c:41
 msgid "Stroke"
 msgstr ""
 
-#: ../operations/workshop/warp.c:33
+#: ../operations/workshop/warp.c:42
 msgid "Behavior"
 msgstr ""
 
-#: ../operations/workshop/warp.c:34
+#: ../operations/workshop/warp.c:43
 msgid "Behavior of the op"
 msgstr ""
 
-#: ../operations/workshop/warp.c:379
+#: ../operations/workshop/warp.c:386
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr ""
 
