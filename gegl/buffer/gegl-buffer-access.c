@@ -134,68 +134,63 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
                        const Babl *format,
                        gpointer    data)
 {
-  guchar     *buf         = data;
-  gint        tile_width  = buffer->tile_storage->tile_width;
-  gint        tile_height = buffer->tile_storage->tile_height;
-  gint        bpx_size    = babl_format_get_bytes_per_pixel (format);
-  const Babl *fish        = NULL;
-
-  gint  buffer_shift_x = buffer->shift_x;
-  gint  buffer_shift_y = buffer->shift_y;
-  gint  px_size        = babl_format_get_bytes_per_pixel (buffer->soft_format);
-
-  if (format != buffer->soft_format)
-    {
-      fish = babl_fish ((gpointer) buffer->soft_format,
-                        (gpointer) format);
-    }
+  if (gegl_buffer_in_abyss( buffer, x, y))
+    /* Nothing to set here */
+    return;
 
   {
-    gint tiledy   = y + buffer_shift_y;
-    gint tiledx   = x + buffer_shift_x;
+    guchar         *buf = data;
+    gint    tile_width  = buffer->tile_storage->tile_width;
+    gint    tile_height = buffer->tile_storage->tile_height;
+    gint buffer_shift_x = buffer->shift_x;
+    gint buffer_shift_y = buffer->shift_y;
+    gint         tiledy = y + buffer_shift_y;
+    gint         tiledx = x + buffer_shift_x;
+    gint       indice_x = gegl_tile_indice (tiledx, tile_width);
+    gint       indice_y = gegl_tile_indice (tiledy, tile_height);
+    GeglTile      *tile = NULL;
 
-    if (gegl_buffer_in_abyss( buffer, x, y))
-      { /* in abyss */
-        return;
+
+    if (buffer->tile_storage->hot_tile &&
+        buffer->tile_storage->hot_tile->x == indice_x &&
+        buffer->tile_storage->hot_tile->y == indice_y)
+      {
+        tile = buffer->tile_storage->hot_tile;
       }
     else
       {
-        gint      indice_x = gegl_tile_indice (tiledx, tile_width);
-        gint      indice_y = gegl_tile_indice (tiledy, tile_height);
-        GeglTile *tile     = NULL;
+        _gegl_buffer_drop_hot_tile (buffer);
+        tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                         indice_x, indice_y,
+                                         0);
+      }
 
-        if (buffer->tile_storage->hot_tile &&
-            buffer->tile_storage->hot_tile->x == indice_x &&
-            buffer->tile_storage->hot_tile->y == indice_y)
+    if (tile)
+      {
+        const Babl *fish  = NULL;
+        gint      offsetx = gegl_tile_offset (tiledx, tile_width);
+        gint      offsety = gegl_tile_offset (tiledy, tile_height);
+        gint     bpx_size = babl_format_get_bytes_per_pixel (format);
+        gint      px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
+        guchar *tp;
+
+        if (format != buffer->soft_format)
           {
-            tile = buffer->tile_storage->hot_tile;
+            fish = babl_fish ((gpointer) buffer->soft_format,
+                              (gpointer) format);
           }
+
+        gegl_tile_lock (tile);
+
+        tp = gegl_tile_get_data (tile) +
+             (offsety * tile_width + offsetx) * px_size;
+        if (fish)
+          babl_process (fish, buf, tp, 1);
         else
-          {
-            _gegl_buffer_drop_hot_tile (buffer);
-            tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                             indice_x, indice_y,
-                                             0);
-          }
+          memcpy (tp, buf, bpx_size);
 
-        if (tile)
-          {
-            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
-            gint    offsety = gegl_tile_offset (tiledy, tile_height);
-            guchar *tp;
-
-            gegl_tile_lock (tile);
-
-            tp = gegl_tile_get_data (tile) +
-                 (offsety * tile_width + offsetx) * px_size;
-            if (fish)
-              babl_process (fish, buf, tp, 1);
-            else
-              memcpy (tp, buf, bpx_size);
-
-            gegl_tile_unlock (tile);
-            buffer->tile_storage->hot_tile = tile;
-          }
+        gegl_tile_unlock (tile);
+        buffer->tile_storage->hot_tile = tile;
       }
   }
 }
