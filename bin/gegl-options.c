@@ -121,6 +121,7 @@ print_opts (GeglOptions *o)
         mode_str = "Display help information"; break;
       default:
         g_warning ("Unknown GeglOption mode: %d", o->mode);
+        mode_str = "unknown mode";
         break;
     }
 

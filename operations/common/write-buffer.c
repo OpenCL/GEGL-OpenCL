@@ -53,7 +53,7 @@ process (GeglOperation       *operation,
         {
           size_t size;
           gboolean err;
-          cl_int cl_err;
+          cl_int cl_err = 0;
           gint j;
 
           GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
