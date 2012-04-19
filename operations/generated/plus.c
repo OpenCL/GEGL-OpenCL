@@ -112,7 +112,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "svg:plus",
     "description" ,
-    _("SVG blend operation plus (<tt>d = cA + cB</tt>)"),
+    _("SVG blend operation plus (<code>d = cA + cB</code>)"),
     NULL);
   gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }

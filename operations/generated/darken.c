@@ -112,7 +112,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:darken",
   "description" ,
-        _("SVG blend operation darken (<tt>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</tt>)"),
+        _("SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);
   gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
 }
