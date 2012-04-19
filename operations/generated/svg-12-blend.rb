@@ -183,7 +183,7 @@ a.each do
   file.write file_tail1
   file.write "
   operation_class->compat_name = \"gegl:#{name}\";
-  
+
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"svg:#{name}\",
   \"description\" ,

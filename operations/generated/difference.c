@@ -108,7 +108,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:difference";
-  
+
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:difference",
   "description" ,
