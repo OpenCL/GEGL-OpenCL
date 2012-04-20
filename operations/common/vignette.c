@@ -146,7 +146,7 @@ static const char* kernel_source =
 "  out[gid] = in[gid]*(1.0f-strength) + color * strength;        \n"
 "}                                                               \n";
 
-static gegl_cl_run_data * cl_data = NULL;
+static GeglClRunData * cl_data = NULL;
 
 static cl_int
 cl_process (GeglOperation       *operation,

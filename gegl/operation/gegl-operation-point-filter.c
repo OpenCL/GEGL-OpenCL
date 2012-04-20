@@ -119,7 +119,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
             else if (operation_class->cl_data)
               {
                 gint p = 0;
-                gegl_cl_run_data *cl_data = operation_class->cl_data;
+                GeglClRunData *cl_data = operation_class->cl_data;
 
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read][j]);
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[  0 ][j]);

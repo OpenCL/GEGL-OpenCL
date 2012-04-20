@@ -141,7 +141,7 @@ struct _GeglOperationClass
                                               gint                 x,
                                               gint                 y);
 
-  gegl_cl_run_data *cl_data;
+  GeglClRunData *cl_data;
 
   gpointer      pad[9];
 };

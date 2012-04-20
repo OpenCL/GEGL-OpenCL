@@ -419,7 +419,7 @@ static const char* kernel_source =
 "        (value[0], value[1], value[2], value[3]);                     \n"
 "}                                                                     \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 static cl_int
 cl_edge_laplace (cl_mem                in_tex,

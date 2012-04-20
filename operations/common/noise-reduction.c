@@ -231,7 +231,7 @@ static const char* kernel_source =
 "    out[gidy * width + gidx] = in[gidy * in_width + gidx];                        \n"
 "}                                                                                 \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 static cl_int
 cl_noise_reduction (cl_mem                in_tex,

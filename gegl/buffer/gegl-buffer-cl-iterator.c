@@ -52,7 +52,7 @@ typedef struct GeglBufferClIterators
   /* format */
   size_t op_cl_format_size      [GEGL_CL_BUFFER_MAX_ITERATORS];
 
-  gegl_cl_color_op conv         [GEGL_CL_BUFFER_MAX_ITERATORS];
+  GeglClColorOp conv         [GEGL_CL_BUFFER_MAX_ITERATORS];
 
   /* total iteration */
   gint           rois;

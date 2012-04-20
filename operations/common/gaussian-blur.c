@@ -472,7 +472,7 @@ static const char* kernel_source =
 "        src_buf, src_offset, 1, cmatrix, matrix_length);          \n"
 "}                                                                 \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 static cl_int
 cl_gaussian_blur (cl_mem                in_tex,

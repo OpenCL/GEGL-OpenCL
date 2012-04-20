@@ -273,7 +273,7 @@ static const char* kernel_source =
 "  out[out_index] = mean / (2 * radius + 1);                                                        \n"
 "}                                                                                                  \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 static cl_int
 cl_box_blur (cl_mem                in_tex,

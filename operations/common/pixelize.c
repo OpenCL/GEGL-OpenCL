@@ -185,7 +185,7 @@ static const char* kernel_source =
 "    out[gidx + gidy * src_width] = in[cx + cy * block_count_x];       \n"
 "}                                                                     \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 static cl_int
 cl_pixelise (cl_mem                in_tex,

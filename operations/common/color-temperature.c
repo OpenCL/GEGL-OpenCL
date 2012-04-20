@@ -188,7 +188,7 @@ static const char* kernel_source =
 "  out[gid]  =  out_v;                                          \n"
 "}                                                              \n";
 
-static gegl_cl_run_data *cl_data = NULL;
+static GeglClRunData *cl_data = NULL;
 
 /* OpenCL processing function */
 static cl_int

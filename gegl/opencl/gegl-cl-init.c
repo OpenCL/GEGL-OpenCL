@@ -85,7 +85,7 @@ const char *gegl_cl_errstring(cl_int err) {
   return strings[-err];
 }
 
-static gegl_cl_state cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
+static GeglClState cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
 static GHashTable *cl_program_hash = NULL;
 
 gboolean
@@ -325,15 +325,15 @@ gegl_cl_init (GError **error)
 /* XXX: same program_source with different kernel_name[], context or device
  *      will retrieve the same key
  */
-gegl_cl_run_data *
+GeglClRunData *
 gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[])
 {
   gint errcode;
-  gegl_cl_run_data *cl_data = NULL;
+  GeglClRunData *cl_data = NULL;
   if (!gegl_cl_is_accelerated ())
     return NULL;
 
-  if ((cl_data = (gegl_cl_run_data *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
+  if ((cl_data = (GeglClRunData *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
     {
       size_t length = strlen(program_source);
 
@@ -341,7 +341,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
       guint kernel_n = 0;
       while (kernel_name[++kernel_n] != NULL);
 
-      cl_data = (gegl_cl_run_data *) g_new(gegl_cl_run_data, 1);
+      cl_data = (GeglClRunData *) g_new(GeglClRunData, 1);
 
       CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 1, &program_source,
                                                                       &length, &errcode) );

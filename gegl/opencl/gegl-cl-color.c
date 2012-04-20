@@ -6,7 +6,7 @@
 
 #include "gegl-cl-color-kernel.h"
 
-static gegl_cl_run_data *kernels_color = NULL;
+static GeglClRunData *kernels_color = NULL;
 
 #define CL_FORMAT_N 11
 
@@ -235,7 +235,7 @@ gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
   return TRUE;
 }
 
-gegl_cl_color_op
+GeglClColorOp
 gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
 {
   if (in_format == out_format)

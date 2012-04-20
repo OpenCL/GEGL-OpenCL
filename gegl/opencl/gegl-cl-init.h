@@ -29,7 +29,7 @@ typedef struct
     char platform_ext    [1024];
     char device_name     [1024];
   }
-gegl_cl_state;
+GeglClState;
 
 const char *gegl_cl_errstring(cl_int err);
 
@@ -56,9 +56,9 @@ typedef struct
   cl_program program;
   cl_kernel  *kernel;
   size_t     *work_group_size;
-} gegl_cl_run_data;
+} GeglClRunData;
 
-gegl_cl_run_data *gegl_cl_compile_and_build (const char *program_source,
+GeglClRunData *gegl_cl_compile_and_build (const char *program_source,
                                              const char *kernel_name[]);
 
 #define GEGL_CL_CHUNK_SIZE 1024 * 1024

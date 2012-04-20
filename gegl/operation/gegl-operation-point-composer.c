@@ -159,7 +159,7 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
   cl_int cl_err = 0;
   gboolean err;
 
-  gint foo;
+  gint foo = -1;
 
   /* non-texturizable format! */
   if (!gegl_cl_color_babl (in_format,  NULL) ||
@@ -193,7 +193,7 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
             else if (operation_class->cl_data)
               {
                 gint p = 0;
-                gegl_cl_run_data *cl_data = operation_class->cl_data;
+                GeglClRunData *cl_data = operation_class->cl_data;
 
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read][j]);
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (aux)? (void*)&i->tex[foo][j] : NULL);
