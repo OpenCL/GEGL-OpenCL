@@ -70,12 +70,10 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-#include "opencl/gegl-cl.h"
-
 static const char* kernel_source =
-"__kernel void kernel_over(__global const float4     *in,       \n"
-"                          __global const float4     *aux,      \n"
-"                          __global       float4     *out)      \n"
+"__kernel void svg_src_over (__global const float4 *in,         \n"
+"                            __global const float4 *aux,        \n"
+"                            __global       float4 *out)        \n"
 "{                                                              \n"
 "  int gid = get_global_id(0);                                  \n"
 "  float4 in_v  = in [gid];                                     \n"
@@ -85,48 +83,6 @@ static const char* kernel_source =
 "  out_v.w   = aux_v.w + in_v.w - aux_v.w * in_v.w;             \n"
 "  out[gid]  = out_v;                                           \n"
 "}                                                              \n";
-
-static gegl_cl_run_data *cl_data = NULL;
-
-static cl_int
-cl_process (GeglOperation       *op,
-            cl_mem               in_tex,
-            cl_mem               aux_tex,
-            cl_mem               out_tex,
-            size_t               global_worksize,
-            const GeglRectangle *roi,
-            gint                 level)
-{
-  /* Retrieve a pointer to GeglChantO structure which contains all the
-   * chanted properties
-   */
-
-  cl_int cl_err = 0;
-
-  if (aux_tex == NULL)
-    return 0;
-
-  if (!cl_data)
-    {
-      const char *kernel_name[] = {"kernel_over", NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
-    }
-
-  if (!cl_data) return 1;
-
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem),   (void*)&out_tex);
-  if (cl_err != CL_SUCCESS) return cl_err;
-
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                        cl_data->kernel[0], 1,
-                                        NULL, &global_worksize, NULL,
-                                        0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
-
-  return cl_err;
-}
 
 /* Fast paths */
 static gboolean operation_process (GeglOperation        *operation,
@@ -187,9 +143,6 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
 
   point_composer_class->process = process;
-  point_composer_class->cl_process = cl_process;
-
-  operation_class->opencl_support = TRUE;
 
   operation_class->compat_name = "gegl:over";
 
@@ -198,6 +151,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories" , "compositors:porter-duff",
     "description",
           _("Porter Duff operation over (d = cA + cB * (1 - aA))"),
+    "cl-source"  , kernel_source,
     NULL);
 }
 

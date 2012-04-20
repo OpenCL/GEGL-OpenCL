@@ -100,13 +100,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
       return FALSE;
     }
 
-  GEGL_NOTE (GEGL_DEBUG_OPENCL, "BABL formats: (%s,%s) (%s,%s)\n \t Tile Size:(%d, %d)\n",
-             babl_get_name(input->format),
-             babl_get_name(in_format),
-             babl_get_name(out_format),
-             babl_get_name(output->format),
-             input->tile_storage->tile_width,
-             input->tile_storage->tile_height);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "GEGL_OPERATION_POINT_FILTER: %s", operation_class->name);
 
   /* Process */
   {
@@ -145,7 +139,7 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
 
             if (cl_err != CL_SUCCESS)
               {
-                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in GeglOperationPointFilter Kernel: %sS", gegl_cl_errstring(cl_err));
+                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in GeglOperationPointFilter Kernel: %s", gegl_cl_errstring(cl_err));
                 return FALSE;
               }
           }
@@ -170,7 +164,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (gegl_cl_is_accelerated () && operation_class->cl_data)
+      if (gegl_cl_is_accelerated () && (operation_class->cl_data || point_filter_class->cl_process))
         {
           if (gegl_operation_point_filter_cl_process (operation, input, output, result, level))
             return TRUE;

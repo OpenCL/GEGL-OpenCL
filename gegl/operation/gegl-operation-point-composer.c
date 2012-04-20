@@ -30,6 +30,8 @@
 #include "graph/gegl-pad.h"
 #include <string.h>
 
+#include "gegl-buffer-private.h"
+
 static gboolean gegl_operation_point_composer_process
                               (GeglOperation       *operation,
                                GeglBuffer          *input,
@@ -150,11 +152,14 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
   const Babl *aux_format = gegl_operation_get_format (operation, "aux");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointComposerClass *point_composer_class = GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation);
 
   gint j;
   cl_int cl_err = 0;
   gboolean err;
+
+  gint foo;
 
   /* non-texturizable format! */
   if (!gegl_cl_color_babl (in_format,  NULL) ||
@@ -165,45 +170,52 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
       return FALSE;
     }
 
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "GEGL_OPERATION_POINT_COMPOSER: %s", operation_class->name);
+
   /* Process */
   {
     GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
                   gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
     if (aux)
-      {
-        gint foo = gegl_buffer_cl_iterator_add (i, aux, result, aux_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
+      foo = gegl_buffer_cl_iterator_add (i, aux, result, aux_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-        while (gegl_buffer_cl_iterator_next (i, &err))
-          {
-            if (err) return FALSE;
-            for (j=0; j < i->n; j++)
-              {
-                cl_err = point_composer_class->cl_process(operation, i->tex[read][j], i->tex[foo][j], i->tex[0][j],
-                                                          i->size[0][j], &i->roi[0][j], level);
-                if (cl_err != CL_SUCCESS)
-                  {
-                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointComposer] Kernel",
-                               GEGL_OPERATION_CLASS (operation)->name);
-                    return FALSE;
-                  }
-              }
-          }
-      }
-    else
+    while (gegl_buffer_cl_iterator_next (i, &err))
       {
-        while (gegl_buffer_cl_iterator_next (i, &err))
+        if (err) return FALSE;
+        for (j=0; j < i->n; j++)
           {
-            if (err) return FALSE;
-            for (j=0; j < i->n; j++)
+            if (point_composer_class->cl_process)
               {
-                cl_err = point_composer_class->cl_process(operation, i->tex[read][j], NULL, i->tex[0][j],
-                                                          i->size[0][j], &i->roi[0][j], level);
-                if (cl_err != CL_SUCCESS)
-                  {
-                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s [GeglOperationPointComposer] Kernel",
-                               GEGL_OPERATION_CLASS (operation)->name);
-                    return FALSE;
-                  }
+                cl_err = point_composer_class->cl_process(operation, i->tex[read][j],
+                                                          (aux)? i->tex[foo][j] : NULL,
+                                                          i->tex[0][j], i->size[0][j], &i->roi[0][j], level);
+              }
+            else if (operation_class->cl_data)
+              {
+                gint p = 0;
+                gegl_cl_run_data *cl_data = operation_class->cl_data;
+
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read][j]);
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (aux)? (void*)&i->tex[foo][j] : NULL);
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[0][j]);
+
+                gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
+
+                cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                                     cl_data->kernel[0], 1,
+                                                     NULL, &i->size[0][j], NULL,
+                                                     0, NULL, NULL);
+              }
+            else
+              {
+                g_warning ("OpenCL support enabled, but no way to execute");
+                return FALSE;
+              }
+
+            if (cl_err != CL_SUCCESS)
+              {
+                GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in GeglOperationPointComposer Kernel: %s", gegl_cl_errstring(cl_err));
+                return FALSE;
               }
           }
       }
@@ -219,6 +231,7 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
                                        const GeglRectangle *result,
                                        gint                 level)
 {
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointComposerClass *point_composer_class = GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation);
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *aux_format = gegl_operation_get_format (operation, "aux");
@@ -226,7 +239,7 @@ gegl_operation_point_composer_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      if (gegl_cl_is_accelerated () && point_composer_class->cl_process)
+      if (gegl_cl_is_accelerated () && (operation_class->cl_data || point_composer_class->cl_process))
         {
           if (gegl_operation_point_composer_cl_process (operation, input, aux, output, result, level))
             return TRUE;
