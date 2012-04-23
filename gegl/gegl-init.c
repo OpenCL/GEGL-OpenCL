@@ -594,12 +594,6 @@ gegl_post_parse_hook (GOptionContext *context,
 
   swap_clean ();
 
-  /* Initialize OpenCL if wanted and possible */
-  if (gegl_cl_is_accelerated ())
-    gegl_cl_init (NULL);
-
-  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Using OpenCL: %d\n", gegl_cl_is_accelerated ());
-
   return TRUE;
 }
 

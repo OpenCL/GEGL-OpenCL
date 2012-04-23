@@ -749,27 +749,33 @@ gegl_processor_work (GeglProcessor *processor,
   gboolean   more_work = FALSE;
   GeglCache *cache     = gegl_node_get_cache (processor->input);
 
-  if (gegl_cl_is_accelerated ()
-      && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
+  if (gegl_config()->use_opencl)
     {
-      GeglVisitor *visitor = g_object_new (GEGL_TYPE_VISITOR, NULL);
-      GSList *iterator = NULL;
-      GSList *visits_list = NULL;
-      gegl_visitor_reset (visitor);
-      gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE (processor->node));
-      visits_list = gegl_visitor_get_visits_list (visitor);
+      /* Initialize OpenCL if wanted and possible */
+      gegl_cl_init (NULL);
 
-      for (iterator = visits_list; iterator; iterator = iterator->next)
+      if (gegl_cl_is_accelerated ()
+          && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
         {
-          GeglNode *node = (GeglNode*) iterator->data;
-          if (GEGL_OPERATION_GET_CLASS(node->operation)->cl_data)
-            {
-              processor->chunk_size = GEGL_CL_CHUNK_SIZE;
-              break;
-            }
-        }
+          GeglVisitor *visitor = g_object_new (GEGL_TYPE_VISITOR, NULL);
+          GSList *iterator = NULL;
+          GSList *visits_list = NULL;
+          gegl_visitor_reset (visitor);
+          gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE (processor->node));
+          visits_list = gegl_visitor_get_visits_list (visitor);
 
-      g_object_unref (visitor);
+          for (iterator = visits_list; iterator; iterator = iterator->next)
+            {
+              GeglNode *node = (GeglNode*) iterator->data;
+              if (GEGL_OPERATION_GET_CLASS(node->operation)->cl_data)
+                {
+                  processor->chunk_size = GEGL_CL_CHUNK_SIZE;
+                  break;
+                }
+            }
+
+          g_object_unref (visitor);
+        }
     }
 
   more_work = gegl_processor_render (processor, &processor->rectangle, progress);
