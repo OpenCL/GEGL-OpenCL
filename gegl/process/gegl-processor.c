@@ -749,7 +749,7 @@ gegl_processor_work (GeglProcessor *processor,
   gboolean   more_work = FALSE;
   GeglCache *cache     = gegl_node_get_cache (processor->input);
 
-  if (gegl_cl_is_accelerated () && gegl_config()->use_opencl
+  if (gegl_cl_is_accelerated ()
       && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
     {
       GeglVisitor *visitor = g_object_new (GEGL_TYPE_VISITOR, NULL);

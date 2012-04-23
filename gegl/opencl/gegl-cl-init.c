@@ -11,6 +11,7 @@
 #include "gegl-cl-color.h"
 
 #include "gegl/gegl-debug.h"
+#include "gegl-config.h"
 
 const char *gegl_cl_errstring(cl_int err) {
   static const char* strings[] =
@@ -91,7 +92,7 @@ static GHashTable *cl_program_hash = NULL;
 gboolean
 gegl_cl_is_accelerated (void)
 {
-  return cl_state.is_accelerated;
+  return cl_state.is_accelerated && gegl_config()->use_opencl;
 }
 
 cl_platform_id
