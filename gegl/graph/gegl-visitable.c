@@ -63,7 +63,7 @@ gegl_visitable_accept (GeglVisitable *interface,
 {
   GeglVisitableClass *interface_class;
 
-  g_return_if_fail (GEGL_IS_VISITABLE (interface));
+  //g_return_if_fail (GEGL_IS_VISITABLE (interface));
 
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
 

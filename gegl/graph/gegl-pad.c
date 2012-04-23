@@ -251,7 +251,7 @@ static void
 visitable_accept (GeglVisitable *visitable,
                   GeglVisitor   *visitor)
 {
-  gegl_visitor_visit_pad (visitor, GEGL_PAD (visitable));
+  gegl_visitor_visit_pad (visitor, (GeglPad*) (visitable));
 }
 
 static GSList *
