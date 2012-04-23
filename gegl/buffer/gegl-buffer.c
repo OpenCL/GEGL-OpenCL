@@ -749,7 +749,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
                       gint        y,
                       gint        z)
 {
-  GeglTileHandler *handler = GEGL_TILE_HANDLER (source);
+  GeglTileHandler *handler = (GeglTileHandler*) (source);
   GeglTile    *tile   = NULL;
   source = handler->source;
 
@@ -760,7 +760,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
 
   if (tile)
     {
-      GeglBuffer *buffer = GEGL_BUFFER (handler);
+      GeglBuffer *buffer = (GeglBuffer*) (handler);
 
       /* storing information in tile, to enable the dispose function of the
        * tile instance to "hook" back to the storage with correct
