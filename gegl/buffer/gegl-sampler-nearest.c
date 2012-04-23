@@ -37,14 +37,6 @@ static void    gegl_sampler_nearest_get (GeglSampler  *self,
                                          gdouble       y,
                                          GeglMatrix2  *scale,
                                          void         *output);
-static void    set_property             (GObject      *gobject,
-                                         guint         prop_id,
-                                         const GValue *value,
-                                         GParamSpec   *pspec);
-static void    get_property             (GObject      *gobject,
-                                         guint         prop_id,
-                                         GValue       *value,
-                                         GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
@@ -52,10 +44,6 @@ static void
 gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
 {
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
 
   sampler_class->get     = gegl_sampler_nearest_get;
 
@@ -81,32 +69,4 @@ gegl_sampler_nearest_get (GeglSampler *self,
   gfloat             *sampler_bptr;
   sampler_bptr = gegl_sampler_get_from_buffer (self, (gint)x, (gint)y);
   babl_process (self->fish, sampler_bptr, output, 1);
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (property_id)
-    {
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  switch (property_id)
-    {
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
 }

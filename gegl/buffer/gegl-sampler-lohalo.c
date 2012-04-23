@@ -260,29 +260,12 @@ static void gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                                            GeglMatrix2          *scale,
                                            void*        restrict output);
 
-
-static void set_property (      GObject*    gobject,
-                                guint       property_id,
-                          const GValue*     value,
-                                GParamSpec* pspec);
-
-
-static void get_property (GObject*    gobject,
-                          guint       property_id,
-                          GValue*     value,
-                          GParamSpec* pspec);
-
-
 G_DEFINE_TYPE (GeglSamplerLohalo, gegl_sampler_lohalo, GEGL_TYPE_SAMPLER)
-
 
 static void
 gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 {
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
   sampler_class->get = gegl_sampler_lohalo_get;
 }
 
@@ -2428,24 +2411,4 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
       return;
     }
   }
-}
-
-
-static void
-set_property (      GObject*    gobject,
-                    guint       property_id,
-              const GValue*     value,
-                    GParamSpec* pspec)
-{
-  /* G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec); */
-}
-
-
-static void
-get_property (GObject*    gobject,
-              guint       property_id,
-              GValue*     value,
-              GParamSpec* pspec)
-{
-  /* G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec); */
 }
