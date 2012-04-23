@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-18 01:26+0200\n"
-"PO-Revision-Date: 2012-04-18 01:55+0200\n"
+"POT-Creation-Date: 2012-04-23 17:47+0200\n"
+"PO-Revision-Date: 2012-04-23 17:46+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -173,7 +173,7 @@ msgstr ""
 #: ../operations/common/buffer-sink.c:83
 #: ../operations/common/write-buffer.c:127
 msgid "A GEGL buffer destination surface."
-msgstr "Un buffer di superficie di destinazione GEGL. "
+msgstr "Un buffer di superficie di destinazione GEGL."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
@@ -705,7 +705,7 @@ msgstr "Caricatore file GeglBuffer."
 
 #: ../operations/common/gegl-buffer-save-op.c:24
 msgid "Target file path to write GeglBuffer to."
-msgstr "Percorso file su cui scrivere il GeglBuffer<."
+msgstr "Percorso file su cui scrivere il GeglBuffer."
 
 #: ../operations/common/gegl-buffer-save-op.c:62
 msgid "GeglBuffer file writer."
@@ -751,7 +751,7 @@ msgstr "Nodo GEGL da analizzare"
 msgid "GEGL graph visualizer."
 msgstr "Visualizzatore grafo GEGL."
 
-#: ../operations/common/invert.c:131
+#: ../operations/common/invert.c:91
 msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
@@ -980,8 +980,8 @@ msgid ""
 msgstr ""
 "Dati una qualsiasi tri-mappa fornita dall'utente ed una immagine in "
 "ingresso, crea una superficie alfa in primo piano. Imposta il bianco come "
-"primo piano, nero per lo sfondo della trimappa. Ogni altro particolare viene "
-"trattato come sconosiuto e riempito."
+"primo piano, nero per lo sfondo della tri-mappa. Ogni altro particolare "
+"viene trattato come sconosciuto e riempito."
 
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
@@ -1118,7 +1118,7 @@ msgstr "Blu"
 msgid "Amount of blue"
 msgstr "Ammontare del blu"
 
-#: ../operations/common/mono-mixer.c:202
+#: ../operations/common/mono-mixer.c:104
 msgid "Monochrome channel mixer"
 msgstr "Mixer canale monocromatico"
 
@@ -1175,7 +1175,7 @@ msgstr ""
 "Il valore di opacità generale viene sempre usato in cima all'opzionale "
 "buffer di ingresso ausiliario."
 
-#: ../operations/common/opacity.c:225
+#: ../operations/common/opacity.c:153
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
@@ -1191,9 +1191,9 @@ msgstr "un file GeglBuffer su disco da aprire"
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr "Una sorgente che usa un GeglBuffer su disco."
 
-#: ../operations/common/over.c:200
+#: ../operations/common/over.c:153
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
-msgstr ""
+msgstr "Operazione sopra Porter Duff (d = cA + cB * (1 - aA))"
 
 #: ../operations/common/pixelize.c:25
 msgid "Block Width"
@@ -1437,7 +1437,7 @@ msgstr ""
 
 #: ../operations/common/stress.c:191
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
-msgstr ""
+msgstr "Sviluppo tipo retinex spazio temporale con campionamento stocastico"
 
 #: ../operations/common/stretch-contrast.c:162
 msgid ""
@@ -1487,7 +1487,7 @@ msgstr ""
 "Livello di soglia globale (usato quando non c'è un buffer di ingresso "
 "ausiliario)."
 
-#: ../operations/common/threshold.c:193
+#: ../operations/common/threshold.c:123
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
@@ -1511,7 +1511,7 @@ msgid ""
 "false mach-bands around edges)"
 msgstr ""
 
-#: ../operations/common/value-invert.c:232
+#: ../operations/common/value-invert.c:190
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
@@ -2143,28 +2143,28 @@ msgstr ""
 
 #: ../operations/generated/color-burn.c:117
 msgid ""
-"SVG blend operation color-burn (<tt>if cA * aB + cB * aA <= aA * aB: d = cA "
-"* (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB "
-"* aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</tt>)"
+"SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
+"cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
+"cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 msgstr ""
 
 #: ../operations/generated/color-dodge.c:117
 msgid ""
-"SVG blend operation color-dodge (<tt>if cA * aB + cB * aA >= aA * aB: d = aA "
-"* aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
-"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
+"aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
+"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/darken.c:115
 msgid ""
-"SVG blend operation darken (<tt>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + "
-"cB * (1 - aA)</tt>)"
+"SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
+"+ cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/difference.c:115
 msgid ""
-"SVG blend operation difference (<tt>d = cA + cB - 2 * (MIN (cA * aB, cB * "
-"aA))</tt>)"
+"SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
+"aA))</code>)"
 msgstr ""
 
 #: ../operations/generated/divide.c:125
@@ -2193,8 +2193,8 @@ msgstr ""
 
 #: ../operations/generated/exclusion.c:115
 msgid ""
-"SVG blend operation exclusion (<tt>d = (cA * aB + cB * aA - 2 * cA * cB) + "
-"cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/gamma.c:125
@@ -2203,15 +2203,15 @@ msgstr ""
 
 #: ../operations/generated/hard-light.c:117
 msgid ""
-"SVG blend operation hard-light (<tt>if 2 * cA < aA: d = 2 * cA * cB + cA * "
+"SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
-"+ cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/lighten.c:115
 msgid ""
-"SVG blend operation lighten (<tt>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) "
-"+ cB * (1 - aA)</tt>)"
+"SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
+"aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/multiply.c:125
@@ -2220,27 +2220,27 @@ msgstr ""
 
 #: ../operations/generated/overlay.c:117
 msgid ""
-"SVG blend operation overlay (<tt>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - "
-"aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA "
-"* (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
+"- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/plus.c:115
-msgid "SVG blend operation plus (<tt>d = cA + cB</tt>)"
+msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr ""
 
 #: ../operations/generated/screen.c:115
-msgid "SVG blend operation screen (<tt>d = cA + cB - cA * cB</tt>)"
+msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr ""
 
 #: ../operations/generated/soft-light.c:119
 msgid ""
-"SVG blend operation soft-light (<tt>if 2 * cA < aA: d = cB * (aA - (aB == "
+"SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
 "* cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB "
 "== 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = "
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
-"(1 - aB) + cB * (1 - aA)</tt>)"
+"(1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/src-atop.c:116
@@ -2267,10 +2267,10 @@ msgstr ""
 msgid "Math operation subtract (c = c - value)"
 msgstr ""
 
-#: ../operations/generated/svg-multiply.c:114
+#: ../operations/generated/svg-multiply.c:115
 msgid ""
-"SVG blend operation svg-multiply (<tt>d = cA * cB +  cA * (1 - aB) + cB * (1 "
-"- aA)</tt>)"
+"SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
+"aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/xor.c:116
@@ -2780,10 +2780,11 @@ msgid "Border"
 msgstr "Bordo"
 
 #: ../operations/workshop/convolution-matrix.c:91
-#, fuzzy
 msgid ""
 "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
-msgstr "Tipo di bordo da scegliere. Le possibilità sono extend, wrap, crop. Il valore predefinito è extend"
+msgstr ""
+"Tipo di bordo da scegliere. Le possibilità sono esteso, avvolto o "
+"ritagliato. Il valore predefinito è esteso"
 
 #: ../operations/workshop/convolution-matrix.c:433
 msgid "Creates image by manually set convolution matrix"
@@ -2843,32 +2844,44 @@ msgstr "Motivo Bayer"
 msgid ""
 "Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji "
 "files."
-msgstr "Viene usato il motivo Bayer, 0 sembra funzionare bene per i file Nikon, 2 per i file Fuji."
+msgstr ""
+"Viene usato il motivo Bayer, 0 sembra funzionare bene per i file Nikon, 2 "
+"per i file Fuji."
 
 #: ../operations/workshop/demosaic-bimedian.c:220
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
-msgstr "Esegue una demosaicizzazione scala di grigi a colore, usando la interpolazione bimediana."
+msgstr ""
+"Esegue una demosaicizzazione scala di grigi a colore, usando la "
+"interpolazione bimediana."
 
 #: ../operations/workshop/demosaic-simple.c:152
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
+"Esegue una semplice demosaicizzazione da scala di grigi a colore di "
+"un'immagine, senza interpolazione."
 
 #: ../operations/workshop/disc-percentile.c:29
 msgid "The percentile to compute, defaults to 50, which is a median filter."
 msgstr ""
+"Il percentile da calcolare, il valore predefinito è 50, che corrisponde ad "
+"un filtro mediano."
 
 #: ../operations/workshop/disc-percentile.c:234
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance."
 msgstr ""
+"Imposta il pixel obiettivo al colore corrispondente al dato percentile "
+"quando i colori sono ordinati per luminanza."
 
 #: ../operations/workshop/ditto.c:111
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
+"Operazione di test per fare una mappa 1:1 dell'ingresso sull'uscita, durante "
+"il campionamento"
 
 #: ../operations/workshop/emboss.c:25
 msgid "Azimuth"
@@ -2900,6 +2913,8 @@ msgid ""
 "Optional parameter to override automatic selection of emboss filter. Choices "
 "are emboss, blur-map"
 msgstr ""
+"Parametro opzionale per prevaricare la selezione automatica del filtro "
+"rilievo. Le scelte sono: rilievo e mappa-sfocatura"
 
 #: ../operations/workshop/emboss.c:248
 msgid "Simulates an image created by embossing"
@@ -2919,7 +2934,7 @@ msgstr "quadri al secondo"
 
 #: ../operations/workshop/external/ff-save.c:889
 msgid "FFmpeg video output sink"
-msgstr ""
+msgstr "Ricezione uscita video FFmpeg"
 
 #: ../operations/workshop/external/gluas.c:41
 msgid "Script"
@@ -2939,13 +2954,15 @@ msgstr "Valore utente"
 
 #: ../operations/workshop/external/gluas.c:45
 msgid "(appears in the global variable 'user_value' in lua."
-msgstr ""
+msgstr "(appare nella variabile globale \"user_value\" in lua."
 
 #: ../operations/workshop/external/gluas.c:984
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
-msgstr "Una implementazione proxy di un filtro/compositore di uso generale per il linguaggio di programmazione lua."
+msgstr ""
+"Una implementazione proxy di un filtro/compositore di uso generale per il "
+"linguaggio di programmazione lua."
 
 #: ../operations/workshop/external/lens-correct.c:28
 msgid "Maker:"
@@ -2953,7 +2970,7 @@ msgstr "Creatore:"
 
 #: ../operations/workshop/external/lens-correct.c:29
 msgid "Write lens maker correctly"
-msgstr ""
+msgstr "Scrive il marcatore lente correttamente"
 
 #: ../operations/workshop/external/lens-correct.c:30
 msgid "Camera:"
@@ -3164,6 +3181,9 @@ msgid ""
 "specified line in the input buffer, plotted in a buffer of the specified "
 "size."
 msgstr ""
+"Resa dei profili di luminanza per le componenti rossa, verde e blu lungo la "
+"linea specificata nel buffer di ingresso, disegnati in un buffer della "
+"dimensione specificata."
 
 #: ../operations/workshop/fractal-trace.c:25
 msgid "Fractal"
@@ -3173,6 +3193,8 @@ msgstr "Frattale"
 msgid ""
 "Type of fractal to use. Choices are julia, mandelbrot. Default is mandelbrot."
 msgstr ""
+"Tipo di frattale da usare. Le scelte possibili sono Julia e Mandelbrot. Il "
+"predefinito è Mandelbrot."
 
 #: ../operations/workshop/fractal-trace.c:29
 msgid "X1 value, position"
@@ -3234,29 +3256,36 @@ msgid ""
 "Optional parameter to override automatic selection of wrap background. "
 "Choices are wrap, black, white and transparent."
 msgstr ""
+"Parametro opzionale per avere la precedenza sulla selezione automatica dello "
+"sfondo avvolto. Le scelte possibili sono avvolto, nero, bianco e trasparente."
 
 #: ../operations/workshop/fractal-trace.c:171
 msgid "Unsupported fractal type"
-msgstr ""
+msgstr "Tipo di frattale non supportato"
 
 #: ../operations/workshop/fractal-trace.c:321
 msgid "Performs fractal trace on the image"
-msgstr ""
+msgstr "Esegue una delineatura frattale sull'immagine"
 
 #: ../operations/workshop/generated/average.c:109
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
 msgstr ""
+"Operazione di fusione dell'immagine \"media\" (<tt>c = (cA + aB)/2</tt>)"
 
 #: ../operations/workshop/generated/blend-reflect.c:109
 msgid ""
 "Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
 "cB)</tt>)"
 msgstr ""
+"Operazione di fusione dell'immagine \"riflessione-fusa\" (<tt>c = cB>=1.0?"
+"1.0:cA*cA / (1.0-cB)</tt>)"
 
 #: ../operations/workshop/generated/negation.c:109
 msgid ""
 "Image blending operation 'negation' (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
 msgstr ""
+"Operazione di fusione dell'immagine \"negazione\" (<tt>c = 1.0 - fabs(1.0-cA-"
+"cB)</tt>)"
 
 #: ../operations/workshop/generated/soft-burn.c:109
 msgid ""
