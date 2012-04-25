@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-25 15:33+0200\n"
-"PO-Revision-Date: 2012-04-25 16:07+0200\n"
+"PO-Revision-Date: 2012-04-25 20:12+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -1571,15 +1571,11 @@ msgid "Squeeze"
 msgstr "Spremi"
 
 #: ../operations/common/vignette.c:30
-#, fuzzy
 msgid ""
 "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
 "inf:1, this is applied after proportion is taken into account, to directly "
 "use squeeze factor as proportions, set proportion to 0.0."
-msgstr ""
-"Rapporto dimensioni da usare, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf "
-"1.0 = inf:1, this is applied after proportion is taken into account, to "
-"directly use squeeze factor as proportions, set proportion to 0.0."
+msgstr "Rapporto dimensioni da usare, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, ciò viene applicato dopo aver preso in considerazione le proporzioni, per usare direttamente il rapporto di schiacciamento come proporzioni, impostandole a 0.0."
 
 #: ../operations/common/vignette.c:32
 msgid "Horizontal center of vignetting"
@@ -2163,26 +2159,26 @@ msgid ""
 "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
 "cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
-msgstr ""
+msgstr "Operazione fusione SVG bruciatura-colore (<code>if cA * aB + cB * aA <= aA * aB: d = cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 
 #: ../operations/generated/color-dodge.c:117
 msgid ""
 "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
 "aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione fusione SVG schermatura-colore (<code>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/darken.c:115
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione fusione SVG scurisci (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/difference.c:115
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
-msgstr ""
+msgstr "Operazione fusione SVG differenza (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</code>)"
 
 #: ../operations/generated/divide.c:125
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
@@ -2190,65 +2186,65 @@ msgstr "Operazione matematica dividi (c = valore==0.0f?0.0f:c/valore)"
 
 #: ../operations/generated/dst-atop.c:116
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operazione Porter Duff dst-atop (d = cB * aA + cA * (1.0f - aB))"
 
 #: ../operations/generated/dst-in.c:116
 msgid "Porter Duff operation dst-in (d = cB * aA)"
-msgstr ""
+msgstr "Operazione Porter Duff dst-in (d = cB * aA)"
 
 #: ../operations/generated/dst-out.c:116
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operazione Porter Duff dst-out (d = cB * (1.0f - aA))"
 
 #: ../operations/generated/dst-over.c:116
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operazione Porter Duff dst-over (d = cB + cA * (1.0f - aB))"
 
 #: ../operations/generated/dst.c:116
 msgid "Porter Duff operation dst (d = cB)"
-msgstr ""
+msgstr "Operazione Porter Duff dst (d = cB)"
 
 #: ../operations/generated/exclusion.c:115
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG esclusione (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/gamma.c:125
 msgid "Math operation gamma (c = powf (c, value))"
-msgstr ""
+msgstr "Operazione matematica gamma (c = powf (c, valore))"
 
 #: ../operations/generated/hard-light.c:117
 msgid ""
 "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
 "+ cA * (1 - aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"luce dura\" (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/lighten.c:115
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"illumina\" (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/multiply.c:125
 msgid "Math operation multiply (c = c * value)"
-msgstr ""
+msgstr "Operazione matematica moltiplica (c = c * valore)"
 
 #: ../operations/generated/overlay.c:117
 msgid ""
 "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"rivestimento\" (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/plus.c:115
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"più\" (<code>d = cA + cB</code>)"
 
 #: ../operations/generated/screen.c:115
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"schermo\" (<code>d = cA + cB - cA * cB</code>)"
 
 #: ../operations/generated/soft-light.c:119
 msgid ""
@@ -2258,49 +2254,49 @@ msgid ""
 "== 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = "
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"luce morbida\" (<code>if 2 * cA < aA: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/src-atop.c:116
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operazione Porter Duff src-atop (d = cA * aB + cB * (1.0f - aA))"
 
 #: ../operations/generated/src-in.c:125
 msgid "Porter Duff operation src-in (d = cA * aB)"
-msgstr ""
+msgstr "Operazione Porter Duff src-in (d = cA * aB)"
 
 #: ../operations/generated/src-out.c:116
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operazione Porter Duff src-out (d = cA * (1.0f - aB))"
 
 #: ../operations/generated/src-over.c:116
 msgid "Porter Duff operation src-over (d = cA + cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operazione Porter Duff src-over (d = cA + cB * (1.0f - aA))"
 
 #: ../operations/generated/src.c:116
 msgid "Porter Duff operation src (d = cA)"
-msgstr ""
+msgstr "Operazione Porter Duff src (d = cA)"
 
 #: ../operations/generated/subtract.c:125
 msgid "Math operation subtract (c = c - value)"
-msgstr ""
+msgstr "Operazione matematica sottrai (c = c - valore)"
 
 #: ../operations/generated/svg-multiply.c:115
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
-msgstr ""
+msgstr "Operazione di fusione SVG \"moltiplica\" (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/xor.c:116
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operazione Porter Duff xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
 #: ../operations/transform/reflect.c:29
 msgid "Direction vector's X component"
-msgstr ""
+msgstr "Componente X della direzione del vettore"
 
 #: ../operations/transform/reflect.c:31
 msgid "Direction vector's Y component"
-msgstr ""
+msgstr "Componente Y della direzione del vettore"
 
 #: ../operations/transform/rotate.c:26
 msgid "Angle to rotate (clockwise)"
@@ -2308,7 +2304,7 @@ msgstr "Angolo di rotazione (orario)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
-msgstr ""
+msgstr "Ruota il buffer attorno all'origine specificata."
 
 #: ../operations/transform/scale.c:26
 msgid "Horizontal scale factor"
@@ -2340,7 +2336,7 @@ msgstr "X origine"
 
 #: ../operations/transform/transform-core.c:203
 msgid "X coordinate of origin"
-msgstr ""
+msgstr "Coordinata X dell'origine"
 
 #: ../operations/transform/transform-core.c:210
 msgid "Origin-y"
@@ -2348,11 +2344,11 @@ msgstr "Y origine"
 
 #: ../operations/transform/transform-core.c:211
 msgid "Y coordinate of origin"
-msgstr ""
+msgstr "Coordinata Y dell'origine"
 
 #: ../operations/transform/transform-core.c:219
 msgid "Filter type (nearest, linear, lanczos, cubic, lohalo)"
-msgstr ""
+msgstr "Tipo filtro (più vicino, lineare, lanczos, cubico, lohalo)"
 
 #: ../operations/transform/transform-core.c:225
 #: ../operations/transform/transform-core.c:226
@@ -2373,7 +2369,7 @@ msgstr "Stringa di trasformazione"
 
 #: ../operations/transform/transform.c:30
 msgid "Transforms the group (used by svg)."
-msgstr ""
+msgstr "Trasforma il gruppo (usato da svg)."
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -2387,7 +2383,7 @@ msgstr "Traslazione verticale"
 msgid ""
 "Repositions the buffer (with subpixel precision), if integer coordinates are "
 "passed a fast-path without resampling is used"
-msgstr ""
+msgstr "Riposiziona il buffer (con precisione subpixel), se le coordinate intere sono passate da una scorciatoia senza usare il ricampionamento"
 
 #: ../operations/workshop/box-max.c:26 ../operations/workshop/box-min.c:26
 #: ../operations/workshop/box-percentile.c:28
@@ -2395,35 +2391,35 @@ msgstr ""
 #: ../operations/workshop/kuwahara.c:26
 #: ../operations/workshop/snn-percentile.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
-msgstr ""
+msgstr "Raggio della regione pixel quadrata (larghezza e altezza saranno raggio*2+1)"
 
 #: ../operations/workshop/box-max.c:198
 msgid ""
 "Sets the target pixel to the value of the maximum value in a box surrounding "
 "the pixel"
-msgstr ""
+msgstr "Imposta il pixel obiettivo al valore massimo trovato in un quadrato circostante il pixel stesso"
 
 #: ../operations/workshop/box-min.c:198
 msgid ""
 "Sets the target pixel to the value of the minimum value in a box surrounding "
 "the pixel"
-msgstr ""
+msgstr "Imposta il pixel obiettivo al valore minimo trovato in un quadrato circostante il pixel stesso"
 
 #: ../operations/workshop/box-percentile.c:29
 #: ../operations/workshop/disc-percentile.c:28
 #: ../operations/workshop/snn-percentile.c:31
 msgid "Percentile"
-msgstr ""
+msgstr "Percentile"
 
 #: ../operations/workshop/box-percentile.c:30
 msgid "The percentile to compute, defaults to 50, which is a median filter"
-msgstr ""
+msgstr "La percentile da calcolare, il valore predefinito è 50, che corrisponde ad un filtro mediano"
 
 #: ../operations/workshop/box-percentile.c:230
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance"
-msgstr ""
+msgstr "Imposta il pixel obiettivo al colore corrispondente ad una data percentile quando i colori sono ordinati per luminanza"
 
 #: ../operations/workshop/buffer-cache.c:25
 msgid "Cache buffer"
@@ -2436,7 +2432,7 @@ msgstr "Il GeglBuffer dove viene effettato il caching"
 #: ../operations/workshop/buffer-cache.c:103
 msgid ""
 "Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
+msgstr "Memorizza temporaneamente il buffer in ingresso internamente; i processi successivi utilizzeranno questo buffer come ingresso."
 
 #: ../operations/workshop/color-reduction.c:25
 msgid "Red bits"
@@ -2472,18 +2468,18 @@ msgstr "Numero di bit del canale alfa"
 
 #: ../operations/workshop/color-reduction.c:29
 msgid "Dither"
-msgstr ""
+msgstr "Dither"
 
 #: ../operations/workshop/color-reduction.c:30
 msgid ""
 "Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)"
-msgstr ""
+msgstr "Strategia del dithering (nessuno, casuale, covariante-casuale, Bayer, Floyd-Steinberg)"
 
 #: ../operations/workshop/color-reduction.c:459
 msgid ""
 "Reduces the number of bits per channel (colors and alpha), with optional "
 "dithering"
-msgstr ""
+msgstr "Riduce il numero di bit per canale (colore e alfa), con dithering opzionale"
 
 #: ../operations/workshop/color-rotate.c:33
 #: ../operations/workshop/color-rotate.c:39
@@ -2534,7 +2530,7 @@ msgstr "Il valore della saturazione"
 #: ../operations/workshop/color-rotate.c:52
 #: ../operations/workshop/color-rotate.c:53
 msgid "Change/Treat to this"
-msgstr ""
+msgstr "Cambia/elabora a questo"
 
 #: ../operations/workshop/color-rotate.c:55
 msgid "The value of gray threshold"
@@ -2602,7 +2598,7 @@ msgstr "Valore dell'elemento alla posizione (2,2)"
 
 #: ../operations/workshop/convolution-matrix.c:39
 msgid "(2,3) "
-msgstr ""
+msgstr "(2,3) "
 
 #: ../operations/workshop/convolution-matrix.c:40
 msgid "Value of the element in position (2,3)"
@@ -3258,11 +3254,11 @@ msgstr "Valore di profondità"
 
 #: ../operations/workshop/fractal-trace.c:42
 msgid "Bailout"
-msgstr ""
+msgstr "Bailout"
 
 #: ../operations/workshop/fractal-trace.c:43
 msgid "Bailout length"
-msgstr ""
+msgstr "Lunghezza Bailout"
 
 #: ../operations/workshop/fractal-trace.c:44
 msgid "Background"
@@ -3308,136 +3304,136 @@ msgstr ""
 msgid ""
 "Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
 "cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
-msgstr ""
+msgstr "Operazione di fusione immagine \"bruciatura leggera\" (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 
 #: ../operations/workshop/generated/soft-dodge.c:109
 msgid ""
 "Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
 "cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
-msgstr ""
+msgstr "Operazione di fusione immagine \"schermatura leggera\" (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 
 #: ../operations/workshop/generated/subtractive.c:109
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
-msgstr ""
+msgstr "Operazione di fusione immagine \"sottrattiva\" (<tt>c = cA+cB-1.0</tt>)"
 
 #: ../operations/workshop/hstack.c:178
 msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
 "\"input\")"
-msgstr ""
+msgstr "Impila gli ingressi orizzontalmente, (in \"uscita\" \"aux\" viene piazzato alla destra dell'\"ingresso\")"
 
 #: ../operations/workshop/kuwahara.c:243
 msgid "Edge preserving blur"
-msgstr ""
+msgstr "Sfocatura con conservazione dei bordi"
 
 #: ../operations/workshop/linear-gradient.c:29
 msgid "One end of a agradient"
-msgstr ""
+msgstr "Un capo del gradiente"
 
 #: ../operations/workshop/linear-gradient.c:31
 msgid "The other end of a gradient"
-msgstr ""
+msgstr "L'altro capo del gradiente"
 
 #: ../operations/workshop/linear-gradient.c:137
 msgid "Linear gradient renderer"
-msgstr ""
+msgstr "Renderizzatore di gradiente lineare"
 
 #: ../operations/workshop/mandelbrot.c:25
 msgid "Real"
-msgstr ""
+msgstr "Reale"
 
 #: ../operations/workshop/mandelbrot.c:26
 msgid "Real coordinate"
-msgstr ""
+msgstr "Coordinate reali"
 
 #: ../operations/workshop/mandelbrot.c:27
 msgid "Imaginary"
-msgstr ""
+msgstr "Immaginario"
 
 #: ../operations/workshop/mandelbrot.c:28
 msgid "Imaginary coordinate"
-msgstr ""
+msgstr "Coordinate immaginarie"
 
 #: ../operations/workshop/mandelbrot.c:29
 msgid "Level"
-msgstr ""
+msgstr "Livello"
 
 #: ../operations/workshop/mandelbrot.c:30
 msgid "Water level"
-msgstr ""
+msgstr "Livello dell'acqua"
 
 #: ../operations/workshop/mandelbrot.c:32
 msgid "Maximum number of iterations"
-msgstr ""
+msgstr "Numero massimo di iterazioni"
 
 #: ../operations/workshop/mandelbrot.c:144
 msgid "Mandelbrot set renderer"
-msgstr ""
+msgstr "Renderizzatore dell'insieme di Mandelbrot"
 
 #: ../operations/workshop/max-rgb.c:30
 msgid "Minimal"
-msgstr ""
+msgstr "Minimale"
 
 #: ../operations/workshop/max-rgb.c:31
 msgid "Hold the minimal values instead of the maximal values"
-msgstr ""
+msgstr "Mantiene i valori minimi invece di quelli massimi"
 
 #: ../operations/workshop/max-rgb.c:120
 msgid "Reduce image to pure red, green, and blue"
-msgstr ""
+msgstr "Riduce l'immagine a solo rosso, verde e blu"
 
 #: ../operations/workshop/noise-spread.c:30
 msgid "Horizontal spread amount"
-msgstr ""
+msgstr "Quantità di diffusione orizzontale"
 
 #: ../operations/workshop/noise-spread.c:32
 msgid "Vertical spread amount"
-msgstr ""
+msgstr "Quantità di diffusione verticale"
 
 #: ../operations/workshop/noise-spread.c:172
 msgid "Noise spread filter"
-msgstr ""
+msgstr "Filtro diffusione disturbo"
 
 #: ../operations/workshop/plasma.c:34
 msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
-msgstr ""
+msgstr "Seme casuale. Passando il valore -1 si implica che il seme viene scelto casualmente."
 
 #: ../operations/workshop/plasma.c:35
 msgid "Turbulence"
-msgstr ""
+msgstr "Turbolenza"
 
 #: ../operations/workshop/plasma.c:36
 msgid "The value of the turbulence"
-msgstr ""
+msgstr "Il valore della turbolenza"
 
 #: ../operations/workshop/plasma.c:389
 msgid "Performs plasma effect on the image"
-msgstr ""
+msgstr "Esegue un effetto plasma sull'immagine"
 
 #: ../operations/workshop/radial-gradient.c:24
 msgid "x1"
-msgstr ""
+msgstr "x1"
 
 #: ../operations/workshop/radial-gradient.c:25
 msgid "y1"
-msgstr ""
+msgstr "y1"
 
 #: ../operations/workshop/radial-gradient.c:26
 msgid "x2"
-msgstr ""
+msgstr "x2"
 
 #: ../operations/workshop/radial-gradient.c:27
 msgid "y2"
-msgstr ""
+msgstr "y2"
 
 #: ../operations/workshop/radial-gradient.c:29
 #: ../operations/workshop/radial-gradient.c:31
 msgid "One end of gradient"
-msgstr ""
+msgstr "Un capo del gradiente"
 
 #: ../operations/workshop/radial-gradient.c:129
 msgid "Radial gradient renderer"
-msgstr ""
+msgstr "Renderizzatore di gradiente radiale"
 
 #: ../operations/workshop/rawbayer-load.c:154
 msgid ""
@@ -3445,80 +3441,80 @@ msgid ""
 "grayscale, if the fileformat is .rawbayer it will use this loader instead of "
 "the normal dcraw loader, if the fileformat is .rawbayerS it will swap the "
 "returned 16bit numbers (the pnm loader is apparently buggy)"
-msgstr ""
+msgstr "Caricatore di immagini RAW, che si interfaccia con dcraw tramite pipe. Fornisce una griglia bayer grazza come scala di grigi, se il formato di file è .rawbayer, che userà questo caricatore invece del normale caricatore dcraw. Se il formato file è .rawbayerS, scambierà i numeri a 16 bit restituiti (sembra che il caricatore pnm abbia qualche baco)"
 
 #: ../operations/workshop/red-eye-removal.c:32
 msgid "The value of the threshold"
-msgstr ""
+msgstr "Il valore della soglia"
 
 #: ../operations/workshop/red-eye-removal.c:132
 msgid "Performs red-eye-removal on the image"
-msgstr ""
+msgstr "Esegue una operazione di rimozione dell'effetto occhi rossi sull'immagine"
 
 #: ../operations/workshop/snn-percentile.c:30
 msgid "Number of pairs, higher number preserves more acute features"
-msgstr ""
+msgstr "Numero di paia, i numeri elevati conservano maggiormente le caratteristiche più minute"
 
 #: ../operations/workshop/snn-percentile.c:32
 msgid "The percentile to return, the default value 50 is equal to the median"
-msgstr ""
+msgstr "La percentile ritornata, il valore predefinito di 50 corrisponde alla mediana"
 
 #: ../operations/workshop/snn-percentile.c:272
 msgid ""
 "Noise reducing edge enhancing percentile filter based on Symmetric Nearest "
 "Neighbours"
-msgstr ""
+msgstr "Filtro percentile di riduzione del rumore e aumento del contrasto basato su Symmetric Nearest Neighbours"
 
 #: ../operations/workshop/warp.c:36 ../operations/workshop/warp.c:41
 msgid "Effect Strength"
-msgstr ""
+msgstr "Forza dell'effetto"
 
 #: ../operations/workshop/warp.c:38
 msgid "Effect Size"
-msgstr ""
+msgstr "Dimensione dell'effetto"
 
 #: ../operations/workshop/warp.c:40
 msgid "Effect Hardness"
-msgstr ""
+msgstr "Durezza dell'effetto"
 
 #: ../operations/workshop/warp.c:41
 msgid "Stroke"
-msgstr ""
+msgstr "Tratto"
 
 #: ../operations/workshop/warp.c:42
 msgid "Behavior"
-msgstr ""
+msgstr "Comportamento"
 
 #: ../operations/workshop/warp.c:43
 msgid "Behavior of the op"
-msgstr ""
+msgstr "Comportamento dell'operazione"
 
 #: ../operations/workshop/warp.c:386
 msgid "Compute a relative displacement mapping from a stroke"
-msgstr ""
+msgstr "Calcola la mappatura di uno spostamento relativo da un tratto"
 
 #: ../operations/workshop/whirl-pinch.c:36
 msgid "Whirl"
-msgstr ""
+msgstr "Vortice"
 
 #: ../operations/workshop/whirl-pinch.c:36
 msgid "Whirl angle (degrees)"
-msgstr ""
+msgstr "Angolo vortice (gradi)"
 
 #: ../operations/workshop/whirl-pinch.c:38
 msgid "Pinch"
-msgstr ""
+msgstr "Pizzico"
 
 #: ../operations/workshop/whirl-pinch.c:38
 msgid "Pinch amount"
-msgstr ""
+msgstr "Quantità di pizzico"
 
 #: ../operations/workshop/whirl-pinch.c:40
 msgid ""
 "Radius (1.0 is the largest circle that fits in the image, and 2.0 goes all "
 "the way to the corners)"
-msgstr ""
+msgstr "Raggio (1.0 è il più largo cerchio che entra nell'immagine, mentre 2.0 va sugli spigoli)"
 
 #: ../operations/workshop/whirl-pinch.c:258
 msgid "Applies whirling and pinching on the image"
-msgstr ""
+msgstr "Applica vortice e pizzico all'immagine"
