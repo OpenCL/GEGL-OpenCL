@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-23 17:47+0200\n"
-"PO-Revision-Date: 2012-04-23 17:46+0200\n"
+"POT-Creation-Date: 2012-04-25 15:33+0200\n"
+"PO-Revision-Date: 2012-04-25 16:07+0200\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -1445,6 +1445,9 @@ msgid ""
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images)."
 msgstr ""
+"Scala i componenti del buffer affinché rimangano nel campo 0.0-1.0. Ciò "
+"migliora le immagini che fanno cattivo uso del contrasto disponibile (poco "
+"contrasto, immagine molto scura o molto chiara)."
 
 #: ../operations/common/svg-huerotate.c:27
 #: ../operations/common/svg-luminancetoalpha.c:27
@@ -1491,7 +1494,7 @@ msgstr ""
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
-msgstr ""
+msgstr "Applica una soglia all'immagine  per produrre un'immagine bianco/nera basandosi sui valori globali impostati nelle proprietà del valore o per pixel dall'ingresso ausiliare."
 
 #: ../operations/common/unsharp-mask.c:24
 msgid "Std. Dev."
@@ -1508,14 +1511,18 @@ msgstr "Scala, forza dell'effetto"
 #: ../operations/common/unsharp-mask.c:73
 msgid ""
 "Performs an unsharp mask on the input buffer (sharpens an image by adding "
-"false mach-bands around edges)"
+"false match-bands around edges)"
 msgstr ""
+"Esegue una maschera di contrasto sul buffer di ingresso (aumenta il "
+"contrasto dell'immagine aggiungendo false bande intorno ai bordi)"
 
 #: ../operations/common/value-invert.c:190
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
 msgstr ""
+"Inverte solo il componente valore, il risultato è l'immagine corrispondente "
+"\"invertita\"."
 
 #: ../operations/common/vignette.c:24
 msgid "Shape"
@@ -1530,10 +1537,14 @@ msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
 msgstr ""
+"Valore predefinito \"nero\"; si può usare la trasparenza per cancellare "
+"porzioni dell'immagine"
 
 #: ../operations/common/vignette.c:26
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr ""
+"Quanto deve essere lontano l'effetto vignettatura dalla metà della diagonale "
+"dell'immagine"
 
 #: ../operations/common/vignette.c:27
 msgid "Softness"
@@ -1545,7 +1556,7 @@ msgstr "Gamma"
 
 #: ../operations/common/vignette.c:28
 msgid "Falloff linearity"
-msgstr ""
+msgstr "Linearità caduta"
 
 #: ../operations/common/vignette.c:29
 msgid "Proportion"
@@ -1560,11 +1571,15 @@ msgid "Squeeze"
 msgstr "Spremi"
 
 #: ../operations/common/vignette.c:30
+#, fuzzy
 msgid ""
 "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
 "inf:1, this is applied after proportion is taken into account, to directly "
 "use squeeze factor as proportions, set proportion to 0.0."
 msgstr ""
+"Rapporto dimensioni da usare, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf "
+"1.0 = inf:1, this is applied after proportion is taken into account, to "
+"directly use squeeze factor as proportions, set proportion to 0.0."
 
 #: ../operations/common/vignette.c:32
 msgid "Horizontal center of vignetting"
@@ -1587,7 +1602,7 @@ msgid ""
 "A vignetting op, applies a vignette to an image. Simulates the luminance "
 "fall off at edge of exposed film, and some other fuzzier border effects that "
 "can naturally occur with analoge photograpy."
-msgstr ""
+msgstr "Un'operazione di vignettatura applicata all'immagine. Simula la diminuzione di luminanza e altri effetti particolari ai bordi, un fenomeno tipico dell'esposizione delle vecchie pellicole analogiche."
 
 #: ../operations/common/waves.c:27
 msgid "X coordinate of the center of the waves"
@@ -1599,7 +1614,7 @@ msgstr "Coordinata Y del centro delle onde"
 
 #: ../operations/common/waves.c:164
 msgid "Transform the buffer with waves"
-msgstr ""
+msgstr "Trasforma il buffer con onde"
 
 #: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
@@ -1611,15 +1626,15 @@ msgstr "Valore"
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
 #: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
 msgid "global value used if aux doesn't contain data"
-msgstr ""
+msgstr "valore globale usato se aux non contiene dati"
 
 #: ../operations/common/weighted-blend.c:124
 msgid "blend two images using alpha values as weights"
-msgstr ""
+msgstr "fonde due immagini usando i valori alfa come pesi"
 
 #: ../operations/common/write-buffer.c:26
 msgid "Write to an existing GeglBuffer"
-msgstr ""
+msgstr "Scrive su un GeglBuffer esistente"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -1627,7 +1642,7 @@ msgstr "Riferimento"
 
 #: ../operations/core/clone.c:26
 msgid "The reference ID used as input (for use in XML)."
-msgstr ""
+msgstr "Il riferimento ID usato come ingresso (per usarlo in XML)"
 
 #: ../operations/core/clone.c:112
 msgid "Clone a buffer"
@@ -1643,7 +1658,7 @@ msgstr "Stringa di formato dell'uscita di Babl"
 
 #: ../operations/core/convert-format.c:81
 msgid "Convert the data to the specified format"
-msgstr ""
+msgstr "Conversione dei dati nel formato specificato"
 
 #: ../operations/core/crop.c:179
 msgid "Crop a buffer"
@@ -1673,52 +1688,54 @@ msgstr "Importatore quadro video FFmpeg"
 #: ../operations/external/jp2-load.c:70
 #, c-format
 msgid "Unknown JPEG 2000 image format in '%s'"
-msgstr ""
+msgstr "Formato immagine JPEG 2000 conosciuto in \"%s\""
 
 #: ../operations/external/jp2-load.c:77
 #, c-format
 msgid "Unable to open JPEG 2000 image in '%s'"
-msgstr ""
+msgstr "Impossibile aprire l'immagine JPEG 2000 in \"%s\""
 
 #: ../operations/external/jp2-load.c:84
 #, c-format
 msgid "Unable to create output color profile for '%s'"
-msgstr ""
+msgstr "Impossibile creare un profilo colore di uscita per \"%s\""
 
 #: ../operations/external/jp2-load.c:92
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr ""
+"Impossibile convertire l'immagine nello spazio di colore sRGB mentre si "
+"elabora \"%s\""
 
 #: ../operations/external/jp2-load.c:100
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
-msgstr ""
+msgstr "File non-RGB JPEG 2000 non supportato con %d componenti in \"%s\""
 
 #: ../operations/external/jp2-load.c:111
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
-msgstr ""
+msgstr "File JPEG 2000 non supportato con profondità di colore %d in \"%s\""
 
 #: ../operations/external/jp2-load.c:124
 #, c-format
 msgid "Components of input image '%s' don't match"
-msgstr ""
+msgstr "I componenti nell'immagine in ingresso \"%s\" non corrispondono"
 
 #: ../operations/external/jp2-load.c:209
 #, c-format
 msgid "One or more of R, G, B components are missing from '%s'"
-msgstr ""
+msgstr "Uno o più componenti R, G, o B sono mancanti da \"%s\""
 
 #: ../operations/external/jp2-load.c:218
 #, c-format
 msgid "One or more of R, G, B components have signed data in '%s'"
-msgstr ""
+msgstr "Uno o più componenti R, G o B hanno dati con segno in \"%s\""
 
 #: ../operations/external/jp2-load.c:252
 #, c-format
 msgid "Error reading row %d component %d from '%s'"
-msgstr ""
+msgstr "Errore durante la lettura della riga %d del componente %d da \"%s\""
 
 #: ../operations/external/jp2-load.c:397
 msgid "JPEG 2000 image loader"
@@ -1730,7 +1747,7 @@ msgstr "Caricatore immagini JPG"
 
 #: ../operations/external/jpg-save.c:26
 msgid "Target path and filename, use '-' for stdout"
-msgstr ""
+msgstr "Percorso e nome file dell'obiettivo, usare \"-\" per stdout"
 
 #: ../operations/external/jpg-save.c:27
 msgid "Quality"
@@ -1818,7 +1835,7 @@ msgstr "Numero di livelli per ottenere la soluzione"
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
-msgstr ""
+msgstr "Data una tri-mappa qualsiasi fornita dall'utente e un'immagine di ingresso, crea una mat. alfa di primo piano. Imposta il bianco come selezionato, nero come non selezionato, per la tri-mappa."
 
 #: ../operations/external/path.c:27
 msgid "Fill Color"
@@ -1854,7 +1871,7 @@ msgstr "Opacità delineatura"
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool"
-msgstr ""
+msgstr "L'opacità del tratto, si noti, non si comporta come l'SVG dato che, al momento, la delineatura viene effettuata usando lo strumento aerografo."
 
 #: ../operations/external/path.c:38 ../operations/workshop/warp.c:39
 msgid "Hardness"
@@ -1897,11 +1914,11 @@ msgstr "Vettore"
 #: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
 #: ../operations/external/vector-stroke.c:40
 msgid "A GeglVector representing the path of the stroke"
-msgstr ""
+msgstr "Un GeglVector che rappresenta il percorso del tratto"
 
 #: ../operations/external/path.c:518
 msgid "Renders a brush stroke"
-msgstr ""
+msgstr "Renderizza il tratto di un pennello"
 
 #: ../operations/external/pixbuf.c:25
 msgid "Pixbuf"
@@ -1913,7 +1930,7 @@ msgstr "GdkPixbuf da usare"
 
 #: ../operations/external/pixbuf.c:103
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
-msgstr ""
+msgstr "Usa il GdkPixbuf posizionato alla locazione di memoria in <em>pixbuf</em>."
 
 #: ../operations/external/png-load.c:446
 msgid "PNG image loader."
@@ -1964,7 +1981,7 @@ msgstr "Caricatore immagini RGBE (formato radianza HDR)"
 
 #: ../operations/external/rgbe-save.c:86
 msgid "RGBE image saver (Radiance HDR format)"
-msgstr ""
+msgstr "Salvatore di immagini RGBE (formato radianza HDR)"
 
 #: ../operations/external/save-pixbuf.c:28
 msgid "Pixbuf location"
@@ -1986,24 +2003,24 @@ msgstr "Icona da usare per la finestra di uscita"
 msgid ""
 "Displays the input buffer in an SDL window (restricted to one display op/"
 "process, due to SDL implementation issues)."
-msgstr ""
+msgstr "Mostra il buffer in ingresso in una finestra SDL (limitata ad un solo processo di visualizzazione, a causa di problemi implementativi di SDL)."
 
 #: ../operations/external/svg-load.c:26
 msgid "Path to SVG file to load"
-msgstr ""
+msgstr "Percorso del file SVG da caricare"
 
 #: ../operations/external/svg-load.c:28 ../operations/external/v4l.c:27
 msgid "Width for rendered image"
-msgstr ""
+msgstr "Larghezza dell'immagine renderizzata"
 
 #: ../operations/external/svg-load.c:30 ../operations/external/v4l.c:28
 msgid "Height for rendered image"
-msgstr ""
+msgstr "Altezza dell'immagine renderizzata"
 
 #. not hidden because it has extra API
 #: ../operations/external/svg-load.c:245
 msgid "Load an SVG file using librsvg"
-msgstr ""
+msgstr "Carica un file SVG usando librsvg"
 
 #: ../operations/external/text.c:25
 msgid "Text"
@@ -2035,13 +2052,13 @@ msgstr "Colore del testo (il valore predefinito è \"bianco\")"
 
 #: ../operations/external/text.c:33
 msgid "Wrap width"
-msgstr ""
+msgstr "Larghezza avvolgimento"
 
 #: ../operations/external/text.c:34
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
-msgstr ""
+msgstr "Imposta la larghezza in pixel alla quale le linee lunghe vengoro riavvolte su sé stesse. Usare -1 per disabilitare l'avvolgimento."
 
 #: ../operations/external/text.c:36
 msgid "Justification"
@@ -2053,15 +2070,15 @@ msgstr "Allineamento del testo su più linee (0=sinistra, 1=Centro, 2=destra)"
 
 #: ../operations/external/text.c:39
 msgid "Rendered width in pixels. (read only)"
-msgstr ""
+msgstr "Larghezza renderizzazione in pixel. (sola lettura)"
 
 #: ../operations/external/text.c:41
 msgid "Rendered height in pixels. (read only)"
-msgstr ""
+msgstr "Altezza renderizzazione in pixel. (sola lettura)"
 
 #: ../operations/external/text.c:301
 msgid "Display a string of text using pango and cairo."
-msgstr ""
+msgstr "Mostra una stringa di testo usando pango e cairo."
 
 #: ../operations/external/v4l.c:26
 msgid "Path"
@@ -2109,7 +2126,7 @@ msgstr "home determinare cosa riempire (nonzero|paridispari)"
 #: ../operations/external/vector-fill.c:37
 #: ../operations/external/vector-stroke.c:37
 msgid "svg style description of transform."
-msgstr ""
+msgstr "descrizione della trasformazione stile svg."
 
 #: ../operations/external/vector-fill.c:258
 msgid "Renders a filled region"
@@ -2127,7 +2144,7 @@ msgstr "Lo spessore del pennello usato per la delineatura del tracciato."
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool."
-msgstr ""
+msgstr "L'opacità del tratto, si noti, non si comporta come l'SVG dato che, al momento, la delineatura viene effettuata tramite lo strumento aerografo."
 
 #: ../operations/external/vector-stroke.c:280
 msgid "Renders a vector stroke"
@@ -2139,7 +2156,7 @@ msgstr "Operazione matematica somma (c = c + valore)"
 
 #: ../operations/generated/clear.c:116
 msgid "Porter Duff operation clear (d = 0.0f)"
-msgstr ""
+msgstr "Operazione pulitura Porter Duff (d = 0.0f)"
 
 #: ../operations/generated/color-burn.c:117
 msgid ""
