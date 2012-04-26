@@ -71,7 +71,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   "categories" , "meta:enhance",
   "description",
         _("Performs an unsharp mask on the input buffer (sharpens an image by "
-          "adding false match-bands around edges)"),
+          "adding false mach-bands around edges)"),
         NULL);
 }
 
