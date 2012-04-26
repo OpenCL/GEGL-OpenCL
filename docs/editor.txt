@@ -1,0 +1,23 @@
+This document outlines development on the node editor for 2012 Google Summer of Code
+
+Isaac Wagner
+isaacbw@src.gnome.org
+
+
+DESIRED FEATURES
+================
+
+*Resizable image preview thumbnails on nodes
+*Text annotations
+*Automatic graph layouts
+*Bezier curve pad connections
+*Undo/redo
+*Adding nodes from a list or by typing the name in manually
+*Copy and paste of single nodes or groups of nodes, preserves properties
+*Grayscale Mask Node - includes primitive painting interface for creating grayscale mask inputs directly in the editor
+*Load meta-ops from XML
+*Store node position data in composition XML file
+*Auto-arrange loaded compositions if no positional data is present
+*Display properties directly on node
+*Standard keyboard shortcuts for undo/redo, copy/paste, deleting nodes
+*Can embed image data in composition XML with data URIs or simply reference files with Load nodes
