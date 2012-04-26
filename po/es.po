@@ -1,6 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the GEGL package.
+# Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2012.
 #
 #: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
@@ -10,8 +11,8 @@ msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-04-02 21:17+0000\n"
-"PO-Revision-Date: 2012-04-04 17:14+0200\n"
+"POT-Creation-Date: 2012-04-26 07:45+0000\n"
+"PO-Revision-Date: 2012-04-26 09:53+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,32 +21,35 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../gegl/gegl-init.c:216
-msgid "babls error tolerance, a value beteen 0.2 and 0.000000001"
-msgstr ""
+#| msgid "babls error tolerance, a value beteen 0.2 and 0.000000001"
+msgid "babls error tolerance, a value between 0.2 and 0.000000001"
+msgstr "tolerancia de error de babls, un valor entre 0.2 y 0.000000001"
 
 #: ../gegl/gegl-init.c:221
-msgid "Where GEGL stores it's swap"
-msgstr ""
+#| msgid "Where GEGL stores it's swap"
+msgid "Where GEGL stores its swap"
+msgstr "Dónde almacena GEGL su espacio de intercambio"
 
 #: ../gegl/gegl-init.c:226
 msgid "How much memory to (approximately) use for caching imagery"
-msgstr ""
+msgstr "Cuánta memoria (aproximadamente) usar para el cacheo de las imágenes"
 
 #: ../gegl/gegl-init.c:231
 msgid "Default size of tiles in GeglBuffers"
-msgstr ""
+msgstr "Tamaño predeterminado de las baldosas en GeglBuffers"
 
 #: ../gegl/gegl-init.c:236
 msgid "The count of pixels to compute simultaneously"
-msgstr ""
+msgstr "Cuántos píxeles calcular simultáneamente"
 
 #: ../gegl/gegl-init.c:241
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
+"Calidad del renderizado; un valor entre 0.0 (rápido) y 1.0 (referencia)"
 
 #: ../gegl/gegl-init.c:246
 msgid "The number of concurrent processing threads to use"
-msgstr ""
+msgstr "Número de hilos de procesado concurrente que usar"
 
 #: ../gegl/module/geglmodule.c:147 ../gegl/module/geglmodule.c:165
 #: ../gegl/module/geglmodule.c:274 ../gegl/module/geglmodule.c:301
@@ -78,14 +82,16 @@ msgstr "Radio de desenfoque"
 #: ../operations/common/bilateral-filter.c:28
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
+"Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
+"+1)."
 
 #: ../operations/common/bilateral-filter.c:29
 msgid "Edge preservation"
-msgstr ""
+msgstr "Preservación de los bordes"
 
 #: ../operations/common/bilateral-filter.c:30
 msgid "Amount of edge preservation"
-msgstr ""
+msgstr "Cantidad de preservación de los bordes"
 
 #: ../operations/common/bilateral-filter.c:315
 msgid ""
@@ -93,6 +99,10 @@ msgid ""
 "gaussian blur where the contribution of neighbourhood pixels are weighted by "
 "the color difference from the center pixel."
 msgstr ""
+"Un filtro de difuminado que preserva los bordes, que se puede usar para la "
+"reducción de ruido.  Es un difuminado gaussiano en que la contribución de "
+"los píxeles vecinos está ponderada por la diferencia de color respecto al "
+"píxel central."
 
 #: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -112,10 +122,12 @@ msgstr "Radio"
 #: ../operations/common/box-blur.c:25 ../operations/common/snn-mean.c:27
 msgid "Radius of square pixel region, (width and height will be radius*2+1)"
 msgstr ""
+"Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
+"+1)."
 
-#: ../operations/common/box-blur.c:415
+#: ../operations/common/box-blur.c:423
 msgid "Performs an averaging of a square box of pixels"
-msgstr ""
+msgstr "Efectúa el promediado de un cuadrado de píxeles"
 
 #. ... are the properties of the filter, these are all scalar values
 #. * (doubles), the the parameters are:
@@ -128,7 +140,7 @@ msgstr "Contraste"
 
 #: ../operations/common/brightness-contrast.c:30
 msgid "Range scale factor"
-msgstr ""
+msgstr "Factor de escalado del rango"
 
 #: ../operations/common/brightness-contrast.c:31
 #: ../operations/common/reinhard05.c:27
@@ -137,11 +149,11 @@ msgstr "Brillo"
 
 #: ../operations/common/brightness-contrast.c:32
 msgid "Amount to increase brightness"
-msgstr ""
+msgstr "Grado de aumento del brillo"
 
-#: ../operations/common/brightness-contrast.c:198
+#: ../operations/common/brightness-contrast.c:145
 msgid "Changes the light level and contrast."
-msgstr ""
+msgstr "Cambia el nivel de luz y el contraste."
 
 #: ../operations/common/buffer-sink.c:25
 #: ../operations/common/write-buffer.c:25
@@ -150,21 +162,23 @@ msgstr "Ubicación del búfer"
 
 #: ../operations/common/buffer-sink.c:26
 msgid "The location where to store the output GeglBuffer"
-msgstr ""
+msgstr "Lugar donde guardar el GeglBuffer de salida"
 
 #: ../operations/common/buffer-sink.c:27
 msgid "babl format"
-msgstr ""
+msgstr "formato de babl"
 
 #: ../operations/common/buffer-sink.c:28
 msgid ""
 "The babl format of the output GeglBuffer, NULL to use input buffer format"
 msgstr ""
+"El formato de babl del GeglBuffer de salida, NULL para usar el formato del "
+"búfer de entrada"
 
 #: ../operations/common/buffer-sink.c:83
 #: ../operations/common/write-buffer.c:127
 msgid "A GEGL buffer destination surface."
-msgstr ""
+msgstr "Una superficie de destino para el búfer GEGL."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
@@ -375,7 +389,6 @@ msgid "X"
 msgstr "X"
 
 #: ../operations/common/dropshadow.c:27
-#| msgid "Horizontal position"
 msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
@@ -491,7 +504,6 @@ msgid "Fractal type"
 msgstr "Tipo de fractal"
 
 #: ../operations/common/fractal-explorer.c:35
-#| msgid "Type of wave"
 msgid "Type of a fractal"
 msgstr "Tipo de fractal"
 
@@ -629,7 +641,7 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/gaussian-blur.c:34
-#: ../operations/transform/transform-core.c:217
+#: ../operations/transform/transform-core.c:218
 #: ../operations/workshop/emboss.c:31
 msgid "Filter"
 msgstr "Filtro"
@@ -718,7 +730,7 @@ msgstr ""
 msgid "GEGL graph visualizer."
 msgstr ""
 
-#: ../operations/common/invert.c:131
+#: ../operations/common/invert.c:91
 msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
@@ -922,7 +934,6 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/matting-global.c:26
-#| msgid "Number of colors"
 msgid "Number of iterations"
 msgstr "Número de iteraciones"
 
@@ -1068,7 +1079,7 @@ msgstr "Azul"
 msgid "Amount of blue"
 msgstr "Cantidad de azul"
 
-#: ../operations/common/mono-mixer.c:202
+#: ../operations/common/mono-mixer.c:104
 msgid "Monochrome channel mixer"
 msgstr ""
 
@@ -1092,7 +1103,7 @@ msgstr ""
 msgid "Linear motion blur"
 msgstr ""
 
-#: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:26
+#: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:35
 msgid "Strength"
 msgstr "Fuerza"
 
@@ -1123,7 +1134,7 @@ msgid ""
 "input buffer."
 msgstr ""
 
-#: ../operations/common/opacity.c:225
+#: ../operations/common/opacity.c:153
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
@@ -1137,7 +1148,7 @@ msgstr ""
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr ""
 
-#: ../operations/common/over.c:200
+#: ../operations/common/over.c:153
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr ""
 
@@ -1318,15 +1329,15 @@ msgstr "Ángulo en grados"
 msgid "Sampler used internally"
 msgstr ""
 
-#: ../operations/common/ripple.c:42
+#: ../operations/common/ripple.c:47
 msgid "Wave type"
 msgstr "Tipo de onda"
 
-#: ../operations/common/ripple.c:43
+#: ../operations/common/ripple.c:48
 msgid "Type of wave"
 msgstr "Tipo de onda"
 
-#: ../operations/common/ripple.c:164
+#: ../operations/common/ripple.c:169
 msgid "Transform the buffer with a ripple pattern"
 msgstr ""
 
@@ -1415,7 +1426,7 @@ msgstr "Umbral"
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
 msgstr ""
 
-#: ../operations/common/threshold.c:193
+#: ../operations/common/threshold.c:123
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
@@ -1439,14 +1450,13 @@ msgid ""
 "false mach-bands around edges)"
 msgstr ""
 
-#: ../operations/common/value-invert.c:232
+#: ../operations/common/value-invert.c:190
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
 msgstr ""
 
 #: ../operations/common/vignette.c:24
-#| msgid "shape"
 msgid "Shape"
 msgstr "Forma"
 
@@ -1469,7 +1479,6 @@ msgid "Softness"
 msgstr ""
 
 #: ../operations/common/vignette.c:28
-#| msgid "gamma"
 msgid "Gamma"
 msgstr "Gamma"
 
@@ -1478,7 +1487,6 @@ msgid "Falloff linearity"
 msgstr ""
 
 #: ../operations/common/vignette.c:29
-#| msgid "proportion"
 msgid "Proportion"
 msgstr "Proporción"
 
@@ -1506,7 +1514,6 @@ msgid "Vertical center of vignetting"
 msgstr ""
 
 #: ../operations/common/vignette.c:34
-#| msgid "rotation"
 msgid "Rotation"
 msgstr "Rotación"
 
@@ -1587,7 +1594,6 @@ msgstr ""
 
 #: ../operations/external/ff-load.c:25 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:25
-#| msgid "Path of file to load."
 msgid "Path of file to load"
 msgstr "Archivo de perfil para cargar"
 
@@ -1596,7 +1602,6 @@ msgid "Frame"
 msgstr "Fotograma"
 
 #: ../operations/external/ff-load.c:26
-#| msgid "frame number"
 msgid "Frame number"
 msgstr "Número de fotograma"
 
@@ -1787,7 +1792,7 @@ msgid ""
 "stroking is done using an airbrush tool"
 msgstr ""
 
-#: ../operations/external/path.c:38 ../operations/workshop/warp.c:30
+#: ../operations/external/path.c:38 ../operations/workshop/warp.c:39
 msgid "Hardness"
 msgstr ""
 
@@ -1796,7 +1801,6 @@ msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
 msgstr ""
 
 #: ../operations/external/path.c:41
-#| msgid "File"
 msgid "Fill rule"
 msgstr "Regla de rellenado"
 
@@ -1952,7 +1956,7 @@ msgstr "Familia tipográfica"
 msgid "Font family (utf8)"
 msgstr "Familia tipográfica (UTF-8)"
 
-#: ../operations/external/text.c:29 ../operations/workshop/warp.c:28
+#: ../operations/external/text.c:29 ../operations/workshop/warp.c:37
 msgid "Size"
 msgstr "Tamaño"
 
@@ -2072,28 +2076,28 @@ msgstr ""
 
 #: ../operations/generated/color-burn.c:117
 msgid ""
-"SVG blend operation color-burn (<tt>if cA * aB + cB * aA <= aA * aB: d = cA "
-"* (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB "
-"* aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</tt>)"
+"SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
+"cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
+"cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 msgstr ""
 
 #: ../operations/generated/color-dodge.c:117
 msgid ""
-"SVG blend operation color-dodge (<tt>if cA * aB + cB * aA >= aA * aB: d = aA "
-"* aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
-"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
+"aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
+"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/darken.c:115
 msgid ""
-"SVG blend operation darken (<tt>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + "
-"cB * (1 - aA)</tt>)"
+"SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
+"+ cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/difference.c:115
 msgid ""
-"SVG blend operation difference (<tt>d = cA + cB - 2 * (MIN (cA * aB, cB * "
-"aA))</tt>)"
+"SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
+"aA))</code>)"
 msgstr ""
 
 #: ../operations/generated/divide.c:125
@@ -2122,8 +2126,8 @@ msgstr ""
 
 #: ../operations/generated/exclusion.c:115
 msgid ""
-"SVG blend operation exclusion (<tt>d = (cA * aB + cB * aA - 2 * cA * cB) + "
-"cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/gamma.c:125
@@ -2132,15 +2136,15 @@ msgstr ""
 
 #: ../operations/generated/hard-light.c:117
 msgid ""
-"SVG blend operation hard-light (<tt>if 2 * cA < aA: d = 2 * cA * cB + cA * "
+"SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
-"+ cA * (1 - aB) + cB * (1 - aA)</tt>)"
+"+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/lighten.c:115
 msgid ""
-"SVG blend operation lighten (<tt>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) "
-"+ cB * (1 - aA)</tt>)"
+"SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
+"aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/multiply.c:125
@@ -2149,27 +2153,27 @@ msgstr ""
 
 #: ../operations/generated/overlay.c:117
 msgid ""
-"SVG blend operation overlay (<tt>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - "
-"aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA "
-"* (1 - aB) + cB * (1 - aA)</tt>)"
+"SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
+"- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/plus.c:115
-msgid "SVG blend operation plus (<tt>d = cA + cB</tt>)"
+msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr ""
 
 #: ../operations/generated/screen.c:115
-msgid "SVG blend operation screen (<tt>d = cA + cB - cA * cB</tt>)"
+msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr ""
 
 #: ../operations/generated/soft-light.c:119
 msgid ""
-"SVG blend operation soft-light (<tt>if 2 * cA < aA: d = cB * (aA - (aB == "
+"SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
 "* cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB "
 "== 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = "
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
-"(1 - aB) + cB * (1 - aA)</tt>)"
+"(1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/src-atop.c:116
@@ -2196,10 +2200,10 @@ msgstr ""
 msgid "Math operation subtract (c = c - value)"
 msgstr ""
 
-#: ../operations/generated/svg-multiply.c:114
+#: ../operations/generated/svg-multiply.c:115
 msgid ""
-"SVG blend operation svg-multiply (<tt>d = cA * cB +  cA * (1 - aB) + cB * (1 "
-"- aA)</tt>)"
+"SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
+"aA)</code>)"
 msgstr ""
 
 #: ../operations/generated/xor.c:116
@@ -2256,40 +2260,38 @@ msgstr "Posición vertical"
 msgid "Shears the buffer"
 msgstr "Escala el búfer."
 
-#: ../operations/transform/transform-core.c:201
+#: ../operations/transform/transform-core.c:202
 msgid "Origin-x"
 msgstr ""
 
-#: ../operations/transform/transform-core.c:202
-#| msgid "X-coordinate of origin"
+#: ../operations/transform/transform-core.c:203
 msgid "X coordinate of origin"
 msgstr "Coordenada X del origen"
 
-#: ../operations/transform/transform-core.c:209
+#: ../operations/transform/transform-core.c:210
 msgid "Origin-y"
 msgstr ""
 
-#: ../operations/transform/transform-core.c:210
-#| msgid "Y-coordinate of origin"
+#: ../operations/transform/transform-core.c:211
 msgid "Y coordinate of origin"
 msgstr "Coordenada Y del origen"
 
-#: ../operations/transform/transform-core.c:218
+#: ../operations/transform/transform-core.c:219
 msgid "Filter type (nearest, linear, lanczos, cubic, lohalo)"
 msgstr ""
 
-#: ../operations/transform/transform-core.c:224
 #: ../operations/transform/transform-core.c:225
+#: ../operations/transform/transform-core.c:226
 msgid "Hard edges"
 msgstr "Bordes duros"
 
-#: ../operations/transform/transform-core.c:231
+#: ../operations/transform/transform-core.c:232
 #, fuzzy
 #| msgid "Line Width"
 msgid "Lanczos width"
 msgstr "Anchura de la línea"
 
-#: ../operations/transform/transform-core.c:232
+#: ../operations/transform/transform-core.c:233
 msgid "Width of the Lanczos function"
 msgstr ""
 
@@ -3310,7 +3312,7 @@ msgstr "Turbulencia"
 msgid "The value of the turbulence"
 msgstr ""
 
-#: ../operations/workshop/plasma.c:388
+#: ../operations/workshop/plasma.c:389
 msgid "Performs plasma effect on the image"
 msgstr ""
 
@@ -3369,33 +3371,33 @@ msgid ""
 "Neighbours"
 msgstr ""
 
-#: ../operations/workshop/warp.c:27 ../operations/workshop/warp.c:32
+#: ../operations/workshop/warp.c:36 ../operations/workshop/warp.c:41
 msgid "Effect Strength"
 msgstr "Efecto de fuerza"
 
-#: ../operations/workshop/warp.c:29
+#: ../operations/workshop/warp.c:38
 msgid "Effect Size"
 msgstr "Tamaño del efecto"
 
-#: ../operations/workshop/warp.c:31
+#: ../operations/workshop/warp.c:40
 #, fuzzy
 #| msgid "Effect Size"
 msgid "Effect Hardness"
 msgstr "Tamaño del efecto"
 
-#: ../operations/workshop/warp.c:32
+#: ../operations/workshop/warp.c:41
 msgid "Stroke"
 msgstr ""
 
-#: ../operations/workshop/warp.c:33
+#: ../operations/workshop/warp.c:42
 msgid "Behavior"
 msgstr "Comportamiento"
 
-#: ../operations/workshop/warp.c:34
+#: ../operations/workshop/warp.c:43
 msgid "Behavior of the op"
 msgstr ""
 
-#: ../operations/workshop/warp.c:379
+#: ../operations/workshop/warp.c:386
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr ""
 
