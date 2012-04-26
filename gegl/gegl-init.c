@@ -213,12 +213,12 @@ static const GOptionEntry cmd_entries[]=
     {
      "babl-tolerance", 0, 0,
      G_OPTION_ARG_STRING, &cmd_babl_tolerance,
-     N_("babls error tolerance, a value beteen 0.2 and 0.000000001"), "<float>"
+     N_("babls error tolerance, a value between 0.2 and 0.000000001"), "<float>"
     },
     {
      "gegl-swap", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_swap,
-     N_("Where GEGL stores it's swap"), "<uri>"
+     N_("Where GEGL stores its swap"), "<uri>"
     },
     {
      "gegl-cache-size", 0, 0,
