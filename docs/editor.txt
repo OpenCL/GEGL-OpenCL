@@ -20,4 +20,3 @@ DESIRED FEATURES
 *Auto-arrange loaded compositions if no positional data is present
 *Display properties directly on node
 *Standard keyboard shortcuts for undo/redo, copy/paste, deleting nodes
-*Can embed image data in composition XML with data URIs or simply reference files with Load nodes
