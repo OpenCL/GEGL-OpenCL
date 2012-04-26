@@ -123,6 +123,10 @@ gegl_config_set_property (GObject      *gobject,
         return;
       case PROP_BABL_TOLERANCE:
           {
+            /* XXX: this only works the first time, and since it is a
+             * construct property the values overriden from gimp does not take
+             * effect
+             */
             static gboolean first = TRUE;
             static gboolean overridden = FALSE;
 
@@ -141,7 +145,7 @@ gegl_config_set_property (GObject      *gobject,
                 g_setenv ("BABL_TOLERANCE", buf, 0);
                 /* babl picks up the babl error through the environment, babl
                  * caches valid conversions though so this needs to be set
-                 * before any processing is done
+                 * before _any_ processing is done
                  */
               }
           }
@@ -219,7 +223,7 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_BABL_TOLERANCE,
                                    g_param_spec_double ("babl-tolerance", "babl error", "the error tolerance babl operates with",
-                                                     0.0, 0.2, 0.002,
+                                                     0.0, 0.2, 0.0001,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT));
 
