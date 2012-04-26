@@ -279,7 +279,9 @@ gegl_cl_init (GError **error)
         }
       cl_state.iter_width  /= 2;
 
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Iteration size: (%lu, %lu)", cl_state.iter_width, cl_state.iter_height);
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Iteration size: (%lu, %lu)",
+                                    (long unsigned int)cl_state.iter_width,
+                                    (long unsigned int)cl_state.iter_height);
 
       if (cl_state.image_support)
         {
