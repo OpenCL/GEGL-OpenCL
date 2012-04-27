@@ -1,8 +1,8 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the GEGL package.
-# Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2012.
+# Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 #
 #: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
 #: ../operations/external/sdl-display.c:27
@@ -11,14 +11,14 @@ msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-04-26 21:15+0000\n"
-"PO-Revision-Date: 2012-04-27 12:17+0200\n"
-"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"POT-Creation-Date: 2012-04-27 10:17+0000\n"
+"PO-Revision-Date: 2012-04-27 12:38+0200\n"
+"Last-Translator: Francisco Vila <francisco.vila@hispalinux.es>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../gegl/gegl-init.c:216
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
@@ -469,7 +469,7 @@ msgstr ""
 
 #: ../operations/common/exp-combine.c:1293
 msgid "Combine multiple scene exposures into one high range buffer"
-msgstr ""
+msgstr "Combinar varias exposiciones de escena en un búfer de alto rango"
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise.c:25
 #: ../operations/workshop/convolution-matrix.c:86
@@ -478,7 +478,7 @@ msgstr "Alfa"
 
 #: ../operations/common/fattal02.c:35
 msgid "Gradient threshold for detail enhancement"
-msgstr ""
+msgstr "Umbral del gradiente para realzado del detalle"
 
 #: ../operations/common/fattal02.c:36
 msgid "Beta"
@@ -486,7 +486,7 @@ msgstr "Beta"
 
 #: ../operations/common/fattal02.c:38
 msgid "Strength of local detail enhancement"
-msgstr ""
+msgstr "Intensidad del realzado local del detalle"
 
 #: ../operations/common/fattal02.c:39 ../operations/common/mantiuk06.c:34
 #: ../operations/workshop/color-rotate.c:50
@@ -495,7 +495,7 @@ msgstr "Saturación"
 
 #: ../operations/common/fattal02.c:41
 msgid "Global color saturation factor"
-msgstr ""
+msgstr "Factor global de saturación del color"
 
 #: ../operations/common/fattal02.c:42
 msgid "Noise"
@@ -503,7 +503,7 @@ msgstr "Ruido"
 
 #: ../operations/common/fattal02.c:44
 msgid "Gradient threshold for lowering detail enhancement"
-msgstr ""
+msgstr "Umbral del gradiente para la disminución del realzado del detalle"
 
 #: ../operations/common/fattal02.c:1325
 msgid ""
@@ -526,15 +526,15 @@ msgstr "Izquierda"
 
 #: ../operations/common/fractal-explorer.c:38
 msgid "Right"
-msgstr ""
+msgstr "Derecha"
 
 #: ../operations/common/fractal-explorer.c:39
 msgid "Top"
-msgstr ""
+msgstr "Arriba"
 
 #: ../operations/common/fractal-explorer.c:40
 msgid "Bottom"
-msgstr ""
+msgstr "Abajo"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "CX"
@@ -542,7 +542,7 @@ msgstr "CX"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "CX (only Julia)"
-msgstr ""
+msgstr "CX (sólo Julia)"
 
 #: ../operations/common/fractal-explorer.c:45
 msgid "CY"
@@ -550,70 +550,70 @@ msgstr "CY"
 
 #: ../operations/common/fractal-explorer.c:45
 msgid "CY (only Julia)"
-msgstr ""
+msgstr "CY (sólo Julia)"
 
 #: ../operations/common/fractal-explorer.c:47
 msgid "Red stretch"
-msgstr ""
+msgstr "Ensanchamiento del rojo"
 
 #: ../operations/common/fractal-explorer.c:48
 msgid "Red stretching factor"
-msgstr ""
+msgstr "Factor de ensanchamiento del rojo"
 
 #: ../operations/common/fractal-explorer.c:49
 msgid "Green stretch"
-msgstr ""
+msgstr "Ensanchamiento del verde"
 
 #: ../operations/common/fractal-explorer.c:50
 msgid "Green stretching factor"
-msgstr ""
+msgstr "Factor de ensanchamiento del verde"
 
 #: ../operations/common/fractal-explorer.c:51
 msgid "Blue stretch"
-msgstr ""
+msgstr "Ensanchamiento del azul"
 
 #: ../operations/common/fractal-explorer.c:52
 msgid "Blue stretching factor"
-msgstr ""
+msgstr "Factor de ensanchamiento del azul"
 
 #: ../operations/common/fractal-explorer.c:54
 msgid "Red mode"
-msgstr ""
+msgstr "Modo del rojo"
 
 #: ../operations/common/fractal-explorer.c:55
 msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr ""
+msgstr "Modo de aplicación del rojo (0:seno; 1:coseno; 2:ninguno)"
 
 #: ../operations/common/fractal-explorer.c:56
 msgid "Green mode"
-msgstr ""
+msgstr "Modo del verde"
 
 #: ../operations/common/fractal-explorer.c:57
 msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr ""
+msgstr "Modo de aplicación del verde (0:seno; 1:coseno; 2:ninguno)"
 
 #: ../operations/common/fractal-explorer.c:58
 msgid "Blue mode"
-msgstr ""
+msgstr "Modo del azul"
 
 #: ../operations/common/fractal-explorer.c:59
 msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr ""
+msgstr "Modo de aplicación del azul (0:seno; 1:coseno; 2:ninguno)"
 
 #: ../operations/common/fractal-explorer.c:61
 #: ../operations/common/fractal-explorer.c:62
 msgid "Red inversion"
-msgstr ""
+msgstr "Inversión del rojo"
 
 #: ../operations/common/fractal-explorer.c:63
 #: ../operations/common/fractal-explorer.c:64
 msgid "Green inversion"
-msgstr ""
+msgstr "Inversión del verde"
 
 #: ../operations/common/fractal-explorer.c:65
 #: ../operations/common/fractal-explorer.c:66
 msgid "Blue inversion"
-msgstr ""
+msgstr "Inversión del azul"
 
 #: ../operations/common/fractal-explorer.c:68
 msgid "Colors"
