@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-04-26 07:56+0000\n"
-"PO-Revision-Date: 2012-04-26 12:36+0200\n"
+"POT-Creation-Date: 2012-04-26 21:15+0000\n"
+"PO-Revision-Date: 2012-04-27 12:17+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -98,9 +98,9 @@ msgid ""
 "the color difference from the center pixel."
 msgstr ""
 "Un filtro de difuminado que preserva los bordes, que se puede usar para la "
-"reducción de ruido.  Es un difuminado gaussiano en que la contribución de "
-"los píxeles vecinos está ponderada por la diferencia de color respecto al "
-"píxel central."
+"reducción de ruido. Es un difuminado gaussiano en que la contribución de los "
+"píxeles vecinos está ponderada por la diferencia de color respecto al píxel "
+"central."
 
 #: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -343,14 +343,16 @@ msgid ""
 "Generates a buffer entirely filled with the specified color, crop it to get "
 "smaller dimensions."
 msgstr ""
+"Genera un búfer completamente relleno con el color especificado, recórtelo "
+"para obtener dimensiones más pequeñas."
 
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
-msgstr ""
+msgstr "Puntos de muestra"
 
 #: ../operations/common/contrast-curve.c:26
 msgid "Number of curve sampling points.  0 for exact calculation."
-msgstr ""
+msgstr "Número de puntos de muestra de la curva. 0 para un cálculo exacto."
 
 #: ../operations/common/contrast-curve.c:27
 msgid "Curve"
@@ -358,31 +360,33 @@ msgstr "Curva"
 
 #: ../operations/common/contrast-curve.c:27
 msgid "The contrast curve."
-msgstr ""
+msgstr "La curva de contraste."
 
 #: ../operations/common/contrast-curve.c:125
 msgid "Adjusts the contrast of the image according to a curve."
-msgstr ""
+msgstr "Ajusta el contraste de la imagen según una curva."
 
 #: ../operations/common/difference-of-gaussians.c:25
 msgid "Radius 1"
-msgstr ""
+msgstr "Radio 1"
 
 #: ../operations/common/difference-of-gaussians.c:27
 msgid "Radius 2"
-msgstr ""
+msgstr "Radio 2"
 
 #: ../operations/common/difference-of-gaussians.c:101
 msgid "Does an edge detection based on the difference of two gaussian blurs."
 msgstr ""
+"Efectúa una detección de bordes basada en la diferencia de dos desenfoques "
+"gaussianos."
 
 #: ../operations/common/display.c:24 ../operations/external/sdl-display.c:26
 msgid "Title to be given to output window"
-msgstr ""
+msgstr "Título que dar a la ventana de salida"
 
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
-msgstr ""
+msgstr "Mostrar el búfer de salida en una ventana."
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
@@ -408,18 +412,16 @@ msgid "Y"
 msgstr "Y"
 
 #: ../operations/common/dropshadow.c:29
-#, fuzzy
-#| msgid "Vertical position"
 msgid "Vertical shadow offset"
-msgstr "Posición vertical"
+msgstr "Desplazamiento vertical de la sombra"
 
 #: ../operations/common/dropshadow.c:82
 msgid "Creates a dropshadow effect on the input buffer"
-msgstr ""
+msgstr "Crea un efecto de sombra arrojada sobre el búfer de entrada"
 
 #: ../operations/common/edge-laplace.c:521
 msgid "High-resolution edge detection"
-msgstr ""
+msgstr "Detección de bordes de alta resolución"
 
 #: ../operations/common/edge-sobel.c:28 ../operations/common/edge-sobel.c:29
 #: ../operations/workshop/noise-spread.c:29
@@ -433,35 +435,37 @@ msgstr "Vertical"
 
 #: ../operations/common/edge-sobel.c:34 ../operations/common/edge-sobel.c:35
 msgid "Keep Signal"
-msgstr ""
+msgstr "Mantener la señal"
 
 #: ../operations/common/edge-sobel.c:352
 msgid "Specialized direction-dependent edge detection"
-msgstr ""
+msgstr "Detección de bordes especializada dependiente de la dirección"
 
 #: ../operations/common/exp-combine.c:25
 msgid "Exposure Values"
-msgstr ""
+msgstr "Valores de exposición"
 
 #: ../operations/common/exp-combine.c:26
 msgid "Relative brightness of each exposure in EV"
-msgstr ""
+msgstr "Brillo relativo de cada exposición en EV"
 
 #: ../operations/common/exp-combine.c:27
 msgid "Discretization Bits"
-msgstr ""
+msgstr "Bits de discretización"
 
 #: ../operations/common/exp-combine.c:29
 msgid "Log2 of source's discretization steps"
-msgstr ""
+msgstr "Log2 de los pasos de discretización de la fuente"
 
 #: ../operations/common/exp-combine.c:30
 msgid "Weight Sigma"
-msgstr ""
+msgstr "Sigma del peso"
 
 #: ../operations/common/exp-combine.c:32
 msgid "Weight distrubtion sigma controlling response contributions"
 msgstr ""
+"Sigma de la distribución del peso que controla las contribuciones a la "
+"respuesta"
 
 #: ../operations/common/exp-combine.c:1293
 msgid "Combine multiple scene exposures into one high range buffer"
