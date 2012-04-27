@@ -19,9 +19,6 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-/*  This operation is deprecated and is to be removed with the next version of GEGL.
- *  Use the scaleratio operation instead.
- */
 
 #ifdef GEGL_CHANT_PROPERTIES
 
@@ -32,9 +29,9 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
 
 #else
 
-#define GEGL_CHANT_NAME scale
-#define GEGL_CHANT_DESCRIPTION _("Scales the buffer.")
-#define GEGL_CHANT_SELF "scale.c"
+#define GEGL_CHANT_NAME scaleratio
+#define GEGL_CHANT_DESCRIPTION _("Scales the buffer according to a ratio.")
+#define GEGL_CHANT_SELF "scale-ratio.c"
 #include "chant.h"
 
 #include <math.h>

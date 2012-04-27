@@ -39,11 +39,13 @@ gegl_module_query (GTypeModule *module)
   return &modinfo;
 }
 
-GType rotate_get_type    (void);
-GType scale_get_type     (void);
-GType shear_get_type     (void);
-GType translate_get_type (void);
-GType reflect_get_type (void);
+GType rotate_get_type      (void);
+GType scale_get_type       (void);
+GType scaleratio_get_type  (void);
+GType scalesize_get_type   (void);
+GType shear_get_type       (void);
+GType translate_get_type   (void);
+GType reflect_get_type     (void);
 GType transform_get_type   (void);
 
 G_MODULE_EXPORT gboolean
@@ -55,6 +57,8 @@ gegl_module_register (GTypeModule *module)
   dummy = op_affine_get_type ();
   dummy = rotate_get_type ();
   dummy = scale_get_type ();
+  dummy = scaleratio_get_type ();
+  dummy = scalesize_get_type ();
   dummy = shear_get_type ();
   dummy = translate_get_type ();
   dummy = reflect_get_type ();

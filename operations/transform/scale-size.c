@@ -13,28 +13,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Philip Lafleur
+ * Copyright 2012 Michael Muré <batolettre@gmail.com>
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-/*  This operation is deprecated and is to be removed with the next version of GEGL.
- *  Use the scaleratio operation instead.
- */
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                   _("Horizontal scale factor"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                   _("Vertical scale factor"))
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 100.0,
+                   _("Horizontal size"))
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 100.0,
+                   _("Vertical size"))
 
 #else
 
-#define GEGL_CHANT_NAME scale
-#define GEGL_CHANT_DESCRIPTION _("Scales the buffer.")
-#define GEGL_CHANT_SELF "scale.c"
+#define GEGL_CHANT_NAME scalesize
+#define GEGL_CHANT_DESCRIPTION _("Scales the buffer according to a size.")
+#define GEGL_CHANT_SELF "scale-size.c"
 #include "chant.h"
 
 #include <math.h>
@@ -44,9 +41,19 @@ create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  GeglOperation *operation  = GEGL_OPERATION (op);
+  GeglRectangle  in_rect = {0,0,0,0};
 
-  matrix->coeff [0][0] = chant->x;
-  matrix->coeff [1][1] = chant->y;
+  if (gegl_operation_source_get_bounding_box (operation, "input"))
+    in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
+
+  if(in_rect.width < 1)
+    in_rect.width = 1;
+  if(in_rect.height < 1)
+    in_rect.height = 1;
+
+  matrix->coeff [0][0] = chant->x / (gdouble) in_rect.width;
+  matrix->coeff [1][1] = chant->y / (gdouble) in_rect.height;
 }
 
 #endif
