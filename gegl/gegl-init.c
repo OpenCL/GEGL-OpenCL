@@ -302,7 +302,7 @@ GeglConfig *gegl_config (void)
             }
         }
 
-      if (g_getenv ("GEGL_USE_OPENCL") != NULL && strcmp(g_getenv ("GEGL_USE_OPENCL"), "yes") == 1)
+      if (g_getenv ("GEGL_USE_OPENCL") != NULL && !g_str_equal(g_getenv ("GEGL_USE_OPENCL"), "yes"))
         config->use_opencl = FALSE;
       else
         config->use_opencl = TRUE;
