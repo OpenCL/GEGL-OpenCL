@@ -154,15 +154,14 @@ if ((gegl_##func = (t_##func) GetProcAddress(module, #func)) == NULL)           
 #define CL_LOAD_FUNCTION(func)                                                    \
 if (!g_module_symbol (module, #func, (gpointer *)& gegl_##func))                  \
   {                                                                               \
-    g_set_error (error, 0, 0,                                                     \
-                 "%s: %s", "libOpenCL.so", g_module_error ());                    \
+    GEGL_NOTE (GEGL_DEBUG_OPENCL, "%s: %s", "libOpenCL.so", g_module_error ());   \
     if (!g_module_close (module))                                                 \
       g_warning ("%s: %s", "libOpenCL.so", g_module_error ());                    \
     return FALSE;                                                                 \
   }                                                                               \
 if (gegl_##func == NULL)                                                          \
   {                                                                               \
-    g_set_error (error, 0, 0, "symbol gegl_##func is NULL");                      \
+    GEGL_NOTE (GEGL_DEBUG_OPENCL, "symbol gegl_##func is NULL");                  \
     if (!g_module_close (module))                                                 \
       g_warning ("%s: %s", "libOpenCL.so", g_module_error ());                    \
     return FALSE;                                                                 \

@@ -134,20 +134,19 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
 
           gegl_cl_color_babl (entry->buffer->soft_format, &size);
 
-          data = gegl_clEnqueueMapBuffer(gegl_cl_get_command_queue(), entry->tex, CL_TRUE,
-                                         CL_MAP_READ, 0, entry->roi.width * entry->roi.height * size,
-                                         0, NULL, NULL, &cl_err);
-          if (cl_err != CL_SUCCESS) CL_ERROR;
+          data = g_malloc(entry->roi.width * entry->roi.height * size);
+
+          cl_err = gegl_clEnqueueReadBuffer(gegl_cl_get_command_queue(),
+                                            entry->tex, CL_TRUE, 0, entry->roi.width * entry->roi.height * size, data,
+                                            0, NULL, NULL);
 
           /* tile-ize */
           gegl_buffer_set (entry->buffer, &entry->roi, 0, entry->buffer->soft_format, data, GEGL_AUTO_ROWSTRIDE);
 
-          cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), entry->tex, data,
-                                                 0, NULL, NULL);
-          if (cl_err != CL_SUCCESS) CL_ERROR;
-
           entry->used --;
           need_cl = TRUE;
+
+          g_free(data);
         }
     }
 
