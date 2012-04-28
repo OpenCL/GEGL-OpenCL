@@ -40,21 +40,16 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  glong   i;
   gfloat *in  = in_buf;
   gfloat *out = out_buf;
 
-  for (i=0; i<samples; i++)
+  while (samples--)
     {
-      int  j;
-      for (j=0; j<3; j++)
-        {
-          gfloat c;
-          c = in[j];
-          c = 1.0 - c;
-          out[j] = c;
-        }
-      out[3]=in[3];
+      out[0] = 1.0 - in[0];
+      out[1] = 1.0 - in[1];
+      out[2] = 1.0 - in[2];
+      out[3] = in[3];
+
       in += 4;
       out+= 4;
     }
