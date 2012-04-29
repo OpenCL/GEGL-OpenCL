@@ -223,7 +223,7 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_BABL_TOLERANCE,
                                    g_param_spec_double ("babl-tolerance", "babl error", "the error tolerance babl operates with",
-                                                     0.0, 0.2, 0.0001,
+                                                     0.0, 0.2, 0.0002,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT));
 
