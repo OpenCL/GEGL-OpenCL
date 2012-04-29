@@ -1228,6 +1228,9 @@ gegl_buffer_copy (GeglBuffer          *src,
         cow_rect.width  = cow_rect.width  - (cow_rect.width  % tile_width);
         cow_rect.height = cow_rect.height - (cow_rect.height % tile_height);
 
+        g_assert (cow_rect.width >= 0);
+        g_assert (cow_rect.height >= 0);
+
         {
           GeglRectangle top, bottom, left, right;
           
@@ -1243,6 +1246,7 @@ gegl_buffer_copy (GeglBuffer          *src,
  
             storage = GEGL_TILE_HANDLER_CHAIN (dst->tile_storage);
             cache = GEGL_TILE_HANDLER_CACHE (gegl_tile_handler_chain_get_first (storage, GEGL_TYPE_TILE_HANDLER_CACHE));
+
 
             for (dst_y = cow_rect.y + dst->shift_y; dst_y < cow_rect.y + dst->shift_y + cow_rect.height; dst_y += tile_height)
             for (dst_x = cow_rect.x + dst->shift_x; dst_x < cow_rect.x + dst->shift_x + cow_rect.width; dst_x += tile_width)
@@ -1348,7 +1352,9 @@ gegl_buffer_copy (GeglBuffer          *src,
       }
     }
   else
-    gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
+    {
+      gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
+    }
 }
 
 static void
@@ -1395,6 +1401,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
       dst_rect = gegl_buffer_get_extent (dst);
     }
 
+  goto nocow; // cow for clearing is currently broken, go to nocow case
   if (!g_object_get_data (G_OBJECT (dst), "is-linear"))
     {
       gint tile_width = dst->tile_width;
@@ -1418,6 +1425,11 @@ gegl_buffer_clear (GeglBuffer          *dst,
 
         cow_rect.width  = cow_rect.width  - (cow_rect.width  % tile_width);
         cow_rect.height = cow_rect.height - (cow_rect.height % tile_height);
+
+
+        g_assert (cow_rect.width >= 0);
+        g_assert (cow_rect.height >= 0);
+
         {
           GeglRectangle top, bottom, left, right;
           
@@ -1476,7 +1488,10 @@ gegl_buffer_clear (GeglBuffer          *dst,
       }
     }
   else
-    gegl_buffer_clear2 (dst, dst_rect);
+    {
+nocow:
+      gegl_buffer_clear2 (dst, dst_rect);
+    }
 }
 
 void
