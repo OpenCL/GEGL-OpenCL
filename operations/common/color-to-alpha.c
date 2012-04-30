@@ -17,6 +17,7 @@
  *  with algorithm by clahey
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 2011 Robert Sasu <sasu.robert@gmail.com>
+ * Copyright (C) 2012 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -29,7 +30,7 @@ gegl_chant_color (color, _("Color"), "black",
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_TYPE_POINT_FILTER
 #define GEGL_CHANT_C_FILE       "color-to-alpha.c"
 
 #include "gegl-chant.h"
@@ -39,9 +40,9 @@ gegl_chant_color (color, _("Color"), "black",
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
-                             babl_format ("RGBA float"));
+                             babl_format ("R'G'B'A float"));
   gegl_operation_set_format (operation, "output",
-                             babl_format ("RGBA float"));
+                             babl_format ("R'G'B'A float"));
 }
 
 /*
@@ -78,88 +79,93 @@ static void prepare (GeglOperation *operation)
 */
 
 static void
-color_to_alpha (gfloat     *color,
-                gfloat     *src,
-                gint        offset)
+color_to_alpha (const gfloat *color,
+                const gfloat *src,
+                gfloat       *dst)
 {
   gint i;
-  gfloat temp[4];
+  gfloat alpha[4];
 
-  temp[3] = src[offset + 3];
+  for (i=0; i<4; i++)
+    dst[i] = src[i];
+
+  alpha[3] = dst[3];
 
   for (i=0; i<3; i++)
     {
-      if (color[i] < 1.e-4f)
-        temp[i] = src[offset+i];
-      else if (src[offset+i] > color[i])
-        temp[i] = (src[offset+i] - color[i]) / (1.0f - color[i]);
-      else if (src[offset+i] < color[i])
-        temp[i] = (color[i] - src[offset+i]) / color[i];
+      if (color[i] < 0.0001)
+        alpha[i] = dst[i];
+      else if (dst[i] > color[i])
+        alpha[i] = (dst[i] - color[i]) / (1.0f - color[i]);
+      else if (dst[i] < color[i])
+        alpha[i] = (color[i] - dst[i]) / (color[i]);
       else
-        temp[i] = 0.0f;
+        alpha[i] = 0.0f;
     }
 
-  if (temp[0] > temp[1])
+  if (alpha[0] > alpha[1])
     {
-      if (temp[0] > temp[2])
-        src[offset+3] = temp[0];
+      if (alpha[0] > alpha[2])
+        dst[3] = alpha[0];
       else
-        src[offset+3] = temp[2];
+        dst[3] = alpha[2];
     }
-  else if (temp[1] > temp[2])
-    src[offset+3] = temp[1];
+  else if (alpha[1] > alpha[2])
+    {
+      dst[3] = alpha[1];
+    }
   else
-    src[offset+3] = temp[2];
+    {
+      dst[3] = alpha[2];
+    }
 
-  if (src[offset+3] < 1.e-4f)
+  if (dst[3] < 0.0001)
     return;
 
   for (i=0; i<3; i++)
-    src[offset+i] = (src[offset+i] - color[i]) / src[offset+3] + color[i];
+    dst[i] = (dst[i] - color[i]) / dst[3] + color[i];
 
-  src[offset+3] *= temp[3];
+  dst[3] *= alpha[3];
 }
 
 
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result,
+         void                *in_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
          gint                 level)
 {
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *format = babl_format ("RGBA float");
-  gfloat     *src_buf, color[4];
+  const Babl *format = babl_format ("R'G'B'A float");
+  gfloat      color[4];
   gint        x;
 
-  src_buf = g_new0 (gfloat, result->width * result->height * 4);
+  gfloat *in_buff = in_buf;
+  gfloat *out_buff = out_buf;
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf,
-                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_color_get_pixel (o->color, format, color);
 
-  gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
-
-  for (x = 0; x < result->width * result->height; x++)
-    color_to_alpha (color, src_buf, 4 * x);
-
-  gegl_buffer_set (output, result, 0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_free (src_buf);
+  for (x = 0; x < n_pixels; x++)
+    {
+      color_to_alpha (color, in_buff, out_buff);
+      in_buff  += 4;
+      out_buff += 4;
+    }
 
   return TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationPointFilterClass *filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  filter_class    = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   filter_class->process    = process;
   operation_class->prepare = prepare;
