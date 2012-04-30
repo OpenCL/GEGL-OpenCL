@@ -31,6 +31,8 @@ gegl_chant_object(buffer, _("Input buffer"),
 #define GEGL_CHANT_C_FILE       "buffer-source.c"
 
 #include "gegl-chant.h"
+#include <gegl.h>
+#include "graph/gegl-node.h"
 
 static void buffer_changed (GeglBuffer          *buffer,
                             const GeglRectangle *rect,
@@ -79,6 +81,10 @@ process (GeglOperation        *operation,
       /* override core behaviour, by resetting the buffer in the operation_context */
       gegl_operation_context_take_object (context, "output",
                                           G_OBJECT (o->buffer));
+      /* mark that this buffer should not be used for in-place
+       * processing.
+       */
+      gegl_object_set_has_forked (o->buffer);
     }
   return TRUE;
 }
