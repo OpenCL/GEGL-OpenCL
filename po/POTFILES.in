@@ -159,7 +159,6 @@ operations/workshop/hstack.c
 operations/workshop/kuwahara.c
 operations/workshop/linear-gradient.c
 operations/workshop/mandelbrot.c
-operations/workshop/max-rgb.c
 operations/workshop/noise-spread.c
 operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
