@@ -29,7 +29,7 @@ gegl_chant_int   (steps, _("Discretization Bits"),
                   _("Log2 of source's discretization steps"))
 gegl_chant_double (sigma, _("Weight Sigma"),
                   0.0f, 32.0f, 8.0f,
-                  _("Weight distrubtion sigma controlling response contributions"))
+                  _("Weight distribution sigma controlling response contributions"))
 
 #else
 
@@ -229,7 +229,7 @@ gegl_expcombine_weights_gauss (gfloat *weights,
           continue;
         }
 
-      /* gkrawczyk: that's not really a gaussian, but equation is
+      /* gkrawczyk: that's not really a Gaussian, but equation is
        * taken from Robertson02 paper.
        */
       weight = exp ( -sigma                 *
