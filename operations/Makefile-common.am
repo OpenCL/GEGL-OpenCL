@@ -1,7 +1,8 @@
 if PLATFORM_WIN32
 no_undefined = -no-undefined
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la $(BABL_LIBS)
 endif
+
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la $(BABL_LIBS)
 
 op_libs = $(DEP_LIBS) $(libgegl) $(OPENCL_LIBS)
 
