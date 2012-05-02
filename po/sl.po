@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-04-22 19:26+0000\n"
-"PO-Revision-Date: 2012-04-23 01:09+0100\n"
+"POT-Creation-Date: 2012-04-26 07:45+0000\n"
+"PO-Revision-Date: 2012-04-27 09:28+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -22,12 +22,14 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../gegl/gegl-init.c:216
-msgid "babls error tolerance, a value beteen 0.2 and 0.000000001"
-msgstr "Toleranca napake Babla, vrednost med 0,2 in 0,000000001"
+#| msgid "babls error tolerance, a value beteen 0.2 and 0.000000001"
+msgid "babls error tolerance, a value between 0.2 and 0.000000001"
+msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
 #: ../gegl/gegl-init.c:221
-msgid "Where GEGL stores it's swap"
-msgstr "Kje GEGL shranjuje svoje vmesne podatke"
+#| msgid "Where GEGL stores it's swap"
+msgid "Where GEGL stores its swap"
+msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
 #: ../gegl/gegl-init.c:226
 msgid "How much memory to (approximately) use for caching imagery"
@@ -2170,9 +2172,6 @@ msgid "Math operation subtract (c = c - value)"
 msgstr "Matematična operacija odštevanja (c = c - vrednost)"
 
 #: ../operations/generated/svg-multiply.c:115
-#| msgid ""
-#| "SVG blend operation svg-multiply (<tt>d = cA * cB +  cA * (1 - aB) + cB * "
-#| "(1 - aA)</tt>)"
 msgid "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"
 
