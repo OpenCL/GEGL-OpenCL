@@ -35,7 +35,7 @@ TESTS = \
   run-edge-laplace-broken.xml.sh       \
   run-edge-sobel.xml.sh                \
   run-fattal02.xml.sh                  \
-  run-gamma-broken.xml.sh              \
+  run-gamma.xml.sh              \
   run-hdr-color.xml.sh                 \
   run-mantiuk06.xml.sh                 \
   run-pixelize.xml.sh                  \
