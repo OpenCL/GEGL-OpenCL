@@ -444,8 +444,9 @@ gegl_buffer_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
+
 GeglTileBackend *
-gegl_buffer_backend (GeglBuffer *buffer)
+gegl_buffer_backend2 (GeglBuffer *buffer)
 {
   GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
 
@@ -456,7 +457,6 @@ gegl_buffer_backend (GeglBuffer *buffer)
     {
       tmp = GEGL_TILE_HANDLER (tmp)->source;
     } while (tmp &&
-             /*GEGL_IS_TILE_TRAIT (tmp) &&*/
              !GEGL_IS_TILE_BACKEND (tmp));
   if (!tmp &&
       !GEGL_IS_TILE_BACKEND (tmp))
@@ -465,15 +465,28 @@ gegl_buffer_backend (GeglBuffer *buffer)
   return (GeglTileBackend *) tmp;
 }
 
+GeglTileBackend *
+gegl_buffer_backend (GeglBuffer *buffer)
+{
+  GeglTileBackend *tmp;
+  if (G_LIKELY (buffer->backend))
+    return buffer->backend;
+
+  tmp = gegl_buffer_backend2 (buffer);
+
+  if (tmp)
+    buffer->backend = tmp;
+
+  return (GeglTileBackend *) tmp;
+}
+
 static GeglTileStorage *
 gegl_buffer_tile_storage (GeglBuffer *buffer)
 {
-  GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
+  GeglTileSource *tmp = (GeglTileSource*) (buffer);
 
-  do
-    {
-      tmp = ((GeglTileHandler *) (tmp))->source;
-    } while (!GEGL_IS_TILE_STORAGE (tmp));
+  do tmp = ((GeglTileHandler *) (tmp))->source;
+  while (!GEGL_IS_TILE_STORAGE (tmp));
 
   g_assert (tmp);
 

@@ -133,8 +133,8 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   cache->tile_storage = tile_storage;
   gegl_tile_handler_chain_bind (tile_handler_chain);
 
-  ((GeglTileBackend *)gegl_buffer_backend ((void*)tile_storage))->priv->storage = (gpointer)
-                                             tile_storage;
+  ((GeglTileBackend *)gegl_buffer_backend2 ((void*)tile_storage))->priv->storage = (gpointer)
+                                              tile_storage;
 
   tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
                                               250,

@@ -95,6 +95,7 @@ void              gegl_tile_cache_init    (void);
 void              gegl_tile_cache_destroy (void);
 
 GeglTileBackend * gegl_buffer_backend     (GeglBuffer *buffer);
+GeglTileBackend * gegl_buffer_backend2    (GeglBuffer *buffer); /* non-cached */
 
 gboolean          gegl_buffer_is_shared   (GeglBuffer *buffer);
 
