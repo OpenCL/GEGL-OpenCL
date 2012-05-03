@@ -181,7 +181,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
   CacheItem            *item;
   GSList               *iter;
 
-  cache = GEGL_TILE_HANDLER_CACHE (object);
+  cache = (GeglTileHandlerCache*) (object);
 
   /* only throw out items belonging to this cache instance */
 
@@ -226,11 +226,11 @@ gegl_tile_handler_cache_get_tile_command (GeglTileSource *tile_store,
                                           gint        y,
                                           gint        z)
 {
-  GeglTileHandlerCache *cache    = GEGL_TILE_HANDLER_CACHE (tile_store);
-  GeglTileSource       *source = GEGL_TILE_HANDLER (tile_store)->source;
+  GeglTileHandlerCache *cache    = (GeglTileHandlerCache*) (tile_store);
+  GeglTileSource       *source   = ((GeglTileHandler*) (tile_store))->source;
   GeglTile             *tile     = NULL;
 
-  if (gegl_cl_is_accelerated ())
+  if (G_UNLIKELY (gegl_cl_is_accelerated ()))
     gegl_buffer_cl_cache_flush2 (cache, NULL);
 
   tile = gegl_tile_handler_cache_get_tile (cache, x, y, z);
@@ -262,8 +262,8 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
                                  gint             z,
                                  gpointer         data)
 {
-  GeglTileHandler      *handler = GEGL_TILE_HANDLER (tile_store);
-  GeglTileHandlerCache *cache   = GEGL_TILE_HANDLER_CACHE (handler);
+  GeglTileHandler      *handler = (GeglTileHandler*) (tile_store);
+  GeglTileHandlerCache *cache   = (GeglTileHandlerCache*) (handler);
 
   switch (command)
     {
@@ -272,7 +272,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
           GList     *link;
 
           if (gegl_cl_is_accelerated ())
-            gegl_buffer_cl_cache_flush2 (GEGL_TILE_HANDLER_CACHE (tile_store), NULL);
+            gegl_buffer_cl_cache_flush2 (cache, NULL);
 
           if (cache->count)
             {
