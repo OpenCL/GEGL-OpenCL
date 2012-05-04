@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-03 22:13+0000\n"
+"POT-Creation-Date: 2012-05-04 12:09+0000\n"
 "PO-Revision-Date: 2012-05-04 14:07+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -343,7 +343,7 @@ msgstr "Permite cambiar la temperatura de color de una imagen."
 
 #: ../operations/common/color-to-alpha.c:29
 msgid "The color to render (defaults to 'white')"
-msgstr "Color que renderizar. El predeterminado es: «negro»"
+msgstr "Color que renderizar. El predeterminado es: «blanco»"
 
 #: ../operations/common/color-to-alpha.c:176
 msgid "Performs color-to-alpha on the image."
