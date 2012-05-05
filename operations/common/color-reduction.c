@@ -23,10 +23,10 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_register_enum (gegl_dither_strategy)
-  enum_value (GEGL_DITHER_NONE,   "none")
-  enum_value (GEGL_DITHER_RANDOM, "random")
-  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "random-covariant")
-  enum_value (GEGL_DITHER_BAYER,  "bayer")
+  enum_value (GEGL_DITHER_NONE,   "None")
+  enum_value (GEGL_DITHER_RANDOM, "Random")
+  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "Random Covariant")
+  enum_value (GEGL_DITHER_BAYER,  "Bayer")
   enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
 gegl_chant_register_enum_end (GeglDitherStrategy)
 
