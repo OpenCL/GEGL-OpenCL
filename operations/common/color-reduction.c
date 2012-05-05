@@ -22,12 +22,21 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
+gegl_chant_register_enum (gegl_dither_strategy)
+  enum_value (GEGL_DITHER_NONE,   "none")
+  enum_value (GEGL_DITHER_RANDOM, "random")
+  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "random-covariant")
+  enum_value (GEGL_DITHER_BAYER,  "bayer")
+  enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
+gegl_chant_register_enum_end (GeglDitherStrategy)
+
 gegl_chant_int (red_bits,   _("Red bits"),   1, 16, 16, _("Number of bits for red channel"))
 gegl_chant_int (green_bits, _("Green bits"), 1, 16, 16, _("Number of bits for green channel"))
 gegl_chant_int (blue_bits,  _("Blue bits"),  1, 16, 16, _("Number of bits for blue channel"))
 gegl_chant_int (alpha_bits, _("Alpha bits"), 1, 16, 16, _("Number of bits for alpha channel"))
-gegl_chant_string (dither_type, _("Dither"), "none",
-              _("Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)"))
+
+gegl_chant_enum (dither_strategy, _("Dithering Strategy"), GeglDitherStrategy,
+                 gegl_dither_strategy, GEGL_DITHER_NONE, _("The dithering strategy to use"))
 
 #else
 
@@ -422,18 +431,28 @@ process (GeglOperation       *operation,
   channel_bits [2] = o->blue_bits;
   channel_bits [3] = o->alpha_bits;
 
-  if (!o->dither_type)
-    process_no_dither (input, output, result, channel_bits);
-  else if (!strcasecmp (o->dither_type, "random"))
-    process_random (input, output, result, channel_bits);
-  else if (!strcasecmp (o->dither_type, "random-covariant"))
-    process_random_covariant (input, output, result, channel_bits);
-  else if (!strcasecmp (o->dither_type, "bayer"))
-    process_bayer (input, output, result, channel_bits);
-  else if (!strcasecmp (o->dither_type, "floyd-steinberg"))
-    process_floyd_steinberg (input, output, result, channel_bits);
-  else
-    process_no_dither (input, output, result, channel_bits);
+  switch (o->dither_strategy)
+    {
+      case GEGL_DITHER_NONE:
+        process_no_dither (input, output, result, channel_bits);
+        break;
+      case GEGL_DITHER_RANDOM:
+        process_random (input, output, result, channel_bits);
+        break;
+      case GEGL_DITHER_RANDOM_COVARIANT:
+        process_random_covariant (input, output, result, 
+                                  channel_bits);
+        break;
+      case GEGL_DITHER_FLOYD_STEINBERG:
+        process_floyd_steinberg (input, output, result,
+                                 channel_bits);
+        break;
+      case GEGL_DITHER_BAYER:
+        process_bayer (input, output, result, channel_bits);
+        break;
+      default:
+        process_no_dither (input, output, result, channel_bits);
+    }
 
   return TRUE;
 }
