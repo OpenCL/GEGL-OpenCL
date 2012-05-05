@@ -34,6 +34,7 @@
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"
 #include "gegl-config.h"
+#include "gegl-buffer-private.h"
 
 
 G_DEFINE_TYPE (GeglTileStorage, gegl_tile_storage, GEGL_TYPE_TILE_HANDLER_CHAIN)
@@ -62,7 +63,7 @@ tile_storage_idle (gpointer data)
   return gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));
 }
 
-GeglTileBackend *gegl_buffer_backend (GObject *buffer);
+GeglTileBackend * gegl_buffer_backend (GeglBuffer *buffer);
 
 GeglTileStorage *
 gegl_tile_storage_new (GeglTileBackend *backend)
