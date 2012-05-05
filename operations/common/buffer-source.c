@@ -34,6 +34,24 @@ gegl_chant_object(buffer, _("Input buffer"),
 #include <gegl.h>
 #include "graph/gegl-node.h"
 
+typedef struct
+{
+  gulong buffer_changed_handler;
+} Priv;
+
+static Priv *
+get_priv (GeglChantO *o)
+{
+  Priv *priv = (Priv*)o->chant_data;
+  if (priv == NULL) {
+    priv = g_new0 (Priv, 1);
+    o->chant_data = (void*) priv;
+
+    priv->buffer_changed_handler = 0;
+  }
+  return priv;
+}
+
 static void buffer_changed (GeglBuffer          *buffer,
                             const GeglRectangle *rect,
                             gpointer             userdata)
@@ -56,6 +74,37 @@ get_bounding_box (GeglOperation *operation)
   return result;
 }
 
+static void
+my_set_property (GObject  *gobject,
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
+{
+  GeglOperation *operation = GEGL_OPERATION (gobject);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  Priv *p = get_priv(o);
+  GObject *buffer = NULL;
+
+  switch (property_id)
+  {
+    case PROP_buffer:
+      if (o->buffer) {
+        g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
+      }
+      buffer = G_OBJECT (g_value_get_object (value));
+      if (buffer) {
+        g_signal_connect (buffer, "changed", G_CALLBACK(buffer_changed), operation);
+      }
+      break;
+    default:
+      break;
+  }
+
+  /* The set_property provided by the chant system does the
+   * storing and reffing/unreffing of the input properties */
+  set_property(gobject, property_id, value, pspec);
+}
+
 static gboolean
 process (GeglOperation        *operation,
          GeglOperationContext *context,
@@ -67,12 +116,6 @@ process (GeglOperation        *operation,
 
   if (o->buffer)
     {
-      if (!o->chant_data)
-        {
-          o->chant_data = (void*)0xf00;
-          g_signal_connect (o->buffer, "changed",
-                            G_CALLBACK(buffer_changed), operation);
-        }
       g_object_ref (o->buffer); /* Add an extra reference, since
 				     * gegl_operation_set_data is
 				     * stealing one.
@@ -93,12 +136,19 @@ static void
 dispose (GObject *object)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  Priv *p = get_priv(o);
 
   if (o->buffer)
     {
+      g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
       g_object_unref (o->buffer);
       o->buffer = NULL;
     }
+
+  if (p) {
+    g_free(p);
+    o->chant_data = NULL;
+  }
 
   G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
 }
@@ -114,6 +164,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 
+  G_OBJECT_CLASS (klass)->set_property = my_set_property;
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
   gegl_operation_class_set_keys (operation_class,
@@ -126,3 +177,4 @@ gegl_chant_class_init (GeglChantClass *klass)
 }
 
 #endif
+
