@@ -48,8 +48,8 @@ static GType    type_name##_type_id = 0;                                \
 static void     type_name##_class_chant_intern_init (gpointer klass)    \
   {                                                                     \
     gegl_chant_parent_class = g_type_class_peek_parent (klass);         \
-    type_name##_class_init ((TypeName##Class*) klass);                  \
     gegl_chant_class_intern_init (klass);                               \
+    type_name##_class_init ((TypeName##Class*) klass);                  \
   }                                                                     \
 GType                                                                   \
 type_name##_get_type (void)                                             \
