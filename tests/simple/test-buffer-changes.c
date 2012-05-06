@@ -13,6 +13,15 @@ typedef struct {
 
 GeglRectangle null_rect = {0, 0, 0, 0};
 
+gboolean    test_gegl_rectangle_equal(const GeglRectangle *expected, const GeglRectangle *actual);
+TestCase *  test_case_new(void);
+void        handle_buffer_changed(GeglBuffer *buffer, const GeglRectangle *rect, gpointer user_data);
+void        test_buffer_change_signal_on_set(void);
+void        test_buffer_change_signal_with_iter(guint access_method, guint expected_signal_calls);
+void        test_buffer_change_signal_with_iter_write(void);
+void        test_buffer_change_signal_with_iter_readwrite(void);
+void        test_buffer_no_change_signal_with_iter_read(void);
+
 gboolean
 test_gegl_rectangle_equal(const GeglRectangle *expected, const GeglRectangle *actual)
 {
@@ -42,7 +51,7 @@ test_case_new(void)
     return test_case;
 }
 
- 
+
 void
 handle_buffer_changed(GeglBuffer *buffer, const GeglRectangle *rect, gpointer user_data)
 {
