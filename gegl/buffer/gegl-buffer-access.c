@@ -560,6 +560,18 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                           const void          *src,
                           gint                 rowstride)
 {
+    gegl_buffer_set_unlocked_no_notify(buffer, rect, format, src, rowstride);
+    gegl_buffer_emit_changed_signal(buffer, rect);
+}
+
+
+void
+gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
+                          const GeglRectangle *rect,
+                          const Babl          *format,
+                          const void          *src,
+                          gint                 rowstride)
+{
   if (format == NULL)
     format = buffer->soft_format;
 

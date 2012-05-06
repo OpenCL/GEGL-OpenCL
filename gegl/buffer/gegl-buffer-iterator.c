@@ -405,8 +405,14 @@ gegl_buffer_iterator_stop (GeglBufferIterator *iterator)
             found = TRUE;
             break;
           }
-      if (!found)
+      if (!found) {
         gegl_buffer_unlock (i->buffer[no]);
+
+        if (i->flags[no] & GEGL_BUFFER_WRITE) {
+          gegl_buffer_emit_changed_signal(i->buffer[no], &(i->rect[no]));
+        }
+      }
+
     }
 
   for (no=0; no<i->iterators; no++)
@@ -476,10 +482,8 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
 
                   ensure_buf (i, no);
 
-  /* XXX: should perhaps use _set_unlocked, and keep the lock in the
-   * iterator.
-   */
-                  gegl_buffer_set (i->buffer[no], &(i->roi[no]), 0, i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE); /* XXX: use correct level */
+                  /* Change notification is done in gegl_buffer_iterator_stop */
+                  gegl_buffer_set_unlocked_no_notify (i->buffer[no], &(i->roi[no]), i->format[no], i->buf[no], GEGL_AUTO_ROWSTRIDE); /* XXX: use correct level */
                 }
             }
         }

@@ -107,6 +107,11 @@ void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                                             const Babl          *format,
                                             const void          *src,
                                             gint                 rowstride);
+void              gegl_buffer_set_unlocked_no_notify (GeglBuffer  *buffer,
+                                              const GeglRectangle *rect,
+                                              const Babl          *format,
+                                              const void          *src,
+                                              gint                 rowstride);
 void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                             gdouble              scale,
                                             const GeglRectangle *rect,
@@ -126,7 +131,8 @@ void            gegl_buffer_sampler           (GeglBuffer     *buffer,
                                                const Babl     *format,
                                                gpointer        sampler);
 
-
+void            gegl_buffer_emit_changed_signal(GeglBuffer *buffer,
+                                                const GeglRectangle *rect);
 
 /* the instance size of a GeglTile is a bit large, and should if possible be
  * trimmed down

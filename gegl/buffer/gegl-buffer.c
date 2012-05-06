@@ -1347,3 +1347,16 @@ gboolean gegl_buffer_unlock (GeglBuffer *buffer)
   g_mutex_unlock (buffer->tile_storage->mutex);
   return ret;
 }
+
+void gegl_buffer_emit_changed_signal(GeglBuffer *buffer, const GeglRectangle *rect)
+{
+  GeglRectangle copy;
+
+  if (rect == NULL) {
+    copy = *gegl_buffer_get_extent (buffer);
+  } else {
+    copy = *rect;
+  }
+
+  g_signal_emit(buffer, gegl_buffer_signals[CHANGED], 0, &copy, NULL);
+}
