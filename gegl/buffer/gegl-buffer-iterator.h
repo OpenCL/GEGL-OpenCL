@@ -28,6 +28,13 @@
 #define GEGL_BUFFER_WRITE     2
 #define GEGL_BUFFER_READWRITE (GEGL_BUFFER_READ|GEGL_BUFFER_WRITE)
 
+/***
+ * GeglBufferIterator:
+ *
+ * GeglBufferIterator allows to iterate over one or more GeglBuffers.
+ * In each iteration the new data is available as a linear chunk of
+ * memory. See gegl_buffer_iterator_new() and gegl_buffer_iterator_next()
+ */
 typedef struct GeglBufferIterator
 {
   gint          length;
@@ -90,8 +97,8 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
  * gegl_buffer_iterator_stop:
  * @iterator: a GeglBufferIterator
  *
- * Cancels the current iteration, freeing up any temporary resources. You have
- * to bail out of any loop you are currently.
+ * Cancels the current iteration, freeing up any temporary resources. The
+ * iterator handle is no longer valid after invoking this function.
  */
 void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
 

@@ -149,6 +149,7 @@ endif
 api.html: $(top_srcdir)/gegl/gegl.h\
           $(top_builddir)/gegl/gegl-version.h\
           $(top_srcdir)/gegl/buffer/gegl-buffer.h\
+	  $(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
           $(top_srcdir)/gegl/gegl-utils.h\
           $(top_srcdir)/gegl/property-types/gegl-color.h\
           $(top_srcdir)/gegl/gegl-matrix.h\
@@ -160,6 +161,7 @@ if HAVE_RUBY
 	    $(top_srcdir)/gegl/gegl.h			\
 	    $(top_builddir)/gegl/gegl-version.h		\
 	    $(top_srcdir)/gegl/buffer/gegl-buffer.h	\
+	    $(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
             $(top_srcdir)/gegl/gegl-utils.h \
             $(top_srcdir)/gegl/property-types/gegl-color.h\
             $(top_srcdir)/gegl/gegl-matrix.h \
