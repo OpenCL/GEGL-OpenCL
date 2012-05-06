@@ -11,7 +11,7 @@ typedef struct {
     GeglRectangle buffer_changed_rect;
 } TestCase;
 
-GeglRectangle null_rect = (GeglRectangle){0, 0, 0, 0};
+GeglRectangle null_rect = {0, 0, 0, 0};
 
 gboolean
 test_gegl_rectangle_equal(const GeglRectangle *expected, const GeglRectangle *actual)
@@ -30,7 +30,10 @@ test_case_new(void)
 {
     TestCase *test_case = g_new(TestCase, 1);
 
-    test_case->buffer_extent = (GeglRectangle){0, 0, 500, 500};
+    test_case->buffer_extent.x = 0;
+    test_case->buffer_extent.y = 0;
+    test_case->buffer_extent.width = 500;
+    test_case->buffer_extent.height = 500;
     test_case->buffer_format = babl_format("RGBA u8");
     test_case->buffer = gegl_buffer_new(&test_case->buffer_extent, test_case->buffer_format);
     
@@ -53,7 +56,7 @@ void
 test_buffer_change_signal_on_set(void)
 {
     TestCase *test_case = test_case_new();
-    GeglRectangle rect = (GeglRectangle){0, 0, 100, 100};
+    GeglRectangle rect = {0, 0, 100, 100};
     char *tmp = g_malloc(rect.height*rect.width*1*4);
     
     g_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
@@ -76,7 +79,7 @@ void
 test_buffer_change_signal_with_iter(guint access_method, guint expected_signal_calls)
 {
     TestCase *test_case = test_case_new();
-    GeglRectangle rect = (GeglRectangle){0, 0, 100, 100};
+    GeglRectangle rect = {0, 0, 100, 100};
     char *tmp = g_malloc(rect.height*rect.width*1*4);
     GeglBufferIterator *gi = gegl_buffer_iterator_new(test_case->buffer, &rect, 0,
                                 test_case->buffer_format, access_method, GEGL_ABYSS_NONE);
