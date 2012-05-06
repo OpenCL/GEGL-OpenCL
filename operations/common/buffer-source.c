@@ -89,11 +89,13 @@ my_set_property (GObject  *gobject,
   {
     case PROP_buffer:
       if (o->buffer) {
+        // Invariant: valid buffer should always have valid signal handler
+        g_assert(p->buffer_changed_handler > 0);
         g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
       }
       buffer = G_OBJECT (g_value_get_object (value));
       if (buffer) {
-        g_signal_connect (buffer, "changed", G_CALLBACK(buffer_changed), operation);
+        p->buffer_changed_handler = g_signal_connect (buffer, "changed", G_CALLBACK(buffer_changed), operation);
       }
       break;
     default:
@@ -140,6 +142,8 @@ dispose (GObject *object)
 
   if (o->buffer)
     {
+      // Invariant: valid buffer should always have valid signal handler
+      g_assert(p->buffer_changed_handler > 0);
       g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
       g_object_unref (o->buffer);
       o->buffer = NULL;
