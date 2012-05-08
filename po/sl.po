@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-02 20:24+0000\n"
-"PO-Revision-Date: 2012-05-03 19:53+0100\n"
+"POT-Creation-Date: 2012-05-05 17:48+0000\n"
+"PO-Revision-Date: 2012-05-07 09:27+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -312,6 +312,51 @@ msgstr "Barva upodabljanja (privzeto črna, 'black')"
 msgid "Generates a buffer entirely filled with the specified color, crop it to get smaller dimensions."
 msgstr "Tvori izravnalnik, povsem zapolnjen z navedeno barvo, obrežite ga za manjše mere."
 
+#: ../operations/common/color-reduction.c:33
+msgid "Red bits"
+msgstr "Bitov rdeče"
+
+#: ../operations/common/color-reduction.c:33
+msgid "Number of bits for red channel"
+msgstr "Število bitov za rdeči kanal"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Green bits"
+msgstr "Bitov zelene"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Number of bits for green channel"
+msgstr "Število bitov za zeleni kanal"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Blue bits"
+msgstr "Bitov modre"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Number of bits for blue channel"
+msgstr "Število bitov za modri kanal"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Alpha bits"
+msgstr "Bitov alfe"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Number of bits for alpha channel"
+msgstr "Število bitov za kanal alfa"
+
+#: ../operations/common/color-reduction.c:38
+msgid "Dithering Strategy"
+msgstr "Strategija drgeta"
+
+#: ../operations/common/color-reduction.c:39
+#| msgid "The fill opacity to use"
+msgid "The dithering strategy to use"
+msgstr "Strategija drgeta, ki jo želite uporabiti"
+
+#: ../operations/common/color-reduction.c:478
+msgid "Reduces the number of bits per channel (colors and alpha), with optional dithering"
+msgstr "Zmanjša število bitov na kanal (barvni in alfa), z možnim drgetom"
+
 #: ../operations/common/color-temperature.c:27
 msgid "Original temperature"
 msgstr "Izvorna temperatura"
@@ -333,7 +378,6 @@ msgid "Allows changing the color temperature of an image."
 msgstr "Omogoča spreminjanje barvne temperature slike."
 
 #: ../operations/common/color-to-alpha.c:29
-#| msgid "The color to render (defaults to 'black')"
 msgid "The color to render (defaults to 'white')"
 msgstr "Barva upodabljanja (privzeto bela, 'white')"
 
@@ -467,7 +511,6 @@ msgid "Weight Sigma"
 msgstr "Sigma teže"
 
 #: ../operations/common/exp-combine.c:32
-#| msgid "Weight distrubtion sigma controlling response contributions"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Sigma porazdelitve uteži, ki nadzira prispevke odziva"
 
@@ -2210,22 +2253,18 @@ msgid "Scales the buffer."
 msgstr "Spremeni merilo izravnalnika."
 
 #: ../operations/transform/scale-ratio.c:33
-#| msgid "Scales the buffer."
 msgid "Scales the buffer according to a ratio."
 msgstr "Spremeni merilo izravnalnika glede na razmerje."
 
 #: ../operations/transform/scale-size.c:26
-#| msgid "Horizontal"
 msgid "Horizontal size"
 msgstr "Velikost vodoravno"
 
 #: ../operations/transform/scale-size.c:28
-#| msgid "Vertical"
 msgid "Vertical size"
 msgstr "Velikost navpično"
 
 #: ../operations/transform/scale-size.c:33
-#| msgid "Scales the buffer."
 msgid "Scales the buffer according to a size."
 msgstr "Spremeni merilo izravnalnika glede na velikost."
 
@@ -2336,50 +2375,6 @@ msgstr "GeglBuffer, v katerem se izvaja medpomnjenje"
 #: ../operations/workshop/buffer-cache.c:103
 msgid "Cache the input buffer internally, further process take this buffer as input."
 msgstr "Notranje medpomni vhodni izravnalnik, nadaljnji postopki vzamejo ta izravnalnik za vhod."
-
-#: ../operations/workshop/color-reduction.c:25
-msgid "Red bits"
-msgstr "Bitov rdeče"
-
-#: ../operations/workshop/color-reduction.c:25
-msgid "Number of bits for red channel"
-msgstr "Število bitov za rdeči kanal"
-
-#: ../operations/workshop/color-reduction.c:26
-msgid "Green bits"
-msgstr "Bitov zelene"
-
-#: ../operations/workshop/color-reduction.c:26
-msgid "Number of bits for green channel"
-msgstr "Število bitov za zeleni kanal"
-
-#: ../operations/workshop/color-reduction.c:27
-msgid "Blue bits"
-msgstr "Bitov modre"
-
-#: ../operations/workshop/color-reduction.c:27
-msgid "Number of bits for blue channel"
-msgstr "Število bitov za modri kanal"
-
-#: ../operations/workshop/color-reduction.c:28
-msgid "Alpha bits"
-msgstr "Bitov alfe"
-
-#: ../operations/workshop/color-reduction.c:28
-msgid "Number of bits for alpha channel"
-msgstr "Število bitov za kanal alfa"
-
-#: ../operations/workshop/color-reduction.c:29
-msgid "Dither"
-msgstr "Stresanje"
-
-#: ../operations/workshop/color-reduction.c:30
-msgid "Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)"
-msgstr "Strategija drgeta (brez, naključna, naključna-kovariančna, bayerjeva, floyd-steinbergova)"
-
-#: ../operations/workshop/color-reduction.c:459
-msgid "Reduces the number of bits per channel (colors and alpha), with optional dithering"
-msgstr "Zmanjša število bitov na kanal (barvni in alfa), z možnim drgetom"
 
 #: ../operations/workshop/color-rotate.c:33
 #: ../operations/workshop/color-rotate.c:39
