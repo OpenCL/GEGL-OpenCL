@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-10 11:10+0000\n"
-"PO-Revision-Date: 2012-05-10 14:21+0200\n"
+"POT-Creation-Date: 2012-05-10 12:21+0000\n"
+"PO-Revision-Date: 2012-05-10 14:22+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1949,7 +1949,6 @@ msgid "Fill rule"
 msgstr "Regla de rellenado"
 
 #: ../operations/external/path.c:42
-#| msgid "How to determine what to fill (nonzero|evenodd"
 msgid "How to determine what to fill (nonzero|evenodd)"
 msgstr "Cómo determinar lo que se rellena (no nulo / par impar)"
 
@@ -2193,7 +2192,6 @@ msgid "Fill rule."
 msgstr "Regla de rellenado."
 
 #: ../operations/external/vector-fill.c:34
-#| msgid "how to determine what to fill (nonzero|evenodd"
 msgid "how to determine what to fill (nonzero|evenodd)"
 msgstr "cómo determinar lo que se rellena (no nulo / par impar)"
 
@@ -2885,11 +2883,13 @@ msgid "Border"
 msgstr "Borde"
 
 #: ../operations/workshop/convolution-matrix.c:91
+#| msgid ""
+#| "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
 msgid ""
-"Type of border to choose.Choices are extend, wrap, crop.Default is extend"
+"Type of border to choose. Choices are extend, wrap, crop. Default is extend"
 msgstr ""
 "Tipo de borde que seleccionar. Se puede elegir entre extender, ajustar o "
-"recortar. El predeterminado es «extender»"
+"recortar. El predeterminado es extender"
 
 #: ../operations/workshop/convolution-matrix.c:433
 msgid "Creates image by manually set convolution matrix"
@@ -3089,7 +3089,8 @@ msgid "Lens:"
 msgstr "Objetivo:"
 
 #: ../operations/workshop/external/lens-correct.c:33
-msgid "Write your lens model with majuscules"
+#| msgid "Write your lens model with majuscules"
+msgid "Write your lens model with uppercase letters"
 msgstr "Escriba el modelo de su objetivo con mayúsculas"
 
 #: ../operations/workshop/external/lens-correct.c:34
