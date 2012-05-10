@@ -39,7 +39,7 @@ gegl_chant_double (stroke_hardness, _("Hardness"),   0.0, 1.0, 0.6,
                              _("Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"))
 
 gegl_chant_string (fill_rule,_("Fill rule"), "nonzero",
-                             _("How to determine what to fill (nonzero|evenodd"))
+                             _("How to determine what to fill (nonzero|evenodd)"))
 
 gegl_chant_string (transform,_("Transform"), "",
                              _("SVG style description of transform"))
