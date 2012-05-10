@@ -27,11 +27,6 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "graph/gegl-node.h"
-#include "graph/gegl-pad.h"
-#include "operation/gegl-operation.h"
-#include "property-types/gegl-color.h"
-#include "property-types/gegl-curve.h"
-#include "property-types/gegl-path.h"
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
@@ -108,12 +103,10 @@ static void param_set (ParseData   *pd,
   else if (strcmp (param_name, "operation") &&
            strcmp (param_name, "type"))
     {
-      GeglOperation *operation;
       GParamSpec    *paramspec;
 set_clone_prop_as_well:
 
-      operation = new->operation;
-      paramspec = g_object_class_find_property (G_OBJECT_GET_CLASS (operation), param_name);
+      paramspec = gegl_node_find_property (new, param_name);
 
       if (!paramspec)
         {
@@ -431,7 +424,7 @@ static void end_element (GMarkupParseContext *context,
   else if (!strcmp (element_name, "tree") ||
            !strcmp (element_name, "layers"))
     {
-      if (gegl_node_get_pad (pd->iter, "input"))
+      if (gegl_node_get_producer (pd->iter, "input", NULL))
         {
           gegl_node_connect_from (pd->iter, "input",
                                   gegl_node_get_input_proxy (GEGL_NODE (pd->parent->data), "input"),
@@ -969,15 +962,11 @@ add_stack (SerializeState *ss,
 
       while (iter)
         {
-          GeglPad     *input, *aux;
           const gchar *id = NULL;
           gchar       *class;
           gegl_node_get (iter, "operation", &class, NULL);
 
-          input = gegl_node_get_pad (iter, "input");
-          aux   = gegl_node_get_pad (iter, "aux");
-
-          if (gegl_node_get_num_sinks (iter) > 1)
+          if (gegl_node_get_consumers (iter, "output", NULL, NULL) > 1)
             {
               const gchar *new_id = g_hash_table_lookup (ss->clones, iter);
               if (new_id)
@@ -1007,13 +996,9 @@ add_stack (SerializeState *ss,
                 }
               else
                 {
-                  if (aux &&
-                      gegl_pad_get_connected_to (aux))
+                  GeglNode *source_node = gegl_node_get_producer (iter, "aux", NULL);
+                  if (source_node)
                     {
-                      GeglPad  *source_pad;
-                      GeglNode *source_node;
-                      source_pad  = gegl_pad_get_connected_to (aux);
-                      source_node = gegl_pad_get_node (source_pad);
                       {
                         GeglNode *graph = g_object_get_data (G_OBJECT (source_node),
                                                              "graph");
@@ -1077,26 +1062,19 @@ add_stack (SerializeState *ss,
                 }
             }
           id = NULL;
-          if (input)
-            {
-              GeglPad *source_pad;
-              source_pad = gegl_pad_get_connected_to (input);
-              if (source_pad)
-                {
-                  GeglNode *source_node = gegl_pad_get_node (source_pad);
-                  GeglNode *graph       = g_object_get_data (G_OBJECT (source_node),
-                                                             "graph");
-                  if (graph)
-                    source_node = graph;
-                  iter = source_node;
-                }
-              else
-                iter = NULL;
-            }
-          else
-            {
+          {
+            GeglNode *source_node = gegl_node_get_producer (iter, "input", NULL);
+            if (source_node)
+              {
+                GeglNode *graph       = g_object_get_data (G_OBJECT (source_node),
+                                                           "graph");
+                if (graph)
+                  source_node = graph;
+                iter = source_node;
+              }
+            else
               iter = NULL;
-            }
+          }
 
           g_free (class);
         }

@@ -19,8 +19,6 @@
 #ifndef GEGL_XML_H
 #define GEGL_XML_H
 
-#include "gegl-types-internal.h"
-
 gchar    * gegl_node_to_xml        (GeglNode    *gegl,
                                     const gchar *path_root);
 GeglNode * gegl_node_new_from_xml  (const gchar *xmldata,
