@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-10 08:27+0000\n"
-"PO-Revision-Date: 2012-05-10 11:35+0200\n"
+"POT-Creation-Date: 2012-05-10 09:38+0000\n"
+"PO-Revision-Date: 2012-05-10 13:08+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1933,14 +1933,16 @@ msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool"
 msgstr ""
+"Opacidad del trazo. Observe que no se comporta como SVG porque, por el, "
+"momento el trazado se hace con una herramienta de aerográfo"
 
 #: ../operations/external/path.c:38 ../operations/workshop/warp.c:39
 msgid "Hardness"
-msgstr ""
+msgstr "Dureza"
 
 #: ../operations/external/path.c:39
 msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
-msgstr ""
+msgstr "Dureza del pincel, 0.0 para un pincel blando, 1.0 para un pincel duro"
 
 #: ../operations/external/path.c:41
 msgid "Fill rule"
@@ -1948,24 +1950,24 @@ msgstr "Regla de rellenado"
 
 #: ../operations/external/path.c:42
 msgid "How to determine what to fill (nonzero|evenodd"
-msgstr ""
+msgstr "Cómo determinar lo que se rellena (no nulo / par impar)"
 
 #: ../operations/external/path.c:44 ../operations/external/vector-fill.c:36
 #: ../operations/external/vector-stroke.c:36
 msgid "Transform"
-msgstr ""
+msgstr "Transformar"
 
 #: ../operations/external/path.c:45
 msgid "SVG style description of transform"
-msgstr ""
+msgstr "Descripción de la transformación en estilo SVG"
 
 #: ../operations/external/path.c:47
 msgid "Fill opacity"
-msgstr ""
+msgstr "Opacidad del relleno"
 
 #: ../operations/external/path.c:48
 msgid "The fill opacity to use"
-msgstr ""
+msgstr "Opacidad del relleno que usar"
 
 #: ../operations/external/path.c:50 ../operations/external/vector-fill.c:39
 #: ../operations/external/vector-stroke.c:39
@@ -1975,15 +1977,15 @@ msgstr "Vector"
 #: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
 #: ../operations/external/vector-stroke.c:40
 msgid "A GeglVector representing the path of the stroke"
-msgstr ""
+msgstr "Un vector GeglVector que representa la ruta del trazo"
 
 #: ../operations/external/path.c:518
 msgid "Renders a brush stroke"
-msgstr ""
+msgstr "Renderiza un trazo de pincel"
 
 #: ../operations/external/pixbuf.c:25
 msgid "Pixbuf"
-msgstr ""
+msgstr "Pixbuf"
 
 #: ../operations/external/pixbuf.c:25
 msgid "GdkPixbuf to use"
@@ -1992,16 +1994,18 @@ msgstr "GdkPixbuf que usar"
 #: ../operations/external/pixbuf.c:103
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr ""
+"Usa el GdkPixbuf situado en la posición de memoria que está en <em>pixbuf</"
+"em>."
 
 #: ../operations/external/png-load.c:446
 msgid "PNG image loader."
-msgstr ""
+msgstr "Cargador de imágenes PNG."
 
 #: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
 #: ../operations/external/rgbe-save.c:27
 #: ../operations/workshop/external/ff-save.c:30
 msgid "Target path and filename, use '-' for stdout."
-msgstr ""
+msgstr "Ruta y nombre del archivo objetivo, use «-» para la salida estándar."
 
 #: ../operations/external/png-save.c:28
 msgid "Compression"
@@ -2009,23 +2013,25 @@ msgstr "Compresión"
 
 #: ../operations/external/png-save.c:29
 msgid "PNG compression level from 1 to 9"
-msgstr ""
+msgstr "Nivel de compresión PNG de 1 a 9"
 
 #: ../operations/external/png-save.c:30 ../operations/external/ppm-save.c:28
 msgid "Bitdepth"
-msgstr ""
+msgstr "Bits de profundidad"
 
 #: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:30
 msgid "8 and 16 are amongst the currently accepted values."
-msgstr ""
+msgstr "8 y 16 están entre los valores comúnmente aceptados."
 
 #: ../operations/external/png-save.c:233
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
+"Guardador de imágenes PNG (pasa el búfer a su través, guarda como efecto "
+"colateral)."
 
 #: ../operations/external/ppm-load.c:306
 msgid "PPM image loader."
-msgstr ""
+msgstr "Cargador de imágenes PPM."
 
 #: ../operations/external/ppm-save.c:27
 msgid "Raw format"
@@ -2033,37 +2039,40 @@ msgstr "Formato Raw"
 
 #: ../operations/external/ppm-save.c:190
 msgid "PPM image saver (Portable pixmap saver.)"
-msgstr ""
+msgstr "Guardador de imágenes PPM (guardador de mapas de píxeles portables)."
 
 #: ../operations/external/rgbe-load.c:135
 msgid "RGBE image loader (Radiance HDR format)."
-msgstr ""
+msgstr "Cargador de imágenes RGBE (formato HDR de radiancia)."
 
 #: ../operations/external/rgbe-save.c:86
 msgid "RGBE image saver (Radiance HDR format)"
-msgstr ""
+msgstr "Guardador de imágenes RGBE (formato HDR de radiancia)"
 
 #: ../operations/external/save-pixbuf.c:28
 msgid "Pixbuf location"
-msgstr ""
+msgstr "Ubicación del Pixbuf"
 
 #: ../operations/external/save-pixbuf.c:29
 msgid "The location where to store the output GdkPixbuf."
-msgstr ""
+msgstr "Lugar donde almacenar el GdkPixbuf de salida."
 
 #: ../operations/external/save-pixbuf.c:106
 msgid "Save output into a GdkPixbuf."
-msgstr ""
+msgstr "Guardar la salida en un GdkPixbuf."
 
 #: ../operations/external/sdl-display.c:28
 msgid "Icon to be used for output window"
-msgstr ""
+msgstr "Icono que usar para la ventana de salida"
 
 #: ../operations/external/sdl-display.c:181
 msgid ""
 "Displays the input buffer in an SDL window (restricted to one display op/"
 "process, due to SDL implementation issues)."
 msgstr ""
+"Presenta el búfer de entrada en una ventana SDL (restringido a una "
+"presentación por operador o proceso, debido a cuestiones de implementación "
+"de SDL)."
 
 #: ../operations/external/svg-load.c:26
 msgid "Path to SVG file to load"
@@ -2080,7 +2089,7 @@ msgstr "Altura de la imagen renderizada"
 #. not hidden because it has extra API
 #: ../operations/external/svg-load.c:245
 msgid "Load an SVG file using librsvg"
-msgstr ""
+msgstr "Cargar un archivo SVG usando librsvg"
 
 #: ../operations/external/text.c:25
 msgid "Text"
@@ -2088,7 +2097,7 @@ msgstr "Texto"
 
 #: ../operations/external/text.c:26
 msgid "String to display (utf8)"
-msgstr ""
+msgstr "Cadena que mostrar (utf8)"
 
 #: ../operations/external/text.c:27
 msgid "Font family"
@@ -2104,11 +2113,11 @@ msgstr "Tamaño"
 
 #: ../operations/external/text.c:30
 msgid "Approximate height of text in pixels."
-msgstr ""
+msgstr "Altura aproximada del texto en píxeles."
 
 #: ../operations/external/text.c:32
 msgid "Color for the text (defaults to 'white')"
-msgstr ""
+msgstr "Color del texto (el predeterminado es «blanco»)"
 
 #: ../operations/external/text.c:33
 msgid "Wrap width"
@@ -2119,6 +2128,8 @@ msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
 msgstr ""
+"Establece la anchura en píxeles en la que la líneas largas se ajustan. Use -"
+"1 para no ajustar."
 
 #: ../operations/external/text.c:36
 msgid "Justification"
@@ -2127,18 +2138,19 @@ msgstr "Justificación"
 #: ../operations/external/text.c:37
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr ""
+"Alineación para textos de varias líneas (0=Izquierda, 1=Centro, 2=Derecha)"
 
 #: ../operations/external/text.c:39
 msgid "Rendered width in pixels. (read only)"
-msgstr ""
+msgstr "Anchura del renderizado en píxeles (solo lectura)."
 
 #: ../operations/external/text.c:41
 msgid "Rendered height in pixels. (read only)"
-msgstr ""
+msgstr "Altura del renderizado en píxeles (solo lectura)."
 
 #: ../operations/external/text.c:301
 msgid "Display a string of text using pango and cairo."
-msgstr ""
+msgstr "Presentar una cadena de texto usando Pango y Cairo."
 
 #: ../operations/external/v4l.c:26
 msgid "Path"
@@ -2151,6 +2163,8 @@ msgstr "Ruta al dispositivo v4l"
 #: ../operations/external/v4l.c:30
 msgid "current frame number, can be changed to trigger a reload of the image."
 msgstr ""
+"número del fotograma actual, se puede cambiar para que dispare una recarga "
+"de la imagen."
 
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/ff-save.c:32
@@ -2159,62 +2173,64 @@ msgstr "FPS"
 
 #: ../operations/external/v4l.c:32
 msgid "autotrigger reload this many times a second."
-msgstr ""
+msgstr "autodisparar la recarga esta cantidad de veces por segundo."
 
 #: ../operations/external/v4l.c:322
 msgid "Video4Linux input, webcams framegrabbers and similar devices."
-msgstr ""
+msgstr "Entrada Video4Linux, capturadoras, webcams y dispositivos similares."
 
 #: ../operations/external/vector-fill.c:28
 msgid "Color of paint to use for filling."
-msgstr ""
+msgstr "Color de la pintura que usar para el relleno."
 
 #: ../operations/external/vector-fill.c:31
 msgid "The fill opacity to use."
-msgstr ""
+msgstr "Opacidad de relleno que usar."
 
 #: ../operations/external/vector-fill.c:33
 msgid "Fill rule."
-msgstr ""
+msgstr "Regla de rellenado."
 
 #: ../operations/external/vector-fill.c:34
 msgid "how to determine what to fill (nonzero|evenodd"
-msgstr ""
+msgstr "cómo determinar lo que se rellena (no nulo / par impar)"
 
 #: ../operations/external/vector-fill.c:37
 #: ../operations/external/vector-stroke.c:37
 msgid "svg style description of transform."
-msgstr ""
+msgstr "descripción estilo SVG de la transformación."
 
 #: ../operations/external/vector-fill.c:258
 msgid "Renders a filled region"
-msgstr ""
+msgstr "Renderiza una región rellena"
 
 #: ../operations/external/vector-stroke.c:28
 msgid "Color of paint to use for stroking."
-msgstr ""
+msgstr "Color de la pintura que usar para el trazado."
 
 #: ../operations/external/vector-stroke.c:31
 msgid "The width of the brush used to stroke the path."
-msgstr ""
+msgstr "Anchura del pincel usado para trazar la ruta."
 
 #: ../operations/external/vector-stroke.c:34
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool."
 msgstr ""
+"Opacidad del trazo. Observe que no se comporta como SVG porque por el "
+"momento el trazado se hace con una herramienta de aerógrafo."
 
 #: ../operations/external/vector-stroke.c:280
 msgid "Renders a vector stroke"
-msgstr ""
+msgstr "Renderiza un trazado de vector"
 
 #: ../operations/generated/add.c:125
 msgid "Math operation add (c = c + value)"
-msgstr ""
+msgstr "Operación matemática suma (c = c + valor)"
 
 #: ../operations/generated/clear.c:116
 msgid "Porter Duff operation clear (d = 0.0f)"
-msgstr ""
+msgstr "Operación Porter-Duff borrar (d = 0.0f)"
 
 #: ../operations/generated/color-burn.c:117
 msgid ""
@@ -2222,6 +2238,10 @@ msgid ""
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
 "cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 msgstr ""
+"Operación de mezcla SVG quemado de color (<code>si cA * aB + cB * aA <= aA * "
+"aB: d = cA * (1 - aB) + cB * (1 - aA) en caso contrario: d = (cA == 0 ? 1 : "
+"(aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</"
+"code>)"
 
 #: ../operations/generated/color-dodge.c:117
 msgid ""
@@ -2229,52 +2249,62 @@ msgid ""
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
 "aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG máscara de color (<code>si cA * aB + cB * aA >= aA * "
+"aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) en caso contrario: d = (cA "
+"== aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 "
+"- aA)</code>)"
 
 #: ../operations/generated/darken.c:115
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG oscurecer (<code>d = MIN (cA * aB, cB * aA) + cA * "
+"(1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/difference.c:115
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
 msgstr ""
+"Operación de mezcla SVG diferencia (<code>d = cA + cB - 2 * (MIN (cA * aB, "
+"cB * aA))</code>)"
 
 #: ../operations/generated/divide.c:125
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
-msgstr ""
+msgstr "Operación matemática dividir (c = valor==0.0f?0.0f:c/valor)"
 
 #: ../operations/generated/dst-atop.c:116
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operación de Porter-Duff dst-atop (d = cB * aA + cA * (1.0f - aB))"
 
 #: ../operations/generated/dst.c:116
 msgid "Porter Duff operation dst (d = cB)"
-msgstr ""
+msgstr "Operación de Porter-Duff dst (d = cB)"
 
 #: ../operations/generated/dst-in.c:116
 msgid "Porter Duff operation dst-in (d = cB * aA)"
-msgstr ""
+msgstr "Operación de Porter-Duff dst-in (d = cB * aA)"
 
 #: ../operations/generated/dst-out.c:116
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operación de Porter-Duff dst-out (d = cB * (1.0f - aA))"
 
 #: ../operations/generated/dst-over.c:116
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operación de Porter-Duff dst-over (d = cB + cA * (1.0f - aB))"
 
 #: ../operations/generated/exclusion.c:115
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG exclusión (<code>d = (cA * aB + cB * aA - 2 * cA * "
+"cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/gamma.c:125
 msgid "Math operation gamma (c = powf (c, value))"
-msgstr ""
+msgstr "Operación matemática gamma (c = powf (c, valor))"
 
 #: ../operations/generated/hard-light.c:117
 msgid ""
@@ -2282,16 +2312,21 @@ msgid ""
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
 "+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG aclarado duro (<code>si 2 * cA < aA: d = 2 * cA * cB "
+"+ cA * (1 - aB) + cB * (1 - aA) en caso contrario: d = aA * aB - 2 * (aB - "
+"cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/lighten.c:115
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG aclarar (<code>d = MAX (cA * aB, cB * aA) + cA * (1 "
+"- aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/multiply.c:125
 msgid "Math operation multiply (c = c * value)"
-msgstr ""
+msgstr "Operación matemática multiplicar (c = c * valor)"
 
 #: ../operations/generated/overlay.c:117
 msgid ""
@@ -2299,14 +2334,17 @@ msgid ""
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG overlay (<code>si 2 * cB > aB: d = 2 * cA * cB + cA "
+"* (1 - aB) + cB * (1 - aA) en caso contrario: d = aA * aB - 2 * (aB - cB) * "
+"(aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/plus.c:115
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
-msgstr ""
+msgstr "Operación de mezcla SVG suma (<code>d = cA + cB</code>)"
 
 #: ../operations/generated/screen.c:115
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
-msgstr ""
+msgstr "Operación de mezcla SVG pantalla (<code>d = cA + cB - cA * cB</code>)"
 
 #: ../operations/generated/soft-light.c:119
 msgid ""
@@ -2317,40 +2355,48 @@ msgid ""
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG aclarado suave (<code>si 2 * cA < aA: d = cB * (aA - "
+"(aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - "
+"aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - "
+"aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); en "
+"caso contrario: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 "
+"* cA - aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/src-atop.c:116
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operación de Porter-Duff src-atop (d = cA * aB + cB * (1.0f - aA))"
 
 #: ../operations/generated/src.c:116
 msgid "Porter Duff operation src (d = cA)"
-msgstr ""
+msgstr "Operación de Porter-Duff src (d = cA)"
 
 #: ../operations/generated/src-in.c:125
 msgid "Porter Duff operation src-in (d = cA * aB)"
-msgstr ""
+msgstr "Operación de Porter-Duff src-in (d = cA * aB)"
 
 #: ../operations/generated/src-out.c:116
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
-msgstr ""
+msgstr "Operación de Porter-Duff src-out (d = cA * (1.0f - aB))"
 
 #: ../operations/generated/src-over.c:116
 msgid "Porter Duff operation src-over (d = cA + cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operación de Porter-Duff src-over (d = cA + cB * (1.0f - aA))"
 
 #: ../operations/generated/subtract.c:125
 msgid "Math operation subtract (c = c - value)"
-msgstr ""
+msgstr "Operación matemática restar (c = c - valor)"
 
 #: ../operations/generated/svg-multiply.c:115
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
 msgstr ""
+"Operación de mezcla SVG multiplicar (<code>d = cA * cB +  cA * (1 - aB) + cB "
+"* (1 - aA)</code>)"
 
 #: ../operations/generated/xor.c:116
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
-msgstr ""
+msgstr "Operación de Porter-Duff xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
 #: ../operations/transform/reflect.c:29
 msgid "Direction vector's X component"
