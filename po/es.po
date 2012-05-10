@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-08 18:05+0000\n"
-"PO-Revision-Date: 2012-05-10 10:18+0200\n"
+"POT-Creation-Date: 2012-05-10 08:27+0000\n"
+"PO-Revision-Date: 2012-05-10 11:35+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1476,7 +1476,7 @@ msgid ""
 "Neighborhood taken into account, for enhancement ideal values are close to "
 "the longest side of the image, increasing this increases the runtime"
 msgstr ""
-"Vecindad que se toma en cuenta; para realzar los valores ideales que son "
+"Vecindad que se toma en cuenta; los valores ideales para realzar son "
 "próximos al lado largo de la imagen, aumentarlo hace aumentar el tiempo de "
 "ejecución"
 
@@ -1593,14 +1593,16 @@ msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
 msgstr ""
+"El predeterminado es: «negro», aquí puede usar transparencia para eliminar "
+"partes de una imagen"
 
 #: ../operations/common/vignette.c:26
 msgid "How far out vignetting goes as portion of half image diagonal"
-msgstr ""
+msgstr "Magnitud del viñeteado como porción de la semidiagonal de la imagen"
 
 #: ../operations/common/vignette.c:27
 msgid "Softness"
-msgstr ""
+msgstr "Suavidad"
 
 #: ../operations/common/vignette.c:28
 msgid "Gamma"
@@ -1608,7 +1610,7 @@ msgstr "Gamma"
 
 #: ../operations/common/vignette.c:28
 msgid "Falloff linearity"
-msgstr ""
+msgstr "Linealidad del Falloff"
 
 #: ../operations/common/vignette.c:29
 msgid "Proportion"
@@ -1616,11 +1618,11 @@ msgstr "Proporción"
 
 #: ../operations/common/vignette.c:29
 msgid "How close we are to image proportions"
-msgstr ""
+msgstr "Cómo de cerca está de las proporciones de la imagen"
 
 #: ../operations/common/vignette.c:30
 msgid "Squeeze"
-msgstr ""
+msgstr "Apretar"
 
 #: ../operations/common/vignette.c:30
 msgid ""
@@ -1628,14 +1630,18 @@ msgid ""
 "inf:1, this is applied after proportion is taken into account, to directly "
 "use squeeze factor as proportions, set proportion to 0.0."
 msgstr ""
+"Proporción de aspecto que usar, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:"
+"inf 1.0 = inf:1, se aplica después de tener en cuenta la proporción, para "
+"usar directamente el factor de apriete como proporciones, establezca la "
+"proporción a 0.0."
 
 #: ../operations/common/vignette.c:32
 msgid "Horizontal center of vignetting"
-msgstr ""
+msgstr "Centro horizontal del viñeteado"
 
 #: ../operations/common/vignette.c:33
 msgid "Vertical center of vignetting"
-msgstr ""
+msgstr "Centro vertical del viñeteado"
 
 #: ../operations/common/vignette.c:34
 msgid "Rotation"
@@ -1651,18 +1657,22 @@ msgid ""
 "fall off at edge of exposed film, and some other fuzzier border effects that "
 "can naturally occur with analoge photograpy."
 msgstr ""
+"Operador de viñeteado, aplica una viñeta o marco difuso a una imagen. Simula "
+"el descenso de luminancia en los bordes de la película expuesta, y otros "
+"efectos de borde borroso que pueden ocurrir de forma natural con la "
+"fotografía analógica."
 
 #: ../operations/common/waves.c:27
 msgid "X coordinate of the center of the waves"
-msgstr ""
+msgstr "Coordenada X del centro de las ondas"
 
 #: ../operations/common/waves.c:30
 msgid "Coordinate y of the center of the waves"
-msgstr ""
+msgstr "Coordenada Y del centro de las ondas"
 
 #: ../operations/common/waves.c:164
 msgid "Transform the buffer with waves"
-msgstr ""
+msgstr "Transformar el búfer con ondas"
 
 #: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
@@ -1674,15 +1684,15 @@ msgstr "Valor"
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
 #: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
 msgid "global value used if aux doesn't contain data"
-msgstr ""
+msgstr "valor global usado si el auxiliar no tiene datos"
 
 #: ../operations/common/weighted-blend.c:124
 msgid "blend two images using alpha values as weights"
-msgstr ""
+msgstr "mezclar dos imágenes usando los valores de alfa como pesos"
 
 #: ../operations/common/write-buffer.c:26
 msgid "Write to an existing GeglBuffer"
-msgstr ""
+msgstr "Escribir en un GeglBuffer existente"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -1690,7 +1700,7 @@ msgstr "Referencia"
 
 #: ../operations/core/clone.c:26
 msgid "The reference ID used as input (for use in XML)."
-msgstr ""
+msgstr "ID de referencia usado como entrada (para su uso en XML)."
 
 #: ../operations/core/clone.c:112
 msgid "Clone a buffer"
@@ -1702,11 +1712,11 @@ msgstr "Formato de salida"
 
 #: ../operations/core/convert-format.c:29
 msgid "Babl output format string"
-msgstr ""
+msgstr "Cadena de formato de salida Babl"
 
 #: ../operations/core/convert-format.c:81
 msgid "Convert the data to the specified format"
-msgstr ""
+msgstr "Convertir los datos al formato especificado"
 
 #: ../operations/core/crop.c:179
 msgid "Crop a buffer"
@@ -1714,7 +1724,7 @@ msgstr "Recortar un búfer"
 
 #: ../operations/core/nop.c:72
 msgid "No operation (can be used as a routing point)"
-msgstr ""
+msgstr "Ninguna operación (se puede usar como punto de enrutado)"
 
 #: ../operations/external/ff-load.c:25 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:25
@@ -1731,77 +1741,78 @@ msgstr "Número de fotograma"
 
 #: ../operations/external/ff-load.c:471
 msgid "FFmpeg video frame importer"
-msgstr ""
+msgstr "Importador de fotogramas de vídeo FFmpeg"
 
 #: ../operations/external/jp2-load.c:70
 #, c-format
 msgid "Unknown JPEG 2000 image format in '%s'"
-msgstr ""
+msgstr "Formato de imagen JPEG 2000 desconocido en «%s»"
 
 #: ../operations/external/jp2-load.c:77
 #, c-format
 msgid "Unable to open JPEG 2000 image in '%s'"
-msgstr ""
+msgstr "No se pudo abrir la imagen JPEG 2000 en «%s»"
 
 #: ../operations/external/jp2-load.c:84
 #, c-format
 msgid "Unable to create output color profile for '%s'"
-msgstr ""
+msgstr "No se pudo crear el perfil de color de salida para «%s»"
 
 #: ../operations/external/jp2-load.c:92
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr ""
+"No se pudo convertir la imagen al espacio de colores sRGB al procesar «%s»"
 
 #: ../operations/external/jp2-load.c:100
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
-msgstr ""
+msgstr "Archivo JPEG 2000 no RGB no soportado con %d componentes en «%s»"
 
 #: ../operations/external/jp2-load.c:111
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
-msgstr ""
+msgstr "Archivo JPEG 2000 no soportado con profundidad %d en «%s»"
 
 #: ../operations/external/jp2-load.c:124
 #, c-format
 msgid "Components of input image '%s' don't match"
-msgstr ""
+msgstr "Las componentes de la imagen de entrada «%s» no se corresponden"
 
 #: ../operations/external/jp2-load.c:209
 #, c-format
 msgid "One or more of R, G, B components are missing from '%s'"
-msgstr ""
+msgstr "Faltan una o más componentes de R, G, B de «%s»"
 
 #: ../operations/external/jp2-load.c:218
 #, c-format
 msgid "One or more of R, G, B components have signed data in '%s'"
-msgstr ""
+msgstr "Una o más componentes de R, G, B tienen datos firmados en «%s»"
 
 #: ../operations/external/jp2-load.c:252
 #, c-format
 msgid "Error reading row %d component %d from '%s'"
-msgstr ""
+msgstr "Error al leer la fila %d componente %d de «%s»"
 
 #: ../operations/external/jp2-load.c:397
 msgid "JPEG 2000 image loader"
-msgstr ""
+msgstr "Cargador de imágenes JPEG 2000"
 
 #: ../operations/external/jpg-load.c:223
 msgid "JPG image loader"
-msgstr ""
+msgstr "Cargador de imágenes JPG"
 
 #: ../operations/external/jpg-save.c:26
 msgid "Target path and filename, use '-' for stdout"
-msgstr ""
+msgstr "Ruta y nombre del archivo objetivo, use «-» para la salida estándar"
 
 #: ../operations/external/jpg-save.c:27
 msgid "Quality"
-msgstr ""
+msgstr "Calidad"
 
 #: ../operations/external/jpg-save.c:28
 msgid "JPEG compression quality (between 1 and 100)"
-msgstr ""
+msgstr "Calidad de la compresión JPEG (entre 1 y 100)"
 
 #: ../operations/external/jpg-save.c:29
 msgid "Smoothing"
@@ -1809,7 +1820,7 @@ msgstr "Suavizado"
 
 #: ../operations/external/jpg-save.c:30
 msgid "Smoothing factor from 1 to 100; 0 disables smoothing"
-msgstr ""
+msgstr "Factor de suavizado de 1 a 100; 0 desactiva el suavizado"
 
 #: ../operations/external/jpg-save.c:31
 msgid "Optimize"
@@ -1817,15 +1828,15 @@ msgstr "Optimizar"
 
 #: ../operations/external/jpg-save.c:32
 msgid "Use optimized huffman tables"
-msgstr ""
+msgstr "Usar tablas de Huffman optimizadas"
 
 #: ../operations/external/jpg-save.c:33
 msgid "Progressive"
-msgstr ""
+msgstr "Progresivo"
 
 #: ../operations/external/jpg-save.c:34
 msgid "Create progressive JPEG images"
-msgstr ""
+msgstr "Crear imágenes JPEG progresivas"
 
 #: ../operations/external/jpg-save.c:35
 #: ../operations/workshop/color-rotate.c:46
@@ -1834,11 +1845,13 @@ msgstr "Escala de grises"
 
 #: ../operations/external/jpg-save.c:36
 msgid "Create a grayscale (monochrome) image"
-msgstr ""
+msgstr "Crear una imagen de escala de grises (monocromática)"
 
 #: ../operations/external/jpg-save.c:192
 msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
 msgstr ""
+"Guardador de imágenes JPEG (pasa el búfer a su través, guarda como efecto "
+"colateral)"
 
 #: ../operations/external/matting-levin.c:25
 msgid "Epsilon"
@@ -1846,15 +1859,15 @@ msgstr "Epsilon"
 
 #: ../operations/external/matting-levin.c:27
 msgid "Log of the error weighting"
-msgstr ""
+msgstr "Logaritmo de la ponderación de error"
 
 #: ../operations/external/matting-levin.c:30
 msgid "Radius of the processing window"
-msgstr ""
+msgstr "Radio de la ventana de procesado"
 
 #: ../operations/external/matting-levin.c:33
 msgid "Alpha threshold for multilevel processing"
-msgstr ""
+msgstr "Umbral alfa para el procesado multinivel"
 
 #: ../operations/external/matting-levin.c:34
 msgid "Lambda"
@@ -1862,53 +1875,58 @@ msgstr "Lambda"
 
 #: ../operations/external/matting-levin.c:35
 msgid "Trimap influence factor"
-msgstr ""
+msgstr "Factor de influencia del trimap"
 
 #: ../operations/external/matting-levin.c:38
 msgid "Number of downsampled levels to use"
-msgstr ""
+msgstr "Número de niveles submuestreados que usar"
 
 #: ../operations/external/matting-levin.c:39
 msgid "Active Levels"
-msgstr ""
+msgstr "Niveles activos"
 
 #: ../operations/external/matting-levin.c:41
 msgid "Number of levels to perform solving"
-msgstr ""
+msgstr "Número de niveles para el solucionado"
 
 #: ../operations/external/matting-levin.c:1428
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
 msgstr ""
+"Dado un trimap difuso aportado por el usuario y una imagen de entrada, crear "
+"una máscara alfa de primer plano. Establecer blanco como seleccionado, negro "
+"como no seleccionado, para el trimap."
 
 #: ../operations/external/path.c:27
 msgid "Fill Color"
-msgstr ""
+msgstr "Color de relleno"
 
 #: ../operations/external/path.c:28
 msgid "Color of paint to use for filling, use 0 opacity to disable filling"
 msgstr ""
+"Color de la pintura que usar para el relleno, use opacidad 0 para desactivar "
+"el rellenado"
 
 #: ../operations/external/path.c:29
 msgid "Stroke Color"
-msgstr ""
+msgstr "Color del trazo"
 
 #: ../operations/external/path.c:30
 msgid "Color of paint to use for stroking"
-msgstr ""
+msgstr "Color de la pintura que usar para el trazado"
 
 #: ../operations/external/path.c:32
 msgid "Stroke width"
-msgstr ""
+msgstr "Anchura del trazo"
 
 #: ../operations/external/path.c:33
 msgid "The width of the brush used to stroke the path"
-msgstr ""
+msgstr "Anchura del pincel que se usa para trazar la ruta"
 
 #: ../operations/external/path.c:35
 msgid "Stroke opacity"
-msgstr ""
+msgstr "Opacidad del trazo"
 
 #: ../operations/external/path.c:36
 msgid ""
@@ -2351,62 +2369,44 @@ msgid "Rotate the buffer around the specified origin."
 msgstr ""
 
 #: ../operations/transform/scale.c:29 ../operations/transform/scale-ratio.c:26
-#, fuzzy
-#| msgid "Horizontal position"
 msgid "Horizontal scale factor"
-msgstr "Posición horizontal"
+msgstr "Factor de escalado horizontal"
 
 #: ../operations/transform/scale.c:31 ../operations/transform/scale-ratio.c:28
-#, fuzzy
-#| msgid "Vertical position"
 msgid "Vertical scale factor"
-msgstr "Posición vertical"
+msgstr "Factor de escalado vertical"
 
 #: ../operations/transform/scale.c:36
 msgid "Scales the buffer."
 msgstr "Escala el búfer."
 
 #: ../operations/transform/scale-ratio.c:33
-#, fuzzy
-#| msgid "Scales the buffer."
 msgid "Scales the buffer according to a ratio."
-msgstr "Escala el búfer."
+msgstr "Escala el búfer según una proporción."
 
 #: ../operations/transform/scale-size.c:26
-#, fuzzy
-#| msgid "Horizontal"
 msgid "Horizontal size"
-msgstr "Horizontal"
+msgstr "Tamaño horizontal"
 
 #: ../operations/transform/scale-size.c:28
-#, fuzzy
-#| msgid "Vertical"
 msgid "Vertical size"
-msgstr "Vertical"
+msgstr "Tamaño vertical"
 
 #: ../operations/transform/scale-size.c:33
-#, fuzzy
-#| msgid "Scales the buffer."
 msgid "Scales the buffer according to a size."
-msgstr "Escala el búfer."
+msgstr "Escala el búfer según un tamaño."
 
 #: ../operations/transform/shear.c:26
-#, fuzzy
-#| msgid "Horizontal position"
 msgid "Horizontal shear amount"
-msgstr "Posición horizontal"
+msgstr "Grado de inclinación horizontal"
 
 #: ../operations/transform/shear.c:28
-#, fuzzy
-#| msgid "Vertical position"
 msgid "Vertical shear amount"
-msgstr "Posición vertical"
+msgstr "Grado de inclinación vertical"
 
 #: ../operations/transform/shear.c:33
-#, fuzzy
-#| msgid "Scales the buffer."
 msgid "Shears the buffer"
-msgstr "Escala el búfer."
+msgstr "Inclina el búfer"
 
 #: ../operations/transform/transform.c:25
 msgid "Transformation string"
@@ -2442,26 +2442,20 @@ msgid "Hard edges"
 msgstr "Bordes duros"
 
 #: ../operations/transform/transform-core.c:232
-#, fuzzy
-#| msgid "Line Width"
 msgid "Lanczos width"
-msgstr "Anchura de la línea"
+msgstr "Anchura del Lanczos"
 
 #: ../operations/transform/transform-core.c:233
 msgid "Width of the Lanczos function"
 msgstr ""
 
 #: ../operations/transform/translate.c:26
-#, fuzzy
-#| msgid "Horizontal position"
 msgid "Horizontal translation"
-msgstr "Posición horizontal"
+msgstr "Traslación horizontal"
 
 #: ../operations/transform/translate.c:28
-#, fuzzy
-#| msgid "Vertical position"
 msgid "Vertical translation"
-msgstr "Posición vertical"
+msgstr "Traslación vertical"
 
 #: ../operations/transform/translate.c:33
 msgid ""
@@ -3469,10 +3463,8 @@ msgid "Effect Size"
 msgstr "Tamaño del efecto"
 
 #: ../operations/workshop/warp.c:40
-#, fuzzy
-#| msgid "Effect Size"
 msgid "Effect Hardness"
-msgstr "Tamaño del efecto"
+msgstr "Dureza del efecto"
 
 #: ../operations/workshop/warp.c:41
 msgid "Stroke"
