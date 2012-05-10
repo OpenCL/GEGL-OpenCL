@@ -31,7 +31,7 @@ gegl_chant_double (opacity,  _("Opacity"),  -2.0, 2.0, 1.0,
                              _("The fill opacity to use."))
 
 gegl_chant_string (fill_rule,_("Fill rule."), "nonzero",
-                             _("how to determine what to fill (nonzero|evenodd"))
+                             _("how to determine what to fill (nonzero|evenodd)"))
 
 gegl_chant_string (transform,_("Transform"), "",
                              _("svg style description of transform."))
