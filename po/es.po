@@ -1,6 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
+# translation of gegl.master.po to Español
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the GEGL package.
+#
 # Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2012.
 #
@@ -8,17 +9,18 @@
 #: ../operations/external/sdl-display.c:27
 msgid ""
 msgstr ""
-"Project-Id-Version: master\n"
+"Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-04 12:09+0000\n"
-"PO-Revision-Date: 2012-05-04 14:07+0200\n"
+"POT-Creation-Date: 2012-05-08 18:05+0000\n"
+"PO-Revision-Date: 2012-05-10 10:18+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../gegl/gegl-init.c:216
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
@@ -186,7 +188,7 @@ msgstr "Búfer de entrada"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "El GeglBuffer que cargar dentro de la tubería"
 
-#: ../operations/common/buffer-source.c:122
+#: ../operations/common/buffer-source.c:177
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr ""
 "Una fuente que utiliza un GeglBuffer en memoria, para uso interno de GEGL."
@@ -318,6 +320,53 @@ msgid ""
 msgstr ""
 "Genera un búfer completamente relleno con el color especificado, recórtelo "
 "para obtener dimensiones más pequeñas."
+
+#: ../operations/common/color-reduction.c:33
+msgid "Red bits"
+msgstr "Bits rojos"
+
+#: ../operations/common/color-reduction.c:33
+msgid "Number of bits for red channel"
+msgstr "Número de bits para el canal rojo"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Green bits"
+msgstr "Bits verdes"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Number of bits for green channel"
+msgstr "Número de bits para el canal verde"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Blue bits"
+msgstr "Bits azules"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Number of bits for blue channel"
+msgstr "Número de bits para el canal azul"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Alpha bits"
+msgstr "Bits alfa"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Number of bits for alpha channel"
+msgstr "Número de bits para el canal alfa"
+
+#: ../operations/common/color-reduction.c:38
+msgid "Dithering Strategy"
+msgstr "Estrategia de tramado"
+
+#: ../operations/common/color-reduction.c:39
+msgid "The dithering strategy to use"
+msgstr "Qué estrategia de tramado usar"
+
+#: ../operations/common/color-reduction.c:478
+msgid ""
+"Reduces the number of bits per channel (colors and alpha), with optional "
+"dithering"
+msgstr ""
+"Reduce el número de bits por canal (colores y alfa), con tramado opcional"
 
 #: ../operations/common/color-temperature.c:27
 msgid "Original temperature"
@@ -514,6 +563,10 @@ msgid ""
 "a low dynamic range. This operator attenuates the magnitudes of local image "
 "gradients, producing luminance within the range 0.0-1.0"
 msgstr ""
+"Adaptar una imagen, que puede tener un rango dinámico alto, para su "
+"presentación utilizando un rango dinámico bajo. Este operador atenúa las "
+"magnitudes de los gradientes locales de la imagen, produciendo una "
+"luminancia dentro del rango de 0.0 a 1.0"
 
 #: ../operations/common/fractal-explorer.c:35
 msgid "Fractal type"
@@ -928,6 +981,10 @@ msgid ""
 "a low dynamic range. This operator constrains contrasts across multiple "
 "spatial frequencies, producing luminance within the range 0.0-1.0"
 msgstr ""
+"Adaptar una imagen, que puede tener un rango dinámico alto, para su "
+"presentación utilizando un rango dinámico bajo. Este operador restringe el "
+"contraste a través de varias frecuencias espaciales, produciendo una "
+"luminancia dentro del rango de 0.0 a 1.0"
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:39
@@ -946,6 +1003,8 @@ msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
 msgstr ""
+"muestrear la entrada con un búfer auxiliar que contiene coordenadas "
+"absolutas de la fuente"
 
 #: ../operations/common/map-relative.c:23
 msgid "Scaling"
@@ -977,6 +1036,10 @@ msgid ""
 "alpha matte. Set white as foreground, black as background for the tri-map. "
 "Everything else will be treated as unknown and filled in."
 msgstr ""
+"Dados un tri-map difuso aportado por el usuario y una imagen de entrada, "
+"crear un «matte» de alfa en primer plano. Establezca blanco como primer plano "
+"y negro como fondo para el tri-map. Todo lo demás se tratará como "
+"desconocido y se rellenará."
 
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
@@ -1040,19 +1103,21 @@ msgstr "Proporción en el eje Y para el centro de la reflexión"
 
 #: ../operations/common/mirrors.c:44
 msgid "Trim X"
-msgstr ""
+msgstr "Recorte X"
 
 #: ../operations/common/mirrors.c:44
 msgid "X axis ratio for trimming mirror expanse"
 msgstr ""
+"Proporción en el eje X para recortar la expansión producida por el espejo"
 
 #: ../operations/common/mirrors.c:46
 msgid "Trim Y"
-msgstr ""
+msgstr "Recortar Y"
 
 #: ../operations/common/mirrors.c:46
 msgid "Y axis ratio for trimming mirror expanse"
 msgstr ""
+"Proporción en el eje Y para recortar la expansión producida por el espejo"
 
 #: ../operations/common/mirrors.c:48
 msgid "Zoom"
@@ -1076,15 +1141,15 @@ msgstr "Recortar el resultado al tamaño de la entrada"
 
 #: ../operations/common/mirrors.c:54
 msgid "Wrap input"
-msgstr ""
+msgstr "Ajustar la entrada"
 
 #: ../operations/common/mirrors.c:54
 msgid "Fill full output area"
-msgstr ""
+msgstr "Rellenar toda el área de salida"
 
 #: ../operations/common/mirrors.c:401
 msgid "Applies mirroring effect on the image."
-msgstr ""
+msgstr "Aplica un efecto de espejo sobre la imagen."
 
 #: ../operations/common/mono-mixer.c:26
 #: ../operations/workshop/convolution-matrix.c:83
@@ -1115,7 +1180,7 @@ msgstr "Cantidad de azul"
 
 #: ../operations/common/mono-mixer.c:104
 msgid "Monochrome channel mixer"
-msgstr ""
+msgstr "Mezclador de canales monocromático."
 
 #: ../operations/common/motion-blur.c:27
 msgid "Length"
@@ -1152,7 +1217,7 @@ msgstr "Iteración"
 
 #: ../operations/common/noise.c:111
 msgid "Perlin noise generator"
-msgstr ""
+msgstr "Generador de ruido de Perlin"
 
 #: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:35
 msgid "Strength"
@@ -1160,31 +1225,35 @@ msgstr "Fuerza"
 
 #: ../operations/common/noise-reduction.c:26
 msgid "How many iteratarions to run the algorithm with"
-msgstr ""
+msgstr "Con cuántas iteraciones ejecutar el algoritmo"
 
 #: ../operations/common/opacity.c:25
 msgid ""
 "Global opacity value that is always used on top of the optional auxiliary "
 "input buffer."
 msgstr ""
+"Valor de opacidad global que se usa siempre encima del búfer de entrada "
+"auxiliar opcional."
 
 #: ../operations/common/opacity.c:153
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
 msgstr ""
+"Pondera la opacidad de la entrada, tanto el valor de la entrada auxiliar "
+"como la propiedad del valor global."
 
 #: ../operations/common/open-buffer.c:25
 msgid "a GeglBuffer on disk to open"
-msgstr ""
+msgstr "GeglBuffer del disco que abrir"
 
 #: ../operations/common/open-buffer.c:130
 msgid "A source that uses an on-disk GeglBuffer."
-msgstr ""
+msgstr "Una fuente que usa un GeglBuffer que está en el disco."
 
 #: ../operations/common/over.c:153
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
-msgstr ""
+msgstr "Operación de Porter-Duff sobre (d = cA + cB * (1 - aA))"
 
 #: ../operations/common/pixelize.c:25
 msgid "Block Width"
@@ -1192,7 +1261,7 @@ msgstr "Anchura del bloque"
 
 #: ../operations/common/pixelize.c:26
 msgid "Width of blocks in pixels"
-msgstr ""
+msgstr "Anchura de los bloques en píxeles"
 
 #: ../operations/common/pixelize.c:27
 msgid "Block Height"
@@ -1200,16 +1269,16 @@ msgstr "Altura del bloque"
 
 #: ../operations/common/pixelize.c:28
 msgid "Height of blocks in pixels"
-msgstr ""
+msgstr "Altura de los bloques en píxeles"
 
 #: ../operations/common/pixelize.c:338
 msgid "Simplify image into an array of solid-colored squares"
-msgstr ""
+msgstr "Simplificar la imagen en una matriz de cuadrados de color liso"
 
 #: ../operations/common/polar-coordinates.c:34
 #: ../operations/common/polar-coordinates.c:35
 msgid "Circle depth in percent"
-msgstr ""
+msgstr "Profundidad del círculo en porcentaje"
 
 #: ../operations/common/polar-coordinates.c:36
 msgid "Offset angle"
@@ -1221,19 +1290,19 @@ msgstr "Ángulo de desfase."
 
 #: ../operations/common/polar-coordinates.c:38
 msgid "Map backwards"
-msgstr ""
+msgstr "Mapear hacia atrás"
 
 #: ../operations/common/polar-coordinates.c:38
 msgid "Start from the right instead of the left"
-msgstr ""
+msgstr "Empezar desde la derecha en lugar de la izquierda"
 
 #: ../operations/common/polar-coordinates.c:39
 msgid "Map from top"
-msgstr ""
+msgstr "Mapear desde arriba"
 
 #: ../operations/common/polar-coordinates.c:39
 msgid "Put the top row in the middle and the bottom row on the outside"
-msgstr ""
+msgstr "Poner la fila superior en el medio y la inferior en la parte exterior"
 
 #: ../operations/common/polar-coordinates.c:40
 msgid "To polar"
@@ -1241,7 +1310,7 @@ msgstr "A polares"
 
 #: ../operations/common/polar-coordinates.c:40
 msgid "Map the image to a circle"
-msgstr ""
+msgstr "Mapear la imagen a un círculo"
 
 #: ../operations/common/polar-coordinates.c:41
 msgid "X:"
@@ -1250,7 +1319,7 @@ msgstr "X:"
 #: ../operations/common/polar-coordinates.c:42
 #: ../operations/common/polar-coordinates.c:44
 msgid "Origin point for the polar coordinates"
-msgstr ""
+msgstr "Punto de origen para las coordenadas polares"
 
 #: ../operations/common/polar-coordinates.c:43
 msgid "Y:"
@@ -1258,15 +1327,15 @@ msgstr "Y:"
 
 #: ../operations/common/polar-coordinates.c:45
 msgid "Choose middle"
-msgstr ""
+msgstr "Seleccionar el punto medio"
 
 #: ../operations/common/polar-coordinates.c:46
 msgid "Let origin point to be the middle one"
-msgstr ""
+msgstr "Hacer que el punto de origen sea el punto medio"
 
 #: ../operations/common/polar-coordinates.c:402
 msgid "Performs polar-coordinates on the image."
-msgstr ""
+msgstr "Efectúa coordenadas polares sobre la imagen."
 
 #: ../operations/common/posterize.c:25
 #: ../operations/external/matting-levin.c:36
@@ -1275,23 +1344,23 @@ msgstr "Niveles"
 
 #: ../operations/common/posterize.c:26
 msgid "number of levels per component"
-msgstr ""
+msgstr "número de niveles por componente"
 
 #: ../operations/common/posterize.c:82
 msgid "Reduces the number of levels in each color component of the image."
-msgstr ""
+msgstr "Reduce el número de niveles en cada componente de color de la imagen."
 
 #: ../operations/common/raw-load.c:183
 msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr ""
+msgstr "Cargador de imágenes en bruto, envuelve a dcraw con tuberías."
 
 #: ../operations/common/rectangle.c:34
 msgid "Horizontal extent"
-msgstr ""
+msgstr "Dimensión horizontal"
 
 #: ../operations/common/rectangle.c:36
 msgid "Vertical extent"
-msgstr ""
+msgstr "Dimensión vertical"
 
 #: ../operations/common/rectangle.c:38
 msgid "Color to render"
@@ -1299,11 +1368,11 @@ msgstr "Color que renderizar"
 
 #: ../operations/common/rectangle.c:134
 msgid "A rectangular source of a fixed size with a solid color"
-msgstr ""
+msgstr "Una fuente rectangular de tamaño fijo y color liso"
 
 #: ../operations/common/reinhard05.c:29
 msgid "Overall brightness of the image"
-msgstr ""
+msgstr "Brillo general de la imagen"
 
 #: ../operations/common/reinhard05.c:30
 msgid "Chromatic Adaptation"
@@ -1311,15 +1380,15 @@ msgstr "Adaptación cromática"
 
 #: ../operations/common/reinhard05.c:32
 msgid "Adapation to colour variation across the image"
-msgstr ""
+msgstr "Adaptación a las variaciones de color a través de la imagen"
 
 #: ../operations/common/reinhard05.c:33
 msgid "Light Adaptation"
-msgstr ""
+msgstr "Adaptación a la luz"
 
 #: ../operations/common/reinhard05.c:35
 msgid "Adapation to light variation across the image"
-msgstr ""
+msgstr "Adaptación a las variaciones de luz a través de la imagen"
 
 #: ../operations/common/reinhard05.c:274
 msgid ""
@@ -1328,10 +1397,16 @@ msgid ""
 "simple physiological observations, producing luminance within the range 0.0-"
 "1.0"
 msgstr ""
+"Adaptar una imagen, que puede tener un rango dinámico alto, para su "
+"presentación utilizando un rango dinámico bajo. Es un operador global "
+"eficiente derivado de observaciones fisiológicas sencillas, que produce una "
+"luminancia dentro del rango de 0.0 a 1.0"
 
 #: ../operations/common/remap.c:96
 msgid "stretch components of pixels individually based on luminance envelopes"
 msgstr ""
+"estirar los componentes de los píxeles individualmente basándose en "
+"envolventes de luminancia"
 
 #: ../operations/common/ripple.c:27 ../operations/common/waves.c:32
 msgid "Amplitude"
@@ -1339,7 +1414,7 @@ msgstr "Amplitud"
 
 #: ../operations/common/ripple.c:28 ../operations/common/waves.c:33
 msgid "Amplitude of the ripple"
-msgstr ""
+msgstr "Amplitud del remolino"
 
 #: ../operations/common/ripple.c:30 ../operations/common/waves.c:35
 msgid "Period"
@@ -1347,7 +1422,7 @@ msgstr "Periodo"
 
 #: ../operations/common/ripple.c:31 ../operations/common/waves.c:36
 msgid "Period of the ripple"
-msgstr ""
+msgstr "Período del remolino"
 
 #: ../operations/common/ripple.c:33 ../operations/common/ripple.c:34
 #: ../operations/common/waves.c:38 ../operations/common/waves.c:39
@@ -1368,46 +1443,54 @@ msgstr "Tipo de onda"
 
 #: ../operations/common/ripple.c:169
 msgid "Transform the buffer with a ripple pattern"
-msgstr ""
+msgstr "Transformar el búfer con un patrón de remolinos"
 
 #: ../operations/common/save.c:25
 msgid "Path of file to save."
-msgstr ""
+msgstr "Ruta del archivo que guardar."
 
 #: ../operations/common/save.c:195
 msgid "Multipurpose file saver, that uses other native handlers."
 msgstr ""
+"Guardador de archivos de varios usos, que utiliza otros manejadores nativos."
 
 #: ../operations/common/snn-mean.c:28
 #: ../operations/workshop/snn-percentile.c:29
 msgid "Pairs"
-msgstr ""
+msgstr "Pares"
 
 #: ../operations/common/snn-mean.c:29
 msgid "Number of pairs; higher number preserves more acute features"
-msgstr ""
+msgstr "Número de pares; un número mayor preserva detalles más precisos"
 
 #: ../operations/common/snn-mean.c:436
 msgid ""
 "Noise reducing edge enhancing blur filter based  on Symmetric Nearest "
 "Neighbours"
 msgstr ""
+"Filtro de desenfoque que resalta los bordes y reduice el ruido, basado en "
+"los vecinos simétricos más próximos"
 
 #: ../operations/common/stress.c:28
 msgid ""
 "Neighborhood taken into account, for enhancement ideal values are close to "
 "the longest side of the image, increasing this increases the runtime"
 msgstr ""
+"Vecindad que se toma en cuenta; para realzar los valores ideales que son "
+"próximos al lado largo de la imagen, aumentarlo hace aumentar el tiempo de "
+"ejecución"
 
 #: ../operations/common/stress.c:32
 msgid ""
 "Number of iterations, a higher number of iterations provides a less noisy "
 "rendering at a computational cost"
 msgstr ""
+"Número de iteraciones, un número más alto de iteraciones aporta una "
+"renderización con menos ruido a costa de un incremento en el cálculo"
 
 #: ../operations/common/stress.c:191
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
-msgstr ""
+msgstr "Envolvente de tipo Retinex espacio-temporal con muestreo estocástico"
 
 #: ../operations/common/stretch-contrast.c:162
 msgid ""
@@ -1415,6 +1498,9 @@ msgid ""
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images)."
 msgstr ""
+"Escala las componentes del búfer para que estén en el rango de 0.0 a 1.0. "
+"Esto mejora las imágenes que hacen un uso pobre del contraste disponible "
+"(imágenes con poco contraste, muy oscuras o muy claras)."
 
 #: ../operations/common/svg-huerotate.c:27
 #: ../operations/common/svg-luminancetoalpha.c:27
@@ -1430,19 +1516,19 @@ msgstr "lista de <number>s"
 
 #: ../operations/common/svg-huerotate.c:116
 msgid "SVG color matrix operation svg_huerotate"
-msgstr ""
+msgstr "Operación svg_huerotate de la matriz de colores SVG"
 
 #: ../operations/common/svg-luminancetoalpha.c:95
 msgid "SVG color matrix operation svg_luminancetoalpha"
-msgstr ""
+msgstr "Operación svg_luminancetoalpha de la matriz de colores SVG"
 
 #: ../operations/common/svg-matrix.c:132
 msgid "SVG color matrix operation svg_matrix"
-msgstr ""
+msgstr "Operación svg_matrix de la matriz de colores SVG"
 
 #: ../operations/common/svg-saturate.c:127
 msgid "SVG color matrix operation svg_saturate"
-msgstr ""
+msgstr "Operación svg_saturate de la matriz de colores SVG"
 
 #: ../operations/common/threshold.c:25
 #: ../operations/external/matting-levin.c:31
@@ -1454,12 +1540,16 @@ msgstr "Umbral"
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
 msgstr ""
+"Nivel del umbral global (usado cuando no hay búfer de entrada auxiliar)."
 
 #: ../operations/common/threshold.c:123
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
 msgstr ""
+"Aplica a la imagen un umbral de blanco o negro basado en el valor global "
+"fijado en la propiedad del valor, o bien por cada píxel a partir de la "
+"entrada auxiliar."
 
 #: ../operations/common/unsharp-mask.c:24
 msgid "Std. Dev."
@@ -1467,23 +1557,28 @@ msgstr "Desv. Est."
 
 #: ../operations/common/unsharp-mask.c:25
 msgid "Standard deviation (spatial scale factor)"
-msgstr ""
+msgstr "Desviación estándar (factor de escala espacial)"
 
 #: ../operations/common/unsharp-mask.c:27
 msgid "Scale, strength of effect"
-msgstr ""
+msgstr "Escala, fuerza del efecto"
 
 #: ../operations/common/unsharp-mask.c:73
 msgid ""
 "Performs an unsharp mask on the input buffer (sharpens an image by adding "
 "false mach-bands around edges)"
 msgstr ""
+"Efectúa una máscara de desenfoque sobre el búfer de entrada (afila los "
+"detalles de una imagen añadiendo bandas de mach falsas alrededor de los "
+"bordes)"
 
 #: ../operations/common/value-invert.c:190
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
 msgstr ""
+"Invierte sólo la componente de valor, el resultado es la correspondiente "
+"imagen «invertida»."
 
 #: ../operations/common/vignette.c:24
 msgid "Shape"
@@ -1491,7 +1586,7 @@ msgstr "Forma"
 
 #: ../operations/common/vignette.c:24
 msgid "Shape to use: 0=circle 1=diamond 2=square"
-msgstr ""
+msgstr "Forma que usar: 0=círculo 1=rombo 2=cuadrado"
 
 #: ../operations/common/vignette.c:25
 msgid ""
@@ -2421,53 +2516,6 @@ msgstr ""
 #: ../operations/workshop/buffer-cache.c:103
 msgid ""
 "Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
-
-#: ../operations/workshop/color-reduction.c:25
-msgid "Red bits"
-msgstr "Bits rojos"
-
-#: ../operations/workshop/color-reduction.c:25
-msgid "Number of bits for red channel"
-msgstr "Número de bits para el canal rojo"
-
-#: ../operations/workshop/color-reduction.c:26
-msgid "Green bits"
-msgstr "Bits verdes"
-
-#: ../operations/workshop/color-reduction.c:26
-msgid "Number of bits for green channel"
-msgstr "Número de bits para el canal verde"
-
-#: ../operations/workshop/color-reduction.c:27
-msgid "Blue bits"
-msgstr "Bits azules"
-
-#: ../operations/workshop/color-reduction.c:27
-msgid "Number of bits for blue channel"
-msgstr "Número de bits para el canal azul"
-
-#: ../operations/workshop/color-reduction.c:28
-msgid "Alpha bits"
-msgstr "Bits alfa"
-
-#: ../operations/workshop/color-reduction.c:28
-msgid "Number of bits for alpha channel"
-msgstr "Número de bits para el canal alfa"
-
-#: ../operations/workshop/color-reduction.c:29
-msgid "Dither"
-msgstr ""
-
-#: ../operations/workshop/color-reduction.c:30
-msgid ""
-"Dithering strategy (none, random, random-covariant, bayer, floyd-steinberg)"
-msgstr ""
-
-#: ../operations/workshop/color-reduction.c:459
-msgid ""
-"Reduces the number of bits per channel (colors and alpha), with optional "
-"dithering"
 msgstr ""
 
 #: ../operations/workshop/color-rotate.c:33
@@ -3467,18 +3515,3 @@ msgstr ""
 #: ../operations/workshop/whirl-pinch.c:258
 msgid "Applies whirling and pinching on the image"
 msgstr ""
-
-#~ msgid "Blur radius."
-#~ msgstr "Radio de desenfoque."
-
-#~ msgid "Fractal Type"
-#~ msgstr "Tipo de fractal"
-
-#~ msgid "To polar."
-#~ msgstr "A polares."
-
-#~ msgid "x"
-#~ msgstr "x"
-
-#~ msgid "y"
-#~ msgstr "y"
