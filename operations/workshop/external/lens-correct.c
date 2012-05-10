@@ -30,7 +30,7 @@ gegl_chant_string (maker, _("Maker:"),"none",
 gegl_chant_string (Camera, _("Camera:"),"none",
                    _("Write camera name correctly"))
 gegl_chant_string (Lens, _("Lens:"),"none",
-                   _("Write your lens model with majuscules"))
+                   _("Write your lens model with uppercase letters"))
 gegl_chant_double (focal, _("Focal of the camera"), 0.0, 300.0, 20.0,
                    _("Calculate b value from focal"))
 

@@ -88,8 +88,8 @@ gegl_chant_boolean (alpha, _("Alpha"), TRUE, _("Alpha channel"))
 gegl_chant_boolean (weight, _("Alpha-weighting"), TRUE, _("Alpha weighting"))
 
 gegl_chant_string (border, _("Border"), "extend",
-                   _("Type of border to choose."
-                     "Choices are extend, wrap, crop."
+                   _("Type of border to choose. "
+                     "Choices are extend, wrap, crop. "
                      "Default is extend"))
 
 #else
