@@ -48,10 +48,13 @@ typedef struct GeglBufferIterator
  * gegl_buffer_iterator_new:
  * @buffer: a #GeglBuffer
  * @roi: the rectangle to iterate over
- * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
- * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
  * @level: the level at which we are iterating, the roi will indicate the
  * extent at 1:1, x,y,width and height are/(2^level)
+ * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
+ * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
+ * @repeat_mode: how request outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE
+
  *
  * Create a new buffer iterator, this buffer will be iterated through
  * in linear chunks, some chunks might be full tiles the coordinates, see
@@ -66,7 +69,7 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
                                                 gint                 level,
                                                 const Babl          *format,
                                                 guint                flags,
-                                                GeglAbyssPolicy      abyss_policy);
+                                                GeglAbyssPolicy      repeat_mode);
 
 
 /**
@@ -74,8 +77,12 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
  * @iterator: a #GeglBufferIterator
  * @buffer: a #GeglBuffer
  * @roi: the rectangle to iterate over
+ * @level: the level at which we are iterating, the roi will indicate the
+ * extent at 1:1, x,y,width and height are/(2^level)
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
  * @flags: whether we need reading or writing to this buffer.
+ * @repeat_mode: how request outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE
  *
  * Adds an additional buffer iterator that will be processed in sync with
  * the original one, if the buffer doesn't align with the other for tile access
@@ -91,7 +98,7 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
                                                 gint                 level,
                                                 const Babl          *format,
                                                 guint                flags,
-                                                GeglAbyssPolicy      abyss_policy);
+                                                GeglAbyssPolicy      repeat_mode);
 
 /**
  * gegl_buffer_iterator_stop:
@@ -116,6 +123,8 @@ void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
  */
 gboolean             gegl_buffer_iterator_next (GeglBufferIterator *iterator);
 
+/**
+ */
 
 #ifdef EXAMPLE
 
