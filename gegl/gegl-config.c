@@ -246,12 +246,4 @@ gegl_config_class_init (GeglConfigClass *klass)
 static void
 gegl_config_init (GeglConfig *self)
 {
-  self->swap        = NULL;
-  self->quality     = 1.0;
-  self->cache_size  = 256 * 1024 * 1024;
-  self->chunk_size  = 512 * 512;
-  self->tile_width  = 128;
-  self->tile_height = 64;
-  self->threads = 1;
-  self->use_opencl = TRUE;
 }
