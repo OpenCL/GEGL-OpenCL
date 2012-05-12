@@ -195,52 +195,68 @@ gegl_config_class_init (GeglConfigClass *klass)
 
 
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
-                                   g_param_spec_int ("tile-width", "Tile width", "default tile width for created buffers.",
+                                   g_param_spec_int ("tile-width",
+                                                     "Tile width",
+                                                     "default tile width for created buffers.",
                                                      0, G_MAXINT, 64,
-                                                     G_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
-                                   g_param_spec_int ("tile-height", "Tile height", "default tile height for created buffers.",
+                                   g_param_spec_int ("tile-height",
+                                                     "Tile height",
+                                                     "default tile height for created buffers.",
                                                      0, G_MAXINT, 64,
-                                                     G_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
-                                   g_param_spec_int ("cache-size", "Cache size", "size of cache in bytes",
+                                   g_param_spec_int ("cache-size",
+                                                     "Cache size",
+                                                     "size of cache in bytes",
                                                      0, G_MAXINT, 512*1024*1024,
-                                                     G_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
 
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
-                                   g_param_spec_int ("chunk-size", "Chunk size",
-                                     "the number of pixels processed simultaneously by GEGL.",
+                                   g_param_spec_int ("chunk-size",
+                                                     "Chunk size",
+                                                     "the number of pixels processed simultaneously by GEGL.",
                                                      1, G_MAXINT, 256*300,
-                                                     G_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_QUALITY,
-                                   g_param_spec_double ("quality", "Quality", "quality/speed trade off 1.0 = full quality, 0.0=full speed",
-                                                     0.0, 1.0, 1.0,
-                                                     G_PARAM_READWRITE));
+                                   g_param_spec_double ("quality",
+                                                        "Quality",
+                                                        "quality/speed trade off 1.0 = full quality, 0.0=full speed",
+                                                        0.0, 1.0, 1.0,
+                                                        G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_BABL_TOLERANCE,
-                                   g_param_spec_double ("babl-tolerance", "babl error", "the error tolerance babl operates with",
-                                                     0.0, 0.2, 0.0002,
-                                                     G_PARAM_READWRITE|
-                                                     G_PARAM_CONSTRUCT));
+                                   g_param_spec_double ("babl-tolerance",
+                                                        "babl error",
+                                                        "the error tolerance babl operates with",
+                                                        0.0, 0.2, 0.0002,
+                                                        G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_SWAP,
-                                   g_param_spec_string ("swap", "Swap", "where gegl stores it's swap files", NULL,
-                                                     G_PARAM_READWRITE));
+                                   g_param_spec_string ("swap",
+                                                        "Swap",
+                                                        "where gegl stores it's swap files",
+                                                        NULL,
+                                                        G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_THREADS,
-                                   g_param_spec_int ("threads", "Number of concurrent evaluation threads", "default tile height for created buffers.",
+                                   g_param_spec_int ("threads",
+                                                     "Number of concurrent evaluation threads",
+                                                     "default tile height for created buffers.",
                                                      0, 16, 1,
-                                                     G_PARAM_READWRITE));
+                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_USE_OPENCL,
-                                   g_param_spec_boolean ("use-opencl", "Use OpenCL", "Try to use OpenCL",
-                                                     TRUE,
-                                                     G_PARAM_READWRITE));
-
+                                   g_param_spec_boolean ("use-opencl",
+                                                         "Use OpenCL",
+                                                         "Try to use OpenCL",
+                                                         TRUE,
+                                                         G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
 }
 
 static void
