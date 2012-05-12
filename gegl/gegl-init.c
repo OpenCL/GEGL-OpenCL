@@ -475,6 +475,7 @@ gegl_post_parse_hook (GOptionContext *context,
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
   g_type_init ();
+  babl_init ();
   gegl_instrument ("gegl", "gegl_init", 0);
 
   config = (void*)gegl_config ();
@@ -517,7 +518,6 @@ gegl_post_parse_hook (GOptionContext *context,
 
   time = gegl_ticks ();
 
-  babl_init ();
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
 
   gegl_init_i18n ();
