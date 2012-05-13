@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-05 17:48+0000\n"
-"PO-Revision-Date: 2012-05-07 09:27+0100\n"
+"POT-Creation-Date: 2012-05-10 12:21+0000\n"
+"PO-Revision-Date: 2012-05-13 02:18+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -179,7 +179,7 @@ msgstr "Vhodni izravnalnik"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer, ki naj se naloži v cevovod"
 
-#: ../operations/common/buffer-source.c:122
+#: ../operations/common/buffer-source.c:177
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr "Izvor, ki uporablja notranje-pomnilniški GeglBuffer, za GEGL-ovo interno uporabo."
 
@@ -349,7 +349,6 @@ msgid "Dithering Strategy"
 msgstr "Strategija drgeta"
 
 #: ../operations/common/color-reduction.c:39
-#| msgid "The fill opacity to use"
 msgid "The dithering strategy to use"
 msgstr "Strategija drgeta, ki jo želite uporabiti"
 
@@ -1842,7 +1841,8 @@ msgid "Fill rule"
 msgstr "Pravilo polnila"
 
 #: ../operations/external/path.c:42
-msgid "How to determine what to fill (nonzero|evenodd"
+#| msgid "How to determine what to fill (nonzero|evenodd"
+msgid "How to determine what to fill (nonzero|evenodd)"
 msgstr "Kako določiti, kaj naj bo zapolnjeno (nonzero|evenodd)"
 
 #: ../operations/external/path.c:44
@@ -2078,7 +2078,8 @@ msgid "Fill rule."
 msgstr "Pravilo polnila."
 
 #: ../operations/external/vector-fill.c:34
-msgid "how to determine what to fill (nonzero|evenodd"
+#| msgid "how to determine what to fill (nonzero|evenodd"
+msgid "how to determine what to fill (nonzero|evenodd)"
 msgstr "Kako določiti, kaj je potrebno zapolniti (nonzeto|evenodd)"
 
 #: ../operations/external/vector-fill.c:37
@@ -2688,7 +2689,9 @@ msgid "Border"
 msgstr "Rob"
 
 #: ../operations/workshop/convolution-matrix.c:91
-msgid "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
+#| msgid ""
+#| "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
+msgid "Type of border to choose. Choices are extend, wrap, crop. Default is extend"
 msgstr "Vrste obrob, ki jih lahko izberete: razširi (extend), prelomi (wrap) in obreži (crop). Privzeto je nastavljen razširi."
 
 #: ../operations/workshop/convolution-matrix.c:433
@@ -2865,8 +2868,9 @@ msgid "Lens:"
 msgstr "Objektiv."
 
 #: ../operations/workshop/external/lens-correct.c:33
-msgid "Write your lens model with majuscules"
-msgstr "Zapišite model objektiva v majuskuli (vse črke enako velike, torej vse male ali vse velike)"
+#| msgid "Write your lens model with majuscules"
+msgid "Write your lens model with uppercase letters"
+msgstr "Zapišite model objektiva z velikimi črkami"
 
 #: ../operations/workshop/external/lens-correct.c:34
 msgid "Focal of the camera"
