@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (opacity, _("Opacity"), -2.0, 2.0, 0.5, _("Opacity"))
+gegl_chant_double (opacity, _("Opacity"), 0, 1.0, 0.5, _("Opacity"))
 gegl_chant_double_ui (x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, -20.0, 20.0, 1.0,
                    _("Horizontal shadow offset"))
 gegl_chant_double_ui (y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, -20.0, 20.0, 1.0,
