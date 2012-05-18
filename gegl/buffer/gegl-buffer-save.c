@@ -226,9 +226,9 @@ gegl_buffer_save (GeglBuffer          *buffer,
   info->path = g_strdup (path);
 
 #ifndef G_OS_WIN32
-  info->o    = open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+  info->o    = g_open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 #else
-  info->o    = open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
+  info->o    = g_open (info->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
 #endif
 
 

@@ -856,7 +856,7 @@ gegl_tile_backend_file_constructor (GType                  type,
 
 
   /* If the file already exists open it, assuming it is a GeglBuffer. */
-  if (access (self->path, F_OK) != -1)
+  if (g_access (self->path, F_OK) != -1)
     {
       goffset offset = 0;
 
@@ -869,7 +869,7 @@ gegl_tile_backend_file_constructor (GType                  type,
                         G_CALLBACK (gegl_tile_backend_file_file_changed),
                         self);
 
-      self->o = open (self->path, O_RDWR|O_CREAT, 0770);
+      self->o = g_open (self->path, O_RDWR|O_CREAT, 0770);
       if (self->o == -1)
         {
           /* Try again but this time with only read access. This is
@@ -877,7 +877,7 @@ gegl_tile_backend_file_constructor (GType                  type,
            * when it opens a GeglBuffer file in the source tree
            * (which is read-only).
            */
-          self->o = open (self->path, O_RDONLY, 0770);
+          self->o = g_open (self->path, O_RDONLY, 0770);
 
           if (self->o == -1)
             g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
@@ -933,7 +933,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
 
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "creating swapfile  %s", self->path);
 
-      self->o = open (self->path, O_RDWR|O_CREAT, 0770);
+      self->o = g_open (self->path, O_RDWR|O_CREAT, 0770);
       if (self->o == -1)
         g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
 
