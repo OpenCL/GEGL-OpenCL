@@ -68,10 +68,10 @@ $(testprefix)%.xml.sh: Makefile.am $(call test_to_xml,$@) $(call test_to_ref,$@)
 	@xml_file=$(call test_to_xml,$@)                                   ;\
 	ref_img=$(call test_to_ref,$@)                                     ;\
 	out_img=$(call test_to_out,$@)                                     ;\
-	echo "#!/bin/sh" > $@                                              ;\
+	echo "#!/bin/bash" > $@                                            ;\
 	echo "mkdir -p $(abs_builddir)/output" >> $@                       ;\
 	echo "$(builddir_gegl) $$xml_file -o $$out_img" >> $@              ;\
-	echo "$(builddir_img_cmp) $$ref_img $$out_img &> /dev/null" >> $@  ;\
+	echo "$(builddir_img_cmp) $$ref_img $$out_img" >> $@  ;\
 	chmod +x $@
 
 clean-local:
