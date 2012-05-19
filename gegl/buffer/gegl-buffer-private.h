@@ -50,6 +50,9 @@ struct _GeglBuffer
                              /* construction relative to immediate source  */
 
   GeglRectangle     abyss;
+  gboolean          abyss_tracks_extent; /* specifies whether the abyss rectangle
+                                            should track any modifications to the
+                                            extent rectangle */
 
 
   GeglSampler      *sampler; /* cached sampler for speeding up random

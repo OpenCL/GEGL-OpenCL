@@ -352,6 +352,11 @@ gegl_buffer_set_extent (GeglBuffer          *buffer,
       header->height = buffer->extent.height;
     }
 
+  if (buffer->abyss_tracks_extent)
+    {
+      buffer->abyss = *extent;
+    }
+
   return TRUE;
 }
 
@@ -676,16 +681,19 @@ gegl_buffer_constructor (GType                  type,
         }
     }
 
+  buffer->abyss_tracks_extent = FALSE;
+
   if (buffer->abyss.width == 0 &&
       buffer->abyss.height == 0 &&
       buffer->abyss.x == 0 &&
       buffer->abyss.y == 0)      /* 0 sized extent == inherit buffer extent
                                   */
     {
-      buffer->abyss.x      = buffer->extent.x;
-      buffer->abyss.y      = buffer->extent.y;
-      buffer->abyss.width  = buffer->extent.width;
-      buffer->abyss.height = buffer->extent.height;
+      buffer->abyss.x             = buffer->extent.x;
+      buffer->abyss.y             = buffer->extent.y;
+      buffer->abyss.width         = buffer->extent.width;
+      buffer->abyss.height        = buffer->extent.height;
+      buffer->abyss_tracks_extent = TRUE;
     }
   else if (buffer->abyss.width == 0 &&
            buffer->abyss.height == 0)
@@ -724,6 +732,18 @@ gegl_buffer_constructor (GType                  type,
       request.height = buffer->abyss.height;
 
       gegl_rectangle_intersect (&self, &parent, &request);
+
+      /* Don't have the abyss track the extent if the intersection is
+       * not the entire extent. Otherwise, setting the extent identical
+       * to itself could suddenly make the abyss bigger. */
+      if (buffer->abyss_tracks_extent && 
+          (buffer->extent.x      != self.x ||
+           buffer->extent.y      != self.y ||
+           buffer->extent.width  != self.width ||
+           buffer->extent.height != self.height) )
+        {
+          buffer->abyss_tracks_extent = FALSE;
+        }
 
       buffer->abyss.x      = self.x;
       buffer->abyss.y      = self.y;
