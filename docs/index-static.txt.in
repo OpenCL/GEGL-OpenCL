@@ -467,7 +467,7 @@ dropped into the directory in the build.
   ├──operations        Runtime loaded plug-ins for image processing operations.
   │   │
   │   ├──core ⊙        Basic operations tightly coupled with GEGL.
-  │   ├──affine        Transforming operations (rotate/scale/translate)
+  │   ├──transform     Transforming operations (rotate/scale/translate)
   │   ├──generated ⊙   Operations generated from scripts (currently
   │   ├──external      Operations with external dependencies.
   │   ├──common ⊙      Other operations.
