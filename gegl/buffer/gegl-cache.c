@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <glib-object.h>
+#include <glib/gstdio.h>
 
 #include <babl/babl.h>
 

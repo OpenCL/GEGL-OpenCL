@@ -27,6 +27,7 @@
 #include <errno.h>
 
 #include <glib-object.h>
+#include <glib/gstdio.h>
 
 #include "gegl-types-internal.h"
 

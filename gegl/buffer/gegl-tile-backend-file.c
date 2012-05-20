@@ -28,6 +28,7 @@
 
 #include <glib-object.h>
 #include <glib/gprintf.h>
+#include <glib/gstdio.h>
 
 #include "gegl.h"
 #include "gegl-tile-backend.h"
