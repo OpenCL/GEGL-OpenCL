@@ -38,7 +38,7 @@ TEST ()
     }
 
   print_buffer (buffer);
-  g_object_unref (buffer);
+  g_object_unref (buffer2);
   g_object_unref (buffer);
   test_end ();
 }

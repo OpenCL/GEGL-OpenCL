@@ -22,7 +22,7 @@ TEST ()
 
   gegl_buffer_copy (buffer2, &source, buffer, &source);
   print_buffer (buffer);
-  g_object_unref (buffer);
+  g_object_unref (buffer2);
   g_object_unref (buffer);
   test_end ();
 }
