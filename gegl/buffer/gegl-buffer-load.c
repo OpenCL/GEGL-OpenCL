@@ -47,6 +47,7 @@
 #include "gegl-debug.h"
 
 #include <glib/gprintf.h>
+#include <glib/gstdio.h>
 
 typedef struct
 {
