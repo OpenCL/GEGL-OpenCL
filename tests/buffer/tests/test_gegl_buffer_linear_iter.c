@@ -34,7 +34,7 @@ TEST ()
       gint length = iter->length;
 
       while (length--)
-        *d = *s;
+        *d++ = *s++;
     }
 
   print_buffer (buffer);

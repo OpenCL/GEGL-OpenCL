@@ -39,7 +39,7 @@ TEST ()
               gint length = iter->length;
 
               while (length--)
-                *d = *s;
+                *d++ = *s++;
             }
 
           g_object_unref (buffer2);
