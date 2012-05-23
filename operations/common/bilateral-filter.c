@@ -199,7 +199,7 @@ process (GeglOperation       *operation,
 
   if (o->blur_radius < 1.0)
     {
-      output = g_object_ref (input);
+      gegl_buffer_copy (input, result, output, result);
     }
   else
     {
