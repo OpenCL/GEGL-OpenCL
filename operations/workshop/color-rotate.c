@@ -351,8 +351,6 @@ process (GeglOperation       *operation,
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  format = babl_format ("RGBA float");
-
   gegl_buffer_get (input, result, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
