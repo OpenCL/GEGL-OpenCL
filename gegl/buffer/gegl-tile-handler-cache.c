@@ -41,11 +41,16 @@ typedef struct CacheItem
 {
   GeglTileHandlerCache *handler; /* The specific handler that cached this item*/
   GeglTile *tile;                /* The tile */
+  GList     link;                /*  Link in the cache_queue, to avoid
+                                  *  queue lookups involving g_list_find() */
 
   gint      x;                   /* The coordinates this tile was cached for */
   gint      y;
   gint      z;
 } CacheItem;
+
+#define LINK_GET_ITEM(link) \
+        ((CacheItem *) ((guchar *) link - G_STRUCT_OFFSET (CacheItem, link)))
 
 
 static void       gegl_tile_handler_cache_dispose    (GObject              *object);
@@ -152,7 +157,7 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
           gegl_tile_unref (item->tile);
           cache->count--;
         }
-      g_queue_remove (cache_queue, item);
+      g_queue_unlink (cache_queue, &item->link);
       g_hash_table_remove (cache_ht, item);
       g_slice_free (CacheItem, item);
     }
@@ -204,7 +209,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
                 gegl_tile_unref (item->tile);
                 cache->count--;
               }
-            g_queue_remove (cache_queue, item);
+            g_queue_unlink (cache_queue, &item->link);
             g_hash_table_remove (cache_ht, item);
             g_slice_free (CacheItem, item);
         }
@@ -278,7 +283,7 @@ gegl_tile_handler_cache_command (GeglTileSource  *tile_store,
             {
               for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
                 {
-                  CacheItem *item = link->data;
+                  CacheItem *item = LINK_GET_ITEM (link);
                   GeglTile  *tile = item->tile;
 
                   if (tile != NULL &&
@@ -345,7 +350,7 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
 
   for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
     {
-      CacheItem *item = link->data;
+      CacheItem *item = LINK_GET_ITEM (link);
       GeglTile  *tile = item->tile;
 
       count++;
@@ -385,8 +390,8 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
   result = g_hash_table_lookup (cache_ht, &pin);
   if (result)
     {
-      g_queue_remove (cache_queue, result);
-      g_queue_push_head (cache_queue, result);
+      g_queue_unlink (cache_queue, &result->link);
+      g_queue_push_head_link (cache_queue, &result->link);
       g_static_mutex_unlock (&mutex);
       return gegl_tile_ref (result->tile);
     }
@@ -414,12 +419,14 @@ gegl_tile_handler_cache_has_tile (GeglTileHandlerCache *cache,
 static gboolean
 gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
 {
-  CacheItem *last_writable;
+  GList *link;
 
-  last_writable = g_queue_pop_tail (cache_queue);
+  link = g_queue_pop_tail_link (cache_queue);
 
-  if (last_writable != NULL)
+  if (link != NULL)
     {
+      CacheItem *last_writable = LINK_GET_ITEM (link);
+
       g_hash_table_remove (cache_ht, last_writable);
       cache_total  -= last_writable->tile->size;
       gegl_tile_unref (last_writable->tile);
@@ -441,7 +448,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
   g_static_mutex_lock (&mutex);
   for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
     {
-      CacheItem *item = link->data;
+      CacheItem *item = LINK_GET_ITEM (link);
       GeglTile  *tile = item->tile;
 
       if (tile != NULL &&
@@ -454,9 +461,9 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
           tile->tile_storage = NULL;
           gegl_tile_mark_as_stored (tile); /* to cheat it out of being stored */
           gegl_tile_unref (tile);
+          g_queue_unlink (cache_queue, link);
           g_hash_table_remove (cache_ht, item);
           g_slice_free (CacheItem, item);
-          g_queue_delete_link (cache_queue, link);
           g_static_mutex_unlock (&mutex);
           return;
         }
@@ -479,7 +486,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
   g_static_mutex_lock (&mutex);
   for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
     {
-      CacheItem *item = link->data;
+      CacheItem *item = LINK_GET_ITEM (link);
       GeglTile  *tile = item->tile;
 
       if (tile != NULL &&
@@ -491,9 +498,9 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
           gegl_tile_void (tile);
           cache_total -= item->tile->size;
           gegl_tile_unref (tile);
+          g_queue_unlink (cache_queue, link);
           g_hash_table_remove (cache_ht, item);
           g_slice_free (CacheItem, item);
-          g_queue_delete_link (cache_queue, link);
           g_static_mutex_unlock (&mutex);
           cache->count --;
           return;
@@ -511,18 +518,21 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 {
   CacheItem *item = g_slice_new (CacheItem);
 
-  item->handler = cache;
-  item->tile    = gegl_tile_ref (tile);
-  item->x       = x;
-  item->y       = y;
-  item->z       = z;
+  item->handler   = cache;
+  item->tile      = gegl_tile_ref (tile);
+  item->link.data = item;
+  item->link.next = NULL;
+  item->link.prev = NULL;
+  item->x         = x;
+  item->y         = y;
+  item->z         = z;
 
   // XXX : remove entry if it already exists
   gegl_tile_handler_cache_void (cache, x, y, z);
 
   g_static_mutex_lock (&mutex);
   cache_total  += item->tile->size;
-  g_queue_push_head (cache_queue, item);
+  g_queue_push_head_link (cache_queue, &item->link);
 
   cache->count ++;
 
@@ -601,7 +611,10 @@ void
 gegl_tile_cache_destroy (void)
 {
   if (cache_queue)
-    g_queue_free (cache_queue);
+    {
+      while (g_queue_pop_head_link (cache_queue));
+      g_queue_free (cache_queue);
+    }
   if (cache_ht)
     g_hash_table_destroy (cache_ht);
   cache_queue = NULL;
