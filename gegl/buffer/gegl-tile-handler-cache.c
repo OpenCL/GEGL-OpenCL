@@ -443,30 +443,25 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
                                     gint                  y,
                                     gint                  z)
 {
-  GList *link;
+  CacheItem *item;
+  CacheItem  key;
+
+  key.x       = x;
+  key.y       = y;
+  key.z       = z;
+  key.handler = cache;
 
   g_static_mutex_lock (&mutex);
-  for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
+  item = g_hash_table_lookup (cache_ht, &key);
+  if (item)
     {
-      CacheItem *item = LINK_GET_ITEM (link);
-      GeglTile  *tile = item->tile;
-
-      if (tile != NULL &&
-          item->x == x &&
-          item->y == y &&
-          item->z == z &&
-          item->handler == cache)
-        {
-          cache_total  -= item->tile->size;
-          tile->tile_storage = NULL;
-          gegl_tile_mark_as_stored (tile); /* to cheat it out of being stored */
-          gegl_tile_unref (tile);
-          g_queue_unlink (cache_queue, link);
-          g_hash_table_remove (cache_ht, item);
-          g_slice_free (CacheItem, item);
-          g_static_mutex_unlock (&mutex);
-          return;
-        }
+      cache_total -= item->tile->size;
+      item->tile->tile_storage = NULL;
+      gegl_tile_mark_as_stored (item->tile); /* to cheat it out of being stored */
+      gegl_tile_unref (item->tile);
+      g_queue_unlink (cache_queue, &item->link);
+      g_hash_table_remove (cache_ht, item);
+      g_slice_free (CacheItem, item);
     }
   g_static_mutex_unlock (&mutex);
 }
@@ -478,33 +473,25 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
                               gint                  y,
                               gint                  z)
 {
-  GList *link;
+  CacheItem *item;
+  CacheItem  key;
 
-  if (!cache_queue)
-    return;
+  key.x       = x;
+  key.y       = y;
+  key.z       = z;
+  key.handler = cache;
 
   g_static_mutex_lock (&mutex);
-  for (link = g_queue_peek_head_link (cache_queue); link; link = link->next)
+  item = g_hash_table_lookup (cache_ht, &key);
+  if (item)
     {
-      CacheItem *item = LINK_GET_ITEM (link);
-      GeglTile  *tile = item->tile;
-
-      if (tile != NULL &&
-          item->x == x &&
-          item->y == y &&
-          item->z == z &&
-          item->handler == cache)
-        {
-          gegl_tile_void (tile);
-          cache_total -= item->tile->size;
-          gegl_tile_unref (tile);
-          g_queue_unlink (cache_queue, link);
-          g_hash_table_remove (cache_ht, item);
-          g_slice_free (CacheItem, item);
-          g_static_mutex_unlock (&mutex);
-          cache->count --;
-          return;
-        }
+      gegl_tile_void (item->tile);
+      cache_total -= item->tile->size;
+      gegl_tile_unref (item->tile);
+      g_queue_unlink (cache_queue, &item->link);
+      g_hash_table_remove (cache_ht, item);
+      g_slice_free (CacheItem, item);
+      cache->count --;
     }
   g_static_mutex_unlock (&mutex);
 }
