@@ -367,6 +367,22 @@ gegl_tile_handler_cache_wash (GeglTileHandlerCache *cache)
   return FALSE;
 }
 
+static inline CacheItem *
+cache_lookup (GeglTileHandlerCache *cache,
+              gint                  x,
+              gint                  y,
+              gint                  z)
+{
+  CacheItem key;
+
+  key.x       = x;
+  key.y       = y;
+  key.z       = z;
+  key.handler = cache;
+
+  return g_hash_table_lookup (cache_ht, &key);
+}
+
 /* returns the requested Tile if it is in the cache, NULL otherwize.
  */
 static GeglTile *
@@ -376,18 +392,12 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
                                   gint                  z)
 {
   CacheItem *result;
-  CacheItem pin;
 
   if (cache->count == 0)
     return NULL;
 
-  pin.x = x;
-  pin.y = y;
-  pin.z = z;
-  pin.handler = cache;
-
   g_static_mutex_lock (&mutex);
-  result = g_hash_table_lookup (cache_ht, &pin);
+  result = cache_lookup (cache, x, y, z);
   if (result)
     {
       g_queue_unlink (cache_queue, &result->link);
@@ -444,15 +454,9 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
                                     gint                  z)
 {
   CacheItem *item;
-  CacheItem  key;
-
-  key.x       = x;
-  key.y       = y;
-  key.z       = z;
-  key.handler = cache;
 
   g_static_mutex_lock (&mutex);
-  item = g_hash_table_lookup (cache_ht, &key);
+  item = cache_lookup (cache, x, y, z);
   if (item)
     {
       cache_total -= item->tile->size;
@@ -474,15 +478,9 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
                               gint                  z)
 {
   CacheItem *item;
-  CacheItem  key;
-
-  key.x       = x;
-  key.y       = y;
-  key.z       = z;
-  key.handler = cache;
 
   g_static_mutex_lock (&mutex);
-  item = g_hash_table_lookup (cache_ht, &key);
+  item = cache_lookup (cache, x, y, z);
   if (item)
     {
       gegl_tile_void (item->tile);
