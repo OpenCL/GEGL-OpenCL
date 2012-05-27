@@ -12,7 +12,6 @@
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
             <param name='filter'>linear</param>
-            <param name='hard-edges'>false</param>
             <param name='x'>0.200000</param>
             <param name='y'>0.200000</param>
           </params>
@@ -45,7 +44,6 @@
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
             <param name='filter'>linear</param>
-            <param name='hard-edges'>false</param>
             <param name='x'>0.200000</param>
             <param name='y'>0.200000</param>
           </params>
@@ -66,7 +64,6 @@
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
             <param name='filter'>linear</param>
-            <param name='hard-edges'>false</param>
             <param name='x'>0.200000</param>
             <param name='y'>0.200000</param>
           </params>
@@ -90,7 +87,6 @@
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
             <param name='filter'>linear</param>
-            <param name='hard-edges'>false</param>
             <param name='x'>0.200000</param>
             <param name='y'>0.200000</param>
           </params>
@@ -161,7 +157,6 @@
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
             <param name='filter'>linear</param>
-            <param name='hard-edges'>false</param>
             <param name='x'>0.500000</param>
             <param name='y'>0.500000</param>
           </params>
