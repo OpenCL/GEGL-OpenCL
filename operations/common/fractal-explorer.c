@@ -117,10 +117,7 @@ explorer_render_row (GeglChantO *o,
                      clrmap      colormap,
                      guchar    **dest_row)
 {
-  gint    fractaltype;
   gint    col;
-  gdouble xmin;
-  gdouble ymin;
   gdouble a;
   gdouble b;
   gdouble x;
@@ -137,35 +134,22 @@ explorer_render_row (GeglChantO *o,
   gdouble foldyinity;
   gdouble xx = 0;
   gdouble adjust;
-  gdouble cx;
-  gdouble cy;
   gint    counter;
   gint    color;
-  gint    iteration;
-  gint    ncolors;
-  gint    useloglog;
   gdouble xdiff;
   gdouble ydiff;
   gdouble log2;
 
-  fractaltype = o->fractaltype;
-  xmin = o->xmin;
-  ymin = o->ymin;
-  cx = o->cx;
-  cy = o->cy;
-  iteration = o->iter;
-  ncolors = o->ncolors;
-  useloglog = o->useloglog;
   log2 = log (2.0);
 
-  xdiff = (o->xmax - xmin) / o->width;
-  ydiff = (o->ymax - ymin) / o->height;
+  xdiff = (o->xmax - o->xmin) / o->width;
+  ydiff = (o->ymax - o->ymin) / o->height;
 
   for (col = col_start; col < col_end; col++)
     {
-      a = xmin + (gdouble) col * xdiff;
-      b = ymin + (gdouble) row * ydiff;
-      if (fractaltype != 0)
+      a = o->xmin + (gdouble) col * xdiff;
+      b = o->ymin + (gdouble) row * ydiff;
+      if (o->fractaltype != 0)
         {
           tmpx = x = a;
           tmpy = y = b;
@@ -176,12 +160,12 @@ explorer_render_row (GeglChantO *o,
           y = 0;
         }
 
-      for (counter = 0; counter < iteration; counter++)
+      for (counter = 0; counter < o->iter; counter++)
         {
           oldx=x;
           oldy=y;
 
-          switch (fractaltype)
+          switch (o->fractaltype)
             {
             case TYPE_MANDELBROT:
               xx = x * x - y * y + a;
@@ -189,43 +173,43 @@ explorer_render_row (GeglChantO *o,
               break;
 
             case TYPE_JULIA:
-              xx = x * x - y * y + cx;
-              y = 2.0 * x * y + cy;
+              xx = x * x - y * y + o->cx;
+              y = 2.0 * x * y + o->cy;
               break;
 
             case TYPE_BARNSLEY_1:
-              foldxinitx = oldx * cx;
-              foldyinity = oldy * cy;
-              foldxinity = oldx * cy;
-              foldyinitx = oldy * cx;
+              foldxinitx = oldx * o->cx;
+              foldyinity = oldy * o->cy;
+              foldxinity = oldx * o->cy;
+              foldyinitx = oldy * o->cx;
               /* orbit calculation */
               if (oldx >= 0)
                 {
-                  xx = (foldxinitx - cx - foldyinity);
-                  y  = (foldyinitx - cy + foldxinity);
+                  xx = (foldxinitx - o->cx - foldyinity);
+                  y  = (foldyinitx - o->cy + foldxinity);
                 }
               else
                 {
-                  xx = (foldxinitx + cx - foldyinity);
-                  y  = (foldyinitx + cy + foldxinity);
+                  xx = (foldxinitx + o->cx - foldyinity);
+                  y  = (foldyinitx + o->cy + foldxinity);
                 }
               break;
 
             case TYPE_BARNSLEY_2:
-              foldxinitx = oldx * cx;
-              foldyinity = oldy * cy;
-              foldxinity = oldx * cy;
-              foldyinitx = oldy * cx;
+              foldxinitx = oldx * o->cx;
+              foldyinity = oldy * o->cy;
+              foldxinity = oldx * o->cy;
+              foldyinitx = oldy * o->cx;
               /* orbit calculation */
               if (foldxinity + foldyinitx >= 0)
                 {
-                  xx = foldxinitx - cx - foldyinity;
-                  y  = foldyinitx - cy + foldxinity;
+                  xx = foldxinitx - o->cx - foldyinity;
+                  y  = foldyinitx - o->cy + foldxinity;
                 }
               else
                 {
-                  xx = foldxinitx + cx - foldyinity;
-                  y  = foldyinitx + cy + foldxinity;
+                  xx = foldxinitx + o->cx - foldyinity;
+                  y  = foldyinitx + o->cy + foldxinity;
                 }
               break;
 
@@ -241,23 +225,23 @@ explorer_render_row (GeglChantO *o,
                 }
               else
                 {
-                  xx = foldxinitx - foldyinity -1.0 + cx * oldx;
+                  xx = foldxinitx - foldyinity -1.0 + o->cx * oldx;
                   y  = foldxinity * 2;
-                  y += cy * oldx;
+                  y += o->cy * oldx;
                 }
               break;
 
             case TYPE_SPIDER:
               /* { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 } */
-              xx = x*x - y*y + tmpx + cx;
-              y = 2 * oldx * oldy + tmpy +cy;
+              xx = x*x - y*y + tmpx + o->cx;
+              y = 2 * oldx * oldy + tmpy + o->cy;
               tmpx = tmpx/2 + xx;
               tmpy = tmpy/2 + y;
               break;
 
             case TYPE_MAN_O_WAR:
-              xx = x*x - y*y + tmpx + cx;
-              y = 2.0 * x * y + tmpy + cy;
+              xx = x*x - y*y + tmpx + o->cx;
+              y = 2.0 * x * y + tmpy + o->cy;
               tmpx = oldx;
               tmpy = oldy;
               break;
@@ -268,8 +252,8 @@ explorer_render_row (GeglChantO *o,
               tempsqrx = oldx - tempsqrx + tempsqry;
               tempsqry = -(oldy * oldx);
               tempsqry += tempsqry + oldy;
-              xx = cx * tempsqrx - cy * tempsqry;
-              y = cx * tempsqry + cy * tempsqrx;
+              xx = o->cx * tempsqrx - o->cy * tempsqry;
+              y = o->cx * tempsqry + o->cy * tempsqrx;
               break;
 
             case TYPE_SIERPINSKI:
@@ -291,7 +275,7 @@ explorer_render_row (GeglChantO *o,
             break;
         }
 
-      if (useloglog)
+      if (o->useloglog)
         {
           gdouble modulus_square = (x * x) + (y * y);
 
@@ -305,7 +289,7 @@ explorer_render_row (GeglChantO *o,
           adjust = 0.0;
         }
 
-      color = (gint) (((counter - adjust) * (ncolors - 1)) / iteration);
+      color = (gint) (((counter - adjust) * (o->ncolors - 1)) / o->iter);
 
       (*dest_row)[0] = colormap[color].r;
       (*dest_row)[1] = colormap[color].g;
