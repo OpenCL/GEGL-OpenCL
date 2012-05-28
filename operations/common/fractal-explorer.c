@@ -41,8 +41,8 @@ gegl_chant_double (ymax, _("Bottom"), -3.0, 3.0,  2.0, _("Bottom"))
 
 gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
 
-gegl_chant_double (cx, _("CX"), -2.5, 2.5, -0.75, _("CX (only Julia)"))
-gegl_chant_double (cy, _("CY"), -2.5, 2.5,  0.2,  _("CY (only Julia)"))
+gegl_chant_double (cx, _("CX"), -2.5, 2.5, -0.75, _("CX (No effect in Mandelbrot and Sierpinski)"))
+gegl_chant_double (cy, _("CY"), -2.5, 2.5,  0.2,  _("CY (No effect in Mandelbrot and Sierpinski)"))
 
 gegl_chant_double (redstretch,   _("Red stretch"),   0.0, 1.0, 1.0,
                    _("Red stretching factor"))
