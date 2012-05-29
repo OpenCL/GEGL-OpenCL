@@ -258,7 +258,7 @@ gegl_buffer_load (const gchar *path)
   LoadInfo *info = g_slice_new0 (LoadInfo);
 
   info->path = g_strdup (path);
-  info->i = g_open (info->path, O_RDONLY);
+  info->i = g_open (info->path, O_RDONLY, 0770);
   GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "starting to load buffer %s", path);
   if (info->i == -1)
     {
