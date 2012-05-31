@@ -89,6 +89,7 @@ process (GeglOperation       *operation,
 
   gint n_pixels = result->width * result->height;
   gint i;
+  gint j;
 
   GRand *gr;
   gint shift; /* random shift amount */
@@ -111,6 +112,17 @@ process (GeglOperation       *operation,
   gr = g_rand_new ();
   g_rand_set_seed (gr, o->seed);
   shift = g_rand_int_range(gr, -s, s);
+
+  if (o->direction == GEGL_HORIZONTAL)
+    j = result->y;
+  else
+    j = result->x;
+
+  /* run through the random numbers until we reach the one for the first line */
+  for(i = 0; i < j; i++) 
+    {
+      g_rand_int_range(gr, -s, s);
+    }
   
   while (n_pixels--)
     {
