@@ -31,8 +31,8 @@ sc_compute_UVT_cache (P2tRTriangulation   *mesh,
 
   uvt = gegl_buffer_new (area, SC_BABL_UVT_FORMAT);
 
-  iter = gegl_buffer_iterator_new (uvt, area, SC_BABL_UVT_FORMAT,
-                                   GEGL_BUFFER_WRITE);
+  iter = gegl_buffer_iterator_new (uvt, area, 0, SC_BABL_UVT_FORMAT,
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
   config.step_x = config.step_y = 1;
   config.cpp = 4; /* Not that it will be used, but it won't harm */
@@ -103,9 +103,9 @@ sc_point_to_color_func (P2tRPoint *point,
 
 #undef sc_rect_contains
 
-      gegl_buffer_sample (cci->fg_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_SAMPLER_NEAREST);
+      gegl_buffer_sample (cci->fg_buf, pt->x, pt->y, NULL, aux_c, format, GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
       /* Sample the BG with the offset */
-      gegl_buffer_sample (cci->bg_buf, pt->x + cci->xoff, pt->y + cci->yoff, NULL, input_c, format, GEGL_SAMPLER_NEAREST);
+      gegl_buffer_sample (cci->bg_buf, pt->x + cci->xoff, pt->y + cci->yoff, NULL, input_c, format, GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
       
       dest_c[0] += weight * (input_c[0] - aux_c[0]);
       dest_c[1] += weight * (input_c[1] - aux_c[1]);
@@ -165,21 +165,25 @@ sc_render_seamless (GeglBuffer          *bg,
 
   /* Iterate over the output buffer, while synching with the paste and
    * the cache */
-  iter      = gegl_buffer_iterator_new (dest, &to_render, format,
-                                        GEGL_BUFFER_WRITE);
+  iter      = gegl_buffer_iterator_new (dest, &to_render, 0, format,
+                                        GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
   out_index = 0;
   
   uvt_index = gegl_buffer_iterator_add (iter,
                                         cache->uvt,
                                         &to_render,
+                                        0,
                                         SC_BABL_UVT_FORMAT,
-                                        GEGL_BUFFER_READ);
+                                        GEGL_BUFFER_READ,
+                                        GEGL_ABYSS_NONE);
 
   fg_index  = gegl_buffer_iterator_add (iter,
                                         fg,
                                         &to_render,
+                                        0,
                                         format,
-                                        GEGL_BUFFER_READ);
+                                        GEGL_BUFFER_READ,
+                                        GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))
     {

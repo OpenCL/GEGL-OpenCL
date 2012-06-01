@@ -101,10 +101,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationComposerClass *composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
   operation_class->prepare     = prepare;
-  operation_class->name        = "gegl:seamless-clone-render";
-  operation_class->categories  = "programming";
-  operation_class->description = "Seamless cloning rendering operation";
   operation_class->get_required_for_output = get_required_for_output;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name",        "gegl:seamless-clone-render",
+    "categories",  "programming",
+    "description", "Seamless cloning rendering operation",
+    NULL);
 
   composer_class->process      = process;
 }

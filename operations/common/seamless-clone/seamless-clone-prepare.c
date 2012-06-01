@@ -83,9 +83,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationSinkClass     *sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
   operation_class->prepare     = prepare;
-  operation_class->name        = "gegl:seamless-clone-prepare";
-  operation_class->categories  = "programming";
-  operation_class->description = _("Seamless cloning preprocessing operation");
+
+  gegl_operation_class_set_keys (operation_class,
+    "name",        "gegl:seamless-clone-prepare",
+    "categories",  "programming",
+    "description", _("Seamless cloning preprocessing operation"),
+    NULL);
 
   sink_class->process          = process;
   sink_class->needs_full       = TRUE;

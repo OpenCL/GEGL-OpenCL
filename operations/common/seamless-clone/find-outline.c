@@ -102,7 +102,7 @@ static inline gfloat
 sc_sample_alpha (GeglBuffer *buf, gint x, gint y, const Babl *format)
 {
   gfloat col[4] = {0, 0, 0, 0};
-  gegl_buffer_sample (buf, x, y, NULL, col, format, GEGL_SAMPLER_NEAREST);
+  gegl_buffer_sample (buf, x, y, NULL, col, format, GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
   return col[3];
 }
 
