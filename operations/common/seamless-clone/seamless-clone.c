@@ -75,7 +75,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   gboolean  return_val;
   ScCache  *cache;

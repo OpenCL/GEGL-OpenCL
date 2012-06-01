@@ -62,7 +62,8 @@ prepare (GeglOperation *operation)
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *roi)
+         const GeglRectangle *roi,
+         gint                 level)
 {
   gpointer *dest = GEGL_CHANT_PROPERTIES (operation) -> result;
 

@@ -80,7 +80,8 @@ process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *aux,
          GeglBuffer          *output,
-         const GeglRectangle *result)
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   ScCache *spr = o->prepare;

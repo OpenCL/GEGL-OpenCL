@@ -253,7 +253,7 @@ sc_generate_cache (GeglBuffer          *fg,
 void
 sc_cache_free (ScCache *cache)
 {
-  gegl_buffer_destroy(cache->uvt);
+  g_object_unref (cache->uvt);
   sc_mesh_sampling_free (cache->sampling);
   p2tr_triangulation_free (cache->mesh);
   sc_outline_free (cache->outline);
