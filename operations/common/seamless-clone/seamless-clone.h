@@ -20,15 +20,15 @@
 #ifndef __SEAMLESS_CLONE_H__
 #define __SEAMLESS_CLONE_H__
 
-#include "poly2tri-c/poly2tri.h"
-#include "poly2tri-c/refine/triangulation.h"
+#include <poly2tri-c/p2t/poly2tri.h>
+#include <poly2tri-c/refine/refine.h>
 
 #include "find-outline.h"
 #include "make-mesh.h"
 
 typedef struct {
   ScOutline         *outline;
-  P2tRTriangulation *mesh;
+  P2trMesh          *mesh;
   GeglRectangle      mesh_bounds;
   ScMeshSampling    *sampling;
   GeglBuffer        *uvt;

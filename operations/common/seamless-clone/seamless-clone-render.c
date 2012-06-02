@@ -37,9 +37,9 @@ gegl_chant_pointer (prepare, _("prepare"),
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
 
-#include "poly2tri-c/poly2tri.h"
-#include "poly2tri-c/refine/triangulation.h"
-#include "poly2tri-c/render/mesh-render.h"
+#include <poly2tri-c/p2t/poly2tri.h>
+#include <poly2tri-c/refine/refine.h>
+#include <poly2tri-c/render/mesh-render.h>
 #include "seamless-clone-common.h"
 
 static GeglRectangle

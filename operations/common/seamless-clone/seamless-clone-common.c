@@ -22,12 +22,12 @@
 #include <gegl-utils.h>
 
 static GeglBuffer*
-sc_compute_UVT_cache (P2tRTriangulation   *mesh,
+sc_compute_UVT_cache (P2trMesh            *mesh,
                       const GeglRectangle *area)
 {
   GeglBuffer         *uvt;
   GeglBufferIterator *iter;
-  P2tRImageConfig     config;
+  P2trImageConfig     config;
 
   uvt = gegl_buffer_new (area, SC_BABL_UVT_FORMAT);
 
@@ -44,7 +44,7 @@ sc_compute_UVT_cache (P2tRTriangulation   *mesh,
       config.x_samples = iter->roi[0].width;
       config.y_samples = iter->roi[0].height;
       p2tr_mesh_render_cache_uvt_exact (mesh,
-                                        (P2tRuvt*) iter->data[0],
+                                        (P2truvt*) iter->data[0],
                                         iter->length,
                                         &config);
     }
@@ -55,7 +55,7 @@ sc_compute_UVT_cache (P2tRTriangulation   *mesh,
 }
 
 static void
-sc_point_to_color_func (P2tRPoint *point,
+sc_point_to_color_func (P2trPoint *point,
                         gfloat    *dest,
                         gpointer   cci_p)
 {
@@ -187,9 +187,9 @@ sc_render_seamless (GeglBuffer          *bg,
 
   while (gegl_buffer_iterator_next (iter))
     {
-      P2tRImageConfig  imcfg;
+      P2trImageConfig  imcfg;
       float           *out_raw, *fg_raw;
-      P2tRuvt         *uvt_raw;
+      P2truvt         *uvt_raw;
       int              x, y;
       
       imcfg.min_x = iter->roi[out_index].x;
@@ -200,7 +200,7 @@ sc_render_seamless (GeglBuffer          *bg,
       imcfg.cpp = 4;
 
       out_raw = (gfloat*)iter->data[out_index];
-      uvt_raw = (P2tRuvt*)iter->data[uvt_index];
+      uvt_raw = (P2truvt*)iter->data[uvt_index];
       fg_raw = (gfloat*)iter->data[fg_index];
 
       p2tr_mesh_render_scanline2 (uvt_raw, out_raw, &imcfg, sc_point_to_color_func, &mesh_render_info);
@@ -255,7 +255,7 @@ sc_cache_free (ScCache *cache)
 {
   g_object_unref (cache->uvt);
   sc_mesh_sampling_free (cache->sampling);
-  p2tr_triangulation_free (cache->mesh);
+  p2tr_mesh_unref (cache->mesh);
   sc_outline_free (cache->outline);
   g_free (cache);
 }

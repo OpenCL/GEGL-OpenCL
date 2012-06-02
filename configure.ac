@@ -52,6 +52,7 @@ m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
 m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
+m4_define([poly2tri-c_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
 
@@ -458,6 +459,14 @@ PKG_CHECK_MODULES(DEP,
 # Rerun PKG_CONFIG to add gthread-2.0 cflags and libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
+
+
+PKG_CHECK_MODULES(P2TC,
+                  poly2tri-c >= poly2tri-c_required_version, ,
+                  AC_MSG_ERROR([
+        *** Poly2tri-C not found. You can find it on http://code.google.com/p/poly2tri-c/
+        *** Errors follow:
+            $P2TC_PKG_ERRORS]))
 
 ######################
 # gettext i18n support
@@ -1084,11 +1093,6 @@ operations/core/Makefile
 operations/common/Makefile
 operations/common/perlin/Makefile
 operations/common/seamless-clone/Makefile
-operations/common/seamless-clone/poly2tri-c/Makefile
-operations/common/seamless-clone/poly2tri-c/common/Makefile
-operations/common/seamless-clone/poly2tri-c/refine/Makefile
-operations/common/seamless-clone/poly2tri-c/render/Makefile
-operations/common/seamless-clone/poly2tri-c/sweep/Makefile
 operations/external/Makefile
 operations/generated/Makefile
 operations/transform/Makefile

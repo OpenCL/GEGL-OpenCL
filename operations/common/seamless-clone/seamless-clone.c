@@ -32,9 +32,9 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 
-#include "poly2tri-c/poly2tri.h"
-#include "poly2tri-c/refine/triangulation.h"
-#include "poly2tri-c/render/mesh-render.h"
+#include <poly2tri-c/p2t/poly2tri.h>
+#include <poly2tri-c/refine/refine.h>
+#include <poly2tri-c/render/mesh-render.h>
 #include "seamless-clone-common.h"
 
 static GeglRectangle

@@ -7,6 +7,6 @@ pluginsdir=@libdir@/@PACKAGE_NAME@-@GEGL_API_VERSION@
 Name: GEGL
 Description: Generic Graphics Library 
 Version: @GEGL_REAL_VERSION@
-Requires: @GLIB_PACKAGES@ babl
+Requires: @GLIB_PACKAGES@ babl poly2tri-c
 Libs: -L${libdir} -l@PACKAGE_NAME@-@GEGL_API_VERSION@
 Cflags: -I${includedir}/@PACKAGE_NAME@-@GEGL_API_VERSION@

@@ -26,9 +26,8 @@
 #include <gegl.h>
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 
-#include "poly2tri-c/poly2tri.h"
-#include "poly2tri-c/refine/triangulation.h"
-#include "poly2tri-c/refine/refine.h"
+#include <poly2tri-c/p2t/poly2tri.h>
+#include <poly2tri-c/refine/refine.h>
 #include "seamless-clone.h"
 
 #define g_ptr_array_index_cyclic(array,index_) g_ptr_array_index(array,(index_)%((array)->len))
@@ -186,28 +185,20 @@ sc_sample_list_free (ScSampleList *self)
 }
 
 ScMeshSampling*
-sc_mesh_sampling_compute (ScOutline         *outline,
-                          P2tRTriangulation *mesh)
+sc_mesh_sampling_compute (ScOutline *outline,
+                          P2trMesh  *mesh)
 {
-  GPtrArray  *points = g_ptr_array_new ();
   GHashTable *pt2sample = g_hash_table_new (g_direct_hash, g_direct_equal);
-  gint i;
+  P2trPoint  *pt = NULL;
+  P2trHashSetIter iter;
 
-  /* Note that the get_points function increases the refcount of the
-   * returned points, so we must unref them when done with them
-   */
-  p2tr_triangulation_get_points (mesh, points);
-
-  for (i = 0; i < points->len; i++)
+  p2tr_hash_set_iter_init (&iter, mesh->points);
+  while (p2tr_hash_set_iter_next (&iter, (gpointer*) &pt))
     {
-	  P2tRPoint    *pt = (P2tRPoint*) g_ptr_array_index (points, i);
-	  ScSampleList *sl = sc_sample_list_compute (outline, pt->x, pt->y);
-	  g_hash_table_insert (pt2sample, pt, sl);
-	}
+      ScSampleList *sl = sc_sample_list_compute (outline, pt->c.x, pt->c.y);
+      g_hash_table_insert (pt2sample, pt, sl);
+    }
 
-  /* We will unref the points when freeing the hash table */
-  g_ptr_array_free (points, TRUE);
-  	
   return pt2sample;
 }
 
@@ -217,7 +208,7 @@ sc_mesh_sampling_entry_free_hfunc (gpointer point,
                                    gpointer unused)
 {
   /* Unref the point returned from triangulation_get_points */
-  p2tr_point_unref ((P2tRPoint*)point);
+  p2tr_point_unref ((P2trPoint*)point);
   /* Free the sampling list */
   sc_sample_list_free ((ScSampleList*)sampling_list);
 }
@@ -236,7 +227,7 @@ sc_mesh_sampling_free (ScMeshSampling *self)
  * @mesh_bounds: A rectangle in which the bounds of the mesh should be
  *               stored
  */
-P2tRTriangulation*
+P2trMesh*
 sc_make_fine_mesh (ScOutline     *outline,
                    GeglRectangle *mesh_bounds,
                    int            max_refine_steps)
@@ -245,10 +236,13 @@ sc_make_fine_mesh (ScOutline     *outline,
   gint i, N = realOutline->len;
   gint min_x = G_MAXINT, max_x = -G_MAXINT, min_y = G_MAXINT, max_y = -G_MAXINT;
 
-  /* An array of P2tRPoint*, holding the outline points */
+  /* An array of P2tPoint*, holding the outline points */
   GPtrArray *mesh_points = g_ptr_array_new ();
 
-  P2tRTriangulation *T;
+  P2tCDT *rough_cdt;
+  P2trCDT *fine_cdt;
+  P2trMesh *result;
+  P2trDelaunayTerminator *refiner;
 
   for (i = 0; i < N; i++)
     {
@@ -261,7 +255,7 @@ sc_make_fine_mesh (ScOutline     *outline,
 
       /* No one should care if the points are given in reverse order,
        * and prepending to the GList is more efficient */
-      g_ptr_array_add (mesh_points, p2tr_point_new (pt->x, pt->y));
+      g_ptr_array_add (mesh_points, p2t_point_new_dd (pt->x, pt->y));
     }
 
   mesh_bounds->x = min_x;
@@ -269,14 +263,26 @@ sc_make_fine_mesh (ScOutline     *outline,
   mesh_bounds->width = max_x + 1 - min_x;
   mesh_bounds->height = max_y + 1 - min_y;
 
-  T = p2tr_triangulate_and_refine (mesh_points, max_refine_steps);
+  rough_cdt = p2t_cdt_new (mesh_points);
+  p2t_cdt_triangulate (rough_cdt);
+  fine_cdt = p2tr_cdt_new (rough_cdt);
+  /* We no longer need the rough CDT */
+  p2t_cdt_free (rough_cdt);
+
+  refiner = p2tr_dt_new (G_PI / 6, p2tr_dt_false_too_big, fine_cdt);
+  p2tr_dt_refine (refiner, max_refine_steps);
+  p2tr_dt_free (refiner);
+
+  p2tr_mesh_ref (result = fine_cdt->mesh);
+
+  p2tr_cdt_free_full (fine_cdt, FALSE);
 
   for (i = 0; i < N; i++)
     {
-      p2tr_point_unref ((P2tRPoint*) g_ptr_array_index (mesh_points, i));
-	}
+      p2t_point_free ((P2tPoint*) g_ptr_array_index (mesh_points, i));
+    }
 
   g_ptr_array_free (mesh_points, TRUE);
 
-  return T;
+  return result;
 }

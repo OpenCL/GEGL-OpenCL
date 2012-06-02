@@ -31,10 +31,10 @@ typedef GHashTable ScMeshSampling;
 ScSampleList* sc_sample_list_compute (ScOutline *outline, gdouble Px, gdouble Py);
 void          sc_sample_list_free    (ScSampleList *self);
 
-ScMeshSampling* sc_mesh_sampling_compute (ScOutline *outline, P2tRTriangulation *mesh);
+ScMeshSampling* sc_mesh_sampling_compute (ScOutline *outline, P2trMesh *mesh);
 void            sc_mesh_sampling_free    (ScMeshSampling *self);
 
-P2tRTriangulation* sc_make_fine_mesh (ScOutline *outline, GeglRectangle *mesh_bounds, int max_refine_steps);
+P2trMesh*       sc_make_fine_mesh (ScOutline *outline, GeglRectangle *mesh_bounds, int max_refine_steps);
 
 
 #endif

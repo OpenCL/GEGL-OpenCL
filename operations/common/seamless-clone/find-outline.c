@@ -31,8 +31,8 @@
 #include <stdio.h> /* TODO: get rid of this debugging way! */
 
 #include "seamless-clone.h"
-#include "poly2tri-c/poly2tri.h"
-#include "poly2tri-c/refine/triangulation.h"
+#include <poly2tri-c/p2t/poly2tri.h>
+#include <poly2tri-c/refine/refine.h>
 
 /* Define the directions
  *

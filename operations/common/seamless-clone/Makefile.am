@@ -1,8 +1,7 @@
-SUBDIRS = poly2tri-c
-
 include $(top_srcdir)/operations/Makefile-common.am
 
-AM_LDFLAGS += $(op_libs) poly2tri-c/libpoly2tri-c.la
+AM_LDFLAGS += $(op_libs) $(P2TC_LIBS)
+AM_CFLAGS  += $(op_cflags) $(P2TC_CFLAGS)
 
 sc_common_files =		\
  	make-mesh.c		\
