@@ -37,6 +37,13 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 #include <poly2tri-c/render/mesh-render.h>
 #include "seamless-clone-common.h"
 
+typedef struct SCProps_
+{
+  GMutex mutex;
+  GeglBuffer *aux;
+  ScCache *preprocess;
+} SCProps;
+
 static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
@@ -64,10 +71,35 @@ static void
 prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format ("R'G'B'A float");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
+  if (o->chant_data == NULL)
+    {
+      SCProps *props = g_slice_new (SCProps);
+      g_mutex_init (&props->mutex);
+      props->aux = NULL;
+      props->preprocess = NULL;
+      o->chant_data = props;
+    }
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "aux",    format);
   gegl_operation_set_format (operation, "output", format);
+}
+
+static void finalize (GObject *object)
+{
+  GeglOperation *op = (void*) object;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  if (o->chant_data)
+    {
+      SCProps *props = (SCProps*) o->chant_data;
+      g_mutex_clear (&props->mutex);
+      props->aux = NULL;
+      if (props->preprocess)
+        sc_cache_free (props->preprocess);
+      o->chant_data = NULL;
+    }
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
 static gboolean
@@ -79,11 +111,22 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   gboolean  return_val;
-  ScCache  *cache;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  SCProps *props;
 
-  cache = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), GEGL_CHANT_PROPERTIES (operation) -> max_refine_steps);
-  return_val = sc_render_seamless (input, aux, 0, 0, output, result, cache);
-  sc_cache_free (cache);
+  g_assert (o->chant_data != NULL);
+
+  props = (SCProps*) o->chant_data;
+  g_mutex_lock (&props->mutex);
+  if (props->aux != aux)
+    {
+      props->aux = aux;
+      props->preprocess = NULL;
+      props->preprocess = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), o -> max_refine_steps);
+    }
+  g_mutex_unlock (&props->mutex);
+
+  return_val = sc_render_seamless (input, aux, 0, 0, output, result, props->preprocess);
   
   return  return_val;
 }
@@ -94,8 +137,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationComposerClass *composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
-  operation_class->prepare     = prepare;
-  composer_class->process      = process;
+  G_OBJECT_CLASS (klass)->finalize = finalize;
+  operation_class->prepare         = prepare;
+  composer_class->process          = process;
 
   operation_class->opencl_support = FALSE;
   gegl_operation_class_set_keys (operation_class,
