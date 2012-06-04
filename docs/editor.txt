@@ -3,7 +3,6 @@ This document outlines development on the node editor for 2012 Google Summer of 
 Isaac Wagner
 isaacbw@src.gnome.org
 
-
 DESIRED FEATURES
 ================
 
@@ -20,3 +19,17 @@ DESIRED FEATURES
 *Auto-arrange loaded compositions if no positional data is present
 *Display properties directly on node
 *Standard keyboard shortcuts for undo/redo, copy/paste, deleting nodes
+*Can "shade" nodes which reduces their size to just displaying the node title
+
+LIBRARIES
+=========
+
+GTK+
+Cairo
+
+DESIGN NOTES
+============
+
+Node editing and rendering code will be modular and reusable within other node manipulation applications
+
+The node editing will exist within its own GTK+ widget and other GEGL-specific functionality will be implemented within the shell application
