@@ -214,16 +214,18 @@ list_properties_simple (GType type)
        */
       if (!found)
         {
-
+          gchar *escaped;
           if (first)
             {
                fprintf (file, "<dl>");
                first = FALSE;
             }
+          escaped = escape (g_param_spec_get_blurb (self[prop_no]));
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              escape (g_param_spec_get_blurb (self[prop_no])));
+              escaped);
+          g_free (escaped);
         }
     }
   if (!first)
@@ -270,16 +272,18 @@ list_properties (GType type,
        */
       if (!found)
         {
-
+          gchar *escaped;
           if (first)
             {
                fprintf (file, "<h5>Properties</h5><dl>");
                first = FALSE;
             }
+          escaped = escape (g_param_spec_get_blurb (self[prop_no]));
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              escape(g_param_spec_get_blurb (self[prop_no])));
+              escaped);
+          g_free (escaped);
         }
     }
   if (!first)
@@ -299,15 +303,18 @@ list_properties (GType type,
        */
       if (found)
         {
+          gchar *escaped;
           if (first)
             {
                fprintf (file, "<h5>Inherited Properties</h5><dl>");
                first = FALSE;
             }
+          escaped = escape (g_param_spec_get_blurb (self[prop_no]));
           fprintf (file, "<dt><b>%s</b> <em>%s</em></dt><dd>%s</dd>\n", 
               g_param_spec_get_name (self[prop_no]),
               g_type_name (G_OBJECT_TYPE(self[prop_no])),
-              escape(g_param_spec_get_blurb (self[prop_no])));
+              escaped);
+          g_free (escaped);
         }
     }
   if (!first)
