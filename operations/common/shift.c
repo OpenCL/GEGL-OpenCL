@@ -44,22 +44,61 @@ gegl_chant_enum (direction, _("Direction"), GeglDirection, gegl_direction,
 #define GEGL_CHANT_C_FILE       "shift.c"
 
 #include "gegl-chant.h"
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
 
 static void prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
+  
+  GeglRectangle *boundary = gegl_operation_source_get_bounding_box (operation, "input");
+  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+  GRand *gr;
+  GArray *offsets;
+  gint r;
+  gint s; /* max shift amount */
+  gint i;
+  gint array_size = 0;
+
+  if (!boundary)
+    return;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
+  g_static_mutex_lock (&mutex);
+  
+  gr = g_rand_new ();
+  g_rand_set_seed (gr, o->seed);
+  s = o->shift;
+  
+  if (o->direction == GEGL_HORIZONTAL)
+    {
+      op_area->left   = o->shift;
+      op_area->right  = o->shift;
+      op_area->top    = 0;
+      op_area->bottom = 0;
 
-  op_area->left   = o->shift;
-  op_area->right  = o->shift;
-  op_area->top    = o->shift;
-  op_area->bottom = o->shift;
+      array_size = boundary->height;
+    }
+  else if (o->direction == GEGL_VERTICAL)
+    {
+      op_area->top    = o->shift;
+      op_area->bottom = o->shift;
+      op_area->left   = 0;
+      op_area->right  = 0;
+
+      array_size = boundary->width;
+    }
+
+  offsets = g_array_new(FALSE, FALSE, sizeof(gint));
+  for (i = 0; i < array_size; i++)
+    {
+      r = g_rand_int_range(gr, -s, s);
+      g_array_append_val(offsets, r);
+    }
+  o->chant_data = offsets;
+  
+  g_static_mutex_unlock (&mutex);
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -74,12 +113,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle src_rect;
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gfloat *src_buf;
   gfloat *dst_buf;
+  GeglRectangle src_rect;
 
   gint x = 0; /* initial x                   */
   gint y = 0; /*           and y coordinates */
@@ -89,11 +128,12 @@ process (GeglOperation       *operation,
 
   gint n_pixels = result->width * result->height;
   gint i;
-  gint j;
+  gint shift;
+  gint s = o->shift;
 
-  GRand *gr;
-  gint shift; /* random shift amount */
-  gint s = o->shift; /* max shift amount */
+  GArray *offsets;
+
+  offsets = (GArray*) o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
   src_rect.width  = result->width + op_area->left + op_area->right;
@@ -109,32 +149,18 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
 		   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  gr = g_rand_new ();
-  g_rand_set_seed (gr, o->seed);
-  shift = g_rand_int_range(gr, -s, s);
-
-  if (o->direction == GEGL_HORIZONTAL)
-    j = result->y;
-  else
-    j = result->x;
-
-  /* run through the random numbers until we reach the one for the first line */
-  for(i = 0; i < j; i++) 
-    {
-      g_rand_int_range(gr, -s, s);
-    }
-  
   while (n_pixels--)
     {
       /* select the desired input pixel */
       if (o->direction == GEGL_HORIZONTAL)
 	{
-	  in_pixel = src_buf + 4*(src_rect.width * (s + y) + s + x + shift);
+	  shift = g_array_index(offsets, gint, result->y + y);
+	  in_pixel = src_buf + 4*(src_rect.width * y + s + x + shift);
 	}
       else if (o->direction == GEGL_VERTICAL)
 	{
-	  in_pixel = src_buf + 4*(src_rect.width * (s + y + shift) + s + x);
-	  out_pixel = dst_buf + 4*(result->width * y + x);
+	  shift = g_array_index(offsets, gint, result->x + x);
+	  in_pixel = src_buf + 4*(src_rect.width * (y + s + shift) + x);
 	}
       
       /* copy pixel */
@@ -144,32 +170,14 @@ process (GeglOperation       *operation,
 	  in_pixel ++;
 	  out_pixel ++;
 	}
-      
-      /* update x and y coordinates and shift amount if necessary */
-      if (o->direction == GEGL_HORIZONTAL)
+      x++;
+      if (x == result->width)
 	{
-	  x++;
-	  if (x == result->width)
-	    {
-	      x = 0;
-	      y++;
-	      shift = g_rand_int_range(gr, -s, s);
-	    }
-	}
-      else if (o->direction == GEGL_VERTICAL)
-	{
+	  x = 0;
 	  y++;
-	  if (y == result->height)
-	    {
-	      y = 0;
-	      x++;
-	      shift = g_rand_int_range(gr, -s, s);
-	    }
 	}
     }
   
-  g_rand_free (gr);
-
   gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_slice_free1 (src_rect.width * src_rect.height * 4 * sizeof(gfloat), src_buf);
   g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
