@@ -1036,8 +1036,7 @@ gegl_node_blit (GeglNode            *self,
 
       if (threads==1)
         {
-          for (i=0; i<threads; i++)
-              spawnrender (&data[i], NULL);
+          spawnrender (&data[0], NULL);
         }
       else
         {
