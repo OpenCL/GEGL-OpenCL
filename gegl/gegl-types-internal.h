@@ -24,7 +24,7 @@ G_BEGIN_DECLS
 
 typedef struct _GeglCRVisitor        GeglCRVisitor;
 typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
-typedef struct _GeglEvalMgr          GeglEvalMgr;
+typedef struct _GeglEvalManager      GeglEvalManager;
 typedef struct _GeglEvalVisitor      GeglEvalVisitor;
 typedef struct _GeglFinishVisitor    GeglFinishVisitor;
 typedef struct _GeglGraph            GeglGraph;

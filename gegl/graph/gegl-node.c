@@ -39,7 +39,7 @@
 #include "operation/gegl-operations.h"
 #include "operation/gegl-operation-meta.h"
 
-#include "process/gegl-eval-mgr.h"
+#include "process/gegl-eval-manager.h"
 #include "process/gegl-have-visitor.h"
 #include "process/gegl-prepare-visitor.h"
 #include "process/gegl-finish-visitor.h"
@@ -64,14 +64,14 @@ enum
 
 struct _GeglNodePrivate
 {
-  GSList         *source_connections;
-  GSList         *sink_connections;
-  GSList         *children;  /*  used for children */
-  GeglNode       *parent;
-  gchar          *name;
-  GeglProcessor  *processor;
-  GHashTable     *contexts;
-  GeglEvalMgr    *eval_mgr[GEGL_MAX_THREADS];
+  GSList          *source_connections;
+  GSList          *sink_connections;
+  GSList          *children;  /*  used for children */
+  GeglNode        *parent;
+  gchar           *name;
+  GeglProcessor   *processor;
+  GHashTable      *contexts;
+  GeglEvalManager *eval_manager[GEGL_MAX_THREADS];
 };
 
 
@@ -235,10 +235,10 @@ gegl_node_dispose (GObject *gobject)
   {
     gint i;
     for (i=0; i<GEGL_MAX_THREADS; i++)
-      if (self->priv->eval_mgr[i])
+      if (self->priv->eval_manager[i])
         {
-          g_object_unref (self->priv->eval_mgr[i]);
-          self->priv->eval_mgr[i] = NULL;
+          g_object_unref (self->priv->eval_manager[i]);
+          self->priv->eval_manager[i] = NULL;
         }
   }
 
@@ -863,16 +863,16 @@ gegl_node_link_many (GeglNode *source,
   va_end (var_args);
 }
 
-static void gegl_node_ensure_eval_mgr (GeglNode    *self,
+static void gegl_node_ensure_eval_manager (GeglNode    *self,
                                        const gchar *pad,
                                        gint         no)
 {
-  if (!self->priv->eval_mgr[no])
-    self->priv->eval_mgr[no] = gegl_eval_mgr_new (self, pad);
+  if (!self->priv->eval_manager[no])
+    self->priv->eval_manager[no] = gegl_eval_manager_new (self, pad);
 }
 
-/* Will set the eval_mgr's roi to the supplied roi if defined, otherwise
- * it will use the node's bounding box. Then the gegl_eval_mgr_apply will
+/* Will set the eval_manager's roi to the supplied roi if defined, otherwise
+ * it will use the node's bounding box. Then the gegl_eval_manager_apply will
  * be called.
  */
 static GeglBuffer *
@@ -892,13 +892,13 @@ gegl_node_apply_roi (GeglNode            *self,
 
   if (roi)
     {
-      self->priv->eval_mgr[tid]->roi = *roi;
+      self->priv->eval_manager[tid]->roi = *roi;
     }
   else
     {
-      self->priv->eval_mgr[tid]->roi = gegl_node_get_bounding_box (self);
+      self->priv->eval_manager[tid]->roi = gegl_node_get_bounding_box (self);
     }
-  buffer = gegl_eval_mgr_apply (self->priv->eval_mgr[tid]);
+  buffer = gegl_eval_manager_apply (self->priv->eval_manager[tid]);
   return buffer;
 }
 
@@ -1009,7 +1009,7 @@ gegl_node_blit (GeglNode            *self,
         {
           data[i] = data[0];
           data[i].roi = *roi;
-          gegl_node_ensure_eval_mgr (self, "output", i);
+          gegl_node_ensure_eval_manager (self, "output", i);
           if (horizontal)
             {
               data[i].roi.width = roi->width / threads;
@@ -1056,7 +1056,7 @@ gegl_node_blit (GeglNode            *self,
     {
       GeglBuffer *buffer;
 
-      gegl_node_ensure_eval_mgr (self, "output", 0);
+      gegl_node_ensure_eval_manager (self, "output", 0);
       buffer = gegl_node_apply_roi (self, "output", roi, 0);
       if (buffer && destination_buf)
         {

@@ -16,8 +16,8 @@
  * Copyright 2003 Calvin Williamson
  */
 
-#ifndef __GEGL_EVAL_MGR_H__
-#define __GEGL_EVAL_MGR_H__
+#ifndef __GEGL_EVAL_MANAGER_H__
+#define __GEGL_EVAL_MANAGER_H__
 
 #include "gegl-types-internal.h"
 #include "buffer/gegl-buffer-types.h"
@@ -38,20 +38,20 @@ typedef enum
    * nodes
    */
   NEED_CONTEXT_SETUP_TRAVERSAL
-} GeglEvalMgrStates;
+} GeglEvalManagerStates;
 
 
-#define GEGL_TYPE_EVAL_MGR            (gegl_eval_mgr_get_type ())
-#define GEGL_EVAL_MGR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_EVAL_MGR, GeglEvalMgr))
-#define GEGL_EVAL_MGR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
-#define GEGL_IS_EVAL_MGR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_EVAL_MGR))
-#define GEGL_IS_EVAL_MGR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_EVAL_MGR))
-#define GEGL_EVAL_MGR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
+#define GEGL_TYPE_EVAL_MANAGER            (gegl_eval_manager_get_type ())
+#define GEGL_EVAL_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_EVAL_MANAGER, GeglEvalManager))
+#define GEGL_EVAL_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_EVAL_MANAGER, GeglEvalManagerClass))
+#define GEGL_IS_EVAL_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_EVAL_MANAGER))
+#define GEGL_IS_EVAL_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_EVAL_MANAGER))
+#define GEGL_EVAL_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_MANAGER, GeglEvalManagerClass))
 
 
-typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
+typedef struct _GeglEvalManagerClass GeglEvalManagerClass;
 
-struct _GeglEvalMgr
+struct _GeglEvalManager
 {
   GObject    parent_instance;
   GeglNode  *node;
@@ -61,7 +61,7 @@ struct _GeglEvalMgr
   /* whether we can fire off rendering requests straight
    * away or we have to re-prepare etc of the graph
    */
-  GeglEvalMgrStates state;
+  GeglEvalManagerStates state;
 
   /* we keep these objects around, they are too expensive to throw away */
   GeglVisitor *prepare_visitor;
@@ -72,18 +72,18 @@ struct _GeglEvalMgr
 
 };
 
-struct _GeglEvalMgrClass
+struct _GeglEvalManagerClass
 {
   GObjectClass  parent_class;
 };
 
 
-GType        gegl_eval_mgr_get_type (void) G_GNUC_CONST;
+GType             gegl_eval_manager_get_type (void) G_GNUC_CONST;
 
-GeglBuffer * gegl_eval_mgr_apply    (GeglEvalMgr *self);
-GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
-                                     const gchar *pad_name);
+GeglBuffer *      gegl_eval_manager_apply    (GeglEvalManager *self);
+GeglEvalManager * gegl_eval_manager_new      (GeglNode        *node,
+                                              const gchar     *pad_name);
 
 G_END_DECLS
 
-#endif /* __GEGL_EVAL_MGR_H__ */
+#endif /* __GEGL_EVAL_MANAGER_H__ */

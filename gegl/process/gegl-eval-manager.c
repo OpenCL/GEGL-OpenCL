@@ -23,7 +23,7 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-eval-mgr.h"
+#include "gegl-eval-manager.h"
 #include "gegl-eval-visitor.h"
 #include "gegl-debug-rect-visitor.h"
 #include "gegl-need-visitor.h"
@@ -38,22 +38,22 @@
 #include <stdlib.h>
 
 
-static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
-static void gegl_eval_mgr_init (GeglEvalMgr *self);
-static void gegl_eval_mgr_finalize (GObject *self_object);
+static void gegl_eval_manager_class_init (GeglEvalManagerClass *klass);
+static void gegl_eval_manager_init (GeglEvalManager *self);
+static void gegl_eval_manager_finalize (GObject *self_object);
 
-G_DEFINE_TYPE (GeglEvalMgr, gegl_eval_mgr, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglEvalManager, gegl_eval_manager, G_TYPE_OBJECT)
 
 static void
-gegl_eval_mgr_class_init (GeglEvalMgrClass *klass)
+gegl_eval_manager_class_init (GeglEvalManagerClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->finalize = gegl_eval_mgr_finalize;
+  gobject_class->finalize = gegl_eval_manager_finalize;
 }
 
 static void
-gegl_eval_mgr_init (GeglEvalMgr *self)
+gegl_eval_manager_init (GeglEvalManager *self)
 {
   GeglRectangle roi = { 0, 0, -1, -1 };
   gpointer     context_id = self;
@@ -68,9 +68,9 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
 }
 
 static void
-gegl_eval_mgr_finalize (GObject *self_object)
+gegl_eval_manager_finalize (GObject *self_object)
 {
-  GeglEvalMgr *self = GEGL_EVAL_MGR (self_object);
+  GeglEvalManager *self = GEGL_EVAL_MANAGER (self_object);
 #if 0
   GeglNode    *root;
   GeglPad     *pad;
@@ -94,20 +94,20 @@ gegl_eval_mgr_finalize (GObject *self_object)
   g_object_unref (self->finish_visitor);
   g_free (self->pad_name);
 
-  G_OBJECT_CLASS (gegl_eval_mgr_parent_class)->finalize (self_object);
+  G_OBJECT_CLASS (gegl_eval_manager_parent_class)->finalize (self_object);
 }
 
 static gboolean
-gegl_eval_mgr_change_notification (GObject             *gobject,
-                                   const GeglRectangle *rect,
-                                   gpointer             user_data)
+gegl_eval_manager_change_notification (GObject             *gobject,
+                                       const GeglRectangle *rect,
+                                       gpointer             user_data)
 {
-  GeglEvalMgr *mgr = GEGL_EVAL_MGR (user_data);
+  GeglEvalManager *manager = GEGL_EVAL_MANAGER (user_data);
 
-  if (mgr->node != NULL)
+  if (manager->node != NULL)
     {
-      gpointer              context_id = mgr;
-      GeglOperationContext *context    = gegl_node_get_context (mgr->node,
+      gpointer              context_id = manager;
+      GeglOperationContext *context    = gegl_node_get_context (manager->node,
                                                                 context_id);
       if (context != NULL)
         {
@@ -116,9 +116,9 @@ gegl_eval_mgr_change_notification (GObject             *gobject,
         }
     }
 
-  if (mgr->state != UNINITIALIZED)
+  if (manager->state != UNINITIALIZED)
     {
-      mgr->state = NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL;
+      manager->state = NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL;
     }
 
   return FALSE;
@@ -126,7 +126,7 @@ gegl_eval_mgr_change_notification (GObject             *gobject,
 
 
 GeglBuffer *
-gegl_eval_mgr_apply (GeglEvalMgr *self)
+gegl_eval_manager_apply (GeglEvalManager *self)
 {
   GeglNode    *root;
   GeglBuffer  *object;
@@ -134,7 +134,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   glong        time       = gegl_ticks ();
   gpointer     context_id = self;
 
-  g_assert (GEGL_IS_EVAL_MGR (self));
+  g_assert (GEGL_IS_EVAL_MANAGER (self));
 
   gegl_instrument ("gegl", "process", 0);
 
@@ -246,18 +246,18 @@ gegl_eval_mgr_apply (GeglEvalMgr *self)
   return object;
 }
 
-GeglEvalMgr * gegl_eval_mgr_new     (GeglNode *node,
-                                     const gchar *pad_name)
+GeglEvalManager * gegl_eval_manager_new     (GeglNode    *node,
+                                             const gchar *pad_name)
 {
-  GeglEvalMgr *self = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
+  GeglEvalManager *self = g_object_new (GEGL_TYPE_EVAL_MANAGER, NULL);
   g_assert (GEGL_IS_NODE (node));
   self->node = node;
   if (pad_name)
     self->pad_name = g_strdup (pad_name);
   else
     self->pad_name = g_strdup ("output");
-  /*g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (gegl_eval_mgr_change_notification), self);*/
-  g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (gegl_eval_mgr_change_notification), self);
-  g_signal_connect (G_OBJECT (self->node), "notify", G_CALLBACK (gegl_eval_mgr_change_notification), self);
+  /*g_signal_connect (G_OBJECT (self->node->operation), "notify", G_CALLBACK (gegl_eval_manager_change_notification), self);*/
+  g_signal_connect (G_OBJECT (self->node), "invalidated", G_CALLBACK (gegl_eval_manager_change_notification), self);
+  g_signal_connect (G_OBJECT (self->node), "notify", G_CALLBACK (gegl_eval_manager_change_notification), self);
   return self;
 }
