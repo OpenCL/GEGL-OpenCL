@@ -1,0 +1,118 @@
+Journal / transaction log
+
+== Usecases ==
+* Base for undo/redo stacks
+* Automated testing
+ * of view widgets
+ * graph manipulation API
+* Sharing and manipulation of a GEGL graph between multiple programs
+
+== Operations ==
+- Add node. int parent_node_id
+- Remove node. int node_id
+
+- Connect pad. int sink_node_id, char *input_pad_name, int source_node_id, char *output_pad_name
+- Disconnect pad. int node_id, char *pad_name
+
+- Change property. int node_id, char *key, char *value (using property-type specific serialization serialized)
+- Change operation. int node_id, char *new_operation_name
+
+- Recall state. (go back to a previous transaction). Specified using the block number for the transaction_start.
+
+Node references:
+- GEGL to maintain an (graph) unique identifier for each node: Add an integer identifier to node when added to the graph.
+- The identifier must be be maintained when changing operations.
+- This identifier should be hidden from applications: could be done by making the property read-only in public interface.
+
+== Transactions ==
+The operations are grouped in transactions. Applications can decide the start and end of a transaction.
+If no transaction is explicitly opened, an implicit transaction for the duration of the operation is created.
+
+After a add node operation, one or mor change property and change operation operations must follow.
+
+== File format ==
+Append only file format consisting of a series of entries.
+
+Entries can span a number of blocks, except for transaction end which must
+consist of one block, and file header which must consist of 4 blocks (?)
+
+Entry format:
+Each block entry has has a size of X times Y block. An integer in the start
+of the entry specifies how many blocks the entry consists of.
+Each entry has a integer type, denoting what kind of entry it is.
+
+Each entry has an integer entry_size denoting number of blocks the entry consists of.
+Integer precision: 32 bit?
+Block size: 32 bytes?
+
+File Header:
+- Stores a lock with PID for the active process.
+The lock is taken when a transaction starts, and released on transaction end.
+Other applications can check whether the PID is for an alive process.
+The header is not subject to the append-only rule.
+
+Transaction start:
+- Stores a human string description of the change
+? maybe a transaction size in blocks (can be used to quickly traverse forward)
+
+Transaction end:
+Contains a pointer to the to start of transaction, as an integer of the transaction start entry.
+If the pointer ever points to a non-transaction start entry, the journal is inconsistent.
+
+Operation entries:
+Each entry (see above list) has a format depending on its type.
+
+=== Example ===
+
+	---------------------
+	| file header       |
+	---------------------
+	| transaction start |
+	---------------------
+	| add node          |
+	---------------------
+	| set property      |
+	---------------------
+	| set property      |
+	---------------------
+	| connect pad       |
+	---------------------
+	| transaction end   |
+	---------------------
+	| transaction start |
+	---------------------
+	| remove node       |
+	---------------------
+	| transaction end   |
+	---------------------
+
+== Public API ==
+
+void gegl_graph_transaction_start(const char *description);
+ @description a human readable description of the change. UTF-8 encoded
+
+void gegl_graph_transaction_end(void);
+
+int gegl_graph_transaction_previous (int block_no);
+ @block_no <= 0 means end of journal. Only block numbers for transaction start entries are valid
+ @return -1 on invalid block_no, else the block number of the previous transaction
+
+int gegl_graph_transaction_recall(int block_no);
+ @block_no <= 0 means end of journal. Only block numbers for transaction start entries are valid
+ @return -1 on invalid block_no, 
+
+char *gegl_graph_transaction_get_description(int block_no);
+ @block_no Only block numbers for transaction start entries are valid
+ @return NULL on invalid block_no, else the human readable description passed to transaction_start
+
+== Implementation notes ==
+
+TODO
+
+== Ideas ==
+* Add a non-blocking version of transactions.
+Note: not guaranteed to succeed. Applications must gracefully handle the transaction being rejected.
+
+  gegl_graph_transaction_new(const char *description);
+  gboolean gegl_graph_transaction_commit();
+
