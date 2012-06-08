@@ -45,6 +45,13 @@ gegl_chant_enum (fractaltype, _("Fractal type"), GeglFractalExplorerType,
 
 gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
 
+gegl_chant_double_ui (zoom, _("Zoom"), 0.0000001, 10000000.0, 1.0/400.0, 0.00001, 1000.0, 1.5,
+   _("Zoom in the fractal space"))
+gegl_chant_double_ui (shiftx, _("Shift X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0, -1000.0, 1000.0, 1.5,
+   _("X shift in the fractal space"))
+gegl_chant_double_ui (shifty, _("Shift Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0, -1000.0, 1000.0, 1.5,
+   _("Y shift in the fractal space"))
+
 gegl_chant_double (cx, _("CX"), -2.5, 2.5, -0.75, _("CX (No effect in Mandelbrot and Sierpinski)"))
 gegl_chant_double (cy, _("CY"), -2.5, 2.5,  0.2,  _("CY (No effect in Mandelbrot and Sierpinski)"))
 
@@ -218,8 +225,8 @@ process (GeglOperation       *operation,
 
   while (n_pixels--)
     {
-      x = pixelx / 400.0; /* room for moving in the fractal space */
-      y = pixely / 400.0;
+      x = (pixelx + o->shiftx) / o->zoom;
+      y = (pixely + o->shifty) / o->zoom;
 
       if (o->fractaltype == GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT)
         {
