@@ -50,35 +50,20 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
   
-  GeglRectangle *boundary = gegl_operation_source_get_bounding_box (operation, "input");
-  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
-
-  GRand *gr;
-  GArray *offsets;
-  gint r;
-  gint s; /* max shift amount */
-  gint i;
-  gint array_size = 0;
-
-  if (!boundary)
-    return;
-
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
-  g_static_mutex_lock (&mutex);
-  
-  gr = g_rand_new ();
-  g_rand_set_seed (gr, o->seed);
-  s = o->shift;
-  
+
+  if (o->chant_data) {
+    g_array_free (o->chant_data, TRUE);
+    o->chant_data = NULL;
+  }
+    
   if (o->direction == GEGL_HORIZONTAL)
     {
       op_area->left   = o->shift;
       op_area->right  = o->shift;
       op_area->top    = 0;
       op_area->bottom = 0;
-
-      array_size = boundary->height;
     }
   else if (o->direction == GEGL_VERTICAL)
     {
@@ -86,19 +71,7 @@ static void prepare (GeglOperation *operation)
       op_area->bottom = o->shift;
       op_area->left   = 0;
       op_area->right  = 0;
-
-      array_size = boundary->width;
     }
-
-  offsets = g_array_new(FALSE, FALSE, sizeof(gint));
-  for (i = 0; i < array_size; i++)
-    {
-      r = g_rand_int_range(gr, -s, s);
-      g_array_append_val(offsets, r);
-    }
-  o->chant_data = offsets;
-  
-  g_static_mutex_unlock (&mutex);
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -133,6 +106,46 @@ process (GeglOperation       *operation,
 
   GArray *offsets;
 
+  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+  GeglRectangle *boundary;
+  
+  GRand *gr;
+  
+  gint array_size = 0;
+  gint r;
+
+  /* calculate offsets once */
+  if (!o->chant_data)
+    {
+      g_static_mutex_lock (&mutex);
+      boundary = gegl_operation_source_get_bounding_box (operation, "input");
+
+      if (boundary)
+	{
+	  gr = g_rand_new ();
+	  g_rand_set_seed (gr, o->seed);
+	  
+	  offsets = g_array_new(FALSE, FALSE, sizeof(gint));
+	  
+	  if (o->direction == GEGL_HORIZONTAL)
+	    {
+	      array_size = boundary->height;
+	    }
+	  else if (o->direction == GEGL_VERTICAL)
+	    {
+	      array_size = boundary->width;
+	    }
+      
+	  for (i = 0; i < array_size; i++)
+	    {
+	      r = g_rand_int_range(gr, -s, s);
+	      g_array_append_val(offsets, r);
+	    }
+	  o->chant_data = offsets;
+	}
+      g_static_mutex_unlock (&mutex);
+    }
+  
   offsets = (GArray*) o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
@@ -181,22 +194,38 @@ process (GeglOperation       *operation,
   gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_slice_free1 (src_rect.width * src_rect.height * 4 * sizeof(gfloat), src_buf);
   g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
-
   return  TRUE;
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      g_array_free (o->chant_data, TRUE);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
   
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
-  
+
+  object_class->finalize = finalize;
   filter_class->process    = process;
   operation_class->prepare = prepare;
-  
+
   gegl_operation_class_set_keys (operation_class,
     "categories" , "distort",
     "name"       , "gegl:shift",
