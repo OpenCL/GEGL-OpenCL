@@ -21,16 +21,16 @@
 #include "module.h"
 #include "transform-core.h"
 
-static GTypeModule          *affine_module;
+static GTypeModule          *transform_module;
 static const GeglModuleInfo  modinfo =
 {
   GEGL_MODULE_ABI_VERSION
 };
 
 G_MODULE_EXPORT GTypeModule *
-affine_module_get_module (void)
+transform_module_get_module (void)
 {
-  return affine_module;
+  return transform_module;
 }
 
 G_MODULE_EXPORT const GeglModuleInfo *
@@ -52,9 +52,9 @@ G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
   GType dummy;
-  affine_module = module;
+  transform_module = module;
 
-  dummy = op_affine_get_type ();
+  dummy = op_transform_get_type ();
   dummy = rotate_get_type ();
   dummy = scale_get_type ();
   dummy = scaleratio_get_type ();

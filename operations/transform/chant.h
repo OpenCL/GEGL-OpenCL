@@ -15,8 +15,8 @@
 
 #define GEGL_CHANT_PARENT_TypeName      OpTransform
 #define GEGL_CHANT_PARENT_TypeNameClass OpTransformClass
-#define GEGL_CHANT_PARENT_TYPE          TYPE_OP_AFFINE
-#define GEGL_CHANT_PARENT_CLASS         OP_AFFINE_CLASS
+#define GEGL_CHANT_PARENT_TYPE          TYPE_OP_TRANSFORM
+#define GEGL_CHANT_PARENT_CLASS         OP_TRANSFORM_CLASS
 
 typedef struct Generated        GeglChantOperation;
 typedef struct GeneratedClass   ChantClass;
@@ -89,7 +89,7 @@ type_name##_get_type (void) \
           NULL    /* value_table */ \
         }; \
       g_define_type_id = \
-        gegl_module_register_type (affine_module_get_module (), TYPE_PARENT,\
+        gegl_module_register_type (transform_module_get_module (), TYPE_PARENT,\
                                    "GeglOpPlugIn-" #type_name,\
                                    &g_define_type_info, 0);\
       { CODE ; }\
@@ -252,8 +252,8 @@ gegl_chant_constructor (GType                  type,
 static void class_init (GeglOperationClass *operation_class);
 #endif
 
-static void create_matrix (OpTransform    *affine,
-                           GeglMatrix3 *matrix);
+static void create_matrix (OpTransform  *transform,
+                           GeglMatrix3  *matrix);
 
 static void
 gegl_chant_class_init (ChantClass * klass)
