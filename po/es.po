@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-10 12:23+0000\n"
-"PO-Revision-Date: 2012-05-10 14:37+0200\n"
+"POT-Creation-Date: 2012-06-12 19:50+0000\n"
+"PO-Revision-Date: 2012-06-13 10:07+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -439,6 +439,29 @@ msgstr "Título que dar a la ventana de salida"
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
 msgstr "Mostrar el búfer de salida en una ventana."
+
+#: ../operations/common/dot.c:26 ../operations/common/pixelize.c:25
+msgid "Block Width"
+msgstr "Anchura del bloque"
+
+#: ../operations/common/dot.c:27
+#| msgid "Width of blocks in pixels"
+msgid "Size of each block in pixels"
+msgstr "Tamaño de cada bloque en píxeles"
+
+#: ../operations/common/dot.c:28
+#| msgid "Iteration"
+msgid "Dot size ratio"
+msgstr "Proporción del tamaño del punto"
+
+#: ../operations/common/dot.c:29
+msgid "Size ratio of a dot inside each block"
+msgstr "Proporción del tamaño de un punto dentro de cada bloque"
+
+#: ../operations/common/dot.c:191
+#| msgid "Simplify image into an array of solid-colored squares"
+msgid "Simplify image into an array of solid-colored dots"
+msgstr "Simplificar la imagen en una matriz de puntos de color liso"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
@@ -1254,10 +1277,6 @@ msgstr "Una fuente que usa un GeglBuffer que está en el disco."
 #: ../operations/common/over.c:153
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Operación de Porter-Duff sobre (d = cA + cB * (1 - aA))"
-
-#: ../operations/common/pixelize.c:25
-msgid "Block Width"
-msgstr "Anchura del bloque"
 
 #: ../operations/common/pixelize.c:26
 msgid "Width of blocks in pixels"
@@ -2626,7 +2645,7 @@ msgstr "Cambiar o pasar a manejar a éste"
 msgid "The value of gray threshold"
 msgstr "Valor del umbral de gris"
 
-#: ../operations/workshop/color-rotate.c:385
+#: ../operations/workshop/color-rotate.c:383
 msgid "Rotate colors on the image"
 msgstr "Rotar los colores de la imagen"
 
