@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-05-10 12:21+0000\n"
-"PO-Revision-Date: 2012-05-13 02:18+0100\n"
+"POT-Creation-Date: 2012-06-12 19:50+0000\n"
+"PO-Revision-Date: 2012-06-16 16:47+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -424,6 +424,30 @@ msgstr "Naslov za izhodno okno."
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
 msgstr "Prikaži vhodni izravnalnik v oknu."
+
+#: ../operations/common/dot.c:26
+#: ../operations/common/pixelize.c:25
+msgid "Block Width"
+msgstr "Širina bloka"
+
+#: ../operations/common/dot.c:27
+#| msgid "Width of blocks in pixels"
+msgid "Size of each block in pixels"
+msgstr "Širina bloka v slikovnih točkah"
+
+#: ../operations/common/dot.c:28
+#| msgid "Iteration"
+msgid "Dot size ratio"
+msgstr "Razmerje stranic pike"
+
+#: ../operations/common/dot.c:29
+msgid "Size ratio of a dot inside each block"
+msgstr "Razmerje stranic pike oz. točke v vsakem bloku"
+
+#: ../operations/common/dot.c:191
+#| msgid "Simplify image into an array of solid-colored squares"
+msgid "Simplify image into an array of solid-colored dots"
+msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 
 #: ../operations/common/dropshadow.c:25
 #: ../operations/common/layer.c:32
@@ -1207,10 +1231,6 @@ msgstr "Vir, ki uporablja GeglBuffer na disku."
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Operacija Porter Duff over (d = cA + cB * (1 - aA))"
 
-#: ../operations/common/pixelize.c:25
-msgid "Block Width"
-msgstr "Širina bloka"
-
 #: ../operations/common/pixelize.c:26
 msgid "Width of blocks in pixels"
 msgstr "Širina blokov v slikovnih točkah"
@@ -1841,7 +1861,6 @@ msgid "Fill rule"
 msgstr "Pravilo polnila"
 
 #: ../operations/external/path.c:42
-#| msgid "How to determine what to fill (nonzero|evenodd"
 msgid "How to determine what to fill (nonzero|evenodd)"
 msgstr "Kako določiti, kaj naj bo zapolnjeno (nonzero|evenodd)"
 
@@ -2078,7 +2097,6 @@ msgid "Fill rule."
 msgstr "Pravilo polnila."
 
 #: ../operations/external/vector-fill.c:34
-#| msgid "how to determine what to fill (nonzero|evenodd"
 msgid "how to determine what to fill (nonzero|evenodd)"
 msgstr "Kako določiti, kaj je potrebno zapolniti (nonzeto|evenodd)"
 
@@ -2432,7 +2450,7 @@ msgstr "Spremeni/obdelaj"
 msgid "The value of gray threshold"
 msgstr "Vrednost sivinskega praga"
 
-#: ../operations/workshop/color-rotate.c:385
+#: ../operations/workshop/color-rotate.c:383
 msgid "Rotate colors on the image"
 msgstr "Zasukaj barve slike"
 
@@ -2689,8 +2707,6 @@ msgid "Border"
 msgstr "Rob"
 
 #: ../operations/workshop/convolution-matrix.c:91
-#| msgid ""
-#| "Type of border to choose.Choices are extend, wrap, crop.Default is extend"
 msgid "Type of border to choose. Choices are extend, wrap, crop. Default is extend"
 msgstr "Vrste obrob, ki jih lahko izberete: razširi (extend), prelomi (wrap) in obreži (crop). Privzeto je nastavljen razširi."
 
@@ -2868,7 +2884,6 @@ msgid "Lens:"
 msgstr "Objektiv."
 
 #: ../operations/workshop/external/lens-correct.c:33
-#| msgid "Write your lens model with majuscules"
 msgid "Write your lens model with uppercase letters"
 msgstr "Zapišite model objektiva z velikimi črkami"
 
