@@ -225,7 +225,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_int ("chunk-size",
                                                      "Chunk size",
                                                      "the number of pixels processed simultaneously by GEGL.",
-                                                     1, G_MAXINT, 256 * 300,
+                                                     1, G_MAXINT, 512 * 512,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
