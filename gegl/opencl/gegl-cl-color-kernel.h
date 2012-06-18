@@ -16,9 +16,13 @@
  * Copyright 2012 Victor Oliveira (victormatheus@gmail.com)
  */
 
+/* This is almost a copy-paste from babl/base color conversion functions
+
+   XXX: This code is very hard to maintain and keep in sync with BABL, we should
+        think in something better
+*/
+
 static const char* kernel_color_source =
-"/* This is almost a copy-paste from babl/base conversion functions in RGBA space */      \n"
-"                                                                                         \n"
 "/* Alpha threshold used in the reference implementation for                              \n"
 " * un-pre-multiplication of color data:                                                  \n"
 " *                                                                                       \n"

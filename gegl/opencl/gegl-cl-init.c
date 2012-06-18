@@ -16,6 +16,11 @@
  * Copyright 2012 Victor Oliveira (victormatheus@gmail.com)
  */
 
+/* OpenCL Initialization
+   The API is stubbed out so we detect if OpenCL libraries are available
+   in runtime.
+*/
+
 #include "config.h"
 
 #define __GEGL_CL_INIT_MAIN__

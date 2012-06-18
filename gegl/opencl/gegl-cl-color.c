@@ -16,6 +16,12 @@
  * Copyright 2012 Victor Oliveira (victormatheus@gmail.com)
  */
 
+
+/* Here we have implemented in OpenCL a subset of color space conversions provided by BABL
+   that are commonly used. For now there is no support for conversions that need a intermediate
+   representation (ex: A->B, B->C, C->D), just among two color spaces.
+*/
+
 #include "config.h"
 
 #include "gegl.h"
