@@ -176,8 +176,8 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
 
         if (format != buffer->soft_format)
           {
-            fish = babl_fish ((gpointer) buffer->soft_format,
-                              (gpointer) format);
+            fish = babl_fish ((gpointer) format,
+                              (gpointer) buffer->soft_format);
           }
 
         gegl_tile_lock (tile);
