@@ -45,7 +45,7 @@ gegl_chant_enum (fractaltype, _("Fractal type"), GeglFractalExplorerType,
 
 gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
 
-gegl_chant_double_ui (zoom, _("Zoom"), 0.0000001, 10000000.0, 1.0/400.0, 0.00001, 1000.0, 1.5,
+gegl_chant_double_ui (zoom, _("Zoom"), 0.0000001, 10000000.0, 300, 0.0001, 10000.0, 1.5,
    _("Zoom in the fractal space"))
 gegl_chant_double_ui (shiftx, _("Shift X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0, -1000.0, 1000.0, 1.5,
    _("X shift in the fractal space"))
