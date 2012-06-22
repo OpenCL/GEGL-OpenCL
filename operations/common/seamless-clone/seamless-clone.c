@@ -39,7 +39,7 @@ gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
 
 typedef struct SCProps_
 {
-  GMutex mutex;
+  GMutex *mutex;
   GeglBuffer *aux;
   ScCache *preprocess;
 } SCProps;
@@ -76,7 +76,7 @@ prepare (GeglOperation *operation)
   if (o->chant_data == NULL)
     {
       SCProps *props = g_slice_new (SCProps);
-      g_mutex_init (&props->mutex);
+      props->mutex = g_mutex_new ();
       props->aux = NULL;
       props->preprocess = NULL;
       o->chant_data = props;
@@ -93,7 +93,7 @@ static void finalize (GObject *object)
   if (o->chant_data)
     {
       SCProps *props = (SCProps*) o->chant_data;
-      g_mutex_clear (&props->mutex);
+      g_mutex_free (props->mutex);
       props->aux = NULL;
       if (props->preprocess)
         sc_cache_free (props->preprocess);
@@ -117,14 +117,14 @@ process (GeglOperation       *operation,
   g_assert (o->chant_data != NULL);
 
   props = (SCProps*) o->chant_data;
-  g_mutex_lock (&props->mutex);
+  g_mutex_lock (props->mutex);
   if (props->aux != aux)
     {
       props->aux = aux;
       props->preprocess = NULL;
       props->preprocess = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), o -> max_refine_steps);
     }
-  g_mutex_unlock (&props->mutex);
+  g_mutex_unlock (props->mutex);
 
   return_val = sc_render_seamless (input, aux, 0, 0, output, result, props->preprocess);
   
