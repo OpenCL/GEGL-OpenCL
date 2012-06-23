@@ -128,7 +128,12 @@ sc_render_seamless (GeglBuffer          *bg,
                     const GeglRectangle *dest_rect,
                     const ScCache       *cache)
 {
-  GeglRectangle fg_rect, to_render;
+  /** The area filled by the FG buf after the offset */
+  GeglRectangle fg_rect;
+  /** The intersection of fg_rect and the area that we should output */
+  GeglRectangle to_render;
+  /** The area matching to_render in the FG buf without the offset */
+  GeglRectangle to_render_fg;
 
   ScColorComputeInfo  mesh_render_info;
   GeglBufferIterator *iter;
@@ -141,16 +146,31 @@ sc_render_seamless (GeglBuffer          *bg,
       g_warning ("No preprocessing result given. Stop.");
       return FALSE;
     }
+  if (gegl_rectangle_is_empty (&cache->mesh_bounds))
+    {
+      return TRUE;
+    }
+  if (! gegl_rectangle_contains (gegl_buffer_get_extent (fg), &cache->mesh_bounds))
+    {
+      g_warning ("The mesh from the preprocessing is not inside the "
+          "foreground. Stop");
+      return FALSE;
+    }
 
-  fg_rect = *gegl_buffer_get_extent (fg);
-  
-  /* The location of the aux will actually be computed with an offset */
-  fg_rect.x += fg_xoff;
-  fg_rect.y += fg_yoff;
-  
+  /* The real rectangle of the foreground that we should render is
+   * defined by the bounds of the mesh plus the given offset */
+  gegl_rectangle_set (&fg_rect,
+      cache->mesh_bounds.x + fg_xoff, cache->mesh_bounds.y + fg_yoff,
+      cache->mesh_bounds.width,       cache->mesh_bounds.height);
+
   /* We only need to render the intersection of the mesh bounds and the
    * desired output */
   gegl_rectangle_intersect (&to_render, dest_rect, &fg_rect);
+
+  if (gegl_rectangle_is_empty (&to_render))
+    {
+      return TRUE;
+    }
 
   /* Render the mesh into it */
   mesh_render_info.fg_buf = fg;
@@ -169,9 +189,13 @@ sc_render_seamless (GeglBuffer          *bg,
                                         GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
   out_index = 0;
   
+  gegl_rectangle_set (&to_render_fg,
+      to_render.x - fg_xoff, to_render.y - fg_yoff,
+      to_render.width,       to_render.height);
+
   uvt_index = gegl_buffer_iterator_add (iter,
                                         cache->uvt,
-                                        &to_render,
+                                        &to_render_fg,
                                         0,
                                         SC_BABL_UVT_FORMAT,
                                         GEGL_BUFFER_READ,
@@ -179,7 +203,7 @@ sc_render_seamless (GeglBuffer          *bg,
 
   fg_index  = gegl_buffer_iterator_add (iter,
                                         fg,
-                                        &to_render,
+                                        &to_render_fg,
                                         0,
                                         format,
                                         GEGL_BUFFER_READ,
@@ -192,11 +216,11 @@ sc_render_seamless (GeglBuffer          *bg,
       P2truvt         *uvt_raw;
       int              x, y;
       
-      imcfg.min_x = iter->roi[out_index].x;
-      imcfg.min_y = iter->roi[out_index].y;
+      imcfg.min_x = iter->roi[fg_index].x;
+      imcfg.min_y = iter->roi[fg_index].y;
       imcfg.step_x = imcfg.step_y = 1;
-      imcfg.x_samples = iter->roi[out_index].width;
-      imcfg.y_samples = iter->roi[out_index].height;
+      imcfg.x_samples = iter->roi[fg_index].width;
+      imcfg.y_samples = iter->roi[fg_index].height;
       imcfg.cpp = 4;
 
       out_raw = (gfloat*)iter->data[out_index];
@@ -233,9 +257,11 @@ sc_generate_cache (GeglBuffer          *fg,
 
   /* Find an outline around the area of the paste */
   outline = sc_outline_find_ccw (extents, fg);
+
   /* Create a fine mesh from the polygon defined by that outline */
   result->mesh = sc_make_fine_mesh (outline, &result->mesh_bounds,
                                     max_refine_steps);
+
   /* Now compute the list of points to sample in order to define the
    * color of each triangulation vertex */
   result->sampling = sc_mesh_sampling_compute (outline, result->mesh);
