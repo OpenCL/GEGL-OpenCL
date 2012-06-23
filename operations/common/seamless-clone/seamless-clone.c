@@ -21,6 +21,11 @@
 gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
                 _("Maximal amount of refinement points to be used for the interpolation mesh"))
 
+gegl_chant_int (xoff, _("X offset"), -100000, +100000, 0,
+                _("How much horizontal offset should applied to the paste"))
+
+gegl_chant_int (yoff, _("Y offset"), -100000, +100000, 0,
+                _("How much vertical offset should applied to the paste"))
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
@@ -120,13 +125,15 @@ process (GeglOperation       *operation,
   g_mutex_lock (props->mutex);
   if (props->aux != aux)
     {
+      if (props->preprocess)
+        sc_cache_free (props->preprocess);
+
       props->aux = aux;
-      props->preprocess = NULL;
       props->preprocess = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), o -> max_refine_steps);
     }
   g_mutex_unlock (props->mutex);
 
-  return_val = sc_render_seamless (input, aux, 0, 0, output, result, props->preprocess);
+  return_val = sc_render_seamless (input, aux, o->xoff, o->yoff, output, result, props->preprocess);
   
   return  return_val;
 }
