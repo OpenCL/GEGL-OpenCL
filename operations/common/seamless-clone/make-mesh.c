@@ -242,7 +242,7 @@ sc_make_fine_mesh (ScOutline     *outline,
   P2tCDT *rough_cdt;
   P2trCDT *fine_cdt;
   P2trMesh *result;
-  P2trDelaunayTerminator *refiner;
+  P2trRefiner *refiner;
 
   for (i = 0; i < N; i++)
     {
@@ -269,9 +269,9 @@ sc_make_fine_mesh (ScOutline     *outline,
   /* We no longer need the rough CDT */
   p2t_cdt_free (rough_cdt);
 
-  refiner = p2tr_dt_new (G_PI / 6, p2tr_dt_false_too_big, fine_cdt);
-  p2tr_dt_refine (refiner, max_refine_steps);
-  p2tr_dt_free (refiner);
+  refiner = p2tr_refiner_new (G_PI / 6, p2tr_refiner_false_too_big, fine_cdt);
+  p2tr_refiner_refine (refiner, max_refine_steps, NULL);
+  p2tr_refiner_free (refiner);
 
   p2tr_mesh_ref (result = fine_cdt->mesh);
 
