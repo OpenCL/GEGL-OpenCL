@@ -1,0 +1,3582 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2012.
+#
+#: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
+#: ../operations/external/sdl-display.c:27
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-24 13:20+0300\n"
+"PO-Revision-Date: 2012-06-24 13:23+0300\n"
+"Last-Translator: Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>\n"
+"Language-Team: Latviešu <lata-l10n@googlegroups.com>\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: Lokalize 1.4\n"
+
+#: ../gegl/gegl-init.c:216
+msgid "babls error tolerance, a value between 0.2 and 0.000000001"
+msgstr "babl kļūdu tolerance — vērtība starp 0.2 un 0.000000001"
+
+#: ../gegl/gegl-init.c:221
+msgid "Where GEGL stores its swap"
+msgstr "Kur ir GEGL maiņvieta"
+
+#: ../gegl/gegl-init.c:226
+msgid "How much memory to (approximately) use for caching imagery"
+msgstr "Aptuveni cik atmiņas izmantot attēlu pieglabāšanai"
+
+#: ../gegl/gegl-init.c:231
+msgid "Default size of tiles in GeglBuffers"
+msgstr "Noklusējuma izmērs flīzēm iekš GeglBuffers"
+
+#: ../gegl/gegl-init.c:236
+msgid "The count of pixels to compute simultaneously"
+msgstr "Vienlaicīgi aprēķināmo pikseļu skaits"
+
+#: ../gegl/gegl-init.c:241
+msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
+msgstr "Renderēšanas kvalitāte — vērtība starp 0.0(ātri) un 1.0(atsauce)"
+
+#: ../gegl/gegl-init.c:246
+msgid "The number of concurrent processing threads to use"
+msgstr "Vienlaicīgi izmantojamo vienlaicīgo apstrādes pavedienu skaits"
+
+#: ../gegl/module/geglmodule.c:147 ../gegl/module/geglmodule.c:165
+#: ../gegl/module/geglmodule.c:274 ../gegl/module/geglmodule.c:301
+#: ../gegl/module/geglmodule.c:393
+#, c-format
+msgid "Module '%s' load error: %s"
+msgstr "Moduļa '%s' ielādes kļūda — %s"
+
+#: ../gegl/module/geglmodule.c:369
+msgid "Module error"
+msgstr "Kļūda modulī"
+
+#: ../gegl/module/geglmodule.c:370
+msgid "Loaded"
+msgstr "Ielādēts"
+
+#: ../gegl/module/geglmodule.c:371
+msgid "Load failed"
+msgstr "Ielādes kļūda"
+
+#: ../gegl/module/geglmodule.c:372
+msgid "Not loaded"
+msgstr "Nav ielādēts"
+
+#: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/dropshadow.c:31
+msgid "Blur radius"
+msgstr "Aizmiglošanas rādiuss"
+
+#: ../operations/common/bilateral-filter.c:28
+msgid "Radius of square pixel region, (width and height will be radius*2+1)."
+msgstr ""
+"Kvadrāta pikseļa reģiona rādiuss (platums un augstums būs rādiuss*2+1)."
+
+#: ../operations/common/bilateral-filter.c:29
+msgid "Edge preservation"
+msgstr "Malu saglabāšana"
+
+#: ../operations/common/bilateral-filter.c:30
+msgid "Amount of edge preservation"
+msgstr "Malu saglabāšanas apjoms"
+
+#: ../operations/common/bilateral-filter.c:315
+msgid ""
+"An edge preserving blur filter that can be used for noise reduction. It is a "
+"gaussian blur where the contribution of neighbourhood pixels are weighted by "
+"the color difference from the center pixel."
+msgstr ""
+"Malu saglabāšanas aizmiglošanas filtrs, ko var izmantot trokšņu "
+"samazināšanai. Tā ir Gausa aizmiglošana, kur pienesums no blakus pikseļiem "
+"tiek svērts pret krāsu atšķirību no centrālā pikseļa."
+
+#: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
+#: ../operations/common/difference-of-gaussians.c:26
+#: ../operations/common/difference-of-gaussians.c:28
+#: ../operations/common/dropshadow.c:30 ../operations/common/snn-mean.c:26
+#: ../operations/common/stress.c:27 ../operations/common/vignette.c:26
+#: ../operations/external/matting-levin.c:28
+#: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
+#: ../operations/workshop/box-percentile.c:27
+#: ../operations/workshop/disc-percentile.c:26
+#: ../operations/workshop/kuwahara.c:25
+#: ../operations/workshop/snn-percentile.c:27
+#: ../operations/workshop/whirl-pinch.c:40
+msgid "Radius"
+msgstr "Rādiuss"
+
+#: ../operations/common/box-blur.c:25 ../operations/common/snn-mean.c:27
+msgid "Radius of square pixel region, (width and height will be radius*2+1)"
+msgstr "Kvadrāta pikseļa reģiona rādiuss (platums un augstums būs rādiuss*2+1)"
+
+#: ../operations/common/box-blur.c:423
+msgid "Performs an averaging of a square box of pixels"
+msgstr "Izrēķina vidējo vērtību pikseļu kvadrāta kastei"
+
+#. ... are the properties of the filter, these are all scalar values
+#. * (doubles), the the parameters are:
+#. *       property name,   min,   max, default, "description of property"
+#.
+#: ../operations/common/brightness-contrast.c:29
+#: ../operations/common/mantiuk06.c:31
+msgid "Contrast"
+msgstr "Kontrasts"
+
+#: ../operations/common/brightness-contrast.c:30
+msgid "Range scale factor"
+msgstr "Apgabala mēroga koeficients"
+
+#: ../operations/common/brightness-contrast.c:31
+#: ../operations/common/reinhard05.c:27
+msgid "Brightness"
+msgstr "Spilgtums"
+
+#: ../operations/common/brightness-contrast.c:32
+msgid "Amount to increase brightness"
+msgstr "Apjoms, par kādu palielināt spilgtumu"
+
+#: ../operations/common/brightness-contrast.c:145
+msgid "Changes the light level and contrast."
+msgstr "Maina gaismas līmeni un kontrastu."
+
+#: ../operations/common/buffer-sink.c:25
+#: ../operations/common/write-buffer.c:25
+msgid "Buffer location"
+msgstr "Bufera atrašanās vieta"
+
+#: ../operations/common/buffer-sink.c:26
+msgid "The location where to store the output GeglBuffer"
+msgstr "Vieta, kur saglabāt izvadi no GeglBuffer"
+
+#: ../operations/common/buffer-sink.c:27
+msgid "babl format"
+msgstr "babl formāts"
+
+#: ../operations/common/buffer-sink.c:28
+msgid ""
+"The babl format of the output GeglBuffer, NULL to use input buffer format"
+msgstr "babl formāts GeglBuffer izvadei. NULL, lai izmantotu ievades formātu"
+
+#: ../operations/common/buffer-sink.c:83
+#: ../operations/common/write-buffer.c:127
+msgid "A GEGL buffer destination surface."
+msgstr "GEGL bufera mērķa virsma."
+
+#: ../operations/common/buffer-source.c:25
+msgid "Input buffer"
+msgstr "Ievades buferis"
+
+#: ../operations/common/buffer-source.c:26
+msgid "The GeglBuffer to load into the pipeline"
+msgstr "GeglBuffer, ko ielādēt konveijerā"
+
+#: ../operations/common/buffer-source.c:177
+msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
+msgstr ""
+"Avots, kas izmanto atmiņā esošu GeglBuffer, izmantojams iekšēji ar GEGL."
+
+#: ../operations/common/c2g.c:28
+msgid ""
+"Neighborhood taken into account, this is the radius in pixels taken into "
+"account when deciding which colors map to which gray values"
+msgstr ""
+"Apkārtne tiek ņemta vērā. Šis ir rādiuss pikseļos, kas jāņem vērā, kad "
+"nosaka, kādas krāsas ir jāattēlo uz kurām pelēkajām vērtībām."
+
+#: ../operations/common/c2g.c:29 ../operations/common/stress.c:29
+msgid "Samples"
+msgstr "Paraugi"
+
+#: ../operations/common/c2g.c:30 ../operations/common/stress.c:30
+msgid "Number of samples to do per iteration looking for the range of colors"
+msgstr "Paraugu skaits, kas jāņem katrā iterācijā, meklējot krāsu apgabalu."
+
+#: ../operations/common/c2g.c:31 ../operations/common/fractal-explorer.c:42
+#: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
+#: ../operations/workshop/mandelbrot.c:31
+msgid "Iterations"
+msgstr "Iterācijas"
+
+#: ../operations/common/c2g.c:32
+msgid ""
+"Number of iterations, a higher number of iterations provides less noisy "
+"results at a computational cost"
+msgstr ""
+"Iterāciju skaits. Lielāks iterāciju skaits dod mazāk trokšņainu rezultātu, "
+"bet ir ilgāk jāskaitļo"
+
+#: ../operations/common/c2g.c:493
+msgid ""
+"Color to grayscale conversion, uses envelopes formed from spatial  color "
+"differences to perform color-feature preserving grayscale  spatial contrast "
+"enhancement"
+msgstr ""
+"Pārveidošanā no krāsām uz pelēktoņiem tiek izmantotas aploksnes no telpiskām "
+"krāsu atšķirībām, lai veiktu krāsu pazīmju saglabāšanu pelēktoņu telpiskā "
+"kontrasta uzlabošanu"
+
+#: ../operations/common/checkerboard.c:25
+#: ../operations/common/fractal-explorer.c:30
+#: ../operations/common/fractal-explorer.c:31 ../operations/common/grid.c:24
+#: ../operations/common/rectangle.c:33 ../operations/core/crop.c:27
+#: ../operations/external/svg-load.c:27 ../operations/external/text.c:38
+#: ../operations/external/v4l.c:27 ../operations/external/vector-stroke.c:30
+#: ../operations/workshop/external/line-profile.c:29
+msgid "Width"
+msgstr "Platums"
+
+#: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
+msgid "Horizontal width of cells pixels"
+msgstr "Šūnu horizontālais platums pikseļos"
+
+#: ../operations/common/checkerboard.c:27
+#: ../operations/common/fractal-explorer.c:32
+#: ../operations/common/fractal-explorer.c:33 ../operations/common/grid.c:26
+#: ../operations/common/rectangle.c:35 ../operations/core/crop.c:28
+#: ../operations/external/svg-load.c:29 ../operations/external/text.c:40
+#: ../operations/external/v4l.c:28
+#: ../operations/workshop/external/line-profile.c:30
+msgid "Height"
+msgstr "Augstums"
+
+#: ../operations/common/checkerboard.c:28 ../operations/common/grid.c:27
+msgid "Vertical width of cells in pixels"
+msgstr "Šūnu vertikālais platums pikseļos"
+
+#: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:28
+#: ../operations/common/mirrors.c:36
+msgid "X offset"
+msgstr "X nobīde"
+
+#: ../operations/common/checkerboard.c:30 ../operations/common/grid.c:29
+msgid "Horizontal offset (from origin) for start of grid"
+msgstr "Horizontālā nobīde (no izcelsmes) režģa sākumam"
+
+#: ../operations/common/checkerboard.c:31 ../operations/common/grid.c:30
+#: ../operations/common/mirrors.c:38
+msgid "Y offset"
+msgstr "Y nobīde"
+
+#: ../operations/common/checkerboard.c:32 ../operations/common/grid.c:31
+msgid "Vertical offset (from origin) for start of grid"
+msgstr "Vertikālā nobīde (no izcelsmes) režģa sākumam"
+
+#: ../operations/common/checkerboard.c:33 ../operations/common/color.c:24
+#: ../operations/common/color-to-alpha.c:28 ../operations/common/grid.c:36
+#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:25
+#: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
+#: ../operations/external/vector-stroke.c:27
+#: ../operations/workshop/linear-gradient.c:28
+#: ../operations/workshop/radial-gradient.c:28
+msgid "Color"
+msgstr "Krāsa"
+
+#: ../operations/common/checkerboard.c:34
+msgid "One of the cell colors (defaults to 'black')"
+msgstr "Viena no šūnas krāsām (noklusējuma vērtība ir 'black')"
+
+#: ../operations/common/checkerboard.c:35
+#: ../operations/workshop/linear-gradient.c:30
+#: ../operations/workshop/radial-gradient.c:30
+msgid "Other color"
+msgstr "Otra krāsa"
+
+#: ../operations/common/checkerboard.c:36
+msgid "The other cell color (defaults to 'white')"
+msgstr "Otra šūnas krāsa (noklusējuma vērtība ir 'white')"
+
+#: ../operations/common/checkerboard.c:146
+msgid "Checkerboard renderer"
+msgstr "Dambretes galdiņa atveidojums"
+
+#: ../operations/common/color.c:25
+msgid "The color to render (defaults to 'black')"
+msgstr "Krāsa, kuru atveidot (noklusējuma vērtība ir 'black')"
+
+#: ../operations/common/color.c:88
+msgid ""
+"Generates a buffer entirely filled with the specified color, crop it to get "
+"smaller dimensions."
+msgstr ""
+"Izveidot buferi, kas ir pilnībā aizpildīts ar norādīto krāsu. Apcērtiet to, "
+"lai samazinātu izmērus."
+
+#: ../operations/common/color-reduction.c:33
+msgid "Red bits"
+msgstr "Sarkanie biti"
+
+#: ../operations/common/color-reduction.c:33
+msgid "Number of bits for red channel"
+msgstr "Bitu skaits sarkanajā kanālā"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Green bits"
+msgstr "Zaļie biti"
+
+#: ../operations/common/color-reduction.c:34
+msgid "Number of bits for green channel"
+msgstr "Bitu skaits zaļajā kanālā"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Blue bits"
+msgstr "Zilie biti"
+
+#: ../operations/common/color-reduction.c:35
+msgid "Number of bits for blue channel"
+msgstr "Bitu skaits zilajā kanālā"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Alpha bits"
+msgstr "Alfa biti"
+
+#: ../operations/common/color-reduction.c:36
+msgid "Number of bits for alpha channel"
+msgstr "Bitu skaits alfa kanālā"
+
+#: ../operations/common/color-reduction.c:38
+msgid "Dithering Strategy"
+msgstr "Pustoņu imitēšanas stratēģija"
+
+#: ../operations/common/color-reduction.c:39
+msgid "The dithering strategy to use"
+msgstr "Izmantojamā pustoņu imitēšanas stratēģija"
+
+#: ../operations/common/color-reduction.c:478
+msgid ""
+"Reduces the number of bits per channel (colors and alpha), with optional "
+"dithering"
+msgstr ""
+"Samazina bitu skaitu kanālā (krāsu un alfas) ar neobligātu pustoņu imitēšanu"
+
+#: ../operations/common/color-temperature.c:27
+msgid "Original temperature"
+msgstr "Oriģināla temperatūra"
+
+#: ../operations/common/color-temperature.c:27
+msgid ""
+"Estimated temperature of the light source in Kelvin the image was taken with."
+msgstr ""
+"Gaismas avota novērtētā temperatūra kelvinos, kādā tika uzņemts attēls."
+
+#: ../operations/common/color-temperature.c:28
+msgid "Intended temperature"
+msgstr "Vēlamā temperatūra"
+
+#: ../operations/common/color-temperature.c:28
+msgid "Corrected estimation of the temperature of the light source in Kelvin."
+msgstr "Gaismas avota temperatūras labotais novērtējums kelvinos."
+
+#: ../operations/common/color-temperature.c:267
+msgid "Allows changing the color temperature of an image."
+msgstr "Ļauj mainīt attēla krāsu temperatūru."
+
+#: ../operations/common/color-to-alpha.c:29
+msgid "The color to render (defaults to 'white')"
+msgstr "Krāsa, kuru atveidot (noklusējuma vērtība ir 'white')"
+
+#: ../operations/common/color-to-alpha.c:176
+msgid "Performs color-to-alpha on the image."
+msgstr "Veic krāsa-uz-alfa pārveidošanu attēlam."
+
+#: ../operations/common/contrast-curve.c:25
+msgid "Sample points"
+msgstr "Paraugpunkti"
+
+#: ../operations/common/contrast-curve.c:26
+msgid "Number of curve sampling points.  0 for exact calculation."
+msgstr "Līknes paraugpunktu skaits. 0 — precīzai aprēķināšanai."
+
+#: ../operations/common/contrast-curve.c:27
+msgid "Curve"
+msgstr "Līkne"
+
+#: ../operations/common/contrast-curve.c:27
+msgid "The contrast curve."
+msgstr "Kontrasta līkne."
+
+#: ../operations/common/contrast-curve.c:125
+msgid "Adjusts the contrast of the image according to a curve."
+msgstr "Pielāgo attēla kontrastu, vadoties pēc līknes."
+
+#: ../operations/common/difference-of-gaussians.c:25
+msgid "Radius 1"
+msgstr "Rādiuss 1"
+
+#: ../operations/common/difference-of-gaussians.c:27
+msgid "Radius 2"
+msgstr "Rādiuss 2"
+
+#: ../operations/common/difference-of-gaussians.c:101
+msgid "Does an edge detection based on the difference of two gaussian blurs."
+msgstr ""
+"Veic malu noteikšanu, balstoties uz atšķirību starp diviem Gausa "
+"aizmiglojumiem."
+
+#: ../operations/common/display.c:24 ../operations/external/sdl-display.c:26
+msgid "Title to be given to output window"
+msgstr "Virsraksts, ko dot izvades logam"
+
+#: ../operations/common/display.c:142
+msgid "Display the input buffer in a window."
+msgstr "Rādīt ievades buferi logā."
+
+#: ../operations/common/dot.c:26 ../operations/common/pixelize.c:25
+msgid "Block Width"
+msgstr "Bloku platums"
+
+#: ../operations/common/dot.c:27
+msgid "Size of each block in pixels"
+msgstr "Katra bloka platums pikseļos"
+
+#: ../operations/common/dot.c:28
+msgid "Dot size ratio"
+msgstr "Punkta izmēra koeficients"
+
+#: ../operations/common/dot.c:29
+msgid "Size ratio of a dot inside each block"
+msgstr "Izmēra koeficients punktam katrā blokā"
+
+#: ../operations/common/dot.c:191
+msgid "Simplify image into an array of solid-colored dots"
+msgstr "Vienkāršot attēlu par vienkrāsainu punktu masīvu"
+
+#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
+#: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
+#: ../operations/external/vector-fill.c:30
+#: ../operations/external/vector-stroke.c:33
+msgid "Opacity"
+msgstr "Blīvums"
+
+#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:34
+#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:32
+#: ../operations/common/waves.c:26 ../operations/core/crop.c:25
+msgid "X"
+msgstr "X"
+
+#: ../operations/common/dropshadow.c:27
+msgid "Horizontal shadow offset"
+msgstr "Horizontālā ēnas nobīde"
+
+#: ../operations/common/dropshadow.c:28 ../operations/common/layer.c:36
+#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:33
+#: ../operations/common/waves.c:29 ../operations/core/crop.c:26
+msgid "Y"
+msgstr "Y"
+
+#: ../operations/common/dropshadow.c:29
+msgid "Vertical shadow offset"
+msgstr "Vertikālā ēnas nobīde"
+
+#: ../operations/common/dropshadow.c:82
+msgid "Creates a dropshadow effect on the input buffer"
+msgstr "Izveido krītošas ēnas efektu ievades buferī"
+
+#: ../operations/common/edge-laplace.c:521
+msgid "High-resolution edge detection"
+msgstr "Augstas izšķirtspējas malu noteikšana"
+
+#: ../operations/common/edge-sobel.c:28 ../operations/common/edge-sobel.c:29
+#: ../operations/workshop/noise-spread.c:29
+msgid "Horizontal"
+msgstr "Horizontāls"
+
+#: ../operations/common/edge-sobel.c:31 ../operations/common/edge-sobel.c:32
+#: ../operations/workshop/noise-spread.c:31
+msgid "Vertical"
+msgstr "Vertikāls"
+
+#: ../operations/common/edge-sobel.c:34 ../operations/common/edge-sobel.c:35
+msgid "Keep Signal"
+msgstr "Paturēt signālu"
+
+#: ../operations/common/edge-sobel.c:352
+msgid "Specialized direction-dependent edge detection"
+msgstr "Specializēta, no virziena neatkarīga, robežu noteikšana"
+
+#: ../operations/common/exp-combine.c:25
+msgid "Exposure Values"
+msgstr "Ekspozīcijas vērtības"
+
+#: ../operations/common/exp-combine.c:26
+msgid "Relative brightness of each exposure in EV"
+msgstr "Relatīvais spilgtums katrai ekspozīcijai, izteikta ar EV"
+
+#: ../operations/common/exp-combine.c:27
+msgid "Discretization Bits"
+msgstr "Diskretizēšanas biti"
+
+#: ../operations/common/exp-combine.c:29
+msgid "Log2 of source's discretization steps"
+msgstr "Log2 no avota diskretizēšanas soļiem"
+
+#: ../operations/common/exp-combine.c:30
+msgid "Weight Sigma"
+msgstr "Svara sigma"
+
+#: ../operations/common/exp-combine.c:32
+msgid "Weight distribution sigma controlling response contributions"
+msgstr "Svara sadalījuma sigma, kas kontrolē atbildes pienesumu"
+
+#: ../operations/common/exp-combine.c:1293
+msgid "Combine multiple scene exposures into one high range buffer"
+msgstr "Apvienot vairāku ainu ekspozīcijas vienā augta apgabala buferī"
+
+#: ../operations/common/fattal02.c:33 ../operations/common/noise.c:25
+#: ../operations/workshop/convolution-matrix.c:86
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../operations/common/fattal02.c:35
+msgid "Gradient threshold for detail enhancement"
+msgstr "Krāsu pārejas slieksnis, detaļu uzlabošanai"
+
+#: ../operations/common/fattal02.c:36
+msgid "Beta"
+msgstr "Beta"
+
+#: ../operations/common/fattal02.c:38
+msgid "Strength of local detail enhancement"
+msgstr "Lokālo detaļu uzlabošanas spēks"
+
+#: ../operations/common/fattal02.c:39 ../operations/common/mantiuk06.c:34
+#: ../operations/workshop/color-rotate.c:50
+msgid "Saturation"
+msgstr "Piesātinājums"
+
+#: ../operations/common/fattal02.c:41
+msgid "Global color saturation factor"
+msgstr "Globālais krāsu piesātināšanas koeficients"
+
+#: ../operations/common/fattal02.c:42
+msgid "Noise"
+msgstr "Troksnis"
+
+#: ../operations/common/fattal02.c:44
+msgid "Gradient threshold for lowering detail enhancement"
+msgstr "Krāsu pārejas slieksnis, detaļu uzlabošanas samazināšanai"
+
+#: ../operations/common/fattal02.c:1325
+msgid ""
+"Adapt an image, which may have a high dynamic range, for presentation using "
+"a low dynamic range. This operator attenuates the magnitudes of local image "
+"gradients, producing luminance within the range 0.0-1.0"
+msgstr ""
+"Adaptēt attēlu, kam var būt augsts dinamiskais apgabals, prezentēšanai, "
+"izmantojot zemu dinamisko apgabalu. Šis operators vājina lokālā attēla krāsu "
+"pāreju lielumu, veidojot spilgtumu apgabalā 0.0-1.0"
+
+#: ../operations/common/fractal-explorer.c:35
+msgid "Fractal type"
+msgstr "Fraktāļa tips"
+
+#: ../operations/common/fractal-explorer.c:35
+msgid "Type of a fractal"
+msgstr "Fraktāļa tips"
+
+#: ../operations/common/fractal-explorer.c:37
+msgid "Left"
+msgstr "Kreisais"
+
+#: ../operations/common/fractal-explorer.c:38
+msgid "Right"
+msgstr "Labais"
+
+#: ../operations/common/fractal-explorer.c:39
+msgid "Top"
+msgstr "Augšējais"
+
+#: ../operations/common/fractal-explorer.c:40
+msgid "Bottom"
+msgstr "Apakšējais"
+
+#: ../operations/common/fractal-explorer.c:44
+msgid "CX"
+msgstr "CX"
+
+#: ../operations/common/fractal-explorer.c:44
+msgid "CX (only Julia)"
+msgstr "CX (tiki Džuliana)"
+
+#: ../operations/common/fractal-explorer.c:45
+msgid "CY"
+msgstr "CY"
+
+#: ../operations/common/fractal-explorer.c:45
+msgid "CY (only Julia)"
+msgstr "CY (tiki Džuliana)"
+
+#: ../operations/common/fractal-explorer.c:47
+msgid "Red stretch"
+msgstr "Sarkanais izvērsums"
+
+#: ../operations/common/fractal-explorer.c:48
+msgid "Red stretching factor"
+msgstr "Sarkanā izvērsuma koeficients"
+
+#: ../operations/common/fractal-explorer.c:49
+msgid "Green stretch"
+msgstr "Zaļais izvērsums"
+
+#: ../operations/common/fractal-explorer.c:50
+msgid "Green stretching factor"
+msgstr "Zaļā izvērsuma koeficients"
+
+#: ../operations/common/fractal-explorer.c:51
+msgid "Blue stretch"
+msgstr "Zilais izvērsums"
+
+#: ../operations/common/fractal-explorer.c:52
+msgid "Blue stretching factor"
+msgstr "Zilā izvērsuma koeficients"
+
+#: ../operations/common/fractal-explorer.c:54
+msgid "Red mode"
+msgstr "Sarkanais režīms"
+
+#: ../operations/common/fractal-explorer.c:55
+msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
+msgstr "Sarkanais lietotnes režīms (0:SIN; 1:COS; 2:NEKĀDS)"
+
+#: ../operations/common/fractal-explorer.c:56
+msgid "Green mode"
+msgstr "Zaļais režīms"
+
+#: ../operations/common/fractal-explorer.c:57
+msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
+msgstr "Zaļais lietotnes režīms (0:SIN; 1:COS; 2:NEKĀDS)"
+
+#: ../operations/common/fractal-explorer.c:58
+msgid "Blue mode"
+msgstr "Zilais režīms"
+
+#: ../operations/common/fractal-explorer.c:59
+msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
+msgstr "Zilais lietotnes režīms (0:SIN; 1:COS; 2:NEKĀDS)"
+
+#: ../operations/common/fractal-explorer.c:61
+#: ../operations/common/fractal-explorer.c:62
+msgid "Red inversion"
+msgstr "Sarkanā inversija"
+
+#: ../operations/common/fractal-explorer.c:63
+#: ../operations/common/fractal-explorer.c:64
+msgid "Green inversion"
+msgstr "Zaļā inversija"
+
+#: ../operations/common/fractal-explorer.c:65
+#: ../operations/common/fractal-explorer.c:66
+msgid "Blue inversion"
+msgstr "Zilā inversija"
+
+#: ../operations/common/fractal-explorer.c:68
+msgid "Colors"
+msgstr "Krāsas"
+
+#: ../operations/common/fractal-explorer.c:69
+msgid "Number of colors"
+msgstr "Krāsu skaits"
+
+#: ../operations/common/fractal-explorer.c:71
+msgid "Loglog smoothing"
+msgstr "Loglog gludināšana"
+
+#: ../operations/common/fractal-explorer.c:72
+msgid "Use loglog smoothing"
+msgstr "Lietot loglog gludināšanu"
+
+#: ../operations/common/fractal-explorer.c:474
+msgid "Fractal Explorer"
+msgstr "Fraktāļu pārlūks"
+
+#: ../operations/common/gaussian-blur.c:30
+msgid "Size X"
+msgstr "Izmērs X"
+
+#: ../operations/common/gaussian-blur.c:31
+msgid ""
+"Standard deviation for the horizontal axis. (multiply by ~2 to get radius)"
+msgstr ""
+"Starndartnovirze horizontālajai asij (reiziniet ar ~2, lai iegūt rādiusu)."
+
+#: ../operations/common/gaussian-blur.c:32
+msgid "Size Y"
+msgstr "Izmērs Y"
+
+#: ../operations/common/gaussian-blur.c:33
+msgid ""
+"Standard deviation for the vertical axis. (multiply by ~2 to get radius.)"
+msgstr ""
+"Starndartnovirze vertikālajai asij (reiziniet ar ~2, lai iegūt rādiusu)."
+
+#: ../operations/common/gaussian-blur.c:34
+#: ../operations/transform/transform-core.c:218
+#: ../operations/workshop/emboss.c:31
+msgid "Filter"
+msgstr "Filtrs"
+
+#: ../operations/common/gaussian-blur.c:35
+msgid ""
+"Optional parameter to override the automatic selection of blur filter. "
+"Choices are fir, iir, auto"
+msgstr ""
+"Neobligāts parametrs, lai pārrakstītu automātisko aizmiglošanas filtra "
+"izvēli. Var izvēlēties fir, iir, auto"
+
+#: ../operations/common/gaussian-blur.c:731
+msgid ""
+"Performs an averaging of neighboring pixels with the normal distribution as "
+"weighting"
+msgstr ""
+"Izrēķina vidējo vērtību pikseļu apkaimei ar normālo sadalījumu kā svērumu"
+
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24
+#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
+#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:27
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
+#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
+#: ../operations/external/jpg-save.c:25 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/workshop/external/ff-save.c:30
+#: ../operations/workshop/external/gluas.c:43
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Fails"
+
+#: ../operations/common/gegl-buffer-load-op.c:24
+msgid "Path of GeglBuffer file to load."
+msgstr "Ceļš uz ielādējamo GeglBuffer failu."
+
+#: ../operations/common/gegl-buffer-load-op.c:88
+msgid "GeglBuffer file loader."
+msgstr "GeglBuffer faila ielādētājs."
+
+#: ../operations/common/gegl-buffer-save-op.c:24
+msgid "Target file path to write GeglBuffer to."
+msgstr "Mērķa faila ceļš, kurā rakstīt GeglBuffer."
+
+#: ../operations/common/gegl-buffer-save-op.c:62
+msgid "GeglBuffer file writer."
+msgstr "GeglBuffer faila rakstītājs."
+
+#: ../operations/common/grey.c:104
+msgid "Turns the image greyscale"
+msgstr "Pārvērš attēlu pelēktoņos"
+
+#: ../operations/common/grid.c:32
+msgid "Line Width"
+msgstr "Līnijas platums"
+
+#: ../operations/common/grid.c:33
+msgid "Width of grid lines in pixels"
+msgstr "Līniju platums pikseļos"
+
+#: ../operations/common/grid.c:34
+msgid "Line Height"
+msgstr "Līnijas augstums"
+
+#: ../operations/common/grid.c:35
+msgid "Height of grid lines in pixels"
+msgstr "Līniju augstums pikseļos"
+
+#: ../operations/common/grid.c:37
+msgid "Color of the grid lines"
+msgstr "Režģa līniju krāsa"
+
+#: ../operations/common/grid.c:129
+msgid "Grid renderer"
+msgstr "Režģa attēlotājs"
+
+#: ../operations/common/introspect.c:26
+msgid "Node"
+msgstr "Mezgls"
+
+#: ../operations/common/introspect.c:26
+msgid "GeglNode to introspect"
+msgstr "GeglNode mezgls, ko izmeklēt"
+
+#: ../operations/common/introspect.c:160
+msgid "GEGL graph visualizer."
+msgstr "GEGL grafa vizualizators."
+
+#: ../operations/common/invert.c:86
+msgid ""
+"Inverts the components (except alpha), the result is the corresponding "
+"\"negative\" image."
+msgstr ""
+"Invertē komponentes (izņemot alfa), rezultāts ir atbilstošais attēla "
+"“negatīvs”."
+
+#: ../operations/common/layer.c:30
+msgid "Operation"
+msgstr "Darbība"
+
+#: ../operations/common/layer.c:31
+msgid "Composite operation to use"
+msgstr "Izmantojamā salikšanas darbība"
+
+#: ../operations/common/layer.c:35 ../operations/common/rectangle.c:30
+msgid "Horizontal position"
+msgstr "Horizontālais novietojums"
+
+#: ../operations/common/layer.c:37 ../operations/common/rectangle.c:32
+msgid "Vertical position"
+msgstr "Vertikālais novietojums"
+
+#: ../operations/common/layer.c:38 ../operations/common/noise.c:27
+#: ../operations/common/unsharp-mask.c:26
+#: ../operations/workshop/external/lens-correct.c:43
+msgid "Scale"
+msgstr "Mērogs"
+
+#: ../operations/common/layer.c:39
+msgid "Scale 1:1 size"
+msgstr "Mērogs 1:1 izmērs"
+
+#: ../operations/common/layer.c:40
+msgid "Source"
+msgstr "Avots"
+
+#: ../operations/common/layer.c:41
+msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
+msgstr "Avota datu fails (png, jpg, raw, svg, bmp, tif, ...)"
+
+#: ../operations/common/layer.c:267
+msgid "A layer in the traditional sense"
+msgstr "Slānis parastajā izpratnē"
+
+#: ../operations/common/lens-distortion.c:33
+msgid "Main:"
+msgstr "Galvenā:"
+
+#: ../operations/common/lens-distortion.c:34
+#: ../operations/common/lens-distortion.c:36
+msgid "Main value of distortion"
+msgstr "Kropļojumu galvenā vērtība"
+
+#: ../operations/common/lens-distortion.c:35
+msgid "Zoom:"
+msgstr "Mērogs:"
+
+#: ../operations/common/lens-distortion.c:37
+msgid "Edge:"
+msgstr "Mala:"
+
+#: ../operations/common/lens-distortion.c:38
+msgid "Edge value of distortion"
+msgstr "Kropļojumu malas vērtība"
+
+#: ../operations/common/lens-distortion.c:39
+msgid "Brighten:"
+msgstr "Padarīt spožāku:"
+
+#: ../operations/common/lens-distortion.c:40
+msgid "Brighten the image"
+msgstr "Padarīt attēlu spožāku"
+
+#: ../operations/common/lens-distortion.c:41
+msgid "X shift:"
+msgstr "X nobīde:"
+
+#: ../operations/common/lens-distortion.c:42
+msgid "Shift horizontal"
+msgstr "Nobīde horizontāli"
+
+#: ../operations/common/lens-distortion.c:43
+msgid "Y shift:"
+msgstr "Y nobīde:"
+
+#: ../operations/common/lens-distortion.c:44
+msgid "Shift vertical"
+msgstr "Nobīde vertikāli"
+
+#: ../operations/common/lens-distortion.c:321
+#: ../operations/workshop/external/lens-correct.c:476
+msgid "Copies image performing lens distortion correction."
+msgstr "Kopē attēlu, veicot lēcas kropļojumu korekciju."
+
+#: ../operations/common/levels.c:26
+msgid "Low input"
+msgstr "Zemā ievade"
+
+#: ../operations/common/levels.c:27
+msgid "Input luminance level to become lowest output"
+msgstr "Ievades spīduma līmenis, kas kļūst par zemāko izvadi"
+
+#: ../operations/common/levels.c:28
+msgid "High input"
+msgstr "Augstā ievade"
+
+#: ../operations/common/levels.c:29
+msgid "Input luminance level to become white."
+msgstr "Ievades spīduma līmenis, kas kļūst par balto."
+
+#: ../operations/common/levels.c:30
+msgid "Low output"
+msgstr "Zemā izvade"
+
+#: ../operations/common/levels.c:31
+msgid "Lowest luminance level in output"
+msgstr "Zemākais spīduma līmenis izvadē"
+
+#: ../operations/common/levels.c:32
+msgid "High output"
+msgstr "Augstā izvade"
+
+#: ../operations/common/levels.c:33
+msgid "Highest luminance level in output"
+msgstr "Augstākais spīduma līmenis izvadē"
+
+#: ../operations/common/levels.c:182
+msgid "Remaps the intensity range of the image"
+msgstr "Maina attēla intensitātes apgabala karti"
+
+#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
+#: ../operations/common/raw-load.c:27 ../operations/external/png-load.c:27
+#: ../operations/external/ppm-load.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "Path of file to load."
+msgstr "Ceļš uz failu, ko ielādēt."
+
+#: ../operations/common/load.c:180
+msgid ""
+"Multipurpose file loader, that uses other native handlers, and fallback "
+"conversion using image magick's convert."
+msgstr ""
+"Vairāku failu ielādētājs, kas izmanto vietējos apstrādātājus, un atkāpšanās "
+"pārveidošana, izmantojot magick konvertu."
+
+#: ../operations/common/magick-load.c:136
+msgid "Image Magick wrapper using the png op."
+msgstr "Attēla Magick ietinums, izmantojot png op."
+
+#: ../operations/common/mantiuk06.c:33
+msgid "The amount of contrast compression"
+msgstr "Kontrasta kompensēšanas apjoms"
+
+#: ../operations/common/mantiuk06.c:36
+msgid "Global colour saturation factor"
+msgstr "Globālais krāsu piesātināšanas koeficients"
+
+#: ../operations/common/mantiuk06.c:37
+msgid "Detail"
+msgstr "Detaļas"
+
+#: ../operations/common/mantiuk06.c:39
+msgid "Level of emphasis on image gradient details"
+msgstr "Līmenis uzsvaram uz attēla krāsu pāreju detaļām"
+
+#: ../operations/common/mantiuk06.c:1639
+msgid ""
+"Adapt an image, which may have a high dynamic range, for presentation using "
+"a low dynamic range. This operator constrains contrasts across multiple "
+"spatial frequencies, producing luminance within the range 0.0-1.0"
+msgstr ""
+"Adaptēt attēlu, kam var būt augsts dinamiskais apgabals, prezentēšanai, "
+"izmantojot zemu dinamisko apgabalu. Šis operators ierobežo kontrastu "
+"vairākās telpiskās frekvencēs, veidojot spilgtumu apgabalā 0.0-1.0"
+
+#: ../operations/common/map-absolute.c:22
+#: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:39
+#: ../operations/common/waves.c:41 ../operations/workshop/ditto.c:27
+msgid "Sampler"
+msgstr "Paraugs"
+
+#: ../operations/common/map-absolute.c:23
+#: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:40
+#: ../operations/common/waves.c:42 ../operations/workshop/ditto.c:28
+msgid "Sampler used internally"
+msgstr "Iekšēji lietots paraugs"
+
+#: ../operations/common/map-absolute.c:148
+msgid ""
+"sample input with an auxiliary buffer that contain absolute source "
+"coordinates"
+msgstr "parauga ievade ar palīgbuferi, kas satur absolūtas avota koordinātas"
+
+#: ../operations/common/map-relative.c:23
+msgid "Scaling"
+msgstr "Mērogošana"
+
+#: ../operations/common/map-relative.c:24
+msgid ""
+"scaling factor of displacement, indicates how large spatial displacement a "
+"relative mapping value of 1.0 corresponds to."
+msgstr ""
+"novietojuma maiņas mēroga koeficients; norāda, cik lielai telpiskajai "
+"nobīdei atbilst 1.0, attiecībā pret attēlojuma vērtību."
+
+#: ../operations/common/map-relative.c:156
+msgid ""
+"sample input with an auxiliary buffer that contain relative source "
+"coordinates"
+msgstr "parauga ievade ar palīgbuferi, kas satur relatīvas avota koordinātas"
+
+#: ../operations/common/matting-global.c:26
+msgid "Number of iterations"
+msgstr "Iterāciju skaits"
+
+#: ../operations/common/matting-global.c:482
+msgid ""
+"Given a sparse user supplied tri-map and an input image, create a foreground "
+"alpha matte. Set white as foreground, black as background for the tri-map. "
+"Everything else will be treated as unknown and filled in."
+msgstr ""
+"Ja lietotājs ir devis trūcīgu tri-karti un ievades attēlu, izveidot "
+"priekšplāna alfas matējumu. Iestatiet balto kā priekšplānu un melno kā fonu "
+"tri-kartei. Viss pārējais tiks uzskatīts par nezināmu un tiks aizpildīts."
+
+#: ../operations/common/mblur.c:25
+msgid "Dampness"
+msgstr "Mitrums"
+
+#: ../operations/common/mblur.c:26
+msgid "The value represents the contribution of the past to the new frame."
+msgstr "Vērtība, kas apzīmē pienesumu no pagātnes jaunajam kadram."
+
+#: ../operations/common/mblur.c:144
+msgid "Accumulating motion blur"
+msgstr "Uzkrājošais kustības izplūdums"
+
+#: ../operations/common/mirrors.c:30
+msgid "Mirror rotation"
+msgstr "Spoguļa pagrieziens"
+
+#: ../operations/common/mirrors.c:30
+msgid "Rotation applied to the mirrors"
+msgstr "Pagrieziens, kas attiecināts uz spoguļiem"
+
+#: ../operations/common/mirrors.c:32
+msgid "Result rotation"
+msgstr "Rezultāta pagrieziens"
+
+#: ../operations/common/mirrors.c:32
+msgid "Rotation applied to the result"
+msgstr "Pagrieziens, kas attiecināts uz rezultāta"
+
+#: ../operations/common/mirrors.c:34
+msgid "Mirrors"
+msgstr "Spoguļi"
+
+#: ../operations/common/mirrors.c:34
+msgid "Number of mirrors to use"
+msgstr "Izmantojamo spoguļu skaits"
+
+#: ../operations/common/mirrors.c:36
+msgid "X offset of the result of mirroring"
+msgstr "X nobīde spoguļošanas rezultātam"
+
+#: ../operations/common/mirrors.c:38
+msgid "Y offset of the result of mirroring"
+msgstr "Y nobīde spoguļošanas rezultātam"
+
+#: ../operations/common/mirrors.c:40
+msgid "Center X"
+msgstr "Centrs X"
+
+#: ../operations/common/mirrors.c:40
+msgid "X axis ratio for the center of mirroring"
+msgstr "X ass attiecība centra spoguļošanai"
+
+#: ../operations/common/mirrors.c:42
+msgid "Center Y"
+msgstr "Centrs Y"
+
+#: ../operations/common/mirrors.c:42
+msgid "Y axis ratio for the center of mirroring"
+msgstr "Y ass attiecība centra spoguļošanai"
+
+#: ../operations/common/mirrors.c:44
+msgid "Trim X"
+msgstr "Apgriezt X"
+
+#: ../operations/common/mirrors.c:44
+msgid "X axis ratio for trimming mirror expanse"
+msgstr "X ass attiecība spoguļa plašumu apgriešanai"
+
+#: ../operations/common/mirrors.c:46
+msgid "Trim Y"
+msgstr "Apgriezt Y"
+
+#: ../operations/common/mirrors.c:46
+msgid "Y axis ratio for trimming mirror expanse"
+msgstr "Y ass attiecība spoguļa plašumu apgriešanai"
+
+#: ../operations/common/mirrors.c:48
+msgid "Zoom"
+msgstr "Tuvināt"
+
+#: ../operations/common/mirrors.c:48 ../operations/common/mirrors.c:50
+msgid "Scale factor to make rendering size bigger"
+msgstr "Mēroga koeficients, lai padarītu renderēšanas izmēru lielāku"
+
+#: ../operations/common/mirrors.c:50
+msgid "Expand"
+msgstr "Izvērst"
+
+#: ../operations/common/mirrors.c:52
+msgid "Clip result"
+msgstr "Apcirst rezultātu"
+
+#: ../operations/common/mirrors.c:52
+msgid "Clip result to input size"
+msgstr "Apcirst rezultātu līdz ievades izmēram"
+
+#: ../operations/common/mirrors.c:54
+msgid "Wrap input"
+msgstr "Aplauzt ievadi"
+
+#: ../operations/common/mirrors.c:54
+msgid "Fill full output area"
+msgstr "Aizpildīt pilnībā izvades laukumu"
+
+#: ../operations/common/mirrors.c:401
+msgid "Applies mirroring effect on the image."
+msgstr "Attēlam pielieto spoguļošanas efektu."
+
+#: ../operations/common/mono-mixer.c:26
+#: ../operations/workshop/convolution-matrix.c:83
+msgid "Red"
+msgstr "Sarkans"
+
+#: ../operations/common/mono-mixer.c:27
+msgid "Amount of red"
+msgstr "Sarkanā apjoms"
+
+#: ../operations/common/mono-mixer.c:28
+#: ../operations/workshop/convolution-matrix.c:84
+msgid "Green"
+msgstr "Zaļš"
+
+#: ../operations/common/mono-mixer.c:29
+msgid "Amount of green"
+msgstr "Zaļā apjoms"
+
+#: ../operations/common/mono-mixer.c:30
+#: ../operations/workshop/convolution-matrix.c:85
+msgid "Blue"
+msgstr "Zils"
+
+#: ../operations/common/mono-mixer.c:31
+msgid "Amount of blue"
+msgstr "Zilā apjoms"
+
+#: ../operations/common/mono-mixer.c:104
+msgid "Monochrome channel mixer"
+msgstr "Vienkrāsaina kanāla mikseris"
+
+#: ../operations/common/motion-blur.c:27
+msgid "Length"
+msgstr "Garums"
+
+#: ../operations/common/motion-blur.c:28
+msgid "Length of blur in pixels"
+msgstr "Pikseļu aizmiglošanas garums"
+
+#: ../operations/common/motion-blur.c:29 ../operations/common/ripple.c:36
+msgid "Angle"
+msgstr "Leņķis"
+
+#: ../operations/common/motion-blur.c:30
+msgid "Angle of blur in degrees"
+msgstr "Aizmiglošanas leņķis grādos"
+
+#: ../operations/common/motion-blur.c:349
+msgid "Linear motion blur"
+msgstr "Lineārs kustības izplūdums"
+
+#: ../operations/common/noise.c:29
+msgid "Z offset"
+msgstr "Z nobīde"
+
+#: ../operations/common/noise.c:31 ../operations/workshop/cubism.c:34
+#: ../operations/workshop/plasma.c:33
+msgid "Seed"
+msgstr "Sēkla"
+
+#: ../operations/common/noise.c:33
+msgid "Iteration"
+msgstr "Iterācija"
+
+#: ../operations/common/noise.c:111
+msgid "Perlin noise generator"
+msgstr "Perlin trokšņa veidotājs"
+
+#: ../operations/common/noise-reduction.c:26 ../operations/workshop/warp.c:35
+msgid "Strength"
+msgstr "Stiprums"
+
+#: ../operations/common/noise-reduction.c:26
+msgid "How many iteratarions to run the algorithm with"
+msgstr "Ar cik iterācijām darbināt algoritmu"
+
+#: ../operations/common/opacity.c:25
+msgid ""
+"Global opacity value that is always used on top of the optional auxiliary "
+"input buffer."
+msgstr ""
+"Globāla blīvuma vērtība, kas vienmēr tiek izmantota uz neobligāta ievades "
+"palīgbufera."
+
+#: ../operations/common/opacity.c:153
+msgid ""
+"Weights the opacity of the input both the value of the aux input and the "
+"global value property."
+msgstr ""
+"Izsver ievades blīvumu gan no aux ievades vērtības, gan arī globālās "
+"vērtības īpašības."
+
+#: ../operations/common/open-buffer.c:25
+msgid "a GeglBuffer on disk to open"
+msgstr "atveramais GeglBuffer uz diska"
+
+#: ../operations/common/open-buffer.c:130
+msgid "A source that uses an on-disk GeglBuffer."
+msgstr "Avots, kas izmanto uz diska esošu GeglBuffer."
+
+#: ../operations/common/over.c:153
+msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
+msgstr "Porter Duff operācija: virs (d = cA + cB * (1 - aA))"
+
+#: ../operations/common/pixelize.c:26
+msgid "Width of blocks in pixels"
+msgstr "Bloku platums pikseļos"
+
+#: ../operations/common/pixelize.c:27
+msgid "Block Height"
+msgstr "Bloku augstums"
+
+#: ../operations/common/pixelize.c:28
+msgid "Height of blocks in pixels"
+msgstr "Bloku augstums pikseļos"
+
+#: ../operations/common/pixelize.c:338
+msgid "Simplify image into an array of solid-colored squares"
+msgstr "Vienkāršot attēlu par vienkrāsainu kvadrātu masīvu"
+
+#: ../operations/common/polar-coordinates.c:34
+#: ../operations/common/polar-coordinates.c:35
+msgid "Circle depth in percent"
+msgstr "Riņķa dziļums procentos"
+
+#: ../operations/common/polar-coordinates.c:36
+msgid "Offset angle"
+msgstr "Nobīdes leņķis"
+
+#: ../operations/common/polar-coordinates.c:37
+msgid "Offset angle."
+msgstr "Nobīdes leņķis."
+
+#: ../operations/common/polar-coordinates.c:38
+msgid "Map backwards"
+msgstr "Kartēt atmuguriski"
+
+#: ../operations/common/polar-coordinates.c:38
+msgid "Start from the right instead of the left"
+msgstr "Sākt no labās nevis no kreisās"
+
+#: ../operations/common/polar-coordinates.c:39
+msgid "Map from top"
+msgstr "Kartēt no augšas"
+
+#: ../operations/common/polar-coordinates.c:39
+msgid "Put the top row in the middle and the bottom row on the outside"
+msgstr "Novietot augšējo rindu vidū un apakšējo rindu ārpusē"
+
+#: ../operations/common/polar-coordinates.c:40
+msgid "To polar"
+msgstr "Uz polāro"
+
+#: ../operations/common/polar-coordinates.c:40
+msgid "Map the image to a circle"
+msgstr "Kartēt attēlu uz apli"
+
+#: ../operations/common/polar-coordinates.c:41
+msgid "X:"
+msgstr "X:"
+
+#: ../operations/common/polar-coordinates.c:42
+#: ../operations/common/polar-coordinates.c:44
+msgid "Origin point for the polar coordinates"
+msgstr "Sākuma punkts polārajām koordinātām"
+
+#: ../operations/common/polar-coordinates.c:43
+msgid "Y:"
+msgstr "Y:"
+
+#: ../operations/common/polar-coordinates.c:45
+msgid "Choose middle"
+msgstr "Izvēlēties vidu"
+
+#: ../operations/common/polar-coordinates.c:46
+msgid "Let origin point to be the middle one"
+msgstr "Ļaut sākuma punktam būt viduspunktam"
+
+#: ../operations/common/polar-coordinates.c:402
+msgid "Performs polar-coordinates on the image."
+msgstr "Veic polāro koordināšu pārveidošanu attēlam."
+
+#: ../operations/common/posterize.c:25
+#: ../operations/external/matting-levin.c:36
+msgid "Levels"
+msgstr "Līmeņi"
+
+#: ../operations/common/posterize.c:26
+msgid "number of levels per component"
+msgstr "līmeņu skaits katrai komponentei"
+
+#: ../operations/common/posterize.c:82
+msgid "Reduces the number of levels in each color component of the image."
+msgstr "Samazina līmeņu skaitu katrai krāsu komponentei attēlā."
+
+#: ../operations/common/raw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr "Jēlu (raw) attēlu ielādētājs, ietin dcraw ar konveijeriem."
+
+#: ../operations/common/rectangle.c:34
+msgid "Horizontal extent"
+msgstr "Horizontālais apjoms"
+
+#: ../operations/common/rectangle.c:36
+msgid "Vertical extent"
+msgstr "Vertikālais apjoms"
+
+#: ../operations/common/rectangle.c:38
+msgid "Color to render"
+msgstr "Krāsa, ko attēlot"
+
+#: ../operations/common/rectangle.c:134
+msgid "A rectangular source of a fixed size with a solid color"
+msgstr "Taisnstūra avots ar fiksētu izmēru un viendabīgu krāsu"
+
+#: ../operations/common/reinhard05.c:29
+msgid "Overall brightness of the image"
+msgstr "Kopējais attēla gaišums"
+
+#: ../operations/common/reinhard05.c:30
+msgid "Chromatic Adaptation"
+msgstr "Hromatiskā adaptācija"
+
+#: ../operations/common/reinhard05.c:32
+msgid "Adapation to colour variation across the image"
+msgstr "Krāsu variāciju adaptācija viscaur attēlam"
+
+#: ../operations/common/reinhard05.c:33
+msgid "Light Adaptation"
+msgstr "Gaismas adaptācija"
+
+#: ../operations/common/reinhard05.c:35
+msgid "Adapation to light variation across the image"
+msgstr "Gaismas variāciju adaptācija viscaur attēlam"
+
+#: ../operations/common/reinhard05.c:274
+msgid ""
+"Adapt an image, which may have a high dynamic range, for presentation using "
+"a low dynamic range. This is an efficient global operator derived from "
+"simple physiological observations, producing luminance within the range "
+"0.0-1.0"
+msgstr ""
+"Adaptēt attēlu, kam var būt augsts dinamiskais apgabals, prezentēšanai, "
+"izmantojot zemu dinamisko apgabalu. Šis ir efektīvs globāls operators, kas "
+"atvasināts no vienkāršiem psiholoģiskiem novērojumiem, veidojot spilgtumu "
+"apgabalā 0.0-1.0"
+
+#: ../operations/common/remap.c:96
+msgid "stretch components of pixels individually based on luminance envelopes"
+msgstr ""
+"izstiept pikseļu komponentes individuāli, balsoties uz spilgtuma aploksnēm"
+
+#: ../operations/common/ripple.c:27 ../operations/common/waves.c:32
+msgid "Amplitude"
+msgstr "Amplitūda"
+
+#: ../operations/common/ripple.c:28 ../operations/common/waves.c:33
+msgid "Amplitude of the ripple"
+msgstr "Sīku vilnīšu amplitūda"
+
+#: ../operations/common/ripple.c:30 ../operations/common/waves.c:35
+msgid "Period"
+msgstr "Periods"
+
+#: ../operations/common/ripple.c:31 ../operations/common/waves.c:36
+msgid "Period of the ripple"
+msgstr "Sīku vilnīšu periods"
+
+#: ../operations/common/ripple.c:33 ../operations/common/ripple.c:34
+#: ../operations/common/waves.c:38 ../operations/common/waves.c:39
+msgid "Phase shift"
+msgstr "Fāžu nobīde"
+
+#: ../operations/common/ripple.c:37
+msgid "Angle in degree"
+msgstr "Leņķis grādos"
+
+#: ../operations/common/ripple.c:47
+msgid "Wave type"
+msgstr "Vilnīša tips"
+
+#: ../operations/common/ripple.c:48
+msgid "Type of wave"
+msgstr "Vilnīša tips"
+
+#: ../operations/common/ripple.c:169
+msgid "Transform the buffer with a ripple pattern"
+msgstr "Pārveidot buferi ar vilnīšu rakstu"
+
+#: ../operations/common/save.c:25
+msgid "Path of file to save."
+msgstr "Ceļš uz failu, ko saglabāt."
+
+#: ../operations/common/save.c:195
+msgid "Multipurpose file saver, that uses other native handlers."
+msgstr "Vairāku failu saglabātājs, kas izmanto vietējos apstrādātājus."
+
+#: ../operations/common/snn-mean.c:28
+#: ../operations/workshop/snn-percentile.c:29
+msgid "Pairs"
+msgstr "Pāri"
+
+#: ../operations/common/snn-mean.c:29
+msgid "Number of pairs; higher number preserves more acute features"
+msgstr "Pāru skaits. Lielāks skaits saglabā precīzākas iezīmes"
+
+#: ../operations/common/snn-mean.c:436
+msgid ""
+"Noise reducing edge enhancing blur filter based  on Symmetric Nearest "
+"Neighbours"
+msgstr ""
+"Trokšņu mazinošs, malu uzlabojošs, aizmiglošanas filtrs, kas balstīts uz "
+"Simetriskā Tuvākā Apkaime"
+
+#: ../operations/common/stress.c:28
+msgid ""
+"Neighborhood taken into account, for enhancement ideal values are close to "
+"the longest side of the image, increasing this increases the runtime"
+msgstr ""
+"Apkaime, kas tiek ņemta vērā, lai uzlabotu ideālās vērtības, kas ir tuvas "
+"attēla garākajai malai; tā palielināšana paildzinās darbības laiku"
+
+#: ../operations/common/stress.c:32
+msgid ""
+"Number of iterations, a higher number of iterations provides a less noisy "
+"rendering at a computational cost"
+msgstr ""
+"Iterāciju skaits. Lielāks iterāciju skaits dod mazāk trokšņainu attēlojumu, "
+"bet ir ilgāk jāskaitļo"
+
+#: ../operations/common/stress.c:191
+msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
+msgstr "Telpiska pagaidu tīklenes-veida aploksne ar stohastisku paraugu nolasi"
+
+#: ../operations/common/stretch-contrast.c:162
+msgid ""
+"Scales the components of the buffer to be in the 0.0-1.0 range. This "
+"improves images that make poor use of the available contrast (little "
+"contrast, very dark, or very bright images)."
+msgstr ""
+"Mērogo bufera komponentes, lai būtu apgabalā 0.0-1.0. Tas uzlabo attēlu, kas "
+"pilnībā neizmanto pieejamo kontrastu (mazs kontrasts, ļoti tumšs vai ļoti "
+"gaišs attēls)."
+
+#: ../operations/common/svg-huerotate.c:27
+#: ../operations/common/svg-luminancetoalpha.c:27
+#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+msgid "Values"
+msgstr "Vērtības"
+
+#: ../operations/common/svg-huerotate.c:27
+#: ../operations/common/svg-luminancetoalpha.c:27
+#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+msgid "list of <number>s"
+msgstr "saraksts ar <skaitļ>iem"
+
+#: ../operations/common/svg-huerotate.c:116
+msgid "SVG color matrix operation svg_huerotate"
+msgstr "SVG krāsu matricas operācija svg_huerotate"
+
+#: ../operations/common/svg-luminancetoalpha.c:95
+msgid "SVG color matrix operation svg_luminancetoalpha"
+msgstr "SVG krāsu matricas operācija svg_luminancetoalpha"
+
+#: ../operations/common/svg-matrix.c:132
+msgid "SVG color matrix operation svg_matrix"
+msgstr "SVG krāsu matricas operācija svg_matrix"
+
+#: ../operations/common/svg-saturate.c:127
+msgid "SVG color matrix operation svg_saturate"
+msgstr "SVG krāsu matricas operācija svg_saturate"
+
+#: ../operations/common/threshold.c:25
+#: ../operations/external/matting-levin.c:31
+#: ../operations/workshop/color-rotate.c:54
+#: ../operations/workshop/red-eye-removal.c:31
+msgid "Threshold"
+msgstr "Slieksnis"
+
+#: ../operations/common/threshold.c:26
+msgid "Global threshold level (used when there is no auxiliary input buffer)."
+msgstr ""
+"Globālais sliekšņa līmenis (tiek izmantots, kad nav ievades papildbufera)"
+
+#: ../operations/common/threshold.c:123
+msgid ""
+"Thresholds the image to white/black based on either the global value set in "
+"the value property, or per pixel from the aux input."
+msgstr ""
+"Pārveido attēlu uz melnbaltu pēc sliekšņa, balstoties vai nu uz globālām "
+"vērtībām vērtību īpašībās, vai uz pikseli no aux ievades."
+
+#: ../operations/common/unsharp-mask.c:24
+msgid "Std. Dev."
+msgstr "Standartnovirze"
+
+#: ../operations/common/unsharp-mask.c:25
+msgid "Standard deviation (spatial scale factor)"
+msgstr "Standartnovirze (telpisks mēroga koeficients)"
+
+#: ../operations/common/unsharp-mask.c:27
+msgid "Scale, strength of effect"
+msgstr "Mērogs, efekta stiprums"
+
+#: ../operations/common/unsharp-mask.c:73
+msgid ""
+"Performs an unsharp mask on the input buffer (sharpens an image by adding "
+"false mach-bands around edges)"
+msgstr ""
+"Ievades buferim uzklāj izplūduma maskas filtru (uzasina attēlu, pievienojot "
+"neīstus atbilstošus apmales ap kontūrām)"
+
+#: ../operations/common/value-invert.c:190
+msgid ""
+"Inverts just the value component, the result is the corresponding `inverted' "
+"image."
+msgstr ""
+"Invertē tikai vērtības komponenti; rezultāts ir atbilstošs “invertētais” "
+"attēls."
+
+#: ../operations/common/vignette.c:24
+msgid "Shape"
+msgstr "Forma"
+
+#: ../operations/common/vignette.c:24
+msgid "Shape to use: 0=circle 1=diamond 2=square"
+msgstr "Figūra, ko izmantot: 0=aplis 1=rombs 2=kvadrāts"
+
+#: ../operations/common/vignette.c:25
+msgid ""
+"Defaults to 'black', you can use transparency here to erase portions of an "
+"image"
+msgstr ""
+"Noklusējuma vērtība ir 'black'; jūs varat šeit izmantot caurspīdīgumu, lai "
+"izdzēstu daļu attēla"
+
+#: ../operations/common/vignette.c:26
+msgid "How far out vignetting goes as portion of half image diagonal"
+msgstr "Cik tālu iet vinjete, izteikta kā daļa no attēla diagonāles puses"
+
+#: ../operations/common/vignette.c:27
+msgid "Softness"
+msgstr "Mīkstums"
+
+#: ../operations/common/vignette.c:28
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../operations/common/vignette.c:28
+msgid "Falloff linearity"
+msgstr "Krituma linearitāte"
+
+#: ../operations/common/vignette.c:29
+msgid "Proportion"
+msgstr "Proporcija"
+
+#: ../operations/common/vignette.c:29
+msgid "How close we are to image proportions"
+msgstr "Cik tuvu esam attēla proporcijām"
+
+#: ../operations/common/vignette.c:30
+msgid "Squeeze"
+msgstr "Saspiest"
+
+#: ../operations/common/vignette.c:30
+msgid ""
+"Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
+"inf:1, this is applied after proportion is taken into account, to directly "
+"use squeeze factor as proportions, set proportion to 0.0."
+msgstr ""
+"Izmantojamā izmēru attiecība, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf "
+"1.0 = inf:1, šo pielieto pēc tam, kad tiek ņemtas vērā proporcijas. Lai "
+"tieši izmantotu saspiešanas koeficientu kā proporcijas, iestatiet "
+"proporcijas uz 0.0."
+
+#: ../operations/common/vignette.c:32
+msgid "Horizontal center of vignetting"
+msgstr "Vinjetes horizontālais vidus"
+
+#: ../operations/common/vignette.c:33
+msgid "Vertical center of vignetting"
+msgstr "Vinjetes vertikālais vidus"
+
+#: ../operations/common/vignette.c:34
+msgid "Rotation"
+msgstr "Pagrieziens"
+
+#: ../operations/common/vignette.c:34
+msgid "Rotation angle"
+msgstr "Pagrieziena leņķis"
+
+#: ../operations/common/vignette.c:386
+msgid ""
+"A vignetting op, applies a vignette to an image. Simulates the luminance "
+"fall off at edge of exposed film, and some other fuzzier border effects that "
+"can naturally occur with analoge photograpy."
+msgstr ""
+"Vinješu operācija — attēlam pielieto vinjeti. Imitē gaišuma samazināšanos "
+"eksponētās filmiņas malās un dažus citus efektus, kas var dabiski gadīties "
+"analogajā fotografēšanā."
+
+#: ../operations/common/waves.c:27
+msgid "X coordinate of the center of the waves"
+msgstr "Vilnīšu vidus X koordināta"
+
+#: ../operations/common/waves.c:30
+msgid "Coordinate y of the center of the waves"
+msgstr "Vilnīšu vidus Y koordināta"
+
+#: ../operations/common/waves.c:164
+msgid "Transform the buffer with waves"
+msgstr "Pārveidot buferi ar vilnīšiem"
+
+#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
+#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
+#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
+msgid "Value"
+msgstr "Vērtība"
+
+#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
+#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
+#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
+msgid "global value used if aux doesn't contain data"
+msgstr "globāla vērtība, ja aux nesatur datus"
+
+#: ../operations/common/weighted-blend.c:124
+msgid "blend two images using alpha values as weights"
+msgstr "sapludināt divus attēlus, izmantojot alfa vērtību kā svaru"
+
+#: ../operations/common/write-buffer.c:26
+msgid "Write to an existing GeglBuffer"
+msgstr "Rakstīt jau esošā GeglBuffer"
+
+#: ../operations/core/clone.c:25
+msgid "Reference"
+msgstr "Atsauce"
+
+#: ../operations/core/clone.c:26
+msgid "The reference ID used as input (for use in XML)."
+msgstr "Atsauces ID, ko izmantot kā ievadi (izmanto XML)"
+
+#: ../operations/core/clone.c:112
+msgid "Clone a buffer"
+msgstr "Klonēt buferi"
+
+#: ../operations/core/convert-format.c:28
+msgid "Output format"
+msgstr "Izvades formāts"
+
+#: ../operations/core/convert-format.c:29
+msgid "Babl output format string"
+msgstr "Babl izvades formāta virkne"
+
+#: ../operations/core/convert-format.c:81
+msgid "Convert the data to the specified format"
+msgstr "Pārveidot datus uz norādīto formātu"
+
+#: ../operations/core/crop.c:179
+msgid "Crop a buffer"
+msgstr "Apcirst buferi"
+
+#: ../operations/core/nop.c:72
+msgid "No operation (can be used as a routing point)"
+msgstr "Nav operācijas (var izmantot ar maršrutēšanas punktu)"
+
+#: ../operations/external/ff-load.c:25 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:25
+msgid "Path of file to load"
+msgstr "Ceļš uz failu, ko ielādēt"
+
+#: ../operations/external/ff-load.c:26 ../operations/external/v4l.c:29
+msgid "Frame"
+msgstr "Ietvars"
+
+#: ../operations/external/ff-load.c:26
+msgid "Frame number"
+msgstr "Ietvara numurs"
+
+#: ../operations/external/ff-load.c:471
+msgid "FFmpeg video frame importer"
+msgstr "FFmpeg video ietvara importētājs"
+
+#: ../operations/external/jp2-load.c:70
+#, c-format
+msgid "Unknown JPEG 2000 image format in '%s'"
+msgstr "Nezināms JPEG 2000 attēla formāts iekš “%s“"
+
+#: ../operations/external/jp2-load.c:77
+#, c-format
+msgid "Unable to open JPEG 2000 image in '%s'"
+msgstr "Nevar atvērt JPEG 2000 attēlu iekš “%s”"
+
+#: ../operations/external/jp2-load.c:84
+#, c-format
+msgid "Unable to create output color profile for '%s'"
+msgstr "Nevar izveidot “%s” izvades krāsu profilu"
+
+#: ../operations/external/jp2-load.c:92
+#, c-format
+msgid "Unable to convert image to sRGB color space when processing '%s'"
+msgstr "Nevar pārveidot attēlu uz sRGB krāsu telpu, apstrādājot “%s”"
+
+#: ../operations/external/jp2-load.c:100
+#, c-format
+msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
+msgstr "Neatbalstīts ne-RGB JPEG 2000 fails ar %d komponentēm iekš “%s”"
+
+#: ../operations/external/jp2-load.c:111
+#, c-format
+msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
+msgstr "Neatbalstīts JPEG 2000 fails ar dziļumu %d iekš “%s”"
+
+#: ../operations/external/jp2-load.c:124
+#, c-format
+msgid "Components of input image '%s' don't match"
+msgstr "Komponentes ievades attēlam “%s” nesakrīt"
+
+#: ../operations/external/jp2-load.c:209
+#, c-format
+msgid "One or more of R, G, B components are missing from '%s'"
+msgstr "No “%s” trūkst viena vai vairākas R, G, B komponentes"
+
+#: ../operations/external/jp2-load.c:218
+#, c-format
+msgid "One or more of R, G, B components have signed data in '%s'"
+msgstr "Vienai vai vairākām R, G, B komponentēm ir parakstīti dati iekš “%s”"
+
+#: ../operations/external/jp2-load.c:252
+#, c-format
+msgid "Error reading row %d component %d from '%s'"
+msgstr "Kļūda, nolasot rindas %d komponenti %d no “%s”"
+
+#: ../operations/external/jp2-load.c:397
+msgid "JPEG 2000 image loader"
+msgstr "JPEG 2000 attēlu ielādētājs"
+
+#: ../operations/external/jpg-load.c:223
+msgid "JPG image loader"
+msgstr "JPG attēlu ielādētājs"
+
+#: ../operations/external/jpg-save.c:26
+msgid "Target path and filename, use '-' for stdout"
+msgstr "Mērķa ceļš un faila nosaukums, izmanto “-” standarta izvadei"
+
+#: ../operations/external/jpg-save.c:27
+msgid "Quality"
+msgstr "Kvalitāte"
+
+#: ../operations/external/jpg-save.c:28
+msgid "JPEG compression quality (between 1 and 100)"
+msgstr "JPEG saspiešanas kvalitāte (starp 1 un 100)"
+
+#: ../operations/external/jpg-save.c:29
+msgid "Smoothing"
+msgstr "Nogludināšana"
+
+#: ../operations/external/jpg-save.c:30
+msgid "Smoothing factor from 1 to 100; 0 disables smoothing"
+msgstr "Gludināšanas pakāpe no 1 līdz 100; 0 izslēdz gludināšanu"
+
+#: ../operations/external/jpg-save.c:31
+msgid "Optimize"
+msgstr "Optimizēt"
+
+#: ../operations/external/jpg-save.c:32
+msgid "Use optimized huffman tables"
+msgstr "Lietot optimizētas huffman tabulas"
+
+#: ../operations/external/jpg-save.c:33
+msgid "Progressive"
+msgstr "Progresīvs"
+
+#: ../operations/external/jpg-save.c:34
+msgid "Create progressive JPEG images"
+msgstr "Izveidot progresīvus JPEG attēlus"
+
+#: ../operations/external/jpg-save.c:35
+#: ../operations/workshop/color-rotate.c:46
+msgid "Grayscale"
+msgstr "Pelēktoņu"
+
+#: ../operations/external/jpg-save.c:36
+msgid "Create a grayscale (monochrome) image"
+msgstr "Izveidot pelēktoņu (vienkrāsainu) attēlu"
+
+#: ../operations/external/jpg-save.c:192
+msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
+msgstr "JPEG attēla saglabātājs (iziet cauri buferim, saglabā kā blakusefektu)"
+
+#: ../operations/external/matting-levin.c:25
+msgid "Epsilon"
+msgstr "Epsilons"
+
+#: ../operations/external/matting-levin.c:27
+msgid "Log of the error weighting"
+msgstr "Izsvērtā logaritma kļūda"
+
+#: ../operations/external/matting-levin.c:30
+msgid "Radius of the processing window"
+msgstr "Apstrādes loga rādius"
+
+#: ../operations/external/matting-levin.c:33
+msgid "Alpha threshold for multilevel processing"
+msgstr "Alfa slieksnis vairāku līmeņu apstrādei"
+
+#: ../operations/external/matting-levin.c:34
+msgid "Lambda"
+msgstr "Lambda"
+
+#: ../operations/external/matting-levin.c:35
+msgid "Trimap influence factor"
+msgstr "Trimap ietekmes koeficients"
+
+#: ../operations/external/matting-levin.c:38
+msgid "Number of downsampled levels to use"
+msgstr "Izmantojamo samazināto paraugu lasījumu līmeņu skaits"
+
+#: ../operations/external/matting-levin.c:39
+msgid "Active Levels"
+msgstr "Aktīvie līmeņi"
+
+#: ../operations/external/matting-levin.c:41
+msgid "Number of levels to perform solving"
+msgstr "Līmeņu skaits, lai veiktu risināšanu"
+
+#: ../operations/external/matting-levin.c:1428
+msgid ""
+"Given a sparse user supplied tri-map and an input image, create a foreground "
+"alpha mat. Set white as selected, black as unselected, for the tri-map."
+msgstr ""
+"Ja lietotājs ir devis trūcīgu tri-karti un ievades attēlu, izveidot "
+"priekšplāna alfas matējumu. Iestatiet balto kā izvēlētu un melno kā "
+"neizvēlētu tri-kartei."
+
+#: ../operations/external/path.c:27
+msgid "Fill Color"
+msgstr "Aizpildījuma krāsa"
+
+#: ../operations/external/path.c:28
+msgid "Color of paint to use for filling, use 0 opacity to disable filling"
+msgstr ""
+"Krāsa, ar ko aizpildīt, izmantojiet 0 blīvumu, lai deaktivētu aizpildīšanu"
+
+#: ../operations/external/path.c:29
+msgid "Stroke Color"
+msgstr "Vilkuma krāsa"
+
+#: ../operations/external/path.c:30
+msgid "Color of paint to use for stroking"
+msgstr "Krāsa, kādā ir otas vilkums"
+
+#: ../operations/external/path.c:32
+msgid "Stroke width"
+msgstr "Vilkuma platums"
+
+#: ../operations/external/path.c:33
+msgid "The width of the brush used to stroke the path"
+msgstr "Platums otai, ar ko tiek vilkts gar ceļu"
+
+#: ../operations/external/path.c:35
+msgid "Stroke opacity"
+msgstr "Vilkuma blīvums"
+
+#: ../operations/external/path.c:36
+msgid ""
+"Opacity of stroke, note, does not behave like SVG since at the moment "
+"stroking is done using an airbrush tool"
+msgstr ""
+"Vilkuma blīvums. Ņemiet vērā, uzvedība nav kā SVG, jo pašlaik vilkšana tiek "
+"veikta ar aerogrāfa rīku"
+
+#: ../operations/external/path.c:38 ../operations/workshop/warp.c:39
+msgid "Hardness"
+msgstr "Stingrums"
+
+#: ../operations/external/path.c:39
+msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
+msgstr "Otas stingrums. 0.0 ir mīksta ota, 1.0 ir cieta ota"
+
+#: ../operations/external/path.c:41
+msgid "Fill rule"
+msgstr "Aizpildīšanas kārtula"
+
+#: ../operations/external/path.c:42
+msgid "How to determine what to fill (nonzero|evenodd)"
+msgstr "Kā noteikt, ko aizpildīt (nonzero|evenodd)"
+
+#: ../operations/external/path.c:44 ../operations/external/vector-fill.c:36
+#: ../operations/external/vector-stroke.c:36
+msgid "Transform"
+msgstr "Pārveidot"
+
+#: ../operations/external/path.c:45
+msgid "SVG style description of transform"
+msgstr "SVG stila apraksts, ko pārveidot"
+
+#: ../operations/external/path.c:47
+msgid "Fill opacity"
+msgstr "Aizpildījuma blīvums"
+
+#: ../operations/external/path.c:48
+msgid "The fill opacity to use"
+msgstr "Aizpildījuma blīvums, ko izmantot"
+
+#: ../operations/external/path.c:50 ../operations/external/vector-fill.c:39
+#: ../operations/external/vector-stroke.c:39
+msgid "Vector"
+msgstr "Vektors"
+
+#: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
+#: ../operations/external/vector-stroke.c:40
+msgid "A GeglVector representing the path of the stroke"
+msgstr "GeglVector, kas reprezentē vilkuma ceļu"
+
+#: ../operations/external/path.c:518
+msgid "Renders a brush stroke"
+msgstr "Attēlo otas vilkumu"
+
+#: ../operations/external/pixbuf.c:25
+msgid "Pixbuf"
+msgstr "Pixbuf"
+
+#: ../operations/external/pixbuf.c:25
+msgid "GdkPixbuf to use"
+msgstr "GdkPixbuf, ko izmantot"
+
+#: ../operations/external/pixbuf.c:103
+msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
+msgstr "Izmanto GdkPixbuf, kas atrodas atmiņā iekš <em>pixbuf</em>."
+
+#: ../operations/external/png-load.c:446
+msgid "PNG image loader."
+msgstr "PNG attēlu ielādētājs."
+
+#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
+#: ../operations/external/rgbe-save.c:27
+#: ../operations/workshop/external/ff-save.c:30
+msgid "Target path and filename, use '-' for stdout."
+msgstr "Mērķa ceļš un faila nosaukums, izmanto “-” standarta izvadei."
+
+#: ../operations/external/png-save.c:28
+msgid "Compression"
+msgstr "Saspiešana"
+
+#: ../operations/external/png-save.c:29
+msgid "PNG compression level from 1 to 9"
+msgstr "PNG saspiešanas līmenis no 1 līdz 9"
+
+#: ../operations/external/png-save.c:30 ../operations/external/ppm-save.c:28
+msgid "Bitdepth"
+msgstr "Bitu dziļums"
+
+#: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:30
+msgid "8 and 16 are amongst the currently accepted values."
+msgstr "8 un 16 ir starp pašlaik pieņemtajām vērtībām."
+
+#: ../operations/external/png-save.c:233
+msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
+msgstr "PNG attēla saglabātājs (iziet cauri buferim, saglabā kā blakusefektu)."
+
+#: ../operations/external/ppm-load.c:306
+msgid "PPM image loader."
+msgstr "PPM attēlu ielādētājs."
+
+#: ../operations/external/ppm-save.c:27
+msgid "Raw format"
+msgstr "Jēls (raw) formāts"
+
+#: ../operations/external/ppm-save.c:190
+msgid "PPM image saver (Portable pixmap saver.)"
+msgstr "PPM attēlu saglabātājs (portējamas pikseļu kartes saglabātājs)."
+
+#: ../operations/external/rgbe-load.c:135
+msgid "RGBE image loader (Radiance HDR format)."
+msgstr "RGBE attēla ielādētājs (Radiance HDR formāts)."
+
+#: ../operations/external/rgbe-save.c:86
+msgid "RGBE image saver (Radiance HDR format)"
+msgstr "RGBE attēla saglabātājs (Radiance HDR formāts)"
+
+#: ../operations/external/save-pixbuf.c:28
+msgid "Pixbuf location"
+msgstr "Pixbuf vieta"
+
+#: ../operations/external/save-pixbuf.c:29
+msgid "The location where to store the output GdkPixbuf."
+msgstr "Vieta, kur saglabāt izvadi no GdkPixbuf."
+
+#: ../operations/external/save-pixbuf.c:106
+msgid "Save output into a GdkPixbuf."
+msgstr "Saglabāt izvadu iekš GdkPixbuf."
+
+#: ../operations/external/sdl-display.c:28
+msgid "Icon to be used for output window"
+msgstr "Ikona, ko izmantot izvades logam"
+
+#: ../operations/external/sdl-display.c:181
+msgid ""
+"Displays the input buffer in an SDL window (restricted to one display op/"
+"process, due to SDL implementation issues)."
+msgstr ""
+"Attēlot ievades buferi SDL logā (SDL implementācijas ierobežojumu dēļ tas ir "
+"ierobežots uz vienu displeja darbības procesu)."
+
+#: ../operations/external/svg-load.c:26
+msgid "Path to SVG file to load"
+msgstr "Ceļš uz SVG failu, ko ielādēt"
+
+#: ../operations/external/svg-load.c:28 ../operations/external/v4l.c:27
+msgid "Width for rendered image"
+msgstr "Attēlotā attēla platums"
+
+#: ../operations/external/svg-load.c:30 ../operations/external/v4l.c:28
+msgid "Height for rendered image"
+msgstr "Attēlotā attēla augstums"
+
+#. not hidden because it has extra API
+#: ../operations/external/svg-load.c:245
+msgid "Load an SVG file using librsvg"
+msgstr "Ielādēt SVG failu, izmantojot librsvg"
+
+#: ../operations/external/text.c:25
+msgid "Text"
+msgstr "Teksts"
+
+#: ../operations/external/text.c:26
+msgid "String to display (utf8)"
+msgstr "Virkne, ko attēlot (utf8)"
+
+#: ../operations/external/text.c:27
+msgid "Font family"
+msgstr "Fontu saime"
+
+#: ../operations/external/text.c:28
+msgid "Font family (utf8)"
+msgstr "Fontu saime (utf8)"
+
+#: ../operations/external/text.c:29 ../operations/workshop/warp.c:37
+msgid "Size"
+msgstr "Izmērs"
+
+#: ../operations/external/text.c:30
+msgid "Approximate height of text in pixels."
+msgstr "Aptuvenais teksta augstums pikseļos."
+
+#: ../operations/external/text.c:32
+msgid "Color for the text (defaults to 'white')"
+msgstr "Teksta krāsa (noklusējuma ir 'white')"
+
+#: ../operations/external/text.c:33
+msgid "Wrap width"
+msgstr "Aplaušanas platums"
+
+#: ../operations/external/text.c:34
+msgid ""
+"Sets the width in pixels at which long lines will wrap. Use -1 for no "
+"wrapping."
+msgstr ""
+"Iestata platumu pikseļos, pie kuriem garas rindas tiks aplauztas. Lietojiet "
+"-1, lai neaplauztu."
+
+#: ../operations/external/text.c:36
+msgid "Justification"
+msgstr "Izlīdzināšana"
+
+#: ../operations/external/text.c:37
+msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
+msgstr "Vairāku rindu teksta līdzinājums (0=Kreisais, 1=Vidus, 2=Labais)"
+
+#: ../operations/external/text.c:39
+msgid "Rendered width in pixels. (read only)"
+msgstr "Attēlotais platums pikseļos. (tikai lasāms)"
+
+#: ../operations/external/text.c:41
+msgid "Rendered height in pixels. (read only)"
+msgstr "Attēlotais augstums pikseļos. (tikai lasāms)"
+
+#: ../operations/external/text.c:301
+msgid "Display a string of text using pango and cairo."
+msgstr "Attēlot teksta virkni, izmantojot pango un cairo."
+
+#: ../operations/external/v4l.c:26
+msgid "Path"
+msgstr "Ceļš"
+
+#: ../operations/external/v4l.c:26
+msgid "Path to v4l device"
+msgstr "Ceļš uz v4l ierīci"
+
+#: ../operations/external/v4l.c:30
+msgid "current frame number, can be changed to trigger a reload of the image."
+msgstr "pašreizējā kadra numurs, var mainīt, lai izraisītu attēla pārlādēšanu."
+
+#: ../operations/external/v4l.c:31
+#: ../operations/workshop/external/ff-save.c:32
+msgid "FPS"
+msgstr "Kadri/sek"
+
+#: ../operations/external/v4l.c:32
+msgid "autotrigger reload this many times a second."
+msgstr "automātiski izraisīt pārlādi tik reizes sekundē."
+
+#: ../operations/external/v4l.c:322
+msgid "Video4Linux input, webcams framegrabbers and similar devices."
+msgstr ""
+"Video4Linux ievade, tīmekļa kameras, kadru tvērēji un līdzīgas ierīces."
+
+#: ../operations/external/vector-fill.c:28
+msgid "Color of paint to use for filling."
+msgstr "Krāsa, kādā ir aizpildījums."
+
+#: ../operations/external/vector-fill.c:31
+msgid "The fill opacity to use."
+msgstr "Aizpildījuma blīvums, ko izmantot."
+
+#: ../operations/external/vector-fill.c:33
+msgid "Fill rule."
+msgstr "Aizpildīšanas kārtula."
+
+#: ../operations/external/vector-fill.c:34
+msgid "how to determine what to fill (nonzero|evenodd)"
+msgstr "kā noteikt, ko aizpildīt (nonzero|evenodd)"
+
+#: ../operations/external/vector-fill.c:37
+#: ../operations/external/vector-stroke.c:37
+msgid "svg style description of transform."
+msgstr "svg stila apraksts, ko pārveidot."
+
+#: ../operations/external/vector-fill.c:258
+msgid "Renders a filled region"
+msgstr "Attēlo aizpildīto apgabalu"
+
+#: ../operations/external/vector-stroke.c:28
+msgid "Color of paint to use for stroking."
+msgstr "Krāsa, kādā ir otas vilkums."
+
+#: ../operations/external/vector-stroke.c:31
+msgid "The width of the brush used to stroke the path."
+msgstr "Platums otai, ar ko tiek vilkts gar ceļu."
+
+#: ../operations/external/vector-stroke.c:34
+msgid ""
+"Opacity of stroke, note, does not behave like SVG since at the moment "
+"stroking is done using an airbrush tool."
+msgstr ""
+"Vilkuma blīvums. Ņemiet vērā, uzvedība nav kā SVG, jo pašlaik vilkšana tiek "
+"veikta ar aerogrāfa rīku."
+
+#: ../operations/external/vector-stroke.c:280
+msgid "Renders a vector stroke"
+msgstr "Attēlo vektora vilkumu"
+
+#: ../operations/generated/add.c:125
+msgid "Math operation add (c = c + value)"
+msgstr "Matemātikas operācija: saskaitīšana (c = c + vērtība)"
+
+#: ../operations/generated/clear.c:116
+msgid "Porter Duff operation clear (d = 0.0f)"
+msgstr "Porter Duff operācija: nullēt (d = 0.0f)"
+
+#: ../operations/generated/color-burn.c:117
+msgid ""
+"SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
+"cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
+"cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: krāsas aptumšošana (<code>ja cA * aB + cB * aA "
+"<= aA * aB: d = cA * (1 - aB) + cB * (1 - aA) citādi: d = (cA == 0 ? 1 : (aA "
+"* (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</"
+"code>)"
+
+#: ../operations/generated/color-dodge.c:117
+msgid ""
+"SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
+"aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
+"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: krāsas izgaismošana (<code>ja cA * aB + cB * "
+"aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) citādi: d = (cA "
+"== aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 "
+"- aA)</code>)"
+
+#: ../operations/generated/darken.c:115
+msgid ""
+"SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
+"+ cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: aptumšot (<code>d = MIN (cA * aB, cB * aA) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/difference.c:115
+msgid ""
+"SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
+"aA))</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: starpība (<code>d = cA + cB - 2 * (MIN (cA * "
+"aB, cB * aA))</code>)"
+
+#: ../operations/generated/divide.c:125
+msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
+msgstr "Matemātikas operācija: salīšana (c = value==0.0f?0.0f:c/vērtība)"
+
+#: ../operations/generated/dst-atop.c:116
+msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
+msgstr "Porter Duff operācija: dst-atop (d = cB * aA + cA * (1.0f - aB))"
+
+#: ../operations/generated/dst.c:116
+msgid "Porter Duff operation dst (d = cB)"
+msgstr "Porter Duff operācija: dst (d = cB)"
+
+#: ../operations/generated/dst-in.c:116
+msgid "Porter Duff operation dst-in (d = cB * aA)"
+msgstr "Porter Duff operācija: dst-in (d = cB * aA)"
+
+#: ../operations/generated/dst-out.c:116
+msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
+msgstr "Porter Duff operācija: dst-out (d = cB * (1.0f - aA))"
+
+#: ../operations/generated/dst-over.c:116
+msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
+msgstr "Porter Duff operācija: dst-over (d = cB + cA * (1.0f - aB))"
+
+#: ../operations/generated/exclusion.c:115
+msgid ""
+"SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: izslēgšana (<code>d = (cA * aB + cB * aA - 2 * "
+"cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/gamma.c:125
+msgid "Math operation gamma (c = powf (c, value))"
+msgstr "Matemātikas operācija: gamma (c = powf (c, vērtība))"
+
+#: ../operations/generated/hard-light.c:117
+msgid ""
+"SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
+"(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
+"+ cA * (1 - aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: cieta gaisma (<code>ja 2 * cA < aA: d = 2 * cA "
+"* cB + cA * (1 - aB) + cB * (1 - aA) citādi: d = aA * aB - 2 * (aB - cB) * "
+"(aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/lighten.c:115
+msgid ""
+"SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
+"aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: padarīt gaišāku (<code>d = MAX (cA * aB, cB * "
+"aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/multiply.c:125
+msgid "Math operation multiply (c = c * value)"
+msgstr "Matemātikas operācija: reizināt (c = c * vērtība)"
+
+#: ../operations/generated/overlay.c:117
+msgid ""
+"SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
+"- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
+"cA * (1 - aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: pārklāt (<code>ja 2 * cB > aB: d = 2 * cA * cB "
+"+ cA * (1 - aB) + cB * (1 - aA) citādi: d = aA * aB - 2 * (aB - cB) * (aA - "
+"cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/plus.c:115
+msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
+msgstr "SVG sapludināšanas operācija: pluss (<code>d = cA + cB</code>)"
+
+#: ../operations/generated/screen.c:115
+msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: aizsegs (<code>d = cA + cB - cA * cB</code>)"
+
+#: ../operations/generated/soft-light.c:119
+msgid ""
+"SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
+"0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
+"* cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB "
+"== 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = "
+"(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
+"(1 - aB) + cB * (1 - aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: mīksta gaisma (<code>ja 2 * cA < aA: d = cB * "
+"(aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 "
+"- aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA "
+"- aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); "
+"citādi: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - "
+"aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/src-atop.c:116
+msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
+msgstr "Porter Duff operācija: src-atop (d = cA * aB + cB * (1.0f - aA))"
+
+#: ../operations/generated/src.c:116
+msgid "Porter Duff operation src (d = cA)"
+msgstr "Porter Duff operācija: src (d = cA)"
+
+#: ../operations/generated/src-in.c:125
+msgid "Porter Duff operation src-in (d = cA * aB)"
+msgstr "Porter Duff operācija: src-in (d = cA * aB)"
+
+#: ../operations/generated/src-out.c:116
+msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
+msgstr "Porter Duff operācija: src-out (d = cA * (1.0f - aB))"
+
+#: ../operations/generated/src-over.c:116
+msgid "Porter Duff operation src-over (d = cA + cB * (1.0f - aA))"
+msgstr "Porter Duff operācija: src-over (d = cA + cB * (1.0f - aA))"
+
+#: ../operations/generated/subtract.c:125
+msgid "Math operation subtract (c = c - value)"
+msgstr "Matemātikas operācija: atņemšana (c = c - vērtība)"
+
+#: ../operations/generated/svg-multiply.c:115
+msgid ""
+"SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
+"aA)</code>)"
+msgstr ""
+"SVG sapludināšanas operācija: reizināšana (<code>d = cA * cB +  cA * (1 - "
+"aB) + cB * (1 - aA)</code>)"
+
+#: ../operations/generated/xor.c:116
+msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
+msgstr "Porter Duff operācija: xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
+
+#: ../operations/transform/reflect.c:29
+msgid "Direction vector's X component"
+msgstr "Virziena vektora X komponente"
+
+#: ../operations/transform/reflect.c:31
+msgid "Direction vector's Y component"
+msgstr "Virziena vektora Y komponente"
+
+#: ../operations/transform/rotate.c:26
+msgid "Angle to rotate (clockwise)"
+msgstr "Pagriešanas leņķis (pa pulksteni)"
+
+#: ../operations/transform/rotate.c:31
+msgid "Rotate the buffer around the specified origin."
+msgstr "Pagriezt buferi ap norādīto sākumu."
+
+#: ../operations/transform/scale.c:29 ../operations/transform/scale-ratio.c:26
+msgid "Horizontal scale factor"
+msgstr "Horizontālā mēroga koeficients"
+
+#: ../operations/transform/scale.c:31 ../operations/transform/scale-ratio.c:28
+msgid "Vertical scale factor"
+msgstr "Vertikālā mēroga koeficients"
+
+#: ../operations/transform/scale.c:36
+msgid "Scales the buffer."
+msgstr "Mērogo buferi."
+
+#: ../operations/transform/scale-ratio.c:33
+msgid "Scales the buffer according to a ratio."
+msgstr "Mērogo buferi, vadoties pēc koeficienta."
+
+#: ../operations/transform/scale-size.c:26
+msgid "Horizontal size"
+msgstr "Horizontālais izmērs"
+
+#: ../operations/transform/scale-size.c:28
+msgid "Vertical size"
+msgstr "Vertikālais izmērs"
+
+#: ../operations/transform/scale-size.c:33
+msgid "Scales the buffer according to a size."
+msgstr "Mērogo buferi, vadoties pēc izmēra."
+
+#: ../operations/transform/shear.c:26
+msgid "Horizontal shear amount"
+msgstr "Horizontālās šķiebšanas apmērs"
+
+#: ../operations/transform/shear.c:28
+msgid "Vertical shear amount"
+msgstr "Vertikālās šķiebšanas apmērs"
+
+#: ../operations/transform/shear.c:33
+msgid "Shears the buffer"
+msgstr "Sašķiebj buferi"
+
+#: ../operations/transform/transform.c:25
+msgid "Transformation string"
+msgstr "Pārveidošanas virkne"
+
+#: ../operations/transform/transform.c:30
+msgid "Transforms the group (used by svg)."
+msgstr "Pārveido grupu (izmanto svg)."
+
+#: ../operations/transform/transform-core.c:202
+msgid "Origin-x"
+msgstr "Pirmavots x"
+
+#: ../operations/transform/transform-core.c:203
+msgid "X coordinate of origin"
+msgstr "Pirmavota X koordināta"
+
+#: ../operations/transform/transform-core.c:210
+msgid "Origin-y"
+msgstr "Pirmavots y"
+
+#: ../operations/transform/transform-core.c:211
+msgid "Y coordinate of origin"
+msgstr "Pirmavota Y koordināta"
+
+#: ../operations/transform/transform-core.c:219
+msgid "Filter type (nearest, linear, lanczos, cubic, lohalo)"
+msgstr "Filtra tips (tuvākais, lineārs, lanczos, kubisks, lohalo)"
+
+#: ../operations/transform/transform-core.c:225
+#: ../operations/transform/transform-core.c:226
+msgid "Hard edges"
+msgstr "Cietas malas"
+
+#: ../operations/transform/transform-core.c:232
+msgid "Lanczos width"
+msgstr "Lanczos platums"
+
+#: ../operations/transform/transform-core.c:233
+msgid "Width of the Lanczos function"
+msgstr "Lanczos funkcijas platums"
+
+#: ../operations/transform/translate.c:26
+msgid "Horizontal translation"
+msgstr "Horizontālā translācija"
+
+#: ../operations/transform/translate.c:28
+msgid "Vertical translation"
+msgstr "Vertikālā translācija"
+
+#: ../operations/transform/translate.c:33
+msgid ""
+"Repositions the buffer (with subpixel precision), if integer coordinates are "
+"passed a fast-path without resampling is used"
+msgstr ""
+"Maina bufera pozīciju (ar precizitāti līdz apakšpikseļiem), ja veselu "
+"skaitļu koordinātas ir padotas pa ātro ceļu, neizmantojot atkārtotu paraugu "
+"ņemšanu"
+
+#: ../operations/workshop/box-max.c:26 ../operations/workshop/box-min.c:26
+#: ../operations/workshop/box-percentile.c:28
+#: ../operations/workshop/disc-percentile.c:27
+#: ../operations/workshop/kuwahara.c:26
+#: ../operations/workshop/snn-percentile.c:28
+msgid "Radius of square pixel region (width and height will be radius*2+1)"
+msgstr "Kvadrāta pikseļa reģiona rādiuss (platums un augstums būs rādiuss*2+1)"
+
+#: ../operations/workshop/box-max.c:198
+msgid ""
+"Sets the target pixel to the value of the maximum value in a box surrounding "
+"the pixel"
+msgstr ""
+"Iestata mērķa pikseli uz vērtību, kas ir maksimālā vērtība kastē, kas "
+"ieskauj pikseli"
+
+#: ../operations/workshop/box-min.c:198
+msgid ""
+"Sets the target pixel to the value of the minimum value in a box surrounding "
+"the pixel"
+msgstr ""
+"Iestata mērķa pikseli uz vērtību, kas ir minimālā vērtība kastē, kas ieskauj "
+"pikseli"
+
+#: ../operations/workshop/box-percentile.c:29
+#: ../operations/workshop/disc-percentile.c:28
+#: ../operations/workshop/snn-percentile.c:31
+msgid "Percentile"
+msgstr "Procentīle"
+
+#: ../operations/workshop/box-percentile.c:30
+msgid "The percentile to compute, defaults to 50, which is a median filter"
+msgstr ""
+"Procentīle, ko izskaitļot; noklusējuma vērtība ir 50, kas ir vidējais filtrs"
+
+#: ../operations/workshop/box-percentile.c:230
+msgid ""
+"Sets the target pixel to the color corresponding to a given percentile when "
+"colors are sorted by luminance"
+msgstr ""
+"Iestata mērķa pikselim krāsu, kas atbilst dotajai procentīlei, kas krāsas ir "
+"sakārtotas pēc spīduma"
+
+#: ../operations/workshop/buffer-cache.c:25
+msgid "Cache buffer"
+msgstr "Kešatmiņas buferis"
+
+#: ../operations/workshop/buffer-cache.c:26
+msgid "The GeglBuffer where the caching is done"
+msgstr "GeglBuffer, kur notiek pieglabāšana"
+
+#: ../operations/workshop/buffer-cache.c:103
+msgid ""
+"Cache the input buffer internally, further process take this buffer as input."
+msgstr ""
+"Pieglabāt ievades buferi iekšēji, turpmākais process ņem šo buferi kā ievadi."
+
+#: ../operations/workshop/color-rotate.c:33
+#: ../operations/workshop/color-rotate.c:39
+msgid "Clockwise"
+msgstr "Pulksteņrādītāja virzienā"
+
+#: ../operations/workshop/color-rotate.c:34
+#: ../operations/workshop/color-rotate.c:40
+msgid "Switch to clockwise"
+msgstr "Pāriet uz pulksteņrādītāja virzienu"
+
+#: ../operations/workshop/color-rotate.c:35
+#: ../operations/workshop/color-rotate.c:41
+msgid "From:"
+msgstr "No:"
+
+#: ../operations/workshop/color-rotate.c:36
+#: ../operations/workshop/color-rotate.c:42
+msgid "Starting angle for the color rotation"
+msgstr "Sākuma leņķis krāsu pagriešanai"
+
+#: ../operations/workshop/color-rotate.c:37
+#: ../operations/workshop/color-rotate.c:43
+msgid "To:"
+msgstr "Līdz:"
+
+#: ../operations/workshop/color-rotate.c:38
+#: ../operations/workshop/color-rotate.c:44
+msgid "End angle for the color rotation"
+msgstr "Beigu leņķis krāsu pagriešanai"
+
+#: ../operations/workshop/color-rotate.c:47
+msgid "Choose in case of grayscale images"
+msgstr "Izvēlieties, ja ir pelēktoņu attēli"
+
+#: ../operations/workshop/color-rotate.c:48
+msgid "Hue"
+msgstr "Tonis"
+
+#: ../operations/workshop/color-rotate.c:49
+msgid "The value of hue"
+msgstr "Toņa vērtība"
+
+#: ../operations/workshop/color-rotate.c:51
+msgid "The value of saturation"
+msgstr "Piesātinājuma vērtība"
+
+#: ../operations/workshop/color-rotate.c:52
+#: ../operations/workshop/color-rotate.c:53
+msgid "Change/Treat to this"
+msgstr "Mainīt uz šo"
+
+#: ../operations/workshop/color-rotate.c:55
+msgid "The value of gray threshold"
+msgstr "Pelēkā sliekšņa vērtība"
+
+#: ../operations/workshop/color-rotate.c:383
+msgid "Rotate colors on the image"
+msgstr "Pagriezt attēla krāsas"
+
+#: ../operations/workshop/convolution-matrix.c:25
+msgid "(1,1) "
+msgstr "(1,1) "
+
+#: ../operations/workshop/convolution-matrix.c:26
+msgid "Value of the element in position (1,1)"
+msgstr "Vērtība elementam pozīcijā (1,1)"
+
+#: ../operations/workshop/convolution-matrix.c:27
+msgid "(1,2) "
+msgstr "(1,2) "
+
+#: ../operations/workshop/convolution-matrix.c:28
+msgid "Value of the element in position (1,2)"
+msgstr "Vērtība elementam pozīcijā (1,2)"
+
+#: ../operations/workshop/convolution-matrix.c:29
+msgid "(1,3) "
+msgstr "(1,3) "
+
+#: ../operations/workshop/convolution-matrix.c:30
+msgid "Value of the element in position (1,3)"
+msgstr "Vērtība elementam pozīcijā (1,3)"
+
+#: ../operations/workshop/convolution-matrix.c:31
+msgid "(1,4) "
+msgstr "(1,4) "
+
+#: ../operations/workshop/convolution-matrix.c:32
+msgid "Value of the element in position (1,4)"
+msgstr "Vērtība elementam pozīcijā (1,4)"
+
+#: ../operations/workshop/convolution-matrix.c:33
+msgid "(1,5) "
+msgstr "(1,5) "
+
+#: ../operations/workshop/convolution-matrix.c:34
+msgid "Value of the element in position (1,5)"
+msgstr "Vērtība elementam pozīcijā (1,5)"
+
+#: ../operations/workshop/convolution-matrix.c:35
+msgid "(2,1) "
+msgstr "(2,1) "
+
+#: ../operations/workshop/convolution-matrix.c:36
+msgid "Value of the element in position (2,1)"
+msgstr "Vērtība elementam pozīcijā (2,1)"
+
+#: ../operations/workshop/convolution-matrix.c:37
+msgid "(2,2) "
+msgstr "(2,2) "
+
+#: ../operations/workshop/convolution-matrix.c:38
+msgid "Value of the element in position (2,2)"
+msgstr "Vērtība elementam pozīcijā (2,2)"
+
+#: ../operations/workshop/convolution-matrix.c:39
+msgid "(2,3) "
+msgstr "(2,3) "
+
+#: ../operations/workshop/convolution-matrix.c:40
+msgid "Value of the element in position (2,3)"
+msgstr "Vērtība elementam pozīcijā (2,3)"
+
+#: ../operations/workshop/convolution-matrix.c:41
+msgid "(2,4) "
+msgstr "(2,4) "
+
+#: ../operations/workshop/convolution-matrix.c:42
+msgid "Value of the element in position (2,4)"
+msgstr "Vērtība elementam pozīcijā (2,4)"
+
+#: ../operations/workshop/convolution-matrix.c:43
+msgid "(2,5) "
+msgstr "(2,5) "
+
+#: ../operations/workshop/convolution-matrix.c:44
+msgid "Value of the element in position (2,5)"
+msgstr "Vērtība elementam pozīcijā (2,5)"
+
+#: ../operations/workshop/convolution-matrix.c:45
+msgid "(3,1) "
+msgstr "(3,1) "
+
+#: ../operations/workshop/convolution-matrix.c:46
+msgid "Value of the element in position (3,1)"
+msgstr "Vērtība elementam pozīcijā (3,1)"
+
+#: ../operations/workshop/convolution-matrix.c:47
+msgid "(3,2) "
+msgstr "(3,2) "
+
+#: ../operations/workshop/convolution-matrix.c:48
+msgid "Value of the element in position (3,2)"
+msgstr "Vērtība elementam pozīcijā (3,2)"
+
+#: ../operations/workshop/convolution-matrix.c:49
+msgid "(3,3) "
+msgstr "(3,3) "
+
+#: ../operations/workshop/convolution-matrix.c:50
+msgid "Value of the element in position (3,3)"
+msgstr "Vērtība elementam pozīcijā (3,3)"
+
+#: ../operations/workshop/convolution-matrix.c:51
+msgid "(3,4) "
+msgstr "(3,4) "
+
+#: ../operations/workshop/convolution-matrix.c:52
+msgid "Value of the element in position (3,4)"
+msgstr "Vērtība elementam pozīcijā (3,4)"
+
+#: ../operations/workshop/convolution-matrix.c:53
+msgid "(3,5) "
+msgstr "(3,5) "
+
+#: ../operations/workshop/convolution-matrix.c:54
+msgid "Value of the element in position (3,5)"
+msgstr "Vērtība elementam pozīcijā (3,5)"
+
+#: ../operations/workshop/convolution-matrix.c:55
+msgid "(4,1) "
+msgstr "(4,1) "
+
+#: ../operations/workshop/convolution-matrix.c:56
+msgid "Value of the element in position (4,1)"
+msgstr "Vērtība elementam pozīcijā (4,1)"
+
+#: ../operations/workshop/convolution-matrix.c:57
+msgid "(4,2) "
+msgstr "(4,2) "
+
+#: ../operations/workshop/convolution-matrix.c:58
+msgid "Value of the element in position (4,2)"
+msgstr "Vērtība elementam pozīcijā (4,2)"
+
+#: ../operations/workshop/convolution-matrix.c:59
+msgid "(4,3) "
+msgstr "(4,3) "
+
+#: ../operations/workshop/convolution-matrix.c:60
+msgid "Value of the element in position (4,3)"
+msgstr "Vērtība elementam pozīcijā (4,3)"
+
+#: ../operations/workshop/convolution-matrix.c:61
+msgid "(4,4) "
+msgstr "(4,4) "
+
+#: ../operations/workshop/convolution-matrix.c:62
+msgid "Value of the element in position (4,4)"
+msgstr "Vērtība elementam pozīcijā (4,4)"
+
+#: ../operations/workshop/convolution-matrix.c:63
+msgid "(4,5) "
+msgstr "(4,5) "
+
+#: ../operations/workshop/convolution-matrix.c:64
+msgid "Value of the element in position (4,5)"
+msgstr "Vērtība elementam pozīcijā (4,5)"
+
+#: ../operations/workshop/convolution-matrix.c:65
+msgid "(5,1) "
+msgstr "(5,1) "
+
+#: ../operations/workshop/convolution-matrix.c:66
+msgid "Value of the element in position (5,1)"
+msgstr "Vērtība elementam pozīcijā (5,1)"
+
+#: ../operations/workshop/convolution-matrix.c:67
+msgid "(5,2) "
+msgstr "(5,2) "
+
+#: ../operations/workshop/convolution-matrix.c:68
+msgid "Value of the element in position (5,2)"
+msgstr "Vērtība elementam pozīcijā (5,2)"
+
+#: ../operations/workshop/convolution-matrix.c:69
+msgid "(5,3) "
+msgstr "(5,3) "
+
+#: ../operations/workshop/convolution-matrix.c:70
+msgid "Value of the element in position (5,3)"
+msgstr "Vērtība elementam pozīcijā (5,3)"
+
+#: ../operations/workshop/convolution-matrix.c:71
+msgid "(5,4) "
+msgstr "(5,4) "
+
+#: ../operations/workshop/convolution-matrix.c:72
+msgid "Value of the element in position (5,4)"
+msgstr "Vērtība elementam pozīcijā (5,4)"
+
+#: ../operations/workshop/convolution-matrix.c:73
+msgid "(5,5) "
+msgstr "(5,5) "
+
+#: ../operations/workshop/convolution-matrix.c:74
+msgid "Value of the element in position (5,5)"
+msgstr "Vērtība elementam pozīcijā (5,5)"
+
+#: ../operations/workshop/convolution-matrix.c:76
+msgid "Divisor: "
+msgstr "Dalītājs: "
+
+#: ../operations/workshop/convolution-matrix.c:77
+msgid "The value of the divisor"
+msgstr "Dalītāja vērtība"
+
+#: ../operations/workshop/convolution-matrix.c:78
+msgid "Offset: "
+msgstr "Nobīde: "
+
+#: ../operations/workshop/convolution-matrix.c:79
+msgid "The value of the offset"
+msgstr "Nobīdes vērtība"
+
+#: ../operations/workshop/convolution-matrix.c:81
+msgid "Normalize"
+msgstr "Normalizēt"
+
+#: ../operations/workshop/convolution-matrix.c:81
+msgid "Normalize or not"
+msgstr "Normalizēt vai nē"
+
+#: ../operations/workshop/convolution-matrix.c:83
+msgid "Red channel"
+msgstr "Sarkanais kanāls"
+
+#: ../operations/workshop/convolution-matrix.c:84
+msgid "Green channel"
+msgstr "Zaļais kanāls"
+
+#: ../operations/workshop/convolution-matrix.c:85
+msgid "Blue channel"
+msgstr "Zilais kanāls"
+
+#: ../operations/workshop/convolution-matrix.c:86
+msgid "Alpha channel"
+msgstr "Alfa kanāls"
+
+#: ../operations/workshop/convolution-matrix.c:88
+msgid "Alpha-weighting"
+msgstr "Alfa svēršana"
+
+#: ../operations/workshop/convolution-matrix.c:88
+msgid "Alpha weighting"
+msgstr "Alfa svēršana"
+
+#: ../operations/workshop/convolution-matrix.c:90
+msgid "Border"
+msgstr "Mala"
+
+#: ../operations/workshop/convolution-matrix.c:91
+msgid ""
+"Type of border to choose. Choices are extend, wrap, crop. Default is extend"
+msgstr ""
+"Malas veids, ko izvēlēties. Iespējas ir — extend, wrap, crop. Noklusējuma ir "
+"extend."
+
+#: ../operations/workshop/convolution-matrix.c:433
+msgid "Creates image by manually set convolution matrix"
+msgstr "Izveido attēlus, manuāli iestatot konvolūcijas matricu"
+
+#: ../operations/workshop/cubism.c:30 ../operations/workshop/cubism.c:31
+msgid "Tile size"
+msgstr "Flīzes izmērs"
+
+#: ../operations/workshop/cubism.c:32 ../operations/workshop/cubism.c:33
+msgid "Tile saturation"
+msgstr "Flīzes piesātinājums"
+
+#: ../operations/workshop/cubism.c:35
+msgid "Random seed"
+msgstr "Nejaušības sēkla"
+
+#: ../operations/workshop/cubism.c:595
+msgid "A filter that somehow resembles a cubist painting style"
+msgstr "Filtrs, kas kaut kādā mērā atgādina kubistu gleznošanas stilu"
+
+#: ../operations/workshop/deinterlace.c:30
+msgid "Even/Odd"
+msgstr "Pāra/nepāra"
+
+#: ../operations/workshop/deinterlace.c:30
+msgid "Keep even/odd fields"
+msgstr "Paturēt pāra/nepāra laukus"
+
+#: ../operations/workshop/deinterlace.c:31
+msgid "Horizontal/Vertical"
+msgstr "Horizontāls/vertikāls"
+
+#: ../operations/workshop/deinterlace.c:32
+msgid "Choose horizontal or vertical"
+msgstr "Izvēlieties horizontālo vai vertikālo"
+
+#: ../operations/workshop/deinterlace.c:33
+msgid "Block size"
+msgstr "Bloka izmērs"
+
+#: ../operations/workshop/deinterlace.c:34
+msgid "Block size of deinterlacing rows/columns"
+msgstr "Bloka izmērs rindu/kolonnu rindpārleces novēršanai"
+
+#: ../operations/workshop/deinterlace.c:309
+msgid "Performs deinterlace on the image"
+msgstr "Novērš rindpārleci attēlam"
+
+#: ../operations/workshop/demosaic-bimedian.c:26
+#: ../operations/workshop/demosaic-simple.c:25
+msgid "Bayer pattern"
+msgstr "Bayer raksts"
+
+#: ../operations/workshop/demosaic-bimedian.c:27
+#: ../operations/workshop/demosaic-simple.c:26
+msgid ""
+"Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji "
+"files."
+msgstr ""
+"Izmantotais Bayer raksts. 0 strādā uz dažiem nikon failiem, 2 dažiem Fuji "
+"failiem."
+
+#: ../operations/workshop/demosaic-bimedian.c:220
+msgid ""
+"Performs a grayscale2color demosaicing of an image, using bimedian "
+"interpolation."
+msgstr ""
+"Veic pelēktoņi-uz-krāsa attēla mozaīkas novēršanu, izmantojot bimediāna "
+"interpolāciju."
+
+#: ../operations/workshop/demosaic-simple.c:152
+msgid ""
+"Performs a naive grayscale2color demosaicing of an image, no interpolation."
+msgstr ""
+"Veic naivo pelēktoņi-uz-krāsa attēla mozaīkas novēršanu, bez interpolācijas."
+
+#: ../operations/workshop/disc-percentile.c:29
+msgid "The percentile to compute, defaults to 50, which is a median filter."
+msgstr ""
+"Procentīle, ko izskaitļot; noklusējuma vērtība ir 50, kas ir vidējais filtrs."
+
+#: ../operations/workshop/disc-percentile.c:234
+msgid ""
+"Sets the target pixel to the color corresponding to a given percentile when "
+"colors are sorted by luminance."
+msgstr ""
+"Iestata mērķa pikselim krāsu, kas atbilst dotajai procentīlei, kas krāsas ir "
+"sakārtotas pēc spīduma."
+
+#: ../operations/workshop/ditto.c:111
+msgid "Test op to do a 1:1 map of input to output, while sampling"
+msgstr ""
+"Testa darbība, lai veiktu 1:1 attēlojumu no ievades uz izvadi, nolasot "
+"paraugus"
+
+#: ../operations/workshop/emboss.c:25
+msgid "Azimuth"
+msgstr "Azimuts"
+
+#: ../operations/workshop/emboss.c:26
+msgid "The value of azimuth"
+msgstr "Azimuta vērtība"
+
+#: ../operations/workshop/emboss.c:27
+msgid "Elevation"
+msgstr "Augstums"
+
+#: ../operations/workshop/emboss.c:28
+msgid "The value of elevation"
+msgstr "Augstuma vērtība"
+
+#: ../operations/workshop/emboss.c:29
+#: ../operations/workshop/fractal-trace.c:40
+msgid "Depth"
+msgstr "Dziļums"
+
+#: ../operations/workshop/emboss.c:30
+msgid "Pixel depth"
+msgstr "Pikseļu dziļums"
+
+#: ../operations/workshop/emboss.c:32
+msgid ""
+"Optional parameter to override automatic selection of emboss filter. Choices "
+"are emboss, blur-map"
+msgstr ""
+"Neobligāti parametri, lai pārrakstītu automātisko izvēli grofēšanas filtram. "
+"Izvēles iespējas ir emboss, blur-map"
+
+#: ../operations/workshop/emboss.c:248
+msgid "Simulates an image created by embossing"
+msgstr "Imitē attēlu, ko iegūst ar gofrēšanu"
+
+#: ../operations/workshop/external/ff-save.c:31
+msgid "Bitrate"
+msgstr "Bitu ātrums"
+
+#: ../operations/workshop/external/ff-save.c:31
+msgid "target bitrate"
+msgstr "mērķa bitu ātrums"
+
+#: ../operations/workshop/external/ff-save.c:32
+msgid "frames per second"
+msgstr "kadri sekundē"
+
+#: ../operations/workshop/external/ff-save.c:889
+msgid "FFmpeg video output sink"
+msgstr "FFmpeg video izvades savācējs"
+
+#: ../operations/workshop/external/gluas.c:41
+msgid "Script"
+msgstr "Skripts"
+
+#: ../operations/workshop/external/gluas.c:42
+msgid "The lua script containing the implementation of this operation."
+msgstr "Lua skripts, kas satur šīs operācija implementāciju."
+
+#: ../operations/workshop/external/gluas.c:43
+msgid "a stored lua script on disk implementing an operation."
+msgstr "uz diska saglabāts lua skripts, kas implementē operāciju."
+
+#: ../operations/workshop/external/gluas.c:44
+msgid "User value"
+msgstr "Lietotāja vērtība"
+
+#: ../operations/workshop/external/gluas.c:45
+msgid "(appears in the global variable 'user_value' in lua."
+msgstr "(parādās lua globālajā mainīgajā 'user_value'."
+
+#: ../operations/workshop/external/gluas.c:984
+msgid ""
+"A general purpose filter/composer implementation proxy for the lua "
+"programming language."
+msgstr ""
+"Universāls filtru/veidotāju implementācijas spraudnis lua programmēšanas "
+"valodai."
+
+#: ../operations/workshop/external/lens-correct.c:28
+msgid "Maker:"
+msgstr "Ražotājs:"
+
+#: ../operations/workshop/external/lens-correct.c:29
+msgid "Write lens maker correctly"
+msgstr "Ierakstiet lēcas ražotāju pareizi"
+
+#: ../operations/workshop/external/lens-correct.c:30
+msgid "Camera:"
+msgstr "Fotoaparāts:"
+
+#: ../operations/workshop/external/lens-correct.c:31
+msgid "Write camera name correctly"
+msgstr "Ierakstiet ražotāja vārdu pareizi"
+
+#: ../operations/workshop/external/lens-correct.c:32
+msgid "Lens:"
+msgstr "Lēca:"
+
+#: ../operations/workshop/external/lens-correct.c:33
+msgid "Write your lens model with uppercase letters"
+msgstr "Ievadiet savas lēcas modeli ar lielajiem burtiem"
+
+#: ../operations/workshop/external/lens-correct.c:34
+msgid "Focal of the camera"
+msgstr "Lēcas fokusa garums"
+
+#: ../operations/workshop/external/lens-correct.c:35
+msgid "Calculate b value from focal"
+msgstr "Aprēķināt b vērtību no fokusa"
+
+#: ../operations/workshop/external/lens-correct.c:37
+msgid "Center"
+msgstr "Vidus"
+
+#: ../operations/workshop/external/lens-correct.c:38
+msgid "If you want center"
+msgstr "Ja vēlaties vidu"
+
+#: ../operations/workshop/external/lens-correct.c:39
+msgid "Lens center x"
+msgstr "Lēcas vidus x"
+
+#: ../operations/workshop/external/lens-correct.c:40
+#: ../operations/workshop/external/lens-correct.c:42
+msgid "Coordinates of lens center"
+msgstr "Lēcas vidus koordinātas"
+
+#: ../operations/workshop/external/lens-correct.c:41
+msgid "Lens center y"
+msgstr "Lēcas vidus y"
+
+#: ../operations/workshop/external/lens-correct.c:44
+msgid "Scale of the image"
+msgstr "Attēla mērogs"
+
+#: ../operations/workshop/external/lens-correct.c:45
+msgid "Autocorrect d values"
+msgstr "Automātiski labot d vērtības"
+
+#: ../operations/workshop/external/lens-correct.c:46
+msgid "Autocorrect D values for lens correction models."
+msgstr "Automātiski labot D vērtības lēcu koriģēšanas modeļiem."
+
+#: ../operations/workshop/external/lens-correct.c:48
+msgid "Model red a:"
+msgstr "Modeļa sarkanais a:"
+
+#: ../operations/workshop/external/lens-correct.c:49
+#: ../operations/workshop/external/lens-correct.c:51
+#: ../operations/workshop/external/lens-correct.c:53
+#: ../operations/workshop/external/lens-correct.c:55
+#: ../operations/workshop/external/lens-correct.c:58
+#: ../operations/workshop/external/lens-correct.c:60
+#: ../operations/workshop/external/lens-correct.c:62
+#: ../operations/workshop/external/lens-correct.c:64
+#: ../operations/workshop/external/lens-correct.c:67
+#: ../operations/workshop/external/lens-correct.c:69
+#: ../operations/workshop/external/lens-correct.c:71
+#: ../operations/workshop/external/lens-correct.c:73
+msgid "Correction parameters for each color channel"
+msgstr "Labošanas parametrs karam krāsu kanālam"
+
+#: ../operations/workshop/external/lens-correct.c:50
+msgid "Model red b:"
+msgstr "Modeļa sarkanais b:"
+
+#: ../operations/workshop/external/lens-correct.c:52
+msgid "Model red c:"
+msgstr "Modeļa sarkanais c:"
+
+#: ../operations/workshop/external/lens-correct.c:54
+msgid "Model red d:"
+msgstr "Modeļa sarkanais d:"
+
+#: ../operations/workshop/external/lens-correct.c:57
+msgid "Model green a:"
+msgstr "Modeļa zaļais a:"
+
+#: ../operations/workshop/external/lens-correct.c:59
+msgid "Model green b:"
+msgstr "Modeļa zaļais b:"
+
+#: ../operations/workshop/external/lens-correct.c:61
+msgid "Model green c:"
+msgstr "Modeļa zaļais c:"
+
+#: ../operations/workshop/external/lens-correct.c:63
+msgid "Model green d:"
+msgstr "Modeļa zaļais d:"
+
+#: ../operations/workshop/external/lens-correct.c:66
+msgid "Model blue a:"
+msgstr "Modeļa zilais a:"
+
+#: ../operations/workshop/external/lens-correct.c:68
+msgid "Model blue b:"
+msgstr "Modeļa zilais b:"
+
+#: ../operations/workshop/external/lens-correct.c:70
+msgid "Model blue c:"
+msgstr "Modeļa zilais c:"
+
+#: ../operations/workshop/external/lens-correct.c:72
+msgid "Model blue d:"
+msgstr "Modeļa zilais d:"
+
+#: ../operations/workshop/external/lens-correct.c:75
+msgid "Model alpha a:"
+msgstr "Modeļa alfa a:"
+
+#: ../operations/workshop/external/lens-correct.c:76
+#: ../operations/workshop/external/lens-correct.c:78
+#: ../operations/workshop/external/lens-correct.c:80
+#: ../operations/workshop/external/lens-correct.c:82
+msgid "Correction parameters for alpha channel"
+msgstr "Labošanas parametrs alfa kanālam"
+
+#: ../operations/workshop/external/lens-correct.c:77
+msgid "Model alpha b:"
+msgstr "Modeļa alfa b:"
+
+#: ../operations/workshop/external/lens-correct.c:79
+msgid "Model alpha c:"
+msgstr "Modeļa alfa c:"
+
+#: ../operations/workshop/external/lens-correct.c:81
+msgid "Model alpha d:"
+msgstr "Modeļa alfa d:"
+
+#: ../operations/workshop/external/line-profile.c:25
+msgid "X0"
+msgstr "X0"
+
+#: ../operations/workshop/external/line-profile.c:25
+msgid "Start x coordinate"
+msgstr "Sākuma x koordināta"
+
+#: ../operations/workshop/external/line-profile.c:26
+#: ../operations/workshop/fractal-trace.c:28
+#: ../operations/workshop/linear-gradient.c:24
+msgid "X1"
+msgstr "X1"
+
+#: ../operations/workshop/external/line-profile.c:26
+msgid "End x coordinate"
+msgstr "Beigu x koordināta"
+
+#: ../operations/workshop/external/line-profile.c:27
+msgid "Y0"
+msgstr "Y0"
+
+#: ../operations/workshop/external/line-profile.c:27
+msgid "Start y coordinate"
+msgstr "Sākuma y koordināta"
+
+#: ../operations/workshop/external/line-profile.c:28
+#: ../operations/workshop/fractal-trace.c:32
+#: ../operations/workshop/linear-gradient.c:25
+msgid "Y1"
+msgstr "Y1"
+
+#: ../operations/workshop/external/line-profile.c:28
+msgid "End y coordinate"
+msgstr "Beigu y koordināta"
+
+#: ../operations/workshop/external/line-profile.c:29
+msgid "Width of plot"
+msgstr "Lauciņa platums"
+
+#: ../operations/workshop/external/line-profile.c:30
+msgid "Height of plot"
+msgstr "Lauciņa augstums"
+
+#: ../operations/workshop/external/line-profile.c:31
+msgid "Min"
+msgstr "Min"
+
+#: ../operations/workshop/external/line-profile.c:31
+msgid "Value at bottom"
+msgstr "Vērtība apakšā"
+
+#: ../operations/workshop/external/line-profile.c:32
+msgid "Max"
+msgstr "Maks"
+
+#: ../operations/workshop/external/line-profile.c:32
+msgid "Value at top"
+msgstr "Vērtība augšā"
+
+#: ../operations/workshop/external/line-profile.c:178
+msgid ""
+"Renders luminance profiles for red green and blue components along the "
+"specified line in the input buffer, plotted in a buffer of the specified "
+"size."
+msgstr ""
+"Attēlo spīduma profilus sarkanajām un zilajām komponentēm gar norādīto "
+"līniju ievades buferī, kas atlikts norādītā izmēra buferī."
+
+#: ../operations/workshop/fractal-trace.c:25
+msgid "Fractal"
+msgstr "Fraktālis"
+
+#: ../operations/workshop/fractal-trace.c:26
+msgid ""
+"Type of fractal to use. Choices are julia, mandelbrot. Default is mandelbrot."
+msgstr ""
+"Fraktāļa veids, ko izmantot. Iespējamās vērtības ir julia, mandelbrot. "
+"Noklusējuma vērtība ir mandelbrot."
+
+#: ../operations/workshop/fractal-trace.c:29
+msgid "X1 value, position"
+msgstr "X1 vērtība, novietojums"
+
+#: ../operations/workshop/fractal-trace.c:30
+#: ../operations/workshop/linear-gradient.c:26
+msgid "X2"
+msgstr "X2"
+
+#: ../operations/workshop/fractal-trace.c:31
+#: ../operations/workshop/fractal-trace.c:33
+msgid "X2 value, position"
+msgstr "X2 vērtība, novietojums"
+
+#: ../operations/workshop/fractal-trace.c:34
+#: ../operations/workshop/linear-gradient.c:27
+msgid "Y2"
+msgstr "Y2"
+
+#: ../operations/workshop/fractal-trace.c:35
+msgid "Y2 value, position"
+msgstr "Y2 vērtība, novietojums"
+
+#: ../operations/workshop/fractal-trace.c:36
+msgid "JX"
+msgstr "JX"
+
+#: ../operations/workshop/fractal-trace.c:37
+msgid "Julia seed X value, position"
+msgstr "Džuliāna sēklas X vērtība, novietojums"
+
+#: ../operations/workshop/fractal-trace.c:38
+msgid "JY"
+msgstr "JY"
+
+#: ../operations/workshop/fractal-trace.c:39
+msgid "Julia seed Y value, position"
+msgstr "Džuliāna sēklas Y vērtība, novietojums"
+
+#: ../operations/workshop/fractal-trace.c:41
+msgid "Depth value"
+msgstr "Dziļuma vērtība"
+
+#: ../operations/workshop/fractal-trace.c:42
+msgid "Bailout"
+msgstr "Izbēgšana"
+
+#: ../operations/workshop/fractal-trace.c:43
+msgid "Bailout length"
+msgstr "Izbēgšanas garums"
+
+#: ../operations/workshop/fractal-trace.c:44
+msgid "Background"
+msgstr "Fons"
+
+#: ../operations/workshop/fractal-trace.c:45
+msgid ""
+"Optional parameter to override automatic selection of wrap background. "
+"Choices are wrap, black, white and transparent."
+msgstr ""
+"Neobligāts parametrs, lai pārrakstītu automātisko aplaušanas fona izvēli. "
+"Var izvēlēties wrap, black, white un transparent."
+
+#: ../operations/workshop/fractal-trace.c:171
+msgid "Unsupported fractal type"
+msgstr "Neatbalstīts fraktāļa tips"
+
+#: ../operations/workshop/fractal-trace.c:321
+msgid "Performs fractal trace on the image"
+msgstr "Veic fraktāļa izsekošanu attēlam"
+
+#: ../operations/workshop/generated/average.c:109
+msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
+msgstr "Attēla sapludināšanas operācija: vidējais (<tt>c = (cA + aB)/2</tt>)"
+
+#: ../operations/workshop/generated/blend-reflect.c:109
+msgid ""
+"Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
+"cB)</tt>)"
+msgstr ""
+"Attēla sapludināšanas operācija: saplūduma-atspulgs (<tt>c = cB>=1.0?1.0:"
+"cA*cA / (1.0-cB)</tt>)"
+
+#: ../operations/workshop/generated/negation.c:109
+msgid ""
+"Image blending operation 'negation' (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
+msgstr ""
+"Attēla sapludināšanas operācija: negācija (<tt>c = 1.0 - fabs(1.0-cA-cB)</"
+"tt>)"
+
+#: ../operations/workshop/generated/soft-burn.c:109
+msgid ""
+"Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
+"cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
+msgstr ""
+"Attēla sapludināšanas operācija: mīksta aptumšošana (<tt>c = (cA+cB<1.0)?"
+"0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
+
+#: ../operations/workshop/generated/soft-dodge.c:109
+msgid ""
+"Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
+"cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
+msgstr ""
+"Attēla sapludināšanas operācija: mīksta izgaismošana ((<tt>c = (cA+cB<1.0)?"
+"0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
+
+#: ../operations/workshop/generated/subtractive.c:109
+msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
+msgstr "Attēla sapludināšanas operācija: atņemošs (<tt>c = cA+cB-1.0</tt>)"
+
+#: ../operations/workshop/hstack.c:178
+msgid ""
+"Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
+"\"input\")"
+msgstr ""
+"Horizontāli saliktas ievades, (iekš \"output\" \"aux\" ir novietots pa labi "
+"no \"input\")"
+
+#: ../operations/workshop/kuwahara.c:243
+msgid "Edge preserving blur"
+msgstr "Malu saglabājoša aizmiglošana"
+
+#: ../operations/workshop/linear-gradient.c:29
+msgid "One end of a agradient"
+msgstr "Krāsu pārejas viena mala"
+
+#: ../operations/workshop/linear-gradient.c:31
+msgid "The other end of a gradient"
+msgstr "Krāsu pārejas otra mala"
+
+#: ../operations/workshop/linear-gradient.c:137
+msgid "Linear gradient renderer"
+msgstr "Lineāras krāsu pārejas attēlotājs"
+
+#: ../operations/workshop/mandelbrot.c:25
+msgid "Real"
+msgstr "Reālā"
+
+#: ../operations/workshop/mandelbrot.c:26
+msgid "Real coordinate"
+msgstr "Reālā koordināta"
+
+#: ../operations/workshop/mandelbrot.c:27
+msgid "Imaginary"
+msgstr "Imaginārā"
+
+#: ../operations/workshop/mandelbrot.c:28
+msgid "Imaginary coordinate"
+msgstr "Imaginārā koordināta"
+
+#: ../operations/workshop/mandelbrot.c:29
+msgid "Level"
+msgstr "Līmenis"
+
+#: ../operations/workshop/mandelbrot.c:30
+msgid "Water level"
+msgstr "Ūdens līmenis"
+
+#: ../operations/workshop/mandelbrot.c:32
+msgid "Maximum number of iterations"
+msgstr "Maksimālais iterāciju skaits"
+
+#: ../operations/workshop/mandelbrot.c:144
+msgid "Mandelbrot set renderer"
+msgstr "Mandelbrota kopas attēlotājs"
+
+#: ../operations/workshop/noise-spread.c:30
+msgid "Horizontal spread amount"
+msgstr "Horizontālās izklāšanas apmērs"
+
+#: ../operations/workshop/noise-spread.c:32
+msgid "Vertical spread amount"
+msgstr "Vertikālās izklāšanas apmērs"
+
+#: ../operations/workshop/noise-spread.c:172
+msgid "Noise spread filter"
+msgstr "Trokšņa izklāšanas filtrs"
+
+#: ../operations/workshop/plasma.c:34
+msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
+msgstr "Nejauša sēkla. -1 padošana nozīmē, ka sēklu izvēlas nejauši."
+
+#: ../operations/workshop/plasma.c:35
+msgid "Turbulence"
+msgstr "Turbulence"
+
+#: ../operations/workshop/plasma.c:36
+msgid "The value of the turbulence"
+msgstr "Turbulences vērtība"
+
+#: ../operations/workshop/plasma.c:389
+msgid "Performs plasma effect on the image"
+msgstr "Uz attēla veic plazmas efektu"
+
+#: ../operations/workshop/radial-gradient.c:24
+msgid "x1"
+msgstr "x1"
+
+#: ../operations/workshop/radial-gradient.c:25
+msgid "y1"
+msgstr "y1"
+
+#: ../operations/workshop/radial-gradient.c:26
+msgid "x2"
+msgstr "x2"
+
+#: ../operations/workshop/radial-gradient.c:27
+msgid "y2"
+msgstr "y2"
+
+#: ../operations/workshop/radial-gradient.c:29
+#: ../operations/workshop/radial-gradient.c:31
+msgid "One end of gradient"
+msgstr "Viens krāsu pārejas gals"
+
+#: ../operations/workshop/radial-gradient.c:129
+msgid "Radial gradient renderer"
+msgstr "Radiālas krāsu pārejas attēlotājs"
+
+#: ../operations/workshop/rawbayer-load.c:154
+msgid ""
+"Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
+"grayscale, if the fileformat is .rawbayer it will use this loader instead of "
+"the normal dcraw loader, if the fileformat is .rawbayerS it will swap the "
+"returned 16bit numbers (the pnm loader is apparently buggy)"
+msgstr ""
+"Jēlu attēlu ielādētājs, ietin dcraw ar konveijeriem; nodrošina jēlu bayer "
+"režģi kā pelēktoņus; ja faila formāts ir .rawbayer, tiks izmantots šis "
+"ielādētājs, nevis parastais dcraw ielādētājs; ja faila formāts ir ."
+"rawbayerS, tiks apmainīti atgrieztie 16 bitu skaitļi (acīmredzot, pnm "
+"ielādētājs ir kļūdains)"
+
+#: ../operations/workshop/red-eye-removal.c:32
+msgid "The value of the threshold"
+msgstr "Sliekšņa vērtība"
+
+#: ../operations/workshop/red-eye-removal.c:132
+msgid "Performs red-eye-removal on the image"
+msgstr "Novērš sarkano acu efektu attēlā"
+
+#: ../operations/workshop/snn-percentile.c:30
+msgid "Number of pairs, higher number preserves more acute features"
+msgstr "Pāru skaits. Lielāks skaits saglabā precīzākas iezīmes"
+
+#: ../operations/workshop/snn-percentile.c:32
+msgid "The percentile to return, the default value 50 is equal to the median"
+msgstr ""
+"Procentīle, ko atgriezt; noklusējuma vērtība ir 50, kas ir vienāda ar vidējo"
+
+#: ../operations/workshop/snn-percentile.c:272
+msgid ""
+"Noise reducing edge enhancing percentile filter based on Symmetric Nearest "
+"Neighbours"
+msgstr ""
+"Trokšņu mazinošs, malu uzlabojošs, procentīles filtrs, kas balstīts uz "
+"Simetriskā Tuvākā Apkaime"
+
+#: ../operations/workshop/warp.c:36 ../operations/workshop/warp.c:41
+msgid "Effect Strength"
+msgstr "Efekta stiprums"
+
+#: ../operations/workshop/warp.c:38
+msgid "Effect Size"
+msgstr "Efekta izmērs"
+
+#: ../operations/workshop/warp.c:40
+msgid "Effect Hardness"
+msgstr "Efekta stingrums"
+
+#: ../operations/workshop/warp.c:41
+msgid "Stroke"
+msgstr "Vilkums"
+
+#: ../operations/workshop/warp.c:42
+msgid "Behavior"
+msgstr "Uzvedība"
+
+#: ../operations/workshop/warp.c:43
+msgid "Behavior of the op"
+msgstr "Operācijas uzvedība"
+
+#: ../operations/workshop/warp.c:386
+msgid "Compute a relative displacement mapping from a stroke"
+msgstr "Izskaitļot relatīvo pārvietojuma kartējumu no vilkuma"
+
+#: ../operations/workshop/whirl-pinch.c:36
+msgid "Whirl"
+msgstr "Sagriezt"
+
+#: ../operations/workshop/whirl-pinch.c:36
+msgid "Whirl angle (degrees)"
+msgstr "Sagriešanas leņķis grādos"
+
+#: ../operations/workshop/whirl-pinch.c:38
+msgid "Pinch"
+msgstr "Savilkt"
+
+#: ../operations/workshop/whirl-pinch.c:38
+msgid "Pinch amount"
+msgstr "Savilkšanas apjoms"
+
+#: ../operations/workshop/whirl-pinch.c:40
+msgid ""
+"Radius (1.0 is the largest circle that fits in the image, and 2.0 goes all "
+"the way to the corners)"
+msgstr ""
+"Rādiuss (1.0 ir garākais aplis, kas iekļaujas attēlā, un 2.0 iet līdz pašam "
+"stūrim)"
+
+#: ../operations/workshop/whirl-pinch.c:258
+msgid "Applies whirling and pinching on the image"
+msgstr "Veic sagriešanu un savilkšanu attēlam"
