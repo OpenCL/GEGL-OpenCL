@@ -38,7 +38,7 @@ G_BEGIN_DECLS
 #define GEGL_IS_TILE_SOURCE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_SOURCE))
 #define GEGL_TILE_SOURCE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_SOURCE, GeglTileSourceClass))
 
-typedef gint GeglTileCommand;
+typedef struct _GeglTileSourceClass GeglTileSourceClass;
 
 struct _GeglTileSource
 {
@@ -59,25 +59,6 @@ struct _GeglTileSourceClass
 };
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
-
-/* All commands have the ability to pass commands to all tiles the handlers
- * add abstraction to the commands the documentaiton given here is valid
- * when the commands are issued to a full blown GeglBuffer instance.
- */
-
-enum _GeglTileCommand
-{
-  GEGL_TILE_IDLE = 0,
-  GEGL_TILE_SET,
-  GEGL_TILE_GET,
-  GEGL_TILE_IS_CACHED,
-  GEGL_TILE_EXIST,
-  GEGL_TILE_VOID,
-  GEGL_TILE_FLUSH,
-  GEGL_TILE_REFETCH,
-  GEGL_TILE_REINIT,
-  GEGL_TILE_LAST_COMMAND
-};
 
 #ifdef NOT_REALLY_COS_THIS_IS_MACROS
 /* The functions documented below are actually macros, all using the command vfunc */

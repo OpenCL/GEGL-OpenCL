@@ -35,6 +35,9 @@ G_BEGIN_DECLS
 #define GEGL_IS_TILE_BACKEND_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_BACKEND))
 #define GEGL_TILE_BACKEND_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_BACKEND, GeglTileBackendClass))
 
+typedef struct _GeglTileBackendClass   GeglTileBackendClass;
+typedef struct _GeglTileBackendPrivate GeglTileBackendPrivate;
+
 struct _GeglTileBackend
 {
   GeglTileSource          parent_instance;

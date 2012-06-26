@@ -1,5 +1,4 @@
 /* This file is part of GEGL.
- * ck
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +19,35 @@
 #ifndef __GEGL_BUFFER_BACKEND_H__
 #define __GEGL_BUFFER_BACKEND_H__
 
-typedef struct _GeglTileSource            GeglTileSource;
-typedef struct _GeglTileSourceClass       GeglTileSourceClass;
-
-typedef struct _GeglTileBackend           GeglTileBackend;
-typedef struct _GeglTileBackendClass      GeglTileBackendClass;
-typedef struct _GeglTileBackendPrivate    GeglTileBackendPrivate;
+G_BEGIN_DECLS
 
 typedef struct _GeglTile                  GeglTile;
+typedef struct _GeglTileSource            GeglTileSource;
+typedef struct _GeglTileBackend           GeglTileBackend;
 
 
 typedef void   (*GeglTileCallback)       (GeglTile *tile,
                                           gpointer user_data);
 
+/* All commands have the ability to pass commands to all tiles the handlers
+ * add abstraction to the commands the documentaiton given here is valid
+ * when the commands are issued to a full blown GeglBuffer instance.
+ */
+typedef enum
+{
+  GEGL_TILE_IDLE = 0,
+  GEGL_TILE_SET,
+  GEGL_TILE_GET,
+  GEGL_TILE_IS_CACHED,
+  GEGL_TILE_EXIST,
+  GEGL_TILE_VOID,
+  GEGL_TILE_FLUSH,
+  GEGL_TILE_REFETCH,
+  GEGL_TILE_REINIT,
+  GEGL_TILE_LAST_COMMAND
+} GeglTileCommand;
+
+G_END_DECLS
 
 #include "gegl-types.h"
 #include "gegl-tile-backend.h"
