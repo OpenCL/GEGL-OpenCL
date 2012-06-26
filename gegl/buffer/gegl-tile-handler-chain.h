@@ -32,6 +32,8 @@
 #define GEGL_IS_TILE_HANDLER_CHAIN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_HANDLER_CHAIN))
 #define GEGL_TILE_HANDLER_CHAIN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_HANDLER_CHAIN, GeglTileHandlerChainClass))
 
+typedef struct _GeglTileHandlerChainClass GeglTileHandlerChainClass;
+
 struct _GeglTileHandlerChain
 {
   GeglTileHandler  parent_instance;

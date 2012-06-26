@@ -32,6 +32,8 @@
 #define GEGL_IS_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER))
 #define GEGL_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER, GeglBufferClass))
 
+typedef struct _GeglBufferClass GeglBufferClass;
+
 struct _GeglBuffer
 {
   GeglTileHandler   parent_instance; /* which is a GeglTileHandler which has a

@@ -19,8 +19,6 @@
 #ifndef __GEGL_BUFFER_TYPES_H__
 #define __GEGL_BUFFER_TYPES_H__
 
-typedef struct _GeglTileClass             GeglTileClass;
-
 #include "gegl-types.h"
 #include "gegl-buffer-backend.h"
 
@@ -45,26 +43,18 @@ struct _GeglTileBackendPrivate
   gboolean    shared;
 };
 
-
-
 typedef struct _GeglTileHandler           GeglTileHandler;
-typedef struct _GeglTileHandlerClass      GeglTileHandlerClass;
 
 typedef struct _GeglTileHandlerChain      GeglTileHandlerChain;
-typedef struct _GeglTileHandlerChainClass GeglTileHandlerChainClass;
 
 typedef struct _GeglTileStorage           GeglTileStorage;
-typedef struct _GeglTileStorageClass      GeglTileStorageClass;
 
 #ifndef __GEGL_BUFFER_H__
 typedef struct _GeglBuffer                GeglBuffer;
 typedef struct _GeglSampler               GeglSampler;
 #endif
 
-typedef struct _GeglBufferClass           GeglBufferClass;
-
 typedef struct _GeglCache                 GeglCache;
-typedef struct _GeglCacheClass            GeglCacheClass;
 
 typedef struct _GeglRegion                GeglRegion;
 

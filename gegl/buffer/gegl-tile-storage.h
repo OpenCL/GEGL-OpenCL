@@ -34,6 +34,8 @@
 #define GEGL_IS_TILE_STORAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_STORAGE))
 #define GEGL_TILE_STORAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_STORAGE, GeglTileStorageClass))
 
+typedef struct _GeglTileStorageClass GeglTileStorageClass;
+
 struct _GeglTileStorage
 {
   GeglTileHandlerChain parent_instance;

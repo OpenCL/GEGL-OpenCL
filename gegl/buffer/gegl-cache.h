@@ -31,6 +31,8 @@ G_BEGIN_DECLS
 #define GEGL_IS_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
 #define GEGL_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglCacheClass))
 
+typedef struct _GeglCacheClass GeglCacheClass;
+
 struct _GeglCache
 {
   GeglBuffer    parent_instance;
