@@ -540,7 +540,7 @@ gegl_buffer_iterate_read_simple (GeglBuffer          *buffer,
           bp = buf + bufy * buf_stride + bufx * bpx_size;
 
           if (width + offsetx - bufx < tile_width)
-            pixels = (width + offsetx - bufx) - offsetx;
+            pixels = width - bufx;
           else
             pixels = tile_width - offsetx;
 
@@ -648,7 +648,7 @@ gegl_buffer_iterate_read_abyss_none (GeglBuffer          *buffer,
             bp = buf + bufy * buf_stride + bufx * bpx_size;
 
             if (width + offsetx - bufx < tile_width)
-              pixels = (width + offsetx - bufx) - offsetx;
+              pixels = width - bufx;
             else
               pixels = tile_width - offsetx;
 
@@ -810,7 +810,7 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
             bp = buf + bufy * buf_stride + bufx * bpx_size;
 
             if (width + offsetx - bufx < tile_width)
-              pixels = (width + offsetx - bufx) - offsetx;
+              pixels = width - bufx;
             else
               pixels = tile_width - offsetx;
 
@@ -1027,7 +1027,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
           else
             {
               if (width + offsetx - bufx < tile_width)
-                pixels = (width + offsetx - bufx) - offsetx;
+                pixels = width - bufx;
               else
                 pixels = tile_width - offsetx;
 
@@ -1130,7 +1130,7 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
           bp = buf + bufy * buf_stride + bufx * bpx_size;
 
           if (width + offsetx - bufx < tile_width)
-            pixels = (width + offsetx - bufx) - offsetx;
+            pixels = width - bufx;
           else
             pixels = tile_width - offsetx;
 
