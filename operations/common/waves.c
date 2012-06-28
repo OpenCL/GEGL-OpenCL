@@ -41,6 +41,8 @@ gegl_chant_double (phi, _("Phase shift"), -1.0, 1.0, 0.0,
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
 
+gegl_chant_boolean (clamp, _("Clamp deformation"), FALSE,
+                    _("Limit deformation in the image area."))
 
 #else
 
@@ -92,6 +94,8 @@ process (GeglOperation       *operation,
 
   gint n_pixels = result->width * result->height;
 
+  GeglAbyssPolicy abyss = o->clamp ? GEGL_ABYSS_CLAMP : GEGL_ABYSS_NONE;
+
   while (n_pixels--)
     {
       gdouble coordsx = 0.0;
@@ -125,7 +129,7 @@ process (GeglOperation       *operation,
                         coordsy,
                         NULL,
                         out_pixel,
-                        GEGL_ABYSS_NONE);
+                        abyss);
 
       out_pixel += 4;
 
