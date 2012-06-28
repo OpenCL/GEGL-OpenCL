@@ -34,6 +34,9 @@ gegl_chant_double (black, _("Percent Black"), 0.0, 1.0, 0.2,
 gegl_chant_double (white, _("Percent White"), 0.0, 1.0, 0.2,
                    _("Percent White"))
 
+gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
+                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -51,6 +54,61 @@ typedef struct {
   gdouble      white;
 } Ramps;
 
+static void
+grey_blur_buffer(GeglBuffer *input,
+		 gdouble sharpness,
+		 gdouble mask_radius,
+		 GeglBuffer **dest1,
+		 GeglBuffer **dest2)
+{
+  GeglNode *gegl, *image, *write1, *write2, *grey, *blur1, *blur2;
+  gdouble radius, std_dev1, std_dev2;
+
+  gegl = gegl_node_new();
+  image = gegl_node_new_child(gegl,
+			      "operation", "gegl:buffer-source",
+			      "buffer", input,
+			      NULL);
+  grey = gegl_node_new_child(gegl,
+			     "operation", "gegl:grey",
+			     NULL);
+
+  radius   = MAX (1.0, 10 * (1.0 - sharpness));
+  radius   = fabs (radius) + 1.0;
+  std_dev1 = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
+  
+  radius   = fabs (mask_radius) + 1.0;
+  std_dev2 = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
+
+  blur1 =  gegl_node_new_child(gegl,
+			       "operation", "gegl:gaussian-blur",
+			       "std_dev_x", std_dev1,
+			       "std_dev_y", std_dev1,
+			       NULL);
+  blur2 =  gegl_node_new_child(gegl,
+			       "operation", "gegl:gaussian-blur",
+			       "std_dev_x", std_dev2,
+			       "std_dev_y", std_dev2,
+			       NULL);
+
+  write1 = gegl_node_new_child(gegl,
+			       "operation", "gegl:buffer-sink",
+			       "buffer", dest1, NULL);
+  
+  write2 = gegl_node_new_child(gegl,
+			       "operation", "gegl:buffer-sink",
+			       "buffer", dest2, NULL);
+  
+
+  gegl_node_link_many (image, grey, blur1, write1, NULL);
+  gegl_node_process (write1);
+  
+  gegl_node_link_many (image, grey, blur2, write2, NULL);
+  gegl_node_process (write2);
+
+  g_object_unref (gegl);
+}
+
 static gdouble
 compute_ramp (GeglBuffer *input,
 	      GeglOperation *operation,
@@ -59,66 +117,37 @@ compute_ramp (GeglBuffer *input,
 {
   GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglRectangle *whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglNode *gegl, *image, *write1, *write2, *grey, *blur1, *blur2;
-  GeglBuffer *dest1 = gegl_buffer_new(whole_region, babl_format ("Y float"));
-  GeglBuffer *dest2 = gegl_buffer_new(whole_region, babl_format ("Y float"));
-
-  gegl = gegl_node_new();
-  image = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-source",
-			      "buffer", input,
-			      NULL);
-
-  grey = gegl_node_new_child(gegl,
-			     "operation", "gegl:grey",
-			     NULL);
-
-  blur1 =  gegl_node_new_child(gegl,
-			       "operation", "gegl:gaussian-blur",
-			       "std_dev_x", (MAX(1.0, 10*(1.0 - o->sharpness)) + 1.0)/sqrt(2.0),
-			       "std_dev_y", (MAX(1.0, 10*(1.0 - o->sharpness)) + 1.0)/sqrt(2.0),
-			       NULL);
-  
-  blur2 =  gegl_node_new_child(gegl,
-			       "operation", "gegl:gaussian-blur",
-			       "std_dev_x", (o->mask_radius + 1.0)/sqrt(2.0),
-			       "std_dev_y", (o->mask_radius + 1.0)/sqrt(2.0),
-			       NULL);
-    
-  write1 = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-sink",
-			      "buffer", &dest1, NULL);
-  
-  write2 = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-sink",
-			      "buffer", &dest2, NULL);
-  
-
-  gegl_node_link_many (image, grey, blur1, write1, NULL);
-  gegl_node_process (write1);
-  
-  gegl_node_link_many (image, grey, blur2, write2, NULL);
-  gegl_node_process (write2);
-  
-  GeglSampler *sampler1 = gegl_buffer_sampler_new (dest1,
-                                                  babl_format ("Y float"),
-                                                  GEGL_SAMPLER_CUBIC);
-  GeglSampler *sampler2 = gegl_buffer_sampler_new (dest2,
-                                                  babl_format ("Y float"),
-                                                  GEGL_SAMPLER_CUBIC);
-  gint n_pixels = whole_region->width * whole_region->height;
+  GeglRectangle *whole_region;
+  gint    n_pixels;
   gint    hist[2000];
   gdouble diff;
   gint    count;
   gint    sum;
-
+  gfloat pixel1, pixel2;
+  gint x;
+  gint y;
+  gint i;
+  GeglSampler *sampler1;
+  GeglSampler *sampler2;
+  GeglBuffer *dest1, *dest2;
+  
+  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
+    
+  sampler1 = gegl_buffer_sampler_new (dest1,
+				      babl_format ("Y float"),
+				      o->sampler_type);
+  
+  sampler2 = gegl_buffer_sampler_new (dest2,
+				      babl_format ("Y float"),
+				      o->sampler_type);
+  
+  n_pixels = whole_region->width * whole_region->height;
+  
   memset (hist, 0, sizeof (int) * 2000);
   count = 0;
-  gfloat pixel1, pixel2;
-  gint x = whole_region->x;
-  gint y = whole_region->y;
-  gint i;
+  x = whole_region->x;
+  y = whole_region->y;
   while (n_pixels--)
     {
       gegl_sampler_get (sampler1,
@@ -132,7 +161,9 @@ compute_ramp (GeglBuffer *input,
                         y,
                         NULL,
                         &pixel2);
+
       diff = pixel1/pixel2;
+
       if (under_threshold)
 	{
 	  if (diff < THRESHOLD)
@@ -149,7 +180,7 @@ compute_ramp (GeglBuffer *input,
 	      count += 1;
 	    }
 	}
-      /* update x and y coordinates */
+
       x++;
       if (x>=whole_region->x + whole_region->width)
         {
@@ -157,11 +188,9 @@ compute_ramp (GeglBuffer *input,
           y++;
         }
     }
-
+  
   g_object_unref (sampler1);
   g_object_unref (sampler2);
-
-  g_object_unref (gegl);
   g_object_unref (dest1);
   g_object_unref (dest2);
   
@@ -210,13 +239,32 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglNode *gegl, *image, *write1, *write2, *grey, *blur1, *blur2;
-  GeglBuffer *dest1 = gegl_buffer_new(result, babl_format ("Y float"));
-  GeglBuffer *dest2 = gegl_buffer_new(result, babl_format ("Y float"));
+  GeglBuffer *dest1;
+  GeglBuffer *dest2;
+  GeglSampler *sampler1;
+  GeglSampler *sampler2;
 
   Ramps* ramps;
+
+  gint n_pixels;
+  gfloat pixel1, pixel2;
+  gfloat *out_pixel;
+  gint x;
+  gint y;
   
-  // needs mutex
+  gdouble diff;
+  Ramps *get_ramps;
+  gdouble ramp_down;
+  gdouble ramp_up;
+  gdouble mult;
+  
+  gfloat *dst_buf;
+  
+  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+  dst_buf = g_slice_alloc (result->width * result->height * 1 * sizeof(gfloat));
+
+  g_static_mutex_lock (&mutex);
   if(o->chant_data == NULL) {
     o->chant_data = g_slice_new (Ramps);
     
@@ -224,67 +272,26 @@ process (GeglOperation       *operation,
     ramps->black = compute_ramp(input,operation,o->black,1);
     ramps->white = compute_ramp(input,operation,1.0-o->white,0);
   }
+  g_static_mutex_unlock (&mutex);
   
-  gegl = gegl_node_new();
-  image = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-source",
-			      "buffer", input,
-			      NULL);
+  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
+  
+  sampler1 = gegl_buffer_sampler_new (dest1,
+				      babl_format ("Y float"),
+				      o->sampler_type);
+  
+  sampler2 = gegl_buffer_sampler_new (dest2,
+				      babl_format ("Y float"),
+				      o->sampler_type);
+  out_pixel = dst_buf;
+  x = result->x;
+  y = result->y;
+  n_pixels = result->width * result->height;
+  
+  get_ramps = (Ramps*) o->chant_data;
+  ramp_down = get_ramps->black;
+  ramp_up = get_ramps->white;
 
-  grey = gegl_node_new_child(gegl,
-			     "operation", "gegl:grey",
-			     NULL);
-
-  blur1 =  gegl_node_new_child(gegl,
-			       "operation", "gegl:gaussian-blur",
-			       "std_dev_x", (MAX(1.0, 10*(1.0 - o->sharpness)) + 1.0)/sqrt(2.0),
-			       "std_dev_y", (MAX(1.0, 10*(1.0 - o->sharpness)) + 1.0)/sqrt(2.0),
-			       NULL);
-  
-  blur2 =  gegl_node_new_child(gegl,
-			       "operation", "gegl:gaussian-blur",
-			       "std_dev_x", (o->mask_radius + 1.0)/sqrt(2.0),
-			       "std_dev_y", (o->mask_radius + 1.0)/sqrt(2.0),
-			       NULL);
-  
-  write1 = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-sink",
-			      "buffer", &dest1, NULL);
-  
-  write2 = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-sink",
-			      "buffer", &dest2, NULL);
-  
-
-  gegl_node_link_many (image, grey, blur1, write1, NULL);
-  gegl_node_process (write1);
-  
-  gegl_node_link_many (image, grey, blur2, write2, NULL);
-  gegl_node_process (write2);
-  
-  GeglSampler *sampler1 = gegl_buffer_sampler_new (dest1,
-                                                  babl_format ("Y float"),
-                                                  GEGL_SAMPLER_CUBIC);
-  GeglSampler *sampler2 = gegl_buffer_sampler_new (dest2,
-                                                  babl_format ("Y float"),
-                                                  GEGL_SAMPLER_CUBIC);
-
-  gfloat *dst_buf = g_slice_alloc (result->width * result->height * 1 * sizeof(gfloat));
-  
-  gint n_pixels = result->width * result->height;
-  
-  gfloat pixel1, pixel2;
-
-  gfloat *out_pixel = dst_buf;
-
-  gint x = result->x; /* initial x                   */
-  gint y = result->y; /*           and y coordinates */
-
-  gdouble diff;
-  Ramps *get_ramps = (Ramps*) o->chant_data;
-  gdouble ramp_down = get_ramps->black;
-  gdouble ramp_up = get_ramps->white;
-  gdouble mult;
   while (n_pixels--)
     {
       gegl_sampler_get (sampler1,
@@ -316,11 +323,10 @@ process (GeglOperation       *operation,
 	    mult = MIN (ramp_up,
 			(diff - THRESHOLD)) / ramp_up;
 
-	   *out_pixel = 1.0 - (1.0 - mult) * (1.0 - pixel1);
+	  *out_pixel = 1.0 - (1.0 - mult) * (1.0 - pixel1);
 	}
       out_pixel += 1;
       
-      /* update x and y coordinates */
       x++;
       if (x>=result->x + result->width)
         {
@@ -331,13 +337,12 @@ process (GeglOperation       *operation,
   
   gegl_buffer_set (output, result, 0, babl_format ("Y float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_slice_free1 (result->width * result->height * 1 * sizeof(gfloat), dst_buf);
+ 
   g_object_unref (sampler1);
   g_object_unref (sampler2);
-
-  g_object_unref (gegl);
   g_object_unref (dest1);
   g_object_unref (dest2);
-  
+     
   return  TRUE;
 }
 
@@ -372,10 +377,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "artistic",
-    "name"       , "gegl:photocopy",
-    "description", _("Photocopy effect"),
-    NULL);
+				 "categories" , "artistic",
+				 "name"       , "gegl:photocopy",
+				 "description", _("Photocopy effect"),
+				 NULL);
 }
 
 #endif
