@@ -47,6 +47,9 @@ gegl_chant_register_enum_end (GeglRippleWaveType)
 gegl_chant_enum (wave_type, _("Wave type"), GeglRippleWaveType, gegl_ripple_wave_type,
                  GEGl_RIPPLE_WAVE_TYPE_SINE, _("Type of wave"))
 
+gegl_chant_boolean (tileable, _("Tileable"), FALSE,
+                    _("Retain tilebility"))
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -98,6 +101,8 @@ process (GeglOperation       *operation,
 
   gint n_pixels = result->width * result->height;
 
+  GeglAbyssPolicy abyss = o->tileable ? GEGL_ABYSS_LOOP : GEGL_ABYSS_NONE;
+
   while (n_pixels--)
     {
       gdouble shift;
@@ -130,7 +135,7 @@ process (GeglOperation       *operation,
                         coordsy,
                         NULL,
                         out_pixel,
-                        GEGL_ABYSS_NONE);
+                        abyss);
 
       out_pixel += 4;
 
