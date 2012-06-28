@@ -1208,7 +1208,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
   roi_factored.height /= factor;
 
   if (rowstride == GEGL_AUTO_ROWSTRIDE)
-    rowstride = roi->width * babl_format_get_bytes_per_pixel (format);
+    rowstride = roi_factored.width * babl_format_get_bytes_per_pixel (format);
 
   if (gegl_rectangle_contains (&abyss, roi))
     {
