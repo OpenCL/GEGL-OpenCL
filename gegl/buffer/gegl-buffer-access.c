@@ -213,14 +213,14 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
       {
         case GEGL_ABYSS_CLAMP:
           abyss = gegl_buffer_get_abyss (buffer);
-          x = CLAMP (x, abyss->x, abyss->x+abyss->width);
-          y = CLAMP (y, abyss->y, abyss->x+abyss->height);
+          x = CLAMP (x, abyss->x, abyss->x+abyss->width-1);
+          y = CLAMP (y, abyss->y, abyss->x+abyss->height-1);
           break;
 
         case GEGL_ABYSS_LOOP:
           abyss = gegl_buffer_get_abyss (buffer);
-          x = abyss->x + (x - abyss->x) % abyss->width;
-          y = abyss->y + (y - abyss->y) % abyss->height;
+          x = abyss->x + GEGL_REMAINDER (x - abyss->x, abyss->width);
+          y = abyss->y + GEGL_REMAINDER (y - abyss->y, abyss->height);
           break;
 
         case GEGL_ABYSS_BLACK:
