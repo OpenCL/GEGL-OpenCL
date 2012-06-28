@@ -280,7 +280,7 @@ GeglConfig *gegl_config (void)
       if (g_getenv ("GEGL_QUALITY"))
         config->quality = atof(g_getenv("GEGL_QUALITY"));
       if (g_getenv ("GEGL_CACHE_SIZE"))
-        config->cache_size = atoi(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024;
+        config->tile_cache_size = atoll(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024;
       if (g_getenv ("GEGL_CHUNK_SIZE"))
         config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
       if (g_getenv ("GEGL_TILE_SIZE"))
@@ -485,7 +485,7 @@ gegl_post_parse_hook (GOptionContext *context,
   if (cmd_gegl_quality)
     config->quality = atof (cmd_gegl_quality);
   if (cmd_gegl_cache_size)
-    config->cache_size = atoi (cmd_gegl_cache_size)*1024*1024;
+    config->tile_cache_size = atoll (cmd_gegl_cache_size)*1024*1024;
   if (cmd_gegl_chunk_size)
     config->chunk_size = atoi (cmd_gegl_chunk_size);
   if (cmd_gegl_tile_size)

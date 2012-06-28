@@ -88,7 +88,7 @@ static GStaticMutex mutex                 = G_STATIC_MUTEX_INIT;
 static GQueue      *cache_queue           = NULL;
 static GHashTable  *cache_ht              = NULL;
 static gint         cache_wash_percentage = 20;
-static gint         cache_total           = 0; /* approximate amount of bytes stored */
+static guint64      cache_total           = 0; /* approximate amount of bytes stored */
 #ifdef GEGL_DEBUG_CACHE_HITS
 static gint         cache_hits            = 0;
 static gint         cache_misses          = 0;
@@ -524,10 +524,10 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
   g_hash_table_insert (cache_ht, item, item);
 
-  while (cache_total > gegl_config()->cache_size)
+  while (cache_total > gegl_config()->tile_cache_size)
     {
 #ifdef GEGL_DEBUG_CACHE_HITS
-      GEGL_NOTE(GEGL_DEBUG_CACHE, "cache_total:%i > cache_size:%i", cache_total, gegl_config()->cache_size);
+      GEGL_NOTE(GEGL_DEBUG_CACHE, "cache_total:"G_GUINT64_FORMAT" > cache_size:"G_GUINT64_FORMAT, cache_total, gegl_config()->tile_cache_size);
       GEGL_NOTE(GEGL_DEBUG_CACHE, "%f%% hit:%i miss:%i  %i]", cache_hits*100.0/(cache_hits+cache_misses), cache_hits, cache_misses, g_queue_get_length (cache_queue));
 #endif
       gegl_tile_handler_cache_trim (cache);

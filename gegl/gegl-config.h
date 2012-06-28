@@ -38,7 +38,7 @@ struct _GeglConfig
   GObject  parent_instance;
 
   gchar   *swap;
-  gint     cache_size;
+  guint64  tile_cache_size;
   gint     chunk_size; /* The size of elements being processed at once */
   gdouble  quality;
   gdouble  babl_tolerance;

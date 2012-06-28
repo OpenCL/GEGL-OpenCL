@@ -36,7 +36,8 @@ enum
 {
   PROP_0,
   PROP_QUALITY,
-  PROP_CACHE_SIZE,
+  PROP_CACHE_SIZE, /* deprecated */
+  PROP_TILE_CACHE_SIZE,
   PROP_CHUNK_SIZE,
   PROP_SWAP,
   PROP_BABL_TOLERANCE,
@@ -57,7 +58,11 @@ gegl_config_get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_CACHE_SIZE:
-        g_value_set_int (value, config->cache_size);
+        g_value_set_int (value, config->tile_cache_size);
+        break;
+
+      case PROP_TILE_CACHE_SIZE:
+        g_value_set_uint64 (value, config->tile_cache_size);
         break;
 
       case PROP_CHUNK_SIZE:
@@ -109,7 +114,10 @@ gegl_config_set_property (GObject      *gobject,
   switch (property_id)
     {
       case PROP_CACHE_SIZE:
-        config->cache_size = g_value_get_int (value);
+        config->tile_cache_size = g_value_get_int (value);
+        break;
+      case PROP_TILE_CACHE_SIZE:
+        config->tile_cache_size = g_value_get_uint64 (value);
         break;
       case PROP_CHUNK_SIZE:
         config->chunk_size = g_value_get_int (value);
@@ -212,14 +220,21 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
+  /* deprecated */
   g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
                                    g_param_spec_int ("cache-size",
                                                      "Cache size",
-                                                     "size of cache in bytes",
+                                                     "deprecated, use tile-cache-size instead",
                                                      0, G_MAXINT, 512 * 1024 * 1024,
-                                                     G_PARAM_READWRITE |
-                                                     G_PARAM_CONSTRUCT));
+                                                     G_PARAM_READWRITE));
 
+  g_object_class_install_property (gobject_class, PROP_TILE_CACHE_SIZE,
+                                   g_param_spec_uint64 ("tile-cache-size",
+                                                        "Tile Cache size",
+                                                        "size of tile cache in bytes",
+                                                        0, G_MAXUINT64, 512 * 1024 * 1024,
+                                                        G_PARAM_READWRITE |
+                                                        G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunk-size",
