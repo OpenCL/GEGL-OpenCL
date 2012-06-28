@@ -115,9 +115,9 @@ process (GeglOperation       *operation,
   gint r;
 
   /* calculate offsets once */
+  g_static_mutex_lock (&mutex);
   if (!o->chant_data)
     {
-      g_static_mutex_lock (&mutex);
       boundary = gegl_operation_source_get_bounding_box (operation, "input");
 
       if (boundary)
@@ -143,9 +143,8 @@ process (GeglOperation       *operation,
 	    }
 	  o->chant_data = offsets;
 	}
-      g_static_mutex_unlock (&mutex);
     }
-  
+  g_static_mutex_unlock (&mutex);
   offsets = (GArray*) o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
