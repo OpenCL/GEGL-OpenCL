@@ -34,9 +34,6 @@ gegl_chant_double (black, _("Percent Black"), 0.0, 1.0, 0.2,
 gegl_chant_double (white, _("Percent White"), 0.0, 1.0, 0.2,
                    _("Percent White"))
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
-                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
-
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -52,6 +49,10 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 typedef struct {
   gdouble      black;
   gdouble      white;
+  gdouble      prev_mask_radius;
+  gdouble      prev_sharpness;
+  gdouble      prev_black;
+  gdouble      prev_white;
 } Ramps;
 
 static void
@@ -99,7 +100,6 @@ grey_blur_buffer(GeglBuffer *input,
 			       "operation", "gegl:buffer-sink",
 			       "buffer", dest2, NULL);
   
-
   gegl_node_link_many (image, grey, blur1, write1, NULL);
   gegl_node_process (write1);
   
@@ -110,41 +110,72 @@ grey_blur_buffer(GeglBuffer *input,
 }
 
 static gdouble
+calculate_threshold (gint *hist,
+		     gdouble pct,
+		     gint count,
+		     gint under_threshold)
+{
+  gint    sum;
+  gint    i;
+
+  if (pct == 0.0 || count == 0)
+    return (under_threshold ? 1.0 : 0.0);
+
+  sum = 0;
+  for (i = 0; i < 2000; i++)
+    {
+      sum += hist[i];
+      if (((gdouble) sum / (gdouble) count) > pct)
+        {
+          if (under_threshold)
+            return (THRESHOLD - (gdouble) i / 1000.0);
+          else
+            return ((gdouble) i / 1000.0 - THRESHOLD);
+        }
+    }
+  
+  return (under_threshold ? 0.0 : 1.0);
+}
+
+static void
 compute_ramp (GeglBuffer *input,
 	      GeglOperation *operation,
-              gdouble  pct,
-              gint     under_threshold)
+	      gdouble pct_black,
+	      gdouble pct_white,
+	      gint under_threshold,
+	      gdouble *threshold_black,
+	      gdouble *threshold_white)
 {
   GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
 
   GeglRectangle *whole_region;
   gint    n_pixels;
-  gint    hist[2000];
+  gint    hist1[2000];
+  gint    hist2[2000];
   gdouble diff;
   gint    count;
-  gint    sum;
   gfloat pixel1, pixel2;
   gint x;
   gint y;
-  gint i;
   GeglSampler *sampler1;
   GeglSampler *sampler2;
   GeglBuffer *dest1, *dest2;
   
-  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-    
+  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
+      
   sampler1 = gegl_buffer_sampler_new (dest1,
 				      babl_format ("Y float"),
-				      o->sampler_type);
+				      GEGL_SAMPLER_LINEAR);
   
   sampler2 = gegl_buffer_sampler_new (dest2,
 				      babl_format ("Y float"),
-				      o->sampler_type);
+				      GEGL_SAMPLER_LINEAR);
   
   n_pixels = whole_region->width * whole_region->height;
   
-  memset (hist, 0, sizeof (int) * 2000);
+  memset (hist1, 0, sizeof (int) * 2000);
+  memset (hist2, 0, sizeof (int) * 2000);
   count = 0;
   x = whole_region->x;
   y = whole_region->y;
@@ -168,7 +199,7 @@ compute_ramp (GeglBuffer *input,
 	{
 	  if (diff < THRESHOLD)
 	    {
-	      hist[(int) (diff * 1000)] += 1;
+	      hist2[(int) (diff * 1000)] += 1;
 	      count += 1;
 	    }
 	}
@@ -176,7 +207,7 @@ compute_ramp (GeglBuffer *input,
 	{
 	  if (diff >= THRESHOLD && diff < 2.0)
 	    {
-	      hist[(int) (diff * 1000)] += 1;
+	      hist1[(int) (diff * 1000)] += 1;
 	      count += 1;
 	    }
 	}
@@ -193,24 +224,9 @@ compute_ramp (GeglBuffer *input,
   g_object_unref (sampler2);
   g_object_unref (dest1);
   g_object_unref (dest2);
-  
-  if (pct == 0.0 || count == 0)
-    return (under_threshold ? 1.0 : 0.0);
 
-  sum = 0;
-  for (i = 0; i < 2000; i++)
-    {
-      sum += hist[i];
-      if (((gdouble) sum / (gdouble) count) > pct)
-        {
-          if (under_threshold)
-            return (THRESHOLD - (gdouble) i / 1000.0);
-          else
-            return ((gdouble) i / 1000.0 - THRESHOLD);
-        }
-    }
-  
-  return (under_threshold ? 0.0 : 1.0);
+  *threshold_black = calculate_threshold(hist1, pct_black, count, 0);
+  *threshold_white = calculate_threshold(hist2, pct_white, count, 1);
 }
 
 static void prepare (GeglOperation *operation)
@@ -225,9 +241,18 @@ static void prepare (GeglOperation *operation)
                              babl_format ("Y float"));
   if(o->chant_data)
     {
-      g_slice_free (Ramps, o->chant_data);
+      Ramps* ramps = (Ramps*) o->chant_data;
+
+      /* hack so that thresholds are only calculated once */
+      if(ramps->prev_mask_radius != o->mask_radius ||
+	 ramps->prev_sharpness   != o->sharpness   ||
+	 ramps->prev_black       != o->black       ||
+	 ramps->prev_white       != o->white)
+	{
+	  g_slice_free (Ramps, o->chant_data);
+	  o->chant_data = NULL;
+	}
     }
-  o->chant_data = NULL;
 }
 
 static gboolean
@@ -259,30 +284,36 @@ process (GeglOperation       *operation,
   gdouble mult;
   
   gfloat *dst_buf;
+  GeglRectangle *whole_region;
   
   static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 
   dst_buf = g_slice_alloc (result->width * result->height * 1 * sizeof(gfloat));
 
   g_static_mutex_lock (&mutex);
-  if(o->chant_data == NULL) {
-    o->chant_data = g_slice_new (Ramps);
-    
-    ramps = (Ramps*) o->chant_data;
-    ramps->black = compute_ramp(input,operation,o->black,1);
-    ramps->white = compute_ramp(input,operation,1.0-o->white,0);
-  }
+  if(o->chant_data == NULL) 
+    {
+      whole_region = gegl_operation_source_get_bounding_box (operation, "input");
+      o->chant_data = g_slice_new (Ramps);
+      ramps = (Ramps*) o->chant_data;
+      compute_ramp(input,operation,o->black,o->white,1,&ramps->black,&ramps->white);
+      ramps->prev_mask_radius = o->mask_radius;
+      ramps->prev_sharpness   = o->sharpness;
+      ramps->prev_black       = o->black;
+      ramps->prev_white       = o->white;
+    }
   g_static_mutex_unlock (&mutex);
-  
+
+  gegl_buffer_set_extent(input, result);
   grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
   
   sampler1 = gegl_buffer_sampler_new (dest1,
 				      babl_format ("Y float"),
-				      o->sampler_type);
+				      GEGL_SAMPLER_LINEAR);
   
   sampler2 = gegl_buffer_sampler_new (dest2,
 				      babl_format ("Y float"),
-				      o->sampler_type);
+				      GEGL_SAMPLER_LINEAR);
   out_pixel = dst_buf;
   x = result->x;
   y = result->y;
@@ -342,7 +373,9 @@ process (GeglOperation       *operation,
   g_object_unref (sampler2);
   g_object_unref (dest1);
   g_object_unref (dest2);
-     
+ 
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
+  gegl_buffer_set_extent(input, whole_region);
   return  TRUE;
 }
 
