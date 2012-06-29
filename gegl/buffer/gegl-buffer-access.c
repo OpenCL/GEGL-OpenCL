@@ -977,18 +977,19 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
 
           y = bufy;
           if (tiledx != buffer_x + bufx)
-            { /* x was clamped */
+            { /* x was clamped. Copy a single color since x remains clamped in
+               this iteration. */
               guchar color[128];
               gint i;
 
-              /* gap between current column and left side of abyss */
+              /* gap between current column and left side of abyss rect */
               lskip = (buffer_abyss_x) - (buffer_x + bufx);
               /* gap between current column and end of roi */
               rskip = width - bufx;
               pixels = (lskip > 0) ? lskip : rskip;
 
               if (row_in_abyss)
-                {
+                { /* y remains clamped in this iteration so don't change the color */
                   if (fish)
                     babl_process (fish, tp, color, 1);
                   else
@@ -1031,7 +1032,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
               else
                 pixels = tile_width - offsetx;
 
-              /* gap between current column and right side of abyss */
+              /* gap between current column and right side of abyss rect */
               rskip = abyss_x_total - (buffer_x + bufx);
               if (rskip > 0 && rskip < pixels)
                 pixels = rskip;
@@ -1108,9 +1109,9 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
       else
         rows = tile_height - offsety;
 
-      /* gap between current row and top of abyss */
+      /* gap between current row and top of abyss rect */
       topskip = buffer_abyss_y - tiledy;
-      /* gap between current row and bottom of abyss */
+      /* gap between current row and bottom of abyss rect */
       bottomskip = abyss_y_total - tiledy;
 
       if (topskip > 0 && topskip < rows)
@@ -1139,9 +1140,9 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
                                             gegl_tile_indice (tiledy, tile_height),
                                             level);
 
-          /* gap between current column and left side of abyss */
+          /* gap between current column and left side of abyss rect */
           lskip = buffer_abyss_x - tiledx;
-          /* gap between current column and right side of abyss */
+          /* gap between current column and right side of abyss rect */
           rskip = abyss_x_total - tiledx;
 
           if (lskip > 0 && lskip < pixels)
