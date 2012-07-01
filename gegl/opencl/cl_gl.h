@@ -33,7 +33,7 @@
 #define __OPENCL_CL_GL_H
 
 #ifdef __APPLE__
-#include <OpenCL/cl.h>
+#include "cl.h"
 #include <OpenGL/CGLDevice.h>
 #else
 #include "cl.h"

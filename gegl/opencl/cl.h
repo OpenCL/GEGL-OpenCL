@@ -26,11 +26,7 @@
 #ifndef __OPENCL_CL_H
 #define __OPENCL_CL_H
 
-#ifdef __APPLE__
-#include <OpenCL/cl_platform.h>
-#else
 #include "cl_platform.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
