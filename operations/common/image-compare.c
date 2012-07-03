@@ -1,0 +1,174 @@
+/* This file is an image processing operation for GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2010 Øyvind Kolås <pippin@gimp.org>
+ *           2012 Ville Sokk <ville.sokk@gmail.com>
+ */
+
+#include "config.h"
+#include <math.h>
+#include <glib/gi18n-lib.h>
+
+#ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_int (wrong_pixels, _("Wrong pixels"), G_MININT, G_MAXINT, 0, _("Number of differing pixels."))
+gegl_chant_double (max_diff, _("Maximum difference"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _("Maximum difference between two pixels."))
+gegl_chant_double (avg_diff_wrong, _("Average difference (wrong)"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _("Average difference between wrong pixels."))
+gegl_chant_double (avg_diff_total, _("Average difference (total)"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _("Average difference between all pixels."))
+
+#else
+
+#define GEGL_CHANT_TYPE_COMPOSER
+#define GEGL_CHANT_C_FILE       "image-compare.c"
+
+#include "gegl-chant.h"
+
+
+static void
+prepare (GeglOperation *self)
+{
+  gegl_operation_set_format (self, "input", babl_format ("CIE Lab float"));
+  gegl_operation_set_format (self, "aux", babl_format ("CIE Lab float"));
+  gegl_operation_set_format (self, "output", babl_format ("R'G'B' u8"));
+}
+
+static GeglRectangle
+get_required_for_output (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *region)
+{
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+
+  return result;
+}
+
+#define SQR(x) ((x) * (x))
+
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         GeglBuffer          *aux,
+         GeglBuffer          *output,
+         const GeglRectangle *result,
+         gint                 level)
+{
+  GeglChantO  *props        = GEGL_CHANT_PROPERTIES (operation);
+  gdouble      max_diff     = 0.0;
+  gdouble      diffsum      = 0.0;
+  gint         wrong_pixels = 0;
+  const Babl*  cielab       = babl_format ("CIE Lab float");
+  gint         rowstride_in, rowstride_aux, rowstride_out, pixels, i;
+  gfloat      *in_buf, *aux_buf, *a, *b;
+  guchar      *out_buf, *out;
+
+  in_buf  = (void *) gegl_buffer_linear_open (input, result, &rowstride_in, cielab);
+  aux_buf = (void *) gegl_buffer_linear_open (aux, result, &rowstride_aux, cielab);
+  out_buf = (void *) gegl_buffer_linear_open (output, result, &rowstride_out, babl_format ("R'G'B' u8"));
+
+  a   = in_buf;
+  b   = aux_buf;
+  out = out_buf;
+
+  pixels = result->width * result->height;
+
+  for (i = 0; i < pixels; i++)
+    {
+      gdouble diff = sqrt (SQR(a[0] - b[0])+
+                           SQR(a[1] - b[1])+
+                           SQR(a[2] - b[2]));
+      if (diff >= 0.01)
+        {
+          wrong_pixels++;
+          diffsum += diff;
+          if (diff > max_diff)
+            max_diff = diff;
+          out[0] = (diff / 100.0 * 255);
+          out[1] = 0;
+          out[2] = a[0] / 100.0 * 255;
+        }
+      else
+        {
+          out[0] = a[0] / 100.0 * 255;
+          out[1] = a[0] / 100.0 * 255;
+          out[2] = a[0] / 100.0 * 255;
+        }
+      a   += 3;
+      b   += 3;
+      out += 3;
+    }
+
+  a   = in_buf;
+  b   = aux_buf;
+  out = out_buf;
+
+  if (wrong_pixels)
+    for (i = 0; i < pixels; i++)
+      {
+        gdouble diff = sqrt (SQR(a[0] - b[0])+
+                             SQR(a[1] - b[1])+
+                             SQR(a[2] - b[2]));
+
+        if (diff >= 0.01)
+          {
+            out[0] = (100 - a[0]) / 100.0 * 64 + 32;
+            out[1] = (diff / max_diff * 255);
+            out[2] = 0;
+          }
+        else
+          {
+            out[0] = a[0] / 100.0 * 255;
+            out[1] = a[0] / 100.0 * 255;
+            out[2] = a[0] / 100.0 * 255;
+          }
+        a   += 3;
+        b   += 3;
+        out += 3;
+      }
+
+  gegl_buffer_linear_close (input, in_buf);
+  gegl_buffer_linear_close (aux, aux_buf);
+  gegl_buffer_linear_close (output, out_buf);
+
+  props->wrong_pixels   = wrong_pixels;
+  props->max_diff       = max_diff;
+  props->avg_diff_wrong = diffsum / wrong_pixels;
+  props->avg_diff_total = diffsum / pixels;
+
+  return TRUE;
+}
+
+static void
+gegl_chant_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass         *operation_class;
+  GeglOperationComposerClass *composer_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
+
+  operation_class->prepare                 = prepare;
+  operation_class->get_required_for_output = get_required_for_output;
+  composer_class->process                  = process;
+
+  gegl_operation_class_set_keys (operation_class,
+                                 "name"       , "gegl:image-compare",
+                                 "categories" , "misc",
+                                 "description", _("Compares if input and aux buffers are "
+                                                  "different. Results are saved in the "
+                                                  "properties."),
+                                 NULL);
+}
+
+#endif
