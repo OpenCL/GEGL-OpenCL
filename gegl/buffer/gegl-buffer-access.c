@@ -335,33 +335,33 @@ gegl_buffer_flush (GeglBuffer *buffer)
 
 static inline void
 gegl_buffer_iterate_write (GeglBuffer          *buffer,
-                           const GeglRectangle *roi, /* or NULL for extent */
+                           const GeglRectangle *roi,
                            guchar              *buf,
                            gint                 rowstride,
                            const Babl          *format,
                            gint                 level)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  buf_stride;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint buf_stride;
+  gint bufy        = 0;
 
-  gint  buffer_shift_x = buffer->shift_x;
-  gint  buffer_shift_y = buffer->shift_y;
+  gint buffer_shift_x = buffer->shift_x;
+  gint buffer_shift_y = buffer->shift_y;
 
-  gint  width          = buffer->extent.width;
-  gint  height         = buffer->extent.height;
-  gint  buffer_x       = buffer->extent.x + buffer_shift_x;
-  gint  buffer_y       = buffer->extent.y + buffer_shift_y;
+  gint width    = buffer->extent.width;
+  gint height   = buffer->extent.height;
+  gint buffer_x = buffer->extent.x + buffer_shift_x;
+  gint buffer_y = buffer->extent.y + buffer_shift_y;
 
-  gint  buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
-  gint  buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
-  gint  abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
-  gint  abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
-  gint  factor         = 1<<level;
+  gint buffer_abyss_x = buffer->abyss.x + buffer_shift_x;
+  gint buffer_abyss_y = buffer->abyss.y + buffer_shift_y;
+  gint abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
+  gint abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
+  gint factor         = 1<<level;
   const Babl *fish;
 
   /* roi specified, override buffers extent */
@@ -503,17 +503,17 @@ gegl_buffer_iterate_read_simple (GeglBuffer          *buffer,
                                  const Babl          *format,
                                  gint                 level)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint bufy        = 0;
 
-  gint  width          = roi->width;
-  gint  height         = roi->height;
-  gint  buffer_x       = roi->x;
-  gint  buffer_y       = roi->y;
+  gint width    = roi->width;
+  gint height   = roi->height;
+  gint buffer_x = roi->x;
+  gint buffer_y = roi->y;
 
   const Babl *fish;
 
@@ -589,22 +589,22 @@ gegl_buffer_iterate_read_abyss_none (GeglBuffer          *buffer,
                                      const Babl          *format,
                                      gint                 level)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint bufy        = 0;
 
-  gint  width          = roi->width;
-  gint  height         = roi->height;
-  gint  buffer_x       = roi->x;
-  gint  buffer_y       = roi->y;
+  gint width    = roi->width;
+  gint height   = roi->height;
+  gint buffer_x = roi->x;
+  gint buffer_y = roi->y;
 
-  gint  buffer_abyss_x = abyss->x;
-  gint  buffer_abyss_y = abyss->y;
-  gint  abyss_x_total  = buffer_abyss_x + abyss->width;
-  gint  abyss_y_total  = buffer_abyss_y + abyss->height;
+  gint buffer_abyss_x = abyss->x;
+  gint buffer_abyss_y = abyss->y;
+  gint abyss_x_total  = buffer_abyss_x + abyss->width;
+  gint abyss_y_total  = buffer_abyss_y + abyss->height;
 
   const Babl *fish;
 
@@ -751,22 +751,22 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
                                       gint                 level,
                                       guchar              *color)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint bufy        = 0;
 
-  gint  width          = roi->width;
-  gint  height         = roi->height;
-  gint  buffer_x       = roi->x;
-  gint  buffer_y       = roi->y;
+  gint width    = roi->width;
+  gint height   = roi->height;
+  gint buffer_x = roi->x;
+  gint buffer_y = roi->y;
 
-  gint  buffer_abyss_x = abyss->x;
-  gint  buffer_abyss_y = abyss->y;
-  gint  abyss_x_total  = buffer_abyss_x + abyss->width;
-  gint  abyss_y_total  = buffer_abyss_y + abyss->height;
+  gint buffer_abyss_x = abyss->x;
+  gint buffer_abyss_y = abyss->y;
+  gint abyss_x_total  = buffer_abyss_x + abyss->width;
+  gint abyss_y_total  = buffer_abyss_y + abyss->height;
 
   const Babl *fish;
 
@@ -917,22 +917,22 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                                       const Babl          *format,
                                       gint                 level)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint bufy        = 0;
 
-  gint  width          = roi->width;
-  gint  height         = roi->height;
-  gint  buffer_x       = roi->x;
-  gint  buffer_y       = roi->y;
+  gint width    = roi->width;
+  gint height   = roi->height;
+  gint buffer_x = roi->x;
+  gint buffer_y = roi->y;
 
-  gint  buffer_abyss_x = abyss->x;
-  gint  buffer_abyss_y = abyss->y;
-  gint  abyss_x_total  = buffer_abyss_x + abyss->width;
-  gint  abyss_y_total  = buffer_abyss_y + abyss->height;
+  gint buffer_abyss_x = abyss->x;
+  gint buffer_abyss_y = abyss->y;
+  gint abyss_x_total  = buffer_abyss_x + abyss->width;
+  gint abyss_y_total  = buffer_abyss_y + abyss->height;
 
   const Babl *fish;
 
@@ -1071,22 +1071,22 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
                                      const Babl          *format,
                                      gint                 level)
 {
-  gint  tile_width  = buffer->tile_storage->tile_width;
-  gint  tile_height = buffer->tile_storage->tile_height;
-  gint  px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
-  gint  bpx_size    = babl_format_get_bytes_per_pixel (format);
-  gint  tile_stride = px_size * tile_width;
-  gint  bufy = 0;
+  gint tile_width  = buffer->tile_storage->tile_width;
+  gint tile_height = buffer->tile_storage->tile_height;
+  gint px_size     = babl_format_get_bytes_per_pixel (buffer->soft_format);
+  gint bpx_size    = babl_format_get_bytes_per_pixel (format);
+  gint tile_stride = px_size * tile_width;
+  gint bufy        = 0;
 
-  gint  width          = roi->width;
-  gint  height         = roi->height;
-  gint  buffer_x       = roi->x;
-  gint  buffer_y       = roi->y;
+  gint width    = roi->width;
+  gint height   = roi->height;
+  gint buffer_x = roi->x;
+  gint buffer_y = roi->y;
 
-  gint  buffer_abyss_x = abyss->x;
-  gint  buffer_abyss_y = abyss->y;
-  gint  abyss_x_total  = buffer_abyss_x + abyss->width;
-  gint  abyss_y_total  = buffer_abyss_y + abyss->height;
+  gint buffer_abyss_x = abyss->x;
+  gint buffer_abyss_y = abyss->y;
+  gint abyss_x_total  = buffer_abyss_x + abyss->width;
+  gint abyss_y_total  = buffer_abyss_y + abyss->height;
 
   const Babl *fish;
 
@@ -1098,13 +1098,13 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
 
   while (bufy < height)
     {
-      gint tiledy   = buffer_abyss_y +
+      gint tiledy  = buffer_abyss_y +
         GEGL_REMAINDER (buffer_y + bufy - buffer_abyss_y, abyss->height);
       gint offsety = gegl_tile_offset (tiledy, tile_height);
-      gint bufx     = 0;
+      gint bufx    = 0;
       gint rows, topskip, bottomskip;
 
-      if (height - bufy < tile_height)
+      if (height + offsety - bufy < tile_height)
         rows = height - bufy;
       else
         rows = tile_height - offsety;
