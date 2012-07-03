@@ -14,7 +14,6 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2012 Ville Sokk <ville.sokk@gmail.com>
- *           2003, 2004, 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include <glib.h>
@@ -23,26 +22,28 @@
 #include <string.h>
 
 
-#define match(string) (!strcmp (*curr, (string)))
-
-#define assert_argument() do {\
-    if (!curr[1] || curr[1][0]=='-') {\
-        g_printerr ("ERROR: '%s' option expected argument\n", *curr);\
-        exit(-1);\
-    }\
-}while(0)
-
-#define get_string(var) do{\
-    assert_argument();\
-    curr++;\
-    (var)=*curr;\
-}while(0)
-
-
 static GRegex *regex;
 static gchar  *data_dir;
 static gchar  *reference_dir;
 static gchar  *output_dir;
+static gchar  *pattern;
+
+static const GOptionEntry options[] =
+{
+  {"data-directory", 'd', 0, G_OPTION_ARG_FILENAME, &data_dir,
+   "Root directory of files used in the composition", NULL},
+
+  {"reference-directory", 'r', 0, G_OPTION_ARG_FILENAME, &reference_dir,
+   "Directory where reference images are located", NULL},
+
+  {"output-directory", 'o', 0, G_OPTION_ARG_FILENAME, &output_dir,
+   "Directory where composition output and diff files are saved", NULL},
+
+  {"pattern", 'p', 0, G_OPTION_ARG_STRING, &pattern,
+   "Regular expression used to match names of operations to be tested", NULL},
+
+  { NULL }
+};
 
 
 static gboolean
@@ -107,7 +108,7 @@ process_operations (GType type)
               gegl_node_process (comparison);
               gegl_node_get (comparison, "max diff", &max_diff, NULL);
 
-              if (max_diff < 1.5)
+              if (max_diff < 1.0)
                 {
                   g_printf ("PASS\n");
                   result = result && TRUE;
@@ -123,14 +124,15 @@ process_operations (GType type)
 
                   g_free (output_path);
                   output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, diff_file, NULL);
+
                   gegl_node_set (output, "path", output_path, NULL);
                   gegl_node_link_many (comparison, output, NULL);
                   gegl_node_process (output);
 
+                  g_free (diff_file);
+
                   g_printf ("FAIL\n");
                   result = result && FALSE;
-
-                  g_free (diff_file);
                 }
             }
 
@@ -151,38 +153,39 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-  gint    result;
-  gchar  *pattern = "";
-  gchar **curr    = argv;
-  gchar  *cwd     = g_get_current_dir ();
+  gboolean        result;
+  gchar          *cwd;
+  GError         *error = NULL;
+  GOptionContext *context;
 
+  g_thread_init (NULL);
+
+  cwd           = g_get_current_dir ();
   reference_dir = cwd;
   output_dir    = cwd;
   data_dir      = cwd;
 
-  while (*curr)
+  context = g_option_context_new (NULL);
+  g_option_context_add_main_entries (context, options, NULL);
+  g_option_context_add_group (context, gegl_get_option_group ());
+
+  if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      if (match ("--data") || match ("-d"))
-        get_string (data_dir);
-      else if (match ("--reference") || match ("-r"))
-        get_string (reference_dir);
-      else if (match ("--output") || match ("-o"))
-        get_string (output_dir);
-      else if (match ("--pattern") || match ("-p"))
-        get_string (pattern);
-      curr++;
+      g_print ("%s\n", error->message);
+      g_error_free (error);
+      g_free (cwd);
+      exit (1);
     }
+  else
+    {
+      regex = g_regex_new (pattern, 0, 0, NULL);
 
-  g_thread_init (NULL);
-  gegl_init (&argc, &argv);
+      result = process_operations (GEGL_TYPE_OPERATION);
 
-  regex = g_regex_new (pattern, 0, 0, NULL);
+      g_regex_unref (regex);
+      g_free (cwd);
+      gegl_exit ();
 
-  result = process_operations (GEGL_TYPE_OPERATION);
-
-  g_regex_unref (regex);
-  g_free (cwd);
-  gegl_exit ();
-
-  return result;
+      return result;
+    }
 }
