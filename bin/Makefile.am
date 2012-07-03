@@ -25,7 +25,7 @@ AM_LDFLAGS =  \
 	$(no_undefined) ../gegl/libgegl-$(GEGL_API_VERSION).la \
 	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO)
 
-bin_PROGRAMS = gegl
+bin_PROGRAMS = gegl gegl-tester
 
 gegl_SOURCES =			\
 	gegl.c			\
@@ -33,6 +33,9 @@ gegl_SOURCES =			\
 	gegl-options.h		\
 	gegl-path-smooth.c	\
 	gegl-path-smooth.h
+
+gegl_tester_SOURCES = \
+	gegl-tester.c
 
 if HAVE_SPIRO
 gegl_SOURCES += gegl-path-spiro.h gegl-path-spiro.c
