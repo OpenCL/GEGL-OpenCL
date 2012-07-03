@@ -115,10 +115,10 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   if (g_getenv("GEGL_LOG_TILE_BACKEND")||
       g_getenv("GEGL_TILE_LOG"))
     gegl_tile_handler_chain_add (tile_handler_chain,
-                      g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
+                                 g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 #endif
 
-  cache = g_object_new (GEGL_TYPE_TILE_HANDLER_CACHE, NULL);
+  cache = gegl_tile_handler_cache_new ();
   empty = gegl_tile_handler_empty_new (backend, cache);
   zoom = gegl_tile_handler_zoom_new (backend, tile_storage, cache);
 
@@ -126,11 +126,16 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   gegl_tile_handler_chain_add (tile_handler_chain, zoom);
   gegl_tile_handler_chain_add (tile_handler_chain, empty);
 
+  g_object_unref (cache);
+  g_object_unref (zoom);
+  g_object_unref (empty);
+
 #if 0
   if (g_getenv("GEGL_LOG_TILE_CACHE"))
     gegl_tile_handler_chain_add (tile_handler_chain,
                                  g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 #endif
+
   tile_storage->cache = cache;
   cache->tile_storage = tile_storage;
   gegl_tile_handler_chain_bind (tile_handler_chain);
@@ -139,10 +144,10 @@ gegl_tile_storage_new (GeglTileBackend *backend)
                                               tile_storage;
 
   tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
-                                              250,
-                                              tile_storage_idle,
-                                              tile_storage,
-                                              NULL);
+                                                   250,
+                                                   tile_storage_idle,
+                                                   tile_storage,
+                                                   NULL);
 
   return tile_storage;
 }

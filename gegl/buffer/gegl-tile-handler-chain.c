@@ -164,8 +164,9 @@ GeglTileHandler *
 gegl_tile_handler_chain_add (GeglTileHandlerChain *tile_handler_chain,
                              GeglTileHandler      *handler)
 {
-  tile_handler_chain->chain = g_slist_prepend (tile_handler_chain->chain, handler);
-  /*gegl_tile_handler_chain_bind (tile_handler_chain);*/
+  tile_handler_chain->chain = g_slist_prepend (tile_handler_chain->chain,
+                                               g_object_ref (handler));
+
   return handler;
 }
 
