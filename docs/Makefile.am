@@ -1,5 +1,4 @@
-SUBDIRS= gallery
-#DIST_SUBDIRS= graphics gallery
+#DIST_SUBDIRS= graphics
 
 #
 # The patterns used for html creation in the gegl build system

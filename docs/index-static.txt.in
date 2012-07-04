@@ -69,10 +69,6 @@ http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASS
 http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]::
   The mailinglist archives for some discussion and announcement.
 
-Gallery
-~~~~~~~
-For examples of what GEGL's rendering engine currently can do look at the
-link:gallery/index.html[gallery].
 
 Bugzilla
 ~~~~~~~~
@@ -308,9 +304,6 @@ operation] for a point operation well sprinkled with comments as a starting poin
 //
 //The type of operation associated with a node can be specified either with a
 //class attribute or by using the operation name as the tag name for the node.
-//
-//or documentation on how this XML works, take a look at the sources in the
-//gallery. And browse the documentation for operations.
 
 Environment
 ~~~~~~~~~~~
@@ -481,13 +474,8 @@ dropped into the directory in the build.
   │
   │
   ├──docs              The GEGL website (this documentation), built for your
-  │   │                the corresponding sourcetree with correct documentation
-  │   │                etc.
-  │   │
-  │   └──gallery ⊙     A gallery of sample GEGL compositions, using the
-  │       │            (not yet stabilized) XML format.
-  │       │
-  │       └──data      Image data used by the sample compositions.
+  │                    the corresponding sourcetree with correct documentation
+  │                    etc.
   │
   ├──bin               gegl binary, for processing XML compositions to png files.
   │
@@ -503,7 +491,6 @@ dropped into the directory in the build.
 <div class="toclevel1"><a href="#gegl">GEGL</a></div>
 <div class="toclevel2"><a href="#features">Features</a></div>
 <div class="toclevel2"><a href="#_news">News</a></div>
-<div class="toclevel2"><a href="gallery/index.html">Gallery</a></div>
 <!--<div class="toclevel2"><a href="http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">Bugzilla</a></div>
 <div class="toclevel2"><a href="#_mailinglist">Mailinglist</a></div>-->
 <div class="toclevel2"><a href="#_copyright">Copyright</a></div>
