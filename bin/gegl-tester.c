@@ -26,7 +26,7 @@ static GRegex *regex;
 static gchar  *data_dir;
 static gchar  *reference_dir;
 static gchar  *output_dir;
-static gchar  *pattern;
+static gchar  *pattern = "";
 
 static const GOptionEntry options[] =
 {
@@ -89,6 +89,9 @@ process_operations (GType type)
             }
           else
             {
+              GeglRectangle ref_bounds, comp_bounds;
+              gint          ref_pixels;
+
               output = gegl_node_new_child (composition,
                                             "operation", "gegl:save",
                                             "path", output_path,
@@ -101,38 +104,63 @@ process_operations (GType type)
                                              "path", image_path,
                                              NULL);
 
-              comparison = gegl_node_create_child (composition, "gegl:image-compare");
+              ref_bounds  = gegl_node_get_bounding_box (ref_img);
+              comp_bounds = gegl_node_get_bounding_box (composition);
+              ref_pixels  = ref_bounds.width * ref_bounds.height;
 
-              gegl_node_link_many (composition, comparison, NULL);
-              gegl_node_connect_to (ref_img, "output", comparison, "aux");
-              gegl_node_process (comparison);
-              gegl_node_get (comparison, "max diff", &max_diff, NULL);
-
-              if (max_diff < 1.0)
+              if (ref_pixels != (comp_bounds.width * comp_bounds.height))
                 {
-                  g_printf ("PASS\n");
-                  result = result && TRUE;
+                  g_printf ("FAIL\n  Reference and composition differ in size\n");
+                  result = FALSE;
                 }
               else
                 {
-                  gint   img_length = strlen (image);
-                  gchar *diff_file  = g_malloc (img_length + 16);
-                  gint   ext_length = strlen (strrchr (image, '.'));
+                  comparison = gegl_node_create_child (composition, "gegl:image-compare");
 
-                  memcpy (diff_file, image, img_length + 1);
-                  memcpy (diff_file + img_length - ext_length, "-diff.png", 11);
+                  gegl_node_link_many (composition, comparison, NULL);
+                  gegl_node_connect_to (ref_img, "output", comparison, "aux");
+                  gegl_node_process (comparison);
+                  gegl_node_get (comparison, "max diff", &max_diff, NULL);
 
-                  g_free (output_path);
-                  output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, diff_file, NULL);
+                  if (max_diff < 1.0)
+                    {
+                      g_printf ("PASS\n");
+                      result = result && TRUE;
+                    }
+                  else
+                    {
+                      gint     img_length = strlen (image);
+                      gchar   *diff_file  = g_malloc (img_length + 16);
+                      gint     ext_length = strlen (strrchr (image, '.'));
+                      gdouble  avg_diff_wrong, avg_diff_total;
+                      gint     wrong_pixels;
 
-                  gegl_node_set (output, "path", output_path, NULL);
-                  gegl_node_link_many (comparison, output, NULL);
-                  gegl_node_process (output);
+                      gegl_node_get (comparison, "avg_diff_wrong", &avg_diff_wrong,
+                                     "avg_diff_total", &avg_diff_total, "wrong_pixels",
+                                     &wrong_pixels, NULL);
 
-                  g_free (diff_file);
+                      g_printf ("FAIL\n  Reference image and composition differ\n"
+                                "    wrong pixels : %i/%i (%2.2f%%)\n"
+                                "    max Δe       : %2.3f\n"
+                                "    avg Δe       : %2.3f (wrong) %2.3f (total)\n",
+                                wrong_pixels, ref_pixels, (wrong_pixels * 100.0 / ref_pixels),
+                                max_diff,
+                                avg_diff_wrong, avg_diff_total);
 
-                  g_printf ("FAIL\n");
-                  result = result && FALSE;
+                      memcpy (diff_file, image, img_length + 1);
+                      memcpy (diff_file + img_length - ext_length, "-diff.png", 11);
+
+                      g_free (output_path);
+                      output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, diff_file, NULL);
+
+                      gegl_node_set (output, "path", output_path, NULL);
+                      gegl_node_link_many (comparison, output, NULL);
+                      gegl_node_process (output);
+
+                      g_free (diff_file);
+
+                      result = FALSE;
+                    }
                 }
             }
 
