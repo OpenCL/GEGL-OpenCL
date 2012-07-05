@@ -43,8 +43,6 @@ struct _GeglTileBackendPrivate
   gboolean    shared;
 };
 
-typedef struct _GeglTileHandler           GeglTileHandler;
-
 typedef struct _GeglTileHandlerChain      GeglTileHandlerChain;
 
 typedef struct _GeglTileStorage           GeglTileStorage;

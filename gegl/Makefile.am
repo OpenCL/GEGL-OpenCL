@@ -50,6 +50,7 @@ GEGL_introspectable_headers =	\
     buffer/gegl-buffer-backend.h	\
     buffer/gegl-tile.h			\
     buffer/gegl-tile-backend.h		\
+    buffer/gegl-tile-handler.h		\
     buffer/gegl-tile-source.h		\
     property-types/gegl-paramspecs.h	\
     property-types/gegl-color.h		\
