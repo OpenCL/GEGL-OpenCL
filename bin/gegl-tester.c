@@ -22,11 +22,12 @@
 #include <string.h>
 
 
-static GRegex *regex;
-static gchar  *data_dir;
-static gchar  *reference_dir;
-static gchar  *output_dir;
-static gchar  *pattern = "";
+static GRegex   *regex;
+static gchar    *data_dir      = NULL;
+static gchar    *reference_dir = NULL;
+static gchar    *output_dir    = NULL;
+static gchar    *pattern       = "";
+static gboolean *output_all    = FALSE;
 
 static const GOptionEntry options[] =
 {
@@ -42,9 +43,33 @@ static const GOptionEntry options[] =
   {"pattern", 'p', 0, G_OPTION_ARG_STRING, &pattern,
    "Regular expression used to match names of operations to be tested", NULL},
 
+  {"all", 'a', 0, G_OPTION_ARG_NONE, &output_all,
+   "Create output for all operations using a standard composition "
+   "if no composition is specified", NULL},
+
   { NULL }
 };
 
+/* convert operation name to output path */
+static gchar*
+operation_to_path (const gchar *op_name,
+                   gboolean     diff)
+{
+  gchar *cleaned = g_strdup (op_name);
+  gchar *filename, *output_path;
+
+  g_strdelimit (cleaned, ":", '-');
+  if (diff)
+    filename = g_strconcat (cleaned, "-diff.png", NULL);
+  else
+    filename = g_strconcat (cleaned, ".png", NULL);
+  output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, filename, NULL);
+
+  g_free (cleaned);
+  g_free (filename);
+
+  return output_path;
+}
 
 static gboolean
 process_operations (GType type)
@@ -72,25 +97,25 @@ process_operations (GType type)
       xml             = gegl_operation_class_get_key (operation_class, "reference-composition");
       name            = gegl_operation_class_get_key (operation_class, "name");
 
-      if (image && xml && g_regex_match (regex, name, 0, NULL))
+      if (name && image && xml && g_regex_match (regex, name, 0, NULL))
         {
           gchar    *image_path  = g_build_path (G_DIR_SEPARATOR_S, reference_dir, image, NULL);
-          gchar    *output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, image, NULL);
-          GeglNode *composition, *output, *ref_img, *comparison;
-          gdouble   max_diff;
+          gchar    *output_path = operation_to_path (name, FALSE);
+          GeglNode *composition;
 
           g_printf ("%s: ", name);
 
           composition = gegl_node_new_from_xml (xml, data_dir);
           if (!composition)
             {
-              g_printerr ("\nComposition graph is flawed\n");
+              g_printf ("\nComposition graph is flawed\n");
               result = FALSE;
             }
           else
             {
-              GeglRectangle ref_bounds, comp_bounds;
-              gint          ref_pixels;
+              GeglRectangle  ref_bounds, comp_bounds;
+              GeglNode      *output, *ref_img;
+              gint           ref_pixels;
 
               output = gegl_node_new_child (composition,
                                             "operation", "gegl:save",
@@ -115,6 +140,9 @@ process_operations (GType type)
                 }
               else
                 {
+                  GeglNode *comparison;
+                  gdouble   max_diff;
+
                   comparison = gegl_node_create_child (composition, "gegl:image-compare");
 
                   gegl_node_link_many (composition, comparison, NULL);
@@ -129,9 +157,6 @@ process_operations (GType type)
                     }
                   else
                     {
-                      gint     img_length = strlen (image);
-                      gchar   *diff_file  = g_malloc (img_length + 16);
-                      gint     ext_length = strlen (strrchr (image, '.'));
                       gdouble  avg_diff_wrong, avg_diff_total;
                       gint     wrong_pixels;
 
@@ -147,17 +172,12 @@ process_operations (GType type)
                                 max_diff,
                                 avg_diff_wrong, avg_diff_total);
 
-                      memcpy (diff_file, image, img_length + 1);
-                      memcpy (diff_file + img_length - ext_length, "-diff.png", 11);
-
                       g_free (output_path);
-                      output_path = g_build_path (G_DIR_SEPARATOR_S, output_dir, diff_file, NULL);
+                      output_path = operation_to_path (name, TRUE);
 
                       gegl_node_set (output, "path", output_path, NULL);
                       gegl_node_link_many (comparison, output, NULL);
                       gegl_node_process (output);
-
-                      g_free (diff_file);
 
                       result = FALSE;
                     }
@@ -167,6 +187,46 @@ process_operations (GType type)
           g_object_unref (composition);
           g_free (image_path);
           g_free (output_path);
+        }
+      else if (name && output_all && g_regex_match (regex, name, 0, NULL))
+        {
+          /* use standard composition and images, don't test */
+          GeglNode *composition, *input, *aux, *operation, *output;
+          gchar    *input_path  = g_build_path (G_DIR_SEPARATOR_S, data_dir,
+                                              "standard-input.png", NULL);
+          gchar    *aux_path    = g_build_path (G_DIR_SEPARATOR_S, data_dir,
+                                              "standard-aux.png", NULL);
+          gchar    *output_path = operation_to_path (name, FALSE);
+
+          composition = gegl_node_new ();
+          input = gegl_node_new_child (composition,
+                                       "operation", "gegl:load",
+                                       "path", input_path,
+                                       NULL);
+          aux = gegl_node_new_child (composition,
+                                     "operation", "gegl:load",
+                                     "path", aux_path,
+                                     NULL);
+          operation = gegl_node_create_child (composition, name);
+          output = gegl_node_new_child (composition,
+                                        "operation", "gegl:save",
+                                        "path", output_path,
+                                        NULL);
+
+          gegl_node_link_many (operation, output, NULL);
+
+          if (gegl_node_has_pad (operation, "input"))
+            gegl_node_link_many (input, operation, NULL);
+
+          if (gegl_node_has_pad (operation, "aux"))
+            gegl_node_connect_to (aux, "output", operation, "aux");
+
+          gegl_node_process (output);
+
+          g_free (input_path);
+          g_free (aux_path);
+          g_free (output_path);
+          g_object_unref (composition);
         }
 
       result = result && process_operations(operations[i]);
@@ -182,16 +242,12 @@ main (gint    argc,
       gchar **argv)
 {
   gboolean        result;
-  gchar          *cwd;
   GError         *error = NULL;
   GOptionContext *context;
 
   g_thread_init (NULL);
 
-  cwd           = g_get_current_dir ();
-  reference_dir = cwd;
-  output_dir    = cwd;
-  data_dir      = cwd;
+  reference_dir = g_get_current_dir ();
 
   context = g_option_context_new (NULL);
   g_option_context_add_main_entries (context, options, NULL);
@@ -199,9 +255,13 @@ main (gint    argc,
 
   if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-      g_print ("%s\n", error->message);
+      g_printf ("%s\n", error->message);
       g_error_free (error);
-      g_free (cwd);
+      exit (1);
+    }
+  else if (!(data_dir && output_dir))
+    {
+      g_printf ("Data and output directories must be specified\n");
       exit (1);
     }
   else
@@ -211,7 +271,6 @@ main (gint    argc,
       result = process_operations (GEGL_TYPE_OPERATION);
 
       g_regex_unref (regex);
-      g_free (cwd);
       gegl_exit ();
 
       return result;
