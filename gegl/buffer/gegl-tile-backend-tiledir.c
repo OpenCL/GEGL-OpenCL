@@ -23,7 +23,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "gegl-types.h"
+#include "gegl-buffer-backend.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-tiledir.h"
 
