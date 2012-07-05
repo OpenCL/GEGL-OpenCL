@@ -1090,6 +1090,50 @@ gegl_buffer_new_for_backend (const GeglRectangle *extent,
                        NULL);
 }
 
+void
+gegl_buffer_add_handler (GeglBuffer *buffer,
+                         gpointer    handler)
+{
+  GeglTileHandlerChain *chain;
+
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  g_return_if_fail (GEGL_IS_TILE_HANDLER (handler));
+
+  g_object_set (handler,
+                "format", buffer->tile_storage->format,
+                "tile-width", buffer->tile_storage->tile_width,
+                "tile-height", buffer->tile_storage->tile_height,
+                NULL);
+
+  chain = GEGL_TILE_HANDLER_CHAIN (buffer->tile_storage);
+
+  gegl_tile_handler_chain_add (chain, handler);
+
+  /* XXX */
+  chain->chain = g_slist_remove (chain->chain, handler);
+  chain->chain = g_slist_insert (chain->chain, handler, 2);
+
+  gegl_tile_handler_chain_bind (chain);
+}
+
+void
+gegl_buffer_remove_handler (GeglBuffer *buffer,
+                            gpointer    handler)
+{
+  GeglTileHandlerChain *chain;
+
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  g_return_if_fail (GEGL_IS_TILE_HANDLER (handler));
+
+  chain = GEGL_TILE_HANDLER_CHAIN (buffer->tile_storage);
+
+  g_return_if_fail (g_slist_find (chain->chain, handler));
+
+  chain->chain = g_slist_remove (chain->chain, handler);
+  g_object_unref (handler);
+
+  gegl_tile_handler_chain_bind (chain);
+}
 
 /* FIXME: this function needs optimizing, perhaps keep a pool
  * of GeglBuffer shells that can be adapted to the needs

@@ -77,6 +77,11 @@ GeglBuffer *    gegl_buffer_new               (const GeglRectangle *extent,
 GeglBuffer *   gegl_buffer_new_for_backend    (const GeglRectangle *extent,
                                                void                *backend);
 
+void           gegl_buffer_add_handler        (GeglBuffer          *buffer,
+                                               gpointer             handler);
+void           gegl_buffer_remove_handler     (GeglBuffer          *buffer,
+                                               gpointer             handler);
+
 /**
  * gegl_buffer_open:
  * @path: the path to a gegl buffer on disk.
