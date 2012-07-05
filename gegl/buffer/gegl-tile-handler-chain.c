@@ -18,15 +18,16 @@
 
 #include "config.h"
 
-#include <glib.h>
+#include <glib-object.h>
 
-#include "glib-object.h"
 #include "gegl-buffer-types.h"
 #include "gegl-tile-handler-chain.h"
 #include "gegl-tile-handler-cache.h"
+#include "gegl-tile-handler-private.h"
 
 
-G_DEFINE_TYPE (GeglTileHandlerChain, gegl_tile_handler_chain, GEGL_TYPE_TILE_HANDLER)
+G_DEFINE_TYPE (GeglTileHandlerChain, gegl_tile_handler_chain,
+               GEGL_TYPE_TILE_HANDLER)
 
 static void
 gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
@@ -161,11 +162,19 @@ gegl_tile_handler_chain_bind (GeglTileHandlerChain *tile_handler_chain)
 }
 
 GeglTileHandler *
-gegl_tile_handler_chain_add (GeglTileHandlerChain *tile_handler_chain,
+gegl_tile_handler_chain_add (GeglTileHandlerChain *chain,
                              GeglTileHandler      *handler)
 {
-  tile_handler_chain->chain = g_slist_prepend (tile_handler_chain->chain,
-                                               g_object_ref (handler));
+  GeglTileStorage      *storage;
+  GeglTileHandlerCache *cache;
+
+  storage = _gegl_tile_handler_get_tile_storage ((GeglTileHandler *) chain);
+  cache = _gegl_tile_handler_get_cache ((GeglTileHandler *) chain);
+
+  _gegl_tile_handler_set_tile_storage (handler, storage);
+  _gegl_tile_handler_set_cache (handler, cache);
+
+  chain->chain = g_slist_prepend (chain->chain, g_object_ref (handler));
 
   return handler;
 }

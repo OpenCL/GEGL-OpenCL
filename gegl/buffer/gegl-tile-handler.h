@@ -39,15 +39,18 @@ G_BEGIN_DECLS
 #define GEGL_IS_TILE_HANDLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_HANDLER))
 #define GEGL_TILE_HANDLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_HANDLER, GeglTileHandlerClass))
 
-typedef struct _GeglTileHandlerClass GeglTileHandlerClass;
+typedef struct _GeglTileHandlerClass   GeglTileHandlerClass;
+typedef struct _GeglTileHandlerPrivate GeglTileHandlerPrivate;
 
 struct _GeglTileHandler
 {
   GeglTileSource  parent_instance;
-  GeglTileSource *source; /* The source of the data, which we can rely on if
-                             our command handler doesn't handle a command, this
-                             is typically done with gegl_tile_handler_source_command
-                             passing ourself as the first parameter. */
+  GeglTileSource *source; /* The source of the data, which we can rely
+                             on if our command handler doesn't handle
+                             a command, this is typically done with
+                             gegl_tile_handler_source_command passing
+                             ourself as the first parameter. */
+  GeglTileHandlerPrivate *priv;
 };
 
 struct _GeglTileHandlerClass
@@ -55,17 +58,24 @@ struct _GeglTileHandlerClass
   GeglTileSourceClass parent_class;
 };
 
-GType gegl_tile_handler_get_type (void) G_GNUC_CONST;
+GType   gegl_tile_handler_get_type   (void) G_GNUC_CONST;
 
-void
-gegl_tile_handler_set_source (GeglTileHandler *handler,
-                              GeglTileSource  *source);
+void    gegl_tile_handler_set_source (GeglTileHandler *handler,
+                                      GeglTileSource  *source);
 
-
-#define gegl_tile_handler_get_source(handler)  (((GeglTileHandler*)handler)->source)
+#define gegl_tile_handler_get_source(handler) (((GeglTileHandler*)handler)->source)
 
 #define gegl_tile_handler_source_command(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)
 
+GeglTile * gegl_tile_handler_create_tile (GeglTileHandler *handler,
+                                          gint             x,
+                                          gint             y,
+                                          gint             z);
+GeglTile * gegl_tile_handler_dup_tile    (GeglTileHandler *handler,
+                                          GeglTile        *tile,
+                                          gint             x,
+                                          gint             y,
+                                          gint             z);
 
 G_END_DECLS
 

@@ -39,6 +39,7 @@ libbuffer_la_SOURCES = \
     gegl-tile-backend-file.c	\
     gegl-tile-backend-ram.c	\
     gegl-tile-handler.c		\
+    gegl-tile-handler-private.h	\
     gegl-tile-handler-cache.c	\
     gegl-tile-handler-chain.c	\
     gegl-tile-handler-empty.c	\

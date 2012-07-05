@@ -47,7 +47,6 @@ struct _GeglTileHandlerEmpty
 
   GeglTile               *tile;
   GeglTileBackend        *backend;
-  GeglTileHandlerCache   *cache;
 };
 
 struct _GeglTileHandlerEmptyClass
@@ -55,9 +54,9 @@ struct _GeglTileHandlerEmptyClass
   GeglTileHandlerClass parent_class;
 };
 
-GType gegl_tile_handler_empty_get_type (void) G_GNUC_CONST;
-GeglTileHandler *gegl_tile_handler_empty_new (GeglTileBackend      *backend,
-                                              GeglTileHandlerCache *cache);
+GType             gegl_tile_handler_empty_get_type (void) G_GNUC_CONST;
+
+GeglTileHandler * gegl_tile_handler_empty_new      (GeglTileBackend *backend);
 
 G_END_DECLS
 

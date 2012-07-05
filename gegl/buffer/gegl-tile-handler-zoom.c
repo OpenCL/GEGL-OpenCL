@@ -15,31 +15,29 @@
  *
  * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
  */
+
 #include "config.h"
-#include <glib.h>
-#include <glib-object.h>
+
 #include <string.h>
+
+#include <babl/babl.h>
+#include <glib-object.h>
 
 #include "gegl-types.h"
 #include "gegl-matrix.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-handler.h"
-#include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
-
-
-G_DEFINE_TYPE (GeglTileHandlerZoom, gegl_tile_handler_zoom, GEGL_TYPE_TILE_HANDLER)
-
-#include <babl/babl.h>
+#include "gegl-tile-handler-private.h"
+#include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-storage.h"
 
-void gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
-                                     GeglTile             *tile,
-                                     gint                  x,
-                                     gint                  y,
-                                     gint                  z);
+
+G_DEFINE_TYPE (GeglTileHandlerZoom, gegl_tile_handler_zoom,
+               GEGL_TYPE_TILE_HANDLER)
+
 static inline void set_blank (GeglTile   *dst_tile,
                               gint        width,
                               gint        height,
@@ -201,18 +199,17 @@ get_tile (GeglTileSource *gegl_tile_source,
           gint            y,
           gint            z)
 {
-  GeglTileSource      *source = ((GeglTileHandler*)(gegl_tile_source))->source;
-  GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom*)(gegl_tile_source);
+  GeglTileSource      *source = ((GeglTileHandler *) gegl_tile_source)->source;
+  GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom *) gegl_tile_source;
   GeglTile            *tile   = NULL;
   const Babl          *format = gegl_tile_backend_get_format (zoom->backend);
+  GeglTileStorage     *tile_storage;
   gint                 tile_width;
   gint                 tile_height;
   gint                 tile_size;
 
   if (source)
-    {
-      tile = gegl_tile_source_get_tile (source, x, y, z);
-    }
+    tile = gegl_tile_source_get_tile (source, x, y, z);
 
   if (tile)
     return tile;
@@ -223,11 +220,13 @@ get_tile (GeglTileSource *gegl_tile_source,
       return NULL;
     }
 
-  if (z>zoom->tile_storage->seen_zoom)
-    zoom->tile_storage->seen_zoom = z;
+  tile_storage = _gegl_tile_handler_get_tile_storage ((GeglTileHandler *) zoom);
 
-  g_assert (zoom->backend);
-  g_object_get (zoom->backend, "tile-width", &tile_width,
+  if (z > tile_storage->seen_zoom)
+    tile_storage->seen_zoom = z;
+
+  g_object_get (zoom->backend,
+                "tile-width", &tile_width,
                 "tile-height", &tile_height,
                 "tile-size", &tile_size,
                 NULL);
@@ -255,18 +254,9 @@ get_tile (GeglTileSource *gegl_tile_source,
       }
 
     g_assert (tile == NULL);
-    if (tile == NULL)
-      {
-        tile = gegl_tile_new (tile_size);
 
-        tile->x = x;
-        tile->y = y;
-        tile->z = z;
-        tile->tile_storage = zoom->tile_storage;
+    tile = gegl_tile_handler_create_tile (GEGL_TILE_HANDLER (zoom), x, y, z);
 
-        if (zoom->cache)
-          gegl_tile_handler_cache_insert (zoom->cache, tile, x, y, z);
-      }
     gegl_tile_lock (tile);
 
     for (i = 0; i < 2; i++)
@@ -312,20 +302,15 @@ gegl_tile_handler_zoom_class_init (GeglTileHandlerZoomClass *klass)
 static void
 gegl_tile_handler_zoom_init (GeglTileHandlerZoom *self)
 {
-  ((GeglTileSource*)self)->command = gegl_tile_handler_zoom_command;
-  self->backend = NULL;
-  self->tile_storage = NULL;
+  ((GeglTileSource *) self)->command = gegl_tile_handler_zoom_command;
 }
 
 GeglTileHandler *
-gegl_tile_handler_zoom_new (GeglTileBackend      *backend,
-                            GeglTileStorage      *tile_storage,
-                            GeglTileHandlerCache *cache)
+gegl_tile_handler_zoom_new (GeglTileBackend *backend)
 {
   GeglTileHandlerZoom *ret = g_object_new (GEGL_TYPE_TILE_HANDLER_ZOOM, NULL);
-  ((GeglTileSource*)ret)->command = gegl_tile_handler_zoom_command;
+
   ret->backend = backend;
-  ret->tile_storage = tile_storage;
-  ret->cache = cache;
+
   return (void*)ret;
 }

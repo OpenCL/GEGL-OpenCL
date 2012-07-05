@@ -32,6 +32,7 @@
 #include "gegl-tile-handler-zoom.h"
 #include "gegl-tile-handler-cache.h"
 #include "gegl-tile-handler-log.h"
+#include "gegl-tile-handler-private.h"
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"
 #include "gegl-config.h"
@@ -72,9 +73,9 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   GeglTileStorage *tile_storage = g_object_new (GEGL_TYPE_TILE_STORAGE, NULL);
   GeglTileHandlerChain  *tile_handler_chain;
   GeglTileHandler       *handler;
+  GeglTileHandler       *cache = NULL;
   GeglTileHandler       *empty = NULL;
   GeglTileHandler       *zoom = NULL;
-  GeglTileHandlerCache  *cache = NULL;
 
   tile_storage->seen_zoom = 0;
   tile_storage->mutex = g_mutex_new ();
@@ -119,10 +120,14 @@ gegl_tile_storage_new (GeglTileBackend *backend)
 #endif
 
   cache = gegl_tile_handler_cache_new ();
-  empty = gegl_tile_handler_empty_new (backend, cache);
-  zoom = gegl_tile_handler_zoom_new (backend, tile_storage, cache);
+  empty = gegl_tile_handler_empty_new (backend);
+  zoom = gegl_tile_handler_zoom_new (backend);
 
-  gegl_tile_handler_chain_add (tile_handler_chain, (void*)cache);
+  /* set storage and cache on ourself so chain_add() can use it */
+  _gegl_tile_handler_set_tile_storage (handler, tile_storage);
+  _gegl_tile_handler_set_cache (handler, (GeglTileHandlerCache *) cache);
+
+  gegl_tile_handler_chain_add (tile_handler_chain, cache);
   gegl_tile_handler_chain_add (tile_handler_chain, zoom);
   gegl_tile_handler_chain_add (tile_handler_chain, empty);
 
@@ -136,8 +141,8 @@ gegl_tile_storage_new (GeglTileBackend *backend)
                                  g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
 #endif
 
-  tile_storage->cache = cache;
-  cache->tile_storage = tile_storage;
+  tile_storage->cache = (GeglTileHandlerCache *) cache;
+  ((GeglTileHandlerCache *) cache)->tile_storage = tile_storage;
   gegl_tile_handler_chain_bind (tile_handler_chain);
 
   ((GeglTileBackend *)gegl_buffer_backend2 ((void*)tile_storage))->priv->storage = (gpointer)
