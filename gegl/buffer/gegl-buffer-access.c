@@ -379,13 +379,13 @@ gegl_buffer_iterate (GeglBuffer          *buffer,
             {
               gint    row;
               gint    y  = bufy;
-              guchar *bp = buf + ((bufy) * width) * bpx_size;
+              guchar *bp = buf + bufy * buf_stride;
 
               for (row = offsety;
                    row < tile_height && y < height;
                    row++, y++)
                 {
-                  memset (bp, 0x00, buf_stride);
+                  memset (bp, 0x00, width * bpx_size);
                   bp += buf_stride;
                 }
             }
