@@ -1693,25 +1693,25 @@ gegl_node_get_producer (GeglNode *node,
     return NULL;
   ret = gegl_pad_get_node (pad);
 
-    if(ret)
-      {
-        const gchar *name;
-        name = gegl_node_get_name (ret);
-        if (name && !strcmp (name, "proxynop-output"))
-          {
-            ret = g_object_get_data (G_OBJECT (ret), "graph");
-            /* XXX: needs testing whether this returns the correct value
-             * for non "output" output pads.
-             */
-            if (output_pad_name)
-              *output_pad_name = g_strdup (gegl_pad_get_name (pad));
-          }
-        else
-          {
-            if (output_pad_name)
-              *output_pad_name = g_strdup (gegl_pad_get_name (pad));
-          }
-      }
+  if(ret)
+    {
+      const gchar *name;
+      name = gegl_node_get_name (ret);
+      if (name && !strcmp (name, "proxynop-output"))
+	{
+	  ret = g_object_get_data (G_OBJECT (ret), "graph");
+	  /* XXX: needs testing whether this returns the correct value
+	   * for non "output" output pads.
+	   */
+	  if (output_pad_name)
+	    *output_pad_name = g_strdup (gegl_pad_get_name (pad));
+	}
+      else
+	{
+	  if (output_pad_name)
+	    *output_pad_name = g_strdup (gegl_pad_get_name (pad));
+	}
+    }
   return ret;
 }
 
@@ -1950,8 +1950,12 @@ gegl_node_get_consumers (GeglNode      *node,
   GeglPad *pad;
   gchar  **pasp = NULL;
 
-  g_return_val_if_fail (GEGL_IS_NODE (node), 0);
   g_return_val_if_fail (output_pad != NULL, 0);
+
+  if(node->is_graph)
+    node = gegl_node_get_output_proxy(node, "output");
+
+  g_return_val_if_fail (GEGL_IS_NODE (node), 0);
 
   pad = gegl_node_get_pad (node, output_pad);
 
@@ -1989,10 +1993,21 @@ gegl_node_get_consumers (GeglNode      *node,
     pasp_pos = (n_connections + 1) * sizeof (void *);
     for (iter = connections; iter; iter = g_slist_next (iter))
       {
-        GeglConnection *connection = iter->data;
-        GeglPad        *pad        = gegl_connection_get_sink_pad (connection);
-        GeglNode       *node       = gegl_connection_get_sink_node (connection);
-        const gchar    *pad_name   = gegl_pad_get_name (pad);
+        GeglConnection	*connection = iter->data;
+        GeglPad		*pad        = gegl_connection_get_sink_pad (connection);
+	GeglNode	*node       = gegl_connection_get_sink_node (connection);
+        const gchar	*pad_name   = gegl_pad_get_name (pad);
+	const gchar	*name	    = gegl_node_get_name(node);
+
+	const gchar* proxy_name = g_strconcat("proxynop-", pad_name, NULL);
+	if(!strcmp(name, proxy_name))
+	  {
+	    node = g_object_get_data(G_OBJECT(node), "graph");
+	    name = gegl_node_get_name(node);
+	  }
+	else
+	  {
+	  }
 
         if (nodes)
           (*nodes)[i] = node;
