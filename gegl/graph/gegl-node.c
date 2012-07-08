@@ -540,6 +540,7 @@ gegl_node_invalidated (GeglNode            *node,
     {
       if (rect && clear_cache)
         gegl_buffer_clear (GEGL_BUFFER (node->cache), rect);
+
       gegl_cache_invalidate (node->cache, rect);
     }
   node->valid_have_rect = FALSE;
@@ -1763,6 +1764,9 @@ gegl_node_get_bounding_box (GeglNode *root)
   g_object_unref (root);
   g_free (id);
 
+  if (root->cache)
+    gegl_buffer_set_abyss (GEGL_BUFFER (root->cache), &root->have_rect);
+
   root->valid_have_rect = TRUE;
   return root->have_rect;
 }
@@ -2051,8 +2055,9 @@ gegl_node_get_cache (GeglNode *node)
 
   if (!node->cache)
     {
-      GeglPad    *pad;
-      const Babl *format;
+      GeglPad       *pad;
+      const Babl    *format;
+      GeglRectangle  bounds = gegl_node_get_bounding_box (node);
 
       /* XXX: it should be possible to have cache for other pads than
        * only "output" pads
@@ -2060,6 +2065,7 @@ gegl_node_get_cache (GeglNode *node)
       pad = gegl_node_get_pad (node, "output");
       if (!pad)
         return NULL;
+
       format = gegl_pad_get_format (pad);
       if (!format)
         {
@@ -2070,6 +2076,9 @@ gegl_node_get_cache (GeglNode *node)
                                   "node", node,
                                   "format", format,
                                   NULL);
+
+      gegl_buffer_set_abyss (GEGL_BUFFER (node->cache), &bounds);
+
       g_signal_connect (G_OBJECT (node->cache), "computed",
                         (GCallback) gegl_node_computed_event,
                         node);
