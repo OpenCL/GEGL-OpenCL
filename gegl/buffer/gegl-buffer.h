@@ -164,6 +164,18 @@ const GeglRectangle * gegl_buffer_get_extent  (GeglBuffer *buffer);
 gboolean          gegl_buffer_set_extent      (GeglBuffer          *buffer,
                                                const GeglRectangle *extent);
 
+/**
+ * gegl_buffer_set_abyss:
+ * @buffer: the buffer to operate on.
+ * @extent: new abyss.
+ *
+ * Changes the size and position of the abyss rectangle of a buffer.
+ *
+ * Returns TRUE if the change of abyss was succesful.
+ */
+gboolean          gegl_buffer_set_abyss      (GeglBuffer          *buffer,
+                                              const GeglRectangle *abyss);
+
 /* convenience access macros */
 
 /**

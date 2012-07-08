@@ -360,6 +360,17 @@ gegl_buffer_set_extent (GeglBuffer          *buffer,
   return TRUE;
 }
 
+gboolean
+gegl_buffer_set_abyss (GeglBuffer          *buffer,
+                       const GeglRectangle *abyss)
+{
+  g_return_val_if_fail(GEGL_IS_BUFFER(buffer), FALSE);
+
+  buffer->abyss = *abyss;
+
+  return TRUE;
+}
+
 void gegl_buffer_stats (void)
 {
   g_warning ("Buffer statistics: allocated:%i deallocated:%i balance:%i",
