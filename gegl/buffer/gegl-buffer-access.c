@@ -980,13 +980,13 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
             { /* x was clamped. Copy a single color since x remains clamped in
                this iteration. */
               guchar color[128];
-              gint i;
+              gint   i;
 
               /* gap between current column and left side of abyss rect */
               lskip = (buffer_abyss_x) - (buffer_x + bufx);
               /* gap between current column and end of roi */
               rskip = width - bufx;
-              pixels = (lskip > 0) ? lskip : rskip;
+              pixels = (lskip > 0 && lskip < width) ? lskip : rskip;
 
               if (row_in_abyss)
                 { /* y remains clamped in this iteration so don't change the color */
@@ -1018,8 +1018,8 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                       for (i = 0; i < pixels * bpx_size; i += bpx_size)
                         memcpy (bp + i, color, bpx_size);
 
-                      if (buffer_y + y >= buffer_abyss_y
-                          && buffer_y + y < abyss_y_total - 1)
+                      if (buffer_y + y >= buffer_abyss_y &&
+                          buffer_y + y < abyss_y_total - 1)
                         tp += tile_stride;
                       bp += buf_stride;
                     }
@@ -1046,8 +1046,8 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                   else
                     memcpy (bp, tp, pixels * px_size);
 
-                  if (buffer_y + y >= buffer_abyss_y
-                      && buffer_y + y < abyss_y_total - 1)
+                  if (buffer_y + y >= buffer_abyss_y &&
+                      buffer_y + y < abyss_y_total - 1)
                     tp += tile_stride;
                   bp += buf_stride;
                 }
