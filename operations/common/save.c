@@ -116,7 +116,7 @@ gegl_save_attach (GeglOperation *operation)
                                       NULL);
 
   /* Set some debug names for the child nodes */
-  nodename = gegl_node_get_debug_name (operation->node);
+  /*  nodename = gegl_node_get_debug_name (operation->node);
   g_assert (nodename);
 
   childname = g_strconcat (nodename, "-save", NULL);
@@ -125,7 +125,7 @@ gegl_save_attach (GeglOperation *operation)
 
   childname = g_strconcat (nodename, "-input", NULL);
   gegl_node_set_name (self->input, childname);
-  g_free (childname);
+  g_free (childname);*/
 
   /* Link the saving node and attempt to set an appropriate save operation,
    * might as well at least try to do this before prepare.
