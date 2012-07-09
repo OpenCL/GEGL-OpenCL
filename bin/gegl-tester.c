@@ -248,8 +248,6 @@ main (gint    argc,
 
   g_thread_init (NULL);
 
-  reference_dir = g_get_current_dir ();
-
   context = g_option_context_new (NULL);
   g_option_context_add_main_entries (context, options, NULL);
   g_option_context_add_group (context, gegl_get_option_group ());
@@ -258,22 +256,26 @@ main (gint    argc,
     {
       g_printf ("%s\n", error->message);
       g_error_free (error);
-      exit (1);
+      result = FALSE;
     }
-  else if (!(data_dir && output_dir))
+  else if (output_all && !(data_dir && output_dir))
     {
       g_printf ("Data and output directories must be specified\n");
-      exit (1);
+      result = FALSE;
+    }
+  else if (!(output_all || (data_dir && output_dir && reference_dir)))
+    {
+      g_printf ("Data, reference and output directories must be specified\n");
+      result = FALSE;
     }
   else
     {
       regex = g_regex_new (pattern, 0, 0, NULL);
-
       result = process_operations (GEGL_TYPE_OPERATION);
-
       g_regex_unref (regex);
-      gegl_exit ();
-
-      return result;
     }
+
+  gegl_exit ();
+
+  return result;
 }
