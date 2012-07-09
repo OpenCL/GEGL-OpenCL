@@ -133,7 +133,8 @@ process_operations (GType type)
               comp_bounds = gegl_node_get_bounding_box (composition);
               ref_pixels  = ref_bounds.width * ref_bounds.height;
 
-              if (ref_pixels != (comp_bounds.width * comp_bounds.height))
+              if (ref_bounds.width != comp_bounds.width ||
+                  ref_bounds.height != comp_bounds.height)
                 {
                   g_printf ("FAIL\n  Reference and composition differ in size\n");
                   result = FALSE;
