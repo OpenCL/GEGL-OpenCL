@@ -157,8 +157,8 @@ gegl_sampler_cubic_get (GeglSampler     *self,
   gint              i;
 
   context_rect = self->context_rect[0];
-  dx = (gint) x;
-  dy = (gint) y;
+  dx = (gint) floor (x);
+  dy = (gint) floor (y);
   sampler_bptr = gegl_sampler_get_ptr (self, dx, dy, repeat_mode);
 
      {
