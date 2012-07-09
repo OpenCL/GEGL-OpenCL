@@ -2055,9 +2055,8 @@ gegl_node_get_cache (GeglNode *node)
 
   if (!node->cache)
     {
-      GeglPad       *pad;
-      const Babl    *format;
-      GeglRectangle  bounds = gegl_node_get_bounding_box (node);
+      GeglPad    *pad;
+      const Babl *format;
 
       /* XXX: it should be possible to have cache for other pads than
        * only "output" pads
@@ -2077,7 +2076,9 @@ gegl_node_get_cache (GeglNode *node)
                                   "format", format,
                                   NULL);
 
-      gegl_buffer_set_abyss (GEGL_BUFFER (node->cache), &bounds);
+      /* bounding box must be called at least once to compute an
+         initial have_rect for the abyss */
+      gegl_node_get_bounding_box (node);
 
       g_signal_connect (G_OBJECT (node->cache), "computed",
                         (GCallback) gegl_node_computed_event,
