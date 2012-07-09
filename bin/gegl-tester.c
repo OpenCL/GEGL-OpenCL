@@ -121,7 +121,7 @@ process_operations (GType type)
                                             "operation", "gegl:save",
                                             "path", output_path,
                                             NULL);
-              gegl_node_link_many (composition, output, NULL);
+              gegl_node_link (composition, output);
               gegl_node_process (output);
 
               ref_img = gegl_node_new_child (composition,
@@ -145,7 +145,7 @@ process_operations (GType type)
 
                   comparison = gegl_node_create_child (composition, "gegl:image-compare");
 
-                  gegl_node_link_many (composition, comparison, NULL);
+                  gegl_node_link (composition, comparison);
                   gegl_node_connect_to (ref_img, "output", comparison, "aux");
                   gegl_node_process (comparison);
                   gegl_node_get (comparison, "max diff", &max_diff, NULL);
@@ -176,7 +176,7 @@ process_operations (GType type)
                       output_path = operation_to_path (name, TRUE);
 
                       gegl_node_set (output, "path", output_path, NULL);
-                      gegl_node_link_many (comparison, output, NULL);
+                      gegl_node_link (comparison, output);
                       gegl_node_process (output);
 
                       result = FALSE;
@@ -213,10 +213,10 @@ process_operations (GType type)
                                         "path", output_path,
                                         NULL);
 
-          gegl_node_link_many (operation, output, NULL);
+          gegl_node_link (operation, output);
 
           if (gegl_node_has_pad (operation, "input"))
-            gegl_node_link_many (input, operation, NULL);
+            gegl_node_link (input, operation);
 
           if (gegl_node_has_pad (operation, "aux"))
             gegl_node_connect_to (aux, "output", operation, "aux");
