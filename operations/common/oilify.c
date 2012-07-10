@@ -30,6 +30,8 @@ gegl_chant_double (mask_radius, _("Mask Radius"), 1.0, 25.0, 4.0,
 gegl_chant_double (exponent, _("Exponent"), 1.0, 20.0, 8.0,
                    _("Exponent"))
 
+gegl_chant_boolean (use_inten, _("Intensity Mode"), TRUE, _("Use pixel luminance values"))
+
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
 
@@ -44,46 +46,87 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 
 #define NUM_INTENSITIES       256
 
-static void oilify_pixel (gint x,
-			  gint y,
-			  gdouble radius,
-			  gdouble exponent,
-			  GeglSampler *sampler,
-			  gfloat *dst_pixel)
+  static void oilify_pixel (gint x,
+			    gint y,
+			    gboolean use_inten,
+			    gdouble radius,
+			    gdouble exponent,
+			    GeglSampler *sampler,
+			    GeglSampler *sampler_inten,
+			    gfloat *dst_pixel)
 {
   gint hist[4][NUM_INTENSITIES];
+  gfloat cumulative_rgb[4][NUM_INTENSITIES];
+  gint hist_inten[NUM_INTENSITIES];
   gfloat temp_pixel[4];
+  gfloat temp_inten_pixel;
   gint ceil_radius = ceil(radius);
   gdouble radius_sq = radius*radius;
   gint i, j, b;
   gint hist_max[4];
+  gint inten_max;
   gint intensity;
   gfloat sum;
-  gfloat div;
-  
-  for (b = 0; b < 4; b++)
+  gfloat ratio;
+  gfloat weight;
+  gfloat color;
+  gfloat result;
+
+  for (i = 0; i < NUM_INTENSITIES; i++)
     {
-      for (i = 0; i < NUM_INTENSITIES; i++)
-	hist[b][i] = 0;
+      hist_inten[i] = 0;
+      for (b = 0; b < 4; b++)
+	{
+	  hist[b][i] = 0;
+	  cumulative_rgb[b][i] = 0.0;
+	}
     }
+
   for (i = -ceil_radius; i < ceil_radius; i++)
     {
       for (j = -ceil_radius; j < ceil_radius; j++)
 	{
-	  if (i*i + j*j < radius_sq) {
-	    gegl_sampler_get (sampler,
-			      x+i,
-			      y+j,
-			      NULL,
-			      temp_pixel);
-	    for (b = 0; b < 4; b++) 
-	      {
-		intensity = temp_pixel[b] * NUM_INTENSITIES;
-		hist[b][intensity]++;
-	      }
-	  }
+	  if (i*i + j*j < radius_sq) 
+	    {
+	      gegl_sampler_get (sampler,
+				x+i,
+				y+j,
+				NULL,
+				temp_pixel);
+	      
+	      if (use_inten)
+		{
+		  
+		  gegl_sampler_get (sampler_inten,
+				    x+i,
+				    y+j,
+				    NULL,
+				    &temp_inten_pixel);
+		  intensity = temp_inten_pixel * NUM_INTENSITIES;
+		  hist_inten[intensity]++;
+		  for (b = 0; b < 4; b++) 
+		    {
+		      cumulative_rgb[b][intensity] += temp_pixel[b];
+		    }
+		}
+	      else 
+		{
+		  for (b = 0; b < 4; b++) 
+		    {
+		      intensity = temp_pixel[b] * NUM_INTENSITIES;
+		      hist[b][intensity]++;
+		    }
+		}
+	    }
 	}
     }
+  
+  inten_max = 1;
+
+  /* calculated maximums */
+  for (i = 0; i < NUM_INTENSITIES; i++) {
+    inten_max = MAX (inten_max, hist_inten[i]);
+  }
   
   for (b = 0; b < 4; b++) 
     {
@@ -91,20 +134,36 @@ static void oilify_pixel (gint x,
       for (i = 0; i < NUM_INTENSITIES; i++) {
 	hist_max[b] = MAX (hist_max[b], hist[b][i]);
       }
-  }
+    }
   
+  /* calculate weight and use it to set the pixel */
   for (b = 0; b < 4; b++) 
     {
       sum = 0.0;
-      div = 0.0;
-      for (i = 0; i < NUM_INTENSITIES; i++)
+      color = 0.0;
+      if (use_inten)
 	{
-	  gfloat ratio = (gfloat) hist[b][i] / (gfloat) hist_max[b];
-	  gfloat weight = pow (ratio, exponent);
-	  sum += weight * (gfloat) i/(gfloat) NUM_INTENSITIES;
-	  div += weight;
+	  for (i = 0; i < NUM_INTENSITIES; i++)  
+	    {
+	      ratio = (gfloat) hist_inten[i] / (gfloat) inten_max;
+	      weight = pow (ratio, exponent);
+	      if (hist_inten[i] > 0)
+		color += weight * cumulative_rgb[b][i] / (gfloat) hist_inten[i];
+	    }
+	  result = color;
+	  dst_pixel[b] = result;
 	}
-      dst_pixel[b] = sum / div;
+      else
+	{ 
+	  for (i = 0; i < NUM_INTENSITIES; i++)
+	    {
+	      ratio = (gfloat) hist[b][i] / (gfloat) hist_max[b];
+	      weight = pow (ratio, exponent);
+	      sum += weight * (gfloat) i;
+	    }
+	  result = sum / (gfloat) NUM_INTENSITIES;
+	  dst_pixel[b] = result;
+	}
     }
 }
 
@@ -117,9 +176,9 @@ static void prepare (GeglOperation *operation)
   o       = GEGL_CHANT_PROPERTIES (operation);
 
   op_area->left   = 
-  op_area->right  = 
-  op_area->top    = 
-  op_area->bottom = o->mask_radius;
+    op_area->right  = 
+    op_area->top    = 
+    op_area->bottom = o->mask_radius;
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -147,12 +206,17 @@ process (GeglOperation       *operation,
                                                   babl_format ("RGBA float"),
                                                   o->sampler_type);
 
+  GeglSampler *sampler_inten = gegl_buffer_sampler_new (input,
+							babl_format ("Y float"),
+							o->sampler_type);
+
   gint n_pixels = result->width * result->height;
 
   while (n_pixels--)
     {
       
-      oilify_pixel(x, y, o->mask_radius, o->exponent, sampler, out_pixel);
+      oilify_pixel(x, y, o->use_inten, o->mask_radius, o->exponent, 
+		   sampler, sampler_inten, out_pixel);
 
       out_pixel += 4;
 
@@ -187,10 +251,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "artistic",
-    "name"       , "gegl:oilify",
-    "description", _("Emulate an oil painting"),
-    NULL);
+				 "categories" , "artistic",
+				 "name"       , "gegl:oilify",
+				 "description", _("Emulate an oil painting"),
+				 NULL);
 }
-
 #endif
