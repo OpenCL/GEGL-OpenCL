@@ -22,12 +22,13 @@
 #include <string.h>
 
 
-static GRegex   *regex;
-static gchar    *data_dir      = NULL;
-static gchar    *reference_dir = NULL;
-static gchar    *output_dir    = NULL;
-static gchar    *pattern       = "";
-static gboolean *output_all    = FALSE;
+static GRegex   *regex, *exc_regex;
+static gchar    *data_dir        = NULL;
+static gchar    *reference_dir   = NULL;
+static gchar    *output_dir      = NULL;
+static gchar    *pattern         = "";
+static gchar    *exclusion_pattern = "a^"; /* doesn't match anything by default */
+static gboolean *output_all      = FALSE;
 
 static const GOptionEntry options[] =
 {
@@ -42,6 +43,9 @@ static const GOptionEntry options[] =
 
   {"pattern", 'p', 0, G_OPTION_ARG_STRING, &pattern,
    "Regular expression used to match names of operations to be tested", NULL},
+
+  {"exclusion-pattern", 'e', 0, G_OPTION_ARG_STRING, &exclusion_pattern,
+   "Regular expression used to match names of operations not to be tested", NULL},
 
   {"all", 'a', 0, G_OPTION_ARG_NONE, &output_all,
    "Create output for all operations using a standard composition "
@@ -97,13 +101,15 @@ process_operations (GType type)
       xml             = gegl_operation_class_get_key (operation_class, "reference-composition");
       name            = gegl_operation_class_get_key (operation_class, "name");
 
-      if (name && image && xml && g_regex_match (regex, name, 0, NULL))
+      if (name && image && xml && g_regex_match (regex, name, 0, NULL) &&
+          !g_regex_match (exc_regex, name, 0, NULL))
         {
           gchar    *image_path  = g_build_path (G_DIR_SEPARATOR_S, reference_dir, image, NULL);
           gchar    *output_path = operation_to_path (name, FALSE);
           GeglNode *composition;
 
-          g_printf ("%s: ", name);
+          if (!output_all)
+            g_printf ("%s: ", name);
 
           composition = gegl_node_new_from_xml (xml, data_dir);
           if (!composition)
@@ -118,69 +124,74 @@ process_operations (GType type)
               gint           ref_pixels;
 
               output = gegl_node_new_child (composition,
-                                            "operation", "gegl:save",
+                                            "operation", "gegl:png-save",
+                                            "compression", 9,
                                             "path", output_path,
                                             NULL);
               gegl_node_link (composition, output);
               gegl_node_process (output);
 
-              ref_img = gegl_node_new_child (composition,
-                                             "operation", "gegl:load",
-                                             "path", image_path,
-                                             NULL);
-
-              ref_bounds  = gegl_node_get_bounding_box (ref_img);
-              comp_bounds = gegl_node_get_bounding_box (composition);
-              ref_pixels  = ref_bounds.width * ref_bounds.height;
-
-              if (ref_bounds.width != comp_bounds.width ||
-                  ref_bounds.height != comp_bounds.height)
+              /* don't test if run with --all */
+              if (!output_all)
                 {
-                  g_printf ("FAIL\n  Reference and composition differ in size\n");
-                  result = FALSE;
-                }
-              else
-                {
-                  GeglNode *comparison;
-                  gdouble   max_diff;
+                  ref_img = gegl_node_new_child (composition,
+                                                 "operation", "gegl:load",
+                                                 "path", image_path,
+                                                 NULL);
 
-                  comparison = gegl_node_create_child (composition, "gegl:image-compare");
+                  ref_bounds  = gegl_node_get_bounding_box (ref_img);
+                  comp_bounds = gegl_node_get_bounding_box (composition);
+                  ref_pixels  = ref_bounds.width * ref_bounds.height;
 
-                  gegl_node_link (composition, comparison);
-                  gegl_node_connect_to (ref_img, "output", comparison, "aux");
-                  gegl_node_process (comparison);
-                  gegl_node_get (comparison, "max diff", &max_diff, NULL);
-
-                  if (max_diff < 1.0)
+                  if (ref_bounds.width != comp_bounds.width ||
+                      ref_bounds.height != comp_bounds.height)
                     {
-                      g_printf ("PASS\n");
-                      result = result && TRUE;
+                      g_printf ("FAIL\n  Reference and composition differ in size\n");
+                      result = FALSE;
                     }
                   else
                     {
-                      gdouble  avg_diff_wrong, avg_diff_total;
-                      gint     wrong_pixels;
+                      GeglNode *comparison;
+                      gdouble   max_diff;
 
-                      gegl_node_get (comparison, "avg_diff_wrong", &avg_diff_wrong,
-                                     "avg_diff_total", &avg_diff_total, "wrong_pixels",
-                                     &wrong_pixels, NULL);
+                      comparison = gegl_node_create_child (composition, "gegl:image-compare");
 
-                      g_printf ("FAIL\n  Reference image and composition differ\n"
-                                "    wrong pixels : %i/%i (%2.2f%%)\n"
-                                "    max Δe       : %2.3f\n"
-                                "    avg Δe       : %2.3f (wrong) %2.3f (total)\n",
-                                wrong_pixels, ref_pixels, (wrong_pixels * 100.0 / ref_pixels),
-                                max_diff,
-                                avg_diff_wrong, avg_diff_total);
+                      gegl_node_link (composition, comparison);
+                      gegl_node_connect_to (ref_img, "output", comparison, "aux");
+                      gegl_node_process (comparison);
+                      gegl_node_get (comparison, "max diff", &max_diff, NULL);
 
-                      g_free (output_path);
-                      output_path = operation_to_path (name, TRUE);
+                      if (max_diff < 1.0)
+                        {
+                          g_printf ("PASS\n");
+                          result = result && TRUE;
+                        }
+                      else
+                        {
+                          gdouble  avg_diff_wrong, avg_diff_total;
+                          gint     wrong_pixels;
 
-                      gegl_node_set (output, "path", output_path, NULL);
-                      gegl_node_link (comparison, output);
-                      gegl_node_process (output);
+                          gegl_node_get (comparison, "avg_diff_wrong", &avg_diff_wrong,
+                                         "avg_diff_total", &avg_diff_total, "wrong_pixels",
+                                         &wrong_pixels, NULL);
 
-                      result = FALSE;
+                          g_printf ("FAIL\n  Reference image and composition differ\n"
+                                    "    wrong pixels : %i/%i (%2.2f%%)\n"
+                                    "    max Δe       : %2.3f\n"
+                                    "    avg Δe       : %2.3f (wrong) %2.3f (total)\n",
+                                    wrong_pixels, ref_pixels, (wrong_pixels * 100.0 / ref_pixels),
+                                    max_diff,
+                                    avg_diff_wrong, avg_diff_total);
+
+                          g_free (output_path);
+                          output_path = operation_to_path (name, TRUE);
+
+                          gegl_node_set (output, "path", output_path, NULL);
+                          gegl_node_link (comparison, output);
+                          gegl_node_process (output);
+
+                          result = FALSE;
+                        }
                     }
                 }
             }
@@ -189,9 +200,13 @@ process_operations (GType type)
           g_free (image_path);
           g_free (output_path);
         }
-      else if (name && output_all && g_regex_match (regex, name, 0, NULL))
+      /* if we are running with --all and the operation doesn't have a
+         composition, use standard composition and images, don't test */
+      else if (output_all && name && g_regex_match (regex, name, 0, NULL) &&
+               !g_regex_match (exc_regex, name, 0, NULL) &&
+               !(g_type_is_a (operations[i], GEGL_TYPE_OPERATION_SINK) ||
+                 g_type_is_a (operations[i], GEGL_TYPE_OPERATION_TEMPORAL)))
         {
-          /* use standard composition and images, don't test */
           GeglNode *composition, *input, *aux, *operation, *output;
           gchar    *input_path  = g_build_path (G_DIR_SEPARATOR_S, data_dir,
                                               "standard-input.png", NULL);
@@ -200,29 +215,34 @@ process_operations (GType type)
           gchar    *output_path = operation_to_path (name, FALSE);
 
           composition = gegl_node_new ();
-          input = gegl_node_new_child (composition,
-                                       "operation", "gegl:load",
-                                       "path", input_path,
-                                       NULL);
-          aux = gegl_node_new_child (composition,
-                                     "operation", "gegl:load",
-                                     "path", aux_path,
-                                     NULL);
           operation = gegl_node_create_child (composition, name);
-          output = gegl_node_new_child (composition,
-                                        "operation", "gegl:save",
-                                        "path", output_path,
-                                        NULL);
 
-          gegl_node_link (operation, output);
+          if (gegl_node_has_pad (operation, "output"))
+            {
+              input = gegl_node_new_child (composition,
+                                           "operation", "gegl:load",
+                                           "path", input_path,
+                                           NULL);
+              aux = gegl_node_new_child (composition,
+                                         "operation", "gegl:load",
+                                         "path", aux_path,
+                                         NULL);
+              output = gegl_node_new_child (composition,
+                                            "operation", "gegl:png-save",
+                                            "compression", 9,
+                                            "path", output_path,
+                                            NULL);
 
-          if (gegl_node_has_pad (operation, "input"))
-            gegl_node_link (input, operation);
+              gegl_node_link (operation, output);
 
-          if (gegl_node_has_pad (operation, "aux"))
-            gegl_node_connect_to (aux, "output", operation, "aux");
+              if (gegl_node_has_pad (operation, "input"))
+                gegl_node_link (input, operation);
 
-          gegl_node_process (output);
+              if (gegl_node_has_pad (operation, "aux"))
+                gegl_node_connect_to (aux, "output", operation, "aux");
+
+              gegl_node_process (output);
+            }
 
           g_free (input_path);
           g_free (aux_path);
@@ -271,11 +291,18 @@ main (gint    argc,
   else
     {
       regex = g_regex_new (pattern, 0, 0, NULL);
+      exc_regex = g_regex_new (exclusion_pattern, 0, 0, NULL);
+
       result = process_operations (GEGL_TYPE_OPERATION);
+
       g_regex_unref (regex);
+      g_regex_unref (exc_regex);
     }
 
   gegl_exit ();
 
-  return result;
+  if (output_all)
+    return 0;
+  else
+    return result;
 }
