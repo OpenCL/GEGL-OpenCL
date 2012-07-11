@@ -6,6 +6,8 @@
 #
 
 gtkdochtmldir = $(datadir)/gtk-doc/html/gegl
+gtkdocimgdir = $(datadir)/gtk-doc/html/gegl/images
+gtkdocexampledir = $(datadir)/gtk-doc/html/gegl/images/examples
 
 HTML_FILES = \
 	operations.html		\
@@ -62,9 +64,18 @@ EXTRA_DIST = \
 	images/GEGL.svg			\
 	images/gaussian-blur-graph.png	\
 	images/gegl.ico			\
+	images/standard-input.png \
+	images/standard-aux.png \
 	index-static.txt.in
 
+EXAMPLE_FILES = $(wildcard images/examples/*.png)
+EXTRA_DIST += $(EXAMPLE_FILES)
+
 dist_gtkdochtml_DATA = $(GTKDOC_FILES)
+dist_gtkdocimg_DATA = \
+	images/standard-input.png \
+	images/standard-aux.png
+dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
@@ -72,9 +83,20 @@ CLEANFILES = README $(HTML_FILES) index-static.txt
 DISTCLEANFILES = index-static.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
+exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|color|introspect|layer|image-compare|grid|checkerboard|fractal-explorer|perlin-noise|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|rectangle|dropshadow"
+
 all-local: $(HTML_FILES)
 
-operations.html: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c
+examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
+	@if test -d images/examples; then :; else \
+		echo "Generating example images" ; \
+		mkdir -p images/examples ; \
+		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
+		$(top_builddir)/bin/gegl-tester$(EXEEXT) --all -o images/examples \
+		-d images -e $(exclusion_pattern) ; \
+	fi
+
+operations.html: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/operation_reference$(EXEEXT) --ops-html > $@
 
@@ -202,11 +224,10 @@ else
 endif
 
 clean-local:
+	rm -rf images/examples; \
 	if test $(srcdir) = .; then :; else 	\
 	    rm -f gegl.devhelp;	\
 	fi
-
-
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
