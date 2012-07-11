@@ -289,6 +289,23 @@ static void category_menu_index (gpointer key,
     }
 }
 
+/* convert operation name to path of example image */
+static gchar*
+operation_to_path (const gchar *op_name)
+{
+  gchar *cleaned = g_strdup (op_name);
+  gchar *filename, *output_path;
+
+  g_strdelimit (cleaned, ":", '-');
+  filename = g_strconcat (cleaned, ".png", NULL);
+  output_path = g_build_path (G_DIR_SEPARATOR_S, "images", "examples", filename, NULL);
+
+  g_free (cleaned);
+  g_free (filename);
+
+  return output_path;
+}
+
 gint
 main (gint    argc,
       gchar **argv)
@@ -364,12 +381,26 @@ main (gint    argc,
       GeglOperationClass *klass = iter->data;
       const char *categoris = gegl_operation_class_get_key (klass, "categories");
       const char *description = gegl_operation_class_get_key (klass, "description");
+      const char *name = gegl_operation_class_get_key (klass, "name");
+
       if (categoris && strstr (categoris, "hidden"))
         continue;
 
       g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_name' colspan='4'><a name='op_%s'>%s</a></td>\n</tr>\n", klass->name, klass->name);
+
+      if (name)
+        {
+          char *image = operation_to_path (name);
+
+          if (g_file_test (image, G_FILE_TEST_EXISTS))
+            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><a href='%s'>Example image</a></td>\n</tr>\n", image);
+
+          g_free (image);
+        }
+
       if (description)
         g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", description);
+
       list_properties (G_OBJECT_CLASS_TYPE (klass), 2, TRUE);
     }
   g_print ("</table>\n");
