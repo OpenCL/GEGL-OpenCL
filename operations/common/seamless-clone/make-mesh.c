@@ -1,6 +1,6 @@
 /* This file is an image processing operation for GEGL
  *
- * seamless-clone.c
+ * make-mesh.c
  * Copyright (C) 2011 Barak Itkin <lightningismyname@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -70,16 +70,16 @@ sc_compute_sample_list_part (ScOutline     *outline,
    
   if (!needsMore || d <= 1)
     {
-	  g_ptr_array_add (sl->points, pt1);
-	  return;
-	}
+      g_ptr_array_add (sl->points, pt1);
+      return;
+    }
   else
     {
-	  gint index12 = (index1 + index2) / 2;
-	  sc_compute_sample_list_part (outline, index1, index12, Px, Py, sl, k + 1);
-	  sc_compute_sample_list_part (outline, index12, index2, Px, Py, sl, k + 1);
-	  return;
-	}
+      gint index12 = (index1 + index2) / 2;
+      sc_compute_sample_list_part (outline, index1, index12, Px, Py, sl, k + 1);
+      sc_compute_sample_list_part (outline, index12, index2, Px, Py, sl, k + 1);
+      return;
+    }
 }
 
 static void
@@ -113,7 +113,7 @@ sc_compute_sample_list_weights (gdouble        Px,
       /* Did the point match one of the outline points? */
       if (norm1 == 0)
         {
-		  gdouble temp = 1;
+          gdouble temp = 1;
           g_ptr_array_remove_range (sl->points, 0, N);
           /* No weights yet so nothing to remove */
           
@@ -127,13 +127,13 @@ sc_compute_sample_list_weights (gdouble        Px,
 
       if (temp <= 1 && temp >= -1)
         {
-		  /* Result is in the range of 0 to PI */
+          /* Result is in the range of 0 to PI */
           ang = acos (temp);
         }
       else
         {
-		  ang = 0;
-		}
+           ang = 0;
+        }
       
       tan_as_half[i] = tan (ang / 2);
       tan_as_half[i] = ABS (tan_as_half[i]);
@@ -147,7 +147,7 @@ sc_compute_sample_list_weights (gdouble        Px,
       weightTemp = (tan_as_half[i - 1] + tan_as_half[i % N]) / pow (norms[i % N], 2);
       sl->total_weight += weightTemp;
       g_array_append_val (sl->weights, weightTemp);
-	}
+    }
 }
 
 ScSampleList*
@@ -247,15 +247,17 @@ sc_make_fine_mesh (ScOutline     *outline,
   for (i = 0; i < N; i++)
     {
       ScPoint *pt = (ScPoint*) g_ptr_array_index (realOutline, i);
+      gdouble realX = pt->x + SC_DIRECTION_XOFFSET (pt->outside_normal, 0.25);
+      gdouble realY = pt->y + SC_DIRECTION_YOFFSET (pt->outside_normal, 0.25);
 
-      min_x = MIN (pt->x, min_x);
-      min_y = MIN (pt->y, min_y);
-      max_x = MAX (pt->x, max_x);
-      max_y = MAX (pt->y, max_y);
+      min_x = MIN (realX, min_x);
+      min_y = MIN (realY, min_y);
+      max_x = MAX (realX, max_x);
+      max_y = MAX (realY, max_y);
 
       /* No one should care if the points are given in reverse order,
        * and prepending to the GList is more efficient */
-      g_ptr_array_add (mesh_points, p2t_point_new_dd (pt->x, pt->y));
+      g_ptr_array_add (mesh_points, p2t_point_new_dd (realX, realY));
     }
 
   mesh_bounds->x = min_x;

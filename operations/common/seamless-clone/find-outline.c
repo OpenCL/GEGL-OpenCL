@@ -28,200 +28,192 @@
  */
 
 #include <gegl.h>
-#include <stdio.h> /* TODO: get rid of this debugging way! */
+
 
 #include "seamless-clone.h"
 #include <poly2tri-c/p2t/poly2tri.h>
 #include <poly2tri-c/refine/refine.h>
 
-/* Define the directions
- *
- *          0
- *         
- *    7     N     1
- *          ^
- *          |
- *          |           
- * 6  W<----+---->E  2
- *          |              =====>X
- *          |             ||
- *          v             ||
- *    5     S     3       ||
- *                        vv
- *          4             Y
- */
-typedef enum {
-  D_N = 0,    /* 000 */
-  D_NE = 1,   /* 001 */
-  D_E = 2,    /* 010 */
-  D_SE = 3,   /* 011 */
-  D_S = 4,    /* 100 */
-  D_SW = 5,   /* 101 */
-  D_W = 6,    /* 110 */
-  D_NW = 7    /* 111 */
-} OUTLINE_DIRECTION;
-
-#define cwdirection(t)       (((t)+1)%8)
-#define ccwdirection(t)      (((t)+7)%8)
-#define oppositedirection(t) (((t)+4)%8)
-
-#define isSouth(s) (((s) == D_S) || ((s) == D_SE) || ((s) == D_SW))
-#define isNorth(s) (((s) == D_N) || ((s) == D_NE) || ((s) == D_NW))
-
-#define isEast(s) (((s) == D_NE) || ((s) == D_E) || ((s) == D_SE))
-#define isWest(s) (((s) == D_NW) || ((s) == D_W) || ((s) == D_SW))
-
-/**
- * Add a COPY of the given point into the array pts. The original point CAN
- * be freed later!
- */
 static inline void
-add_point (GPtrArray* pts, ScPoint *pt)
+sc_point_copy_to (const ScPoint *src,
+                  ScPoint       *dst)
 {
-  ScPoint *cpy = g_slice_new (ScPoint);
-  cpy->x = pt->x;
-  cpy->y = pt->y;
-
-  g_ptr_array_add (pts, cpy);
+  dst->x              = src->x;
+  dst->y              = src->y;
+  dst->outside_normal = src->outside_normal;
 }
 
-static inline void
-spoint_move (ScPoint *pt, OUTLINE_DIRECTION t, ScPoint *dest)
+static inline ScPoint*
+sc_point_copy (const ScPoint *src)
 {
-  dest->x = pt->x + (isEast(t) ? 1 : (isWest(t) ? -1 : 0));
-  dest->y = pt->y + (isSouth(t) ? 1 : (isNorth(t) ? -1 : 0));
+  ScPoint *self = g_slice_new (ScPoint);
+  sc_point_copy_to (src, self);
+  return self;
+}
+
+static inline ScPoint*
+sc_point_move (const ScPoint *src,
+               ScDirection    t,
+               ScPoint       *dst)
+{
+  dst->x = src->x + SC_DIRECTION_XOFFSET (t, 1);
+  dst->y = src->y + SC_DIRECTION_YOFFSET (t, 1);
+  return dst;
 }
 
 static inline gboolean
-in_range(gint val,gint min,gint max)
+sc_point_eq (const ScPoint *pt1,
+             const ScPoint *pt2)
 {
-  return (((min) <= (val)) && ((val) <= (max)));
+  return pt1->x == pt2->x && pt1->y == pt2->y;
 }
 
-static inline gfloat
-sc_sample_alpha (GeglBuffer *buf, gint x, gint y, const Babl *format)
+static gint
+sc_point_cmp (const ScPoint *pt1,
+              const ScPoint *pt2)
 {
-  gfloat col[4] = {0, 0, 0, 0};
-  gegl_buffer_sample (buf, x, y, NULL, col, format, GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-  return col[3];
+  if (pt1->y < pt2->y)
+    return -1;
+  else if (pt1->y > pt2->y)
+    return +1;
+  else
+    {
+      if (pt1->x < pt2->x)
+        return -1;
+      else if (pt1->x > pt2->x)
+        return +1;
+      else
+        return 0;
+    }
 }
 
 static inline gboolean
-is_opaque (const GeglRectangle *rect,
-           GeglBuffer          *pixels,
+in_range (gint val,
+          gint min,
+          gint max)
+{
+  return (min <= val) && (val <= max);
+}
+
+static inline gboolean
+in_rectangle (const GeglRectangle *rect,
+              const ScPoint       *pt)
+{
+  return in_range (pt->x, rect->x, rect->x + rect->width - 1)
+    && in_range (pt->y, rect->y, rect->y + rect->height - 1);
+}
+
+static inline gboolean
+is_opaque (const GeglRectangle *search_area,
+           GeglBuffer          *buffer,
            const Babl          *format,
            const ScPoint       *pt)
 {
-  g_assert (pt != NULL);
-  g_assert (rect != NULL);
+  gfloat col[4] = {0, 0, 0, 0};
 
-  return in_range(pt->x, rect->x, rect->x + rect->width - 1)
-         && in_range(pt->y, rect->y, rect->y + rect->height - 1)
-         && (sc_sample_alpha (pixels, pt->x, pt->y, format) >= 0.5f);
+  if (! in_rectangle (search_area, pt))
+    return FALSE;
+
+  gegl_buffer_sample (buffer, pt->x, pt->y, NULL, col, format,
+      GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
+
+  return col[3] >= 0.5f;
 }
 
-/* This function receives a white pixel (pt) and the direction of the movement
- * that lead to it (prevdirection). It will return the direction leading to the
- * next white pixel (while following the edges in CW order), and the pixel
- * itself would be stored in dest.
- *
- * The logic is simple:
- * 1. Try to continue in the same direction that lead us to the current pixel
- * 2. Dprev = oppposite(prevdirection)
- * 3. Dnow  = cw(Dprev)
- * 4. While moving to Dnow is white:
- * 4.1. Dprev = Dnow
- * 4.2. Dnow  = cw(D)
- * 5. Return the result - moving by Dprev
- */
-static inline OUTLINE_DIRECTION
-outline_walk_cw (const GeglRectangle *rect,
-                 GeglBuffer          *pixels,
-                 const Babl          *format,
-                 OUTLINE_DIRECTION    prevdirection,
-                 ScPoint             *pt,
-                 ScPoint             *dest)
+/* This function assumes the pixel is white! */
+static inline gboolean
+is_opaque_island (const GeglRectangle *search_area,
+                  GeglBuffer          *buffer,
+                  const Babl          *format,
+                  const ScPoint       *pt)
 {
-  OUTLINE_DIRECTION Dprev = oppositedirection(prevdirection);
-  OUTLINE_DIRECTION Dnow = cwdirection (Dprev);
- 
-  ScPoint ptN, ptP;
+  gint i;
+  ScPoint temp;
 
-  spoint_move (pt, Dprev, &ptP);
-  spoint_move (pt, Dnow, &ptN);
+  for (i = 0; i < 8; ++i)
+    if (is_opaque (search_area, buffer, format, sc_point_move (pt, i, &temp)))
+      return FALSE;
 
-  while (is_opaque (rect, pixels, format, &ptN))
+  return TRUE;
+}
+
+static inline ScDirection
+walk_cw (const GeglRectangle *search_area,
+         GeglBuffer          *buffer,
+         const Babl          *format,
+         const ScPoint       *cur_pt,
+         ScDirection          dir_from_prev,
+         ScPoint             *next_pt)
+{
+  ScDirection dir_to_prev = SC_DIRECTION_OPPOSITE (dir_from_prev);
+  ScDirection dir_to_next = SC_DIRECTION_CW (dir_to_prev);
+
+  sc_point_move (cur_pt, dir_to_next, next_pt);
+
+  while (! is_opaque (search_area, buffer, format, next_pt))
     {
-       Dprev = Dnow;
-       ptP.x = ptN.x;
-       ptP.y = ptN.y;
-       Dnow = cwdirection (Dprev);
-       spoint_move (pt, Dnow, &ptN);
+      dir_to_next = SC_DIRECTION_CW (dir_to_next);
+      sc_point_move (cur_pt, dir_to_next, next_pt);
     }
 
-  dest->x = ptP.x;
-  dest->y = ptP.y;
-  return Dprev;
+  return dir_to_next;
 }
 
-#define pteq(pt1,pt2) (((pt1)->x == (pt2)->x) && ((pt1)->y == (pt2)->y))
-
-GPtrArray*
-sc_outline_find_ccw (const GeglRectangle *rect,
-                     GeglBuffer          *pixels)
+ScOutline*
+sc_outline_find (const GeglRectangle *search_area,
+                 GeglBuffer          *buffer)
 {
   const Babl *format = babl_format("RGBA float");
-  GPtrArray  *points = g_ptr_array_new ();
-  
-  gint x = rect->x, y;
+  ScOutline *result = g_ptr_array_new ();
 
   gboolean found = FALSE;
-  ScPoint START, pt, ptN;
-  OUTLINE_DIRECTION DIR, DIRN;
+  ScPoint current, next, *first;
+  ScDirection to_next;
 
-  /* First of all try to find a white pixel */
-  for (y = rect->y; y < rect->y + rect->height; y++)
+  gint row_max = search_area->x + search_area->width;
+  gint col_max = search_area->y + search_area->height;
+
+  for (current.y = search_area->y; current.y < row_max; ++current.y)
     {
-      for (x = rect->x; x < rect->x + rect->width; x++)
+      for (current.x = search_area->x; current.x < col_max; ++current.x)
+        if (is_opaque (search_area, buffer, format, &current)
+            && ! is_opaque_island (search_area, buffer, format, &current))
+          {
+            found = TRUE;
+            break;
+          }
+
+      if (found)
+        break;
+    }
+
+  if (found)
+    {
+      current.outside_normal = SC_DIRECTION_N;
+      g_ptr_array_add (result, first = sc_point_copy (&current));
+
+      to_next = walk_cw (search_area, buffer, format, &current,
+          SC_DIRECTION_E, &next);
+
+      while (! sc_point_eq (&next, first))
         {
-          if (sc_sample_alpha (pixels, x, y, format) >= 0.5f)
-            {
-               found = TRUE;
-               break;
-            }
+          next.outside_normal = SC_DIRECTION_CW(SC_DIRECTION_CW(to_next));
+          g_ptr_array_add (result, sc_point_copy (&next));
+          sc_point_copy_to (&next, &current);
+          to_next = walk_cw (search_area, buffer, format, &current,
+              to_next, &next);
         }
-      if (found) break;
     }
 
-  if (!found)
-    return points;
-  
-  pt.x = START.x = x;
-  pt.y = START.y = y;
-  DIR = D_NW;
-
-  add_point (points, &START);
-
-  DIRN = outline_walk_cw (rect, pixels, format, DIR,&pt,&ptN);
-
-  while (! pteq(&ptN,&START))
-    {
-      add_point (points, &ptN);
-      pt.x = ptN.x;
-      pt.y = ptN.y;
-      DIR = DIRN;
-      DIRN = outline_walk_cw (rect, pixels, format, DIR,&pt,&ptN);
-    }
-
-  return points;
+  return result;
 }
 
 void
 sc_outline_free (ScOutline *self)
 {
-	GPtrArray *real = (GPtrArray*) self;
-	gint i;
-	for (i = 0; i < real->len; i++)
-	  g_slice_free (ScPoint, g_ptr_array_index (self, i));
-	g_ptr_array_free (real, TRUE);
+  GPtrArray *real = (GPtrArray*) self;
+  gint i;
+  for (i = 0; i < real->len; i++)
+    g_slice_free (ScPoint, g_ptr_array_index (self, i));
+  g_ptr_array_free (real, TRUE);
 }

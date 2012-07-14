@@ -111,7 +111,7 @@ sc_point_to_color_func (P2trPoint *point,
       dest_c[1] += weight * (input_c[1] - aux_c[1]);
       dest_c[2] += weight * (input_c[2] - aux_c[2]);
       weightT += weight;
-	}
+    }
 
   col_cpy[0] = dest[0] = dest_c[0] / weightT;
   col_cpy[1] = dest[1] = dest_c[1] / weightT;
@@ -256,7 +256,7 @@ sc_generate_cache (GeglBuffer          *fg,
   ScCache *result = g_new0 (ScCache, 1);
 
   /* Find an outline around the area of the paste */
-  outline = sc_outline_find_ccw (extents, fg);
+  outline = sc_outline_find (extents, fg);
 
   /* Create a fine mesh from the polygon defined by that outline */
   result->mesh = sc_make_fine_mesh (outline, &result->mesh_bounds,
