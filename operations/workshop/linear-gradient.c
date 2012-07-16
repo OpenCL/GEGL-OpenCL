@@ -48,8 +48,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {-10000000, -10000000, 20000000, 20000000};
-  return result;
+  return gegl_rectangle_infinite_plane ();
 }
 
 static gfloat dist(gfloat x1, gfloat y1, gfloat x2, gfloat y2)
