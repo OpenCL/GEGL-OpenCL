@@ -117,16 +117,7 @@ oilify_pixel (gint x,
         {
           if (i*i + j*j <= radius_sq)
             {
-              if (x + i < 0 ||
-                  x + i > whole_rect->width ||
-                  y + j < 0 ||
-                  y + j > whole_rect->height)
-                {
-                  if (x + i < 0)
-                    g_print("%d %d\n", x+i, y+j);
-                  continue;
-                }
-              get_pixel (x + i,
+	      get_pixel (x + i,
                          y + j,
                          buf_width,
                          src_buf,
