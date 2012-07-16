@@ -35,19 +35,12 @@ gegl_chant_pointer (buffer, _("Cache buffer"),
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {0,0,0,0};
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
 
   if (o->buffer)
-    {
-      result = *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
-    }
+    return *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
   else
-    {
-      result = GEGL_OPERATION_GET_CLASS (operation)->get_bounding_box (operation);
-    }
-
-  return result;
+    return *gegl_operation_source_get_bounding_box (operation, "input");
 }
 
 static gboolean
