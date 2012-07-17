@@ -1765,7 +1765,7 @@ gegl_node_get_bounding_box (GeglNode *root)
   g_free (id);
 
   if (root->cache)
-    gegl_buffer_set_abyss (GEGL_BUFFER (root->cache), &root->have_rect);
+    gegl_buffer_set_extent (GEGL_BUFFER (root->cache), &root->have_rect);
 
   root->valid_have_rect = TRUE;
   return root->have_rect;
@@ -2076,8 +2076,8 @@ gegl_node_get_cache (GeglNode *node)
                                   "format", format,
                                   NULL);
 
-      /* bounding box must be called at least once to compute an
-         initial have_rect for the abyss */
+      /* gegl_node_get_bounding_box must be called at least once to compute
+         an initial have_rect for the extent of the cache */
       gegl_node_get_bounding_box (node);
 
       g_signal_connect (G_OBJECT (node->cache), "computed",
