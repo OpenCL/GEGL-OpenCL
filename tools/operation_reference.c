@@ -393,7 +393,7 @@ main (gint    argc,
           char *image = operation_to_path (name);
 
           if (g_file_test (image, G_FILE_TEST_EXISTS))
-            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><a href='%s'>Example image</a></td>\n</tr>\n", image);
+            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><img src='%s' /></td>\n</tr>\n", image);
 
           g_free (image);
         }
