@@ -218,7 +218,7 @@ process_operations (GType type)
                !(g_type_is_a (operations[i], GEGL_TYPE_OPERATION_SINK) ||
                  g_type_is_a (operations[i], GEGL_TYPE_OPERATION_TEMPORAL)))
         {
-          GeglNode *composition, *input, *aux, *operation, *output;
+          GeglNode *composition, *input, *aux, *operation, *crop, *output;
           gchar    *input_path  = g_build_path (G_DIR_SEPARATOR_S, data_dir,
                                               "standard-input.png", NULL);
           gchar    *aux_path    = g_build_path (G_DIR_SEPARATOR_S, data_dir,
@@ -238,13 +238,18 @@ process_operations (GType type)
                                          "operation", "gegl:load",
                                          "path", aux_path,
                                          NULL);
+              crop = gegl_node_new_child (composition,
+                                          "operation", "gegl:crop",
+                                          "width", 200.0,
+                                          "height", 200.0,
+                                          NULL);
               output = gegl_node_new_child (composition,
                                             "operation", "gegl:png-save",
                                             "compression", 9,
                                             "path", output_path,
                                             NULL);
 
-              gegl_node_link (operation, output);
+              gegl_node_link_many (operation, crop, output, NULL);
 
               if (gegl_node_has_pad (operation, "input"))
                 gegl_node_link (input, operation);
