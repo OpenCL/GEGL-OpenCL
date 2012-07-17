@@ -42,48 +42,34 @@ gegl_chant_double (sharpness, _("Sharpness"),   0.0, 1.0, 0.85, _("Sharpness"))
 #define SIGMOIDAL_RANGE 20
 
 static void
-grey_blur_buffer(GeglBuffer *input,
-		 gdouble glow_radius,
-		 GeglBuffer **dest)
+grey_blur_buffer (GeglBuffer *input,
+            gdouble glow_radius,
+            GeglBuffer **dest)
 {
-  GeglNode *gegl, *image, *write, *blur, *save, *save1;
+  GeglNode *gegl, *image, *write, *blur;
   gdouble radius, std_dev;
 
-  gegl = gegl_node_new();
-  image = gegl_node_new_child(gegl,
-			      "operation", "gegl:buffer-source",
-			      "buffer", input,
-			      NULL);
+  gegl = gegl_node_new ();
+  image = gegl_node_new_child (gegl,
+                "operation", "gegl:buffer-source",
+                "buffer", input,
+                NULL);
 
   radius   = fabs (glow_radius) + 1.0;
   std_dev = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
   
-  blur =  gegl_node_new_child(gegl,
-			       "operation", "gegl:gaussian-blur",
-			       "std_dev_x", std_dev,
-			       "std_dev_y", std_dev,
-			       NULL);
+  blur =  gegl_node_new_child ( gegl,
+                "operation", "gegl:gaussian-blur",
+                "std_dev_x", std_dev,
+                "std_dev_y", std_dev,
+                NULL);
 
-  write = gegl_node_new_child(gegl,
-			       "operation", "gegl:buffer-sink",
-			       "buffer", dest, NULL);
-
-  save = gegl_node_new_child(gegl,
-			       "operation", "gegl:png-save",
-			       "path", "modif.png", NULL);
-
-  save1 = gegl_node_new_child(gegl,
-			       "operation", "gegl:png-save",
-			       "path", "source.png", NULL);
+  write = gegl_node_new_child ( gegl,
+                "operation", "gegl:buffer-sink",
+                "buffer", dest, NULL);
   
   gegl_node_link_many (image, blur, write, NULL);
   gegl_node_process (write);
-
-  gegl_node_link_many (blur, save, NULL);
-  gegl_node_process (save);
-
-  gegl_node_link_many (image, save1, NULL);
-  gegl_node_process (save1);  
 
   g_object_unref (gegl);
 }
@@ -133,7 +119,7 @@ process (GeglOperation       *operation,
   dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
   dst_tmp = g_slice_alloc (result->width * result->height * sizeof(gfloat));
   dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
-  dest_tmp = gegl_buffer_new(whole_region, babl_format ("Y' float"));
+  dest_tmp = gegl_buffer_new (whole_region, babl_format ("Y' float"));
 
   gegl_buffer_get (input, result, 1.0, babl_format ("Y'CbCrA float"), dst_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
@@ -145,7 +131,6 @@ process (GeglOperation       *operation,
 
   while (n_pixels--)
   {
-
     /* compute sigmoidal transfer */
     val = *input_ptr;
     val = 1.0 / (1.0 + exp (-(SIGMOIDAL_BASE + (o->sharpness * SIGMOIDAL_RANGE)) * (val - 0.5)));
@@ -154,16 +139,15 @@ process (GeglOperation       *operation,
 
     dst_tmp_ptr +=1;
     input_ptr   +=4;
-
   }
 
-  gegl_buffer_set_extent(dest_tmp, whole_region);
+  gegl_buffer_set_extent (dest_tmp, whole_region);
   gegl_buffer_set (dest_tmp, whole_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
-  grey_blur_buffer(dest_tmp, o->glow_radius, &dest);
+  grey_blur_buffer (dest_tmp, o->glow_radius, &dest);
   
   sampler = gegl_buffer_sampler_new (dest,
-				      babl_format ("Y' float"),
-				      GEGL_SAMPLER_LINEAR);
+                    babl_format ("Y' float"),
+                    GEGL_SAMPLER_LINEAR);
     
   x = result->x;
   y = result->y;
@@ -176,7 +160,7 @@ process (GeglOperation       *operation,
   while (n_pixels--)
     {
       gegl_sampler_get (sampler,
-			            x,
+                    x,
                         y,
                         NULL,
                         &pixel);
@@ -206,7 +190,7 @@ process (GeglOperation       *operation,
   g_object_unref (dest);
  
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  gegl_buffer_set_extent(input, whole_region);
+  gegl_buffer_set_extent (input, whole_region);
   return  TRUE;
 }
 
@@ -223,10 +207,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-				 "categories" , "artistic",
-				 "name"       , "gegl:softglow",
-				 "description", _("Softglow effect"),
-				 NULL);
+                "categories" , "artistic",
+                "name"       , "gegl:softglow",
+                "description", _("Softglow effect"),
+                NULL);
 }
 
 #endif
