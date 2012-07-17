@@ -95,14 +95,26 @@ process_operations (GType type)
     {
       GeglOperationClass *operation_class;
       const gchar        *image, *xml, *name;
+      gboolean            matches;
 
       operation_class = g_type_class_ref (operations[i]);
       image           = gegl_operation_class_get_key (operation_class, "reference-image");
       xml             = gegl_operation_class_get_key (operation_class, "reference-composition");
       name            = gegl_operation_class_get_key (operation_class, "name");
 
-      if (name && image && xml && g_regex_match (regex, name, 0, NULL) &&
-          !g_regex_match (exc_regex, name, 0, NULL))
+      if (name == NULL)
+        {
+          result = result && process_operations (operations[i]);
+          continue;
+        }
+
+      matches = g_regex_match (regex, name, 0, NULL) &&
+        !g_regex_match (exc_regex, name, 0, NULL);
+
+      if (output_all && matches)
+        g_printf ("%s\n", name);
+
+      if (image && xml && matches)
         {
           gchar    *image_path  = g_build_path (G_DIR_SEPARATOR_S, reference_dir, image, NULL);
           gchar    *output_path = operation_to_path (name, FALSE);
@@ -202,8 +214,7 @@ process_operations (GType type)
         }
       /* if we are running with --all and the operation doesn't have a
          composition, use standard composition and images, don't test */
-      else if (output_all && name && g_regex_match (regex, name, 0, NULL) &&
-               !g_regex_match (exc_regex, name, 0, NULL) &&
+      else if (output_all && matches &&
                !(g_type_is_a (operations[i], GEGL_TYPE_OPERATION_SINK) ||
                  g_type_is_a (operations[i], GEGL_TYPE_OPERATION_TEMPORAL)))
         {
@@ -250,7 +261,7 @@ process_operations (GType type)
           g_object_unref (composition);
         }
 
-      result = result && process_operations(operations[i]);
+      result = result && process_operations (operations[i]);
     }
 
   g_free (operations);
