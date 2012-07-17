@@ -626,13 +626,13 @@ gegl_buffer_iterate_read_abyss_none (GeglBuffer          *buffer,
         { /* entire row of tiles is in abyss */
           gint    row;
           gint    y  = bufy;
-          guchar *bp = buf + ((bufy) * width) * bpx_size;
+          guchar *bp = buf + bufy * buf_stride;
 
           for (row = offsety;
                row < tile_height && y < height;
                row++, y++)
             {
-              memset (bp, 0x00, buf_stride);
+              memset (bp, 0x00, width * bpx_size);
               bp += buf_stride;
             }
         }
@@ -788,13 +788,13 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
         { /* entire row of tiles is in abyss */
           gint    row;
           gint    y  = bufy;
-          guchar *bp = buf + ((bufy) * width) * bpx_size;
+          guchar *bp = buf + bufy * buf_stride;
 
           for (row = offsety;
                row < tile_height && y < height;
                row++, y++)
             {
-              for (i = 0; i < buf_stride; i += bpx_size)
+              for (i = 0; i < width * bpx_size; i += bpx_size)
                 memcpy (bp + i, color, bpx_size);
               bp += buf_stride;
             }
