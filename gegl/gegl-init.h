@@ -21,12 +21,51 @@
 
 G_BEGIN_DECLS
 
-
+/**
+ * gegl_init:
+ * @argc: a pointer to the number of command line arguments.
+ * @argv: a pointer to the array of command line arguments.
+ *
+ * Call this function before using any other GEGL functions. It will initialize
+ * everything needed to operate GEGL and parses some standard command line
+ * options.  @argc and @argv are adjusted accordingly so your own code will
+ * never see those standard arguments.
+ *
+ * Note that there is an alternative ways to initialize GEGL: if you are
+ * calling g_option_context_parse() with the option group returned by
+ * gegl_get_option_group(), you don't have to call gegl_init().
+ **/
 void           gegl_init              (gint    *argc,
                                        gchar ***argv);
+
+/**
+ * gegl_get_option_group:
+ *
+ * Returns a #GOptionGroup for the commandline arguments recognized
+ * by GEGL. You should add this group to your #GOptionContext
+ * with g_option_context_add_group(), if you are using
+ * g_option_context_parse() to parse your commandline arguments.
+ *
+ * Returns a #GOptionGroup for the commandline arguments recognized by GEGL.
+ */
 GOptionGroup * gegl_get_option_group  (void);
+
+/**
+ * gegl_exit:
+ *
+ * Call this function when you're done using GEGL. It will clean up
+ * caches and write/dump debug information if the correct debug flags
+ * are set.
+ */
 void           gegl_exit              (void);
 
+/**
+ * gegl_get_debug_enabled:
+ *
+ * Check if gegl has debugging turned on.
+ *
+ * Return value: TRUE if debugging is turned on, FALSE otherwise.
+ */
 gboolean       gegl_get_debug_enabled (void); /* should be moved into config */
 
 void           gegl_get_version          (int *major,
