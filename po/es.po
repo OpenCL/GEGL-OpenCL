@@ -12,42 +12,176 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-12 19:50+0000\n"
-"PO-Revision-Date: 2012-06-13 10:07+0200\n"
+"POT-Creation-Date: 2012-07-18 05:56+0000\n"
+"PO-Revision-Date: 2012-07-18 10:59+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../gegl/gegl-init.c:216
+#: ../bin/gegl.c:147
+#, c-format
+#| msgid "Unable to create output color profile for '%s'"
+msgid "Unable to read file: %s"
+msgstr "No se pudo leer del archivo: %s"
+
+#: ../bin/gegl.c:191
+#, c-format
+msgid "Invalid graph, abort.\n"
+msgstr "Gráfico no válido, cancelar.\n"
+
+#: ../bin/gegl.c:257 ../bin/gegl-options.c:124
+#, c-format
+msgid "Unknown GeglOption mode: %d"
+msgstr "Modo de GeglOption desconocido: %d"
+
+#: ../bin/gegl-options.c:45
+#, c-format
+msgid ""
+"usage: %s [options] <file | -- [op [op] ..]>\n"
+"\n"
+"  Options:\n"
+"     -h, --help      this help information\n"
+"\n"
+"     -i, --file      read xml from named file\n"
+"\n"
+"     -x, --xml       use xml provided in next argument\n"
+"\n"
+"     --dot           output a graphviz graph description\n"
+"\n"
+"     -o, --output    output generated image to named file, type based\n"
+"                     on extension.\n"
+"\n"
+"     -p              increment frame counters of various elements when\n"
+"                     processing is done.\n"
+"\n"
+"     -X              output the XML that was read in\n"
+"\n"
+"     -v, --verbose   print diagnostics while running\n"
+"\n"
+"All parameters following -- are considered ops to be chained together\n"
+"into a small composition instead of using an xml file, this allows for\n"
+"easy testing of filters. Be aware that the default value will be used\n"
+"for all properties.\n"
+msgstr ""
+"Uso: %s [opciones] <archivo | -- [op [op] ..]>\n"
+"\n"
+"  Options:\n"
+"     -h, --help      muestra esta ayuda\n"
+"\n"
+"     -i, --file      leer XML del archivo indicado\n"
+"\n"
+"     -x, --xml       usar el XML indicado en el siguiente argumento\n"
+"\n"
+"     --dot           mostrar una descripción del gráfico de graphviz\n"
+"\n"
+"     -o, --output    mostrar la imagen generada en un archivo con nombre, "
+"basándose el tipo\n"
+"                     en la extensión.\n"
+"\n"
+"     -p             incrementar los contadores de marcos de varios elementos "
+"cuando\n"
+"                     termine el procesado.\n"
+"\n"
+"     -X              mostrar el XML leído\n"
+"\n"
+"     -v, --verbose   mostrar diagnósticos durante la ejecución\n"
+"\n"
+"Todos los parámetros seguidos de -- se consideran opciones que se deben\n"
+"poner juntas, en una pequeña composición, en lugar de usar un archivo XML;\n"
+"esto permite probar sencillos filtros. Tenga en cuenta que se usará el "
+"valor\n"
+"predeterminado para todas las propiedades.\n"
+
+#: ../bin/gegl-options.c:77
+#, c-format
+msgid "ERROR: '%s' option expected argument\n"
+msgstr "Error: se esperaba un argumento para la opción «%s»\n"
+
+#: ../bin/gegl-options.c:116
+msgid "Display on screen"
+msgstr "Mostrar en la pantalla"
+
+#: ../bin/gegl-options.c:118
+msgid "Print XML"
+msgstr "Imprimir XML"
+
+#: ../bin/gegl-options.c:120
+msgid "Output in a file"
+msgstr "Salida en un archivo"
+
+#: ../bin/gegl-options.c:122
+msgid "Display help information"
+msgstr "Mostrar información de ayuda"
+
+#: ../bin/gegl-options.c:125
+msgid "unknown mode"
+msgstr "modo desconocido"
+
+#: ../bin/gegl-options.c:130
+#, c-format
+msgid ""
+"Parsed commandline:\n"
+"\tmode:   %s\n"
+"\tfile:   %s\n"
+"\txml:    %s\n"
+"\toutput: %s\n"
+"\trest:   %s\n"
+"\t\n"
+msgstr ""
+"Análisis de la línea de comandos:\n"
+"\tmodo:      %s\n"
+"\tarchivo:   %s\n"
+"\txml:         %s\n"
+"\tsalida:     %s\n"
+"\tresto:      %s\n"
+"\t\n"
+
+#: ../bin/gegl-options.c:257
+#, c-format
+msgid ""
+"\n"
+"\n"
+"unknown parameter '%s' giving you help instead\n"
+"\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"parámetro «%s» desconocido. Mostrando la ayuda en su lugar\n"
+"\n"
+"\n"
+
+#: ../gegl/gegl-init.c:212
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "tolerancia de error de babls, un valor entre 0.2 y 0.000000001"
 
-#: ../gegl/gegl-init.c:221
+#: ../gegl/gegl-init.c:217
 msgid "Where GEGL stores its swap"
 msgstr "Dónde almacena GEGL su espacio de intercambio"
 
-#: ../gegl/gegl-init.c:226
+#: ../gegl/gegl-init.c:222
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Cuánta memoria (aproximadamente) usar para el cacheo de las imágenes"
 
-#: ../gegl/gegl-init.c:231
+#: ../gegl/gegl-init.c:227
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Tamaño predeterminado de las baldosas en GeglBuffers"
 
-#: ../gegl/gegl-init.c:236
+#: ../gegl/gegl-init.c:232
 msgid "The count of pixels to compute simultaneously"
 msgstr "Cuántos píxeles calcular simultáneamente"
 
-#: ../gegl/gegl-init.c:241
+#: ../gegl/gegl-init.c:237
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Calidad del renderizado; un valor entre 0.0 (rápido) y 1.0 (referencia)"
 
-#: ../gegl/gegl-init.c:246
+#: ../gegl/gegl-init.c:242
 msgid "The number of concurrent processing threads to use"
 msgstr "Número de hilos de procesado concurrente que usar"
 
@@ -445,12 +579,10 @@ msgid "Block Width"
 msgstr "Anchura del bloque"
 
 #: ../operations/common/dot.c:27
-#| msgid "Width of blocks in pixels"
 msgid "Size of each block in pixels"
 msgstr "Tamaño de cada bloque en píxeles"
 
 #: ../operations/common/dot.c:28
-#| msgid "Iteration"
 msgid "Dot size ratio"
 msgstr "Proporción del tamaño del punto"
 
@@ -459,7 +591,6 @@ msgid "Size ratio of a dot inside each block"
 msgstr "Proporción del tamaño de un punto dentro de cada bloque"
 
 #: ../operations/common/dot.c:191
-#| msgid "Simplify image into an array of solid-colored squares"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Simplificar la imagen en una matriz de puntos de color liso"
 
@@ -2583,7 +2714,7 @@ msgstr "Cachear el búfer"
 msgid "The GeglBuffer where the caching is done"
 msgstr "El GeglBuffer en que se hace el cacheado"
 
-#: ../operations/workshop/buffer-cache.c:103
+#: ../operations/workshop/buffer-cache.c:96
 msgid ""
 "Cache the input buffer internally, further process take this buffer as input."
 msgstr ""
@@ -3447,7 +3578,7 @@ msgstr "Un extremo del degradado"
 msgid "The other end of a gradient"
 msgstr "El otro extremo del degradado"
 
-#: ../operations/workshop/linear-gradient.c:137
+#: ../operations/workshop/linear-gradient.c:136
 msgid "Linear gradient renderer"
 msgstr "Renderizador de degradados lineales"
 
@@ -3533,7 +3664,7 @@ msgstr "y2"
 msgid "One end of gradient"
 msgstr "Un extremo del degradado"
 
-#: ../operations/workshop/radial-gradient.c:129
+#: ../operations/workshop/radial-gradient.c:128
 msgid "Radial gradient renderer"
 msgstr "Renderizador de degradado radial"
 
