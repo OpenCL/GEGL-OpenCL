@@ -18,6 +18,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n-lib.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -41,7 +42,7 @@ static G_GNUC_NORETURN void
 usage (char *application_name)
 {
     fprintf (stderr,
-"usage: %s [options] <file | -- [op [op] ..]>\n"
+_("usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "  Options:\n"
 "     -h, --help      this help information\n"
@@ -65,7 +66,7 @@ usage (char *application_name)
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
 "easy testing of filters. Be aware that the default value will be used\n"
-"for all properties.\n"
+"for all properties.\n")
 , application_name);
     exit (0);
 }
@@ -73,7 +74,7 @@ usage (char *application_name)
 #define match(string) (!strcmp (*curr, (string)))
 #define assert_argument() do {\
     if (!curr[1] || curr[1][0]=='-') {\
-        fprintf (stderr, "ERROR: '%s' option expected argument\n", *curr);\
+        fprintf (stderr, _("ERROR: '%s' option expected argument\n"), *curr);\
         exit(-1);\
     }\
 }while(0)
@@ -112,27 +113,27 @@ print_opts (GeglOptions *o)
   switch (o->mode)
     {
       case GEGL_RUN_MODE_DISPLAY:
-        mode_str = "Display on screen"; break;
+        mode_str = _("Display on screen"); break;
       case GEGL_RUN_MODE_XML:
-        mode_str = "Print XML"; break;
+        mode_str = _("Print XML"); break;
       case GEGL_RUN_MODE_OUTPUT:
-        mode_str = "Output in a file"; break;
+        mode_str = _("Output in a file"); break;
       case GEGL_RUN_MODE_HELP:
-        mode_str = "Display help information"; break;
+        mode_str = _("Display help information"); break;
       default:
-        g_warning ("Unknown GeglOption mode: %d", o->mode);
-        mode_str = "unknown mode";
+        g_warning (_("Unknown GeglOption mode: %d"), o->mode);
+        mode_str = _("unknown mode");
         break;
     }
 
     fprintf (stderr,
-"Parsed commandline:\n"
+_("Parsed commandline:\n"
 "\tmode:   %s\n"
 "\tfile:   %s\n"
 "\txml:    %s\n"
 "\toutput: %s\n"
 "\trest:   %s\n"
-"\t\n",
+"\t\n"),
     mode_str,
     o->file==NULL?"(null)":o->file,
     o->xml==NULL?"(null)":o->xml,
@@ -253,7 +254,7 @@ parse_args (int    argc,
         }
 
         else if (*curr[0]=='-') {
-            fprintf (stderr, "\n\nunknown parameter '%s' giving you help instead\n\n\n", *curr);
+            fprintf (stderr, _("\n\nunknown parameter '%s' giving you help instead\n\n\n"), *curr);
             usage (argv[0]);
         }
 

@@ -20,6 +20,7 @@
 
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <glib/gi18n-lib.h>
 #include <gegl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -143,7 +144,7 @@ main (gint    argc,
           g_file_get_contents (o->file, &script, NULL, &err);
           if (err != NULL)
             {
-              g_warning ("Unable to read file: %s", err->message);
+              g_warning (_("Unable to read file: %s"), err->message);
             }
         }
       else
@@ -187,7 +188,7 @@ main (gint    argc,
 
   if (!gegl)
     {
-      g_print ("Invalid graph, abort.\n");
+      g_print (_("Invalid graph, abort.\n"));
       return 1;
     }
 
@@ -247,13 +248,13 @@ main (gint    argc,
           gegl_node_process (output);
           g_object_unref (output);
         }
-        break;  
+        break;
 
       case GEGL_RUN_MODE_HELP:
         break;
 
       default:
-        g_warning ("Unknown GeglOption mode: %d", o->mode);
+        g_warning (_("Unknown GeglOption mode: %d"), o->mode);
         break;
     }
 
