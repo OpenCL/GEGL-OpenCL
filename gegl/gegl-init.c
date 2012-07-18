@@ -154,6 +154,14 @@ static glong         global_time = 0;
 
 static const gchar *makefile (void);
 
+static void
+gegl_init_i18n (void)
+{
+  setlocale (LC_ALL, "");
+  bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+}
+
 void
 gegl_init (gint    *argc,
            gchar ***argv)
@@ -162,6 +170,8 @@ gegl_init (gint    *argc,
   GError         *error = NULL;
   if (config)
     return;
+
+  gegl_init_i18n ();
 
   /*  If any command-line actions are ever added to GEGL, then the commented
    *  out code below should be used.  Until then, we simply call the parse hook
@@ -412,14 +422,6 @@ gegl_exit (void)
 
 static void swap_clean (void);
 
-static void
-gegl_init_i18n (void)
-{
-  setlocale (LC_ALL, "");
-  bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
-  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-}
-
 void
 gegl_get_version (int *major,
                   int *minor,
@@ -495,8 +497,6 @@ gegl_post_parse_hook (GOptionContext *context,
   time = gegl_ticks ();
 
   gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
-
-  gegl_init_i18n ();
 
   time = gegl_ticks ();
   if (!module_db)
