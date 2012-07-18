@@ -1,0 +1,167 @@
+/* This file is an image processing operation for GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 1995 Spencer Kimball and Peter Mattis
+ * Copyright 1996 Torsten Martinsen
+ * Copyright 2000 Tim Copperfield <timecop@japan.co.jp>
+ * Copyright 2012 Maxime Nicco <maxime.nicco@gmail.com>
+ */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+#ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_boolean (correlated, _("Correlated noise"), FALSE, _("Correlated noise"))
+
+gegl_chant_boolean (independent, _("Independent RGB"), TRUE, _("Independent RGB"))
+
+gegl_chant_double (red, _("Red"),   0.0, 1.0, 0.20, _("Red"))
+
+gegl_chant_double (green, _("Green"),   0.0, 1.0, 0.20, _("Green"))
+
+gegl_chant_double (blue, _("Blue"),   0.0, 1.0, 0.20, _("Blue"))
+
+gegl_chant_double (alpha, _("Alpha"),   0.0, 1.0, 0.00, _("Alpha"))
+
+#else
+
+#define GEGL_CHANT_TYPE_POINT_FILTER
+#define GEGL_CHANT_C_FILE       "noise-rgb.c"
+
+#include "gegl-chant.h"
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+/*
+ * Return a Gaussian (aka normal) distributed random variable.
+ *
+ * Adapted from gauss.c included in GNU scientific library.
+ *
+ * Ratio method (Kinderman-Monahan); see Knuth v2, 3rd ed, p130
+ * K+M, ACM Trans Math Software 3 (1977) 257-260.
+*/
+static gdouble
+gauss (GRand *gr)
+{
+  gdouble u, v, x;
+
+  do
+  {
+    v = g_rand_double (gr);
+
+    do
+      u = g_rand_double (gr);
+    while (u == 0);
+
+    /* Const 1.715... = sqrt(8/e) */
+    x = 1.71552776992141359295 * (v - 0.5) / u;
+  }
+  while (x * x > -4.0 * log (u));
+
+  return x;
+}
+
+static void prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static gboolean
+process (GeglOperation       *operation,
+         void                *in_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
+         gint                 level)
+{
+  GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
+
+  GRand    *noise_gr;
+  gdouble  noise_coeff = 0.0;
+  gint     b, i;
+  gdouble  noise[4];
+  gfloat   tmp;
+  gfloat   * GEGL_ALIGNED in_pixel;
+  gfloat   * GEGL_ALIGNED out_pixel;
+
+  noise_gr = g_rand_new ();
+
+  in_pixel   = in_buf;
+  out_pixel  = out_buf;
+
+  noise[0] = o->red;
+  noise[1] = o->green;
+  noise[2] = o->blue;
+  noise[3] = o->alpha;
+
+  for (i=0; i<n_pixels; i++)
+      {
+    for (b = 0; b < 4; b++)
+    {
+      if (b == 0 || o->independent || b == 3 )
+         noise_coeff = noise[b] * gauss (noise_gr) * 0.5;
+
+      if (noise[b] > 0.0)
+      {
+        if (o->correlated)
+        {
+          tmp = (in_pixel[b] + (in_pixel[b] * (noise_coeff / 0.5)) );
+        }
+        else
+        {
+          tmp = (in_pixel[b] + noise_coeff );
+        }
+
+        out_pixel[b] = CLAMP(tmp, 0.0, 1.0);
+      }
+      else
+      {
+        out_pixel[b] = in_pixel[b];
+      }
+    }
+
+    in_pixel  += 4;
+    out_pixel += 4;
+
+  }
+
+  g_rand_free (noise_gr);
+
+  return TRUE;
+}
+
+static void
+gegl_chant_class_init (GeglChantClass *klass)
+{
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
+
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+
+  operation_class->prepare = prepare;
+  point_filter_class->process = process;
+
+  gegl_operation_class_set_keys (operation_class,
+      "name",       "gegl:noise-rgb",
+      "categories", "noise", 
+      "description", _("Distort colors by random amounts."),
+      NULL);
+}
+
+#endif
