@@ -46,11 +46,11 @@ gegl_chant_boolean (use_inten, _("Intensity Mode"), TRUE,
 
 /* Get the pixel from x, y offset from the center pixel src_pix */
 static void
-get_pixel(gint x,
-          gint y,
-          gint buf_width,
-          gfloat* src_begin,
-          gfloat* dst)
+get_pixel (gint x,
+           gint y,
+           gint buf_width,
+           gfloat* src_begin,
+           gfloat* dst)
 {
   gint b;
   gfloat* src = src_begin + 4*(x + buf_width*y);
@@ -61,11 +61,11 @@ get_pixel(gint x,
 }
 
 static void
-get_pixel_inten(gint x,
-                gint y,
-                gint buf_width,
-                gfloat* inten_begin,
-                gfloat* dst)
+get_pixel_inten (gint x,
+                 gint y,
+                 gint buf_width,
+                 gfloat* inten_begin,
+                 gfloat* dst)
 {
   *dst = *(inten_begin + (x + buf_width*y));
 }
@@ -88,7 +88,7 @@ oilify_pixel (gint x,
   gfloat mult_inten[NUM_INTENSITIES];
   gfloat temp_pixel[4];
   gfloat temp_inten_pixel;
-  gint ceil_radius = ceil(radius);
+  gint ceil_radius = ceil (radius);
   gdouble radius_sq = radius*radius;
   gint i, j, b;
   gint hist_max[4];
@@ -117,7 +117,7 @@ oilify_pixel (gint x,
         {
           if (i*i + j*j <= radius_sq)
             {
-	      get_pixel (x + i,
+              get_pixel (x + i,
                          y + j,
                          buf_width,
                          src_buf,
@@ -254,9 +254,9 @@ process (GeglOperation       *operation,
 
   total_pixels = src_rect.width * src_rect.height;
 
-  src_buf = g_slice_alloc (4 * total_pixels * sizeof(gfloat));
-  dst_buf = g_slice_alloc (4 * total_pixels * sizeof(gfloat));
-  inten_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
+  src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
+  dst_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
+  inten_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
@@ -267,7 +267,7 @@ process (GeglOperation       *operation,
   out_pixel = dst_buf;
   while (n_pixels--)
     {
-      oilify_pixel(x, y, whole_rect, o->use_inten, o->mask_radius, o->exponent,
+      oilify_pixel (x, y, whole_rect, o->use_inten, o->mask_radius, o->exponent,
                    src_rect.width, src_buf, inten_buf, out_pixel);
 
       out_pixel += 4;
@@ -284,9 +284,9 @@ process (GeglOperation       *operation,
   gegl_buffer_set (output, result, 0,
                    babl_format ("RGBA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_slice_free1 (4 * total_pixels * sizeof(gfloat), src_buf);
-  g_slice_free1 (4 * total_pixels * sizeof(gfloat), dst_buf);
-  g_slice_free1 (total_pixels * sizeof(gfloat), inten_buf);
+  g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
+  g_slice_free1 (4 * total_pixels * sizeof (gfloat), dst_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), inten_buf);
 
   return  TRUE;
 }
