@@ -114,9 +114,8 @@ process_operations (GType type)
       if (output_all && matches)
         g_printf ("%s\n", name);
 
-      if (image && xml && matches)
+      if (xml && matches)
         {
-          gchar    *image_path  = g_build_path (G_DIR_SEPARATOR_S, reference_dir, image, NULL);
           gchar    *output_path = operation_to_path (name, FALSE);
           GeglNode *composition;
 
@@ -144,8 +143,10 @@ process_operations (GType type)
               gegl_node_process (output);
 
               /* don't test if run with --all */
-              if (!output_all)
+              if (!output_all && image)
                 {
+                  gchar *image_path = g_build_path (G_DIR_SEPARATOR_S, reference_dir, image, NULL);
+
                   ref_img = gegl_node_new_child (composition,
                                                  "operation", "gegl:load",
                                                  "path", image_path,
@@ -205,11 +206,12 @@ process_operations (GType type)
                           result = FALSE;
                         }
                     }
+
+                  g_free (image_path);
                 }
             }
 
           g_object_unref (composition);
-          g_free (image_path);
           g_free (output_path);
         }
       /* if we are running with --all and the operation doesn't have a

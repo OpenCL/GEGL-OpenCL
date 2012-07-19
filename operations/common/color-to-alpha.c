@@ -161,8 +161,29 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
+  GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *filter_class;
+  gchar                         *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='svg:dst-over'>"
+    "  <node operation='gegl:crop'>"
+    "    <params>"
+    "      <param name='width'>200.0</param>"
+    "      <param name='height'>200.0</param>"
+    "    </params>"
+    "  </node>"
+    "  <node operation='gegl:checkerboard'>"
+    "    <params><param name='color1'>rgb(0.5, 0.5, 0.5)</param></params>"
+    "  </node>"
+    "</node>"
+    "<node operation='gegl:color-to-alpha'>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
@@ -174,6 +195,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:color-to-alpha",
     "categories" , "color",
     "description", _("Performs color-to-alpha on the image."),
+    "reference-composition", composition,
     NULL);
 }
 

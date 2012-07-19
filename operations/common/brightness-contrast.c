@@ -128,6 +128,20 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
+  gchar                         *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:brightness-contrast'>"
+    "  <params>"
+    "    <param name='contrast'>1.8</param>"
+    "    <param name='brightness'>0.25</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
@@ -141,9 +155,10 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:brightness-contrast",
-      "categories", "color", 
+      "categories", "color",
       "description", _("Changes the light level and contrast."),
       "cl-source"  , kernel_source,
+      "reference-composition", composition,
       NULL);
 }
 

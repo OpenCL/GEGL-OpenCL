@@ -440,7 +440,7 @@ process (GeglOperation       *operation,
         process_random (input, output, result, channel_bits);
         break;
       case GEGL_DITHER_RANDOM_COVARIANT:
-        process_random_covariant (input, output, result, 
+        process_random_covariant (input, output, result,
                                   channel_bits);
         break;
       case GEGL_DITHER_FLOYD_STEINBERG:
@@ -462,6 +462,23 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
+  gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:color-reduction'>"
+    "  <params>"
+    "    <param name='red-bits'>2</param>"
+    "    <param name='green-bits'>2</param>"
+    "    <param name='blue-bits'>2</param>"
+    "    <param name='alpha-bits'>2</param>"
+    "    <param name='dither-strategy'>Floyd-Steinberg</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
@@ -476,6 +493,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories"  , "misc",
     "description" ,
             _("Reduces the number of bits per channel (colors and alpha), with optional dithering"),
+    "reference-composition", composition,
             NULL);
 }
 

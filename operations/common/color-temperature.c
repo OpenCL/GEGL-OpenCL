@@ -245,6 +245,19 @@ gegl_chant_class_init (GeglChantClass *klass)
   GObjectClass                  *object_class;
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
+  gchar                         *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:color-temperature'>"
+    "  <params>"
+    "    <param name='intended-temperature'>12000</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   object_class       = G_OBJECT_CLASS (klass);
   operation_class    = GEGL_OPERATION_CLASS (klass);
@@ -265,6 +278,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories" , "color",
     "description",
           _("Allows changing the color temperature of an image."),
+    "reference-composition", composition,
     NULL);
 }
 
