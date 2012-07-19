@@ -9,10 +9,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-06-12 19:50+0000\n"
-"PO-Revision-Date: 2012-06-16 16:47+0100\n"
+"POT-Creation-Date: 2012-07-18 05:56+0000\n"
+"PO-Revision-Date: 2012-07-18 22:19+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,31 +22,162 @@ msgstr ""
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../gegl/gegl-init.c:216
+#: ../bin/gegl.c:147
+#, c-format
+#| msgid "Unable to create output color profile for '%s'"
+msgid "Unable to read file: %s"
+msgstr "Datoteke ni mogoče prebrati: %s"
+
+#: ../bin/gegl.c:191
+#, c-format
+msgid "Invalid graph, abort.\n"
+msgstr "Neveljaven graf, sledi prekinitev.\n"
+
+#: ../bin/gegl.c:257
+#: ../bin/gegl-options.c:124
+#, c-format
+msgid "Unknown GeglOption mode: %d"
+msgstr "Neznan način GeglOption: %d"
+
+#: ../bin/gegl-options.c:45
+#, c-format
+msgid ""
+"usage: %s [options] <file | -- [op [op] ..]>\n"
+"\n"
+"  Options:\n"
+"     -h, --help      this help information\n"
+"\n"
+"     -i, --file      read xml from named file\n"
+"\n"
+"     -x, --xml       use xml provided in next argument\n"
+"\n"
+"     --dot           output a graphviz graph description\n"
+"\n"
+"     -o, --output    output generated image to named file, type based\n"
+"                     on extension.\n"
+"\n"
+"     -p              increment frame counters of various elements when\n"
+"                     processing is done.\n"
+"\n"
+"     -X              output the XML that was read in\n"
+"\n"
+"     -v, --verbose   print diagnostics while running\n"
+"\n"
+"All parameters following -- are considered ops to be chained together\n"
+"into a small composition instead of using an xml file, this allows for\n"
+"easy testing of filters. Be aware that the default value will be used\n"
+"for all properties.\n"
+msgstr ""
+"raba: %s [možnosti] <datoteka | -- [op [op] ..]>\n"
+"\n"
+"  Možnosti:\n"
+"     -h, --help      to besedilo pomoči\n"
+"\n"
+"     -i, --file      preberi xml iz navedene datoteke\n"
+"\n"
+"     -x, --xml       uporabi xml iz sledečega parametra\n"
+"\n"
+"     --dot           izpiši opis grafaa graphviz\n"
+"\n"
+"     -o, --output    izpiši tvorjeno sliko v imenovano datoteko, vrsta\n"
+"                     je odvisna od končnice datoteke.\n"
+"\n"
+"     -p              povečaj števce sličic raznih elementov, ko je\n"
+"                     obdelava zaključena.\n"
+"\n"
+"     -X              izpiše XML, ki je bil prebran\n"
+"\n"
+"     -v, --verbose   natisni diagnostiko med delovanjem\n"
+"\n"
+"Vsi argumenti, ki sledijo --, are considered ops, ki se verižijo\n"
+"v manjši sestav namesto uporabe datoteke xml, kar omogoča\n"
+"enostavno preizkušanje filtrov. Upoštevajte, da bo za vse lastnosti\n"
+"uporabljena privzeta vrednost.\n"
+
+#: ../bin/gegl-options.c:77
+#, c-format
+msgid "ERROR: '%s' option expected argument\n"
+msgstr "NAPAKA: možnost '%s' pričakuje argument\n"
+
+#: ../bin/gegl-options.c:116
+msgid "Display on screen"
+msgstr "Prikaži na zaslonu"
+
+#: ../bin/gegl-options.c:118
+msgid "Print XML"
+msgstr "Natisni XML"
+
+#: ../bin/gegl-options.c:120
+msgid "Output in a file"
+msgstr "Izhod v datoteko"
+
+#: ../bin/gegl-options.c:122
+msgid "Display help information"
+msgstr "Prikaži vsebino pomoči"
+
+#: ../bin/gegl-options.c:125
+msgid "unknown mode"
+msgstr "neznan način"
+
+#: ../bin/gegl-options.c:130
+#, c-format
+msgid ""
+"Parsed commandline:\n"
+"\tmode:   %s\n"
+"\tfile:   %s\n"
+"\txml:    %s\n"
+"\toutput: %s\n"
+"\trest:   %s\n"
+"\t\n"
+msgstr ""
+"Razčlenjena ukazna vrstica:\n"
+"\tnačin:   %s\n"
+"\tdatoteka:   %s\n"
+"\txml:    %s\n"
+"\tizhod: %s\n"
+"\tostanek:   %s\n"
+"\t\n"
+
+#: ../bin/gegl-options.c:257
+#, c-format
+msgid ""
+"\n"
+"\n"
+"unknown parameter '%s' giving you help instead\n"
+"\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"neznan parameter '%s', namesto tega bo izpisana pomoč\n"
+"\n"
+"\n"
+
+#: ../gegl/gegl-init.c:212
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:221
+#: ../gegl/gegl-init.c:217
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:226
+#: ../gegl/gegl-init.c:222
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za medpomnenje podob"
 
-#: ../gegl/gegl-init.c:231
+#: ../gegl/gegl-init.c:227
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:236
+#: ../gegl/gegl-init.c:232
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:241
+#: ../gegl/gegl-init.c:237
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "Kakovost upodabljanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:246
+#: ../gegl/gegl-init.c:242
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
@@ -431,12 +563,10 @@ msgid "Block Width"
 msgstr "Širina bloka"
 
 #: ../operations/common/dot.c:27
-#| msgid "Width of blocks in pixels"
 msgid "Size of each block in pixels"
 msgstr "Širina bloka v slikovnih točkah"
 
 #: ../operations/common/dot.c:28
-#| msgid "Iteration"
 msgid "Dot size ratio"
 msgstr "Razmerje stranic pike"
 
@@ -445,7 +575,6 @@ msgid "Size ratio of a dot inside each block"
 msgstr "Razmerje stranic pike oz. točke v vsakem bloku"
 
 #: ../operations/common/dot.c:191
-#| msgid "Simplify image into an array of solid-colored squares"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 
@@ -2391,7 +2520,7 @@ msgstr "Medpomnilniški izravnalnik"
 msgid "The GeglBuffer where the caching is done"
 msgstr "GeglBuffer, v katerem se izvaja medpomnjenje"
 
-#: ../operations/workshop/buffer-cache.c:103
+#: ../operations/workshop/buffer-cache.c:96
 msgid "Cache the input buffer internally, further process take this buffer as input."
 msgstr "Notranje medpomni vhodni izravnalnik, nadaljnji postopki vzamejo ta izravnalnik za vhod."
 
@@ -3193,7 +3322,7 @@ msgstr "Prvi konec preliva"
 msgid "The other end of a gradient"
 msgstr "Drugi konec preliva"
 
-#: ../operations/workshop/linear-gradient.c:137
+#: ../operations/workshop/linear-gradient.c:136
 msgid "Linear gradient renderer"
 msgstr "Upodobljevalnik linearnih prelivov"
 
@@ -3278,7 +3407,7 @@ msgstr "y2"
 msgid "One end of gradient"
 msgstr "Prvi konec preliva"
 
-#: ../operations/workshop/radial-gradient.c:129
+#: ../operations/workshop/radial-gradient.c:128
 msgid "Radial gradient renderer"
 msgstr "Upodobljevalnik krožnega preliva"
 
