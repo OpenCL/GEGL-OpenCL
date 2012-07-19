@@ -56,20 +56,20 @@ typedef struct {
 } Ramps;
 
 static void
-grey_blur_buffer(GeglBuffer *input,
-                 gdouble sharpness,
-                 gdouble mask_radius,
-                 GeglBuffer **dest1,
-                 GeglBuffer **dest2)
+grey_blur_buffer (GeglBuffer *input,
+                  gdouble sharpness,
+                  gdouble mask_radius,
+                  GeglBuffer **dest1,
+                  GeglBuffer **dest2)
 {
   GeglNode *gegl, *image, *write1, *write2, *blur1, *blur2;
   gdouble radius, std_dev1, std_dev2;
 
-  gegl = gegl_node_new();
-  image = gegl_node_new_child(gegl,
-                              "operation", "gegl:buffer-source",
-                              "buffer", input,
-                              NULL);
+  gegl = gegl_node_new ();
+  image = gegl_node_new_child (gegl,
+                               "operation", "gegl:buffer-source",
+                               "buffer", input,
+                               NULL);
 
   radius   = MAX (1.0, 10 * (1.0 - sharpness));
   radius   = fabs (radius) + 1.0;
@@ -78,24 +78,24 @@ grey_blur_buffer(GeglBuffer *input,
   radius   = fabs (mask_radius) + 1.0;
   std_dev2 = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
 
-  blur1 =  gegl_node_new_child(gegl,
-                               "operation", "gegl:gaussian-blur",
-                               "std_dev_x", std_dev1,
-                               "std_dev_y", std_dev1,
-                               NULL);
-  blur2 =  gegl_node_new_child(gegl,
-                               "operation", "gegl:gaussian-blur",
-                               "std_dev_x", std_dev2,
-                               "std_dev_y", std_dev2,
-                               NULL);
+  blur1 =  gegl_node_new_child (gegl,
+                                "operation", "gegl:gaussian-blur",
+                                "std_dev_x", std_dev1,
+                                "std_dev_y", std_dev1,
+                                NULL);
+  blur2 =  gegl_node_new_child (gegl,
+                                "operation", "gegl:gaussian-blur",
+                                "std_dev_x", std_dev2,
+                                "std_dev_y", std_dev2,
+                                NULL);
 
-  write1 = gegl_node_new_child(gegl,
-                               "operation", "gegl:buffer-sink",
-                               "buffer", dest1, NULL);
+  write1 = gegl_node_new_child (gegl,
+                                "operation", "gegl:buffer-sink",
+                                "buffer", dest1, NULL);
 
-  write2 = gegl_node_new_child(gegl,
-                               "operation", "gegl:buffer-sink",
-                               "buffer", dest2, NULL);
+  write2 = gegl_node_new_child (gegl,
+                                "operation", "gegl:buffer-sink",
+                                "buffer", dest2, NULL);
 
   gegl_node_link_many (image, blur1, write1, NULL);
   gegl_node_process (write1);
@@ -163,12 +163,12 @@ compute_ramp (GeglBuffer *input,
   gfloat* ptr2;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
+  grey_blur_buffer (input, o->sharpness, o->mask_radius, &dest1, &dest2);
 
   total_pixels = whole_region->width * whole_region->height;
-  src1_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
-  src2_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
-  dst_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
+  src1_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+  src2_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+  dst_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
   gegl_buffer_get (dest1, whole_region, 1.0, babl_format ("Y float"),
                    src1_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
@@ -209,12 +209,12 @@ compute_ramp (GeglBuffer *input,
   g_object_unref (dest1);
   g_object_unref (dest2);
 
-  g_slice_free1 (total_pixels * sizeof(gfloat), src1_buf);
-  g_slice_free1 (total_pixels * sizeof(gfloat), src2_buf);
-  g_slice_free1 (total_pixels * sizeof(gfloat), dst_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), src1_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), src2_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), dst_buf);
 
-  *threshold_black = calculate_threshold(hist1, pct_black, count, 0);
-  *threshold_white = calculate_threshold(hist2, pct_white, count, 1);
+  *threshold_black = calculate_threshold (hist1, pct_black, count, 0);
+  *threshold_white = calculate_threshold (hist2, pct_white, count, 1);
 }
 
 static void prepare (GeglOperation *operation)
@@ -227,15 +227,15 @@ static void prepare (GeglOperation *operation)
                              babl_format ("Y float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("Y float"));
-  if(o->chant_data)
+  if (o->chant_data)
     {
       Ramps* ramps = (Ramps*) o->chant_data;
 
       /* hack so that thresholds are only calculated once */
-      if(ramps->prev_mask_radius != o->mask_radius ||
-         ramps->prev_sharpness   != o->sharpness   ||
-         ramps->prev_black       != o->black       ||
-         ramps->prev_white       != o->white)
+      if (ramps->prev_mask_radius != o->mask_radius ||
+          ramps->prev_sharpness   != o->sharpness   ||
+          ramps->prev_black       != o->black       ||
+          ramps->prev_white       != o->white)
         {
           g_slice_free (Ramps, o->chant_data);
           o->chant_data = NULL;
@@ -277,19 +277,19 @@ process (GeglOperation       *operation,
   static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 
   total_pixels = result->width * result->height;
-  dst_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
+  dst_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
   g_static_mutex_lock (&mutex);
-  if(o->chant_data == NULL)
+  if (o->chant_data == NULL)
     {
       o->chant_data = g_slice_new (Ramps);
       ramps = (Ramps*) o->chant_data;
-      compute_ramp(input,
-                   operation,
-                   o->black,
-                   o->white,1,
-                   &ramps->black,
-                   &ramps->white);
+      compute_ramp (input,
+                    operation,
+                    o->black,
+                    o->white,1,
+                    &ramps->black,
+                    &ramps->white);
       ramps->prev_mask_radius = o->mask_radius;
       ramps->prev_sharpness   = o->sharpness;
       ramps->prev_black       = o->black;
@@ -297,12 +297,12 @@ process (GeglOperation       *operation,
     }
   g_static_mutex_unlock (&mutex);
 
-  grey_blur_buffer(input, o->sharpness, o->mask_radius, &dest1, &dest2);
+  grey_blur_buffer (input, o->sharpness, o->mask_radius, &dest1, &dest2);
 
   total_pixels = result->width * result->height;
-  src1_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
-  src2_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
-  dst_buf = g_slice_alloc (total_pixels * sizeof(gfloat));
+  src1_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+  src2_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+  dst_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
   gegl_buffer_get (dest1, result, 1.0, babl_format ("Y float"),
                    src1_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
@@ -356,9 +356,9 @@ process (GeglOperation       *operation,
                    babl_format ("Y float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
 
-  g_slice_free1 (total_pixels * sizeof(gfloat), src1_buf);
-  g_slice_free1 (total_pixels * sizeof(gfloat), src2_buf);
-  g_slice_free1 (total_pixels * sizeof(gfloat), dst_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), src1_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), src2_buf);
+  g_slice_free1 (total_pixels * sizeof (gfloat), dst_buf);
 
   return  TRUE;
 }
