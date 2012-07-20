@@ -26,26 +26,6 @@
 #include "find-outline.h"
 #include "make-mesh.h"
 
-typedef struct {
-  ScOutline         *outline;
-  P2trMesh          *mesh;
-  GeglRectangle      mesh_bounds;
-  ScMeshSampling    *sampling;
-  GeglBuffer        *uvt;
-} ScPreprocessResult;
-
-#define sc_preprocess_new() (g_new0 (ScPreprocessResult, 1))
-
-//inline void
-//sc_preprocess_result_free (ScPreprocessResult *self)
-//{
-//  sc_mesh_sampling_free (self->sampling);
-//  p2tr_triangulation_free (self->mesh);
-//  sc_outline_free (self->outline);
-//
-//  g_free (self);
-//}
-
 #define SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2tRuvt) * 8, NULL))
 #define SC_BABL_UVT_FORMAT (babl_format_n (SC_BABL_UVT_TYPE, 3))
 
