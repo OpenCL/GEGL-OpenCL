@@ -26,6 +26,8 @@ gegl_chant_int (xoff, _("X offset"), -100000, +100000, 0,
 
 gegl_chant_int (yoff, _("Y offset"), -100000, +100000, 0,
                 _("How much vertical offset should applied to the paste"))
+
+gegl_chant_string (error_msg, _("Error message"), NULL, _("An error message in case of a failure"))
 #else
 
 #define GEGL_CHANT_TYPE_COMPOSER
@@ -130,6 +132,24 @@ process (GeglOperation       *operation,
 
       props->aux = aux;
       props->preprocess = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), o -> max_refine_steps);
+      switch (props->preprocess->error)
+        {
+          case SC_ERROR_NONE:
+            o->error_msg = NULL;
+            break;
+          case SC_ERROR_NO_PASTE:
+            o->error_msg = _("The paste does not contain opaque parts");
+            break;
+          case SC_ERROR_SMALL_PASTE:
+            o->error_msg = _("The paste is too small to use");
+            break;
+          case SC_ERROR_HOLED_OR_SPLIT_PASTE:
+            o->error_msg = _("The paste contains holes and/or several unconnected parts");
+            break;
+          default:
+            g_warning ("Unknown preprocessing status %d", props->preprocess->error);
+            break;
+        }
     }
   g_mutex_unlock (props->mutex);
 
