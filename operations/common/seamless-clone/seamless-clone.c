@@ -133,8 +133,10 @@ process (GeglOperation       *operation,
     }
   g_mutex_unlock (props->mutex);
 
-  return_val = sc_render_seamless (input, aux, o->xoff, o->yoff, output, result, props->preprocess);
-  
+  if (props->preprocess->error == SC_ERROR_NONE)
+    return sc_render_seamless (input, aux, o->xoff, o->yoff, output, result, props->preprocess);
+  else
+    return FALSE;
   return  return_val;
 }
 

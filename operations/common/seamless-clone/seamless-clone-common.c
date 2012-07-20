@@ -146,6 +146,11 @@ sc_render_seamless (GeglBuffer          *bg,
       g_warning ("No preprocessing result given. Stop.");
       return FALSE;
     }
+  if (cache->error != SC_ERROR_NONE)
+    {
+      g_warning ("The preprocessing result contains an error. Stop.");
+      return FALSE;
+    }
   if (gegl_rectangle_is_empty (&cache->mesh_bounds))
     {
       return TRUE;
@@ -248,26 +253,42 @@ sc_render_seamless (GeglBuffer          *bg,
 }
 
 ScCache*
-sc_generate_cache (GeglBuffer          *fg,
-                   const GeglRectangle *extents,
-                   int                  max_refine_steps)
+sc_generate_cache (GeglBuffer           *fg,
+                   const GeglRectangle  *extents,
+                   int                   max_refine_steps)
 {
-  ScOutline *outline;
   ScCache *result = g_new0 (ScCache, 1);
+  gint outline_length = 0;
+  gboolean ignored_islands;
 
-  /* Find an outline around the area of the paste */
-  outline = sc_outline_find (extents, fg);
+  result->error = SC_ERROR_NONE;
+  result->mesh = NULL;
+  result->sampling = NULL;
+  result->uvt = NULL;
+
+  /* Find an outline around the area of the paste. We will also
+   * need it later to compute the sampling list for each point
+   */
+  result->outline = sc_outline_find (extents, fg, &ignored_islands);
+  outline_length = sc_outline_length (result->outline);
+
+  if (outline_length == 0)
+    result->error = ignored_islands ? SC_ERROR_SMALL_PASTE : SC_ERROR_NO_PASTE;
+  else if (outline_length < 3)
+    result->error = SC_ERROR_SMALL_PASTE;
+  else if (! sc_outline_check_if_single (extents, fg, result->outline))
+    result->error = SC_ERROR_HOLED_OR_SPLIT_PASTE;
+
+  if (result->error != SC_ERROR_NONE)
+    return result;
 
   /* Create a fine mesh from the polygon defined by that outline */
-  result->mesh = sc_make_fine_mesh (outline, &result->mesh_bounds,
+  result->mesh = sc_make_fine_mesh (result->outline, &result->mesh_bounds,
                                     max_refine_steps);
 
   /* Now compute the list of points to sample in order to define the
    * color of each triangulation vertex */
-  result->sampling = sc_mesh_sampling_compute (outline, result->mesh);
-
-  /* We need the outline since the sampling relies on it's points */
-  result->outline = outline;
+  result->sampling = sc_mesh_sampling_compute (result->outline, result->mesh);
 
   /* For each pixel inside the paste area, cache which triangle contains
    * it, and the triangle interpolation parameters for that point */

@@ -27,6 +27,13 @@
 #include "find-outline.h"
 #include "make-mesh.h"
 
+typedef enum {
+  SC_ERROR_NONE = 0,
+  SC_ERROR_NO_PASTE,
+  SC_ERROR_SMALL_PASTE,
+  SC_ERROR_HOLED_OR_SPLIT_PASTE,
+} ScError;
+
 typedef struct {
   GeglRectangle   bg_rect;
   GeglBuffer     *fg_buf;
@@ -38,6 +45,7 @@ typedef struct {
 } ScColorComputeInfo;
 
 typedef struct {
+  ScError            error;
   GeglRectangle      mesh_bounds;
   P2trMesh          *mesh;
   ScMeshSampling    *sampling;

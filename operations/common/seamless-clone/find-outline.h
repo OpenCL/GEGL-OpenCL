@@ -106,8 +106,16 @@ typedef struct  {
  */
 typedef GPtrArray ScOutline;
 
-ScOutline* sc_outline_find (const GeglRectangle *rect, GeglBuffer *pixels);
+ScOutline* sc_outline_find            (const GeglRectangle *rect,
+                                       GeglBuffer          *pixels,
+                                       gboolean            *ignored_islands);
 
-void       sc_outline_free  (ScOutline *self);
+gboolean   sc_outline_check_if_single (const GeglRectangle *search_area,
+                                       GeglBuffer          *buffer,
+                                       ScOutline           *existing);
+
+guint      sc_outline_length          (ScOutline *self);
+
+void       sc_outline_free            (ScOutline *self);
 
 #endif
