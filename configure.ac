@@ -460,14 +460,6 @@ PKG_CHECK_MODULES(DEP,
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
 
-
-PKG_CHECK_MODULES(P2TC,
-                  poly2tri-c >= poly2tri-c_required_version, ,
-                  AC_MSG_ERROR([
-        *** Poly2tri-C not found. You can find it on http://code.google.com/p/poly2tri-c/
-        *** Errors follow:
-            $P2TC_PKG_ERRORS]))
-
 ######################
 # gettext i18n support
 ######################
@@ -1023,6 +1015,24 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
+######################
+# Check for poly2tri-c
+######################
+
+AC_ARG_WITH(p2tc, AS_HELP_STRING([--without-p2tc], [build without poly2tri-c support]))
+
+have_p2tc="no"
+if test "x$with_p2tc" != "xno"; then
+  PKG_CHECK_MODULES(P2TC, poly2tri-c >= poly2tri-c_required_version,
+    have_p2tc="yes",
+    have_p2tc="no  (poly2tri-c not found)")
+fi
+
+AM_CONDITIONAL(HAVE_P2TC, test "$have_p2tc" = "yes")
+
+AC_SUBST(P2TC_CFLAGS)
+AC_SUBST(P2TC_LIBS)
+
 #######################
 # Check for other items
 #######################
@@ -1163,4 +1173,5 @@ Optional dependencies:
   spiro:           $spiro_ok
   EXIV:            $have_exiv2
   umfpack:         $have_umfpack
+  poly2tri-c:      $have_p2tc
 ]);
