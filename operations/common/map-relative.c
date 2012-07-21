@@ -143,6 +143,22 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;
+  gchar                      *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:map-relative'>"
+    "  <params>"
+    "    <param name='scaling'>100</param>"
+    "  </params>"
+    "  <node operation='gegl:load'>"
+    "    <params><param name='path'>standard-aux.png</param></params>"
+    "  </node>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
@@ -155,6 +171,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:map-relative",
     "categories" , "transform",
     "description", _("sample input with an auxiliary buffer that contain relative source coordinates"),
+    "reference-composition", composition,
     NULL);
 }
 #endif

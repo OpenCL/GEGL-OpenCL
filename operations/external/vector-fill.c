@@ -243,6 +243,16 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
+  gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:fill-path'>"
+    "  <params>"
+    "    <param name='d'>M30,4 C12,13 0,30 0,50 C0,78 23,100 50,100 C71,100 88,88 96,71"
+    "                    L56,71 C42,71 30,59 30,45 L30,4 z</param>"
+    "    <param name='color'>rgb(0.0, 0.6, 1.0)</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
@@ -256,6 +266,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:fill-path",
     "categories" , "render",
     "description", _("Renders a filled region"),
+    "reference-composition", composition,
     NULL);
 }
 

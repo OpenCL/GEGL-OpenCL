@@ -167,6 +167,22 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
+  gchar                         *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:levels'>"
+    "  <params>"
+    "    <param name='in-low'>0.54</param>"
+    "    <param name='in-high'>0.60</param>"
+    "    <param name='out-low'>0.57</param>"
+    "    <param name='out-high'>0.68</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
@@ -180,6 +196,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:levels",
     "categories" , "color",
     "description", _("Remaps the intensity range of the image"),
+    "reference-composition", composition,
     NULL);
 }
 

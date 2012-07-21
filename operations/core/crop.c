@@ -164,6 +164,22 @@ static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass *operation_class;
+  gchar              *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:crop'>"
+    "  <params>"
+    "    <param name='x'>50</param>"
+    "    <param name='y'>80</param>"
+    "    <param name='width'>70</param>"
+    "    <param name='height'>60</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
 
@@ -177,6 +193,7 @@ gegl_chant_class_init (GeglChantClass *klass)
       "name",        "gegl:crop",
       "categories",  "core",
       "description", _("Crop a buffer"),
+      "reference-composition", composition,
       NULL);
 
   operation_class->no_cache = TRUE;

@@ -306,6 +306,23 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
+  gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:lens-distortion'>"
+    "  <params>"
+    "    <param name='main'>100</param>"
+    "    <param name='zoom'>20</param>"
+    "    <param name='edge'>100</param>"
+    "    <param name='x-shift'>20</param>"
+    "    <param name='y-shift'>20</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
@@ -319,6 +336,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name"       , "gegl:lens-distortion",
     "categories" , "blur",
     "description", _("Copies image performing lens distortion correction."),
+    "reference-composition", composition,
     NULL);
 }
 
