@@ -42,8 +42,6 @@
 #include "transform-core.h"
 #include "module.h"
 
-#include "buffer/gegl-buffer-cl-cache.h"
-
 enum
 {
   PROP_ORIGIN_X = 1,
