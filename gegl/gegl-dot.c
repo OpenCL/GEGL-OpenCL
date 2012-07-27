@@ -188,7 +188,7 @@ gegl_dot_add_graph (GString     *string,
 {
   GeglNode *graph = node;
 
-  g_string_append_printf (string, "subgraph cluster_%s%p { graph [ label=\"%s %p\" fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\"]; node [ fontsize=\"10\" ];\n", label, node, label, node);
+  g_string_append_printf (string, "subgraph cluster_%p { graph [ label=\"%s %p\" fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\"]; node [ fontsize=\"10\" ];\n", node, label, node);
 
   {
     GSList *nodes = gegl_node_get_children (graph);
