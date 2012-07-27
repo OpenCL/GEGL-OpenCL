@@ -87,8 +87,8 @@ randomize_value (gfloat     now,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("HSVA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("HSVA float"));
 }
 
 static gboolean
@@ -102,34 +102,21 @@ process (GeglOperation       *operation,
   GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
 
   gint i;
-  gfloat *out_pixel_ptr;
 
   gfloat   * GEGL_ALIGNED in_pixel;
-  gfloat   * GEGL_ALIGNED in_pixel_hsv;
-  gfloat   * GEGL_ALIGNED out_pixel_hsv;
   gfloat   * GEGL_ALIGNED out_pixel;
 
   gfloat    hue, saturation, value, alpha;
 
-  const Babl *hsva = babl_format ("HSVA float");
-  const Babl *rgba = babl_format ("RGBA float");
-
   in_pixel      = in_buf;
   out_pixel     = out_buf;
-  in_pixel_hsv  = g_slice_alloc (n_pixels * 4 * sizeof(gfloat));
-  out_pixel_hsv = g_slice_alloc (n_pixels * 4 * sizeof(gfloat));
-
-
-  babl_process (babl_fish (rgba, hsva), in_pixel, in_pixel_hsv, n_pixels);
-
-  out_pixel_ptr = out_pixel_hsv;
 
   for (i = 0; i < n_pixels; i++)
   {
-    hue        = in_pixel_hsv[0];
-    saturation = in_pixel_hsv[1];
-    value      = in_pixel_hsv[2];
-    alpha      = in_pixel_hsv[3];
+    hue        = in_pixel[0];
+    saturation = in_pixel[1];
+    value      = in_pixel[2];
+    alpha      = in_pixel[3];
 
     /* there is no need for scattering hue of desaturated pixels here */
     if ((o->hue_distance > 0) && (saturation > 0))
@@ -145,17 +132,15 @@ process (GeglOperation       *operation,
     if (o->value_distance > 0)
       value = randomize_value (value, 0.0, 1.0, FALSE, o->value_distance, o->holdness);
 
-      out_pixel_ptr[0] = hue;
-      out_pixel_ptr[1] = saturation;
-      out_pixel_ptr[2] = value;
-      out_pixel_ptr[3] = alpha;
+      out_pixel[0] = hue;
+      out_pixel[1] = saturation;
+      out_pixel[2] = value;
+      out_pixel[3] = alpha;
 
-    in_pixel_hsv  += 4;
-    out_pixel_ptr += 4;
+    in_pixel  += 4;
+    out_pixel += 4;
 
   }
-
-  babl_process (babl_fish (hsva, rgba), out_pixel_hsv, out_pixel, n_pixels);
 
   return TRUE;
 }
