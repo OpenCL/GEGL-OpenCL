@@ -44,7 +44,7 @@ sc_compute_UVT_cache (P2trMesh            *mesh,
       config.x_samples = iter->roi[0].width;
       config.y_samples = iter->roi[0].height;
       p2tr_mesh_render_cache_uvt_exact (mesh,
-                                        (P2truvt*) iter->data[0],
+                                        (P2trUVT*) iter->data[0],
                                         iter->length,
                                         &config);
     }
@@ -218,7 +218,7 @@ sc_render_seamless (GeglBuffer          *bg,
     {
       P2trImageConfig  imcfg;
       float           *out_raw, *fg_raw;
-      P2truvt         *uvt_raw;
+      P2trUVT         *uvt_raw;
       int              x, y;
       
       imcfg.min_x = iter->roi[fg_index].x;
@@ -226,13 +226,14 @@ sc_render_seamless (GeglBuffer          *bg,
       imcfg.step_x = imcfg.step_y = 1;
       imcfg.x_samples = iter->roi[fg_index].width;
       imcfg.y_samples = iter->roi[fg_index].height;
-      imcfg.cpp = 4;
+      imcfg.cpp = 3;
+      imcfg.alpha_last = TRUE;
 
       out_raw = (gfloat*)iter->data[out_index];
-      uvt_raw = (P2truvt*)iter->data[uvt_index];
+      uvt_raw = (P2trUVT*)iter->data[uvt_index];
       fg_raw = (gfloat*)iter->data[fg_index];
 
-      p2tr_mesh_render_scanline2 (uvt_raw, out_raw, &imcfg, sc_point_to_color_func, &mesh_render_info);
+      p2tr_mesh_render_from_cache_f (uvt_raw, out_raw, iter->length, &imcfg, sc_point_to_color_func, &mesh_render_info);
 
       for (y = 0; y < imcfg.y_samples; y++)
         {

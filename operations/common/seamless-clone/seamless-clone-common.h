@@ -67,7 +67,7 @@ ScCache*   sc_generate_cache (GeglBuffer          *fg,
 
 void       sc_cache_free     (ScCache *cache);
 
-#define SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2truvt) * 8, NULL))
-#define SC_BABL_UVT_FORMAT (babl_format_n (SC_BABL_UVT_TYPE, 3))
+#define SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2trUVT) * 8, NULL))
+#define SC_BABL_UVT_FORMAT (babl_format_n (SC_BABL_UVT_TYPE, 1))
 
 #endif
