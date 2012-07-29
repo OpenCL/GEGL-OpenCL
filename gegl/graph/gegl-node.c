@@ -1829,10 +1829,10 @@ gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-  g_mutex_lock (self->mutex);
+  //g_mutex_lock (self->mutex);
 
   context = g_hash_table_lookup (self->priv->contexts, context_id);
-  g_mutex_unlock (self->mutex);
+  //g_mutex_unlock (self->mutex);
   return context;
 }
 
