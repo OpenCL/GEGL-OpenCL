@@ -199,6 +199,8 @@ gegl_cl_init (GError **error)
 
   if (!cl_state.is_accelerated)
     {
+        babl_init();
+
       #ifdef G_OS_WIN32
         HINSTANCE module;
         module = LoadLibrary ("OpenCL.dll");
