@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """ This file is part of GEGL
  *
  * GEGL is free software; you can redistribute it and/or
