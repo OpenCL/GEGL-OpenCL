@@ -257,7 +257,7 @@ static void start_element (GMarkupParseContext *context,
   if (!strcmp (element_name, "gegl") ||
       !strcmp (element_name, "image"))
     {
-      GeglNode *new = gegl_node_new();
+      GeglNode *new = g_object_new (GEGL_TYPE_NODE, "operation", "gegl:nop", NULL);
       if (pd->gegl == NULL)
         {
           pd->gegl = new;
@@ -265,8 +265,17 @@ static void start_element (GMarkupParseContext *context,
       else
         {
         }
+
       pd->state  = STATE_TREE_NORMAL;
       pd->parent = g_list_prepend (pd->parent, new);
+
+      if (pd->iter)
+	{
+	  gegl_node_get_output_proxy (pd->iter, "output");
+	  gegl_node_connect_from (pd->iter, "input", new, "output");
+	}
+
+      pd->iter = gegl_node_get_output_proxy (new, "output");
     }
   else if (!strcmp (element_name, "graph"))
     {
@@ -380,7 +389,7 @@ static void start_element (GMarkupParseContext *context,
         }
       else
         {
-          if (pd->iter)
+          if (pd->iter && gegl_node_has_pad(new, "output"))
 	    {
 	      gegl_node_connect_from (pd->iter, "input", new, "output");
 	    }
@@ -1091,6 +1100,9 @@ gegl_node_to_xml (GeglNode    *gegl,
   ss.clone_count = 0;
   ss.clones      = g_hash_table_new (NULL, NULL);
   ss.terse       = FALSE;
+
+  if(!(gegl->is_graph || gegl->operation))
+    gegl = gegl_node_get_output_proxy(gegl, "output");
 
   g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss.buf, "<gegl>\n");
