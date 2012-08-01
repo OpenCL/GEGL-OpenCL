@@ -23,8 +23,8 @@ libbuffer_la_SOURCES = \
     gegl-buffer-cl-iterator.c	\
     gegl-buffer-cl-cache.c	\
     gegl-buffer-linear.c	\
+	gegl-buffer-load.c	\
     gegl-buffer-save.c		\
-    gegl-buffer-load.c		\
     gegl-cache.c		\
     gegl-sampler.c		\
     gegl-sampler-cubic.c	\
@@ -77,10 +77,10 @@ libbuffer_la_SOURCES = \
     gegl-tile-handler-zoom.h	\
     gegl-id-pool.h
 
-libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
+libbuffer_la_SOURCES += gegl-tile-backend-file-mapped.c
 #if HAVE_64_BIT
 #libbuffer_la_SOURCES += gegl-tile-backend-file.c
 #else
-#libbuffer_la_SOURCES +=	gegl-tile-backend-file-async.c
+#libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
 #endif
 

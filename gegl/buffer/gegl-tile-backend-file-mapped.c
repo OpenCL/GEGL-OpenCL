@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006, 2007, 2008 Øyvind Kolås <pippin@gimp.org>
+ *           2012 Ville Sokk <ville.sokk@gmail.com>
  */
 
 #include "config.h"
@@ -21,6 +22,7 @@
 #include <gio/gio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
@@ -31,7 +33,6 @@
 #include <glib/gstdio.h>
 
 #include "gegl.h"
-#include "gegl-buffer-backend.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
@@ -86,8 +87,6 @@ struct _GeglTileBackendFile
    */
   GeglBufferHeader header;
 
-  gint            foffset;
-
   /* current offset, used when writing the index */
   gint             offset;
 
@@ -109,6 +108,12 @@ struct _GeglTileBackendFile
 
   /* for reading */
   int              i;
+
+  /* pointer to the memory mapped file */
+  gchar           *map;
+
+  /* size of the memory mapped area */
+  guint            total_mapped;
 };
 
 
@@ -120,47 +125,63 @@ static void     gegl_tile_backend_file_dbg_dealloc  (int                  size);
 
 
 static inline void
+gegl_tile_backend_file_map (GeglTileBackendFile *self)
+{
+  self->map = mmap (NULL, self->total_mapped, PROT_READ|PROT_WRITE, MAP_SHARED, self->o, 0);
+  if (self->map == MAP_FAILED)
+    {
+      g_error ("Unable to memory map file %s: %s", self->path, g_strerror (errno));
+      return;
+    }
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "mapped %i bytes of file %s", self->total_mapped, self->path);
+}
+
+static inline void
+gegl_tile_backend_file_unmap (GeglTileBackendFile *self)
+{
+  if ((munmap (self->map, self->total_mapped)) < 0)
+    {
+      g_warning ("Unable to unmap file %s: %s", self->path, g_strerror (errno));
+      return;
+    }
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "unmapped file %s", self->path);
+}
+
+static inline void
+gegl_tile_backend_file_remap (GeglTileBackendFile *self)
+{
+  if (self->total > self->total_mapped)
+    {
+      g_printf ("remap %i\n", self->total * 10);
+
+      gegl_tile_backend_file_unmap (self);
+      self->total_mapped = self->total * 10;
+      gegl_tile_backend_file_map (self);
+    }
+}
+
+static inline void
+gegl_tile_backend_file_sync (GeglTileBackendFile *self)
+{
+  if ((msync (self->map, self->total, MS_SYNC|MS_INVALIDATE)) < 0)
+    {
+      g_warning ("Unable to sync file %s: %s", self->path, g_strerror (errno));
+      return;
+    }
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "synced file %s", self->path);
+}
+
+static inline void
 gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
                                         GeglBufferTile      *entry,
                                         guchar              *dest)
 {
-  gint     to_be_read;
-  gboolean success;
   gint     tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-  goffset  offset = entry->offset;
-  guchar  *tdest = dest;
+  goffset  offset    = entry->offset;
 
   gegl_tile_backend_file_ensure_exist (self);
 
-  if (self->foffset != offset)
-    {
-      success = (lseek (self->i, offset, SEEK_SET) >= 0);
-
-      if (success == FALSE)
-        {
-          g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
-          return;
-        }
-      self->foffset = offset;
-    }
-  to_be_read = tile_size;
-
-  while (to_be_read > 0)
-    {
-      GError *error = NULL;
-      gint byte_read;
-
-      byte_read = read (self->i, tdest + tile_size - to_be_read, to_be_read);
-      if (byte_read <= 0)
-        {
-          g_message ("unable to read tile data from self: "
-                     "%s (%d/%d bytes read) %s",
-                     g_strerror (errno), byte_read, to_be_read, error?error->message:"--");
-          return;
-        }
-      to_be_read -= byte_read;
-      self->foffset += byte_read;
-    }
+  memcpy (dest, self->map + offset, tile_size);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
@@ -170,44 +191,13 @@ gegl_tile_backend_file_file_entry_write (GeglTileBackendFile *self,
                                          GeglBufferTile      *entry,
                                          guchar              *source)
 {
-  gint     to_be_written;
-  gboolean success;
-  goffset  offset = entry->offset;
-  gint     tile_size;
+  goffset  offset    = entry->offset;
+  gint     tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
 
   gegl_tile_backend_file_ensure_exist (self);
 
-  if (self->foffset != offset)
-    {
-      success = (lseek (self->o, offset, SEEK_SET) >= 0);
-      if (success == FALSE)
-        {
-          g_warning ("unable to seek to tile in buffer: %s", g_strerror (errno));
-          return;
-        }
-      self->foffset = offset;
-    }
+  memcpy (self->map + offset, source, tile_size);
 
-  tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-
-  to_be_written = tile_size;
-
-  while (to_be_written > 0)
-    {
-      gint wrote;
-      wrote = write (self->o,
-                     source + tile_size - to_be_written,
-                     to_be_written);
-      if (wrote <= 0)
-        {
-          g_message ("unable to write tile data to self: "
-                     "%s (%d/%d bytes written)",
-                     g_strerror (errno), wrote, to_be_written);
-          return;
-        }
-      to_be_written -= wrote;
-      self->foffset += wrote;
-    }
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "wrote entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
 }
 
@@ -249,7 +239,7 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
           GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "growing file to %i bytes", (gint)self->total);
 
           ftruncate (self->o, self->total);
-          self->foffset = -1;
+          gegl_tile_backend_file_remap (self);
         }
     }
   gegl_tile_backend_file_dbg_alloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
@@ -273,18 +263,10 @@ gegl_tile_backend_file_file_entry_destroy (GeglBufferTile      *entry,
 static gboolean
 gegl_tile_backend_file_write_header (GeglTileBackendFile *self)
 {
-  gboolean success;
-
   gegl_tile_backend_file_ensure_exist (self);
 
-  success = (lseek (self->o, 0, SEEK_SET) != -1);
-  if (success == FALSE)
-    {
-      g_warning ("unable to seek in buffer");
-      return FALSE;
-    }
-  write (self->o, &(self->header), 256);
-  self->foffset = 256;
+  memcpy (self->map, &(self->header), 256);
+
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
 }
@@ -296,8 +278,8 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
   gegl_tile_backend_file_ensure_exist (self);
   if (self->in_holding)
     {
-      guint64 next_allocation = self->offset + self->in_holding->length;
-
+      gint    offset          = self->offset;
+      guint64 next_allocation = offset + self->in_holding->length;
 
       /* update the next offset pointer in the previous block */
       if (block == NULL)
@@ -306,38 +288,27 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
       else
           self->in_holding->next = next_allocation;
 
-      if (self->foffset != self->offset)
-      {
-        if(lseek (self->o, self->offset, G_SEEK_SET) == -1)
-          goto fail;
-
-        self->foffset = self->offset;
-      }
-
       /* XXX: should promiscuosuly try to compress here as well,. if revisions
               are not matching..
        */
 
+      if (self->total < next_allocation)
+        {
+          self->total = next_allocation;
+          ftruncate (self->o, next_allocation);
+          gegl_tile_backend_file_remap (self);
+        }
+      memcpy (self->map + offset, self->in_holding, self->in_holding->length);
+      self->offset += self->in_holding->length;
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
                  self->in_holding->length,
                  self->in_holding->flags,
                  (gint)self->in_holding->next,
-                 (gint)self->offset);
-      {
-        ssize_t written = write (self->o, self->in_holding,
-                                 self->in_holding->length);
-        if(written != -1)
-          {
-            self->offset += written;
-            self->foffset += written;
-          }
-      }
+                 offset);
 
       g_assert (next_allocation == self->offset); /* true as long as
                                                      the simple allocation
                                                      scheme is used */
-
-      self->offset = next_allocation;
     }
   else
     {
@@ -347,21 +318,10 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
                                             * of file, worry about writing
                                             * header inside free list later
                                             */
-      if (self->foffset != self->offset)
-      {
-        if(lseek (self->o, self->offset, G_SEEK_SET) == -1)
-          goto fail;
-
-        self->foffset = self->offset;
-      }
     }
   self->in_holding = block;
 
   return TRUE;
-fail:
-  g_warning ("gegl buffer index writing problems for %s",
-             self->path);
-  return FALSE;
 }
 
 G_DEFINE_TYPE (GeglTileBackendFile, gegl_tile_backend_file, GEGL_TYPE_TILE_BACKEND)
@@ -402,9 +362,9 @@ gegl_tile_backend_file_dbg_dealloc (gint size)
 
 static inline GeglBufferTile *
 gegl_tile_backend_file_lookup_entry (GeglTileBackendFile *self,
-              gint                 x,
-              gint                 y,
-              gint                 z)
+                                     gint                 x,
+                                     gint                 y,
+                                     gint                 z)
 {
   GeglBufferTile *ret;
   GeglBufferTile *key = gegl_tile_entry_new (x,y,z);
@@ -536,7 +496,6 @@ gegl_tile_backend_file_flush (GeglTileSource *source,
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "flushing %s", self->path);
 
-
   self->header.rev ++;
   self->header.next = self->next_pre_alloc; /* this is the offset
                                                we start handing
@@ -559,7 +518,6 @@ gegl_tile_backend_file_flush (GeglTileSource *source,
     }
 
   gegl_tile_backend_file_write_header (self);
-  fsync (self->o);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "flushed %s", self->path);
 
@@ -662,16 +620,13 @@ gegl_tile_backend_file_finalize (GObject *object)
     {
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "finalizing buffer %s", self->path);
 
-      if (self->i != -1)
-        {
-          close (self->i);
-          self->i = -1;
-        }
       if (self->o != -1)
         {
           close (self->o);
           self->o = -1;
         }
+      if (self->map)
+        gegl_tile_backend_file_unmap (self);
     }
 
   if (self->path)
@@ -727,30 +682,27 @@ gegl_tile_backend_file_equalfunc (gconstpointer a,
   return FALSE;
 }
 
-
 static void
 gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
                                    gboolean             block)
 {
-  GeglBufferHeader new_header;
-  GList           *iter;
-  GeglTileBackend *backend;
-  goffset offset = 0;
-  goffset max=0;
-  gint tile_size;
+  GeglBufferHeader  new_header;
+  GList            *iter;
+  GeglTileBackend  *backend;
+  goffset           offset = 0;
+  goffset           max    = 0;
+  gint              tile_size;
 
   /* compute total from and next pre alloc by monitoring tiles as they
    * are added here
    */
   /* reload header */
-  new_header = gegl_buffer_read_header (self->i, &offset, NULL)->header;
-  self->foffset = 256;
+  new_header = gegl_buffer_read_header (0, &offset, self->map)->header;
 
   while (new_header.flags & GEGL_FLAG_LOCKED)
     {
       g_usleep (50000);
-      new_header = gegl_buffer_read_header (self->i, &offset, NULL)->header;
-      self->foffset = 256;
+      new_header = gegl_buffer_read_header (0, &offset, self->map)->header;
     }
 
   if (new_header.rev == self->header.rev)
@@ -764,16 +716,14 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
       GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "loading index: %s", self->path);
     }
 
-  tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-  offset      = self->header.next;
-  self->tiles = gegl_buffer_read_index (self->i, &offset, NULL);
-  self->foffset = -1;
-  backend     = GEGL_TILE_BACKEND (self);
+  tile_size     = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
+  offset        = self->header.next;
+  self->tiles   = gegl_buffer_read_index (0, &offset, self->map);
+  backend       = GEGL_TILE_BACKEND (self);
 
   for (iter = self->tiles; iter; iter=iter->next)
     {
-      GeglBufferItem *item = iter->data;
-
+      GeglBufferItem *item     = iter->data;
       GeglBufferItem *existing = g_hash_table_lookup (self->index, item);
 
       if (item->tile.offset > max)
@@ -818,22 +768,18 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
   g_slist_free (self->free_list);
   self->free_list      = NULL;
   self->next_pre_alloc = max; /* if bigger than own? */
-  self->total          = max;
   self->tiles          = NULL;
 }
 
 static void
 gegl_tile_backend_file_file_changed (GFileMonitor        *monitor,
-              GFile               *file,
-              GFile               *other_file,
-              GFileMonitorEvent    event_type,
-              GeglTileBackendFile *self)
+                                     GFile               *file,
+                                     GFile               *other_file,
+                                     GFileMonitorEvent    event_type,
+                                     GeglTileBackendFile *self)
 {
   if (event_type == G_FILE_MONITOR_EVENT_CHANGED /*G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT*/ )
-    {
       gegl_tile_backend_file_load_index (self, TRUE);
-      self->foffset = -1;
-    }
 }
 
 static GObject *
@@ -851,15 +797,14 @@ gegl_tile_backend_file_constructor (GType                  type,
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing file backend: %s", self->path);
 
-  self->file = g_file_new_for_commandline_arg (self->path);
-  self->i = self->o = -1;
+  self->file  = g_file_new_for_commandline_arg (self->path);
+  self->o     = -1;
   self->index = g_hash_table_new (gegl_tile_backend_file_hashfunc, gegl_tile_backend_file_equalfunc);
-
 
   /* If the file already exists open it, assuming it is a GeglBuffer. */
   if (g_access (self->path, F_OK) != -1)
     {
-      goffset offset = 0;
+      GStatBuf  stats;
 
       /* Install a monitor for changes to the file in case other applications
        * might be writing to the buffer
@@ -883,26 +828,28 @@ gegl_tile_backend_file_constructor (GType                  type,
           if (self->o == -1)
             g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
         }
-      self->i = dup (self->o);
 
-      self->header = gegl_buffer_read_header (self->i, &offset, NULL)->header;
+      g_stat (self->path, &stats);
+      self->total_mapped = stats.st_size;
+      gegl_tile_backend_file_map (self);
+
+      self->header = gegl_buffer_read_header (0, NULL, self->map)->header;
       self->header.rev = self->header.rev -1;
 
       /* we are overriding all of the work of the actual constructor here,
        * a really evil hack :d
        */
-      backend->priv->tile_width = self->header.tile_width;
+      backend->priv->tile_width  = self->header.tile_width;
       backend->priv->tile_height = self->header.tile_height;
-      backend->priv->format = babl_format (self->header.description);
-      backend->priv->px_size = babl_format_get_bytes_per_pixel (backend->priv->format);
-      backend->priv->tile_size = backend->priv->tile_width *
+      backend->priv->format      = babl_format (self->header.description);
+      backend->priv->px_size     = babl_format_get_bytes_per_pixel (backend->priv->format);
+      backend->priv->tile_size   = backend->priv->tile_width *
                                     backend->priv->tile_height *
                                     backend->priv->px_size;
 
       /* insert each of the entries into the hash table */
       gegl_tile_backend_file_load_index (self, TRUE);
       self->exist = TRUE;
-      g_assert (self->i != -1);
       g_assert (self->o != -1);
 
       /* to autoflush gegl_buffer_set */
@@ -928,6 +875,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
   if (!self->exist)
     {
       GeglTileBackend *backend;
+
       self->exist = TRUE;
 
       backend = GEGL_TILE_BACKEND (self);
@@ -940,7 +888,11 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
 
       self->next_pre_alloc = 256;  /* reserved space for header */
       self->total          = 256;  /* reserved space for header */
-      self->foffset        = 0;
+
+      ftruncate (self->o, 256);
+      self->total_mapped = 2000000000;
+      gegl_tile_backend_file_map (self);
+
       gegl_buffer_header_init (&self->header,
                                backend->priv->tile_width,
                                backend->priv->tile_height,
@@ -948,14 +900,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
                                backend->priv->format
                                );
       gegl_tile_backend_file_write_header (self);
-      self->foffset       = 256;
-      fsync (self->o);
-      self->i = dup (self->o);
 
-      /*self->i = G_INPUT_STREAM (g_file_read (self->file, NULL, NULL));*/
-      self->next_pre_alloc = 256;  /* reserved space for header */
-      self->total          = 256;  /* reserved space for header */
-      g_assert (self->i != -1);
       g_assert (self->o != -1);
     }
 }
@@ -990,26 +935,26 @@ gegl_tile_backend_file_init (GeglTileBackendFile *self)
   ((GeglTileSource*)self)->command = gegl_tile_backend_file_command;
   self->path           = NULL;
   self->file           = NULL;
-  self->i              = -1;
   self->o              = -1;
   self->index          = NULL;
   self->free_list      = NULL;
   self->next_pre_alloc = 256;  /* reserved space for header */
   self->total          = 256;  /* reserved space for header */
+  self->map            = NULL;
 }
 
 gboolean
 gegl_tile_backend_file_try_lock (GeglTileBackendFile *self)
 {
   GeglBufferHeader new_header;
-  new_header = gegl_buffer_read_header (self->i, NULL, NULL)->header;
+
+  new_header = gegl_buffer_read_header (0, NULL, self->map)->header;
   if (new_header.flags & GEGL_FLAG_LOCKED)
     {
       return FALSE;
     }
   self->header.flags += GEGL_FLAG_LOCKED;
   gegl_tile_backend_file_write_header (self);
-  fsync (self->o);
   return TRUE;
 }
 
@@ -1023,6 +968,5 @@ gegl_tile_backend_file_unlock (GeglTileBackendFile *self)
     }
   self->header.flags -= GEGL_FLAG_LOCKED;
   gegl_tile_backend_file_write_header (self);
-  fsync (self->o);
   return TRUE;
 }
