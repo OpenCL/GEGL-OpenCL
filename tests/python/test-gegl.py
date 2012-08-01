@@ -35,6 +35,15 @@ class TestGegl(unittest.TestCase):
         Gegl.init(0, "");
         Gegl.exit();
 
+    def test_config_defaults(self):
+        Gegl.init(0, "")
+        gegl_config = Gegl.config()
+        # Some default that are unlikely to change
+        self.assertEqual(gegl_config.props.quality, 1.0)
+        self.assertEqual(gegl_config.get_property('tile-width'), 128)
+        self.assertEqual(gegl_config.get_property('tile-height'), 64)
+        Gegl.exit()
+
 if __name__ == '__main__':
     unittest.main()
 
