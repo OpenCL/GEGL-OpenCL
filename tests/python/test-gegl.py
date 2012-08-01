@@ -23,20 +23,18 @@ import gi
 from gi.repository import Gegl
 
 class TestGegl(unittest.TestCase):
-    """Tests the Gegl"""
+    """Tests the Gegl global functions, initialization and configuration handling."""
 
     def test_init(self):
         Gegl.init(0, "");
 
     def test_exit(self):
-        pass
-        #Gegl.exit()
+        Gegl.exit()
 
     def test_init_exit(self):
         Gegl.init(0, "");
         Gegl.exit();
 
 if __name__ == '__main__':
-    #print dir(Gegl)
     unittest.main()
 

@@ -77,7 +77,5 @@ class TestGeglNodeSaveXml(unittest.TestCase):
 
 if __name__ == '__main__':
     Gegl.init(0, "");
-    #print dir(Gegl.Node)
-
     unittest.main()
-
+    Gegl.exit()
