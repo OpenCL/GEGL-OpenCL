@@ -825,6 +825,8 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
  * "cache-size" "quality" and "swap", the two first is an integer denoting
  * number of bytes, the secons a double value between 0 and 1 and the last
  * the path of the directory to swap to (or "ram" to not use diskbased swap)
+ *
+ * Return value: (transfer none): a #GeglConfig
  */
 GeglConfig      * gegl_config (void);
 
