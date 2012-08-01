@@ -424,6 +424,7 @@ gegl_exit (void)
     }
   g_object_unref (config);
   config = NULL;
+  global_time = 0;
 }
 
 static void swap_clean (void);
