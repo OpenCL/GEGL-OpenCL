@@ -39,7 +39,13 @@ typedef enum
   GEGL_BLIT_DIRTY    = 1 << 1
 } GeglBlitFlags;
 
+
 typedef struct _GeglConfig GeglConfig;
+GType gegl_config_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_CONFIG            (gegl_config_get_type ())
+#define GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONFIG, GeglConfig))
+#define GEGL_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CONFIG))
+
 typedef struct _GeglCurve  GeglCurve;
 typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;

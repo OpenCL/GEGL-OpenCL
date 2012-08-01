@@ -24,12 +24,10 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_CONFIG            (gegl_config_get_type ())
-#define GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONFIG, GeglConfig))
 #define GEGL_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CONFIG, GeglConfigClass))
-#define GEGL_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CONFIG))
 #define GEGL_IS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CONFIG))
 #define GEGL_CONFIG_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CONFIG, GeglConfigClass))
+/* The rest is in gegl-types.h */
 
 typedef struct _GeglConfigClass GeglConfigClass;
 
@@ -52,8 +50,6 @@ struct _GeglConfigClass
 {
   GObjectClass parent_class;
 };
-
-GType gegl_config_get_type (void) G_GNUC_CONST;
 
 GeglConfig   * gegl_config            (void);
 
