@@ -173,14 +173,6 @@ gegl_init (gint    *argc,
 
   gegl_init_i18n ();
 
-  /*  If any command-line actions are ever added to GEGL, then the commented
-   *  out code below should be used.  Until then, we simply call the parse hook
-   *  directly.
-   */
-#if 0
-  gegl_post_parse_hook (NULL, NULL, NULL, NULL);
-#else
-
   context = g_option_context_new (NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);
   g_option_context_set_help_enabled (context, FALSE);
@@ -193,7 +185,6 @@ gegl_init (gint    *argc,
     }
 
   g_option_context_free (context);
-#endif
 }
 
 static gchar   *cmd_gegl_swap=NULL;
