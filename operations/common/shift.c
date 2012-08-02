@@ -34,7 +34,6 @@ gegl_chant_register_enum (gegl_direction)
   enum_value (GEGL_VERTICAL, "Vertical")
 gegl_chant_register_enum_end (GeglDirection)
 
-
 gegl_chant_enum (direction, _("Direction"), GeglDirection, gegl_direction,
                  GEGL_HORIZONTAL, _("Shift direction"))
 
