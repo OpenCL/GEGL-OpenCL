@@ -38,6 +38,22 @@ G_BEGIN_DECLS
 typedef struct _GeglTileBackendFile      GeglTileBackendFile;
 typedef struct _GeglTileBackendFileClass GeglTileBackendFileClass;
 
+typedef enum
+{
+  OP_WRITE,
+  OP_TRUNCATE,
+  OP_SYNC
+} ThreadOp;
+
+typedef struct
+{
+  gint                 length;    /* length of data if writing tile or
+                                     length of file if truncating */
+  guchar              *source;
+  goffset              offset;
+  GeglTileBackendFile *file;      /* the file we are operating on */
+  ThreadOp             operation; /* type of file operation, see above */
+} ThreadParams;
 
 struct _GeglTileBackendFileClass
 {

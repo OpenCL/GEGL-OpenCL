@@ -118,7 +118,7 @@ struct _GeglTileBackendFile
   GFileMonitor    *monitor;
 
   /* number of write operations in the queue for this file */
-  gint             pending_writes;
+  gint             pending_ops;
 
   /* used for waiting on writes to the file to be finished */
   GCond           *cond;
@@ -129,24 +129,6 @@ struct _GeglTileBackendFile
   /* for reading */
   int              i;
 };
-
-typedef enum
-{
-  OP_WRITE,
-  OP_TRUNCATE,
-  OP_SYNC,
-  OP_CLOSE
-} ThreadOp;
-
-typedef struct
-{
-  gint                 length;    /* length of data if writing tile or
-                                     length of file if truncating */
-  guchar              *source;
-  goffset              offset;
-  GeglTileBackendFile *file;      /* the file we are operating on */
-  ThreadOp             operation; /* type of file operation, see above */
-} ThreadParams;
 
 
 static void     gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self);
@@ -166,21 +148,21 @@ static gint file_size      = 0;
 static gint peak_allocs    = 0;
 static gint peak_file_size = 0;
 
-static GQueue  queue       = G_QUEUE_INIT;
-static GMutex *mutex = NULL;
-static GCond  *queue_cond  = NULL;
+static GQueue  queue      = G_QUEUE_INIT;
+static GMutex *mutex      = NULL;
+static GCond  *queue_cond = NULL;
 
 
-static inline void
+static void
 gegl_tile_backend_file_finish_writing (GeglTileBackendFile *self)
 {
   g_mutex_lock (mutex);
-  while (self->pending_writes != 0)
+  while (self->pending_ops != 0)
     g_cond_wait (self->cond, mutex);
   g_mutex_unlock (mutex);
 }
 
-static inline void
+static void
 gegl_tile_backend_file_push_queue (ThreadParams *params)
 {
   gboolean was_empty;
@@ -188,7 +170,7 @@ gegl_tile_backend_file_push_queue (ThreadParams *params)
   g_mutex_lock (mutex);
 
   was_empty = g_queue_is_empty (&queue);
-  params->file->pending_writes += 1;
+  params->file->pending_ops += 1;
   g_queue_push_tail (&queue, params);
   if (was_empty)
     g_cond_signal (queue_cond);
@@ -260,22 +242,13 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
         case OP_SYNC:
           fsync (params->file->o);
           break;
-        case OP_CLOSE:
-          if (params->file->o != -1 && params->file->i != -1)
-            {
-              close (params->file->o);
-              close (params->file->i);
-              params->file->i = -1;
-              params->file->o = -1;
-            }
-          break;
         }
 
       g_mutex_lock (mutex);
       g_queue_pop_head (&queue);
 
-      params->file->pending_writes -= 1;
-      if (params->file->pending_writes == 0)
+      params->file->pending_ops -= 1;
+      if (params->file->pending_ops == 0)
         g_cond_signal (params->file->cond);
 
       if (params->operation == OP_WRITE)
@@ -290,7 +263,7 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
 }
 
 static void
-gegl_tile_backend_file_read_entry (GeglTileBackendFile *self,
+gegl_tile_backend_file_entry_read (GeglTileBackendFile *self,
                                    GeglBufferTile      *entry,
                                    guchar              *dest)
 {
@@ -352,7 +325,7 @@ gegl_tile_backend_file_read_entry (GeglTileBackendFile *self,
 }
 
 static inline void
-gegl_tile_backend_file_write_entry (GeglTileBackendFile *self,
+gegl_tile_backend_file_entry_write (GeglTileBackendFile *self,
                                     GeglBufferTile      *entry,
                                     guchar              *source)
 {
@@ -614,7 +587,7 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
   gegl_tile_set_rev (tile, entry->rev);
   gegl_tile_mark_as_stored (tile);
 
-  gegl_tile_backend_file_read_entry (tile_backend_file, entry, gegl_tile_get_data (tile));
+  gegl_tile_backend_file_entry_read (tile_backend_file, entry, gegl_tile_get_data (tile));
   return tile;
 }
 
@@ -643,7 +616,7 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
     }
   entry->rev = gegl_tile_get_rev (tile);
 
-  gegl_tile_backend_file_write_entry (tile_backend_file, entry, gegl_tile_get_data (tile));
+  gegl_tile_backend_file_entry_write (tile_backend_file, entry, gegl_tile_get_data (tile));
   gegl_tile_mark_as_stored (tile);
   return NULL;
 }
@@ -829,17 +802,20 @@ gegl_tile_backend_file_finalize (GObject *object)
 
   if (self->exist)
     {
-      ThreadParams *params = g_new (ThreadParams, 1);
+      gegl_tile_backend_file_finish_writing (self);
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "finalizing buffer %s", self->path);
 
-      params->operation = OP_CLOSE;
-      params->file = (GeglTileBackendFile *) self;
-
-      gegl_tile_backend_file_push_queue (params);
-
-      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "pushed close of %s", self->path);
+      if (self->i != -1)
+        {
+          close (self->i);
+          self->i = -1;
+        }
+      if (self->o != -1)
+        {
+          close (self->o);
+          self->o = -1;
+        }
     }
-
-  gegl_tile_backend_file_finish_writing (self);
 
   if (self->path)
     g_free (self->path);
@@ -1015,12 +991,12 @@ gegl_tile_backend_file_constructor (GType                  type,
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing file backend: %s", self->path);
 
-  self->file           = g_file_new_for_commandline_arg (self->path);
-  self->i              = self->o = -1;
-  self->index          = g_hash_table_new (gegl_tile_backend_file_hashfunc,
-                                           gegl_tile_backend_file_equalfunc);
-  self->pending_writes = 0;
-  self->cond           = g_cond_new ();
+  self->file        = g_file_new_for_commandline_arg (self->path);
+  self->i           = self->o = -1;
+  self->index       = g_hash_table_new (gegl_tile_backend_file_hashfunc,
+                                        gegl_tile_backend_file_equalfunc);
+  self->pending_ops = 0;
+  self->cond        = g_cond_new ();
 
   /* If the file already exists open it, assuming it is a GeglBuffer. */
   if (g_access (self->path, F_OK) != -1)
@@ -1107,7 +1083,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
       self->next_pre_alloc = 256; /* reserved space for header */
       self->total          = 256; /* reserved space for header */
       self->in_offset      = self->out_offset = 0;
-      self->pending_writes = 0;
+      self->pending_ops = 0;
       gegl_buffer_header_init (&self->header,
                                backend->priv->tile_width,
                                backend->priv->tile_height,
@@ -1161,7 +1137,7 @@ gegl_tile_backend_file_init (GeglTileBackendFile *self)
   self->free_list                  = NULL;
   self->next_pre_alloc             = 256; /* reserved space for header */
   self->total                      = 256; /* reserved space for header */
-  self->pending_writes             = 0;
+  self->pending_ops                = 0;
 }
 
 gboolean
