@@ -41,6 +41,7 @@
 #include <glib/gstdio.h>
 
 #include "gegl.h"
+#include "gegl-buffer-backend.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-buffer-index.h"
