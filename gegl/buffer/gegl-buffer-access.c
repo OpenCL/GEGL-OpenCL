@@ -652,7 +652,6 @@ gegl_buffer_iterate_read_abyss_none (GeglBuffer          *buffer,
             else
               pixels = tile_width - offsetx;
 
-
             if (!(buffer_x + bufx + tile_width >= buffer_abyss_x &&
                   buffer_x + bufx < abyss_x_total))
               { /* entire tile is in abyss */
@@ -696,9 +695,6 @@ gegl_buffer_iterate_read_abyss_none (GeglBuffer          *buffer,
                     bufx += (tile_width - offsetx);
                     continue;
                   }
-
-                if (write)
-                  gegl_tile_lock (tile);
 
                 tile_base = gegl_tile_get_data (tile);
                 tp        = ((guchar *) tile_base) + (offsety * tile_width + offsetx) * px_size;
