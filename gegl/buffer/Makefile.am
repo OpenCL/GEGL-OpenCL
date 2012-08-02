@@ -77,9 +77,9 @@ libbuffer_la_SOURCES = \
     gegl-tile-handler-zoom.h	\
     gegl-id-pool.h
 
-libbuffer_la_SOURCES += gegl-tile-backend-file-mapped.c
-#if HAVE_64_BIT
-#libbuffer_la_SOURCES += gegl-tile-backend-file.c
+libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
+#if HAVE_64_BIT 
+#libbuffer_la_SOURCES += gegl-tile-backend-file-mapped.c
 #else
 #libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
 #endif
