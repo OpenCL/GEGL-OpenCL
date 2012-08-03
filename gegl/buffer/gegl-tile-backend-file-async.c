@@ -461,7 +461,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
 
       if (self->out_offset != self->offset)
       {
-        if (lseek (self->o, self->offset, G_SEEK_SET) == -1)
+        if (lseek (self->o, self->offset, SEEK_SET) == -1)
           goto fail;
 
         self->out_offset = self->offset;
@@ -505,7 +505,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
                                             */
       if (self->out_offset != self->offset)
       {
-        if (lseek (self->o, self->offset, G_SEEK_SET) == -1)
+        if (lseek (self->o, self->offset, SEEK_SET) == -1)
           goto fail;
 
         self->out_offset = self->offset;
@@ -515,8 +515,8 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
 
   return TRUE;
 fail:
-  g_warning ("gegl buffer index writing problems for %s",
-             self->path);
+  g_warning ("failed to lseek() to 0x%x in %s: %s",
+             self->offset, self->path, g_strerror (errno));
   return FALSE;
 }
 
