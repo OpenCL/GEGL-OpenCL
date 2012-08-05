@@ -17,13 +17,14 @@
  *           2012 Ville Sokk <ville.sokk@gmail.com>
  */
 
-/* This tile backend stores tiles of a GeglBuffer on disk. There's one
- * thread (shared between instances of the class) that performs all file
- * operations except reading and opening. Communication between the main
- * gegl thread and the writer thread is performed using a queue. The
- * writer thread sleeps if the queue is empty. If a read is performed and
- * the tile is in the queue then its data is copied from the queue
- * instead of read from disk.
+/* GeglTileBackendFile stores tiles of a GeglBuffer on disk. There are
+ * two versions of the class. This one uses regular I/O calls in a
+ * separate thread (shared between instances of the class) that performs
+ * all file operations except reading and opening. Communication between
+ * the main gegl thread and the writer thread is performed using a
+ * queue. The writer thread sleeps if the queue is empty. If an entry is
+ * read and the tile is in the queue then its data is copied from the
+ * queue instead of read from disk.
  */
 
 #include "config.h"

@@ -17,6 +17,15 @@
  *           2012 Ville Sokk <ville.sokk@gmail.com>
  */
 
+/* GeglTileBackendFile stores tiles of a GeglBuffer on disk. There are
+ * two versions of the class. This one memory maps the file and I/O is
+ * performed using memcpy. There's a thread that performs writes like the
+ * async backend since the underlying file has to be grown often which
+ * has to be done with a system call which causes blocking. If the thread
+ * queue is empty then regular memcpy is used instead of pushing to the
+ * queue.
+ */
+
 #include "config.h"
 
 #include <gio/gio.h>
@@ -171,33 +180,12 @@ gegl_tile_backend_file_push_queue (ThreadParams *params)
 }
 
 static void
-gegl_tile_backend_file_truncate (GeglTileBackendFile *self,
-                                 guint                length)
-{
-  ThreadParams *params = g_new (ThreadParams, 1);
-
-  params->operation = OP_TRUNCATE;
-  params->file      = self;
-  params->length    = length;
-
-  gegl_tile_backend_file_push_queue (params);
-
-  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "truncate to %u bytes", length);
-}
-
-static void
 gegl_tile_backend_file_write (GeglTileBackendFile *self,
                               goffset              offset,
                               gchar               *source,
                               gint                 length)
 {
-  gboolean is_empty;
-
-  /*g_mutex_lock (mutex);*/
-  is_empty = g_queue_is_empty (&queue);
-  /*g_mutex_unlock (mutex);*/
-
-  if (is_empty)
+  if (g_queue_is_empty (&queue))
     {
       memcpy (self->map + offset, source, length);
     }
@@ -241,21 +229,6 @@ gegl_tile_backend_file_unmap (GeglTileBackendFile *self)
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "unmapped file %s", self->path);
 }
 
-static inline void
-gegl_tile_backend_file_remap (GeglTileBackendFile *self)
-{
-  if (self->total > self->total_mapped)
-    {
-      g_mutex_lock (mutex);
-
-      gegl_tile_backend_file_unmap (self);
-      self->total_mapped = self->total * 5;
-      gegl_tile_backend_file_map (self);
-
-      g_mutex_unlock (mutex);
-    }
-}
-
 static gpointer
 gegl_tile_backend_file_writer_thread (gpointer ignored)
 {
@@ -278,8 +251,20 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
                   params->source, params->length);
           break;
         case OP_TRUNCATE:
-          ftruncate (params->file->o, params->length);
-          gegl_tile_backend_file_remap (params->file);
+          {
+            GeglTileBackendFile *file = params->file;
+            ftruncate (file->o, params->length);
+            if (file->total > file->total_mapped)
+              {
+                g_mutex_lock (mutex);
+
+                gegl_tile_backend_file_unmap (file);
+                file->total_mapped = file->total * 5;
+                gegl_tile_backend_file_map (file);
+
+                g_mutex_unlock (mutex);
+              }
+          }
           break;
         default: /* OP_SYNC is not necessary for memory mapped files */
           break;
@@ -371,8 +356,17 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
                                                   we have room for next allocation..
                                                 */
         {
+          ThreadParams *params = g_new (ThreadParams, 1);
+
           self->total = self->total + 32 * tile_size;
-          gegl_tile_backend_file_truncate (self, self->total);
+
+          params->operation = OP_TRUNCATE;
+          params->file      = self;
+          params->length    = self->total;
+
+          gegl_tile_backend_file_push_queue (params);
+
+          GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "pushed truncate to %i bytes", (gint)self->total);
         }
     }
   gegl_tile_backend_file_dbg_alloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
