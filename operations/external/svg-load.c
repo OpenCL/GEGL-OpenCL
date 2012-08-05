@@ -74,8 +74,6 @@ gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
     surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, *ret_width, *ret_height);
     cr = cairo_create (surface);
 
-    rsvg_init();
-
 /*
 FIXME: The routine 'rsvg_pixbuf_from_file_at_size' is deprecated. Set up a
 cairo matrix and use rsvg_handle_new_from_file() + rsvg_handle_render_cairo()
@@ -98,8 +96,6 @@ instead.
       pixeldata = gdk_pixbuf_get_pixels (pixbuf);
       gegl_buffer_set (gegl_buffer, &rect, 0, babl_format ("R'G'B'A u8"), pixeldata, GEGL_AUTO_ROWSTRIDE);
     }
-
-    rsvg_term();
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
@@ -138,7 +134,6 @@ query_svg (const gchar *path,
   GError           *pError = NULL;
   SvgLoadVals       vals;
 
-  rsvg_init ();
   handle = rsvg_handle_new_from_file (path, &pError);
   if (handle == NULL)
       return FALSE;
@@ -151,8 +146,7 @@ query_svg (const gchar *path,
 
   rsvg_handle_get_dimensions (handle, &dimension_data);
 
-  rsvg_handle_free (handle);
-  rsvg_term ();
+  g_object_unref (handle);
 
   *width  = dimension_data.width;
   *height = dimension_data.height;
