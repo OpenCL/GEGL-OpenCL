@@ -35,8 +35,6 @@ gegl_chant_string (ref, _("Reference"), "ID",
 #include <math.h>
 #include <string.h>
 
-#include "buffer/gegl-buffer-cl-cache.h"
-
 static GeglNode *
 detect (GeglOperation *operation,
         gint           x,

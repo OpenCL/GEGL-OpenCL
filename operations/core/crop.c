@@ -34,7 +34,6 @@ gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height
 
 #include "gegl-chant.h"
 #include "graph/gegl-node.h"
-#include "buffer/gegl-buffer-cl-cache.h"
 #include <math.h>
 
 static GeglNode *
