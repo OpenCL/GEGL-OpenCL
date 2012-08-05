@@ -1026,7 +1026,7 @@ gegl_tile_backend_file_constructor (GType                  type,
           if (self->o == -1)
             g_warning ("%s: Could not open '%s': %s", G_STRFUNC, self->path, g_strerror (errno));
         }
-      self->i = g_open (self->path, O_RDONLY);
+      self->i = g_open (self->path, O_RDONLY, 0);
 
       self->header     = gegl_buffer_read_header (self->i, &offset, NULL)->header;
       self->header.rev = self->header.rev -1;
@@ -1091,7 +1091,7 @@ gegl_tile_backend_file_ensure_exist (GeglTileBackendFile *self)
                                backend->priv->px_size,
                                backend->priv->format);
       gegl_tile_backend_file_write_header (self);
-      self->i = g_open (self->path, O_RDONLY);
+      self->i = g_open (self->path, O_RDONLY, 0);
 
       g_assert (self->i != -1);
       g_assert (self->o != -1);
