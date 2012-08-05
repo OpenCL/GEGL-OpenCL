@@ -77,8 +77,23 @@ GeglBuffer *    gegl_buffer_new               (const GeglRectangle *extent,
 GeglBuffer *   gegl_buffer_new_for_backend    (const GeglRectangle *extent,
                                                void                *backend);
 
+/**
+ * gegl_buffer_add_handler:
+ * @buffer: a #GeglBuffer
+ * @handler: a #GeglTileHandler
+ *
+ * Add a new tile handler in the existing chain of tile handler of a GeglBuffer.
+ */
 void           gegl_buffer_add_handler        (GeglBuffer          *buffer,
                                                gpointer             handler);
+
+/**
+ * gegl_buffer_remove_handler:
+ * @buffer: a #GeglBuffer
+ * @handler: a #GeglTileHandler
+ *
+ * Remove the provided tile handler in the existing chain of tile handler of a GeglBuffer.
+ */
 void           gegl_buffer_remove_handler     (GeglBuffer          *buffer,
                                                gpointer             handler);
 
@@ -167,7 +182,7 @@ gboolean          gegl_buffer_set_extent      (GeglBuffer          *buffer,
 /**
  * gegl_buffer_set_abyss:
  * @buffer: the buffer to operate on.
- * @extent: new abyss.
+ * @abyss: new abyss.
  *
  * Changes the size and position of the abyss rectangle of a buffer.
  *
