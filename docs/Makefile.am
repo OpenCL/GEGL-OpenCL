@@ -93,7 +93,7 @@ examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*
 		mkdir -p images/examples ; \
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 		$(top_builddir)/bin/gegl-tester$(EXEEXT) --all -o images/examples \
-		-d images -e $(exclusion_pattern) ; \
+		-d $(srcdir)/images -e $(exclusion_pattern) ; \
 	fi
 
 operations.html: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
