@@ -337,13 +337,15 @@ void gegl_tile_storage_cache_cleanup (void);
 void
 gegl_exit (void)
 {
+  glong timing;
+
   if (!config)
     {
       g_warning("gegl_exit() called without matching call to gegl_init()");
       return;
     }
 
-  glong timing = gegl_ticks ();
+  timing = gegl_ticks ();
 
   gegl_tile_storage_cache_cleanup ();
   gegl_tile_cache_destroy ();
