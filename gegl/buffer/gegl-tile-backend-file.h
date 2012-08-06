@@ -20,6 +20,7 @@
 #define __GEGL_TILE_BACKEND_FILE_H__
 
 #include "gegl-tile-backend.h"
+#include "gegl-buffer-index.h"
 
 /***
  * GeglTileBackendFile is a GeglTileBackend that store tiles in a unique file.
@@ -43,17 +44,24 @@ typedef enum
   OP_WRITE,
   OP_TRUNCATE,
   OP_SYNC
-} ThreadOp;
+} GeglFileBackendThreadOp;
 
 typedef struct
 {
-  gint                 length;    /* length of data if writing tile or
-                                     length of file if truncating */
-  guchar              *source;
-  goffset              offset;
-  GeglTileBackendFile *file;      /* the file we are operating on */
-  ThreadOp             operation; /* type of file operation, see above */
-} ThreadParams;
+  GeglBufferTile *tile;
+  gchar           in_queue;
+} GeglFileBackendEntry;
+
+typedef struct
+{
+  gint                     length;    /* length of data if writing tile or
+                                         length of file if truncating */
+  guchar                  *source;
+  goffset                  offset;
+  GeglTileBackendFile     *file;      /* the file we are operating on */
+  GeglFileBackendThreadOp  operation; /* type of file operation, see above */
+  GeglFileBackendEntry    *entry;
+} GeglFileBackendThreadParams;
 
 struct _GeglTileBackendFileClass
 {

@@ -164,7 +164,7 @@ gegl_tile_backend_file_finish_writing (GeglTileBackendFile *self)
 }
 
 static void
-gegl_tile_backend_file_push_queue (ThreadParams *params)
+gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
 {
   gboolean was_empty;
 
@@ -180,10 +180,11 @@ gegl_tile_backend_file_push_queue (ThreadParams *params)
 }
 
 static void
-gegl_tile_backend_file_write (GeglTileBackendFile *self,
-                              goffset              offset,
-                              gchar               *source,
-                              gint                 length)
+gegl_tile_backend_file_write (GeglTileBackendFile  *self,
+                              goffset               offset,
+                              gchar                *source,
+                              guint                 length,
+                              GeglFileBackendEntry *entry)
 {
   if (g_queue_is_empty (&queue))
     {
@@ -191,8 +192,8 @@ gegl_tile_backend_file_write (GeglTileBackendFile *self,
     }
   else
     {
-      ThreadParams *params     = g_new (ThreadParams, 1);
-      guchar       *new_source = g_malloc (length);
+      GeglFileBackendThreadParams *params = g_new0 (GeglFileBackendThreadParams, 1);
+      guchar *new_source = g_malloc (length);
 
       memcpy (new_source, source, length);
 
@@ -201,6 +202,9 @@ gegl_tile_backend_file_write (GeglTileBackendFile *self,
       params->file      = self;
       params->length    = length;
       params->source    = new_source;
+
+      if (entry)
+        entry->in_queue = TRUE;
 
       gegl_tile_backend_file_push_queue (params);
     }
@@ -234,14 +238,14 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
 {
   while (TRUE)
     {
-      ThreadParams *params;
+      GeglFileBackendThreadParams *params;
 
       g_mutex_lock (mutex);
 
       while (g_queue_is_empty (&queue))
         g_cond_wait (queue_cond, mutex);
 
-      params = (ThreadParams *)g_queue_peek_head (&queue);
+      params = (GeglFileBackendThreadParams *)g_queue_peek_head (&queue);
       g_mutex_unlock (mutex);
 
       switch (params->operation)
@@ -277,6 +281,9 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
       if (params->file->pending_ops == 0)
         g_cond_signal (params->file->cond);
 
+      if (params->entry)
+        params->entry->in_queue = FALSE;
+
       if (params->operation == OP_WRITE)
         g_free (params->source);
 
@@ -288,45 +295,62 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
 }
 
 static inline void
-gegl_tile_backend_file_file_entry_read (GeglTileBackendFile *self,
-                                        GeglBufferTile      *entry,
-                                        guchar              *dest)
+gegl_tile_backend_file_file_entry_read (GeglTileBackendFile  *self,
+                                        GeglFileBackendEntry *entry,
+                                        guchar               *dest)
 {
   gint     tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-  goffset  offset    = entry->offset;
+  goffset  offset    = entry->tile->offset;
 
   gegl_tile_backend_file_ensure_exist (self);
 
-  g_mutex_lock (mutex);
-  if (!g_queue_is_empty (&queue))
+  if (entry->in_queue)
     {
-      GList *link = g_queue_peek_tail_link (&queue);
+      GList *link;
+
+      g_mutex_lock (mutex);
+
+      link = g_queue_peek_tail_link (&queue);
 
       while (link)
         {
-          ThreadParams *queued_op = (ThreadParams *)link->data;
+          GeglFileBackendThreadParams *queued_op =
+            (GeglFileBackendThreadParams *)link->data;
 
           if (queued_op->file == self && queued_op->offset == offset)
             {
               memcpy (dest, queued_op->source, tile_size);
               g_mutex_unlock (mutex);
-              GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i from write queue", entry->x, entry->y, entry->z);
+              GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i from write queue", entry->tile->x, entry->tile->y, entry->tile->z);
               return;
             }
           link = link->prev;
         }
+      g_mutex_unlock (mutex);
     }
-  g_mutex_unlock (mutex);
 
   memcpy (dest, self->map + offset, tile_size);
 
-  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i at %i", entry->x, entry->y, entry->z, (gint)offset);
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i at %i", entry->tile->x, entry->tile->y, entry->tile->z, (gint)offset);
 }
 
-static inline GeglBufferTile *
+static GeglFileBackendEntry *
+gegl_tile_backend_file_file_entry_create (gint x,
+                                          gint y,
+                                          gint z)
+{
+  GeglFileBackendEntry *entry = g_new0 (GeglFileBackendEntry, 1);
+
+  entry->tile     = gegl_tile_entry_new (x, y, z);
+  entry->in_queue = FALSE;
+
+  return entry;
+}
+
+static inline GeglFileBackendEntry *
 gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
 {
-  GeglBufferTile *entry = gegl_tile_entry_new (0,0,0);
+  GeglFileBackendEntry *entry = gegl_tile_backend_file_file_entry_create (0,0,0);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Creating new entry");
 
@@ -339,24 +363,24 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
        * only keep track of offsets.
        */
       gint offset = GPOINTER_TO_INT (self->free_list->data);
-      entry->offset = offset;
+      entry->tile->offset = offset;
       self->free_list = g_slist_remove (self->free_list, self->free_list->data);
 
-      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i from free list", ((gint)entry->offset));
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i from free list", ((gint)entry->tile->offset));
     }
   else
     {
       gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
 
-      entry->offset = self->next_pre_alloc;
-      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->offset);
+      entry->tile->offset = self->next_pre_alloc;
+      GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "  set offset %i (next allocation)", (gint)entry->tile->offset);
       self->next_pre_alloc += tile_size;
 
       if (self->next_pre_alloc >= self->total) /* automatic growing ensuring that
                                                   we have room for next allocation..
                                                 */
         {
-          ThreadParams *params = g_new (ThreadParams, 1);
+          GeglFileBackendThreadParams *params = g_new0 (GeglFileBackendThreadParams, 1);
 
           self->total = self->total + 32 * tile_size;
 
@@ -374,16 +398,17 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
 }
 
 static inline void
-gegl_tile_backend_file_file_entry_destroy (GeglBufferTile      *entry,
-                                           GeglTileBackendFile *self)
+gegl_tile_backend_file_file_entry_destroy (GeglFileBackendEntry *entry,
+                                           GeglTileBackendFile  *self)
 {
   /* XXX: EEEk, throwing away bits */
-  guint offset = entry->offset;
+  guint offset = entry->tile->offset;
   self->free_list = g_slist_prepend (self->free_list,
                                      GUINT_TO_POINTER (offset));
   g_hash_table_remove (self->index, entry);
 
   gegl_tile_backend_file_dbg_dealloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
+  g_free (entry->tile);
   g_free (entry);
 }
 
@@ -392,7 +417,7 @@ gegl_tile_backend_file_write_header (GeglTileBackendFile *self)
 {
   gegl_tile_backend_file_ensure_exist (self);
 
-  gegl_tile_backend_file_write (self, 0, (gchar*)&(self->header), 256);
+  gegl_tile_backend_file_write (self, 0, (gchar*)&(self->header), 256, NULL);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote header, next=%i", (gint)self->header.next);
   return TRUE;
@@ -419,7 +444,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
               are not matching..
        */
 
-      gegl_tile_backend_file_write (self, offset, (gchar*)self->in_holding, self->in_holding->length);
+      gegl_tile_backend_file_write (self, offset, (gchar*)self->in_holding, self->in_holding->length, NULL);
 
       self->offset += self->in_holding->length;
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "Wrote block: length:%i flags:%i next:%i at offset %i",
@@ -472,16 +497,17 @@ gegl_tile_backend_file_dbg_dealloc (gint size)
   file_size -= size;
 }
 
-static inline GeglBufferTile *
+static inline GeglFileBackendEntry *
 gegl_tile_backend_file_lookup_entry (GeglTileBackendFile *self,
                                      gint                 x,
                                      gint                 y,
                                      gint                 z)
 {
-  GeglBufferTile *ret;
-  GeglBufferTile *key = gegl_tile_entry_new (x,y,z);
+  GeglFileBackendEntry *ret = NULL;
+  GeglFileBackendEntry *key = gegl_tile_backend_file_file_entry_create (x,y,z);
   ret = g_hash_table_lookup (self->index, key);
-  gegl_tile_entry_destroy (key);
+  g_free (key->tile);
+  g_free (key);
   return ret;
 }
 
@@ -492,15 +518,15 @@ gegl_tile_backend_file_lookup_entry (GeglTileBackendFile *self,
  */
 static GeglTile *
 gegl_tile_backend_file_get_tile (GeglTileSource *self,
-          gint            x,
-          gint            y,
-          gint            z)
+                                 gint            x,
+                                 gint            y,
+                                 gint            z)
 {
-  GeglTileBackend     *backend;
-  GeglTileBackendFile *tile_backend_file;
-  GeglBufferTile      *entry;
-  GeglTile            *tile = NULL;
-  gint                 tile_size;
+  GeglTileBackend      *backend;
+  GeglTileBackendFile  *tile_backend_file;
+  GeglFileBackendEntry *entry;
+  GeglTile             *tile = NULL;
+  gint                  tile_size;
 
   backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
@@ -511,7 +537,7 @@ gegl_tile_backend_file_get_tile (GeglTileSource *self,
 
   tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
   tile      = gegl_tile_new (tile_size);
-  gegl_tile_set_rev (tile, entry->rev);
+  gegl_tile_set_rev (tile, entry->tile->rev);
   gegl_tile_mark_as_stored (tile);
 
   gegl_tile_backend_file_file_entry_read (tile_backend_file, entry, gegl_tile_get_data (tile));
@@ -525,9 +551,9 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
                                  gint            y,
                                  gint            z)
 {
-  GeglTileBackend     *backend;
-  GeglTileBackendFile *tile_backend_file;
-  GeglBufferTile      *entry;
+  GeglTileBackend      *backend;
+  GeglTileBackendFile  *tile_backend_file;
+  GeglFileBackendEntry *entry;
 
   backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
@@ -535,18 +561,20 @@ gegl_tile_backend_file_set_tile (GeglTileSource *self,
 
   if (entry == NULL)
     {
-      entry    = gegl_tile_backend_file_file_entry_new (tile_backend_file);
-      entry->x = x;
-      entry->y = y;
-      entry->z = z;
+      entry          = gegl_tile_backend_file_file_entry_new (tile_backend_file);
+      entry->tile->x = x;
+      entry->tile->y = y;
+      entry->tile->z = z;
       g_hash_table_insert (tile_backend_file->index, entry, entry);
     }
-  entry->rev = gegl_tile_get_rev (tile);
+  entry->tile->rev = gegl_tile_get_rev (tile);
 
-  gegl_tile_backend_file_write (tile_backend_file, entry->offset,
+  gegl_tile_backend_file_write (tile_backend_file, entry->tile->offset,
                                 (gchar*)gegl_tile_get_data (tile),
-                                gegl_tile_backend_get_tile_size (backend));
-  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "wrote entry %i, %i, %i at %i", entry->x, entry->y, entry->z, (gint)entry->offset);
+                                gegl_tile_backend_get_tile_size (backend),
+                                entry);
+
+  GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "wrote entry %i, %i, %i at %i", entry->tile->x, entry->tile->y, entry->tile->z, (gint)entry->tile->offset);
 
   gegl_tile_mark_as_stored (tile);
   return NULL;
@@ -559,9 +587,9 @@ gegl_tile_backend_file_void_tile (GeglTileSource *self,
                                   gint            y,
                                   gint            z)
 {
-  GeglTileBackend     *backend;
-  GeglTileBackendFile *tile_backend_file;
-  GeglBufferTile      *entry;
+  GeglTileBackend      *backend;
+  GeglTileBackendFile  *tile_backend_file;
+  GeglFileBackendEntry *entry;
 
   backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
@@ -582,9 +610,9 @@ gegl_tile_backend_file_exist_tile (GeglTileSource *self,
                                    gint            y,
                                    gint            z)
 {
-  GeglTileBackend     *backend;
-  GeglTileBackendFile *tile_backend_file;
-  GeglBufferTile      *entry;
+  GeglTileBackend      *backend;
+  GeglTileBackendFile  *tile_backend_file;
+  GeglFileBackendEntry *entry;
 
   backend           = GEGL_TILE_BACKEND (self);
   tile_backend_file = GEGL_TILE_BACKEND_FILE (backend);
@@ -625,9 +653,9 @@ gegl_tile_backend_file_flush (GeglTileSource *source,
       GList *iter;
       for (iter = tiles; iter; iter = iter->next)
         {
-          GeglBufferItem *item = iter->data;
+          GeglFileBackendEntry *item = iter->data;
 
-          gegl_tile_backend_file_write_block (self, &item->block);
+          gegl_tile_backend_file_write_block (self, &(item->tile->block));
         }
       gegl_tile_backend_file_write_block (self, NULL); /* terminate the index */
       g_list_free (tiles);
@@ -761,12 +789,12 @@ gegl_tile_backend_file_finalize (GObject *object)
 static guint
 gegl_tile_backend_file_hashfunc (gconstpointer key)
 {
-  const GeglBufferTile *e = key;
-  guint            hash;
-  gint             i;
-  gint             srcA = e->x;
-  gint             srcB = e->y;
-  gint             srcC = e->z;
+  const GeglBufferTile *e    = ((GeglFileBackendEntry *)key)->tile;
+  guint                 hash;
+  gint                  i;
+  gint                  srcA = e->x;
+  gint                  srcB = e->y;
+  gint                  srcC = e->z;
 
   /* interleave the 10 least significant bits of all coordinates,
    * this gives us Z-order / morton order of the space and should
@@ -786,10 +814,10 @@ gegl_tile_backend_file_hashfunc (gconstpointer key)
 
 static gboolean
 gegl_tile_backend_file_equalfunc (gconstpointer a,
-           gconstpointer b)
+                                  gconstpointer b)
 {
-  const GeglBufferTile *ea = a;
-  const GeglBufferTile *eb = b;
+  const GeglBufferTile *ea = ((GeglFileBackendEntry*)a)->tile;
+  const GeglBufferTile *eb = ((GeglFileBackendEntry*)b)->tile;
 
   if (ea->x == eb->x &&
       ea->y == eb->y &&
@@ -840,18 +868,20 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
 
   for (iter = self->tiles; iter; iter=iter->next)
     {
-      GeglBufferItem *item     = iter->data;
-      GeglBufferItem *existing = g_hash_table_lookup (self->index, item);
+      GeglBufferItem       *item     = iter->data;
+      GeglFileBackendEntry *new      = gegl_tile_backend_file_file_entry_create (0, 0, 0);
+      GeglFileBackendEntry *existing =
+        gegl_tile_backend_file_lookup_entry (self, item->tile.x, item->tile.y, item->tile.z);
 
       if (item->tile.offset > max)
         max = item->tile.offset + tile_size;
 
       if (existing)
         {
-          if (existing->tile.rev == item->tile.rev)
+          if (existing->tile->rev == item->tile.rev)
             {
-              g_assert (existing->tile.offset == item->tile.offset);
-              existing->tile = item->tile;
+              g_assert (existing->tile->offset == item->tile.offset);
+              *existing->tile = item->tile;
               g_free (item);
               continue;
             }
@@ -863,23 +893,24 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
               g_hash_table_remove (self->index, existing);
 
               gegl_tile_source_refetch (GEGL_TILE_SOURCE (storage),
-                                        existing->tile.x,
-                                        existing->tile.y,
-                                        existing->tile.z);
+                                        existing->tile->x,
+                                        existing->tile->y,
+                                        existing->tile->z);
 
-              if (existing->tile.z == 0)
+              if (existing->tile->z == 0)
                 {
                   rect.width = self->header.tile_width;
                   rect.height = self->header.tile_height;
-                  rect.x = existing->tile.x * self->header.tile_width;
-                  rect.y = existing->tile.y * self->header.tile_height;
+                  rect.x = existing->tile->x * self->header.tile_width;
+                  rect.y = existing->tile->y * self->header.tile_height;
                 }
               g_free (existing);
 
               g_signal_emit_by_name (storage, "changed", &rect, NULL);
             }
         }
-      g_hash_table_insert (self->index, iter->data, iter->data);
+      new->tile = iter->data;
+      g_hash_table_insert (self->index, new, new);
     }
   g_list_free (self->tiles);
   g_slist_free (self->free_list);
