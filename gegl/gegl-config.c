@@ -44,7 +44,8 @@ enum
   PROP_TILE_WIDTH,
   PROP_TILE_HEIGHT,
   PROP_THREADS,
-  PROP_USE_OPENCL
+  PROP_USE_OPENCL,
+  PROP_QUEUE_LIMIT
 };
 
 static void
@@ -95,6 +96,10 @@ gegl_config_get_property (GObject    *gobject,
 
       case PROP_USE_OPENCL:
         g_value_set_boolean (value, config->use_opencl);
+        break;
+
+      case PROP_QUEUE_LIMIT:
+        g_value_set_int (value, config->queue_limit);
         break;
 
       default:
@@ -174,6 +179,9 @@ gegl_config_set_property (GObject      *gobject,
         if (config->use_opencl)
           gegl_cl_init (NULL);
 
+        break;
+      case PROP_QUEUE_LIMIT:
+        config->queue_limit = g_value_get_int (value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -283,6 +291,14 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                          TRUE,
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_QUEUE_LIMIT,
+                                   g_param_spec_int ("queue-limit",
+                                                     "Queue limit",
+                                                     "Maximum number of entries in the file tile backend's writer queue",
+                                                     1, G_MAXINT, 1000,
+                                                     G_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT));
 }
 
 static void

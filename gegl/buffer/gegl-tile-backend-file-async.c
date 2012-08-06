@@ -48,6 +48,7 @@
 #include "gegl-buffer-index.h"
 #include "gegl-buffer-types.h"
 #include "gegl-debug.h"
+#include "gegl-config.h"
 
 
 #ifndef HAVE_FSYNC
@@ -153,6 +154,7 @@ static gint peak_file_size = 0;
 static GQueue  queue      = G_QUEUE_INIT;
 static GMutex *mutex      = NULL;
 static GCond  *queue_cond = NULL;
+static GCond  *max_cond   = NULL;
 
 
 static void
@@ -167,14 +169,18 @@ gegl_tile_backend_file_finish_writing (GeglTileBackendFile *self)
 static void
 gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
 {
-  gboolean was_empty;
+  guint length;
 
   g_mutex_lock (mutex);
 
-  was_empty = g_queue_is_empty (&queue);
+  length = g_queue_get_length (&queue);
+
+  if (length > gegl_config ()->queue_limit)
+    g_cond_wait (max_cond, mutex);
+
   params->file->pending_ops += 1;
   g_queue_push_tail (&queue, params);
-  if (was_empty)
+  if (length == 0) /* wake up the writer thread */
     g_cond_signal (queue_cond);
 
   g_mutex_unlock (mutex);
@@ -252,6 +258,9 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
       params->file->pending_ops -= 1;
       if (params->file->pending_ops == 0)
         g_cond_signal (params->file->cond);
+
+      if (g_queue_get_length (&queue) < gegl_config ()->queue_limit)
+        g_cond_signal (max_cond);
 
       if (params->entry)
         params->entry->in_queue = FALSE;
@@ -1142,6 +1151,7 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
   gobject_class->finalize     = gegl_tile_backend_file_finalize;
 
   queue_cond = g_cond_new ();
+  max_cond   = g_cond_new ();
   mutex      = g_mutex_new ();
   g_thread_create_full (gegl_tile_backend_file_writer_thread,
                         NULL, 0, TRUE, TRUE, G_THREAD_PRIORITY_NORMAL, NULL);

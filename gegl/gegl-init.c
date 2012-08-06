@@ -187,13 +187,13 @@ gegl_init (gint    *argc,
   g_option_context_free (context);
 }
 
-static gchar   *cmd_gegl_swap=NULL;
-static gchar   *cmd_gegl_cache_size=NULL;
-static gchar   *cmd_gegl_chunk_size=NULL;
-static gchar   *cmd_gegl_quality=NULL;
-static gchar   *cmd_gegl_tile_size=NULL;
-static gchar   *cmd_babl_tolerance =NULL;
-static gchar   *cmd_gegl_threads=NULL;
+static gchar *cmd_gegl_swap        = NULL;
+static gchar *cmd_gegl_cache_size  = NULL;
+static gchar *cmd_gegl_chunk_size  = NULL;
+static gchar *cmd_gegl_quality     = NULL;
+static gchar *cmd_gegl_tile_size   = NULL;
+static gchar *cmd_babl_tolerance   = NULL;
+static gchar *cmd_gegl_threads     = NULL;
 
 static const GOptionEntry cmd_entries[]=
 {
@@ -283,6 +283,9 @@ GeglConfig *gegl_config (void)
         config->use_opencl = FALSE;
       else
         config->use_opencl = TRUE;
+
+      if (g_getenv ("GEGL_QUEUE_LIMIT"))
+        config->queue_limit = atoi(g_getenv ("GEGL_QUEUE_LIMIT"));
 
       if (gegl_swap_dir())
         config->swap = g_strdup(gegl_swap_dir ());
