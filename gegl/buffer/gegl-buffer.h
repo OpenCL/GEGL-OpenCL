@@ -249,8 +249,11 @@ gboolean          gegl_buffer_set_abyss      (GeglBuffer          *buffer,
  * depends on the requested BablFormat.
  * @rowstride: rowstride in bytes, or GEGL_AUTO_ROWSTRIDE to compute the
  * rowstride based on the width and bytes per pixel for the specified format.
- * @repeat_mode: how request outside the buffer extent are handled.
- * Valid values: GEGL_ABYSS_NONE
+ * @repeat_mode: how requests outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE (abyss pixels are zeroed), GEGL_ABYSS_WHITE
+ * (abyss pixels are white), GEGL_ABYSS_BLACK (abyss pixels are black),
+ * GEGL_ABYSS_CLAMP (coordinates are clamped to the abyss rectangle),
+ * GEGL_ABYSS_LOOP (buffer contents are tiled if outside of the abyss rectangle).
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer, the
  * data is converted to the desired BablFormat, if the BablFormat stored and
@@ -403,8 +406,11 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * @sampler_type: the sampler type to use,
  * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
  * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC and GEGL_SAMPLER_LOHALO
- * @repeat_mode: how request outside the buffer extent are handled.
- * valid values: GEGL_ABYSS_NONE
+ * @repeat_mode: how requests outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE (abyss pixels are zeroed), GEGL_ABYSS_WHITE
+ * (abyss pixels are white), GEGL_ABYSS_BLACK (abyss pixels are black),
+ * GEGL_ABYSS_CLAMP (coordinates are clamped to the abyss rectangle),
+ * GEGL_ABYSS_LOOP (buffer contents are tiled if outside of the abyss rectangle).
  *
  * Query interpolate pixel values at a given coordinate using a specified form
  * of interpolation. The samplers used cache for a small neighbourhood of the
@@ -465,8 +471,11 @@ GeglSampler *    gegl_buffer_sampler_new      (GeglBuffer       *buffer,
  * @y: y coordinate to sample
  * @scale: matrix representing extent of sampling area in source buffer.
  * @output: memory location for output data.
- * @repeat_mode: how request outside the buffer extent are handled.
- * valid values: GEGL_ABYSS_NONE
+ * @repeat_mode: how requests outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE (abyss pixels are zeroed), GEGL_ABYSS_WHITE
+ * (abyss pixels are white), GEGL_ABYSS_BLACK (abyss pixels are black),
+ * GEGL_ABYSS_CLAMP (coordinates are clamped to the abyss rectangle),
+ * GEGL_ABYSS_LOOP (buffer contents are tiled if outside of the abyss rectangle).
  *
  * Perform a sampling with the provided @sampler.
  */
