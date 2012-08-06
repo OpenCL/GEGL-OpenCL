@@ -23,11 +23,11 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (threshold, _("Threshold"), 0.0, 1.0, 0.2,
+gegl_chant_double (threshold, _("Threshold"), 0.0, 100.0, 10.0,
                    _("Higher values restrict the effect to fewer "
                      "areas of the image"))
 
-gegl_chant_int (strength, _("Strength"), 1, 100, 4,
+gegl_chant_int (strength, _("Strength"), 1, 1000, 40,
                 _("Higher values increase the magnitude of the effect"))
 
 #else
@@ -36,12 +36,50 @@ gegl_chant_int (strength, _("Strength"), 1, 100, 4,
 #define GEGL_CHANT_C_FILE       "wind.c"
 
 #include "gegl-chant.h"
-//#include <math.h>
 #include <stdlib.h>
 
+typedef struct
+{
+  gint x;
+  gint y;
+} pair;
 
-//assume leading
-//assume has alpha
+guint tuple_hash (gconstpointer v);
+gboolean tuple_equal (gconstpointer v1, gconstpointer v2);
+void get_pixel (gint x,
+                gint y,
+                gint buf_width,
+                gfloat* src_begin,
+                gfloat* dst);
+
+guint tuple_hash (gconstpointer v)
+{
+  const pair *data = v;
+  return (g_int_hash (&data->x) ^ g_int_hash (&data->y));
+}
+
+gboolean tuple_equal (gconstpointer v1, gconstpointer v2)
+{
+  const pair *data1 = v1;
+  const pair *data2 = v2;
+  return (g_int_equal (&data1->x, &data2->x) &&
+          g_int_equal (&data1->y, &data2->y));
+}
+
+void get_pixel (gint x,
+                gint y,
+                gint buf_width,
+                gfloat* src_begin,
+                gfloat* dst)
+{
+  gint b;
+  gfloat* src = src_begin + 4*(x + buf_width*y);
+  for (b = 0; b < 4; b++)
+    {
+      dst[b] = src[b];
+    }
+}
+
 static void
 get_derivative (gfloat   *pixel1,
                 gfloat   *pixel2,
@@ -63,11 +101,45 @@ threshold_exceeded (gfloat  *pixel1,
 
   get_derivative (pixel1, pixel2, derivative);
 
-  sum = 0;
+  sum = 0.0;
   for (i = 0; i < 4; i++)
     sum += derivative[i];
+  return ((sum / 4.0) > (threshold/100.0));
+}
 
-  return ((sum / 4.0) > threshold);
+static void
+calculate_bleed (GHashTable *h,
+                 gfloat *data,
+                 gfloat threshold,
+                 gfloat max_length,
+                 GeglRectangle *rect)
+{
+  gint x, y;
+
+  for (y = 0; y < rect->height; y++)
+    {
+      for (x = 0; x < rect->width - 3; x++)
+        {
+          gfloat pixel1[4];
+          gfloat pixel2[4];
+          get_pixel (x, y, rect->width, data, pixel1);
+          get_pixel (x + 3, y, rect->width, data, pixel2);
+          if (threshold_exceeded (pixel1,
+                                  pixel2,
+                                  threshold))
+            {
+              pair *k = g_new (pair, 1);
+              gint *v = g_new (gint, 1);
+              gint bleed_length = 1 + (gint)(g_random_double () * max_length);
+
+              k->x = x;
+              k->y = y;
+
+              *v = bleed_length;
+              g_hash_table_insert (h, k, v);
+            }
+        }
+    }
 }
 
 static void prepare (GeglOperation *operation)
@@ -78,7 +150,16 @@ static void prepare (GeglOperation *operation)
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
 
-  op_area->left   = o->strength; //only from left for now
+  if (o->chant_data)
+    {
+      g_hash_table_destroy (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  op_area->left   = o->strength;
+  op_area->right  = o->strength;
+  op_area->top    = o->strength;
+  op_area->bottom = o->strength;
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -102,100 +183,149 @@ process (GeglOperation       *operation,
   gint n_pixels = result->width * result->height;
   GeglRectangle src_rect;
 
-  gfloat *blend_pix; //left edge
-  gfloat *target_pix; //normally right edge
-  gfloat *base_pix; //input pixel corresponding to write
-  gfloat *dst_pix; //write target
+  gfloat *current_pix;
+  gfloat *target_pix;
+  gfloat *dst_pix;
 
   gint x, y;
-  gint total_pixels;
+  gint total_src_pixels;
+  gint total_dst_pixels;
 
-  gfloat denominator;
+  gint bleed_max;
+  gint bleed_index;
+  gfloat blend_coefficient;
 
-  gint n;
-  gint bleed_length_max;
-  gint bleed_length;
+  GHashTable *bleed_table;
 
-  /* code to calculate each left edge and the associated bleed length
-   that is randomly generated*/
+  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+  g_static_mutex_lock (&mutex);
+  if (!o->chant_data)
+    {
+      GeglRectangle *whole_rect = gegl_operation_source_get_bounding_box (operation, "input");
+      gfloat *data = (gfloat*) gegl_buffer_linear_open (input, NULL, NULL, babl_format ("RGBA float"));
+
+      bleed_table = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
+      calculate_bleed (bleed_table, data, o->threshold, (gfloat) o->strength, whole_rect);
+      o->chant_data = bleed_table;
+      gegl_buffer_linear_close (input, data);
+    }
+  g_static_mutex_unlock (&mutex);
+
+  bleed_table = (GHashTable*) o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
   src_rect.width  = result->width + op_area->left + op_area->right;
   src_rect.y      = result->y - op_area->top;
   src_rect.height = result->height + op_area->top + op_area->bottom;
 
-  total_pixels = src_rect.width * src_rect.height;
+  total_src_pixels = src_rect.width * src_rect.height;
+  total_dst_pixels = result->width * result->height;
 
-  src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
+  src_buf = g_slice_alloc (4 * total_src_pixels * sizeof (gfloat));
+  dst_buf = g_slice_alloc (4 * total_dst_pixels * sizeof (gfloat));
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  //for each pixel
-  base_pix = src_buf + 4 * o->strength;
+  current_pix = src_buf + 4*(o->strength + src_rect.width * o->strength);
   dst_pix = dst_buf;
   x = 0;
   y = 0;
   n_pixels = result->width * result->height;
-  bleed_length = o->strength;
+  bleed_max = 0;
+  bleed_index = 0;
   while (n_pixels--)
     {
-      /* need to check up to the max bleed length to see if there is a left edge
-       which bleeds to the current pixel and bleed approriately */
-
       gint i;
-      denominator = 1.0/(gfloat) bleed_length;;
-      for (i = 0; i < 4; i++)
-            dst_pix[i] = base_pix[i];
-      for (n = 0; n < bleed_length; n++)
-        {
-          target_pix = base_pix - 4 * n;
-          blend_pix = target_pix - 4 * 3;
-          if (x < 3 + n)
-            continue;
+      pair key = {x, y};
+      gint *bleed = g_hash_table_lookup (bleed_table, &key);
 
-          if (threshold_exceeded (blend_pix, target_pix, o->threshold))
+      for (i = 0; i < 4; i++)
+        dst_pix[i] = current_pix[i];
+
+      if (bleed)
+        {
+          gfloat blend_color[4];
+          gfloat blend_amount[4];
+          gfloat *blend_pix;
+
+          bleed_max = *bleed;
+          bleed_index = *bleed;
+          target_pix = current_pix;
+          blend_pix = current_pix - 12;
+          for (i = 0; i < 4; i++)
             {
-              gfloat blend_color[4];
-              gfloat blend_amount[4];
-              for (i = 0; i < 4; i++)
-                {
-                  blend_color[i] = blend_pix[i];
-                  blend_amount[i] = target_pix[i] - blend_pix[i];
-                  blend_color[i] += blend_amount[i] * (gfloat) n * denominator;
-                  dst_pix[i] = (2.0 * blend_color[i] + dst_pix[i])/3.0;
-                }
+              blend_amount[i] = target_pix[i] - blend_pix[i];
+              blend_color[i] = blend_pix[i] + blend_amount[i];
+              dst_pix[i] = (2.0 * blend_color[i] + dst_pix[i])/3.0;
             }
         }
-      dst_pix += 4;
-      /* update x and y coordinates */
+      else if (bleed_index > 0)
+        {
+          gfloat blend_color[4];
+          gfloat blend_amount[4];
+          gfloat *blend_pix;
+          bleed_index--;
+          blend_coefficient = 1.0 - ((gfloat) bleed_index)/(gfloat) bleed_max;
+          blend_pix = current_pix - 4 * (bleed_max - bleed_index) - 12;
+          target_pix = current_pix;
+          for (i = 0; i < 4; i++)
+            {
+              blend_amount[i] = target_pix[i] - blend_pix[i];
+              blend_color[i] = blend_pix[i] + blend_amount[i] * blend_coefficient;
+              dst_pix[i] = (2.0 * blend_color[i] + dst_pix[i])/3.0;
+            }
+        }
+
       x++;
-      base_pix += 4;
+      current_pix += 4;
+      dst_pix += 4;
       if (x >= result->width)
         {
+          bleed_max = 0;
+          bleed_index = 0;
           x = 0;
           y++;
-          base_pix += 4 * o->strength;
+          current_pix += 8 * o->strength;
         }
     }
-  gegl_buffer_set (output, result, 0,
+  gegl_buffer_set (output, result, 1,
                    babl_format ("RGBA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
-  g_slice_free1 (4 * total_pixels * sizeof (gfloat), dst_buf);
+  g_slice_free1 (4 * total_src_pixels * sizeof (gfloat), src_buf);
+  g_slice_free1 (4 * total_dst_pixels * sizeof (gfloat), dst_buf);
+
   return TRUE;
+}
+
+
+static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      g_hash_table_destroy (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
+  object_class->finalize   = finalize;
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
