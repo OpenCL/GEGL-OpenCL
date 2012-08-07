@@ -493,14 +493,6 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
       else
           self->in_holding->next = next_allocation;
 
-      if (self->out_offset != self->offset)
-      {
-        if (lseek (self->o, self->offset, SEEK_SET) == -1)
-          goto fail;
-
-        self->out_offset = self->offset;
-      }
-
       /* XXX: should promiscuosuly try to compress here as well,. if revisions
               are not matching..
        */
@@ -533,26 +525,14 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile *self,
   else
     {
       /* we're setting up for the first write */
-
       self->offset = self->next_pre_alloc; /* start writing header at end
                                             * of file, worry about writing
                                             * header inside free list later
                                             */
-      if (self->out_offset != self->offset)
-      {
-        if (lseek (self->o, self->offset, SEEK_SET) == -1)
-          goto fail;
-
-        self->out_offset = self->offset;
-      }
     }
   self->in_holding = block;
 
   return TRUE;
-fail:
-  g_warning ("failed to lseek() to 0x%x in %s: %s",
-             self->offset, self->path, g_strerror (errno));
-  return FALSE;
 }
 
 void
