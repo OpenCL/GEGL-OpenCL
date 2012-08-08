@@ -1186,16 +1186,13 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
                                    gint                 level,
                                    GeglAbyssPolicy      repeat_mode)
 {
-  GeglRectangle abyss          = {buffer->abyss.x + buffer->shift_x,
-                                  buffer->abyss.y + buffer->shift_y,
-                                  buffer->abyss.width,
-                                  buffer->abyss.height};
+  GeglRectangle abyss          = buffer->abyss;
   GeglRectangle abyss_factored = abyss;
   GeglRectangle roi_factored   = *roi;
   gint          factor         = 1<<level;
 
-  abyss_factored.x      /= factor;
-  abyss_factored.y      /= factor;
+  abyss_factored.x       = (buffer->shift_x + abyss.x) / factor;
+  abyss_factored.y       = (buffer->shift_y + abyss.y) / factor;
   abyss_factored.width  /= factor;
   abyss_factored.height /= factor;
 
