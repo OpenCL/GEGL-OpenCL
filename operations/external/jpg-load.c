@@ -152,8 +152,8 @@ gegl_jpg_load_get_bounding_box (GeglOperation *operation)
   if (status)
     {
       /*g_warning ("calc have rect of %s failed", o->path);*/
-      result.width  = 10;
-      result.height  = 10;
+      result.width  = 0;
+      result.height  = 0;
     }
   else
     {

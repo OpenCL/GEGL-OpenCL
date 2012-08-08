@@ -378,8 +378,8 @@ get_bounding_box (GeglOperation *operation)
 
   if (status)
     {
-      width=10;
-      height=10;
+      width = 0;
+      height = 0;
     }
 
   gegl_operation_set_format (operation, "output", format);
