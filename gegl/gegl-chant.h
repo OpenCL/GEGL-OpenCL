@@ -348,6 +348,7 @@ gegl_module_register (GTypeModule *module)
 #define gegl_chant_pointer(name, nick, blurb)
 #define gegl_chant_color(name, nick, def, blurb)
 #define gegl_chant_curve(name, nick, blurb)
+#define gegl_chant_seed(name, nick, blurb)
 #define gegl_chant_path(name, nick, blurb)
 #define gegl_chant_register_enum(enum_name) \
 typedef enum {
@@ -399,6 +400,7 @@ GType enum_name ## _get_type (void)               \
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 #undef gegl_chant_register_enum
 #undef enum_value
@@ -429,6 +431,7 @@ struct _GeglChantO
 #define gegl_chant_pointer(name, nick, blurb)                                   gpointer           name;
 #define gegl_chant_color(name, nick, def, blurb)                                GeglColor         *name;
 #define gegl_chant_curve(name, nick, blurb)                                     GeglCurve         *name;
+#define gegl_chant_seed(name, nick, blurb)                                      gint               name;
 #define gegl_chant_path(name, nick, blurb)                                      GeglPath          *name;\
                                                                                 guint path_changed_handler;
 
@@ -447,6 +450,7 @@ struct _GeglChantO
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 };
 
@@ -468,6 +472,7 @@ enum
 #define gegl_chant_pointer(name, nick, blurb)                                   PROP_##name,
 #define gegl_chant_color(name, nick, def, blurb)                                PROP_##name,
 #define gegl_chant_curve(name, nick, blurb)                                     PROP_##name,
+#define gegl_chant_seed(name, nick, blurb)                                      PROP_##name,
 #define gegl_chant_path(name, nick, blurb)                                      PROP_##name,
 
 #include GEGL_CHANT_C_FILE
@@ -485,6 +490,7 @@ enum
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
   PROP_LAST
 };
@@ -553,6 +559,10 @@ get_property (GObject      *gobject,
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
+#define gegl_chant_seed(name, nick, blurb)                    \
+    case PROP_##name:                                         \
+      g_value_set_int (value, properties->name);              \
+      break;
 #define gegl_chant_path(name, nick, blurb)                    \
     case PROP_##name:                                         \
       if (!properties->name)properties->name = gegl_path_new (); /* this feels ugly */\
@@ -574,6 +584,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -658,6 +669,10 @@ set_property (GObject      *gobject,
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
+#define gegl_chant_seed(name, nick, blurb)                            \
+    case PROP_##name:                                                 \
+      properties->name = g_value_get_int (value);                     \
+    break;
 #define gegl_chant_path(name, nick, blurb)                            \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
@@ -690,6 +705,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 
     default:
@@ -747,6 +763,7 @@ static void gegl_chant_destroy_notify (gpointer data)
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
+#define gegl_chant_seed(name, nick, blurb)
 #define gegl_chant_path(name, nick, blurb)          \
   if (properties->name)                             \
     {                                               \
@@ -769,6 +786,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 
   g_slice_free (GeglChantO, properties);
@@ -802,6 +820,7 @@ gegl_chant_constructor (GType                  type,
 #define gegl_chant_color(name, nick, def, blurb)              \
     if (properties->name == NULL) \
     {properties->name = gegl_color_new(def?def:"black");}
+#define gegl_chant_seed(name, nick, blurb)
 #define gegl_chant_path(name, nick, blurb)
 #define gegl_chant_curve(name, nick, blurb)
 
@@ -820,6 +839,7 @@ gegl_chant_constructor (GType                  type,
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 
   g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);
@@ -933,6 +953,13 @@ gegl_chant_class_intern_init (gpointer klass)
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT | \
                                                           GEGL_PARAM_PAD_INPUT)));
+#define gegl_chant_seed(name, nick, blurb)                                   \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   gegl_param_spec_seed (#name, nick, blurb, \
+                                                     (GParamFlags) (         \
+                                                     G_PARAM_READWRITE |     \
+                                                     G_PARAM_CONSTRUCT |     \
+                                                     GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_path(name, nick, blurb)                                 \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    gegl_param_spec_path (#name, nick, blurb,\
@@ -965,6 +992,7 @@ gegl_chant_class_intern_init (gpointer klass)
 #undef gegl_chant_pointer
 #undef gegl_chant_color
 #undef gegl_chant_curve
+#undef gegl_chant_seed
 #undef gegl_chant_path
 }
 

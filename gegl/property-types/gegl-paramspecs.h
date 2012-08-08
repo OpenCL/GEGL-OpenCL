@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 typedef struct _GeglParamSpecString GeglParamSpecString;
 typedef struct _GeglParamSpecDouble GeglParamSpecDouble;
 typedef struct _GeglParamSpecInt    GeglParamSpecInt;
-
+typedef struct _GeglParamSpecSeed   GeglParamSpecSeed;
 
 
 
@@ -221,6 +221,29 @@ void   gegl_param_spec_enum_exclude_value (GeglParamSpecEnum *espec,
                                            gint               value);
 
 
+
+/*
+ * GEGL_TYPE_PARAM_SEED
+ */
+
+#define GEGL_TYPE_PARAM_SEED           (gegl_param_seed_get_type ())
+#define GEGL_PARAM_SPEC_SEED(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_SEED, GeglParamSpecSeed))
+#define GEGL_IS_PARAM_SPEC_SEED(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_SEED))
+
+struct _GeglParamSpecSeed
+{
+  GParamSpecInt parent_instance;
+
+  gint          ui_minimum;
+  gint          ui_maximum;
+};
+
+GType        gegl_param_seed_get_type (void) G_GNUC_CONST;
+
+GParamSpec * gegl_param_spec_seed (const gchar *name,
+                                   const gchar *nick,
+                                   const gchar *blurb,
+                                   GParamFlags  flags);
 
 G_END_DECLS
 #endif  /*  __GEGL_PARAM_SPECS_H__  */

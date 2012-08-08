@@ -82,7 +82,7 @@ gegl_param_spec_double (const gchar *name,
 {
   GeglParamSpecDouble *pspec;
   GParamSpecDouble *dspec;
-  
+
   pspec = g_param_spec_internal (GEGL_TYPE_PARAM_DOUBLE,
                                  name, nick, blurb, flags);
   dspec = G_PARAM_SPEC_DOUBLE (pspec);
@@ -153,7 +153,7 @@ gegl_param_spec_int (const gchar *name,
 {
   GeglParamSpecInt *pspec;
   GParamSpecInt *ispec;
-  
+
 
   pspec = g_param_spec_internal (GEGL_TYPE_PARAM_INT,
                                  name, nick, blurb, flags);
@@ -617,4 +617,72 @@ gegl_param_spec_enum_exclude_value (GeglParamSpecEnum *espec,
 
   espec->excluded_values = g_slist_prepend (espec->excluded_values,
                                             GINT_TO_POINTER (value));
+}
+
+/*
+ * GEGL_TYPE_PARAM_SEED
+ */
+
+static void       gegl_param_seed_class_init (GParamSpecClass *klass);
+static void       gegl_param_seed_init       (GParamSpec      *pspec);
+
+GType
+gegl_param_seed_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL, NULL,
+        (GClassInitFunc) gegl_param_seed_class_init,
+        NULL, NULL,
+        sizeof (GeglParamSpecSeed),
+        0,
+        (GInstanceInitFunc) gegl_param_seed_init
+      };
+      type = g_type_register_static (G_TYPE_PARAM_INT,
+                                     "GeglParamseed", &info, 0);
+    }
+  return type;
+}
+
+static void
+gegl_param_seed_class_init (GParamSpecClass *klass)
+{
+  klass->value_type     = G_TYPE_INT;
+}
+
+static void
+gegl_param_seed_init (GParamSpec *pspec)
+{
+  GeglParamSpecSeed *gdpspec = GEGL_PARAM_SPEC_SEED (pspec);
+
+  gdpspec->ui_minimum = 0;
+  gdpspec->ui_maximum = G_MAXINT;
+}
+
+GParamSpec *
+gegl_param_spec_seed (const gchar *name,
+                      const gchar *nick,
+                      const gchar *blurb,
+                      GParamFlags  flags)
+{
+  GeglParamSpecSeed *pspec;
+  GParamSpecInt *ispec;
+
+
+  pspec = g_param_spec_internal (GEGL_TYPE_PARAM_SEED,
+                                 name, nick, blurb, flags);
+  ispec = G_PARAM_SPEC_INT (pspec);
+
+  ispec->minimum = 0;
+  ispec->maximum = G_MAXINT;
+  ispec->default_value = g_random_int_range(0, G_MAXINT);
+  pspec->ui_minimum = 0;
+  pspec->ui_maximum = G_MAXINT;
+
+  return G_PARAM_SPEC (pspec);
 }
