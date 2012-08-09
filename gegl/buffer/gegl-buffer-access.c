@@ -1190,12 +1190,16 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
   GeglRectangle abyss          = buffer->abyss;
   GeglRectangle abyss_factored = abyss;
   GeglRectangle roi_factored   = *roi;
-  gint          factor         = 1<<level;
+  const gint    factor         = 1 << level;
+  const gint    x1 = buffer->shift_x + abyss.x;
+  const gint    y1 = buffer->shift_y + abyss.y;
+  const gint    x2 = buffer->shift_x + abyss.x + abyss.width;
+  const gint    y2 = buffer->shift_y + abyss.y + abyss.height;
 
-  abyss_factored.x       = (buffer->shift_x + abyss.x) / factor;
-  abyss_factored.y       = (buffer->shift_y + abyss.y) / factor;
-  abyss_factored.width  /= factor;
-  abyss_factored.height /= factor;
+  abyss_factored.x      = (x1 + (x1 < 0 ? 1 - factor : 0)) / factor;
+  abyss_factored.y      = (y1 + (y1 < 0 ? 1 - factor : 0)) / factor;
+  abyss_factored.width  = (x2 + (x2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.x;
+  abyss_factored.height = (y2 + (y2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.y;
 
   roi_factored.x       = (buffer->shift_x + roi_factored.x) / factor;
   roi_factored.y       = (buffer->shift_y + roi_factored.y) / factor;
@@ -1299,161 +1303,73 @@ gegl_buffer_set (GeglBuffer          *buffer,
   gegl_buffer_unlock (buffer);
 }
 
-
-#if 0
-/*
- *  slow nearest neighbour resampler that seems to be
- *  completely correct.
- */
-
-static void
-resample_nearest (void   *dest_buf,
-                  void   *source_buf,
-                  gint    dest_w,
-                  gint    dest_h,
-                  gint    source_w,
-                  gint    source_h,
-                  gdouble offset_x,
-                  gdouble offset_y,
-                  gdouble scale,
-                  gint    bpp,
-                  gint    rowstride)
-{
-  gint x, y;
-
-  if (rowstride == GEGL_AUTO_ROWSTRIDE)
-     rowstride = dest_w * bpp;
-
-  for (y = 0; y < dest_h; y++)
-    {
-      gint    sy;
-      guchar *dst;
-      guchar *src_base;
-
-      sy = (y + offset_y) / scale;
-
-
-      if (sy >= source_h)
-        sy = source_h - 1;
-
-      dst      = ((guchar *) dest_buf) + y * rowstride;
-      src_base = ((guchar *) source_buf) + sy * source_w * bpp;
-
-      for (x = 0; x < dest_w; x++)
-        {
-          gint    sx;
-          guchar *src;
-          sx = (x + offset_x) / scale;
-
-          if (sx >= source_w)
-            sx = source_w - 1;
-          src = src_base + sx * bpp;
-
-          memcpy (dst, src, bpp);
-          dst += bpp;
-        }
-    }
-}
+#ifdef BOXFILTER_FLOAT
+typedef float            T;
+#define double2T(a)      (a)
+#define projectionT      babl_type ("float")
+#define T_components     babl_format_get_n_components (format)
+#else
+typedef guchar           T;
+#define double2T(a)      (lrint (a))
+#define projectionT      babl_type ("u8")
+#define T_components     bpp
 #endif
+#define EPSILON 1.e-6
 
-/* Optimized|obfuscated version of the nearest neighbour resampler
- * XXX: seems to contains some very slight inprecision in the rendering.
- */
 static void
-resample_nearest (void   *dest_buf,
-                  void   *source_buf,
-                  gint    dest_w,
-                  gint    dest_h,
-                  gint    source_w,
-                  gint    source_h,
-                  gdouble offset_x,
-                  gdouble offset_y,
-                  gdouble scale,
-                  gint    bpp,
-                  gint    rowstride)
+resample_nearest (guchar              *dst,
+                  const guchar        *src,
+                  const GeglRectangle *dst_rect,
+                  const GeglRectangle *src_rect,
+                  const gint           src_stride,
+                  const gdouble        scale,
+                  const gint           bpp,
+                  const gint           dst_stride)
 {
-  gint x, y;
-  guint xdiff, ydiff, xstart, sy;
+  int i, j;
 
-  if (rowstride == GEGL_AUTO_ROWSTRIDE)
-     rowstride = dest_w * bpp;
-
-  xdiff = 65536 / scale;
-  ydiff = 65536 / scale;
-  xstart = (offset_x * 65536) / scale;
-  sy = (offset_y * 65536) / scale;
-
-  for (y = 0; y < dest_h; y++)
+  for (i = 0; i < dst_rect->height; i++)
     {
-      guchar *dst;
-      guchar *src_base;
-      guint sx;
-      guint px = 0;
-      guchar *src;
+      const gdouble sy = (dst_rect->y + .5 + i) / scale - src_rect->y;
+      const gint    ii = floor (sy + EPSILON);
 
-      if (sy >= source_h << 16)
-        sy = (source_h - 1) << 16;
-
-      dst      = ((guchar *) dest_buf) + y * rowstride;
-      src_base = ((guchar *) source_buf) + (sy >> 16) * source_w * bpp;
-
-      sx = xstart;
-      src = src_base;
-
-      /* this is the loop that is actually properly optimized,
-       * portions of the setup is done for all the rows outside the y
-       * loop as well */
-      for (x = 0; x < dest_w; x++)
+      for (j = 0; j < dst_rect->width; j++)
         {
-          gint diff;
-          gint ssx = sx>>16;
-          if ( (diff = ssx - px) > 0)
-            {
-              if (ssx < source_w)
-                src += diff * bpp;
-              px += diff;
-            }
-          memcpy (dst, src, bpp);
-          dst += bpp;
-          sx += xdiff;
+          const gdouble sx = (dst_rect->x + .5 + j) / scale - src_rect->x;
+          const gint    jj = floor (sx + EPSILON);
+
+          memcpy (&dst[i * dst_stride + j * bpp],
+                  &src[ii * src_stride + jj * bpp],
+                  bpp);
         }
-      sy += ydiff;
     }
 }
 
 static inline void
-box_filter (guint          left_weight,
-            guint          center_weight,
-            guint          right_weight,
-            guint          top_weight,
-            guint          middle_weight,
-            guint          bottom_weight,
-            guint          sum,
-            const guchar **src,   /* the 9 surrounding source pixels */
-            guchar        *dest,
-            gint           components)
+box_filter (gdouble   left_weight,
+            gdouble   center_weight,
+            gdouble   right_weight,
+            gdouble   top_weight,
+            gdouble   middle_weight,
+            gdouble   bottom_weight,
+            const T **src,   /* the 9 surrounding source pixels */
+            T        *dest,
+            gint      components)
 {
-  /* NOTE: this box filter presumes pre-multiplied alpha, if there
-   * is alpha.
-   */
-   guint lt, lm, lb;
-   guint ct, cm, cb;
-   guint rt, rm, rb;
-
-   lt = left_weight * top_weight;
-   lm = left_weight * middle_weight;
-   lb = left_weight * bottom_weight;
-   ct = center_weight * top_weight;
-   cm = center_weight * middle_weight;
-   cb = center_weight * bottom_weight;
-   rt = right_weight * top_weight;
-   rm = right_weight * middle_weight;
-   rb = right_weight * bottom_weight;
+   const gdouble lt = left_weight * top_weight;
+   const gdouble lm = left_weight * middle_weight;
+   const gdouble lb = left_weight * bottom_weight;
+   const gdouble ct = center_weight * top_weight;
+   const gdouble cm = center_weight * middle_weight;
+   const gdouble cb = center_weight * bottom_weight;
+   const gdouble rt = right_weight * top_weight;
+   const gdouble rm = right_weight * middle_weight;
+   const gdouble rb = right_weight * bottom_weight;
 
 #define docomponent(i) \
-      dest[i] = (src[0][i] * lt + src[3][i] * lm + src[6][i] * lb + \
-                 src[1][i] * ct + src[4][i] * cm + src[7][i] * cb + \
-                 src[2][i] * rt + src[5][i] * rm + src[8][i] * rb) / sum
+      dest[i] = double2T (src[0][i] * lt + src[3][i] * lm + src[6][i] * lb + \
+                          src[1][i] * ct + src[4][i] * cm + src[7][i] * cb + \
+                          src[2][i] * rt + src[5][i] * rm + src[8][i] * rb)
   switch (components)
     {
       case 5: docomponent(4);
@@ -1466,100 +1382,43 @@ box_filter (guint          left_weight,
 }
 
 static void
-resample_boxfilter_u8 (void   *dest_buf,
-                       void   *source_buf,
-                       gint    dest_w,
-                       gint    dest_h,
-                       gint    source_w,
-                       gint    source_h,
-                       gdouble offset_x,
-                       gdouble offset_y,
-                       gdouble scale,
-                       gint    components,
-                       gint    rowstride)
+resample_boxfilter_T  (guchar              *dest_buf,
+                       const guchar        *source_buf,
+                       const GeglRectangle *dst_rect,
+                       const GeglRectangle *src_rect,
+                       const gint           s_rowstride,
+                       const gdouble        scale,
+                       const gint           components,
+                       const gint           d_rowstride)
 {
-  gint x, y;
-  gint iscale      = scale * 256;
-  gint s_rowstride = source_w * components;
-  gint d_rowstride = dest_w * components;
+  gdouble  left_weight, center_weight, right_weight;
+  gdouble  top_weight, middle_weight, bottom_weight;
+  const T *src[9];
+  gint     x, y;
 
-  gint          footprint_x;
-  gint          footprint_y;
-  guint         foosum;
-
-  guint         left_weight;
-  guint         center_weight;
-  guint         right_weight;
-
-  guint         top_weight;
-  guint         middle_weight;
-  guint         bottom_weight;
-
-  footprint_y = (1.0 / scale) * 256;
-  footprint_x = (1.0 / scale) * 256;
-  foosum = footprint_x * footprint_y;
-
-  if (rowstride != GEGL_AUTO_ROWSTRIDE)
-    d_rowstride = rowstride;
-
-  for (y = 0; y < dest_h; y++)
+  for (y = 0; y < dst_rect->height; y++)
     {
-      gint    sy;
-      gint    dy;
-      guchar *dst;
-      const guchar *src_base;
-      gint sx;
-      gint xdelta;
+      const gdouble  sy = (dst_rect->y + y + .5) / scale - src_rect->y;
+      const gint     ii = floor (sy);
+      T             *dst = (T*)(dest_buf + y * d_rowstride);
+      const guchar  *src_base = source_buf + ii * s_rowstride;
 
-      sy = ((y + offset_y) * 65536) / iscale;
+      top_weight    = MAX (0., .5 - scale * (sy - ii));
+      bottom_weight = MAX (0., .5 - scale * ((ii + 1 ) - sy));
+      middle_weight = 1. - top_weight - bottom_weight;
 
-      if (sy >= (source_h - 1) << 8)
-        sy = (source_h - 2) << 8;/* is this the right thing to do? */
-
-      dy = sy & 255;
-
-      dst      = ((guchar *) dest_buf) + y * d_rowstride;
-      src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
-
-      if (dy > footprint_y / 2)
-        top_weight = 0;
-      else
-        top_weight = footprint_y / 2 - dy;
-
-      if (0xff - dy > footprint_y / 2)
-        bottom_weight = 0;
-      else
-        bottom_weight = footprint_y / 2 - (0xff - dy);
-
-      middle_weight = footprint_y - top_weight - bottom_weight;
-
-      sx = (offset_x *65536) / iscale;
-      xdelta = 65536/iscale;
-
-      /* XXX: needs quite a bit of optimization */
-      for (x = 0; x < dest_w; x++)
+      for (x = 0; x < dst_rect->width; x++)
         {
-          gint          dx;
-          const guchar *src[9];
+          const gdouble  sx = (dst_rect->x + x + .5) / scale - src_rect->x;
+          const gint     jj = floor (sx);
 
-          /*sx = (x << 16) / iscale;*/
-          dx = sx & 255;
+          left_weight   = MAX (0., .5 - scale * (sx - jj));
+          right_weight  = MAX (0., .5 - scale * ((jj + 1) - sx));
+          center_weight = 1. - left_weight - right_weight;
 
-          if (dx > footprint_x / 2)
-            left_weight = 0;
-          else
-            left_weight = footprint_x / 2 - dx;
-
-          if (0xff - dx > footprint_x / 2)
-            right_weight = 0;
-          else
-            right_weight = footprint_x / 2 - (0xff - dx);
-
-          center_weight = footprint_x - left_weight - right_weight;
-
-          src[4] = src_base + (sx >> 8) * components;
-          src[1] = src[4] - s_rowstride;
-          src[7] = src[4] + s_rowstride;
+          src[4] = (const T*)src_base + jj * components;
+          src[1] = (const T*)(src_base - s_rowstride) + jj * components;
+          src[7] = (const T*)(src_base + s_rowstride) + jj * components;
 
           src[2] = src[1] + components;
           src[5] = src[4] + components;
@@ -1569,46 +1428,17 @@ resample_boxfilter_u8 (void   *dest_buf,
           src[3] = src[4] - components;
           src[6] = src[7] - components;
 
-          if ((sx >>8) - 1<0)
-            {
-              src[0]=src[1];
-              src[3]=src[4];
-              src[6]=src[7];
-            }
-          if ((sy >> 8) - 1 < 0)
-            {
-              src[0]=src[3];
-              src[1]=src[4];
-              src[2]=src[5];
-            }
-          if ((sx >>8) + 1 >= source_w)
-            {
-              src[2]=src[1];
-              src[5]=src[4];
-              src[8]=src[7];
-              break;
-            }
-          if ((sy >> 8) + 1 >= source_h)
-            {
-              src[6]=src[3];
-              src[7]=src[4];
-              src[8]=src[5];
-            }
-
           box_filter (left_weight,
                       center_weight,
                       right_weight,
                       top_weight,
                       middle_weight,
                       bottom_weight,
-                      foosum,
                       src,   /* the 9 surrounding source pixels */
                       dst,
                       components);
 
-
           dst += components;
-          sx += xdelta;
         }
     }
 }
@@ -1667,77 +1497,87 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
   else
     {
       gint          level       = 0;
-      gint          buf_width   = rect->width / scale;
-      gint          buf_height  = rect->height / scale;
+      gint          buf_width;
+      gint          buf_height;
       gint          bpp         = babl_format_get_bytes_per_pixel (format);
       GeglRectangle sample_rect;
       void         *sample_buf;
+      gint          x1 = floor (rect->x / scale + EPSILON);
+      gint          x2 = ceil ((rect->x + rect->width) / scale - EPSILON);
+      gint          y1 = floor (rect->y / scale + EPSILON);
+      gint          y2 = ceil ((rect->y + rect->height) / scale - EPSILON);
       gint          factor = 1;
-      gdouble       offset_x;
-      gdouble       offset_y;
-
-      sample_rect.x = floor(rect->x/scale);
-      sample_rect.y = floor(rect->y/scale);
-      sample_rect.width = buf_width;
-      sample_rect.height = buf_height;
+      gint          stride;
+      gint          offset = 0;
 
       while (scale <= 0.5)
         {
+          x1 = 0 < x1 ? x1 / 2 : (x1 - 1) / 2;
+          y1 = 0 < y1 ? y1 / 2 : (y1 - 1) / 2;
+          x2 = 0 < x2 ? (x2 + 1) / 2 : x2 / 2;
+          y2 = 0 < y2 ? (y2 + 1) / 2 : y2 / 2;
           scale  *= 2;
           factor *= 2;
           level++;
         }
 
-      buf_width  /= factor;
-      buf_height /= factor;
+      buf_width  = x2 - x1;
+      buf_height = y2 - y1;
 
       /* ensure we always have some data to sample from */
-      sample_rect.width  += factor * 2;
-      sample_rect.height += factor * 2;
-      buf_width          += 2;
-      buf_height         += 2;
+      if (scale != 1.0 && scale < 1.99 &&
+          babl_format_get_type (format, 0) == projectionT)
+        {
+          buf_width  += 2;
+          buf_height += 2;
+          offset = (buf_width + 1) * bpp;
+        }
 
-      offset_x = rect->x-floor(rect->x/scale) * scale;
-      offset_y = rect->y-floor(rect->y/scale) * scale;
+      sample_rect.x      = factor * x1;
+      sample_rect.y      = factor * y1;
+      sample_rect.width  = factor * (x2 - x1);
+      sample_rect.height = factor * (y2 - y1);
 
-      sample_buf = g_malloc (buf_width * buf_height * bpp);
-      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, sample_buf, GEGL_AUTO_ROWSTRIDE,
+      sample_buf = scale == 1.0 ? dest_buf : g_malloc0 (buf_height * buf_width * bpp);
+      stride     = scale == 1.0 ? rowstride : buf_width * bpp;
+
+      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, stride,
                                          format, level, repeat_mode);
-#if 1
-  /* slows testing of rendering code speed too much for now and
-   * no time to make a fast implementation
-   */
 
-      if (babl_format_get_type (format, 0) == babl_type ("u8")
-          && !(level == 0 && scale > 1.99))
+      if (scale == 1.0)
+        return;
+
+      if (rowstride == GEGL_AUTO_ROWSTRIDE)
+        rowstride = rect->width * bpp;
+
+      if (scale <= 1.99 && babl_format_get_type (format, 0) == projectionT)
         { /* do box-filter resampling if we're 8bit (which projections are) */
+          sample_rect.x      = x1 - 1;
+          sample_rect.y      = y1 - 1;
+          sample_rect.width  = x2 - x1 + 2;
+          sample_rect.height = y2 - y1 + 2;
 
-          /* XXX: use box-filter also for > 1.99 when testing and probably
-           * later, there are some bugs when doing so
-           */
-          resample_boxfilter_u8 (dest_buf,
+          resample_boxfilter_T  (dest_buf,
                                  sample_buf,
-                                 rect->width,
-                                 rect->height,
-                                 buf_width,
-                                 buf_height,
-                                 offset_x,
-                                 offset_y,
+                                 rect,
+                                 &sample_rect,
+                                 buf_width * bpp,
                                  scale,
-                                 bpp,
+                                 T_components,
                                  rowstride);
         }
       else
-#endif
         {
+          sample_rect.x      = x1;
+          sample_rect.y      = y1;
+          sample_rect.width  = x2 - x1;
+          sample_rect.height = y2 - y1;
+
           resample_nearest (dest_buf,
                             sample_buf,
-                            rect->width,
-                            rect->height,
-                            buf_width,
-                            buf_height,
-                            offset_x,
-                            offset_y,
+                            rect,
+                            &sample_rect,
+                            buf_width * bpp,
                             scale,
                             bpp,
                             rowstride);
