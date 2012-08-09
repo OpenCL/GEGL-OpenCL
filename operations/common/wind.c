@@ -30,6 +30,8 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 100.0, 10.0,
 gegl_chant_int (strength, _("Strength"), 1, 1000, 40,
                 _("Higher values increase the magnitude of the effect"))
 
+gegl_chant_seed (seed, _("Seed"), _("Random seed"))
+
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
@@ -112,10 +114,11 @@ calculate_bleed (GHashTable *h,
                  gfloat *data,
                  gfloat threshold,
                  gfloat max_length,
-                 GeglRectangle *rect)
+                 GeglRectangle *rect,
+                 gint seed)
 {
   gint x, y;
-
+  GRand *gr = g_rand_new_with_seed (seed);
   for (y = 0; y < rect->height; y++)
     {
       for (x = 0; x < rect->width - 3; x++)
@@ -130,7 +133,7 @@ calculate_bleed (GHashTable *h,
             {
               pair *k = g_new (pair, 1);
               gint *v = g_new (gint, 1);
-              gint bleed_length = 1 + (gint)(g_random_double () * max_length);
+              gint bleed_length = 1 + (gint)(g_rand_double (gr) * max_length);
 
               k->x = x;
               k->y = y;
@@ -140,6 +143,7 @@ calculate_bleed (GHashTable *h,
             }
         }
     }
+  g_rand_free (gr);
 }
 
 static void prepare (GeglOperation *operation)
@@ -206,7 +210,7 @@ process (GeglOperation       *operation,
       gfloat *data = (gfloat*) gegl_buffer_linear_open (input, NULL, NULL, babl_format ("RGBA float"));
 
       bleed_table = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
-      calculate_bleed (bleed_table, data, o->threshold, (gfloat) o->strength, whole_rect);
+      calculate_bleed (bleed_table, data, o->threshold, (gfloat) o->strength, whole_rect, o->seed);
       o->chant_data = bleed_table;
       gegl_buffer_linear_close (input, data);
     }
