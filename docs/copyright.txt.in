@@ -6,6 +6,9 @@ Public License] as published by the Free Software Foundation; either version 3
 of the Licenses, or (at your option) any later version. The library itself is
 licensed under LGPL while the sample commandline application and GUI binary
 gegl is licensed under GPL.
+GEGL depends on and ships with the link:http://code.google.com/p/poly2tri-c[Poly2Tri-C]
+library, which is also free software; you can redistribute it and/or modify it
+under the terms of the link:NEW-BSD[New BSD License].
 
 Contributors
 ~~~~~~~~~~~~
