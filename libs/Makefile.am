@@ -1,1 +1,1 @@
-SUBDIRS = rgbe
+SUBDIRS = rgbe poly2tri-c

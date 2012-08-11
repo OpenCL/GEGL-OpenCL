@@ -1,0 +1,13 @@
+========================================================================
+====  Poly2Tri-C: A library for generating, refining and rendering  ====
+====        2-Dimensional Constrained Delaunay Triangulations       ====
+========================================================================
+
+This is a minimal version of the Poly2Tri-C library, required to compile
+the seamless cloning operation. For more information, and in order to
+get the full library, see http://code.google.com/p/poly2tri-c
+
+Poly2Tri-C Version info:
+
+    CURRENT REVISION: b27c5b79df2ffa4e2cb37f9e5536831f16afb11b
+    CACHED ON: August 11th, 2012

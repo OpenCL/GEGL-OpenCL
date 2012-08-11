@@ -18,6 +18,4 @@ seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 
-if HAVE_P2TC
 op_LTLIBRARIES = seamless-clone.la seamless-clone-render.la seamless-clone-prepare.la seamless-clone-compose.la
-endif

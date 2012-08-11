@@ -1019,19 +1019,23 @@ AC_SUBST(UMFPACK_LIBS)
 # Check for poly2tri-c
 ######################
 
-AC_ARG_WITH(p2tc, AS_HELP_STRING([--without-p2tc], [build without poly2tri-c support]))
-
 have_p2tc="no"
-if test "x$with_p2tc" != "xno"; then
-  PKG_CHECK_MODULES(P2TC, poly2tri-c >= poly2tri-c_required_version,
-    have_p2tc="yes",
-    have_p2tc="no  (poly2tri-c not found)")
-fi
+PKG_CHECK_MODULES(P2TC, poly2tri-c >= poly2tri-c_required_version,
+  have_p2tc="yes",
+  have_p2tc="yes  (installed poly2tri-c not found, using local version)")
 
 AM_CONDITIONAL(HAVE_P2TC, test "$have_p2tc" = "yes")
 
 AC_SUBST(P2TC_CFLAGS)
 AC_SUBST(P2TC_LIBS)
+
+# If no poly2tri-c version is installed, we should use the local version
+# we have cached in the libs directory
+if test "x$have_p2tc" != "xyes"; then
+  AC_SUBST(P2TC_SRC_DIR, "`cd $srcdir; pwd`/libs/poly2tri-c")
+  AC_SUBST(P2TC_CFLAGS, "-I\"$P2TC_SRC_DIR\"")
+  AC_SUBST(P2TC_LIBS, "-L\"$P2TC_SRC_DIR/poly2tri-c\" -lpoly2tri-c")
+fi
 
 #######################
 # Check for other items
@@ -1098,6 +1102,13 @@ gegl/property-types/Makefile
 gegl/opencl/Makefile
 libs/Makefile
 libs/rgbe/Makefile
+libs/poly2tri-c/Makefile
+libs/poly2tri-c/poly2tri-c/Makefile
+libs/poly2tri-c/poly2tri-c/render/Makefile
+libs/poly2tri-c/poly2tri-c/p2t/sweep/Makefile
+libs/poly2tri-c/poly2tri-c/p2t/common/Makefile
+libs/poly2tri-c/poly2tri-c/p2t/Makefile
+libs/poly2tri-c/poly2tri-c/refine/Makefile
 operations/Makefile
 operations/core/Makefile
 operations/common/Makefile
