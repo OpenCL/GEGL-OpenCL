@@ -73,6 +73,9 @@ process (GeglOperation       *operation,
   gfloat      *in_buf, *aux_buf, *a, *b;
   guchar      *out_buf, *out;
 
+  if (aux == NULL)
+    return TRUE;
+
   in_buf  = (void *) gegl_buffer_linear_open (input, result, &rowstride_in, cielab);
   aux_buf = (void *) gegl_buffer_linear_open (aux, result, &rowstride_aux, cielab);
   out_buf = (void *) gegl_buffer_linear_open (output, result, &rowstride_out, babl_format ("R'G'B' u8"));
