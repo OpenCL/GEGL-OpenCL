@@ -33,7 +33,7 @@ gegl_chant_double (contrast, _("Contrast"),
                   _("The amount of contrast compression"))
 gegl_chant_double (saturation, _("Saturation"),
                   0.0, 2.0, 0.8,
-                  _("Global colour saturation factor"))
+                  _("Global color saturation factor"))
 gegl_chant_double (detail, _("Detail"),
                   1.0, 99.0, 1.0,
                   _("Level of emphasis on image gradient details"))
