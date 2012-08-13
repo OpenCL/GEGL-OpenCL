@@ -25,6 +25,9 @@
 gegl_chant_object (buffer, _("Buffer location"),
                    _("Write to an existing GeglBuffer"))
 
+gegl_chant_boolean (flush, _("Flush buffer"), TRUE,
+                    _("Flush buffer after writing"))
+
 #else
 
 #define GEGL_CHANT_TYPE_SINK
@@ -86,7 +89,9 @@ process (GeglOperation       *operation,
       else
         gegl_buffer_copy (input, result, output, result);
 
-      gegl_buffer_flush (output);
+      if (o->flush)
+        gegl_buffer_flush (output);
+
       gegl_node_emit_computed (operation->node, result);
     }
 
