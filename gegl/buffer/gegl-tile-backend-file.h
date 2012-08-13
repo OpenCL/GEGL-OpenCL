@@ -49,6 +49,7 @@ typedef enum
 typedef struct
 {
   GeglBufferTile *tile;
+  /* reference to the writer queue link of this entry */
   GList          *link;
 } GeglFileBackendEntry;
 

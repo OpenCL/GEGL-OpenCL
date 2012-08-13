@@ -24,7 +24,10 @@
  * the main gegl thread and the writer thread is performed using a
  * queue. The writer thread sleeps if the queue is empty. If an entry is
  * read and the tile is in the queue then its data is copied from the
- * queue instead of read from disk.
+ * queue instead of read from disk. There are two locks, queue_mutex and
+ * write_mutex. The first one is used to append to the queue or read from
+ * it, the second one to completely stop the writer thread from working
+ * (to remove/change queue entries).
  */
 
 #include "config.h"
@@ -352,12 +355,10 @@ gegl_tile_backend_file_entry_write (GeglTileBackendFile  *self,
                                     guchar               *source)
 {
   GeglFileBackendThreadParams *params;
-  gint    length     = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-  guchar *new_source = g_malloc (length);
+  gint    length = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
+  guchar *new_source;
 
   gegl_tile_backend_file_ensure_exist (self);
-
-  memcpy (new_source, source, length);
 
   if (entry->link)
     {
@@ -366,15 +367,16 @@ gegl_tile_backend_file_entry_write (GeglTileBackendFile  *self,
       if (entry->link)
         {
           params = (GeglFileBackendThreadParams *)entry->link->data;
-
-          g_free (params->source);
-          params->source = new_source;
+          memcpy (params->source, source, length);
           g_mutex_unlock (write_mutex);
           return;
         }
 
       g_mutex_unlock (write_mutex);
     }
+
+  new_source = g_malloc (length);
+  memcpy (new_source, source, length);
 
   params            = g_new0 (GeglFileBackendThreadParams, 1);
   params->operation = OP_WRITE;
@@ -473,9 +475,11 @@ gegl_tile_backend_file_file_entry_destroy (GeglFileBackendEntry *entry,
 
       if (entry->link)
         {
-          g_free (((GeglFileBackendThreadParams *)entry->link->data)->source);
-          g_free (entry->link->data);
+          GeglFileBackendThreadParams *queued_op = entry->link->data;
+          queued_op->file->pending_ops -= 1;
           g_queue_delete_link (&queue, entry->link);
+          g_free (queued_op->source);
+          g_free (queued_op);
         }
 
       g_mutex_unlock (write_mutex);
