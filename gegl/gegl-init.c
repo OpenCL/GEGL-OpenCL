@@ -187,13 +187,15 @@ gegl_init (gint    *argc,
   g_option_context_free (context);
 }
 
-static gchar *cmd_gegl_swap        = NULL;
-static gchar *cmd_gegl_cache_size  = NULL;
-static gchar *cmd_gegl_chunk_size  = NULL;
-static gchar *cmd_gegl_quality     = NULL;
-static gchar *cmd_gegl_tile_size   = NULL;
-static gchar *cmd_babl_tolerance   = NULL;
-static gchar *cmd_gegl_threads     = NULL;
+static gchar    *cmd_gegl_swap        = NULL;
+static gchar    *cmd_gegl_cache_size  = NULL;
+static gchar    *cmd_gegl_chunk_size  = NULL;
+static gchar    *cmd_gegl_quality     = NULL;
+static gchar    *cmd_gegl_tile_size   = NULL;
+static gchar    *cmd_babl_tolerance   = NULL;
+static gchar    *cmd_gegl_threads     = NULL;
+static gboolean *cmd_gegl_opencl      = NULL;
+static gint     *cmd_gegl_queue_limit = NULL;
 
 static const GOptionEntry cmd_entries[]=
 {
@@ -231,6 +233,16 @@ static const GOptionEntry cmd_entries[]=
      "gegl-threads", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_threads,
      N_("The number of concurrent processing threads to use"), "<threads>"
+    },
+    {
+      "gegl-use-opencl", 0, 0,
+      G_OPTION_ARG_NONE, &cmd_gegl_opencl,
+      N_("Use OpenCL"), NULL
+    },
+    {
+      "gegl-queue-limit", 0, 0,
+      G_OPTION_ARG_INT, &cmd_gegl_queue_limit,
+      N_("Maximum number of entries in the file tile backend's writer queue"), "<count>"
     },
     { NULL }
 };
@@ -481,6 +493,11 @@ gegl_post_parse_hook (GOptionContext *context,
     config->threads = atoi (cmd_gegl_threads);
   if (cmd_babl_tolerance)
     g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
+  /* don't override the environment variable */
+  if (g_getenv ("GEGL_USE_OPENCL") == NULL && cmd_gegl_opencl)
+    g_object_set (config, "use-opencl", cmd_gegl_opencl, NULL);
+  if (cmd_gegl_queue_limit)
+    g_object_set (config, "queue-limit", cmd_gegl_queue_limit, NULL);
 
 #ifdef GEGL_ENABLE_DEBUG
   {

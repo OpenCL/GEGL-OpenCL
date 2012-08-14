@@ -296,7 +296,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_int ("queue-limit",
                                                      "Queue limit",
                                                      "Maximum number of entries in the file tile backend's writer queue",
-                                                     1, G_MAXINT, 1000,
+                                                     2, G_MAXINT, 1000,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 }
