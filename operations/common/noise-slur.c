@@ -30,7 +30,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-//gegl_chant_int (random_seed, _("Random seed"),   1, 8, 2, _("Random seed"))
+gegl_chant_boolean (random_seed, _("Random Seed "), FALSE, _("to get a random seed"))
+
+gegl_chant_seed (seed, _("Seed"), _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),   0.0, 100.0, 3.0, _("Radomization"))
 
@@ -85,7 +87,11 @@ process (GeglOperation       *operation,
   gint k, b, i;
   gint total_pixels;
 
-  gr = g_rand_new ();
+  if (o->random_seed)
+    gr = g_rand_new();
+  else
+    gr = g_rand_new_with_seed (o->seed);
+
   tmp = gegl_buffer_new(result, babl_format ("RGBA float"));
 
   src_rect.x      = result->x - op_area->left;
