@@ -69,16 +69,20 @@ process (GeglOperation       *operation,
   gdouble      diffsum      = 0.0;
   gint         wrong_pixels = 0;
   const Babl*  cielab       = babl_format ("CIE Lab float");
-  gint         rowstride_in, rowstride_aux, rowstride_out, pixels, i;
+  const Babl*  srgb         = babl_format ("R'G'B' u8");
+  gint         pixels, i;
   gfloat      *in_buf, *aux_buf, *a, *b;
   guchar      *out_buf, *out;
 
   if (aux == NULL)
     return TRUE;
 
-  in_buf  = (void *) gegl_buffer_linear_open (input, result, &rowstride_in, cielab);
-  aux_buf = (void *) gegl_buffer_linear_open (aux, result, &rowstride_aux, cielab);
-  out_buf = (void *) gegl_buffer_linear_open (output, result, &rowstride_out, babl_format ("R'G'B' u8"));
+  in_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (cielab));
+  aux_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (cielab));
+  out_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (srgb));
+
+  gegl_buffer_get (input, result, 1.0, cielab, in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (aux, result, 1.0, cielab, aux_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   a   = in_buf;
   b   = aux_buf;
@@ -140,9 +144,11 @@ process (GeglOperation       *operation,
         out += 3;
       }
 
-  gegl_buffer_linear_close (input, in_buf);
-  gegl_buffer_linear_close (aux, aux_buf);
-  gegl_buffer_linear_close (output, out_buf);
+  gegl_buffer_set (output, result, 1.0, srgb, out_buf, GEGL_AUTO_ROWSTRIDE);
+
+  g_free (in_buf);
+  g_free (aux_buf);
+  g_free (out_buf);
 
   props->wrong_pixels   = wrong_pixels;
   props->max_diff       = max_diff;
@@ -167,7 +173,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
                                  "name"       , "gegl:image-compare",
-                                 "categories" , "misc",
+                                 "categories" , "programming",
                                  "description", _("Compares if input and aux buffers are "
                                                   "different. Results are saved in the "
                                                   "properties."),

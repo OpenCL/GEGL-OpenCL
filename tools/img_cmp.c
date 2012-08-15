@@ -1,4 +1,4 @@
-#include <gegl.h> 
+#include <gegl.h>
 #include <math.h>
 #include <string.h>
 
@@ -8,9 +8,10 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-  GeglBuffer *bufferA = NULL;
-  GeglBuffer *bufferB = NULL;
-  GeglBuffer *debug_buf = NULL;
+  GeglNode      *gegl, *imgA, *imgB, *comparison;
+  GeglRectangle  boundsA, boundsB;
+  gdouble        max_diff, avg_diff_wrong, avg_diff_total;
+  gint           wrong_pixels, total_pixels;
 
   g_thread_init (NULL);
   gegl_init (&argc, &argv);
@@ -24,162 +25,84 @@ main (gint    argc,
       return 1;
     }
 
-  {
-    GeglNode *graph, *sink;
-    graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &bufferA, NULL,
-                             gegl_node ("gegl:load", "path", argv[1], NULL)));
-    gegl_node_process (sink);
-    g_object_unref (graph);
-    if (!bufferA)
-      {
-        g_printerr ("Failed to open %s\n", argv[1]);
-        return 1;
-      }
+  gegl = gegl_node_new ();
+  imgA = gegl_node_new_child (gegl,
+                              "operation", "gegl:load",
+                              "path", argv[1],
+                              NULL);
+  imgB = gegl_node_new_child (gegl,
+                              "operation", "gegl:load",
+                              "path", argv[2],
+                              NULL);
 
-    graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &bufferB, NULL,
-                             gegl_node ("gegl:load", "path", argv[2], NULL)));
-    gegl_node_process (sink);
-    g_object_unref (graph);
-    if (!bufferB)
-      {
-        g_printerr ("Failed to open %s\n", argv[2]);
-        return 1;
-      }
-  }
+  boundsA = gegl_node_get_bounding_box (imgA);
+  boundsB = gegl_node_get_bounding_box (imgB);
+  total_pixels = boundsA.width * boundsA.height;
 
-  if (gegl_buffer_get_width (bufferA) != gegl_buffer_get_width (bufferB) ||
-      gegl_buffer_get_height (bufferA) != gegl_buffer_get_height (bufferB))
+  if (boundsA.width != boundsB.width || boundsA.height != boundsB.height)
     {
       g_printerr ("%s and %s differ in size\n", argv[1], argv[2]);
       g_printerr ("  %ix%i vs %ix%i\n",
-                  gegl_buffer_get_width (bufferA), gegl_buffer_get_height (bufferA),
-                  gegl_buffer_get_width (bufferB), gegl_buffer_get_height (bufferB));
+                  boundsA.width, boundsA.height, boundsB.width, boundsB.height);
       return 1;
     }
 
-  debug_buf = gegl_buffer_new (gegl_buffer_get_extent (bufferA), babl_format ("R'G'B' u8"));
-  
-   
+  comparison = gegl_node_create_child (gegl, "gegl:image-compare");
+  gegl_node_link (imgA, comparison);
+  gegl_node_connect_to (imgB, "output", comparison, "aux");
+  gegl_node_process (comparison);
+  gegl_node_get (comparison,
+                 "max diff", &max_diff,
+                 "avg-diff-wrong", &avg_diff_wrong,
+                 "avg-diff-total", &avg_diff_total,
+                 "wrong-pixels", &wrong_pixels,
+                 NULL);
 
-  {
-     gfloat *bufA, *bufB;
-     gfloat *a, *b;
-     guchar *debug, *d;
-     gint   rowstrideA, rowstrideB, dRowstride;
-     gint   pixels;
-     gint   wrong_pixels=0;
-     gint   i;
-     gdouble diffsum = 0.0;
-     gdouble max_diff = 0.0;
+  if (max_diff >= 0.1)
+    {
+      g_printerr ("%s and %s differ\n"
+                  "  wrong pixels   : %i/%i (%2.2f%%)\n"
+                  "  max Δe         : %2.3f\n"
+                  "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
+                  argv[1], argv[2],
+                  wrong_pixels, total_pixels,
+                  (wrong_pixels*100.0/total_pixels), max_diff,
+                  avg_diff_wrong, avg_diff_total);
 
-     pixels = gegl_buffer_get_pixel_count (bufferA);
+      if (max_diff > 1.5 &&
+          !strstr (argv[2], "broken"))
+        {
+          GeglNode *save;
+          gchar *debug_path = g_malloc (strlen (argv[2])+16);
 
-     bufA = (void*)gegl_buffer_linear_open (bufferA, NULL, &rowstrideA,
-                                            babl_format ("CIE Lab float"));
-     bufB = (void*)gegl_buffer_linear_open (bufferB, NULL, &rowstrideB,
-                                            babl_format ("CIE Lab float"));
-     debug = (void*)gegl_buffer_linear_open (debug_buf, NULL, &dRowstride, babl_format ("R'G'B' u8"));
+          memcpy (debug_path, argv[2], strlen (argv[2])+1);
+          memcpy (debug_path + strlen(argv[2])-4, "-diff.png", 11);
 
-     a = bufA;
-     b = bufB;
-     d = debug;
+          save = gegl_node_new_child (gegl,
+                                      "operation", "gegl:png-save",
+                                      "path", debug_path,
+                                      NULL);
+          gegl_node_link (comparison, save);
+          gegl_node_process (save);
 
-     for (i=0;i<pixels;i++)
-       {
-         gdouble diff = sqrt ( SQR(a[0]-b[0])+
-                               SQR(a[1]-b[1])+
-                               SQR(a[2]-b[2])
-                               /*+SQR(a[3]-b[3])*/);
-         if (diff>=0.01)
-           {
-             wrong_pixels++;
-             diffsum += diff;
-             if (diff > max_diff)
-               max_diff = diff;
-             d[0]=(diff/100.0 * 255);
-             d[1]=0;
-             d[2]=a[0]/100.0*255;
-           }
-         else
-           {
-             d[0]=a[0]/100.0*255;
-             d[1]=a[0]/100.0*255;
-             d[2]=a[0]/100.0*255;
-           }
-         a+=3;
-         b+=3;
-         d+=3;
-       }
 
-     a = bufA;
-     b = bufB;
-     d = debug;
+          /*gegl_graph (sink=gegl_node ("gegl:png-save",
+                                      "path", debug_path, NULL,
+                                      gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));*/
 
-     if (wrong_pixels)
-       for (i=0;i<pixels;i++)
-         {
-           gdouble diff = sqrt ( SQR(a[0]-b[0])+
-                                 SQR(a[1]-b[1])+
-                                 SQR(a[2]-b[2])
-                                 /*+SQR(a[3]-b[3])*/);
-           if (diff>=0.01)
-             {
-               d[0]=(100-a[0])/100.0*64+32;
-               d[1]=(diff/max_diff * 255);
-               d[2]=0;
-             }
-           else
-             {
-               d[0]=a[0]/100.0*255;
-               d[1]=a[0]/100.0*255;
-               d[2]=a[0]/100.0*255;
-             }
-           a+=3;
-           b+=3;
-           d+=3;
-         }
-
-     gegl_buffer_linear_close (bufferA, bufA);
-     gegl_buffer_linear_close (bufferB, bufB);
-     gegl_buffer_linear_close (debug_buf, debug);
-
-     if (max_diff >= 0.1)
-       {
-         g_printerr ("%s and %s differ\n"
-                     "  wrong pixels   : %i/%i (%2.2f%%)\n"
-                     "  max Δe         : %2.3f\n"
-                     "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
-                     argv[1], argv[2],
-                     wrong_pixels, pixels, (wrong_pixels*100.0/pixels),
-                     max_diff,
-                     diffsum/wrong_pixels,
-                     diffsum/pixels);
-         if (max_diff > 1.5 &&
-             !strstr (argv[2], "broken"))
-           {
-             GeglNode *sink;
-             gchar *debug_path = g_malloc (strlen (argv[2])+16);
-             memcpy (debug_path, argv[2], strlen (argv[2])+1);
-             memcpy (debug_path + strlen(argv[2])-4, "-diff.png", 11);
-             gegl_graph (sink=gegl_node ("gegl:png-save",
-                                 "path", debug_path, NULL,
-                                 gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));
-             gegl_node_process (sink);
-             return 1;
-           }
-         if (strstr (argv[2], "broken"))
-           g_print ("because the test is expected to fail ");
-         else
-           g_print ("because the error is small ");
-         g_print ("we'll say ");
-       }
-
-  }
+          return 1;
+        }
+      if (strstr (argv[2], "broken"))
+        g_print ("because the test is expected to fail ");
+      else
+        g_print ("because the error is small ");
+      g_print ("we'll say ");
+    }
 
   g_print ("%s and %s are identical\n", argv[1], argv[2]);
-  g_object_unref (debug_buf); 
-  g_object_unref (bufferA); 
-  g_object_unref (bufferB); 
+
+  g_object_unref (gegl);
+
   gegl_exit ();
   return 0;
 }
