@@ -42,6 +42,7 @@ typedef struct _GeglTileBackendFileClass GeglTileBackendFileClass;
 typedef enum
 {
   OP_WRITE,
+  OP_WRITE_BLOCK,
   OP_TRUNCATE,
   OP_SYNC
 } GeglFileBackendThreadOp;
@@ -49,8 +50,10 @@ typedef enum
 typedef struct
 {
   GeglBufferTile *tile;
-  /* reference to the writer queue link of this entry */
-  GList          *link;
+  /* reference to the writer queue links of this entry when writing
+     tile data or a GeglBufferBlock*/
+  GList          *tile_link;
+  GList          *block_link;
 } GeglFileBackendEntry;
 
 typedef struct
