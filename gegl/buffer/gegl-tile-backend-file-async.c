@@ -289,7 +289,7 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
       if (g_queue_get_length (&queue) < gegl_config ()->queue_limit)
         g_cond_signal (max_cond);
 
-      if (params->operation == OP_WRITE || params->operation == OP_WRITE_BLOCK)
+      if (params->source)
         g_free (params->source);
 
       g_free (params);
@@ -311,15 +311,20 @@ gegl_tile_backend_file_entry_read (GeglTileBackendFile  *self,
 
   gegl_tile_backend_file_ensure_exist (self);
 
-  if (entry->tile_link)
+  if (entry->tile_link || in_progress)
     {
+      GeglFileBackendThreadParams *queued_op = NULL;
       g_mutex_lock (mutex);
 
       if (entry->tile_link)
+        queued_op = entry->tile_link->data;
+      else if (in_progress && in_progress->entry == entry &&
+               in_progress->operation == OP_WRITE)
+        queued_op = in_progress;
+
+      if (queued_op)
         {
-          memcpy (dest,
-                  ((GeglFileBackendThreadParams *)entry->tile_link->data)->source,
-                  to_be_read);
+          memcpy (dest, queued_op->source, to_be_read);
           g_mutex_unlock (mutex);
 
           GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i from queue", entry->tile->x, entry->tile->y, entry->tile->z);
