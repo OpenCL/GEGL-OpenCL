@@ -52,6 +52,53 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
+/* Fast paths */
+static gboolean operation_process (GeglOperation        *operation,
+                                   GeglOperationContext *context,
+                                   const gchar          *output_prop,
+                                   const GeglRectangle  *result,
+                                   gint                  level)
+{
+  GeglOperationClass  *operation_class;
+  gpointer input, aux;
+  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+
+  /* get the raw values this does not increase the reference count */
+  input = gegl_operation_context_get_object (context, "input");
+  aux = gegl_operation_context_get_object (context, "aux");
+
+  /* pass the input/aux buffers directly through if they are alone*/
+  {
+    const GeglRectangle *in_extent = NULL;
+    const GeglRectangle *aux_extent = NULL;
+
+    if (input)
+      in_extent = gegl_buffer_get_abyss (input);
+
+    if ((!input ||
+        (aux && !gegl_rectangle_intersect (NULL, in_extent, result))))
+      {
+         gegl_operation_context_take_object (context, "output",
+                                             g_object_ref (aux));
+         return TRUE;
+      }
+    if (aux)
+      aux_extent = gegl_buffer_get_abyss (aux);
+
+    if (!aux ||
+        (input && !gegl_rectangle_intersect (NULL, aux_extent, result)))
+      {
+        gegl_operation_context_take_object (context, "output",
+                                            g_object_ref (input));
+        return TRUE;
+      }
+  }
+  /* chain up, which will create the needed buffers for our actual
+   * process function
+   */
+  return operation_class->process (operation, context, output_prop, result, level);
+}
+
 static gboolean
 process (GeglOperation       *op,
          void                *in_buf,
@@ -66,8 +113,8 @@ process (GeglOperation       *op,
   gfloat * GEGL_ALIGNED out = out_buf;
   gint    i;
 
-  if (aux==NULL)
-    return TRUE;
+  if(aux == NULL)
+     return TRUE;
 
   for (i = 0; i < n_pixels; i++)
     {
@@ -105,6 +152,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
   point_composer_class->process = process;
+  operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
   operation_class->compat_name = "gegl:exclusion";
