@@ -242,8 +242,21 @@ process (GeglOperation       *operation,
   while (n_pixels--)
     {
       gint i;
-      pair key = {x, y};
+      pair key = {x + result->x, y + result->y};
       gint *bleed = g_hash_table_lookup (bleed_table, &key);
+
+      if (x == 0) {
+        for (i = 0; i < o->strength; i++)
+          {
+            pair key = {result->x - i, y + result->y};
+            gint *bleed = g_hash_table_lookup (bleed_table, &key);
+            if (bleed) {
+              bleed_max = *bleed;
+              bleed_index = *bleed - i;
+              break;
+            }
+          }
+      }
 
       for (i = 0; i < 4; i++)
         dst_pix[i] = current_pix[i];
