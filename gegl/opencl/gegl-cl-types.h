@@ -28,10 +28,10 @@
 
 struct _GeglClTexture
 {
-  cl_mem data;
-  cl_image_format format;
-  gint width;
-  gint height;
+  cl_mem           data;
+  cl_image_format  format;
+  gint             width;
+  gint             height;
 };
 
 typedef struct _GeglClTexture GeglClTexture;

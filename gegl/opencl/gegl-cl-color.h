@@ -29,13 +29,26 @@ typedef enum
   GEGL_CL_COLOR_CONVERT       = 2
 } GeglClColorOp;
 
-void gegl_cl_color_compile_kernels(void);
+/** Compile and register OpenCL kernel for color conversion */
+void          gegl_cl_color_compile_kernels(void);
 
-gboolean gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes);
+/** Return TRUE if the Babl format is supported with OpenCL.
+ *  If present, returns the byte per pixel in *bytes
+ */
+gboolean      gegl_cl_color_babl (const Babl *buffer_format,
+                                  size_t     *bytes);
 
-GeglClColorOp gegl_cl_color_supported (const Babl *in_format, const Babl *out_format);
+/** Return TRUE if the convertion is OpenCL supported */
+GeglClColorOp gegl_cl_color_supported (const Babl *in_format,
+                                       const Babl *out_format);
 
-gboolean gegl_cl_color_conv (cl_mem in_tex, cl_mem aux_tex, const size_t size,
-                             const Babl *in_format, const Babl *out_format);
+/** Copy and convert size pixels from in_tex to aux_tex.
+ *  Return TRUE if succesfull.
+ */
+gboolean      gegl_cl_color_conv (cl_mem        in_tex,
+                                  cl_mem        aux_tex,
+                                  const size_t  size,
+                                  const Babl   *in_format,
+                                  const Babl   *out_format);
 
 #endif

@@ -39,49 +39,49 @@ static const Babl *format[CL_FORMAT_N];
 
 enum
 {
-CL_RGBAU8_TO_RGBAF        = 0,
-CL_RGBAF_TO_RGBAU8        = 1,
+  CL_RGBAU8_TO_RGBAF          = 0,
+  CL_RGBAF_TO_RGBAU8          = 1,
 
-CL_RGBAF_TO_RAGABAF       = 2,
-CL_RAGABAF_TO_RGBAF       = 3,
-CL_RGBAU8_TO_RAGABAF      = 4,
-CL_RAGABAF_TO_RGBAU8      = 5,
+  CL_RGBAF_TO_RAGABAF         = 2,
+  CL_RAGABAF_TO_RGBAF         = 3,
+  CL_RGBAU8_TO_RAGABAF        = 4,
+  CL_RAGABAF_TO_RGBAU8        = 5,
 
-CL_RGBAF_TO_RGBA_GAMMA_F  = 6,
-CL_RGBA_GAMMA_F_TO_RGBAF  = 7,
-CL_RGBAU8_TO_RGBA_GAMMA_F = 8,
-CL_RGBA_GAMMA_F_TO_RGBAU8 = 9,
+  CL_RGBAF_TO_RGBA_GAMMA_F    = 6,
+  CL_RGBA_GAMMA_F_TO_RGBAF    = 7,
+  CL_RGBAU8_TO_RGBA_GAMMA_F   = 8,
+  CL_RGBA_GAMMA_F_TO_RGBAU8   = 9,
 
-CL_RGBAF_TO_YCBCRAF       = 10,
-CL_YCBCRAF_TO_RGBAF       = 11,
-CL_RGBAU8_TO_YCBCRAF      = 12,
-CL_YCBCRAF_TO_RGBAU8      = 13,
+  CL_RGBAF_TO_YCBCRAF         = 10,
+  CL_YCBCRAF_TO_RGBAF         = 11,
+  CL_RGBAU8_TO_YCBCRAF        = 12,
+  CL_YCBCRAF_TO_RGBAU8        = 13,
 
-CL_RGBU8_TO_RGBAF         = 14,
-CL_RGBAF_TO_RGBU8         = 15,
+  CL_RGBU8_TO_RGBAF           = 14,
+  CL_RGBAF_TO_RGBU8           = 15,
 
-CL_YU8_TO_YF              = 16,
+  CL_YU8_TO_YF                = 16,
 
-CL_RGBAF_TO_YAF           = 17,
-CL_YAF_TO_RGBAF           = 18,
-CL_RGBAU8_TO_YAF          = 19,
-CL_YAF_TO_RGBAU8          = 20,
+  CL_RGBAF_TO_YAF             = 17,
+  CL_YAF_TO_RGBAF             = 18,
+  CL_RGBAU8_TO_YAF            = 19,
+  CL_YAF_TO_RGBAU8            = 20,
 
-CL_RGBAF_TO_RGBA_GAMMA_U8 = 21,
-CL_RGBA_GAMMA_U8_TO_RGBAF = 22,
+  CL_RGBAF_TO_RGBA_GAMMA_U8   = 21,
+  CL_RGBA_GAMMA_U8_TO_RGBAF   = 22,
 
-CL_RGBAF_TO_RGB_GAMMA_U8  = 23,
-CL_RGB_GAMMA_U8_TO_RGBAF  = 24,
+  CL_RGBAF_TO_RGB_GAMMA_U8    = 23,
+  CL_RGB_GAMMA_U8_TO_RGBAF    = 24,
 
-CL_RGBA_GAMMA_U8_TO_RAGABAF = 25,
-CL_RAGABAF_TO_RGBA_GAMMA_U8 = 26,
-CL_RGB_GAMMA_U8_TO_RAGABAF  = 27,
-CL_RAGABAF_TO_RGB_GAMMA_U8  = 28,
+  CL_RGBA_GAMMA_U8_TO_RAGABAF = 25,
+  CL_RAGABAF_TO_RGBA_GAMMA_U8 = 26,
+  CL_RGB_GAMMA_U8_TO_RAGABAF  = 27,
+  CL_RAGABAF_TO_RGB_GAMMA_U8  = 28,
 
-CL_RGBA_GAMMA_U8_TO_YAF = 29,
-CL_YAF_TO_RGBA_GAMMA_U8 = 30,
-CL_RGB_GAMMA_U8_TO_YAF  = 31,
-CL_YAF_TO_RGB_GAMMA_U8  = 32,
+  CL_RGBA_GAMMA_U8_TO_YAF     = 29,
+  CL_YAF_TO_RGBA_GAMMA_U8     = 30,
+  CL_RGB_GAMMA_U8_TO_YAF      = 31,
+  CL_YAF_TO_RGB_GAMMA_U8      = 32,
 };
 
 void
@@ -151,7 +151,8 @@ gegl_cl_color_compile_kernels(void)
 
 
 static gint
-choose_kernel (const Babl *in_format, const Babl *out_format)
+choose_kernel (const Babl *in_format,
+               const Babl *out_format)
 {
   gint kernel = -1;
 
@@ -223,7 +224,8 @@ choose_kernel (const Babl *in_format, const Babl *out_format)
 }
 
 gboolean
-gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
+gegl_cl_color_babl (const Babl *buffer_format,
+                    size_t     *bytes)
 {
   int i;
   gboolean supported_format = FALSE;
@@ -261,22 +263,26 @@ gegl_cl_color_babl (const Babl *buffer_format, size_t *bytes)
 }
 
 GeglClColorOp
-gegl_cl_color_supported (const Babl *in_format, const Babl *out_format)
+gegl_cl_color_supported (const Babl *in_format,
+                         const Babl *out_format)
 {
   if (in_format == out_format)
     return GEGL_CL_COLOR_EQUAL;
 
   if (choose_kernel (in_format, out_format) >= 0)
     return GEGL_CL_COLOR_CONVERT;
-  else
-    return GEGL_CL_COLOR_NOT_SUPPORTED;
+
+  return GEGL_CL_COLOR_NOT_SUPPORTED;
 }
 
 #define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
 
 gboolean
-gegl_cl_color_conv (cl_mem in_tex, cl_mem out_tex, const size_t size,
-                    const Babl *in_format, const Babl *out_format)
+gegl_cl_color_conv (cl_mem         in_tex,
+                    cl_mem         out_tex,
+                    const size_t   size,
+                    const Babl    *in_format,
+                    const Babl    *out_format)
 {
   int errcode;
 
