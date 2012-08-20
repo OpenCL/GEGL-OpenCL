@@ -20,6 +20,7 @@
 #include <gegl.h>
 #include <gegl-plugin.h>
 #include <string.h>
+#include <glib/gprintf.h>
 
 
 static GRegex   *regex, *exc_regex;
