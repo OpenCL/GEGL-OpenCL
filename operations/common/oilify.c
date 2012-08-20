@@ -40,7 +40,6 @@ gegl_chant_boolean (use_inten, _("Intensity Mode"), TRUE,
 
 #include "gegl-chant.h"
 #include <math.h>
-#include <stdlib.h>
 
 #define NUM_INTENSITIES       256
 

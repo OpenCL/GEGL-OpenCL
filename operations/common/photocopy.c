@@ -40,9 +40,7 @@ gegl_chant_double (white, _("Percent White"), 0.0, 1.0, 0.2,
 #define GEGL_CHANT_C_FILE       "photocopy.c"
 
 #include "gegl-chant.h"
-#include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
 
 #define THRESHOLD 0.75
 
