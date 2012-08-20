@@ -21,62 +21,34 @@
 
 #include "gegl-cl-types.h"
 
-#define CL_SAFE_CALL(func)                                          \
-func;                                                               \
-if (errcode != CL_SUCCESS)                                          \
-{                                                                   \
-  g_warning("OpenCL error in %s, Line %u in file %s\nError:%s",     \
-            #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
-}
+const char *      gegl_cl_errstring(cl_int err);
 
-typedef struct
-  {
-    gboolean is_accelerated;
-    cl_context ctx;
-    cl_platform_id platform;
-    cl_device_id device;
-    cl_command_queue cq;
-    cl_bool image_support;
-    size_t iter_height;
-    size_t iter_width;
-    cl_ulong max_mem_alloc;
-    cl_ulong local_mem_size;
+gboolean          gegl_cl_init (GError **error);
 
-    char platform_name   [1024];
-    char platform_version[1024];
-    char platform_ext    [1024];
-    char device_name     [1024];
-  }
-GeglClState;
+gboolean          gegl_cl_is_accelerated (void);
 
-const char *gegl_cl_errstring(cl_int err);
+cl_platform_id    gegl_cl_get_platform (void);
 
-gboolean gegl_cl_init (GError **error);
+cl_device_id      gegl_cl_get_device (void);
 
-gboolean gegl_cl_is_accelerated (void);
+cl_context        gegl_cl_get_context (void);
 
-cl_platform_id gegl_cl_get_platform (void);
+cl_command_queue  gegl_cl_get_command_queue (void);
 
-cl_device_id gegl_cl_get_device (void);
+cl_ulong          gegl_cl_get_local_mem_size (void);
 
-cl_context gegl_cl_get_context (void);
+size_t            gegl_cl_get_iter_width (void);
 
-cl_command_queue gegl_cl_get_command_queue (void);
-
-cl_ulong gegl_cl_get_local_mem_size (void);
-
-size_t gegl_cl_get_iter_width (void);
-
-size_t gegl_cl_get_iter_height (void);
+size_t            gegl_cl_get_iter_height (void);
 
 typedef struct
 {
-  cl_program program;
+  cl_program  program;
   cl_kernel  *kernel;
   size_t     *work_group_size;
 } GeglClRunData;
 
-GeglClRunData *gegl_cl_compile_and_build (const char *program_source,
+GeglClRunData *   gegl_cl_compile_and_build (const char *program_source,
                                              const char *kernel_name[]);
 
 #define GEGL_CL_CHUNK_SIZE 1024 * 1024

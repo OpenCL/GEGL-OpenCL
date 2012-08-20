@@ -109,6 +109,26 @@ const char *gegl_cl_errstring(cl_int err) {
   return strings[-err];
 }
 
+typedef struct
+{
+  gboolean         is_accelerated;
+  cl_context       ctx;
+  cl_platform_id   platform;
+  cl_device_id     device;
+  cl_command_queue cq;
+  cl_bool          image_support;
+  size_t           iter_height;
+  size_t           iter_width;
+  cl_ulong         max_mem_alloc;
+  cl_ulong         local_mem_size;
+
+  char platform_name   [1024];
+  char platform_version[1024];
+  char platform_ext    [1024];
+  char device_name     [1024];
+}
+GeglClState;
+
 static GeglClState cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
 static GHashTable *cl_program_hash = NULL;
 
@@ -352,6 +372,14 @@ gegl_cl_init (GError **error)
 
 #undef CL_LOAD_FUNCTION
 
+#define CL_SAFE_CALL(func)                                          \
+func;                                                               \
+if (errcode != CL_SUCCESS)                                          \
+{                                                                   \
+  g_warning("OpenCL error in %s, Line %u in file %s\nError:%s",     \
+            #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
+}
+
 /* XXX: same program_source with different kernel_name[], context or device
  *      will retrieve the same key
  */
@@ -420,3 +448,5 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
   return cl_data;
 }
+
+#undef CL_SAFE_CALL
