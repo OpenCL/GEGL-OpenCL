@@ -596,7 +596,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile  *self,
       params     = g_new0 (GeglFileBackendThreadParams, 1);
       new_source = g_malloc (length);
 
-      memcpy (new_source, self->in_holding, length);
+      memcpy (new_source, block, length);
 
       params->operation = OP_WRITE_BLOCK;
       params->length    = length;
