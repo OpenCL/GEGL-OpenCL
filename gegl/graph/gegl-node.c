@@ -1282,6 +1282,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     GSList   *old_pads        = NULL;
     GeglNode *input           = NULL;
     GeglNode *aux             = NULL;
+    GeglNode *aux2            = NULL;
 
     if (self->operation)
       g_object_unref (self->operation);
@@ -1304,6 +1305,7 @@ gegl_node_set_operation_object (GeglNode      *self,
       }
     input = gegl_node_get_producer (self, "input", NULL);
     aux   = gegl_node_get_producer (self, "aux", NULL);
+    aux2  = gegl_node_get_producer (self, "aux2", NULL);
 
     gegl_node_disconnect_sources (self);
     gegl_node_disconnect_sinks (self);
@@ -1323,6 +1325,8 @@ gegl_node_set_operation_object (GeglNode      *self,
       gegl_node_connect_from (self, "input", input, "output");
     if (aux)
       gegl_node_connect_from (self, "aux", aux, "output");
+    if (aux2)
+      gegl_node_connect_from (self, "aux2", aux2, "output");
     if (output)
       gegl_node_connect_to (self, "output", output, output_dest_pad);
 
