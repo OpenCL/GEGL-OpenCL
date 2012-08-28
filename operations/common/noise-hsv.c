@@ -85,7 +85,8 @@ randomize_value (gfloat     now,
   return new_val;
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("HSVA float"));
   gegl_operation_set_format (operation, "output", babl_format ("HSVA float"));
@@ -132,10 +133,10 @@ process (GeglOperation       *operation,
     if (o->value_distance > 0)
       value = randomize_value (value, 0.0, 1.0, FALSE, o->value_distance, o->holdness);
 
-      out_pixel[0] = hue;
-      out_pixel[1] = saturation;
-      out_pixel[2] = value;
-      out_pixel[3] = alpha;
+    out_pixel[0] = hue;
+    out_pixel[1] = saturation;
+    out_pixel[2] = value;
+    out_pixel[3] = alpha;
 
     in_pixel  += 4;
     out_pixel += 4;
