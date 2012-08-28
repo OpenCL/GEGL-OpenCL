@@ -46,21 +46,25 @@ typedef struct
   gint y;
 } pair;
 
-guint tuple_hash (gconstpointer v);
-gboolean tuple_equal (gconstpointer v1, gconstpointer v2);
-void get_pixel (gint x,
-                gint y,
-                gint buf_width,
-                gfloat* src_begin,
-                gfloat* dst);
+static guint     tuple_hash  (gconstpointer v);
+static gboolean  tuple_equal (gconstpointer v1,
+                              gconstpointer v2);
+static void      get_pixel   (gint    x,
+                              gint    y,
+                              gint    buf_width,
+                              gfloat *src_begin,
+                              gfloat *dst);
 
-guint tuple_hash (gconstpointer v)
+static guint
+tuple_hash (gconstpointer v)
 {
   const pair *data = v;
   return (g_int_hash (&data->x) ^ g_int_hash (&data->y));
 }
 
-gboolean tuple_equal (gconstpointer v1, gconstpointer v2)
+static gboolean
+tuple_equal (gconstpointer v1,
+             gconstpointer v2)
 {
   const pair *data1 = v1;
   const pair *data2 = v2;
@@ -68,11 +72,12 @@ gboolean tuple_equal (gconstpointer v1, gconstpointer v2)
           g_int_equal (&data1->y, &data2->y));
 }
 
-void get_pixel (gint x,
-                gint y,
-                gint buf_width,
-                gfloat* src_begin,
-                gfloat* dst)
+static void
+get_pixel (gint    x,
+           gint    y,
+           gint    buf_width,
+           gfloat *src_begin,
+           gfloat *dst)
 {
   gint b;
   gfloat* src = src_begin + 4*(x + buf_width*y);
@@ -110,12 +115,12 @@ threshold_exceeded (gfloat  *pixel1,
 }
 
 static void
-calculate_bleed (GHashTable *h,
-                 gfloat *data,
-                 gfloat threshold,
-                 gfloat max_length,
+calculate_bleed (GHashTable    *h,
+                 gfloat        *data,
+                 gfloat         threshold,
+                 gfloat         max_length,
                  GeglRectangle *rect,
-                 gint seed)
+                 gint           seed)
 {
   gint x, y;
   GRand *gr = g_rand_new_with_seed (seed);
@@ -146,7 +151,8 @@ calculate_bleed (GHashTable *h,
   g_rand_free (gr);
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
@@ -229,8 +235,13 @@ process (GeglOperation       *operation,
   src_buf = g_slice_alloc (4 * total_src_pixels * sizeof (gfloat));
   dst_buf = g_slice_alloc (4 * total_dst_pixels * sizeof (gfloat));
 
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (input,
+                   &src_rect,
+                   1.0,
+                   babl_format ("RGBA float"),
+                   src_buf,
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   current_pix = src_buf + 4*(o->strength + src_rect.width * o->strength);
   dst_pix = dst_buf;
@@ -307,9 +318,13 @@ process (GeglOperation       *operation,
           current_pix += 8 * o->strength;
         }
     }
-  gegl_buffer_set (output, result, 1,
+  gegl_buffer_set (output,
+                   result,
+                   1,
                    babl_format ("RGBA float"),
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
+                   dst_buf,
+                   GEGL_AUTO_ROWSTRIDE);
+
   g_slice_free1 (4 * total_src_pixels * sizeof (gfloat), src_buf);
   g_slice_free1 (4 * total_dst_pixels * sizeof (gfloat), dst_buf);
 
