@@ -27,8 +27,6 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_boolean (random_seed, _("Random Seed "), FALSE, _("to get a random seed"))
-
 gegl_chant_seed (seed, _("Seed"), _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),   0.0, 100.0, 3.0, _("Radomization"))
@@ -76,10 +74,8 @@ process (GeglOperation       *operation,
   in_pixel      = in_buf;
   out_pixel     = out_buf;
 
-  if (o->random_seed)
-    gr = g_rand_new();
-  else
-    gr = g_rand_new_with_seed (o->seed);
+
+  gr = g_rand_new_with_seed (o->seed);
 
   out_pix = out_pixel;
 
