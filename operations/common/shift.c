@@ -28,13 +28,13 @@ gegl_chant_int (shift, _("Shift"), 1, 200, 5,
 
 gegl_chant_seed (seed, _("Seed"), _("Random seed"))
 
-gegl_chant_register_enum (gegl_direction)
-  enum_value (GEGL_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_VERTICAL, "Vertical")
-gegl_chant_register_enum_end (GeglDirection)
+gegl_chant_register_enum (gegl_shift_direction)
+  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
+  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL, "Vertical")
+gegl_chant_register_enum_end (GeglShiftDirection)
 
-gegl_chant_enum (direction, _("Direction"), GeglDirection, gegl_direction,
-                 GEGL_HORIZONTAL, _("Shift direction"))
+gegl_chant_enum (direction, _("Direction"), GeglShiftDirection, gegl_shift_direction,
+                 GEGL_SHIFT_DIRECTION_HORIZONTAL, _("Shift direction"))
 
 #else
 
@@ -43,7 +43,8 @@ gegl_chant_enum (direction, _("Direction"), GeglDirection, gegl_direction,
 
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
@@ -51,19 +52,20 @@ static void prepare (GeglOperation *operation)
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->chant_data) {
-    g_array_free (o->chant_data, TRUE);
-    o->chant_data = NULL;
-  }
+  if (o->chant_data)
+    {
+      g_array_free (o->chant_data, TRUE);
+      o->chant_data = NULL;
+    }
 
-  if (o->direction == GEGL_HORIZONTAL)
+  if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
     {
       op_area->left   = o->shift;
       op_area->right  = o->shift;
       op_area->top    = 0;
       op_area->bottom = 0;
     }
-  else if (o->direction == GEGL_VERTICAL)
+  else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
     {
       op_area->top    = o->shift;
       op_area->bottom = o->shift;
@@ -125,11 +127,11 @@ process (GeglOperation       *operation,
 
           offsets = g_array_new (FALSE, FALSE, sizeof (gint));
 
-          if (o->direction == GEGL_HORIZONTAL)
+          if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
             {
               array_size = boundary->height;
             }
-          else if (o->direction == GEGL_VERTICAL)
+          else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
             {
               array_size = boundary->width;
             }
@@ -162,12 +164,12 @@ process (GeglOperation       *operation,
   while (n_pixels--)
     {
       /* select the desired input pixel */
-      if (o->direction == GEGL_HORIZONTAL)
+      if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
         {
           shift = g_array_index (offsets, gint, result->y + y);
           in_pixel = src_buf + 4*(src_rect.width * y + s + x + shift);
         }
-      else if (o->direction == GEGL_VERTICAL)
+      else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
         {
           shift = g_array_index (offsets, gint, result->x + x);
           in_pixel = src_buf + 4*(src_rect.width * (y + s + shift) + x);
