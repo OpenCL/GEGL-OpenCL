@@ -75,7 +75,8 @@ gauss (GRand *gr)
   return x;
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -110,7 +111,7 @@ process (GeglOperation       *operation,
   noise[3] = o->alpha;
 
   for (i=0; i<n_pixels; i++)
-      {
+  {
     for (b = 0; b < 4; b++)
     {
       if (b == 0 || o->independent || b == 3 )
@@ -159,7 +160,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:noise-rgb",
-      "categories", "noise", 
+      "categories", "noise",
       "description", _("Distort colors by random amounts."),
       NULL);
 }
