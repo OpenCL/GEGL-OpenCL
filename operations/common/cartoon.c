@@ -45,10 +45,10 @@ typedef struct {
 } Ramps;
 
 static void
-grey_blur_buffer (GeglBuffer *input,
-        gdouble mask_radius,
-        GeglBuffer **dest1,
-        GeglBuffer **dest2)
+grey_blur_buffer (GeglBuffer  *input,
+                  gdouble      mask_radius,
+                  GeglBuffer **dest1,
+                  GeglBuffer **dest2)
 {
   GeglNode *gegl, *image, *write1, *write2, *grey, *blur1, *blur2;
   gdouble radius, std_dev1, std_dev2;
@@ -98,11 +98,11 @@ grey_blur_buffer (GeglBuffer *input,
 }
 
 static gdouble
-compute_ramp (GeglBuffer *input,
-        GeglOperation *operation,
-        gdouble pct_black)
+compute_ramp (GeglBuffer    *input,
+              GeglOperation *operation,
+              gdouble        pct_black)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   GeglRectangle *whole_region;
   gint    n_pixels;
@@ -122,12 +122,12 @@ compute_ramp (GeglBuffer *input,
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
   sampler1 = gegl_buffer_sampler_new (dest1,
-                    babl_format ("Y' float"),
-                    GEGL_SAMPLER_LINEAR);
+                                      babl_format ("Y' float"),
+                                      GEGL_SAMPLER_LINEAR);
 
   sampler2 = gegl_buffer_sampler_new (dest2,
-                    babl_format ("Y' float"),
-                    GEGL_SAMPLER_LINEAR);
+                                      babl_format ("Y' float"),
+                                      GEGL_SAMPLER_LINEAR);
 
   n_pixels = whole_region->width * whole_region->height;
   memset (hist, 0, sizeof (int) * 100);
@@ -151,16 +151,16 @@ compute_ramp (GeglBuffer *input,
                         &pixel2,
                         GEGL_ABYSS_NONE);
 
-    if (pixel2 != 0)
-    {
-      diff = (gdouble) pixel1 / (gdouble) pixel2;
-
-      if (diff < 1.0)
+      if (pixel2 != 0)
       {
-        hist[(int) (diff * 100)] += 1;
-        count += 1;
+        diff = (gdouble) pixel1 / (gdouble) pixel2;
+
+        if (diff < 1.0)
+        {
+          hist[(int) (diff * 100)] += 1;
+          count += 1;
+        }
       }
-    }
 
       x++;
       if (x >= whole_region->x + whole_region->width)
@@ -190,11 +190,10 @@ compute_ramp (GeglBuffer *input,
 
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
-
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("Y'CbCrA float"));
@@ -222,10 +221,10 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBuffer *dest1;
-  GeglBuffer *dest2;
+  GeglBuffer  *dest1;
+  GeglBuffer  *dest2;
   GeglSampler *sampler1;
   GeglSampler *sampler2;
 
@@ -270,12 +269,12 @@ process (GeglOperation       *operation,
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
   sampler1 = gegl_buffer_sampler_new (dest1,
-                    babl_format ("Y' float"),
-                    GEGL_SAMPLER_LINEAR);
+                                      babl_format ("Y' float"),
+                                      GEGL_SAMPLER_LINEAR);
 
   sampler2 = gegl_buffer_sampler_new (dest2,
-                    babl_format ("Y' float"),
-                    GEGL_SAMPLER_LINEAR);
+                                      babl_format ("Y' float"),
+                                      GEGL_SAMPLER_LINEAR);
 
   x = result->x;
   y = result->y;
@@ -288,7 +287,7 @@ process (GeglOperation       *operation,
   while (n_pixels--)
     {
       gegl_sampler_get (sampler1,
-			            x,
+                        x,
                         y,
                         NULL,
                         &pixel1,
@@ -358,7 +357,7 @@ finalize (GObject *object)
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass               *object_class;
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
