@@ -45,11 +45,11 @@ gegl_chant_boolean (use_inten, _("Intensity Mode"), TRUE,
 
 /* Get the pixel from x, y offset from the center pixel src_pix */
 static void
-get_pixel (gint x,
-           gint y,
-           gint buf_width,
-           gfloat* src_begin,
-           gfloat* dst)
+get_pixel (gint    x,
+           gint    y,
+           gint    buf_width,
+           gfloat *src_begin,
+           gfloat *dst)
 {
   gint b;
   gfloat* src = src_begin + 4*(x + buf_width*y);
@@ -60,34 +60,34 @@ get_pixel (gint x,
 }
 
 static void
-get_pixel_inten (gint x,
-                 gint y,
-                 gint buf_width,
-                 gfloat* inten_begin,
-                 gfloat* dst)
+get_pixel_inten (gint    x,
+                 gint    y,
+                 gint    buf_width,
+                 gfloat *inten_begin,
+                 gfloat *dst)
 {
   *dst = *(inten_begin + (x + buf_width*y));
 }
 
 static void
-oilify_pixel (gint x,
-              gint y,
+oilify_pixel (gint           x,
+              gint           y,
               GeglRectangle *whole_rect,
-              gboolean use_inten,
-              gdouble radius,
-              gdouble exponent,
-              gint buf_width,
-              gfloat *src_buf,
-              gfloat *inten_buf,
-              gfloat *dst_pixel)
+              gboolean       use_inten,
+              gdouble        radius,
+              gdouble        exponent,
+              gint           buf_width,
+              gfloat        *src_buf,
+              gfloat        *inten_buf,
+              gfloat        *dst_pixel)
 {
-  gint hist[4][NUM_INTENSITIES];
+  gint   hist[4][NUM_INTENSITIES];
   gfloat cumulative_rgb[4][NUM_INTENSITIES];
-  gint hist_inten[NUM_INTENSITIES];
+  gint   hist_inten[NUM_INTENSITIES];
   gfloat mult_inten[NUM_INTENSITIES];
   gfloat temp_pixel[4];
   gfloat temp_inten_pixel;
-  gint ceil_radius = ceil (radius);
+  gint   ceil_radius = ceil (radius);
   gdouble radius_sq = radius*radius;
   gint i, j, b;
   gint hist_max[4];
@@ -204,7 +204,8 @@ oilify_pixel (gint x,
     }
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
