@@ -44,7 +44,8 @@ gegl_chant_int (repeat, _("Repeat"),   1, 100, 1, _("Repeat"))
 #include <math.h>
 #include <stdlib.h>
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area;
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -76,7 +77,6 @@ process (GeglOperation       *operation,
   gfloat *out_pixel, *in_pixel;
   gint n_pixels = result->width * result->height;
   gint width  = result->width;
-  gint height = result->height;
   GeglRectangle src_rect;
   GRand    *gr;
   gint k, b, i;
@@ -165,7 +165,7 @@ process (GeglOperation       *operation,
 
   }
 
-   gegl_buffer_copy(tmp, NULL, output, NULL);
+  gegl_buffer_copy(tmp, NULL, output, NULL);
 
   g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
   g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
@@ -176,12 +176,9 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
