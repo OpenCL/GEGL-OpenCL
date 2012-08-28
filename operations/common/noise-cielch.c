@@ -44,9 +44,9 @@ static gdouble
 randomize_value (gdouble     now,
                  gdouble     min,
                  gdouble     max,
-                 gboolean   wraps_around,
+                 gboolean    wraps_around,
                  gdouble     rand_max,
-                 gint       holdness)
+                 gint        holdness)
 {
   gint    flag, i;
   gdouble rand_val, new_val, steps;
@@ -83,7 +83,8 @@ randomize_value (gdouble     now,
   return new_val;
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input" , babl_format ("CIE LCH(ab) alpha double"));
   gegl_operation_set_format (operation, "output", babl_format ("CIE LCH(ab) alpha double"));
@@ -128,10 +129,10 @@ process (GeglOperation       *operation,
     if (o->lightness_distance > 0)
       lightness = randomize_value (lightness, 0.0, 100.0, FALSE, o->lightness_distance, o->holdness);
 
-      out_pixel[0] = lightness;
-      out_pixel[1] = chroma;
-      out_pixel[2] = hue;
-      out_pixel[3] = alpha;
+    out_pixel[0] = lightness;
+    out_pixel[1] = chroma;
+    out_pixel[2] = hue;
+    out_pixel[3] = alpha;
 
     in_pixel  += 4;
     out_pixel += 4;
