@@ -44,7 +44,8 @@ gegl_chant_int (repeat, _("Repeat"),   1, 100, 1, _("Repeat"))
 #include <math.h>
 #include <stdlib.h>
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input" , babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
