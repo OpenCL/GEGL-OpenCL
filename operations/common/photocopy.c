@@ -54,9 +54,9 @@ typedef struct {
 } Ramps;
 
 static void
-grey_blur_buffer (GeglBuffer *input,
-                  gdouble sharpness,
-                  gdouble mask_radius,
+grey_blur_buffer (GeglBuffer  *input,
+                  gdouble      sharpness,
+                  gdouble      mask_radius,
                   GeglBuffer **dest1,
                   GeglBuffer **dest2)
 {
@@ -105,10 +105,10 @@ grey_blur_buffer (GeglBuffer *input,
 }
 
 static gdouble
-calculate_threshold (gint *hist,
-                     gdouble pct,
-                     gint count,
-                     gint under_threshold)
+calculate_threshold (gint    *hist,
+                     gdouble  pct,
+                     gint     count,
+                     gint     under_threshold)
 {
   gint    sum;
   gint    i;
@@ -133,15 +133,15 @@ calculate_threshold (gint *hist,
 }
 
 static void
-compute_ramp (GeglBuffer *input,
+compute_ramp (GeglBuffer    *input,
               GeglOperation *operation,
-              gdouble pct_black,
-              gdouble pct_white,
-              gint under_threshold,
-              gdouble *threshold_black,
-              gdouble *threshold_white)
+              gdouble        pct_black,
+              gdouble        pct_white,
+              gint           under_threshold,
+              gdouble       *threshold_black,
+              gdouble       *threshold_white)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   GeglRectangle *whole_region;
   gint    n_pixels;
@@ -215,11 +215,10 @@ compute_ramp (GeglBuffer *input,
   *threshold_white = calculate_threshold (hist2, pct_white, count, 1);
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
-
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("Y float"));
