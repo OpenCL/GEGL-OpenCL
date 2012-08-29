@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-08-28 13:35+0000\n"
-"PO-Revision-Date: 2012-08-28 23:31+0100\n"
-"Last-Translator: filmsi\n"
+"PO-Revision-Date: 2012-08-29 09:37+0100\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -76,9 +76,9 @@ msgstr ""
 "\n"
 "     -x, --xml       uporabi xml iz sledečega parametra\n"
 "\n"
-"     --dot           izpiši opis grafaa graphviz\n"
+"     --dot           izpiši opis grafa graphviz\n"
 "\n"
-"     -o, --output    izpiši tvorjeno sliko v imenovano datoteko, vrsta\n"
+"     -o, --output    izpiši ustvarjeno sliko v imenovano datoteko, vrsta\n"
 "                     je odvisna od končnice datoteke.\n"
 "\n"
 "     -p              povečaj števce sličic raznih elementov, ko je\n"
@@ -162,7 +162,7 @@ msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
 #: ../gegl/gegl-init.c:215
 msgid "How much memory to (approximately) use for caching imagery"
-msgstr "Koliko pomnilnika (približno) uporabiti za medpomnenje podob"
+msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
 #: ../gegl/gegl-init.c:220
 msgid "Default size of tiles in GeglBuffers"
@@ -291,7 +291,7 @@ msgstr "Spremeni raven svetlobe in kontrast."
 #: ../operations/common/buffer-sink.c:25
 #: ../operations/common/write-buffer.c:25
 msgid "Buffer location"
-msgstr "Mesto izravnalnika"
+msgstr "Mesto medpomnilnika"
 
 #: ../operations/common/buffer-sink.c:26
 msgid "The location where to store the output GeglBuffer"
@@ -303,16 +303,16 @@ msgstr "Zapis babl"
 
 #: ../operations/common/buffer-sink.c:28
 msgid "The babl format of the output GeglBuffer, NULL to use input buffer format"
-msgstr "Zapis babl izhoda GeglBuffer, NULL za uporabo vhodnega zapisa izravnalnika"
+msgstr "Zapis babl izhoda GeglBuffer, NULL za uporabo vhodnega zapisa medpomnilnika"
 
 #: ../operations/common/buffer-sink.c:83
 #: ../operations/common/write-buffer.c:132
 msgid "A GEGL buffer destination surface."
-msgstr "Ciljna ploskev izravnalnika GEGL."
+msgstr "Ciljna ploskev medpomnilnika GEGL."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
-msgstr "Vhodni izravnalnik"
+msgstr "Vhodni medpomnilnika"
 
 #: ../operations/common/buffer-source.c:26
 msgid "The GeglBuffer to load into the pipeline"
@@ -449,7 +449,7 @@ msgstr "Barva upodabljanja (privzeto črna, 'black')"
 
 #: ../operations/common/color.c:88
 msgid "Generates a buffer entirely filled with the specified color, crop it to get smaller dimensions."
-msgstr "Tvori izravnalnik, povsem zapolnjen z navedeno barvo, obrežite ga za manjše mere."
+msgstr "Ustvari medpomnilnika, povsem zapolnjen z navedeno barvo, obrežite ga za manjše mere."
 
 #: ../operations/common/color-reduction.c:33
 msgid "Red bits"
@@ -562,7 +562,7 @@ msgstr "Naslov za izhodno okno."
 
 #: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
-msgstr "Prikaži vhodni izravnalnik v oknu."
+msgstr "Prikaži vhodni medpomnilnik v oknu."
 
 #: ../operations/common/dot.c:26
 #: ../operations/common/pixelize.c:25
@@ -622,7 +622,7 @@ msgstr "Navpični odmik sence"
 
 #: ../operations/common/dropshadow.c:82
 msgid "Creates a dropshadow effect on the input buffer"
-msgstr "Ustvari učinek padle sence na vhodnem izravnalniku"
+msgstr "Ustvari učinek padle sence na vhodnem medpomnilniku"
 
 #: ../operations/common/edge-laplace.c:521
 msgid "High-resolution edge detection"
@@ -974,7 +974,7 @@ msgstr "Povprečna razlika med vsemi slikovnimi točkami."
 
 #: ../operations/common/image-compare.c:177
 msgid "Compares if input and aux buffers are different. Results are saved in the properties."
-msgstr "Primerja, če se izravnalnika vhoda in izhoda razlikujeta. Rezultate shranite v nastavitvah."
+msgstr "Primerja, če se medpomnilnika vhoda in izhoda razlikujeta. Rezultati so shranjeni v nastavitvah."
 
 #: ../operations/common/introspect.c:26
 msgid "Node"
@@ -1171,7 +1171,7 @@ msgstr "Notranje uporabljeni vzorčevalnik"
 
 #: ../operations/common/map-absolute.c:148
 msgid "sample input with an auxiliary buffer that contain absolute source coordinates"
-msgstr "Vzorči vhod s pomožnim izravnalnikom, ki vsebuje absolutne izvorne koordinate"
+msgstr "Vzorči vhod s pomožnim medpomnilnikom, ki vsebuje absolutne izvorne koordinate"
 
 #: ../operations/common/map-relative.c:23
 msgid "Scaling"
@@ -1183,7 +1183,7 @@ msgstr "Faktor spremembe merila razmestitve, nakaže, v kakšni meri prostorska 
 
 #: ../operations/common/map-relative.c:173
 msgid "sample input with an auxiliary buffer that contain relative source coordinates"
-msgstr "Vzorči vhod s pomožnim izravnalnikom, ki vsebuje relativne izvorne koordinate"
+msgstr "Vzorči vhod s pomožnim medpomnilnikom, ki vsebuje relativne izvorne koordinate"
 
 #: ../operations/common/matting-global.c:26
 msgid "Number of iterations"
@@ -1370,7 +1370,7 @@ msgstr "Ponovitve"
 
 #: ../operations/common/noise.c:111
 msgid "Perlin noise generator"
-msgstr "Tvornik Perlinovega šuma"
+msgstr "Ustvarjalnik Perlinovega šuma"
 
 #: ../operations/common/noise-reduction.c:26
 #: ../operations/workshop/warp.c:35
@@ -1383,7 +1383,7 @@ msgstr "S koliko ponovitvami naj se izvede algoritem"
 
 #: ../operations/common/opacity.c:25
 msgid "Global opacity value that is always used on top of the optional auxiliary input buffer."
-msgstr "Splošna raven prekrivnosti, ki je vedno uporabljan na vrhu neobveznega pomožnega vhodnega izravnalnika."
+msgstr "Splošna raven prekrivnosti, ki je vedno uporabljan na vrhu neobveznega pomožnega vhodnega medpomnilnika."
 
 #: ../operations/common/opacity.c:153
 msgid "Weights the opacity of the input both the value of the aux input and the global value property."
@@ -1589,7 +1589,7 @@ msgstr "Ohrani tlakovalnost"
 
 #: ../operations/common/ripple.c:175
 msgid "Transform the buffer with a ripple pattern"
-msgstr "Preoblikuj izravnalnik z valovitim vzorcem"
+msgstr "Preoblikuj medpomnilnik z valovitim vzorcem"
 
 #: ../operations/common/save.c:25
 msgid "Path of file to save."
@@ -1626,7 +1626,7 @@ msgstr "Prostorsko časovna ovojnica, podobna Retinex, s stohastičnim vzorčenj
 
 #: ../operations/common/stretch-contrast.c:162
 msgid "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that make poor use of the available contrast (little contrast, very dark, or very bright images)."
-msgstr "Spremeni merilo komponent izravnalnika, da ustrezajo obsegu 0,0-1,0. S tem se izboljšajo slike, ki slabo izkoriščajo kontrast, ki je na voljo (nizko kontrastne, zelo temne ali zelo svetle slike)."
+msgstr "Spremeni merilo komponent medpomnilnika, da ustrezajo obsegu 0,0-1,0. S tem se izboljšajo slike, ki slabo izkoriščajo kontrast, ki je na voljo (nizko kontrastne, zelo temne ali zelo svetle slike)."
 
 #: ../operations/common/svg-huerotate.c:27
 #: ../operations/common/svg-luminancetoalpha.c:27
@@ -1667,7 +1667,7 @@ msgstr "Prag"
 
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
-msgstr "Splošna raven praga (uporabljena, ko ni pomožnega vhodnega izravnalnika)."
+msgstr "Splošna raven praga (uporabljena, ko ni pomožnega vhodnega medpomnilnika)."
 
 #: ../operations/common/threshold.c:123
 msgid "Thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input."
@@ -1687,7 +1687,7 @@ msgstr "Merilo, jakost ali učinek"
 
 #: ../operations/common/unsharp-mask.c:73
 msgid "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)"
-msgstr "Izvede neostro masko na vhodnem izravnalniku (izostri sliko z dodajanje lažnih Machovih trakov okoli robov)"
+msgstr "Izvede neostro masko na vhodnem medpomnilniku (izostri sliko z dodajanje lažnih Machovih trakov okoli robov)"
 
 #: ../operations/common/value-invert.c:190
 msgid "Inverts just the value component, the result is the corresponding `inverted' image."
@@ -1776,7 +1776,7 @@ msgstr "Omeji deformacijo v območju slike."
 
 #: ../operations/common/waves.c:169
 msgid "Transform the buffer with waves"
-msgstr "Preoblikuj izravnalnik z valovi"
+msgstr "Preoblikuj medpomnilnik z valovi"
 
 #: ../operations/common/weighted-blend.c:25
 #: ../operations/generated/add.c:29
@@ -1807,11 +1807,11 @@ msgstr "Zapiši v obstoječi GeglBuffer"
 #: ../operations/common/write-buffer.c:28
 #| msgid "Input buffer"
 msgid "Flush buffer"
-msgstr "Počisti izravnalnik"
+msgstr "Počisti medpomnilnik"
 
 #: ../operations/common/write-buffer.c:29
 msgid "Flush buffer after writing"
-msgstr "Počisti izravnalnik po pisanju"
+msgstr "Počisti medpomnilnik po pisanju"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -1823,7 +1823,7 @@ msgstr "Sklicni ID, uporabljen kot vhod (za uporabo v XML)."
 
 #: ../operations/core/clone.c:110
 msgid "Clone a buffer"
-msgstr "Kloniraj izravnalnik"
+msgstr "Kloniraj medpomnilnik"
 
 #: ../operations/core/convert-format.c:28
 msgid "Output format"
@@ -1839,7 +1839,7 @@ msgstr "Pretvori podatke v navedeno obliko"
 
 #: ../operations/core/crop.c:194
 msgid "Crop a buffer"
-msgstr "Obreži izravnalnik"
+msgstr "Obreži medpomnilnik"
 
 #: ../operations/core/nop.c:72
 msgid "No operation (can be used as a routing point)"
@@ -1969,7 +1969,7 @@ msgstr "Ustvari sivinsko (monokromatično) sliko"
 
 #: ../operations/external/jpg-save.c:192
 msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
-msgstr "Shranjevalnik slik JPEG (preide izravnalnik, stranski učinek je shranjevanje)."
+msgstr "Shranjevalnik slik JPEG (preide medpomnilnik, stranski učinek je shranjevanje)."
 
 #: ../operations/external/matting-levin.c:25
 msgid "Epsilon"
@@ -2096,7 +2096,7 @@ msgstr "Upodobi potezo čopiča"
 
 #: ../operations/external/pixbuf.c:25
 msgid "Pixbuf"
-msgstr "Medpomnilnik slik. točk"
+msgstr "Medpomnilnik sličic"
 
 #: ../operations/external/pixbuf.c:25
 msgid "GdkPixbuf to use"
@@ -2137,7 +2137,7 @@ msgstr "8 in 16 sta med trenutno podprtimi vrednostmi."
 
 #: ../operations/external/png-save.c:233
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
-msgstr "Shranjevalnik slik PNG (preide izravnalnik, stranski učinek je shranjevanje)."
+msgstr "Shranjevalnik slik PNG (preide medpomnilnik, stranski učinek je shranjevanje)."
 
 #: ../operations/external/ppm-load.c:306
 msgid "PPM image loader."
@@ -2161,7 +2161,7 @@ msgstr "Shranjevalnik slik RGBE (zapis Radiance HDR)"
 
 #: ../operations/external/save-pixbuf.c:28
 msgid "Pixbuf location"
-msgstr "Mesto Pixbuf"
+msgstr "Mesto medpomnilnika sličic"
 
 #: ../operations/external/save-pixbuf.c:29
 msgid "The location where to store the output GdkPixbuf."
@@ -2177,7 +2177,7 @@ msgstr "Ikona za izhodno okno"
 
 #: ../operations/external/sdl-display.c:181
 msgid "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues)."
-msgstr "Prikaže vhodni izravnalnik v oknu SDL (omejeno na en prikaz op/postopka zaradi težav z izvedbo SDL)"
+msgstr "Prikaže vhodni medpomnilnik v oknu SDL (omejeno na en prikaz op/postopka zaradi težav z izvedbo SDL)"
 
 #: ../operations/external/svg-load.c:26
 msgid "Path to SVG file to load"
@@ -2451,7 +2451,7 @@ msgstr "Kot sukanja (v SUK)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
-msgstr "Zasukaj izravnalnik okoli navedenega izvora."
+msgstr "Zasukaj medpomnilnik okoli navedenega izvora."
 
 #: ../operations/transform/scale.c:29
 #: ../operations/transform/scale-ratio.c:26
@@ -2465,11 +2465,11 @@ msgstr "Faktor navpične spremembe merila"
 
 #: ../operations/transform/scale.c:36
 msgid "Scales the buffer."
-msgstr "Spremeni merilo izravnalnika."
+msgstr "Spremeni merilo medpomnilnika."
 
 #: ../operations/transform/scale-ratio.c:33
 msgid "Scales the buffer according to a ratio."
-msgstr "Spremeni merilo izravnalnika glede na razmerje."
+msgstr "Spremeni merilo medpomnilnik glede na razmerje."
 
 #: ../operations/transform/scale-size.c:26
 msgid "Horizontal size"
@@ -2481,7 +2481,7 @@ msgstr "Velikost navpično"
 
 #: ../operations/transform/scale-size.c:33
 msgid "Scales the buffer according to a size."
-msgstr "Spremeni merilo izravnalnika glede na velikost."
+msgstr "Spremeni merilo medpomnilnika glede na velikost."
 
 #: ../operations/transform/shear.c:26
 msgid "Horizontal shear amount"
@@ -2493,7 +2493,7 @@ msgstr "Količina navpičnega striženja"
 
 #: ../operations/transform/shear.c:33
 msgid "Shears the buffer"
-msgstr "Postriže izravnalnik"
+msgstr "Postriže medpomnilnik"
 
 #: ../operations/transform/transform.c:25
 msgid "Transformation string"
@@ -2546,7 +2546,7 @@ msgstr "Navpični vodoravni premik"
 
 #: ../operations/transform/translate.c:33
 msgid "Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used"
-msgstr "Prerazmesti izravnalnik (z natančnostjo pod-slikovne točke), če so podane celoštevilske koordinate hitri poti brez uporabe ponovnega vzorčenja."
+msgstr "Premesti medpomnilnik (z natančnostjo pod-slikovne točke), če so podane celoštevilske koordinate hitri poti brez uporabe ponovnega vzorčenja."
 
 #: ../operations/workshop/box-max.c:26
 #: ../operations/workshop/box-min.c:26
@@ -2581,15 +2581,15 @@ msgstr "Nastavi ciljno slikovno točko na barvo, ki ustreza danemu odstotku, ko 
 
 #: ../operations/workshop/buffer-cache.c:25
 msgid "Cache buffer"
-msgstr "Medpomnilniški izravnalnik"
+msgstr "Predpomnilniški medpomnilnik"
 
 #: ../operations/workshop/buffer-cache.c:26
 msgid "The GeglBuffer where the caching is done"
-msgstr "GeglBuffer, v katerem se izvaja medpomnjenje"
+msgstr "GeglBuffer, v katerem se izvaja predpomnjenje"
 
 #: ../operations/workshop/buffer-cache.c:96
 msgid "Cache the input buffer internally, further process take this buffer as input."
-msgstr "Notranje medpomni vhodni izravnalnik, nadaljnji postopki vzamejo ta izravnalnik za vhod."
+msgstr "Notranje predpomni vhodni medpomnilnik, nadaljnji postopki vzamejo ta medpomnilnik kot vhod."
 
 #: ../operations/workshop/color-rotate.c:33
 #: ../operations/workshop/color-rotate.c:39
@@ -3272,7 +3272,7 @@ msgstr "Vrednost na vrhu"
 
 #: ../operations/workshop/external/line-profile.c:178
 msgid "Renders luminance profiles for red green and blue components along the specified line in the input buffer, plotted in a buffer of the specified size."
-msgstr "Upodobi profile svetilnosti za komponente rdeče, zelene in modre vzdolž navedene črte v vhodnem izravnalniku, izrisane v izravnalniku navedene velikosti."
+msgstr "Upodobi profile svetilnosti za komponente rdeče, zelene in modre vzdolž navedene črte v vhodnem medpomnilnik, izrisane medpomnilniku navedene velikosti."
 
 #: ../operations/workshop/fractal-trace.c:25
 msgid "Fractal"
