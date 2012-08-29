@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-08-14 09:57+0000\n"
-"PO-Revision-Date: 2012-08-20 23:26+0100\n"
+"POT-Creation-Date: 2012-08-28 13:35+0000\n"
+"PO-Revision-Date: 2012-08-28 23:31+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -972,7 +972,7 @@ msgstr "Povprečna razlika (skupaj)"
 msgid "Average difference between all pixels."
 msgstr "Povprečna razlika med vsemi slikovnimi točkami."
 
-#: ../operations/common/image-compare.c:171
+#: ../operations/common/image-compare.c:177
 msgid "Compares if input and aux buffers are different. Results are saved in the properties."
 msgstr "Primerja, če se izravnalnika vhoda in izhoda razlikujeta. Rezultate shranite v nastavitvah."
 
@@ -1766,10 +1766,9 @@ msgid "Coordinate y of the center of the waves"
 msgstr "Koordinata Y središča valov"
 
 #: ../operations/common/waves.c:44
-#, fuzzy
 #| msgid "Display help information"
 msgid "Clamp deformation"
-msgstr "Deformacija vilice"
+msgstr "Obrzdaj deformacijo"
 
 #: ../operations/common/waves.c:45
 msgid "Limit deformation in the image area."
@@ -1806,15 +1805,13 @@ msgid "Write to an existing GeglBuffer"
 msgstr "Zapiši v obstoječi GeglBuffer"
 
 #: ../operations/common/write-buffer.c:28
-#, fuzzy
 #| msgid "Input buffer"
 msgid "Flush buffer"
-msgstr "Izvrzi izravnalnik"
+msgstr "Počisti izravnalnik"
 
 #: ../operations/common/write-buffer.c:29
-#, fuzzy
 msgid "Flush buffer after writing"
-msgstr "Izvrzi izravnalnik po pisanju"
+msgstr "Počisti izravnalnik po pisanju"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -2332,19 +2329,19 @@ msgstr "Matematična operacija seštevanja add (c = c + vrednost)"
 msgid "Porter Duff operation clear (d = 0.0f)"
 msgstr "Operacija Porter Duff clear (d = 0.0f)"
 
-#: ../operations/generated/color-burn.c:117
+#: ../operations/generated/color-burn.c:165
 msgid "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 msgstr "Operacija zlivanja SVG color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = cA * (1 - aB) + cB * (1 - aA) sicer: d = (cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 
-#: ../operations/generated/color-dodge.c:117
+#: ../operations/generated/color-dodge.c:165
 msgid "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) sicer: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/darken.c:115
+#: ../operations/generated/darken.c:163
 msgid "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/difference.c:115
+#: ../operations/generated/difference.c:163
 msgid "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</code>)"
 msgstr "Operacija zlivanja SVG difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</code>)"
 
@@ -2372,7 +2369,7 @@ msgstr "Operacija Porter Duff dst-out (d = cB * (1.0f - aA))"
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
 msgstr "Operacija Porter Duff dst-over (d = cB + cA * (1.0f - aB))"
 
-#: ../operations/generated/exclusion.c:115
+#: ../operations/generated/exclusion.c:163
 msgid "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
@@ -2380,11 +2377,11 @@ msgstr "Operacija zlivanja SVG exclusion (<code>d = (cA * aB + cB * aA - 2 * cA 
 msgid "Math operation gamma (c = powf (c, value))"
 msgstr "Matematična operacija gama (c = powf (c, vrednost))"
 
-#: ../operations/generated/hard-light.c:117
+#: ../operations/generated/hard-light.c:165
 msgid "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) sicer: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/lighten.c:115
+#: ../operations/generated/lighten.c:163
 msgid "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
@@ -2392,19 +2389,19 @@ msgstr "Operacija zlivanja SVG lighten (<code>d = MAX (cA * aB, cB * aA) + cA * 
 msgid "Math operation multiply (c = c * value)"
 msgstr "Matematična operacija množenja multiply (c = c * vrednost)"
 
-#: ../operations/generated/overlay.c:117
+#: ../operations/generated/overlay.c:165
 msgid "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) sicer: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/plus.c:115
+#: ../operations/generated/plus.c:163
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr "Operacija zlivanja SVG plus (<code>d = cA + cB</code>)"
 
-#: ../operations/generated/screen.c:115
+#: ../operations/generated/screen.c:163
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr "Operacija zlivanja SVG screen (<code>d = cA + cB - cA * cB</code>)"
 
-#: ../operations/generated/soft-light.c:119
+#: ../operations/generated/soft-light.c:167
 msgid "SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); otherwise: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); sicer: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
@@ -2432,7 +2429,7 @@ msgstr "Operacija Porter Duff src-over (d = cA + cB * (1.0f - aA))"
 msgid "Math operation subtract (c = c - value)"
 msgstr "Matematična operacija odštevanja (c = c - vrednost)"
 
-#: ../operations/generated/svg-multiply.c:115
+#: ../operations/generated/svg-multiply.c:163
 msgid "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr "Operacija zlivanja SVG multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"
 
