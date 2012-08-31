@@ -187,7 +187,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-Pick",
+      "name",       "gegl:noise-pick",
       "categories", "noise",
       "description", _("Randomly interchange some pixels with neighbors"),
       NULL);

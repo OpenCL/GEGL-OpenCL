@@ -130,7 +130,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-Hurl",
+      "name",       "gegl:noise-hurl",
       "categories", "noise",
       "description", _("Completely randomize a fraction of pixels"),
       NULL);

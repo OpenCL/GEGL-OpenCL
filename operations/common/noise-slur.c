@@ -163,12 +163,9 @@ process (GeglOperation       *operation,
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
@@ -176,7 +173,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-Slur",
+      "name",       "gegl:noise-slur",
       "categories", "noise",
       "description", _("Randomly slide some pixels downward (similar to melting)"),
       NULL);
