@@ -350,4 +350,5 @@ gegl_dot_node_to_png (GeglNode    *node,
   dot_cmd = g_strdup_printf ("dot -o %s -Tpng %s", png_path, dot_filename);
   if (system (dot_cmd) == -1)
     g_warning ("Error executing GraphViz dot program");
+  g_free (dot_cmd);
 }
