@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-08-29 11:18+0000\n"
-"PO-Revision-Date: 2012-08-30 22:39+0100\n"
+"POT-Creation-Date: 2012-08-31 08:10+0000\n"
+"PO-Revision-Date: 2012-09-10 00:54+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -354,12 +354,10 @@ msgid "Color to grayscale conversion, uses envelopes formed from spatial  color 
 msgstr "Pretvorba iz sivinske v barvno, uporablja ovojnice iz barvno prostorskih razlik, da izvede izboljšavo sivinsko prostorskega kontrasta z ohranjanjem lastnosti barv"
 
 #: ../operations/common/cartoon.c:25
-#| msgid "Blur radius"
 msgid "Mask radius"
 msgstr "Polmer maske"
 
 #: ../operations/common/cartoon.c:27
-#| msgid "Percentile"
 msgid "Percent black"
 msgstr "Odstotek črnine"
 
@@ -1375,18 +1373,15 @@ msgstr "Linearna zabrisanost gibanja"
 
 #: ../operations/common/noise-cielch.c:25
 #: ../operations/common/noise-hsv.c:27
-#, fuzzy
 #| msgid "Hardness"
 msgid "Holdness"
-msgstr "Trdota"
+msgstr "Strnjenost"
 
 #: ../operations/common/noise-cielch.c:27
-#| msgid "Brightness"
 msgid "Lightness"
 msgstr "Svetlost"
 
 #: ../operations/common/noise-cielch.c:29
-#, fuzzy
 msgid "Chroma"
 msgstr "Kroma"
 
@@ -1397,7 +1392,6 @@ msgid "Hue"
 msgstr "Obarvanost"
 
 #: ../operations/common/noise-cielch.c:160
-#, fuzzy
 msgid "Randomize lightness/chroma/hue independently"
 msgstr "Neodvisna naključnost svetlosti/krome/obarvanosti"
 
@@ -1412,7 +1406,6 @@ msgid "Value"
 msgstr "Vrednost"
 
 #: ../operations/common/noise-hsv.c:164
-#, fuzzy
 msgid "Randomize hue/saturation/value independently"
 msgstr "Neodvisna naključnost obarvanosti/nasičenosti/vrednosti"
 
@@ -1445,7 +1438,6 @@ msgstr "Naključnost (%)"
 #: ../operations/common/noise-hurl.c:32
 #: ../operations/common/noise-pick.c:32
 #: ../operations/common/noise-slur.c:35
-#| msgid "Rotation"
 msgid "Radomization"
 msgstr "Naključnost"
 
@@ -1478,7 +1470,6 @@ msgid "Correlated noise"
 msgstr "Korelacijski šum"
 
 #: ../operations/common/noise-rgb.c:29
-#, fuzzy
 msgid "Independent RGB"
 msgstr "Neodvisni RGB"
 
@@ -1487,9 +1478,8 @@ msgid "Distort colors by random amounts."
 msgstr "Popači barve z naključnimi vrednostmi."
 
 #: ../operations/common/noise-slur.c:181
-#, fuzzy
 msgid "Randomly slide some pixels downward (similar to melting)"
-msgstr "Naključno odmakni nekaj slikovnih točk navzdol (podobno taljenju)"
+msgstr "Naključno porini nekaj slikovnih točk navzdol (podobno taljenju)"
 
 #: ../operations/common/noise.c:29
 msgid "Z offset"
@@ -1506,7 +1496,6 @@ msgstr "Ustvarjalnik Perlinovega šuma"
 #: ../operations/common/oilify.c:27
 #: ../operations/common/photocopy.c:25
 #: ../operations/common/photocopy.c:26
-#| msgid "Radius"
 msgid "Mask Radius"
 msgstr "Polmer maske"
 
@@ -1516,17 +1505,14 @@ msgstr "Polmer kroga okoli slik. točke"
 
 #: ../operations/common/oilify.c:30
 #: ../operations/common/oilify.c:31
-#, fuzzy
 msgid "Exponent"
 msgstr "Eksponentno"
 
 #: ../operations/common/oilify.c:33
-#, fuzzy
 msgid "Intensity Mode"
-msgstr "Intenzivni način"
+msgstr "Način intenzivnosti"
 
 #: ../operations/common/oilify.c:34
-#| msgid "Use optimized huffman tables"
 msgid "Use pixel luminance values"
 msgstr "Uporabi vrednosti svetlosti slik. točk"
 
@@ -1557,19 +1543,16 @@ msgstr "Operacija Porter Duff over (d = cA + cB * (1 - aA))"
 #: ../operations/common/photocopy.c:28
 #: ../operations/common/photocopy.c:29
 #: ../operations/common/softglow.c:29
-#| msgid "Dampness"
 msgid "Sharpness"
 msgstr "Ostrina"
 
 #: ../operations/common/photocopy.c:31
 #: ../operations/common/photocopy.c:32
-#| msgid "Percentile"
 msgid "Percent Black"
 msgstr "Odstotek črne"
 
 #: ../operations/common/photocopy.c:34
 #: ../operations/common/photocopy.c:35
-#| msgid "Percentile"
 msgid "Percent White"
 msgstr "Odstotek bele"
 
@@ -1776,7 +1759,6 @@ msgid "Multipurpose file saver, that uses other native handlers."
 msgstr "Večnamenski shranjevalnik datotek, ki uporablja druge domorodne ročice."
 
 #: ../operations/common/shift.c:26
-#| msgid "X shift:"
 msgid "Shift"
 msgstr "Odmik"
 
@@ -1789,7 +1771,6 @@ msgid "Direction"
 msgstr "Smer"
 
 #: ../operations/common/shift.c:37
-#| msgid "Shift horizontal"
 msgid "Shift direction"
 msgstr "Smer odmika"
 
@@ -1811,12 +1792,10 @@ msgid "Noise reducing edge enhancing blur filter based  on Symmetric Nearest Nei
 msgstr "Filter zabrisanosti za izboljšavo robov in zmanjševanje šuma, ki temelji na simetričnih najbližjih sosedih"
 
 #: ../operations/common/softglow.c:25
-#| msgid "Blur radius"
 msgid "Glow radius"
 msgstr "Polmer žarenja"
 
 #: ../operations/common/softglow.c:224
-#, fuzzy
 msgid "Softglow effect"
 msgstr "Učinek mehkega žarenja"
 
@@ -2000,19 +1979,16 @@ msgid "blend two images using alpha values as weights"
 msgstr "Združi dve sliki z uporabo alfa-vrednosti kot uteži"
 
 #: ../operations/common/wind.c:27
-#, fuzzy
 msgid "Higher values restrict the effect to fewer areas of the image"
 msgstr "Višje vrednosti omejujejo učinek na manj območij slike"
 
 #: ../operations/common/wind.c:31
-#, fuzzy
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Višje vrednosti povečajo jakost učinka"
 
 #: ../operations/common/wind.c:367
-#, fuzzy
 msgid "Wind-like bleed effect"
-msgstr "Učinek prelivanja podoben vetru"
+msgstr "Učinek prelivanja, podoben vetru"
 
 #: ../operations/common/write-buffer.c:26
 msgid "Write to an existing GeglBuffer"
