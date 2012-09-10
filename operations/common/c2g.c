@@ -491,8 +491,8 @@ gegl_chant_class_init (GeglChantClass *klass)
       "categories",  "enhance",
       "description", 
      _("Color to grayscale conversion, uses envelopes formed from spatial "
-       " color differences to perform color-feature preserving grayscale "
-       " spatial contrast enhancement"),
+       "color differences to perform color-feature preserving grayscale "
+       "spatial contrast enhancement"),
      NULL);
 }
 

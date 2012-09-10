@@ -29,7 +29,7 @@ gegl_chant_double (brightness, _("Brightness"),
                   _("Overall brightness of the image"))
 gegl_chant_double (chromatic, _("Chromatic Adaptation"),
                   0.0, 1.0, 0.0,
-                  _("Adapation to colour variation across the image"))
+                  _("Adapation to color variation across the image"))
 gegl_chant_double (light, _("Light Adaptation"),
                   0.0, 1.0, 1.0,
                   _("Adapation to light variation across the image"))
@@ -272,7 +272,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   "categories" , "tonemapping",
   "description",
         _("Adapt an image, which may have a high dynamic range, for "
-	  "presentation using a low dynamic range. This is an efficient "
+          "presentation using a low dynamic range. This is an efficient "
           "global operator derived from simple physiological observations, "
           "producing luminance within the range 0.0-1.0"),
         NULL);

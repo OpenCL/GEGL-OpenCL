@@ -32,7 +32,7 @@
 
 gegl_chant_seed (seed, _("Seed"), _("Random seed"))
 
-gegl_chant_double (pct_random, _("Randomization (%)"),   0.0, 100.0, 3.0, _("Radomization"))
+gegl_chant_double (pct_random, _("Randomization (%)"),   0.0, 100.0, 3.0, _("Randomization"))
 
 gegl_chant_int (repeat, _("Repeat"),   1, 100, 1, _("Repeat"))
 

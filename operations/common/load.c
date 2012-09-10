@@ -178,7 +178,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories" , "meta:input",
     "description",
           _("Multipurpose file loader, that uses other native handlers, and "
-            "fallback conversion using image magick's convert."),
+            "fallback conversion using Image Magick's convert."),
     NULL);
 
 }
