@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-08-29 11:18+0000\n"
-"PO-Revision-Date: 2012-08-29 16:59+0200\n"
+"POT-Creation-Date: 2012-09-10 08:50+0000\n"
+"PO-Revision-Date: 2012-09-10 18:10+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -369,9 +369,13 @@ msgstr ""
 "pero mayor coste de procesado"
 
 #: ../operations/common/c2g.c:493
+#| msgid ""
+#| "Color to grayscale conversion, uses envelopes formed from spatial  color "
+#| "differences to perform color-feature preserving grayscale  spatial "
+#| "contrast enhancement"
 msgid ""
-"Color to grayscale conversion, uses envelopes formed from spatial  color "
-"differences to perform color-feature preserving grayscale  spatial contrast "
+"Color to grayscale conversion, uses envelopes formed from spatial color "
+"differences to perform color-feature preserving grayscale spatial contrast "
 "enhancement"
 msgstr ""
 "Conversión de color a escala de grises, usa envolventes formadas a partir de "
@@ -379,12 +383,10 @@ msgstr ""
 "del contraste que preserva las características de color"
 
 #: ../operations/common/cartoon.c:25
-#| msgid "Blur radius"
 msgid "Mask radius"
 msgstr "Radio de la máscara"
 
 #: ../operations/common/cartoon.c:27
-#| msgid "Percentile"
 msgid "Percent black"
 msgstr "Porcentaje de negro"
 
@@ -1167,12 +1169,15 @@ msgid "Path of file to load."
 msgstr "Ruta del archivo que cargar"
 
 #: ../operations/common/load.c:180
+#| msgid ""
+#| "Multipurpose file loader, that uses other native handlers, and fallback "
+#| "conversion using image magick's convert."
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
-"conversion using image magick's convert."
+"conversion using Image Magick's convert."
 msgstr ""
 "Cargador de archivos de multipropósito, que usa otros manejadores nativos, y "
-"conversión de último recurso usando la función convert de ImageMagick."
+"conversión de último recurso usando la función «convert» de ImageMagick."
 
 #: ../operations/common/magick-load.c:136
 msgid "Image Magick wrapper using the png op."
@@ -1419,12 +1424,10 @@ msgid "Linear motion blur"
 msgstr "Desenfoque de movimiento lineal"
 
 #: ../operations/common/noise-cielch.c:25 ../operations/common/noise-hsv.c:27
-#| msgid "Hardness"
 msgid "Holdness"
 msgstr "Holgura"
 
 #: ../operations/common/noise-cielch.c:27
-#| msgid "Brightness"
 msgid "Lightness"
 msgstr "Brillo"
 
@@ -1472,8 +1475,8 @@ msgstr "Aleatorización (%s)"
 
 #: ../operations/common/noise-hurl.c:32 ../operations/common/noise-pick.c:32
 #: ../operations/common/noise-slur.c:35
-#| msgid "Rotation"
-msgid "Radomization"
+#| msgid "Radomization"
+msgid "Randomization"
 msgstr "Aleatorización"
 
 #: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:34
@@ -1510,7 +1513,7 @@ msgstr "RGB independiente"
 msgid "Distort colors by random amounts."
 msgstr "Distorsionar colores una cantidad aleatoria."
 
-#: ../operations/common/noise-slur.c:181
+#: ../operations/common/noise-slur.c:178
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr ""
 "Deslizar aleatoriamente algunos píxeles hacia abajo (similar a la fusión)"
@@ -1529,7 +1532,6 @@ msgstr "Generador de ruido de Perlin"
 
 #: ../operations/common/oilify.c:27 ../operations/common/photocopy.c:25
 #: ../operations/common/photocopy.c:26
-#| msgid "Radius"
 msgid "Mask Radius"
 msgstr "Radio de la máscara"
 
@@ -1546,7 +1548,6 @@ msgid "Intensity Mode"
 msgstr "Modo de intensidad"
 
 #: ../operations/common/oilify.c:34
-#| msgid "Use optimized huffman tables"
 msgid "Use pixel luminance values"
 msgstr "Usar valores de luminancia de píxeles"
 
@@ -1584,17 +1585,14 @@ msgstr "Operación de Porter-Duff sobre (d = cA + cB * (1 - aA))"
 
 #: ../operations/common/photocopy.c:28 ../operations/common/photocopy.c:29
 #: ../operations/common/softglow.c:29
-#| msgid "Dampness"
 msgid "Sharpness"
 msgstr "Nitidez"
 
 #: ../operations/common/photocopy.c:31 ../operations/common/photocopy.c:32
-#| msgid "Percentile"
 msgid "Percent Black"
 msgstr "Porcentaje de negro"
 
 #: ../operations/common/photocopy.c:34 ../operations/common/photocopy.c:35
-#| msgid "Percentile"
 msgid "Percent White"
 msgstr "Porcentaje de blanco"
 
@@ -1722,7 +1720,8 @@ msgid "Chromatic Adaptation"
 msgstr "Adaptación cromática"
 
 #: ../operations/common/reinhard05.c:32
-msgid "Adapation to colour variation across the image"
+#| msgid "Adapation to colour variation across the image"
+msgid "Adapation to color variation across the image"
 msgstr "Adaptación a las variaciones de color a través de la imagen"
 
 #: ../operations/common/reinhard05.c:33
@@ -1806,7 +1805,6 @@ msgstr ""
 "Guardador de archivos de varios usos, que utiliza otros manejadores nativos."
 
 #: ../operations/common/shift.c:26
-#| msgid "X shift:"
 msgid "Shift"
 msgstr "Desplazamiento"
 
@@ -1819,7 +1817,6 @@ msgid "Direction"
 msgstr "Dirección"
 
 #: ../operations/common/shift.c:37
-#| msgid "Shift horizontal"
 msgid "Shift direction"
 msgstr "Dirección del desplazamiento"
 
@@ -1845,7 +1842,6 @@ msgstr ""
 "vecinos simétricos más próximos"
 
 #: ../operations/common/softglow.c:25
-#| msgid "Blur radius"
 msgid "Glow radius"
 msgstr "Radio del resplandor"
 
