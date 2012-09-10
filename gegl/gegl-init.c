@@ -471,6 +471,21 @@ gegl_post_parse_hook (GOptionContext *context,
   babl_init ();
   gegl_instrument ("gegl", "gegl_init", 0);
 
+#ifdef GEGL_ENABLE_DEBUG
+  {
+    const char *env_string;
+    env_string = g_getenv ("GEGL_DEBUG");
+    if (env_string != NULL)
+      {
+        gegl_debug_flags =
+          g_parse_debug_string (env_string,
+                                gegl_debug_keys,
+                                G_N_ELEMENTS (gegl_debug_keys));
+        env_string = NULL;
+      }
+  }
+#endif /* GEGL_ENABLE_DEBUG */
+
   config = (void*)gegl_config ();
 
   if (cmd_gegl_swap)
@@ -499,20 +514,6 @@ gegl_post_parse_hook (GOptionContext *context,
   if (cmd_gegl_queue_limit)
     g_object_set (config, "queue-limit", cmd_gegl_queue_limit, NULL);
 
-#ifdef GEGL_ENABLE_DEBUG
-  {
-    const char *env_string;
-    env_string = g_getenv ("GEGL_DEBUG");
-    if (env_string != NULL)
-      {
-        gegl_debug_flags =
-          g_parse_debug_string (env_string,
-                                gegl_debug_keys,
-                                G_N_ELEMENTS (gegl_debug_keys));
-        env_string = NULL;
-      }
-  }
-#endif /* GEGL_ENABLE_DEBUG */
 
   time = gegl_ticks ();
 
